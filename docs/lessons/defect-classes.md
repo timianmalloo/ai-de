@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 70 · partially-controlled 57 · uncontrolled 15
+**Status counts:** controlled 73 · partially-controlled 57 · uncontrolled 15
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -6182,3 +6182,81 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   as below.
 - **Status:** `partially-controlled` — the instance is repaired; the mechanical control is a pack
   proposal, filed with this entry, not yet a gate.
+
+### DC-143 — A theme declared as a rule with no values is a theme that cannot fail
+- **Shape:** the design language declares one mode's values and, for the other, a sentence
+  (*"inverted roles, same semantics"*). Every measurement of the second mode — the contrast
+  census, the mockup's live audit, `ui-craft-gate.py`'s token check — has nothing to resolve, so
+  it reports *not measured* or (worse) passes on the default mode's values. A mode with a rule
+  and no values cannot fail, and a mode that cannot fail is indistinguishable from one that was
+  never checked. The mockups meanwhile invent their own light values in a harness block, so the
+  product has a light palette after all — in the wrong file, unreviewed, and different per mockup.
+- **Signature:** a `Modes` table row whose *Ground* column is prose; a census run that says
+  *"not measured until values are declared"*; two mockups whose `:root[data-theme="light"]` blocks
+  disagree on the accent.
+- **Instance (D1, `addendum-c-chain`, 2026-09-11):** `DESIGN.md:121` (light = *"inverted roles,
+  same semantics"*, values declared for dark only, `:5-48`); `spec-addendum-c-perspectives` §C7
+  and §R row 24 recorded the light census as *not measured*; `session-front-door.html:30-36`
+  carried a light set (`#2C6FA8` accent) that no artifact governed. Fixed by declaring every role's
+  light value as a flat `light-<role>` key under `colors:` (the form both readers accept —
+  `note-addendum-c-design-signature` §3), re-picked for AA on the light grounds.
+- **Sweep:** high contrast has the same shape but is *correctly* value-less (the values are the
+  OS's) — recorded in the Modes row as a decision, with the mockups' hc values labelled stand-ins.
+  No other `DESIGN.md` mode exists.
+- **Control:** `tools/verify-design-modes.py` — every colour role must carry a `light-` twin, no
+  orphan mode key, and `accent-contrast` and `border-strong` must exist; wired into `build.yml`
+  beside the craft floor. Observed red with `light-accent` removed and with `accent-contrast`
+  removed (`--self-test`, 4 cases), green on this commit.
+- **Status:** `controlled` for the light mode; `partially` for the runtime — the census
+  (`ShellContrastCensusTests`, merged with INV-0008) runs dark today; its light run is the
+  acceptance test for the declared values.
+
+### DC-144 — A palette table that measures every ink on one ground never lists the family that fails
+- **Shape:** the design language's contrast audit is a table of inks × *one* ground
+  (`{colors.surface}`), so every state that paints a different ground — the accent-filled tab,
+  the checked toggle, the selected palette row, the primary button — has no row, and a light ink
+  on the accent ground at 2.37:1 is invisible to the audit while the audit reads *all AA*. The
+  code then borrows a ground token as an ink (`SurfaceSunkenBrush` on the New session glyph),
+  because no token *named* the on-accent ink.
+- **Signature:** a "Contrast (on `{colors.surface}`)" column; a state matrix that names a ground
+  and not its ink (or the reverse); a census row whose ground is `AccentBrush`.
+- **Instance (D1 / INV-0008, 2026-09-11):** `DESIGN.md:72-85` (the one-ground table); the census
+  found 12 of 180 pairings at 2.37:1 on `AccentBrush` and the selected-inactive tab at 1.45:1 on
+  `#2A313B` (a line token used as a ground). Fixed by the **ink × ground matrix** (every pairing a
+  state may render, both themes, `—` where forbidden), `accent-contrast`'s explicit role as the only
+  ink on the accent ground (the code's `AccentContrastBrush`), and the rule that every state names
+  both an ink and a ground (PS-T1); the one-ground column's ratios were stale (13.9 vs 14.98) and
+  are deleted in favour of the matrix. DC-139 is the implementation-side twin (the leaf overrides the
+  container's pairing); this class is the audit's blind spot that let it pass.
+- **Sweep:** the front-door mockup's audit already paired `--accent-contrast` on `--accent`; the
+  three Addendum C mockups list the accent-as-ground family explicitly and classify each pairing
+  (text / ui / decorative). The same blind spot recurred one level down in the second pass: the
+  audits classified the *ink* on a highlighted menu row and never the highlight against the menu
+  ground as a state indicator (1.14:1) — the reviewer's N1; the fix is the row focus ring and a `ui`
+  audit row for every state indicator, not only every text pairing.
+- **Control:** at the design layer, `verify-design-modes.py` refuses a `DESIGN.md` without
+  `accent-contrast`; at the product layer, the runtime census over the composed tree
+  (`ShellContrastCensusTests`, 180 pairings / 0 below floor on `main` at `cb4a6ebe`) is the control.
+  The matrix itself is prose — hand-typed ratios can drift on the next re-tone; the census
+  re-measures them.
+- **Status:** `controlled` — named ink, matrix, token control and the product census in place.
+
+### DC-145 — A per-file allow-list of gated artifacts lets every new artifact enter ungated
+- **Shape:** a CI floor is scoped to the artifacts under review by naming them one by one. The
+  list is correct on the day it is written and wrong on the day the next artifact is authored:
+  the new file joins the corpus with no gate, drifts, and the gate stays green because it never
+  looked. The allow-list *is* the defect — the default was "ungated", and the author had to
+  remember a script to change it.
+- **Signature:** `GATED = [("docs/mockups/<one-file>.html", ...)]`; a new mockup commit that does
+  not touch `tools/`; a craft report whose per-file counts include a file the gate does not name.
+- **Instance (D1, 2026-09-11):** `tools/verify-ui-craft-floor.py:69` gated
+  `session-front-door.html` and `DESIGN.md`; the three Addendum C mockups would have entered
+  ungated. First fix appended them to the list (the instance); second fix inverted the default —
+  every `docs/mockups/*.html` is gated at Major unless named in `LEGACY_ADVISORY` with its reason.
+- **Sweep:** the twelve legacy mockups are the exemption (60 Majors of deliberate DX17 density,
+  per the `ui-craft.yml` header); no other per-file allow-list of gated targets exists in `tools/`
+  (`grep -n "GATED\|ADVISORY" tools/*.py`).
+- **Control:** `verify-ui-craft-floor.py` `gated_mockups()` — the exemption is the thing that must
+  be written; `--self-test` still discriminates (Nit fails, Major passes on the front door). Green on
+  this commit over five gated files.
+- **Status:** `controlled`.

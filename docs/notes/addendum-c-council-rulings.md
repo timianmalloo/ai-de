@@ -1,6 +1,6 @@
 ---
 id: note-addendum-c-council-rulings
-title: "Decision note — Rulings 50–63: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
+title: "Decision note — Rulings 50–71: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
 type: doc
 status: accepted
 owner: "@timianmalloo"
@@ -9,6 +9,7 @@ tags: [decision-note, ruling, conductor, addendum-c, perspective, ui, docking, e
 links:
   - { to: plan-addendum-c-modes, rel: relates-to }
   - { to: spec-addendum-c-perspectives, rel: relates-to }
+  - { to: spec-addendum-d-compile-step, rel: relates-to }
   - { to: plan-conductor-front-door, rel: relates-to }
   - { to: adr-0017-primary-view-mode, rel: relates-to }
   - { to: spec-knowledge-explorer-mode, rel: relates-to }
@@ -26,7 +27,7 @@ summary: >-
   spec written without them would get wrong.
 ---
 
-# Decision note — Rulings 50–63
+# Decision note — Rulings 50–71
 
 ## Provenance
 
@@ -543,3 +544,323 @@ all, S-1 and US-C13 revert to a per-prompt field (never to a session setting).
 
 **RECORD AS:** Ruling 63 — tier is a compile-step decoration, not a session setting; derivation open,
 the operator's to specify; fan-out ceiling and budget remain session settings.
+
+
+---
+
+# Rulings 64–71 — Addendum D filed, two security findings, and the operator's task-class decision (2026-09-11)
+
+## Provenance
+
+Issued by the **Owner** (`fable`) after `spec-addendum-d-compile-step` cleared its three hard vetoes at
+gate pass 2. **64–69 file the spec's own proposals PR-D1…PR-D6.** **66 also disposes of finding F-2**
+(the lease derives from the render) as a defect to fix now on `main`. **70 files the operator's
+decision** that task class is per prompt (audit `al-01M296K4DAJ7H8NP26WC7B135Y`, committed with this
+note — the Owner ruled on the relay and conditioned on the commit). **71 rules on F-3** (governed
+lanes are not toolless). The Owner numbered F-2's disposal inside 66 so the register has no gap; 72
+is not used. Files relied on: the spec; this note; `front-door-rulings-41-42.md`,
+`front-door-rulings-43-44.md`; `docs/adr/0028-mode-cohort-not-partition.md`;
+`docs/lessons/defect-classes.md`; `ComposerSendGate.cs`; `LeaseDerivation.cs`;
+`ComposerCompiler.cs`; `AcpLaneClient.cs`; `GovernedRunHost.cs`; `.claude/settings.json`; the
+adapter `spikes/acp-subscription-lane/node_modules/@agentclientprotocol/claude-agent-acp/dist/acp-agent.js`.
+
+---
+
+## Ruling 64 — PR-D1 filed: the session fan-out value is a ceiling; effective fan-out = min(cap(tier), ceiling); tier is overridable in Prepare and that is not "operator-typed"
+
+**RULING:** File PR-D1 (`addendum-d-compile-step.md:827`): the session's fan-out value is a ceiling,
+the compiled tier's cap applies within it (`cap(T0)=0, cap(T1)=2, cap(T2)=4`,
+`effective = min(cap(tier), Current(ceilings).fan_out)`, a projection computed at Submit, `:309`,
+`:262`), tier is the §A9 projection (`:295-311`) with an `operator` override on the compile line as
+the only stored tier (`:305` R4), and this override does not trip Ruling 63's revert clause.
+
+**BECAUSE:** Ruling 63 labelled the ceiling/cap reconciliation Inferred pending the compile spec; the
+spec now states it as a rule with the cap function sourced to CT19 and GO7 (`:309`). Ruling 63's
+condition reverts to a per-prompt *field* only if tier becomes *typed*; a Prepare override is a
+control over a derived value that already exists, appears only after compile, has no box and no
+required state (`:805` R-10) — that is Ruling 63's "confirmed at send", not Ruling 56's "per-prompt
+field". Ruling 56 stands untouched for ceiling and budget: the spec keeps them non-overridable in
+Prepare (`:309`, `:804` R-9).
+
+**CONFIDENCE:** Verified (spec `:262, :295-311, :805, :827`; Rulings 56, 63 read).
+
+**SCOPE EFFECT:** Admits the override control and the fourteen enumerated tier inputs (`:307`) as the
+test. Cuts, as the spec does (`:297`): fan-out syntax in the text and template-declared tier. Freezes
+tier ∈ {T0, T1, T2}; effective never exceeds the ceiling; the ceiling is never raised from Prepare.
+
+**CONDITIONS:** (1) The override stores `source: operator` and the rule's value, so `override rate`
+(§A14.3) is measurable — Ruling 56's revisit trigger transfers here as that metric. (2) The
+`ceilings` snapshot names the draft's held value as its writer until the session settings exist
+(`:123`, F-6); never a compile-time default.
+
+**RECORD AS:** Ruling 64 — PR-D1 filed: session fan-out is a ceiling; effective = min(cap(tier),
+ceiling), cap 0/2/4; tier overridable in Prepare, not typed (Ruling 63 confirmed, Ruling 56 intact
+for ceiling and budget).
+
+---
+
+## Ruling 65 — PR-D2 filed: the compiler is the session's bound (engine, model, account); Addendum B `:152` superseded for the compile step
+
+**RULING:** File PR-D2 (`:828`): the compile call runs on the session's bound `(engine, model,
+account)`; Addendum B `:152`'s separately configured assist provider and its `assist:` node are
+superseded for the compile step and not built; B `:162-163`'s one-shot mechanics and discipline are
+kept as the `compile.*` events (`:796-797`).
+
+**BECAUSE:** The spec's privacy ground is decisive on its own: the history window is a compile input
+(`:460`) and must never cross a provider boundary (`:491` C6) — a second provider would receive the
+conversation. The operator's ratifying words (*"the same model that the session is bound to"*) are
+cited at `:796`; the ruling does not depend on them. Ruling 57 is intact — B `:184`'s compiled view
+is kept (`:799`).
+
+**CONFIDENCE:** Verified for the spec text and C6; Inferred for `ProviderConfiguration.cs:65-66`
+(not opened by the Owner).
+
+**SCOPE EFFECT:** Cuts the `assist:` node and any assist-provider settings surface. The `refused`
+row (`:323`) stands: the compile passes `SpawnContract.Authorize` exactly as a lane does, so a compile
+can never bill an API key while a subscription is configured.
+
+**CONDITIONS:** The conductor commits the session audit entries so `:796`'s citation resolves (F-1);
+if the committed words differ, re-file.
+
+**RECORD AS:** Ruling 65 — PR-D2 filed: the compiler is the session's bound (engine, model,
+account); Addendum B `:152` superseded for the compile, `assist:` not built, B `:162-163` kept.
+
+---
+
+## Ruling 66 — PR-D3 filed, and F-2 fixed now on `main`: lease derivation runs over the editor's source text only
+
+**RULING:** File PR-D3 (`:829`) **and fix F-2 on `main` now, ahead of any Addendum D slice**:
+red-first tests that an attachment body, a template body and a rendered goal-block line carrying
+`@src/` derive no pattern while the same mention in the editor text does; then
+`ComposerSendGate.cs:164` and the display caller `ComposerSurface.cs:449` both pass the editor's
+held source text — the same symbol at both sites — and `LeaseDerivation` is unchanged.
+
+**BECAUSE:** Today `Derive(compiled.Text)` runs over the rendered view (`ComposerSendGate.cs:146-147,
+:164`), and `RenderAttachment` inlines `attachment.Text` into that view
+(`ComposerCompiler.cs:149-150`); `Mention` is `@(\S+)` over the whole string
+(`LeaseDerivation.cs:49-50, :69`). So a file the operator attached, or a template someone else
+authored, mints a write scope. **This is a reading of Ruling 42, not an extension:** R19/42's purpose
+is *"a lease is never operator-typed"* and *"the paths they referenced with a mention are the paths
+they mean"* (`front-door-rulings-41-42.md:93-95`; Ruling 57) — "they" is the operator, and text the
+operator did not author is not their reference. Ruling 42 simply never enumerated the render as a
+non-source. It is a defect, not a floor trip: the Security veto cleared with this as the ordered fix
+(`:478`, `:813`); the displayed lease is computed from the same text as the sent one
+(`ComposerSurface.cs:449`) so the operator sees the widened scope before Send; and Phase 1 seams are
+validated, not enforced (`:309`, Ruling 26c). It is fixed now because it is two argument changes and
+one test, it is C17's own class (`LeaseDerivation.cs:43-47` records the prior widening instance), and
+every day it waits is a day the F5 evidence run's lease comes from a render.
+
+**CONFIDENCE:** Verified (both call sites, `RenderAttachment`, the regex, Ruling 42 and its erratum).
+Inferred: that no existing test asserts either behaviour — the spec's grep (`:478`).
+
+**SCOPE EFFECT:** Admits one T0 fix on `main`: the tests, the two argument changes, a
+`defect-classes.md` entry for the class *"a derivation reads the render instead of the source"*.
+Freezes: `LeaseDerivation` API unchanged; the lease stays a projection, never a stored decoration
+(`:245`, `:263`); §A13.3's census gate (the `Derive(` argument is the `source_text` symbol, `:469`)
+ships with D's C4, not as a blocker to this fix. **F-2 is disposed here; no separate ruling.**
+
+**CONDITIONS:** (1) Red-first: the attachment-body and template-body tests fail on `main` before the
+change (record the red run; `:478` marks it Inferred until then). (2) Display and Send derive from
+the same symbol — a test asserts `Patterns(x)` at the surface equals `request.Lease.Exclusive` for a
+draft with an attachment mention. (3) If the F5 exit run's prompt carries any attachment or template,
+it re-runs after this fix; if it carries neither (a one-line write), it is unaffected.
+
+**RECORD AS:** Ruling 66 — PR-D3 filed and F-2 fixed now on main: lease derivation over the editor's
+source text only; `ComposerSendGate.cs:164` and `ComposerSurface.cs:449` change argument, red-first
+(a reading of Ruling 42, not an extension).
+
+---
+
+## Ruling 67 — PR-D4 filed: mechanical pre-compile on debounce, agentic compile on the Send gesture; two gestures under an agentic rung
+
+**RULING:** File PR-D4 (`:830`, §A10.1 `:315`): the mechanical projections settle live on the
+debounced draft in memory and persist nothing; an envelope is opened and the agentic compile runs
+only on the Send gesture; under `agentic-advisory` or `agentic` a prompt is two gestures, the second
+the confirmation; Addendum C US-C13's *"when the draft settles (debounced), then … derived
+structure"* (`addendum-c-perspectives.md:727`) is read as the mechanical path, with the agentic delta
+surfaced (`:801` R-6).
+
+**BECAUSE:** A compile per keystroke burns the plan window and multiplies the injection surface
+(`:506` D row); one in flight per draft, cancel-on-edit and `inputs_sha` reuse are only coherent on a
+gesture. US-C13's one-action property is preserved under `mechanical-only` (`:315`), and the
+two-gesture shape is the operator's own *prepare-then-submit* word (`:315`); the *same key* for both
+gestures is the author's Inferred choice (`:839`), reversible at zero cost.
+
+**CONFIDENCE:** Verified (spec `:315`, `:506`, C `:725-729`); Inferred for the operator's "prepare"
+words (relayed, F-1).
+
+**SCOPE EFFECT:** Cuts a separate *Prepare* command (`:315`). Admits the `Prepare again` control and
+the `stale` / `preparing` states. Freezes the 1 s mechanical bound as a defect signal, not a degraded
+state.
+
+**CONDITIONS:** (1) Under `mechanical-only`, US-C13's inline derived structure still appears on
+debounce — the debounce experience is not lost, only the model call moves. (2) The `same key`
+inference is recorded as Inferred in the note and the first operator observation settles it.
+
+**RECORD AS:** Ruling 67 — PR-D4 filed: mechanical pre-compile on debounce; agentic compile and
+envelope open on the Send gesture; two gestures under an agentic rung (US-C13 `:727` read as the
+mechanical path).
+
+---
+
+## Ruling 68 — PR-D5 filed: the compile-mode ladder, gated by the pin spike, then 50 scored + 50 holdout envelopes
+
+**RULING:** File PR-D5 (`:831`): `compile_mode` defaults to `mechanical-only`; `agentic-advisory` is
+selectable only after the P-D5 pin spike's artifact exists with a recorded adapter sha equal to the
+installed adapter's (`:486` C1); `agentic` only after the first 50 real envelopes are scored and the
+next 50 holdout envelopes meet §A14.4's fixed floors (`:518`), D-D1 an order not a conjunction; the
+agentic tier recommendation replaces the rule only under §A14.5 (D-D2).
+
+**BECAUSE:** The pin is verified in adapter source (`acp-agent.js:5883-5884`, `:6008`) and unobserved
+on the wire (`:836`); a model-backed capability with no eval is the AI Systems Engineer's hard veto
+(`:511`). The floors are fixed before the sample and judged on a holdout (`:518`), which is the only
+shape in which "passes" means anything.
+
+**CONFIDENCE:** Verified (spec `:315, :486, :509-518, :836`; adapter `:5883-5884, :6007-6008`).
+Inferred for §A14.5's content (cited, not opened).
+
+**SCOPE EFFECT:** Freezes the order: spike → advisory → 50 → holdout 50 → agentic. Freezes
+`tool_calls = 0` and `applied_denied = 0` as invariants over every `called` row, unfiltered by
+`EffectiveMode` (`:518`). A failed spike is a hard stop for every agentic rung, never a fallback.
+
+**CONDITIONS:** (1) The adapter version is pinned at 0.75.1; a bump re-runs the spike. (2) N = 50 is
+Inferred (`:518`) and may be revised only upward. (3) The spike's fixture repository includes
+`.mcp.json` with a stdio server so `mcp__*` frames are in the assertion (`:486`). **F-3 is not
+disposed here** — it concerns lanes, not the compile session — see Ruling 71.
+
+**RECORD AS:** Ruling 68 — PR-D5 filed: compile mode defaults mechanical-only; advisory after the
+observed pin spike; agentic after 50 scored + 50 holdout meet the fixed §A14.4 floors (D-D1 an
+order; D-D2 under §A14.5).
+
+---
+
+## Ruling 69 — PR-D6 filed: v1's only agentic decoration is the structure; framing is mechanical; skill relevance and mention suggestions wait for their own evals
+
+**RULING:** File PR-D6 (`:832`): the only `derived` decorations in v1 are `goal`, `done_when`,
+`not_in_scope`, requested only for the open lines and skipped when all three are filled (`:260`,
+`:289`); family framing is the versioned profile applied as a template (`:242`, `:266`); skill
+relevance, mention suggestions, tier recommendation and any model rewrite of the framing are not
+built until each is admitted to the allow-list by its own eval (D-D2/D-D3, `:270`).
+
+**BECAUSE:** LOA P1/P2 and DM15 (`:806` R-11): a deterministic template covers ceremony and format
+with no hallucination surface, and an abstraction with no reader is a scope cut. The deny-list
+(`:289`) makes the allow-list the whole of what a model can touch, so each later admission is one
+name plus one eval, not a redesign.
+
+**CONFIDENCE:** Verified (spec `:242, :257-270, :289, :806, :832`).
+
+**SCOPE EFFECT:** Cuts from v1: `tier_recommendation`, `family_framing` (as a model output),
+`skill_ref`, `mention_suggestion`. Freezes the allow-list as case-sensitive and the deny-list as
+"any unknown name" (`:289`).
+
+**CONDITIONS:** Adding any name to the allow-list requires (i) its eval in §A14 form, (ii) a
+`contract_version` bump so `inputs_sha` never reuses pre-admission decorations (`:293`).
+
+**RECORD AS:** Ruling 69 — PR-D6 filed: v1's only agentic decoration is the structure (open lines
+only); framing is mechanical; skill relevance, mention suggestions and framing rewrites wait for
+their own evals (D-D3).
+
+---
+
+## Ruling 70 — the operator's decision filed: task class is per prompt, a decoration of the compiled envelope; the session carries a default, not a constant
+
+**RULING:** File the operator's decision: task class is chosen **per prompt** — a `mechanical`
+decoration on the compiled envelope with `source ∈ {session-default, operator}`, never `derived` —
+and the session carries a **default** the operator may set, not a per-session constant; the New
+Session sheet's field becomes *default task class* and is **optional at create**, and Send is refused
+for a prompt with no effective class (*"choose a task class for this prompt"*).
+
+**BECAUSE:** The operator's words (`al-01M296K4DAJ7H8NP26WC7B135Y`, committed with this note): *"a
+session is a conversation … task class seems like it should be something defined for every chat"*.
+The code already scores per run, not per session: `GovernedRunHost.cs:172` passes `request.TaskClass`
+per episode, and the partition key is `ScoreSegment(Workspace, TaskClass, SchemaVersion)` per scored
+episode (`Leaderboard.cs:25`; ADR-0028). What is per-session today is only where the value is
+*chosen* (`NewSessionSheetViewModel.cs:85, :166, :253-262`; `MainWindow.xaml.cs:290`;
+`ComposerSendGate.cs:30, :162`). DC-110's standing rule — *"the work determines the task class;
+never the door"* (`defect-classes.md:4276-4277`) — is *better* served per prompt: the prompt is the
+work. Optional-at-create with a refusal at Send keeps Ruling 19's *no default* intent (no
+system-chosen class can ever rank) while honouring the operator's objection to deciding before the
+conversation exists — **that split is the Owner's extension, marked as such.**
+
+**Supersedes (quoted):** spec `:245` *"Task class: … a setting, not a decoration: chosen on the New
+Session sheet, required, no default"*; `:249` delta (3) *"task class moves from decorations to
+settings"*; `:264` *"Task class … settings — `task_class` snapshotted on `opened`"*; `:804` R-9
+*"task class stays a setting"*; Addendum A's R13/R14 sheet requirement (the sheet's task-class field
+becomes an optional default); the exit-evidence clause *"a task class no earlier run has used"*
+(`docs/plans/conductor-front-door.md`, §F5 / the Proof Pack's cohort check) now reads **per run**.
+
+**Constrains:** the envelope gains `task_class` as a mechanical decoration with provenance;
+`ComposerSendContext.TaskClass` becomes the nullable session default; `GovernedRunRequest.TaskClass`
+stays required and non-null (`GovernedRunRequest.cs:19, :37`), filled from the envelope; the cohort
+key is read per episode (already true — no Watcher change); the deny-list keeps `task_class` (`:289`)
+so the model never sets it; `session.json`'s `TaskClass` is the default, labelled so (`:463`).
+
+**Does not change:** DC-110 — a default is an operator-chosen setting, a per-prompt value is the
+operator's; neither is a door default, and the provenance is recorded; ADR-0028 (mode is cohort,
+never partition); the Work Episode as scoring unit; `ScoreSegment`.
+
+**CONFIDENCE:** Verified for the code shape and DC-110/ADR-0028; **Inferred** for the operator's
+words at the time of ruling (relayed; committed with this note) and for the two clauses the Owner
+could not open.
+
+**SCOPE EFFECT:** Admits the per-prompt decoration and the compile-line control; changes the sheet
+field to optional default; cuts nothing from the Watcher. **F5 remains valid evidence:** the run
+carries one prompt whose class the operator chose for that prompt (the sheet is merely where); under
+this ruling its provenance is `session-default`, and `GovernedRunRequest.TaskClass` is already per
+request.
+
+**CONDITIONS:** (1) The audit entry is committed with this note so the citation resolves. (2) The F5
+Proof Pack states the class and where it was chosen. (3) A per-prompt change never rewrites the
+session default silently (DM: derive, don't store) — "use as default" is a separate explicit act.
+(4) The conductor files the exact path:line of the exit-evidence clause and Addendum A's R13/R14 in
+this note when the F5 Proof Pack lands on `main`.
+
+**RECORD AS:** Ruling 70 — task class is per prompt: a mechanical envelope decoration with provenance
+(session-default | operator), the sheet's field an optional default, Send refused without one;
+supersedes spec `:245, :249(3), :264, :804`; DC-110 and ADR-0028 unchanged; F5 evidence stands.
+
+---
+
+## Ruling 71 — F-3: governed lanes are not toolless; F5 proceeds only with the lane's shell pinned off and the pin observed; the launch pin is the agent-plane's, the spike is Addendum D's; the allow-list is a finding for the operator
+
+**RULING:** (a) The F5 exit run may proceed on `feature/exit-evidence` @ `757af057` **only after**
+`AcpLaneClient.NewSessionAsync` sends `_meta.claudeCode.options.disallowedTools: ["Bash"]` for the
+governed lane, a unit test asserts that member on the outgoing `session/new` JSON, the run is
+attended, and the run's Proof Pack records the outgoing frame, every observed tool-call name, and
+`origin/main`'s sha before and after; (b) the standing control is **both**: the P-D5 wire spike
+(Addendum D's C1, precondition for any agentic rung) and a typed `session/new` tools argument on the
+one `NewSessionAsync` site (the agent-plane's; delivered on the F5 tree, reused by D's C1 with
+`tools: []`); (c) `.claude/settings.json:4` is filed as a **finding for the operator**, not a defect
+the Owner rules on.
+
+**BECAUSE:** `session/new` today carries only `cwd` and `mcpServers: []` (`AcpLaneClient.cs:164-167`;
+`GovernedRunHost.cs:140`); with no `_meta` the adapter gives the SDK the `claude_code` preset
+(`acp-agent.js:5883-5884`, `:6008`), resolves the permission mode from
+`settingSources: ["user","project","local"]` (`:5856`, `:5962`), and this repository's project
+settings allow `Bash(git push:*)` (`settings.json:4`). The lease bounds file writes the seams observe;
+it does not bound tools. The operator's user-level and `local` settings are **not recorded** — the
+Owner cannot assume they add nothing, which is why the pin is required rather than an attended run
+alone. This is not yet an escalation: no irreversible action has occurred and the plan is approved;
+**if a lane pushes, or a `Bash` frame appears despite the pin, that is an irreversible action outside
+the plan and goes to the human.** `disallowedTools` is honoured in source (`:6007`) and unobserved on
+the wire — the Proof Pack's observed tool-call names are the evidence that closes it for F5; the
+spike closes it in general.
+
+**CONFIDENCE:** Verified (`AcpLaneClient.cs`, `GovernedRunHost.cs`, `settings.json`, adapter `:5856,
+:5883-5884, :5962, :6007-6008`, branch ref). Not recorded: user/local settings; the *"canUseTool is
+not guaranteed"* comment the spec cites at `:5883-5884` — the Owner did not see it at those lines.
+
+**SCOPE EFFECT:** Admits one small agent-plane change (a record `{tools?, disallowedTools?}` on
+`NewSessionAsync`, two callers) — not a launch-profile abstraction. Freezes: the Phase 1 governed lane
+has no shell until a later ruling admits it with its own spike. Cuts nothing from F5's goal.
+
+**CONDITIONS:** (1) The wire test is red-first. (2) A run whose Proof Pack lacks the frame or the
+tool-call names is *not recorded*, not passed. (3) For the operator: `Bash(git push:*)` in the
+committed project settings is now reachable by any governed lane in a worktree of this repo; keep or
+drop is theirs; the lane control makes the lane independent of it either way. (4) Ruling 66's
+condition (3) applies to the same run.
+
+**RECORD AS:** Ruling 71 — F-3: F5 proceeds only with `disallowedTools: ["Bash"]` on the lane's
+`session/new`, tested and observed in the Proof Pack; standing control = P-D5 spike (D) + typed tools
+argument on `AcpLaneClient.NewSessionAsync` (agent-plane); `settings.json:4` filed as an operator
+finding.

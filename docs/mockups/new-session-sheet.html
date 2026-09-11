@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-vp="desk">
+<head>
+<meta charset="utf-8">
+<title>AI-DE New Session sheet: session settings with defaults</title>
+<style>
+/* Tokens mirrored from DESIGN.md (dark, light, high-contrast). No raw colour in a component rule.
+   `--accent-contrast` is the ONLY ink any state paints on `--accent` (the code's AccentContrastBrush). */
+:root{
+  --surface:#12151A; --surface-raised:#1A1F26; --surface-sunken:#0D1014;
+  --border:#2A313B; --text:#E4E9EF; --text-muted:#98A3B2; --text-disabled:#7C8896; --border-strong:#7C8896;
+  --accent:#5B9DD9; --accent-contrast:#0D1014; --focus:#8FC0EA;
+  --verified:#5FB98F; --inferred:#D8A650; --danger:#E07A6F; --float-chrome:#232A33; --scrim:rgba(0,0,0,0.55);
+  --hl:var(--float-chrome); --hl-ink:var(--text);
+  --font-ui:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+  --font-mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+  --t-xs:11px; --t-sm:12px; --t-md:13px; --t-lg:15px; --t-xl:18px; --t-2xl:22px;
+  --s1:2px; --s2:4px; --s3:6px; --s4:8px; --s5:12px; --s6:16px; --s7:24px; --s8:32px;
+  --r-sm:4px; --r-md:6px; --r-lg:10px; --r-island:12px;
+  --e-rest:0 1px 3px rgba(0,0,0,0.28); --e-raise:0 4px 12px rgba(0,0,0,0.34); --e-dialog:0 8px 24px rgba(0,0,0,0.5);
+  --fast:150ms; --base:200ms; --ease:cubic-bezier(0.2,0,0,1);
+}
+:root[data-theme="light"]{
+  --surface:#F4F6F8; --surface-raised:#FFFFFF; --surface-sunken:#E7EBEF;
+  --border:#C7CFD8; --text:#1A1F26; --text-muted:#55606E; --text-disabled:#5F6977; --border-strong:#5F6977;
+  --accent:#27649A; --accent-contrast:#FFFFFF; --focus:#1B4F7E;
+  --verified:#1C724A; --inferred:#7D5900; --danger:#A8372B; --float-chrome:#EEF1F4; --scrim:rgba(0,0,0,0.35);
+}
+:root[data-theme="hc"]{
+  --surface:#000000; --surface-raised:#000000; --surface-sunken:#000000;
+  --border:#FFFFFF; --text:#FFFFFF; --text-muted:#FFFFFF; --text-disabled:#3FF23F; --border-strong:#FFFFFF;
+  --accent:#00FFFF; --accent-contrast:#000000; --focus:#FFFFFF;
+  --verified:#00FF80; --inferred:#FFD400; --danger:#FF9E9E; --float-chrome:#000000; --scrim:rgba(0,0,0,0.7);
+  --hl:#00FFFF; --hl-ink:#000000;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--surface);color:var(--text);font-family:var(--font-ui);font-size:var(--t-md);line-height:1.5}
+svg{display:block}
+.ico{width:16px;height:16px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ico.sm{width:12px;height:12px}
+.ico.lg{width:22px;height:22px;stroke-width:1.6}
+:is(button,select,input,summary,[tabindex]):focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+[data-motion="reduce"] *{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+code{font-family:var(--font-mono);font-size:var(--t-sm)}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+
+/* ---- REVIEW HARNESS (chrome, never ships) --------------------------------- */
+.harness{position:sticky;top:0;z-index:60;display:flex;flex-wrap:wrap;gap:var(--s4) var(--s5);align-items:center;
+  padding:var(--s4) var(--s6);background:var(--surface-sunken);border-bottom:1px solid var(--border);font-size:var(--t-sm)}
+.harness strong{font-weight:600;letter-spacing:.04em;color:var(--text-muted)}
+.harness label{display:flex;align-items:center;gap:var(--s3);color:var(--text)}
+.harness select{background:var(--surface-raised);color:var(--text);border:1px solid var(--border-strong);border-radius:var(--r-sm);padding:var(--s2) var(--s3);font:inherit;min-height:26px;cursor:pointer}
+.checks{margin-left:auto;font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text-muted)}
+.checks b.ok{color:var(--verified)} .checks b.bad{color:var(--danger)}
+.note{margin:var(--s6) var(--s6) 0;padding:var(--s5) var(--s6);border:1px solid var(--border);border-radius:var(--r-lg);background:var(--surface-raised);color:var(--text-muted);font-size:var(--t-sm);max-width:1400px}
+.note b{color:var(--text)}
+.srlog{display:none;margin:var(--s5) var(--s6) 0;padding:var(--s5) var(--s6);border:1px solid var(--border);border-radius:var(--r-lg);background:var(--surface-raised);max-width:1400px}
+body[data-persona="screenreader"] .srlog{display:block}
+.srlog h4{margin:0 0 var(--s4);font-size:var(--t-sm);letter-spacing:.04em;color:var(--text-muted);font-weight:600}
+.srlog ol{margin:0;padding-left:var(--s7);font-size:var(--t-sm);color:var(--text)}
+.srlog .who{font-family:var(--font-mono);color:var(--text-muted)}
+
+/* ---- THE SHEET (modal, over the shell) ------------------------------------- */
+.frame{margin:var(--s6);max-width:1400px}
+[data-vp="narrow"] .frame{max-width:1024px}
+.scene{position:relative;min-height:720px;border-radius:var(--r-island);background:var(--surface);outline:1px solid var(--border);overflow:hidden}
+.behind{padding:var(--s6);color:var(--text-muted);font-size:var(--t-sm)}
+.behind .bar{height:28px;border-radius:var(--r-sm);background:var(--surface-raised);margin-bottom:var(--s4)}
+.scrim{position:absolute;inset:0;background:var(--scrim);display:flex;align-items:flex-start;justify-content:center;padding:var(--s8) var(--s6)}
+.sheet{width:680px;max-width:100%;border-radius:var(--r-island);background:var(--surface-raised);box-shadow:var(--e-dialog);display:flex;flex-direction:column}
+.shead{display:flex;align-items:baseline;flex-wrap:wrap;gap:var(--s4) var(--s5);padding:var(--s6) var(--s7) var(--s5);border-bottom:1px solid var(--border)}
+.shead h2{margin:0;font-size:var(--t-2xl);font-weight:600;color:var(--text);line-height:1.2}
+.shead .sub{font-size:var(--t-sm);color:var(--text-muted);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.shead .sub b{color:var(--text);font-weight:600}
+.sbody{padding:var(--s6) var(--s7) var(--s4)}
+.field{margin-bottom:var(--s7)}
+.field > .lbl{display:flex;align-items:center;flex-wrap:wrap;gap:var(--s4);margin-bottom:var(--s4);font-size:var(--t-sm);font-weight:600;color:var(--text)}
+.req{display:inline-flex;align-items:center;gap:var(--s3);height:20px;padding:0 var(--s4);border-radius:var(--r-sm);border:1px solid var(--inferred);color:var(--inferred);font-size:var(--t-sm);font-weight:600}
+.req.answered{border-color:var(--verified);color:var(--verified)}
+.tin{width:100%;height:30px;padding:0 var(--s5);border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--surface-sunken);color:var(--text);font:inherit;font-size:var(--t-md)}
+.tin:focus{border-color:var(--accent)}
+.help{margin:var(--s4) 0 0;font-size:var(--t-sm);color:var(--text-muted);max-width:66ch}
+.help b{color:var(--text)}
+.classgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s4)}
+.classopt{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s4) var(--s5);border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface-sunken);color:var(--text);cursor:pointer;text-align:left;font:inherit;min-height:56px}
+.classopt:hover{border-color:var(--accent)}
+.classopt[aria-pressed="true"]{border-color:var(--accent);background:var(--surface)}
+.classopt .cn{font-family:var(--font-mono);font-size:var(--t-md);color:var(--text)}
+.classopt .cd{font-size:var(--t-sm);color:var(--text-muted)}
+.recall{display:flex;align-items:center;flex-wrap:wrap;gap:var(--s3) var(--s4);margin-top:var(--s4);font-size:var(--t-sm);color:var(--text-muted)}
+.recall button{height:24px;padding:0 var(--s4);border:1px solid var(--accent);border-radius:var(--r-sm);background:transparent;color:var(--text);font:inherit;font-size:var(--t-sm);font-family:var(--font-mono);cursor:pointer}
+
+/* SESSION SETTINGS: one row of two controls, each with its unit and its source. No tier. */
+.settings{display:grid;grid-template-columns:1fr 1fr;gap:var(--s5)}
+.setting{padding:var(--s4) var(--s5);border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface-sunken)}
+.setting .sl{display:flex;align-items:center;gap:var(--s4);font-size:var(--t-sm);font-weight:600;color:var(--text);margin-bottom:var(--s3)}
+.setting .src{margin-left:auto;font-weight:400;color:var(--text-muted)}
+.setting .ctl{display:flex;align-items:center;gap:var(--s4)}
+.num{width:96px;height:28px;padding:0 var(--s4);border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font:inherit;font-family:var(--font-mono);font-size:var(--t-md);font-variant-numeric:tabular-nums;text-align:right}
+.num:focus{border-color:var(--accent)}
+.num[aria-invalid="true"]{border-color:var(--danger)}
+.unit{font-size:var(--t-sm);color:var(--text-muted)}
+.setting .sh{margin:var(--s3) 0 0;font-size:var(--t-sm);color:var(--text-muted)}
+.setting .inval{display:flex;align-items:center;gap:var(--s2);margin-top:var(--s3);font-size:var(--t-sm);color:var(--danger);font-weight:600}
+
+.backends{border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface-sunken);padding:var(--s3) var(--s4)}
+.brow{display:flex;align-items:center;flex-wrap:wrap;gap:var(--s4);padding:var(--s3) var(--s4);font-size:var(--t-sm);min-width:0}
+.brow .bn{font-family:var(--font-mono);color:var(--text)}
+.brow .acct{color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.brow .sp{margin-left:auto}
+.chip{display:inline-flex;align-items:center;gap:var(--s3);height:20px;padding:0 var(--s4);border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface);color:var(--text-muted);font-size:var(--t-sm);white-space:nowrap;flex:none}
+.chip .dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.chip.ok{color:var(--verified)} .chip.warn{color:var(--inferred);border-color:var(--inferred)}
+.btn{height:26px;padding:0 var(--s5);border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--surface-raised);color:var(--text);font:inherit;font-size:var(--t-sm);cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.pri{height:28px;background:var(--accent);color:var(--accent-contrast);border-color:var(--accent);font-weight:600;font-size:var(--t-md);padding:0 var(--s6)}
+.btn.pri:hover{filter:brightness(1.12)}
+.btn.pri[disabled]{background:var(--surface-raised);color:var(--text-disabled);border-color:var(--border);cursor:not-allowed;filter:none}
+.sfoot{display:flex;align-items:center;flex-wrap:wrap;gap:var(--s4) var(--s5);padding:var(--s5) var(--s7);border-top:1px solid var(--border);background:var(--surface-raised);border-radius:0 0 var(--r-island) var(--r-island)}
+.sfoot .sp{margin-left:auto}
+.reason{display:inline-flex;align-items:center;gap:var(--s3);font-size:var(--t-sm);color:var(--inferred)}
+.reason.err{color:var(--danger)}
+.ring{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);border-top-color:var(--accent);animation:spin 900ms linear infinite;flex:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.errbox{border:1px solid var(--danger);border-radius:var(--r-md);background:var(--surface-raised);padding:var(--s4) var(--s5);margin:0 var(--s7) var(--s5);font-size:var(--t-sm)}
+.errbox b{color:var(--text)}
+.chooser{width:560px;max-width:100%;border-radius:var(--r-island);background:var(--surface-raised);box-shadow:var(--e-dialog);padding:var(--s6) var(--s7)}
+.chooser h2{margin:0 0 var(--s3);font-size:var(--t-xl);font-weight:600;color:var(--text)}
+.chooser p{margin:0 0 var(--s5);font-size:var(--t-sm);color:var(--text-muted)}
+.chooser .row{display:flex;align-items:center;gap:var(--s4);min-height:32px;padding:var(--s2) var(--s4);border-radius:var(--r-sm);font-size:var(--t-sm);color:var(--text)}
+.chooser .row:hover{background:var(--hl);color:var(--hl-ink)}
+.chooser .row:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
+.chooser .row .p{font-family:var(--font-mono);color:var(--text-muted);margin-left:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:280px}
+.fo{display:none;width:18px;height:18px;border-radius:50%;background:var(--focus);color:var(--accent-contrast);font-size:var(--t-xs);font-weight:600;align-items:center;justify-content:center;font-family:var(--font-mono);flex:none}
+body[data-persona="keyboard"] .fo{display:inline-flex}
+
+/* ---- STATE GATING ---------------------------------------------------------- */
+[data-show]{display:none}
+body[data-state="default"] [data-show~="default"],body[data-state="answered"] [data-show~="answered"],body[data-state="creating"] [data-show~="creating"],
+body[data-state="failed"] [data-show~="failed"],body[data-state="invalid"] [data-show~="invalid"],body[data-state="noworkspace"] [data-show~="noworkspace"],
+body[data-state="overflow"] [data-show~="overflow"]{display:block}
+body[data-state="default"] .fi[data-show~="default"],body[data-state="answered"] .fi[data-show~="answered"],body[data-state="creating"] .fi[data-show~="creating"],
+body[data-state="failed"] .fi[data-show~="failed"],body[data-state="invalid"] .fi[data-show~="invalid"],body[data-state="noworkspace"] .fi[data-show~="noworkspace"],
+body[data-state="overflow"] .fi[data-show~="overflow"]{display:inline-flex}
+body[data-state="default"] .fx[data-show~="default"],body[data-state="answered"] .fx[data-show~="answered"],body[data-state="creating"] .fx[data-show~="creating"],
+body[data-state="failed"] .fx[data-show~="failed"],body[data-state="invalid"] .fx[data-show~="invalid"],body[data-state="noworkspace"] .fx[data-show~="noworkspace"],
+body[data-state="overflow"] .fx[data-show~="overflow"]{display:flex}
+body[data-state="noworkspace"] #sheet{display:none}
+body:not([data-state="noworkspace"]) #chooser{display:none}
+
+/* ---- CONTRAST EVIDENCE ----------------------------------------------------- */
+.secwrap{margin:var(--s6);max-width:1400px}
+h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--text)}
+.ctab{width:100%;border-collapse:collapse;font-size:var(--t-sm)}
+.ctab th,.ctab td{text-align:left;padding:var(--s3) var(--s4);border-bottom:1px solid var(--border);vertical-align:top}
+.ctab th{letter-spacing:.04em;color:var(--text-muted);font-weight:600}
+.ctab td.n{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pass{color:var(--verified)} .fail{color:var(--danger)} .na{color:var(--text-muted)}
+.swatch{display:inline-block;width:12px;height:12px;border-radius:2px;border:1px solid var(--border);vertical-align:-2px;margin-right:var(--s3)}
+</style>
+</head>
+<body data-state="default" data-persona="operator" data-motion="full">
+
+<div class="harness" role="region" aria-label="Review harness">
+  <strong>Harness</strong>
+  <label>State
+    <select id="h-state">
+      <option value="default">default: defaults prefilled, task class unanswered</option>
+      <option value="answered">answered: one click on the defaults creates</option>
+      <option value="creating">creating</option>
+      <option value="failed">create failed (answers kept)</option>
+      <option value="invalid">invalid budget</option>
+      <option value="noworkspace">no workspace: the chooser interposes</option>
+      <option value="overflow">overflow: long paths, 6 backends</option>
+    </select></label>
+  <label>Theme
+    <select id="h-theme"><option value="dark">dark</option><option value="light">light</option><option value="hc">high-contrast (stand-ins)</option></select></label>
+  <label>Viewport
+    <select id="h-vp"><option value="desk">desktop 1440</option><option value="narrow">narrow 1024</option></select></label>
+  <label>Persona
+    <select id="h-persona"><option value="operator">Operator</option><option value="keyboard">Keyboard-only (focus order)</option><option value="screenreader">Screen reader (live region)</option></select></label>
+  <label>Motion
+    <select id="h-motion"><option value="full">full</option><option value="reduce">reduced</option></select></label>
+  <span class="checks" id="verdict">measuring&hellip;</span>
+</div>
+
+<p class="note" id="legend"></p>
+<div class="srlog" role="region" aria-label="Live region trace"><h4>What the live region says</h4><ol id="srlist"></ol></div>
+
+<div class="frame"><div class="scene">
+  <div class="behind" aria-hidden="true">
+    <div class="bar" style="width:40%"></div><div class="bar" style="width:100%;height:520px"></div>
+    The shell behind the sheet: the sheet is modal, so no perspective switch can occur while it is open. On Create, the document opens in the Coding host first and Coding activates second, as one transaction.
+  </div>
+  <div class="scrim">
+    <!-- THE WORKSPACE CHOOSER interposes when no workspace is bound (US-C5). -->
+    <div class="chooser" id="chooser" role="dialog" aria-labelledby="ch-h" aria-modal="true">
+      <h2 id="ch-h">Choose a workspace first</h2>
+      <p>Pick a workspace; the New Session sheet follows.</p>
+      <div class="row" tabindex="0"><span>commerce</span><span class="p">C:\projects\commerce</span></div>
+      <div class="row" tabindex="0"><span>ai-de</span><span class="p">C:\projects\ai-de</span></div>
+      <div class="row" tabindex="0"><span>Open a folder…</span></div>
+      <div style="display:flex;gap:var(--s4);margin-top:var(--s5);justify-content:flex-end"><button class="btn">Cancel</button></div>
+    </div>
+
+    <div class="sheet" id="sheet" role="dialog" aria-labelledby="sheet-h" aria-modal="true">
+      <div class="shead">
+        <h2 id="sheet-h">New session</h2>
+        <span class="sub fi" data-show="default answered creating failed invalid">workspace <b>commerce</b> · defaults from workspace policy</span>
+        <span class="sub fi" data-show="overflow">workspace <b>payments-platform-regional-settlement-and-reconciliation-services</b> · defaults from workspace policy</span>
+      </div>
+
+      <div class="errbox fx" data-show="failed" role="alert" style="margin-top:var(--s5)">
+        <span><b>Couldn't create the session</b> — the workspace daemon is not running. Your answers are kept. Start the daemon from File → Index solution, or retry.</span>
+      </div>
+
+      <div class="sbody">
+        <div class="field">
+          <span class="lbl">Name <span class="fo">1</span></span>
+          <input class="tin" value="2026-09-11 payments extraction" aria-label="Session name">
+          <p class="help">Renameable later. Sessions are listed by name in Recent sessions.</p>
+        </div>
+
+        <div class="field">
+          <span class="lbl">Task class
+            <span class="req fi" data-show="default invalid overflow"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Required, no default</span>
+            <span class="req answered fi" data-show="answered creating failed"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Answered</span>
+            <span class="fo">2</span>
+          </span>
+          <p class="help" style="margin:0 0 var(--s4)"><b>What this decides:</b> a session's score is only ever compared against other sessions of the same class. Pick the one that matches the work. There is no default, because a guessed class is indistinguishable from a chosen one afterwards.</p>
+          <div class="classgrid" role="group" aria-label="Task class">
+            <button class="classopt" aria-pressed="false"><span class="cn">feature</span><span class="cd">Add a capability that did not exist.</span></button>
+            <button class="classopt" id="opt-extraction" aria-pressed="false"><span class="cn">extraction</span><span class="cd">Pull an existing behaviour into its own shape.</span></button>
+            <button class="classopt" aria-pressed="false"><span class="cn">defect</span><span class="cd">Find a cause and repair its class.</span></button>
+            <button class="classopt" aria-pressed="false"><span class="cn">migration</span><span class="cd">Move a dependency, framework or schema forward.</span></button>
+            <button class="classopt" aria-pressed="false"><span class="cn">review</span><span class="cd">Read and judge without changing.</span></button>
+            <button class="classopt" aria-pressed="false"><span class="cn">ui-feedback</span><span class="cd">Elevate a surface against operator feedback.</span></button>
+          </div>
+          <div class="recall"><span>Your last session used</span><button type="button">ui-feedback</button><span>. One click applies it. A suggestion, not a preselection.</span></div>
+        </div>
+
+        <!-- SESSION SETTINGS: with defaults; the sheet creates with one click on them. No tier: tier is compiled, not typed. -->
+        <div class="field">
+          <span class="lbl">Session settings <span class="chip"><span class="dot" style="background:var(--verified)"></span>defaults, editable later from the session header</span><span class="fo">3</span></span>
+          <div class="settings">
+            <div class="setting">
+              <div class="sl">Fan-out ceiling<span class="src">workspace default</span></div>
+              <div class="ctl"><input class="num" value="3" aria-label="Fan-out ceiling, sub-agents" inputmode="numeric"><span class="unit">sub-agents</span></div>
+              <p class="sh">Most sub-agents any turn may convene. The compiled tier decides how many it uses, up to this.</p>
+            </div>
+            <div class="setting">
+              <div class="sl">Budget<span class="src">workspace default</span></div>
+              <div class="ctl fx" data-show="default answered creating failed overflow noworkspace"><input class="num" value="40,000" aria-label="Budget, tokens per session" inputmode="numeric"><span class="unit">tokens per session</span></div>
+              <div class="ctl fx" data-show="invalid"><input class="num" value="0" aria-label="Budget, tokens per session" aria-invalid="true" aria-describedby="budget-why" inputmode="numeric"><span class="unit">tokens per session</span></div>
+              <p class="sh fi" data-show="default answered creating failed overflow noworkspace" style="display:block">Spend stops here; a run that needs more asks before it continues.</p>
+              <p class="inval fi" data-show="invalid" id="budget-why"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>A budget of 0 tokens can't run anything. Enter at least 1,000, or leave the workspace default of 40,000.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom:var(--s4)">
+          <span class="lbl">Agent backends <span class="fo">4</span></span>
+          <div class="backends">
+            <div class="brow"><span class="chip ok"><span class="dot"></span>ready</span><span class="bn">claude-code</span><span class="acct">max-personal</span></div>
+            <div class="brow"><span class="chip ok"><span class="dot"></span>ready</span><span class="bn">codex</span><span class="acct">chatgpt-personal</span></div>
+            <div class="brow"><span class="chip warn"><span class="dot"></span>needs login</span><span class="bn">copilot</span><span class="acct">enterprise-org</span><span class="sp"></span><button class="btn">Sign in</button></div>
+            <div class="brow fx" data-show="overflow"><span class="chip ok"><span class="dot"></span>ready</span><span class="bn">gemini-cli</span><span class="acct">workspace-service-account-regional-settlement@payments-platform.iam.gserviceaccount.com</span></div>
+            <div class="brow fx" data-show="overflow"><span class="chip warn"><span class="dot"></span>needs login</span><span class="bn">aider</span><span class="acct">local</span><span class="sp"></span><button class="btn">Sign in</button></div>
+            <div class="brow fx" data-show="overflow"><span class="chip"><span class="dot"></span>off</span><span class="bn">cursor-agent</span><span class="acct">not configured</span></div>
+          </div>
+          <p class="help">A session opens without a ready backend; a <i>run</i> needs one.</p>
+        </div>
+      </div>
+
+      <div class="sfoot">
+        <span class="reason fi" data-show="default invalid overflow"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Choose a task class to create the session.</span>
+        <span class="reason err fi" data-show="invalid"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Budget needs a value.</span>
+        <span class="reason fi" data-show="creating"><span class="ring" aria-hidden="true"></span>Creating…</span>
+        <span class="sp"></span>
+        <button class="btn">Cancel <span class="fo">5</span></button>
+        <button class="btn pri fi" data-show="default invalid overflow" disabled>Create session</button>
+        <button class="btn pri fi" data-show="answered failed">Create session <span class="fo">6</span></button>
+        <button class="btn pri fi" data-show="creating" disabled>Creating…</button>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<div class="secwrap">
+  <h3 class="sech">Computed contrast: every pairing the sheet renders</h3>
+  <p class="help" style="margin-bottom:var(--s5)">Read from the live computed styles, recalculated on every theme change. A disabled control lives on the raised sheet ground, where `text-disabled` clears the text floor in both themes; that is the one place it is allowed (DESIGN.md, recorded deviations).</p>
+  <table class="ctab"><thead><tr><th>Pairing</th><th>Kind</th><th>Ink</th><th>Ground</th><th>Ratio</th><th>Floor</th><th>Verdict</th></tr></thead><tbody id="ctbody"></tbody></table>
+</div>
+
+<script>
+var root=document.documentElement, body=document.body;
+function bind(id,target,attr){ var el=document.getElementById(id); el.addEventListener('change',function(){ target.dataset[attr]=el.value; render(); }); }
+bind('h-theme',root,'theme'); bind('h-vp',root,'vp'); bind('h-state',body,'state'); bind('h-persona',body,'persona'); bind('h-motion',body,'motion');
+var LEGEND={
+  'default':'<b>Defaults prefilled; one required answer.</b> The fan-out ceiling and the budget arrive from workspace policy and are editable here or later from the session header. There is no tier field and no note explaining its absence: the fan-out ceiling\u2019s own sentence says the compiled tier decides how many sub-agents a run uses (the operator\u2019s correction of 2026-09-11). Task class stays required and undefaulted (RQ1\u2013RQ6); the disabled Create button says why beside itself.',
+  'answered':'<b>Answered.</b> One click on a class, and the sheet creates on the defaults with nothing else touched. The required marker flipped to Answered.',
+  'creating':'<b>Creating.</b> The order is fixed: the session document opens in the Coding host first, then Coding activates, as one transaction. A failure leaves you in the perspective you were in.',
+  'failed':'<b>Create failed.</b> The reason is stated in the sheet, every answer is kept, Create is the retry.',
+  'invalid':'<b>Invalid budget.</b> The field carries the reason beside it and the footer names the field; nothing is lost, Create waits.',
+  'noworkspace':'<b>No workspace bound.</b> New session is never disabled: the workspace chooser interposes, and the sheet follows the choice.',
+  'overflow':'<b>Overflow.</b> A 70-character workspace name in the header, a 90-character service-account label in a backend row, six backends. Everything truncates with an ellipsis and its full text in the accessible name; nothing wraps the footer.'
+};
+function render(){
+  document.getElementById('legend').innerHTML=LEGEND[body.dataset.state]||'';
+  var st=body.dataset.state, L=[];
+  if (st==='default') L.push(['on open','New session dialog. Name, edit text. Task class, required, no default. Focus: Name.']);
+  if (st==='answered') L.push(['live region','Task class: extraction. Answered. Create session is available.']);
+  if (st==='creating') { L.push(['UIA notification','Creating\u2026']); L.push(['then (the shell, one transaction)','Coding perspective \u2014 session 2026-09-11 payments extraction opened; focus lands in the editor']); }
+  if (st==='failed') L.push(['live region',"Couldn't create the session — the workspace daemon is not running. Your answers are kept."]);
+  if (st==='invalid') L.push(['live region',"Budget: A budget of 0 tokens can't run anything. Enter at least 1,000."]);
+  if (st==='noworkspace') L.push(['live region','Choose a workspace first. Dialog.']);
+  if (st==='overflow') L.push(['accessible name','workspace payments-platform-regional-settlement-and-reconciliation-services (the full text; the visible label truncates)']);
+  document.getElementById('srlist').innerHTML=L.map(function(x){return '<li><span class="who">'+x[0]+'</span> · '+x[1]+'</li>';}).join('');
+  document.getElementById('opt-extraction').setAttribute('aria-pressed', (st==='answered'||st==='creating'||st==='failed')?'true':'false');
+  audit();
+}
+function srgb(c){ c/=255; return c<=0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055,2.4); }
+function lum(rgb){ return 0.2126*srgb(rgb[0])+0.7152*srgb(rgb[1])+0.0722*srgb(rgb[2]); }
+function parse(s){ var m=/rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(s); return m?[+m[1],+m[2],+m[3]]:null; }
+function ratio(f,b){ var a=lum(f), c=lum(b); var hi=Math.max(a,c), lo=Math.min(a,c); return (hi+0.05)/(lo+0.05); }
+function hex(rgb){ return '#'+rgb.map(function(v){return ('0'+v.toString(16)).slice(-2);}).join('').toUpperCase(); }
+var probe=document.createElement('span'); probe.id='probe'; probe.style.display='none'; document.body.appendChild(probe);
+function tok(n){ probe.style.color='var('+n+')'; return parse(getComputedStyle(probe).color)||[0,0,0]; }
+var THRESH={text:4.5,large:3,ui:3,decorative:3};
+var PAIRS=[
+  ['Sheet title on the sheet',                       'large','--text',          '--surface-raised'],
+  ['Field label on the sheet',                       'text','--text',           '--surface-raised'],
+  ['Help copy on the sheet',                         'text','--text-muted',     '--surface-raised'],
+  ['Required marker (inferred) on the sheet',        'text','--inferred',       '--surface-raised'],
+  ['Answered marker (verified) on the sheet',        'text','--verified',       '--surface-raised'],
+  ['Text input on the sunken field',                 'text','--text',           '--surface-sunken'],
+  ['Class option name on the sunken option',         'text','--text',           '--surface-sunken'],
+  ['Class option description on the sunken option',  'text','--text-muted',     '--surface-sunken'],
+  ['Selected option border on the sheet',            'ui',  '--accent',         '--surface-raised'],
+  ['Setting label on the sunken setting',            'text','--text',           '--surface-sunken'],
+  ['Setting source (muted) on the sunken setting',   'text','--text-muted',     '--surface-sunken'],
+  ['Numeric value on the surface input',             'text','--text',           '--surface'],
+  ['Invalid reason (danger) on the sunken setting',  'text','--danger',         '--surface-sunken'],
+  ['Invalid border on the surface input',            'ui',  '--danger',         '--surface'],
+  ['Tier note on the surface note',                  'text','--text-muted',     '--surface'],
+  ['Backend name on the sunken list',                'text','--text',           '--surface-sunken'],
+  ['Needs-login chip on the surface chip',           'text','--inferred',       '--surface'],
+  ['Create label on the accent fill',                'text','--accent-contrast', '--accent'],
+  ['Disabled Create label on the sheet',             'text','--text-disabled',  '--surface-raised'],
+  ['Disabled reason (inferred) on the sheet',        'text','--inferred',       '--surface-raised'],
+  ['Failure copy on the sheet',                      'text','--text-muted',     '--surface-raised'],
+  ['Chooser row on the lifted ground',               'text','--text',           '--float-chrome'],
+  ['Focus ring on the sheet',                        'ui',  '--focus',          '--surface-raised'],
+  ['Text field boundary on the sheet',                 'ui',  '--border-strong',   '--surface-raised'],
+  ['Numeric field boundary on the sunken setting',      'ui',  '--border-strong',   '--surface-sunken'],
+  ['Chooser row, pointer-hovered, on the lifted ground', 'text','--hl-ink',         '--hl'],
+  ['Chooser row keyboard focus ring (inset)',           'ui',  '--focus',          '--surface-raised'],
+  ['Field border (decorative hairline) on the sheet',   'decorative','--border',   '--surface-raised']
+];
+function audit(){
+  var tb=document.getElementById('ctbody'), fails=0, rows='', hc=root.dataset.theme==='hc';
+  for (var i=0;i<PAIRS.length;i++){ var p=PAIRS[i], f=tok(p[2]), b=tok(p[3]), r=ratio(f,b), need=THRESH[p[1]], req=p[1]!=='decorative', ok=r>=need-0.005; if(req&&!ok&&!hc) fails++;
+    rows+='<tr><td>'+p[0]+'</td><td>'+p[1]+'</td><td class="n"><span class="swatch" style="background:'+hex(f)+'"></span>'+hex(f)+'</td><td class="n"><span class="swatch" style="background:'+hex(b)+'"></span>'+hex(b)+'</td><td class="n">'+r.toFixed(2)+':1</td><td class="n">'+need.toFixed(1)+':1</td><td class="'+(hc?'na':(req?(ok?'pass':'fail'):'na'))+'">'+(hc?'stand-in, not measured':(req?(ok?'PASS':'FAIL'):'reported, not counted'))+'</td></tr>'; }
+  tb.innerHTML=rows;
+  var small=0; document.querySelectorAll('.sheet button, .sheet input, .chooser button, .chooser [tabindex]').forEach(function(el){ if(el.offsetParent===null) return; var rc=el.getBoundingClientRect(); if(rc.width&&rc.height&&(rc.width<24||rc.height<24)) small++; });
+  var tierFields=document.querySelectorAll('.sheet [aria-label*="Tier" i], .sheet [aria-label*="tier" i]').length;
+  document.getElementById('verdict').innerHTML='audit: '+(hc?'<b class="ok">hc: stand-ins, not measured</b>':'<b class="'+(fails?'bad':'ok')+'">'+fails+' contrast fail</b>') · <b class="'+(small?'bad':'ok')+'">'+small+' target &lt; 24px</b> · <b class="'+(tierFields?'bad':'ok')+'">'+tierFields+' tier field</b> · '+PAIRS.length+' pairs';
+}
+render(); window.addEventListener('resize',audit);
+</script>
+</body>
+</html>

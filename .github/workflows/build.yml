@@ -235,6 +235,16 @@ jobs:
           python tools/verify-ui-craft-floor.py --self-test
           python tools/verify-ui-craft-floor.py
 
+      # Addendum C (D1). The light theme was a rule with no values, so the contrast census could
+      # only ever report "not measured" for it -- a mode that cannot fail. Every colour role must
+      # carry a light value, and the on-accent ink must exist (12 of the 14 census failures were a
+      # light ink on the accent ground because no state named one).
+      - name: Design modes complete (every colour role has a light value; on-accent ink declared)
+        if: ${{ !cancelled() }}
+        run: |
+          python tools/verify-design-modes.py --self-test
+          python tools/verify-design-modes.py
+
       # A vendored half-megabyte ES-module bundle (`src/AiDe.App/Web/vendor/`) is executable that no
       # compiler type-checks, no test imports by name and no reviewer reads. Everything that makes it
       # trustworthy is a claim in the manifest beside it, and a claim nothing re-reads is prose.

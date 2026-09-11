@@ -3095,6 +3095,132 @@ window.DOCS_INDEX = {
       "sourceSha256": "98e6dbe61d6bdf8e501b6e43bc5e896c144f49186afd3fe7e7e2dc88efb1c6d0"
     },
     {
+      "id": "note-addendum-c-design-menu-names",
+      "path": "docs/notes/addendum-c-design-menu-names.md",
+      "title": "The top-level menus are File · Edit · View · Window · Prompt · Help — Terminal renamed to what it holds, the design language's Graph · Model · Agents set retired, and Ctrl+1/2/3 confirmed as the perspective gestures",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Spec §R row 5 handed D1 the top-level menu names (DESIGN.md said File · Edit · View · Graph · Model · Agents · Window · Help; the code says File · Edit · View · Window · Terminal · Help). D1 keeps five of the code's six and renames Terminal to Prompt, because with the terminal verbs moved to File as entry verbs the menu holds only prompt verbs; the derivation rule places every allow-list entry under View, so a Model or Graph menu would need a second placement rule. Ctrl+1/2/3 are confirmed against a fetched Windows precedent (Outlook switches its top-level views with Ctrl+1…Ctrl+8).",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "menu",
+        "keyboard",
+        "gestures",
+        "design-language"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-menu-derivation-rule",
+          "rel": "depends-on"
+        },
+        {
+          "to": "ui-review-perspective-shell",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-perspective-shell",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "21bdd8e99b31336d09477cb77198931da1fdb9688d0aa91b250ad66df1b9d294"
+    },
+    {
+      "id": "note-addendum-c-design-signature",
+      "path": "docs/notes/addendum-c-design-signature.md",
+      "title": "DESIGN.md's header signature, the on-accent ink, the light values and the comment re-tone — four token-system decisions below ADR weight",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Records why DESIGN.md's archetype header now reads PerspectiveShell with Arch:HubAndSpoke and Depth:SoftShadow (the old Arch:Desktop was not a grammar value; Flat lagged the facelift), why accent-contrast is kept under its name with an explicit role (a rename to text-on-accent was made and reverted the same day when main merged the code's AccentContrastBrush), why the light theme is declared as flat light-* keys under colors:, why syntax-comment moved from #5A6472 to #808C9A, and why border-strong exists. Each carries the alternative it rejected and the check that would show it wrong.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "design-language",
+        "tokens",
+        "contrast",
+        "archetype",
+        "light-theme"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "ui-review-perspective-shell",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-perspective-shell",
+          "rel": "relates-to"
+        },
+        {
+          "to": "ui-review-operator-feedback",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7af7c2b99b9ec0da1bd1306ff9138873baa4e99ba27de1bbd60a7c86eaf8b300"
+    },
+    {
+      "id": "note-addendum-c-design-tier-decoration",
+      "path": "docs/notes/addendum-c-design-tier-decoration.md",
+      "title": "Tier is compiled, not typed — the operator's correction to Ruling 56's tier clause, and how the composer and the sheet render it",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "During D1 the operator corrected Ruling 56: tier is not a session setting; it is a decoration the compile step attaches to the compiled prompt. This note records the correction verbatim as relayed, what the design does with it (no tier field anywhere; the compiled disclosure carries the derived tier with three states; the sheet and the settings line carry the fan-out ceiling and the budget only), the one reading that is the conductor's and not the operator's (ceiling versus effective cap), and what is deliberately not designed (the derivation and the compile step).",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "composer",
+        "session-settings",
+        "tier",
+        "compile-step",
+        "operator-correction"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "refines"
+        },
+        {
+          "to": "mockup-conversation-composer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-new-session-sheet",
+          "rel": "relates-to"
+        },
+        {
+          "to": "ui-review-perspective-shell",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d16d9ce86d824bad46291d4b0f602b1dd4035d617b160e9fa3493ba514ab7cdb"
+    },
+    {
       "id": "note-addendum-c-inadmissible-kind-routing",
       "path": "docs/notes/addendum-c-inadmissible-kind-routing.md",
       "title": "A kind-opening request the active perspective cannot satisfy routes to the first admitting perspective in the order Architecture · Coding and announces; in-body node actions never route — no dialog, no silent drop",
@@ -3197,6 +3323,137 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "43706b39a40e5e6be67ff9998252bbb2dd5f71e8dab6007f6661a6b341658304"
+    },
+    {
+      "id": "note-addendum-d-compile-session-tools",
+      "path": "docs/notes/addendum-d-compile-session-tools.md",
+      "title": "A compile session is not toolless by default — the adapter loads the repository's settings and the claude_code tool preset — so the host pins the compile session's tools to none via session/new _meta, and a spike must observe it before the agentic stage is admitted",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-03-10",
+      "reviewSuggested": [],
+      "summary": "The proposal's premise that the compile \"hands off to a model\" with nothing at stake is false: adapter 0.75.1 starts the SDK with settingSources [\"user\",\"project\",\"local\"] and the claude_code tool preset, and this repository's settings auto-allow `Bash(git push:*)`. The host's reject-all permission handler covers only what the adapter routes through request_permission. The fix is a host-pinned tool set (`_meta.disableBuiltInTools: true` → `tools: []`), verified in source and unobserved on the wire. Blast radius: the compile session; and every lane today (a finding).",
+      "tags": [
+        "decision-note",
+        "addendum-d",
+        "security",
+        "acp",
+        "adapter",
+        "compile",
+        "spike"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-spec-errata-policy",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "23dbea5cc4a5f7291107fdb7974dd5beadadaaa3b3cafc1c71c193e797073a19"
+    },
+    {
+      "id": "note-addendum-d-compile-trigger",
+      "path": "docs/notes/addendum-d-compile-trigger.md",
+      "title": "The mechanical pre-compile runs on the debounced draft; the agentic compile runs on an explicit act — the Send gesture or a Prepare command — never on debounce",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-03-10",
+      "reviewSuggested": [],
+      "summary": "A model call per keystroke burns the subscription window and shows model-authored content the operator did not ask for; so the pre-compile (T0) is live and the compile (T3) is explicit — the first Send gesture prepares, the second confirms; an unchanged inputs hash re-prepares with zero requests. Blast radius: the composer's gesture count under the agentic mode; US-C13's \"debounced\" wording for derived structure.",
+      "tags": [
+        "decision-note",
+        "addendum-d",
+        "compile",
+        "prepare",
+        "composer",
+        "cost",
+        "hax"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "78163b40d0715262a91b92df4f61eea16091f7fc6d70c9382b11c92f57a84847"
+    },
+    {
+      "id": "note-addendum-d-envelope-store",
+      "path": "docs/notes/addendum-d-envelope-store.md",
+      "title": "The envelope store is an event-grained, append-only JSONL sidecar per session — the envelope is the fold, the lease is a projection, cost lives on the model call, and history begins at the first append",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-03-10",
+      "reviewSuggested": [],
+      "summary": "The durable representation for Prompt Compilation: one row in `<workspace>/.aide/sessions/<session-id>/envelope-events.jsonl` is exactly one event on one envelope, keyed (envelope_id, seq); the envelope is the fold; the lease, the CT19 block and every count are projections; the craft profile is a Type-2 dimension carried by the pack. Expand-only, no backfill, deletion by containment. Blast radius: every compiled turn from the first append on.",
+      "tags": [
+        "decision-note",
+        "addendum-d",
+        "compile",
+        "envelope",
+        "data-model",
+        "dimensional",
+        "channel-b"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-d-compile-step-proposal",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1b6a9501a9bbd527a70dad967a719ec7bb028d78bb1320a97ab97d3fc166e568"
+    },
+    {
+      "id": "note-addendum-d-lease-source-text",
+      "path": "docs/notes/addendum-d-lease-source-text.md",
+      "title": "Lease derivation runs over the editor's source text only — never attachment bodies, the rendered goal block, the history window, or model output; today it runs over the whole rendered text",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-03-10",
+      "reviewSuggested": [],
+      "summary": "Ruling 42's intent — the paths the operator referenced are the paths they mean — is not met by a mention inside an attached file or inside model-authored structure; today `LeaseDerivation.Derive(compiled.Text)` at `ComposerSendGate.cs:164` reads both. The call site changes its argument to the editor's source text; `LeaseDerivation` itself does not change. Blast radius: any operator relying on an attachment to widen a lease (none known; no test either way).",
+      "tags": [
+        "decision-note",
+        "addendum-d",
+        "lease",
+        "ruling-42",
+        "security",
+        "composer"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-front-door-rulings-41-42",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "68055e831d79120304b524fccc1c4b855458fb4f4004917e6a0736d7c0ae40bf"
     },
     {
       "id": "note-ai-native-ide-architecture-review-depth",
@@ -5931,7 +6188,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "16d0e939430d66d420d18e1d3459d983e7954c674c81822aa9b47f718cffb73a"
+      "sourceSha256": "1d3971f39bd4aec2a0b7c55f11f63fc0031ea8c44257d86426c3deb983f5b7e7"
     },
     {
       "id": "design-session-profiler",
@@ -6510,6 +6767,62 @@ window.DOCS_INDEX = {
       "sourceSha256": "019b6dfead9d172ec258bf9ada3019edcd311fc3601c556dc544132abe0ca999"
     },
     {
+      "id": "mockup-conversation-composer",
+      "path": "docs/mockups/conversation-composer.md",
+      "title": "Conversation composer — one editor, derived structure, compiled on demand (Addendum C elevate mockup)",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [
+        {
+          "by": "ui-review-perspective-shell",
+          "on": "2026-09-11",
+          "reason": "D1 /ui-design: the perspective-shell design language, three mockups and the rubric review; spec §C3/§C4 carry the accent-contrast role, the editor ground, the rail's activation model and the compiled-tier copy as recorded deviations"
+        }
+      ],
+      "summary": "The Coding composer as a conversation (Ruling 57): one editor that is the largest and brightest element in the pane, the goal block's Goal · Done when · Not in scope derived beneath it as editable lines, one inherited-settings line (fan-out ceiling and budget from the session, no tier, no override), the write scope derived from an @path mention, the compiled prompt on demand carrying the tier the compile step attached, and the Console streaming beside it. Ten hard states, a no-provider variant, four tier-decoration states, and a density audit measured on the rendered page.",
+      "tags": [
+        "ui-design",
+        "mockup",
+        "addendum-c",
+        "composer",
+        "conversation",
+        "session-settings",
+        "contrast",
+        "ai-ux"
+      ],
+      "links": [
+        {
+          "to": "ui-review-perspective-shell",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-design-tier-decoration",
+          "rel": "depends-on"
+        },
+        {
+          "to": "mockup-session-front-door",
+          "rel": "refines"
+        },
+        {
+          "to": "ui-review-operator-feedback",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0b33c43325fbfa5bb87ddd6d2143cf4fe18e9c10524d52a567d0d756ee9ab47f"
+    },
+    {
       "id": "mockup-editor-surfaces",
       "path": "docs/mockups/editor-surfaces.md",
       "title": "Editor & content surfaces — mockup",
@@ -6697,6 +7010,109 @@ window.DOCS_INDEX = {
       "sourceSha256": "ea8f4ed0d3c06bccdc3531132459307b83b32bb69dffcfc892077b8366e54deb"
     },
     {
+      "id": "mockup-new-session-sheet",
+      "path": "docs/mockups/new-session-sheet.md",
+      "title": "New Session sheet — session settings with defaults (Addendum C elevate mockup)",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "The New Session sheet carrying the session settings as defaults: the fan-out ceiling and the budget as one row of two unit-bearing controls prefilled from workspace policy, no tier field (tier is attached by the compile step), the task class kept required and undefaulted, and seven states including create failure with answers kept, an invalid budget, the workspace chooser interposing when none is bound, and overflow.",
+      "tags": [
+        "ui-design",
+        "mockup",
+        "addendum-c",
+        "new-session",
+        "session-settings",
+        "task-class",
+        "contrast"
+      ],
+      "links": [
+        {
+          "to": "ui-review-perspective-shell",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-design-tier-decoration",
+          "rel": "depends-on"
+        },
+        {
+          "to": "mockup-session-front-door",
+          "rel": "refines"
+        },
+        {
+          "to": "ui-review-operator-feedback",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "229083f7004bc304131931cd270b6ffa7b7c1e8bd5ac95ddb4265ff5d2e830f0"
+    },
+    {
+      "id": "mockup-perspective-shell",
+      "path": "docs/mockups/perspective-shell.md",
+      "title": "Perspective shell — Coding · Explore · Architecture (Addendum C elevate mockup)",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "A self-contained, dependency-free mockup of the shell as three perspectives: the rail (New session + Coding · Explore · Architecture as a radio group; Tests reserved and absent), the menu bar derived per perspective, the Coding and Architecture default layouts with their empty states, Explore full-window and unchanged, the switch in its retained / opening / error states, the drop-with-report status, the dock tab strip in all four states, and a live contrast audit over every ink/ground pairing including the accent-as-ground family the runtime census found failing.",
+      "tags": [
+        "ui-design",
+        "mockup",
+        "addendum-c",
+        "perspective",
+        "rail",
+        "menu",
+        "docking",
+        "contrast"
+      ],
+      "links": [
+        {
+          "to": "ui-review-perspective-shell",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "mockup-session-front-door",
+          "rel": "refines"
+        },
+        {
+          "to": "ui-review-operator-feedback",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-design-signature",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-design-menu-names",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a5c1329af98ccc6e2327a22470bf746e1140f62ab478f626a413d0cf749c213d"
+    },
+    {
       "id": "mockup-session-front-door",
       "path": "docs/mockups/session-front-door.md",
       "title": "Session front door — operator-feedback elevate mockup",
@@ -6842,7 +7258,7 @@ window.DOCS_INDEX = {
     {
       "id": "note-addendum-c-council-rulings",
       "path": "docs/notes/addendum-c-council-rulings.md",
-      "title": "Decision note — Rulings 50–63: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
+      "title": "Decision note — Rulings 50–71: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
       "type": "doc",
       "status": "accepted",
       "owner": "@timianmalloo",
@@ -6867,6 +7283,10 @@ window.DOCS_INDEX = {
         },
         {
           "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
           "rel": "relates-to"
         },
         {
@@ -6895,7 +7315,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f8502c5f835818944b92fe7513b438f70d7d4ba70d3994e92652e7dd2f75f433"
+      "sourceSha256": "f189761fb40d65dac56910d36a26629211512902d9370aa8f9414b688cab2600"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -6934,6 +7354,42 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "67b6351ffc527659f43fcf2c8b6f2ed3bce587e45530107c258f911e0e52638e"
+    },
+    {
+      "id": "note-addendum-d-compile-step-proposal",
+      "path": "docs/notes/addendum-d-compile-step-proposal.md",
+      "title": "Decision note — the compile step: the operator's thinking and the conductor's proposal, ratified",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "The operator's own thinking on the compile step (four contexts; mechanical then agentic; a prepare stage; a rich envelope; the template as a guide), the conductor's proposal answering the operator's questions, and the operator's ratification. This note is the input to /specify Addendum D; it is not the spec.",
+      "tags": [
+        "decision-note",
+        "addendum-d",
+        "compile",
+        "composer",
+        "envelope",
+        "conductor"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-addendum-c-modes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3d1fdfc212a742b174ccff69c77d496535dd63d7e005df6bf4ea2ab61f255a9c"
     },
     {
       "id": "note-front-door-rulings-45-48",
@@ -8111,6 +8567,76 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "7e3ec2b817fddafb398006e9682f60792f2f55f886b323c284be36d0d708a4b8"
+    },
+    {
+      "id": "ui-review-perspective-shell",
+      "path": "docs/reviews/ui-perspective-shell.md",
+      "title": "UI review — the perspective shell (Coding · Explore · Architecture), the conversation composer and the New Session sheet",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "Elevate-mode review of the AI-DE workbench redesigned as three perspectives, with the composer as a conversation and the session settings in the New Session sheet. The token system gained an explicit role for the on-accent ink (accent-contrast, the code's AccentContrastBrush), a control boundary token (border-strong), light values for every role and a re-toned comment colour, and an ink-by-ground matrix replaced a one-ground table that had drifted. Three mockups measure 0 craft findings each (corpus 104 to 98); three adversaries ran a bounded three-pass loop recorded here; the highest-leverage change for the slice is now landed on main (INV-0008's container-pairs / leaf-inherits rule, the census at 180 pairings / 0 below floor), so the ranked plan's first item is the composer's remaining tokens and the tab and menu states the design adds.",
+      "tags": [
+        "ui-review",
+        "ux",
+        "accessibility",
+        "contrast",
+        "perspective",
+        "composer",
+        "session-settings",
+        "addendum-c"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "documents"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "mockup-perspective-shell",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-conversation-composer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-new-session-sheet",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-session-front-door",
+          "rel": "refines"
+        },
+        {
+          "to": "ui-review-operator-feedback",
+          "rel": "refines"
+        },
+        {
+          "to": "note-addendum-c-design-signature",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-design-menu-names",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-design-tier-decoration",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-current-state-inventory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "526d0d28b986e75dcf1ea39ed457d0ab5950b46f8f90e523fc09cf8e121ba37d"
     },
     {
       "id": "ui-review-watcher-observatory",
@@ -13066,7 +13592,7 @@ window.DOCS_INDEX = {
         {
           "kind": "flowchart",
           "title": "B5. User flows",
-          "mermaid": "flowchart TD\n  A[Any perspective] -->|New session: rail / Ctrl+N / File / palette — always enabled| B{Workspace bound?}\n  B -->|no| C[Workspace chooser interposes — Addendum A §A4.2]\n  C -->|cancel| A\n  C -->|chosen| D\n  B -->|yes| D[New Session sheet — modal; tier, fan-out cap, budget prefilled from workspace defaults]\n  D -->|cancel| A2[Current perspective unchanged]\n  D -->|create| E{Document opened in host A?}\n  E -->|no| E2[Stay in the current perspective; failure reported]\n  E -->|yes| F[Document takes the stack — Ruling 47]\n  F --> G[Coding perspective activates — one transaction with the open]\n  G --> H[Live region: 'Coding perspective — session <name> opened']"
+          "mermaid": "flowchart TD\n  A[Any perspective] -->|New session: rail / Ctrl+N / File / palette — always enabled| B{Workspace bound?}\n  B -->|no| C[Workspace chooser interposes — Addendum A §A4.2]\n  C -->|cancel| A\n  C -->|chosen| D\n  B -->|yes| D[New Session sheet — modal; fan-out ceiling and budget prefilled from workspace defaults; no tier field]\n  D -->|cancel| A2[Current perspective unchanged]\n  D -->|create| E{Document opened in host A?}\n  E -->|no| E2[Stay in the current perspective; failure reported]\n  E -->|yes| F[Document takes the stack — Ruling 47]\n  F --> G[Coding perspective activates — one transaction with the open]\n  G --> H[Live region: 'Coding perspective — session <name> opened']"
         },
         {
           "kind": "flowchart",
@@ -13089,7 +13615,92 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  A[Session document open: one editor, structure collapsed, compiled collapsed] -->|type prose| B{Draft settles: objective derivable?}\n  A -->|shape control: pick a template — B:181 kept| T[Template fields render as the derived structure, prefilled from the text where possible]\n  T --> E\n  B -->|no| C[Structure stays one collapsed line; a T2 send will mark Goal and Done when]\n  C -->|type more| B\n  C --> E\n  B -->|yes| D[Derived structure expands beneath the editor: Goal · Done when · Not in scope, marked derived]\n  D -->|edit a line inline| D\n  D --> E{@path mention present?}\n  E -->|no| F[Write-scope line: elicitation text; Send → refusal names @path and offers the picker — Ruling 42 intact]\n  F -->|add a mention| E\n  E -->|yes| G[Write-scope line: 'src/…/** — from your mention']\n  G -->|open Compiled disclosure| H[Exactly the outgoing text; no diff, no summary; editor does not shrink]\n  H --> G\n  G -->|Send Ctrl+Enter| I{T2 and a content field empty?}\n  I -->|yes| J[Inline marks on every gap at once; one-line reason each; nothing sent]\n  J -->|fix| D\n  I -->|no| K[Sent: compiled prompt carries the session's tier · fan-out · budget in the CT19 block]\n  K --> K2[Reply streams in the Console canvas; the block joins the Score outline]\n  K2 -->|conductor answers with a drafted template — S-8| K3[Next message's draft: the reply's text with its derived structure inline]\n  K3 --> D\n  K2 -->|operator writes the next message| A\n  A -->|session settings on the header| L[Edit fan-out ceiling / budget for the session; tier is compiled, not set here]\n  L -->|re-validate the current draft| B"
         }
       ],
-      "sourceSha256": "bd0cf2b8b7196a34eb870d6567f88abbcdfeb964b26d3dd243759150be464780"
+      "sourceSha256": "e4c8c7557d31bc3c54ec4798d476ca88b6a32132ffd9bf5d02bed4331e6de7fd"
+    },
+    {
+      "id": "spec-addendum-d-compile-step",
+      "path": "docs/specs/addendum-d-compile-step.md",
+      "title": "Addendum D — The Compile Step",
+      "type": "spec",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-03-10",
+      "reviewSuggested": [],
+      "summary": "Typed text becomes a compiled envelope through a mechanical pre-compile, an agentic compile on the session-bound model, and an operator Prepare stage; Send confirms. Settles the three columns (settings · compile context · decorations), the Prompt Compilation domain model (an event-grained, append-only envelope; the lease, the tier, the shape and the cap are projections, never stored), the mechanical tier rule, the compile modes and their degradation, the compiled-envelope/1 event schema and its projections onto the unchanged spawn contract, the eval gate the agentic stage ships behind, and the security proof that no model output ever becomes a write scope — including the corrected fact that a compile session holds whatever tools the repository's settings auto-allow unless the host pins them.",
+      "tags": [
+        "conductor",
+        "addendum-d",
+        "compile",
+        "composer",
+        "envelope",
+        "prepare",
+        "craft-profile",
+        "eval",
+        "session"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "refines"
+        },
+        {
+          "to": "note-addendum-d-compile-step-proposal",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-d-envelope-store",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-d-compile-trigger",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-d-lease-source-text",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-d-compile-session-tools",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "er",
+          "title": "A6. Conceptual domain model — the bounded context *Prompt Compilation*",
+          "mermaid": "erDiagram\n  SESSION ||--o{ ENVELOPE : \"opens (session_id)\"\n  ENVELOPE ||--|{ ENVELOPE_EVENT : \"is the fold of\"\n  ENVELOPE_EVENT ||--o| DECORATION : \"kind = decorated\"\n  ENVELOPE_EVENT ||--o| MODEL_CALL : \"kind = called\"\n  DECORATION }o--o| MODEL_CALL : \"call_seq (derived only)\"\n  DECORATION }o--o| CRAFT_PROFILE_VERSION : \"family_profile value\"\n  DECORATION }o--o| TEMPLATE_VERSION : \"template_applied value\"\n  ENVELOPE ||--o| RUN : \"consumed (run_id, episode_id)\"\n  ENVELOPE }o--o| ENVELOPE : \"supersedes (by id)\"\n  ENVELOPE_EVENT {\n    string envelope_id PK\n    int seq PK\n    string kind\n    string at\n    string schema\n    string prev_sha\n  }\n  DECORATION {\n    string name\n    string source\n    json value\n    float confidence\n    int call_seq\n    json grounded_in\n  }\n  MODEL_CALL {\n    string engine_id\n    string model_configured\n    string model_observed\n    int latency_ms\n    json cost\n    string outcome\n    string reason\n    string contract_version\n    string prompt_sha\n  }\n  CRAFT_PROFILE_VERSION {\n    string family PK\n    string version PK\n    string sha\n  }"
+        },
+        {
+          "kind": "flowchart",
+          "title": "A13. Security and privacy of the new surface",
+          "mermaid": "flowchart LR\n  subgraph HOST[Host process — trusted]\n    OP[Operator: text · affirmed refs · Prepare edits · Send]\n    PRE[PRE-COMPILE mechanical: projections · refs · snapshots]\n    TB{{TYPED BOUNDARY: compile-output/1 allow-list · open lines · type · mention scan · spans}}\n    PREP[PREPARE · Send gate]\n    ENV[(envelope-events.jsonl — .aide/, git-ignored, exclusive writer)]\n  end\n  subgraph CC[Claude Code process, cwd = repo — semi-trusted execution]\n    CONST[/constitution: CLAUDE.md · AGENTS.md · load:always · settings.json hooks + allow rules/]\n    MODEL((bound model — untrusted-content producer; tools pinned to none))\n  end\n  HIST[(history window — untrusted: prior model text)]\n  OP --> PRE -- \"host header · fenced text · mechanical facts · profile · refs, no bodies\" --> MODEL\n  HIST --> MODEL\n  CONST -. harness load, never inlined; hooks see the prompt .-> MODEL\n  MODEL -- free text --> TB -- derived decorations --> PREP\n  PREP -- operator decorations · sha256 of sent text · projection_sha --> ENV --> HIST\n  MODEL x-- \"request_permission → reject · fs/terminal → -32601 · MCP = [] · tools = []\" --x HOST"
+        },
+        {
+          "kind": "flowchart",
+          "title": "B3. User flows",
+          "mermaid": "flowchart TD\n  A[draft: in-memory projections live — write scope, shape, tier] -->|Ctrl+Enter / Send| M{Compile mode · structure open?}\n  M -->|mechanical-only, or all three lines supplied| P3[envelope opened · prepared: lines empty-editable or supplied; tier from rule; Send = submit]\n  M -->|agentic rung, ≥ 1 line open| C[envelope opened · preparing: skeleton; editor editable; Cancel; ≤ 60 s]\n  C -->|Ctrl+Enter| C\n  C -->|operator edits text| A\n  C -->|Cancel / unavailable / refused / timed out / malformed| P4[prepared — compiled mechanically — reason · Prepare again]\n  C -->|tool call or permission request seen| P5[prepared — suspect: reason; per-line suspect marks; Prepare again]\n  C -->|zero proposals| P6[prepared — no goal block proposed; sends as a message]\n  C -->|succeeded| P[prepared: derived lines; compile line with tier + rationale; disclosure]\n  P4 -->|Prepare again| C\n  P5 -->|Prepare again| C\n  P -->|edit / keep / restore a line · override the tier| P\n  P -->|edit text| S[stale: live projections with a stale mark; press again to prepare]\n  S -->|Ctrl+Enter, inputs changed| C\n  S -->|Ctrl+Enter, inputs unchanged after a success| P\n  P -->|Ctrl+Enter| G{Send gate}\n  P3 -->|Ctrl+Enter| G\n  P4 -->|Ctrl+Enter| G\n  P5 -->|Ctrl+Enter| G\n  P6 -->|Ctrl+Enter| G\n  G -->|no write scope| R1[refused inline: mention @path — Ruling 42 elicitation]\n  G -->|T2 content gap| R2[refused inline: marks on every gap at once]\n  G -->|rendered view stale| S\n  R1 --> P\n  R2 --> P\n  G -->|ok| K[submitted: one event with text_sha256 + projection_sha; run starts; derived marks become kept]\n  K --> K2[reply streams in the Console canvas; consumed on the run result; next draft starts at A]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "B3. User flows",
+          "mermaid": "flowchart LR\n  H[session header: ceiling · budget · compile mode] -->|edit while draft| A2[draft: projections re-run in memory]\n  H -->|edit while prepared| S2[stale: live projections with a stale mark]\n  S2 -->|Ctrl+Enter| C2[re-prepare per Flow D-1]\n  H -.->|tier is not here — Ruling 63| X[(compile line owns tier)]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "B3. User flows",
+          "mermaid": "flowchart TD\n  U[aide session purge id] --> V{id is one segment of the session-id grammar, resolved under .aide/sessions/?}\n  V -->|no| X[refused before any file is touched]\n  V -->|yes| W[confirmation: name · id · workspace root · resolved file path · envelope count · newest at]\n  W -->|decline| Y[nothing deleted]\n  W -->|confirm or --yes| Z[envelope-events.jsonl deleted; session.json and session-events.jsonl survive]\n  Z --> Q[session document reopens: history purged; Proof Pack citations resolve as purged]"
+        }
+      ],
+      "sourceSha256": "a502bd6f1f7a244d83b4ecf97470d8fe801afce1164442d664b3adba708d07df"
     },
     {
       "id": "spec-agentic-watcher-substrate",
@@ -13335,7 +13946,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3ece0948aa158aaddb1dc6f38bb0589d59e877efc3cd2418976e59ff84d27cf0"
+      "sourceSha256": "830c0aba1f77ad721fd19eec32697a61dee097ee8e03b3e00235622cbde3741f"
     },
     {
       "id": "spec-editor-surfaces",
@@ -13774,6 +14385,14 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     },
     {
+      "id": "surface-mockups-conversation-composer",
+      "path": "docs/mockups/conversation-composer.html",
+      "title": "AI-DE conversation composer: one editor, derived structure, compiled on demand",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-conversation-composer"
+    },
+    {
       "id": "surface-mockups-facelift-elevate",
       "path": "docs/mockups/facelift-elevate.html",
       "title": "AI-DE facelift — elevate proposals (visualization)",
@@ -13788,6 +14407,22 @@ window.DOCS_INDEX = {
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "mockup-app-facelift"
+    },
+    {
+      "id": "surface-mockups-new-session-sheet",
+      "path": "docs/mockups/new-session-sheet.html",
+      "title": "AI-DE New Session sheet: session settings with defaults",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-new-session-sheet"
+    },
+    {
+      "id": "surface-mockups-perspective-shell",
+      "path": "docs/mockups/perspective-shell.html",
+      "title": "AI-DE perspective shell: Coding · Explore · Architecture",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-perspective-shell"
     },
     {
       "id": "surface-mockups-session-front-door",
@@ -13886,5 +14521,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "dabf2c8d34cb0bbb8364236aab896493341e0785af866f1de867462401ca8e2f"
+  "graphSha256": "068ee9262ca4f38ce568245197a4f14aef928466befc5c90d0f43325b90b8bf1"
 };
