@@ -13653,7 +13653,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  U[aide session purge id] --> V{id is one segment of the session-id grammar, resolved under .aide/sessions/?}\n  V -->|no| X[refused before any file is touched]\n  V -->|yes| W[confirmation: name · id · workspace root · resolved file path · envelope count · newest at]\n  W -->|decline| Y[nothing deleted]\n  W -->|confirm or --yes| Z[envelope-events.jsonl deleted; session.json and session-events.jsonl survive]\n  Z --> Q[session document reopens: history purged; Proof Pack citations resolve as purged]"
         }
       ],
-      "sourceSha256": "b4fdba9b449cc5b885b74b5c6b805aae180e5d188fed0f2e1184afc3746ab819"
+      "sourceSha256": "a502bd6f1f7a244d83b4ecf97470d8fe801afce1164442d664b3adba708d07df"
     },
     {
       "id": "spec-agentic-watcher-substrate",
@@ -14474,5 +14474,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "cf4dd0683bb377041afb0689b58316238bb4eb22de669f52a94ba16f64b82be5"
+  "graphSha256": "21e3edbaae64db518f962b3e05eee7ccbd8a08eea9e6528d8ec9843373e95997"
 };
