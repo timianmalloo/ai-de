@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 64 · partially-controlled 51 · uncontrolled 10
+**Status counts:** controlled 64 · partially-controlled 51 · uncontrolled 11
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -4872,6 +4872,18 @@ for both or split.*
   conductor but by a node that could not get a self-consistent branch from that base. *Knowing
   the class, and having registered it that same day, did not produce the read-back —* which is
   the argument for control (b) over control (a): remove the human step rather than add one.
+- **Third instance, and it is in the INSTRUMENT (2026-09-11).** Control (a) said to read CI back
+  *"from the run's own conclusion rather than from a wrapper's exit code"* — which is right and
+  **not sufficient**. A node measured that **`gh run watch --exit-status` exited `0` after
+  printing `failed to get run: HTTP 403: API rate limit exceeded`**. It never observed the
+  conclusion at all, and reported success. **The conductor had been reading that signal all
+  session and telling nodes to read it too**, treating agreement between it and
+  `--json conclusion` as confirmation — when one of the two can go green *for the wrong
+  reason*. **Only `gh run view --json conclusion` actually answers the question**; the watch
+  command answers *"did I finish waiting"*, and a failure to observe finishes waiting.
+  Control (a) is amended: **the conclusion field is the signal; a watch exit code is at most a
+  liveness hint.** That this class's own instrument carried the class is the sharpest
+  instance of it so far.
 - **Relationship to DC-117:** DC-117 is the same family one axis over — there the invisible variable
   was the **host** (console vs console-less), here it is the **operating system**. Both are *the
   environment a test ran in is not recorded in the claim that it passed.*
@@ -5163,6 +5175,52 @@ for both or split.*
   `bool`-returning establish-a-property call can still be written in statement position, and the
   control that would catch it — an analyzer or a gate over interop call sites — is named here and
   not built
+
+
+### DC-126 — A gate verifies that an instruction is DOCUMENTED, not that it is FOLLOWABLE, and the capability it names does not exist
+
+- **Shape:** a recurring failure is diagnosed, and the remedy is written as an **instruction** into
+  every place an agent reads. A gate is then built to keep that instruction present — it checks the
+  required wording appears in each root and **goes green**. The instruction names a **channel, an
+  environment variable, a path or a tool**, and *nothing ever checks that the named thing exists in
+  the sessions being asked to use it.* So the mandate is present, the gate is green, and the
+  behaviour is **impossible**. The original symptom continues, and the artifact built to fix it is
+  now evidence that it was fixed.
+- **Signature:** a gate whose `REQUIRED_MARKERS` are **strings to find in documents**; an
+  instruction naming an env var, with no check that it is set; and the tell — **the metric the
+  instruction was written to move has not moved**, while everything about the instruction reports
+  healthy.
+- **Instance (2026-09-11, found because a node refused to fake it):** `AGENTS.md` carries the Proof
+  Pack capture mandate, and states its own reason in measured terms — *"111 episodes, 1 observation…
+  an engine that is correct, verified end to end, and producing nothing, because almost nothing ever
+  recorded its evidence."* The channel is `$AIDE_CONTRACT_LOG`. **It is UNSET in every session** —
+  the conductor's and every agent's — so **no node in the front-door slice could write an
+  `episode-close` line.** `tools/verify-capture-instruction.py` is **green**, because
+  `REQUIRED_MARKERS = ("episode.artifacts", "AIDE_CONTRACT_LOG")` checks that those **strings appear
+  in each harness root**. It verifies the mandate is *documented*. Node F4 hit it and **named the
+  gap rather than inventing a path**, which is the only reason it surfaced.
+- **Why it survives, and why the gate makes it worse:** the gate is not wrong about what it checks —
+  the instruction *is* present in three harness roots, which is a real and useful property. It is
+  wrong about **what a reader takes its green to mean.** And because the gate exists, the question
+  *"is capture working?"* has an authoritative-looking answer, so nobody asks the different question
+  *"has anything ever been captured?"* — which the repository's own `111 episodes, 1 observation`
+  already answered.
+- **The distinguishing test, and it is cheap:** for any instruction-presence gate, ask **"if an
+  agent obeyed this instruction perfectly, would it succeed?"** Here the answer is no: the write
+  target is undefined. A gate that cannot ask that question is measuring documentation.
+- **Relationship to the session's recurring shape:** this is *a control that is off, where off is
+  indistinguishable from on-and-quiet* — applied to **the control built to fix a measured absence**.
+  It is also DC-118's mechanism at the outermost hop: the gate's claim (*capture is in place*) is
+  **wider** than what it checks (*the words are present*), and nothing checked the width.
+- **Control:** an instruction-presence gate must **either** verify the capability it names is
+  reachable — the env var is set, the path is writable, the tool answers — **or** say in its own
+  output that it checks **presence only**, so its green cannot be read as capability. The stronger
+  form here is a **liveness check on the corpus**: the mandate exists to make observations
+  accumulate, so **the number of recorded observations is the thing to gate**, not the number of
+  documents containing the word. *A mandate whose compliance is unmeasurable has no compliance.*
+- **Status:** `uncontrolled` — the gap is measured and recorded, the gate is unchanged, and the
+  channel is still unset, so the next slice will produce the same zero observations with the same
+  green gate
 
 
 ---
