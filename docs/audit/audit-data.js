@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T03:12:05Z",
+  "generated": "2026-09-11T13:12:38Z",
   "audit": [
     {
       "actor": null,
@@ -11298,6 +11298,33 @@ window.AUDIT_DATA = {
         "branch": "fix/spawn-containment",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M289JH887ES3D4RAWCX0Q8YH",
+      "shortname": "optimize-graph-ui-and-windowing",
+      "datetime": "2026-09-11T13:12:38Z",
+      "session": "conductor-ui-windowing",
+      "prompt": "add some parallel threads (sub-agents in work trees) to work on cleaning up the UI/UX all up. Thread 1: /ui-design elevate the UI. Thread 2: /investigate if we have fully cleaned up our windowing behaviors. Make sure you /optimize-graph for these new asks but keep making progress on the core tasks. Make sure for these two new threads /prepare-for-coordination so that we are working efficiently and not creating contention",
+      "summary": "Three tracks planned as one execution graph: F5 exit evidence (core), UI elevation from seven pieces of operator feedback, and a windowing investigation with a numbered repro.\n\nTHE OPTIMIZATION WAS MOSTLY DELETIONS, and both deleted edges came from the conductor's own briefing.\n\n  DELETED: \"F5 must finish before the UI work starts.\" F5's Proof Pack is a SNAPSHOT citing its sha. UI landing afterwards does not invalidate it -- it means the evidence describes the tree it ran on, which is what evidence is. Incidental ordering.\n\n  DELETED: \"UI and windowing collide on DockThemeAccents.cs.\" THE PREMISE WAS FALSE, and grounding disproved it: DockRoundedTabs.cs is 33 LINES OF STYLING; the tab-move handlers are in WorkbenchAdapter.cs, WorkbenchController.cs and SurfaceChrome.cs. B touches theme and surfaces; C touches adapter and controller. The contention was asserted from the directory name rather than from the call sites.\n\n  DELETED: \"the Owner ruling gates the UI track.\" It gates ONE OF SEVEN ITEMS. Gating all seven on it is the same incidental ordering in miniature.\n\nSPAN: U1 -> Owner ruling -> U2 -> close. F5 IS NOT ON THE SPAN, which matters because F5 is the most expensive single node (VERIFIED: N7 was 2,404 s in Phase 1) and the naive plan put it at the HEAD of the chain. Moving it off the span is worth more than any widening.\n\nCEILING CHECKED BEFORE WIDENING (GO4a): three heads, each its own worktree, no shared authored file. Fan-out overhead is one worktree creation and one merge per node, small against durations measured in tens of minutes. Widening justified, not assumed.\n\nWAVE 1 (width 3, at the stated cap): A1 F5 (writes docs/proof + one oracle test) || U1 ui-design stages 1-3 (writes DESIGN.md + docs/mockups, READ-ONLY on src/) || C1 windowing investigation (writes a findings note, READ-ONLY on src/). The read-only property is what makes wave 1 safe and it is a property of the work, not a promise. Persona convenings take no worktree, so the Owner ruling on the contested item runs DURING wave 1.\n\nWAVE 2: U2 UI implementation (depends on U1 by data, on the Owner ruling by decision, for the mode item only) || C2 windowing fix (depends on C1 by data).\n\nSHARED-SURFACE CLAUSES, JOINTLY SATISFIABLE (GO14a): on src/AiDe.App/Workbench/**, U2 fails if a theme/contrast/icon/surface-content change alters tab placement or move behaviour; C2 fails if a placement or move change alters any colour token or contrast pair. Disjoint by CONCERN, and each clause scoped to its own concern rather than to the directory -- which is the unscoped form that made two nodes collide at the front-door join.\n\nTHE LOOP IS BOUNDED. \"Elevate the UI\" has no natural end, so the rubric critique carries: variant = rubric findings at severity >= major, strictly decreasing; floor = zero majors; exit = no majors AND ui-craft-gate exits 0 AND the accessibility floor is met (three conditions, because a clean gate is a floor and never a verdict); cap = 3 passes, and a firing cap is a DEFECT SIGNAL -- pass 3 with majors remaining stops and reports a ranked plan.\n\nSIX FLOORS NAMED UP FRONT rather than discovered at the join: the Owner ruling on the contested item; the UX & Accessibility hard veto (contrast is WCAG and the feedback says \"common issue in app\", so it is systemic); ui-craft-gate + design-lint, already wired in ui-craft.yml; red-first for every claimed control including the windowing repro; F5's oracle-before-run; audit entries.\n\nRE-PLAN CHECKPOINTS: (1) the Owner ruling -- if Terminal leaves the mode set, U2's scope changes materially; (2) C1's root cause -- if the tab swap is in the DOCKING LIBRARY rather than our code, C2 becomes a vendor-boundary question, not a fix.\n\nBEFORE/AFTER: span three-tracks-in-series -> U1/ruling/U2; width 1 -> 3 contracted; F5 head-of-chain -> off the span; decision gates one-implicit-late -> one-explicit-early-scoped-to-one-seventh; loops bounded 0 -> 1 with a variant; floors discovered-at-join -> 6 immovable.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "docs/plans/ui-and-windowing.md"
+      ],
+      "tags": [
+        "conductor",
+        "plan",
+        "ui",
+        "windowing",
+        "execution-graph"
+      ],
+      "outcome": "success",
+      "goal": "Plan three tracks as one graph so UI and windowing proceed without contending, while F5 keeps moving",
+      "done_when": "Wave 1 dispatched at width 3 with a contracted fan-out, the loop bounded by a variant, and every deleted edge justified",
+      "tier": "T2",
+      "fan_out": 3
     }
   ],
   "changes": [

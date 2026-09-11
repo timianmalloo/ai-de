@@ -6851,6 +6851,43 @@ window.DOCS_INDEX = {
       "sourceSha256": "861afc9d4143c581d7a03d000c35735c6d4b18ea0ea589cd5d301b74c75eb88f"
     },
     {
+      "id": "plan-ui-and-windowing",
+      "path": "docs/plans/ui-and-windowing.md",
+      "title": "Execution graph — UI elevation, windowing behaviour, and F5 in parallel",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "Three tracks planned as one graph: F5 exit evidence, UI elevation from seven pieces of operator feedback, and a windowing investigation with a numbered repro. Two assumed contentions were disproved by grounding, and the real constraint turned out to be a single decision gate over one of seven UI items rather than an ordering over all three tracks.",
+      "tags": [
+        "plan",
+        "execution-graph",
+        "ui-design",
+        "windowing",
+        "docking",
+        "f5",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-graph-and-loop-engineering",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-front-door-residuals",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6599725c767ec765e3cc34cbaa0db93e839c257dbd67d897113cb3c19b4eda59"
+    },
+    {
       "id": "profile-conductor-phase1",
       "path": "docs/profiles/conductor-phase1.md",
       "title": "Session profile — Conductor Phase 1",
@@ -12863,5 +12900,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ff9b79988c806ac4186416d92ea394db7360cd91aee4ef9a029f0711f0ec07f8"
+  "graphSha256": "5ba9ae92496f2501addc5adbedb3b35a5c454ec5d38b971c068a1314480052c8"
 };
