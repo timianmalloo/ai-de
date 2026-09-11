@@ -6031,7 +6031,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   sweep guard fails when a surface does not, the once-test fails when the guard is removed, and the
   shell probe fails when the page dies.
 
-### DC-139 — A worktree cleanup removes the tree of an OPEN node because "no unique commits" was read as "no longer needed"
+### DC-142 — A worktree cleanup removes the tree of an OPEN node because "no unique commits" was read as "no longer needed"
 - **Shape:** the fail-safe cleanup (WT7) refuses a tree only for *data* reasons — primary, cwd,
   locked, held by a live session, dirty, unique commits, branch checked out twice. A tree whose
   branch is **pushed and clean** passes every test even when the node that owns it is still open

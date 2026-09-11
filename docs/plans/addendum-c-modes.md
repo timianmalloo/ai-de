@@ -224,7 +224,7 @@ reached four times and never exceeded.
 
 **Defects the conductor created on this plan, registered:** DC-136 (a merge resolved by
 "regenerate, stage everything" left markers in a figure-patched file); DC-113 recurrence 2 (two
-gate lines that could not stop); DC-139 (cleanup removed an open node's tree). Each with its
+gate lines that could not stop); DC-142 (cleanup removed an open node's tree). Each with its
 control in the register.
 
 ## Stage 10 — Cost vs delivery (filled at close)
