@@ -13,8 +13,9 @@ finally runs light.
 
 A second shape from the same investigation: 12 of 14 failing pairings were a light ink painted
 on the accent ground because no state named an on-accent ink. DESIGN.md now declares
-`text-on-accent` as the only ink any state may paint on `accent`; this script refuses a
-DESIGN.md that drops it, in either mode.
+`accent-contrast` as the only ink any state may paint on `accent` (the code's AccentContrastBrush)
+and `border-strong` as the control boundary; this script refuses a DESIGN.md that drops either, in
+either mode.
 
 Stdlib only. Exit 0 when clean, 1 otherwise. `--self-test` proves it can fail (DC-104).
 """
@@ -29,7 +30,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DESIGN = ROOT / "DESIGN.md"
 MODE_PREFIXES = ("light-",)
-REQUIRED_ROLES = ("text-on-accent", "accent", "text", "text-muted", "text-disabled", "focus")
+REQUIRED_ROLES = ("accent-contrast", "border-strong", "accent", "text", "text-muted", "text-disabled", "focus")
 
 
 def colour_keys(text):
@@ -87,10 +88,10 @@ def self_test():
     if not any("`accent` has no `light-accent`" in d for d in check(broken)):
         failures.append("missing light twin: not refused")
     # Drop the on-accent ink in both modes: must fail.
-    broken = re.sub(r"^\s{2}(light-)?text-on-accent:.*\n", "", text, flags=re.M)
+    broken = re.sub(r"^\s{2}(light-)?accent-contrast:.*\n", "", text, flags=re.M)
     cases.append("missing on-accent ink refused")
-    if not any("text-on-accent" in d for d in check(broken)):
-        failures.append("missing text-on-accent: not refused")
+    if not any("accent-contrast" in d for d in check(broken)):
+        failures.append("missing accent-contrast: not refused")
     # An orphan light key must fail.
     broken = text.replace("  light-surface:", "  light-ghost: \"#000000\"\n  light-surface:", 1)
     cases.append("orphan mode key refused")
@@ -120,7 +121,7 @@ def main():
     keys = colour_keys(DESIGN.read_text(encoding="utf-8"))
     base = [k for k in keys if not k.startswith(MODE_PREFIXES)]
     print(f"verify-design-modes: OK - {len(base)} colour roles, each with a light value; "
-          f"text-on-accent declared.")
+          f"accent-contrast and border-strong declared.")
     return 0
 
 

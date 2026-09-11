@@ -6,15 +6,15 @@
 <style>
 /* ===========================================================================
    Tokens mirrored from DESIGN.md (dark, light, high-contrast stand-ins). No raw
-   colour appears in a component rule. `--text-on-accent` is the ONLY ink any
+   colour appears in a component rule. `--accent-contrast` is the ONLY ink any
    state paints on `--accent`. These are the names the host injects into the
    composer page on `host.init` (DESIGN.md PS-C4), so this mockup and the
    WebView2 page read one palette. `--hl`/`--hl-ink`: a highlighted row.
    =========================================================================== */
 :root{
   --surface:#12151A; --surface-raised:#1A1F26; --surface-sunken:#0D1014;
-  --border:#2A313B; --text:#E4E9EF; --text-muted:#98A3B2; --text-disabled:#7C8896; --field-border:#7C8896;
-  --accent:#5B9DD9; --text-on-accent:#0D1014; --focus:#8FC0EA;
+  --border:#2A313B; --text:#E4E9EF; --text-muted:#98A3B2; --text-disabled:#7C8896; --border-strong:#7C8896;
+  --accent:#5B9DD9; --accent-contrast:#0D1014; --focus:#8FC0EA;
   --verified:#5FB98F; --inferred:#D8A650; --stale:#D8A650; --danger:#E07A6F; --float-chrome:#232A33;
   --syntax-comment:#808C9A;
   --hl:var(--float-chrome); --hl-ink:var(--text);
@@ -28,16 +28,15 @@
 }
 :root[data-theme="light"]{
   --surface:#F4F6F8; --surface-raised:#FFFFFF; --surface-sunken:#E7EBEF;
-  --border:#C7CFD8; --text:#1A1F26; --text-muted:#55606E; --text-disabled:#5F6977; --field-border:#5F6977;
-  --accent:#27649A; --text-on-accent:#FFFFFF; --focus:#1B4F7E;
-  --verified:#1C724A; --inferred:#7D5900; --stale:#7D5900; --danger:#A8372B; --float-chrome:#FFFFFF;
+  --border:#C7CFD8; --text:#1A1F26; --text-muted:#55606E; --text-disabled:#5F6977; --border-strong:#5F6977;
+  --accent:#27649A; --accent-contrast:#FFFFFF; --focus:#1B4F7E;
+  --verified:#1C724A; --inferred:#7D5900; --stale:#7D5900; --danger:#A8372B; --float-chrome:#EEF1F4;
   --syntax-comment:#5C6674;
-  --hl:#E7EBEF; --hl-ink:var(--text);
 }
 :root[data-theme="hc"]{
   --surface:#000000; --surface-raised:#000000; --surface-sunken:#000000;
-  --border:#FFFFFF; --text:#FFFFFF; --text-muted:#FFFFFF; --text-disabled:#3FF23F; --field-border:#FFFFFF;
-  --accent:#00FFFF; --text-on-accent:#000000; --focus:#FFFFFF;
+  --border:#FFFFFF; --text:#FFFFFF; --text-muted:#FFFFFF; --text-disabled:#3FF23F; --border-strong:#FFFFFF;
+  --accent:#00FFFF; --accent-contrast:#000000; --focus:#FFFFFF;
   --verified:#00FF80; --inferred:#FFD400; --stale:#FFD400; --danger:#FF9E9E; --float-chrome:#000000;
   --syntax-comment:#FFFFFF;
   --hl:#00FFFF; --hl-ink:#000000;
@@ -59,7 +58,7 @@ code{font-family:var(--font-mono);font-size:var(--t-sm)}
   padding:var(--s4) var(--s6);background:var(--surface-sunken);border-bottom:1px solid var(--border);font-size:var(--t-sm)}
 .harness strong{font-weight:600;letter-spacing:.04em;color:var(--text-muted)}
 .harness label{display:flex;align-items:center;gap:var(--s3);color:var(--text)}
-.harness select{background:var(--surface-raised);color:var(--text);border:1px solid var(--field-border);border-radius:var(--r-sm);padding:var(--s2) var(--s3);font:inherit;min-height:26px;cursor:pointer}
+.harness select{background:var(--surface-raised);color:var(--text);border:1px solid var(--border-strong);border-radius:var(--r-sm);padding:var(--s2) var(--s3);font:inherit;min-height:26px;cursor:pointer}
 .checks{margin-left:auto;font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text-muted)}
 .checks b.ok{color:var(--verified)} .checks b.bad{color:var(--danger)}
 .note{margin:var(--s6) var(--s6) 0;padding:var(--s5) var(--s6);border:1px solid var(--border);border-radius:var(--r-lg);background:var(--surface-raised);color:var(--text-muted);font-size:var(--t-sm);max-width:1400px}
@@ -81,7 +80,7 @@ body[data-persona="screenreader"] .srlog{display:block}
 .chip{display:inline-flex;align-items:center;gap:var(--s3);height:20px;padding:0 var(--s4);border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface-sunken);color:var(--text-muted);font-size:var(--t-sm);white-space:nowrap;max-width:240px;overflow:hidden;text-overflow:ellipsis;flex:none}
 .chip .dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
 .chip.ok{color:var(--verified)} .chip.warn{color:var(--inferred);border-color:var(--inferred)} .chip.accent{border-color:var(--accent);color:var(--text)}
-.shape{display:inline-flex;align-items:center;gap:var(--s3);height:24px;padding:0 var(--s4);border:1px solid var(--field-border);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font:inherit;font-size:var(--t-sm);cursor:pointer}
+.shape{display:inline-flex;align-items:center;gap:var(--s3);height:24px;padding:0 var(--s4);border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font:inherit;font-size:var(--t-sm);cursor:pointer}
 .shape:hover{border-color:var(--accent)}
 .gear{display:inline-flex;align-items:center;gap:var(--s3);height:24px;padding:0 var(--s4);border:0;border-radius:var(--r-sm);background:transparent;color:var(--accent);font:inherit;font-size:var(--t-sm);cursor:pointer}
 .gear:hover{text-decoration:underline}
@@ -93,7 +92,7 @@ body[data-state="settings"] .pop{display:block}
 .setting .sl{display:flex;align-items:center;gap:var(--s4);font-weight:600;color:var(--text);margin-bottom:var(--s3)}
 .setting .src{margin-left:auto;font-weight:400;color:var(--text-muted)}
 .setting .ctl{display:flex;align-items:center;gap:var(--s4)}
-.num{width:96px;height:28px;padding:0 var(--s4);border:1px solid var(--field-border);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font:inherit;font-family:var(--font-mono);font-size:var(--t-md);font-variant-numeric:tabular-nums;text-align:right}
+.num{width:96px;height:28px;padding:0 var(--s4);border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font:inherit;font-family:var(--font-mono);font-size:var(--t-md);font-variant-numeric:tabular-nums;text-align:right}
 .unit{color:var(--text-muted)}
 .setting .sh{margin:var(--s3) 0 0;color:var(--text-muted)}
 .pop .acts{display:flex;gap:var(--s4);justify-content:flex-end;margin-top:var(--s5)}
@@ -103,7 +102,7 @@ body[data-state="settings"] .pop{display:block}
 .canvas{display:flex;flex-direction:column;min-width:0;min-height:0;border-left:1px solid var(--border);padding-left:var(--s6)}
 
 /* THE EDITOR: the largest element in the pane, with the highest-contrast ink. */
-.editor{flex:1;min-height:130px;padding:var(--s4) var(--s5);border:1px solid var(--field-border);border-radius:var(--r-md);background:var(--surface-sunken);color:var(--text);font-size:var(--t-md);line-height:1.65;overflow:auto;position:relative}
+.editor{flex:1;min-height:130px;padding:var(--s4) var(--s5);border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--surface-sunken);color:var(--text);font-size:var(--t-md);line-height:1.65;overflow:auto;position:relative}
 .editor:focus,.editor:focus-within{border-color:var(--accent)}
 .editor .ph{color:var(--text-muted)}
 .caret{display:inline-block;width:1px;height:1.1em;vertical-align:text-bottom;background:var(--text);animation:blink 1.1s steps(1) infinite}
@@ -112,9 +111,8 @@ body[data-state="settings"] .pop{display:block}
 .picker{display:none;position:absolute;left:var(--s5);bottom:calc(100% - 118px);min-width:320px;background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--e-raise);padding:var(--s2);z-index:5}
 body[data-state="noscope"] .picker{display:block}
 .picker .prow{display:flex;align-items:center;gap:var(--s4);min-height:26px;padding:var(--s2) var(--s4);border-radius:var(--r-sm);font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text)}
-.picker .prow[aria-selected="true"]{background:var(--hl);color:var(--hl-ink)}
+.picker .prow[aria-selected="true"]{outline:2px solid var(--focus);outline-offset:-2px}
 .picker .prow .k{color:var(--text-muted);font-family:var(--font-ui);margin-left:auto}
-.picker .prow[aria-selected="true"] .k{color:var(--hl-ink)}
 .drop{position:absolute;inset:0;display:none;align-items:center;justify-content:center;border-radius:var(--r-md);border:2px dashed var(--accent);background:var(--surface-sunken);color:var(--text);font-weight:600;font-size:var(--t-md)}
 body[data-state="attaching"] .drop{display:flex}
 .skel{height:12px;border-radius:var(--r-sm);background:linear-gradient(90deg,var(--surface-raised),var(--border),var(--surface-raised));background-size:200% 100%;animation:sh 1.2s linear infinite;margin:var(--s4) 0}
@@ -148,17 +146,17 @@ details[open] .car{transform:rotate(90deg)}
 .updated{color:var(--stale);font-weight:600}
 
 .sendrow{display:flex;align-items:center;flex-wrap:wrap;gap:var(--s4);min-height:36px;padding:var(--s4) 0 0;border-top:1px solid var(--border);margin-top:var(--s2)}
-.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--field-border);border-radius:var(--r-sm);background:var(--surface);color:var(--text-muted);cursor:pointer}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text-muted);cursor:pointer}
 .iconbtn:hover{color:var(--text);border-color:var(--accent)}
 .badge{display:inline-flex;align-items:center;height:20px;padding:0 var(--s4);border-radius:var(--r-sm);border:1px solid var(--border);color:var(--text-muted);font-size:var(--t-sm)}
 .sp{margin-left:auto}
-.send{display:inline-flex;align-items:center;gap:var(--s4);height:28px;padding:0 var(--s5);border:1px solid var(--accent);border-radius:var(--r-md);background:var(--accent);color:var(--text-on-accent);font:inherit;font-size:var(--t-md);font-weight:600;cursor:pointer;position:relative}
+.send{display:inline-flex;align-items:center;gap:var(--s4);height:28px;padding:0 var(--s5);border:1px solid var(--accent);border-radius:var(--r-md);background:var(--accent);color:var(--accent-contrast);font:inherit;font-size:var(--t-md);font-weight:600;cursor:pointer;position:relative}
 .send:hover{filter:brightness(1.12)}
 .send[disabled]{background:var(--surface-raised);color:var(--text-disabled);border-color:var(--border);cursor:not-allowed;filter:none}
 .send .kbd{font-family:var(--font-mono);font-size:var(--t-xs);font-weight:400}
 .reason{display:inline-flex;align-items:center;gap:var(--s3);font-size:var(--t-sm);color:var(--inferred)}
 .reason.err{color:var(--danger)}
-.btn{height:26px;padding:0 var(--s5);border:1px solid var(--field-border);border-radius:var(--r-md);background:var(--surface-raised);color:var(--text);font:inherit;font-size:var(--t-sm);cursor:pointer}
+.btn{height:26px;padding:0 var(--s5);border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--surface-raised);color:var(--text);font:inherit;font-size:var(--t-sm);cursor:pointer}
 .btn:hover{border-color:var(--accent)}
 .refusal{display:flex;flex-direction:column;gap:var(--s3);width:100%;padding:var(--s4) var(--s5);border:1px solid var(--danger);border-radius:var(--r-md);background:var(--surface-raised);font-size:var(--t-sm);color:var(--text)}
 .refusal .acts{display:flex;gap:var(--s4)}
@@ -185,7 +183,7 @@ body[data-state="attachoff"] .attachoff{display:flex}
 .wayfinder p{margin:0;max-width:44ch;font-size:var(--t-md)}
 
 /* keyboard persona: focus order in DOM order, across the WebView2 boundary (P-13) */
-.fo{display:none;width:18px;height:18px;border-radius:50%;background:var(--focus);color:var(--text-on-accent);font-size:var(--t-xs);font-weight:600;align-items:center;justify-content:center;font-family:var(--font-mono);flex:none}
+.fo{display:none;width:18px;height:18px;border-radius:50%;background:var(--focus);color:var(--accent-contrast);font-size:var(--t-xs);font-weight:600;align-items:center;justify-content:center;font-family:var(--font-mono);flex:none}
 body[data-persona="keyboard"] .fo{display:inline-flex}
 body[data-persona="keyboard"] .boundary{outline:1px dashed var(--inferred);outline-offset:3px}
 
@@ -283,7 +281,7 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
     <!-- ================= THE COMPOSER: one message, derived beneath ================= -->
     <section class="composer" aria-label="Composer">
       <!-- EDITOR (the WebView2 page in the real shell; tokens reach it as CSS variables) -->
-      <div class="fx" data-show="loading" style="flex:1;flex-direction:column;min-height:130px;padding:var(--s4) var(--s5);border:1px solid var(--field-border);border-radius:var(--r-md);background:var(--surface-sunken)">
+      <div class="fx" data-show="loading" style="flex:1;flex-direction:column;min-height:130px;padding:var(--s4) var(--s5);border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--surface-sunken)">
         <div class="skel" style="width:62%"></div><div class="skel" style="width:84%"></div><div class="skel" style="width:41%"></div>
       </div>
       <div data-show="editorerror" style="flex:1"><div class="errbox" role="alert"><h4>Editor couldn't start — WebView2 runtime not found.</h4><p>The session stays open. Install the WebView2 runtime, or retry if it was being updated.</p><button class="btn">Retry</button></div></div>
@@ -518,7 +516,7 @@ var THRESH={text:4.5,large:3,ui:3,decorative:3};
 var PAIRS=[
   ['Editor text on the sunken editor',                    'text','--text',          '--surface-sunken'],
   ['Editor placeholder on the sunken editor',             'text','--text-muted',    '--surface-sunken'],
-  ['Editor boundary (field-border) on the island',        'ui',  '--field-border',  '--surface-raised'],
+  ['Editor boundary (border-strong) on the island',       'ui',  '--border-strong', '--surface-raised'],
   ['Mention chip text on the surface chip',               'text','--text',          '--surface'],
   ['Mention chip border on the sunken editor',            'ui',  '--accent',        '--surface-sunken'],
   ['Editor focus border on the island',                   'ui',  '--accent',        '--surface-raised'],
@@ -533,16 +531,17 @@ var PAIRS=[
   ['Compiled text on the sunken block',                   'text','--text',          '--surface-sunken'],
   ['Compiled comment (re-toned syntax-comment)',          'text','--syntax-comment','--surface-sunken'],
   ['Updated marker (stale) on the island',                'text','--stale',         '--surface-raised'],
-  ['Send label on the accent fill',                       'text','--text-on-accent','--accent'],
+  ['Send label on the accent fill',                       'text','--accent-contrast','--accent'],
   ['Disabled Send label on the island',                   'text','--text-disabled', '--surface-raised'],
   ['Refusal reason (inferred) on the island',             'text','--inferred',      '--surface-raised'],
   ['Refusal border on the island',                        'ui',  '--danger',        '--surface-raised'],
   ['Session header chip text',                            'text','--text-muted',    '--surface-sunken'],
-  ['Numeric field boundary on the sunken setting',        'ui',  '--field-border',  '--surface-sunken'],
+  ['Numeric field boundary (border-strong) on the sunken setting', 'ui', '--border-strong', '--surface-sunken'],
   ['Console timestamp on the island',                     'text','--text-muted',    '--surface-raised'],
   ['Console lane name on the island',                     'text','--accent',        '--surface-raised'],
   ['Turn text on the surface turn',                       'text','--text',          '--surface'],
-  ['Picker row, highlighted, on the highlight ground',    'text','--hl-ink',        '--hl'],
+  ['Picker active option: focus ring (inset) on the picker ground', 'ui','--focus',    '--surface-raised'],
+  ['Picker row text on the picker ground',                'text','--text',          '--surface-raised'],
   ['Focus ring on the island',                            'ui',  '--focus',         '--surface-raised'],
   ['Hairline between lines',                              'decorative','--border',  '--surface-raised']
 ];

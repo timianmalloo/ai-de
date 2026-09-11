@@ -35,7 +35,8 @@ summary: >-
 ## What it renders
 
 1. **The rail** (PS-R1–PS-R4). New session above the divider in the accent fill with the on-accent
-   ink; three destinations as a `radiogroup` with exactly one `aria-checked`; the 3px accent bar as
+   ink (`accent-contrast`); three destinations as a vertical tab list with exactly one
+   `aria-selected` and manual activation (Up/Down move focus only; Space, Enter or the gesture switch); the 3px accent bar as
    the non-colour active signal; the *opening* state (progress ring, status *"Opening
    Architecture…"*, focus unchanged) and the *error* state (danger badge, the reason in the tooltip,
    activation retries). No fourth item: "Tests" is a reserved name only.
@@ -52,7 +53,8 @@ summary: >-
    Right: Provenance rendering the selected row's detail (and its empty copy); Bottom collapsed; the
    graph's *showing 40 of 212* degraded state; the read-only banner; the evidence empty state.
 6. **The tab strip** in its four states: rest, hover, selected-active (the one accent-filled tab,
-   `text-on-accent` on `accent`), selected-inactive (`text` on `surface`).
+   `accent-contrast` on `accent`), selected-inactive (`text` on `surface` with a 2px muted top edge as
+   the state indicator). A keyboard-highlighted menu row draws the focus ring inset.
 7. **The status strip** carrying the drop-with-report chip in the spec's plural and all-dropped
    forms, the switch outcome, and a keyboard-reachable close.
 
@@ -63,8 +65,8 @@ overflow / error) · restore (clean / 3 panes dropped / every pane dropped) · m
 View / Terminal) · theme (dark / light / high-contrast) · viewport (1440 / wide / 1024) · persona
 (operator / keyboard-only with focus-order badges and the focus-landing element outlined / screen
 reader with the live-region trace in order) · reduced motion. The verdict strip reports computed
-contrast failures, targets under 24px, rail targets under 44px, and the number of checked rail items
-(must be exactly one). Every pairing is classified text / ui / decorative per DX11.
+contrast failures, targets under 24px, rail targets under 44px, and the number of selected rail items
+(must be exactly one). Every pairing is classified text / ui / decorative per DX11; under the high-contrast theme the values are stand-ins and the audit says *not measured*.
 
 ## What this mockup is not
 

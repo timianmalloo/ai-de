@@ -14,7 +14,8 @@ links:
   - { to: mockup-session-front-door, rel: refines }
   - { to: ui-review-operator-feedback, rel: relates-to }
 review-by: 2026-12-11
-review-suggested: []
+review-suggested:
+  - { by: ui-review-perspective-shell, on: 2026-09-11, reason: "D1 /ui-design: the perspective-shell design language, three mockups and the rubric review; spec §C3/§C4 carry the accent-contrast role, the editor ground, the rail's activation model and the compiled-tier copy as recorded deviations" }
 summary: >-
   The Coding composer as a conversation (Ruling 57): one editor that is the largest and brightest
   element in the pane, the goal block's Goal · Done when · Not in scope derived beneath it as
@@ -38,7 +39,7 @@ then the composer: **the editor** (the WebView2 page in the shell; here a `role=
 sunken ground, focus on open, an `@`-mention chip inline, the mention picker at the caret), then four
 lines of 12px type beneath it: the **derived structure** (a disclosure holding Goal · Done when · Not
 in scope as editable lines with *derived* / *edited* / *missing* marks, glyph + word, never colour
-alone), the **inherited settings** line (*fan-out ≤ 3 · budget 40k tokens · from session settings*,
+alone), the **inherited settings** line (*fan-out ≤ 3 · budget 40,000 tokens — from session settings*,
 the text is the link, no tier, no override), the **write scope** line(s) (*from your mention*), and
 the **compiled prompt** disclosure (collapsed; the exact outgoing text; the **tier decoration** the
 compile step attached: *not derived yet* → *~ T1 derived* → *T1 confirmed*, and the T0-with-ceiling
