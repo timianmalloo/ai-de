@@ -1661,6 +1661,36 @@ public sealed class WorkbenchShell : IDisposable
                 trigger, before!.Shape(), after.Shape(), moved,
                 applied ? null : "position-mapping-refused");
         }
+
+        if (!applied)
+        {
+            Announcer.Announce(RefusedReconcileAnnouncement(before!));
+        }
+    }
+
+    /// <summary>
+    /// What to say when a native drag could not be mapped back into the model. INV-0006 F3.
+    /// </summary>
+    /// <remarks>
+    /// <para>A refused reconcile means the model is untouched and the next render will put the panes
+    /// back where they were — the user's drag is going to be undone. That was silent: no message, no
+    /// log, no visible difference from a drag that simply did not take.</para>
+    /// <para>The collapsed-zone case is named because it is <b>measured</b>, not guessed: a collapsed
+    /// tool zone that still holds panes is not rendered, so it is absent from the view the reconcile
+    /// reads, the surface-set guard sees surfaces go missing and refuses the whole reconcile — and the
+    /// same drag succeeds once the zone is expanded (ZoneBackedLayoutServiceTests). Where no collapsed
+    /// zone is holding panes, the cause is not known here and the sentence says only what is true.</para>
+    /// </remarks>
+    private static string RefusedReconcileAnnouncement(WorkbenchLayout before)
+    {
+        var holdingCollapsed = Enum.GetValues<ZoneId>()
+            .Where(z => before.Zone(z).Collapsed && !before.Zone(z).IsEmpty)
+            .ToList();
+
+        return holdingCollapsed.Count > 0
+            ? "That pane move could not be applied — a collapsed panel still holds panes. "
+              + "Expand it and move the pane again."
+            : "That pane move could not be applied, so the panes will return to where they were.";
     }
 
     /// <summary>Which surfaces changed zone across a reconcile — the half that says what it DID.</summary>

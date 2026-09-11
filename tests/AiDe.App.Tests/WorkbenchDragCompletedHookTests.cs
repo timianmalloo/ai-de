@@ -208,6 +208,36 @@ public sealed class WorkbenchDragCompletedHookTests
         Assert.Equal(["domain"], moved);
     }
 
+    /// <summary>
+    /// INV-0006 F3. A collapsed tool zone that still holds panes makes every native drag revert — the
+    /// zone is not rendered, so the reconcile sees its panes go missing and refuses. That refusal is
+    /// correct and was completely silent: the user's drag simply undid itself with no message.
+    /// </summary>
+    [Fact]
+    public void ADragThatCannotBeApplied_IsAnnouncedInsteadOfSilentlyReverting()
+    {
+        var (announcement, refusals) = WithRealizedWorkbench(h =>
+        {
+            var records = new List<string>();
+            var previous = WorkbenchDiagnostics.Sink;
+            WorkbenchDiagnostics.Sink = records.Add;
+            try
+            {
+                h.Shell.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed));
+                h.Adapter.Render();
+                Settle(h.Window, h.Adapter.Manager);
+
+                DragDocumentIntoPane(h, "domain", "terminal-1");
+                return (h.Shell.Announcer.Last, records.Count(r => r.Contains("position-mapping-refused", StringComparison.Ordinal)));
+            }
+            finally { WorkbenchDiagnostics.Sink = previous; }
+        });
+
+        Assert.Contains("could not be applied", announcement, StringComparison.Ordinal);
+        Assert.Contains("collapsed panel", announcement, StringComparison.Ordinal);
+        Assert.True(refusals >= 1, "the refused reconcile was not recorded");
+    }
+
     private static List<string> CapturingDiagnostics(Action body)
     {
         var lines = new List<string>();
