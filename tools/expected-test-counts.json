@@ -1,7 +1,7 @@
 {
   "_comment": "Minimum tests that must EXECUTE per project. The control for defect class DC-012: a crashed test host reports success with a smaller count, and nothing else notices. Raise these with `python tools/verify-test-run.py --update` when you add tests; never lower one to make a run pass. Keys with a suffix are HALVES of a project run on one OS; `splits` says which halves must account for which whole, and verify-test-run checks that sum on every invocation, on both operating systems. AiDe.Core.Tests.nonportable is [Trait(\"Platform\",\"Windows\")] only - kernel32, powershell.exe, the net10.0-windows daemon, and tests that assert Windows path semantics on purpose. There is no quarantine category: every test that merely failed on Linux was diagnosed and fixed (INV-0005).",
   "minimumExecuted": {
-    "AiDe.App.Tests": 504,
+    "AiDe.App.Tests": 512,
     "AiDe.Core.Tests": 2210,
     "AiDe.Core.Tests.portable": 2056,
     "AiDe.Core.Tests.nonportable": 154
@@ -12,5 +12,5 @@
       "AiDe.Core.Tests.nonportable"
     ]
   },
-  "_baselineBump": "2026-09-11, merges of node C2 (INV-0006, the pane swap) and the corpus-assertion fix. AiDe.App.Tests 495 -> 504 (C2's drag-hook and reconcile-oracle cases); AiDe.Core.Tests 2206 -> 2210, portable 2052 -> 2056; non-portable unchanged at 154. MEASURED ON THE MERGED TREE, each key its own run: --filter Platform!=Windows gave 2056, --filter Platform=Windows gave 154, the whole Core run gave 2210, and 2056 + 154 = 2210, so the split invariant holds by OBSERVATION. App was run from the PowerShell console host (DC-117). verify-test-run.py --update was NEVER run and no node edited this file -- baselines are the conductor's separate recorded act, because a node raising its own floor is grading its own work. Every floor raised; none lowered. Nodes F6, F5, U2 are live and will raise these further."
+  "_baselineBump": "2026-09-11, merge of node F4b (feature/run-seam) — the request-to-run seam, DC-130's instance. AiDe.App.Tests 504 -> 512; Core unchanged at 2210, so its portable/non-portable split is carried forward untouched rather than re-measured, because F4b added no Core tests and the whole-project count is the same number that 2056 + 154 accounted for on the previous run. MEASURED on the merged tree by verify-test-run.py: App 512, Core 2210. verify-test-run.py --update was NEVER run and no node edited this file — baselines are the conductor's separate recorded act, because a node raising its own floor is grading its own work. Every floor raised; none lowered. Prior bump: 2026-09-11, merges of node C2 (INV-0006, the pane swap) and the corpus-assertion fix — App 495 -> 504, Core 2206 -> 2210, portable 2052 -> 2056, non-portable 154, each key its own run and 2056 + 154 = 2210 by observation, App run from the PowerShell console host (DC-117). Nodes F6, F5, U2 are live and will raise these further."
 }

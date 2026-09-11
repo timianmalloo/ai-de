@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 65 · partially-controlled 53 · uncontrolled 13
+**Status counts:** controlled 65 · partially-controlled 53 · uncontrolled 14
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -5596,3 +5596,46 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Status:** `controlled` — the boundary gate is wired and red-first on both clauses, and the
   census shape is written into the close. The general discipline is only as strong as the reviewer
   who asks *"what is the denominator?"*
+
+### DC-132 — A handler is wired to an event the library never raises on the path it was written for
+
+- **Shape:** a user interaction needs observing, so a handler is subscribed to a plausible event.
+  The subscription compiles, a grep shows it wired, and every reviewer who reads the subscription
+  concludes the interaction is handled. **It is not**, because the library implements that
+  interaction *natively* and never routes it through the observed event — it mutates its own state
+  directly. Nothing fails. There is no red. The handler simply never runs, and the only way to find
+  out is to perform the interaction and watch for an effect that does not arrive.
+- **Signature:** a subscription with no test that observes the handler *running for that
+  interaction*; a handler whose only coverage asserts it does the right thing *when called*; an
+  event named for a concept rather than for a moment the library promises to announce; and the tell
+  that makes it unmistakable — **the library ships its own implementation of the very gesture the
+  handler is meant to detect.**
+- **Instance (INV-0006, 2026-09-11):** `Controller.DragStateChanged += canvas.SetObscured` is wired
+  at `WorkbenchShell.cs:1243`. `SetDragging(true)` is reached **only** from `DragOver`
+  (`WorkbenchController.cs:254`), so the entire pointer path is dead. What actually happens on a tab
+  drag is **AvalonDock's own drag**, mutating `Manager.Layout` directly, observed by nobody.
+  `Manager.LayoutUpdated` *is* subscribed twice — `WorkbenchAdapter.cs:52` and
+  `WorkbenchShell.cs:511` — and **neither touches the model**, so `MarkDirty` schedules a save of a
+  model that does not contain the user's drag. The model is told only by `ReconcileViewIntoModel()`,
+  called from four places, **all of them other commands**. The operator's drag was never recorded by
+  anything.
+- **TWO MECHANICAL DETECTORS WERE TRIED AND BOTH MISSED IT, which is the part worth keeping:**
+  (a) *"a subscription to an event not declared in `src/`"* flags **25 events** — `Click`, `KeyDown`,
+  `Loaded`, `Tick` — because in a UI framework every event is the library's. A detector that flags
+  everything is not a detector. (b) *"an event declared in `src/`, subscribed, never invoked"* finds
+  **zero**, and `DragStateChanged` is among the zero: it **is** invoked, from a site nothing reaches.
+  **Presence is mechanical; reachability is not**, and this defect lives entirely in the gap.
+- **Control:** a handler wired to an interaction carries a test that observes **the handler running
+  for that interaction** — not a test that it behaves correctly once called, which is the test that
+  exists here and passes. Where the library implements the gesture natively, the Spike Protocol
+  obligation applies before depending on the contract: *establish which event the library actually
+  raises for this gesture, by running it*, rather than choosing the event whose name matches the
+  concept. **The conductor's own brief for this node named an event and a file list; four of six
+  briefed claims were false (§10), and the two files where the defect lives were not among the five
+  named.**
+- **Relationship:** DC-129's sibling. There a launch **succeeded emptily**; here a subscription
+  **wires emptily**. Both produce an artifact that reads as correct at every site a reviewer looks,
+  and in both the missing thing is an *observation at runtime* that nobody was obliged to make.
+- **Status:** `uncontrolled` — the test obligation is stated and the instance is fixed, but no gate
+  in this repository can distinguish a live subscription from a dead one, and the two candidate
+  detectors were built and both failed. The next handler wired to the wrong event will land green.
