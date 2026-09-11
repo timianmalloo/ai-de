@@ -87,10 +87,25 @@ public sealed class ACanvasModeIsAddedByAddingARowTests
     [Fact]
     public void NoPlaceholderModeExists()
     {
-        // Ruling 22's actual target. Console and Terminal only, and both build something real.
+        // Ruling 22's actual target, now at its floor: ONE row, which builds something real.
+        //
+        // Ruling 45 cut Terminal. §A6.1 defines that mode as a view onto EXISTING observed lanes,
+        // the shipped row constructed a NEW ConPTY session per session document, and Phase 1's own
+        // ratified goal block reads "with zero terminal hosting" — so the row was the placeholder
+        // this test exists to forbid, wearing a working surface's clothes. A tab with nothing behind
+        // it is dead UI whether or not the thing behind it compiles.
+        //
+        // One row makes Ruling 22's clause HARDER to satisfy, not easier: "adding a mode is adding a
+        // row" can no longer be true by accident of two entries shipping, and is carried entirely by
+        // the Register case above.
         Assert.Equal(
-            [CanvasModeCatalog.ConsoleModeId, CanvasModeCatalog.TerminalModeId],
+            [CanvasModeCatalog.ConsoleModeId],
             CanvasModeCatalog.BuiltIn.Select(m => m.ModeId));
+
+        // The id survives the row, because a session envelope persists it. Removing the constant
+        // would make a saved session's restored mode unresolvable rather than merely unavailable.
+        Assert.DoesNotContain(
+            CanvasModeCatalog.BuiltIn, m => m.ModeId == CanvasModeCatalog.TerminalModeId);
 
         Assert.All(CanvasModeCatalog.BuiltIn, mode =>
         {

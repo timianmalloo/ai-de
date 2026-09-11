@@ -48,21 +48,48 @@ public static class CanvasModeCatalog
     /// <summary>The merged-stream mode. First, because R16 b1 makes it the default on session open.</summary>
     public const string ConsoleModeId = "console";
 
-    /// <summary>The terminal mode — today's real terminal surface, unchanged.</summary>
+    /// <summary>
+    /// The terminal mode's id. <b>The id survives Ruling 45; the built-in row does not.</b>
+    /// </summary>
+    /// <remarks>
+    /// It is persisted in session document envelopes, so removing the constant would make a saved
+    /// session's restored mode unresolvable rather than merely unavailable — and Terminal
+    /// re-registers as a row, showing <i>existing observed lanes</i> per §A6.1, in the phase that
+    /// binds observed lanes to a session. A mode id is a name; a row is a promise that something is
+    /// behind it.
+    /// </remarks>
     public const string TerminalModeId = "terminal";
 
     private static readonly List<CanvasMode> Registered = [];
     private static readonly Lock Gate = new();
 
-    /// <summary>The two rows this phase ships. Console and Terminal only — no placeholder.</summary>
+    /// <summary>
+    /// The one row this phase ships (Ruling 45).
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Terminal was cut, and not because the operator asked.</b> Addendum A §A6.1 defines
+    /// the Terminal mode as <i>"observed lanes' live terminals for this session"</i> — terminals
+    /// that already exist. The row that was here constructed a <b>new</b> <c>TerminalSurface</c> per
+    /// session, whose constructor starts a ConPTY session, which is not what §A6.1 specifies; and
+    /// Phase 1 binds no observed lanes, its own ratified goal block reading <i>"with zero terminal
+    /// hosting"</i>. The ratification note had already cut Artifacts, Profiler and Board on the rule
+    /// <i>"a tab with nothing behind it is dead UI"</i>. This is that rule reaching the row that was
+    /// left in.</para>
+    ///
+    /// <para><b>A registration cut, not a spec change and not a default change.</b> Ruling 21 —
+    /// <i>"the canvas split is IN"</i> — stands; the split mechanism is untouched and is re-proven
+    /// against a test-registered mode. Console was already the default on session open (R16 b1), so
+    /// no default moves. <c>TerminalSurface</c>, <c>Dispatch/</c>, <c>Terminal/</c>, File → New
+    /// Terminal Session and ADR-0017 are all untouched: dispatching to a real terminal is a
+    /// different capability from hosting one inside a session pane, and it keeps working.</para>
+    ///
+    /// <para><b>Adding a mode is still adding a row</b> (Ruling 22). That claim is now carried
+    /// entirely by <see cref="Register"/> rather than by a second shipped row, which is a stronger
+    /// proof of it than two hard-coded entries ever were.</para>
+    /// </remarks>
     public static IReadOnlyList<CanvasMode> BuiltIn { get; } =
     [
         new(ConsoleModeId, "Console", context => new ConsoleSurface(context.Stream)),
-
-        // The existing terminal surface, constructed exactly as SurfaceContentFactory constructs a
-        // terminal pane. A session's terminal mode is a terminal, not a second implementation of one.
-        new(TerminalModeId, "Terminal", context => new TerminalSurface(
-            $"session-terminal:{context.SessionId}", $"{context.Title} — Terminal")),
     ];
 
     /// <summary>Every mode a session document offers: the built-in rows, then any appended.</summary>

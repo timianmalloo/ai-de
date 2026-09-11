@@ -470,57 +470,20 @@ public partial class MainWindow : Window
     }
 
     /// <summary>
-    /// Maximizes the pane a newly created session document landed in.
+    /// Hands a newly created session's document the whole tree (Ruling 47), and re-renders.
     /// </summary>
     /// <remarks>
-    /// <para><b>AWAITING RATIFICATION — this is a proposal in code, and it is one line to withdraw.</b>
-    /// The operator asked for New Session to give <i>"a full window view like the explorer view icon
-    /// does"</i>. That cannot be delivered by pointing a button at the Explorer path: the Explorer
-    /// icon swaps <c>ContentControl.Content</c> over a <b>two-value</b> <see cref="ShellViewMode"/>
-    /// and is full-<b>body</b>, not full-window — the menu bar, title strip, rail and status strip
-    /// all remain — and a session is a <b>dock document</b>. A4.4 and ADR-0017 say so in as many
-    /// words: <i>"Sessions are dock documents inside the Workbench, not a third shell mode."</i></para>
-    ///
-    /// <para><b>What this does instead.</b> DESIGN.md already defines a <c>maximized</c> dock state —
-    /// <i>"fills the tree; siblings are temporarily minimized and remembered as such"</i> — reached
-    /// today by <c>workbench.maximizePane</c>. Creating a session applies it to the document's own
-    /// stack. The felt experience is the one that was asked for; no third shell mode is introduced
-    /// and no ADR is reopened. <c>Restore</c> undoes what maximizing did and not what the user
-    /// did, so the arrangement survives.</para>
-    ///
-    /// <para><b>If the Owner rules otherwise</b> — either that a session really should be a third
-    /// shell mode, or that a new session should not disturb the arrangement at all — the change is
-    /// to stop calling this from <see cref="NewSession"/>. Nothing else depends on it, and the
-    /// <c>maximized</c> state remains exactly as reachable by command as it is today.</para>
-    ///
-    /// <para><b>Reopening a session deliberately does not do this.</b> Maximizing is a response to
-    /// "I just made this and I want to work in it", not a property of session documents; doing it on
-    /// every reopen would rearrange the workbench behind an operator who asked for a tab.</para>
+    /// The decision itself lives on <see cref="Workbench.Sessions.NewSessionPlacement"/>, which a
+    /// test can reach; this is the window's half — the projection has to be re-rendered after the
+    /// layout changes, and only the window holds the adapter. Reopening a session does not call it.
     /// </remarks>
-    /// <param name="sessionId">The session whose document was just opened.</param>
-    /// <param name="announcement">What opening the document already had to say.</param>
-    /// <returns>That sentence, plus what maximizing did — or unchanged, when it did nothing.</returns>
     private string GiveTheNewSessionTheWholeTree(string sessionId, string announcement)
     {
-        var surfaceId = Workbench.Sessions.SessionDocumentSurface.SurfaceIdFor(sessionId);
-        var stack = Shell.Service.Current.FindStackOf(surfaceId);
-
-        if (stack is null)
-        {
-            // The document did not reach the layout. Saying nothing extra is the honest outcome:
-            // the open announcement already carries whatever did happen.
-            return announcement;
-        }
-
-        var result = Shell.Service.Apply(
-            new AiDe.Core.Workbench.LayoutOperation.SetStackState(
-                stack.Id, AiDe.Core.Workbench.StackState.Maximized));
+        var said = Workbench.Sessions.NewSessionPlacement.GiveItTheWholeTree(
+            Shell.Service, sessionId, announcement);
 
         Shell.Adapter.Render();
-
-        // A refusal is announced, never swallowed — a maximize that silently did nothing is
-        // indistinguishable from a dead command (DC-011).
-        return $"{announcement} {result.Announcement}";
+        return said;
     }
 
     /// <summary>Reflects the active view mode on the Explore rail item — accent bar, pill, icon colour.</summary>
