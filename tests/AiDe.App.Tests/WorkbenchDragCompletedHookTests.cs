@@ -1,3 +1,4 @@
+using System.IO;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
@@ -236,6 +237,64 @@ public sealed class WorkbenchDragCompletedHookTests
         Assert.Contains("could not be applied", announcement, StringComparison.Ordinal);
         Assert.Contains("collapsed panel", announcement, StringComparison.Ordinal);
         Assert.True(refusals >= 1, "the refused reconcile was not recorded");
+    }
+
+    /// <summary>
+    /// INV-0006 F4. Opening a workspace replaces the WHOLE arrangement, so every pane moves at once.
+    /// <c>LayoutPersistence.Restore()</c> has always composed the sentence that says so, and the caller
+    /// used the result only for a null test and threw the sentence away — which is half of why the
+    /// reported session's first two screenshots read as "the tabs rearranged without me doing anything".
+    /// </summary>
+    [Fact]
+    public void OpeningAWorkspace_AnnouncesWhatTheRestoreDid_AndRecordsTheBranchThatRan()
+    {
+        var directory = Path.Combine(Path.GetTempPath(), "aide-f4-" + Guid.NewGuid().ToString("N")[..8]);
+        Directory.CreateDirectory(directory);
+
+        try
+        {
+            var (firstOpen, firstRecords, secondOpen, secondRecords) = Sta.Run(() =>
+            {
+                var lines = new List<string>();
+                var previous = WorkbenchDiagnostics.Sink;
+                WorkbenchDiagnostics.Sink = line => { lock (lines) { lines.Add(line); } };
+                try
+                {
+                    // Nothing saved yet: the honest sentence is the KEPT one, and the record must say
+                    // keep-current — where it used to say restore-zones whatever actually happened.
+                    var first = new WorkbenchShell(queries: null, workspaceDataDirectory: directory);
+                    var firstSaid = first.Announcer.Last;
+                    var firstSeen = lines.ToList();
+
+                    // Rearrange, flush, and open the workspace again.
+                    first.Service.Apply(new LayoutOperation.MoveSurface(
+                        "domain", new DropTarget(ZonesToTree.LeftStackId, DropKind.JoinStack)));
+                    first.Persistence!.SaveNow();
+
+                    lines.Clear();
+                    var second = new WorkbenchShell(queries: null, workspaceDataDirectory: directory);
+                    return (firstSaid, firstSeen, second.Announcer.Last, lines.ToList());
+                }
+                finally { WorkbenchDiagnostics.Sink = previous; }
+            }, 60);
+
+            Assert.Equal("Kept the current workbench arrangement.", firstOpen);
+            Assert.Contains(firstRecords, r => IsWorkspaceOpen(r, "keep-current"));
+
+            Assert.Equal("Restored your saved workbench arrangement.", secondOpen);
+            Assert.Contains(secondRecords, r => IsWorkspaceOpen(r, "restore-zones"));
+        }
+        finally
+        {
+            try { Directory.Delete(directory, recursive: true); } catch (IOException) { }
+        }
+    }
+
+    private static bool IsWorkspaceOpen(string record, string placement)
+    {
+        var root = JsonDocument.Parse(record).RootElement;
+        return root.TryGetProperty("operation", out var op) && op.GetString() == "workspace-open"
+            && root.GetProperty("placement").GetString() == placement;
     }
 
     private static List<string> CapturingDiagnostics(Action body)

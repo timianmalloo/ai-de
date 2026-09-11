@@ -1715,9 +1715,29 @@ public sealed class WorkbenchShell : IDisposable
     // to a degenerate layout. So the earlier keep-current guard is subsumed by faithful restore.
     private void RestoreArrangementOnWorkspaceOpen()
     {
-        var restore = Persistence?.Restore();
+        if (Persistence is not { } persistence)
+        {
+            WorkbenchDiagnostics.LayoutMutation(
+                "workspace-open", "no-persistence", "layout", null, Service.Current);
+            return;
+        }
+
+        var restore = persistence.Restore();
+
+        // INV-0006 F4. Restore() has always COMPOSED the sentence — "Restored your saved workbench
+        // arrangement." — and the caller used the result only for a null test and threw the sentence
+        // away. Opening a workspace replaces the whole arrangement, so every pane moves at once; with
+        // nothing said, that reads as "the tabs rearranged without me doing anything", which is half
+        // of what was reported. The system knew exactly what it had done.
+        Announcer.Announce(restore.Announcement);
+
+        // And the placement is now the branch that actually ran. Restore() returns a RestoreResult in
+        // both cases and never null, so `restore is null ? "keep-current" : "restore-zones"` recorded
+        // "restore-zones" every time — including every time it restored nothing.
         WorkbenchDiagnostics.LayoutMutation(
-            "workspace-open", restore is null ? "keep-current" : "restore-zones", "layout", null, Service.Current);
+            "workspace-open",
+            persistence.LastRestoreAppliedASavedArrangement ? "restore-zones" : "keep-current",
+            "layout", null, Service.Current);
     }
 
     // Expands a collapsed tool zone from its rail (ADR-0021 collapse-to-rail). SetStackState(Docked)
