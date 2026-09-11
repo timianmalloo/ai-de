@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T16:04:29Z",
+  "generated": "2026-09-11T16:44:13Z",
   "audit": [
     {
       "actor": null,
@@ -11569,6 +11569,47 @@ window.AUDIT_DATA = {
       ],
       "tier": "T2",
       "tool": "Claude Code"
+    },
+    {
+      "id": "al-01M28NNYNHPEYQFASSV6HH1M7X",
+      "shortname": "straggler-census-4",
+      "datetime": "2026-09-11T16:44:13Z",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "prompt": "Run /investigate on straggler terminal-host processes. Explain the WHOLE population and deliver a durable control, not a fourth leak.",
+      "summary": "Fourth report of straggler terminal hosts, investigated as a POPULATION rather than a mechanism (DC-131). Census, ancestry walked to the root, attribution by executable path and command line rather than process name: 547 host-like processes = 529 foreign + 1 ours + 3 ours-live + 14 honestly unattributed.\n\nWHAT IS OURS: exactly one. An orphaned VBCSCompiler.exe (Roslyn compiler server) per build, holding a conhost, command line `-pipename:<base64>` naming no project, repo or worktree. DC-123 one ring out for the third time: Directory.Build.rsp retired MSBuild WORKER reuse and the COMPILER SERVER is a different server with its own lifetime and switch. Fixed in verify-test-run.py's teardown with the documented `dotnet build-server shutdown`, guarded by an idle check because the command is per-user and several agent sessions build here concurrently.\n\nWHAT IS NOT OURS: the 256-node pool. Spawned by Windows Terminal's own agent host (wta.exe, Microsoft.IntelligentTerminal), whose argv carries --agent \"copilot --acp --stdio\" literally. Creation-time chain validates with no recycled pid; EngineCatalogTests asserts the product path refuses to launch copilot. H1 (spike leak) and H2 (TH2 pre-fix cohort) both REFUTED.\n\nDELTAS (before/after, ancestry to root): Core.Tests Platform=Windows 0 survivors; App.Tests 0 survivors; full suite (2751 tests) exactly 1 survivor. A run creates ~42 ConPTY conhosts and ~21 msedgewebview2 and reaps all of them -- the operator looking during a run sees a real spike that is not a leak.\n\nFOUR OF THE PARENT'S CLAIMS WERE FALSE: 11 claude.exe (9); \"the copilot pool is not ours\" was asserted before it was provable and turned out right for the wrong reason; \"zero with AiDe in the ancestry\" (an artefact of matching process NAMES, while four AiDe.Daemon.exe were live); and the census itself was a single sample of a population that moves by 40+ processes during any test run.\n\nCONTROLS: tools/reap-stragglers.py -- dry-run by default, foreign and unknown reported and never removed, documented mechanism over killing, refuses to act while any build or test is live. --self-test (19 assertions) wired into build.yml on Linux, carrying both field errors as executable oracles plus the outage-preventing one: AiDe.Daemon.exe is parentless BY DESIGN (holds the workspace lock, bounded by a 30s idle grace) and must never be reaped. --behaviour falsified 0->1->0; --assert-clean around the full suite went 1 (red) -> 0 (green).\n\nRESIDUAL, reported not fixed: the daemon's only stop condition is a timer, not containment -- no job object at ShellBootstrap.cs:130 (Process.Start(start)?.Dispose()); AcpEngineProcess.cs:131 and ConPtyTerminalSession.cs:253 both carry a self-documented UNMEASURED window between Process.Start and AssignProcessToJob; and killing processes was refused by this session's permission classifier, so the --reap kill path is unexercised (the documented build-server shutdown path IS exercised).",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": "claude-code",
+      "actor": "sre-diagnostician",
+      "artifacts": [
+        "tools/reap-stragglers.py",
+        "docs/lessons/defect-classes.md",
+        ".github/workflows/build.yml",
+        "tools/verify-test-run.py"
+      ],
+      "tags": [
+        "straggler",
+        "DC-131",
+        "DC-123",
+        "observability"
+      ],
+      "outcome": "success",
+      "goal": "Explain the entire straggler population with measurement; prove whether AI-DE leaves anything behind; land an operator control and a gate.",
+      "done_when": "Census verified with an attribution column; process deltas captured around the suite; control committed red-first; DC-131 recurrence registered.",
+      "tier": "T1",
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "6c39bd360e70b3e9727955bb4504f4cfa677b4e9",
+        "short": "6c39bd360",
+        "branch": "investigate/straggler-census",
+        "pushed": null
+      }
     }
   ],
   "changes": [
