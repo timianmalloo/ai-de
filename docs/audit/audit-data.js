@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T17:34:16Z",
+  "generated": "2026-09-11T20:08:24Z",
   "audit": [
     {
       "actor": null,
@@ -11691,6 +11691,81 @@ window.AUDIT_DATA = {
         "branch": "conductor/addendum-c",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M28T8C2WEVN4J0D10XQJMJAZ",
+      "shortname": "Operator feedback on the session composer (with screenshot 'session gest…",
+      "datetime": "2026-09-11T18:04:11Z",
+      "session": "prompt-log",
+      "prompt": "Operator feedback on the session composer (with screenshot 'session gesture.png'): (1) 'I could not see the entry areas' — the composer's fields were squeezed into a ~200px scroll region above a large Compiled view; (2) there are mandatory fields that should not be mandatory and should be options in settings, not explicitly the template: budget, cap etc. are not intrinsic to the prompt, they are intrinsic to the session settings; (3) the UX is super chunky — it does not feel like a chat conversation, and the whole enter-in-text-boxes-and-see-the-render-below is awful from a UI/UX perspective. Also observed: Send refused with 'no write scope could be derived from this draft'.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M28TDX0G5RGHXKY5QTTFQMPH",
+      "shortname": "Operator: we still have lots of cases of dark/hard-to-read font colors a…",
+      "datetime": "2026-09-11T18:07:12Z",
+      "session": "prompt-log",
+      "prompt": "Operator: we still have lots of cases of dark/hard-to-read font colors against the tool background. We need a consistent color palette that works consistently, and to stop putting dark fonts on dark backgrounds and light fonts on light backgrounds. (Screenshot 'session gesture.png': Compiled view label, Lease/status lines, 'Attaching files is off' line, Graph/Terminal tab captions dim on dark; the compiled TextBox is a white box in a dark UI.)",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M28YSMW5C0C6VZJVSMD93HBG",
+      "shortname": "Operator on tier: shouldn't tier be decided by the compilation of the pr…",
+      "datetime": "2026-09-11T19:23:32Z",
+      "session": "prompt-log",
+      "prompt": "Operator on tier: shouldn't tier be decided by the compilation of the prompt? A key aspect and benefit of being able to type a prompt and then post-process it would be to decorate it with things like tier.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M28ZFJW6MCAMFS8KHYNQ77G1",
+      "shortname": "Operator, thinking through compile: three (four) contexts are needed — (…",
+      "datetime": "2026-09-11T19:35:30Z",
+      "session": "prompt-log",
+      "prompt": "Operator, thinking through compile: three (four) contexts are needed — (1) the model family (Anthropic, OAI, Grok…) the prompt is crafted for (perception: OAI models add more ceremony and drift per turn); (2) the conversation and session history; (3) the repo and its standards/constitution and its particular skills (e.g. my work loop in the ai-forward repo); (4) compile is first mechanical then agentic — a mechanical pre-compile (decoration etc.), then hand-off to a model to compile the final prompt, the same model the session is bound to (as Claude Code binds a conversation model while execution may use other agents/models). Answers: Q1 inputs = text, session context, repo constitution, target model family. Q2 a separation of concerns between what an operator tunes in settings vs. what is uniquely contextual at compile — conductor to propose the differentiation. Q3 with that enumeration, recommend the mechanical/agentic split. Q4 post-compile is a 'prepare' stage where the operator may override before submitting to the console. Q5 a rich envelope; fields not a rigid structure; the template is a guide not a constraint, because compile can create the appropriate structure through further decoration.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2917WRTT5JP9EEV2C9FTW9E",
+      "shortname": "Operator: yes, I am aligned with Addendum D (the compile step as its own…",
+      "datetime": "2026-09-11T20:06:16Z",
+      "session": "prompt-log",
+      "prompt": "Operator: yes, I am aligned with Addendum D (the compile step as its own bounded context, per the conductor's proposal: pre-compile mechanical, then compile agentic on the session-bound model, then prepare with operator override, then submit; settings vs compile-context vs decorations; lease always mechanical; tier mechanical-first; a rich append-only compiled envelope; template as guide).",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
