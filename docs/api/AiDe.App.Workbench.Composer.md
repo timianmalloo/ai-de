@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 43 members, 87% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 45 members, 87% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Composer`
 
-**9 public types · 43 public members · 87% documented.**
+**9 public types · 45 public members · 87% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -221,10 +221,12 @@ claim, and paste is handled inside the page by the editor that received it.
 | `ComposerSendGate Gate` | The send gate. Exposed so the seam's counter is readable by a test. |
 | `ComposerDraft Draft` | The draft this surface composes. |
 | `string Status` | The last thing that happened, in a sentence. |
-| `ComposerMessageRouter? Router` | The router, once the page has been wired. Null before initialisation. |
+| `ComposerMessageRouter Router` | The router. Built with the surface, so a mount is heard before the session is wired. |
+| `bool PageIsReady` | Whether the page has reported that it mounted. |
 | `string CompiledView` | What the operator will read before sending: the whole compiled prompt. |
 | `IReadOnlyList<ComposerFieldDescriptor> Fields` | The fields the host has minted for the form on screen, in render order. |
 | `void Configure(` | Wires the host-side sources: the session's config, the run context, and the attach path. |
+| `void ShowFieldRefusal(string field, string message)` | Reports a host-side refusal on the surface, naming the field the operator must fix. |
 | `IReadOnlyList<TemplatePickerRow> TemplateCards` | The picker cards currently offered, in catalog order. |
 | `void ChooseTemplate(string templateId)` | Binds the draft to a catalog template and re-mints the form (R15's validated form). |
 | `GovernedRunRequest? Send()` | The send gesture, host-owned. The button calls it; so does the accelerator handler. |
@@ -248,8 +250,30 @@ claim, and paste is handled inside the page by the editor that received it.
 
 Wires the host-side sources: the session's config, the run context, and the attach path.
 
-**Remarks.** Called by the shell after render, exactly as the canvas graph source is wired. Everything
-supplied here is host-owned; nothing in it can be influenced by the page.
+**Remarks.** Called by the shell after render, exactly as the canvas graph source is wired.
+Everything supplied here is host-owned; nothing in it can be influenced by the page.
+
+
+
+
+
+**It pushes the first `host.init` — but only if the page has already mounted.**
+The two orders are both real: the shell configures a document it has just opened while the
+browser is still starting, and it can equally configure one whose page mounted first. Each
+half pushes only when the other has happened, so a mount yields **exactly one** init
+whichever way round they land.
+
+### `void ShowFieldRefusal(string field, string message)`
+
+Reports a host-side refusal on the surface, naming the field the operator must fix.
+
+- **`field`** — The field, in the wire name the configuration file uses.
+- **`message`** — What is wrong, naming the file and the values found.
+
+**Remarks.** **Where the composer says why it has no run binding.** Nothing is wired — there is no
+context to wire — and the alternative is an empty surface, which is indistinguishable from a
+broken one. The field name is carried rather than folded into prose for the same reason
+`ComposerFieldError` carries one: the operator's next action is to edit one line.
 
 ### `void ChooseTemplate(string templateId)`
 
@@ -271,6 +295,11 @@ Handles a WebView2 accelerator. Ctrl-Enter is the send, and it is marked handled
 never sees it either (Security C11).
 
 **Returns.** Whether the key was the send gesture.
+
+### `void MarkReady()`
+
+**Remarks.** The page mounted. It pushes the first init **if the shell has already configured this
+surface**; if it has not, `Configure` pushes instead. See its remarks.
 
 ### `AttachOutcome Attach(IReadOnlyList<string> filePaths)`
 

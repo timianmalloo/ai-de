@@ -113,6 +113,17 @@ Whether this backend may be offered to the router for this session.
 sheet now offers a Sign in action: the operator may enable the engine on the session, and the
 router still will not bind a lane to it until a re-probe says otherwise.
 
+### `string DisplayLabel`
+
+The row as the sheet reads it: engine, account, health.
+
+**Remarks.** **The health word carries its provenance, because nothing probes.** §4.3 describes a
+per-account liveness check and this phase builds none — the value comes from `health:` in
+`~/.aide/providers.json`, which is what the operator observed and wrote down. A bare
+"ready" on screen would read as "checked just now", a claim the product cannot make, and the
+operator would discover it was stale at the moment a run failed. Same posture as
+`ObservedAuthLabel`, applied to the value beside it.
+
 ## `NewSessionResult`
 
 *record* — `NewSessionSheetViewModel.cs`

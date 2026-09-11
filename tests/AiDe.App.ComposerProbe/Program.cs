@@ -1,8 +1,12 @@
+using System.IO;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Threading;
 using AiDe.App.Workbench;
 using AiDe.App.Workbench.Composer;
+using AiDe.Core.AgentPlane;
+using AiDe.Core.Presentation.Composer;
+using AiDe.Core.Sessions;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Wpf;
 
@@ -37,19 +41,311 @@ internal static class Program
     private const int Crashed = 10;
     private const int CouldNotEvaluate = 11;
 
+    // --handshake only. Each is a DIFFERENT way the one-init-per-mount contract breaks, so the test
+    // that launched this can say which without reading a log.
+    private const int ThePageNeverMounted = 12;
+    private const int TheInitCountWasNotOne = 13;
+    private const int TheFieldValueDidNotSurvive = 14;
+
+    /// <summary>Runs the handshake oracle instead of the CSP/one-document probe.</summary>
+    private const string HandshakeArgument = "--handshake";
+
     private static readonly List<string> Cancelled = [];
 
     [STAThread]
-    private static int Main()
+    private static int Main(string[] args)
     {
         try
         {
-            return Run();
+            return args is not null && args.Contains(HandshakeArgument, StringComparer.Ordinal)
+                ? Handshake.Run()
+                : Run();
         }
         catch (Exception ex)
         {
             Console.Error.WriteLine(ex);
             return Crashed;
+        }
+    }
+
+    /// <summary>
+    /// <b>Condition (d):</b> exactly one <c>host.init</c> per mount after <c>Configure</c>, and field
+    /// values survive it — measured against the <b>shipped</b> <see cref="ComposerSurface"/>, not a
+    /// hand-rolled host beside it.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Why the real surface.</b> The defect was in the handshake between that control and
+    /// that page: the page posted <c>editor.ready</c> only from inside its own <c>host.init</c>
+    /// branch, and nothing pushed a first init, so the page never mounted at all. A probe that posts
+    /// the init itself — which the CSP probe above does, deliberately, because its question is about
+    /// the browser — cannot see that, because it IS the missing push (DC-016).</para>
+    ///
+    /// <para><b>Both orders, because both happen.</b> The shell configures a document it has just
+    /// opened while WebView2 is still starting, and it can equally configure one whose page mounted
+    /// first. Each is run as its own window, and the count must be one in both.</para>
+    /// </remarks>
+    private static class Handshake
+    {
+        private const string SeededGoal = "Seeded before the page mounted. It must still be here.";
+
+        internal static int Run()
+        {
+            foreach (var configureBeforeShow in new[] { true, false })
+            {
+                var outcome = Once(configureBeforeShow);
+                if (outcome != Ok)
+                {
+                    return outcome;
+                }
+            }
+
+            Console.Out.WriteLine("the composer handshake pushed exactly one host.init per mount, both orders");
+            return Ok;
+        }
+
+        private static int Once(bool configureBeforeShow)
+        {
+            var surface = new ComposerSurface("composer:probe", "probe — composer");
+            var window = new Window
+            {
+                Title = "AiDe composer handshake probe",
+                Content = surface,
+                Width = 900,
+                Height = 700,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+            };
+
+            // THE DRAFT IS WRITTEN BEFORE ANYTHING IS PUSHED. This is the value the second render
+            // used to wipe: PushInit sent `value = ""` for every field, so a form rebuilt after the
+            // operator had typed came back empty.
+            surface.Draft.SwitchTo(ComposerShape.GoalBlock);
+            surface.Draft.SetGoalValue(GoalBlockFields.GoalKey, SeededGoal);
+
+            if (configureBeforeShow)
+            {
+                Configure(surface);
+            }
+
+            var result = Crashed;
+            window.Loaded += async (_, _) =>
+            {
+                result = await MeasureAsync(surface, configureBeforeShow);
+                window.Close();
+            };
+
+            window.Show();
+
+            var frame = new DispatcherFrame();
+            window.Closed += (_, _) => frame.Continue = false;
+
+            var guard = new DispatcherTimer(
+                TimeSpan.FromSeconds(180), DispatcherPriority.Normal,
+                (_, _) => { frame.Continue = false; }, Dispatcher.CurrentDispatcher);
+            guard.Start();
+
+            Dispatcher.PushFrame(frame);
+            guard.Stop();
+            surface.Dispose();
+            return result;
+        }
+
+        private static void Configure(ComposerSurface surface)
+        {
+            var root = Path.Combine(Path.GetTempPath(), "aide-handshake", Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(root);
+
+            surface.Configure(
+                new SessionConfig("s-probe", "probe", "w-probe", DateTimeOffset.UnixEpoch, ["claude-code"]),
+                new ComposerSendContext(
+                    RepositoryRoot: root,
+                    DataDirectory: root,
+                    AdapterInstallRoot: root,
+                    EngineId: "claude-code",
+                    Model: "probe-model",
+                    AccountLabel: "probe-account",
+                    TaskClass: "probe",
+                    ProofPackArtifacts: [],
+                    Providers: []),
+                ComposerFields.GoalBlock(),
+                new AttachmentGate(root, new AttachmentFileReader(), new NeverAsked(), "anthropic", "probe-account"));
+        }
+
+        private static async Task<int> MeasureAsync(ComposerSurface surface, bool configureBeforeShow)
+        {
+            var view = FindWebView(surface);
+            if (view is null)
+            {
+                Console.Error.WriteLine("the composer surface holds no WebView2");
+                return Crashed;
+            }
+
+            if (!configureBeforeShow)
+            {
+                // The other order: wait for the mount, THEN wire the session. Nothing may have been
+                // pushed yet — the surface has no fields to push.
+                if (!await WaitAsync(() => surface.PageIsReady))
+                {
+                    Console.Error.WriteLine(
+                        "the page never posted editor.ready, so the host was never told it mounted");
+                    return ThePageNeverMounted;
+                }
+
+                Configure(surface);
+            }
+
+            if (!await WaitAsync(async () => await Eval(view, "String(window.__composerReady === true)") == "true"))
+            {
+                Console.Error.WriteLine(
+                    $"the page never rendered a host.init. ready={surface.PageIsReady}, "
+                    + $"drops={surface.Router.Dropped}, status='{surface.Status}', "
+                    + $"source='{view.CoreWebView2?.Source}', "
+                    + $"instance={await Eval(view, "String(window.__aideComposerInstance)")}, "
+                    + $"module={await Eval(view, "typeof window.__composerToFence")}, "
+                    + $"inits={await Eval(view, "String(window.__composerInitCount)")}, "
+                    + $"metrics=[{string.Join(",", surface.Metrics.Keys)}], "
+                    + $"error={await Eval(view, "String(window.__composerError)")}");
+
+                return ThePageNeverMounted;
+            }
+
+            // Settle: a SECOND init would arrive after the first render, and measuring immediately
+            // would report one either way — which is a measurement that cannot fail.
+            await Task.Delay(TimeSpan.FromSeconds(2));
+
+            var inits = await Eval(view, "String(window.__composerInitCount)");
+            var rendered = await Eval(
+                view, "String(document.querySelector('.cm-content').textContent)");
+
+            Console.Out.WriteLine(
+                $"configure-before-show={configureBeforeShow}: host.init count={inits}, "
+                + $"router drops={surface.Router.Dropped}, rendered goal={rendered}");
+
+            // THE ACCESSOR THAT SILENTLY ATE EVERY PAGE MESSAGE, measured on every run rather than
+            // remembered. `AdditionalObjects` is only populated by `postMessageWithAdditionalObjects`;
+            // reading it for a plain `postMessage` threw inside the multicast event invocation, which
+            // aborted the handler list and was swallowed at the COM boundary — so nothing arrived and
+            // nothing reported. The surface now reads it defensively; this line is what keeps that
+            // justified by a measurement.
+            Console.Out.WriteLine($"AdditionalObjects on a plain postMessage: {await AdditionalObjectsAsync(view)}");
+
+            if (inits != "1")
+            {
+                Console.Error.WriteLine($"host.init arrived {inits} times for one mount");
+                return TheInitCountWasNotOne;
+            }
+
+            if (!rendered.Contains("must still be here", StringComparison.Ordinal))
+            {
+                Console.Error.WriteLine($"the seeded field value did not survive the init: '{rendered}'");
+                return TheFieldValueDidNotSurvive;
+            }
+
+            return Ok;
+        }
+
+        /// <summary>What <c>AdditionalObjects</c> does for a message that carries none.</summary>
+        private static async Task<string> AdditionalObjectsAsync(WebView2 view)
+        {
+            var answer = "the message never arrived";
+            void Read(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
+            {
+                try
+                {
+                    answer = e.AdditionalObjects is null
+                        ? "null"
+                        : "count " + e.AdditionalObjects.Count.ToString(
+                            System.Globalization.CultureInfo.InvariantCulture);
+                }
+                catch (Exception error)
+                {
+                    answer = "reading it threw " + error.GetType().Name;
+                }
+            }
+
+            view.CoreWebView2.WebMessageReceived += Read;
+
+            // `metrics` with a name and a number: one of the four kinds that carry no file object,
+            // routed as itself so this measurement rides the shipped path rather than a side door.
+            await Eval(
+                view,
+                "chrome.webview.postMessage({v:1,kind:'metrics',instance:window.__aideComposerInstance,"
+                + "name:'composer.probe',value:1})");
+
+            await Task.Delay(1000);
+            view.CoreWebView2.WebMessageReceived -= Read;
+            return answer;
+        }
+
+        private static async Task<bool> WaitAsync(Func<bool> settled)
+        {
+            var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(45);
+            while (DateTime.UtcNow < deadline)
+            {
+                if (settled())
+                {
+                    return true;
+                }
+
+                await Task.Delay(100);
+            }
+
+            return false;
+        }
+
+        private static async Task<bool> WaitAsync(Func<Task<bool>> settled)
+        {
+            var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(45);
+            while (DateTime.UtcNow < deadline)
+            {
+                if (await settled())
+                {
+                    return true;
+                }
+
+                await Task.Delay(100);
+            }
+
+            return false;
+        }
+
+        private static WebView2? FindWebView(DependencyObject node)
+        {
+            if (node is WebView2 found)
+            {
+                return found;
+            }
+
+            for (var i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(node); i++)
+            {
+                if (FindWebView(System.Windows.Media.VisualTreeHelper.GetChild(node, i)) is { } child)
+                {
+                    return child;
+                }
+            }
+
+            if (node is System.Windows.Controls.ContentControl { Content: DependencyObject content })
+            {
+                return FindWebView(content);
+            }
+
+            if (node is System.Windows.Controls.Panel panel)
+            {
+                foreach (var child in panel.Children)
+                {
+                    if (child is DependencyObject element && FindWebView(element) is { } inside)
+                    {
+                        return inside;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>The attach path is never exercised here, so nothing is ever asked.</summary>
+        private sealed class NeverAsked : IAttachmentAffirmation
+        {
+            public bool Confirm(OutsideWorkspaceAffirmation affirmation) => false;
         }
     }
 

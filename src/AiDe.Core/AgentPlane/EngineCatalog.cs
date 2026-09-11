@@ -1,9 +1,12 @@
 namespace AiDe.Core.AgentPlane;
 
 /// <summary>
-/// How an engine speaks ACP, per spec §14.2's <c>providers.yaml</c>. A closed set on purpose — the
-/// spec declares exactly these four, and unlike a run-event <c>kind</c> they do not evolve
-/// additively: a fifth would be a new launch path, which is a code change by definition.
+/// How an engine speaks ACP, per spec §14.2's provider schema — the file this repository reads is
+/// <c>~/.aide/providers.json</c> (erratum: <c>docs/notes/conductor-spec-errata-providers-json.md</c>),
+/// and its <c>acp:</c> key is accepted and never read, because this enum is the catalog's fact.
+/// A closed set on purpose — the spec declares exactly these four, and unlike a run-event
+/// <c>kind</c> they do not evolve additively: a fifth would be a new launch path, which is a code
+/// change by definition.
 /// </summary>
 public enum AcpMode
 {

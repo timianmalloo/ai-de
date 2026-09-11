@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.AgentPlane: 54 types, 128 members, 90% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.AgentPlane: 56 types, 137 members, 90% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.AgentPlane`
 
-**54 public types · 128 public members · 90% documented.**
+**56 public types · 137 public members · 90% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -529,9 +529,12 @@ never read from the frame.
 
 *enum* — `EngineCatalog.cs`
 
-How an engine speaks ACP, per spec §14.2's `providers.yaml`. A closed set on purpose — the
-spec declares exactly these four, and unlike a run-event `kind` they do not evolve
-additively: a fifth would be a new launch path, which is a code change by definition.
+How an engine speaks ACP, per spec §14.2's provider schema — the file this repository reads is
+`~/.aide/providers.json` (erratum: `docs/notes/conductor-spec-errata-providers-json.md`),
+and its `acp:` key is accepted and never read, because this enum is the catalog's fact.
+A closed set on purpose — the spec declares exactly these four, and unlike a run-event
+`kind` they do not evolve additively: a fifth would be a new launch path, which is a code
+change by definition.
 
 ## `EngineRow`
 
@@ -1100,6 +1103,110 @@ ruled on.
 **Remarks.** **Idempotent and non-overwriting.** A second ruling on one seam would change what the run
 closed against after the fact; the first ruling stands and the caller is told it did nothing.
 
+## `BindingRefusal`
+
+*record* — `ProviderConfiguration.cs`
+
+Why a lane could not be bound, as a **field** plus a sentence.
+
+**Remarks.** **A field, never prose alone.** The operator's next action is to edit one line of one file, so
+the refusal has to say which line. It is deliberately the same shape as
+`AiDe.Core.Presentation.Composer.ComposerFieldError` without being that type: this namespace
+is below Presentation and must not reach up into it.
+
+## `ProviderConfiguration`
+
+*class* — `ProviderConfiguration.cs`
+
+`~/.aide/providers.json` — the configured providers, accounts, adapter install root and
+per-engine model, as read from the file the operator hand-edits.
+
+**Remarks.** **JSON, and the `.yaml` in spec §14.2 is an erratum.** The spec names
+`~/.aide/providers.yaml`; this repository reads `~/.aide/providers.json`. The reason is
+the Ruling 36 YAML guard: the only YAML reader in this product is scoped to the template
+frontmatter loader, and widening it to a file that carries account identity is a larger security
+decision than a config reader is allowed to make on its own. The transcription is otherwise
+one-for-one, so a §14.2 file becomes this one by re-punctuating it. Filed as an Addendum erratum
+per the Ruling 23 precedent; see `docs/notes/conductor-spec-errata-policy.md`.
+
+
+
+
+
+**Two fields EXTEND §14.2, and both are marked where they are read.**
+`adapterInstallRoot` and `engines.<id>.model` are not in the spec's schema.
+`GovernedRunRequest` requires both, §14.2 supplies neither, and §14.2's own answer for
+the model — `routing.roles` / `best_fit` — is a routing engine this phase does not
+build. They are read here rather than defaulted in code, which is the whole point of the
+node.
+
+
+
+
+
+**Refused, never defaulted, and never silently empty.** A missing file is an absence:
+`ReadIfPresent` answers `null` and the shell renders "no agent backend is
+configured", which is true. A file that exists and is wrong is a refusal that names the file and
+the field — because an empty registry read out of a malformed file renders as the absence state,
+which is a wrong claim about a file the operator wrote.
+
+
+
+
+
+**Health is the operator's record, not a probe.** There is no health prober in this
+phase, so `health:` is what the operator observed and wrote down — the posture
+`ObservedAuthLabel` already takes. It is required per account rather
+than defaulted: a defaulted `ready` is indistinguishable afterwards from an observed one.
+
+| Member | Summary |
+|---|---|
+| `string FileName = "providers.json"` | The file name, and the erratum's subject: `.json`, not `.yaml`. |
+| `string DefaultPath` | Where the file is, by default: `~/.aide/providers.json` (§4.3). |
+| `string Path { get; }` | The file this configuration was read from. Every refusal names it. |
+| `string AdapterInstallRoot { get; }` | The directory whose `node_modules` holds the ACP adapter. **Extends §14.2.** |
+| `ProviderRegistry Registry { get; }` | The providers and accounts, as the registry §4.3 describes. |
+| `ProviderConfiguration? ReadIfPresent(string path)` | Reads the file, or answers `null` when there is none. |
+| `ProviderConfiguration Read(string path)` | Reads the file. The file must exist. |
+| `LaneBinding? Bind(string engineId, out BindingRefusal? refusal)` | Binds one engine to the `(engine, model, account)` triple a run needs, or says which field is missing. |
+
+### `ProviderConfiguration? ReadIfPresent(string path)`
+
+Reads the file, or answers `null` when there is none.
+
+- **`path`** — The file to read. `DefaultPath` when the caller has no reason to differ.
+
+**Throws `AgentPlaneException`.** `ProviderConfigurationMalformed` — the file exists and is wrong. **Never collapsed into `null`:** a caller that could not tell "no file" from "bad file" would render the second as the first.
+
+### `ProviderConfiguration Read(string path)`
+
+Reads the file. The file must exist.
+
+**Throws `AgentPlaneException`.** `ProviderConfigurationMalformed`, naming the file and the field.
+
+### `LaneBinding? Bind(string engineId, out BindingRefusal? refusal)`
+
+Binds one engine to the `(engine, model, account)` triple a run needs, or says which
+field is missing.
+
+- **`engineId`** — A catalog engine id — normally the session's one enabled backend.
+- **`refusal`** — Why not, when the result is null.
+
+**Remarks.** **Nothing here decides anything the file did not say.** The model comes from
+`engines.<id>.model`. The account comes from `engines.<id>.account`, or
+from the provider carrying exactly one — which is the file choosing, not this method. Two
+accounts and no selection is a refusal, because picking one would be right in every case
+anyone checks by hand and wrong in the case that bills the wrong account (DC-110).
+
+
+
+
+
+**The registry's rules are called, not restated.** Unknown engine, unconfigured
+provider, unknown account and `needs-login` are all `ProviderRegistry`'s
+refusals; this maps each to the field the operator must edit. A second opinion about what
+binds would be a second place for the rule to change.
+
 ## `AccountHealth`
 
 *enum* — `ProviderRegistry.cs`
@@ -1128,7 +1235,7 @@ cohorts and the profiler all key on the account, not on the provider.
 
 *record* — `ProviderRegistry.cs`
 
-One `providers.yaml` row (§14.2) — a provider, how it authenticates, and its accounts.
+One `providers.json` row (§14.2) — a provider, how it authenticates, and its accounts.
 
 **Remarks.** **It deliberately carries no engine id.** `Provider` already states the
 engine → provider mapping, and two definitions of one mapping is a defect signature (DM7): the
@@ -1158,8 +1265,9 @@ bill. Every lookup here fails loudly, and the message names the value that was n
 **Constructed from configuration, with no built-in default.** §14.2's example rows carry
 account labels like `max-personal`, which are one operator's names for one operator's
 logins. A registry that shipped them would assert an account nobody had signed into. The rows
-come from `~/.aide/providers.yaml` and its per-workspace overrides; parsing that file is the
-caller's job, and this type is what the parsed result becomes.
+come from `~/.aide/providers.json` — §14.2's `providers.yaml`, with the `.yaml`
+filed as an erratum (`docs/notes/conductor-spec-errata-providers-json.md`) — and
+`ProviderConfiguration` is the reader. Per-workspace overrides are not built.
 
 | Member | Summary |
 |---|---|
@@ -1246,6 +1354,7 @@ Stable error codes for the agent plane. Search-key stability is the whole point.
 | `string SessionCwdNotAbsolute = "AP-0018"` | A session cwd that is not absolute. Refused before the wire, so the reason names the caller rather than arriving later as the adapter's own `-32602`. |
 | `string EngineDidNotStart = "AP-0019"` | The engine executable could not be started at all. |
 | `string GovernedEpisodeNotScored = "AP-0020"` | A governed lane's closed episode produced no scorecard, so it belongs to no cohort. Reported rather than absorbed: an episode that scores nowhere is indistinguishable from a lane that never ran. |
+| `string ProviderConfigurationMalformed = "AP-0021"` | `~/.aide/providers.json` exists and is wrong — a missing field, an unknown key, or a value outside a closed set. **Distinct from the file being absent**, which is not an error at all: an absent file is an operator who… |
 
 ## `RunEventCost`
 
