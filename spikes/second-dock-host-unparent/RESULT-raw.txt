@@ -1,0 +1,67 @@
+
+==============================================================================
+Q0 - environment
+==============================================================================
+WebView2 Runtime : 152.0.4191.66
+AvalonDock       : 5.0.0.0
+WebView2 wrapper : 1.0.3485.44
+OS               : Microsoft Windows NT 10.0.26200.0
+.NET             : 10.0.11
+
+==============================================================================
+Q1 - first entry into host B (Architecture): the WebView2 initialises once
+==============================================================================
+  CoreWebView2 alive           : True
+  Loaded events so far         : 2
+  EnsureCoreWebView2Async calls: 1
+  InitializationCompleted      : 1
+  page state set               : n=41 scrollY=500
+  raw HwndHost                 : builds=1 destroys=0 hwnd=0x32081C
+  [PASS] Q1 CoreWebView2 initialised exactly once on first entry
+  [PASS] Q1 raw HwndHost built exactly once on first entry
+
+==============================================================================
+Q2 - the cycle: B → A → B, three times (host B unparented with a live WebView2 inside)
+==============================================================================
+  cycle 1: hidden → alive=True same=True rawBuilds=1 rawDestroys=0
+  cycle 1: shown  → same CoreWebView2=True n=41 scrollY=500 Loaded=3 Ensure=1 InitCompleted=1 rawBuilds=1 rawDestroys=0 rawHwnd=0x32081C
+  [PASS] Q2.1 CoreWebView2 is the same object after the cycle
+  [PASS] Q2.1 JS state survives the cycle (n == 41)
+  [PASS] Q2.1 scroll offset survives the cycle (scrollY == 500)
+  [PASS] Q2.1 no re-initialisation (Ensure == 1, InitCompleted == 1)
+  cycle 2: hidden → alive=True same=True rawBuilds=1 rawDestroys=0
+  cycle 2: shown  → same CoreWebView2=True n=41 scrollY=500 Loaded=4 Ensure=1 InitCompleted=1 rawBuilds=1 rawDestroys=0 rawHwnd=0x32081C
+  [PASS] Q2.2 CoreWebView2 is the same object after the cycle
+  [PASS] Q2.2 JS state survives the cycle (n == 41)
+  [PASS] Q2.2 scroll offset survives the cycle (scrollY == 500)
+  [PASS] Q2.2 no re-initialisation (Ensure == 1, InitCompleted == 1)
+  cycle 3: hidden → alive=True same=True rawBuilds=1 rawDestroys=0
+  cycle 3: shown  → same CoreWebView2=True n=41 scrollY=500 Loaded=5 Ensure=1 InitCompleted=1 rawBuilds=1 rawDestroys=0 rawHwnd=0x32081C
+  [PASS] Q2.3 CoreWebView2 is the same object after the cycle
+  [PASS] Q2.3 JS state survives the cycle (n == 41)
+  [PASS] Q2.3 scroll offset survives the cycle (scrollY == 500)
+  [PASS] Q2.3 no re-initialisation (Ensure == 1, InitCompleted == 1)
+
+==============================================================================
+Q3 - via a full-window surface: B → Explore → B
+==============================================================================
+  same CoreWebView2=True n=41 Loaded=6 Ensure=1 rawBuilds=1 rawDestroys=0
+  [PASS] Q3 CoreWebView2 survives B → Explore → B
+
+==============================================================================
+Q4 - the raw HwndHost (the general case Ruling 52's CONDITIONS name)
+==============================================================================
+  builds=1 destroys=0 first hwnd=0x32081C last hwnd=0x32081C stable=True
+
+==============================================================================
+Q5 - the same cycle under HOST A's own docked pane re-parent (DC-138 baseline)
+==============================================================================
+  Loaded events total=6 (each is an attach; initialisation stayed at 1)
+  [PASS] Q5 Loaded fired more than once (the re-parents were real) while initialisation stayed once
+
+==============================================================================
+Findings
+==============================================================================
+  - A raw HwndHost kept its native window across every unparent (no DestroyWindowCore).
+
+RESULT: PASS — a second AvalonDock host with a live WebView2 survives unparenting; Ruling 52's condition holds.

@@ -25,6 +25,8 @@ summary: >-
   (F5 untouched; code after F5 merges), ADR-0017's fate (retained and amended), the graph model (one
   substrate, two surfaces), the build order under the operator's 80% case, and four page-one facts a
   spec written without them would get wrong.
+review-suggested:
+  - { by: adr-0017-primary-view-mode, on: 2026-09-11, reason: "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent" }
 ---
 
 # Decision note — Rulings 50–71

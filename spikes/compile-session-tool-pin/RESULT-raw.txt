@@ -1,0 +1,13 @@
+adapter: C:\projects\ai-de\spikes\acp-subscription-lane\node_modules\@agentclientprotocol\claude-agent-acp\dist\acp-agent.js
+version: 0.75.1
+sha256 : c22424c297429378166524b59ee6bed239c999a420ad0dd06571b768efa7525b
+  [PASS] tools-from-meta                line 5883   `_meta.claudeCode.options.tools` is the primary pin; `_meta.disableBuiltInTools: true` is the legacy shorthand for `[]`; absent both, the SDK gets the `claude_code` preset
+  [PASS] tools-reach-sdk                line 6007   the resolved `tools` value is passed to the SDK query options verbatim (anchored to the options block, beside disallowedTools)
+  [PASS] disallowed-concat              line 6007   `_meta.claudeCode.options.disallowedTools` is concatenated with the adapter's own — the braces pin reaches the SDK
+  [PASS] setting-sources                line 5962   the compile session loads the repository's CLAUDE.md, settings and hooks from the cwd — the constitution by harness load, and the hooks residual
+  [PASS] meta-spread-order              line 5962   `_meta.claudeCode.options` is spread AFTER settingSources — a caller could override it; the architecture rejects doing so (dropping `project` drops CLAUDE.md)
+  [PASS] permission-mode-from-settings  line 5856   the permission mode comes from settings, not from the host — the reject-all handler is not the control; the pin is
+  [PASS] bypass-before-canusetool       line 5274   auto-allowed/bypassed tools never reach the host's canUseTool — the adapter's own COMMENT (Inferred: CLI-enforced; Flagged until P-D5)
+  [PASS] leading-slash-is-a-command     line 6034   a prompt whose first bytes are `/…` is executed by the CLI as a local command — why the compile prompt begins with a fixed host header
+
+RESULT: PASS — every adapter-side fact the pin rests on holds in this adapter build

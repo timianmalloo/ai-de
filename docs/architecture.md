@@ -27,15 +27,33 @@ links:
   - { to: adr-0011-session-processing-class-egress, rel: depends-on }
   - { to: adr-0012-docking-shell-library, rel: depends-on }
   - { to: adr-0013-layout-persistence-envelope, rel: depends-on }
-review-by: 2027-02-26
+  - { to: adr-0017-primary-view-mode, rel: depends-on }
+  - { to: spec-addendum-c-perspectives, rel: implements }
+  - { to: spec-addendum-d-compile-step, rel: implements }
+  - { to: note-addendum-c-council-rulings, rel: relates-to }
+  - { to: adr-0030-perspective-registry-and-allow-lists, rel: depends-on }
+  - { to: adr-0031-second-docking-host, rel: depends-on }
+  - { to: adr-0032-perspective-layout-slots, rel: depends-on }
+  - { to: adr-0033-prompt-compilation-bounded-context, rel: depends-on }
+  - { to: adr-0034-envelope-event-store, rel: depends-on }
+  - { to: adr-0035-compile-session-binding-and-pin, rel: depends-on }
+  - { to: adr-0036-compile-mode-ladder-deployment-gates, rel: depends-on }
+  - { to: adr-0037-family-craft-profile-dimension, rel: depends-on }
+  - { to: note-addendum-cd-architecture-p1-inputs, rel: relates-to }
+  - { to: architecture-agent-plane, rel: relates-to }
+review-by: 2027-03-11
 review-suggested:
   - { by: spec-ai-native-ide, on: 2026-08-26, reason: "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice" }
+  - { by: adr-0017-primary-view-mode, on: 2026-09-11, reason: "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent" }
+  - { by: adr-0013-layout-persistence-envelope, on: 2026-09-11, reason: "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback" }
 summary: >-
   Defines AI-DE as a WPF+WebView2 workspace shell over a per-workspace local authority core that
   builds provenance-labelled facts from repository artifacts, serves derived visual projections and
   session-class-governed MCP tools, delivers prompts under a write-ahead two-phase receipt, and
   keeps agent/model capability outside deterministic source truth. Supersedes the 2026-08-25 draft;
-  resolves the council review's three hard and two soft vetoes.
+  resolves the council review's three hard and two soft vetoes. Amended 2026-09-11 for Addenda C
+  and D: the Perspective shell (ADR-0017 as amended; ADR-0030–0032) and the Prompt Compilation
+  bounded context (ADR-0033–0037).
 ---
 
 # Architecture: AI-DE
@@ -43,7 +61,7 @@ summary: >-
 - **Status:** In review
 - **Tier:** T2
 - **Driving spec:** [`docs/specs/ai-native-ide.md`](specs/ai-native-ide.md)
-- **Author(s) / date:** @timianmalloo · 2026-08-26 (v2)
+- **Author(s) / date:** @timianmalloo · 2026-08-26 (v2) · amended 2026-09-11 (Addenda C and D, §Addenda C and D below)
 - **Baseline:** `src/AiDe.App` is a .NET 10 WPF starter with no daemon, persistence, runtime AI,
   terminal, or extraction components. This architecture is the target shape; it does not claim the
   target is implemented.
@@ -130,7 +148,10 @@ prompt staging, dispatch authorization, and rendering are deterministic (T0). An
 consume bounded context and propose annotations, but it cannot block the workspace hot path or make
 artifact-derived truth. v1 ships **no model call at all** (M1, below), so F here describes the
 *shape the hot path is built to*, and the AI-aside channel is dormant until the optional capability
-contract is met — recorded so the fork is explicit, not aspirational.
+contract is met — recorded so the fork is explicit, not aspirational. *(Superseded for the compile
+step by Addenda C/D, 2026-09-11: the agentic compile is a live, gated model call — §C/D.7,
+ADR-0035/0036 — behind the capability contract's conditions with condition 3 recorded as a
+deviation, §C/D.11.)*
 
 **Composed archetypes:**
 - **C — Tool-Mediated Constructor:** the MCP gateway exposes declared, typed graph/knowledge
@@ -442,7 +463,9 @@ read tool** and authorship origin on every result:
 | `architecture` | `{workspaceId, scopeId, maxNodes:1..100}` → projection DSL, **byte cap**, source revision, omissions. |
 | `record_note`, `record_decision`, `announce_claim` | Caller-bound workspace/session, typed payload, `commandId`, ≤64 KiB; policy validation and actor attribution; decisions/consequential classes require user confirmation. |
 
-The **tool descriptions are the only prompt surface v1 ships**; they carry an **A2 semantic
+The **tool descriptions are the only prompt surface v1 ships** *(superseded for the compile step
+by Addenda C/D: `compile-prompt/1` is a second prompt surface, host-embedded, hashed as
+`prompt_sha`, and gated by ADR-0036's A6 ring — §C/D.5)*; they carry an **A2 semantic
 tool-selection eval against at least one real client model** and an **A6 regression gate** on any
 description/schema edit — not only protocol conformance.
 
@@ -498,6 +521,36 @@ description/schema edit — not only protocol conformance.
   notation-valid Mermaid `classDiagram` render defer to Phase 2**, gated on a Core `has_member`
   extractor enhancement (a Mermaid classDiagram with empty compartments is not worth vendoring ~3 MB
   of mermaid.js).
+- [ADR-0017 — amended 2026-09-11](adr/0017-primary-view-mode.md) (Ruling 52): the closed set is the
+  **Perspective** set (Coding · Explore · Architecture); a body may be a docking host; the second-host
+  clause discharged by `spikes/second-dock-host-unparent`. [ADR-0013](adr/0013-layout-persistence-envelope.md)
+  amended in the same change: one slot per host perspective.
+- [ADR-0030](adr/0030-perspective-registry-and-allow-lists.md): **the Perspective set is a closed Core
+  row set; the allow-list is a column on the App's kind rows; menu, palette, rail and routing are
+  derived from the join** — never a second list.
+- [ADR-0031](adr/0031-second-docking-host.md): **Architecture's body is a second AvalonDock host
+  composed as a `DockHost` unit under one presenter** — one controller per host, one catalog, one
+  factory (the Owner's residual decided).
+- [ADR-0032](adr/0032-perspective-layout-slots.md): **one zone-envelope file per host perspective**
+  in the existing schema; drop-with-report at restore; a one-time `.bak`; rollback is a golden
+  round-trip.
+- [ADR-0033](adr/0033-prompt-compilation-bounded-context.md): **Prompt Compilation is a bounded
+  context in `AiDe.Core/Compilation` with one seam and one projection** — `Project()` is the sole
+  assembler at the composer's unchanged send site; budget is an optional cap projected onto the
+  unchanged `RunBudget`; the default task class is `free-form`.
+- [ADR-0034](adr/0034-envelope-event-store.md): **the compiled-envelope store is an append-only,
+  exclusively written, sha-chained JSONL sidecar per session**; the eval corpus and the Proof Pack are
+  projections; purge deletes the file; the Session's delete cascades by containment.
+- [ADR-0035](adr/0035-compile-session-binding-and-pin.md): **the agentic compile is one pinned ACP
+  session on the session's bound engine, composed by `CompileCallHost` apart from the run root** —
+  `tools: []` through Ruling 71's typed argument; `compile-call.compose`, never
+  `governed-run.compose`.
+- [ADR-0036](adr/0036-compile-mode-ladder-deployment-gates.md): **the compile-mode ladder is a set
+  of runtime deployment gates behind an eval** — the pin artifact with a matching adapter sha, then
+  the 50/50 holdout report meeting fixed floors; the A6 ring; the drift detector.
+- [ADR-0037](adr/0037-family-craft-profile-dimension.md): **the family craft profile is a Type-2
+  dimension — one immutable pack-owned file per version**, pinned by `(family, version, sha)`,
+  applied as a template in v1.
 
 ## Delivery phasing — vertical slices
 
@@ -543,6 +596,443 @@ Pack. Equality oracles are defined as a **canonical normalized form** (sorted no
 field set), and each equality test states which claim it proves. A fake/prod extractor, terminal, or
 visual adapter shares a versioned conformance suite once it has both an interface and a second
 implementation (Phase 2 for terminal/visual; `P1-EXT` establishes the extractor interface in Phase 1).
+
+## Addenda C and D — the perspective shell and the compile step (2026-09-11)
+
+*Amendments and additions to the architecture above, from `/define-architecture` of
+`spec-addendum-c-perspectives` and `spec-addendum-d-compile-step` (node A1 of
+`plan-addendum-c-modes`, session `addendum-c-chain`). Rulings 50–71 (`note-addendum-c-council-rulings`)
+are binding inputs; two operator decisions of 2026-09-11 relayed by the conductor (audit
+`al-01M297VC0HTFJP761D9BVE9Z72`, being filed by the Owner) are folded in and labelled. Every
+load-bearing claim carries **[Verified]**, **[Inferred]** or **[Flagged]**; a citation is not a
+promotion.*
+
+### C/D.1 Context, and the two bounded contexts touched
+
+Two specs, two contexts, one shell:
+
+| Context | What it decides | Spec | Owner persona at the gate |
+|---|---|---|---|
+| **Shell presentation** (Addendum C) — *the use case the tool is in* | The **Perspective** set (Coding · Explore · Architecture) as ADR-0017's primary-view-mode set; a second docking host; allow-lists; the derived menu; one layout slot per host; the composer as a conversation (US-C13) | `spec-addendum-c-perspectives` (accepted) | UX & Accessibility (census), Test Architect |
+| **Prompt Compilation** (Addendum D) — *everything between the typed text and the run request* | An append-only compiled-envelope stream, a mechanical pre-compile, an agentic compile behind an eval gate, Prepare, and projections onto the unchanged spawn contract | `spec-addendum-d-compile-step` (accepted; its Part A domain model passed by the Data & Persistence Architect — architected to, not re-modelled) | Data & Persistence, Security & Identity, AI Systems Engineer |
+
+The decisions below are recorded as **ADR-0030…0037** plus in-place amendments to **ADR-0017**
+(status `proposed` → accepted-as-amended, Ruling 52) and **ADR-0013** (per-perspective slots).
+
+### C/D.2 The system as a system
+
+- **Stocks:** three retained bodies (host A, host B, the Explore surface) and their layout slots;
+  the open session documents (shell-owned); the **envelope-events stream** per session (append-only);
+  the draft store; the craft-profile set (pack-owned, versioned); the two committed proof artifacts
+  that gate the compile-mode ladder.
+- **Flows:** a perspective switch (a body swap, ≤ 150 ms p95 retained — measured, US-C12); a routed
+  kind-open (Architecture · Coding); typed text → pre-compile (in memory, debounced) → Send gesture →
+  envelope opened → agentic call (one `session/prompt`, ≤ 60 s) → Prepare → Send → `Project()` →
+  `GovernedRunRequest` → the run root; `consumed` on the run result.
+- **Feedback loops:** the eval corpus is the product's own record (kept/edited/emptied/absent per
+  line) and feeds the admission report; the drift detector demotes `agentic` on a golden regression;
+  `inputs_sha` reuse makes a re-prepare after a success zero requests; the account's
+  `quota-degraded` health is the observable of "bounded by the subscription".
+- **Delays:** the model call (bounded 60 s); the debounce (750 ms layout save; the draft's settle);
+  the first entry of a lazy body (recorded, no budget until measured).
+- **Boundary drawn:** the shell (App) composes hosts and the compile call; Core holds the perspective
+  rows, the layout services, the Prompt Compilation context (fold · projection · validator · store);
+  the agent plane is **unchanged in contract** (fourteen `GovernedRunRequest` parameters, two named
+  construction sites); the adapter process is outside, pinned at 0.75.1. **Excluded:** Use Case 4
+  (Tests), the deferred understanding views D-0…D-6, a second engine (D-D4), lifecycle/expiry of the
+  envelope file (D-D5), any model-authored decoration beyond the three structure lines (D-D2/D-D3).
+
+### C/D.3 Candidate shapes considered (Stage 1), and the leverage point
+
+| Shape | Where it lost |
+|---|---|
+| **Perspectives as N docked "views" in one host** (option A of ADR-0017, re-opened) | The clutter Addendum C exists to remove; a mode cannot be expressed as a pane; Ruling 52 cuts it. |
+| **Perspectives as N bodies under one presenter, hosts where a host is warranted** (chosen; ADR-0017 amended, ADR-0031) | — |
+| **The compile step inside the composer's WPF surface** | Headless tests become STA; the eval harness couples to the App; rejected in ADR-0033. |
+| **The compile step as a second request type through the run root** | US-D12 fixes the contract; a compile is not a run — ADR-0033/0035. |
+| **The compile call in-process through the Agent SDK** | A direct-API path spec v1 §4.2 forbids; `SpawnContract.Authorize` refuses `direct-api` by design — ADR-0035. |
+
+**The high-leverage structural decision** is not the rail or the menu — it is that **`Project()` is
+the one function that assembles a run request from an envelope, and the envelope is the fold of
+append-only events** (ADR-0033/0034). Everything the operator sees in Prepare and everything the
+conductor receives read the same fold, so the "what was sent" question has one answer and the eval
+corpus is free. The merely visible decision — which kinds go in which perspective — is a data row
+(ADR-0030).
+
+### C/D.4 Component map — the perspective shell
+
+```mermaid
+flowchart TB
+  classDef core fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF
+  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF
+  classDef ext fill:#0D1014,stroke:#98A3B2,stroke-dasharray:4 3,color:#98A3B2
+
+  subgraph core["AiDe.Core/Workbench — data and services (T0)"]
+    PSet["PerspectiveSet.All<br/>3 rows: id · order · body kind · command · routing order<br/>(ADR-0030)"]
+    Catalog["WorkbenchCommandCatalog<br/>+ perspective.* rows derived from PSet"]
+    ZSvcA["ZoneBackedLayoutService (host A)<br/>+ admitted-kind set"]
+    ZSvcB["ZoneBackedLayoutService (host B)<br/>+ admitted-kind set"]
+    Store["ZoneLayoutStore ×2<br/>one file per host slot (ADR-0032)"]
+  end
+
+  subgraph app["AiDe.App — the shell"]
+    Window["MainWindow<br/>rail · menu · title · status (outside the swap)"]
+    Presenter["PerspectiveShell (ADR-0017 presenter, 3 bodies)<br/>active · previous · routes Execute(id)"]
+    Kinds["SurfaceContentFactory.Kinds<br/>18 rows + Perspectives column + Instances (ADR-0030)"]
+    Menu["PerspectiveMenu.For(perspective, Kinds, catalog)<br/>menu · palette · rail · title — one derivation"]
+    HostA["DockHost A — Coding<br/>Manager · Adapter · Controller · Rails · Persistence"]
+    HostB["DockHost B — Architecture<br/>Manager · Adapter · Controller · Rails · Persistence (ADR-0031)"]
+    Explore["ExplorerSurface<br/>full-window, unchanged (Ruling 53)"]
+    Web["WebSurfaceHost<br/>once-gate per surface (DC-138)"]
+    Doc["SessionDocumentSurface<br/>composer (a conversation, US-C13) · canvas"]
+  end
+
+  Canvas2["2nd CanvasSurface<br/>kind filter code·data·architecture"]:::ext
+
+  PSet --> Catalog
+  PSet --> Presenter
+  Kinds --> Menu
+  Catalog --> Menu
+  Menu --> Window
+  Window --> Presenter
+  Presenter --> HostA
+  Presenter --> HostB
+  Presenter --> Explore
+  HostA --> ZSvcA --> Store
+  HostB --> ZSvcB --> Store
+  Kinds --> HostA
+  Kinds --> HostB
+  HostB --> Canvas2
+  Canvas2 --> Web
+  HostA --> Doc
+  class core,PSet,Catalog,ZSvcA,ZSvcB,Store core
+  class app,Window,Presenter,Kinds,Menu,HostA,HostB,Explore,Web,Doc app
+```
+
+| Component | Responsibility | Boundary contract | Decision |
+|---|---|---|---|
+| `PerspectiveSet` (Core) | The closed row set, order, body kind, command id, the routing order | Pure data; three rows; a fourth fails the build test | ADR-0030 |
+| `SurfaceKind.Perspectives` + `Instances` (App row column) | Which perspectives admit the kind; one/many instances | Explicit, non-empty per row; the menu/palette/routing derive from it | ADR-0030 |
+| `PerspectiveMenu.For` (App) | The one derivation of menu · palette · rail · title from the join | §B3's literal table is the oracle; the mutation test needs no builder edit | ADR-0030 |
+| `PerspectiveShell` (App; today's `ShellModeController`, generalised) | Active perspective, previous slot, three retained bodies, command routing, entry-verb transaction (document first, then Coding) | Retain-never-rebuild across three bodies; `Assert.Same` and P-4 | ADR-0017 (amended), ADR-0031 |
+| `DockHost` ×2 (App) | Manager · Adapter · zone service · controller · rails · persistence, composed per host | One controller per host; shared factory, catalog, announcer, palette | ADR-0031 |
+| `ZoneBackedLayoutService` + admitted kinds (Core) | Enforces the Perspective Layout invariant at open, restore, every mutation | An inadmissible surface is refused and reported | ADR-0031 |
+| `ZoneLayoutStore` per host file (Core) | One zone-envelope file per host slot, schema 1 | Coding = today's file; `.pre-perspectives.bak` once; refusal reported | ADR-0032 |
+| `WebSurfaceHost` (App) | Once-gated WebView2 initialisation for every web surface in either host | `InitialisationsStarted == 1` across cycles | `note-addendum-cd-web-surface-host-sharing` |
+
+**`ShellViewMode → Perspective`** is renamed only in the implementing commit (Ruling 50). The
+composer's conversation shape (US-C13) is Addendum C's; its Prepare states are Addendum D's inside
+the same regions (D §B2) — one composer, no second surface.
+
+### C/D.5 Component map — the compile step
+
+```mermaid
+flowchart LR
+  classDef core fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF
+  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF
+  classDef ext fill:#0D1014,stroke:#98A3B2,stroke-dasharray:4 3,color:#98A3B2
+  classDef store fill:#0D1014,stroke:#D8A650,color:#D8A650
+
+  Editor["Composer editor<br/>source_text (the only lease source — Ruling 66)"]:::app
+  Pre["PreCompile (T0, debounced, in memory)<br/>shape · tier rule · cap · lease display · profile ·<br/>constitution manifest · history window · snapshots"]:::core
+  Send1["Send gesture #1<br/>opens the envelope"]:::app
+  Call["CompileCallHost (App/Conductor, T3)<br/>ResolveLaunch → process → handshake → Authorize →<br/>session/new tools:[] → prompt ≤ 60 s → counts<br/>(ADR-0035)"]:::app
+  TB{{"CompileOutputValidator (T0)<br/>schema · allow-list · open lines · type ·<br/>mention scan · spans (ADR-0033)"}}:::core
+  Env[("EnvelopeStore<br/>envelope-events.jsonl · append-only ·<br/>FileShare.None · prev_sha (ADR-0034)")]:::store
+  Prep["Prepare (App, WPF controls)<br/>marks · tier control · what-was-read ·<br/>operator rows"]:::app
+  Proj["Project(Fold(events)) (T0)<br/>shape · tier+rationale · cap · GoalBlock ·<br/>lease · prompt · task class · projection_sha"]:::core
+  Gate["ComposerSendGate.Send<br/>the 2nd named construction site of<br/>GovernedRunRequest — unchanged"]:::app
+  Root["GovernedRunHost.RunAsync<br/>the one run root (agent-plane §4)"]:::app
+  Adapter["claude-agent-acp 0.75.1<br/>sha pinned"]:::ext
+  Profile["craft-profiles/<family>@<version>.md<br/>pack-owned Type-2 (ADR-0037)"]:::store
+  Gates["Deployment gates (ADR-0036)<br/>compile-pin-spike.json ·<br/>compile-eval-admission.json"]:::store
+
+  Editor --> Pre --> Send1 --> Env
+  Send1 -->|"mode admits"| Call --> Adapter
+  Adapter --> Call --> TB --> Env
+  Env --> Prep --> Env
+  Env --> Proj --> Gate --> Root
+  Profile -.-> Pre
+  Gates -.->|"settings model reads"| Send1
+  Root -.->|"consumed {run_id}"| Env
+```
+
+| Component | Home | Responsibility | Boundary contract | Decision |
+|---|---|---|---|---|
+| `PreCompile` | Core/Compilation | The mechanical stage: projections and snapshots, pure and total, ≤ 1 s (a defect signal) | Golden-file: identical canonical payloads for identical inputs (US-D2) | ADR-0033 |
+| `EnvelopeStore` + `Fold` / `Current` / `Confirmed` / `EffectiveMode` | Core/Compilation | The append-only stream and its one fold | `Append` + reader only; exclusive writer; chain check | ADR-0034 |
+| `Project` | Core/Compilation | **The sole assembler** of shape · tier · cap · `GoalBlock` · lease · prompt · task class | A closed, named set of call sites by census (ADR-0033 rule 2 — the count lives there, not here); `projection_sha` rebuilds | ADR-0033 |
+| `CompileOutputValidator` + `CompilePromptAssembler` | Core/Compilation | The typed boundary; the host header and template as embedded resources | Nothing downstream sees raw text; `prompt_sha` over embedded bytes | ADR-0033 |
+| `CompileCallHost` | App/Conductor | The one model call, composed apart from the run root | `compile-call.compose`, never `governed-run.compose`; a negative-reference census | ADR-0035, `note-addendum-cd-second-entry-point-ledger` |
+| `AcpLaneClient.NewSessionAsync(cwd, SessionTools)` | Core/AgentPlane (Ruling 71's delivery, reused) | The typed `session/new` tools argument — a sealed two-value type (`None` · `Lane`) | `tools: []` + the `settings` deny belt + `disallowedTools` + `mcpServers: []` on the wire, exact key set asserted (`disableBuiltInTools` dropped as dead) | ADR-0035 |
+| Prepare (states, marks, tier control) | App/Workbench/Composer | The human gate inside Addendum C's composer | Send is the confirmation; every override an `operator` row | D §A11, Addendum C §C4 |
+| Settings model (compile mode, ceiling, `budget_cap`, default task class) | Core/Sessions (no code home today — F-6) | Reads the two gate artifacts; exposes the ladder | A rung is selectable only when its artifact verifies | ADR-0036 |
+| `tools/compile-eval/` | tools (Python, stdlib) | Golden set from real rows; metrics with denominators; the A6 ring | The report contract test | ADR-0036 |
+| Craft profiles | pack (`.claude/knowledge/craft-profiles/`) | One immutable file per version | `(family, version, sha)` pinned; deployment map append-only | ADR-0037 |
+| `aide session purge` | CLI | Deletes the envelope file only | Id grammar; confirmation contents; the Session delete cascades by containment | ADR-0034 |
+
+**The seam, in three lines.** *In:* `Compile(sourceText, settings, context) → Envelope` (the
+pre-compile's mechanical rows; the agentic stage's `called` + `derived` rows; Prepare's `operator`
+rows). *Out:* `Project(Fold(events)) → (shape, tier + rationale, fan-out cap, GoalBlock, lease,
+prompt, task class, projection_sha)`. *Contract:* `ComposerSendGate.Send` passes the projection into
+the **unchanged** `GovernedRunRequest`; `SpawnContract`, `LeaseDerivation`, `TemplateCompiler` and
+`GovernedRunHost` do not change.
+
+### C/D.6 The three columns after the operator's decisions of 2026-09-11
+
+| Value | Home | Default | Per prompt | On the wire (`GoalBlock`) |
+|---|---|---|---|---|
+| Fan-out **ceiling** | session setting (Ruling 56) | workspace default | never (Ruling 64) | `FanOutCap = min(cap(tier), ceiling)`, computed by `Project()` |
+| **Budget** | session setting — **an optional cap** (`budget_cap: {requests, tokens} \| none`); the draft's per-block field is the interim writer and is retired when the setting lands (one home) | **none — bounded by the subscription** (the operator: *"budgets should be max … by default and then optionally I can enforce a cap"*) | never | a cap projects as `RunBudget(requests, tokens)`; none projects as the declared constant **`RunBudget.SubscriptionBounded`** (`int.MaxValue`, `long.MaxValue`; `IsSubscriptionBounded` a *value* predicate) — positive, so the tier-blind six-field `Validate` passes unchanged; **the sentinel is rendered in words, never as a number, in the sent bytes and in Prepare**; `Project()` reads it from the `ceilings` row only (never a live setting — an incomplete fold goes `stale` and appends a fresh row); **spend is measured per turn regardless** (`RunEventCost` from the usage frames; `called.cost`); cap utilisation exists only when a cap does |
+| **Tier** | a projection (Ruling 63/64) | the §A9 rule | overridable in Prepare (an `operator` row) | `Tier` from `Current(tier)` or the rule |
+| **Task class** | a per-prompt mechanical decoration with a session **default** (Ruling 70) — one constant `TaskClasses.FreeForm`, one home (the session config's `default_task_class`) | **`free-form`** — an explicit, operator-visible value (the operator: *"the basic should be free-form upon open and then I can change it"*) | changeable (source `operator`) | `GovernedRunRequest.TaskClass = Current(task_class)`, required and non-null; **no refusal for a missing class** (none can be missing — Ruling 70's refusal is overruled by the later decision); **an amendment of ADR-0028's explicitness rule, recorded as such** — the provenance rides an expand-only cohort attribute `task_class_source` beside `ScoreSegment`, never inside it, and `free-form` is a comparable class (a defaulted episode ranks — a decision, not an accident) |
+| Compile mode | session setting | `mechanical-only` | never | — (the ladder, ADR-0036) |
+| Lease | a projection of the editor's `source_text` only (Ruling 66) | — | via mentions only | `LeaseDerivation.Derive(source_text)` |
+
+`ComposerSendContext.TaskClass` is therefore **populated from** the session's `default_task_class`
+(still non-null; never a second literal); the request's value comes from the envelope. DC-110's
+concern is met by provenance, not denied: `free-form` at the composer door *is* structurally a door
+default (the D&P Architect's finding), chosen by the operator and visible, and every episode carries
+`task_class_source` so the board can tell chosen from defaulted (ADR-0033 rule 4; ADR-0028's
+amendment pointer).
+
+### C/D.7 Tier allocation (LOA) for every new capability
+
+| Capability | Tier | Why |
+|---|---|---|
+| Perspective set, allow-lists, menu/palette/rail derivation, routing, the second host, layout slots | **T0** | Registry, join, projection — deterministic and testable without a window |
+| Pre-compile: shape, the tier rule, `min(cap, ceiling)`, lease display, profile selection, constitution manifest (frontmatter line-scan), history window, snapshots, template application | **T0** | "Models are never asked to do arithmetic, enforce policy, or replay logic that a function can express" (P2) |
+| `Fold`, `Project`, `EnvelopeStore`, `CompileOutputValidator`, the deployment-gate checks, the eval harness | **T0** | The verifier and the ledger must be deterministic (P5, P10) |
+| **The agentic compile — the three structure lines, open lines only** | **T3** (the session's bound model, one call, tools pinned to none) | The one row where a T0 rule is insufficient (extraction from prose); behind the typed boundary, Prepare, and ADR-0036's gates |
+| Tier recommendation, framing rewrite, skill relevance, mention suggestions | — (not built) | D-D2/D-D3: each admitted only by its own eval and a `contract_version` bump |
+
+Archetype for the addition: **F — Copilot Aside Hot Path**, unchanged from the primary — the shell
+and the pre-compile are the hot path (0 % AI); the agentic compile is the advisory channel whose
+output cannot reach the run except through the human gate (and, pre-admission, cannot reach it at
+all). **The hot path is the run root (`GovernedRunHost.RunAsync`) and the shell; the Send gesture
+is the advisory channel's human gate** — F's composition here is 1.4 Hot Path Bypass (the
+mechanical path needs no model), 6.5 Graceful Degradation and 4.3 Receipt Ledger. Rejected for the
+compile: **E — Generate-Verify-Select** (no population, one proposal per call,
+the human is the selector), **D — Grounded Synthesizer** (the model does not synthesise over
+evidence; it structures the operator's own text), and **C — Tool-Mediated Constructor** (the nearest
+alternative after F on the selection table: a `set_goal` tool the model calls; rejected because the
+compile session's whole posture is `tools: []` — P4's tool-surface rule is met by giving the model
+*no* surface and validating its text at a typed boundary, not by giving it one typed tool).
+**Principles deviated from, recorded (the Enterprise Architect's finding):** F's defining clause —
+*the AI never blocks the hot path* — is **bounded, not upheld, under the agentic rungs**: the Send
+gesture is serialised behind the ≤ 60 s compile (a Send during `preparing` is ignored with its
+reason), and under `agentic` the model's rows reach `GoalBlock.Goal` on the second gesture. The
+bound is the linked deadline, cancel-by-edit, C7 degradation (the send always proceeds), and the
+rung being opt-in behind ADR-0036's gates; F holds unbounded for the run root and under
+`mechanical-only`. A mechanical *Send now* during `preparing` would make the aside truly parallel —
+the Owner's call, recorded as a finding. **DDD relationships (named):** `Compilation` is a
+**Conformist** to `AgentPlane`'s `GoalBlock`/`RunBudget`/`SpawnContract` (it adopts their shapes
+unchanged) and shares a **Shared Kernel** with `Sessions` (`SessionConfig`); identity-only reference
+holds for the *data* (`session_id`, `run_id`), not for the code.
+
+### C/D.8 Durable representation (DM13) — the additions
+
+| Shape | Grain and history rule | Decision |
+|---|---|---|
+| Layout slot per host perspective | One zone-envelope file per host; Type-1 (preference, rebuildable); a one-time `.bak` at migration | ADR-0032 (ADR-0013 amended) |
+| `envelope-events.jsonl` | **One row is exactly one event on one envelope**, `(envelope_id, seq)`, recorded when it occurs; append-only; `prev_sha` chains the file; the envelope is the fold; lease/shape/tier/cap/counts are projections | ADR-0034 |
+| Craft profile | Dimension, natural key `family`; version identity `(version, sha)`; content Type-2 as one immutable file per version; envelopes pin the triple | ADR-0037 |
+| The two gate artifacts | Machine-level records under `~/.aide/proof/` the settings model verifies (the pin triple; the holdout report's tuple), each committed under `docs/proof/` as the Proof Pack's citation carrying the machine artifact's sha | ADR-0036 |
+| `task_class_source` cohort attribute | One row per scored episode; an **expand-only** `TEXT NULL` column on `scored_episode_cell` beside `ScoreSegment`, never inside it (the `mode` column's pattern, ADR-0028: schema v6 → v7); old rows read *not recorded*; the migration test lands in D-1 with the D&P Architect's sign-off | ADR-0033 rule 4, ADR-0028 amendment |
+| Session settings (ceiling, `budget_cap`, compile mode, default task class) | Additive fields on the session config with explicit defaults (`none`, `mechanical-only`, `free-form`); an old file reads with the defaults | ADR-0033 (the home is P1's; F-6) |
+
+The workspace fact store (ADR-0002) is untouched: none of the above is repository evidence.
+
+### C/D.9 Contracts at seams — the spikes
+
+| Seam / dependency | Contract relied on | Evidence | Confidence |
+|---|---|---|---|
+| A second AvalonDock host under the ADR-0017 presenter | Unparenting a `DockingManager` holding a live `WebView2` (and a raw `HwndHost`) hides and re-shows it without destroying the native window; `CoreWebView2` identity, one initialisation, page state and scroll survive A→B→A→B ×3 and B→Explore→B; `Loaded` is per attach | `spikes/second-dock-host-unparent` — 2026-09-11, exit 0, all checks PASS | **Verified** (this cycle shape; floats are the airspace spike's) |
+| Adapter `session/new` `_meta` contract (0.75.1, sha `c22424c2…`) | `_meta.claudeCode.options.tools` primary, `disableBuiltInTools` a dead shorthand beside it, `disallowedTools` concatenated, `settingSources` from the cwd, `_meta` spread after it, permission mode from settings, a leading `/` executes as a CLI command | `spikes/compile-session-tool-pin` — 2026-09-11, 8/8 adapter-side facts hold (source read; **no model call**) | **Verified in source; Flagged on the wire** until P-D5 — except "bypass before `canUseTool`", which is the adapter's *comment* about CLI behaviour: **Inferred**, Flagged until P-D5 |
+| The Claude Code CLI binary the SDK launches (the pin's **enforcement** point) | `tools: []` honoured by the CLI; launched at `CLAUDE_CODE_EXECUTABLE ?? claudeCliPath()` (`acp-agent.js:6003`) with AI-DE's environment inherited | Not read; the pin is a **triple** (adapter sha · SDK version · CLI binary sha) and `CLAUDE_CODE_EXECUTABLE` is stripped from the child (ADR-0035) | **Flagged** until P-D5 records the triple |
+| Ruling 71's typed tools argument on `AcpLaneClient.NewSessionAsync` | Reused by the compile with `tools: []` | Not landed on `feature/exit-evidence` at `757af057` (`AcpLaneClient.cs:152-189` unchanged) | **Flagged** — P1 sequences it before the compile host |
+| Ruling 66's lease-source fix | `ComposerSendGate.cs:164` and `ComposerSurface.cs:449` pass the editor's text | Not on `main` at `a3f760a3` (`Derive(compiled.Text)` still) | **Flagged** — P1's first Addendum D node |
+
+### C/D.10 Cross-cutting concerns
+
+- **Identity and trust (P11):** the compile runs as the operator's own subscription through
+  `SpawnContract.AuthorizeBinding` (the identity half of `Authorize`, factored out because
+  `Authorize` validates a goal block the compile exists to fill), minimum authority — `tools: []`
+  through a sealed two-value `SessionTools`, the `settings` deny belt, no MCP, permissions refused,
+  the pin triple verified at every call; the
+  repository's hooks see the compile prompt (accepted, measured by P-D9); `providers.json` values
+  never reach a model (P-D3's redaction assertion). **The operator keeps `Bash(git push:*)` in the
+  committed settings, so the `session/new` pin is the only tool control for lanes and compiles alike**
+  (agent-plane §12). The lease is derived from the editor's `source_text` and nothing else (Ruling
+  66; the seven closed paths of D §A13.3; the census holds `new Lease(` at two named sites).
+- **Idempotency (P8):** a re-prepare with an unchanged `inputs_sha` after a *succeeded* call makes
+  zero requests; a failed call is never reused; one compile in flight per draft; a Send gesture during
+  `preparing` is ignored with its reason; `submitted.text_sha256` and `projection_sha` witness what
+  went out.
+- **Failure modes (C7):** a body that fails to build leaves the other perspectives usable and the
+  rail item in its error state; a restore that drops surfaces reports them; a locked or corrupt
+  envelope file degrades Prepare to mechanical-only and keeps the session; every non-success compile
+  outcome (`unavailable · refused · timed_out · malformed · suspect · cancelled`) is a visible
+  mechanical envelope with a *Prepare again* control and the send proceeds; a missing gate artifact
+  leaves a rung unselectable with the reason.
+- **Observability (IO1–IO12):** perspective switches emit `{from, to, trigger, first_entry,
+  duration_ms}` with named start/stop edges **and an `outcome ∈ {switched, failed, refused}` plus
+  `error_code`** — a body that fails to build never raises the new body's `Loaded`, so the failed
+  switch's stop edge is the rail's error state being set, and the failure is in the telemetry, not
+  only on the rail (the SRE's finding; extends US-C12's attribute set); drop-with-report carries
+  count and kinds; the compile
+  emits `compile.stage{stage, duration_ms, outcome}` and `compile.degraded` on the normal path, with
+  the `called` row as the durable receipt (model configured/observed, cost, latency, counts,
+  `inputs_sha`, `prompt_sha`, `contract_version`); every percentile carries `n_measured / n_total`;
+  `prefix_measured` is read from the wire; spend is measured per turn whether or not a cap exists;
+  nothing degrades to `0`, only to *not recorded*. Latency figures are recorded SLOs, never CI
+  assertions (ADR-0029; `verify-perf-assertions.py`).
+- **The census gate as the UI acceptance floor:** every surface Addenda C and D add or restyle names
+  the runtime contrast census (Addendum C §C7, P-11) as its acceptance test; a surface the census
+  cannot walk reports *not measured*, never a pass; the interim floor is `ContrastFloorTests`'
+  pairing list with *census-pending* rows.
+- **`WebSurfaceHost` is shared by every web surface in either host** (DC-138;
+  `note-addendum-cd-web-surface-host-sharing`).
+
+### C/D.11 LOA conformance for the additions
+
+| Criterion | Status |
+|---|---|
+| C1 Tier annotation | `CompileCallHost` carries `[CapabilityTier(T3)]`; nothing else initiates a model call. **Recorded deviation:** no `[CapabilityTier]` or `[Pattern]` attribute exists in `src/` today; `CompileCallHost` is the first, and the attribute types are defined in `Core/AgentPlane` in slice D-2. **Capability-contract condition 3 (a pinned model version) is a recorded deviation:** the wire reports no model identity this client can read (`model_observed` is *not recorded* until it does — agent-plane §12), so the compensating controls are `model_configured` in ADR-0036's gate tuple, drift trigger (ii) on any observed change, and the identity labelled Inferred on every report. |
+| C2 Budget propagation | The 60 s compile bound and the token thresholds (`opened.constants`, the admission floors) are the compile's budget; the run's budget is the projected `RunBudget` (validated, never enforced in Phase 1). |
+| C3 Receipt emission | Every compile is a `called` row inside a `compile.stage` activity; every run root a `governed-run.compose`; a compile a `compile-call.compose`. |
+| C4 Typed boundaries | `compile-output/1` → `DerivedDecoration[]` through `CompileOutputValidator`; `Perspective`, `SurfaceKind`, `EnvelopeEvent` are records. |
+| C5 Side-effect protection | No model output reaches a run without the validator, `Project()` and Send; pre-admission, none reaches it at all. |
+| C6 Idempotency keys | `inputs_sha` (compile), `envelope_id` + `seq` (store), `commandId`/dispatch key (unchanged). |
+| C7 Fallback declaration | Every compile outcome degrades to a mechanical envelope; every gate refusal names its reason; a failed body leaves the shell usable. |
+| C8 Pattern naming | Named per ADR, as corrected by the Patterns Expert at the gate (descriptor rows / Smart Enum, Table-Driven Method, Presenter, State + Command Router, parameterised Factory Method, Parallel Change expand-only, Atomic Replace with backup, Event Store + Hash Chain + Projection, ACL/Translator at the seam, Special Case, Deterministic Verifier as the enforcement of a Schema-Constrained-Output contract, Receipt Ledger, Facade + Gateway + typed Parameter Object, memoized model call, Promotion/Admission Gate + Shadow Mode, Circuit Breaker with manual reset + high-water-mark cursor, Graceful Degradation, least-privilege capability restriction + Policy-Bound Egress — **not** Sandboxed Executor, Confidence-Calibrated Gating, Red Team Probe, Composite or Mediator, each of which was named and withdrawn). **Recorded SHOULD-deviation, house-wide:** patterns are named in prose (ADR "LOA mapping" sections), not by a `[Pattern]` attribute; the first attribute lands with C1's above. |
+| C9 Anti-pattern absence | No second list (55b), no stored projection (DM7), no ungated model output, no flag-gated capability, no second run root. |
+| C10 Audit completeness | The envelope stream is queryable from `envelope_id` to `consumed.run_id`; the Proof Pack cites `envelope_id + projection_sha`. |
+| C11 Principal propagation | The operator's subscription is the acting principal on every compile and run (`Authorize` at the boundary; `AccountLabel` on the receipt). |
+
+### C/D.12 Delivery phasing — vertical slices for P1 to carry
+
+Defined whole above; delivered as thin end-to-end slices, each deployable, test-validated and
+human-validatable, in Ruling 54's order for C and the spec's for D. Ordered gates:
+**spike → advisory → measured → agentic**; the two spikes above are done (one Verified, one
+Verified-in-source); P-D5 is the first runtime gate.
+
+| Slice | Proves end to end | Real | Mocked / stubbed seam | Human validation | E2E checks | Unblocks |
+|---|---|---|---|---|---|---|
+| **C-0 — prerequisites** | Ruling 66's lease-source fix; Ruling 71's typed `session/new` tools argument (from `feature/exit-evidence`); INV-0006 merged | the two argument changes; the `NewSessionAsync` record | — | none (headless) | red-first: an attached body with `@src/` adds no pattern; the lane's `session/new` carries `disallowedTools: ["Bash"]` | every later slice |
+| **C-1 — the perspective mechanism (walking skeleton)** | The rail's three destinations swap three retained bodies; the derived menu and palette follow the allow-list; one slot per host; the drop-with-report restore | `PerspectiveSet`, the kind-row columns, `PerspectiveMenu.For`, `PerspectiveShell`, `DockHost` extracted and composed twice, `ZoneLayoutStore` per host, host B with the §B4 default | host B's surfaces are today's (no `view`/`inspector` selection wire yet); Explore unchanged | switch with a terminal live and a run streaming; restore today's saved layout and read the report; press `Ctrl+3` with focus inside the Explore body's WebView2 page, then inside the terminal (P-7, re-targeted: the terminal is WPF-drawn; the WebView2 pages are the real `HwndHost`s) | US-C1–C4, C7–C10, C12 headless + P-1, P-2, P-3, P-4, P-8, P-9 | C-2, C-3 |
+| **C-2 — the Coding default and the Evidence pair** | The Coding host opens with §B4's layout; `view`/`inspector` render master and detail in Architecture | `WorkbenchLayout.Default()` per perspective; the selection-source seam | — | open a fresh workspace; select an evidence row and read its provenance | US-C6, US-C8 headless + P-6 | D-1 (the composer) |
+| **C-3 — the composer as a conversation** | One editor, no boxes, no compiled text at rest; empty editable structure lines; the write-scope line; the refusal that names `@path` | Addendum C's composer regions; the Prepare regions as WPF controls; session settings with defaults (ceiling, `budget_cap: none`, compile mode, `free-form`) — F-6's home | the deriver (D-5 → D's compile); the census's WebView2 half (*not measured*) | type the US-C13 fixture; send at defaults with one gesture; read the inherited line (*bounded by your subscription*) | US-C13, US-C5 headless + P-11 (WPF half), P-12, P-13; the census-pending rows in `ContrastFloorTests` | D-1 |
+| **D-1 — the mechanical compile + the store + Prepare + purge** | Send opens an envelope, the projections read from the fold, `GovernedRunRequest` is byte-identical to today's for the same text, the store chains, purge deletes the file, `aide compile fold` recomputes the projection from rows | `AiDe.Core/Compilation` (pre-compile, fold, `Project`, validator, store), `ComposerSendGate.Send` via `Project()`, `aide compile fold` (the third named `Project(` site; the eval's fold), Prepare's four states, `aide session purge`, the instrumentation | `CompileCallHost` (a fake peer); the profile (`none`) | send a prompt and diff the compiled disclosure against the sent bytes; purge and confirm | US-D1–D4, D6, D7, D9, D10, D12, D13 headless; P-D1, P-D2 (real rows), P-D3, P-D6 | D-2 |
+| **D-2 — the compile call and the first gate** | A pinned compile session on the bound engine returns typed proposals into Prepare under `agentic-advisory`; the pin observed on the wire | `CompileCallHost`, the typed tools argument with `tools: []`, the ledgers, the settings model reading `compile-pin-spike.json`, the eval harness's derive/score | the admission report (absent → `agentic` unselectable) | run P-D5 attended; prepare a prompt under advisory; keep one line and send | US-D5, D8, D11 (b1, b2) headless; **P-D5, P-D8, P-D9 runtime**; P-D4's first 50 | D-3 |
+| **D-3 — admission** | 50 scored + 50 holdout meet the floors; `agentic` selectable; the A6 ring runs | `compile-eval-admission.json`, `ring.py`, the drift detector, `anthropic@1.0.0` (from `/collectknowledge`) | — | read the report; open settings and see `agentic` selectable with its reason | US-D11 (b3, b4); P-D7 | D-D2 (forced-choice subset) |
+
+**Planned reds, per slice — each observed red before the behaviour lands (CI6; Addendum C §A12,
+Addendum D §A22):**
+
+| Slice | Red first (test, and why it goes red) |
+|---|---|
+| C-0 | the attachment-body / template-body lease tests (Ruling 66); the lane's `session/new` exact-key wire test (`disallowedTools: ["Bash"]`, Ruling 71) |
+| C-1 | `MainMenuTests.TheMenuCoversEveryCatalogCommand` (one menu no longer covers every command → re-scoped to ≥ 1 perspective ∪ entry verbs); `MainMenuTests.EveryMenuItemShowsItsKeyboardChord` (bound-only); `ExplorerModeTests.Toggle_FlipsModeAndRaisesModeChanged` (three-row set; activate-the-active is a no-op); the announced-gesture uniqueness collector (four collisions today, US-C10 b2); the `Perspectives` non-empty-set build test; the §B3 literal-table menu oracle; the US-C3 routing table; ADR-0032's tests 1–7 |
+| C-2 | `SurfaceContentTests.TheJoinsSurfaceIsBuilt_AndIsInTheDefaultLayout` and the four sibling `*IsInTheDefaultLayout` tests (re-scoped to "reachable from the derived menu of the perspective that admits it" + §B4's per-perspective defaults); the US-C6 positive master/detail oracle (both trees identical today); the US-C8 recording-fake kind filter |
+| C-3 | `TheComposerRendersItsFieldLevelErrorsTests.ARequiredFieldGapBlocksSend…` (six fields on screen), `TheComposerIsOneValidationMechanismTests.Ruling26b_…`, `GoalBlockTemplateTests.TheTemplatesFieldsAreTheSameSetAsGoalBlockFields` (tier / fan-out / budget leave the per-prompt set); the positive send with nothing typed for tier/fan-out/budget ("'tier' is required" today); the `"free-form"` quoted-literal census (zero today); the numeral-absence render test for `SubscriptionBounded` |
+| D-1 | P-D1's fourteen tier inputs (no rule exists); the `Projection.Project(` named-call-site census (zero today); the `LeaseDerivation.Derive(`/`Patterns(` named-site census with the `source_text` argument (the display site still passes the render today); the `RunBudget` named-member cap; ADR-0034's tests 1–3, 5, 6; the `HasMention` shared-regex test; the `projection_sha` domain test (an `operator` `task_class` row changes the sha) |
+| D-2 | the compile `session/new` exact-key-set wire test; `Roots == 0` for a compile; the `Conductor/Compile*.cs` negative-reference census (non-empty set asserted); `AuthorizeBinding`'s R0 case; the linked-deadline test (silent at `initialize`); the gate-1 artifact tests (missing / triple mismatch / recount ≠ 0) |
+| D-3 | the report contract test (num/den only; split witness; `carried` floors; `--affirm`); the drift watermark test; the canonicalisation fixture asserted by both sha implementations |
+
+**Spec oracles whose test is the spec's own criterion (no ADR test; the slice's red-first list
+names them so red-first is traceable):** US-C1 b3/b4 (activate-the-active no-op; Escape's scope),
+US-C3 b4 (routing target fails to build), US-C5 (all bullets; P-1 for the rendered rail), US-C8
+b3/b4 (in-host opens; the drill-to-node return), US-C10 b2/b3 (the collector; copy derived from
+bindings), US-C11 (ADR-0031 test 3), US-C12 b1 (the switch event), **P-5** (the permission overlay
+while Architecture is active — C-1), US-D3 b3/b4, US-D5 b4–b7, US-D6 b1–b5, US-D9, US-D13's *"history
+purged"* / *purged* resolution. Each is assigned to the slice that builds the behaviour, and each
+lands red before green.
+
+**Non-goals carried (never in these slices):** Use Case 4; D-0…D-6 of Addendum C; D-D2…D-D5 of
+Addendum D; a per-prompt task-class *refinement* by a model; a numeric budget required anywhere; a
+second graph store; a chord-prefix key handler; the census's design.
+
+### C/D.13 The E7 surface list for the whole refactor (written once; P1 carries it)
+
+**Perspectives:** store (`ZoneLayoutStore` ×2, file per host) → model (`PerspectiveSet`;
+`SurfaceKind.Perspectives/Instances`; `ZoneBackedLayoutService` admitted kinds) → service
+(`PerspectiveShell`, `DockHost` ×2, `WorkbenchController` ×2, `LayoutPersistence` ×2) →
+projection/wire (`PerspectiveMenu.For`; `RestoreResult` with drop report; the switch event) → client
+type (`MainWindow` rail items, menu radio, title suffix, status strip) → UI (rail states; empty
+states; the drop-with-report string; the census rows) → compute reader (`MainMenuTests`' successor;
+the palette; P-1's UIA walk; the switch-event consumer in the profiler).
+
+**Compile:** store (`envelope-events.jsonl`; the two gate artifacts; craft-profile files) → model
+(`Envelope`, five event records, `RunBudget.SubscriptionBounded`, `task_class` decoration) → service
+(`PreCompile`, `Fold`, `Project`, `CompileOutputValidator`, `EnvelopeStore`, `CompileCallHost`,
+settings model) → projection/wire (`GovernedRunRequest` unchanged; `session/new` `_meta`;
+`compile.*` run events) → client type (`ComposerSendContext.TaskClass` default; Prepare's marks and
+compile line) → UI (the derived structure, compile line, inherited line, write-scope line, compiled
+disclosure; the census rows) → compute reader (`Project()`'s three named call sites — the render,
+`Send`, and `aide compile fold`; the eval harness over the CLI's JSON; the Proof Pack's
+`projection_sha` citation; `aide session purge`'s confirmation).
+
+### C/D.14 Confidence ledger
+
+| Claim | Label | Basis |
+|---|---|---|
+| A second docking host survives the presenter swap with a live HwndHost | Verified | `spikes/second-dock-host-unparent`, exit 0 |
+| The adapter honours `_meta.claudeCode.options.{tools, disallowedTools}` and passes them to the SDK | Verified (source) | `spikes/compile-session-tool-pin`, 8/8 |
+| `tools: []` yields zero tool calls on the wire with a repository `.mcp.json` | Flagged | P-D5 not run |
+| The spec's quoted adapter comment (*"canUseTool is not guaranteed…"*) | Corrected | not in 0.75.1; the mechanism is at `:5274-5279`, `:5856` |
+| Ruling 71's typed tools argument exists | Flagged | not on `feature/exit-evidence` at `757af057` |
+| Ruling 66's fix is on `main` | Flagged | `ComposerSendGate.cs:164` still `Derive(compiled.Text)` at `a3f760a3` |
+| `free-form` is a comparable `ScoreSegment` class | Verified | `Leaderboard.cs:36, 55-70` — only `Unclassified` is incomparable |
+| `RunBudget.SubscriptionBounded` passes `Validate` | Verified (by reading `Validate`) | `GoalBlock.cs:146-157` refuses only null and non-positive |
+| `SpawnContract.Authorize` cannot be reused for a compile as-is | Verified | `GoalBlock.cs:207` calls `RequireGoalBlock` → `Validate`; an R0 compile has no block — hence `AuthorizeBinding` (ADR-0035) |
+| `disableBuiltInTools` adds no control beside `tools: []` | Verified (source) | `acp-agent.js:5883-5884` — `??` never evaluates its right-hand side when `tools` is present |
+| The `settings` deny belt's key names and precedence | Inferred | P-D5 runs with and without it |
+| Windows share-mode: a recursive delete fails on the locked envelope file after removing siblings | Inferred | ADR-0034 rule 6's acquire-first rule; the cascade test proves it |
+| The retained-switch p95 ≤ 150 ms | Inferred | US-C12's budget; measured at P-8, never a CI assert |
+| N = 50, X = 10 %, Δ = 20 %, K = 5, 32 KiB, 60 s, 1 s | Inferred | first values (IO7); K and the bounds on `opened.constants`, N/X/Δ in the host floor table; N only upward, floors only stricter |
+| The `anthropic@1.0.0` profile exists | Flagged | it does not; compiles run with `none` |
+
+### C/D.15 Residual architectural risk (the additions)
+
+- **P-7 (a gesture from inside a hosted HWND — the WebView2 pages, not the terminal, which is
+  WPF-drawn)** may never reach WPF; if so the web surface
+  forwards the perspective gestures — `/design-slice`'s decision.
+- **The `WorkbenchShell` extraction** is the largest edit in Addendum C (2,967 lines; DC-135's
+  70:19 test ratio must not widen).
+- **The hooks residual:** a repository hook sees the compile prompt and can egress it; accepted for
+  the operator's own repository and measured (P-D9), never assumed.
+- **A single-author corpus** for the first 100 envelopes; floors fixed in advance, judged on a
+  holdout, labelled.
+- **The envelope file's growth** beyond 10 MiB is unmeasured (D-D5's trigger).
+- **The ruling being filed** for the two operator decisions of 2026-09-11 is cited here by audit
+  id; when the Owner numbers it, ADR-0033 and this section gain the number (a citation edit, not a
+  decision).
+
+### C/D.16 Gate record — Addenda C and D
+
+`GATE define-architecture (Addenda C and D) · 2026-09-11 · node A1, session addendum-c-chain ·
+council in Adversary Mode, ≤ 3 concurrent, loop variant = unresolved Blockers, floor 0, cap 2 ·
+authors did not self-clear any veto.`
+
+| Persona | Pass 1 | Pass 2 | Conditions (all folded into the ADRs and this section) |
+|---|---|---|---|
+| **Data & Persistence Architect** (hard veto — the store and the migrations) | **HELD**: two Blockers — a writer opening a broken chain could duplicate `(envelope_id, seq)`; `Project()` reading a live setting broke DM11 b/c — plus 12 Majors (the `.bak` copy/refusal paths; the frozen-DTO rollback oracle; the Session delete acquiring the file first; the sha domain and the `manifest.json` registry row; the sentinel rendered in words; the `ParseBudget` contract step; one constant/one home for `free-form`; the ADR-0028 amendment recorded) | **CLEARED** — both Blockers closed by text + test; three soft conditions applied (`constitution_delivery` — later cut; the canonicalisation fixture; the writer's schema-agnostic key walk); the delete-under-held-handle ordering | ADR-0032, 0033, 0034, 0037, 0013, 0028 |
+| **Security & Identity Architect** (hard veto — the compile session's tool set, the lease source, the envelope's history) | **CLEARED with nine conditions** — `AuthorizeBinding` factored out (`Authorize` validates a block the compile exists to fill); the pin is a triple (adapter sha · SDK version · CLI binary sha) verified per call, `CLAUDE_CODE_EXECUTABLE` stripped; the dead `disableBuiltInTools` belt replaced by a `settings` deny belt (key names Inferred; P-D5 with/without); a sealed two-value `SessionTools` with an exact-key-set wire test; the ledger note's "pin loosened ⇒ ungoverned lane"; Gate 1 as a staleness gate with a frame-log recount; P-D9 on a never-trusted fixture with a conditional trust affirmation; committed fixtures affirmed | — | ADR-0035, 0036, 0033, the ledger note, agent-plane §12 |
+| **AI Systems Engineer** (hard veto — the eval gate and non-determinism containment) | **CLEARED with eight conditions** — floors recomputed from num/den by the reader; the sample/holdout witness; the bound model in the gate tuple; a degraded-rate floor over every `called` row and one treatment-arm definition; the deterministic baseline named with a measurable; the drift trigger demotes and the re-run re-admits; `suspect` post-admission reads advisory and triggers drift; the `reused` receipt row and eval dedup | — | ADR-0036, 0035, 0033 |
+| **Test Architect** (hard — every ADR names its falsifying test) | **HELD**: one Blocker — the `projection_sha` domain hashed `opened.task_class` while the projection reads `Current(task_class)` — plus eight Majors (two oracles for `disableBuiltInTools`; `HasMention` public vs the reflection test; a vacuous `RunBudget` census; a one-file negative census; X and Δ unvalued; P-7's premise — the terminal is WPF-drawn; the eval's Python `Project()`; planned reds not carried per slice) | **CLEARED** — the Blocker closed (the domain member is `Current(task_class).value ‖ source`; US-D1 b2 superseded as a finding); three conditions applied (`aide compile fold` as the third named `Project(` site; `GoalBlock.cs` in the `RunBudget` cap with two named exemptions; ADR-0035's summary) | ADR-0033, 0035, 0031, this section §C/D.12 |
+| **SRE & Systems Diagnostician** | **PASS-WITH-CONDITIONS** — one linked 60 s deadline over Start → close; correlation keys on the `compile.*` events (later made pun-free); the open-time walk measured and off the UI thread; the drift watermark; the switch event's `outcome`; the hidden host's footprint measured at P-4; plus minors (reap-before-append, `error_code`, censored latency, `reused` cost zero, `session.spend`) | — | ADR-0035, 0034, 0036, 0033, 0031, §C/D.10 |
+| **Enterprise Architect** (soft veto — LOA conformance) | **PASS-WITH-CONDITIONS** — F's non-blocking clause recorded as a bounded deviation; capability-contract condition 3 recorded as a deviation with compensating controls; a Cost Model on ADR-0035; the `task_class_source` column in the durable table; Archetype C named as rejected; DDD relationship types named; two top-level pointers; spec supersessions recorded; the cross-repo contract owned | — | §C/D.7, §C/D.8, §C/D.11, ADR-0035, 0030, 0033, 0034, 0037 |
+| **Patterns Expert** | **PASS-WITH-CONDITIONS** — five patterns renamed (6.4 → Promotion/Admission Gate + Shadow Mode; "5.1 inverted" → least-privilege restriction; 5.2 → Policy-Bound Egress, no sandbox claim; 3.4 → eval-harness adversarial cases; Composite → parameterised Factory Method; Mediator → State + Command Router; Strategy/Registry → Table-Driven Method / Smart Enum); `File.Replace` atomic writes with backup; no key pun on `RunEvent.RunId/AgentId` (origin in `Ext`); ACL/Facade/Gateway/Special Case named | — | every ADR's LOA mapping; ADR-0032 rules 3–4; ADR-0033 rule 6 |
+| **The Simplifier** (soft veto) | **HELD on six Majors** — four cuts taken (`CompileCallLedger`; the mode-ledger file; the `constitution_delivery` special case; the `compile.inflight` gauge) and the two drifted duplicates reduced to pointers (ADR-0013's mechanism prose; the ledger note's census); the presenter-router question referred to the Tech Lead; minors: N/X/Δ in one home; `DeniedToolNames` once with a removal rule; a "realised as" line on ADR-0033; the header render of spend as a finding; the two `.bak` suffixes defended in writing; the spec's latency floor not thinned (a finding) | cleared by the cuts and the written rationales above | ADR-0035, 0036, 0037, 0033, 0013, the ledger note, the P1 note |
+| **Tech Lead** (casting vote) | **PASS-WITH-CONDITIONS** — one three-path constant for the `Project()` census (every "two" struck); one lifetime rule for the envelope store (the document's; one `consumed` per envelope); the opener delegates' fate named (one routed `OpenKind`, wired once); the four tension calls ruled: shared handshake **deferred** with a drift control; `CompileCallLedger` **cut**, the ledger fold tracked debt; the router **stays in the presenter, bounded** (a `switch` on any other command id is the falsifier); the `DockHost` record **kept**; `[CapabilityTier]` kept only with a reader test; N only upward, floors only stricter; the frame log machine-level | — | ADR-0033, 0034, 0031, 0035, 0036 |
+
+**Verdict: PASS-WITH-CONDITIONS — every hard veto cleared by its holder (none self-cleared); the
+soft vetoes cleared by cuts or written rationale; the cap (2) fired for two holders (D&P, Test
+Architect) and did not exceed it.** Residual risks: §C/D.15. Conditions that are *tests* land
+red-first in the slices named in §C/D.12; conditions that are *runtime measurements* are the Proof
+Pack items named there (P-4, P-7, P-D4, P-D5, P-D8, P-D9). Findings for the Owner and for
+`/design-slice` are consolidated in `note-addendum-cd-architecture-p1-inputs` §6.
 
 ## LOA conformance check
 
@@ -604,8 +1094,8 @@ implementation (Phase 2 for terminal/visual; `P1-EXT` establishes the extractor 
 | | |
 |---|---|
 | **Completed** | Superseded the 2026-08-25 draft; **executed and committed the SQLite, MCP (stdio + hostile-Origin), and ConPTY spikes**; recovered and committed the release plan; fixed the `.gitignore` rules that hid `docs/release/` and `spikes/`; resolved the three hard and two soft vetoes and the verified contradictions; added ADR-0008..0011; produced the revised component architecture, durable model, phasing, and Phase-1 proof plan. |
-| **Remaining** | Phases 1–5 in order; Phase 1 first resolves the in-process core, write-ahead dispatch, knowledge projection, and MCP egress design. |
-| **Best next action** | `/design` the Phase-1 walking skeleton: fixture extractor, workspace fact schema, bounded query/projection + knowledge projection contract, in-process command/authorization, write-ahead dispatch receipt, and the accessible provenance pane. |
+| **Remaining** | Phases 1–5 in order; Phase 1 first resolves the in-process core, write-ahead dispatch, knowledge projection, and MCP egress design. **Addenda C and D (2026-09-11):** slices C-0 → C-1 → C-2 → C-3 → D-1 → D-2 → D-3 (§C/D.12), gated spike → advisory → measured → agentic. |
+| **Best next action** | `/prepare-for-coordination` (P1) over §C/D.12 and `note-addendum-cd-architecture-p1-inputs`, then `/design-slice` of C-0 + C-1 (the prerequisites and the perspective mechanism — the walking skeleton of the perspective shell). |
 
 ## Review resolution
 

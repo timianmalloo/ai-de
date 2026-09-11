@@ -10,6 +10,7 @@ links:
   - { to: architecture-agent-plane, rel: relates-to }
   - { to: note-conductor-mode-cohort-not-partition, rel: implements }
   - { to: adr-0023-watcher-observation-projection, rel: relates-to }
+  - { to: adr-0033-prompt-compilation-bounded-context, rel: relates-to }
 review-by: 2027-02-28
 review-suggested: []
 summary: >-
@@ -95,3 +96,16 @@ that a governed and an observed episode carrying the **same** caller-chosen task
   Persistence Architect per the ruling's Condition 4.
 - **Ruling of record:** `docs/notes/conductor-mode-cohort-not-partition.md`, Owner agent, 2026-09-09,
   confidence Verified.
+
+## Amendment pointer — 2026-09-11 (ADR-0033 rule 4)
+
+The decision above stands. ADR-0033 records, as an **amendment of this record's explicitness
+rule**, the operator's decision of 2026-09-11 that the composer door carries an operator-set
+default task class `free-form` (`TaskClasses.FreeForm`, declared beside `ScoreSegment.Unclassified`),
+changeable per prompt (Ruling 70). Structurally that is a door default — the shape this record
+forbids — so ADR-0033 binds it with two conditions: the provenance is recorded per episode as an
+**expand-only cohort attribute `task_class_source ∈ {session-default, operator}` beside
+`ScoreSegment`, never inside it** (this record's own `mode` column pattern), and `free-form` is a
+comparable class, so a defaulted episode ranks (recorded, not hidden). The two ingest doors this
+record corrected are unchanged. The Phase-3 finding above gains a third door.
+

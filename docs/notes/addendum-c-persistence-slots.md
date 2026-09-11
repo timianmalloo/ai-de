@@ -11,7 +11,8 @@ links:
   - { to: note-addendum-c-council-rulings, rel: depends-on }
   - { to: adr-0013-layout-persistence-envelope, rel: relates-to }
 review-by: 2027-03-11
-review-suggested: []
+review-suggested:
+  - { by: adr-0013-layout-persistence-envelope, on: 2026-09-11, reason: "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback" }
 summary: >-
   Ruling 52 says an old envelope carrying a now-disallowed kind migrates by drop-with-report, never
   crash; this note fixes the two things it left open — the old envelope becomes the Coding slot
