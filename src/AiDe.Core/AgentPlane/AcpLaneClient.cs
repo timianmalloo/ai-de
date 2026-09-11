@@ -62,6 +62,73 @@ public sealed record AcpClientCapabilities(bool ReadTextFile, bool WriteTextFile
 }
 
 /// <summary>
+/// The tools argument of <c>session/new</c> — what the lane's model may hold — sent through the
+/// adapter's extension slot <c>_meta.claudeCode.options</c>.
+/// </summary>
+/// <remarks>
+/// <para><b>A lane is not toolless by default.</b> With no <c>_meta</c> the adapter hands the SDK
+/// the <c>claude_code</c> preset and resolves permissions from the user's, the repository's and the
+/// local settings (adapter 0.75.1, <c>acp-agent.js:5883-5884</c>, <c>:5962</c>), so the lease
+/// bounds the file writes the seams observe and nothing bounds the tools. This record is the one
+/// place the host says otherwise (Ruling 71; <c>docs/notes/lane-pin-spike.md</c>).</para>
+///
+/// <para><b>Exactly the two members the adapter spreads into the SDK options</b>
+/// (<c>:6007-6008</c>), and nothing else — the whole <c>_meta.claudeCode.options</c> object is
+/// spread into the SDK's options (<c>:5964</c>), so a wider record would be a wider reach. An
+/// absent record and an empty one both send the frame every prior run sent.</para>
+/// </remarks>
+/// <param name="Tools">
+/// The base tool set: <c>null</c> leaves the adapter's preset in place; an empty list disables
+/// every built-in tool (Addendum D's compile session).
+/// </param>
+/// <param name="DisallowedTools">
+/// Tool names removed from the model's context even where the settings would allow them;
+/// <c>null</c> sends none. The governed lane sends <c>["Bash"]</c>.
+/// </param>
+public sealed record LaneSessionOptions(IReadOnlyList<string>? Tools = null, IReadOnlyList<string>? DisallowedTools = null)
+{
+    /// <summary>
+    /// The <c>_meta</c> object for <c>session/new</c>, or <c>null</c> when there is nothing to say —
+    /// so an absent record and an empty one both leave the frame exactly as it was.
+    /// </summary>
+    /// <exception cref="ArgumentException">A blank tool name: it looks like a pin and pins nothing.</exception>
+    internal JsonObject? ToMeta()
+    {
+        if (Tools is null && DisallowedTools is null)
+        {
+            return null;
+        }
+
+        var options = new JsonObject();
+
+        if (Tools is not null)
+        {
+            options["tools"] = Names(Tools);
+        }
+
+        if (DisallowedTools is not null)
+        {
+            options["disallowedTools"] = Names(DisallowedTools);
+        }
+
+        return new JsonObject { ["claudeCode"] = new JsonObject { ["options"] = options } };
+    }
+
+    private static JsonArray Names(IReadOnlyList<string> names)
+    {
+        var array = new JsonArray();
+
+        foreach (var name in names)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(name);
+            array.Add(name);
+        }
+
+        return array;
+    }
+}
+
+/// <summary>
 /// ACP semantics over the peer: the handshake, the session, the prompt, and the permission answer.
 /// </summary>
 /// <remarks>
@@ -143,13 +210,17 @@ public sealed class AcpLaneClient
     }
 
     /// <summary>
-    /// Opens a session rooted at <paramref name="cwd"/>, which <b>must be absolute</b>.
+    /// Opens a session rooted at <paramref name="cwd"/>, which <b>must be absolute</b>, holding the
+    /// tools <paramref name="options"/> names — or, with none, whatever the adapter's preset allows.
     /// </summary>
     /// <exception cref="AgentPlaneException">
     /// <see cref="AgentPlaneErrorCodes.SessionCwdNotAbsolute"/> — refused before the wire, so the
     /// reason stays attached to the caller rather than arriving later as a <c>-32602</c>.
     /// </exception>
-    public async Task<string> NewSessionAsync(string cwd, CancellationToken cancellationToken = default)
+    public async Task<string> NewSessionAsync(
+        string cwd,
+        LaneSessionOptions? options = null,
+        CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(cwd);
 
@@ -161,10 +232,16 @@ public sealed class AcpLaneClient
                 + "with -32602. It is refused here so the error names the caller rather than the transport");
         }
 
-        var result = await _peer.RequestAsync(
-            "session/new",
-            new JsonObject { ["cwd"] = cwd, ["mcpServers"] = new JsonArray() },
-            cancellationToken: cancellationToken);
+        var parameters = new JsonObject { ["cwd"] = cwd, ["mcpServers"] = new JsonArray() };
+
+        // Ruling 71: the tools pin rides the adapter's extension slot, and only when there is one to
+        // send — the frame every prior run sent stays byte-identical otherwise.
+        if (options?.ToMeta() is { } meta)
+        {
+            parameters["_meta"] = meta;
+        }
+
+        var result = await _peer.RequestAsync("session/new", parameters, cancellationToken: cancellationToken);
 
         return (result["sessionId"] as JsonValue)?.TryGetValue<string>(out var sessionId) == true
             ? sessionId
@@ -183,10 +260,13 @@ public sealed class AcpLaneClient
     /// ran there). A caller holding a <see cref="ProvisionedWorktree"/> passes the tree, not a
     /// string, so a governed lane cannot be rooted anywhere else by picking the wrong path.
     /// </remarks>
-    public Task<string> NewSessionAsync(ProvisionedWorktree worktree, CancellationToken cancellationToken = default)
+    public Task<string> NewSessionAsync(
+        ProvisionedWorktree worktree,
+        LaneSessionOptions? options = null,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(worktree);
-        return NewSessionAsync(worktree.Path, cancellationToken);
+        return NewSessionAsync(worktree.Path, options, cancellationToken);
     }
 
     /// <summary>

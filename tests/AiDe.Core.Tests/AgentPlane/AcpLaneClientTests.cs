@@ -127,6 +127,104 @@ public sealed class AcpLaneClientTests
     }
 
     /// <summary>
+    /// With no session options the frame is <b>byte for byte</b> the one every prior run sent —
+    /// <c>cwd</c> and an empty <c>mcpServers</c>, no <c>_meta</c> — whether the record is absent or
+    /// empty. Pinned as an exact string, so the pin below cannot widen the null path by accident.
+    /// </summary>
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task WithoutSessionOptionsTheSessionNewFrameIsByteForByteTheOneEveryPriorRunSent(bool emptyRecord)
+    {
+        var absolute = Path.GetFullPath(Path.GetTempPath());
+        var harness = New();
+        var run = harness.Peer.RunAsync();
+        var session = emptyRecord
+            ? harness.Client.NewSessionAsync(absolute, new LaneSessionOptions())
+            : harness.Client.NewSessionAsync(absolute);
+
+        harness.Input.Push("""{"jsonrpc":"2.0","id":1,"result":{"sessionId":"s-1"}}""" + "\n");
+        await session;
+
+        var expected = """{"jsonrpc":"2.0","id":1,"method":"session/new","params":{"cwd":"""
+            + JsonValue.Create(absolute)!.ToJsonString()
+            + ""","mcpServers":[]}}""";
+        Assert.Equal(expected, Assert.Single(harness.Output.Lines).Line);
+
+        harness.Input.EndOfStream();
+        await run;
+    }
+
+    /// <summary>
+    /// Ruling 71: the governed lane pins its shell off through the adapter's extension slot —
+    /// <c>_meta.claudeCode.options.disallowedTools: ["Bash"]</c> (adapter 0.75.1,
+    /// <c>acp-agent.js:5859-5860</c>, <c>:6007</c>) — on the <b>worktree</b> overload, which is the
+    /// governed caller's. The rest of the frame is unchanged, and <c>tools</c> is not sent.
+    /// </summary>
+    [Fact]
+    public async Task TheGovernedLanePinsBashOffThroughTheAdaptersMetaSlot()
+    {
+        var absolute = Path.GetFullPath(Path.GetTempPath());
+        var tree = new ProvisionedWorktree(absolute, "agent/claude-code/lane-0001", absolute, CoordInstalled: false);
+        var harness = New();
+        var run = harness.Peer.RunAsync();
+        var session = harness.Client.NewSessionAsync(tree, new LaneSessionOptions(DisallowedTools: ["Bash"]));
+
+        harness.Input.Push("""{"jsonrpc":"2.0","id":1,"result":{"sessionId":"s-2"}}""" + "\n");
+        Assert.Equal("s-2", await session);
+
+        var parameters = Parse(Assert.Single(harness.Output.Lines).Line)["params"]!.AsObject();
+        Assert.Equal(absolute, parameters["cwd"]!.GetValue<string>());
+        Assert.Empty(parameters["mcpServers"]!.AsArray());
+
+        var meta = Assert.IsType<JsonObject>(parameters["_meta"]);
+        var options = meta["claudeCode"]!["options"]!.AsObject();
+        Assert.Equal(["Bash"], options["disallowedTools"]!.AsArray().Select(n => n!.GetValue<string>()));
+        Assert.False(options.ContainsKey("tools"));
+        Assert.Equal(["cwd", "mcpServers", "_meta"], parameters.Select(m => m.Key));
+
+        harness.Input.EndOfStream();
+        await run;
+    }
+
+    /// <summary>
+    /// The other member — Addendum D's C1 sends <c>tools: []</c> to disable every built-in tool. An
+    /// empty list is sent as an empty array, not dropped as "nothing to say".
+    /// </summary>
+    [Fact]
+    public async Task AnEmptyToolsListReachesTheMetaSlotAsAnEmptyArray()
+    {
+        var absolute = Path.GetFullPath(Path.GetTempPath());
+        var harness = New();
+        var run = harness.Peer.RunAsync();
+        var session = harness.Client.NewSessionAsync(absolute, new LaneSessionOptions(Tools: []));
+
+        harness.Input.Push("""{"jsonrpc":"2.0","id":1,"result":{"sessionId":"s-3"}}""" + "\n");
+        await session;
+
+        var options = Parse(harness.Output.Lines[0].Line)["params"]!["_meta"]!["claudeCode"]!["options"]!.AsObject();
+        Assert.Empty(options["tools"]!.AsArray());
+        Assert.False(options.ContainsKey("disallowedTools"));
+
+        harness.Input.EndOfStream();
+        await run;
+    }
+
+    /// <summary>A blank tool name looks like a pin and pins nothing; it is refused before the wire.</summary>
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    public async Task ABlankToolNameIsRefusedBeforeAnythingIsSent(string name)
+    {
+        var harness = New();
+
+        await Assert.ThrowsAsync<ArgumentException>(
+            () => harness.Client.NewSessionAsync(Path.GetTempPath(), new LaneSessionOptions(DisallowedTools: [name])));
+
+        Assert.Empty(harness.Output.Lines);
+    }
+
+    /// <summary>
     /// The default permission answer is the <b>reject</b> option — fail closed, exactly as the spike
     /// probe did, because an unattended lane that silently accepts every edit is not governed.
     /// </summary>

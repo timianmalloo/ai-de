@@ -31,13 +31,16 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 **Status counts:** controlled 74 · partially-controlled 58 · uncontrolled 15
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
-**Recurrences since last review:** 5.
+**Recurrences since last review:** 6.
 - **DC-008**, whose first control was scoped to one test project when the cause was not project-specific.
 - **DC-001**, whose first control checked links between files and so could not see three classes cited by ID with no entry in this register.
 - **DC-013**, which recurred the same day it was first caused, because the first occurrence was repaired without being registered at all.
 - **DC-021**, which reached its *third* occurrence before it was registered at all: each repair was cheap enough to make asking why unnecessary.
 - **DC-071**, whose first control lived inside a vendored file and was silently deleted six hours
   later by a routine `/updatepack` — the fix and the mechanism that erases it shared one file.
+- **DC-019**, whose "generalisation to apply elsewhere" was prose: the lease was proven to bound a
+  lane's file writes and the lane's *tools* crossed the same boundary unbounded (Ruling 71) — a
+  memoir is not a control, and the sweep now names the boundary.
 
 *All three are CI4: a second occurrence means the control was wrong, not that someone was careless. In the first two the control had been written to fit the instances rather than the class; in the third there was no control at all, because the first occurrence was repaired and never registered — which is the failure this file exists to prevent.*
 
@@ -645,6 +648,15 @@ for both or split.*
   `RoslynCodeTaskFactory` inline task, a `UsingTask` assembly, and a design-time-target hook — with
   **zero** workspace diagnostics. Two of the four need nothing but the checked-in `.csproj`. The
   analyzer control was correct and never covered this.
+  2026-09-11 (**recurrence**, a different boundary) — the governed lane's **lease** was proven to
+  bound the file writes the seams observe (`LeaseMonitor`, `LeasesRaiseSeamsTests`), and the lane was
+  thereafter treated as governed. A lane's **tools** cross the same boundary by a different mechanism:
+  `session/new` carried only `cwd` and `mcpServers: []`, so adapter 0.75.1 handed the SDK the
+  `claude_code` preset with `Bash`, under a permission mode resolved from the user's, the
+  repository's and the local settings — and the committed project settings allow `Bash(git push:*)`.
+  Found by the Owner at F-3 (Ruling 71), not by a test. Fix: a typed `LaneSessionOptions` on
+  `AcpLaneClient.NewSessionAsync`; the governed host pins `DisallowedTools: ["Bash"]`
+  (`proof-lane-pin-ruling-71`, `note-lane-pin-spike`).
 - **Control:** the spike is committed and re-runnable
   (`dotnet run --project spikes/msbuild-task-execution`), and its **exit code is the assertion**:
   `1` when repository code executes. It carries a positive control and a non-vacuity guard, because
@@ -655,10 +667,19 @@ for both or split.*
   covers*, not the boundary it sits on — then ask what else crosses that boundary. Every "we
   established that X cannot happen" in a design should name the mechanism X travels by, and every
   other mechanism is unprobed until it is probed.
+  For the lane boundary: `EverySessionOpenedFromSourceSaysWhatToolsItHolds`
+  (`tests/AiDe.App.Tests/Conductor/TheGovernedLaneHasNoShellTests.cs`) sweeps every `NewSessionAsync`
+  call in `src/` and fails on one that does not name its tools — the boundary, not the one site —
+  observed red on the bare two-argument call before the pin; and the wire test
+  `TheGovernedLanePinsBashOffThroughTheAdaptersMetaSlot` reads the outgoing frame.
 - **Residual risk:** **live.** No containment for MSBuild task execution has been designed or tested;
   Component 1 is blocked on that decision. The same shape should be checked against the other proven
   controls in this repo — the MCP egress denial, the capability-revocation path and the fact-store
-  immutability triggers each cover a named mechanism, not a boundary.
+  immutability triggers each cover a named mechanism, not a boundary. For the lane: "no `Bash` tool"
+  is not "no command execution" — `Monitor.command`, `REPL`, `Agent` subagents and the project
+  hooks the lane loads from its own worktree remain unprobed (Security lens, 2026-09-11); the pin is
+  contract-verified and wire-unobserved until the F5 Proof Pack records the frame and the tool-call
+  names.
 - **Status:** `partially-controlled`
 
 ### DC-020 — A domain refusal that was a local exception becomes a shared-process outage
