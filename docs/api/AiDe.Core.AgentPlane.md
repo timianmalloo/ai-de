@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.AgentPlane: 57 types, 137 members, 90% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.AgentPlane: 57 types, 138 members, 90% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.AgentPlane`
 
-**57 public types · 137 public members · 90% documented.**
+**57 public types · 138 public members · 90% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -199,6 +199,7 @@ caller owns, not a constant.
 | `int ProtocolVersion = 1` | The ACP schema revision this client speaks, pinned and **asserted on the way back**. |
 | `AcpLaneClient(` | **(gap)** |
 | `Task<JsonObject> InitializeAsync(CancellationToken cancellationToken = default)` | Performs the handshake and returns its result, having checked the echoed version. |
+| `JsonObject? SessionNewParameters { get; private set; }` | The params of the `session/new` this client sent — the object the peer serialized onto the wire, `_meta` included — or `null` until it has sent one. |
 | `Task<string> NewSessionAsync(` | Opens a session rooted at , which **must be absolute**, holding the tools  names — or, with none, whatever the adapter's preset allows. |
 | `Task<string> NewSessionAsync(` | Opens the lane's session rooted in its **provisioned worktree** — spec R1 bullet 1. |
 | `Task<JsonObject> PromptAsync(string sessionId, string text, CancellationToken cancellationToken = default)` | Sends one prompt and waits for the turn to end, under the prompt bound rather than the handshake one. |
@@ -222,6 +223,15 @@ still parses, and the meanings have moved underneath it.
 Performs the handshake and returns its result, having checked the echoed version.
 
 **Throws `AgentPlaneException`.** `ProtocolVersionMismatch` when the peer echoed a different version, or none at all.
+
+### `JsonObject? SessionNewParameters { get; private set; }`
+
+The params of the `session/new` this client sent — the object the peer serialized onto
+the wire, `_meta` included — or `null` until it has sent one.
+
+**Remarks.** The outbound mirror of `ObservedAuth`: kept so the host can record the
+frame it opened the lane with (Ruling 71 (a)) as what was sent, never as a re-computation of
+what should have been.
 
 ### `Task<string> NewSessionAsync(`
 

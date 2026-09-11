@@ -183,6 +183,9 @@ public sealed class AcpLaneClientTests
         Assert.False(options.ContainsKey("tools"));
         Assert.Equal(["cwd", "mcpServers", "_meta"], parameters.Select(m => m.Key));
 
+        // What the client says it sent IS what went down the wire — the host records the former.
+        Assert.Equal(parameters.ToJsonString(), harness.Client.SessionNewParameters?.ToJsonString());
+
         harness.Input.EndOfStream();
         await run;
     }

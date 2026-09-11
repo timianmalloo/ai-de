@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 81 types, 332 members, 70% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 81 types, 333 members, 70% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**81 public types · 332 public members · 70% documented.**
+**81 public types · 333 public members · 70% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1972,6 +1972,7 @@ path swallows its own failure.
 | `void TerminalStart(` | Records the decision a terminal launch made, and how it ended. |
 | `void Crash(string origin, Exception exception)` | Records an unhandled exception, with the context that says which gesture produced it. |
 | `void McpConfig(string outcome, string? path, string? detail)` | Records what contributing to `.mcp.json` did, and the detail that must not be announced. |
+| `void LaneSessionNew(string runId, string laneId, string sessionId, JsonObject? parameters)` | Records the `session/new` a governed lane was opened with — the params object the client sent, `_meta` included — keyed by run, lane and the ACP session id it came back with. |
 | `void AppStart(string theme, DpiScale dpi, double width, double height, string windowState)` | Records that the shell started, naming the binary it is: the informational version and the commit inside it, the build configuration, the docking theme, the DPI and the window. |
 | `void ComposerLayout(` | Records the composer's rendered bounds: the editor host, the read-only compiled view, and the composer they share — at first layout and whenever either part moves past the surface's threshold. |
 | `void WebSurfaceHandshake(` | Records one transition of a web surface's host↔page handshake, with the surface's counts as they stood at that moment. |
@@ -2063,6 +2064,16 @@ it is recorded here rather than discarded.
 Written on EVERY outcome, not just the failures, because the question an operator asks
 first is which of the five things happened — and an event that only appears when something
 broke cannot answer "it did nothing, and that was correct".
+
+### `void LaneSessionNew(string runId, string laneId, string sessionId, JsonObject? parameters)`
+
+Records the `session/new` a governed lane was opened with — the params object the client
+sent, `_meta` included — keyed by run, lane and the ACP session id it came back with.
+
+**Remarks.** **Why this exists (Ruling 71 (a)).** The F5 Proof Pack must carry the outgoing frame, and a
+frame someone had to remember to capture is "not recorded". Emitted on the normal path from
+the one site that opens a lane's session, so the log holds it whether or not anyone watched.
+The unit test proves the shape; this line proves what was sent.
 
 ### `void AppStart(string theme, DpiScale dpi, double width, double height, string windowState)`
 

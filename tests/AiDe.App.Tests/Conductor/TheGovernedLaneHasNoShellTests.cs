@@ -1,5 +1,10 @@
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using AiDe.App.Conductor;
+using AiDe.App.Tests.Sessions;
+using AiDe.App.Workbench;
+using AiDe.Core.AgentPlane;
 
 namespace AiDe.App.Tests.Conductor;
 
@@ -69,6 +74,68 @@ public sealed partial class TheGovernedLaneHasNoShellTests
             Assert.True(parts.Length == 3, $"{file}: NewSessionAsync({arguments}) does not say what tools the session holds");
             Assert.False(parts[1] is "null" or "options: null", $"{file}: NewSessionAsync({arguments}) opens a session with no tools argument");
         }
+    }
+
+    /// <summary>
+    /// Ruling 71 (a): the frame the lane was opened with is recorded on the normal path — on the run's
+    /// report and as a <c>lane.session-new</c> workbench log line — and what is recorded is what went
+    /// down the wire, <c>_meta</c> included. No flag, nothing to remember.
+    /// </summary>
+    /// <remarks>
+    /// The real client over the real peer, with the engine's stdin captured: the assertion compares
+    /// the recorded params against the <c>session/new</c> frame the peer actually wrote — so a host
+    /// that logged a re-computation of what it meant to send would still have to match the wire.
+    /// </remarks>
+    [Fact]
+    public async Task TheFrameTheLaneWasOpenedWithIsRecordedOnTheReportAndInTheLog()
+    {
+        var absolute = Path.GetFullPath(Path.GetTempPath());
+        var tree = new ProvisionedWorktree(absolute, "agent/claude-code/lane-0001", absolute, CoordInstalled: false);
+        var stdout = new PushedOutputReader();
+        var stdin = new StringWriter();
+        var peer = new AcpPeer(stdout, TextWriter.Synchronized(stdin), new AcpRunEventMapper("run-1", "lane-1"), diagnostics: _ => { });
+        var client = new AcpLaneClient(peer);
+        var report = new List<string>();
+        var log = new List<string>();
+
+        var pump = peer.RunAsync();
+        var previous = WorkbenchDiagnostics.Sink;
+        WorkbenchDiagnostics.Sink = log.Add;
+        string session;
+        try
+        {
+            var open = GovernedRunHost.OpenSessionAsync(client, tree, "run-1", "lane-1", report.Add, CancellationToken.None);
+            stdout.PushFrame("""{"jsonrpc":"2.0","id":1,"result":{"sessionId":"sess-9"}}""");
+            session = await open;
+        }
+        finally
+        {
+            WorkbenchDiagnostics.Sink = previous;
+        }
+
+        stdout.EndOfStream();
+        await pump;
+
+        Assert.Equal("sess-9", session);
+
+        // The wire: the one frame the peer wrote to the engine's stdin.
+        var wire = JsonNode.Parse(stdin.ToString().Trim())!.AsObject();
+        Assert.Equal("session/new", wire["method"]!.GetValue<string>());
+        var sent = wire["params"]!.ToJsonString();
+        Assert.Contains("""{"claudeCode":{"options":{"disallowedTools":["Bash"]}}}""", sent, StringComparison.Ordinal);
+
+        // The report: the session id and the exact params, on one line.
+        var line = Assert.Single(report);
+        Assert.Contains("sess-9", line, StringComparison.Ordinal);
+        Assert.Contains(sent, line, StringComparison.Ordinal);
+
+        // The log: evt lane.session-new, keyed by run, lane and session, carrying the same params.
+        var record = JsonDocument.Parse(Assert.Single(log)).RootElement;
+        Assert.Equal("lane.session-new", record.GetProperty("evt").GetString());
+        Assert.Equal("run-1", record.GetProperty("run").GetString());
+        Assert.Equal("lane-1", record.GetProperty("lane").GetString());
+        Assert.Equal("sess-9", record.GetProperty("session").GetString());
+        Assert.Equal(sent, record.GetProperty("params").GetRawText());
     }
 
     [GeneratedRegex(@"\.NewSessionAsync\((?<arguments>[^)]*)\)")]

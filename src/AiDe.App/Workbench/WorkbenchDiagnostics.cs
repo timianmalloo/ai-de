@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Windows;
 using AiDe.Core.Workbench;
 
@@ -187,6 +188,34 @@ public static class WorkbenchDiagnostics
             outcome,
             path,
             detail,
+        });
+    }
+
+    /// <summary>
+    /// Records the <c>session/new</c> a governed lane was opened with — the params object the client
+    /// sent, <c>_meta</c> included — keyed by run, lane and the ACP session id it came back with.
+    /// </summary>
+    /// <remarks>
+    /// <b>Why this exists (Ruling 71 (a)).</b> The F5 Proof Pack must carry the outgoing frame, and a
+    /// frame someone had to remember to capture is "not recorded". Emitted on the normal path from
+    /// the one site that opens a lane's session, so the log holds it whether or not anyone watched.
+    /// The unit test proves the shape; this line proves what was sent.
+    /// </remarks>
+    public static void LaneSessionNew(string runId, string laneId, string sessionId, JsonObject? parameters)
+    {
+        using var activity = Source.StartActivity("lane.session-new");
+        activity?.SetTag("lane.run", runId);
+        activity?.SetTag("lane.id", laneId);
+        activity?.SetTag("lane.session", sessionId);
+
+        Write(new
+        {
+            ts = DateTimeOffset.UtcNow.ToString("O"),
+            evt = "lane.session-new",
+            run = runId,
+            lane = laneId,
+            session = sessionId,
+            @params = parameters,
         });
     }
 
