@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation.Composer: 30 types, 72 members, 86% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation.Composer: 30 types, 73 members, 86% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation.Composer`
 
-**30 public types · 72 public members · 86% documented.**
+**30 public types · 73 public members · 86% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -325,6 +325,7 @@ written one is overwritten with.
 | Member | Summary |
 |---|---|
 | `ComposerShape Shape { get; private set; } = ComposerShape.FreeForm` | The active shape. Free-form is the default, and needs no template anywhere. |
+| `string SourceText` | The editor's own held source text — what the operator typed, and nothing else (Ruling 66). |
 | `string FreeFormText` | The retained free-form text. |
 | `string? TemplateId { get; private set; }` | The template this draft is bound to, when its shape is a template. |
 | `IReadOnlyDictionary<string, string> GoalValues` | The goal-block field values, by wire name. |
@@ -337,6 +338,24 @@ written one is overwritten with.
 | `void Add(ComposerAttachment attachment)` | Adds an affirmed attachment. |
 | `void SwitchTo(ComposerShape shape, string? goalBlockText = null)` | Switches shape, retaining every shape's own content. |
 | `GoalBlock ToGoalBlock()` | The goal block this draft declares, as a value the one validation mechanism can read. |
+
+### `string SourceText`
+
+The editor's own held source text — what the operator typed, and nothing else (Ruling 66).
+
+**Remarks.** **Why this exists.** `Compile`'s output additionally
+carries an attachment's file content and, for a template draft, the template's own fixed
+prose — neither of which the operator wrote. `LeaseDerivation` must read only what
+the operator authored, so it is derived from this, never from the compiled prompt.
+
+
+
+
+
+**Shape-scoped, not shape-summed.** A draft retains every shape's content at once
+(see the class remarks), but only the *active* shape's content is what the operator is
+currently looking at and editing — a mention left behind in a shape the operator switched away
+from must not silently widen the lane's write scope.
 
 ### `void SwitchTo(ComposerShape shape, string? goalBlockText = null)`
 

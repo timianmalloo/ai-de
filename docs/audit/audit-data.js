@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T22:03:10Z",
+  "generated": "2026-09-11T22:49:36Z",
   "audit": [
     {
       "actor": null,
@@ -12381,6 +12381,44 @@ window.AUDIT_DATA = {
         "sha": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "short": "a3f760a3a",
         "branch": "conductor/addendum-c",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M29AJS86DHYB8G4T58KJMRV8",
+      "shortname": "implement-ruling-66-lease-source",
+      "datetime": "2026-09-11T22:49:30Z",
+      "session": "lease-source",
+      "prompt": "Ruling 66: lease derivation runs over the editor's source text only — never an attachment body, a template body, or the rendered goal block; red-first at both call sites",
+      "summary": "F-2 fixed: added ComposerDraft.SourceText (operator-typed content only, shape-scoped); ComposerSendGate.cs:169 and ComposerSurface.cs:452 both derive the lease from it instead of the compiled prompt. Red observed on main (attachment/template-body cases), green after; goal-block heading and goal-field controls unaffected; display/send equality test added; source-scan guard added; DC-146 registered; Security & Identity read-only review PASS. Core 2240/0, App 605/0 (611 incl. new tests), build clean under -p:TreatWarningsAsErrors=true. Proof Pack: docs/proof/lease-source-text.md.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Presentation/Composer/ComposerDraft.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSendGate.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs",
+        "tests/AiDe.App.Tests/Composer/TheLeaseDerivesFromTheEditorsSourceTextTests.cs",
+        "docs/lessons/defect-classes.md",
+        "docs/proof/lease-source-text.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Fix F-2 on main: LeaseDerivation.Derive/Patterns must read only the editor's own typed source text, never an attachment body, a template body, or the rendered goal-block structure, at both call sites (ComposerSendGate.cs, ComposerSurface.cs), red-first.",
+      "done_when": "Red observed pre-fix for attachment-body and template-body cases; both call sites pass the same new ComposerDraft.SourceText symbol; display and Send leases proven equal; LeaseDerivation unchanged; full Core.Tests/App.Tests green; build clean under TreatWarningsAsErrors; DC-146 registered with its control; Security & Identity read-only review passed; Proof Pack committed; pushed to fix/lease-source-text without merging to main.",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-11T22:28:32Z",
+      "duration_seconds": 1258.0,
+      "git": {
+        "sha": "1aadde843a950c9d56a7dc5f034bca0254d52f4b",
+        "short": "1aadde843",
+        "branch": "fix/lease-source-text",
         "pushed": null
       }
     }
