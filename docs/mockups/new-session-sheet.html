@@ -88,6 +88,8 @@ body[data-persona="screenreader"] .srlog{display:block}
 .classopt[aria-pressed="true"]{border-color:var(--accent);background:var(--surface)}
 .classopt .cn{font-family:var(--font-mono);font-size:var(--t-md);color:var(--text)}
 .classopt .cd{font-size:var(--t-sm);color:var(--text-muted)}
+.check{display:inline-flex;align-items:center;gap:var(--s3);min-height:24px;cursor:pointer;color:var(--text);font-size:var(--t-sm);margin-top:var(--s2)}
+.check input{width:16px;height:16px;margin:0;accent-color:var(--accent)}
 .recall{display:flex;align-items:center;flex-wrap:wrap;gap:var(--s3) var(--s4);margin-top:var(--s4);font-size:var(--t-sm);color:var(--text-muted)}
 .recall button{height:24px;padding:0 var(--s4);border:1px solid var(--accent);border-radius:var(--r-sm);background:transparent;color:var(--text);font:inherit;font-size:var(--t-sm);font-family:var(--font-mono);cursor:pointer}
 
@@ -166,11 +168,11 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
   <strong>Harness</strong>
   <label>State
     <select id="h-state">
-      <option value="default">default: defaults prefilled, task class unanswered</option>
-      <option value="answered">answered: one click on the defaults creates</option>
+      <option value="default">default: zero required inputs; free-form preselected, budget bounded by the subscription (Ruling 72)</option>
+      <option value="answered">class chosen: extraction, one click</option>
       <option value="creating">creating</option>
       <option value="failed">create failed (answers kept)</option>
-      <option value="invalid">invalid budget</option>
+      <option value="invalid">invalid cap: a cap enforced at 0 tokens</option>
       <option value="noworkspace">no workspace: the chooser interposes</option>
       <option value="overflow">overflow: long paths, 6 backends</option>
     </select></label>
@@ -224,12 +226,13 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
 
         <div class="field">
           <span class="lbl">Task class
-            <span class="req fi" data-show="default invalid overflow"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Required, no default</span>
-            <span class="req answered fi" data-show="answered creating failed"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Answered</span>
+            <span class="req answered fi" data-show="default invalid overflow noworkspace"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Default: free-form</span>
+            <span class="req answered fi" data-show="answered creating failed"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Chosen: extraction</span>
             <span class="fo">2</span>
           </span>
-          <p class="help" style="margin:0 0 var(--s4)"><b>What this decides:</b> a session's score is only ever compared against other sessions of the same class. Pick the one that matches the work. There is no default, because a guessed class is indistinguishable from a chosen one afterwards.</p>
-          <div class="classgrid" role="group" aria-label="Task class">
+          <p class="help" style="margin:0 0 var(--s4)"><b>What this decides:</b> the class every new prompt in this session starts with. A run's score is only ever compared with runs of the same class; <i>free-form</i> means no class ranks it. Change it here, or on any prompt from its decoration line (that never changes this default).</p>
+          <div class="classgrid" role="group" aria-label="Default task class">
+            <button class="classopt" id="opt-freeform" aria-pressed="true"><span class="cn">free-form</span><span class="cd">No class ranks the turn. The default on open.</span></button>
             <button class="classopt" aria-pressed="false"><span class="cn">feature</span><span class="cd">Add a capability that did not exist.</span></button>
             <button class="classopt" id="opt-extraction" aria-pressed="false"><span class="cn">extraction</span><span class="cd">Pull an existing behaviour into its own shape.</span></button>
             <button class="classopt" aria-pressed="false"><span class="cn">defect</span><span class="cd">Find a cause and repair its class.</span></button>
@@ -237,7 +240,7 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
             <button class="classopt" aria-pressed="false"><span class="cn">review</span><span class="cd">Read and judge without changing.</span></button>
             <button class="classopt" aria-pressed="false"><span class="cn">ui-feedback</span><span class="cd">Elevate a surface against operator feedback.</span></button>
           </div>
-          <div class="recall"><span>Your last session used</span><button type="button">ui-feedback</button><span>. One click applies it. A suggestion, not a preselection.</span></div>
+          <div class="recall"><span>Your last session used</span><button type="button">ui-feedback</button><span>. One click applies it as this session's default.</span></div>
         </div>
 
         <!-- SESSION SETTINGS: with defaults; the sheet creates with one click on them. No tier: tier is compiled, not typed. -->
@@ -250,11 +253,13 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
               <p class="sh">Most sub-agents any turn may convene. The compiled tier decides how many it uses, up to this.</p>
             </div>
             <div class="setting">
-              <div class="sl">Budget<span class="src">workspace default</span></div>
-              <div class="ctl fx" data-show="default answered creating failed overflow noworkspace"><input class="num" value="40,000" aria-label="Budget, tokens per session" inputmode="numeric"><span class="unit">tokens per session</span></div>
-              <div class="ctl fx" data-show="invalid"><input class="num" value="0" aria-label="Budget, tokens per session" aria-invalid="true" aria-describedby="budget-why" inputmode="numeric"><span class="unit">tokens per session</span></div>
-              <p class="sh fi" data-show="default answered creating failed overflow noworkspace" style="display:block">Spend stops here; a run that needs more asks before it continues.</p>
-              <p class="inval fi" data-show="invalid" id="budget-why"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>A budget of 0 tokens can't run anything. Enter at least 1,000, or leave the workspace default of 40,000.</p>
+              <div class="sl">Budget<span class="src">default</span></div>
+              <div class="ctl fx" data-show="default answered creating failed overflow noworkspace"><span>Bounded by your subscription</span></div>
+              <label class="check fx" data-show="default answered creating failed overflow noworkspace"><input type="checkbox" aria-describedby="cap-help"> Enforce a cap for this session</label>
+              <label class="check fx" data-show="invalid"><input type="checkbox" checked aria-describedby="budget-why"> Enforce a cap for this session</label>
+              <div class="ctl fx" data-show="invalid"><input class="num" value="0" aria-label="Cap, tokens per session" aria-invalid="true" aria-describedby="budget-why" inputmode="numeric"><span class="unit">tokens per session</span></div>
+              <p class="sh fi" data-show="default answered creating failed overflow noworkspace" style="display:block" id="cap-help">Off: spend stops where your subscription stops. On: you set a number of tokens, and a turn that would pass it asks first. Never a number you must type to start.</p>
+              <p class="inval fi" data-show="invalid" id="budget-why"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>A cap of 0 tokens can't run anything. Enter at least 1,000, or turn the cap off.</p>
             </div>
           </div>
         </div>
@@ -274,13 +279,12 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
       </div>
 
       <div class="sfoot">
-        <span class="reason fi" data-show="default invalid overflow"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Choose a task class to create the session.</span>
-        <span class="reason err fi" data-show="invalid"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Budget needs a value.</span>
+        <span class="reason err fi" data-show="invalid"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>The cap needs a value, or turn it off.</span>
         <span class="reason fi" data-show="creating"><span class="ring" aria-hidden="true"></span>Creating…</span>
         <span class="sp"></span>
         <button class="btn">Cancel <span class="fo">5</span></button>
-        <button class="btn pri fi" data-show="default invalid overflow" disabled>Create session</button>
-        <button class="btn pri fi" data-show="answered failed">Create session <span class="fo">6</span></button>
+        <button class="btn pri fi" data-show="invalid" disabled>Create session</button>
+        <button class="btn pri fi" data-show="default answered failed overflow">Create session <span class="fo">6</span></button>
         <button class="btn pri fi" data-show="creating" disabled>Creating…</button>
       </div>
     </div>
@@ -298,26 +302,26 @@ var root=document.documentElement, body=document.body;
 function bind(id,target,attr){ var el=document.getElementById(id); el.addEventListener('change',function(){ target.dataset[attr]=el.value; render(); }); }
 bind('h-theme',root,'theme'); bind('h-vp',root,'vp'); bind('h-state',body,'state'); bind('h-persona',body,'persona'); bind('h-motion',body,'motion');
 var LEGEND={
-  'default':'<b>Defaults prefilled; one required answer.</b> The fan-out ceiling and the budget arrive from workspace policy and are editable here or later from the session header. There is no tier field and no note explaining its absence: the fan-out ceiling\u2019s own sentence says the compiled tier decides how many sub-agents a run uses (the operator\u2019s correction of 2026-09-11). Task class stays required and undefaulted (RQ1\u2013RQ6); the disabled Create button says why beside itself.',
-  'answered':'<b>Answered.</b> One click on a class, and the sheet creates on the defaults with nothing else touched. The required marker flipped to Answered.',
+  'default':'<b>Zero required inputs (Ruling 72).</b> The fan-out ceiling arrives from workspace policy; the budget reads <i>bounded by your subscription</i> with an <i>enforce a cap</i> affordance the operator opens deliberately, never a prefilled number; the default task class is <i>free-form</i>, preselected and visible, changeable per prompt later. There is no tier field and no note explaining its absence. Create is available on open.',
+  'answered':'<b>A class chosen.</b> One click on <i>extraction</i> makes it this session\u2019s default; the marker reads <i>Chosen: extraction</i>. Nothing else is touched; Create was available before and after.',
   'creating':'<b>Creating.</b> The order is fixed: the session document opens in the Coding host first, then Coding activates, as one transaction. A failure leaves you in the perspective you were in.',
   'failed':'<b>Create failed.</b> The reason is stated in the sheet, every answer is kept, Create is the retry.',
-  'invalid':'<b>Invalid budget.</b> The field carries the reason beside it and the footer names the field; nothing is lost, Create waits.',
+  'invalid':'<b>Invalid cap.</b> The operator enforced a cap and typed 0: the field carries the reason beside it and the footer names the fix (a value, or turn the cap off); nothing is lost, Create waits.',
   'noworkspace':'<b>No workspace bound.</b> New session is never disabled: the workspace chooser interposes, and the sheet follows the choice.',
   'overflow':'<b>Overflow.</b> A 70-character workspace name in the header, a 90-character service-account label in a backend row, six backends. Everything truncates with an ellipsis and its full text in the accessible name; nothing wraps the footer.'
 };
 function render(){
   document.getElementById('legend').innerHTML=LEGEND[body.dataset.state]||'';
   var st=body.dataset.state, L=[];
-  if (st==='default') L.push(['on open','New session dialog. Name, edit text. Task class, required, no default. Focus: Name.']);
-  if (st==='answered') L.push(['live region','Task class: extraction. Answered. Create session is available.']);
+  if (st==='default') L.push(['on open','New session dialog. Name, edit text. Default task class: free-form, pressed. Budget: bounded by your subscription. Create session is available. Focus: Name.']);
+  if (st==='answered') L.push(['live region','Default task class: extraction, chosen.']);
   if (st==='creating') { L.push(['UIA notification','Creating\u2026']); L.push(['then (the shell, one transaction)','Coding perspective \u2014 session 2026-09-11 payments extraction opened; focus lands in the editor']); }
   if (st==='failed') L.push(['live region',"Couldn't create the session — the workspace daemon is not running. Your answers are kept."]);
-  if (st==='invalid') L.push(['live region',"Budget: A budget of 0 tokens can't run anything. Enter at least 1,000."]);
+  if (st==='invalid') L.push(['live region',"Cap: A cap of 0 tokens can't run anything. Enter at least 1,000, or turn the cap off."]);
   if (st==='noworkspace') L.push(['live region','Choose a workspace first. Dialog.']);
   if (st==='overflow') L.push(['accessible name','workspace payments-platform-regional-settlement-and-reconciliation-services (the full text; the visible label truncates)']);
   document.getElementById('srlist').innerHTML=L.map(function(x){return '<li><span class="who">'+x[0]+'</span> · '+x[1]+'</li>';}).join('');
-  document.getElementById('opt-extraction').setAttribute('aria-pressed', (st==='answered'||st==='creating'||st==='failed')?'true':'false');
+  var chosen=(st==='answered'||st==='creating'||st==='failed'); document.getElementById('opt-extraction').setAttribute('aria-pressed', chosen?'true':'false'); document.getElementById('opt-freeform').setAttribute('aria-pressed', chosen?'false':'true');
   audit();
 }
 function srgb(c){ c/=255; return c<=0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055,2.4); }
@@ -363,9 +367,9 @@ function audit(){
   for (var i=0;i<PAIRS.length;i++){ var p=PAIRS[i], f=tok(p[2]), b=tok(p[3]), r=ratio(f,b), need=THRESH[p[1]], req=p[1]!=='decorative', ok=r>=need-0.005; if(req&&!ok&&!hc) fails++;
     rows+='<tr><td>'+p[0]+'</td><td>'+p[1]+'</td><td class="n"><span class="swatch" style="background:'+hex(f)+'"></span>'+hex(f)+'</td><td class="n"><span class="swatch" style="background:'+hex(b)+'"></span>'+hex(b)+'</td><td class="n">'+r.toFixed(2)+':1</td><td class="n">'+need.toFixed(1)+':1</td><td class="'+(hc?'na':(req?(ok?'pass':'fail'):'na'))+'">'+(hc?'stand-in, not measured':(req?(ok?'PASS':'FAIL'):'reported, not counted'))+'</td></tr>'; }
   tb.innerHTML=rows;
-  var small=0; document.querySelectorAll('.sheet button, .sheet input, .chooser button, .chooser [tabindex]').forEach(function(el){ if(el.offsetParent===null) return; var rc=el.getBoundingClientRect(); if(rc.width&&rc.height&&(rc.width<24||rc.height<24)) small++; });
+  var small=0; document.querySelectorAll('.sheet button, .sheet input, .chooser button, .chooser [tabindex]').forEach(function(el){ if(el.offsetParent===null) return; var tgt=(el.type==='checkbox'&&el.closest('label'))?el.closest('label'):el; var rc=tgt.getBoundingClientRect(); if(rc.width&&rc.height&&(rc.width<24||rc.height<24)) small++; });
   var tierFields=document.querySelectorAll('.sheet [aria-label*="Tier" i], .sheet [aria-label*="tier" i]').length;
-  document.getElementById('verdict').innerHTML='audit: '+(hc?'<b class="ok">hc: stand-ins, not measured</b>':'<b class="'+(fails?'bad':'ok')+'">'+fails+' contrast fail</b>') · <b class="'+(small?'bad':'ok')+'">'+small+' target &lt; 24px</b> · <b class="'+(tierFields?'bad':'ok')+'">'+tierFields+' tier field</b> · '+PAIRS.length+' pairs';
+  document.getElementById('verdict').innerHTML='audit: '+(hc?'<b class="ok">hc: stand-ins, not measured</b>':'<b class="'+(fails?'bad':'ok')+'">'+fails+' contrast fail</b>')+' · <b class="'+(small?'bad':'ok')+'">'+small+' target &lt; 24px</b> · <b class="'+(tierFields?'bad':'ok')+'">'+tierFields+' tier field</b> · '+PAIRS.length+' pairs';
 }
 render(); window.addEventListener('resize',audit);
 </script>

@@ -1,0 +1,1116 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-vp="desk">
+<head>
+<meta charset="utf-8">
+<title>AI-DE session as a conversation: n turns, one editor, the Console as the reply side</title>
+<style>
+/* ===========================================================================
+   Tokens mirrored from DESIGN.md (dark, light, high-contrast stand-ins). No raw
+   colour appears in a component rule. `--accent-contrast` is the ONLY ink any
+   state paints on `--accent`. The composer page receives these names on
+   `host.init` (DESIGN.md PS-C4); the thread is WPF and reads the same brushes.
+   `--hl`/`--hl-ink`: a highlighted menu row (pointer courtesy; the keyboard
+   indicator is the inset focus ring). The hc block is a stand-in so the
+   harness can show WHICH ground-only states carry a system pair (A-7); its
+   audit reports "not measured", never a pass.
+   =========================================================================== */
+:root{
+  --surface:#12151A; --surface-raised:#1A1F26; --surface-sunken:#0D1014;
+  --border:#2A313B; --text:#E4E9EF; --text-muted:#98A3B2; --text-disabled:#7C8896; --border-strong:#7C8896;
+  --accent:#5B9DD9; --accent-contrast:#0D1014; --focus:#8FC0EA;
+  --verified:#5FB98F; --inferred:#D8A650; --stale:#D8A650; --danger:#E07A6F; --float-chrome:#232A33;
+  --hl:var(--float-chrome); --hl-ink:var(--text);
+  --font-ui:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+  --font-mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+  --t-xs:11px; --t-sm:12px; --t-md:13px; --t-lg:15px; --t-2xl:22px;
+  --s1:2px; --s2:4px; --s3:6px; --s4:8px; --s5:12px; --s6:16px; --s7:24px; --s8:32px;
+  --r-sm:4px; --r-md:6px; --r-lg:10px; --r-island:12px;
+  --e-raise:0 4px 12px rgba(0,0,0,0.34);
+  --fast:150ms; --base:200ms; --ease:cubic-bezier(0.2,0,0,1);
+}
+:root[data-theme="light"]{
+  --surface:#F4F6F8; --surface-raised:#FFFFFF; --surface-sunken:#E7EBEF;
+  --border:#C7CFD8; --text:#1A1F26; --text-muted:#55606E; --text-disabled:#5F6977; --border-strong:#5F6977;
+  --accent:#27649A; --accent-contrast:#FFFFFF; --focus:#1B4F7E;
+  --verified:#1C724A; --inferred:#7D5900; --stale:#7D5900; --danger:#A8372B; --float-chrome:#EEF1F4;
+}
+:root[data-theme="hc"]{
+  --surface:#000000; --surface-raised:#000000; --surface-sunken:#000000;
+  --border:#FFFFFF; --text:#FFFFFF; --text-muted:#FFFFFF; --text-disabled:#3FF23F; --border-strong:#FFFFFF;
+  --accent:#00FFFF; --accent-contrast:#000000; --focus:#FFFFFF;
+  --verified:#00FF80; --inferred:#FFD400; --stale:#FFD400; --danger:#FF9E9E; --float-chrome:#000000;
+  --hl:#00FFFF; --hl-ink:#000000;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--surface);color:var(--text);font-family:var(--font-ui);font-size:var(--t-md);line-height:1.5}
+svg{display:block}
+.ico{width:16px;height:16px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ico.sm{width:12px;height:12px}
+.ico.lg{width:22px;height:22px;stroke-width:1.6}
+:is(button,select,input,summary,[tabindex]):focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+[data-motion="reduce"] *{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important} .ring{border-top-color:var(--border);border-color:var(--accent)}}
+code{font-family:var(--font-mono);font-size:var(--t-sm)}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+
+/* ---- REVIEW HARNESS (chrome, never ships) --------------------------------- */
+.harness{position:sticky;top:0;z-index:60;display:flex;flex-wrap:wrap;gap:var(--s4) var(--s5);align-items:center;
+  padding:var(--s4) var(--s6);background:var(--surface-sunken);border-bottom:1px solid var(--border);font-size:var(--t-sm)}
+.harness strong{font-weight:600;letter-spacing:.04em;color:var(--text-muted)}
+.harness label{display:flex;align-items:center;gap:var(--s3);color:var(--text)}
+.harness select{background:var(--surface-raised);color:var(--text);border:1px solid var(--border-strong);border-radius:var(--r-sm);padding:var(--s2) var(--s3);font:inherit;min-height:26px;cursor:pointer;max-width:440px}
+.checks{margin-left:auto;font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text-muted)}
+.checks b.ok{color:var(--verified)} .checks b.bad{color:var(--danger)}
+.note{margin:var(--s6) var(--s6) 0;padding:var(--s5) var(--s6);border:1px solid var(--border);border-radius:var(--r-lg);background:var(--surface-raised);color:var(--text-muted);font-size:var(--t-sm);max-width:80ch}
+.note b{color:var(--text)}
+.srlog{margin:var(--s5) var(--s6) 0;padding:var(--s5) var(--s6);border:1px solid var(--border);border-radius:var(--r-lg);background:var(--surface-raised);max-width:80ch}
+.srlog h4{margin:0 0 var(--s4);font-size:var(--t-sm);letter-spacing:.04em;color:var(--text-muted);font-weight:600}
+.srlog ol{margin:0;padding-left:var(--s7);font-size:var(--t-sm);color:var(--text)}
+.srlog .who{font-family:var(--font-mono);color:var(--text-muted)}
+
+/* ---- THE WINDOW at startup size: the session takes the whole tree (Ruling 47) ---- */
+.frame{margin:var(--s6);overflow:auto}
+.win{width:1440px;height:900px;display:grid;grid-template-rows:28px 1fr;padding:var(--s2) 0;outline:1px solid var(--border);border-radius:var(--r-island);background:var(--surface);position:relative}
+[data-vp="narrow"] .win{width:1024px}
+.menubar{display:flex;align-items:center;gap:var(--s1);padding:var(--s2) var(--s4);border-bottom:1px solid var(--border);background:var(--surface);font-size:var(--t-sm)}
+.menubar .mi{height:20px;padding:0 var(--s4);border:0;border-radius:var(--r-sm);background:transparent;color:var(--text);font:inherit;font-size:var(--t-sm);cursor:pointer}
+.menubar .mi:hover{background:var(--surface-raised)}
+.menubar .ttl{margin-left:auto;color:var(--text-muted)}
+.shellbody{display:grid;grid-template-columns:48px 1fr;min-height:0}
+.rail{display:flex;flex-direction:column;align-items:center;gap:var(--s3);padding:var(--s4) 0;background:var(--surface-sunken);border-right:1px solid var(--border)}
+.rail .primary{width:32px;height:32px;border:0;border-radius:var(--r-md);background:var(--accent);color:var(--accent-contrast);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.rail .div{width:24px;height:1px;background:var(--border);margin:var(--s2) 0}
+.rail .item{width:40px;height:36px;border:0;border-radius:var(--r-lg);background:transparent;color:var(--text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
+.rail .item:hover{background:var(--surface-raised);color:var(--text)}
+.rail .item[aria-selected="true"]{background:var(--surface-raised);color:var(--accent)}
+.rail .item[aria-selected="true"]::before{content:"";position:absolute;left:-4px;top:8px;bottom:8px;width:3px;border-radius:2px;background:var(--accent)}
+.main{display:grid;grid-template-rows:28px 1fr;min-height:0;min-width:0}
+.titlestrip{display:flex;align-items:center;gap:var(--s3);padding:var(--s2) var(--s5);border-bottom:1px solid var(--border);font-size:var(--t-sm);color:var(--text-muted)}
+.titlestrip b{color:var(--text);font-weight:600}
+.bodywrap{padding:var(--s4);min-height:0;min-width:0;display:grid}
+/* the maximized Center stack: one pane fills the tree; siblings are minimized and remembered */
+.pane{display:grid;grid-template-rows:28px 1fr;min-height:0;min-width:0;padding:var(--s1) 0;background:var(--surface-raised);border-radius:var(--r-island);outline:1px solid var(--accent)}
+.tabstrip{display:flex;align-items:flex-end;gap:var(--s1);height:28px;padding:var(--s2) var(--s4) 0;border-bottom:1px solid var(--border)}
+.tab{display:inline-flex;align-items:center;gap:var(--s3);height:24px;padding:0 var(--s4);border:1px solid transparent;border-bottom:0;border-radius:var(--r-sm) var(--r-sm) 0 0;background:var(--surface);color:var(--text);font:inherit;font-size:var(--t-sm);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--accent);color:var(--accent-contrast)}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text-muted);font:inherit;cursor:pointer;position:relative}
+.iconbtn:hover{color:var(--text);border-color:var(--accent)}
+.iconbtn.q{width:24px;height:24px;border-color:transparent;background:transparent}
+
+/* ---- THE SESSION DOCUMENT: header · thread · composer ---------------------- */
+.sdoc{display:grid;grid-template-rows:auto minmax(0,1fr) auto;grid-template-columns:minmax(0,1fr);min-height:0;min-width:0;position:relative}
+.sdoc.split{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+.sesshead{grid-column:1/-1;display:flex;align-items:center;gap:var(--s4);min-height:28px;padding:var(--s1) var(--s5) 1px;border-bottom:1px solid var(--border);font-size:var(--t-sm);min-width:0;position:relative}
+.sesshead .nm{font-weight:600;color:var(--text);white-space:nowrap}
+.sesshead .sp{margin-left:auto}
+.chip{display:inline-flex;align-items:center;gap:var(--s3);height:20px;padding:0 var(--s4);border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface-sunken);color:var(--text-muted);font-size:var(--t-sm);white-space:nowrap;max-width:240px;overflow:hidden;text-overflow:ellipsis;flex:none}
+.chip .dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.chip.ok{color:var(--verified)} .chip.warn{color:var(--inferred);border-color:var(--inferred)}
+.shape{display:inline-flex;align-items:center;gap:var(--s3);height:24px;padding:0 var(--s4);border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font:inherit;font-size:var(--t-sm);cursor:pointer}
+.shape:hover{border-color:var(--accent)}
+.shape .k{color:var(--text-muted);margin-right:var(--s1)}
+.gear{display:inline-flex;align-items:center;gap:var(--s3);height:24px;padding:0 var(--s4);border:0;border-radius:var(--r-sm);background:transparent;color:var(--accent);font:inherit;font-size:var(--t-sm);cursor:pointer}
+.gear:hover{text-decoration:underline}
+.gear[aria-pressed="true"],.gear[aria-expanded="true"]{color:var(--text);background:var(--surface)}
+.pop{position:absolute;right:var(--s5);top:30px;z-index:20;width:560px;max-width:calc(100% - 24px);padding:var(--s5);background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--e-raise);font-size:var(--t-sm);color:var(--text)}
+.pop h4{margin:0 0 var(--s4);font-size:var(--t-sm);letter-spacing:.04em;font-weight:600;color:var(--text-muted)}
+.settings{display:grid;grid-template-columns:1fr 1fr;gap:var(--s5)}
+.setting{padding:var(--s4) var(--s5);border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface-sunken)}
+.setting .sl{display:flex;align-items:center;gap:var(--s4);font-weight:600;color:var(--text);margin-bottom:var(--s3)}
+.setting .src{margin-left:auto;font-weight:400;color:var(--text-muted)}
+.setting .ctl{display:flex;align-items:center;gap:var(--s4);min-height:28px;flex-wrap:wrap}
+.num{width:96px;height:28px;padding:0 var(--s4);border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font:inherit;font-family:var(--font-mono);font-size:var(--t-md);font-variant-numeric:tabular-nums;text-align:right}
+.unit{color:var(--text-muted)}
+.setting .sh{margin:var(--s3) 0 0;color:var(--text-muted)}
+.pop .acts{display:flex;gap:var(--s4);justify-content:flex-end;margin-top:var(--s5)}
+.sel{height:28px;padding:0 var(--s4);border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font:inherit;font-size:var(--t-sm)}
+.check{display:inline-flex;align-items:center;gap:var(--s3);min-height:24px;cursor:pointer;color:var(--text)}
+.check input{width:16px;height:16px;margin:0;accent-color:var(--accent)}
+.jump{position:absolute;right:var(--s5);top:30px;z-index:20;width:520px;max-width:calc(100% - 24px);max-height:340px;overflow:auto;padding:var(--s2);background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--e-raise);font-size:var(--t-sm)}
+.jump .jrow{display:flex;align-items:center;gap:var(--s4);min-height:26px;padding:var(--s2) var(--s4);border-radius:var(--r-sm);color:var(--text);cursor:pointer;min-width:0}
+.jump .jrow:hover{background:var(--hl);color:var(--hl-ink)}
+.jump .jrow.kbd{outline:2px solid var(--focus);outline-offset:-2px}
+.jump .jrow .o{font-family:var(--font-mono);color:var(--text-muted);flex:none;width:32px}
+.jump .jrow .w{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.jump .jrow .st{flex:none}
+
+/* THE THREAD: a feed of turns, one left edge, scrolls under a pinned composer */
+.thread{grid-column:1;overflow:auto;padding:0 var(--s6);min-height:0;scroll-padding-bottom:var(--s7)}
+.turn{display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:var(--s4);padding:var(--s5) 0 var(--s4);border-top:1px solid var(--border)}
+.turn:first-child{border-top:0}
+.turn:focus-visible{outline:2px solid var(--focus);outline-offset:-2px;border-radius:var(--r-sm)}
+.gut{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:var(--t-sm);color:var(--text-muted);padding-top:2px;white-space:nowrap}
+.src{font-size:var(--t-md);color:var(--text);line-height:1.5;max-width:96ch;overflow-wrap:anywhere}
+.mention{border-radius:var(--r-sm);padding:1px var(--s3);background:var(--surface);border:1px solid var(--accent);font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text);white-space:nowrap}
+.deco{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s1) var(--s3);min-height:24px;margin-top:var(--s2);font-size:var(--t-sm);color:var(--text-muted);min-width:0}
+.seg{display:inline-flex;align-items:center;gap:var(--s2);min-height:24px;min-width:0}
+.seg + .seg::before{content:"\00b7";margin-right:var(--s2);color:var(--text-muted)}
+.seg .v{color:var(--text)}
+.seg .p{color:var(--text-muted)}
+.seg .tv{font-weight:600;color:var(--text)}
+.seg .lease{font-family:var(--font-mono);color:var(--text);overflow-wrap:anywhere}
+.seg.ts{margin-left:auto;font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.lnk{color:var(--accent);background:transparent;border:0;font:inherit;font-size:var(--t-sm);padding:0 var(--s2);min-height:24px;cursor:pointer;border-radius:var(--r-sm);display:inline-flex;align-items:center;gap:var(--s2)}
+.lnk:hover{text-decoration:underline}
+.lnk[aria-expanded="true"] .car{transform:rotate(90deg)}
+.car{transition:transform var(--fast) var(--ease)}
+.ctl{display:inline-flex;align-items:center;gap:var(--s2);min-height:24px;padding:0 var(--s2);border:0;border-radius:var(--r-sm);background:transparent;color:var(--text);font:inherit;font-size:var(--t-sm);font-weight:600;cursor:pointer}
+.ctl:hover{background:var(--surface)}
+.ctl.d{color:var(--inferred)} .ctl.nd{color:var(--text-muted);font-weight:400} .ctl.x{color:var(--danger)}
+.prov{grid-column:2;margin-top:var(--s2);padding:var(--s2) 0 0 var(--s2);font-size:var(--t-sm);color:var(--text-muted);border-top:1px solid var(--border)}
+.prov div{display:flex;gap:var(--s3);min-height:22px;align-items:baseline;flex-wrap:wrap}
+.prov .k{flex:none;color:var(--text-muted);min-width:64px}
+.prov .v{color:var(--text)}
+.cpl{grid-column:2;margin-top:var(--s2)}
+.cpl pre{margin:var(--s2) 0 0;padding:var(--s4) var(--s5);border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface-sunken);color:var(--text);font-family:var(--font-mono);font-size:var(--t-sm);white-space:pre-wrap;max-height:200px;overflow:auto}
+/* the reply side: the Console folded under its turn, one left edge with the prompt */
+.rside{grid-column:2;margin-top:var(--s4)}
+.outcome{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s1) var(--s4);min-height:24px;font-size:var(--t-sm);color:var(--text-muted)}
+.st{display:inline-flex;align-items:center;gap:var(--s2);font-weight:600}
+.st.ok{color:var(--verified)} .st.err{color:var(--danger)} .st.run{color:var(--text)} .st.wait{color:var(--inferred)} .st.stop{color:var(--text-muted)}
+.outcome .n{font-family:var(--font-mono);font-variant-numeric:tabular-nums;color:var(--text)}
+.outcome .lane{font-family:var(--font-mono);color:var(--accent)}
+.reply{margin-top:var(--s2);font-size:var(--t-md);color:var(--text);max-width:96ch;overflow-wrap:anywhere}
+.evlist{margin-top:var(--s2)}
+.evline{display:flex;align-items:baseline;gap:var(--s5);padding:var(--s1) 0;font-size:var(--t-sm);min-width:0}
+.evline .ts{font-family:var(--font-mono);font-variant-numeric:tabular-nums;color:var(--text-muted);flex:none}
+.evline .lane{font-family:var(--font-mono);color:var(--accent);flex:none}
+.evline .msg{color:var(--text);min-width:0;overflow-wrap:anywhere}
+.evline .msg.err{color:var(--danger)}
+.acts{display:flex;flex-wrap:wrap;gap:var(--s4);margin-top:var(--s3)}
+.btn{height:26px;padding:0 var(--s5);border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--surface-raised);color:var(--text);font:inherit;font-size:var(--t-sm);cursor:pointer;display:inline-flex;align-items:center;gap:var(--s3)}
+.btn:hover{border-color:var(--accent)}
+.ring{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);border-top-color:var(--accent);animation:spin 900ms linear infinite;flex:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+[data-motion="reduce"] .ring{border-top-color:var(--border);border-color:var(--accent)}
+.rbox{margin-top:var(--s3);padding:var(--s4) var(--s5);border:1px solid var(--danger);border-radius:var(--r-md);background:var(--surface-raised);font-size:var(--t-sm);color:var(--text);max-width:96ch}
+.rbox.wait{border-color:var(--inferred)}
+.rbox.stop{border-color:var(--border-strong)}
+details.ev summary{list-style:none;display:inline-flex;align-items:center;gap:var(--s2);min-height:24px;padding:0 var(--s2);font-size:var(--t-sm);color:var(--accent);cursor:pointer;border-radius:var(--r-sm)}
+details.ev summary::-webkit-details-marker{display:none}
+details.ev[open] summary .car{transform:rotate(90deg)}
+.wayfinder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--s4);text-align:center;padding:var(--s8) var(--s6);color:var(--text-muted);min-height:220px;height:100%}
+.wayfinder h3{margin:0;font-size:var(--t-lg);font-weight:600;color:var(--text)}
+.wayfinder p{margin:0;max-width:44ch;font-size:var(--t-md)}
+.skel{height:12px;border-radius:var(--r-sm);background:linear-gradient(90deg,var(--surface-raised),var(--border-strong),var(--surface-raised));background-size:200% 100%;animation:sh 1.2s linear infinite;margin:var(--s4) 0}
+@keyframes sh{to{background-position:-200% 0}}
+.skelturn{display:grid;grid-template-columns:40px 1fr;column-gap:var(--s4);padding:var(--s5) 0;border-top:1px solid var(--border)}
+.skelturn:first-child{border-top:0}
+.follow{display:inline-flex;align-items:center;gap:var(--s2);color:var(--text-muted)}
+
+/* THE COMPOSER: the current turn, pinned; its top edge is independent of the turn count */
+.composer{grid-column:1;display:flex;flex-direction:column;min-width:0;padding:var(--s5) var(--s6) var(--s6);border-top:1px solid var(--border);position:relative}
+.editor{min-height:130px;max-height:280px;padding:var(--s4) var(--s5);border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--surface-sunken);color:var(--text);font-size:var(--t-md);line-height:1.65;overflow:auto;position:relative}
+.editor:focus,.editor:focus-within{border-color:var(--accent)}
+.editor.empty::after{content:attr(data-ph);color:var(--text-muted)}
+.editor.ro{color:var(--text-muted)}
+.caret{display:inline-block;width:1px;height:1.1em;vertical-align:text-bottom;background:var(--text);animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.drop{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:var(--r-md);border:2px dashed var(--accent);background:var(--surface-sunken);color:var(--text);font-weight:600;font-size:var(--t-md)}
+.attachoff{display:flex;align-items:center;gap:var(--s3);min-height:24px;padding:3px var(--s2);font-size:var(--t-sm);color:var(--text-muted)}
+.picker{position:absolute;left:var(--s6);bottom:calc(100% - 100px);min-width:320px;background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--e-raise);padding:var(--s2);z-index:5}
+.picker .prow{display:flex;align-items:center;gap:var(--s4);min-height:26px;padding:var(--s2) var(--s4);border-radius:var(--r-sm);font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text)}
+.picker .prow[aria-selected="true"]{outline:2px solid var(--focus);outline-offset:-2px}
+.picker .prow .k{color:var(--text-muted);font-family:var(--font-ui);margin-left:auto}
+.errbox{border:1px solid var(--danger);border-radius:var(--r-lg);background:var(--surface-raised);padding:var(--s5) var(--s6)}
+.errbox h4{margin:0 0 var(--s3);font-size:var(--t-md);color:var(--text);font-weight:600}
+.errbox p{margin:0 0 var(--s4);font-size:var(--t-sm);color:var(--text-muted)}
+
+/* THE LINES BENEATH: text grouped by spacing and a hairline, never a box (D1's language, ratified) */
+.lines{display:flex;flex-direction:column;margin-top:var(--s4)}
+.line{display:flex;align-items:center;gap:var(--s3);min-height:24px;padding:3px var(--s2);font-size:var(--t-sm);color:var(--text-muted);border-top:1px solid var(--border);min-width:0;flex-wrap:wrap}
+.line:first-child{border-top:0}
+.line .k{flex:none;color:var(--text-muted)}
+.line .k::after{content:"\00b7";margin-left:var(--s3)}
+.line .v{color:var(--text);min-width:0;overflow-wrap:anywhere}
+.line .v.edit{flex:1;min-height:24px;display:inline-flex;align-items:center;border-radius:var(--r-sm);padding:0 var(--s2);cursor:text}
+.line .v.edit:hover{background:var(--surface)}
+.line .v.edit.empty::before{content:attr(data-ph);color:var(--text-muted);font-style:italic}
+.mark{display:inline-flex;align-items:center;gap:var(--s2);font-size:var(--t-sm);font-weight:600;flex:none;margin-left:auto}
+.mark.d{color:var(--inferred)} .mark.x{color:var(--danger)} .mark.c{color:var(--verified)} .mark.n{color:var(--text-muted);font-weight:400}
+.readlist{margin:0 0 var(--s2) var(--s7);padding:var(--s2) 0 0 var(--s2);font-size:var(--t-sm);color:var(--text-muted);border-top:1px solid var(--border)}
+.readlist div{display:flex;gap:var(--s3);min-height:22px;align-items:baseline;flex-wrap:wrap}
+.readlist .k{flex:none;color:var(--text-muted);min-width:64px}
+.readlist .v{color:var(--text)}
+.why{width:100%;font-size:var(--t-sm);color:var(--danger);padding:0 0 var(--s1) var(--s2)}
+details.structure summary,details.compiled summary{list-style:none;display:flex;align-items:center;gap:var(--s3);min-height:24px;padding:3px var(--s2);font-size:var(--t-sm);color:var(--text-muted);cursor:pointer;border-top:1px solid var(--border)}
+details.structure summary::-webkit-details-marker,details.compiled summary::-webkit-details-marker{display:none}
+details.structure summary{border-top:0}
+details[open] > summary .car{transform:rotate(90deg)}
+.structure .body{overflow:hidden;animation:grow var(--base) var(--ease)}
+@keyframes grow{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.compiled pre{margin:var(--s2) 0 var(--s4);padding:var(--s4) var(--s5);border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface-sunken);color:var(--text);font-family:var(--font-mono);font-size:var(--t-sm);white-space:pre-wrap;max-height:200px;overflow:auto}
+.updated{color:var(--stale);font-weight:600}
+.cline .st{font-weight:600}
+.cline .model{font-family:var(--font-mono);color:var(--text)}
+.menu{position:absolute;z-index:25;min-width:300px;padding:var(--s2);background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--e-raise);font-size:var(--t-sm)}
+.menu .mrow{display:flex;align-items:center;gap:var(--s4);min-height:26px;padding:var(--s2) var(--s4);border-radius:var(--r-sm);color:var(--text);cursor:pointer}
+.menu .mrow:hover{background:var(--hl);color:var(--hl-ink)}
+.menu .mrow.kbd{outline:2px solid var(--focus);outline-offset:-2px}
+.menu .mrow .d{color:var(--text-muted);margin-left:auto;font-weight:400;white-space:nowrap}
+.menu .mrow b{font-weight:600}
+.menu .msep{height:1px;background:var(--border);margin:var(--s2) 0}
+.menu .mh{padding:var(--s2) var(--s4);color:var(--text-muted);letter-spacing:.04em;font-weight:600}
+
+.sendrow{display:flex;align-items:center;flex-wrap:wrap;gap:var(--s4);min-height:36px;padding:var(--s4) 0 0;border-top:1px solid var(--border);margin-top:var(--s2)}
+.sp{margin-left:auto}
+.send{display:inline-flex;align-items:center;gap:var(--s4);height:28px;padding:0 var(--s5);border:1px solid var(--accent);border-radius:var(--r-md);background:var(--accent);color:var(--accent-contrast);font:inherit;font-size:var(--t-md);font-weight:600;cursor:pointer;position:relative}
+.send:hover{filter:brightness(1.12)}
+.send[disabled]{background:var(--surface-raised);color:var(--text-disabled);border-color:var(--border);cursor:not-allowed;filter:none}
+.send .kbd{font-family:var(--font-mono);font-size:var(--t-xs);font-weight:400}
+.reason{display:inline-flex;align-items:center;gap:var(--s3);font-size:var(--t-sm);color:var(--inferred)}
+.reason.err{color:var(--danger)}
+.refusal{display:flex;flex-direction:column;gap:var(--s3);width:100%;padding:var(--s4) var(--s5);border:1px solid var(--danger);border-radius:var(--r-md);background:var(--surface-raised);font-size:var(--t-sm);color:var(--text)}
+.refusal .acts{margin:0}
+
+/* THE CONSOLE SPLIT (Ruling 21's split, on demand): the merged stream unfolded beside the thread */
+.console{grid-column:2;grid-row:2/4;border-left:1px solid var(--border);display:flex;flex-direction:column;min-height:0;min-width:0}
+.modestrip{display:flex;align-items:center;gap:var(--s2);height:28px;padding:var(--s2) var(--s4);border-bottom:1px solid var(--border)}
+.modetitle{font-size:var(--t-sm);font-weight:600;letter-spacing:.04em;color:var(--text-muted)}
+.consolebody{flex:1;min-height:0;padding:var(--s3) var(--s5);overflow:auto}
+.consolebody .evhead.cur{color:var(--accent);font-weight:600}
+.consolebody .evline.cur{background:var(--surface);border-radius:var(--r-sm);padding:var(--s1) var(--s2)}
+.consolebody .evhead{font-family:var(--font-mono);color:var(--text-muted);padding:var(--s3) 0 var(--s1);border-top:1px solid var(--border);margin-top:var(--s2)}
+.consolebody .evhead:first-child{border-top:0;margin-top:0}
+
+/* keyboard persona: focus order stamped from DOM order at render, and the regions F6 cycles */
+.fo{position:absolute;z-index:40;width:18px;height:18px;border-radius:50%;background:var(--focus);color:var(--accent-contrast);font-size:var(--t-xs);font-weight:600;display:inline-flex;align-items:center;justify-content:center;font-family:var(--font-mono);pointer-events:none}
+body[data-persona="keyboard"] .region{outline:1px dashed var(--inferred);outline-offset:-3px}
+
+/* ---- EVIDENCE --------------------------------------------------------------- */
+.secwrap{margin:var(--s6);max-width:1400px}
+h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--text)}
+.help{font-size:var(--t-sm);color:var(--text-muted);max-width:80ch;margin:0 0 var(--s5)}
+.ctab{width:100%;border-collapse:collapse;font-size:var(--t-sm)}
+.ctab th,.ctab td{text-align:left;padding:var(--s3) var(--s4);border-bottom:1px solid var(--border);vertical-align:top}
+.ctab th{letter-spacing:.04em;color:var(--text-muted);font-weight:600}
+.ctab td.n{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pass{color:var(--verified)} .fail{color:var(--danger)} .na{color:var(--text-muted)}
+.swatch{display:inline-block;width:12px;height:12px;border-radius:2px;border:1px solid var(--border);vertical-align:-2px;margin-right:var(--s3)}
+</style>
+</head>
+<body data-state="prepared" data-turns="5" data-persona="operator" data-motion="full">
+
+<div class="harness" role="region" aria-label="Review harness">
+  <strong>Harness</strong>
+  <label>State
+    <select id="h-state">
+      <optgroup label="The session">
+        <option value="empty">empty session: no turns yet</option>
+        <option value="first">first turn: b1 sent, running</option>
+        <option value="loading">loading: session restoring</option>
+        <option value="jump">jump to a turn: the outline open (40 turns)</option>
+      </optgroup>
+      <optgroup label="The current turn (mechanical-only mode)">
+        <option value="draft-mech">draft: lines to fill in, T0 message, Send is one gesture</option>
+        <option value="template">template picked: change-order v2 supplies the structure</option>
+      </optgroup>
+      <optgroup label="The current turn (agentic mode: two gestures)">
+        <option value="draft">draft: before the first gesture (Prepare)</option>
+        <option value="draft-nolease">draft with no mention: the send row says so before the gesture</option>
+        <option value="preparing">preparing: envelope opened, the model working</option>
+        <option value="cancelled">cancelled: the draft was edited while preparing</option>
+        <option value="prepared" selected>prepared: T1 derived, Send is the confirmation</option>
+        <option value="reused">prepared again: unchanged inputs, no new request</option>
+        <option value="classmenu">prepared: the task-class menu open on the decoration line</option>
+        <option value="override">prepared: class chosen for this prompt, tier T2 (rule said T1)</option>
+        <option value="tiermenu">prepared: the tier menu open (the rule’s value one row away)</option>
+        <option value="whatread">prepared: what the compile read, open under the compile line</option>
+        <option value="advisory">prepared under agentic-advisory: two derived lines not yet kept</option>
+        <option value="forced">prepared: the tier must be chosen for this prompt (tier_prompt forced)</option>
+        <option value="mechanical">prepared: compiled mechanically (needs-login), Prepare again</option>
+        <option value="refusedtos">prepared: compiled mechanically (not a subscription)</option>
+        <option value="timedout">prepared: compiled mechanically (the 60 s bound passed)</option>
+        <option value="malformed">prepared: compiled mechanically (the output failed the schema)</option>
+        <option value="byyou">prepared: structure supplied by you (no call made)</option>
+        <option value="suspect">prepared: suspect (the model made 1 tool call)</option>
+        <option value="nostructure">prepared: no goal block proposed, sends as a message</option>
+        <option value="stale">stale: the draft changed since it was prepared</option>
+        <option value="stale-settings">stale: session settings changed since it was prepared</option>
+      </optgroup>
+      <optgroup label="Send">
+        <option value="gaps">refused: content gaps (compiles at T2)</option>
+        <option value="noscope">refused: no write scope</option>
+        <option value="quota">refused before start: the subscription window is exhausted</option>
+        <option value="sending">sending (marks kept)</option>
+        <option value="sendfailed">send failed (draft kept, compiled updated)</option>
+      </optgroup>
+      <optgroup label="The reply side of the last turn">
+        <option value="laneerror">lane error: the lane exited 1</option>
+        <option value="stopped">stopped by you</option>
+        <option value="permission">permission request waiting on the last turn</option>
+        <option value="capask">a cap is enforced and the turn would pass it</option>
+      </optgroup>
+      <optgroup label="Chrome and failure">
+        <option value="settings">session settings opened from the header</option>
+        <option value="settings-cap">session settings with a cap enforced</option>
+        <option value="split">Console split open beside the thread</option>
+        <option value="attaching">attaching: drop target over the editor</option>
+        <option value="attachoff">attaching is off for this session</option>
+        <option value="editorerror">editor error</option>
+        <option value="overflow">overflow: 40 turns, four mentions, T2 derived, long reply lines</option>
+      </optgroup>
+    </select></label>
+  <label>Turns
+    <select id="h-turns"><option value="1">1</option><option value="5" selected>5</option><option value="40">40</option></select></label>
+  <label>Theme
+    <select id="h-theme"><option value="dark">dark</option><option value="light">light</option><option value="hc">high-contrast (stand-ins)</option></select></label>
+  <label>Viewport
+    <select id="h-vp"><option value="desk">desktop 1440</option><option value="narrow">narrow 1024</option></select></label>
+  <label>Persona
+    <select id="h-persona"><option value="operator">Operator</option><option value="keyboard">Keyboard-only (focus order, F6 regions)</option><option value="screenreader">Screen reader (live region)</option></select></label>
+  <label>Motion
+    <select id="h-motion"><option value="full">full</option><option value="reduce">reduced</option></select></label>
+  <span class="checks" id="verdict">measuring&hellip;</span>
+</div>
+
+<p class="note" id="legend"></p>
+<div class="srlog" role="region" aria-label="Live region trace" id="srlog" hidden><h4>What the screen reader hears</h4><ol id="srlist"></ol></div>
+
+<div class="frame"><div class="win" id="win">
+  <div class="menubar"><button class="mi">File</button><button class="mi">Edit</button><button class="mi">View</button><button class="mi">Prompt</button><button class="mi">Window</button><button class="mi">Help</button><span class="ttl">commerce &middot; Coding &middot; AI-DE</span></div>
+  <div class="shellbody">
+    <nav class="rail" aria-label="Activity rail">
+      <button class="primary" aria-label="New session, Ctrl+N"><svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+      <span class="div" aria-hidden="true"></span>
+      <div role="tablist" aria-label="Perspective" aria-orientation="vertical">
+        <button class="item" role="tab" aria-selected="true" tabindex="0" aria-label="Coding perspective, Ctrl+1"><svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg></button>
+        <button class="item" role="tab" aria-selected="false" tabindex="-1" aria-label="Explore perspective, Ctrl+2"><svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></button>
+        <button class="item" role="tab" aria-selected="false" tabindex="-1" aria-label="Architecture perspective, Ctrl+3"><svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="8.5" y="14" width="7" height="7" rx="1.5"/><path d="M6.5 10v2.5h11V10M12 12.5V14"/></svg></button>
+      </div>
+    </nav>
+    <div class="main">
+      <div class="titlestrip"><span>workspace</span><b>commerce</b><span>&middot;</span><span>Coding</span><span>&middot;</span><span>session <b>payments extraction</b> maximized</span><span class="sp"></span></div>
+      <div class="bodywrap">
+        <!-- THE MAXIMIZED CENTER STACK: no Terminal sessions pane, no bottom terminal, no graph. Siblings are minimized and remembered. -->
+        <section class="pane" aria-label="Center zone, maximized">
+          <div class="tabstrip" role="tablist">
+            <button class="tab" role="tab" aria-selected="true"><span class="lbl">payments extraction</span></button>
+            <span class="sp"></span>
+            <button class="iconbtn q" aria-label="Restore the layout, show the other panes again, Ctrl+K Z" title="Restore layout (Ctrl+K, Z)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+          </div>
+
+          <div class="sdoc" id="sdoc">
+            <!-- SESSION HEADER: one row, the only chrome above the thread. No class chip: the class is per turn (Ruling 70). -->
+            <div class="sesshead region" aria-label="Session header">
+              <span class="nm">payments extraction</span>
+              <button class="shape" aria-haspopup="listbox"><span class="k">template</span><span data-show="template">change-order v2</span><span data-hide="template">none</span> <svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6-6 6"/></svg></button>
+              <button class="gear" id="settings-link" aria-haspopup="dialog" aria-expanded="false"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Session settings</button>
+              <button class="gear" id="split-toggle" aria-pressed="false" aria-label="Console: show the merged stream beside the thread"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M13 4v16"/></svg>Console</button>
+              <span class="sp"></span>
+              <button class="gear" id="jump-toggle" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="turncount jump-lbl"><span id="turncount">5 turns</span><span id="jump-lbl" hidden>jump to a turn</span><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+              <span class="chip ok"><span class="dot"></span>2 backends ready</span>
+              <span class="chip warn" data-show="sendfailed"><span class="dot"></span>conductor disconnected</span>
+              <!-- JUMP LIST: the Score outline as an on-demand view (Addendum B :186): ordinal · the words · the outcome -->
+              <div class="jump" role="listbox" aria-label="Jump to a turn" id="jumplist" data-show="jump"></div>
+              <!-- SESSION SETTINGS POPOVER: ceiling · budget (bounded by the subscription unless a cap is enforced) · default task class · compile mode · backends -->
+              <div class="pop" role="dialog" aria-label="Session settings" data-show="settings settings-cap">
+                <h4>Session settings</h4>
+                <div class="settings">
+                  <div class="setting"><div class="sl">Fan-out ceiling<span class="src">workspace default</span></div><div class="ctl"><input class="num" value="3" aria-label="Fan-out ceiling, sub-agents" inputmode="numeric"><span class="unit">sub-agents</span></div><p class="sh">Most sub-agents any turn may convene. The compiled tier decides how many it uses, up to this.</p></div>
+                  <div class="setting"><div class="sl">Budget<span class="src" data-show="settings">default</span><span class="src" data-show="settings-cap">cap enforced</span></div><div class="ctl" data-show="settings"><span>Bounded by your subscription</span></div><label class="check" data-show="settings"><input type="checkbox" aria-describedby="cap-help"> Enforce a cap for this session</label><label class="check" data-show="settings-cap"><input type="checkbox" checked aria-describedby="cap-help"> Enforce a cap for this session</label><div class="ctl" data-show="settings-cap"><input class="num" value="40,000" aria-label="Cap, tokens per session" inputmode="numeric"><span class="unit">tokens per session</span></div><p class="sh" id="cap-help">Off: spend stops where your subscription stops. On: you set a number of tokens, and a turn that would pass it asks first.</p></div>
+                  <div class="setting"><div class="sl">Default task class<span class="src">free-form on open</span></div><div class="ctl"><select class="sel" aria-label="Default task class"><option>free-form</option><option>extraction</option><option>feature</option><option>defect</option><option>migration</option><option>review</option><option>ui-feedback</option></select></div><p class="sh">Every new prompt starts with this class. Change it on any prompt from its decoration line; that never changes this default.</p></div>
+                  <div class="setting"><div class="sl">Compile mode<span class="src">session</span></div><div class="ctl"><select class="sel" aria-label="Compile mode"><option>mechanical-only</option><option>agentic-advisory</option><option selected>agentic</option></select></div><p class="sh">Agentic: Ctrl+Enter prepares the turn on the session&rsquo;s bound model first; the same key sends it. Advisory: a derived line counts only once you keep or edit it. Mechanical-only: one gesture, you fill the structure.</p></div>
+                  <div class="setting" style="grid-column:1/-1"><div class="sl">Backends<span class="src">session</span></div><div class="ctl"><span class="chip ok"><span class="dot"></span>ready</span><span class="mono">claude-code</span><span class="unit">max-personal</span><span class="chip ok"><span class="dot"></span>ready</span><span class="mono">codex</span><span class="unit">chatgpt-personal</span><span class="sp"></span><button class="btn">Change&hellip;</button></div><p class="sh">A run uses the session&rsquo;s one routable backend; the compile runs on the same binding.</p></div>
+                </div>
+                <div class="acts"><button class="btn">Cancel</button><button class="btn">Save for this session</button></div>
+              </div>
+            </div>
+
+            <!-- THE THREAD: a feed of turns (APG feed pattern). PageDown / PageUp move between turns; F6 cycles header, thread, composer. -->
+            <div class="thread region" id="thread" role="feed" aria-label="Conversation" aria-busy="false">
+              <div id="empty-wayfinder" class="wayfinder" data-show="empty">
+                <svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17l6-6-6-6M12 19h8"/></svg>
+                <h3>Nothing has run yet.</h3>
+                <p>Write the first message below; every turn and its reply appear here, above the editor.</p>
+              </div>
+              <div id="loading-skel" data-show="loading">
+                <div class="skelturn"><div class="skel" style="width:24px"></div><div><div class="skel" style="width:62%"></div><div class="skel" style="width:38%"></div><div class="skel" style="width:81%;margin-top:14px"></div></div></div>
+                <div class="skelturn"><div class="skel" style="width:24px"></div><div><div class="skel" style="width:54%"></div><div class="skel" style="width:33%"></div><div class="skel" style="width:70%;margin-top:14px"></div></div></div>
+                <div class="skelturn"><div class="skel" style="width:24px"></div><div><div class="skel" style="width:70%"></div><div class="skel" style="width:41%"></div></div></div>
+              </div>
+              <div id="turns"></div>
+            </div>
+
+            <!-- THE COMPOSER: the current turn. Editor, then lines. Pinned; the thread scrolls above it. -->
+            <section class="composer region" id="composer" aria-label="Composer: the next turn">
+              <div id="editor-loading" class="editor" data-show="loading" style="display:flex;flex-direction:column;justify-content:center"><div class="skel" style="width:62%"></div><div class="skel" style="width:84%"></div><div class="skel" style="width:41%"></div></div>
+              <div data-show="editorerror"><div class="errbox" role="alert"><h4>Editor couldn&rsquo;t start &mdash; WebView2 runtime not found.</h4><p>The session stays open; the thread above is still yours to read. Install the WebView2 runtime, or retry if it was being updated.</p><button class="btn">Retry</button></div></div>
+              <div class="editor" id="editor" data-hide="loading editorerror" contenteditable="false" tabindex="0" role="textbox" aria-multiline="true" aria-label="Message" aria-describedby="editor-help" data-ph="">
+                <span id="editor-text"></span>
+                <div class="drop" aria-hidden="true" data-show="attaching">Drop to attach</div>
+              </div>
+              <span id="editor-help" hidden></span>
+              <div class="picker" role="listbox" id="picker" aria-label="Mention a file or folder" data-show="noscope">
+                <div class="prow" role="option" id="opt-1" aria-selected="true">@src/AiDe.Core/Workbench/<span class="k">folder</span></div>
+                <div class="prow" role="option" id="opt-2" aria-selected="false">@src/AiDe.Core/Workbench/ZoneLayoutStore.cs<span class="k">file</span></div>
+                <div class="prow" role="option" id="opt-3" aria-selected="false">@src/AiDe.Core/Workbench/LayoutStore.cs<span class="k">file</span></div>
+              </div>
+              <div class="attachoff" role="status" data-show="attachoff">Attaching files is off for this session.</div>
+
+              <div class="lines" data-hide="loading editorerror">
+                <!-- DERIVED STRUCTURE: the marks of Addendum D §A11 on a line; restore where the mark allows (keep is the advisory rung's act, not this slice's) -->
+                <details class="structure" id="structure" open>
+                  <summary id="structure-summary"><svg class="ico sm car" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><span id="structure-title">Goal &middot; Done when &middot; Not in scope</span></summary>
+                  <div class="body" id="structure-body"></div>
+                </details>
+
+                <!-- COMPILE LINE (Addendum D): present only when an envelope exists. The provenance of the compile, its recovery, and what was read. -->
+                <div class="line cline" id="cline" hidden>
+                  <span class="k">Compile</span>
+                  <span id="cline-text" style="display:inline-flex;align-items:center;gap:var(--s3);flex-wrap:wrap;min-width:0"></span>
+                </div>
+                <div class="readlist" id="readlist" data-show="whatread" role="region" aria-label="What the compile read">
+                  <div><span class="k">turns</span><span class="v">b1 answered &middot; b2 completed &middot; b3 completed &middot; b4 completed &middot; b5 completed</span><span>ids and outcomes, never contents (the history window: 5 of 5, 4,120 bytes)</span></div>
+                  <div><span class="k">constitution</span><span class="v">CLAUDE.md &rarr; AGENTS.md + 12 docs</span><span>by manifest, loaded by the harness; 46,712 tokens; sha 8e21&hellip;</span></div>
+                  <div><span class="k">profile</span><span class="v">anthropic@1.0.0</span><span>sha 3f9c&hellip;</span></div>
+                  <div><span class="k">source</span><span class="v mono">text sha 9c3d&hellip;</span><span>the rendered view, fenced; 1 attachment by reference (none)</span></div>
+                  <div><span class="k">cost</span><span class="v">2,140 tokens</span><span>1,980 in (1,840 cached) &middot; 160 out &middot; 1 request &middot; 4.2 s</span></div>
+                </div>
+
+                <!-- DECORATION LINE: what this turn carries, in the grammar every past turn uses. Here class and tier are controls with their provenance inline; lease and shape are derived text. -->
+                <div class="line" id="decoline" style="position:relative">
+                  <span class="k">This turn</span>
+                  <span class="seg"><span class="p" id="class-lbl">class</span>
+                    <button class="ctl" id="class-ctl" aria-haspopup="menu" aria-expanded="false" aria-labelledby="class-lbl class-val" aria-describedby="class-prov"><span id="class-val">free-form</span><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                    <span class="p" id="class-prov">session default</span>
+                  </span>
+                  <span class="seg" id="tier-seg"><span class="p" id="tier-lbl">tier</span>
+                    <button class="ctl" id="tier-ctl" aria-haspopup="menu" aria-expanded="false" aria-labelledby="tier-lbl tier-val" aria-describedby="tier-prov"><span id="tier-val">T1</span><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                    <span class="p" id="tier-prov"></span>
+                  </span>
+                  <span class="seg" id="lease-seg"><span class="p">lease</span><span class="lease" id="lease-val"></span><span class="p" id="lease-prov"></span></span>
+                  <span class="seg" id="shape-seg"><span class="v" id="shape-val">goal block</span></span>
+                  <span class="seg" id="tmpl-seg" hidden><span class="p">template</span><span class="v">change-order v2</span></span>
+                  <!-- the task-class menu: seven classes with their sentences; "use as the session default" is a separate explicit act (Ruling 70, condition 3) -->
+                  <div class="menu" role="menu" aria-label="Task class for this prompt" data-show="classmenu" style="left:88px;top:26px">
+                    <div class="mh">Task class for this prompt</div>
+                    <div class="mrow kbd" role="menuitemradio" aria-checked="true"><b>free-form</b><span class="d">session default &middot; no class ranks this turn</span></div>
+                    <div class="mrow" role="menuitemradio" aria-checked="false"><b>extraction</b><span class="d">Pull an existing behaviour out into its own shape.</span></div>
+                    <div class="mrow" role="menuitemradio" aria-checked="false"><b>feature</b><span class="d">Add a capability that did not exist.</span></div>
+                    <div class="mrow" role="menuitemradio" aria-checked="false"><b>defect</b><span class="d">Find a cause and repair its class.</span></div>
+                    <div class="mrow" role="menuitemradio" aria-checked="false"><b>migration</b><span class="d">Move a dependency, framework or schema forward.</span></div>
+                    <div class="mrow" role="menuitemradio" aria-checked="false"><b>review</b><span class="d">Read and judge without changing.</span></div>
+                    <div class="mrow" role="menuitemradio" aria-checked="false"><b>ui-feedback</b><span class="d">Elevate a surface against operator feedback.</span></div>
+                    <div class="msep"></div>
+                    <div class="mrow" role="menuitem">Use the chosen class as the session default<span class="d">a separate act; never silent</span></div>
+                  </div>
+                  <!-- the tier menu: three values with their caps, and the rule's value one row away -->
+                  <div class="menu" role="menu" aria-label="Tier for this prompt" data-show="forced" style="left:300px;top:26px">
+                    <div class="mh">Tier for this prompt &middot; the rule could not decide</div>
+                    <div class="mrow kbd" role="menuitemradio" aria-checked="false"><b>T0</b><span class="d">no fan-out &middot; the conductor answers</span></div>
+                    <div class="mrow" role="menuitemradio" aria-checked="false"><b>T1</b><span class="d">cap 2 &middot; one lane, no coordination</span></div>
+                    <div class="mrow" role="menuitemradio" aria-checked="false"><b>T2</b><span class="d">cap 4, 3 within this session&rsquo;s ceiling &middot; plans and seams</span></div>
+                  </div>
+                  <div class="menu" role="menu" aria-label="Tier for this prompt" data-show="tiermenu" style="left:300px;top:26px">
+                    <div class="mh">Tier for this prompt &middot; the rule said T1</div>
+                    <div class="mrow" role="menuitemradio" aria-checked="false"><b>T0</b><span class="d">no fan-out &middot; the conductor answers</span></div>
+                    <div class="mrow" role="menuitemradio" aria-checked="false"><b>T1</b><span class="d">cap 2 &middot; the rule&rsquo;s value</span></div>
+                    <div class="mrow kbd" role="menuitemradio" aria-checked="true"><b>T2</b><span class="d">cap 4, 3 within this session&rsquo;s ceiling &middot; operator</span></div>
+                    <div class="msep"></div>
+                    <div class="mrow" role="menuitem">Restore the rule&rsquo;s value (T1)<span class="d">one act</span></div>
+                  </div>
+                </div>
+
+                <!-- INHERITED SETTINGS: one muted line; the text is the link; no override; the effective cap is derived from the tier -->
+                <div class="line" id="settingsline">
+                  <span class="k">Settings</span>
+                  <button class="lnk" id="inherit-link"></button>
+                </div>
+
+                <!-- COMPILED PROMPT: on demand, collapsed, exactly the outgoing bytes; no diff, no comments -->
+                <details class="compiled" id="compiled">
+                  <summary aria-label="Compiled prompt" aria-describedby="compiled-desc"><svg class="ico sm car" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+                    <span>Compiled prompt</span>
+                    <span id="compiled-desc" style="display:inline-flex;gap:var(--s3);align-items:center;min-width:0"><span class="updated" data-show="sendfailed stale stale-settings">updated</span></span>
+                  </summary>
+<pre id="compiled-pre"></pre>
+                </details>
+              </div>
+
+              <!-- SEND ROW: the button says what the gesture does now (Prepare / Send); a refusal disables it with the reason beside it -->
+              <div class="sendrow" data-hide="editorerror">
+                <button class="iconbtn" aria-label="Attach a file"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11l-9 9a5 5 0 0 1-7-7l9-9a3.5 3.5 0 0 1 5 5l-9 9a2 2 0 0 1-3-3l8-8"/></svg></button>
+                <button class="iconbtn" aria-label="Mention a file or folder"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 5 2 9 9 0 1 0-3.5 5"/></svg></button>
+                <span class="sp"></span>
+                <span class="reason" id="reason" role="status" hidden><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg><span id="reason-text"></span></span>
+                <span class="reason" id="reason-busy" hidden><span class="ring" aria-hidden="true"></span><span id="reason-busy-text"></span></span>
+                <button class="send" id="send"><span id="send-label">Send</span> <span class="kbd">Ctrl+Enter</span></button>
+                <div class="refusal" role="alert" data-show="noscope">
+                  <span><b>Send needs a write scope.</b> Mention the files or folders this run may write, as @path (for example @src/AiDe.Core/) &mdash; the lease is derived from your mentions.</span>
+                  <span class="acts"><button class="btn">Add a mention</button></span>
+                </div>
+                <div class="refusal" role="alert" data-show="sendfailed">
+                  <span><b>Couldn&rsquo;t send</b> &mdash; the conductor closed the connection. Your draft is kept.</span>
+                </div>
+                <div class="refusal" role="alert" data-show="quota">
+                  <span><b>Refused before it started</b> &mdash; your subscription&rsquo;s window is exhausted until 16:00 (resets in 37 min). Nothing ran and nothing was spent; your draft and its prepared envelope are kept. Send it after 16:00, or change the session&rsquo;s backends in session settings.</span>
+                  <span class="acts"><button class="btn">Open session settings</button></span>
+                </div>
+              </div>
+            </section>
+
+            <!-- THE CONSOLE SPLIT: Ruling 21's split, on demand. The same events the thread folds per turn, unfolded in time. -->
+            <section class="console region" aria-label="Console: the merged stream" data-show="split">
+              <div class="modestrip"><span class="modetitle">Console</span><span class="sp"></span><span class="follow" id="follow"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>following b5</span></div>
+              <div class="consolebody" id="consolebody" tabindex="0" role="region" aria-label="Merged stream, every turn in time order"></div>
+            </section>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ==================================================================== -->
+<!-- EVIDENCE: "chat-like" measured, contrast computed                      -->
+<!-- ==================================================================== -->
+<div class="secwrap">
+  <h3 class="sech">&ldquo;Chat-like&rdquo;, measured on this page</h3>
+  <p class="help">The operator&rsquo;s word is a feeling; the contract is a set of numbers read from the rendered layout on every change, at the shell&rsquo;s startup size (1440 &times; 900) with the session maximized. Rhythm: the editor&rsquo;s top edge is read at 1, 5 and 40 turns in one pass and must not move. Alignment: every turn&rsquo;s text, reply and outcome share one left edge. Density: how many turns the tree shows, against a threshold the row prints. The absence of form chrome: no bordered field other than the editor, no box around a turn, no per-prompt settings field.</p>
+  <table class="ctab"><thead><tr><th>Property</th><th>Contract</th><th>Measured</th><th>Verdict</th></tr></thead><tbody id="dtbody"></tbody></table>
+
+  <h3 class="sech" style="margin-top:var(--s7)">Computed contrast: every pairing the thread and the composer render</h3>
+  <p class="help">Read from the live computed styles and recalculated on every theme change. Classified text (4.5:1), large (3:1), ui (3:1) or decorative (reported, not counted). Under the high-contrast theme the values are stand-ins and the audit reports not measured. The runtime census (spec &sect;C7) is the acceptance test on the composed tree.</p>
+  <table class="ctab"><thead><tr><th>Pairing</th><th>Kind</th><th>Ink</th><th>Ground</th><th>Ratio</th><th>Floor</th><th>Verdict</th></tr></thead><tbody id="ctbody"></tbody></table>
+</div>
+
+<script>
+var root=document.documentElement, body=document.body;
+function bind(id,target,attr){ var el=document.getElementById(id); el.addEventListener('change',function(){ target.dataset[attr]=el.value; render(); }); }
+bind('h-theme',root,'theme'); bind('h-vp',root,'vp');
+bind('h-state',body,'state'); bind('h-turns',body,'turns'); bind('h-persona',body,'persona'); bind('h-motion',body,'motion');
+
+/* ---- fixtures: five turns of one session, as diverse as a session is ------------------- */
+/* Each turn is ONE store, the envelope's fold: `env` = decoration rows (name · value · source · how). The decoration line,
+   the provenance disclosure and the compiled prompt are three renders of it; the compiled prompt is the sent bytes only. */
+var MODEL='claude-sonnet-4-5', PROFILE='anthropic@1.0.0';
+function envRows(t,n){
+  var rows=[
+    ['class', t.cls, t.clsOp?'operator':'session-default', t.clsOp?'chosen for this prompt (session default: free-form)':'the session’s default on open'],
+    ['tier', t.tier, t.tierOp?'operator':'rule', t.tierProv],
+    ['lease', t.lease?t.lease.join(' · '):'none', 'mechanical', t.lease?'from your mention'+(t.lease.length>1?'s':'')+' (LeaseDerivation.Patterns over the source text)':'a message spawns no lane'],
+    ['shape', t.shape, 'projection', 'computed from the structure'],
+  ];
+  if (t.tmpl) rows.push(['template', t.tmpl, 'mechanical', 'picked from the template control']);
+  var noCall = t.tier==='T0'&&!t.model;
+  rows.push(['compile', noCall ? 'mechanical only' : MODEL+' · '+PROFILE, noCall?'—':'called', noCall ? 'no goal block to derive' : 'read '+(n-1)+' turn'+(n===2?'':'s')+' · 1 request · '+(t.ctok||'1,980')+' tokens · succeeded']);
+  rows.push(['envelope', 'env-'+(7000+n*37).toString(16), 'submitted', 'text sha '+(0x9c1e+n*0x1f).toString(16)+'… · projection sha '+(0x51a0+n*0x2b).toString(16)+'…']);
+  return rows;
+}
+var TURNS=[
+ { cls:'review', clsOp:true, tier:'T0', tierProv:'rule R0: no goal block', lease:null, shape:'message', when:'14:01',
+   src:'Map the layout stores in this workspace and name the invariant each one protects.',
+   outcome:{st:'ok',word:'answered',lane:'conductor',parts:['0 lanes','1,860 tokens','6 s'],events:3},
+   reply:'Two stores. <code>LayoutStore</code> (tree schema, v4, a migration chain) and <code>ZoneLayoutStore</code> (zone schema, v1, discards on any mismatch). The invariant the first protects is &ldquo;a saved layout is never partially applied&rdquo;; the second has none yet.',
+   ev:[['14:01:12','conductor','Block b1 accepted, tier T0, 0 lanes'],['14:01:13','conductor','report: 2 stores found under src/AiDe.Core/Workbench/'],['14:01:18','conductor','answered (1,860 tokens)']],
+   compiled:'task_class: review\nshape: message\ntier: T0\nbudget: subscription\nmessage: |\n  Map the layout stores in this workspace and name the invariant each one protects.\n' },
+ { cls:'extraction', clsOp:true, tier:'T1', tierProv:'rule R2: goal block filled by the model, one lease; confirmed at send', lease:['src/AiDe.Core/Workbench/**'], shape:'goal block', when:'14:02', model:true, ctok:'1,980',
+   src:'Refactor the layout store’s migration chain so a newer schema is refused with a report; touch only <span class="mention">@src/AiDe.Core/Workbench/</span>.',
+   outcome:{st:'ok',word:'completed',lane:'claude-code',parts:['1 lane','3 edits','12,400 tokens','4 min 12 s'],events:142},
+   reply:'Done. <code>LayoutStore.Load</code> now refuses an envelope whose schema is newer than 4 and reports it on the status strip; the v5 file is left untouched. 14 tests green, 1 added (<code>ANewerSchemaIsRefusedWithAReport</code>).',
+   ev:[['14:02:03','conductor','Block b2 accepted, tier T1, 1 lane, lease <code>src/AiDe.Core/Workbench/**</code>'],['14:02:04','claude-code','read <code>LayoutStore.cs</code> (412 lines)'],['14:02:09','claude-code','edit <code>LayoutStore.cs</code>, 1 hunk: refuse schema &gt; 4 with a report'],['14:03:41','claude-code','test: 14 passed, 0 failed, 3.8 s'],['14:06:15','conductor','completed: 3 edits, 12,400 tokens']],
+   compiled:'task_class: extraction\nshape: goal-block\ntier: T1\nfan_out: 2\nbudget: subscription\ngoal: Refuse a newer layout schema with a report instead of a silent reset\ndone_when: a v6 envelope is refused, reported on the status strip, and the v5 file is untouched\nnot_in_scope: the envelope’s contents; anything outside src/AiDe.Core/Workbench/\nlease: src/AiDe.Core/Workbench/**\nmessage: |\n  Refactor the layout store’s migration chain so a newer schema is refused with a report;\n  touch only @src/AiDe.Core/Workbench/.\n' },
+ { cls:'defect', clsOp:true, tier:'T1', tierProv:'rule R2: goal block filled by the model, one lease; confirmed at send', lease:['tests/AiDe.App.Tests/**'], shape:'goal block', when:'14:31', model:true, ctok:'2,210',
+   src:'<code>ContrastFloorTests</code> is green on the same commit where the shell shows 2.37:1. Find why; touch only <span class="mention">@tests/AiDe.App.Tests/</span>.',
+   outcome:{st:'ok',word:'completed',lane:'claude-code',parts:['1 lane','1 edit','9,900 tokens','3 min 05 s'],events:96},
+   reply:'Root cause: the theory exercises <code>ThemeBrushes</code>, which the product does not construct; the shell reads the implicit <code>TextBlock</code> style. Registered as DC-135; the census now walks the composed tree instead.',
+   ev:[['14:31:02','conductor','Block b3 accepted, tier T1, 1 lane, lease <code>tests/AiDe.App.Tests/**</code>'],['14:31:05','claude-code','read <code>ContrastFloorTests.cs</code> (188 lines)'],['14:32:40','claude-code','edit <code>ShellContrastCensusTests.cs</code>, 1 hunk'],['14:34:07','conductor','completed: 1 edit, 9,900 tokens']],
+   compiled:'task_class: defect\nshape: goal-block\ntier: T1\nfan_out: 2\nbudget: subscription\ngoal: Find why the contrast theory is green while the shell fails\ndone_when: the cause is named and a test that fails on the shell’s tree exists\nnot_in_scope: the fix itself; anything outside tests/AiDe.App.Tests/\nlease: tests/AiDe.App.Tests/**\nmessage: |\n  ContrastFloorTests is green on the same commit where the shell shows 2.37:1. Find why;\n  touch only @tests/AiDe.App.Tests/.\n' },
+ { cls:'ui-feedback', clsOp:true, tier:'T2', tierProv:'operator (rule said T1): two seams, the tab strip and the menu, coordinate', tierOp:true, lease:['src/AiDe.App/Workbench/**'], shape:'goal block', tmpl:'change-order v2', when:'15:04', model:true, ctok:'2,640',
+   src:'Apply the contrast fix to the dock tab strip and the three menu brushes under <span class="mention">@src/AiDe.App/Workbench/</span>; the census stays at 180 of 180.',
+   outcome:{st:'ok',word:'completed',lane:'claude-code',parts:['2 lanes','5 edits','31,200 tokens','11 min 40 s'],events:388},
+   reply:'Both seams landed: the selected-inactive tab pairs <code>text</code> on <code>surface</code> with the 2px muted edge; the menu brushes read <code>surface-raised</code>, <code>float-chrome</code> and <code>border</code>. Census 180 of 180, 0 below floor.',
+   ev:[['15:04:10','conductor','Block b4 accepted, tier T2 (operator; rule said T1), 2 lanes'],['15:04:12','claude-code','read <code>DockRoundedTabs.xaml</code> (240 lines)'],['15:09:52','claude-code','edit <code>App.xaml</code>, 3 hunks: menu brushes onto tokens'],['15:15:50','conductor','completed: 5 edits, 31,200 tokens']],
+   compiled:'task_class: ui-feedback\nshape: goal-block\ntemplate: change-order v2\ntier: T2\nfan_out: 3\nbudget: subscription\nlease: src/AiDe.App/Workbench/**\nwhat_changed: the dock tab strip and the three menu brushes take token pairings\namended_done_when: the census reads 180 of 180 with 0 below floor in both themes\nnot_in_scope: the composer page; the high-contrast dictionary\nmessage: |\n  Apply the contrast fix to the dock tab strip and the three menu brushes under\n  @src/AiDe.App/Workbench/; the census stays at 180 of 180.\n' },
+ { cls:'free-form', clsOp:false, tier:'T1', tierProv:'rule R2: goal block filled by you, one lease; confirmed at send', lease:['docs/proof/**'], shape:'goal block', when:'15:22', model:true, ctok:'1,120',
+   src:'Write this session’s proof pack under <span class="mention">@docs/proof/</span>: what changed, what is still open, and the sha each claim cites.',
+   outcome:{st:'ok',word:'completed',lane:'claude-code',parts:['1 lane','1 edit','4,100 tokens','1 min 02 s'],events:51},
+   reply:'Wrote <code>docs/proof/pp-0142.md</code>: three changes with their shas, two open items (the high-contrast dictionary; the menu keyboard indicator), every figure taken from the census run at <code>c9fb2a94</code>.',
+   ev:[['15:22:30','conductor','Block b5 accepted, tier T1, 1 lane, lease <code>docs/proof/**</code>'],['15:22:31','claude-code','read <code>docs/proof/pp-0141.md</code> (96 lines)'],['15:23:12','claude-code','write <code>docs/proof/pp-0142.md</code> (74 lines)'],['15:23:32','conductor','completed: 1 edit, 4,100 tokens']],
+   compiled:'task_class: free-form\nshape: goal-block\ntier: T1\nfan_out: 2\nbudget: subscription\ngoal: A proof pack for this session with a sha on every claim\ndone_when: docs/proof/pp-0142.md exists and names what changed and what is open\nnot_in_scope: anything outside docs/proof/\nlease: docs/proof/**\nmessage: |\n  Write this session’s proof pack under @docs/proof/: what changed, what is still open,\n  and the sha each claim cites.\n' }
+];
+/* the last turn's reply-side variants (a goal block is answered by a lane); a refusal BEFORE start is composer-side (see SCEN.quota) */
+var LAST_VARIANTS={
+  running:{st:'run',word:'running',lane:'claude-code',parts:['41 s elapsed','38 events'],live:true,
+    ev:[['15:22:30','conductor','Block b5 accepted, tier T1, 1 lane, lease <code>docs/proof/**</code>'],['15:22:31','claude-code','read <code>docs/proof/pp-0141.md</code> (96 lines)'],['15:22:58','claude-code','read <code>docs/audit/audit-log.jsonl</code> (last 40 entries)'],['15:23:09','claude-code','write <code>docs/proof/pp-0142.md</code> (in progress)']],
+    acts:['Stop this turn'], reason:'b5 is running; the next turn waits for it.', stopdesc:'Stop ends the lane cleanly; edits made so far stay on disk and are listed on the turn.'},
+  laneerror:{st:'err',word:'lane exited 1',lane:'claude-code',parts:['37 s','12 events','0 edits'],
+    ev:[['15:22:30','conductor','Block b5 accepted, tier T1, 1 lane, lease <code>docs/proof/**</code>'],['15:22:31','claude-code','read <code>docs/proof/pp-0141.md</code> (96 lines)'],['15:23:05','claude-code','<span class="err">stderr: fatal: not a git repository (or any of the parent directories): .git</span>'],['15:23:07','conductor','<span class="err">lane exited 1 before any edit; the lease was never used</span>']],
+    box:'<b>The lane exited 1 before any edit.</b> Its last four lines are above; nothing under <code>docs/proof/</code> changed. Send the same turn again as b6 (it prepares again: one request), or open the full log first.',
+    acts:['Send again as a new turn','Open the log']},
+  stopped:{st:'stop',word:'stopped by you',lane:'claude-code',parts:['52 s','1 edit so far','3,900 tokens','44 events'],
+    ev:[['15:22:30','conductor','Block b5 accepted, tier T1, 1 lane, lease <code>docs/proof/**</code>'],['15:22:31','claude-code','read <code>docs/proof/pp-0141.md</code> (96 lines)'],['15:23:12','claude-code','write <code>docs/proof/pp-0142.md</code> (74 lines, partial)'],['15:23:22','conductor','stopped by the operator; the lane ended cleanly']],
+    boxkind:'stop', box:'<b>Stopped at 15:23:22 after 1 edit</b> (<code>docs/proof/pp-0142.md</code>, partial, 3,900 tokens). The file stays as the lane left it. Send the same turn again as b6 (it prepares again), or open the log.',
+    acts:['Send again as a new turn','Open the log']},
+  permission:{st:'wait',word:'waiting for you',lane:'claude-code',parts:['2 min 14 s','27 events'],live:true,
+    ev:[['15:22:30','conductor','Block b5 accepted, tier T1, 1 lane, lease <code>docs/proof/**</code>'],['15:23:12','claude-code','write <code>docs/proof/pp-0142.md</code> (74 lines)'],['15:24:40','claude-code','asks to write outside the declared scope: <code>docs/audit/audit-log.jsonl</code>'],['15:24:40','conductor','waiting for the operator (the lane is paused)']],
+    boxkind:'wait', box:'<b>claude-code asks to write outside the declared scope:</b> <code>docs/audit/audit-log.jsonl</code>. The lease is <code>docs/proof/**</code>. Allow once lets this one write through; Deny keeps the lease and the lane continues without it.',
+    acts:['Deny','Allow once'], reason:'b5 is waiting for you; the next turn waits for it.'},
+  capask:{st:'wait',word:'waiting for you',lane:'conductor',parts:['3 s','2 events'],live:true,
+    ev:[['15:22:30','conductor','Block b5 accepted, tier T1, 1 lane, lease <code>docs/proof/**</code>'],['15:22:31','conductor','this turn would pass the cap you enforced: 38,900 of 40,000 tokens used; the lane is not started']],
+    boxkind:'wait', box:'<b>This turn would pass the cap you enforced</b> (38,900 of 40,000 tokens used this session). Allow this turn to run past it, raise the cap in session settings, or stop it here. Nothing has run.',
+    acts:['Allow this turn','Open session settings','Stop this turn'], reason:'b5 is waiting for you; the next turn waits for it.'}
+};
+
+/* ---- scenario table: what each state renders in the composer ------------------------------ */
+var DRAFT='Now make <code>ZoneLayoutStore</code> protect the same invariant: refuse a newer zone schema with a report instead of discarding it; touch only <span class="mention">@src/AiDe.Core/Workbench/</span>.';
+var DRAFT2='Now make <code>ZoneLayoutStore</code> protect the same invariant: refuse a newer zone schema with a report instead of discarding it; touch <span class="mention">@src/AiDe.Core/Workbench/</span> and <span class="mention">@src/AiDe.App/Workbench/</span>.';
+var DRAFT_NOSCOPE='Now make <code>ZoneLayoutStore</code> protect the same invariant: refuse a newer zone schema with a report instead of discarding it.';
+var DRAFT_LONG='Regenerate every projection under <span class="mention">@src/AiDe.Core/Presentation/Sessions/Composer/Rendering/Markdown/</span> and reconcile the fixture set against <span class="mention">@tests/AiDe.Core.Tests/Fixtures/payments-aggregate-extraction-roundtrip-with-inferred-edges.golden.json</span>; keep <span class="mention">@src/AiDe.Core/Workbench/</span> and <span class="mention">@src/AiDe.App/Workbench/Sessions/</span> readable throughout, never rewrite a migration that has shipped, and when the golden master and the projection disagree, stop and report which one is wrong rather than regenerating the master to match. Run the characterization suite before and after; the diff is the deliverable.';
+var G='Refuse a newer zone-layout schema with a report instead of discarding it', D='a v2 zone envelope is refused, reported on the status strip, and the v1 file is untouched', N='the tree store (b2 covered it); anything outside src/AiDe.Core/Workbench/';
+var L1=['src/AiDe.Core/Workbench/**'];
+var RATIONALE='the model filled Goal and Done when; one lease';
+var COMPILED_OK={st:'ok',text:'Compiled on <span class="model">'+MODEL+'</span> · '+PROFILE+' · read 5 turns · '+RATIONALE+' · 1 request · 2,140 tokens',read:true};
+var PREPARED={text:DRAFT,lines:'derived',tier:['d','T1','derived: '+RATIONALE],lease:L1,shape:'goal block',send:['Send',true,''],cline:COMPILED_OK};
+var EMPTYISH={text:'',lines:'none',tier:['nd','T0','no goal block yet'],lease:null,shape:'message',send:['Prepare',false,'Write something to send.'],cline:null};
+/* compiled mechanically: one state, the reason parameterised (Addendum D §A11) */
+function degraded(reason){ return {text:DRAFT,lines:'fill',tier:['nd','T0','no goal block: fill Goal and Done when, or Prepare again'],lease:L1,shape:'message',send:['Send',true,''],cline:{st:'err',text:'Compiled mechanically — '+reason,acts:['Prepare again']}}; }
+var MECHANICAL=degraded('needs-login. Sign in with <code>claude</code> and mark the account <code>ready</code> in providers.json, or send as is.');
+var SCEN={
+  empty:      Object.assign({},EMPTYISH,{turns:0}),
+  first:      Object.assign({},EMPTYISH,{turns:1,last:'running'}),
+  loading:    Object.assign({},EMPTYISH,{send:['Prepare',false,'Editor starting…']}),
+  whatread:   PREPARED,
+  tiermenu:   Object.assign({},PREPARED,{cls:['defect','chosen for this prompt'],tier:['c','T2','operator (rule said T1)']}),
+  advisory:   Object.assign({},PREPARED,{lines:'advisory',send:['Send',true,'2 derived lines are not kept; they send empty.'],cline:{st:'ok',text:'Compiled on <span class="model">'+MODEL+'</span> · '+PROFILE+' · read 5 turns · '+RATIONALE+' · advisory: a derived line counts once you keep or edit it',read:true}}),
+  refusedtos: degraded('not a subscription. The compile bills the window a lane does; bind a subscription account in providers.json, or send as is.'),
+  timedout:   degraded('the 60 s compile bound passed with no answer. Prepare again, or send as is.'),
+  malformed:  degraded('the model’s output failed the schema; nothing was applied. Prepare again, or send as is.'),
+  byyou:      {text:DRAFT,lines:'byyou',tier:['c','T1','rule R2: goal block filled by you, one lease'],lease:L1,shape:'goal block',send:['Send',true,''],cline:{st:'',text:'Structure supplied by you · no request made'}},
+  'settings-cap':PREPARED,
+  editorerror:Object.assign({},EMPTYISH,{send:['Prepare',false,'']}),
+  jump:       Object.assign({},PREPARED,{turns:40}),
+  'draft-mech':{text:DRAFT,lines:'fill',tier:['nd','T0','no goal block: fill Goal and Done when to spawn a lane'],lease:L1,shape:'message',send:['Send',true,''],cline:null,mode:'mechanical-only'},
+  template:   {text:DRAFT,lines:'template',tier:['c','T1','rule R2: goal block filled by template, one lease'],lease:L1,shape:'goal block',tmpl:true,send:['Send',false,'This prompt is a goal block and needs Not in scope.'],cline:{st:'',text:'Structure supplied by template'},mode:'mechanical-only'},
+  draft:      {text:DRAFT,lines:'pending',tier:['nd','T0','no goal block yet: Prepare derives one'],lease:L1,shape:'message',send:['Prepare',true,''],cline:null},
+  'draft-nolease':{text:DRAFT_NOSCOPE,lines:'pending',tier:['nd','T0','no goal block yet: Prepare derives one'],lease:null,shape:'message',send:['Prepare',true,'If Prepare derives a goal block, it can’t be sent without an @path mention.'],cline:null},
+  preparing:  {text:DRAFT,lines:'skel',tier:['nd','T0','preparing…'],lease:L1,shape:'message',send:['Send',false,'Preparing… press again when prepared.'],cline:{st:'',text:'Preparing on <span class="model">'+MODEL+'</span> (up to 60 s)',acts:['Cancel'],skel:true}},
+  cancelled:  {text:DRAFT+' Keep the v1 reader working for one release.',lines:'pending',tier:['nd','T0','no goal block yet: Prepare derives one'],lease:L1,shape:'message',send:['Prepare',true,''],cline:{st:'err',text:'Cancelled — draft edited. The envelope was abandoned; nothing was applied.',acts:['Prepare again']}},
+  prepared:   PREPARED,
+  reused:     Object.assign({},PREPARED,{cline:{st:'ok',text:'Compiled on <span class="model">'+MODEL+'</span> · '+PROFILE+' · read 5 turns · '+RATIONALE+' · reused, no new request',read:true}}),
+  classmenu:  PREPARED,
+  override:   Object.assign({},PREPARED,{cls:['defect','chosen for this prompt'],tier:['c','T2','operator (rule said T1)']}),
+  forced:     Object.assign({},PREPARED,{tier:['x','choose','the rule could not decide this prompt’s tier'],send:['Send',false,'Choose a tier for this prompt.']}),
+  mechanical: MECHANICAL,
+  suspect:    {text:DRAFT,lines:'suspect',tier:['x','~ T1','derived by a suspect compile: read the lines before you send'],lease:L1,shape:'goal block',send:['Send',false,'This prompt is a goal block and needs Not in scope.'],cline:{st:'err',text:'Suspect — the model made 1 tool call; read the lines before you send.',acts:['Prepare again'],read:true}},
+  nostructure:{text:'What does <code>ZoneLayoutStore</code> do on a schema mismatch today, and where is that decided? Touch nothing under <span class="mention">@src/AiDe.Core/Workbench/</span>.',lines:'fill',tier:['nd','T0','no goal block proposed'],lease:L1,shape:'message',send:['Send',true,''],cline:{st:'ok',text:'No goal block proposed; sends as a message · <span class="model">'+MODEL+'</span> · read 5 turns · 1,120 tokens',read:true}},
+  stale:      {text:DRAFT+' Keep the v1 reader working for one release.',lines:'derived',tier:['nd','T1','rule R2: goal block, one lease (live, unconfirmed)'],lease:L1,shape:'goal block',send:['Prepare',true,''],cline:{st:'stale',text:'Your draft changed since it was prepared — press again to prepare it.'}},
+  'stale-settings':{text:DRAFT,lines:'derived',tier:['nd','T1','rule R2: goal block, one lease (live, unconfirmed)'],lease:L1,shape:'goal block',send:['Prepare',true,''],cline:{st:'stale',text:'Session settings changed since it was prepared (fan-out ceiling 3 → 1) — press again to prepare it.'},ceil:1},
+  gaps:       {text:DRAFT2,lines:'gaps',tier:['d','T2','derived: two leases'],lease:['src/AiDe.Core/Workbench/**','src/AiDe.App/Workbench/**'],shape:'goal block',send:['Send',false,'2 lines need filling; this prompt compiles at T2.'],cline:{st:'ok',text:'Compiled on <span class="model">'+MODEL+'</span> · '+PROFILE+' · read 5 turns · the model filled Goal only · 1 request',read:true}},
+  noscope:    {text:DRAFT_NOSCOPE,lines:'derived',tier:['d','T1','derived: goal block, no write scope yet'],lease:null,shape:'goal block',send:['Send',false,'Send needs a write scope.'],cline:{st:'ok',text:'Compiled on <span class="model">'+MODEL+'</span> · '+PROFILE+' · read 5 turns · the model filled Goal and Done when · 1 request',read:true}},
+  quota:      Object.assign({},PREPARED,{send:['Try again',true,'Refused before it started; a retry before 16:00 is refused again and spends nothing.'],collapsed:true}),
+  sending:    {text:DRAFT,lines:'kept',tier:['c','T1','confirmed'],lease:L1,shape:'goal block',send:['Send',false,''],busy:'Sending…',ro:true,cline:COMPILED_OK},
+  sendfailed: {text:DRAFT,lines:'kept',tier:['c','T1','confirmed'],lease:L1,shape:'goal block',send:['Try again',true,''],ro:true,cline:COMPILED_OK},
+  laneerror:  Object.assign({},EMPTYISH,{last:'laneerror'}),
+  stopped:    Object.assign({},EMPTYISH,{last:'stopped'}),
+  permission: Object.assign({},EMPTYISH,{last:'permission'}),
+  capask:     Object.assign({},EMPTYISH,{last:'capask'}),
+  settings:   PREPARED,
+  split:      Object.assign({},PREPARED,{last:'running'}),
+  attaching:  PREPARED,
+  attachoff:  PREPARED,
+  overflow:   {text:DRAFT_LONG,lines:'derived-long',tier:['d','T2','derived: three leases'],lease:['src/AiDe.Core/Presentation/Sessions/Composer/Rendering/Markdown/**','tests/AiDe.Core.Tests/Fixtures/payments-aggregate-extraction-roundtrip-with-inferred-edges.golden.json','src/AiDe.Core/Workbench/** · src/AiDe.App/Workbench/Sessions/**'],shape:'goal block',send:['Send',true,''],cline:{st:'ok',text:'Compiled on <span class="model">'+MODEL+'</span> · '+PROFILE+' · read 12 turns (byte-bounded, 40 in the session) · the model filled Goal and Done when; three leases · 1 request · 6,900 tokens',read:true},turns:40}
+};
+var CAP={T0:0,T1:2,T2:4}, CEIL=3;
+
+/* one line per state: the rule it exercises and the string it proves */
+var LEGEND={
+  prepared:'<b>SC1, SC2, SC4–SC6.</b> A thread of turns above one pinned editor; each turn is the operator&rsquo;s words, a decoration line in one grammar, and the lane&rsquo;s reply folded beneath it. The current turn carries the same line with two controls (class, tier) and their provenance inline; the compile line says who compiled it, what it read and why the tier moved. Ctrl+Enter prepared this turn; the same key sends it (the confirmation).',
+  empty:'<b>SC1.</b> No turns: one sentence, the editor focused. The class already reads <i>free-form &middot; session default</i> (Ruling 72); the tier T0 because nothing yields a goal block; the button says Prepare.',
+  first:'<b>SC7, SC9.</b> b1 running: outcome line with elapsed time and event count, the last four lines following, Stop as the one control. Send waits with its reason (Inferred: one run at a time; a finding for the spec).',
+  loading:'<b>State: loading.</b> Skeleton turns in the thread&rsquo;s shape, a text skeleton in the editor, Send disabled with the reason.',
+  editorerror:'<b>State: error.</b> The page could not start; the thread stays readable; Retry is the recovery.',
+  jump:'<b>SC8 at 40 turns.</b> The turn count is the outline: ordinal &middot; the words &middot; the outcome word, a listbox with type-ahead on the ordinal; Enter focuses that turn in the feed. Addendum B&rsquo;s Score outline as an on-demand view, symmetric with the Console split.',
+  'draft-mech':'<b>Mechanical-only (the first slice).</b> No model call; the lines are yours to fill; shape message, tier T0; one gesture.',
+  template:'<b>SC5: <i>Structure supplied by template</i>.</b> Two lines from change-order v2, one to fill; tier T1 by rule; one gesture.',
+  draft:'<b>SC6, before the first gesture.</b> The structure line says the lines appear when you prepare; the button says Prepare; nothing was sent to a model (Ruling 67).',
+  'draft-nolease':'<b>SC6 on a mention-less draft.</b> Before the first gesture the send row says what Prepare will cost and why it will not send: the compile is a request against the plan window, and the operator&rsquo;s fear is one they did not approve.',
+  preparing:'<b>SC5: <i>Preparing on &lt;model&gt; (up to 60 s) &middot; Cancel</i>.</b> Skeleton under the editor, the editor editable, a second Ctrl+Enter ignored with its reason.',
+  cancelled:'<b>SC5: <i>Cancelled &mdash; draft edited</i>.</b> The envelope opened for the gesture was abandoned; the compile line says so and offers Prepare again; the button says Prepare.',
+  whatread:'<b>SC5: <i>what was read</i>.</b> Turns as ids and outcomes, the constitution by manifest with its token count, the profile and source shas, the cost in and out: never contents.',
+  tiermenu:'<b>SC4: the tier menu.</b> Three values with their caps; the operator’s T2 checked; the rule’s value (T1) one row away as <i>Restore the rule’s value</i>.',
+  advisory:'<b>SC6 under agentic-advisory.</b> A derived line counts only once kept or edited; two are not kept, the send row says they send empty, and the compiled bytes show them blank (the Owner finding on the shape rule covers this rung).',
+  refusedtos:'<b>SC5: <i>Compiled mechanically — not a subscription</i>.</b> The compile call passed the same authorisation gate a lane does and was refused; the fix names the binding; the run still proceeds.',
+  timedout:'<b>SC5: <i>Compiled mechanically — the 60 s compile bound passed</i>.</b> A late answer is never applied; Prepare again or send as is.',
+  malformed:'<b>SC5: <i>Compiled mechanically — the output failed the schema</i>.</b> Nothing was applied; the lines are yours to fill.',
+  byyou:'<b>SC5: <i>Structure supplied by you · no request made</i>.</b> All three lines filled by the operator, so the compile made no call; the tier is the rule’s (T1) and Send is one more gesture.',
+  'settings-cap':'<b>PS-S1 erratum, Ruling 72.</b> A cap enforced: the checkbox on, the number the operator typed, and the promise that a turn which would pass it asks first (see the <i>capask</i> state).',
+  reused:'<b>SC5: <i>reused, no new request</i>.</b> The second gesture on unchanged inputs made no model call and the line says so (Addendum D §B5).',
+  classmenu:'<b>SC3.</b> The class menu: seven classes with their sentences; <i>free-form</i> checked as the session default; making a choice the session default is a separate row (Ruling 70, condition 3).',
+  override:'<b>SC3, SC4.</b> <i>class defect &middot; chosen for this prompt</i>; <i>T2 &middot; operator (rule said T1)</i>; the settings line derives the cap: min(cap(T2) = 4, ceiling 3) = 3.',
+  forced:'<b>SC4: <i>tier_prompt: forced</i> (Addendum D §A11).</b> The rule could not decide; the tier control is blank and invalid, the menu offers the three values with their caps, Send is refused until one is chosen.',
+  mechanical:'<b>SC5: <i>Compiled mechanically &mdash; reason. fix, or send as is. &middot; Prepare again</i>.</b> The run proceeds; nothing is silent, nothing is blocked for a model&rsquo;s absence.',
+  suspect:'<b>SC5: <i>Suspect</i>.</b> The compile made a tool call; the line says so before Send and every proposed line carries the mark.',
+  nostructure:'<b>SC5: <i>No goal block proposed; sends as a message</i>.</b> A question; a success, not a failure; shape message, tier T0, Send still the second gesture.',
+  stale:'<b>SC5: <i>Your draft changed since it was prepared</i>.</b> The compile line is the one carrier of <i>stale</i>; the tier shows the rule&rsquo;s live value; the button says Prepare.',
+  'stale-settings':'<b>SC5, Addendum D Flow D-2.</b> A settings edit while prepared also stales the envelope; the line names what changed (the ceiling) and the settings line already derives the new cap.',
+  gaps:'<b>PS-C3.</b> Two mentions, two leases, T2: Done when and Not in scope refused inline with one reason each; Send disabled with the count and the tier.',
+  noscope:'<b>PS-C3, Ruling 42.</b> A goal block with no lease: the segment says <i>none yet</i>, the refusal says what derives one and how, the picker opens at the caret.',
+  quota:'<b>SC7 (refusal before start is composer-side).</b> The conductor refused b6 before it started, so no turn joined the thread (Feedback:+Confirmed): the reason sits beside Send, the draft and its envelope are kept, the recovery names session settings, which carry the backends.',
+  sending:'<b>PS-C2.</b> Editor read-only for the round trip; marks became <i>kept</i>; tier confirmed; b6 joins the thread when the conductor accepts it.',
+  sendfailed:'<b>PS-C3.</b> The reason and the promise: your draft is kept; Try again is the same key.',
+  laneerror:'<b>SC7: <i>lane exited 1</i>.</b> The last four lines, what did not happen, two recoveries, in the thread where it happened.',
+  stopped:'<b>SC7: <i>stopped by you</i>.</b> What Stop produced: edits so far, tokens, the partial file named, the same two recoveries.',
+  permission:'<b>SC7: <i>waiting for you</i>.</b> The permission request in the turn that raised it, with Allow once and Deny; the next turn waits.',
+  capask:'<b>SC7 with a cap enforced (Ruling 72).</b> The turn would pass the cap the operator set; the conductor waits before starting the lane; Allow, raise the cap, or stop.',
+  settings:'<b>PS-S1–PS-S4 after Ruling 72.</b> The ceiling; the budget as a state (<i>bounded by your subscription</i>) with the cap as a deliberate act; the default class; the compile mode; the backends. No tier anywhere.',
+  split:'<b>SC1, Ruling 21.</b> The Console split: the same events the thread folds, unfolded in time, following the running turn; the thread keeps its rhythm.',
+  attaching:'<b>PS-C (attaching).</b> A drop target over the editor says what a drop does; the editor keeps its size and its text.',
+  attachoff:'<b>PS-C (attaching off).</b> One line beneath the editor, muted ink on the island.',
+  overflow:'<b>Overflow.</b> Forty turns; a long draft with four mentions (three leases, T2 derived) rendered in full on the decoration line, never truncated; long reply lines wrapping at a readable measure; the editor scrolls within its maximum height.'
+};
+
+/* ---- rendering ---------------------------------------------------------------------- */
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function shown(el){ if(el.offsetParent===null) return false; var d=el.closest('details:not([open])'); if(d){ var sm=el.closest('summary'); if(!sm||!d.contains(sm)||sm.parentElement!==d) return false; } return true; }
+function evLine(e){ return '<div class="evline"><span class="ts">'+e[0]+'</span><span class="lane">'+e[1]+'</span><span class="msg">'+e[2]+'</span></div>'; }
+function glyphFor(st){ return {ok:'<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>', err:'<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>', run:'<span class="ring" aria-hidden="true"></span>', wait:'<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>', stop:'<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg>'}[st]; }
+function turnHtml(t, n, total, variant, folded){
+  var deco = '<span class="seg"><span class="p">class</span><span class="v">'+t.cls+'</span></span>'
+    + '<span class="seg"><span class="tv">'+t.tier+'</span></span>'
+    + (t.lease ? '<span class="seg"><span class="p">lease</span><span class="lease" aria-describedby="lease-all-'+n+'">'+t.lease[0]+(t.lease.length>1?' +'+(t.lease.length-1)+' more':'')+'</span><span id="lease-all-'+n+'" hidden>'+t.lease.join(', ')+'</span></span>' : '')
+    + '<span class="seg"><span class="v">'+t.shape+'</span></span>'
+    + (t.tmpl ? '<span class="seg"><span class="p">template</span><span class="v">'+t.tmpl+'</span></span>' : '')
+    + '<span class="seg"><button class="lnk" aria-expanded="false" aria-controls="prov-'+n+'" aria-label="Provenance of b'+n+'" data-toggle="prov-'+n+'"><svg class="ico sm car" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>provenance</button></span>'
+    + '<span class="seg"><button class="lnk" aria-expanded="false" aria-controls="cpl-'+n+'" aria-label="Compiled prompt of b'+n+'" data-toggle="cpl-'+n+'"><svg class="ico sm car" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>compiled prompt</button></span>'
+    + '<span class="seg ts">'+t.when+'</span>';
+  var prov = '<div class="prov" id="prov-'+n+'" hidden>'
+    + envRows(t,n).map(function(r){ return '<div><span class="k">'+r[0]+'</span><span class="v'+(r[0]==='lease'||r[0]==='envelope'?' mono':'')+'">'+r[1]+'</span><span>'+r[2]+' · '+r[3]+'</span></div>'; }).join('')
+    + '<div><span class="k"></span><button class="lnk" aria-label="Use b'+n+' as the next draft">Use as the next draft</button></div>'
+    + '</div>';
+  var cpl = '<div class="cpl" id="cpl-'+n+'" hidden><pre>'+esc(t.compiled)+'</pre></div>';
+  var o = variant ? variant : t.outcome;
+  var outcome = '<div class="outcome"><span class="st '+o.st+'">'+glyphFor(o.st)+o.word+'</span><span class="lane">'+o.lane+'</span>'
+    + o.parts.map(function(p){return '<span class="n">'+p+'</span>';}).join('')
+    + (o.events ? '<details class="ev"><summary><svg class="ico sm car" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>'+o.events+' events</summary><div class="evlist">'+(t.ev||[]).map(evLine).join('')+(o.events>(t.ev||[]).length?'<div class="evline"><span class="ts">…</span><span class="msg"><button class="lnk" aria-label="Open the Console at b'+n+'" data-console="'+n+'">the other '+(o.events-(t.ev||[]).length)+', in the Console</button></span></div>':'')+'</div></details>' : '')
+    + '</div>';
+  var replyBody = variant
+    ? '<div class="evlist"'+(variant.live?' aria-live="off"':'')+'>'+variant.ev.map(evLine).join('')+'</div>'
+      + (variant.box ? '<div class="rbox'+(variant.boxkind?' '+variant.boxkind:'')+'" role="alert">'+variant.box+'</div>' : '')
+      + (variant.acts ? '<div class="acts">'+variant.acts.map(function(a){return '<button class="btn"'+(a==='Stop this turn'&&variant.stopdesc?' title="'+variant.stopdesc+'" aria-description="'+variant.stopdesc+'"':'')+'>'+a+'</button>';}).join('')+'</div>' : '')
+    : (folded ? '' : '<div class="reply">'+t.reply+'</div>');
+  return '<article class="turn" id="turn-'+n+'" tabindex="0" aria-posinset="'+n+'" aria-setsize="'+total+'" aria-labelledby="gut-'+n+' src-'+n+'" aria-describedby="deco-'+n+'">'
+    + '<span class="gut" id="gut-'+n+'">b'+n+'</span>'
+    + '<div><div class="src" id="src-'+n+'">'+t.src+'</div><div class="deco" id="deco-'+n+'">'+deco+'</div></div>'
+    + prov + cpl
+    + '<div class="rside">'+outcome+replyBody+'</div>'
+    + '</article>';
+}
+function timeFor(i){ var m=9*60+12+i*7; return ('0'+Math.floor(m/60)).slice(-2)+':'+('0'+(m%60)).slice(-2); }
+var consoleFocus=null;
+function turnList(n){ /* the fixtures for a thread of n turns; at 40, b17 is a failed PAST turn, folded */
+  var list=[];
+  if (n===1) list.push(TURNS[4]);
+  else for (var i=0;i<n;i++){ var t=Object.assign({},TURNS[i%5]); if (n===40) t.when=timeFor(i); if (n===40 && i===16){ t.outcome={st:'err',word:'lane exited 1',lane:'claude-code',parts:['37 s','12 events','0 edits'],events:12}; t.ev=LAST_VARIANTS.laneerror.ev; t.folded=true; } list.push(t); }
+  return list;
+}
+function renderThread(sc){
+  var host=document.getElementById('turns'), n = sc.turns!==undefined ? sc.turns : +body.dataset.turns;
+  var last = sc.last ? LAST_VARIANTS[sc.last] : null, list=turnList(n), out=[];
+  list.forEach(function(t,i){ out.push(turnHtml(t,i+1,n,(i===n-1)?last:null,t.folded)); });
+  host.innerHTML=out.join('');
+  document.getElementById('turncount').textContent = n===0 ? 'no turns yet' : n+' turn'+(n===1?'':'s');
+  document.getElementById('thread').setAttribute('aria-busy', ((last&&last.st==='run')||body.dataset.state==='loading') ? 'true' : 'false');
+  host.querySelectorAll('[data-toggle]').forEach(function(b){ b.addEventListener('click',function(){ var el=document.getElementById(b.dataset.toggle); var open=el.hidden; el.hidden=!open; b.setAttribute('aria-expanded',open?'true':'false'); audit(); }); });
+  host.querySelectorAll('[data-console]').forEach(function(b){ b.addEventListener('click',function(){ consoleFocus=+b.dataset.console; body.dataset.state='split'; document.getElementById('h-state').value='split'; render(); }); });
+  /* the jump list: ordinal · the words · the outcome word */
+  var jl=document.getElementById('jumplist');
+  jl.innerHTML=list.map(function(t,i){ var o=(i===n-1&&last)?last:t.outcome; return '<div class="jrow'+(i===n-1?' kbd':'')+'" role="option" aria-selected="'+(i===n-1?'true':'false')+'"><span class="o">b'+(i+1)+'</span><span class="w">'+t.src.replace(/<[^>]+>/g,'')+'</span><span class="st '+o.st+'">'+o.word+'</span></div>'; }).join('');
+  /* the Console split: the same events, unfolded in time, with a heading per turn; following the running turn or the turn the operator opened */
+  var c=document.getElementById('consolebody'), all=[], focus = consoleFocus || (last ? n : null);
+  list.forEach(function(t,j){ var evs=(j===n-1&&last)?last.ev:(t.ev||[]); all.push('<div class="evhead'+((j+1)===focus?' cur':'')+'" id="ev-b'+(j+1)+'" role="heading" aria-level="4">b'+(j+1)+' · '+t.when+'</div>'); evs.forEach(function(e){ all.push('<div class="evline'+((j+1)===focus?' cur':'')+'"><span class="ts">'+e[0]+'</span><span class="lane">'+e[1]+'</span><span class="msg">'+e[2]+'</span></div>'); }); });
+  c.innerHTML=all.join('');
+  document.getElementById('follow').innerHTML='<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>'+(last&&last.st==='run'?'following b'+n:(focus?'at b'+focus:'at the end'));
+  var th=document.getElementById('thread'); th.scrollTop=th.scrollHeight;
+  if (focus){ var eh=document.getElementById('ev-b'+focus); if (eh) c.scrollTop=eh.offsetTop-c.offsetTop; } else c.scrollTop=c.scrollHeight;
+}
+function lineHtml(k,v,mark,opts){
+  opts=opts||{};
+  var id=k.toLowerCase().replace(/[^a-z]+/g,'-');
+  var m = mark==='derived' ? '<span class="mark d" id="m-'+id+'">~ derived</span>'+(opts.keep?'<button class="lnk" aria-label="Keep '+k+' as derived">keep</button>':'')
+        : mark==='kept' ? '<span class="mark c" id="m-'+id+'">✓ kept</span>'
+        : mark==='edited' ? '<span class="mark c" id="m-'+id+'">✓ edited</span><button class="lnk" aria-label="Restore the derived '+k+'">restore</button>'
+        : mark==='template' ? '<span class="mark n" id="m-'+id+'">template</span>'
+        : mark==='suspect' ? '<span class="mark x" id="m-'+id+'">! suspect</span>'
+        : mark==='invalid' ? '<span class="mark x" id="m-'+id+'">! invalid</span>'
+        : '<span class="mark n" id="m-'+id+'">fill in</span>';
+  var empty = (mark==='fill'||mark==='invalid');
+  var val = empty ? '<span class="v edit empty" tabindex="0" role="textbox" aria-label="'+k+'" aria-placeholder="fill in" data-ph="fill in" aria-describedby="m-'+id+'"'+(mark==='invalid'?' aria-invalid="true" aria-errormessage="why-'+id+'"':'')+'></span>'
+                  : (opts.ro ? '<span class="v" aria-describedby="m-'+id+'">'+v+'</span>' : '<span class="v edit" tabindex="0" role="textbox" aria-label="'+k+'" aria-describedby="m-'+id+'">'+v+'</span>');
+  var why = mark==='invalid' ? '<span class="why" id="why-'+id+'">'+opts.why+'</span>' : '';
+  return '<div class="line"><span class="k">'+k+'</span>'+val+m+why+'</div>';
+}
+function renderStructure(sc){
+  var b=document.getElementById('structure-body'), s=document.getElementById('structure'), ttl=document.getElementById('structure-title');
+  var mode=sc.lines;
+  ttl.innerHTML = mode==='none' ? 'Goal &middot; Done when &middot; Not in scope &mdash; appear when you prepare' : mode==='pending' ? 'Goal &middot; Done when &middot; Not in scope &mdash; appear when you prepare (Ctrl+Enter)' : (sc.tmpl ? 'What changed &middot; Amended done-when &middot; Not in scope' : 'Goal &middot; Done when &middot; Not in scope');
+  if (mode==='none'||mode==='pending'){ s.open=false; b.innerHTML=''; return; }
+  s.open=!sc.collapsed;
+  if (mode==='skel'){ b.innerHTML='<div class="line" style="flex-direction:column;align-items:stretch;padding:var(--s2)"><div class="skel" style="width:70%;margin:var(--s2) 0"></div><span class="help" style="margin:0">Deriving from your text on the bound model… (the editor stays yours)</span></div>'; return; }
+  var rows='';
+  if (mode==='fill'){ rows=lineHtml('Goal','','fill')+lineHtml('Done when','','fill')+lineHtml('Not in scope','','fill'); }
+  else if (mode==='template'){ rows=lineHtml('What changed','ZoneLayoutStore refuses a newer zone schema with a report','template')+lineHtml('Amended done-when','a v2 zone envelope is refused and reported; the v1 file is untouched','template')+lineHtml('Not in scope','','fill'); }
+  else if (mode==='derived'){ rows=lineHtml('Goal',G,'derived')+lineHtml('Done when',D,'derived')+lineHtml('Not in scope',N,'edited'); }
+  else if (mode==='advisory'){ rows=lineHtml('Goal',G,'derived',{keep:true})+lineHtml('Done when',D,'derived',{keep:true})+lineHtml('Not in scope',N,'edited'); }
+  else if (mode==='byyou'){ rows=lineHtml('Goal',G,'edited')+lineHtml('Done when',D,'edited')+lineHtml('Not in scope',N,'edited'); }
+  else if (mode==='derived-long'){ rows=lineHtml('Goal','Regenerate every Markdown projection under src/AiDe.Core/Presentation/Sessions/Composer/Rendering/Markdown/ and reconcile the fixture set against the payments-aggregate golden master without ever rewriting a migration that has shipped, reporting rather than regenerating when the master and the projection disagree','derived')+lineHtml('Done when','the characterization suite passes before and after; the diff is the deliverable; the golden master is untouched','derived')+lineHtml('Not in scope',N,'edited'); }
+  else if (mode==='suspect'){ rows=lineHtml('Goal',G,'suspect')+lineHtml('Done when',D,'suspect')+lineHtml('Not in scope','','fill'); }
+  else if (mode==='kept'){ rows=lineHtml('Goal',G,'kept',{ro:true})+lineHtml('Done when',D,'kept',{ro:true})+lineHtml('Not in scope',N,'kept',{ro:true}); }
+  else if (mode==='gaps'){ rows=lineHtml('Goal',G,'derived')+lineHtml('Done when','','invalid',{why:'This prompt compiles at T2 and needs Done when.'})+lineHtml('Not in scope','','invalid',{why:'This prompt compiles at T2 and needs Not in scope — the boundary is what the lease is checked against.'}); }
+  b.innerHTML=rows;
+}
+function compiledText(sc, cls, ceil){
+  var tier=sc.tier[1], gb = sc.shape==='goal block', t = (tier==='choose'?'(choose)':tier);
+  var head = 'task_class: '+cls+'\n' + 'shape: '+(gb?'goal-block':'message')+'\n' + (sc.tmpl?'template: change-order v2\n':'') + 'tier: '+t+'\n'
+    + (gb && CAP[tier]!==undefined ? 'fan_out: '+Math.min(CAP[tier],ceil)+'\n' : '') + 'budget: subscription\n'
+    + (sc.lease ? sc.lease.map(function(l){ return 'lease: '+l.replace(' · ','\nlease: '); }).join('\n')+'\n' : (gb?'lease: (none)\n':''));
+  var struct = (sc.lines==='derived'||sc.lines==='kept'||sc.lines==='suspect'||sc.lines==='byyou') ? 'goal: '+G+'\ndone_when: '+D+'\nnot_in_scope: '+(sc.lines==='suspect'?'':N)+'\n'
+    : sc.lines==='advisory' ? 'goal:\ndone_when:\nnot_in_scope: '+N+'\n'
+    : sc.lines==='derived-long' ? 'goal: Regenerate every Markdown projection under src/AiDe.Core/Presentation/Sessions/Composer/Rendering/Markdown/ and reconcile the fixture set against the payments-aggregate golden master\ndone_when: the characterization suite passes before and after; the diff is the deliverable; the golden master is untouched\nnot_in_scope: '+N+'\n'
+    : sc.lines==='gaps' ? 'goal: '+G+'\ndone_when:\nnot_in_scope:\n'
+    : sc.lines==='template' ? 'what_changed: ZoneLayoutStore refuses a newer zone schema with a report\namended_done_when: a v2 zone envelope is refused and reported; the v1 file is untouched\nnot_in_scope:\n' : '';
+  var msg = sc.text ? 'message: |\n  '+sc.text.replace(/<[^>]+>/g,'').replace(/(.{88,}?)\s/g,'$1\n  ')+'\n' : 'message: |\n\n';
+  return head+struct+msg;
+}
+function setShow(state){
+  document.querySelectorAll('[data-show]').forEach(function(el){ el.hidden = el.dataset.show.split(' ').indexOf(state)<0; });
+  document.querySelectorAll('[data-hide]').forEach(function(el){ el.hidden = el.dataset.hide.split(' ').indexOf(state)>=0; });
+}
+function stampFocusOrder(){ /* keyboard persona: the tab order is read from the DOM, never typed by hand */
+  document.querySelectorAll('.fo').forEach(function(f){ f.remove(); });
+  if (body.dataset.persona!=='keyboard') return;
+  var i=0, win=document.getElementById('win').getBoundingClientRect();
+  document.querySelectorAll('#sdoc button, #sdoc [tabindex="0"], #sdoc summary, #sdoc input, #sdoc select').forEach(function(el){
+    if (!shown(el) || el.closest('.turn')) return; /* turns are one stop each; PageDown / PageUp move between them */
+    i++; var r=el.getBoundingClientRect(), f=document.createElement('span'); f.className='fo'; f.textContent=i; f.setAttribute('aria-hidden','true');
+    f.style.left=(r.left-win.left-8)+'px'; f.style.top=(r.top-win.top-8)+'px'; document.getElementById('win').appendChild(f);
+  });
+  var first=document.querySelector('#turns .turn'); if (first){ var r=first.getBoundingClientRect(), f=document.createElement('span'); f.className='fo'; f.textContent='T'; f.title='the feed: one stop; PageDown / PageUp move between turns'; f.style.left=(r.left-win.left-8)+'px'; f.style.top=(r.top-win.top+4)+'px'; document.getElementById('win').appendChild(f); }
+}
+function render(){
+  var st=body.dataset.state, sc=SCEN[st];
+  if (st!=='split') consoleFocus=null;
+  setShow(st);
+  document.getElementById('sdoc').classList.toggle('split', st==='split');
+  document.getElementById('split-toggle').setAttribute('aria-pressed', st==='split'?'true':'false');
+  document.getElementById('settings-link').setAttribute('aria-expanded', (st==='settings'||st==='settings-cap')?'true':'false');
+  document.getElementById('jump-toggle').setAttribute('aria-expanded', st==='jump'?'true':'false');
+  /* editor */
+  var ed=document.getElementById('editor'), et=document.getElementById('editor-text');
+  ed.classList.toggle('ro', !!sc.ro); if (sc.ro) ed.setAttribute('aria-readonly','true'); else ed.removeAttribute('aria-readonly');
+  var ph=(sc.last||st==='first') ? 'Write the next message. Mention the files it may write as @path.' : 'What should this session do? Mention the files it may write as @path.';
+  ed.classList.toggle('empty', !sc.text); ed.setAttribute('data-ph', sc.text?'':ph); ed.setAttribute('aria-placeholder', ph);
+  et.innerHTML = sc.text ? sc.text+(sc.ro?'':'<span class="caret"></span>') : '<span class="caret"></span>';
+  if (st==='noscope'){ ed.setAttribute('aria-controls','picker'); ed.setAttribute('aria-activedescendant','opt-1'); } else { ed.removeAttribute('aria-controls'); ed.removeAttribute('aria-activedescendant'); }
+  var verb = sc.mode==='mechanical-only' ? 'Ctrl+Enter sends.' : sc.send[0]==='Prepare' ? (sc.cline&&sc.cline.st==='stale' ? 'Ctrl+Enter prepares again.' : 'Ctrl+Enter prepares; when prepared, the same key sends.') : sc.send[0]==='Try again' ? 'Ctrl+Enter tries again.' : 'Ctrl+Enter sends.';
+  document.getElementById('editor-help').textContent = verb+' Type @ to mention a file or folder. F6 moves to the thread; Ctrl+Home reaches the header.';
+  renderStructure(sc);
+  /* compile line */
+  var cl=document.getElementById('cline'), ct=document.getElementById('cline-text');
+  if (sc.cline){ cl.hidden=false;
+    var c=sc.cline, glyph = c.st==='ok' ? glyphFor('ok') : c.st==='err' ? '<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>' : c.st==='stale' ? '<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>' : '';
+    ct.innerHTML = (c.skel?'<span class="ring" aria-hidden="true"></span>':'') + '<span class="st" style="color:'+(c.st==='ok'?'var(--verified)':c.st==='err'?'var(--danger)':c.st==='stale'?'var(--stale)':'var(--text-muted)')+'">'+glyph+'</span><span style="color:var(--text)">'+c.text+'</span>'
+      + (c.read ? '<button class="lnk" aria-expanded="'+(st==='whatread'?'true':'false')+'" aria-controls="readlist"><svg class="ico sm car" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>what was read</button>' : '')
+      + (c.acts ? c.acts.map(function(a){return '<button class="btn">'+a+'</button>';}).join('') : '');
+  } else { cl.hidden=true; ct.innerHTML=''; }
+  /* decoration line: the current turn shows its provenance inline (the operator confirms it at the send); a past turn folds it (SC2) */
+  var cls = sc.cls ? sc.cls[0] : 'free-form', clsProv = sc.cls ? sc.cls[1] : 'session default';
+  document.getElementById('class-val').textContent=cls; document.getElementById('class-prov').textContent=clsProv;
+  document.getElementById('class-ctl').setAttribute('aria-expanded', st==='classmenu'?'true':'false');
+  var tc=document.getElementById('tier-ctl'); tc.className='ctl '+sc.tier[0]; document.getElementById('tier-val').textContent=(sc.tier[0]==='d'?'~ ':'')+sc.tier[1];
+  var onCline = !!(sc.cline && sc.cline.text && sc.cline.text.indexOf(RATIONALE)>=0);
+  document.getElementById('tier-prov').textContent = onCline ? sc.tier[2].split(':')[0] : sc.tier[2];
+  tc.setAttribute('aria-describedby', onCline ? 'tier-prov cline-text' : 'tier-prov');
+  if (st==='tiermenu') { document.getElementById('class-val').textContent='defect'; }
+  tc.setAttribute('aria-expanded', (st==='forced'||st==='tiermenu')?'true':'false'); if (st==='forced') tc.setAttribute('aria-invalid','true'); else tc.removeAttribute('aria-invalid');
+  if (sc.lease){ document.getElementById('lease-val').innerHTML=sc.lease.map(function(l){return l.replace(' · ',' · ');}).join(' · '); document.getElementById('lease-prov').textContent=(sc.lease.length>1?'from your mentions':'from your mention'); }
+  else { document.getElementById('lease-val').textContent='none yet'; document.getElementById('lease-prov').textContent='mention the files this run may write as @path'; }
+  document.getElementById('shape-val').textContent=sc.shape;
+  document.getElementById('tmpl-seg').hidden=!sc.tmpl;
+  /* settings line: the effective cap is derived from the tier, within the ceiling */
+  var tier=sc.tier[1], ceil=sc.ceil||CEIL, eff=CAP[tier]!==undefined?Math.min(CAP[tier],ceil):null;
+  document.getElementById('inherit-link').textContent = (tier==='T0' ? 'T0 — the ceiling of '+ceil+' does not apply to this turn' : eff===null ? 'fan-out cap: choose a tier (ceiling '+ceil+')' : 'fan-out cap '+eff+' (ceiling '+ceil+')') + ' · budget: bounded by your subscription · from session settings';
+  /* compiled prompt: the sent bytes */
+  document.getElementById('compiled-pre').textContent=compiledText(sc,cls,ceil);
+  /* send row */
+  var sb=document.getElementById('send'); sb.disabled=!sc.send[1]; document.getElementById('send-label').textContent=sc.send[0];
+  var nTurns = sc.turns!==undefined ? sc.turns : +body.dataset.turns;
+  var reasonText = (sc.last && LAST_VARIANTS[sc.last].reason) ? LAST_VARIANTS[sc.last].reason.replace(/b5/g,'b'+nTurns) : (sc.send[2] || '');
+  if (sc.last && LAST_VARIANTS[sc.last].reason) reasonText = reasonText.replace(/^b(\d+)/, '<button class="lnk" style="padding:0 2px;min-width:24px;justify-content:center;font-weight:600" aria-label="Go to turn b$1">b$1</button>');
+  var r=document.getElementById('reason'); r.hidden=!reasonText; document.getElementById('reason-text').innerHTML=reasonText; r.className='reason'+((st==='gaps'||st==='noscope'||st==='forced'||st==='quota'||st==='template'||st==='suspect')?' err':'');
+  var rb=document.getElementById('reason-busy'); rb.hidden=!sc.busy; document.getElementById('reason-busy-text').textContent=sc.busy||'';
+  /* thread */
+  renderThread(sc);
+  /* legend + screen reader trace */
+  document.getElementById('legend').innerHTML=LEGEND[st]||'';
+  var L=[];
+  if (st==='prepared'||st==='settings'||st==='split'||st==='attaching'||st==='attachoff'||st==='jump') { L.push(['on prepared (status)','Prepared: T1 derived — '+RATIONALE+'. Compiled on '+MODEL+', read 5 turns. Ctrl+Enter sends.']); L.push(['decoration line','This turn: class free-form, session default (menu button); tier T1 derived (menu button), description: '+RATIONALE+'; lease src/AiDe.Core/Workbench/** from your mention; goal block']); L.push(['each derived line','name "Goal" / "Done when" / "Not in scope"; ItemStatus: derived / edited; restore follows an edited line']); }
+  if (st==='jump') L.push(['jump list','listbox "Jump to a turn", 40 options: "b17, ContrastFloorTests is green…, lane exited 1"; type an ordinal to move; Enter focuses the turn in the feed']);
+  else if (st==='empty') { L.push(['on open','focus lands in the editor (Message, edit text, multi-line; description: Ctrl+Enter prepares; when prepared, the same key sends. Type @ to mention a file or folder. F6 moves to the thread; Ctrl+Home reaches the header)']); L.push(['thread (feed, 0 items)','Conversation: Nothing has run yet.']); }
+  else if (st==='first') { L.push(['on accept (status)','Turn b1 accepted as a goal block, tier T1, 1 lane.']); L.push(['(nothing while streaming)','event lines are not announced; the outcome will be']); L.push(['on an ignored Ctrl+Enter (status)','b1 is running; the next turn waits for it. (the ordinal is a link that focuses the turn’s first action)']); }
+  else if (st==='preparing') { L.push(['on the gesture (status)','Preparing on '+MODEL+', up to 60 seconds. Cancel is on the compile line.']); L.push(['on a second Ctrl+Enter (status)','Preparing, press again when prepared.']); }
+  else if (st==='cancelled') { L.push(['on cancel (status)','Cancelled: the draft was edited. Nothing was applied. Ctrl+Enter prepares again.']); }
+  else if (st==='reused') { L.push(['on prepared (status)','Prepared again: unchanged inputs, reused, no new request. Ctrl+Enter sends.']); }
+  else if (st==='mechanical'||st==='refusedtos'||st==='timedout'||st==='malformed') { L.push(['on prepared (status)',sc.cline.text.replace(/<[^>]+>/g,'')+' Prepare again is on the compile line. Ctrl+Enter sends as a message, tier T0.']); }
+  else if (st==='byyou') { L.push(['on the gesture (status)','Structure supplied by you; no request made. Tier T1 by rule. Ctrl+Enter sends.']); }
+  else if (st==='whatread') { L.push(['what was read (region)','turns b1 to b5 with their outcomes; the constitution by manifest, 46,712 tokens; profile anthropic 1.0.0; cost 2,140 tokens, 1 request, 4.2 seconds']); }
+  else if (st==='tiermenu') { L.push(['tier menu','menu "Tier for this prompt, the rule said T1", 3 radio items, T2 checked, operator; then one item: Restore the rule’s value, T1']); }
+  else if (st==='advisory') { L.push(['on prepared (status)','Prepared under advisory: 2 derived lines are not kept; they send empty. Keep or edit each line, then Ctrl+Enter sends.']); }
+  else if (st==='suspect') { L.push(['on prepared (assertive)','Suspect: the model made 1 tool call; read the lines before you send. This prompt is a goal block and needs Not in scope.']); L.push(['each proposed line','ItemStatus: suspect; the tier control’s description: derived by a suspect compile']); }
+  else if (st==='nostructure') { L.push(['on prepared (status)','No goal block proposed; sends as a message. Ctrl+Enter sends.']); L.push(['on send','Sending block b6 as a message, tier T0, class free-form.']); }
+  else if (st==='stale'||st==='stale-settings') { L.push(['on change after prepare (status)',(st==='stale'?'Your draft':'Session settings')+' changed since it was prepared; press Ctrl+Enter again to prepare it.']); }
+  else if (st==='classmenu') { L.push(['class menu','menu "Task class for this prompt", 7 radio items; free-form checked: session default, no class ranks this turn; then one item: Use the chosen class as the session default']); }
+  else if (st==='override') { L.push(['decoration line','class defect, chosen for this prompt; tier T2, operator, rule said T1; settings: fan-out cap 3, ceiling 3']); }
+  else if (st==='forced') { L.push(['UIA notification','Choose a tier for this prompt: the rule could not decide. Menu: T0, no fan-out; T1, cap 2; T2, cap 4.']); L.push(['focus','the tier control, invalid; its description carries the reason']); }
+  else if (st==='gaps'){ L.push(['UIA notification','Send refused: 2 lines need filling. This prompt compiles at T2 and needs Done when. This prompt compiles at T2 and needs Not in scope.']); L.push(['focus','the first invalid line (Done when); ItemStatus "invalid", HelpText carries the reason']); }
+  else if (st==='noscope'){ L.push(['UIA notification','Send needs a write scope. Mention the files or folders this run may write, as @path.']); L.push(['focus','the editor, with the mention picker (a listbox) open at the caret: Down and Up move the active option, Enter inserts it, Escape closes the picker']); }
+  else if (st==='quota'){ L.push(['UIA notification','Refused before it started: your subscription’s window is exhausted until 16:00. Nothing was spent; your draft is kept.']); L.push(['focus','Open session settings']); }
+  else if (st==='sending'){ L.push(['UIA notification','Sending block b6 as a goal block, tier T1, class free-form.']); L.push(['editor','Message, edit text, read only']); }
+  else if (st==='sendfailed'){ L.push(['UIA notification',"Couldn't send — the conductor closed the connection. Your draft is kept."]); L.push(['focus','Try again']); }
+  else if (st==='laneerror'){ L.push(['on outcome (assertive)','Turn b5: the lane exited 1 before any edit. Send again as a new turn, or open the log.']); L.push(['focus','stays in the editor; the turn is reachable with PageUp']); }
+  else if (st==='stopped'){ L.push(['on stop (status)','Turn b5 stopped by you after 1 edit; 3,900 tokens. Send again as a new turn, or open the log.']); }
+  else if (st==='permission'){ L.push(['on request (assertive)','Turn b5 is waiting for you: claude-code asks to write outside the declared scope, docs/audit/audit-log.jsonl. Deny or Allow once.']); L.push(['focus','stays where it is (the request is an alert, never a focus steal); F6 then PageUp reaches the turn; Deny is the first button']); L.push(['on an ignored Ctrl+Enter (status)','b5 is waiting for you; the next turn waits for it.']); }
+  else if (st==='capask'){ L.push(['on request (assertive)','Turn b5 is waiting for you: it would pass the cap you enforced, 38,900 of 40,000 tokens used. Allow this turn, open session settings, or stop it.']); }
+  else if (st==='editorerror'){ L.push(['UIA notification',"Editor couldn't start — WebView2 runtime not found."]); L.push(['focus','Retry']); }
+  else if (st==='loading'){ L.push(['UIA notification','Restoring payments extraction. Editor starting.']); }
+  else if (st==='template'){ L.push(['on template (status)','Template change-order v2 applied: two lines supplied, one to fill in. Tier T1 by rule. This prompt is a goal block and needs Not in scope.']); }
+  else if (st==='settings-cap'){ L.push(['settings dialog','Budget: cap enforced; Cap, 40,000 tokens per session, edit text']); }
+  else if (st==='attachoff'){ L.push(['status','Attaching files is off for this session.']); }
+  else if (st==='draft-mech'||st==='draft'||st==='draft-nolease'){ L.push(['on open','focus lands in the editor']); L.push(['decoration line','This turn: class free-form, session default; tier T0, '+sc.tier[2]+'; lease '+(sc.lease?sc.lease[0]+' from your mention':'none yet, mention the files this run may write as @path')+'; message']); if (st==='draft-nolease') L.push(['Send (description)','If Prepare derives a goal block, it can’t be sent without an @path mention.']); }
+  else { L.push(['on open','focus lands in the editor']); }
+  if ((sc.turns!==undefined?sc.turns:+body.dataset.turns)>=2) L.push(['past turn outcome (status, once)','Turn b2 completed: 3 edits, 12,400 tokens, 4 minutes 12 seconds. (event lines are read on demand, never announced)']);
+  document.getElementById('srlist').innerHTML=L.map(function(x){return '<li><span class="who">'+x[0]+'</span> · '+x[1]+'</li>';}).join('');
+  document.getElementById('srlog').hidden = body.dataset.persona!=='screenreader';
+  audit();
+  stampFocusOrder();
+}
+
+/* ---- contrast + "chat-like" audit (computed, never claimed) --------------- */
+function srgb(c){ c/=255; return c<=0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055,2.4); }
+function lum(rgb){ return 0.2126*srgb(rgb[0])+0.7152*srgb(rgb[1])+0.0722*srgb(rgb[2]); }
+function parse(s){ var m=/rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(s); return m?[+m[1],+m[2],+m[3]]:null; }
+function ratio(f,b){ var a=lum(f), c=lum(b); var hi=Math.max(a,c), lo=Math.min(a,c); return (hi+0.05)/(lo+0.05); }
+function hex(rgb){ return '#'+rgb.map(function(v){return ('0'+v.toString(16)).slice(-2);}).join('').toUpperCase(); }
+var probe=document.createElement('span'); probe.id='probe'; probe.style.display='none'; document.body.appendChild(probe);
+function tok(n){ probe.style.color='var('+n+')'; return parse(getComputedStyle(probe).color)||[0,0,0]; }
+var THRESH={text:4.5,large:3,ui:3,decorative:3};
+var PAIRS=[
+  ['Turn text on the island',                              'text','--text',          '--surface-raised'],
+  ['Turn ordinal (gutter) on the island',                  'text','--text-muted',    '--surface-raised'],
+  ['Decoration label on the island',                       'text','--text-muted',    '--surface-raised'],
+  ['Decoration value on the island',                       'text','--text',          '--surface-raised'],
+  ['Derived tier (inferred) on the island',                'text','--inferred',      '--surface-raised'],
+  ['Stale compile line (stale) on the island',             'text','--stale',         '--surface-raised'],
+  ['Outcome: completed (verified) on the island',          'text','--verified',      '--surface-raised'],
+  ['Outcome: lane exited (danger) on the island',          'text','--danger',        '--surface-raised'],
+  ['Outcome: waiting (inferred) on the island',            'text','--inferred',      '--surface-raised'],
+  ['Outcome: stopped (muted) on the island',               'text','--text-muted',    '--surface-raised'],
+  ['Lane name (accent) on the island',                     'text','--accent',        '--surface-raised'],
+  ['Event timestamp on the island',                        'text','--text-muted',    '--surface-raised'],
+  ['Reply text on the island',                             'text','--text',          '--surface-raised'],
+  ['Provenance / compiled-prompt link on the island',      'text','--accent',        '--surface-raised'],
+  ['Refusal box border (danger) on the island',            'ui',  '--danger',        '--surface-raised'],
+  ['Waiting box border (inferred) on the island',          'ui',  '--inferred',      '--surface-raised'],
+  ['Stopped box border (border-strong) on the island',     'ui',  '--border-strong', '--surface-raised'],
+  ['Turn focus ring on the island',                        'ui',  '--focus',         '--surface-raised'],
+  ['Console event highlighted row (text on surface)',      'text','--text',          '--surface'],
+  ['Editor text on the sunken editor',                     'text','--text',          '--surface-sunken'],
+  ['Editor placeholder on the sunken editor',              'text','--text-muted',    '--surface-sunken'],
+  ['Editor boundary (border-strong) on the island',        'ui',  '--border-strong', '--surface-raised'],
+  ['Mention chip border on the sunken editor',             'ui',  '--accent',        '--surface-sunken'],
+  ['Drop-target dashed border on the sunken editor',       'ui',  '--accent',        '--surface-sunken'],
+  ['Line label on the island',                             'text','--text-muted',    '--surface-raised'],
+  ['Line value on the island',                             'text','--text',          '--surface-raised'],
+  ['Derived mark (inferred) on the island',                'text','--inferred',      '--surface-raised'],
+  ['Invalid / suspect mark (danger) on the island',        'text','--danger',        '--surface-raised'],
+  ['Kept mark (verified) on the island',                   'text','--verified',      '--surface-raised'],
+  ['Class / tier control text on the island',              'text','--text',          '--surface-raised'],
+  ['Class / tier control text on its hover ground (surface)','text','--text',        '--surface'],
+  ['Invalid tier control (danger) on the island',          'text','--danger',        '--surface-raised'],
+  ['Compiled text on the sunken block',                    'text','--text',          '--surface-sunken'],
+  ['Send label on the accent fill',                        'text','--accent-contrast','--accent'],
+  ['Disabled Send label on the island',                    'text','--text-disabled', '--surface-raised'],
+  ['Refusal reason (inferred) on the island',              'text','--inferred',      '--surface-raised'],
+  ['Refusal reason (danger) on the island',                'text','--danger',        '--surface-raised'],
+  ['Menu / jump row text on the raised popover',           'text','--text',          '--surface-raised'],
+  ['Menu / jump keyboard ring (inset) on the raised popover','ui','--focus',         '--surface-raised'],
+  ['Menu / jump hover row: hl-ink on hl',                  'text','--hl-ink',        '--hl'],
+  ['Session header chip text on the sunken chip',          'text','--text-muted',    '--surface-sunken'],
+  ['Numeric field boundary on the sunken setting',         'ui',  '--border-strong', '--surface-sunken'],
+  ['Console heading of the opened turn (accent) on the island','text','--accent',   '--surface-raised'],
+  ['Menu row text on the pointer-hover ground (float-chrome)','text','--text',       '--float-chrome'],
+  ['Menu row meta on the pointer-hover ground',           'text','--text-muted',    '--float-chrome'],
+  ['Derived tier on the control hover ground (surface)',   'text','--inferred',      '--surface'],
+  ['Provenance label on the control hover ground',         'text','--text-muted',    '--surface'],
+  ['Backend chip: ready (verified) on the sunken chip',    'text','--verified',      '--surface-sunken'],
+  ['Backend chip: warn (inferred) on the sunken chip',     'text','--inferred',      '--surface-sunken'],
+  ['Mention chip text on the surface chip',                'text','--text',          '--surface'],
+  ['Skeleton ink (border-strong) on the island',           'ui',  '--border-strong', '--surface-raised'],
+  ['Console highlighted row ground (surface on raised): a courtesy, the heading carries the state','decorative','--surface','--surface-raised'],
+  ['Hairline between turns',                               'decorative','--border',  '--surface-raised']
+];
+function audit(){
+  var tb=document.getElementById('ctbody'), fails=0, rows='', hc=root.dataset.theme==='hc';
+  for (var i=0;i<PAIRS.length;i++){
+    var p=PAIRS[i], f=tok(p[2]), b=tok(p[3]), r=ratio(f,b), need=THRESH[p[1]], req=p[1]!=='decorative', ok=r>=need-0.005;
+    if (req&&!ok&&!hc) fails++;
+    rows+='<tr><td>'+p[0]+'</td><td>'+p[1]+'</td><td class="n"><span class="swatch" style="background:'+hex(f)+'"></span>'+hex(f)+'</td><td class="n"><span class="swatch" style="background:'+hex(b)+'"></span>'+hex(b)+'</td><td class="n">'+r.toFixed(2)+':1</td><td class="n">'+need.toFixed(1)+':1</td><td class="'+(hc?'na':(req?(ok?'pass':'fail'):'na'))+'">'+(hc?'stand-in, not measured':(req?(ok?'PASS':'FAIL'):'reported, not counted'))+'</td></tr>';
+  }
+  tb.innerHTML=rows;
+  /* "chat-like", measured against the rendered layout */
+  var st=body.dataset.state, sc=SCEN[st];
+  var headEl=document.querySelector('.sesshead'), head=headEl.getBoundingClientRect().height, headContent=0;
+  headEl.childNodes.forEach(function(n){ if(n.nodeType===1&&n.offsetParent!==null&&!n.hidden&&getComputedStyle(n).position!=='absolute') headContent=Math.max(headContent,n.getBoundingClientRect().height); });
+  var th=document.getElementById('thread'), comp=document.getElementById('composer'), ed=document.getElementById('editor');
+  var thR=th.getBoundingClientRect(), compR=comp.getBoundingClientRect(), edR=ed.offsetParent===null?null:ed.getBoundingClientRect();
+  /* the editor's top edge, read at 1 / 5 / 40 turns IN ONE PASS, then the state's own count restored */
+  var tops={}, scroll40=false, keep=sc.turns!==undefined?sc.turns:+body.dataset.turns;
+  [1,5,40].forEach(function(k){ renderThread(Object.assign({},sc,{turns:k})); tops[k]=Math.round(comp.getBoundingClientRect().top); if(k===40) scroll40 = th.scrollHeight>th.clientHeight+1; });
+  renderThread(Object.assign({},sc,{turns:keep}));
+  var topStable = tops[1]===tops[5] && tops[5]===tops[40];
+  var lefts={}; document.querySelectorAll('#turns .src, #turns .reply, #turns .outcome').forEach(function(el){ if(el.offsetParent===null) return; lefts[Math.round(el.getBoundingClientRect().left)]=1; });
+  var edges=Object.keys(lefts).length;
+  var lastBad=!!document.querySelector('#turns .turn:last-child .st.err, #turns .turn:last-child .st.wait, #turns .turn:last-child .st.run, #turns .turn:last-child .st.stop');
+  var visible=0, arts=document.querySelectorAll('#turns .turn'); arts.forEach(function(a){ var r=a.getBoundingClientRect(); var ov=Math.min(r.bottom,thR.bottom)-Math.max(r.top,thR.top); if (ov>0 && ov>=Math.min(r.height,thR.height)*0.5) visible++; });
+  var open=document.getElementById('structure').open;
+  var refusalShown=!!document.querySelector('#composer .refusal:not([hidden])');
+  var need = (st==='split'||st==='whatread') ? 1 : (open||lastBad||refusalShown) ? 2 : 3;
+  var fields=0; document.querySelectorAll('#composer [role="textbox"], #composer input, #composer textarea').forEach(function(el){ if(el.offsetParent===null||el.id==='editor') return; var cs=getComputedStyle(el); if (parseFloat(cs.borderTopWidth)>0 && cs.borderTopStyle!=='none') fields++; });
+  var boxes=0; arts.forEach(function(a){ var cs=getComputedStyle(a); if (parseFloat(cs.borderLeftWidth)>0||parseFloat(cs.borderRightWidth)>0||(cs.backgroundColor&&cs.backgroundColor!=='rgba(0, 0, 0, 0)')||(cs.boxShadow&&cs.boxShadow!=='none')) boxes++; });
+  var rows_=0; document.querySelectorAll('#composer .lines .line, #composer .lines summary').forEach(function(el){ if (shown(el)) rows_++; });
+  var expect = (open?4:1) + 3 + (document.getElementById('cline').hidden?0:1);
+  var sizes={}; document.querySelectorAll('#turns *, #composer *').forEach(function(el){ if(!shown(el)) return; var direct=false; for (var c=el.firstChild;c;c=c.nextSibling){ if(c.nodeType===3&&c.textContent.trim()){ direct=true; break; } } if(!direct) return; var fs=getComputedStyle(el).fontSize; if(!sizes[fs]) sizes[fs]=el.tagName.toLowerCase()+(el.className&&typeof el.className==='string'?'.'+el.className.split(' ')[0]:''); });
+  var nsizes=Object.keys(sizes).length;
+  var btnDone=0, btnBad=0; arts.forEach(function(a){ var c=0; a.querySelectorAll('button, summary').forEach(function(b){ if(shown(b)) c++; }); if (a.querySelector('.st.ok')) btnDone=Math.max(btnDone,c); else btnBad=Math.max(btnBad,c); });
+  var tierFields=document.querySelectorAll('#sdoc input[aria-label*="ier" i], #sdoc input[aria-label*="udget" i], #composer select').length;
+  var D=[
+    ['Chrome above the thread','one row: 28px, and its content fits it',Math.round(head)+'px (content '+Math.round(headContent)+'px)',Math.round(head)<=28&&headContent<=head],
+    ['The editor’s top edge is independent of the turn count','equal at 1 / 5 / 40 turns, read in one pass',tops[1]+' / '+tops[5]+' / '+tops[40]+'px',topStable],
+    ['The thread scrolls under the composer at 40 turns','yes',scroll40?'yes':'no',scroll40],
+    ['One left edge for every turn’s text, reply and outcome','1 distinct x',edges+' distinct',edges<=1],
+    ['Turns at least half visible at this viewport', arts.length<3?'n/a (fewer than 3 turns)':'≥ 3 at rest; ≥ 2 with the structure expanded, a refusal shown, or a last turn that failed, waits or runs; ≥ 1 with the split or what-was-read open', arts.length<3?visible+' of '+arts.length:visible+' of '+arts.length+' (need ≥ '+need+(root.dataset.vp==='narrow'?'; at 1024 reported, not counted: the contract is 1440 × 900':'')+')', root.dataset.vp==='narrow'||arts.length<3||visible>=need],
+    ['Boxes around turns (border, ground or shadow)','0',boxes+'',boxes===0],
+    ['Bordered text fields other than the editor','0',fields+'',fields===0],
+    ['Per-prompt tier / cap / budget fields','0',tierFields+'',tierFields===0],
+    ['Rows beneath the editor (this state)','4 at rest (structure · this turn · settings · compiled), +1 with a compile line, +3 with the structure open',rows_+' ('+(open?'expanded':'collapsed')+(document.getElementById('cline').hidden?'':', compile line')+')',rows_<=expect],
+    ['Controls visible per turn at rest','completed ≤ 3 (provenance, compiled prompt, events); failed, stopped, waiting or running ≤ 6 (the same, plus up to 3 recovery actions)','completed '+btnDone+', other '+btnBad,btnDone<=3&&btnBad<=6],
+    ['Type sizes in the thread and composer','≤ 3 (13 · 12 · 11)',nsizes+' ('+Object.keys(sizes).map(function(k){return k+' '+sizes[k];}).join(', ')+')',nsizes<=3],
+    ['Editor height (a regression guard on the CSS floor)','≥ 130px, ≤ 280px',edR?Math.round(edR.height)+'px':'n/a (state without an editor)',edR?(edR.height>=130&&edR.height<=280):true]
+  ];
+  var dfail=0; document.getElementById('dtbody').innerHTML=D.map(function(d){ if(!d[3]) dfail++; return '<tr><td>'+d[0]+'</td><td>'+d[1]+'</td><td class="n">'+d[2]+'</td><td class="'+(d[3]?'pass':'fail')+'">'+(d[3]?'MET':'NOT MET')+'</td></tr>'; }).join('');
+  var dangling=0; document.querySelectorAll('#sdoc [aria-describedby], #sdoc [aria-labelledby], #sdoc [aria-errormessage], #sdoc [aria-controls], #sdoc [aria-activedescendant]').forEach(function(el){ if(el.offsetParent===null&&el.id!=='editor') return; ['aria-describedby','aria-labelledby','aria-errormessage','aria-controls','aria-activedescendant'].forEach(function(a){ var v=el.getAttribute(a); if(!v) return; v.split(/\s+/).forEach(function(id){ if(id&&!document.getElementById(id)) dangling++; }); }); });
+  var small=0, controls=0; document.querySelectorAll('#sdoc button, #sdoc [tabindex], #sdoc summary, #sdoc input, #sdoc select').forEach(function(el){ if(!shown(el)) return; controls++; var tgt = (el.type==='checkbox' && el.closest('label')) ? el.closest('label') : el; var rc=tgt.getBoundingClientRect(); if(rc.width&&rc.height&&(rc.width<24||rc.height<24)) small++; });
+  document.getElementById('verdict').innerHTML='audit: '+(hc?'<b class="ok">hc: stand-ins, not measured</b>':'<b class="'+(fails?'bad':'ok')+'">'+fails+' contrast fail</b>')+' · <b class="'+(dfail?'bad':'ok')+'">'+dfail+' chat-like miss</b> · <b class="'+(small?'bad':'ok')+'">'+small+' target &lt; 24px</b> · <b class="'+(dangling?'bad':'ok')+'">'+dangling+' dangling aria ref</b> · '+controls+' controls in the document · '+PAIRS.length+' pairs';
+}
+/* review convenience: #state=gaps&turns=40&theme=light&vp=narrow&persona=keyboard&motion=reduce presets the harness */
+(function(){ var q={}; location.hash.replace(/^#/,'').split('&').forEach(function(kv){ var p=kv.split('='); if(p[0]) q[p[0]]=decodeURIComponent(p[1]||''); });
+  var map={state:['h-state',body,'state'],turns:['h-turns',body,'turns'],theme:['h-theme',root,'theme'],vp:['h-vp',root,'vp'],persona:['h-persona',body,'persona'],motion:['h-motion',body,'motion']};
+  Object.keys(map).forEach(function(k){ if(q[k]!==undefined){ var m=map[k], sel=document.getElementById(m[0]); if([].some.call(sel.options,function(o){return o.value===q[k];})){ sel.value=q[k]; m[1].dataset[m[2]]=q[k]; } } });
+})();
+render(); window.addEventListener('resize',function(){ audit(); stampFocusOrder(); });
+document.getElementById('compiled').addEventListener('toggle',audit); document.getElementById('structure').addEventListener('toggle',audit);
+</script>
+</body>
+</html>

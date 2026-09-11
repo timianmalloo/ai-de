@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T21:49:00Z",
+  "generated": "2026-09-11T23:20:50Z",
   "audit": [
     {
       "actor": null,
@@ -12334,6 +12334,154 @@ window.AUDIT_DATA = {
         "sha": "dbc201d6aec1db09d76b4418fa6d0956bbc05ddb",
         "short": "dbc201d6a",
         "branch": "conductor/addendum-c",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M297VC0HTFJP761D9BVE9Z72",
+      "shortname": "Operator decisions: (1) keep the auto-allow of Bash(git push:*) in .clau…",
+      "datetime": "2026-09-11T22:01:45Z",
+      "session": "prompt-log",
+      "prompt": "Operator decisions: (1) keep the auto-allow of Bash(git push:*) in .claude/settings.json - yes; (2) conversation-composer looks great; (3) New Session sheet: budgets should be max (i.e. limited by my subscription) by default, and then optionally I can enforce a cap - I do not know what I intend to spend, often (look at this session); it is unreasonable for long-running work to set a budget proactively unless cost-capping; with a subscription that has a cap I do not need to cap. Also I do not need to choose a task class - the basic should be free-form upon open, and then I can change it.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M297XY963XPWF3J1HTD7RB22",
+      "shortname": "ruling-72-budget-taskclass-autoallow",
+      "datetime": "2026-09-11T22:03:09Z",
+      "session": "conductor-addendum-c",
+      "prompt": "Operator: keep the git push auto-allow; conversation-composer looks great; budget defaults to the subscription bound with an optional cap; task class free-form on open, changeable per prompt.",
+      "summary": "Ruling 72 filed by the conductor on the operator's verbatim words (nothing to weigh): budget an optional cap defaulting to subscription-bounded; task class free-form by default, per prompt, no Send refusal (supersedes Ruling 70's refusal clause); settings.json auto-allow kept, Ruling 71's pin the only lane control. A1 and D2 messaged.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "File the operator's three decisions as Ruling 72 and amend Addenda C and D",
+      "done_when": "Ruling 72 in the note; C's sheet criterion and D's budget/task-class rows amended; gates green",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
+        "short": "a3f760a3a",
+        "branch": "conductor/addendum-c",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M29AJS86DHYB8G4T58KJMRV8",
+      "shortname": "implement-ruling-66-lease-source",
+      "datetime": "2026-09-11T22:49:30Z",
+      "session": "lease-source",
+      "prompt": "Ruling 66: lease derivation runs over the editor's source text only — never an attachment body, a template body, or the rendered goal block; red-first at both call sites",
+      "summary": "F-2 fixed: added ComposerDraft.SourceText (operator-typed content only, shape-scoped); ComposerSendGate.cs:169 and ComposerSurface.cs:452 both derive the lease from it instead of the compiled prompt. Red observed on main (attachment/template-body cases), green after; goal-block heading and goal-field controls unaffected; display/send equality test added; source-scan guard added; DC-146 registered; Security & Identity read-only review PASS. Core 2240/0, App 605/0 (611 incl. new tests), build clean under -p:TreatWarningsAsErrors=true. Proof Pack: docs/proof/lease-source-text.md.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Presentation/Composer/ComposerDraft.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSendGate.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs",
+        "tests/AiDe.App.Tests/Composer/TheLeaseDerivesFromTheEditorsSourceTextTests.cs",
+        "docs/lessons/defect-classes.md",
+        "docs/proof/lease-source-text.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Fix F-2 on main: LeaseDerivation.Derive/Patterns must read only the editor's own typed source text, never an attachment body, a template body, or the rendered goal-block structure, at both call sites (ComposerSendGate.cs, ComposerSurface.cs), red-first.",
+      "done_when": "Red observed pre-fix for attachment-body and template-body cases; both call sites pass the same new ComposerDraft.SourceText symbol; display and Send leases proven equal; LeaseDerivation unchanged; full Core.Tests/App.Tests green; build clean under TreatWarningsAsErrors; DC-146 registered with its control; Security & Identity read-only review passed; Proof Pack committed; pushed to fix/lease-source-text without merging to main.",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-11T22:28:32Z",
+      "duration_seconds": 1258.0,
+      "git": {
+        "sha": "1aadde843a950c9d56a7dc5f034bca0254d52f4b",
+        "short": "1aadde843",
+        "branch": "fix/lease-source-text",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M29C6VP3JKYT063DFXB8DF3W",
+      "shortname": "ui-design-session-conversation",
+      "datetime": "2026-09-11T23:17:56Z",
+      "session": "session-elevation",
+      "prompt": "/ui-design elevate — the session as a conversation: n prompts per session, each compiled (prepare → submit) and carrying its own task class and tier decorations, the thread, the console as the reply side, the session taking the whole real estate; over D1's perspective shell and conversation composer. Node D2 of plan-addendum-c-modes (conductor conductor-addendum-c). The operator's words that define the node (al-01M296K4DAJ7H8NP26WC7B135Y, al-01M28T8C2WEVN4J0D10XQJMJAZ): \"a session can have n prompts... because a session is a conversation ... task class seems like it should be something defined for every chat in a conversation ... i think the overall /ui-design elevate of the session needs to be done\"; \"launching something like a session was it used the whole real-estate so the doc with the graph etc. shouldn't be visible\"; \"the UX is super chunky... it does not feel like a chat conversation and the whole enter in text boxes and see the render below is awful\". Mid-run (al-01M297VC0HTFJP761D9BVE9Z72, Ruling 72): budget bounded by the subscription by default with an optional cap; task class defaults to free-form and changes per prompt, no refusal; D1's composer language ratified.",
+      "summary": "Elevate of the session document as a conversation over D1's ratified composer. Direction: a thread of turns above one pinned editor, the session taking the whole tree (Ruling 47, no graph); each turn rendered from its envelope (decoration line class · tier · lease · shape · template with provenance on demand, the sent bytes on demand) with the lane's reply folded beneath it as the Console; the task class per prompt with free-form as the explicit default (Ruling 72); Addendum D's Prepare in every named state; Layout:StreamingThread adopted (reverses spec C §C1). Artifacts: DESIGN.md gained the section \"The session is a conversation\" (SC1–SC10, the measured thread contract, no colour role added, eleven recorded deviations) and Ruling 72 errata under the front-door and sheet sections; docs/mockups/session-conversation.html (+ .md hub): 43 harness states × turns 1/5/40 × theme × viewport × persona × motion, a self-measuring verdict strip (53 contrast pairs, targets, dangling ARIA references, the chat-like contract with its thresholds printed; the editor's top edge read at 1/5/40 in one pass); docs/mockups/new-session-sheet.html carried to Ruling 72 (budget as a state with an optional cap; free-form preselected; zero required inputs) and its pre-existing script error fixed (its verdict strip had never rendered); docs/reviews/ui-session-conversation.md (measurements, the structural read of D1's composer — 14 lacks for n turns —, findings, scorecard, ranked plan, the spec findings); two decision notes (session-design-thread-not-panes, session-design-decoration-line); DC-147 registered. Measured: craft gate 0 on the new mockup, the sheet and DESIGN.md, the corpus unchanged at 98 (60/38); design-lint strict clean; verify-design-modes OK; 86 headless renders (43 states × dark 1440 / light 1024) at 0 contrast fail · 0 chat-like miss · 0 target < 24px · 0 dangling ARIA reference · 0 script errors. Critique: three read-only adversaries (UX & Accessibility hard veto, UX Researcher/IA, Simplifier), two passes: pass 1 11 Blockers + 8 Majors + 41 Minors; pass 2 0 Blockers, 0 Majors, 12 Minors, all applied — UX&A PASS (veto cleared, not by the author), UX-IA PASS, Simplifier CLEARED. Findings for the specs (the conductor's): C §C1/§B2 StreamingThread adopted and the earlier-turns paragraph, the Score outline as the jump list, the write-scope region as the lease segment; A §A2 the canvas beside the composer as the on-demand split; B :181 / C §B2 / US-C13 the header's template control and shape reserved for Message | Goal-block; D §B2/§B4/§B5 the tier control's home, task_class in inputs_sha, the cancelled and reused strings, mode: mechanical-only unrendered, the stopped and refused-before-start vocabulary, when a cap asks vs refuses; a sentence on a send while a turn runs (Inferred one-run-at-a-time); an Owner ruling on the refusal sentence (compiles at T2 vs is a goal block, tier-blind). Highest-leverage change: the thread's ItemsControl with the feed's keyboard model (SC8) and the announcement policy (SC9). Residual: UI-T4 native proof (P-1, P-9, P-11, P-12, P-13, SC8/SC9 rows) is the slice's; Ctrl+K,Z toggling and one-run-at-a-time are Inferred.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/session-conversation.html",
+        "docs/mockups/session-conversation.md",
+        "docs/reviews/ui-session-conversation.md",
+        "DESIGN.md",
+        "docs/mockups/new-session-sheet.html",
+        "docs/notes/session-design-thread-not-panes.md",
+        "docs/notes/session-design-decoration-line.md"
+      ],
+      "tags": [
+        "addendum-c",
+        "addendum-d",
+        "ui-design",
+        "session"
+      ],
+      "outcome": "success",
+      "goal": "Run /ui-design elevate on the session as a conversation over D1's composer: the thread, the per-turn decorations with provenance, Prepare, the whole real estate; measured, critiqued, documented",
+      "done_when": "docs/mockups/session-conversation.html (+ .md) with every named state and the harness axes, craft gate 0 on it, design-lint strict clean, docs/reviews/ui-session-conversation.md with measurements/scorecard/ranked plan/spec findings, decision notes, derive, audit, gates green, commit pushed to feature/session-elevation",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-11T21:52:21Z",
+      "duration_seconds": 5135.0,
+      "persona_yield": [
+        {
+          "persona": "ux-accessibility",
+          "raised": 30,
+          "accepted": 30
+        },
+        {
+          "persona": "ux-researcher-ia",
+          "raised": 26,
+          "accepted": 26
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 24,
+          "accepted": 22
+        }
+      ],
+      "git": {
+        "sha": "8214ecd50e880d46ec7d5d6459dc426b94a12bf8",
+        "short": "8214ecd50",
+        "branch": "feature/session-elevation",
         "pushed": null
       }
     }

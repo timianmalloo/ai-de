@@ -877,3 +877,11 @@ is a per-prompt mechanical decoration with provenance, the session carries an op
 Send is refused without an effective class — §A6/§A7's snapshot row and §R's R-9 are amended above by
 substitution; the `opened` event snapshots the *default*, the `decorated` event records the per-prompt
 value. Status moves to `accepted`.
+
+**Errata after Ruling 72 (2026-09-11):** (a) the `ceilings` decoration's `budget` is **optional** —
+absent means *bounded by the subscription* and the compiled block's budget field is projected as a
+declared subscription-bounded value (representation: A1's ADR); a cap is present only when the
+operator enforced one; spend is measured per turn regardless (§A14 cost axes). (b) The session's
+default task class is **`free-form`** — present from open, changeable per prompt (Ruling 70) — and
+Ruling 70's *"Send is refused for a prompt with no effective class"* is superseded: none can be
+missing. §A7's Scale and Scope rows and the `opened` snapshot read accordingly.

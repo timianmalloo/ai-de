@@ -576,6 +576,14 @@ explaining the rule in the vocabulary of the subsystem that needs it.
 | **RQ5** | A **disabled primary action states its reason adjacent to itself**, in the same row, naming the field: *Choose a task class to create the session.* An inert control never leaves the operator guessing. |
 | **RQ6** | **Recall is not a default.** The operator's own last answer may be offered as a one-click chip, labelled as a suggestion. Nothing is pre-selected, so the type-level no-default contract and the reflective test that pins it both still hold. |
 
+**Erratum after Ruling 72 (2026-09-11, node D2).** The sheet's task class is a **default task class**,
+preselected **`free-form`** (an explicit, visible value: *"no class ranks the turn"*), changed per prompt
+from the turn's decoration line (SC3). RQ1–RQ3 stand (a closed vocabulary chosen from its set, explained
+at the field); **RQ4 and RQ5 no longer have a case**: there is no required-and-undefaulted state and no
+disabled Create waiting on a class; **RQ6 reads**: the last session's class is offered as a one-click
+chip that makes it *this session's* default, and `free-form` is what is preselected. The budget is no
+longer a prefilled number (PS-S1 erratum below). `new-session-sheet.html` renders both.
+
 ### The composer is a document, not a text box
 
 The session pane is a **serial-entry task inside a parallel-reading surface**. Reading is parallel and
@@ -879,6 +887,17 @@ compiled header (PS-C7).
 | **PS-S3** | Derive, don't store: the effective cap of a run is the compiled tier's cap (0 at T0, 2 at T1, the GO7 cap at T2) **bounded by the session's ceiling** **[Inferred: the conductor's reconciliation, awaiting the operator's compile-step specification]**. The sheet therefore explains the ceiling in those words and carries no tier warning; the *"T0 derived: this run uses no fan-out"* line lives on the compiled disclosure, where the tier is known (PS-C7). |
 | **PS-S4** | The sheet's non-client caption opts into the platform's dark mode (TC4); every control in it carries a token pairing (TC1–TC2), and every text or numeric field carries a `{colors.border-strong}` boundary so an editable setting is identifiable at rest (1.4.11). Create failure keeps the sheet's values and states the reason beside Create. There is no note explaining the absent tier field: the fan-out ceiling's own sentence says what decides the tier, and explaining an absence is a placeholder in prose. |
 
+**Erratum after Ruling 72 (2026-09-11, node D2).** The **budget is an optional cap**: its default state
+reads *Bounded by your subscription* (a sentence, never a number), with a checkbox *Enforce a cap for
+this session* that reveals the numeric field only when the operator opens it; the `invalid` state is a
+cap enforced at 0 (*"A cap of 0 tokens can't run anything. Enter at least 1,000, or turn the cap off."*).
+PS-S1's *"the only undefaulted field remains the task class"* is superseded: the sheet has **zero required
+inputs** and Create is available on open; PS-S2's numeric budget applies only when a cap is enforced;
+PS-S3 stands. The session-settings popover and the settings line read the same words (*budget: bounded by
+your subscription — from session settings*). If the product cannot read the subscription's own limit,
+the state reads *bounded by your subscription — not measured here* (Ruling 72, condition 1), never a
+plausible number.
+
 ### Motion inventory (DX19)
 
 | Moment | Duration | Why |
@@ -951,3 +970,214 @@ send row is pinned).
 | *Nested cards* and *cramped padding* on the 28px strips | The front-door section's two recorded deviations, unchanged. |
 | A hovered accent fill is `brightness(1.12)`, not a token | The value is derived from `{colors.accent}` and clears 8.24 / 5.22:1 with `accent-contrast`; the WPF slice uses the Fluent accent-light brush. Recorded so the non-token ground is a decision. |
 | The composer's editor is a WebView2 page and the census cannot walk it yet | Reported as *not measured*, never as a pass (§C7). The mockup's live audit measures the design's pairs; the page's real pairs are measured when the census walks the DOM. |
+
+## The session is a conversation — n turns, one editor (SC1–SC10)
+
+*Added by `/ui-design` (elevate) at node D2 of `plan-addendum-c-modes` over the section above, whose
+language the operator ratified on 2026-09-11 (*"looks great"*, Ruling 72). The review and its ranked
+plan are [`docs/reviews/ui-session-conversation.md`](docs/reviews/ui-session-conversation.md); the
+mockup is [`docs/mockups/session-conversation.html`](docs/mockups/session-conversation.html). This
+section adds **no colour role**; it adds the turn's rhythm, the decoration line's grammar, the
+thread's keyboard model and the rendering of Addendum D's Prepare, all on the roles the matrix already
+measures in both themes. Rules, triggers, references and motion rows the section above already
+states are not repeated here.*
+
+### Direction brief (DX5): what changes when the composer becomes a session
+
+**Who, and in what state.** The same operator as above, now over a session of *n* turns: a question,
+an extraction, a defect, a UI change, a proof pack, in one afternoon (the operator's own words:
+*"reflect on the diversity of things in this session"*). They arrive mid-thread, with a reply
+streaming, and want to read what happened and say what is next without leaving the keyboard.
+
+**The job.** Hold a **governed conversation**: *n* prompts, each compiled and decorated (class · tier
+· lease · shape · template, each with its provenance), each answered by a lane whose reply sits under
+the prompt that caused it, with the session taking the whole tree (Ruling 47) in the Coding
+perspective and no graph beside it (Rulings 52, 61). The operator's verdicts are the evidence:
+*"a session is a conversation"*, *"launching a session should use the whole real estate"*, *"it does
+not feel like a chat conversation"*.
+
+**Archetype.** The session document takes its own signature, paired with the shell's:
+
+```
+SessionConversation {
+  Type:Conversational; Arch:Streaming; Layout:StreamingThread; Density:Compact;
+  Nav:Sidebar; Viewport:DesktopBound; Input:KeyboardFirst+PrecisionPointer;
+  Color:DarkAdaptive; Type:Utilitarian; Depth:SoftShadow; Sync:LocalFirst; Persistence:LocalDevice;
+  Feedback:Generative+Confirmed; Motion:Micro; Pacing:Freeform; Transition:HardCut;
+  A11y:WCAG_2.2_AA+ReducedMotion; x-platform:windows; x-framework:wpf;
+}
+```
+
+Nearest row **D1 · Generative Stream Thread**. **Three facets change against the section above's
+signature, each with its reason (G9):** `Layout:StreamingThread` is **adopted** (the thread is the
+session document and the editor its last region; the section above and spec §C1 declined it, and
+the Console *beside* the composer was that design's own flagged residual — the operator's verdict
+settles it); `Feedback:+Confirmed`, never D1's `Optimistic` (a turn joins the thread when the
+conductor accepts it, not when Send is pressed); `Pacing:Freeform` (the operator types the next turn
+while a reply streams; sending waits). Every other facet is the section above's, for the same
+reasons. One descriptor deviation from D1's row: the thread **follows only while pinned at its
+end**; a reader mid-thread is never scrolled. **Verified against the shape of the task:** reading
+the thread is parallel (a scan of outcomes and decorations), entering is serial (one editor).
+
+**Three adjectives, and their opposites.** **Threaded, not paned** (turns in time order in one
+column, the editor beneath; not a composer pane beside a console pane). **Governed, not bubbled**
+(every turn carries its envelope in one line with provenance on demand and the lane's evidence
+beneath; no bubbles, avatars or centred column). **Continuous, not chunky** (a turn is grouped by
+spacing and a hairline; the editor's top edge never moves; the thread scrolls, the editor does not).
+
+**References added to the section above's.** **A REPL transcript** (the shell's own terminal pane
+renders one): prompt line and output block in one column, in time order, told apart by a gutter
+marker rather than a box **[Verified: `perspective-shell.html` `.term`]**. **The WAI-ARIA APG Feed
+pattern**: `feed` / `article` with `aria-posinset` / `aria-setsize`, `aria-busy` while turns arrive,
+PageDown / PageUp between articles, Ctrl+End to the first focusable after the feed
+(w3.org/WAI/ARIA/apg/patterns/feed, fetched 2026-09-11 **[Verified]**).
+
+**Anti-goals added.** Not a diff view. Not a per-prompt tier, cap or budget *field* (the class and
+the tier are choices over derived values, with provenance). Not a graph or a terminal beside the
+session. Not an auto-scroll that steals the reading position. Not a silent class (the default is an
+explicit value, *free-form*). Not a typing indicator, a regenerate button or a per-message copy
+control.
+
+**Constraints added.** The session document is the **maximized Center stack** (Ruling 47;
+`StackState.Maximized`, siblings minimized and remembered; the way back is the strip's restore
+control, `Ctrl+K, Z` **[Inferred: `workbench.maximizePane` toggles]**); the thread is WPF (an
+`ItemsControl` of turns exposed as a list), the editor the WebView2 page; the contract below is
+measured at the shell's startup size, 1440 × 900.
+
+### Personality in three moves (DX6)
+
+- **Type.** `{typography.ui}` for the operator's words and the lane's reply (13px, the evidence);
+  12px for everything derived about them (the decoration line, the outcome line, event lines); 11px
+  only for a keystroke. `{typography.mono}` for what is compared character by character: the turn
+  ordinal `b2`, a lease, a lane name, a sha, a timestamp, the compiled prompt.
+- **Colour.** The accent is spent on the lane name, the provenance and compiled-prompt links, the
+  opened turn's heading in the Console split, and Send; the outcome word carries `{colors.verified}`
+  (completed, answered), `{colors.danger}` (lane exited), `{colors.inferred}` (waiting), `{colors.text}`
+  (running), `{colors.text-muted}` (stopped), always beside a glyph and a word. The current turn is
+  distinguished by position (last) and by the editor's boundary, never by a coloured band.
+- **Space.** The turn rhythm: **4 within a line · 4 between the words and their decoration line · 8
+  between the prompt side and the reply side · 20 between turns (12 above, 8 below, one hairline)**,
+  so within-turn is visibly tighter than between-turn. A 40px gutter carries the ordinal; every
+  turn's text, reply and outcome share **one left edge**. Prose (the words, the reply) wraps at a
+  96ch measure; evidence lines run the width.
+
+### Trigger map (delta from the section above)
+
+| Trigger | Fires? | Consequence here |
+|---|---|---|
+| UI-T1 expert/quantitative | **Narrowly** | Every number the thread shows is unit-bearing at one precision, tabular: `12,400 tokens`, `4 min 12 s`, `41 s elapsed`, `142 events`, `fan-out cap 2 (ceiling 3)`, `38,900 of 40,000` (TQ2/TQ7). |
+| UI-T3 fronts a model | **Yes** | The compile step (Addendum D) fronts the session's bound model and the lane's reply is a model's. First-class wrong-answer states: the nine compile-line strings (SC5), *suspect* on every proposed value, the refused send, the lane error, the refusal before start (U15a: the budget is the subscription's limit by default, Ruling 72, so the metered state is the window, named with its reset time). |
+
+### "Chat-like", measured (the thread contract)
+
+The operator's word is a feeling; the diagnosis is a set of numbers the mockup reads from its
+rendered layout on every change (its verdict strip) and the slice must meet at the startup size with
+the session maximized (P-12's successor). A row that reads back its own CSS constant is not a
+measurement, so the rows below read rendered geometry, and one of them re-renders the thread at
+three counts inside one audit pass.
+
+| Property | Value | Why |
+|---|---|---|
+| Chrome above the thread | **28px**, one row, and its content fits it (24px controls, no overflow) | Name · template · session settings · Console · the turn count (the jump list) · health. **No class chip**: the class is per turn (Ruling 70). |
+| The editor's top edge | **equal at 1, 5 and 40 turns**, read in one pass; the thread scrolls at 40 | Rhythm: the thread grows upward and scrolls; the composer is pinned. |
+| Left edges | **1** for every turn's words, reply and outcome | Alignment: one gutter, no alternation, no bubbles. |
+| Turns at least half visible | **≥ 3** at rest (structure collapsed); **≥ 2** with the structure expanded, a refusal shown, or a last turn that failed, waits or runs (its four lines and its recovery take a turn's room); **≥ 1** with the Console split or *what was read* open — the row prints the threshold it applied | Density: the tree shows a conversation, not one exchange. |
+| Boxes around turns | **0** (no border, ground or shadow) | A turn is grouped by spacing and a hairline (DX13). |
+| Bordered text fields other than the editor | **0** | The section above, kept. |
+| Per-prompt tier / cap / budget fields | **0** | Rulings 56, 63, 64, 72: choices over derived values, with provenance; never a box. |
+| Rows beneath the editor | **4 at rest** (structure collapsed · this turn · settings · compiled prompt), **+1** with a compile line (an envelope exists), **+3** with the structure expanded; each 24px | The section above's 4, with the write-scope line folded into the decoration line's lease segment and Addendum D's compile line added only when it has something to say. |
+| Controls visible per turn at rest | completed **≤ 3** (provenance · compiled prompt · events); failed, stopped, waiting or running **≤ 6** (the same, plus up to three recovery actions) | Evidence on demand; the thread stays scannable at 40; a failed *past* turn folds like a completed one (no actions). |
+| Dangling `aria-describedby` / `aria-errormessage` / `aria-labelledby` / `aria-controls` references | **0**, walked over the rendered DOM in every state | A state a screen reader cannot reach is not a state. |
+| Type sizes in the thread and composer | **3** (13 · 12 · 11) | Hierarchy by scale; the empty state's 15px heading is the `state.not-declared` shape. |
+| Editor height | **≥ 130px**, ≤ 280px then scrolls (a regression guard on the CSS floor) | The message stays the focal point without pushing the send row off the tree. |
+
+### The turn (SC1–SC10)
+
+**One store per turn: the envelope** (Addendum D §A12, the fold of its decoration rows). The
+decoration line, the provenance disclosure and the compiled prompt are three **renders** of it:
+the line shows the current values; the provenance disclosure shows each row with its `source`
+(*session-default · operator · rule · derived · mechanical · projection · called · submitted*) and
+its reason; the compiled prompt shows the **sent bytes only** — no comments, no diff. Nothing is
+authored twice.
+
+| Region (top → bottom) | Height | Ink / ground | Rule |
+|---|---|---|---|
+| **Gutter** | 40px column | `{typography.mono}` `{colors.text-muted}` on `{colors.surface-raised}` | The ordinal `b<n>`. Never an avatar. |
+| **The words** | as written; 13px, 1.5 | `{colors.text}` on raised | The operator's source text verbatim, mentions as `{typography.mono}` chips; wraps at 96ch. |
+| **Decoration line** | 24px (wraps at 1024) | labels `{colors.text-muted}`, values `{colors.text}` | `class <value>` · `tier <value>` · `lease <pattern> [+n more]` · `<shape>` [· `template <id> v<n>`] · **provenance** · **compiled prompt** · `<hh:mm>` right-aligned. On a **past** turn every segment is compact text; provenance is one disclosure away. On the **current** turn the class and the tier are menu controls with their provenance inline (the operator confirms it at the send), every lease pattern is rendered in full, and the compile line sits above. |
+| **Provenance** (on demand) | one row per decoration | `{colors.text-muted}` keys, `{colors.text}` values | `name · value · source · reason`, from the envelope; ends with *Use as the next draft*. |
+| **Compiled prompt** (on demand) | ≤ 200px, scrolls | `{typography.mono}` `{colors.text}` on `{colors.surface-sunken}` | Exactly the sent bytes. |
+| **Reply side: outcome line** | 24px | the word beside a glyph, coloured as above; the lane `{colors.accent}` mono; counts `{colors.text}` mono tabular | *answered* · *completed* · *running* · *lane exited 1* · *stopped by you* · *waiting for you*, then lane · counts with units · duration · **N events** (a disclosure whose tail is *the other N, in the Console*, which opens the split at that turn). |
+| **Reply side: the reply** | as written; 13px | `{colors.text}` | The conductor's report or the lane's summary, plain text (no link activation from model-authored content). |
+| **Reply side: events** | 20px lines | ts `{colors.text-muted}` · lane `{colors.accent}` · message `{colors.text}` (`{colors.danger}` for stderr) | Folded on a completed turn; the **running** turn shows its last four lines live with **Stop this turn**; a **failed**, **stopped** or **waiting** last turn shows its last four lines, a boxed reason (`{colors.danger}` / `{colors.border-strong}` / `{colors.inferred}` 1px) and its actions inline; a failed **past** turn folds like a completed one. |
+
+| Rule | Statement |
+|---|---|
+| **SC1** | **One thread, one editor, one left edge.** The session document is a feed of turns with the composer as its last region; no pane sits beside it at rest. The Console split (Ruling 21) is **on demand** from the header, a view of the same stream unfolded in time with a heading per turn, following the running turn or opened at the turn the operator asked for: derived, never a second store. |
+| **SC2** | **One decoration grammar for every turn.** `class · tier · lease · shape [· template]`, each decoration a row of the envelope with its source. A past turn renders the values and keeps the provenance one disclosure away; the current turn renders the same values with the class and tier as controls and their provenance inline, because the send confirms them. The write-scope line of the section above **is the lease segment**: every pattern in full on the current turn (*none yet — mention the files this run may write as @path* when absent), `+n more` with the full list in the description on a past turn. |
+| **SC3** | **Task class is per prompt, defaulted, never absent.** A menu control on the decoration line; the session's default is **`free-form`** on open (Ruling 72: an explicit value, *"no class ranks this turn"*), changeable in session settings; choosing a class marks the decoration *chosen for this prompt*; *"Use the chosen class as the session default"* is a separate row in the same menu (Ruling 70, condition 3). There is **no refusal for a missing class**. The header carries no class chip. |
+| **SC4** | **Tier is a choice over a projection, on the decoration line, beside its provenance.** The rationale sentence (*the model filled Goal and Done when; one lease*) is rendered **once**: on the compile line when one exists (Addendum D's own string), where the tier control's description reads it; on the control's provenance otherwise. Renderings: *T0 · no goal block yet* (`{colors.text-muted}`), *~ T1 · derived: the model filled Goal and Done when; one lease* (`{colors.inferred}`), *T1 · confirmed* (on send), *T2 · operator (rule said T1)*, *~ T1 · derived by a suspect compile* (`{colors.danger}`), and *choose* (`{colors.danger}`, `aria-invalid`) when `tier_prompt: forced` could not decide, with Send refused *Choose a tier for this prompt.* The menu offers T0 / T1 / T2 with each cap and *Restore the rule's value* one row away; the settings line derives the effective cap live (*fan-out cap 2 (ceiling 3)*; *T0 — the ceiling of 3 does not apply to this turn*). *Stale* has **one carrier, the compile line**; the tier shows the rule's live value. |
+| **SC5** | **The compile line exists only when an envelope does.** Under `mechanical-only` with no template it is absent (four rows at rest) — Addendum D's *mode: mechanical-only* string is therefore not rendered (recorded below). It carries one of: *Structure supplied by template* · *Structure supplied by you · no request made* · *Preparing on <model> (up to 60 s) · Cancel* · *Compiled on <model> · <profile> · read <k> turns · <rationale> · <n> request · <tokens> · what was read* · *… reused, no new request* · *Cancelled — draft edited. The envelope was abandoned; nothing was applied. · Prepare again* (a tenth string Addendum D's nine lack; recorded below) · *Compiled mechanically — <reason>. <fix>, or send as is. · Prepare again* (reasons: *needs-login* · *not a subscription* · *the 60 s compile bound passed with no answer* · *the model's output failed the schema; nothing was applied*) · *Suspect — the model made <n> tool call(s); read the lines before you send · Prepare again* · *No goal block proposed; sends as a message* · *Your draft / Session settings changed since it was prepared — press again to prepare it*. **What was read** lists turns as ids and outcomes, the constitution by manifest with its token count, the profile and its sha, the source's sha, and the cost (in / cached / out · requests · seconds) — never contents. |
+| **SC6** | **The button says what the gesture does, and the help says it too.** Under an agentic rung: **Prepare** (no fresh envelope) → **Send** (prepared; the confirmation) → **Prepare** again when stale; **Try again** after a failed send; under `mechanical-only` always **Send**; the editor's description carries the same verb. One key, Ctrl+Enter, throughout (Ruling 67; the same-key choice stays Inferred). A gesture that is ignored — during *preparing*, while a turn runs or waits — is **announced as a status** with its reason, never silent. On a mention-less draft, before the first gesture, the send row says *If Prepare derives a goal block, it can't be sent without an @path mention.* A gesture refused because a turn runs or waits names the turn, and the ordinal is a link to it. Under **agentic-advisory** a derived line carries *keep* and counts only once kept or edited; the send row says how many are not kept and that they send empty. |
+| **SC7** | **The reply side is the Console, folded per turn, and a failure lives where it happened.** A completed turn: outcome line, reply, *N events* collapsed. Running: the last four lines live, **Stop this turn** (its description: edits so far stay on disk and are listed on the turn). *Lane exited 1*: the last four lines, what did not happen, **Send again as a new turn** (it prepares again: one request) · **Open the log**. *Stopped by you*: edits so far, tokens, the partial file named, the same two recoveries. *Waiting for you*: the permission request, or the cap the operator enforced, in the turn that raised it — **Deny** first, then **Allow once** (or **Allow this turn** · **Open session settings** · **Stop this turn**), as an alert that never takes focus. A **refusal before start** (the subscription window) is **composer-side**: no turn joined the thread (Feedback:+Confirmed), the reason sits beside **Try again** with its reset time (a retry before it is refused again and spends nothing), the draft and its envelope are kept, and the recovery names session settings, which carry the backends. An enforced cap never refuses: it **asks, in the thread**, before the lane starts. Never a modal. |
+| **SC8** | **Keyboard.** Focus lands in the editor on open. **F6** cycles header → thread → composer (→ the Console split when open). The thread is an APG **feed**: PageDown / PageUp move between turns, Ctrl+End reaches the editor, Ctrl+Home the header; inside a turn, Tab reaches provenance · compiled prompt · events · the turn's actions and Shift+Tab returns; Escape never leaves the document (P-13). The turn count in the header is the **jump list** (Addendum B's Score outline as an on-demand view): ordinal · the words · the outcome word, type-ahead on the ordinal, Enter focuses the turn. The mention picker is a listbox the editor controls (`aria-controls` · `aria-activedescendant`): Down / Up move, Enter inserts, Escape closes. Exposed to UIA as a `List` of `ListItem`s named *"b2, Refactor the layout store's…"* with the decoration line as `ItemStatus`. |
+| **SC9** | **Announcements.** A turn's outcome is announced **once**, as a status (*Turn b2 completed: 3 edits, 12,400 tokens, 4 minutes 12 seconds*); a lane error, a refusal and a permission request are assertive; **event lines are never announced**; the Prepare states are announced with the verb Ctrl+Enter now performs; the class and the tier are spoken at the send (*Sending block b6 as a goal block, tier T1, class free-form* · *…as a message, tier T0…*). The feed carries `aria-busy` while a turn streams or the session restores. |
+| **SC10** | **Names and states are real, not styled.** A structure line's name is constant (*Goal*); its mark is its `ItemStatus` / `aria-describedby` target and a refusal reason its `HelpText` / `aria-errormessage`, every reference resolving (the contract's dangling-reference row); an empty line's watermark is a placeholder, never its value; the class and tier controls are named *class free-form* / *tier T1*; provenance and compiled-prompt disclosures are named for their turn (*Provenance of b2*); a read-only editor says so (`aria-readonly`); the reply side's glyph is decoration beside its word. The disabled Send under high contrast maps to `GrayText`, never a coloured stand-in. |
+
+### Motion inventory (DX19; additions to the section above)
+
+| Moment | Duration | Why |
+|---|---|---|
+| A turn joins the thread (on the conductor's accept) | **0ms**; the thread follows only while pinned at its end | Layout is structure; a reader mid-thread is never moved. |
+| Reply lines arriving on the running turn | **0ms** | Evidence appears; nothing slides. |
+| The outcome word settles (running → completed / failed / stopped) | `{motion.fast}` colour and weight only | Feedback that the turn ended. |
+| The running ring | continuous spin; under reduced motion a static ring beside the word *running* | The one moving element in a running turn. |
+| The Console split, the jump list open | **0ms** | A population change (MS4), not a slide. |
+
+### Copy added by this section (strings not already in a rule above or in Addendum D)
+
+- `Nothing has run yet.` · `Write the first message below; every turn and its reply appear here, above the editor.` *(the thread's empty state; the first action is the focused editor)*
+- `Write the next message. Mention the files it may write as @path.` *(placeholder after the first turn)*
+- `This turn` · `session default` · `chosen for this prompt` · `Task class for this prompt` · `free-form — session default · no class ranks this turn` · `Use the chosen class as the session default — a separate act; never silent` · `Tier for this prompt · the rule said T1` · `Tier for this prompt · the rule could not decide` · `Restore the rule's value (T1)`
+- `lease none yet — mention the files this run may write as @path` · `+1 more`
+- `fan-out cap 2 (ceiling 3) · budget: bounded by your subscription · from session settings` · `T0 — the ceiling of 3 does not apply to this turn` · `fan-out cap: choose a tier (ceiling 3)`
+- `Preparing… press again when prepared.` · `b1 is running; the next turn waits for it.` · `b5 is waiting for you; the next turn waits for it.` · `Refused before it started; a retry before 16:00 is refused again and spends nothing.` · `2 derived lines are not kept; they send empty.`
+- `Goal · Done when · Not in scope — appear when you prepare (Ctrl+Enter)` · `fill in` *(watermark)* · `keep` · `restore`
+- `the other 136, in the Console` · `Use as the next draft`
+- `The lane exited 1 before any edit. Its last four lines are above; nothing under docs/proof/ changed. Send the same turn again as b6 (it prepares again: one request), or open the full log first.`
+- `Stopped at 15:23:22 after 1 edit (docs/proof/pp-0142.md, partial, 3,900 tokens). The file stays as the lane left it. Send the same turn again as b6 (it prepares again), or open the log.`
+- `Refused before it started — your subscription's window is exhausted until 16:00 (resets in 37 min). Nothing ran and nothing was spent; your draft and its prepared envelope are kept. Send it after 16:00, or change the session's backends in session settings.` + `Open session settings`
+- `claude-code asks to write outside the declared scope: docs/audit/audit-log.jsonl. The lease is docs/proof/**. Allow once lets this one write through; Deny keeps the lease and the lane continues without it.`
+- `This turn would pass the cap you enforced (38,900 of 40,000 tokens used this session). Allow this turn to run past it, raise the cap in session settings, or stop it here. Nothing has run.`
+- `not a subscription. The compile bills the window a lane does; bind a subscription account in providers.json, or send as is.` · `the 60 s compile bound passed with no answer. Prepare again, or send as is.` · `the model's output failed the schema; nothing was applied. Prepare again, or send as is.` *(the reasons SC5's degraded string takes)* · `Session settings changed since it was prepared (fan-out ceiling 3 → 1) — press again to prepare it.`
+- `Budget` · `Bounded by your subscription` · `bounded by your subscription — not measured here` · `Enforce a cap for this session` · `Off: spend stops where your subscription stops. On: you set a number of tokens, and a turn that would pass it asks first.` · `Default task class` · `free-form on open` · `Every new prompt starts with this class. Change it on any prompt from its decoration line; that never changes this default.` · `Compile mode` · `mechanical-only` / `agentic-advisory` / `agentic` · `Backends`
+- `template none` · `Console` *(the split toggle: "show the merged stream beside the thread")* · `following b5` · `at b2` · `Jump to a turn` · `Restore the layout (Ctrl+K, Z)`
+
+### AI-UX (U13–U15; additions)
+
+**Shape of AI:** the decoration line and its provenance are **Identifiers** (what the system decided,
+and from what); the compile line and *what was read* are **Trust builders → Disclosure** (which model,
+which profile, what it read, what it cost; *suspect* on the line and on every value when it acted);
+the derived lines with *restore* (and *keep* under advisory) and Send-as-confirmation are
+**Governors**; the thread's empty state, the jump list and the button's verb are **Wayfinders**.
+**HAX:** G1/G2 (the tier's rationale names who filled the structure), G7 (the same gesture prepares
+and sends), G8 (restore or empty a line in one act; the rule's tier one row away), G11 (a provenance
+row per decoration), G18 (a stale envelope says so on the compile line; a reused one says no request
+was made). The budget's metered state (U15a) is the subscription window with its reset time, or the
+cap the operator enforced with its count, never a plausible number.
+
+### Recorded deviations (CD16; additions)
+
+| Deviation | Reason |
+|---|---|
+| `Layout:StreamingThread` **adopted** for the session document; spec `spec-addendum-c-perspectives` §C1 and §B2 say *not adopted* (composer beside canvas) | The operator's verdict and the whole-real-estate ask; the section above listed reply-beside-input as its own unvalidated residual. **A finding for the spec's owner** (Addendum D Part C already reads `StreamingThread`, so the two specs disagree today). |
+| The Console is the reply side of each turn; a Console pane beside the composer is not rendered at rest | Ruling 21's split survives as an on-demand view of the same stream (SC1). A finding for Addendum A §A2 / C §B2's *"composer beside canvas"*. |
+| The thread follows only while pinned at its end (D1's row auto-scrolls) | A reader mid-thread is never moved; a turn joining announces itself (SC9). |
+| The tier control sits on the **decoration line**, not on the compile line (Addendum D §B2, §B4) | One grammar for every turn (SC2): a past turn's tier and a current turn's tier read in the same place; the compile line keeps the provenance of the *compile*. A finding for Addendum D's owner (its §B5 tab-order criterion changes with it). |
+| The write-scope line is the decoration line's **lease segment** (C §B2 lists it as its own region) | Derive, don't store: the lease *is* the write scope; one row fewer beneath the editor. A finding for the spec's owner. |
+| The header's control reads **`template none` / `template change-order v2`**, not *Free-form* / *Template* (Addendum B `:181`, C §B2 "shape control") | *Free-form* is now the default task class (Ruling 72) and *shape* names the submission shape (Addendum A R15 b2: Message | Goal-block) on every decoration line; a third meaning for either word is a vocabulary collision. The send row's shape badge of the section above is **deleted**: the decoration line's `<shape>` and `template` segments carry it 24px above. A finding for the spec's owner (US-C13's badge sentence). |
+| Addendum D's *mode: mechanical-only* compile-line string is not rendered, and a tenth string, *Cancelled — draft edited*, is | Under `mechanical-only` with no template the compile line is absent (SC5: four rows at rest); the compile mode is a session setting the popover shows. An edit during *preparing* abandons an opened envelope, which Flow D-1 routes back to *draft* without a word; the design says so on the compile line. Both are findings for Addendum D's owner. |
+| `template` and `suspect` refuse Send with *This prompt is a goal block and needs Not in scope.* while `gaps` keeps the section above's *This prompt compiles at T2 and needs …*; under `agentic-advisory` two unkept lines send blank with Send enabled, as Addendum D §A11 says | `SpawnContract.Validate` refuses a blank boundary tier-blind (C's own shape rule), so a goal block needs all three lines at any tier; the tier-naming copy is ratified but overstates, and the advisory rung's *sends as fill-in* meets the same gate. **A finding for the Owner** (which sentence is true, and what an unkept derived line sends). |
+| A Send while a turn runs or waits is refused with *"b1 is running; the next turn waits for it."* | **[Inferred]** one governed run at a time per session; no spec sentence says what a send does while a turn runs. A finding for the spec's owner; reversible at zero cost. |
+| `Ctrl+K, Z` on the restore control | `workbench.maximizePane` is bound to it (`WorkbenchCommands.cs:60`); that it *toggles* is **[Inferred]**. |
+| The `hc` theme in the mockup is a stand-in palette | Kept so the harness can show which ground-only states carry a system pair (the finding class of A-7); its audit reports *not measured*, never a pass. |

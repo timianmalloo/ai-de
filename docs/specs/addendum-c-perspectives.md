@@ -245,7 +245,7 @@ here only where a body exists today (Ruling 54).
 The operator opens AI-DE. The rail shows **New session** above three destinations — **Coding**,
 **Explore**, **Architecture** — with Coding active. The body is the Coding host: an empty Center
 inviting a session, the terminal-session watcher at left, a terminal below. They press **Ctrl+N**;
-the sheet opens with the session's fan-out ceiling and budget already at the workspace defaults (tier is not on the sheet — it is compiled per prompt, Ruling 63);
+the sheet opens with the session's fan-out ceiling at the workspace default, the budget reading *bounded by your subscription* (an optional cap the operator may enforce — Ruling 72), and the task class preselected `free-form` (Ruling 72); tier is not on the sheet — it is compiled per prompt (Ruling 63);
 they accept. The session document lands in the Center and takes the stack (Ruling 47). They **write
 as in a chat**: *"Refactor the layout store's migration chain so a newer schema is refused with a
 report; touch only @src/AiDe.Core/Workbench/."* The composer shows, inline beneath the text, the
@@ -560,10 +560,13 @@ only in its XAML is proven at runtime and said so.
 - **Given** no workspace is bound, **When** New session is activated, **Then** the workspace chooser
   interposes (Addendum A §A4.2) — the item is **always enabled**; `workspace == null` →
   `IsEnabled == true` and the chooser opens (*falsifier:* a disabled New session item).
-- **Given** the sheet opens, **Then** the fan-out ceiling and budget are shown **prefilled from the
-  workspace defaults** as session settings (S-1/S-2; tier is not a sheet field — Ruling 63), editable there and later in session settings,
+- **Given** the sheet opens, **Then** the fan-out ceiling is shown **prefilled from the workspace
+  default**, the budget shows its default state *bounded by your subscription* with an *enforce a cap*
+  affordance (never a prefilled number — Ruling 72), the task class is preselected `free-form`
+  (Ruling 72; changeable per prompt, Ruling 70), all as session settings (S-1/S-2; tier is not a
+  sheet field — Ruling 63), editable there and later in session settings,
   and the sheet still creates with one click on the defaults (Addendum A §A2 "one click on sensible
-  defaults") (*falsifier:* a sheet that cannot create until a budget is typed).
+  defaults") (*falsifier:* a sheet that cannot create until a budget is typed; a sheet that requires a task class; a numeric budget prefilled).
 - **Given** any perspective, **Then** the rail's New session item and `File → New Session` are
   present (*falsifier:* absent in Explore) — headless on the model + menu; P-1 for the pixels.
 
@@ -1774,3 +1777,8 @@ US-C5, Flow 2 D, the US-C13 warning's source, B6, §C4 — Ruling 63); the compo
 `surface-sunken` inside the raised island (§C3, D1's design); the rail item is a single-selection
 group with manual activation, not an automatically-activating radio group (§C4, PS-R2). Verified by
 re-read; `verify-ruling-citations.py` green.
+
+**Errata after Ruling 72 (2026-09-11):** the budget is an optional cap whose default state is
+*bounded by your subscription*; the task class defaults to `free-form` and is changeable per prompt
+with no Send refusal (§A3, US-C5 amended by substitution). D1's `new-session-sheet.html` shows the
+budget as a state and the class preselected — D2 carries the change.

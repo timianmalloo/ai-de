@@ -161,7 +161,12 @@ public sealed class ComposerSendGate
                 AccountLabel: context.AccountLabel,
                 TaskClass: context.TaskClass,
                 Goal: draft.ToGoalBlock(),
-                Lease: LeaseDerivation.Derive(compiled.Text),
+
+                // THE DRAFT'S OWN SOURCE TEXT, NOT THE COMPILED PROMPT (Ruling 66). `compiled.Text`
+                // additionally carries every attachment's file content and, for a template draft, the
+                // template's own fixed prose — neither of which the operator typed, and either of
+                // which would otherwise widen the lane's write scope with a mention nobody wrote.
+                Lease: LeaseDerivation.Derive(draft.SourceText),
                 Prompt: compiled.Text,
                 ProofPackArtifacts: context.ProofPackArtifacts,
                 Providers: context.Providers,

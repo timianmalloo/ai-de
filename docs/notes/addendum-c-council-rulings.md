@@ -1,6 +1,6 @@
 ---
 id: note-addendum-c-council-rulings
-title: "Decision note — Rulings 50–71: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
+title: "Decision note — Rulings 50–72: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
 type: doc
 status: accepted
 owner: "@timianmalloo"
@@ -29,7 +29,7 @@ review-suggested:
   - { by: adr-0017-primary-view-mode, on: 2026-09-11, reason: "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent" }
 ---
 
-# Decision note — Rulings 50–71
+# Decision note — Rulings 50–72
 
 ## Provenance
 
@@ -866,3 +866,53 @@ condition (3) applies to the same run.
 `session/new`, tested and observed in the Proof Pack; standing control = P-D5 spike (D) + typed tools
 argument on `AcpLaneClient.NewSessionAsync` (agent-plane); `settings.json:4` filed as an operator
 finding.
+
+---
+
+## Ruling 72 — the operator's decisions filed: budget defaults to the subscription's bound with an optional cap; task class defaults to free-form and changes per prompt; the `git push` auto-allow stays
+
+**RULING:** (a) The session's **budget** is an *optional cap*: its absent state means **bounded by the
+subscription**, is the default, and is never a number the operator must type; the operator may
+*enforce a cap* deliberately, in the sheet or in session settings. (b) The session's **default task
+class is `free-form`** — an explicit, operator-visible value present from the moment a session
+opens; any prompt may change its own class (Ruling 70); **Ruling 70's Send refusal for a missing
+class is superseded** — no class can be missing. (c) The operator keeps `Bash(git push:*)` in
+`.claude/settings.json`; Ruling 71's lane pin is therefore the only control on a governed lane's
+shell, and the finding is closed as *decided*, not *fixed*.
+
+**BECAUSE:** The operator's words, verbatim (`al-01M297VC0HTFJP761D9BVE9Z72`): *"budgets should be
+max (i.e. limited by my subscription) by default and then optionally I can enforce … I don't know
+what I intend to spend often … it is unreasonable for long running work to set a budget proactively
+unless in cost capping. When I have a subscription with a cap then I don't need to cap. Also I don't
+need to choose a task class … the basic should be free form upon open and then I can change it"* —
+and *"1: yes auto-allow"*. These are decisions, filed by the conductor without convening the Owner:
+there was nothing to weigh. Consistency: the compiled block still carries six fields and
+`SpawnContract.Validate` stays tier-blind and blank-refusing — the budget projection carries the cap
+when set and a declared *subscription-bounded* value otherwise (the architecture decides the
+representation; derive, don't store); spend is **measured** per turn regardless (IO cost axes, ADR-0029
+— recorded, never asserted). A `free-form` class is a legitimate cohort key: it is the operator's
+stated default, not a value the door invented (DC-110), and `ScoreSegment(Workspace, TaskClass, …)`
+partitions it like any other (ADR-0028 unchanged). Ruling 19's *no system default* intent is met —
+the default is the operator's, declared here.
+
+**CONFIDENCE:** Verified (the operator's words; Rulings 56, 70, 71; `SpawnContract.Validate`).
+**Inferred:** the exact representation of "subscription-bounded" in the compiled block — A1's to
+decide with a falsifying test.
+
+**SCOPE EFFECT:** Supersedes: Ruling 70's *"Send is refused for a prompt with no effective class"*
+and its *"optional at create"* framing (the sheet shows `free-form` selected, changeable); Addendum
+C's sheet criterion (US-C5: no prefilled numeric budget; the sheet creates on defaults with **zero
+required inputs**); Addendum D's budget snapshot (the `ceilings` decoration's `budget` is optional)
+and its task-class rows (default `free-form`); D1's `new-session-sheet.html` (budget as a state, not
+a number; task class preselected `free-form`) and D2's brief (no refusal state). Ruling 56 stands:
+fan-out ceiling and budget are session settings — the budget one now optional. Ruling 71 stands
+unchanged.
+
+**CONDITIONS:** (1) If the subscription's own limit is not readable by the product, the budget's
+absent state reads *"bounded by your subscription — not measured here"*, never a plausible number.
+(2) A per-prompt class change never rewrites the session default silently (Ruling 70 condition 3).
+(3) Revisit (a) only if a cost-capping need arrives from the operator — the affordance exists for it.
+
+**RECORD AS:** Ruling 72 — budget is an optional cap defaulting to the subscription's bound; task
+class defaults to `free-form` and changes per prompt, no Send refusal; the `git push` auto-allow
+stays and Ruling 71's pin is the control.
