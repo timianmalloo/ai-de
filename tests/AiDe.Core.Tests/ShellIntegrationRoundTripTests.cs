@@ -1,3 +1,5 @@
+using System.Runtime.Versioning;
+
 namespace AiDe.Core.Tests;
 
 /// <summary>
@@ -21,6 +23,7 @@ namespace AiDe.Core.Tests;
 /// <para>Out of process for the reason in <b>DC-014</b>: ConPTY attaches a child only when the host
 /// owns a real console, and a <c>dotnet test</c> host never does.</para>
 /// </remarks>
+[SupportedOSPlatform("windows")]
 [Trait("Platform", "Windows")]
 public sealed class ShellIntegrationRoundTripTests
 {

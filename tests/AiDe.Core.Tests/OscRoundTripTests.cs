@@ -1,3 +1,5 @@
+using System.Runtime.Versioning;
+
 namespace AiDe.Core.Tests;
 
 /// <summary>
@@ -21,6 +23,7 @@ namespace AiDe.Core.Tests;
 /// it — testing it after a genuine claim had already made OSC authoritative would be an easier case
 /// than the real one.</para>
 /// </remarks>
+[SupportedOSPlatform("windows")]
 [Trait("Platform", "Windows")]
 public sealed class OscRoundTripTests
 {
