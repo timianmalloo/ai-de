@@ -239,6 +239,27 @@ def census(procs, paths):
     return rows
 
 
+def headline(items):
+    """The group header names EVERY distinct reason in the group, not the first one.
+
+    Printing items[0] read as "529 processes, ancestor PresentMonService.exe" when
+    PresentMonService owned exactly ONE of them and Windows Terminal's agent host owned the
+    other 512. Each row's own classification was right; the HEADER invented a majority
+    attribution nobody had measured -- DC-131 inside the tool written to prevent it. A
+    distribution, or nothing. Covered by self_test, which shows the items[0] formula fails.
+    """
+    reasons = {}
+    for _p, why in items:
+        reasons[why] = reasons.get(why, 0) + 1
+    ordered = sorted(reasons.items(), key=lambda kv: -kv[1])
+    if len(ordered) == 1:
+        return ordered[0][0]
+    text = "; ".join("%d x %s" % (n, why) for why, n in ordered[:3])
+    if len(ordered) > 3:
+        text += "; +%d more reason(s)" % (len(ordered) - 3)
+    return text
+
+
 def report(rows):
     buckets = {}
     for klass, p, why in rows:
@@ -249,7 +270,7 @@ def report(rows):
         items = buckets.get(klass, [])
         if not items:
             continue
-        print("%-16s%7d   %s" % (klass, len(items), items[0][1]))
+        print("%-16s%7d   %s" % (klass, len(items), headline(items)))
         by_name = {}
         for p, _why in items:
             by_name.setdefault(p["name"], []).append(p)
@@ -411,12 +432,22 @@ def self_test():
         snap.write_text(json.dumps({"40": "T1"}), encoding="utf-8")
         expect("pre-existing server is excused", assert_clean(dirty, {wt}, str(snap)), 0)
 
+    # The header falsifier (DC-131 inside the tool): a group where the FIRST item's reason
+    # is the rarest one. The items[0] formula would headline the 1-of-513 attribution.
+    skewed = [(None, "ancestor PresentMonService.exe")] +              [(None, "ancestor WindowsTerminal.exe")] * 512
+    expect("header is a distribution, majority first",
+           headline(skewed), "512 x ancestor WindowsTerminal.exe; 1 x ancestor PresentMonService.exe")
+    expect("header of a single-reason group is that reason",
+           headline([(None, "ancestor node.exe")] * 3), "ancestor node.exe")
+    expect("the items[0] formula is the defect, not the control",
+           skewed[0][1] == headline(skewed), False)
+
     if failures:
         print("SELF-TEST FAILED -- the gate's own oracle is wrong:")
         for f in failures:
             print("  " + f)
         return 1
-    print("\nself-test: 19 assertions over 10 synthetic process tables, all passing.")
+    print("\nself-test: 22 assertions over 10 synthetic process tables, all passing.")
     print("  The DC-131 falsifier: a conhost whose DIRECT PARENT IS ALIVE and whose")
     print("    grandparent is dead. A one-level orphan check scores that clean.")
     print("  The wta trap: `copilot --acp --stdio` is byte-identical to what our own")
