@@ -174,6 +174,10 @@ lane in a live linked worktree is now credited for evidence committed on its own
 control observed failing first, on the un-fixed shape, with `Not Scored — no minimum verification
 path`. Phase 1's exit run avoided the defect by rooting in a **clone**; this run does not have to.
 
+**Measured before the run, on this machine, and it is an argument rather than a result.** A bounded pre-flight through the `--conduct` entry (audit `al-01M28BN2WPZKCAE3VT8228QY5H`, task class `front-door-preflight` in its own store, tagged `not-exit-evidence`) rooted a governed run in **this linked worktree**. Its `scored_episode_cell` row reads `Partial: 15 / 15 observed`, `mode=governed`, `IsComparable == true`, `IncomparableReason == null` — and the row's `workspace` column reads `c:\projects\ai-de`, the **parent** repository, which does not contain this file in its working tree **or** in its `HEAD` (`9f01fdc`), checked both ways. The parent therefore *cannot* have supplied the declared artifact, so it was credited from the lane's own checkout: DC-115's Phase-2 control observed doing its job, by elimination of the only other source, rather than inferred from the register saying it should.
+
+**What that pre-flight does not cover, so its green is not over-quoted.** It launched through `--conduct`, **not** the front door, so it is no evidence for clause 2 or clause 5 — those are precisely the path it does not touch. It is evidence about the plumbing, not a verdict, and **clause 9 is discharged by the exit run below, not by it**. Two runs occurred rather than one: `& <winexe>` returns immediately because the GUI subsystem detaches, so a first invocation reported no exit code while a real run continued in the background. Both scored; both lane trees were read, removed and pruned; the main clone's merge drivers were re-read afterwards and are unchanged.
+
 **Ruling 17 is pre-committed here rather than decided afterwards:** under the linked-worktree shape a
 `Not Scored` verdict is an **EvaluatorIntegrity trip to the human**, not a qualification that may be
 written into a Residual cell. The oracle enforces it (`clause9_dc115`), so the softer answer is not
