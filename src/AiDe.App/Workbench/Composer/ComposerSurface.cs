@@ -34,7 +34,7 @@ namespace AiDe.App.Workbench.Composer;
 /// clipboard at all — <see cref="ClipboardReads"/> exists so that is an observable rather than a
 /// claim, and paste is handled inside the page by the editor that received it.</para>
 /// </remarks>
-public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHasDisplayName
+public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHasDisplayName, IDisposable
 {
     private readonly WebView2 _view;
     private readonly TextBox _compiled;
@@ -54,6 +54,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     private TemplateCatalog? _catalog;
     private PromptTemplate? _template;
     private bool _attachEnabled;
+    private bool _disposed;
     private int _blockedByAttachSetting;
 
     /// <param name="surfaceId">The surface's stable id, as every other surface carries one.</param>
@@ -429,6 +430,26 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             ? "Attach a UTF-8 text file to this prompt."
             : "Attaching files is off for this session. Turn on the session's Attach files setting to enable it.";
         AutomationProperties.SetHelpText(_attach, (string)_attach.ToolTip);
+    }
+
+    /// <summary>
+    /// Releases the hosted browser control.
+    /// </summary>
+    /// <remarks>
+    /// <b>A WebView2 is a child PROCESS, not a visual.</b> Dropping the reference leaves the browser
+    /// running, so a session document opened and closed repeatedly accumulates one per open — a leak
+    /// that looks like nothing in the visual tree and like memory pressure in Task Manager.
+    /// </remarks>
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _disposed = true;
+        _view.PreviewKeyDown -= OnPreviewKey;
+        _view.Dispose();
     }
 
     private static IReadOnlyList<string> PickFiles()

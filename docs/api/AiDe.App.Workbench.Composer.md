@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 41 members, 86% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 42 members, 86% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Composer`
 
-**9 public types · 41 public members · 86% documented.**
+**9 public types · 42 public members · 86% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -218,6 +218,7 @@ claim, and paste is handled inside the page by the editor that received it.
 | `Dictionary<string, long> Metrics { get; } = new(StringComparer.Ordinal)` | Diagnostic counters the page moved. Nothing outside diagnostics is reachable. |
 | `AttachOutcome Attach(IReadOnlyList<string> filePaths)` | Offers files to the draft through the attach gate. |
 | `System.Text.Json.Nodes.JsonObject CommittedRecord()` | The committed-channel record for this send: counts, and one boolean. |
+| `void Dispose()` | Releases the hosted browser control. |
 
 ### `ComposerSurface(string surfaceId, string title)`
 
@@ -258,6 +259,14 @@ Offers files to the draft through the attach gate.
 
 **Remarks.** The gate refuses before touching the file system when the session's attach setting is off, so
 the refusal below reaches the operator without a single byte having been read.
+
+### `void Dispose()`
+
+Releases the hosted browser control.
+
+**Remarks.** **A WebView2 is a child PROCESS, not a visual.** Dropping the reference leaves the browser
+running, so a session document opened and closed repeatedly accumulates one per open — a leak
+that looks like nothing in the visual tree and like memory pressure in Task Manager.
 
 ## `ComposerFieldTarget`
 

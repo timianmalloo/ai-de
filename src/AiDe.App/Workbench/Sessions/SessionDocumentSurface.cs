@@ -450,5 +450,10 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         }
 
         _modeContent.Clear();
+
+        // The composer hosts a WebView2, which is a child PROCESS. It is disposed HERE and not on a
+        // mode switch: ADR-0017's retain-never-rebuild rule is about the canvas modes, and the
+        // composer half of the paired zone outlives every one of them.
+        Composer.Dispose();
     }
 }
