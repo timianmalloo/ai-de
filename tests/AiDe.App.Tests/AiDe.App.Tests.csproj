@@ -80,6 +80,19 @@
     -->
     <ProjectReference Include="..\AiDe.App.ComposerProbe\AiDe.App.ComposerProbe.csproj"
                       ReferenceOutputAssembly="false" />
+
+    <!--
+      The contrast probe, the FIFTH instance of the same build-order edge (DC-023), added on the
+      day it was written. It boots the real AiDe.App.App out of process and walks every text
+      pairing the shell composes; ShellContrastCensusTests reads its report. An in-process
+      census was tried first and could not coexist with the suite: WPF allows one Application
+      per process, and shutting it down unregistered the pack: URI scheme for the twelve tests
+      that ran after it (DC-008).
+
+      ReferenceOutputAssembly="false" because it is started as a process, never linked.
+    -->
+    <ProjectReference Include="..\AiDe.App.ContrastProbe\AiDe.App.ContrastProbe.csproj"
+                      ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>

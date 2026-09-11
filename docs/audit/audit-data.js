@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T19:34:52Z",
+  "generated": "2026-09-11T20:07:34Z",
   "audit": [
     {
       "actor": null,
@@ -11736,26 +11736,29 @@ window.AUDIT_DATA = {
     {
       "actor": null,
       "artifacts": [
-        "docs/investigations/INV-0007-composer-entry-areas-starved-by-the-compiled-view.md",
-        "tests/AiDe.App.Tests/Composer/ComposerHostIntegrationTests.cs",
-        "tests/AiDe.App.ComposerProbe/Program.cs"
+        "docs/investigations/INV-0007-contrast-floor-passes-while-the-shell-fails.md",
+        "docs/notes/contrast-census-runs-out-of-process.md",
+        "tests/AiDe.App.ContrastProbe/Program.cs",
+        "tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs",
+        "tests/AiDe.App.Tests/ShellContrastCensusTests.cs"
       ],
-      "datetime": "2026-09-11T18:25:12Z",
-      "done_when": "Two red tests committed on investigate/composer-input, INV-0007 written with typed links and derived, audit entry, derived views regenerated, branch pushed",
-      "duration_seconds": 2399.0,
+      "datetime": "2026-09-11T18:53:01Z",
+      "done_when": "INV-0007 exists with the census table verbatim; the census (AiDe.App.ContrastProbe + ShellContrastCensusTests) is committed red on main; audit logged; pushed to investigate/contrast-census",
+      "duration_seconds": 2655.0,
+      "fan_out": 1,
       "git": {
-        "branch": "investigate/composer-input",
+        "branch": "investigate/contrast-census",
         "pushed": null,
         "sha": "f5c0f740fd0488baa00dd2de4320c187f585058e",
         "short": "f5c0f740f"
       },
-      "goal": "Verified root cause of 'the composer accepts no typing / entry areas not visible' after File → New Session, with a red reproduction in the product's composition, a class, a sibling sweep and a phased plan; stop before the fix",
-      "id": "al-01M28VEVQW46H5GKG4JW7ZD8X4",
+      "goal": "Prove, by a census of the shell the product composes, why unreadable text ships past U2's contrast floor; name the mechanism per site; propose the class and a phased plan; stop before fixing",
+      "id": "al-01M28X1SAPJE12TF0FKMEQXHZT",
       "kind": "skill",
       "outcome": "success",
-      "prompt": "The composer accepts no typing: the operator opened File → New Session and could not type in the composer. The operator, on the F5 tree (feature/exit-evidence @ 729fdb5e — same composer code as main), ran dotnet run --project src/AiDe.App -c Release, opened a workspace, did File → New Session, and reports: \"I cannot type in the composer.\" Words only; no screenshot yet. %LOCALAPPDATA%\\AiDe\\logs\\workbench-20260911.log — last line 2026-09-11T17:41:12Z evt: layout.mutation, operation: open-session-document, surface: session-document:20260911T174112Z-28f7fe97, placement: split-beside-graph — that is the operator's gesture. Nothing is logged after it. The composer emits no diagnostics at all. Later, verbatim: \"I could not see the entry areas.\" — and the operator's screenshot: a ~200px WebView2 scroll region with only FAN_OUT_CAP and BUDGET visible, a ~500px read-only Compiled view under it.",
-      "session": "composer-input",
-      "shortname": "investigate-composer-input",
+      "prompt": "We still have lots of cases of dark/hard-to-read font colors with regards to the tool background. We need to ensure we have a consistent color palette that works consistently, and stop putting dark fonts on dark backgrounds and light fonts on light backgrounds.",
+      "session": "contrast-census",
+      "shortname": "investigate-contrast-census",
       "signals": {
         "acceptance_met": true,
         "regression": false,
@@ -11763,61 +11766,12 @@ window.AUDIT_DATA = {
         "verification_path": true
       },
       "skill": "investigate",
-      "started_at": "2026-09-11T17:45:13Z",
-      "summary": "INV-0007. Verified root cause (necessary and sufficient, measured in the real WorkbenchShell + AvalonDock host under the operator's recorded arrangement): ComposerSurface docks a StackPanel footer Bottom whose read-only compiled-view TextBox has no MaxHeight; it is measured unconstrained (401px for an empty goal block, 465px with three answers) before the WebView2 editor host gets the remainder, so editor = composer − compiled − 114px: 0px at 485px (F5's choreography), 105–110px at 684–689px (main, Ruling 47 maximize). Capping the compiled view from outside the product gave the editor 202px in the same 485px and the run went green. Second defect reproduced: any later Adapter.Render() re-parents the WebView2, WPF raises Loaded again, InitialiseAsync navigates again, the router drops the new page's editor.ready as a duplicate → host.init=0, fields=0, the operator's on-screen text gone; the graph canvas has the same Loaded→navigate shape (one render, one reload, measured). Ruled out by measurement: focus/global key handlers (decompiled WebView2 WPF wrapper forwards only accelerators), host.init never arriving on open, page/bundle failing to load, a non-editable editor, contrast as the primary cause (text 10.33:1, labels 6.31:1; boundaries 1.51:1 recorded as F4). Two red tests committed (ComposerHostIntegrationTests: entry areas keep their room — exit 24; page survives a later render — exit 25). Phased plan: 1 writer-first Grid layout with a 35% compiled ceiling; 2 initialise-once + readiness per navigation (composer + canvas); 3 bounds/handshake/input telemetry on the normal path; 4 class controls (writer≥reader helper, one WebSurfaceHost, Loaded-init analyzer, DC classes A/B registered with the fix); 5 keyboard entry focuses a field; 6 page-side non-text contrast floor. Stopped before the fix.",
+      "started_at": "2026-09-11T18:08:46Z",
+      "summary": "Two verified findings. (1) The photographed sites are the ORIGINAL instance on a Release binary built before 5213d7bb merged: both matching Release builds carry be68ca1c / 2a363f4f in their informational version and neither contains the fix; the white TextBox is impossible on HEAD (measured sunken). (2) On main a census of the real App booted out of process (180 pairings) finds 14 below floor the floor cannot see: 12 at 2.37:1 where the fix's implicit TextBlock style overrides every container's accent-ground state ink by inheritance, 2 disabled controls whose DisabledTextBrush never reaches the glyphs, 1 page-CSS hint at 4.47:1. Necessary+sufficient: setter removed -> 12->0 (and 3 masked selected-inactive tab sites at 1.45 appear); setter present -> 12. Class: the leaf overrides the container's pairing (proposed DC-136), DC-135 recurrence 2, DC-131 instance, an unattributed-binary report (proposed DC-137). Phased plan: A remove the leaf ink setter + B selected-ACTIVE tab trigger + DESIGN.md on-accent row; TokenDisciplineTests source rule; page CSS tokens on host.init; app.start with the sha; register; census reach; muted-token decision. Stopped for review.",
       "tags": [
-        "composer",
-        "investigation"
-      ],
-      "tier": "T1",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
-        "docs/proof/composer-entry-areas.md",
-        "docs/lessons/defect-classes.md",
-        "src/AiDe.App/Workbench/WebSurfaceHost.cs",
-        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs",
-        "src/AiDe.App/Workbench/CanvasSurface.cs",
-        "src/AiDe.App/Workbench/WorkbenchDiagnostics.cs",
-        "src/AiDe.Core/Presentation/Composer/ComposerMessageRouter.cs",
-        "tests/AiDe.App.Tests/Composer/TheWriterKeepsItsRoomTests.cs",
-        "tests/AiDe.App.Tests/TheWebSurfacesInitialiseOnceAcrossReparentsTests.cs",
-        "tests/AiDe.App.Tests/Composer/ComposerHostIntegrationTests.cs",
-        "tests/AiDe.App.ComposerProbe/Program.cs",
-        "tests/AiDe.Core.Tests/Composer/TheVocabularyIsClosedTests.cs"
-      ],
-      "datetime": "2026-09-11T19:27:42Z",
-      "done_when": "both INV red tests observed red then green without weakened assertions; run-binding guard green; WorkbenchDiagnostics emits bounds, handshake transitions and input on the normal path; register entries with recurrence controls observed failing; gates green bare; audit entry and proof pack; committed and pushed, no merge",
-      "duration_seconds": 3519.0,
-      "fan_out": 3,
-      "git": {
-        "branch": "fix/composer-entry-areas",
-        "pushed": null,
-        "sha": "4b05744b57a13cec939f323bc4c2eb158bc5ac0a",
-        "short": "4b05744b5"
-      },
-      "goal": "INV-0007 phases 1-4 on fix/composer-entry-areas: bounded compiled view, initialise-once handshake for composer and canvas, normal-path telemetry, class controls and register entries",
-      "id": "al-01M28Z19PG92S9YE390MPKB7TR",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "/implement INV-0007 phases 1-4: bounded compiled view, initialise-once handshake for composer and canvas, normal-path telemetry, class controls and defect-class registration.\n\n1. Bounded compiled view. Writer-first layout: the editor host is the primary row; the compiled view is capped (INV's figure: ≤ 35 % of the composer's height, scrolling inside) and never starves the editor. Prefer the smallest correct change (MaxHeight bound to the surface's height, or a Grid with star rows) over a new abstraction — the Simplifier reviews this.\n2. Initialise once; readiness per navigation. InitialiseAsync runs once per surface, not per Loaded; a re-parent must not re-navigate; if the page does reload (a genuine navigation), the router treats the new editor.ready as a new page — it re-sends host.init with the current draft rather than dropping the ready as a duplicate. Apply the same shape to CanvasSurface. Both red tests go green; the run-binding guard stays green.\n3. Telemetry on the normal path (IO1–IO12): via WorkbenchDiagnostics, emit (a) the composer's rendered bounds — editor host and compiled view ActualHeight/ActualWidth — at first layout and whenever either changes beyond a threshold you state; (b) every handshake transition (editor.ready received, host.init pushed, duplicate-ready dropped vs re-initialised, page reload) with the surface id; (c) an input-received counter (keystrokes that reached the draft). Each degrades to \"not recorded\", never to a plausible zero. No flag, no re-run needed.\n4. Class controls + registration. Register the defect class(es) in docs/lessons/defect-classes.md with ids from python tools/verify-id-allocators.py (never highest-plus-one; a sibling node investigate/contrast-census is live and may allocate concurrently — re-run the allocator immediately before you commit the register). Write the control that fails when the shape recurs: a test that the two WebView2-hosting surfaces (composer, canvas) initialise exactly once across N re-parents, and a sweep-shaped guard for \"a content-sized control docked beside a filling HwndHost/WebView2\" if you can state its root, recursion, token set and allowlist honestly (GO14a) — otherwise name it as a residual, not a control. Run class → sweep → derive → prevent in writing in the register entry.\n\nPhases 5 and 6 are named-and-deferred. Do not merge to main — the conductor converges.",
-      "session": "composer-fix",
-      "shortname": "implement-inv-0007-phases-1-4",
-      "signals": {
-        "acceptance_met": true,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": "implement",
-      "started_at": "2026-09-11T18:29:03Z",
-      "summary": "Phase 1: ComposerSurface.MeasureOverride caps the compiled view at floor(min(0.35*H,(H-chrome)/2)) before children are measured (one pass); probe exit 24 -> 0 (editor 110px/465px -> 334px/241px); fast-ring STA test at 485/1000/485+wrapped-status red -> green. Phase 2: WebSurfaceHost (once per surface, guard before the first await) used by ComposerSurface and CanvasSurface; ComposerMessageRouter.BeginNavigation re-keys readiness per document from the composer's own allowed NavigationStarting; probe exit 25 -> 0 (navigations +0, router drops 0, fields 6); canvas navigations per render 1 -> 0; reload and cancelled-navigation branches proven through the product (exit 26/27 by mutation). Phase 3: composer.layout and web-surface.handshake (initialising, re-attached, init-failed, navigation-started, configured, page-ready, init-pushed, input-received, message-dropped, disposed) on the normal path, null never 0, probe echoes the Sink. Phase 4: DC-136 (partially-controlled) and DC-137 (controlled) with class -> sweep -> derive -> prevent; once-across-3-re-parents tests for both surfaces (red by mutation: Actual 4), held-open runtime-start test, Loaded-hook sweep guard (red at HEAD). Reviews: Test Architect veto cleared after 4 must-fixes; Simplifier -109 lines applied in part; SRE's two must-fixes applied. Proof Pack docs/proof/composer-entry-areas.md. Phases 5-6 deferred. DC ids collide with origin/main's DC-136 (spent during this node) - renumber in place at merge.",
-      "tags": [
-        "inv-0007",
-        "composer",
-        "dc-136",
-        "dc-137"
+        "ui",
+        "contrast",
+        "census"
       ],
       "tier": "T1",
       "tool": null
@@ -11956,6 +11910,156 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T2",
       "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0007-composer-entry-areas-starved-by-the-compiled-view.md",
+        "tests/AiDe.App.Tests/Composer/ComposerHostIntegrationTests.cs",
+        "tests/AiDe.App.ComposerProbe/Program.cs"
+      ],
+      "datetime": "2026-09-11T18:25:12Z",
+      "done_when": "Two red tests committed on investigate/composer-input, INV-0007 written with typed links and derived, audit entry, derived views regenerated, branch pushed",
+      "duration_seconds": 2399.0,
+      "git": {
+        "branch": "investigate/composer-input",
+        "pushed": null,
+        "sha": "f5c0f740fd0488baa00dd2de4320c187f585058e",
+        "short": "f5c0f740f"
+      },
+      "goal": "Verified root cause of 'the composer accepts no typing / entry areas not visible' after File → New Session, with a red reproduction in the product's composition, a class, a sibling sweep and a phased plan; stop before the fix",
+      "id": "al-01M28VEVQW46H5GKG4JW7ZD8X4",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "The composer accepts no typing: the operator opened File → New Session and could not type in the composer. The operator, on the F5 tree (feature/exit-evidence @ 729fdb5e — same composer code as main), ran dotnet run --project src/AiDe.App -c Release, opened a workspace, did File → New Session, and reports: \"I cannot type in the composer.\" Words only; no screenshot yet. %LOCALAPPDATA%\\AiDe\\logs\\workbench-20260911.log — last line 2026-09-11T17:41:12Z evt: layout.mutation, operation: open-session-document, surface: session-document:20260911T174112Z-28f7fe97, placement: split-beside-graph — that is the operator's gesture. Nothing is logged after it. The composer emits no diagnostics at all. Later, verbatim: \"I could not see the entry areas.\" — and the operator's screenshot: a ~200px WebView2 scroll region with only FAN_OUT_CAP and BUDGET visible, a ~500px read-only Compiled view under it.",
+      "session": "composer-input",
+      "shortname": "investigate-composer-input",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "investigate",
+      "started_at": "2026-09-11T17:45:13Z",
+      "summary": "INV-0007. Verified root cause (necessary and sufficient, measured in the real WorkbenchShell + AvalonDock host under the operator's recorded arrangement): ComposerSurface docks a StackPanel footer Bottom whose read-only compiled-view TextBox has no MaxHeight; it is measured unconstrained (401px for an empty goal block, 465px with three answers) before the WebView2 editor host gets the remainder, so editor = composer − compiled − 114px: 0px at 485px (F5's choreography), 105–110px at 684–689px (main, Ruling 47 maximize). Capping the compiled view from outside the product gave the editor 202px in the same 485px and the run went green. Second defect reproduced: any later Adapter.Render() re-parents the WebView2, WPF raises Loaded again, InitialiseAsync navigates again, the router drops the new page's editor.ready as a duplicate → host.init=0, fields=0, the operator's on-screen text gone; the graph canvas has the same Loaded→navigate shape (one render, one reload, measured). Ruled out by measurement: focus/global key handlers (decompiled WebView2 WPF wrapper forwards only accelerators), host.init never arriving on open, page/bundle failing to load, a non-editable editor, contrast as the primary cause (text 10.33:1, labels 6.31:1; boundaries 1.51:1 recorded as F4). Two red tests committed (ComposerHostIntegrationTests: entry areas keep their room — exit 24; page survives a later render — exit 25). Phased plan: 1 writer-first Grid layout with a 35% compiled ceiling; 2 initialise-once + readiness per navigation (composer + canvas); 3 bounds/handshake/input telemetry on the normal path; 4 class controls (writer≥reader helper, one WebSurfaceHost, Loaded-init analyzer, DC classes A/B registered with the fix); 5 keyboard entry focuses a field; 6 page-side non-text contrast floor. Stopped before the fix.",
+      "tags": [
+        "composer",
+        "investigation"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/composer-entry-areas.md",
+        "docs/lessons/defect-classes.md",
+        "src/AiDe.App/Workbench/WebSurfaceHost.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs",
+        "src/AiDe.App/Workbench/CanvasSurface.cs",
+        "src/AiDe.App/Workbench/WorkbenchDiagnostics.cs",
+        "src/AiDe.Core/Presentation/Composer/ComposerMessageRouter.cs",
+        "tests/AiDe.App.Tests/Composer/TheWriterKeepsItsRoomTests.cs",
+        "tests/AiDe.App.Tests/TheWebSurfacesInitialiseOnceAcrossReparentsTests.cs",
+        "tests/AiDe.App.Tests/Composer/ComposerHostIntegrationTests.cs",
+        "tests/AiDe.App.ComposerProbe/Program.cs",
+        "tests/AiDe.Core.Tests/Composer/TheVocabularyIsClosedTests.cs"
+      ],
+      "datetime": "2026-09-11T19:27:42Z",
+      "done_when": "both INV red tests observed red then green without weakened assertions; run-binding guard green; WorkbenchDiagnostics emits bounds, handshake transitions and input on the normal path; register entries with recurrence controls observed failing; gates green bare; audit entry and proof pack; committed and pushed, no merge",
+      "duration_seconds": 3519.0,
+      "fan_out": 3,
+      "git": {
+        "branch": "fix/composer-entry-areas",
+        "pushed": null,
+        "sha": "4b05744b57a13cec939f323bc4c2eb158bc5ac0a",
+        "short": "4b05744b5"
+      },
+      "goal": "INV-0007 phases 1-4 on fix/composer-entry-areas: bounded compiled view, initialise-once handshake for composer and canvas, normal-path telemetry, class controls and register entries",
+      "id": "al-01M28Z19PG92S9YE390MPKB7TR",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "/implement INV-0007 phases 1-4: bounded compiled view, initialise-once handshake for composer and canvas, normal-path telemetry, class controls and defect-class registration.\n\n1. Bounded compiled view. Writer-first layout: the editor host is the primary row; the compiled view is capped (INV's figure: ≤ 35 % of the composer's height, scrolling inside) and never starves the editor. Prefer the smallest correct change (MaxHeight bound to the surface's height, or a Grid with star rows) over a new abstraction — the Simplifier reviews this.\n2. Initialise once; readiness per navigation. InitialiseAsync runs once per surface, not per Loaded; a re-parent must not re-navigate; if the page does reload (a genuine navigation), the router treats the new editor.ready as a new page — it re-sends host.init with the current draft rather than dropping the ready as a duplicate. Apply the same shape to CanvasSurface. Both red tests go green; the run-binding guard stays green.\n3. Telemetry on the normal path (IO1–IO12): via WorkbenchDiagnostics, emit (a) the composer's rendered bounds — editor host and compiled view ActualHeight/ActualWidth — at first layout and whenever either changes beyond a threshold you state; (b) every handshake transition (editor.ready received, host.init pushed, duplicate-ready dropped vs re-initialised, page reload) with the surface id; (c) an input-received counter (keystrokes that reached the draft). Each degrades to \"not recorded\", never to a plausible zero. No flag, no re-run needed.\n4. Class controls + registration. Register the defect class(es) in docs/lessons/defect-classes.md with ids from python tools/verify-id-allocators.py (never highest-plus-one; a sibling node investigate/contrast-census is live and may allocate concurrently — re-run the allocator immediately before you commit the register). Write the control that fails when the shape recurs: a test that the two WebView2-hosting surfaces (composer, canvas) initialise exactly once across N re-parents, and a sweep-shaped guard for \"a content-sized control docked beside a filling HwndHost/WebView2\" if you can state its root, recursion, token set and allowlist honestly (GO14a) — otherwise name it as a residual, not a control. Run class → sweep → derive → prevent in writing in the register entry.\n\nPhases 5 and 6 are named-and-deferred. Do not merge to main — the conductor converges.",
+      "session": "composer-fix",
+      "shortname": "implement-inv-0007-phases-1-4",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-11T18:29:03Z",
+      "summary": "Phase 1: ComposerSurface.MeasureOverride caps the compiled view at floor(min(0.35*H,(H-chrome)/2)) before children are measured (one pass); probe exit 24 -> 0 (editor 110px/465px -> 334px/241px); fast-ring STA test at 485/1000/485+wrapped-status red -> green. Phase 2: WebSurfaceHost (once per surface, guard before the first await) used by ComposerSurface and CanvasSurface; ComposerMessageRouter.BeginNavigation re-keys readiness per document from the composer's own allowed NavigationStarting; probe exit 25 -> 0 (navigations +0, router drops 0, fields 6); canvas navigations per render 1 -> 0; reload and cancelled-navigation branches proven through the product (exit 26/27 by mutation). Phase 3: composer.layout and web-surface.handshake (initialising, re-attached, init-failed, navigation-started, configured, page-ready, init-pushed, input-received, message-dropped, disposed) on the normal path, null never 0, probe echoes the Sink. Phase 4: DC-136 (partially-controlled) and DC-137 (controlled) with class -> sweep -> derive -> prevent; once-across-3-re-parents tests for both surfaces (red by mutation: Actual 4), held-open runtime-start test, Loaded-hook sweep guard (red at HEAD). Reviews: Test Architect veto cleared after 4 must-fixes; Simplifier -109 lines applied in part; SRE's two must-fixes applied. Proof Pack docs/proof/composer-entry-areas.md. Phases 5-6 deferred. DC ids collide with origin/main's DC-136 (spent during this node) - renumber in place at merge.",
+      "tags": [
+        "inv-0007",
+        "composer",
+        "dc-136",
+        "dc-137"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "id": "al-01M291A2TKG3B0DJYT7JW74XZ5",
+      "shortname": "implement-contrast-census-phases-1-5",
+      "datetime": "2026-09-11T20:07:27Z",
+      "session": "contrast-fix",
+      "prompt": "Contrast census phases 1-5: remove the leaf ink override, fix the selected-tab trigger, token-discipline source rule, composer page CSS variables on host.init, app.start with the sha, register the classes. (1) The ink fix: remove the leaf TextBlock implicit-style Foreground setter (or scope it so it cannot outrank a container's TextElement.Foreground); fix the DockRoundedTabs.xaml trigger so selected-active tabs get the on-accent ink and selected-inactive tabs keep readable ink on their sunken ground; disabled controls render DisabledTextBrush. Introduce the on-accent ink token if none exists. Census -> 0 below floor, 0 state losses. (2) The source rule in TokenDisciplineTests: no implicit style targeting leaf text may set Foreground; every state trigger that sets a ground also sets an ink (or inherits one from a container that does). Red first against the pre-fix XAML, green after. (3) Composer page tokens: the page draws ink/ground/border/muted/on-accent/disabled from CSS variables injected on host.init from the theme (an additive field on the envelope); #drop-hint and every label/field/border pairing >= the floor. The census's webview half goes green. (4) app.start telemetry: one normal-path diagnostics event at startup carrying AssemblyInformationalVersion (the sha), the theme, and the DPI/window size. (5) Register the classes with ids from verify-id-allocators.py run immediately before the commit: the leaf-overrides-container pairing; the unattributed-binary report; DC-135 recurrence 2 and the DC-131 instance. Class -> sweep -> derive -> prevent in writing. Re-issue INV-0007 as the next free id. Do not write DESIGN.md; do not merge to main; push fix/contrast-census.",
+      "summary": "Phases 1-5 of INV-0008 (re-issued from INV-0007; the composer investigation held that id first) landed on fix/contrast-census. Census on the merge base 7d95f8cd: 180 pairings, 14 below floor (13 app-style token at 2.37:1 TextBrush-on-AccentBrush, 1 page-css at 4.47:1) + 2 disabled-state losses -> after: 180 / 0 / 0, 5 census facts green. Phase 1: the implicit TextBlock/Label Foreground setters removed; AccentContrastBrush (#0D1014 = DESIGN.md accent-contrast, 6.60:1 on the accent) named on the checked toggle, selected row and the tab title; the tab's on-accent ink follows IsActive (the theme's accent-ground condition), the selected-inactive tab keeps TextBrush on the border ground (10.74:1); Fix A alone exposed three further masked sites (the composer footer's Compiled view / lease / status inheriting #000000 from AvalonDock's pane control at 1.27:1 - the photographed lines) fixed at the container: SurfaceChrome's island card states TextElement.Foreground=TextBrush beside its raised ground. Phase 2: TokenDisciplineTests.NoImplicitLeafTextStyle_SetsItsOwnInk (red on pre-fix App.xaml lines 391/396) and EveryTriggerThatPaintsAGround_StatesAnInkThatClearsIt (engine red on planted IsChecked->AccentBrush with no ink, plus Trigger.Setters / Setter.Value / Style rest-setter counterexamples); ContrastFloorTests' 18-type theory asserts the inverse for the two leaf types and the root ink on Window. Phase 3: host.init carries an additive `theme` field - eleven CSS custom properties (--surface, --surface-raised, --surface-sunken, --text, --text-muted, --text-disabled, --accent, --accent-contrast, --border, --danger, --focus) read from Application.Resources by ComposerPageTheme; composer.mjs applies them on the root before rendering; composer.html reads each with the token's value as fallback; #drop-hint 7.16:1; the probe records the root's inline custom properties beside the push and plants a FocusBrush sentinel (#010203) so the push is distinguishable from the fallback (fact red with applyTheme removed); applyTheme's guards proven against the live page (red with the guard disabled); every stylesheet fallback held to its token (red on planted drift, no-fallback and a named colour); composer-host.html on token values; src/AiDe.App/Web promoted from advisory to gated in verify-ui-craft-floor.py (0 findings). Phase 4: WorkbenchDiagnostics.AppStart from MainWindow.Loaded - {ts, evt:app.start, version 1.0.0+sha, commit (40-hex or null), configuration, theme, dpi{scaleX,scaleY,pixelsPerInchX,Y}, window{width,height,state}} + an app.start activity; AppStartIsRecordedTests 3 facts (red with a stub; the real App's boot proven through the contrast probe, exactly one line). Phase 5: DC-139 (the leaf overrides the container's pairing), DC-140 (a report against an unattributed binary), DC-141 (a scripted edit anchored on a token prose also contains - this build's own defect, caught by the census's DC-016 guard), DC-135 recurrence 2, DC-131 instance; ids re-issued at the merge after main spent 137/138. Reviews: UX&A PASS-with-conditions (on-accent pairing confirmed the only legal ink on the accent; conditions carried as residuals: DESIGN.md row for D1, a non-colour selected indicator on the inactive tab, a border-strong token for input boundaries, muted->text for empty states, no local ink under an accent trigger); Test Architect round 1 BLOCK (no proof pack yet) -> round 2 PASS-with-conditions after the reader rule, sentinel, pinned roles, init-count poll and AppStartCount; residuals: host.init golden at the composer owner's seam, 22 C# local leaf inks, the last-focused-inactive tab state. Gates: builds 0/0/0 warnings-as-errors; App suite 600/600; verify-test-run OK (600>=554, 2240>=2239); every verify-*.py 0 after regenerate; craft floor gated. Proof Pack docs/proof/contrast-census.md; decision note docs/notes/on-accent-ink-is-its-own-token.md. Not done: DESIGN.md (D1 owns it), phases 6-7, Fix D's About/status-strip half.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/contrast-census.md",
+        "docs/investigations/INV-0008-contrast-floor-passes-while-the-shell-fails.md",
+        "docs/notes/on-accent-ink-is-its-own-token.md",
+        "docs/lessons/defect-classes.md",
+        "src/AiDe.App/App.xaml",
+        "src/AiDe.App/Workbench/DockRoundedTabs.xaml",
+        "src/AiDe.App/Workbench/SurfaceChrome.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerPageTheme.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs",
+        "src/AiDe.App/Web/composer.html",
+        "src/AiDe.App/Web/composer.mjs",
+        "src/AiDe.App/Web/composer-host.html",
+        "src/AiDe.App/Workbench/WorkbenchDiagnostics.cs",
+        "src/AiDe.App/MainWindow.xaml.cs",
+        "tests/AiDe.App.Tests/ShellContrastCensusTests.cs",
+        "tests/AiDe.App.Tests/TokenDisciplineTests.cs",
+        "tests/AiDe.App.Tests/ContrastFloorTests.cs",
+        "tests/AiDe.App.Tests/AppStartIsRecordedTests.cs",
+        "tests/AiDe.App.Tests/Composer/ComposerPageThemeTests.cs",
+        "tests/AiDe.App.ContrastProbe/Program.cs",
+        "tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs",
+        "tools/verify-ui-craft-floor.py"
+      ],
+      "tags": [
+        "ui",
+        "contrast",
+        "census",
+        "tokens",
+        "telemetry"
+      ],
+      "outcome": "success",
+      "goal": "Land INV-0008 phases 1-5 on fix/contrast-census: the leaf ink override removed, the tab trigger on IsActive, the on-accent token, the source rules, composer page tokens on host.init, app.start with the sha, the classes registered",
+      "done_when": "Census 0 below floor / 0 state losses on the composed shell (was 180/14/2); source rules red on pre-fix XAML then green; host.init carries the theme and the page root proves the push; app.start emitted on boot with a 40-hex commit; DC classes registered with allocator-verified ids; proof pack committed; every gate green bare; pushed to fix/contrast-census, not merged",
+      "tier": "T1",
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-11T19:15:16Z",
+      "duration_seconds": 3131.0,
+      "git": {
+        "sha": "57057e423dd8fdb3cc6bddae177c71ee1db76a70",
+        "short": "57057e423",
+        "branch": "fix/contrast-census",
+        "pushed": null
+      }
     }
   ],
   "changes": [

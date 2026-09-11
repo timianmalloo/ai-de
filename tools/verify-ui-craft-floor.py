@@ -42,10 +42,12 @@ WHAT IS GATED AND WHAT IS NOT, deliberately and per Ruling 48:
   GATED at Major   docs/mockups/session-front-door.html, DESIGN.md
                    Measured 0 Majors / 5 Minors and 0 findings respectively, so the threshold
                    has discriminating power and costs nothing today.
-  ADVISORY         src/AiDe.App/Web -- 17 Majors, every one a colour literal in the composer
-                   HTML. Gating it would be red on day one, and the next step after a
-                   permanently red gate is muting it, which is worse than advisory. It gates
-                   when the composer HTML is tokenized.
+  GATED at Major   src/AiDe.App/Web -- was ADVISORY at 17 Majors, every one a colour literal in
+                   the composer HTML; promoted the day the composer page was tokenized (INV-0008
+                   Fix C: CSS custom properties pushed on host.init, DESIGN.md values as the
+                   fallbacks; the host-probe page carries the token values by hand). Measured
+                   0 findings at promotion. A gate that is red on day one gets muted, which is
+                   why it waited; a gate that is green on day one and stays wired is the control.
   NOT SCANNED      docs/mockups as a whole -- 66 Majors the ui-craft.yml header records as
                    deliberate DX17 dense-meta text in the legacy IDE mockups. It gates when
                    docs/reviews/ui-mockups-craft-gate.md dispositions them.
@@ -65,11 +67,15 @@ PACK_GATE = ROOT / "docs" / "ai-forward-pack" / "scripts" / "ui-craft-gate.py"
 SEVERITY_ORDER = ["Nit", "Minor", "Major", "Blocker"]
 
 # Targets whose findings FAIL this gate, with the severity each fails at.
-GATED = [("docs/mockups/session-front-door.html", "Major"), ("DESIGN.md", "Major")]
+GATED = [
+    ("docs/mockups/session-front-door.html", "Major"),
+    ("DESIGN.md", "Major"),
+    # Promoted from ADVISORY when the composer HTML was tokenized (ranked-plan item 13, INV-0008).
+    ("src/AiDe.App/Web", "Major"),
+]
 
 # Scanned and reported, never failed. Each carries the condition that would promote it.
-ADVISORY = [("src/AiDe.App/Web",
-             "promotes to gated when the composer HTML is tokenized (ranked-plan item 13)")]
+ADVISORY: list[tuple[str, str]] = []
 
 BUILD_OUTPUT = {"bin", "obj", "node_modules", "artifacts"}
 
