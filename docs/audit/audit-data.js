@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T20:12:28Z",
+  "generated": "2026-09-11T20:25:11Z",
   "audit": [
     {
       "actor": null,
@@ -12135,6 +12135,49 @@ window.AUDIT_DATA = {
       "summary": "prompt logged for reuse",
       "tags": [],
       "tool": null
+    },
+    {
+      "id": "al-01M2927GWV79QDF90AVM22VRQF",
+      "shortname": "ui-design-addendum-c-perspectives",
+      "datetime": "2026-09-11T20:23:32Z",
+      "session": "addendum-c-chain",
+      "prompt": "elevate — the AI-DE workbench as three perspectives (Coding · Explore · Architecture): the rail, the perspective-contextual menu, the Coding and Architecture default layouts, the conversation composer, and the New Session sheet with session settings; per spec-addendum-c-perspectives",
+      "summary": "Baseline ui-craft-gate over docs/mockups: 104 findings (66 Major / 38 Minor, cramped-padding 26), reproduced. Result: 98 (60 / 38) — the three new mockups measure 0 findings each; DESIGN.md 0; design-lint --strict clean; verify-design-modes OK (30 roles, each with a light value). Tokens: accent-contrast keeps its name with the on-accent-ink role (a rename to text-on-accent was made and reverted when main merged AccentContrastBrush); border-strong added (#7C8896 / #5F6977); syntax-comment #5A6472 -> #808C9A; 30 light-* values declared (light-float-chrome #EEF1F4); the one-ground palette column replaced by an ink×ground matrix in both themes; the header signature corrected to PerspectiveShell (Arch:HubAndSpoke, Depth:SoftShadow). Design: rail as a manual-activation tab list; tab strip with an on-accent selected-active state and a 2px muted edge on selected-inactive; menus derived (File · Edit · View · Window · Prompt · Help) with the focus ring as the keyboard indicator; the composer as a conversation with one editor, derived lines, a settings line (fan-out ceiling + budget, no tier), the compiled prompt on demand carrying the compiled tier as a decoration (the operator's mid-run correction: tier is compiled, not typed); the sheet with the session settings and no tier field. Loop: pass 1 = 2 Blockers + 19 Majors across UX&A / UX-IA / Simplifier; pass 2 = UX-IA PASS, Simplifier CLEARED, UX&A one new Blocker (menu highlight sub-3:1); pass 3 = UX&A PASS, veto cleared on the design artifacts; 0 Majors; native proof P-1/P-9/P-11/P-12/P-13 not measurable from HTML. Vetoes: a11y hard veto raised and cleared by the UX&A lens (not the author); UX-spec veto cleared; Simplifier soft veto cleared. main cb4a6ebe merged into the branch (one conflict, tools/verify-ui-craft-floor.py, united). Controls: every mockup craft-gated by default (DC-145); tools/verify-design-modes.py in build.yml (DC-143); DC-144 registered. Notes: addendum-c-design-signature, -menu-names, -tier-decoration. External: the spec's tier erratum and §C3/§C4 amendments are the conductor's.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "DESIGN.md",
+        "docs/mockups/perspective-shell.html",
+        "docs/mockups/conversation-composer.html",
+        "docs/mockups/new-session-sheet.html",
+        "docs/reviews/ui-perspective-shell.md",
+        "docs/notes/addendum-c-design-signature.md",
+        "docs/notes/addendum-c-design-menu-names.md",
+        "docs/notes/addendum-c-design-tier-decoration.md",
+        "tools/verify-design-modes.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Run /ui-design (elevate) for spec-addendum-c-perspectives: the token system that makes the census's failing pairings impossible by construction (on-accent ink, control boundary, light values, comment re-tone, an ink×ground matrix), the perspective-shell design language, three self-contained mockups with the review harness, a rubric critique with a bounded loop, decision notes, and the craft gate run as CI runs it",
+      "done_when": "DESIGN.md lint-clean with dark and light values and every state naming ink and ground; perspective-shell.html, conversation-composer.html, new-session-sheet.html each 0 craft findings with every spec §C4 hard state rendered; docs/reviews/ui-perspective-shell.md with measurements, findings, scorecard, ranked plan; the loop at 0 Majors with the a11y veto cleared by the UX & Accessibility lens; audit appended, derived views green, gates green, committed and pushed to feature/addendum-c",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-11T19:03:20Z",
+      "duration_seconds": 4812.0,
+      "git": {
+        "sha": "62a7f140fb09844bcb225c61bd7b1394c13ad35e",
+        "short": "62a7f140f",
+        "branch": "feature/addendum-c",
+        "pushed": false
+      }
     }
   ],
   "changes": [

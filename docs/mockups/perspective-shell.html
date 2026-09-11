@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-vp="desk">
+<head>
+<meta charset="utf-8">
+<title>AI-DE perspective shell: Coding · Explore · Architecture</title>
+<style>
+/* ===========================================================================
+   Tokens mirrored from DESIGN.md (dark, light, high-contrast). No raw colour
+   appears in a component rule below. The light values are DESIGN.md's own
+   `light-*` tokens; the high-contrast values are STAND-INS for Windows system
+   colours (DESIGN.md Modes: the OS owns them) and the audit says so.
+   `--accent-contrast` is the ONLY ink any state paints on `--accent` (the code's AccentContrastBrush).
+   `--hl` / `--hl-ink` are the mockup's aliases for "a highlighted row": the
+   lifted ground + text in dark/light, Highlight + HighlightText in HC.
+   =========================================================================== */
+:root{
+  --surface:#12151A; --surface-raised:#1A1F26; --surface-sunken:#0D1014;
+  --border:#2A313B; --text:#E4E9EF; --text-muted:#98A3B2; --text-disabled:#7C8896; --border-strong:#7C8896;
+  --accent:#5B9DD9; --accent-contrast:#0D1014; --focus:#8FC0EA;
+  --verified:#5FB98F; --inferred:#D8A650; --danger:#E07A6F; --locked:#D8A650; --float-chrome:#232A33;
+  --syntax-comment:#808C9A;
+  --hl:var(--float-chrome); --hl-ink:var(--text);
+  --font-ui:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+  --font-mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+  --t-xs:11px; --t-sm:12px; --t-md:13px; --t-lg:15px; --t-xl:18px; --t-2xl:22px;
+  --s1:2px; --s2:4px; --s3:6px; --s4:8px; --s5:12px; --s6:16px; --s7:24px; --s8:32px;
+  --r-sm:4px; --r-md:6px; --r-lg:10px; --r-island:12px;
+  --e-rest:0 1px 3px rgba(0,0,0,0.28); --e-raise:0 4px 12px rgba(0,0,0,0.34); --e-dialog:0 8px 24px rgba(0,0,0,0.5);
+  --fast:150ms; --base:200ms; --ease:cubic-bezier(0.2,0,0,1);
+}
+:root[data-theme="light"]{
+  --surface:#F4F6F8; --surface-raised:#FFFFFF; --surface-sunken:#E7EBEF;
+  --border:#C7CFD8; --text:#1A1F26; --text-muted:#55606E; --text-disabled:#5F6977; --border-strong:#5F6977;
+  --accent:#27649A; --accent-contrast:#FFFFFF; --focus:#1B4F7E;
+  --verified:#1C724A; --inferred:#7D5900; --danger:#A8372B; --locked:#7D5900; --float-chrome:#EEF1F4;
+  --syntax-comment:#5C6674;
+}
+:root[data-theme="hc"]{
+  --surface:#000000; --surface-raised:#000000; --surface-sunken:#000000;
+  --border:#FFFFFF; --text:#FFFFFF; --text-muted:#FFFFFF; --text-disabled:#3FF23F; --border-strong:#FFFFFF;
+  --accent:#00FFFF; --accent-contrast:#000000; --focus:#FFFFFF;
+  --verified:#00FF80; --inferred:#FFD400; --danger:#FF9E9E; --locked:#FFD400; --float-chrome:#000000;
+  --syntax-comment:#FFFFFF;
+  --hl:#00FFFF; --hl-ink:#000000;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--surface);color:var(--text);font-family:var(--font-ui);font-size:var(--t-md);line-height:1.5}
+svg{display:block}
+.ico{width:16px;height:16px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ico.sm{width:12px;height:12px}
+.ico.lg{width:22px;height:22px;stroke-width:1.6}
+:is(button,select,input,summary,[tabindex]):focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+[data-motion="reduce"] *{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+code{font-family:var(--font-mono);font-size:var(--t-sm)}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+
+/* ---- REVIEW HARNESS (chrome, never ships) --------------------------------- */
+.harness{position:sticky;top:0;z-index:60;display:flex;flex-wrap:wrap;gap:var(--s4) var(--s5);align-items:center;
+  padding:var(--s4) var(--s6);background:var(--surface-sunken);border-bottom:1px solid var(--border);font-size:var(--t-sm)}
+.harness strong{font-weight:600;letter-spacing:.04em;color:var(--text-muted)}
+.harness label{display:flex;align-items:center;gap:var(--s3);color:var(--text)}
+.harness select{background:var(--surface-raised);color:var(--text);border:1px solid var(--border-strong);
+  border-radius:var(--r-sm);padding:var(--s2) var(--s3);font:inherit;min-height:26px;cursor:pointer}
+.checks{margin-left:auto;font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text-muted)}
+.checks b.ok{color:var(--verified)} .checks b.bad{color:var(--danger)}
+.note{margin:var(--s6) var(--s6) 0;padding:var(--s5) var(--s6);border:1px solid var(--border);border-radius:var(--r-lg);
+  background:var(--surface-raised);color:var(--text-muted);font-size:var(--t-sm);max-width:1400px}
+.note b{color:var(--text)}
+
+/* ---- WINDOW SCAFFOLD ------------------------------------------------------ */
+.frame{margin:var(--s6);max-width:1400px}
+[data-vp="narrow"] .frame{max-width:1024px}
+[data-vp="wide"] .frame{max-width:1720px}
+.window{border-radius:var(--r-island);background:var(--surface);outline:1px solid var(--border);
+  display:grid;grid-template-rows:32px 1fr;min-height:640px;position:relative}
+.shellbody{display:grid;grid-template-columns:56px 1fr;min-height:0}
+.main{display:grid;grid-template-rows:28px 1fr auto;min-width:0;min-height:0}
+
+/* ---- MENU BAR (derived per perspective) ----------------------------------- */
+.menubar{display:flex;align-items:center;gap:var(--s1);padding:var(--s2) var(--s4);background:var(--surface-raised);
+  border-bottom:1px solid var(--border);border-radius:var(--r-island) var(--r-island) 0 0;font-size:var(--t-sm);position:relative}
+.menubar .app{font-weight:600;color:var(--text-muted);padding:0 var(--s4) 0 var(--s2);letter-spacing:.04em}
+.mi{height:24px;padding:0 var(--s4);border:0;border-radius:var(--r-sm);background:transparent;color:var(--text);font:inherit;font-size:var(--t-sm);cursor:pointer;position:relative}
+.mi:hover,.mi[aria-expanded="true"]{background:var(--hl);color:var(--hl-ink)}
+.mi[hidden]{display:none}
+.menu{position:absolute;top:28px;left:0;min-width:300px;padding:var(--s2);background:var(--surface-raised);border:1px solid var(--border);
+  border-radius:var(--r-md);box-shadow:var(--e-raise);z-index:30;text-align:left;color:var(--text)}
+.menu .row{display:flex;align-items:center;gap:var(--s4);height:26px;padding:0 var(--s4) 0 var(--s7);border-radius:var(--r-sm);color:var(--text);position:relative;white-space:nowrap}
+.menu .row:hover{background:var(--hl);color:var(--hl-ink)}
+.menu .row.kbd{outline:2px solid var(--focus);outline-offset:-2px}
+.menu .row .kbd{margin-left:auto;font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text-muted);font-variant-numeric:tabular-nums}
+.menu .row:hover .kbd{color:var(--hl-ink)}
+.menu .row.checked::before{content:"";position:absolute;left:8px;top:9px;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.menu .row.disabled{color:var(--text-disabled)}
+.menu .row.disabled:hover{background:transparent;color:var(--text-disabled)}
+.menu .row.disabled .why{margin-left:auto;font-size:var(--t-sm);color:var(--text-muted);font-style:italic}
+.menu .sep{height:1px;background:var(--border);margin:var(--s2) var(--s4)}
+.menu .grp{font-size:var(--t-sm);letter-spacing:.04em;font-weight:600;color:var(--text-muted);padding:var(--s2) var(--s4) 0 var(--s7)}
+
+/* ---- RAIL: one action, three destinations (manual activation) ------------- */
+.rail{display:flex;flex-direction:column;align-items:center;gap:var(--s2);padding:var(--s4) var(--s3);
+  background:var(--surface-sunken);border-right:1px solid var(--border)}
+.rail .primary{position:relative;display:flex;align-items:center;justify-content:center;width:44px;height:44px;
+  border-radius:var(--r-md);background:var(--accent);color:var(--accent-contrast);border:0;cursor:pointer;transition:filter var(--fast) var(--ease)}
+.rail .primary:hover{filter:brightness(1.12)}
+.rail .primary:active{filter:brightness(0.94)}
+.rail .div{width:24px;height:1px;background:var(--border);margin:var(--s3) 0;flex:none}
+.rail [role="tablist"]{display:flex;flex-direction:column;gap:var(--s2);align-items:center}
+.rail .item{position:relative;display:flex;align-items:center;justify-content:center;width:44px;height:44px;
+  border:0;border-radius:var(--r-md);background:transparent;color:var(--text-muted);cursor:pointer;transition:color var(--fast) var(--ease),background var(--fast) var(--ease)}
+.rail .item:hover{background:var(--surface-raised);color:var(--text)}
+:root[data-theme="hc"] .rail .item:hover{background:transparent}
+.rail .item[aria-selected="true"]{background:var(--surface-raised);color:var(--accent)}
+.rail .item::before{content:"";position:absolute;left:-9px;top:9px;width:3px;height:26px;border-radius:0 2px 2px 0;background:var(--accent);
+  opacity:0;transition:opacity var(--fast) var(--ease)}
+.rail .item[aria-selected="true"]::before{opacity:1}
+.rail .item.opening .ring{position:absolute;inset:6px;border-radius:50%;border:2px solid var(--border);border-top-color:var(--accent);animation:spin 900ms linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.rail .item .badge{display:none;position:absolute;right:3px;top:3px;width:16px;height:16px;border-radius:50%;border:2px solid var(--danger);color:var(--danger);
+  background:var(--surface-sunken);align-items:center;justify-content:center;font-size:var(--t-xs);font-weight:600;line-height:1}
+.rail .item.error .badge{display:flex}
+.tip{position:absolute;left:52px;top:9px;white-space:nowrap;background:var(--float-chrome);color:var(--text);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:var(--s3) var(--s5);font-size:var(--t-sm);box-shadow:var(--e-raise);opacity:0;pointer-events:none;
+  transition:opacity var(--fast) var(--ease);z-index:20}
+.tip .kbd{font-family:var(--font-mono);font-size:var(--t-xs);color:var(--text-muted);margin-left:var(--s4)}
+.tip.long{white-space:normal;width:260px}
+.rail :is(.item,.primary):hover .tip,.rail :is(.item,.primary):focus-visible .tip{opacity:1}
+
+/* ---- TITLE + STATUS STRIPS ------------------------------------------------- */
+.titlestrip{display:flex;align-items:center;gap:var(--s4);padding:var(--s2) var(--s5);border-bottom:1px solid var(--border);font-size:var(--t-sm);color:var(--text-muted);background:var(--surface)}
+.titlestrip b{color:var(--text);font-weight:600}
+.titlestrip .sp{margin-left:auto}
+.linkbtn{background:transparent;border:0;color:var(--accent);font:inherit;font-size:var(--t-sm);cursor:pointer;padding:var(--s1) var(--s2);border-radius:var(--r-sm);min-height:24px}
+.linkbtn:hover{text-decoration:underline}
+.statusstrip{display:flex;align-items:flex-start;gap:var(--s4);padding:var(--s2) var(--s5);border-top:1px solid var(--border);font-size:var(--t-sm);color:var(--text);background:var(--surface);min-width:0;min-height:28px}
+.statusstrip .msg{min-width:0;line-height:1.4;padding:var(--s1) 0;max-height:2.9em;overflow:hidden;border-radius:var(--r-sm)}
+.chip{display:inline-flex;align-items:center;gap:var(--s3);height:20px;padding:0 var(--s4);border-radius:var(--r-sm);border:1px solid var(--border);
+  background:var(--surface-sunken);color:var(--text-muted);font-size:var(--t-sm);white-space:nowrap;flex:none}
+.chip.count{color:var(--text);font-weight:600;font-variant-numeric:tabular-nums}
+.chip.warn{border-color:var(--inferred);color:var(--inferred)} .chip.ok{color:var(--verified)} .chip.bad{border-color:var(--danger);color:var(--danger)}
+.chip .dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.statusstrip .close{margin-left:auto;width:24px;height:24px;border:0;background:transparent;color:var(--text-muted);border-radius:var(--r-sm);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.statusstrip .close:hover{color:var(--text);background:var(--surface-raised)}
+
+/* ---- PERMISSION OVERLAY (RootLayer, outside the swapped region) ------------- */
+.perm{display:none;position:absolute;left:56px;right:0;top:60px;z-index:40;padding:0 var(--s5)}
+body[data-perm="pending"] .perm{display:block}
+.perm .card{display:flex;align-items:center;flex-wrap:wrap;gap:var(--s4) var(--s5);padding:var(--s4) var(--s5);background:var(--surface-raised);border:1px solid var(--inferred);border-radius:var(--r-lg);box-shadow:var(--e-raise);font-size:var(--t-sm);color:var(--text)}
+.perm .card .who{font-family:var(--font-mono);color:var(--text-muted)}
+.perm .card .sp{margin-left:auto}
+
+/* ---- BODIES ---------------------------------------------------------------- */
+.bodywrap{position:relative;min-height:0;min-width:0}
+.persp{display:none;min-height:0;height:100%}
+body[data-shown="coding"] #p-coding,body[data-shown="explore"] #p-explore,body[data-shown="arch"] #p-arch{display:grid}
+.host{gap:var(--s4);background:var(--surface);padding:var(--s4);min-height:560px}
+#p-coding{grid-template-columns:248px 1fr;grid-template-rows:1fr 190px}
+#p-arch{grid-template-columns:248px 1fr 300px;grid-template-rows:1fr 26px}
+[data-vp="narrow"] #p-arch{grid-template-columns:200px 1fr 240px}
+.pane{display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--r-island);overflow:hidden;box-shadow:var(--e-rest)}
+.pane.focused{border-color:var(--accent)}
+.zone-bottom{grid-column:1 / -1}
+.panebody{flex:1;min-height:0;padding:var(--s5) var(--s6);overflow:auto;background:var(--surface)}
+
+/* the 28px dock tab strip and its FOUR states (rest · hover · selected-active · selected-inactive) */
+.tabstrip{display:flex;align-items:flex-end;gap:var(--s1);height:28px;padding:var(--s2) var(--s4) 0;background:var(--surface-raised);border-bottom:1px solid var(--border)}
+.tab{display:inline-flex;align-items:center;gap:var(--s2);height:24px;padding:0 var(--s2) 0 var(--s4);border:1px solid transparent;border-bottom:0;
+  border-radius:var(--r-sm) var(--r-sm) 0 0;background:transparent;color:var(--text-muted);font:inherit;font-size:var(--t-sm);cursor:pointer;white-space:nowrap;max-width:220px}
+.tab:hover{color:var(--text)}
+.tab[aria-selected="true"]{color:var(--text);background:var(--surface);border-color:var(--border);border-top:2px solid var(--text-muted);margin-bottom:-1px}
+.pane.focused .tab[aria-selected="true"]{color:var(--accent-contrast);background:var(--accent);border-color:var(--accent);border-top-color:var(--accent)}
+.tab .cl{width:24px;height:24px;border-radius:var(--r-sm);display:inline-flex;align-items:center;justify-content:center;opacity:0;margin:0 -2px 0 0}
+/* the close glyph is hover-revealed; the keyboard closes the active surface with Ctrl+W (bound), so the glyph is never the only door */
+.tab:hover .cl,.tab[aria-selected="true"] .cl{opacity:1}
+.tab .lbl{overflow:hidden;text-overflow:ellipsis}
+.tabstrip .sp{margin-left:auto}
+.collapsed{grid-column:1 / -1;display:flex;align-items:center;gap:var(--s4);padding:var(--s2) var(--s5);background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--r-md);color:var(--text-muted);font-size:var(--t-sm)}
+.collapsed button{background:transparent;border:0;color:var(--accent);font:inherit;font-size:var(--t-sm);cursor:pointer;padding:var(--s1) var(--s2);border-radius:var(--r-sm);min-height:24px}
+
+/* lists */
+.list{display:flex;flex-direction:column}
+.lrow{display:flex;align-items:center;gap:var(--s4);min-height:28px;padding:var(--s2) var(--s4);border-radius:var(--r-sm);font-size:var(--t-sm);color:var(--text);cursor:default}
+.lrow:hover{background:var(--hl);color:var(--hl-ink)}
+.lrow[aria-selected="true"]{background:var(--surface-raised);color:var(--text)}
+.lrow[aria-selected="true"] .id{color:var(--accent)}
+.lrow[aria-selected="true"] .nm{font-weight:600}
+.lrow .id{font-family:var(--font-mono);color:var(--text-muted);flex:none;font-variant-numeric:tabular-nums}
+.lrow .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lrow .sp{margin-left:auto}
+.live{color:var(--verified)} .idle{color:var(--text-muted)}
+
+/* empty states: one glyph, one true sentence, one first action */
+.wayfinder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--s4);text-align:center;padding:var(--s8) var(--s6);color:var(--text-muted);min-height:220px}
+.wayfinder h3{margin:0;font-size:var(--t-lg);font-weight:600;color:var(--text)}
+.wayfinder p{margin:0;max-width:44ch;font-size:var(--t-md)}
+.cta{display:inline-flex;align-items:center;gap:var(--s4);height:28px;padding:0 var(--s6);border:1px solid var(--accent);border-radius:var(--r-md);
+  background:var(--accent);color:var(--accent-contrast);font:inherit;font-weight:600;cursor:pointer}
+.cta .kbd{font-family:var(--font-mono);font-size:var(--t-xs);font-weight:400}
+.cta:hover{filter:brightness(1.12)}
+.btn{height:26px;padding:0 var(--s5);border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--surface-raised);color:var(--text);font:inherit;font-size:var(--t-sm);cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.skel{height:12px;border-radius:var(--r-sm);background:linear-gradient(90deg,var(--surface-raised),var(--border),var(--surface-raised));background-size:200% 100%;animation:sh 1.2s linear infinite;margin-bottom:var(--s4)}
+@keyframes sh{to{background-position:-200% 0}}
+.errbox{border:1px solid var(--danger);border-radius:var(--r-lg);background:var(--surface-raised);padding:var(--s5) var(--s6);margin:var(--s5) 0}
+.errbox h4{margin:0 0 var(--s3);font-size:var(--t-md);color:var(--text);font-weight:600}
+.errbox p{margin:0 0 var(--s4);font-size:var(--t-sm);color:var(--text-muted)}
+
+/* terminal */
+.term{font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text);background:var(--surface-sunken);padding:var(--s4) var(--s5);border-radius:var(--r-sm);white-space:pre;overflow:auto;height:100%}
+.term .p{color:var(--accent)} .term .c{color:var(--syntax-comment)}
+
+/* session document (Coding center: a stand-in; the composer has its own mockup) */
+.sdoc{display:grid;grid-template-columns:1fr 1fr;gap:var(--s6);height:100%}
+.sdoc > div{min-width:0}
+.sdoc > div + div{border-left:1px solid var(--border);padding-left:var(--s6)}
+.sdoc .hd{font-size:var(--t-sm);letter-spacing:.04em;font-weight:600;color:var(--text-muted);margin-bottom:var(--s4)}
+.editor{min-height:130px;padding:var(--s4) var(--s5);border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--surface-sunken);color:var(--text);font-size:var(--t-md);line-height:1.6}
+.mention{border-radius:var(--r-sm);padding:1px var(--s3);background:var(--surface);border:1px solid var(--accent);font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text)}
+.help{font-size:var(--t-sm);color:var(--text-muted);max-width:80ch;margin:0 0 var(--s5)}
+.evline{display:flex;align-items:baseline;gap:var(--s5);padding:var(--s2) 0;border-bottom:1px solid var(--border);font-size:var(--t-sm)}
+.evline .ts{font-family:var(--font-mono);font-variant-numeric:tabular-nums;color:var(--text-muted);flex:none}
+.evline .lane{font-family:var(--font-mono);color:var(--accent);flex:none}
+
+/* Architecture: graph placeholder, evidence, provenance */
+.graph{position:relative;height:100%;min-height:300px;background:var(--surface);border-radius:var(--r-sm);overflow:hidden}
+.graph svg.g{width:100%;height:100%}
+.graph .node{fill:var(--surface-raised);stroke:var(--border)} .graph .node.sel{stroke:var(--accent);stroke-width:2}
+.graph .edge{stroke:var(--text-muted);stroke-width:1} .graph .edge.inf{stroke:var(--inferred);stroke-dasharray:4 3}
+.graph text{fill:var(--text);font-family:var(--font-mono);font-size:12px}
+.graph .badgebar{position:absolute;left:var(--s5);bottom:var(--s5);display:flex;gap:var(--s4);align-items:center}
+.readonly{display:flex;align-items:center;gap:var(--s3);height:22px;padding:0 var(--s4);border-radius:var(--r-sm);background:var(--surface-sunken);color:var(--locked);font-size:var(--t-sm);border:1px solid var(--border);flex:none}
+.sec{margin:0 0 var(--s5)}
+.sec h4{margin:0 0 var(--s2);font-size:var(--t-sm);letter-spacing:.04em;font-weight:600;color:var(--text-muted)}
+.sec p{margin:0;font-size:var(--t-sm);color:var(--text)}
+.conf{display:inline-flex;align-items:center;gap:var(--s2);font-size:var(--t-sm);font-weight:600}
+.conf.v{color:var(--verified)} .conf.i{color:var(--inferred)} .conf.f{color:var(--text-muted)}
+
+/* Explore: full body, unchanged */
+#p-explore{grid-template-columns:1fr 360px;gap:var(--s4);background:var(--surface);padding:var(--s4);min-height:560px}
+.xpane{display:flex;flex-direction:column;background:var(--surface);min-width:0;min-height:0;padding:var(--s5) var(--s6);border-radius:var(--r-island);border:1px solid var(--border)}
+.search{display:flex;align-items:center;gap:var(--s4);min-height:30px;padding:var(--s2) var(--s5);border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--surface-sunken);color:var(--text);font-size:var(--t-md);margin-bottom:var(--s5)}
+.search .ph{color:var(--text-muted)}
+.reader h3{margin:0 0 var(--s3);font-size:var(--t-lg);font-weight:600;color:var(--text)}
+.reader .meta{font-size:var(--t-sm);color:var(--text-muted);margin-bottom:var(--s5)}
+.reader p{margin:0 0 var(--s4);font-size:var(--t-md);color:var(--text)}
+.reader .edge{display:flex;gap:var(--s4);align-items:center;height:24px;font-size:var(--t-sm);color:var(--text)}
+
+/* keyboard persona: focus order + landing */
+.fo{display:none;position:absolute;width:18px;height:18px;border-radius:50%;background:var(--focus);color:var(--accent-contrast);font-size:var(--t-xs);font-weight:600;
+  align-items:center;justify-content:center;z-index:25;pointer-events:none;font-family:var(--font-mono)}
+body[data-persona="keyboard"] .fo{display:flex}
+body[data-persona="keyboard"] .land{outline:2px solid var(--focus);outline-offset:2px}
+.srlog{display:none;margin:var(--s5) var(--s6) 0;padding:var(--s5) var(--s6);border:1px solid var(--border);border-radius:var(--r-lg);background:var(--surface-raised);max-width:1400px}
+body[data-persona="screenreader"] .srlog{display:block}
+.srlog h4{margin:0 0 var(--s4);font-size:var(--t-sm);letter-spacing:.04em;color:var(--text-muted);font-weight:600}
+.srlog ol{margin:0;padding-left:var(--s7);font-size:var(--t-sm);color:var(--text)}
+.srlog li{padding:var(--s1) 0}
+.srlog .who{font-family:var(--font-mono);color:var(--text-muted)}
+
+/* ---- STATE GATING ---------------------------------------------------------- */
+[data-show]{display:none}
+body[data-state="default"] [data-show~="default"],body[data-state="empty"] [data-show~="empty"],body[data-state="loading"] [data-show~="loading"],
+body[data-state="overflow"] [data-show~="overflow"],body[data-state="error"] [data-show~="error"]{display:block}
+body[data-state="default"] .fx[data-show~="default"],body[data-state="empty"] .fx[data-show~="empty"],body[data-state="loading"] .fx[data-show~="loading"],
+body[data-state="overflow"] .fx[data-show~="overflow"],body[data-state="error"] .fx[data-show~="error"]{display:flex}
+body[data-state="default"] .fg[data-show~="default"],body[data-state="overflow"] .fg[data-show~="overflow"]{display:grid}
+[data-restore]{display:none}
+body[data-restore="dropped"] [data-restore~="dropped"],body[data-restore="alldropped"] [data-restore~="alldropped"],body[data-restore="none"] [data-restore~="none"],
+body[data-restore="newer"] [data-restore~="newer"],body[data-restore="duplicate"] [data-restore~="duplicate"]{display:flex}
+[data-sw]{display:none}
+body[data-switch="opening"] [data-sw~="opening"],body[data-switch="error"] [data-sw~="error"],body[data-switch="retained"] [data-sw~="retained"],body[data-switch="ignored"] [data-sw~="ignored"]{display:flex}
+[data-routed]{display:none}
+body[data-routedopen="yes"] [data-routed~="yes"]{display:inline-flex}
+
+/* ---- CONTRAST EVIDENCE ------------------------------------------------------ */
+.secwrap{margin:var(--s6);max-width:1400px}
+h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--text)}
+.ctab{width:100%;border-collapse:collapse;font-size:var(--t-sm)}
+.ctab th,.ctab td{text-align:left;padding:var(--s3) var(--s4);border-bottom:1px solid var(--border);vertical-align:top}
+.ctab th{letter-spacing:.04em;color:var(--text-muted);font-weight:600}
+.ctab td.n{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pass{color:var(--verified)} .fail{color:var(--danger)} .na{color:var(--text-muted)}
+.swatch{display:inline-block;width:12px;height:12px;border-radius:2px;border:1px solid var(--border);vertical-align:-2px;margin-right:var(--s3)}
+</style>
+</head>
+<body data-persp="coding" data-shown="coding" data-switch="retained" data-trigger="rail" data-routedopen="no" data-state="default" data-restore="none" data-menu="none" data-perm="none" data-persona="operator" data-motion="full">
+
+<div class="harness" role="region" aria-label="Review harness">
+  <strong>Harness</strong>
+  <label>Perspective
+    <select id="h-persp"><option value="coding">Coding</option><option value="explore">Explore</option><option value="arch">Architecture</option></select></label>
+  <label>Trigger
+    <select id="h-trigger"><option value="rail">rail item</option><option value="gesture">bound gesture (Ctrl+1/2/3)</option><option value="menu">View menu</option><option value="routed">routed kind-open from Explore ("View source" → Architecture)</option><option value="escape">Escape from Explore's root</option></select></label>
+  <label>Switch
+    <select id="h-switch"><option value="retained">retained (body swap)</option><option value="opening">opening (first entry)</option><option value="ignored">ignored (a build is running)</option><option value="error">error (body failed to build)</option></select></label>
+  <label>State
+    <select id="h-state"><option value="default">default</option><option value="empty">empty / first-run</option><option value="loading">loading</option><option value="overflow">overflow / degraded</option><option value="error">error</option></select></label>
+  <label>Restore
+    <select id="h-restore"><option value="none">clean</option><option value="dropped">3 panes dropped, reported</option><option value="alldropped">every pane dropped</option><option value="duplicate">a one-instance kind twice</option><option value="newer">newer schema refused</option></select></label>
+  <label>Permission
+    <select id="h-perm"><option value="none">none</option><option value="pending">request arrives while away</option></select></label>
+  <label>Menu
+    <select id="h-menu"><option value="none">closed</option><option value="file">File</option><option value="view">View</option><option value="prompt">Prompt</option></select></label>
+  <label>Theme
+    <select id="h-theme"><option value="dark">dark</option><option value="light">light</option><option value="hc">high-contrast (stand-ins)</option></select></label>
+  <label>Viewport
+    <select id="h-vp"><option value="desk">desktop 1440</option><option value="wide">wide</option><option value="narrow">narrow 1024</option></select></label>
+  <label>Persona
+    <select id="h-persona"><option value="operator">Operator</option><option value="keyboard">Keyboard-only (focus order)</option><option value="screenreader">Screen reader (live region)</option></select></label>
+  <label>Motion
+    <select id="h-motion"><option value="full">full</option><option value="reduce">reduced</option></select></label>
+  <span class="checks" id="verdict">measuring&hellip;</span>
+</div>
+
+<p class="note" id="legend"></p>
+
+<div class="srlog" role="region" aria-label="Live region trace">
+  <h4>What the screen reader hears, in order (a UIA notification is raised before focus moves)</h4>
+  <ol id="srlist"></ol>
+</div>
+
+<div class="frame"><div class="window" id="win">
+
+  <!-- MENU BAR: derived from the active perspective. Prompt is absent outside Coding;
+       Edit and Window are absent in Explore (not a host). A menu is present only when it has an item. -->
+  <div class="menubar" role="menubar" aria-label="Menu bar">
+    <span class="app">AI-DE</span>
+    <button class="mi" id="m-file" role="menuitem" aria-haspopup="true" aria-expanded="false">File
+      <div class="menu" role="menu" hidden id="menu-file">
+        <div class="grp">New</div>
+        <div class="row" role="menuitem">New session<span class="kbd">Ctrl+N</span></div>
+        <div class="row kbd" role="menuitem" aria-current="true">New terminal</div>
+        <div class="grp">Terminal sessions</div>
+        <div class="row" role="menuitem">New Claude Code session</div>
+        <div class="row" role="menuitem">New GitHub Copilot session</div>
+        <div class="sep"></div>
+        <div class="row" role="menuitem">Open workspace…</div>
+        <div class="row" role="menuitem">Index solution</div>
+        <div class="row disabled" role="menuitem" aria-disabled="true">Re-index all<span class="why">indexing is already running</span></div>
+        <div class="sep"></div>
+        <div class="row" role="menuitem">Recent sessions ▸</div>
+        <div class="row" role="menuitem">Recent workspaces ▸</div>
+      </div>
+    </button>
+    <button class="mi" id="m-edit" role="menuitem" aria-haspopup="true">Edit</button>
+    <button class="mi" id="m-view" role="menuitem" aria-haspopup="true" aria-expanded="false">View
+      <div class="menu" role="menu" hidden id="menu-view">
+        <div class="grp">Perspective</div>
+        <div class="row" role="menuitemradio" id="mv-coding">Coding<span class="kbd">Ctrl+1</span></div>
+        <div class="row" role="menuitemradio" id="mv-explore">Explore<span class="kbd">Ctrl+2</span></div>
+        <div class="row" role="menuitemradio" id="mv-arch">Architecture<span class="kbd">Ctrl+3</span></div>
+        <div class="sep"></div>
+        <div id="mv-coding-entries">
+          <div class="grp">Coding surfaces</div>
+          <div class="row" role="menuitem">Show Terminal sessions</div>
+          <div class="row" role="menuitem">Show Message board</div>
+          <div class="row" role="menuitem">Show Leaderboard</div>
+          <div class="row" role="menuitem">Show Ledger</div>
+          <div class="row" role="menuitem">Show Daydreams</div>
+          <div class="row" role="menuitem">New Search</div>
+          <div class="row" role="menuitem">New Code viewer</div>
+          <div class="row" role="menuitem">Show Diagnostics</div>
+          <div class="sep"></div>
+          <div class="row" role="menuitem">Raise dispute on the latest scored episode</div>
+        </div>
+        <div id="mv-arch-entries">
+          <div class="grp">Architecture views</div>
+          <div class="row" role="menuitem">Show Graph</div>
+          <div class="row" role="menuitem">Show Evidence</div>
+          <div class="row" role="menuitem">Show Provenance</div>
+          <div class="row" role="menuitem">New Class diagram</div>
+          <div class="row" role="menuitem">New Sequence diagram</div>
+          <div class="row" role="menuitem">Show Contexts</div>
+          <div class="row" role="menuitem">Show Joins</div>
+          <div class="row" role="menuitem">New Code viewer</div>
+          <div class="sep"></div>
+          <div class="row" role="menuitem">Focus the canvas</div>
+        </div>
+        <div id="mv-explore-entries">
+          <div class="sep"></div>
+          <div class="row" role="menuitem">Focus the canvas</div>
+        </div>
+        <div id="mv-host-entries">
+          <div class="sep"></div>
+          <div class="row" role="menuitem">Next tab<span class="kbd">Ctrl+PageDown</span></div>
+          <div class="row" role="menuitem">Previous tab<span class="kbd">Ctrl+PageUp</span></div>
+          <div class="row" role="menuitem">Reorder tab…</div>
+        </div>
+        <div class="sep"></div>
+        <div class="row" role="menuitem">Clear status</div>
+      </div>
+    </button>
+    <button class="mi" id="m-window" role="menuitem" aria-haspopup="true">Window</button>
+    <button class="mi" id="m-prompt" role="menuitem" aria-haspopup="true" aria-expanded="false">Prompt
+      <div class="menu" role="menu" hidden id="menu-prompt">
+        <div class="row" role="menuitem">Dispatch prompt…</div>
+        <div class="row" role="menuitem">New prompt draft</div>
+      </div>
+    </button>
+    <button class="mi" id="m-help" role="menuitem" aria-haspopup="true">Help</button>
+  </div>
+
+  <!-- PERMISSION OVERLAY: RootLayer, outside the swapped body; visible after one dispatcher frame in ANY perspective -->
+  <div class="perm" role="dialog" aria-label="Permission request">
+    <div class="card">
+      <span class="chip warn"><span class="dot"></span>permission</span>
+      <span><span class="who">claude-code · session payments extraction</span> asks to write outside the declared scope: <code>src/AiDe.App/Workbench/ZoneRails.cs</code></span>
+      <span class="sp"></span>
+      <button class="btn">Allow once</button><button class="btn">Deny</button><button class="btn">Open the session</button>
+    </div>
+  </div>
+
+  <div class="shellbody">
+    <!-- RAIL: manual activation. Up/Down move focus only; Space, Enter, the gesture or a click switch. -->
+    <nav class="rail" aria-label="Activity rail">
+      <button class="primary" aria-label="New session" id="r-new">
+        <svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="tip">New session<span class="kbd">Ctrl+N</span></span>
+        <span class="fo" style="left:-6px;top:-6px">1</span>
+      </button>
+      <span class="div" aria-hidden="true"></span>
+      <div role="tablist" aria-label="Perspective" aria-orientation="vertical">
+        <button class="item" role="tab" aria-selected="true" tabindex="0" id="r-coding" aria-label="Coding perspective">
+          <svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg>
+          <span class="ring" aria-hidden="true"></span><span class="badge" aria-hidden="true">!</span>
+          <span class="tip" id="tip-coding">Coding<span class="kbd">Ctrl+1</span></span>
+          <span class="fo" style="left:-6px;top:-6px">2</span>
+        </button>
+        <button class="item" role="tab" aria-selected="false" tabindex="-1" id="r-explore" aria-label="Explore perspective">
+          <svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          <span class="ring" aria-hidden="true"></span><span class="badge" aria-hidden="true">!</span>
+          <span class="tip" id="tip-explore">Explore — graph &amp; reader<span class="kbd">Ctrl+2</span></span>
+        </button>
+        <button class="item" role="tab" aria-selected="false" tabindex="-1" id="r-arch" aria-label="Architecture perspective">
+          <svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="8.5" y="14" width="7" height="7" rx="1.5"/><path d="M6.5 10v2.5h11V10M12 12.5V14"/></svg>
+          <span class="ring" aria-hidden="true"></span><span class="badge" aria-hidden="true">!</span>
+          <span class="tip" id="tip-arch">Architecture<span class="kbd">Ctrl+3</span></span>
+        </button>
+      </div>
+      <!-- "Tests" is a reserved name with no item: AR3, a rail item is present only if it does something. Nothing is rendered for it. -->
+    </nav>
+
+    <div class="main">
+      <div class="titlestrip">
+        <span>workspace</span><b>commerce</b><span>·</span><span id="title-persp">Coding</span>
+        <span class="sp"></span>
+        <button class="linkbtn" id="reset-layout">Reset layout</button>
+      </div>
+
+      <div class="bodywrap">
+        <!-- ================= CODING: host A ================= -->
+        <div class="persp host" id="p-coding" aria-label="Coding perspective body">
+          <section class="pane" aria-label="Left zone">
+            <div class="tabstrip" role="tablist"><button class="tab" role="tab" aria-selected="true" id="t-sessions"><span class="lbl">Terminal sessions</span><span class="cl" aria-hidden="true"><svg class="ico sm" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17"/></svg></span></button><span class="fo" style="position:relative;left:6px;top:-2px">3</span></div>
+            <div class="panebody">
+              <div class="list" data-show="default overflow error">
+                <div class="lrow" aria-selected="true"><span class="live">●</span><span class="nm">claude-code · feature/addendum-c</span><span class="sp"></span><span class="id">14:02</span></div>
+                <div class="lrow"><span class="live">●</span><span class="nm">copilot · fix/composer-entry-areas</span><span class="sp"></span><span class="id">13:41</span></div>
+                <div class="lrow"><span class="idle">○</span><span class="nm">claude-code · investigate/contrast-census (ended)</span><span class="sp"></span><span class="id">11:57</span></div>
+                <div class="lrow" data-show="overflow"><span class="idle">○</span><span class="nm">codex · chore/regenerate-derived-views-after-the-addendum-c-merge-and-commit-contract-logs (ended)</span><span class="sp"></span><span class="id">09:12</span></div>
+              </div>
+              <div data-show="loading"><div class="skel" style="width:70%"></div><div class="skel" style="width:52%"></div><div class="skel" style="width:64%"></div></div>
+              <div data-show="empty"><div class="wayfinder" style="min-height:160px">
+                <svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5a1.5 1.5 0 0 1 1.5-1.5h15A1.5 1.5 0 0 1 21 5v14a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19zM7 9l3 3-3 3M13 15h4"/></svg>
+                <h3>No terminal sessions yet</h3>
+                <p>Open a Claude Code or GitHub Copilot terminal session from the File menu, and it appears here.</p>
+              </div></div>
+            </div>
+          </section>
+
+          <section class="pane focused" aria-label="Center zone">
+            <div class="tabstrip" role="tablist">
+              <button class="tab" role="tab" aria-selected="true" data-show="default overflow error loading" style="display:inline-flex"><span class="lbl">payments extraction</span><span class="cl" aria-hidden="true"><svg class="ico sm" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17"/></svg></span></button>
+              <button class="tab" role="tab" aria-selected="false" data-show="default overflow" style="display:inline-flex"><span class="lbl">Router.cs</span></button>
+              <button class="tab" role="tab" aria-selected="false" data-show="overflow" style="display:inline-flex"><span class="lbl">migration chain</span></button>
+              <button class="tab" role="tab" aria-selected="false" data-show="overflow" style="display:inline-flex"><span class="lbl">payments-aggregate-extraction-roundtrip-with-inferred-edges.golden.json</span></button>
+              <button class="tab" role="tab" aria-selected="false" data-show="overflow" style="display:inline-flex"><span class="lbl">Search</span></button>
+              <button class="tab" role="tab" aria-selected="false" data-show="overflow" style="display:inline-flex"><span class="lbl">Ledger</span></button>
+              <span class="sp"></span>
+              <span class="chip" data-show="overflow" style="display:inline-flex">+3 more</span>
+            </div>
+            <div class="panebody" id="center-body">
+              <div data-show="empty"><div class="wayfinder land" id="land-coding-empty">
+                <svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h10M4 19h7"/></svg>
+                <h3>No session open.</h3>
+                <button class="cta">New session <span class="kbd">Ctrl+N</span></button>
+                <p>Or open a recent one from File → Recent sessions.</p>
+              </div></div>
+              <div data-show="loading"><p class="help">Restoring <b>payments extraction</b>…</p><div class="skel" style="width:58%"></div><div class="skel" style="width:81%"></div><div class="skel" style="width:37%"></div><div class="skel" style="width:64%;height:96px"></div></div>
+              <div data-show="error"><div class="errbox" role="alert"><h4>This session couldn't be restored</h4><p>The session file at <code>.ai-de/sessions/payments-extraction.yaml</code> is from a newer schema (v6; this build reads v5). Nothing was changed on disk.</p><button class="btn">Open the file</button> <button class="btn">Close this tab</button></div></div>
+              <div class="sdoc fg" data-show="default overflow">
+                <div>
+                  <div class="hd">Composer · Free-form</div>
+                  <div class="editor land" id="land-coding" tabindex="0" role="textbox" aria-multiline="true" aria-label="Message">Refactor the layout store's migration chain so a newer schema is refused with a report; touch only <span class="mention">@src/AiDe.Core/Workbench/</span>.</div>
+                  <p class="help" style="margin:var(--s4) 0 0">The composer's lines and its full state set are in <code>conversation-composer.html</code>; this is where the document lands.</p>
+                </div>
+                <div>
+                  <div class="hd">Console</div>
+                  <div class="evline"><span class="ts">14:02:03</span><span class="lane">conductor</span><span>Block b2 accepted, tier T1, 1 lane</span></div>
+                  <div class="evline"><span class="ts">14:02:04</span><span class="lane">claude-code</span><span>read <code>src/AiDe.Core/Workbench/LayoutStore.cs</code> (412 lines)</span></div>
+                  <div class="evline"><span class="ts">14:02:09</span><span class="lane">claude-code</span><span>edit <code>LayoutStore.cs</code>, 1 hunk</span></div>
+                  <div class="evline"><span class="ts">14:02:11</span><span class="lane">conductor</span><span>permission requested: write outside the declared scope</span></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="pane zone-bottom" aria-label="Bottom zone">
+            <div class="tabstrip" role="tablist"><button class="tab" role="tab" aria-selected="true"><span class="lbl">Terminal — pwsh</span><span class="cl" aria-hidden="true"><svg class="ico sm" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17"/></svg></span></button></div>
+            <div class="panebody" style="padding:var(--s4) var(--s5)">
+<div class="term"><span class="p">PS C:\projects\ai-de&gt;</span> git status --short
+ M src/AiDe.Core/Workbench/LayoutStore.cs
+<span class="p">PS C:\projects\ai-de&gt;</span> dotnet test tests/AiDe.App.Tests --filter LayoutStore
+<span class="c"># Passed! 14 · Failed 0 · Skipped 0 · 3.8 s</span>
+<span class="p">PS C:\projects\ai-de&gt;</span> █</div>
+            </div>
+          </section>
+        </div>
+
+        <!-- ================= EXPLORE: full body, unchanged ================= -->
+        <div class="persp" id="p-explore" aria-label="Explore perspective body">
+          <div class="xpane">
+            <div class="search land" id="land-explore" role="search" tabindex="0"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM16 16l4.5 4.5"/></svg><span class="ph">Search the graph</span></div>
+            <div class="graph" style="min-height:420px"><svg class="g" viewBox="0 0 800 420" aria-label="Knowledge graph, 2D">
+              <line class="edge" x1="220" y1="210" x2="400" y2="120"/><line class="edge" x1="220" y1="210" x2="420" y2="300"/><line class="edge inf" x1="400" y1="120" x2="600" y2="200"/><line class="edge" x1="420" y1="300" x2="600" y2="200"/>
+              <rect class="node sel" x="150" y="190" width="140" height="40" rx="8"/><text x="220" y="215" text-anchor="middle">spec-addendum-c</text>
+              <rect class="node" x="330" y="100" width="140" height="40" rx="8"/><text x="400" y="125" text-anchor="middle">note-rulings-50-62</text>
+              <rect class="node" x="350" y="280" width="140" height="40" rx="8"/><text x="420" y="305" text-anchor="middle">adr-0017</text>
+              <rect class="node" x="530" y="180" width="140" height="40" rx="8"/><text x="600" y="205" text-anchor="middle">ShellModeController</text>
+            </svg>
+              <div class="badgebar"><span class="chip">2D</span><span class="chip">depth 2</span><span class="chip"><span class="mono">212</span>&nbsp;nodes</span></div>
+            </div>
+          </div>
+          <div class="xpane reader">
+            <h3>spec-addendum-c-perspectives</h3>
+            <div class="meta">spec · accepted · @timianmalloo · review by 2027-03-11</div>
+            <p>Introduces the Perspective: the use case the whole tool is in, selected from the activity rail…</p>
+            <div class="edge"><span class="conf v">✓ Verified</span><span>depends-on</span><code>note-addendum-c-council-rulings</code></div>
+            <div class="edge"><span class="conf v">✓ Verified</span><span>refines</span><code>spec-conductor</code></div>
+            <div class="edge"><span class="conf i">~ Inferred</span><span>relates-to</span><code>adr-0017-primary-view-mode</code></div>
+            <div style="margin-top:var(--s5);display:flex;gap:var(--s4)"><button class="btn">View source</button><button class="btn">Reveal in graph</button></div>
+          </div>
+        </div>
+
+        <!-- ================= ARCHITECTURE: host B ================= -->
+        <div class="persp host" id="p-arch" aria-label="Architecture perspective body">
+          <section class="pane" aria-label="Left zone">
+            <div class="tabstrip" role="tablist"><button class="tab" role="tab" aria-selected="true"><span class="lbl">Evidence</span></button></div>
+            <div class="panebody">
+              <div class="list" data-show="default overflow error">
+                <div class="lrow" aria-selected="true"><span class="id">e-0412</span><span class="nm">calls_at · LayoutStore.Load → Migrations.Step</span><span class="sp"></span><span class="conf v">✓</span></div>
+                <div class="lrow"><span class="id">e-0413</span><span class="nm">inherits · ZoneBackedLayoutService : ILayoutService</span><span class="sp"></span><span class="conf v">✓</span></div>
+                <div class="lrow"><span class="id">e-0419</span><span class="nm">injects · WorkbenchShell ← ZoneBackedLayoutService</span><span class="sp"></span><span class="conf i">~</span></div>
+                <div class="lrow" data-show="overflow"><span class="id">e-0420</span><span class="nm">reads · src/AiDe.App/Workbench/Sessions/Composer/Rendering/Markdown/VeryLongProjectionNameThatDoesNotFitTheColumn.cs</span><span class="sp"></span><span class="conf f">?</span></div>
+              </div>
+              <div data-show="loading"><div class="skel" style="width:78%"></div><div class="skel" style="width:60%"></div><div class="skel" style="width:70%"></div></div>
+              <p class="help" data-show="overflow" style="margin-top:var(--s4)"><span class="mono">≥ 20,000</span> rows <span class="chip warn">capped</span></p>
+              <div data-show="empty"><div class="wayfinder" style="min-height:160px">
+                <svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h10M4 19h7"/></svg>
+                <h3>Nothing indexed yet.</h3><p>Run Index from the File menu.</p>
+              </div></div>
+            </div>
+          </section>
+
+          <section class="pane focused" aria-label="Center zone">
+            <div class="tabstrip" role="tablist">
+              <button class="tab land" id="land-arch" role="tab" aria-selected="true" data-show="default overflow loading error" style="display:inline-flex"><span class="lbl">Graph</span><span class="cl" aria-hidden="true"><svg class="ico sm" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17"/></svg></span></button>
+              <button class="tab" role="tab" aria-selected="false" data-show="default overflow loading error" style="display:inline-flex"><span class="lbl">Domain</span></button>
+              <button class="tab" role="tab" aria-selected="false" data-show="default overflow loading error" style="display:inline-flex"><span class="lbl">Contexts</span></button>
+              <button class="tab" role="tab" aria-selected="false" data-show="default overflow loading error" style="display:inline-flex"><span class="lbl">Joins</span></button>
+              <button class="tab" role="tab" aria-selected="false" data-show="overflow" style="display:inline-flex"><span class="lbl">Sequence — LayoutStore.Load</span></button>
+              <button class="tab" role="tab" aria-selected="false" data-routed="yes" id="t-routed"><span class="lbl">Code — LayoutStore.cs</span><span class="cl" aria-hidden="true"><svg class="ico sm" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17"/></svg></span></button>
+            </div>
+            <div class="panebody" style="padding:var(--s4)">
+              <div data-show="empty"><div class="wayfinder land" id="land-arch-empty">
+                <svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="8.5" y="14" width="7" height="7" rx="1.5"/></svg>
+                <h3>No view open.</h3>
+                <button class="cta">Show Graph</button>
+                <p>Or open Domain, Contexts or Joins from the View menu.</p>
+              </div></div>
+              <div data-show="loading"><p class="help">Indexing the workspace: 3 of 5 scopes read.</p><div class="skel" style="width:44%"></div><div class="skel" style="width:70%;height:180px"></div></div>
+              <div data-show="default overflow error" style="height:100%">
+                <div class="graph"><svg class="g" viewBox="0 0 820 380" aria-label="Architecture graph, code · data · architecture kinds only">
+                  <line class="edge" x1="150" y1="190" x2="330" y2="90"/><line class="edge" x1="150" y1="190" x2="330" y2="290"/><line class="edge inf" x1="330" y1="90" x2="530" y2="190"/><line class="edge" x1="330" y1="290" x2="530" y2="190"/><line class="edge" x1="530" y1="190" x2="700" y2="90"/>
+                  <rect class="node sel" x="80" y="170" width="140" height="40" rx="8"/><text x="150" y="195" text-anchor="middle">LayoutStore</text>
+                  <rect class="node" x="260" y="70" width="140" height="40" rx="8"/><text x="330" y="95" text-anchor="middle">Migrations</text>
+                  <rect class="node" x="260" y="270" width="140" height="40" rx="8"/><text x="330" y="295" text-anchor="middle">ZoneLayoutStore</text>
+                  <rect class="node" x="460" y="170" width="140" height="40" rx="8"/><text x="530" y="195" text-anchor="middle">LayoutPersistence</text>
+                  <rect class="node" x="630" y="70" width="150" height="40" rx="8"/><text x="705" y="95" text-anchor="middle">WorkbenchShell</text>
+                </svg>
+                  <div class="badgebar">
+                    <span class="readonly"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Derived view — read-only</span>
+                    <span class="chip">code · data · architecture</span>
+                    <span class="chip warn fx" data-show="overflow" style="display:none">showing <span class="mono">40</span> of <span class="mono">212</span> types</span>
+                    <span class="chip fx" data-show="default error" style="display:none"><span class="mono">212</span>&nbsp;types</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="pane" aria-label="Right zone">
+            <div class="tabstrip" role="tablist"><button class="tab" role="tab" aria-selected="true"><span class="lbl">Provenance</span></button></div>
+            <div class="panebody">
+              <div data-show="empty loading"><div class="wayfinder" style="min-height:160px"><p>Select an evidence row to see its provenance.</p></div></div>
+              <div data-show="error"><div class="errbox" role="alert"><h4>This row's provenance couldn't be read.</h4><p>The fact store returned no record for <code>e-0412</code>. The row is still listed; re-index to rebuild it.</p><button class="btn">Re-index this scope</button></div></div>
+              <div data-show="default overflow">
+                <div class="sec"><h4>Fact</h4><p><span class="mono">e-0412</span> · calls_at · <span class="conf v">✓ Verified</span></p></div>
+                <div class="sec"><h4>Source</h4><p class="mono">src/AiDe.Core/Workbench/LayoutStore.cs:171</p></div>
+                <div class="sec"><h4>Extracted by</h4><p>Roslyn syntax walk · scope <span class="mono">AiDe.Core/net10.0</span> · 2026-09-11 11:42</p></div>
+                <div class="sec"><h4>Edges</h4><p>3 outbound · 1 inbound · 1 <span class="conf i">~ Inferred</span> (DI)</p></div>
+                <button class="btn">View source</button>
+              </div>
+            </div>
+          </section>
+
+          <div class="collapsed" aria-label="Bottom zone, collapsed">
+            <span>Bottom</span><span class="chip count">0</span><button>Expand</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATUS STRIP: the message is the live region (not the chip, not Dismiss); it wraps and is focusable -->
+      <div class="statusstrip">
+        <span class="fx" data-sw="retained" style="gap:var(--s4);align-items:flex-start;min-width:0">
+          <span class="fx" data-restore="none" style="gap:var(--s4);align-items:flex-start;min-width:0"><span class="chip ok"><span class="dot"></span>daemon</span><span class="msg" role="status" aria-live="polite" id="status-msg" tabindex="0">Coding perspective</span></span>
+          <span class="fx" data-restore="dropped" style="gap:var(--s4);align-items:flex-start;min-width:0"><span class="chip count">3 panes</span><span class="msg" role="status" aria-live="polite" tabindex="0">3 panes from your saved layout aren't available in Coding — Domain (class diagram), Graph, Contexts. Architecture opens with Graph, Domain, Contexts and Joins; open anything else from its View menu.</span></span>
+          <span class="fx" data-restore="alldropped" style="gap:var(--s4);align-items:flex-start;min-width:0"><span class="chip count">default</span><span class="msg" role="status" aria-live="polite" tabindex="0">Your saved layout had no panes Coding can show, so Coding opened with its default layout.</span></span>
+          <span class="fx" data-restore="duplicate" style="gap:var(--s4);align-items:flex-start;min-width:0"><span class="chip count">1 pane</span><span class="msg" role="status" aria-live="polite" tabindex="0">Diagnostics appeared twice in your saved layout; the first copy was kept and the second dropped.</span></span>
+          <span class="fx" data-restore="newer" style="gap:var(--s4);align-items:flex-start;min-width:0"><span class="chip bad"><span class="dot"></span>not applied</span><span class="msg" role="status" aria-live="polite" tabindex="0">Your saved layout is from a newer version (schema v6; this build reads v5) and was not applied. Coding opened with its default layout; your layout file was kept.</span></span>
+        </span>
+        <span class="fx" data-sw="opening" style="gap:var(--s4);align-items:flex-start;min-width:0"><span class="chip"><span class="dot" style="background:var(--accent)"></span>opening</span><span class="msg" role="status" aria-live="polite" id="status-opening" tabindex="0">Opening Architecture…</span></span>
+        <span class="fx" data-sw="ignored" style="gap:var(--s4);align-items:flex-start;min-width:0"><span class="chip"><span class="dot" style="background:var(--accent)"></span>opening</span><span class="msg" role="status" aria-live="polite" id="status-ignored" tabindex="0">Opening Architecture… (still building).</span></span>
+        <span class="fx" data-sw="error" style="gap:var(--s4);align-items:flex-start;min-width:0"><span class="chip bad"><span class="dot"></span>failed</span><span class="msg" role="status" aria-live="polite" id="status-error" tabindex="0">Couldn't open Architecture — the graph service did not answer in 10 s. Activate to try again.</span></span>
+        <button class="close" aria-label="Dismiss status"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ==================================================================== -->
+<!-- CONTRAST AUDIT: every pairing this mockup renders, computed live       -->
+<!-- ==================================================================== -->
+<div class="secwrap">
+  <h3 class="sech">Computed contrast: every ink/ground pairing a state may render</h3>
+  <p class="help">Read from the live computed styles and recalculated on every theme change; never typed in. Each pairing is classified
+    <b>text</b> (4.5:1), <b>large</b> (3:1), <b>ui</b> (3:1, a boundary or state indicator needed to identify a control, and focus rings) or
+    <b>decorative</b> (measured and reported, never counted). The accent-as-ground family is listed explicitly: it is the family the
+    runtime census found failing (14 of 180 pairings, INV-0007) and the one a single-ground palette table cannot show. Under the
+    high-contrast theme the values are stand-ins for Windows system colours and the audit reports <i>not measured</i>.</p>
+  <table class="ctab"><thead><tr><th>Pairing</th><th>Kind</th><th>Ink</th><th>Ground</th><th>Ratio</th><th>Floor</th><th>Verdict</th></tr></thead><tbody id="ctbody"></tbody></table>
+</div>
+
+<script>
+/* ---- harness wiring ------------------------------------------------------- */
+var root=document.documentElement, body=document.body;
+function bind(id, target, attr){ var el=document.getElementById(id); el.addEventListener('change',function(){ target.dataset[attr]=el.value; render(); }); }
+bind('h-theme',root,'theme'); bind('h-vp',root,'vp');
+bind('h-persp',body,'persp'); bind('h-trigger',body,'trigger'); bind('h-switch',body,'switch'); bind('h-state',body,'state'); bind('h-restore',body,'restore');
+bind('h-perm',body,'perm'); bind('h-menu',body,'menu'); bind('h-persona',body,'persona'); bind('h-motion',body,'motion');
+
+var NAMES={coding:'Coding',explore:'Explore',arch:'Architecture'};
+var GEST={coding:'Ctrl+1',explore:'Ctrl+2',arch:'Ctrl+3'};
+var MENUS={coding:['file','edit','view','window','prompt','help'], explore:['file','view','help'], arch:['file','edit','view','window','help']};
+var LEGEND={
+  coding:'<b>Coding (host A), the 80% case.</b> Center belongs to the session document; Left is <b>Terminal sessions</b> (the qualifier Addendum A §A3 requires, Ruling 62); Bottom is one terminal; Right is empty. No Explore pane, no Domain, no Provenance, no Graph: the clutter the operator named is gone by construction, not by hiding. The Center empty state is the <code>state.not-declared</code> shape: one glyph, one true sentence, one first action.',
+  explore:'<b>Explore: the full-window ExplorerSurface, unchanged</b> (Ruling 52d). Not a host, so no Edit, Window or Prompt menu and no zone rails; Reset layout is absent. Focus lands on the search box on entry, never inside the canvas; Escape from the surface root returns to the previous perspective. "View source" on a type node is a routed kind-open to Architecture; "Reveal in graph" acts here.',
+  arch:'<b>Architecture (host B): existing surfaces only</b> A keyboard-highlighted menu row draws the focus ring inset (see File → New terminal); the lifted hover ground is a pointer courtesy and never the indicator. (Rulings 54, 59, 61). Center: Graph · Domain · Contexts · Joins as tabs, one accent-filled (the focused stack); a selected tab in an unfocused stack carries a 2px muted top edge as its state indicator. Left: Evidence, the master. Right: Provenance, the detail, which renders the selected row rather than a second copy of the list. Bottom collapsed. The graph is kind-filtered to code · data · architecture; a bounded render says <b>showing 40 of 212</b>.'
+};
+function render(){
+  var target=body.dataset.persp, sw=body.dataset.switch, trig=body.dataset.trigger;
+  if (trig==='routed') target='arch';            /* a routed kind-open from Explore always targets Architecture (the reading host wins a shared kind) */
+  if (trig==='escape') target='coding';          /* Escape from Explore's root restores the previous perspective (Coding in this scene) */
+  var shown = (sw==='retained') ? target : (trig==='routed' ? 'explore' : 'coding');
+  if (target===shown) sw='retained';             /* activating the shown perspective is a no-op: nothing opens, nothing errors */
+  body.dataset.shown=shown; body.dataset.routedopen = (trig==='routed' && sw==='retained') ? 'yes' : 'no';
+  document.getElementById('title-persp').textContent=NAMES[shown];
+  document.title='commerce \u2014 '+NAMES[shown]+' \u2014 AI-DE';
+  document.getElementById('reset-layout').hidden = shown==='explore';
+  /* rail: exactly one selected; opening / error on the target only when it is not the shown one */
+  ['coding','explore','arch'].forEach(function(p){
+    var el=document.getElementById('r-'+p);
+    el.setAttribute('aria-selected', p===shown ? 'true':'false'); el.setAttribute('tabindex', p===shown ? '0':'-1');
+    el.classList.toggle('opening', (sw==='opening'||sw==='ignored') && p===target && p!==shown);
+    el.classList.toggle('error', sw==='error' && p===target && p!==shown);
+    var tip=document.getElementById('tip-'+p);
+    if (sw==='error' && p===target && p!==shown) tip.className='tip long', tip.innerHTML="Couldn't open "+NAMES[p]+" \u2014 the graph service did not answer in 10 s. Activate to try again.";
+    else if ((sw==='opening'||sw==='ignored') && p===target && p!==shown) tip.className='tip', tip.innerHTML='Opening '+NAMES[p]+'\u2026';
+    else tip.className='tip', tip.innerHTML=(p==='explore'?'Explore \u2014 graph &amp; reader':NAMES[p])+'<span class="kbd">'+GEST[p]+'</span>';
+    var mv=document.getElementById('mv-'+p); mv.classList.toggle('checked', p===shown); mv.setAttribute('aria-checked', p===shown?'true':'false');
+  });
+  /* routed-open: the opened surface sits in the Center stack */
+  var tr=document.getElementById('t-routed'); tr.setAttribute('aria-selected', body.dataset.routedopen==='yes' ? 'true':'false');
+  document.querySelectorAll('#p-arch .pane.focused .tab:not(#t-routed)').forEach(function(t,i){ if (body.dataset.routedopen==='yes') t.setAttribute('aria-selected','false'); else if (i===0) t.setAttribute('aria-selected','true'); });
+  var opening='Opening '+NAMES[target]+'\u2026';
+  document.getElementById('status-opening').textContent=opening;
+  document.getElementById('status-ignored').textContent=opening+' (still building).';
+  document.getElementById('status-error').textContent= trig==='routed'
+    ? "Couldn't open Code viewer \u2014 Architecture failed to open: the graph service did not answer in 10 s."
+    : "Couldn't open "+NAMES[target]+" \u2014 the graph service did not answer in 10 s. Activate to try again.";
+  document.getElementById('status-msg').textContent= body.dataset.routedopen==='yes' ? 'Opened Code viewer in Architecture' : NAMES[shown]+' perspective'+(shown==='arch'?' \u2014 4 panes':'');
+  /* menu bar: derived. A menu is present only when it has an item. */
+  ['file','edit','view','window','prompt','help'].forEach(function(m){ document.getElementById('m-'+m).hidden = MENUS[shown].indexOf(m)<0; });
+  document.getElementById('mv-coding-entries').hidden = shown!=='coding';
+  document.getElementById('mv-arch-entries').hidden = shown!=='arch';
+  document.getElementById('mv-explore-entries').hidden = shown!=='explore';
+  document.getElementById('mv-host-entries').hidden = shown==='explore';
+  var open=body.dataset.menu;
+  ['file','view','prompt'].forEach(function(m){ var b=document.getElementById('m-'+m), mm=document.getElementById('menu-'+m); var on = open===m && !b.hidden; mm.hidden=!on; b.setAttribute('aria-expanded', on?'true':'false'); });
+  var legend=LEGEND[shown];
+  if (open==='prompt' && shown!=='coding') legend+=' <b>The Prompt menu is absent here</b>: structurally inapplicable means absent, not disabled.';
+  if (trig==='gesture') legend+=' <b>Trigger: the bound gesture</b> ('+GEST[target]+', also from inside the terminal HWND: P-7). Same announcement, same landing.';
+  if (trig==='menu') legend+=' <b>Trigger: View → '+NAMES[target]+'</b>, the radio group in the View menu; the rail item follows.';
+  if (trig==='routed' && sw==='retained') legend+=' <b>Trigger: a routed kind-open.</b> "View source" on a type node in Explore asks for a Code viewer, which Explore does not admit; the shell activates the first perspective in the order Architecture · Coding that admits it, opens it there (the new Center tab) and announces it. Return is the ordinary switch: activate Explore, or press Escape there.';
+  if (trig==='routed' && sw!=='retained') legend+=' <b>Trigger: a routed kind-open that failed.</b> Architecture could not be built, so the operator stays in Explore with focus unchanged and the failure string names both the surface and the perspective.';
+  if (trig==='escape') legend+=' <b>Trigger: Escape from Explore\u2019s root.</b> The previous perspective is restored (Coding here); Escape reaches the perspective level only from the Explore surface root, never from a host.';
+  if (sw==='opening') legend+=' <b>Opening state:</b> the target item shows a progress ring, the status strip says so, focus stays on the trigger, and the current body stays until the first layout pass of the new one.';
+  if (sw==='ignored') legend+=' <b>Ignored:</b> a switch requested while a body is still building is ignored and said so; the operator stays where they were.';
+  if (sw==='error') legend+=' <b>Error state:</b> the body failed to build; the rail item carries a danger badge and the reason; the operator stays where they were with focus unchanged; activating again retries.';
+  if (body.dataset.perm==='pending') legend+=' <b>Permission request while away:</b> the queue overlay is RootLayer, outside the swapped region, so it is visible after one dispatcher frame in any perspective.';
+  document.getElementById('legend').innerHTML=legend;
+  /* live region trace */
+  var L=[];
+  if (sw==='retained'){
+    if (body.dataset.routedopen==='yes') L.push(['UIA notification (before focus)','Opened Code viewer in Architecture']);
+    else L.push(['UIA notification (before focus)', NAMES[shown]+' perspective'+(shown==='arch'?' \u2014 4 panes':'')]);
+    L.push(['focus', body.dataset.routedopen==='yes' ? 'the opened Code viewer tab in the Center stack' : shown==='coding' ? (body.dataset.state==='empty' ? 'the Center empty state\u2019s first action (New session)' : 'the active session document\u2019s editor') : shown==='explore' ? 'the search box (the first non-canvas focusable)' : 'the Center\u2019s active tab (Graph)']);
+    if (body.dataset.restore==='dropped') L.push(['live region', "3 panes from your saved layout aren't available in Coding \u2014 Domain (class diagram), Graph, Contexts. Architecture opens with Graph, Domain, Contexts and Joins; open anything else from its View menu."]);
+    if (body.dataset.restore==='alldropped') L.push(['live region', 'Your saved layout had no panes Coding can show, so Coding opened with its default layout.']);
+    if (body.dataset.restore==='duplicate') L.push(['live region', 'Diagnostics appeared twice in your saved layout; the first copy was kept and the second dropped.']);
+    if (body.dataset.restore==='newer') L.push(['live region', 'Your saved layout is from a newer version and was not applied. Coding opened with its default layout; your layout file was kept.']);
+  } else if (sw==='opening'){ L.push(['status', opening]); L.push(['focus', 'unchanged: stays on the trigger until the body\u2019s first layout pass']); }
+  else if (sw==='ignored'){ L.push(['status', opening+' (still building).']); L.push(['focus', 'unchanged']); }
+  else { L.push(['UIA notification', document.getElementById('status-error').textContent]); L.push(['focus', 'unchanged']); L.push(['rail', NAMES[target]+' item: error state, ItemStatus carries the reason; activation retries']); }
+  if (body.dataset.perm==='pending') L.push(['UIA notification (ImportantAll)', 'Permission request: claude-code asks to write outside the declared scope. Allow once, Deny, or Open the session.']);
+  L.push(['rail keyboard model', 'Up/Down move focus between items and announce their names only; Space, Enter or the gesture switches; activating the selected item is a no-op']);
+  document.getElementById('srlist').innerHTML=L.map(function(x){return '<li><span class="who">'+x[0]+'</span> \u00b7 '+x[1]+'</li>';}).join('');
+  audit();
+}
+
+/* ---- contrast + target-size audit (computed, never claimed) --------------- */
+function srgb(c){ c/=255; return c<=0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055,2.4); }
+function lum(rgb){ return 0.2126*srgb(rgb[0])+0.7152*srgb(rgb[1])+0.0722*srgb(rgb[2]); }
+function parse(s){ var m=/rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(s); return m?[+m[1],+m[2],+m[3]]:null; }
+function ratio(f,b){ var a=lum(f), c=lum(b); var hi=Math.max(a,c), lo=Math.min(a,c); return (hi+0.05)/(lo+0.05); }
+function hex(rgb){ return '#'+rgb.map(function(v){return ('0'+v.toString(16)).slice(-2);}).join('').toUpperCase(); }
+var probe=document.createElement('span'); probe.id='probe'; probe.style.display='none'; document.body.appendChild(probe);
+function tok(n){ probe.style.color='var('+n+')'; return parse(getComputedStyle(probe).color)||[0,0,0]; }
+var THRESH={text:4.5,large:3,ui:3,decorative:3};
+var PAIRS=[
+  ['Rail item, rest: glyph on the sunken rail',                'ui',   '--text-muted',    '--surface-sunken'],
+  ['Rail item, hover: glyph on the raised pill',                'ui',   '--text',          '--surface-raised'],
+  ['Rail item, selected: accent glyph on the raised pill',      'ui',   '--accent',        '--surface-raised'],
+  ['Rail active bar on the sunken rail',                        'ui',   '--accent',        '--surface-sunken'],
+  ['New session glyph on the accent fill',                      'ui',   '--accent-contrast','--accent'],
+  ['Focus ring (outer) on the sunken rail',                     'ui',   '--focus',         '--surface-sunken'],
+  ['Focus ring on the accent fill (why the ring is outer)',     'decorative','--focus',    '--accent'],
+  ['Error badge ring and glyph on the sunken rail',             'ui',   '--danger',        '--surface-sunken'],
+  ['Tab, rest: caption on the strip',                           'text', '--text-muted',    '--surface-raised'],
+  ['Tab, selected-active: caption on the accent fill',          'text', '--accent-contrast','--accent'],
+  ['Tab, selected-inactive: caption on the document ground',    'text', '--text',          '--surface'],
+  ['Tab, selected-inactive: 2px top edge on the strip (state)', 'ui',   '--text-muted',    '--surface-raised'],
+  ['Menu item on the menu ground',                              'text', '--text',          '--surface-raised'],
+  ['Menu item, pointer-hovered, on the lifted ground',           'text', '--hl-ink',        '--hl'],
+  ['Menu row keyboard focus ring (inset) on the menu ground',      'ui',   '--focus',         '--surface-raised'],
+  ['Lifted hover ground against the menu ground (why it is not the indicator)', 'decorative', '--hl', '--surface-raised'],
+  ['Menu item, disabled with reason',                           'text', '--text-disabled', '--surface-raised'],
+  ['Menu keystroke column',                                     'text', '--text-muted',    '--surface-raised'],
+  ['Status strip text',                                         'text', '--text',          '--surface'],
+  ['Empty-state sentence on the pane ground',                   'text', '--text-muted',    '--surface'],
+  ['Empty-state first action label',                            'text', '--accent-contrast','--accent'],
+  ['Evidence row on the list ground',                           'text', '--text',          '--surface'],
+  ['Selected row id (accent) on the raised row',                'text', '--accent',        '--surface-raised'],
+  ['Hovered row on the highlight ground',                       'text', '--hl-ink',        '--hl'],
+  ['Verified word on the pane ground',                          'text', '--verified',      '--surface'],
+  ['Inferred word on the pane ground',                          'text', '--inferred',      '--surface'],
+  ['Danger copy in an error box',                               'text', '--danger',        '--surface-raised'],
+  ['Read-only banner on the sunken chip',                       'text', '--locked',        '--surface-sunken'],
+  ['Terminal text on the sunken ground',                        'text', '--text',          '--surface-sunken'],
+  ['Terminal comment (re-toned syntax-comment)',                'text', '--syntax-comment','--surface-sunken'],
+  ['Graph node label on the node',                              'text', '--text',          '--surface-raised'],
+  ['Control boundary (border-strong) on the sunken field',      'ui',   '--border-strong', '--surface-sunken'],
+  ['Control boundary (border-strong) on the raised ground',     'ui',   '--border-strong', '--surface-raised'],
+  ['Permission card border (inferred) on the raised card',      'ui',   '--inferred',      '--surface-raised'],
+  ['Pane border on the surface',                                'decorative','--border',   '--surface'],
+  ['Composer stand-in: editor text on sunken',                  'text', '--text',          '--surface-sunken']
+];
+function audit(){
+  var tb=document.getElementById('ctbody'), fails=0, rows='', hc=root.dataset.theme==='hc';
+  for (var i=0;i<PAIRS.length;i++){
+    var p=PAIRS[i], f=tok(p[2]), b=tok(p[3]), r=ratio(f,b), need=THRESH[p[1]], req=p[1]!=='decorative', ok=r>=need-0.005;
+    if (req && !ok && !hc) fails++;
+    rows+='<tr><td>'+p[0]+'</td><td>'+p[1]+'</td>'
+      +'<td class="n"><span class="swatch" style="background:'+hex(f)+'"></span>'+hex(f)+'</td>'
+      +'<td class="n"><span class="swatch" style="background:'+hex(b)+'"></span>'+hex(b)+'</td>'
+      +'<td class="n">'+r.toFixed(2)+':1</td><td class="n">'+need.toFixed(1)+':1</td>'
+      +'<td class="'+(hc?'na':(req?(ok?'pass':'fail'):'na'))+'">'+(hc?'stand-in, not measured':(req?(ok?'PASS':'FAIL'):'reported, not counted'))+'</td></tr>';
+  }
+  if (tb) tb.innerHTML=rows;
+  var small=0, ctrls=document.querySelectorAll('#win button, #win [tabindex], #win input');
+  for (var j=0;j<ctrls.length;j++){ var el=ctrls[j]; if (el.offsetParent===null) continue; var rc=el.getBoundingClientRect(); if (rc.width&&rc.height&&(rc.width<24||rc.height<24)) small++; }
+  var railSmall=0, items=document.querySelectorAll('.rail .item, .rail .primary');
+  for (var k=0;k<items.length;k++){ var rr=items[k].getBoundingClientRect(); if (rr.width<44||rr.height<44) railSmall++; }
+  var selected=document.querySelectorAll('.rail .item[aria-selected="true"]').length;
+  var v=document.getElementById('verdict');
+  v.innerHTML='audit: '+(hc?'<b class="ok">hc: stand-ins, not measured</b>':'<b class="'+(fails?'bad':'ok')+'">'+fails+' contrast fail</b>')+' \u00b7 <b class="'+(small?'bad':'ok')+'">'+small+' target &lt; 24px</b> \u00b7 <b class="'+(railSmall?'bad':'ok')+'">'+railSmall+' rail target &lt; 44px</b> \u00b7 <b class="'+(selected===1?'ok':'bad')+'">'+selected+' rail item selected</b> \u00b7 '+PAIRS.length+' pairs';
+}
+render(); window.addEventListener('resize',audit);
+</script>
+</body>
+</html>

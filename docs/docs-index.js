@@ -3095,6 +3095,132 @@ window.DOCS_INDEX = {
       "sourceSha256": "98e6dbe61d6bdf8e501b6e43bc5e896c144f49186afd3fe7e7e2dc88efb1c6d0"
     },
     {
+      "id": "note-addendum-c-design-menu-names",
+      "path": "docs/notes/addendum-c-design-menu-names.md",
+      "title": "The top-level menus are File · Edit · View · Window · Prompt · Help — Terminal renamed to what it holds, the design language's Graph · Model · Agents set retired, and Ctrl+1/2/3 confirmed as the perspective gestures",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Spec §R row 5 handed D1 the top-level menu names (DESIGN.md said File · Edit · View · Graph · Model · Agents · Window · Help; the code says File · Edit · View · Window · Terminal · Help). D1 keeps five of the code's six and renames Terminal to Prompt, because with the terminal verbs moved to File as entry verbs the menu holds only prompt verbs; the derivation rule places every allow-list entry under View, so a Model or Graph menu would need a second placement rule. Ctrl+1/2/3 are confirmed against a fetched Windows precedent (Outlook switches its top-level views with Ctrl+1…Ctrl+8).",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "menu",
+        "keyboard",
+        "gestures",
+        "design-language"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-menu-derivation-rule",
+          "rel": "depends-on"
+        },
+        {
+          "to": "ui-review-perspective-shell",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-perspective-shell",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "21bdd8e99b31336d09477cb77198931da1fdb9688d0aa91b250ad66df1b9d294"
+    },
+    {
+      "id": "note-addendum-c-design-signature",
+      "path": "docs/notes/addendum-c-design-signature.md",
+      "title": "DESIGN.md's header signature, the on-accent ink, the light values and the comment re-tone — four token-system decisions below ADR weight",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Records why DESIGN.md's archetype header now reads PerspectiveShell with Arch:HubAndSpoke and Depth:SoftShadow (the old Arch:Desktop was not a grammar value; Flat lagged the facelift), why accent-contrast is kept under its name with an explicit role (a rename to text-on-accent was made and reverted the same day when main merged the code's AccentContrastBrush), why the light theme is declared as flat light-* keys under colors:, why syntax-comment moved from #5A6472 to #808C9A, and why border-strong exists. Each carries the alternative it rejected and the check that would show it wrong.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "design-language",
+        "tokens",
+        "contrast",
+        "archetype",
+        "light-theme"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "ui-review-perspective-shell",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-perspective-shell",
+          "rel": "relates-to"
+        },
+        {
+          "to": "ui-review-operator-feedback",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7af7c2b99b9ec0da1bd1306ff9138873baa4e99ba27de1bbd60a7c86eaf8b300"
+    },
+    {
+      "id": "note-addendum-c-design-tier-decoration",
+      "path": "docs/notes/addendum-c-design-tier-decoration.md",
+      "title": "Tier is compiled, not typed — the operator's correction to Ruling 56's tier clause, and how the composer and the sheet render it",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "During D1 the operator corrected Ruling 56: tier is not a session setting; it is a decoration the compile step attaches to the compiled prompt. This note records the correction verbatim as relayed, what the design does with it (no tier field anywhere; the compiled disclosure carries the derived tier with three states; the sheet and the settings line carry the fan-out ceiling and the budget only), the one reading that is the conductor's and not the operator's (ceiling versus effective cap), and what is deliberately not designed (the derivation and the compile step).",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "composer",
+        "session-settings",
+        "tier",
+        "compile-step",
+        "operator-correction"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "refines"
+        },
+        {
+          "to": "mockup-conversation-composer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-new-session-sheet",
+          "rel": "relates-to"
+        },
+        {
+          "to": "ui-review-perspective-shell",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d16d9ce86d824bad46291d4b0f602b1dd4035d617b160e9fa3493ba514ab7cdb"
+    },
+    {
       "id": "note-addendum-c-inadmissible-kind-routing",
       "path": "docs/notes/addendum-c-inadmissible-kind-routing.md",
       "title": "A kind-opening request the active perspective cannot satisfy routes to the first admitting perspective in the order Architecture · Coding and announces; in-body node actions never route — no dialog, no silent drop",
@@ -5931,7 +6057,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "16d0e939430d66d420d18e1d3459d983e7954c674c81822aa9b47f718cffb73a"
+      "sourceSha256": "1d3971f39bd4aec2a0b7c55f11f63fc0031ea8c44257d86426c3deb983f5b7e7"
     },
     {
       "id": "design-session-profiler",
@@ -6510,6 +6636,62 @@ window.DOCS_INDEX = {
       "sourceSha256": "019b6dfead9d172ec258bf9ada3019edcd311fc3601c556dc544132abe0ca999"
     },
     {
+      "id": "mockup-conversation-composer",
+      "path": "docs/mockups/conversation-composer.md",
+      "title": "Conversation composer — one editor, derived structure, compiled on demand (Addendum C elevate mockup)",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [
+        {
+          "by": "ui-review-perspective-shell",
+          "on": "2026-09-11",
+          "reason": "D1 /ui-design: the perspective-shell design language, three mockups and the rubric review; spec §C3/§C4 carry the accent-contrast role, the editor ground, the rail's activation model and the compiled-tier copy as recorded deviations"
+        }
+      ],
+      "summary": "The Coding composer as a conversation (Ruling 57): one editor that is the largest and brightest element in the pane, the goal block's Goal · Done when · Not in scope derived beneath it as editable lines, one inherited-settings line (fan-out ceiling and budget from the session, no tier, no override), the write scope derived from an @path mention, the compiled prompt on demand carrying the tier the compile step attached, and the Console streaming beside it. Ten hard states, a no-provider variant, four tier-decoration states, and a density audit measured on the rendered page.",
+      "tags": [
+        "ui-design",
+        "mockup",
+        "addendum-c",
+        "composer",
+        "conversation",
+        "session-settings",
+        "contrast",
+        "ai-ux"
+      ],
+      "links": [
+        {
+          "to": "ui-review-perspective-shell",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-design-tier-decoration",
+          "rel": "depends-on"
+        },
+        {
+          "to": "mockup-session-front-door",
+          "rel": "refines"
+        },
+        {
+          "to": "ui-review-operator-feedback",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0b33c43325fbfa5bb87ddd6d2143cf4fe18e9c10524d52a567d0d756ee9ab47f"
+    },
+    {
       "id": "mockup-editor-surfaces",
       "path": "docs/mockups/editor-surfaces.md",
       "title": "Editor & content surfaces — mockup",
@@ -6695,6 +6877,109 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "ea8f4ed0d3c06bccdc3531132459307b83b32bb69dffcfc892077b8366e54deb"
+    },
+    {
+      "id": "mockup-new-session-sheet",
+      "path": "docs/mockups/new-session-sheet.md",
+      "title": "New Session sheet — session settings with defaults (Addendum C elevate mockup)",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "The New Session sheet carrying the session settings as defaults: the fan-out ceiling and the budget as one row of two unit-bearing controls prefilled from workspace policy, no tier field (tier is attached by the compile step), the task class kept required and undefaulted, and seven states including create failure with answers kept, an invalid budget, the workspace chooser interposing when none is bound, and overflow.",
+      "tags": [
+        "ui-design",
+        "mockup",
+        "addendum-c",
+        "new-session",
+        "session-settings",
+        "task-class",
+        "contrast"
+      ],
+      "links": [
+        {
+          "to": "ui-review-perspective-shell",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-design-tier-decoration",
+          "rel": "depends-on"
+        },
+        {
+          "to": "mockup-session-front-door",
+          "rel": "refines"
+        },
+        {
+          "to": "ui-review-operator-feedback",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "229083f7004bc304131931cd270b6ffa7b7c1e8bd5ac95ddb4265ff5d2e830f0"
+    },
+    {
+      "id": "mockup-perspective-shell",
+      "path": "docs/mockups/perspective-shell.md",
+      "title": "Perspective shell — Coding · Explore · Architecture (Addendum C elevate mockup)",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "A self-contained, dependency-free mockup of the shell as three perspectives: the rail (New session + Coding · Explore · Architecture as a radio group; Tests reserved and absent), the menu bar derived per perspective, the Coding and Architecture default layouts with their empty states, Explore full-window and unchanged, the switch in its retained / opening / error states, the drop-with-report status, the dock tab strip in all four states, and a live contrast audit over every ink/ground pairing including the accent-as-ground family the runtime census found failing.",
+      "tags": [
+        "ui-design",
+        "mockup",
+        "addendum-c",
+        "perspective",
+        "rail",
+        "menu",
+        "docking",
+        "contrast"
+      ],
+      "links": [
+        {
+          "to": "ui-review-perspective-shell",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "mockup-session-front-door",
+          "rel": "refines"
+        },
+        {
+          "to": "ui-review-operator-feedback",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-design-signature",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-design-menu-names",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a5c1329af98ccc6e2327a22470bf746e1140f62ab478f626a413d0cf749c213d"
     },
     {
       "id": "mockup-session-front-door",
@@ -8111,6 +8396,76 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "7e3ec2b817fddafb398006e9682f60792f2f55f886b323c284be36d0d708a4b8"
+    },
+    {
+      "id": "ui-review-perspective-shell",
+      "path": "docs/reviews/ui-perspective-shell.md",
+      "title": "UI review — the perspective shell (Coding · Explore · Architecture), the conversation composer and the New Session sheet",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "Elevate-mode review of the AI-DE workbench redesigned as three perspectives, with the composer as a conversation and the session settings in the New Session sheet. The token system gained an explicit role for the on-accent ink (accent-contrast, the code's AccentContrastBrush), a control boundary token (border-strong), light values for every role and a re-toned comment colour, and an ink-by-ground matrix replaced a one-ground table that had drifted. Three mockups measure 0 craft findings each (corpus 104 to 98); three adversaries ran a bounded three-pass loop recorded here; the highest-leverage change for the slice is now landed on main (INV-0008's container-pairs / leaf-inherits rule, the census at 180 pairings / 0 below floor), so the ranked plan's first item is the composer's remaining tokens and the tab and menu states the design adds.",
+      "tags": [
+        "ui-review",
+        "ux",
+        "accessibility",
+        "contrast",
+        "perspective",
+        "composer",
+        "session-settings",
+        "addendum-c"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "documents"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "mockup-perspective-shell",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-conversation-composer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-new-session-sheet",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-session-front-door",
+          "rel": "refines"
+        },
+        {
+          "to": "ui-review-operator-feedback",
+          "rel": "refines"
+        },
+        {
+          "to": "note-addendum-c-design-signature",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-design-menu-names",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-design-tier-decoration",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-current-state-inventory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "526d0d28b986e75dcf1ea39ed457d0ab5950b46f8f90e523fc09cf8e121ba37d"
     },
     {
       "id": "ui-review-watcher-observatory",
@@ -13727,6 +14082,14 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     },
     {
+      "id": "surface-mockups-conversation-composer",
+      "path": "docs/mockups/conversation-composer.html",
+      "title": "AI-DE conversation composer: one editor, derived structure, compiled on demand",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-conversation-composer"
+    },
+    {
       "id": "surface-mockups-facelift-elevate",
       "path": "docs/mockups/facelift-elevate.html",
       "title": "AI-DE facelift — elevate proposals (visualization)",
@@ -13741,6 +14104,22 @@ window.DOCS_INDEX = {
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "mockup-app-facelift"
+    },
+    {
+      "id": "surface-mockups-new-session-sheet",
+      "path": "docs/mockups/new-session-sheet.html",
+      "title": "AI-DE New Session sheet: session settings with defaults",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-new-session-sheet"
+    },
+    {
+      "id": "surface-mockups-perspective-shell",
+      "path": "docs/mockups/perspective-shell.html",
+      "title": "AI-DE perspective shell: Coding · Explore · Architecture",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-perspective-shell"
     },
     {
       "id": "surface-mockups-session-front-door",
@@ -13839,5 +14218,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "e8bab6158ec02dc84205b5d4223843db66cb29164e2503cfdcfd17f9f615c0aa"
+  "graphSha256": "4e2298f7b9afb0bf1a25a2d95cd0b227bd6ff2742e794dcba9cc81e358f090ad"
 };
