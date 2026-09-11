@@ -924,7 +924,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "adr-0017-primary-view-mode",
+          "on": "2026-09-11",
+          "reason": "accepted as amended by Ruling 52 and INV-0009 (A1); inbound neighbours re-read"
+        }
+      ],
       "summary": "The Explorer's reader needs a selected node's CONTENT (source/markdown/html) and metadata, which the graph payload deliberately does not carry. It is fetched on demand for the one selected node via a new bounded Core query (a sibling of GraphOverview), not by fattening CanvasNode — because content on every node would blow the IPC transport bound (US-K12) for a value only the selected node needs.",
       "tags": [
         "architecture",
@@ -953,7 +959,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c130a64221c086e88ffd7b3865b90bcaf09f910e404c422680e717376424e8e3"
+      "sourceSha256": "4711a43fad1de541080ee32300fe4a4d8a25369d1ab0b770e8e337b25774fa12"
     },
     {
       "id": "adr-0019-advisory-evaluator-calibration",
@@ -4742,7 +4748,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "adr-0017-primary-view-mode",
+          "on": "2026-09-11",
+          "reason": "accepted as amended by Ruling 52 and INV-0009 (A1); inbound neighbours re-read"
+        }
+      ],
       "summary": "Component design for the Phase-1 walking skeleton of the full-window Explorer mode: the ShellViewMode swap (WorkbenchHost.Content toggles Manager↔ExplorerSurface, Shell held so the workbench and its live ConPTY/WebView2 children hide-not-destroy), a dedicated CanvasSurface in Explorer (not reparented), a new CanvasSurface.NodeSelected seam the reader follows, and a NodeReaderView stub (metadata + walkable edges; content deferred to ADR-0018 node-content-reader-contract Phase 2). Resolves the mechanism the ADRs deferred, with a red-first test plan whose key control is \"a live terminal survives an Explorer round-trip\".",
       "tags": [
         "explorer",
@@ -4777,7 +4789,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  Rail[Explore rail item] -->|Toggle| SMC[ShellModeController]\n  SMC -->|Workbench| WH[WorkbenchHost.Content = Shell.Manager]\n  SMC -->|Explorer| EX[WorkbenchHost.Content = ExplorerSurface]\n  EX --> G[CanvasSurface 'explorer-graph']\n  EX --> R[NodeReaderView]\n  G -->|NodeSelected CanvasNodeRef| R\n  R -->|activate edge -> RefreshAsync target| G\n  G -. GraphSource .-> VM[CanvasGraphViewModel over IWorkspaceQueries]"
         }
       ],
-      "sourceSha256": "fd5e5efd36e8264327a3aaa7a6d98b0dfe90dbdd6724ff2fb5ea4e47b2ec816d"
+      "sourceSha256": "406feb47fc74498d8f7a42e1e8c3dd7ca0e1bfea2ee04258d6a8ae11911fb63f"
     },
     {
       "id": "design-mcp-enlightened-path",
@@ -7437,13 +7449,19 @@ window.DOCS_INDEX = {
     {
       "id": "note-addendum-c-council-rulings",
       "path": "docs/notes/addendum-c-council-rulings.md",
-      "title": "Decision note — Rulings 50–72: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
+      "title": "Decision note — Rulings 50–73: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
       "type": "doc",
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "1",
       "reviewBy": "2026-12-11",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "adr-0017-primary-view-mode",
+          "on": "2026-09-11",
+          "reason": "accepted as amended by Ruling 52 and INV-0009 (A1); inbound neighbours re-read"
+        }
+      ],
       "summary": "Rulings 50–55 issued before any Addendum C spec was written; 56–62 issued at the spec's gate — 56 and 57 file the operator's own composer verdicts, 58–62 rule on the reconciliation table. Six rulings the Owner issued before any Addendum C spec was written, on the evidence the conductor brought at node R0 of plan-addendum-c-modes. They fix the vocabulary (Perspective), the phasing (F5 untouched; code after F5 merges), ADR-0017's fate (retained and amended), the graph model (one substrate, two surfaces), the build order under the operator's 80% case, and four page-one facts a spec written without them would get wrong.",
       "tags": [
         "decision-note",
@@ -7494,7 +7512,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0b0df1bde64c74d20f620c14b6c62257f775830184831e18d5e3caa33fcc2a44"
+      "sourceSha256": "a93747621638c39eda7f5ce0a1ddd3cae3e0b000ea54cdab320ba6014909c8f9"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -13719,7 +13737,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "next-delivery (after F5 merges — Ruling 51)",
       "reviewBy": "2027-03-11",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "adr-0017-primary-view-mode",
+          "on": "2026-09-11",
+          "reason": "accepted as amended by Ruling 52 and INV-0009 (A1); inbound neighbours re-read"
+        }
+      ],
       "summary": "Addendum C to the Conductor spec. Introduces the Perspective — the use case the whole tool is in (Coding · Explore · Architecture; Tests reserved) — selected from the activity rail, with each perspective admitting a declared subset of the existing surface kinds, contributing a derived menu, owning a default layout and a persistence slot. Binds the six Owner rulings (50–55), records the operator's three composer verdicts as page-one supersessions of R15/R18/R19 clauses (for the Owner to file), adds the token-only contrast NFR proven by a runtime census, reconciles against ADR-0017 and the seven shell specs it refines, and names the deferred understanding views, the structure deriver and Use Case 4 as non-goals.",
       "tags": [
         "conductor",
@@ -13847,7 +13871,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  A[Session document open: one editor, structure collapsed, compiled collapsed] -->|type prose| B{Draft settles: objective derivable?}\n  A -->|shape control: pick a template — B:181 kept| T[Template fields render as the derived structure, prefilled from the text where possible]\n  T --> E\n  B -->|no| C[Structure stays one collapsed line; a T2 send will mark Goal and Done when]\n  C -->|type more| B\n  C --> E\n  B -->|yes| D[Derived structure expands beneath the editor: Goal · Done when · Not in scope, marked derived]\n  D -->|edit a line inline| D\n  D --> E{@path mention present?}\n  E -->|no| F[Write-scope line: elicitation text; Send → refusal names @path and offers the picker — Ruling 42 intact]\n  F -->|add a mention| E\n  E -->|yes| G[Write-scope line: 'src/…/** — from your mention']\n  G -->|open Compiled disclosure| H[Exactly the outgoing text; no diff, no summary; editor does not shrink]\n  H --> G\n  G -->|Send Ctrl+Enter| I{T2 and a content field empty?}\n  I -->|yes| J[Inline marks on every gap at once; one-line reason each; nothing sent]\n  J -->|fix| D\n  I -->|no| K[Sent: compiled prompt carries the session's tier · fan-out · budget in the CT19 block]\n  K --> K2[Reply streams in the Console canvas; the block joins the Score outline]\n  K2 -->|conductor answers with a drafted template — S-8| K3[Next message's draft: the reply's text with its derived structure inline]\n  K3 --> D\n  K2 -->|operator writes the next message| A\n  A -->|session settings on the header| L[Edit fan-out ceiling / budget for the session; tier is compiled, not set here]\n  L -->|re-validate the current draft| B"
         }
       ],
-      "sourceSha256": "ee460f1d27c41d64af57b57d3b58619133f58bb6c301a5486402a17471abcb8c"
+      "sourceSha256": "ed9ca5c0ff0d7f9dbfae9c3bdaf80fcafabc40857e1d4a977cd0f22eed229ede"
     },
     {
       "id": "spec-addendum-d-compile-step",
@@ -13932,7 +13956,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  U[aide session purge id] --> V{id is one segment of the session-id grammar, resolved under .aide/sessions/?}\n  V -->|no| X[refused before any file is touched]\n  V -->|yes| W[confirmation: name · id · workspace root · resolved file path · envelope count · newest at]\n  W -->|decline| Y[nothing deleted]\n  W -->|confirm or --yes| Z[envelope-events.jsonl deleted; session.json and session-events.jsonl survive]\n  Z --> Q[session document reopens: history purged; Proof Pack citations resolve as purged]"
         }
       ],
-      "sourceSha256": "88f892bd6ddc9ed16e2f307d54350909bd06e27232846fbd872e2343572a6f9d"
+      "sourceSha256": "96821258bb38bc611a74f51585fe187c75f69f5eed2e86dcf18d4d8745976352"
     },
     {
       "id": "spec-agentic-watcher-substrate",
@@ -14761,5 +14785,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ce2e8210c0d0e799e272edf51c6e920622280e8e2bf8cfe4bef86b871af77586"
+  "graphSha256": "b48544927c9fb758117b280ee88be0f399fac546d6436febd09429adbab6312b"
 };

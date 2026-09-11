@@ -299,7 +299,7 @@ erDiagram
 | # | P | L | → Tier · rationale | Why | Falsifying input (must **not** yield this row's `(tier, rationale)`) |
 | --- | --- | --- | --- | --- | --- |
 | R0 | no | any | **T0** · *no goal block* | No goal block → no spawn; the conductor answers through `report` (spec v1 §5.3 Stage 0). *A Message with three mentions is still T0 — lease ≠ tier.* | `goal` and `done_when` filled, one mention → not R0. |
-| R1 | yes | 0 | **T1** · *goal block (filled by `<structure_source>`), no write scope yet* | The function is total: the tier is computed; the **send** is refused separately for the missing write scope (US-C13's Ruling 42 elicitation). | `goal` filled, `done_when` blank → P = no → R0, not R1. |
+| R1 | yes | 0 | **T1** · *goal block (filled by `<structure_source>`), no write scope* | The function is total: the tier is computed; **the turn runs read-only** — no lease derived, every write-capable tool disallowed on the lane (Ruling 73; this row earlier read *"the send is refused separately for the missing write scope"*, superseded) |
 | R2 | yes | 1 | **T1** · *goal block (filled by `<structure_source>`), one lease* | One write scope, one lane, no coordination. | The same draft with `@src/A/` and `@src/B/` → R3, not R2. |
 | R3 | yes | ≥ 2 | **T2** · *goal block (filled by `<structure_source>`), N leases* | Two or more exclusive scopes is coordination work; T2 plans and seams. | `@src/A/ … @src/A/` de-duplicates to L = 1 → R2; `@../x` is dropped → L = 0 → R1. |
 | R4 | any | any | **operator override** → the operator's tier · *operator (rule said `<R>`)* | Prepare may override any non-ceiling value (§A11); the override is a label for D-D2. | An override cannot set a value outside {T0, T1, T2}; `T9` is refused. |
@@ -885,3 +885,11 @@ operator enforced one; spend is measured per turn regardless (§A14 cost axes). 
 default task class is **`free-form`** — present from open, changeable per prompt (Ruling 70) — and
 Ruling 70's *"Send is refused for a prompt with no effective class"* is superseded: none can be
 missing. §A7's Scale and Scope rows and the `opened` snapshot read accordingly.
+
+**Errata after Ruling 73 (2026-09-11):** a turn that writes nothing needs no lease. The shape
+projection gains **`read-only`** (a Message, or a Goal-block whose source text names no write scope):
+such a turn opens its lane with every write-capable tool disallowed (Ruling 71's argument) and
+derives no lease; the lease gate applies to **write-shaped** turns only (R1 amended above; §A9's
+shape rule; §A13's oracles gain the read-only frame assertion). Session persistence (the envelope
+store, ADR-0034; the session store) is the tool's — the operator never names a file or location.
+The `not derivable` copy becomes *"read-only — nothing will be written"*.

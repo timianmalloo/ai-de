@@ -27,7 +27,8 @@ links:
   - { to: note-addendum-c-menu-derivation-rule, rel: relates-to }
   - { to: note-addendum-c-persistence-slots, rel: relates-to }
 review-by: 2027-03-11
-review-suggested: []
+review-suggested:
+  - { by: adr-0017-primary-view-mode, on: 2026-09-11, reason: "accepted as amended by Ruling 52 and INV-0009 (A1); inbound neighbours re-read" }
 summary: >-
   Addendum C to the Conductor spec. Introduces the Perspective — the use case the whole tool is in
   (Coding · Explore · Architecture; Tests reserved) — selected from the activity rail, with each
@@ -1782,3 +1783,8 @@ re-read; `verify-ruling-citations.py` green.
 *bounded by your subscription*; the task class defaults to `free-form` and is changeable per prompt
 with no Send refusal (§A3, US-C5 amended by substitution). D1's `new-session-sheet.html` shows the
 budget as a state and the class preselected — D2 carries the change.
+
+**Errata after Ruling 73 (2026-09-11):** US-C13's refusal *"no write scope could be derived"* applies
+to a **write-shaped** turn only. A send with no `@mention` runs as a **read-only turn** — the default
+conversation — with the lease line reading *"read-only — nothing will be written"*; the operator adds
+a mention when the turn must write. Session persistence is the tool's purview, never a field.

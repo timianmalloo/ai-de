@@ -12,7 +12,8 @@ links:
   - { to: adr-0018-node-content-reader-contract, rel: refines }
   - { to: mockup-knowledge-explorer-mode, rel: relates-to }
 review-by: 2027-02-28
-review-suggested: []
+review-suggested:
+  - { by: adr-0017-primary-view-mode, on: 2026-09-11, reason: "accepted as amended by Ruling 52 and INV-0009 (A1); inbound neighbours re-read" }
 summary: >-
   Component design for the Phase-1 walking skeleton of the full-window Explorer mode: the ShellViewMode
   swap (WorkbenchHost.Content toggles Manager↔ExplorerSurface, Shell held so the workbench and its live

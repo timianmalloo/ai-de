@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T23:20:50Z",
+  "generated": "2026-09-11T23:36:22Z",
   "audit": [
     {
       "actor": null,
@@ -12482,6 +12482,68 @@ window.AUDIT_DATA = {
         "sha": "8214ecd50e880d46ec7d5d6459dc426b94a12bf8",
         "short": "8214ecd50",
         "branch": "feature/session-elevation",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M29CHR7C9WAPMA7YZPRMKXB6",
+      "shortname": "Operator approves INV-0009 phases 1, 2, 2b, 4 now, and rules the workspa…",
+      "datetime": "2026-09-11T23:23:53Z",
+      "session": "prompt-log",
+      "prompt": "Operator approves INV-0009 phases 1, 2, 2b, 4 now, and rules the workspace chooser OPENS the chosen workspace and then creates the session (R13 b1 completed), rather than refusing.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M29D65TJN0ZSKC4AZDZ9YVDC",
+      "shortname": "Operator: actually I am confused - why would this not be a standard REPL…",
+      "datetime": "2026-09-11T23:35:02Z",
+      "session": "prompt-log",
+      "prompt": "Operator: actually I am confused - why would this not be a standard REPL loop between the prompt side and the console; why do I need to define a file? ... yeah I think this is our security part of the constitution being too restrictive in straightforward scenarios. A turn that writes nothing needs no lease. But session persistence is important - that should be the tool's purview, not the operator's purview.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M29D8K9EXS9PGG1YYKTC9693",
+      "shortname": "ruling-73-read-only-turn",
+      "datetime": "2026-09-11T23:36:22Z",
+      "session": "conductor-addendum-c",
+      "prompt": "Operator: a turn that writes nothing needs no lease; session persistence is the tool's purview not the operator's; the security constitution was too restrictive in straightforward scenarios.",
+      "summary": "Ruling 73: read-only turns (Message, or no write scope) run with write tools disallowed via Ruling 71's argument and no lease; the lease gate applies to write-shaped turns only; persistence automatic under the tool's store; class 'a security control gates a shape it does not protect' to be registered when DC-148/149 land (register hole). D R1 amended; C and D errata appended. V16 flag pushed from ADR-0017.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "File the operator's decision that a turn which writes nothing needs no lease, persistence is the tool's, and a security control gates only the shape it protects; amend C and D; push the V16 flag A1 could not",
+      "done_when": "Ruling 73 in the note; D's R1 and shape rule amended; C's refusal scoped to write turns; review-suggested pushed from ADR-0017; gates green",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "f92aa810457c1b497bcd337fa3f3ebe91d07dbcb",
+        "short": "f92aa8104",
+        "branch": "conductor/addendum-c",
         "pushed": null
       }
     }
