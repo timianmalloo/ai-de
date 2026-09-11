@@ -180,6 +180,20 @@ jobs:
           python tools/verify-node-reuse-control.py --self-test
           python tools/verify-node-reuse-control.py
 
+      # DC-013 recurrence 6. Programme decisions are cited by number and enforced as binding.
+      # ELEVEN of them defined nothing: Ruling 35 was cited six times as governing a dependency
+      # decision, Ruling 7 as forbidding an interface, with no note anywhere recording what either
+      # said. Two ends met on 2026-09-11: "Ruling 45" was issued to a node as a mid-task correction
+      # before any such ruling existed, and the Owner -- unable to see that 46 was taken, because
+      # nothing recorded it -- allocated 46 a second time. The absence of the register caused the
+      # collision in the register. Nine numbers stay frozen by name as unreconstructable debt and
+      # the list may only shrink. A decision that cannot be read is a number with a reputation.
+      - name: Every cited ruling resolves to a note that defines it
+        if: ${{ !cancelled() }}
+        run: |
+          python tools/verify-ruling-citations.py --self-test
+          python tools/verify-ruling-citations.py
+
       # A vendored half-megabyte ES-module bundle (`src/AiDe.App/Web/vendor/`) is executable that no
       # compiler type-checks, no test imports by name and no reviewer reads. Everything that makes it
       # trustworthy is a claim in the manifest beside it, and a claim nothing re-reads is prose.

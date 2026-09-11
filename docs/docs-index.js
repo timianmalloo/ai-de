@@ -1471,7 +1471,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 43 members, 87% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 45 members, 87% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1484,7 +1484,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c0fd5d96e75c9c40363aa8906dceab7d706b2a5ce3885c520e2a880306d8f9b8"
+      "sourceSha256": "7d09188f96a1e8f14587f34803e53e79bd74d3116da9f23a0dab553641b292c3"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -1546,7 +1546,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 54 types, 128 members, 90% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 56 types, 137 members, 90% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1559,7 +1559,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ae4b87b5f1acc3bab35d384a7a85bd5f5fc72da236f4090f7a81f36a77570644"
+      "sourceSha256": "a1e5adcd67395d1626ef8532b6bbb3232a2b3eedec921a9281b8fb5799753395"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -1784,7 +1784,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6101eeb9d63c2083d088936e3c4a17512c83753cecccaa051322cc5acc4b075e"
+      "sourceSha256": "1efdbff16861d509426b5d56a0db17425a41459ff48df6ebd5a5ae080d32d962"
     },
     {
       "id": "api-aide-core-projections",
@@ -3515,6 +3515,49 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "86fef6ba1f84009e378367a4da3fd7bf3b2943b15e0768c1fd9f8f410be7ef09"
+    },
+    {
+      "id": "note-conductor-spec-errata-providers-json",
+      "path": "docs/notes/conductor-spec-errata-providers-json.md",
+      "title": "Spec erratum — v1.0 §4.3/§14.2 name ~/.aide/providers.yaml; this repository reads ~/.aide/providers.json",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "Spec v1.0 names ~/.aide/providers.yaml in two places (§4.3 line 209, §14.2 lines 472-473). The reader built under Ruling 47 reads ~/.aide/providers.json, applying Ruling 23's ladder argument to the file Ruling 23 itself named as the open case. The schema is otherwise a one-for-one transcription, plus two fields marked in code as extending §14.2: adapterInstallRoot and a per-engine model. The spec HTML stays byte-frozen.",
+      "tags": [
+        "conductor",
+        "spec",
+        "errata",
+        "front-door",
+        "providers",
+        "yaml",
+        "ruling-23",
+        "ruling-36",
+        "ruling-47"
+      ],
+      "links": [
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-spec-errata-policy",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-front-door-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-front-door-ruling-36",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "569f2b8bfa93b44d9eb277254e153e3fe07320a484fcefea2fef652fbb69f616"
     },
     {
       "id": "note-conductor-subscription-use-authorised",
@@ -5649,7 +5692,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1ccfe6a911f498021336017ef2b2c717bef1542775fa81f306969ac090624cf3"
+      "sourceSha256": "48a7627c86737107a77a6e66c064779d2e52f0187c4df9269a948121ab695d17"
     },
     {
       "id": "design-session-profiler",
@@ -6556,6 +6599,43 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "bf5ead48ffaf206188af85737793da995de0409692d2133165110d2891a55a73"
+    },
+    {
+      "id": "note-front-door-rulings-45-48",
+      "path": "docs/notes/front-door-rulings-45-48.md",
+      "title": "Decision note — Rulings 45–48: Terminal leaves Phase 1, edge ownership, maximize-on-create, craft-gate corpus",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "Four rulings filed together. Three are the Owner's rulings on the UI track; the fourth is a retroactive filing of a number that was already being cited as authority. The numbering departs from the Owner's own allocation, and the reason is recorded here rather than corrected silently.",
+      "tags": [
+        "decision-note",
+        "ruling",
+        "conductor",
+        "front-door",
+        "ui",
+        "craft-gate",
+        "docking"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-ui-and-windowing",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-front-door-council-rulings",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e73242b6893766c1eca09ce45565231240a7dd543190e2526fca49887c192bdb"
     },
     {
       "id": "perf-results-phase-1",
@@ -11360,6 +11440,43 @@ window.DOCS_INDEX = {
       "sourceSha256": "c779debd962133ea02c61e17c0ae420b10ceb6831f939fb2802acfcf272a24a4"
     },
     {
+      "id": "proof-front-door-provider-config",
+      "path": "docs/proof/front-door-provider-config.md",
+      "title": "Proof Pack — node F6, provider configuration and the composer handshake",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Evidence for Ruling 47: a JSON reader for ~/.aide/providers.json with two fields marked as extending §14.2, one registry construction site feeding both the sheet and the composer's run binding, the composer's first Configure caller in src/, the attach gate's labels from the same binding, and the host.init / editor.ready handshake fixed and proven in a real WebView2 -- red first, both orders, one init per mount, field values surviving it. Three defects were found where the brief named one; the third had made every page-to-host message silently unreceived.",
+      "tags": [
+        "conductor",
+        "front-door",
+        "providers",
+        "composer",
+        "handshake",
+        "proof-pack",
+        "ruling-47"
+      ],
+      "links": [
+        {
+          "to": "spec-conductor",
+          "rel": "tested-by"
+        },
+        {
+          "to": "note-conductor-spec-errata-providers-json",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-front-door-council-rulings",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4a15a8ae4342546bf837f9d1a48dee8b71ecdb2f4a8eb2fdd0660ac0bb895e4d"
+    },
+    {
       "id": "proof-lane-rename-ruling-15",
       "path": "docs/proof/pp-lane-rename-ruling-15.md",
       "title": "Proof Pack — Ruling 15/15a: GovernedSessionSource/GovernedSession rename",
@@ -12517,7 +12634,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2578ab82138b240b64d06c6a62c021ae3c413bcd7e2dc3a853b704a5252eccff"
+      "sourceSha256": "4433ace5f820c0cb3acb1e7e7b02adac9d9afc9796a10dc76919b4d3e0b23be7"
     },
     {
       "id": "spec-editor-surfaces",
@@ -13068,5 +13185,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "f382f1e3273a2c380a58fffeb764f8b998da8926a5ac1d63e0d065b8329e328e"
+  "graphSha256": "18cf55777814bd622f3518afe3fa866c343508d89fcbc3be1313a5d0a175b6e0"
 };

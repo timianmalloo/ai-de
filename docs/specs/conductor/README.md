@@ -51,3 +51,6 @@ corrected line, verbatim, with its line number; never edit the HTML):
 
 - `note-conductor-spec-errata-lane-rename` — v1.0 §6.2 (line 260), §10 (line 336), §11
   (line 376) name `GovernedSessionSource`; superseded by `GovernedLaneSource` (Ruling 15/A3).
+- `note-conductor-spec-errata-providers-json` — v1.0 §4.3 (line 209) and §14.2 (lines 472–473)
+  name `~/.aide/providers.yaml`; this repository reads `~/.aide/providers.json` (Ruling 23's
+  ladder applied to the file Ruling 23 named as the open case, under Ruling 36's YAML scope).

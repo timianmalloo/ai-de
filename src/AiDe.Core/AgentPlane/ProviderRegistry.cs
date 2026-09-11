@@ -48,7 +48,7 @@ public enum ProviderAuth
 public sealed record ProviderAccount(string Label, AccountHealth Health, string? ObservedAuthLabel = null);
 
 /// <summary>
-/// One <c>providers.yaml</c> row (§14.2) — a provider, how it authenticates, and its accounts.
+/// One <c>providers.json</c> row (§14.2) — a provider, how it authenticates, and its accounts.
 /// </summary>
 /// <remarks>
 /// <b>It deliberately carries no engine id.</b> <see cref="EngineRow.Provider"/> already states the
@@ -84,8 +84,9 @@ public sealed record LaneBinding(string EngineId, string Model, ProviderAccount 
 /// <para><b>Constructed from configuration, with no built-in default.</b> §14.2's example rows carry
 /// account labels like <c>max-personal</c>, which are one operator's names for one operator's
 /// logins. A registry that shipped them would assert an account nobody had signed into. The rows
-/// come from <c>~/.aide/providers.yaml</c> and its per-workspace overrides; parsing that file is the
-/// caller's job, and this type is what the parsed result becomes.</para>
+/// come from <c>~/.aide/providers.json</c> — §14.2's <c>providers.yaml</c>, with the <c>.yaml</c>
+/// filed as an erratum (<c>docs/notes/conductor-spec-errata-providers-json.md</c>) — and
+/// <see cref="ProviderConfiguration"/> is the reader. Per-workspace overrides are not built.</para>
 /// </remarks>
 public sealed class ProviderRegistry
 {

@@ -48,13 +48,19 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     private readonly List<ComposerFieldDescriptor> _fields = [];
     private readonly string _instance = Guid.NewGuid().ToString("N");
 
-    private ComposerMessageRouter? _router;
+    // BUILT WITH THE SURFACE, not with the session. The page posts `editor.ready` the moment it
+    // mounts, which can be before the shell has called Configure — and a ready that arrives at a null
+    // router is a mount the host never hears about, so nothing would ever push the first init.
+    private readonly ComposerMessageRouter _router;
+
     private AttachmentGate? _attachments;
     private ComposerSendContext? _context;
     private TemplateCatalog? _catalog;
     private PromptTemplate? _template;
     private bool _attachEnabled;
     private bool _disposed;
+    private bool _pageReady;
+    private bool _configured;
     private int _blockedByAttachSetting;
 
     /// <param name="surfaceId">The surface's stable id, as every other surface carries one.</param>
@@ -110,6 +116,8 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         root.Children.Add(_view);
         Content = root;
 
+        _router = new ComposerMessageRouter(ComposerPageContract.Url, _instance, [], this);
+
         _view.PreviewKeyDown += OnPreviewKey;
         Loaded += async (_, _) => await InitialiseAsync();
     }
@@ -135,8 +143,11 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// <summary>The last thing that happened, in a sentence.</summary>
     public string Status => _status.Text;
 
-    /// <summary>The router, once the page has been wired. Null before initialisation.</summary>
-    public ComposerMessageRouter? Router => _router;
+    /// <summary>The router. Built with the surface, so a mount is heard before the session is wired.</summary>
+    public ComposerMessageRouter Router => _router;
+
+    /// <summary>Whether the page has reported that it mounted.</summary>
+    public bool PageIsReady => _pageReady;
 
     /// <summary>What the operator will read before sending: the whole compiled prompt.</summary>
     public string CompiledView => _compiled.Text;
@@ -148,8 +159,14 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// Wires the host-side sources: the session's config, the run context, and the attach path.
     /// </summary>
     /// <remarks>
-    /// Called by the shell after render, exactly as the canvas graph source is wired. Everything
-    /// supplied here is host-owned; nothing in it can be influenced by the page.
+    /// <para>Called by the shell after render, exactly as the canvas graph source is wired.
+    /// Everything supplied here is host-owned; nothing in it can be influenced by the page.</para>
+    ///
+    /// <para><b>It pushes the first <c>host.init</c> — but only if the page has already mounted.</b>
+    /// The two orders are both real: the shell configures a document it has just opened while the
+    /// browser is still starting, and it can equally configure one whose page mounted first. Each
+    /// half pushes only when the other has happened, so a mount yields <b>exactly one</b> init
+    /// whichever way round they land.</para>
     /// </remarks>
     public void Configure(
         SessionConfig config,
@@ -171,14 +188,33 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         _fields.Clear();
         _fields.AddRange(fields);
 
-        _router = new ComposerMessageRouter(
-            ComposerPageContract.Url, _instance, [.. _fields.Select(f => f.Id)], this);
+        _router.ReplaceFields([.. _fields.Select(f => f.Id)]);
 
         _templatePicker.ItemsSource = catalog is null ? null : ComposerTemplatePicker.Rows(catalog);
         _templatePicker.Visibility = catalog is null ? Visibility.Collapsed : Visibility.Visible;
 
+        _configured = true;
+
         ApplyAttachAffordance();
         RenderCompiledView();
+        PushInitWhenBothHalvesHaveHappened();
+    }
+
+    /// <summary>
+    /// Reports a host-side refusal on the surface, naming the field the operator must fix.
+    /// </summary>
+    /// <remarks>
+    /// <b>Where the composer says why it has no run binding.</b> Nothing is wired — there is no
+    /// context to wire — and the alternative is an empty surface, which is indistinguishable from a
+    /// broken one. The field name is carried rather than folded into prose for the same reason
+    /// <see cref="ComposerFieldError"/> carries one: the operator's next action is to edit one line.
+    /// </remarks>
+    /// <param name="field">The field, in the wire name the configuration file uses.</param>
+    /// <param name="message">What is wrong, naming the file and the values found.</param>
+    public void ShowFieldRefusal(string field, string message)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(field);
+        _status.Text = $"{field}: {message}";
     }
 
     /// <summary>The picker cards currently offered, in catalog order.</summary>
@@ -209,7 +245,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
         _fields.Clear();
         _fields.AddRange(ComposerFields.ForTemplate(entry.Template!));
-        _router?.ReplaceFields([.. _fields.Select(f => f.Id)]);
+        _router.ReplaceFields([.. _fields.Select(f => f.Id)]);
 
         PushInit();
         RenderCompiledView();
@@ -274,7 +310,15 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     }
 
     /// <inheritdoc/>
-    public void MarkReady() => PushInit();
+    /// <remarks>
+    /// The page mounted. It pushes the first init <b>if the shell has already configured this
+    /// surface</b>; if it has not, <see cref="Configure"/> pushes instead. See its remarks.
+    /// </remarks>
+    public void MarkReady()
+    {
+        _pageReady = true;
+        PushInitWhenBothHalvesHaveHappened();
+    }
 
     /// <inheritdoc/>
     public void SetFieldText(string fieldId, long revision, string text)
@@ -458,6 +502,18 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         return dialog.ShowDialog() == true ? dialog.FileNames : [];
     }
 
+    /// <summary>
+    /// Pushes <c>host.init</c> once the page has mounted <i>and</i> the shell has configured this
+    /// surface — the two halves of the handshake, in whichever order they arrive.
+    /// </summary>
+    private void PushInitWhenBothHalvesHaveHappened()
+    {
+        if (_pageReady && _configured)
+        {
+            PushInit();
+        }
+    }
+
     private void PushInit()
     {
         var payload = new
@@ -475,7 +531,11 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
                 required = f.Required,
                 hint = f.Hint,
                 options = f.Options,
-                value = string.Empty,
+
+                // THE DRAFT'S OWN VALUE, not a blank. The host is the source of the text and the page
+                // mirrors it, so an init carrying `""` for a field the draft has content for does not
+                // "start fresh" — it overwrites what the operator wrote with an empty form.
+                value = CurrentValue(f),
             }),
             fileCandidates = Array.Empty<string>(),
             graphCandidates = Array.Empty<string>(),
@@ -483,6 +543,19 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
         _view.CoreWebView2?.PostWebMessageAsJson(JsonSerializer.Serialize(payload));
     }
+
+    /// <summary>What the draft currently holds for one field — the inverse of <see cref="SetFieldText"/>.</summary>
+    private string CurrentValue(ComposerFieldDescriptor field) => field.Target switch
+    {
+        ComposerFieldTarget.FreeForm => _draft.FreeFormText,
+        ComposerFieldTarget.GoalBlock =>
+            _draft.GoalValues.TryGetValue(field.Name, out var goal) ? goal : string.Empty,
+        ComposerFieldTarget.Template =>
+            _draft.TemplateValues.TryGetValue(field.Name, out var values)
+                ? string.Join("\n", values)
+                : string.Empty,
+        _ => string.Empty,
+    };
 
     private static string WidgetName(ComposerFieldWidget widget) => widget switch
     {
@@ -507,6 +580,17 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
             ComposerPageContract.ApplySettingsFloor(core.Settings);
             WebAssetHost.Map(core);
+
+            // THE HOST-MINTED INSTANCE, HANDED TO THE DOCUMENT BEFORE ANY SCRIPT RUNS. The page must
+            // carry it in every envelope, including the first — `editor.ready` — so it cannot be
+            // learned from `host.init`, which is what ready unblocks. Injected rather than posted:
+            // a message needs an instance to be routed, which is the loop.
+            //
+            // IT GRANTS THE PAGE NOTHING. It is a string the host generated, that the host already
+            // re-states on `host.init`, and that the router compares ordinally. It is not a host
+            // object — those stay off — and there is no second value the page could have used.
+            await core.AddScriptToExecuteOnDocumentCreatedAsync(
+                "window.__aideComposerInstance = " + JsonSerializer.Serialize(_instance) + ";");
 
             core.NavigationStarting += (_, e) => e.Cancel = ComposerPageContract.MustCancelNavigation(e.Uri);
             core.FrameNavigationStarting += (_, e) => e.Cancel = ComposerPageContract.MustCancelNavigation(e.Uri);
@@ -553,16 +637,36 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     {
         // The handler passes the three inputs and does nothing else — every rule is in the router,
         // where it can be exercised without a browser.
+        //
+        // `AdditionalObjects` IS NULL FOR FOUR OF THE FIVE KINDS, and that is not a style note.
+        // MEASURED by the composer probe, which prints it on every run: for a message posted with
+        // plain `postMessage` the property reads `null`, so the obvious `foreach` over it threw a
+        // NullReferenceException — INSIDE a multicast event invocation, which aborts the handler list,
+        // and at a COM callback boundary, which swallowed it. The visible symptom was no symptom: no
+        // exception, no crash, no drop counted, and every page message silently unreceived. Only
+        // `attach.offered` — posted with `postMessageWithAdditionalObjects` — carries objects at all.
         var paths = new List<string>();
-        foreach (var item in e.AdditionalObjects)
+        try
         {
-            if (item is CoreWebView2File file)
+            if (e.AdditionalObjects is { } objects)
             {
-                paths.Add(file.Path);
+                foreach (var item in objects)
+                {
+                    if (item is CoreWebView2File file)
+                    {
+                        paths.Add(file.Path);
+                    }
+                }
             }
         }
+        catch (Exception error) when (error is not OutOfMemoryException)
+        {
+            // A message whose objects cannot be read carries no paths. It is still routed: the four
+            // kinds that never carry one must not be lost because the fifth's accessor failed.
+            paths.Clear();
+        }
 
-        _router?.Route(e.Source, e.WebMessageAsJson, paths);
+        _router.Route(e.Source, e.WebMessageAsJson, paths);
     }
 }
 

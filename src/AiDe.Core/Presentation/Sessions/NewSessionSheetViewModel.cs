@@ -35,6 +35,14 @@ public sealed record AgentBackendRow(string EngineId, string ProviderId, Provide
     public bool RoutableForThisSession => Account.Health != AccountHealth.NeedsLogin;
 
     /// <summary>The row as the sheet reads it: engine, account, health.</summary>
+    /// <remarks>
+    /// <b>The health word carries its provenance, because nothing probes.</b> §4.3 describes a
+    /// per-account liveness check and this phase builds none — the value comes from <c>health:</c> in
+    /// <c>~/.aide/providers.json</c>, which is what the operator observed and wrote down. A bare
+    /// "ready" on screen would read as "checked just now", a claim the product cannot make, and the
+    /// operator would discover it was stale at the moment a run failed. Same posture as
+    /// <see cref="ProviderAccount.ObservedAuthLabel"/>, applied to the value beside it.
+    /// </remarks>
     public string DisplayLabel =>
         $"{EngineId} · {Account.Label} · {Health switch
         {
@@ -42,7 +50,7 @@ public sealed record AgentBackendRow(string EngineId, string ProviderId, Provide
             AccountHealth.NeedsLogin => "needs login",
             AccountHealth.QuotaDegraded => "quota degraded",
             _ => "not recorded",
-        }}";
+        }} (as you recorded it, not probed)";
 }
 
 /// <summary>What the sheet produced: the session it created, and the one field a run also needs.</summary>

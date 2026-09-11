@@ -12,6 +12,13 @@ public partial class MainWindow : Window
 {
     private readonly ShellModeController _mode;
 
+    /// <summary>
+    /// The provider file, as the last <c>File → New Session</c> read it. <b>The one construction site
+    /// of a <c>ProviderRegistry</c> in the product</b>, and the source of the sheet's account list and
+    /// the composer's run binding alike.
+    /// </summary>
+    private AiDe.Core.AgentPlane.ProviderConfiguration? _providers;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -135,20 +142,40 @@ public partial class MainWindow : Window
     /// having created nothing — the sheet is not even constructed, because it is not constructible
     /// without a workspace.</para>
     ///
-    /// <para><b>No provider registry is configured yet, and the sheet says so.</b> §14.2's
-    /// <c>providers.yaml</c> has no reader in this repository — <c>ProviderRegistry</c>'s own remarks
-    /// record that parsing it is a caller's job — so the sheet is handed an empty registry and
-    /// renders "no agent backend is configured", which is true. A session still opens; a governed
-    /// run is what needs a backend.</para>
+    /// <para><b>The provider registry is read here, once, and handed to BOTH consumers.</b>
+    /// <c>~/.aide/providers.json</c> — §14.2's <c>providers.yaml</c>, with the <c>.yaml</c> filed as
+    /// an erratum, see <see cref="AiDe.Core.AgentPlane.ProviderConfiguration"/> — is read into
+    /// <see cref="_providers"/> before the sheet opens, and the same instance then binds the
+    /// composer's run context. Two reads would be two registries, and the sheet's account list would
+    /// be able to disagree with the account a run bills.</para>
+    ///
+    /// <para><b>Missing, malformed and configured are three states, not two.</b> No file: the sheet
+    /// shows "no agent backend is configured", which is true, and a session still opens — a governed
+    /// run is what needs a backend. A malformed file: this refuses before the sheet opens, naming the
+    /// file and the field, because a registry read empty out of a broken file renders as the first
+    /// state and is a wrong claim about a file the operator wrote (Ruling 47 (b)).</para>
     /// </remarks>
     private string NewSession()
     {
+        try
+        {
+            _providers = AiDe.Core.AgentPlane.ProviderConfiguration.ReadIfPresent(
+                AiDe.Core.AgentPlane.ProviderConfiguration.DefaultPath);
+        }
+        catch (AiDe.Core.AgentPlane.AgentPlaneException error)
+        {
+            // REFUSED, NOT DEFAULTED. The flow does not start: an empty registry here would open the
+            // sheet reading "no agent backend is configured" over a file that configures several.
+            _providers = null;
+            return error.Message;
+        }
+
         var flow = new Workbench.Sessions.NewSessionFlow(
             activeWorkspaceRoot: () => (DataContext as MainWindowViewModel)?.WorkspaceRoot,
             chooseWorkspace: ChooseWorkspaceForSession,
             showSheet: sheet => Workbench.Sessions.NewSessionSheetDialog.Show(
                 sheet, this, Shell.Announcer.Announce),
-            registry: () => new AiDe.Core.AgentPlane.ProviderRegistry([]),
+            registry: () => _providers?.Registry ?? new AiDe.Core.AgentPlane.ProviderRegistry([]),
             workspaceId: root => root,
             opened: created =>
             {
@@ -157,11 +184,139 @@ public partial class MainWindow : Window
                     new Workbench.Sessions.RecentSessionEntry(
                         created.Config.SessionId, created.Config.Name, created.Config.WorkspaceId));
 
-                Shell.Announcer.Announce(Shell.OpenSessionDocument(created.Config));
+                var opened = Shell.OpenSessionDocument(created.Config);
+                Shell.Announcer.Announce(opened + " " + BindComposer(created));
                 RebuildMenu();
             });
 
         return flow.Start().Announcement;
+    }
+
+    /// <summary>
+    /// Wires the session's composer to the run it will start — <b>the only caller of
+    /// <c>ComposerSurface.Configure</c> in the product</b>.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>One binding feeds both consumers.</b> The <c>ComposerSendContext</c> and the
+    /// <c>AttachmentGate</c>'s provider name and account label all come from the single
+    /// <see cref="AiDe.Core.AgentPlane.LaneBinding"/> resolved below. There is deliberately no second
+    /// source: the sentence the operator affirms before a byte of an outside-workspace file is read
+    /// names the account the run will bill, and two derivations of that pair is the shape that lets
+    /// the affirmation describe a different account from the one that gets charged (DM7).</para>
+    ///
+    /// <para><b>Every refusal names a field and is visible.</b> No model, an ambiguous account, an
+    /// unconfigured provider and an ambiguous engine each land on the composer's own status line and
+    /// in the announcement. Nothing is defaulted on the way past: a run-side value invented here
+    /// ranks the episode in the wrong standings cohort and is indistinguishable from a chosen one
+    /// afterwards (DC-110).</para>
+    ///
+    /// <para><b>The draft opens as a goal block, not free-form.</b> A governed run requires the six
+    /// §14.3 fields — no block, no spawn (R2) — and a free-form draft validates with none of them,
+    /// so the shape is set here rather than discovered at the run host.</para>
+    /// </remarks>
+    private string BindComposer(AiDe.Core.Presentation.Sessions.NewSessionResult created)
+    {
+        if (Shell.SessionComposer(created.Config.SessionId) is not { } composer)
+        {
+            return "Its composer is not on screen, so nothing was wired to a run.";
+        }
+
+        if (DataContext is not MainWindowViewModel
+            {
+                WorkspaceRoot: { } repositoryRoot, DataDirectory: { } dataDirectory,
+            })
+        {
+            return Refuse(
+                composer, "repositoryRoot",
+                "this window has no open workspace, so a run has no checkout to cut a worktree from");
+        }
+
+        if (_providers is not { } providers)
+        {
+            return Refuse(
+                composer, "providers",
+                $"there is no provider file at {AiDe.Core.AgentPlane.ProviderConfiguration.DefaultPath}, "
+                + "so no run binding exists. The session is open; a governed run needs one");
+        }
+
+        if (created.RoutableBackends.Count != 1)
+        {
+            return Refuse(
+                composer, "engineId",
+                created.RoutableBackends.Count == 0
+                    ? "this session has no routable agent backend — every enabled engine reads "
+                      + "needs-login, which §4.3 treats as absent"
+                    : $"this session enables {created.RoutableBackends.Count} routable backends ("
+                      + string.Join(", ", created.RoutableBackends)
+                      + "). Enable exactly one: an ambiguous engine is refused rather than resolved "
+                      + "by reading order");
+        }
+
+        var binding = providers.Bind(created.RoutableBackends[0], out var refusal);
+        if (binding is null)
+        {
+            return Refuse(composer, refusal!.Field, refusal.Message);
+        }
+
+        composer.Draft.SwitchTo(AiDe.Core.Presentation.Composer.ComposerShape.GoalBlock);
+
+        composer.Configure(
+            created.Config,
+            new Workbench.Composer.ComposerSendContext(
+                RepositoryRoot: repositoryRoot,
+                DataDirectory: dataDirectory,
+                AdapterInstallRoot: providers.AdapterInstallRoot,
+                EngineId: binding.EngineId,
+                Model: binding.Model,
+                AccountLabel: binding.Account.Label,
+                TaskClass: created.TaskClass,
+                ProofPackArtifacts: [],
+                Providers: providers.Registry.Rows),
+            Workbench.Composer.ComposerFields.GoalBlock(),
+            new AiDe.Core.Presentation.Composer.AttachmentGate(
+                repositoryRoot,
+                new AiDe.Core.Presentation.Composer.AttachmentFileReader(),
+                new AffirmOutsideWorkspaceAttachment(this),
+
+                // THE SAME BINDING, not a second lookup. These two arguments are the sentence the
+                // operator reads before any outside-workspace byte is read.
+                binding.Provider.ProviderId,
+                binding.Account.Label));
+
+        return $"Composer bound to {binding.EngineId} · {binding.Model} · {binding.Account.Label}.";
+    }
+
+    /// <summary>Puts a field-level refusal on the composer and returns it for the announcement.</summary>
+    private static string Refuse(Workbench.Composer.ComposerSurface composer, string field, string message)
+    {
+        composer.ShowFieldRefusal(field, message);
+        return $"The composer has no run binding — {field}: {message}.";
+    }
+
+    /// <summary>
+    /// Asks the operator about one outside-workspace file, in a modal owned by this window.
+    /// </summary>
+    /// <remarks>
+    /// <b>It lives here for the same reason the folder picker does:</b> only a <c>Window</c> can show
+    /// a modal, and the gate that decides <i>whether</i> to ask is in Core, where it is testable
+    /// without one. The default is No — a dialog dismissed with Escape, closed with the title bar, or
+    /// answered by a mis-click must not read as consent to send a file off the machine.
+    /// </remarks>
+    private sealed class AffirmOutsideWorkspaceAttachment(Window owner)
+        : AiDe.Core.Presentation.Composer.IAttachmentAffirmation
+    {
+        public bool Confirm(AiDe.Core.Presentation.Composer.OutsideWorkspaceAffirmation affirmation)
+        {
+            ArgumentNullException.ThrowIfNull(affirmation);
+
+            return MessageBox.Show(
+                owner,
+                affirmation.Prompt,
+                "Attach a file from outside this workspace?",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning,
+                MessageBoxResult.No) == MessageBoxResult.Yes;
+        }
     }
 
     /// <summary>Reopens a session from the Recent sessions list, restoring its workspace first.</summary>

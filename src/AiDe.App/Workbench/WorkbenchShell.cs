@@ -2945,6 +2945,21 @@ public sealed class WorkbenchShell : IDisposable
             "There is no pane to open a session document in.");
     }
 
+    /// <summary>
+    /// The composer half of an open session document, so the composition root can wire it.
+    /// </summary>
+    /// <remarks>
+    /// <b>The shell hands the surface over; it does not build the run context.</b> Everything a
+    /// governed run needs — the provider file, the binding, the account — is read in
+    /// <c>MainWindow</c>, which is the one place a <c>ProviderRegistry</c> is constructed. A shell
+    /// that assembled it here would be the second construction site of one fact (DM7).
+    /// </remarks>
+    /// <param name="sessionId">The session whose document is open.</param>
+    /// <returns>The composer, or null when no document for that session is open.</returns>
+    internal Composer.ComposerSurface? SessionComposer(string sessionId) =>
+        _sessionDocuments
+            .GetValueOrDefault(Sessions.SessionDocumentSurface.SurfaceIdFor(sessionId))?.Composer;
+
     /// <summary>The command palette's rows: every keyboard-reachable layout command.</summary>
     public static IReadOnlyList<WorkbenchCommand> PaletteCommands(string search) =>
         [.. WorkbenchCommandCatalog.Search(search)];
