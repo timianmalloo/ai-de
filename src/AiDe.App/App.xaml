@@ -20,6 +20,31 @@
         <SolidColorBrush x:Key="TextBrush" Color="#E4E9EF" />
 
         <!--
+            THE REST OF THE PALETTE, DECLARED HERE RATHER THAN TWO HUNDRED LINES DOWN. A
+            StaticResource resolves against what has already been parsed, so a brush declared after
+            the styles that use it cannot be referenced by them. These seven sat below the menu
+            templates, which is why the implicit default styles at the bottom of this file could not
+            have been written where they belong. Tokens first, templates second, styles last.
+        -->
+        <SolidColorBrush x:Key="TextMutedBrush" Color="#98A3B2" />
+        <SolidColorBrush x:Key="AccentBrush" Color="#5B9DD9" />
+        <SolidColorBrush x:Key="VerifiedBrush" Color="#5FB98F" />
+        <SolidColorBrush x:Key="InferredBrush" Color="#D8A650" />
+        <SolidColorBrush x:Key="UnverifiedBrush" Color="#98A3B2" />
+        <SolidColorBrush x:Key="DangerBrush" Color="#E07A6F" />
+        <SolidColorBrush x:Key="FocusBrush" Color="#8FC0EA" />
+
+        <!--
+            DISABLED IS A STATE, NOT AN OPACITY (DESIGN.md, "Disabled is a state").
+            TextMuted composited at 50% over the sunken ground measures 2.73:1 — below the 3:1 floor
+            for a meaningful graphic — so `Opacity 0.5` made "unavailable" and "unreadable" the same
+            rendering. This value was already in this file three times, as a raw literal on the
+            disabled MenuItem foreground; it is now the token those three reference. ContrastFloor
+            computes it against all three grounds rather than this comment asserting a number (TC6).
+        -->
+        <SolidColorBrush x:Key="DisabledTextBrush" Color="#7C8896" />
+
+        <!--
             MENU COLOURS. Reported as illegible: the Menu carried a dark background and a light
             foreground, but a MenuItem's DROPDOWN uses the system popup template, which is light —
             so light text landed on a light background. Both surfaces are stated explicitly rather
@@ -59,18 +84,6 @@
         </Style>
 
         <!--
-            LIST ITEM LEGIBILITY. Without this, a ListBox item's text falls back to the default
-            ListBoxItem foreground (a dark system colour), so the honest-read surfaces — provenance,
-            board, leaderboard, search — rendered near-black text on the near-black surface and were
-            effectively unreadable (smoke 9-2: "black font on dark background"). The window's TextBrush
-            is the readable foreground; the default template's selection trigger still swaps to the
-            highlight text colour when a row is selected, so this only fixes the unselected default.
-        -->
-        <Style TargetType="ListBoxItem">
-            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
-        </Style>
-
-        <!--
             MENU TEMPLATES. The default WPF MenuItem/ContextMenu popups keep the system chrome —
             a thick square border and a heavy shadow — which read as clunky against the soft
             facelift. These retemplate the four MenuItem roles and the ContextMenu so every dropdown
@@ -87,7 +100,7 @@
                     <Setter TargetName="Bd" Property="Background" Value="{StaticResource MenuHoverBrush}" />
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Foreground" Value="#7C8896" />
+                    <Setter Property="Foreground" Value="{StaticResource DisabledTextBrush}" />
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
@@ -136,7 +149,7 @@
                     <Setter TargetName="Bd" Property="Background" Value="{StaticResource MenuHoverBrush}" />
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Foreground" Value="#7C8896" />
+                    <Setter Property="Foreground" Value="{StaticResource DisabledTextBrush}" />
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
@@ -168,7 +181,7 @@
                     <Setter TargetName="Bd" Property="Background" Value="{StaticResource MenuHoverBrush}" />
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Foreground" Value="#7C8896" />
+                    <Setter Property="Foreground" Value="{StaticResource DisabledTextBrush}" />
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
@@ -220,13 +233,6 @@
         <Style TargetType="{x:Type avalonDock:LayoutAnchorSideControl}">
             <Setter Property="Visibility" Value="Collapsed" />
         </Style>
-        <SolidColorBrush x:Key="TextMutedBrush" Color="#98A3B2" />
-        <SolidColorBrush x:Key="AccentBrush" Color="#5B9DD9" />
-        <SolidColorBrush x:Key="VerifiedBrush" Color="#5FB98F" />
-        <SolidColorBrush x:Key="InferredBrush" Color="#D8A650" />
-        <SolidColorBrush x:Key="UnverifiedBrush" Color="#98A3B2" />
-        <SolidColorBrush x:Key="DangerBrush" Color="#E07A6F" />
-        <SolidColorBrush x:Key="FocusBrush" Color="#8FC0EA" />
 
         <!--
             FACELIFT — soft islands. Radii are TOKENS: a control rounds by referencing these, never a
@@ -235,14 +241,106 @@
             over an HwndHost/WebView2 pane, where WPF effects do not composite (the airspace rule the
             wpf-styling-expert holds a veto on). Panes soften with radius + border, not shadow.
         -->
+        <CornerRadius x:Key="RadiusSm">4</CornerRadius>
         <CornerRadius x:Key="RadiusMd">6</CornerRadius>
         <CornerRadius x:Key="RadiusLg">10</CornerRadius>
         <CornerRadius x:Key="RadiusIsland">12</CornerRadius>
         <DropShadowEffect x:Key="ElevationRaised" BlurRadius="16" ShadowDepth="0" Opacity="0.34" Color="#000000" />
 
-        <!--  A rounded chrome button. Keyed, not the default Button style, so AvalonDock's own
-              buttons keep their template. Hover uses the menu-hover ground; focus draws a visible
-              ring (WCAG 2.4.7); disabled dims but stays readable.  -->
+        <!--
+            THE ONE BUTTON CHROME. Shared by the keyed RoundedButton, the implicit Button default and
+            the implicit ToggleButton default, so a button added tomorrow looks like the app without
+            anyone having to remember a style name.
+
+            THE FOCUS RING IS ITS OWN OUTLINE (AR4, WCAG 2.4.7). It used to be a trigger that
+            recoloured Chrome's BorderBrush - and every rail button sets BorderThickness="0", so the
+            ring had zero width and rendered NOTHING while a comment two lines up claimed it did.
+            FocusRing is a second border with its own 2px thickness that no caller can zero, drawn
+            just outside the chrome and never hit-testable.
+
+            DISABLED IS A TOKEN PAIRING, NOT AN OPACITY (A4). Opacity 0.5 over the sunken rail
+            measured 2.73:1 against a 3:1 floor. Both the content's foreground and the templated
+            parent's are set, because a rail glyph strokes itself from the BUTTON's Foreground while
+            a caption reads the ContentPresenter's - and the TargetName'd setter is the half a
+            caller's local Foreground cannot outrank.
+        -->
+        <ControlTemplate x:Key="ChromeButtonTemplate" TargetType="ButtonBase">
+            <Grid>
+                <Border x:Name="Chrome"
+                        CornerRadius="{StaticResource RadiusMd}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Padding="{TemplateBinding Padding}">
+                    <ContentPresenter x:Name="Content"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center"
+                                      TextElement.Foreground="{TemplateBinding Foreground}" />
+                </Border>
+                <Border x:Name="FocusRing"
+                        Margin="-1"
+                        BorderThickness="2"
+                        BorderBrush="Transparent"
+                        CornerRadius="{StaticResource RadiusMd}"
+                        IsHitTestVisible="False"
+                        SnapsToDevicePixels="True" />
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Chrome" Property="Background" Value="{StaticResource MenuHoverBrush}" />
+                </Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter TargetName="FocusRing" Property="BorderBrush" Value="{StaticResource FocusBrush}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter TargetName="Content" Property="TextElement.Foreground" Value="{StaticResource DisabledTextBrush}" />
+                    <Setter Property="Foreground" Value="{StaticResource DisabledTextBrush}" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <!--  The toggle form: the same chrome plus a checked state, so a two-state control reads as
+              chosen rather than as the platform's pale face (measured #BCDDEE on our ground).  -->
+        <ControlTemplate x:Key="ChromeToggleTemplate" TargetType="ToggleButton">
+            <Grid>
+                <Border x:Name="Chrome"
+                        CornerRadius="{StaticResource RadiusMd}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Padding="{TemplateBinding Padding}">
+                    <ContentPresenter x:Name="Content"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center"
+                                      TextElement.Foreground="{TemplateBinding Foreground}" />
+                </Border>
+                <Border x:Name="FocusRing"
+                        Margin="-1"
+                        BorderThickness="2"
+                        BorderBrush="Transparent"
+                        CornerRadius="{StaticResource RadiusMd}"
+                        IsHitTestVisible="False"
+                        SnapsToDevicePixels="True" />
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter TargetName="Chrome" Property="Background" Value="{StaticResource AccentBrush}" />
+                    <Setter TargetName="Chrome" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                    <Setter TargetName="Content" Property="TextElement.Foreground" Value="{StaticResource SurfaceSunkenBrush}" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Chrome" Property="Background" Value="{StaticResource MenuHoverBrush}" />
+                </Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter TargetName="FocusRing" Property="BorderBrush" Value="{StaticResource FocusBrush}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter TargetName="Content" Property="TextElement.Foreground" Value="{StaticResource DisabledTextBrush}" />
+                    <Setter Property="Foreground" Value="{StaticResource DisabledTextBrush}" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <!--  Kept as a key because the call sites name it, and naming the app's button explicitly is
+              not wrong. It is now the same thing the implicit default already gives you.  -->
         <Style x:Key="RoundedButton" TargetType="Button">
             <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
             <Setter Property="Background" Value="{StaticResource SurfaceRaisedBrush}" />
@@ -250,31 +348,303 @@
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="Padding" Value="10,4" />
             <Setter Property="SnapsToDevicePixels" Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="Chrome"
-                                CornerRadius="{StaticResource RadiusMd}"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Chrome" Property="Background" Value="{StaticResource MenuHoverBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsKeyboardFocused" Value="True">
-                                <Setter TargetName="Chrome" Property="BorderBrush" Value="{StaticResource FocusBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Opacity" Value="0.5" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+            <Setter Property="Template" Value="{StaticResource ChromeButtonTemplate}" />
+        </Style>
+
+        <!--
+            ============================================================================
+            THEME COVERAGE IS OPT-OUT, NOT OPT-IN (DESIGN.md TC1-TC3)
+            ============================================================================
+
+            WHAT WAS WRONG. This shell themed its CONTAINERS and left its LEAVES to WPF, whose
+            platform default is a LIGHT theme. Six implicit styles existed and not one was for a text
+            or an input control, so eighteen base types fell back to the platform and twenty-eight
+            live instantiations rendered near-black ink on a themed dark ground - measured at 1.15:1
+            and 1.27:1 against a 4.5:1 floor. Text was not merely low-contrast; it was invisible.
+
+            WHY IMPLICIT RATHER THAN PER-ELEMENT. Per-element brushes make correctness a habit: the
+            control that is added tomorrow regresses silently and nothing fails. An implicit
+            (TargetType-only) style makes the theme the default and an escape the explicit act, so
+            the NEXT control is correct without anyone remembering this file exists.
+
+            INK AND GROUND TOGETHER, ALWAYS (TC2). The previous partial fix themed a ListBoxItem's
+            Foreground and left its ListBox's Background on the platform's white - and so converted
+            dark-on-dark into light-on-white at 1.22:1. A partial pairing is worse than none, so
+            every style below states both. Where the honest ground is "whatever the container
+            paints", it is stated as such (x:Null for the inline text types, Transparent for the row
+            and tab types) rather than left unsaid: an unstated ground is what nobody measured.
+
+            WHY x:Null AND NOT Transparent FOR TextBlock. Transparent is hit-testable and null is
+            not. Painting a transparent ground under every run of text in the app would silently
+            change which element receives a press - inside a draggable tab header, that is a
+            behaviour change wearing a theming change's clothes.
+
+            MEASURED, NOT ASSERTED (TC6). ContrastFloorTests renders these controls under this
+            dictionary and computes every pairing from the resolved brushes; the numbers live there,
+            not in this comment.
+        -->
+
+        <!--  Inline text. Ink only has a ground when its container gives it one; that is the pairing
+              that gets measured, and x:Null says so without changing hit-testing.  -->
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="{x:Null}" />
+        </Style>
+
+        <Style TargetType="Label">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="{x:Null}" />
+        </Style>
+
+        <!--  Text entry is a SUNKEN well: a field the operator types into reads as depth, and the
+              read-only compiled view stops being the brightest element on its pane.  -->
+        <Style TargetType="TextBox">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="{StaticResource SurfaceSunkenBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="CaretBrush" Value="{StaticResource TextBrush}" />
+            <Setter Property="SelectionBrush" Value="{StaticResource AccentBrush}" />
+        </Style>
+
+        <Style TargetType="PasswordBox">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="{StaticResource SurfaceSunkenBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="CaretBrush" Value="{StaticResource TextBrush}" />
+            <Setter Property="SelectionBrush" Value="{StaticResource AccentBrush}" />
+        </Style>
+
+        <Style TargetType="RichTextBox">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="{StaticResource SurfaceSunkenBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="CaretBrush" Value="{StaticResource TextBrush}" />
+            <Setter Property="SelectionBrush" Value="{StaticResource AccentBrush}" />
+        </Style>
+
+        <!--  The app's button, by default. AvalonDock's own chrome is exempted in its own resource
+              scope (DockRoundedTabs), which is nearer in the tree and therefore wins.  -->
+        <Style TargetType="Button">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="{StaticResource SurfaceRaisedBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="10,4" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template" Value="{StaticResource ChromeButtonTemplate}" />
+        </Style>
+
+        <Style TargetType="ToggleButton">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="{StaticResource SurfaceRaisedBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="10,4" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template" Value="{StaticResource ChromeToggleTemplate}" />
+        </Style>
+
+        <!--
+            THE BULLET IS DRAWN HERE, NOT BY THE PLATFORM. The platform's BulletChrome paints its
+            check glyph in a fixed near-black, so a dark ground under it produces a control whose
+            CHECKED and UNCHECKED states are indistinguishable - a state that reads as the wrong
+            answer, which is worse than an unreadable label. The glyph is ours, in the ink token, so
+            it is legible by the same measurement everything else is.
+        -->
+        <ControlTemplate x:Key="ChromeCheckBoxTemplate" TargetType="CheckBox">
+            <Grid Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid Width="16" Height="16" VerticalAlignment="Center">
+                    <Border x:Name="Box"
+                            CornerRadius="{StaticResource RadiusSm}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="1"
+                            SnapsToDevicePixels="True" />
+                    <Path x:Name="Check" Visibility="Collapsed"
+                          Data="M3.5,8.5 L6.5,11.5 L12.5,4.5"
+                          Stroke="{StaticResource TextBrush}" StrokeThickness="2"
+                          StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
+                    <Rectangle x:Name="Mixed" Visibility="Collapsed" Width="8" Height="2"
+                               Fill="{StaticResource TextBrush}" />
+                    <Border x:Name="FocusRing" Margin="-3" BorderThickness="2" BorderBrush="Transparent"
+                            CornerRadius="{StaticResource RadiusSm}" IsHitTestVisible="False" />
+                </Grid>
+                <ContentPresenter x:Name="Content" Grid.Column="1" Margin="8,0,0,0"
+                                  VerticalAlignment="Center" RecognizesAccessKey="True"
+                                  TextElement.Foreground="{TemplateBinding Foreground}" />
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter TargetName="Check" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                </Trigger>
+                <Trigger Property="IsChecked" Value="{x:Null}">
+                    <Setter TargetName="Mixed" Property="Visibility" Value="Visible" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource FocusBrush}" />
+                </Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter TargetName="FocusRing" Property="BorderBrush" Value="{StaticResource FocusBrush}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter TargetName="Content" Property="TextElement.Foreground" Value="{StaticResource DisabledTextBrush}" />
+                    <Setter TargetName="Check" Property="Stroke" Value="{StaticResource DisabledTextBrush}" />
+                    <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource DisabledTextBrush}" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <Style TargetType="CheckBox">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="{StaticResource SurfaceSunkenBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template" Value="{StaticResource ChromeCheckBoxTemplate}" />
+        </Style>
+
+        <!--  The same reasoning as the checkbox: the platform's radio dot is a fixed dark fill.  -->
+        <ControlTemplate x:Key="ChromeRadioButtonTemplate" TargetType="RadioButton">
+            <Grid Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid Width="16" Height="16" VerticalAlignment="Center">
+                    <Ellipse x:Name="Box"
+                             Fill="{TemplateBinding Background}"
+                             Stroke="{TemplateBinding BorderBrush}"
+                             StrokeThickness="1" />
+                    <Ellipse x:Name="Dot" Visibility="Collapsed" Width="8" Height="8"
+                             Fill="{StaticResource TextBrush}" />
+                    <Ellipse x:Name="FocusRing" Margin="-3" Stroke="Transparent" StrokeThickness="2"
+                             IsHitTestVisible="False" />
+                </Grid>
+                <ContentPresenter x:Name="Content" Grid.Column="1" Margin="8,0,0,0"
+                                  VerticalAlignment="Center" RecognizesAccessKey="True"
+                                  TextElement.Foreground="{TemplateBinding Foreground}" />
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter TargetName="Dot" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="Box" Property="Stroke" Value="{StaticResource AccentBrush}" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Box" Property="Stroke" Value="{StaticResource FocusBrush}" />
+                </Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter TargetName="FocusRing" Property="Stroke" Value="{StaticResource FocusBrush}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter TargetName="Content" Property="TextElement.Foreground" Value="{StaticResource DisabledTextBrush}" />
+                    <Setter TargetName="Dot" Property="Fill" Value="{StaticResource DisabledTextBrush}" />
+                    <Setter TargetName="Box" Property="Stroke" Value="{StaticResource DisabledTextBrush}" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <Style TargetType="RadioButton">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="{StaticResource SurfaceSunkenBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template" Value="{StaticResource ChromeRadioButtonTemplate}" />
+        </Style>
+
+        <!--  A dropdown's closed face is themed here; its popup rows are ComboBoxItem, which is the
+              SAME pairing trap as ListBox/ListBoxItem and is therefore stated beside it.  -->
+        <Style TargetType="ComboBox">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="{StaticResource SurfaceRaisedBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+        </Style>
+
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="{StaticResource MenuBackgroundBrush}" />
+        </Style>
+
+        <!--  The list and its rows, as one pairing. This is pair 8's site: the item's ink was themed
+              and the list's ground was not, so the command palette rendered #E4E9EF on the
+              platform's #FFFFFF at 1.22:1 - the inverse of the defect the fix was for.  -->
+        <Style TargetType="ListBox">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+        </Style>
+
+        <ControlTemplate x:Key="ChromeListBoxItemTemplate" TargetType="ListBoxItem">
+            <Border x:Name="Row"
+                    Background="{TemplateBinding Background}"
+                    Padding="{TemplateBinding Padding}"
+                    CornerRadius="{StaticResource RadiusSm}"
+                    SnapsToDevicePixels="True">
+                <ContentPresenter x:Name="Content" TextElement.Foreground="{TemplateBinding Foreground}" />
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Row" Property="Background" Value="{StaticResource MenuHoverBrush}" />
+                </Trigger>
+                <!--  Selection is the accent ground with the sunken ink on it: a selected row must
+                      not be the one row in the app that reverts to the platform's pale highlight.  -->
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter TargetName="Row" Property="Background" Value="{StaticResource AccentBrush}" />
+                    <Setter TargetName="Content" Property="TextElement.Foreground" Value="{StaticResource SurfaceSunkenBrush}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter TargetName="Content" Property="TextElement.Foreground" Value="{StaticResource DisabledTextBrush}" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Template" Value="{StaticResource ChromeListBoxItemTemplate}" />
+        </Style>
+
+        <!--  The tree and its rows. The row's ground is Transparent because the tree paints it and a
+              second opaque ground there would hide the selection the template draws.  -->
+        <Style TargetType="TreeView">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+        </Style>
+
+        <Style TargetType="TreeViewItem">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+
+        <!--  A tab header sits ON chrome somebody else painted (AvalonDock's, or a TabControl's), so
+              Transparent is the true ground and the ink is what was missing.  -->
+        <Style TargetType="TabItem">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+
+        <Style TargetType="Expander">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+        </Style>
+
+        <Style TargetType="GroupBox">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+        </Style>
+
+        <!--  Every top-level window, not just the one that remembered. A dialog opened with `new
+              Window` used to inherit nothing at all.  -->
+        <Style TargetType="Window">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
         </Style>
 
         <!--  Terminal palette. The ANSI sixteen are a REQUIRED vocabulary: programs address them by

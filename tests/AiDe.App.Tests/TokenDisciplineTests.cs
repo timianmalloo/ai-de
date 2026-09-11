@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using System.Windows;
 
 namespace AiDe.App.Tests;
 
@@ -56,6 +57,107 @@ public sealed class TokenDisciplineTests
     public void TheScan_CoversANonEmptyCorpus()
     {
         Assert.NotEmpty(ComponentMarkup());
+    }
+
+    /// <summary>
+    /// Every resource key this application names exists (TC3).
+    /// </summary>
+    /// <remarks>
+    /// <para><b>A resource reference to a missing key is a silent no-op.</b> No exception, no log,
+    /// and visually indistinguishable from "not themed yet". <c>SunkenBrush</c> and
+    /// <c>RaisedBrush</c> were referenced from six sites and declared nowhere: the search box in the
+    /// class diagram stayed platform white, the code viewer and the prompt draft stayed unthemed,
+    /// and the type cards rendered transparent over the pane. The keys that WERE declared are
+    /// <c>SurfaceSunkenBrush</c> and <c>SurfaceRaisedBrush</c>, one word away from each, and nothing
+    /// anywhere said so.</para>
+    ///
+    /// <para><b>Fifteen lines of check would have caught both at authoring time</b>, which is the
+    /// whole argument for writing them (CI6).</para>
+    ///
+    /// <para><b>Why DockRoundedTabs.xaml is excluded.</b> Its keys — <c>DropDownControlArea</c>,
+    /// <c>PinClose</c> — are AvalonDock's, resolved from the theme dictionary the DockingManager
+    /// merges at runtime, so App.xaml is the wrong dictionary to look for them in. The exclusion is
+    /// by file and is asserted to match exactly one file, so it cannot quietly grow.</para>
+    /// </remarks>
+    [Fact]
+    public void EveryResourceKeyTheAppNames_IsDeclared()
+    {
+        var declared = DeclaredKeys();
+
+        Assert.True(declared.Count > 20,
+            $"only {declared.Count} key(s) were read out of App.xaml, so this check is scanning the "
+            + "wrong document and would pass over anything (DC-016).");
+
+        var offenders = new List<string>();
+        var scanned = 0;
+
+        foreach (var file in Directory.EnumerateFiles(ProjectRoot(), "*.*", SearchOption.AllDirectories))
+        {
+            var name = Path.GetFileName(file);
+
+            if (file.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar, StringComparison.Ordinal)
+                || file.Contains(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            Regex pattern;
+
+            if (name.Equals("App.xaml", StringComparison.OrdinalIgnoreCase)
+                || name.Equals(AvalonDockOwnedMarkup, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+            else if (name.EndsWith(".xaml", StringComparison.OrdinalIgnoreCase))
+            {
+                pattern = MarkupKey;
+            }
+            else if (name.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
+            {
+                pattern = CodeKey;
+            }
+            else
+            {
+                continue;
+            }
+
+            scanned++;
+
+            foreach (Match match in pattern.Matches(File.ReadAllText(file)))
+            {
+                var key = match.Groups[1].Value;
+
+                if (!declared.Contains(key))
+                {
+                    offenders.Add($"{name}: {key}");
+                }
+            }
+        }
+
+        Assert.True(scanned > 10,
+            $"only {scanned} file(s) were scanned for resource keys, which is not this project.");
+
+        Assert.True(offenders.Count == 0,
+            "these resource keys are named and never declared in App.xaml. A reference to a missing "
+            + "key fails SILENTLY — the control simply keeps the platform's value, which is the same "
+            + "rendering as 'not themed yet' (TC3): "
+            + Environment.NewLine + string.Join(Environment.NewLine, offenders.Distinct()));
+    }
+
+    /// <summary>The one markup file whose keys belong to AvalonDock's theme, not to App.xaml.</summary>
+    private const string AvalonDockOwnedMarkup = "DockRoundedTabs.xaml";
+
+    private static readonly Regex MarkupKey =
+        new(@"\{(?:Static|Dynamic)Resource\s+([A-Za-z0-9_]+)\s*\}", RegexOptions.Compiled);
+
+    private static readonly Regex CodeKey = new(
+        @"(?:SetResourceReference\s*\([^,]+,\s*|TryFindResource\s*\(|FindResource\s*\()\s*""([A-Za-z0-9_]+)""",
+        RegexOptions.Compiled);
+
+    private static HashSet<string> DeclaredKeys()
+    {
+        var app = File.ReadAllText(Path.Combine(ProjectRoot(), TokenDictionary));
+        return [.. Regex.Matches(app, @"x:Key=""([^""]+)""").Select(m => m.Groups[1].Value)];
     }
 
     private static string ProjectRoot()
