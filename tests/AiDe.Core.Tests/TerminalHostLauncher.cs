@@ -1,4 +1,6 @@
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
+using AiDe.Core.Terminal;
 
 namespace AiDe.Core.Tests;
 
@@ -15,6 +17,7 @@ namespace AiDe.Core.Tests;
 /// <para>Shared rather than duplicated: two suites now need it, and a second hand-rolled copy of
 /// <c>CreateProcessW</c> is the kind of thing that drifts silently.</para>
 /// </remarks>
+[SupportedOSPlatform("windows")]
 internal static class TerminalHostLauncher
 {
     /// <summary>The helper executable, built alongside the tests and found relative to them.</summary>
@@ -22,7 +25,8 @@ internal static class TerminalHostLauncher
     {
         var root = Path.GetFullPath(Path.Combine(
             AppContext.BaseDirectory, "..", "..", "..", "..", "AiDe.Core.TerminalHost", "bin"));
-        var configuration = Directory.Exists(Path.Combine(root, "Release")) ? "Release" : "Debug";
+        var release = Path.Combine(root, "Release", "net10.0", "AiDe.Core.TerminalHost.exe");
+        var configuration = File.Exists(release) ? "Release" : "Debug";
         var candidate = Path.Combine(root, configuration, "net10.0", "AiDe.Core.TerminalHost.exe");
 
         Assert.True(
@@ -51,12 +55,16 @@ internal static class TerminalHostLauncher
         var arguments = mode is null ? $"\"{report}\"" : $"\"{report}\" \"{mode}\"";
         var commandLine = $"\"{exe}\" {arguments}\0".ToCharArray();
 
+        var job = ConPtyInterop.CreateKillOnCloseJob();
+
         if (!CreateProcessW(
                 null, ref commandLine[0], IntPtr.Zero, IntPtr.Zero, false, CREATE_NEW_CONSOLE,
                 IntPtr.Zero, Path.GetDirectoryName(exe), ref startup, out var info))
         {
             Assert.Fail($"could not start the helper: Win32 error {Marshal.GetLastWin32Error()}");
         }
+
+        ConPtyInterop.AssignProcessToJobObject(job, info.hProcess);
 
         try
         {
@@ -68,12 +76,14 @@ internal static class TerminalHostLauncher
         catch (OperationCanceledException)
         {
             Assert.Fail("the terminal host helper did not exit within its deadline");
-            return -1;
+            return -1; // unreachable at runtime (Assert.Fail throws) but required: xunit 2.9's
+                       // Assert.Fail is not [DoesNotReturn], so the compiler needs a value here (CS0161).
         }
         finally
         {
             CloseHandle(info.hThread);
             CloseHandle(info.hProcess);
+            ConPtyInterop.CloseHandle(job);
         }
     }
 
