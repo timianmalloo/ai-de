@@ -39,15 +39,16 @@ THE TWO THINGS THIS ASSERTS THAT THE PACK SCRIPT CANNOT:
 
 WHAT IS GATED AND WHAT IS NOT, deliberately and per Ruling 48:
 
-  GATED at Major   docs/mockups/session-front-door.html, DESIGN.md
-                   Measured 0 Majors / 5 Minors and 0 findings respectively, so the threshold
-                   has discriminating power and costs nothing today.
+  GATED at Major   DESIGN.md and EVERY docs/mockups/*.html not named in LEGACY_ADVISORY --
+                   today session-front-door.html (0 Majors / 5 Minors), perspective-shell.html,
+                   conversation-composer.html, new-session-sheet.html (0 findings each). A new
+                   mockup is gated by default; the exemption is the thing that must be written.
   ADVISORY         src/AiDe.App/Web -- 17 Majors, every one a colour literal in the composer
                    HTML. Gating it would be red on day one, and the next step after a
                    permanently red gate is muting it, which is worse than advisory. It gates
                    when the composer HTML is tokenized.
-  NOT SCANNED      docs/mockups as a whole -- 66 Majors the ui-craft.yml header records as
-                   deliberate DX17 dense-meta text in the legacy IDE mockups. It gates when
+  NOT SCANNED      the twelve legacy mockups in LEGACY_ADVISORY -- 60 Majors (2026-09-11) the
+                   ui-craft.yml header records as deliberate DX17 dense-meta text. They gate when
                    docs/reviews/ui-mockups-craft-gate.md dispositions them.
 """
 
@@ -64,8 +65,29 @@ PACK_GATE = ROOT / "docs" / "ai-forward-pack" / "scripts" / "ui-craft-gate.py"
 
 SEVERITY_ORDER = ["Nit", "Minor", "Major", "Blocker"]
 
+# THE DEFAULT IS GATED (Addendum C, D1). The first shape of this list named the gated files
+# one by one, which meant every mockup authored after it entered the corpus ungated and
+# drifted silently until someone remembered the list -- the allow-list was the defect.
+# Now every docs/mockups/*.html is gated at Major unless it is named in LEGACY_ADVISORY
+# with the reason it is exempt; a new mockup is gated on the day it is committed.
+LEGACY_ADVISORY = {
+    # The legacy IDE mockups carry deliberate dense-meta text (DX17) -- 60 Majors in the
+    # 2026-09-11 measurement. They promote to gated when
+    # docs/reviews/ui-mockups-craft-gate.md dispositions them (ui-craft.yml header).
+    "activity-rail.html", "app-facelift.html", "context-map-join.html", "editor-surfaces.html",
+    "facelift-elevate.html", "graph-canvas.html", "knowledge-explorer-mode.html",
+    "knowledge-explorer.html", "named-dock-zones.html", "uml-erm-surfaces.html",
+    "watcher-observatory.html", "workbench.html",
+}
+
+def gated_mockups():
+    """Every committed mockup not explicitly exempted, at Major."""
+    folder = ROOT / "docs" / "mockups"
+    return [("docs/mockups/" + p.name, "Major")
+            for p in sorted(folder.glob("*.html")) if p.name not in LEGACY_ADVISORY]
+
 # Targets whose findings FAIL this gate, with the severity each fails at.
-GATED = [("docs/mockups/session-front-door.html", "Major"), ("DESIGN.md", "Major")]
+GATED = [("DESIGN.md", "Major")] + gated_mockups()
 
 # Scanned and reported, never failed. Each carries the condition that would promote it.
 ADVISORY = [("src/AiDe.App/Web",
