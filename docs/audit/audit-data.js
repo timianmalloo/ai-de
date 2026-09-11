@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T02:24:16Z",
+  "generated": "2026-09-11T02:26:32Z",
   "audit": [
     {
       "actor": null,
@@ -11055,6 +11055,203 @@ window.AUDIT_DATA = {
       "goal": "Settle whether a safe default, rather than enforceable prevention, is acceptable for Phase 1",
       "done_when": "C21's default confirmed and the per-session limit recorded as accepted rather than omitted",
       "tier": "T2"
+    },
+    {
+      "id": "al-01M2718HK868J0JDW7X3K61GBW",
+      "shortname": "F4 — the composer: R15/R19, Security C9-C21, Privacy C14(e)(i)-(vi)",
+      "datetime": "2026-09-11T01:28:08Z",
+      "session": "conductor-front-door-f4",
+      "prompt": "Node F4 — the composer (R15, R19). T2, opus. Implement the composer against docs/plans/conductor-front-door.md section F4, Rulings 41-44, the conductor privacy review and the front-door council review: the five-kind page-to-host vocabulary, the host-owned send, the bounded attach path with its operator opt-in, no late binding, the resolved-path label, the derived lease, and the F4 production vendored bundle with its manifest, notices and recurring advisory scan.",
+      "summary": "Delivered F4. The composer's model half is AiDe.Core/Presentation/Composer (router, attach gate and policy, form engine, compiler, lease derivation, draft store, mention sources, send record); the send seam and the WPF surface are AiDe.App/Workbench/Composer; the page is src/AiDe.App/Web/composer.{html,mjs}; the production bundle was built once from a narrowed 24-package input set and hash-pinned.\n\nMEASURED. AiDe.App.Tests 491 (floor was 456), run under the PowerShell console host per DC-117. AiDe.Core.Tests 2188 = portable 2035 + non-portable 153 (floors 2064 / 1912 / 152), all three runs executed, so the split invariant holds by observation. verify-test-run.py --update was never run; every floor raised, none lowered. All twelve named gates exit 0 bare, plus the new verify-vendored-advisories gate and its self-test.\n\nTWO DEFECTS THIS NODE CREATED AND ITS OWN RED-FIRST TESTS CAUGHT, each converted into a control rather than a test edit. (1) System.Text.Json resolves a duplicate JSON member to the LAST occurrence, so {\"kind\":\"nope\",\"kind\":\"editor.ready\"} routed as editor.ready while another reader of the same bytes may take the first â€” a duplicate top-level member is now refused outright. (2) The mention capture stopped at the first non-path character, so @src/*.cs captured \"src/\" and became the BROADER lease src/** â€” a narrower capture was a widening bug, and the capture now runs to whitespace and rejects afterwards.\n\nTHE PROBE SETTLED C12's INFERRED CLAIM. A real WebView2 loading the real page under default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' reports editors: 1, chips: 1, native controls: 4 â€” the editor renders, the bundle's own plugin ran, and Ruling 33's four native widgets created no editor instance. fetch: rejected, hostObject resolution: rejected, and the control's document was unchanged after location.href, window.open and an off-origin iframe.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Claude Code",
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "src/AiDe.Core/Presentation/Composer/",
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs",
+        "src/AiDe.App/Web/composer.html",
+        "tools/verify-vendored-advisories.py"
+      ],
+      "tags": [
+        "conductor",
+        "front-door",
+        "composer",
+        "security",
+        "privacy"
+      ],
+      "outcome": "success",
+      "goal": "Deliver F4 of the front-door slice — the composer (R15, R19) — discharging every Fails-if clause in the plan's F4 section with a named test, and building the production vendored bundle once (C18, C19).",
+      "done_when": "Every F4 clause has a test or is named unmet; the twelve gates exit 0 bare; App and Core suites measured at or above their floors with the split invariant observed; CI green on the pushed branch.",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-11T00:39:03Z",
+      "duration_seconds": 2945.0,
+      "git": {
+        "sha": "3603d5db417c186dacbdeb407d149b886d8659fb",
+        "short": "3603d5db4",
+        "branch": "feature/composer",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M272CKWZFS1XRENRFFCDBMCX",
+      "shortname": "F4 addendum — the template picker card, and the form re-mint that follows it",
+      "datetime": "2026-09-11T01:47:50Z",
+      "session": "conductor-front-door-f4",
+      "prompt": "Close the F4 clause 'Template picker renders any catalog template as a validated form; a required-field gap blocks send with a field-level error; the picker card shows when_to_use as headline and why as detail.'",
+      "summary": "Added ComposerTemplatePicker (Core) and wired it into the composer surface. A failed template is a DISABLED card carrying its error rather than a silent drop, and an override is badged with what it shadows. Choosing a card re-mints the field ids through ComposerMessageRouter.ReplaceFields, so an id from the previous form is one the host no longer holds — the same rule as 'the page may only match a host-minted id', applied to a form that changed under it. Measured after: App 493, Core 2193 = portable 2040 + non-portable 153; all twelve gates and the new advisory gate exit 0 bare.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Claude Code",
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "src/AiDe.Core/Presentation/Composer/ComposerTemplatePicker.cs"
+      ],
+      "tags": [
+        "conductor",
+        "front-door",
+        "composer",
+        "templates"
+      ],
+      "outcome": "success",
+      "goal": "Close F4's template-picker clause: render any catalog template as a validated form, with when_to_use as headline and why as detail, and a disabled card carrying its error.",
+      "done_when": "ComposerTemplatePicker projects every catalog entry, the surface renders the cards, choosing one re-mints the field ids, and all four measurements stay above their floors.",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-11T00:39:03Z",
+      "duration_seconds": 4127.0,
+      "git": {
+        "sha": "b87506e0bd8d033bd7e45d916395c3a7e5447c22",
+        "short": "b87506e0b",
+        "branch": "feature/composer",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M272SA24MKX5WPV2R9ZW4G98",
+      "shortname": "F4 addendum — the clauses whose subject is a document, a piece of copy, or an absent code path",
+      "datetime": "2026-09-11T01:54:46Z",
+      "session": "conductor-front-door-f4",
+      "prompt": "Close the F4 clauses whose subject is a document, a piece of UI copy, or the absence of a code path — the ones that read as satisfied by intention.",
+      "summary": "Six clauses given oracles. The S1 guard now passes a booby-trapped template alongside a free-form draft and asserts its marker never reaches the output, which is the strongest available form of 'no template code executes' short of instrumenting the compiler. The locale rule is a repo-wide sweep for RegionInfo and TimeZoneInfo.Local plus a composer-scoped sweep for CurrentCulture and navigator.language. The API-key residual is covered by asserting the terms-of-service refusal still fires first, because in Phase 1 the exception cannot be enabled at all. Final measurement: App 493, Core 2199 = portable 2046 + non-portable 153, all three Core runs executed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Claude Code",
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "tests/AiDe.Core.Tests/Composer/ThePrivacyResidualsAreCoveredTests.cs"
+      ],
+      "tags": [
+        "conductor",
+        "front-door",
+        "composer",
+        "privacy"
+      ],
+      "outcome": "success",
+      "goal": "Give an oracle to the six F4 clauses that read as satisfied by intention: the provider record, the caps-are-not-a-run-ceiling copy rule, the no-locale-read rule, the no-assist rule, the S1 free-form guard, and the API-key-exception residual.",
+      "done_when": "Each of the six has a test that reads the tree rather than the intention, and all four measurements stay above their floors.",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "abd52160245dfdde1cf62ed71f88a4e6efa49fa6",
+        "short": "abd521602",
+        "branch": "feature/composer",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M273417NTG3RRWZ69BE0A2YB",
+      "shortname": "F4 addendum — the C18 manifest-to-notices cross-check the hash gate cannot see",
+      "datetime": "2026-09-11T02:00:37Z",
+      "session": "conductor-front-door-f4",
+      "prompt": "Close C18's Fails-if: any provenance.packages[].name@version in the manifest absent from THIRD-PARTY-NOTICES.md.",
+      "summary": "The hash gate pins bytes; it cannot see whether the MIT notice obligation was discharged, because a notices file is prose to it. This is the half that goes stale the moment the package set changes — which is exactly what F4 did, 26 packages to 24. Checked both directions: a package in the manifest and not in the notices is an undischarged obligation, and a package in the notices and not in the manifest is a notice for something that is not shipped. Also asserts the production pin is NOT the spike's ee3d19a4 (Ruling 33), C7's narrowing, and C19's advisory record plus its wired CI steps. Final measurement: Core 2205 = portable 2052 + non-portable 153, App 493.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Claude Code",
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "tests/AiDe.Core.Tests/Composer/TheVendoredBundleIsPinnedAndNoticedTests.cs"
+      ],
+      "tags": [
+        "conductor",
+        "front-door",
+        "composer",
+        "supply-chain"
+      ],
+      "outcome": "success",
+      "goal": "Give C18's second half an oracle: every package in the F4 manifest is named with its version in THIRD-PARTY-NOTICES.md, and the notices name nothing the manifest does not ship.",
+      "done_when": "The cross-check runs both directions, the production pin is asserted not to be the spike's, and C7's narrowing and C19's record are checked from the manifest.",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "2de3ecc5850652221665b4da6351e5097e8e2da5",
+        "short": "2de3ecc58",
+        "branch": "feature/composer",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M273FPP3PZTEFVN6BCB26VR7",
+      "shortname": "F4 close — US-ED7's one-way transfer, and the composer's hosted browser disposed",
+      "datetime": "2026-09-11T02:07:00Z",
+      "session": "conductor-front-door-f4",
+      "prompt": "Close F4's remaining clauses: US-ED7's one-way transfer with no reverse path.",
+      "summary": "US-ED7's oracle is now what the clause asks for: mutate the composer side after the handover and assert the lane's copy does not move, then assert by reflection that nothing the run side exposes carries a draft and nothing on the gate accepts a request — not 'we do not call it', but 'there is nothing to call'. Also: SessionDocumentSurface now disposes the composer, because a WebView2 is a child PROCESS and dropping the reference leaks one per document open — invisible in the visual tree. Final measurement: App 494, Core 2205 = portable 2052 + non-portable 153.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Claude Code",
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "conductor",
+        "front-door",
+        "composer"
+      ],
+      "outcome": "success",
+      "goal": "Close F4: assert the transfer is one-way with no reverse path, dispose the hosted browser, and register the parser-differential finding as a class.",
+      "done_when": "US-ED7 has its oracle, the session document disposes the composer, DC-124 is in the register, and every measurement and gate is green.",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "8eb31aabf5383b2e25ea0239c6e934a12d5a7f0f",
+        "short": "8eb31aabf",
+        "branch": "feature/composer",
+        "pushed": true
+      }
     }
   ],
   "changes": [

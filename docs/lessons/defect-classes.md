@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 64 · partially-controlled 49 · uncontrolled 10
+**Status counts:** controlled 64 · partially-controlled 50 · uncontrolled 10
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -5106,6 +5106,39 @@ Classes discovered in OTHER repositories, promoted to the shared fleet store and
 Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` to refresh.
 
 **Not added, because this repo already carries them under different wording** -- merged into the existing class instead: `COORD-C` into `DC-088`, `COORD-D` into `DC-067`.
+
+### DC-124 — A message's meaning depends on WHICH parser reads it, and every reader believes it is reading the same bytes
+
+- **Shape:** a boundary accepts a structured message and more than one component reads it — the
+  router that acts on it, the logger that records it, a proxy or a gate that inspects it. The format
+  permits a document that **two conforming readers resolve differently**, so every component is
+  correct about the bytes and they disagree about the message. Nothing is malformed, nothing throws,
+  and no test fails, because each reader is tested alone.
+- **Signature:** a duplicate member in JSON (`System.Text.Json` takes the **last**; several other
+  readers take the first); a header sent twice; a length declared two ways; a value both in a body
+  and in a wrapper. The tell is a validation rule written as *"read field X and check it"* rather
+  than *"there is exactly one X"* — checking a value presumes a value, and presuming one is the
+  defect.
+- **Instance (2026-09-11, node F4, found by the fuzz corpus C20 required, on its first run):** the
+  composer's page→host router accepted `{"v":1,"kind":"nope","kind":"editor.ready", …}` and routed it
+  as `editor.ready`, because `JsonDocument.TryGetProperty` resolves a duplicate to the last
+  occurrence. The allow-list was doing its job perfectly on the value it was handed. Anything else
+  reading the same bytes for a record, a rule or a review could have seen `nope`.
+- **Control:** refuse the document, not the value — `ComposerMessageRouter` rejects any body
+  declaring a top-level member twice, before it reads a single field, and
+  `TheVocabularyIsClosedTests.C20_EveryUnknownKindAndEveryMalformedBodyReachesDropAndCount` carries
+  the row. **Observed failing on the un-fixed router** (it returned `Accepted`). *(automated
+  control — the highest rung available here; "make it impossible" would need a parser that rejects
+  duplicates natively, which `System.Text.Json` does not offer.)*
+- **Sweep:** every other place this repository parses a structured message at a trust boundary and
+  more than one component reads it. The IPC framing is length-prefixed and single-reader; the ACP
+  stream is read once by the mapper. **Reported, not closed:** a future second reader of the composer
+  bridge — a recorder, a policy gate — makes this class live again, and the refusal above is what
+  keeps that safe rather than the fact that there is one reader today.
+- **Status:** `partially-controlled` — the refusal is automated and was observed failing, but the
+  sweep's honest finding is that this repository has one reader per boundary TODAY, so the class
+  is prevented at the composer bridge and merely absent elsewhere rather than controlled there.
+- **Confidence:** Verified — the accepting behaviour was observed before the refusal was written.
 
 ### UNKNOWN-ARTIFACT-TYP - unknown-artifact-type-in-frontmatter
 - **Control:** docs-graph.py validate rejects any frontmatter 'type' not in the TYPES enum; run it after adding a graph node. (automated control)

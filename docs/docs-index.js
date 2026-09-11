@@ -1462,6 +1462,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "fdbc42d0d79fb2f2884fbdf7f49b3dfa0f6eb53712949ec5efe2d4df133b1693"
     },
     {
+      "id": "api-aide-app-workbench-composer",
+      "path": "docs/api/AiDe.App.Workbench.Composer.md",
+      "title": "API: AiDe.App.Workbench.Composer",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 42 members, 86% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e08169671a60023c3889f27b5551c2ecfb407828f86051d9f5c0594f9a496e19"
+    },
+    {
       "id": "api-aide-app-workbench-sessions",
       "path": "docs/api/AiDe.App.Workbench.Sessions.md",
       "title": "API: AiDe.App.Workbench.Sessions",
@@ -1484,7 +1509,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fbafadabf07a1e5bbc13100799e04b776be255b287c9f2058767b0a0981dc0e6"
+      "sourceSha256": "11797566bd655dbcd9a5021da18522b18da2370d78258d3f460b4e83a4597c66"
     },
     {
       "id": "api-aide-core",
@@ -1712,6 +1737,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "7000558540508ecc26119ac8c9242f689e0dd0614b2564a132dff92adb0f45aa"
     },
     {
+      "id": "api-aide-core-presentation-composer",
+      "path": "docs/api/AiDe.Core.Presentation.Composer.md",
+      "title": "API: AiDe.Core.Presentation.Composer",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 30 types, 71 members, 86% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0e00afd6cdbfac78096f4196dbb0c95b8c5727ba26a3f14b445750cae81dbca3"
+    },
+    {
       "id": "api-aide-core-presentation-sessions",
       "path": "docs/api/AiDe.Core.Presentation.Sessions.md",
       "title": "API: AiDe.Core.Presentation.Sessions",
@@ -1771,7 +1821,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Sessions: 22 types, 56 members, 87% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Sessions: 22 types, 58 members, 88% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1784,7 +1834,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4ba8f8a86c9e217ec4e205bc4e5e848433e44cef79b26c5b61f91e60a6c5c8b4"
+      "sourceSha256": "83a0b4068daefef096ee3acff1e727c8211e6e7811a92a8faa735d3f2fbf9dda"
     },
     {
       "id": "api-aide-core-store",
@@ -5599,7 +5649,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e9010028e09a3e816e9853d5baa211ad5d7eed40a4c7f15e50a316ccd04d3815"
+      "sourceSha256": "6136d31c0bb025eb99919f3222b788bb6f75fcae420325c2ebd98bd5b4990689"
     },
     {
       "id": "design-session-profiler",
@@ -7390,7 +7440,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d09ed1d7d7fda53bebeeb46824db841ecb7d3cda65cdbd026b69416a8a5797cc"
+      "sourceSha256": "db87705b28e0546792b116b67e0bec087e5d7a5435aab3cad5309e63bfd082b4"
     },
     {
       "id": "session-profiles",
@@ -12813,5 +12863,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "01e161d42fc4a90d8c456a7f61b96a262c0e23f0c53a2ed286c54b28924f9873"
+  "graphSha256": "07b6b5115feabedf4a4b9c258f6802963d61ff178f28269609ee66ae4aab99b9"
 };

@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using AiDe.App.Workbench.Composer;
 using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Workbench.Sessions;
@@ -25,11 +26,13 @@ namespace AiDe.App.Workbench.Sessions;
 /// gap in the lane's delivered ordinals — with a companion falsifier that takes the rebuild path and
 /// shows all three going red.</para>
 ///
-/// <para><b>The composer is today's staged-draft composer, absorbed rather than replaced.</b>
-/// Addendum A §10 says <c>PromptDraftViewModel</c>'s transfer rules are absorbed by the composer and
-/// that the class may remain for the standalone draft surface. So this hosts the real
-/// <see cref="PromptDraftSurface"/> — a working composer, not a placeholder — and R15's rich editor
-/// replaces its innards in the composer node.</para>
+/// <para><b>The composer zone now hosts R15's composer, as F2 said it would.</b> F2 put the
+/// staged-draft surface here — a working composer rather than a placeholder — and recorded that the
+/// rich editor would replace its innards in the composer node. It has:
+/// <see cref="ComposerSurface"/> is the editor, the host-owned send, and the compiled view the
+/// operator reads before anything leaves the machine. <c>PromptDraftViewModel</c>'s transfer rules
+/// are unchanged and the standalone draft surface still exists, exactly as Addendum A §10 allows.
+/// </para>
 /// </remarks>
 public sealed class SessionDocumentSurface : ContentControl, IDisposable
 {
@@ -68,7 +71,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         AutomationProperties.SetName(this, model.Title);
         SetResourceReference(BackgroundProperty, "SurfaceBrush");
 
-        Composer = new PromptDraftSurface($"composer:{model.SessionId}", $"{model.Title} — composer");
+        Composer = new ComposerSurface($"composer:{model.SessionId}", $"{model.Title} — composer");
 
         Content = BuildPairedZone();
 
@@ -97,7 +100,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     public string SurfaceId { get; }
 
     /// <summary>The composer half of the paired zone.</summary>
-    public PromptDraftSurface Composer { get; }
+    public ComposerSurface Composer { get; }
 
     /// <summary>The mode captions currently offered, in catalog order. No placeholder is ever added.</summary>
     public IReadOnlyList<string> ModeTabs =>
@@ -447,5 +450,10 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         }
 
         _modeContent.Clear();
+
+        // The composer hosts a WebView2, which is a child PROCESS. It is disposed HERE and not on a
+        // mode switch: ADR-0017's retain-never-rebuild rule is about the canvas modes, and the
+        // composer half of the paired zone outlives every one of them.
+        Composer.Dispose();
     }
 }

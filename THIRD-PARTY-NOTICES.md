@@ -35,28 +35,51 @@ The shell ships a **single pre-built ES-module bundle** of CodeMirror 6, served 
 virtual host. It is a *distributed copy*, so the MIT licence's notice requirement applies to it — and
 that requirement is discharged **here and by the committed licence texts**, not by the bundler.
 
-- License: MIT (all 26 packages; read from the `license` field of each package in the
+**This is the PRODUCTION bundle, built once in node F4 (Ruling 33).** It replaces the F1 spike
+bundle. The spike's sha256 `ee3d19a4…` was spike evidence and is not a production pin; the pin is
+the manifest's, below. Security condition **C18** re-fired C1–C8 in full for this new dependency
+set, and **C19** added a recurring advisory scan.
+
+- License: MIT (all 24 packages; read from the `license` field of each package in the
   `npm ci --omit=dev` install tree, not asserted)
 - License copy: [`src/AiDe.App/Web/vendor/LICENSES-codemirror.txt`](src/AiDe.App/Web/vendor/LICENSES-codemirror.txt)
   — every package's own `LICENSE` file, copied verbatim
 - Manifest (hashes, versions, build command): [`src/AiDe.App/Web/vendor/vendor-manifest.json`](src/AiDe.App/Web/vendor/vendor-manifest.json)
-- Built from: `spikes/codemirror-composer/package-lock.json` (sha256 `fc3edc2235a59fd4838c737f5c92c393538ce2220ee81b0067e4e4d750c1b11f`)
-- Build command, one-off and recorded, run in `spikes/codemirror-composer`:
+- Built from: `vendor-src/composer-bundle/package-lock.json` (sha256 `1291dd0ab9daf0e21b980a832d58dceded72900d87a364818ae0b50c9df1f696`)
+- Bundle sha256: `0e743c3564e14752e3f2938da50cd45e64e604225b5007fd208d0c3f76318762` (558198 bytes)
+- Build command, one-off and recorded, run in `vendor-src/composer-bundle`:
 
 ```
 npm ci --omit=dev
-npx --yes esbuild@0.28.2 lib.mjs --bundle --format=esm --minify --legal-comments=eof --outfile=../../src/AiDe.App/Web/vendor/codemirror-composer.bundle.mjs
+npx --yes esbuild@0.28.2 composer-entry.mjs --bundle --format=esm --minify --legal-comments=eof --outfile=../../src/AiDe.App/Web/vendor/codemirror-composer.bundle.mjs
 ```
 
-**`--legal-comments=eof` is applied and emits nothing, measured.** The 26 installed packages
+**The input set is narrower than the spike's, and the narrowing is Security C7.** Dropped:
+`codemirror` (the meta-package) and `@codemirror/lang-javascript` (the source viewer's, which F4
+does not render). Added: `@codemirror/autocomplete` (the mention picker's `CompletionSource`) and
+`@codemirror/commands` (history and `standardKeymap`). 26 packages → 24.
+**`standardKeymap` rather than `defaultKeymap` is Security C11 expressed in the input set:**
+`defaultKeymap` binds Ctrl-Enter to `insertBlankLine`, `standardKeymap` binds it to nothing, so the
+accelerator the shell owns is not also a page command.
+
+**`--legal-comments=eof` is applied and emits nothing, measured.** The 24 installed packages
 contain zero `@license`/`@preserve` markers and no bang-comment inside the bundle's import graph, so
 the bundle built with the flag is byte-identical to the bundle built without it. The flag is kept
 because the day an upstream package adds one, it must survive — but it discharges no obligation
 today, and treating it as though it did is how a notice requirement goes unmet while looking handled.
 
+**Reproducible, measured rather than claimed.** The same install and the same pinned bundler
+invocation reproduced these bytes exactly on 2026-09-11.
+
+**Advisory posture (C19).** `npm audit --package-lock-only` over the committed lockfile reported
+**0 vulnerabilities at every severity** on 2026-09-11, recorded at
+`vendor-src/composer-bundle/advisory-scan.json`. *A one-off scan is a point-in-time observation — the recurring
+step is the control, not the stored output:* `tools/verify-vendored-advisories.py` re-runs it and is
+wired into `build.yml`.
+
 **Nothing in this is part of the build.** No npm, node or esbuild step exists in `AiDe.sln`, MSBuild
-or CI; the build copies the committed bytes verbatim and `tools/verify-vendored-assets.py` re-reads
-their hashes on every push.
+or CI's build path; the build copies the committed bytes verbatim and
+`tools/verify-vendored-assets.py` re-reads their hashes on every push.
 
 The bundled packages:
 
@@ -70,7 +93,6 @@ The bundled packages:
 - `@codemirror/language` 6.12.4
 - `@codemirror/legacy-modes` 6.5.4
 - `@codemirror/lint` 6.9.7
-- `@codemirror/search` 6.7.2
 - `@codemirror/state` 6.7.4
 - `@codemirror/view` 6.43.11
 - `@lezer/common` 1.5.2
@@ -82,7 +104,6 @@ The bundled packages:
 - `@lezer/lr` 1.4.10
 - `@lezer/markdown` 1.7.2
 - `@marijn/find-cluster-break` 1.0.4
-- `codemirror` 6.0.2
 - `crelt` 1.0.7
 - `style-mod` 4.1.3
 - `w3c-keyname` 2.2.8

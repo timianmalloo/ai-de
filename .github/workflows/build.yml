@@ -181,6 +181,22 @@ jobs:
         if: ${{ !cancelled() }}
         run: python tools/verify-vendored-assets.py --self-test
 
+      # SECURITY C19, and the honest limit that makes it a control rather than a record: a one-off
+      # advisory scan is a point-in-time observation, so THE RECURRING STEP IS THE CONTROL, NOT THE
+      # STORED OUTPUT. A frozen dependency set does not become vulnerable when we change it; it
+      # becomes vulnerable when somebody else publishes an advisory about a version we pinned months
+      # ago, and nothing in the repository changes on that day.
+      #
+      # It fails closed when npm is unavailable. "npm was not there, so nothing was checked" is the
+      # same output a clean run gives, which is the shape of a control that cannot fire (DC-016).
+      - name: Vendored-advisory gate (C19)
+        if: ${{ !cancelled() }}
+        run: python tools/verify-vendored-advisories.py
+
+      - name: Vendored-advisory gate — self-test
+        if: ${{ !cancelled() }}
+        run: python tools/verify-vendored-advisories.py --self-test
+
       # DC-021: a fixture that restates a list the product declares. Three occurrences before it was
       # registered, because each repair was cheap enough that nobody asked why. The register recorded
       # the residual honestly — derivation was a convention and nothing failed when the next fixture

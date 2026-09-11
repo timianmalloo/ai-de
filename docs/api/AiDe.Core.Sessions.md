@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Sessions: 22 types, 56 members, 87% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Sessions: 22 types, 58 members, 88% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Sessions`
 
-**22 public types · 56 public members · 87% documented.**
+**22 public types · 58 public members · 88% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -29,6 +29,50 @@ summary: >-
 The user-facing container Addendum A3 defines: named, workspace-bound, and carrying
 session-scoped config (Phase 1: which agent backends are enabled). R14 b2: "session" in this
 namespace names only this container — never a Watcher/Dispatch/Terminal-internal concept.
+
+| Member | Summary |
+|---|---|
+| `bool AttachEnabled { get; init; }` | Whether this session may attach files to a composed prompt (Security/Privacy **C21**). **Off by default**, confirmed by the human on 2026-09-10. |
+
+### `bool AttachEnabled { get; init; }`
+
+Whether this session may attach files to a composed prompt (Security/Privacy **C21**).
+**Off by default**, confirmed by the human on 2026-09-10.
+
+**Remarks.** **It gates the attach path — not egress, not send, not paste.** Gating all model
+egress or the composer's send would disable the product's core function and be dishonest in a
+specific way: the agent CLI is a separate process the operator launches from a terminal
+anyway, so switching off this app's send does not stop the egress, it routes around it. Attach
+is the honest line because it is the only path that puts bytes into the prompt the operator
+did not type.
+
+
+
+
+
+**An init-only property rather than a positional parameter** so a
+`session.json` written before this field existed still reads, and reads false — which is
+the safe state, not merely the convenient one.
+
+
+
+
+
+**"Off" is distinguishable from "never asked" by the EXISTING event log, and no
+provenance field is added here.** False with no `session.config` event naming it is the
+shipped default; with one, an operator decided. The append-only log is already the record, and
+two definitions of one fact is a defect signature — so there is deliberately no
+`source` or `decidedAt` member on this type.
+
+
+
+
+
+**Honest limit, stated here rather than discovered later.** This record is
+per-session and operator-writable, so this is **a default with a safe initial state, not an
+enforceable policy**. A deployment that must *prevent* attach needs a
+non-session-overridable layer, which is Phase 2 — named here as the upgrade trigger. Nothing
+may describe this field as restricting or preventing attach for a deployment.
 
 ## `SessionEventKinds`
 
@@ -87,7 +131,25 @@ plain `System.Text.Json`, tolerant JSONL reads.
 | `SessionConfig Create(` | Creates the session: writes `session.json` and emits `session.open`. |
 | `SessionConfig Load()` | The current, live config — what a NEW run would pick up. |
 | `SessionConfig SetEnabledBackends(IReadOnlyList<string> enabledBackends, DateTimeOffset now)` | Applies a backend toggle for new runs and emits `session.config`. Never mutates a `SessionConfig` a caller already holds — see the remarks on this type. |
+| `SessionConfig SetAttachEnabled(bool attachEnabled, DateTimeOffset now)` | Applies the attach toggle for new runs and emits `session.config` (C21). |
 | `IReadOnlyList<SessionEvent> ReadEvents()` | Every event this session has ever emitted, in append order. |
+
+### `SessionConfig SetAttachEnabled(bool attachEnabled, DateTimeOffset now)`
+
+Applies the attach toggle for new runs and emits `session.config` (C21).
+
+**Remarks.** **Through the store, exactly like the backend toggle.** C21 needs no Settings surface
+and invents no config concept: it is a new field on an existing record, written with an
+existing event kind, by the same read-modify-write under the same lock.
+
+
+
+
+
+**Host-owned and unreachable from the page (C21(e)).** No page-to-host kind reads or
+writes it and none may be added — the page may be *told* the state so it can render a
+disabled affordance; it may never *report* it. The asymmetry is deliberate: the composer
+may not carry a dial that loosens governance, and this one only restricts.
 
 ## `SessionId`
 

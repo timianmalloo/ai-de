@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    A GUI-SUBSYSTEM host, for the same reason AiDe.App.CanvasProbe is one.
+
+    The claim under test is "the composer page runs under its CSP and can reach exactly one document" — which
+    needs a real window with a real WebView2 in it, and a `dotnet test` host does not reliably give
+    one (DC-014). Same control the ConPTY and canvas-focus cases took: run it out of process, in the
+    configuration under test, and report by exit code.
+  -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>AiDe.App.ComposerProbe</AssemblyName>
+
+    <!-- A HELPER, not a test project: no framework, no .trx. See the CanvasProbe note. -->
+    <IsTestProject>false</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AiDe.App\AiDe.App.csproj" />
+  </ItemGroup>
+
+</Project>
