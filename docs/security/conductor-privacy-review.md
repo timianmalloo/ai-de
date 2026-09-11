@@ -2,7 +2,7 @@
 id: privacy-review-conductor
 title: "AI-DE Conductor — privacy review and provider record"
 type: privacy-review
-status: in-review
+status: accepted
 owner: "@timianmalloo"
 phase: "1"
 tags: [privacy, conductor, external-processing, provider-record, egress, anthropic, basis]
@@ -78,7 +78,7 @@ rows resting on an undated page are marked as such.
 | 4 | **Residency / transfer mechanism** | *"your personal data is transferred to our servers in the **US**, or to **other countries outside the EEA and the UK**"* — **no named region set, and no consumer region commitment.** Residency controls (`inference_geo`, workspace geo) are **Claude API / Console only**; consumer Free/Pro/Max is out of scope. Transfer: **adequacy decisions and EU/UK/Swiss Standard Contractual Clauses**, plus statutory derogations. **EU-US Data Privacy Framework: NOT PUBLISHED as a mechanism** — the string appears **0 times** in both the Privacy Policy and the DPA. | Privacy Policy §5 · **2026-07-08**; data-residency doc (undated) |
 | 5 | **User jurisdiction** | **US — declared by the operator, 2026-09-10.** *Not inferred.* See "Why nothing reads the locale" below. | Operator |
 | 6 | **Training posture** | Contract language is **opt-out**: *"We may use your Inputs and Outputs to train and improve Anthropic AI models, **unless you opt out through your account settings**."* **Claude Code does not differ** — training applies *"including when you use Claude Code from these accounts"* for Free/Pro/Max. **Opt-out does not stop** training use for conversations flagged in safety review, or for materials submitted as feedback. | Privacy Policy §2 · **2026-07-08**; Consumer Terms · **2025-10-08**; Claude Code data-usage (**undated**) |
-| 6a | **The account's actual toggle state** | **OPEN — see "The one open field".** The **default state for a new signup is NOT PUBLISHED**; Anthropic states only that users *"select your preference in the signup process."* | — |
+| 6a | **The account's actual toggle state** | **OBSERVED 2026-09-10: model improvement is OFF.** Recorded from the operator, verbatim: *"retention of 30 days"* — which row 7 maps one-to-one onto the toggle being off (ON is *up to 5 years de-identified*; OFF is *30 days*). **The inference is marked rather than silent:** the operator stated the retention figure, not the toggle position, and the two are equivalent only via row 7's mapping. The **default for a new signup remains NOT PUBLISHED** — which is why this field had to be observed rather than assumed from the tier. | Operator, 2026-09-10 |
 | 7 | **Retention** | **LOCAL, and verified on this machine rather than cited from an undated doc:** plaintext `.jsonl` transcripts under `~/.claude/projects/<workspace-slug>/`, **one per session AND one per subagent** — a **fan-out**, not a single file — retained **30 days** by default (`cleanupPeriodDays`). **Provider-side — training ON:** *"we may retain your data in a de-identified format for **up to 5 years** in our model training pipelines."* **Training OFF:** *"Users who don't allow data use for model improvement: **30-day retention period**"* (stated for Claude Code, consumer plans). **Trust & safety:** if flagged, inputs and outputs **up to 2 years**, classification scores **up to 7 years**. **Feedback:** thumbs-up/down conversations **5 years**; Claude Code `/feedback`, `/bug`, `/share` transcripts **5 years**. **Legal hold** overrides all of the above. | Retention article · **2026-07-01**; Claude Code data-usage (**undated**) |
 | 8 | **Deletion / rights path** | **The local copy is outside the product's deletion reach.** The `~/.claude/projects/` transcripts hold every prompt and every attachment byte in cleartext and are not governed by `.aide/`, by this repository's `.gitignore`, or by anything AI-DE controls. Dispositioned as the parent review's *"incomplete result for repository-owned or external copies"* (`ai-native-ide-privacy-review.md:75-77`) — **a named incompleteness rather than an unnamed one.** **And row 3's consequence belongs here, where a reader looks:** because Anthropic is a **controller**, the operator **cannot impose processing instructions and holds no contractual erasure right** — only a data-subject request the policy says *"are limited"* and may be declined. **Provider-side:** deleting a conversation removes it *"from your chat history **immediately**"* and *"from our back-end storage systems **within 30 days**."* Turning training off stops future use of previous and new chats; **data already inside in-progress training runs or trained models remains.** Rights requests by contacting Anthropic; the policy states rights *"are limited"* and may be declined with a lawful reason. | Retention article · **2026-07-01**; Privacy Policy §4/§7 · **2026-07-08** |
 | 9 | **Repository-policy authorization** | **Granted by the operator, 2026-09-10**, verbatim: *"For me personally all that is fine, we may want to have an 'opt-in' choice in the tool (in a settings) so that a case where that may not be ok we can restrict."* The opt-in is built as **C21**. | Operator |
@@ -112,7 +112,12 @@ splitting the tables is the control.
 
 | Not yet observed | Action | Owner | Target |
 | --- | --- | --- | --- |
-| The account's **model-improvement setting** (row 6a) | Open `claude.ai/settings/data-privacy-controls`, read it, record the value and date | **The operator** | Before `status` moves to `accepted` |
+| *(none)* | — | — | — |
+
+**Discharged 2026-09-10.** The one entry — the account's model-improvement setting — was
+observed and recorded at row 6a. **This is why the split mattered:** filed under *"not
+published"* it would have sat forever behind a rule written for facts nobody can establish;
+filed as *"not yet observed"* it carried an owner and a target and was closed in a minute.
 
 > **This record may NOT be marked `status: accepted` while the table above is non-empty.**
 > **It does not block F4's send seam** — Privacy confirmed that reading explicitly, and for a
@@ -121,29 +126,36 @@ splitting the tables is the control.
 > assumed the favourable branch.* The authorization survives either branch for the operator's
 > own data.
 
-## The one open field, and it is the operator's to close
+## The field that was open, and how it closed
 
-**Row 6a.** Because the toggle's default is not published, the record must carry **the account's
-observed setting**, not a tier-level assumption. That is a one-minute observation only the account
-holder can make:
+**Row 6a** (closing Privacy's condition **R4**). Because the toggle's default is not published, the record carries **the account's observed
+setting**, not a tier-level assumption. It was a one-minute observation only the account holder
+could make, and it has been made:
 
-> Open **`claude.ai/settings/data-privacy-controls`**, read the model-improvement setting, and record
-> the value and the date here.
+> **Observed 2026-09-10: model improvement is OFF.**
 
-Until it is recorded, **the honest posture is the contract's**: training **may** occur, retention
-**up to 5 years de-identified**. If the toggle is off, retention drops to the 30-day figure in row 7
-and this record should say so with the observation date.
+**The operative posture is therefore the OFF branch**: the **30-day** figure in row 7, not the
+5-year training-pipeline retention. **Two things survive that, and the record must not let the
+good news bury them:**
+1. **Opt-out does not stop training use** for conversations flagged in safety review, or for
+   materials submitted as feedback (row 6). Off is not none.
+2. **The 30-day figure is the Claude Code doc's**, on an **undated page**. The consumer retention
+   article uses "30 days" to mean something else entirely — the back-end window **after you
+   delete a chat** — and publishes **no maximum retention for undeleted chats**. So *"chats are
+   deleted after 30 days"* remains **not a supportable general statement**, even now.
 
-**This does not block the Conductor.** The basis, authorization, purpose and data classes are
-recorded; row 6a determines *which* published retention figure applies, not *whether* the egress
-is permitted. **But do not read "which figure" as a footnote:** ON means training plus **up to
-5 years de-identified**; OFF means **30 days**. That is the single most consequential fact in
-this document for the operator.
+**It never blocked the Conductor** — it determined *which* published retention figure applies, not
+*whether* the egress is permitted. **But it was not a footnote either:** ON would have meant
+training plus **up to 5 years de-identified**; OFF means **30 days**. That was the single most
+consequential fact in this document for the operator, and it resolved to the narrower branch.
 
-> **And if it resolves to ON, the third-party narrowing hardens.** A colleague's commit email
-> inside an attached file being **used to train a model** is a different proposition from it
-> being deleted in 30 days. The narrowing above currently states a limit with **no consequence**;
-> this is the consequence, and it is contingent on an unobserved setting.
+> **The third-party narrowing does NOT harden — this time.** Privacy's residual was: *"if row 6a
+> resolves to ON, my third-party-data narrowing hardens — a colleague's commit email inside an
+> attached file being **used to train a model** is a different proposition from it being deleted
+> in 30 days."* **It resolved to OFF**, so that consequence does not attach today. **It is a
+> setting, not a property:** if the toggle is ever turned on, the narrowing at the top of this
+> document acquires that consequence retroactively for everything sent afterwards. **Added to
+> the re-verify trigger list below.**
 
 ## Why nothing in the product reads the machine locale
 
@@ -183,8 +195,11 @@ change every two to three months — and **one of them (2025-09-28) changed exac
 this record turns on.** A 90-day review catches a change before it is a version stale.
 
 **Re-verify immediately on any of:** an in-app terms-acceptance prompt · a new dated version at the
-Privacy Policy updates article · **a plan change** — consumer → Team/Enterprise flips role, terms and
-retention all at once · a Claude Code release note touching telemetry or feedback.
+Privacy Policy updates article · **a plan change** — consumer → Team/Enterprise flips role, terms
+and retention all at once · a Claude Code release note touching telemetry or feedback · **the
+model-improvement toggle being turned ON**, which moves row 7 from 30 days to *up to 5 years
+de-identified* **and** attaches a consequence to the third-party narrowing that does not apply
+today.
 
 **Net finding from the version history:** the training and retention terms **have not moved since
 2025-09-28**.

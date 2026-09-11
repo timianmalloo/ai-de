@@ -11008,7 +11008,7 @@ window.DOCS_INDEX = {
       "path": "docs/security/conductor-privacy-review.md",
       "title": "AI-DE Conductor — privacy review and provider record",
       "type": "privacy-review",
-      "status": "in-review",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "1",
       "reviewBy": "2026-12-09",
@@ -11038,7 +11038,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "034971142e5967ec6c933ed332e6f0481e0c427aa48178a9d23fd80479fe8f23"
+      "sourceSha256": "70be47bec3d22b82a75fcceb9b51b67671c6eb0175f97f7d178ca72999c2ab77"
     },
     {
       "id": "proof-conductor-agent-plane",
@@ -12777,5 +12777,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a0245f5d834cc0ecc8a968abc4ee0d601c88da0bde83a2e4e6f224dcaccc8c07"
+  "graphSha256": "03de8c290db94887995ffe5f8bd6ba1a52f6b5e8738d52b4842b13822cdf7fb4"
 };
