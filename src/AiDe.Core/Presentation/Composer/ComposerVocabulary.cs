@@ -43,7 +43,7 @@ public static class ComposerMessageKinds
     /// list (a), (b), (i), written down so a later reader adds one and a test goes red.
     /// </summary>
     /// <remarks>
-    /// A list of refusals is only a control while something reads it: <c>TheRefusedNamesAreNotInTheVocabulary</c>
+    /// A list of refusals is only a control while something reads it: <c>TheFiveKindsAreTheWholeVocabularyAndTheRefusedNamesAreNotInIt</c>
     /// asserts every entry here is absent from <see cref="All"/>, and C11's oracle posts each of
     /// them and asserts the send counter never moves.
     /// </remarks>

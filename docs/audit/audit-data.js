@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T00:23:21Z",
+  "generated": "2026-09-11T01:28:14Z",
   "audit": [
     {
       "actor": null,
@@ -11055,6 +11055,50 @@ window.AUDIT_DATA = {
       "goal": "Settle whether a safe default, rather than enforceable prevention, is acceptable for Phase 1",
       "done_when": "C21's default confirmed and the per-session limit recorded as accepted rather than omitted",
       "tier": "T2"
+    },
+    {
+      "id": "al-01M2718HK868J0JDW7X3K61GBW",
+      "shortname": "F4 — the composer: R15/R19, Security C9-C21, Privacy C14(e)(i)-(vi)",
+      "datetime": "2026-09-11T01:28:08Z",
+      "session": "conductor-front-door-f4",
+      "prompt": "Node F4 — the composer (R15, R19). T2, opus. Implement the composer against docs/plans/conductor-front-door.md section F4, Rulings 41-44, the conductor privacy review and the front-door council review: the five-kind page-to-host vocabulary, the host-owned send, the bounded attach path with its operator opt-in, no late binding, the resolved-path label, the derived lease, and the F4 production vendored bundle with its manifest, notices and recurring advisory scan.",
+      "summary": "Delivered F4. The composer's model half is AiDe.Core/Presentation/Composer (router, attach gate and policy, form engine, compiler, lease derivation, draft store, mention sources, send record); the send seam and the WPF surface are AiDe.App/Workbench/Composer; the page is src/AiDe.App/Web/composer.{html,mjs}; the production bundle was built once from a narrowed 24-package input set and hash-pinned.\n\nMEASURED. AiDe.App.Tests 491 (floor was 456), run under the PowerShell console host per DC-117. AiDe.Core.Tests 2188 = portable 2035 + non-portable 153 (floors 2064 / 1912 / 152), all three runs executed, so the split invariant holds by observation. verify-test-run.py --update was never run; every floor raised, none lowered. All twelve named gates exit 0 bare, plus the new verify-vendored-advisories gate and its self-test.\n\nTWO DEFECTS THIS NODE CREATED AND ITS OWN RED-FIRST TESTS CAUGHT, each converted into a control rather than a test edit. (1) System.Text.Json resolves a duplicate JSON member to the LAST occurrence, so {\"kind\":\"nope\",\"kind\":\"editor.ready\"} routed as editor.ready while another reader of the same bytes may take the first â€” a duplicate top-level member is now refused outright. (2) The mention capture stopped at the first non-path character, so @src/*.cs captured \"src/\" and became the BROADER lease src/** â€” a narrower capture was a widening bug, and the capture now runs to whitespace and rejects afterwards.\n\nTHE PROBE SETTLED C12's INFERRED CLAIM. A real WebView2 loading the real page under default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' reports editors: 1, chips: 1, native controls: 4 â€” the editor renders, the bundle's own plugin ran, and Ruling 33's four native widgets created no editor instance. fetch: rejected, hostObject resolution: rejected, and the control's document was unchanged after location.href, window.open and an off-origin iframe.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Claude Code",
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "src/AiDe.Core/Presentation/Composer/",
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs",
+        "src/AiDe.App/Web/composer.html",
+        "tools/verify-vendored-advisories.py"
+      ],
+      "tags": [
+        "conductor",
+        "front-door",
+        "composer",
+        "security",
+        "privacy"
+      ],
+      "outcome": "success",
+      "goal": "Deliver F4 of the front-door slice — the composer (R15, R19) — discharging every Fails-if clause in the plan's F4 section with a named test, and building the production vendored bundle once (C18, C19).",
+      "done_when": "Every F4 clause has a test or is named unmet; the twelve gates exit 0 bare; App and Core suites measured at or above their floors with the split invariant observed; CI green on the pushed branch.",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-11T00:39:03Z",
+      "duration_seconds": 2945.0,
+      "git": {
+        "sha": "3603d5db417c186dacbdeb407d149b886d8659fb",
+        "short": "3603d5db4",
+        "branch": "feature/composer",
+        "pushed": null
+      }
     }
   ],
   "changes": [

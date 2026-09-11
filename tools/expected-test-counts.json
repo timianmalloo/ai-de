@@ -1,10 +1,10 @@
 {
   "_comment": "Minimum tests that must EXECUTE per project. The control for defect class DC-012: a crashed test host reports success with a smaller count, and nothing else notices. Raise these with `python tools/verify-test-run.py --update` when you add tests; never lower one to make a run pass. Keys with a suffix are HALVES of a project run on one OS; `splits` says which halves must account for which whole, and verify-test-run checks that sum on every invocation, on both operating systems. AiDe.Core.Tests.nonportable is [Trait(\"Platform\",\"Windows\")] only - kernel32, powershell.exe, the net10.0-windows daemon, and tests that assert Windows path semantics on purpose. There is no quarantine category: every test that merely failed on Linux was diagnosed and fixed (INV-0005).",
   "minimumExecuted": {
-    "AiDe.App.Tests": 456,
-    "AiDe.Core.Tests": 2064,
-    "AiDe.Core.Tests.portable": 1912,
-    "AiDe.Core.Tests.nonportable": 152
+    "AiDe.App.Tests": 491,
+    "AiDe.Core.Tests": 2188,
+    "AiDe.Core.Tests.portable": 2035,
+    "AiDe.Core.Tests.nonportable": 153
   },
   "splits": {
     "AiDe.Core.Tests": [
@@ -12,5 +12,5 @@
       "AiDe.Core.Tests.nonportable"
     ]
   },
-  "_baselineBump": "2026-09-10, node MCP1 (McpConfigWriter ACL preservation + four parse defects). AiDe.Core.Tests 2045 -> 2064, portable 1893 -> 1912 (nineteen new cases across M1-M5); non-portable unchanged at 152; AiDe.App.Tests unchanged at 456. MEASURED ON THE MERGED TREE, all four keys: 1912 + 152 = 2064 and all three Core runs were executed, so the split invariant holds by OBSERVATION. Note M1 is deliberately NOT platform-traited so the Linux runner executes it -- that is what caught File.Replace preserving the ACL on Windows but NOT the mode on POSIX (0600 -> 0644). A Windows-only proof of a path-permission change is not a proof. verify-test-run.py --update was NEVER run. Every floor raised; none lowered."
+  "_baselineBump": "2026-09-11, node F4 (the composer: R15/R19, Security C9-C21, Privacy C14(e)(i)-(vi)). AiDe.App.Tests 456 -> 491 (35 new: the send seam, the page policy, the no-late-binding window, the rendered field-level errors, and the real-WebView2 composer probe). AiDe.Core.Tests 2064 -> 2188, portable 1912 -> 2035, non-portable 152 -> 153 (the one new Windows-traited case is the directory-junction-in-the-prefix row of C14(e)(ii); its sibling symlink row is portable). MEASURED ON THIS TREE, all four keys: 2035 + 153 = 2188 and all three Core runs were executed, so the split invariant holds by OBSERVATION. AiDe.App.Tests was run under the PowerShell console host, per DC-117. verify-test-run.py --update was NEVER run. Every floor raised; none lowered."
 }

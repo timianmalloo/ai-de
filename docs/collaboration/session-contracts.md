@@ -55,13 +55,16 @@ which is the defect signature the data-modelling standard names.
 
 ## 2. File ownership
 
-**Last reconciled against the tree: 2026-09-10**, by node F2 of the front-door slice, adding the
-three surfaces it built under `src/AiDe.App/Workbench/Sessions/`. Previously reconciled 2026-09-01 by
-the core session, covering the nine surfaces §4y listed and the Session 3 rows in §4z.
+**Last reconciled against the tree: 2026-09-11**, by node F4 of the front-door slice, adding the
+composer surface it built under `src/AiDe.App/Workbench/Composer/`. Previously reconciled 2026-09-10
+by node F2 (the three surfaces under `src/AiDe.App/Workbench/Sessions/`), and 2026-09-01 by the core
+session (the nine surfaces §4y listed and the Session 3 rows in §4z).
 
-*A gap this reconciliation found, reported rather than closed here.* `tools/verify-surface-ownership.py`
-iterates `src/AiDe.App/Workbench` **non-recursively**, so the three rows added below sit outside its
-scan and were assigned by hand rather than forced by the gate. That is the DC-118 shape — a guard
+*The same gap, still open, and named again rather than assumed handled.* `tools/verify-surface-ownership.py`
+iterates `src/AiDe.App/Workbench` **non-recursively**, so the rows for `Workbench/Sessions/` and
+`Workbench/Composer/` sit outside its scan and were **assigned by hand rather than forced by the
+gate** — F2 said so for its three, and F4 says so for its one. A second node reaching the same
+by-hand conclusion is the point at which the follow-up stops being hypothetical. That is the DC-118 shape — a guard
 narrower than the sentence it enforces ("every surface has a declared owner") — and widening it is a
 change to a shared control, which belongs to whoever owns that decision rather than to the node that
 noticed.
@@ -91,6 +94,7 @@ other session may not read it — reading is how contracts stay honest.
 | `src/AiDe.App/Workbench/NodeReaderView.cs` | Reads `DescribeAsync`/`NodeContentAsync` directly — see the split below |
 | `src/AiDe.App/Workbench/CodeViewerView.cs` | The render half of the `NodeContentAsync` contract (ADR-0025 code-viewer-renderer) — see the split below |
 | `src/AiDe.Core/Presentation/Sessions/**` | The session front door's view models and the pure state they hold (Addendum A §10) — see the placement rule below |
+| `src/AiDe.Core/Presentation/Composer/**` | The composer's model half: the closed page-to-host vocabulary and its router, the attach gate and policy, the form engine, the compiler and the lease derivation. `net10.0`, so the compiler is the control — a `FrameworkElement` here does not build |
 
 **Where an Addendum A §10 Presentation type lives, so nobody re-derives it (Ruling 41).**
 A §10 Presentation type whose name contains "session" goes in **`src/AiDe.Core/Presentation/Sessions/`**.
@@ -155,6 +159,7 @@ unchanged and returns to Design.
 | `src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs` | The session document: the paired-zone preset and the canvas mode strip (R13 b3, R16) |
 | `src/AiDe.App/Workbench/Sessions/ConsoleSurface.cs` | The Console canvas mode: the merged stream, its lane rail and its filter tree (R16 b1) |
 | `src/AiDe.App/Workbench/Sessions/NewSessionSheetDialog.cs` | The New Session sheet's window; every rule it renders belongs to `NewSessionSheetModel` (R13) |
+| `src/AiDe.App/Workbench/Composer/ComposerSurface.cs` | The composer: the WebView2-hosted editor, the host-owned Send, the attach affordance, and the compiled view the operator reads before a send (R15, R19). **Assigned by hand** — it is outside `verify-surface-ownership.py`'s non-recursive scan |
 | `docs/mockups/**`, `docs/design/**` | Design artifacts |
 | `docs/ui/**` | Session 3 (`claude-ui-experience`) — craft findings, mockups, review harnesses |
 | `docs/design/ux-*.md`, `docs/design/ui-*.md` | Session 3 — UX/UI specs it authors |

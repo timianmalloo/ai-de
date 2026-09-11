@@ -321,11 +321,12 @@ shows all three going red.
 
 
 
-**The composer is today's staged-draft composer, absorbed rather than replaced.**
-Addendum A §10 says `PromptDraftViewModel`'s transfer rules are absorbed by the composer and
-that the class may remain for the standalone draft surface. So this hosts the real
-`PromptDraftSurface` — a working composer, not a placeholder — and R15's rich editor
-replaces its innards in the composer node.
+**The composer zone now hosts R15's composer, as F2 said it would.** F2 put the
+staged-draft surface here — a working composer rather than a placeholder — and recorded that the
+rich editor would replace its innards in the composer node. It has:
+`ComposerSurface` is the editor, the host-owned send, and the compiled view the
+operator reads before anything leaves the machine. `PromptDraftViewModel`'s transfer rules
+are unchanged and the standalone draft surface still exists, exactly as Addendum A §10 allows.
 
 | Member | Summary |
 |---|---|
@@ -334,7 +335,7 @@ replaces its innards in the composer node.
 | `string Kind = "session-document"` | The surface kind `SurfaceContentFactory` builds this for. |
 | `SessionDocumentViewModel Model { get; }` | This document's state. |
 | `string SurfaceId { get; }` | The layout surface id. |
-| `PromptDraftSurface Composer { get; }` | The composer half of the paired zone. |
+| `ComposerSurface Composer { get; }` | The composer half of the paired zone. |
 | `IReadOnlyList<string> ModeTabs` | The mode captions currently offered, in catalog order. No placeholder is ever added. |
 | `double RenderedComposerWeight` | The rendered composer share of the paired zone — what the splitter actually shows. |
 | `double RenderedCanvasWeight` | The rendered canvas share of the paired zone. |
