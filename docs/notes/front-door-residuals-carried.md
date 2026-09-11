@@ -74,6 +74,13 @@ named phase or persona).
 - **R13 b2's live gap:** the sheet cannot list backends in the running app — **`providers.yaml` has no reader anywhere in the repo**, and Ruling 35 refuses a third hand-rolled one. The sheet renders an honest empty state. The oracle is fully discharged against a populated registry in test.
 - **`ProviderRegistry` is constructed from in-code rows** (`GovernedRunHost.cs:69`), never from a file.
 
+## Accumulated at the F5 close, when the run was attempted
+
+| Residual | Kind | Detail |
+| --- | --- | --- |
+| **The composer's send context has no producer in the product** | measured | `grep -rn "ComposerSendContext" src` returns **five** hits and **zero** constructions — a declaration, a doc-comment cref, two parameters, a field. The only `new ComposerSendContext` in the repository is `ASendLaunchesAGovernedRunTests.cs:79`. So `ComposerSurface._context` is null on every shipped path and `Send()` returns null at `:224`. **DC-130's second instance in this slice**, with its signature verbatim: `MainWindow.xaml.cs:160` forwards only `created.Config` and drops `NewSessionResult.TaskClass`, the one field the sheet refuses to default (DC-110). Clauses 2, 3, 5, 6 and 9 are unsatisfiable until an owner is assigned to the edge. |
+| **The F5 oracle cannot distinguish a product-wired composer from a harness-wired one** | named | Clause 2 asserts the request was built in the composer; clause 5 asserts the launch site is under `src/`. **Neither asks who supplied the send context.** A driver that calls `Composer.Configure(...)` itself and presses `Send()` reads green on both while the product still cannot send — DC-127's shape, reachable through the pack's own gate. The closure is a source scan of the form `TheProductItselfConstructsASessionLane` already uses. **Not added:** clause 0 pins the oracle's bytes to `1374401d`, so widening it after the fact reddens clause 0. |
+
 ## One process residual, recorded because it shaped everything above
 
 **Ten or more conductor claims were refuted by the nodes they were given to**, each on evidence: a

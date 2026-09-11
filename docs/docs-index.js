@@ -3720,7 +3720,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1189c6d0a922b4586547644625f2277f3acdfc8dbccde49992848654f7c3da6e"
+      "sourceSha256": "4bcb8047941435c1cc88430139c6453695690c52b4b67c578ff48846f08e3de8"
     },
     {
       "id": "note-front-door-ruling-36",
@@ -13068,5 +13068,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "93ce2ba72f1b65fb834cf109feedaa675cad3f33381664e853d7c759ed32bcd7"
+  "graphSha256": "9efd57181f354b969bb21f8817bee46373fa1dbf564d4a44b4a975031fabfc4e"
 };
