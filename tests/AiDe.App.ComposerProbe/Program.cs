@@ -33,7 +33,7 @@ namespace AiDe.App.ComposerProbe;
 /// <para><b>The exit code is the assertion</b>, and each failure has its own so the test that
 /// launched this can say what went wrong without reading a log.</para>
 /// </remarks>
-internal static class Program
+internal static partial class Program
 {
     private const int Ok = 0;
     private const int PageNeverLoaded = 2;
@@ -69,6 +69,17 @@ internal static class Program
     /// <summary>Runs the shell-choreography typing oracle.</summary>
     private const string ShellArgument = "--shell";
 
+    // --session-render only (INV-0009). The operator's 22:33Z launch replayed in the product's own
+    // docking host under the product's own mode controller; each is a different way "File -> New
+    // Session showed me nothing" happens, so the test that launched this can name which.
+    private const int TheNewDocumentNeverLoaded = 30;
+    private const int TheNewDocumentNeverPushedInit = 31;
+    private const int TheReopenedDocumentWasNeverConfigured = 32;
+    private const int TheReplayDidNotReachTheOperatorsState = 33;
+
+    /// <summary>Runs the INV-0009 session-render replay.</summary>
+    private const string SessionRenderArgument = "--session-render";
+
     private static readonly List<string> Cancelled = [];
 
     [STAThread]
@@ -82,6 +93,11 @@ internal static class Program
 
         try
         {
+            if (args is not null && args.Contains(SessionRenderArgument, StringComparer.Ordinal))
+            {
+                return SessionRender.Run(args!);
+            }
+
             if (args is not null && args.Contains(ShellArgument, StringComparer.Ordinal))
             {
                 return ShellTyping.Run(args!);

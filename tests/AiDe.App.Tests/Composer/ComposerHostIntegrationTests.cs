@@ -242,7 +242,8 @@ public sealed class ComposerHostIntegrationTests
             .Where(l => l.StartsWith("diag: {\"ts\":", StringComparison.Ordinal) && l.Contains("\"surface\":\"composer:", StringComparison.Ordinal))
             .ToList();
 
-    private static (int ExitCode, string Stdout, string Stderr) RunProbe(string arguments, TimeSpan timeout)
+    /// <summary>Runs the composer probe with <paramref name="arguments"/>; shared with the session-render oracles (INV-0009).</summary>
+    internal static (int ExitCode, string Stdout, string Stderr) RunProbe(string arguments, TimeSpan timeout)
     {
         var probe = ProbePath();
         Assert.True(File.Exists(probe), $"the composer probe was not built at {probe}");
@@ -262,7 +263,7 @@ public sealed class ComposerHostIntegrationTests
         return (process.ExitCode, stdout, stderr);
     }
 
-    private static string ProbePath()
+    internal static string ProbePath()
     {
         var configuration =
 #if DEBUG

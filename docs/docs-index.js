@@ -876,7 +876,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "inv-0009-a-session-document-opened-into-a-body-that-is-not-on-screen",
+          "on": "2026-09-11",
+          "reason": "Silent on catalog commands issued while the non-active mode is retained: a dock document opened while Explorer is the body is added to an unparented host and announced as shown (DC-147). Amendment proposed in INV-0009 Phase 5."
+        }
+      ],
       "summary": "A surface that needs the whole body (the Knowledge Explorer's graph+reader) is presented as a primary VIEW MODE the shell holds — Workbench | Explorer — realised as a body-content swap of the region the docking host occupies, with the activity rail as the mode selector. Rejects making it a dock pane (it would compete for space — the defect being fixed) and a modal overlay (the rail must persist and it is not dismiss-only). The non-active mode's state is retained, never rebuilt.",
       "tags": [
         "architecture",
@@ -913,7 +919,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a0fd25f41ccbbcc1c1de6317ccca478e2e77b800403234c6fd68582c9acc6773"
+      "sourceSha256": "148db40c8bbf6f9e4eba24aaf90d180dde902287223c353ae3079265529ff4f6"
     },
     {
       "id": "adr-0018-node-content-reader-contract",
@@ -6188,7 +6194,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1d3971f39bd4aec2a0b7c55f11f63fc0031ea8c44257d86426c3deb983f5b7e7"
+      "sourceSha256": "681e3dc3d91e270973eed9a83b012e86bf3282e22e25f9dcce43bb6effbcd17b"
     },
     {
       "id": "design-session-profiler",
@@ -8962,6 +8968,65 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "d00544d0b42b6172579cc926023e22354b094238e7a9dac0c7c3a09488b264d7"
+    },
+    {
+      "id": "inv-0009-a-session-document-opened-into-a-body-that-is-not-on-screen",
+      "path": "docs/investigations/INV-0009-a-session-document-opened-into-a-body-that-is-not-on-screen.md",
+      "title": "A session document opened into a body that is not on screen: New Session while Explorer is the body, and a reopen that never binds or shows",
+      "type": "investigation",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-front-door",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "The operator ran File → New Session twice after opening a workspace and saw nothing; the brief attributed it to the restored layout. Replayed from the log's own restore payload in the product's docking host under the product's mode controller: the restored arrangement renders the new document (green), and the one state the log names by its explorer-graph line — Explorer as the window's body — does not (red, exit 30): the document is added to an unparented docking host, its composer is configured and never loaded, and the shell announces \"opened … maximized\" about a tree nobody is looking at; putting the workbench back shows it untouched (necessary and sufficient). A second red: a reopened session whose surface the restore already placed keeps its \"No session is open\" island and its composer is never bound. A third finding: the operator's first document at 22:33:28Z was a New Session through the chooser with no workspace open, whose composer rendered and was refused for \"no open workspace\" — the blank editor they described. Four oracles committed (two red); the fix is not made.",
+      "tags": [
+        "session-document",
+        "composer",
+        "explorer-mode",
+        "shell-view-mode",
+        "docking",
+        "layout-restore",
+        "observability",
+        "ruling-47",
+        "dc-147",
+        "dc-148",
+        "dc-084",
+        "dc-040",
+        "dc-135"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0021-named-dock-zones",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-front-door-rulings-45-48",
+          "rel": "depends-on"
+        },
+        {
+          "to": "inv-0007-composer-entry-areas-starved-by-the-compiled-view",
+          "rel": "relates-to"
+        },
+        {
+          "to": "inv-0008-contrast-floor-passes-while-the-shell-fails",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5892b5d3a5aadaa18528204f6ec3081076555bef81e215fbd0d6a591e5c66fae"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -14474,5 +14539,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "174f46834dc10f9eee93d9f2d3c94dd4176c1c4b05c3713204a59f7751a6182d"
+  "graphSha256": "2166c90208a8a545f120e0384a786580bed6c985242ce67d32257fc9becfe637"
 };
