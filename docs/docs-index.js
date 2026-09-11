@@ -4416,6 +4416,123 @@ window.DOCS_INDEX = {
       "sourceSha256": "2f0f00167f44229374a054156349912b571a740c0e4dd61c053ab41d2292a4bf"
     },
     {
+      "id": "note-session-design-decoration-line",
+      "path": "docs/notes/session-design-decoration-line.md",
+      "title": "The decoration line — one grammar for every turn (class · tier · lease · shape · template, provenance on demand), the task class per prompt with free-form as the explicit default, and where the tier control sits",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [
+        {
+          "by": "mockup-session-conversation",
+          "on": "2026-09-11",
+          "reason": "D2 /ui-design elevate: the session as a conversation supersedes the composer-beside-Console layout; the specs' §C1/§B2, the tier control's home and the template control are findings for their owners"
+        }
+      ],
+      "summary": "Every turn carries one decoration line rendered from the envelope, the one store (DESIGN.md SC2–SC5). The task class is a per-prompt control with free-form as the session's explicit default (Ruling 72 over Ruling 70's refusal clause); the tier control sits on the same line beside its rationale, a placement that deviates from Addendum D's compile line; the write-scope line is the lease segment; the header's shape control became a template control. The note records the operator's words behind each choice, the rejected alternatives and the findings.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "addendum-d",
+        "session",
+        "decoration",
+        "task-class",
+        "tier",
+        "lease",
+        "provenance",
+        "ruling-70",
+        "ruling-72",
+        "ui-design"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "refines"
+        },
+        {
+          "to": "note-addendum-c-design-tier-decoration",
+          "rel": "refines"
+        },
+        {
+          "to": "mockup-session-conversation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "ui-review-session-conversation",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d7d843184433ad6d8cbad339438f16d17c98c070700452b7c2a6dba3f262a004"
+    },
+    {
+      "id": "note-session-design-thread-not-panes",
+      "path": "docs/notes/session-design-thread-not-panes.md",
+      "title": "The session is a thread, not two panes — the Console as the reply side of each turn, the editor pinned beneath, and what that reverses in Addendum C §C1/§B2",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [
+        {
+          "by": "mockup-session-conversation",
+          "on": "2026-09-11",
+          "reason": "D2 /ui-design elevate: the session as a conversation supersedes the composer-beside-Console layout; the specs' §C1/§B2, the tier control's home and the template control are findings for their owners"
+        }
+      ],
+      "summary": "At node D2 the session document became a thread (DESIGN.md SC1, SC7, SC8): turns above one pinned editor, the lane's reply folded beneath the turn that caused it, the Console split and the Score outline kept as on-demand views of the same stream. This adopts Layout:StreamingThread, which D1 and spec §C1 declined. The note records the evidence, what is reversed and kept, the rejected alternatives, the one Inferred reading (one run at a time), and the findings for the specs.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "addendum-d",
+        "session",
+        "thread",
+        "console",
+        "archetype",
+        "ui-design",
+        "operator-verdict"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "refines"
+        },
+        {
+          "to": "mockup-session-conversation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-conversation-composer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "ui-review-session-conversation",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8559beb5e946d5f7fe7dfa05f1497be483a283b3ae257162d5150914bc1bd713"
+    },
+    {
       "id": "note-terminal-customization-persistence",
       "path": "docs/notes/terminal-customization-persistence.md",
       "title": "Decision — terminal customization persistence & busy-close",
@@ -6188,7 +6305,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "adb77c41f5f614f87fc06297c81760134063736c408f186ed41d09ee9988a707"
+      "sourceSha256": "ea6114c533462753d715b664e5c11fb61d4d1bf751673a077604cea9b690148c"
     },
     {
       "id": "design-session-profiler",
@@ -7111,6 +7228,68 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "a5c1329af98ccc6e2327a22470bf746e1140f62ab478f626a413d0cf749c213d"
+    },
+    {
+      "id": "mockup-session-conversation",
+      "path": "docs/mockups/session-conversation.md",
+      "title": "Session conversation — n turns, one editor, the Console as the reply side (Addendum C/D elevate mockup)",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "The session document as a conversation: a thread of turns above one pinned editor, the session taking the whole tree in the Coding perspective (Ruling 47, no graph), each turn rendered from its envelope (the decoration line, provenance on demand, the sent bytes on demand) with the lane's reply folded beneath it. Forty-three harness states over DESIGN.md SC1–SC10, a 1 / 5 / 40 turn-count axis, and a \"chat-like\" contract the page measures on itself.",
+      "tags": [
+        "ui-design",
+        "mockup",
+        "addendum-c",
+        "addendum-d",
+        "session",
+        "conversation",
+        "thread",
+        "composer",
+        "prepare",
+        "task-class",
+        "contrast",
+        "ai-ux"
+      ],
+      "links": [
+        {
+          "to": "mockup-conversation-composer",
+          "rel": "refines"
+        },
+        {
+          "to": "ui-review-session-conversation",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-perspective-shell",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-session-design-thread-not-panes",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-session-design-decoration-line",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "acc979c2676b3dafe4b3d0cd550909e253c02b7fcd49197a2f3a595ac7822e53"
     },
     {
       "id": "mockup-session-front-door",
@@ -8637,6 +8816,78 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "526d0d28b986e75dcf1ea39ed457d0ab5950b46f8f90e523fc09cf8e121ba37d"
+    },
+    {
+      "id": "ui-review-session-conversation",
+      "path": "docs/reviews/ui-session-conversation.md",
+      "title": "UI review — the session as a conversation: n turns, one editor, the Console as the reply side",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [
+        {
+          "by": "mockup-session-conversation",
+          "on": "2026-09-11",
+          "reason": "D2 /ui-design elevate: the session as a conversation supersedes the composer-beside-Console layout; the specs' §C1/§B2, the tier control's home and the template control are findings for their owners"
+        }
+      ],
+      "summary": "Elevate-mode review of the AI-DE session document as a conversation, over D1's ratified composer. The thread of turns above one pinned editor, each turn rendered from its envelope with the lane's reply folded beneath it, replaces the composer-beside-Console layout; the task class is per prompt with free-form as the explicit default (Ruling 72); Addendum D's Prepare is rendered in every named state. Three adversaries ran a bounded two-pass loop recorded here; the craft gate reads 0 on the new mockup and the corpus stays at 98; the highest-leverage change for the slice is the thread's ItemsControl with the feed's keyboard model and the announcement policy, because everything else in the design renders inside it.",
+      "tags": [
+        "ui-review",
+        "ux",
+        "accessibility",
+        "contrast",
+        "session",
+        "conversation",
+        "thread",
+        "composer",
+        "prepare",
+        "task-class",
+        "addendum-c",
+        "addendum-d"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "documents"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "mockup-session-conversation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-conversation-composer",
+          "rel": "refines"
+        },
+        {
+          "to": "mockup-new-session-sheet",
+          "rel": "relates-to"
+        },
+        {
+          "to": "ui-review-perspective-shell",
+          "rel": "refines"
+        },
+        {
+          "to": "note-session-design-thread-not-panes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-session-design-decoration-line",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "acace466bd7042458ffd7737750a34a9d429780d85e4db2e15001eb28ac939e9"
     },
     {
       "id": "ui-review-watcher-observatory",
@@ -14406,6 +14657,14 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-perspective-shell"
     },
     {
+      "id": "surface-mockups-session-conversation",
+      "path": "docs/mockups/session-conversation.html",
+      "title": "AI-DE session as a conversation: n turns, one editor, the Console as the reply side",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-session-conversation"
+    },
+    {
       "id": "surface-mockups-session-front-door",
       "path": "docs/mockups/session-front-door.html",
       "title": "AI-DE session front door — operator-feedback elevate",
@@ -14502,5 +14761,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "da91b29f27ed76213cb0c428ba7729b4c4c406394626d22c905ce8e0cbec2b47"
+  "graphSha256": "ce2e8210c0d0e799e272edf51c6e920622280e8e2bf8cfe4bef86b871af77586"
 };
