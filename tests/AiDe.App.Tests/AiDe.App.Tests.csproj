@@ -60,6 +60,26 @@
     -->
     <ProjectReference Include="..\AiDe.App.WebHostProbe\AiDe.App.WebHostProbe.csproj"
                       ReferenceOutputAssembly="false" />
+
+    <!--
+      The composer probe, the FOURTH instance of the same build-order edge (DC-023), and the first
+      one where the stale binary DID NOT announce itself. The other three were found by the probe
+      being ABSENT, which fails with an honest message. This one was found by the probe being
+      PRESENT AND OLD: on the merge of feature/provider-config the test ran a probe built 32 minutes
+      earlier, before the three handshake fixes that commit landed, so
+      TheHandshakePushesExactlyOneHostInitPerMountAndFieldValuesSurviveIt asserted 2 and measured 0.
+      The identical tree passed in the worktree that had built the probe and failed in the checkout
+      that had not — same commit, same machine, opposite results, and nothing in the failure named
+      the binary.
+
+      That is the shape worth remembering: a missing probe fails loudly, a STALE probe fails as a
+      product defect. Every out-of-process probe this project drives belongs here on the day it is
+      written, not after the failure it causes.
+
+      ReferenceOutputAssembly="false" because it is started as a process, never linked.
+    -->
+    <ProjectReference Include="..\AiDe.App.ComposerProbe\AiDe.App.ComposerProbe.csproj"
+                      ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>
