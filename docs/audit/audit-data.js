@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T17:35:05Z",
+  "generated": "2026-09-11T18:40:36Z",
   "audit": [
     {
       "actor": null,
@@ -11732,6 +11732,76 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T2",
       "tool": null
+    },
+    {
+      "id": "al-01M28W210Q8QGKK38QEQ0WR1EB",
+      "shortname": "operator-intent-addendum-c-verbatim",
+      "datetime": "2026-09-11T18:35:40Z",
+      "session": "addendum-c-chain",
+      "prompt": "I think the experience is very cluttered (rapidly) because it is mixing use cases in a common set of docks. We need to clean up and refactor the entire user experience and tighten up what can be done where and when.\nUse Case 1: Agentic Coding â€” the primary model is the session construct we are working on now; the secondary model is CLI instances in the tool (terminal); the third model is a hybrid, some work in the session experience, some in CLI. The 80% case and where most of our calories must be spent is the primary model, which has to be a seamless, joyful and extremely productive experience.\nUse Case 2: Knowledge Exploration and Visualization â€” the core is in the Explorer view already: open the graph and be able to search or navigate in the graph; for any given node you should have the appropriate viewing surface â€” metadata, markdown, html, code etc. The explorer should be the way you walk the graph to learn about knowledge, not how you think of architecture.\nUse Case 3: Code and Architecture understanding â€” two models: (1) a solution/tree view of the code, data, architecture artifacts in the project/repo; (2) a graph view of the code, data, architectureâ€¦ and even knowledge (similar to the explorer). This view focuses on broad-based understanding that narrows to the specific: (1) the Domain Entities; (2) the Entry Points â€” API surface, UX surface etc â€” that allow one to reason over the solution from a particular entry point; (3) the entire class diagram or data model (ERM or Entity Model) â€” this has to scale, the current class diagram doesn't scale well; (4) the data flow from an entry point; (5) the sequence diagram from a given entry point or a method; (6) the conceptual architecture: layer and component diagrams derived from the code and from things like bicep.\nUse Case 4: Test coverage â€” not broached as yet; later: the right test dashboards and what kind of debugging experience we need.\nFor all of these: the side tool bar (where the explorer icon is) should have icons for all of these use cases, and then we use the same docking architecture BUT the things that can be viewed, docked are intrinsic to the context of the use case â€” e.g. no sequence diagram in the agentic coding use case. The top menu bar options should be contextually aligned to which use case the main window is in â€” think of this as the \"current mode\".\n/Specify Addendum C to the current work which envisions the Mode the tool is in, tied to the Use Cases identified, constrains the surfaces that are tied to each use case and defines the top and side menus etc.",
+      "summary": "The operator's Addendum C intent in full, as relayed verbatim by the conductor (session conductor-addendum-c) in S1's brief; the operator's own committed entry al-01M28QJMWGJT5AK438M37KJ9ZT is a 664-char paraphrase of the same instruction. Logged so the spec's quotations resolve to a committed record.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [
+        "addendum-c",
+        "operator-intent"
+      ],
+      "outcome": "success",
+      "started_at": "2026-09-11T17:36:43Z",
+      "duration_seconds": 3537.0
+    },
+    {
+      "id": "al-01M28WAVQ7930JSTXQRV248G31",
+      "shortname": "specify-addendum-c-perspectives",
+      "datetime": "2026-09-11T18:40:30Z",
+      "session": "addendum-c-chain",
+      "prompt": "I think the experience is very cluttered (rapidly) because it is mixing use cases in a common set of docks. We need to clean up and refactor the entire user experience and tighten up what can be done where and when.\nUse Case 1: Agentic Coding — the primary model is the session construct we are working on now; the secondary model is CLI instances in the tool (terminal); the third model is a hybrid, some work in the session experience, some in CLI. The 80% case and where most of our calories must be spent is the primary model, which has to be a seamless, joyful and extremely productive experience.\nUse Case 2: Knowledge Exploration and Visualization — the core is in the Explorer view already: open the graph and be able to search or navigate in the graph; for any given node you should have the appropriate viewing surface — metadata, markdown, html, code etc. The explorer should be the way you walk the graph to learn about knowledge, not how you think of architecture.\nUse Case 3: Code and Architecture understanding — two models: (1) a solution/tree view of the code, data, architecture artifacts in the project/repo; (2) a graph view of the code, data, architecture… and even knowledge (similar to the explorer). This view focuses on broad-based understanding that narrows to the specific: (1) the Domain Entities; (2) the Entry Points — API surface, UX surface etc — that allow one to reason over the solution from a particular entry point; (3) the entire class diagram or data model (ERM or Entity Model) — this has to scale, the current class diagram doesn't scale well; (4) the data flow from an entry point; (5) the sequence diagram from a given entry point or a method; (6) the conceptual architecture: layer and component diagrams derived from the code and from things like bicep.\nUse Case 4: Test coverage — not broached as yet; later: the right test dashboards and what kind of debugging experience we need.\nFor all of these: the side tool bar (where the explorer icon is) should have icons for all of these use cases, and then we use the same docking architecture BUT the things that can be viewed, docked are intrinsic to the context of the use case — e.g. no sequence diagram in the agentic coding use case. The top menu bar options should be contextually aligned to which use case the main window is in — think of this as the \"current mode\".\n/Specify Addendum C to the current work which envisions the Mode the tool is in, tied to the Use Cases identified, constrains the surfaces that are tied to each use case and defines the top and side menus etc.",
+      "summary": "Produced docs/specs/addendum-c-perspectives.md (three layers) + a row in docs/specs/conductor/README.md + four decision notes (Coding default layout; inadmissible-kind routing; menu derivation; persistence slots). Binds Rulings 50-55; folds two mid-run operator directives: the composer verdicts (page-one Supersessions S-1..S-9 of R15/R18/R19 clauses quoted by line, US-C13, for the Owner to file as PR-A/PR-B) and the token-only contrast NFR proven by a runtime census (A9, C7, P-11). Archetype: PerspectiveShell Arch:HubAndSpoke (auto-selected). Gate: pass 1 all three vetoes HELD (UX-IA routing rule; UX-A11y: Ctrl+K chords are announced, never bound; Test Architect: no seam/oracle for no-rebuild and rail claims); pass 2 (cap): UX-IA and UX-A11y CLEARED with conditions applied; Test Architect held on a NEW blocker (the spec's own false claim that a deriver exists - corrected, seam+oracle named) and Simplifier soft veto held on two majors (deriver deferred as D-5; per-prompt override cut) - both sets of conditions applied in text, un-reconfirmed because the cap fired; Product Strategist ACCEPT WITH CHANGES applied (committed operator entry is a paraphrase; the relayed verbatim text logged as al-01M28W210Q8QGKK38QEQ0WR1EB). Conflicts surfaced in section R (24 rows): knowledge-exploration's in-surface view selector vs Ruling 53; uml-erm Model-catalog IA vs per-kind surfaces; DESIGN.md menu names vs code; Addendum A A4.1 File placement; the sessions caption vs A3 naming; four announced chord collisions and zero bound chords; ADR-0017 still proposed; Addendum B missing from the README; no glossary; no XAML craft scan; DESIGN.md Arch:Desktop not a grammar value; syntax-comment below floor; no light-theme values.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/addendum-c-perspectives.md",
+        "docs/specs/conductor/README.md",
+        "docs/notes/addendum-c-coding-default-layout.md",
+        "docs/notes/addendum-c-inadmissible-kind-routing.md",
+        "docs/notes/addendum-c-menu-derivation-rule.md",
+        "docs/notes/addendum-c-persistence-slots.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Produce Addendum C - Perspectives as one three-layer spec bound to Rulings 50-55, with README row, decision notes, frontmatter and derived index",
+      "done_when": "docs/specs/addendum-c-perspectives.md committed and pushed on feature/addendum-c with every Gherkin criterion naming a falsifier, the adversarial gate recorded, gates exit 0",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": false,
+        "regression": false
+      },
+      "persona_yield": [
+        {
+          "persona": "the-simplifier",
+          "raised": 12,
+          "accepted": 11
+        },
+        {
+          "persona": "product-strategist",
+          "raised": 9,
+          "accepted": 9
+        }
+      ],
+      "git": {
+        "sha": "5d8d51e38db7bb0653ccf7258f8992dd0301e0bf",
+        "short": "5d8d51e38",
+        "branch": "feature/addendum-c",
+        "pushed": null
+      }
     }
   ],
   "changes": [
