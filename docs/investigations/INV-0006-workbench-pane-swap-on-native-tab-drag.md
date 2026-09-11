@@ -9,7 +9,6 @@ tags: [workbench, docking, avalondock, layout, zones, drag, reconcile, observabi
 links:
   - { to: adr-0012-docking-shell-library, rel: depends-on }
   - { to: adr-0021-named-dock-zones, rel: refines }
-  - { to: inv-terminal-crash-and-pane-moves, rel: refines }
 review-by: 2026-12-01
 summary: >-
   Dragging a tab in the workbench mutates AvalonDock's tree and nothing else — the zone model, which

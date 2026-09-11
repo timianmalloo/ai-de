@@ -6919,16 +6919,12 @@ window.DOCS_INDEX = {
           "rel": "relates-to"
         },
         {
-          "to": "kb-graph-and-loop-engineering",
-          "rel": "depends-on"
-        },
-        {
           "to": "note-front-door-residuals",
           "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6599725c767ec765e3cc34cbaa0db93e839c257dbd67d897113cb3c19b4eda59"
+      "sourceSha256": "2d5ebde012f5c21f85aaa095489501b42cd9371ffcced0c19292c6e3dbb37797"
     },
     {
       "id": "profile-conductor-phase1",
@@ -7873,14 +7869,10 @@ window.DOCS_INDEX = {
         {
           "to": "adr-0021-named-dock-zones",
           "rel": "refines"
-        },
-        {
-          "to": "inv-terminal-crash-and-pane-moves",
-          "rel": "refines"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a8f92037fca13a544bc5c533a0ae4a407a608a5d621fe3e2932d2bf39ca0f257"
+      "sourceSha256": "b234911b74883e52df5498c42cd6495c034e6763148eee75867d94a5dfafb6b8"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -13029,5 +13021,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "3f9218d74ecf733984f9db0a089d6a5616780b47e30b69e9bfeb0572ba13150e"
+  "graphSha256": "2b9f59474a17914fa8962c010de8007ea2f76ac60537787d696ec6e8966c9143"
 };
