@@ -1,6 +1,6 @@
 ---
 id: note-addendum-c-council-rulings
-title: "Decision note — Rulings 50–72: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
+title: "Decision note — Rulings 50–73: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
 type: doc
 status: accepted
 owner: "@timianmalloo"
@@ -29,7 +29,7 @@ review-suggested:
   - { by: adr-0017-primary-view-mode, on: 2026-09-11, reason: "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent" }
 ---
 
-# Decision note — Rulings 50–72
+# Decision note — Rulings 50–73
 
 ## Provenance
 
@@ -916,3 +916,68 @@ absent state reads *"bounded by your subscription — not measured here"*, never
 **RECORD AS:** Ruling 72 — budget is an optional cap defaulting to the subscription's bound; task
 class defaults to `free-form` and changes per prompt, no Send refusal; the `git push` auto-allow
 stays and Ruling 71's pin is the control.
+
+---
+
+## Ruling 73 — the operator's decisions filed: a turn that writes nothing needs no lease; persistence is the tool's purview; a security control gates only the shape it protects
+
+**RULING:** (a) **A turn that writes nothing needs no lease.** A send whose compiled shape is a
+*Message* — or a Goal-block whose source text names no write scope — runs as a **read-only turn**:
+the lane is opened with every write-capable tool disallowed through Ruling 71's typed
+`session/new` argument (at least `Write`, `Edit`, `MultiEdit`, `NotebookEdit`, `Bash` — the
+architecture names the exact set from the SDK's tool list), **no lease is derived and none is
+required**, and no worktree needs cutting for it. The lease gate (Ruling 42, C17) applies **only**
+to a turn whose compiled shape is a write — a Goal-block with a derived write scope — and there it
+stands unchanged: derived from the operator's `@mentions` over the editor's source text (Ruling 66),
+never typed as a pattern, never universal. (b) **Session persistence is the tool's purview.** The
+conversation, its envelopes and the session's state persist automatically under the tool's own
+store (`<workspace>/.aide/sessions/<id>/`, ADR-0034) — the operator never names a file, a scope or a
+location for the session to exist or to be resumed. (c) **A security control gates only the shape it
+protects.** C17's rule — *a lane with no exclusive write pattern cannot be seam-monitored* — is a rule
+about lanes that can write; applying it to a turn that cannot write refused straightforward
+conversation for no protection gained. The class is registered with this ruling.
+
+**BECAUSE:** The operator's words, verbatim (`al-01M29D65TJN0ZSKC4AZDZ9YVDC`): *"why wouldn't this be
+a standard REPL loop between the prompt side and the console … why do I need to define a file …
+this is our security part of the constitution being too restrictive in straightforward scenarios. A
+turn that writes nothing needs no lease. But session persistence is important — that should be the
+tool's purview not the operator's purview."* The enforceable reading of "writes nothing" is *cannot
+write*: the tool does not infer from prose that a turn will not write; it **removes the capability**
+and derives no lease, so C17's invariant — no lease ⇔ no write capability — holds by construction
+(the pin exists: `LaneSessionOptions`, Ruling 71, delivered on `feature/exit-evidence` at
+`246b38a3`). A turn that turns out to need writes fails visibly inside the read-only lane, and the
+operator adds a mention (or, later, accepts a suggested one — Ruling 69's deferred decoration); the
+compile step's shape rule (US-C13; Addendum D §A9) already distinguishes Message from Goal-block,
+and this ruling attaches the lease gate to the *write* shape rather than to every send.
+Persistence: ADR-0034's envelope store and Addendum A's session store are the tool's; nothing in
+either asks the operator for a path, and nothing may.
+
+**CONFIDENCE:** Verified (the operator's words; Rulings 42, 66, 69, 71; `LeaseDerivation.cs:25`'s
+*"no lease means no run"* premise, which this ruling narrows to write turns). **Inferred:** whether
+a read-only turn runs in the workspace itself or in a throwaway worktree — the architecture decides
+(P1 slice), with the constraint that it cuts nothing the operator must clean up.
+
+**SCOPE EFFECT:** Supersedes: `LeaseDerivation.cs:25` *"no lease means no run"* (→ *no lease means
+no write capability*); Addendum D's tier rule row R1 (*"the send is refused separately for the
+missing write scope"* → the turn runs read-only); Addendum C US-C13's send refusal for a missing
+scope (→ applies to a write-shaped turn only; the read-only turn is the default conversation);
+Ruling 42's *"nothing derivable means no lease, and no lease means no run"* clause (the derivation
+and the refusal of typed/universal leases stand). Admits: a `read-only` turn shape in the compiled
+envelope (a projection, like the others), the write-tools pin as the second use of Ruling 71's
+argument (the first is `Bash` off for every governed lane; the compile session's `tools: []` is the
+third), and one decoration line state (*"read-only — nothing will be written"*). Constrains D2's
+design (the lease segment reads *none — read-only* rather than *not derivable*) and P1's slices
+(the read-only turn is Coding's first slice, not its last — it is the 80% case's REPL).
+
+**CONDITIONS:** (1) The read-only lane's tool set is asserted red-first on the outgoing `session/new`
+frame and observed in the run's Proof Pack (Ruling 71's shape). (2) If a read-only turn is ever
+observed writing (a `Write`/`Edit` frame, a dirty tree after the turn), that is an irreversible act
+outside the plan and stops at the human; the pin is re-spiked. (3) The class in (c) is registered
+with a control the Security lens runs on every finding: *name the shape the control protects; a
+shape without the risk is exempt by construction* — a finding that fails to name its shape is
+returned, not applied.
+
+**RECORD AS:** Ruling 73 — a turn that writes nothing needs no lease: Message/no-scope turns run
+read-only with write tools disallowed and no lease; the lease gate applies to write-shaped turns
+only; persistence is the tool's, never operator-declared; a security control gates only the shape
+it protects (class registered).
