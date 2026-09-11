@@ -206,6 +206,27 @@ graph LR
   S1 --> D1[D1 /ui-design<br/>opus] --> A1[A1 /define-architecture<br/>opus] --> P1[P1 /prepare-for-coordination<br/>opus] --> X{{dispatch under P1's contract}}
 ```
 
+## Re-plan record (GO17) — what changed the shape after wave 1
+
+| When | Checkpoint / event | Outcome | Effect on the graph |
+| --- | --- | --- | --- |
+| R0 | ① phasing | Addendum C does not touch Phase 1's exit (Ruling 51) | F5b's oracle unchanged |
+| R0 | ② ADR-0017 | **A third outcome:** retained *and amended* (Ruling 52) — neither branch the plan named | D1's brief carries the amended shape |
+| after F5a | operator's gesture attempt | *"I could not see the entry areas"* — a product defect, not evidence | **Detour:** `investigate/composer-input` → INV-0007 (two verified defects: the compiled view starves the editor; a later render loses the page) → `fix/composer-entry-areas` (phases 1–4, merged `5c132902`, DC-137/138) → merged forward into F5's tree (`fa8edc10`) |
+| after F5a | operator: contrast recurrence | *"dark fonts on dark backgrounds… a consistent palette"* | **Detour:** `investigate/contrast-census` (a census of the composed shell: 14 of 180 pairings below floor; root cause the leaf `TextBlock` style overriding container ink; `ContrastFloorTests` green on the same commit — DC-135 recurrence) → `fix/contrast-census` phases 1–5 (live) |
+| S1 close | council cap fired (pass 2) | New material entered between passes (two operator directives) — a defect signal about the input, not the loop | One bounded pass each: Simplifier cleared; TA held N1(a)(b) + **NB-1** (empty Not-in-scope could never go green against `SpawnContract.Validate`), substitutions applied, re-read, cleared |
+| S1 close | operator: tier | *"shouldn't tier be decided by the compilation of the prompt?"* then *"we haven't thought through the compile step"* | **Ruling 63** files over 56's tier clause; tier is a compile-step decoration; the compile step becomes a **named seam** for A1 |
+| S1 close | operator ratifies the compile-step proposal | *"yes I am aligned with Addendum D"* | **New node S2 — `/specify` Addendum D — inserted before A1**, in parallel with D1 (own worktree, disjoint files). A1 now covers both C and D. |
+
+**Span after re-plan:** `R0 → S1 → {D1 ∥ S2} → A1 → P1 → dispatch`, with the two detours off the
+span (they gate the *gesture*, not the chain). **Width stayed at 3** throughout; the cap was
+reached four times and never exceeded.
+
+**Defects the conductor created on this plan, registered:** DC-136 (a merge resolved by
+"regenerate, stage everything" left markers in a figure-patched file); DC-113 recurrence 2 (two
+gate lines that could not stop); DC-139 (cleanup removed an open node's tree). Each with its
+control in the register.
+
 ## Stage 10 — Cost vs delivery (filled at close)
 
 _Planned vs actual, rework passes, floors met — appended when the chain closes._

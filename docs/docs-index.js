@@ -5865,7 +5865,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7d30d392febfc2603c0c53a6ca6c5f3edee191d4a806a0c670a4288d34f3859c"
+      "sourceSha256": "b37709dc8e3f1ac248eefa2e957a7533ad02594bcfb5431faa7c3b65feb25b63"
     },
     {
       "id": "design-session-profiler",
@@ -6986,7 +6986,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph LR\n  F5a[F5a commit + gates<br/>sonnet] --> H1((operator gesture)) --> F5b[F5b discharge clauses<br/>opus]\n  R0[R0 Owner ruling<br/>fable] --> S1[S1 /specify<br/>opus]\n  M0[M0 inventory + baseline<br/>sonnet] --> S1\n  M0 --> D1\n  M0 --> A1\n  S1 --> D1[D1 /ui-design<br/>opus] --> A1[A1 /define-architecture<br/>opus] --> P1[P1 /prepare-for-coordination<br/>opus] --> X{{dispatch under P1's contract}}"
         }
       ],
-      "sourceSha256": "bc6abb2214a1c7b14323a72b5381d2ce96e11e93b4a22ed2c487fb904c9316ba"
+      "sourceSha256": "b406e10ee9d9eb9a5c4e189f2cf4b49746bbe3252d356371b44c15c2e0364166"
     },
     {
       "id": "plan-agentic-watcher-substrate",
@@ -13683,5 +13683,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ef885c2deafd825551370b47f29152adebb1670c55e0fed1962c1c1405659b92"
+  "graphSha256": "abbbaa3034d2fa9aa6843ab4f450bf67ea9f431e09d594736cbf76e2ecf63c75"
 };
