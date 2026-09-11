@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 64 · partially-controlled 48 · uncontrolled 11
+**Status counts:** controlled 64 · partially-controlled 49 · uncontrolled 10
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -5059,11 +5059,31 @@ for both or split.*
   `%TEMP%` is a per-test fingerprint of an aborted run.** The generalisation: **when reasoning about
   a resource's lifetime, name every ring that owns one — the ring you are looking at is the one you
   will protect.**
-- **Status:** `uncontrolled` — diagnosed with the root cause quoted and the fix identified as three
-  lines of an idiom already in the repository, but nothing yet fails when a helper outlives its
-  suite, and the rate is unmeasured: the population was **zero** at measurement time, so this leak is
-  **episodic rather than monotonic** and every statement about its frequency, including the
-  conductor's, is modelled rather than observed
+- **Fixed 2026-09-10, and the abnormal path is the one that was observed.** The launcher now creates
+  a kill-on-close job before `CreateProcessW`, assigns the child, and closes the job handle in the
+  existing `finally`. **Red-first on the path a `finally` cannot cover:** the **test host** was
+  killed (`testhost.exe` PID 36704, not the helper), and helper PID 47884 was **gone 47 ms later**.
+  That is precisely the state the operator photographed — a suite that did not exit cleanly.
+- **Three assumptions in the fix brief were false, and building found all three** — worth recording
+  because two of them look like the kind of tidy-up that gets waved through:
+  1. *"`return -1` after `Assert.Fail` is dead code"* — deleting it produced **`CS0161`**. xUnit
+     2.9.3's `Assert.Fail` is **not annotated `[DoesNotReturn]`**, so the compiler cannot see it as
+     terminal. **Unreachable at runtime, required at compile time.** A HYG-A cleanup that would have
+     broken the build.
+  2. *"a three-line change"* — `ConPtyInterop`'s members carry `[SupportedOSPlatform("windows")]`, so
+     calling them tripped **CA1416** under `TreatWarningsAsErrors`; three types needed the
+     annotation.
+  3. **The oracle's pattern had a hole.** It listed four report prefixes and **omitted
+     `conpty-host`**, the conformance suite's — leaving the leftover-report oracle **blind to the
+     fifth call site**. *An oracle with a hole in it is worse than no oracle*, because it reports
+     clean.
+- **Status:** `partially-controlled` — the launcher now reaps its own child, proven on the
+  test-host-killed path, and a leftover-report oracle covers all five call sites. Not `controlled`:
+  that oracle is a **fingerprint of an aborted run**, not a process-table assertion, so a helper that
+  survives while its report is still deleted would pass. The out-of-host process-diff oracle is
+  named and unbuilt. And the **rate remains unmeasured** — the population was **zero** at diagnosis
+  time, so this leak is **episodic rather than monotonic**, and every statement about its frequency,
+  including the conductor's, is modelled rather than observed
 
 
 ---
