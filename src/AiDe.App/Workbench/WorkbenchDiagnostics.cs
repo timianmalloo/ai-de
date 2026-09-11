@@ -119,6 +119,32 @@ public static class WorkbenchDiagnostics
         });
     }
 
+    /// <summary>
+    /// Records what contributing to <c>.mcp.json</c> did, and the detail that must not be announced.
+    /// </summary>
+    /// <remarks>
+    /// <para>The user-facing reason is deliberately content-free: a parse failure's message names the
+    /// property it choked on — "Duplicate property 'ACME_API_KEY' encountered during deserialization"
+    /// — and that property belongs to a third party, whose file the user never asked us to read out
+    /// to the live region. The detail is nonetheless the half a person diagnosing actually needs, so
+    /// it is recorded here rather than discarded.</para>
+    ///
+    /// <para>Written on EVERY outcome, not just the failures, because the question an operator asks
+    /// first is which of the five things happened — and an event that only appears when something
+    /// broke cannot answer "it did nothing, and that was correct".</para>
+    /// </remarks>
+    public static void McpConfig(string outcome, string? path, string? detail)
+    {
+        Write(new
+        {
+            ts = DateTimeOffset.UtcNow.ToString("O"),
+            evt = "mcp.config",
+            outcome,
+            path,
+            detail,
+        });
+    }
+
     private static void Write(object record)
     {
         string line;

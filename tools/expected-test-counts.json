@@ -2,8 +2,8 @@
   "_comment": "Minimum tests that must EXECUTE per project. The control for defect class DC-012: a crashed test host reports success with a smaller count, and nothing else notices. Raise these with `python tools/verify-test-run.py --update` when you add tests; never lower one to make a run pass. Keys with a suffix are HALVES of a project run on one OS; `splits` says which halves must account for which whole, and verify-test-run checks that sum on every invocation, on both operating systems. AiDe.Core.Tests.nonportable is [Trait(\"Platform\",\"Windows\")] only - kernel32, powershell.exe, the net10.0-windows daemon, and tests that assert Windows path semantics on purpose. There is no quarantine category: every test that merely failed on Linux was diagnosed and fixed (INV-0005).",
   "minimumExecuted": {
     "AiDe.App.Tests": 456,
-    "AiDe.Core.Tests": 2045,
-    "AiDe.Core.Tests.portable": 1893,
+    "AiDe.Core.Tests": 2064,
+    "AiDe.Core.Tests.portable": 1912,
     "AiDe.Core.Tests.nonportable": 152
   },
   "splits": {
@@ -12,5 +12,5 @@
       "AiDe.Core.Tests.nonportable"
     ]
   },
-  "_baselineBump": "2026-09-10, node FX3 (three containment-boundary sites + the class gate). AiDe.Core.Tests 2041 -> 2045, portable 1889 -> 1893 (four path-comparison tests); non-portable unchanged at 152; AiDe.App.Tests unchanged at 456. MEASURED ON THE MERGED TREE, all four keys: --filter Platform!=Windows gave 1893, --filter Platform=Windows gave 152, the whole Core run gave 2045, and 1893 + 152 = 2045, so the split invariant holds by OBSERVATION rather than arithmetic. App was re-measured here rather than carried across from the branch run. verify-test-run.py --update was NEVER run: it skips the split invariant (:193) and returns 0 unconditionally (:269), so it cannot be the thing that sets the gate. Every floor raised; none lowered."
+  "_baselineBump": "2026-09-10, node MCP1 (McpConfigWriter ACL preservation + four parse defects). AiDe.Core.Tests 2045 -> 2064, portable 1893 -> 1912 (nineteen new cases across M1-M5); non-portable unchanged at 152; AiDe.App.Tests unchanged at 456. MEASURED ON THE MERGED TREE, all four keys: 1912 + 152 = 2064 and all three Core runs were executed, so the split invariant holds by OBSERVATION. Note M1 is deliberately NOT platform-traited so the Linux runner executes it -- that is what caught File.Replace preserving the ACL on Windows but NOT the mode on POSIX (0600 -> 0644). A Windows-only proof of a path-permission change is not a proof. verify-test-run.py --update was NEVER run. Every floor raised; none lowered."
 }

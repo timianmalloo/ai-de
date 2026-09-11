@@ -1446,7 +1446,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 324 members, 69% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 325 members, 69% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1459,7 +1459,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2d863e8d82937e7c932313f811c98fb56b79df037467aa66ede48e090ab036b0"
+      "sourceSha256": "fdbc42d0d79fb2f2884fbdf7f49b3dfa0f6eb53712949ec5efe2d4df133b1693"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -5563,7 +5563,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bf1c3b96c02ae7e79df9bbea1d7c2a64bb63b81eceb4ab57b4c432c597cf2b5c"
+      "sourceSha256": "e9010028e09a3e816e9853d5baa211ad5d7eed40a4c7f15e50a316ccd04d3815"
     },
     {
       "id": "design-session-profiler",
@@ -12777,5 +12777,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "096bb9e3a851dcd5658b825e5d7a574f4e6c315bbacb4b2c7e4d5716f86fe994"
+  "graphSha256": "a0245f5d834cc0ecc8a968abc4ee0d601c88da0bde83a2e4e6f224dcaccc8c07"
 };

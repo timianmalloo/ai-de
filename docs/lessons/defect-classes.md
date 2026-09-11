@@ -4861,6 +4861,17 @@ for both or split.*
   **Not yet acted on, and deliberately so** — closing it means running ~1,889 more tests per push
   on the more expensive runner, which is a coverage-versus-cost decision the CE-series governs and
   the SRE owns. Recorded here so the choice is made rather than defaulted.
+- **Second instance, 2026-09-10, and this time the repository said it out loud.** The conductor
+  merged a new gate without wiring it into CI, **noticed that itself**, and handed the wiring to
+  another node — then **pushed three times without reading CI back.** `main` sat **red** at
+  `7c30c29` for three commits. The failing gate was `verify-project-coverage`, and its message
+  is the same sentence the conductor had written into the other node's brief an hour earlier:
+  > `tools/verify-aide-gitignore.py is a gate that no workflow invokes — it runs only when
+  > somebody remembers, which is not a control`
+  **The control for the omission existed, fired correctly, and nobody looked.** Found not by the
+  conductor but by a node that could not get a self-consistent branch from that base. *Knowing
+  the class, and having registered it that same day, did not produce the read-back —* which is
+  the argument for control (b) over control (a): remove the human step rather than add one.
 - **Relationship to DC-117:** DC-117 is the same family one axis over — there the invisible variable
   was the **host** (console vs console-less), here it is the **operating system**. Both are *the
   environment a test ran in is not recorded in the claim that it passed.*

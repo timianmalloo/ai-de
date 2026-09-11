@@ -24,7 +24,14 @@ public enum McpConfigOutcome
 }
 
 /// <summary>The outcome and the path, or the reason there is none.</summary>
-public sealed record McpConfigResult(McpConfigOutcome Outcome, string? Path, string? Reason);
+/// <param name="Outcome">What the write did.</param>
+/// <param name="Path">The file, when there was one to name.</param>
+/// <param name="Reason">The user-facing sentence. ANNOUNCED VERBATIM, so it carries nothing
+/// read out of the file.</param>
+/// <param name="Detail">The diagnostic detail for the log. May quote the file, so it is never
+/// announced.</param>
+public sealed record McpConfigResult(
+    McpConfigOutcome Outcome, string? Path, string? Reason, string? Detail = null);
 
 /// <summary>
 /// Puts AI-DE's MCP server where a harness will discover it, without taking the file over.
@@ -57,6 +64,15 @@ public static class McpConfigWriter
     private static readonly JsonSerializerOptions Json = new() { WriteIndented = true };
 
     /// <summary>
+    /// Reading options. <c>AllowDuplicateProperties: false</c> because the default is true, and a
+    /// duplicate then surfaces as an <c>ArgumentException</c> out of the lazily built dictionary at
+    /// the first index into the object holding it — which is outside the catch that exists for a bad
+    /// file, and so out of <see cref="Ensure"/> entirely. Refusing at the parse gives a duplicate the
+    /// same answer this class already gives any file it cannot model, by the same path.
+    /// </summary>
+    private static readonly JsonDocumentOptions Reading = new() { AllowDuplicateProperties = false };
+
+    /// <summary>
     /// Ensures the workspace's <c>.mcp.json</c> offers AI-DE's server.
     /// </summary>
     /// <param name="workspaceRoot">The repository the agent will work in.</param>
@@ -87,7 +103,13 @@ public static class McpConfigWriter
             if (existed)
             {
                 var text = File.ReadAllText(path);
-                var parsed = string.IsNullOrWhiteSpace(text) ? new JsonObject() : JsonNode.Parse(text)?.AsObject();
+                var parsed = string.IsNullOrWhiteSpace(text)
+                    ? new JsonObject()
+
+                    // `as`, not AsObject(). AsObject() THROWS on a root that is an array or a scalar,
+                    // so the refusal just below was unreachable for every input except a literal
+                    // `null` — the one shape the doc comment above does not single out.
+                    : JsonNode.Parse(text, nodeOptions: null, documentOptions: Reading) as JsonObject;
                 if (parsed is null)
                 {
                     return new McpConfigResult(
@@ -105,9 +127,17 @@ public static class McpConfigWriter
         }
         catch (JsonException ex)
         {
+            // The message quotes the file. A duplicate reads "Duplicate property 'ACME_API_KEY'
+            // encountered during deserialization", and Reason is announced VERBATIM to the live
+            // region — so pasting it here puts another vendor's secret NAMES on screen and into the
+            // accessibility tree, out of a file the user never asked us to read aloud. Names, not
+            // values, which is why this is minor; it is still a disclosure nobody chose. The detail
+            // goes to the log instead, so it is not announced and not lost either.
             return new McpConfigResult(
                 McpConfigOutcome.RefusedUnparseable, path,
-                $"{FileName} could not be parsed ({ex.Message}), so it was left untouched.");
+                $"{FileName} could not be parsed, so it was left untouched. "
+                + "Fix or remove it and AI-DE will add its server on the next open.",
+                ex.Message);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
@@ -147,17 +177,67 @@ public static class McpConfigWriter
 
         servers[ServerKey] = desired;
 
+        // Temp-and-move: a harness may read this file at any moment, so a half-written one is a
+        // state that will occur rather than one that might.
+        var temporary = path + ".tmp";
         try
         {
-            // Temp-and-move: a harness may read this file at any moment, so a half-written one is a
-            // state that will occur rather than one that might.
-            var temporary = path + ".tmp";
             File.WriteAllText(temporary, root.ToJsonString(Json), new UTF8Encoding(false));
-            File.Move(temporary, path, overwrite: true);
+
+            if (File.Exists(path))
+            {
+                // NOT File.Move(overwrite: true). Move installs the TEMP file's permissions — freshly
+                // created, so whatever the directory and umask hand out — over the target's own. A
+                // user who locked .mcp.json down BECAUSE it holds a live third-party key had it
+                // silently unlocked. MEASURED on Windows: owner-only with inheritance disabled came
+                // back SYSTEM + Administrators + owner, every ACE inherited and protection off.
+                //
+                // ReplaceFile preserves the REPLACED file's attributes and ACL, stays atomic, and
+                // stays same-volume — which this already is. MEASURED on the same hardened file:
+                // protection and the ACE set came back identical.
+                //
+                // BUT THAT IS THE WINDOWS HALF ONLY. On POSIX, File.Replace does NOT carry the
+                // destination's mode across — MEASURED on the Linux runner, where a 0600 target came
+                // back 0644, i.e. the temp file's own creation mode survived the rename. So there the
+                // mode is put on the REPLACEMENT before the swap rather than restored after it: a
+                // chmod afterwards would leave a window, however short, in which a file the user made
+                // private is world-readable.
+                if (!OperatingSystem.IsWindows())
+                {
+                    File.SetUnixFileMode(temporary, File.GetUnixFileMode(path));
+                }
+
+                File.Replace(temporary, path, destinationBackupFileName: null);
+            }
+            else
+            {
+                File.Move(temporary, path);
+            }
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             return new McpConfigResult(McpConfigOutcome.Failed, path, ex.Message);
+        }
+        finally
+        {
+            // The move is exactly the operation that fails when a harness holds the file open, and
+            // what a failure leaves behind is a byte-complete copy of every third-party `env` block at
+            // a path none of the user's protections were written for: a path-literal .gitignore line
+            // does not match `.mcp.json.tmp`, the ACL hardening was applied to the other inode, and a
+            // secret-scanner path rule names the other file. On both success paths the temp file is
+            // already gone and this is a no-op.
+            if (File.Exists(temporary))
+            {
+                try
+                {
+                    File.Delete(temporary);
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                {
+                    // Best effort. Replacing the write's own outcome with a cleanup failure would
+                    // report the less useful of two true things.
+                }
+            }
         }
 
         return new McpConfigResult(
