@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T14:49:28Z",
+  "generated": "2026-09-11T14:53:18Z",
   "audit": [
     {
       "actor": null,
@@ -11413,6 +11413,48 @@ window.AUDIT_DATA = {
         "regression": false
       },
       "supersedes": "al-01M28B0R807NPKC605J54T6S09"
+    },
+    {
+      "id": "al-01M28FAM78M790SKYWB4RHM9EN",
+      "shortname": "Terminal-host census: the population, not the mechanism",
+      "datetime": "2026-09-11T14:53:11Z",
+      "session": "conductor-terminal-hosts-census",
+      "prompt": "i still see multiple ai-de terminal hosts that look like phantom hosts because you only have the main session and two sub-agents going, here is a screen shot of what i see: [Image] so i dont think you actually cleaned up the stale terminal hosts",
+      "summary": "CENSUS FIRST, which is the part that was missing the first two times: 287 console-host processes -\n256 held by node.exe under copilot.exe (a different application entirely), 20 held by orphaned\nMSBuild /nodeReuse:true workers (mine), 11 system/third-party, and ZERO with anything named AiDe\nanywhere in the ancestry chain. TH1 and TH2 are both still fixed and both were real; they answered\nabout a different population than the one on the operator's screen.\n\nThe earlier orphan check looked ONE level up, found every host's direct parent alive and reported\nzero orphans. The MSBuild workers WERE the orphans and the hosts beneath them were correctly\nparented - a containment check one level deep confirms containment one level deep.\n\nCONTROL MOVED TO THE BOUNDARY. verify-test-run.py sets MSBUILDDISABLENODEREUSE in its own\nsubprocess environment, which is one call site; the 20 came from dotnet build typed directly and\nnever reach it (DC-123). Directory.Build.rsp at the repository root covers every MSBuild invocation\nrooted anywhere in the tree.\n\nFALSIFIED BOTH DIRECTIONS rather than assumed, because a single-project build needs no worker nodes\nand would have passed either way: from the root, 16 workers without the file and 0 with it; from a\nsubdirectory, the same 16 -> 0, so discovery walks up; dotnet test 0.\n\nThe gate guards the real fragility, which is not the root file going missing: MSBuild takes the\nFIRST response file it finds walking up and stops, so a nested one silently shadows the root for\neverything beneath it. Both clauses observed RED before green. --self-test breaks a synthetic tree\nfour ways. --behaviour runs the falsifier and FAILS if removing the control leaves zero workers.\n\nThe 20 orphans were cleared with dotnet build-server shutdown - the documented mechanism, not a\nkill - after sampling 4 s of zero CPU on each, with two agents building.\n\nCORRECTED A REFUTED CLAIM: verify-test-run.py stated these workers linger fifteen minutes. The\n06:22 cohort was still standing at 07:40 with a dead parent. For an orphan the lifetime is\nunbounded and the comment now says so.\n\nRegister: DC-131 - a defect reported as a POPULATION is closed by fixing a MECHANISM and the\npopulation is never counted. DC-123 is the mechanism half (why the symptom persisted); DC-131 is\nthe reporting half (why it was declared resolved twice while it did). 131 classes, 65/53/13.\n\n30 gates PASS, 0 FAIL. Pushed as 37ce01a2.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "Directory.Build.rsp",
+        "tools/verify-node-reuse-control.py",
+        "tools/verify-test-run.py",
+        ".github/workflows/build.yml",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "process-containment",
+        "census",
+        "DC-131",
+        "DC-123",
+        "msbuild"
+      ],
+      "outcome": "success",
+      "goal": "Count the whole console-host population with attribution before claiming anything, then control whatever share is ours at the boundary rather than at one call site.",
+      "done_when": "Every host attributed by ancestry-to-root; the AiDe share stated; the control falsified both directions from root and subdirectory; a gate with a self-test wired into CI; DC-131 registered; gates green; pushed and CI read back.",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "37ce01a28d9514dac726f6793601c3f606a330d5",
+        "short": "37ce01a28",
+        "branch": "main",
+        "pushed": true
+      }
     }
   ],
   "changes": [
