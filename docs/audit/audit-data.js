@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T13:12:38Z",
+  "generated": "2026-09-11T13:49:49Z",
   "audit": [
     {
       "actor": null,
@@ -11325,6 +11325,45 @@ window.AUDIT_DATA = {
       "done_when": "Wave 1 dispatched at width 3 with a contracted fan-out, the loop bounded by a variant, and every deleted edge justified",
       "tier": "T2",
       "fan_out": 3
+    },
+    {
+      "id": "al-01M28BPEDHQFCT6PC7CJQ0ZFD1",
+      "shortname": "node-f4b-run-seam",
+      "datetime": "2026-09-11T13:49:44Z",
+      "session": "f4b-run-seam",
+      "prompt": "Node F4b - the seam between 'a request exists' and 'a run happens'. Product wiring, red-first. Ruled into existence by Ruling 46 because no clause in the slice ever claimed this edge. Scope: (i) an optional event sink on GovernedRunHost.RunAsync, default null, publishing each event as the host's existing loop drains it, with ConductorEntry.cs byte-unchanged; (ii) the session document calls RunAsync on Send and feeds a real SessionLane into the real Console surface, in PRODUCT code. Conditions: red-first with an oracle that the sink receives EXACTLY EventsObserved events; the headless path stays green with the sink null; clause 5's root ledger still counts one root. Plus, handed over from F5: CompositionRootLedger and a 7-line RunAsync hunk whose activity opens above anything throwable.",
+      "summary": "Red observed first: a real Send on a real session document returned a real GovernedRunRequest (SendCount 1) while CompositionRootLedger read 0, and 'new SessionLane(' appeared in nine test files and no file under src/. Landed F5's CompositionRootLedger (activity opened before EngineCatalog.ResolveLaunch, so two unknown-engine calls read 2 with no adapter) and its falsifier in both directions. Added an optional Action<ObservedRunEvent> sink LAST on RunAsync so ConductorEntry stayed byte-unchanged (git diff main -- ConductorEntry.cs: 0 bytes), extracted the drain loop into GovernedRunHost.DrainAsync so the equality oracle is runnable without an adapter, and added RunEventRelay whose ChannelReader<ObservedRunEvent> fits SessionLane's existing constructor. ComposerSendGate now announces the request at its one construction site outside its lock, so both discarding callers reach a run unedited; SessionDocumentSurface builds the relay and a real SessionLane into its real Console surface and calls the one root. Observed: drained.Events == relay.Published == lane.Delivered == Model.Dispatched == console.RenderedRows.Count == 5, relay.Refused == 0. Counts: App 503 (floor 495), Core 2206 (floor 2206), portable 2052, non-portable 154. FINDING, reported not fixed: ComposerSurface.Configure has zero callers in src and four of ComposerSendContext's run-side fields (AdapterInstallRoot, Model, AccountLabel, Providers) have no source anywhere in src/ - MainWindow.xaml.cs:151 hands the New Session sheet an empty ProviderRegistry on purpose - so a UI-launched run cannot be configured today and F5 clause 2 is blocked on section 14.2 configuration, not on this node.",
+      "kind": "skill",
+      "skill": null,
+      "tool": "claude-code",
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "src/AiDe.App/Conductor/RunEventRelay.cs",
+        "src/AiDe.App/Conductor/CompositionRootLedger.cs",
+        "tests/AiDe.App.Tests/Conductor/AGovernedRunReachesTheConsoleTests.cs",
+        "tests/AiDe.App.Tests/Conductor/ASendLaunchesAGovernedRunTests.cs",
+        "tests/AiDe.App.Tests/Conductor/TheOneCompositionRootIsCountedTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Close the seam between 'a request exists' and 'a run happens': an optional inert event sink on GovernedRunHost.RunAsync, and a PRODUCT-code session-document call site that launches a governed run on Send and feeds a real SessionLane into the real Console surface.",
+      "done_when": "Red observed first (a Send produces a request and no run; no src file constructs a SessionLane); sink receives EXACTLY EventsObserved events; headless path green with sink null; ConductorEntry.cs byte-unchanged; clause 5's root ledger reads one; full gate set exit 0.",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-11T13:29:06Z",
+      "duration_seconds": 1238.0,
+      "git": {
+        "sha": "0e59403de2719b0cc5a8665be912b5e637709693",
+        "short": "0e59403de",
+        "branch": "feature/run-seam",
+        "pushed": null
+      }
     }
   ],
   "changes": [

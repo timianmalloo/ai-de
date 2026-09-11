@@ -82,5 +82,6 @@ public sealed class CompositionRootLedger : IDisposable
     /// <summary>Opens a ledger. Counting starts here and stops at <see cref="Dispose"/>.</summary>
     public static CompositionRootLedger Open() => new();
 
+    /// <summary>Stops counting. A ledger belongs to one exercise, so it is closed with it.</summary>
     public void Dispose() => _listener.Dispose();
 }

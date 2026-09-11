@@ -72,5 +72,6 @@ public sealed class RunEventRelay : IDisposable
     /// </remarks>
     public void Complete() => _channel.Writer.TryComplete();
 
+    /// <summary>Closes the relay — <see cref="Complete"/>, so a `using` and an explicit end agree.</summary>
     public void Dispose() => Complete();
 }

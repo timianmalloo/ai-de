@@ -10,17 +10,62 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Conductor: 4 types, 6 members, 100% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Conductor: 6 types, 17 members, 100% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Conductor`
 
-**4 public types · 6 public members · 100% documented.**
+**6 public types · 17 public members · 100% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
 > gap rather than given invented text. The extractor is a lexical reader, not a compiler:
 > it does not resolve generics, partial classes across files, or conditional compilation.
+
+## `CompositionRootLedger`
+
+*class* — `CompositionRootLedger.cs`
+
+Counts governed-run compositions while it is open — the ledger §F5 clause 5 asserts against when
+it says the run was "launched through the same composition root, no second entry point".
+
+**Remarks.** **"One composition root" is unfalsifiable as prose.** It reads identically whether the
+UI really calls `RunAsync` or whether a surface quietly assembled a
+lane of its own — and N7's floor is explicit that a hand-assembled path is not exit evidence. This
+makes the claim a number: one run, one root, `Roots == 1`.
+
+
+
+
+
+**It counts the attempt, not the success, and that is what makes the falsifier cheap.**
+The activity opens before `EngineCatalog.ResolveLaunch` — the first statement in
+`RunAsync` that refuses — so two runs with an unknown engine id read
+`2` with no adapter, no node and no network. Move the emission below anything throwable and
+the falsifier needs a live subscription run to observe, which is a falsifier nobody re-runs.
+
+
+
+
+
+**It listens rather than instruments.** The idiom, including this reason, is
+`TerminalHostingLedger`'s: a counter added inside the thing being
+measured is one an edit to that thing can remove with nothing noticing.
+
+
+
+
+
+**Scoped, because an `ActivityListener` is process-global.** The count
+belongs to one exercise, so the ledger is a disposable window over one.
+
+| Member | Summary |
+|---|---|
+| `string CompositionActivitySource = "aide.conductor.composition"` | The activity source the composition root publishes on. |
+| `string GovernedRunComposeActivity = "governed-run.compose"` | The activity `RunAsync` opens for one composition. |
+| `long Roots` | How many governed runs were composed since this ledger opened. |
+| `CompositionRootLedger Open()` | Opens a ledger. Counting starts here and stops at `Dispose`. |
+| `void Dispose()` | Stops counting. A ledger belongs to one exercise, so it is closed with it. |
 
 ## `ConductorEntry`
 
@@ -100,6 +145,13 @@ Runs one governed lane to completion and scores it.
 
 - **`request`** — What to run.
 - **`cancellationToken`** — Bounds the whole run.
+- **`sink`** — An optional observer of every event this run drains — `RunEventRelay.Publish` is what the Conductor Surface passes. **Null by default, and genuinely inert:** the headless path names no sink and the drain then behaves exactly as it did before this parameter existed.
+
+**Remarks.** **The sink is last, after the cancellation token, on purpose.** The usual .NET ordering
+would put a token last, but `ConductorEntry` calls
+`RunAsync(request, bound.Token)` positionally and §F5 clause 5 asserts the root count by
+ledger — an added parameter must not become a reason to edit the one other caller, because an
+edit there is how "one composition root" starts being a claim about two.
 
 ## `GovernedRunRequest`
 
@@ -116,3 +168,53 @@ A second overload is how a second composition root starts.
 *record* — `GovernedRunRequest.cs`
 
 What the governed run did, in the terms its exit evidence is written from.
+
+## `RunEventRelay`
+
+*class* — `RunEventRelay.cs`
+
+Carries the events `GovernedRunHost` drains to a second consumer — the shape
+`SessionLane` already takes, so nothing on the console side has to change to receive them.
+
+**Remarks.** **Why a relay and not a second reader.** `AcpEventQueue` is
+`SingleReader = true` and the host's own loop is that reader, so "let the console read the
+plane's queue too" is impossible by construction rather than merely unwise. The host therefore
+*republishes* what it has already drained, and this is the channel it republishes into. The
+events are the same instances — nothing is re-normalized, re-sequenced or re-stamped, so the
+console cannot hold a second opinion about what arrived (DM7).
+
+
+
+
+
+**It fits `SessionLane`'s existing constructor.** `Reader` is a
+`ChannelReader{T}` of `ObservedRunEvent`, which is exactly the parameter
+the lane already declares, so the seam is a new object rather than a changed contract on a type
+another node had just finished.
+
+
+
+
+
+**Unbounded, and that is a bounded risk.** A bounded relay would back-pressure the host
+— and therefore the engine — on a console that stopped reading, which turns a closed pane into a
+stalled run; an unbounded one holds at most one run's events and is collected with the document
+that opened it. What is not acceptable is losing an event silently, because the equality the
+sink's oracle asserts would then quietly become an approximation, so a publish that cannot land
+is **counted** as `Refused` rather than dropped.
+
+| Member | Summary |
+|---|---|
+| `ChannelReader<ObservedRunEvent> Reader` | The consumer side — hand this straight to a `SessionLane`. |
+| `long Published` | How many events reached the relay. The number the run's own count is compared with. |
+| `long Refused` | How many could not. Above zero means the console saw fewer events than the run did, and it says so instead of the two numbers quietly disagreeing. |
+| `void Publish(ObservedRunEvent observed)` | The sink itself: pass this as `GovernedRunHost.RunAsync`'s `sink`. |
+| `void Complete()` | Closes the relay, which ends the lane's drain once it has read what is already queued. |
+| `void Dispose()` | Closes the relay — `Complete`, so a `using` and an explicit end agree. |
+
+### `void Complete()`
+
+Closes the relay, which ends the lane's drain once it has read what is already queued.
+
+**Remarks.** Called when the run ends, not when the document closes: a lane whose run is over should stop
+waiting, and a lane whose document is closing is disposed by the document.

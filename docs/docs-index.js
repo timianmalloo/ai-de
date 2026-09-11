@@ -1396,7 +1396,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Conductor: 4 types, 6 members, 100% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Conductor: 6 types, 17 members, 100% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1409,7 +1409,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "dcee303a3587857a2fd2d01a17c0fc1b99149ee82375b93b194bb0647e09c121"
+      "sourceSha256": "31d74f515e6ba809a0adebb2e294d0cc13e98d05ed7c6909faf07e7b0fa3e2f6"
     },
     {
       "id": "api-aide-app-viewmodels",
@@ -1471,7 +1471,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 42 members, 86% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 43 members, 87% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1484,7 +1484,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e08169671a60023c3889f27b5551c2ecfb407828f86051d9f5c0594f9a496e19"
+      "sourceSha256": "c0fd5d96e75c9c40363aa8906dceab7d706b2a5ce3885c520e2a880306d8f9b8"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -1496,7 +1496,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 54 members, 92% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 58 members, 93% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1509,7 +1509,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "11797566bd655dbcd9a5021da18522b18da2370d78258d3f460b4e83a4597c66"
+      "sourceSha256": "6a85049edb599eee99c64aea2ecfa64daba7a2de277aec96d0ef558f96ceb7b5"
     },
     {
       "id": "api-aide-core",
@@ -12900,5 +12900,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "5ba9ae92496f2501addc5adbedb3b35a5c454ec5d38b971c068a1314480052c8"
+  "graphSha256": "6d6ae7b263c738dcdbc1625e2e2ab7117a4a9f1df91dd525cc8a9906968135a5"
 };
