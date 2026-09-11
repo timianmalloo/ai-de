@@ -45,8 +45,9 @@ summary: >-
 | --- | --- |
 | **Oracle** | `tools/verify-front-door-exit-evidence.py` — clause 0 plus the nine |
 | **Oracle commit** | `1374401d171b1ec6be5d56c25b1d1e00608abc18`, committed `2026-09-11T06:36:24-07:00` (`%ct` 1789133784) |
-| **Oracle integrity** | **Held across two merges of `main`** — `39bcf288`, then `be68ca1c`. `git diff 1374401d HEAD -- tools/verify-front-door-exit-evidence.py` is **empty** after each — the bytes running are the bytes committed. `1374401d` is an ancestor of this branch and is **not** reachable from `main`, so it exists only here and only a rewrite could destroy it. The branch was merged, never rebased, both times (DC-128) |
-| **Run started** | `RUN-PENDING` — see *The exit run did not happen*, Part 2, for the two preconditions that are not this node's to settle |
+| **Oracle integrity** | **Held across three merges of `main`** — `39bcf288`, `be68ca1c`, `4b9dd779`. `git diff 1374401d HEAD -- tools/verify-front-door-exit-evidence.py` is **empty** after each — the bytes running are the bytes committed. The branch was merged, never rebased, every time (DC-128) |
+| **Oracle reachability** | **Pinned by the annotated tag `f5-oracle-frozen`**, pushed. `git rev-parse f5-oracle-frozen^{commit}` → `1374401d171b1ec6be5d56c25b1d1e00608abc18`, and the oracle's bytes at the tag are identical to the bytes running. **Not decoration.** The commit was reachable *only* from `feature/exit-evidence`; a squash-merge, a rebase, or deleting the branch after merge would have left it unreferenced and, at the next `gc`, gone — and clause 0 would then be **unverifiable rather than false, which is worse**, because a control that cannot run reads like one that passed. A tag is a ref, refs make objects reachable, and `gc` never collects what is reachable, so clause 0 no longer depends on anyone remembering a merge strategy. **This repository had no tags at all before this one.** DC-128 covers *"a cited commit proves existence, not immutability"*; this covers the half DC-128 does not — that the cited commit is still **there** to compare against |
+| **Run started** | `RUN-PENDING` — awaiting the operator's `File → New Session` gesture under **Ruling 49**. See *The exit run did not happen*, Part 3 |
 | **Ordering evidence** | Vacuous but not absent: the oracle predates any run because **there is no run yet**. Clause 0's byte comparison is the half that carries weight without one, and it holds |
 | **Blind spot, closed from outside** | Clauses 2 and 5 cannot tell a product-wired composer from a harness-wired one. **The frozen oracle was not widened** — `TheRunBindingComesFromTheProviderFileTests.TheShellConstructsOneRegistryOneSendContextAndOneAttachmentGate` asserts exactly one `composer.Configure(` in the shell, which settles it from outside clause 0's pinned bytes |
 | **Falsifier suite** | `TheSessionOriginIsSetOnlyOnTheCommandPathTests`, `TerminalHostingLedgerTests`, `TheOneCompositionRootIsCountedTests` — each resolved to a declaration under `tests/`, not quoted from memory. The third read `TheRunHasOneCompositionRootTests` until this close, and **no class of that name has ever existed** |
@@ -58,7 +59,7 @@ summary: >-
   surface and its host-owned send), and `src/AiDe.App/Conductor/` (the composition root, the
   composition-root ledger, and the session document's call into it).
 - **Spec:** R13, R14, R15, R16, R18, R19 under the cuts in
-  `docs/plans/conductor-front-door.md` and Rulings 13–46.
+  `docs/plans/conductor-front-door.md` and Rulings 13–49 (49 is the ruling that the exit run is triggered by the operator's own gesture and no headless entry point is built).
 
 ## The nine clauses
 
@@ -66,19 +67,23 @@ Each row is one §F5 clause. **Residual** names a measurement or an explicit unc
 every row — never "none", which is the shape this clause exists to refuse: *"populated" is satisfied
 by "none" in every cell*.
 
-**Clauses 1, 4, 7 and 8 are discharged. Clauses 2, 3, 5, 6 and 9 read `RUN-PENDING`** — and the
-reason changed once, which is why it is stated rather than left to be assumed. Until `be68ca1c` the
-product **could not** send from the front door at all; F6 closed that, and what remains is two
-operator-owned preconditions, not a defect. Both states, with the observations behind them, are in
-*The exit run did not happen* below. Read it before quoting any `RUN-PENDING` cell as merely "not yet
-done" — and note that Part 1's blocker is **no longer true of this tree**.
+**Clauses 1, 4, 7 and 8 are discharged. Clauses 2, 3, 5, 6 and 9 read `RUN-PENDING`** — and the reason
+has changed twice, which is why each state is written down rather than left to be assumed. Until
+`be68ca1c` the product **could not** send from the front door at all; F6 closed that; and under
+**Ruling 49** what remains is a single input no code can supply — **the operator's own
+`File → New Session` gesture**. All three states, with the observations behind them, are in *The exit
+run did not happen* below (Parts 1, 2, 3). Read it before quoting any `RUN-PENDING` cell as merely
+"not yet done", and note that **Part 1's blocker is no longer true of this tree**.
+
+**If that gesture is not performed, clause 1 is `NOT DEMONSTRATED` and the exit is `NOT MET`.** No
+row in this pack should be read as evidence the front door works until one records a gesture.
 
 | # | Clause | Evidence | Oracle (why it can fail) | Red observed | Confidence | Residual |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | **Started from `File → New Session`, machine-checkably** — `session.open` carries an `origin` set only on the `Ctrl+N` / `MainMenuBuilder` path | `TheSessionOriginIsSetOnlyOnTheCommandPathTests` (3 cases) + the exit run's own `session-events.jsonl` | The **companion**: a session constructed directly reads `direct`. A field that is always the same value distinguishes nothing | **Yes**, both halves — see *Falsifiers observed red* | Verified | **Named uncovered input:** the scan bounds the front-door value to two files in `src/`; it cannot see a *third* production path that reaches `SessionConfigStore.Create` and simply leaves `origin` at its default. That path would read `direct` and be indistinguishable from a test — the guard is over *claiming* the front door, not over *reaching* the store |
 | 2 | **Composed in the composer, streamed in Console mode** | `RUN-PENDING` | The bytes sent are the bytes the composer rendered (digest equality), the active canvas mode is `console`, and the console rendered ≥ 1 row | `RUN-PENDING` | `RUN-PENDING` | **Measured:** `terminalModeBuilt == false` over the run. Ruling 45's exposure is real but untaken — see the Ruling 45 residual below |
 | 3 | **Scored end-to-end**, cell `IsComparable == true`, read from `scored_episode_cell` | `RUN-PENDING` | `scored`, `segmentIsComparable`, a null `incomparableReason`, and an actual store row — a verdict with no row is a claim | `RUN-PENDING` | `RUN-PENDING` | **Named uncovered input:** one cell, one task class, one engine. Comparability across cohorts is not exercised, and `LaneCohort`'s axes are proven by unit test rather than by a second live run |
-| 4 | **`terminalHostConstructions == 0`**, with N7's companion falsifier carried forward verbatim | `RUN-PENDING` for the zero; `TerminalHostingLedgerTests.AnOpenLedgerCountsARealTerminalHostConstruction` for the one | A counter nothing increments reads 0 forever. The same counter is shown reading **1** against a real ConPTY | **Yes** — the run's own predicate applied to a run that did host a terminal | Verified (falsifier) | **Measured:** the ledger counts the *attempt*, opened before interop, so a failed construction still counts. **Named uncovered input:** a terminal hosted by a *child process* of this one emits on that process's `ActivitySource` and is invisible to this ledger |
+| 4 | **`terminalHostConstructions == 0`**, with N7's companion falsifier carried forward verbatim | `RUN-PENDING` for the zero; `TerminalHostingLedgerTests.AnOpenLedgerCountsARealTerminalHostConstruction` for the one | A counter nothing increments reads 0 forever. The same counter is shown reading **1** against a real ConPTY | **Yes** — the run's own predicate applied to a run that did host a terminal | Verified (falsifier) | **Measured:** the ledger counts the *attempt*, opened before interop, so a failed construction still counts. It is **activity-shaped, not name-shaped** — an `ActivityListener` on `aide.terminal.runtime` counting `terminal.start` — so it does not share the blind spot that made a process census match on names and report zero AI-DE hosts wrongly. **Measured uncovered input, no longer hypothetical:** a terminal hosted by a *child process* emits on that process's `ActivitySource` and is invisible here. Observed instance: a full `verify-test-run.py` creates **~42 ConPTY conhosts and ~21 `msedgewebview2`** and reaps all of them, while each build leaves exactly **one** orphaned `VBCSCompiler.exe` holding a conhost — **none of which this ledger can see**. For *this* run the exposure is bounded by reading both spawn sites: `GovernedRunHost` starts only `AcpEngineProcess` (node) and `WorktreeProvisioner` (git/coord), and **both set `CreateNoWindow = true`, `UseShellExecute = false` with all streams redirected**; no daemon is on this path |
 | 5 | **Launched through the same composition root `GovernedRunHost` uses** — no second entry point (Ruling 13), asserted by a ledger counting roots | `RUN-PENDING` | `Roots == 1`, the launch site is under `src/`, and exactly 2 sites construct a `GovernedRunRequest` (C16) | `RUN-PENDING` | `RUN-PENDING` | **Named uncovered input:** the ledger counts roots *entered in this process*. A second entry point in a **separate process** is outside its window, and C16's two-site cap is a source scan, not a runtime one |
 | 6 | **Recorded measurement**: event count, p50/p95, **host named** — recorded per ADR-0029, never asserted | `RUN-PENDING` | Presence, a named host, and an absent measurement reading `not recorded` rather than `0`. **No comparison to a constant** — that is DC-107 | `RUN-PENDING` | Recorded, not asserted | **Measured and bounded:** the figures measure *in-process normalization only*, on one host, on one run. They are **no evidence** about a loaded machine or a lane whose events cross a process boundary — ADR-0029 says so in its own consequences |
 | 7 | **Proof Pack** at `docs/proof/conductor-front-door.md`, every Residual cell naming a measurement or an explicit uncovered input | This file, checked by `clause7_proof_pack_residuals` | Any Residual cell reading `none` / `n/a` / `—` / empty | **Yes** — the oracle's self-test reddens on a `none` cell and does not fire on a non-Residual column | Verified | **Named uncovered input:** the check is *shape*, not *truth*. A cell reading "measured: 4 of 599" passes whether or not anything was measured. Only a reader can close that, and this row says so rather than implying the gate did |
@@ -303,7 +308,10 @@ GovernedRunRequest* — with a named refusal at each link. This node's first swe
 the private method name `BindComposer` and found nothing, which would have been the third
 grep-shaped false negative in this node. **The method name is not the path's name.**
 
-### What is still open, and neither part is code
+### What was still open after F6 — superseded by Part 3
+
+> Both rows below are **answered now**. Kept because Part 3's ruling is only legible against the
+> question it answers.
 
 | Precondition | State | Why it is not this node's to settle |
 | --- | --- | --- |
@@ -315,6 +323,53 @@ grep-shaped false negative in this node. **The method name is not the path's nam
 (`@agentclientprotocol` present); subscription use is authorised by the operator in their own words
 (audit `al-01M23SEGAS071BX81W0MA9RF92`), and that authorisation is scoped to *the operator using
 their own subscription on their own machine for their own project*, which is this.
+
+### Part 3 — Ruling 49, and why the run waits for a hand
+
+**Both preconditions in Part 2 are now answered, and one answer refuses a design.**
+
+**The provider file exists and was verified rather than trusted.** `~/.aide/providers.json` names one
+`anthropic` subscription account, label `max`, and `engines.claude-code.model = claude-sonnet-5`.
+`adapterInstallRoot` resolves: `…/node_modules/@agentclientprotocol/claude-agent-acp/dist/index.js`
+is present, its `package.json` reads **0.75.1**, which is the version `EngineCatalog` pins, and
+`node --version` is **v24.18.0**. Path composed the way `EngineCatalog.ResolveLaunch` composes it,
+then checked on disk.
+
+**The account is `quota-degraded`, and that binds.** `AccountHealth.QuotaDegraded`'s own words:
+*"Under quota pressure — a signal, not an absence. A lane still binds, and carries the pressure."*
+Only `NeedsLogin` is refused (`ProviderRegistry.cs:178`). So a quota refusal, if one comes, will come
+from the API rather than from the binding — **and it is the recorded result, not a reason to run
+again.** Re-running until it passes would be shopping for a verdict, which is DC-127 aimed at the
+exit evidence itself.
+
+**Ruling 49 — the exit run is triggered by the operator's own `File → New Session` gesture, and no
+headless entry point is built.** A headless entry was proposed to substitute for the gesture. It was
+refused, and the reasoning is from the plan's text rather than from preference:
+
+| Branch | Why it fails |
+| --- | --- |
+| Headless entry stamps `main-menu.new-session` | Falsifies clause 1's meaning — *"origin set **only** on the `Ctrl+N` / `MainMenuBuilder` command path"* (`conductor-front-door.md:811-814`) — and makes the front-door proof harness-producible. **That is the "asserted-about" failure N7 was blocked for. Refused outright, not available for approval** |
+| Headless entry stamps some other origin | Fails the oracle: `FRONT_DOOR_ORIGIN` is checked at line 112 against line 44, and clause 0 forbids widening it |
+| Run anyway, report clause 1 partial | Clause 1 is one of the six that *"Fails if any of 1–6 is absent"* (`:831-832`). **A failed exit wearing a partial-pass headline**, not "not recorded, never zero" |
+
+**Clause 5 says the same thing from another angle** (`:820-821`): *"no second entry point (Ruling 13),
+asserted by a ledger counting roots."* The headless entry would not have tripped that ledger — it
+would have reached the one composition root — but the hands are the plan's **intended** trigger
+rather than an accident of its wording.
+
+**The control that would not have caught this.** `ExactlyOneSiteInSrcCanStampTheFrontDoorOrigin`
+checks who *names* `SessionOrigins.MainMenuNewSession`. A headless entry driving
+`NewSessionSheetViewModel.Create()` names nothing, so **the guard would have stayed green while the
+claim it protects became false.** The allowlist stays at two entries and its comment now carries
+Ruling 49's answer.
+
+### If the gesture is not performed
+
+**Then clause 1 is `NOT DEMONSTRATED`, the exit is `NOT MET`, and this pack carries no headline that
+the front door works.** The slice stays open. That is the honest failure, and it is a different thing
+from the third branch above: it claims nothing, where a partial-pass headline would claim something
+false. **Nothing in this pack should be read as evidence the front door works until a row below says
+a gesture happened.**
 
 ## Residual
 
@@ -360,7 +415,7 @@ cell comes to read "none". Every entry states its **kind**: **measured** (a numb
 | **The API-key exception needs its own provider record** | owned | A second egress class with different third-party terms. One record cannot cover both. |
 | **C14(e)(iv)'s refusal set is incomplete by construction** | named | *"Must never be described as 'secrets cannot be attached.'"* It grew by a **class** — in-repo config files carrying third-party credentials — after `.mcp.json` showed the list's organising idea had a blind spot. |
 | **The repository's third-party identifiers are unenumerated** | named | The provider record's third-party narrowing is stated rather than measured. |
-| **R13 b2's live gap: the sheet cannot list backends in the running app** | named | `providers.yaml` has **no reader anywhere in the repository**, and Ruling 35 refuses a third hand-rolled one. The sheet renders an honest empty state. The oracle is fully discharged against a populated registry in test; `ProviderRegistry` is constructed from in-code rows at `GovernedRunHost.cs:90`, never from a file. |
+| **R13 b2's live gap: the sheet cannot list backends in the running app** | named | `providers.yaml` has **no reader anywhere in the repository**, and Ruling 35 refuses a third hand-rolled one. The sheet renders an honest empty state. The oracle is fully discharged against a populated registry in test; ~~`ProviderRegistry` is constructed from in-code rows at `GovernedRunHost.cs:90`, never from a file.~~ **No longer true — F6 landed `ProviderConfiguration.Read`, which parses `~/.aide/providers.json`; `GovernedRunHost.cs:90` now rebuilds from `request.Providers`, the rows travelling on the request.** |
 
 ### Found by this node
 
@@ -371,6 +426,9 @@ cell comes to read "none". Every entry states its **kind**: **measured** (a numb
 | **Clause 5's ledger is built by the node that does not grade it** | named | The composition-root ledger was drafted here and **handed to F4b** under Ruling 46's own principle applied one level down: *the node that builds the counter must not be the node whose Proof Pack the counter proves.* Recorded because the reasoning is the reusable part, and because the hand-off is the kind of thing that looks like lost work in a log unless it says why. |
 | **The F5 gate's bare run is not wired into CI yet** | named | `verify-project-coverage` is right that a gate no workflow invokes is not a control, and wiring the bare run before the exit run existed made CI red for the honest reason that the gate's subject did not exist — observed on run `34606518579`, job `gates`, step *Front-door exit evidence (F5)*. Only the **self-test** is wired now, which is a real invocation doing real work (it reddens on every clause it claims to check) and satisfies the coverage gate without wiring a control ahead of the thing it controls. **The bare run is added in the same commit that lands `spikes/conductor-front-door-exit-run/exit-evidence.json`** — named here so it is a step rather than something to be remembered. Until then the nine clauses are checked by running the gate locally, which is exactly the weakness the coverage gate names. |
 | **The composer's send context has no producer in the product — DC-130's second instance in this slice** | measured | `grep -rn "ComposerSendContext" src` returns **five** hits and **zero constructions** — a declaration, a doc-comment cref, two parameters and a field. The only `new ComposerSendContext` in the repository is `ASendLaunchesAGovernedRunTests.cs:79`. So `ComposerSurface._context` is null in every shipped path, `Send()` returns null with *"the composer is not wired to a session yet"*, and **clauses 2, 3, 5, 6 and 9 are unsatisfiable** — five of nine, the same arithmetic the first instance produced. The discarded value is `NewSessionResult.TaskClass` at `MainWindow.xaml.cs:160`, the one field the sheet refuses to default (DC-110). **This node did not wire it:** the edge is unowned, and deciding where a *reopened* session's task class comes from is a ruling, not an evidence node's call. |
+| **A guard that would have stayed green while its claim became false** | measured | `ExactlyOneSiteInSrcCanStampTheFrontDoorOrigin` checks who **names** `SessionOrigins.MainMenuNewSession` — allowlist of **2** files. The proposed headless entry would have driven `NewSessionSheetViewModel.Create()` and named nothing, so the guard would have passed while clause 1's sentence — *origin set **only** on the `Ctrl+N` path* — became false. **The gap is between naming the constant and reaching the sheet, and only the first is mechanized.** Refused by Ruling 49, so the second front door does not exist; the allowlist comment now carries that answer so the next proposer meets it. **Not built:** a guard over *who reaches the sheet* is a call-graph question, not a token scan, and no ruling asked for one. |
+| **The exit run will not exercise the ambiguous-account refusal** | named | `~/.aide/providers.json` carries **one** account deliberately, so `LaneBinding`'s two-account refusal cannot fire on this path. It is covered by test — `TheRunBindingComesFromTheProviderFileTests.AnAmbiguousAccountRefusesOnTheComposerNamingTheField` — and **not** by the live run. Stated because a reader could otherwise take the green run as evidence the refusal works in production; it is evidence the *happy* path works with one account configured. |
+| **The run's cohort will carry a degraded account** | measured | The configured account's `health` is `quota-degraded` — **the operator's own observation, not a probe and not a placeholder** (`ProviderAccount.Health` is documented as the operator's record). `QuotaDegraded` binds by design and *carries the pressure*, so a refusal or throttle from the API is a legitimate measured outcome. **The one-run rule applies:** a quota refusal is recorded as the result and is not grounds to re-run. Re-running until green would be DC-127 aimed at the exit evidence itself. |
 | **DC-095 is controlled in code comments and uncontrolled in Proof Packs** | measured | `verify-cited-controls.py` scans `SEARCHED = ("src", "tests")` — **source comments only**. A Proof Pack is markdown, so every control it cites is unguarded, in the artifact whose whole purpose is citing controls. All **14** test-shaped identifiers in this file were resolved against `tests/` at this close and **one did not exist**: the header's falsifier suite named `TheRunHasOneCompositionRootTests`, which has never existed (the real class is `TheOneCompositionRootIsCountedTests`). Corrected above. **The extension is named and not built**, and it is cheap — the resolver already exists twice, as `_declared_in_tests` in this slice's oracle and as the matcher inside `verify-cited-controls.py`. **One warning for whoever builds it:** the dead name is still written above and in the carried note, as the *record* of the defect, so a naive resolver reddens on the two files that document it. A mechanical citation checker needs claim language as its trigger — the reason `verify-cited-controls.py` already keys on *asserts / pins / proves / guards*, and not on the shape of the identifier. |
 | **The oracle cannot distinguish a product-wired composer from a harness-wired one** | named | Clause 2 asserts the request was built in the composer; clause 5 asserts the launch site is under `src/`. **Neither asks who supplied the send context**, so a driver that calls `Composer.Configure(...)` itself and then presses `Send()` reads green on both while the product still cannot send — DC-127's shape, reachable through this pack's own gate. The closure is a source scan of the form `TheProductItselfConstructsASessionLane` already uses. **Not added, deliberately:** clause 0 compares this file's bytes against `1374401d`, so widening the oracle after the fact reddens clause 0. The control refused its own author, which is the behaviour it was committed early to have. |
 | **The exit run did not happen** | named | Every `RUN-PENDING` row above is pending for the structural reason recorded in *The exit run did not happen* — not because a run was attempted and failed, and not because one was skipped for cost. No live subscription turn was spent, no lane tree was provisioned, and no episode was scored by this node. **The `front-door-preflight` class recorded earlier remains the only live run this node caused**, and it is tagged `not-exit-evidence` in its own store. When the run does happen it will still be **one** run — one host, one engine, one account, one task class, no distribution and no rate — and the re-runnable half will still be the test suite. |

@@ -72,7 +72,22 @@ named phase or persona).
 - **R13 b2 (Ruling 18):** only `claude-code` was exercised; codex and copilot are **refused by N2's own test**. *Stated in the exit evidence, not stubbed.*
 - **DC-115:** if the exit run roots in a clone rather than a linked worktree, that qualification is carried **exactly as Phase 1 carried it, never silently**.
 - **R13 b2's live gap:** the sheet cannot list backends in the running app — **`providers.yaml` has no reader anywhere in the repo**, and Ruling 35 refuses a third hand-rolled one. The sheet renders an honest empty state. The oracle is fully discharged against a populated registry in test.
-- **`ProviderRegistry` is constructed from in-code rows** (`GovernedRunHost.cs:90`), never from a file.
+- ~~**`ProviderRegistry` is constructed from in-code rows** (`GovernedRunHost.cs:90`), never from a
+  file.~~ **No longer true — F6 landed the reader.** `ProviderConfiguration.Read` parses
+  `~/.aide/providers.json` and `MainWindow` binds from it; `GovernedRunHost.cs:90` still builds its
+  registry from `request.Providers`, which is the rows travelling on the request rather than a second
+  reading. Struck rather than deleted: this line is why F5 believed the run was unreachable, and the
+  belief was correct when written.
+
+## Accumulated under Ruling 49, while the run waits for the operator's gesture
+
+| Residual | Kind | Detail |
+| --- | --- | --- |
+| **A guard that would have stayed green while its claim became false** | measured | `ExactlyOneSiteInSrcCanStampTheFrontDoorOrigin` checks who **names** `SessionOrigins.MainMenuNewSession` — allowlist of **2** files. A headless entry driving `NewSessionSheetViewModel.Create()` names nothing, so the guard would have passed while clause 1's sentence — *origin set **only** on the `Ctrl+N` path* — became false. **The gap is between naming the constant and reaching the sheet, and only the first is mechanized.** Refused by Ruling 49; the allowlist comment now carries that answer. A guard over *who reaches the sheet* is a call-graph question, not a token scan, and **is not built**. |
+| **The exit run will not exercise the ambiguous-account refusal** | named | `~/.aide/providers.json` carries one account deliberately, so `LaneBinding`'s two-account refusal cannot fire on this path. Covered by `TheRunBindingComesFromTheProviderFileTests.AnAmbiguousAccountRefusesOnTheComposerNamingTheField`, **not** by the live run. |
+| **The run's cohort will carry a degraded account** | measured | The account's `health` is `quota-degraded` — the operator's own observation, not a probe. `QuotaDegraded` binds by design and carries the pressure, so an API refusal or throttle is a legitimate measured outcome. **One-run rule:** a quota refusal is recorded as the result, never grounds to re-run — that would be DC-127 aimed at the exit evidence. |
+| **`TerminalHostingLedger` cannot see child processes** | measured | Upgraded from *named* to *measured*. The ledger is activity-shaped (`ActivityListener` on `aide.terminal.runtime`), so it has no name-matching blind spot — but it is in-process. Observed: a full `verify-test-run.py` creates **~42 ConPTY conhosts and ~21 `msedgewebview2`** and reaps all of them, and each build leaves exactly **one** orphaned `VBCSCompiler.exe` holding a conhost. **None is visible to this ledger.** For the exit run the exposure is bounded by reading both spawn sites: `AcpEngineProcess` and `WorktreeProvisioner` each set `CreateNoWindow = true`, `UseShellExecute = false`, streams redirected; no daemon is on that path. |
+| **The oracle's commit was reachable from one branch only** | measured | `1374401d` existed solely on `feature/exit-evidence`; a squash-merge, rebase or branch deletion would have made clause 0 **unverifiable rather than false** — a control that cannot run reads like one that passed. Fixed by the annotated tag **`f5-oracle-frozen`**, pushed; this repository had **no tags at all** before it. DC-128 covers *cited ≠ unchanged*; this covers *cited ≠ still present*. |
 
 ## Accumulated at the F5 close, when the run was attempted
 

@@ -134,10 +134,24 @@ public sealed class TheSessionOriginIsSetOnlyOnTheCommandPathTests : IDisposable
     /// the single sheet that stamps it.
     /// </summary>
     /// <remarks>
-    /// A named constant rather than literals in the loop, for the reason
+    /// <para>A named constant rather than literals in the loop, for the reason
     /// <c>SessionPathContractTests.AllowlistedRunLogReservationFiles</c> is one: when a later phase
     /// legitimately adds a second front door, it extends this list citing its ruling, rather than
-    /// the guard being weakened or deleted to let it through.
+    /// the guard being weakened or deleted to let it through.</para>
+    ///
+    /// <para><b>That sentence has now been tested, and the answer is Ruling 49: this slice admits no
+    /// second front door.</b> A headless entry point was proposed for the F5 exit run, to substitute
+    /// for the operator's gesture. It would not have appeared in this list — it would have driven
+    /// <c>NewSessionSheetViewModel.Create()</c> rather than naming the constant — so <b>this guard
+    /// would have stayed green while the claim it protects became false</b>: the origin would no
+    /// longer have distinguished the operator's route from a harness's. The plan's clause 1 says the
+    /// origin is set <i>only</i> on the <c>Ctrl+N</c> / <c>MainMenuBuilder</c> path, and a second
+    /// path reaching the same sheet falsifies that sentence without reddening anything here.</para>
+    ///
+    /// <para><b>So the list stays at two entries, and the guard is not the whole control.</b> What
+    /// this test can see is who <i>names</i> the constant; what it cannot see is who <i>reaches</i>
+    /// the sheet. A later phase adding a second front door cites its own ruling and must state which
+    /// half it is changing.</para>
     /// </remarks>
     private static readonly IReadOnlyList<string> AllowlistedOriginStampSites =
         ["NewSessionSheetViewModel.cs", "SessionConfig.cs"];
