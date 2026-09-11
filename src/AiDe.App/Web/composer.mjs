@@ -289,6 +289,7 @@ try {
   window.__composerInitCount = 0;
   window.__composerError = "";
   window.__composerToFence = toFence;
+  window.__composerApplyTheme = applyTheme;
 
   // The host-minted instance, handed to the document before any script ran. Never generated here: a
   // page that could mint its own identity could address a surface it is not.

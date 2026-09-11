@@ -21,8 +21,8 @@
     host.init from the shell's token dictionary (ComposerPageTheme). The fallback beside each is
     that token's declared value, for the frame before the push arrives — never a second palette:
     the page used to carry its own (#1E1E1E / #D4D4D4 / #7F858A) and its hint measured 4.47:1.
-    The shell contrast census measures this page rendered; a fallback that drifts from the token
-    is caught there, not here.
+    ComposerPageThemeTests.EveryFallbackInThePageIsItsTokensDeclaredValue holds each fallback to the
+    token's value in App.xaml; the shell contrast census measures the page rendered.
   */
   :root { color-scheme: dark; }
   html, body { margin: 0; height: 100%; background: var(--surface, #12151A); color: var(--text, #E4E9EF); }

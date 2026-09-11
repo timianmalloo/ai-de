@@ -91,8 +91,17 @@ internal static class ShellContrastCensus
         Dictionary<string, string> ShellTheme,
         Dictionary<string, string> PageTheme)
     {
-        /// <summary>The <c>app.start</c> diagnostics line this boot wrote, or null when it wrote none.</summary>
+        /// <summary>The first <c>app.start</c> diagnostics line this boot wrote, or null when it wrote none.</summary>
         public string? AppStart { get; init; }
+
+        /// <summary>How many <c>app.start</c> lines the boot wrote — one is the contract.</summary>
+        public int AppStartCount { get; init; }
+
+        /// <summary>The colour the probe planted on <c>FocusBrush</c> before the shell composed, so the push can be told from the fallback.</summary>
+        public string? FocusSentinel { get; init; }
+
+        /// <summary>What the page's root carried after <c>applyTheme</c> was handed malformed entries — must equal <see cref="PageTheme"/>.</summary>
+        public Dictionary<string, string>? PageThemeAfterMalformedPush { get; init; }
     }
 
     private static Site Row(
@@ -226,7 +235,7 @@ internal static class ShellContrastCensus
 
         omissions.Add(new Omission("wpf", "combo drop-downs, tooltips, context menus", "Popup visuals are not in the window's visual tree until opened; the composer's template picker is collapsed with no catalog"));
         omissions.Add(new Omission("wpf", "the New Session sheet", "a separate window; ContrastFloorTests site 7 measures it"));
-        omissions.Add(new Omission("wpf", "hover / pressed / selected-inactive states", "the census reads the rest state; a trigger-only pairing is unmeasured here"));
+        omissions.Add(new Omission("wpf", "hover / pressed states", "the census reads the rest state; a pointer-only pairing is unmeasured here (selected-inactive IS measured: the selected tab of every pane that lost focus is in the rest state)"));
         omissions.Add(new Omission("terminal", "TerminalView cells", "GlyphRun renderer over the ANSI palette a child process chooses from; App.xaml's palette table is the pairing set"));
 
         // 6. The two WebView2 pages: the composer and the graph canvas.
@@ -238,7 +247,10 @@ internal static class ShellContrastCensus
         // Equal values from the fallback and the push measure the same; this column tells them apart.
         var shellTheme = new Dictionary<string, string>(ComposerPageTheme.Current(), StringComparer.Ordinal);
 
-        return new Report(commit, sites, omissions, log, shellTheme, pageTheme);
+        return new Report(commit, sites, omissions, log, shellTheme, pageTheme.Applied)
+        {
+            PageThemeAfterMalformedPush = pageTheme.AfterMalformed,
+        };
     }
 
     // ─────────────────────────────────────────────────────────────────── the walker ──
@@ -484,11 +496,12 @@ internal static class ShellContrastCensus
 
     // ────────────────────────────────────────────────────────────────── the pages ──
 
-    private static async Task<Dictionary<string, string>> WebViewsAsync(
+    private static async Task<(Dictionary<string, string> Applied, Dictionary<string, string>? AfterMalformed)> WebViewsAsync(
         Window window, AiDe.App.Workbench.Sessions.SessionDocumentSurface document,
         List<Site> sites, List<Omission> omissions, List<string> log)
     {
         var pageTheme = new Dictionary<string, string>(StringComparer.Ordinal);
+        Dictionary<string, string>? afterMalformed = null;
         var composer = document.Composer;
         var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(30);
 
@@ -516,14 +529,18 @@ internal static class ShellContrastCensus
             string? json = null;
             var mounted = DateTime.UtcNow + TimeSpan.FromSeconds(10);
 
-            // The fields mount on host.init, after Configure; poll — bounded — until the page has
-            // something to say, then take that reading.
+            // The fields mount on host.init, after Configure; poll — bounded — until the page says
+            // it has APPLIED an init (not merely mounted: PageIsReady is the mount), then take that
+            // reading. Waiting on text rows alone would read a page with static text before the
+            // push had been applied, and measure its fallbacks as if they were the push.
             while (DateTime.UtcNow < mounted)
             {
                 string raw;
                 try
                 {
-                    raw = await view.CoreWebView2.ExecuteScriptAsync(PageCensusScript);
+                    var inits = await view.CoreWebView2.ExecuteScriptAsync("window.__composerInitCount");
+                    if (inits is not ("0" or "null" or "undefined")) { raw = await view.CoreWebView2.ExecuteScriptAsync(PageCensusScript); }
+                    else { await Task.Delay(200); continue; }
                 }
                 catch (Exception ex)
                 {
@@ -569,15 +586,16 @@ internal static class ShellContrastCensus
             {
                 try
                 {
-                    var raw = await view.CoreWebView2.ExecuteScriptAsync(RootCustomPropertiesScript);
-                    var inline = JsonSerializer.Deserialize<string>(raw);
-                    if (!string.IsNullOrEmpty(inline))
+                    foreach (var pair in await RootCustomPropertiesAsync(view))
                     {
-                        foreach (var pair in JsonSerializer.Deserialize<Dictionary<string, string>>(inline) ?? [])
-                        {
-                            pageTheme[pair.Key] = pair.Value;
-                        }
+                        pageTheme[pair.Key] = pair.Value;
                     }
+
+                    // applyTheme's guards, against the live page: a malformed name, a non-hex value
+                    // and a non-string value must leave the root exactly as the push left it. Read
+                    // AFTER the push's footprint has been recorded, so the two readings are compared.
+                    await view.CoreWebView2.ExecuteScriptAsync(MalformedThemeScript);
+                    afterMalformed = await RootCustomPropertiesAsync(view);
                 }
                 catch (Exception ex)
                 {
@@ -588,8 +606,25 @@ internal static class ShellContrastCensus
             }
         }
 
-        return pageTheme;
+        return (pageTheme, afterMalformed);
     }
+
+    private static async Task<Dictionary<string, string>> RootCustomPropertiesAsync(WebView2 view)
+    {
+        var raw = await view.CoreWebView2.ExecuteScriptAsync(RootCustomPropertiesScript);
+        var inline = JsonSerializer.Deserialize<string>(raw);
+        return string.IsNullOrEmpty(inline)
+            ? new Dictionary<string, string>(StringComparer.Ordinal)
+            : JsonSerializer.Deserialize<Dictionary<string, string>>(inline) ?? new Dictionary<string, string>(StringComparer.Ordinal);
+    }
+
+    /// <summary>
+    /// Entries applyTheme must refuse, each one the GUARD decides (a name the CSSOM would reject
+    /// anyway proves nothing): a url() value, a number, a five-digit hex, a capitalised name.
+    /// </summary>
+    private const string MalformedThemeScript = """
+        window.__composerApplyTheme({ "--surface": "url(x)", "--text": 42, "--text-muted": "#12345", "--Accent": "#000000" })
+        """;
 
     /// <summary>The custom properties on the document root's INLINE style — the ones the host's push set, and nothing the stylesheet declared.</summary>
     private const string RootCustomPropertiesScript = """

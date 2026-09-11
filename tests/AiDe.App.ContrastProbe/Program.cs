@@ -34,7 +34,18 @@ internal static class Program
     private const int Crashed = 10;
 
     private static int _exit = Crashed;
-    private static string? _appStart;
+    private static readonly List<string> _appStarts = [];
+
+    /// <summary>A colour no token declares, frozen, for the push-versus-fallback discrimination.</summary>
+    private static readonly System.Windows.Media.SolidColorBrush FocusSentinel = Frozen("#010203");
+
+    private static System.Windows.Media.SolidColorBrush Frozen(string hex)
+    {
+        var brush = new System.Windows.Media.SolidColorBrush(
+            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(hex)!);
+        brush.Freeze();
+        return brush;
+    }
 
     [STAThread]
     private static int Main(string[] args)
@@ -55,13 +66,24 @@ internal static class Program
             // test can prove the composed shell names its binary on its normal path (INV-0008 Fix D).
             AiDe.App.Workbench.WorkbenchDiagnostics.Sink = line =>
             {
-                if (line.Contains("\"evt\":\"app.start\"", StringComparison.Ordinal)) _appStart ??= line;
+                if (line.Contains("\"evt\":\"app.start\"", StringComparison.Ordinal)) _appStarts.Add(line);
             };
 
             var app = new AiDe.App.App();
             app.InitializeComponent();
-            app.Startup += (_, _) => app.Dispatcher.BeginInvoke(
-                DispatcherPriority.ContextIdle, new Action(() => _ = StageAsync(app, reportPath)));
+            app.Startup += (_, _) =>
+            {
+                // A SENTINEL ON THE ONE ROLE NO TEXT PAIRING USES. The page's stylesheet falls back
+                // to each token's declared value, so a page that never received the push — or that
+                // applied a copy of its own — would carry the same colours as one that did. The
+                // focus ring is not text (the census never measures it), so overriding its token
+                // here changes no measured row, and a page whose root carries the sentinel can only
+                // have got it from the host's push (ShellContrastCensusTests, the push fact).
+                app.Resources["FocusBrush"] = FocusSentinel;
+
+                app.Dispatcher.BeginInvoke(
+                    DispatcherPriority.ContextIdle, new Action(() => _ = StageAsync(app, reportPath)));
+            };
 
             return app.Run();
         }
@@ -96,7 +118,12 @@ internal static class Program
                 .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
                 ?? "(no informational version)";
 
-            var report = await ShellContrastCensus.TakeAsync(window, workspace, version) with { AppStart = _appStart };
+            var report = await ShellContrastCensus.TakeAsync(window, workspace, version) with
+            {
+                AppStart = _appStarts.FirstOrDefault(),
+                AppStartCount = _appStarts.Count,
+                FocusSentinel = "#010203",
+            };
 
             File.WriteAllText(reportPath, JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true }));
 

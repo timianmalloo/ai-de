@@ -66,6 +66,20 @@ public sealed class AppStartIsRecordedTests
         Assert.Equal(1.25, dpi.GetProperty("scaleX").GetDouble());
         Assert.Equal(1.25, dpi.GetProperty("scaleY").GetDouble());
         Assert.Equal(120, dpi.GetProperty("pixelsPerInchX").GetDouble());
+        Assert.Equal(120, dpi.GetProperty("pixelsPerInchY").GetDouble());
+
+        // The configuration is read off the assembly, and this test project is built in the same
+        // configuration as the product it references.
+#if DEBUG
+        Assert.Equal("Debug", Text(start, "configuration"));
+#else
+        Assert.Equal("Release", Text(start, "configuration"));
+#endif
+
+        var ts = Text(start, "ts");
+        Assert.NotNull(ts);
+        Assert.True(DateTimeOffset.TryParse(ts, null, System.Globalization.DateTimeStyles.RoundtripKind, out var when));
+        Assert.InRange(when, DateTimeOffset.UtcNow.AddMinutes(-1), DateTimeOffset.UtcNow.AddMinutes(1));
 
         var window = start.GetProperty("window");
         Assert.Equal(1440, window.GetProperty("width").GetDouble());
@@ -95,6 +109,8 @@ public sealed class AppStartIsRecordedTests
         Assert.True(census.Failure is null, "the shell was not booted: " + census.Failure);
         Assert.False(string.IsNullOrEmpty(census.AppStart),
             "the composed shell booted, showed its window and wrote no app.start — the binary is unattributed again (INV-0008 Fix D)");
+        Assert.True(census.AppStartCount == 1,
+            $"the shell wrote app.start {census.AppStartCount} times in one boot — one line names one binary once");
 
         var start = JsonDocument.Parse(census.AppStart!).RootElement;
 

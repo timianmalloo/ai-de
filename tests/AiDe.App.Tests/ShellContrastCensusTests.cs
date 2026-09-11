@@ -141,6 +141,32 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
             "the host's host.init theme did not reach the composer page's root — the page is drawing its "
             + "stylesheet fallbacks, not the shell's tokens:" + Environment.NewLine + string.Join(Environment.NewLine, missing)
             + Environment.NewLine + string.Join(Environment.NewLine, census.Log));
+
+        // THE SENTINEL. The stylesheet's fallbacks equal the tokens, so equal values above could be
+        // a page applying a copy of its own. The probe planted a colour no token declares on the
+        // focus role before the shell composed; only the host's push can have carried it here.
+        Assert.False(string.IsNullOrEmpty(census.FocusSentinel), "the probe planted no sentinel, so this fact cannot tell the push from the fallback");
+        Assert.Equal(census.FocusSentinel, census.ShellTheme["--focus"], ignoreCase: true);
+        Assert.Equal(census.FocusSentinel, census.PageTheme["--focus"], ignoreCase: true);
+    }
+
+    /// <summary>
+    /// <c>applyTheme</c> refuses what is not a custom property with a six-digit hex value — a bad
+    /// name, a <c>url()</c>, a number, a five-digit hex, a capitalised name — and leaves the root as
+    /// the push left it. Exercised against the live page, not a copy of the function.
+    /// </summary>
+    [Fact]
+    public void TheComposerPageRefusesAMalformedTheme()
+    {
+        var census = Taken.Value;
+
+        Assert.True(census.Failure is null, "the census was not taken: " + census.Failure);
+        Assert.NotNull(census.PageThemeAfterMalformedPush);
+        Assert.True(census.PageTheme.Count > 0, "the push left nothing on the root, so there is nothing for a malformed push to disturb");
+
+        Assert.Equal(
+            census.PageTheme.OrderBy(p => p.Key, StringComparer.Ordinal).Select(p => $"{p.Key}={p.Value}"),
+            census.PageThemeAfterMalformedPush!.OrderBy(p => p.Key, StringComparer.Ordinal).Select(p => $"{p.Key}={p.Value}"));
     }
 
     // ───────────────────────────────────────────────────────────────── the probe ──
@@ -157,11 +183,17 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
     internal sealed record Census(
         string Version, IReadOnlyList<Site> Sites, IReadOnlyList<Omission> Omissions, IReadOnlyList<string> Log,
         IReadOnlyDictionary<string, string> ShellTheme, IReadOnlyDictionary<string, string> PageTheme,
-        string? AppStart, string? Failure);
+        string? AppStart, string? Failure)
+    {
+        public int AppStartCount { get; init; }
+        public string? FocusSentinel { get; init; }
+        public IReadOnlyDictionary<string, string>? PageThemeAfterMalformedPush { get; init; }
+    }
 
     private sealed record ProbeReport(
         string Commit, List<Site> Sites, List<Omission> Omissions, List<string> Log,
-        Dictionary<string, string>? ShellTheme, Dictionary<string, string>? PageTheme, string? AppStart);
+        Dictionary<string, string>? ShellTheme, Dictionary<string, string>? PageTheme, string? AppStart,
+        int AppStartCount, string? FocusSentinel, Dictionary<string, string>? PageThemeAfterMalformedPush);
 
     private static readonly Dictionary<string, string> Empty = new(StringComparer.Ordinal);
 
@@ -202,7 +234,12 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
             var parsed = JsonSerializer.Deserialize<ProbeReport>(File.ReadAllText(report))
                 ?? throw new InvalidDataException("the report deserialised to null");
 
-            return new Census(parsed.Commit, parsed.Sites, parsed.Omissions, parsed.Log, parsed.ShellTheme ?? Empty, parsed.PageTheme ?? Empty, parsed.AppStart, null);
+            return new Census(parsed.Commit, parsed.Sites, parsed.Omissions, parsed.Log, parsed.ShellTheme ?? Empty, parsed.PageTheme ?? Empty, parsed.AppStart, null)
+            {
+                AppStartCount = parsed.AppStartCount,
+                FocusSentinel = parsed.FocusSentinel,
+                PageThemeAfterMalformedPush = parsed.PageThemeAfterMalformedPush,
+            };
         }
         finally
         {

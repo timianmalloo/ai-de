@@ -1446,7 +1446,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 330 members, 70% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 332 members, 70% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1459,7 +1459,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e64214b625285576c018e89b8d5ac4743ae0566e9740069d3e7f2219d58a062e"
+      "sourceSha256": "38bd1b075d3a57455d2b44c04310915d9408e7b662f226b3b4cdbb76c7c9be04"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -2821,7 +2821,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "facelift",
       "reviewBy": "2027-03-10",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "inv-0008-contrast-floor-passes-while-the-shell-fails",
+          "on": "2026-09-11",
+          "reason": "phases 1-5 implemented on fix/contrast-census; the census is green and the on-accent pairing exists"
+        }
+      ],
       "summary": "The census measures the product's composed visual tree by booting AiDe.App.App in its own process (AiDe.App.ContrastProbe) and reading a JSON report; an in-process Application was measured to break twelve later tests by unregistering the pack: URI scheme on shutdown. Blast radius: one more probe project on the build-order edge, one InternalsVisibleTo, ~5 s per App test run.",
       "tags": [
         "decision-note",
@@ -2838,7 +2844,39 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ed9103b62072836d9320e6792d490823514c6cd89b04ab07b47e4a4de7791a5c"
+      "sourceSha256": "45b3a08692a7f140fdbcf29b8bca53a180ef961308f7744564d0ab2996ad2ca1"
+    },
+    {
+      "id": "note-20260911-on-accent-ink-is-its-own-token",
+      "path": "docs/notes/on-accent-ink-is-its-own-token.md",
+      "title": "The ink on the accent ground is its own token, and the leaf never states an ink",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "facelift",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Three calls made while implementing INV-0008 phases 1-5: the on-accent ink is AccentContrastBrush (DESIGN.md's accent-contrast, #0D1014) rather than a borrowed SurfaceSunkenBrush; the container that paints a ground states the ink that goes on it and the leaf text types state none; and the composer page draws from CSS custom properties the host pushes on host.init, with the token values as the stylesheet's fallbacks for the pre-push frame. Blast radius: every TextBlock/Label in the shell (the census is the proof), one additive host.init field, one new WPF token.",
+      "tags": [
+        "decision-note",
+        "ui",
+        "contrast",
+        "tokens",
+        "wpf",
+        "webview2"
+      ],
+      "links": [
+        {
+          "to": "inv-0008-contrast-floor-passes-while-the-shell-fails",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-contrast-census",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "548f04adda56a93f377779873224a9f8c48952ff87efac92419652b7a04f92ef"
     },
     {
       "id": "note-addendum-a-ratification",
@@ -8374,7 +8412,9 @@ window.DOCS_INDEX = {
         "census",
         "floors",
         "dc-135",
-        "dc-131"
+        "dc-131",
+        "dc-139",
+        "dc-140"
       ],
       "links": [
         {
@@ -8395,7 +8435,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "52741a12158dcd5fb93dfb53e3d4eb515339e7f21121b0297f69d4e7036ceea4"
+      "sourceSha256": "d00544d0b42b6172579cc926023e22354b094238e7a9dac0c7c3a09488b264d7"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -11872,6 +11912,49 @@ window.DOCS_INDEX = {
       "sourceSha256": "5ceb5507a5710e579bc6160c03077fb806b8cd01f8cc25aa3adf1bde84b80807"
     },
     {
+      "id": "proof-contrast-census",
+      "path": "docs/proof/contrast-census.md",
+      "title": "Proof Pack - Contrast census phases 1-5",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "facelift",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Evidence that INV-0008's phases 1-5 landed: the composed shell's contrast census goes from 180 pairings / 14 below floor / 2 disabled-state losses to 180 / 0 / 0 by removing the leaf ink override, pairing ink on the containers, an on-accent token (6.60:1), the tab trigger on IsActive, and the composer page drawing from tokens the host pushes on host.init; two source rules in TokenDisciplineTests (seen red); app.start naming the binary (seen red); DC-139/140/141 registered. Full App suite green; every verify-* gate green; the craft floor promoted to gated over src/AiDe.App/Web.",
+      "tags": [
+        "proof-pack",
+        "ui",
+        "contrast",
+        "wcag",
+        "census",
+        "tokens",
+        "telemetry",
+        "dc-139",
+        "dc-140"
+      ],
+      "links": [
+        {
+          "to": "inv-0008-contrast-floor-passes-while-the-shell-fails",
+          "rel": "tested-by"
+        },
+        {
+          "to": "note-20260911-on-accent-ink-is-its-own-token",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260911-contrast-census-runs-out-of-process",
+          "rel": "depends-on"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "99ca61fd41fa74746074c9eb696ad9ff72a83110c4276fb05b30f974ad4d19d6"
+    },
+    {
       "id": "proof-front-door-provider-config",
       "path": "docs/proof/front-door-provider-config.md",
       "title": "Proof Pack — node F6, provider configuration and the composer handshake",
@@ -13756,5 +13839,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "9f3df7d66b8da0e888ed1cd2f017a2b5791ee460d8861fa9480198d62d60e4c0"
+  "graphSha256": "f27108aaadf81efb8a4b7a13dd9333afd41dd6e85555a99bae1345860049e57e"
 };

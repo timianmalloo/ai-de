@@ -9,7 +9,8 @@ tags: [decision-note, ui, contrast, wpf, testing, probe]
 links:
   - { to: inv-0008-contrast-floor-passes-while-the-shell-fails, rel: relates-to }
 review-by: 2027-03-10
-review-suggested: []
+review-suggested:
+  - { by: inv-0008-contrast-floor-passes-while-the-shell-fails, on: 2026-09-11, reason: "phases 1-5 implemented on fix/contrast-census; the census is green and the on-accent pairing exists" }
 summary: >-
   The census measures the product's composed visual tree by booting AiDe.App.App in its own process
   (AiDe.App.ContrastProbe) and reading a JSON report; an in-process Application was measured to break

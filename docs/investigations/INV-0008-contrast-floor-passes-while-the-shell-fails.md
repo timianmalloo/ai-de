@@ -5,7 +5,7 @@ type: investigation
 status: accepted
 owner: "@timianmalloo"
 phase: "facelift"
-tags: [ui, contrast, wcag, theme, wpf, avalondock, webview2, census, floors, dc-135, dc-131]
+tags: [ui, contrast, wcag, theme, wpf, avalondock, webview2, census, floors, dc-135, dc-131, dc-139, dc-140]
 links:
   - { to: ui-review-operator-feedback, rel: refines }
   - { to: adr-0012-docking-shell-library, rel: depends-on }
@@ -28,7 +28,7 @@ summary: >-
 
 # INV-0008 — The contrast floor passes while the shell fails
 
-- **Status:** Root cause verified · fix proposed · **stopped for review**
+- **Status:** Root cause verified · **phases 1–5 implemented** on `fix/contrast-census` (see *Implemented*, below §9) · phases 6–7 open
 - **Severity / tier:** T1 — every surface, every operator, on the first screen
 - **Reported by / date:** the operator, 2026-09-11 18:07Z (`al-01M28TDX0G5RGHXKY5QTTFQMPH`, session `conductor-addendum-c`)
 - **Related:** `docs/reviews/ui-operator-feedback.md` (U1, §2a — the eleven pairs), `DESIGN.md` §Palette roles, commit `5213d7bb` (U2's floor), `tests/AiDe.App.Tests/ContrastFloorTests.cs`, DC-131, DC-133, DC-135
@@ -300,8 +300,62 @@ asserted in 5213d7bb's remarks without opening the precedence table (NG9).
 | 6 | **Census reach** — open a disabled check/radio and a disabled menu item in the census (the structurally-confirmed siblings) and the hover/selected-inactive states via the same triggers; note the split canvas state | the named omissions that share the mechanism | the omissions table shrinks; each new row measured | 1 |
 | 7 | **Palette decision (operator):** `{colors.text-muted}` reads as unreadable at 6.48:1 on raised; propose a lighter muted (e.g. `#A9B3C1` ≈ 8:1, hand-computed) or reserve muted for metadata only — with the census table as the measurement | the operator's perception, not a floor failure | the census re-measured after the token change | — |
 
-> **STOP — human review gate.** The census is committed red as evidence. No fix is made. Approve the
-> phases to execute; Phase 1 is one line plus one trigger and the theory adjustment.
+> **Review gate passed (2026-09-11):** the operator approved phases 1–5; implemented on
+> `fix/contrast-census` — see *Implemented* below. Phases 6–7 remain open.
+
+### Implemented — phases 1–5 (`fix/contrast-census`, `docs/proof/contrast-census.md`)
+
+- **Census:** `main` `7d95f8cd` (this branch's merge base) — **180 pairings, 14 below floor** (13
+  `app-style token` at 2.37:1 on `AccentBrush`, 1 `page-css` at 4.47:1) **+ 2 disabled-state
+  losses** → after: **180 pairings, 0 below floor, 0 state losses**, 4 census facts green.
+- **Phase 1 uncovered more than the experiment did.** With the leaf setter removed and the tab
+  trigger fixed, the out-of-process census found **three further masked sites** the in-process
+  experiment (§4a) had not: the composer footer's "Compiled view" / lease / status `TextBlock`s
+  inheriting `#000000` from AvalonDock's `LayoutDocumentPaneControl` default style (1.27:1 on the
+  raised card) — the exact lines the operator photographed. The leaf setter had been *masking*
+  them, not pairing them. Fixed at the container: `SurfaceChrome.WrapAsIsland` now states
+  `TextElement.Foreground = TextBrush` beside the raised ground it paints.
+- **The on-accent token.** `AccentContrastBrush` = `#0D1014` (DESIGN.md's declared
+  `{colors.accent-contrast}`, which the code had been spelling as `SurfaceSunkenBrush`); **6.60:1**
+  on `AccentBrush`, re-measured by the census on the active tab, the checked toggle and the
+  selected palette row. The tab's on-accent ink follows `IsActive` — the theme's own condition for
+  the accent ground (`DocumentWellTabSelectedActiveBackground`, AvalonDock VS2013 `Generic.xaml`) —
+  never `IsSelected`; the selected-inactive tab keeps `TextBrush` on the border ground (10.74:1).
+  **`DESIGN.md`'s palette-roles row is D1's to write** (the `ui-design` node owns that file): role
+  *the only ink on `{colors.accent}` as a ground*, 6.6:1 on the accent, equal to
+  `{colors.surface-sunken}` by coincidence and not by dependency.
+- **Phase 2 (source rule):** `TokenDisciplineTests.NoImplicitLeafTextStyle_SetsItsOwnInk` (red on
+  the pre-fix `App.xaml` at lines 391 and 396, green after) and
+  `EveryTriggerThatPaintsAGround_StatesAnInkThatClearsIt` (green on the tree; its engine red on a
+  planted `IsChecked → AccentBrush` with no ink). The (b)/(c) C# literal scans proposed in §9 were
+  **not** built — the census measures the rendered literal, and the `?? Brushes.Gray` fallbacks
+  are outside the running product's path (§8); recorded, not acted on.
+- **Phase 3 (page tokens):** `host.init` carries an additive `theme` field — eleven CSS custom
+  properties (`--surface`, `--surface-raised`, `--surface-sunken`, `--text`, `--text-muted`,
+  `--text-disabled`, `--accent`, `--accent-contrast`, `--border`, `--danger`, `--focus`) read from
+  `Application.Resources` by `ComposerPageTheme`; `composer.mjs` applies them on the root before
+  it renders; `composer.html`'s stylesheet reads each with its token's value as the fallback. The
+  hint now measures 7.16:1; the census records the root's inline custom properties beside the
+  shell's push and a fourth fact asserts they agree (red with `applyTheme` removed). `composer-host.html`
+  (the WebHostProbe page, no host to push to) carries the token values by hand; `src/AiDe.App/Web`
+  is **promoted to gated** in `tools/verify-ui-craft-floor.py` (0 findings at promotion).
+- **Phase 4 (`app.start`):** `WorkbenchDiagnostics.AppStart` from `MainWindow.Loaded` —
+  `{version, commit, configuration, theme, dpi, window}`; `AppStartIsRecordedTests` proves the
+  shape through the seam and, through the contrast probe's boot of the real `App`, that the
+  composed shell emits it. The status-strip / Help → About half of Fix D is **not** done.
+- **Phase 5 (register):** the two proposed classes registered as **DC-139** (the leaf overrides
+  the container's pairing) and **DC-140** (a report against an unattributed binary) — the ids
+  proposed here (136, 137) were spent by `main` and `fix/composer-entry-areas` before this branch
+  merged, exactly as §8 warned; DC-135 recurrence 2 and a DC-131 instance appended; **DC-141**
+  registers a defect this implementation caused and caught (a scripted edit anchored on a `<style>`
+  inside a comment).
+- **Not done here, named:** field-boundary contrast on the composer page (`{colors.border}` at
+  1.39:1 on the surface — CD16's recorded deviation covers separators, not a control boundary; a
+  `border-strong` token is a `DESIGN.md` decision); a non-colour selected indicator on the
+  selected-inactive tab (ground-only at 1.39:1 vs the unselected ground); the muted-ink
+  perception (Phase 7); hover/pressed and the popups the census does not open (Phase 6); a rule
+  against a *local* ink under an accent-ground trigger (UX&A finding, structurally confirmed, not
+  rendered). All in the proof pack's residuals.
 
 ## 10. Residual risk & what would change the diagnosis
 

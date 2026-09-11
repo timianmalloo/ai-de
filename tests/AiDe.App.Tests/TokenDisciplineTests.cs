@@ -314,6 +314,53 @@ public sealed class TokenDisciplineTests
         Assert.Contains("IsChecked", finding, StringComparison.Ordinal);
         Assert.Contains("AccentBrush", finding, StringComparison.Ordinal);
         Assert.Contains("TextBrush", finding, StringComparison.Ordinal);
+
+        // The three syntaxes the rule must also read: <Trigger.Setters> element syntax, a
+        // <Setter.Value> carrying a resource element, and a Style whose rest ink is its own Setter.
+        const string ElementSyntaxes = """
+            <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+              <SolidColorBrush x:Key="TextBrush" Color="#E4E9EF" />
+              <SolidColorBrush x:Key="AccentBrush" Color="#5B9DD9" />
+              <SolidColorBrush x:Key="TextMutedBrush" Color="#98A3B2" />
+              <Style x:Key="ElementTrigger" TargetType="Button">
+                <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                <Style.Triggers>
+                  <Trigger Property="IsPressed" Value="True">
+                    <Trigger.Setters>
+                      <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+                    </Trigger.Setters>
+                  </Trigger>
+                </Style.Triggers>
+              </Style>
+              <Style x:Key="ElementValue" TargetType="Button">
+                <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                <Style.Triggers>
+                  <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background">
+                      <Setter.Value>
+                        <DynamicResource ResourceKey="AccentBrush" />
+                      </Setter.Value>
+                    </Setter>
+                  </Trigger>
+                </Style.Triggers>
+              </Style>
+              <Style x:Key="StyleRestInk" TargetType="Button">
+                <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                <Style.Triggers>
+                  <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+                  </Trigger>
+                </Style.Triggers>
+              </Style>
+            </ResourceDictionary>
+            """;
+
+        var findings = UnpairedGrounds(ElementSyntaxes, DeclaredColours(ElementSyntaxes)).ToList();
+
+        Assert.Equal(3, findings.Count);
+        Assert.Contains(findings, f => f.Contains("IsPressed", StringComparison.Ordinal) && f.Contains("TextBrush", StringComparison.Ordinal));
+        Assert.Contains(findings, f => f.Contains("IsMouseOver", StringComparison.Ordinal) && f.Contains("TextBrush", StringComparison.Ordinal));
+        Assert.Contains(findings, f => f.Contains("IsFocused", StringComparison.Ordinal) && f.Contains("TextMutedBrush", StringComparison.Ordinal));
     }
 
     private static readonly XNamespace Xaml = "http://schemas.microsoft.com/winfx/2006/xaml";
@@ -322,8 +369,12 @@ public sealed class TokenDisciplineTests
     private static readonly Regex ResourceToken =
         new(@"^\{(?:Static|Dynamic)Resource\s+([A-Za-z0-9_]+)\s*\}$", RegexOptions.Compiled);
 
-    private static readonly string[] InkProperties = ["Foreground", "TextElement.Foreground", "Control.Foreground"];
-    private static readonly string[] GroundProperties = ["Background", "Panel.Background", "Border.Background", "Control.Background"];
+    /// <summary>An ink property, qualified or not: <c>Foreground</c>, <c>TextElement.Foreground</c>, <c>TextBlock.Foreground</c>…</summary>
+    private static bool IsInk(string? property) =>
+        property is not null && (property == "Foreground" || property.EndsWith(".Foreground", StringComparison.Ordinal));
+
+    private static bool IsGround(string? property) =>
+        property is not null && (property == "Background" || property.EndsWith(".Background", StringComparison.Ordinal));
 
     /// <summary>The floor for body text (WCAG 1.4.3); every ground a trigger paints under text is body text.</summary>
     private const double TextFloor = 4.5;
@@ -345,7 +396,7 @@ public sealed class TokenDisciplineTests
             foreach (var setter in style.Descendants().Where(e => e.Name.LocalName == "Setter"))
             {
                 var property = setter.Attribute("Property")?.Value;
-                if (property is not null && InkProperties.Contains(property, StringComparer.Ordinal))
+                if (IsInk(property))
                 {
                     yield return $"line {Line(setter)}: implicit <Style TargetType=\"{target}\"> sets {property}";
                 }
@@ -363,11 +414,15 @@ public sealed class TokenDisciplineTests
 
         foreach (var trigger in document.Descendants().Where(IsTrigger))
         {
-            var setters = trigger.Elements().Where(e => e.Name.LocalName == "Setter").ToList();
+            // Attribute syntax (<Setter …/> as a child) and element syntax (<Trigger.Setters><Setter …/>).
+            var setters = trigger.Elements().Where(e => e.Name.LocalName == "Setter")
+                .Concat(trigger.Elements().Where(e => e.Name.LocalName.EndsWith(".Setters", StringComparison.Ordinal))
+                    .SelectMany(s => s.Elements().Where(e => e.Name.LocalName == "Setter")))
+                .ToList();
 
             var grounds = setters
-                .Where(s => GroundProperties.Contains(s.Attribute("Property")?.Value ?? "", StringComparer.Ordinal))
-                .Select(s => Token(s.Attribute("Value")?.Value))
+                .Where(s => IsGround(s.Attribute("Property")?.Value))
+                .Select(s => Token(SetterValue(s)))
                 .Where(t => t is not null && colours.ContainsKey(t))
                 .Select(t => t!)
                 .ToList();
@@ -375,8 +430,8 @@ public sealed class TokenDisciplineTests
             if (grounds.Count == 0) continue;
 
             var ownInk = setters
-                .Where(s => InkProperties.Contains(s.Attribute("Property")?.Value ?? "", StringComparer.Ordinal))
-                .Select(s => Token(s.Attribute("Value")?.Value))
+                .Where(s => IsInk(s.Attribute("Property")?.Value))
+                .Select(s => Token(SetterValue(s)))
                 .FirstOrDefault(t => t is not null);
 
             var ink = ownInk ?? RestInk(trigger);
@@ -409,14 +464,37 @@ public sealed class TokenDisciplineTests
         var template = trigger.Ancestors().FirstOrDefault(e => e.Name.LocalName is "ControlTemplate" or "DataTemplate" or "Style");
         if (template is null) return RootInk;
 
+        // An ink stated on an element in the template body (TextElement.Foreground="{StaticResource X}")…
         var stated = template.Descendants()
             .Where(e => !e.Ancestors().Any(IsTrigger) && e.Name.LocalName != "Setter")
             .SelectMany(e => e.Attributes())
-            .Where(a => InkProperties.Contains(a.Name.LocalName, StringComparer.Ordinal))
+            .Where(a => IsInk(a.Name.LocalName))
             .Select(a => Token(a.Value))
             .FirstOrDefault(t => t is not null);
 
+        // …else a Style's own rest setter (<Setter Property="Foreground" …/> outside its triggers).
+        stated ??= template.Descendants()
+            .Where(e => e.Name.LocalName == "Setter" && !e.Ancestors().Any(IsTrigger) && IsInk(e.Attribute("Property")?.Value))
+            .Select(e => Token(SetterValue(e)))
+            .FirstOrDefault(t => t is not null);
+
         return stated ?? RootInk;
+    }
+
+    /// <summary>A setter's value, from its attribute or from a <c>&lt;Setter.Value&gt;</c> child carrying a resource extension.</summary>
+    private static string? SetterValue(XElement setter)
+    {
+        if (setter.Attribute("Value") is { } attribute) return attribute.Value;
+
+        var element = setter.Elements().FirstOrDefault(e => e.Name.LocalName == "Setter.Value")?.Elements().FirstOrDefault();
+        if (element is null) return null;
+        if (element.Name.LocalName is "StaticResource" or "DynamicResource")
+        {
+            var key = element.Attribute("ResourceKey")?.Value;
+            return key is null ? null : "{" + element.Name.LocalName + " " + key + "}";
+        }
+
+        return null;
     }
 
     private static bool IsTrigger(XElement e) =>
