@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T01:48:00Z",
+  "generated": "2026-09-11T01:54:47Z",
   "audit": [
     {
       "actor": null,
@@ -11136,6 +11136,44 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "b87506e0bd8d033bd7e45d916395c3a7e5447c22",
         "short": "b87506e0b",
+        "branch": "feature/composer",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M272SA24MKX5WPV2R9ZW4G98",
+      "shortname": "F4 addendum — the clauses whose subject is a document, a piece of copy, or an absent code path",
+      "datetime": "2026-09-11T01:54:46Z",
+      "session": "conductor-front-door-f4",
+      "prompt": "Close the F4 clauses whose subject is a document, a piece of UI copy, or the absence of a code path — the ones that read as satisfied by intention.",
+      "summary": "Six clauses given oracles. The S1 guard now passes a booby-trapped template alongside a free-form draft and asserts its marker never reaches the output, which is the strongest available form of 'no template code executes' short of instrumenting the compiler. The locale rule is a repo-wide sweep for RegionInfo and TimeZoneInfo.Local plus a composer-scoped sweep for CurrentCulture and navigator.language. The API-key residual is covered by asserting the terms-of-service refusal still fires first, because in Phase 1 the exception cannot be enabled at all. Final measurement: App 493, Core 2199 = portable 2046 + non-portable 153, all three Core runs executed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Claude Code",
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "tests/AiDe.Core.Tests/Composer/ThePrivacyResidualsAreCoveredTests.cs"
+      ],
+      "tags": [
+        "conductor",
+        "front-door",
+        "composer",
+        "privacy"
+      ],
+      "outcome": "success",
+      "goal": "Give an oracle to the six F4 clauses that read as satisfied by intention: the provider record, the caps-are-not-a-run-ceiling copy rule, the no-locale-read rule, the no-assist rule, the S1 free-form guard, and the API-key-exception residual.",
+      "done_when": "Each of the six has a test that reads the tree rather than the intention, and all four measurements stay above their floors.",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "abd52160245dfdde1cf62ed71f88a4e6efa49fa6",
+        "short": "abd521602",
         "branch": "feature/composer",
         "pushed": true
       }

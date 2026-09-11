@@ -234,5 +234,28 @@ public sealed class AttachIsOperatorEnabledTests : IDisposable
 
         Assert.Contains("enforceable policy", config, StringComparison.Ordinal);
         Assert.Contains("non-session-overridable", config, StringComparison.Ordinal);
+
+        // And nothing ANYWHERE in the composer or the session config claims the opposite. The clause
+        // says "described anywhere", so the sweep is over every file that could carry the claim
+        // rather than over the one that carries its correction.
+        var swept = Directory
+            .EnumerateFiles(
+                Path.Combine(RepoFiles.Root(), "src", "AiDe.Core", "Presentation", "Composer"), "*.cs")
+            .Concat(Directory.EnumerateFiles(
+                Path.Combine(RepoFiles.Root(), "src", "AiDe.App", "Workbench", "Composer"), "*.cs"))
+            .Append(Path.Combine(RepoFiles.Root(), "src", "AiDe.Core", "Sessions", "SessionConfig.cs"))
+            .Append(Path.Combine(RepoFiles.Root(), "src", "AiDe.App", "Web", "composer.mjs"))
+            .ToList();
+
+        Assert.NotEmpty(swept);
+
+        foreach (var path in swept)
+        {
+            var text = File.ReadAllText(path);
+            foreach (var claim in new[] { "prevents attach", "restricts attach", "prevent attach", "restrict attach" })
+            {
+                Assert.DoesNotContain(claim, text, StringComparison.OrdinalIgnoreCase);
+            }
+        }
     }
 }
