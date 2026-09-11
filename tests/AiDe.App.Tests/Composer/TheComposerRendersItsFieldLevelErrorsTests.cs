@@ -125,6 +125,39 @@ public sealed class TheComposerRendersItsFieldLevelErrorsTests
     }
 
     [Fact]
+    public void TheClipboardIsNeverReadAcrossASessionOfTypingFocusChangesAndSends()
+    {
+        Sta.Run(() =>
+        {
+            var root = Path.Combine(Path.GetTempPath(), "aide-render", Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(root);
+
+            try
+            {
+                var surface = Build(root, attachEnabled: false);
+
+                // A whole session's worth of the three gestures the rider names: typing, focus
+                // changes, and sends. No polling, no history, no paste-on-focus.
+                for (var i = 1; i <= 50; i++)
+                {
+                    surface.SetFieldText(surface.Fields[0].Id, i, $"line {i} about @src/Payments");
+                    surface.MoveFocus();
+                }
+
+                surface.Draft.SwitchTo(ComposerShape.FreeForm);
+                surface.Draft.SetFreeFormText("a prompt about @src/Payments\n");
+                Assert.NotNull(surface.Send());
+
+                Assert.Equal(0, surface.ClipboardReads);
+            }
+            finally
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        });
+    }
+
+    [Fact]
     public void ThePickerOffersEveryCatalogCardAndChoosingOneReMintsTheForm()
     {
         Sta.Run(() =>
