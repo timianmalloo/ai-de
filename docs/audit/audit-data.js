@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T18:56:08Z",
+  "generated": "2026-09-11T19:00:53Z",
   "audit": [
     {
       "actor": null,
@@ -11831,6 +11831,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "4b866670560195bcc9a0f7446390ad4759f43a7e",
         "short": "4b8666705",
+        "branch": "feature/addendum-c",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M28XG5J0RZTA7YT2GJEYV1AS",
+      "shortname": "owner-rulings-56-62-filed",
+      "datetime": "2026-09-11T19:00:52Z",
+      "session": "addendum-c-chain",
+      "prompt": "Owner (fable): file PR-A and PR-B with the tier question answered; rule on §R rows 3, 7, 8, 9, 17.",
+      "summary": "56: tier, fan-out cap, budget are session settings with defaults (tier by ruling, an Owner extension of CT19; the operator's direct answer files over it). 57: the composer is a conversation; B :183/:216 superseded; S-8 admitted under D-6; Ruling 42 intact. 58: Explore's structural view selector cut, routed kind-opens to Architecture. 59: joins and codeviewer admitted to Architecture; search/diagnostics out; D-0 deferred. 60: Loomkeeper kinds homed in Coding, sessions alone in the default. 61: Provenance is not a Coding surface. 62: caption 'Terminal sessions'; A3 executed, no erratum. Spec status accepted.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/addendum-c-council-rulings.md",
+        "docs/specs/addendum-c-perspectives.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "File the operator's composer verdicts as Rulings 56/57 and the Owner's dispositions of §R rows 3,7,8,9,17 as 58-62; cite them from the spec; accept the spec",
+      "done_when": "Rulings 56-62 verbatim in note-addendum-c-council-rulings; spec cites 56/57 in place of PR-A/PR-B; status accepted; gates green",
+      "tier": "T2",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "9a6bf41c5195c48845bc21fd97c2616dfd5422d7",
+        "short": "9a6bf41c5",
         "branch": "feature/addendum-c",
         "pushed": true
       }

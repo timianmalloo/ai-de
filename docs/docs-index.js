@@ -6776,14 +6776,14 @@ window.DOCS_INDEX = {
     {
       "id": "note-addendum-c-council-rulings",
       "path": "docs/notes/addendum-c-council-rulings.md",
-      "title": "Decision note — Rulings 50–55: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, and page one",
+      "title": "Decision note — Rulings 50–62: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
       "type": "doc",
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "1",
       "reviewBy": "2026-12-11",
       "reviewSuggested": [],
-      "summary": "Six rulings the Owner issued before any Addendum C spec was written, on the evidence the conductor brought at node R0 of plan-addendum-c-modes. They fix the vocabulary (Perspective), the phasing (F5 untouched; code after F5 merges), ADR-0017's fate (retained and amended), the graph model (one substrate, two surfaces), the build order under the operator's 80% case, and four page-one facts a spec written without them would get wrong.",
+      "summary": "Rulings 50–55 issued before any Addendum C spec was written; 56–62 issued at the spec's gate — 56 and 57 file the operator's own composer verdicts, 58–62 rule on the reconciliation table. Six rulings the Owner issued before any Addendum C spec was written, on the evidence the conductor brought at node R0 of plan-addendum-c-modes. They fix the vocabulary (Perspective), the phasing (F5 untouched; code after F5 merges), ADR-0017's fate (retained and amended), the graph model (one substrate, two surfaces), the build order under the operator's 80% case, and four page-one facts a spec written without them would get wrong.",
       "tags": [
         "decision-note",
         "ruling",
@@ -6797,6 +6797,10 @@ window.DOCS_INDEX = {
       "links": [
         {
           "to": "plan-addendum-c-modes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
           "rel": "relates-to"
         },
         {
@@ -6825,7 +6829,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "cba1de1b8eb6feaf5e9f4ade3c4bf15bfd4ab18c6f28b7e7d69b0d549d32b8ea"
+      "sourceSha256": "1d71f33eaf89475c5e7f2f3e152e93ddd7da45e0956dcf84d5cad7248364f9af"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -12661,7 +12665,7 @@ window.DOCS_INDEX = {
       "path": "docs/specs/addendum-c-perspectives.md",
       "title": "Addendum C — Perspectives: the use case the tool is in, the surfaces each perspective admits, the rail and the perspective-contextual menu",
       "type": "spec",
-      "status": "in-review",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "next-delivery (after F5 merges — Ruling 51)",
       "reviewBy": "2027-03-11",
@@ -12793,7 +12797,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  A[Session document open: one editor, structure collapsed, compiled collapsed] -->|type prose| B{Draft settles: objective derivable?}\n  A -->|shape control: pick a template — B:181 kept| T[Template fields render as the derived structure, prefilled from the text where possible]\n  T --> E\n  B -->|no| C[Structure stays one collapsed line; a T2 send will mark Goal and Done when]\n  C -->|type more| B\n  C --> E\n  B -->|yes| D[Derived structure expands beneath the editor: Goal · Done when · Not in scope, marked derived]\n  D -->|edit a line inline| D\n  D --> E{@path mention present?}\n  E -->|no| F[Write-scope line: elicitation text; Send → refusal names @path and offers the picker — Ruling 42 intact]\n  F -->|add a mention| E\n  E -->|yes| G[Write-scope line: 'src/…/** — from your mention']\n  G -->|open Compiled disclosure| H[Exactly the outgoing text; no diff, no summary; editor does not shrink]\n  H --> G\n  G -->|Send Ctrl+Enter| I{T2 and a content field empty?}\n  I -->|yes| J[Inline marks on every gap at once; one-line reason each; nothing sent]\n  J -->|fix| D\n  I -->|no| K[Sent: compiled prompt carries the session's tier · fan-out · budget in the CT19 block]\n  K --> K2[Reply streams in the Console canvas; the block joins the Score outline]\n  K2 -->|conductor answers with a drafted template — S-8| K3[Next message's draft: the reply's text with its derived structure inline]\n  K3 --> D\n  K2 -->|operator writes the next message| A\n  A -->|session settings on the header| L[Edit tier / fan-out / budget for the session; T0-with-fan-out warning here]\n  L -->|re-validate the current draft| B"
         }
       ],
-      "sourceSha256": "bc8a83b9e46c65b37e20eafa5161d1cf62aeece5f5853128654fcf075b45f4ea"
+      "sourceSha256": "3183e699c042477ca56ea8d85c4fd6c6f96808a6b14047d6a4c0d7288df199e7"
     },
     {
       "id": "spec-agentic-watcher-substrate",
@@ -13590,5 +13594,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "7ca6245d0b64aac4f286bfa46eeb8f89f834b0b27e6a73b7359cf090aa02e109"
+  "graphSha256": "578866d2408395a629a13d6b84712444039fe0e8b7e4a579c34859cb2853df0d"
 };
