@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T18:25:19Z",
+  "generated": "2026-09-11T19:27:52Z",
   "audit": [
     {
       "actor": null,
@@ -11769,6 +11769,56 @@ window.AUDIT_DATA = {
         "sha": "f5c0f740fd0488baa00dd2de4320c187f585058e",
         "short": "f5c0f740f",
         "branch": "investigate/composer-input",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M28Z19PG92S9YE390MPKB7TR",
+      "shortname": "implement-inv-0007-phases-1-4",
+      "datetime": "2026-09-11T19:27:42Z",
+      "session": "composer-fix",
+      "prompt": "/implement INV-0007 phases 1-4: bounded compiled view, initialise-once handshake for composer and canvas, normal-path telemetry, class controls and defect-class registration.\n\n1. Bounded compiled view. Writer-first layout: the editor host is the primary row; the compiled view is capped (INV's figure: ≤ 35 % of the composer's height, scrolling inside) and never starves the editor. Prefer the smallest correct change (MaxHeight bound to the surface's height, or a Grid with star rows) over a new abstraction — the Simplifier reviews this.\n2. Initialise once; readiness per navigation. InitialiseAsync runs once per surface, not per Loaded; a re-parent must not re-navigate; if the page does reload (a genuine navigation), the router treats the new editor.ready as a new page — it re-sends host.init with the current draft rather than dropping the ready as a duplicate. Apply the same shape to CanvasSurface. Both red tests go green; the run-binding guard stays green.\n3. Telemetry on the normal path (IO1–IO12): via WorkbenchDiagnostics, emit (a) the composer's rendered bounds — editor host and compiled view ActualHeight/ActualWidth — at first layout and whenever either changes beyond a threshold you state; (b) every handshake transition (editor.ready received, host.init pushed, duplicate-ready dropped vs re-initialised, page reload) with the surface id; (c) an input-received counter (keystrokes that reached the draft). Each degrades to \"not recorded\", never to a plausible zero. No flag, no re-run needed.\n4. Class controls + registration. Register the defect class(es) in docs/lessons/defect-classes.md with ids from python tools/verify-id-allocators.py (never highest-plus-one; a sibling node investigate/contrast-census is live and may allocate concurrently — re-run the allocator immediately before you commit the register). Write the control that fails when the shape recurs: a test that the two WebView2-hosting surfaces (composer, canvas) initialise exactly once across N re-parents, and a sweep-shaped guard for \"a content-sized control docked beside a filling HwndHost/WebView2\" if you can state its root, recursion, token set and allowlist honestly (GO14a) — otherwise name it as a residual, not a control. Run class → sweep → derive → prevent in writing in the register entry.\n\nPhases 5 and 6 are named-and-deferred. Do not merge to main — the conductor converges.",
+      "summary": "Phase 1: ComposerSurface.MeasureOverride caps the compiled view at floor(min(0.35*H,(H-chrome)/2)) before children are measured (one pass); probe exit 24 -> 0 (editor 110px/465px -> 334px/241px); fast-ring STA test at 485/1000/485+wrapped-status red -> green. Phase 2: WebSurfaceHost (once per surface, guard before the first await) used by ComposerSurface and CanvasSurface; ComposerMessageRouter.BeginNavigation re-keys readiness per document from the composer's own allowed NavigationStarting; probe exit 25 -> 0 (navigations +0, router drops 0, fields 6); canvas navigations per render 1 -> 0; reload and cancelled-navigation branches proven through the product (exit 26/27 by mutation). Phase 3: composer.layout and web-surface.handshake (initialising, re-attached, init-failed, navigation-started, configured, page-ready, init-pushed, input-received, message-dropped, disposed) on the normal path, null never 0, probe echoes the Sink. Phase 4: DC-136 (partially-controlled) and DC-137 (controlled) with class -> sweep -> derive -> prevent; once-across-3-re-parents tests for both surfaces (red by mutation: Actual 4), held-open runtime-start test, Loaded-hook sweep guard (red at HEAD). Reviews: Test Architect veto cleared after 4 must-fixes; Simplifier -109 lines applied in part; SRE's two must-fixes applied. Proof Pack docs/proof/composer-entry-areas.md. Phases 5-6 deferred. DC ids collide with origin/main's DC-136 (spent during this node) - renumber in place at merge.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/composer-entry-areas.md",
+        "docs/lessons/defect-classes.md",
+        "src/AiDe.App/Workbench/WebSurfaceHost.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs",
+        "src/AiDe.App/Workbench/CanvasSurface.cs",
+        "src/AiDe.App/Workbench/WorkbenchDiagnostics.cs",
+        "src/AiDe.Core/Presentation/Composer/ComposerMessageRouter.cs",
+        "tests/AiDe.App.Tests/Composer/TheWriterKeepsItsRoomTests.cs",
+        "tests/AiDe.App.Tests/TheWebSurfacesInitialiseOnceAcrossReparentsTests.cs",
+        "tests/AiDe.App.Tests/Composer/ComposerHostIntegrationTests.cs",
+        "tests/AiDe.App.ComposerProbe/Program.cs",
+        "tests/AiDe.Core.Tests/Composer/TheVocabularyIsClosedTests.cs"
+      ],
+      "tags": [
+        "inv-0007",
+        "composer",
+        "dc-136",
+        "dc-137"
+      ],
+      "outcome": "success",
+      "goal": "INV-0007 phases 1-4 on fix/composer-entry-areas: bounded compiled view, initialise-once handshake for composer and canvas, normal-path telemetry, class controls and register entries",
+      "done_when": "both INV red tests observed red then green without weakened assertions; run-binding guard green; WorkbenchDiagnostics emits bounds, handshake transitions and input on the normal path; register entries with recurrence controls observed failing; gates green bare; audit entry and proof pack; committed and pushed, no merge",
+      "tier": "T1",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-11T18:29:03Z",
+      "duration_seconds": 3519.0,
+      "git": {
+        "sha": "4b05744b57a13cec939f323bc4c2eb158bc5ac0a",
+        "short": "4b05744b5",
+        "branch": "fix/composer-entry-areas",
         "pushed": null
       }
     }

@@ -73,14 +73,25 @@ public readonly record struct CanvasRefresh(CanvasRefreshOutcome Outcome, string
 
 public sealed class CanvasSurface : ContentControl, IDisposable
 {
+    private readonly WebSurfaceHost _host;
     private readonly WebView2 _view;
     private bool _obscured;
     private bool _disposed;
+    private int _navigations;
 
     public CanvasSurface(string surfaceId, string title)
     {
         SurfaceId = surfaceId;
-        _view = new WebView2();
+
+        // One host for both web surfaces (DC-137): it initialises once across every re-parent, so a
+        // later render no longer reloads the graph. The page string stays the canvas's own.
+        _host = new WebSurfaceHost(surfaceId, this, InitialiseAsync, failure => Content = new TextBlock
+        {
+            Text = "The graph canvas could not start. " + failure,
+            TextWrapping = TextWrapping.Wrap,
+            Margin = new Thickness(12),
+        });
+        _view = _host.View;
 
         AutomationProperties.SetName(_view, $"{title} graph canvas");
         AutomationProperties.SetName(this, title);
@@ -101,8 +112,6 @@ public sealed class CanvasSurface : ContentControl, IDisposable
             await RefreshAsync(pending);
         };
         _view.WebMessageReceived += OnWebMessage;
-
-        Loaded += async (_, _) => await InitialiseAsync();
     }
 
     /// <summary>A root requested before the page was ready, applied when it becomes ready.</summary>
@@ -112,6 +121,9 @@ public sealed class CanvasSurface : ContentControl, IDisposable
 
     /// <summary>The focus seam the router drives. Non-null from construction.</summary>
     public ICanvasFocusTarget FocusTarget { get; }
+
+    /// <summary>How many times the browser was initialised. The contract is 1, across every re-parent.</summary>
+    internal int InitialisationsStarted => _host.InitialisationsStarted;
 
     /// <summary>True once the page has loaded and can accept focus.</summary>
     public bool Ready { get; private set; }
@@ -201,33 +213,22 @@ public sealed class CanvasSurface : ContentControl, IDisposable
     /// </summary>
     public void SetObscured(bool obscured) => _obscured = obscured;
 
-    private async Task InitialiseAsync()
+    /// <summary>
+    /// Navigates the started browser to the canvas page. Runs once per surface, through the host.
+    /// </summary>
+    /// <remarks>
+    /// The canvas stays on <c>NavigateToString</c>: its page is a self-contained string with no
+    /// imports, while the composer's ES module needs <c>WebAssetHost</c>'s virtual-host mapping.
+    /// The two navigation idioms are the surfaces' own; the attach-once discipline is the host's.
+    /// </remarks>
+    private Task InitialiseAsync()
     {
-        if (_disposed) return;
+        // Measured, not claimed: the browser says when a navigation starts, and every one is a line.
+        _view.CoreWebView2!.NavigationStarting += (_, _) =>
+            WorkbenchDiagnostics.WebSurfaceHandshake(SurfaceId, "navigation-started", ++_navigations);
 
-        try
-        {
-            await _view.EnsureCoreWebView2Async();
-            // simplify: TWO WEB-HOSTING IDIOMS COEXIST IN THIS SHELL, deliberately. The canvas
-            // stays on NavigateToString because its page is a self-contained string with no
-            // imports, and moving it would buy nothing but a second thing to break; the composer
-            // needs WebAssetHost's virtual-host mapping because an ES module cannot be served to
-            // a NavigateToString document at all. Ceiling: exactly these two surfaces.
-            // trigger: revisit when this canvas needs a module import of its own, or when a THIRD
-            // web surface appears — at that point one host abstraction is cheaper than three copies.
-            _view.NavigateToString(CanvasPage.Html);
-        }
-        catch (Exception ex) when (ex is not OutOfMemoryException)
-        {
-            // A missing or broken WebView2 runtime must not take the shell down: the canvas is one
-            // pane. It stays not-Ready, and workbench.focusCanvas refuses with a reason.
-            Content = new TextBlock
-            {
-                Text = "The graph canvas could not start. " + ex.Message,
-                TextWrapping = TextWrapping.Wrap,
-                Margin = new Thickness(12),
-            };
-        }
+        _view.NavigateToString(CanvasPage.Html);
+        return Task.CompletedTask;
     }
 
     private void OnWebMessage(object? sender, Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs e)
@@ -377,7 +378,7 @@ public sealed class CanvasSurface : ContentControl, IDisposable
     {
         if (_disposed) return;
         _disposed = true;
-        _view.Dispose();
+        _host.Dispose();
     }
 
 }

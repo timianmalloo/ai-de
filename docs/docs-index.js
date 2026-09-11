@@ -1446,7 +1446,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 329 members, 70% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 331 members, 70% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1459,7 +1459,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2ca509a76d037af0d7f659a2796393aaba255b0b25bbcd41dfac058e196cb199"
+      "sourceSha256": "659e727fe5db05de4eb2adeaab4950eceedb38ef9f15610e8d60853de3527ac0"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -1471,7 +1471,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 45 members, 87% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 47 members, 88% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1484,7 +1484,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7d09188f96a1e8f14587f34803e53e79bd74d3116da9f23a0dab553641b292c3"
+      "sourceSha256": "cb2ecaeaae556560ac23fa2c02c43669ef644d0ba053ed93e0cb0181fa74768b"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -1746,7 +1746,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 30 types, 71 members, 86% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 30 types, 72 members, 86% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1759,7 +1759,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0e00afd6cdbfac78096f4196dbb0c95b8c5727ba26a3f14b445750cae81dbca3"
+      "sourceSha256": "6b7ced7de22cc8b5d97098ac7d0a69df2df5799fb3191ed207d1bae50fbee68a"
     },
     {
       "id": "api-aide-core-presentation-sessions",
@@ -5725,7 +5725,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e5b0be937c331d6ab99a128336e58b351eeb970f5a603dabdf92e45063918137"
+      "sourceSha256": "4cfa70153c509dac2b5bf2e545ab3518f193429b02ee6bd98652b85fb83c8755"
     },
     {
       "id": "design-session-profiler",
@@ -11545,6 +11545,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "70be47bec3d22b82a75fcceb9b51b67671c6eb0175f97f7d178ca72999c2ab77"
     },
     {
+      "id": "proof-composer-entry-areas",
+      "path": "docs/proof/composer-entry-areas.md",
+      "title": "Proof Pack — the composer's entry areas keep their room, and the page survives a render (INV-0007, phases 1–4)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-front-door",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Evidence for INV-0007 phases 1–4: the compiled view is capped to the smaller of 35% of the composer and half of what the chrome leaves (set in MeasureOverride, one pass); both WebView2 surfaces initialise once through one WebSurfaceHost and the router's readiness is per document; bounds, every handshake transition and the first accepted keystroke are emitted on the normal path. Nine new tests, four of them through the real docking host; every one observed red first or red by a named mutation. Probe exit 24 → 0 (editor 110px/465px → 334px/241px) and 25 → 0.",
+      "tags": [
+        "composer",
+        "webview2",
+        "wpf",
+        "layout",
+        "handshake",
+        "observability",
+        "proof-pack",
+        "inv-0007",
+        "dc-136",
+        "dc-137"
+      ],
+      "links": [
+        {
+          "to": "inv-0007-composer-entry-areas-starved-by-the-compiled-view",
+          "rel": "implements"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b71010eb551eb018ae4a5a45870bca37ccb7eac1588dc3dad0bc074506597aae"
+    },
+    {
       "id": "proof-conductor-agent-plane",
       "path": "docs/proof/conductor-agent-plane.md",
       "title": "Proof Pack — Conductor agent plane, Phase 1 (N0–N7)",
@@ -13326,5 +13362,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ac0d3fd6477d92ef5877802c85f7bae73c8599e6cc6d26fb6d7393cad14d744b"
+  "graphSha256": "23c0b76fadae43e57492770b45ebadd36fdd3901118db75bc9ec9cd250bf5eba"
 };

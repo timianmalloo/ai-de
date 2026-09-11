@@ -93,6 +93,52 @@ public sealed class TheVocabularyIsClosedTests
         Assert.False(router.IsReady);
     }
 
+    /// <summary>
+    /// <b>INV-0007, finding 2.</b> A <c>ready</c> that follows a navigation the host declared is a
+    /// NEW document's mount, not a duplicate: it is accepted, the sink hears it, and the new page's
+    /// revisions start again from its own 1 — so typing into the reloaded page is not dropped as
+    /// "not strictly greater" than the old page's count.
+    /// </summary>
+    /// <remarks>
+    /// <b>Observed red before the fix</b> against a router whose <c>BeginNavigation</c> did nothing:
+    /// the second ready dropped as "this instance already reported ready" (<c>Ready</c> stayed 1,
+    /// <c>Dropped</c> read 1) — exactly the <c>router drops=2</c> the shell probe printed after one
+    /// later render.
+    /// </remarks>
+    [Fact]
+    public void AReadyAfterADeclaredNavigationIsAMountNotADuplicate()
+    {
+        var (router, sink) = Build("goal:1");
+
+        Assert.True(router.Route(PageUrl, Envelope("editor.ready"), []).Accepted);
+        Assert.True(router.Route(PageUrl, Envelope("draft.changed", "\"fieldId\":\"goal:1\",\"rev\":7,\"text\":\"old page\""), []).Accepted);
+
+        // Without a navigation, a second ready is still the duplicate it always was.
+        Assert.False(router.Route(PageUrl, Envelope("editor.ready"), []).Accepted);
+        Assert.Equal(1, router.Dropped);
+
+        // The host saw NavigationStarting for the page URL: the document is being replaced.
+        router.BeginNavigation();
+        Assert.False(router.IsReady);
+
+        // THE OLD PAGE IS STILL ALIVE for a moment. A late change from it, at its old revision, is
+        // dropped as "before ready" — and does NOT re-raise the high-water mark the new page will
+        // count under. Pinned, because the alternative is the same silence by a third route.
+        Assert.False(router.Route(PageUrl, Envelope("draft.changed", "\"fieldId\":\"goal:1\",\"rev\":8,\"text\":\"late\""), []).Accepted);
+        Assert.Equal(2, router.Dropped);
+
+        var readyAgain = router.Route(PageUrl, Envelope("editor.ready"), []);
+        Assert.True(readyAgain.Accepted, readyAgain.Reason);
+        Assert.Equal(2, sink.Ready);
+        Assert.True(router.IsReady);
+
+        // The new page counts from its own 1, which is below the old page's 7.
+        var typed = router.Route(PageUrl, Envelope("draft.changed", "\"fieldId\":\"goal:1\",\"rev\":1,\"text\":\"new page\""), []);
+        Assert.True(typed.Accepted, typed.Reason);
+        Assert.Equal(2, sink.Fields);
+        Assert.Equal(2, router.Dropped);
+    }
+
     [Fact]
     public void C9_AStaleInstanceIsRefusedOnEveryKind()
     {

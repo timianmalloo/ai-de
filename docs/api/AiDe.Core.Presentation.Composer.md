@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation.Composer: 30 types, 71 members, 86% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation.Composer: 30 types, 72 members, 86% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation.Composer`
 
-**30 public types · 71 public members · 86% documented.**
+**30 public types · 72 public members · 86% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -535,6 +535,7 @@ WebView2 event handler is an unhandled exception on the UI thread.
 | `long Dropped { get; private set; }` | How many messages were refused. Drops are counted, never recorded with their content. |
 | `bool IsReady { get; private set; }` | Whether the page has reported ready for this instance. |
 | `void ReplaceFields(IReadOnlyList<string> fieldIds)` | Re-mints the acceptable field set, after the host changed the form. |
+| `void BeginNavigation()` | The host declared a navigation: the document that reported ready is being replaced, so the next `editor.ready` is a **new page's mount**, not a duplicate. |
 | `ComposerRouteResult Route(` | Routes one message. Never throws. |
 
 ### `ComposerMessageRouter(`
@@ -553,6 +554,16 @@ a template replaces the fields on screen, so the ids the page may address must b
 too: an id from the previous form is an id the host no longer holds, and continuing to accept
 it would let a page write into a field that is not there. The stored revisions are cleared
 with them, because a revision is per field and the fields are new.
+
+### `void BeginNavigation()`
+
+The host declared a navigation: the document that reported ready is being replaced, so the
+next `editor.ready` is a **new page's mount**, not a duplicate.
+
+**Remarks.** The once-gate in `Ready` is per **document**, not per surface (DC-137): only the
+host can start a navigation, so only the host resets it — nothing in the page's vocabulary
+reaches this method. The per-field revisions go with it: a new document counts from its own
+1, and the old page's high-water marks would drop every keystroke as "not strictly greater".
 
 ### `ComposerRouteResult Route(`
 

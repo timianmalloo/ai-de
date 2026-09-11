@@ -136,6 +136,16 @@ public sealed class ComposerHostIntegrationTests
         Assert.Contains("fields=6 editors=3", stdout, StringComparison.Ordinal);
         Assert.Contains("writer >= reader: True", stdout, StringComparison.Ordinal);
         Assert.Contains("reached draft=True", stdout, StringComparison.Ordinal);
+
+        // INV-0007 PHASE 3: the surface measured itself. The bounds, every handshake transition and
+        // the first accepted keystroke are on the normal path — no flag, no re-run — and each line
+        // below could only be printed by the product, since the probe writes none of them.
+        var composerLines = ComposerDiagnostics(stdout);
+        Assert.Contains(composerLines, l => l.Contains("\"evt\":\"composer.layout\"", StringComparison.Ordinal));
+        foreach (var transition in new[] { "initialising", "navigation-started", "configured", "page-ready", "init-pushed", "input-received" })
+        {
+            Assert.Contains(composerLines, l => l.Contains($"\"transition\":\"{transition}\"", StringComparison.Ordinal));
+        }
     }
 
     /// <summary>
@@ -169,7 +179,68 @@ public sealed class ComposerHostIntegrationTests
         // (the line is printed only on the --render-after-mount path).
         Assert.Contains("after one later render:", stdout, StringComparison.Ordinal);
         Assert.Contains("fields=6, editor text=", stdout, StringComparison.Ordinal);
+
+        // INV-0007 PHASE 2/3: the re-parent was heard and declined — one line says the docking host
+        // attached the surface again, and no line says a ready was dropped or a page reloaded.
+        var composerLines = ComposerDiagnostics(stdout);
+        Assert.Contains(composerLines, l => l.Contains("\"transition\":\"re-attached\"", StringComparison.Ordinal));
+        Assert.DoesNotContain(composerLines, l => l.Contains("\"transition\":\"message-dropped\"", StringComparison.Ordinal));
+        Assert.Single(composerLines, l => l.Contains("\"transition\":\"navigation-started\"", StringComparison.Ordinal));
     }
+
+    /// <summary>
+    /// <b>DC-137, the allowed branch.</b> A genuine reload of the composer page — crash recovery's
+    /// shape — is a new document whose <c>editor.ready</c> is a mount: one more navigation, one more
+    /// <c>host.init</c> carrying the draft the host still holds, no ready dropped, six fields back.
+    /// </summary>
+    /// <remarks>
+    /// Seen red by mutation through this probe: with the surface's <c>BeginNavigation</c> call
+    /// removed, exit 26 — <i>init-pushed 1->1, router drops +1, host.init count=0 fields=0</i>, and
+    /// the log's <c>message-dropped … editor.ready: this instance already reported ready</c>.
+    /// </remarks>
+    [Fact]
+    public void AGenuineReloadRemountsThePageWithTheDraft()
+    {
+        var (exitCode, stdout, stderr) = RunProbe("--shell --maximize --reload-after-mount --height 800", TimeSpan.FromMinutes(6));
+
+        Assert.True(exitCode == 0, $"the composer shell probe failed with exit {exitCode}. {stdout} {stderr}");
+
+        Assert.Contains("after a reload: remounted=True, composer navigation-started 1->2, init-pushed 1->2, editor.ready posted +1, router drops +0, host.init count=1 fields=6", stdout, StringComparison.Ordinal);
+
+        var composerLines = ComposerDiagnostics(stdout);
+        Assert.Equal(2, composerLines.Count(l => l.Contains("\"transition\":\"navigation-started\"", StringComparison.Ordinal)));
+        Assert.Equal(2, composerLines.Count(l => l.Contains("\"transition\":\"page-ready\"", StringComparison.Ordinal)));
+        Assert.DoesNotContain(composerLines, l => l.Contains("\"transition\":\"message-dropped\"", StringComparison.Ordinal));
+    }
+
+    /// <summary>
+    /// <b>DC-137, the cancelled branch.</b> A navigation the policy cancels replaces no document and
+    /// resets nothing: the composer counts no navigation, readiness stands, and the next keystroke
+    /// reaches the draft.
+    /// </summary>
+    /// <remarks>
+    /// Seen red by mutation through this probe: with the cancel early-return removed from
+    /// <c>OnNavigationStarting</c>, exit 27 — <i>navigation-started 1->2, page ready=False, router
+    /// drops=1, reached draft=False</i>: the operator's typing silently lost.
+    /// </remarks>
+    [Fact]
+    public void ACancelledNavigationResetsNothing()
+    {
+        var (exitCode, stdout, stderr) = RunProbe("--shell --maximize --escape-after-mount --height 800", TimeSpan.FromMinutes(6));
+
+        Assert.True(exitCode == 0, $"the composer shell probe failed with exit {exitCode}. {stdout} {stderr}");
+
+        // The browser really raised a second NavigationStarting (the page tried), and the composer
+        // really did not count it.
+        Assert.Contains("after a cancelled navigation: composer navigation-started 1->1, raw NavigationStarting=2, page ready=True, router drops=0, dispatched=True, reached draft=True", stdout, StringComparison.Ordinal);
+        Assert.Single(ComposerDiagnostics(stdout), l => l.Contains("\"transition\":\"navigation-started\"", StringComparison.Ordinal));
+    }
+
+    /// <summary>The workbench diagnostics the probe echoed, for the composer surface only.</summary>
+    private static List<string> ComposerDiagnostics(string stdout) =>
+        stdout.Split('\n')
+            .Where(l => l.StartsWith("diag: {\"ts\":", StringComparison.Ordinal) && l.Contains("\"surface\":\"composer:", StringComparison.Ordinal))
+            .ToList();
 
     private static (int ExitCode, string Stdout, string Stderr) RunProbe(string arguments, TimeSpan timeout)
     {

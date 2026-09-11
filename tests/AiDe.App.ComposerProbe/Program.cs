@@ -60,6 +60,8 @@ internal static class Program
     private const int TypingDidNotReachTheDraft = 23;
     private const int TheEditorHasNoSize = 24;
     private const int TheLaterRenderResetThePage = 25;
+    private const int TheReloadLostThePage = 26;
+    private const int TheEscapeResetTheHandshake = 27;
 
     /// <summary>Runs the handshake oracle instead of the CSP/one-document probe.</summary>
     private const string HandshakeArgument = "--handshake";
@@ -72,6 +74,12 @@ internal static class Program
     [STAThread]
     private static int Main(string[] args)
     {
+        // THE WORKBENCH LOG, ON STDOUT, IN EVERY MODE. The surfaces emit their bounds, handshake
+        // transitions and input counts on the normal path (DC-136/DC-137); the test that launched
+        // this reads them from here, and nothing a probe does lands in the operator's own log file
+        // (INV-0007 F6: a test run and an operator's session were sharing one file).
+        WorkbenchDiagnostics.Sink = line => Console.Out.WriteLine("diag: " + line);
+
         try
         {
             if (args is not null && args.Contains(ShellArgument, StringComparer.Ordinal))
@@ -404,8 +412,11 @@ internal static class Program
         /// <param name="Maximize">Run main's choreography (Ruling 47's maximize) rather than F5's.</param>
         /// <param name="RenderAfterMount">After the page mounts, render once more, as any later layout command does.</param>
         /// <param name="CapCompiled">The NECESSITY check: cap the compiled view's height from outside and re-measure.</param>
+        /// <param name="ReloadAfterMount">After the page mounts and takes a keystroke, reload the document — crash recovery's shape — and read what came back.</param>
+        /// <param name="EscapeAfterMount">After the page mounts, let the page try to navigate away (the policy cancels it) and type again.</param>
         /// <param name="WindowHeight">The window's height. 800 is a laptop; 1400 gives the document the ~1000px the operator's screenshot shows.</param>
-        private sealed record Options(bool Maximize, bool RenderAfterMount, bool CapCompiled, double WindowHeight);
+        private sealed record Options(
+            bool Maximize, bool RenderAfterMount, bool CapCompiled, bool ReloadAfterMount, bool EscapeAfterMount, double WindowHeight);
 
         private static double HeightArgument(string[] args)
         {
@@ -428,13 +439,37 @@ internal static class Program
         /// </summary>
         private const double CompiledShareCeiling = 0.35;
 
+        private static readonly List<string> Transitions = [];
+
+        /// <summary>How many composer handshake lines carry <paramref name="transition"/>.</summary>
+        private static int Count(string transition)
+        {
+            lock (Transitions)
+            {
+                return Transitions.Count(l =>
+                    l.Contains("\"surface\":\"composer:", StringComparison.Ordinal)
+                    && l.Contains($"\"transition\":\"{transition}\"", StringComparison.Ordinal));
+            }
+        }
+
         internal static int Run(string[] args)
         {
             var options = new Options(
                 Maximize: args.Contains("--maximize", StringComparer.Ordinal),
                 RenderAfterMount: args.Contains("--render-after-mount", StringComparer.Ordinal),
                 CapCompiled: args.Contains("--cap-compiled", StringComparer.Ordinal),
+                ReloadAfterMount: args.Contains("--reload-after-mount", StringComparer.Ordinal),
+                EscapeAfterMount: args.Contains("--escape-after-mount", StringComparer.Ordinal),
                 WindowHeight: HeightArgument(args));
+
+            // The composer's own transitions, kept so a verdict below can count them by name rather
+            // than by the probe's raw event subscriptions (which also see cancelled navigations).
+            var echo = WorkbenchDiagnostics.Sink;
+            WorkbenchDiagnostics.Sink = line =>
+            {
+                lock (Transitions) { Transitions.Add(line); }
+                echo?.Invoke(line);
+            };
 
             var root = Path.Combine(Path.GetTempPath(), "aide-shell-typing", Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(root);
@@ -781,6 +816,69 @@ internal static class Program
                 if (verdict == Ok)
                 {
                     verdict = TypingDidNotReachTheDraft;
+                }
+            }
+
+            if (options.EscapeAfterMount)
+            {
+                // THE CANCELLED BRANCH. The page tries to leave; the policy cancels the navigation
+                // (C10). A cancelled navigation replaces no document, so it must reset nothing: the
+                // composer's own navigation count stays where it was, no ready is expected, and the
+                // next keystroke still reaches the draft.
+                var startedBefore = Count("navigation-started");
+                await Eval(view, "(function(){ try { location.href = 'https://example.invalid/'; } catch (e) {} return 'tried'; })()");
+                await Task.Delay(TimeSpan.FromSeconds(2));
+
+                await Eval(view, "(function(){ const c = document.querySelector('.cm-content'); if (c) c.focus(); return 'focused'; })()");
+                await Task.Delay(150);
+                var again = await DispatchCharAsync(view, 'z', 0x5A);
+                await Task.Delay(700);
+                var afterEscape = composer.CompiledView;
+                var escapeTyped = afterEscape.Contains('z');
+                Console.Out.WriteLine(
+                    $"after a cancelled navigation: composer navigation-started {startedBefore}->{Count("navigation-started")}, "
+                    + $"raw NavigationStarting={navigationsStarted}, page ready={composer.PageIsReady}, router drops={composer.Router.Dropped}, "
+                    + $"dispatched={again}, reached draft={escapeTyped}");
+
+                if (Count("navigation-started") != startedBefore || !escapeTyped)
+                {
+                    Console.Error.WriteLine("a cancelled navigation reset the handshake: the composer counted it or the next keystroke was lost");
+                    verdict = TheEscapeResetTheHandshake;
+                }
+            }
+
+            if (options.ReloadAfterMount)
+            {
+                // THE ALLOWED BRANCH. A genuine reload — crash recovery's shape — replaces the
+                // document. The new page's ready must be a mount, not a duplicate: one more
+                // navigation-started, one more init-pushed, no message-dropped for the ready, six
+                // fields, and the editor showing the draft the host still holds.
+                var startedBefore = Count("navigation-started");
+                var pushedBefore = Count("init-pushed");
+                var dropsBefore = composer.Router.Dropped;
+                var readyBefore = readyPosted;
+
+                view.CoreWebView2!.Reload();
+                var remounted = await WaitAsync(async () =>
+                    await Eval(view, "String(window.__composerReady === true && document.querySelectorAll('#fields .field').length > 0)") == "true");
+                await Task.Delay(TimeSpan.FromSeconds(2));
+
+                var fieldsAfter = await Eval(view, "String(document.querySelectorAll('#fields .field').length)");
+                var initsAfter = await Eval(view, "String(window.__composerInitCount)");
+                var textAfter = await Eval(view, "String((document.querySelector('.cm-content') || {}).textContent || '')");
+                var firstGoalLine = composer.Draft.GoalValues.TryGetValue(GoalBlockFields.GoalKey, out var goalNow) ? goalNow.Split('\n')[0] : string.Empty;
+                Console.Out.WriteLine(
+                    $"after a reload: remounted={remounted}, composer navigation-started {startedBefore}->{Count("navigation-started")}, "
+                    + $"init-pushed {pushedBefore}->{Count("init-pushed")}, editor.ready posted +{readyPosted - readyBefore}, "
+                    + $"router drops +{composer.Router.Dropped - dropsBefore}, host.init count={initsAfter} fields={fieldsAfter}, "
+                    + $"editor text='{textAfter}', draft holds='{firstGoalLine}'");
+
+                if (!remounted || fieldsAfter is "0" or "" || Count("navigation-started") != startedBefore + 1
+                    || Count("init-pushed") != pushedBefore + 1 || composer.Router.Dropped != dropsBefore
+                    || !textAfter.Contains(firstGoalLine, StringComparison.Ordinal))
+                {
+                    Console.Error.WriteLine("a reload lost the page: the new document's ready was not a mount, or the draft did not come back");
+                    verdict = TheReloadLostThePage;
                 }
             }
 
