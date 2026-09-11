@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T19:15:39Z",
+  "generated": "2026-09-11T19:47:22Z",
   "audit": [
     {
       "actor": null,
@@ -11909,6 +11909,95 @@ window.AUDIT_DATA = {
       "summary": "56: tier, fan-out cap, budget are session settings with defaults (tier by ruling, an Owner extension of CT19; the operator's direct answer files over it). 57: the composer is a conversation; B :183/:216 superseded; S-8 admitted under D-6; Ruling 42 intact. 58: Explore's structural view selector cut, routed kind-opens to Architecture. 59: joins and codeviewer admitted to Architecture; search/diagnostics out; D-0 deferred. 60: Loomkeeper kinds homed in Coding, sessions alone in the default. 61: Provenance is not a Coding surface. 62: caption 'Terminal sessions'; A3 executed, no erratum. Spec status accepted.",
       "tags": [],
       "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0007-composer-entry-areas-starved-by-the-compiled-view.md",
+        "tests/AiDe.App.Tests/Composer/ComposerHostIntegrationTests.cs",
+        "tests/AiDe.App.ComposerProbe/Program.cs"
+      ],
+      "datetime": "2026-09-11T18:25:12Z",
+      "done_when": "Two red tests committed on investigate/composer-input, INV-0007 written with typed links and derived, audit entry, derived views regenerated, branch pushed",
+      "duration_seconds": 2399.0,
+      "git": {
+        "branch": "investigate/composer-input",
+        "pushed": null,
+        "sha": "f5c0f740fd0488baa00dd2de4320c187f585058e",
+        "short": "f5c0f740f"
+      },
+      "goal": "Verified root cause of 'the composer accepts no typing / entry areas not visible' after File → New Session, with a red reproduction in the product's composition, a class, a sibling sweep and a phased plan; stop before the fix",
+      "id": "al-01M28VEVQW46H5GKG4JW7ZD8X4",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "The composer accepts no typing: the operator opened File → New Session and could not type in the composer. The operator, on the F5 tree (feature/exit-evidence @ 729fdb5e — same composer code as main), ran dotnet run --project src/AiDe.App -c Release, opened a workspace, did File → New Session, and reports: \"I cannot type in the composer.\" Words only; no screenshot yet. %LOCALAPPDATA%\\AiDe\\logs\\workbench-20260911.log — last line 2026-09-11T17:41:12Z evt: layout.mutation, operation: open-session-document, surface: session-document:20260911T174112Z-28f7fe97, placement: split-beside-graph — that is the operator's gesture. Nothing is logged after it. The composer emits no diagnostics at all. Later, verbatim: \"I could not see the entry areas.\" — and the operator's screenshot: a ~200px WebView2 scroll region with only FAN_OUT_CAP and BUDGET visible, a ~500px read-only Compiled view under it.",
+      "session": "composer-input",
+      "shortname": "investigate-composer-input",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "investigate",
+      "started_at": "2026-09-11T17:45:13Z",
+      "summary": "INV-0007. Verified root cause (necessary and sufficient, measured in the real WorkbenchShell + AvalonDock host under the operator's recorded arrangement): ComposerSurface docks a StackPanel footer Bottom whose read-only compiled-view TextBox has no MaxHeight; it is measured unconstrained (401px for an empty goal block, 465px with three answers) before the WebView2 editor host gets the remainder, so editor = composer − compiled − 114px: 0px at 485px (F5's choreography), 105–110px at 684–689px (main, Ruling 47 maximize). Capping the compiled view from outside the product gave the editor 202px in the same 485px and the run went green. Second defect reproduced: any later Adapter.Render() re-parents the WebView2, WPF raises Loaded again, InitialiseAsync navigates again, the router drops the new page's editor.ready as a duplicate → host.init=0, fields=0, the operator's on-screen text gone; the graph canvas has the same Loaded→navigate shape (one render, one reload, measured). Ruled out by measurement: focus/global key handlers (decompiled WebView2 WPF wrapper forwards only accelerators), host.init never arriving on open, page/bundle failing to load, a non-editable editor, contrast as the primary cause (text 10.33:1, labels 6.31:1; boundaries 1.51:1 recorded as F4). Two red tests committed (ComposerHostIntegrationTests: entry areas keep their room — exit 24; page survives a later render — exit 25). Phased plan: 1 writer-first Grid layout with a 35% compiled ceiling; 2 initialise-once + readiness per navigation (composer + canvas); 3 bounds/handshake/input telemetry on the normal path; 4 class controls (writer≥reader helper, one WebSurfaceHost, Loaded-init analyzer, DC classes A/B registered with the fix); 5 keyboard entry focuses a field; 6 page-side non-text contrast floor. Stopped before the fix.",
+      "tags": [
+        "composer",
+        "investigation"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/composer-entry-areas.md",
+        "docs/lessons/defect-classes.md",
+        "src/AiDe.App/Workbench/WebSurfaceHost.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs",
+        "src/AiDe.App/Workbench/CanvasSurface.cs",
+        "src/AiDe.App/Workbench/WorkbenchDiagnostics.cs",
+        "src/AiDe.Core/Presentation/Composer/ComposerMessageRouter.cs",
+        "tests/AiDe.App.Tests/Composer/TheWriterKeepsItsRoomTests.cs",
+        "tests/AiDe.App.Tests/TheWebSurfacesInitialiseOnceAcrossReparentsTests.cs",
+        "tests/AiDe.App.Tests/Composer/ComposerHostIntegrationTests.cs",
+        "tests/AiDe.App.ComposerProbe/Program.cs",
+        "tests/AiDe.Core.Tests/Composer/TheVocabularyIsClosedTests.cs"
+      ],
+      "datetime": "2026-09-11T19:27:42Z",
+      "done_when": "both INV red tests observed red then green without weakened assertions; run-binding guard green; WorkbenchDiagnostics emits bounds, handshake transitions and input on the normal path; register entries with recurrence controls observed failing; gates green bare; audit entry and proof pack; committed and pushed, no merge",
+      "duration_seconds": 3519.0,
+      "fan_out": 3,
+      "git": {
+        "branch": "fix/composer-entry-areas",
+        "pushed": null,
+        "sha": "4b05744b57a13cec939f323bc4c2eb158bc5ac0a",
+        "short": "4b05744b5"
+      },
+      "goal": "INV-0007 phases 1-4 on fix/composer-entry-areas: bounded compiled view, initialise-once handshake for composer and canvas, normal-path telemetry, class controls and register entries",
+      "id": "al-01M28Z19PG92S9YE390MPKB7TR",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "/implement INV-0007 phases 1-4: bounded compiled view, initialise-once handshake for composer and canvas, normal-path telemetry, class controls and defect-class registration.\n\n1. Bounded compiled view. Writer-first layout: the editor host is the primary row; the compiled view is capped (INV's figure: ≤ 35 % of the composer's height, scrolling inside) and never starves the editor. Prefer the smallest correct change (MaxHeight bound to the surface's height, or a Grid with star rows) over a new abstraction — the Simplifier reviews this.\n2. Initialise once; readiness per navigation. InitialiseAsync runs once per surface, not per Loaded; a re-parent must not re-navigate; if the page does reload (a genuine navigation), the router treats the new editor.ready as a new page — it re-sends host.init with the current draft rather than dropping the ready as a duplicate. Apply the same shape to CanvasSurface. Both red tests go green; the run-binding guard stays green.\n3. Telemetry on the normal path (IO1–IO12): via WorkbenchDiagnostics, emit (a) the composer's rendered bounds — editor host and compiled view ActualHeight/ActualWidth — at first layout and whenever either changes beyond a threshold you state; (b) every handshake transition (editor.ready received, host.init pushed, duplicate-ready dropped vs re-initialised, page reload) with the surface id; (c) an input-received counter (keystrokes that reached the draft). Each degrades to \"not recorded\", never to a plausible zero. No flag, no re-run needed.\n4. Class controls + registration. Register the defect class(es) in docs/lessons/defect-classes.md with ids from python tools/verify-id-allocators.py (never highest-plus-one; a sibling node investigate/contrast-census is live and may allocate concurrently — re-run the allocator immediately before you commit the register). Write the control that fails when the shape recurs: a test that the two WebView2-hosting surfaces (composer, canvas) initialise exactly once across N re-parents, and a sweep-shaped guard for \"a content-sized control docked beside a filling HwndHost/WebView2\" if you can state its root, recursion, token set and allowlist honestly (GO14a) — otherwise name it as a residual, not a control. Run class → sweep → derive → prevent in writing in the register entry.\n\nPhases 5 and 6 are named-and-deferred. Do not merge to main — the conductor converges.",
+      "session": "composer-fix",
+      "shortname": "implement-inv-0007-phases-1-4",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-11T18:29:03Z",
+      "summary": "Phase 1: ComposerSurface.MeasureOverride caps the compiled view at floor(min(0.35*H,(H-chrome)/2)) before children are measured (one pass); probe exit 24 -> 0 (editor 110px/465px -> 334px/241px); fast-ring STA test at 485/1000/485+wrapped-status red -> green. Phase 2: WebSurfaceHost (once per surface, guard before the first await) used by ComposerSurface and CanvasSurface; ComposerMessageRouter.BeginNavigation re-keys readiness per document from the composer's own allowed NavigationStarting; probe exit 25 -> 0 (navigations +0, router drops 0, fields 6); canvas navigations per render 1 -> 0; reload and cancelled-navigation branches proven through the product (exit 26/27 by mutation). Phase 3: composer.layout and web-surface.handshake (initialising, re-attached, init-failed, navigation-started, configured, page-ready, init-pushed, input-received, message-dropped, disposed) on the normal path, null never 0, probe echoes the Sink. Phase 4: DC-136 (partially-controlled) and DC-137 (controlled) with class -> sweep -> derive -> prevent; once-across-3-re-parents tests for both surfaces (red by mutation: Actual 4), held-open runtime-start test, Loaded-hook sweep guard (red at HEAD). Reviews: Test Architect veto cleared after 4 must-fixes; Simplifier -109 lines applied in part; SRE's two must-fixes applied. Proof Pack docs/proof/composer-entry-areas.md. Phases 5-6 deferred. DC ids collide with origin/main's DC-136 (spent during this node) - renumber in place at merge.",
+      "tags": [
+        "inv-0007",
+        "composer",
+        "dc-136",
+        "dc-137"
+      ],
+      "tier": "T1",
       "tool": null
     }
   ],

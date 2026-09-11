@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 81 types, 329 members, 70% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 81 types, 330 members, 70% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**81 public types · 329 public members · 70% documented.**
+**81 public types · 330 public members · 70% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1972,6 +1972,7 @@ path swallows its own failure.
 | `void TerminalStart(` | Records the decision a terminal launch made, and how it ended. |
 | `void Crash(string origin, Exception exception)` | Records an unhandled exception, with the context that says which gesture produced it. |
 | `void McpConfig(string outcome, string? path, string? detail)` | Records what contributing to `.mcp.json` did, and the detail that must not be announced. |
+| `void AppStart(string theme, DpiScale dpi, double width, double height, string windowState)` | Records that the shell started, naming the binary it is: the informational version and the commit inside it, the build configuration, the docking theme, the DPI and the window. |
 
 ### `void LayoutReconcile(`
 
@@ -2060,6 +2061,30 @@ it is recorded here rather than discarded.
 Written on EVERY outcome, not just the failures, because the question an operator asks
 first is which of the five things happened — and an event that only appears when something
 broke cannot answer "it did nothing, and that was correct".
+
+### `void AppStart(string theme, DpiScale dpi, double width, double height, string windowState)`
+
+Records that the shell started, naming the binary it is: the informational version and the
+commit inside it, the build configuration, the docking theme, the DPI and the window.
+
+**Remarks.** **Why this exists (INV-0008).** Three Release builds from three commits were on one
+machine; the operator photographed one and nothing tied the screenshot to a commit. A fixed
+instance re-entered as a recurrence and the investigation re-derived the mechanism before it
+could read the version off the binary. The binary always carried its commit
+(`AssemblyInformationalVersion` = `1.0.0+<sha>`); the shell never said it.
+A UI report now starts from this line, and is attributed before it is triaged.
+
+
+
+
+**On the normal path, no flag.** Emitted once from the main window's `Loaded`,
+after the window has a size and a DPI — the two facts a contrast or layout report needs and
+a screenshot cannot state.
+
+
+
+
+A build without a source revision records `commit` as null. It never invents one.
 
 ## `WorkbenchShell`
 

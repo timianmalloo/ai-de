@@ -1446,7 +1446,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 329 members, 70% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 330 members, 70% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1459,7 +1459,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2ca509a76d037af0d7f659a2796393aaba255b0b25bbcd41dfac058e196cb199"
+      "sourceSha256": "e64214b625285576c018e89b8d5ac4743ae0566e9740069d3e7f2219d58a062e"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -1471,7 +1471,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 45 members, 87% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 10 types, 50 members, 88% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1484,7 +1484,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7d09188f96a1e8f14587f34803e53e79bd74d3116da9f23a0dab553641b292c3"
+      "sourceSha256": "70623ec42ead604738e7e96027e40b1c828ccc9f8734af4a82ca6d7fb761d05e"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -1746,7 +1746,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 30 types, 71 members, 86% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 30 types, 72 members, 86% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1759,7 +1759,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0e00afd6cdbfac78096f4196dbb0c95b8c5727ba26a3f14b445750cae81dbca3"
+      "sourceSha256": "0d56e518b14c71aa9745dddf040735a427ae52a9d53046be4b81fecdd0539eff"
     },
     {
       "id": "api-aide-core-presentation-sessions",
@@ -2833,12 +2833,12 @@ window.DOCS_INDEX = {
       ],
       "links": [
         {
-          "to": "inv-0007-contrast-floor-passes-while-the-shell-fails",
+          "to": "inv-0008-contrast-floor-passes-while-the-shell-fails",
           "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "76c453e69a0d9adc219d1e19f57816756edf1a38c31f11bd0c61cd9e79b63b62"
+      "sourceSha256": "ed9103b62072836d9320e6792d490823514c6cd89b04ab07b47e4a4de7791a5c"
     },
     {
       "id": "note-addendum-a-ratification",
@@ -5893,7 +5893,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a27b900dd0e5b36b307f9699edb27262c01f08440a15d7fd7b95a51179189b10"
+      "sourceSha256": "1e64d0fd0273a30ca882f166eac7c6a950a4e1d5250387e7676451814494a355"
     },
     {
       "id": "design-session-profiler",
@@ -6804,7 +6804,7 @@ window.DOCS_INDEX = {
     {
       "id": "note-addendum-c-council-rulings",
       "path": "docs/notes/addendum-c-council-rulings.md",
-      "title": "Decision note — Rulings 50–62: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
+      "title": "Decision note — Rulings 50–63: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
       "type": "doc",
       "status": "accepted",
       "owner": "@timianmalloo",
@@ -6857,7 +6857,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1d71f33eaf89475c5e7f2f3e152e93ddd7da45e0956dcf84d5cad7248364f9af"
+      "sourceSha256": "f8502c5f835818944b92fe7513b438f70d7d4ba70d3994e92652e7dd2f75f433"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -8300,8 +8300,61 @@ window.DOCS_INDEX = {
       "sourceSha256": "b234911b74883e52df5498c42cd6495c034e6763148eee75867d94a5dfafb6b8"
     },
     {
-      "id": "inv-0007-contrast-floor-passes-while-the-shell-fails",
-      "path": "docs/investigations/INV-0007-contrast-floor-passes-while-the-shell-fails.md",
+      "id": "inv-0007-composer-entry-areas-starved-by-the-compiled-view",
+      "path": "docs/investigations/INV-0007-composer-entry-areas-starved-by-the-compiled-view.md",
+      "title": "The composer's entry areas have no room: the read-only compiled view takes the editor's height, and the next render kills the page",
+      "type": "investigation",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-front-door",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "\"I cannot type in the composer\" / \"I could not see the entry areas\" after File → New Session. Verified by measurement in the real shell under the operator's recorded arrangement: the composer's WebView2 laid out at 0px (F5 tree) and 105–110px (main) of a 485–689px composer, because the read-only compiled-view TextBox has no height ceiling, sits in a StackPanel docked Bottom, and is measured unconstrained before the editor host gets the remainder — a 28-line goal block costs 465px, and editor = composer − compiled − 114px. Capping the compiled view from outside the product gave the editor 202px in the same 485px and the run went green (necessity). A second, independent defect was found and reproduced: any later Adapter.Render() re-parents the WebView2, WPF raises Loaded again, InitialiseAsync navigates the page again, and the router drops the new page's editor.ready as a duplicate — no host.init, zero fields, the operator's on-screen text gone. The graph canvas shares the Loaded→navigate shape (measured: one render, one reload). Two red tests are committed; the fix is not.",
+      "tags": [
+        "composer",
+        "webview2",
+        "wpf",
+        "layout",
+        "docking",
+        "handshake",
+        "observability",
+        "session-document",
+        "ruling-47"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "refines"
+        },
+        {
+          "to": "note-front-door-rulings-45-48",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0015-canvas-hosting-and-overlay-strategy",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0021-named-dock-zones",
+          "rel": "depends-on"
+        },
+        {
+          "to": "inv-0006-workbench-pane-swap-on-native-tab-drag",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "System map",
+          "mermaid": "flowchart TD\n  MW[MainWindow.NewSession → opened] --> OSD[Shell.OpenSessionDocument → Adapter.Render #1]\n  MW --> BC[BindComposer → ComposerSurface.Configure]\n  MW -->|main only| GT[GiveItTheWholeTree → Adapter.Render #2]\n  OSD --> SDS[SessionDocumentSurface: Grid · composer col ⟷ canvas col]\n  SDS --> CS[ComposerSurface: DockPanel]\n  CS --> P[template picker · Dock.Top · Auto]\n  CS --> B[Send/Attach bar · Dock.Bottom · Auto]\n  CS --> F[footer StackPanel · Dock.Bottom · Auto<br/>label · compiled TextBox (MinHeight 90, no MaxHeight) · lease · status]\n  CS --> V[WebView2 · LastChildFill = the remainder]\n  F -. measured first, unconstrained .-> V\n  V --> L[Loaded → InitialiseAsync → EnsureCoreWebView2 → subscribe → Navigate]\n  L --> PG[composer.mjs: editor.ready → router.Ready once → MarkReady → host.init → render fields]\n  R[any later Adapter.Render] -->|Manager.Layout replaced → re-parent| V\n  V -->|Loaded again| L"
+        }
+      ],
+      "sourceSha256": "fc30cc6a719178cfe437ee214487eaaa8e8c6622bd5bcd730bea11f529e9f7da"
+    },
+    {
+      "id": "inv-0008-contrast-floor-passes-while-the-shell-fails",
+      "path": "docs/investigations/INV-0008-contrast-floor-passes-while-the-shell-fails.md",
       "title": "The contrast floor passes while the shell fails: a floor over a population the product does not render",
       "type": "investigation",
       "status": "accepted",
@@ -8342,7 +8395,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "88c59296a8d8227d8c3db658501e13f9274e0b3543b835138a04dd3892815893"
+      "sourceSha256": "52741a12158dcd5fb93dfb53e3d4eb515339e7f21121b0297f69d4e7036ceea4"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -11747,6 +11800,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "70be47bec3d22b82a75fcceb9b51b67671c6eb0175f97f7d178ca72999c2ab77"
     },
     {
+      "id": "proof-composer-entry-areas",
+      "path": "docs/proof/composer-entry-areas.md",
+      "title": "Proof Pack — the composer's entry areas keep their room, and the page survives a render (INV-0007, phases 1–4)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-front-door",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Evidence for INV-0007 phases 1–4: the compiled view is capped to the smaller of 35% of the composer and half of what the chrome leaves (set in MeasureOverride, one pass); both WebView2 surfaces initialise once through one WebSurfaceHost and the router's readiness is per document; bounds, every handshake transition and the first accepted keystroke are emitted on the normal path. Nine new tests, four of them through the real docking host; every one observed red first or red by a named mutation. Probe exit 24 → 0 (editor 110px/465px → 334px/241px) and 25 → 0.",
+      "tags": [
+        "composer",
+        "webview2",
+        "wpf",
+        "layout",
+        "handshake",
+        "observability",
+        "proof-pack",
+        "inv-0007",
+        "dc-136",
+        "dc-137"
+      ],
+      "links": [
+        {
+          "to": "inv-0007-composer-entry-areas-starved-by-the-compiled-view",
+          "rel": "implements"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "da6b4af0c9eab8f5f7b94546b4c43f2ee1abb7982d150116f21d95616757e912"
+    },
+    {
       "id": "proof-conductor-agent-plane",
       "path": "docs/proof/conductor-agent-plane.md",
       "title": "Proof Pack — Conductor agent plane, Phase 1 (N0–N7)",
@@ -12867,10 +12956,10 @@ window.DOCS_INDEX = {
         {
           "kind": "flowchart",
           "title": "B5. User flows",
-          "mermaid": "flowchart TD\n  A[Session document open: one editor, structure collapsed, compiled collapsed] -->|type prose| B{Draft settles: objective derivable?}\n  A -->|shape control: pick a template — B:181 kept| T[Template fields render as the derived structure, prefilled from the text where possible]\n  T --> E\n  B -->|no| C[Structure stays one collapsed line; a T2 send will mark Goal and Done when]\n  C -->|type more| B\n  C --> E\n  B -->|yes| D[Derived structure expands beneath the editor: Goal · Done when · Not in scope, marked derived]\n  D -->|edit a line inline| D\n  D --> E{@path mention present?}\n  E -->|no| F[Write-scope line: elicitation text; Send → refusal names @path and offers the picker — Ruling 42 intact]\n  F -->|add a mention| E\n  E -->|yes| G[Write-scope line: 'src/…/** — from your mention']\n  G -->|open Compiled disclosure| H[Exactly the outgoing text; no diff, no summary; editor does not shrink]\n  H --> G\n  G -->|Send Ctrl+Enter| I{T2 and a content field empty?}\n  I -->|yes| J[Inline marks on every gap at once; one-line reason each; nothing sent]\n  J -->|fix| D\n  I -->|no| K[Sent: compiled prompt carries the session's tier · fan-out · budget in the CT19 block]\n  K --> K2[Reply streams in the Console canvas; the block joins the Score outline]\n  K2 -->|conductor answers with a drafted template — S-8| K3[Next message's draft: the reply's text with its derived structure inline]\n  K3 --> D\n  K2 -->|operator writes the next message| A\n  A -->|session settings on the header| L[Edit tier / fan-out / budget for the session; T0-with-fan-out warning here]\n  L -->|re-validate the current draft| B"
+          "mermaid": "flowchart TD\n  A[Session document open: one editor, structure collapsed, compiled collapsed] -->|type prose| B{Draft settles: objective derivable?}\n  A -->|shape control: pick a template — B:181 kept| T[Template fields render as the derived structure, prefilled from the text where possible]\n  T --> E\n  B -->|no| C[Structure stays one collapsed line; a T2 send will mark Goal and Done when]\n  C -->|type more| B\n  C --> E\n  B -->|yes| D[Derived structure expands beneath the editor: Goal · Done when · Not in scope, marked derived]\n  D -->|edit a line inline| D\n  D --> E{@path mention present?}\n  E -->|no| F[Write-scope line: elicitation text; Send → refusal names @path and offers the picker — Ruling 42 intact]\n  F -->|add a mention| E\n  E -->|yes| G[Write-scope line: 'src/…/** — from your mention']\n  G -->|open Compiled disclosure| H[Exactly the outgoing text; no diff, no summary; editor does not shrink]\n  H --> G\n  G -->|Send Ctrl+Enter| I{T2 and a content field empty?}\n  I -->|yes| J[Inline marks on every gap at once; one-line reason each; nothing sent]\n  J -->|fix| D\n  I -->|no| K[Sent: compiled prompt carries the session's tier · fan-out · budget in the CT19 block]\n  K --> K2[Reply streams in the Console canvas; the block joins the Score outline]\n  K2 -->|conductor answers with a drafted template — S-8| K3[Next message's draft: the reply's text with its derived structure inline]\n  K3 --> D\n  K2 -->|operator writes the next message| A\n  A -->|session settings on the header| L[Edit fan-out ceiling / budget for the session; tier is compiled, not set here]\n  L -->|re-validate the current draft| B"
         }
       ],
-      "sourceSha256": "3183e699c042477ca56ea8d85c4fd6c6f96808a6b14047d6a4c0d7288df199e7"
+      "sourceSha256": "bd0cf2b8b7196a34eb870d6567f88abbcdfeb964b26d3dd243759150be464780"
     },
     {
       "id": "spec-agentic-watcher-substrate",
@@ -13667,5 +13756,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "cddd35c6cf7180b90d87fa526b2bf6abfffbb974af407c9f6260b7b63ee89222"
+  "graphSha256": "9f3df7d66b8da0e888ed1cd2f017a2b5791ee460d8861fa9480198d62d60e4c0"
 };

@@ -240,6 +240,72 @@ public static class WorkbenchDiagnostics
         return revision.Length == 40 && revision.All(c => c is (>= '0' and <= '9') or (>= 'a' and <= 'f')) ? revision : null;
     }
 
+    /// <summary>
+    /// Records the composer's rendered bounds: the editor host, the read-only compiled view, and the
+    /// composer they share — at first layout and whenever either part moves past the surface's
+    /// threshold.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>A value that could not be read is <c>null</c>, never 0</b> (DC-137). An element not
+    /// yet arranged reports 0px, and 0px is also the defect — so the writer sends <c>null</c> for a
+    /// part whose arrange is not valid, and a reader can tell "not laid out" from "laid out at
+    /// nothing". <paramref name="visible"/> and <paramref name="loaded"/> separate a hidden pane's
+    /// honest 0 from a starved one.</para>
+    /// </remarks>
+    public static void ComposerLayout(
+        string surfaceId,
+        double? composerWidth, double? composerHeight,
+        double? editorWidth, double? editorHeight,
+        double? compiledWidth, double? compiledHeight,
+        bool visible, bool loaded, long inputs)
+    {
+        Write(new
+        {
+            ts = DateTimeOffset.UtcNow.ToString("O"),
+            evt = "composer.layout",
+            surface = surfaceId,
+            composer = new { width = composerWidth, height = composerHeight },
+            editor = new { width = editorWidth, height = editorHeight },
+            compiled = new { width = compiledWidth, height = compiledHeight },
+            visible,
+            loaded,
+            inputs,
+        });
+    }
+
+    /// <summary>
+    /// Records one transition of a web surface's host↔page handshake, with the surface's counts as
+    /// they stood at that moment.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The transitions</b> — from the host: <c>initialising</c>, <c>re-attached</c>,
+    /// <c>init-failed</c>; from the composer: <c>navigation-started</c>, <c>configured</c>,
+    /// <c>page-ready</c>, <c>init-pushed</c>, <c>input-received</c> (once per pushed init, at the
+    /// first accepted <c>draft.changed</c>), <c>message-dropped</c> (once per kind and reason per
+    /// navigation), <c>disposed</c>. Counts are lifetime totals as they stood at the transition;
+    /// a count the caller does not measure is <c>null</c>, never invented. No character of the
+    /// draft is ever recorded.</para>
+    /// </remarks>
+    public static void WebSurfaceHandshake(
+        string surfaceId, string transition,
+        int? navigations = null, long? inputs = null, long? drops = null, string? detail = null,
+        string? errorCode = null, string? exceptionType = null)
+    {
+        Write(new
+        {
+            ts = DateTimeOffset.UtcNow.ToString("O"),
+            evt = "web-surface.handshake",
+            surface = surfaceId,
+            transition,
+            navigations,
+            inputs,
+            drops,
+            detail,
+            errorCode,
+            exceptionType,
+        });
+    }
+
     private static void Write(object record)
     {
         string line;

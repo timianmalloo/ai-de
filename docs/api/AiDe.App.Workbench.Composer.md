@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 45 members, 87% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Composer: 10 types, 50 members, 88% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Composer`
 
-**9 public types · 45 public members · 87% documented.**
+**10 public types · 50 public members · 88% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -60,6 +60,41 @@ Whether a navigation target is the composer's own document.
 **Remarks.** An ordinal equality, not a prefix and not a host test: a look-alike host
 (`aide.assets.invalid.evil.test`) and a second document on the real origin both pass the
 prefix form written the obvious way.
+
+## `ComposerPageTheme`
+
+*class* — `ComposerPageTheme.cs`
+
+The theme the composer page draws with, as CSS custom properties read from the shell's token
+dictionary — pushed on `host.init` so the page carries no palette of its own.
+
+**Remarks.** **One palette, read where it is declared (INV-0008, Fix C).** The page used to carry
+its own copy — `#1E1E1E`, `#D4D4D4`, `#7F858A` — and its hint measured 4.47:1
+against a floor of 4.5 that nothing in the shell's dictionary would have produced. Every role
+below is a token in `App.xaml`; the page's stylesheet references the property and keeps the
+dictionary's value as its fallback for the frame before the push arrives.
+
+
+
+
+
+**Additive on the envelope.** `theme` is one more field on `host.init`; a page
+that does not read it renders its fallbacks, and a host that does not send it (the composer
+probe) leaves the page on them. The handshake itself is untouched.
+
+
+
+
+
+**A missing token is omitted, never invented.** A role whose brush is not in the
+dictionary is left out of the push so the page keeps its fallback — the census then measures
+that fallback — rather than being sent a colour this class made up.
+
+| Member | Summary |
+|---|---|
+| `IReadOnlyList<(string Property, string Token)> Roles =` | CSS custom property → the `App.xaml` token it is read from. One row per role the page draws with. |
+| `IReadOnlyDictionary<string, string> Current()` | The running application's theme, or an empty set when there is no application (a bare test host). |
+| `IReadOnlyDictionary<string, string> From(ResourceDictionary? resources)` | Every role whose token resolves in  to a solid colour, as `#RRGGBB`. |
 
 ## `ComposerSendContext`
 
@@ -215,6 +250,7 @@ claim, and paste is handled inside the page by the editor that received it.
 | Member | Summary |
 |---|---|
 | `ComposerSurface(string surfaceId, string title)` | **(gap)** |
+| `double CompiledShareCeiling = 0.35` | The most of the composer's height the read-only compiled view may take — and it never takes more than the editor host: **the writer is never smaller than the reader.** |
 | `string SurfaceId { get; }` | The surface's stable id. |
 | `string? DisplayName` | **(gap)** |
 | `long ClipboardReads { get; }` | How many times this control read the clipboard. It is zero, always, across typing, focus changes and sends — the observable behind "no clipboard access outside the paste gesture". |
@@ -240,6 +276,7 @@ claim, and paste is handled inside the page by the editor that received it.
 | `AttachOutcome Attach(IReadOnlyList<string> filePaths)` | Offers files to the draft through the attach gate. |
 | `System.Text.Json.Nodes.JsonObject CommittedRecord()` | The committed-channel record for this send: counts, and one boolean. |
 | `void Dispose()` | Releases the hosted browser control. |
+| `Size MeasureOverride(Size constraint)` | **The writer is sized first (DC-137).** A DockPanel measures its docked children before the fill child, each with infinite extent on the docked axis, so an uncapped compiled view took its whole content height and the … |
 
 ### `ComposerSurface(string surfaceId, string title)`
 

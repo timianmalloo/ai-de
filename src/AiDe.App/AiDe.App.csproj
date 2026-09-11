@@ -116,6 +116,13 @@
     <!-- The contrast census boots the real App out of process and opens a session document
          through the shell (internal), the way MainWindow does — see AiDe.App.ContrastProbe. -->
     <InternalsVisibleTo Include="AiDe.App.ContrastProbe" />
+
+    <!-- The composer probe drives the SHELL's own new-session choreography (OpenSessionDocument,
+         SessionComposer, NewSessionPlacement) against a real WebView2, out of process. It needs the
+         same internals the in-process suite has, for the same reason: a probe that rebuilt the
+         choreography from public pieces would exercise a composition the product does not construct
+         (DC-135). -->
+    <InternalsVisibleTo Include="AiDe.App.ComposerProbe" />
   </ItemGroup>
 
 </Project>
