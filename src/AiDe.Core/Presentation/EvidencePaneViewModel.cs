@@ -31,6 +31,23 @@ public sealed record ConfidenceBadge(string Glyph, string Text, string TokenName
         _ => new ConfidenceBadge("?", "Unverified", "colors.unverified"),
     };
 
+    /// <summary>
+    /// The badge for a row whose confidence was never established.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Not a <see cref="VerificationStatus"/>, deliberately.</b> The three statuses are
+    /// claims the extractor made about an assertion. "The projection this row came from does not
+    /// carry one" is a different kind of fact, and folding it into <c>Unverified</c> would state an
+    /// extractor's finding that no extractor made.</para>
+    ///
+    /// <para>DESIGN.md's status language names this state: question glyph, the words <i>Not
+    /// recorded</i>, <c>{colors.unverified}</c> — <i>"evidence is absent or untrustworthy"</i>. The
+    /// design language's own third principle is that absence is a state and never renders as a
+    /// clean success.</para>
+    /// </remarks>
+    public static ConfidenceBadge NotRecorded { get; } =
+        new("?", "Not recorded", "colors.unverified");
+
     /// <summary>What a screen reader announces. Never just the colour name.</summary>
     public string AccessibleName => Text;
 }
@@ -107,13 +124,30 @@ public sealed class EvidencePaneViewModel(IWorkspaceQueries queries)
 
         try
         {
+            // MaxSearchResultsCeiling, not MaxNeighborsCeiling. Fifty is the NEIGHBOUR bound — how
+            // much of one node's neighbourhood a projection will return — and ProjectionService's
+            // own remarks record this exact mistake being found and fixed, which is where
+            // MaxSearchResultsCeiling came from. That sweep reached Contexts and Joins and missed
+            // this pane, so the surface whose job is listing evidence stopped at fifty rows and
+            // called it "50 item(s)".
             var result = await queries.FindAsync(
-                searchTerm, ProjectionService.MaxNeighborsCeiling, cancellationToken);
+                searchTerm, ProjectionService.MaxSearchResultsCeiling, cancellationToken);
             SourceRevision = result.SourceRevision;
 
             _allRows = [.. result.Matches.Select(m => new EvidenceRow(
                 m.NodeId, m.DisplayLabel, m.NodeKind,
-                ConfidenceBadge.For(VerificationStatus.Verified),
+                // NOT Verified. This read `ConfidenceBadge.For(VerificationStatus.Verified)` —
+                // unconditional, for every row, in a product whose design language states by name
+                // that an inferred edge rendered identically to an extracted one is
+                // GRAPH-PROVENANCE-LAUNDERED. The badge is never drawn on this surface, so the
+                // false claim survived only in the ACCESSIBLE NAME: a confidence invented for
+                // screen-reader users and for nobody else.
+                //
+                // A search match carries no verification status — FindMatch has an Authorship
+                // origin and no VerificationStatus — so the honest render is the absence. When the
+                // query grows a real status, this becomes ConfidenceBadge.For(that status); until
+                // then, synthesising one is the defect.
+                ConfidenceBadge.NotRecorded,
                 // Only when the match was NOT on the id — otherwise the row would repeat itself.
                 m.MatchedOn == Store.NodeMatchKind.Attribute ? m.Evidence : null))];
 
@@ -127,7 +161,16 @@ public sealed class EvidencePaneViewModel(IWorkspaceQueries queries)
             else
             {
                 State = PaneState.Ready;
-                StatusMessage = $"{Rows.Count} item(s) · rev {SourceRevision}";
+
+                // A bounded read must never look complete. "20,000 results" and "≥ 20,000 results
+                // (capped)" are different claims, and rendering them identically is the surface
+                // inventing the completeness the read could not establish — the same failure class
+                // as provenance laundering (DESIGN.md, the bounded-read rule).
+                var capped = result.Bounds.OmittedNodes > 0 || result.Bounds.ByteCapped;
+
+                StatusMessage = capped
+                    ? $"≥ {Rows.Count} item(s) (capped) · rev {SourceRevision}"
+                    : $"{Rows.Count} item(s) · rev {SourceRevision}";
             }
         }
         catch (Exception ex) when (ex is not OperationCanceledException)

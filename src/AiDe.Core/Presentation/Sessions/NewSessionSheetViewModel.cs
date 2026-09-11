@@ -158,6 +158,26 @@ public sealed class NewSessionSheetViewModel
     public string? TaskClass { get; set; }
 
     /// <summary>
+    /// The classes the sheet offers, so the operator CHOOSES one rather than spelling it (RQ1).
+    /// </summary>
+    /// <remarks>
+    /// Exposed here rather than reached for by the view, so the sheet's vocabulary and the sheet's
+    /// rules are read from one object. The list is provisional and says so on
+    /// <see cref="TaskClassVocabulary"/>; nothing in it is preselected.
+    /// </remarks>
+    public IReadOnlyList<TaskClassOption> TaskClassOptions => TaskClassVocabulary.Offered;
+
+    /// <summary>
+    /// Whether the required, undefaulted task class has been answered (RQ4).
+    /// </summary>
+    /// <remarks>
+    /// A visible STATE rather than an asterisk, and read by the view as a word and a glyph so it is
+    /// never carried by colour alone. It flips on the answer, which is what makes "why is this
+    /// mandatory" answerable by looking rather than by asking twice.
+    /// </remarks>
+    public bool TaskClassAnswered => !string.IsNullOrWhiteSpace(TaskClass);
+
+    /// <summary>
     /// The agent backends on offer: every catalog engine whose provider the registry carries,
     /// once per configured account, with the registry's live health.
     /// </summary>
@@ -224,8 +244,14 @@ public sealed class NewSessionSheetViewModel
 
             if (string.IsNullOrWhiteSpace(TaskClass))
             {
-                return "Choose a task class. It is required and has no default: a defaulted class "
-                    + "ranks in the wrong cohort.";
+                // RQ2/RQ5 — a CONSEQUENCE, beside the control it is about. The previous sentence
+                // ("a defaulted class ranks in the wrong cohort") named a mechanism, in the
+                // vocabulary of the ranking subsystem, in a footnote 200px below the field. The
+                // operator asked why the field was mandatory while the answer was on screen, and
+                // asked again in the same session — which is evidence about the affordance, not
+                // about the operator. The full explanation sits AT the field; this is the reason the
+                // disabled button carries.
+                return TaskClassVocabulary.ChooseOneToCreate;
             }
 
             return null;
@@ -314,7 +340,12 @@ public sealed class NewSessionSheetViewModel
     {
         if (BlockedReason is { } reason)
         {
-            throw new InvalidOperationException(reason);
+            // The operator's sentence, plus the rule, for the reader this one actually has: whoever
+            // wrote a call that skipped CanCreate. See TaskClassVocabulary.NoDefaultRule.
+            throw new InvalidOperationException(
+                reason == TaskClassVocabulary.ChooseOneToCreate
+                    ? $"{reason} {TaskClassVocabulary.NoDefaultRule}"
+                    : reason);
         }
 
         var store = new SessionConfigStore(WorkspaceRoot, SessionId.New(now));
