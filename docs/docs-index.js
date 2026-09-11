@@ -6870,6 +6870,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "67b6351ffc527659f43fcf2c8b6f2ed3bce587e45530107c258f911e0e52638e"
     },
     {
+      "id": "note-addendum-d-compile-step-proposal",
+      "path": "docs/notes/addendum-d-compile-step-proposal.md",
+      "title": "Decision note — the compile step: the operator's thinking and the conductor's proposal, ratified",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "The operator's own thinking on the compile step (four contexts; mechanical then agentic; a prepare stage; a rich envelope; the template as a guide), the conductor's proposal answering the operator's questions, and the operator's ratification. This note is the input to /specify Addendum D; it is not the spec.",
+      "tags": [
+        "decision-note",
+        "addendum-d",
+        "compile",
+        "composer",
+        "envelope",
+        "conductor"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-addendum-c-modes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3d1fdfc212a742b174ccff69c77d496535dd63d7e005df6bf4ea2ab61f255a9c"
+    },
+    {
       "id": "note-front-door-rulings-45-48",
       "path": "docs/notes/front-door-rulings-45-48.md",
       "title": "Decision note — Rulings 45–48: Terminal leaves Phase 1, edge ownership, maximize-on-create, craft-gate corpus",
@@ -13683,5 +13719,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ef885c2deafd825551370b47f29152adebb1670c55e0fed1962c1c1405659b92"
+  "graphSha256": "6f6d755ebf2da970f896363a59bacd7d650cd4dda317a9a70fbca8aaf4f84674"
 };
