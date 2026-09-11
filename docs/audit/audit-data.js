@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T15:16:49Z",
+  "generated": "2026-09-11T15:24:49Z",
   "audit": [
     {
       "actor": null,
@@ -11539,34 +11539,36 @@ window.AUDIT_DATA = {
       }
     },
     {
-      "id": "al-01M28GNK45N2J84NQQTSSQZZHP",
-      "shortname": "F6 correction — the multicast-event class is DC-133, not DC-132",
-      "datetime": "2026-09-11T15:16:39Z",
-      "session": "conductor-front-door-f6",
-      "prompt": "Correct the defect-class id in al-01M28GFKJVH9PRE8FVNWRWAZ27.",
-      "summary": "The class registered by node F6 -- a throw in ONE subscriber aborts a multicast event's remaining handlers, and across a COM boundary the exception is swallowed, so a whole channel goes silent with nothing to read -- is DC-133. The superseded entry's summary names DC-132, which origin/main had already spent on 'A handler is wired to an event the library never raises on the path it was written for'. The collision was caught by verify-id-allocators.py on rebase and resolved the way the session contract prescribes: keep the id already published on main, re-issue the other. This log is append-only, so the original entry stays and this is the correction.",
-      "kind": "manual",
-      "skill": null,
-      "tool": "Claude Code",
       "actor": "Claude Opus 5 (1M context)",
       "artifacts": [
         "docs/lessons/defect-classes.md"
       ],
+      "datetime": "2026-09-11T15:16:39Z",
+      "done_when": "verify-id-allocators.py passes on feature/provider-config, the register carries the class at DC-133, and the log records the correction without deleting the entry it corrects.",
+      "fan_out": 0,
+      "git": {
+        "branch": "feature/provider-config",
+        "pushed": null,
+        "sha": "ee49cb740354ba117b624b815df0b660d64652ad",
+        "short": "ee49cb740"
+      },
+      "goal": "Correct the defect-class id in al-01M28GFKJVH9PRE8FVNWRWAZ27: the multicast-event class node F6 registered is DC-133, because origin/main had already published DC-132.",
+      "id": "al-01M28GNK45N2J84NQQTSSQZZHP",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "Correct the defect-class id in al-01M28GFKJVH9PRE8FVNWRWAZ27.",
+      "session": "conductor-front-door-f6",
+      "shortname": "F6 correction — the multicast-event class is DC-133, not DC-132",
+      "skill": null,
+      "summary": "The class registered by node F6 -- a throw in ONE subscriber aborts a multicast event's remaining handlers, and across a COM boundary the exception is swallowed, so a whole channel goes silent with nothing to read -- is DC-133. The superseded entry's summary names DC-132, which origin/main had already spent on 'A handler is wired to an event the library never raises on the path it was written for'. The collision was caught by verify-id-allocators.py on rebase and resolved the way the session contract prescribes: keep the id already published on main, re-issue the other. This log is append-only, so the original entry stays and this is the correction.",
+      "supersedes": "al-01M28GFKJVH9PRE8FVNWRWAZ27",
       "tags": [
         "conductor",
         "front-door",
         "defect-class"
       ],
-      "outcome": "success",
       "tier": "T2",
-      "fan_out": 0,
-      "supersedes": "al-01M28GFKJVH9PRE8FVNWRWAZ27",
-      "git": {
-        "sha": "ee49cb740354ba117b624b815df0b660d64652ad",
-        "short": "ee49cb740",
-        "branch": "feature/provider-config",
-        "pushed": null
-      }
+      "tool": "Claude Code"
     }
   ],
   "changes": [
