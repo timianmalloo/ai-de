@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 64 · partially-controlled 53 · uncontrolled 12
+**Status counts:** controlled 64 · partially-controlled 53 · uncontrolled 13
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -5354,6 +5354,56 @@ for both or split.*
 - **Status:** `uncontrolled` — the instance is understood and the constraint is written into the
   exit-run harness's brief, but nothing in the repository fails when a caller waits on the call
   instead of the process, and the next harness author inherits only prose
+
+
+### DC-130 — Adjacent nodes each build one end of a seam that no clause assigned, and every node passes
+
+- **Shape:** a plan decomposes work into nodes and gives each one a clause list. Two adjacent nodes
+  each build **one end** of a connection between them — node A produces a value, node B consumes a
+  value of that shape — and **no clause claims the edge itself**. Both nodes are correct against
+  their own clauses. Both ship green. The plan review passes, because the review reads a **list of
+  nodes**, and the thing missing is not a node. **The gap is only discovered by whoever first needs
+  the two ends to meet**, which is typically the evidence node, at the close, when the cost of
+  finding it is highest.
+- **Signature:** a constructed value returned to a **discarding caller**; a consumer wired to a
+  source that has no producer; a plan whose clauses all read *"X exists"* and none read *"X reaches
+  Y"*; and the tell that makes it unmistakable — **one of the nodes writes the conflict down in a
+  code comment and no clause resolves it.**
+- **Instance (front-door slice, 2026-09-11):** F4 built `ComposerSurface.Send()`, which constructs a
+  real `GovernedRunRequest` through the real send gate **and returns it to `(_, _) => Send();`** — a
+  discarding caller. F2 built `SessionLane`, taking a `ChannelReader<ObservedRunEvent>`, **and its own
+  remark says it reads *"the same channel `AcpPeer` publishes into and `GovernedRunHost` drains."***
+  `GovernedRunHost.RunAsync` drains that channel itself and `AcpEventQueue` is **`SingleReader = true`**,
+  so a second drain is impossible by construction. `RunAsync` had **exactly one caller in `src/`**:
+  `ConductorEntry.cs:80`.
+  **So nothing in the product launched a run from the UI at all.** The slice could build a session,
+  open a composer, validate a goal block and construct a real request — and then drop it. Every node
+  had discharged every clause it was given.
+- **How it was found, and how late:** by the **exit-evidence node**, while writing an oracle for a
+  clause that read *"composed in the composer, streamed in Console mode."* It was unsatisfiable, and
+  the discovery was worth two clauses at first reading — the conductor sized the fix as unblocking
+  **two of nine**. The node corrected that: **five of nine**, because the scored cell, the recorded
+  measurement and the DC-115 verdict are all **read off the exit run's result**, and there is no exit
+  run until the product can launch one. *The gap's true size was invisible from the plan and visible
+  from the oracle.*
+- **Why plan review does not catch it:** the review enumerates **nodes and their clauses** and asks
+  whether each is owned, testable and floored. **An edge is not a node.** A surface list of the form
+  *store → model → service → projection → client → UI* names the **stations**; nothing asks whether
+  the **track between two stations** has an owner. And because both nodes pass, no red appears
+  anywhere until something tries to traverse the edge.
+- **Control (from Ruling 46):** the slice's **E7 surface list assigns every EDGE to a node, not only
+  every surface**, and **plan review fails when an edge is unowned.** The cheap form: for each pair of
+  adjacent nodes, write the sentence *"A's output reaches B by ___, owned by ___"* — and if the blank
+  cannot be filled with a node id, the plan is incomplete, whether or not every node is. *A clause
+  saying "the request is constructed" and a clause saying "the lane renders events" do not, between
+  them, say "the request starts a run."*
+- **Relationship to DC-118:** the same family, one level out. DC-118 is about a **clause** whose
+  width does not match the ruling it derives from; this is about **a clause that was never written
+  at all**, for work nobody noticed was work. **Both are failures of the plan rather than of the
+  nodes**, and in both the nodes' greenness is what conceals them.
+- **Status:** `uncontrolled` — the instance is being repaired by a node ruled into existence for it,
+  and the control is stated, but **no plan in this repository currently carries an edge-ownership
+  list**, and the next slice decomposed the same way would produce the same gap
 
 
 ---
