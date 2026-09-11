@@ -3840,6 +3840,39 @@ window.DOCS_INDEX = {
       "sourceSha256": "d26789684f6dc9d229f4e05352992992cf60e0c2f26880a52dcac230d7933fbe"
     },
     {
+      "id": "note-front-door-ruling-49",
+      "path": "docs/notes/front-door-ruling-49.md",
+      "title": "Decision note — Ruling 49: the F5 exit run waits for the operator's own gesture",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "A headless entry point was proposed to substitute for the operator's File → New Session gesture in the F5 exit run. Refused: it would satisfy the letter of clauses 1 and 5 while falsifying the sentence they exist to prove, and the origin guard would have stayed green while doing it. The exit run is triggered by the operator's own gesture; no headless entry point is built.",
+      "tags": [
+        "conductor",
+        "front-door",
+        "ruling",
+        "exit-evidence",
+        "f5",
+        "headless-entry",
+        "session-origin"
+      ],
+      "links": [
+        {
+          "to": "proof-conductor-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a2698ddd3864f74149a056b81ffeaf1276ad64d3ee920e839386936b9040dcf7"
+    },
+    {
       "id": "note-front-door-rulings-41-42",
       "path": "docs/notes/front-door-rulings-41-42.md",
       "title": "Decision note — Rulings 41 and 42: session ViewModel placement, and the lease the sheet must not carry",
@@ -13240,5 +13273,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c30ceeceeaf459420bcaac6ff12dd64d905d92698202971cf1f40a2444ec0fe0"
+  "graphSha256": "5a41e756919f70e8b6ab8dd23734dc80822c2e74136caaf8648c0a3b39ff6f4a"
 };
