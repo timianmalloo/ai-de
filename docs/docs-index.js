@@ -1396,7 +1396,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Conductor: 4 types, 6 members, 100% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Conductor: 6 types, 17 members, 100% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1409,7 +1409,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "dcee303a3587857a2fd2d01a17c0fc1b99149ee82375b93b194bb0647e09c121"
+      "sourceSha256": "31d74f515e6ba809a0adebb2e294d0cc13e98d05ed7c6909faf07e7b0fa3e2f6"
     },
     {
       "id": "api-aide-app-viewmodels",
@@ -1446,7 +1446,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 326 members, 70% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 329 members, 70% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1459,7 +1459,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3e00e71ff46d2337227540ee8e0429a638943d1d6b69c9c2750233041870ae33"
+      "sourceSha256": "2ca509a76d037af0d7f659a2796393aaba255b0b25bbcd41dfac058e196cb199"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -1471,7 +1471,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 42 members, 86% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 43 members, 87% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1484,7 +1484,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e08169671a60023c3889f27b5551c2ecfb407828f86051d9f5c0594f9a496e19"
+      "sourceSha256": "c0fd5d96e75c9c40363aa8906dceab7d706b2a5ce3885c520e2a880306d8f9b8"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -1496,7 +1496,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 54 members, 92% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 58 members, 93% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1509,7 +1509,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4c04de461a4c5ee98ee42cff06663b3fcf2e9f374a15d1ac6254a0c6d182e140"
+      "sourceSha256": "c4aeca9f3d2216b46a0c7fbad0784df90ade084ebe16351280a915c6bcaff585"
     },
     {
       "id": "api-aide-core",
@@ -5649,7 +5649,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "318b5a0d53fc165c07e69fb00414b0d069b750ca9c4993e49e3692f60db0c3df"
+      "sourceSha256": "1ccfe6a911f498021336017ef2b2c717bef1542775fa81f306969ac090624cf3"
     },
     {
       "id": "design-session-profiler",
@@ -6919,16 +6919,12 @@ window.DOCS_INDEX = {
           "rel": "relates-to"
         },
         {
-          "to": "kb-graph-and-loop-engineering",
-          "rel": "depends-on"
-        },
-        {
           "to": "note-front-door-residuals",
           "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6599725c767ec765e3cc34cbaa0db93e839c257dbd67d897113cb3c19b4eda59"
+      "sourceSha256": "2d5ebde012f5c21f85aaa095489501b42cd9371ffcced0c19292c6e3dbb37797"
     },
     {
       "id": "profile-conductor-phase1",
@@ -7849,7 +7845,7 @@ window.DOCS_INDEX = {
       "path": "docs/investigations/INV-0006-workbench-pane-swap-on-native-tab-drag.md",
       "title": "Moving one tab swaps both panes: the workbench has no drag-completed hook",
       "type": "investigation",
-      "status": "draft",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "facelift",
       "reviewBy": "2026-12-01",
@@ -7873,14 +7869,10 @@ window.DOCS_INDEX = {
         {
           "to": "adr-0021-named-dock-zones",
           "rel": "refines"
-        },
-        {
-          "to": "inv-terminal-crash-and-pane-moves",
-          "rel": "refines"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5e4e9b0574b04e6efdca7248ddfe9b10c6a439ffa1087d8c571e67d5db7c191c"
+      "sourceSha256": "b234911b74883e52df5498c42cd6495c034e6763148eee75867d94a5dfafb6b8"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -13029,5 +13021,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d4ea12f7f883b5022473dc22cb299e960787e872e85d33ececcc34f9277ef460"
+  "graphSha256": "031df5b2d766ca9edbc06900372fc695eebd07ff5de6f5dc6a11edeb337974de"
 };

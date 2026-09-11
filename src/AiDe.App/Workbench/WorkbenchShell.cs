@@ -181,6 +181,19 @@ public sealed class WorkbenchShell : IDisposable
             ExpandZone);
         Manager.LayoutChanged += (_, _) => _rails.Refresh();
 
+        // INV-0006 F1 — the drag-completed hook. A native tab drag is AvalonDock's own gesture: it
+        // mutates the docking tree and tells nobody, so before this the zone model learned about a
+        // drag only when one of four UNRELATED commands happened to reconcile (new terminal, new
+        // agent terminal, new prompt draft, open reference document). In the reported session that
+        // was 3m49s and eight drags later, and a reconcile handed that much drift swaps both columns
+        // whole. Reconciling as the drag lands keeps every reconcile one drag from the model, which
+        // is the regime the zone tests already prove correct.
+        //
+        // Deliberately does NOT re-render: the view already shows the drop the user made, so the
+        // model is catching up to the view, not the other way round. Rendering here would re-parent
+        // every pane and re-seat every tab for a change already on screen.
+        Adapter.ViewArrangementChanged += (_, _) => ReconcileViewIntoModel("drag");
+
         Palette = new CommandPalette(Controller, Announcer);
         Prompt = new PromptBar(Announcer);
 
@@ -497,9 +510,16 @@ public sealed class WorkbenchShell : IDisposable
     /// Marks the layout dirty after any change, so nothing has to remember to save.
     /// </summary>
     /// <remarks>
-    /// Hooked to the adapter's render rather than to individual commands: a save triggered per
-    /// command would miss changes made by a drag, and every new operation would need to remember to
-    /// opt in. One hook downstream of all of them cannot be forgotten.
+    /// <para>Hooked downstream of the commands rather than to each of them: every new operation would
+    /// otherwise need to remember to opt in, and one hook downstream of all of them cannot be
+    /// forgotten.</para>
+    /// <para><b>Known gap (INV-0006).</b> The signal is <c>Manager.LayoutUpdated</c> — WPF's layout
+    /// pass — and a cross-pane drag raises it ZERO times in a host running no visual pass (measured,
+    /// WorkbenchDragCompletedHookTests). So this does not reliably schedule a save for a native drag.
+    /// What the drag DOES reach is the model, as it lands (F1), so whenever a save runs it writes the
+    /// arrangement the user is looking at, and <see cref="LayoutPersistence.Dispose"/>'s shutdown
+    /// flush still writes it. A crash between the drag and shutdown does not. Closing this needs the
+    /// same docking-model signal the drag hook watches.</para>
     /// </remarks>
     private void PersistOnEveryChange()
     {
@@ -1605,26 +1625,94 @@ public sealed class WorkbenchShell : IDisposable
         return result.Applied ? okMessage : result.Announcement;
     }
 
-    // Before a layout mutation that will trigger a full Render, fold any native pane drag or splitter
-    // resize the user performed back into the model, so the rebuild preserves their arrangement instead
-    // of reverting it. Fail-safe: ReadLayoutFromView returns null on any shape it cannot map losslessly,
-    // and this is then a no-op — the pre-existing revert stands, never a corrupted layout.
-    private void ReconcileViewIntoModel()
+    // Folds any native pane drag the user performed back into the model. Called as the drag lands
+    // (INV-0006 F1) and, still, before any command that will trigger a full Render, so the rebuild
+    // preserves their arrangement instead of reverting it. Fail-safe: ReadLayoutFromView returns null
+    // on any shape it cannot map losslessly, and this is then a no-op — the pre-existing revert
+    // stands, never a corrupted layout.
+    private void ReconcileViewIntoModel(string trigger = "command")
     {
-        if (Adapter.ReadLayoutFromView() is { } reconciled)
+        var zones = Service as ZoneBackedLayoutService;
+        var before = zones?.Zones;
+
+        if (Adapter.ReadLayoutFromView() is not { } reconciled)
         {
-            // A live drag is reconciled by POSITION only — never the kind-based conversion, which
-            // re-seats every stack and moved a bystander zone on a single drag (smoke 9-2 #3). An
-            // unmappable drag is left for the next Render to revert. Persistence still uses Restore.
-            if (Service is ZoneBackedLayoutService zones)
+            // Nothing rendered yet is not a gesture; anything else is one we are about to revert.
+            if (Adapter.HoldsDocuments())
             {
-                zones.ReconcileFromView(reconciled);
+                WorkbenchDiagnostics.LayoutReconcile(trigger, before?.Shape(), before?.Shape(), [], "view-unreadable");
             }
-            else
-            {
-                Service.Restore(reconciled);
-            }
+
+            return;
         }
+
+        // A live drag is reconciled by POSITION only — never the kind-based conversion, which
+        // re-seats every stack and moved a bystander zone on a single drag (smoke 9-2 #3). An
+        // unmappable drag is left for the next Render to revert. Persistence still uses Restore.
+        if (zones is null)
+        {
+            Service.Restore(reconciled);
+            return;
+        }
+
+        var applied = zones.ReconcileFromView(reconciled);
+        var after = zones.Zones;
+        var moved = SurfacesThatChangedZone(before!, after);
+
+        // INV-0006 F2. A drag used to emit nothing at all, which is why the reported gesture is
+        // permanently unrecoverable. Written whenever the reconcile moved something or refused;
+        // a reconcile that did neither is a no-op and says so by being absent.
+        if (!applied || moved.Count > 0)
+        {
+            WorkbenchDiagnostics.LayoutReconcile(
+                trigger, before!.Shape(), after.Shape(), moved,
+                applied ? null : "position-mapping-refused");
+        }
+
+        if (!applied)
+        {
+            Announcer.Announce(RefusedReconcileAnnouncement(before!));
+        }
+    }
+
+    /// <summary>
+    /// What to say when a native drag could not be mapped back into the model. INV-0006 F3.
+    /// </summary>
+    /// <remarks>
+    /// <para>A refused reconcile means the model is untouched and the next render will put the panes
+    /// back where they were — the user's drag is going to be undone. That was silent: no message, no
+    /// log, no visible difference from a drag that simply did not take.</para>
+    /// <para>The collapsed-zone case is named because it is <b>measured</b>, not guessed: a collapsed
+    /// tool zone that still holds panes is not rendered, so it is absent from the view the reconcile
+    /// reads, the surface-set guard sees surfaces go missing and refuses the whole reconcile — and the
+    /// same drag succeeds once the zone is expanded (ZoneBackedLayoutServiceTests). Where no collapsed
+    /// zone is holding panes, the cause is not known here and the sentence says only what is true.</para>
+    /// </remarks>
+    private static string RefusedReconcileAnnouncement(WorkbenchLayout before)
+    {
+        var holdingCollapsed = Enum.GetValues<ZoneId>()
+            .Where(z => before.Zone(z).Collapsed && !before.Zone(z).IsEmpty)
+            .ToList();
+
+        return holdingCollapsed.Count > 0
+            ? "That pane move could not be applied — a collapsed panel still holds panes. "
+              + "Expand it and move the pane again."
+            : "That pane move could not be applied, so the panes will return to where they were.";
+    }
+
+    /// <summary>Which surfaces changed zone across a reconcile — the half that says what it DID.</summary>
+    private static IReadOnlyList<string> SurfacesThatChangedZone(WorkbenchLayout before, WorkbenchLayout after)
+    {
+        static Dictionary<string, ZoneId> ZoneOf(WorkbenchLayout layout) =>
+            Enum.GetValues<ZoneId>()
+                .SelectMany(z => layout.Zone(z).Surfaces().Select(s => (s.SurfaceId, Zone: z)))
+                .ToDictionary(x => x.SurfaceId, x => x.Zone, StringComparer.Ordinal);
+
+        var from = ZoneOf(before);
+        var to = ZoneOf(after);
+        return [.. from.Keys
+            .Where(id => !to.TryGetValue(id, out var zone) || zone != from[id])
+            .OrderBy(id => id, StringComparer.Ordinal)];
     }
 
     // ADR-0021 dz-persist: opening a workspace RESTORES its saved zone arrangement. This is safe now
@@ -1634,9 +1722,29 @@ public sealed class WorkbenchShell : IDisposable
     // to a degenerate layout. So the earlier keep-current guard is subsumed by faithful restore.
     private void RestoreArrangementOnWorkspaceOpen()
     {
-        var restore = Persistence?.Restore();
+        if (Persistence is not { } persistence)
+        {
+            WorkbenchDiagnostics.LayoutMutation(
+                "workspace-open", "no-persistence", "layout", null, Service.Current);
+            return;
+        }
+
+        var restore = persistence.Restore();
+
+        // INV-0006 F4. Restore() has always COMPOSED the sentence — "Restored your saved workbench
+        // arrangement." — and the caller used the result only for a null test and threw the sentence
+        // away. Opening a workspace replaces the whole arrangement, so every pane moves at once; with
+        // nothing said, that reads as "the tabs rearranged without me doing anything", which is half
+        // of what was reported. The system knew exactly what it had done.
+        Announcer.Announce(restore.Announcement);
+
+        // And the placement is now the branch that actually ran. Restore() returns a RestoreResult in
+        // both cases and never null, so `restore is null ? "keep-current" : "restore-zones"` recorded
+        // "restore-zones" every time — including every time it restored nothing.
         WorkbenchDiagnostics.LayoutMutation(
-            "workspace-open", restore is null ? "keep-current" : "restore-zones", "layout", null, Service.Current);
+            "workspace-open",
+            persistence.LastRestoreAppliedASavedArrangement ? "restore-zones" : "keep-current",
+            "layout", null, Service.Current);
     }
 
     // Expands a collapsed tool zone from its rail (ADR-0021 collapse-to-rail). SetStackState(Docked)

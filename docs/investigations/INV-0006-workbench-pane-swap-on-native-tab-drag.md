@@ -2,14 +2,13 @@
 id: inv-0006-workbench-pane-swap-on-native-tab-drag
 title: "Moving one tab swaps both panes: the workbench has no drag-completed hook"
 type: investigation
-status: draft
+status: accepted
 owner: "@timianmalloo"
 phase: "facelift"
 tags: [workbench, docking, avalondock, layout, zones, drag, reconcile, observability]
 links:
   - { to: adr-0012-docking-shell-library, rel: depends-on }
   - { to: adr-0021-named-dock-zones, rel: refines }
-  - { to: inv-terminal-crash-and-pane-moves, rel: refines }
 review-by: 2026-12-01
 summary: >-
   Dragging a tab in the workbench mutates AvalonDock's tree and nothing else — the zone model, which

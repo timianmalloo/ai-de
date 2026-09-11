@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T14:26:35Z",
+  "generated": "2026-09-11T15:19:51Z",
   "audit": [
     {
       "actor": null,
@@ -11348,15 +11348,6 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M28DSXJFATYK40B3T5ZBAWAF",
-      "shortname": "node-u2-ui-implementation",
-      "datetime": "2026-09-11T14:26:35Z",
-      "session": "session_01PXGs6quw67gGZao37P7xSC",
-      "prompt": "feat(theme): implicit defaults for the base control set, measured\n\nItem 1 of the ranked plan in docs/reviews/ui-operator-feedback.md, plus\nitems 4 and 5.\n\nThe shell themed its CONTAINERS and left its LEAVES to WPF, whose default\nis a light theme. Six implicit styles existed, none for a text or input\ncontrol; eighteen base types fell back to the platform and twenty-eight\ninstantiations did. App.xaml now carries an implicit default for every\ntype TC1 names, each setting INK AND GROUND TOGETHER - the partial\npairing is what turned dark-on-dark into light-on-white at 1.22:1.\n\n- The palette tokens move above the templates, because a StaticResource\n  cannot reference a brush declared below it.\n- DisabledTextBrush (#7C8896) is now a token, not a literal repeated three\n  times, and disabled is that pairing rather than Opacity 0.5 - which\n  measured 2.73:1 against a 3:1 floor (A4).\n- The focus ring is its own 2px outline. The old trigger recoloured a\n  border whose thickness every rail button sets to zero, so it rendered\n  nothing while a comment claimed otherwise (A1/AR4).\n- CheckBox and RadioButton are retemplated: the platform bullet paints its\n  glyph in a fixed near-black, so on a dark ground the two states\n  composite to nearly the same image.\n- SunkenBrush/RaisedBrush were referenced from six sites and declared\n  nowhere. A missing key is a silent no-op (TC3); the six now name the\n  keys that exist.\n- AvalonDock's chrome keeps a transparent button pairing in its own\n  resource scope, which is nearer in the tree than Application.Resources.\n\nControls, not prose (CI6):\n- ContrastFloorTests re-measures all eleven pairings from real controls in\n  a real shown window under the real App.xaml, and writes the table.\n- A theory over the eighteen TC1 types fails when one has no implicit\n  default, or sets only one of ink and ground.\n- A rendered-pixel test fails when a checked box is not visibly different\n  from an unchecked one.\n- TokenDisciplineTests fails when any named resource key is undeclared.\n\nMeasured after the change: pairs 1-10 clear their floors (13.57-15.62:1\nfor text, 5.28:1 for the disabled glyph). Pair 11 is DESIGN.md's declared\nborder deviation and is reported, not asserted.\n\nNo layout, geometry, template binding or command is changed by any of\nthis, so tab placement and drag behaviour are untouched.\n\nCo-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01PXGs6quw67gGZao37P7xSC",
-      "summary": "Node U2 — built U1's ranked plan for the theme, contrast, icon, surface-content and sheet concern.\n\nBUILT. Item 1: implicit TargetType defaults in App.xaml for the eighteen base control types TC1\nnames, each setting ink and ground together. Item 4: the rail focus ring is its own 2px outline\n(the old trigger recoloured a border every rail button sets to zero width). Item 5: the six\nreferences to the undeclared SunkenBrush/RaisedBrush keys now name the keys that exist, and a\ncheck fails when any named key is undeclared. Item 3: the task class is a bounded picker with\nRQ2-RQ5 copy and nothing preselected. Item 6: the pane no longer hard-codes Verified. Item 8: three\ndisabled rail placeholders deleted, New Session added as the accent primary, Explorer given a\ncatalog command. Item 10: MaxSearchResultsCeiling, and a capped read renders as a lower bound.\nItem 11: both dialogs opt their caption into DWM dark mode through one factory. A4: disabled is a\ntoken pairing, not Opacity 0.5 at 2.73:1.\n\nMEASURED, NOT ASSERTED. ContrastFloorTests instantiates real controls in a real shown window under\nthe real App.xaml and computes every pairing. Pairs 1-10 clear (13.57-15.62:1 text, 5.28:1 the\ndisabled glyph); pair 11 is DESIGN.md's declared border deviation at 1.39:1, reported and not\nasserted. A rendered-pixel test proves a checked box differs visibly from an unchecked one.\n\nPROPOSED, AWAITING RATIFICATION. Creating a session maximizes its document's stack — the maximized\ndock state DESIGN.md already defines — because the requested full-window view conflicts with A4.4\nand ADR-0017.\n\nDEFERRED WITH REASONS. Item 2 and the composer half of 5/6 belong to node F4b. Item 7 renders in\nSessionDocumentSurface.cs, which F4b holds. Items 12 and 16 depend on item 2. Item 9 is a finding\nleft where the deletion would be made: the operator's own fix is backwards, and nothing was\ndeleted. Items 13 and 15 are product decisions or cross reserved files. RQ6 is not built because\nthe operator's last answer is persisted nowhere.\n\nFALSE IN MY BRIEF. Item 1 clears 8 of 11 measured pairs, not 7 — pair 8 is a ListBox ground and the\nimplicit ListBox style clears it. The palette needed one addition (a disabled ink token) for A4,\nwhich the brief's \"no behaviour change, one file\" framing did not anticipate. The craft gate with\n--gate exits 0 over docs/mockups with 66 Majors and 38 Minors present, so --gate is no more\ndiscriminating than a bare run unless a Blocker is mapped.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": "Claude Opus 5 (1M context)",
       "artifacts": [
         "src/AiDe.App/App.xaml",
@@ -11367,27 +11358,184 @@ window.AUDIT_DATA = {
         "src/AiDe.Core/Presentation/Sessions/TaskClassVocabulary.cs",
         "src/AiDe.App/Workbench/DarkCaption.cs"
       ],
+      "datetime": "2026-09-11T14:26:35Z",
+      "done_when": "Each ranked item is built, deferred or refused with a reason; the eleven measured pairings are re-measured after item 1 rather than asserted; the maximized proposal is built and marked awaiting ratification; the IA finding is produced with nothing deleted; test floors met; gates run with --gate on the craft gate; branch pushed.",
+      "git": {
+        "branch": "feature/ui-implementation",
+        "pushed": null,
+        "sha": "0a63a731d863d0636bbcf215c4540311b988eae7",
+        "short": "0a63a731d"
+      },
+      "goal": "Implement U1's ranked plan for the theme, contrast, icon, surface-content and sheet concern, on feature/ui-implementation, without altering tab placement or move behaviour.",
+      "id": "al-01M28DSXJFATYK40B3T5ZBAWAF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "feat(theme): implicit defaults for the base control set, measured\n\nItem 1 of the ranked plan in docs/reviews/ui-operator-feedback.md, plus\nitems 4 and 5.\n\nThe shell themed its CONTAINERS and left its LEAVES to WPF, whose default\nis a light theme. Six implicit styles existed, none for a text or input\ncontrol; eighteen base types fell back to the platform and twenty-eight\ninstantiations did. App.xaml now carries an implicit default for every\ntype TC1 names, each setting INK AND GROUND TOGETHER - the partial\npairing is what turned dark-on-dark into light-on-white at 1.22:1.\n\n- The palette tokens move above the templates, because a StaticResource\n  cannot reference a brush declared below it.\n- DisabledTextBrush (#7C8896) is now a token, not a literal repeated three\n  times, and disabled is that pairing rather than Opacity 0.5 - which\n  measured 2.73:1 against a 3:1 floor (A4).\n- The focus ring is its own 2px outline. The old trigger recoloured a\n  border whose thickness every rail button sets to zero, so it rendered\n  nothing while a comment claimed otherwise (A1/AR4).\n- CheckBox and RadioButton are retemplated: the platform bullet paints its\n  glyph in a fixed near-black, so on a dark ground the two states\n  composite to nearly the same image.\n- SunkenBrush/RaisedBrush were referenced from six sites and declared\n  nowhere. A missing key is a silent no-op (TC3); the six now name the\n  keys that exist.\n- AvalonDock's chrome keeps a transparent button pairing in its own\n  resource scope, which is nearer in the tree than Application.Resources.\n\nControls, not prose (CI6):\n- ContrastFloorTests re-measures all eleven pairings from real controls in\n  a real shown window under the real App.xaml, and writes the table.\n- A theory over the eighteen TC1 types fails when one has no implicit\n  default, or sets only one of ink and ground.\n- A rendered-pixel test fails when a checked box is not visibly different\n  from an unchecked one.\n- TokenDisciplineTests fails when any named resource key is undeclared.\n\nMeasured after the change: pairs 1-10 clear their floors (13.57-15.62:1\nfor text, 5.28:1 for the disabled glyph). Pair 11 is DESIGN.md's declared\nborder deviation and is reported, not asserted.\n\nNo layout, geometry, template binding or command is changed by any of\nthis, so tab placement and drag behaviour are untouched.\n\nCo-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01PXGs6quw67gGZao37P7xSC",
+      "session": "session_01PXGs6quw67gGZao37P7xSC",
+      "shortname": "node-u2-ui-implementation",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "summary": "Node U2 — built U1's ranked plan for the theme, contrast, icon, surface-content and sheet concern.\n\nBUILT. Item 1: implicit TargetType defaults in App.xaml for the eighteen base control types TC1\nnames, each setting ink and ground together. Item 4: the rail focus ring is its own 2px outline\n(the old trigger recoloured a border every rail button sets to zero width). Item 5: the six\nreferences to the undeclared SunkenBrush/RaisedBrush keys now name the keys that exist, and a\ncheck fails when any named key is undeclared. Item 3: the task class is a bounded picker with\nRQ2-RQ5 copy and nothing preselected. Item 6: the pane no longer hard-codes Verified. Item 8: three\ndisabled rail placeholders deleted, New Session added as the accent primary, Explorer given a\ncatalog command. Item 10: MaxSearchResultsCeiling, and a capped read renders as a lower bound.\nItem 11: both dialogs opt their caption into DWM dark mode through one factory. A4: disabled is a\ntoken pairing, not Opacity 0.5 at 2.73:1.\n\nMEASURED, NOT ASSERTED. ContrastFloorTests instantiates real controls in a real shown window under\nthe real App.xaml and computes every pairing. Pairs 1-10 clear (13.57-15.62:1 text, 5.28:1 the\ndisabled glyph); pair 11 is DESIGN.md's declared border deviation at 1.39:1, reported and not\nasserted. A rendered-pixel test proves a checked box differs visibly from an unchecked one.\n\nPROPOSED, AWAITING RATIFICATION. Creating a session maximizes its document's stack — the maximized\ndock state DESIGN.md already defines — because the requested full-window view conflicts with A4.4\nand ADR-0017.\n\nDEFERRED WITH REASONS. Item 2 and the composer half of 5/6 belong to node F4b. Item 7 renders in\nSessionDocumentSurface.cs, which F4b holds. Items 12 and 16 depend on item 2. Item 9 is a finding\nleft where the deletion would be made: the operator's own fix is backwards, and nothing was\ndeleted. Items 13 and 15 are product decisions or cross reserved files. RQ6 is not built because\nthe operator's last answer is persisted nowhere.\n\nFALSE IN MY BRIEF. Item 1 clears 8 of 11 measured pairs, not 7 — pair 8 is a ListBox ground and the\nimplicit ListBox style clears it. The palette needed one addition (a disabled ink token) for A4,\nwhich the brief's \"no behaviour change, one file\" framing did not anticipate. The craft gate with\n--gate exits 0 over docs/mockups with 66 Majors and 38 Minors present, so --gate is no more\ndiscriminating than a bare run unless a Blocker is mapped.",
       "tags": [
         "ui",
         "contrast",
         "theme"
       ],
-      "outcome": "success",
-      "goal": "Implement U1's ranked plan for the theme, contrast, icon, surface-content and sheet concern, on feature/ui-implementation, without altering tab placement or move behaviour.",
-      "done_when": "Each ranked item is built, deferred or refused with a reason; the eleven measured pairings are re-measured after item 1 rather than asserted; the maximized proposal is built and marked awaiting ratification; the IA finding is produced with nothing deleted; test floors met; gates run with --gate on the craft gate; branch pushed.",
       "tier": "T2",
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
+      "tool": null
+    },
+    {
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "src/AiDe.App/Conductor/RunEventRelay.cs",
+        "src/AiDe.App/Conductor/CompositionRootLedger.cs",
+        "tests/AiDe.App.Tests/Conductor/AGovernedRunReachesTheConsoleTests.cs",
+        "tests/AiDe.App.Tests/Conductor/ASendLaunchesAGovernedRunTests.cs",
+        "tests/AiDe.App.Tests/Conductor/TheOneCompositionRootIsCountedTests.cs"
+      ],
+      "datetime": "2026-09-11T13:49:44Z",
+      "done_when": "Red observed first (a Send produces a request and no run; no src file constructs a SessionLane); sink receives EXACTLY EventsObserved events; headless path green with sink null; ConductorEntry.cs byte-unchanged; clause 5's root ledger reads one; full gate set exit 0.",
+      "duration_seconds": 1238.0,
+      "fan_out": 3,
       "git": {
-        "sha": "0a63a731d863d0636bbcf215c4540311b988eae7",
-        "short": "0a63a731d",
-        "branch": "feature/ui-implementation",
-        "pushed": null
-      }
+        "branch": "feature/run-seam",
+        "pushed": null,
+        "sha": "0e59403de2719b0cc5a8665be912b5e637709693",
+        "short": "0e59403de"
+      },
+      "goal": "Close the seam between 'a request exists' and 'a run happens': an optional inert event sink on GovernedRunHost.RunAsync, and a PRODUCT-code session-document call site that launches a governed run on Send and feeds a real SessionLane into the real Console surface.",
+      "id": "al-01M28BPEDHQFCT6PC7CJQ0ZFD1",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Node F4b - the seam between 'a request exists' and 'a run happens'. Product wiring, red-first. Ruled into existence by Ruling 46 because no clause in the slice ever claimed this edge. Scope: (i) an optional event sink on GovernedRunHost.RunAsync, default null, publishing each event as the host's existing loop drains it, with ConductorEntry.cs byte-unchanged; (ii) the session document calls RunAsync on Send and feeds a real SessionLane into the real Console surface, in PRODUCT code. Conditions: red-first with an oracle that the sink receives EXACTLY EventsObserved events; the headless path stays green with the sink null; clause 5's root ledger still counts one root. Plus, handed over from F5: CompositionRootLedger and a 7-line RunAsync hunk whose activity opens above anything throwable.",
+      "session": "f4b-run-seam",
+      "shortname": "node-f4b-run-seam",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "started_at": "2026-09-11T13:29:06Z",
+      "summary": "Red observed first: a real Send on a real session document returned a real GovernedRunRequest (SendCount 1) while CompositionRootLedger read 0, and 'new SessionLane(' appeared in nine test files and no file under src/. Landed F5's CompositionRootLedger (activity opened before EngineCatalog.ResolveLaunch, so two unknown-engine calls read 2 with no adapter) and its falsifier in both directions. Added an optional Action<ObservedRunEvent> sink LAST on RunAsync so ConductorEntry stayed byte-unchanged (git diff main -- ConductorEntry.cs: 0 bytes), extracted the drain loop into GovernedRunHost.DrainAsync so the equality oracle is runnable without an adapter, and added RunEventRelay whose ChannelReader<ObservedRunEvent> fits SessionLane's existing constructor. ComposerSendGate now announces the request at its one construction site outside its lock, so both discarding callers reach a run unedited; SessionDocumentSurface builds the relay and a real SessionLane into its real Console surface and calls the one root. Observed: drained.Events == relay.Published == lane.Delivered == Model.Dispatched == console.RenderedRows.Count == 5, relay.Refused == 0. Counts: App 503 (floor 495), Core 2206 (floor 2206), portable 2052, non-portable 154. FINDING, reported not fixed: ComposerSurface.Configure has zero callers in src and four of ComposerSendContext's run-side fields (AdapterInstallRoot, Model, AccountLabel, Providers) have no source anywhere in src/ - MainWindow.xaml.cs:151 hands the New Session sheet an empty ProviderRegistry on purpose - so a UI-launched run cannot be configured today and F5 clause 2 is blocked on section 14.2 configuration, not on this node.",
+      "tags": [],
+      "tier": "T2",
+      "tool": "claude-code"
+    },
+    {
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "docs/plans/ui-and-windowing.md"
+      ],
+      "datetime": "2026-09-11T14:08:08Z",
+      "done_when": "Wave 1 dispatched at width 3 with a contracted fan-out, the loop bounded by a variant, and every deleted edge justified against the code",
+      "fan_out": 3,
+      "goal": "Plan three tracks as one graph so UI and windowing proceed without contending, while F5 keeps moving",
+      "id": "al-01M28CR4EKFA345WZDM78BKNX2",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Correct the capture on the optimize-graph entry that turned main red.",
+      "session": "conductor-ui-windowing",
+      "shortname": "optimize-graph-ui-and-windowing (corrected capture)",
+      "signals": {
+        "acceptance_met": false,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "optimize-graph",
+      "summary": "SUPERSEDES al-01M289JH887ES3D4RAWCX0Q8YH, which recorded the optimize-graph run for the UI and windowing tracks with NO SIGNALS OBJECT and no docs/proof artifact -- so it scored Not Scored for want of a verification path, and it turned main's CI red on the audit-capture ratchet.\n\nThe gate's own message is the correction and it is exactly right: \"If nothing was verified, say so: --signal-verification-path false is capture, silence is not.\"\n\nWHAT THE SUPERSEDED ENTRY SHOULD HAVE SAID ABOUT ITSELF. A planning run has a verification path and it is not a test: the plan's claims were checked against the code before dispatch, and two of the three edges the conductor asserted were DISPROVED by that check -- DockRoundedTabs.cs is 33 lines of styling, so the assumed UI/windowing contention on DockThemeAccents.cs did not exist, and F5's Proof Pack is a snapshot citing its sha, so it never needed to precede the UI work. A third assertion, that the Owner ruling gated the UI track, was narrowed to one of seven items. That is a verification path that was executed and that changed the artifact.\n\nWHAT WAS NOT VERIFIED, stated rather than left silent: the plan's SPAN claim rests on one measured figure (N7 at 2,404 s, from Phase 1's ledger) and otherwise on node shapes that are Inferred; no acceptance criterion was met by the planning run itself, because a plan is not acceptance; and no regression was possible, since nothing executable changed.\n\nThis entry also carries the goal and done-when the original omitted.",
+      "supersedes": "al-01M289JH887ES3D4RAWCX0Q8YH",
+      "tags": [
+        "conductor",
+        "plan",
+        "correction",
+        "dc-119"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "docs/reviews/ui-operator-feedback.md",
+        "docs/mockups/session-front-door.html",
+        "DESIGN.md"
+      ],
+      "datetime": "2026-09-11T14:08:32Z",
+      "done_when": "A ranked plan exists, the contrast defect is root-caused at the token level with its failing pairs measured, and the rubric loop has reached zero major findings without the cap firing",
+      "goal": "Elevate the UI against seven pieces of operator feedback: direction in words, the design system, a mockup with its hard states, and a rubric critique ending in a ranked plan",
+      "id": "al-01M28CRW87QFVF13NH7SNMN055",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Correct the capture on node U1's ui-design entry, which recorded no goal or done_when.",
+      "session": "ui-elevation-node-u1",
+      "shortname": "ui-design-session-front-door (corrected capture)",
+      "signals": {
+        "acceptance_met": false,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "ui-design",
+      "summary": "SUPERSEDES al-01M28B0R807NPKC605J54T6S09, node U1's ui-design run, which recorded no goal and no done_when -- so it could never become a Work Episode and nothing could score or observe it (AL5b). Together with the conductor's own uncaptured planning entry it turned main's CI red on the audit-capture ratchet.\n\nThe goal and done-when below are NOT reconstructed from the node's output: they are the ones the conductor set in the node's brief, restated verbatim in substance. The node did not invent its goal and this entry does not invent one for it.\n\nWHAT THE RUN PRODUCED, so the capture is not merely well-formed: a ranked plan of sixteen items across three tiers, the contrast defect root-caused at the TOKEN level with eleven failing pairs measured rather than described, and the composer diagnosed as NEVER INITIALIZING -- Configure with zero callers and a host.init/editor.ready deadlock -- which resolved two separate pieces of operator feedback into one defect.\n\nVERIFICATION PATH, and it was executed: the eleven failing contrast pairs were measured against the WCAG floors with their sites cited; the palette was exonerated by measurement (text on surface 14.98:1); and the rubric loop ran to its floor in two passes with the variant recorded at each. ACCEPTANCE was not met and that is the honest value: this node was design only, read-only on src/, so nothing it produced is acceptance of a behaviour -- node U2 builds to it. No regression was possible for the same reason.\n\nAND THE FINDING THAT MATTERS MOST is about a prior review rather than the surface: the previous review of this same rail PASSED it -- tooltips, targets, keyboard, contrast \"~5.1:1/~7.6:1\", verdict PASS -- and never asked whether the buttons did anything. Those contrast figures came from the MOCKUP'S readout, not the app. A surface reviewed, passed, and still carrying four dead icons.",
+      "supersedes": "al-01M28B0R807NPKC605J54T6S09",
+      "tags": [
+        "ui",
+        "ui-design",
+        "correction",
+        "operator-feedback"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "Directory.Build.rsp",
+        "tools/verify-node-reuse-control.py",
+        "tools/verify-test-run.py",
+        ".github/workflows/build.yml",
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-11T14:53:11Z",
+      "done_when": "Every host attributed by ancestry-to-root; the AiDe share stated; the control falsified both directions from root and subdirectory; a gate with a self-test wired into CI; DC-131 registered; gates green; pushed and CI read back.",
+      "git": {
+        "branch": "main",
+        "pushed": true,
+        "sha": "37ce01a28d9514dac726f6793601c3f606a330d5",
+        "short": "37ce01a28"
+      },
+      "goal": "Count the whole console-host population with attribution before claiming anything, then control whatever share is ours at the boundary rather than at one call site.",
+      "id": "al-01M28FAM78M790SKYWB4RHM9EN",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "i still see multiple ai-de terminal hosts that look like phantom hosts because you only have the main session and two sub-agents going, here is a screen shot of what i see: [Image] so i dont think you actually cleaned up the stale terminal hosts",
+      "session": "conductor-terminal-hosts-census",
+      "shortname": "Terminal-host census: the population, not the mechanism",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "CENSUS FIRST, which is the part that was missing the first two times: 287 console-host processes -\n256 held by node.exe under copilot.exe (a different application entirely), 20 held by orphaned\nMSBuild /nodeReuse:true workers (mine), 11 system/third-party, and ZERO with anything named AiDe\nanywhere in the ancestry chain. TH1 and TH2 are both still fixed and both were real; they answered\nabout a different population than the one on the operator's screen.\n\nThe earlier orphan check looked ONE level up, found every host's direct parent alive and reported\nzero orphans. The MSBuild workers WERE the orphans and the hosts beneath them were correctly\nparented - a containment check one level deep confirms containment one level deep.\n\nCONTROL MOVED TO THE BOUNDARY. verify-test-run.py sets MSBUILDDISABLENODEREUSE in its own\nsubprocess environment, which is one call site; the 20 came from dotnet build typed directly and\nnever reach it (DC-123). Directory.Build.rsp at the repository root covers every MSBuild invocation\nrooted anywhere in the tree.\n\nFALSIFIED BOTH DIRECTIONS rather than assumed, because a single-project build needs no worker nodes\nand would have passed either way: from the root, 16 workers without the file and 0 with it; from a\nsubdirectory, the same 16 -> 0, so discovery walks up; dotnet test 0.\n\nThe gate guards the real fragility, which is not the root file going missing: MSBuild takes the\nFIRST response file it finds walking up and stops, so a nested one silently shadows the root for\neverything beneath it. Both clauses observed RED before green. --self-test breaks a synthetic tree\nfour ways. --behaviour runs the falsifier and FAILS if removing the control leaves zero workers.\n\nThe 20 orphans were cleared with dotnet build-server shutdown - the documented mechanism, not a\nkill - after sampling 4 s of zero CPU on each, with two agents building.\n\nCORRECTED A REFUTED CLAIM: verify-test-run.py stated these workers linger fifteen minutes. The\n06:22 cohort was still standing at 07:40 with a dead parent. For an orphan the lifetime is\nunbounded and the comment now says so.\n\nRegister: DC-131 - a defect reported as a POPULATION is closed by fixing a MECHANISM and the\npopulation is never counted. DC-123 is the mechanism half (why the symptom persisted); DC-131 is\nthe reporting half (why it was declared resolved twice while it did). 131 classes, 65/53/13.\n\n30 gates PASS, 0 FAIL. Pushed as 37ce01a2.",
+      "tags": [
+        "process-containment",
+        "census",
+        "DC-131",
+        "DC-123",
+        "msbuild"
+      ],
+      "tier": "T1",
+      "tool": null
     }
   ],
   "changes": [

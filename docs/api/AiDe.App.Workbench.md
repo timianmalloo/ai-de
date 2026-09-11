@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 81 types, 326 members, 70% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 81 types, 329 members, 70% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**81 public types · 326 public members · 70% documented.**
+**81 public types · 329 public members · 70% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -549,6 +549,7 @@ and writing the file on each one would turn a smooth drag into a stutter of disk
 |---|---|
 | `LayoutPersistence(` | **(gap)** |
 | `RestoreResult? LastRestore { get; private set; }` | The last restore's outcome — what to announce, and what could not be honoured. |
+| `bool LastRestoreAppliedASavedArrangement { get; private set; }` | Whether the last `Restore` applied a **saved** arrangement, as opposed to keeping the one already on screen. |
 | `RestoreResult Restore()` | Loads the saved arrangement, or the default when there is none or it cannot be honoured. |
 | `void MarkDirty()` | Schedules a save. Repeated calls within the debounce window collapse into one write. |
 | `void SaveNow()` | Writes immediately — used on shutdown, where a pending debounce would be lost. |
@@ -557,6 +558,17 @@ and writing the file on each one would turn a smooth drag into a stutter of disk
 ### `LayoutPersistence(`
 
 - **`restorableKinds`** — Surface kinds the shell can build content for. Surfaces CREATED at runtime — an agent terminal, for one — have ids that no fixed list can contain, so without this they were dropped on every restart and announced as no longer available.
+
+### `bool LastRestoreAppliedASavedArrangement { get; private set; }`
+
+Whether the last `Restore` applied a **saved** arrangement, as opposed to
+keeping the one already on screen.
+
+**Remarks.** A flag rather than a test on the returned object, because `Restore` returns a
+`RestoreResult` in BOTH cases and never null — so the caller's old
+`restore is null ? "keep-current" : "restore-zones"` logged "restore-zones" every time,
+including the times it restored nothing. Recovering the branch from the announcement text
+would be a second definition of one fact (DM7); this is the first one.
 
 ## `NodeContentKind`
 
@@ -1602,15 +1614,33 @@ Maps `AssetRoot` onto `VirtualHostName` for .
 Renders the owned `Layout` model into AvalonDock, and supplies the accessibility the
 library does not (ADR-0012).
 
-**Remarks.** The adapter is deliberately **one-way**: model → view. Pointer gestures enter as
-`LayoutOperation` requests through `Apply`, never as direct
-view mutations — that is what keeps the keyboard path and the drag path provably identical
-(SC 2.5.7). The view is a projection; it is never the source of truth.
+**Remarks.** Rendering is one-way: model → view. The view is a projection; it is never the source of
+truth.
+
+
+
+
+**This used to claim that "pointer gestures enter as `LayoutOperation` requests
+through `Apply`, never as direct view mutations", and that is not true
+of the running app** (INV-0006 §2). The workbench's own pointer pipeline —
+`DropTargetResolver.Resolve` → `WorkbenchController.DragOver` → `Drop` →
+`LayoutOperation.MoveSurface` — has **no production caller**: verified by exhaustive grep,
+only `DragStateChanged` is subscribed. It is fully tested, and those tests prove nothing about
+the app. A native tab drag is AvalonDock's own gesture and DOES mutate the view directly; it is
+folded back into the model by `ViewArrangementChanged` and the shell's reconcile.
+
+
+
+
+The unwired path is NOT dead code to sweep: it is the pointer half of the SC 2.5.7
+keyboard-equivalence argument, and that claim needs re-examining by the UX & Accessibility lens
+rather than deleting. The comment was the defect; the code stays.
 
 | Member | Summary |
 |---|---|
 | `string LeakedNamePrefix = "AvalonDock."` | Automation names starting with this prefix are the library's type names leaking through as accessible names — the defect the UIA probe found (spikes/avalondock-a11y). |
 | `WorkbenchAdapter(` | **(gap)** |
+| `event EventHandler? ViewArrangementChanged` | Raised when the view's pane topology changed **under the model** — which, for a workbench whose every model-driven change goes through `Render`, means a native AvalonDock gesture: a tab dragged between panes, or reord… |
 | `DockingManager Manager { get; }` | **(gap)** |
 | `void Invalidate(IEnumerable<string> surfaceIds)` | Projects the current model into AvalonDock and names everything for assistive tech.  Marks surfaces to be REBUILT (not reused) on the next `Render`. Used by the shell when a workspace attaches and the watcher read pan… |
 | `void RefreshInPlace(IEnumerable<string> surfaceIds)` | Rebuilds the content of specific surfaces **in place** — replacing each `LayoutDocument`'s `Content` without swapping `Layout` — so refreshing one set of panes never disturbs the others. |
@@ -1620,6 +1650,32 @@ view mutations — that is what keeps the keyboard path and the drag path provab
 | `T? SurfaceContent<T>(string surfaceId) where T : class` | The inner surface content of type  for , looking THROUGH the island chrome (`WrapAsIsland`) that non-windowed panes are wrapped in. |
 | `string? ActiveSurfaceId` | The surface id of the document the user is currently focused in, or null. Read from AvalonDock's own active-content tracking so a "new pane" command can open where the user is looking rather than in a fixed corner of … |
 | `Layout? ReadLayoutFromView()` | Reads the CURRENT AvalonDock arrangement back into the owned model, so a native pane drag or a splitter resize the user performed is captured before the next `Render` would rebuild from a stale model and revert it. Re… |
+
+### `event EventHandler? ViewArrangementChanged`
+
+Raised when the view's pane topology changed **under the model** — which, for a workbench
+whose every model-driven change goes through `Render`, means a native AvalonDock
+gesture: a tab dragged between panes, or reordered within one.
+
+**Remarks.** **Why this exists (INV-0006).** AvalonDock owns the drag; it mutates its own tree and
+tells nobody. Nothing in the workbench subscribed to a drag completing, so the zone model — the
+source of truth — learned about a drag only when one of four *unrelated* commands happened
+to call `ReconcileViewIntoModel`. In the reported session that was 3m49s and eight drags
+later, and a reconcile handed that much drift re-derives each zone's identity by majority
+content overlap, crosses a column, and redraws **both columns on the other side**: eleven
+bystander surfaces moved by one tab drag, measured. With this event every reconcile happens one
+drag after the last one — the regime the zone tests already prove correct — so no change to the
+mapping heuristic is needed.
+
+
+
+
+**Why it is guarded rather than raised raw.** `Manager.LayoutUpdated` is WPF's
+`LayoutUpdated` — a layout-pass event, not a docking event; AvalonDock
+declares no event of that name. It fires on resizes, selection changes, tab realization and
+animation frames, most of which change no arrangement at all, and `Updated`
+fires for selection and float-property changes too. The signature comparison is what turns two
+chatty signals into one event per actual rearrangement.
 
 ### `void RefreshInPlace(IEnumerable<string> surfaceIds)`
 
@@ -1912,9 +1968,37 @@ path swallows its own failure.
 | `ActivitySource Source = new("aide.workbench")` | **(gap)** |
 | `Action<string>? Sink { get; set; }` | Test seam: when set, records go here instead of the log file (headless assertion). |
 | `void LayoutMutation(` | Records a layout mutation and the resulting stack/surface topology. |
+| `void LayoutReconcile(` | Records a reconcile of the **view** back into the model — the fold-in that follows a native tab drag — with the zone assignment before and after it. |
 | `void TerminalStart(` | Records the decision a terminal launch made, and how it ended. |
 | `void Crash(string origin, Exception exception)` | Records an unhandled exception, with the context that says which gesture produced it. |
 | `void McpConfig(string outcome, string? path, string? detail)` | Records what contributing to `.mcp.json` did, and the detail that must not be announced. |
+
+### `void LayoutReconcile(`
+
+Records a reconcile of the **view** back into the model — the fold-in that follows a native
+tab drag — with the zone assignment before and after it.
+
+**Remarks.** **Why this exists (INV-0006).** A drag emitted **nothing at all**. The log for the
+reported session is empty across the entire defect window, 12:55:02Z to 12:59:50Z, which spans
+the three screenshots that contain the defect — so the gesture that produced it is permanently
+unrecoverable, and every future report of this shape would have been too. That absence, not the
+swap, is what made the report unanswerable: the code could be read, and the code is correct for
+the values it was written against.
+
+
+
+
+**Before and after, not just after.** `LayoutMutation` records the
+resulting topology, which is enough for a placement ("the terminal went here") and useless for
+a reconcile: the question is what the reconcile DID, and a correct reconcile and a whole-column
+relabel produce topologies that look equally reasonable on their own. The pair, plus the list
+of surfaces whose zone changed, is what separates them.
+
+
+
+
+A reconcile that changed nothing and refused nothing writes nothing — the caller decides,
+because a log that records every no-op is a log nobody reads.
 
 ### `void TerminalStart(`
 

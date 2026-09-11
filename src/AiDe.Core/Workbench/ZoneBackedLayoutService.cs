@@ -180,7 +180,17 @@ public sealed class ZoneBackedLayoutService : ILayoutService
         {
             if (!assigned.TryGetValue(id, out var surfaces))
             {
-                continue; // a collapsed/empty zone that was not rendered keeps its current content
+                // Reached ONLY for the Bottom zone, and only when it was not rendered — Left, Center
+                // and Right are pre-seeded above, so they never take this branch.
+                //
+                // DC-122: this comment used to promise "a collapsed/empty zone that was not rendered
+                // keeps its current content", which is behaviour the code does not have for the three
+                // side/center zones. A COLLAPSED, NON-EMPTY tool zone is not in the view at all, so it
+                // is assigned an empty surface list, the surface-set guard below sees the loss and
+                // refuses the whole reconcile — every native drag silently reverts for as long as that
+                // zone stays collapsed (measured: ZoneBackedLayoutServiceTests, and announced by the
+                // shell since INV-0006 F3). The refusal is the fail-safe; the comment was the defect.
+                continue;
             }
 
             var welcomeOnly = surfaces.Count == 1 && surfaces[0].SurfaceId == ZonesToTree.WelcomePlaceholder.SurfaceId;

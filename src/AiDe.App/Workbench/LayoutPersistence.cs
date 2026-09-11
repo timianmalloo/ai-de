@@ -71,6 +71,19 @@ public sealed class LayoutPersistence : IDisposable
     /// <summary>The last restore's outcome — what to announce, and what could not be honoured.</summary>
     public RestoreResult? LastRestore { get; private set; }
 
+    /// <summary>
+    /// Whether the last <see cref="Restore"/> applied a <b>saved</b> arrangement, as opposed to
+    /// keeping the one already on screen.
+    /// </summary>
+    /// <remarks>
+    /// A flag rather than a test on the returned object, because <see cref="Restore"/> returns a
+    /// <see cref="RestoreResult"/> in BOTH cases and never null — so the caller's old
+    /// <c>restore is null ? "keep-current" : "restore-zones"</c> logged "restore-zones" every time,
+    /// including the times it restored nothing. Recovering the branch from the announcement text
+    /// would be a second definition of one fact (DM7); this is the first one.
+    /// </remarks>
+    public bool LastRestoreAppliedASavedArrangement { get; private set; }
+
     /// <summary>Loads the saved arrangement, or the default when there is none or it cannot be honoured.</summary>
     public RestoreResult Restore()
     {
@@ -83,6 +96,7 @@ public sealed class LayoutPersistence : IDisposable
                 var result = new RestoreResult(_zoneService.Current, false, null, [], [],
                     "Restored your saved workbench arrangement.");
                 LastRestore = result;
+                LastRestoreAppliedASavedArrangement = true;
                 return result;
             }
 
@@ -90,11 +104,16 @@ public sealed class LayoutPersistence : IDisposable
             var kept = new RestoreResult(_zoneService.Current, false, null, [], [],
                 "Kept the current workbench arrangement.");
             LastRestore = kept;
+            LastRestoreAppliedASavedArrangement = false;
             return kept;
         }
 
         var treeResult = _store.Load(_availability, _displayIsConnected);
         LastRestore = treeResult;
+
+        // The legacy tree path has no "kept" branch: it either loaded a saved layout or fell back to
+        // the default, which WasDefaulted reports.
+        LastRestoreAppliedASavedArrangement = !treeResult.WasDefaulted;
         _service.Restore(treeResult.Layout);
         return treeResult;
     }
