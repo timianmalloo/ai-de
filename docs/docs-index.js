@@ -3763,7 +3763,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a68842f250f29c72cba5509e7198266915a774c65a0e26a8bdc50458a2bc1fae"
+      "sourceSha256": "60a6f680a12e324d9681aa3c3e6347f661fde4955c6e9efa1390eb4cb5c2aa53"
     },
     {
       "id": "note-front-door-ruling-36",
@@ -3838,6 +3838,39 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "d26789684f6dc9d229f4e05352992992cf60e0c2f26880a52dcac230d7933fbe"
+    },
+    {
+      "id": "note-front-door-ruling-49",
+      "path": "docs/notes/front-door-ruling-49.md",
+      "title": "Decision note — Ruling 49: the F5 exit run waits for the operator's own gesture",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "A headless entry point was proposed to substitute for the operator's File → New Session gesture in the F5 exit run. Refused: it would satisfy the letter of clauses 1 and 5 while falsifying the sentence they exist to prove, and the origin guard would have stayed green while doing it. The exit run is triggered by the operator's own gesture; no headless entry point is built.",
+      "tags": [
+        "conductor",
+        "front-door",
+        "ruling",
+        "exit-evidence",
+        "f5",
+        "headless-entry",
+        "session-origin"
+      ],
+      "links": [
+        {
+          "to": "proof-conductor-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a2698ddd3864f74149a056b81ffeaf1276ad64d3ee920e839386936b9040dcf7"
     },
     {
       "id": "note-front-door-rulings-41-42",
@@ -11437,7 +11470,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c791af176900269ae2290f8c7e51878562b77b5e96a76004a9f20cb547ffde47"
+      "sourceSha256": "2423d3d093e52c4684039f4df826e22087662428fa24121d61f00cd196ad048d"
     },
     {
       "id": "proof-front-door-provider-config",
@@ -13185,5 +13218,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "09ea51d92c001bd4fac09f5f04234bc4282acea90c056a551e06a46608c277f7"
+  "graphSha256": "b140ea6d498f91f49158b77fc7bcd27071e83bde81377648d9d23b79a569bcfb"
 };

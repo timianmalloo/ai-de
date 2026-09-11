@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T16:40:04Z",
+  "generated": "2026-09-11T17:34:57Z",
   "audit": [
     {
       "actor": null,
@@ -11687,6 +11687,40 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "c5ca7b1ff3d5105da27d6b81a2a95e063680630e",
         "short": "c5ca7b1ff",
+        "branch": "feature/exit-evidence",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-01M28RJNCKQZPTG05SMVRWR16V",
+      "shortname": "f5a-ruling-49-committed",
+      "datetime": "2026-09-11T17:34:51Z",
+      "session": "f5a-exit-evidence",
+      "prompt": "Bring feature/exit-evidence to the operator-gesture boundary: everything committed, gates green, pushed, so the only missing input for F5 is the operator's own File -> New Session gesture (Ruling 49). Do not perform that gesture, launch the app, or run any session.",
+      "summary": "Read and confirmed coherent the three prior-session diffs (residuals-carried table, Proof Pack Part 3 / clause table / oracle-integrity rows, and a test <remarks> comment); nothing was half-written. Filed docs/notes/front-door-ruling-49.md (verified absent by grep and by verify-ruling-citations.py before filing; passes after). Checked docs/notes/front-door-council-rulings.md and confirmed it is a specific decision note (Rulings 19-25), not an index -- no row added there. Committed the three prior-session files (bc3ba59c) and the ruling note (2a363f4f) as two separate commits. Ran all 32 tools/verify-*.py gates bare, one exit code each: 30 passed (0); verify-front-door-exit-evidence.py failed (1) as expected -- spikes/conductor-front-door-exit-run/exit-evidence.json does not exist because the operator's gesture has not happened, which is the exact state Ruling 49 describes; verify-derived-views.py and verify-site-figures.py both failed (1) as expected because the new note is not yet reflected in the derived views -- both are resolved by this same commit's regenerate-derived.py run, checked again after. dotnet build src/AiDe.Core/AiDe.Core.csproj -c Release -p:TreatWarningsAsErrors=true: 0 Warnings, 0 Errors. dotnet build tests/AiDe.Core.Tests -c Release: 0 Warnings, 0 Errors. Filtered test TheSessionOriginIsSetOnlyOnTheCommandPathTests: 4 passed, 0 failed. Full verify-test-run.py (bare, check mode, background due to length): exit 0, 2755 tests across AiDe.App.Tests (517) and AiDe.Core.Tests (2238), both met baseline. verify-test-run.py --update was never run.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/front-door-ruling-49.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Bring feature/exit-evidence to the operator-gesture boundary: commit the prior session's uncommitted files, file Ruling 49 as a note, run every gate, and push, so the only missing input for F5 is the operator's own File -> New Session gesture.",
+      "done_when": "The three prior-session files and the new Ruling 49 note are committed; every tools/verify-*.py gate plus the Core build, tests build, and filtered test run have recorded exit codes; the audit entry and derived views are regenerated and committed; the branch is pushed to origin/feature/exit-evidence.",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-11T17:28:04Z",
+      "duration_seconds": 407.0,
+      "git": {
+        "sha": "2a363f4fedcdbf634ddce40e97a0cc32f54faadf",
+        "short": "2a363f4fe",
         "branch": "feature/exit-evidence",
         "pushed": false
       }
