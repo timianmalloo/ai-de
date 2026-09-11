@@ -2993,6 +2993,146 @@ window.DOCS_INDEX = {
       "sourceSha256": "ec9241e2678513842acfd782cdde7304799225f77c8cab9d307f89bb6ebb1799"
     },
     {
+      "id": "note-addendum-c-coding-default-layout",
+      "path": "docs/notes/addendum-c-coding-default-layout.md",
+      "title": "The Coding perspective's default layout is the session's place: Center empty until a session opens, Terminal sessions left, one terminal below; Evidence and the fleet views leave the default",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Ruling 55d fixes what leaves the Coding default (the Explore pane, the Domain/Provenance duplication); this note fixes what stays. Center: nothing until a session opens; Left: the watcher of observed terminal sessions, captioned \"Terminal sessions\"; Bottom: one terminal; Right: empty. The Evidence master-detail moves to Architecture; the Loomkeeper fleet views (board, leaderboard, ledger, daydreams) are admitted to Coding but reachable from the derived menu, not present by default. Blast radius: the first thing every operator sees.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "coding",
+        "default-layout",
+        "loomkeeper",
+        "evidence"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-current-state-inventory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "98e6dbe61d6bdf8e501b6e43bc5e896c144f49186afd3fe7e7e2dc88efb1c6d0"
+    },
+    {
+      "id": "note-addendum-c-inadmissible-kind-routing",
+      "path": "docs/notes/addendum-c-inadmissible-kind-routing.md",
+      "title": "A kind-opening request the active perspective cannot satisfy routes to the first admitting perspective in the order Architecture · Coding and announces; in-body node actions never route — no dialog, no silent drop",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "When an admitted surface raises a kind-opening request its perspective cannot satisfy (a reader node in Explore → \"View source\" or \"Class diagram\"), the shell activates the first perspective in the routing order Architecture · Coding that admits the kind, opens it there, and announces the switch; the operator returns by activating the origin perspective (Escape, from Explore). In-body actions (Read document, Metadata & edges, Reveal in graph) never route — they act in the raising body. A target that fails to build leaves the perspective unchanged and says why. Blast radius: every cross-perspective \"Open as…\" and drill-to-node path.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "perspective",
+        "routing",
+        "allow-list",
+        "ux"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f57a49247acf87427d6e7d7e87bed37f2d2e02af2bf6235798bc3924a3cf6bf5"
+    },
+    {
+      "id": "note-addendum-c-menu-derivation-rule",
+      "path": "docs/notes/addendum-c-menu-derivation-rule.md",
+      "title": "The menu is three derived sets — perspective-independent entries, body-conditional entries, allow-list entries — and a structurally inapplicable command is absent, not disabled",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Ruling 55b says the per-perspective menu is derived; this note fixes the derivation's three inputs and two edge rules — entry verbs (session.new, terminal.new, the derived \"New <Harness> session\" rows) are global, live in File, and route to Coding, and \"not admitted here\" means absent while \"cannot run right now\" means disabled with a reason. Blast radius: MainMenuBuilder, CommandPalette, and every command row.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "menu",
+        "palette",
+        "derivation",
+        "entry-verb"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-app-facelift",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2d0388f698d6a36573b46ad8db0618bc3ddba8ccfe62f0667be9db5497918c44"
+    },
+    {
+      "id": "note-addendum-c-persistence-slots",
+      "path": "docs/notes/addendum-c-persistence-slots.md",
+      "title": "One persistence slot per docking-host perspective; a pre-Addendum-C envelope migrates into the Coding slot; surfaces of a kind Coding does not admit are dropped with a report and not carried to another slot",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Ruling 52 says an old envelope carrying a now-disallowed kind migrates by drop-with-report, never crash; this note fixes the two things it left open — the old envelope becomes the Coding slot (expand, never discard, closing the zone schema's no-migration gap), and dropped surfaces are not re-homed into Architecture's slot, which starts from its default. Blast radius: every saved layout.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "persistence",
+        "layout-envelope",
+        "migration",
+        "adr-0013"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0013-layout-persistence-envelope",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "43706b39a40e5e6be67ff9998252bbb2dd5f71e8dab6007f6661a6b341658304"
+    },
+    {
       "id": "note-ai-native-ide-architecture-review-depth",
       "path": "docs/notes/ai-native-ide-architecture-review-depth.md",
       "title": "Decision note — AI-native IDE architecture review depth",
@@ -6636,14 +6776,14 @@ window.DOCS_INDEX = {
     {
       "id": "note-addendum-c-council-rulings",
       "path": "docs/notes/addendum-c-council-rulings.md",
-      "title": "Decision note — Rulings 50–55: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, and page one",
+      "title": "Decision note — Rulings 50–62: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
       "type": "doc",
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "1",
       "reviewBy": "2026-12-11",
       "reviewSuggested": [],
-      "summary": "Six rulings the Owner issued before any Addendum C spec was written, on the evidence the conductor brought at node R0 of plan-addendum-c-modes. They fix the vocabulary (Perspective), the phasing (F5 untouched; code after F5 merges), ADR-0017's fate (retained and amended), the graph model (one substrate, two surfaces), the build order under the operator's 80% case, and four page-one facts a spec written without them would get wrong.",
+      "summary": "Rulings 50–55 issued before any Addendum C spec was written; 56–62 issued at the spec's gate — 56 and 57 file the operator's own composer verdicts, 58–62 rule on the reconciliation table. Six rulings the Owner issued before any Addendum C spec was written, on the evidence the conductor brought at node R0 of plan-addendum-c-modes. They fix the vocabulary (Perspective), the phasing (F5 untouched; code after F5 merges), ADR-0017's fate (retained and amended), the graph model (one substrate, two surfaces), the build order under the operator's 80% case, and four page-one facts a spec written without them would get wrong.",
       "tags": [
         "decision-note",
         "ruling",
@@ -6657,6 +6797,10 @@ window.DOCS_INDEX = {
       "links": [
         {
           "to": "plan-addendum-c-modes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
           "rel": "relates-to"
         },
         {
@@ -6685,7 +6829,45 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "cba1de1b8eb6feaf5e9f4ade3c4bf15bfd4ab18c6f28b7e7d69b0d549d32b8ea"
+      "sourceSha256": "1d71f33eaf89475c5e7f2f3e152e93ddd7da45e0956dcf84d5cad7248364f9af"
+    },
+    {
+      "id": "note-addendum-c-current-state-inventory",
+      "path": "docs/notes/addendum-c-current-state-inventory.md",
+      "title": "Addendum C — current-state inventory (M0)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "Read-only inventory of the workbench shell at main@7f0b67a3: every surface, menu/command, the two-mode shell (Workbench/Explorer, ADR-0017), zone/layout persistence, the specs and ADRs that already govern this surface, a local craft-gate run (104 findings), and the test-coverage ratio for the layout service the shell actually runs.",
+      "tags": [
+        "addendum-c",
+        "inventory",
+        "ux",
+        "workbench"
+      ],
+      "links": [
+        {
+          "to": "plan-addendum-c-modes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-named-dock-zones",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "67b6351ffc527659f43fcf2c8b6f2ed3bce587e45530107c258f911e0e52638e"
     },
     {
       "id": "note-front-door-rulings-45-48",
@@ -12479,6 +12661,145 @@ window.DOCS_INDEX = {
       "sourceSha256": "fa128429155af92c08c52f48033ebd5764a806c77b75aa71aa0a2a0d2a716b96"
     },
     {
+      "id": "spec-addendum-c-perspectives",
+      "path": "docs/specs/addendum-c-perspectives.md",
+      "title": "Addendum C — Perspectives: the use case the tool is in, the surfaces each perspective admits, the rail and the perspective-contextual menu",
+      "type": "spec",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Addendum C to the Conductor spec. Introduces the Perspective — the use case the whole tool is in (Coding · Explore · Architecture; Tests reserved) — selected from the activity rail, with each perspective admitting a declared subset of the existing surface kinds, contributing a derived menu, owning a default layout and a persistence slot. Binds the six Owner rulings (50–55), records the operator's three composer verdicts as page-one supersessions of R15/R18/R19 clauses (for the Owner to file), adds the token-only contrast NFR proven by a runtime census, reconciles against ADR-0017 and the seven shell specs it refines, and names the deferred understanding views, the structure deriver and Use Case 4 as non-goals.",
+      "tags": [
+        "conductor",
+        "addendum-c",
+        "perspective",
+        "rail",
+        "menu",
+        "docking",
+        "explorer",
+        "architecture",
+        "coding",
+        "composer",
+        "contrast",
+        "ux",
+        "ui",
+        "wpf"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-current-state-inventory",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-named-dock-zones",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-app-facelift",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-knowledge-exploration",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-uml-erm-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-terminal-sessions",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-editor-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-addendum-c-modes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-spec-errata-policy",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-front-door-rulings-41-42",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-coding-default-layout",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-inadmissible-kind-routing",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-menu-derivation-rule",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-persistence-slots",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "B5. User flows",
+          "mermaid": "flowchart TD\n  A[Coding active: session streaming, terminal live] -->|rail item / gesture / View menu| A1{Drag or lazy build in progress?}\n  A1 -->|tab drag| A2[Cancel the drag as a no-op drop] --> B\n  A1 -->|a build is running| A3[Ignore; status line: 'Opening Architecture…'] --> A\n  A1 -->|no| B{Target body built?}\n  B -->|yes, retained| C[Body swap: show target host]\n  B -->|no, first entry| D[Rail item: opening state; focus stays on the trigger; build lazily]\n  D -->|built| C\n  D -->|build fails| E[Rail item: error state with reason; stay in Coding; focus unchanged; status + live region]\n  E -->|user activates again| D\n  C --> F[Live region announces, then focus lands on the target body's first focusable]\n  F --> G[Coding body retained: pid unchanged, console buffering]\n  G -->|permission request arrives| H[Queue overlay visible after one frame — RootLayer, outside the swap]\n  G -->|activate Coding again — rail / gesture / menu| I[Return: same instances, same layout]\n  C -->|switch emits event| J[(from, to, trigger, first_entry, duration_ms)]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "B5. User flows",
+          "mermaid": "flowchart TD\n  A[Any perspective] -->|New session: rail / Ctrl+N / File / palette — always enabled| B{Workspace bound?}\n  B -->|no| C[Workspace chooser interposes — Addendum A §A4.2]\n  C -->|cancel| A\n  C -->|chosen| D\n  B -->|yes| D[New Session sheet — modal; tier, fan-out cap, budget prefilled from workspace defaults]\n  D -->|cancel| A2[Current perspective unchanged]\n  D -->|create| E{Document opened in host A?}\n  E -->|no| E2[Stay in the current perspective; failure reported]\n  E -->|yes| F[Document takes the stack — Ruling 47]\n  F --> G[Coding perspective activates — one transaction with the open]\n  G --> H[Live region: 'Coding perspective — session <name> opened']"
+        },
+        {
+          "kind": "flowchart",
+          "title": "B5. User flows",
+          "mermaid": "flowchart TD\n  A[Node action raised in Explore or Architecture] --> B{In-body action?}\n  B -->|Read document / Metadata & edges / Reveal in graph| C[Act in the raising body — no switch]\n  B -->|kind-opening: View source / Class diagram / Sequence diagram| D{Active perspective admits K?}\n  D -->|yes| E[Open in the active host, zone by kind]\n  D -->|no| F[Target = first of Architecture · Coding that admits K]\n  F --> G{Target body builds?}\n  G -->|yes| H[Activate target; open K there; live region: 'Opened Class diagram in Architecture']\n  H -->|activate the origin perspective; Escape if it was Explore| I[Origin perspective restored, unchanged]\n  G -->|no| J[Stay; focus unchanged; status + live region: 'Couldn't open Class diagram — Architecture failed to open: reason']\n  D -->|no perspective admits K — impossible by construction| K[Test asserts every kind row has a non-empty set]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "B5. User flows",
+          "mermaid": "flowchart TD\n  A[Startup] --> B{Envelope present?}\n  B -->|none| C[Each perspective: default layout]\n  B -->|newer schema| D[Refuse with report; defaults — as today]\n  B -->|corrupt| D\n  B -->|pre-slot schema| E[Migrate into the Coding slot — expand, never discard]\n  E --> F{Surfaces of a kind Coding does not admit, or duplicate one-instance kinds?}\n  F -->|none| G[Coding restored as saved]\n  F -->|some| H[Drop them from the Coding slot]\n  H --> H2{Any surface left?}\n  H2 -->|no| H3[Apply the Coding default; the report says so]\n  H2 -->|yes| I[Status + live region: the §C4 report string; event carries count + kinds]\n  H3 --> I\n  I --> J[Architecture slot: default layout — dropped surfaces are not carried over]\n  B -->|slot schema| L[Each slot restored independently]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "B5. User flows",
+          "mermaid": "flowchart TD\n  A[Focus in a pane or inside the terminal HWND] -->|Tab cycle reaches the rail once| B[Rail: Up/Down between items, Enter/Space activates]\n  A -->|bound perspective gesture| C[Switch without visiting the rail — P-7 when focus is in the HWND]\n  C --> D[Announcement, then focus lands in the new body — never on the rail, never lost to the window]\n  D -->|Alt / F10| E[Menu bar: only this perspective's menus]\n  E -->|Ctrl+K| F[Palette: only this perspective's commands, chord strings announced]\n  B -->|Tab| A\n  D -->|Escape, Explore only, from the surface root| G[Previous perspective]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "B5. User flows",
+          "mermaid": "flowchart TD\n  A[Session document open: one editor, structure collapsed, compiled collapsed] -->|type prose| B{Draft settles: objective derivable?}\n  A -->|shape control: pick a template — B:181 kept| T[Template fields render as the derived structure, prefilled from the text where possible]\n  T --> E\n  B -->|no| C[Structure stays one collapsed line; a T2 send will mark Goal and Done when]\n  C -->|type more| B\n  C --> E\n  B -->|yes| D[Derived structure expands beneath the editor: Goal · Done when · Not in scope, marked derived]\n  D -->|edit a line inline| D\n  D --> E{@path mention present?}\n  E -->|no| F[Write-scope line: elicitation text; Send → refusal names @path and offers the picker — Ruling 42 intact]\n  F -->|add a mention| E\n  E -->|yes| G[Write-scope line: 'src/…/** — from your mention']\n  G -->|open Compiled disclosure| H[Exactly the outgoing text; no diff, no summary; editor does not shrink]\n  H --> G\n  G -->|Send Ctrl+Enter| I{T2 and a content field empty?}\n  I -->|yes| J[Inline marks on every gap at once; one-line reason each; nothing sent]\n  J -->|fix| D\n  I -->|no| K[Sent: compiled prompt carries the session's tier · fan-out · budget in the CT19 block]\n  K --> K2[Reply streams in the Console canvas; the block joins the Score outline]\n  K2 -->|conductor answers with a drafted template — S-8| K3[Next message's draft: the reply's text with its derived structure inline]\n  K3 --> D\n  K2 -->|operator writes the next message| A\n  A -->|session settings on the header| L[Edit tier / fan-out / budget for the session; T0-with-fan-out warning here]\n  L -->|re-validate the current draft| B"
+        }
+      ],
+      "sourceSha256": "3183e699c042477ca56ea8d85c4fd6c6f96808a6b14047d6a4c0d7288df199e7"
+    },
+    {
       "id": "spec-agentic-watcher-substrate",
       "path": "docs/specs/agentic-watcher-substrate.md",
       "title": "Loomkeeper - Agentic Watcher Substrate and Observatory",
@@ -12722,7 +13043,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4433ace5f820c0cb3acb1e7e7b02adac9d9afc9796a10dc76919b4d3e0b23be7"
+      "sourceSha256": "3ece0948aa158aaddb1dc6f38bb0589d59e877efc3cd2418976e59ff84d27cf0"
     },
     {
       "id": "spec-editor-surfaces",
@@ -13273,5 +13594,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "5467e234a293022064752d990a1ce74a841b42a7fbddc34fe02dbe8d27584b36"
+  "graphSha256": "578866d2408395a629a13d6b84712444039fe0e8b7e4a579c34859cb2853df0d"
 };
