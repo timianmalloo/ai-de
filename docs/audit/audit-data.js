@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T17:25:40Z",
+  "generated": "2026-09-11T17:26:02Z",
   "audit": [
     {
       "actor": null,
@@ -11626,6 +11626,39 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M28R2FS1TBHD8648HNA7R11M",
+      "shortname": "optimize-graph-addendum-c-modes",
+      "datetime": "2026-09-11T17:26:01Z",
+      "session": "conductor-addendum-c",
+      "prompt": "Plan the remainder of this turn as one graph: (A) resume F5 on feature/exit-evidence — commit the Ruling 49 edits, run gates, stop at the operator's File → New Session gesture boundary; (B) open Addendum C (modes tied to four use cases; per-mode surface constraints; side toolbar + contextual top menu) via /specify → /ui-design → /define-architecture → /prepare-for-coordination, then dispatch the refactor to sub-agents in their own worktrees. Governance: Owner=fable, Conductor=opus, model per node, repo coordination protocol. Width cap 3.",
+      "summary": "Naive: 6 nodes in series, F5 at the head of a chain it has no edge into. Optimized: 9 nodes + dispatch; span R0->S1->D1->A1->P1 (all real data/decision edges); F5a and M0 off the span; three nodes pulled from inside S1/D1/A1 to the head (the Owner's vocabulary/phasing/ADR-0017 ruling; the current-state inventory + craft-gate baseline; the architecture recovery collapsed into M0). Width 3 at the head, 1 on the chain, P1's own contract at dispatch. 12 floors named + Security named-not-triggered; 4 loops bounded; shared surfaces with jointly-satisfiable clauses. Found: Ruling 49 cited in 3 files, filed in none; ShellViewMode{Workbench,Explorer} (ADR-0017 body swap) is the decision Addendum C supersedes. Span Inferred ~6000s; specify's one 65s data point labelled not credible.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/addendum-c-modes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Plan F5-to-gesture and Addendum C (modes tied to use cases) as one graph, then execute it",
+      "done_when": "F5 tree committed and green at the gesture boundary; Addendum C spec, design, ADRs and coordination plan committed; refactor dispatched under P1's contract",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": false,
+        "regression": false
+      },
+      "git": {
+        "sha": "32cffcaa949c57e10c143683588af9f54dffe917",
+        "short": "32cffcaa9",
+        "branch": "conductor/addendum-c",
+        "pushed": null
+      }
     }
   ],
   "changes": [
