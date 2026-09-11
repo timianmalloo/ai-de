@@ -2,7 +2,7 @@
 id: inv-0006-workbench-pane-swap-on-native-tab-drag
 title: "Moving one tab swaps both panes: the workbench has no drag-completed hook"
 type: investigation
-status: draft
+status: accepted
 owner: "@timianmalloo"
 phase: "facelift"
 tags: [workbench, docking, avalondock, layout, zones, drag, reconcile, observability]

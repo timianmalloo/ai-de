@@ -1446,7 +1446,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 325 members, 69% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 328 members, 70% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1459,7 +1459,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fdbc42d0d79fb2f2884fbdf7f49b3dfa0f6eb53712949ec5efe2d4df133b1693"
+      "sourceSha256": "9925e3ac8c40a76a589f20339afce30525e14c016e7ca2194f21baeedb18a240"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -7849,7 +7849,7 @@ window.DOCS_INDEX = {
       "path": "docs/investigations/INV-0006-workbench-pane-swap-on-native-tab-drag.md",
       "title": "Moving one tab swaps both panes: the workbench has no drag-completed hook",
       "type": "investigation",
-      "status": "draft",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "facelift",
       "reviewBy": "2026-12-01",
@@ -7880,7 +7880,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5e4e9b0574b04e6efdca7248ddfe9b10c6a439ffa1087d8c571e67d5db7c191c"
+      "sourceSha256": "a8f92037fca13a544bc5c533a0ae4a407a608a5d621fe3e2932d2bf39ca0f257"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -13029,5 +13029,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "550298098587a0c30ad022bb426ea7c21acaa6cf92c9dea0738b7e2d24640502"
+  "graphSha256": "3f9218d74ecf733984f9db0a089d6a5616780b47e30b69e9bfeb0572ba13150e"
 };

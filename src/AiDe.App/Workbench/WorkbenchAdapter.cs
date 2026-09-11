@@ -15,10 +15,19 @@ namespace AiDe.App.Workbench;
 /// library does not (ADR-0012).
 /// </summary>
 /// <remarks>
-/// The adapter is deliberately **one-way**: model → view. Pointer gestures enter as
-/// <see cref="LayoutOperation"/> requests through <see cref="ILayoutService.Apply"/>, never as direct
-/// view mutations — that is what keeps the keyboard path and the drag path provably identical
-/// (SC 2.5.7). The view is a projection; it is never the source of truth.
+/// <para>Rendering is one-way: model → view. The view is a projection; it is never the source of
+/// truth.</para>
+/// <para><b>This used to claim that "pointer gestures enter as <see cref="LayoutOperation"/> requests
+/// through <see cref="ILayoutService.Apply"/>, never as direct view mutations", and that is not true
+/// of the running app</b> (INV-0006 §2). The workbench's own pointer pipeline —
+/// <c>DropTargetResolver.Resolve</c> → <c>WorkbenchController.DragOver</c> → <c>Drop</c> →
+/// <c>LayoutOperation.MoveSurface</c> — has <b>no production caller</b>: verified by exhaustive grep,
+/// only <c>DragStateChanged</c> is subscribed. It is fully tested, and those tests prove nothing about
+/// the app. A native tab drag is AvalonDock's own gesture and DOES mutate the view directly; it is
+/// folded back into the model by <see cref="ViewArrangementChanged"/> and the shell's reconcile.</para>
+/// <para>The unwired path is NOT dead code to sweep: it is the pointer half of the SC 2.5.7
+/// keyboard-equivalence argument, and that claim needs re-examining by the UX &amp; Accessibility lens
+/// rather than deleting. The comment was the defect; the code stays.</para>
 /// </remarks>
 public sealed class WorkbenchAdapter
 {
@@ -37,6 +46,14 @@ public sealed class WorkbenchAdapter
     // DC-029); the shell only ever marks the stateless watcher read surfaces.
     private readonly HashSet<string> _pendingRebuild = new(StringComparer.Ordinal);
 
+    // The pane topology this adapter last SAW in the view - set by Render (what it just drew) and by
+    // the drag watcher (what it just observed). Comparing against it is what turns WPF's very chatty
+    // layout-pass event into "the arrangement actually changed", exactly once per change.
+    private string _lastSeenArrangement = string.Empty;
+    private bool _raisingArrangementChanged;
+    private bool _rendering;
+    private LayoutRoot? _watchedRoot;
+
     public WorkbenchAdapter(
         DockingManager manager, ILayoutService service,
         Func<Surface, FrameworkElement>? contentFactory = null)
@@ -53,7 +70,26 @@ public sealed class WorkbenchAdapter
         {
             ApplyAccessibleNames();
             DecorateTabs(Manager);
+            RaiseWhenTheViewArrangementChanged();
         };
+
+        // AvalonDock's OWN model-mutation signal, watched ALONGSIDE the WPF layout pass above.
+        //
+        // MEASURED, not assumed (WorkbenchDragCompletedHookTests): moving a tab into another pane
+        // raises LayoutRoot.Updated once and raises Manager.LayoutUpdated ZERO times in a host that
+        // is running no visual pass. Wiring the reconcile to Manager.LayoutUpdated alone — which is
+        // what INV-0006 proposed — therefore produces a hook that cannot be tested at all, and rests
+        // on a WPF layout pass that the docking model does not promise.
+        //
+        // KNOWN GAP, stated rather than implied: reordering a tab WITHIN one pane raises neither
+        // signal here, so that drag still reaches the model only at the next command's reconcile. It
+        // cannot produce INV-0006's defect (no surface changes column), and closing it needs a driven
+        // docking host to establish what a real pointer reorder raises — the WorkbenchProbe node.
+        //
+        // Re-subscribed on LayoutChanged because Render REPLACES Manager.Layout, and a subscription
+        // to the discarded root is a hook that silently stops firing after the first render.
+        Manager.LayoutChanged += (_, _) => WatchTheDockingModel();
+        WatchTheDockingModel();
 
         // Route AvalonDock's own close (whichever tab button or gesture triggers it) through the
         // model, so the layout stays the source of truth rather than AvalonDock silently removing a
@@ -67,6 +103,30 @@ public sealed class WorkbenchAdapter
             }
         };
     }
+
+    /// <summary>
+    /// Raised when the view's pane topology changed <b>under the model</b> — which, for a workbench
+    /// whose every model-driven change goes through <see cref="Render"/>, means a native AvalonDock
+    /// gesture: a tab dragged between panes, or reordered within one.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Why this exists (INV-0006).</b> AvalonDock owns the drag; it mutates its own tree and
+    /// tells nobody. Nothing in the workbench subscribed to a drag completing, so the zone model — the
+    /// source of truth — learned about a drag only when one of four <i>unrelated</i> commands happened
+    /// to call <c>ReconcileViewIntoModel</c>. In the reported session that was 3m49s and eight drags
+    /// later, and a reconcile handed that much drift re-derives each zone's identity by majority
+    /// content overlap, crosses a column, and redraws <b>both columns on the other side</b>: eleven
+    /// bystander surfaces moved by one tab drag, measured. With this event every reconcile happens one
+    /// drag after the last one — the regime the zone tests already prove correct — so no change to the
+    /// mapping heuristic is needed.</para>
+    /// <para><b>Why it is guarded rather than raised raw.</b> <c>Manager.LayoutUpdated</c> is WPF's
+    /// <see cref="UIElement.LayoutUpdated"/> — a layout-pass event, not a docking event; AvalonDock
+    /// declares no event of that name. It fires on resizes, selection changes, tab realization and
+    /// animation frames, most of which change no arrangement at all, and <see cref="LayoutRoot.Updated"/>
+    /// fires for selection and float-property changes too. The signature comparison is what turns two
+    /// chatty signals into one event per actual rearrangement.</para>
+    /// </remarks>
+    public event EventHandler? ViewArrangementChanged;
 
     public DockingManager Manager { get; }
 
@@ -200,10 +260,94 @@ public sealed class WorkbenchAdapter
         _pendingRebuild.Clear();
 
         var panel = BuildPanel(_service.Current.Root, reuse);
-        Manager.Layout = new LayoutRoot { RootPanel = panel };
-        RestoreSelection();
-        RestoreActive(preActive);
-        ApplyAccessibleNames();
+
+        // A render IS the model speaking; every mutation it makes to the docking tree must not come
+        // back as "the view changed under us". What we drew becomes the arrangement the watcher has
+        // seen, recorded once the whole render (selection and activation included) has settled.
+        _rendering = true;
+        try
+        {
+            Manager.Layout = new LayoutRoot { RootPanel = panel };
+            RestoreSelection();
+            RestoreActive(preActive);
+            ApplyAccessibleNames();
+        }
+        finally
+        {
+            _rendering = false;
+            _lastSeenArrangement = ViewArrangementSignature() ?? string.Empty;
+        }
+    }
+
+    /// <summary>
+    /// Whether the view currently holds any rendered document. Distinguishes "nothing is on screen
+    /// yet" from "the user arranged something we could not read" — which are the same <c>null</c> out
+    /// of <see cref="ReadLayoutFromView"/> and very different things to record.
+    /// </summary>
+    internal bool HoldsDocuments() =>
+        Manager.Layout?.Descendents().OfType<LayoutDocument>().Any() == true;
+
+    private void WatchTheDockingModel()
+    {
+        if (ReferenceEquals(_watchedRoot, Manager.Layout))
+        {
+            return;
+        }
+
+        if (_watchedRoot is not null)
+        {
+            _watchedRoot.Updated -= OnDockingModelUpdated;
+        }
+
+        _watchedRoot = Manager.Layout;
+        if (_watchedRoot is not null)
+        {
+            _watchedRoot.Updated += OnDockingModelUpdated;
+        }
+    }
+
+    private void OnDockingModelUpdated(object? sender, EventArgs e) => RaiseWhenTheViewArrangementChanged();
+
+    /// <summary>
+    /// The view's pane topology: each document pane's surfaces, in pane order and in tab order.
+    /// Null when nothing is rendered. Deliberately ignores sizes, selection and node identity — a
+    /// splitter drag or a tab click is not a rearrangement.
+    /// </summary>
+    private string? ViewArrangementSignature()
+    {
+        if (Manager.Layout is not { } root)
+        {
+            return null;
+        }
+
+        var panes = root.Descendents().OfType<LayoutDocumentPane>()
+            .Select(pane => string.Join(
+                ",", pane.Children.OfType<LayoutDocument>().Select(d => d.ContentId ?? "?")));
+        return string.Join("|", panes);
+    }
+
+    private void RaiseWhenTheViewArrangementChanged()
+    {
+        // A handler that renders would come straight back through here; one pass per change.
+        if (_rendering || _raisingArrangementChanged || ViewArrangementChanged is null)
+        {
+            return;
+        }
+
+        var signature = ViewArrangementSignature();
+        if (signature is null || string.Equals(signature, _lastSeenArrangement, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        // Recorded BEFORE the raise: the handler reconciles the model to this arrangement, so this is
+        // now what the adapter has seen, whether the reconcile accepted it or refused it. Recording it
+        // afterwards would re-raise on every layout pass for a view we cannot map.
+        _lastSeenArrangement = signature;
+
+        _raisingArrangementChanged = true;
+        try { ViewArrangementChanged.Invoke(this, EventArgs.Empty); }
+        finally { _raisingArrangementChanged = false; }
     }
 
     // Selects each pane's active tab from the model AFTER the layout is attached — AvalonDock resets a
