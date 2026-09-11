@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T01:54:47Z",
+  "generated": "2026-09-11T02:00:38Z",
   "audit": [
     {
       "actor": null,
@@ -11174,6 +11174,44 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "abd52160245dfdde1cf62ed71f88a4e6efa49fa6",
         "short": "abd521602",
+        "branch": "feature/composer",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M273417NTG3RRWZ69BE0A2YB",
+      "shortname": "F4 addendum — the C18 manifest-to-notices cross-check the hash gate cannot see",
+      "datetime": "2026-09-11T02:00:37Z",
+      "session": "conductor-front-door-f4",
+      "prompt": "Close C18's Fails-if: any provenance.packages[].name@version in the manifest absent from THIRD-PARTY-NOTICES.md.",
+      "summary": "The hash gate pins bytes; it cannot see whether the MIT notice obligation was discharged, because a notices file is prose to it. This is the half that goes stale the moment the package set changes — which is exactly what F4 did, 26 packages to 24. Checked both directions: a package in the manifest and not in the notices is an undischarged obligation, and a package in the notices and not in the manifest is a notice for something that is not shipped. Also asserts the production pin is NOT the spike's ee3d19a4 (Ruling 33), C7's narrowing, and C19's advisory record plus its wired CI steps. Final measurement: Core 2205 = portable 2052 + non-portable 153, App 493.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Claude Code",
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "tests/AiDe.Core.Tests/Composer/TheVendoredBundleIsPinnedAndNoticedTests.cs"
+      ],
+      "tags": [
+        "conductor",
+        "front-door",
+        "composer",
+        "supply-chain"
+      ],
+      "outcome": "success",
+      "goal": "Give C18's second half an oracle: every package in the F4 manifest is named with its version in THIRD-PARTY-NOTICES.md, and the notices name nothing the manifest does not ship.",
+      "done_when": "The cross-check runs both directions, the production pin is asserted not to be the spike's, and C7's narrowing and C19's record are checked from the manifest.",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "2de3ecc5850652221665b4da6351e5097e8e2da5",
+        "short": "2de3ecc58",
         "branch": "feature/composer",
         "pushed": true
       }
