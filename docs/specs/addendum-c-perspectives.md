@@ -163,12 +163,12 @@ number at filing — this document cites none until one exists, which is what
 
 | # | Superseded clause (verbatim, with its line) | What supersedes it | Proposed ruling (to file) |
 | --- | --- | --- | --- |
-| S-1 | Addendum A `:234` (R15 b2): *"a T2 goal block missing a CT19 field cannot send (field-level error)."* — as it applies to **fan-out cap, budget and tier** | Fan-out cap and budget are **session settings with defaults** (set in the New Session sheet and editable in session settings), never mandatory per-prompt fields; a goal block **inherits** them. **Tier is included by inference** — the operator wrote *"budget, cap etc."* and tier is this document's reading of "etc." **[Inferred]**; PR-A puts it to the Owner as a question, since CT19 treats tier as per-turn. No per-prompt override: the settings are *"intrinsic to the session settings"* (verdict 2), and a second place to set one quantity is derive-don't-store's defect (the Simplifier's finding). The gate on **goal / done-when** stands (not-in-scope warns, per B `:176`), but those are **derived and prefilled** from the conversation and confirmed by the send itself (US-C13), not typed into mandatory boxes. | **PR-A** — session-level settings |
+| S-1 | Addendum A `:234` (R15 b2): *"a T2 goal block missing a CT19 field cannot send (field-level error)."* — as it applies to **fan-out cap, budget and tier** | Fan-out cap and budget are **session settings with defaults** (set in the New Session sheet and editable in session settings), never mandatory per-prompt fields; a goal block **inherits** them. **Tier is included by inference** — the operator wrote *"budget, cap etc."* and tier is this document's reading of "etc." **[Inferred]**; PR-A puts it to the Owner as a question, since CT19 treats tier as per-turn. No per-prompt override: the settings are *"intrinsic to the session settings"* (verdict 2), and a second place to set one quantity is derive-don't-store's defect (the Simplifier's finding). The gate on **goal / done-when / not-in-scope** stands (all three refused inline — NB-1 superseded B `:176`'s *warn*), but those are **derived and prefilled** from the conversation and confirmed by the send itself (US-C13), not typed into mandatory boxes. | **PR-A** — session-level settings |
 | S-2 | Addendum B `:135` (B4 goal-block row): fields *"goal, done_when, not_in_scope, tier, fan_out_cap, budget"* | The template's *content* fields are goal, done_when, not_in_scope; **tier, fan_out_cap, budget move to the session's settings** and the compiled prompt carries the session's values (so the conductor receives the same CT19 block, sourced differently). | PR-A |
 | S-3 | Addendum B `:183` (B6): *"Template form rendering: typed fields from frontmatter … required markers, hints inline, mention chips work inside fields, validation gates send with field-level errors — the CT19 gating from A5/R15 is now the general case, since goal-block is a template."* | The composer's primary surface is a **conversation** — one prompt editor; a template's structure is rendered **as derived, prefilled structure inline** (a collapsible outline the operator confirms or edits), not a form of boxes above a render. Field-level validation survives as inline marks on that outline. | **PR-B** — the composer is a conversation |
 | S-4 | Addendum B `:209` (R18 b4): *"Goal-block is re-based as template goal-block with zero behavior change to A5/R15 gating (regression-tested)."* | "Zero behavior change" no longer holds for the three session-setting fields (S-1/S-2); the regression tests re-scope to the content fields. | PR-A |
 | S-5 | Addendum B `:216` (R19 b2): *"Template picker renders any catalog template as a validated form; a required-field gap blocks send with a field-level error; view-compiled shows the exact outgoing text."* | "As a validated form" → as the inline derived structure of S-3; "required-field gap blocks send" stands for content fields only; "view-compiled shows the exact outgoing text" **stands**. | PR-B |
-| S-6 *(reaffirmed, not superseded)* | Addendum B `:184`: *"View compiled toggle shows exactly the text the conductor will receive. No hidden prompt assembly."* | **Kept as written** — a *toggle* is on demand. The as-built composer renders the compiled prompt **permanently** in a plain `TextBox` below the fields (`ComposerSurface.cs:25-27,77-107` **[Verified]**), which is what the operator saw; verdict (3) restores B:184's own words: compiled text **on demand** (collapsed by default; a preview or a diff against the previous send), never a permanently rendered block. | — (no ruling needed; a finding for the composer slice) |
+| S-6 *(reaffirmed, not superseded)* | Addendum B `:184`: *"View compiled toggle shows exactly the text the conductor will receive. No hidden prompt assembly."* | **Kept as written** — a *toggle* is on demand. The as-built composer renders the compiled prompt **permanently** in a plain `TextBox` below the fields (`ComposerSurface.cs:25-27,77-107` **[Verified]**), which is what the operator saw; verdict (3) restores B:184's own words: compiled text **on demand** (collapsed by default; a preview — no diff, no summary, per §C4), never a permanently rendered block. | — (no ruling needed; a finding for the composer slice) |
 | S-8 *[Inferred — an extension of verdict (3) to the conductor's round-trips, not the operator's words]* | Addendum B `:187` (B6): *"Conductor round-trips: the conductor may answer a free-form message with a drafted template (a filled change-order, a goal block) — it arrives as a reviewable form in the composer, exactly like an assist result."* | "As a reviewable form" → as the **inline derived structure** of S-3 laid over the reply's text in the composer; reviewable, editable, sent by the operator's explicit act. The rest of the clause (the ruling-request template auto-applied to Owner convenings) stands. | PR-B |
 | S-9 *(kept intact)* | Addendum B `:181` (B6): *"Shape control in the composer header: Free-form \| Template picker (searchable, grouped by intent, recents first). Per block; switching shapes preserves content …"* | **Not superseded.** The shape control stays in the composer header; choosing a template renders its fields as the inline derived structure (S-3), never as a form of boxes. The twelve built-in templates (B4) remain reachable from it. | — |
 | S-7 *(kept intact)* | Ruling 42 (`note-front-door-rulings-41-42` §Ruling 42): the lease is **derived** from the goal block's mentions and never operator-typed; `LeaseDerivation.Patterns` derives from `@mentions` in the compiled text (`LeaseDerivation.cs:49-50` **[Verified]**) | **Not superseded.** The UX change is *how the mention is elicited and explained*: the refusal at `ComposerSurface.cs:289-292` **[Verified]** says a write scope could not be derived but not that **only an `@path` mention derives one** — US-C13 requires the message to say so and to offer the mention picker. Who computes the glob is unchanged. | — |
@@ -399,7 +399,8 @@ types the model prescribes.
 structure** may use the assist provider Addendum B §B5 already configures (R21) — an *Advisory*
 tier: a derivation the operator confirms, never a gate that sends on its own. **No derivation of
 any kind exists today** — grep of `src/AiDe.App/Workbench/Composer`, `src/AiDe.Core/Presentation/Composer`
-and `src/AiDe.Core/Sessions` for `heuristic|derive|infer|promote` finds nothing **[Verified]** (an
+and `src/AiDe.Core/Sessions` for `heuristic|infer|promote` finds nothing, and every `derive` hit is the lease
+(`LeaseDerivation.cs`) or a doc comment — none derives the goal-block structure **[Verified — re-run at the gate's third pass]** (an
 earlier draft of this paragraph said the composer "already has" heuristics; the Test Architect caught
 the unmarked claim). **The deriver is therefore named-and-deferred as D-5 (§A5)**: the first composer
 slice ships the conversation with **empty, editable** Goal / Done-when / Not-in-scope lines (a
@@ -733,16 +734,18 @@ superseded on page one] [Ruling 42 intact]`
   *derived* mark (**red today** — no deriver seam exists); with **no deriver**, the lines are empty,
   editable, and carry the *"fill in, or add an assist provider in settings"* copy. The editor's
   rendered height at the startup width is **P-12**.
-- **Given** a T2 session, **When** the operator sends with an empty Goal or Done-when after
-  derivation, **Then** send is refused with an **inline mark on every gap at once** and a one-line
-  reason per line — the CT19 discipline for *content* fields survives (S-1); an empty Not-in-scope
-  **warns and does not block** (Addendum B `:176` shows it as *"flagged … or send will warn"*)
+- **Given** a T2 session, **When** the operator sends with an empty Goal, Done-when or Not-in-scope
+  after derivation, **Then** send is refused with an **inline mark on every gap at once** and a one-line
+  reason per line — the CT19 discipline for *content* fields survives (S-1); **an empty Not-in-scope is
+  refused inline, not warned** — `SpawnContract.Validate` refuses a blank boundary by design
+  (`GoalBlock.cs:124-132`, *"CT19 requires the boundary to be written"*), so Addendum B `:176`'s
+  *"or send will warn"* is superseded here (NB-1, gate pass 3)
   (*falsifier:* a send with no done-when on a T2 session succeeds; a modal error; two serial
   refusals for two gaps). **Send is the confirmation** of the derived lines — there is no separate
   confirm act; the *derived* marks clear on send (or on an inline edit), so a prompt at defaults is
   one action (§B7 zero per-prompt settings). **Oracle — headless.** The refusal half is **green
   today** (the form engine already refuses a gap); the **red-first half is the positive send**: a
-  draft with Goal and Done-when filled and **no tier, fan-out or budget typed anywhere** sends, and
+  draft with Goal, Done-when **and Not-in-scope** filled and **no tier, fan-out or budget typed anywhere** sends, and
   the compiled block carries the session's tier — today it fails with *"'tier' is required"*
   (`ComposerSurface.cs:725-735` marks all six `Required: true` **[Verified — reviewer-read]**).
 - **Given** the session's tier, fan-out cap and budget are session settings (S-1/S-2), **When** the
@@ -776,7 +779,8 @@ superseded on page one] [Ruling 42 intact]`
   **Then** the template's fields render as the inline derived structure, prefilled where the
   conversation text supplies a value and empty-editable where it does not; content fields gate the
   send inline; the shape badge on the send row names the template (*falsifier:* a form of boxes; a
-  template whose fields are unreachable from the composer).
+  template whose fields are unreachable from the composer). **Oracle — headless:** the picker's
+  selection reaches the surface's descriptor set and the rendered field names equal the template's.
 - **Given** the rendered composer in the dark theme, **Then** every ink/ground pair in it (the
   editor, the derived structure, the write-scope line, the disclosure, the status line) is a
   `DESIGN.md` token pair meeting AA — proven by the census of §C7, which lists the composer explicitly
@@ -825,7 +829,7 @@ stays empty; the send is a Message shape with no goal block — never a block `V
 (refusal names `@path`) · two mentions (two lease lines) · a mention with trailing punctuation
 (`LeaseDerivation` strips it — `LeaseDerivation.cs:52-53`) · T0 session whose settings carry a fan-out cap
 (warning on the inherited line) · compiled disclosure opened then edited (the disclosure updates; the editor does
-not shrink) · no assist provider configured (structure derived heuristically or left for the operator)
+not shrink) · no assist provider configured (lines empty and editable with the *"fill in, or add an assist provider in settings"* copy — US-C13's no-deriver oracle)
 · **contrast:** the census run in dark and light, over every perspective with every default surface
 open and the session document showing each canvas mode.
 
@@ -857,7 +861,7 @@ change as the behaviour (test names **[Verified — files read]**):
 | `MainMenuTests.EveryMenuItemShowsItsKeyboardChord` | it asserts a chord string on every item, bound or not | "every item with a **bound** gesture shows it; an item whose gesture is not bound shows none" (US-C10 b3) |
 | `SurfaceContentTests.TheJoinsSurfaceIsBuilt_AndIsInTheDefaultLayout`, `TheSessionsSurface_IsInTheDefaultLayout`, `TheBoardSurface_…`, `TheLeaderboardSurface_…`, `TheLedgerSurface_…` | assert presence in one `Layout.Default()` (`LayoutModel.cs:130`) | "reachable from the derived menu of the perspective that admits it" + the per-perspective default tables of §B4 (US-C4, US-C6, US-C8) |
 | `ExplorerModeTests.Toggle_FlipsModeAndRaisesModeChanged` (and its siblings on the two-valued presenter) | the set is three-valued; "toggle" becomes "activate a named perspective", and activating the active one is a no-op | US-C1's activation rule; Escape-from-Explore reads the previous-perspective slot |
-| `TheComposerRendersItsFieldLevelErrorsTests.ARequiredFieldGapBlocksSendWithAFieldLevelErrorThatIsOnTheScreen` (asserts all six fields on screen); `TheComposerIsOneValidationMechanismTests.Ruling26b_TheFormEngineAndTheSpawnContractNameOneFieldSetForEveryInput` (form set == contract set); `GoalBlockTemplateTests.TheTemplatesFieldsAreTheSameSetAsGoalBlockFields` — **[Verified — files exist]** | tier / fan-out cap / budget are no longer per-prompt fields (S-1, S-2, S-4): the form set shrinks to the content fields while the contract set keeps six, sourced from session settings | content fields (goal, done-when) gate a send inline, not-in-scope warns; the contract's six are satisfied by content + session settings; **the new red-first test is the positive send** (US-C13 b3's oracle): a content-filled draft with nothing typed for tier/fan-out/budget sends and the compiled block carries the session's tier — fails today with "'tier' is required" |
+| `TheComposerRendersItsFieldLevelErrorsTests.ARequiredFieldGapBlocksSendWithAFieldLevelErrorThatIsOnTheScreen` (asserts all six fields on screen); `TheComposerIsOneValidationMechanismTests.Ruling26b_TheFormEngineAndTheSpawnContractNameOneFieldSetForEveryInput` (form set == contract set); `GoalBlockTemplateTests.TheTemplatesFieldsAreTheSameSetAsGoalBlockFields` — **[Verified — files exist]** | tier / fan-out cap / budget are no longer per-prompt fields (S-1, S-2, S-4): the form set shrinks to the content fields while the contract set keeps six, sourced from session settings | content fields (goal, done-when, not-in-scope) gate a send inline; the contract's six are satisfied by content + session settings; **the new red-first test is the positive send** (US-C13 b3's oracle): a content-filled draft with nothing typed for tier/fan-out/budget sends and the compiled block carries the session's tier — fails today with "'tier' is required" |
 
 ### A13. Runtime Proof Pack items (named now, measured at the slice)
 
@@ -1157,7 +1161,7 @@ flowchart TD
   E -->|no| F[Write-scope line: elicitation text; Send → refusal names @path and offers the picker — Ruling 42 intact]
   F -->|add a mention| E
   E -->|yes| G[Write-scope line: 'src/…/** — from your mention']
-  G -->|open Compiled disclosure| H[Exactly the outgoing text; diff vs previous send; editor does not shrink]
+  G -->|open Compiled disclosure| H[Exactly the outgoing text; no diff, no summary; editor does not shrink]
   H --> G
   G -->|Send Ctrl+Enter| I{T2 and a content field empty?}
   I -->|yes| J[Inline marks on every gap at once; one-line reason each; nothing sent]
@@ -1460,7 +1464,7 @@ active one checked, and no menu whose every item would be absent.
     chord handler binds them; no copy and no palette row names an unbound keystroke.
 - **Performance (U17):** retained switch p95 ≤ 150 ms (P-8); no rebuild (US-C2); the drop-with-report
   path never delays the first paint of the Coding host by more than the report's own string
-  formatting; the derived structure's heuristic derivation runs off the UI thread and never blocks
+  formatting; the derived structure's derivation, when a deriver exists (D-5), runs off the UI thread and never blocks
   typing (the assist provider's latency is Addendum B's budget).
 - **Craft floor (CD1–CD20):** the shell is XAML and **no gate scans it** (inventory §6 **[Verified]**).
   `ui-craft-gate.py` over D1's mockup is `/ui-design`'s own Stage-3 floor, not a proof this spec
@@ -1606,8 +1610,8 @@ operator's own decisions, quoted by line, awaiting filing as rulings.)
 - **[Flagged] Flow 3 has no live source today**: the Explorer canvas is not bound to the "Open as…"
   handler (`BindCanvas` binds docked canvases only, per the UX-IA reviewer **[Inferred — not
   independently re-verified]**), so the routing rule's first real exercise is at the slice.
-- **[Flagged] Derivation quality of the goal-block structure** (US-C13): with no assist provider the
-  heuristic derivation may yield empty lines for terse prose; the state is designed (empty, editable)
+- **[Flagged] Derivation quality of the goal-block structure** (US-C13): with no assist provider there is
+  no derivation at all and every line is empty (D-5); the state is designed (empty, editable)
   but the hit rate is unmeasured — instrument it (derived vs edited vs emptied per send) from the
   first slice.
 - **[Flagged] The census's WebView2 half**: computing composed DOM colours through the host is the
@@ -1714,3 +1718,44 @@ Product Strategist reviewed it.**
 Test-Architect hard veto and the Simplifier's soft veto are HELD-CONDITIONS-APPLIED, un-reconfirmed
 — the conductor decides whether to spend a third pass.** Authors did not self-clear any veto. The
 spec stays `in-review` until the Test Architect confirms N1–N3 and the Owner files PR-A/PR-B.
+
+**Pass 3 (bounded, spent by the conductor on the cap's defect signal — the new material was two
+operator directives, not a stuck loop).** Scope: TA N1–N3; Simplifier (a), (b). Read-only reviewers,
+concurrent.
+- *Simplifier:* **(a) CONFIRMED** (D-5 `:322-327`, US-C13 `:721-723`, `:404-408`; no other story
+  needs the deriver; the target is phased, not redefined — and the phasing is within the spec's
+  remit: it is forced by the AI Systems Engineer's standing veto on a model-backed capability with
+  no eval, not a re-reading of the operator). **(b) CONFIRMED** (`:751`, `:1170`, `:1233`, `:1372`;
+  no per-prompt override survives anywhere). One leftover from the diff-expander cut (`:171`, Flow 6
+  node H) — swept in this revision. **SOFT VETO CLEARED.**
+- *Test Architect:* **N2 CONFIRMED** (`SpawnContract.Validate`, `GoalBlock.cs:127-155`, no branch on
+  tier — Verified); **N3 CONFIRMED** (all three tests exist; the positive send can fail —
+  `ComposerSurface.cs:725-735` builds every descriptor `Required: true`). **N1 HELD** on two
+  sentences: (a) the `[Verified]` grep at §A6 returned four `derive` hits (`LeaseDerivation.cs`,
+  two doc comments, `SessionId.cs`) — none load-bearing, but a Verified label on a check that fails
+  is N1's own class recurring; (b) §A10's boundary row and the residual bullet still assumed a
+  heuristic deriver. **NEW BLOCKER NB-1:** *"an empty Not-in-scope warns and does not block"* had no
+  path to green — `Validate` refuses a blank boundary by design (`GoalBlock.cs:124-132`,
+  `GovernedLaneSourceTests.AnIncompleteGoalBlockOpensNothing`), so the positive-send test either
+  filled the field and proved nothing about the warn clause, or left it empty and could not pass.
+  Smallest fix taken: Not-in-scope is the **third gating content field**; Addendum B `:176`'s *warn*
+  is superseded here. N6 partial: the template-picker bullet had no oracle label — added.
+  **Resolution applied by the conductor (not the author) exactly as prescribed:** §A6 grep sentence
+  now states what the grep returns; §A10 row and the residual bullet name the null-deriver state;
+  US-C13 refuses all three content gaps inline and the positive send fills all three; §A12's row and
+  S-1 agree; the template-picker bullet carries *Oracle — headless*. **Veto status: HELD pending the
+  TA's bounded re-confirmation of these substitutions** (a fourth read of five sentences, not a fourth
+  pass). Authors did not self-clear.
+- *Test Architect, bounded re-read of the five substitutions:* N1(a) **CONFIRMED** (grep re-run:
+  `heuristic|infer|promote` exit 1; six `derive` hits, all the lease or doc comments); N1(b)
+  **CONFIRMED** (`:831-832`, `:1613-1614`, `:1467`); NB-1 **CONFIRMED** — the positive send now has a
+  path to green against `GoalBlock.cs:131-157`, and no "Not-in-scope warns" survives in Parts A–C
+  (the `NotInScope` check sits at `:133`, one line past the `:124-132` cited — citation precision,
+  not a hold); N6 **CONFIRMED** (the picker oracle fails on `change-order`'s five fields if
+  `ForTemplate` does not replace the descriptors); the record above **CONFIRMED** against the diff.
+  **HARD VETO CLEARED.** Runtime Proof Pack items (§A13) stay named-now-measured-at-the-slice, where
+  the Test Architect re-convenes.
+
+**Verdict after pass 3: all four vetoes cleared (UX-IA, UX-A11y at pass 2; Simplifier, Test
+Architect at pass 3). Status moves to `accepted` when the Owner files PR-A / PR-B and rules on
+§R rows 3, 7, 8, 9, 17 — the spec cites numbers only after they exist.**

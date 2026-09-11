@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T18:40:36Z",
+  "generated": "2026-09-11T18:55:24Z",
   "audit": [
     {
       "actor": null,
@@ -11801,6 +11801,38 @@ window.AUDIT_DATA = {
         "short": "5d8d51e38",
         "branch": "feature/addendum-c",
         "pushed": null
+      }
+    },
+    {
+      "id": "al-01M28X63ZKE60ASBWY3XE9C788",
+      "shortname": "specify-addendum-c-gate-pass-3",
+      "datetime": "2026-09-11T18:55:23Z",
+      "session": "addendum-c-chain",
+      "prompt": "Bounded third pass on spec-addendum-c-perspectives: Simplifier confirms (a) D-5 deferral and (b) the per-prompt override cut; Test Architect confirms N1-N3.",
+      "summary": "Simplifier cleared (a),(b); one leftover diff-expander reference swept. TA confirmed N2, N3; held N1(a) a [Verified] grep that failed its own check (four derive hits, none load-bearing), N1(b) a boundary row assuming a heuristic deriver, and NEW BLOCKER NB-1: 'empty Not-in-scope warns and sends' had no path to green because SpawnContract.Validate refuses a blank boundary by design. Conductor applied the prescribed text (Not-in-scope is the third gating content field; Addendum B :176's warn superseded), TA re-read the five sentences: all CONFIRMED, veto CLEARED. Authors did not self-clear.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/addendum-c-perspectives.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Clear the two vetoes the cap left held on Addendum C by one bounded pass each",
+      "done_when": "Simplifier (a),(b) and TA N1-N3 confirmed or held with clearing text; substitutions applied by the conductor, re-confirmed, committed",
+      "tier": "T2",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "4b866670560195bcc9a0f7446390ad4759f43a7e",
+        "short": "4b8666705",
+        "branch": "feature/addendum-c",
+        "pushed": true
       }
     }
   ],
