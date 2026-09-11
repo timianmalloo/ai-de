@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T17:26:28Z",
+  "generated": "2026-09-11T17:33:48Z",
   "audit": [
     {
       "actor": null,
@@ -11656,6 +11656,38 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "32cffcaa949c57e10c143683588af9f54dffe917",
         "short": "32cffcaa9",
+        "branch": "conductor/addendum-c",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M28RGPG1E9BYRWZF02AKPWQX",
+      "shortname": "r0-owner-rulings-50-55",
+      "datetime": "2026-09-11T17:33:47Z",
+      "session": "conductor-addendum-c",
+      "prompt": "Node R0 of plan-addendum-c-modes: six questions to the Owner (fable) with verified evidence — Q1 vocabulary, Q2 phasing vs F5, Q3 ADR-0017, Q4 UC2 vs UC3 graph, Q5 the 80% case, Q6 anything missed.",
+      "summary": "Ruling 50: the concept is Perspective (Coding, Explore, Architecture; Tests reserved); canvas mode and primary view mode keep their names. Ruling 51: F5 stands untouched; Addendum C spec in parallel, code from main after F5 merges. Ruling 52: ADR-0017 retained AND amended — a perspective is a primary view mode, its body may be an allow-listed docking host (Coding = today's host, Architecture = a second host), Explore stays full-window; second-host no-rebuild test owed (Inferred). Ruling 53: one graph substrate, two surfaces, no in-surface toggle. Ruling 54: build order Coding, mechanism, Explore-unchanged, Architecture-existing-surfaces; entry-points, data-flow, ER, bicep-derived diagrams named-and-deferred; UC4 non-goal. Ruling 55: five canvas modes (Terminal is the hybrid), derived menus, New-session in every perspective, Coding layout resolves the Explore/Domain/Provenance duplication. Checkpoint 2 discharged with a third outcome the plan had not named.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Owner rules on Addendum C's vocabulary, phasing, ADR-0017, graph substrate, priority and page-one facts before any spec is written",
+      "done_when": "Rulings 50-55 filed verbatim with evidence in docs/notes/addendum-c-council-rulings.md; plan checkpoints 1 and 2 discharged",
+      "tier": "T2",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "9927192bcb3fc1999e86780f94479758417dd35d",
+        "short": "9927192bc",
         "branch": "conductor/addendum-c",
         "pushed": null
       }

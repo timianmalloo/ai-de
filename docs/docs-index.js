@@ -6601,6 +6601,60 @@ window.DOCS_INDEX = {
       "sourceSha256": "bf5ead48ffaf206188af85737793da995de0409692d2133165110d2891a55a73"
     },
     {
+      "id": "note-addendum-c-council-rulings",
+      "path": "docs/notes/addendum-c-council-rulings.md",
+      "title": "Decision note — Rulings 50–55: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, and page one",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "Six rulings the Owner issued before any Addendum C spec was written, on the evidence the conductor brought at node R0 of plan-addendum-c-modes. They fix the vocabulary (Perspective), the phasing (F5 untouched; code after F5 merges), ADR-0017's fate (retained and amended), the graph model (one substrate, two surfaces), the build order under the operator's 80% case, and four page-one facts a spec written without them would get wrong.",
+      "tags": [
+        "decision-note",
+        "ruling",
+        "conductor",
+        "addendum-c",
+        "perspective",
+        "ui",
+        "docking",
+        "explorer"
+      ],
+      "links": [
+        {
+          "to": "plan-addendum-c-modes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-knowledge-exploration",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-uml-erm-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-front-door-council-rulings",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "cba1de1b8eb6feaf5e9f4ade3c4bf15bfd4ab18c6f28b7e7d69b0d549d32b8ea"
+    },
+    {
       "id": "note-front-door-rulings-45-48",
       "path": "docs/notes/front-door-rulings-45-48.md",
       "title": "Decision note — Rulings 45–48: Terminal leaves Phase 1, edge ownership, maximize-on-create, craft-gate corpus",
@@ -13186,5 +13240,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "4c5e4e6978239f122ea115e0ce989da45b296950b1fa4d2a5bf6cde7869a2033"
+  "graphSha256": "c30ceeceeaf459420bcaac6ff12dd64d905d92698202971cf1f40a2444ec0fe0"
 };
