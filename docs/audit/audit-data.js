@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T14:06:11Z",
+  "generated": "2026-09-11T14:08:53Z",
   "audit": [
     {
       "actor": null,
@@ -11346,6 +11346,73 @@ window.AUDIT_DATA = {
       "summary": "Elevate review of the session front door. Six of seven feedback items are unimplemented spec or measured defect, not taste. Item 4's systemic cause named at the token level: only 6 implicit WPF styles exist, none for a text or input control, so 18 base types fall back to platform light defaults - 11 measured failing pairs, worst 1.15:1, plus the inverse at 1.22:1 caused by a previous partial fix. Composer: CodeMirror is vendored and navigated to but Configure has zero callers and host.init/editor.ready deadlock, so it never initializes. Task class is a free-text box for a cohort key where a typo costs more than a default. Explore/Provenance/Domain are one class instantiated three times, and the operator's proposed fix keeps the wrong one. Rail: 3 of 4 icons inert, the 4th is the only door to Explorer mode. Console-only mode strip designed per Ruling 45. Rubric variant 5 majors -> 0 in 2 passes; cap did not fire. Nine false claims in the brief reported.",
       "tags": [],
       "tool": null
+    },
+    {
+      "id": "al-01M28CR4EKFA345WZDM78BKNX2",
+      "shortname": "optimize-graph-ui-and-windowing (corrected capture)",
+      "datetime": "2026-09-11T14:08:08Z",
+      "session": "conductor-ui-windowing",
+      "prompt": "Correct the capture on the optimize-graph entry that turned main red.",
+      "summary": "SUPERSEDES al-01M289JH887ES3D4RAWCX0Q8YH, which recorded the optimize-graph run for the UI and windowing tracks with NO SIGNALS OBJECT and no docs/proof artifact -- so it scored Not Scored for want of a verification path, and it turned main's CI red on the audit-capture ratchet.\n\nThe gate's own message is the correction and it is exactly right: \"If nothing was verified, say so: --signal-verification-path false is capture, silence is not.\"\n\nWHAT THE SUPERSEDED ENTRY SHOULD HAVE SAID ABOUT ITSELF. A planning run has a verification path and it is not a test: the plan's claims were checked against the code before dispatch, and two of the three edges the conductor asserted were DISPROVED by that check -- DockRoundedTabs.cs is 33 lines of styling, so the assumed UI/windowing contention on DockThemeAccents.cs did not exist, and F5's Proof Pack is a snapshot citing its sha, so it never needed to precede the UI work. A third assertion, that the Owner ruling gated the UI track, was narrowed to one of seven items. That is a verification path that was executed and that changed the artifact.\n\nWHAT WAS NOT VERIFIED, stated rather than left silent: the plan's SPAN claim rests on one measured figure (N7 at 2,404 s, from Phase 1's ledger) and otherwise on node shapes that are Inferred; no acceptance criterion was met by the planning run itself, because a plan is not acceptance; and no regression was possible, since nothing executable changed.\n\nThis entry also carries the goal and done-when the original omitted.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "docs/plans/ui-and-windowing.md"
+      ],
+      "tags": [
+        "conductor",
+        "plan",
+        "correction",
+        "dc-119"
+      ],
+      "outcome": "success",
+      "goal": "Plan three tracks as one graph so UI and windowing proceed without contending, while F5 keeps moving",
+      "done_when": "Wave 1 dispatched at width 3 with a contracted fan-out, the loop bounded by a variant, and every deleted edge justified against the code",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false,
+        "regression": false
+      },
+      "supersedes": "al-01M289JH887ES3D4RAWCX0Q8YH"
+    },
+    {
+      "id": "al-01M28CRW87QFVF13NH7SNMN055",
+      "shortname": "ui-design-session-front-door (corrected capture)",
+      "datetime": "2026-09-11T14:08:32Z",
+      "session": "ui-elevation-node-u1",
+      "prompt": "Correct the capture on node U1's ui-design entry, which recorded no goal or done_when.",
+      "summary": "SUPERSEDES al-01M28B0R807NPKC605J54T6S09, node U1's ui-design run, which recorded no goal and no done_when -- so it could never become a Work Episode and nothing could score or observe it (AL5b). Together with the conductor's own uncaptured planning entry it turned main's CI red on the audit-capture ratchet.\n\nThe goal and done-when below are NOT reconstructed from the node's output: they are the ones the conductor set in the node's brief, restated verbatim in substance. The node did not invent its goal and this entry does not invent one for it.\n\nWHAT THE RUN PRODUCED, so the capture is not merely well-formed: a ranked plan of sixteen items across three tiers, the contrast defect root-caused at the TOKEN level with eleven failing pairs measured rather than described, and the composer diagnosed as NEVER INITIALIZING -- Configure with zero callers and a host.init/editor.ready deadlock -- which resolved two separate pieces of operator feedback into one defect.\n\nVERIFICATION PATH, and it was executed: the eleven failing contrast pairs were measured against the WCAG floors with their sites cited; the palette was exonerated by measurement (text on surface 14.98:1); and the rubric loop ran to its floor in two passes with the variant recorded at each. ACCEPTANCE was not met and that is the honest value: this node was design only, read-only on src/, so nothing it produced is acceptance of a behaviour -- node U2 builds to it. No regression was possible for the same reason.\n\nAND THE FINDING THAT MATTERS MOST is about a prior review rather than the surface: the previous review of this same rail PASSED it -- tooltips, targets, keyboard, contrast \"~5.1:1/~7.6:1\", verdict PASS -- and never asked whether the buttons did anything. Those contrast figures came from the MOCKUP'S readout, not the app. A surface reviewed, passed, and still carrying four dead icons.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "docs/reviews/ui-operator-feedback.md",
+        "docs/mockups/session-front-door.html",
+        "DESIGN.md"
+      ],
+      "tags": [
+        "ui",
+        "ui-design",
+        "correction",
+        "operator-feedback"
+      ],
+      "outcome": "success",
+      "goal": "Elevate the UI against seven pieces of operator feedback: direction in words, the design system, a mockup with its hard states, and a rubric critique ending in a ranked plan",
+      "done_when": "A ranked plan exists, the contrast defect is root-caused at the token level with its failing pairs measured, and the rubric loop has reached zero major findings without the cap firing",
+      "tier": "T2",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false,
+        "regression": false
+      },
+      "supersedes": "al-01M28B0R807NPKC605J54T6S09"
     }
   ],
   "changes": [
