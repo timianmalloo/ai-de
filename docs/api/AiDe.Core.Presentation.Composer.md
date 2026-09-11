@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation.Composer: 28 types, 69 members, 86% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation.Composer: 30 types, 71 members, 86% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation.Composer`
 
-**28 public types · 69 public members · 86% documented.**
+**30 public types · 71 public members · 86% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -534,6 +534,7 @@ WebView2 event handler is an unhandled exception on the UI thread.
 | `ComposerMessageRouter(` | **(gap)** |
 | `long Dropped { get; private set; }` | How many messages were refused. Drops are counted, never recorded with their content. |
 | `bool IsReady { get; private set; }` | Whether the page has reported ready for this instance. |
+| `void ReplaceFields(IReadOnlyList<string> fieldIds)` | Re-mints the acceptable field set, after the host changed the form. |
 | `ComposerRouteResult Route(` | Routes one message. Never throws. |
 
 ### `ComposerMessageRouter(`
@@ -542,6 +543,16 @@ WebView2 event handler is an unhandled exception on the UI thread.
 - **`instance`** — The host-minted identifier for this composer surface.
 - **`fieldIds`** — Every field id the host minted. The page may only match one.
 - **`sink`** — Where accepted effects go.
+
+### `void ReplaceFields(IReadOnlyList<string> fieldIds)`
+
+Re-mints the acceptable field set, after the host changed the form.
+
+**Remarks.** **The host mints; the page matches — and that stays true when the form changes.** Choosing
+a template replaces the fields on screen, so the ids the page may address must be replaced
+too: an id from the previous form is an id the host no longer holds, and continuing to accept
+it would let a page write into a field that is not there. The stored revisions are cleared
+with them, because a revision is per field and the fields are new.
 
 ### `ComposerRouteResult Route(`
 
@@ -609,6 +620,35 @@ Appends one line per attachment to the machine-local reviewable record.
 
 **Remarks.** A blocked attach writes **one count line and nothing else** — no path, no basename, no
 size — because C21(d) binds Channel B exactly as it binds the committed channel.
+
+## `TemplatePickerRow`
+
+*record* — `ComposerTemplatePicker.cs`
+
+One card in the template picker, as the picker renders it.
+
+## `ComposerTemplatePicker`
+
+*class* — `ComposerTemplatePicker.cs`
+
+Projects a catalog into picker cards — headline, detail, badge, and the disabled rows.
+
+**Remarks.** **Nothing is silently dropped, and that is the reason this is a projection rather than a
+filter.** A template that failed load becomes a **disabled row carrying its error**, because
+a picker that hides a broken file makes the file invisible at exactly the moment somebody is
+looking for it.
+
+
+
+
+
+**The headline is `when_to_use` and the detail is `why`, verbatim.** Both are
+load-blocking in the catalog, so a row that got this far has them; transcribing or paraphrasing
+them here would be a second copy of text the twelve built-ins are byte-for-byte checked against.
+
+| Member | Summary |
+|---|---|
+| `IReadOnlyList<TemplatePickerRow> Rows(TemplateCatalog catalog)` | Every catalog entry as a card, in the catalog's own order. |
 
 ## `ComposerMessageKinds`
 

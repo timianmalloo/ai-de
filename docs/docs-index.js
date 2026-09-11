@@ -1471,7 +1471,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 38 members, 85% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 41 members, 86% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1484,7 +1484,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "96560def0b8b9547d443ec6151e4b931e7375f06bd0c31afd85f581935ed8cb4"
+      "sourceSha256": "7bc53910143c5cade98018527208c54efec0055b6408d09b00b46a1670641c6d"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -1746,7 +1746,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 28 types, 69 members, 86% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 30 types, 71 members, 86% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1759,7 +1759,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "38cb543526351c70761a19b3728869375ab0a7ee5e277dee1ca6f840fe103097"
+      "sourceSha256": "0e00afd6cdbfac78096f4196dbb0c95b8c5727ba26a3f14b445750cae81dbca3"
     },
     {
       "id": "api-aide-core-presentation-sessions",
@@ -12827,5 +12827,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "67c9cb7c098c92e61f88cb6610f3ed3bd0d5808990312bb70dcac64fb9db4c01"
+  "graphSha256": "1a21cc5f81bbb647d03831c0e3178aa86a9db6e57702bce6133dfb0304c34bbe"
 };

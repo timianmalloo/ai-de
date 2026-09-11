@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T01:28:14Z",
+  "generated": "2026-09-11T01:48:00Z",
   "audit": [
     {
       "actor": null,
@@ -11098,6 +11098,46 @@ window.AUDIT_DATA = {
         "short": "3603d5db4",
         "branch": "feature/composer",
         "pushed": null
+      }
+    },
+    {
+      "id": "al-01M272CKWZFS1XRENRFFCDBMCX",
+      "shortname": "F4 addendum — the template picker card, and the form re-mint that follows it",
+      "datetime": "2026-09-11T01:47:50Z",
+      "session": "conductor-front-door-f4",
+      "prompt": "Close the F4 clause 'Template picker renders any catalog template as a validated form; a required-field gap blocks send with a field-level error; the picker card shows when_to_use as headline and why as detail.'",
+      "summary": "Added ComposerTemplatePicker (Core) and wired it into the composer surface. A failed template is a DISABLED card carrying its error rather than a silent drop, and an override is badged with what it shadows. Choosing a card re-mints the field ids through ComposerMessageRouter.ReplaceFields, so an id from the previous form is one the host no longer holds — the same rule as 'the page may only match a host-minted id', applied to a form that changed under it. Measured after: App 493, Core 2193 = portable 2040 + non-portable 153; all twelve gates and the new advisory gate exit 0 bare.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Claude Code",
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "src/AiDe.Core/Presentation/Composer/ComposerTemplatePicker.cs"
+      ],
+      "tags": [
+        "conductor",
+        "front-door",
+        "composer",
+        "templates"
+      ],
+      "outcome": "success",
+      "goal": "Close F4's template-picker clause: render any catalog template as a validated form, with when_to_use as headline and why as detail, and a disabled card carrying its error.",
+      "done_when": "ComposerTemplatePicker projects every catalog entry, the surface renders the cards, choosing one re-mints the field ids, and all four measurements stay above their floors.",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-11T00:39:03Z",
+      "duration_seconds": 4127.0,
+      "git": {
+        "sha": "b87506e0bd8d033bd7e45d916395c3a7e5447c22",
+        "short": "b87506e0b",
+        "branch": "feature/composer",
+        "pushed": true
       }
     }
   ],

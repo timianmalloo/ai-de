@@ -101,6 +101,25 @@ public sealed class ComposerMessageRouter
     /// <summary>Whether the page has reported ready for this instance.</summary>
     public bool IsReady { get; private set; }
 
+    /// <summary>
+    /// Re-mints the acceptable field set, after the host changed the form.
+    /// </summary>
+    /// <remarks>
+    /// <b>The host mints; the page matches — and that stays true when the form changes.</b> Choosing
+    /// a template replaces the fields on screen, so the ids the page may address must be replaced
+    /// too: an id from the previous form is an id the host no longer holds, and continuing to accept
+    /// it would let a page write into a field that is not there. The stored revisions are cleared
+    /// with them, because a revision is per field and the fields are new.
+    /// </remarks>
+    public void ReplaceFields(IReadOnlyList<string> fieldIds)
+    {
+        ArgumentNullException.ThrowIfNull(fieldIds);
+
+        _fieldIds.Clear();
+        _fieldIds.UnionWith(fieldIds);
+        _revisions.Clear();
+    }
+
     /// <summary>Routes one message. Never throws.</summary>
     /// <param name="sourceUri">The frame's own URI, as WebView2 reported it.</param>
     /// <param name="json">The raw message body.</param>

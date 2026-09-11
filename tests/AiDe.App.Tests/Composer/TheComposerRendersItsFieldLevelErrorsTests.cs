@@ -125,6 +125,60 @@ public sealed class TheComposerRendersItsFieldLevelErrorsTests
     }
 
     [Fact]
+    public void ThePickerOffersEveryCatalogCardAndChoosingOneReMintsTheForm()
+    {
+        Sta.Run(() =>
+        {
+            var root = Path.Combine(Path.GetTempPath(), "aide-render", Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(root);
+
+            try
+            {
+                var surface = new ComposerSurface("composer:s-0002", "s-0002 — composer");
+                var catalog = TemplateCatalog.BuiltIn();
+
+                surface.Configure(
+                    new SessionConfig("s-0002", "second", "w-1", DateTimeOffset.UnixEpoch, ["claude-code"]),
+                    Context(root),
+                    ComposerFields.GoalBlock(),
+                    new AttachmentGate(root, new AttachmentFileReader(), new NeverAsked(), "Anthropic (Claude Code)", "max-personal"),
+                    catalog);
+
+                var staleId = surface.Fields[0].Id;
+
+                Assert.Equal(12, surface.TemplateCards.Count);
+                Assert.All(surface.TemplateCards, card =>
+                {
+                    Assert.False(string.IsNullOrWhiteSpace(card.Headline));
+                    Assert.False(string.IsNullOrWhiteSpace(card.Detail));
+                });
+
+                var chosen = catalog.Entries.First(e => e.IsEnabled);
+                surface.ChooseTemplate(chosen.Id);
+
+                Assert.Equal(ComposerShape.Template, surface.Draft.Shape);
+                Assert.Equal(chosen.Id, surface.Draft.TemplateId);
+                Assert.DoesNotContain(surface.Fields, f => f.Id == staleId);
+
+                // THE FORM IS RE-MINTED. A field id from the goal-block form is no longer one the host
+                // holds, so an update naming it reaches nothing — which is the same rule as "the page
+                // may only MATCH a host-minted id", applied to a form that changed under it.
+                surface.SetFieldText(staleId, 1, "written into a field that is not there");
+                Assert.Empty(surface.Draft.GoalValues);
+
+                // And a required field still blocks the send with a field-level error.
+                Assert.Null(surface.Send());
+                Assert.Equal(0, surface.Gate.SendCount);
+                Assert.NotEqual(string.Empty, surface.Status);
+            }
+            finally
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        });
+    }
+
+    [Fact]
     public void TheCompiledViewOnScreenIsTheWholePromptAndNotASummary()
     {
         Sta.Run(() =>

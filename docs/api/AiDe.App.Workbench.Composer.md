@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 38 members, 85% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 41 members, 86% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Composer`
 
-**9 public types · 38 public members · 85% documented.**
+**9 public types · 41 public members · 86% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -204,7 +204,10 @@ claim, and paste is handled inside the page by the editor that received it.
 | `string Status` | The last thing that happened, in a sentence. |
 | `ComposerMessageRouter? Router` | The router, once the page has been wired. Null before initialisation. |
 | `string CompiledView` | What the operator will read before sending: the whole compiled prompt. |
+| `IReadOnlyList<ComposerFieldDescriptor> Fields` | The fields the host has minted for the form on screen, in render order. |
 | `void Configure(` | Wires the host-side sources: the session's config, the run context, and the attach path. |
+| `IReadOnlyList<TemplatePickerRow> TemplateCards` | The picker cards currently offered, in catalog order. |
+| `void ChooseTemplate(string templateId)` | Binds the draft to a catalog template and re-mints the form (R15's validated form). |
 | `GovernedRunRequest? Send()` | The send gesture, host-owned. The button calls it; so does the accelerator handler. |
 | `bool OnAcceleratorKey(uint virtualKey, bool controlHeld, bool isKeyDown)` | Handles a WebView2 accelerator. Ctrl-Enter is the send, and it is marked handled so the page never sees it either (Security C11). |
 | `void MarkReady()` | **(gap)** |
@@ -227,6 +230,14 @@ Wires the host-side sources: the session's config, the run context, and the atta
 
 **Remarks.** Called by the shell after render, exactly as the canvas graph source is wired. Everything
 supplied here is host-owned; nothing in it can be influenced by the page.
+
+### `void ChooseTemplate(string templateId)`
+
+Binds the draft to a catalog template and re-mints the form (R15's validated form).
+
+**Remarks.** **The field ids are re-minted, not reused.** A new form is a new set of fields the host
+holds; an id from the previous form is one the host no longer has, and the router is told so
+rather than left accepting it.
 
 ### `GovernedRunRequest? Send()`
 

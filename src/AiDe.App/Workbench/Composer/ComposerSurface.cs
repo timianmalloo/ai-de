@@ -42,6 +42,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     private readonly TextBlock _status;
     private readonly Button _send;
     private readonly Button _attach;
+    private readonly ComboBox _templatePicker;
     private readonly ComposerSendGate _gate = new();
     private readonly ComposerDraft _draft = new();
     private readonly List<ComposerFieldDescriptor> _fields = [];
@@ -50,6 +51,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     private ComposerMessageRouter? _router;
     private AttachmentGate? _attachments;
     private ComposerSendContext? _context;
+    private TemplateCatalog? _catalog;
     private PromptTemplate? _template;
     private bool _attachEnabled;
     private int _blockedByAttachSetting;
@@ -85,6 +87,9 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         _attach.Click += (_, _) => OfferAttachment(PickFiles());
         ApplyAttachAffordance();
 
+        _templatePicker = BuildTemplatePicker();
+        DockPanel.SetDock(_templatePicker, Dock.Top);
+
         var bar = new DockPanel { Margin = new Thickness(12, 8, 12, 8) };
         DockPanel.SetDock(bar, Dock.Bottom);
         bar.Children.Add(_send);
@@ -98,6 +103,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         DockPanel.SetDock(footer, Dock.Bottom);
 
         var root = new DockPanel { LastChildFill = true };
+        root.Children.Add(_templatePicker);
         root.Children.Add(bar);
         root.Children.Add(footer);
         root.Children.Add(_view);
@@ -134,6 +140,9 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// <summary>What the operator will read before sending: the whole compiled prompt.</summary>
     public string CompiledView => _compiled.Text;
 
+    /// <summary>The fields the host has minted for the form on screen, in render order.</summary>
+    public IReadOnlyList<ComposerFieldDescriptor> Fields => _fields;
+
     /// <summary>
     /// Wires the host-side sources: the session's config, the run context, and the attach path.
     /// </summary>
@@ -146,7 +155,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         ComposerSendContext context,
         IReadOnlyList<ComposerFieldDescriptor> fields,
         AttachmentGate attachments,
-        PromptTemplate? template = null)
+        TemplateCatalog? catalog = null)
     {
         ArgumentNullException.ThrowIfNull(config);
         ArgumentNullException.ThrowIfNull(context);
@@ -155,7 +164,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
         _context = context;
         _attachments = attachments;
-        _template = template;
+        _catalog = catalog;
         _attachEnabled = config.AttachEnabled;
 
         _fields.Clear();
@@ -164,7 +173,44 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         _router = new ComposerMessageRouter(
             ComposerPageContract.Url, _instance, [.. _fields.Select(f => f.Id)], this);
 
+        _templatePicker.ItemsSource = catalog is null ? null : ComposerTemplatePicker.Rows(catalog);
+        _templatePicker.Visibility = catalog is null ? Visibility.Collapsed : Visibility.Visible;
+
         ApplyAttachAffordance();
+        RenderCompiledView();
+    }
+
+    /// <summary>The picker cards currently offered, in catalog order.</summary>
+    public IReadOnlyList<TemplatePickerRow> TemplateCards =>
+        _templatePicker.ItemsSource as IReadOnlyList<TemplatePickerRow> ?? [];
+
+    /// <summary>
+    /// Binds the draft to a catalog template and re-mints the form (R15's validated form).
+    /// </summary>
+    /// <remarks>
+    /// <b>The field ids are re-minted, not reused.</b> A new form is a new set of fields the host
+    /// holds; an id from the previous form is one the host no longer has, and the router is told so
+    /// rather than left accepting it.
+    /// </remarks>
+    public void ChooseTemplate(string templateId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(templateId);
+
+        var entry = _catalog?.Find(templateId);
+        if (entry is null || !entry.IsEnabled)
+        {
+            _status.Text = $"the template '{templateId}' is not one this catalog can offer";
+            return;
+        }
+
+        _template = entry.Template;
+        _draft.UseTemplate(templateId);
+
+        _fields.Clear();
+        _fields.AddRange(ComposerFields.ForTemplate(entry.Template!));
+        _router?.ReplaceFields([.. _fields.Select(f => f.Id)]);
+
+        PushInit();
         RenderCompiledView();
     }
 
@@ -318,6 +364,62 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         _lease.Text = patterns.Count == 0
             ? "Lease: not derivable until the draft names something"
             : "Lease: " + string.Join(", ", patterns);
+    }
+
+    /// <summary>
+    /// The template picker: one card per catalog entry, headline and detail, disabled rows included.
+    /// </summary>
+    /// <remarks>
+    /// <b>A card is <c>when_to_use</c> over <c>why</c>, and a failed template is a DISABLED card
+    /// carrying its error</b> — never a silent drop. The projection is
+    /// <see cref="ComposerTemplatePicker"/>'s, so what a card says is decided in a place a headless
+    /// test can read.
+    /// </remarks>
+    private ComboBox BuildTemplatePicker()
+    {
+        var picker = new ComboBox
+        {
+            Margin = new Thickness(12, 10, 12, 4),
+            DisplayMemberPath = null,
+            Visibility = Visibility.Collapsed,
+        };
+        AutomationProperties.SetName(picker, "Start from template");
+
+        var card = new FrameworkElementFactory(typeof(StackPanel));
+
+        var headline = new FrameworkElementFactory(typeof(TextBlock));
+        headline.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding(nameof(TemplatePickerRow.Headline)));
+        headline.SetValue(TextBlock.FontWeightProperty, FontWeights.SemiBold);
+        headline.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap);
+
+        var detail = new FrameworkElementFactory(typeof(TextBlock));
+        detail.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding(nameof(TemplatePickerRow.Detail)));
+        detail.SetValue(TextBlock.OpacityProperty, 0.75);
+        detail.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap);
+
+        var badge = new FrameworkElementFactory(typeof(TextBlock));
+        badge.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding(nameof(TemplatePickerRow.OverrideBadge)));
+        badge.SetValue(TextBlock.OpacityProperty, 0.6);
+
+        card.AppendChild(headline);
+        card.AppendChild(detail);
+        card.AppendChild(badge);
+        picker.ItemTemplate = new DataTemplate { VisualTree = card };
+
+        var containerStyle = new Style(typeof(ComboBoxItem));
+        containerStyle.Setters.Add(new Setter(
+            IsEnabledProperty, new System.Windows.Data.Binding(nameof(TemplatePickerRow.IsEnabled))));
+        picker.ItemContainerStyle = containerStyle;
+
+        picker.SelectionChanged += (_, _) =>
+        {
+            if (picker.SelectedItem is TemplatePickerRow { IsEnabled: true } row)
+            {
+                ChooseTemplate(row.Id);
+            }
+        };
+
+        return picker;
     }
 
     private void ApplyAttachAffordance()

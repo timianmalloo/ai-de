@@ -163,6 +163,26 @@ public sealed class TheComposerPageCarriesItsPolicyTests
     }
 
     [Fact]
+    public void TheMentionPickerIsCodeMirrorsOwnCompletionSourceAndNotABespokePopup()
+    {
+        var entry = File.ReadAllText(Path.Combine(
+            RepoRoot(), "vendor-src", "composer-bundle", "composer-entry.mjs"));
+
+        Assert.Contains("from \"@codemirror/autocomplete\"", entry, StringComparison.Ordinal);
+        Assert.Contains("autocompletion({ override: sources })", entry, StringComparison.Ordinal);
+
+        // The package is in the production input set rather than a claim about it.
+        var manifest = File.ReadAllText(Path.Combine(
+            RepoRoot(), "src", "AiDe.App", "Web", "vendor", "vendor-manifest.json"));
+        Assert.Contains("\"@codemirror/autocomplete\"", manifest, StringComparison.Ordinal);
+
+        // And the page builds no popup of its own — the whole point of "not a bespoke popup".
+        var module = Executable(ComposerPageContract.ModuleFile);
+        Assert.DoesNotContain("popup", module, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("createPopup", module, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void ThePasteFenceCarriesNoProvenanceClaim()
     {
         var module = WebFile(ComposerPageContract.ModuleFile);
