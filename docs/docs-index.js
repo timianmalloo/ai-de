@@ -3133,6 +3133,137 @@ window.DOCS_INDEX = {
       "sourceSha256": "43706b39a40e5e6be67ff9998252bbb2dd5f71e8dab6007f6661a6b341658304"
     },
     {
+      "id": "note-addendum-d-compile-session-tools",
+      "path": "docs/notes/addendum-d-compile-session-tools.md",
+      "title": "A compile session is not toolless by default — the adapter loads the repository's settings and the claude_code tool preset — so the host pins the compile session's tools to none via session/new _meta, and a spike must observe it before the agentic stage is admitted",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-03-10",
+      "reviewSuggested": [],
+      "summary": "The proposal's premise that the compile \"hands off to a model\" with nothing at stake is false: adapter 0.75.1 starts the SDK with settingSources [\"user\",\"project\",\"local\"] and the claude_code tool preset, and this repository's settings auto-allow `Bash(git push:*)`. The host's reject-all permission handler covers only what the adapter routes through request_permission. The fix is a host-pinned tool set (`_meta.disableBuiltInTools: true` → `tools: []`), verified in source and unobserved on the wire. Blast radius: the compile session; and every lane today (a finding).",
+      "tags": [
+        "decision-note",
+        "addendum-d",
+        "security",
+        "acp",
+        "adapter",
+        "compile",
+        "spike"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-spec-errata-policy",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "23dbea5cc4a5f7291107fdb7974dd5beadadaaa3b3cafc1c71c193e797073a19"
+    },
+    {
+      "id": "note-addendum-d-compile-trigger",
+      "path": "docs/notes/addendum-d-compile-trigger.md",
+      "title": "The mechanical pre-compile runs on the debounced draft; the agentic compile runs on an explicit act — the Send gesture or a Prepare command — never on debounce",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-03-10",
+      "reviewSuggested": [],
+      "summary": "A model call per keystroke burns the subscription window and shows model-authored content the operator did not ask for; so the pre-compile (T0) is live and the compile (T3) is explicit — the first Send gesture prepares, the second confirms; an unchanged inputs hash re-prepares with zero requests. Blast radius: the composer's gesture count under the agentic mode; US-C13's \"debounced\" wording for derived structure.",
+      "tags": [
+        "decision-note",
+        "addendum-d",
+        "compile",
+        "prepare",
+        "composer",
+        "cost",
+        "hax"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "78163b40d0715262a91b92df4f61eea16091f7fc6d70c9382b11c92f57a84847"
+    },
+    {
+      "id": "note-addendum-d-envelope-store",
+      "path": "docs/notes/addendum-d-envelope-store.md",
+      "title": "The envelope store is an event-grained, append-only JSONL sidecar per session — the envelope is the fold, the lease is a projection, cost lives on the model call, and history begins at the first append",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-03-10",
+      "reviewSuggested": [],
+      "summary": "The durable representation for Prompt Compilation: one row in `<workspace>/.aide/sessions/<session-id>/envelope-events.jsonl` is exactly one event on one envelope, keyed (envelope_id, seq); the envelope is the fold; the lease, the CT19 block and every count are projections; the craft profile is a Type-2 dimension carried by the pack. Expand-only, no backfill, deletion by containment. Blast radius: every compiled turn from the first append on.",
+      "tags": [
+        "decision-note",
+        "addendum-d",
+        "compile",
+        "envelope",
+        "data-model",
+        "dimensional",
+        "channel-b"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-d-compile-step-proposal",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1b6a9501a9bbd527a70dad967a719ec7bb028d78bb1320a97ab97d3fc166e568"
+    },
+    {
+      "id": "note-addendum-d-lease-source-text",
+      "path": "docs/notes/addendum-d-lease-source-text.md",
+      "title": "Lease derivation runs over the editor's source text only — never attachment bodies, the rendered goal block, the history window, or model output; today it runs over the whole rendered text",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-03-10",
+      "reviewSuggested": [],
+      "summary": "Ruling 42's intent — the paths the operator referenced are the paths they mean — is not met by a mention inside an attached file or inside model-authored structure; today `LeaseDerivation.Derive(compiled.Text)` at `ComposerSendGate.cs:164` reads both. The call site changes its argument to the editor's source text; `LeaseDerivation` itself does not change. Blast radius: any operator relying on an attachment to widen a lease (none known; no test either way).",
+      "tags": [
+        "decision-note",
+        "addendum-d",
+        "lease",
+        "ruling-42",
+        "security",
+        "composer"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-front-door-rulings-41-42",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "68055e831d79120304b524fccc1c4b855458fb4f4004917e6a0736d7c0ae40bf"
+    },
+    {
       "id": "note-ai-native-ide-architecture-review-depth",
       "path": "docs/notes/ai-native-ide-architecture-review-depth.md",
       "title": "Decision note — AI-native IDE architecture review depth",
@@ -12925,6 +13056,91 @@ window.DOCS_INDEX = {
       "sourceSha256": "bd0cf2b8b7196a34eb870d6567f88abbcdfeb964b26d3dd243759150be464780"
     },
     {
+      "id": "spec-addendum-d-compile-step",
+      "path": "docs/specs/addendum-d-compile-step.md",
+      "title": "Addendum D — The Compile Step",
+      "type": "spec",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-03-10",
+      "reviewSuggested": [],
+      "summary": "Typed text becomes a compiled envelope through a mechanical pre-compile, an agentic compile on the session-bound model, and an operator Prepare stage; Send confirms. Settles the three columns (settings · compile context · decorations), the Prompt Compilation domain model (an event-grained, append-only envelope; the lease, the tier, the shape and the cap are projections, never stored), the mechanical tier rule, the compile modes and their degradation, the compiled-envelope/1 event schema and its projections onto the unchanged spawn contract, the eval gate the agentic stage ships behind, and the security proof that no model output ever becomes a write scope — including the corrected fact that a compile session holds whatever tools the repository's settings auto-allow unless the host pins them.",
+      "tags": [
+        "conductor",
+        "addendum-d",
+        "compile",
+        "composer",
+        "envelope",
+        "prepare",
+        "craft-profile",
+        "eval",
+        "session"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "refines"
+        },
+        {
+          "to": "note-addendum-d-compile-step-proposal",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-d-envelope-store",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-d-compile-trigger",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-d-lease-source-text",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-d-compile-session-tools",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "er",
+          "title": "A6. Conceptual domain model — the bounded context *Prompt Compilation*",
+          "mermaid": "erDiagram\n  SESSION ||--o{ ENVELOPE : \"opens (session_id)\"\n  ENVELOPE ||--|{ ENVELOPE_EVENT : \"is the fold of\"\n  ENVELOPE_EVENT ||--o| DECORATION : \"kind = decorated\"\n  ENVELOPE_EVENT ||--o| MODEL_CALL : \"kind = called\"\n  DECORATION }o--o| MODEL_CALL : \"call_seq (derived only)\"\n  DECORATION }o--o| CRAFT_PROFILE_VERSION : \"family_profile value\"\n  DECORATION }o--o| TEMPLATE_VERSION : \"template_applied value\"\n  ENVELOPE ||--o| RUN : \"consumed (run_id, episode_id)\"\n  ENVELOPE }o--o| ENVELOPE : \"supersedes (by id)\"\n  ENVELOPE_EVENT {\n    string envelope_id PK\n    int seq PK\n    string kind\n    string at\n    string schema\n    string prev_sha\n  }\n  DECORATION {\n    string name\n    string source\n    json value\n    float confidence\n    int call_seq\n    json grounded_in\n  }\n  MODEL_CALL {\n    string engine_id\n    string model_configured\n    string model_observed\n    int latency_ms\n    json cost\n    string outcome\n    string reason\n    string contract_version\n    string prompt_sha\n  }\n  CRAFT_PROFILE_VERSION {\n    string family PK\n    string version PK\n    string sha\n  }"
+        },
+        {
+          "kind": "flowchart",
+          "title": "A13. Security and privacy of the new surface",
+          "mermaid": "flowchart LR\n  subgraph HOST[Host process — trusted]\n    OP[Operator: text · affirmed refs · Prepare edits · Send]\n    PRE[PRE-COMPILE mechanical: projections · refs · snapshots]\n    TB{{TYPED BOUNDARY: compile-output/1 allow-list · open lines · type · mention scan · spans}}\n    PREP[PREPARE · Send gate]\n    ENV[(envelope-events.jsonl — .aide/, git-ignored, exclusive writer)]\n  end\n  subgraph CC[Claude Code process, cwd = repo — semi-trusted execution]\n    CONST[/constitution: CLAUDE.md · AGENTS.md · load:always · settings.json hooks + allow rules/]\n    MODEL((bound model — untrusted-content producer; tools pinned to none))\n  end\n  HIST[(history window — untrusted: prior model text)]\n  OP --> PRE -- \"host header · fenced text · mechanical facts · profile · refs, no bodies\" --> MODEL\n  HIST --> MODEL\n  CONST -. harness load, never inlined; hooks see the prompt .-> MODEL\n  MODEL -- free text --> TB -- derived decorations --> PREP\n  PREP -- operator decorations · sha256 of sent text · projection_sha --> ENV --> HIST\n  MODEL x-- \"request_permission → reject · fs/terminal → -32601 · MCP = [] · tools = []\" --x HOST"
+        },
+        {
+          "kind": "flowchart",
+          "title": "B3. User flows",
+          "mermaid": "flowchart TD\n  A[draft: in-memory projections live — write scope, shape, tier] -->|Ctrl+Enter / Send| M{Compile mode · structure open?}\n  M -->|mechanical-only, or all three lines supplied| P3[envelope opened · prepared: lines empty-editable or supplied; tier from rule; Send = submit]\n  M -->|agentic rung, ≥ 1 line open| C[envelope opened · preparing: skeleton; editor editable; Cancel; ≤ 60 s]\n  C -->|Ctrl+Enter| C\n  C -->|operator edits text| A\n  C -->|Cancel / unavailable / refused / timed out / malformed| P4[prepared — compiled mechanically — reason · Prepare again]\n  C -->|tool call or permission request seen| P5[prepared — suspect: reason; per-line suspect marks; Prepare again]\n  C -->|zero proposals| P6[prepared — no goal block proposed; sends as a message]\n  C -->|succeeded| P[prepared: derived lines; compile line with tier + rationale; disclosure]\n  P4 -->|Prepare again| C\n  P5 -->|Prepare again| C\n  P -->|edit / keep / restore a line · override the tier| P\n  P -->|edit text| S[stale: live projections with a stale mark; press again to prepare]\n  S -->|Ctrl+Enter, inputs changed| C\n  S -->|Ctrl+Enter, inputs unchanged after a success| P\n  P -->|Ctrl+Enter| G{Send gate}\n  P3 -->|Ctrl+Enter| G\n  P4 -->|Ctrl+Enter| G\n  P5 -->|Ctrl+Enter| G\n  P6 -->|Ctrl+Enter| G\n  G -->|no write scope| R1[refused inline: mention @path — Ruling 42 elicitation]\n  G -->|T2 content gap| R2[refused inline: marks on every gap at once]\n  G -->|rendered view stale| S\n  R1 --> P\n  R2 --> P\n  G -->|ok| K[submitted: one event with text_sha256 + projection_sha; run starts; derived marks become kept]\n  K --> K2[reply streams in the Console canvas; consumed on the run result; next draft starts at A]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "B3. User flows",
+          "mermaid": "flowchart LR\n  H[session header: ceiling · budget · compile mode] -->|edit while draft| A2[draft: projections re-run in memory]\n  H -->|edit while prepared| S2[stale: live projections with a stale mark]\n  S2 -->|Ctrl+Enter| C2[re-prepare per Flow D-1]\n  H -.->|tier is not here — Ruling 63| X[(compile line owns tier)]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "B3. User flows",
+          "mermaid": "flowchart TD\n  U[aide session purge id] --> V{id is one segment of the session-id grammar, resolved under .aide/sessions/?}\n  V -->|no| X[refused before any file is touched]\n  V -->|yes| W[confirmation: name · id · workspace root · resolved file path · envelope count · newest at]\n  W -->|decline| Y[nothing deleted]\n  W -->|confirm or --yes| Z[envelope-events.jsonl deleted; session.json and session-events.jsonl survive]\n  Z --> Q[session document reopens: history purged; Proof Pack citations resolve as purged]"
+        }
+      ],
+      "sourceSha256": "798c678b188018589b0406e05f72bf5fd5b50517d1baef1610b278c60a6c0b57"
+    },
+    {
       "id": "spec-agentic-watcher-substrate",
       "path": "docs/specs/agentic-watcher-substrate.md",
       "title": "Loomkeeper - Agentic Watcher Substrate and Observatory",
@@ -13168,7 +13384,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3ece0948aa158aaddb1dc6f38bb0589d59e877efc3cd2418976e59ff84d27cf0"
+      "sourceSha256": "830c0aba1f77ad721fd19eec32697a61dee097ee8e03b3e00235622cbde3741f"
     },
     {
       "id": "spec-editor-surfaces",
@@ -13719,5 +13935,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "6f6d755ebf2da970f896363a59bacd7d650cd4dda317a9a70fbca8aaf4f84674"
+  "graphSha256": "f5db6d72cb14ba8d22f9555be15760f9c51af33bbb948f2ab966c0b4e1132228"
 };

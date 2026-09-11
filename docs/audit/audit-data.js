@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T20:07:06Z",
+  "generated": "2026-09-11T21:31:50Z",
   "audit": [
     {
       "actor": null,
@@ -11956,6 +11956,84 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T2",
       "tool": null
+    },
+    {
+      "id": "al-01M29642AFD8BYVDQCWFZBQ88Z",
+      "shortname": "specify-addendum-d-compile-step",
+      "datetime": "2026-09-11T21:31:33Z",
+      "session": "addendum-d-chain",
+      "prompt": "Addendum D — The Compile Step: typed text becomes a compiled envelope through a mechanical pre-compile, an agentic compile on the session-bound model, and an operator Prepare stage; settings vs compile context vs decorations",
+      "summary": "Addendum D — The Compile Step specified at docs/specs/addendum-d-compile-step.md (in review; gate PASS after a two-pass council loop, cap 2, zero unresolved Blockers). Domain model: bounded context Prompt Compilation; the Envelope aggregate (one invariant: append-only by seq); the lease, shape, tier and effective fan-out are projections, never stored; the craft profile a Type-2 dimension (one file per version); the fact is one event per row in .aide/sessions/<id>/envelope-events.jsonl (opened · decorated · called · submitted · consumed), exclusive writer, prev_sha chain; expand-only, no backfill; purge deletes the envelope file only. Three columns corrected (task class is a setting; the lease and tier leave the decorations column; compile mode is a new setting; attachments reach the compile by reference). Mechanical tier rule as a total projection (R0–R4, fourteen enumerated inputs, structure_source in the rationale); effective fan-out = min(cap(tier), ceiling). Compile modes mechanical-only | agentic-advisory | agentic with nine degradation states and a 60 s bound; Prepare with four composer states, a mark table, tier override on the compile line, Send as confirmation. Security: a compile session is NOT toolless by default (adapter 0.75.1 settingSources + claude_code preset; the repo allows Bash(git push:*)) — the host pins tools via session/new _meta.claudeCode.options.tools: [] (verified in source, unobserved on the wire; a spike gates every agentic rung); seven Ruling-42 paths closed; a fixed host header (a leading '/' runs as a CLI command); hooks residual measured. Eval: DC-127-proof fixtures derived from real rows; floors fixed in advance, judged on a holdout; forced-choice tier subset. Four decision notes; README row; six proposed rulings (PR-D1..D6) and twelve findings for the Owner. Peers: Data & Persistence Architect, AI Systems Engineer, Security (Peer); adversaries: Test Architect, D&P, Security (BLOCK ×3 on pass 1 → all cleared on pass 2), AI Systems Engineer (pass-with-conditions), UX/IA (pass-with-conditions), Simplifier (soft veto; cuts accepted except prev_sha and per-version profiles, overridden in writing).",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/addendum-d-compile-step.md",
+        "docs/notes/addendum-d-envelope-store.md",
+        "docs/notes/addendum-d-compile-trigger.md",
+        "docs/notes/addendum-d-lease-source-text.md",
+        "docs/notes/addendum-d-compile-session-tools.md",
+        "docs/specs/conductor/README.md"
+      ],
+      "tags": [
+        "addendum-d",
+        "compile",
+        "conductor"
+      ],
+      "outcome": "success",
+      "goal": "Produce Addendum D — The Compile Step via /specify: the Prompt Compilation domain model, the three columns, the mechanical tier rule, compile modes and degradation, Prepare, the compiled-envelope/1 schema and its projections onto the unchanged spawn contract, the security proof for Ruling 42, the eval gate, phasing, reconciliation with Addenda B and C, Gherkin criteria, NFRs, Proof Pack items and the gate record",
+      "done_when": "docs/specs/addendum-d-compile-step.md + README row + decision notes exist; docs-graph derive run; audit appended; gates green; committed and pushed to feature/addendum-d",
+      "tier": "T2",
+      "main_calls": 75,
+      "main_budget": 90,
+      "main_over_budget": false,
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-11T20:08:21Z",
+      "duration_seconds": 4992.0,
+      "persona_yield": [
+        {
+          "persona": "data-persistence-architect",
+          "raised": 7,
+          "accepted": 7
+        },
+        {
+          "persona": "ai-systems-engineer",
+          "raised": 6,
+          "accepted": 6
+        },
+        {
+          "persona": "security-identity-architect",
+          "raised": 8,
+          "accepted": 8
+        },
+        {
+          "persona": "test-architect",
+          "raised": 10,
+          "accepted": 10
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 13,
+          "accepted": 11
+        },
+        {
+          "persona": "ux-researcher-ia",
+          "raised": 12,
+          "accepted": 12
+        }
+      ],
+      "git": {
+        "sha": "ca069ba506b5d3c76f43c6e7d3c8ebec40f609e5",
+        "short": "ca069ba50",
+        "branch": "feature/addendum-d",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -15142,6 +15220,31 @@ window.AUDIT_DATA = {
         "pushed": false,
         "commits": []
       }
+    },
+    {
+      "id": "cl-01M2964CX6490AR9XPRCH73EMD",
+      "datetime": "2026-09-11T21:31:44Z",
+      "session": "addendum-d-chain",
+      "kind": "spec",
+      "skill": "specify",
+      "title": "Addendum D — the compile step's data model, security boundary and phasing settled",
+      "prompt": "Addendum D — The Compile Step: typed text becomes a compiled envelope through a mechanical pre-compile, an agentic compile on the session-bound model, and an operator Prepare stage; settings vs compile context vs decorations",
+      "summary": "Prompt Compilation bounded context: an event-grained append-only envelope store (.aide/sessions/<id>/envelope-events.jsonl; the envelope is the fold; the lease, shape, tier and effective fan-out are projections); the craft profile a Type-2 dimension; the compile session's tools pinned by the host (a compile session is not toolless by default) with a spike gating every agentic rung; compile modes mechanical-only | agentic-advisory | agentic; six proposed rulings for the Owner.",
+      "rationale": "The data model is the highest-priority decision (DM1); the Data & Persistence Architect corrected the conductor's row-per-turn candidate to event grain and the lease to a projection (DM-A); Security found the proposal's no-tools premise false in adapter 0.75.1's source; the AI Systems Engineer's eval gate binds every agentic rung.",
+      "artifacts": [
+        "docs/specs/addendum-d-compile-step.md"
+      ],
+      "tags": [
+        "addendum-d"
+      ],
+      "git": {
+        "before": "ca069ba5",
+        "after": "ca069ba506b5d3c76f43c6e7d3c8ebec40f609e5",
+        "branch": "feature/addendum-d",
+        "pushed": null,
+        "commits": []
+      },
+      "audit_ref": "al-01M29642AFD8BYVDQCWFZBQ88Z"
     }
   ]
 };
