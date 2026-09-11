@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 65 · partially-controlled 53 · uncontrolled 14
+**Status counts:** controlled 65 · partially-controlled 53 · uncontrolled 15
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -137,6 +137,9 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 - **Status:** `controlled`
 
 ### DC-006 — A gate reports success over a corpus it never read
+- **Recurrence, 2026-09-11 — the control is DEFEATED, and it is defeated by passing.** Measured by node U2: `ui-craft-gate.py src/AiDe.App --gate` now exits 0 with **51 Majors**, so the gate no longer looks empty — it looks *productive*. **Every one of the 51 is a colour literal in `composer.html` / `composer-host.html`, read from the copies under `bin/Debug/`.** Not one finding is in any XAML or C# file. The corpus the scanner found is **build output**, so `TheScan_CoversANonEmptyCorpus` — the control written for this exact class — **passes**, because the corpus is non-empty. It is also entirely the wrong corpus. A control that asserts *a* corpus was read cannot distinguish the product's source from a copy of a copy of part of it, and the original failure mode has come back wearing the shape of the fix.
+- **Why this is worse than the 2026-08-26 instance rather than the same size.** Then the gate was visibly silent and a seeded `#FF00FF` proved it. Now it is loud, and everything it says is about files that are not the source of anything — so its findings are **stale by construction** (they describe whatever was last built) and its green is **not a fact about the repository**. A clean clone gives it less to read; a stale `bin/` gives it findings from code that no longer exists. The corpus is a function of build state, which is the one input nobody thinks of as an input.
+- **What the control has to become:** the corpus assertion must name the **kind** of file the rules are meant to read and the **root** they must be read from, and refuse a corpus discovered under a build-output directory. *Non-empty* was always the weaker half of the question; **the other half is whether it read the thing under review**, and only that half would have caught this.
 - **Signature:** a linter, scanner, or gate exits 0 with "no findings" because its file matcher found
   nothing it understands — not because the code is clean. The report is shaped exactly like a pass.
 - **Why it survives:** exit code 0, a reassuring message, and a green CI step. Nothing asserts that
@@ -5639,3 +5642,39 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Status:** `uncontrolled` — the test obligation is stated and the instance is fixed, but no gate
   in this repository can distinguish a live subscription from a dead one, and the two candidate
   detectors were built and both failed. The next handler wired to the wrong event will land green.
+
+### DC-133 — A gate's failure threshold sits above the highest severity its rule set can emit, so it is advisory by arithmetic
+
+- **Shape:** a gate is wired into CI with a `--gate` flag and a documented obligation behind it. The
+  flag maps to a severity — it fails on Blockers. **The rule set contains no rule that emits a
+  Blocker**, or none that the corpus can trigger. So the gate is unconditional green, and nothing
+  anywhere says so: not the flag's name, not the CI step's name, not the output, which faithfully
+  prints every finding it is about to not fail on. **It is advisory by arithmetic rather than by
+  decision**, which is the difference that matters — nobody chose this, and so nobody can be asked
+  to defend it.
+- **Signature:** a gate whose `--gate` or `--strict` run is indistinguishable from its bare run; a
+  severity ladder where the top rung is unoccupied; a CI step that has never failed and whose
+  authors cannot name the input that would fail it; and the tell that settles it — **run it against
+  the worst artifact you have and watch it exit 0.**
+- **Instance (2026-09-11), two readings by node U2:** `ui-craft-gate.py docs/mockups --gate` exits
+  **0 with 66 Majors and 38 Minors**. It fails only on Blocker-mapped findings and **there are none
+  anywhere in the corpus**. `AGENTS.md` requires this floor be gated in CI on the grounds that *"a
+  lesson recorded as prose is a memoir"* (CI6) — and the gate satisfies the letter of that while
+  being unable to fail.
+- **What made it invisible for so long:** I had previously briefed a node that the gate "exits 0
+  with 13 Majors present", and treated that as an exit condition with no discriminating power. **The
+  real figure is 66**, and the difference is instructive: a number I had half-measured let me name
+  the defect while still underestimating it by five times. *A defect that is known about is not
+  therefore sized.*
+- **Relationship to DC-006:** they compound, and on the same tool. DC-006 is *the gate read the
+  wrong corpus*; this is *the gate could not have failed on the right one either*. Either alone is a
+  hole; together the CI step carries no information at all, and its presence is worse than its
+  absence because it occupies the slot where a real control would go.
+- **Control:** a gate's threshold must be **reachable** — there must exist at least one rule in its
+  own rule set that can emit at or above the level it fails on, asserted against the rule set rather
+  than against today's findings (a corpus that happens to be clean must not read as a broken gate).
+  Every gate wired into CI states, in the step, **the input that would make it fail**; a step whose
+  authors cannot write that sentence is not a gate.
+- **Status:** `uncontrolled` — the measurement exists and the threshold question is with the Owner,
+  because where to set it is a policy call and not a defect fix. No check in this repository
+  currently asserts that a gate's failing severity is attainable.
