@@ -28,6 +28,15 @@
         -->
         <SolidColorBrush x:Key="TextMutedBrush" Color="#98A3B2" />
         <SolidColorBrush x:Key="AccentBrush" Color="#5B9DD9" />
+
+        <!--
+            THE INK ON THE ACCENT (DESIGN.md `{colors.accent-contrast}`). A selected tab, a checked
+            toggle and a selected palette row paint the accent as their ground, and the rest ink on it
+            measures 2.37:1. The pairing is a token of its own rather than a borrowed surface brush,
+            so a reader of the template sees "ink for the accent" and not "the sunken ground, used as
+            ink" — one meaning per token (INV-0008). 6.6:1 on the accent; the census re-measures it.
+        -->
+        <SolidColorBrush x:Key="AccentContrastBrush" Color="#0D1014" />
         <SolidColorBrush x:Key="VerifiedBrush" Color="#5FB98F" />
         <SolidColorBrush x:Key="InferredBrush" Color="#D8A650" />
         <SolidColorBrush x:Key="UnverifiedBrush" Color="#98A3B2" />
@@ -325,7 +334,7 @@
                 <Trigger Property="IsChecked" Value="True">
                     <Setter TargetName="Chrome" Property="Background" Value="{StaticResource AccentBrush}" />
                     <Setter TargetName="Chrome" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
-                    <Setter TargetName="Content" Property="TextElement.Foreground" Value="{StaticResource SurfaceSunkenBrush}" />
+                    <Setter TargetName="Content" Property="TextElement.Foreground" Value="{StaticResource AccentContrastBrush}" />
                 </Trigger>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter TargetName="Chrome" Property="Background" Value="{StaticResource MenuHoverBrush}" />
@@ -385,15 +394,23 @@
             not in this comment.
         -->
 
-        <!--  Inline text. Ink only has a ground when its container gives it one; that is the pairing
-              that gets measured, and x:Null says so without changing hit-testing.  -->
+        <!--
+            Inline text. Ink only has a ground when its container gives it one; that is the pairing
+            that gets measured, and x:Null says so without changing hit-testing.
+
+            THE LEAF DOES NOT STATE ITS INK (INV-0008). A Foreground setter here outranks every
+            container's state pairing — the checked toggle's, the selected row's, the disabled
+            button's, the active tab's — because those reach the glyphs by INHERITANCE and an
+            implicit style's setter beats an inherited value. With the setter, twelve accent-ground
+            sites rendered the rest ink at 2.37:1 and "disabled" was indistinguishable from
+            "enabled". The Window style states the root ink; the container pairs the rest.
+            TokenDisciplineTests fails on the setter's return.
+        -->
         <Style TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
             <Setter Property="Background" Value="{x:Null}" />
         </Style>
 
         <Style TargetType="Label">
-            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
             <Setter Property="Background" Value="{x:Null}" />
         </Style>
 
@@ -605,11 +622,11 @@
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter TargetName="Row" Property="Background" Value="{StaticResource MenuHoverBrush}" />
                 </Trigger>
-                <!--  Selection is the accent ground with the sunken ink on it: a selected row must
+                <!--  Selection is the accent ground with the on-accent ink on it: a selected row must
                       not be the one row in the app that reverts to the platform's pale highlight.  -->
                 <Trigger Property="IsSelected" Value="True">
                     <Setter TargetName="Row" Property="Background" Value="{StaticResource AccentBrush}" />
-                    <Setter TargetName="Content" Property="TextElement.Foreground" Value="{StaticResource SurfaceSunkenBrush}" />
+                    <Setter TargetName="Content" Property="TextElement.Foreground" Value="{StaticResource AccentContrastBrush}" />
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
                     <Setter TargetName="Content" Property="TextElement.Foreground" Value="{StaticResource DisabledTextBrush}" />

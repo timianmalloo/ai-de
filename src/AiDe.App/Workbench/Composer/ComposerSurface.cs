@@ -539,6 +539,10 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             }),
             fileCandidates = Array.Empty<string>(),
             graphCandidates = Array.Empty<string>(),
+
+            // The shell's tokens as CSS custom properties, so the page draws with the one palette
+            // (INV-0008, Fix C). Additive: a page that ignores it renders its fallbacks.
+            theme = ComposerPageTheme.Current(),
         };
 
         _view.CoreWebView2?.PostWebMessageAsJson(JsonSerializer.Serialize(payload));

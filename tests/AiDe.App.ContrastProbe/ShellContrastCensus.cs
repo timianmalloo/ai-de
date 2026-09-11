@@ -9,6 +9,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using AiDe.App.Workbench;
+using AiDe.App.Workbench.Composer;
 using AiDe.Core.Workbench;
 using Microsoft.Web.WebView2.Wpf;
 
@@ -86,7 +87,13 @@ internal static class ShellContrastCensus
         string Commit,
         List<Site> Sites,
         List<Omission> Omissions,
-        List<string> Log);
+        List<string> Log,
+        Dictionary<string, string> ShellTheme,
+        Dictionary<string, string> PageTheme)
+    {
+        /// <summary>The <c>app.start</c> diagnostics line this boot wrote, or null when it wrote none.</summary>
+        public string? AppStart { get; init; }
+    }
 
     private static Site Row(
         int number, string population, string surface, string element, string text,
@@ -223,9 +230,15 @@ internal static class ShellContrastCensus
         omissions.Add(new Omission("terminal", "TerminalView cells", "GlyphRun renderer over the ANSI palette a child process chooses from; App.xaml's palette table is the pairing set"));
 
         // 6. The two WebView2 pages: the composer and the graph canvas.
-        await WebViewsAsync(window, document, sites, omissions, log);
+        var pageTheme = await WebViewsAsync(window, document, sites, omissions, log);
 
-        return new Report(commit, sites, omissions, log);
+        // The theme the shell pushed on host.init, beside the custom properties the page's root
+        // actually carries. The stylesheet never DECLARES a property — it only reads each one with
+        // its fallback — so a property on the root's inline style can only have come from the push.
+        // Equal values from the fallback and the push measure the same; this column tells them apart.
+        var shellTheme = new Dictionary<string, string>(ComposerPageTheme.Current(), StringComparer.Ordinal);
+
+        return new Report(commit, sites, omissions, log, shellTheme, pageTheme);
     }
 
     // ─────────────────────────────────────────────────────────────────── the walker ──
@@ -450,23 +463,32 @@ internal static class ShellContrastCensus
         return TokenFor(theme, solid.Color) is { } byValue ? "~" + byValue : null;
     }
 
-    /// <summary>A token whose colour equals this one — "~" in the report: same colour, not the same brush.</summary>
+    /// <summary>
+    /// Every token whose colour equals this one, joined with "=" — "~" in the report: same colour, not
+    /// the same brush. Listed rather than picked, because two tokens can legitimately share a value
+    /// (<c>SurfaceSunkenBrush</c> and <c>AccentContrastBrush</c> are both #0D1014) and a report that
+    /// named one of them by dictionary order would attribute a text box's ground to the on-accent ink.
+    /// </summary>
     private static string? TokenFor(ResourceDictionary theme, Color color)
     {
+        var matches = new List<string>();
+
         foreach (var key in theme.Keys)
         {
-            if (theme[key] is SolidColorBrush candidate && candidate.Color == color) return key.ToString();
+            if (theme[key] is SolidColorBrush candidate && candidate.Color == color) matches.Add(key.ToString()!);
         }
 
-        return null;
+        matches.Sort(StringComparer.Ordinal);
+        return matches.Count == 0 ? null : string.Join("=", matches);
     }
 
     // ────────────────────────────────────────────────────────────────── the pages ──
 
-    private static async Task WebViewsAsync(
+    private static async Task<Dictionary<string, string>> WebViewsAsync(
         Window window, AiDe.App.Workbench.Sessions.SessionDocumentSurface document,
         List<Site> sites, List<Omission> omissions, List<string> log)
     {
+        var pageTheme = new Dictionary<string, string>(StringComparer.Ordinal);
         var composer = document.Composer;
         var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(30);
 
@@ -542,8 +564,42 @@ internal static class ShellContrastCensus
             }
 
             log.Add($"webview {label}: {count} text elements");
+
+            if (Uri.UnescapeDataString(label).EndsWith("/" + ComposerPageContract.PageFile, StringComparison.Ordinal))
+            {
+                try
+                {
+                    var raw = await view.CoreWebView2.ExecuteScriptAsync(RootCustomPropertiesScript);
+                    var inline = JsonSerializer.Deserialize<string>(raw);
+                    if (!string.IsNullOrEmpty(inline))
+                    {
+                        foreach (var pair in JsonSerializer.Deserialize<Dictionary<string, string>>(inline) ?? [])
+                        {
+                            pageTheme[pair.Key] = pair.Value;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    omissions.Add(new Omission("webview", $"{owner} {label} root custom properties", "ExecuteScriptAsync threw: " + ex.Message));
+                }
+
+                log.Add($"webview {label}: {pageTheme.Count} custom properties on the root");
+            }
         }
+
+        return pageTheme;
     }
+
+    /// <summary>The custom properties on the document root's INLINE style — the ones the host's push set, and nothing the stylesheet declared.</summary>
+    private const string RootCustomPropertiesScript = """
+        (() => {
+          const s = document.documentElement.style;
+          const o = {};
+          for (let i = 0; i < s.length; i++) { const n = s[i]; if (n.startsWith('--')) o[n] = s.getPropertyValue(n).trim(); }
+          return JSON.stringify(o);
+        })()
+        """;
 
     /// <summary>
     /// The same census, in the page: every element carrying its own text (or a placeholder, or a

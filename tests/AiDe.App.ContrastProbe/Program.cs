@@ -34,6 +34,7 @@ internal static class Program
     private const int Crashed = 10;
 
     private static int _exit = Crashed;
+    private static string? _appStart;
 
     [STAThread]
     private static int Main(string[] args)
@@ -48,6 +49,14 @@ internal static class Program
             // StartupUri is pack://application:,,,/MainWindow.xaml and resolves against the resource
             // assembly, which defaults to THIS exe. Point it at the product before Run.
             PointResourceAssemblyAtTheProduct();
+
+            // The workbench diagnostics of THIS boot, read from the seam rather than from the
+            // operator's log file: the report carries the app.start line the shell wrote, so the
+            // test can prove the composed shell names its binary on its normal path (INV-0008 Fix D).
+            AiDe.App.Workbench.WorkbenchDiagnostics.Sink = line =>
+            {
+                if (line.Contains("\"evt\":\"app.start\"", StringComparison.Ordinal)) _appStart ??= line;
+            };
 
             var app = new AiDe.App.App();
             app.InitializeComponent();
@@ -87,7 +96,7 @@ internal static class Program
                 .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
                 ?? "(no informational version)";
 
-            var report = await ShellContrastCensus.TakeAsync(window, workspace, version);
+            var report = await ShellContrastCensus.TakeAsync(window, workspace, version) with { AppStart = _appStart };
 
             File.WriteAllText(reportPath, JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true }));
 

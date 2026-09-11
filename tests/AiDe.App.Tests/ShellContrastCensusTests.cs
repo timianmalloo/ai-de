@@ -17,7 +17,7 @@ namespace AiDe.App.Tests;
 /// paragraph dim, the tab captions dim, a white text box in a dark pane. Every one of those is
 /// outside its population, because that test measures controls it constructs on a window it builds.
 /// This one measures what the product composes, out of process, by booting the real
-/// <c>AiDe.App.App</c> (<c>AiDe.App.ContrastProbe</c>; INV-0007).</para>
+/// <c>AiDe.App.App</c> (<c>AiDe.App.ContrastProbe</c>; INV-0008).</para>
 ///
 /// <para><b>The red output is the sweep.</b> Every failing site is a row with its ratio, its ink's
 /// provenance and its mechanism, so the assertion message is the census and the census is the
@@ -33,7 +33,8 @@ namespace AiDe.App.Tests;
 /// </remarks>
 public sealed class ShellContrastCensusTests(ITestOutputHelper output)
 {
-    private static readonly Lazy<Census> Taken = new(Take, LazyThreadSafetyMode.ExecutionAndPublication);
+    /// <summary>One boot per test run; <c>AppStartIsRecordedTests</c> reads the same census.</summary>
+    internal static readonly Lazy<Census> Taken = new(Take, LazyThreadSafetyMode.ExecutionAndPublication);
 
     [Fact]
     public void EveryTextPairingInTheComposedShellClearsItsFloor()
@@ -112,6 +113,36 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
             + Environment.NewLine + Table(failing));
     }
 
+    /// <summary>
+    /// The composer page draws with the shell's tokens because the shell pushed them — every role
+    /// the host sends on <c>host.init</c> is on the page's root, with the shell's value.
+    /// </summary>
+    /// <remarks>
+    /// The fact above cannot see this: the stylesheet's fallbacks are the same values, so a page
+    /// that never received the push measures identically. The stylesheet never declares a custom
+    /// property, only reads one, so a property on the root's inline style is the push's footprint
+    /// and nothing else's (E8: the field has a writer AND a reader, both traced).
+    /// </remarks>
+    [Fact]
+    public void TheComposerPageDrawsWithTheTokensTheShellPushed()
+    {
+        var census = Taken.Value;
+
+        Assert.True(census.Failure is null, "the census was not taken: " + census.Failure);
+
+        Assert.True(census.ShellTheme.Count > 0, "the shell resolved no theme roles to push — ComposerPageTheme found none of its tokens in Application.Resources (TC3)");
+
+        var missing = census.ShellTheme
+            .Where(role => !census.PageTheme.TryGetValue(role.Key, out var value) || !string.Equals(value, role.Value, StringComparison.OrdinalIgnoreCase))
+            .Select(role => $"{role.Key}: shell {role.Value}, page {(census.PageTheme.TryGetValue(role.Key, out var v) ? v : "(not set)")}")
+            .ToList();
+
+        Assert.True(missing.Count == 0,
+            "the host's host.init theme did not reach the composer page's root — the page is drawing its "
+            + "stylesheet fallbacks, not the shell's tokens:" + Environment.NewLine + string.Join(Environment.NewLine, missing)
+            + Environment.NewLine + string.Join(Environment.NewLine, census.Log));
+    }
+
     // ───────────────────────────────────────────────────────────────── the probe ──
 
     /// <summary>One measured pairing — the probe's row, as the JSON contract carries it.</summary>
@@ -124,16 +155,22 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
     internal sealed record Omission(string Population, string What, string Reason);
 
     internal sealed record Census(
-        string Version, IReadOnlyList<Site> Sites, IReadOnlyList<Omission> Omissions, IReadOnlyList<string> Log, string? Failure);
+        string Version, IReadOnlyList<Site> Sites, IReadOnlyList<Omission> Omissions, IReadOnlyList<string> Log,
+        IReadOnlyDictionary<string, string> ShellTheme, IReadOnlyDictionary<string, string> PageTheme,
+        string? AppStart, string? Failure);
 
-    private sealed record ProbeReport(string Commit, List<Site> Sites, List<Omission> Omissions, List<string> Log);
+    private sealed record ProbeReport(
+        string Commit, List<Site> Sites, List<Omission> Omissions, List<string> Log,
+        Dictionary<string, string>? ShellTheme, Dictionary<string, string>? PageTheme, string? AppStart);
+
+    private static readonly Dictionary<string, string> Empty = new(StringComparer.Ordinal);
 
     private static Census Take()
     {
         var probe = ProbePath();
         if (!File.Exists(probe))
         {
-            return new Census("(not built)", [], [], [], $"the contrast probe was not built at {probe}");
+            return new Census("(not built)", [], [], [], Empty, Empty, null, $"the contrast probe was not built at {probe}");
         }
 
         var report = Path.Combine(Path.GetTempPath(), "aide-contrast-census-" + Guid.NewGuid().ToString("N") + ".json");
@@ -152,12 +189,12 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
         if (!process.WaitForExit((int)TimeSpan.FromMinutes(4).TotalMilliseconds))
         {
             try { process.Kill(entireProcessTree: true); } catch (InvalidOperationException) { }
-            return new Census("(hung)", [], [], [], "the contrast probe hung. " + stdout + stderr);
+            return new Census("(hung)", [], [], [], Empty, Empty, null, "the contrast probe hung. " + stdout + stderr);
         }
 
         if (process.ExitCode != 0 || !File.Exists(report))
         {
-            return new Census("(failed)", [], [], [], $"the contrast probe exited {process.ExitCode} without a report. {stdout} {stderr}");
+            return new Census("(failed)", [], [], [], Empty, Empty, null, $"the contrast probe exited {process.ExitCode} without a report. {stdout} {stderr}");
         }
 
         try
@@ -165,7 +202,7 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
             var parsed = JsonSerializer.Deserialize<ProbeReport>(File.ReadAllText(report))
                 ?? throw new InvalidDataException("the report deserialised to null");
 
-            return new Census(parsed.Commit, parsed.Sites, parsed.Omissions, parsed.Log, null);
+            return new Census(parsed.Commit, parsed.Sites, parsed.Omissions, parsed.Log, parsed.ShellTheme ?? Empty, parsed.PageTheme ?? Empty, parsed.AppStart, null);
         }
         finally
         {

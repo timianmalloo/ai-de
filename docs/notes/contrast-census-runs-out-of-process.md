@@ -7,7 +7,7 @@ owner: "@timianmalloo"
 phase: "facelift"
 tags: [decision-note, ui, contrast, wpf, testing, probe]
 links:
-  - { to: inv-0007-contrast-floor-passes-while-the-shell-fails, rel: relates-to }
+  - { to: inv-0008-contrast-floor-passes-while-the-shell-fails, rel: relates-to }
 review-by: 2027-03-10
 review-suggested: []
 summary: >-
@@ -24,7 +24,7 @@ weight. One note per call; written before the session that made it closes.*
 
 - **Kind:** decision
 - **Confidence:** Verified — both alternatives were run, not reasoned about
-- **Made during:** `/investigate` INV-0007 (session `contrast-census`)
+- **Made during:** `/investigate` INV-0008 (session `contrast-census`)
 
 ## The call
 

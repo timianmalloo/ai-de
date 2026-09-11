@@ -1,5 +1,5 @@
 ---
-id: inv-0007-contrast-floor-passes-while-the-shell-fails
+id: inv-0008-contrast-floor-passes-while-the-shell-fails
 title: "The contrast floor passes while the shell fails: a floor over a population the product does not render"
 type: investigation
 status: accepted
@@ -26,7 +26,7 @@ summary: >-
   eleven subjects it constructed on a window it built; the product composes a different population.
 ---
 
-# INV-0007 — The contrast floor passes while the shell fails
+# INV-0008 — The contrast floor passes while the shell fails
 
 - **Status:** Root cause verified · fix proposed · **stopped for review**
 - **Severity / tier:** T1 — every surface, every operator, on the first screen
@@ -36,11 +36,12 @@ summary: >-
 > Diagnosis only. The census (`tests/AiDe.App.ContrastProbe`, `ShellContrastCensusTests`) is committed
 > red as the evidence and the sweep; no fix is made. Investigation worktree `investigate/contrast-census`.
 >
-> **Id collision, declared (DC-013):** `verify-id-allocators.py` reports INV-0007 allocated independently on
-> `investigate/composer-input` (`INV-0007-composer-entry-areas-starved-by-the-compiled-view.md`) and here.
-> Both branches are off `main`; the allocator's contract re-issues whichever lands second (rename, `id`,
-> the note's link, the test remark, and a superseding audit entry). Kept at 0007 here so this tree's
-> sequence has no hole.
+> **Id re-issued (DC-013):** this investigation was authored as INV-0007 on `investigate/contrast-census`;
+> `verify-id-allocators.py` reported INV-0007 allocated independently there and on
+> `investigate/composer-input` (`INV-0007-composer-entry-areas-starved-by-the-compiled-view.md`), which
+> landed first on `fix/composer-entry-areas`. Re-issued as **INV-0008** on `fix/contrast-census` (file,
+> `id`, the note's link, the test remark); the original audit entry `al-01M28X1SAPJE12TF0FKMEQXHZT` still
+> names INV-0007 — the log is append-only, and the implementation entry supersedes it.
 
 ## 0. What was measured, and what was not
 

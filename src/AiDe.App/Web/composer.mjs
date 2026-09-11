@@ -213,6 +213,21 @@ function render(fields) {
   }
 }
 
+/**
+ * The shell's tokens, as CSS custom properties on the root — the page draws with the host's palette
+ * and carries none of its own (INV-0008, Fix C). Absent or malformed entries are skipped so the
+ * stylesheet's fallbacks (the same tokens' declared values) stay in force; nothing is invented here.
+ */
+function applyTheme(theme) {
+  if (!theme || typeof theme !== "object") return;
+  const root = document.documentElement.style;
+  for (const [name, value] of Object.entries(theme)) {
+    if (/^--[a-z][a-z-]*$/.test(name) && typeof value === "string" && /^#[0-9a-fA-F]{6}$/.test(value)) {
+      root.setProperty(name, value);
+    }
+  }
+}
+
 function onHostMessage(event) {
   const message = event.data;
   if (!message || message.v !== PROTOCOL_VERSION) return;
@@ -225,6 +240,7 @@ function onHostMessage(event) {
     state.fileCandidates = message.fileCandidates || [];
     state.graphCandidates = message.graphCandidates || [];
     state.attachEnabled = message.attachEnabled === true;
+    applyTheme(message.theme);
     document.getElementById("drop-hint").textContent = state.attachEnabled
       ? "Drop a file here to attach it."
       : "Attaching files is off for this session.";
