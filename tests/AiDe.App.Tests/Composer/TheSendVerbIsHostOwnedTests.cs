@@ -213,6 +213,45 @@ public sealed class TheSendVerbIsHostOwnedTests
     }
 
     [Fact]
+    public void US_ED7_TheTransferIsOneWayAndNoReversePathExists()
+    {
+        var gate = new ComposerSendGate();
+        var draft = new ComposerDraft();
+        draft.SetFreeFormText("the composed prompt about @src/Payments\n");
+
+        var request = gate.Send(Context(), draft, null, out _);
+        Assert.NotNull(request);
+        var handedOver = request!.Prompt;
+
+        // MUTATE THE COMPOSER SIDE AFTER THE HANDOVER. What the lane holds does not move.
+        draft.SetFreeFormText("edited after the send, about @docs/plan.md\n");
+        draft.SwitchTo(ComposerShape.GoalBlock);
+
+        Assert.Equal(handedOver, request.Prompt);
+        Assert.Contains("@src/Payments", request.Prompt, StringComparison.Ordinal);
+        Assert.DoesNotContain("@docs/plan.md", request.Prompt, StringComparison.Ordinal);
+
+        // AND NO REVERSE PATH EXISTS. Not "we do not call it" — there is nothing to call: nothing the
+        // run side hands back carries a draft, and nothing on the gate accepts a request.
+        Assert.DoesNotContain(
+            typeof(GovernedRunRequest).GetProperties(),
+            p => typeof(ComposerDraft).IsAssignableFrom(p.PropertyType));
+
+        Assert.DoesNotContain(
+            typeof(GovernedRunResult).GetProperties(),
+            p => typeof(ComposerDraft).IsAssignableFrom(p.PropertyType));
+
+        Assert.DoesNotContain(
+            typeof(ComposerSendGate).GetMethods(),
+            m => m.GetParameters().Any(p =>
+                typeof(GovernedRunRequest).IsAssignableFrom(p.ParameterType)
+                || typeof(GovernedRunResult).IsAssignableFrom(p.ParameterType)));
+
+        // The prompt itself is a string, so "the lane's copy" cannot be mutated in place either.
+        Assert.True(typeof(string).IsSealed);
+    }
+
+    [Fact]
     public void ASendWithNothingDerivableAsALeaseFailsClosedRatherThanDefaulting()
     {
         var gate = new ComposerSendGate();

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T02:04:25Z",
+  "generated": "2026-09-11T02:07:01Z",
   "audit": [
     {
       "actor": null,
@@ -11212,6 +11212,43 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "2de3ecc5850652221665b4da6351e5097e8e2da5",
         "short": "2de3ecc58",
+        "branch": "feature/composer",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M273FPP3PZTEFVN6BCB26VR7",
+      "shortname": "F4 close — US-ED7's one-way transfer, and the composer's hosted browser disposed",
+      "datetime": "2026-09-11T02:07:00Z",
+      "session": "conductor-front-door-f4",
+      "prompt": "Close F4's remaining clauses: US-ED7's one-way transfer with no reverse path.",
+      "summary": "US-ED7's oracle is now what the clause asks for: mutate the composer side after the handover and assert the lane's copy does not move, then assert by reflection that nothing the run side exposes carries a draft and nothing on the gate accepts a request — not 'we do not call it', but 'there is nothing to call'. Also: SessionDocumentSurface now disposes the composer, because a WebView2 is a child PROCESS and dropping the reference leaks one per document open — invisible in the visual tree. Final measurement: App 494, Core 2205 = portable 2052 + non-portable 153.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Claude Code",
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "conductor",
+        "front-door",
+        "composer"
+      ],
+      "outcome": "success",
+      "goal": "Close F4: assert the transfer is one-way with no reverse path, dispose the hosted browser, and register the parser-differential finding as a class.",
+      "done_when": "US-ED7 has its oracle, the session document disposes the composer, DC-124 is in the register, and every measurement and gate is green.",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "8eb31aabf5383b2e25ea0239c6e934a12d5a7f0f",
+        "short": "8eb31aabf",
         "branch": "feature/composer",
         "pushed": true
       }
