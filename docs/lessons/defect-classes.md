@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 64 · partially-controlled 53 · uncontrolled 11
+**Status counts:** controlled 64 · partially-controlled 53 · uncontrolled 12
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -5301,6 +5301,47 @@ for both or split.*
   self-test; the plan clause it corrects is now accurate, but **no other ordering requirement in the
   repository carries a byte comparison**, and the plan-authoring habit that produced the weak form is
   unchanged
+
+
+### DC-129 — A launch that detaches returns success immediately, so the caller measures a run that has not happened
+
+- **Shape:** a caller invokes an executable and waits on **the call** rather than on **the process**. If
+  the target is a GUI-subsystem binary — on Windows, a `WinExe` — the shell **detaches it and returns
+  at once**. The caller sees **no error, no exit code, and a near-zero duration**, and concludes the
+  work completed instantly. Meanwhile the real work is **running in the background**, doing everything
+  it was asked to: provisioning, spending, writing, scoring. The failure is not that the launch
+  failed — **it succeeded emptily**, and every field the caller reads is consistent with success.
+- **Signature:** a measured duration implausibly close to zero; a missing rather than zero exit code;
+  a "completed" run with no output artifact; and the tell — **a second invocation produces a second
+  set of side effects while the first is still live**, because nothing told the caller the first one
+  had not finished.
+- **Instance (front-door pre-flight, 2026-09-11):** `& $exe --conduct …` on a `WinExe` returned
+  immediately, reporting no exit code and 0 seconds, **while a real governed run continued detached**
+  — provisioning a lane worktree and spending a live subscription turn. A second invocation under
+  `Start-Process -Wait` ran and was measured. **Both completed. Both scored `Partial: 15 / 15
+  observed`.** The store ended with **two episodes in one cohort** and the subscription cost was
+  doubled — *by a harness error, not by design*.
+- **What actually detected it, and this is the transferable part:** not the exit code, not the
+  duration, not the absence of output. **`git worktree list` came back 22 when 21 was expected.** An
+  **incidental invariant**, maintained for another reason entirely, caught what the intended signal
+  could not — because the intended signal had not failed. In the node's own words: ***"The count was
+  the detector, not the exit code."***
+- **Why it survives:** every instinct for checking a subprocess is pointed at the wrong object. A
+  non-zero exit code, a thrown exception, a timeout, stderr — none of them fire, because the launch
+  genuinely succeeded. **The only honest signal is the process handle, and the idiom that returns it
+  is not the idiom most shells reach for first.**
+- **Relationship to the register:** it is the session's recurring shape — *a control whose green is
+  indistinguishable from its absence* — at the **process-launch boundary**, and it is the same family
+  as `gh run watch --exit-status` exiting `0` after failing to observe a run (DC-119). Both report
+  success for **not having looked**.
+- **Control:** **wait on the process object, never on the call**, for any invocation that may target a
+  GUI-subsystem binary — `Start-Process -Wait -PassThru` or an equivalent that yields a handle, then
+  read the handle's exit code. Where a run has a **countable side effect** — a worktree, an episode
+  row, a lock — **assert the count**, because a count discriminates where an exit code does not.
+  *A measured duration near zero for work that cannot be near zero is a detection, not a result.*
+- **Status:** `uncontrolled` — the instance is understood and the constraint is written into the
+  exit-run harness's brief, but nothing in the repository fails when a caller waits on the call
+  instead of the process, and the next harness author inherits only prose
 
 
 ---
