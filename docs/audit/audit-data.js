@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T16:50:31Z",
+  "generated": "2026-09-11T17:20:27Z",
   "audit": [
     {
       "actor": null,
@@ -11327,69 +11327,6 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "actor": null,
-      "artifacts": [
-        "docs/mockups/session-front-door.html",
-        "docs/reviews/ui-operator-feedback.md",
-        "DESIGN.md"
-      ],
-      "datetime": "2026-09-11T13:37:53Z",
-      "duration_seconds": 1341.0,
-      "id": "al-01M28B0R807NPKC605J54T6S09",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "Node U1 - /ui-design stages 1-3 on real operator feedback (7 items in C:\\Users\\malla\\Downloads\\UI housekeeping). DESIGN ONLY: write DESIGN.md and docs/mockups/, do NOT write src/. T2. Bounded loop: variant = rubric findings at severity >= major, strictly decreasing; floor = zero majors; cap = 3 passes. Deliverable is the ranked plan. Mid-task correction: Ruling 45 makes the canvas Console-only; design a one-mode-now-N-later strip.",
-      "session": "ui-elevation-node-u1",
-      "shortname": "ui-design-session-front-door",
-      "skill": "ui-design",
-      "started_at": "2026-09-11T13:15:32Z",
-      "summary": "Elevate review of the session front door. Six of seven feedback items are unimplemented spec or measured defect, not taste. Item 4's systemic cause named at the token level: only 6 implicit WPF styles exist, none for a text or input control, so 18 base types fall back to platform light defaults - 11 measured failing pairs, worst 1.15:1, plus the inverse at 1.22:1 caused by a previous partial fix. Composer: CodeMirror is vendored and navigated to but Configure has zero callers and host.init/editor.ready deadlock, so it never initializes. Task class is a free-text box for a cohort key where a typo costs more than a default. Explore/Provenance/Domain are one class instantiated three times, and the operator's proposed fix keeps the wrong one. Rail: 3 of 4 icons inert, the 4th is the only door to Explorer mode. Console-only mode strip designed per Ruling 45. Rubric variant 5 majors -> 0 in 2 passes; cap did not fire. Nine false claims in the brief reported.",
-      "tags": [],
-      "tool": null
-    },
-    {
-      "actor": "Claude Opus 5 (1M context)",
-      "artifacts": [
-        "src/AiDe.App/App.xaml",
-        "tests/AiDe.App.Tests/ContrastFloorTests.cs",
-        "tests/AiDe.App.Tests/ThemeProbe.cs",
-        "tests/AiDe.App.Tests/Sessions/TheTaskClassIsChosenNotTypedTests.cs",
-        "tests/AiDe.Core.Tests/TheEvidencePaneDoesNotInventConfidenceTests.cs",
-        "src/AiDe.Core/Presentation/Sessions/TaskClassVocabulary.cs",
-        "src/AiDe.App/Workbench/DarkCaption.cs"
-      ],
-      "datetime": "2026-09-11T14:26:35Z",
-      "done_when": "Each ranked item is built, deferred or refused with a reason; the eleven measured pairings are re-measured after item 1 rather than asserted; the maximized proposal is built and marked awaiting ratification; the IA finding is produced with nothing deleted; test floors met; gates run with --gate on the craft gate; branch pushed.",
-      "git": {
-        "branch": "feature/ui-implementation",
-        "pushed": null,
-        "sha": "0a63a731d863d0636bbcf215c4540311b988eae7",
-        "short": "0a63a731d"
-      },
-      "goal": "Implement U1's ranked plan for the theme, contrast, icon, surface-content and sheet concern, on feature/ui-implementation, without altering tab placement or move behaviour.",
-      "id": "al-01M28DSXJFATYK40B3T5ZBAWAF",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "feat(theme): implicit defaults for the base control set, measured\n\nItem 1 of the ranked plan in docs/reviews/ui-operator-feedback.md, plus\nitems 4 and 5.\n\nThe shell themed its CONTAINERS and left its LEAVES to WPF, whose default\nis a light theme. Six implicit styles existed, none for a text or input\ncontrol; eighteen base types fell back to the platform and twenty-eight\ninstantiations did. App.xaml now carries an implicit default for every\ntype TC1 names, each setting INK AND GROUND TOGETHER - the partial\npairing is what turned dark-on-dark into light-on-white at 1.22:1.\n\n- The palette tokens move above the templates, because a StaticResource\n  cannot reference a brush declared below it.\n- DisabledTextBrush (#7C8896) is now a token, not a literal repeated three\n  times, and disabled is that pairing rather than Opacity 0.5 - which\n  measured 2.73:1 against a 3:1 floor (A4).\n- The focus ring is its own 2px outline. The old trigger recoloured a\n  border whose thickness every rail button sets to zero, so it rendered\n  nothing while a comment claimed otherwise (A1/AR4).\n- CheckBox and RadioButton are retemplated: the platform bullet paints its\n  glyph in a fixed near-black, so on a dark ground the two states\n  composite to nearly the same image.\n- SunkenBrush/RaisedBrush were referenced from six sites and declared\n  nowhere. A missing key is a silent no-op (TC3); the six now name the\n  keys that exist.\n- AvalonDock's chrome keeps a transparent button pairing in its own\n  resource scope, which is nearer in the tree than Application.Resources.\n\nControls, not prose (CI6):\n- ContrastFloorTests re-measures all eleven pairings from real controls in\n  a real shown window under the real App.xaml, and writes the table.\n- A theory over the eighteen TC1 types fails when one has no implicit\n  default, or sets only one of ink and ground.\n- A rendered-pixel test fails when a checked box is not visibly different\n  from an unchecked one.\n- TokenDisciplineTests fails when any named resource key is undeclared.\n\nMeasured after the change: pairs 1-10 clear their floors (13.57-15.62:1\nfor text, 5.28:1 for the disabled glyph). Pair 11 is DESIGN.md's declared\nborder deviation and is reported, not asserted.\n\nNo layout, geometry, template binding or command is changed by any of\nthis, so tab placement and drag behaviour are untouched.\n\nCo-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01PXGs6quw67gGZao37P7xSC",
-      "session": "session_01PXGs6quw67gGZao37P7xSC",
-      "shortname": "node-u2-ui-implementation",
-      "signals": {
-        "acceptance_met": true,
-        "regression": false,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": "implement",
-      "summary": "Node U2 — built U1's ranked plan for the theme, contrast, icon, surface-content and sheet concern.\n\nBUILT. Item 1: implicit TargetType defaults in App.xaml for the eighteen base control types TC1\nnames, each setting ink and ground together. Item 4: the rail focus ring is its own 2px outline\n(the old trigger recoloured a border every rail button sets to zero width). Item 5: the six\nreferences to the undeclared SunkenBrush/RaisedBrush keys now name the keys that exist, and a\ncheck fails when any named key is undeclared. Item 3: the task class is a bounded picker with\nRQ2-RQ5 copy and nothing preselected. Item 6: the pane no longer hard-codes Verified. Item 8: three\ndisabled rail placeholders deleted, New Session added as the accent primary, Explorer given a\ncatalog command. Item 10: MaxSearchResultsCeiling, and a capped read renders as a lower bound.\nItem 11: both dialogs opt their caption into DWM dark mode through one factory. A4: disabled is a\ntoken pairing, not Opacity 0.5 at 2.73:1.\n\nMEASURED, NOT ASSERTED. ContrastFloorTests instantiates real controls in a real shown window under\nthe real App.xaml and computes every pairing. Pairs 1-10 clear (13.57-15.62:1 text, 5.28:1 the\ndisabled glyph); pair 11 is DESIGN.md's declared border deviation at 1.39:1, reported and not\nasserted. A rendered-pixel test proves a checked box differs visibly from an unchecked one.\n\nPROPOSED, AWAITING RATIFICATION. Creating a session maximizes its document's stack — the maximized\ndock state DESIGN.md already defines — because the requested full-window view conflicts with A4.4\nand ADR-0017.\n\nDEFERRED WITH REASONS. Item 2 and the composer half of 5/6 belong to node F4b. Item 7 renders in\nSessionDocumentSurface.cs, which F4b holds. Items 12 and 16 depend on item 2. Item 9 is a finding\nleft where the deletion would be made: the operator's own fix is backwards, and nothing was\ndeleted. Items 13 and 15 are product decisions or cross reserved files. RQ6 is not built because\nthe operator's last answer is persisted nowhere.\n\nFALSE IN MY BRIEF. Item 1 clears 8 of 11 measured pairs, not 7 — pair 8 is a ListBox ground and the\nimplicit ListBox style clears it. The palette needed one addition (a disabled ink token) for A4,\nwhich the brief's \"no behaviour change, one file\" framing did not anticipate. The craft gate with\n--gate exits 0 over docs/mockups with 66 Majors and 38 Minors present, so --gate is no more\ndiscriminating than a bare run unless a Blocker is mapped.",
-      "tags": [
-        "ui",
-        "contrast",
-        "theme"
-      ],
-      "tier": "T2",
-      "tool": null
-    },
-    {
       "actor": "Claude Opus 5 (1M context)",
       "artifacts": [
         "src/AiDe.App/Conductor/RunEventRelay.cs",
@@ -11427,6 +11364,27 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T2",
       "tool": "claude-code"
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/session-front-door.html",
+        "docs/reviews/ui-operator-feedback.md",
+        "DESIGN.md"
+      ],
+      "datetime": "2026-09-11T13:37:53Z",
+      "duration_seconds": 1341.0,
+      "id": "al-01M28B0R807NPKC605J54T6S09",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Node U1 - /ui-design stages 1-3 on real operator feedback (7 items in C:\\Users\\malla\\Downloads\\UI housekeeping). DESIGN ONLY: write DESIGN.md and docs/mockups/, do NOT write src/. T2. Bounded loop: variant = rubric findings at severity >= major, strictly decreasing; floor = zero majors; cap = 3 passes. Deliverable is the ranked plan. Mid-task correction: Ruling 45 makes the canvas Console-only; design a one-mode-now-N-later strip.",
+      "session": "ui-elevation-node-u1",
+      "shortname": "ui-design-session-front-door",
+      "skill": "ui-design",
+      "started_at": "2026-09-11T13:15:32Z",
+      "summary": "Elevate review of the session front door. Six of seven feedback items are unimplemented spec or measured defect, not taste. Item 4's systemic cause named at the token level: only 6 implicit WPF styles exist, none for a text or input control, so 18 base types fall back to platform light defaults - 11 measured failing pairs, worst 1.15:1, plus the inverse at 1.22:1 caused by a previous partial fix. Composer: CodeMirror is vendored and navigated to but Configure has zero callers and host.init/editor.ready deadlock, so it never initializes. Task class is a free-text box for a cohort key where a typo costs more than a default. Explore/Provenance/Domain are one class instantiated three times, and the operator's proposed fix keeps the wrong one. Rail: 3 of 4 icons inert, the 4th is the only door to Explorer mode. Console-only mode strip designed per Ruling 45. Rubric variant 5 majors -> 0 in 2 passes; cap did not fire. Nine false claims in the brief reported.",
+      "tags": [],
+      "tool": null
     },
     {
       "actor": "Claude Opus 5 (1M context)",
@@ -11611,6 +11569,89 @@ window.AUDIT_DATA = {
       ],
       "tier": "T2",
       "tool": "Claude Code"
+    },
+    {
+      "actor": "sre-diagnostician",
+      "artifacts": [
+        "tools/reap-stragglers.py",
+        "docs/lessons/defect-classes.md",
+        ".github/workflows/build.yml",
+        "tools/verify-test-run.py"
+      ],
+      "datetime": "2026-09-11T16:44:13Z",
+      "done_when": "Census verified with an attribution column; process deltas captured around the suite; control committed red-first; DC-131 recurrence registered.",
+      "fan_out": 2,
+      "git": {
+        "branch": "investigate/straggler-census",
+        "pushed": null,
+        "sha": "6c39bd360e70b3e9727955bb4504f4cfa677b4e9",
+        "short": "6c39bd360"
+      },
+      "goal": "Explain the entire straggler population with measurement; prove whether AI-DE leaves anything behind; land an operator control and a gate.",
+      "id": "al-01M28NNYNHPEYQFASSV6HH1M7X",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Run /investigate on straggler terminal-host processes. Explain the WHOLE population and deliver a durable control, not a fourth leak.",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "shortname": "straggler-census-4",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "investigate",
+      "summary": "Fourth report of straggler terminal hosts, investigated as a POPULATION rather than a mechanism (DC-131). Census, ancestry walked to the root, attribution by executable path and command line rather than process name: 547 host-like processes = 529 foreign + 1 ours + 3 ours-live + 14 honestly unattributed.\n\nWHAT IS OURS: exactly one. An orphaned VBCSCompiler.exe (Roslyn compiler server) per build, holding a conhost, command line `-pipename:<base64>` naming no project, repo or worktree. DC-123 one ring out for the third time: Directory.Build.rsp retired MSBuild WORKER reuse and the COMPILER SERVER is a different server with its own lifetime and switch. Fixed in verify-test-run.py's teardown with the documented `dotnet build-server shutdown`, guarded by an idle check because the command is per-user and several agent sessions build here concurrently.\n\nWHAT IS NOT OURS: the 256-node pool. Spawned by Windows Terminal's own agent host (wta.exe, Microsoft.IntelligentTerminal), whose argv carries --agent \"copilot --acp --stdio\" literally. Creation-time chain validates with no recycled pid; EngineCatalogTests asserts the product path refuses to launch copilot. H1 (spike leak) and H2 (TH2 pre-fix cohort) both REFUTED.\n\nDELTAS (before/after, ancestry to root): Core.Tests Platform=Windows 0 survivors; App.Tests 0 survivors; full suite (2751 tests) exactly 1 survivor. A run creates ~42 ConPTY conhosts and ~21 msedgewebview2 and reaps all of them -- the operator looking during a run sees a real spike that is not a leak.\n\nFOUR OF THE PARENT'S CLAIMS WERE FALSE: 11 claude.exe (9); \"the copilot pool is not ours\" was asserted before it was provable and turned out right for the wrong reason; \"zero with AiDe in the ancestry\" (an artefact of matching process NAMES, while four AiDe.Daemon.exe were live); and the census itself was a single sample of a population that moves by 40+ processes during any test run.\n\nCONTROLS: tools/reap-stragglers.py -- dry-run by default, foreign and unknown reported and never removed, documented mechanism over killing, refuses to act while any build or test is live. --self-test (19 assertions) wired into build.yml on Linux, carrying both field errors as executable oracles plus the outage-preventing one: AiDe.Daemon.exe is parentless BY DESIGN (holds the workspace lock, bounded by a 30s idle grace) and must never be reaped. --behaviour falsified 0->1->0; --assert-clean around the full suite went 1 (red) -> 0 (green).\n\nRESIDUAL, reported not fixed: the daemon's only stop condition is a timer, not containment -- no job object at ShellBootstrap.cs:130 (Process.Start(start)?.Dispose()); AcpEngineProcess.cs:131 and ConPtyTerminalSession.cs:253 both carry a self-documented UNMEASURED window between Process.Start and AssignProcessToJob; and killing processes was refused by this session's permission classifier, so the --reap kill path is unexercised (the documented build-server shutdown path IS exercised).",
+      "tags": [
+        "straggler",
+        "DC-131",
+        "DC-123",
+        "observability"
+      ],
+      "tier": "T1",
+      "tool": "claude-code"
+    },
+    {
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "src/AiDe.App/App.xaml",
+        "tests/AiDe.App.Tests/ContrastFloorTests.cs",
+        "tests/AiDe.App.Tests/ThemeProbe.cs",
+        "tests/AiDe.App.Tests/Sessions/TheTaskClassIsChosenNotTypedTests.cs",
+        "tests/AiDe.Core.Tests/TheEvidencePaneDoesNotInventConfidenceTests.cs",
+        "src/AiDe.Core/Presentation/Sessions/TaskClassVocabulary.cs",
+        "src/AiDe.App/Workbench/DarkCaption.cs"
+      ],
+      "datetime": "2026-09-11T14:26:35Z",
+      "done_when": "Each ranked item is built, deferred or refused with a reason; the eleven measured pairings are re-measured after item 1 rather than asserted; the maximized proposal is built and marked awaiting ratification; the IA finding is produced with nothing deleted; test floors met; gates run with --gate on the craft gate; branch pushed.",
+      "git": {
+        "branch": "feature/ui-implementation",
+        "pushed": null,
+        "sha": "0a63a731d863d0636bbcf215c4540311b988eae7",
+        "short": "0a63a731d"
+      },
+      "goal": "Implement U1's ranked plan for the theme, contrast, icon, surface-content and sheet concern, on feature/ui-implementation, without altering tab placement or move behaviour.",
+      "id": "al-01M28DSXJFATYK40B3T5ZBAWAF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "feat(theme): implicit defaults for the base control set, measured\n\nItem 1 of the ranked plan in docs/reviews/ui-operator-feedback.md, plus\nitems 4 and 5.\n\nThe shell themed its CONTAINERS and left its LEAVES to WPF, whose default\nis a light theme. Six implicit styles existed, none for a text or input\ncontrol; eighteen base types fell back to the platform and twenty-eight\ninstantiations did. App.xaml now carries an implicit default for every\ntype TC1 names, each setting INK AND GROUND TOGETHER - the partial\npairing is what turned dark-on-dark into light-on-white at 1.22:1.\n\n- The palette tokens move above the templates, because a StaticResource\n  cannot reference a brush declared below it.\n- DisabledTextBrush (#7C8896) is now a token, not a literal repeated three\n  times, and disabled is that pairing rather than Opacity 0.5 - which\n  measured 2.73:1 against a 3:1 floor (A4).\n- The focus ring is its own 2px outline. The old trigger recoloured a\n  border whose thickness every rail button sets to zero, so it rendered\n  nothing while a comment claimed otherwise (A1/AR4).\n- CheckBox and RadioButton are retemplated: the platform bullet paints its\n  glyph in a fixed near-black, so on a dark ground the two states\n  composite to nearly the same image.\n- SunkenBrush/RaisedBrush were referenced from six sites and declared\n  nowhere. A missing key is a silent no-op (TC3); the six now name the\n  keys that exist.\n- AvalonDock's chrome keeps a transparent button pairing in its own\n  resource scope, which is nearer in the tree than Application.Resources.\n\nControls, not prose (CI6):\n- ContrastFloorTests re-measures all eleven pairings from real controls in\n  a real shown window under the real App.xaml, and writes the table.\n- A theory over the eighteen TC1 types fails when one has no implicit\n  default, or sets only one of ink and ground.\n- A rendered-pixel test fails when a checked box is not visibly different\n  from an unchecked one.\n- TokenDisciplineTests fails when any named resource key is undeclared.\n\nMeasured after the change: pairs 1-10 clear their floors (13.57-15.62:1\nfor text, 5.28:1 for the disabled glyph). Pair 11 is DESIGN.md's declared\nborder deviation and is reported, not asserted.\n\nNo layout, geometry, template binding or command is changed by any of\nthis, so tab placement and drag behaviour are untouched.\n\nCo-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01PXGs6quw67gGZao37P7xSC",
+      "session": "session_01PXGs6quw67gGZao37P7xSC",
+      "shortname": "node-u2-ui-implementation",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "summary": "Node U2 — built U1's ranked plan for the theme, contrast, icon, surface-content and sheet concern.\n\nBUILT. Item 1: implicit TargetType defaults in App.xaml for the eighteen base control types TC1\nnames, each setting ink and ground together. Item 4: the rail focus ring is its own 2px outline\n(the old trigger recoloured a border every rail button sets to zero width). Item 5: the six\nreferences to the undeclared SunkenBrush/RaisedBrush keys now name the keys that exist, and a\ncheck fails when any named key is undeclared. Item 3: the task class is a bounded picker with\nRQ2-RQ5 copy and nothing preselected. Item 6: the pane no longer hard-codes Verified. Item 8: three\ndisabled rail placeholders deleted, New Session added as the accent primary, Explorer given a\ncatalog command. Item 10: MaxSearchResultsCeiling, and a capped read renders as a lower bound.\nItem 11: both dialogs opt their caption into DWM dark mode through one factory. A4: disabled is a\ntoken pairing, not Opacity 0.5 at 2.73:1.\n\nMEASURED, NOT ASSERTED. ContrastFloorTests instantiates real controls in a real shown window under\nthe real App.xaml and computes every pairing. Pairs 1-10 clear (13.57-15.62:1 text, 5.28:1 the\ndisabled glyph); pair 11 is DESIGN.md's declared border deviation at 1.39:1, reported and not\nasserted. A rendered-pixel test proves a checked box differs visibly from an unchecked one.\n\nPROPOSED, AWAITING RATIFICATION. Creating a session maximizes its document's stack — the maximized\ndock state DESIGN.md already defines — because the requested full-window view conflicts with A4.4\nand ADR-0017.\n\nDEFERRED WITH REASONS. Item 2 and the composer half of 5/6 belong to node F4b. Item 7 renders in\nSessionDocumentSurface.cs, which F4b holds. Items 12 and 16 depend on item 2. Item 9 is a finding\nleft where the deletion would be made: the operator's own fix is backwards, and nothing was\ndeleted. Items 13 and 15 are product decisions or cross reserved files. RQ6 is not built because\nthe operator's last answer is persisted nowhere.\n\nFALSE IN MY BRIEF. Item 1 clears 8 of 11 measured pairs, not 7 — pair 8 is a ListBox ground and the\nimplicit ListBox style clears it. The palette needed one addition (a disabled ink token) for A4,\nwhich the brief's \"no behaviour change, one file\" framing did not anticipate. The craft gate with\n--gate exits 0 over docs/mockups with 66 Majors and 38 Minors present, so --gate is no more\ndiscriminating than a bare run unless a Blocker is mapped.",
+      "tags": [
+        "ui",
+        "contrast",
+        "theme"
+      ],
+      "tier": "T2",
+      "tool": null
     }
   ],
   "changes": [

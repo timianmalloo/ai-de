@@ -159,6 +159,42 @@ def run_tests(projects: list[Path], filter_expr: str | None = None, key: str | N
         subprocess.run(
             command, cwd=REPO, capture_output=True, text=True, check=False, env=environment)
 
+    retire_build_servers()
+
+
+def retire_build_servers() -> None:
+    """Retire the .NET build servers this run started -- but only if the machine is quiet.
+
+    MEASURED 2026-09-11, and it is the third ring of the same defect. The environment
+    variable above retires MSBuild WORKER reuse. It says nothing about the ROSLYN COMPILER
+    SERVER, which is a separate server with its own lifetime and its own switch. A full
+    `verify-test-run.py` leaves EXACTLY ONE process behind -- `VBCSCompiler.exe`, orphaned,
+    holding a `conhost.exe`, command line `-pipename:<base64>`: no project, no repository,
+    no worktree, nothing to attribute it by. It is the operator's straggler, and it was
+    the only one of 547 host-like processes that turned out to be ours.
+
+    `dotnet build-server shutdown` is the DOCUMENTED mechanism and is preferred over
+    killing anything. Measured 1 -> 0.
+
+    THE GUARD IS NOT OPTIONAL. That command is per-USER, not per-worktree: it retires the
+    servers of every concurrent build on the machine. Several agent sessions build here at
+    once, in different worktrees -- that is normal and it is how this whole defect was
+    measured. Retiring a peer's compiler server mid-build is a worse defect than the one
+    being fixed, so the reaper's own idle check decides, and a busy machine is left alone.
+    The `--assert-clean` gate still fails in that case, which is the honest outcome: the
+    straggler is real, and this run was not in a position to clear it.
+
+    NOT `UseSharedCompilation=false`, which would also stop the server existing: shared
+    compilation is a large build-time win and the cost of losing it is UNMEASURED. Trading
+    it away to avoid one process would be exactly the hunch this repository keeps
+    recording.
+    """
+    reaper = REPO / "tools" / "reap-stragglers.py"
+    if not reaper.exists():
+        return
+    subprocess.run([sys.executable, str(reaper), "--reap"],
+                   cwd=REPO, capture_output=True, text=True, check=False)
+
 
 def read_counts(project_name: str) -> tuple[dict[str, int], str] | None:
     """Return (counters, outcome) for a project's result file, or None when it produced none."""

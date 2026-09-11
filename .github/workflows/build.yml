@@ -174,6 +174,31 @@ jobs:
       # invocation, and the thing that can silently undo it is a NESTED response file, since MSBuild
       # stops at the first one it finds walking up. Falsified both directions: 16 workers without
       # the file, 0 with it, from the root and from a subdirectory.
+      # DC-131 recurrence 2 + 3. The node-reuse gate below fixed MSBuild WORKER reuse. It says
+      # nothing about the ROSLYN COMPILER SERVER — a different server, its own lifetime, its own
+      # switch — which a build leaves orphaned holding a console host whose command line is
+      # `-pipename:<base64>`: no project, no repo, no worktree. DC-123 one ring out, third time on
+      # the same symptom.
+      #
+      # And the harder half: the FOURTH report was answered with a census that matched process
+      # NAMES up the ancestry. Nothing a test spawns is named `AiDe`, so it reported "zero of ours"
+      # twice while four `AiDe.Daemon.exe` were on the operator's screen. The identity was in the
+      # executable path and the command line the whole time.
+      #
+      # This is the ORACLE for that attribution, and it runs here on Linux because it is pure
+      # Python over synthetic process tables. It carries the two errors made in the field as
+      # executable assertions: `copilot --acp --stdio` under Windows Terminal is NOT ours even
+      # though it is byte-identical to what EngineCatalog would run for a native-ACP engine, and
+      # `AiDe.Daemon.exe` IS ours and must NEVER be reaped even though it is parentless and looks
+      # exactly like a leak — it holds the workspace lock.
+      #
+      # The Windows-only halves — the live census, `--assert-clean` around a test run, and
+      # `--behaviour`, which orphans a real compiler server and proves the documented shutdown
+      # clears it — run on a developer machine. `--self-test` is the part CI can hold.
+      - name: Straggler attribution oracle
+        if: ${{ !cancelled() }}
+        run: python tools/reap-stragglers.py --self-test
+
       - name: MSBuild node-reuse control is at the boundary
         if: ${{ !cancelled() }}
         run: |

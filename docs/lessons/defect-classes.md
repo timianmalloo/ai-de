@@ -5607,9 +5607,54 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   and absent one ring out, which is exactly why `verify-test-run.py`'s environment variable did not
   reach a hand-typed `dotnet build`. **This is the *reporting* half:** DC-123 explains why the
   symptom persisted, DC-131 explains why it was declared resolved twice while it did.
+- **Recurrence 2 (2026-09-11, the FOURTH report) — THE CENSUS WAS TAKEN, AND IT WAS TAKEN ON THE
+  WRONG KEY.** The control above says the close requires an attribution column. One was produced,
+  twice, and both times it reported **"zero with `AiDe` anywhere in the ancestry"** — while four
+  `AiDe.Daemon.exe`, each holding its own console host, were on the operator's screen. The census
+  matched **process NAMES** up the chain. Nothing a test spawns is *named* `AiDe`: the identity
+  lives in the **executable path and the command line**, and `conhost.exe` carries neither. Matching
+  on the one attribute that cannot hold the answer returns a confident zero. **The operator was
+  right all four times; the instrument was reading the wrong column.** *A census satisfies DC-131
+  only if its key can represent the thing being attributed* — state the key, and prove it can return
+  a non-zero answer before trusting a zero.
+- **Recurrence 3 (same day) — the mechanism half moved one ring out AGAIN.** `Directory.Build.rsp`
+  retired MSBuild *worker* reuse. The **Roslyn compiler server** (`VBCSCompiler.exe`) is a different
+  server with its own lifetime and its own switch, and was never in scope. Measured: one build
+  leaves one `VBCSCompiler.exe` **orphaned** — parent dead — holding one `conhost.exe`, command line
+  `-pipename:<base64>`: no project, no repository, no worktree, unattributable by construction.
+  `dotnet build-server shutdown` clears it, measured 1 → 0. **Three fixes on one symptom, each
+  correct, each one ring short of the next.**
+- **The over-correction, recorded because it is the same defect pointed the other way.** The first
+  cut of `tools/reap-stragglers.py` attributed by searching the concatenated command lines of the
+  whole ancestry, and classified **543 of 547** processes as foreign — including the investigating
+  session's own shells, because *the diagnostic command lines contained the word `copilot`*. An
+  ancestor that merely **mentions** a keyword poisoned every descendant. **A confidently wrong
+  attribution column is worse than no column**, and it fails in the direction nobody re-checks,
+  because it agrees with the hypothesis. A process *name* in the ancestry is a structural fact; a
+  string inside somebody's argv is a rumour.
+- **What the fourth census found, as the denominator this class demands:** 547 host-like processes —
+  **529 foreign** (256 `node.exe` MCP servers under `copilot.exe --acp --stdio`, spawned by
+  **Windows Terminal's own agent host** — `wta.exe` from `Microsoft.IntelligentTerminal`, whose argv
+  carries `--agent "copilot --acp --stdio"` literally — plus their 256 console hosts and 17 others),
+  **1 ours** (the orphaned compiler server), **3 ours-live**, **14 honestly unattributed**. The
+  hypothesis that the ACP pool was TH2's pre-fix cohort was **refuted**: creation times validate as a
+  real chain (copilot 10:37:46.410 < wta 10:37:45.455 < WindowsTerminal 10:37:45.025 — no recycled
+  pid), and `EngineCatalogTests` asserts the product path *refuses* to launch `copilot`. **The trap
+  worth keeping: that command line is character-for-character what our own `EngineCatalog` would run
+  for a native-ACP engine.** Attribution by command line alone scores it as ours. The discriminator
+  is the parent's argv, not the child's.
+- **Control (recurrence 2/3):** `tools/reap-stragglers.py` — census with a real attribution column,
+  ancestry walked to the root, **dry-run by default**, `foreign` and `unknown` reported and never
+  removed, the documented `dotnet build-server shutdown` preferred over killing, and a refusal to act
+  while any build or test is live. `--self-test` (19 assertions, wired into `build.yml`) carries the
+  two field errors as executable oracles: the `wta`/`copilot` trap, and `AiDe.Daemon.exe`, which is
+  **parentless by design** — it holds the workspace lock across a shell restart and is bounded by a
+  30s idle grace (`IpcServer.Idle`) — so reaping it because it matches the shape of a leak would drop
+  a live workspace. `--behaviour` orphans a real compiler server and proves the fix clears it.
 - **Status:** `controlled` — the boundary gate is wired and red-first on both clauses, and the
   census shape is written into the close. The general discipline is only as strong as the reviewer
-  who asks *"what is the denominator?"*
+  who asks *"what is the denominator?"* — and, after recurrence 2, *"what is the key, and can it
+  ever return a non-zero answer?"*
 
 ### DC-132 — A handler is wired to an event the library never raises on the path it was written for
 
