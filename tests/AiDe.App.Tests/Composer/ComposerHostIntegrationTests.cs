@@ -49,6 +49,55 @@ public sealed class ComposerHostIntegrationTests
         Assert.Contains("fenced: true", stdout, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// <b>Ruling 47 (d):</b> exactly one <c>host.init</c> per mount after <c>Configure</c>, and field
+    /// values survive it — driven against the shipped <c>ComposerSurface</c> and the shipped page.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>What was red before the fix, and how.</b> With the page restored to posting
+    /// <c>editor.ready</c> only from inside its own <c>host.init</c> branch, this probe exits 12 —
+    /// <c>ThePageNeverMounted</c> — because nothing pushes a first init and the page is waiting for
+    /// one. That is the deadlock, observed, not argued.</para>
+    ///
+    /// <para><b>Both orders are run</b>: the shell configuring a document whose browser is still
+    /// starting, and configuring one whose page mounted first. Each must yield exactly one init.</para>
+    /// </remarks>
+    [Fact]
+    public void TheHandshakePushesExactlyOneHostInitPerMountAndFieldValuesSurviveIt()
+    {
+        var probe = ProbePath();
+        Assert.True(File.Exists(probe), $"the composer probe was not built at {probe}");
+
+        using var process = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(probe)
+        {
+            Arguments = "--handshake",
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+        })!;
+
+        var stdout = process.StandardOutput.ReadToEnd();
+        var stderr = process.StandardError.ReadToEnd();
+        Assert.True(process.WaitForExit((int)TimeSpan.FromMinutes(6).TotalMilliseconds), "the handshake probe hung");
+
+        Assert.True(
+            process.ExitCode == 0,
+            $"the composer handshake probe failed with exit {process.ExitCode}. {stdout} {stderr}");
+
+        // NON-VACUITY. Each line below could only be printed after the thing it describes happened,
+        // and the count appears once per order rather than once in total.
+        Assert.Equal(2, stdout.Split("host.init count=1", StringSplitOptions.None).Length - 1);
+
+        Assert.Contains("configure-before-show=True", stdout, StringComparison.Ordinal);
+        Assert.Contains("configure-before-show=False", stdout, StringComparison.Ordinal);
+        Assert.Contains("rendered goal=Seeded before the page mounted", stdout, StringComparison.Ordinal);
+
+        // The accessor that silently ate every page message, re-measured on every run. If this ever
+        // stops reading `null`, the defensive read in the surface has a different justification and
+        // its comment is a memoir.
+        Assert.Contains("AdditionalObjects on a plain postMessage: null", stdout, StringComparison.Ordinal);
+    }
+
     private static string ProbePath()
     {
         var configuration =

@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 65 · partially-controlled 53 · uncontrolled 15
+**Status counts:** controlled 66 · partially-controlled 53 · uncontrolled 15
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -5689,3 +5689,62 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Status:** `uncontrolled` — the measurement exists and the threshold question is with the Owner,
   because where to set it is a policy call and not a defect fix. No check in this repository
   currently asserts that a gate's failing severity is attainable.
+
+### DC-134 — A throw in ONE subscriber aborts a multicast event, and across an interop boundary it is swallowed, so a whole channel goes silent with nothing to read
+> **Renumbered from DC-133 on merge, 2026-09-11.** This class and *a gate's failure threshold sits
+> above the highest severity its rule set can emit* were both registered as `DC-133`, on the same
+> day, by two trees that could not see each other — node F6 in its worktree and the conductor on
+> `main`. `verify-defect-register.py` passed in both, because it enforces one-entry-per-class
+> **within a tree**. The tiebreak was *which tree is `main`*, which carries no information about
+> merit. **DC-013 recurrence 5.**
+
+
+- **Shape:** a .NET event is raised over a multicast delegate, and an exception in one handler
+  **stops the invocation list** — later subscribers never run. When the raiser is across an interop
+  boundary (COM, a native callback, a browser host), the exception is also **caught and discarded
+  there**, so it never reaches a crash, a log, or a debugger's first-chance stop. The result is an
+  entire channel that delivers nothing, with **no exception, no crash, no counter moving, and no
+  error state anywhere to read**. Every diagnostic that works by looking for a failure finds none,
+  because the failure was consumed.
+- **Signature:** an event that "does not fire" while the thing raising it demonstrably works;
+  a drop counter that reads 0 when nothing arrived (0 is correct — the code that increments it is
+  downstream of the throw); a second handler added to diagnose the first one, which also never runs
+  and is read as confirmation that the source is dead; an event-args property dereferenced without a
+  null check because the API's shape implies it is always populated.
+- **Instance (composer, node F6, 2026-09-11):** `ComposerSurface.OnWebMessage` opened with
+  `foreach (var item in e.AdditionalObjects)`. **Measured:** for a message posted with plain
+  `chrome.webview.postMessage` — four of the composer's five message kinds —
+  `CoreWebView2WebMessageReceivedEventArgs.AdditionalObjects` reads **`null`**; only
+  `postMessageWithAdditionalObjects` populates it. So every page message NREd before reaching
+  `ComposerMessageRouter.Route`, WebView2 swallowed it, and **no page-to-host message had ever been
+  received.** It was invisible because the handshake was independently deadlocked — the page was
+  waiting for a `host.init` nothing pushed — so "the page never mounts" had a sufficient explanation
+  already, and the second defect sat behind the first. It surfaced only when a probe drove a
+  `postMessage` directly from the page, subscribed its **own** handler to the same
+  `CoreWebView2.WebMessageReceived`, and saw *that* handler get nothing either: one handler failing
+  is a bug in the handler, two handlers failing on the same event is a bug in the invocation.
+- **Why the existing controls could not see it:** `ComposerMessageRouter` is a pure function and has
+  156 tests; every one of them calls `Route` directly, which is downstream of the throw. The router
+  cannot fail to receive a message it is handed. `ComposerHostIntegrationTests` drove a real page in
+  a real WebView2 and printed *"page messages observed: 1"* — **without asserting on it**, so the
+  number could have been 0 for months and the test stayed green. A count printed and not asserted is
+  a measurement nobody takes.
+- **Control:** the event-args access is guarded, and — the rung that actually holds — the composer
+  probe **posts a plain `postMessage` on every run and prints what `AdditionalObjects` reads**, with
+  `ComposerHostIntegrationTests.TheHandshakePushesExactlyOneHostInitPerMountAndFieldValuesSurviveIt`
+  asserting it still reads `null`. If the platform ever changes that, the comment justifying the
+  guard stops being true and a test says so, rather than the guard becoming folklore (CI6). The
+  handshake oracle is the second half: it asserts a **positive** — exactly one `host.init` reaches
+  the page per mount — which cannot be satisfied by a channel that delivers nothing.
+- **Swept:** every subscription to a WebView2/CoreWebView2 event in `src/` was read.
+  `CanvasSurface.OnWebMessage` touches only `e.WebMessageAsJson` inside a `try`/`catch`, and the four
+  navigation handlers read `e.Uri` and set a flag. `AdditionalObjects` is dereferenced in exactly one
+  place in `src/`, and it is the one repaired here.
+- **Relationship to DC-012:** DC-012 is a run that reports success with fewer tests than exist —
+  a *quantity* silently smaller than it should be. This is the same failure mode with the quantity at
+  zero and no report at all, which is why it survived longer: DC-012's control asserts on a count,
+  and nothing here was counting.
+- **Status:** `controlled` — the measurement runs on every probe invocation and is asserted, and the
+  positive handshake oracle fails if the channel goes silent again for any reason. What is **not**
+  controlled is the general shape: a new interop event handler that dereferences an event-args
+  property unguarded would reintroduce it somewhere else, and no gate reads for that.

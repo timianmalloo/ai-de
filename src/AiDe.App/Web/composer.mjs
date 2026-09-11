@@ -7,6 +7,18 @@
 //
 // CTRL-ENTER IS NOT BOUND HERE, AND NOT IN THE BUNDLE. The shell owns the send accelerator and marks
 // the key handled. A page that could evidence a human gesture could post one in a loop.
+//
+// THE HANDSHAKE, AND WHY `editor.ready` IS POSTED ON MOUNT. ComposerMessageKinds.EditorReady states
+// the contract: "The page finished mounting. The host may flush queued host-to-page pushes." Ready
+// therefore comes FIRST and unprompted — the host has nothing to push until it is told the page
+// exists. Posting it from inside the `host.init` branch instead made ready a REPLY to the very push
+// it was supposed to unblock: nothing pushed a first init, so nothing ever mounted, and whoever
+// added the first push would have got a second ready straight back that the router drops.
+//
+// THE INSTANCE ARRIVES BEFORE ANY OF THIS, and the host still mints it. It is injected into the
+// document at creation (`window.__aideComposerInstance`), because a page that must put the instance
+// in every envelope cannot post its FIRST message without one. The host re-states it on `host.init`
+// and the two are compared there: the page never invents an identity, it is handed one twice.
 import { makeFieldEditor } from "./vendor/codemirror-composer.bundle.mjs";
 
 const PROTOCOL_VERSION = 1;
@@ -206,6 +218,9 @@ function onHostMessage(event) {
   if (!message || message.v !== PROTOCOL_VERSION) return;
 
   if (message.kind === "host.init") {
+    // THE INSTANCE IS MATCHED, NOT ADOPTED. It was injected at document creation; an init carrying a
+    // different one is not this surface's, and taking it would let a stale push re-identify the page.
+    if (state.instance && message.instance !== state.instance) return;
     state.instance = message.instance;
     state.fileCandidates = message.fileCandidates || [];
     state.graphCandidates = message.graphCandidates || [];
@@ -214,7 +229,11 @@ function onHostMessage(event) {
       ? "Drop a file here to attach it."
       : "Attaching files is off for this session.";
     render(message.fields || []);
-    post("editor.ready", {});
+
+    // NO `editor.ready` HERE. See the handshake note at the top: replying to the push with the
+    // message that unblocks the push is the ping-pong, and the second render arrives carrying the
+    // empty values that were pushed before the operator had typed anything.
+    window.__composerInitCount += 1;
     window.__composerReady = true;
   }
 }
@@ -251,13 +270,20 @@ function wireFocus() {
 
 try {
   window.__composerReady = false;
+  window.__composerInitCount = 0;
   window.__composerError = "";
   window.__composerToFence = toFence;
+
+  // The host-minted instance, handed to the document before any script ran. Never generated here: a
+  // page that could mint its own identity could address a surface it is not.
+  state.instance =
+    typeof window.__aideComposerInstance === "string" ? window.__aideComposerInstance : "";
 
   chrome.webview.addEventListener("message", onHostMessage);
   wireDrop();
   wireFocus();
   post("metrics", { name: "composer.mounted", value: 1 });
+  post("editor.ready", {});
 } catch (e) {
   window.__composerError = String((e && e.stack) || e);
   const box = document.getElementById("error");

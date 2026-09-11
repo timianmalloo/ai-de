@@ -103,6 +103,15 @@ public static class AgentPlaneErrorCodes
     /// never ran.
     /// </summary>
     public const string GovernedEpisodeNotScored = "AP-0020";
+
+    /// <summary>
+    /// <c>~/.aide/providers.json</c> exists and is wrong — a missing field, an unknown key, or a
+    /// value outside a closed set. <b>Distinct from the file being absent</b>, which is not an error
+    /// at all: an absent file is an operator who has not configured a backend, and a malformed one
+    /// read as an empty registry would render as exactly that, which is a wrong claim about a file
+    /// that exists.
+    /// </summary>
+    public const string ProviderConfigurationMalformed = "AP-0021";
 }
 
 /// <summary>
