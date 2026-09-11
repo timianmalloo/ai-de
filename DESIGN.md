@@ -1,8 +1,11 @@
 ---
 name: AI-DE Workspace
 description: Design language for the AI-DE desktop workspace — a dense, calm, evidence-first shell for directing coding agents.
-archetype: "Workbench { Type:OLTP; Arch:Desktop; Layout:MultiPanelWorkstation; Density:Compact; Nav:CommandPalette+Sidebar; Viewport:DesktopBound; Input:KeyboardFirst+PrecisionPointer; Color:DarkAdaptive; Type:Utilitarian; Depth:Flat; Sync:LocalFirst; Persistence:LocalDevice; Feedback:Optimistic; Motion:Micro; Pacing:Freeform; Transition:HardCut; A11y:WCAG_2.2_AA; }"
+archetype: "PerspectiveShell { Type:OLTP; Arch:HubAndSpoke; Layout:MultiPanelWorkstation; Density:Compact; Nav:Sidebar+CommandPalette+TopBar; Viewport:DesktopBound; Input:KeyboardFirst+PrecisionPointer; Color:DarkAdaptive; Type:Utilitarian; Depth:SoftShadow; Sync:LocalFirst; Persistence:LocalDevice; Feedback:Instant+Confirmed; Motion:Micro; Pacing:Freeform; Transition:HardCut; A11y:WCAG_2.2_AA+ReducedMotion; x-platform:windows; x-framework:wpf; }"
 colors:
+  # Dark is the operator's default. Every role below has a light value under the same name with a
+  # `light-` prefix (one role, two values — modes over the semantic layer, U4); the high-contrast
+  # theme maps roles to Windows system brushes by rule and declares no values here.
   surface: "#12151A"
   surface-raised: "#1A1F26"
   surface-sunken: "#0D1014"
@@ -11,7 +14,13 @@ colors:
   text-muted: "#98A3B2"
   text-disabled: "#7C8896"
   accent: "#5B9DD9"
-  accent-contrast: "#0D1014"
+  # The ink on an accent ground — the ONLY ink any state may paint on {colors.accent}. It used to be
+  # named `accent-contrast`; renamed so no site borrows a ground token (surface-sunken) as an ink.
+  text-on-accent: "#0D1014"
+  # The boundary of a text or numeric field at rest (WCAG 1.4.11 needs 3:1 to identify an input);
+  # {colors.border} is decorative and cannot carry it. Same value as text-disabled by design: one
+  # dim grey for "chrome that is not ink".
+  field-border: "#7C8896"
   verified: "#5FB98F"
   inferred: "#D8A650"
   unverified: "#98A3B2"
@@ -32,9 +41,43 @@ colors:
   # token discipline is satisfied and the craft detector treats them as intentional, not drift.
   syntax-keyword: "#C792EA"
   syntax-type: "#82AAFF"
-  syntax-comment: "#5A6472"
+  # Re-toned from #5A6472 (3.05–3.18:1 on the dark grounds — below the 4.5:1 text floor for the
+  # first code node rendered; spec-addendum-c-perspectives §R row 23). 5.35 / 4.84 / 5.57:1 now.
+  syntax-comment: "#808C9A"
   syntax-string: "#C3E88D"
   syntax-highlight: "#B08CD9"
+  # ---- Light mode values (the same roles; declared so the light contrast census has something to
+  # measure — spec-addendum-c-perspectives §R row 24). Every ink clears 4.5:1 on every light ground.
+  light-surface: "#F4F6F8"
+  light-surface-raised: "#FFFFFF"
+  light-surface-sunken: "#E7EBEF"
+  light-border: "#C7CFD8"
+  light-text: "#1A1F26"
+  light-text-muted: "#55606E"
+  light-text-disabled: "#5F6977"
+  light-accent: "#27649A"
+  light-text-on-accent: "#FFFFFF"
+  light-field-border: "#5F6977"
+  light-verified: "#1C724A"
+  light-inferred: "#7D5900"
+  light-unverified: "#55606E"
+  light-stale: "#7D5900"
+  light-danger: "#A8372B"
+  light-focus: "#1B4F7E"
+  light-splitter: "#C7CFD8"
+  light-splitter-hover: "#27649A"
+  light-splitter-keyboard: "#1B4F7E"
+  light-drop-target: "#27649A"
+  light-drop-target-fill: "rgba(39,100,154,0.18)"
+  light-drop-forbidden: "#A8372B"
+  light-float-chrome: "#FFFFFF"
+  light-locked: "#7D5900"
+  light-scrim: "rgba(0,0,0,0.35)"
+  light-syntax-keyword: "#6F35A0"
+  light-syntax-type: "#1C579B"
+  light-syntax-comment: "#5C6674"
+  light-syntax-string: "#38651B"
+  light-syntax-highlight: "#6C3FA0"
 typography:
   ui: "Segoe UI Variable Text, Segoe UI, system-ui, sans-serif"
   mono: "Cascadia Mono, Consolas, ui-monospace, monospace"
@@ -69,20 +112,56 @@ chrome competes with evidence, so chrome loses.
 
 ## Palette roles
 
-| Token | Role | Contrast (on `{colors.surface}`) |
-|---|---|---|
-| `{colors.text}` | primary evidence text | 13.9:1 — AA/AAA body |
-| `{colors.text-muted}` | secondary metadata, `not recorded` | 6.4:1 — AA body |
-| `{colors.text-disabled}` | the ink of an unavailable control — **a pairing, never an opacity** | 5.1:1 — AA body |
-| `{colors.accent}` | selection, focus affordance, links | 6.1:1 — AA body, AA non-text |
-| `{colors.verified}` | Verified confidence chip | 7.2:1 |
-| `{colors.inferred}` / `{colors.stale}` | Inferred confidence, stale state | 8.3:1 |
-| `{colors.danger}` | failed extraction, delivery failure | 5.6:1 — AA body |
-| `{colors.focus}` | 2px focus ring, always visible | 8.9:1 against surface and raised |
-| `{colors.border}` | 1px separators; never the only grouping signal | 1.6:1 — decorative, spacing carries the grouping |
+| Token | Role |
+|---|---|
+| `{colors.text}` | primary evidence text |
+| `{colors.text-muted}` | secondary metadata, `not recorded` |
+| `{colors.text-disabled}` | the ink of an unavailable control — **a pairing, never an opacity** |
+| `{colors.accent}` | selection, focus affordance, links |
+| `{colors.verified}` | Verified confidence chip |
+| `{colors.inferred}` / `{colors.stale}` | Inferred confidence, stale state |
+| `{colors.danger}` | failed extraction, delivery failure |
+| `{colors.focus}` | 2px focus ring, always visible |
+| `{colors.text-on-accent}` | **the ink on an accent ground** — the only ink a checked, selected-active or primary-action state may paint on `{colors.accent}` |
+| `{colors.field-border}` | the boundary of a text or numeric field at rest — a `ui` pairing (3:1) on every field ground |
+| `{colors.border}` | 1px separators; never the only grouping signal — decorative, spacing carries the grouping |
 
-*Contrast figures are computed against `{colors.surface}` and re-measured by the contrast audit in the
-UI craft gate; a token that drops below AA fails the gate, it does not get a waiver.*
+*Ratios live in one place: the ink × ground matrix below (both themes). A one-ground column used to
+sit here and had drifted from the values it claimed to measure (13.9 vs 14.98); a second store of the
+same number is how a design language declares AA it did not compute (TC6).*
+
+### Ink × ground — every pairing a state may render, both themes
+
+The table above measures every ink on one ground. The family that failed the runtime census
+(`INV-0007`, 14 of 180 pairings) was the **accent-as-ground** family — a light ink on `{colors.accent}`
+at 2.37:1 — which a one-ground table cannot list. This matrix is the rule: **a state names an ink token
+and a ground token from the same row and column, and nothing else.** A cell marked `—` is a pairing no
+state may use. Ratios are computed from the token values (dark / light); the runtime census re-measures
+them on the composed tree and is the acceptance test (spec-addendum-c-perspectives §C7).
+
+| Ink ↓ · Ground → | `surface` | `surface-raised` | `surface-sunken` | `float-chrome` | `accent` |
+|---|---|---|---|---|---|
+| `text` | 14.98 / 15.29 | 13.57 / 16.56 | 15.62 / 13.82 | 11.86 / 16.56 | **—** (2.37 / 3.11 — the census failure) |
+| `text-muted` | 7.16 / 5.90 | 6.48 / 6.39 | 7.46 / 5.34 | 5.67 / 6.39 | — |
+| `text-disabled` | 5.07 / 5.14 | 4.59 / 5.57 | 5.28 / 4.64 | 4.01† / 5.57 | — |
+| `text-on-accent` | — | — | — | — | **6.60 / 6.22** |
+| `accent` (link, glyph, 3px bar) | 6.33 / 5.74 | 5.73 / 6.22 | 6.60 / 5.19 | 5.01 / 6.22 | — |
+| `verified` | 7.69 / 5.45 | 6.96 / 5.91 | 8.01 / 4.93 | 6.08 / 5.91 | — |
+| `inferred` / `stale` / `locked` | 8.27 / 5.87 | 7.48 / 6.36 | 8.62 / 5.31 | 6.54 / 6.36 | — |
+| `danger` | 6.26 / 5.97 | 5.67 / 6.47 | 6.52 / 5.40 | 4.95 / 6.47 | — |
+| `focus` (2px outer ring, 3:1 floor) | 9.49 / 7.86 | 8.59 / 8.51 | 9.89 / 7.11 | 7.51 / 8.51 | **1.50 / 1.37 — outer ring only** (see deviations) |
+| `syntax-comment` | 5.35 / 5.37 | 4.84 / 5.82 | 5.57 / 4.86 | — | — |
+| `field-border` (1px field boundary, 3:1 floor) | 5.07 / 5.14 | 4.59 / 5.57 | 5.28 / 4.64 | — | — |
+| `danger` as a glyph/badge stroke (3:1 floor) | 6.26 / 5.97 | 5.67 / 6.47 | 6.52 / 5.40 | — | — |
+
+† `text-disabled` on `float-chrome` (dark) is 4.01:1, below the text floor. **A disabled menu row
+therefore never takes the lifted hover ground**: hovering a disabled item leaves it on
+`surface-raised` (4.59 / 5.57) and shows the reason. A disabled rail item does not exist (AR3); a
+disabled tab is not a state the dock has. Every other `text-disabled` cell clears 4.5:1 in both themes
+(an earlier draft of this row stated light values it had not computed — 4.26 / 3.85 — and built a
+deviation on them; recomputed from `{colors.light-text-disabled}`, the deviation is gone). A hovered accent fill (Send, New
+session, a primary button) is the accent at `brightness(1.12)` — a derived value, not a token; the WPF
+slice uses the Fluent accent-light brush; computed 8.24 / 5.22:1 with `text-on-accent`.
 
 ## Type
 
@@ -118,8 +197,8 @@ a component missing its empty or error state is an incomplete component, not a s
 | Mode | Ground | Notes |
 |---|---|---|
 | Dark (default) | `{colors.surface}` | The operator's working default. |
-| Light | inverted roles, same semantics | Confidence hues re-picked for AA on a light ground, not naively lightened. |
-| Windows high contrast | system colours | Token roles map to system brushes; glyph+text confidence keeps meaning when hue is unavailable. |
+| Light | `{colors.light-surface}` — **every role has a declared `light-*` value** (frontmatter; `tools/verify-design-modes.py` refuses a role without one) | Confidence hues re-picked for AA on a light ground, not naively lightened; the ratios are the matrix's light column. Until 2026-09-11 this row was a rule with no values, so the light contrast census had nothing to measure (spec-addendum-c-perspectives §R row 24). |
+| Windows high contrast | system colours | **Every ground-only state maps to a system pair, or it vanishes** (black on black): the active rail bar and the selected-active tab → `SystemColors.Highlight` ground + `HighlightText` ink; a menu, palette, picker or list **highlight** → `Highlight` + `HighlightText`; the hover pill on the rail → no ground change (the focus ring, `SystemColors.ControlText` 2px, is the only indicator); field boundaries → `ControlText`; disabled → `GrayText`. Glyph+text confidence keeps meaning when hue is unavailable. No values are declared here because the values are the OS's; the mockups' `hc` theme uses stand-ins and its audit is labelled *not measured*. |
 
 ## Performance budget
 
@@ -222,8 +301,10 @@ carries an accessible name and a tooltip** — an icon is never the sole label. 
 
 ### Menu & command system
 
-A **menu bar** (File · Edit · View · Graph · Model · Agents · Window · Help) is the *discovery* path over the
-existing command palette (Cmd/Ctrl-K, the *power* path). A **Command** = `{ id, label, icon, shortcut,
+A **menu bar** (File · Edit · View · Window · Terminal · Help — the six the code builds; the earlier
+Graph · Model · Agents set is retired by the perspective-shell section's PS-M1, because every
+allow-list entry derives into View) is the *discovery* path over the existing command palette
+(Ctrl+K, the *power* path). A **Command** = `{ id, label, icon, shortcut,
 enabled-predicate, disabled-reason }`. Menu-item states: default / hover / focus / **disabled-with-reason**
 (the reason shows on hover — an inert control never leaves the user guessing) / checked. The menu bar surfaces
 the same commands the palette runs; they never diverge.
@@ -546,12 +627,12 @@ rendered as a lower bound per the bounded-read rule).
 - `Choose a task class to create the session.`
 - `A session's score is only ever compared against sessions of the same class. Pick the one that matches the work.`
 - `Your last session used ui-feedback. One click applies it. It is a suggestion, not a preselection.`
-- `Describe the change. Press / for a skill, @ to attach context.`
+- `Describe the change. Press / for a skill, @ to attach context.` *(superseded by the perspective-shell section's placeholder)*
 - `Draft staged, not sent`
 - `This session has no blocks yet.`
 - `Console is the only canvas mode in this phase.`
 - `Explorer: graph and reader`
-- `Nothing has run yet. Send the first block and the merged stream appears here.`
+- `Nothing has run yet. Send the first message and the merged stream appears here.`
 - `Block b3 is waiting on a ready agent backend. The draft is preserved and was not sent.`
 - `A session opens without a ready backend; a run needs one.`
 
@@ -562,3 +643,310 @@ rendered as a lower bound per the bounded-read rule).
 | `{colors.border}` measures **1.39:1** on `{colors.surface}`, below the 3:1 floor for a UI component boundary | Already declared in the palette table above: the border is decorative and **spacing carries the grouping**. It is never the only signal separating two regions. Re-stated here because a measurement that looks like a failure needs its disposition beside it. |
 | The 28px dense strips trip the detector's *cramped padding* rule | 8px of vertical inset is arithmetically impossible inside a 28px row that also holds a 24px control. The density is the archetype's (`Density:Compact`) and the horizontal inset is a full `{spacing.scale}` step. |
 | A composer island sits inside a bordered pane, tripping *nested cards* | The soft-islands register is exactly a card inside a pane. The nesting is one level and it is the facelift's stated direction. |
+
+---
+
+## The perspective shell — three benches, one conversation
+
+*Added by `/ui-design` (elevate) for `spec-addendum-c-perspectives`; the review and its ranked plan are
+[`docs/reviews/ui-perspective-shell.md`](docs/reviews/ui-perspective-shell.md) and the mockups are
+[`docs/mockups/perspective-shell.html`](docs/mockups/perspective-shell.html),
+[`docs/mockups/conversation-composer.html`](docs/mockups/conversation-composer.html) and
+[`docs/mockups/new-session-sheet.html`](docs/mockups/new-session-sheet.html). This section adds
+**one ink token** (`{colors.text-on-accent}`), **re-tones one** (`{colors.syntax-comment}`), and
+declares the **light values** of every role. Everything else is pairing, placement, rhythm and copy.*
+
+### Direction brief (DX5)
+
+**Who, and in what state.** The operator: one technical lead, one screen, three jobs on one repository,
+serially, many times a day. They arrive **in flow** (a terminal live, a console streaming, a permission
+request due) and never browsing. Eighty percent of their time is in Coding, talking to a session.
+
+**The job.** Be in **one use case at a time** with the surfaces, the menu and the default arrangement
+fitted to it: **J1** drive agentic coding by talking to a session as in a chat; **J2** walk the graph;
+**J3** understand the code broad-to-specific. The shell's own job is the switch between them, and the
+switch must feel like *turning to a different bench in the same workshop*: instant, stated, lossless.
+
+**Archetype.** The shell's signature is the frontmatter's `PerspectiveShell { … Arch:HubAndSpoke … }`
+(spec §C1): the rail is the hub, each perspective a spoke; **the spokes are read in parallel** (three
+destinations always visible with their state) **and entered serially** (exactly one body). Verified
+against the shape of each task inside it: the Coding and Architecture hosts are parallel-reading
+`MultiPanelWorkstation`s; Explore is the explorer's own Spatial-Canvas × Master-Detail; **the composer
+is serial entry and takes D1 · Generative Stream Thread as its nearest row** (`Feedback:Generative`,
+U13–U15 adopted; `Layout:StreamingThread` not adopted: the thread is the session document, composer
+beside canvas, not an auto-scrolling column); the New Session sheet is one short form, `Pacing:UserDriven`
+inside a modal, no wizard. The header's previous `Arch:Desktop` was not a grammar value and `Depth:Flat`
+lagged the facelift; both corrected here (`docs/notes/addendum-c-design-signature.md`).
+
+**Three adjectives, and their opposites.** **Fitted, not cluttered** (nothing on screen that is not
+about the job the operator is in). **Conversational, not clerical** (the composer is a message you
+write, whose structure appears beneath it; never a form you fill above a render). **Legible, not dim**
+(every ink is a token pair that clears AA in both themes; the operator's directive, verbatim: *"stop
+putting dark fonts on dark backgrounds"*). Inherited from the spec: *predictable, not surprising*;
+*quiet, not decorated*.
+
+**Named references, and what is taken.** **Eclipse perspectives**: a task-scoped view set with a menu
+contribution, switched often; not its chrome (fetched, spec §A11). **VS Code's activity bar**: an
+icon-only rail, one active item, tooltip + accessible name; not its colours (fetched, spec §A11).
+**Outlook for Windows**: `Ctrl+1 … Ctrl+8` switch its top-level views (Mail, Calendar, People …), which
+is the Fluent-side precedent for `Ctrl+1/2/3` as perspective gestures (support.microsoft.com, fetched
+2026-09-11 **[Verified]**). **Cursor's chat input**: `@` typed in the one input attaches context with
+suggestions as you type (cursor.com/docs, fetched 2026-09-11 **[Verified]**; how a selection renders is
+not documented there, so chips are this design's choice **[Inferred]**). **The Claude application**: the
+operator's own comparable (*"does not feel like a chat conversation"*): one editor, attachments beneath
+the text, settings elsewhere; **not** bubbles, avatars or a centred column. The operator's verdict is the
+evidence; the product was not fetched **[Flagged]**. **JetBrains New UI / Islands**: the facelift's
+register, unchanged.
+
+**Anti-goals.** Not a dashboard of equal tiles. Not a form of boxes above a render. Not a chat of
+bubbles. Not a rail of placeholders (AR3: the 4-mode rail that was tried and deleted). Not dim-on-dark
+or light-on-light, in any state, in either theme. Not a slide between destinations (three directions,
+no meaning). Not a per-prompt settings field, ever (Ruling 56), and not a tier field anywhere the operator types (the operator's correction of 2026-09-11: tier is compiled, not typed). Not the accent as decoration.
+
+**Constraints.** WPF on Windows (.NET 10), Fluent conventions, UI Automation names and states, a
+high-contrast mode that maps to system colours; AvalonDock hosts and the named-zone model unchanged; the
+composer editor is a WebView2 page (no effect over it, airspace; tokens reach it as CSS variables);
+`Density:Compact` with 28px rows and strips; one screen, startup width; WCAG 2.2 AA is a hard floor with
+the runtime census (§C7) as its acceptance test; no generated imagery.
+
+### Personality in three moves (DX6)
+
+- **Type.** `{typography.ui}` for chrome and the conversation; `{typography.mono}` for a path, a write
+  scope, a compiled prompt: anything the operator must read character by character before an agent
+  acts on it. The composer's editor is UI type, not mono: it is a message, not code.
+- **Colour.** One accent, spent on exactly three things: the rail's primary action, the one active
+  destination / selected-active tab (one of each on screen at any instant), and links + focus. Semantic
+  hues only beside a glyph and a word. In light mode the accent darkens to `{colors.light-accent}` so
+  the same three uses clear the floor; nothing is "lightened".
+- **Space.** The compact rhythm: **4 within a line, 8 between lines, 12 between regions, 16 pane
+  padding**, and within-group visibly tighter than between-group. Lines of text are grouped by spacing
+  and a hairline, never by a box: the composer has zero bordered fields at rest.
+
+### Trigger map (mapped at Stage 1)
+
+| Trigger | Fires? | Consequence here |
+|---|---|---|
+| UI-T1 expert/quantitative | **Narrowly** | The routing shell is not a quantitative surface (its nearest rows are H1/G6 already). TQ2/TQ7 apply to every number it shows: `budget` with its unit and precision, `fan-out 3`, `showing 40 of 212`, `3 panes`: tabular numerals, unit-bearing, a lower bound rendered as one. |
+| UI-T2 generated assets | **No** | Nothing under `docs/assets/` is produced; VA1–VA22 inert. |
+| UI-T3 fronts a model | **Yes** | The composer fronts the assist deriver (D-5) and the conductor. Wrong derivation, refused send, lane refusal and "no provider" are first-class states; Governor / Trust-builder→Disclosure / Wayfinder named below. |
+| UI-T4 native client | **Yes**: `native-desktop` · `windows` · `wpf` · distribution: local unsigned build · a11y API: UI Automation · HIG: Fluent | The HTML mockups are direction evidence only. Native PASS is the runtime Proof Pack (spec §A13 P-1…P-13), measured at the slice; the review lists every row as *not measured* rather than claiming it. |
+
+### "Not chunky", measured (the density contract)
+
+The operator's word is *chunky*; the diagnosis is a set of numbers the mockup meets and the slice must
+meet at the shell's startup width (P-12):
+
+| Property | Value | Why |
+|---|---|---|
+| Chrome above the editor's first line | **28px** (the session header) | One row. The shape control and the settings affordance live in it; nothing else sits above the message. |
+| Editor share of the composer zone | **≥ 45 %** of the zone height; never below its declared minimum (5 lines, 130px) | The message is the focal point; everything beneath it is derived from it. |
+| Rows beneath the editor | **4 at rest** (structure collapsed to one line · inherited settings · write scope · compiled summary), **7 with the structure expanded**, each **24px** | Lines of 12px type, not boxes. Expanding the structure adds three 24px lines beneath the editor and never moves its top edge. Measured at the shell's startup Center height (≈ 580px). |
+| Bordered text fields at rest, other than the editor | **0** | A line of text is grouped by spacing and a hairline, never by a box (DX13). The editor carries a `{colors.field-border}` boundary because it is an input (1.4.11); nothing beneath it does. |
+| Type sizes in the composer | **3**: 13px editor · 12px lines and labels · 11px key labels (`Ctrl+Enter`) | Hierarchy by scale, not weight (DX12); the 15px empty-state heading belongs to the canvas beside it. |
+| Animated moments in the composer | **2**: structure expand `{motion.base}`, derived-mark clear `{motion.fast}` | Plus the caret. Nothing else moves (DX19). |
+| Per-prompt settings fields | **0** | Ruling 56 as corrected by the operator (2026-09-11): the fan-out **ceiling** and the budget are read from the session and shown as one muted line that links to their one home; **tier is not typed anywhere**: it is a decoration the compile step attaches to the compiled prompt, shown on the compiled disclosure as a derived value the operator sees and confirms at send. |
+
+### The rail: one action, three destinations (AR1–AR5 kept; PS-R1–PS-R4 added)
+
+| Rule | Statement |
+|---|---|
+| *(composition, active signal)* | The rail's composition (New session above the divider; Coding · Explore · Architecture; Tests reserved and absent) and the active signal (the 3px bar plus the accent glyph; the pill is decorative) are spec §B2 and §C3 and are not restated here. |
+| **PS-R2** | The destinations are a **single-selection group with manual activation**: one selected item; **Up/Down move focus only** (nothing switches, nothing announces); **Space, Enter, the bound gesture, or a click switch**; Tab leaves the rail (roving tab-stop); activating the selected item is a no-op that emits nothing. Exposed to UIA as a vertical **tab list** (`TabItem` with `SelectionItemPattern`, `IsSelected` = active), not as radio buttons: a WPF `RadioButton` group selects on arrow, which would switch perspective on the first Down and make the *opening* state ("focus stays on the trigger") impossible. Deviation from spec §C4's "radio-group item", recorded with this rationale; the View menu keeps `menuitemradio`. |
+| **PS-R4** | Every rail glyph is a registry entry (`IconAdd`, `IconExplore`, and two new ones, `IconCoding` and `IconArchitecture`, drawn on the `{icon.md}` grid at `{icon.stroke}`), never inline path data. The tooltip is *"Coding — Ctrl+1"* with the keystroke **rendered from the bound `KeyGesture`'s display string**; no bound gesture, no keystroke shown. |
+
+| Rail item state | Ink | Ground | Extra signal |
+|---|---|---|---|
+| rest | `{colors.text-muted}` | `{colors.surface-sunken}` | none |
+| hover | `{colors.text}` | `{colors.surface-raised}` | tooltip |
+| focus | as rest/hover | as rest/hover | 2px `{colors.focus}` **outer** ring (`{colors.focus}` on the accent-filled New session item is 1.5:1, so the ring is never inset there) |
+| **checked (active)** | `{colors.accent}` | `{colors.surface-raised}` | 3px `{colors.accent}` bar, `aria-checked`/`IsChecked` exposed |
+| **opening** (first entry) | `{colors.text-muted}` | `{colors.surface-raised}` | progress ring on the glyph; status *"Opening Architecture…"*; focus stays on the trigger |
+| **error** (body failed to build) | `{colors.text-muted}` | `{colors.surface-sunken}` | `{colors.danger}` badge glyph; tooltip and `ItemStatus`: *"Couldn't open Architecture: <reason>. Activate to try again."* |
+| disabled | *does not exist* | none | AR3: a destination that cannot be entered is removed |
+| **New session** rest / hover / focus / pressed | `{colors.text-on-accent}` | `{colors.accent}` (hover: same, `brightness 1.12`) | never disabled: with no workspace the chooser interposes |
+
+### The dock tab strip: the states the census found (PS-T1–PS-T3)
+
+The runtime census measured every selected-active tab caption at **2.37:1** (`text` on `accent`,
+an implicit `TextBlock` style overriding the container's ink) and the selected-*inactive* tab at
+**1.45:1** (sunken ink on `{colors.border}` used as a ground). Both are the same defect: a state that
+named a ground without naming its ink, or an ink without its ground.
+
+| Rule | Statement |
+|---|---|
+| **PS-T1** | **Every tab state names both an ink and a ground from the matrix above.** A leaf text element never states its own ink: the container pairs, the leaf inherits (the census's Fix A). |
+| **PS-T2** | Exactly **one** selected-active tab exists on screen: the tab of the stack that holds focus. It is the only accent-filled tab, and that is what makes it the focused-pane indicator (Premiere's blue line, kept). |
+| **PS-T3** | A selected-inactive tab is the document's own ground (`{colors.surface}`) under the strip's raised ground, **with a 2px `{colors.text-muted}` top edge as its ≥ 3:1 state indicator** (6.48 / 6.39:1 on the strip) — the ground shift alone is 1.08:1 and the ink shift 2.09:1, neither of which identifies the state (1.4.11); it never borrows a line token as a ground. |
+
+| Tab state | Ink | Ground | Extra signal |
+|---|---|---|---|
+| rest | `{colors.text-muted}` | `{colors.surface-raised}` (the strip) | none |
+| hover | `{colors.text}` | `{colors.surface-raised}` | close control appears |
+| **selected-active** | `{colors.text-on-accent}` | `{colors.accent}` | 6.6 / 6.2:1; one on screen |
+| **selected-inactive** | `{colors.text}` | `{colors.surface}` | 2px `{colors.text-muted}` top edge (the `ui` indicator, 6.48 / 6.39:1); 15.0 / 15.3:1 for the caption |
+| focus (keyboard) | as state | as state | 2px `{colors.focus}` outer ring |
+| dragging | `{colors.text}` | `{colors.float-chrome}` | `{elevation.raised}`; drop target per the layout tokens |
+| disabled | *does not exist* | none | a tab you cannot select is a surface that should not be in the stack |
+
+### The menu bar and palette: derived, named, honest (PS-M1–PS-M4)
+
+| Rule | Statement |
+|---|---|
+| **PS-M1** | Top-level names are **File · Edit · View · Window · Prompt · Help**. Five are the code's names, kept; the sixth was the code's *Terminal*, renamed **Prompt** because, with `terminal.new` and the harness rows moved to File as entry verbs (US-C11), it holds only *Dispatch prompt…* and *New prompt draft* — a Terminal menu with no terminal verb teaches the operator to distrust the menu. The earlier *Graph · Model · Agents* set is retired: the derivation rule (spec §B3) places every allow-list entry under **View**, so a Model menu would need a second placement rule, and harness sessions are entry verbs under File, so an Agents menu would offer what File already does (`docs/notes/addendum-c-design-menu-names.md`). Which menus each perspective has is spec §B3 (Coding: all six; Explore: File · View · Help; Architecture: all but Prompt). |
+| **PS-M3** | Structurally inapplicable → **absent**; transiently unavailable → **disabled with a reason** on hover — and a disabled row never takes the hover ground (its ink fails 4.5:1 on `float-chrome`). New session is never disabled. The File menu's harness rows sit under a group caption *Terminal sessions*, so the two nouns the operator meets there (a *session* document; a Claude Code *terminal session*) are told apart by the group, not by the row title the profiles derive. |
+| **PS-M4** | An item shows a keystroke only when one is **bound**, rendered from the binding's display string. An unbound chord (`Ctrl+K, X`) is shown and spoken nowhere until a chord handler exists. The palette row for such a command reads its title alone. |
+
+| Menu item state | Ink | Ground |
+|---|---|---|
+| menu ground / rest | `{colors.text}` | `{colors.surface-raised}` (1px `{colors.border}` frame, `{elevation.raised}`) |
+| hover / keyboard-highlighted | `{colors.text}` | `{colors.float-chrome}`, the ground one step above raised |
+| focus | as hover | as hover: the highlight *is* the focus indicator in a menu; the ring appears on the menu-bar header only |
+| **disabled, with reason** | `{colors.text-disabled}` (4.59 / 4.62:1) | `{colors.surface-raised}`; the reason in `{colors.text-muted}` on hover |
+| **checked** (the active perspective) | `{colors.text}` + `{colors.accent}` check glyph | `{colors.surface-raised}` |
+| keystroke column | `{colors.text-muted}`, `{typography.mono}`, tabular | as row |
+
+### The switch, and what it says
+
+`Transition:HardCut`: the body is the same rectangle; a slide across three destinations reads as travel
+that did not happen. The active bar and glyph change over `{motion.fast}`. **The announcement is a
+mechanism, not an ordering:** the shell raises a UIA notification
+(`AutomationPeer.RaiseNotificationEvent(ActionCompleted, ImportantAll, "<Perspective> perspective…")`)
+**before** it calls `Focus()` on the new body's first focusable (Coding: the active document's editor, else
+the Left zone's active tab; Explore: the search box, never the canvas; Architecture: the Center's active
+tab), and each body carries the constant name *"<Perspective> perspective body"* so the focus move is a
+second carrier. A polite live region beside an immediate focus move is exactly the case where a screen
+reader speaks the target first and drops the text; P-9 is the falsifier. A routed kind-open announces
+*"Opened Class diagram in Architecture"*; its failure announces the failure string and moves nothing.
+The window title reads *"<workspace> — <Perspective> — AI-DE"*. The status strip's **message is the live
+region** (`role=status` on the text, not on the strip, so the health chip and the Dismiss control never
+announce); a long report wraps to two lines and is focusable, never trapped in a tooltip; the count chip
+is `{typography.weight-medium}`; Dismiss is keyboard-reachable.
+
+### The two default layouts and their empty states
+
+The layouts are spec §B4 and their copy is spec §C4, rendered verbatim by `perspective-shell.html`;
+neither is restated here. The design adds one rule: every empty state is the `state.not-declared`
+shape — `{icon.lg}` glyph, one true sentence, one first action — never a heading over a muted
+paragraph, and never a second explanatory sentence in front of the first action. A disallowed kind
+restored from a saved layout is **dropped and reported**, never silently, in the plural forms the spec
+fixes; a newer-schema envelope is refused with a report and the file kept; a duplicate one-instance
+kind keeps its first copy and reports the second.
+
+### The composer is a conversation (PS-C1–PS-C6)
+
+The front-door section above made the composer *a document, not a text box*. Ruling 57 goes one step
+further: **a conversation, not a form.** One editor, structure derived beneath it, the compiled prompt on
+demand, settings elsewhere.
+
+| Region (top → bottom) | Height | Ink / ground | Rule |
+|---|---|---|---|
+| **Session header** | 28px | `{colors.text}` on `{colors.surface-raised}` | Name · task-class chip · **shape control** (Free-form ▾ / template picker, kept from Addendum B `:181`) · the **session-settings affordance** (*Session settings*) · backend health. |
+| **Editor** | fills; min 5 lines | `{colors.text}` on `{colors.surface-sunken}` inside the raised island, bounded by 1px `{colors.field-border}`; placeholder `{colors.text-muted}` | The **largest element in the pane, with the highest-contrast ink** (15.6:1); caret visible; focus on open; placeholder in voice. `@` opens the mention picker at the caret (a listbox of options, a sibling of the editor, never inside it); a mention renders as a `{typography.mono}` chip in the text. Never a system-default white `TextBox`. Spec §C3 says *on `{colors.surface-raised}` (the island)*; the front-door section put the editor on the sunken ground inside the island so the island and the field read as two things — kept, recorded as a deviation for the spec's owner. |
+| **Derived structure** | 24px collapsed → 3 × 24px | labels `{colors.text-muted}`, values `{colors.text}`, both on `{colors.surface-raised}` | *Goal · Done when · Not in scope* as editable lines, not boxes; the *derived* mark is `{colors.inferred}` glyph + word; an *invalid* mark is `{colors.danger}` glyph + one-line reason. Expands beneath the editor over `{motion.base}`; **the editor's top edge never moves.** |
+| **Inherited settings line** | 24px | `{colors.text-muted}` on raised; the link `{colors.accent}` | *"fan-out ≤ 3 · budget 40k tokens — from session settings"*. The text is the link. **No per-prompt override, and no tier here.** The fan-out value is the session's **ceiling**; the effective cap is the compiled tier's cap within it (0 at T0, 2 at T1, the GO7 cap at T2) **[Inferred: the conductor's reconciliation of CT19 with the operator's correction, not yet the operator's word]**. |
+| **Write scope line** | 24px (one per pattern) | `{colors.text-muted}`; the pattern in `{typography.mono}` `{colors.text}` | *"Write scope: src/AiDe.Core/Workbench/** — from your mention"*; none: *"Write scope: none yet — mention the files this run may write as @path"*. |
+| **Compiled prompt** | 24px collapsed | summary `{colors.text-muted}`; the tier decoration `{colors.inferred}` glyph + word (derived) or `{colors.text}` (confirmed); body `{typography.mono}` `{colors.text}` on `{colors.surface-sunken}` | An `Expander` named *"Compiled prompt"*; collapsed by default; exactly the outgoing text; **no diff, no summary**; header says *updated* when stale. **The tier is a decoration the compile step attaches**: the header reads *"Compiled prompt · T1 derived"* (or *"tier not derived yet"* before the draft settles); the operator sees it and confirms it by sending. How the tier is derived, and the compile step itself, are **not designed here**: the operator will specify them separately. |
+| **Send row** | 36px | Send: `{colors.text-on-accent}` on `{colors.accent}` | Send (Ctrl+Enter) · shape badge · a refusal reason beside a disabled Send, in `{colors.inferred}`. |
+
+| Rule | Statement |
+|---|---|
+| **PS-C1** | **One editor, zero field boxes, zero compiled text at rest.** The composer's visual tree contains no `TextBox` for compiled text and no field widgets until the structure expands, and the expanded structure is lines, not boxes. |
+| **PS-C2** | **Send is the confirmation.** A derived line is confirmed by sending or by editing it; there is no separate confirm act, so a prompt at defaults is one action. |
+| **PS-C3** | **A refusal marks every gap at once**, inline, with one line of reason each, names the fix, and names the tier that requires it — the *compiled* tier, since the session has none: *"This prompt compiles at T2 and needs Done when."* A missing write scope says what derives one and offers the picker: *"Send needs a write scope. Mention the files or folders this run may write, as @path (for example @src/AiDe.Core/) — the lease is derived from your mentions."* **After any refusal Send is disabled with the reason beside it** until the gap is filled — one refusal grammar, not two. The rule that decides which tier a prompt compiles to is the operator's compile-step specification (not yet written); until it exists the refusal path's slice is gated on it. |
+| **PS-C4** | **The page draws from the theme's tokens.** The host injects, on `host.init`, the CSS custom properties `--surface`, `--surface-raised`, `--surface-sunken`, `--border`, `--text`, `--text-muted`, `--text-disabled`, `--accent`, `--text-on-accent`, `--focus`, `--inferred`, `--verified`, `--danger`, `--font-ui`, `--font-mono` from `Application.Resources`; the page's rules reference them and carry no second palette (TC5). The page reports *not measured* to the census until the census walks it. |
+| **PS-C5** | **No provider, no pretence.** With no assist provider the three lines are empty and editable and say *"fill in, or add an assist provider in settings"*; with a provider deriving, the structure shows a one-line skeleton, never a spinner over the editor; a wrong derivation is corrected in place (HAX G9). |
+| **PS-C6** | Focus order across the WebView2 boundary, in DOM order: shape control → session settings → **editor** → Goal → Done when → Not in scope (each an editable line) → the settings link → the compiled prompt's header → Attach → Mention → **Send**, and back with Shift+Tab. The write-scope line is derived text, not a stop. Escape inside the page never leaves the document (P-13). Each editable line's **accessible name is constant** (*Goal*, *Done when*, *Not in scope*); its state (*derived* / *edited* / *missing*) is `AutomationProperties.ItemStatus` (WPF) / `aria-describedby` → the mark (page); a refusal reason is `HelpText` / `aria-errormessage`; the placeholder *fill in, or add an assist provider in settings* is a watermark, never the value. |
+| **PS-C7** | **Tier is compiled, not typed.** No field, chip or setting anywhere lets the operator type a tier. The compiled disclosure carries the derived tier as a decoration with three states: *not derived yet* (before the draft settles, `{colors.text-muted}`), *derived* (`{colors.inferred}` glyph + *T1 derived*), *confirmed* (cleared on send, `{colors.text}`). A T0 derivation in a session whose fan-out ceiling is non-zero says *"T0 derived · no fan-out"* on the line, with the full sentence *"this run uses no fan-out (session ceiling 3)"* in its description. **Exposure:** the expander's accessible name stays *"Compiled prompt"*; the tier state and *updated* are its `AutomationProperties.ItemStatus` (WPF) / `aria-describedby` (page), and the tier is spoken at the confirmation points — the refusal announcement (*"This prompt compiles at T2 and needs Done when"*) and the in-flight announcement (*"Sending block b3 as a goal block, tier T1"*) — so a screen-reader operator hears the decoration before and at the send, not after it. The tier decoration is **never styled as a control**. |
+
+**Complete states.** Spec §C4 names them and `conversation-composer.html` renders them (its State
+control); this section adds only what the spec does not have: the editor's **attaching** (a drop
+target over the editor, *"Drop to attach"*) and **attaching-off** (*"Attaching files is off for this
+session."*, `{colors.text-muted}` on the island — the census's `#drop-hint` site, now a token pair)
+states; the compiled prompt's **tier not derived yet · tier derived · tier confirmed**; a
+**template** state (the shape control picked *change-order*, its fields rendered as the same derived
+lines: prefilled where the text supplies a value, empty-editable where it does not); and a **session
+settings** state (the header's affordance opens the sheet's *Session settings* row in a popover — one
+control, two doors). The inherited-settings line has **no warning state**: the T0 reading lives on the
+compiled header (PS-C7).
+
+### The New Session sheet carries the session settings (PS-S1–PS-S4)
+
+| Rule | Statement |
+|---|---|
+| **PS-S1** | The **fan-out ceiling** and the **budget** are session settings with defaults, prefilled from workspace policy, editable in the sheet and later from the session header. **Tier is not a session setting and has no field**: the operator's correction of 2026-09-11 (*"shouldn't tier be decided by the compilation of the prompt?"*) overrides Ruling 56's tier clause; tier is a decoration the compile step attaches (PS-C7). The sheet still creates with one click on the defaults; the only undefaulted field remains the task class (RQ1–RQ6). |
+| **PS-S2** | The two settings are one **row of two controls** under the heading *Session settings*, each with its unit and its source (*"workspace default"*), never a field per line. Fan-out is labelled as a ceiling (*"Fan-out ceiling"*, *"most sub-agents any turn may convene"*); budget is numeric with tabular figures and a unit suffix (TQ2). |
+| **PS-S3** | Derive, don't store: the effective cap of a run is the compiled tier's cap (0 at T0, 2 at T1, the GO7 cap at T2) **bounded by the session's ceiling** **[Inferred: the conductor's reconciliation, awaiting the operator's compile-step specification]**. The sheet therefore explains the ceiling in those words and carries no tier warning; the *"T0 derived: this run uses no fan-out"* line lives on the compiled disclosure, where the tier is known (PS-C7). |
+| **PS-S4** | The sheet's non-client caption opts into the platform's dark mode (TC4); every control in it carries a token pairing (TC1–TC2), and every text or numeric field carries a `{colors.field-border}` boundary so an editable setting is identifiable at rest (1.4.11). Create failure keeps the sheet's values and states the reason beside Create. There is no note explaining the absent tier field: the fan-out ceiling's own sentence says what decides the tier, and explaining an absence is a placeholder in prose. |
+
+### Motion inventory (DX19)
+
+| Moment | Duration | Why |
+|---|---|---|
+| Perspective body swap | **0ms** + announcement | `Transition:HardCut`; the region is the same rectangle. |
+| Rail active bar + glyph | `{motion.fast}` | Confirms the switch without delaying it. |
+| Derived structure expand / collapse | `{motion.base}` | Continuity: the lines grow from beneath the editor; the editor never moves. |
+| Derived-mark clear on edit/send | `{motion.fast}` colour/weight only | Feedback that the operator's word replaced the system's. |
+| Compiled prompt disclose | `{motion.fast}` | Same as every expander in the shell. |
+| Menu open, tooltip appear | `{motion.fast}` opacity | Fluent's own timing. |
+| Everything else (tab switch, layout, drop-with-report chip) | **0ms** | Layout is structure, not narrative. |
+
+Under reduced motion every row is 0ms and every announcement still fires.
+
+### Copy added by this section
+
+- `Coding — Ctrl+1` · `Explore — graph & reader — Ctrl+2` · `Architecture — Ctrl+3` *(tooltips; the keystroke from the binding)*
+- `Coding perspective` · `Explore perspective` · `Architecture perspective` *(accessible names)*
+- `Architecture perspective — 4 panes` · `Opened Class diagram in Architecture` · `Coding perspective — session payments extraction opened` *(announcements)*
+- `Opening Architecture…` · `Opening Architecture… (still building).`
+- `Couldn't open Architecture — the graph service did not answer in 10 s. Activate to try again.`
+- `Couldn't open Class diagram — Architecture failed to open: the graph service did not answer in 10 s.`
+- `No session open.` · `Or open a recent one from File → Recent sessions.`
+- `No view open.` · `Or open Domain, Contexts or Joins from the View menu.`
+- `Select an evidence row to see its provenance.` · `Nothing indexed yet. Run Index from the File menu.` · `This row's provenance couldn't be read.`
+- `3 panes from your saved layout aren't available in Coding — Domain (class diagram), Graph, Contexts. Architecture opens with Graph, Domain, Contexts and Joins; open anything else from its View menu.`
+- `1 pane from your saved layout isn't available in Coding — Graph. Architecture opens with Graph, Domain, Contexts and Joins; open anything else from its View menu.`
+- `Your saved layout had no panes Coding can show, so Coding opened with its default layout.`
+- `What should this session do? Mention the files it may write as @path.` *(editor placeholder)*
+- `Goal · Done when · Not in scope — will appear as you write`
+- `fill in, or add an assist provider in settings`
+- `fan-out ≤ 3 · budget 40k tokens — from session settings`
+- `Compiled prompt · ~ T1 derived` · `Compiled prompt · tier not derived yet` · `Compiled prompt — updated · T1 confirmed` · `~ T0 derived · no fan-out` *(description: this run uses no fan-out — session ceiling 3)*
+- `Write scope: src/AiDe.Core/Workbench/** — from your mention`
+- `Write scope: none yet — mention the files this run may write as @path`
+- `Send needs a write scope. Mention the files or folders this run may write, as @path (for example @src/AiDe.Core/) — the lease is derived from your mentions.`
+- `This prompt compiles at T2 and needs Done when.` · `This prompt compiles at T2 and needs a Goal.` · `This prompt compiles at T2 and needs Not in scope — the boundary is what the lease is checked against.` · `2 lines need filling — this prompt compiles at T2.`
+- `Compiled prompt` · `Compiled prompt — updated` · `Drop to attach` · `Attaching files is off for this session.`
+- `Editor starting…` · `Editor couldn't start — WebView2 runtime not found.` + `Retry`
+- `Couldn't send — the conductor closed the connection. Your draft is kept.` + `Try again`
+- `Sending block b3 as a goal block, tier T1.` *(announcement)*
+- `Session settings` · `workspace default` · `Fan-out ceiling` · `Most sub-agents any turn may convene. The compiled tier decides how many it uses, up to this.` · `Budget` · `tokens per session` · `Choose a workspace first` · `Pick a workspace; the New Session sheet follows.`
+- `Couldn't create the session — the workspace daemon is not running. Your answers are kept.`
+- Budget is always written `40,000 tokens` — thousands separator, unit, one precision everywhere (TQ2).
+
+### AI-UX (U13–U15; the composer only)
+
+**Shape of AI:** the derived structure is a **Governor** (the plan the operator reviews before the action);
+the *derived* mark and the **tier decoration on the compiled prompt** are **Trust builders → Disclosure** (what the system produced versus what the operator wrote, and what the compile step attached); the placeholder and the collapsed structure line are **Wayfinders**. **HAX:** G1/G2 (the marks say
+what was derived and that it may be wrong), **G9** efficient correction (edit in place, never a modal),
+**G11** (with D-5: each derived line names the sentence it came from, on hover/focus). A wrong derivation
+is a first-class state; the send is always the operator's explicit act; the compiled disclosure is the
+trust builder: no hidden prompt assembly.
+
+### Performance budget (U17)
+
+Retained perspective switch p95 ≤ 150ms (P-8), first entry recorded and reported; no graph query
+re-issued, no process restarted, no document re-created on a switch; the derived structure's derivation
+runs off the UI thread and never blocks typing; the drop-with-report path delays first paint by no more
+than its string formatting; no layout shift when the structure expands (the editor is above it, the
+send row is pinned).
+
+### Recorded deviations (CD16)
+
+| Deviation | Reason |
+|---|---|
+| `{colors.focus}` on `{colors.accent}` is 1.5:1 (dark) / 1.37:1 (light) | The ring is drawn **outside** the accent-filled item, against the rail's sunken ground (9.9 / 7.1:1). A ring inset on the accent item would fail 1.4.11; the outer ring is the rule, not an exception. |
+| `{colors.text-disabled}` on `{colors.float-chrome}` (dark) is 4.01:1 | A disabled menu row never takes the lifted hover ground; it stays on `surface-raised` (4.59:1) and shows its reason. |
+| `{colors.light-border}` on `{colors.light-surface}` is 1.45:1 | The same decorative deviation as the dark border: spacing carries the grouping; the border is never the only signal. Fields do not rely on it: they carry `{colors.field-border}`. |
+| *Nested cards* and *cramped padding* on the 28px strips | The front-door section's two recorded deviations, unchanged. |
+| A hovered accent fill is `brightness(1.12)`, not a token | The value is derived from `{colors.accent}` and clears 8.24 / 5.22:1 with `text-on-accent`; the WPF slice uses the Fluent accent-light brush. Recorded so the non-token ground is a decision. |
+| The composer's editor is a WebView2 page and the census cannot walk it yet | Reported as *not measured*, never as a pass (§C7). The mockup's live audit measures the design's pairs; the page's real pairs are measured when the census walks the DOM. |

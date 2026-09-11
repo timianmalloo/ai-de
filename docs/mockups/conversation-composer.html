@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-vp="desk">
+<head>
+<meta charset="utf-8">
+<title>AI-DE conversation composer: one editor, derived structure, compiled on demand</title>
+<style>
+/* ===========================================================================
+   Tokens mirrored from DESIGN.md (dark, light, high-contrast stand-ins). No raw
+   colour appears in a component rule. `--text-on-accent` is the ONLY ink any
+   state paints on `--accent`. These are the names the host injects into the
+   composer page on `host.init` (DESIGN.md PS-C4), so this mockup and the
+   WebView2 page read one palette. `--hl`/`--hl-ink`: a highlighted row.
+   =========================================================================== */
+:root{
+  --surface:#12151A; --surface-raised:#1A1F26; --surface-sunken:#0D1014;
+  --border:#2A313B; --text:#E4E9EF; --text-muted:#98A3B2; --text-disabled:#7C8896; --field-border:#7C8896;
+  --accent:#5B9DD9; --text-on-accent:#0D1014; --focus:#8FC0EA;
+  --verified:#5FB98F; --inferred:#D8A650; --stale:#D8A650; --danger:#E07A6F; --float-chrome:#232A33;
+  --syntax-comment:#808C9A;
+  --hl:var(--float-chrome); --hl-ink:var(--text);
+  --font-ui:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+  --font-mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+  --t-xs:11px; --t-sm:12px; --t-md:13px; --t-lg:15px; --t-xl:18px; --t-2xl:22px;
+  --s1:2px; --s2:4px; --s3:6px; --s4:8px; --s5:12px; --s6:16px; --s7:24px; --s8:32px;
+  --r-sm:4px; --r-md:6px; --r-lg:10px; --r-island:12px;
+  --e-rest:0 1px 3px rgba(0,0,0,0.28); --e-raise:0 4px 12px rgba(0,0,0,0.34); --e-dialog:0 8px 24px rgba(0,0,0,0.5);
+  --fast:150ms; --base:200ms; --ease:cubic-bezier(0.2,0,0,1);
+}
+:root[data-theme="light"]{
+  --surface:#F4F6F8; --surface-raised:#FFFFFF; --surface-sunken:#E7EBEF;
+  --border:#C7CFD8; --text:#1A1F26; --text-muted:#55606E; --text-disabled:#5F6977; --field-border:#5F6977;
+  --accent:#27649A; --text-on-accent:#FFFFFF; --focus:#1B4F7E;
+  --verified:#1C724A; --inferred:#7D5900; --stale:#7D5900; --danger:#A8372B; --float-chrome:#FFFFFF;
+  --syntax-comment:#5C6674;
+  --hl:#E7EBEF; --hl-ink:var(--text);
+}
+:root[data-theme="hc"]{
+  --surface:#000000; --surface-raised:#000000; --surface-sunken:#000000;
+  --border:#FFFFFF; --text:#FFFFFF; --text-muted:#FFFFFF; --text-disabled:#3FF23F; --field-border:#FFFFFF;
+  --accent:#00FFFF; --text-on-accent:#000000; --focus:#FFFFFF;
+  --verified:#00FF80; --inferred:#FFD400; --stale:#FFD400; --danger:#FF9E9E; --float-chrome:#000000;
+  --syntax-comment:#FFFFFF;
+  --hl:#00FFFF; --hl-ink:#000000;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--surface);color:var(--text);font-family:var(--font-ui);font-size:var(--t-md);line-height:1.5}
+svg{display:block}
+.ico{width:16px;height:16px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ico.sm{width:12px;height:12px}
+.ico.lg{width:22px;height:22px;stroke-width:1.6}
+:is(button,select,input,summary,[tabindex]):focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+[data-motion="reduce"] *{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+code{font-family:var(--font-mono);font-size:var(--t-sm)}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+
+/* ---- REVIEW HARNESS (chrome, never ships) --------------------------------- */
+.harness{position:sticky;top:0;z-index:60;display:flex;flex-wrap:wrap;gap:var(--s4) var(--s5);align-items:center;
+  padding:var(--s4) var(--s6);background:var(--surface-sunken);border-bottom:1px solid var(--border);font-size:var(--t-sm)}
+.harness strong{font-weight:600;letter-spacing:.04em;color:var(--text-muted)}
+.harness label{display:flex;align-items:center;gap:var(--s3);color:var(--text)}
+.harness select{background:var(--surface-raised);color:var(--text);border:1px solid var(--field-border);border-radius:var(--r-sm);padding:var(--s2) var(--s3);font:inherit;min-height:26px;cursor:pointer}
+.checks{margin-left:auto;font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text-muted)}
+.checks b.ok{color:var(--verified)} .checks b.bad{color:var(--danger)}
+.note{margin:var(--s6) var(--s6) 0;padding:var(--s5) var(--s6);border:1px solid var(--border);border-radius:var(--r-lg);background:var(--surface-raised);color:var(--text-muted);font-size:var(--t-sm);max-width:1400px}
+.note b{color:var(--text)}
+.srlog{display:none;margin:var(--s5) var(--s6) 0;padding:var(--s5) var(--s6);border:1px solid var(--border);border-radius:var(--r-lg);background:var(--surface-raised);max-width:1400px}
+body[data-persona="screenreader"] .srlog{display:block}
+.srlog h4{margin:0 0 var(--s4);font-size:var(--t-sm);letter-spacing:.04em;color:var(--text-muted);font-weight:600}
+.srlog ol{margin:0;padding-left:var(--s7);font-size:var(--t-sm);color:var(--text)}
+.srlog .who{font-family:var(--font-mono);color:var(--text-muted)}
+
+/* ---- SESSION DOCUMENT (fixed at the shell's startup Center height, so the density contract is measured where it applies) ---- */
+.frame{margin:var(--s6);max-width:1400px}
+[data-vp="narrow"] .frame{max-width:1024px}
+[data-vp="wide"] .frame{max-width:1720px}
+.doc{outline:1px solid var(--border);border-radius:var(--r-island);background:var(--surface-raised);display:grid;grid-template-rows:28px 1fr;height:580px;position:relative}
+.sesshead{display:flex;align-items:center;gap:var(--s4);padding:var(--s2) var(--s5);border-bottom:1px solid var(--border);background:var(--surface-raised);border-radius:var(--r-island) var(--r-island) 0 0;font-size:var(--t-sm);min-width:0;position:relative}
+.sesshead .nm{font-weight:600;color:var(--text);white-space:nowrap}
+.sesshead .sp{margin-left:auto}
+.chip{display:inline-flex;align-items:center;gap:var(--s3);height:20px;padding:0 var(--s4);border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface-sunken);color:var(--text-muted);font-size:var(--t-sm);white-space:nowrap;max-width:240px;overflow:hidden;text-overflow:ellipsis;flex:none}
+.chip .dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.chip.ok{color:var(--verified)} .chip.warn{color:var(--inferred);border-color:var(--inferred)} .chip.accent{border-color:var(--accent);color:var(--text)}
+.shape{display:inline-flex;align-items:center;gap:var(--s3);height:24px;padding:0 var(--s4);border:1px solid var(--field-border);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font:inherit;font-size:var(--t-sm);cursor:pointer}
+.shape:hover{border-color:var(--accent)}
+.gear{display:inline-flex;align-items:center;gap:var(--s3);height:24px;padding:0 var(--s4);border:0;border-radius:var(--r-sm);background:transparent;color:var(--accent);font:inherit;font-size:var(--t-sm);cursor:pointer}
+.gear:hover{text-decoration:underline}
+.pop{display:none;position:absolute;left:var(--s5);top:30px;z-index:20;width:520px;max-width:calc(100% - 24px);padding:var(--s5);background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--e-raise);font-size:var(--t-sm);color:var(--text)}
+body[data-state="settings"] .pop{display:block}
+.pop h4{margin:0 0 var(--s4);font-size:var(--t-sm);letter-spacing:.04em;font-weight:600;color:var(--text-muted)}
+.settings{display:grid;grid-template-columns:1fr 1fr;gap:var(--s5)}
+.setting{padding:var(--s4) var(--s5);border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface-sunken)}
+.setting .sl{display:flex;align-items:center;gap:var(--s4);font-weight:600;color:var(--text);margin-bottom:var(--s3)}
+.setting .src{margin-left:auto;font-weight:400;color:var(--text-muted)}
+.setting .ctl{display:flex;align-items:center;gap:var(--s4)}
+.num{width:96px;height:28px;padding:0 var(--s4);border:1px solid var(--field-border);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font:inherit;font-family:var(--font-mono);font-size:var(--t-md);font-variant-numeric:tabular-nums;text-align:right}
+.unit{color:var(--text-muted)}
+.setting .sh{margin:var(--s3) 0 0;color:var(--text-muted)}
+.pop .acts{display:flex;gap:var(--s4);justify-content:flex-end;margin-top:var(--s5)}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:var(--s6);padding:var(--s5) var(--s6) var(--s6);min-height:0}
+.composer{display:flex;flex-direction:column;min-width:0;min-height:0;position:relative}
+.canvas{display:flex;flex-direction:column;min-width:0;min-height:0;border-left:1px solid var(--border);padding-left:var(--s6)}
+
+/* THE EDITOR: the largest element in the pane, with the highest-contrast ink. */
+.editor{flex:1;min-height:130px;padding:var(--s4) var(--s5);border:1px solid var(--field-border);border-radius:var(--r-md);background:var(--surface-sunken);color:var(--text);font-size:var(--t-md);line-height:1.65;overflow:auto;position:relative}
+.editor:focus,.editor:focus-within{border-color:var(--accent)}
+.editor .ph{color:var(--text-muted)}
+.caret{display:inline-block;width:1px;height:1.1em;vertical-align:text-bottom;background:var(--text);animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.mention{border-radius:var(--r-sm);padding:1px var(--s3);background:var(--surface);border:1px solid var(--accent);font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text)}
+.picker{display:none;position:absolute;left:var(--s5);bottom:calc(100% - 118px);min-width:320px;background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--e-raise);padding:var(--s2);z-index:5}
+body[data-state="noscope"] .picker{display:block}
+.picker .prow{display:flex;align-items:center;gap:var(--s4);min-height:26px;padding:var(--s2) var(--s4);border-radius:var(--r-sm);font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text)}
+.picker .prow[aria-selected="true"]{background:var(--hl);color:var(--hl-ink)}
+.picker .prow .k{color:var(--text-muted);font-family:var(--font-ui);margin-left:auto}
+.picker .prow[aria-selected="true"] .k{color:var(--hl-ink)}
+.drop{position:absolute;inset:0;display:none;align-items:center;justify-content:center;border-radius:var(--r-md);border:2px dashed var(--accent);background:var(--surface-sunken);color:var(--text);font-weight:600;font-size:var(--t-md)}
+body[data-state="attaching"] .drop{display:flex}
+.skel{height:12px;border-radius:var(--r-sm);background:linear-gradient(90deg,var(--surface-raised),var(--border),var(--surface-raised));background-size:200% 100%;animation:sh 1.2s linear infinite;margin:var(--s4) 0}
+@keyframes sh{to{background-position:-200% 0}}
+
+/* THE LINES BENEATH: text grouped by spacing and a hairline, never a box. Labels inline, no gutter. */
+.lines{display:flex;flex-direction:column;margin-top:var(--s4)}
+.line{display:flex;align-items:center;gap:var(--s3);min-height:24px;padding:3px var(--s2);font-size:var(--t-sm);color:var(--text-muted);border-top:1px solid var(--border);min-width:0}
+.line:first-child{border-top:0}
+.line .k{flex:none;color:var(--text-muted)}
+.line .k::after{content:"\00b7";margin-left:var(--s3)}
+.line .v{color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.line .v.edit{flex:1;min-height:24px;display:inline-flex;align-items:center;border-radius:var(--r-sm);padding:0 var(--s2);cursor:text}
+.line .v.edit:hover{background:var(--surface)}
+.line .v.edit.empty{color:var(--text-muted);font-style:italic}
+.line .lnk{color:var(--accent);background:transparent;border:0;font:inherit;font-size:var(--t-sm);padding:0 var(--s2);min-height:24px;cursor:pointer;border-radius:var(--r-sm)}
+.line .lnk:hover{text-decoration:underline}
+.mark{display:inline-flex;align-items:center;gap:var(--s2);font-size:var(--t-sm);font-weight:600;flex:none;margin-left:auto}
+.mark.d{color:var(--inferred)} .mark.x{color:var(--danger)} .mark.c{color:var(--verified)}
+.why{width:100%;font-size:var(--t-sm);color:var(--danger);padding:0 0 var(--s1) var(--s2)}
+details summary{list-style:none;display:flex;align-items:center;gap:var(--s3);min-height:24px;padding:3px var(--s2);font-size:var(--t-sm);color:var(--text-muted);cursor:pointer;border-top:1px solid var(--border)}
+details summary::-webkit-details-marker{display:none}
+details .car{transition:transform var(--fast) var(--ease)}
+details[open] .car{transform:rotate(90deg)}
+.structure .body{overflow:hidden;animation:grow var(--base) var(--ease)}
+@keyframes grow{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.compiled pre{margin:var(--s2) 0 var(--s4);padding:var(--s4) var(--s5);border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface-sunken);color:var(--text);font-family:var(--font-mono);font-size:var(--t-sm);white-space:pre-wrap;max-height:200px;overflow:auto}
+.compiled pre .cm{color:var(--syntax-comment)}
+.tier{display:inline-flex;align-items:center;gap:var(--s2);font-weight:600;flex:none}
+.tier.nd{color:var(--text-muted);font-weight:400} .tier.d{color:var(--inferred)} .tier.c{color:var(--text)}
+.updated{color:var(--stale);font-weight:600}
+
+.sendrow{display:flex;align-items:center;flex-wrap:wrap;gap:var(--s4);min-height:36px;padding:var(--s4) 0 0;border-top:1px solid var(--border);margin-top:var(--s2)}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--field-border);border-radius:var(--r-sm);background:var(--surface);color:var(--text-muted);cursor:pointer}
+.iconbtn:hover{color:var(--text);border-color:var(--accent)}
+.badge{display:inline-flex;align-items:center;height:20px;padding:0 var(--s4);border-radius:var(--r-sm);border:1px solid var(--border);color:var(--text-muted);font-size:var(--t-sm)}
+.sp{margin-left:auto}
+.send{display:inline-flex;align-items:center;gap:var(--s4);height:28px;padding:0 var(--s5);border:1px solid var(--accent);border-radius:var(--r-md);background:var(--accent);color:var(--text-on-accent);font:inherit;font-size:var(--t-md);font-weight:600;cursor:pointer;position:relative}
+.send:hover{filter:brightness(1.12)}
+.send[disabled]{background:var(--surface-raised);color:var(--text-disabled);border-color:var(--border);cursor:not-allowed;filter:none}
+.send .kbd{font-family:var(--font-mono);font-size:var(--t-xs);font-weight:400}
+.reason{display:inline-flex;align-items:center;gap:var(--s3);font-size:var(--t-sm);color:var(--inferred)}
+.reason.err{color:var(--danger)}
+.btn{height:26px;padding:0 var(--s5);border:1px solid var(--field-border);border-radius:var(--r-md);background:var(--surface-raised);color:var(--text);font:inherit;font-size:var(--t-sm);cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.refusal{display:flex;flex-direction:column;gap:var(--s3);width:100%;padding:var(--s4) var(--s5);border:1px solid var(--danger);border-radius:var(--r-md);background:var(--surface-raised);font-size:var(--t-sm);color:var(--text)}
+.refusal .acts{display:flex;gap:var(--s4)}
+.errbox{border:1px solid var(--danger);border-radius:var(--r-lg);background:var(--surface-raised);padding:var(--s5) var(--s6)}
+.errbox h4{margin:0 0 var(--s3);font-size:var(--t-md);color:var(--text);font-weight:600}
+.errbox p{margin:0 0 var(--s4);font-size:var(--t-sm);color:var(--text-muted)}
+.ring{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);border-top-color:var(--accent);animation:spin 900ms linear infinite;flex:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.attachoff{display:none;align-items:center;gap:var(--s3);min-height:24px;padding:3px var(--s2);font-size:var(--t-sm);color:var(--text-muted);border-top:1px solid var(--border)}
+body[data-state="attachoff"] .attachoff{display:flex}
+
+/* CANVAS: the Console beside the composer (the thread lives here, not in the composer) */
+.modestrip{display:flex;align-items:center;gap:var(--s2);height:28px;padding:var(--s2) var(--s2);border-bottom:1px solid var(--border);background:var(--surface-raised)}
+.modetitle{font-size:var(--t-sm);font-weight:600;letter-spacing:.04em;color:var(--text-muted);padding:0 var(--s2)}
+.canvasbody{flex:1;min-height:0;padding:var(--s4) 0;overflow:auto}
+.evline{display:flex;align-items:baseline;gap:var(--s5);padding:var(--s2) 0;border-bottom:1px solid var(--border);font-size:var(--t-sm);min-width:0}
+.evline .ts{font-family:var(--font-mono);font-variant-numeric:tabular-nums;color:var(--text-muted);flex:none}
+.evline .lane{font-family:var(--font-mono);color:var(--accent);flex:none}
+.evline .msg{color:var(--text);min-width:0}
+.turn{margin:var(--s4) 0;padding:var(--s4) var(--s5);border-radius:var(--r-md);background:var(--surface);font-size:var(--t-sm);color:var(--text)}
+.turn .who{font-family:var(--font-mono);color:var(--text-muted);margin-bottom:var(--s2)}
+.wayfinder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--s4);text-align:center;padding:var(--s8) var(--s6);color:var(--text-muted);min-height:200px}
+.wayfinder h3{margin:0;font-size:var(--t-lg);font-weight:600;color:var(--text)}
+.wayfinder p{margin:0;max-width:44ch;font-size:var(--t-md)}
+
+/* keyboard persona: focus order in DOM order, across the WebView2 boundary (P-13) */
+.fo{display:none;width:18px;height:18px;border-radius:50%;background:var(--focus);color:var(--text-on-accent);font-size:var(--t-xs);font-weight:600;align-items:center;justify-content:center;font-family:var(--font-mono);flex:none}
+body[data-persona="keyboard"] .fo{display:inline-flex}
+body[data-persona="keyboard"] .boundary{outline:1px dashed var(--inferred);outline-offset:3px}
+
+/* ---- STATE GATING ---------------------------------------------------------- */
+[data-show]{display:none}
+body[data-state="default"] [data-show~="default"],body[data-state="empty"] [data-show~="empty"],body[data-state="loading"] [data-show~="loading"],
+body[data-state="deriving"] [data-show~="deriving"],body[data-state="refused"] [data-show~="refused"],body[data-state="noscope"] [data-show~="noscope"],
+body[data-state="inflight"] [data-show~="inflight"],body[data-state="sendfailed"] [data-show~="sendfailed"],body[data-state="editorerror"] [data-show~="editorerror"],
+body[data-state="overflow"] [data-show~="overflow"],body[data-state="template"] [data-show~="template"],body[data-state="settings"] [data-show~="settings"],
+body[data-state="attaching"] [data-show~="attaching"],body[data-state="attachoff"] [data-show~="attachoff"]{display:block}
+body[data-state="default"] .fx[data-show~="default"],body[data-state="empty"] .fx[data-show~="empty"],body[data-state="loading"] .fx[data-show~="loading"],
+body[data-state="deriving"] .fx[data-show~="deriving"],body[data-state="refused"] .fx[data-show~="refused"],body[data-state="noscope"] .fx[data-show~="noscope"],
+body[data-state="inflight"] .fx[data-show~="inflight"],body[data-state="sendfailed"] .fx[data-show~="sendfailed"],body[data-state="editorerror"] .fx[data-show~="editorerror"],
+body[data-state="overflow"] .fx[data-show~="overflow"],body[data-state="template"] .fx[data-show~="template"],body[data-state="settings"] .fx[data-show~="settings"],
+body[data-state="attaching"] .fx[data-show~="attaching"],body[data-state="attachoff"] .fx[data-show~="attachoff"]{display:flex}
+body[data-state="default"] .fi[data-show~="default"],body[data-state="refused"] .fi[data-show~="refused"],body[data-state="noscope"] .fi[data-show~="noscope"],
+body[data-state="overflow"] .fi[data-show~="overflow"],body[data-state="inflight"] .fi[data-show~="inflight"],body[data-state="sendfailed"] .fi[data-show~="sendfailed"],
+body[data-state="empty"] .fi[data-show~="empty"],body[data-state="loading"] .fi[data-show~="loading"],body[data-state="editorerror"] .fi[data-show~="editorerror"],
+body[data-state="deriving"] .fi[data-show~="deriving"],body[data-state="template"] .fi[data-show~="template"],body[data-state="settings"] .fi[data-show~="settings"],
+body[data-state="attaching"] .fi[data-show~="attaching"],body[data-state="attachoff"] .fi[data-show~="attachoff"]{display:inline-flex}
+[data-prov]{display:none}
+body[data-provider="present"] [data-prov~="present"],body[data-provider="absent"] [data-prov~="absent"]{display:flex}
+
+/* ---- CONTRAST + DENSITY EVIDENCE ------------------------------------------- */
+.secwrap{margin:var(--s6);max-width:1400px}
+h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--text)}
+.help{font-size:var(--t-sm);color:var(--text-muted);max-width:80ch;margin:0 0 var(--s5)}
+.ctab{width:100%;border-collapse:collapse;font-size:var(--t-sm)}
+.ctab th,.ctab td{text-align:left;padding:var(--s3) var(--s4);border-bottom:1px solid var(--border);vertical-align:top}
+.ctab th{letter-spacing:.04em;color:var(--text-muted);font-weight:600}
+.ctab td.n{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pass{color:var(--verified)} .fail{color:var(--danger)} .na{color:var(--text-muted)}
+.swatch{display:inline-block;width:12px;height:12px;border-radius:2px;border:1px solid var(--border);vertical-align:-2px;margin-right:var(--s3)}
+</style>
+</head>
+<body data-state="default" data-provider="present" data-persona="operator" data-motion="full">
+
+<div class="harness" role="region" aria-label="Review harness">
+  <strong>Harness</strong>
+  <label>State
+    <select id="h-state">
+      <option value="default">default: draft with structure derived (compiles at T1)</option>
+      <option value="empty">empty / first message</option>
+      <option value="loading">loading: editor starting</option>
+      <option value="deriving">deriving: provider working</option>
+      <option value="template">template picked: change-order</option>
+      <option value="settings">session settings opened from the header</option>
+      <option value="attaching">attaching: drop target over the editor</option>
+      <option value="attachoff">attaching is off for this session</option>
+      <option value="refused">refused: content gaps (compiles at T2)</option>
+      <option value="noscope">refused: no write scope</option>
+      <option value="inflight">sending (marks confirmed)</option>
+      <option value="sendfailed">send failed (draft kept, compiled updated)</option>
+      <option value="editorerror">editor error</option>
+      <option value="overflow">overflow: long draft, 4 mentions (compiles at T0, ceiling 3)</option>
+    </select></label>
+  <label>Assist provider
+    <select id="h-provider"><option value="present">present (lines derived)</option><option value="absent">absent (lines empty, editable)</option></select></label>
+  <label>Theme
+    <select id="h-theme"><option value="dark">dark</option><option value="light">light</option><option value="hc">high-contrast (stand-ins)</option></select></label>
+  <label>Viewport
+    <select id="h-vp"><option value="desk">desktop 1440</option><option value="wide">wide</option><option value="narrow">narrow 1024</option></select></label>
+  <label>Persona
+    <select id="h-persona"><option value="operator">Operator</option><option value="keyboard">Keyboard-only (focus order, P-13)</option><option value="screenreader">Screen reader (live region)</option></select></label>
+  <label>Motion
+    <select id="h-motion"><option value="full">full</option><option value="reduce">reduced</option></select></label>
+  <span class="checks" id="verdict">measuring&hellip;</span>
+</div>
+
+<p class="note" id="legend"></p>
+<div class="srlog" role="region" aria-label="Live region trace"><h4>What the screen reader hears</h4><ol id="srlist"></ol></div>
+
+<div class="frame"><div class="doc" id="doc">
+  <!-- SESSION HEADER: 28px, the only chrome above the message -->
+  <div class="sesshead">
+    <span class="nm">payments extraction</span>
+    <span class="chip accent">class: extraction</span>
+    <button class="shape" aria-haspopup="listbox" aria-label="Submission shape"><span class="fi" data-show="template">Template: change-order</span><span class="fi" data-show="default empty loading deriving settings attaching attachoff refused noscope inflight sendfailed editorerror overflow">Free-form</span> <svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6-6 6"/></svg><span class="fo">1</span></button>
+    <button class="gear" id="settings-link" aria-haspopup="dialog"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Session settings<span class="fo">2</span></button>
+    <span class="sp"></span>
+    <span class="chip ok"><span class="dot"></span>2 backends ready</span>
+    <span class="chip warn fi" data-show="sendfailed"><span class="dot"></span>conductor disconnected</span>
+    <!-- SESSION SETTINGS POPOVER: the sheet's row, re-used. One control, two doors. -->
+    <div class="pop" role="dialog" aria-label="Session settings">
+      <h4>Session settings</h4>
+      <div class="settings">
+        <div class="setting"><div class="sl">Fan-out ceiling<span class="src">workspace default</span></div><div class="ctl"><input class="num" value="3" aria-label="Fan-out ceiling, sub-agents" inputmode="numeric"><span class="unit">sub-agents</span></div><p class="sh">Most sub-agents any turn may convene. The compiled tier decides how many it uses, up to this.</p></div>
+        <div class="setting"><div class="sl">Budget<span class="src">workspace default</span></div><div class="ctl"><input class="num" value="40,000" aria-label="Budget, tokens per session" inputmode="numeric"><span class="unit">tokens per session</span></div><p class="sh">Spend stops here; a run that needs more asks before it continues.</p></div>
+      </div>
+      <div class="acts"><button class="btn">Cancel</button><button class="btn">Save for this session</button></div>
+    </div>
+  </div>
+
+  <div class="split">
+    <!-- ================= THE COMPOSER: one message, derived beneath ================= -->
+    <section class="composer" aria-label="Composer">
+      <!-- EDITOR (the WebView2 page in the real shell; tokens reach it as CSS variables) -->
+      <div class="fx" data-show="loading" style="flex:1;flex-direction:column;min-height:130px;padding:var(--s4) var(--s5);border:1px solid var(--field-border);border-radius:var(--r-md);background:var(--surface-sunken)">
+        <div class="skel" style="width:62%"></div><div class="skel" style="width:84%"></div><div class="skel" style="width:41%"></div>
+      </div>
+      <div data-show="editorerror" style="flex:1"><div class="errbox" role="alert"><h4>Editor couldn't start — WebView2 runtime not found.</h4><p>The session stays open. Install the WebView2 runtime, or retry if it was being updated.</p><button class="btn">Retry</button></div></div>
+      <div class="editor boundary fi" id="editor" data-show="default empty deriving template settings attaching attachoff refused noscope inflight sendfailed overflow" contenteditable="false" tabindex="0" role="textbox" aria-multiline="true" aria-label="Message" aria-describedby="editor-help">
+        <span class="fo" style="position:absolute;right:8px;top:8px">3</span>
+        <span data-show="empty" class="ph">What should this session do? Mention the files it may write as @path.<span class="caret"></span></span>
+        <span data-show="default deriving template settings attaching attachoff refused">Refactor the layout store's migration chain so a newer schema is refused with a report; touch only <span class="mention">@src/AiDe.Core/Workbench/</span>.<span class="caret"></span></span>
+        <span data-show="noscope">Refactor the layout store's migration chain so a newer schema is refused with a report.<span class="caret"></span></span>
+        <span data-show="inflight sendfailed" style="color:var(--text-muted)">Refactor the layout store's migration chain so a newer schema is refused with a report; touch only <span class="mention">@src/AiDe.Core/Workbench/</span>.</span>
+        <span data-show="overflow">Regenerate every projection under <span class="mention">@src/AiDe.Core/Presentation/Sessions/Composer/Rendering/Markdown/</span> and reconcile the fixture set against <span class="mention">@tests/AiDe.Core.Tests/Fixtures/payments-aggregate-extraction-roundtrip-with-inferred-edges.golden.json</span>; keep <span class="mention">@src/AiDe.Core/Workbench/</span> and <span class="mention">@src/AiDe.App/Workbench/Sessions/</span> readable throughout, never rewrite a migration that has shipped, and when the golden master and the projection disagree, stop and report which one is wrong rather than regenerating the master to match. Run the characterization suite before and after; the diff is the deliverable.<span class="caret"></span></span>
+        <div class="drop" aria-hidden="true">Drop to attach</div>
+      </div>
+      <span id="editor-help" hidden>Ctrl+Enter sends. Type @ to mention a file or folder.</span>
+      <!-- THE MENTION PICKER: a listbox, a sibling of the editor, positioned at the caret -->
+      <div class="picker" role="listbox" aria-label="Mention a file or folder">
+        <div class="prow" role="option" aria-selected="true">@src/AiDe.Core/Workbench/<span class="k">folder</span></div>
+        <div class="prow" role="option" aria-selected="false">@src/AiDe.Core/Workbench/LayoutStore.cs<span class="k">file</span></div>
+        <div class="prow" role="option" aria-selected="false">@src/AiDe.Core/Workbench/ZoneLayoutStore.cs<span class="k">file</span></div>
+      </div>
+      <div class="attachoff" role="status">Attaching files is off for this session.</div>
+
+      <!-- DERIVED STRUCTURE: lines, not boxes; the editor's top edge never moves -->
+      <div class="lines">
+        <details class="structure" id="structure" open>
+          <summary aria-label="Goal, Done when, Not in scope"><svg class="ico sm car" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+            <span class="fi" data-show="empty">Goal · Done when · Not in scope — will appear as you write</span>
+            <span class="fi" data-show="default refused noscope inflight sendfailed overflow deriving loading editorerror settings attaching attachoff">Goal · Done when · Not in scope</span>
+            <span class="fi" data-show="template">What changed · Amended done-when · Not in scope <span class="chip" style="margin-left:var(--s3)">change-order v2</span></span>
+            <span class="fo" style="margin-left:auto">4</span>
+          </summary>
+          <div class="body">
+            <div class="fx" data-show="deriving" style="flex-direction:column;padding:var(--s2) var(--s2)"><div class="skel" style="width:70%;margin:var(--s2) 0"></div><span class="help" style="margin:0">Deriving from your text… (the editor stays yours)</span></div>
+            <div data-show="default noscope overflow settings attaching attachoff">
+              <div class="fx" data-prov="present" style="flex-direction:column">
+                <div class="line"><span class="k">Goal</span><span class="v edit" tabindex="0" role="textbox" aria-label="Goal" aria-describedby="m-goal">Refuse a newer layout schema with a report instead of a silent reset</span><span class="mark d" id="m-goal">~ derived</span><span class="fo">5</span></div>
+                <div class="line"><span class="k">Done when</span><span class="v edit" tabindex="0" role="textbox" aria-label="Done when" aria-describedby="m-done">a v6 envelope is refused, reported on the status strip, and the v5 file is untouched</span><span class="mark d" id="m-done">~ derived</span><span class="fo">6</span></div>
+                <div class="line"><span class="k">Not in scope</span><span class="v edit" tabindex="0" role="textbox" aria-label="Not in scope" aria-describedby="m-nis">the envelope's contents; anything outside src/AiDe.Core/Workbench/</span><span class="mark c" id="m-nis">✓ edited</span><span class="fo">7</span></div>
+              </div>
+              <div class="fx" data-prov="absent" style="flex-direction:column">
+                <div class="line"><span class="k">Goal</span><span class="v edit empty" tabindex="0" role="textbox" aria-label="Goal" aria-placeholder="fill in, or add an assist provider in settings">fill in, or add an assist provider in settings</span></div>
+                <div class="line"><span class="k">Done when</span><span class="v edit empty" tabindex="0" role="textbox" aria-label="Done when" aria-placeholder="fill in, or add an assist provider in settings">fill in, or add an assist provider in settings</span></div>
+                <div class="line"><span class="k">Not in scope</span><span class="v edit empty" tabindex="0" role="textbox" aria-label="Not in scope" aria-placeholder="fill in, or add an assist provider in settings">fill in, or add an assist provider in settings</span></div>
+              </div>
+            </div>
+            <div data-show="template">
+              <div class="line"><span class="k">What changed</span><span class="v edit" tabindex="0" role="textbox" aria-label="What changed" aria-describedby="m-t1">The migration chain refuses a newer schema with a report</span><span class="mark d" id="m-t1">~ derived</span></div>
+              <div class="line"><span class="k">Amended done-when</span><span class="v edit" tabindex="0" role="textbox" aria-label="Amended done-when" aria-describedby="m-t2">a v6 envelope is refused and reported; the v5 file is untouched</span><span class="mark d" id="m-t2">~ derived</span></div>
+              <div class="line"><span class="k">Not in scope</span><span class="v edit empty" tabindex="0" role="textbox" aria-label="Not in scope" aria-placeholder="fill in">fill in</span></div>
+            </div>
+            <div data-show="inflight sendfailed">
+              <div class="line"><span class="k">Goal</span><span class="v">Refuse a newer layout schema with a report instead of a silent reset</span><span class="mark c" aria-hidden="true">✓</span></div>
+              <div class="line"><span class="k">Done when</span><span class="v">a v6 envelope is refused, reported on the status strip, and the v5 file is untouched</span><span class="mark c" aria-hidden="true">✓</span></div>
+              <div class="line"><span class="k">Not in scope</span><span class="v">the envelope's contents; anything outside src/AiDe.Core/Workbench/</span><span class="mark c" aria-hidden="true">✓</span></div>
+            </div>
+            <div data-show="refused">
+              <div class="line"><span class="k">Goal</span><span class="v edit" tabindex="0" role="textbox" aria-label="Goal" aria-describedby="m-rg">Refuse a newer layout schema with a report instead of a silent reset</span><span class="mark d" id="m-rg">~ derived</span></div>
+              <div class="line" style="flex-wrap:wrap"><span class="k">Done when</span><span class="v edit empty" tabindex="0" role="textbox" aria-label="Done when" aria-invalid="true" aria-describedby="m-rd" aria-errormessage="why-rd">empty</span><span class="mark x" id="m-rd">! missing</span><span class="why" id="why-rd">This prompt compiles at T2 and needs Done when.</span></div>
+              <div class="line" style="flex-wrap:wrap"><span class="k">Not in scope</span><span class="v edit empty" tabindex="0" role="textbox" aria-label="Not in scope" aria-invalid="true" aria-describedby="m-rn" aria-errormessage="why-rn">empty</span><span class="mark x" id="m-rn">! missing</span><span class="why" id="why-rn">This prompt compiles at T2 and needs Not in scope — the boundary is what the lease is checked against.</span></div>
+            </div>
+          </div>
+        </details>
+
+        <!-- INHERITED SETTINGS: one muted line; the text is the link; no tier here -->
+        <div class="line fi" data-show="default empty deriving template settings attaching attachoff refused noscope inflight sendfailed overflow loading editorerror" style="display:flex">
+          <span class="k">Settings</span>
+          <button class="lnk" id="inherit-link">fan-out ≤ 3 · budget 40,000 tokens — from session settings</button>
+          <span class="fo" style="margin-left:auto">8</span>
+        </div>
+
+        <!-- WRITE SCOPE: derived text, not a stop; one line per pattern; the refusal names @path -->
+        <div class="line fi" data-show="default deriving template settings attaching attachoff refused inflight sendfailed" style="display:flex"><span class="k">Write scope</span><span class="v mono">src/AiDe.Core/Workbench/**</span><span>— from your mention</span></div>
+        <div class="line fi" data-show="overflow" style="display:flex"><span class="k">Write scope</span><span class="v mono">src/AiDe.Core/Presentation/Sessions/Composer/Rendering/Markdown/**</span><span>— from your mention</span></div>
+        <div class="line fi" data-show="overflow" style="display:flex"><span class="k" style="visibility:hidden">Write scope</span><span class="v mono">tests/AiDe.Core.Tests/Fixtures/payments-aggregate-extraction-roundtrip-with-inferred-edges.golden.json</span><span>— from your mention</span></div>
+        <div class="line fi" data-show="overflow" style="display:flex"><span class="k" style="visibility:hidden">Write scope</span><span class="v mono">src/AiDe.Core/Workbench/** · src/AiDe.App/Workbench/Sessions/**</span><span>— from your mentions</span></div>
+        <div class="line fi" data-show="empty loading editorerror" style="display:flex"><span class="k">Write scope</span><span>none yet — mention the files this run may write as @path</span></div>
+        <div class="line fi" data-show="noscope" style="display:flex"><span class="k">Write scope</span><span class="mark x" style="margin:0">! none</span><span>mention the files this run may write as @path</span></div>
+
+        <!-- COMPILED PROMPT: on demand, collapsed, exactly the outgoing text; the tier is a decoration the compile step attaches.
+             The expander's accessible NAME is constant; the tier state and "updated" are its description (ItemStatus in WPF). -->
+        <details class="compiled" id="compiled">
+          <summary aria-label="Compiled prompt" aria-describedby="tier-desc"><svg class="ico sm car" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+            <span>Compiled prompt</span>
+            <span id="tier-desc" style="display:inline-flex;gap:var(--s3);align-items:center;min-width:0">
+              <span class="updated fi" data-show="sendfailed">— updated</span>
+              <span class="tier" id="tier-deco">· tier not derived yet</span>
+            </span>
+            <span class="mono" style="margin-left:auto;color:var(--text-muted)" id="chars">412 chars</span>
+            <span class="fo">9</span>
+          </summary>
+<pre id="compiled-pre"></pre>
+        </details>
+      </div>
+
+      <!-- SEND ROW: after any refusal Send is disabled with the reason beside it, until the gap is filled -->
+      <div class="sendrow">
+        <button class="iconbtn" aria-label="Attach a file"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11l-9 9a5 5 0 0 1-7-7l9-9a3.5 3.5 0 0 1 5 5l-9 9a2 2 0 0 1-3-3l8-8"/></svg><span class="fo" style="position:absolute;margin-left:22px;margin-top:-22px">10</span></button>
+        <button class="iconbtn" aria-label="Mention a file or folder"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 5 2 9 9 0 1 0-3.5 5"/></svg><span class="fo" style="position:absolute;margin-left:22px;margin-top:-22px">11</span></button>
+        <span class="badge fi" data-show="default refused inflight sendfailed overflow deriving template settings attaching attachoff">Goal block</span>
+        <span class="badge fi" data-show="empty loading editorerror noscope">Message</span>
+        <span class="sp"></span>
+        <span class="reason fi" data-show="empty"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Write something to send.</span>
+        <span class="reason fi" data-show="loading"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Editor starting…</span>
+        <span class="reason fi" data-show="refused"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>2 lines need filling — this prompt compiles at T2.</span>
+        <span class="reason fi" data-show="noscope"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Send needs a write scope.</span>
+        <span class="reason fi" data-show="inflight"><span class="ring" aria-hidden="true"></span>Sending…</span>
+        <button class="send fi" data-show="default overflow deriving template settings attaching attachoff">Send <span class="kbd">Ctrl+Enter</span><span class="fo">12</span></button>
+        <button class="send fi" data-show="empty loading editorerror refused noscope inflight" disabled>Send <span class="kbd">Ctrl+Enter</span></button>
+        <button class="send fi" data-show="sendfailed">Try again <span class="kbd">Ctrl+Enter</span></button>
+        <div class="refusal fi" data-show="noscope" role="alert" style="display:none">
+          <span><b>Send needs a write scope.</b> Mention the files or folders this run may write, as @path (for example @src/AiDe.Core/) — the lease is derived from your mentions.</span>
+          <span class="acts"><button class="btn">Add a mention</button></span>
+        </div>
+        <div class="refusal fi" data-show="sendfailed" role="alert" style="display:none">
+          <span><b>Couldn't send</b> — the conductor closed the connection. Your draft is kept.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= THE CANVAS: Console beside it (the thread lives here) ================= -->
+    <section class="canvas" aria-label="Output canvas">
+      <div class="modestrip"><span class="modetitle">Console</span></div>
+      <div class="canvasbody">
+        <div data-show="empty loading editorerror"><div class="wayfinder">
+          <svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17l6-6-6-6M12 19h8"/></svg>
+          <h3>Nothing has run yet.</h3>
+          <p>Send the first message and the merged stream appears here.</p>
+        </div></div>
+        <div data-show="default deriving template settings attaching attachoff refused noscope overflow inflight sendfailed">
+          <div class="turn"><div class="who">you · b1 · message · 14:01</div>Map the layout stores in this workspace and name the invariant each one protects.</div>
+          <div class="evline"><span class="ts">14:01:12</span><span class="lane">conductor</span><span class="msg">Block b1 accepted, tier T0, 0 lanes</span></div>
+          <div class="turn"><div class="who">conductor · reply to b1 · 14:01</div>Two stores. <code>LayoutStore</code> (tree schema, v4, a migration chain) and <code>ZoneLayoutStore</code> (zone schema, v1, discards on any mismatch). The invariant the first protects is "a saved layout is never partially applied"; the second has none yet.</div>
+          <div class="turn"><div class="who">you · b2 · goal block · T1 · 14:02</div>Refactor the layout store's migration chain so a newer schema is refused with a report; touch only <code>@src/AiDe.Core/Workbench/</code>.</div>
+          <div class="evline"><span class="ts">14:02:03</span><span class="lane">conductor</span><span class="msg">Block b2 accepted, tier T1, 1 lane, lease <code>src/AiDe.Core/Workbench/**</code></span></div>
+          <div class="evline"><span class="ts">14:02:04</span><span class="lane">claude-code</span><span class="msg">read <code>LayoutStore.cs</code> (412 lines)</span></div>
+          <div class="evline fx" data-show="inflight sendfailed default overflow"><span class="ts">14:02:09</span><span class="lane">claude-code</span><span class="msg">edit <code>LayoutStore.cs</code>, 1 hunk: refuse schema &gt; 4 with a report</span></div>
+          <div class="evline fx" data-show="sendfailed"><span class="ts">14:02:41</span><span class="lane">conductor</span><span class="msg" style="color:var(--danger)">connection closed by peer; events are complete up to 14:02:09</span></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div></div>
+
+<!-- ==================================================================== -->
+<!-- EVIDENCE: density measured, contrast computed                          -->
+<!-- ==================================================================== -->
+<div class="secwrap">
+  <h3 class="sech">"Not chunky", measured on this page</h3>
+  <p class="help">The density contract in DESIGN.md is a set of numbers, read from the rendered layout on every change at the shell's startup Center height (the document is fixed at 580px for that reason): chrome above the editor's first line, the editor's share of the composer zone, the rows rendered beneath it (4 with the structure collapsed, 7 expanded), bordered text fields other than the editor, and the type sizes the composer uses.</p>
+  <table class="ctab"><thead><tr><th>Property</th><th>Contract</th><th>Measured</th><th>Verdict</th></tr></thead><tbody id="dtbody"></tbody></table>
+
+  <h3 class="sech" style="margin-top:var(--s7)">Computed contrast: every pairing the composer renders</h3>
+  <p class="help">Read from the live computed styles and recalculated on every theme change. Classified <b>text</b> (4.5:1), <b>large</b> (3:1), <b>ui</b> (3:1) or <b>decorative</b> (reported, not counted). Under the high-contrast theme the values are stand-ins and the audit reports <i>not measured</i>. The WebView2 page's real pairs are measured by the runtime census when it walks the DOM; until then the page reports <i>not measured</i>, and this table is the design's contract for it.</p>
+  <table class="ctab"><thead><tr><th>Pairing</th><th>Kind</th><th>Ink</th><th>Ground</th><th>Ratio</th><th>Floor</th><th>Verdict</th></tr></thead><tbody id="ctbody"></tbody></table>
+</div>
+
+<script>
+var root=document.documentElement, body=document.body;
+function bind(id,target,attr){ var el=document.getElementById(id); el.addEventListener('change',function(){ target.dataset[attr]=el.value; render(); }); }
+bind('h-theme',root,'theme'); bind('h-vp',root,'vp');
+bind('h-state',body,'state'); bind('h-provider',body,'provider'); bind('h-persona',body,'persona'); bind('h-motion',body,'motion');
+
+/* The tier decoration is DERIVED FROM THE STATE, never an independent axis: a state either has a compiled
+   tier or it does not, and the marks a send confirmed cannot coexist with "derived". */
+var TIER={ 'default':['d','T1'], template:['d','T1'], settings:['d','T1'], attaching:['d','T1'], attachoff:['d','T1'], noscope:['d','T1'], deriving:['nd',null],
+           empty:['nd',null], loading:['nd',null], editorerror:['nd',null], refused:['d','T2'], overflow:['d','T0'], inflight:['c','T1'], sendfailed:['c','T1'] };
+var CAP={T0:0,T1:2,T2:3};
+var LEGEND={
+  'default':'<b>The composer is a conversation.</b> One editor, the largest element in the pane. Beneath it, lines of 12px type, not boxes: the structure the text yielded (each line editable in place, marked <i>derived</i> until you touch it or send), the settings the session gives every prompt (a link, no override, and no tier: tier is compiled, not typed), the write scope the mention derived, and the compiled prompt on demand. The compiled header carries the tier the compile step attached (~ T1 derived) as a derived value you see and confirm by sending; a screen reader hears it as the expander’s description and again at the send. Send is the confirmation.',
+  'empty':'<b>First message.</b> The placeholder teaches the first action and the one thing a run needs (an @path). The structure line says what will appear as you write. Send is disabled with its reason beside it. The badge reads <i>Message</i>: with no structure, a send is a Message shape, never a goal block that would be refused. The tier is not derived yet.',
+  'loading':'<b>Editor starting.</b> The WebView2 page mounts asynchronously, so the island shows a text skeleton and Send is disabled with the reason. Nothing else in the document waits.',
+  'deriving':'<b>The provider is deriving.</b> A one-line skeleton in the structure, never a spinner over the editor; typing is never blocked. Send is enabled: a send now is a Message shape with whatever lines exist; the tier is not derived until the draft settles.',
+  'template':'<b>A template picked from the shape control</b> (Addendum B :181 kept). Its fields render as the same derived lines, prefilled where the text supplies a value and empty-editable where it does not; the badge names the template. No form of boxes.',
+  'settings':'<b>Session settings, opened from the header.</b> The gear and the settings line open the same popover: the sheet’s Session settings row (fan-out ceiling, budget), saved for this session. One control, two doors; no tier.',
+  'attaching':'<b>Attaching.</b> A drop target over the editor says what a drop does; the editor keeps its size and its text.',
+  'attachoff':'<b>Attaching is off for this session.</b> The census’s <code>#drop-hint</code> site (4.47:1 in page CSS), now a token pair: muted ink on the island, one line beneath the editor.',
+  'refused':'<b>Refused, every gap at once.</b> This prompt compiles at T2, so an empty Done-when and Not-in-scope refuse the send inline, one reason per line, nothing modal, nothing sent; the reason beside the disabled Send counts the gaps and names the tier. Fix a line in place and Ctrl+Enter again. Which tier a prompt compiles to is the compile step’s rule, not yet specified.',
+  'noscope':'<b>Refused: no write scope.</b> Send is disabled with the reason beside it; the refusal says what derives a lease and how to add one (an @path mention), and the picker opens at the caret. Who computes the lease is unchanged (Ruling 42): still only the mentions.',
+  'inflight':'<b>Sending.</b> The editor is read-only for the round trip, the row shows progress, the derived marks have cleared (send confirmed them, and the compiled header now says T1 confirmed), and the Console starts streaming beside the composer.',
+  'sendfailed':'<b>Send failed.</b> The reason, and the promise: your draft is kept. The compiled header says <i>updated</i> because the text changed since it was last opened. Try again is the same Ctrl+Enter.',
+  'editorerror':'<b>Editor error.</b> The page could not start; the session document stays open, the reason is stated, Retry is the recovery. The Console and the header are unaffected.',
+  'overflow':'<b>Overflow.</b> A long draft with four mentions: the editor scrolls within its height and never collapses below its minimum; one write-scope line per pattern; a 120-character path in mono. This prompt compiles at T0 in a session whose fan-out ceiling is 3, so the compiled header says the run uses no fan-out.'
+};
+function compiledText(st){
+  var t=TIER[st]||['nd',null], tier=t[1];
+  var head = tier ? 'shape: goal-block\ntier: '+tier+'                      # attached by the compile step (derived)\nfan-out: '+CAP[tier]+'                    # '+tier+'’s cap, within the session ceiling of 3\nbudget: 40,000 tokens         # from session settings\n'
+                  : 'shape: message\ntier: (not derived yet)       # attached by the compile step when the draft settles\nbudget: 40,000 tokens         # from session settings\n';
+  var body_ = (st==='empty'||st==='loading'||st==='editorerror') ? 'message: |\n  (empty)\n'
+    : (st==='template') ? '\nwhat_changed: The migration chain refuses a newer schema with a report\namended_done_when: a v6 envelope is refused and reported; the v5 file is untouched\nnot_in_scope: (empty)\n\nlease: src/AiDe.Core/Workbench/**   # derived from @src/AiDe.Core/Workbench/\nmessage: |\n  Refactor the layout store’s migration chain so a newer schema is refused with a report;\n  touch only @src/AiDe.Core/Workbench/.\n'
+    : (st==='noscope') ? '\ngoal: Refuse a newer layout schema with a report instead of a silent reset\nlease: (none: no @path mention)\nmessage: |\n  Refactor the layout store’s migration chain so a newer schema is refused with a report.\n'
+    : (st==='refused') ? '\ngoal: Refuse a newer layout schema with a report instead of a silent reset\ndone_when: (empty)\nnot_in_scope: (empty)\n\nlease: src/AiDe.Core/Workbench/**   # derived from @src/AiDe.Core/Workbench/\nmessage: |\n  Refactor the layout store’s migration chain so a newer schema is refused with a report;\n  touch only @src/AiDe.Core/Workbench/.\n'
+    : '\ngoal: Refuse a newer layout schema with a report instead of a silent reset\ndone_when: a v6 envelope is refused, reported on the status strip, and the v5 file is untouched\nnot_in_scope: the envelope’s contents; anything outside src/AiDe.Core/Workbench/\n\nlease: src/AiDe.Core/Workbench/**   # derived from @src/AiDe.Core/Workbench/\nmessage: |\n  Refactor the layout store’s migration chain so a newer schema is refused with a report;\n  touch only @src/AiDe.Core/Workbench/.\n';
+  return head+body_;
+}
+function render(){
+  var st=body.dataset.state, t=TIER[st]||['nd',null];
+  var deco=document.getElementById('tier-deco');
+  deco.className='tier '+t[0];
+  if (t[0]==='nd') { deco.textContent='· tier not derived yet'; deco.removeAttribute('title'); }
+  else if (t[0]==='c') { deco.textContent='· '+t[1]+' confirmed'; deco.removeAttribute('title'); }
+  else if (t[1]==='T0') { deco.textContent='· ~ T0 derived · no fan-out'; deco.setAttribute('title','This run uses no fan-out (session ceiling 3).'); }
+  else { deco.textContent='· ~ '+t[1]+' derived'; deco.removeAttribute('title'); }
+  var pre=document.getElementById('compiled-pre'); pre.textContent=compiledText(st);
+  pre.innerHTML=pre.innerHTML.replace(/(#[^\n]*)/g,'<span class="cm">$1</span>');
+  document.getElementById('chars').textContent=pre.textContent.length+' chars';
+  var legend=LEGEND[st]||'';
+  if (body.dataset.provider==='absent') legend+=' <b>No assist provider:</b> the three lines are empty and editable and say so. This is the first slice’s shipped state (D-5): the conversation without the deriver.';
+  if (st==='overflow') legend+=' The ceiling is the session’s; the effective cap is the tier’s within it (Inferred: the conductor’s reconciliation of CT19 with the operator’s correction).';
+  document.getElementById('legend').innerHTML=legend;
+  var L=[];
+  if (st==='refused'){ L.push(['UIA notification','Send refused: 2 lines need filling. This prompt compiles at T2 and needs Done when. This prompt compiles at T2 and needs Not in scope.']); L.push(['focus','the first invalid line (Done when); its ItemStatus reads "missing", its HelpText carries the reason']); }
+  else if (st==='noscope'){ L.push(['UIA notification','Send needs a write scope. Mention the files or folders this run may write, as @path.']); L.push(['focus','the editor, with the mention picker (a listbox) open at the caret']); }
+  else if (st==='inflight'){ L.push(['UIA notification','Sending block b3 as a goal block, tier T1.']); }
+  else if (st==='sendfailed'){ L.push(['UIA notification',"Couldn't send — the conductor closed the connection. Your draft is kept."]); L.push(['focus','Try again']); }
+  else if (st==='editorerror'){ L.push(['UIA notification',"Editor couldn't start — WebView2 runtime not found."]); L.push(['focus','Retry']); }
+  else if (st==='loading'){ L.push(['UIA notification','Editor starting.']); }
+  else if (st==='attachoff'){ L.push(['status','Attaching files is off for this session.']); }
+  else if (st==='deriving'){ L.push(['(nothing)','derivation never announces; the structure updates silently and its marks say derived']); }
+  else { L.push(['on open','focus lands in the editor (Message, edit text, multi-line; description: Ctrl+Enter sends, type @ to mention)']); L.push(['Compiled prompt expander','name "Compiled prompt"; description (ItemStatus): '+deco.textContent.replace(/^· /,'')]); L.push(['each derived line','name "Goal" / "Done when" / "Not in scope"; ItemStatus: derived / edited / missing']); }
+  document.getElementById('srlist').innerHTML=L.map(function(x){return '<li><span class="who">'+x[0]+'</span> · '+x[1]+'</li>';}).join('');
+  audit();
+}
+
+/* ---- contrast + density audit (computed, never claimed) --------------- */
+function srgb(c){ c/=255; return c<=0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055,2.4); }
+function lum(rgb){ return 0.2126*srgb(rgb[0])+0.7152*srgb(rgb[1])+0.0722*srgb(rgb[2]); }
+function parse(s){ var m=/rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(s); return m?[+m[1],+m[2],+m[3]]:null; }
+function ratio(f,b){ var a=lum(f), c=lum(b); var hi=Math.max(a,c), lo=Math.min(a,c); return (hi+0.05)/(lo+0.05); }
+function hex(rgb){ return '#'+rgb.map(function(v){return ('0'+v.toString(16)).slice(-2);}).join('').toUpperCase(); }
+var probe=document.createElement('span'); probe.id='probe'; probe.style.display='none'; document.body.appendChild(probe);
+function tok(n){ probe.style.color='var('+n+')'; return parse(getComputedStyle(probe).color)||[0,0,0]; }
+var THRESH={text:4.5,large:3,ui:3,decorative:3};
+var PAIRS=[
+  ['Editor text on the sunken editor',                    'text','--text',          '--surface-sunken'],
+  ['Editor placeholder on the sunken editor',             'text','--text-muted',    '--surface-sunken'],
+  ['Editor boundary (field-border) on the island',        'ui',  '--field-border',  '--surface-raised'],
+  ['Mention chip text on the surface chip',               'text','--text',          '--surface'],
+  ['Mention chip border on the sunken editor',            'ui',  '--accent',        '--surface-sunken'],
+  ['Editor focus border on the island',                   'ui',  '--accent',        '--surface-raised'],
+  ['Drop-target dashed border on the sunken editor',      'ui',  '--accent',        '--surface-sunken'],
+  ['Line label on the island',                            'text','--text-muted',    '--surface-raised'],
+  ['Line value on the island',                            'text','--text',          '--surface-raised'],
+  ['Derived mark (inferred) on the island',               'text','--inferred',      '--surface-raised'],
+  ['Missing mark (danger) on the island',                 'text','--danger',        '--surface-raised'],
+  ['Edited mark (verified) on the island',                'text','--verified',      '--surface-raised'],
+  ['Settings link on the island',                         'text','--accent',        '--surface-raised'],
+  ['Attaching-off line on the island',                    'text','--text-muted',    '--surface-raised'],
+  ['Compiled text on the sunken block',                   'text','--text',          '--surface-sunken'],
+  ['Compiled comment (re-toned syntax-comment)',          'text','--syntax-comment','--surface-sunken'],
+  ['Updated marker (stale) on the island',                'text','--stale',         '--surface-raised'],
+  ['Send label on the accent fill',                       'text','--text-on-accent','--accent'],
+  ['Disabled Send label on the island',                   'text','--text-disabled', '--surface-raised'],
+  ['Refusal reason (inferred) on the island',             'text','--inferred',      '--surface-raised'],
+  ['Refusal border on the island',                        'ui',  '--danger',        '--surface-raised'],
+  ['Session header chip text',                            'text','--text-muted',    '--surface-sunken'],
+  ['Numeric field boundary on the sunken setting',        'ui',  '--field-border',  '--surface-sunken'],
+  ['Console timestamp on the island',                     'text','--text-muted',    '--surface-raised'],
+  ['Console lane name on the island',                     'text','--accent',        '--surface-raised'],
+  ['Turn text on the surface turn',                       'text','--text',          '--surface'],
+  ['Picker row, highlighted, on the highlight ground',    'text','--hl-ink',        '--hl'],
+  ['Focus ring on the island',                            'ui',  '--focus',         '--surface-raised'],
+  ['Hairline between lines',                              'decorative','--border',  '--surface-raised']
+];
+function audit(){
+  var tb=document.getElementById('ctbody'), fails=0, rows='', hc=root.dataset.theme==='hc';
+  for (var i=0;i<PAIRS.length;i++){
+    var p=PAIRS[i], f=tok(p[2]), b=tok(p[3]), r=ratio(f,b), need=THRESH[p[1]], req=p[1]!=='decorative', ok=r>=need-0.005;
+    if (req&&!ok&&!hc) fails++;
+    rows+='<tr><td>'+p[0]+'</td><td>'+p[1]+'</td><td class="n"><span class="swatch" style="background:'+hex(f)+'"></span>'+hex(f)+'</td><td class="n"><span class="swatch" style="background:'+hex(b)+'"></span>'+hex(b)+'</td><td class="n">'+r.toFixed(2)+':1</td><td class="n">'+need.toFixed(1)+':1</td><td class="'+(hc?'na':(req?(ok?'pass':'fail'):'na'))+'">'+(hc?'stand-in, not measured':(req?(ok?'PASS':'FAIL'):'reported, not counted'))+'</td></tr>';
+  }
+  tb.innerHTML=rows;
+  /* density contract, measured against the rendered layout */
+  var comp=document.querySelector('.composer'), ed=document.getElementById('editor');
+  var head=document.querySelector('.sesshead').getBoundingClientRect().height;
+  var compR=comp.getBoundingClientRect(), edR=ed.offsetParent===null?null:ed.getBoundingClientRect();
+  var share=edR?edR.height/compR.height:0;
+  var rows_=0; document.querySelectorAll('.composer .lines .line, .composer .lines summary, .composer .attachoff').forEach(function(el){ if (el.offsetParent!==null) rows_++; });
+  var open=document.getElementById('structure').open;
+  var expectRows = open ? 7 : 4;
+  var fields=0; document.querySelectorAll('.composer [role="textbox"], .composer input, .composer textarea').forEach(function(el){ if(el.offsetParent===null||el.id==='editor') return; var cs=getComputedStyle(el); if (parseFloat(cs.borderTopWidth)>0 && cs.borderTopStyle!=='none') fields++; });
+  var sizes={}; document.querySelectorAll('.composer *').forEach(function(el){ if(el.offsetParent===null) return; var t=(el.textContent||'').trim(); if(!t) return; var fs=getComputedStyle(el).fontSize; sizes[fs]=1; });
+  var nsizes=Object.keys(sizes).length;
+  var D=[
+    ['Chrome above the editor’s first line','28px',Math.round(head)+'px',Math.round(head)<=28],
+    ['Editor share of the composer zone','≥ 45%',edR?Math.round(share*100)+'%':'n/a (state without an editor)',edR?share>=0.45:true],
+    ['Editor height never below its minimum','≥ 130px',edR?Math.round(edR.height)+'px':'n/a',edR?edR.height>=130:true],
+    ['Rows rendered beneath the editor (this state)','4 collapsed / 7 expanded (+1 per extra scope line or notice)',rows_+' ('+(open?'expanded':'collapsed')+')',rows_<=expectRows+ (body.dataset.state==='overflow'?3:1)],
+    ['Bordered text fields other than the editor','0',fields+'',fields===0],
+    ['Type sizes in the composer','≤ 3 (13 · 12 · 11)',nsizes+'',nsizes<=3]
+  ];
+  var dfail=0; document.getElementById('dtbody').innerHTML=D.map(function(d){ if(!d[3]) dfail++; return '<tr><td>'+d[0]+'</td><td>'+d[1]+'</td><td class="n">'+d[2]+'</td><td class="'+(d[3]?'pass':'fail')+'">'+(d[3]?'MET':'NOT MET')+'</td></tr>'; }).join('');
+  var small=0; document.querySelectorAll('#doc button, #doc [tabindex], #doc summary, #doc input').forEach(function(el){ if(el.offsetParent===null) return; var rc=el.getBoundingClientRect(); if(rc.width&&rc.height&&(rc.width<24||rc.height<24)) small++; });
+  var tierFields=document.querySelectorAll('#doc input[aria-label*="ier" i], #doc select').length;
+  document.getElementById('verdict').innerHTML='audit: '+(hc?'<b class="ok">hc: stand-ins, not measured</b>':'<b class="'+(fails?'bad':'ok')+'">'+fails+' contrast fail</b>')+' · <b class="'+(dfail?'bad':'ok')+'">'+dfail+' density miss</b> · <b class="'+(small?'bad':'ok')+'">'+small+' target &lt; 24px</b> · <b class="'+(tierFields?'bad':'ok')+'">'+tierFields+' tier field</b> · '+PAIRS.length+' pairs';
+}
+render(); window.addEventListener('resize',audit);
+document.getElementById('compiled').addEventListener('toggle',audit); document.getElementById('structure').addEventListener('toggle',audit);
+</script>
+</body>
+</html>
