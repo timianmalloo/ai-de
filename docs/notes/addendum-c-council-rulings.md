@@ -1,6 +1,6 @@
 ---
 id: note-addendum-c-council-rulings
-title: "Decision note — Rulings 50–73: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
+title: "Decision note — Rulings 50–78: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
 type: doc
 status: accepted
 owner: "@timianmalloo"
@@ -29,7 +29,7 @@ review-suggested:
   - { by: adr-0017-primary-view-mode, on: 2026-09-11, reason: "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent" }
 ---
 
-# Decision note — Rulings 50–73
+# Decision note — Rulings 50–78
 
 ## Provenance
 
@@ -981,3 +981,286 @@ returned, not applied.
 read-only with write tools disallowed and no lease; the lease gate applies to write-shaped turns
 only; persistence is the tool's, never operator-declared; a security control gates only the shape
 it protects (class registered).
+
+---
+
+# Rulings 74–78 and the D2/A1 errata batch (2026-09-11)
+
+## Provenance
+
+Issued by the **Owner** (`fable`) on the findings the design node D2 (`ui-review-session-conversation`)
+and the architecture node A1 (`note-addendum-cd-architecture-p1-inputs` §6) handed the conductor,
+in one batch so the specs absorb both in one errata pass. Evidence the Owner opened: Rulings 70–73,
+45, 47; Addendum C §C1/§B2/§C4/US-C12/US-C13 and its errata; Addendum D §A7–§A15, §A22, Parts B/C;
+`GoalBlock.cs:127-160`; the adapter 0.75.1 at `acp-agent.js:5881-5884` (and a zero-hit grep for the
+quoted comment); ADR-0036 `:96-115`, `:228-237`; `DESIGN.md:1096-1184`, `:937`; D2's review and both
+decision notes; Addendum A `:104`, `:159`, `:185`, `:238-242`; Addendum B `:181-188`;
+`WorkEpisode.cs:20`. Not opened by the Owner: the audit-log verbatims (relayed), ADR-0031/0033/0035
+bodies, adapter `:5274-5279`/`:5856`, the run host's concurrency, the mockup's P-13 trace. The errata
+E1–E7 are applied by the conductor's errata node, which cites this note.
+
+---
+
+## Ruling 74 — the session document is a `StreamingThread`; the Console is the reply side of each turn; the split is on demand (D2 items 1, 2)
+
+**RULING:** Amend Addendum C §C1 so the *session document* carries `Layout:StreamingThread` (the
+shell stays `HubAndSpoke`/`MultiPanelWorkstation`); amend §B2's earlier-turns paragraph and Addendum
+A §A2/§A6/R16's default so the turns live in the thread with the lane's reply folded beneath the turn
+that caused it, and the Console split is an on-demand view of the same stream opened at a turn;
+Addendum D Part C stands as written. Item 2 is a clause of this ruling, not an erratum.
+
+**BECAUSE:** The two specs contradict each other today — C §C1 `:1288-1291` *"Not adopted …
+`Layout:StreamingThread`"* vs D Part C `:782` *"unchanged from Addendum C §C1
+(`Layout:StreamingThread` …)"* — so one must move, and the operator's verdicts (as quoted in Ruling
+70 and `note-session-design-thread-not-panes` §Why) decide which. Item 2 changes a P0 default
+(Addendum A `:104` *"composer pane left, output canvas right"*, R16 `:238-242`) and re-reads Ruling
+21's *"the canvas split is IN"* as on-demand; a default-layout change to a P0 requirement is a
+ruling, not a wording fix. Ruling 45 (Console-only strip) and Ruling 21's mechanism are untouched —
+the split still exists and still has its oracle.
+
+**CONFIDENCE:** Verified for the spec contradiction and the Addendum A default; Inferred for the
+operator's verbatims (relayed via the note; consistent with the quote in Ruling 70).
+
+**SCOPE EFFECT:** Admits the thread control (D2 ranked item 1) as the slice's first node. Cuts the
+Console pane at rest. Freezes: the split is derived from the turns' events, never a second store
+(SC1). Addendum D Part C: no change.
+
+**CONDITIONS:** (1) Ruling 21's red-first oracle is re-pointed, not dropped: the split's rows equal
+the folded events of every turn, in order (D2 item 7). (2) The split stays in the F6 cycle and
+reachable from the header. (3) Addendum B `:186`'s Score outline is recorded as *superseded by the
+jump list*, not silently dropped.
+
+**RECORD AS:** Ruling 74 — the session document adopts `Layout:StreamingThread`; the Console is the
+reply side folded per turn; the split is on demand (Ruling 21 honoured as on-demand); C §C1/§B2 and
+Addendum A §A2/§A6/R16 amended; D Part C stands.
+
+---
+
+## Ruling 75 — the refusal sentence: a blank Not in scope on a goal block is refused tier-blind; a blank Goal or Done when makes a Message (D2 item 5)
+
+**RULING:** The true sentence is *"This prompt is a goal block and needs Not in scope."* — the only
+content-gap refusal that exists. *"compiles at T2 and needs …"* is superseded everywhere it appears
+(C §C4 `:1381` *"A T2 session needs Done when."*, US-C13 `:741-747`, `DESIGN.md:937`, D1's
+`conversation-composer.html` `refused` state, D2's `gaps` state). A blank Goal or Done when is not
+refused: the turn is a Message (D §A12.2 `:406`), shown live on the decoration line and spoken at
+Send. Under `agentic-advisory`: an unkept Goal or Done when → Message; an unkept Not in scope with
+both others confirmed → refused with *keep* offered; the copy *"they send empty"* is true only for
+lines whose blankness yields a Message.
+
+**BECAUSE:** `SpawnContract.Validate` refuses a blank `not_in_scope` for any block with no tier input
+(`GoalBlock.cs:131-134`), and D's shape projection makes a block exist only when Goal and Done when
+are both non-blank (`:406`; §A9 P; enumerated input (3) *goal filled, done_when blank → R0*). So
+"needs Done when" can never fire and "at T2" is never the reason. US-C13's *"empty Goal, Done-when
+or Not-in-scope … refused on every gap at once"* is the older reading and is amended by
+substitution.
+
+**CONFIDENCE:** Verified.
+
+**SCOPE EFFECT:** Cuts three refusal strings to one. Amends Flow D-1 `:716` (*T2 content gap* → *goal
+block with blank Not in scope*), US-C13's falsifier (*a Goal-block send with a blank Not in scope
+succeeds*), and D1's/D2's mockup states (a `gaps` state has exactly one gap). Ruling 73 unchanged: a
+goal block with no mention still runs read-only and still needs its three lines.
+
+**CONDITIONS:** (1) The send-gate test asserts both halves: blank Not in scope on a block → refused;
+blank Done when → Message, not refused. (2) The shape demotion is announced (SC9's *"…as a message,
+tier T0"*) — a silent demotion is the falsifier.
+
+**RECORD AS:** Ruling 75 — the content-gap refusal is *"This prompt is a goal block and needs Not in
+scope."*, tier-blind; a blank Goal or Done when yields a Message, never a refusal; *"compiles at T2
+and needs…"* superseded in C §C4, US-C13, DESIGN.md and both mockups.
+
+---
+
+## Ruling 76 — one degraded-rate floor; the latency floor is struck as a floor and reported as a measurement (A1 item 8)
+
+**RULING:** The degraded-rate floor `(timed_out + malformed + unavailable) / every called row ≤ X`
+stands as the one floor on this quantity, with **X = 5 %** as its first value; §A14.4's
+`latency_p95 ≤ 60,000 ms` is struck as a floor and becomes a reported measurement — p50/p95 over
+succeeded rows, timed-out rows counted as right-censored beside `n_measured / n_total` — with no
+latency floor until 50 measured compiles, then a floor set from the measurement and revised only
+stricter.
+
+**BECAUSE:** With `bound_ms = 60000` (§A10.2 `:324`), a p95 ≤ 60 s over every row is a ≤ 5 %
+timeout-rate floor in disguise (ADR-0036 `:233-235`), and over succeeded rows only it is vacuous —
+no completed call exceeds the bound. Two floors on one quantity is two definitions of one measure
+(DM: derive, don't store twice). Taking the stricter of the two readings (5 %, not 10 %) is what
+"floors only stricter" (§A14.4; ADR-0036 `:108`) permits; loosening timeouts to 10 % would thin a
+floor.
+
+**CONFIDENCE:** Verified for the overlap; Inferred for the number (a first value under IO7, like
+N = 50).
+
+**SCOPE EFFECT:** Amends §A14.4 and ADR-0036's floor table; §A16's 15 s p95 stays a target. Nothing
+else moves.
+
+**CONDITIONS:** X lives in the host-compiled floor table only (ADR-0036 `:104-106`), never on
+`opened.constants`.
+
+**RECORD AS:** Ruling 76 — one degraded-rate floor, X = 5 % first value (the stricter reading);
+`latency_p95 ≤ 60 s` struck as a floor, reported censored until measured; §A14.4 and ADR-0036
+amended.
+
+---
+
+## Ruling 77 — gestures while something is in flight: no Send-now during `preparing`; one governed run at a time per session (A1 item 7; D2's send-while-running gap)
+
+**RULING:** (a) There is no *Send now* during `preparing`: the gesture stays ignored with its reason
+(§A10.1 `:315`; US-D5 `:551`); the operator waits or presses **Cancel**, which yields
+`prepared — compiled mechanically — cancelled` and one more gesture sends the mechanical envelope;
+Cancel's description reads *"Cancel — send without the model's lines"*. (b) A Send while a turn
+runs or waits is refused with a reason naming the turn (*"b1 is running; the next turn waits for
+it."*): **one governed run at a time per session** in Phase 1 — an Owner extension, marked,
+reversible.
+
+**BECAUSE:** (a) Send is the *confirmation* of a prepared turn (§A11 `:369`), and a prepared turn
+does not exist until the call resolves; the mechanical envelope being complete does not make it the
+turn the operator will confirm. US-D5's falsifier already names *"a submit of a half-prepared
+envelope"*. A third affordance beside Cancel and wait is speculative generality. (b) No spec
+sentence exists (D2 §9; the note's Inferred item); a queue is state nobody asked for; the refusal is
+the smallest correct rule and costs nothing to reverse.
+
+**CONFIDENCE:** Verified for (a); Inferred for (b) — the run host's concurrency was not read.
+
+**SCOPE EFFECT:** Cuts *Send now*. Admits three refused-gesture states (preparing · running ·
+waiting) as rows of the STA test (§B5). Freezes queued sends out of Phase 1.
+
+**CONDITIONS:** (1) Each refused gesture is announced as a status with its reason (SC6), never
+silent. (2) If Addendum A's run model later admits parallel runs per session, (b) is re-read as
+*"queued after b1"* with a `queued` outcome and nothing else moves.
+
+**RECORD AS:** Ruling 77 — no Send-now during `preparing` (wait or Cancel, then Send); one governed
+run at a time per session, a Send while a turn runs or waits refused with the turn named (Owner
+extension, reversible).
+
+---
+
+## Ruling 78 — where spend renders, and what an enforced cap does (A1 item 9; D2 item 4's cap)
+
+**RULING:** Spend renders at two grains, both folds over the store and never stored: **per turn** on
+the reply side's outcome line (tokens in / cached / out · requests · duration, from the run's
+`RunEventCost` and, for the compile, `called.cost` in *what was read*); **per session** in the
+session header's budget state (*"12,400 tokens this session · bounded by your subscription"* /
+*"38,900 of 40,000 · cap enforced"*). Not on the decoration line — decorations are inputs to a
+compile; spend is an outcome. An **enforced cap** (Ruling 72) never refuses: a new turn does not
+start once measured session spend has reached the cap without asking in-thread (SC7's `capask`); a
+running turn is not stopped by the cap in Phase 1 and its outcome line reports the overrun; the copy
+never predicts a turn's spend — *"would pass it"* becomes *"has reached the cap you set; allow this
+turn, raise the cap, or stop"*.
+
+**BECAUSE:** Ruling 72 makes spend *measured regardless* and the budget optional, so the header is
+where the operator's question "how much this session" is answered against the cap state (IO2 cost
+axes); the per-turn number already sits in D2's outcome-line counts (`DESIGN.md:1110`). "Would pass"
+is a prediction with no emitting source (IO: never a plausible number); "has reached" is a
+measurement. Mid-run stopping needs a pause on the run host the spec has not built — Ruling 26c's
+*validated, not enforced* parity holds inside a turn.
+
+**CONFIDENCE:** Verified for the spec and design facts; the cap semantics are an Owner extension of
+Ruling 72, marked.
+
+**SCOPE EFFECT:** Admits the header's budget state and the per-turn counts as the two spend
+surfaces; cuts a spend segment from the decoration line; freezes mid-run cap stops out of Phase 1.
+Amends the sheet's help copy (`new-session-sheet.html:261`, `DESIGN.md:1153`, `:1151`).
+
+**CONDITIONS:** (1) Absent `usage` on the wire renders *not recorded*, never 0 (US-D10). (2) The
+cap's help copy states the guarantee truthfully: *"a new turn will not start past it without asking;
+a running turn finishes."*
+
+**RECORD AS:** Ruling 78 — spend renders per turn on the outcome line and per session in the
+header's budget state, both derived; an enforced cap asks in-thread before a turn starts once
+measured spend has reached it, never refuses, never stops a running turn in Phase 1, never predicts.
+
+---
+
+## Errata batch (D2/A1) — the Owner's wording, applied by the conductor's errata node
+
+**E1 · Template control (D2 item 3).** Addendum B `:181`: *"**Template control** in the composer
+header: `template: none | <id>@<version>` (searchable picker, grouped by intent, recents first). Per
+block; switching preserves content (template → none yields the compiled text for editing; none →
+template goes through apply-template)."* B `:186`: *"the jump list (Addendum C §B2) lists each
+turn's ordinal · words · outcome; the decoration line carries `<shape>` (message | goal block) and
+`template <id> v<n>`."* C §B2 `:971`: *"**Header: template control** | `template: none |
+<id>@<version>` — Addendum B `:181` as amended; the session-settings affordance beside it |
+`none`"*; `:977`: *"Send (Ctrl+Enter), provenance — no shape badge; the decoration line's `<shape>`
+and `template` segments carry it"*. US-C13 and §B2's glossary: *shape* is reserved for Message |
+Goal-block (Addendum A R15 b2); *template* is `none | id@version`; *class* is the task class.
+**BECAUSE:** `Free-form` (template) · `free-form` (class) · *shape* twice — `DESIGN.md:1178`, the
+decoration-line note §Why. **CONFIDENCE:** Verified.
+
+**E2 · The tier control's home (D2 item 4a).** D §B2 `:682`: the compile line carries the *call's*
+provenance (model · profile · what was read · cost · Prepare again · *stale*); the tier and its
+control sit on the **decoration line** beside the tier's rationale. §B4 wireframe: the `T1
+[T0|T1|T2]` row moves to the decoration line. §B5 `:773`: *"The tier control is on the decoration
+line, never in the settings line or a field (falsifier: a control in C's 'no override' region; a
+tier field)."* `:774` tab order: *editor → structure lines → decoration line (class · tier · lease)
+→ compile line (what was read · Prepare again) → settings links → compiled disclosure → Send, no
+trap.* US-D6 `:555`: *"exactly one tier control, parented to the decoration line."* **BECAUSE:**
+Rulings 63/64 hold unchanged (compiled, overridable in Prepare, never typed); SC2's one-grammar rule
+puts a past and a current turn's tier in the same place (`DESIGN.md:1176`). **CONFIDENCE:** Verified
+for the rules; the tab-order sequence is Inferred from SC2/SC4 — confirmed against the mockup's
+P-13 trace before filing.
+
+**E3 · `task_class` in `inputs_sha` (D2 item 4b).** §A8.4 `:293`: name `task_class` explicitly in
+the domain — it is already there as one of *"the mechanical facts"* the prompt carries (§A8.3
+`:276`). Add to Flow D-2 `:728`: *a per-prompt class change after Prepare stales the envelope like a
+settings change (an `operator` `task_class` row is appended; no new envelope; the next gesture
+re-prepares, and under an agentic rung that is one request).* **CONFIDENCE:** Verified.
+
+**E4 · `cancelled` and `reused` (D2 item 4c).** `cancelled` is already row 7 of §A10.2's nine — D2
+miscounted; no new outcome. Amend Flow D-1 `:699` so the edge *operator edits text → draft* carries
+the `cancelled` string on the abandoned envelope's compile line (§A11 `:345` already allows the
+draft state to show *"the last envelope's state"*); D2's fuller string stands. `reused` is **not** a
+`called.outcome` (no call was made): add *"… reused, no new request"* to §A11's `prepared(reason)`
+list and to §B5's table-driven test as a **tenth string beside the nine outcome strings**; ADR-0036
+`:270` already excludes `reused` rows from percentiles. **CONFIDENCE:** Verified.
+
+**E5 · `mode: mechanical-only` unrendered (D2 item 4d).** §A10.2 row 1 `:321`: the string becomes a
+provenance fact (`opened.compile_mode`, shown in the provenance disclosure and session settings),
+not a compile-line string; under `mechanical-only` with no template the compile line is absent (the
+envelope opens and submits on one gesture, §A10.1 `:315`). The STA test keeps nine rows; row 1's
+expectation is *compile line absent, provenance shows `mode: mechanical-only`* — the row is
+re-pointed, not removed. **CONFIDENCE:** Verified.
+
+**E6 · Outcome vocabulary for *stopped* and *refused before start* (D2 item 4e).** §A12.1 `:397`:
+`consumed` carries `outcome` (the episode's `EpisodeOutcome` — `Completed | Abandoned | Superseded |
+Blocked`, `WorkEpisode.cs:20`, unchanged) **and** `reason` (a stable code: `completed` ·
+`lane_exited{code}` · `stopped_by_operator`); a stopped turn is `Abandoned` + `stopped_by_operator`;
+the outcome word on the reply side is a render of the pair. A **refusal before start** is not a
+turn: `submitted.accepted: false, refusal: <code>` on the same envelope, no `consumed`, the envelope
+stays open and a later `submitted` may be accepted (US-D6 `:556` and US-D7 `:564` already permit
+exactly one *accepted* `submitted`). *waiting for you* is a live state, never an outcome. Exact code
+names are A1's (ADR-0033). **CONFIDENCE:** Verified for the enum and the event shape; the code names
+are Inferred.
+
+**E7 · A1's supersessions (item 6).**
+- D §A13.4 C1 `:486` and US-D8 b2 `:570`: drop `_meta.disableBuiltInTools: true` — adapter 0.75.1
+  evaluates it only when `tools` is absent (`acp-agent.js:5881-5884`, *"a legacy shorthand for
+  tools: []"*); the pin is `tools: []` + `disallowedTools` + `mcpServers: []` + the reject handler
+  (ADR-0035's `settings` deny belt).
+- D page-one fact 5 and §A13.4 `:482`: drop the quoted comment *"canUseTool is not guaranteed to
+  run…"* — zero hits in adapter 0.75.1 (`package.json:6`); cite the mechanism lines A1 names
+  (`:5274-5279`, `:5856`) instead — those lines the Owner did not open.
+- D §A22 row 5 `:662` *"the lane path is unchanged"* → superseded by Ruling 71 (one typed tools
+  argument on `NewSessionAsync`; the governed lane carries `disallowedTools: ["Bash"]`, the
+  read-only turn the write set — Ruling 73, the compile session `tools: []`).
+- D US-D1 b2 `:529` and the `projection_sha` domain (`:142`, `:413`, `:562`): `opened.task_class` →
+  `Current(task_class).value ‖ source`; the falsifier is *a `task_class` row with `source:
+  derived`* (the deny-list keeps `task_class` for the model; Ruling 70 gives it `session-default |
+  operator`).
+- C US-C12 `:695-700`: the switch event gains `outcome` and `error_code` (IO failure-rate axis;
+  stable codes per the observability standard).
+- C P-7 `:884`, `:680`, `:828`, `:1610`: re-targeted from the terminal HWND to the **WebView2 pages**
+  (the composer editor, the Explorer's pages) — ADR-0031 draws the terminal in WPF. **CONFIDENCE:**
+  Verified for the adapter facts and the spec lines; ADR-0031's rationale Inferred (not opened).
+
+**RECORD AS (one line for the batch):** Errata batch D2/A1 after Rulings 74–78 — template control
+(B `:181`/`:186`, C §B2, US-C13); tier control on the decoration line (D §B2/§B4/§B5, US-D6);
+`task_class` named in `inputs_sha` and a class change stales like a setting; `cancelled` stays the
+seventh outcome, `reused` a tenth non-outcome string; `mode: mechanical-only` is provenance, not a
+compile-line string; `consumed.reason` and `submitted.accepted:false` for stopped /
+refused-before-start; `disableBuiltInTools` and the phantom adapter quote dropped; §A22 row 5, US-D1
+b2 / `projection_sha`, US-C12 `outcome`/`error_code`, P-7 → WebView2.
+
+**Not ruled, for the record:** IA-17 (a template under an agentic rung) — not put; the smallest
+reading is D §A8.1's *"the call is skipped when all three lines are already non-blank"*, so a fully
+filled template never calls the model and a partially filled one names only its open lines — no new
+rule needed.

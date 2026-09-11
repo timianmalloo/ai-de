@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T23:37:14Z",
+  "generated": "2026-09-11T23:49:14Z",
   "audit": [
     {
       "actor": null,
@@ -12649,6 +12649,38 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M29E052588QJ65T5FD0FHNX7",
+      "shortname": "owner-rulings-74-78-errata-batch",
+      "datetime": "2026-09-11T23:49:13Z",
+      "session": "conductor-addendum-c",
+      "prompt": "Owner: D2's five findings and A1's four open items in one batch.",
+      "summary": "74 the session document is a StreamingThread, the Console the reply side folded per turn, split on demand (C §C1/§B2, A §A2/§A6/R16 amended). 75 one content-gap refusal: a goal block needs Not in scope, tier-blind; blank Goal/Done-when yields a Message. 76 one degraded-rate floor X=5%; latency p95 struck as a floor, reported censored. 77 no Send-now during preparing; one governed run at a time per session (Owner extension). 78 spend renders per turn on the outcome line and per session in the header; an enforced cap asks, never refuses, never stops a running turn. Errata E1-E7 (template control, tier control home, task_class in inputs_sha, cancelled/reused, mechanical-only as provenance, consumed.reason + submitted.accepted:false, A1's supersessions incl. disableBuiltInTools and the phantom adapter quote).",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "File Rulings 74-78 and the D2/A1 errata batch verbatim; the errata node applies E1-E7",
+      "done_when": "Rulings in the note; errata node dispatched with the note as its brief; gates green",
+      "tier": "T2",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "eba82d5f17bee3d1447bb24bcf94ecb03bd2f72b",
+        "short": "eba82d5f1",
+        "branch": "conductor/addendum-c",
+        "pushed": null
+      }
     }
   ],
   "changes": [
