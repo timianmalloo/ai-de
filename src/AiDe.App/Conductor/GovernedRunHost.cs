@@ -40,8 +40,22 @@ public static class GovernedRunHost
     /// </summary>
     /// <param name="request">What to run.</param>
     /// <param name="cancellationToken">Bounds the whole run.</param>
+    /// <param name="sink">
+    /// An optional observer of every event this run drains — <c>RunEventRelay.Publish</c> is what the
+    /// Conductor Surface passes. <b>Null by default, and genuinely inert:</b> the headless path names
+    /// no sink and the drain then behaves exactly as it did before this parameter existed.
+    /// </param>
+    /// <remarks>
+    /// <b>The sink is last, after the cancellation token, on purpose.</b> The usual .NET ordering
+    /// would put a token last, but <see cref="ConductorEntry"/> calls
+    /// <c>RunAsync(request, bound.Token)</c> positionally and §F5 clause 5 asserts the root count by
+    /// ledger — an added parameter must not become a reason to edit the one other caller, because an
+    /// edit there is how "one composition root" starts being a claim about two.
+    /// </remarks>
     public static async Task<GovernedRunResult> RunAsync(
-        GovernedRunRequest request, CancellationToken cancellationToken = default)
+        GovernedRunRequest request,
+        CancellationToken cancellationToken = default,
+        Action<ObservedRunEvent>? sink = null)
     {
         ArgumentNullException.ThrowIfNull(request);
 
@@ -126,32 +140,10 @@ public static class GovernedRunHost
         var acpSession = await client.NewSessionAsync(worktree, cancellationToken).ConfigureAwait(false);
         Report("acp session " + acpSession);
 
-        var kinds = new List<string>();
-        var latencies = new List<double>();
-        var events = 0;
-
         var prompt = client.PromptAsync(acpSession, request.Prompt, cancellationToken);
 
-        await foreach (var run in peer.Events.Reader.ReadAllAsync(cancellationToken).ConfigureAwait(false))
-        {
-            events++;
-            kinds.Add(run.Event.Kind);
-
-            if (run.NormalizationLatency is { } latency)
-            {
-                latencies.Add(latency.TotalMilliseconds);
-            }
-
-            foreach (var seam in seams.Observe(run.Event))
-            {
-                Report($"seam {seam.SeamId}: {seam.Path} is outside the lease");
-            }
-
-            if (prompt.IsCompleted && peer.Events.Reader.Count == 0)
-            {
-                break;
-            }
-        }
+        var drained = await DrainAsync(peer.Events, prompt, seams, Report, sink, cancellationToken)
+            .ConfigureAwait(false);
 
         var outcome = EpisodeOutcome.Completed;
         try
@@ -203,11 +195,11 @@ public static class GovernedRunHost
             Stages: [.. triage.Stages.Select(s => s.ToString())],
             SkippedPlanAndCouncil: triage.SkipsPlanAndCouncil,
             TriageReason: triage.Reason,
-            EventsObserved: events,
-            EventKinds: [.. kinds.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)],
-            LatencyMeasured: latencies.Count,
-            LatencyP50Ms: Percentile(latencies, 0.50),
-            LatencyP95Ms: Percentile(latencies, 0.95),
+            EventsObserved: drained.Events,
+            EventKinds: [.. drained.Kinds.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)],
+            LatencyMeasured: drained.LatenciesMs.Count,
+            LatencyP50Ms: Percentile(drained.LatenciesMs, 0.50),
+            LatencyP95Ms: Percentile(drained.LatenciesMs, 0.95),
             LatencyHost: Environment.MachineName,
             SeamsRaised: seams.RaisedCount,
             SeamResolutionRatio: seams.SeamResolutionRatio,
@@ -224,6 +216,82 @@ public static class GovernedRunHost
             EngineExited: engine.HasExited,
             EnvironmentFindings: engine.EnvironmentFindings,
             Diagnostics: [.. diagnostics]);
+    }
+
+    /// <summary>What one drain of the plane's queue observed. The run's own numbers, at their source.</summary>
+    /// <param name="Events">How many normalized events arrived — <c>EventsObserved</c> on the result.</param>
+    /// <param name="Kinds">Every kind, in receipt order.</param>
+    /// <param name="LatenciesMs">Normalization latency for the events that carried one. Never padded.</param>
+    internal sealed record DrainedEvents(int Events, IReadOnlyList<string> Kinds, IReadOnlyList<double> LatenciesMs);
+
+    /// <summary>
+    /// Drains the plane's queue until the prompt has answered and nothing is left, observing each
+    /// event exactly once.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>One loop, one count, one sink call.</b> <see cref="AcpEventQueue"/> is
+    /// <c>SingleReader = true</c>, so a console that wanted its own drain could not have one; the
+    /// sink is therefore invoked from inside this loop, on the same iteration that increments the
+    /// count. That is what makes "the sink received exactly <c>EventsObserved</c> events" an
+    /// equality rather than an approximation — one authoritative producer for one quantity (DM7),
+    /// and the same retain-never-rebuild rule <c>SessionLane</c> already applies to ordering.</para>
+    ///
+    /// <para><b>The sink is called after the count, and its exceptions are not swallowed.</b> A
+    /// caught-and-ignored sink failure would leave the run reporting a number the console never
+    /// received, which is the one outcome the equality exists to rule out.</para>
+    ///
+    /// <para><b>Extracted from <see cref="RunAsync"/> so the equality is testable at all.</b> A
+    /// whole governed run needs an adapter, node, a provisioned worktree and a scored episode; this
+    /// needs a queue. The shipped loop and the exercised loop are the same method, which is the
+    /// point — a second copy for the test would be the hand-assembled harness N7 refuses.</para>
+    /// </remarks>
+    /// <param name="queue">The plane's own queue for this lane.</param>
+    /// <param name="prompt">The in-flight prompt. Its completion is half the exit condition.</param>
+    /// <param name="seams">The lease monitor every observed event is offered to.</param>
+    /// <param name="report">Where a raised seam is named.</param>
+    /// <param name="sink">The optional second consumer. Null is inert.</param>
+    /// <param name="cancellationToken">Bounds the drain.</param>
+    internal static async Task<DrainedEvents> DrainAsync(
+        AcpEventQueue queue,
+        Task prompt,
+        LeaseMonitor seams,
+        Action<string> report,
+        Action<ObservedRunEvent>? sink,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(queue);
+        ArgumentNullException.ThrowIfNull(prompt);
+        ArgumentNullException.ThrowIfNull(seams);
+        ArgumentNullException.ThrowIfNull(report);
+
+        var kinds = new List<string>();
+        var latencies = new List<double>();
+        var events = 0;
+
+        await foreach (var run in queue.Reader.ReadAllAsync(cancellationToken).ConfigureAwait(false))
+        {
+            events++;
+            kinds.Add(run.Event.Kind);
+
+            sink?.Invoke(run);
+
+            if (run.NormalizationLatency is { } latency)
+            {
+                latencies.Add(latency.TotalMilliseconds);
+            }
+
+            foreach (var seam in seams.Observe(run.Event))
+            {
+                report($"seam {seam.SeamId}: {seam.Path} is outside the lease");
+            }
+
+            if (prompt.IsCompleted && queue.Reader.Count == 0)
+            {
+                break;
+            }
+        }
+
+        return new DrainedEvents(events, kinds, latencies);
     }
 
     /// <summary>
@@ -351,7 +419,7 @@ public static class GovernedRunHost
     /// <b>Null, never 0.</b> A latency of zero and a latency nobody measured are different facts, and
     /// only one of them is good news (IO12).
     /// </remarks>
-    private static double? Percentile(List<double> values, double quantile)
+    private static double? Percentile(IReadOnlyList<double> values, double quantile)
     {
         if (values.Count == 0)
         {

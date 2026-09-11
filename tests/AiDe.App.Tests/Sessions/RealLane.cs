@@ -91,6 +91,16 @@ internal sealed class RealLane : IDisposable
     /// <summary>The plane's own queue for this lane — what a <see cref="SessionLane"/> drains.</summary>
     public ChannelReader<ObservedRunEvent> Events => _peer.Events.Reader;
 
+    /// <summary>
+    /// The queue itself, for a test that drives <c>GovernedRunHost</c>'s own drain over it.
+    /// </summary>
+    /// <remarks>
+    /// The drain takes the queue rather than the reader because its exit condition reads
+    /// <c>Reader.Count</c>; exposing it here keeps the production drain and the production queue
+    /// together in the exercise, which is the whole reason this class is real.
+    /// </remarks>
+    public AcpEventQueue Queue => _peer.Events;
+
     /// <summary>Pushes one <c>agent_message_chunk</c> — the commonest frame a lane emits.</summary>
     public void Say(string text)
     {
