@@ -1446,7 +1446,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 325 members, 69% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 328 members, 70% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1459,7 +1459,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fdbc42d0d79fb2f2884fbdf7f49b3dfa0f6eb53712949ec5efe2d4df133b1693"
+      "sourceSha256": "9925e3ac8c40a76a589f20339afce30525e14c016e7ca2194f21baeedb18a240"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -5649,7 +5649,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "318b5a0d53fc165c07e69fb00414b0d069b750ca9c4993e49e3692f60db0c3df"
+      "sourceSha256": "5647f35c6667cac704dce7050a0f13e018c2eb7cc7fa68a2458fe2c7af0bc95d"
     },
     {
       "id": "design-session-profiler",
@@ -6415,6 +6415,49 @@ window.DOCS_INDEX = {
       "sourceSha256": "ea8f4ed0d3c06bccdc3531132459307b83b32bb69dffcfc892077b8366e54deb"
     },
     {
+      "id": "mockup-session-front-door",
+      "path": "docs/mockups/session-front-door.md",
+      "title": "Session front door — operator-feedback elevate mockup",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@claude-ui-elevation",
+      "phase": "phase-1-front-door",
+      "reviewBy": "2026-12-10",
+      "reviewSuggested": [
+        {
+          "by": "ui-review-operator-feedback",
+          "on": "2026-09-11",
+          "reason": "New elevate review: token-coverage rules TC1-TC6, required-field rules RQ1-RQ6, canvas mode strip MS1-MS5 and activity rail AR1-AR5 added to DESIGN.md; ranked plan for the running app"
+        }
+      ],
+      "summary": "A self-contained, dependency-free mockup of the five surfaces named in operator feedback on the running app: the composer as a notebook of blocks, the Console-only canvas mode strip under Ruling 45, the New Session sheet's required task class, the activity rail, and a contrast audit computed from live styles rather than claimed in prose. Ships the standard review harness plus a catalog-size control that switches the mode strip between one, two and five modes.",
+      "tags": [
+        "ui-design",
+        "mockup",
+        "composer",
+        "task-class",
+        "canvas-modes",
+        "activity-rail",
+        "contrast"
+      ],
+      "links": [
+        {
+          "to": "ui-review-operator-feedback",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-app-facelift",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-facelift-elevate",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8caa79a9e338fe7a9b7267b1571cc6ce6663421f658d571e8c98a907dc520cfc"
+    },
+    {
       "id": "mockup-uml-erm-surfaces",
       "path": "docs/mockups/uml-erm-surfaces.md",
       "title": "UML & ERM Surfaces — derived views (mockup)",
@@ -6876,16 +6919,12 @@ window.DOCS_INDEX = {
           "rel": "relates-to"
         },
         {
-          "to": "kb-graph-and-loop-engineering",
-          "rel": "depends-on"
-        },
-        {
           "to": "note-front-door-residuals",
           "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6599725c767ec765e3cc34cbaa0db93e839c257dbd67d897113cb3c19b4eda59"
+      "sourceSha256": "2d5ebde012f5c21f85aaa095489501b42cd9371ffcced0c19292c6e3dbb37797"
     },
     {
       "id": "profile-conductor-phase1",
@@ -7571,6 +7610,46 @@ window.DOCS_INDEX = {
       "sourceSha256": "87360ac96ef97fa830bbcee369a8ec3a8f5545eae3d45d82dbb9433a460e93ef"
     },
     {
+      "id": "ui-review-operator-feedback",
+      "path": "docs/reviews/ui-operator-feedback.md",
+      "title": "UI review — the session front door, from operator feedback",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@claude-ui-elevation",
+      "phase": "phase-1-front-door",
+      "reviewBy": "2026-12-10",
+      "reviewSuggested": [],
+      "summary": "Elevate-mode review of the AI-DE session front door against seven pieces of real operator feedback on the running app. Six of the seven are unimplemented specification or a measurable defect rather than a matter of taste; the contrast complaint is one systemic cause with eleven measured failing pairs. The single highest improvement-to-effort change is a set of implicit default styles in one file, which converts theme coverage from opt-in to opt-out.",
+      "tags": [
+        "ui-review",
+        "ux",
+        "accessibility",
+        "contrast",
+        "composer",
+        "information-architecture"
+      ],
+      "links": [
+        {
+          "to": "mockup-session-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-app-facelift",
+          "rel": "relates-to"
+        },
+        {
+          "to": "review-ui-facelift",
+          "rel": "refines"
+        },
+        {
+          "to": "review-ui-activity-rail",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7e3ec2b817fddafb398006e9682f60792f2f55f886b323c284be36d0d708a4b8"
+    },
+    {
       "id": "ui-review-watcher-observatory",
       "path": "docs/reviews/ui-watcher-observatory.md",
       "title": "UI Review - Loomkeeper Observatory",
@@ -7760,6 +7839,40 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "99a6c7f2d3ca7e12e5c0d8902df3508280fda1e3ce975c545d37922ff083a7dc"
+    },
+    {
+      "id": "inv-0006-workbench-pane-swap-on-native-tab-drag",
+      "path": "docs/investigations/INV-0006-workbench-pane-swap-on-native-tab-drag.md",
+      "title": "Moving one tab swaps both panes: the workbench has no drag-completed hook",
+      "type": "investigation",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "facelift",
+      "reviewBy": "2026-12-01",
+      "reviewSuggested": [],
+      "summary": "Dragging a tab in the workbench mutates AvalonDock's tree and nothing else — the zone model, which is the source of truth, is never told. Nothing subscribes to a drag-completed event; the only reconcile runs from four unrelated commands (new terminal, new agent terminal, new prompt draft, open reference document). So the view drifts from the model for minutes, and when one of those four commands finally fires, `TryMapByPosition` re-derives each zone's identity by MAJORITY CONTENT OVERLAP and `ZonesToTree.ToTree` re-renders in the fixed order Left | Center | Right. When the drift is large enough that a zone's majority has moved column, the two zone LABELS exchange and every pane changes side at once — the \"all tabs swapped from right to left\" the operator saw. Reproduced headlessly against the operator's own recorded model and screenshots. The gesture is the library's; the drift, the majority-vote reconcile and the total absence of telemetry are ours, and so is the remedy.",
+      "tags": [
+        "workbench",
+        "docking",
+        "avalondock",
+        "layout",
+        "zones",
+        "drag",
+        "reconcile",
+        "observability"
+      ],
+      "links": [
+        {
+          "to": "adr-0012-docking-shell-library",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0021-named-dock-zones",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b234911b74883e52df5498c42cd6495c034e6763148eee75867d94a5dfafb6b8"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -12812,6 +12925,14 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-app-facelift"
     },
     {
+      "id": "surface-mockups-session-front-door",
+      "path": "docs/mockups/session-front-door.html",
+      "title": "AI-DE session front door — operator-feedback elevate",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-session-front-door"
+    },
+    {
       "id": "surface-mockups-workbench",
       "path": "docs/mockups/workbench.html",
       "title": "AI-DE Workbench — mockup",
@@ -12900,5 +13021,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "6d6ae7b263c738dcdbc1625e2e2ab7117a4a9f1df91dd525cc8a9906968135a5"
+  "graphSha256": "180ef01148715eec36fda32d2db8c5d660a8ca66bb60142c59518f391eec786a"
 };

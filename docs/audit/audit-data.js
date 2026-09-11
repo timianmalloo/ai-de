@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T13:49:49Z",
+  "generated": "2026-09-11T14:53:51Z",
   "audit": [
     {
       "actor": null,
@@ -11030,20 +11030,22 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M26VWPBWCEHFA97GDC6KPWW0",
-      "shortname": "Human: attach off-by-default for Phase 1; the gap accepted by decision",
-      "datetime": "2026-09-10T23:54:17Z",
-      "session": "conductor-front-door-join",
-      "prompt": "off-by-default should be the default for phase 1",
-      "summary": "HUMAN DECISION on the scope question Privacy raised, captured verbatim: \"off-by-default should be the default for phase 1\".\n\nWHAT IT SETTLES. Privacy ruled C21 -- attach gated, off by default, no Settings surface, a field on the existing SessionConfig record -- and then flagged an honest limit rather than shipping the word \"restrict\" unexamined: SessionConfig is PER-SESSION and operator-writable, so what Phase 1 can deliver is a DEFAULT WITH A SAFE INITIAL STATE, NOT AN ENFORCEABLE POLICY. In a deployment where the egress genuinely is not acceptable, a control the operator can switch on is not a control. Privacy's words: \"If that gap is unacceptable to the human, they should say so now; it is a scope question, not a design one.\"\n\nIt was put to the human verbatim. They chose off-by-default for Phase 1. So the gap is ACCEPTED BY DECISION rather than carried by omission, and the non-session-overridable layer is Phase 2 with C21(f) as its named upgrade trigger.\n\nWHY OFF-BY-DEFAULT COSTS THIS OPERATOR ALMOST NOTHING, which is what made the literal reading of \"opt-in\" affordable: gating ATTACH rather than egress or send means free-form send, goal blocks, templates and paste-to-fence all work with it off -- F4's own S1 guard already requires free-form to work with no template anywhere in the path. Gating egress or send would have been dishonest in a specific way Privacy named: claude-code is a separate process the operator launches from a terminal anyway, so switching off AI-DE's send does not stop the egress, it ROUTES AROUND it -- which is C14(e)'s own test for whether a control is real.\n\nAND THE ASYMMETRY THAT DECIDED THE DEFAULT: the failure modes are not symmetric and one is irreversible -- \"once sent, nothing is retractable\". Off-by-default is safe for the deployment that never opens the settings; on-by-default is safe only for the one that does.\n\nSTILL OPEN, and it is the operator's to close: row 6a of the provider record, the ACCOUNT'S OBSERVED model-improvement setting. The default for a new signup is not published by Anthropic, so the record must carry an observation rather than a tier-level assumption. The conductor's reading is that this does NOT block -- it decides which published retention figure applies, not whether the egress is permitted -- and that reading has been put to Privacy to confirm or overrule rather than self-certified.\n\nTHE RECORD ITSELF is written at docs/security/conductor-privacy-review.md and has been sent to Privacy for confirmation. The conductor did not clear its own artifact: Privacy set the clearing condition and its own line was \"I do not clear my own basis\", so the same logic applies to the document the conductor wrote against that condition.",
-      "kind": "manual",
-      "skill": null,
-      "tool": null,
       "actor": "timianmalloo (human)",
       "artifacts": [
         "docs/plans/conductor-front-door.md",
         "docs/security/conductor-privacy-review.md"
       ],
+      "datetime": "2026-09-10T23:54:17Z",
+      "done_when": "C21's default confirmed and the per-session limit recorded as accepted rather than omitted",
+      "goal": "Settle whether a safe default, rather than enforceable prevention, is acceptable for Phase 1",
+      "id": "al-01M26VWPBWCEHFA97GDC6KPWW0",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "off-by-default should be the default for phase 1",
+      "session": "conductor-front-door-join",
+      "shortname": "Human: attach off-by-default for Phase 1; the gap accepted by decision",
+      "skill": null,
+      "summary": "HUMAN DECISION on the scope question Privacy raised, captured verbatim: \"off-by-default should be the default for phase 1\".\n\nWHAT IT SETTLES. Privacy ruled C21 -- attach gated, off by default, no Settings surface, a field on the existing SessionConfig record -- and then flagged an honest limit rather than shipping the word \"restrict\" unexamined: SessionConfig is PER-SESSION and operator-writable, so what Phase 1 can deliver is a DEFAULT WITH A SAFE INITIAL STATE, NOT AN ENFORCEABLE POLICY. In a deployment where the egress genuinely is not acceptable, a control the operator can switch on is not a control. Privacy's words: \"If that gap is unacceptable to the human, they should say so now; it is a scope question, not a design one.\"\n\nIt was put to the human verbatim. They chose off-by-default for Phase 1. So the gap is ACCEPTED BY DECISION rather than carried by omission, and the non-session-overridable layer is Phase 2 with C21(f) as its named upgrade trigger.\n\nWHY OFF-BY-DEFAULT COSTS THIS OPERATOR ALMOST NOTHING, which is what made the literal reading of \"opt-in\" affordable: gating ATTACH rather than egress or send means free-form send, goal blocks, templates and paste-to-fence all work with it off -- F4's own S1 guard already requires free-form to work with no template anywhere in the path. Gating egress or send would have been dishonest in a specific way Privacy named: claude-code is a separate process the operator launches from a terminal anyway, so switching off AI-DE's send does not stop the egress, it ROUTES AROUND it -- which is C14(e)'s own test for whether a control is real.\n\nAND THE ASYMMETRY THAT DECIDED THE DEFAULT: the failure modes are not symmetric and one is irreversible -- \"once sent, nothing is retractable\". Off-by-default is safe for the deployment that never opens the settings; on-by-default is safe only for the one that does.\n\nSTILL OPEN, and it is the operator's to close: row 6a of the provider record, the ACCOUNT'S OBSERVED model-improvement setting. The default for a new signup is not published by Anthropic, so the record must carry an observation rather than a tier-level assumption. The conductor's reading is that this does NOT block -- it decides which published retention figure applies, not whether the egress is permitted -- and that reading has been put to Privacy to confirm or overrule rather than self-certified.\n\nTHE RECORD ITSELF is written at docs/security/conductor-privacy-review.md and has been sent to Privacy for confirmation. The conductor did not clear its own artifact: Privacy set the clearing condition and its own line was \"I do not clear my own basis\", so the same logic applies to the document the conductor wrote against that condition.",
       "tags": [
         "conductor",
         "privacy",
@@ -11051,21 +11053,10 @@ window.AUDIT_DATA = {
         "human-floor",
         "f4"
       ],
-      "outcome": "success",
-      "goal": "Settle whether a safe default, rather than enforceable prevention, is acceptable for Phase 1",
-      "done_when": "C21's default confirmed and the per-session limit recorded as accepted rather than omitted",
-      "tier": "T2"
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2718HK868J0JDW7X3K61GBW",
-      "shortname": "F4 — the composer: R15/R19, Security C9-C21, Privacy C14(e)(i)-(vi)",
-      "datetime": "2026-09-11T01:28:08Z",
-      "session": "conductor-front-door-f4",
-      "prompt": "Node F4 — the composer (R15, R19). T2, opus. Implement the composer against docs/plans/conductor-front-door.md section F4, Rulings 41-44, the conductor privacy review and the front-door council review: the five-kind page-to-host vocabulary, the host-owned send, the bounded attach path with its operator opt-in, no late binding, the resolved-path label, the derived lease, and the F4 production vendored bundle with its manifest, notices and recurring advisory scan.",
-      "summary": "Delivered F4. The composer's model half is AiDe.Core/Presentation/Composer (router, attach gate and policy, form engine, compiler, lease derivation, draft store, mention sources, send record); the send seam and the WPF surface are AiDe.App/Workbench/Composer; the page is src/AiDe.App/Web/composer.{html,mjs}; the production bundle was built once from a narrowed 24-package input set and hash-pinned.\n\nMEASURED. AiDe.App.Tests 491 (floor was 456), run under the PowerShell console host per DC-117. AiDe.Core.Tests 2188 = portable 2035 + non-portable 153 (floors 2064 / 1912 / 152), all three runs executed, so the split invariant holds by observation. verify-test-run.py --update was never run; every floor raised, none lowered. All twelve named gates exit 0 bare, plus the new verify-vendored-advisories gate and its self-test.\n\nTWO DEFECTS THIS NODE CREATED AND ITS OWN RED-FIRST TESTS CAUGHT, each converted into a control rather than a test edit. (1) System.Text.Json resolves a duplicate JSON member to the LAST occurrence, so {\"kind\":\"nope\",\"kind\":\"editor.ready\"} routed as editor.ready while another reader of the same bytes may take the first â€” a duplicate top-level member is now refused outright. (2) The mention capture stopped at the first non-path character, so @src/*.cs captured \"src/\" and became the BROADER lease src/** â€” a narrower capture was a widening bug, and the capture now runs to whitespace and rejects afterwards.\n\nTHE PROBE SETTLED C12's INFERRED CLAIM. A real WebView2 loading the real page under default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' reports editors: 1, chips: 1, native controls: 4 â€” the editor renders, the bundle's own plugin ran, and Ruling 33's four native widgets created no editor instance. fetch: rejected, hostObject resolution: rejected, and the control's document was unchanged after location.href, window.open and an off-origin iframe.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": "Claude Code",
       "actor": "Claude Opus 5 (1M context)",
       "artifacts": [
         "src/AiDe.Core/Presentation/Composer/",
@@ -11073,6 +11064,32 @@ window.AUDIT_DATA = {
         "src/AiDe.App/Web/composer.html",
         "tools/verify-vendored-advisories.py"
       ],
+      "datetime": "2026-09-11T01:28:08Z",
+      "done_when": "Every F4 clause has a test or is named unmet; the twelve gates exit 0 bare; App and Core suites measured at or above their floors with the split invariant observed; CI green on the pushed branch.",
+      "duration_seconds": 2945.0,
+      "fan_out": 3,
+      "git": {
+        "branch": "feature/composer",
+        "pushed": null,
+        "sha": "3603d5db417c186dacbdeb407d149b886d8659fb",
+        "short": "3603d5db4"
+      },
+      "goal": "Deliver F4 of the front-door slice — the composer (R15, R19) — discharging every Fails-if clause in the plan's F4 section with a named test, and building the production vendored bundle once (C18, C19).",
+      "id": "al-01M2718HK868J0JDW7X3K61GBW",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Node F4 — the composer (R15, R19). T2, opus. Implement the composer against docs/plans/conductor-front-door.md section F4, Rulings 41-44, the conductor privacy review and the front-door council review: the five-kind page-to-host vocabulary, the host-owned send, the bounded attach path with its operator opt-in, no late binding, the resolved-path label, the derived lease, and the F4 production vendored bundle with its manifest, notices and recurring advisory scan.",
+      "session": "conductor-front-door-f4",
+      "shortname": "F4 — the composer: R15/R19, Security C9-C21, Privacy C14(e)(i)-(vi)",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-11T00:39:03Z",
+      "summary": "Delivered F4. The composer's model half is AiDe.Core/Presentation/Composer (router, attach gate and policy, form engine, compiler, lease derivation, draft store, mention sources, send record); the send seam and the WPF surface are AiDe.App/Workbench/Composer; the page is src/AiDe.App/Web/composer.{html,mjs}; the production bundle was built once from a narrowed 24-package input set and hash-pinned.\n\nMEASURED. AiDe.App.Tests 491 (floor was 456), run under the PowerShell console host per DC-117. AiDe.Core.Tests 2188 = portable 2035 + non-portable 153 (floors 2064 / 1912 / 152), all three runs executed, so the split invariant holds by observation. verify-test-run.py --update was never run; every floor raised, none lowered. All twelve named gates exit 0 bare, plus the new verify-vendored-advisories gate and its self-test.\n\nTWO DEFECTS THIS NODE CREATED AND ITS OWN RED-FIRST TESTS CAUGHT, each converted into a control rather than a test edit. (1) System.Text.Json resolves a duplicate JSON member to the LAST occurrence, so {\"kind\":\"nope\",\"kind\":\"editor.ready\"} routed as editor.ready while another reader of the same bytes may take the first â€” a duplicate top-level member is now refused outright. (2) The mention capture stopped at the first non-path character, so @src/*.cs captured \"src/\" and became the BROADER lease src/** â€” a narrower capture was a widening bug, and the capture now runs to whitespace and rejects afterwards.\n\nTHE PROBE SETTLED C12's INFERRED CLAIM. A real WebView2 loading the real page under default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' reports editors: 1, chips: 1, native controls: 4 â€” the editor renders, the bundle's own plugin ran, and Ruling 33's four native widgets created no editor instance. fetch: rejected, hostObject resolution: rejected, and the control's document was unchanged after location.href, window.open and an off-origin iframe.",
       "tags": [
         "conductor",
         "front-door",
@@ -11080,189 +11097,163 @@ window.AUDIT_DATA = {
         "security",
         "privacy"
       ],
-      "outcome": "success",
-      "goal": "Deliver F4 of the front-door slice — the composer (R15, R19) — discharging every Fails-if clause in the plan's F4 section with a named test, and building the production vendored bundle once (C18, C19).",
-      "done_when": "Every F4 clause has a test or is named unmet; the twelve gates exit 0 bare; App and Core suites measured at or above their floors with the split invariant observed; CI green on the pushed branch.",
       "tier": "T2",
-      "fan_out": 3,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
-      "started_at": "2026-09-11T00:39:03Z",
-      "duration_seconds": 2945.0,
-      "git": {
-        "sha": "3603d5db417c186dacbdeb407d149b886d8659fb",
-        "short": "3603d5db4",
-        "branch": "feature/composer",
-        "pushed": null
-      }
+      "tool": "Claude Code"
     },
     {
-      "id": "al-01M272CKWZFS1XRENRFFCDBMCX",
-      "shortname": "F4 addendum — the template picker card, and the form re-mint that follows it",
-      "datetime": "2026-09-11T01:47:50Z",
-      "session": "conductor-front-door-f4",
-      "prompt": "Close the F4 clause 'Template picker renders any catalog template as a validated form; a required-field gap blocks send with a field-level error; the picker card shows when_to_use as headline and why as detail.'",
-      "summary": "Added ComposerTemplatePicker (Core) and wired it into the composer surface. A failed template is a DISABLED card carrying its error rather than a silent drop, and an override is badged with what it shadows. Choosing a card re-mints the field ids through ComposerMessageRouter.ReplaceFields, so an id from the previous form is one the host no longer holds — the same rule as 'the page may only match a host-minted id', applied to a form that changed under it. Measured after: App 493, Core 2193 = portable 2040 + non-portable 153; all twelve gates and the new advisory gate exit 0 bare.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": "Claude Code",
       "actor": "Claude Opus 5 (1M context)",
       "artifacts": [
         "src/AiDe.Core/Presentation/Composer/ComposerTemplatePicker.cs"
       ],
+      "datetime": "2026-09-11T01:47:50Z",
+      "done_when": "ComposerTemplatePicker projects every catalog entry, the surface renders the cards, choosing one re-mints the field ids, and all four measurements stay above their floors.",
+      "duration_seconds": 4127.0,
+      "fan_out": 3,
+      "git": {
+        "branch": "feature/composer",
+        "pushed": true,
+        "sha": "b87506e0bd8d033bd7e45d916395c3a7e5447c22",
+        "short": "b87506e0b"
+      },
+      "goal": "Close F4's template-picker clause: render any catalog template as a validated form, with when_to_use as headline and why as detail, and a disabled card carrying its error.",
+      "id": "al-01M272CKWZFS1XRENRFFCDBMCX",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Close the F4 clause 'Template picker renders any catalog template as a validated form; a required-field gap blocks send with a field-level error; the picker card shows when_to_use as headline and why as detail.'",
+      "session": "conductor-front-door-f4",
+      "shortname": "F4 addendum — the template picker card, and the form re-mint that follows it",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-11T00:39:03Z",
+      "summary": "Added ComposerTemplatePicker (Core) and wired it into the composer surface. A failed template is a DISABLED card carrying its error rather than a silent drop, and an override is badged with what it shadows. Choosing a card re-mints the field ids through ComposerMessageRouter.ReplaceFields, so an id from the previous form is one the host no longer holds — the same rule as 'the page may only match a host-minted id', applied to a form that changed under it. Measured after: App 493, Core 2193 = portable 2040 + non-portable 153; all twelve gates and the new advisory gate exit 0 bare.",
       "tags": [
         "conductor",
         "front-door",
         "composer",
         "templates"
       ],
-      "outcome": "success",
-      "goal": "Close F4's template-picker clause: render any catalog template as a validated form, with when_to_use as headline and why as detail, and a disabled card carrying its error.",
-      "done_when": "ComposerTemplatePicker projects every catalog entry, the surface renders the cards, choosing one re-mints the field ids, and all four measurements stay above their floors.",
       "tier": "T2",
-      "fan_out": 3,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
-      "started_at": "2026-09-11T00:39:03Z",
-      "duration_seconds": 4127.0,
-      "git": {
-        "sha": "b87506e0bd8d033bd7e45d916395c3a7e5447c22",
-        "short": "b87506e0b",
-        "branch": "feature/composer",
-        "pushed": true
-      }
+      "tool": "Claude Code"
     },
     {
-      "id": "al-01M272SA24MKX5WPV2R9ZW4G98",
-      "shortname": "F4 addendum — the clauses whose subject is a document, a piece of copy, or an absent code path",
-      "datetime": "2026-09-11T01:54:46Z",
-      "session": "conductor-front-door-f4",
-      "prompt": "Close the F4 clauses whose subject is a document, a piece of UI copy, or the absence of a code path — the ones that read as satisfied by intention.",
-      "summary": "Six clauses given oracles. The S1 guard now passes a booby-trapped template alongside a free-form draft and asserts its marker never reaches the output, which is the strongest available form of 'no template code executes' short of instrumenting the compiler. The locale rule is a repo-wide sweep for RegionInfo and TimeZoneInfo.Local plus a composer-scoped sweep for CurrentCulture and navigator.language. The API-key residual is covered by asserting the terms-of-service refusal still fires first, because in Phase 1 the exception cannot be enabled at all. Final measurement: App 493, Core 2199 = portable 2046 + non-portable 153, all three Core runs executed.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": "Claude Code",
       "actor": "Claude Opus 5 (1M context)",
       "artifacts": [
         "tests/AiDe.Core.Tests/Composer/ThePrivacyResidualsAreCoveredTests.cs"
       ],
+      "datetime": "2026-09-11T01:54:46Z",
+      "done_when": "Each of the six has a test that reads the tree rather than the intention, and all four measurements stay above their floors.",
+      "fan_out": 3,
+      "git": {
+        "branch": "feature/composer",
+        "pushed": true,
+        "sha": "abd52160245dfdde1cf62ed71f88a4e6efa49fa6",
+        "short": "abd521602"
+      },
+      "goal": "Give an oracle to the six F4 clauses that read as satisfied by intention: the provider record, the caps-are-not-a-run-ceiling copy rule, the no-locale-read rule, the no-assist rule, the S1 free-form guard, and the API-key-exception residual.",
+      "id": "al-01M272SA24MKX5WPV2R9ZW4G98",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Close the F4 clauses whose subject is a document, a piece of UI copy, or the absence of a code path — the ones that read as satisfied by intention.",
+      "session": "conductor-front-door-f4",
+      "shortname": "F4 addendum — the clauses whose subject is a document, a piece of copy, or an absent code path",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "summary": "Six clauses given oracles. The S1 guard now passes a booby-trapped template alongside a free-form draft and asserts its marker never reaches the output, which is the strongest available form of 'no template code executes' short of instrumenting the compiler. The locale rule is a repo-wide sweep for RegionInfo and TimeZoneInfo.Local plus a composer-scoped sweep for CurrentCulture and navigator.language. The API-key residual is covered by asserting the terms-of-service refusal still fires first, because in Phase 1 the exception cannot be enabled at all. Final measurement: App 493, Core 2199 = portable 2046 + non-portable 153, all three Core runs executed.",
       "tags": [
         "conductor",
         "front-door",
         "composer",
         "privacy"
       ],
-      "outcome": "success",
-      "goal": "Give an oracle to the six F4 clauses that read as satisfied by intention: the provider record, the caps-are-not-a-run-ceiling copy rule, the no-locale-read rule, the no-assist rule, the S1 free-form guard, and the API-key-exception residual.",
-      "done_when": "Each of the six has a test that reads the tree rather than the intention, and all four measurements stay above their floors.",
       "tier": "T2",
-      "fan_out": 3,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
-      "git": {
-        "sha": "abd52160245dfdde1cf62ed71f88a4e6efa49fa6",
-        "short": "abd521602",
-        "branch": "feature/composer",
-        "pushed": true
-      }
+      "tool": "Claude Code"
     },
     {
-      "id": "al-01M273417NTG3RRWZ69BE0A2YB",
-      "shortname": "F4 addendum — the C18 manifest-to-notices cross-check the hash gate cannot see",
-      "datetime": "2026-09-11T02:00:37Z",
-      "session": "conductor-front-door-f4",
-      "prompt": "Close C18's Fails-if: any provenance.packages[].name@version in the manifest absent from THIRD-PARTY-NOTICES.md.",
-      "summary": "The hash gate pins bytes; it cannot see whether the MIT notice obligation was discharged, because a notices file is prose to it. This is the half that goes stale the moment the package set changes — which is exactly what F4 did, 26 packages to 24. Checked both directions: a package in the manifest and not in the notices is an undischarged obligation, and a package in the notices and not in the manifest is a notice for something that is not shipped. Also asserts the production pin is NOT the spike's ee3d19a4 (Ruling 33), C7's narrowing, and C19's advisory record plus its wired CI steps. Final measurement: Core 2205 = portable 2052 + non-portable 153, App 493.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": "Claude Code",
       "actor": "Claude Opus 5 (1M context)",
       "artifacts": [
         "tests/AiDe.Core.Tests/Composer/TheVendoredBundleIsPinnedAndNoticedTests.cs"
       ],
+      "datetime": "2026-09-11T02:00:37Z",
+      "done_when": "The cross-check runs both directions, the production pin is asserted not to be the spike's, and C7's narrowing and C19's record are checked from the manifest.",
+      "fan_out": 3,
+      "git": {
+        "branch": "feature/composer",
+        "pushed": true,
+        "sha": "2de3ecc5850652221665b4da6351e5097e8e2da5",
+        "short": "2de3ecc58"
+      },
+      "goal": "Give C18's second half an oracle: every package in the F4 manifest is named with its version in THIRD-PARTY-NOTICES.md, and the notices name nothing the manifest does not ship.",
+      "id": "al-01M273417NTG3RRWZ69BE0A2YB",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Close C18's Fails-if: any provenance.packages[].name@version in the manifest absent from THIRD-PARTY-NOTICES.md.",
+      "session": "conductor-front-door-f4",
+      "shortname": "F4 addendum — the C18 manifest-to-notices cross-check the hash gate cannot see",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "summary": "The hash gate pins bytes; it cannot see whether the MIT notice obligation was discharged, because a notices file is prose to it. This is the half that goes stale the moment the package set changes — which is exactly what F4 did, 26 packages to 24. Checked both directions: a package in the manifest and not in the notices is an undischarged obligation, and a package in the notices and not in the manifest is a notice for something that is not shipped. Also asserts the production pin is NOT the spike's ee3d19a4 (Ruling 33), C7's narrowing, and C19's advisory record plus its wired CI steps. Final measurement: Core 2205 = portable 2052 + non-portable 153, App 493.",
       "tags": [
         "conductor",
         "front-door",
         "composer",
         "supply-chain"
       ],
-      "outcome": "success",
-      "goal": "Give C18's second half an oracle: every package in the F4 manifest is named with its version in THIRD-PARTY-NOTICES.md, and the notices name nothing the manifest does not ship.",
-      "done_when": "The cross-check runs both directions, the production pin is asserted not to be the spike's, and C7's narrowing and C19's record are checked from the manifest.",
       "tier": "T2",
-      "fan_out": 3,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
-      "git": {
-        "sha": "2de3ecc5850652221665b4da6351e5097e8e2da5",
-        "short": "2de3ecc58",
-        "branch": "feature/composer",
-        "pushed": true
-      }
+      "tool": "Claude Code"
     },
     {
-      "id": "al-01M273FPP3PZTEFVN6BCB26VR7",
-      "shortname": "F4 close — US-ED7's one-way transfer, and the composer's hosted browser disposed",
-      "datetime": "2026-09-11T02:07:00Z",
-      "session": "conductor-front-door-f4",
-      "prompt": "Close F4's remaining clauses: US-ED7's one-way transfer with no reverse path.",
-      "summary": "US-ED7's oracle is now what the clause asks for: mutate the composer side after the handover and assert the lane's copy does not move, then assert by reflection that nothing the run side exposes carries a draft and nothing on the gate accepts a request — not 'we do not call it', but 'there is nothing to call'. Also: SessionDocumentSurface now disposes the composer, because a WebView2 is a child PROCESS and dropping the reference leaks one per document open — invisible in the visual tree. Final measurement: App 494, Core 2205 = portable 2052 + non-portable 153.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": "Claude Code",
       "actor": "Claude Opus 5 (1M context)",
       "artifacts": [
         "docs/lessons/defect-classes.md"
       ],
+      "datetime": "2026-09-11T02:07:00Z",
+      "done_when": "US-ED7 has its oracle, the session document disposes the composer, DC-124 is in the register, and every measurement and gate is green.",
+      "fan_out": 3,
+      "git": {
+        "branch": "feature/composer",
+        "pushed": true,
+        "sha": "8eb31aabf5383b2e25ea0239c6e934a12d5a7f0f",
+        "short": "8eb31aabf"
+      },
+      "goal": "Close F4: assert the transfer is one-way with no reverse path, dispose the hosted browser, and register the parser-differential finding as a class.",
+      "id": "al-01M273FPP3PZTEFVN6BCB26VR7",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Close F4's remaining clauses: US-ED7's one-way transfer with no reverse path.",
+      "session": "conductor-front-door-f4",
+      "shortname": "F4 close — US-ED7's one-way transfer, and the composer's hosted browser disposed",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "summary": "US-ED7's oracle is now what the clause asks for: mutate the composer side after the handover and assert the lane's copy does not move, then assert by reflection that nothing the run side exposes carries a draft and nothing on the gate accepts a request — not 'we do not call it', but 'there is nothing to call'. Also: SessionDocumentSurface now disposes the composer, because a WebView2 is a child PROCESS and dropping the reference leaks one per document open — invisible in the visual tree. Final measurement: App 494, Core 2205 = portable 2052 + non-portable 153.",
       "tags": [
         "conductor",
         "front-door",
         "composer"
       ],
-      "outcome": "success",
-      "goal": "Close F4: assert the transfer is one-way with no reverse path, dispose the hosted browser, and register the parser-differential finding as a class.",
-      "done_when": "US-ED7 has its oracle, the session document disposes the composer, DC-124 is in the register, and every measurement and gate is green.",
       "tier": "T2",
-      "fan_out": 3,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
-      "git": {
-        "sha": "8eb31aabf5383b2e25ea0239c6e934a12d5a7f0f",
-        "short": "8eb31aabf",
-        "branch": "feature/composer",
-        "pushed": true
-      }
+      "tool": "Claude Code"
     },
     {
-      "id": "al-01M275GXM1VAQA1N3EQYR3AY2Y",
-      "shortname": "TH2 — spawn containment: the unchecked assign, the job handle's lifetime, and the engine tree the product leaked",
-      "datetime": "2026-09-11T02:42:37Z",
-      "session": "conductor-front-door-th2",
-      "prompt": "Node TH2 — four sites, one of them product code. An SRE investigation has done the diagnosis and quoted every line; you are implementing, not re-deriving. Site 1: AssignProcessToJobObject is UNCHECKED at both shipped C# call sites. Site 2: the job handle's lifetime at TerminalHostLauncher.cs:58. Site 3: the product leaks an entire engine tree (AcpEngineProcess.cs:117). Site 4: MSBuild node reuse in verify-test-run.py. Plus one judgement on the CREATE_SUSPENDED comment. Red-first, and the abnormal path is the one that counts.",
-      "summary": "Four spawn-containment sites, red-first on the two that could be observed.\n\nSITE 1 - AssignProcessToJobObject was UNCHECKED at both shipped C# call sites. RED, and the red was\na PASSING test: against a job whose object had been closed the call returned false, set\nERROR_INVALID_HANDLE (6), raised nothing, and left the child running outside the job. The raw import\nis now private; ConPtyInterop.AssignProcessToJob (Sandbox.cs:86-87's shape, not a fourth spelling) is\nthe only route to it, and InternalsVisibleTo does not reach private members - a future call site\ncannot discard the answer because the answer is no longer offered. GREEN:\nJobContainmentTests.AnAssignThatCannotHappenIsNotSilent.\n\nSITE 2 - TerminalHostLauncher created the job before the try, with two throwing statements between\nthe handle and the only code that closes it. All three steps are now inside the try; the finally is\nzero-guarded.\n\nSITE 3 - THE DELIVERABLE. AcpEngineProcess spawned the ACP engine with no job object and reaped in\nDispose only; GovernedRunHost.cs:65 reaches it through `using`, and a killed process runs nothing.\nMeasured from OUTSIDE the process that leaks (AcpProbe --host-engine): host killed with\nTerminateProcess, engine and grandchild BOTH STILL RUNNING 5,000 ms later. After: engine gone 7 ms,\ngrandchild 8 ms. The first version of that oracle proved the wrong thing - a child blocked on\nReadToEnd dies when its parent's pipe breaks, so the tree looked contained while nothing contained\nit. Stdin EOF is a mitigation, not containment.\n\nSITE 4 - verify-test-run.py ran dotnet test with no node-reuse control. MSBUILDDISABLENODEREUSE=1 is\nset in the subprocess ENVIRONMENT, not on the command line: this gate's argv is read by other things.\n\nJUDGEMENT ASKED FOR, NOT IMPLEMENTED: ConPtyTerminalSession's CREATE_SUSPENDED comment is wrong on\nits stated reason - \"the process never starts if the assign throws\" is not a failure mode, it is the\nrefusal bounded_process.py:224-226 already ships as correct. The code is unchanged; the comment now\nsays the window is accepted and UNMEASURED, and names PROC_THREAD_ATTRIBUTE_JOB_LIST as the end\nstate that removes the window and the resume together.\n\nRegister: DC-123 gains the outer-ring recurrence in product code; DC-125 is new (a call that\nESTABLISHES a safety property reports failure by return value and the return value is discarded),\nswept across every bool-returning P/Invoke in src/, tests/ and spikes/.\n\nCounts MEASURED on this tree after rebasing onto the feature/composer merge, each as its own run:\nCore 2206, portable 2052, non-portable 154, App 495. 2052 + 154 = 2206 by observation.\nverify-test-run.py --update was never run. The brief's stated floors (App 456, Core 2064 = 1912 +\n152) were true when it was written and were superseded mid-node by that merge.",
-      "kind": "manual",
-      "skill": null,
-      "tool": "Claude Code",
       "actor": "Claude Opus 5 (1M context)",
       "artifacts": [
         "src/AiDe.Core/AgentPlane/AcpEngineProcess.cs",
@@ -11274,6 +11265,30 @@ window.AUDIT_DATA = {
         "tools/verify-test-run.py",
         "docs/lessons/defect-classes.md"
       ],
+      "datetime": "2026-09-11T02:42:37Z",
+      "done_when": "The checked assign is the only route; the job handle cannot leak; the engine tree dies with a KILLED host, measured from outside it; the test gate sets MSBUILDDISABLENODEREUSE; counts reported; named gates bare exit 0; branch pushed and CI read back.",
+      "fan_out": 3,
+      "git": {
+        "branch": "fix/spawn-containment",
+        "pushed": null,
+        "sha": "1583e045d0f304db5943178d87d163adaf69b814",
+        "short": "1583e045d"
+      },
+      "goal": "Fix four spawn-containment sites with a red-first observation for each of the two that can be observed, and rule on the CREATE_SUSPENDED comment without changing that code.",
+      "id": "al-01M275GXM1VAQA1N3EQYR3AY2Y",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "Node TH2 — four sites, one of them product code. An SRE investigation has done the diagnosis and quoted every line; you are implementing, not re-deriving. Site 1: AssignProcessToJobObject is UNCHECKED at both shipped C# call sites. Site 2: the job handle's lifetime at TerminalHostLauncher.cs:58. Site 3: the product leaks an entire engine tree (AcpEngineProcess.cs:117). Site 4: MSBuild node reuse in verify-test-run.py. Plus one judgement on the CREATE_SUSPENDED comment. Red-first, and the abnormal path is the one that counts.",
+      "session": "conductor-front-door-th2",
+      "shortname": "TH2 — spawn containment: the unchecked assign, the job handle's lifetime, and the engine tree the product leaked",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "Four spawn-containment sites, red-first on the two that could be observed.\n\nSITE 1 - AssignProcessToJobObject was UNCHECKED at both shipped C# call sites. RED, and the red was\na PASSING test: against a job whose object had been closed the call returned false, set\nERROR_INVALID_HANDLE (6), raised nothing, and left the child running outside the job. The raw import\nis now private; ConPtyInterop.AssignProcessToJob (Sandbox.cs:86-87's shape, not a fourth spelling) is\nthe only route to it, and InternalsVisibleTo does not reach private members - a future call site\ncannot discard the answer because the answer is no longer offered. GREEN:\nJobContainmentTests.AnAssignThatCannotHappenIsNotSilent.\n\nSITE 2 - TerminalHostLauncher created the job before the try, with two throwing statements between\nthe handle and the only code that closes it. All three steps are now inside the try; the finally is\nzero-guarded.\n\nSITE 3 - THE DELIVERABLE. AcpEngineProcess spawned the ACP engine with no job object and reaped in\nDispose only; GovernedRunHost.cs:65 reaches it through `using`, and a killed process runs nothing.\nMeasured from OUTSIDE the process that leaks (AcpProbe --host-engine): host killed with\nTerminateProcess, engine and grandchild BOTH STILL RUNNING 5,000 ms later. After: engine gone 7 ms,\ngrandchild 8 ms. The first version of that oracle proved the wrong thing - a child blocked on\nReadToEnd dies when its parent's pipe breaks, so the tree looked contained while nothing contained\nit. Stdin EOF is a mitigation, not containment.\n\nSITE 4 - verify-test-run.py ran dotnet test with no node-reuse control. MSBUILDDISABLENODEREUSE=1 is\nset in the subprocess ENVIRONMENT, not on the command line: this gate's argv is read by other things.\n\nJUDGEMENT ASKED FOR, NOT IMPLEMENTED: ConPtyTerminalSession's CREATE_SUSPENDED comment is wrong on\nits stated reason - \"the process never starts if the assign throws\" is not a failure mode, it is the\nrefusal bounded_process.py:224-226 already ships as correct. The code is unchanged; the comment now\nsays the window is accepted and UNMEASURED, and names PROC_THREAD_ATTRIBUTE_JOB_LIST as the end\nstate that removes the window and the resume together.\n\nRegister: DC-123 gains the outer-ring recurrence in product code; DC-125 is new (a call that\nESTABLISHES a safety property reports failure by return value and the return value is discarded),\nswept across every bool-returning P/Invoke in src/, tests/ and spikes/.\n\nCounts MEASURED on this tree after rebasing onto the feature/composer merge, each as its own run:\nCore 2206, portable 2052, non-portable 154, App 495. 2052 + 154 = 2206 by observation.\nverify-test-run.py --update was never run. The brief's stated floors (App 456, Core 2064 = 1912 +\n152) were true when it was written and were superseded mid-node by that merge.",
       "tags": [
         "containment",
         "job-object",
@@ -11281,38 +11296,26 @@ window.AUDIT_DATA = {
         "DC-123",
         "DC-125"
       ],
-      "outcome": "success",
-      "goal": "Fix four spawn-containment sites with a red-first observation for each of the two that can be observed, and rule on the CREATE_SUSPENDED comment without changing that code.",
-      "done_when": "The checked assign is the only route; the job handle cannot leak; the engine tree dies with a KILLED host, measured from outside it; the test gate sets MSBUILDDISABLENODEREUSE; counts reported; named gates bare exit 0; branch pushed and CI read back.",
       "tier": "T1",
-      "fan_out": 3,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
-      "git": {
-        "sha": "1583e045d0f304db5943178d87d163adaf69b814",
-        "short": "1583e045d",
-        "branch": "fix/spawn-containment",
-        "pushed": null
-      }
+      "tool": "Claude Code"
     },
     {
-      "id": "al-01M289JH887ES3D4RAWCX0Q8YH",
-      "shortname": "optimize-graph-ui-and-windowing",
-      "datetime": "2026-09-11T13:12:38Z",
-      "session": "conductor-ui-windowing",
-      "prompt": "add some parallel threads (sub-agents in work trees) to work on cleaning up the UI/UX all up. Thread 1: /ui-design elevate the UI. Thread 2: /investigate if we have fully cleaned up our windowing behaviors. Make sure you /optimize-graph for these new asks but keep making progress on the core tasks. Make sure for these two new threads /prepare-for-coordination so that we are working efficiently and not creating contention",
-      "summary": "Three tracks planned as one execution graph: F5 exit evidence (core), UI elevation from seven pieces of operator feedback, and a windowing investigation with a numbered repro.\n\nTHE OPTIMIZATION WAS MOSTLY DELETIONS, and both deleted edges came from the conductor's own briefing.\n\n  DELETED: \"F5 must finish before the UI work starts.\" F5's Proof Pack is a SNAPSHOT citing its sha. UI landing afterwards does not invalidate it -- it means the evidence describes the tree it ran on, which is what evidence is. Incidental ordering.\n\n  DELETED: \"UI and windowing collide on DockThemeAccents.cs.\" THE PREMISE WAS FALSE, and grounding disproved it: DockRoundedTabs.cs is 33 LINES OF STYLING; the tab-move handlers are in WorkbenchAdapter.cs, WorkbenchController.cs and SurfaceChrome.cs. B touches theme and surfaces; C touches adapter and controller. The contention was asserted from the directory name rather than from the call sites.\n\n  DELETED: \"the Owner ruling gates the UI track.\" It gates ONE OF SEVEN ITEMS. Gating all seven on it is the same incidental ordering in miniature.\n\nSPAN: U1 -> Owner ruling -> U2 -> close. F5 IS NOT ON THE SPAN, which matters because F5 is the most expensive single node (VERIFIED: N7 was 2,404 s in Phase 1) and the naive plan put it at the HEAD of the chain. Moving it off the span is worth more than any widening.\n\nCEILING CHECKED BEFORE WIDENING (GO4a): three heads, each its own worktree, no shared authored file. Fan-out overhead is one worktree creation and one merge per node, small against durations measured in tens of minutes. Widening justified, not assumed.\n\nWAVE 1 (width 3, at the stated cap): A1 F5 (writes docs/proof + one oracle test) || U1 ui-design stages 1-3 (writes DESIGN.md + docs/mockups, READ-ONLY on src/) || C1 windowing investigation (writes a findings note, READ-ONLY on src/). The read-only property is what makes wave 1 safe and it is a property of the work, not a promise. Persona convenings take no worktree, so the Owner ruling on the contested item runs DURING wave 1.\n\nWAVE 2: U2 UI implementation (depends on U1 by data, on the Owner ruling by decision, for the mode item only) || C2 windowing fix (depends on C1 by data).\n\nSHARED-SURFACE CLAUSES, JOINTLY SATISFIABLE (GO14a): on src/AiDe.App/Workbench/**, U2 fails if a theme/contrast/icon/surface-content change alters tab placement or move behaviour; C2 fails if a placement or move change alters any colour token or contrast pair. Disjoint by CONCERN, and each clause scoped to its own concern rather than to the directory -- which is the unscoped form that made two nodes collide at the front-door join.\n\nTHE LOOP IS BOUNDED. \"Elevate the UI\" has no natural end, so the rubric critique carries: variant = rubric findings at severity >= major, strictly decreasing; floor = zero majors; exit = no majors AND ui-craft-gate exits 0 AND the accessibility floor is met (three conditions, because a clean gate is a floor and never a verdict); cap = 3 passes, and a firing cap is a DEFECT SIGNAL -- pass 3 with majors remaining stops and reports a ranked plan.\n\nSIX FLOORS NAMED UP FRONT rather than discovered at the join: the Owner ruling on the contested item; the UX & Accessibility hard veto (contrast is WCAG and the feedback says \"common issue in app\", so it is systemic); ui-craft-gate + design-lint, already wired in ui-craft.yml; red-first for every claimed control including the windowing repro; F5's oracle-before-run; audit entries.\n\nRE-PLAN CHECKPOINTS: (1) the Owner ruling -- if Terminal leaves the mode set, U2's scope changes materially; (2) C1's root cause -- if the tab swap is in the DOCKING LIBRARY rather than our code, C2 becomes a vendor-boundary question, not a fix.\n\nBEFORE/AFTER: span three-tracks-in-series -> U1/ruling/U2; width 1 -> 3 contracted; F5 head-of-chain -> off the span; decision gates one-implicit-late -> one-explicit-early-scoped-to-one-seventh; loops bounded 0 -> 1 with a variant; floors discovered-at-join -> 6 immovable.",
-      "kind": "skill",
-      "skill": "optimize-graph",
-      "tool": null,
       "actor": "Claude Opus 5 (1M context)",
       "artifacts": [
         "docs/plans/ui-and-windowing.md"
       ],
+      "datetime": "2026-09-11T13:12:38Z",
+      "done_when": "Wave 1 dispatched at width 3 with a contracted fan-out, the loop bounded by a variant, and every deleted edge justified",
+      "fan_out": 3,
+      "goal": "Plan three tracks as one graph so UI and windowing proceed without contending, while F5 keeps moving",
+      "id": "al-01M289JH887ES3D4RAWCX0Q8YH",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "add some parallel threads (sub-agents in work trees) to work on cleaning up the UI/UX all up. Thread 1: /ui-design elevate the UI. Thread 2: /investigate if we have fully cleaned up our windowing behaviors. Make sure you /optimize-graph for these new asks but keep making progress on the core tasks. Make sure for these two new threads /prepare-for-coordination so that we are working efficiently and not creating contention",
+      "session": "conductor-ui-windowing",
+      "shortname": "optimize-graph-ui-and-windowing",
+      "skill": "optimize-graph",
+      "summary": "Three tracks planned as one execution graph: F5 exit evidence (core), UI elevation from seven pieces of operator feedback, and a windowing investigation with a numbered repro.\n\nTHE OPTIMIZATION WAS MOSTLY DELETIONS, and both deleted edges came from the conductor's own briefing.\n\n  DELETED: \"F5 must finish before the UI work starts.\" F5's Proof Pack is a SNAPSHOT citing its sha. UI landing afterwards does not invalidate it -- it means the evidence describes the tree it ran on, which is what evidence is. Incidental ordering.\n\n  DELETED: \"UI and windowing collide on DockThemeAccents.cs.\" THE PREMISE WAS FALSE, and grounding disproved it: DockRoundedTabs.cs is 33 LINES OF STYLING; the tab-move handlers are in WorkbenchAdapter.cs, WorkbenchController.cs and SurfaceChrome.cs. B touches theme and surfaces; C touches adapter and controller. The contention was asserted from the directory name rather than from the call sites.\n\n  DELETED: \"the Owner ruling gates the UI track.\" It gates ONE OF SEVEN ITEMS. Gating all seven on it is the same incidental ordering in miniature.\n\nSPAN: U1 -> Owner ruling -> U2 -> close. F5 IS NOT ON THE SPAN, which matters because F5 is the most expensive single node (VERIFIED: N7 was 2,404 s in Phase 1) and the naive plan put it at the HEAD of the chain. Moving it off the span is worth more than any widening.\n\nCEILING CHECKED BEFORE WIDENING (GO4a): three heads, each its own worktree, no shared authored file. Fan-out overhead is one worktree creation and one merge per node, small against durations measured in tens of minutes. Widening justified, not assumed.\n\nWAVE 1 (width 3, at the stated cap): A1 F5 (writes docs/proof + one oracle test) || U1 ui-design stages 1-3 (writes DESIGN.md + docs/mockups, READ-ONLY on src/) || C1 windowing investigation (writes a findings note, READ-ONLY on src/). The read-only property is what makes wave 1 safe and it is a property of the work, not a promise. Persona convenings take no worktree, so the Owner ruling on the contested item runs DURING wave 1.\n\nWAVE 2: U2 UI implementation (depends on U1 by data, on the Owner ruling by decision, for the mode item only) || C2 windowing fix (depends on C1 by data).\n\nSHARED-SURFACE CLAUSES, JOINTLY SATISFIABLE (GO14a): on src/AiDe.App/Workbench/**, U2 fails if a theme/contrast/icon/surface-content change alters tab placement or move behaviour; C2 fails if a placement or move change alters any colour token or contrast pair. Disjoint by CONCERN, and each clause scoped to its own concern rather than to the directory -- which is the unscoped form that made two nodes collide at the front-door join.\n\nTHE LOOP IS BOUNDED. \"Elevate the UI\" has no natural end, so the rubric critique carries: variant = rubric findings at severity >= major, strictly decreasing; floor = zero majors; exit = no majors AND ui-craft-gate exits 0 AND the accessibility floor is met (three conditions, because a clean gate is a floor and never a verdict); cap = 3 passes, and a firing cap is a DEFECT SIGNAL -- pass 3 with majors remaining stops and reports a ranked plan.\n\nSIX FLOORS NAMED UP FRONT rather than discovered at the join: the Owner ruling on the contested item; the UX & Accessibility hard veto (contrast is WCAG and the feedback says \"common issue in app\", so it is systemic); ui-craft-gate + design-lint, already wired in ui-craft.yml; red-first for every claimed control including the windowing repro; F5's oracle-before-run; audit entries.\n\nRE-PLAN CHECKPOINTS: (1) the Owner ruling -- if Terminal leaves the mode set, U2's scope changes materially; (2) C1's root cause -- if the tab swap is in the DOCKING LIBRARY rather than our code, C2 becomes a vendor-boundary question, not a fix.\n\nBEFORE/AFTER: span three-tracks-in-series -> U1/ruling/U2; width 1 -> 3 contracted; F5 head-of-chain -> off the span; decision gates one-implicit-late -> one-explicit-early-scoped-to-one-seventh; loops bounded 0 -> 1 with a variant; floors discovered-at-join -> 6 immovable.",
       "tags": [
         "conductor",
         "plan",
@@ -11320,22 +11323,10 @@ window.AUDIT_DATA = {
         "windowing",
         "execution-graph"
       ],
-      "outcome": "success",
-      "goal": "Plan three tracks as one graph so UI and windowing proceed without contending, while F5 keeps moving",
-      "done_when": "Wave 1 dispatched at width 3 with a contracted fan-out, the loop bounded by a variant, and every deleted edge justified",
       "tier": "T2",
-      "fan_out": 3
+      "tool": null
     },
     {
-      "id": "al-01M28BPEDHQFCT6PC7CJQ0ZFD1",
-      "shortname": "node-f4b-run-seam",
-      "datetime": "2026-09-11T13:49:44Z",
-      "session": "f4b-run-seam",
-      "prompt": "Node F4b - the seam between 'a request exists' and 'a run happens'. Product wiring, red-first. Ruled into existence by Ruling 46 because no clause in the slice ever claimed this edge. Scope: (i) an optional event sink on GovernedRunHost.RunAsync, default null, publishing each event as the host's existing loop drains it, with ConductorEntry.cs byte-unchanged; (ii) the session document calls RunAsync on Send and feeds a real SessionLane into the real Console surface, in PRODUCT code. Conditions: red-first with an oracle that the sink receives EXACTLY EventsObserved events; the headless path stays green with the sink null; clause 5's root ledger still counts one root. Plus, handed over from F5: CompositionRootLedger and a 7-line RunAsync hunk whose activity opens above anything throwable.",
-      "summary": "Red observed first: a real Send on a real session document returned a real GovernedRunRequest (SendCount 1) while CompositionRootLedger read 0, and 'new SessionLane(' appeared in nine test files and no file under src/. Landed F5's CompositionRootLedger (activity opened before EngineCatalog.ResolveLaunch, so two unknown-engine calls read 2 with no adapter) and its falsifier in both directions. Added an optional Action<ObservedRunEvent> sink LAST on RunAsync so ConductorEntry stayed byte-unchanged (git diff main -- ConductorEntry.cs: 0 bytes), extracted the drain loop into GovernedRunHost.DrainAsync so the equality oracle is runnable without an adapter, and added RunEventRelay whose ChannelReader<ObservedRunEvent> fits SessionLane's existing constructor. ComposerSendGate now announces the request at its one construction site outside its lock, so both discarding callers reach a run unedited; SessionDocumentSurface builds the relay and a real SessionLane into its real Console surface and calls the one root. Observed: drained.Events == relay.Published == lane.Delivered == Model.Dispatched == console.RenderedRows.Count == 5, relay.Refused == 0. Counts: App 503 (floor 495), Core 2206 (floor 2206), portable 2052, non-portable 154. FINDING, reported not fixed: ComposerSurface.Configure has zero callers in src and four of ComposerSendContext's run-side fields (AdapterInstallRoot, Model, AccountLabel, Providers) have no source anywhere in src/ - MainWindow.xaml.cs:151 hands the New Session sheet an empty ProviderRegistry on purpose - so a UI-launched run cannot be configured today and F5 clause 2 is blocked on section 14.2 configuration, not on this node.",
-      "kind": "skill",
-      "skill": null,
-      "tool": "claude-code",
       "actor": "Claude Opus 5 (1M context)",
       "artifacts": [
         "src/AiDe.App/Conductor/RunEventRelay.cs",
@@ -11344,26 +11335,165 @@ window.AUDIT_DATA = {
         "tests/AiDe.App.Tests/Conductor/ASendLaunchesAGovernedRunTests.cs",
         "tests/AiDe.App.Tests/Conductor/TheOneCompositionRootIsCountedTests.cs"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Close the seam between 'a request exists' and 'a run happens': an optional inert event sink on GovernedRunHost.RunAsync, and a PRODUCT-code session-document call site that launches a governed run on Send and feeds a real SessionLane into the real Console surface.",
+      "datetime": "2026-09-11T13:49:44Z",
       "done_when": "Red observed first (a Send produces a request and no run; no src file constructs a SessionLane); sink receives EXACTLY EventsObserved events; headless path green with sink null; ConductorEntry.cs byte-unchanged; clause 5's root ledger reads one; full gate set exit 0.",
-      "tier": "T2",
-      "fan_out": 3,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
-      "started_at": "2026-09-11T13:29:06Z",
       "duration_seconds": 1238.0,
+      "fan_out": 3,
       "git": {
-        "sha": "0e59403de2719b0cc5a8665be912b5e637709693",
-        "short": "0e59403de",
         "branch": "feature/run-seam",
-        "pushed": null
-      }
+        "pushed": null,
+        "sha": "0e59403de2719b0cc5a8665be912b5e637709693",
+        "short": "0e59403de"
+      },
+      "goal": "Close the seam between 'a request exists' and 'a run happens': an optional inert event sink on GovernedRunHost.RunAsync, and a PRODUCT-code session-document call site that launches a governed run on Send and feeds a real SessionLane into the real Console surface.",
+      "id": "al-01M28BPEDHQFCT6PC7CJQ0ZFD1",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Node F4b - the seam between 'a request exists' and 'a run happens'. Product wiring, red-first. Ruled into existence by Ruling 46 because no clause in the slice ever claimed this edge. Scope: (i) an optional event sink on GovernedRunHost.RunAsync, default null, publishing each event as the host's existing loop drains it, with ConductorEntry.cs byte-unchanged; (ii) the session document calls RunAsync on Send and feeds a real SessionLane into the real Console surface, in PRODUCT code. Conditions: red-first with an oracle that the sink receives EXACTLY EventsObserved events; the headless path stays green with the sink null; clause 5's root ledger still counts one root. Plus, handed over from F5: CompositionRootLedger and a 7-line RunAsync hunk whose activity opens above anything throwable.",
+      "session": "f4b-run-seam",
+      "shortname": "node-f4b-run-seam",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "started_at": "2026-09-11T13:29:06Z",
+      "summary": "Red observed first: a real Send on a real session document returned a real GovernedRunRequest (SendCount 1) while CompositionRootLedger read 0, and 'new SessionLane(' appeared in nine test files and no file under src/. Landed F5's CompositionRootLedger (activity opened before EngineCatalog.ResolveLaunch, so two unknown-engine calls read 2 with no adapter) and its falsifier in both directions. Added an optional Action<ObservedRunEvent> sink LAST on RunAsync so ConductorEntry stayed byte-unchanged (git diff main -- ConductorEntry.cs: 0 bytes), extracted the drain loop into GovernedRunHost.DrainAsync so the equality oracle is runnable without an adapter, and added RunEventRelay whose ChannelReader<ObservedRunEvent> fits SessionLane's existing constructor. ComposerSendGate now announces the request at its one construction site outside its lock, so both discarding callers reach a run unedited; SessionDocumentSurface builds the relay and a real SessionLane into its real Console surface and calls the one root. Observed: drained.Events == relay.Published == lane.Delivered == Model.Dispatched == console.RenderedRows.Count == 5, relay.Refused == 0. Counts: App 503 (floor 495), Core 2206 (floor 2206), portable 2052, non-portable 154. FINDING, reported not fixed: ComposerSurface.Configure has zero callers in src and four of ComposerSendContext's run-side fields (AdapterInstallRoot, Model, AccountLabel, Providers) have no source anywhere in src/ - MainWindow.xaml.cs:151 hands the New Session sheet an empty ProviderRegistry on purpose - so a UI-launched run cannot be configured today and F5 clause 2 is blocked on section 14.2 configuration, not on this node.",
+      "tags": [],
+      "tier": "T2",
+      "tool": "claude-code"
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/session-front-door.html",
+        "docs/reviews/ui-operator-feedback.md",
+        "DESIGN.md"
+      ],
+      "datetime": "2026-09-11T13:37:53Z",
+      "duration_seconds": 1341.0,
+      "id": "al-01M28B0R807NPKC605J54T6S09",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Node U1 - /ui-design stages 1-3 on real operator feedback (7 items in C:\\Users\\malla\\Downloads\\UI housekeeping). DESIGN ONLY: write DESIGN.md and docs/mockups/, do NOT write src/. T2. Bounded loop: variant = rubric findings at severity >= major, strictly decreasing; floor = zero majors; cap = 3 passes. Deliverable is the ranked plan. Mid-task correction: Ruling 45 makes the canvas Console-only; design a one-mode-now-N-later strip.",
+      "session": "ui-elevation-node-u1",
+      "shortname": "ui-design-session-front-door",
+      "skill": "ui-design",
+      "started_at": "2026-09-11T13:15:32Z",
+      "summary": "Elevate review of the session front door. Six of seven feedback items are unimplemented spec or measured defect, not taste. Item 4's systemic cause named at the token level: only 6 implicit WPF styles exist, none for a text or input control, so 18 base types fall back to platform light defaults - 11 measured failing pairs, worst 1.15:1, plus the inverse at 1.22:1 caused by a previous partial fix. Composer: CodeMirror is vendored and navigated to but Configure has zero callers and host.init/editor.ready deadlock, so it never initializes. Task class is a free-text box for a cohort key where a typo costs more than a default. Explore/Provenance/Domain are one class instantiated three times, and the operator's proposed fix keeps the wrong one. Rail: 3 of 4 icons inert, the 4th is the only door to Explorer mode. Console-only mode strip designed per Ruling 45. Rubric variant 5 majors -> 0 in 2 passes; cap did not fire. Nine false claims in the brief reported.",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "docs/plans/ui-and-windowing.md"
+      ],
+      "datetime": "2026-09-11T14:08:08Z",
+      "done_when": "Wave 1 dispatched at width 3 with a contracted fan-out, the loop bounded by a variant, and every deleted edge justified against the code",
+      "fan_out": 3,
+      "goal": "Plan three tracks as one graph so UI and windowing proceed without contending, while F5 keeps moving",
+      "id": "al-01M28CR4EKFA345WZDM78BKNX2",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Correct the capture on the optimize-graph entry that turned main red.",
+      "session": "conductor-ui-windowing",
+      "shortname": "optimize-graph-ui-and-windowing (corrected capture)",
+      "signals": {
+        "acceptance_met": false,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "optimize-graph",
+      "summary": "SUPERSEDES al-01M289JH887ES3D4RAWCX0Q8YH, which recorded the optimize-graph run for the UI and windowing tracks with NO SIGNALS OBJECT and no docs/proof artifact -- so it scored Not Scored for want of a verification path, and it turned main's CI red on the audit-capture ratchet.\n\nThe gate's own message is the correction and it is exactly right: \"If nothing was verified, say so: --signal-verification-path false is capture, silence is not.\"\n\nWHAT THE SUPERSEDED ENTRY SHOULD HAVE SAID ABOUT ITSELF. A planning run has a verification path and it is not a test: the plan's claims were checked against the code before dispatch, and two of the three edges the conductor asserted were DISPROVED by that check -- DockRoundedTabs.cs is 33 lines of styling, so the assumed UI/windowing contention on DockThemeAccents.cs did not exist, and F5's Proof Pack is a snapshot citing its sha, so it never needed to precede the UI work. A third assertion, that the Owner ruling gated the UI track, was narrowed to one of seven items. That is a verification path that was executed and that changed the artifact.\n\nWHAT WAS NOT VERIFIED, stated rather than left silent: the plan's SPAN claim rests on one measured figure (N7 at 2,404 s, from Phase 1's ledger) and otherwise on node shapes that are Inferred; no acceptance criterion was met by the planning run itself, because a plan is not acceptance; and no regression was possible, since nothing executable changed.\n\nThis entry also carries the goal and done-when the original omitted.",
+      "supersedes": "al-01M289JH887ES3D4RAWCX0Q8YH",
+      "tags": [
+        "conductor",
+        "plan",
+        "correction",
+        "dc-119"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "docs/reviews/ui-operator-feedback.md",
+        "docs/mockups/session-front-door.html",
+        "DESIGN.md"
+      ],
+      "datetime": "2026-09-11T14:08:32Z",
+      "done_when": "A ranked plan exists, the contrast defect is root-caused at the token level with its failing pairs measured, and the rubric loop has reached zero major findings without the cap firing",
+      "goal": "Elevate the UI against seven pieces of operator feedback: direction in words, the design system, a mockup with its hard states, and a rubric critique ending in a ranked plan",
+      "id": "al-01M28CRW87QFVF13NH7SNMN055",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Correct the capture on node U1's ui-design entry, which recorded no goal or done_when.",
+      "session": "ui-elevation-node-u1",
+      "shortname": "ui-design-session-front-door (corrected capture)",
+      "signals": {
+        "acceptance_met": false,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "ui-design",
+      "summary": "SUPERSEDES al-01M28B0R807NPKC605J54T6S09, node U1's ui-design run, which recorded no goal and no done_when -- so it could never become a Work Episode and nothing could score or observe it (AL5b). Together with the conductor's own uncaptured planning entry it turned main's CI red on the audit-capture ratchet.\n\nThe goal and done-when below are NOT reconstructed from the node's output: they are the ones the conductor set in the node's brief, restated verbatim in substance. The node did not invent its goal and this entry does not invent one for it.\n\nWHAT THE RUN PRODUCED, so the capture is not merely well-formed: a ranked plan of sixteen items across three tiers, the contrast defect root-caused at the TOKEN level with eleven failing pairs measured rather than described, and the composer diagnosed as NEVER INITIALIZING -- Configure with zero callers and a host.init/editor.ready deadlock -- which resolved two separate pieces of operator feedback into one defect.\n\nVERIFICATION PATH, and it was executed: the eleven failing contrast pairs were measured against the WCAG floors with their sites cited; the palette was exonerated by measurement (text on surface 14.98:1); and the rubric loop ran to its floor in two passes with the variant recorded at each. ACCEPTANCE was not met and that is the honest value: this node was design only, read-only on src/, so nothing it produced is acceptance of a behaviour -- node U2 builds to it. No regression was possible for the same reason.\n\nAND THE FINDING THAT MATTERS MOST is about a prior review rather than the surface: the previous review of this same rail PASSED it -- tooltips, targets, keyboard, contrast \"~5.1:1/~7.6:1\", verdict PASS -- and never asked whether the buttons did anything. Those contrast figures came from the MOCKUP'S readout, not the app. A surface reviewed, passed, and still carrying four dead icons.",
+      "supersedes": "al-01M28B0R807NPKC605J54T6S09",
+      "tags": [
+        "ui",
+        "ui-design",
+        "correction",
+        "operator-feedback"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "Directory.Build.rsp",
+        "tools/verify-node-reuse-control.py",
+        "tools/verify-test-run.py",
+        ".github/workflows/build.yml",
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-11T14:53:11Z",
+      "done_when": "Every host attributed by ancestry-to-root; the AiDe share stated; the control falsified both directions from root and subdirectory; a gate with a self-test wired into CI; DC-131 registered; gates green; pushed and CI read back.",
+      "git": {
+        "branch": "main",
+        "pushed": true,
+        "sha": "37ce01a28d9514dac726f6793601c3f606a330d5",
+        "short": "37ce01a28"
+      },
+      "goal": "Count the whole console-host population with attribution before claiming anything, then control whatever share is ours at the boundary rather than at one call site.",
+      "id": "al-01M28FAM78M790SKYWB4RHM9EN",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "i still see multiple ai-de terminal hosts that look like phantom hosts because you only have the main session and two sub-agents going, here is a screen shot of what i see: [Image] so i dont think you actually cleaned up the stale terminal hosts",
+      "session": "conductor-terminal-hosts-census",
+      "shortname": "Terminal-host census: the population, not the mechanism",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "CENSUS FIRST, which is the part that was missing the first two times: 287 console-host processes -\n256 held by node.exe under copilot.exe (a different application entirely), 20 held by orphaned\nMSBuild /nodeReuse:true workers (mine), 11 system/third-party, and ZERO with anything named AiDe\nanywhere in the ancestry chain. TH1 and TH2 are both still fixed and both were real; they answered\nabout a different population than the one on the operator's screen.\n\nThe earlier orphan check looked ONE level up, found every host's direct parent alive and reported\nzero orphans. The MSBuild workers WERE the orphans and the hosts beneath them were correctly\nparented - a containment check one level deep confirms containment one level deep.\n\nCONTROL MOVED TO THE BOUNDARY. verify-test-run.py sets MSBUILDDISABLENODEREUSE in its own\nsubprocess environment, which is one call site; the 20 came from dotnet build typed directly and\nnever reach it (DC-123). Directory.Build.rsp at the repository root covers every MSBuild invocation\nrooted anywhere in the tree.\n\nFALSIFIED BOTH DIRECTIONS rather than assumed, because a single-project build needs no worker nodes\nand would have passed either way: from the root, 16 workers without the file and 0 with it; from a\nsubdirectory, the same 16 -> 0, so discovery walks up; dotnet test 0.\n\nThe gate guards the real fragility, which is not the root file going missing: MSBuild takes the\nFIRST response file it finds walking up and stops, so a nested one silently shadows the root for\neverything beneath it. Both clauses observed RED before green. --self-test breaks a synthetic tree\nfour ways. --behaviour runs the falsifier and FAILS if removing the control leaves zero workers.\n\nThe 20 orphans were cleared with dotnet build-server shutdown - the documented mechanism, not a\nkill - after sampling 4 s of zero CPU on each, with two agents building.\n\nCORRECTED A REFUTED CLAIM: verify-test-run.py stated these workers linger fifteen minutes. The\n06:22 cohort was still standing at 07:40 with a dead parent. For an orphan the lifetime is\nunbounded and the comment now says so.\n\nRegister: DC-131 - a defect reported as a POPULATION is closed by fixing a MECHANISM and the\npopulation is never counted. DC-123 is the mechanism half (why the symptom persisted); DC-131 is\nthe reporting half (why it was declared resolved twice while it did). 131 classes, 65/53/13.\n\n30 gates PASS, 0 FAIL. Pushed as 37ce01a2.",
+      "tags": [
+        "process-containment",
+        "census",
+        "DC-131",
+        "DC-123",
+        "msbuild"
+      ],
+      "tier": "T1",
+      "tool": null
     }
   ],
   "changes": [

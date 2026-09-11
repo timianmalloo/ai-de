@@ -305,6 +305,62 @@ public sealed class ZoneBackedLayoutServiceTests
         Assert.Equal(ZoneId.Left, svc.Zones.FindZoneOf("explore")); // bystander untouched
     }
 
+    /// <summary>
+    /// INV-0006 F3, measured: a collapsed tool zone that still HOLDS panes makes every native drag
+    /// revert. The zone is not rendered, so it is absent from the view the reconcile reads; the
+    /// surface-set guard sees its panes go missing and refuses the whole reconcile. The refusal is
+    /// correct — rendering the mapping would drop those panes — but before F3 nothing said so.
+    /// </summary>
+    [Fact]
+    public void ReconcileFromView_WithACollapsedZoneStillHoldingPanes_RefusesEveryDrag()
+    {
+        var collapsed = ZoneLayoutService.CollapseZone(WorkbenchLayout.Default(), ZoneId.Left).Layout;
+        var svc = new ZoneBackedLayoutService(collapsed);
+        var before = svc.Zones.Shape();
+
+        var applied = svc.ReconcileFromView(DomainDraggedIntoTheBottom(svc.Current, withLeftColumn: false));
+
+        Assert.False(applied);
+        Assert.Equal(before, svc.Zones.Shape());       // untouched — the next render undoes the drag
+        Assert.Equal(ZoneId.Center, svc.Zones.FindZoneOf("domain"));
+    }
+
+    /// <summary>
+    /// The other half, which is what makes "expand it and move the pane again" an honest thing to
+    /// announce rather than a guess: the SAME drag is applied once the zone is expanded.
+    /// </summary>
+    [Fact]
+    public void ReconcileFromView_WithNoZoneCollapsed_AppliesTheSameDrag()
+    {
+        var svc = new ZoneBackedLayoutService(WorkbenchLayout.Default());
+
+        var applied = svc.ReconcileFromView(DomainDraggedIntoTheBottom(svc.Current, withLeftColumn: true));
+
+        Assert.True(applied);
+        Assert.Equal(ZoneId.Bottom, svc.Zones.FindZoneOf("domain"));
+        Assert.Equal(ZoneId.Left, svc.Zones.FindZoneOf("explore"));   // bystander untouched
+    }
+
+    private static Layout DomainDraggedIntoTheBottom(Layout rendered, bool withLeftColumn)
+    {
+        var center = rendered.AllStacks().Single(s => s.Id == ZonesToTree.CenterStackId);
+        var bottom = rendered.AllStacks().Single(s => s.Id == ZonesToTree.BottomStackId);
+        var domain = center.Surfaces.Single(s => s.SurfaceId == "domain");
+
+        LayoutNode columns = new StackNode("c", center.Surfaces.Remove(domain));
+        if (withLeftColumn)
+        {
+            var left = rendered.AllStacks().Single(s => s.Id == ZonesToTree.LeftStackId);
+            columns = new SplitNode("cols", Orientation.Horizontal, [left, columns], [0.3, 0.7]);
+        }
+
+        return new Layout(
+            new SplitNode("root", Orientation.Vertical,
+                [columns, new StackNode("b", bottom.Surfaces.Add(domain))],
+                [0.7, 0.3]),
+            [], ImmutableDictionary<string, StackState>.Empty);
+    }
+
     private static IReadOnlyList<string> StackSurfaces(ILayoutService svc, string stackId) =>
         svc.Current.AllStacks().FirstOrDefault(s => s.Id == stackId)?.Surfaces.Select(s => s.SurfaceId).ToList()
         ?? new List<string>();

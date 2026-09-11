@@ -129,8 +129,11 @@ def run_tests(projects: list[Path], filter_expr: str | None = None, key: str | N
             command += ["--filter", filter_expr]
 
         # MSBuild's worker nodes outlive the driver by design: `dotnet test` starts them with
-        # /nodeReuse:true so the next build can reuse them, and they linger for fifteen minutes
-        # afterwards whether or not there is a next build. When the driver is killed rather than
+        # /nodeReuse:true so the next build can reuse them. The fifteen-minute idle timeout this
+        # comment used to cite as their lifetime IS WRONG FOR ORPHANS, and the correction was
+        # measured rather than reasoned: on 2026-09-11 a cohort of sixteen spawned at 06:22 was
+        # still standing at 07:40 -- 1.3 hours, zero CPU, parent long dead. Treat their lifetime as
+        # UNBOUNDED. When the driver is killed rather than
         # allowed to exit -- a cancelled CI job, a closed terminal, an agent session that ends --
         # the workers survive it and nothing is left that names them. COUNTS, with their
         # provenance: the investigation that opened this node found SIXTEEN such orphans; TWO were
@@ -144,6 +147,12 @@ def run_tests(projects: list[Path], filter_expr: str | None = None, key: str | N
         # things, and an extra flag there is a change to a contract. MSBUILDDISABLENODEREUSE is
         # the documented switch and it is already the shape used at
         # spikes/extraction-containment/LowIntegrity.cs:145.
+        #
+        # THIS COVERS THIS GATE ONLY, and that was the defect: the sixteen orphans above came from
+        # `dotnet build` run by hand, which never reaches this line. The boundary control is
+        # Directory.Build.rsp at the repository root, pinned by tools/verify-node-reuse-control.py.
+        # Both are kept -- this one survives a shadowing nested response file, that one covers every
+        # invocation this gate never sees.
         environment = dict(os.environ)
         environment["MSBUILDDISABLENODEREUSE"] = "1"
 

@@ -8,7 +8,6 @@ phase: "1"
 tags: [plan, execution-graph, ui-design, windowing, docking, f5, coordination]
 links:
   - { to: plan-conductor-front-door, rel: relates-to }
-  - { to: kb-graph-and-loop-engineering, rel: depends-on }
   - { to: note-front-door-residuals, rel: relates-to }
 review-by: 2026-12-11
 summary: >-

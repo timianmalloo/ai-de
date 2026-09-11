@@ -1,0 +1,3 @@
+# Applied to every MSBuild invocation rooted in this repository, including the ones
+# a human or an agent types by hand. See tools/verify-node-reuse-control.py.
+/nodeReuse:false
