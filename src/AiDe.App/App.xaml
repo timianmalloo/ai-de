@@ -656,6 +656,22 @@
             <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
         </Style>
 
+        <!--
+            NOT IN TC1'S LIST, AND THAT IS A GAP IN THE LIST RATHER THAN IN THE IMPLEMENTATION.
+            DESIGN.md's icon system requires that EVERY icon-only control carries a tooltip, so on
+            this surface the tooltip is not an edge case - it is the label. The platform's default is
+            the system info-tip, which is light, and it is the one popup in the app that would still
+            flash white on a dark ground after everything else was themed. Measured by
+            ToolTipTests before and after, rather than assumed from what a system brush is called.
+        -->
+        <Style TargetType="ToolTip">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="{StaticResource MenuBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource MenuBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="8,5" />
+        </Style>
+
         <!--  Every top-level window, not just the one that remembered. A dialog opened with `new
               Window` used to inherit nothing at all.  -->
         <Style TargetType="Window">
