@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T16:06:50Z",
+  "generated": "2026-09-11T16:18:27Z",
   "audit": [
     {
       "actor": null,
@@ -11651,6 +11651,45 @@ window.AUDIT_DATA = {
       ],
       "tier": "T2",
       "tool": "Claude Code"
+    },
+    {
+      "id": "al-01M28M6KP2YYN6M6F4NZ8HDNSD",
+      "shortname": "F5: F6's edge verified, oracle blind spot closed from outside, run blocked on two operator inputs",
+      "datetime": "2026-09-11T16:18:22Z",
+      "session": "conductor-front-door-f5-exit-evidence",
+      "prompt": "Your blocker is cleared on main - F6 built the edge, and your report is what proved it was missing.\nMerge main (never rebase), then take the run: task class no earlier run has used checked against the\nstore, harness waits on the process object (DC-129), terminalHostConstructions == 0 with N7's\nfalsifier verbatim, every Residual cell naming a measurement or an explicit uncovered input. Do not\ntouch clause 0 - satisfy the blind spot by a companion demonstration in the Proof Pack instead, and\nsay so if that is the wrong shape.",
+      "summary": "THE BLOCKER IS CLEARED AND VERIFIED, AND THE RUN IS STILL NOT TAKEN. F6's edge is real on the merged\ntree: MainWindow.xaml.cs:263 calls composer.Configure(...) and :265 constructs\nnew Workbench.Composer.ComposerSendContext(...) with TaskClass: created.TaskClass -- the field that\nwas being dropped. All of the coordinator's claims were checked against the tree this time and ALL\nWERE TRUE: floors App 517 / Core 2234 / portable 2080 / non-portable 154; register 134 classes\n(66/53/15); Ruling 46 filed as the edge-ownership ruling; verify-ruling-citations.py present and\ngreen (43 cited, 34 defined, 9 frozen); ComposerProbe is a ProjectReference at line 81.\n\nTHE ORACLE'S BLIND SPOT IS CLOSED FROM OUTSIDE, NOT BY WIDENING IT. Clause 0 was not touched and the\noracle's bytes still match 1374401d across a second merge.\nTheRunBindingComesFromTheProviderFileTests.TheShellConstructsOneRegistryOneSendContextAndOneAttachmentGate\nasserts EXACTLY ONE composer.Configure( and EXACTLY ONE new Workbench.Composer.ComposerSendContext(\nin the shell, then sweeps every other file under src/AiDe.App/. Because there is one Configure call\nsite and it is product code, a run reaching Send() with a populated context reached it through\nBindComposer. That is the companion the conductor asked for, and it already existed.\n\nWHY THE RUN STILL DID NOT HAPPEN -- two preconditions, neither of them code, neither this node's.\n(1) ~/.aide/providers.json is ABSENT on this machine (ProviderConfiguration.DefaultPath, checked).\nBindComposer refuses by name without it, and the file names THE ACCOUNT THE RUN BILLS. Inventing that\nlabel is DC-110's defect exactly, and LaneBinding refuses to pick between two accounts for the same\nreason. The schema is settled; the value is the operator's.\n(2) THERE IS NO HEADLESS FRONT DOOR. ConductorEntry.IsRequested is the only argument the shell reads.\nFile -> New Session opens a modal Window via NewSessionSheetDialog.Show, and showSheet is hard-wired\ninside MainWindow.NewSession(), so nothing substitutes it without editing product code. \"The harness\nwaits on the process object\" does not apply -- there is no process to launch for this path. The\ngesture is the operator's hands or UI automation of a live modal on a billing path.\n(3) Cohort: no AI-DE episode store exists at any default location, so the \"class no earlier run has\nused\" check must be made against the store the workspace's DataDirectory creates at run time.\n\nREADY: the ACP adapter is installed at C:/Projects/ai-de/spikes/acp-subscription-lane; subscription\nuse is authorised by the operator in their own words (al-01M23SEGAS071BX81W0MA9RF92), scoped to the\noperator's own subscription on their own machine for their own project.\n\nA NEAR-MISS CORRECTED BEFORE IT WAS REPORTED. I first swept for coverage by grepping the private\nmethod name BindComposer, found nothing, and was about to report the path untested. It is thoroughly\ntested: F6's E7-chain test covers file -> reader -> registry -> sheet -> EnabledBackends ->\nComposerSendContext -> Send -> GovernedRunRequest with a named refusal at each link. THE METHOD NAME\nIS NOT THE PATH'S NAME. Third grep-shaped false negative in this node -- the first was\nnamespace-qualified `new Sessions.SessionDocumentSurface`, which the conductor then walked into too.\n\nPROOF PACK CORRECTED RATHER THAN APPENDED TO. The pack asserted \"the shipped product cannot send\nfrom the front door\", which is now FALSE of the tree. That section is now Part 1 (what was measured,\nmarked no longer true) and Part 2 (what F6 closed, what remains). Counts corrected twice by\nre-measuring: this table has now named three different floor sets, and each was stale when carried\nrather than measured. Gate count measured by `ls`, not recalled -- my first draft said 32.\n\nCOUNTS on the merged tree, --update NEVER run: App 517 (floor 517, +0), Core 2238 (floor 2234, +4),\nportable 2084 (floor 2080, +4), non-portable 154 (floor 154, +0). 2084 + 154 = 2238 by three\nobservations that agree. The +4 is this node's own four origin tests. Build 0/0. 30 of 31 gates\ngreen; the thirty-first is this slice's oracle refusing an absent subject, whose --self-test is green.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/conductor-front-door.md",
+        "tools/verify-front-door-exit-evidence.py"
+      ],
+      "tags": [
+        "f5",
+        "dc-130",
+        "blocked",
+        "providers"
+      ],
+      "outcome": "blocked",
+      "goal": "Verify the cleared blocker against the tree, then take the front-door exit run without touching clause 0.",
+      "done_when": "F6's edge verified by opening the file; oracle bytes still match 1374401d; counts and gates reported; the run taken or its remaining preconditions named as findings.",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false,
+        "regression": false
+      },
+      "git": {
+        "sha": "c5ca7b1ff3d5105da27d6b81a2a95e063680630e",
+        "short": "c5ca7b1ff",
+        "branch": "feature/exit-evidence",
+        "pushed": false
+      }
     }
   ],
   "changes": [

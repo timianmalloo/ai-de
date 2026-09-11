@@ -45,9 +45,10 @@ summary: >-
 | --- | --- |
 | **Oracle** | `tools/verify-front-door-exit-evidence.py` — clause 0 plus the nine |
 | **Oracle commit** | `1374401d171b1ec6be5d56c25b1d1e00608abc18`, committed `2026-09-11T06:36:24-07:00` (`%ct` 1789133784) |
-| **Oracle integrity** | **Held across the merge of `main` at `39bcf288`.** `git diff 1374401d HEAD -- tools/verify-front-door-exit-evidence.py` is **empty** — the bytes running are the bytes committed. `1374401d` is an ancestor of this branch and is **not** reachable from `main`, so it exists only here and only a rewrite could destroy it. The branch was merged, never rebased (DC-128) |
-| **Run started** | `RUN-PENDING` — and it stays pending; see *The exit run did not happen* |
-| **Ordering evidence** | Vacuous but not absent: the oracle predates any run because **there is no run**. Clause 0's byte comparison is the half that still carries weight, and it holds |
+| **Oracle integrity** | **Held across two merges of `main`** — `39bcf288`, then `be68ca1c`. `git diff 1374401d HEAD -- tools/verify-front-door-exit-evidence.py` is **empty** after each — the bytes running are the bytes committed. `1374401d` is an ancestor of this branch and is **not** reachable from `main`, so it exists only here and only a rewrite could destroy it. The branch was merged, never rebased, both times (DC-128) |
+| **Run started** | `RUN-PENDING` — see *The exit run did not happen*, Part 2, for the two preconditions that are not this node's to settle |
+| **Ordering evidence** | Vacuous but not absent: the oracle predates any run because **there is no run yet**. Clause 0's byte comparison is the half that carries weight without one, and it holds |
+| **Blind spot, closed from outside** | Clauses 2 and 5 cannot tell a product-wired composer from a harness-wired one. **The frozen oracle was not widened** — `TheRunBindingComesFromTheProviderFileTests.TheShellConstructsOneRegistryOneSendContextAndOneAttachmentGate` asserts exactly one `composer.Configure(` in the shell, which settles it from outside clause 0's pinned bytes |
 | **Falsifier suite** | `TheSessionOriginIsSetOnlyOnTheCommandPathTests`, `TerminalHostingLedgerTests`, `TheOneCompositionRootIsCountedTests` — each resolved to a declaration under `tests/`, not quoted from memory. The third read `TheRunHasOneCompositionRootTests` until this close, and **no class of that name has ever existed** |
 
 - **Component:** `src/AiDe.Core/Sessions/` (session container, path contract, template spine),
@@ -65,10 +66,12 @@ Each row is one §F5 clause. **Residual** names a measurement or an explicit unc
 every row — never "none", which is the shape this clause exists to refuse: *"populated" is satisfied
 by "none" in every cell*.
 
-**Clauses 1, 4, 7 and 8 are discharged. Clauses 2, 3, 5, 6 and 9 read `RUN-PENDING` and stay there**
-— not because the run was skipped, but because the shipped product cannot send from the front door at
-this commit. The structural reason, with every observation that establishes it, is in *The exit run
-did not happen* below. Read that before quoting any `RUN-PENDING` cell as merely "not yet done".
+**Clauses 1, 4, 7 and 8 are discharged. Clauses 2, 3, 5, 6 and 9 read `RUN-PENDING`** — and the
+reason changed once, which is why it is stated rather than left to be assumed. Until `be68ca1c` the
+product **could not** send from the front door at all; F6 closed that, and what remains is two
+operator-owned preconditions, not a defect. Both states, with the observations behind them, are in
+*The exit run did not happen* below. Read it before quoting any `RUN-PENDING` cell as merely "not yet
+done" — and note that Part 1's blocker is **no longer true of this tree**.
 
 | # | Clause | Evidence | Oracle (why it can fail) | Red observed | Confidence | Residual |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -192,11 +195,19 @@ available to whoever fills this section in.
 **The class stays `partially-controlled` either way**, and its three open residues are named in
 clause 9's Residual cell.
 
-## The exit run did not happen, and the reason is a second instance of the same class
+## The exit run did not happen — first because the product could not send, then for two other reasons
 
-**Five clauses stay `RUN-PENDING` — 2, 3, 5, 6 and 9 — because the shipped product still cannot send
-from the front door.** Not "was not exercised": *cannot*. The finding is structural and total, and
-every part of it is an observation of the tree at this commit rather than an inference from a plan.
+> **Status, read this before the evidence below.** The structural blocker this section records **has
+> been closed by node F6** and is **no longer true of the tree**. It is kept in full because deleting
+> it would delete the measurement that caused the repair. Two parts: what was measured while it was
+> true, then what closed it and what is still open.
+
+### Part 1 — what was measured, while the product could not send
+
+**Measured at `50b2364f`, before F6 merged.** Five clauses — 2, 3, 5, 6 and 9 — were unsatisfiable
+because the shipped product could not send from the front door. Not "was not exercised": *cannot*.
+The finding was structural and total, and every part of it was an observation of the tree at that
+commit rather than an inference from a plan.
 
 **What was checked, and how.**
 
@@ -267,6 +278,43 @@ harness did". The fix is a source scan of the shape
 the run would redden clause 0 — the control working against its own author, which is what it is for.
 The gap is recorded as a residual instead, and it is the same class one level in: *an edge between
 two clauses that no clause owns.*
+
+### Part 2 — what F6 closed, verified on the merged tree
+
+**The edge is built, and the blind spot above is closed by a control that already exists.** Checked
+on `main` at `be68ca1c`, merged here:
+
+| Was missing | Now | Observation |
+| --- | --- | --- |
+| no `composer.Configure(` in `src/` | `MainWindow.xaml.cs:263` | inside `BindComposer`, on the create path |
+| no `new ComposerSendContext` in `src/` | `MainWindow.xaml.cs:265` | `TaskClass: created.TaskClass` — the field that used to be dropped is now carried |
+| `Model`/`AccountLabel`/`Providers` had no source | `ProviderConfiguration` reads `~/.aide/providers.json` | one `LaneBinding` feeds the send context *and* the attach affirmation, so the account affirmed is the account billed |
+| the oracle could not tell product-wired from harness-wired | `TheRunBindingComesFromTheProviderFileTests.TheShellConstructsOneRegistryOneSendContextAndOneAttachmentGate` | asserts **exactly one** `composer.Configure(` and **exactly one** `new Workbench.Composer.ComposerSendContext(` in the shell, then sweeps every other file under `src/AiDe.App/` for a second one |
+
+That last row is the point. **The blind spot was never closed by widening the frozen oracle — it is
+closed from outside it.** Because there is exactly one `Configure` call site in the shell and it is
+product code, a run that reaches `Send()` with a populated context reached it through
+`BindComposer`. Clause 0 stayed untouched, and the oracle's bytes still match `1374401d`.
+
+**One correction to Part 1, found by re-checking rather than by being told.** Part 1 does not claim
+the path is untested, and it must not: F6's `TheRunBindingComesFromTheProviderFileTests` covers the
+whole E7 chain — *file → reader → registry → sheet → EnabledBackends → ComposerSendContext → Send →
+GovernedRunRequest* — with a named refusal at each link. This node's first sweep for coverage grepped
+the private method name `BindComposer` and found nothing, which would have been the third
+grep-shaped false negative in this node. **The method name is not the path's name.**
+
+### What is still open, and neither part is code
+
+| Precondition | State | Why it is not this node's to settle |
+| --- | --- | --- |
+| **`~/.aide/providers.json`** | **absent on this machine** (`ProviderConfiguration.DefaultPath`, checked) | `BindComposer` refuses by name without it. The file names **the account the run bills**. Inventing that label is precisely DC-110's defect, and `LaneBinding`'s own remarks refuse to pick between two accounts for the same reason. The schema is settled and testable; the value is the operator's |
+| **The gesture** | **no headless front door exists** | `ConductorEntry.IsRequested` is the only argument the shell reads; `File → New Session` opens a modal `Window` through `NewSessionSheetDialog.Show`, and `showSheet` is hard-wired inside `MainWindow.NewSession()`, so nothing can substitute it without editing product code. *"The harness waits on the process object" does not apply here* — there is no process to launch for this path. The gesture is either the operator's hands or UI automation of a live modal on a billing path |
+| **The cohort** | **no AI-DE episode store exists at any default location** (searched) | the store is created under the workspace's `DataDirectory` when the workspace opens, so the "task class no earlier run has used" check must be made against **that** store at run time, not against this file |
+
+**What is ready:** the ACP adapter is installed at `C:/Projects/ai-de/spikes/acp-subscription-lane`
+(`@agentclientprotocol` present); subscription use is authorised by the operator in their own words
+(audit `al-01M23SEGAS071BX81W0MA9RF92`), and that authorisation is scoped to *the operator using
+their own subscription on their own machine for their own project*, which is this.
 
 ## Residual
 
@@ -342,20 +390,22 @@ That is a **procedural** control with no mechanical backing, and it belongs here
 
 ## Counts and gates
 
-Measured on the merged tree (`main` at `39bcf288` merged into `feature/exit-evidence`), Debug, this
-machine. The floors are the ones `tools/expected-test-counts.json` carries **after** F4b's bump — the
-figures this table used to name (495 / 2206 / 2052) were the pre-F4b floors and were stale.
+Measured on the merged tree (`main` at `be68ca1c` merged into `feature/exit-evidence`), Debug, this
+machine. The floors are the ones `tools/expected-test-counts.json` carries **after F6's bump** — an
+earlier revision of this table named 495 / 2206 / 2052, which were pre-F4b and stale, and the
+revision after that named 512 / 2210 / 2056, which were pre-F6 and stale. **Both were corrected by
+re-measuring, never by carrying the number forward.**
 
 | | Executed | Floor | Over |
 | --- | --- | --- | --- |
-| `AiDe.App.Tests` | **512** | 512 | 0 |
-| `AiDe.Core.Tests` | **2214** | 2210 | +4 |
-| `AiDe.Core.Tests` portable | **2060** | 2056 | +4 |
+| `AiDe.App.Tests` | **517** | 517 | 0 |
+| `AiDe.Core.Tests` | **2238** | 2234 | +4 |
+| `AiDe.Core.Tests` portable | **2084** | 2080 | +4 |
 | `AiDe.Core.Tests` non-portable | **154** | 154 | 0 |
-| Full gate set, bare | **29 of 30 green**; the thirtieth is this slice's own oracle, refusing for the reason below | — | — |
+| Full gate set, bare | **30 of 31 green** (`ls tools/verify-*.py` counted, not recalled); the thirty-first is this slice's own oracle, refusing for the reason below | — | — |
 | Build | **0 warnings, 0 errors** | — | — |
 
-`2060 + 154 = 2214` **by observation**, not by arithmetic on the baseline: each half was run under its
+`2084 + 154 = 2238` **by observation**, not by arithmetic on the baseline: each half was run under its
 own `--filter` and `--key`, and the whole project was run separately, so the sum is three
 measurements that agree rather than one measurement and a subtraction.
 
