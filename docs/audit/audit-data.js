@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T13:34:50Z",
+  "generated": "2026-09-11T13:49:06Z",
   "audit": [
     {
       "actor": null,
@@ -11297,6 +11297,49 @@ window.AUDIT_DATA = {
         "short": "1583e045d",
         "branch": "fix/spawn-containment",
         "pushed": null
+      }
+    },
+    {
+      "id": "al-01M28BN2WPZKCAE3VT8228QY5H",
+      "shortname": "f5-preflight-live-run",
+      "datetime": "2026-09-11T13:48:59Z",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "prompt": "Node F5 — exit evidence and the Proof Pack. Pre-flight only: buy Ruling 17's answer (does the linked-worktree shape score?) through the existing --conduct entry before spending the front-door exit run, which cannot be re-taken.",
+      "summary": "A LIVE GOVERNED RUN THAT IS NOT THE EXIT EVIDENCE, recorded because a live run that appears in no record is worse than one that appears with its purpose stated.\n\nWHAT IT WAS FOR. F5's exit run launches through the front door and cannot be re-taken; Ruling 17 makes \"does the linked-worktree shape score?\" a question that must reach the conductor rather than a qualification to carry. This bought that answer through the existing `--conduct` headless entry, for one trivial turn, before spending the run whose evidence is the deliverable.\n\nBOUNDS. Task class `front-door-preflight` in its own scratch data directory, so nothing shares the exit run's cohort — ScoreSegment partitions on (Workspace, TaskClass, SchemaVersion) and a throwaway episode in the measured cohort would be DC-110's shape. Lease exactly `spikes/conductor-front-door-exit-run/**`; 6-minute prompt timeout; the lane wrote one file containing one word.\n\nWHAT IT MEASURED, and it is the reason to keep the record. repositoryRoot was the LINKED WORKTREE `C:/projects/ai-de-feature-exit-evidence`. The episode scored `Partial: 15 / 15 observed`, `mode=governed`, `IsComparable == true`, `IncomparableReason == null` — and its `workspace` column reads `c:\\projects\\ai-de`, the PARENT repository, which does not contain `docs/proof/conductor-front-door.md` in its working tree or in HEAD (`9f01fdc`), verified both ways. The declared artifact was therefore credited from the LANE'S OWN CHECKOUT: DC-115's Phase-2 control (`ProofPackVerifier.VerifyInCheckouts` + `ClosedEpisodeScoring.CheckoutsOf`) observed doing its job on the shape Phase 1 could not use. Phase 1 avoided the defect by rooting in a clone; this did not have to.\n\nOTHER MEASUREMENTS. terminalHostConstructions 0. eventsObserved 43, latencyMeasured 43, p50 0.0204 ms, p95 0.2858 ms on TIMMALLSTRIX — recorded, never asserted (ADR-0029). observedAuth kind=account label=\"Claude Max\" plan=max. seamsRaised 0, seamResolutionRatio 1. Exit code 0, so ConductorEntry's four-point floor held. Wall clock 14 s for the run that was waited on.\n\ncoordInstalled: FALSE, DELIBERATELY. `coord` is not on this machine's PATH and no shim was supplied, because supplying one would have run `coord install` inside a linked worktree that SHARES `.git/config` with its parent — measured: `extensions.worktreeConfig` is unset on C:/projects/ai-de and both merge drivers live in `file:.git/config`. That is DC-112, and it would have repointed the main clone's merge drivers at a lane tree that is then released, breaking merges across twenty-one live worktrees, in the one run nobody would think to suspect. `ProcessRunner.Run` catches Win32Exception and returns -1, so the provisioner records false and the run proceeds. The main clone's merge drivers were re-read after the runs and after cleanup: unchanged.\n\nA MISTAKE, RECORDED RATHER THAN TIDIED. TWO runs happened, not one. `& $exe --conduct ...` on a WinExe returns immediately — the GUI subsystem detaches — so the first invocation reported no exit code and 0 seconds while a real governed run continued in the background. The second, launched with Start-Process -Wait, is the one measured above. Both provisioned a lane worktree and both scored `Partial: 15 / 15 observed`; the store holds two episodes in the preflight cohort. The subscription cost was doubled by a harness error, not by design. Anything launching this shell must wait on the process object, never on the call.\n\nCLEANUP. Both lane worktrees removed (`git worktree remove --force`, opt-in after reading what each held: one untracked `preflight.txt` containing `ready`, HEAD at 1374401 which exists on feature/exit-evidence, so no commit existed nowhere else), both agent branches deleted, `git worktree prune` run, count back to 21 with zero lane trees remaining.\n\nWHAT THIS DOES NOT COVER, stated so a green is not over-quoted later. It launched through `--conduct`, NOT the front door. It is no evidence for clause 2 (composed in the composer, streamed in Console mode) or clause 5 (launched through the same composition root, ledger counting roots) — those are precisely the path it does not touch. Clause 9's qualification is discharged by the exit run, not by this one. This is evidence about the plumbing, not a verdict.",
+      "kind": "script",
+      "skill": null,
+      "tool": "AiDe.App.exe --conduct",
+      "actor": "node-f5",
+      "artifacts": [
+        "docs/proof/conductor-front-door.md",
+        "tools/verify-front-door-exit-evidence.py"
+      ],
+      "tags": [
+        "conductor",
+        "front-door",
+        "f5",
+        "pre-flight",
+        "dc-115",
+        "dc-112",
+        "not-exit-evidence"
+      ],
+      "outcome": "success",
+      "goal": "Measure, before the exit run, every live dependency the exit run has: the pinned adapter starting, observed auth arriving, worktree provisioning from inside a linked worktree, coord genuinely absent, and whether the linked-worktree shape scores comparable.",
+      "done_when": "A governed run rooted in the linked worktree has closed, its scored_episode_cell row read, and either IsComparable == true is recorded or the Not Scored verdict has been escalated as Ruling 17's EvaluatorIntegrity trip.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-11T13:18:47Z",
+      "duration_seconds": 1812.0,
+      "git": {
+        "sha": "1374401d171b1ec6be5d56c25b1d1e00608abc18",
+        "short": "1374401d1",
+        "branch": "feature/exit-evidence",
+        "pushed": true
       }
     }
   ],
