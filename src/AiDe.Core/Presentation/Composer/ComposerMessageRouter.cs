@@ -120,6 +120,22 @@ public sealed class ComposerMessageRouter
         _revisions.Clear();
     }
 
+    /// <summary>
+    /// The host declared a navigation: the document that reported ready is being replaced, so the
+    /// next <c>editor.ready</c> is a <b>new page's mount</b>, not a duplicate.
+    /// </summary>
+    /// <remarks>
+    /// The once-gate in <see cref="Ready"/> is per <b>document</b>, not per surface (DC-138): only the
+    /// host can start a navigation, so only the host resets it — nothing in the page's vocabulary
+    /// reaches this method. The per-field revisions go with it: a new document counts from its own
+    /// 1, and the old page's high-water marks would drop every keystroke as "not strictly greater".
+    /// </remarks>
+    public void BeginNavigation()
+    {
+        IsReady = false;
+        _revisions.Clear();
+    }
+
     /// <summary>Routes one message. Never throws.</summary>
     /// <param name="sourceUri">The frame's own URI, as WebView2 reported it.</param>
     /// <param name="json">The raw message body.</param>
