@@ -6672,6 +6672,58 @@ window.DOCS_INDEX = {
       "sourceSha256": "db224bf7106c094b4c7a3e4f54182436c18f5f3f712a52021fde24f07fc3dcef"
     },
     {
+      "id": "plan-addendum-c-modes",
+      "path": "docs/plans/addendum-c-modes.md",
+      "title": "Execution graph — F5 to the gesture boundary, and Addendum C (modes tied to use cases)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "Two tracks planned as one graph. F5 is independent and runs at the head to the operator-gesture boundary Ruling 49 fixes. Addendum C is a serial chain by real data and decision edges (specify → ui-design → define-architecture → prepare-for-coordination), so the optimization is not width but pulling three things off the chain to its head: the Owner's vocabulary-and-phasing ruling, the current-state inventory, and the architecture recovery. ADR-0017's body-swap Explorer is the decision Addendum C contests, and it is named before any spec is written.",
+      "tags": [
+        "plan",
+        "execution-graph",
+        "addendum-c",
+        "modes",
+        "use-cases",
+        "f5",
+        "coordination",
+        "ui-design"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-ui-and-windowing",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-graph-and-loop-engineering",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Stage 9 — Before and after",
+          "mermaid": "graph LR\n  F5a[F5a commit + gates<br/>sonnet] --> H1((operator gesture)) --> F5b[F5b discharge clauses<br/>opus]\n  R0[R0 Owner ruling<br/>fable] --> S1[S1 /specify<br/>opus]\n  M0[M0 inventory + baseline<br/>sonnet] --> S1\n  M0 --> D1\n  M0 --> A1\n  S1 --> D1[D1 /ui-design<br/>opus] --> A1[A1 /define-architecture<br/>opus] --> P1[P1 /prepare-for-coordination<br/>opus] --> X{{dispatch under P1's contract}}"
+        }
+      ],
+      "sourceSha256": "a0ce3d9c463dcc3f2a431f95f12acb45b92d1c26588f2b3b8f8798d8ef54303e"
+    },
+    {
       "id": "plan-agentic-watcher-substrate",
       "path": "docs/plans/agentic-watcher-substrate.md",
       "title": "Execution Graph - Loomkeeper Knowledge, Specification, and UI",
@@ -13138,5 +13190,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d78139c0fa4946e9604a9ffeb886ea11b29cfe6b45e4dd56cf60adf32fc8081c"
+  "graphSha256": "e3ff0b2c438359f5229f17a07548b43a37a08b2d6168c1c0b6f86a83572d5c29"
 };
