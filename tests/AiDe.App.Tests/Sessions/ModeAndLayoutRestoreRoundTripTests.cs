@@ -14,8 +14,18 @@ namespace AiDe.App.Tests.Sessions;
 /// prevented is a document that reopens Console-default when Terminal was active, and that failure
 /// lives on the disk boundary.
 /// </remarks>
+/// <remarks>
+/// <b>Registers the Terminal row Ruling 45 cut from <c>BuiltIn</c>.</b> The mechanism under test
+/// here needs a SECOND canvas mode to exist at all; which modes the product ships is a different
+/// question, and Ruling 45 answered it by cutting a row whose content Phase 1 cannot bind. Every
+/// assertion below is unchanged — the proof survives the cut rather than being weakened by it, which
+/// is also Ruling 22's clause re-proven against a test-registered mode.
+/// </remarks>
+[Collection(CanvasModes.Name)]
 public sealed class ModeAndLayoutRestoreRoundTripTests : IDisposable
 {
+    private readonly TerminalModeForTests _terminal = new();
+
     private readonly string _root = Path.Combine(
         Path.GetTempPath(), "aide-f2-restore-" + Guid.NewGuid().ToString("N"));
 
@@ -25,6 +35,8 @@ public sealed class ModeAndLayoutRestoreRoundTripTests : IDisposable
 
     public void Dispose()
     {
+        _terminal.Dispose();
+
         try { Directory.Delete(_root, recursive: true); } catch (IOException) { }
     }
 

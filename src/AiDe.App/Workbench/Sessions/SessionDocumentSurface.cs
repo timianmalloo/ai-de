@@ -52,6 +52,16 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     private readonly ColumnDefinition _canvasSplitterColumn = new() { Width = new GridLength(0) };
     private readonly ColumnDefinition _secondaryColumn = new();
     private readonly StackPanel _tabStrip = new() { Orientation = System.Windows.Controls.Orientation.Horizontal };
+
+    // MS2 — the one-mode form of the strip. Not a tab with nothing to switch to: the pane title, in
+    // the same 12px/600/0.04em treatment every other pane header uses, so a single-mode canvas reads
+    // as native rather than as a tab bar with one tab.
+    private readonly TextBlock _paneTitle = new()
+    {
+        FontSize = 12,
+        FontWeight = FontWeights.SemiBold,
+        VerticalAlignment = VerticalAlignment.Center,
+    };
     private readonly ToggleButton _splitToggle = new();
     private readonly Border _permissionBanner = new();
     private readonly TextBlock _permissionText = new();
@@ -114,8 +124,27 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     public ComposerSurface Composer { get; }
 
     /// <summary>The mode captions currently offered, in catalog order. No placeholder is ever added.</summary>
+    /// <remarks>
+    /// Empty when the strip is in its one-mode form (MS2), because there are no tabs then — see
+    /// <see cref="ModeStripTitle"/>. A caption list that reported one tab would be describing a
+    /// control the pane does not render.
+    /// </remarks>
     public IReadOnlyList<string> ModeTabs =>
-        [.. _tabStrip.Children.OfType<ToggleButton>().Select(b => (string)b.Content)];
+        _tabStrip.Visibility == Visibility.Visible
+            ? [.. _tabStrip.Children.OfType<ToggleButton>().Select(b => (string)b.Content)]
+            : [];
+
+    /// <summary>
+    /// The pane title the strip shows at ONE mode (MS2), or null when it is showing tabs.
+    /// </summary>
+    /// <remarks>
+    /// Exposed because the two forms of the strip are a design rule with an oracle, not a rendering
+    /// detail: at one mode the honest form is the title every other pane uses, because a canvas mode
+    /// carries no name, no close control and no drag handle of its own — which is why MS5 says the
+    /// "single-surface stacks keep their tab strip" rule does not reach this strip.
+    /// </remarks>
+    public string? ModeStripTitle =>
+        _paneTitle.Visibility == Visibility.Visible ? _paneTitle.Text : null;
 
     /// <summary>The rendered composer share of the paired zone — what the splitter actually shows.</summary>
     public double RenderedComposerWeight => _composerColumn.Width.Value;
@@ -310,8 +339,18 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
 
     private DockPanel BuildCanvasZone()
     {
+        // MS1 — ONE 28px ROW WHOSE GEOMETRY NEVER CHANGES. Only its POPULATION changes: the title
+        // at one mode, the tab strip and the split control at two or more. Neither form is a
+        // degraded version of the other, and the transition is a population change, not a layout
+        // change — so nothing below this line moves when a mode is registered.
         AutomationProperties.SetName(_tabStrip, "Canvas modes");
-        var header = new DockPanel { Margin = new Thickness(10, 8, 10, 6) };
+        _paneTitle.Text = Model.Title;
+        _paneTitle.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+        AutomationProperties.SetName(_paneTitle, "Canvas");
+
+        var header = new DockPanel { Margin = new Thickness(10, 8, 10, 6), MinHeight = 28 };
+        DockPanel.SetDock(_paneTitle, Dock.Left);
+        header.Children.Add(_paneTitle);
         DockPanel.SetDock(_tabStrip, Dock.Left);
         header.Children.Add(_tabStrip);
 
@@ -465,9 +504,24 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
 
         // Guarded, because assigning IsChecked raises Click's sibling events; without it a render
         // triggered BY a split would toggle the split straight back.
+        // MS3 — the split control APPEARS at two or more modes, bound to the mode count rather than
+        // hard-coded. Registering a mode is adding a row; nothing here is edited to make the control
+        // arrive. The count is the document's own mode list, which is the catalog's size as the
+        // shell hands it over (WorkbenchShell.cs, where the document is built from
+        // CanvasModeCatalog.All) — one source, read once, rather than a control that consults a
+        // static while rendering a list it was given.
+        //
+        // Visibility, not IsEnabled: a disabled control announcing a capability the product does not
+        // have is the placeholder AR3 removes from the rail, and it would be the same defect here.
+        var many = Model.AvailableModes.Count > 1;
+
+        _paneTitle.Visibility = many ? Visibility.Collapsed : Visibility.Visible;
+        _tabStrip.Visibility = many ? Visibility.Visible : Visibility.Collapsed;
+        _splitToggle.Visibility = many ? Visibility.Visible : Visibility.Collapsed;
+
         _reflectingSplitToggle = true;
         _splitToggle.IsChecked = Model.IsSplit;
-        _splitToggle.IsEnabled = Model.AvailableModes.Count > 1;
+        _splitToggle.IsEnabled = many;
         _reflectingSplitToggle = false;
     }
 

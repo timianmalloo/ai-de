@@ -62,10 +62,28 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0"
+            <StackPanel x:Name="ActivityRail"
+                        Grid.Column="0"
                         Background="{StaticResource SurfaceSunkenBrush}"
                         KeyboardNavigation.TabNavigation="Once"
                         KeyboardNavigation.DirectionalNavigation="Cycle">
+                <!--  AR2 — THE ONE PRIMARY ACTION, above the group and separated from it. The rail
+                      holds DESTINATIONS (AR1); "new session" is a verb, so it does not join them,
+                      and the accent fill is reserved for exactly this (DESIGN.md, icon system).
+                      It runs the SAME catalog command as File -> New Session, so there is one door
+                      and not a second one that can drift from it (AR5).  -->
+                <Button x:Name="NewSessionRailButton" Click="OnNewSessionFromRail"
+                        Margin="6,8,6,4" Height="44" Style="{StaticResource RoundedButton}"
+                        AutomationProperties.Name="New session"
+                        Background="{StaticResource AccentBrush}"
+                        BorderThickness="0"
+                        Foreground="{StaticResource SurfaceSunkenBrush}"
+                        ToolTip="New session &#8212; Ctrl+N">
+                    <Path Width="22" Height="22" Stretch="Uniform" Data="{StaticResource IconAdd}"
+                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                          StrokeThickness="1.8" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                </Button>
+                <Border Height="1" Margin="12,4,12,6" Background="{StaticResource BorderBrush}" />
                 <!--  Roving tab-stop: Tab lands on the rail once; Up/Down arrows move between its
                       buttons (DirectionalNavigation=Cycle), the standard toolbar/activity-bar idiom.  -->
                 <!--  Icon-only vertical navigation rail (VS Code / JetBrains idiom): the 56px column
@@ -87,63 +105,18 @@
                               StrokeThickness="1.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                     </Button>
                 </Grid>
-                <!-- IsEnabled=False, and it is the whole fix. ShellViewMode declares two modes; this
-                     rail declared four, so three buttons were styled exactly like the working one,
-                     carried a ToolTip promising a mode and an AutomationProperties.Name announcing
-                     one, and did nothing at all on click - not even the "not available in this
-                     build" the command layer says. Silence is the failure mode the disclosure work
-                     exists to remove, and an inert control is a promise made in the UI.
+                <!--  AR3 — A RAIL ITEM IS PRESENT ONLY IF IT DOES SOMETHING. Three buttons used to
+                      sit here, IsEnabled="False", announcing "Coordinate", "Compose" and "Audit" -
+                      modes ShellViewMode does not have. Disabling them removed the lie and kept the
+                      dead UI: at rest they were the same 44x44 pill in the same muted foreground as
+                      the one that works, so "none of these icons do anything" was a fair reading of
+                      a rail where three of four did not.
 
-                     Disabling is what makes it honest without deciding the product question: WPF
-                     drops a disabled button from the tab order and reports it as disabled to
-                     assistive technology, so nobody is told a button exists and left to discover by
-                     pressing it that it is a no-op. Whether Coordinate is BUILT or REMOVED is the
-                     user's call and is not made here. -->
-                <Button Margin="6,4" Height="44" Style="{StaticResource RoundedButton}" IsEnabled="False"
-                        AutomationProperties.Name="Coordinate" Background="Transparent" BorderThickness="0"
-                        Foreground="{StaticResource TextMutedBrush}" ToolTip="Coordinate — not in this build">
-                    <Path Width="22" Height="22" Stretch="Uniform" Data="{StaticResource IconCoordinate}"
-                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                          StrokeThickness="1.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
-                </Button>
-                <!-- IsEnabled=False, and it is the whole fix. ShellViewMode declares two modes; this
-                     rail declared four, so three buttons were styled exactly like the working one,
-                     carried a ToolTip promising a mode and an AutomationProperties.Name announcing
-                     one, and did nothing at all on click - not even the "not available in this
-                     build" the command layer says. Silence is the failure mode the disclosure work
-                     exists to remove, and an inert control is a promise made in the UI.
-
-                     Disabling is what makes it honest without deciding the product question: WPF
-                     drops a disabled button from the tab order and reports it as disabled to
-                     assistive technology, so nobody is told a button exists and left to discover by
-                     pressing it that it is a no-op. Whether Compose is BUILT or REMOVED is the
-                     user's call and is not made here. -->
-                <Button Margin="6,4" Height="44" Style="{StaticResource RoundedButton}" IsEnabled="False"
-                        AutomationProperties.Name="Compose" Background="Transparent" BorderThickness="0"
-                        Foreground="{StaticResource TextMutedBrush}" ToolTip="Compose — not in this build">
-                    <Path Width="22" Height="22" Stretch="Uniform" Data="{StaticResource IconCompose}"
-                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                          StrokeThickness="1.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
-                </Button>
-                <!-- IsEnabled=False, and it is the whole fix. ShellViewMode declares two modes; this
-                     rail declared four, so three buttons were styled exactly like the working one,
-                     carried a ToolTip promising a mode and an AutomationProperties.Name announcing
-                     one, and did nothing at all on click - not even the "not available in this
-                     build" the command layer says. Silence is the failure mode the disclosure work
-                     exists to remove, and an inert control is a promise made in the UI.
-
-                     Disabling is what makes it honest without deciding the product question: WPF
-                     drops a disabled button from the tab order and reports it as disabled to
-                     assistive technology, so nobody is told a button exists and left to discover by
-                     pressing it that it is a no-op. Whether Audit is BUILT or REMOVED is the
-                     user's call and is not made here. -->
-                <Button Margin="6,4" Height="44" Style="{StaticResource RoundedButton}" IsEnabled="False"
-                        AutomationProperties.Name="Audit" Background="Transparent" BorderThickness="0"
-                        Foreground="{StaticResource TextMutedBrush}" ToolTip="Audit — not in this build">
-                    <Path Width="22" Height="22" Stretch="Uniform" Data="{StaticResource IconAudit}"
-                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                          StrokeThickness="1.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
-                </Button>
+                      They are DELETED rather than re-enabled because whether those modes get built
+                      is a product decision and an absent row is the honest state of one that has not
+                      been made. Explorer stays: it is the ONLY door to the Knowledge Explorer in the
+                      product, and the instruction as written ("get rid of them") would have removed
+                      it along with the placeholders.  -->
             </StackPanel>
 
             <!--  The docking host is injected by the composition root, not declared here: the

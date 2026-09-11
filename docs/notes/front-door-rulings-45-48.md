@@ -132,6 +132,30 @@ so **this product behaviour currently has no oracle at all**.
    needing a ruling*, with the control being that a review's **"needs an Owner nod"** phrase becomes
    a **plan floor node**, not prose.
 
+### CORRECTION, 2026-09-11 — this ruling's premise does not hold for the running path
+
+**The ruling's reasoning cited coverage that does not cover the product.** It said
+`StackState.Maximized` and `workbench.maximizePane` are *"pre-existing and tested"*, naming
+`WorkbenchLayoutTests.cs:285-311` and `WorkbenchControllerTests.cs:171-180`. Node U2 opened them:
+both construct **`new LayoutService()`**, the tree service. The shell constructs
+**`new ZoneBackedLayoutService()`** (`WorkbenchShell.cs:113`), whose projection builds every stack
+at the default `Docked` and hands `Layout` an **always-empty** maximize memo
+(`ZonesToTree.cs:67` — `ImmutableDictionary<string, StackState>.Empty`). **`StackState` does not
+round-trip, so `Maximized` is unobservable in this product.**
+
+Swept: **66 tests construct the tree service, 8 construct the one the shell runs.**
+
+**The ruling itself stands** — maximize-on-create is still ratified, and the behaviour still
+arrives, because `ZoneLayoutService.Maximize` really does minimise siblings and `ZonesToTree`
+renders that by omitting a collapsed zone. What was wrong was the *evidence* the ruling rested on,
+which I supplied. The condition saved it: demanding a red-first oracle is what exposed the premise,
+because the obvious assertion went red against a stub and **stayed red against the real body**. The
+shipped oracle observes the effect `DESIGN.md` promises rather than the unobservable state.
+
+Registered as **DC-135**. The lesson for every future ruling: *"pre-existing and tested"* must name
+**which implementation** the coverage constructs, or it ratifies a property of code that does not
+ship.
+
 **Constrains.** Admits maximize-on-create as the delivery of feedback item 3's *"full window"*
 request. Freezes `ShellViewMode` at two values. Cuts any *"third shell mode"* reading.
 
@@ -182,9 +206,25 @@ legacy IDE mockups until `docs/reviews/ui-mockups-craft-gate.md` dispositions th
 4. Register the defect class: a gate whose target directory includes generated output. *(Filed as the
    2026-09-11 recurrence of **DC-006**.)*
 
-**Confidence:** Verified on the script, the workflow and the corpus. **Flagged:** the node's
-"all 51 from `bin/Debug`" attribution, and the **13-vs-66 Majors discrepancy, which is recorded as
-NOT RECONCILED rather than resolved.**
+**Confidence:** Verified on the script, the workflow and the corpus. The **13-vs-66 Majors discrepancy remains NOT RECONCILED** rather than resolved — the scopes were never compared.
+
+### Condition 2, discharged 2026-09-11 — and the arithmetic is exact
+
+Re-measured with `--json`, per target, over committed source:
+
+| Target | Findings | Severity | From build output |
+| --- | ---: | --- | ---: |
+| `docs/mockups/session-front-door.html` | 5 | all Minor | 0 |
+| `DESIGN.md` | 0 | — | 0 |
+| **`src/AiDe.App/Web`** (committed source alone) | **17** | **all Major** | **0** |
+
+**51 = 17 × 3** — the source file, its `bin/Debug` copy and its `bin/Release` copy. So the node's attribution was wrong in the way the Owner said (the findings are not *from* `bin/`), and right about the magnitude for a reason nobody had stated: **every finding was reported three times**. All 17 are real and live in committed source. The 51 is not carried forward.
+
+### A deviation from this ruling's STATED MECHANISM, recorded rather than taken quietly
+
+The ruling admits *"a `--fail-on <severity>` option in `ui-craft-gate.py`"*. **That was not built.** `ui-craft-gate.py` lives in `docs/ai-forward-pack/`, whose entire file history is pack-revision commits; `pack-apply.py` three-way-merges repo-local deviations and, **on conflict, parks the incoming text under `docs/ai-forward-pack/conflicts/`** for manual reconciliation. A threshold this repository's CI depends on should not live where a future pack update can send it to a conflicts directory.
+
+Instead: **`tools/verify-ui-craft-floor.py`**, a repo-owned wrapper — the shape `tools/regenerate-derived.py` and `tools/verify-derived-views.py` already use for pack scripts. It invokes the pack script with `--json` and applies the threshold itself. **The ruling's substance is unchanged** — corpus pinned to committed source first, threshold scoped to the artifact under review — and it asserts two things the pack script cannot: a gated target under a build-output directory is **refused outright** rather than filtered (a gate that silently drops part of its corpus is the defect one level down), and an empty corpus is refused (CD9). Wired into the **every-push** ring, not the weekly one, because a floor that runs weekly is not a merge gate.
 
 ---
 

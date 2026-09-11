@@ -108,7 +108,7 @@ public sealed class PromptDraftSurface : ContentControl
             Padding = new Thickness(12, 10, 12, 10),
             FontSize = 13.5,
         };
-        _text.SetResourceReference(BackgroundProperty, "SunkenBrush");
+        _text.SetResourceReference(BackgroundProperty, "SurfaceSunkenBrush");
         AutomationProperties.SetName(_text, "Prompt draft");
         _text.TextChanged += (_, _) =>
         {

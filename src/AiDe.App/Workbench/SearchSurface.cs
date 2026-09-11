@@ -60,7 +60,7 @@ public sealed class SearchSurface : ContentControl, IHasDisplayName
 
         _query = new TextBox { Padding = new Thickness(6, 4, 6, 4) };
         AutomationProperties.SetName(_query, "Search the workspace");
-        _query.SetResourceReference(BackgroundProperty, "SunkenBrush");
+        _query.SetResourceReference(BackgroundProperty, "SurfaceSunkenBrush");
         _query.SetResourceReference(ForegroundProperty, "TextBrush");
 
         // Debounced, not per-keystroke: the provider opens workspace files for the content half of the

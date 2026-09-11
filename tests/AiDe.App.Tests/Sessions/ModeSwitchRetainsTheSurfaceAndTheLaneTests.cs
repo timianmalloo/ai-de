@@ -26,8 +26,20 @@ namespace AiDe.App.Tests.Sessions;
 /// ordinals. The third is the one only a live lane can pose: a rebuilt console starts its history
 /// wherever it was built, so every ordinal before that is missing.</para>
 /// </remarks>
-public sealed class ModeSwitchRetainsTheSurfaceAndTheLaneTests
+/// <remarks>
+/// <b>Registers the Terminal row Ruling 45 cut from <c>BuiltIn</c>.</b> The mechanism under test
+/// here needs a SECOND canvas mode to exist at all; which modes the product ships is a different
+/// question, and Ruling 45 answered it by cutting a row whose content Phase 1 cannot bind. Every
+/// assertion below is unchanged — the proof survives the cut rather than being weakened by it, which
+/// is also Ruling 22's clause re-proven against a test-registered mode.
+/// </remarks>
+[Collection(CanvasModes.Name)]
+public sealed class ModeSwitchRetainsTheSurfaceAndTheLaneTests : IDisposable
 {
+    private readonly TerminalModeForTests _terminal = new();
+
+    public void Dispose() => _terminal.Dispose();
+
     /// <summary>Events delivered before the switches, so the rebuild has real history to lose.</summary>
     private const int Settled = 3;
 
