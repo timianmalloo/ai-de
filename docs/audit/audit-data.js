@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T02:26:32Z",
+  "generated": "2026-09-11T02:42:37Z",
   "audit": [
     {
       "actor": null,
@@ -11251,6 +11251,52 @@ window.AUDIT_DATA = {
         "short": "8eb31aabf",
         "branch": "feature/composer",
         "pushed": true
+      }
+    },
+    {
+      "id": "al-01M275GXM1VAQA1N3EQYR3AY2Y",
+      "shortname": "TH2 — spawn containment: the unchecked assign, the job handle's lifetime, and the engine tree the product leaked",
+      "datetime": "2026-09-11T02:42:37Z",
+      "session": "conductor-front-door-th2",
+      "prompt": "Node TH2 — four sites, one of them product code. An SRE investigation has done the diagnosis and quoted every line; you are implementing, not re-deriving. Site 1: AssignProcessToJobObject is UNCHECKED at both shipped C# call sites. Site 2: the job handle's lifetime at TerminalHostLauncher.cs:58. Site 3: the product leaks an entire engine tree (AcpEngineProcess.cs:117). Site 4: MSBuild node reuse in verify-test-run.py. Plus one judgement on the CREATE_SUSPENDED comment. Red-first, and the abnormal path is the one that counts.",
+      "summary": "Four spawn-containment sites, red-first on the two that could be observed.\n\nSITE 1 - AssignProcessToJobObject was UNCHECKED at both shipped C# call sites. RED, and the red was\na PASSING test: against a job whose object had been closed the call returned false, set\nERROR_INVALID_HANDLE (6), raised nothing, and left the child running outside the job. The raw import\nis now private; ConPtyInterop.AssignProcessToJob (Sandbox.cs:86-87's shape, not a fourth spelling) is\nthe only route to it, and InternalsVisibleTo does not reach private members - a future call site\ncannot discard the answer because the answer is no longer offered. GREEN:\nJobContainmentTests.AnAssignThatCannotHappenIsNotSilent.\n\nSITE 2 - TerminalHostLauncher created the job before the try, with two throwing statements between\nthe handle and the only code that closes it. All three steps are now inside the try; the finally is\nzero-guarded.\n\nSITE 3 - THE DELIVERABLE. AcpEngineProcess spawned the ACP engine with no job object and reaped in\nDispose only; GovernedRunHost.cs:65 reaches it through `using`, and a killed process runs nothing.\nMeasured from OUTSIDE the process that leaks (AcpProbe --host-engine): host killed with\nTerminateProcess, engine and grandchild BOTH STILL RUNNING 5,000 ms later. After: engine gone 7 ms,\ngrandchild 8 ms. The first version of that oracle proved the wrong thing - a child blocked on\nReadToEnd dies when its parent's pipe breaks, so the tree looked contained while nothing contained\nit. Stdin EOF is a mitigation, not containment.\n\nSITE 4 - verify-test-run.py ran dotnet test with no node-reuse control. MSBUILDDISABLENODEREUSE=1 is\nset in the subprocess ENVIRONMENT, not on the command line: this gate's argv is read by other things.\n\nJUDGEMENT ASKED FOR, NOT IMPLEMENTED: ConPtyTerminalSession's CREATE_SUSPENDED comment is wrong on\nits stated reason - \"the process never starts if the assign throws\" is not a failure mode, it is the\nrefusal bounded_process.py:224-226 already ships as correct. The code is unchanged; the comment now\nsays the window is accepted and UNMEASURED, and names PROC_THREAD_ATTRIBUTE_JOB_LIST as the end\nstate that removes the window and the resume together.\n\nRegister: DC-123 gains the outer-ring recurrence in product code; DC-125 is new (a call that\nESTABLISHES a safety property reports failure by return value and the return value is discarded),\nswept across every bool-returning P/Invoke in src/, tests/ and spikes/.\n\nCounts MEASURED on this tree after rebasing onto the feature/composer merge, each as its own run:\nCore 2206, portable 2052, non-portable 154, App 495. 2052 + 154 = 2206 by observation.\nverify-test-run.py --update was never run. The brief's stated floors (App 456, Core 2064 = 1912 +\n152) were true when it was written and were superseded mid-node by that merge.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "Claude Code",
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "src/AiDe.Core/AgentPlane/AcpEngineProcess.cs",
+        "src/AiDe.Core/Terminal/ConPtyInterop.cs",
+        "src/AiDe.Core/Terminal/ConPtyTerminalSession.cs",
+        "tests/AiDe.Core.Tests/TerminalHostLauncher.cs",
+        "tests/AiDe.Core.Tests/JobContainmentTests.cs",
+        "tests/AiDe.Core.AcpProbe/Program.cs",
+        "tools/verify-test-run.py",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "containment",
+        "job-object",
+        "process-lifetime",
+        "DC-123",
+        "DC-125"
+      ],
+      "outcome": "success",
+      "goal": "Fix four spawn-containment sites with a red-first observation for each of the two that can be observed, and rule on the CREATE_SUSPENDED comment without changing that code.",
+      "done_when": "The checked assign is the only route; the job handle cannot leak; the engine tree dies with a KILLED host, measured from outside it; the test gate sets MSBUILDDISABLENODEREUSE; counts reported; named gates bare exit 0; branch pushed and CI read back.",
+      "tier": "T1",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "1583e045d0f304db5943178d87d163adaf69b814",
+        "short": "1583e045d",
+        "branch": "fix/spawn-containment",
+        "pushed": null
       }
     }
   ],
