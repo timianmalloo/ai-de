@@ -27,6 +27,13 @@ namespace AiDe.App.Tests;
 /// <para><b>Why it asserts about enabled buttons rather than about three names.</b> Naming the three
 /// would pass the moment somebody adds a fourth — the defect-report-shaped test DC-076 is about. The
 /// rule is the invariant: if it is enabled and announced, it must be able to act.</para>
+///
+/// <para><b>The guard counts RAIL buttons now, and that is the point of the rewrite.</b> It used to
+/// assert <c>buttons.Count &gt;= 4</c> over every Button in the window, with the reason <i>"the mode
+/// rail alone has four"</i> — which tied a DC-016 emptiness guard to a product decision that had not
+/// been made. Deleting three dead placeholders, which is the correct change, turned it red for a
+/// reason that had nothing to do with what it measures. A guard should fail when the scan finds
+/// nothing, never when the surface under review gets smaller.</para>
 /// </remarks>
 public sealed class RailButtonsDoNotLieTests
 {
@@ -34,6 +41,13 @@ public sealed class RailButtonsDoNotLieTests
         "http://schemas.microsoft.com/winfx/2006/xaml/presentation";
 
     private static readonly XNamespace Xaml = "http://schemas.microsoft.com/winfx/2006/xaml";
+
+    /// <summary>The rail's own buttons — the surface this file is a review of.</summary>
+    private static List<XElement> RailButtons() =>
+        [.. XDocument.Load(MainWindowXaml())
+            .Descendants()
+            .First(e => (string?)e.Attribute(Xaml + "Name") == "ActivityRail")
+            .Descendants(Presentation + "Button")];
 
     private static string MainWindowXaml()
     {
@@ -60,10 +74,19 @@ public sealed class RailButtonsDoNotLieTests
             .ToList();
 
         // The DC-016 guard. A walk that found nothing would pass this file while the rail was full
-        // of dead controls.
-        Assert.True(buttons.Count >= 4,
-            $"found {buttons.Count} Button element(s) in MainWindow.xaml; the mode rail alone has "
-            + "four, so this test is reading the wrong document rather than a correct one");
+        // of dead controls. Two is the floor because the rail is, by AR1/AR2, at least one
+        // destination and one primary action — and because a floor that encodes how many
+        // destinations the product HAS is a floor that fails when the product changes.
+        var rail = RailButtons();
+
+        Assert.True(rail.Count >= 2,
+            $"found {rail.Count} Button element(s) inside the ActivityRail; the rail holds at least "
+            + "its primary action and one destination, so this test is reading the wrong document "
+            + "rather than a correct one");
+
+        Assert.True(buttons.Count >= rail.Count,
+            "the whole-window scan found fewer buttons than the rail scan, which cannot be true of "
+            + "the same document");
 
         var inert = buttons
             .Where(b => (string?)b.Attribute("IsEnabled") != "False")
@@ -80,6 +103,29 @@ public sealed class RailButtonsDoNotLieTests
             + "working ones, and have no Click, no Command and no x:Name by which any code could "
             + "reach them — pressing one does nothing and says nothing. A control that looks "
             + "operable and is not is a promise made in the UI: " + string.Join(", ", inert));
+    }
+
+    /// <summary>
+    /// AR3 — a rail item is present only if it does something.
+    /// </summary>
+    /// <remarks>
+    /// Disabling the three placeholders removed the LIE and kept the dead UI. At rest a disabled
+    /// 44×44 pill in a muted foreground is indistinguishable from the one item that works, which is
+    /// why "none of these icons do anything" was a fair reading of a rail where three of four did
+    /// not. The rail is destinations; a destination that does not exist is not a greyed-out
+    /// destination, it is an absent one.
+    /// </remarks>
+    [Fact]
+    public void NoRailItemIsAPlaceholder()
+    {
+        var inert = RailButtons()
+            .Where(b => (string?)b.Attribute("IsEnabled") == "False")
+            .Select(b => (string?)b.Attribute("AutomationProperties.Name") ?? "(unnamed)")
+            .ToList();
+
+        Assert.True(inert.Count == 0,
+            "these rail items are disabled placeholders announcing a mode the product does not "
+            + "have. At rest they are the same pill as the item that works: " + string.Join(", ", inert));
     }
 
     [Fact]

@@ -209,6 +209,17 @@ public static class WorkbenchCommandCatalog
             "Opens the workspace diagnostics pane: the last re-index's analysis coverage (what was not analysed, grouped by category) and the daemon state.",
             Menu: "_View"),
 
+        // AR5 - NO CAPABILITY'S ONLY DOOR IS AN ICON IN THE RAIL. Explorer mode had exactly one
+        // caller, the rail button's Click handler, and no catalog row - so the Knowledge Explorer
+        // was unreachable from the menu, from the palette and from the keyboard, and deleting one
+        // 44x44 button would have removed a whole mode from the product. A catalog row is menu,
+        // palette and gesture in one change.
+        new("shell.toggleExplorer", "Explorer: graph and reader", "Ctrl+K, E",
+            OperationKind: "",   // a shell view mode, not a tree mutation
+            "Swaps the body between the workbench and the full-body Explorer. The workbench is "
+            + "retained, never rebuilt, so a running terminal keeps running while Explorer is open.",
+            Menu: "_View"),
+
         new("workbench.focusCanvas", "Focus graph canvas", "Ctrl+K, G",
             string.Empty,
             "Moves focus into the graph. Tab off either end or press Escape to come back.",

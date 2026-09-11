@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Interop;
@@ -81,6 +80,10 @@ public partial class MainWindow : Window
         // sheet and the workspace chooser are both windows, and only a Window can show one.
         Shell.Controller.NewSessionRequested = NewSession;
 
+        // AR5 — Explorer is a catalog command, so it reaches the menu and the palette and is no
+        // longer reachable only by pressing one 44×44 icon.
+        Shell.Controller.ExplorerToggleRequested = ToggleExplorerMode;
+
         // Built from the command catalog, so the menu cannot offer something the product no longer
         // does — and every item shows its chord, which is how the chord becomes discoverable.
         RebuildMenu();
@@ -157,7 +160,8 @@ public partial class MainWindow : Window
                     new Workbench.Sessions.RecentSessionEntry(
                         created.Config.SessionId, created.Config.Name, created.Config.WorkspaceId));
 
-                Shell.Announcer.Announce(Shell.OpenSessionDocument(created.Config));
+                var opened = Shell.OpenSessionDocument(created.Config);
+                Shell.Announcer.Announce(GiveTheNewSessionTheWholeTree(created.Config.SessionId, opened));
                 RebuildMenu();
             });
 
@@ -286,8 +290,80 @@ public partial class MainWindow : Window
         Shell.Adapter.Render();
     }
 
-    /// <summary>Toggles the shell between the workbench and the full-window Explorer (ADR-0017 primary-view-mode).</summary>
-    private void OnToggleExplorer(object sender, RoutedEventArgs e) => _mode.Toggle();
+    /// <summary>
+    /// The rail's Explorer item, routed through the catalog command rather than calling the mode
+    /// controller directly — one door, so the rail and the palette cannot drift apart (AR5).
+    /// </summary>
+    private void OnToggleExplorer(object sender, RoutedEventArgs e) =>
+        Shell.Controller.Execute("shell.toggleExplorer");
+
+    /// <summary>The rail's one primary action, on the same catalog command as File → New Session.</summary>
+    private void OnNewSessionFromRail(object sender, RoutedEventArgs e) =>
+        Shell.Controller.Execute("session.new");
+
+    /// <summary>Swaps the body between the workbench and Explorer, and says which one is showing.</summary>
+    private string ToggleExplorerMode()
+    {
+        _mode.Toggle();
+
+        return _mode.Mode == ShellViewMode.Explorer
+            ? "Explorer: graph and reader. The workbench is retained, not closed."
+            : "Workbench. The same panes, in the arrangement you left them.";
+    }
+
+    /// <summary>
+    /// Maximizes the pane a newly created session document landed in.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>AWAITING RATIFICATION — this is a proposal in code, and it is one line to withdraw.</b>
+    /// The operator asked for New Session to give <i>"a full window view like the explorer view icon
+    /// does"</i>. That cannot be delivered by pointing a button at the Explorer path: the Explorer
+    /// icon swaps <c>ContentControl.Content</c> over a <b>two-value</b> <see cref="ShellViewMode"/>
+    /// and is full-<b>body</b>, not full-window — the menu bar, title strip, rail and status strip
+    /// all remain — and a session is a <b>dock document</b>. A4.4 and ADR-0017 say so in as many
+    /// words: <i>"Sessions are dock documents inside the Workbench, not a third shell mode."</i></para>
+    ///
+    /// <para><b>What this does instead.</b> DESIGN.md already defines a <c>maximized</c> dock state —
+    /// <i>"fills the tree; siblings are temporarily minimized and remembered as such"</i> — reached
+    /// today by <c>workbench.maximizePane</c>. Creating a session applies it to the document's own
+    /// stack. The felt experience is the one that was asked for; no third shell mode is introduced
+    /// and no ADR is reopened. <c>Restore</c> undoes what maximizing did and not what the user
+    /// did, so the arrangement survives.</para>
+    ///
+    /// <para><b>If the Owner rules otherwise</b> — either that a session really should be a third
+    /// shell mode, or that a new session should not disturb the arrangement at all — the change is
+    /// to stop calling this from <see cref="NewSession"/>. Nothing else depends on it, and the
+    /// <c>maximized</c> state remains exactly as reachable by command as it is today.</para>
+    ///
+    /// <para><b>Reopening a session deliberately does not do this.</b> Maximizing is a response to
+    /// "I just made this and I want to work in it", not a property of session documents; doing it on
+    /// every reopen would rearrange the workbench behind an operator who asked for a tab.</para>
+    /// </remarks>
+    /// <param name="sessionId">The session whose document was just opened.</param>
+    /// <param name="announcement">What opening the document already had to say.</param>
+    /// <returns>That sentence, plus what maximizing did — or unchanged, when it did nothing.</returns>
+    private string GiveTheNewSessionTheWholeTree(string sessionId, string announcement)
+    {
+        var surfaceId = Workbench.Sessions.SessionDocumentSurface.SurfaceIdFor(sessionId);
+        var stack = Shell.Service.Current.FindStackOf(surfaceId);
+
+        if (stack is null)
+        {
+            // The document did not reach the layout. Saying nothing extra is the honest outcome:
+            // the open announcement already carries whatever did happen.
+            return announcement;
+        }
+
+        var result = Shell.Service.Apply(
+            new AiDe.Core.Workbench.LayoutOperation.SetStackState(
+                stack.Id, AiDe.Core.Workbench.StackState.Maximized));
+
+        Shell.Adapter.Render();
+
+        // A refusal is announced, never swallowed — a maximize that silently did nothing is
+        // indistinguishable from a dead command (DC-011).
+        return $"{announcement} {result.Announcement}";
+    }
 
     /// <summary>Reflects the active view mode on the Explore rail item — accent bar, pill, icon colour.</summary>
     private void ReflectMode(ShellViewMode mode)
@@ -304,31 +380,14 @@ public partial class MainWindow : Window
     // FACELIFT — the window's own chrome, drawn by DWM, not by us. AllowsTransparency stays False
     // (the WPF default) so the system keeps the drop shadow and the Windows 11 rounded corners; the
     // AllowsTransparency=True path would disable both, which is the single most common modern-WPF
-    // defect (WPF-TRANSPARENCY-TRAP). Here we only opt in explicitly and darken the caption so the
-    // title bar matches the app instead of flashing a light system bar on a dark window.
+    // defect (WPF-TRANSPARENCY-TRAP).
+    //
+    // The interop moved to DarkCaption, which is now the only place a window's non-client area is
+    // decided. It used to live here and ONLY here, which is exactly why both dialogs shipped a light
+    // caption: the opt-in was a thing you had to know about rather than a thing you got (TC4).
     protected override void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);
-
-        var hwnd = new WindowInteropHelper(this).Handle;
-        if (hwnd == IntPtr.Zero)
-        {
-            return;
-        }
-
-        // A hint, not a guarantee: pre-Windows-11 and unusual composition states ignore it, and that
-        // is the correct outcome — the window is still a normal, usable window, just not rounded.
-        int dark = 1;
-        _ = DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, ref dark, sizeof(int));
-
-        int round = DWMWCP_ROUND;
-        _ = DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, ref round, sizeof(int));
+        Workbench.DarkCaption.ApplyToHandle(new WindowInteropHelper(this).Handle, round: true);
     }
-
-    private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
-    private const int DWMWA_WINDOW_CORNER_PREFERENCE = 33;
-    private const int DWMWCP_ROUND = 2;
-
-    [DllImport("dwmapi.dll", SetLastError = true)]
-    private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attribute, ref int value, int size);
 }

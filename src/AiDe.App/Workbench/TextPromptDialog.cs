@@ -1,7 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace AiDe.App.Workbench;
 
@@ -17,38 +16,22 @@ public static class TextPromptDialog
     {
         string? result = null;
 
+        // Every brush here used to be looked up by key with a HARD-CODED COLOUR AS THE FALLBACK -
+        // a second copy of the palette that drifts on its own, and a failed token lookup rendering
+        // as a plausible colour instead of as a failure (C3/TC5). The implicit defaults in App.xaml
+        // now carry all of it, so the control that needs no styling has none.
         var box = new TextBox
         {
             Text = initial,
             Padding = new Thickness(8, 6, 8, 6),
             FontSize = 14,
-            Background = Brush("SurfaceSunkenBrush", Color.FromRgb(0x0D, 0x10, 0x14)),
-            Foreground = Brush("TextBrush", Color.FromRgb(0xE4, 0xE9, 0xEF)),
-            BorderBrush = Brush("BorderBrush", Color.FromRgb(0x2A, 0x31, 0x3B)),
             BorderThickness = new Thickness(1),
-            CaretBrush = Brush("AccentBrush", Color.FromRgb(0x5B, 0x9D, 0xD9)),
         };
 
-        var window = new Window
-        {
-            Title = title,
-            Width = 360,
-            SizeToContent = SizeToContent.Height,
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            WindowStyle = WindowStyle.ToolWindow,
-            ResizeMode = ResizeMode.NoResize,
-            ShowInTaskbar = false,
-            Owner = owner,
-            Background = Brush("SurfaceRaisedBrush", Color.FromRgb(0x1A, 0x1F, 0x26)),
-        };
+        var window = DarkCaption.CreateDialog(title, owner, width: 360);
 
         var ok = new Button { Content = "Rename", IsDefault = true, MinWidth = 80, Margin = new Thickness(8, 0, 0, 0) };
         var cancel = new Button { Content = "Cancel", IsCancel = true, MinWidth = 80 };
-        if (TryFindStyle("RoundedButton", out var buttonStyle))
-        {
-            ok.Style = buttonStyle;
-            cancel.Style = buttonStyle;
-        }
 
         ok.Click += (_, _) =>
         {
@@ -65,12 +48,8 @@ public static class TextPromptDialog
         buttons.Children.Add(cancel);
         buttons.Children.Add(ok);
 
-        var label = new TextBlock
-        {
-            Text = title,
-            Foreground = Brush("TextMutedBrush", Color.FromRgb(0x98, 0xA3, 0xB2)),
-            Margin = new Thickness(0, 0, 0, 8),
-        };
+        var label = new TextBlock { Text = title, Margin = new Thickness(0, 0, 0, 8) };
+        label.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
 
         var panel = new StackPanel { Margin = new Thickness(16) };
         panel.Children.Add(label);
@@ -93,20 +72,5 @@ public static class TextPromptDialog
         };
 
         return window.ShowDialog() == true ? result : null;
-    }
-
-    private static SolidColorBrush Brush(string key, Color fallback) =>
-        Application.Current?.TryFindResource(key) as SolidColorBrush ?? new SolidColorBrush(fallback);
-
-    private static bool TryFindStyle(string key, out Style style)
-    {
-        if (Application.Current?.TryFindResource(key) is Style found)
-        {
-            style = found;
-            return true;
-        }
-
-        style = null!;
-        return false;
     }
 }

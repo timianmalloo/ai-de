@@ -72,6 +72,7 @@
         <Geometry x:Key="IconClose">M7 7l10 10M17 7 7 17</Geometry>
         <Geometry x:Key="IconSearch">M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM16 16l4.5 4.5</Geometry>
         <Geometry x:Key="IconLayout">M3.5 4.5h17v15h-17zM3.5 10h17M10 10v9.5</Geometry>
+        <Geometry x:Key="IconAdd">M12 5v14M5 12h14</Geometry>
         <Geometry x:Key="IconRefresh">M4 12a8 8 0 0 1 13.7-5.7L21 9M21 4v5h-5M20 12a8 8 0 0 1-13.7 5.7L3 15M3 20v-5h5</Geometry>
 
         <Style TargetType="Menu">

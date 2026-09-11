@@ -29,18 +29,10 @@ public static class NewSessionSheetDialog
     {
         ArgumentNullException.ThrowIfNull(sheet);
 
-        var window = new Window
-        {
-            Title = "New session",
-            Width = 520,
-            SizeToContent = SizeToContent.Height,
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            WindowStyle = WindowStyle.ToolWindow,
-            ResizeMode = ResizeMode.NoResize,
-            ShowInTaskbar = false,
-            Owner = owner,
-        };
-        window.SetResourceReference(Window.BackgroundProperty, "SurfaceRaisedBrush");
+        // Through the factory, so the CAPTION is dark too. This sheet was the measured instance of
+        // TC4: a #F9F1EF title bar with black text and a red close button, above a #12151A body,
+        // because only MainWindow ever opted into DWM's dark mode.
+        var window = DarkCaption.CreateDialog("New session", owner, width: 520);
         window.Content = Build(sheet, announce, () => window.DialogResult = true);
 
         return window.ShowDialog() == true;
