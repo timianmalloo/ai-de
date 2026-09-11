@@ -195,12 +195,7 @@ public sealed class NewSessionSheetViewModel
     /// which is the same answer <see cref="ProviderRegistry.Find"/> gives, rather than a row that
     /// renders and then refuses.
     /// </remarks>
-    public IReadOnlyList<AgentBackendRow> Backends =>
-    [
-        .. EngineCatalog.Rows
-            .SelectMany(engine => Accounts(engine.Provider)
-                .Select(account => new AgentBackendRow(engine.Id, engine.Provider, account))),
-    ];
+    public IReadOnlyList<AgentBackendRow> Backends => BackendsOf(_registry);
 
     /// <summary>The backends the operator has enabled for this session.</summary>
     public IReadOnlyList<string> EnabledBackends =>
@@ -210,12 +205,40 @@ public sealed class NewSessionSheetViewModel
     /// The enabled backends the router may bind — <c>needs-login</c> excluded (Ruling 20's
     /// "not cut" half).
     /// </summary>
-    public IReadOnlyList<string> RoutableBackends =>
+    public IReadOnlyList<string> RoutableBackends => RoutableAmong(_enabled, _registry);
+
+    /// <summary>
+    /// The backends in <paramref name="enabled"/> the router may bind against
+    /// <paramref name="registry"/> — <c>needs-login</c> excluded (§4.3).
+    /// </summary>
+    /// <remarks>
+    /// <b>One derivation, two readers (DM7).</b> The sheet derives it at create from the operator's
+    /// choices; a reopened or restored session derives it from the config's
+    /// <see cref="AiDe.Core.Sessions.SessionConfig.EnabledBackends"/> and the registry as it reads
+    /// now (INV-0009 Phase 2). A second spelling of "routable" in the binder is the shape that lets
+    /// a session bind on reopen to an engine the sheet would have refused.
+    /// </remarks>
+    public static IReadOnlyList<string> RoutableAmong(IEnumerable<string> enabled, ProviderRegistry registry)
+    {
+        ArgumentNullException.ThrowIfNull(enabled);
+        ArgumentNullException.ThrowIfNull(registry);
+
+        var chosen = enabled.ToHashSet(StringComparer.Ordinal);
+
+        return
+        [
+            .. BackendsOf(registry)
+                .Where(b => chosen.Contains(b.EngineId) && b.RoutableForThisSession)
+                .Select(b => b.EngineId)
+                .Distinct(StringComparer.Ordinal),
+        ];
+    }
+
+    private static IReadOnlyList<AgentBackendRow> BackendsOf(ProviderRegistry registry) =>
     [
-        .. Backends
-            .Where(b => _enabled.Contains(b.EngineId) && b.RoutableForThisSession)
-            .Select(b => b.EngineId)
-            .Distinct(StringComparer.Ordinal),
+        .. EngineCatalog.Rows
+            .SelectMany(engine => Accounts(registry, engine.Provider)
+                .Select(account => new AgentBackendRow(engine.Id, engine.Provider, account))),
     ];
 
     /// <summary>
@@ -369,8 +392,8 @@ public sealed class NewSessionSheetViewModel
     /// </remarks>
     public bool HealthWasReprobed => !ReferenceEquals(_registry, _initialRegistry);
 
-    private IEnumerable<ProviderAccount> Accounts(string providerId) =>
-        _registry.Rows
+    private static IEnumerable<ProviderAccount> Accounts(ProviderRegistry registry, string providerId) =>
+        registry.Rows
             .Where(r => string.Equals(r.ProviderId, providerId, StringComparison.Ordinal))
             .SelectMany(r => r.Accounts);
 }

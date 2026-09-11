@@ -192,25 +192,38 @@ public sealed class TheRunBindingComesFromTheProviderFileTests
     /// attach gate once, from one binding.
     /// </summary>
     /// <remarks>
-    /// The behavioural tests above prove the values agree for the inputs they use. This proves there
-    /// is no OTHER path — a second <c>new AttachmentGate(</c> added later, wired from a second
-    /// lookup, would go red here rather than in an affirmation nobody re-read.
+    /// <para>The behavioural tests above prove the values agree for the inputs they use. This proves
+    /// there is no OTHER path — a second <c>new AttachmentGate(</c> added later, wired from a second
+    /// lookup, would go red here rather than in an affirmation nobody re-read.</para>
+    ///
+    /// <para><b>The site moved, and did not multiply (INV-0009 Phase 2).</b> The binding lived in
+    /// <c>MainWindow.BindComposer</c> and was reachable only from New Session; it is now
+    /// <c>SessionComposerBinder</c>, reached from New Session, Reopen and the restore at
+    /// workspace-open. So the counts are asserted on the binder, the window is asserted to hold
+    /// <b>none</b> of them, and the sweep over the rest of the App excludes the binder instead of the
+    /// window.</para>
     /// </remarks>
     [Fact]
     public void TheShellConstructsOneRegistryOneSendContextAndOneAttachmentGate()
     {
         var window = SourceFile("src", "AiDe.App", "MainWindow.xaml.cs");
+        var binder = SourceFile("src", "AiDe.App", "Workbench", "Sessions", "SessionComposerBinder.cs");
 
+        // The registry is still read once, in the window, and handed to both the sheet and the binder.
         Assert.Equal(1, Occurrences(window, "new AiDe.Core.AgentPlane.ProviderRegistry("));
-        Assert.Equal(1, Occurrences(window, "new Workbench.Composer.ComposerSendContext("));
-        Assert.Equal(1, Occurrences(window, "new AiDe.Core.Presentation.Composer.AttachmentGate("));
-        Assert.Equal(1, Occurrences(window, "composer.Configure("));
+        Assert.Equal(0, Occurrences(window, "ComposerSendContext("));
+        Assert.Equal(0, Occurrences(window, "AttachmentGate("));
+        Assert.Equal(0, Occurrences(window, ".Configure("));
+
+        Assert.Equal(1, Occurrences(binder, "new ComposerSendContext("));
+        Assert.Equal(1, Occurrences(binder, "new AttachmentGate("));
+        Assert.Equal(1, Occurrences(binder, "composer.Configure("));
 
         // Both of the gate's label arguments are the binding's own members, spelled out here so a
         // later edit to either one has to change this line too.
-        Assert.Contains("binding.Provider.ProviderId", window, StringComparison.Ordinal);
-        Assert.Contains("AccountLabel: binding.Account.Label", window, StringComparison.Ordinal);
-        Assert.Contains("binding.Account.Label)", window, StringComparison.Ordinal);
+        Assert.Contains("binding.Provider.ProviderId", binder, StringComparison.Ordinal);
+        Assert.Contains("AccountLabel: binding.Account.Label", binder, StringComparison.Ordinal);
+        Assert.Contains("binding.Account.Label)", binder, StringComparison.Ordinal);
 
         // THE LAST NODE ON THE EDGE LIST REBUILDS THE REGISTRY, AND MUST CARRY NO SOURCE OF ITS OWN.
         // `GovernedRunHost` is the far end of `ComposerSendContext → GovernedRunRequest →
@@ -232,7 +245,7 @@ public sealed class TheRunBindingComesFromTheProviderFileTests
         {
             if (path.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}", StringComparison.Ordinal)
                 || path.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}", StringComparison.Ordinal)
-                || path.EndsWith("MainWindow.xaml.cs", StringComparison.Ordinal)
+                || path.EndsWith("SessionComposerBinder.cs", StringComparison.Ordinal)
                 || path.EndsWith("GovernedRunHost.cs", StringComparison.Ordinal))
             {
                 continue;

@@ -7,7 +7,9 @@ using System.Windows.Threading;
 using AiDe.App.Workbench;
 using AiDe.App.Workbench.Composer;
 using AiDe.App.Workbench.Sessions;
+using AiDe.Core.AgentPlane;
 using AiDe.Core.Presentation.Composer;
+using AiDe.Core.Presentation.Sessions;
 using AiDe.Core.Sessions;
 using AiDe.Core.Workbench;
 using Microsoft.Web.WebView2.Wpf;
@@ -379,9 +381,34 @@ internal static partial class Program
         }
 
         /// <summary>
-        /// <c>MainWindow.ReopenSessionAsync</c>'s shell half, exactly: <c>session.json</c> read back
-        /// through <c>SessionConfigStore.Load</c>, then the one call <c>Shell.OpenSessionDocument(config)</c>.
-        /// Nothing binds the composer on this path; this measures what that leaves on screen.
+        /// A provider file with one ready account for <c>claude-code</c>, as the operator's
+        /// <c>~/.aide/providers.json</c> would carry it — written to the run's own directory, never
+        /// read from the machine's.
+        /// </summary>
+        private const string ProviderFile = """
+            {
+              "adapterInstallRoot": "C:/adapters/probe",
+              "providers": {
+                "anthropic": { "auth": "subscription", "accounts": [
+                  { "label": "probe-account", "health": "ready" } ] }
+              },
+              "engines": { "claude-code": { "model": "probe-model" } }
+            }
+            """;
+
+        private static ProviderConfiguration WriteProviderFile(string root)
+        {
+            var path = Path.Combine(root, "providers.json");
+            File.WriteAllText(path, ProviderFile);
+            return ProviderConfiguration.Read(path);
+        }
+
+        /// <summary>
+        /// <c>MainWindow.ReopenSessionAsync</c>'s shell half, as it stands after INV-0009 Phase 2:
+        /// <c>session.json</c> read back through <c>SessionConfigStore.Load</c>, the one call
+        /// <c>Shell.OpenSessionDocument(config)</c>, then the product's own binder over the config's
+        /// enabled backends and a provider file. Before Phase 2 nothing bound the composer on this
+        /// path and the restored pane kept its island; this measures what the path leaves on screen.
         /// </summary>
         private static async Task<int> ReopenAsync(WorkbenchShell shell, string root)
         {
@@ -389,10 +416,17 @@ internal static partial class Program
             var store = new SessionConfigStore(root, RestoredActiveSessionId);
             store.Create("Terrace session", root, ["claude-code"], now);
             var config = store.Load();
+            var providers = WriteProviderFile(root);
 
             var said = shell.OpenSessionDocument(config);
             var composer = shell.SessionComposer(config.SessionId)
                 ?? throw new InvalidOperationException("the shell reopened the document but holds no composer for it");
+            said += " " + SessionComposerBinder.Bind(
+                shell, config,
+                NewSessionSheetViewModel.RoutableAmong(config.EnabledBackends, providers.Registry),
+                taskClass: null,
+                repositoryRoot: root, dataDirectory: root,
+                providers, new NeverAffirms());
             Console.Out.WriteLine($"reopen: announced='{said}' zones={Shape(shell)}");
 
             // What the pane renders now that a live document is registered for its surface: the

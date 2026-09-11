@@ -2966,6 +2966,18 @@ public sealed class WorkbenchShell : IDisposable
             // the dictionary must agree about which pane holds this session, and two derivations of
             // one key is the shape that lets them stop agreeing (DM7).
             _sessionDocuments[document.SurfaceId] = document;
+
+            // A surface the saved arrangement restored BEFORE this session was reopened holds the
+            // factory's "No session is open" island, and the reconcile reuses a pane's content
+            // unless something names it for rebuild (DC-029). Nothing did, so the reopen activated
+            // the island and announced the session (INV-0009 §6, DC-040). Named here — and only when
+            // the pane exists and holds something other than a live document — so the next Render
+            // hands the pane this document.
+            if (Adapter.ContentFor(document.SurfaceId) is not null
+                && Adapter.SurfaceContent<Sessions.SessionDocumentSurface>(document.SurfaceId) is null)
+            {
+                Adapter.Invalidate([document.SurfaceId]);
+            }
         }
 
         return OpenReferenceDocument(

@@ -178,17 +178,11 @@ public partial class MainWindow : Window
     /// </remarks>
     private string NewSession()
     {
-        try
-        {
-            _providers = AiDe.Core.AgentPlane.ProviderConfiguration.ReadIfPresent(
-                AiDe.Core.AgentPlane.ProviderConfiguration.DefaultPath);
-        }
-        catch (AiDe.Core.AgentPlane.AgentPlaneException error)
+        if (ReadProviders() is { } malformed)
         {
             // REFUSED, NOT DEFAULTED. The flow does not start: an empty registry here would open the
             // sheet reading "no agent backend is configured" over a file that configures several.
-            _providers = null;
-            return error.Message;
+            return malformed;
         }
 
         var flow = new Workbench.Sessions.NewSessionFlow(
@@ -210,7 +204,8 @@ public partial class MainWindow : Window
                 // its composer is bound, then the pane takes the tree (Ruling 47). One sentence,
                 // because a live region read three times in a row is three interruptions.
                 Shell.Announcer.Announce(GiveTheNewSessionTheWholeTree(
-                    created.Config.SessionId, opened + " " + BindComposer(created)));
+                    created.Config.SessionId,
+                    opened + " " + BindComposer(created.Config, created.RoutableBackends, created.TaskClass)));
                 RebuildMenu();
             });
 
@@ -218,104 +213,52 @@ public partial class MainWindow : Window
     }
 
     /// <summary>
-    /// Wires the session's composer to the run it will start — <b>the only caller of
-    /// <c>ComposerSurface.Configure</c> in the product</b>.
+    /// Reads the provider file into <see cref="_providers"/>, or returns the refusal when the file
+    /// is malformed.
     /// </summary>
     /// <remarks>
-    /// <para><b>One binding feeds both consumers.</b> The <c>ComposerSendContext</c> and the
-    /// <c>AttachmentGate</c>'s provider name and account label all come from the single
-    /// <see cref="AiDe.Core.AgentPlane.LaneBinding"/> resolved below. There is deliberately no second
-    /// source: the sentence the operator affirms before a byte of an outside-workspace file is read
-    /// names the account the run will bill, and two derivations of that pair is the shape that lets
-    /// the affirmation describe a different account from the one that gets charged (DM7).</para>
-    ///
-    /// <para><b>Every refusal names a field and is visible.</b> No model, an ambiguous account, an
-    /// unconfigured provider and an ambiguous engine each land on the composer's own status line and
-    /// in the announcement. Nothing is defaulted on the way past: a run-side value invented here
-    /// ranks the episode in the wrong standings cohort and is indistinguishable from a chosen one
-    /// afterwards (DC-110).</para>
-    ///
-    /// <para><b>The draft opens as a goal block, not free-form.</b> A governed run requires the six
-    /// §14.3 fields — no block, no spawn (R2) — and a free-form draft validates with none of them,
-    /// so the shape is set here rather than discovered at the run host.</para>
+    /// <b>Missing, malformed and configured are three states, not two.</b> No file: null, and the
+    /// binder refuses by name when a run needs one. A malformed file: the message names the file
+    /// and the field, and the caller refuses rather than proceeding over an empty registry that
+    /// would render as "no agent backend is configured" — a wrong claim about a file the operator
+    /// wrote (Ruling 47 (b)). Read on every path that binds a composer, so a reopen sees the file
+    /// as it is now rather than as the last New Session left it.
     /// </remarks>
-    private string BindComposer(AiDe.Core.Presentation.Sessions.NewSessionResult created)
+    private string? ReadProviders()
     {
-        if (Shell.SessionComposer(created.Config.SessionId) is not { } composer)
+        try
         {
-            return "Its composer is not on screen, so nothing was wired to a run.";
+            _providers = AiDe.Core.AgentPlane.ProviderConfiguration.ReadIfPresent(
+                AiDe.Core.AgentPlane.ProviderConfiguration.DefaultPath);
+            return null;
         }
-
-        if (DataContext is not MainWindowViewModel
-            {
-                WorkspaceRoot: { } repositoryRoot, DataDirectory: { } dataDirectory,
-            })
+        catch (AiDe.Core.AgentPlane.AgentPlaneException error)
         {
-            return Refuse(
-                composer, "repositoryRoot",
-                "this window has no open workspace, so a run has no checkout to cut a worktree from");
+            _providers = null;
+            return error.Message;
         }
-
-        if (_providers is not { } providers)
-        {
-            return Refuse(
-                composer, "providers",
-                $"there is no provider file at {AiDe.Core.AgentPlane.ProviderConfiguration.DefaultPath}, "
-                + "so no run binding exists. The session is open; a governed run needs one");
-        }
-
-        if (created.RoutableBackends.Count != 1)
-        {
-            return Refuse(
-                composer, "engineId",
-                created.RoutableBackends.Count == 0
-                    ? "this session has no routable agent backend — every enabled engine reads "
-                      + "needs-login, which §4.3 treats as absent"
-                    : $"this session enables {created.RoutableBackends.Count} routable backends ("
-                      + string.Join(", ", created.RoutableBackends)
-                      + "). Enable exactly one: an ambiguous engine is refused rather than resolved "
-                      + "by reading order");
-        }
-
-        var binding = providers.Bind(created.RoutableBackends[0], out var refusal);
-        if (binding is null)
-        {
-            return Refuse(composer, refusal!.Field, refusal.Message);
-        }
-
-        composer.Draft.SwitchTo(AiDe.Core.Presentation.Composer.ComposerShape.GoalBlock);
-
-        composer.Configure(
-            created.Config,
-            new Workbench.Composer.ComposerSendContext(
-                RepositoryRoot: repositoryRoot,
-                DataDirectory: dataDirectory,
-                AdapterInstallRoot: providers.AdapterInstallRoot,
-                EngineId: binding.EngineId,
-                Model: binding.Model,
-                AccountLabel: binding.Account.Label,
-                TaskClass: created.TaskClass,
-                ProofPackArtifacts: [],
-                Providers: providers.Registry.Rows),
-            Workbench.Composer.ComposerFields.GoalBlock(),
-            new AiDe.Core.Presentation.Composer.AttachmentGate(
-                repositoryRoot,
-                new AiDe.Core.Presentation.Composer.AttachmentFileReader(),
-                new AffirmOutsideWorkspaceAttachment(this),
-
-                // THE SAME BINDING, not a second lookup. These two arguments are the sentence the
-                // operator reads before any outside-workspace byte is read.
-                binding.Provider.ProviderId,
-                binding.Account.Label));
-
-        return $"Composer bound to {binding.EngineId} · {binding.Model} · {binding.Account.Label}.";
     }
 
-    /// <summary>Puts a field-level refusal on the composer and returns it for the announcement.</summary>
-    private static string Refuse(Workbench.Composer.ComposerSurface composer, string field, string message)
+    /// <summary>
+    /// Binds a session document's composer to the run it will start — the window's half is the
+    /// workspace it has open and the modal that asks about an outside-workspace file; the binding
+    /// itself is <see cref="Workbench.Sessions.SessionComposerBinder"/>, shared by every path that
+    /// opens a session document (INV-0009 Phase 2).
+    /// </summary>
+    private string BindComposer(
+        AiDe.Core.Sessions.SessionConfig config, IReadOnlyList<string> routableBackends, string? taskClass)
     {
-        composer.ShowFieldRefusal(field, message);
-        return $"The composer has no run binding — {field}: {message}.";
+        var workspace = DataContext as MainWindowViewModel;
+
+        return Workbench.Sessions.SessionComposerBinder.Bind(
+            Shell,
+            config,
+            routableBackends,
+            taskClass,
+            repositoryRoot: workspace?.WorkspaceRoot,
+            dataDirectory: workspace?.DataDirectory,
+            _providers,
+            new AffirmOutsideWorkspaceAttachment(this));
     }
 
     /// <summary>
@@ -391,8 +334,31 @@ public partial class MainWindow : Window
             return;
         }
 
-        Shell.Announcer.Announce(Shell.OpenSessionDocument(config));
+        if (ReadProviders() is { } malformed)
+        {
+            // The same refusal New Session makes, for the same reason: a bound composer over an
+            // empty registry read out of a broken file would be a wrong claim about the file.
+            Shell.Announcer.Announce(malformed);
+            return;
+        }
+
+        // Shown AND bound (INV-0009 §6). The reopen used to end at the open, so the document was
+        // shown with a composer nothing had configured; the routable set is derived from the
+        // config's enabled backends against the registry as it reads now, and the task class is
+        // whatever the session has on record — none, until the operator chooses one for a prompt.
+        var shown = Shell.OpenSessionDocument(config);
+        Shell.Announcer.Announce(shown + " " + BindComposer(config, RoutableBackendsOf(config), taskClass: null));
     }
+
+    /// <summary>
+    /// The backends a session on record may bind now: its enabled set, filtered by the registry's
+    /// login state — the sheet's own derivation, so a reopen cannot bind an engine the sheet would
+    /// have refused. Empty with no provider file, where the binder refuses by name anyway.
+    /// </summary>
+    private IReadOnlyList<string> RoutableBackendsOf(AiDe.Core.Sessions.SessionConfig config) =>
+        _providers is { } providers
+            ? AiDe.Core.Presentation.Sessions.NewSessionSheetViewModel.RoutableAmong(config.EnabledBackends, providers.Registry)
+            : [];
 
     /// <summary>Shows the workspace chooser that interposes when no workspace is open (R13 b1).</summary>
     private string? ChooseWorkspaceForSession()

@@ -15,7 +15,11 @@ namespace AiDe.App.Workbench.Composer;
 /// <param name="EngineId">The engine, from the session's enabled backends.</param>
 /// <param name="Model">The model, a standings cohort axis.</param>
 /// <param name="AccountLabel">The configured account the work bills against.</param>
-/// <param name="TaskClass">Required, with no default: a defaulted class ranks in the wrong cohort.</param>
+/// <param name="TaskClass">
+/// The session's task class, or null when none is on record — a reopened or restored session binds
+/// without one (INV-0009 Phase 2). Never defaulted: a defaulted class ranks in the wrong cohort, so
+/// <see cref="ComposerSendGate.Send"/> refuses by name until one is chosen (Ruling 70).
+/// </param>
 /// <param name="ProofPackArtifacts">Evidence paths the episode declares at close.</param>
 /// <param name="Providers">The provider rows, parsed from configuration by the caller.</param>
 /// <param name="CoordCommand">The coordination CLI, per machine.</param>
@@ -27,7 +31,7 @@ public sealed record ComposerSendContext(
     string EngineId,
     string Model,
     string AccountLabel,
-    string TaskClass,
+    string? TaskClass,
     IReadOnlyList<string> ProofPackArtifacts,
     IReadOnlyList<ProviderRow> Providers,
     string CoordCommand = "coord",
@@ -149,6 +153,15 @@ public sealed class ComposerSendGate
             if (string.IsNullOrWhiteSpace(compiled.Text))
             {
                 refusal = new ComposerSendRefusal([], "an empty prompt is not a task");
+                return null;
+            }
+
+            // NOT DEFAULTED. A session bound on reopen has no task class on record (the sheet's
+            // choice belongs to the run it was made for), and a class invented here would rank the
+            // episode in a cohort nobody chose (DC-110).
+            if (string.IsNullOrWhiteSpace(context.TaskClass))
+            {
+                refusal = new ComposerSendRefusal([], "choose a task class for this prompt — this session has none on record");
                 return null;
             }
 
