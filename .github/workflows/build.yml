@@ -385,13 +385,17 @@ jobs:
       # this repository that reads its OWN commit: it compares the oracle's bytes at the cited sha
       # against the bytes now running, so an oracle quietly widened after the run reddens here
       # rather than passing. The self-test proves it can fail on every clause it claims to check.
+      # ONLY THE SELF-TEST UNTIL THE SUBJECT EXISTS. The gate reads the exit run's recorded
+      # evidence; until F5's run has happened there is no record to read, and a bare invocation here
+      # would be a step that is red for the honest reason that its subject does not exist yet. The
+      # self-test is a real invocation doing real work - it proves the gate reddens on every clause
+      # it claims to check - which satisfies verify-project-coverage without wiring a control ahead
+      # of the thing it controls. The bare run is added in the same commit that lands
+      # spikes/conductor-front-door-exit-run/exit-evidence.json, and F5's Proof Pack carries that as
+      # a named step rather than leaving it to be remembered.
       - name: Front-door exit evidence (F5) — self-test
         if: ${{ !cancelled() }}
         run: python tools/verify-front-door-exit-evidence.py --self-test
-
-      - name: Front-door exit evidence (F5)
-        if: ${{ !cancelled() }}
-        run: python tools/verify-front-door-exit-evidence.py
 
       - name: Containment-comparison gate — self-test
         if: ${{ !cancelled() }}
