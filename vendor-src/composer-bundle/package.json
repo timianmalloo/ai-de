@@ -1,0 +1,17 @@
+{
+  "name": "aide-composer-bundle",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The PRODUCTION input set for src/AiDe.App/Web/vendor/codemirror-composer.bundle.mjs. Narrowed per Security C7 to what the composer renders: Ruling 33 puts only `mentions` and `long-text` in an EditorView, so the source viewer's JavaScript language support is not here.",
+  "type": "module",
+  "dependencies": {
+    "@codemirror/autocomplete": "6.20.3",
+    "@codemirror/commands": "6.11.0",
+    "@codemirror/lang-json": "6.0.2",
+    "@codemirror/lang-markdown": "6.5.2",
+    "@codemirror/language": "6.12.4",
+    "@codemirror/legacy-modes": "6.5.4",
+    "@codemirror/state": "6.7.4",
+    "@codemirror/view": "6.43.11"
+  }
+}

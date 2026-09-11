@@ -1,17 +1,17 @@
 {
   "schema": "vendored-assets/1",
   "directory": "src/AiDe.App/Web/vendor",
-  "description": "CodeMirror 6, bundled once into a single ES module so the WebView2 host can serve it over a virtual host. Security condition C1-C4 on docs/plans/conductor-front-door.md. This is the SPIKE entry's bundle (exports makeComposer and makeSourceViewer, and contains no mention picker): Ruling 33 puts the production bundle in F4, after the field-widget inventory.",
+  "description": "CodeMirror 6, bundled once into a single ES module so the WebView2 host can serve it over a virtual host. THE PRODUCTION BUNDLE (Ruling 33), built in node F4 after the field-widget inventory was fixed: `mentions` and `long-text` render in an EditorView with this extension set; `text`, `list`, `enum` and `budget` are native HTML controls with no CodeMirror instance. It replaces the F1 SPIKE bundle (sha256 ee3d19a4...), whose hash is spike evidence and is never cited as the production pin. Security conditions C1-C8, re-fired in full by C18.",
   "files": [
     {
       "path": "src/AiDe.App/Web/vendor/codemirror-composer.bundle.mjs",
-      "sha256": "ee3d19a44a330c43d03889ace6424732a5314073c96a36c39e83a2e1ee340981",
-      "bytes": 508337
+      "sha256": "0e743c3564e14752e3f2938da50cd45e64e604225b5007fd208d0c3f76318762",
+      "bytes": 558198
     },
     {
       "path": "src/AiDe.App/Web/vendor/LICENSES-codemirror.txt",
-      "sha256": "191209b99767a9dee777b702a6e12169a04b039b83946cef114c38a9e4276e56",
-      "bytes": 33613
+      "sha256": "583e8c7163b2eed0d236619f0f4251f3d7ce7d5448af1bd09078ddb8a8a880de",
+      "bytes": 31056
     }
   ],
   "provenance": {
@@ -64,11 +64,6 @@
       {
         "name": "@codemirror/lint",
         "version": "6.9.7",
-        "licence": "MIT"
-      },
-      {
-        "name": "@codemirror/search",
-        "version": "6.7.2",
         "licence": "MIT"
       },
       {
@@ -127,11 +122,6 @@
         "licence": "MIT"
       },
       {
-        "name": "codemirror",
-        "version": "6.0.2",
-        "licence": "MIT"
-      },
-      {
         "name": "crelt",
         "version": "1.0.7",
         "licence": "MIT"
@@ -147,24 +137,34 @@
         "licence": "MIT"
       }
     ],
-    "package_count": 26,
-    "lockfile": "spikes/codemirror-composer/package-lock.json",
-    "lockfile_sha256": "fc3edc2235a59fd4838c737f5c92c393538ce2220ee81b0067e4e4d750c1b11f",
-    "entry": "spikes/codemirror-composer/lib.mjs",
+    "package_count": 24,
+    "lockfile": "vendor-src/composer-bundle/package-lock.json",
+    "lockfile_sha256": "1291dd0ab9daf0e21b980a832d58dceded72900d87a364818ae0b50c9df1f696",
+    "entry": "vendor-src/composer-bundle/composer-entry.mjs",
     "install_command": "npm ci --omit=dev",
-    "build_command": "npx --yes esbuild@0.28.2 lib.mjs --bundle --format=esm --minify --legal-comments=eof --outfile=../../src/AiDe.App/Web/vendor/codemirror-composer.bundle.mjs",
-    "build_working_directory": "spikes/codemirror-composer",
+    "build_command": "npx --yes esbuild@0.28.2 composer-entry.mjs --bundle --format=esm --minify --legal-comments=eof --outfile=../../src/AiDe.App/Web/vendor/codemirror-composer.bundle.mjs",
+    "build_working_directory": "vendor-src/composer-bundle",
     "builder": "esbuild",
     "builder_version": "0.28.2",
     "node_version": "v24.18.0",
     "npm_version": "12.0.2",
-    "build_date": "2026-09-10",
+    "build_date": "2026-09-11",
     "licence": "MIT",
     "licence_copy": "src/AiDe.App/Web/vendor/LICENSES-codemirror.txt",
-    "licence_verified_against": "the license field of each of the 26 packages in the npm ci --omit=dev install tree; all 26 read MIT, and each package's own LICENSE file is copied verbatim into licence_copy",
-    "npm_audit": "npm ci --omit=dev reported 0 vulnerabilities across 27 audited packages on 2026-09-10",
-    "reproducibility": "the same install and the same pinned bundler WITHOUT --legal-comments reproduced the spike's recorded artifact byte-for-byte (508337 bytes, sha256 ee3d19a44a330c43d03889ace6424732a5314073c96a36c39e83a2e1ee340981), so the vendored bytes are a rebuild of a recorded input set rather than a blob of unknown origin",
-    "legal_comments_note": "--legal-comments=eof is applied and produces no output: measured, the 26 installed packages contain zero @license/@preserve markers and no bang-comment in the bundle's import graph, so the bundle with the flag is byte-identical to the bundle without it. The MIT notice obligation is therefore discharged by licence_copy and by the CodeMirror section of THIRD-PARTY-NOTICES.md, NOT by the flag.",
-    "not_in_the_build": "no npm, node or esbuild step exists in AiDe.sln, MSBuild or CI. The build copies these committed bytes verbatim; rebuilding them is a deliberate, recorded, one-off act."
+    "licence_verified_against": "the license field of each of the 24 packages in the `npm ci --omit=dev` install tree; all 24 read MIT, and each package's own LICENSE file is copied verbatim into licence_copy by a script that fails closed when a package ships none.",
+    "narrowing_note": "C7. The direct dependency set drops `codemirror` (the meta-package) and the source viewer's `@codemirror/lang-javascript`, and adds `@codemirror/autocomplete` (the mention picker's CompletionSource) and `@codemirror/commands` (history + standardKeymap). 26 packages -> 24. `standardKeymap` rather than `defaultKeymap` is Security C11 expressed in the input set: defaultKeymap binds Ctrl-Enter to insertBlankLine, standardKeymap binds it to nothing, so the accelerator the shell owns is not also a page command.",
+    "reproducibility": "measured on 2026-09-11: the same install and the same pinned bundler invocation reproduced this artifact BYTE-FOR-BYTE (558198 bytes, sha256 0e743c3564e14752e3f2938da50cd45e64e604225b5007fd208d0c3f76318762), so the vendored bytes are a rebuild of a recorded input set rather than a blob of unknown origin.",
+    "legal_comments_note": "--legal-comments=eof is applied and produces no output: the 24 installed packages contain no @license/@preserve marker and no bang-comment in this bundle's import graph, so the bundle with the flag is byte-identical to the bundle without it. The MIT notice obligation is discharged by licence_copy and by the CodeMirror section of THIRD-PARTY-NOTICES.md, NOT by the flag.",
+    "advisory_scan": {
+      "command": "npm audit --package-lock-only --json",
+      "working_directory": "vendor-src/composer-bundle",
+      "date": "2026-09-11",
+      "result": "0 vulnerabilities at every severity (info/low/moderate/high/critical all 0)",
+      "raw": "vendor-src/composer-bundle/advisory-scan.json",
+      "raw_sha256": "f953029b1a8d2e32e09e8c2992f4ed20c9eff32fb1b47697dd924e594c8427a8",
+      "against_lockfile_sha256": "1291dd0ab9daf0e21b980a832d58dceded72900d87a364818ae0b50c9df1f696",
+      "honest_limit": "a one-off scan is a point-in-time observation. THE RECURRING STEP IS THE CONTROL, NOT THIS STORED OUTPUT: tools/verify-vendored-advisories.py re-runs the scan against this same lockfile and is wired into build.yml (Security C19)."
+    },
+    "not_in_the_build": "no npm, node or esbuild step exists in AiDe.sln, MSBuild or CI's build path. The build copies these committed bytes verbatim; rebuilding them is a deliberate, recorded, one-off act."
   }
 }
