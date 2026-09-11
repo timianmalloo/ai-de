@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T16:50:31Z",
+  "generated": "2026-09-11T17:20:25Z",
   "audit": [
     {
       "actor": null,
@@ -11611,6 +11611,21 @@ window.AUDIT_DATA = {
       ],
       "tier": "T2",
       "tool": "Claude Code"
+    },
+    {
+      "id": "al-01M28QJMWGJT5AK438M37KJ9ZT",
+      "shortname": "Commit + merge the straggler-census header fix and delete the 36 merged …",
+      "datetime": "2026-09-11T17:17:22Z",
+      "session": "prompt-log",
+      "prompt": "Commit + merge the straggler-census header fix and delete the 36 merged local branches. Resume F5 with the original governance: Owner (Fable), Conductor (Opus), model per task, each sub-agent in its own worktree, repo coordination protocols. Addendum C: the tool has a Mode tied to four use cases (Agentic Coding; Knowledge Exploration; Code & Architecture Understanding; Test Coverage later); each mode constrains which surfaces can be viewed/docked; side toolbar carries one icon per use case; top menu is contextual to the mode. /specify Addendum C, /ui-design the UX refactor, /define-architecture, /prepare-for-coordination, then run the refactor in parallel.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
