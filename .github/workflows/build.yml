@@ -194,6 +194,22 @@ jobs:
           python tools/verify-ruling-citations.py --self-test
           python tools/verify-ruling-citations.py
 
+      # Ruling 48. AGENTS.md requires the UI craft floor be gated in CI (CI6), and it was not,
+      # for two reasons that had to be fixed in order. DC-133: ui-craft-gate.py --gate exits 1
+      # only on a Blocker, and no rule emits one without --a11y-obligation, so it exited 0 with
+      # 66 Majors -- advisory by ARITHMETIC, not by decision. DC-006 recurrence: the corpus
+      # included build output, so `src/AiDe.App` reported 51 findings where `src/AiDe.App/Web`
+      # reports 17. 51 = 17 x 3: source, the bin/Debug copy, the bin/Release copy.
+      # This wrapper pins the corpus to committed source and applies a threshold that can fire.
+      # Gated at Major: the session front-door mockup (0 Majors today) and DESIGN.md (0). The
+      # composer HTML is advisory at 17 Majors until it is tokenized -- a gate that is red on
+      # day one gets muted, which is worse than advisory.
+      - name: UI craft floor (gated, committed source only)
+        if: ${{ !cancelled() }}
+        run: |
+          python tools/verify-ui-craft-floor.py --self-test
+          python tools/verify-ui-craft-floor.py
+
       # A vendored half-megabyte ES-module bundle (`src/AiDe.App/Web/vendor/`) is executable that no
       # compiler type-checks, no test imports by name and no reviewer reads. Everything that makes it
       # trustworthy is a claim in the manifest beside it, and a claim nothing re-reads is prose.

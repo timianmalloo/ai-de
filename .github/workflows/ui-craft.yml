@@ -2,11 +2,27 @@ name: UI craft (mockups)
 
 # The slow ring for the design surfaces (CE4): the deterministic UI craft detector
 # (Impeccable, wrapped by ui-craft-gate.py, ui-craft-detection.md CD8) run over the
-# committed mockups and the design language. It is ADVISORY here, not a merge gate:
-# the IDE mockups carry deliberate dense-meta text (DX17) the detector flags as Major,
-# so a hard --gate would fail on intended density. This job produces the review as a
-# step summary + artifact so drift is visible; flipping to --gate is a follow-up once
-# the dense-meta findings are dispositioned in docs/reviews/ui-mockups-craft-gate.md.
+# committed mockups and the design language.
+#
+# WHAT IS GATED AND WHAT IS NOT (Ruling 48 condition 3 -- this sentence used to say only
+# "advisory", which was honest about this job and silent about whether the floor existed
+# anywhere else; it did not):
+#
+#   GATED, every push, in build.yml   tools/verify-ui-craft-floor.py fails on any Major in
+#                                     docs/mockups/session-front-door.html or DESIGN.md,
+#                                     scanned over COMMITTED SOURCE only.
+#   ADVISORY, here                    the rest of docs/mockups -- 66 Majors the legacy IDE
+#                                     mockups carry as deliberate dense-meta text (DX17), so
+#                                     a hard gate would fail on intended density. Promotes
+#                                     when docs/reviews/ui-mockups-craft-gate.md dispositions
+#                                     them.
+#   ADVISORY, in the floor gate       src/AiDe.App/Web, 17 Majors, every one a colour literal
+#                                     in the composer HTML. Promotes when it is tokenized.
+#
+# Do NOT reach for --gate here as the fix. MEASURED: it exits 1 only on a Blocker-mapped
+# finding and no rule emits one without --a11y-obligation, so `--gate` over this corpus exits
+# 0 with 66 Majors present (DC-133). The threshold lives in the wrapper because it has to be
+# able to fire.
 
 on:
   pull_request:
