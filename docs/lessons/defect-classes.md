@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 70 · partially-controlled 56 · uncontrolled 15
+**Status counts:** controlled 70 · partially-controlled 57 · uncontrolled 15
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -4440,6 +4440,17 @@ for both or split.*
 
 ---
 
+- **Recurrence 2 (conductor-addendum-c, 2026-09-11) — the conductor's own shell lines, twice in
+  one hour:** (i) a `for g in …; do python tools/$g.py; echo "exit $?"; done` loop printed
+  `exit 1 verify-defect-register` and the line went on to `git push origin main` because the
+  loop's exit status is its last `echo`; (ii) `python tools/regenerate-derived.py; git add -A …;
+  git commit` committed a merge while the resolver's new marker gate (DC-136) had just printed
+  `FAILED conflict markers`, because `;` does not stop. Both pushed or committed red. The
+  control that held: `&&`-chaining every gate before the act that depends on it — a red step then
+  stops the line — applied to every resolution line since; the pre-commit hook does not run the
+  gate set and should not (it would double CI). The class is unchanged; the instance is the
+  conductor forgetting its own register.
+
 ### DC-114 — A fix to the deployment mechanism cannot deploy itself: correct, tested, green, and unreachable
 
 - **Shape:** the thing being fixed is the thing that performs the fix. An updater, installer,
@@ -6140,3 +6151,34 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   The downstream control that actually fired is the census's non-empty-corpus assertion.
 - **Status:** `partially-controlled` — caught by a downstream measurement, not at the edit; the
   anchor-uniqueness assertion is a discipline, not a gate.
+
+### DC-142 — A worktree cleanup removes the tree of an OPEN node because "no unique commits" was read as "no longer needed"
+- **Shape:** the fail-safe cleanup (WT7) refuses a tree only for *data* reasons — primary, cwd,
+  locked, held by a live session, dirty, unique commits, branch checked out twice. A tree whose
+  branch is **pushed and clean** passes every test even when the node that owns it is still open
+  and one operator gesture away from its exit. The tool prints the verdict as `clean, merged,
+  unheld`, and *merged* there means "every commit exists somewhere else", not "merged into
+  `main`". A conductor reading the word at speed removes the tree it meant to keep.
+- **Signature:** `coord worktree cleanup --remove` run without reading `cleanup` (the dry run)
+  first; a REMOVE row whose branch has commits `main..<branch>` > 0; a node in the plan still
+  marked open for that branch.
+- **Instance (conductor-addendum-c, 2026-09-11):** `cleanup --remove` was run to drop a finished
+  spec scratch tree; it kept that one (a live session held it) and removed
+  `C:/Projects/ai-de-feature-exit-evidence` — F5's tree, 16 commits ahead of `main`, waiting on
+  the operator's `File → New Session` gesture (Ruling 49). Nothing was lost — F5a had pushed, which
+  is exactly why the rules allowed it — and the tree was re-added at the same path at `729fdb5e`
+  in one command. What was lost was the build output and the run marker, and the operator's
+  confidence that the conductor reads before it removes.
+- **Sweep:** every `cleanup --remove` in this session before this one had been preceded by a
+  `list` read the same turn; this was the first blind run. The plan's own contract names DC-120
+  (no repo-wide destructive command while sibling nodes are live) and this is that class one ring
+  out: the command is tree-wide, not repo-wide, and the sibling was not live, only open.
+- **Control:** two, and only the second counts. (1) Prose: the conductor runs `cleanup` (dry run)
+  and reads every REMOVE row's branch against `git rev-list --count main..<branch>` before
+  `--remove` — a memoir. (2) Proposed for the pack (`coord-core.py` is pack-managed; a repo-local
+  edit is a deviation `updatepack` must merge): `worktree_safety` adds a hold reason *"branch has
+  N commit(s) not on the default branch — open work; pass `--include-unmerged` to remove"*, so an
+  open node's tree is HELD by default and removable only by name. Until that lands the status is
+  as below.
+- **Status:** `partially-controlled` — the instance is repaired; the mechanical control is a pack
+  proposal, filed with this entry, not yet a gate.

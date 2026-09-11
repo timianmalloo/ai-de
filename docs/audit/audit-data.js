@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T20:11:52Z",
+  "generated": "2026-09-11T20:12:28Z",
   "audit": [
     {
       "actor": null,
@@ -12001,15 +12001,6 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M291A2TKG3B0DJYT7JW74XZ5",
-      "shortname": "implement-contrast-census-phases-1-5",
-      "datetime": "2026-09-11T20:07:27Z",
-      "session": "contrast-fix",
-      "prompt": "Contrast census phases 1-5: remove the leaf ink override, fix the selected-tab trigger, token-discipline source rule, composer page CSS variables on host.init, app.start with the sha, register the classes. (1) The ink fix: remove the leaf TextBlock implicit-style Foreground setter (or scope it so it cannot outrank a container's TextElement.Foreground); fix the DockRoundedTabs.xaml trigger so selected-active tabs get the on-accent ink and selected-inactive tabs keep readable ink on their sunken ground; disabled controls render DisabledTextBrush. Introduce the on-accent ink token if none exists. Census -> 0 below floor, 0 state losses. (2) The source rule in TokenDisciplineTests: no implicit style targeting leaf text may set Foreground; every state trigger that sets a ground also sets an ink (or inherits one from a container that does). Red first against the pre-fix XAML, green after. (3) Composer page tokens: the page draws ink/ground/border/muted/on-accent/disabled from CSS variables injected on host.init from the theme (an additive field on the envelope); #drop-hint and every label/field/border pairing >= the floor. The census's webview half goes green. (4) app.start telemetry: one normal-path diagnostics event at startup carrying AssemblyInformationalVersion (the sha), the theme, and the DPI/window size. (5) Register the classes with ids from verify-id-allocators.py run immediately before the commit: the leaf-overrides-container pairing; the unattributed-binary report; DC-135 recurrence 2 and the DC-131 instance. Class -> sweep -> derive -> prevent in writing. Re-issue INV-0007 as the next free id. Do not write DESIGN.md; do not merge to main; push fix/contrast-census.",
-      "summary": "Phases 1-5 of INV-0008 (re-issued from INV-0007; the composer investigation held that id first) landed on fix/contrast-census. Census on the merge base 7d95f8cd: 180 pairings, 14 below floor (13 app-style token at 2.37:1 TextBrush-on-AccentBrush, 1 page-css at 4.47:1) + 2 disabled-state losses -> after: 180 / 0 / 0, 5 census facts green. Phase 1: the implicit TextBlock/Label Foreground setters removed; AccentContrastBrush (#0D1014 = DESIGN.md accent-contrast, 6.60:1 on the accent) named on the checked toggle, selected row and the tab title; the tab's on-accent ink follows IsActive (the theme's accent-ground condition), the selected-inactive tab keeps TextBrush on the border ground (10.74:1); Fix A alone exposed three further masked sites (the composer footer's Compiled view / lease / status inheriting #000000 from AvalonDock's pane control at 1.27:1 - the photographed lines) fixed at the container: SurfaceChrome's island card states TextElement.Foreground=TextBrush beside its raised ground. Phase 2: TokenDisciplineTests.NoImplicitLeafTextStyle_SetsItsOwnInk (red on pre-fix App.xaml lines 391/396) and EveryTriggerThatPaintsAGround_StatesAnInkThatClearsIt (engine red on planted IsChecked->AccentBrush with no ink, plus Trigger.Setters / Setter.Value / Style rest-setter counterexamples); ContrastFloorTests' 18-type theory asserts the inverse for the two leaf types and the root ink on Window. Phase 3: host.init carries an additive `theme` field - eleven CSS custom properties (--surface, --surface-raised, --surface-sunken, --text, --text-muted, --text-disabled, --accent, --accent-contrast, --border, --danger, --focus) read from Application.Resources by ComposerPageTheme; composer.mjs applies them on the root before rendering; composer.html reads each with the token's value as fallback; #drop-hint 7.16:1; the probe records the root's inline custom properties beside the push and plants a FocusBrush sentinel (#010203) so the push is distinguishable from the fallback (fact red with applyTheme removed); applyTheme's guards proven against the live page (red with the guard disabled); every stylesheet fallback held to its token (red on planted drift, no-fallback and a named colour); composer-host.html on token values; src/AiDe.App/Web promoted from advisory to gated in verify-ui-craft-floor.py (0 findings). Phase 4: WorkbenchDiagnostics.AppStart from MainWindow.Loaded - {ts, evt:app.start, version 1.0.0+sha, commit (40-hex or null), configuration, theme, dpi{scaleX,scaleY,pixelsPerInchX,Y}, window{width,height,state}} + an app.start activity; AppStartIsRecordedTests 3 facts (red with a stub; the real App's boot proven through the contrast probe, exactly one line). Phase 5: DC-139 (the leaf overrides the container's pairing), DC-140 (a report against an unattributed binary), DC-141 (a scripted edit anchored on a token prose also contains - this build's own defect, caught by the census's DC-016 guard), DC-135 recurrence 2, DC-131 instance; ids re-issued at the merge after main spent 137/138. Reviews: UX&A PASS-with-conditions (on-accent pairing confirmed the only legal ink on the accent; conditions carried as residuals: DESIGN.md row for D1, a non-colour selected indicator on the inactive tab, a border-strong token for input boundaries, muted->text for empty states, no local ink under an accent trigger); Test Architect round 1 BLOCK (no proof pack yet) -> round 2 PASS-with-conditions after the reader rule, sentinel, pinned roles, init-count poll and AppStartCount; residuals: host.init golden at the composer owner's seam, 22 C# local leaf inks, the last-focused-inactive tab state. Gates: builds 0/0/0 warnings-as-errors; App suite 600/600; verify-test-run OK (600>=554, 2240>=2239); every verify-*.py 0 after regenerate; craft floor gated. Proof Pack docs/proof/contrast-census.md; decision note docs/notes/on-accent-ink-is-its-own-token.md. Not done: DESIGN.md (D1 owns it), phases 6-7, Fix D's About/status-strip half.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/contrast-census.md",
@@ -12035,6 +12026,31 @@ window.AUDIT_DATA = {
         "tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs",
         "tools/verify-ui-craft-floor.py"
       ],
+      "datetime": "2026-09-11T20:07:27Z",
+      "done_when": "Census 0 below floor / 0 state losses on the composed shell (was 180/14/2); source rules red on pre-fix XAML then green; host.init carries the theme and the page root proves the push; app.start emitted on boot with a 40-hex commit; DC classes registered with allocator-verified ids; proof pack committed; every gate green bare; pushed to fix/contrast-census, not merged",
+      "duration_seconds": 3131.0,
+      "fan_out": 2,
+      "git": {
+        "branch": "fix/contrast-census",
+        "pushed": null,
+        "sha": "57057e423dd8fdb3cc6bddae177c71ee1db76a70",
+        "short": "57057e423"
+      },
+      "goal": "Land INV-0008 phases 1-5 on fix/contrast-census: the leaf ink override removed, the tab trigger on IsActive, the on-accent token, the source rules, composer page tokens on host.init, app.start with the sha, the classes registered",
+      "id": "al-01M291A2TKG3B0DJYT7JW74XZ5",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Contrast census phases 1-5: remove the leaf ink override, fix the selected-tab trigger, token-discipline source rule, composer page CSS variables on host.init, app.start with the sha, register the classes. (1) The ink fix: remove the leaf TextBlock implicit-style Foreground setter (or scope it so it cannot outrank a container's TextElement.Foreground); fix the DockRoundedTabs.xaml trigger so selected-active tabs get the on-accent ink and selected-inactive tabs keep readable ink on their sunken ground; disabled controls render DisabledTextBrush. Introduce the on-accent ink token if none exists. Census -> 0 below floor, 0 state losses. (2) The source rule in TokenDisciplineTests: no implicit style targeting leaf text may set Foreground; every state trigger that sets a ground also sets an ink (or inherits one from a container that does). Red first against the pre-fix XAML, green after. (3) Composer page tokens: the page draws ink/ground/border/muted/on-accent/disabled from CSS variables injected on host.init from the theme (an additive field on the envelope); #drop-hint and every label/field/border pairing >= the floor. The census's webview half goes green. (4) app.start telemetry: one normal-path diagnostics event at startup carrying AssemblyInformationalVersion (the sha), the theme, and the DPI/window size. (5) Register the classes with ids from verify-id-allocators.py run immediately before the commit: the leaf-overrides-container pairing; the unattributed-binary report; DC-135 recurrence 2 and the DC-131 instance. Class -> sweep -> derive -> prevent in writing. Re-issue INV-0007 as the next free id. Do not write DESIGN.md; do not merge to main; push fix/contrast-census.",
+      "session": "contrast-fix",
+      "shortname": "implement-contrast-census-phases-1-5",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-11T19:15:16Z",
+      "summary": "Phases 1-5 of INV-0008 (re-issued from INV-0007; the composer investigation held that id first) landed on fix/contrast-census. Census on the merge base 7d95f8cd: 180 pairings, 14 below floor (13 app-style token at 2.37:1 TextBrush-on-AccentBrush, 1 page-css at 4.47:1) + 2 disabled-state losses -> after: 180 / 0 / 0, 5 census facts green. Phase 1: the implicit TextBlock/Label Foreground setters removed; AccentContrastBrush (#0D1014 = DESIGN.md accent-contrast, 6.60:1 on the accent) named on the checked toggle, selected row and the tab title; the tab's on-accent ink follows IsActive (the theme's accent-ground condition), the selected-inactive tab keeps TextBrush on the border ground (10.74:1); Fix A alone exposed three further masked sites (the composer footer's Compiled view / lease / status inheriting #000000 from AvalonDock's pane control at 1.27:1 - the photographed lines) fixed at the container: SurfaceChrome's island card states TextElement.Foreground=TextBrush beside its raised ground. Phase 2: TokenDisciplineTests.NoImplicitLeafTextStyle_SetsItsOwnInk (red on pre-fix App.xaml lines 391/396) and EveryTriggerThatPaintsAGround_StatesAnInkThatClearsIt (engine red on planted IsChecked->AccentBrush with no ink, plus Trigger.Setters / Setter.Value / Style rest-setter counterexamples); ContrastFloorTests' 18-type theory asserts the inverse for the two leaf types and the root ink on Window. Phase 3: host.init carries an additive `theme` field - eleven CSS custom properties (--surface, --surface-raised, --surface-sunken, --text, --text-muted, --text-disabled, --accent, --accent-contrast, --border, --danger, --focus) read from Application.Resources by ComposerPageTheme; composer.mjs applies them on the root before rendering; composer.html reads each with the token's value as fallback; #drop-hint 7.16:1; the probe records the root's inline custom properties beside the push and plants a FocusBrush sentinel (#010203) so the push is distinguishable from the fallback (fact red with applyTheme removed); applyTheme's guards proven against the live page (red with the guard disabled); every stylesheet fallback held to its token (red on planted drift, no-fallback and a named colour); composer-host.html on token values; src/AiDe.App/Web promoted from advisory to gated in verify-ui-craft-floor.py (0 findings). Phase 4: WorkbenchDiagnostics.AppStart from MainWindow.Loaded - {ts, evt:app.start, version 1.0.0+sha, commit (40-hex or null), configuration, theme, dpi{scaleX,scaleY,pixelsPerInchX,Y}, window{width,height,state}} + an app.start activity; AppStartIsRecordedTests 3 facts (red with a stub; the real App's boot proven through the contrast probe, exactly one line). Phase 5: DC-139 (the leaf overrides the container's pairing), DC-140 (a report against an unattributed binary), DC-141 (a scripted edit anchored on a token prose also contains - this build's own defect, caught by the census's DC-016 guard), DC-135 recurrence 2, DC-131 instance; ids re-issued at the merge after main spent 137/138. Reviews: UX&A PASS-with-conditions (on-accent pairing confirmed the only legal ink on the accent; conditions carried as residuals: DESIGN.md row for D1, a non-colour selected indicator on the inactive tab, a border-strong token for input boundaries, muted->text for empty states, no local ink under an accent trigger); Test Architect round 1 BLOCK (no proof pack yet) -> round 2 PASS-with-conditions after the reader rule, sentinel, pinned roles, init-count poll and AppStartCount; residuals: host.init golden at the composer owner's seam, 22 C# local leaf inks, the last-focused-inactive tab state. Gates: builds 0/0/0 warnings-as-errors; App suite 600/600; verify-test-run OK (600>=554, 2240>=2239); every verify-*.py 0 after regenerate; craft floor gated. Proof Pack docs/proof/contrast-census.md; decision note docs/notes/on-accent-ink-is-its-own-token.md. Not done: DESIGN.md (D1 owns it), phases 6-7, Fix D's About/status-strip half.",
       "tags": [
         "ui",
         "contrast",
@@ -12042,24 +12058,83 @@ window.AUDIT_DATA = {
         "tokens",
         "telemetry"
       ],
-      "outcome": "success",
-      "goal": "Land INV-0008 phases 1-5 on fix/contrast-census: the leaf ink override removed, the tab trigger on IsActive, the on-accent token, the source rules, composer page tokens on host.init, app.start with the sha, the classes registered",
-      "done_when": "Census 0 below floor / 0 state losses on the composed shell (was 180/14/2); source rules red on pre-fix XAML then green; host.init carries the theme and the page root proves the push; app.start emitted on boot with a 40-hex commit; DC classes registered with allocator-verified ids; proof pack committed; every gate green bare; pushed to fix/contrast-census, not merged",
       "tier": "T1",
-      "fan_out": 2,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "started_at": "2026-09-11T19:15:16Z",
-      "duration_seconds": 3131.0,
-      "git": {
-        "sha": "57057e423dd8fdb3cc6bddae177c71ee1db76a70",
-        "short": "57057e423",
-        "branch": "fix/contrast-census",
-        "pushed": null
-      }
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-11T18:04:11Z",
+      "id": "al-01M28T8C2WEVN4J0D10XQJMJAZ",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "Operator feedback on the session composer (with screenshot 'session gesture.png'): (1) 'I could not see the entry areas' — the composer's fields were squeezed into a ~200px scroll region above a large Compiled view; (2) there are mandatory fields that should not be mandatory and should be options in settings, not explicitly the template: budget, cap etc. are not intrinsic to the prompt, they are intrinsic to the session settings; (3) the UX is super chunky — it does not feel like a chat conversation, and the whole enter-in-text-boxes-and-see-the-render-below is awful from a UI/UX perspective. Also observed: Send refused with 'no write scope could be derived from this draft'.",
+      "session": "prompt-log",
+      "shortname": "Operator feedback on the session composer (with screenshot 'session gest…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-11T18:07:12Z",
+      "id": "al-01M28TDX0G5RGHXKY5QTTFQMPH",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "Operator: we still have lots of cases of dark/hard-to-read font colors against the tool background. We need a consistent color palette that works consistently, and to stop putting dark fonts on dark backgrounds and light fonts on light backgrounds. (Screenshot 'session gesture.png': Compiled view label, Lease/status lines, 'Attaching files is off' line, Graph/Terminal tab captions dim on dark; the compiled TextBox is a white box in a dark UI.)",
+      "session": "prompt-log",
+      "shortname": "Operator: we still have lots of cases of dark/hard-to-read font colors a…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-11T19:23:32Z",
+      "id": "al-01M28YSMW5C0C6VZJVSMD93HBG",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "Operator on tier: shouldn't tier be decided by the compilation of the prompt? A key aspect and benefit of being able to type a prompt and then post-process it would be to decorate it with things like tier.",
+      "session": "prompt-log",
+      "shortname": "Operator on tier: shouldn't tier be decided by the compilation of the pr…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-11T19:35:30Z",
+      "id": "al-01M28ZFJW6MCAMFS8KHYNQ77G1",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "Operator, thinking through compile: three (four) contexts are needed — (1) the model family (Anthropic, OAI, Grok…) the prompt is crafted for (perception: OAI models add more ceremony and drift per turn); (2) the conversation and session history; (3) the repo and its standards/constitution and its particular skills (e.g. my work loop in the ai-forward repo); (4) compile is first mechanical then agentic — a mechanical pre-compile (decoration etc.), then hand-off to a model to compile the final prompt, the same model the session is bound to (as Claude Code binds a conversation model while execution may use other agents/models). Answers: Q1 inputs = text, session context, repo constitution, target model family. Q2 a separation of concerns between what an operator tunes in settings vs. what is uniquely contextual at compile — conductor to propose the differentiation. Q3 with that enumeration, recommend the mechanical/agentic split. Q4 post-compile is a 'prepare' stage where the operator may override before submitting to the console. Q5 a rich envelope; fields not a rigid structure; the template is a guide not a constraint, because compile can create the appropriate structure through further decoration.",
+      "session": "prompt-log",
+      "shortname": "Operator, thinking through compile: three (four) contexts are needed — (…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-11T20:06:16Z",
+      "id": "al-01M2917WRTT5JP9EEV2C9FTW9E",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "Operator: yes, I am aligned with Addendum D (the compile step as its own bounded context, per the conductor's proposal: pre-compile mechanical, then compile agentic on the session-bound model, then prepare with operator override, then submit; settings vs compile-context vs decorations; lease always mechanical; tier mechanical-first; a rich append-only compiled envelope; template as guide).",
+      "session": "prompt-log",
+      "shortname": "Operator: yes, I am aligned with Addendum D (the compile step as its own…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
     }
   ],
   "changes": [
