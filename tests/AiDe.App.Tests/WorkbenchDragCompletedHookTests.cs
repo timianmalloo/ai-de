@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using AiDe.App.Workbench;
@@ -172,6 +173,50 @@ public sealed class WorkbenchDragCompletedHookTests
 
         Assert.True(dockingUpdates >= 1, "LayoutRoot.Updated did not fire for a cross-pane move");
         Assert.Equal(0, wpfLayoutPasses);
+    }
+
+    /// <summary>
+    /// INV-0006 F2. A drag emitted <b>nothing at all</b> — the reported session's log is empty across
+    /// the whole defect window — so the gesture that produced it is permanently unrecoverable. This
+    /// asserts what a real drag now writes: the trigger, and the zone assignment before and after it.
+    /// </summary>
+    [Fact]
+    public void ADrag_EmitsALayoutMutationRecord_CarryingTheZoneAssignmentBeforeAndAfter()
+    {
+        var records = CapturingDiagnostics(() => WithRealizedWorkbench(h =>
+        {
+            DragDocumentIntoPane(h, "domain", "explore");
+            return 0;
+        }));
+
+        var drag = records
+            .Select(line => JsonDocument.Parse(line).RootElement)
+            .Where(r => r.GetProperty("evt").GetString() == "layout.mutation"
+                        && r.GetProperty("operation").GetString() == "drag")
+            .ToList();
+
+        var reconciled = Assert.Single(drag, r => r.GetProperty("placement").GetString() == "reconciled");
+
+        var before = reconciled.GetProperty("before").GetString()!;
+        var after = reconciled.GetProperty("after").GetString()!;
+        var moved = reconciled.GetProperty("moved").EnumerateArray().Select(e => e.GetString()).ToList();
+
+        // The pair is the point: either half alone cannot separate a correct reconcile from a
+        // whole-column relabel, which is the distinction the original report could not be answered on.
+        Assert.Contains("Center:[graph+domain+", before, StringComparison.Ordinal);
+        Assert.Contains("Left:[domain+explore+", after, StringComparison.Ordinal);
+        Assert.Equal(["domain"], moved);
+    }
+
+    private static List<string> CapturingDiagnostics(Action body)
+    {
+        var lines = new List<string>();
+        var previous = WorkbenchDiagnostics.Sink;
+        WorkbenchDiagnostics.Sink = line => { lock (lines) { lines.Add(line); } };
+        try { body(); }
+        finally { WorkbenchDiagnostics.Sink = previous; }
+
+        return lines;
     }
 
     // ── driving the docking host ────────────────────────────────────────────────────────────

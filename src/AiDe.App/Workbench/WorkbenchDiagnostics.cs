@@ -53,6 +53,49 @@ public static class WorkbenchDiagnostics
     }
 
     /// <summary>
+    /// Records a reconcile of the <b>view</b> back into the model — the fold-in that follows a native
+    /// tab drag — with the zone assignment before and after it.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Why this exists (INV-0006).</b> A drag emitted <b>nothing at all</b>. The log for the
+    /// reported session is empty across the entire defect window, 12:55:02Z to 12:59:50Z, which spans
+    /// the three screenshots that contain the defect — so the gesture that produced it is permanently
+    /// unrecoverable, and every future report of this shape would have been too. That absence, not the
+    /// swap, is what made the report unanswerable: the code could be read, and the code is correct for
+    /// the values it was written against.</para>
+    /// <para><b>Before and after, not just after.</b> <see cref="LayoutMutation"/> records the
+    /// resulting topology, which is enough for a placement ("the terminal went here") and useless for
+    /// a reconcile: the question is what the reconcile DID, and a correct reconcile and a whole-column
+    /// relabel produce topologies that look equally reasonable on their own. The pair, plus the list
+    /// of surfaces whose zone changed, is what separates them.</para>
+    /// <para>A reconcile that changed nothing and refused nothing writes nothing — the caller decides,
+    /// because a log that records every no-op is a log nobody reads.</para>
+    /// </remarks>
+    public static void LayoutReconcile(
+        string trigger, string? before, string? after, IReadOnlyList<string> moved, string? refusal)
+    {
+        using var activity = Source.StartActivity("workbench.layout.mutation");
+        activity?.SetTag("workbench.operation", trigger);
+        activity?.SetTag("workbench.placement", refusal is null ? "reconciled" : "refused");
+        activity?.SetTag("workbench.zones.before", before);
+        activity?.SetTag("workbench.zones.after", after);
+        activity?.SetTag("workbench.moved", string.Join(",", moved));
+        activity?.SetTag("error.code", refusal);
+
+        Write(new
+        {
+            ts = DateTimeOffset.UtcNow.ToString("O"),
+            evt = "layout.mutation",
+            operation = trigger,
+            placement = refusal is null ? "reconciled" : "refused",
+            before,
+            after,
+            moved,
+            refusal,
+        });
+    }
+
+    /// <summary>
     /// Records the decision a terminal launch made, and how it ended.
     /// </summary>
     /// <remarks>

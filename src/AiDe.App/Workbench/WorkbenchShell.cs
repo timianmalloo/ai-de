@@ -192,7 +192,7 @@ public sealed class WorkbenchShell : IDisposable
         // Deliberately does NOT re-render: the view already shows the drop the user made, so the
         // model is catching up to the view, not the other way round. Rendering here would re-parent
         // every pane and re-seat every tab for a change already on screen.
-        Adapter.ViewArrangementChanged += (_, _) => ReconcileViewIntoModel();
+        Adapter.ViewArrangementChanged += (_, _) => ReconcileViewIntoModel("drag");
 
         Palette = new CommandPalette(Controller, Announcer);
         Prompt = new PromptBar(Announcer);
@@ -1618,26 +1618,64 @@ public sealed class WorkbenchShell : IDisposable
         return result.Applied ? okMessage : result.Announcement;
     }
 
-    // Before a layout mutation that will trigger a full Render, fold any native pane drag or splitter
-    // resize the user performed back into the model, so the rebuild preserves their arrangement instead
-    // of reverting it. Fail-safe: ReadLayoutFromView returns null on any shape it cannot map losslessly,
-    // and this is then a no-op — the pre-existing revert stands, never a corrupted layout.
-    private void ReconcileViewIntoModel()
+    // Folds any native pane drag the user performed back into the model. Called as the drag lands
+    // (INV-0006 F1) and, still, before any command that will trigger a full Render, so the rebuild
+    // preserves their arrangement instead of reverting it. Fail-safe: ReadLayoutFromView returns null
+    // on any shape it cannot map losslessly, and this is then a no-op — the pre-existing revert
+    // stands, never a corrupted layout.
+    private void ReconcileViewIntoModel(string trigger = "command")
     {
-        if (Adapter.ReadLayoutFromView() is { } reconciled)
+        var zones = Service as ZoneBackedLayoutService;
+        var before = zones?.Zones;
+
+        if (Adapter.ReadLayoutFromView() is not { } reconciled)
         {
-            // A live drag is reconciled by POSITION only — never the kind-based conversion, which
-            // re-seats every stack and moved a bystander zone on a single drag (smoke 9-2 #3). An
-            // unmappable drag is left for the next Render to revert. Persistence still uses Restore.
-            if (Service is ZoneBackedLayoutService zones)
+            // Nothing rendered yet is not a gesture; anything else is one we are about to revert.
+            if (Adapter.HoldsDocuments())
             {
-                zones.ReconcileFromView(reconciled);
+                WorkbenchDiagnostics.LayoutReconcile(trigger, before?.Shape(), before?.Shape(), [], "view-unreadable");
             }
-            else
-            {
-                Service.Restore(reconciled);
-            }
+
+            return;
         }
+
+        // A live drag is reconciled by POSITION only — never the kind-based conversion, which
+        // re-seats every stack and moved a bystander zone on a single drag (smoke 9-2 #3). An
+        // unmappable drag is left for the next Render to revert. Persistence still uses Restore.
+        if (zones is null)
+        {
+            Service.Restore(reconciled);
+            return;
+        }
+
+        var applied = zones.ReconcileFromView(reconciled);
+        var after = zones.Zones;
+        var moved = SurfacesThatChangedZone(before!, after);
+
+        // INV-0006 F2. A drag used to emit nothing at all, which is why the reported gesture is
+        // permanently unrecoverable. Written whenever the reconcile moved something or refused;
+        // a reconcile that did neither is a no-op and says so by being absent.
+        if (!applied || moved.Count > 0)
+        {
+            WorkbenchDiagnostics.LayoutReconcile(
+                trigger, before!.Shape(), after.Shape(), moved,
+                applied ? null : "position-mapping-refused");
+        }
+    }
+
+    /// <summary>Which surfaces changed zone across a reconcile — the half that says what it DID.</summary>
+    private static IReadOnlyList<string> SurfacesThatChangedZone(WorkbenchLayout before, WorkbenchLayout after)
+    {
+        static Dictionary<string, ZoneId> ZoneOf(WorkbenchLayout layout) =>
+            Enum.GetValues<ZoneId>()
+                .SelectMany(z => layout.Zone(z).Surfaces().Select(s => (s.SurfaceId, Zone: z)))
+                .ToDictionary(x => x.SurfaceId, x => x.Zone, StringComparer.Ordinal);
+
+        var from = ZoneOf(before);
+        var to = ZoneOf(after);
+        return [.. from.Keys
+            .Where(id => !to.TryGetValue(id, out var zone) || zone != from[id])
+            .OrderBy(id => id, StringComparer.Ordinal)];
     }
 
     // ADR-0021 dz-persist: opening a workspace RESTORES its saved zone arrangement. This is safe now

@@ -270,6 +270,14 @@ public sealed class WorkbenchAdapter
         }
     }
 
+    /// <summary>
+    /// Whether the view currently holds any rendered document. Distinguishes "nothing is on screen
+    /// yet" from "the user arranged something we could not read" — which are the same <c>null</c> out
+    /// of <see cref="ReadLayoutFromView"/> and very different things to record.
+    /// </summary>
+    internal bool HoldsDocuments() =>
+        Manager.Layout?.Descendents().OfType<LayoutDocument>().Any() == true;
+
     private void WatchTheDockingModel()
     {
         if (ReferenceEquals(_watchedRoot, Manager.Layout))
