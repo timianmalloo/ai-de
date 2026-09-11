@@ -3637,6 +3637,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "e1ff5834b588aa2ec56a2c1eff70494c4da19afbf1205019e4718cd2904a07cd"
     },
     {
+      "id": "note-front-door-residuals",
+      "path": "docs/notes/front-door-residuals-carried.md",
+      "title": "Residuals carried into the front-door slice close",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-10",
+      "reviewSuggested": [],
+      "summary": "Everything the front-door slice found and did not close, assembled for F5's Proof Pack. F5's clause 7 fails if a Residual cell reads \"none\", so this is the input that makes that clause answerable — each entry names a measurement, an explicit uncovered input, or an owner.",
+      "tags": [
+        "conductor",
+        "front-door",
+        "residual",
+        "proof-pack",
+        "f5",
+        "close"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "privacy-review-conductor",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-front-door-rulings-43-44",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1189c6d0a922b4586547644625f2277f3acdfc8dbccde49992848654f7c3da6e"
+    },
+    {
       "id": "note-front-door-ruling-36",
       "path": "docs/notes/front-door-ruling-36-yaml-guard-scope.md",
       "title": "Decision note — Ruling 36: Rulings 23 and 35 do not conflict; F0's YAML guard narrowed",
@@ -12777,5 +12813,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "8e1fa3aac87005794e56d70f5c5ceca6b92b8b88c08f42fa7b96db8a5a5f2177"
+  "graphSha256": "01e161d42fc4a90d8c456a7f61b96a262c0e23f0c53a2ed286c54b28924f9873"
 };
