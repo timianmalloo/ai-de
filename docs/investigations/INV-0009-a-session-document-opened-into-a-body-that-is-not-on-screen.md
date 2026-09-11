@@ -5,7 +5,7 @@ type: investigation
 status: accepted
 owner: "@timianmalloo"
 phase: "conductor-front-door"
-tags: [session-document, composer, explorer-mode, shell-view-mode, docking, layout-restore, observability, ruling-47, dc-147, dc-148, dc-084, dc-040, dc-135]
+tags: [session-document, composer, explorer-mode, shell-view-mode, docking, layout-restore, observability, ruling-47, dc-148, dc-149, dc-084, dc-040, dc-135]
 links:
   - { to: plan-conductor-front-door, rel: refines }
   - { to: adr-0017-primary-view-mode, rel: depends-on }
@@ -36,7 +36,7 @@ summary: >-
 - **Severity / tier:** T1 — blocks the F5 exit run; the product's front door shows nothing
 - **Reported by / date:** the operator, 2026-09-11 22:34Z; dispatched by the conductor (session `conductor-addendum-c`)
 - **Evidence:** `docs/investigations/operator-launch-22-33Z.log.jsonl` (26 lines, 22:33:20Z–22:34:30Z, from the Release build `1.0.0+135e05e1`, whose session and composer code equals `main` `1aadde84`)
-- **Related:** INV-0007 (the `--shell` probe), INV-0008 (the census over the real App), Ruling 47, ADR-0017, DC-135, DC-147, DC-148, DC-084, DC-040
+- **Related:** INV-0007 (the `--shell` probe), INV-0008 (the census over the real App), Ruling 47, ADR-0017, DC-135, DC-148, DC-149, DC-084, DC-040
 
 > Diagnosis only. The replay (`tests/AiDe.App.ComposerProbe --session-render`) and the four oracles in
 > `tests/AiDe.App.Tests/Sessions/ASessionDocumentIsShownWhereTheOperatorIsTests.cs` are committed as
@@ -257,7 +257,7 @@ opened the chosen workspace in the window (`NewSessionFlow.cs:84–116`; `MainWi
 The page mounted with no fields; the status line under the compiled box carried the refusal. That
 is the blank editor the operator described. The refusal is not in the log (`ShowFieldRefusal`
 writes no diagnostic) — the probe's `--prior-document` step reproduces the state and prints the
-sentence. Registered as **DC-148**. The premise error itself is NG-shaped (the id's timestamp was in
+sentence. Registered as **DC-149**. The premise error itself is NG-shaped (the id's timestamp was in
 hand and unread); it is recorded here rather than registered.
 
 ## 8. System map — where state lives, and what each surface knows
@@ -289,7 +289,7 @@ mode; nothing emits the maximize; nothing emits a refusal.
 
 ## 10. Generalization — the failure classes
 
-- **DC-147 (new) — a command mutates the model of a view that is not on screen, and reports the
+- **DC-148 (new) — a command mutates the model of a view that is not on screen, and reports the
   model's success as the screen's.** Sweep (`WorkbenchShell.cs`): `OpenReferenceDocument` and its
   five callers (`:335–364` class diagram, sequence, search, code viewer, diagnostics), the terminal
   open (`:268–304`), the prompt draft (`:311–331`), `OpenSessionDocument` (`:2909`) — every one
@@ -298,7 +298,7 @@ mode; nothing emits the maximize; nothing emits a refusal.
   Explorer's own reader/graph (they *are* the body). ADR-0017 is silent on commands issued while
   the non-active mode is retained — **a spec gap to surface**, since Ruling 47 delivered "full
   window like the explorer view icon" as maximize-on-create and the operator is evidently using both.
-- **DC-148 (new) — a flow acquires a resource by asking the operator, uses it for one half of the
+- **DC-149 (new) — a flow acquires a resource by asking the operator, uses it for one half of the
   work, and refuses the other half for lack of that resource.** Sweep: the terminal open with no
   workspace (`WorkbenchShell.cs:268`) announces and degrades rather than refusing — not a sibling;
   `ReopenSessionAsync` opens the workspace first (`:361–370`) — the correct shape, which is the
@@ -319,12 +319,12 @@ marker in `src/AiDe.App` is `TerminalSurface.cs:219`, unrelated.
 
 | Phase | Scope (code + tests) | Failure mode eliminated | Validation | Depends on |
 |---|---|---|---|---|
-| **1** | F1 (the `DocumentOpening` seam + `MainWindow` wiring) + F5's `shell.mode` line and `hostLoaded/hostVisible` on `open-*` mutations | DC-147: a dock document opened while Explorer is the body is invisible and announced as shown | `ANewSessionCreatedWhileExplorerIsTheBodyIsShown` green (incl. the sibling line); `LeavingExplorerShowsTheSessionCreatedInsideIt` and `ANewSessionRendersInTheOperatorsRestoredArrangement` stay green; INV-0007's `--shell` oracles stay green; a `ShellModeController` unit test asserts one `shell.mode` line per `Set` | — |
+| **1** | F1 (the `DocumentOpening` seam + `MainWindow` wiring) + F5's `shell.mode` line and `hostLoaded/hostVisible` on `open-*` mutations | DC-148: a dock document opened while Explorer is the body is invisible and announced as shown | `ANewSessionCreatedWhileExplorerIsTheBodyIsShown` green (incl. the sibling line); `LeavingExplorerShowsTheSessionCreatedInsideIt` and `ANewSessionRendersInTheOperatorsRestoredArrangement` stay green; INV-0007's `--shell` oracles stay green; a `ShellModeController` unit test asserts one `shell.mode` line per `Set` | — |
 | **2** | F2 (invalidate on reopen of a restored surface) + F3 (`SessionComposerBinder`, called from `NewSession` and `ReopenSessionAsync`) | DC-040 rec. 2 and DC-084 rec. 2: a reopened session shows the island and has no run binding | `AReopenedSessionIsShownAndItsComposerIsBound` green; the sheet's `RoutableBackends` tests unchanged; `ANewSessionTakesTheWholeTreeTests` (reopen does not maximize) unchanged | 1 (the probe's `--reopen` run must be able to see the pane) |
 | **2b** | Bind restored session documents at `workspace-open`: for each `session-document:<id>` surface the restore keeps, `SessionConfigStore(root, id).Load()` → register + bind; the island only when `session.json` is gone | The restored layout's active tab reading *"No session is open"* over a session that exists | a new probe step (`--bind-on-restore`) asserting the restored active document is live and `configured`; red today by construction (`live-document=False` in every run) | 2 |
-| **3** | F4 — the Owner's choice: open the chosen workspace before `opened`, or refuse New Session until a workspace is open | DC-148: the chooser-bound session's composer refused for "no open workspace" | a `NewSessionFlow` oracle with a chooser; red until F4 | — (Owner ruling) |
+| **3** | F4 — the Owner's choice: open the chosen workspace before `opened`, or refuse New Session until a workspace is open | DC-149: the chooser-bound session's composer refused for "no open workspace" | a `NewSessionFlow` oracle with a chooser; red until F4 | — (Owner ruling) |
 | **4** | F5's remaining emitters: `maximize-stack` mutation (+ refusal), `session-document.bound`/`.refused` | the next report of this family is answerable from the log without a replay | emitter unit tests; the replay's B1 run shows `shell.mode=Explorer` and `hostLoaded=false` on the `open-session-document` line | 1 |
-| **5** | ADR-0017 amendment: *"a command that needs the workbench body switches to it"*, with the list of such commands = the catalog entries that open dock documents; Ruling 47's note gains the pointer | the spec silence that let DC-147 pass review | `verify-ruling-citations.py`; the ADR's `review-suggested` propagation | 1 |
+| **5** | ADR-0017 amendment: *"a command that needs the workbench body switches to it"*, with the list of such commands = the catalog entries that open dock documents; Ruling 47's note gains the pointer | the spec silence that let DC-148 pass review | `verify-ruling-citations.py`; the ADR's `review-suggested` propagation | 1 |
 
 ## 12. Residual risk — and what would change the diagnosis
 

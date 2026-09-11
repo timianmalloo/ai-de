@@ -15,7 +15,7 @@ links:
   - { to: adr-0015-canvas-hosting-and-overlay-strategy, rel: relates-to }
 review-by: 2027-02-28
 review-suggested:
-  - { by: inv-0009-a-session-document-opened-into-a-body-that-is-not-on-screen, on: 2026-09-11, reason: "Silent on catalog commands issued while the non-active mode is retained: a dock document opened while Explorer is the body is added to an unparented host and announced as shown (DC-147). Amendment proposed in INV-0009 Phase 5." }
+  - { by: inv-0009-a-session-document-opened-into-a-body-that-is-not-on-screen, on: 2026-09-11, reason: "Silent on catalog commands issued while the non-active mode is retained: a dock document opened while Explorer is the body is added to an unparented host and announced as shown (DC-148). Amendment proposed in INV-0009 Phase 5." }
 summary: >-
   A surface that needs the whole body (the Knowledge Explorer's graph+reader) is presented as a
   primary VIEW MODE the shell holds — Workbench | Explorer — realised as a body-content swap of the

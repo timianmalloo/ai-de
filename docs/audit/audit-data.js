@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T23:18:02Z",
+  "generated": "2026-09-11T23:21:05Z",
   "audit": [
     {
       "actor": null,
@@ -12424,6 +12424,46 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "1aadde843a950c9d56a7dc5f034bca0254d52f4b",
         "short": "1aadde843",
+        "branch": "investigate/session-document-render",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M29CCKH3RASB2HZZTYPYXX13",
+      "shortname": "investigate-session-document-render-reissue",
+      "datetime": "2026-09-11T23:21:04Z",
+      "session": "session-render",
+      "prompt": "Re-issue the defect-class ids INV-0009 allocated (DC-013): verify-id-allocators reported DC-147 allocated independently on origin/feature/session-elevation after this branch's first commit.",
+      "summary": "Ids re-issued, nothing else changed: the class 'a command mutates the model of a view that is not on screen, and reports the model's success as the screen's' is DC-148 (was DC-147); 'a flow acquires a resource by asking the operator, uses it for one half of the work, and refuses the other half for lack of that resource' is DC-149 (was DC-148). main's DC-146 and feature/session-elevation's DC-147 are carried verbatim so the register's sequence is unbroken on this branch. INV-0009, the register and ADR-0017's review-suggested flag renumbered; the superseded entry's summary should be read with this substitution.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0009-a-session-document-opened-into-a-body-that-is-not-on-screen.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "investigation",
+        "dc-013",
+        "dc-148",
+        "dc-149"
+      ],
+      "outcome": "success",
+      "goal": "Keep INV-0009's ids unique across every branch before push",
+      "done_when": "verify-id-allocators and verify-defect-register green on the branch",
+      "tier": "T1",
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "supersedes": "al-01M29C6TT50SFYN2J9Z8JFVAEY",
+      "git": {
+        "sha": "efc65a8996b0b50872ea422ed3c17973926938e3",
+        "short": "efc65a899",
         "branch": "investigate/session-document-render",
         "pushed": null
       }

@@ -880,7 +880,7 @@ window.DOCS_INDEX = {
         {
           "by": "inv-0009-a-session-document-opened-into-a-body-that-is-not-on-screen",
           "on": "2026-09-11",
-          "reason": "Silent on catalog commands issued while the non-active mode is retained: a dock document opened while Explorer is the body is added to an unparented host and announced as shown (DC-147). Amendment proposed in INV-0009 Phase 5."
+          "reason": "Silent on catalog commands issued while the non-active mode is retained: a dock document opened while Explorer is the body is added to an unparented host and announced as shown (DC-148). Amendment proposed in INV-0009 Phase 5."
         }
       ],
       "summary": "A surface that needs the whole body (the Knowledge Explorer's graph+reader) is presented as a primary VIEW MODE the shell holds — Workbench | Explorer — realised as a body-content swap of the region the docking host occupies, with the activity rail as the mode selector. Rejects making it a dock pane (it would compete for space — the defect being fixed) and a modal overlay (the rail must persist and it is not dismiss-only). The non-active mode's state is retained, never rebuilt.",
@@ -919,7 +919,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "148db40c8bbf6f9e4eba24aaf90d180dde902287223c353ae3079265529ff4f6"
+      "sourceSha256": "379840fde80e6a2d1eabc96745f6cc98910b60025ecd0b8bcc545c7567897e72"
     },
     {
       "id": "adr-0018-node-content-reader-contract",
@@ -6194,7 +6194,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "681e3dc3d91e270973eed9a83b012e86bf3282e22e25f9dcce43bb6effbcd17b"
+      "sourceSha256": "f6644c408aa028730670ee245847e4acdf1b115f48cf9f302dc45d0de491d957"
     },
     {
       "id": "design-session-profiler",
@@ -8989,8 +8989,8 @@ window.DOCS_INDEX = {
         "layout-restore",
         "observability",
         "ruling-47",
-        "dc-147",
         "dc-148",
+        "dc-149",
         "dc-084",
         "dc-040",
         "dc-135"
@@ -9026,7 +9026,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5892b5d3a5aadaa18528204f6ec3081076555bef81e215fbd0d6a591e5c66fae"
+      "sourceSha256": "cc4312d3408f6f357e848047f3242ed2cfe2859af80e5c0f8be143547e3866f5"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -14539,5 +14539,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "2166c90208a8a545f120e0384a786580bed6c985242ce67d32257fc9becfe637"
+  "graphSha256": "5e6db586476a985123ff58b4029d12d1db04223836bf24a126e64097e71a3df4"
 };

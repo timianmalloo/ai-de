@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 73 · partially-controlled 58 · uncontrolled 17
+**Status counts:** controlled 73 · partially-controlled 59 · uncontrolled 17
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -6330,7 +6330,36 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   lease; template case: found `"docs/plan.md"`).
 - **Status:** `controlled`.
 
-### DC-147 — A command mutates the model of a view that is not on screen, and reports the model's success as the screen's
+### DC-147 — An in-artifact measurement that throws before it renders leaves its placeholder on screen, and the craft gate launders the claim
+- **Shape:** a reviewable artifact carries its own measurement (a verdict strip: contrast pairs,
+  target sizes, density) so that its hub document can say *"measured, not asserted"*. A script
+  error before the audit runs (a syntax slip in the strip's own string concatenation) leaves the
+  placeholder *measuring…* on screen forever. Nothing errors visibly, the artifact still opens,
+  the deterministic craft gate reports the file clean (it measures markup and computed style; it
+  does not execute the page the way a browser does), and the hub `.md` repeats a number that was
+  never computed. The claim survives because the only reader that could refute it is a browser
+  console nobody opened.
+- **Signature:** a verdict element whose text is its initial placeholder after load; an
+  `Uncaught SyntaxError` / `ReferenceError` in the console of a mockup; a hub node citing
+  "N pairs, 0 fail" that no run produced; a craft-gate report of 0 findings on a file whose
+  in-artifact audit never ran.
+- **Instance (D2, 2026-09-11):** `docs/mockups/new-session-sheet.html` (D1, on `main`) —
+  `'</b>') · <b class=…` at its verdict line, a missing `+'`; the strip read *measuring…* from the
+  day it was committed while `ui-review-perspective-shell` §2b cited its 27 pairs. Fixed here (the
+  instance); its strip now reads *0 contrast fail · 0 target < 24px · 0 tier field · 28 pairs*.
+- **Sweep:** an Edge headless render of every `docs/mockups/*.html` found the same class in four
+  legacy mockups (`app-facelift`, `context-map-join`, `knowledge-explorer`, `uml-erm-surfaces`:
+  `Uncaught ReferenceError: h_theme is not defined`) — reported to the conductor, not fixed in this
+  node. The three Addendum C/D mockups and the new session mockup render their strips.
+- **Control:** this run — a headless sweep of every mockup and every harness state that fails on
+  `Uncaught` in the console or a verdict strip still reading its placeholder (recorded in
+  `ui-review-session-conversation` §2c and §10). **Proposed** (ranked plan item 5): the same sweep
+  as `tools/verify-mockup-audits.py` beside `verify-ui-craft-floor.py` in `build.yml`, so the
+  craft gate's green never stands alone over a strip that never measured.
+- **Status:** `partially-controlled` — the instance is fixed and the class swept by this run's headless
+  sweep; the gate is prose until the sweep is a script in CI.
+
+### DC-148 — A command mutates the model of a view that is not on screen, and reports the model's success as the screen's
 
 - **Shape:** the shell holds two bodies — the docking workbench and the full-body Explorer — and
   swaps which one is the window's content (ADR-0017). Every catalog command that opens a dock
@@ -6372,7 +6401,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   oracle for the session document.
 - **Status:** `uncontrolled` — red oracle committed; no fix landed.
 
-### DC-148 — A flow acquires a resource by asking the operator, uses it for one half of the work, and refuses the other half for lack of that resource
+### DC-149 — A flow acquires a resource by asking the operator, uses it for one half of the work, and refuses the other half for lack of that resource
 
 - **Shape:** with no workspace open, `File → New Session` interposes a workspace chooser; the
   chosen root binds the session (`SessionConfigStore(root, …).Create`) and the document opens. The
