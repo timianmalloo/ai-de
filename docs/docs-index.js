@@ -5649,7 +5649,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fe10a320dfc1a3f8366531c647837e00dd199fe6e36b31f09bd599932603142b"
+      "sourceSha256": "774a457e1b85f77709834e7577b4dbc9c5dec5e86d4836a1836aab07da7ee10a"
     },
     {
       "id": "design-session-profiler",
@@ -6556,6 +6556,43 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "bf5ead48ffaf206188af85737793da995de0409692d2133165110d2891a55a73"
+    },
+    {
+      "id": "note-front-door-rulings-45-48",
+      "path": "docs/notes/front-door-rulings-45-48.md",
+      "title": "Decision note — Rulings 45–48: Terminal leaves Phase 1, edge ownership, maximize-on-create, craft-gate corpus",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "Four rulings filed together. Three are the Owner's rulings on the UI track; the fourth is a retroactive filing of a number that was already being cited as authority. The numbering departs from the Owner's own allocation, and the reason is recorded here rather than corrected silently.",
+      "tags": [
+        "decision-note",
+        "ruling",
+        "conductor",
+        "front-door",
+        "ui",
+        "craft-gate",
+        "docking"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-ui-and-windowing",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-front-door-council-rulings",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e73242b6893766c1eca09ce45565231240a7dd543190e2526fca49887c192bdb"
     },
     {
       "id": "perf-results-phase-1",
@@ -13021,5 +13058,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "1d406ce7d889633d817053e4688a8f0e26718209faf5410b7e240f441a42f208"
+  "graphSha256": "1cc6dfc2a20bb12b4ec9d4438004db4e034d46f8f9f9760f7951c057a0ed8dba"
 };
