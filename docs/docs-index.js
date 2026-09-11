@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generator": "docs-graph.py derive",
+  "generator": "docs-graph.py flag",
   "rootId": "architecture",
   "artifactTypes": [
     "knowledge",
@@ -6415,6 +6415,49 @@ window.DOCS_INDEX = {
       "sourceSha256": "ea8f4ed0d3c06bccdc3531132459307b83b32bb69dffcfc892077b8366e54deb"
     },
     {
+      "id": "mockup-session-front-door",
+      "path": "docs/mockups/session-front-door.md",
+      "title": "Session front door — operator-feedback elevate mockup",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@claude-ui-elevation",
+      "phase": "phase-1-front-door",
+      "reviewBy": "2026-12-10",
+      "reviewSuggested": [
+        {
+          "by": "ui-review-operator-feedback",
+          "on": "2026-09-11",
+          "reason": "New elevate review: token-coverage rules TC1-TC6, required-field rules RQ1-RQ6, canvas mode strip MS1-MS5 and activity rail AR1-AR5 added to DESIGN.md; ranked plan for the running app"
+        }
+      ],
+      "summary": "A self-contained, dependency-free mockup of the five surfaces named in operator feedback on the running app: the composer as a notebook of blocks, the Console-only canvas mode strip under Ruling 45, the New Session sheet's required task class, the activity rail, and a contrast audit computed from live styles rather than claimed in prose. Ships the standard review harness plus a catalog-size control that switches the mode strip between one, two and five modes.",
+      "tags": [
+        "ui-design",
+        "mockup",
+        "composer",
+        "task-class",
+        "canvas-modes",
+        "activity-rail",
+        "contrast"
+      ],
+      "links": [
+        {
+          "to": "ui-review-operator-feedback",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-app-facelift",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-facelift-elevate",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8caa79a9e338fe7a9b7267b1571cc6ce6663421f658d571e8c98a907dc520cfc"
+    },
+    {
       "id": "mockup-uml-erm-surfaces",
       "path": "docs/mockups/uml-erm-surfaces.md",
       "title": "UML & ERM Surfaces — derived views (mockup)",
@@ -7532,6 +7575,46 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "87360ac96ef97fa830bbcee369a8ec3a8f5545eae3d45d82dbb9433a460e93ef"
+    },
+    {
+      "id": "ui-review-operator-feedback",
+      "path": "docs/reviews/ui-operator-feedback.md",
+      "title": "UI review — the session front door, from operator feedback",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@claude-ui-elevation",
+      "phase": "phase-1-front-door",
+      "reviewBy": "2026-12-10",
+      "reviewSuggested": [],
+      "summary": "Elevate-mode review of the AI-DE session front door against seven pieces of real operator feedback on the running app. Six of the seven are unimplemented specification or a measurable defect rather than a matter of taste; the contrast complaint is one systemic cause with eleven measured failing pairs. The single highest improvement-to-effort change is a set of implicit default styles in one file, which converts theme coverage from opt-in to opt-out.",
+      "tags": [
+        "ui-review",
+        "ux",
+        "accessibility",
+        "contrast",
+        "composer",
+        "information-architecture"
+      ],
+      "links": [
+        {
+          "to": "mockup-session-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-app-facelift",
+          "rel": "relates-to"
+        },
+        {
+          "to": "review-ui-facelift",
+          "rel": "refines"
+        },
+        {
+          "to": "review-ui-activity-rail",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7e3ec2b817fddafb398006e9682f60792f2f55f886b323c284be36d0d708a4b8"
     },
     {
       "id": "ui-review-watcher-observatory",
@@ -12775,6 +12858,14 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-app-facelift"
     },
     {
+      "id": "surface-mockups-session-front-door",
+      "path": "docs/mockups/session-front-door.html",
+      "title": "AI-DE session front door — operator-feedback elevate",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-session-front-door"
+    },
+    {
       "id": "surface-mockups-workbench",
       "path": "docs/mockups/workbench.html",
       "title": "AI-DE Workbench — mockup",
@@ -12863,5 +12954,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ff9b79988c806ac4186416d92ea394db7360cd91aee4ef9a029f0711f0ec07f8"
+  "graphSha256": "67a036bec7d4114a3e77a9500b9a470dab7938c87590f701b141509446547700"
 };

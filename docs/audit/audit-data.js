@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T03:12:05Z",
+  "generated": "2026-09-11T13:37:53Z",
   "audit": [
     {
       "actor": null,
@@ -11298,6 +11298,27 @@ window.AUDIT_DATA = {
         "branch": "fix/spawn-containment",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M28B0R807NPKC605J54T6S09",
+      "shortname": "ui-design-session-front-door",
+      "datetime": "2026-09-11T13:37:53Z",
+      "session": "ui-elevation-node-u1",
+      "prompt": "Node U1 - /ui-design stages 1-3 on real operator feedback (7 items in C:\\Users\\malla\\Downloads\\UI housekeeping). DESIGN ONLY: write DESIGN.md and docs/mockups/, do NOT write src/. T2. Bounded loop: variant = rubric findings at severity >= major, strictly decreasing; floor = zero majors; cap = 3 passes. Deliverable is the ranked plan. Mid-task correction: Ruling 45 makes the canvas Console-only; design a one-mode-now-N-later strip.",
+      "summary": "Elevate review of the session front door. Six of seven feedback items are unimplemented spec or measured defect, not taste. Item 4's systemic cause named at the token level: only 6 implicit WPF styles exist, none for a text or input control, so 18 base types fall back to platform light defaults - 11 measured failing pairs, worst 1.15:1, plus the inverse at 1.22:1 caused by a previous partial fix. Composer: CodeMirror is vendored and navigated to but Configure has zero callers and host.init/editor.ready deadlock, so it never initializes. Task class is a free-text box for a cohort key where a typo costs more than a default. Explore/Provenance/Domain are one class instantiated three times, and the operator's proposed fix keeps the wrong one. Rail: 3 of 4 icons inert, the 4th is the only door to Explorer mode. Console-only mode strip designed per Ruling 45. Rubric variant 5 majors -> 0 in 2 passes; cap did not fire. Nine false claims in the brief reported.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/session-front-door.html",
+        "docs/reviews/ui-operator-feedback.md",
+        "DESIGN.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-09-11T13:15:32Z",
+      "duration_seconds": 1341.0
     }
   ],
   "changes": [
