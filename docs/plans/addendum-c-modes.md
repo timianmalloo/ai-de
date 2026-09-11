@@ -9,7 +9,6 @@ tags: [plan, execution-graph, addendum-c, modes, use-cases, f5, coordination, ui
 links:
   - { to: plan-conductor-front-door, rel: relates-to }
   - { to: plan-ui-and-windowing, rel: relates-to }
-  - { to: kb-graph-and-loop-engineering, rel: depends-on }
   - { to: spec-conductor, rel: relates-to }
   - { to: spec-knowledge-explorer-mode, rel: relates-to }
 review-by: 2026-12-11
