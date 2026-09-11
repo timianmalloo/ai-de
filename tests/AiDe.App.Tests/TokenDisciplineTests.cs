@@ -1,5 +1,8 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Media;
+using System.Xml.Linq;
 
 namespace AiDe.App.Tests;
 
@@ -170,5 +173,380 @@ public sealed class TokenDisciplineTests
 
         Assert.NotNull(directory);
         return Path.Combine(directory.FullName, "src", "AiDe.App");
+    }
+
+    // ───────────────────────────────────── the container pairs ink with ground; the leaf inherits ──
+
+    /// <summary>
+    /// The types whose implicit style may never state an ink (INV-0008). A style on one of these
+    /// outranks every container's state pairing — selected, checked, disabled, on-accent — because
+    /// the container's <c>TextElement.Foreground</c> reaches the glyphs only by inheritance, and an
+    /// implicit style's setter beats an inherited value in the property system's precedence.
+    /// </summary>
+    private static readonly string[] LeafTextTypes =
+    [
+        "TextBlock", "Label", "AccessText", "Run", "Span", "Bold", "Italic", "Underline", "Hyperlink",
+        "Paragraph", "TextElement", "Inline",
+    ];
+
+    public static TheoryData<string> AllMarkup()
+    {
+        var data = new TheoryData<string>();
+        foreach (var file in Directory.EnumerateFiles(ProjectRoot(), "*.xaml", SearchOption.AllDirectories))
+        {
+            data.Add(file);
+        }
+
+        return data;
+    }
+
+    /// <summary>
+    /// No implicit style for a leaf text type sets <c>Foreground</c> — the ink is the container's to
+    /// pair with its ground, and the leaf inherits it (INV-0008, the class that shipped twelve accent
+    /// tabs at 2.37:1 and two disabled buttons in their enabled ink).
+    /// </summary>
+    /// <remarks>
+    /// <b>Why the census is not enough.</b> The census proves the composed shell at HEAD; this rule
+    /// stops the shape being authored again, and fails at the line rather than at the pixel. It was
+    /// observed red against the pre-fix <c>App.xaml</c> (TextBlock and Label each set Foreground) and
+    /// green after the setters were removed.
+    /// </remarks>
+    [Theory]
+    [MemberData(nameof(AllMarkup))]
+    public void NoImplicitLeafTextStyle_SetsItsOwnInk(string xamlPath)
+    {
+        var offenders = LeafInkOverrides(File.ReadAllText(xamlPath))
+            .Select(o => $"{Path.GetFileName(xamlPath)}: {o}")
+            .ToList();
+
+        Assert.True(offenders.Count == 0,
+            "an implicit style on a leaf text type states its own ink, so every container's state "
+            + "pairing (selected / checked / disabled / on-accent) that reaches the text by "
+            + "inheritance is overridden at once (INV-0008). Remove the Foreground setter; the Window "
+            + "style states the root ink and the container pairs the rest:"
+            + Environment.NewLine + string.Join(Environment.NewLine, offenders));
+    }
+
+    /// <summary>
+    /// Every trigger that paints a ground also states an ink that clears the floor on it — in the
+    /// trigger itself, or by the template's rest ink measuring ≥ 4.5:1 on the new ground per the
+    /// token dictionary's own values.
+    /// </summary>
+    /// <remarks>
+    /// <para>A state is a <i>pairing</i> on the container: a trigger that swaps the ground to the
+    /// accent and leaves the ink to whatever was there is the accent-tab defect written one trigger
+    /// at a time. The rule resolves the ink in effect the way the property system does — the
+    /// trigger's own setter, else the template's stated <c>TextElement.Foreground</c>, else the root
+    /// ink — and measures the pairing from <c>App.xaml</c>'s colour values, so a ground that is fine
+    /// under the rest ink (hover on the menu ground) passes without a redundant setter.</para>
+    /// <para>Grounds that are not a plain token — <c>Transparent</c>, a theme
+    /// <c>ComponentResourceKey</c>, a <c>TemplateBinding</c> — are outside what a source rule can
+    /// measure; the census measures them rendered.</para>
+    /// </remarks>
+    [Theory]
+    [MemberData(nameof(AllMarkup))]
+    public void EveryTriggerThatPaintsAGround_StatesAnInkThatClearsIt(string xamlPath)
+    {
+        var offenders = UnpairedGrounds(File.ReadAllText(xamlPath), DeclaredColours())
+            .Select(o => $"{Path.GetFileName(xamlPath)}: {o}")
+            .ToList();
+
+        Assert.True(offenders.Count == 0,
+            "a state trigger paints a ground the ink in effect does not clear, and states no ink of "
+            + "its own — the pairing belongs on the container, in the same trigger (INV-0008):"
+            + Environment.NewLine + string.Join(Environment.NewLine, offenders));
+    }
+
+    /// <summary>The two rules, observed firing on the shapes they exist for — a rule never seen red proves nothing (DC-016).</summary>
+    [Fact]
+    public void TheSourceRules_FireOnTheShapesThatShippedTheDefect()
+    {
+        const string PreFixLeafStyle = """
+            <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+              <SolidColorBrush x:Key="TextBrush" Color="#E4E9EF" />
+              <Style TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+              </Style>
+              <Style x:Key="Caption" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+              </Style>
+            </ResourceDictionary>
+            """;
+
+        var leaf = LeafInkOverrides(PreFixLeafStyle).ToList();
+
+        // The implicit style is the defect; the keyed one is opted into per site and is not.
+        Assert.Single(leaf);
+        Assert.Contains("TextBlock", leaf[0], StringComparison.Ordinal);
+
+        const string UnpairedAccent = """
+            <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+              <SolidColorBrush x:Key="TextBrush" Color="#E4E9EF" />
+              <SolidColorBrush x:Key="AccentBrush" Color="#5B9DD9" />
+              <SolidColorBrush x:Key="MenuHoverBrush" Color="#243040" />
+              <SolidColorBrush x:Key="AccentContrastBrush" Color="#0D1014" />
+              <ControlTemplate x:Key="T" TargetType="ToggleButton">
+                <Border x:Name="Chrome" Background="{TemplateBinding Background}">
+                  <ContentPresenter x:Name="Content" TextElement.Foreground="{StaticResource TextBrush}" />
+                </Border>
+                <ControlTemplate.Triggers>
+                  <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Chrome" Property="Background" Value="{StaticResource MenuHoverBrush}" />
+                  </Trigger>
+                  <Trigger Property="IsChecked" Value="True">
+                    <Setter TargetName="Chrome" Property="Background" Value="{StaticResource AccentBrush}" />
+                  </Trigger>
+                  <Trigger Property="IsPressed" Value="True">
+                    <Setter TargetName="Chrome" Property="Background" Value="{StaticResource AccentBrush}" />
+                    <Setter TargetName="Content" Property="TextElement.Foreground" Value="{StaticResource AccentContrastBrush}" />
+                  </Trigger>
+                </ControlTemplate.Triggers>
+              </ControlTemplate>
+            </ResourceDictionary>
+            """;
+
+        var unpaired = UnpairedGrounds(UnpairedAccent, DeclaredColours(UnpairedAccent)).ToList();
+
+        // Hover keeps the rest ink on a ground it clears (TextBrush on MenuHover ≈ 11:1): not a
+        // finding. Checked paints the accent under the rest ink (2.37:1) and states nothing: the
+        // finding. Pressed paints the accent and pairs it: not a finding.
+        var finding = Assert.Single(unpaired);
+        Assert.Contains("IsChecked", finding, StringComparison.Ordinal);
+        Assert.Contains("AccentBrush", finding, StringComparison.Ordinal);
+        Assert.Contains("TextBrush", finding, StringComparison.Ordinal);
+
+        // The three syntaxes the rule must also read: <Trigger.Setters> element syntax, a
+        // <Setter.Value> carrying a resource element, and a Style whose rest ink is its own Setter.
+        const string ElementSyntaxes = """
+            <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+              <SolidColorBrush x:Key="TextBrush" Color="#E4E9EF" />
+              <SolidColorBrush x:Key="AccentBrush" Color="#5B9DD9" />
+              <SolidColorBrush x:Key="TextMutedBrush" Color="#98A3B2" />
+              <Style x:Key="ElementTrigger" TargetType="Button">
+                <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                <Style.Triggers>
+                  <Trigger Property="IsPressed" Value="True">
+                    <Trigger.Setters>
+                      <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+                    </Trigger.Setters>
+                  </Trigger>
+                </Style.Triggers>
+              </Style>
+              <Style x:Key="ElementValue" TargetType="Button">
+                <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                <Style.Triggers>
+                  <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background">
+                      <Setter.Value>
+                        <DynamicResource ResourceKey="AccentBrush" />
+                      </Setter.Value>
+                    </Setter>
+                  </Trigger>
+                </Style.Triggers>
+              </Style>
+              <Style x:Key="StyleRestInk" TargetType="Button">
+                <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                <Style.Triggers>
+                  <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+                  </Trigger>
+                </Style.Triggers>
+              </Style>
+            </ResourceDictionary>
+            """;
+
+        var findings = UnpairedGrounds(ElementSyntaxes, DeclaredColours(ElementSyntaxes)).ToList();
+
+        Assert.Equal(3, findings.Count);
+        Assert.Contains(findings, f => f.Contains("IsPressed", StringComparison.Ordinal) && f.Contains("TextBrush", StringComparison.Ordinal));
+        Assert.Contains(findings, f => f.Contains("IsMouseOver", StringComparison.Ordinal) && f.Contains("TextBrush", StringComparison.Ordinal));
+        Assert.Contains(findings, f => f.Contains("IsFocused", StringComparison.Ordinal) && f.Contains("TextMutedBrush", StringComparison.Ordinal));
+    }
+
+    private static readonly XNamespace Xaml = "http://schemas.microsoft.com/winfx/2006/xaml";
+    private static readonly XNamespace Presentation = "http://schemas.microsoft.com/winfx/2006/xaml/presentation";
+
+    private static readonly Regex ResourceToken =
+        new(@"^\{(?:Static|Dynamic)Resource\s+([A-Za-z0-9_]+)\s*\}$", RegexOptions.Compiled);
+
+    /// <summary>An ink property, qualified or not: <c>Foreground</c>, <c>TextElement.Foreground</c>, <c>TextBlock.Foreground</c>…</summary>
+    private static bool IsInk(string? property) =>
+        property is not null && (property == "Foreground" || property.EndsWith(".Foreground", StringComparison.Ordinal));
+
+    private static bool IsGround(string? property) =>
+        property is not null && (property == "Background" || property.EndsWith(".Background", StringComparison.Ordinal));
+
+    /// <summary>The floor for body text (WCAG 1.4.3); every ground a trigger paints under text is body text.</summary>
+    private const double TextFloor = 4.5;
+
+    /// <summary>The ink the Window style states, which every text inherits when nothing nearer says otherwise.</summary>
+    private const string RootInk = "TextBrush";
+
+    /// <summary>Implicit (keyless) styles on a leaf text type that set an ink, anywhere in the style.</summary>
+    internal static IEnumerable<string> LeafInkOverrides(string xaml)
+    {
+        var document = XDocument.Parse(xaml, LoadOptions.SetLineInfo);
+
+        foreach (var style in document.Descendants().Where(e => e.Name.LocalName == "Style"))
+        {
+            var target = TargetTypeName(style.Attribute("TargetType")?.Value);
+            if (target is null || !LeafTextTypes.Contains(target, StringComparer.Ordinal)) continue;
+            if (style.Attribute(Xaml + "Key") is not null) continue;
+
+            foreach (var setter in style.Descendants().Where(e => e.Name.LocalName == "Setter"))
+            {
+                var property = setter.Attribute("Property")?.Value;
+                if (IsInk(property))
+                {
+                    yield return $"line {Line(setter)}: implicit <Style TargetType=\"{target}\"> sets {property}";
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Triggers that paint a token ground under text and neither state an ink nor leave one in effect
+    /// that clears the floor on that ground.
+    /// </summary>
+    internal static IEnumerable<string> UnpairedGrounds(string xaml, IReadOnlyDictionary<string, Color> colours)
+    {
+        var document = XDocument.Parse(xaml, LoadOptions.SetLineInfo);
+
+        foreach (var trigger in document.Descendants().Where(IsTrigger))
+        {
+            // Attribute syntax (<Setter …/> as a child) and element syntax (<Trigger.Setters><Setter …/>).
+            var setters = trigger.Elements().Where(e => e.Name.LocalName == "Setter")
+                .Concat(trigger.Elements().Where(e => e.Name.LocalName.EndsWith(".Setters", StringComparison.Ordinal))
+                    .SelectMany(s => s.Elements().Where(e => e.Name.LocalName == "Setter")))
+                .ToList();
+
+            var grounds = setters
+                .Where(s => IsGround(s.Attribute("Property")?.Value))
+                .Select(s => Token(SetterValue(s)))
+                .Where(t => t is not null && colours.ContainsKey(t))
+                .Select(t => t!)
+                .ToList();
+
+            if (grounds.Count == 0) continue;
+
+            var ownInk = setters
+                .Where(s => IsInk(s.Attribute("Property")?.Value))
+                .Select(s => Token(SetterValue(s)))
+                .FirstOrDefault(t => t is not null);
+
+            var ink = ownInk ?? RestInk(trigger);
+
+            foreach (var ground in grounds)
+            {
+                if (!colours.TryGetValue(ink, out var inkColour))
+                {
+                    yield return $"line {Line(trigger)}: {Describe(trigger)} paints {ground} and the ink in effect ({ink}) is not a colour token";
+                    continue;
+                }
+
+                var ratio = ThemeProbe.Contrast(inkColour, colours[ground]);
+                if (ratio < TextFloor)
+                {
+                    yield return string.Format(CultureInfo.InvariantCulture,
+                        "line {0}: {1} paints {2} under {3} at {4:0.00}:1 (floor {5}) and states no ink",
+                        Line(trigger), Describe(trigger), ground, ink, ratio, TextFloor);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// The ink in effect where the trigger's ground is painted: the enclosing template's stated
+    /// <c>TextElement.Foreground</c> token, else the root ink the Window style sets.
+    /// </summary>
+    private static string RestInk(XElement trigger)
+    {
+        var template = trigger.Ancestors().FirstOrDefault(e => e.Name.LocalName is "ControlTemplate" or "DataTemplate" or "Style");
+        if (template is null) return RootInk;
+
+        // An ink stated on an element in the template body (TextElement.Foreground="{StaticResource X}")…
+        var stated = template.Descendants()
+            .Where(e => !e.Ancestors().Any(IsTrigger) && e.Name.LocalName != "Setter")
+            .SelectMany(e => e.Attributes())
+            .Where(a => IsInk(a.Name.LocalName))
+            .Select(a => Token(a.Value))
+            .FirstOrDefault(t => t is not null);
+
+        // …else a Style's own rest setter (<Setter Property="Foreground" …/> outside its triggers).
+        stated ??= template.Descendants()
+            .Where(e => e.Name.LocalName == "Setter" && !e.Ancestors().Any(IsTrigger) && IsInk(e.Attribute("Property")?.Value))
+            .Select(e => Token(SetterValue(e)))
+            .FirstOrDefault(t => t is not null);
+
+        return stated ?? RootInk;
+    }
+
+    /// <summary>A setter's value, from its attribute or from a <c>&lt;Setter.Value&gt;</c> child carrying a resource extension.</summary>
+    private static string? SetterValue(XElement setter)
+    {
+        if (setter.Attribute("Value") is { } attribute) return attribute.Value;
+
+        var element = setter.Elements().FirstOrDefault(e => e.Name.LocalName == "Setter.Value")?.Elements().FirstOrDefault();
+        if (element is null) return null;
+        if (element.Name.LocalName is "StaticResource" or "DynamicResource")
+        {
+            var key = element.Attribute("ResourceKey")?.Value;
+            return key is null ? null : "{" + element.Name.LocalName + " " + key + "}";
+        }
+
+        return null;
+    }
+
+    private static bool IsTrigger(XElement e) =>
+        e.Name.LocalName is "Trigger" or "DataTrigger" or "MultiTrigger" or "MultiDataTrigger";
+
+    private static string Describe(XElement trigger)
+    {
+        var property = trigger.Attribute("Property")?.Value ?? trigger.Attribute("Binding")?.Value;
+        if (property is null)
+        {
+            var conditions = trigger.Descendants().Where(e => e.Name.LocalName == "Condition")
+                .Select(c => (c.Attribute("Property")?.Value ?? c.Attribute("Binding")?.Value ?? "?") + "=" + (c.Attribute("Value")?.Value ?? "?"));
+            property = string.Join(" && ", conditions);
+        }
+
+        return $"{trigger.Name.LocalName} [{property}={trigger.Attribute("Value")?.Value ?? ""}]";
+    }
+
+    private static string? Token(string? value)
+    {
+        if (value is null) return null;
+        var match = ResourceToken.Match(value.Trim());
+        return match.Success ? match.Groups[1].Value : null;
+    }
+
+    private static string? TargetTypeName(string? targetType)
+    {
+        if (targetType is null) return null;
+        var name = targetType.Trim();
+        var typeExtension = Regex.Match(name, @"^\{x:Type\s+(?:[A-Za-z0-9_]+:)?([A-Za-z0-9_]+)\s*\}$");
+        if (typeExtension.Success) return typeExtension.Groups[1].Value;
+        var colon = name.LastIndexOf(':');
+        return colon >= 0 ? name[(colon + 1)..] : name;
+    }
+
+    private static int Line(XElement element) => ((System.Xml.IXmlLineInfo)element).LineNumber;
+
+    /// <summary>Every <c>SolidColorBrush</c> the dictionary declares with a literal colour, by key.</summary>
+    private static Dictionary<string, Color> DeclaredColours(string? xaml = null)
+    {
+        xaml ??= File.ReadAllText(Path.Combine(ProjectRoot(), TokenDictionary));
+        var document = XDocument.Parse(xaml);
+        var colours = new Dictionary<string, Color>(StringComparer.Ordinal);
+
+        foreach (var brush in document.Descendants(Presentation + "SolidColorBrush"))
+        {
+            var key = brush.Attribute(Xaml + "Key")?.Value;
+            var colour = brush.Attribute("Color")?.Value;
+            if (key is null || colour is null || !colour.StartsWith('#')) continue;
+            colours[key] = (Color)ColorConverter.ConvertFromString(colour)!;
+        }
+
+        return colours;
     }
 }

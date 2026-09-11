@@ -215,6 +215,12 @@
                 <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedActiveGlyph}" />
               </Setter.Value>
             </Setter>
+            <!--  The accent ground is painted by the theme's TabItem style on IsActive, and only
+                  there — a selected tab in a pane that does not hold focus sits on the
+                  SelectedInactive ground (the border token), where the on-accent ink measures
+                  1.45:1. So the on-accent ink follows the same condition as the accent ground,
+                  never IsSelected (INV-0008, Fix B).  -->
+            <Setter TargetName="TabTitle" Property="TextElement.Foreground" Value="{DynamicResource AccentContrastBrush}" />
           </DataTrigger>
           <MultiDataTrigger>
             <MultiDataTrigger.Conditions>
@@ -421,7 +427,7 @@
               </Setter.Value>
             </Setter>
           </MultiDataTrigger>
-        <DataTrigger Binding="{Binding Path=IsSelected}" Value="true"><Setter TargetName="TabTitle" Property="TextElement.Foreground" Value="{DynamicResource SurfaceSunkenBrush}" /></DataTrigger></ControlTemplate.Triggers>
+</ControlTemplate.Triggers>
       </ControlTemplate>
     </Setter.Value>
   </Setter>

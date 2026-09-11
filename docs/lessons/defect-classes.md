@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 68 · partially-controlled 54 · uncontrolled 16
+**Status counts:** controlled 70 · partially-controlled 57 · uncontrolled 15
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -4440,6 +4440,17 @@ for both or split.*
 
 ---
 
+- **Recurrence 2 (conductor-addendum-c, 2026-09-11) — the conductor's own shell lines, twice in
+  one hour:** (i) a `for g in …; do python tools/$g.py; echo "exit $?"; done` loop printed
+  `exit 1 verify-defect-register` and the line went on to `git push origin main` because the
+  loop's exit status is its last `echo`; (ii) `python tools/regenerate-derived.py; git add -A …;
+  git commit` committed a merge while the resolver's new marker gate (DC-136) had just printed
+  `FAILED conflict markers`, because `;` does not stop. Both pushed or committed red. The
+  control that held: `&&`-chaining every gate before the act that depends on it — a red step then
+  stops the line — applied to every resolution line since; the pre-commit hook does not run the
+  gate set and should not (it would double CI). The class is unchanged; the instance is the
+  conductor forgetting its own register.
+
 ### DC-114 — A fix to the deployment mechanism cannot deploy itself: correct, tested, green, and unreachable
 
 - **Shape:** the thing being fixed is the thing that performs the fix. An updater, installer,
@@ -5651,6 +5662,13 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   **parentless by design** — it holds the workspace lock across a shell restart and is bounded by a
   30s idle grace (`IpcServer.Idle`) — so reaping it because it matches the shape of a leak would drop
   a live workspace. `--behaviour` orphans a real compiler server and proves the fix clears it.
+- **Instance (INV-0008, 2026-09-11, a different domain — the same shape):** "lots of cases of
+  dark/hard-to-read font colors" is a population report. It was closed by `5213d7bb` with a
+  mechanism fix (eleven pairings + implicit defaults) and a green floor, and no census. The census
+  taken afterwards — 180 pairings, each row attributed to its mechanism (`app-style token`,
+  `inherited`, `page-css`, `token`) — found 14 below floor the floor could not see and split them
+  by owner: 13 to the fix's own leaf style, 1 to the composer page's CSS. Same rule, same answer:
+  **the close of a count is a count.** After the fix, the census is 180 / 0 and it is the control.
 - **Status:** `controlled` — the boundary gate is wired and red-first on both clauses, and the
   census shape is written into the close. The general discipline is only as strong as the reviewer
   who asks *"what is the denominator?"* — and, after recurrence 2, *"what is the key, and can it
@@ -5838,8 +5856,21 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   implementation test counts should be asserted rather than discovered — but no gate here does it,
   and inventing one from this single instance would be the speculative generality the Simplifier
   strikes. **Registered so the next ruling that says "pre-existing and tested" has to name which.**
-- **Status:** `uncontrolled` — the instance is fixed, the ratio is measured and recorded, and the
-  next slice decomposed the same way would cite the same coverage again.
+- **Recurrence 2 (INV-0008, 2026-09-11) — the same shape one layer down: not two implementations
+  of an interface, but a TEST that constructs its subjects and a PRODUCT that composes different
+  ones.** `ContrastFloorTests` (U2's floor) built eleven controls on a `Window` it made, in the
+  rest state, and read the control's property; the product composes on an `Application`, inside a
+  dock, in states, and the leaf reads the property system. The floor was green on the commit the
+  operator photographed. Count: 11 constructed sites + 18 type checks against **180** composed
+  pairings; overlap on the failing family (accent-ground state ink): **0**. The tell was the same as
+  Ruling 47's — the obvious oracle went red against the composed shell and stayed red while the
+  constructed one stayed green. **Control, this time:** `ShellContrastCensusTests` boots the real
+  `AiDe.App.App` out of process and walks what it composes — the population is the product's, by
+  construction. The floor is kept as the per-control theory it is and never widened into a second
+  census.
+- **Status:** `partially-controlled` — the contrast instance is controlled by a census over the
+  real composition; the general shape (a test constructing what the product resolves) still has no
+  gate, and the next slice decomposed the same way would cite the same coverage again.
 
 ### DC-136 — A merge resolved as "regenerate, then stage everything" leaves markers in a file that is patched in place, not regenerated
 - **Shape:** the documented resolution for the two recurring conflicts is *union the append-only
@@ -6019,3 +6050,135 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Status:** `controlled` — the host makes the class impossible for any surface that uses it, the
   sweep guard fails when a surface does not, the once-test fails when the guard is removed, and the
   shell probe fails when the page dies.
+
+### DC-139 — The leaf overrides the container's pairing: an implicit style on a text leaf outranks every state ink the container sets by inheritance
+
+- **Shape:** a theme pairs ink with ground on the **container** — a template trigger sets
+  `TextElement.Foreground` on a `ContentPresenter` for selected / checked / disabled / on-accent,
+  and the glyphs get it by **inheritance**. Then a hardening pass adds an implicit
+  `<Style TargetType="TextBlock">` (and `Label`) with a `Foreground` setter "so every text has an
+  ink". In the property system a style setter outranks an inherited value, so every string-content
+  `TextBlock` in the shell renders the rest-state ink regardless of its container's state: light
+  on the accent at 2.37:1, and "disabled" indistinguishable from "enabled". **Every template reads
+  correctly in source; the defect is a precedence rule nobody opened.** The same pass fixed the
+  photographed sites by the same mechanism — the leaf setter *masked* text that was inheriting the
+  docking theme's black — so the one line was both the fix and the bug.
+- **Signature:** a `Foreground` setter in an implicit style whose `TargetType` is a text leaf
+  (`TextBlock`, `Label`, `Run`, `AccessText`); a census row whose ink source reads `Style` while it
+  sits inside a state trigger's scope; a floor that measures constructed rest-state controls and
+  passes while the composed product fails; a "fix" that makes twelve sites go wrong and three go
+  right at once.
+- **Instance (INV-0008, 2026-09-11, `5213d7bb` → fixed on `fix/contrast-census`):** 13 sites at
+  2.37:1 (`TextBrush` on `AccentBrush`: every selected-active dock tab, the checked "Diagram" toggle,
+  the selected palette row) and 2 disabled buttons rendering `TextBrush` instead of
+  `DisabledTextBrush`. Removing the setter exposed three sites the setter had been masking —
+  `DockRoundedTabs.xaml` painted the on-accent ink on every *selected* tab where only the *active*
+  one has the accent ground (1.45:1 on the selected-inactive ground), and the composer footer's
+  "Compiled view" / lease / status `TextBlock`s inheriting `#000000` from AvalonDock's
+  `LayoutDocumentPaneControl` (1.27:1) — the exact lines the operator photographed, which the
+  leaf setter had been hiding rather than pairing.
+- **Sweep:** every `TextElement.Foreground` on a `ContentPresenter` in `App.xaml` (button, toggle,
+  check, radio, list row, menu item) and the tab title in `DockRoundedTabs.xaml` — all reached the
+  glyphs by inheritance and all were overridden; measured by the census, not by reading. Chrome
+  that strokes a `Path` from `Foreground` was unaffected (no generated `TextBlock`).
+- **Fix (the rule, not the sites):** *the container pairs ink with ground; the leaf inherits.* The
+  leaf styles keep only `Background={x:Null}`; the `Window` style states the root ink; the island
+  card (`SurfaceChrome.WrapAsIsland`) states `TextElement.Foreground=TextBrush` beside the raised
+  ground it paints; the tab's on-accent ink follows `IsActive` — the same condition the theme
+  paints the accent ground on — never `IsSelected`; the on-accent ink is its own token
+  (`AccentContrastBrush`, DESIGN.md `{colors.accent-contrast}`, 6.6:1 on the accent) rather than a
+  borrowed surface brush.
+- **Control:** (1) `ShellContrastCensusTests` — the real `App` booted out of process, every
+  surface, menu and the composer page walked, every text pairing measured from the property
+  system and rendered pixels, **zero tolerance**, plus the disabled-provenance fact; seen red at
+  14 + 2 on `main`, green at 0 + 0 after. (2) `TokenDisciplineTests.NoImplicitLeafTextStyle_SetsItsOwnInk`
+  — no implicit style on a text leaf may set an ink; seen red on the pre-fix `App.xaml` (lines 391,
+  396). (3) `TokenDisciplineTests.EveryTriggerThatPaintsAGround_StatesAnInkThatClearsIt` — a
+  trigger that paints a token ground states an ink, or the ink in effect clears 4.5:1 on it by the
+  dictionary's values; its engine seen red on a planted `IsChecked → AccentBrush` with no ink.
+  (4) `ContrastFloorTests`' 18-type theory now asserts the *inverse* for the two leaf types and
+  the root ink on `Window`.
+- **Status:** `controlled` — the census is the proof of the composition and the two source rules
+  fail at the line. What no control here sees: hover / pressed states and popups the census does
+  not open (Phase 6 of INV-0008), listed in the census's own omissions table.
+
+### DC-140 — A UI defect report is evidence about a BINARY, and the binary is never named, so a fixed instance re-enters as a recurrence
+
+- **Shape:** a screenshot arrives. It is evidence about the build that produced it, and nothing
+  ties it to a commit: the shell writes no launch record, the report names no version, and three
+  Release builds from three commits sit on one machine. The instance it shows was fixed two
+  commits ago. It is triaged as a recurrence of the fixed class, and the next investigation
+  re-derives the mechanism before it can read the informational version off the binary.
+- **Signature:** `%LOCALAPPDATA%\AiDe\logs` with layout mutations and crashes but no start
+  record; an `AssemblyInformationalVersion` of `1.0.0+<sha>` that the product carries and never
+  emits; a report whose only attribution is a timestamp; "still broken" for a site the census at
+  HEAD measures as clearing.
+- **Instance (INV-0008, 2026-09-11):** the photographed black footer text, white text box and dim
+  captions were the ORIGINAL instance on a build before `5213d7bb` merged (H1, verified by the
+  informational versions of the Release DLLs on the machine); reported and first read as a
+  recurrence. Which process the operator launched was **not measurable** — named as such in
+  INV-0008 §0.
+- **Sweep:** `WorkbenchDiagnostics` carried `layout.mutation`, `terminal.start`, `crash`,
+  `mcp.config` — every event about *what happened*, none about *which build it happened in*.
+- **Control:** `WorkbenchDiagnostics.AppStart` — one `app.start` line on the normal path from
+  `MainWindow.Loaded`, no flag: `{version, commit (40-hex or null — never invented), configuration,
+  theme, dpi{scaleX, scaleY, pixelsPerInch}, window{width, height, state}}`, plus an `app.start`
+  activity tagged `service.version` / `vcs.revision`. `AppStartIsRecordedTests` proves the shape
+  through the seam (seen red with a stub) and, through the contrast probe's boot of the real
+  `App`, that the composed shell emits it with the same commit the probe reads off the assembly
+  (seen red before the emitter existed). **The reporting rule:** a UI defect report is attributed
+  to `1.0.0+<sha>` from the log before it is triaged as new or recurring.
+- **Status:** `controlled` — the binary names itself on every boot. Not yet on the status strip
+  or Help → About (INV-0008 Fix D's second half); the log line is the attribution.
+
+### DC-141 — A scripted edit anchors on the first occurrence of a token that prose also contains, and the tree it produces still parses
+
+- **Shape:** a patch script finds its insertion point with `text.index("<style>")` (or the first
+  match of a short tag) and the first occurrence is inside an HTML comment that *mentions* the tag.
+  The replacement lands in the comment, swallows its `-->`, and the rest of the document becomes
+  comment. Nothing fails to parse; nothing fails to build; the page loads and renders an empty
+  body. The failure surfaces one ring out, in whatever measures the page — here the census's page
+  fact reported 0 text elements and the handshake probe reported the module never ran.
+- **Signature:** `.index(` / first-match anchoring on a token shorter than a line; a diff whose
+  hunk begins mid-comment; a page that loads with `__composerError` undefined (the module never
+  executed) rather than set (it threw).
+- **Instance (`fix/contrast-census`, 2026-09-11):** the composer stylesheet retokenisation anchored
+  on `<style>`, which `composer.html`'s CSP comment contains ("CodeMirror's style-mod injects a
+  <style> element"). Caught the same turn by `ShellContrastCensusTests` (DC-016 guard: a page that
+  measured nothing is a failure, not a pass) and `TheHandshakePushesExactlyOneHostInitPerMount…`.
+- **Control:** the authoring rule the same session's other edits already followed — anchor on the
+  whole unique block and `assert text.count(anchor) == 1` before replacing; never on a bare tag.
+  The downstream control that actually fired is the census's non-empty-corpus assertion.
+- **Status:** `partially-controlled` — caught by a downstream measurement, not at the edit; the
+  anchor-uniqueness assertion is a discipline, not a gate.
+
+### DC-142 — A worktree cleanup removes the tree of an OPEN node because "no unique commits" was read as "no longer needed"
+- **Shape:** the fail-safe cleanup (WT7) refuses a tree only for *data* reasons — primary, cwd,
+  locked, held by a live session, dirty, unique commits, branch checked out twice. A tree whose
+  branch is **pushed and clean** passes every test even when the node that owns it is still open
+  and one operator gesture away from its exit. The tool prints the verdict as `clean, merged,
+  unheld`, and *merged* there means "every commit exists somewhere else", not "merged into
+  `main`". A conductor reading the word at speed removes the tree it meant to keep.
+- **Signature:** `coord worktree cleanup --remove` run without reading `cleanup` (the dry run)
+  first; a REMOVE row whose branch has commits `main..<branch>` > 0; a node in the plan still
+  marked open for that branch.
+- **Instance (conductor-addendum-c, 2026-09-11):** `cleanup --remove` was run to drop a finished
+  spec scratch tree; it kept that one (a live session held it) and removed
+  `C:/Projects/ai-de-feature-exit-evidence` — F5's tree, 16 commits ahead of `main`, waiting on
+  the operator's `File → New Session` gesture (Ruling 49). Nothing was lost — F5a had pushed, which
+  is exactly why the rules allowed it — and the tree was re-added at the same path at `729fdb5e`
+  in one command. What was lost was the build output and the run marker, and the operator's
+  confidence that the conductor reads before it removes.
+- **Sweep:** every `cleanup --remove` in this session before this one had been preceded by a
+  `list` read the same turn; this was the first blind run. The plan's own contract names DC-120
+  (no repo-wide destructive command while sibling nodes are live) and this is that class one ring
+  out: the command is tree-wide, not repo-wide, and the sibling was not live, only open.
+- **Control:** two, and only the second counts. (1) Prose: the conductor runs `cleanup` (dry run)
+  and reads every REMOVE row's branch against `git rev-list --count main..<branch>` before
+  `--remove` — a memoir. (2) Proposed for the pack (`coord-core.py` is pack-managed; a repo-local
+  edit is a deviation `updatepack` must merge): `worktree_safety` adds a hold reason *"branch has
+  N commit(s) not on the default branch — open work; pass `--include-unmerged` to remove"*, so an
+  open node's tree is HELD by default and removable only by name. Until that lands the status is
+  as below.
+- **Status:** `partially-controlled` — the instance is repaired; the mechanical control is a pack
+  proposal, filed with this entry, not yet a gate.

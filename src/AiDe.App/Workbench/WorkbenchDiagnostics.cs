@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Text.Json;
+using System.Windows;
 using AiDe.Core.Workbench;
 
 namespace AiDe.App.Workbench;
@@ -186,6 +188,56 @@ public static class WorkbenchDiagnostics
             path,
             detail,
         });
+    }
+
+    /// <summary>
+    /// Records that the shell started, naming the binary it is: the informational version and the
+    /// commit inside it, the build configuration, the docking theme, the DPI and the window.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Why this exists (INV-0008).</b> Three Release builds from three commits were on one
+    /// machine; the operator photographed one and nothing tied the screenshot to a commit. A fixed
+    /// instance re-entered as a recurrence and the investigation re-derived the mechanism before it
+    /// could read the version off the binary. The binary always carried its commit
+    /// (<c>AssemblyInformationalVersion</c> = <c>1.0.0+&lt;sha&gt;</c>); the shell never said it.
+    /// A UI report now starts from this line, and is attributed before it is triaged.</para>
+    /// <para><b>On the normal path, no flag.</b> Emitted once from the main window's <c>Loaded</c>,
+    /// after the window has a size and a DPI — the two facts a contrast or layout report needs and
+    /// a screenshot cannot state.</para>
+    /// <para>A build without a source revision records <c>commit</c> as null. It never invents one.</para>
+    /// </remarks>
+    public static void AppStart(string theme, DpiScale dpi, double width, double height, string windowState)
+    {
+        var assembly = typeof(WorkbenchDiagnostics).Assembly;
+        var version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+        var configuration = assembly.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration;
+
+        using var activity = Source.StartActivity("app.start");
+        activity?.SetTag("service.version", version);
+        activity?.SetTag("vcs.revision", CommitOf(version));
+        activity?.SetTag("app.theme", theme);
+
+        Write(new
+        {
+            ts = DateTimeOffset.UtcNow.ToString("O"),
+            evt = "app.start",
+            version,
+            commit = CommitOf(version),
+            configuration,
+            theme,
+            dpi = new { scaleX = dpi.DpiScaleX, scaleY = dpi.DpiScaleY, pixelsPerInchX = dpi.PixelsPerInchX, pixelsPerInchY = dpi.PixelsPerInchY },
+            window = new { width, height, state = windowState },
+        });
+    }
+
+    /// <summary>The 40-hex source revision an informational version carries after its <c>+</c>, or null.</summary>
+    internal static string? CommitOf(string? informationalVersion)
+    {
+        var plus = informationalVersion?.LastIndexOf('+') ?? -1;
+        if (informationalVersion is null || plus < 0) return null;
+
+        var revision = informationalVersion[(plus + 1)..];
+        return revision.Length == 40 && revision.All(c => c is (>= '0' and <= '9') or (>= 'a' and <= 'f')) ? revision : null;
     }
 
     /// <summary>

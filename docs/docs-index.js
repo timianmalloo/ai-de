@@ -1446,7 +1446,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 331 members, 70% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 332 members, 70% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1459,7 +1459,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7e0472c15789b0ff979a3f652cf250fe1c9801b4275698871869a70a3be5f003"
+      "sourceSha256": "38bd1b075d3a57455d2b44c04310915d9408e7b662f226b3b4cdbb76c7c9be04"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -1471,7 +1471,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 47 members, 88% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 10 types, 50 members, 88% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1484,7 +1484,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "999a84a50af98da0b81364aebcae68876e8737a834c7e82fbe181eddd7a9dbf0"
+      "sourceSha256": "70623ec42ead604738e7e96027e40b1c828ccc9f8734af4a82ca6d7fb761d05e"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -2811,6 +2811,72 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "97234ae560a8663d0d4a2e2510affa12b9f60a61399ff50dafbfe12052a496c1"
+    },
+    {
+      "id": "note-20260911-contrast-census-runs-out-of-process",
+      "path": "docs/notes/contrast-census-runs-out-of-process.md",
+      "title": "The contrast census boots the real App out of process, not a themed window in the test host",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "facelift",
+      "reviewBy": "2027-03-10",
+      "reviewSuggested": [
+        {
+          "by": "inv-0008-contrast-floor-passes-while-the-shell-fails",
+          "on": "2026-09-11",
+          "reason": "phases 1-5 implemented on fix/contrast-census; the census is green and the on-accent pairing exists"
+        }
+      ],
+      "summary": "The census measures the product's composed visual tree by booting AiDe.App.App in its own process (AiDe.App.ContrastProbe) and reading a JSON report; an in-process Application was measured to break twelve later tests by unregistering the pack: URI scheme on shutdown. Blast radius: one more probe project on the build-order edge, one InternalsVisibleTo, ~5 s per App test run.",
+      "tags": [
+        "decision-note",
+        "ui",
+        "contrast",
+        "wpf",
+        "testing",
+        "probe"
+      ],
+      "links": [
+        {
+          "to": "inv-0008-contrast-floor-passes-while-the-shell-fails",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "45b3a08692a7f140fdbcf29b8bca53a180ef961308f7744564d0ab2996ad2ca1"
+    },
+    {
+      "id": "note-20260911-on-accent-ink-is-its-own-token",
+      "path": "docs/notes/on-accent-ink-is-its-own-token.md",
+      "title": "The ink on the accent ground is its own token, and the leaf never states an ink",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "facelift",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Three calls made while implementing INV-0008 phases 1-5: the on-accent ink is AccentContrastBrush (DESIGN.md's accent-contrast, #0D1014) rather than a borrowed SurfaceSunkenBrush; the container that paints a ground states the ink that goes on it and the leaf text types state none; and the composer page draws from CSS custom properties the host pushes on host.init, with the token values as the stylesheet's fallbacks for the pre-push frame. Blast radius: every TextBlock/Label in the shell (the census is the proof), one additive host.init field, one new WPF token.",
+      "tags": [
+        "decision-note",
+        "ui",
+        "contrast",
+        "tokens",
+        "wpf",
+        "webview2"
+      ],
+      "links": [
+        {
+          "to": "inv-0008-contrast-floor-passes-while-the-shell-fails",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-contrast-census",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "548f04adda56a93f377779873224a9f8c48952ff87efac92419652b7a04f92ef"
     },
     {
       "id": "note-addendum-a-ratification",
@@ -5865,7 +5931,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7d30d392febfc2603c0c53a6ca6c5f3edee191d4a806a0c670a4288d34f3859c"
+      "sourceSha256": "16d0e939430d66d420d18e1d3459d983e7954c674c81822aa9b47f718cffb73a"
     },
     {
       "id": "design-session-profiler",
@@ -6986,7 +7052,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph LR\n  F5a[F5a commit + gates<br/>sonnet] --> H1((operator gesture)) --> F5b[F5b discharge clauses<br/>opus]\n  R0[R0 Owner ruling<br/>fable] --> S1[S1 /specify<br/>opus]\n  M0[M0 inventory + baseline<br/>sonnet] --> S1\n  M0 --> D1\n  M0 --> A1\n  S1 --> D1[D1 /ui-design<br/>opus] --> A1[A1 /define-architecture<br/>opus] --> P1[P1 /prepare-for-coordination<br/>opus] --> X{{dispatch under P1's contract}}"
         }
       ],
-      "sourceSha256": "bc6abb2214a1c7b14323a72b5381d2ce96e11e93b4a22ed2c487fb904c9316ba"
+      "sourceSha256": "73aa48c756821554dbff18a1fd597036a2977cb037b2422ae4e0051e4b170ed2"
     },
     {
       "id": "plan-agentic-watcher-substrate",
@@ -8323,6 +8389,53 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "fc30cc6a719178cfe437ee214487eaaa8e8c6622bd5bcd730bea11f529e9f7da"
+    },
+    {
+      "id": "inv-0008-contrast-floor-passes-while-the-shell-fails",
+      "path": "docs/investigations/INV-0008-contrast-floor-passes-while-the-shell-fails.md",
+      "title": "The contrast floor passes while the shell fails: a floor over a population the product does not render",
+      "type": "investigation",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "facelift",
+      "reviewBy": "2026-12-01",
+      "reviewSuggested": [],
+      "summary": "The operator reported dark-on-dark and light-on-light text after U2's contrast floor went green. Two findings, both measured. (1) The photographed sites — black footer text, a white text box, dim mode-strip captions — are the ORIGINAL instance seen on a Release binary built before the fix merged: the three Release builds on the machine carry their commit in their informational version, and the two that match the screenshot (be68ca1c, 2a363f4f) predate 5213d7bb. (2) On main today a census of the shell the product composes — the real App booted out of process, every surface kind opened, every menu, the palette, the composer page — finds 180 text pairings and 14 below floor that the floor cannot see: twelve at 2.37:1 where the fix's own implicit TextBlock style overrides the accent-ground state ink every container sets by inheritance, two disabled controls whose DisabledTextBrush never reaches the glyphs, and one page-CSS hint at 4.47:1. The floor measured eleven subjects it constructed on a window it built; the product composes a different population.",
+      "tags": [
+        "ui",
+        "contrast",
+        "wcag",
+        "theme",
+        "wpf",
+        "avalondock",
+        "webview2",
+        "census",
+        "floors",
+        "dc-135",
+        "dc-131",
+        "dc-139",
+        "dc-140"
+      ],
+      "links": [
+        {
+          "to": "ui-review-operator-feedback",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0012-docking-shell-library",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0008-shell-host",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-app-facelift",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d00544d0b42b6172579cc926023e22354b094238e7a9dac0c7c3a09488b264d7"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -11846,6 +11959,49 @@ window.DOCS_INDEX = {
       "sourceSha256": "2423d3d093e52c4684039f4df826e22087662428fa24121d61f00cd196ad048d"
     },
     {
+      "id": "proof-contrast-census",
+      "path": "docs/proof/contrast-census.md",
+      "title": "Proof Pack - Contrast census phases 1-5",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "facelift",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Evidence that INV-0008's phases 1-5 landed: the composed shell's contrast census goes from 180 pairings / 14 below floor / 2 disabled-state losses to 180 / 0 / 0 by removing the leaf ink override, pairing ink on the containers, an on-accent token (6.60:1), the tab trigger on IsActive, and the composer page drawing from tokens the host pushes on host.init; two source rules in TokenDisciplineTests (seen red); app.start naming the binary (seen red); DC-139/140/141 registered. Full App suite green; every verify-* gate green; the craft floor promoted to gated over src/AiDe.App/Web.",
+      "tags": [
+        "proof-pack",
+        "ui",
+        "contrast",
+        "wcag",
+        "census",
+        "tokens",
+        "telemetry",
+        "dc-139",
+        "dc-140"
+      ],
+      "links": [
+        {
+          "to": "inv-0008-contrast-floor-passes-while-the-shell-fails",
+          "rel": "tested-by"
+        },
+        {
+          "to": "note-20260911-on-accent-ink-is-its-own-token",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260911-contrast-census-runs-out-of-process",
+          "rel": "depends-on"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "99ca61fd41fa74746074c9eb696ad9ff72a83110c4276fb05b30f974ad4d19d6"
+    },
+    {
       "id": "proof-front-door-provider-config",
       "path": "docs/proof/front-door-provider-config.md",
       "title": "Proof Pack — node F6, provider configuration and the composer handshake",
@@ -13730,5 +13886,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ff4cbc0af0218cf03eb16e86988d9fa5894f3f89ed65190371c2037659ed01b7"
+  "graphSha256": "dabf2c8d34cb0bbb8364236aab896493341e0785af866f1de867462401ca8e2f"
 };

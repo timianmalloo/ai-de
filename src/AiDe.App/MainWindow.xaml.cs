@@ -77,6 +77,17 @@ public partial class MainWindow : Window
         // the pending debounced save is flushed on the way out rather than left to a timer.
         Closed += (_, _) => Shell.Dispose();
 
+        // The shell names its binary the moment it has a size and a DPI to report (INV-0008, Fix D):
+        // one app.start line on the normal path, so a UI report can be attributed to `1.0.0+<sha>`
+        // before it is triaged as new or recurring. Written before the workspace opens, so a boot
+        // that fails to attach still recorded which build failed.
+        Loaded += (_, _) => WorkbenchDiagnostics.AppStart(
+            Shell.Manager.Theme?.GetType().Name ?? "(none)",
+            VisualTreeHelper.GetDpi(this),
+            ActualWidth,
+            ActualHeight,
+            WindowState.ToString());
+
         Loaded += async (_, _) => await OpenWorkspaceAsync();
 
         // The folder picker lives here because only a Window can show one; the controller holds the
