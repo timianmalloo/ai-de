@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 66 · partially-controlled 53 · uncontrolled 14
+**Status counts:** controlled 66 · partially-controlled 53 · uncontrolled 15
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -137,6 +137,11 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 - **Status:** `controlled`
 
 ### DC-006 — A gate reports success over a corpus it never read
+- **Recurrence, 2026-09-11 — the control is DEFEATED, and it is defeated by passing.** Measured by node U2: `ui-craft-gate.py src/AiDe.App --gate` now exits 0 with **51 Majors**, so the gate no longer looks empty — it looks *productive*. The script hands its targets straight to the detector with **no `bin`/`obj` exclusion** (`ui-craft-gate.py:125, 290`, Verified), so a `src/AiDe.App` walk reads both `Web/composer.html` and the git-ignored copies of it under `bin/Debug/`. **The corpus is a function of build state — the one input nobody thinks of as an input.** 
+
+  **A CORRECTION, recorded because the overstatement was mine and I published it first.** The node reported *"every one of the 51 is read from the copies under `bin/Debug/`"* and I relayed that as fact. **It is not right as stated** — `Web/` is in the same walk. Re-measured here: `src/AiDe.App/Web/composer.html` carries **19** hex literals and its `bin/Debug` copy carries **19**, identical content, so **a clean checkout still finds them**. The defect is *duplication and staleness*, not a phantom corpus, and it is smaller than I published. The further claim that *not one finding is in any XAML or C# file* is **not re-verified** and is carried Flagged. *A sub-agent's report does not promote a claim, and I promoted one inside the entry whose subject is unverified corpora.* Meanwhile `TheScan_CoversANonEmptyCorpus` — the control written for this exact class — **passes**, because the corpus is non-empty. It is also reported twice, and half of each pair describes whatever was last compiled. A control that asserts *a* corpus was read cannot distinguish the product's source from a build copy of part of it.
+- **Why this is worse than the 2026-08-26 instance rather than the same size.** Then the gate was visibly silent and a seeded `#FF00FF` proved it. Now it is loud, and everything it says is about files that are not the source of anything — so its findings are **stale by construction** (they describe whatever was last built) and its green is **not a fact about the repository**. A clean clone gives it less to read; a stale `bin/` gives it findings from code that no longer exists. The corpus is a function of build state, which is the one input nobody thinks of as an input.
+- **What the control has to become:** the corpus assertion must name the **kind** of file the rules are meant to read and the **root** they must be read from, and refuse a corpus discovered under a build-output directory. *Non-empty* was always the weaker half of the question; **the other half is whether it read the thing under review**, and only that half reaches this. **Ruling 48** sets the shape: targets pinned to committed source paths (`src/AiDe.App/Web`, never `src/AiDe.App`) rather than new exclusion machinery, landing before or with any threshold change, never after.
 - **Signature:** a linter, scanner, or gate exits 0 with "no findings" because its file matcher found
   nothing it understands — not because the code is clean. The report is shaped exactly like a pass.
 - **Why it survives:** exit code 0, a reassuring message, and a green CI step. Nothing asserts that
@@ -305,6 +310,11 @@ for both or split.*
 - **Status:** `controlled`
 
 ### DC-013 — A monotonically allocated id is handed out twice because two trees allocate independently
+- **Recurrence 5, 2026-09-11 — `DC-133` was allocated twice, by two trees, on the same day.** I registered *a gate's failure threshold sits above the highest severity its rule set can emit* on `main` at `22f23d3b`; node F6, running in its own worktree at the same time, registered *a throw in one subscriber aborts a multicast event and is swallowed across an interop boundary* as `DC-133` on `feature/provider-config`. Both are correct against their own tree, and `verify-defect-register.py` passed in both, because it enforces one-entry-per-class **within a tree**. F6's renumbers on merge — and the tiebreak is *which tree is `main`*, not which class is better, which is worth saying plainly because it means **the allocation carries no information about merit**.
+- **Recurrence 6, the same day, in a sequence that has NO allocator at all — and this is the larger half.** Programme decisions are cited by number as binding authority. **Eleven of them define nothing:** Rulings 1, 3, 5, 7, 32, 33, 34, 35, 37, 45 and 46 are cited across `docs/` with **no note that records what they said** (Ruling 33's only definition is a blockquote inside a plan file, which is close enough to read and not close enough to count). **The figure moved from eight to eleven when the gate replaced the grep that produced it** — *even the count of unmeasured things was unmeasured.* `Ruling 35` is cited **six times** as governing a dependency decision. `Ruling 7` is cited as forbidding an interface — including by a note warning a future session not to build the thing it forbids. **Anyone can assert what these said and nobody can check.**
+- **How the two ends of recurrence 6 met.** `Ruling 45` was cited by a mockup and a review, and issued to a node as a mid-task correction, **before any ruling of that number had been made**; the Owner caught it and has now actually ruled it. `Ruling 46` was already cited in DC-130's control and in an audit entry — and the Owner, **unable to see that because no note records it**, allocated 46 again for a different decision. *The absence of the register is what caused the collision in the register.*
+- **The asymmetry that kept this invisible:** defect-class ids have a gate, and `verify-id-allocators.py` says in its own header that the DC-032 collision was caught *"only because verify-defect-register.py happens to enforce one-entry-per-class for its own reasons."* **Ruling numbers have no equivalent accident.** Nothing reads them, nothing counts them, and a number is authoritative the moment it is typed.
+- **Control:** `tools/verify-ruling-citations.py` — every `Ruling NN` cited anywhere under `docs/` must resolve to a decision note that **defines** it, and the sequence may not skip. Observed failing on 45, 46 and 48 before the note was written, and **its first version was itself wrong**: it required a `## Ruling NN` heading, so it reported two correctly filed notes (Rulings 36 and 38, which head themselves `# Decision note — Ruling NN`) as undefined. **A gate that calls a correct artifact missing teaches people to distrust it**, which ends with the gate switched off — DC-104 on its own first run. Nine numbers stay **frozen by name** as unreconstructable debt, and the list may only shrink. A decision that cannot be read is not a decision; it is a number with a reputation.
 - **Signature:** an id is assigned by reading the highest one present and adding one. Two working
   trees each hold the same highest entry, so both hand the same id to the next writer. Neither
   notices, because within either tree the allocation is correct.
@@ -5639,7 +5649,55 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Status:** `uncontrolled` — the test obligation is stated and the instance is fixed, but no gate
   in this repository can distinguish a live subscription from a dead one, and the two candidate
   detectors were built and both failed. The next handler wired to the wrong event will land green.
-### DC-133 — A throw in ONE subscriber aborts a multicast event, and across an interop boundary it is swallowed, so a whole channel goes silent with nothing to read
+
+### DC-133 — A gate's failure threshold sits above the highest severity its rule set can emit, so it is advisory by arithmetic
+
+- **Shape:** a gate is wired into CI with a `--gate` flag and a documented obligation behind it. The
+  flag maps to a severity — it fails on Blockers. **The rule set contains no rule that emits a
+  Blocker**, or none that the corpus can trigger. So the gate is unconditional green, and nothing
+  anywhere says so: not the flag's name, not the CI step's name, not the output, which faithfully
+  prints every finding it is about to not fail on. **It is advisory by arithmetic rather than by
+  decision**, which is the difference that matters — nobody chose this, and so nobody can be asked
+  to defend it.
+- **Signature:** a gate whose `--gate` or `--strict` run is indistinguishable from its bare run; a
+  severity ladder where the top rung is unoccupied; a CI step that has never failed and whose
+  authors cannot name the input that would fail it; and the tell that settles it — **run it against
+  the worst artifact you have and watch it exit 0.**
+- **Instance (2026-09-11), two readings by node U2:** `ui-craft-gate.py docs/mockups --gate` exits
+  **0 with 66 Majors and 38 Minors**. It fails only on Blocker-mapped findings and **there are none
+  anywhere in the corpus**. `AGENTS.md` requires this floor be gated in CI on the grounds that *"a
+  lesson recorded as prose is a memoir"* (CI6) — **Correction to my first draft:** `ui-craft.yml` **declares itself advisory in its own
+  header** and scans only `docs/mockups` and `DESIGN.md`, so the floor is **unmet, not
+  falsified** — the workflow is honest about what it is, and the defect is that the obligation has
+  no gate, not that a gate is lying. `--gate` being unable to fire is Verified and unchanged
+  (`ui-craft-gate.py:314`).
+- **What made it invisible for so long:** I had previously briefed a node that the gate "exits 0
+  with 13 Majors present", and treated that as an exit condition with no discriminating power. **The two are NOT
+  RECONCILED** — taken at different times, scopes never compared — and this entry records them as
+  unreconciled rather than treating the larger as a correction of the smaller. What holds either
+  way: a half-measured number let me name the defect while carrying a figure I could not source.
+  *A defect that is known about is not therefore sized.*
+- **Relationship to DC-006:** they compound, and on the same tool. DC-006 is *the gate read the
+  wrong corpus*; this is *the gate could not have failed on the right one either*. Either alone is a
+  hole; together the CI step carries no information at all, and its presence is worse than its
+  absence because it occupies the slot where a real control would go.
+- **Control:** a gate's threshold must be **reachable** — there must exist at least one rule in its
+  own rule set that can emit at or above the level it fails on, asserted against the rule set rather
+  than against today's findings (a corpus that happens to be clean must not read as a broken gate).
+  Every gate wired into CI states, in the step, **the input that would make it fail**; a step whose
+  authors cannot write that sentence is not a gate.
+- **Status:** `uncontrolled` — the measurement exists and the threshold question is with the Owner,
+  because where to set it is a policy call and not a defect fix. No check in this repository
+  currently asserts that a gate's failing severity is attainable.
+
+### DC-134 — A throw in ONE subscriber aborts a multicast event, and across an interop boundary it is swallowed, so a whole channel goes silent with nothing to read
+> **Renumbered from DC-133 on merge, 2026-09-11.** This class and *a gate's failure threshold sits
+> above the highest severity its rule set can emit* were both registered as `DC-133`, on the same
+> day, by two trees that could not see each other — node F6 in its worktree and the conductor on
+> `main`. `verify-defect-register.py` passed in both, because it enforces one-entry-per-class
+> **within a tree**. The tiebreak was *which tree is `main`*, which carries no information about
+> merit. **DC-013 recurrence 5.**
+
 
 - **Shape:** a .NET event is raised over a multicast delegate, and an exception in one handler
   **stops the invocation list** — later subscribers never run. When the raiser is across an interop

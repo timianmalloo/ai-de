@@ -5692,7 +5692,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0cbe82021edc8dc33c107820e19152c00f5c4ab871f7d508bd853fc61c6b78db"
+      "sourceSha256": "7c1e0ec2337d4f3df9ba2dc72b7d861bce2fea54027562a21fb78cb0f8371de3"
     },
     {
       "id": "design-session-profiler",
@@ -6599,6 +6599,43 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "bf5ead48ffaf206188af85737793da995de0409692d2133165110d2891a55a73"
+    },
+    {
+      "id": "note-front-door-rulings-45-48",
+      "path": "docs/notes/front-door-rulings-45-48.md",
+      "title": "Decision note — Rulings 45–48: Terminal leaves Phase 1, edge ownership, maximize-on-create, craft-gate corpus",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "Four rulings filed together. Three are the Owner's rulings on the UI track; the fourth is a retroactive filing of a number that was already being cited as authority. The numbering departs from the Owner's own allocation, and the reason is recorded here rather than corrected silently.",
+      "tags": [
+        "decision-note",
+        "ruling",
+        "conductor",
+        "front-door",
+        "ui",
+        "craft-gate",
+        "docking"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-ui-and-windowing",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-front-door-council-rulings",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e73242b6893766c1eca09ce45565231240a7dd543190e2526fca49887c192bdb"
     },
     {
       "id": "perf-results-phase-1",
@@ -13101,5 +13138,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d1c90deb7cb435c8c652683b974e3f6ae5ab73663962cf2c19353607b9bf5200"
+  "graphSha256": "79e0a90daf8c2324c908369f34f48d431b1d2804713f70e4626cc5f4b214f416"
 };
