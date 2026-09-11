@@ -29,9 +29,9 @@ public sealed class ExplorerModeTests
             var mode = new ShellModeController(host, workbench, () => { built++; return new Grid(); });
 
             Assert.Same(workbench, host.Content);     // starts on the workbench
-            mode.Set(ShellViewMode.Explorer);
+            mode.Set(ShellViewMode.Explorer, "test");
             Assert.NotSame(workbench, host.Content);  // now the Explorer surface
-            mode.Set(ShellViewMode.Workbench);
+            mode.Set(ShellViewMode.Workbench, "test");
             Assert.Same(workbench, host.Content);     // the SAME workbench instance returns
             Assert.Equal(1, built);                   // Explorer built once, not per entry
         });
@@ -48,10 +48,10 @@ public sealed class ExplorerModeTests
             var built = 0;
             var mode = new ShellModeController(host, new Border(), () => { built++; return new Grid(); });
 
-            mode.Set(ShellViewMode.Explorer);
+            mode.Set(ShellViewMode.Explorer, "test");
             var first = host.Content;
-            mode.Set(ShellViewMode.Workbench);
-            mode.Set(ShellViewMode.Explorer);
+            mode.Set(ShellViewMode.Workbench, "test");
+            mode.Set(ShellViewMode.Explorer, "test");
 
             Assert.Same(first, host.Content);         // the same Explorer instance
             Assert.Equal(1, built);
@@ -70,9 +70,9 @@ public sealed class ExplorerModeTests
             mode.ModeChanged += (_, m) => seen.Add(m);
 
             Assert.Equal(ShellViewMode.Workbench, mode.Mode);
-            mode.Toggle();
+            mode.Toggle("test");
             Assert.Equal(ShellViewMode.Explorer, mode.Mode);
-            mode.Toggle();
+            mode.Toggle("test");
             Assert.Equal(ShellViewMode.Workbench, mode.Mode);
             Assert.Equal(new[] { ShellViewMode.Explorer, ShellViewMode.Workbench }, seen);
         });

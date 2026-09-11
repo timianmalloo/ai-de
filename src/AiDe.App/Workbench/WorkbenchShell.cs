@@ -250,6 +250,7 @@ public sealed class WorkbenchShell : IDisposable
             // nobody is in — the worst of both.
             var worktreeNote = ProvisionAgentWorktree(id, agent);
 
+            OpeningDocument();
             var result = Service.Apply(new LayoutOperation.AddSurface(
                 terminalStackId, new Surface(id, "terminal", title)));
 
@@ -289,6 +290,7 @@ public sealed class WorkbenchShell : IDisposable
             // and the title is "Terminal" — never an agent name. The guid keeps ids unique so a new
             // terminal is ADDED to the collection, never replacing an existing session.
             var id = $"terminal#{Guid.NewGuid().ToString("N")[..6]}";
+            OpeningDocument();
             var result = Service.Apply(new LayoutOperation.AddSurface(
                 terminalStackId, new Surface(id, "terminal", "Terminal")));
 
@@ -320,6 +322,7 @@ public sealed class WorkbenchShell : IDisposable
             if (stack is null) return "There is no pane to open a prompt draft in.";
 
             var id = $"prompt#{Guid.NewGuid().ToString("N")[..6]}";
+            OpeningDocument();
             var result = Service.Apply(new LayoutOperation.AddSurface(
                 stack.Id, new Surface(id, "prompt", "Prompt draft")));
 
@@ -1571,6 +1574,31 @@ public sealed class WorkbenchShell : IDisposable
     // NEVER tabs on top of the graph (the "graph pane disappeared" defect): it tabs into a document
     // stack, or splits a fresh one beside the graph so both stay visible. Shared so every reference
     // document places — and is traced — identically.
+    /// <summary>
+    /// Raised just before a command adds a dock document to the layout — a terminal, a prompt draft,
+    /// a reference document, a session document.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The shell does not know which body is on screen, and this is how it stops needing
+    /// to (INV-0009, DC-148).</b> The window swaps the body between the docking host and the
+    /// full-body Explorer (ADR-0017); every opening command here mutates the layout model, renders
+    /// the docking manager and announces from the result, all of which is true of the model whether
+    /// or not the host is in a visual tree. Two session documents were opened that way into a host
+    /// that was unparented, announced as <i>opened … maximized</i>, and never seen. The window
+    /// handles this event by making the workbench the body — the Explorer surface is retained, not
+    /// rebuilt — so a document is only ever opened into a body that is on screen.</para>
+    ///
+    /// <para><b>One seam, not a per-command check.</b> Every opening command calls
+    /// <see cref="OpeningDocument"/> immediately before its <c>AddSurface</c>;
+    /// <c>EveryOpeningCommandPassesThroughTheSeamTests</c> scans this file for a command that does
+    /// not. A refusal that happens before the add (no profile, no pane) does not raise it: a refusal
+    /// changes nothing on screen and should not swap the body.</para>
+    /// </remarks>
+    public event Action? DocumentOpening;
+
+    /// <summary>Raises <see cref="DocumentOpening"/>. Called before every <c>AddSurface</c> that opens a document.</summary>
+    private void OpeningDocument() => DocumentOpening?.Invoke();
+
     private string OpenReferenceDocument(Surface surface, string okMessage, string noPaneMessage)
     {
         ReconcileViewIntoModel();
@@ -1578,6 +1606,7 @@ public sealed class WorkbenchShell : IDisposable
         var placement = DocumentPlacementPolicy.Decide(Service.Current, Adapter.ActiveSurfaceId);
         if (placement is null) { return noPaneMessage; }
 
+        OpeningDocument();
         LayoutResult result;
         string mode;
         if (placement.TabIntoStackId is { } tabStackId)

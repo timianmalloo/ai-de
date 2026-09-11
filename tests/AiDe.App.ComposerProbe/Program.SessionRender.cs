@@ -75,6 +75,19 @@ internal static partial class Program
             }
         }
 
+        /// <summary>The trigger on the last <c>shell.mode</c> line, or <c>(none)</c> — the product's own record of why the body changed.</summary>
+        private static string LastModeTrigger()
+        {
+            lock (Lines)
+            {
+                var last = Lines.LastOrDefault(l => l.Contains("\"evt\":\"shell.mode\"", StringComparison.Ordinal));
+                if (last is null) { return "(none)"; }
+
+                using var document = JsonDocument.Parse(last);
+                return document.RootElement.GetProperty("trigger").GetString() ?? "(none)";
+            }
+        }
+
         /// <summary>How many <c>composer.layout</c> lines the surface wrote — one per measure pass.</summary>
         private static int LayoutLines(string surfaceId)
         {
@@ -129,6 +142,12 @@ internal static partial class Program
                 body,
                 shell.WorkbenchRoot,
                 () => new ExplorerSurface(shell.CreateExplorerGraph(), new NodeReaderView()));
+
+            // MainWindow's one line for INV-0009's seam, verbatim: a document opens into a body
+            // that is on screen. EveryOpeningCommandPassesThroughTheSeamTests asserts the product
+            // and this replay carry the same wiring, so the replay cannot pass on a line the window
+            // does not have (DC-135).
+            shell.DocumentOpening += () => mode.Set(ShellViewMode.Workbench, "document-opening");
 
             var result = Crashed;
             window.Loaded += async (_, _) =>
@@ -251,7 +270,7 @@ internal static partial class Program
             // ---- 22:34:00Z. explorer-graph initialising: Explorer mode entered. ----
             if (options.Explorer)
             {
-                mode.Set(ShellViewMode.Explorer);
+                mode.Set(ShellViewMode.Explorer, "replay-22:34:00Z");
                 await WaitAsync(() => Count("explorer-graph", "initialising") >= 1, TimeSpan.FromSeconds(20));
                 await Task.Delay(500);
                 Console.Out.WriteLine(
@@ -332,7 +351,7 @@ internal static partial class Program
             if (options.ReturnToWorkbench)
             {
                 // THE NECESSITY HALF: remove the suspected cause and see whether the failure goes.
-                mode.Set(ShellViewMode.Workbench);
+                mode.Set(ShellViewMode.Workbench, "replay-return-to-workbench");
                 window.UpdateLayout();
                 await WaitAsync(() => Count(composer.SurfaceId, "init-pushed") >= 1, TimeSpan.FromSeconds(30));
                 await Task.Delay(1500);
@@ -425,7 +444,7 @@ internal static partial class Program
             var initialising = Count(composer.SurfaceId, "initialising");
             var pushed = Count(composer.SurfaceId, "init-pushed");
             var line =
-                $"{when}: mode={mode.Mode} workbench root loaded={shell.WorkbenchRoot.IsLoaded} visible={shell.WorkbenchRoot.IsVisible}, "
+                $"{when}: mode={mode.Mode} last-mode-trigger={LastModeTrigger()} workbench root loaded={shell.WorkbenchRoot.IsLoaded} visible={shell.WorkbenchRoot.IsVisible}, "
                 + $"composer wpf loaded={loaded} unloaded={unloaded} isLoaded={composer.IsLoaded} isVisible={composer.IsVisible} "
                 + $"size={composer.ActualWidth:F0}x{composer.ActualHeight:F0}, "
                 + $"transitions initialising={initialising} navigation-started={Count(composer.SurfaceId, "navigation-started")} "

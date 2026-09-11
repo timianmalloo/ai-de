@@ -73,6 +73,13 @@ public partial class MainWindow : Window
         };
         ReflectMode(ShellViewMode.Workbench);
 
+        // A dock document opens into a body that is on screen (INV-0009, DC-148). Every opening
+        // command in the shell raises this just before it adds the surface; when the Explorer is the
+        // body, the workbench returns — the Explorer surface is retained, exactly as the rail's
+        // toggle leaves it — so the document the command announces is the document the operator
+        // sees. The replay probe wires the same line, and a scan asserts both carry it.
+        Shell.DocumentOpening += () => _mode.Set(ShellViewMode.Workbench, "document-opening");
+
         // The most common moment to lose an arrangement is rearranging and immediately closing, so
         // the pending debounced save is flushed on the way out rather than left to a timer.
         Closed += (_, _) => Shell.Dispose();
@@ -473,7 +480,7 @@ public partial class MainWindow : Window
     /// <summary>Swaps the body between the workbench and Explorer, and says which one is showing.</summary>
     private string ToggleExplorerMode()
     {
-        _mode.Toggle();
+        _mode.Toggle("shell.toggleExplorer");
 
         return _mode.Mode == ShellViewMode.Explorer
             ? "Explorer: graph and reader. The workbench is retained, not closed."

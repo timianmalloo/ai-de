@@ -23,9 +23,11 @@ namespace AiDe.App.Tests.Sessions;
 /// <b>exit 30</b>, <i>"the new session's composer never entered a rendered visual tree: WPF raised no
 /// Loaded on it and its browser host never initialised"</i>, with the announcement reading <i>Session
 /// opened. Composer bound … Maximized the center</i> and the workbench root <i>loaded=False
-/// visible=False parent=(none)</i>. <see cref="LeavingExplorerShowsTheSessionCreatedInsideIt"/> —
-/// exit 0: the same composer object, untouched, loaded and mounted six fields the moment the workbench
-/// returned to the body. <see cref="AReopenedSessionIsShownAndItsComposerIsBound"/> — <b>exit 32</b>:
+/// visible=False parent=(none)</i>. <see cref="ANewSessionCreatedInsideExplorerLeavesItBecauseADocumentOpened"/>
+/// (then <c>LeavingExplorerShowsTheSessionCreatedInsideIt</c>) — exit 0: the same composer object,
+/// untouched, loaded and mounted six fields the moment the workbench returned to the body; after Phase
+/// 1 that state is unreachable and the oracle asserts the trigger instead.
+/// <see cref="AReopenedSessionIsShownAndItsComposerIsBound"/> — <b>exit 32</b>:
 /// the pane still rendered <i>No session is open</i> after the reopen, and the composer was never
 /// configured.</para>
 /// </remarks>
@@ -77,22 +79,37 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
     }
 
     /// <summary>
-    /// The necessity half, kept as an oracle: the same document, created while Explorer was the body,
-    /// renders the moment the workbench is the body again. Nothing about the document changed — the
-    /// host it sits in was simply put back into the tree.
+    /// <b>The fix, named by its trigger.</b> New Session while Explorer is the body leaves Explorer
+    /// <i>because a document opened</i> — the <c>shell.mode</c> line the product wrote names
+    /// <c>document-opening</c>, not the rail's toggle — and a later return to the workbench is a
+    /// no-op: the composer loaded once, so nothing was re-parented (DC-138).
     /// </summary>
+    /// <remarks>
+    /// Before INV-0009 Phase 1 this was the diagnosis's necessity half: the document created inside
+    /// Explorer stayed unloaded (<i>mode=Explorer … composer wpf loaded=0 … configured=1
+    /// init-pushed=0</i>) until the workbench was put back, at which point the untouched composer
+    /// loaded and mounted six fields. That state is no longer reachable by design, so the oracle now
+    /// asserts the mechanism that replaced it.
+    /// </remarks>
     [Fact]
-    public void LeavingExplorerShowsTheSessionCreatedInsideIt()
+    public void ANewSessionCreatedInsideExplorerLeavesItBecauseADocumentOpened()
     {
         var (exitCode, stdout, stderr) = ComposerHostIntegrationTests.RunProbe(
             "--session-render --prior-document --explorer --return-to-workbench --height 720", Budget);
 
         Assert.True(exitCode == 0, $"the session-render probe failed with exit {exitCode}. {stdout} {stderr}");
 
-        // Inside Explorer: configured, never loaded. After the return: loaded, mounted, six fields.
-        var inside = Line(stdout, "after New Session:");
-        Assert.Contains("mode=Explorer workbench root loaded=False visible=False, composer wpf loaded=0", inside, StringComparison.Ordinal);
-        Assert.Contains(" configured=1 init-pushed=0,", inside, StringComparison.Ordinal);
+        Assert.Contains("explorer (22:34:00Z replay): mode=Explorer explorer-graph initialising=1", stdout, StringComparison.Ordinal);
+
+        var after = Line(stdout, "after New Session:");
+        Assert.Contains("mode=Workbench last-mode-trigger=document-opening ", after, StringComparison.Ordinal);
+        AssertShown(stdout, "after New Session:");
+
+        // The explicit return is a no-op: the same trigger on record, and not one more WPF Loaded on
+        // the composer — nothing was re-parented by a body that was already the workbench.
+        var returned = Line(stdout, "after returning to the workbench:");
+        Assert.Contains("mode=Workbench last-mode-trigger=document-opening ", returned, StringComparison.Ordinal);
+        Assert.Equal(LoadedCount(after), LoadedCount(returned));
         AssertShown(stdout, "after returning to the workbench:");
     }
 
@@ -115,6 +132,16 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
         var composer = Line(stdout, "reopen: composer ");
         Assert.Contains(" configured=1 init-pushed=1 ", composer, StringComparison.Ordinal);
         Assert.Contains(" page fields=6 ", composer, StringComparison.Ordinal);
+    }
+
+    /// <summary>The <c>composer wpf loaded=N</c> count on a measurement line.</summary>
+    private static int LoadedCount(string line)
+    {
+        const string token = "composer wpf loaded=";
+        var at = line.IndexOf(token, StringComparison.Ordinal);
+        Assert.True(at >= 0, $"the line carries no '{token}': {line}");
+        var digits = new string(line[(at + token.Length)..].TakeWhile(char.IsDigit).ToArray());
+        return int.Parse(digits, System.Globalization.CultureInfo.InvariantCulture);
     }
 
     /// <summary>The measurement line that begins with <paramref name="prefix"/>, or a failure naming it.</summary>

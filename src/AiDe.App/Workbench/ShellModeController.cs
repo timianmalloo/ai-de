@@ -50,18 +50,34 @@ public sealed class ShellModeController
     /// <summary>The Explorer surface once it has been created; null until first entry.</summary>
     public UIElement? ExplorerSurface => _explorer;
 
-    public void Toggle() => Set(Mode == ShellViewMode.Workbench
-        ? ShellViewMode.Explorer
-        : ShellViewMode.Workbench);
+    /// <param name="trigger">What asked for the swap — recorded on the <c>shell.mode</c> line.</param>
+    public void Toggle(string trigger) => Set(
+        Mode == ShellViewMode.Workbench ? ShellViewMode.Explorer : ShellViewMode.Workbench,
+        trigger);
 
-    public void Set(ShellViewMode mode)
+    /// <summary>Makes <paramref name="mode"/> the body, and records the change and what triggered it.</summary>
+    /// <remarks>
+    /// <b>The mode is in the log, not inferred from it (INV-0009, IO1).</b> The operator's 22:34Z
+    /// launch could only be read as "Explorer was entered" from an <c>explorer-graph</c> surface
+    /// initialising — a surface that loads only inside that mode. One <c>shell.mode</c> line per
+    /// change, naming the trigger, is what lets the next report say which body a command ran into.
+    /// A call that changes nothing writes nothing: a log that records every no-op is a log nobody
+    /// reads.
+    /// </remarks>
+    /// <param name="mode">The body to show.</param>
+    /// <param name="trigger">What asked for it — a catalog command id, a seam name, a replay step.</param>
+    public void Set(ShellViewMode mode, string trigger)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(trigger);
+
         if (mode == Mode)
         {
             return;
         }
 
+        var from = Mode;
         Mode = mode;
+        WorkbenchDiagnostics.ShellMode(from, mode, trigger);
 
         if (mode == ShellViewMode.Explorer)
         {
