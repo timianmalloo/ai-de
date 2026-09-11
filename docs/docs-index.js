@@ -1446,7 +1446,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 325 members, 69% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 328 members, 70% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1459,7 +1459,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fdbc42d0d79fb2f2884fbdf7f49b3dfa0f6eb53712949ec5efe2d4df133b1693"
+      "sourceSha256": "9925e3ac8c40a76a589f20339afce30525e14c016e7ca2194f21baeedb18a240"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -12938,5 +12938,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "79d2ca1cab65646df773d1eda5f1f6b39670cc4995a0f477d33857b5cf0a86ae"
+  "graphSha256": "28bfbff2ed11b7d64c80569767e94108a0f5b6610cd1eb26ace6bf848734e910"
 };

@@ -21,14 +21,30 @@ public sealed class WorkbenchDragReconcileOracleTests
     // The operator's own session, 2026-09-11 05:59:20 PDT (INV-0006 §1). The model is what the log
     // recorded as live: the workspace-open restore at 05:52:58 plus the session document appended at
     // 05:55:02. No bottom zone — the restore dropped it.
-    private static WorkbenchLayout OperatorModel() => Zones(
-        left: ["graph", "explore", "provenance", "contexts", "joins"],
-        center: ["domain", "sessions", "board", "leaderboard", "ledger", "session-document:2026-09-11"]);
+    //
+    // These four lists are RECORDED EVIDENCE, not a restatement of a product list, which is why each
+    // carries the escape hatch. The surface set is whatever that workspace held on that day — a saved
+    // per-workspace arrangement plus a session document opened mid-session — and deriving it from
+    // Layout.Default() would substitute today's defaults for the operator's data, which is precisely
+    // the input that does NOT reproduce the defect. If the shipped default surfaces change, this
+    // fixture must not follow them.
+
+    // fixture-derivation: ok — the operator's recorded zone-left at 05:59:20, not a product list.
+    private static readonly string[] ModelLeft = ["graph", "explore", "provenance", "contexts", "joins"];
+
+    // fixture-derivation: ok — the operator's recorded zone-center at 05:59:20, not a product list.
+    private static readonly string[] ModelCenter = ["domain", "sessions", "board", "leaderboard", "ledger", "session-document:2026-09-11"];
+
+    // fixture-derivation: ok — the first column of screenshot 6, read off the screenshot.
+    private static readonly string[] ViewFirstColumn = ["graph", "domain", "explore", "sessions", "board", "leaderboard", "ledger"];
+
+    // fixture-derivation: ok — the second column of screenshot 6, read off the screenshot.
+    private static readonly string[] ViewSecondColumn = ["session-document:2026-09-11", "provenance", "contexts", "joins"];
+
+    private static WorkbenchLayout OperatorModel() => Zones(ModelLeft, ModelCenter);
 
     // Screenshot 6, as the operator was looking at it: two columns, in this order.
-    private static Layout OperatorScreenshot6View() => TwoColumns(
-        first: ["graph", "domain", "explore", "sessions", "board", "leaderboard", "ledger"],
-        second: ["session-document:2026-09-11", "provenance", "contexts", "joins"]);
+    private static Layout OperatorScreenshot6View() => TwoColumns(ViewFirstColumn, ViewSecondColumn);
 
     /// <summary>
     /// The defect, measured on the operator's own data: the deferred regime. Nothing reconciles the
