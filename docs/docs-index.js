@@ -6776,7 +6776,7 @@ window.DOCS_INDEX = {
     {
       "id": "note-addendum-c-council-rulings",
       "path": "docs/notes/addendum-c-council-rulings.md",
-      "title": "Decision note — Rulings 50–62: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
+      "title": "Decision note — Rulings 50–63: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
       "type": "doc",
       "status": "accepted",
       "owner": "@timianmalloo",
@@ -6829,7 +6829,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1d71f33eaf89475c5e7f2f3e152e93ddd7da45e0956dcf84d5cad7248364f9af"
+      "sourceSha256": "f8502c5f835818944b92fe7513b438f70d7d4ba70d3994e92652e7dd2f75f433"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -12794,10 +12794,10 @@ window.DOCS_INDEX = {
         {
           "kind": "flowchart",
           "title": "B5. User flows",
-          "mermaid": "flowchart TD\n  A[Session document open: one editor, structure collapsed, compiled collapsed] -->|type prose| B{Draft settles: objective derivable?}\n  A -->|shape control: pick a template — B:181 kept| T[Template fields render as the derived structure, prefilled from the text where possible]\n  T --> E\n  B -->|no| C[Structure stays one collapsed line; a T2 send will mark Goal and Done when]\n  C -->|type more| B\n  C --> E\n  B -->|yes| D[Derived structure expands beneath the editor: Goal · Done when · Not in scope, marked derived]\n  D -->|edit a line inline| D\n  D --> E{@path mention present?}\n  E -->|no| F[Write-scope line: elicitation text; Send → refusal names @path and offers the picker — Ruling 42 intact]\n  F -->|add a mention| E\n  E -->|yes| G[Write-scope line: 'src/…/** — from your mention']\n  G -->|open Compiled disclosure| H[Exactly the outgoing text; no diff, no summary; editor does not shrink]\n  H --> G\n  G -->|Send Ctrl+Enter| I{T2 and a content field empty?}\n  I -->|yes| J[Inline marks on every gap at once; one-line reason each; nothing sent]\n  J -->|fix| D\n  I -->|no| K[Sent: compiled prompt carries the session's tier · fan-out · budget in the CT19 block]\n  K --> K2[Reply streams in the Console canvas; the block joins the Score outline]\n  K2 -->|conductor answers with a drafted template — S-8| K3[Next message's draft: the reply's text with its derived structure inline]\n  K3 --> D\n  K2 -->|operator writes the next message| A\n  A -->|session settings on the header| L[Edit tier / fan-out / budget for the session; T0-with-fan-out warning here]\n  L -->|re-validate the current draft| B"
+          "mermaid": "flowchart TD\n  A[Session document open: one editor, structure collapsed, compiled collapsed] -->|type prose| B{Draft settles: objective derivable?}\n  A -->|shape control: pick a template — B:181 kept| T[Template fields render as the derived structure, prefilled from the text where possible]\n  T --> E\n  B -->|no| C[Structure stays one collapsed line; a T2 send will mark Goal and Done when]\n  C -->|type more| B\n  C --> E\n  B -->|yes| D[Derived structure expands beneath the editor: Goal · Done when · Not in scope, marked derived]\n  D -->|edit a line inline| D\n  D --> E{@path mention present?}\n  E -->|no| F[Write-scope line: elicitation text; Send → refusal names @path and offers the picker — Ruling 42 intact]\n  F -->|add a mention| E\n  E -->|yes| G[Write-scope line: 'src/…/** — from your mention']\n  G -->|open Compiled disclosure| H[Exactly the outgoing text; no diff, no summary; editor does not shrink]\n  H --> G\n  G -->|Send Ctrl+Enter| I{T2 and a content field empty?}\n  I -->|yes| J[Inline marks on every gap at once; one-line reason each; nothing sent]\n  J -->|fix| D\n  I -->|no| K[Sent: compiled prompt carries the session's tier · fan-out · budget in the CT19 block]\n  K --> K2[Reply streams in the Console canvas; the block joins the Score outline]\n  K2 -->|conductor answers with a drafted template — S-8| K3[Next message's draft: the reply's text with its derived structure inline]\n  K3 --> D\n  K2 -->|operator writes the next message| A\n  A -->|session settings on the header| L[Edit fan-out ceiling / budget for the session; tier is compiled, not set here]\n  L -->|re-validate the current draft| B"
         }
       ],
-      "sourceSha256": "3183e699c042477ca56ea8d85c4fd6c6f96808a6b14047d6a4c0d7288df199e7"
+      "sourceSha256": "bd0cf2b8b7196a34eb870d6567f88abbcdfeb964b26d3dd243759150be464780"
     },
     {
       "id": "spec-agentic-watcher-substrate",
@@ -13594,5 +13594,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "578866d2408395a629a13d6b84712444039fe0e8b7e4a579c34859cb2853df0d"
+  "graphSha256": "d510301ec71eb80b155d2f454231cf3aee2f42375835742dae563cbd9abb496f"
 };
