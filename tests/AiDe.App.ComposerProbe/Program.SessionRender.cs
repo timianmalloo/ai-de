@@ -46,9 +46,10 @@ internal static partial class Program
         /// <param name="ReturnToWorkbench">After New Session, leave Explorer mode and measure again (the necessity half).</param>
         /// <param name="Reopen">Run the reopen choreography (MainWindow.ReopenSessionAsync's one shell call) instead of New Session.</param>
         /// <param name="Sibling">In the same state, open a code viewer — a sibling dock document — and measure whether it loads.</param>
+        /// <param name="BindOnRestore">Run the workspace-open choreography for restored session documents (MainWindow.AttachWorkspace's revive-and-bind) instead of New Session.</param>
         /// <param name="WindowHeight">The window's height; 720 is the operator's.</param>
         private sealed record Options(
-            bool PriorDocument, bool Explorer, bool ReturnToWorkbench, bool Reopen, bool Sibling, double WindowHeight);
+            bool PriorDocument, bool Explorer, bool ReturnToWorkbench, bool Reopen, bool Sibling, bool BindOnRestore, double WindowHeight);
 
         /// <summary>
         /// The <c>layout.mutation</c> line the operator's shell wrote at 2026-09-11T22:33:53.717Z
@@ -109,6 +110,7 @@ internal static partial class Program
                 ReturnToWorkbench: args.Contains("--return-to-workbench", StringComparer.Ordinal),
                 Reopen: args.Contains("--reopen", StringComparer.Ordinal),
                 Sibling: args.Contains("--sibling", StringComparer.Ordinal),
+                BindOnRestore: args.Contains("--bind-on-restore", StringComparer.Ordinal),
                 WindowHeight: Height(args));
 
             var echo = WorkbenchDiagnostics.Sink;
@@ -199,7 +201,7 @@ internal static partial class Program
         {
             Console.Out.WriteLine(
                 $"options: priorDocument={options.PriorDocument} explorer={options.Explorer} returnToWorkbench={options.ReturnToWorkbench} "
-                + $"reopen={options.Reopen} sibling={options.Sibling} windowHeight={options.WindowHeight}");
+                + $"reopen={options.Reopen} sibling={options.Sibling} bindOnRestore={options.BindOnRestore} windowHeight={options.WindowHeight}");
 
             await Task.Delay(800);
 
@@ -280,8 +282,8 @@ internal static partial class Program
                     + $"workbench root loaded={shell.WorkbenchRoot.IsLoaded} visible={shell.WorkbenchRoot.IsVisible} parent={shell.WorkbenchRoot.Parent?.GetType().Name ?? "(none)"}");
             }
 
-            var verdict = options.Reopen
-                ? await ReopenAsync(shell, root)
+            var verdict = options.Reopen ? await ReopenAsync(shell, root)
+                : options.BindOnRestore ? await BindOnRestoreAsync(shell, root)
                 : await NewSessionAsync(window, shell, mode, root, options);
 
             persistence.Dispose();
@@ -464,6 +466,68 @@ internal static partial class Program
             }
 
             Console.Out.WriteLine("the reopened session's composer was configured and mounted six fields");
+            return Ok;
+        }
+
+        /// <summary>
+        /// <c>MainWindow.AttachWorkspace</c>'s second half, as it stands after INV-0009 Phase 2b: the
+        /// restored arrangement is on screen with its two session-document surfaces; one of them has a
+        /// <c>session.json</c> in the workspace, the other does not. The shell revives what loads,
+        /// the panes are rendered, and the product's binder binds each revived session. Measured: the
+        /// restored active tab is a live, configured document, and the session that is gone keeps
+        /// its island.
+        /// </summary>
+        private static async Task<int> BindOnRestoreAsync(WorkbenchShell shell, string root)
+        {
+            var now = DateTimeOffset.UtcNow;
+            new SessionConfigStore(root, RestoredActiveSessionId).Create("Terrace session", root, ["claude-code"], now);
+            var providers = WriteProviderFile(root);
+
+            var revived = shell.ReviveRestoredSessionDocuments(root);
+            shell.Adapter.Render();
+            var bound = string.Join(" | ", revived.Select(config => SessionComposerBinder.Bind(
+                shell, config,
+                NewSessionSheetViewModel.RoutableAmong(config.EnabledBackends, providers.Registry),
+                taskClass: null,
+                repositoryRoot: root, dataDirectory: root,
+                providers, new NeverAffirms())));
+            Console.Out.WriteLine(
+                $"bind-on-restore: revived=[{string.Join(",", revived.Select(c => c.SessionId))}] bound='{bound}' zones={Shape(shell)}");
+
+            var activeId = SessionDocumentSurface.SurfaceIdFor(RestoredActiveSessionId);
+            var goneId = SessionDocumentSurface.SurfaceIdFor("20260911T125502Z-bd59855b");
+            var live = shell.Adapter.SurfaceContent<SessionDocumentSurface>(activeId) is not null;
+            var goneLive = shell.Adapter.SurfaceContent<SessionDocumentSurface>(goneId) is not null;
+            Console.Out.WriteLine(
+                $"bind-on-restore: active document live={live} renders='{FirstText(shell.Adapter.ContentFor(activeId))}' "
+                + $"active in view={shell.Adapter.ActiveSurfaceId ?? "(none)"}; gone document live={goneLive} renders='{FirstText(shell.Adapter.ContentFor(goneId))}'");
+
+            var composer = shell.SessionComposer(RestoredActiveSessionId);
+            if (composer is null)
+            {
+                Console.Error.WriteLine("the restored active session's document was not revived: the shell holds no composer for it");
+                return TheRestoredDocumentWasNotRevived;
+            }
+
+            await WaitAsync(() => Count(composer.SurfaceId, "init-pushed") >= 1, TimeSpan.FromSeconds(30));
+            await Task.Delay(1000);
+
+            var view = FindWebView(composer);
+            var fields = view?.CoreWebView2 is null ? "(no page)" : await Eval(view, "String(document.querySelectorAll('#fields .field').length)");
+            Console.Out.WriteLine(
+                $"bind-on-restore: composer initialising={Count(composer.SurfaceId, "initialising")} page-ready={Count(composer.SurfaceId, "page-ready")} "
+                + $"configured={Count(composer.SurfaceId, "configured")} init-pushed={Count(composer.SurfaceId, "init-pushed")} "
+                + $"layout-lines={LayoutLines(composer.SurfaceId)} page fields={fields} host fields={composer.Fields.Count} status='{composer.Status}'");
+
+            if (!live || goneLive || Count(composer.SurfaceId, "configured") == 0 || Count(composer.SurfaceId, "init-pushed") == 0 || fields != "6")
+            {
+                Console.Error.WriteLine(
+                    $"the restored session document was not revived as a bound document: live={live} gone-live={goneLive} "
+                    + $"configured={Count(composer.SurfaceId, "configured")} init-pushed={Count(composer.SurfaceId, "init-pushed")} fields={fields}");
+                return TheRestoredDocumentWasNotRevived;
+            }
+
+            Console.Out.WriteLine("the restored session document is live, its composer bound and mounted six fields; the session that is gone kept its island");
             return Ok;
         }
 

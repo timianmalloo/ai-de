@@ -128,9 +128,47 @@ public partial class MainWindow : Window
 
         if (viewModel.Queries is not null)
         {
-            Shell.AttachWorkspace(
-                viewModel.Queries, viewModel.DataDirectory, viewModel.Commands,
-                workspaceRoot: viewModel.WorkspaceRoot);
+            AttachWorkspace(viewModel);
+        }
+    }
+
+    /// <summary>
+    /// Points the shell at the workspace the window just opened, then gives every session document
+    /// the saved arrangement restored its live, bound document (INV-0009 Phase 2b).
+    /// </summary>
+    /// <remarks>
+    /// <b>The one site.</b> Both open paths — the default workspace at launch and a chosen folder —
+    /// come through here, so a restored session document cannot be live on one and an island on the
+    /// other. Revived panes are rendered before they are bound, so the composer is in the tree when
+    /// its context arrives, exactly as on the New Session path; the bind sentences go to the log,
+    /// not the live region — the restore already announced, and three sentences on top of it would be
+    /// three interruptions.
+    /// </remarks>
+    private void AttachWorkspace(MainWindowViewModel workspace)
+    {
+        Shell.AttachWorkspace(
+            workspace.Queries!, workspace.DataDirectory, workspace.Commands,
+            workspaceRoot: workspace.WorkspaceRoot);
+
+        if (workspace.WorkspaceRoot is not { } root)
+        {
+            return;
+        }
+
+        var revived = Shell.ReviveRestoredSessionDocuments(root);
+        if (revived.Count == 0)
+        {
+            return;
+        }
+
+        Shell.Adapter.Render();
+
+        var malformed = ReadProviders();
+        foreach (var config in revived)
+        {
+            _ = malformed is { } reason
+                ? Workbench.Sessions.SessionComposerBinder.Refuse(Shell, config, "providers", reason)
+                : BindComposer(config, RoutableBackendsOf(config), taskClass: null);
         }
     }
 
@@ -334,20 +372,17 @@ public partial class MainWindow : Window
             return;
         }
 
-        if (ReadProviders() is { } malformed)
-        {
-            // The same refusal New Session makes, for the same reason: a bound composer over an
-            // empty registry read out of a broken file would be a wrong claim about the file.
-            Shell.Announcer.Announce(malformed);
-            return;
-        }
-
         // Shown AND bound (INV-0009 §6). The reopen used to end at the open, so the document was
         // shown with a composer nothing had configured; the routable set is derived from the
         // config's enabled backends against the registry as it reads now, and the task class is
         // whatever the session has on record — none, until the operator chooses one for a prompt.
+        // A malformed provider file is a refusal on the composer, by name: the session exists and
+        // is shown; a bound composer over an empty registry would be a wrong claim about the file.
         var shown = Shell.OpenSessionDocument(config);
-        Shell.Announcer.Announce(shown + " " + BindComposer(config, RoutableBackendsOf(config), taskClass: null));
+        var malformed = ReadProviders();
+        Shell.Announcer.Announce(shown + " " + (malformed is { } reason
+            ? Workbench.Sessions.SessionComposerBinder.Refuse(Shell, config, "providers", reason)
+            : BindComposer(config, RoutableBackendsOf(config), taskClass: null)));
     }
 
     /// <summary>
@@ -407,9 +442,7 @@ public partial class MainWindow : Window
             return viewModel.StatusMessage;
         }
 
-        Shell.AttachWorkspace(
-            viewModel.Queries, viewModel.DataDirectory, viewModel.Commands,
-            workspaceRoot: viewModel.WorkspaceRoot);
+        AttachWorkspace(viewModel);
 
         Shell.Adapter.Render();
         Shell.BindCanvas();

@@ -2939,6 +2939,74 @@ public sealed class WorkbenchShell : IDisposable
     {
         ArgumentNullException.ThrowIfNull(config);
 
+        var surfaceId = RegisterSessionDocument(config);
+
+        return OpenReferenceDocument(
+            new Surface(surfaceId, Sessions.SessionDocumentSurface.Kind, config.Name),
+            $"Session “{config.Name}” opened.",
+            "There is no pane to open a session document in.");
+    }
+
+    /// <summary>
+    /// Gives every <c>session-document</c> surface the saved arrangement restored a live document,
+    /// where its <c>session.json</c> still loads from <paramref name="workspaceRoot"/> — in place,
+    /// with no layout change and no activation — and returns the sessions revived, for the window
+    /// to bind (INV-0009 Phase 2b).
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The island is for a session that is gone, not for one that has not been looked at
+    /// yet.</b> The factory hands a restored session-document surface the "No session is open"
+    /// island because, at restore, nothing had registered a document for it; the operator's
+    /// arrangement then opened on that island over a session that existed, as its active tab
+    /// (INV-0009 §3, line 14). A surface whose <c>session.json</c> is missing or unreadable keeps
+    /// the island — that is the honest state for it.</para>
+    ///
+    /// <para><b>Not through <see cref="OpenSessionDocument"/>,</b> whose open activates the surface:
+    /// reviving three restored tabs must not move the active one the restore chose.</para>
+    /// </remarks>
+    /// <param name="workspaceRoot">The workspace whose sessions the surfaces name.</param>
+    /// <returns>The configs whose documents were revived, in layout order. Each pane is named for rebuild; the caller renders.</returns>
+    internal IReadOnlyList<AiDe.Core.Sessions.SessionConfig> ReviveRestoredSessionDocuments(string workspaceRoot)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(workspaceRoot);
+
+        var revived = new List<AiDe.Core.Sessions.SessionConfig>();
+
+        foreach (var surface in Service.Current.AllStacks().SelectMany(s => s.Surfaces))
+        {
+            if (surface.Kind != Sessions.SessionDocumentSurface.Kind
+                || _sessionDocuments.ContainsKey(surface.SurfaceId)
+                || Sessions.SessionDocumentSurface.SessionIdOf(surface.SurfaceId) is not { } sessionId
+                || !File.Exists(AiDe.Core.Sessions.SessionPaths.SessionFile(workspaceRoot, sessionId)))
+            {
+                continue;
+            }
+
+            AiDe.Core.Sessions.SessionConfig config;
+            try
+            {
+                config = new AiDe.Core.Sessions.SessionConfigStore(workspaceRoot, sessionId).Load();
+            }
+            catch (Exception error) when (error is IOException or System.Text.Json.JsonException)
+            {
+                // Unreadable is "gone" for this purpose: the island says no session is open, which
+                // is what a reopen of it would also conclude (ReopenSessionAsync's catch).
+                continue;
+            }
+
+            RegisterSessionDocument(config);
+            revived.Add(config);
+        }
+
+        return revived;
+    }
+
+    /// <summary>
+    /// Registers the live document for <paramref name="config"/> if none is registered yet, and
+    /// returns its surface id.
+    /// </summary>
+    private string RegisterSessionDocument(AiDe.Core.Sessions.SessionConfig config)
+    {
         var surfaceId = Sessions.SessionDocumentSurface.SurfaceIdFor(config.SessionId);
         var root = _workspaceRoot ?? config.WorkspaceId;
 
@@ -2980,10 +3048,7 @@ public sealed class WorkbenchShell : IDisposable
             }
         }
 
-        return OpenReferenceDocument(
-            new Surface(surfaceId, Sessions.SessionDocumentSurface.Kind, config.Name),
-            $"Session “{config.Name}” opened.",
-            "There is no pane to open a session document in.");
+        return surfaceId;
     }
 
     /// <summary>

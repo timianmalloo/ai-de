@@ -134,6 +134,43 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
         Assert.Contains(" page fields=6 ", composer, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// <b>INV-0009 Phase 2b.</b> At workspace-open, a session document the saved arrangement restored
+    /// is revived — live, its composer bound — where its <c>session.json</c> still loads; one whose
+    /// session is gone keeps the "No session is open" island; and the active tab the restore chose
+    /// stays active.
+    /// </summary>
+    /// <remarks>
+    /// <b>Observed red before the binding half landed</b> (the revive alone, 2026-09-11): exit 34,
+    /// <i>active document live=True renders='Compiled view' … configured=0 init-pushed=0 page
+    /// fields=0</i> — the blank editor of finding C, produced by a revive with no bind. Before the
+    /// revive existed every run printed <i>restored active document: live-document=False renders='No
+    /// session is open…'</i>.
+    /// </remarks>
+    [Fact]
+    public void ARestoredSessionDocumentIsRevivedAndBoundAtWorkspaceOpen()
+    {
+        var (exitCode, stdout, stderr) = ComposerHostIntegrationTests.RunProbe(
+            "--session-render --bind-on-restore --height 720", Budget);
+
+        Assert.True(exitCode == 0, $"the session-render probe failed with exit {exitCode}. {stdout} {stderr}");
+
+        Assert.Contains("restore (22:33:53Z replay): applied-saved=True", stdout, StringComparison.Ordinal);
+        // The sentence's middle dots do not survive the probe's console encoding; the engine does.
+        Assert.Contains("bind-on-restore: revived=[20260911T175821Z-1edfa710] bound='Composer bound to claude-code ", stdout, StringComparison.Ordinal);
+
+        var documents = Line(stdout, "bind-on-restore: active document ");
+        Assert.Contains("active document live=True renders='Compiled view' active in view=session-document:20260911T175821Z-1edfa710;", documents, StringComparison.Ordinal);
+        Assert.Contains("gone document live=False renders='No session is open.", documents, StringComparison.Ordinal);
+
+        var composer = Line(stdout, "bind-on-restore: composer ");
+        Assert.Contains(" configured=1 init-pushed=1 ", composer, StringComparison.Ordinal);
+        Assert.Contains(" page fields=6 ", composer, StringComparison.Ordinal);
+
+        // The binding is in the log, with the checkout it bound to (INV-0009 F5).
+        Assert.Contains("\"evt\":\"session-document.bound\",\"session\":\"20260911T175821Z-1edfa710\"", stdout, StringComparison.Ordinal);
+    }
+
     /// <summary>The <c>composer wpf loaded=N</c> count on a measurement line.</summary>
     private static int LoadedCount(string line)
     {

@@ -76,6 +76,8 @@ internal static partial class Program
     private const int TheNewDocumentNeverPushedInit = 31;
     private const int TheReopenedDocumentWasNeverConfigured = 32;
     private const int TheReplayDidNotReachTheOperatorsState = 33;
+    private const int TheRestoredDocumentWasNotRevived = 34;
+    private const int TheChooserSessionWasNotBoundToTheChosenWorkspace = 35;
 
     /// <summary>Runs the INV-0009 session-render replay.</summary>
     private const string SessionRenderArgument = "--session-render";

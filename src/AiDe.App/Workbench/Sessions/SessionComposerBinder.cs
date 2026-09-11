@@ -137,6 +137,31 @@ internal static class SessionComposerBinder
         return $"Composer bound to {binding.EngineId} · {binding.Model} · {binding.Account.Label}.";
     }
 
+    /// <summary>
+    /// Leaves the composer of <paramref name="config"/>'s open document unbound with a named
+    /// refusal the window established before binding could start — a malformed provider file on a
+    /// reopen or a restore — and returns what to announce.
+    /// </summary>
+    /// <remarks>
+    /// New Session refuses before its sheet opens (the sheet is not constructible without a
+    /// registry); a session that already exists is still shown, with the refusal where the operator
+    /// reads it, rather than not reopened at all.
+    /// </remarks>
+    internal static string Refuse(WorkbenchShell shell, SessionConfig config, string field, string message)
+    {
+        ArgumentNullException.ThrowIfNull(shell);
+        ArgumentNullException.ThrowIfNull(config);
+
+        if (shell.SessionComposer(config.SessionId) is not { } composer)
+        {
+            WorkbenchDiagnostics.SessionDocumentRefused(
+                config.SessionId, null, "composer", "no document is open for this session");
+            return "Its composer is not on screen, so nothing was wired to a run.";
+        }
+
+        return Refuse(config, composer, field, message);
+    }
+
     /// <summary>Puts a field-level refusal on the composer, records it, and returns it for the announcement.</summary>
     private static string Refuse(SessionConfig config, ComposerSurface composer, string field, string message)
     {
