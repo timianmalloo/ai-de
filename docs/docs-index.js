@@ -5692,7 +5692,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "48a7627c86737107a77a6e66c064779d2e52f0187c4df9269a948121ab695d17"
+      "sourceSha256": "91b7ff0ac832d1cfe61ff09272c95912229f8deb7922d8f605fcc151afd3471b"
     },
     {
       "id": "design-session-profiler",
@@ -6635,7 +6635,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "65523ae89b659a14490b9c4e35e7dbbef8b0d0715bf2c9c39c70a40e3aad59d1"
+      "sourceSha256": "5ebb9fe3c2487e03893938193b2b2df66fd4911d74179a707c5d915ebab81dfb"
     },
     {
       "id": "perf-results-phase-1",
@@ -13138,5 +13138,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "5060079799bdd37b6d4761c497be53bda9609e5858f2b594938cf96f7d2830bd"
+  "graphSha256": "d78139c0fa4946e9604a9ffeb886ea11b29cfe6b45e4dd56cf60adf32fc8081c"
 };

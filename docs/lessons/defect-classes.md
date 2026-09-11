@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 66 · partially-controlled 53 · uncontrolled 15
+**Status counts:** controlled 66 · partially-controlled 53 · uncontrolled 16
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -5752,3 +5752,46 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   positive handshake oracle fails if the channel goes silent again for any reason. What is **not**
   controlled is the general shape: a new interop event handler that dereferences an event-args
   property unguarded would reintroduce it somewhere else, and no gate reads for that.
+
+### DC-135 — One interface, two implementations, and the tests exercise the one the product does not construct
+
+- **Shape:** an interface has two implementations — an older general one and the one the shell
+  actually wires. Tests accumulate against the **general** one, because it is the easy one to
+  construct: no shell, no host, no projection. A property proven there is then cited as proven of
+  the product. It is not. **Both implementations are correct**, the tests are honest, and the
+  citation is the defect: nothing in a test that says `new LayoutService()` announces that the
+  running path says something else.
+- **Signature:** a test constructing a concrete type where the product resolves an interface; a
+  count of tests per implementation that nobody has taken; a ruling or a review citing
+  *"pre-existing and tested"* without naming which implementation; and the tell that settles it —
+  **the obvious oracle goes red against a stub and STAYS red against the real body.**
+- **Instance (Ruling 47, 2026-09-11):** the ratification cited `StackState.Maximized` and
+  `workbench.maximizePane` as *"pre-existing and tested"*, naming `WorkbenchLayoutTests.cs:285-311`
+  and `WorkbenchControllerTests.cs:171-180`. Both construct **`new LayoutService()`** — the tree
+  service. The shell constructs **`new ZoneBackedLayoutService()`** (`WorkbenchShell.cs:113`), whose
+  projection builds every stack at the default `Docked` and hands `Layout` an **always-empty**
+  maximize memo (`ZonesToTree.cs:67`: `ImmutableDictionary<string, StackState>.Empty`). **So
+  `StackState` does not round-trip at all, and `Maximized` is unobservable in this product.** The
+  operation is real, tested, and not reachable from the running path.
+- **THE COUNT, which is the part worth keeping:** swept across `tests/` —
+  **66 tests construct `new LayoutService()`; 8 construct `new ZoneBackedLayoutService()`.** The
+  overwhelming majority of this repository's layout coverage is against an implementation the shell
+  does not run. Nobody had taken that ratio, and it is one `grep -c` away.
+- **How the node found it, and why the second red matters more than the first:** the obvious oracle
+  — *the session's stack reads `Maximized`* — went red against a stub (`Expected: Maximized ·
+  Actual: Docked`) and **stayed red against the real implementation**. A first red proves the test
+  can fail; **a second red against working code is the test telling you it is asking the wrong
+  question.** The node then wrote the oracle against the *effect* `DESIGN.md` promises — *"siblings
+  are temporarily minimized"* — and **re-ran that assertion against the stub** rather than letting it
+  inherit the earlier red, which is the step that keeps the replacement honest.
+- **Why a ruling made it worse rather than catching it:** the Owner ruled on evidence the conductor
+  supplied, and the evidence was *"there are tests"*. **A citation is not a promotion** (NG). A
+  ruling that rests on coverage must name the implementation that coverage constructs, or it is
+  ratifying a property of code that does not ship.
+- **Control:** none yet. The mechanical form is available and cheap — a test that constructs a
+  concrete type where the product resolves an interface should have to say so, and the per-
+  implementation test counts should be asserted rather than discovered — but no gate here does it,
+  and inventing one from this single instance would be the speculative generality the Simplifier
+  strikes. **Registered so the next ruling that says "pre-existing and tested" has to name which.**
+- **Status:** `uncontrolled` — the instance is fixed, the ratio is measured and recorded, and the
+  next slice decomposed the same way would cite the same coverage again.
