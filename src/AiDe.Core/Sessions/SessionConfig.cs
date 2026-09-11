@@ -85,3 +85,37 @@ public static class SessionEventKinds
 /// <param name="Kind">A <see cref="SessionEventKinds"/> value.</param>
 /// <param name="Body">The event payload — currently the resulting <c>EnabledBackends</c> list.</param>
 public sealed record SessionEvent(long Seq, DateTimeOffset Ts, string Kind, JsonObject Body);
+
+/// <summary>
+/// How a session came to exist, as the <c>session.open</c> body records it (F5 clause 1).
+/// </summary>
+/// <remarks>
+/// <para><b>On the event, never on <see cref="SessionConfig"/>.</b> Origin is a fact about one
+/// moment — the creation — not a property of the container, and the append-only log is already the
+/// record of what happened. Putting it on the record too would be two definitions of one fact, which
+/// is the defect signature DM's "derive don't store" names.</para>
+///
+/// <para><b><see cref="Direct"/> is the default because the claim is about the OTHER value.</b>
+/// "Started from File → New Session" is only checkable if something that did not start there reads
+/// differently. A field that is always <see cref="MainMenuNewSession"/> would satisfy the sentence
+/// and prove nothing — the exact "asserted-about" shape N7 was blocked for. So
+/// <see cref="SessionConfigStore.Create"/> defaults to <see cref="Direct"/> and exactly one caller
+/// in <c>src/</c> passes <see cref="MainMenuNewSession"/>.</para>
+/// </remarks>
+public static class SessionOrigins
+{
+    /// <summary>
+    /// The <c>File → New Session</c> command path — <c>Ctrl+N</c> and the <c>MainMenuBuilder</c>
+    /// entry, both of which resolve to <c>WorkbenchCommandCatalog</c>'s <c>session.new</c>.
+    /// </summary>
+    /// <remarks>
+    /// <b>Passed at exactly one site in <c>src/</c></b>, <c>NewSessionSheetViewModel.Create</c> —
+    /// the sheet that command opens, and the only production caller of
+    /// <see cref="SessionConfigStore.Create"/>. <c>TheSessionOriginIsSetOnlyOnTheCommandPathTests</c>
+    /// is the scan that holds that to one site.
+    /// </remarks>
+    public const string MainMenuNewSession = "main-menu.new-session";
+
+    /// <summary>Anything that created a session without going through that command.</summary>
+    public const string Direct = "direct";
+}

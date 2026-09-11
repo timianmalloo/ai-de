@@ -36,14 +36,29 @@ public sealed class SessionConfigStore
     public string SessionId { get; }
 
     /// <summary>Creates the session: writes <c>session.json</c> and emits <c>session.open</c>.</summary>
+    /// <param name="name">The operator-facing name.</param>
+    /// <param name="workspaceId">The workspace this session is bound to.</param>
+    /// <param name="enabledBackends">The agent backends enabled for it.</param>
+    /// <param name="now">Stamps the config and the event.</param>
+    /// <param name="origin">
+    /// How this session came to exist — see <see cref="SessionOrigins"/>. <b>Defaulted to
+    /// <see cref="SessionOrigins.Direct"/> deliberately:</b> F5 clause 1's claim is that the front
+    /// door is distinguishable from every other way of reaching this method, and that is only
+    /// checkable if something which did not come through it reads differently. The default is what
+    /// makes the other value evidence.
+    /// </param>
     public SessionConfig Create(
-        string name, string workspaceId, IReadOnlyList<string> enabledBackends, DateTimeOffset now)
+        string name,
+        string workspaceId,
+        IReadOnlyList<string> enabledBackends,
+        DateTimeOffset now,
+        string origin = SessionOrigins.Direct)
     {
         lock (_gate)
         {
             var config = new SessionConfig(SessionId, name, workspaceId, now, [.. enabledBackends]);
             WriteConfigUnsafe(config);
-            AppendEventUnsafe(SessionEventKinds.Open, config, now);
+            AppendEventUnsafe(SessionEventKinds.Open, config, now, origin);
             return config;
         }
     }
@@ -121,7 +136,7 @@ public sealed class SessionConfigStore
             JsonSerializer.Serialize(config, ConfigJsonOptions));
     }
 
-    private void AppendEventUnsafe(string kind, SessionConfig config, DateTimeOffset now)
+    private void AppendEventUnsafe(string kind, SessionConfig config, DateTimeOffset now, string? origin = null)
     {
         Directory.CreateDirectory(SessionPaths.SessionDirectory(WorkspaceRoot, SessionId));
 
@@ -135,6 +150,14 @@ public sealed class SessionConfigStore
             ["enabledBackends"] = new JsonArray([.. config.EnabledBackends.Select(b => JsonValue.Create(b))]),
             ["attachEnabled"] = config.AttachEnabled,
         };
+
+        // `origin` rides `session.open` ONLY. A config toggle has no origin — the session was
+        // already open — and writing one there would be a field carrying a value that answers no
+        // question, which is how a reader learns to stop trusting the field.
+        if (origin is not null)
+        {
+            body["origin"] = origin;
+        }
         var line = JsonSerializer.Serialize(new SessionEvent(nextSeq, now, kind, body));
 
         File.AppendAllText(SessionPaths.EventsFile(WorkspaceRoot, SessionId), line + Environment.NewLine);

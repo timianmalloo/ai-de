@@ -306,6 +306,16 @@ public sealed class NewSessionSheetViewModel
     /// Creates the session: writes <c>session.json</c>, emits <c>session.open</c>, and hands back
     /// the two fields a run also needs.
     /// </summary>
+    /// <remarks>
+    /// <b>This is the one site in <c>src/</c> that names <see cref="SessionOrigins.MainMenuNewSession"/></b>
+    /// (F5 clause 1). This sheet is constructed at exactly one production site —
+    /// <c>NewSessionFlow</c> — which is itself constructed at exactly one — <c>MainWindow.NewSession</c>,
+    /// the handler wired to <c>WorkbenchController.NewSessionRequested</c> and reached only through
+    /// the <c>session.new</c> command that <c>Ctrl+N</c> and <c>MainMenuBuilder</c>'s File entry both
+    /// resolve to. Anything else that creates a session goes through
+    /// <see cref="SessionConfigStore.Create"/> directly and its <c>session.open</c> reads
+    /// <see cref="SessionOrigins.Direct"/>.
+    /// </remarks>
     /// <exception cref="InvalidOperationException">
     /// <see cref="CanCreate"/> is false. The message is <see cref="BlockedReason"/> — a refusal that
     /// does not say why is a dead button.
@@ -318,7 +328,8 @@ public sealed class NewSessionSheetViewModel
         }
 
         var store = new SessionConfigStore(WorkspaceRoot, SessionId.New(now));
-        var config = store.Create(Name.Trim(), WorkspaceId, EnabledBackends, now);
+        var config = store.Create(
+            Name.Trim(), WorkspaceId, EnabledBackends, now, SessionOrigins.MainMenuNewSession);
 
         return new NewSessionResult(config, TaskClass!.Trim(), RoutableBackends);
     }
