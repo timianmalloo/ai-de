@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.AgentPlane: 56 types, 137 members, 90% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.AgentPlane: 57 types, 137 members, 90% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.AgentPlane`
 
-**56 public types · 137 public members · 90% documented.**
+**57 public types · 137 public members · 90% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -153,6 +153,28 @@ with `kind:"edit"` plus a permission request, not as `fs/write_text_file`.
 | `AcpClientCapabilities PhaseOne = new(false, false, false)` | What Phase 1 actually implements: none of them. |
 | `JsonObject ToJson()` | The `clientCapabilities` object, in the shape the adapter reads. |
 
+## `LaneSessionOptions`
+
+*record* — `AcpLaneClient.cs`
+
+The tools argument of `session/new` — what the lane's model may hold — sent through the
+adapter's extension slot `_meta.claudeCode.options`.
+
+**Remarks.** **A lane is not toolless by default.** With no `_meta` the adapter hands the SDK
+the `claude_code` preset and resolves permissions from the user's, the repository's and the
+local settings (adapter 0.75.1, `acp-agent.js:5883-5884`, `:5962`), so the lease
+bounds the file writes the seams observe and nothing bounds the tools. This record is the one
+place the host says otherwise (Ruling 71; `docs/notes/lane-pin-spike.md`).
+
+
+
+
+
+**Exactly the two members the adapter spreads into the SDK options**
+(`:6007-6008`), and nothing else — the whole `_meta.claudeCode.options` object is
+spread into the SDK's options (`:5964`), so a wider record would be a wider reach. An
+absent record and an empty one both send the frame every prior run sent.
+
 ## `AcpLaneClient`
 
 *class* — `AcpLaneClient.cs`
@@ -177,8 +199,8 @@ caller owns, not a constant.
 | `int ProtocolVersion = 1` | The ACP schema revision this client speaks, pinned and **asserted on the way back**. |
 | `AcpLaneClient(` | **(gap)** |
 | `Task<JsonObject> InitializeAsync(CancellationToken cancellationToken = default)` | Performs the handshake and returns its result, having checked the echoed version. |
-| `Task<string> NewSessionAsync(string cwd, CancellationToken cancellationToken = default)` | Opens a session rooted at , which **must be absolute**. |
-| `Task<string> NewSessionAsync(ProvisionedWorktree worktree, CancellationToken cancellationToken = default)` | Opens the lane's session rooted in its **provisioned worktree** — spec R1 bullet 1. |
+| `Task<string> NewSessionAsync(` | Opens a session rooted at , which **must be absolute**, holding the tools  names — or, with none, whatever the adapter's preset allows. |
+| `Task<string> NewSessionAsync(` | Opens the lane's session rooted in its **provisioned worktree** — spec R1 bullet 1. |
 | `Task<JsonObject> PromptAsync(string sessionId, string text, CancellationToken cancellationToken = default)` | Sends one prompt and waits for the turn to end, under the prompt bound rather than the handshake one. |
 
 ### `int ProtocolVersion = 1`
@@ -201,13 +223,14 @@ Performs the handshake and returns its result, having checked the echoed version
 
 **Throws `AgentPlaneException`.** `ProtocolVersionMismatch` when the peer echoed a different version, or none at all.
 
-### `Task<string> NewSessionAsync(string cwd, CancellationToken cancellationToken = default)`
+### `Task<string> NewSessionAsync(`
 
-Opens a session rooted at , which **must be absolute**.
+Opens a session rooted at , which **must be absolute**, holding the
+tools  names — or, with none, whatever the adapter's preset allows.
 
 **Throws `AgentPlaneException`.** `SessionCwdNotAbsolute` — refused before the wire, so the reason stays attached to the caller rather than arriving later as a `-32602`.
 
-### `Task<string> NewSessionAsync(ProvisionedWorktree worktree, CancellationToken cancellationToken = default)`
+### `Task<string> NewSessionAsync(`
 
 Opens the lane's session rooted in its **provisioned worktree** — spec R1 bullet 1.
 

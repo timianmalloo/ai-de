@@ -1546,7 +1546,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 56 types, 137 members, 90% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 57 types, 137 members, 90% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1559,7 +1559,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a1e5adcd67395d1626ef8532b6bbb3232a2b3eedec921a9281b8fb5799753395"
+      "sourceSha256": "14cd3cb0e64795f86cb4da8583dd9feb829f4187000608abc028053479461170"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -4416,6 +4416,51 @@ window.DOCS_INDEX = {
       "sourceSha256": "2f0f00167f44229374a054156349912b571a740c0e4dd61c053ab41d2292a4bf"
     },
     {
+      "id": "note-lane-pin-spike",
+      "path": "docs/notes/lane-pin-spike.md",
+      "title": "The governed lane's shell is pinned off through `_meta.claudeCode.options.disallowedTools` — the adapter's own path, read from its source",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "A source spike (no model call) against adapter @agentclientprotocol/claude-agent-acp 0.75.1: the `session/new` extension slot the adapter reads is `_meta.claudeCode.options`, `disallowedTools` there is an array of SDK tool names spread into the SDK's option, and `\"Bash\"` is the shell tool's name. Ruling 71's spelling holds verbatim. The wire observation is the F5 run's Proof Pack.",
+      "tags": [
+        "decision-note",
+        "spike",
+        "agent-plane",
+        "acp",
+        "ruling-71",
+        "f5",
+        "security"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-d-compile-session-tools",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-conductor-agent-plane",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-lane-pin-ruling-71",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "45e6e3b05e8adc435013bf5745ce7f2cbb68c481c7ee8741e4454ed1a207c3e2"
+    },
+    {
       "id": "note-terminal-customization-persistence",
       "path": "docs/notes/terminal-customization-persistence.md",
       "title": "Decision — terminal customization persistence & busy-close",
@@ -6188,7 +6233,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1d3971f39bd4aec2a0b7c55f11f63fc0031ea8c44257d86426c3deb983f5b7e7"
+      "sourceSha256": "cf4f3f58bc8884b35ef96cf6911ca3f82e42fe8c8fc7e47762c710574d7ae021"
     },
     {
       "id": "design-session-profiler",
@@ -12565,6 +12610,51 @@ window.DOCS_INDEX = {
       "sourceSha256": "4a15a8ae4342546bf837f9d1a48dee8b71ecdb2f4a8eb2fdd0660ac0bb895e4d"
     },
     {
+      "id": "proof-lane-pin-ruling-71",
+      "path": "docs/proof/lane-pin-ruling-71.md",
+      "title": "Proof Pack — Ruling 71's lane pin: the governed lane's session/new carries disallowedTools [\\\"Bash\\\"]",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Evidence that AcpLaneClient.NewSessionAsync now takes a typed LaneSessionOptions {Tools?, DisallowedTools?} on both overloads, that the governed lane sends _meta.claudeCode.options.disallowedTools [\"Bash\"] on its session/new (red-first on the outgoing frame), that the null path is byte-identical to every prior run's frame, and that every session opened from src/ names its tools. The wire observation is the F5 run's own Proof Pack.",
+      "tags": [
+        "proof-pack",
+        "agent-plane",
+        "acp",
+        "ruling-71",
+        "f5",
+        "security",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        },
+        {
+          "to": "note-lane-pin-spike",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-conductor-agent-plane",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a0a1d04734f3b0e66518e2cb385ce079d989932da804cfe162cf7bc05b659479"
+    },
+    {
       "id": "proof-lane-rename-ruling-15",
       "path": "docs/proof/pp-lane-rename-ruling-15.md",
       "title": "Proof Pack — Ruling 15/15a: GovernedSessionSource/GovernedSession rename",
@@ -14521,5 +14611,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "068ee9262ca4f38ce568245197a4f14aef928466befc5c90d0f43325b90b8bf1"
+  "graphSha256": "ad574bb22ee727bc78e54068296651756f25f49d2f5fcf4a4945b91b31e861f9"
 };

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T21:51:03Z",
+  "generated": "2026-09-11T22:16:48Z",
   "audit": [
     {
       "actor": null,
@@ -12491,6 +12491,52 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T2",
       "tool": null
+    },
+    {
+      "id": "al-01M298PPTEJDBYAQQ3DCJW9MTE",
+      "shortname": "f5-lane-pin-ruling-71",
+      "datetime": "2026-09-11T22:16:41Z",
+      "session": "f5-lane-pin",
+      "prompt": "/implement Ruling 71: the governed lane's session/new carries _meta.claudeCode.options.disallowedTools [\"Bash\"], typed on AcpLaneClient.NewSessionAsync, asserted red-first on the outgoing frame\n\nDispatched by the conductor (session conductor-addendum-c) onto the F5 tree C:\\Projects\\ai-de-feature-exit-evidence (feature/exit-evidence @ 757af057); merge main (a3f760a3) first, never rebase; the frozen oracle tools/verify-front-door-exit-evidence.py stays byte-identical to tag f5-oracle-frozen (1374401d).\n\nRuling 71 (verbatim, docs/notes/addendum-c-council-rulings.md): (a) The F5 exit run may proceed only after AcpLaneClient.NewSessionAsync sends _meta.claudeCode.options.disallowedTools: [\"Bash\"] for the governed lane, a unit test asserts that member on the outgoing session/new JSON, the run is attended, and the run's Proof Pack records the outgoing frame, every observed tool-call name, and origin/main's sha before and after; (b) the standing control is a typed session/new tools argument on the one NewSessionAsync site (the agent-plane's; reused later by Addendum D's C1 with tools: []) — a record {tools?, disallowedTools?}, two callers, not a launch-profile abstraction; (c) .claude/settings.json:4 (Bash(git push:*)) is a finding for the operator, not yours to change.\n\nDone when: 1. Spike (bounded, source-only): confirm from the adapter source the _meta path, the type of disallowedTools, and that \"Bash\" is the SDK's shell tool name; record in docs/notes/lane-pin-spike.md. 2. Red first: a Core AgentPlane test asserting the outgoing session/new params contain _meta.claudeCode.options.disallowedTools == [\"Bash\"] when the governed options are passed — observed red on the current client. 3. The change: a small record accepted by NewSessionAsync (both overloads; a null/absent record sends exactly today's frame — a second test proves byte-equality); GovernedRunHost passes DisallowedTools: [\"Bash\"]; ConductorEntry.cs byte-unchanged; no other behaviour change. 4. Green, then the Security lens (read-only sub-agent) confirms: the pin is on the single site, the null path is byte-identical, nothing widens, the settings.json:4 finding is recorded not edited. 5. Gates, bare, stop on the first red: dotnet build Core, App, both test projects with -p:TreatWarningsAsErrors=true; dotnet test Core (full) and App (full); verify-test-run.py CHECK only; every tools/verify-*.py; regenerate-derived.py after the audit entry; the oracle diff empty. 6. Register the class if new (check DC-019 first), audit entry, regenerate, commit, rebuild Release, push origin feature/exit-evidence.\n\nFails if: any change to the frozen oracle, ConductorEntry.cs, .claude/settings.json, the vendored bundle; a launch-profile abstraction; a merge to main; git stash; a rebase; verify-test-run.py --update; a repo-wide destructive command. No governed run, no model call — the operator performs the gesture.",
+      "summary": "Shipped Ruling 71's lane pin on feature/exit-evidence. Spike (source-only, docs/notes/lane-pin-spike.md): adapter 0.75.1 reads _meta.claudeCode.options at acp-agent.js:5859-5860, spreads disallowedTools at :6007 (string[]), Bash is the SDK shell tool (sdk-tools.d.ts:750) — the ruling's spelling holds verbatim. LaneSessionOptions(Tools?, DisallowedTools?) record on both NewSessionAsync overloads; ToMeta null iff both null so the absent/empty record sends the prior frame byte for byte (characterization theory, exact string). Red observed: the pin and tools-[] tests NullReference'd on the plumbing-only client; blank-name test sent a frame and timed out before the guard; App tests turned red by mutating the host (no pin; bare call). GovernedRunHost.GovernedLaneSession = DisallowedTools [Bash] at the one site; a sweep test requires every NewSessionAsync in src/ to name its tools (DC-019: the boundary, not the site). Security lens (read-only): CLEARED WITH FINDINGS — no blocker; nothing widens (:5964 spread collides with nothing security-relevant); next-ruling findings: Monitor/REPL/Agent/hooks remain reachable; settings.json:4 recorded as an operator finding, not edited. Instrumentation gap recorded: the host reports the session id, not the outgoing frame. DC-019 recurrence registered with the sweep as control. Core 2250/2250, App 603/603, verify-test-run --no-run OK; every verify-*.py green except the frozen F5 oracle (red by design until the operator's run). Proof Pack docs/proof/lane-pin-ruling-71.md.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/AgentPlane/AcpLaneClient.cs",
+        "src/AiDe.App/Conductor/GovernedRunHost.cs",
+        "tests/AiDe.Core.Tests/AgentPlane/AcpLaneClientTests.cs",
+        "tests/AiDe.App.Tests/Conductor/TheGovernedLaneHasNoShellTests.cs",
+        "tests/AiDe.Core.AcpProbe/Program.cs",
+        "docs/notes/lane-pin-spike.md",
+        "docs/proof/lane-pin-ruling-71.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "ruling-71",
+        "f5",
+        "agent-plane",
+        "security"
+      ],
+      "outcome": "success",
+      "goal": "Ruling 71 lane pin: a typed LaneSessionOptions {Tools?, DisallowedTools?} on both AcpLaneClient.NewSessionAsync overloads; the governed lane sends _meta.claudeCode.options.disallowedTools [Bash]; null path byte-identical; red-first on the outgoing frame",
+      "done_when": "Spike note records the adapter path from source (0.75.1 :5859-5860, :6007); wire test red then green; null-path byte-equality test green; GovernedRunHost passes the pin at its one site; Security lens clears; builds 0 warnings; Core+App full suites green and verify-test-run --no-run OK; every tools/verify-*.py green after regeneration; oracle byte-identical to 1374401d; committed, Release rebuilt, pushed",
+      "tier": "T1",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-11T21:50:36Z",
+      "duration_seconds": 1565.0,
+      "git": {
+        "sha": "b6652f64979ffcd9c59aa38b190d860528daf2ac",
+        "short": "b6652f649",
+        "branch": "feature/exit-evidence",
+        "pushed": false
+      }
     }
   ],
   "changes": [

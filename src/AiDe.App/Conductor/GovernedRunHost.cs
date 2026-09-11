@@ -36,6 +36,14 @@ public static class GovernedRunHost
     private const string EditToolKind = "edit";
 
     /// <summary>
+    /// What the governed lane's model may hold: everything the adapter's preset allows <b>except the
+    /// shell</b>. Ruling 71 — the lease bounds the file writes the seams observe; it does not bound
+    /// tools, and with no pin the lane holds <c>Bash</c> under whatever the user's, the repository's
+    /// and the local settings allow. The pin is one value on one site, tested on the outgoing frame.
+    /// </summary>
+    internal static readonly LaneSessionOptions GovernedLaneSession = new(DisallowedTools: ["Bash"]);
+
+    /// <summary>
     /// Runs one governed lane to completion and scores it.
     /// </summary>
     /// <param name="request">What to run.</param>
@@ -136,8 +144,9 @@ public static class GovernedRunHost
         Report($"episode {session.EpisodeId} opened on session {session.SessionId}");
 
         // R1 bullet 1: the ACP session's cwd IS the provisioned worktree. The provisioner's own type
-        // is passed rather than a path string, so the lane cannot be rooted anywhere else.
-        var acpSession = await client.NewSessionAsync(worktree, cancellationToken).ConfigureAwait(false);
+        // is passed rather than a path string, so the lane cannot be rooted anywhere else. Ruling 71:
+        // and the lane's shell is pinned off on the same frame.
+        var acpSession = await client.NewSessionAsync(worktree, GovernedLaneSession, cancellationToken).ConfigureAwait(false);
         Report("acp session " + acpSession);
 
         var prompt = client.PromptAsync(acpSession, request.Prompt, cancellationToken);

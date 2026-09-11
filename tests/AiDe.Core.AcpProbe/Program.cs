@@ -304,7 +304,7 @@ public static class Program
         var initialize = await client.InitializeAsync(deadline.Token).ConfigureAwait(false);
         Console.Out.WriteLine("INITIALIZE  " + Trim(initialize));
 
-        var sessionId = await client.NewSessionAsync(cwd, deadline.Token).ConfigureAwait(false);
+        var sessionId = await client.NewSessionAsync(cwd, cancellationToken: deadline.Token).ConfigureAwait(false);
         Console.Out.WriteLine($"SESSION     {sessionId}   cwd={cwd}");
         Console.Out.WriteLine("AUTH        " + (peer.ObservedAuth is { } a
             ? $"kind={a.Kind} label={a.Label} plan={a.Plan}"
