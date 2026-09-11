@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 64 · partially-controlled 48 · uncontrolled 10
+**Status counts:** controlled 64 · partially-controlled 48 · uncontrolled 11
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -4689,6 +4689,14 @@ for both or split.*
      complete under the Bash tool host. **Killing those shells advanced the run immediately** (58 s
      → 92 s CPU), and fresh batches then appeared. **The identical command from the PowerShell
      console host completes and passes 399/399.**
+- **Parentage confirmed 2026-09-10, by exact command line rather than inference (DC-123):** the
+  `powershell.exe -NoLogo -NoExit -EncodedCommand` string is emitted by the **product**, at
+  `ShellIntegration.cs:129` and `:186`, and the test helper's `integration` probe routes through
+  that same builder. **So these shells are children of `AiDe.Core.TerminalHost`**, which the
+  test launcher abandons. The two classes are one family, one ring apart — and the reaping is
+  **inverted**: these shells *are* correctly reaped by a kill-on-close job, while **the helper
+  that owns them is not**. Killing the shells advanced the run because it freed the helper's
+  waits; reaping the **helper** would have taken the shells with it.
 - **Relationship to DC-014:** this is DC-014's shape **one layer up** — there, a console-less host
   could not drive a pseudo-console; here it cannot drive shell integration. Same root, different
   altitude.
@@ -4992,6 +5000,70 @@ for both or split.*
 - **Status:** `uncontrolled` — the instance is corrected (the comment now states what the line does)
   and the two measured defects are recorded as their own next step, but nothing fails when a comment
   claims a property no test asserts
+
+
+### DC-123 — Containment exists one ring in and is absent one ring out, and the leak is unobservable from inside the harness that leaks it
+
+- **Shape:** a system spawns processes in nested rings — a harness spawns a helper, the helper spawns
+  shells. Someone thinks carefully about lifetime **at the inner ring** and builds a real control
+  there: a job object, a kill-on-close handle, a documented reason. **The outer ring — the process
+  that owns the contained ones — gets nothing**, because the reasoning happened while looking at the
+  inner problem. The result is inverted containment: the grandchildren are reaped reliably and the
+  child that owns them is abandoned, taking its reaped-capable subtree with it.
+- **Signature:** a codebase that contains an exemplary lifetime comment **and a leak of the same
+  resource class**; disposal code that releases a *handle* or a *managed wrapper* and is mistaken for
+  ending a *process*; and the tell — **the product uses the correct idiom and the test harness does
+  not**, so the leak is invisible to anyone reading production code.
+- **Instance (2026-09-10, found by the operator from a taskbar screenshot, not by any gate):**
+  `tests/AiDe.Core.Tests/TerminalHostLauncher.cs:61-77` creates a helper with `CREATE_NEW_CONSOLE`
+  and on **every** path does:
+  ```csharp
+  finally { CloseHandle(info.hThread); CloseHandle(info.hProcess); }
+  ```
+  `using var process` disposes the **managed wrapper**; `CloseHandle` closes a **handle**. **Neither
+  ends the child.** Zero occurrences of `Kill`, `Terminate` or `Job` in the file. Five test call
+  sites, one abandoned helper each.
+  **Meanwhile `src/AiDe.Core/Terminal/ConPtyInterop.cs:292-320` defines `CreateKillOnCloseJob()`,
+  whose own doc comment states the requirement exactly** — *"what makes orphan reaping survive AI-DE
+  itself being killed… a shutdown-path `TerminateProcess` would not run at all in that case."* The
+  **product** uses it; the **test launcher** does not, though `InternalsVisibleTo` was already in
+  place and a sibling test already called into that class.
+- **The inversion, stated plainly because it is the whole class:** the shells the helper spawns
+  **are** correctly reaped — the ConPTY session puts them in a kill-on-close job. **The helper that
+  owns them is not.** The inner ring has a job object; the outer ring has nothing. Confirmed by exact
+  command line rather than inferred: DC-117's `powershell.exe -NoLogo -NoExit -EncodedCommand` is
+  emitted at `ShellIntegration.cs:129,:186`, and the helper's probe routes through that builder — so
+  **DC-117's shells are this helper's children.** Same family, one ring apart.
+- **Why nothing catches it, which is the more useful half — TWO independent blind spots:**
+  1. `tools/verify-test-run.py:55-62` **deliberately excludes** the helper project, with a correct
+     rationale (*"a helper produces no `.trx`"*). **The exclusion is right; the consequence is that
+     the one gate watching this project's execution is contractually blind to it.**
+  2. `TerminalHostingLedger` counts `terminal.start` activities **in-process, during a conductor
+     run**, to prove `terminalHostConstructions: 0`. It counts the product *not hosting terminals*.
+     **It cannot see an OS process the test harness spawned.** The repository has a counter named
+     almost exactly for this leak, **pointed 180° away from it.**
+  **So the leak is structurally unobservable from inside the harness that leaks it, and any oracle
+  must live outside the test host.**
+- **A hypothesis this refuted, recorded because the refutation was the useful part:** the conductor
+  proposed that these processes held file handles and thereby explained an orphaned worktree
+  directory and a cleanup that miscounted. **Refuted on live and forensic evidence** — no process
+  held any module under the repository root; an exclusive open of a file in the orphaned tree
+  succeeded; and decisively, **that tree has no `bin` or `obj` anywhere, so no helper binary ever
+  existed in it to hold anything.** 637 files survived there — a removal that aborted at the start or
+  never ran, not one that got 99% done and hit a sharing violation. **Those symptoms are DC-120 and
+  need no help from this class.**
+- **Control:** containment belongs to **the launcher that created the process**, never to a global
+  reaper — a repo-wide "kill all X" sweep is **DC-120 in a new costume**, with blast radius across
+  every sibling worktree. The oracle must be **outside the test host**, and the cheapest form needs
+  no process table at all: each test deletes its report file in `finally`, so **a leftover report in
+  `%TEMP%` is a per-test fingerprint of an aborted run.** The generalisation: **when reasoning about
+  a resource's lifetime, name every ring that owns one — the ring you are looking at is the one you
+  will protect.**
+- **Status:** `uncontrolled` — diagnosed with the root cause quoted and the fix identified as three
+  lines of an idiom already in the repository, but nothing yet fails when a helper outlives its
+  suite, and the rate is unmeasured: the population was **zero** at measurement time, so this leak is
+  **episodic rather than monotonic** and every statement about its frequency, including the
+  conductor's, is modelled rather than observed
 
 
 ---
