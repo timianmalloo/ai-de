@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T23:20:50Z",
+  "generated": "2026-09-11T23:31:03Z",
   "audit": [
     {
       "actor": null,
@@ -12484,6 +12484,109 @@ window.AUDIT_DATA = {
         "branch": "feature/session-elevation",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M29CTB14PVJBWCJ912EJBMC9",
+      "shortname": "define-architecture-addenda-c-d",
+      "datetime": "2026-09-11T23:28:34Z",
+      "session": "addendum-c-chain",
+      "prompt": "You are the investigation node for the defect that blocks the operator's F5 exit run, dispatched by the conductor (Claude Opus, session conductor-addendum-c). Run the /investigate skill (Skill tool: investigate, args: A new session document created by File → New Session is never rendered when the app starts from a restored layout that already holds a session document; and a restored/reopened session document's composer is never configured). Read CLAUDE.md and AGENTS.md first; the pack's rules apply in full — a root cause is proven by a reproduction that fails first, in the state the product was actually in (DC-135, three times today: the harness constructed a state the product was not in). Use python, not python3; $env:PYTHONIOENCODING='utf-8'.\n\n## Your worktree — the only tree you write to\nC:\\Projects\\ai-de-investigate-session-document-render, branch investigate/session-document-render, HEAD = main 1aadde84. From inside it: $env:AGENT_SESSION='session-render'; $env:AGENT_NAME='claude-investigate-render'; $env:PYTHONIOENCODING='utf-8'; python docs/ai-forward-pack/scripts/audit-log.py start --session session-render\nNote: main does not yet carry the F5 tree's lane pin (feature/exit-evidence @ 135e05e1); it does carry the composer fix (WebSurfaceHost, the handshake/layout telemetry — DC-137/138) and the contrast fix. The telemetry below was recorded by the F5 tree's Release build 1.0.0+135e05e1…, whose composer/session code equals main's.\n\n## The evidence — the operator's launch, verbatim, in your tree\ndocs/investigations/operator-launch-22-33Z.log.jsonl — 26 lines from %LOCALAPPDATA%\\AiDe\\logs\\workbench-20260911.log, 22:33:20Z–22:34:30Z, terminal noise removed. Read every line. The story it tells:\n1. app.start 22:33:21Z, Release 135e05e1, DPI 1.5, dark theme.\n2. 22:33:28 layout.mutation open-session-document placement=split-beside-graph surface=session-document:…ba326cf3 active=graph — this document was restored from the persisted layout at startup (the operator did nothing yet); its composer: initialising → navigation-started (1) → page-ready; composer.layout editor 617 px, visible:true, loaded:true — but never configured, never init-pushed → the page mounted with no fields. This is what the operator saw: a blank editor area with the compiled box under it.\n3. 22:34:09 open-session-document placement=split-beside-graph surface=…c5547968 active=graph — the operator's File → New Session; its composer logs configured (fields 6) and nothing else: no initialising, navigations: 0, no composer.layout → the surface was never Loaded, never measured — never in a rendered visual tree.\n4. 22:34:20 open-session-document placement=tab surface=…b62cbcd3 active=…c5547968 (zone-center, active index 9) — a second File → New Session; same: configured, never initialised, never laid out.\n5. 22:34:26 all three composers disposed (the app closed). The graph surface re-attached repeatedly; explorer-graph initialised at 22:34:00.\n\n## The code paths (checked this turn)\n- src/AiDe.App/MainWindow.xaml.cs:172-206 NewSession(): Shell.OpenSessionDocument(created.Config) → GiveTheNewSessionTheWholeTree(sessionId, opened + \" \" + BindComposer(created)) — BindComposer (:235-281, the only Configure call, :281) runs only here; the reopen path :387 (OpenSessionDocument(config) after reading session.json) and the startup restore never bind → defect A: a restored/reopened document's composer has no send context and never pushes host.init.\n- src/AiDe.App/Workbench/Sessions/NewSessionPlacement.cs:31-58 GiveItTheWholeTree: service.Current.FindStackOf(surfaceId) → SetStackState(stack.Id, StackState.Maximized) (Ruling 47; its oracle tests/AiDe.App.Tests/Sessions/ANewSessionTakesTheWholeTreeTests.cs passes on a clean layout). src/AiDe.App/Workbench/WorkbenchShell.cs:1590 (mode = \"split-beside-graph\"), :2909 OpenSessionDocument, ZoneBackedLayoutService / ZonesToTree (src/AiDe.Core/Workbench/; DC-135: StackState.Maximized does not round-trip — the projection omits collapsed zones), LayoutPersistence.cs (the restored layout), SurfaceContentFactory.cs:158-175 (the factory hands back the shell's live document for a session-document surface; sessionDocumentFor).\n- src/AiDe.App/Workbench/Composer/ComposerSurface.cs + WebSurfaceHost.cs (owner.Loaded += OnAttachedAsync; initialising logged there — so no initialising ⇒ Loaded never fired on the new document's composer), WorkbenchDiagnostics.cs (composer.layout from MeasureOverride).\n- The harness that passed: tests/AiDe.App.ComposerProbe/Program.cs --shell mode and tests/AiDe.App.Tests/Composer/ComposerHostIntegrationTests.cs (TheComposersEntryAreasKeepTheirRoomAfterTheNewSessionChoreography: opens a session document on a fresh shell, applies Ruling 47's maximize, fields=6, editor 334 px). The product's state differed: a restored layout already containing a session document (zone-left held explore:view, provenance:inspector, contexts, joins; the restored document sat beside the graph) — reproduce THAT.\n\n## Hypotheses to disconfirm by observation (none is a conclusion)\nH1 With a restored layout, OpenSessionDocument's split-beside-graph places the new document into a stack/zone that the subsequent Maximize of FindStackOf(surfaceId) collapses or that the projection omits (active: graph in the mutation says the new surface was not activated) — so the new document exists in the zone model but not in the rendered tree.\nH2 The restored session document's surface id or the persisted StackState leaves the zone service in a state where a second session-document cannot be projected (e.g. one visible document per zone; the restored one wins).\nH3 The new document was rendered but hidden behind another tab (then Loaded would still fire for AvalonDock content? — verify; a hidden tab's content is usually not loaded) — distinguish \"in the tree, collapsed\" from \"not in the tree\".\nH4 Something in the restore path (A) also prevents (B): e.g. the restored document holds the sessionDocumentFor slot so the factory hands back the OLD document for the NEW surface.\n\n## What you must produce\n1. Reproductions that fail first, in the product's state: extend the --shell probe / the integration test with a restored-layout precondition (persist a layout containing a session document beside the graph as the operator's did — the mutation line carries the zone/stack payload; use it), then File → New Session through MainWindow.NewSession()'s real choreography (OpenSessionDocument → GiveItTheWholeTree → BindComposer), and assert the new document's composer is Loaded, measured (composer.layout present), and reaches init-pushed with fields 6. Observe it red. A second red test for (A): reopening a session (:387 path) yields a composer that reaches configured and init-pushed.\n2. The verified root cause for (B) with the observation that proves it and the alternative ruled out; the cause for (A) is already visible in the code — confirm it by the red test.\n3. The class, generalised (sweep: every other place a document is opened without BindComposer; every placement/maximize path evaluated against a non-empty persisted layout), and a repair plan — code + tests + the missing instrumentation (a layout.mutation line for the maximize itself with the resulting projected tree; a session-document.bound / unbound event so an unconfigured document is visible in the log). Stop before the fix; the operator reviews — but write the plan so the fix is a one-node T1.\n4. docs/investigations/INV-<next>.md (allocator: INV-0008 is the highest on main; python tools/verify-id-allocators.py immediately before commit), frontmatter, typed links, the log excerpt cited by line; docs-graph.py derive; audit entry (--shortname investigate-session-document-render --session session-render --skill investigate --kind skill --tier T1 --git … + signals); regenerate-derived.py; gates bare stop-on-first-red; commit with the attribution lines, then git push -u origin investigate/session-document-render.\n\n## Fails if (stop and report instead)\n- A root cause asserted without the restored-layout reproduction observed red; the harness \"fixed\" to pass rather than the product; any write outside your worktree; git stash; a rebase; a push to main; verify-test-run.py --update; DC-120. No governed run, no model call, no billing.\n\n## Report back (compact)\nThe red observations (test names, failure text); the root cause of (B) and its proof; (A) confirmed; siblings; the plan; INV path and shas; the operator question if any.",
+      "summary": "/define-architecture of Addenda C (perspectives) and D (the compile step) as amendments and additions to the existing architecture. Produced: docs/architecture.md §Addenda C and D (C/D.1–C/D.16: context, the system as a system, candidate shapes and the leverage point, two component maps with Mermaid, the three columns after Ruling 72, LOA tier allocation and archetype with recorded deviations, durable representation, contracts at seams, cross-cutting, conformance, vertical slices C-0…D-3 with a planned-reds table, the E7 surface list, the confidence ledger, residual risk, the gate record); ADR-0017 accepted-as-amended (Ruling 52; the second-host clause discharged by spikes/second-dock-host-unparent — PASS, exit 0; INV-0009/DC-148's docking-command rule added as clause 4); ADR-0013 amended (one zone-envelope file per host perspective); ADR-0028 amendment pointer (Ruling 72's free-form default); eight new ADRs — 0030 perspective registry and allow-lists (Core rows + a column on the App kind rows; menu/palette/rail/routing derived), 0031 the second docking host (a DockHost record composed twice; one controller per host; the router in the presenter, bounded), 0032 perspective layout slots (file per host; File.Replace atomic backup; drop-with-report; frozen-DTO rollback oracle), 0033 Prompt Compilation bounded context (one seam; Project() the sole assembler with three named call sites; budget as an optional cap projected onto the unchanged RunBudget as a Special Case rendered in words; task class free-form by default with task_class_source provenance; projection_sha domain over Current(task_class)), 0034 the envelope event store (append-only, exclusive writer refusing a broken chain, schema-agnostic key walk, purge and the Session delete's cascade), 0035 the compile session binding and pin (CompileCallHost apart from the run root — compile-call.compose; AuthorizeBinding; LaneSessionOptions as delivered with the pin triple adapter/SDK/CLI sha; one linked 60 s deadline), 0036 the compile-mode ladder as runtime deployment gates behind the eval (floors recomputed from num/den; split witness; the bound model in the gate tuple; drift demotes on trigger with readmitted_at as the watermark), 0037 the family craft profile as a Type-2 dimension (one immutable file per version; canonicalised content sha; manifest registry row). Three decision notes (web-surface-host sharing; the second-entry-point ledger; the P1 inputs with components, seams, E7 list, gates and non-goals). Two spikes committed with RESULT.md (second-dock-host-unparent: Verified; compile-session-tool-pin: Verified in source, Flagged on the wire until P-D5). Council: D&P HELD→CLEARED (two Blockers closed), Security CLEARED (nine conditions), AI Systems CLEARED (eight), Test Architect HELD→CLEARED (one Blocker closed), SRE/Enterprise/Patterns PASS-WITH-CONDITIONS, Simplifier's soft veto cleared by four cuts and written rationale, Tech Lead PASS-WITH-CONDITIONS (casting vote) — all conditions folded; no self-clearing. Coordinator inputs folded: Ruling 72 (budget/task class/the auto-allow), INV-0009 (DC-148/DC-149, the binder). Merged origin/main at close (Rulings 66's fix and 72 landed). Not merged to main.",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": null,
+      "actor": "claude-a1-architecture",
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/adr/0017-primary-view-mode.md",
+        "docs/adr/0013-layout-persistence-envelope.md",
+        "docs/adr/0028-mode-cohort-not-partition.md",
+        "docs/adr/0030-perspective-registry-and-allow-lists.md",
+        "docs/adr/0031-second-docking-host.md",
+        "docs/adr/0032-perspective-layout-slots.md",
+        "docs/adr/0033-prompt-compilation-bounded-context.md",
+        "docs/adr/0034-envelope-event-store.md",
+        "docs/adr/0035-compile-session-binding-and-pin.md",
+        "docs/adr/0036-compile-mode-ladder-deployment-gates.md",
+        "docs/adr/0037-family-craft-profile-dimension.md",
+        "docs/notes/addendum-cd-architecture-p1-inputs.md",
+        "docs/notes/addendum-cd-second-entry-point-ledger.md",
+        "docs/notes/addendum-cd-web-surface-host-sharing.md",
+        "spikes/second-dock-host-unparent/RESULT.md",
+        "spikes/compile-session-tool-pin/RESULT.md",
+        "docs/architecture/agent-plane.md"
+      ],
+      "tags": [
+        "addendum-c",
+        "addendum-d",
+        "architecture"
+      ],
+      "outcome": "success",
+      "goal": "Architect Addenda C and D as amendments and additions to the existing architecture: ADR-0017/0013 amended, ADRs 0030-0037, docs/architecture.md, two spikes, the council passed, P1's inputs written",
+      "done_when": "Every ADR names its rejected alternative and falsifying test; both spikes recorded; every hard veto cleared by its holder; docs-graph derived with V16 flags; audit + change-log entries; gates green; commits pushed to feature/addendum-c; no merge to main",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-11T21:51:28Z",
+      "duration_seconds": 5826.0,
+      "persona_yield": [
+        {
+          "persona": "data-persistence-architect",
+          "raised": 23,
+          "accepted": 23
+        },
+        {
+          "persona": "security-identity-architect",
+          "raised": 18,
+          "accepted": 18
+        },
+        {
+          "persona": "ai-systems-engineer",
+          "raised": 19,
+          "accepted": 19
+        },
+        {
+          "persona": "test-architect",
+          "raised": 25,
+          "accepted": 25
+        },
+        {
+          "persona": "sre-diagnostician",
+          "raised": 20,
+          "accepted": 20
+        },
+        {
+          "persona": "enterprise-architect",
+          "raised": 14,
+          "accepted": 14
+        },
+        {
+          "persona": "patterns-expert",
+          "raised": 21,
+          "accepted": 21
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 21,
+          "accepted": 18
+        },
+        {
+          "persona": "tech-lead",
+          "raised": 12,
+          "accepted": 12
+        }
+      ],
+      "git": {
+        "sha": "808224647cdfd8fdef9909feac1750562d886698",
+        "short": "808224647",
+        "branch": "feature/addendum-c",
+        "pushed": false
+      }
     }
   ],
   "changes": [
@@ -15695,6 +15798,374 @@ window.AUDIT_DATA = {
         "commits": []
       },
       "audit_ref": "al-01M29642AFD8BYVDQCWFZBQ88Z"
+    },
+    {
+      "id": "cl-01M29CW734WAE5VACNN1YJM9FM",
+      "datetime": "2026-09-11T23:29:36Z",
+      "session": "addendum-c-chain",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "ADR-0017 accepted as amended (Ruling 52): perspectives are primary view modes; a body may be a docking host; the second-host clause discharged; a docking command while a full-window body is on screen switches back (DC-148)",
+      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
+      "summary": "ADR-0017 moves from proposed to accepted-as-amended in five clauses: the closed set is the Perspective set (Coding, Explore, Architecture); Architecture is a second AvalonDock host; Explore stays full-window; a mode that unparents the docking host switches back for a docking command, document first, through one shell seam (INV-0009); one layout slot per host. The Inferred second-host clause is discharged by spikes/second-dock-host-unparent (PASS).",
+      "rationale": "Ruling 52 retained and amended rather than superseded; the spike observed the same CoreWebView2, page state and raw HWND across cycles; INV-0009 reproduced DC-148 red.",
+      "artifacts": [
+        "docs/adr/0017-primary-view-mode.md",
+        "spikes/second-dock-host-unparent/RESULT.md",
+        "docs/architecture.md"
+      ],
+      "tags": [
+        "addendum-c",
+        "addendum-d"
+      ],
+      "git": {
+        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
+        "after": "808224647cdfd8fdef9909feac1750562d886698",
+        "branch": "feature/addendum-c",
+        "pushed": false,
+        "commits": [
+          "80822464 Merge remote-tracking branch 'origin/main' into feature/addendum-c",
+          "1ab56904 wip: architecture artifacts before the main merge (squashed into the close commits)",
+          "f92aa810 chore: regenerate derived views after the session-design merge; commit contract logs",
+          "18ef2a78 Merge feature/session-elevation â€” D2: the session as a conversation, 43 states, the sheet carried to Ruling 72 (DC-147)",
+          "d3b522b4 design(session): the session as a conversation â€” n turns, one editor, the Console as the reply side (D2 /ui-design elevate)",
+          "8214ecd5 chore: regenerate derived views after the lease-source merge; commit contract logs",
+          "ffb3b3aa Merge fix/lease-source-text â€” Ruling 66: the lease derives from the editor's source text only (DC-146)",
+          "00e0e520 fix(composer): Ruling 66 â€” lease derivation reads the editor's source text, never the render (F-2)",
+          "1aadde84 docs(rulings,specs): Ruling 72 â€” budget subscription-bounded by default, task class free-form, the auto-allow stays"
+        ]
+      },
+      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
+    },
+    {
+      "id": "cl-01M29CW77XATX7Y83JWCASE31S",
+      "datetime": "2026-09-11T23:29:36Z",
+      "session": "addendum-c-chain",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "ADR-0013 amended: one zone-envelope file per host perspective; drop-with-report at restore; the refused or migrated file preserved by atomic replace with backup",
+      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
+      "summary": "The workbench layout envelope gains one file per host perspective in the existing schema (Coding keeps today's file; Architecture a sibling); an inadmissible kind is dropped at restore with a report; the original is preserved as a .bak by File.Replace before the first rewriting save; rollback is a golden round-trip against a frozen schema-1 DTO. Decided as ADR-0032.",
+      "rationale": "Expand-only with no schema bump: the zone store has no migration chain, so a slots map would have discarded every arrangement and refused rollback.",
+      "artifacts": [
+        "docs/adr/0013-layout-persistence-envelope.md",
+        "docs/adr/0032-perspective-layout-slots.md"
+      ],
+      "tags": [
+        "addendum-c",
+        "addendum-d"
+      ],
+      "git": {
+        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
+        "after": "808224647cdfd8fdef9909feac1750562d886698",
+        "branch": "feature/addendum-c",
+        "pushed": false,
+        "commits": [
+          "80822464 Merge remote-tracking branch 'origin/main' into feature/addendum-c",
+          "1ab56904 wip: architecture artifacts before the main merge (squashed into the close commits)",
+          "f92aa810 chore: regenerate derived views after the session-design merge; commit contract logs",
+          "18ef2a78 Merge feature/session-elevation â€” D2: the session as a conversation, 43 states, the sheet carried to Ruling 72 (DC-147)",
+          "d3b522b4 design(session): the session as a conversation â€” n turns, one editor, the Console as the reply side (D2 /ui-design elevate)",
+          "8214ecd5 chore: regenerate derived views after the lease-source merge; commit contract logs",
+          "ffb3b3aa Merge fix/lease-source-text â€” Ruling 66: the lease derives from the editor's source text only (DC-146)",
+          "00e0e520 fix(composer): Ruling 66 â€” lease derivation reads the editor's source text, never the render (F-2)",
+          "1aadde84 docs(rulings,specs): Ruling 72 â€” budget subscription-bounded by default, task class free-form, the auto-allow stays"
+        ]
+      },
+      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
+    },
+    {
+      "id": "cl-01M29CW7CM5TJW1P53WVNXR0E5",
+      "datetime": "2026-09-11T23:29:36Z",
+      "session": "addendum-c-chain",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "ADR-0030: the Perspective set is a closed Core row set; the allow-list is a column on the App kind rows; menu, palette, rail and routing are derived from the join",
+      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
+      "summary": "Three Perspective rows in Core (id, order, body kind, command, routing order Architecture then Coding); an explicit non-empty Perspectives column plus Instances on every SurfaceContentFactory.Kinds row; one App derivation (PerspectiveMenu.For) feeds the rail, the View radio, the New/Show entries, the palette and the routed kind-open; ShellViewMode renamed Perspective only in the implementing commit.",
+      "rationale": "Rulings 22, 50, 52c, 55b: kinds are rows, the allow-list is a column, the menu is derived — never a second list; a per-command Modes column would be a second home.",
+      "artifacts": [
+        "docs/adr/0030-perspective-registry-and-allow-lists.md"
+      ],
+      "tags": [
+        "addendum-c",
+        "addendum-d"
+      ],
+      "git": {
+        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
+        "after": "808224647cdfd8fdef9909feac1750562d886698",
+        "branch": "feature/addendum-c",
+        "pushed": false,
+        "commits": [
+          "80822464 Merge remote-tracking branch 'origin/main' into feature/addendum-c",
+          "1ab56904 wip: architecture artifacts before the main merge (squashed into the close commits)",
+          "f92aa810 chore: regenerate derived views after the session-design merge; commit contract logs",
+          "18ef2a78 Merge feature/session-elevation â€” D2: the session as a conversation, 43 states, the sheet carried to Ruling 72 (DC-147)",
+          "d3b522b4 design(session): the session as a conversation â€” n turns, one editor, the Console as the reply side (D2 /ui-design elevate)",
+          "8214ecd5 chore: regenerate derived views after the lease-source merge; commit contract logs",
+          "ffb3b3aa Merge fix/lease-source-text â€” Ruling 66: the lease derives from the editor's source text only (DC-146)",
+          "00e0e520 fix(composer): Ruling 66 â€” lease derivation reads the editor's source text, never the render (F-2)",
+          "1aadde84 docs(rulings,specs): Ruling 72 â€” budget subscription-bounded by default, task class free-form, the auto-allow stays"
+        ]
+      },
+      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
+    },
+    {
+      "id": "cl-01M29CW7HM3DW2F9RJJCAVWJVA",
+      "datetime": "2026-09-11T23:29:36Z",
+      "session": "addendum-c-chain",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "ADR-0031: Architecture is a second AvalonDock host composed as a DockHost record twice; one WorkbenchController per host; the router stays in the presenter, bounded",
+      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
+      "summary": "A DockHost record (manager, adapter, zone service, controller, rails, persistence) built by one parameterised factory and composed for Coding and Architecture under the ADR-0017 presenter; one controller per host over its own service; PerspectiveShell routes Execute(id) to the active host, runs entry verbs document-first-then-Coding, and generalises INV-0009's DocumentOpening seam; the thirteen opener delegates collapse to one routed OpenKind; the allow-list is enforced by each host's layout service.",
+      "rationale": "The Owner's residual (one controller or two) decided: a swapped service would strand a resize session and focused ids; the Tech Lead ruled the router bounded in the presenter and the record over twelve parallel fields.",
+      "artifacts": [
+        "docs/adr/0031-second-docking-host.md",
+        "docs/notes/addendum-cd-web-surface-host-sharing.md"
+      ],
+      "tags": [
+        "addendum-c",
+        "addendum-d"
+      ],
+      "git": {
+        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
+        "after": "808224647cdfd8fdef9909feac1750562d886698",
+        "branch": "feature/addendum-c",
+        "pushed": false,
+        "commits": [
+          "80822464 Merge remote-tracking branch 'origin/main' into feature/addendum-c",
+          "1ab56904 wip: architecture artifacts before the main merge (squashed into the close commits)",
+          "f92aa810 chore: regenerate derived views after the session-design merge; commit contract logs",
+          "18ef2a78 Merge feature/session-elevation â€” D2: the session as a conversation, 43 states, the sheet carried to Ruling 72 (DC-147)",
+          "d3b522b4 design(session): the session as a conversation â€” n turns, one editor, the Console as the reply side (D2 /ui-design elevate)",
+          "8214ecd5 chore: regenerate derived views after the lease-source merge; commit contract logs",
+          "ffb3b3aa Merge fix/lease-source-text â€” Ruling 66: the lease derives from the editor's source text only (DC-146)",
+          "00e0e520 fix(composer): Ruling 66 â€” lease derivation reads the editor's source text, never the render (F-2)",
+          "1aadde84 docs(rulings,specs): Ruling 72 â€” budget subscription-bounded by default, task class free-form, the auto-allow stays"
+        ]
+      },
+      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
+    },
+    {
+      "id": "cl-01M29CW7PCZCT6GW1Y7TQEH2QN",
+      "datetime": "2026-09-11T23:29:36Z",
+      "session": "addendum-c-chain",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "ADR-0032: one zone-envelope file per host perspective, expand-only; drop-with-report; atomic replace with backup; tested rollback against a frozen DTO",
+      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
+      "summary": "Coding's slot is today's file (byte-compatible at read); Architecture gets a sibling; SlotPathFor is the one key-to-path map; drop-with-report is the host service's restore filter; File.Replace(temp, dest, backup) preserves the pre-perspective bytes once and a refused file before the slot's first save; a newer schema or corrupt file is refused with a reason; rollback is asserted against a frozen schema-1 DTO copy plus a constructor-parameter reflection check.",
+      "rationale": "The D&P Architect's conditions: a verified copy beside a non-atomic write still tears the file; a refused file overwritten at exit is a silent discard; the pre-ADR reader is a binary a test cannot run.",
+      "artifacts": [
+        "docs/adr/0032-perspective-layout-slots.md"
+      ],
+      "tags": [
+        "addendum-c",
+        "addendum-d"
+      ],
+      "git": {
+        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
+        "after": "808224647cdfd8fdef9909feac1750562d886698",
+        "branch": "feature/addendum-c",
+        "pushed": false,
+        "commits": [
+          "80822464 Merge remote-tracking branch 'origin/main' into feature/addendum-c",
+          "1ab56904 wip: architecture artifacts before the main merge (squashed into the close commits)",
+          "f92aa810 chore: regenerate derived views after the session-design merge; commit contract logs",
+          "18ef2a78 Merge feature/session-elevation â€” D2: the session as a conversation, 43 states, the sheet carried to Ruling 72 (DC-147)",
+          "d3b522b4 design(session): the session as a conversation â€” n turns, one editor, the Console as the reply side (D2 /ui-design elevate)",
+          "8214ecd5 chore: regenerate derived views after the lease-source merge; commit contract logs",
+          "ffb3b3aa Merge fix/lease-source-text â€” Ruling 66: the lease derives from the editor's source text only (DC-146)",
+          "00e0e520 fix(composer): Ruling 66 â€” lease derivation reads the editor's source text, never the render (F-2)",
+          "1aadde84 docs(rulings,specs): Ruling 72 â€” budget subscription-bounded by default, task class free-form, the auto-allow stays"
+        ]
+      },
+      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
+    },
+    {
+      "id": "cl-01M29CW7V64FRRRMKDFX6C0NJY",
+      "datetime": "2026-09-11T23:29:37Z",
+      "session": "addendum-c-chain",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "ADR-0033: Prompt Compilation is a bounded context in AiDe.Core with one seam; Project() is the sole assembler with three named call sites; budget is an optional cap as a Special Case; task class defaults to free-form with recorded provenance",
+      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
+      "summary": "AiDe.Core/Compilation owns the envelope, the fold, PreCompile, the typed boundary, the embedded compile contract and the store; ComposerSendGate.Send passes Project(Fold(events)) into the unchanged GovernedRunRequest; Project() reads only the fold (an incomplete fold goes stale and appends a fresh ceilings row); budget_cap none projects as RunBudget.SubscriptionBounded, a value predicate rendered in words; TaskClasses.FreeForm is the default with task_class_source as an expand-only cohort attribute; projection_sha hashes Current(task_class).value and source; LeaseDerivation gains one internal HasMention; the compile events carry origin in Ext, never a key pun.",
+      "rationale": "Ruling 72 leaves the representation of subscription-bounded to the architecture with a falsifying test; DM11 b/c require an offline-rebuildable projection; US-D12 fixes the contract as unchanged.",
+      "artifacts": [
+        "docs/adr/0033-prompt-compilation-bounded-context.md",
+        "docs/adr/0028-mode-cohort-not-partition.md"
+      ],
+      "tags": [
+        "addendum-c",
+        "addendum-d"
+      ],
+      "git": {
+        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
+        "after": "808224647cdfd8fdef9909feac1750562d886698",
+        "branch": "feature/addendum-c",
+        "pushed": false,
+        "commits": [
+          "80822464 Merge remote-tracking branch 'origin/main' into feature/addendum-c",
+          "1ab56904 wip: architecture artifacts before the main merge (squashed into the close commits)",
+          "f92aa810 chore: regenerate derived views after the session-design merge; commit contract logs",
+          "18ef2a78 Merge feature/session-elevation â€” D2: the session as a conversation, 43 states, the sheet carried to Ruling 72 (DC-147)",
+          "d3b522b4 design(session): the session as a conversation â€” n turns, one editor, the Console as the reply side (D2 /ui-design elevate)",
+          "8214ecd5 chore: regenerate derived views after the lease-source merge; commit contract logs",
+          "ffb3b3aa Merge fix/lease-source-text â€” Ruling 66: the lease derives from the editor's source text only (DC-146)",
+          "00e0e520 fix(composer): Ruling 66 â€” lease derivation reads the editor's source text, never the render (F-2)",
+          "1aadde84 docs(rulings,specs): Ruling 72 â€” budget subscription-bounded by default, task class free-form, the auto-allow stays"
+        ]
+      },
+      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
+    },
+    {
+      "id": "cl-01M29CW7ZZMQ21YBJENSS403Q3",
+      "datetime": "2026-09-11T23:29:37Z",
+      "session": "addendum-c-chain",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "ADR-0034: the compiled-envelope store is an append-only, exclusively written, sha-chained JSONL sidecar owned by the session document; a broken chain refuses the writer; purge deletes the file; the Session delete cascades under the held handle",
+      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
+      "summary": "EnvelopeStore exposes Append and a reader; the session document opens it FileShare.None and disposes it at close; the writer walks every line's key on open regardless of schema and refuses to append past a broken chain; the open emits bytes/rows/walk_ms; an Append failure degrades to mechanical-only; the eval corpus and the Proof Pack are projections; aide session purge deletes the file only, and Addendum A's session delete removes the envelope file under the held handle before the siblings; a run outliving its document yields consumed{not recorded, document closed}.",
+      "rationale": "Promotes note-addendum-d-envelope-store per its own rule; the D&P Architect's two Blockers (duplicate keys past a break; a live-setting read) are closed by rule and test.",
+      "artifacts": [
+        "docs/adr/0034-envelope-event-store.md"
+      ],
+      "tags": [
+        "addendum-c",
+        "addendum-d"
+      ],
+      "git": {
+        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
+        "after": "808224647cdfd8fdef9909feac1750562d886698",
+        "branch": "feature/addendum-c",
+        "pushed": false,
+        "commits": [
+          "80822464 Merge remote-tracking branch 'origin/main' into feature/addendum-c",
+          "1ab56904 wip: architecture artifacts before the main merge (squashed into the close commits)",
+          "f92aa810 chore: regenerate derived views after the session-design merge; commit contract logs",
+          "18ef2a78 Merge feature/session-elevation â€” D2: the session as a conversation, 43 states, the sheet carried to Ruling 72 (DC-147)",
+          "d3b522b4 design(session): the session as a conversation â€” n turns, one editor, the Console as the reply side (D2 /ui-design elevate)",
+          "8214ecd5 chore: regenerate derived views after the lease-source merge; commit contract logs",
+          "ffb3b3aa Merge fix/lease-source-text â€” Ruling 66: the lease derives from the editor's source text only (DC-146)",
+          "00e0e520 fix(composer): Ruling 66 â€” lease derivation reads the editor's source text, never the render (F-2)",
+          "1aadde84 docs(rulings,specs): Ruling 72 â€” budget subscription-bounded by default, task class free-form, the auto-allow stays"
+        ]
+      },
+      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
+    },
+    {
+      "id": "cl-01M29CW84Q3821VT0PBJEAGEK9",
+      "datetime": "2026-09-11T23:29:37Z",
+      "session": "addendum-c-chain",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "ADR-0035: the agentic compile is one pinned ACP session on the bound engine, composed by CompileCallHost apart from the run root, with a pin triple and AuthorizeBinding",
+      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
+      "summary": "CompileCallHost composes ResolveLaunch, process, peer, client, AuthorizeBinding (the identity half of Authorize, factored because Authorize validates a block the compile exists to fill), NewSessionAsync(cwd, LaneSessionOptions.Compile), prompt under one linked 60 s deadline, counts; it opens compile-call.compose so CompositionRootLedger.Roots reads 0; the pin is a triple (adapter sha, SDK version, CLI binary sha) verified per call with CLAUDE_CODE_EXECUTABLE stripped; the settings deny belt is admitted only by P-D5; the hooks residual is measured on a never-trusted fixture; a Cost Model is recorded.",
+      "rationale": "Rulings 65, 68, 71; the adapter contract verified in source (spikes/compile-session-tool-pin); the Security Architect's nine conditions and the Tech Lead's rulings on the shared handshake and the ledger.",
+      "artifacts": [
+        "docs/adr/0035-compile-session-binding-and-pin.md",
+        "docs/notes/addendum-cd-second-entry-point-ledger.md",
+        "spikes/compile-session-tool-pin/RESULT.md",
+        "docs/architecture/agent-plane.md"
+      ],
+      "tags": [
+        "addendum-c",
+        "addendum-d"
+      ],
+      "git": {
+        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
+        "after": "808224647cdfd8fdef9909feac1750562d886698",
+        "branch": "feature/addendum-c",
+        "pushed": false,
+        "commits": [
+          "80822464 Merge remote-tracking branch 'origin/main' into feature/addendum-c",
+          "1ab56904 wip: architecture artifacts before the main merge (squashed into the close commits)",
+          "f92aa810 chore: regenerate derived views after the session-design merge; commit contract logs",
+          "18ef2a78 Merge feature/session-elevation â€” D2: the session as a conversation, 43 states, the sheet carried to Ruling 72 (DC-147)",
+          "d3b522b4 design(session): the session as a conversation â€” n turns, one editor, the Console as the reply side (D2 /ui-design elevate)",
+          "8214ecd5 chore: regenerate derived views after the lease-source merge; commit contract logs",
+          "ffb3b3aa Merge fix/lease-source-text â€” Ruling 66: the lease derives from the editor's source text only (DC-146)",
+          "00e0e520 fix(composer): Ruling 66 â€” lease derivation reads the editor's source text, never the render (F-2)",
+          "1aadde84 docs(rulings,specs): Ruling 72 â€” budget subscription-bounded by default, task class free-form, the auto-allow stays"
+        ]
+      },
+      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
+    },
+    {
+      "id": "cl-01M29CW89E6PDFG6TT4YXVVN5M",
+      "datetime": "2026-09-11T23:29:37Z",
+      "session": "addendum-c-chain",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "ADR-0036: the compile-mode ladder is a set of runtime deployment gates behind the eval — the pin artifact recounted, the admission report recomputed by the reader over a witnessed holdout, the A6 ring, the drift detector with readmitted_at as its watermark",
+      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
+      "summary": "Gate 1 is a staleness gate on the machine-level pin artifact with the frame log recounted; Gate 2 carries numerators and denominators the settings model recomputes against a host-owned floor table (including a degraded-rate floor and the bound model in the tuple) over a witnessed sample/holdout split; Gate 3 is the A6 ring with carried behavioural floors; the drift detector demotes on a trigger and re-admits only by re-run; agentic-advisory is shadow mode; committed fixtures are affirmed; the harness calls the product's own fold.",
+      "rationale": "The AI Systems Engineer's hard veto: no model-backed capability without an eval; the gates must be artifacts the product verifies, never a flag.",
+      "artifacts": [
+        "docs/adr/0036-compile-mode-ladder-deployment-gates.md"
+      ],
+      "tags": [
+        "addendum-c",
+        "addendum-d"
+      ],
+      "git": {
+        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
+        "after": "808224647cdfd8fdef9909feac1750562d886698",
+        "branch": "feature/addendum-c",
+        "pushed": false,
+        "commits": [
+          "80822464 Merge remote-tracking branch 'origin/main' into feature/addendum-c",
+          "1ab56904 wip: architecture artifacts before the main merge (squashed into the close commits)",
+          "f92aa810 chore: regenerate derived views after the session-design merge; commit contract logs",
+          "18ef2a78 Merge feature/session-elevation â€” D2: the session as a conversation, 43 states, the sheet carried to Ruling 72 (DC-147)",
+          "d3b522b4 design(session): the session as a conversation â€” n turns, one editor, the Console as the reply side (D2 /ui-design elevate)",
+          "8214ecd5 chore: regenerate derived views after the lease-source merge; commit contract logs",
+          "ffb3b3aa Merge fix/lease-source-text â€” Ruling 66: the lease derives from the editor's source text only (DC-146)",
+          "00e0e520 fix(composer): Ruling 66 â€” lease derivation reads the editor's source text, never the render (F-2)",
+          "1aadde84 docs(rulings,specs): Ruling 72 â€” budget subscription-bounded by default, task class free-form, the auto-allow stays"
+        ]
+      },
+      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
+    },
+    {
+      "id": "cl-01M29CW8ECKHX3EBB2TTT0Q3E1",
+      "datetime": "2026-09-11T23:29:37Z",
+      "session": "addendum-c-chain",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "ADR-0037: the family craft profile is a Type-2 dimension — one immutable pack-owned file per version, content-canonicalised sha, a manifest registry row, applied as a template in v1",
+      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
+      "summary": "craft-profiles/<family>@<version>.md in the pack's knowledge tree with a manifest.json (family, version, sha) row the bundle test recomputes; the sha is over the four content sections canonicalised (LF, trailing whitespace stripped, frontmatter excluded) so maintenance fields stay Type-1 and one version has one sha on every consumer; a shared canonicalisation fixture binds the C# and pack implementations; selection is mechanical, none is a named state, a missing version reads profile not recorded.",
+      "rationale": "The D&P Architect's Blocker at the spec gate (Type-2 declared, Type-1 realised) and pass-2 conditions at this gate; Ruling 69 keeps framing mechanical in v1.",
+      "artifacts": [
+        "docs/adr/0037-family-craft-profile-dimension.md"
+      ],
+      "tags": [
+        "addendum-c",
+        "addendum-d"
+      ],
+      "git": {
+        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
+        "after": "808224647cdfd8fdef9909feac1750562d886698",
+        "branch": "feature/addendum-c",
+        "pushed": false,
+        "commits": [
+          "80822464 Merge remote-tracking branch 'origin/main' into feature/addendum-c",
+          "1ab56904 wip: architecture artifacts before the main merge (squashed into the close commits)",
+          "f92aa810 chore: regenerate derived views after the session-design merge; commit contract logs",
+          "18ef2a78 Merge feature/session-elevation â€” D2: the session as a conversation, 43 states, the sheet carried to Ruling 72 (DC-147)",
+          "d3b522b4 design(session): the session as a conversation â€” n turns, one editor, the Console as the reply side (D2 /ui-design elevate)",
+          "8214ecd5 chore: regenerate derived views after the lease-source merge; commit contract logs",
+          "ffb3b3aa Merge fix/lease-source-text â€” Ruling 66: the lease derives from the editor's source text only (DC-146)",
+          "00e0e520 fix(composer): Ruling 66 â€” lease derivation reads the editor's source text, never the render (F-2)",
+          "1aadde84 docs(rulings,specs): Ruling 72 â€” budget subscription-bounded by default, task class free-form, the auto-allow stays"
+        ]
+      },
+      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
     }
   ]
 };
