@@ -45,6 +45,13 @@ public static class GovernedRunHost
     {
         ArgumentNullException.ThrowIfNull(request);
 
+        // CLAUSE 5'S ORACLE, AND IT OPENS BEFORE ANYTHING THAT CAN THROW. ResolveLaunch below is the
+        // first statement that refuses, and CompositionRootLedger counts the ATTEMPT — so two calls
+        // with an unknown engine id read 2 with no adapter, no node and no network. That is what
+        // makes "one run, one root" falsifiable by a test anybody will re-run.
+        using var composed = CompositionRootSignal.Source.StartActivity(
+            CompositionRootLedger.GovernedRunComposeActivity);
+
         var diagnostics = new System.Collections.Concurrent.ConcurrentQueue<string>();
         void Report(string line) => diagnostics.Enqueue(line);
 
