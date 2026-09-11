@@ -210,6 +210,17 @@ public sealed class AcpLaneClient
     }
 
     /// <summary>
+    /// The params of the <c>session/new</c> this client sent — the object the peer serialized onto
+    /// the wire, <c>_meta</c> included — or <c>null</c> until it has sent one.
+    /// </summary>
+    /// <remarks>
+    /// The outbound mirror of <see cref="AcpPeer.ObservedAuth"/>: kept so the host can record the
+    /// frame it opened the lane with (Ruling 71 (a)) as what was sent, never as a re-computation of
+    /// what should have been.
+    /// </remarks>
+    public JsonObject? SessionNewParameters { get; private set; }
+
+    /// <summary>
     /// Opens a session rooted at <paramref name="cwd"/>, which <b>must be absolute</b>, holding the
     /// tools <paramref name="options"/> names — or, with none, whatever the adapter's preset allows.
     /// </summary>
@@ -241,6 +252,7 @@ public sealed class AcpLaneClient
             parameters["_meta"] = meta;
         }
 
+        SessionNewParameters = parameters;
         var result = await _peer.RequestAsync("session/new", parameters, cancellationToken: cancellationToken);
 
         return (result["sessionId"] as JsonValue)?.TryGetValue<string>(out var sessionId) == true

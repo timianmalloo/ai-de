@@ -1446,7 +1446,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 332 members, 70% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 333 members, 70% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1459,7 +1459,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "38bd1b075d3a57455d2b44c04310915d9408e7b662f226b3b4cdbb76c7c9be04"
+      "sourceSha256": "e5bbe1e3b6ac5b0d1ed891c0106fe8842090fac1ecfd057343fb3db20ad36086"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -1546,7 +1546,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 57 types, 137 members, 90% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 57 types, 138 members, 90% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1559,7 +1559,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "14cd3cb0e64795f86cb4da8583dd9feb829f4187000608abc028053479461170"
+      "sourceSha256": "b0b152bb796d1b9984a8d142d0768c5a62b96e31c07f55de1f0a6010820268cb"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -12652,7 +12652,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a0a1d04734f3b0e66518e2cb385ce079d989932da804cfe162cf7bc05b659479"
+      "sourceSha256": "4f1a145a1f98f3ed2023c88003b8d48ac22f2e48ac6a70a0e97cdfb274c6333c"
     },
     {
       "id": "proof-lane-rename-ruling-15",
@@ -14611,5 +14611,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ad574bb22ee727bc78e54068296651756f25f49d2f5fcf4a4945b91b31e861f9"
+  "graphSha256": "e30d1952f1f0bd95c33fe18d9ac9e657d7068fd5833fcd35274ecba716fa78a6"
 };

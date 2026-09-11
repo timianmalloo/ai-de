@@ -1,5 +1,6 @@
 using System.IO;
 using System.Text.Json.Nodes;
+using AiDe.App.Workbench;
 using AiDe.Core.AgentPlane;
 using AiDe.Core.Watcher;
 
@@ -143,11 +144,8 @@ public static class GovernedRunHost
         var session = new GovernedLaneSource(watcher.Ingest).Open(identity, request.Goal);
         Report($"episode {session.EpisodeId} opened on session {session.SessionId}");
 
-        // R1 bullet 1: the ACP session's cwd IS the provisioned worktree. The provisioner's own type
-        // is passed rather than a path string, so the lane cannot be rooted anywhere else. Ruling 71:
-        // and the lane's shell is pinned off on the same frame.
-        var acpSession = await client.NewSessionAsync(worktree, GovernedLaneSession, cancellationToken).ConfigureAwait(false);
-        Report("acp session " + acpSession);
+        var acpSession = await OpenSessionAsync(client, worktree, runId, laneId, Report, cancellationToken)
+            .ConfigureAwait(false);
 
         var prompt = client.PromptAsync(acpSession, request.Prompt, cancellationToken);
 
@@ -225,6 +223,37 @@ public static class GovernedRunHost
             EngineExited: engine.HasExited,
             EnvironmentFindings: engine.EnvironmentFindings,
             Diagnostics: [.. diagnostics]);
+    }
+
+    /// <summary>
+    /// Opens the lane's session and records the frame it was opened with — the params the client
+    /// sent, <c>_meta</c> included — on the run's report and in the workbench log.
+    /// </summary>
+    /// <remarks>
+    /// Ruling 71 (a): the F5 Proof Pack carries the outgoing <c>session/new</c>, and a frame somebody
+    /// had to remember to capture is "not recorded". So it is emitted on the normal path, from the one
+    /// site that opens a lane's session, and the value written is the object the client handed the
+    /// peer — never a re-computation of what it should have sent.
+    /// </remarks>
+    internal static async Task<string> OpenSessionAsync(
+        AcpLaneClient client,
+        ProvisionedWorktree worktree,
+        string runId,
+        string laneId,
+        Action<string> report,
+        CancellationToken cancellationToken)
+    {
+        // R1 bullet 1: the ACP session's cwd IS the provisioned worktree. The provisioner's own type
+        // is passed rather than a path string, so the lane cannot be rooted anywhere else. Ruling 71:
+        // and the lane's shell is pinned off on the same frame.
+        var acpSession = await client.NewSessionAsync(worktree, GovernedLaneSession, cancellationToken).ConfigureAwait(false);
+
+        // What was sent, not what should have been: the object the client handed the peer. A client
+        // that recorded nothing reads as "not recorded" — never as the frame it was meant to send.
+        var sent = client.SessionNewParameters;
+        report($"acp session {acpSession} opened with session/new params {sent?.ToJsonString() ?? NotRecorded}");
+        WorkbenchDiagnostics.LaneSessionNew(runId, laneId, acpSession, sent);
+        return acpSession;
     }
 
     /// <summary>What one drain of the plane's queue observed. The run's own numbers, at their source.</summary>

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T22:16:48Z",
+  "generated": "2026-09-11T22:26:22Z",
   "audit": [
     {
       "actor": null,
@@ -12536,6 +12536,49 @@ window.AUDIT_DATA = {
         "short": "b6652f649",
         "branch": "feature/exit-evidence",
         "pushed": false
+      }
+    },
+    {
+      "id": "al-01M2998D6N54QJ5J6VC9PK805W",
+      "shortname": "f5-lane-pin-frame-recorded",
+      "datetime": "2026-09-11T22:26:21Z",
+      "session": "f5-lane-pin",
+      "prompt": "Coordinator: close finding 1 in the same tree/session — at the one governed site emit the outgoing session/new params on the normal path (the exact JSON the client sent: cwd, mcpServers, _meta) through the host's existing Report channel AND WorkbenchDiagnostics (evt lane.session-new, run/lane/session id, the params object), so the attended F5 run leaves the frame in %LOCALAPPDATA%\\AiDe\\logs and in the run's report. Red first with the existing fake peer, green, no other change; oracle byte-identical; ConductorEntry.cs untouched. Build with TreatWarningsAsErrors, run the Core AgentPlane suite and the App Conductor tests, audit entry (manual, T0), regenerate-derived, commit, rebuild Release, push, report ProductVersion.",
+      "summary": "AcpLaneClient.SessionNewParameters records the params object handed to the peer (outbound mirror of AcpPeer.ObservedAuth). GovernedRunHost.OpenSessionAsync (the one site, extracted so a fake peer can drive it) reports 'acp session <id> opened with session/new params <json>' and emits WorkbenchDiagnostics.LaneSessionNew (evt lane.session-new; run, lane, session, params); a client that recorded nothing reads as not recorded. Red observed: Core Expected {cwd…} Actual null; App Sub-string not found on the id-only report. Test compares the recorded params to the frame the peer actually wrote to the engine's stdin. Core AgentPlane 182/182, App Conductor 12/12, 0 warnings. Proof Pack claims 10-11 added.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/AgentPlane/AcpLaneClient.cs",
+        "src/AiDe.App/Conductor/GovernedRunHost.cs",
+        "src/AiDe.App/Workbench/WorkbenchDiagnostics.cs",
+        "tests/AiDe.App.Tests/Conductor/TheGovernedLaneHasNoShellTests.cs",
+        "tests/AiDe.Core.Tests/AgentPlane/AcpLaneClientTests.cs",
+        "docs/proof/lane-pin-ruling-71.md"
+      ],
+      "tags": [
+        "ruling-71",
+        "f5",
+        "instrumentation"
+      ],
+      "outcome": "success",
+      "goal": "The frame a governed lane is opened with is recorded on the normal path: report line + lane.session-new log line carrying the params the client sent",
+      "done_when": "Red: the Core assert on SessionNewParameters and the App test on the report/log lines fail on the step-A host; green after; Core AgentPlane 182/182 and App Conductor 12/12; builds 0 warnings; oracle diff empty; committed, Release rebuilt, pushed",
+      "tier": "T0",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-11T22:21:08Z",
+      "duration_seconds": 313.0,
+      "git": {
+        "sha": "246b38a3e871dc85db983abb077f04673db95ab0",
+        "short": "246b38a3e",
+        "branch": "feature/exit-evidence",
+        "pushed": true
       }
     }
   ],

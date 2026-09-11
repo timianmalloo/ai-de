@@ -61,9 +61,21 @@ summary: >-
 
 `.claude/settings.json:4` allows `Bash(git push:*)` without a prompt. Every governed lane runs in a worktree of this repository, and the adapter resolves the SDK's permission mode and allow-list from `["user","project","local"]` (`acp-agent.js:5856`, `:5962`) — so before this change any lane that held `Bash` could `git push` from its worktree under the operator's git identity with no `canUseTool` gate reaching the conductor. The pin removes the `Bash` tool from the model's context entirely, so that line has no tool to apply to; keep or drop is the operator's call and the lane is independent of it either way. The same file also contributes **hooks** to the lane (finding 2), which the pin does not neutralize.
 
-## Instrumentation gap (finding, not authored)
+## Instrumentation — the frame is recorded on the normal path (closed on the coordinator's instruction)
 
-Ruling 71 (a) requires the F5 run's Proof Pack to record the **outgoing frame**. The host reports `acp session <id>` (`GovernedRunHost.cs:150`) and the drain's event kinds, but nothing on the normal path records the `session/new` params it sent — the operator can observe the frame only from the adapter's side or by trusting claim 1. The smallest closure is one `Report` line at the site carrying `GovernedLaneSession`'s `_meta`; not authored here (the dispatch admits no other behaviour change).
+Ruling 71 (a) requires the F5 run's Proof Pack to record the **outgoing frame**. The host now records
+it without anyone remembering to: `GovernedRunHost.OpenSessionAsync` — the one site — reports
+`acp session <id> opened with session/new params <json>` on the run's report and emits a
+`lane.session-new` workbench log line (`run`, `lane`, `session`, `params`) to
+`%LOCALAPPDATA%\AiDe\logs\workbench-YYYYMMDD.log`. The value written is
+`AcpLaneClient.SessionNewParameters` — the object the client handed the peer, the outbound mirror of
+`AcpPeer.ObservedAuth` — never a re-computation; a client that recorded nothing reads as
+`not recorded`.
+
+| # | Claim | Evidence (test) | Oracle — why it can fail | Red observed | Confidence |
+|---|---|---|---|---|---|
+| 10 | What the client says it sent is what went down the wire | `TheGovernedLanePinsBashOffThroughTheAdaptersMetaSlot` (added assert) | `SessionNewParameters.ToJsonString()` equals the wire's `params` | **Yes** — `Expected {"cwd":… Actual null` before the client set it | Verified |
+| 11 | The report line and the `lane.session-new` log line carry the exact params the peer wrote, `_meta` included, keyed by run/lane/session | `TheFrameTheLaneWasOpenedWithIsRecordedOnTheReportAndInTheLog` (real client, real peer, the engine's stdin captured) | Compares the recorded params against the frame the peer actually wrote — a re-computation would still have to match the wire | **Yes** — `Sub-string not found` on the step-A host that reported only the id | Verified |
 
 ## Not built (residual)
 
