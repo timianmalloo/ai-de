@@ -446,7 +446,10 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         var compiled = _gate.RenderView(_draft, _template);
         _compiled.Text = compiled.Text;
 
-        var patterns = LeaseDerivation.Patterns(compiled.Text);
+        // THE DRAFT'S OWN SOURCE TEXT, NOT THE COMPILED PROMPT (Ruling 66) — the same symbol
+        // `ComposerSendGate.Send` derives the sent lease from, so the displayed lease and the sent
+        // lease can never disagree.
+        var patterns = LeaseDerivation.Patterns(_draft.SourceText);
         _lease.Text = patterns.Count == 0
             ? "Lease: not derivable until the draft names something"
             : "Lease: " + string.Join(", ", patterns);

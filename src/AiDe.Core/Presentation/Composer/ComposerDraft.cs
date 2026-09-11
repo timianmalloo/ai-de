@@ -64,6 +64,29 @@ public sealed class ComposerDraft
     /// <summary>The active shape. Free-form is the default, and needs no template anywhere.</summary>
     public ComposerShape Shape { get; private set; } = ComposerShape.FreeForm;
 
+    /// <summary>
+    /// The editor's own held source text — what the operator typed, and nothing else (Ruling 66).
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Why this exists.</b> <see cref="ComposerCompiler.Compile"/>'s output additionally
+    /// carries an attachment's file content and, for a template draft, the template's own fixed
+    /// prose — neither of which the operator wrote. <see cref="LeaseDerivation"/> must read only what
+    /// the operator authored, so it is derived from this, never from the compiled prompt.</para>
+    ///
+    /// <para><b>Shape-scoped, not shape-summed.</b> A draft retains every shape's content at once
+    /// (see the class remarks), but only the <i>active</i> shape's content is what the operator is
+    /// currently looking at and editing — a mention left behind in a shape the operator switched away
+    /// from must not silently widen the lane's write scope.</para>
+    /// </remarks>
+    public string SourceText => Shape switch
+    {
+        ComposerShape.FreeForm => _freeForm,
+        ComposerShape.GoalBlock => string.Join(
+            '\n', GoalBlockFields.All.Select(name => _goalValues.TryGetValue(name, out var value) ? value : string.Empty)),
+        ComposerShape.Template => string.Join('\n', _templateValues.Values.SelectMany(values => values)),
+        _ => throw new ArgumentOutOfRangeException(nameof(Shape), Shape, "unknown composer shape"),
+    };
+
     /// <summary>The retained free-form text.</summary>
     public string FreeFormText => _freeForm;
 
