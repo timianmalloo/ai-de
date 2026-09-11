@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T20:28:07Z",
+  "generated": "2026-09-11T21:36:32Z",
   "audit": [
     {
       "actor": null,
@@ -12137,15 +12137,6 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2927GWV79QDF90AVM22VRQF",
-      "shortname": "ui-design-addendum-c-perspectives",
-      "datetime": "2026-09-11T20:23:32Z",
-      "session": "addendum-c-chain",
-      "prompt": "elevate — the AI-DE workbench as three perspectives (Coding · Explore · Architecture): the rail, the perspective-contextual menu, the Coding and Architecture default layouts, the conversation composer, and the New Session sheet with session settings; per spec-addendum-c-perspectives",
-      "summary": "Baseline ui-craft-gate over docs/mockups: 104 findings (66 Major / 38 Minor, cramped-padding 26), reproduced. Result: 98 (60 / 38) — the three new mockups measure 0 findings each; DESIGN.md 0; design-lint --strict clean; verify-design-modes OK (30 roles, each with a light value). Tokens: accent-contrast keeps its name with the on-accent-ink role (a rename to text-on-accent was made and reverted when main merged AccentContrastBrush); border-strong added (#7C8896 / #5F6977); syntax-comment #5A6472 -> #808C9A; 30 light-* values declared (light-float-chrome #EEF1F4); the one-ground palette column replaced by an ink×ground matrix in both themes; the header signature corrected to PerspectiveShell (Arch:HubAndSpoke, Depth:SoftShadow). Design: rail as a manual-activation tab list; tab strip with an on-accent selected-active state and a 2px muted edge on selected-inactive; menus derived (File · Edit · View · Window · Prompt · Help) with the focus ring as the keyboard indicator; the composer as a conversation with one editor, derived lines, a settings line (fan-out ceiling + budget, no tier), the compiled prompt on demand carrying the compiled tier as a decoration (the operator's mid-run correction: tier is compiled, not typed); the sheet with the session settings and no tier field. Loop: pass 1 = 2 Blockers + 19 Majors across UX&A / UX-IA / Simplifier; pass 2 = UX-IA PASS, Simplifier CLEARED, UX&A one new Blocker (menu highlight sub-3:1); pass 3 = UX&A PASS, veto cleared on the design artifacts; 0 Majors; native proof P-1/P-9/P-11/P-12/P-13 not measurable from HTML. Vetoes: a11y hard veto raised and cleared by the UX&A lens (not the author); UX-spec veto cleared; Simplifier soft veto cleared. main cb4a6ebe merged into the branch (one conflict, tools/verify-ui-craft-floor.py, united). Controls: every mockup craft-gated by default (DC-145); tools/verify-design-modes.py in build.yml (DC-143); DC-144 registered. Notes: addendum-c-design-signature, -menu-names, -tier-decoration. External: the spec's tier erratum and §C3/§C4 amendments are the conductor's.",
-      "kind": "skill",
-      "skill": "ui-design",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "DESIGN.md",
@@ -12158,58 +12149,145 @@ window.AUDIT_DATA = {
         "docs/notes/addendum-c-design-tier-decoration.md",
         "tools/verify-design-modes.py"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Run /ui-design (elevate) for spec-addendum-c-perspectives: the token system that makes the census's failing pairings impossible by construction (on-accent ink, control boundary, light values, comment re-tone, an ink×ground matrix), the perspective-shell design language, three self-contained mockups with the review harness, a rubric critique with a bounded loop, decision notes, and the craft gate run as CI runs it",
+      "datetime": "2026-09-11T20:23:32Z",
       "done_when": "DESIGN.md lint-clean with dark and light values and every state naming ink and ground; perspective-shell.html, conversation-composer.html, new-session-sheet.html each 0 craft findings with every spec §C4 hard state rendered; docs/reviews/ui-perspective-shell.md with measurements, findings, scorecard, ranked plan; the loop at 0 Majors with the a11y veto cleared by the UX & Accessibility lens; audit appended, derived views green, gates green, committed and pushed to feature/addendum-c",
-      "tier": "T2",
-      "fan_out": 3,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
-      "started_at": "2026-09-11T19:03:20Z",
       "duration_seconds": 4812.0,
+      "fan_out": 3,
       "git": {
-        "sha": "62a7f140fb09844bcb225c61bd7b1394c13ad35e",
-        "short": "62a7f140f",
         "branch": "feature/addendum-c",
-        "pushed": false
-      }
+        "pushed": false,
+        "sha": "62a7f140fb09844bcb225c61bd7b1394c13ad35e",
+        "short": "62a7f140f"
+      },
+      "goal": "Run /ui-design (elevate) for spec-addendum-c-perspectives: the token system that makes the census's failing pairings impossible by construction (on-accent ink, control boundary, light values, comment re-tone, an ink×ground matrix), the perspective-shell design language, three self-contained mockups with the review harness, a rubric critique with a bounded loop, decision notes, and the craft gate run as CI runs it",
+      "id": "al-01M2927GWV79QDF90AVM22VRQF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "elevate — the AI-DE workbench as three perspectives (Coding · Explore · Architecture): the rail, the perspective-contextual menu, the Coding and Architecture default layouts, the conversation composer, and the New Session sheet with session settings; per spec-addendum-c-perspectives",
+      "session": "addendum-c-chain",
+      "shortname": "ui-design-addendum-c-perspectives",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "ui-design",
+      "started_at": "2026-09-11T19:03:20Z",
+      "summary": "Baseline ui-craft-gate over docs/mockups: 104 findings (66 Major / 38 Minor, cramped-padding 26), reproduced. Result: 98 (60 / 38) — the three new mockups measure 0 findings each; DESIGN.md 0; design-lint --strict clean; verify-design-modes OK (30 roles, each with a light value). Tokens: accent-contrast keeps its name with the on-accent-ink role (a rename to text-on-accent was made and reverted when main merged AccentContrastBrush); border-strong added (#7C8896 / #5F6977); syntax-comment #5A6472 -> #808C9A; 30 light-* values declared (light-float-chrome #EEF1F4); the one-ground palette column replaced by an ink×ground matrix in both themes; the header signature corrected to PerspectiveShell (Arch:HubAndSpoke, Depth:SoftShadow). Design: rail as a manual-activation tab list; tab strip with an on-accent selected-active state and a 2px muted edge on selected-inactive; menus derived (File · Edit · View · Window · Prompt · Help) with the focus ring as the keyboard indicator; the composer as a conversation with one editor, derived lines, a settings line (fan-out ceiling + budget, no tier), the compiled prompt on demand carrying the compiled tier as a decoration (the operator's mid-run correction: tier is compiled, not typed); the sheet with the session settings and no tier field. Loop: pass 1 = 2 Blockers + 19 Majors across UX&A / UX-IA / Simplifier; pass 2 = UX-IA PASS, Simplifier CLEARED, UX&A one new Blocker (menu highlight sub-3:1); pass 3 = UX&A PASS, veto cleared on the design artifacts; 0 Majors; native proof P-1/P-9/P-11/P-12/P-13 not measurable from HTML. Vetoes: a11y hard veto raised and cleared by the UX&A lens (not the author); UX-spec veto cleared; Simplifier soft veto cleared. main cb4a6ebe merged into the branch (one conflict, tools/verify-ui-craft-floor.py, united). Controls: every mockup craft-gated by default (DC-145); tools/verify-design-modes.py in build.yml (DC-143); DC-144 registered. Notes: addendum-c-design-signature, -menu-names, -tier-decoration. External: the spec's tier erratum and §C3/§C4 amendments are the conductor's.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M292FWRK18K2Y2DZ40F0NAKP",
-      "shortname": "spec-addendum-c-errata-after-d1",
-      "datetime": "2026-09-11T20:28:06Z",
-      "session": "addendum-c-chain",
-      "prompt": "IA-4 / P-6 / P-7 from docs/reviews/ui-perspective-shell.md",
-      "summary": "S-2, §A3, US-C5, Flow 2 D, US-C13 warning source, B6 wireframe, §C4 compiled header line, §C3 editor ground, §C4 rail activation — nine substitutions, an errata paragraph appended to the gate record.",
-      "kind": "manual",
-      "skill": null,
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/specs/addendum-c-perspectives.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Apply the spec errata D1's review owed to the conductor",
+      "datetime": "2026-09-11T20:28:06Z",
       "done_when": "Nine passages amended; no tier on the sheet or in session settings; editor ground and rail activation semantics match the design; gates green",
-      "tier": "T1",
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
       "git": {
-        "sha": "d204b3c7378a263d37291b9651cbf3a981c1bc0c",
-        "short": "d204b3c73",
         "branch": "feature/addendum-c",
-        "pushed": false
-      }
+        "pushed": false,
+        "sha": "d204b3c7378a263d37291b9651cbf3a981c1bc0c",
+        "short": "d204b3c73"
+      },
+      "goal": "Apply the spec errata D1's review owed to the conductor",
+      "id": "al-01M292FWRK18K2Y2DZ40F0NAKP",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "IA-4 / P-6 / P-7 from docs/reviews/ui-perspective-shell.md",
+      "session": "addendum-c-chain",
+      "shortname": "spec-addendum-c-errata-after-d1",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "S-2, §A3, US-C5, Flow 2 D, US-C13 warning source, B6 wireframe, §C4 compiled header line, §C3 editor ground, §C4 rail activation — nine substitutions, an errata paragraph appended to the gate record.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/specs/addendum-d-compile-step.md",
+        "docs/notes/addendum-d-envelope-store.md",
+        "docs/notes/addendum-d-compile-trigger.md",
+        "docs/notes/addendum-d-lease-source-text.md",
+        "docs/notes/addendum-d-compile-session-tools.md",
+        "docs/specs/conductor/README.md"
+      ],
+      "datetime": "2026-09-11T21:31:33Z",
+      "done_when": "docs/specs/addendum-d-compile-step.md + README row + decision notes exist; docs-graph derive run; audit appended; gates green; committed and pushed to feature/addendum-d",
+      "duration_seconds": 4992.0,
+      "fan_out": 3,
+      "git": {
+        "branch": "feature/addendum-d",
+        "pushed": null,
+        "sha": "ca069ba506b5d3c76f43c6e7d3c8ebec40f609e5",
+        "short": "ca069ba50"
+      },
+      "goal": "Produce Addendum D — The Compile Step via /specify: the Prompt Compilation domain model, the three columns, the mechanical tier rule, compile modes and degradation, Prepare, the compiled-envelope/1 schema and its projections onto the unchanged spawn contract, the security proof for Ruling 42, the eval gate, phasing, reconciliation with Addenda B and C, Gherkin criteria, NFRs, Proof Pack items and the gate record",
+      "id": "al-01M29642AFD8BYVDQCWFZBQ88Z",
+      "kind": "skill",
+      "main_budget": 90,
+      "main_calls": 75,
+      "main_over_budget": false,
+      "outcome": "success",
+      "persona_yield": [
+        {
+          "accepted": 7,
+          "persona": "data-persistence-architect",
+          "raised": 7
+        },
+        {
+          "accepted": 6,
+          "persona": "ai-systems-engineer",
+          "raised": 6
+        },
+        {
+          "accepted": 8,
+          "persona": "security-identity-architect",
+          "raised": 8
+        },
+        {
+          "accepted": 10,
+          "persona": "test-architect",
+          "raised": 10
+        },
+        {
+          "accepted": 11,
+          "persona": "the-simplifier",
+          "raised": 13
+        },
+        {
+          "accepted": 12,
+          "persona": "ux-researcher-ia",
+          "raised": 12
+        }
+      ],
+      "prompt": "Addendum D — The Compile Step: typed text becomes a compiled envelope through a mechanical pre-compile, an agentic compile on the session-bound model, and an operator Prepare stage; settings vs compile context vs decorations",
+      "session": "addendum-d-chain",
+      "shortname": "specify-addendum-d-compile-step",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "specify",
+      "started_at": "2026-09-11T20:08:21Z",
+      "summary": "Addendum D — The Compile Step specified at docs/specs/addendum-d-compile-step.md (in review; gate PASS after a two-pass council loop, cap 2, zero unresolved Blockers). Domain model: bounded context Prompt Compilation; the Envelope aggregate (one invariant: append-only by seq); the lease, shape, tier and effective fan-out are projections, never stored; the craft profile a Type-2 dimension (one file per version); the fact is one event per row in .aide/sessions/<id>/envelope-events.jsonl (opened · decorated · called · submitted · consumed), exclusive writer, prev_sha chain; expand-only, no backfill; purge deletes the envelope file only. Three columns corrected (task class is a setting; the lease and tier leave the decorations column; compile mode is a new setting; attachments reach the compile by reference). Mechanical tier rule as a total projection (R0–R4, fourteen enumerated inputs, structure_source in the rationale); effective fan-out = min(cap(tier), ceiling). Compile modes mechanical-only | agentic-advisory | agentic with nine degradation states and a 60 s bound; Prepare with four composer states, a mark table, tier override on the compile line, Send as confirmation. Security: a compile session is NOT toolless by default (adapter 0.75.1 settingSources + claude_code preset; the repo allows Bash(git push:*)) — the host pins tools via session/new _meta.claudeCode.options.tools: [] (verified in source, unobserved on the wire; a spike gates every agentic rung); seven Ruling-42 paths closed; a fixed host header (a leading '/' runs as a CLI command); hooks residual measured. Eval: DC-127-proof fixtures derived from real rows; floors fixed in advance, judged on a holdout; forced-choice tier subset. Four decision notes; README row; six proposed rulings (PR-D1..D6) and twelve findings for the Owner. Peers: Data & Persistence Architect, AI Systems Engineer, Security (Peer); adversaries: Test Architect, D&P, Security (BLOCK ×3 on pass 1 → all cleared on pass 2), AI Systems Engineer (pass-with-conditions), UX/IA (pass-with-conditions), Simplifier (soft veto; cuts accepted except prev_sha and per-version profiles, overridden in writing).",
+      "tags": [
+        "addendum-d",
+        "compile",
+        "conductor"
+      ],
+      "tier": "T2",
+      "tool": null
     }
   ],
   "changes": [
@@ -15396,6 +15474,31 @@ window.AUDIT_DATA = {
         "pushed": false,
         "commits": []
       }
+    },
+    {
+      "id": "cl-01M2964CX6490AR9XPRCH73EMD",
+      "datetime": "2026-09-11T21:31:44Z",
+      "session": "addendum-d-chain",
+      "kind": "spec",
+      "skill": "specify",
+      "title": "Addendum D — the compile step's data model, security boundary and phasing settled",
+      "prompt": "Addendum D — The Compile Step: typed text becomes a compiled envelope through a mechanical pre-compile, an agentic compile on the session-bound model, and an operator Prepare stage; settings vs compile context vs decorations",
+      "summary": "Prompt Compilation bounded context: an event-grained append-only envelope store (.aide/sessions/<id>/envelope-events.jsonl; the envelope is the fold; the lease, shape, tier and effective fan-out are projections); the craft profile a Type-2 dimension; the compile session's tools pinned by the host (a compile session is not toolless by default) with a spike gating every agentic rung; compile modes mechanical-only | agentic-advisory | agentic; six proposed rulings for the Owner.",
+      "rationale": "The data model is the highest-priority decision (DM1); the Data & Persistence Architect corrected the conductor's row-per-turn candidate to event grain and the lease to a projection (DM-A); Security found the proposal's no-tools premise false in adapter 0.75.1's source; the AI Systems Engineer's eval gate binds every agentic rung.",
+      "artifacts": [
+        "docs/specs/addendum-d-compile-step.md"
+      ],
+      "tags": [
+        "addendum-d"
+      ],
+      "git": {
+        "before": "ca069ba5",
+        "after": "ca069ba506b5d3c76f43c6e7d3c8ebec40f609e5",
+        "branch": "feature/addendum-d",
+        "pushed": null,
+        "commits": []
+      },
+      "audit_ref": "al-01M29642AFD8BYVDQCWFZBQ88Z"
     }
   ]
 };
