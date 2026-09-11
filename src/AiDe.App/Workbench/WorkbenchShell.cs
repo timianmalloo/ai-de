@@ -181,6 +181,19 @@ public sealed class WorkbenchShell : IDisposable
             ExpandZone);
         Manager.LayoutChanged += (_, _) => _rails.Refresh();
 
+        // INV-0006 F1 — the drag-completed hook. A native tab drag is AvalonDock's own gesture: it
+        // mutates the docking tree and tells nobody, so before this the zone model learned about a
+        // drag only when one of four UNRELATED commands happened to reconcile (new terminal, new
+        // agent terminal, new prompt draft, open reference document). In the reported session that
+        // was 3m49s and eight drags later, and a reconcile handed that much drift swaps both columns
+        // whole. Reconciling as the drag lands keeps every reconcile one drag from the model, which
+        // is the regime the zone tests already prove correct.
+        //
+        // Deliberately does NOT re-render: the view already shows the drop the user made, so the
+        // model is catching up to the view, not the other way round. Rendering here would re-parent
+        // every pane and re-seat every tab for a change already on screen.
+        Adapter.ViewArrangementChanged += (_, _) => ReconcileViewIntoModel();
+
         Palette = new CommandPalette(Controller, Announcer);
         Prompt = new PromptBar(Announcer);
 
