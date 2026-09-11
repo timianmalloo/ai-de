@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 64 · partially-controlled 51 · uncontrolled 11
+**Status counts:** controlled 64 · partially-controlled 53 · uncontrolled 11
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -5221,6 +5221,86 @@ for both or split.*
 - **Status:** `uncontrolled` — the gap is measured and recorded, the gate is unchanged, and the
   channel is still unset, so the next slice will produce the same zero observations with the same
   green gate
+
+
+### DC-127 — A fixture written by the same mind as the reader shares its blind spot, so a reader tested only against its fixture is tested against its own assumption
+
+- **Shape:** someone writes a reader, parser or checker over a real artifact, and writes a **fixture**
+  to test it. The fixture is constructed from the same mental model as the reader — the same
+  assumption about which column carries the substance, which field is authoritative, which shape the
+  document takes. **So the fixture agrees with the reader by construction**, and the test passes for
+  the same reason the reader is wrong. The defect is invisible until the reader meets the **real**
+  artifact, which is usually in production or at a join.
+- **Signature:** a reader with a green fixture-based test and no test against a committed real
+  artifact; a fixture authored in the same change as the reader; and the tell — **the fixture's shape
+  is simpler than the real artifact's**, because a fixture is written to exercise the code rather
+  than to reproduce the document.
+- **Instance (front-door F5, 2026-09-11, found by the node itself):** the exit-evidence oracle's
+  **clause-7 reader had the exact hole clause 7 exists to close.** Clause 7 fails if a Proof Pack
+  Residual cell reads *"none"*. The carried-residuals tables are `| Residual | Kind | Detail |`, so
+  the `Residual` column holds only the **name** — and a row reading
+  `| the thing we did not do | named | none |` **would have passed**, because the reader checked the
+  first column and the substance lives in `Detail`. The node found it by **testing non-vacuity
+  against the real Proof Pack rather than against its fixture**, and reported the cause in one line:
+  > **"the fixture agreed with me."**
+- **Why it survives:** every conventional signal is green. The test exists, it is red-first capable,
+  it was written before the code, and it fails when the code is broken **in the way the author
+  imagined**. Nothing in the usual checklist asks *"does this fixture reproduce the artifact, or the
+  author's idea of it?"*
+- **Relationship to the rest of this register:** it is **DC-122's mechanism relocated** — there, a
+  comment carried the author's belief and was mistaken for evidence about behaviour; here, a fixture
+  carries the author's belief and is mistaken for evidence about the artifact. And it is the
+  session's recurring shape — *a control whose green is indistinguishable from its absence* — with
+  the fixture supplying the green.
+- **Control:** **a reader over a committed artifact is tested against that artifact, not only against
+  a fixture.** Where the real artifact is unavailable or unstable, the fixture must be **derived from
+  it mechanically** rather than authored, or the test must state that it exercises the code and not
+  the contract. The cheap form, and the one that worked here: **run the reader against the real
+  document and check it is non-vacuous** — that it finds something, and that it would find the thing
+  it exists to find.
+- **Status:** `partially-controlled` — the instance is closed and the oracle's self-test now covers
+  the real table shape specifically, but nothing gates the class: the next reader written beside its
+  own fixture will pass the same way
+
+### DC-128 — Citing a commit proves a file existed, not that it was unchanged, so "committed before" is attested rather than mechanical
+
+- **Shape:** a process requires that an artifact — an oracle, a spec, a baseline — be **fixed before
+  a dependent act**, and the control is *"commit it first and cite the sha."* That proves the file
+  **existed** at that commit. It does **not** prove the file **running now** is the file at that sha.
+  An artifact committed early, then quietly widened after the dependent act and re-cited, **reads
+  identically to one that was right the first time.** The ordering becomes a claim the author makes
+  about themselves.
+- **Signature:** an ordering requirement discharged by a cited sha with no byte comparison; a
+  process document saying *"committed before X and its sha recorded"* without saying *"and unchanged
+  since"*; and the structural tell — **nothing in the check reads the artifact twice.**
+- **Instance (front-door F5, 2026-09-11):** §F5's clause reads *"the oracle is committed BEFORE the
+  run and its SHA cited in the Proof Pack — seven points written after seeing the run are a
+  description, not a test."* The conductor authored that clause and dispatched it in four briefs
+  without noticing that **citing a sha does not prevent editing the file afterwards and citing the
+  new one.** The node implementing it added **clause 0**, which reads its own commit, compares it to
+  the run's start, **and compares its own bytes at that commit against the bytes now running**:
+  > *"An oracle committed early and then quietly widened after the run reads identically to one that
+  > was right first time — unless the bytes are compared."*
+  That makes the ordering **mechanically true rather than attested** — and has the deliberate
+  consequence that the oracle file is now **frozen**: any edit invalidates the cited sha and forces a
+  re-commit and re-cite.
+- **A second-order consequence worth recording, because it bit immediately:** the freeze **constrains
+  how the branch may be integrated.** A **rebase** rewrites the commit and orphans the cited sha,
+  breaking clause 0; a **merge** preserves it. *A control strong enough to constrain its own
+  integration path is working, but the constraint has to be noticed before the integration, not
+  after.*
+- **Why it survives:** the weak form looks rigorous. A sha is precise, verifiable and auditable, and
+  it answers a question — *did this exist then?* — that is adjacent to the one being asked. **The gap
+  between "existed" and "unchanged" is exactly one function call wide and reads as pedantry until
+  someone widens an artifact after the fact.**
+- **Control:** any ordering requirement over an artifact compares **bytes at the cited commit against
+  bytes now**, not the sha alone. Where that is impossible, the requirement is recorded as
+  **attested** rather than verified, and the attestation names who attested. And the integration
+  consequence is stated with the control: **a frozen artifact's branch merges, never rebases.**
+- **Status:** `partially-controlled` — implemented for the exit-evidence oracle and proven by its own
+  self-test; the plan clause it corrects is now accurate, but **no other ordering requirement in the
+  repository carries a byte comparison**, and the plan-authoring habit that produced the weak form is
+  unchanged
 
 
 ---
