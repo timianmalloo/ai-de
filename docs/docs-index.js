@@ -7258,7 +7258,7 @@ window.DOCS_INDEX = {
     {
       "id": "note-addendum-c-council-rulings",
       "path": "docs/notes/addendum-c-council-rulings.md",
-      "title": "Decision note — Rulings 50–63: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
+      "title": "Decision note — Rulings 50–71: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
       "type": "doc",
       "status": "accepted",
       "owner": "@timianmalloo",
@@ -7283,6 +7283,10 @@ window.DOCS_INDEX = {
         },
         {
           "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
           "rel": "relates-to"
         },
         {
@@ -7311,7 +7315,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f8502c5f835818944b92fe7513b438f70d7d4ba70d3994e92652e7dd2f75f433"
+      "sourceSha256": "f189761fb40d65dac56910d36a26629211512902d9370aa8f9414b688cab2600"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -13571,7 +13575,7 @@ window.DOCS_INDEX = {
       "path": "docs/specs/addendum-d-compile-step.md",
       "title": "Addendum D — The Compile Step",
       "type": "spec",
-      "status": "in-review",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "1",
       "reviewBy": "2027-03-10",
@@ -13649,7 +13653,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  U[aide session purge id] --> V{id is one segment of the session-id grammar, resolved under .aide/sessions/?}\n  V -->|no| X[refused before any file is touched]\n  V -->|yes| W[confirmation: name · id · workspace root · resolved file path · envelope count · newest at]\n  W -->|decline| Y[nothing deleted]\n  W -->|confirm or --yes| Z[envelope-events.jsonl deleted; session.json and session-events.jsonl survive]\n  Z --> Q[session document reopens: history purged; Proof Pack citations resolve as purged]"
         }
       ],
-      "sourceSha256": "798c678b188018589b0406e05f72bf5fd5b50517d1baef1610b278c60a6c0b57"
+      "sourceSha256": "b4fdba9b449cc5b885b74b5c6b805aae180e5d188fed0f2e1184afc3746ab819"
     },
     {
       "id": "spec-agentic-watcher-substrate",
@@ -14470,5 +14474,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ca042a663138a515195570e270754897437bf941fbac32de4540cf725bdba0b7"
+  "graphSha256": "cf4dd0683bb377041afb0689b58316238bb4eb22de669f52a94ba16f64b82be5"
 };

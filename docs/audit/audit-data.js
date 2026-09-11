@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T21:36:32Z",
+  "generated": "2026-09-11T21:48:36Z",
   "audit": [
     {
       "actor": null,
@@ -12288,6 +12288,54 @@ window.AUDIT_DATA = {
       ],
       "tier": "T2",
       "tool": null
+    },
+    {
+      "id": "al-01M296K4DAJ7H8NP26WC7B135Y",
+      "shortname": "Operator (screenshot 3, a build on main): (1) I do not have a way to typ…",
+      "datetime": "2026-09-11T21:39:47Z",
+      "session": "prompt-log",
+      "prompt": "Operator (screenshot 3, a build on main): (1) I do not have a way to type into the session again - the composer area is blank; (2) maybe not done yet, but launching a session should use the whole real estate - the doc with the graph etc. should not be visible; (3) a session can have n prompts because a session is a conversation, so task class at session-create seems broken - task class should be defined for every chat in a conversation (reflect on the diversity of things in this session as an example); (4) the overall /ui-design elevate of the session needs to be done. Conductor finding: the binary launched was this morning's (Release be68ca1c / Debug 92809f9b), predating the composer fix, the contrast fix and maximize-on-create; app.start telemetry (on main since 2173ed0c) would have named it.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M29738J4Y4VMFBK8GQCTG6FZ",
+      "shortname": "owner-rulings-64-71-filed",
+      "datetime": "2026-09-11T21:48:35Z",
+      "session": "conductor-addendum-c",
+      "prompt": "Owner (fable): file PR-D1..PR-D6; rule on F-2 (lease derives from the render) and F-3 (lanes are not toolless); file the operator's task-class-per-prompt decision.",
+      "summary": "64 ceiling/cap + Prepare override; 65 compiler is the bound; 66 lease over editor source text only, F-2 fixed now on main (a reading of Ruling 42); 67 mechanical on debounce, agentic on Send; 68 mode ladder gated by the pin spike then 50+50; 69 v1 agentic = structure only; 70 task class per prompt with a session default, F5 evidence stands; 71 F5 proceeds only with disallowedTools Bash on session/new, tested and observed; settings.json git push allow filed as an operator finding.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/addendum-c-council-rulings.md",
+        "docs/specs/addendum-d-compile-step.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "File Addendum D's PR-D1..D6 as Rulings 64-69, the operator's task-class decision as 70, and F-3 as 71; F-2 fixed under 66; accept Addendum D",
+      "done_when": "Rulings 64-71 verbatim in the note; the spec cites them; Ruling 70's supersessions applied; status accepted; gates green",
+      "tier": "T2",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "dbc201d6aec1db09d76b4418fa6d0956bbc05ddb",
+        "short": "dbc201d6a",
+        "branch": "conductor/addendum-c",
+        "pushed": null
+      }
     }
   ],
   "changes": [
