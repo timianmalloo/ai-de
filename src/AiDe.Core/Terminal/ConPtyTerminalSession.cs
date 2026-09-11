@@ -242,25 +242,52 @@ public sealed class ConPtyTerminalSession : ITerminalSession
 
         var job = ConPtyInterop.CreateKillOnCloseJob();
 
-        ConPtyInterop.ProcessInformation process;
+        ConPtyInterop.ProcessInformation process = default;
+        var started = false;
         try
         {
             process = ConPtyInterop.StartAttachedProcess(
                 console, commandLine, request.WorkingDirectory, request.Environment);
+            started = true;
+
+            // THE ASSIGN IS CHECKED, and the window before it is ACCEPTED AND UNMEASURED.
+            //
+            // The child is created running and joins the job a moment later; anything it spawns
+            // inside that window is outside the job permanently. Nobody has measured that window.
+            // This comment used to call it "real but small" — "small" was a belief written in the
+            // voice of a result, and there is no number behind it.
+            //
+            // It also declined CREATE_SUSPENDED-then-assign-then-resume for the wrong reason:
+            // "the process never starts if the assign throws" is not a failure mode, it is the
+            // refusal `docs/ai-forward-pack/scripts/bounded_process.py:224-226` already ships as
+            // CORRECT — "the gated wrapper cannot launch the requested command until Job Object
+            // containment succeeds, closing the child-start-before-assignment race".
+            //
+            // Neither is the end state. `PROC_THREAD_ATTRIBUTE_JOB_LIST` assigns the job AT
+            // CREATION — "a pointer to a list of job handles to be assigned to the child process",
+            // Windows 10 and Server 2016 and newer (Microsoft Learn, UpdateProcThreadAttribute) —
+            // which removes the window and the resume together, and StartAttachedProcess already
+            // builds the proc-thread attribute list it would extend. Recorded as a next step.
+            ConPtyInterop.AssignProcessToJob(job, process.hProcess);
         }
         catch
         {
+            if (started)
+            {
+                // Started, and NOT contained. Ending it here is the same choice bounded_process.py
+                // makes: a caller that asked for a contained shell gets an exception, never an
+                // uncontained one it has no way to notice.
+                ConPtyInterop.TerminateProcess(process.hProcess, 1);
+                ConPtyInterop.CloseHandle(process.hThread);
+                ConPtyInterop.CloseHandle(process.hProcess);
+            }
+
             ConPtyInterop.ClosePseudoConsole(console);
             ConPtyInterop.CloseHandle(job);
             inputWrite.Dispose();
             outputRead.Dispose();
             throw;
         }
-
-        // Assign after creation rather than creating suspended-in-job: the window between the two is
-        // real but small, and the alternative needs CREATE_SUSPENDED plus a resume, which adds its
-        // own failure mode where the process never starts if the assign throws.
-        ConPtyInterop.AssignProcessToJobObject(job, process.hProcess);
 
         var session = new ConPtyTerminalSession(
             request, nonce, console, job, process, inputWrite, outputRead);

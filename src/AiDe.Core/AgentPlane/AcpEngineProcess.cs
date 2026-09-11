@@ -22,16 +22,32 @@ namespace AiDe.Core.AgentPlane;
 /// <para><b>Disposal kills the whole tree.</b> The adapter is <c>node</c> running a package that
 /// itself spawns the <c>claude</c> CLI, so killing the parent alone leaves the grandchild holding a
 /// credential session open with nothing attached to its stdio.</para>
+///
+/// <para><b>And a kill-on-close job is the backstop, because disposal is the GRACEFUL path.</b>
+/// <c>using var engine = ...</c> runs <see cref="Dispose"/>; a host that is killed runs nothing.
+/// This class reasoned carefully about the graceful path - the wait below, and why a kill that is
+/// not waited on is a claim rather than an observation - and left the abnormal one open, which is
+/// DC-123 exactly: an exemplary lifetime comment beside a leak of the same resource class.
+/// MEASURED before the fix, with the host killed rather than closed: the engine and its own child
+/// were both still running five seconds later. The job closes when the host's handle table goes,
+/// however the host dies, and Windows takes the tree with it. Off Windows there is no job and
+/// disposal is the only reaping there is.</para>
 /// </remarks>
 public sealed class AcpEngineProcess : IDisposable
 {
     private readonly Process _process;
     private readonly Action<string> _diagnostics;
+
+    /// <summary>The kill-on-close job the child is in, or <see cref="IntPtr.Zero"/> off Windows.</summary>
+    private readonly IntPtr _job;
+
     private bool _reaped;
 
-    private AcpEngineProcess(Process process, IReadOnlyList<string> environmentFindings, Action<string> diagnostics)
+    private AcpEngineProcess(
+        Process process, IntPtr job, IReadOnlyList<string> environmentFindings, Action<string> diagnostics)
     {
         _process = process;
+        _job = job;
         _diagnostics = diagnostics;
         EnvironmentFindings = environmentFindings;
 
@@ -76,9 +92,10 @@ public sealed class AcpEngineProcess : IDisposable
     /// so the surfacing can be tested without a broken machine.
     /// </param>
     /// <exception cref="AgentPlaneException">
-    /// <see cref="AgentPlaneErrorCodes.EngineDidNotStart"/> when the executable is not there or the
-    /// operating system refuses. A named refusal rather than a raw Win32 exception, because "node is
-    /// not on the PATH" is a fact an operator can act on.
+    /// <see cref="AgentPlaneErrorCodes.EngineDidNotStart"/> when the executable is not there, the
+    /// operating system refuses, or the child started but could not be put in its job. A named
+    /// refusal rather than a raw Win32 exception, because "node is not on the PATH" is a fact an
+    /// operator can act on.
     /// </exception>
     public static AcpEngineProcess Start(
         EngineLaunch launch,
@@ -111,6 +128,11 @@ public sealed class AcpEngineProcess : IDisposable
             info.ArgumentList.Add(argument);
         }
 
+        // Created BEFORE the child, so the only gap is between Process.Start returning and the
+        // assign below. That gap is accepted and UNMEASURED, and it is the same one
+        // ConPtyTerminalSession carries; PROC_THREAD_ATTRIBUTE_JOB_LIST would close both.
+        var job = OperatingSystem.IsWindows() ? ConPtyInterop.CreateKillOnCloseJob() : IntPtr.Zero;
+
         Process? process;
         try
         {
@@ -118,6 +140,7 @@ public sealed class AcpEngineProcess : IDisposable
         }
         catch (Exception error) when (error is System.ComponentModel.Win32Exception or InvalidOperationException)
         {
+            CloseJob(job);
             throw new AgentPlaneException(
                 AgentPlaneErrorCodes.EngineDidNotStart,
                 $"the engine '{launch.FileName}' could not be started: {error.Message}");
@@ -125,14 +148,48 @@ public sealed class AcpEngineProcess : IDisposable
 
         if (process is null)
         {
+            CloseJob(job);
             throw new AgentPlaneException(
                 AgentPlaneErrorCodes.EngineDidNotStart,
                 $"the engine '{launch.FileName}' did not start, and the operating system gave no reason");
         }
 
-        var engine = new AcpEngineProcess(process, findings, report);
+        if (OperatingSystem.IsWindows())
+        {
+            try
+            {
+                // CHECKED. An assign whose answer is discarded leaves the job existing, the engine
+                // outside it, and nothing at all to notice.
+                ConPtyInterop.AssignProcessToJob(job, process.Handle);
+            }
+            catch (System.ComponentModel.Win32Exception error)
+            {
+                // Started, and not contained. End it rather than hand back a lane whose backstop is
+                // absent - the position bounded_process.py:224-226 already ships.
+                process.Kill(entireProcessTree: true);
+                process.WaitForExit();
+                process.Dispose();
+                CloseJob(job);
+
+                throw new AgentPlaneException(
+                    AgentPlaneErrorCodes.EngineDidNotStart,
+                    $"the engine '{launch.FileName}' started but could not be contained, so it was "
+                    + $"ended rather than left running: {error.Message}");
+            }
+        }
+
+        var engine = new AcpEngineProcess(process, job, findings, report);
         engine.PumpStandardError();
         return engine;
+    }
+
+    /// <summary>Closes the job handle, if there is one. Closing it is also what reaps the tree.</summary>
+    private static void CloseJob(IntPtr job)
+    {
+        if (job != IntPtr.Zero && OperatingSystem.IsWindows())
+        {
+            ConPtyInterop.CloseHandle(job);
+        }
     }
 
     /// <summary>Waits for the child to end on its own.</summary>
@@ -143,12 +200,24 @@ public sealed class AcpEngineProcess : IDisposable
     /// Ends the lane's engine, whole tree, and waits until it is actually gone.
     /// </summary>
     /// <remarks>
-    /// The wait is the part that matters: a kill request that is not waited on turns "the child is
-    /// dead" into a claim rather than an observation, and the caller has no way to tell the
-    /// difference.
+    /// <para>The wait is the part that matters: a kill request that is not waited on turns "the
+    /// child is dead" into a claim rather than an observation, and the caller has no way to tell
+    /// the difference.</para>
+    ///
+    /// <para><b>This is the graceful path, and it is no longer the only one.</b> A host that is
+    /// killed never reaches this method; the job handle goes with the host's handle table and
+    /// Windows reaps the tree. Closing that handle here is therefore both the release of a handle
+    /// and the last line of the same reaping, which is why it runs even when the kill above
+    /// threw.</para>
     /// </remarks>
     public void Dispose()
     {
+        if (_reaped)
+        {
+            // Idempotent: the job handle below must not be closed twice.
+            return;
+        }
+
         try
         {
             if (!_process.HasExited)
@@ -168,6 +237,7 @@ public sealed class AcpEngineProcess : IDisposable
 
         _reaped = true;
         _process.Dispose();
+        CloseJob(_job);
     }
 
     /// <summary>

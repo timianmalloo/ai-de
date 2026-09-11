@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
@@ -127,7 +128,22 @@ def run_tests(projects: list[Path], filter_expr: str | None = None, key: str | N
         if filter_expr:
             command += ["--filter", filter_expr]
 
-        subprocess.run(command, cwd=REPO, capture_output=True, text=True, check=False)
+        # MSBuild's worker nodes outlive the driver by design: `dotnet test` starts them with
+        # /nodeReuse:true so the next build can reuse them, and they linger for fifteen minutes
+        # afterwards whether or not there is a next build. When the driver is killed rather than
+        # allowed to exit -- a cancelled CI job, a closed terminal, an agent session that ends --
+        # the workers survive it and nothing is left that names them. Sixteen such orphans were
+        # counted on this machine: live `dotnet` processes whose parents were gone.
+        #
+        # Set in the ENVIRONMENT and not on the command line: this gate's argv is read by other
+        # things, and an extra flag there is a change to a contract. MSBUILDDISABLENODEREUSE is
+        # the documented switch and it is already the shape used at
+        # spikes/extraction-containment/LowIntegrity.cs:145.
+        environment = dict(os.environ)
+        environment["MSBUILDDISABLENODEREUSE"] = "1"
+
+        subprocess.run(
+            command, cwd=REPO, capture_output=True, text=True, check=False, env=environment)
 
 
 def read_counts(project_name: str) -> tuple[dict[str, int], str] | None:

@@ -158,7 +158,33 @@ internal static partial class ConPtyInterop
 
     [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static partial bool AssignProcessToJobObject(IntPtr job, IntPtr process);
+    private static partial bool AssignProcessToJobObject(IntPtr job, IntPtr process);
+
+    /// <summary>
+    /// Puts <paramref name="process"/> into <paramref name="job"/>, and throws when that did not
+    /// happen.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The import above is <c>private</c> so this is the only way to reach it.</b> Both
+    /// shipped call sites used to discard the boolean, and a discarded boolean is the whole defect:
+    /// the job exists, the process is outside it, containment silently did not happen, and every
+    /// test still passes. Measured on the pre-fix code against a job whose object had been closed —
+    /// the call returned <c>false</c>, set <c>ERROR_INVALID_HANDLE</c> (6), raised nothing, and left
+    /// the child running uncontained.</para>
+    ///
+    /// <para><b>Not a fourth spelling.</b> This is the check this repository had already written
+    /// three times and used at neither shipped C# site:
+    /// <c>spikes/extraction-containment/Sandbox.cs:86-87</c>,
+    /// <c>docs/ai-forward-pack/scripts/bounded_process.py:125-127</c> and <c>:224-226</c>.</para>
+    /// </remarks>
+    /// <exception cref="Win32Exception">The assign failed, carrying the operating system's reason.</exception>
+    internal static void AssignProcessToJob(IntPtr job, IntPtr process)
+    {
+        if (!AssignProcessToJobObject(job, process))
+        {
+            throw new Win32Exception(Marshal.GetLastWin32Error(), "AssignProcessToJobObject failed");
+        }
+    }
 
     /// <summary>
     /// Starts a process attached to <paramref name="console"/>.
