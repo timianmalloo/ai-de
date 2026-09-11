@@ -72,6 +72,30 @@ public sealed class SessionConfigStore
         }
     }
 
+    /// <summary>
+    /// Applies the attach toggle for new runs and emits <c>session.config</c> (C21).
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Through the store, exactly like the backend toggle.</b> C21 needs no Settings surface
+    /// and invents no config concept: it is a new field on an existing record, written with an
+    /// existing event kind, by the same read-modify-write under the same lock.</para>
+    ///
+    /// <para><b>Host-owned and unreachable from the page (C21(e)).</b> No page-to-host kind reads or
+    /// writes it and none may be added — the page may be <i>told</i> the state so it can render a
+    /// disabled affordance; it may never <i>report</i> it. The asymmetry is deliberate: the composer
+    /// may not carry a dial that loosens governance, and this one only restricts.</para>
+    /// </remarks>
+    public SessionConfig SetAttachEnabled(bool attachEnabled, DateTimeOffset now)
+    {
+        lock (_gate)
+        {
+            var updated = ReadConfigUnsafe() with { AttachEnabled = attachEnabled };
+            WriteConfigUnsafe(updated);
+            AppendEventUnsafe(SessionEventKinds.Config, updated, now);
+            return updated;
+        }
+    }
+
     /// <summary>Every event this session has ever emitted, in append order.</summary>
     public IReadOnlyList<SessionEvent> ReadEvents()
     {
@@ -102,9 +126,14 @@ public sealed class SessionConfigStore
         Directory.CreateDirectory(SessionPaths.SessionDirectory(WorkspaceRoot, SessionId));
 
         var nextSeq = ReadEventsUnsafe() is { Count: > 0 } existing ? existing[^1].Seq + 1 : 1;
+        // The body carries the resulting config's toggles. `attachEnabled` joins `enabledBackends`
+        // rather than getting a kind of its own: C21 is a field on an existing record with an
+        // existing event kind, and its presence in a `session.config` line is what distinguishes an
+        // operator decision from the shipped default (C21(c)).
         var body = new JsonObject
         {
             ["enabledBackends"] = new JsonArray([.. config.EnabledBackends.Select(b => JsonValue.Create(b))]),
+            ["attachEnabled"] = config.AttachEnabled,
         };
         var line = JsonSerializer.Serialize(new SessionEvent(nextSeq, now, kind, body));
 

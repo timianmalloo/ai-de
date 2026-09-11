@@ -22,7 +22,38 @@ public sealed record SessionConfig(
     string Name,
     string WorkspaceId,
     DateTimeOffset CreatedAt,
-    IReadOnlyList<string> EnabledBackends);
+    IReadOnlyList<string> EnabledBackends)
+{
+    /// <summary>
+    /// Whether this session may attach files to a composed prompt (Security/Privacy <b>C21</b>).
+    /// <b>Off by default</b>, confirmed by the human on 2026-09-10.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>It gates the attach path — not egress, not send, not paste.</b> Gating all model
+    /// egress or the composer's send would disable the product's core function and be dishonest in a
+    /// specific way: the agent CLI is a separate process the operator launches from a terminal
+    /// anyway, so switching off this app's send does not stop the egress, it routes around it. Attach
+    /// is the honest line because it is the only path that puts bytes into the prompt the operator
+    /// did not type.</para>
+    ///
+    /// <para><b>An init-only property rather than a positional parameter</b> so a
+    /// <c>session.json</c> written before this field existed still reads, and reads false — which is
+    /// the safe state, not merely the convenient one.</para>
+    ///
+    /// <para><b>"Off" is distinguishable from "never asked" by the EXISTING event log, and no
+    /// provenance field is added here.</b> False with no <c>session.config</c> event naming it is the
+    /// shipped default; with one, an operator decided. The append-only log is already the record, and
+    /// two definitions of one fact is a defect signature — so there is deliberately no
+    /// <c>source</c> or <c>decidedAt</c> member on this type.</para>
+    ///
+    /// <para><b>Honest limit, stated here rather than discovered later.</b> This record is
+    /// per-session and operator-writable, so this is <b>a default with a safe initial state, not an
+    /// enforceable policy</b>. A deployment that must <i>prevent</i> attach needs a
+    /// non-session-overridable layer, which is Phase 2 — named here as the upgrade trigger. Nothing
+    /// may describe this field as restricting or preventing attach for a deployment.</para>
+    /// </remarks>
+    public bool AttachEnabled { get; init; }
+}
 
 /// <summary>
 /// The <c>kind</c> strings this slice adds to the open, unenumerated vocabulary
