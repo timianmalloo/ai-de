@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 54 members, 92% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 58 members, 93% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Sessions`
 
-**12 public types · 54 public members · 92% documented.**
+**12 public types · 58 public members · 93% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -347,6 +347,10 @@ are unchanged and the standalone draft surface still exists, exactly as Addendum
 | `FrameworkElement ContentFor(string modeId)` | The content built for a mode, creating it on first use and holding it after. |
 | `bool HasBuilt(string modeId)` | Whether a mode's content has been built yet. |
 | `void AttachLane(SessionLane lane)` | Holds a lane for the document's lifetime, so nothing else has to remember to. |
+| `Task LastLaunch { get; private set; } = Task.CompletedTask` | The last launch's own task. Completed when nothing has been sent yet. |
+| `GovernedRunResult? LastRunResult { get; private set; }` | What the last completed run reported, or null when none has completed. |
+| `string? LastRunFailure { get; private set; }` | Why the last run did not complete, or null. Never a plausible substitute for a result. |
+| `RunEventRelay? LastRelay { get; private set; }` | The relay the last launch is publishing through — the console's side of the seam. |
 | `void Dispose()` | Closes the document: its lanes stop, and every mode it built is released. |
 
 ### `SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null)`
@@ -369,6 +373,14 @@ The content built for a mode, creating it on first use and holding it after.
 **Remarks.** Lazy, then retained — the idiom `ShellModeController` uses for the Explorer surface, for
 the same reason: a mode nobody has opened should not cost anything, and re-entering one must
 not rebuild it.
+
+### `Task LastLaunch { get; private set; } = Task.CompletedTask`
+
+The last launch's own task. Completed when nothing has been sent yet.
+
+**Remarks.** It never faults: a run that refuses is a `LastRunFailure`, because a failed
+launch that surfaced only as an unobserved task exception would be a run nobody can see
+did not happen.
 
 ### `void Dispose()`
 

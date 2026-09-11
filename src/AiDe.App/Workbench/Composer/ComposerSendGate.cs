@@ -65,6 +65,22 @@ public sealed class ComposerSendGate
 {
     private readonly Lock _gate = new();
 
+    /// <summary>
+    /// Raised with the request a send produced, once per send, <b>after the gate's lock is
+    /// released</b>.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The announcement is at the construction site, which is why the discarding caller
+    /// stopped mattering.</b> <c>ComposerSurface.Send()</c> returns the request to a WPF click
+    /// handler that throws it away, and the accelerator path does the same; both nonetheless reach a
+    /// run, because the request is announced here — where it is built — rather than at whichever
+    /// caller happened to ask for it. One construction site, one announcement (DM7).</para>
+    ///
+    /// <para><b>Outside the lock, deliberately.</b> The subscriber launches a governed run; raising
+    /// this while <c>_gate</c> is held would hold the send gate for the length of that run.</para>
+    /// </remarks>
+    public event Action<GovernedRunRequest>? Sent;
+
     /// <summary>How many runs this block has started. The observable US-ED5/ED6/ED7 rest on.</summary>
     public long SendCount { get; private set; }
 
@@ -107,6 +123,8 @@ public sealed class ComposerSendGate
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(draft);
 
+        GovernedRunRequest request;
+
         lock (_gate)
         {
             if (SendCount > 0)
@@ -134,7 +152,7 @@ public sealed class ComposerSendGate
                 return null;
             }
 
-            var request = new GovernedRunRequest(
+            request = new GovernedRunRequest(
                 RepositoryRoot: context.RepositoryRoot,
                 DataDirectory: context.DataDirectory,
                 AdapterInstallRoot: context.AdapterInstallRoot,
@@ -152,8 +170,10 @@ public sealed class ComposerSendGate
 
             SendCount++;
             refusal = null;
-            return request;
         }
+
+        Sent?.Invoke(request);
+        return request;
     }
 }
 
