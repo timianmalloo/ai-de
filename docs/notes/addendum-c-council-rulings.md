@@ -1,6 +1,6 @@
 ---
 id: note-addendum-c-council-rulings
-title: "Decision note — Rulings 50–55: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, and page one"
+title: "Decision note — Rulings 50–62: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
 type: doc
 status: accepted
 owner: "@timianmalloo"
@@ -8,6 +8,7 @@ phase: "1"
 tags: [decision-note, ruling, conductor, addendum-c, perspective, ui, docking, explorer]
 links:
   - { to: plan-addendum-c-modes, rel: relates-to }
+  - { to: spec-addendum-c-perspectives, rel: relates-to }
   - { to: plan-conductor-front-door, rel: relates-to }
   - { to: adr-0017-primary-view-mode, rel: relates-to }
   - { to: spec-knowledge-explorer-mode, rel: relates-to }
@@ -16,6 +17,8 @@ links:
   - { to: note-front-door-council-rulings, rel: refines }
 review-by: 2026-12-11
 summary: >-
+  Rulings 50–55 issued before any Addendum C spec was written; 56–62 issued at the spec's gate —
+  56 and 57 file the operator's own composer verdicts, 58–62 rule on the reconciliation table.
   Six rulings the Owner issued before any Addendum C spec was written, on the evidence the conductor
   brought at node R0 of plan-addendum-c-modes. They fix the vocabulary (Perspective), the phasing
   (F5 untouched; code after F5 merges), ADR-0017's fate (retained and amended), the graph model (one
@@ -23,7 +26,7 @@ summary: >-
   spec written without them would get wrong.
 ---
 
-# Decision note — Rulings 50–55
+# Decision note — Rulings 50–62
 
 ## Provenance
 
@@ -237,3 +240,267 @@ set or gets its own — a design question for `/design-slice`, not a spec questi
   ("supersede" or "retain, modes constrain only the workbench"). D1's brief therefore carries the
   amended shape: perspectives as primary view modes, Coding's body = today's host, Architecture's body
   = a second allow-listed host, Explore full-window and unchanged. Discharged with a third outcome.
+
+
+---
+
+# Rulings 56–62 — issued at the spec's gate (2026-09-11)
+
+## Provenance
+
+Issued by the **Owner** (`fable`) after `spec-addendum-c-perspectives` cleared its four vetoes at gate
+pass 3. **Rulings 56 and 57 are filings, not judgements:** they record the operator's own composer
+verdicts — audit entries `al-01M28T8C2WEVN4J0D10XQJMJAZ` (the conductor's transcription) and
+`al-01M28W210Q8QGKK38QEQ0WR1EB` (the verbatim text) — as numbered rulings so the spec can cite a
+number, and answer the one word the operator's text left open ("etc."). Rulings 58–62 dispose of
+§R rows 3, 7, 8, 9 and 17 of the spec. Evidence opened by the Owner: Addendum A `:121,:234`,
+Addendum B `:135,:176,:181-188,:209,:216`, CT19 (`communication-and-task-discipline.md:93`),
+`GoalBlock.cs:127-160`, `ComposerSurface.cs:25-27,284-293`, `LeaseDerivation.cs:49-50`,
+`SurfaceContentFactory.cs:70-123,315-341`, `knowledge-exploration.md:93-96`,
+`uml-erm-surfaces.md:90-93`, the Ruling 42 note `:71-91`, and the spec at
+`:149-175,:298-332,:425-451,:508-529,:570-578,:704-751,:1366-1381,:1569-1583`.
+
+---
+
+## Ruling 56 — PR-A filed: fan-out cap, budget **and tier** are session settings with defaults; no per-prompt field, no per-prompt override
+
+**RULING:** File the operator's verdict (2) as superseding Addendum A `:234` (R15 b2) for fan-out
+cap, budget and tier, and Addendum B `:135` and `:209` accordingly: the three are **session settings
+with defaults**, set in the New Session sheet and changed only in session settings, inherited by
+every prompt; tier is included — "etc." is read as tier, and that reading is now ruled, not inferred.
+
+**BECAUSE:** The operator's words are verbatim in `al-01M28T8C2WEVN4J0D10XQJMJAZ`: *"budget, cap etc.
+are not intrinsic to the prompt, they are intrinsic to the session settings"* — a decision, filed
+here. Tier cannot stay per-prompt once the cap is per-session: CT19 defines the cap **as a function
+of the tier** (*"0 at T0, 2 at T1, the GO7 width cap at T2"*,
+`communication-and-task-discipline.md:93`), so a prompt-authored tier beside a session-authored cap
+is two definitions of one quantity (DM: derive-don't-store), and the spec's own state list already
+carries the symptom as a warning (*"T0 with fan-out 3"*, `:1374-1377`). The contract is unaffected:
+`SpawnContract.Validate` requires all six fields tier-blind (`GoalBlock.cs:131-149`) and the compiled
+block still carries the session's tier, so the audit `tier` field (AL5b) maps 1:1 as before. CT19's
+unit is the agent's *turn*; Addendum A §A3 (`:121`) makes bare "session" the user-facing container —
+the product's session is where a turn-level default is authored. **This is an extension of CT19 to
+the product, marked as such, not a reading of it.**
+
+**CONFIDENCE:** Verified (operator text, CT19, `Validate`, the spec's rows); the tier reading is the
+Owner's ruling on an open word.
+
+**SCOPE EFFECT:** S-1, S-2, S-4 filed. Cuts every per-prompt tier/cap/budget box and every override
+state (the spec's *"No override state: the settings have one home"* `:1376-1377` stands). Goal /
+Done-when / Not-in-scope stay content fields, refused inline at T2 (S-1; `GoalBlock.cs:121-125`). A
+send with empty derived structure is a Message shape (US-C13 shape rule `:715-721`) — that, not a
+lower session tier, is how a trivial prompt in a T2 session stays one action. Regression tests
+re-scope to the content fields (S-4).
+
+**CONDITIONS:** If the operator answers the tier question directly, their answer is filed over this
+ruling. Revisit if the operator is observed changing the session tier prompt-to-prompt — that is the
+signal a per-prompt tier was real, and the remedy is re-ruled then, not pre-built now.
+
+**RECORD AS:** Ruling 56 — PR-A filed: tier, fan-out cap and budget are session settings with
+defaults, inherited by every prompt, no per-prompt field or override (A `:234`, B `:135`, `:209`
+superseded).
+
+---
+
+## Ruling 57 — PR-B filed: the composer is a conversation; S-3 and S-5 superseded, S-8 admitted as an Owner extension under D-6, S-6/S-9 kept, Ruling 42 intact
+
+**RULING:** File the operator's verdict (3) as superseding Addendum B `:183` (template form
+rendering) and `:216` ("as a validated form"): the composer is one primary prompt editor, a
+template's structure renders as derived, prefilled, inline-editable structure, and the compiled
+prompt is on demand only; **admit S-8** (B `:187`'s "reviewable form" for conductor round-trips
+becomes the same inline structure), marked as the Owner's extension and phased under D-6; Ruling 42
+is untouched.
+
+**BECAUSE:** Verdict (3) verbatim: *"the whole enter-in-text-boxes-and-see-the-render-below is
+awful"*. The as-built composer is exactly that: *"The compiled view is a plain text box showing the
+whole prompt"* (`ComposerSurface.cs:25-27`) — which contradicts B `:184`'s own word *toggle*, so S-6
+is a restoration, not a supersession. S-8 is admitted because B `:187` defines the round-trip as
+arriving *"exactly like an assist result"* — the same form mechanism the operator condemned;
+refusing S-8 would keep the condemned mechanism alive on one path. It is an extension (the operator
+did not name round-trips), and D-6 (`:328-330`) defers the build until a reply-channel seam exists,
+so the operator can reverse it at zero cost. Ruling 42 stands: the lease is derived from `@mentions`
+in the compiled text (`LeaseDerivation.cs:49-50`, `@(\S+)`; the Ruling 42 note `:73-74,:89-91`), and
+the only composer change touching it is the refusal copy at `ComposerSurface.cs:288-291`, which
+never says that an `@path` mention is what derives a scope — US-C13 fixes the copy and offers the
+picker; who computes the glob is unchanged.
+
+**CONFIDENCE:** Verified for S-3, S-5, S-6, S-9 and Ruling 42; **Inferred** for S-8 (Owner extension
+of the verdict to a case the operator did not mention).
+
+**SCOPE EFFECT:** S-3, S-5 filed; S-8 admitted, build gated on D-6 (until then B `:187` as written).
+Kept as written: B `:181` shape control (S-9), B `:184` compiled-on-demand (S-6), US-ED5/ED6/ED7
+staging. Cuts: any field box above or below the editor, any permanently rendered compiled block, any
+`ComposerFieldDescriptor` widget at rest (US-C13 oracle `:711-714`). The layout defect of verdict
+(1) stays an investigation finding (`investigate/composer-input`, INV-0007), not spec.
+
+**CONDITIONS:** The operator may overrule S-8 before D-6 is admitted; then B `:187` stands
+permanently. Ruling 42 is falsified — and this ruling re-opened — if any composer change lets a
+write scope be typed as a pattern rather than derived from a mention.
+
+**RECORD AS:** Ruling 57 — PR-B filed: the composer is a conversation (B `:183`, `:216` superseded;
+S-8 admitted as Owner extension under D-6; B `:181`, `:184` kept; Ruling 42 intact).
+
+---
+
+## Ruling 58 — §R row 3: Explore's top-bar view selector loses its structural entries; UML/ER views are Architecture kinds reached by a routed kind-open
+
+**RULING:** Cut the *view selector (graph / UML class / UML component / ERM)* from Explore's IA as an
+in-surface control: the three structural entries become kind-opening actions that route to
+Architecture per US-C3, and with only "graph" left the selector is dropped, not repointed;
+`spec-knowledge-exploration` Part B IA `:96` gets an erratum row citing this ruling.
+
+**BECAUSE:** Ruling 53 bans an in-surface knowledge/architecture toggle and makes UML/ER views
+projections owned by the Model surface; `uml-erm-surfaces.md:90-93` gives those views their own IA —
+catalog → view master-detail with a C4-level switch — that *"composes with — does not duplicate"*
+the explorer. A selector in Explore that renders UML class/component/ERM is the duplicate that clause
+forbids and a fourth "mode" under Ruling 50. US-C3 `:520-527` already defines the routed kind-open in
+the order Architecture · Coding, with the reading host winning a shared kind. US-K7
+(`knowledge-exploration.md:75`) is unaffected: it requires standard notation *when the operator picks
+a structural view*, and that pick now lands in Architecture.
+
+**CONFIDENCE:** Verified.
+
+**SCOPE EFFECT:** Constrains Explore to graph-only (consistent with `spec-knowledge-explorer-mode`
+non-goal 1 and Ruling 54's "no new graph capability in Explore"). The 2D/3D toggle, depth control and
+metric overlay at `:95-96` are untouched — they are graph controls, not view kinds. Adds one erratum
+row to `spec-knowledge-exploration`; the HTML addenda are not touched (Ruling 51).
+
+**CONDITIONS:** Revisit if Architecture's Model surface cannot open scoped to Explore's current
+selection — then the drill loses its context and the fix is a scope parameter on the kind-open,
+still not a selector in Explore.
+
+**RECORD AS:** Ruling 58 — Explore's view selector cut; UML class/component/ERM are Architecture
+kinds opened by US-C3 routing; erratum on `spec-knowledge-exploration` Part B `:96`.
+
+---
+
+## Ruling 59 — §R row 7: `joins` and `codeviewer` admitted to Architecture; `search` and `diagnostics` stay out; D-0 deferred
+
+**RULING:** Admit `joins` and `codeviewer` to the Architecture allow-list — Ruling 54's principle
+was *existing surfaces only* and its three names were an enumeration of what was shown to me, not a
+closed set — with `codeviewer` at default none (opened from a node) and `joins` in the default only
+while it renders real content; confirm the Simplifier's cut of `search` and `diagnostics`, and
+confirm D-0 (solution/tree view) as a fifth named-and-deferred view.
+
+**BECAUSE:** Both kinds exist as descriptor rows (`SurfaceContentFactory.cs:112` `JoinSurface`,
+`:122` `CodeViewerView`). `joins` renders code/schema/infra joins with Verified vs Inferred — the
+operator's UC3 (6) is *"layer and component diagrams derived from the code and from things like
+bicep"* (spec `:76-77`), which is the infra join. `codeviewer` is required by US-C3's routing rule
+(`:520-527`): "View source" from an Architecture node must not leave the reading host, so the kind
+must be admitted there. `search` is an unwired scaffold (`:435`) and `diagnostics` answers no UC3
+item (`:437`) — a menu row for what cannot work is AR3's forbidden empty gesture. D-0: no
+`SolutionTree`/`WorkspaceTree` type exists (Ruling 54 BECAUSE), so it is deferred the same way as
+D-1…D-4 (`:313-319`).
+
+**CONFIDENCE:** Verified for existence, routing and the cuts; **Inferred** that `joins` renders
+against a real workspace (the inventory's claim; the Owner did not open `JoinSurface`).
+
+**SCOPE EFFECT:** Ruling 54's enumeration amended to five existing kinds: `classdiagram`,
+`sequence`, `contexts`, `joins`, `codeviewer`. No new surface built. D-0 admitted to the allow-list
+only in the slice that builds it (`:320-321`).
+
+**CONDITIONS:** If `joins` renders empty against a real workspace, it stays admitted but leaves the
+Architecture default (a default tab that is always empty is the Explore-pane defect Ruling 55d just
+removed). `search` re-admits when an index is wired, one kind at a time.
+
+**RECORD AS:** Ruling 59 — Architecture admits `joins` and `codeviewer` (existing kinds);
+`search`/`diagnostics` cut; D-0 solution tree named-and-deferred.
+
+---
+
+## Ruling 60 — §R row 8: the Loomkeeper kinds are homed in Coding, `sessions` alone in the default; no fleet perspective
+
+**RULING:** Confirm the placement — `sessions`, `board`, `leaderboard`, `ledger`, `daydreams` are
+admitted to Coding, only `sessions` in the Coding default, none in Architecture, and `daydreams`
+becomes reachable through the derived menu by construction (US-C4).
+
+**BECAUSE:** The kinds exist (`SurfaceContentFactory.cs:113-117`) and observe the *terminal* side of
+UC1 — `Sessions`' own empty state sends the operator to the Terminal menu (`:335-336`), which is
+Ruling 54's secondary model. A "Fleet" perspective would be a new rail destination outside the closed
+Perspective set (Ruling 50) and outside Ruling 54's build; hiding the kinds would drop working
+capability. `daydreams` has no command, no menu row and no default-layout slot — in `src/AiDe.App`
+the string appears only in `SurfaceContentFactory.cs` and `WorkbenchShell.cs` (grep, Verified) — so a
+menu derived from the allow-list (Ruling 55b) is the smallest thing that makes it reachable without
+a hand-written list. Architecture excludes them by intent as a reading host (`:448-451`).
+
+**CONFIDENCE:** Verified.
+
+**SCOPE EFFECT:** Freezes the Coding default at Left = Terminal sessions, Bottom = one terminal,
+Center = empty state (US-C6 `:572-576`). No Loomkeeper kind may be hidden because it is empty at
+startup — each keeps its teaching empty state.
+
+**CONDITIONS:** Re-home the five as a set, in one ruling, if the operator names a fleet/observation
+use case (a UC5); until then no kind moves individually.
+
+**RECORD AS:** Ruling 60 — Loomkeeper kinds homed in Coding, `sessions` alone in the default,
+`daydreams` reachable via the derived menu; no fleet perspective.
+
+---
+
+## Ruling 61 — §R row 9: Provenance is not a Coding surface; the Evidence master-detail belongs to Architecture
+
+**RULING:** Confirm that `view` (Evidence, master) and `inspector` (Provenance, detail) leave Coding
+for Architecture (Left / Right), that the selection channel between them is a `/design-slice`
+decision, and that the owed "two kinds render different content" test lands in the slice that moves
+them.
+
+**BECAUSE:** `SurfaceContentFactory.cs:83-88` records Provenance as *the DETAIL half of a
+master-detail screen* whose selection wire was dropped, leaving two byte-identical copies of the
+master (`:74-77`); the operator's UC1 names session, CLI and hybrid — no evidence list — and Ruling
+54 already excludes the reading kinds from Coding (`:446-447`). Restoring the pair needs a selection
+channel between two panes, which the same comment names as a design decision (`:99-101`); US-C6's
+positive oracle (`:577-578`) is the owed control from Ruling 55d. What the operator may want *in
+Coding* about evidence — "what did the agent change" — is `codeviewer` and `ledger` (both admitted
+to Coding, `:433,:436`), not Provenance.
+
+**CONFIDENCE:** Verified.
+
+**SCOPE EFFECT:** Cuts "Explore", "Domain" and "Provenance" captions from the Coding host (US-C6
+falsifier `:574-575`). Architecture default: Left Evidence, Right Provenance (`:439-440`). The
+`inspector` kind must render the selected row's detail, never a second list.
+
+**CONDITIONS:** Re-rule only if an evidence *row* (not source or ledger) is shown to be needed inside
+a Coding session; the request re-admits `view` alone, never the pair.
+
+**RECORD AS:** Ruling 61 — Provenance is not a Coding surface; `view`/`inspector` are Architecture's
+Evidence master-detail, selection channel to `/design-slice`, US-C6 oracle in the same slice.
+
+---
+
+## Ruling 62 — §R row 17: the caption is "Terminal sessions"; A3 needs no erratum; the kind string `sessions` is not renamed
+
+**RULING:** Confirm the caption **"Terminal sessions"** for the `sessions` kind in the Coding
+default; Addendum A §A3 needs no erratum because the caption is A3 executed, not amended; the kind
+string `sessions` stays as-is.
+
+**BECAUSE:** A3's rule (`ai-de-spec-addendum-a-session-experience.html:121`) already says bare
+"session" means the user-facing container **and** that the Watcher's session vocabulary migrates to
+*"lane"/"terminal session"* opportunistically — *"new code complies, touched code migrates"*.
+Captioning the pane "Terminal sessions" is that migration on the one screen where both meanings
+would otherwise meet. The surface lists Loomkeeper-observed terminals
+(`SurfaceContentFactory.cs:315-323`). A kind string is a persisted layout key, not UI copy; A3
+governs the words the operator reads.
+
+**CONFIDENCE:** Verified for A3 and the caption; the one-letter-away hazard is cited by the spec to
+Ruling 18 and not re-opened here.
+
+**SCOPE EFFECT:** US-C6's falsifier (no bare "Sessions" caption in the Coding host, `:575`) stands.
+Finding, not new scope: the same surface's empty-state copy says *"No sessions yet. Open a Claude
+Code or GitHub Copilot session…"* (`:335-336`) — bare "session" for a terminal session; under A3's
+*touched code migrates* rule, that copy changes to "terminal session" in the slice that touches this
+surface, and no earlier.
+
+**CONDITIONS:** Falsified if any Coding-host surface other than the session document is ever
+captioned with bare "Session(s)"; the fix is the caption, never the rule.
+
+**RECORD AS:** Ruling 62 — `sessions` kind captioned "Terminal sessions" in Coding; A3 executed, no
+erratum; kind string unchanged; empty-state copy migrates when touched.
+
+---
+
+## Filing note
+
+All seven are Verified except where marked: Ruling 56's tier reading is an Owner extension of CT19 to
+the product session (**the operator was asked the tier question directly; an answer files over
+56**); Ruling 57's S-8 is an Owner extension of verdict (3); Ruling 59's "joins renders" is the
+inventory's claim.

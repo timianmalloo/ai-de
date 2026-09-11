@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T18:56:22Z",
+  "generated": "2026-09-11T19:15:39Z",
   "audit": [
     {
       "actor": null,
@@ -11734,15 +11734,6 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M28X1SAPJE12TF0FKMEQXHZT",
-      "shortname": "investigate-contrast-census",
-      "datetime": "2026-09-11T18:53:01Z",
-      "session": "contrast-census",
-      "prompt": "We still have lots of cases of dark/hard-to-read font colors with regards to the tool background. We need to ensure we have a consistent color palette that works consistently, and stop putting dark fonts on dark backgrounds and light fonts on light backgrounds.",
-      "summary": "Two verified findings. (1) The photographed sites are the ORIGINAL instance on a Release binary built before 5213d7bb merged: both matching Release builds carry be68ca1c / 2a363f4f in their informational version and neither contains the fix; the white TextBox is impossible on HEAD (measured sunken). (2) On main a census of the real App booted out of process (180 pairings) finds 14 below floor the floor cannot see: 12 at 2.37:1 where the fix's implicit TextBlock style overrides every container's accent-ground state ink by inheritance, 2 disabled controls whose DisabledTextBrush never reaches the glyphs, 1 page-CSS hint at 4.47:1. Necessary+sufficient: setter removed -> 12->0 (and 3 masked selected-inactive tab sites at 1.45 appear); setter present -> 12. Class: the leaf overrides the container's pairing (proposed DC-136), DC-135 recurrence 2, DC-131 instance, an unattributed-binary report (proposed DC-137). Phased plan: A remove the leaf ink setter + B selected-ACTIVE tab trigger + DESIGN.md on-accent row; TokenDisciplineTests source rule; page CSS tokens on host.init; app.start with the sha; register; census reach; muted-token decision. Stopped for review.",
-      "kind": "skill",
-      "skill": "investigate",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/investigations/INV-0007-contrast-floor-passes-while-the-shell-fails.md",
@@ -11751,30 +11742,174 @@ window.AUDIT_DATA = {
         "tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs",
         "tests/AiDe.App.Tests/ShellContrastCensusTests.cs"
       ],
+      "datetime": "2026-09-11T18:53:01Z",
+      "done_when": "INV-0007 exists with the census table verbatim; the census (AiDe.App.ContrastProbe + ShellContrastCensusTests) is committed red on main; audit logged; pushed to investigate/contrast-census",
+      "duration_seconds": 2655.0,
+      "fan_out": 1,
+      "git": {
+        "branch": "investigate/contrast-census",
+        "pushed": null,
+        "sha": "f5c0f740fd0488baa00dd2de4320c187f585058e",
+        "short": "f5c0f740f"
+      },
+      "goal": "Prove, by a census of the shell the product composes, why unreadable text ships past U2's contrast floor; name the mechanism per site; propose the class and a phased plan; stop before fixing",
+      "id": "al-01M28X1SAPJE12TF0FKMEQXHZT",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "We still have lots of cases of dark/hard-to-read font colors with regards to the tool background. We need to ensure we have a consistent color palette that works consistently, and stop putting dark fonts on dark backgrounds and light fonts on light backgrounds.",
+      "session": "contrast-census",
+      "shortname": "investigate-contrast-census",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "investigate",
+      "started_at": "2026-09-11T18:08:46Z",
+      "summary": "Two verified findings. (1) The photographed sites are the ORIGINAL instance on a Release binary built before 5213d7bb merged: both matching Release builds carry be68ca1c / 2a363f4f in their informational version and neither contains the fix; the white TextBox is impossible on HEAD (measured sunken). (2) On main a census of the real App booted out of process (180 pairings) finds 14 below floor the floor cannot see: 12 at 2.37:1 where the fix's implicit TextBlock style overrides every container's accent-ground state ink by inheritance, 2 disabled controls whose DisabledTextBrush never reaches the glyphs, 1 page-CSS hint at 4.47:1. Necessary+sufficient: setter removed -> 12->0 (and 3 masked selected-inactive tab sites at 1.45 appear); setter present -> 12. Class: the leaf overrides the container's pairing (proposed DC-136), DC-135 recurrence 2, DC-131 instance, an unattributed-binary report (proposed DC-137). Phased plan: A remove the leaf ink setter + B selected-ACTIVE tab trigger + DESIGN.md on-accent row; TokenDisciplineTests source rule; page CSS tokens on host.init; app.start with the sha; register; census reach; muted-token decision. Stopped for review.",
       "tags": [
         "ui",
         "contrast",
         "census"
       ],
-      "outcome": "success",
-      "goal": "Prove, by a census of the shell the product composes, why unreadable text ships past U2's contrast floor; name the mechanism per site; propose the class and a phased plan; stop before fixing",
-      "done_when": "INV-0007 exists with the census table verbatim; the census (AiDe.App.ContrastProbe + ShellContrastCensusTests) is committed red on main; audit logged; pushed to investigate/contrast-census",
       "tier": "T1",
-      "fan_out": 1,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
-      "started_at": "2026-09-11T18:08:46Z",
-      "duration_seconds": 2655.0,
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-11T18:35:40Z",
+      "duration_seconds": 3537.0,
+      "id": "al-01M28W210Q8QGKK38QEQ0WR1EB",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "I think the experience is very cluttered (rapidly) because it is mixing use cases in a common set of docks. We need to clean up and refactor the entire user experience and tighten up what can be done where and when.\nUse Case 1: Agentic Coding â€” the primary model is the session construct we are working on now; the secondary model is CLI instances in the tool (terminal); the third model is a hybrid, some work in the session experience, some in CLI. The 80% case and where most of our calories must be spent is the primary model, which has to be a seamless, joyful and extremely productive experience.\nUse Case 2: Knowledge Exploration and Visualization â€” the core is in the Explorer view already: open the graph and be able to search or navigate in the graph; for any given node you should have the appropriate viewing surface â€” metadata, markdown, html, code etc. The explorer should be the way you walk the graph to learn about knowledge, not how you think of architecture.\nUse Case 3: Code and Architecture understanding â€” two models: (1) a solution/tree view of the code, data, architecture artifacts in the project/repo; (2) a graph view of the code, data, architectureâ€¦ and even knowledge (similar to the explorer). This view focuses on broad-based understanding that narrows to the specific: (1) the Domain Entities; (2) the Entry Points â€” API surface, UX surface etc â€” that allow one to reason over the solution from a particular entry point; (3) the entire class diagram or data model (ERM or Entity Model) â€” this has to scale, the current class diagram doesn't scale well; (4) the data flow from an entry point; (5) the sequence diagram from a given entry point or a method; (6) the conceptual architecture: layer and component diagrams derived from the code and from things like bicep.\nUse Case 4: Test coverage â€” not broached as yet; later: the right test dashboards and what kind of debugging experience we need.\nFor all of these: the side tool bar (where the explorer icon is) should have icons for all of these use cases, and then we use the same docking architecture BUT the things that can be viewed, docked are intrinsic to the context of the use case â€” e.g. no sequence diagram in the agentic coding use case. The top menu bar options should be contextually aligned to which use case the main window is in â€” think of this as the \"current mode\".\n/Specify Addendum C to the current work which envisions the Mode the tool is in, tied to the Use Cases identified, constrains the surfaces that are tied to each use case and defines the top and side menus etc.",
+      "session": "addendum-c-chain",
+      "shortname": "operator-intent-addendum-c-verbatim",
+      "skill": null,
+      "started_at": "2026-09-11T17:36:43Z",
+      "summary": "The operator's Addendum C intent in full, as relayed verbatim by the conductor (session conductor-addendum-c) in S1's brief; the operator's own committed entry al-01M28QJMWGJT5AK438M37KJ9ZT is a 664-char paraphrase of the same instruction. Logged so the spec's quotations resolve to a committed record.",
+      "tags": [
+        "addendum-c",
+        "operator-intent"
+      ],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/specs/addendum-c-perspectives.md",
+        "docs/specs/conductor/README.md",
+        "docs/notes/addendum-c-coding-default-layout.md",
+        "docs/notes/addendum-c-inadmissible-kind-routing.md",
+        "docs/notes/addendum-c-menu-derivation-rule.md",
+        "docs/notes/addendum-c-persistence-slots.md"
+      ],
+      "datetime": "2026-09-11T18:40:30Z",
+      "done_when": "docs/specs/addendum-c-perspectives.md committed and pushed on feature/addendum-c with every Gherkin criterion naming a falsifier, the adversarial gate recorded, gates exit 0",
+      "fan_out": 3,
       "git": {
-        "sha": "f5c0f740fd0488baa00dd2de4320c187f585058e",
-        "short": "f5c0f740f",
-        "branch": "investigate/contrast-census",
-        "pushed": null
-      }
+        "branch": "feature/addendum-c",
+        "pushed": null,
+        "sha": "5d8d51e38db7bb0653ccf7258f8992dd0301e0bf",
+        "short": "5d8d51e38"
+      },
+      "goal": "Produce Addendum C - Perspectives as one three-layer spec bound to Rulings 50-55, with README row, decision notes, frontmatter and derived index",
+      "id": "al-01M28WAVQ7930JSTXQRV248G31",
+      "kind": "skill",
+      "outcome": "partial",
+      "persona_yield": [
+        {
+          "accepted": 11,
+          "persona": "the-simplifier",
+          "raised": 12
+        },
+        {
+          "accepted": 9,
+          "persona": "product-strategist",
+          "raised": 9
+        }
+      ],
+      "prompt": "I think the experience is very cluttered (rapidly) because it is mixing use cases in a common set of docks. We need to clean up and refactor the entire user experience and tighten up what can be done where and when.\nUse Case 1: Agentic Coding — the primary model is the session construct we are working on now; the secondary model is CLI instances in the tool (terminal); the third model is a hybrid, some work in the session experience, some in CLI. The 80% case and where most of our calories must be spent is the primary model, which has to be a seamless, joyful and extremely productive experience.\nUse Case 2: Knowledge Exploration and Visualization — the core is in the Explorer view already: open the graph and be able to search or navigate in the graph; for any given node you should have the appropriate viewing surface — metadata, markdown, html, code etc. The explorer should be the way you walk the graph to learn about knowledge, not how you think of architecture.\nUse Case 3: Code and Architecture understanding — two models: (1) a solution/tree view of the code, data, architecture artifacts in the project/repo; (2) a graph view of the code, data, architecture… and even knowledge (similar to the explorer). This view focuses on broad-based understanding that narrows to the specific: (1) the Domain Entities; (2) the Entry Points — API surface, UX surface etc — that allow one to reason over the solution from a particular entry point; (3) the entire class diagram or data model (ERM or Entity Model) — this has to scale, the current class diagram doesn't scale well; (4) the data flow from an entry point; (5) the sequence diagram from a given entry point or a method; (6) the conceptual architecture: layer and component diagrams derived from the code and from things like bicep.\nUse Case 4: Test coverage — not broached as yet; later: the right test dashboards and what kind of debugging experience we need.\nFor all of these: the side tool bar (where the explorer icon is) should have icons for all of these use cases, and then we use the same docking architecture BUT the things that can be viewed, docked are intrinsic to the context of the use case — e.g. no sequence diagram in the agentic coding use case. The top menu bar options should be contextually aligned to which use case the main window is in — think of this as the \"current mode\".\n/Specify Addendum C to the current work which envisions the Mode the tool is in, tied to the Use Cases identified, constrains the surfaces that are tied to each use case and defines the top and side menus etc.",
+      "session": "addendum-c-chain",
+      "shortname": "specify-addendum-c-perspectives",
+      "signals": {
+        "acceptance_met": false,
+        "regression": false,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "specify",
+      "summary": "Produced docs/specs/addendum-c-perspectives.md (three layers) + a row in docs/specs/conductor/README.md + four decision notes (Coding default layout; inadmissible-kind routing; menu derivation; persistence slots). Binds Rulings 50-55; folds two mid-run operator directives: the composer verdicts (page-one Supersessions S-1..S-9 of R15/R18/R19 clauses quoted by line, US-C13, for the Owner to file as PR-A/PR-B) and the token-only contrast NFR proven by a runtime census (A9, C7, P-11). Archetype: PerspectiveShell Arch:HubAndSpoke (auto-selected). Gate: pass 1 all three vetoes HELD (UX-IA routing rule; UX-A11y: Ctrl+K chords are announced, never bound; Test Architect: no seam/oracle for no-rebuild and rail claims); pass 2 (cap): UX-IA and UX-A11y CLEARED with conditions applied; Test Architect held on a NEW blocker (the spec's own false claim that a deriver exists - corrected, seam+oracle named) and Simplifier soft veto held on two majors (deriver deferred as D-5; per-prompt override cut) - both sets of conditions applied in text, un-reconfirmed because the cap fired; Product Strategist ACCEPT WITH CHANGES applied (committed operator entry is a paraphrase; the relayed verbatim text logged as al-01M28W210Q8QGKK38QEQ0WR1EB). Conflicts surfaced in section R (24 rows): knowledge-exploration's in-surface view selector vs Ruling 53; uml-erm Model-catalog IA vs per-kind surfaces; DESIGN.md menu names vs code; Addendum A A4.1 File placement; the sessions caption vs A3 naming; four announced chord collisions and zero bound chords; ADR-0017 still proposed; Addendum B missing from the README; no glossary; no XAML craft scan; DESIGN.md Arch:Desktop not a grammar value; syntax-comment below floor; no light-theme values.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/specs/addendum-c-perspectives.md"
+      ],
+      "datetime": "2026-09-11T18:55:23Z",
+      "done_when": "Simplifier (a),(b) and TA N1-N3 confirmed or held with clearing text; substitutions applied by the conductor, re-confirmed, committed",
+      "git": {
+        "branch": "feature/addendum-c",
+        "pushed": true,
+        "sha": "4b866670560195bcc9a0f7446390ad4759f43a7e",
+        "short": "4b8666705"
+      },
+      "goal": "Clear the two vetoes the cap left held on Addendum C by one bounded pass each",
+      "id": "al-01M28X63ZKE60ASBWY3XE9C788",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "Bounded third pass on spec-addendum-c-perspectives: Simplifier confirms (a) D-5 deferral and (b) the per-prompt override cut; Test Architect confirms N1-N3.",
+      "session": "addendum-c-chain",
+      "shortname": "specify-addendum-c-gate-pass-3",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "Simplifier cleared (a),(b); one leftover diff-expander reference swept. TA confirmed N2, N3; held N1(a) a [Verified] grep that failed its own check (four derive hits, none load-bearing), N1(b) a boundary row assuming a heuristic deriver, and NEW BLOCKER NB-1: 'empty Not-in-scope warns and sends' had no path to green because SpawnContract.Validate refuses a blank boundary by design. Conductor applied the prescribed text (Not-in-scope is the third gating content field; Addendum B :176's warn superseded), TA re-read the five sentences: all CONFIRMED, veto CLEARED. Authors did not self-clear.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/addendum-c-council-rulings.md",
+        "docs/specs/addendum-c-perspectives.md"
+      ],
+      "datetime": "2026-09-11T19:00:52Z",
+      "done_when": "Rulings 56-62 verbatim in note-addendum-c-council-rulings; spec cites 56/57 in place of PR-A/PR-B; status accepted; gates green",
+      "git": {
+        "branch": "feature/addendum-c",
+        "pushed": true,
+        "sha": "9a6bf41c5195c48845bc21fd97c2616dfd5422d7",
+        "short": "9a6bf41c5"
+      },
+      "goal": "File the operator's composer verdicts as Rulings 56/57 and the Owner's dispositions of §R rows 3,7,8,9,17 as 58-62; cite them from the spec; accept the spec",
+      "id": "al-01M28XG5J0RZTA7YT2GJEYV1AS",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "Owner (fable): file PR-A and PR-B with the tier question answered; rule on §R rows 3, 7, 8, 9, 17.",
+      "session": "addendum-c-chain",
+      "shortname": "owner-rulings-56-62-filed",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "56: tier, fan-out cap, budget are session settings with defaults (tier by ruling, an Owner extension of CT19; the operator's direct answer files over it). 57: the composer is a conversation; B :183/:216 superseded; S-8 admitted under D-6; Ruling 42 intact. 58: Explore's structural view selector cut, routed kind-opens to Architecture. 59: joins and codeviewer admitted to Architecture; search/diagnostics out; D-0 deferred. 60: Loomkeeper kinds homed in Coding, sessions alone in the default. 61: Provenance is not a Coding surface. 62: caption 'Terminal sessions'; A3 executed, no erratum. Spec status accepted.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     }
   ],
   "changes": [
