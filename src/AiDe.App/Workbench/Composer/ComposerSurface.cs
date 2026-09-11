@@ -200,6 +200,23 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         PushInitWhenBothHalvesHaveHappened();
     }
 
+    /// <summary>
+    /// Reports a host-side refusal on the surface, naming the field the operator must fix.
+    /// </summary>
+    /// <remarks>
+    /// <b>Where the composer says why it has no run binding.</b> Nothing is wired — there is no
+    /// context to wire — and the alternative is an empty surface, which is indistinguishable from a
+    /// broken one. The field name is carried rather than folded into prose for the same reason
+    /// <see cref="ComposerFieldError"/> carries one: the operator's next action is to edit one line.
+    /// </remarks>
+    /// <param name="field">The field, in the wire name the configuration file uses.</param>
+    /// <param name="message">What is wrong, naming the file and the values found.</param>
+    public void ShowFieldRefusal(string field, string message)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(field);
+        _status.Text = $"{field}: {message}";
+    }
+
     /// <summary>The picker cards currently offered, in catalog order.</summary>
     public IReadOnlyList<TemplatePickerRow> TemplateCards =>
         _templatePicker.ItemsSource as IReadOnlyList<TemplatePickerRow> ?? [];
