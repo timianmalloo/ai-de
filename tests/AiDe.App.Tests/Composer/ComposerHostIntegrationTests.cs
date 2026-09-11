@@ -98,6 +98,99 @@ public sealed class ComposerHostIntegrationTests
         Assert.Contains("AdditionalObjects on a plain postMessage: null", stdout, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// <b>INV-0007, finding 1 (the operator's symptom).</b> After the product's own New Session
+    /// choreography — the shell opens the document, <c>Configure</c> runs as <c>MainWindow.BindComposer</c>
+    /// calls it, the pane takes the tree (Ruling 47) — in the arrangement the operator's workbench log
+    /// recorded, the composer's entry areas <b>keep their room</b>: the editor host is never smaller
+    /// than the read-only compiled view, the compiled view keeps to 35% of the composer, the page
+    /// mounts six fields, and a keystroke reaches the draft.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Observed red on main, 2026-09-11, before any repair:</b> exit 24 — <i>"the editor
+    /// host is starved: it has 110px of the composer's 689px while the read-only compiled view has
+    /// 465px (67%, ceiling 35%)"</i>; on the F5 tree's choreography (no maximize) the editor host
+    /// measured <b>0px</b> of 485. The compiled <c>TextBox</c> has no height ceiling and sits in a
+    /// <c>StackPanel</c> docked Bottom, so it is measured unconstrained and its content height is
+    /// subtracted from the editor before the editor is measured. <b>Necessity, measured in the same
+    /// probe (<c>--cap-compiled</c>):</b> capping the compiled view from outside the product at 35%
+    /// gave the editor host 202px in the same 485px composer and the run exited 0.</para>
+    ///
+    /// <para><b>Why the shell and not a bare window.</b> The handshake probe above hosts the surface
+    /// in a bare <c>Window</c> and is green; the starvation needs the height a docked document
+    /// actually gets, which only the real docking host under the real arrangement provides (DC-135).
+    /// The window is 800px tall — a laptop; the rule is height-independent, and the operator's
+    /// screenshot at roughly 1000px showed the same inversion.</para>
+    /// </remarks>
+    [Fact]
+    public void TheComposersEntryAreasKeepTheirRoomAfterTheNewSessionChoreography()
+    {
+        var (exitCode, stdout, stderr) = RunProbe("--shell --maximize --height 800", TimeSpan.FromMinutes(6));
+
+        Assert.True(
+            exitCode == 0,
+            $"the composer shell probe failed with exit {exitCode}. {stdout} {stderr}");
+
+        // NON-VACUITY. The page mounted its fields, the writer kept at least the reader's room, and a
+        // keystroke reached the draft — each line could only be printed after it happened.
+        Assert.Contains("fields=6 editors=3", stdout, StringComparison.Ordinal);
+        Assert.Contains("writer >= reader: True", stdout, StringComparison.Ordinal);
+        Assert.Contains("reached draft=True", stdout, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// <b>INV-0007, finding 2.</b> A composer page that has mounted survives one later
+    /// <c>Adapter.Render()</c> — which every layout command, pane open and restore performs — with
+    /// its fields still on screen.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Observed red on main, 2026-09-11, before any repair:</b> exit 25 — after one render,
+    /// <i>"wpf loaded=2 unloaded=1, navigations started=2 (+1), editor.ready posted=2 (+1), router
+    /// drops=2, host.init count=0 fields=0, editor text=''"</i> while the host's draft still held the
+    /// text. The render re-parents the WebView2, WPF raises <c>Loaded</c> again,
+    /// <c>ComposerSurface.InitialiseAsync</c> runs again and navigates the page again; the new page
+    /// posts <c>editor.ready</c>, the router drops it as a duplicate of the first mount's, and no
+    /// <c>host.init</c> follows — so the operator's fields vanish and nothing says why.</para>
+    ///
+    /// <para><b>Why main's own choreography does not trip it:</b> its two renders run in one dispatcher
+    /// operation and WPF coalesces the pending <c>Loaded</c> (measured: <c>wpf loaded=1</c>). The
+    /// next render after the mount is the one that does.</para>
+    /// </remarks>
+    [Fact]
+    public void TheComposerPageSurvivesALaterRender()
+    {
+        var (exitCode, stdout, stderr) = RunProbe("--shell --maximize --render-after-mount --height 800", TimeSpan.FromMinutes(6));
+
+        Assert.True(
+            exitCode == 0,
+            $"the composer shell probe failed with exit {exitCode}. {stdout} {stderr}");
+
+        // NON-VACUITY: the fields were there after the render, and the render actually happened
+        // (the line is printed only on the --render-after-mount path).
+        Assert.Contains("after one later render:", stdout, StringComparison.Ordinal);
+        Assert.Contains("fields=6, editor text=", stdout, StringComparison.Ordinal);
+    }
+
+    private static (int ExitCode, string Stdout, string Stderr) RunProbe(string arguments, TimeSpan timeout)
+    {
+        var probe = ProbePath();
+        Assert.True(File.Exists(probe), $"the composer probe was not built at {probe}");
+
+        using var process = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(probe)
+        {
+            Arguments = arguments,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+        })!;
+
+        var stdout = process.StandardOutput.ReadToEnd();
+        var stderr = process.StandardError.ReadToEnd();
+        Assert.True(process.WaitForExit((int)timeout.TotalMilliseconds), $"the composer probe hung ({arguments})");
+
+        return (process.ExitCode, stdout, stderr);
+    }
+
     private static string ProbePath()
     {
         var configuration =

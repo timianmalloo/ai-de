@@ -8090,6 +8090,59 @@ window.DOCS_INDEX = {
       "sourceSha256": "b234911b74883e52df5498c42cd6495c034e6763148eee75867d94a5dfafb6b8"
     },
     {
+      "id": "inv-0007-composer-entry-areas-starved-by-the-compiled-view",
+      "path": "docs/investigations/INV-0007-composer-entry-areas-starved-by-the-compiled-view.md",
+      "title": "The composer's entry areas have no room: the read-only compiled view takes the editor's height, and the next render kills the page",
+      "type": "investigation",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-front-door",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "\"I cannot type in the composer\" / \"I could not see the entry areas\" after File → New Session. Verified by measurement in the real shell under the operator's recorded arrangement: the composer's WebView2 laid out at 0px (F5 tree) and 105–110px (main) of a 485–689px composer, because the read-only compiled-view TextBox has no height ceiling, sits in a StackPanel docked Bottom, and is measured unconstrained before the editor host gets the remainder — a 28-line goal block costs 465px, and editor = composer − compiled − 114px. Capping the compiled view from outside the product gave the editor 202px in the same 485px and the run went green (necessity). A second, independent defect was found and reproduced: any later Adapter.Render() re-parents the WebView2, WPF raises Loaded again, InitialiseAsync navigates the page again, and the router drops the new page's editor.ready as a duplicate — no host.init, zero fields, the operator's on-screen text gone. The graph canvas shares the Loaded→navigate shape (measured: one render, one reload). Two red tests are committed; the fix is not.",
+      "tags": [
+        "composer",
+        "webview2",
+        "wpf",
+        "layout",
+        "docking",
+        "handshake",
+        "observability",
+        "session-document",
+        "ruling-47"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "refines"
+        },
+        {
+          "to": "note-front-door-rulings-45-48",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0015-canvas-hosting-and-overlay-strategy",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0021-named-dock-zones",
+          "rel": "depends-on"
+        },
+        {
+          "to": "inv-0006-workbench-pane-swap-on-native-tab-drag",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "System map",
+          "mermaid": "flowchart TD\n  MW[MainWindow.NewSession → opened] --> OSD[Shell.OpenSessionDocument → Adapter.Render #1]\n  MW --> BC[BindComposer → ComposerSurface.Configure]\n  MW -->|main only| GT[GiveItTheWholeTree → Adapter.Render #2]\n  OSD --> SDS[SessionDocumentSurface: Grid · composer col ⟷ canvas col]\n  SDS --> CS[ComposerSurface: DockPanel]\n  CS --> P[template picker · Dock.Top · Auto]\n  CS --> B[Send/Attach bar · Dock.Bottom · Auto]\n  CS --> F[footer StackPanel · Dock.Bottom · Auto<br/>label · compiled TextBox (MinHeight 90, no MaxHeight) · lease · status]\n  CS --> V[WebView2 · LastChildFill = the remainder]\n  F -. measured first, unconstrained .-> V\n  V --> L[Loaded → InitialiseAsync → EnsureCoreWebView2 → subscribe → Navigate]\n  L --> PG[composer.mjs: editor.ready → router.Ready once → MarkReady → host.init → render fields]\n  R[any later Adapter.Render] -->|Manager.Layout replaced → re-parent| V\n  V -->|Loaded again| L"
+        }
+      ],
+      "sourceSha256": "fc30cc6a719178cfe437ee214487eaaa8e8c6622bd5bcd730bea11f529e9f7da"
+    },
+    {
       "id": "inv-knowledge-chip-reads-zero-again",
       "path": "docs/investigations/knowledge-chip-reads-zero-again.md",
       "title": "The Knowledge category chip reads 0 again — the App ignores the IsKnowledge flag",
@@ -13273,5 +13326,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "db2c8604d1dd265d10147bb37c2b9493f306053f5c435fdd2508e6e45d8f3b29"
+  "graphSha256": "ac0d3fd6477d92ef5877802c85f7bae73c8599e6cc6d26fb6d7393cad14d744b"
 };

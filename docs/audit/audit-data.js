@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T17:34:29Z",
+  "generated": "2026-09-11T18:25:19Z",
   "audit": [
     {
       "actor": null,
@@ -11732,6 +11732,45 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T2",
       "tool": null
+    },
+    {
+      "id": "al-01M28VEVQW46H5GKG4JW7ZD8X4",
+      "shortname": "investigate-composer-input",
+      "datetime": "2026-09-11T18:25:12Z",
+      "session": "composer-input",
+      "prompt": "The composer accepts no typing: the operator opened File → New Session and could not type in the composer. The operator, on the F5 tree (feature/exit-evidence @ 729fdb5e — same composer code as main), ran dotnet run --project src/AiDe.App -c Release, opened a workspace, did File → New Session, and reports: \"I cannot type in the composer.\" Words only; no screenshot yet. %LOCALAPPDATA%\\AiDe\\logs\\workbench-20260911.log — last line 2026-09-11T17:41:12Z evt: layout.mutation, operation: open-session-document, surface: session-document:20260911T174112Z-28f7fe97, placement: split-beside-graph — that is the operator's gesture. Nothing is logged after it. The composer emits no diagnostics at all. Later, verbatim: \"I could not see the entry areas.\" — and the operator's screenshot: a ~200px WebView2 scroll region with only FAN_OUT_CAP and BUDGET visible, a ~500px read-only Compiled view under it.",
+      "summary": "INV-0007. Verified root cause (necessary and sufficient, measured in the real WorkbenchShell + AvalonDock host under the operator's recorded arrangement): ComposerSurface docks a StackPanel footer Bottom whose read-only compiled-view TextBox has no MaxHeight; it is measured unconstrained (401px for an empty goal block, 465px with three answers) before the WebView2 editor host gets the remainder, so editor = composer − compiled − 114px: 0px at 485px (F5's choreography), 105–110px at 684–689px (main, Ruling 47 maximize). Capping the compiled view from outside the product gave the editor 202px in the same 485px and the run went green. Second defect reproduced: any later Adapter.Render() re-parents the WebView2, WPF raises Loaded again, InitialiseAsync navigates again, the router drops the new page's editor.ready as a duplicate → host.init=0, fields=0, the operator's on-screen text gone; the graph canvas has the same Loaded→navigate shape (one render, one reload, measured). Ruled out by measurement: focus/global key handlers (decompiled WebView2 WPF wrapper forwards only accelerators), host.init never arriving on open, page/bundle failing to load, a non-editable editor, contrast as the primary cause (text 10.33:1, labels 6.31:1; boundaries 1.51:1 recorded as F4). Two red tests committed (ComposerHostIntegrationTests: entry areas keep their room — exit 24; page survives a later render — exit 25). Phased plan: 1 writer-first Grid layout with a 35% compiled ceiling; 2 initialise-once + readiness per navigation (composer + canvas); 3 bounds/handshake/input telemetry on the normal path; 4 class controls (writer≥reader helper, one WebSurfaceHost, Loaded-init analyzer, DC classes A/B registered with the fix); 5 keyboard entry focuses a field; 6 page-side non-text contrast floor. Stopped before the fix.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0007-composer-entry-areas-starved-by-the-compiled-view.md",
+        "tests/AiDe.App.Tests/Composer/ComposerHostIntegrationTests.cs",
+        "tests/AiDe.App.ComposerProbe/Program.cs"
+      ],
+      "tags": [
+        "composer",
+        "investigation"
+      ],
+      "outcome": "success",
+      "goal": "Verified root cause of 'the composer accepts no typing / entry areas not visible' after File → New Session, with a red reproduction in the product's composition, a class, a sibling sweep and a phased plan; stop before the fix",
+      "done_when": "Two red tests committed on investigate/composer-input, INV-0007 written with typed links and derived, audit entry, derived views regenerated, branch pushed",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-11T17:45:13Z",
+      "duration_seconds": 2399.0,
+      "git": {
+        "sha": "f5c0f740fd0488baa00dd2de4320c187f585058e",
+        "short": "f5c0f740f",
+        "branch": "investigate/composer-input",
+        "pushed": null
+      }
     }
   ],
   "changes": [
