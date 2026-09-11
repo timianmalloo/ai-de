@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 64 · partially-controlled 51 · uncontrolled 11
+**Status counts:** controlled 65 · partially-controlled 53 · uncontrolled 14
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -4884,6 +4884,18 @@ for both or split.*
   Control (a) is amended: **the conclusion field is the signal; a watch exit code is at most a
   liveness hint.** That this class's own instrument carried the class is the sharpest
   instance of it so far.
+- **Fourth instance, and it widens the class from PLATFORM to ENVIRONMENT (2026-09-11).** A node
+  reported *"full gate set bare: every gate exit 0"* and CI then went red on the same branch.
+  **Neither statement was false.** The local run used **the working tree it had**, including
+  untracked scratch; CI runs the same gate on a **clean checkout**. The node's own account is
+  the precise one: *"The local green and the CI red were not in conflict; my claim was simply
+  narrower than it sounded. **Local gate results are not a CI prediction, and I stated one as
+  though it were the other.**"*
+  So the class is not only *which platform* — it is **which environment**, and a dirty working
+  tree is a different environment from a checkout in exactly the way a Windows runner is a
+  different environment from a Linux one. **Control (a) extends: a completion claim names the
+  environment it covers, not only the platforms** — and "I ran the gates" and "the gates pass
+  on this commit" are different claims that share a sentence.
 - **Relationship to DC-117:** DC-117 is the same family one axis over — there the invisible variable
   was the **host** (console vs console-less), here it is the **operating system**. Both are *the
   environment a test ran in is not recorded in the claim that it passed.*
@@ -5223,6 +5235,177 @@ for both or split.*
   green gate
 
 
+### DC-127 — A fixture written by the same mind as the reader shares its blind spot, so a reader tested only against its fixture is tested against its own assumption
+
+- **Shape:** someone writes a reader, parser or checker over a real artifact, and writes a **fixture**
+  to test it. The fixture is constructed from the same mental model as the reader — the same
+  assumption about which column carries the substance, which field is authoritative, which shape the
+  document takes. **So the fixture agrees with the reader by construction**, and the test passes for
+  the same reason the reader is wrong. The defect is invisible until the reader meets the **real**
+  artifact, which is usually in production or at a join.
+- **Signature:** a reader with a green fixture-based test and no test against a committed real
+  artifact; a fixture authored in the same change as the reader; and the tell — **the fixture's shape
+  is simpler than the real artifact's**, because a fixture is written to exercise the code rather
+  than to reproduce the document.
+- **Instance (front-door F5, 2026-09-11, found by the node itself):** the exit-evidence oracle's
+  **clause-7 reader had the exact hole clause 7 exists to close.** Clause 7 fails if a Proof Pack
+  Residual cell reads *"none"*. The carried-residuals tables are `| Residual | Kind | Detail |`, so
+  the `Residual` column holds only the **name** — and a row reading
+  `| the thing we did not do | named | none |` **would have passed**, because the reader checked the
+  first column and the substance lives in `Detail`. The node found it by **testing non-vacuity
+  against the real Proof Pack rather than against its fixture**, and reported the cause in one line:
+  > **"the fixture agreed with me."**
+- **Why it survives:** every conventional signal is green. The test exists, it is red-first capable,
+  it was written before the code, and it fails when the code is broken **in the way the author
+  imagined**. Nothing in the usual checklist asks *"does this fixture reproduce the artifact, or the
+  author's idea of it?"*
+- **Relationship to the rest of this register:** it is **DC-122's mechanism relocated** — there, a
+  comment carried the author's belief and was mistaken for evidence about behaviour; here, a fixture
+  carries the author's belief and is mistaken for evidence about the artifact. And it is the
+  session's recurring shape — *a control whose green is indistinguishable from its absence* — with
+  the fixture supplying the green.
+- **Control:** **a reader over a committed artifact is tested against that artifact, not only against
+  a fixture.** Where the real artifact is unavailable or unstable, the fixture must be **derived from
+  it mechanically** rather than authored, or the test must state that it exercises the code and not
+  the contract. The cheap form, and the one that worked here: **run the reader against the real
+  document and check it is non-vacuous** — that it finds something, and that it would find the thing
+  it exists to find.
+- **Status:** `partially-controlled` — the instance is closed and the oracle's self-test now covers
+  the real table shape specifically, but nothing gates the class: the next reader written beside its
+  own fixture will pass the same way
+
+### DC-128 — Citing a commit proves a file existed, not that it was unchanged, so "committed before" is attested rather than mechanical
+
+- **Shape:** a process requires that an artifact — an oracle, a spec, a baseline — be **fixed before
+  a dependent act**, and the control is *"commit it first and cite the sha."* That proves the file
+  **existed** at that commit. It does **not** prove the file **running now** is the file at that sha.
+  An artifact committed early, then quietly widened after the dependent act and re-cited, **reads
+  identically to one that was right the first time.** The ordering becomes a claim the author makes
+  about themselves.
+- **Signature:** an ordering requirement discharged by a cited sha with no byte comparison; a
+  process document saying *"committed before X and its sha recorded"* without saying *"and unchanged
+  since"*; and the structural tell — **nothing in the check reads the artifact twice.**
+- **Instance (front-door F5, 2026-09-11):** §F5's clause reads *"the oracle is committed BEFORE the
+  run and its SHA cited in the Proof Pack — seven points written after seeing the run are a
+  description, not a test."* The conductor authored that clause and dispatched it in four briefs
+  without noticing that **citing a sha does not prevent editing the file afterwards and citing the
+  new one.** The node implementing it added **clause 0**, which reads its own commit, compares it to
+  the run's start, **and compares its own bytes at that commit against the bytes now running**:
+  > *"An oracle committed early and then quietly widened after the run reads identically to one that
+  > was right first time — unless the bytes are compared."*
+  That makes the ordering **mechanically true rather than attested** — and has the deliberate
+  consequence that the oracle file is now **frozen**: any edit invalidates the cited sha and forces a
+  re-commit and re-cite.
+- **A second-order consequence worth recording, because it bit immediately:** the freeze **constrains
+  how the branch may be integrated.** A **rebase** rewrites the commit and orphans the cited sha,
+  breaking clause 0; a **merge** preserves it. *A control strong enough to constrain its own
+  integration path is working, but the constraint has to be noticed before the integration, not
+  after.*
+- **Why it survives:** the weak form looks rigorous. A sha is precise, verifiable and auditable, and
+  it answers a question — *did this exist then?* — that is adjacent to the one being asked. **The gap
+  between "existed" and "unchanged" is exactly one function call wide and reads as pedantry until
+  someone widens an artifact after the fact.**
+- **Control:** any ordering requirement over an artifact compares **bytes at the cited commit against
+  bytes now**, not the sha alone. Where that is impossible, the requirement is recorded as
+  **attested** rather than verified, and the attestation names who attested. And the integration
+  consequence is stated with the control: **a frozen artifact's branch merges, never rebases.**
+- **Status:** `partially-controlled` — implemented for the exit-evidence oracle and proven by its own
+  self-test; the plan clause it corrects is now accurate, but **no other ordering requirement in the
+  repository carries a byte comparison**, and the plan-authoring habit that produced the weak form is
+  unchanged
+
+
+### DC-129 — A launch that detaches returns success immediately, so the caller measures a run that has not happened
+
+- **Shape:** a caller invokes an executable and waits on **the call** rather than on **the process**. If
+  the target is a GUI-subsystem binary — on Windows, a `WinExe` — the shell **detaches it and returns
+  at once**. The caller sees **no error, no exit code, and a near-zero duration**, and concludes the
+  work completed instantly. Meanwhile the real work is **running in the background**, doing everything
+  it was asked to: provisioning, spending, writing, scoring. The failure is not that the launch
+  failed — **it succeeded emptily**, and every field the caller reads is consistent with success.
+- **Signature:** a measured duration implausibly close to zero; a missing rather than zero exit code;
+  a "completed" run with no output artifact; and the tell — **a second invocation produces a second
+  set of side effects while the first is still live**, because nothing told the caller the first one
+  had not finished.
+- **Instance (front-door pre-flight, 2026-09-11):** `& $exe --conduct …` on a `WinExe` returned
+  immediately, reporting no exit code and 0 seconds, **while a real governed run continued detached**
+  — provisioning a lane worktree and spending a live subscription turn. A second invocation under
+  `Start-Process -Wait` ran and was measured. **Both completed. Both scored `Partial: 15 / 15
+  observed`.** The store ended with **two episodes in one cohort** and the subscription cost was
+  doubled — *by a harness error, not by design*.
+- **What actually detected it, and this is the transferable part:** not the exit code, not the
+  duration, not the absence of output. **`git worktree list` came back 22 when 21 was expected.** An
+  **incidental invariant**, maintained for another reason entirely, caught what the intended signal
+  could not — because the intended signal had not failed. In the node's own words: ***"The count was
+  the detector, not the exit code."***
+- **Why it survives:** every instinct for checking a subprocess is pointed at the wrong object. A
+  non-zero exit code, a thrown exception, a timeout, stderr — none of them fire, because the launch
+  genuinely succeeded. **The only honest signal is the process handle, and the idiom that returns it
+  is not the idiom most shells reach for first.**
+- **Relationship to the register:** it is the session's recurring shape — *a control whose green is
+  indistinguishable from its absence* — at the **process-launch boundary**, and it is the same family
+  as `gh run watch --exit-status` exiting `0` after failing to observe a run (DC-119). Both report
+  success for **not having looked**.
+- **Control:** **wait on the process object, never on the call**, for any invocation that may target a
+  GUI-subsystem binary — `Start-Process -Wait -PassThru` or an equivalent that yields a handle, then
+  read the handle's exit code. Where a run has a **countable side effect** — a worktree, an episode
+  row, a lock — **assert the count**, because a count discriminates where an exit code does not.
+  *A measured duration near zero for work that cannot be near zero is a detection, not a result.*
+- **Status:** `uncontrolled` — the instance is understood and the constraint is written into the
+  exit-run harness's brief, but nothing in the repository fails when a caller waits on the call
+  instead of the process, and the next harness author inherits only prose
+
+
+### DC-130 — Adjacent nodes each build one end of a seam that no clause assigned, and every node passes
+
+- **Shape:** a plan decomposes work into nodes and gives each one a clause list. Two adjacent nodes
+  each build **one end** of a connection between them — node A produces a value, node B consumes a
+  value of that shape — and **no clause claims the edge itself**. Both nodes are correct against
+  their own clauses. Both ship green. The plan review passes, because the review reads a **list of
+  nodes**, and the thing missing is not a node. **The gap is only discovered by whoever first needs
+  the two ends to meet**, which is typically the evidence node, at the close, when the cost of
+  finding it is highest.
+- **Signature:** a constructed value returned to a **discarding caller**; a consumer wired to a
+  source that has no producer; a plan whose clauses all read *"X exists"* and none read *"X reaches
+  Y"*; and the tell that makes it unmistakable — **one of the nodes writes the conflict down in a
+  code comment and no clause resolves it.**
+- **Instance (front-door slice, 2026-09-11):** F4 built `ComposerSurface.Send()`, which constructs a
+  real `GovernedRunRequest` through the real send gate **and returns it to `(_, _) => Send();`** — a
+  discarding caller. F2 built `SessionLane`, taking a `ChannelReader<ObservedRunEvent>`, **and its own
+  remark says it reads *"the same channel `AcpPeer` publishes into and `GovernedRunHost` drains."***
+  `GovernedRunHost.RunAsync` drains that channel itself and `AcpEventQueue` is **`SingleReader = true`**,
+  so a second drain is impossible by construction. `RunAsync` had **exactly one caller in `src/`**:
+  `ConductorEntry.cs:80`.
+  **So nothing in the product launched a run from the UI at all.** The slice could build a session,
+  open a composer, validate a goal block and construct a real request — and then drop it. Every node
+  had discharged every clause it was given.
+- **How it was found, and how late:** by the **exit-evidence node**, while writing an oracle for a
+  clause that read *"composed in the composer, streamed in Console mode."* It was unsatisfiable, and
+  the discovery was worth two clauses at first reading — the conductor sized the fix as unblocking
+  **two of nine**. The node corrected that: **five of nine**, because the scored cell, the recorded
+  measurement and the DC-115 verdict are all **read off the exit run's result**, and there is no exit
+  run until the product can launch one. *The gap's true size was invisible from the plan and visible
+  from the oracle.*
+- **Why plan review does not catch it:** the review enumerates **nodes and their clauses** and asks
+  whether each is owned, testable and floored. **An edge is not a node.** A surface list of the form
+  *store → model → service → projection → client → UI* names the **stations**; nothing asks whether
+  the **track between two stations** has an owner. And because both nodes pass, no red appears
+  anywhere until something tries to traverse the edge.
+- **Control (from Ruling 46):** the slice's **E7 surface list assigns every EDGE to a node, not only
+  every surface**, and **plan review fails when an edge is unowned.** The cheap form: for each pair of
+  adjacent nodes, write the sentence *"A's output reaches B by ___, owned by ___"* — and if the blank
+  cannot be filled with a node id, the plan is incomplete, whether or not every node is. *A clause
+  saying "the request is constructed" and a clause saying "the lane renders events" do not, between
+  them, say "the request starts a run."*
+- **Relationship to DC-118:** the same family, one level out. DC-118 is about a **clause** whose
+  width does not match the ruling it derives from; this is about **a clause that was never written
+  at all**, for work nobody noticed was work. **Both are failures of the plan rather than of the
+  nodes**, and in both the nodes' greenness is what conceals them.
+- **Status:** `uncontrolled` — the instance is being repaired by a node ruled into existence for it,
+  and the control is stated, but **no plan in this repository currently carries an edge-ownership
+  list**, and the next slice decomposed the same way would produce the same gap
+
+
 ---
 
 ## Inherited from the fleet (ai-forward drm-0009, 2026-09-04)
@@ -5370,3 +5553,89 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Control:** Bound the lease at the guard rather than in prose: cap the TTL, and require a recorded reason above a stated threshold. Report the TTL distribution in doctor so the drift is visible as a number. The rule that should hold — 'a lease covers the minutes you are editing a file, never an area you intend to own' — is only real if something refuses the twelve-hour lease. (automated control)
 - **Boundary:** Applies where leases are advisory over shared files. A long lease is legitimate for a genuinely exclusive, long-running operation — which should be a different verb, not a longer default.
 - **Confidence:** v  - **Source:** fleet (drm-0009/p21)
+
+### DC-131 — A defect reported as a POPULATION is closed by fixing a MECHANISM, and the population is never counted
+
+- **Shape:** the report is a count — a screenshot of a process list, a growing table, *"these are
+  accumulating"*. Investigation finds a real leak, fixes it, and proves the fix with a real test.
+  The report is then closed on the strength of that test. **But the evidence offered was a
+  population and the evidence returned was a mechanism**, and nothing ever went back and counted.
+  The symptom survives, because a population can have more than one source and the fix addressed
+  the source that was looked for. **Every individual claim is true and the answer to the question
+  asked is still wrong.**
+- **Signature:** *"fixed — here is the test"* answering *"there are still N of them"*; a close with
+  no post-fix census; a census with no attribution column, so the count cannot be split by owner; a
+  second report of the same symptom treated as a regression of the first fix rather than as
+  evidence of a second source.
+- **Instance (terminal hosts, 2026-09-11) — reported THREE times, wrong twice:** TH1 fixed a test
+  launcher that closed handles without ending processes. TH2 fixed the product leaking an entire
+  ACP engine tree (`AcpEngineProcess.cs:117`), measured from outside the leaking process, red then
+  green. **Both were real, both are still fixed.** Both were reported to the operator as the answer.
+  The first census of the whole population was taken only after the third report: **287 console-host
+  processes, of which 256 were held by `node.exe` under `copilot.exe` — a different application
+  entirely — 20 by orphaned MSBuild `/nodeReuse:true` workers, and ZERO by anything named `AiDe`.**
+  The two fixes were complete and the operator's screenshot was accurate; they were about different
+  populations. *No test that passed could have told me that, because none of them counted anything.*
+- **What the census cost, and why it was never taken:** one process enumeration with an ancestry
+  walk. It was not taken because the mechanism was found quickly and confirming it felt like
+  confirming the report — **the fix was verified and the ANSWER was not**. The orphan check that was
+  run looked one level up, found every host's direct parent alive, and reported zero orphans; the
+  20 MSBuild workers were invisible to it because *they* were the orphans and the hosts beneath them
+  were correctly parented. **A containment check one level deep confirms containment one level deep.**
+- **Control:** when a defect arrives as a count, **the close requires a census with an attribution
+  column** — every member of the population assigned to an owner, including the members that turn
+  out to belong to someone else. *"Zero of these are ours"* is a result; *"the leak I found is
+  fixed"* is not an answer to *"why are there still so many"*. Ancestry walks run to the root, not
+  one level. For this instance the mechanism control is
+  `tools/verify-node-reuse-control.py` + `Directory.Build.rsp` (falsified both directions: 16 → 0),
+  and the gate carries `--behaviour` so its own oracle is executable rather than asserted.
+- **Relationship to DC-123:** DC-123 is the *mechanism* half — containment installed one ring in
+  and absent one ring out, which is exactly why `verify-test-run.py`'s environment variable did not
+  reach a hand-typed `dotnet build`. **This is the *reporting* half:** DC-123 explains why the
+  symptom persisted, DC-131 explains why it was declared resolved twice while it did.
+- **Status:** `controlled` — the boundary gate is wired and red-first on both clauses, and the
+  census shape is written into the close. The general discipline is only as strong as the reviewer
+  who asks *"what is the denominator?"*
+
+### DC-132 — A handler is wired to an event the library never raises on the path it was written for
+
+- **Shape:** a user interaction needs observing, so a handler is subscribed to a plausible event.
+  The subscription compiles, a grep shows it wired, and every reviewer who reads the subscription
+  concludes the interaction is handled. **It is not**, because the library implements that
+  interaction *natively* and never routes it through the observed event — it mutates its own state
+  directly. Nothing fails. There is no red. The handler simply never runs, and the only way to find
+  out is to perform the interaction and watch for an effect that does not arrive.
+- **Signature:** a subscription with no test that observes the handler *running for that
+  interaction*; a handler whose only coverage asserts it does the right thing *when called*; an
+  event named for a concept rather than for a moment the library promises to announce; and the tell
+  that makes it unmistakable — **the library ships its own implementation of the very gesture the
+  handler is meant to detect.**
+- **Instance (INV-0006, 2026-09-11):** `Controller.DragStateChanged += canvas.SetObscured` is wired
+  at `WorkbenchShell.cs:1243`. `SetDragging(true)` is reached **only** from `DragOver`
+  (`WorkbenchController.cs:254`), so the entire pointer path is dead. What actually happens on a tab
+  drag is **AvalonDock's own drag**, mutating `Manager.Layout` directly, observed by nobody.
+  `Manager.LayoutUpdated` *is* subscribed twice — `WorkbenchAdapter.cs:52` and
+  `WorkbenchShell.cs:511` — and **neither touches the model**, so `MarkDirty` schedules a save of a
+  model that does not contain the user's drag. The model is told only by `ReconcileViewIntoModel()`,
+  called from four places, **all of them other commands**. The operator's drag was never recorded by
+  anything.
+- **TWO MECHANICAL DETECTORS WERE TRIED AND BOTH MISSED IT, which is the part worth keeping:**
+  (a) *"a subscription to an event not declared in `src/`"* flags **25 events** — `Click`, `KeyDown`,
+  `Loaded`, `Tick` — because in a UI framework every event is the library's. A detector that flags
+  everything is not a detector. (b) *"an event declared in `src/`, subscribed, never invoked"* finds
+  **zero**, and `DragStateChanged` is among the zero: it **is** invoked, from a site nothing reaches.
+  **Presence is mechanical; reachability is not**, and this defect lives entirely in the gap.
+- **Control:** a handler wired to an interaction carries a test that observes **the handler running
+  for that interaction** — not a test that it behaves correctly once called, which is the test that
+  exists here and passes. Where the library implements the gesture natively, the Spike Protocol
+  obligation applies before depending on the contract: *establish which event the library actually
+  raises for this gesture, by running it*, rather than choosing the event whose name matches the
+  concept. **The conductor's own brief for this node named an event and a file list; four of six
+  briefed claims were false (§10), and the two files where the defect lives were not among the five
+  named.**
+- **Relationship:** DC-129's sibling. There a launch **succeeded emptily**; here a subscription
+  **wires emptily**. Both produce an artifact that reads as correct at every site a reviewer looks,
+  and in both the missing thing is an *observation at runtime* that nobody was obliged to make.
+- **Status:** `uncontrolled` — the test obligation is stated and the instance is fixed, but no gate
+  in this repository can distinguish a live subscription from a dead one, and the two candidate
+  detectors were built and both failed. The next handler wired to the wrong event will land green.

@@ -436,3 +436,118 @@ focus loss; state changes cause no layout shift. WCAG 2.2 AA applies to the Obse
 target size, focus not obscured, non-drag alternatives, correct treegrid roles/values, high-contrast
 mode, and a table/list equivalent for any graph. All values in aligned columns use tabular figures
 and explicit units.
+
+---
+
+## The front door — sheet, composer, canvas strip
+
+*Added by `/ui-design` (elevate) from operator feedback on the running app; the review and its ranked
+plan are [`docs/reviews/ui-operator-feedback.md`](docs/reviews/ui-operator-feedback.md) and the mockup
+is [`docs/mockups/session-front-door.html`](docs/mockups/session-front-door.html). This section adds
+**no new colour**. Every rule below is coverage, placement or copy, because the measurement said the
+palette was never the defect.*
+
+### Token coverage is opt-out, not opt-in (the rule this section exists for)
+
+The shell themes its **containers** and leaves its **leaves** to the platform. WPF's platform default
+is a light theme, so every control created without an explicit brush renders light-on-dark or
+black-on-dark, and every newly added control regresses silently. Measured: seven sites of near-black
+ink at **1.15:1** and **1.27:1** against a themed ground, and one site of light ink at **1.22:1** on a
+platform-default white list.
+
+| Rule | Statement |
+|---|---|
+| **TC1** | A theme is a set of **implicit (`TargetType`-only) styles** over the base control set, not a set of per-element brushes. The base set is: `TextBlock`, `TextBox`, `Button`, `ToggleButton`, `ComboBox`, `CheckBox`, `RadioButton`, `Label`, `ListBox`, `ListBoxItem`, `TreeView`, `TreeViewItem`, `TabItem`, `PasswordBox`, `RichTextBox`, `Expander`, `GroupBox`, `Window`. |
+| **TC2** | **A partial pairing is worse than none.** Theming a foreground without its background, or the reverse, produces the inverse failure. The `ListBoxItem` foreground was themed and its `ListBox` background was not; the result is `{colors.text}` on platform white. Ink and ground are set together or neither is set. |
+| **TC3** | A resource key that does not resolve **fails silently**. A resource reference to a missing key is a no-op: no exception, no log, no visual difference from "not themed yet". Every key a control names must exist, and that is a check, not a habit. |
+| **TC4** | A window's **non-client area is not part of the app's theme**. Every top-level window opts its caption into the platform's dark mode explicitly, or it ships the OS scheme against the app's ground. |
+| **TC5** | **One palette, one copy.** A value duplicated into a stylesheet, a web asset or a recolour map is a second palette that drifts. Hosted web surfaces receive the tokens; they do not restate them. |
+| **TC6** | Contrast is **computed from the rendered pairing**, never asserted in prose. A design artifact that states a ratio it did not measure is the mechanism by which a design language can declare AA while the product ships text at 1.15:1. |
+
+**Disabled is a state, not an opacity.** Compositing `{colors.text-muted}` at 50% over
+`{colors.surface-sunken}` measures **2.73:1**, below the 3:1 floor for a meaningful graphic. A disabled
+control carries its own token pairing that clears the floor, plus a reason on hover. An unreadable
+control is not a gentler way of saying unavailable.
+
+### Required fields — a required answer is explained where it is asked
+
+The session task class is required and has no default, and that is correct: it is the cohort key every
+comparison is scoped by, and a guessed class is indistinguishable from a chosen one afterwards. The
+failure was never the requirement. It was asking for a closed vocabulary through an open text box, and
+explaining the rule in the vocabulary of the subsystem that needs it.
+
+| Rule | Statement |
+|---|---|
+| **RQ1** | A value whose only use is **exact equality against a set** is entered by choosing from that set. A free-text box for such a value makes a typo indistinguishable from an answer, and a typo here is worse than a default: it forms a cohort of one, renders `Not Comparable`, and silently removes the episode from the cohort it belonged to. |
+| **RQ2** | The explanation says **what the choice decides for this operator**, not what the mechanism is called. "A defaulted class ranks in the wrong cohort" names a mechanism. "A session's score is only ever compared against sessions of the same class" names a consequence. |
+| **RQ3** | The explanation sits **at the field**, above the control, before the answer is needed. Not in a footnote under the buttons. |
+| **RQ4** | **Required-and-undefaulted is a visible state**, `{colors.inferred}` with a glyph and the words *Required, no default*, flipping to `{colors.verified}` and *Answered*. It is never a bare asterisk, and never colour alone. |
+| **RQ5** | A **disabled primary action states its reason adjacent to itself**, in the same row, naming the field: *Choose a task class to create the session.* An inert control never leaves the operator guessing. |
+| **RQ6** | **Recall is not a default.** The operator's own last answer may be offered as a one-click chip, labelled as a suggestion. Nothing is pre-selected, so the type-level no-default contract and the reflective test that pins it both still hold. |
+
+### The composer is a document, not a text box
+
+The session pane is a **serial-entry task inside a parallel-reading surface**. Reading is parallel and
+entering is serial, so the composer needs a focal point of its own. The shipped surface gave its
+largest, brightest element to a **read-only** compiled view, which is why the operator reported no
+editor. The reference the operator named is the Claude application, and the shape the spec already
+asks for is a notebook of blocks.
+
+| Region | Rule |
+|---|---|
+| **Session header** | 28px. Name, workspace, the answered task class as a chip, backend health. The chip is where the sheet's required answer goes on being useful. |
+| **The Score** | Prior blocks, each with its id in `{typography.mono}`, its shape (message or goal block plus tier), its confidence as glyph and word and colour, its event count, and its per-block actions. It scrolls; it is the reading half. |
+| **The composer card** | An island at `{rounded.island}` with `{elevation.resting}`, pinned below the Score, bordered in `{colors.accent}` while focused. It owns the submission-shape tabs, the editor, the context recipe, and one primary action. |
+| **The editor** | The **largest element in the pane**, on a `{colors.surface-sunken}` ground, with a visible caret, focus on session open, and a placeholder that teaches the first action rather than naming the field. |
+| **The context recipe** | Mentions render as removable chips in `{typography.mono}` carrying their pin. What the operator sees is what the conductor receives; an invisible recipe is an unverifiable one. |
+| **Compiled view** | A **disclosure inside the card footer**, collapsed by default, on `{colors.surface-sunken}` in `{typography.mono}`. It is read-only, so it is never the most prominent field on the surface. |
+| **The send row** | One accent primary carrying its chord. Disabled, it states its reason beside it in `{colors.inferred}`. The lease sentence is that reason, not a free-floating line. |
+
+**Complete states for the composer:** first-run (one glyph, one true sentence, one first action),
+drafting, **staged** (`Draft staged, not sent` — a draft is never sent by editing), sending, streaming,
+**refused / wrong answer** (the lane declined, with what it declined and three real next actions),
+error with recovery, and overflow (a 40-line recipe, a 200-character path, a capped event count
+rendered as a lower bound per the bounded-read rule).
+
+### The canvas mode strip — one mode now, N later
+
+| Rule | Statement |
+|---|---|
+| **MS1** | The strip is **one 28px row whose geometry never changes**. Only its population changes, driven by the mode catalog's size. |
+| **MS2** | At **one** mode it renders the **pane title**: 12px, `{typography.weight-medium}`, 0.04em, `{colors.text-muted}`. That is the form every other pane uses, so it reads as native rather than as a tab bar with one tab. |
+| **MS3** | At **two or more** it renders the workbench's 28px tab strip, and the **split control appears**, bound to catalog size rather than hard-coded. Registering a mode is adding a row; nothing else edits. |
+| **MS4** | Neither form is a degraded version of the other, and the transition is a population change, not a layout change. |
+| **MS5** | **This does not contradict "single-surface stacks keep their tab strip".** That rule governs **dock stacks**, where the tab carries the surface's name, its close control and its drag handle. A canvas mode carries none of those; it is a view selector inside one surface, so at one mode the pane title is the honest form. |
+
+### The activity rail — destinations, and one action
+
+| Rule | Statement |
+|---|---|
+| **AR1** | The rail's group holds **destinations**. A verb does not join it. |
+| **AR2** | The **one primary action** sits above the group, separated by a divider, in the accent fill. That is the one place the accent is reserved for a primary action. |
+| **AR3** | **A rail item is present only if it does something.** A disabled placeholder announcing a mode that does not exist is dead UI, and at rest it is indistinguishable from the one item that works. |
+| **AR4** | **Focus is a ring that is actually drawn.** A focus trigger that changes a border *colour* on a control with zero border *thickness* renders nothing. The ring is its own 2px outline, not a recoloured border. |
+| **AR5** | No capability's **only** door is an icon in the rail. Every rail destination also has a catalog command, so it reaches the menu, the palette and a chord. |
+
+### Copy added by this section
+
+- `Required, no default`
+- `Choose a task class to create the session.`
+- `A session's score is only ever compared against sessions of the same class. Pick the one that matches the work.`
+- `Your last session used ui-feedback. One click applies it. It is a suggestion, not a preselection.`
+- `Describe the change. Press / for a skill, @ to attach context.`
+- `Draft staged, not sent`
+- `This session has no blocks yet.`
+- `Console is the only canvas mode in this phase.`
+- `Explorer: graph and reader`
+- `Nothing has run yet. Send the first block and the merged stream appears here.`
+- `Block b3 is waiting on a ready agent backend. The draft is preserved and was not sent.`
+- `A session opens without a ready backend; a run needs one.`
+
+### Recorded deviations (CD16)
+
+| Deviation | Reason |
+|---|---|
+| `{colors.border}` measures **1.39:1** on `{colors.surface}`, below the 3:1 floor for a UI component boundary | Already declared in the palette table above: the border is decorative and **spacing carries the grouping**. It is never the only signal separating two regions. Re-stated here because a measurement that looks like a failure needs its disposition beside it. |
+| The 28px dense strips trip the detector's *cramped padding* rule | 8px of vertical inset is arithmetically impossible inside a 28px row that also holds a 24px control. The density is the archetype's (`Density:Compact`) and the horizontal inset is a full `{spacing.scale}` step. |
+| A composer island sits inside a bordered pane, tripping *nested cards* | The soft-islands register is exactly a card inside a pane. The nesting is one level and it is the facelift's stated direction. |

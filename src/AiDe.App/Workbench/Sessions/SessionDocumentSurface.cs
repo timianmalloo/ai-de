@@ -1,8 +1,11 @@
+using System.IO;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using AiDe.App.Conductor;
 using AiDe.App.Workbench.Composer;
+using AiDe.Core.AgentPlane;
 using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Workbench.Sessions;
@@ -53,6 +56,8 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     private readonly Border _permissionBanner = new();
     private readonly TextBlock _permissionText = new();
     private readonly SessionDocumentStore? _store;
+    private readonly CancellationTokenSource _closing = new();
+    private int _launches;
 
     private bool _reflectingSplitToggle;
 
@@ -72,6 +77,12 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         SetResourceReference(BackgroundProperty, "SurfaceBrush");
 
         Composer = new ComposerSurface($"composer:{model.SessionId}", $"{model.Title} — composer");
+
+        // THE SEAM BETWEEN "A REQUEST EXISTS" AND "A RUN HAPPENS", and it is here rather than in a
+        // test because GovernedRunHost's own remarks refuse a hand-assembled harness as exit
+        // evidence: a bridge built in the suite would make the demonstrated run and the shipped run
+        // differ in exactly the wiring the evidence is about.
+        Composer.Gate.Sent += Launch;
 
         Content = BuildPairedZone();
 
@@ -158,6 +169,92 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     {
         ArgumentNullException.ThrowIfNull(lane);
         _lanes.Add(lane);
+    }
+
+    /// <summary>The last launch's own task. Completed when nothing has been sent yet.</summary>
+    /// <remarks>
+    /// It never faults: a run that refuses is a <see cref="LastRunFailure"/>, because a failed
+    /// launch that surfaced only as an unobserved task exception would be a run nobody can see
+    /// did not happen.
+    /// </remarks>
+    public Task LastLaunch { get; private set; } = Task.CompletedTask;
+
+    /// <summary>What the last completed run reported, or null when none has completed.</summary>
+    public GovernedRunResult? LastRunResult { get; private set; }
+
+    /// <summary>Why the last run did not complete, or null. Never a plausible substitute for a result.</summary>
+    public string? LastRunFailure { get; private set; }
+
+    /// <summary>The relay the last launch is publishing through — the console's side of the seam.</summary>
+    public RunEventRelay? LastRelay { get; private set; }
+
+    /// <summary>
+    /// Runs what the composer just sent, and shows it in Console as it arrives.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The same composition root the headless entry calls, with no second assembly path.</b>
+    /// Everything this method builds is a <i>consumer</i> — a relay and a lane — and the run itself
+    /// is one call to <see cref="GovernedRunHost.RunAsync"/>. <c>CompositionRootLedger</c> is what
+    /// checks that rather than trusting this paragraph.</para>
+    ///
+    /// <para><b>The lane id is the document's, not the plane's.</b> The plane mints its own lane id
+    /// inside the run and stamps it on every event (<c>RunEvent.AgentId</c>), so nothing is lost;
+    /// the console rail needs an id it can key rows under before the first event arrives, and
+    /// inventing a second spelling of the plane's would be two derivations of one identity.</para>
+    /// </remarks>
+    private void Launch(GovernedRunRequest request)
+    {
+        var relay = new RunEventRelay();
+        var lane = new SessionLane(
+            $"lane:{Model.SessionId}:{++_launches}",
+            request.EngineId,
+            relay.Reader,
+            Model,
+            Marshal);
+
+        AttachLane(lane);
+        LastRelay = relay;
+        LastLaunch = RunOneAsync(request, relay);
+    }
+
+    private async Task RunOneAsync(GovernedRunRequest request, RunEventRelay relay)
+    {
+        try
+        {
+            LastRunResult = await GovernedRunHost.RunAsync(request, _closing.Token, relay.Publish)
+                .ConfigureAwait(false);
+        }
+        catch (Exception error) when (error is AgentPlaneException or IOException or OperationCanceledException)
+        {
+            // Reported, never thrown away. These are the three refusals ConductorEntry already
+            // treats as "the run did not complete", and the operator is owed the same sentence.
+            LastRunFailure = $"{error.GetType().Name}: {error.Message}";
+        }
+        finally
+        {
+            // The lane stops waiting once it has drained what is already queued. A relay left open
+            // would leave a pump parked on a run that ended.
+            relay.Complete();
+        }
+    }
+
+    /// <summary>
+    /// Runs one lane dispatch on the thread the surfaces are read from.
+    /// </summary>
+    /// <remarks>
+    /// <b>Blocking, not <c>InvokeAsync</c>.</b> <c>SessionLane</c> counts an event delivered once
+    /// this returns, so a fire-and-forget marshal would make <c>Delivered</c> mean "queued" while
+    /// the console still showed nothing — a count that runs ahead of the rows it describes.
+    /// </remarks>
+    private void Marshal(Action work)
+    {
+        if (Dispatcher.CheckAccess())
+        {
+            work();
+            return;
+        }
+
+        Dispatcher.Invoke(work);
     }
 
     private Grid BuildPairedZone()
@@ -435,6 +532,12 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
 
         Model.LayoutChanged -= OnLayoutChanged;
         Model.Permission.Changed -= RenderPermission;
+        Composer.Gate.Sent -= Launch;
+
+        // The run is bound to the document that started it: closing the pane cancels it rather than
+        // leaving an engine process owned by a surface nobody is showing.
+        _closing.Cancel();
+        _closing.Dispose();
 
         foreach (var lane in _lanes)
         {

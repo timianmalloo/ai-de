@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 42 members, 86% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 43 members, 87% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Composer`
 
-**9 public types · 42 public members · 86% documented.**
+**9 public types · 43 public members · 87% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -109,10 +109,29 @@ not two runs.
 
 | Member | Summary |
 |---|---|
+| `event Action<GovernedRunRequest>? Sent` | Raised with the request a send produced, once per send, **after the gate's lock is released**. |
 | `long SendCount { get; private set; }` | How many runs this block has started. The observable US-ED5/ED6/ED7 rest on. |
 | `CompiledPrompt? RenderedView { get; private set; }` | The compiled text of the last rendered view — what the operator read. |
 | `CompiledPrompt RenderView(ComposerDraft draft, PromptTemplate? template = null)` | Renders the compiled view. Everything after this point is byte-for-byte what gets sent. |
 | `GovernedRunRequest? Send(` | Builds the run request from the rendered view, or refuses and says which field. |
+
+### `event Action<GovernedRunRequest>? Sent`
+
+Raised with the request a send produced, once per send, **after the gate's lock is
+released**.
+
+**Remarks.** **The announcement is at the construction site, which is why the discarding caller
+stopped mattering.** `ComposerSurface.Send()` returns the request to a WPF click
+handler that throws it away, and the accelerator path does the same; both nonetheless reach a
+run, because the request is announced here — where it is built — rather than at whichever
+caller happened to ask for it. One construction site, one announcement (DM7).
+
+
+
+
+
+**Outside the lock, deliberately.** The subscriber launches a governed run; raising
+this while `_gate` is held would hold the send gate for the length of that run.
 
 ### `CompiledPrompt RenderView(ComposerDraft draft, PromptTemplate? template = null)`
 
