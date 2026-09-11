@@ -44,9 +44,10 @@ summary: >-
 | | |
 | --- | --- |
 | **Oracle** | `tools/verify-front-door-exit-evidence.py` — clause 0 plus the nine |
-| **Oracle commit** | `ORACLE-SHA-PENDING` |
-| **Run started** | `RUN-PENDING` |
-| **Ordering evidence** | `RUN-PENDING` — `git log` showing the oracle commit before the run's first artifact |
+| **Oracle commit** | `1374401d171b1ec6be5d56c25b1d1e00608abc18`, committed `2026-09-11T06:36:24-07:00` (`%ct` 1789133784) |
+| **Oracle integrity** | **Held across the merge of `main` at `39bcf288`.** `git diff 1374401d HEAD -- tools/verify-front-door-exit-evidence.py` is **empty** — the bytes running are the bytes committed. `1374401d` is an ancestor of this branch and is **not** reachable from `main`, so it exists only here and only a rewrite could destroy it. The branch was merged, never rebased (DC-128) |
+| **Run started** | `RUN-PENDING` — and it stays pending; see *The exit run did not happen* |
+| **Ordering evidence** | Vacuous but not absent: the oracle predates any run because **there is no run**. Clause 0's byte comparison is the half that still carries weight, and it holds |
 | **Falsifier suite** | `TheSessionOriginIsSetOnlyOnTheCommandPathTests`, `TerminalHostingLedgerTests`, `TheRunHasOneCompositionRootTests` |
 
 - **Component:** `src/AiDe.Core/Sessions/` (session container, path contract, template spine),
@@ -212,6 +213,21 @@ every part of it is an observation of the tree at this commit rather than an inf
 runtime.** That is what makes this conclusive from structure alone, with no run needed to confirm it:
 the absence is total rather than conditional.
 
+**And the gap is two deep, which matters for sizing the repair.** Wiring `Configure` would not by
+itself make the front door send, because three of the context's fields have no source in the running
+app either:
+
+| Field | Source in the running app | Observation |
+| --- | --- | --- |
+| `TaskClass` | none | built by the sheet, dropped at `MainWindow.xaml.cs:160`; the reopen path never had one |
+| `Model`, `AccountLabel`, `Providers` | none | `MainWindow.xaml.cs:151` constructs `new ProviderRegistry([])` — **empty** — and `:139`'s own comment states *"`providers.yaml` has no reader in this repository"*. `GovernedRunHost.cs:90` builds its registry from `request.Providers`, which only the `--conduct` run file supplies |
+
+The second row is **not a new finding** — it is the *R13 b2 live gap* already carried in
+`front-door-residuals-carried.md`. What is new is its consequence: **it was never only a sheet-display
+limitation.** The same missing reader is what leaves the composer's send context unpopulatable, so
+**§F5 clause 2 was not achievable in this slice as decomposed**, independently of the unwired edge.
+That connection existed in the residual list and in the clause list and was made by neither.
+
 **Why this is DC-130 again rather than a missing feature.** The signature the register names is *a
 constructed value returned to a discarding caller*. `MainWindow.xaml.cs:160` is
 `Shell.Announcer.Announce(Shell.OpenSessionDocument(created.Config))` — and `created` is a
@@ -296,7 +312,7 @@ cell comes to read "none". Every entry states its **kind**: **measured** (a numb
 | **The API-key exception needs its own provider record** | owned | A second egress class with different third-party terms. One record cannot cover both. |
 | **C14(e)(iv)'s refusal set is incomplete by construction** | named | *"Must never be described as 'secrets cannot be attached.'"* It grew by a **class** — in-repo config files carrying third-party credentials — after `.mcp.json` showed the list's organising idea had a blind spot. |
 | **The repository's third-party identifiers are unenumerated** | named | The provider record's third-party narrowing is stated rather than measured. |
-| **R13 b2's live gap: the sheet cannot list backends in the running app** | named | `providers.yaml` has **no reader anywhere in the repository**, and Ruling 35 refuses a third hand-rolled one. The sheet renders an honest empty state. The oracle is fully discharged against a populated registry in test; `ProviderRegistry` is constructed from in-code rows at `GovernedRunHost.cs:69`, never from a file. |
+| **R13 b2's live gap: the sheet cannot list backends in the running app** | named | `providers.yaml` has **no reader anywhere in the repository**, and Ruling 35 refuses a third hand-rolled one. The sheet renders an honest empty state. The oracle is fully discharged against a populated registry in test; `ProviderRegistry` is constructed from in-code rows at `GovernedRunHost.cs:90`, never from a file. |
 
 ### Found by this node
 

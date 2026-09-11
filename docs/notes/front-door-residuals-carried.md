@@ -72,7 +72,7 @@ named phase or persona).
 - **R13 b2 (Ruling 18):** only `claude-code` was exercised; codex and copilot are **refused by N2's own test**. *Stated in the exit evidence, not stubbed.*
 - **DC-115:** if the exit run roots in a clone rather than a linked worktree, that qualification is carried **exactly as Phase 1 carried it, never silently**.
 - **R13 b2's live gap:** the sheet cannot list backends in the running app — **`providers.yaml` has no reader anywhere in the repo**, and Ruling 35 refuses a third hand-rolled one. The sheet renders an honest empty state. The oracle is fully discharged against a populated registry in test.
-- **`ProviderRegistry` is constructed from in-code rows** (`GovernedRunHost.cs:69`), never from a file.
+- **`ProviderRegistry` is constructed from in-code rows** (`GovernedRunHost.cs:90`), never from a file.
 
 ## Accumulated at the F5 close, when the run was attempted
 
