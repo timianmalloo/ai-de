@@ -2069,7 +2069,7 @@ Records the composer's rendered bounds: the editor host, the read-only compiled 
 composer they share — at first layout and whenever either part moves past the surface's
 threshold.
 
-**Remarks.** **A value that could not be read is `null`, never 0** (DC-136). An element not
+**Remarks.** **A value that could not be read is `null`, never 0** (DC-137). An element not
 yet arranged reports 0px, and 0px is also the defect — so the writer sends `null` for a
 part whose arrange is not valid, and a reader can tell "not laid out" from "laid out at
 nothing".  and  separate a hidden pane's

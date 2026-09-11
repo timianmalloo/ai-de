@@ -125,7 +125,7 @@ public sealed class ComposerMessageRouter
     /// next <c>editor.ready</c> is a <b>new page's mount</b>, not a duplicate.
     /// </summary>
     /// <remarks>
-    /// The once-gate in <see cref="Ready"/> is per <b>document</b>, not per surface (DC-137): only the
+    /// The once-gate in <see cref="Ready"/> is per <b>document</b>, not per surface (DC-138): only the
     /// host can start a navigation, so only the host resets it — nothing in the page's vocabulary
     /// reaches this method. The per-field revisions go with it: a new document counts from its own
     /// 1, and the old page's high-water marks would drop every keystroke as "not strictly greater".

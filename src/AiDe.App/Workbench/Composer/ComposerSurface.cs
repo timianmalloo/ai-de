@@ -643,7 +643,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     }
 
     /// <summary>
-    /// <b>The writer is sized first (DC-136).</b> A DockPanel measures its docked children before the
+    /// <b>The writer is sized first (DC-137).</b> A DockPanel measures its docked children before the
     /// fill child, each with infinite extent on the docked axis, so an uncapped compiled view took its
     /// whole content height and the editor host got the remainder. The ceiling is set here, before
     /// any child is measured: the smaller of the compiled view's share of this height and half of
@@ -677,7 +677,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// <summary>
     /// The one navigation gate. An allowed navigation replaces the document, so readiness — the
     /// router's and this surface's half — is re-keyed to the new one and its ready will push
-    /// <c>host.init</c> with the draft as it stands (DC-137); a cancelled navigation replaces nothing.
+    /// <c>host.init</c> with the draft as it stands (DC-138); a cancelled navigation replaces nothing.
     /// </summary>
     private void OnNavigationStarting(object? sender, CoreWebView2NavigationStartingEventArgs e)
     {
@@ -782,7 +782,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         var result = _router.Route(e.Source, e.WebMessageAsJson, paths);
         if (!result.Accepted && _dropsThisDocument.Add(result.Kind + "\n" + result.Reason))
         {
-            // The silence DC-137 found — a mount the host refused to hear, a keystroke it refused —
+            // The silence DC-138 found — a mount the host refused to hear, a keystroke it refused —
             // is a line: once per kind and reason per document, so a page posting in a loop cannot
             // write the log full, and the first refusal of each shape is never lost.
             WorkbenchDiagnostics.WebSurfaceHandshake(

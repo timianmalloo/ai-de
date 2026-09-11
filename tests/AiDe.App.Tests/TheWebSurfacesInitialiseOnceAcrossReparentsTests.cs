@@ -12,7 +12,7 @@ namespace AiDe.App.Tests;
 /// after the first is heard, recorded as <c>re-attached</c>, and declined.
 /// </summary>
 /// <remarks>
-/// <para>DC-137's control in the fast ring, for <b>both</b> surfaces; the shell probe
+/// <para>DC-138's control in the fast ring, for <b>both</b> surfaces; the shell probe
 /// (<c>ComposerHostIntegrationTests.TheComposerPageSurvivesALaterRender</c>) proves the visible
 /// consequence through the real docking host. Seen red by mutation: with the host's once-guard
 /// removed, <c>InitialisationsStarted</c> read 4 for 3 re-parents.</para>
@@ -173,7 +173,7 @@ public sealed class TheWebSurfacesInitialiseOnceAcrossReparentsTests
             .Where(relative => !allowed.Contains(relative, StringComparer.Ordinal))
             .ToList();
 
-        Assert.True(offenders.Count == 0, "a Loaded hook outside the allow-list — one-time work on a per-attach event (DC-137): " + string.Join(", ", offenders));
+        Assert.True(offenders.Count == 0, "a Loaded hook outside the allow-list — one-time work on a per-attach event (DC-138): " + string.Join(", ", offenders));
     }
 
     private static string RepoRoot()

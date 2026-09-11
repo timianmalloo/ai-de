@@ -194,7 +194,7 @@ public static class WorkbenchDiagnostics
     /// threshold.
     /// </summary>
     /// <remarks>
-    /// <para><b>A value that could not be read is <c>null</c>, never 0</b> (DC-136). An element not
+    /// <para><b>A value that could not be read is <c>null</c>, never 0</b> (DC-137). An element not
     /// yet arranged reports 0px, and 0px is also the defect — so the writer sends <c>null</c> for a
     /// part whose arrange is not valid, and a reader can tell "not laid out" from "laid out at
     /// nothing". <paramref name="visible"/> and <paramref name="loaded"/> separate a hidden pane's

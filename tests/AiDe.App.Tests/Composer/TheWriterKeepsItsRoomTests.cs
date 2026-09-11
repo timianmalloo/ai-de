@@ -18,7 +18,7 @@ namespace AiDe.App.Tests.Composer;
 /// screenshot showed, with the ~30-line compiled text they had.
 /// </summary>
 /// <remarks>
-/// <para>DC-136's control in the fast ring (observed red there: 0px/465px at 485, 421px/465px at
+/// <para>DC-137's control in the fast ring (observed red there: 0px/465px at 485, 421px/465px at
 /// 1000); the shell probe (<c>ComposerHostIntegrationTests</c>) proves the same rule in the real
 /// docking host with a real browser. This one also reads the <c>composer.layout</c> diagnostic the
 /// surface emits and checks it against the tree it was read from — the log must not disagree with

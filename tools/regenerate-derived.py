@@ -77,6 +77,13 @@ STEPS = [
 # Run after, never instead. A regeneration that produced a stale artifact reports success on its own
 # terms; only the verifiers can say whether the result is current (R4).
 CHECKS = [
+    # A merge resolution is "regenerate, then stage everything" (session-collaboration §"Two
+    # conflicts that recur"). That resolves a DERIVED file and leaves a FIGURE-PATCHED one
+    # (site/*.html - verify-site-figures --update rewrites counts in place, never the file) with
+    # its markers intact, and this command then reported "every derived view is current" over a
+    # tree that still carried '<<<<<<<'. Observed on main f5c0f740; CI reddened and nobody read
+    # it. The gate exists; it belongs in the one command every resolution already runs.
+    ("conflict markers", [sys.executable, "tools/verify-no-conflict-markers.py"]),
     ("derived views", [sys.executable, "tools/verify-derived-views.py"]),
     ("site figures", [sys.executable, "tools/verify-site-figures.py"]),
     ("defect register", [sys.executable, "tools/verify-defect-register.py"]),

@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 67 · partially-controlled 54 · uncontrolled 16
+**Status counts:** controlled 68 · partially-controlled 54 · uncontrolled 16
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -5840,7 +5840,36 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   strikes. **Registered so the next ruling that says "pre-existing and tested" has to name which.**
 - **Status:** `uncontrolled` — the instance is fixed, the ratio is measured and recorded, and the
   next slice decomposed the same way would cite the same coverage again.
-### DC-136 — A content-sized reader is docked beside a filling writer, so the reader is measured first and the writer receives what is left
+
+### DC-136 — A merge resolved as "regenerate, then stage everything" leaves markers in a file that is patched in place, not regenerated
+- **Shape:** the documented resolution for the two recurring conflicts is *union the append-only
+  log, regenerate the derived views* — one command, then `git add -A`. That command regenerates
+  the files the registry calls `derived`; it **patches** `site/*.html` in place
+  (`verify-site-figures.py --update` rewrites counts, never the file). A conflict in a
+  figure-patched file therefore survives the resolution with its `<<<<<<<` intact, the staged
+  tree carries it, and the resolver's own completion line reads *"every derived view is current
+  and every gate is green"* — which was true of the derived views and false of the tree.
+- **Signature:** a merge commit that touches `site/*.html`; `verify-no-conflict-markers.py` red
+  in CI on a `main` push while the local resolution reported green; identical sides
+  (whitespace / end-of-line only), so the conflict was never *about* anything.
+- **Instance (conductor-addendum-c, 2026-09-11):** merge `f5c0f740` of `conductor/addendum-c`
+  into `main` — `site/index.html:59-63,142-146` and `site/model.html:465-469`, both sides
+  byte-identical after trim. Resolved by `regenerate-derived.py` + `git add -A docs site`; the
+  conductor ran `verify-derived-views` and `verify-stranded-audit` after the merge and **not**
+  `verify-no-conflict-markers`; CI reddened on the push and was not read back (E14: an exit code
+  is not a result — read the state). Found by node S1's gate run on `feature/addendum-c`.
+- **Sweep:** `git log --merges -- site/` shows this is the third merge in two days that touched
+  `site/*.html`; the two earlier ones resolved cleanly because only one side had changed. The
+  class was latent, not new.
+- **Control:** `tools/regenerate-derived.py` `CHECKS` now runs `verify-no-conflict-markers.py`
+  first — the one command every resolution already runs fails on a marker anywhere in the tree.
+  Observed red with a scratch marker (exit 1), green after (`main`, this commit).
+- **Status:** `controlled` — the instance is fixed and the control is in the resolution path,
+  not in a step the resolver has to remember.
+
+> **Numbering note.** DC-137 and DC-138 were allocated as DC-136 and DC-137 on `fix/composer-entry-areas` (INV-0007) while `main` spent DC-136 for the merge-marker class; renumbered at the merge (DC-013). The audit entry `al-01M28Z19PG92S9YE390MPKB7TR` and the commit `a764b344` cite the pre-merge numbers; every other citation was renumbered with the register.
+
+### DC-137 — A content-sized reader is docked beside a filling writer, so the reader is measured first and the writer receives what is left
 
 - **Shape:** an input host that fills its container (`LastChildFill`, a `*` row, an `HwndHost`/
   `WebView2`) shares a panel with a read-only element that is sized by its **content** — a
@@ -5909,7 +5938,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Status:** `partially-controlled` — the instance is controlled at two heights in the fast ring
   and in the shell; the class is caught only where a layout test is written for the surface.
 
-### DC-137 — One-time initialisation hooked to a per-attach event, behind a once-gate keyed to the wrong lifetime
+### DC-138 — One-time initialisation hooked to a per-attach event, behind a once-gate keyed to the wrong lifetime
 
 - **Shape:** a hosted control does its one-time start-up in a `Loaded` handler. `Loaded` is raised on
   **every** attach to a loaded tree, and a docking host that rebuilds its layout re-parents every pane

@@ -560,7 +560,7 @@ with them, because a revision is per field and the fields are new.
 The host declared a navigation: the document that reported ready is being replaced, so the
 next `editor.ready` is a **new page's mount**, not a duplicate.
 
-**Remarks.** The once-gate in `Ready` is per **document**, not per surface (DC-137): only the
+**Remarks.** The once-gate in `Ready` is per **document**, not per surface (DC-138): only the
 host can start a navigation, so only the host resets it — nothing in the page's vocabulary
 reaches this method. The per-field revisions go with it: a new document counts from its own
 1, and the old page's high-water marks would drop every keystroke as "not strictly greater".

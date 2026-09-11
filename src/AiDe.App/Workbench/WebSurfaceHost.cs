@@ -9,7 +9,7 @@ namespace AiDe.App.Workbench;
 /// </summary>
 /// <remarks>
 /// <para><b>WPF raises <c>Loaded</c> on every attach, and the docking host re-parents every pane on
-/// every render</b> (DC-137). The WebView2 wrapper survives the re-parent on its own — its window-core
+/// every render</b> (DC-138). The WebView2 wrapper survives the re-parent on its own — its window-core
 /// builder re-parents the existing controller, read from the decompiled 1.0.3485.44 wrapper — so the
 /// reload was ours and the guard is ours: the flag is set <i>before</i> the first await, so a second
 /// <c>Loaded</c> arriving while the runtime is still starting is a re-attach too, not a race.</para>

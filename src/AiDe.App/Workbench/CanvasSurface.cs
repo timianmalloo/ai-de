@@ -83,7 +83,7 @@ public sealed class CanvasSurface : ContentControl, IDisposable
     {
         SurfaceId = surfaceId;
 
-        // One host for both web surfaces (DC-137): it initialises once across every re-parent, so a
+        // One host for both web surfaces (DC-138): it initialises once across every re-parent, so a
         // later render no longer reloads the graph. The page string stays the canvas's own.
         _host = new WebSurfaceHost(surfaceId, this, InitialiseAsync, failure => Content = new TextBlock
         {

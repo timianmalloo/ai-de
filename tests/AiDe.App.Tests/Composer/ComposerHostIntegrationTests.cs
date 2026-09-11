@@ -189,7 +189,7 @@ public sealed class ComposerHostIntegrationTests
     }
 
     /// <summary>
-    /// <b>DC-137, the allowed branch.</b> A genuine reload of the composer page — crash recovery's
+    /// <b>DC-138, the allowed branch.</b> A genuine reload of the composer page — crash recovery's
     /// shape — is a new document whose <c>editor.ready</c> is a mount: one more navigation, one more
     /// <c>host.init</c> carrying the draft the host still holds, no ready dropped, six fields back.
     /// </summary>
@@ -214,7 +214,7 @@ public sealed class ComposerHostIntegrationTests
     }
 
     /// <summary>
-    /// <b>DC-137, the cancelled branch.</b> A navigation the policy cancels replaces no document and
+    /// <b>DC-138, the cancelled branch.</b> A navigation the policy cancels replaces no document and
     /// resets nothing: the composer counts no navigation, readiness stands, and the next keystroke
     /// reaches the draft.
     /// </summary>

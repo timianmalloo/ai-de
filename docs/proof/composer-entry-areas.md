@@ -23,7 +23,7 @@ summary: >-
 
 - **Change:** branch `fix/composer-entry-areas`, on `investigate/composer-input` @ `4b05744b` (= `main` @ `f5c0f740` + INV-0007 and its two red tests)
 - **Investigation:** `docs/investigations/INV-0007-composer-entry-areas-starved-by-the-compiled-view.md`
-- **Register:** DC-136 (a content-sized reader docked beside a filling writer), DC-137 (one-time initialisation on a per-attach event, behind a once-gate keyed to the wrong lifetime) — *ids as allocated on this branch; `origin/main` spent DC-136 at `0a0a73c1` while this node ran, so both renumber up by one at the merge (the DC family is renumbered in place, never re-issued — `verify-id-allocators.py` line 89, DC-134's precedent)*
+- **Register:** DC-137 (a content-sized reader docked beside a filling writer), DC-138 (one-time initialisation on a per-attach event, behind a once-gate keyed to the wrong lifetime) — *ids as allocated on this branch; `origin/main` spent DC-137 at `0a0a73c1` while this node ran, so both renumber up by one at the merge (the DC family is renumbered in place, never re-issued — `verify-id-allocators.py` line 89, DC-134's precedent)*
 - **Tier:** T1 · **Author / date:** the implementation node (session `composer-fix`), 2026-09-11
 
 ## Claims & evidence
@@ -55,7 +55,7 @@ summary: >-
 | `CanvasSurface` | yes | same host; navigations measured from the core's `NavigationStarting`; the `simplify:` marker at the old `:211` retired (its upgrade is taken) |
 | `WorkbenchDiagnostics` | yes | `ComposerLayout` (evt `composer.layout`), `WebSurfaceHandshake` (evt `web-surface.handshake`, transitions listed in its remarks, `errorCode`/`exceptionType` on failure) |
 | readers | yes | the STA tests, the once-tests, the probe (Sink echoed to stdout in every mode — the handshake probe no longer writes into the operator's log, INV F6) |
-| register | yes | DC-136, DC-137 with class → sweep → derive → prevent |
+| register | yes | DC-137, DC-138 with class → sweep → derive → prevent |
 
 **Writer/reader per field (E8):** every `composer.layout` field is written by `EmitLayout` and read by `TheWriterKeepsItsRoomTests`; every handshake transition is written by the host or the composer and read by name in a test (`initialising`, `re-attached`, `init-failed`, `navigation-started`, `configured`, `page-ready`, `init-pushed`, `input-received`, `message-dropped`); `disposed` is written on `Dispose` and read by nothing yet — recorded as such, not claimed.
 
@@ -76,7 +76,7 @@ summary: >-
 | `dotnet build tests/AiDe.App.ComposerProbe -p:TreatWarningsAsErrors=true` | 0 |
 | `dotnet test tests/AiDe.App.Tests` (full, after the last edit) | 567/0 (1 m 19 s) |
 | `dotnet test tests/AiDe.Core.Tests --filter Composer\|Session` | 427/0 |
-| `python tools/verify-*.py` (30 scripts) | all 0 except: `verify-id-allocators.py` (cross-branch: DC-136 spent on `origin/main` during this node; INV-0007 allocated by three branches — `--this-tree-only` is 0), `verify-no-conflict-markers.py` (markers in `site/index.html`/`site/model.html` at this branch's base `f5c0f740`, fixed on `main` by `0a0a73c1` — DC-136 on main), `verify-derived-views.py`/`verify-site-figures.py` (regenerated after the audit entry) |
+| `python tools/verify-*.py` (30 scripts) | all 0 except: `verify-id-allocators.py` (cross-branch: DC-137 spent on `origin/main` during this node; INV-0007 allocated by three branches — `--this-tree-only` is 0), `verify-no-conflict-markers.py` (markers in `site/index.html`/`site/model.html` at this branch's base `f5c0f740`, fixed on `main` by `0a0a73c1` — DC-137 on main), `verify-derived-views.py`/`verify-site-figures.py` (regenerated after the audit entry) |
 | `verify-test-run.py` (CHECK mode) | 0 |
 
 ## Deviations from the INV's plan, recorded
@@ -84,15 +84,15 @@ summary: >-
 - **Phase 1 "editor `MinHeight`"** — dropped: a `MinHeight` on a fill child of a `DockPanel` cannot reclaim room from `Auto`-docked siblings (it overflows the cell instead). The chrome-aware ceiling in `MeasureOverride` is the stronger rule and is tested at the boundary a `MinHeight` was meant for (the wrapped status line).
 - **Phase 1 "Grid with star rows"** — not done: same arithmetic as the `DockPanel` (Auto first, star remainder); the rewrite bought nothing the ceiling does not.
 - **Phase 3 status sentence** (*"the editor has not reported ready"*) — deferred, named: not in the approved phase-3 list; `navigation-started` with no `init-pushed` after it is the log's form of the same fact.
-- **Phase 4(a) table test over every input-host surface** — composer only: DC-136's sweep rules the others out (`PromptDraftSurface`'s writer is the fill child; the rest dock no content-sized reader); a source-level sweep guard for class A was not written because its token set cannot be stated honestly (GO14a) — a residual, not a control.
+- **Phase 4(a) table test over every input-host surface** — composer only: DC-137's sweep rules the others out (`PromptDraftSurface`'s writer is the fill child; the rest dock no content-sized reader); a source-level sweep guard for class A was not written because its token set cannot be stated honestly (GO14a) — a residual, not a control.
 - **INV Phase 3 `composer.input` writer** — folded into the handshake vocabulary as `input-received` (Simplifier, L9: the reuse rung).
 
 ## Residuals
 
 - **Phases 5–6** (keyboard entry lands on `BODY`; page-side contrast floor) — not started, per the approved scope.
-- **Class A recurrence in a new surface** — caught only where a layout test is written for it (DC-136 `partially-controlled`).
+- **Class A recurrence in a new surface** — caught only where a layout test is written for it (DC-137 `partially-controlled`).
 - **Trace correlation** — no line in `WorkbenchDiagnostics` carries `trace_id`/`span_id` and no production listener subscribes to `aide.workbench` (pre-existing, file-wide; the SRE's note).
 - **`disposed` transition** — written, not yet read by a test.
 - **Sub-380px composers** — the rule's floor; below it the compiled view's `MinHeight` (90px) wins over the ceiling by WPF's min/max resolution.
 - **Two shared test helpers** (a `Descendants<T>` walker with a logical option; a `Repo.Root()`/`Repo.SourceFiles()`) — the Simplifier's sweep across eight `RepoRoot()` copies and four walkers; next step, not this change.
-- **DC ids** — DC-136/DC-137 here renumber up by one at the merge; the register's counts line merges to `controlled 68 · partially-controlled 54 · uncontrolled 16`.
+- **DC ids** — DC-137/DC-138 here renumber up by one at the merge; the register's counts line merges to `controlled 68 · partially-controlled 54 · uncontrolled 16`.

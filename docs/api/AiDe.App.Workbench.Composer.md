@@ -241,7 +241,7 @@ claim, and paste is handled inside the page by the editor that received it.
 | `AttachOutcome Attach(IReadOnlyList<string> filePaths)` | Offers files to the draft through the attach gate. |
 | `System.Text.Json.Nodes.JsonObject CommittedRecord()` | The committed-channel record for this send: counts, and one boolean. |
 | `void Dispose()` | Releases the hosted browser control. |
-| `Size MeasureOverride(Size constraint)` | **The writer is sized first (DC-136).** A DockPanel measures its docked children before the fill child, each with infinite extent on the docked axis, so an uncapped compiled view took its whole content height and the … |
+| `Size MeasureOverride(Size constraint)` | **The writer is sized first (DC-137).** A DockPanel measures its docked children before the fill child, each with infinite extent on the docked axis, so an uncapped compiled view took its whole content height and the … |
 
 ### `ComposerSurface(string surfaceId, string title)`
 

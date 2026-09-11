@@ -75,7 +75,7 @@ internal static class Program
     private static int Main(string[] args)
     {
         // THE WORKBENCH LOG, ON STDOUT, IN EVERY MODE. The surfaces emit their bounds, handshake
-        // transitions and input counts on the normal path (DC-136/DC-137); the test that launched
+        // transitions and input counts on the normal path (DC-137/DC-138); the test that launched
         // this reads them from here, and nothing a probe does lands in the operator's own log file
         // (INV-0007 F6: a test run and an operator's session were sharing one file).
         WorkbenchDiagnostics.Sink = line => Console.Out.WriteLine("diag: " + line);
