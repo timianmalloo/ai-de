@@ -113,6 +113,9 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="AiDe.App.Tests" />
+    <!-- The contrast census boots the real App out of process and opens a session document
+         through the shell (internal), the way MainWindow does — see AiDe.App.ContrastProbe. -->
+    <InternalsVisibleTo Include="AiDe.App.ContrastProbe" />
   </ItemGroup>
 
 </Project>

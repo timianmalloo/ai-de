@@ -2813,6 +2813,34 @@ window.DOCS_INDEX = {
       "sourceSha256": "97234ae560a8663d0d4a2e2510affa12b9f60a61399ff50dafbfe12052a496c1"
     },
     {
+      "id": "note-20260911-contrast-census-runs-out-of-process",
+      "path": "docs/notes/contrast-census-runs-out-of-process.md",
+      "title": "The contrast census boots the real App out of process, not a themed window in the test host",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "facelift",
+      "reviewBy": "2027-03-10",
+      "reviewSuggested": [],
+      "summary": "The census measures the product's composed visual tree by booting AiDe.App.App in its own process (AiDe.App.ContrastProbe) and reading a JSON report; an in-process Application was measured to break twelve later tests by unregistering the pack: URI scheme on shutdown. Blast radius: one more probe project on the build-order edge, one InternalsVisibleTo, ~5 s per App test run.",
+      "tags": [
+        "decision-note",
+        "ui",
+        "contrast",
+        "wpf",
+        "testing",
+        "probe"
+      ],
+      "links": [
+        {
+          "to": "inv-0007-contrast-floor-passes-while-the-shell-fails",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "76c453e69a0d9adc219d1e19f57816756edf1a38c31f11bd0c61cd9e79b63b62"
+    },
+    {
       "id": "note-addendum-a-ratification",
       "path": "docs/notes/addendum-a-ratification.md",
       "title": "Decision note — Addendum A ratified with cuts; Rulings 15–18",
@@ -8090,6 +8118,51 @@ window.DOCS_INDEX = {
       "sourceSha256": "b234911b74883e52df5498c42cd6495c034e6763148eee75867d94a5dfafb6b8"
     },
     {
+      "id": "inv-0007-contrast-floor-passes-while-the-shell-fails",
+      "path": "docs/investigations/INV-0007-contrast-floor-passes-while-the-shell-fails.md",
+      "title": "The contrast floor passes while the shell fails: a floor over a population the product does not render",
+      "type": "investigation",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "facelift",
+      "reviewBy": "2026-12-01",
+      "reviewSuggested": [],
+      "summary": "The operator reported dark-on-dark and light-on-light text after U2's contrast floor went green. Two findings, both measured. (1) The photographed sites — black footer text, a white text box, dim mode-strip captions — are the ORIGINAL instance seen on a Release binary built before the fix merged: the three Release builds on the machine carry their commit in their informational version, and the two that match the screenshot (be68ca1c, 2a363f4f) predate 5213d7bb. (2) On main today a census of the shell the product composes — the real App booted out of process, every surface kind opened, every menu, the palette, the composer page — finds 180 text pairings and 14 below floor that the floor cannot see: twelve at 2.37:1 where the fix's own implicit TextBlock style overrides the accent-ground state ink every container sets by inheritance, two disabled controls whose DisabledTextBrush never reaches the glyphs, and one page-CSS hint at 4.47:1. The floor measured eleven subjects it constructed on a window it built; the product composes a different population.",
+      "tags": [
+        "ui",
+        "contrast",
+        "wcag",
+        "theme",
+        "wpf",
+        "avalondock",
+        "webview2",
+        "census",
+        "floors",
+        "dc-135",
+        "dc-131"
+      ],
+      "links": [
+        {
+          "to": "ui-review-operator-feedback",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0012-docking-shell-library",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0008-shell-host",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-app-facelift",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "88c59296a8d8227d8c3db658501e13f9274e0b3543b835138a04dd3892815893"
+    },
+    {
       "id": "inv-knowledge-chip-reads-zero-again",
       "path": "docs/investigations/knowledge-chip-reads-zero-again.md",
       "title": "The Knowledge category chip reads 0 again — the App ignores the IsKnowledge flag",
@@ -13273,5 +13346,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "db2c8604d1dd265d10147bb37c2b9493f306053f5c435fdd2508e6e45d8f3b29"
+  "graphSha256": "8b0b8974b67137fe31f7594622e916fde3b17fd9213a44c6f481ee811983cfbe"
 };

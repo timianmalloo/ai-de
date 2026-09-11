@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    A GUI-SUBSYSTEM host, for the same reason AiDe.App.CanvasProbe and AiDe.App.ComposerProbe are.
+
+    The claim under test is "every text pairing the SHIPPED shell renders clears its floor" — which
+    needs the real `AiDe.App.App` (its compiled App.xaml, its MainWindow, its docking theme) booted
+    the way the product boots it. That needs a real `Application`, and WPF allows one per process:
+    an in-process attempt created it, took the census, shut it down, and left the `pack:` URI scheme
+    unregistered for the twelve tests that ran after it (DC-008, observed: 12 unrelated failures).
+    Same control the ConPTY, canvas-focus and composer cases took: run it out of process and report.
+
+    The report is a JSON file the test reads; the exit code says only whether the census was TAKEN.
+    The verdict belongs to the test, so the failing rows land in the assertion message.
+  -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>AiDe.App.ContrastProbe</AssemblyName>
+
+    <!-- A HELPER, not a test project: no framework, no .trx. See the CanvasProbe note. -->
+    <IsTestProject>false</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AiDe.App\AiDe.App.csproj" />
+  </ItemGroup>
+
+</Project>

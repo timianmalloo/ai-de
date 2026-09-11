@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T17:34:29Z",
+  "generated": "2026-09-11T18:56:22Z",
   "audit": [
     {
       "actor": null,
@@ -11732,6 +11732,49 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T2",
       "tool": null
+    },
+    {
+      "id": "al-01M28X1SAPJE12TF0FKMEQXHZT",
+      "shortname": "investigate-contrast-census",
+      "datetime": "2026-09-11T18:53:01Z",
+      "session": "contrast-census",
+      "prompt": "We still have lots of cases of dark/hard-to-read font colors with regards to the tool background. We need to ensure we have a consistent color palette that works consistently, and stop putting dark fonts on dark backgrounds and light fonts on light backgrounds.",
+      "summary": "Two verified findings. (1) The photographed sites are the ORIGINAL instance on a Release binary built before 5213d7bb merged: both matching Release builds carry be68ca1c / 2a363f4f in their informational version and neither contains the fix; the white TextBox is impossible on HEAD (measured sunken). (2) On main a census of the real App booted out of process (180 pairings) finds 14 below floor the floor cannot see: 12 at 2.37:1 where the fix's implicit TextBlock style overrides every container's accent-ground state ink by inheritance, 2 disabled controls whose DisabledTextBrush never reaches the glyphs, 1 page-CSS hint at 4.47:1. Necessary+sufficient: setter removed -> 12->0 (and 3 masked selected-inactive tab sites at 1.45 appear); setter present -> 12. Class: the leaf overrides the container's pairing (proposed DC-136), DC-135 recurrence 2, DC-131 instance, an unattributed-binary report (proposed DC-137). Phased plan: A remove the leaf ink setter + B selected-ACTIVE tab trigger + DESIGN.md on-accent row; TokenDisciplineTests source rule; page CSS tokens on host.init; app.start with the sha; register; census reach; muted-token decision. Stopped for review.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0007-contrast-floor-passes-while-the-shell-fails.md",
+        "docs/notes/contrast-census-runs-out-of-process.md",
+        "tests/AiDe.App.ContrastProbe/Program.cs",
+        "tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs",
+        "tests/AiDe.App.Tests/ShellContrastCensusTests.cs"
+      ],
+      "tags": [
+        "ui",
+        "contrast",
+        "census"
+      ],
+      "outcome": "success",
+      "goal": "Prove, by a census of the shell the product composes, why unreadable text ships past U2's contrast floor; name the mechanism per site; propose the class and a phased plan; stop before fixing",
+      "done_when": "INV-0007 exists with the census table verbatim; the census (AiDe.App.ContrastProbe + ShellContrastCensusTests) is committed red on main; audit logged; pushed to investigate/contrast-census",
+      "tier": "T1",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-11T18:08:46Z",
+      "duration_seconds": 2655.0,
+      "git": {
+        "sha": "f5c0f740fd0488baa00dd2de4320c187f585058e",
+        "short": "f5c0f740f",
+        "branch": "investigate/contrast-census",
+        "pushed": null
+      }
     }
   ],
   "changes": [
