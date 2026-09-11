@@ -1446,7 +1446,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 329 members, 70% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 331 members, 70% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1459,7 +1459,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2ca509a76d037af0d7f659a2796393aaba255b0b25bbcd41dfac058e196cb199"
+      "sourceSha256": "7e0472c15789b0ff979a3f652cf250fe1c9801b4275698871869a70a3be5f003"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -1471,7 +1471,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 45 members, 87% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 47 members, 88% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1484,7 +1484,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7d09188f96a1e8f14587f34803e53e79bd74d3116da9f23a0dab553641b292c3"
+      "sourceSha256": "999a84a50af98da0b81364aebcae68876e8737a834c7e82fbe181eddd7a9dbf0"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -1746,7 +1746,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 30 types, 71 members, 86% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 30 types, 72 members, 86% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1759,7 +1759,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0e00afd6cdbfac78096f4196dbb0c95b8c5727ba26a3f14b445750cae81dbca3"
+      "sourceSha256": "0d56e518b14c71aa9745dddf040735a427ae52a9d53046be4b81fecdd0539eff"
     },
     {
       "id": "api-aide-core-presentation-sessions",
@@ -5865,7 +5865,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a27b900dd0e5b36b307f9699edb27262c01f08440a15d7fd7b95a51179189b10"
+      "sourceSha256": "7d30d392febfc2603c0c53a6ca6c5f3edee191d4a806a0c670a4288d34f3859c"
     },
     {
       "id": "design-session-profiler",
@@ -8270,6 +8270,59 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "b234911b74883e52df5498c42cd6495c034e6763148eee75867d94a5dfafb6b8"
+    },
+    {
+      "id": "inv-0007-composer-entry-areas-starved-by-the-compiled-view",
+      "path": "docs/investigations/INV-0007-composer-entry-areas-starved-by-the-compiled-view.md",
+      "title": "The composer's entry areas have no room: the read-only compiled view takes the editor's height, and the next render kills the page",
+      "type": "investigation",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-front-door",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "\"I cannot type in the composer\" / \"I could not see the entry areas\" after File → New Session. Verified by measurement in the real shell under the operator's recorded arrangement: the composer's WebView2 laid out at 0px (F5 tree) and 105–110px (main) of a 485–689px composer, because the read-only compiled-view TextBox has no height ceiling, sits in a StackPanel docked Bottom, and is measured unconstrained before the editor host gets the remainder — a 28-line goal block costs 465px, and editor = composer − compiled − 114px. Capping the compiled view from outside the product gave the editor 202px in the same 485px and the run went green (necessity). A second, independent defect was found and reproduced: any later Adapter.Render() re-parents the WebView2, WPF raises Loaded again, InitialiseAsync navigates the page again, and the router drops the new page's editor.ready as a duplicate — no host.init, zero fields, the operator's on-screen text gone. The graph canvas shares the Loaded→navigate shape (measured: one render, one reload). Two red tests are committed; the fix is not.",
+      "tags": [
+        "composer",
+        "webview2",
+        "wpf",
+        "layout",
+        "docking",
+        "handshake",
+        "observability",
+        "session-document",
+        "ruling-47"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "refines"
+        },
+        {
+          "to": "note-front-door-rulings-45-48",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0015-canvas-hosting-and-overlay-strategy",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0021-named-dock-zones",
+          "rel": "depends-on"
+        },
+        {
+          "to": "inv-0006-workbench-pane-swap-on-native-tab-drag",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "System map",
+          "mermaid": "flowchart TD\n  MW[MainWindow.NewSession → opened] --> OSD[Shell.OpenSessionDocument → Adapter.Render #1]\n  MW --> BC[BindComposer → ComposerSurface.Configure]\n  MW -->|main only| GT[GiveItTheWholeTree → Adapter.Render #2]\n  OSD --> SDS[SessionDocumentSurface: Grid · composer col ⟷ canvas col]\n  SDS --> CS[ComposerSurface: DockPanel]\n  CS --> P[template picker · Dock.Top · Auto]\n  CS --> B[Send/Attach bar · Dock.Bottom · Auto]\n  CS --> F[footer StackPanel · Dock.Bottom · Auto<br/>label · compiled TextBox (MinHeight 90, no MaxHeight) · lease · status]\n  CS --> V[WebView2 · LastChildFill = the remainder]\n  F -. measured first, unconstrained .-> V\n  V --> L[Loaded → InitialiseAsync → EnsureCoreWebView2 → subscribe → Navigate]\n  L --> PG[composer.mjs: editor.ready → router.Ready once → MarkReady → host.init → render fields]\n  R[any later Adapter.Render] -->|Manager.Layout replaced → re-parent| V\n  V -->|Loaded again| L"
+        }
+      ],
+      "sourceSha256": "fc30cc6a719178cfe437ee214487eaaa8e8c6622bd5bcd730bea11f529e9f7da"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -11674,6 +11727,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "70be47bec3d22b82a75fcceb9b51b67671c6eb0175f97f7d178ca72999c2ab77"
     },
     {
+      "id": "proof-composer-entry-areas",
+      "path": "docs/proof/composer-entry-areas.md",
+      "title": "Proof Pack — the composer's entry areas keep their room, and the page survives a render (INV-0007, phases 1–4)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-front-door",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Evidence for INV-0007 phases 1–4: the compiled view is capped to the smaller of 35% of the composer and half of what the chrome leaves (set in MeasureOverride, one pass); both WebView2 surfaces initialise once through one WebSurfaceHost and the router's readiness is per document; bounds, every handshake transition and the first accepted keystroke are emitted on the normal path. Nine new tests, four of them through the real docking host; every one observed red first or red by a named mutation. Probe exit 24 → 0 (editor 110px/465px → 334px/241px) and 25 → 0.",
+      "tags": [
+        "composer",
+        "webview2",
+        "wpf",
+        "layout",
+        "handshake",
+        "observability",
+        "proof-pack",
+        "inv-0007",
+        "dc-136",
+        "dc-137"
+      ],
+      "links": [
+        {
+          "to": "inv-0007-composer-entry-areas-starved-by-the-compiled-view",
+          "rel": "implements"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "da6b4af0c9eab8f5f7b94546b4c43f2ee1abb7982d150116f21d95616757e912"
+    },
+    {
       "id": "proof-conductor-agent-plane",
       "path": "docs/proof/conductor-agent-plane.md",
       "title": "Proof Pack — Conductor agent plane, Phase 1 (N0–N7)",
@@ -13594,5 +13683,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d510301ec71eb80b155d2f454231cf3aee2f42375835742dae563cbd9abb496f"
+  "graphSha256": "ef885c2deafd825551370b47f29152adebb1670c55e0fed1962c1c1405659b92"
 };

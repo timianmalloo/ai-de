@@ -36,10 +36,20 @@ namespace AiDe.App.Workbench.Composer;
 /// </remarks>
 public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHasDisplayName, IDisposable
 {
+    /// <summary>
+    /// How far the editor host's or the compiled view's height must move before another
+    /// <c>composer.layout</c> line is written: below this a resize is a drag, not a change of state.
+    /// </summary>
+    private const double LayoutChangeThreshold = 24;
+
+    private readonly WebSurfaceHost _host;
     private readonly WebView2 _view;
     private readonly TextBox _compiled;
+    private readonly TextBlock _compiledLabel = new() { Text = "Compiled view" };
     private readonly TextBlock _lease;
     private readonly TextBlock _status;
+    private readonly DockPanel _bar;
+    private readonly StackPanel _footer;
     private readonly Button _send;
     private readonly Button _attach;
     private readonly ComboBox _templatePicker;
@@ -62,6 +72,11 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     private bool _pageReady;
     private bool _configured;
     private int _blockedByAttachSetting;
+    private int _navigations;
+    private long _inputs;
+    private bool _inputSinceInit;
+    private double?[]? _lastHeights;
+    private readonly HashSet<string> _dropsThisDocument = new(StringComparer.Ordinal);
 
     /// <param name="surfaceId">The surface's stable id, as every other surface carries one.</param>
     /// <param name="title">Its accessible name.</param>
@@ -73,7 +88,6 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         AutomationProperties.SetName(this, title);
         SetResourceReference(BackgroundProperty, "SurfaceBrush");
 
-        _view = new WebView2();
         _compiled = new TextBox
         {
             IsReadOnly = true,
@@ -87,6 +101,10 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         _lease = new TextBlock { Text = "Lease: not derivable until the draft names something", Margin = new Thickness(0, 4, 0, 0) };
         _status = new TextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 4, 0, 0) };
 
+        // Built after the status line it reports into: a browser that cannot start says so there.
+        _host = new WebSurfaceHost(surfaceId, this, InitialiseAsync, failure => _status.Text = "the composer editor could not start: " + failure);
+        _view = _host.View;
+
         _send = new Button { Content = "Send", Padding = new Thickness(14, 6, 14, 6), Margin = new Thickness(0, 0, 8, 0) };
         _send.Click += (_, _) => Send();
 
@@ -97,30 +115,40 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         _templatePicker = BuildTemplatePicker();
         DockPanel.SetDock(_templatePicker, Dock.Top);
 
-        var bar = new DockPanel { Margin = new Thickness(12, 8, 12, 8) };
-        DockPanel.SetDock(bar, Dock.Bottom);
-        bar.Children.Add(_send);
-        bar.Children.Add(_attach);
+        _bar = new DockPanel { Margin = new Thickness(12, 8, 12, 8) };
+        DockPanel.SetDock(_bar, Dock.Bottom);
+        _bar.Children.Add(_send);
+        _bar.Children.Add(_attach);
 
-        var footer = new StackPanel { Margin = new Thickness(12, 0, 12, 12) };
-        footer.Children.Add(new TextBlock { Text = "Compiled view" });
-        footer.Children.Add(_compiled);
-        footer.Children.Add(_lease);
-        footer.Children.Add(_status);
-        DockPanel.SetDock(footer, Dock.Bottom);
+        _footer = new StackPanel { Margin = new Thickness(12, 0, 12, 12) };
+        _footer.Children.Add(_compiledLabel);
+        _footer.Children.Add(_compiled);
+        _footer.Children.Add(_lease);
+        _footer.Children.Add(_status);
+        DockPanel.SetDock(_footer, Dock.Bottom);
 
         var root = new DockPanel { LastChildFill = true };
         root.Children.Add(_templatePicker);
-        root.Children.Add(bar);
-        root.Children.Add(footer);
+        root.Children.Add(_bar);
+        root.Children.Add(_footer);
         root.Children.Add(_view);
         Content = root;
+
+        // Rendered bounds are emitted on the normal path (IO1): the class survived as long as nothing
+        // measured them.
+        _view.SizeChanged += (_, _) => EmitLayout();
+        _compiled.SizeChanged += (_, _) => EmitLayout();
 
         _router = new ComposerMessageRouter(ComposerPageContract.Url, _instance, [], this);
 
         _view.PreviewKeyDown += OnPreviewKey;
-        Loaded += async (_, _) => await InitialiseAsync();
     }
+
+    /// <summary>
+    /// The most of the composer's height the read-only compiled view may take — and it never takes
+    /// more than the editor host: <b>the writer is never smaller than the reader.</b>
+    /// </summary>
+    public const double CompiledShareCeiling = 0.35;
 
     /// <summary>The surface's stable id.</summary>
     public string SurfaceId { get; }
@@ -148,6 +176,9 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
     /// <summary>Whether the page has reported that it mounted.</summary>
     public bool PageIsReady => _pageReady;
+
+    /// <summary>How many times the browser was initialised. The contract is 1, across every re-parent.</summary>
+    internal int InitialisationsStarted => _host.InitialisationsStarted;
 
     /// <summary>What the operator will read before sending: the whole compiled prompt.</summary>
     public string CompiledView => _compiled.Text;
@@ -194,6 +225,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         _templatePicker.Visibility = catalog is null ? Visibility.Collapsed : Visibility.Visible;
 
         _configured = true;
+        WorkbenchDiagnostics.WebSurfaceHandshake(SurfaceId, "configured", _navigations, _inputs, _router.Dropped, $"fields {_fields.Count}");
 
         ApplyAttachAffordance();
         RenderCompiledView();
@@ -317,6 +349,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     public void MarkReady()
     {
         _pageReady = true;
+        WorkbenchDiagnostics.WebSurfaceHandshake(SurfaceId, "page-ready", _navigations, _inputs, _router.Dropped);
         PushInitWhenBothHalvesHaveHappened();
     }
 
@@ -346,6 +379,14 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
                 break;
             default:
                 return;
+        }
+
+        _inputs++;
+        if (!_inputSinceInit)
+        {
+            // Once per pushed init: the first keystroke that reached the draft on the page on screen.
+            _inputSinceInit = true;
+            WorkbenchDiagnostics.WebSurfaceHandshake(SurfaceId, "input-received", _navigations, _inputs, _router.Dropped);
         }
 
         RenderCompiledView();
@@ -493,7 +534,8 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
         _disposed = true;
         _view.PreviewKeyDown -= OnPreviewKey;
-        _view.Dispose();
+        _host.Dispose();
+        WorkbenchDiagnostics.WebSurfaceHandshake(SurfaceId, "disposed", _navigations, _inputs, _router.Dropped);
     }
 
     private static IReadOnlyList<string> PickFiles()
@@ -542,6 +584,8 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         };
 
         _view.CoreWebView2?.PostWebMessageAsJson(JsonSerializer.Serialize(payload));
+        _inputSinceInit = false;
+        WorkbenchDiagnostics.WebSurfaceHandshake(SurfaceId, "init-pushed", _navigations, _inputs, _router.Dropped, $"fields {_fields.Count}");
     }
 
     /// <summary>What the draft currently holds for one field — the inverse of <see cref="SetFieldText"/>.</summary>
@@ -567,45 +611,114 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         _ => "text",
     };
 
+    /// <summary>
+    /// Configures the started browser and navigates it. Runs once per surface — the host guards
+    /// the attach, so a re-parent by the docking host neither re-subscribes nor re-navigates.
+    /// </summary>
     private async Task InitialiseAsync()
     {
-        try
+        var core = _view.CoreWebView2!;
+
+        ComposerPageContract.ApplySettingsFloor(core.Settings);
+        WebAssetHost.Map(core);
+
+        // THE HOST-MINTED INSTANCE, HANDED TO THE DOCUMENT BEFORE ANY SCRIPT RUNS. The page must
+        // carry it in every envelope, including the first — `editor.ready` — so it cannot be
+        // learned from `host.init`, which is what ready unblocks. Injected rather than posted:
+        // a message needs an instance to be routed, which is the loop.
+        //
+        // IT GRANTS THE PAGE NOTHING. It is a string the host generated, that the host already
+        // re-states on `host.init`, and that the router compares ordinally. It is not a host
+        // object — those stay off — and there is no second value the page could have used.
+        await core.AddScriptToExecuteOnDocumentCreatedAsync(
+            "window.__aideComposerInstance = " + JsonSerializer.Serialize(_instance) + ";");
+
+        core.NavigationStarting += OnNavigationStarting;
+        core.FrameNavigationStarting += (_, e) => e.Cancel = ComposerPageContract.MustCancelNavigation(e.Uri);
+        core.NewWindowRequested += (_, e) => e.Handled = true;
+        core.LaunchingExternalUriScheme += (_, e) => e.Cancel = true;
+        core.WebMessageReceived += OnWebMessage;
+
+        core.Navigate(ComposerPageContract.Url);
+    }
+
+    /// <summary>
+    /// <b>The writer is sized first (DC-137).</b> A DockPanel measures its docked children before the
+    /// fill child, each with infinite extent on the docked axis, so an uncapped compiled view took its
+    /// whole content height and the editor host got the remainder. The ceiling is set here, before
+    /// any child is measured: the smaller of the compiled view's share of this height and half of
+    /// what the chrome leaves — so the editor host is never smaller than the compiled view, whatever
+    /// the status line wraps to. One pass; no transient starvation.
+    /// </summary>
+    protected override Size MeasureOverride(Size constraint)
+    {
+        if (!double.IsPositiveInfinity(constraint.Height))
         {
-            await _view.EnsureCoreWebView2Async();
-            var core = _view.CoreWebView2;
-            if (core is null)
-            {
-                return;
-            }
+            var unbounded = new Size(constraint.Width, double.PositiveInfinity);
+            var inner = new Size(Math.Max(0, constraint.Width - _footer.Margin.Left - _footer.Margin.Right), double.PositiveInfinity);
+            _templatePicker.Measure(unbounded);
+            _bar.Measure(unbounded);
+            _compiledLabel.Measure(inner);
+            _lease.Measure(inner);
+            _status.Measure(inner);
 
-            ComposerPageContract.ApplySettingsFloor(core.Settings);
-            WebAssetHost.Map(core);
+            var chrome = _templatePicker.DesiredSize.Height + _bar.DesiredSize.Height
+                + _compiledLabel.DesiredSize.Height + _lease.DesiredSize.Height + _status.DesiredSize.Height
+                + _footer.Margin.Top + _footer.Margin.Bottom;
 
-            // THE HOST-MINTED INSTANCE, HANDED TO THE DOCUMENT BEFORE ANY SCRIPT RUNS. The page must
-            // carry it in every envelope, including the first — `editor.ready` — so it cannot be
-            // learned from `host.init`, which is what ready unblocks. Injected rather than posted:
-            // a message needs an instance to be routed, which is the loop.
-            //
-            // IT GRANTS THE PAGE NOTHING. It is a string the host generated, that the host already
-            // re-states on `host.init`, and that the router compares ordinally. It is not a host
-            // object — those stay off — and there is no second value the page could have used.
-            await core.AddScriptToExecuteOnDocumentCreatedAsync(
-                "window.__aideComposerInstance = " + JsonSerializer.Serialize(_instance) + ";");
-
-            core.NavigationStarting += (_, e) => e.Cancel = ComposerPageContract.MustCancelNavigation(e.Uri);
-            core.FrameNavigationStarting += (_, e) => e.Cancel = ComposerPageContract.MustCancelNavigation(e.Uri);
-            core.NewWindowRequested += (_, e) => e.Handled = true;
-            core.LaunchingExternalUriScheme += (_, e) => e.Cancel = true;
-            core.WebMessageReceived += OnWebMessage;
-
-            core.Navigate(ComposerPageContract.Url);
+            _compiled.MaxHeight = Math.Max(0, Math.Floor(Math.Min(
+                constraint.Height * CompiledShareCeiling,
+                (constraint.Height - chrome) / 2)));
         }
-        catch (Exception error) when (error is not OutOfMemoryException)
+
+        return base.MeasureOverride(constraint);
+    }
+
+    /// <summary>
+    /// The one navigation gate. An allowed navigation replaces the document, so readiness — the
+    /// router's and this surface's half — is re-keyed to the new one and its ready will push
+    /// <c>host.init</c> with the draft as it stands (DC-138); a cancelled navigation replaces nothing.
+    /// </summary>
+    private void OnNavigationStarting(object? sender, CoreWebView2NavigationStartingEventArgs e)
+    {
+        e.Cancel = ComposerPageContract.MustCancelNavigation(e.Uri);
+        if (e.Cancel)
         {
-            // A missing or broken WebView2 runtime must not take the shell down: the composer is one
-            // surface, and the same reasoning the canvas already records applies here.
-            _status.Text = "the composer editor could not start: " + error.Message;
+            return;
         }
+
+        _navigations++;
+        _pageReady = false;
+        _router.BeginNavigation();
+        _dropsThisDocument.Clear();
+        WorkbenchDiagnostics.WebSurfaceHandshake(SurfaceId, "navigation-started", _navigations, _inputs, _router.Dropped);
+    }
+
+    /// <summary>
+    /// Writes the rendered bounds when they first exist and whenever the editor host's or the
+    /// compiled view's height has moved more than <see cref="LayoutChangeThreshold"/> since the last
+    /// line. A part whose arrange is not valid is sent as <c>null</c>, never as 0.
+    /// </summary>
+    internal void EmitLayout()
+    {
+        static double? Width(FrameworkElement e) => e.IsArrangeValid ? e.ActualWidth : null;
+        static double? Height(FrameworkElement e) => e.IsArrangeValid ? e.ActualHeight : null;
+        static bool Moved(double? a, double? b) =>
+            a != b && (a is null || b is null || Math.Abs(a.Value - b.Value) > LayoutChangeThreshold);
+
+        double?[] heights = [Height(_view), Height(_compiled)];
+        if (_lastHeights is { } last && !heights.Zip(last).Any(pair => Moved(pair.First, pair.Second)))
+        {
+            return;
+        }
+
+        _lastHeights = heights;
+        WorkbenchDiagnostics.ComposerLayout(
+            SurfaceId,
+            Width(this), Height(this),
+            Width(_view), heights[0],
+            Width(_compiled), heights[1],
+            IsVisible, IsLoaded, _inputs);
     }
 
     /// <summary>
@@ -666,7 +779,15 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             paths.Clear();
         }
 
-        _router.Route(e.Source, e.WebMessageAsJson, paths);
+        var result = _router.Route(e.Source, e.WebMessageAsJson, paths);
+        if (!result.Accepted && _dropsThisDocument.Add(result.Kind + "\n" + result.Reason))
+        {
+            // The silence DC-138 found — a mount the host refused to hear, a keystroke it refused —
+            // is a line: once per kind and reason per document, so a page posting in a loop cannot
+            // write the log full, and the first refusal of each shape is never lost.
+            WorkbenchDiagnostics.WebSurfaceHandshake(
+                SurfaceId, "message-dropped", _navigations, _inputs, _router.Dropped, $"{result.Kind}: {result.Reason}");
+        }
     }
 }
 

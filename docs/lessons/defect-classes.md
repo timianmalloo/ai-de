@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 67 · partially-controlled 53 · uncontrolled 16
+**Status counts:** controlled 68 · partially-controlled 54 · uncontrolled 16
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -5866,3 +5866,156 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   Observed red with a scratch marker (exit 1), green after (`main`, this commit).
 - **Status:** `controlled` — the instance is fixed and the control is in the resolution path,
   not in a step the resolver has to remember.
+
+> **Numbering note.** DC-137 and DC-138 were allocated as DC-136 and DC-137 on `fix/composer-entry-areas` (INV-0007) while `main` spent DC-136 for the merge-marker class; renumbered at the merge (DC-013). The audit entry `al-01M28Z19PG92S9YE390MPKB7TR` and the commit `a764b344` cite the pre-merge numbers; every other citation was renumbered with the register.
+
+### DC-137 — A content-sized reader is docked beside a filling writer, so the reader is measured first and the writer receives what is left
+
+- **Shape:** an input host that fills its container (`LastChildFill`, a `*` row, an `HwndHost`/
+  `WebView2`) shares a panel with a read-only element that is sized by its **content** — a
+  `TextBox`/`TextBlock`/`StackPanel` with a `MinHeight` and no `MaxHeight`, docked or given an `Auto`
+  row. The panel measures the docked/auto children **first, with infinite extent on the docked axis**,
+  so the reader reports its whole content height and the writer receives `max(0, remaining)`. The
+  surface is inverted — **the reader is sized by content and the writer by remainder** — and it gets
+  worse with use: every line the operator writes makes the reader taller and the writer shorter.
+- **Signature:** `DockPanel.SetDock(x, Dock.Bottom|Top)` or `RowDefinition { Height = Auto }` on a
+  content-growing read-only element whose sibling is the input surface; a `MinHeight` with no
+  `MaxHeight` on a box that mirrors what is typed; a surface that shrinks as the user types; an
+  operator report that says "I cannot type" or "I cannot see the fields" with a screenshot in place
+  of a number, because nothing logs rendered bounds.
+- **Instance (INV-0007, 2026-09-11, the operator's own report):** `ComposerSurface` docked a
+  `StackPanel` footer to the bottom of its `DockPanel` and gave the `WebView2` editor host the
+  remainder; the footer's read-only compiled-view `TextBox` had `MinHeight = 90` and no ceiling.
+  **Measured in the real shell under the operator's recorded arrangement:** the editor host laid out
+  at **0px of a 485px composer** (F5's choreography), **105px of 684px** and **110px of 689px**
+  (maximized, Ruling 47), the compiled box at 465px in all three — 28 lines of goal block. Arithmetic
+  the runs agreed on: `editor = composer − compiled − 114px`, clamped at 0. Necessity: capping the
+  compiled view at 35% from outside the product gave the editor 202px in the same 485px and the run
+  went green.
+- **Class → sweep → derive → prevent.** *Class:* the sizing **order**, not the number of lines — any
+  content-sized reader docked beside a filling writer does this. *Sweep* (every surface pairing an
+  input host with docked chrome, read at INV-0007): `PromptDraftSurface` — the writer is the fill
+  child and the docked items are fixed-height bars, ruled out; `TerminalSurface`/`TerminalView` — no
+  `Dock.Bottom`, ruled out; `ConsoleSurface`, `ExplorerSurface`, `NodeReaderView` — no content-sized
+  reader against a filling input, ruled out. One instance in the tree. *Derive:* the rule is **the
+  writer is never smaller than the reader, and the reader keeps to ≤ 35% of the surface**, stated as
+  `ComposerSurface.CompiledShareCeiling`. *Prevent:* below.
+- **Why it survived:** the composer's bare-window probe gave the surface 700px and never saw the
+  starvation (DC-135's shape: the harness composed what the product does not); the composer emitted
+  **no diagnostics at all**, so the operator's log ended at the gesture and the geometry had to be
+  read off a screenshot.
+- **Control:** (1) the compiled view's `MaxHeight` is set in the surface's own `MeasureOverride`,
+  **before any child is measured**, to `⌊min(0.35·H, (H − chrome)/2)⌋` with the chrome (picker, bar,
+  label, lease, status, footer margin) measured right there — so the reader scrolls inside its
+  share, the writer is never smaller than it **whatever the status line wraps to**, and there is one
+  layout pass with no transient starvation (a `SizeChanged`-driven cap was the first form; the Test
+  Architect's boundary — a refusal wrapped to five lines at 485px — broke it: *editor 138px, compiled
+  169px*). (2)
+  `TheWriterKeepsItsRoomTests.TheEditorHostIsNeverSmallerThanTheCompiledViewAndTheCompiledViewKeepsToItsCeiling`
+  — the surface measured detached, no browser, at **485px, 1000px, and 485px with the wrapped
+  status**, with the operator's ~30-line text, asserting `editor ≥ compiled`, `compiled/H ≤ 0.35`
+  (the test's own constant, equality-checked against the product's), `compiled ≥ min(⌊0.35H⌋,
+  ⌊(editor+compiled)/2⌋) − 1` (a reader collapsed to its `MinHeight` is the opposite starvation),
+  AND that the single `composer.layout` line the surface emits carries the same heights the tree was
+  arranged at (the log must not disagree with the screen). **Observed red on the un-fixed control:**
+  *"editor host 0px, compiled view 465px of the composer's 485px"* and *"421px, 465px of 1000px"*;
+  the wrapped-status row red under the share-only rule by mutation. (3)
+  `ComposerHostIntegrationTests.TheComposersEntryAreasKeepTheirRoomAfterTheNewSessionChoreography` —
+  the same rule in the real docking host under the recorded arrangement, with `fields=6 editors=3`
+  and a keystroke that reached the draft; **observed red on `main`: exit 24, 110px/465px (67%)**;
+  green after: **334px/241px (35%)**. (4) The rendered bounds are now emitted on the normal path
+  (`composer.layout`: composer, editor and compiled `width`/`height`, `visible`, `loaded`; `null` —
+  never 0 — for a part whose arrange is not valid, proven by
+  `APartWhoseArrangeIsNotValidIsReportedAsNullNotZero`; re-emitted when either height moves > 24px),
+  so the next report carries the number rather than the screenshot.
+- **Not controlled, and named as such:** a **new** surface that docks a content-sized reader beside
+  a filling writer. The sweep-shaped guard was considered and not written: its token set cannot be
+  stated honestly — "content-sized" is a property of the element's measure, not of any text a grep
+  can match (`Dock.Bottom` on a fixed-height bar is fine; on a growing `TextBox` it is this class),
+  and an allow-list of variable names would be a claim nobody could verify at a glance (GO14a). The
+  control for a new surface is the same STA layout test, written for it when it is built — a
+  reviewer's question, not a gate.
+- **Status:** `partially-controlled` — the instance is controlled at two heights in the fast ring
+  and in the shell; the class is caught only where a layout test is written for the surface.
+
+### DC-138 — One-time initialisation hooked to a per-attach event, behind a once-gate keyed to the wrong lifetime
+
+- **Shape:** a hosted control does its one-time start-up in a `Loaded` handler. `Loaded` is raised on
+  **every** attach to a loaded tree, and a docking host that rebuilds its layout re-parents every pane
+  on every render — so the start-up runs again: subscriptions are added a second time (every event
+  now handled twice), a page is navigated a second time, and any handshake gate that is once-per-
+  **surface** treats the new page's first message as a duplicate of the old page's. The surface dies
+  silently, or reloads on every layout command, and nothing counts attaches or navigations.
+- **Signature:** `Loaded +=` with side effects on a non-`Window` element; an `IsReady` that is never
+  reset; duplicate event subscriptions after a layout change; a web page that "resets" after a pane
+  opens; a graph that "keeps refreshing"; `router drops` climbing after a render while
+  `host.init count` stays at what it was.
+- **Instance (INV-0007, 2026-09-11, reproduced — not the operator's report):** `ComposerSurface`
+  and `CanvasSurface` both hooked `Loaded += InitialiseAsync`. **Measured in the real shell:** after
+  one later `Adapter.Render()` the composer read `wpf loaded=2 unloaded=1, navigations started=2
+  (+1), editor.ready posted=2 (+1), router drops=2, host.init count=0, fields=0, editor text=''`
+  while the host's draft still held the operator's text; the canvas read *navigations started by the
+  same render = 1*. `main`'s own two renders coalesce into one `Loaded` (`wpf loaded=1`), so the
+  first render after the mount is the one that fires — a pane open, a layout command, a restore.
+- **Class → sweep → derive → prevent.** *Class:* a once-only gate keyed to the wrong lifetime — the
+  init is once-per-**attach** when it must be once-per-**surface**, and the readiness gate is once-
+  per-**surface** when it must be once-per-**document**. *Sweep* (every `Loaded +=` in
+  `src/AiDe.App`, read and counted at HEAD): `CanvasSurface.cs:105` — confirmed, same class;
+  `ComposerSurface.cs:122` — the instance; `MainWindow.Loaded`, `TextPromptDialog.window.Loaded` —
+  a `Window` is never re-parented, ruled out. Two of four. *Derive:* the `simplify:` marker at
+  `CanvasSurface.cs:211` (*two web-hosting idioms coexist … trigger: a THIRD web surface — one host
+  abstraction is cheaper than three copies*) predicted the class by count; it arrived by another
+  route — the same bug in both copies. The marker is retired: the upgrade it named is taken.
+  *Prevent:* below.
+- **Why it survived:** the handshake probe mounted the surface once in a bare window; nothing
+  counted `Loaded`, navigations or attaches; the composer logged nothing; and the router's 156 tests
+  call `Route` directly, downstream of the reload (DC-134's shape — a pure function cannot fail to
+  receive what it is handed).
+- **Control:** (1) **`WebSurfaceHost`** — the one re-attach-safe WebView2 host, used by both
+  surfaces: the guard is set *before* the first await, so a second `Loaded` during runtime start-up
+  is a re-attach and not a race — proven deterministically by
+  `AnAttachDuringTheRuntimeStartIsAReattachNotASecondStart` (the runtime start held open on a
+  `TaskCompletionSource`, `Loaded` raised four times, the initialiser run once after release;
+  **red by mutation** with the flag moved after the await: *Expected 1, Actual 4*); every attach is
+  recorded (`web-surface.handshake`: `initialising` once, `re-attached` thereafter, `init-failed`
+  once with `errorCode` `WEB.INIT_THREW` and the exception type — `AFailedStartIsReportedOnceAndNotRetriedOnReattach`). (2)
+  Readiness is re-keyed **per document**: `ComposerMessageRouter.BeginNavigation()` is called from
+  the composer's own `NavigationStarting` for every navigation it *allows* (a cancelled one replaces
+  nothing), resetting `IsReady` and the per-field revisions, so a genuine reload's `editor.ready` is
+  a mount that re-pushes `host.init` with the draft as it stands — proven at the router by
+  `TheVocabularyIsClosedTests.AReadyAfterADeclaredNavigationIsAMountNotADuplicate` (**observed red
+  against a no-op `BeginNavigation`**: `IsReady` stayed true; a late change from the old page is
+  dropped and raises no mark), and **through the product surface** by two probe scenarios:
+  `ComposerHostIntegrationTests.AGenuineReloadRemountsThePageWithTheDraft` (`core.Reload()` after
+  the mount: *navigation-started 1->2, init-pushed 1->2, router drops +0, fields=6*, the editor
+  showing the draft; **red by mutation** with the `BeginNavigation` wiring removed: exit 26,
+  *init-pushed 1->1, host.init count=0 fields=0*) and `…ACancelledNavigationResetsNothing` (the page
+  tries `location.href`, the policy cancels: *composer navigation-started 1->1, raw
+  NavigationStarting=2, reached draft=True*; **red by mutation** with the cancel early-return
+  removed: exit 27, *page ready=False, reached draft=False* — the operator's typing silently lost).
+  (3)
+  `TheWebSurfacesInitialiseOnceAcrossReparentsTests` — both surfaces in a real window, attached,
+  detached and re-attached **three times**, asserting `Attachments == 4` (non-vacuity) and
+  `InitialisationsStarted == 1`, and that the log carries one `initialising` and three `re-attached`
+  for the surface's id; **seen red by mutation** with the host's guard removed: *Expected 1, Actual
+  4*, both surfaces. (4) The sweep-shaped guard
+  `NoElementOutsideTheHostHooksLoadedForItsOwnInitialisation` — root `src/AiDe.App`, every `*.cs`
+  and `*.xaml` outside `bin`/`obj`, regex `\bLoaded\s*\+=|\bLoadedEvent\b|\bLoaded="`, allow-list
+  by relative path `{src/AiDe.App/MainWindow.xaml.cs, src/AiDe.App/Workbench/TextPromptDialog.cs,
+  src/AiDe.App/Workbench/WebSurfaceHost.cs}` (Windows, and the guard itself); **observed red at
+  HEAD:** `CanvasSurface.cs` and `ComposerSurface.cs` both matched. Adding a path to the allow-list is
+  a claim that its handler is idempotent under re-attach, made beside the entry. (5)
+  `ComposerHostIntegrationTests.TheComposerPageSurvivesALaterRender` — the visible consequence in
+  the real docking host; **observed red on `main`: exit 25**, green after: `navigations +0,
+  editor.ready +0, router drops=0, host.init count=1, fields=6`, `re-attached` logged, no
+  `message-dropped` (every refusal is now a line, once per kind and reason per document — the
+  dropped `draft.changed` the SRE asked for included); the canvas sibling at `--height 1400`:
+  *navigations started by the same render = 0* (was 1), measured from the canvas core's own
+  `NavigationStarting`.
+- **Relationship to DC-132/DC-134:** DC-132 is a handler on an event the library never raises on
+  the path it was written for; this is its mirror — a handler on an event the library raises **more
+  often** than the path it was written for. DC-134 is why the drop was silent; this is why there was
+  a drop.
+- **Status:** `controlled` — the host makes the class impossible for any surface that uses it, the
+  sweep guard fails when a surface does not, the once-test fails when the guard is removed, and the
+  shell probe fails when the page dies.
