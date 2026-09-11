@@ -510,9 +510,16 @@ public sealed class WorkbenchShell : IDisposable
     /// Marks the layout dirty after any change, so nothing has to remember to save.
     /// </summary>
     /// <remarks>
-    /// Hooked to the adapter's render rather than to individual commands: a save triggered per
-    /// command would miss changes made by a drag, and every new operation would need to remember to
-    /// opt in. One hook downstream of all of them cannot be forgotten.
+    /// <para>Hooked downstream of the commands rather than to each of them: every new operation would
+    /// otherwise need to remember to opt in, and one hook downstream of all of them cannot be
+    /// forgotten.</para>
+    /// <para><b>Known gap (INV-0006).</b> The signal is <c>Manager.LayoutUpdated</c> — WPF's layout
+    /// pass — and a cross-pane drag raises it ZERO times in a host running no visual pass (measured,
+    /// WorkbenchDragCompletedHookTests). So this does not reliably schedule a save for a native drag.
+    /// What the drag DOES reach is the model, as it lands (F1), so whenever a save runs it writes the
+    /// arrangement the user is looking at, and <see cref="LayoutPersistence.Dispose"/>'s shutdown
+    /// flush still writes it. A crash between the drag and shutdown does not. Closing this needs the
+    /// same docking-model signal the drag hook watches.</para>
     /// </remarks>
     private void PersistOnEveryChange()
     {

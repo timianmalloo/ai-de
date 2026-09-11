@@ -15,10 +15,19 @@ namespace AiDe.App.Workbench;
 /// library does not (ADR-0012).
 /// </summary>
 /// <remarks>
-/// The adapter is deliberately **one-way**: model → view. Pointer gestures enter as
-/// <see cref="LayoutOperation"/> requests through <see cref="ILayoutService.Apply"/>, never as direct
-/// view mutations — that is what keeps the keyboard path and the drag path provably identical
-/// (SC 2.5.7). The view is a projection; it is never the source of truth.
+/// <para>Rendering is one-way: model → view. The view is a projection; it is never the source of
+/// truth.</para>
+/// <para><b>This used to claim that "pointer gestures enter as <see cref="LayoutOperation"/> requests
+/// through <see cref="ILayoutService.Apply"/>, never as direct view mutations", and that is not true
+/// of the running app</b> (INV-0006 §2). The workbench's own pointer pipeline —
+/// <c>DropTargetResolver.Resolve</c> → <c>WorkbenchController.DragOver</c> → <c>Drop</c> →
+/// <c>LayoutOperation.MoveSurface</c> — has <b>no production caller</b>: verified by exhaustive grep,
+/// only <c>DragStateChanged</c> is subscribed. It is fully tested, and those tests prove nothing about
+/// the app. A native tab drag is AvalonDock's own gesture and DOES mutate the view directly; it is
+/// folded back into the model by <see cref="ViewArrangementChanged"/> and the shell's reconcile.</para>
+/// <para>The unwired path is NOT dead code to sweep: it is the pointer half of the SC 2.5.7
+/// keyboard-equivalence argument, and that claim needs re-examining by the UX &amp; Accessibility lens
+/// rather than deleting. The comment was the defect; the code stays.</para>
 /// </remarks>
 public sealed class WorkbenchAdapter
 {

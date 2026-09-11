@@ -297,6 +297,64 @@ public sealed class WorkbenchDragCompletedHookTests
             && root.GetProperty("placement").GetString() == placement;
     }
 
+    /// <summary>
+    /// INV-0006 §11's first residual risk, closed by F1 and asserted rather than assumed: <b>the
+    /// layout the user is looking at is the layout that gets saved.</b>
+    /// </summary>
+    /// <remarks>
+    /// <para>Persistence marks dirty from the view's signal but writes the zone MODEL, so before F1
+    /// every save between a drag and the next unrelated command wrote an arrangement the user was not
+    /// looking at — including the shutdown flush in <c>Dispose()</c>, which is the most common moment
+    /// to close an app right after rearranging it.</para>
+    /// <para><b>The half that is NOT closed, stated rather than implied:</b> <c>MarkDirty</c> is
+    /// hooked to <c>Manager.LayoutUpdated</c>, and a cross-pane drag raises that ZERO times here
+    /// (see <see cref="ACrossPaneDrag_RaisesTheDockingModelsOwnUpdate_NotAWpfLayoutPass"/>), so a drag
+    /// does not SCHEDULE a save. The arrangement is correct whenever a save runs, and the shutdown
+    /// flush still writes it; a crash between the drag and shutdown does not.</para>
+    /// </remarks>
+    [Fact]
+    public void ASaveAfterADrag_WritesTheArrangementTheUserIsLookingAt()
+    {
+        var directory = Path.Combine(Path.GetTempPath(), "aide-drag-save-" + Guid.NewGuid().ToString("N")[..8]);
+        Directory.CreateDirectory(directory);
+
+        try
+        {
+            var (onScreen, reopened) = Sta.Run(() =>
+            {
+                var shell = new WorkbenchShell(queries: null, workspaceDataDirectory: directory);
+                var window = new Window
+                {
+                    Content = shell,
+                    Width = 1000,
+                    Height = 700,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Left = -10000,
+                    Top = -10000,
+                    ShowInTaskbar = false,
+                    ShowActivated = false,
+                };
+                window.Show();
+                Settle(window, shell.Manager);
+
+                DragDocumentIntoPane(new Harness(shell, window), "domain", "explore");
+                var afterDrag = ((ZoneBackedLayoutService)shell.Service).Zones.Shape();
+                shell.Persistence!.SaveNow();
+                window.Close();
+
+                var next = new WorkbenchShell(queries: null, workspaceDataDirectory: directory);
+                return (afterDrag, ((ZoneBackedLayoutService)next.Service).Zones.Shape());
+            }, 60);
+
+            Assert.Contains("Left:[domain+explore+", onScreen, StringComparison.Ordinal);
+            Assert.Equal(onScreen, reopened);
+        }
+        finally
+        {
+            try { Directory.Delete(directory, recursive: true); } catch (IOException) { }
+        }
+    }
+
     private static List<string> CapturingDiagnostics(Action body)
     {
         var lines = new List<string>();
