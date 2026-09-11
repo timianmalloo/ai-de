@@ -151,26 +151,34 @@ public sealed class WhatTheRealCorpusCanProduceTests
     }
 
     /// <summary>
-    /// And it is BLOCKED from promotion, because nothing has disconfirmed it.
+    /// And every candidate is BLOCKED from promotion, because nothing has disconfirmed it.
     /// </summary>
     /// <remarks>
     /// <para>The acceptance criterion most likely to be quietly relaxed under pressure to show the
     /// feature doing something: a candidate with no disconfirming check has promotion <b>disabled</b>,
     /// not discouraged, and no amount of recurrence substitutes for one.</para>
     ///
-    /// <para>This is the assertion that stays true indefinitely. The previous test expired because
-    /// it described a state the world would leave; this one describes a rule the world cannot change
-    /// on its own — only a human attaching a check can move it, which is the design.</para>
+    /// <para><b>This asserts the rule, not a count.</b> <c>Assert.Single(m.Candidates)</c> expired the
+    /// same way the test above it once did: the corpus is designed to grow, so the number of
+    /// candidates it yields is not durable — an unrelated audit entry (e.g. two superseding entries
+    /// differing only in <c>Shortfalls</c>) can turn one candidate into two without the rule the test
+    /// cares about changing at all. A count over a growing corpus cannot stay true indefinitely; only
+    /// a per-candidate rule can. So this asserts the rule over <b>every</b> candidate, with a
+    /// non-vacuity guard (<see cref="Assert.NotEmpty{T}(IEnumerable{T})"/>) so an empty corpus cannot
+    /// pass by having nothing to check — only a human attaching a disconfirming check can move a
+    /// candidate past this, which is the design.</para>
     /// </remarks>
     [Fact]
     public void TheCandidateCannotBePromotedWithoutADisconfirmingCheck()
     {
         var m = Measure();
 
-        var candidate = Assert.Single(m.Candidates);
-
-        Assert.False(candidate.CanPromote);
-        Assert.NotNull(candidate.BlockedBecause);
+        Assert.NotEmpty(m.Candidates);
+        Assert.All(m.Candidates, candidate =>
+        {
+            Assert.False(candidate.CanPromote);
+            Assert.NotNull(candidate.BlockedBecause);
+        });
     }
 
     /// <summary>
