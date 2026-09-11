@@ -6688,6 +6688,44 @@ window.DOCS_INDEX = {
       "sourceSha256": "cba1de1b8eb6feaf5e9f4ade3c4bf15bfd4ab18c6f28b7e7d69b0d549d32b8ea"
     },
     {
+      "id": "note-addendum-c-current-state-inventory",
+      "path": "docs/notes/addendum-c-current-state-inventory.md",
+      "title": "Addendum C — current-state inventory (M0)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "Read-only inventory of the workbench shell at main@7f0b67a3: every surface, menu/command, the two-mode shell (Workbench/Explorer, ADR-0017), zone/layout persistence, the specs and ADRs that already govern this surface, a local craft-gate run (104 findings), and the test-coverage ratio for the layout service the shell actually runs.",
+      "tags": [
+        "addendum-c",
+        "inventory",
+        "ux",
+        "workbench"
+      ],
+      "links": [
+        {
+          "to": "plan-addendum-c-modes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-named-dock-zones",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "67b6351ffc527659f43fcf2c8b6f2ed3bce587e45530107c258f911e0e52638e"
+    },
+    {
       "id": "note-front-door-rulings-45-48",
       "path": "docs/notes/front-door-rulings-45-48.md",
       "title": "Decision note — Rulings 45–48: Terminal leaves Phase 1, edge ownership, maximize-on-create, craft-gate corpus",
@@ -13273,5 +13311,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "db2c8604d1dd265d10147bb37c2b9493f306053f5c435fdd2508e6e45d8f3b29"
+  "graphSha256": "f459551a389c3b046fedffe3a833c8450b510d4b61224a5c600b2fd6ee23ffc9"
 };
