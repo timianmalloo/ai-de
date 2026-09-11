@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json.Nodes;
 using AiDe.Core.AgentPlane;
 using AiDe.Core.Tests.AgentPlane;
@@ -18,8 +19,43 @@ public static class Program
 {
     public static async Task<int> Main(string[] args)
     {
+        if (args.Contains("--host-engine"))
+        {
+            return await HostEngine().ConfigureAwait(false);
+        }
+
         if (args.Contains("--hang"))
         {
+            if (args.Contains("--spawn-child"))
+            {
+                // A grandchild, so the reaping question is asked about a TREE and not about one
+                // process. Job membership is inherited, so a contained engine takes this with it;
+                // an uncontained one leaves it behind exactly as it leaves itself behind.
+                using var grandchild = Process.Start(new ProcessStartInfo(Environment.ProcessPath!)
+                {
+                    ArgumentList = { "--hang", "--ignore-stdin" },
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                }) ?? throw new InvalidOperationException("the grandchild did not start");
+
+                Console.Out.WriteLine($"GRANDCHILD {grandchild.Id}");
+            }
+
+            if (args.Contains("--ignore-stdin"))
+            {
+                // A child that does NOT end when its stdin closes. MEASURED, because the first
+                // attempt at the containment oracle proved the wrong thing: a child blocked on
+                // `ReadToEnd` is reaped by the pipe breaking when its parent dies, so the tree
+                // appeared contained while nothing contained it. Stdin EOF is a MITIGATION - the
+                // same category as stripping `-NoExit` from a shell - and a mitigation that holds
+                // for this child says nothing about an adapter that is mid-request, buffering, or
+                // holding a credential session open. The self-limit bounds a leak this mode
+                // deliberately creates; it is not the exit path under test.
+                await Task.Delay(TimeSpan.FromSeconds(120)).ConfigureAwait(false);
+                return 0;
+            }
+
             // A child that never exits on its own: it blocks on a stdin that nobody closes. The
             // reaping case needs a process that will still be alive when the test kills it.
             await Console.In.ReadToEndAsync().ConfigureAwait(false);
@@ -36,8 +72,42 @@ public static class Program
             return await Live(args).ConfigureAwait(false);
         }
 
-        Console.Error.WriteLine("usage: AiDe.Core.AcpProbe --self-test | --live [--adapter-root DIR] [--cwd DIR] [--prompt TEXT] | --hang");
+        Console.Error.WriteLine("usage: AiDe.Core.AcpProbe --self-test | --live [--adapter-root DIR] [--cwd DIR] [--prompt TEXT] | --hang [--ignore-stdin] [--spawn-child] | --host-engine");
         return 2;
+    }
+
+    // ------------------------------------------------------------------ the outer ring (DC-123)
+
+    /// <summary>
+    /// Owns a real <see cref="AcpEngineProcess"/> and then waits to be killed.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The oracle has to live outside the process that leaks.</b> DC-123's whole point is
+    /// that an abandoned subtree is invisible from inside the harness that abandoned it, so the
+    /// question "did the engine tree outlive its host?" cannot be asked by a test running in the
+    /// host. This mode makes the host a process a driver can kill, and prints the three process ids
+    /// the driver has to watch — its own, the engine's, and the engine's own child's.</para>
+    ///
+    /// <para><b><c>Dispose</c> is deliberately unreachable on the path this exists to measure.</b>
+    /// It is written below and it is correct; a process that is killed never runs it. That is the
+    /// difference between the graceful path and the abnormal one, and the abnormal one is the one
+    /// containment is for.</para>
+    /// </remarks>
+    private static async Task<int> HostEngine()
+    {
+        var launch = new EngineLaunch(
+            Environment.ProcessPath!, ["--hang", "--ignore-stdin", "--spawn-child"]);
+
+        using var engine = AcpEngineProcess.Start(
+            launch, AppContext.BaseDirectory, d => Console.Error.WriteLine("host: " + d));
+
+        Console.Out.WriteLine($"HOST {Environment.ProcessId}");
+        Console.Out.WriteLine($"ENGINE {engine.ProcessId}");
+        Console.Out.WriteLine(await engine.Output.ReadLineAsync().ConfigureAwait(false));
+        Console.Out.WriteLine("READY");
+
+        await Console.In.ReadToEndAsync().ConfigureAwait(false);
+        return 0;
     }
 
     // ------------------------------------------------------------------ the guards (DC-104)

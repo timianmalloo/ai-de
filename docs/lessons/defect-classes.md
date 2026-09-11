@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 64 · partially-controlled 50 · uncontrolled 10
+**Status counts:** controlled 64 · partially-controlled 51 · uncontrolled 10
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -5088,13 +5088,81 @@ for both or split.*
      `conpty-host`**, the conformance suite's — leaving the leftover-report oracle **blind to the
      fifth call site**. *An oracle with a hole in it is worse than no oracle*, because it reports
      clean.
-- **Status:** `partially-controlled` — the launcher now reaps its own child, proven on the
-  test-host-killed path, and a leftover-report oracle covers all five call sites. Not `controlled`:
-  that oracle is a **fingerprint of an aborted run**, not a process-table assertion, so a helper that
-  survives while its report is still deleted would pass. The out-of-host process-diff oracle is
-  named and unbuilt. And the **rate remains unmeasured** — the population was **zero** at diagnosis
-  time, so this leak is **episodic rather than monotonic**, and every statement about its frequency,
+- **RECURRED ONE RING FURTHER OUT, in PRODUCT code, and the fix above is what made it findable
+  (2026-09-10, node TH2).** `src/AiDe.Core/AgentPlane/AcpEngineProcess.cs` spawns the ACP engine
+  with **no job object at all**; reaping is `Dispose`-only, and `GovernedRunHost.cs:65` reaches it
+  through `using var engine = AcpEngineProcess.Start(...)`. `using` runs `Dispose`; **a killed
+  process runs nothing** — so the abnormal host death, the exact scenario the launcher fix was
+  proven against, abandoned the whole engine tree. The tell is this class's own signature verbatim:
+  the file carries an **exemplary lifetime comment** eight lines from the leak — *"a kill request
+  that is not waited on turns 'the child is dead' into a claim rather than an observation"* —
+  reasoning carefully about the graceful path while the abnormal one stayed open.
+- **Measured, not argued, and the FIRST oracle was wrong.** An out-of-host driver
+  (`AcpProbe --host-engine`) owns a real engine, prints its own pid, the engine's and the engine's
+  child's, and waits to be killed. Its first version proved the wrong thing: the child blocked on
+  `Console.In.ReadToEnd`, so when the host died the pipe broke and the tree exited **on its own** —
+  the run reported `THE ENGINE TREE DIED WITH ITS HOST` while nothing whatsoever contained it.
+  **Stdin EOF is a MITIGATION, not containment**, the same category as stripping `-NoExit` from a
+  shell, and an oracle that cannot tell the two apart reports clean on the defect. With
+  `--ignore-stdin` the measurement is: host killed → **engine and grandchild both still running
+  5,000 ms later** (before); **engine gone after 7 ms, grandchild after 8 ms** (after). The
+  grandchild is the part that matters — job membership is inherited, so the job reaps a tree the
+  code never names.
+- **The generalisation this adds:** *name every ring, then check that the ring you just fixed is not
+  itself owned by something* — and **prove the oracle can fail before trusting what it says**, or a
+  mitigation elsewhere in the system will answer the question you thought you were asking.
+- **Status:** `partially-controlled` — the launcher reaps its own child, the ACP engine is now in a
+  kill-on-close job, and both were proven on the killed-host path. An out-of-host oracle now EXISTS
+  (`AcpProbe --host-engine`) where before it was "named and unbuilt". Still not `controlled`: that
+  oracle is **run by hand, not by CI**, so nothing fails when a third ring is added without one; the
+  leftover-report oracle remains a fingerprint of an aborted run rather than a process-table
+  assertion; and the **rate remains unmeasured** — the population was **zero** at diagnosis time, so
+  this leak is **episodic rather than monotonic**, and every statement about its frequency,
   including the conductor's, is modelled rather than observed
+
+
+### DC-125 — A call that ESTABLISHES a safety property reports failure by return value, and the return value is discarded
+
+- **Shape:** a safety property — containment, a lock, a permission drop, a limit — is established by
+  one call that reports success as a **return value** rather than by throwing. The call site treats
+  it as a statement. From that moment "the property holds" and "the property silently does not hold"
+  are **the same observable state**: the object exists, the code that set it ran, every test passes,
+  and nothing anywhere is different except that the protection is absent.
+- **Signature:** a `bool`-returning interop or API call in **statement position** at a boundary
+  whose whole purpose is the property it sets; a nearby comment describing the property as though it
+  were established; and the decisive tell — **the correct check already exists elsewhere in the same
+  repository** and was not reached for.
+- **Instance (2026-09-10, node TH2, found by an SRE investigation reading both shipped call sites):**
+  `ConPtyTerminalSession.StartAsync` and `TerminalHostLauncher.RunInNewConsoleAsync` both called
+  `AssignProcessToJobObject(job, handle);` and discarded the `bool`. The repository already carried
+  the check **three times** and used it at **neither** shipped C# site:
+  `spikes/extraction-containment/Sandbox.cs:86-87` (`if (!AssignProcessToJobObject(...)) throw new
+  Win32Exception(...)`), and `docs/ai-forward-pack/scripts/bounded_process.py:125-127` and
+  `:224-226`.
+- **Red-first, and the red was that nothing happened.** Reproduced against a job whose object had
+  been closed: the call returned `false`, set `ERROR_INVALID_HANDLE` (6), **raised nothing**, left
+  the child running outside the job — and the test asserting all of that **PASSED**. A defect whose
+  red state is a passing test is the reason this class is invisible: there is no failing signal to
+  drive a fix, which is also why the investigation that found it explicitly refused to bundle a
+  refactor *"with no failing signal driving it"*.
+- **Control — STRUCTURAL, not a lint.** The `AssignProcessToJobObject` import is now `private`, and
+  `ConPtyInterop.AssignProcessToJob` — which checks and throws, in `Sandbox.cs`'s shape rather than
+  a fourth spelling — is the only route to it. `InternalsVisibleTo` does not reach private members,
+  so the test assembly cannot bypass it either. **A future call site cannot discard the answer,
+  because the answer is no longer offered.** `JobContainmentTests.AnAssignThatCannotHappenIsNotSilent`
+  observes the one remaining route firing, and asserts the native code (6) so a throw for some other
+  reason cannot pass for this one.
+- **Swept.** Every `bool`-returning P/Invoke in `src/`, `tests/` and `spikes/`, and every call to one
+  in statement position. After the fix the discarded returns that remain in `src/` are `CloseHandle`,
+  `TerminateProcess` on an already-failing cleanup path, and `InitializeProcThreadAttributeList`'s
+  documented first call — whose failure **is** its success. None of them establishes a property whose
+  absence is unobservable, which is what makes them a different case rather than an exception to this
+  one.
+- **Status:** `partially-controlled` — the one instance is closed structurally and observed firing,
+  and the sweep found no sibling. Not `controlled`: nothing gates the **class**. A new
+  `bool`-returning establish-a-property call can still be written in statement position, and the
+  control that would catch it — an analyzer or a gate over interop call sites — is named here and
+  not built
 
 
 ---

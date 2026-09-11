@@ -55,19 +55,31 @@ internal static class TerminalHostLauncher
         var arguments = mode is null ? $"\"{report}\"" : $"\"{report}\" \"{mode}\"";
         var commandLine = $"\"{exe}\" {arguments}\0".ToCharArray();
 
-        var job = ConPtyInterop.CreateKillOnCloseJob();
-
-        if (!CreateProcessW(
-                null, ref commandLine[0], IntPtr.Zero, IntPtr.Zero, false, CREATE_NEW_CONSOLE,
-                IntPtr.Zero, Path.GetDirectoryName(exe), ref startup, out var info))
-        {
-            Assert.Fail($"could not start the helper: Win32 error {Marshal.GetLastWin32Error()}");
-        }
-
-        ConPtyInterop.AssignProcessToJobObject(job, info.hProcess);
+        // EVERYTHING THAT ALLOCATES IS INSIDE THE TRY, so the `finally` covers it.
+        //
+        // The job used to be created above this line, which left two throwing statements — the
+        // `Assert.Fail` on a failed CreateProcessW, and now the checked assign — between the
+        // creation of a handle and the only code that closes it. On those paths the job handle
+        // leaked, and a leaked KILL_ON_JOB_CLOSE handle is worse than an ordinary one: the job
+        // outlives the run, so the reaping it exists to do never happens.
+        var job = IntPtr.Zero;
+        NativeProcessInformation info = default;
 
         try
         {
+            job = ConPtyInterop.CreateKillOnCloseJob();
+
+            if (!CreateProcessW(
+                    null, ref commandLine[0], IntPtr.Zero, IntPtr.Zero, false, CREATE_NEW_CONSOLE,
+                    IntPtr.Zero, Path.GetDirectoryName(exe), ref startup, out info))
+            {
+                Assert.Fail($"could not start the helper: Win32 error {Marshal.GetLastWin32Error()}");
+            }
+
+            // CHECKED. Discarding this answer is how containment silently does not happen: the job
+            // exists, the helper is outside it, and the suite still reports green.
+            ConPtyInterop.AssignProcessToJob(job, info.hProcess);
+
             using var process = System.Diagnostics.Process.GetProcessById(info.dwProcessId);
             using var deadline = new CancellationTokenSource(limit);
             await process.WaitForExitAsync(deadline.Token);
@@ -81,9 +93,21 @@ internal static class TerminalHostLauncher
         }
         finally
         {
-            CloseHandle(info.hThread);
-            CloseHandle(info.hProcess);
-            ConPtyInterop.CloseHandle(job);
+            // Zero-guarded because the throw can now arrive before any of these exists.
+            if (info.hThread != IntPtr.Zero)
+            {
+                CloseHandle(info.hThread);
+            }
+
+            if (info.hProcess != IntPtr.Zero)
+            {
+                CloseHandle(info.hProcess);
+            }
+
+            if (job != IntPtr.Zero)
+            {
+                ConPtyInterop.CloseHandle(job);
+            }
         }
     }
 
