@@ -13374,7 +13374,7 @@ window.DOCS_INDEX = {
         {
           "kind": "flowchart",
           "title": "B5. User flows",
-          "mermaid": "flowchart TD\n  A[Any perspective] -->|New session: rail / Ctrl+N / File / palette — always enabled| B{Workspace bound?}\n  B -->|no| C[Workspace chooser interposes — Addendum A §A4.2]\n  C -->|cancel| A\n  C -->|chosen| D\n  B -->|yes| D[New Session sheet — modal; tier, fan-out cap, budget prefilled from workspace defaults]\n  D -->|cancel| A2[Current perspective unchanged]\n  D -->|create| E{Document opened in host A?}\n  E -->|no| E2[Stay in the current perspective; failure reported]\n  E -->|yes| F[Document takes the stack — Ruling 47]\n  F --> G[Coding perspective activates — one transaction with the open]\n  G --> H[Live region: 'Coding perspective — session <name> opened']"
+          "mermaid": "flowchart TD\n  A[Any perspective] -->|New session: rail / Ctrl+N / File / palette — always enabled| B{Workspace bound?}\n  B -->|no| C[Workspace chooser interposes — Addendum A §A4.2]\n  C -->|cancel| A\n  C -->|chosen| D\n  B -->|yes| D[New Session sheet — modal; fan-out ceiling and budget prefilled from workspace defaults; no tier field]\n  D -->|cancel| A2[Current perspective unchanged]\n  D -->|create| E{Document opened in host A?}\n  E -->|no| E2[Stay in the current perspective; failure reported]\n  E -->|yes| F[Document takes the stack — Ruling 47]\n  F --> G[Coding perspective activates — one transaction with the open]\n  G --> H[Live region: 'Coding perspective — session <name> opened']"
         },
         {
           "kind": "flowchart",
@@ -13397,7 +13397,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  A[Session document open: one editor, structure collapsed, compiled collapsed] -->|type prose| B{Draft settles: objective derivable?}\n  A -->|shape control: pick a template — B:181 kept| T[Template fields render as the derived structure, prefilled from the text where possible]\n  T --> E\n  B -->|no| C[Structure stays one collapsed line; a T2 send will mark Goal and Done when]\n  C -->|type more| B\n  C --> E\n  B -->|yes| D[Derived structure expands beneath the editor: Goal · Done when · Not in scope, marked derived]\n  D -->|edit a line inline| D\n  D --> E{@path mention present?}\n  E -->|no| F[Write-scope line: elicitation text; Send → refusal names @path and offers the picker — Ruling 42 intact]\n  F -->|add a mention| E\n  E -->|yes| G[Write-scope line: 'src/…/** — from your mention']\n  G -->|open Compiled disclosure| H[Exactly the outgoing text; no diff, no summary; editor does not shrink]\n  H --> G\n  G -->|Send Ctrl+Enter| I{T2 and a content field empty?}\n  I -->|yes| J[Inline marks on every gap at once; one-line reason each; nothing sent]\n  J -->|fix| D\n  I -->|no| K[Sent: compiled prompt carries the session's tier · fan-out · budget in the CT19 block]\n  K --> K2[Reply streams in the Console canvas; the block joins the Score outline]\n  K2 -->|conductor answers with a drafted template — S-8| K3[Next message's draft: the reply's text with its derived structure inline]\n  K3 --> D\n  K2 -->|operator writes the next message| A\n  A -->|session settings on the header| L[Edit fan-out ceiling / budget for the session; tier is compiled, not set here]\n  L -->|re-validate the current draft| B"
         }
       ],
-      "sourceSha256": "bd0cf2b8b7196a34eb870d6567f88abbcdfeb964b26d3dd243759150be464780"
+      "sourceSha256": "e4c8c7557d31bc3c54ec4798d476ca88b6a32132ffd9bf5d02bed4331e6de7fd"
     },
     {
       "id": "spec-agentic-watcher-substrate",
@@ -14218,5 +14218,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "4e2298f7b9afb0bf1a25a2d95cd0b227bd6ff2742e794dcba9cc81e358f090ad"
+  "graphSha256": "cd179ce84744d69f7c372320ffb6de27c5ef1350584867369b830d1bd571ccc4"
 };

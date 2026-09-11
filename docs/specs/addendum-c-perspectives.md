@@ -164,7 +164,7 @@ number at filing — this document cites none until one exists, which is what
 | # | Superseded clause (verbatim, with its line) | What supersedes it | Proposed ruling (to file) |
 | --- | --- | --- | --- |
 | S-1 | Addendum A `:234` (R15 b2): *"a T2 goal block missing a CT19 field cannot send (field-level error)."* — as it applies to **fan-out cap, budget and tier** | Fan-out cap and budget are **session settings with defaults** (set in the New Session sheet and editable in session settings), never mandatory per-prompt fields; a goal block **inherits** them. **Tier is NOT a session setting** — the operator answered directly (Ruling 63, filed over Ruling 56's tier clause): *"tier [should] be decided by the compilation of the prompt … post-process it [to] decorate it with things like tier."* The compile step's design is open and the operator's; until it is specified, the fan-out value in session settings is a **ceiling** and the effective cap is the compiled tier's cap within it (CT19: 0 at T0, 2 at T1, the GO7 cap at T2) **[Inferred — the conductor's reconciliation, not the operator's word]**. No per-prompt override: the settings are *"intrinsic to the session settings"* (verdict 2), and a second place to set one quantity is derive-don't-store's defect (the Simplifier's finding). The gate on **goal / done-when / not-in-scope** stands (all three refused inline — NB-1 superseded B `:176`'s *warn*), but those are **derived and prefilled** from the conversation and confirmed by the send itself (US-C13), not typed into mandatory boxes. | **Ruling 56** (PR-A filed) — session-level settings |
-| S-2 | Addendum B `:135` (B4 goal-block row): fields *"goal, done_when, not_in_scope, tier, fan_out_cap, budget"* | The template's *content* fields are goal, done_when, not_in_scope; **tier, fan_out_cap, budget move to the session's settings** and the compiled prompt carries the session's values (so the conductor receives the same CT19 block, sourced differently). | Ruling 56 |
+| S-2 | Addendum B `:135` (B4 goal-block row): fields *"goal, done_when, not_in_scope, tier, fan_out_cap, budget"* | The template's *content* fields are goal, done_when, not_in_scope; **fan_out_cap and budget move to the session's settings** (Ruling 56) and **tier is a decoration the compile step attaches** (Ruling 63); the compiled prompt carries all three (so the conductor receives the same CT19 block, sourced differently). | Ruling 56 · Ruling 63 |
 | S-3 | Addendum B `:183` (B6): *"Template form rendering: typed fields from frontmatter … required markers, hints inline, mention chips work inside fields, validation gates send with field-level errors — the CT19 gating from A5/R15 is now the general case, since goal-block is a template."* | The composer's primary surface is a **conversation** — one prompt editor; a template's structure is rendered **as derived, prefilled structure inline** (a collapsible outline the operator confirms or edits), not a form of boxes above a render. Field-level validation survives as inline marks on that outline. | **Ruling 57** (PR-B filed) — the composer is a conversation |
 | S-4 | Addendum B `:209` (R18 b4): *"Goal-block is re-based as template goal-block with zero behavior change to A5/R15 gating (regression-tested)."* | "Zero behavior change" no longer holds for the three session-setting fields (S-1/S-2); the regression tests re-scope to the content fields. | Ruling 56 |
 | S-5 | Addendum B `:216` (R19 b2): *"Template picker renders any catalog template as a validated form; a required-field gap blocks send with a field-level error; view-compiled shows the exact outgoing text."* | "As a validated form" → as the inline derived structure of S-3; "required-field gap blocks send" stands for content fields only; "view-compiled shows the exact outgoing text" **stands**. | Ruling 57 |
@@ -245,7 +245,7 @@ here only where a body exists today (Ruling 54).
 The operator opens AI-DE. The rail shows **New session** above three destinations — **Coding**,
 **Explore**, **Architecture** — with Coding active. The body is the Coding host: an empty Center
 inviting a session, the terminal-session watcher at left, a terminal below. They press **Ctrl+N**;
-the sheet opens with the session's tier, fan-out cap and budget already at the workspace defaults;
+the sheet opens with the session's fan-out ceiling and budget already at the workspace defaults (tier is not on the sheet — it is compiled per prompt, Ruling 63);
 they accept. The session document lands in the Center and takes the stack (Ruling 47). They **write
 as in a chat**: *"Refactor the layout store's migration chain so a newer schema is refused with a
 report; touch only @src/AiDe.Core/Workbench/."* The composer shows, inline beneath the text, the
@@ -560,8 +560,8 @@ only in its XAML is proven at runtime and said so.
 - **Given** no workspace is bound, **When** New session is activated, **Then** the workspace chooser
   interposes (Addendum A §A4.2) — the item is **always enabled**; `workspace == null` →
   `IsEnabled == true` and the chooser opens (*falsifier:* a disabled New session item).
-- **Given** the sheet opens, **Then** tier, fan-out cap and budget are shown **prefilled from the
-  workspace defaults** as session settings (S-1/S-2), editable there and later in session settings,
+- **Given** the sheet opens, **Then** the fan-out ceiling and budget are shown **prefilled from the
+  workspace defaults** as session settings (S-1/S-2; tier is not a sheet field — Ruling 63), editable there and later in session settings,
   and the sheet still creates with one click on the defaults (Addendum A §A2 "one click on sensible
   defaults") (*falsifier:* a sheet that cannot create until a budget is typed).
 - **Given** any perspective, **Then** the rail's New session item and `File → New Session` are
@@ -759,8 +759,9 @@ superseded on page one] [Ruling 42 intact]`
   the conductor already expects (*falsifier:* a mandatory Budget field in the composer; a compiled
   prompt missing the tier). **Oracle — headless** on the compiled text and the session settings
   model. The "T0 with fan-out" warning — **a requirement this addendum owns**; Addendum B `:169-176`
-  shows it only as sample text inside a wireframe — fires against the session settings, not a
-  per-prompt box.
+  shows it only as sample text inside a wireframe — fires on the **compiled header**, where the
+  compiled tier meets the session's fan-out ceiling (Ruling 63), not on a per-prompt box and not on
+  the session settings alone.
 - **Given** the operator sends a draft with no `@path` mention, **When** the lease cannot be derived,
   **Then** the refusal says **what derives a lease and how to add one** — *"Send needs a write scope.
   Mention the files or folders this run may write, as @path (for example @src/AiDe.Core/) — the
@@ -1088,7 +1089,7 @@ flowchart TD
   B -->|no| C[Workspace chooser interposes — Addendum A §A4.2]
   C -->|cancel| A
   C -->|chosen| D
-  B -->|yes| D[New Session sheet — modal; tier, fan-out cap, budget prefilled from workspace defaults]
+  B -->|yes| D[New Session sheet — modal; fan-out ceiling and budget prefilled from workspace defaults; no tier field]
   D -->|cancel| A2[Current perspective unchanged]
   D -->|create| E{Document opened in host A?}
   E -->|no| E2[Stay in the current perspective; failure reported]
@@ -1214,7 +1215,7 @@ flowchart TD
  | +---------------------------+ |                                          |
  | ▸ Goal · Done when · Not in   |                                          |
  |   scope  (derived, inline)    |                                          |
- |   T2 · fan-out 3 · budget —   |                                          |
+ |   T1 — derived · fan-out ≤ 3 · budget from session   |                                          |
  |   from session (link)         |                                          |
  |   Write scope: src/…/** —     |                                          |
  |   from your mention           |                                          |
@@ -1331,15 +1332,17 @@ All values are `DESIGN.md` tokens (each named token checked present at `DESIGN.m
 | Menu items | the facelift's menu state matrix: default / hover / focus / disabled-with-reason / **checked** (the active perspective's radio) |
 | Empty states | `{icon.lg}` glyph + one line + first-action button (`DESIGN.md` `state.not-declared` pattern) — never a heading over a muted paragraph |
 | Status / report | status strip text `{colors.text}` on `{colors.surface}`; dropped-pane count uses the existing chip treatment, `{typography.weight-medium}`; long reports wrap or ellipsise with the full text in a tooltip |
-| Composer editor | `{colors.text}` on `{colors.surface-raised}` (the island), never a system-default white `TextBox` |
+| Composer editor | `{colors.text}` on `{colors.surface-sunken}` (a well inside the raised island — D1's design; the island itself is `surface-raised`), never a system-default white `TextBox` |
 | Derived structure, inherited-settings line, write-scope line | labels `{colors.text-muted}` **only where the measured pair meets 4.5:1 on its ground** — otherwise `{colors.text}`; the *derived* mark `{colors.inferred}` glyph + label (never colour alone); an inline validation mark `{colors.danger}` glyph + text |
 | Compiled disclosure | `{typography.mono}` (`DESIGN.md:40` **[Verified]**); `{colors.text}` on `{colors.surface-sunken}` |
 
 ### C4. Key screens and the complete component state set (U9)
 
-**The rail destination** (× 3) — rendered as a **radio-group item styled as the pill** (role +
-checked state exposed through UIA; arrow keys move within the group; the accessible name is
-constant, never suffixed with state): default · hover · focus (outer ring) · **checked/active** (bar +
+**The rail destination** (× 3) — rendered as an item of a **single-selection group with manual
+activation** styled as the pill (UIA tab-list semantics: selection state exposed; arrow keys move
+*focus* within the group and Enter/Space activates — automatic activation would switch on the first
+Down and make the *opening* state impossible; PS-R2; the accessible name is constant, never suffixed
+with state): default · hover · focus (outer ring) · **checked/active** (bar +
 accent glyph) · **opening** (first entry: the glyph gains a progress ring, status *"Opening
 Architecture…"*, focus stays on the trigger until the body's first layout pass) · **error** (the body
 failed to build: `{colors.danger}` badge, tooltip *"Couldn't open Architecture — `<reason>`. Activate
@@ -1374,10 +1377,12 @@ order apply to them directly:
   the reason, e.g. *"A T2 session needs Done when."*) · loading (assist provider deriving: a
   one-line skeleton, never a spinner over the editor) · unavailable (no provider: the lines are empty
   and editable, marked *"fill in, or add an assist provider in settings"*).
-- *Inherited settings line:* default (*"T2 · fan-out 3 · budget from session"*, the text is a
-  link to session settings) · **warning** (*"T0 with fan-out 3 — change it in session settings"*,
-  the warning US-C13 owns, sourced from session settings). No override state: the settings have one
-  home.
+- *Compiled header line:* default (*"T1 — derived · fan-out ≤ 3 · budget from session"* — the tier
+  is the compile step's decoration, shown as derived and confirmed at send; the ceiling and budget
+  link to session settings) · **not derived yet** (*"tier: not derived yet"*) · **warning** (*"T0 —
+  derived, with fan-out ceiling 3: the effective cap is 0"*, the warning US-C13 owns, computed from
+  the compiled tier against the session's ceiling). No override state for the ceiling and budget:
+  the settings have one home; the tier is overridden only in Prepare (Addendum D).
 - *Write-scope line:* **none** (*"Write scope: none yet — mention the files this run may write as
   @path"*) · derived (*"Write scope: src/AiDe.Core/Workbench/** — from your mention"*) · multiple
   (one line per pattern) · refused-send (the line gains the danger mark and the refusal text below).
@@ -1762,3 +1767,10 @@ concurrent.
 **Verdict after pass 3: all four vetoes cleared (UX-IA, UX-A11y at pass 2; Simplifier, Test
 Architect at pass 3). Status moves to `accepted` when the Owner files PR-A / PR-B and rules on
 §R rows 3, 7, 8, 9, 17 — the spec cites numbers only after they exist.**
+
+**Errata after D1 (`ui-review-perspective-shell` IA-4 / P-6 / P-7), applied by the conductor on
+2026-09-11:** tier removed from the sheet and the session settings wherever it still sat (S-2, §A3,
+US-C5, Flow 2 D, the US-C13 warning's source, B6, §C4 — Ruling 63); the composer editor's ground is
+`surface-sunken` inside the raised island (§C3, D1's design); the rail item is a single-selection
+group with manual activation, not an automatically-activating radio group (§C4, PS-R2). Verified by
+re-read; `verify-ruling-citations.py` green.

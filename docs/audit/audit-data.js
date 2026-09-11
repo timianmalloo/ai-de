@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T20:26:15Z",
+  "generated": "2026-09-11T20:28:07Z",
   "audit": [
     {
       "actor": null,
@@ -12175,6 +12175,38 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "62a7f140fb09844bcb225c61bd7b1394c13ad35e",
         "short": "62a7f140f",
+        "branch": "feature/addendum-c",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-01M292FWRK18K2Y2DZ40F0NAKP",
+      "shortname": "spec-addendum-c-errata-after-d1",
+      "datetime": "2026-09-11T20:28:06Z",
+      "session": "addendum-c-chain",
+      "prompt": "IA-4 / P-6 / P-7 from docs/reviews/ui-perspective-shell.md",
+      "summary": "S-2, §A3, US-C5, Flow 2 D, US-C13 warning source, B6 wireframe, §C4 compiled header line, §C3 editor ground, §C4 rail activation — nine substitutions, an errata paragraph appended to the gate record.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/addendum-c-perspectives.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Apply the spec errata D1's review owed to the conductor",
+      "done_when": "Nine passages amended; no tier on the sheet or in session settings; editor ground and rail activation semantics match the design; gates green",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "d204b3c7378a263d37291b9651cbf3a981c1bc0c",
+        "short": "d204b3c73",
         "branch": "feature/addendum-c",
         "pushed": false
       }
