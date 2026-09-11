@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T22:51:17Z",
+  "generated": "2026-09-11T23:18:03Z",
   "audit": [
     {
       "actor": null,
@@ -12419,6 +12419,69 @@ window.AUDIT_DATA = {
         "sha": "1aadde843a950c9d56a7dc5f034bca0254d52f4b",
         "short": "1aadde843",
         "branch": "fix/lease-source-text",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M29C6VP3JKYT063DFXB8DF3W",
+      "shortname": "ui-design-session-conversation",
+      "datetime": "2026-09-11T23:17:56Z",
+      "session": "session-elevation",
+      "prompt": "/ui-design elevate — the session as a conversation: n prompts per session, each compiled (prepare → submit) and carrying its own task class and tier decorations, the thread, the console as the reply side, the session taking the whole real estate; over D1's perspective shell and conversation composer. Node D2 of plan-addendum-c-modes (conductor conductor-addendum-c). The operator's words that define the node (al-01M296K4DAJ7H8NP26WC7B135Y, al-01M28T8C2WEVN4J0D10XQJMJAZ): \"a session can have n prompts... because a session is a conversation ... task class seems like it should be something defined for every chat in a conversation ... i think the overall /ui-design elevate of the session needs to be done\"; \"launching something like a session was it used the whole real-estate so the doc with the graph etc. shouldn't be visible\"; \"the UX is super chunky... it does not feel like a chat conversation and the whole enter in text boxes and see the render below is awful\". Mid-run (al-01M297VC0HTFJP761D9BVE9Z72, Ruling 72): budget bounded by the subscription by default with an optional cap; task class defaults to free-form and changes per prompt, no refusal; D1's composer language ratified.",
+      "summary": "Elevate of the session document as a conversation over D1's ratified composer. Direction: a thread of turns above one pinned editor, the session taking the whole tree (Ruling 47, no graph); each turn rendered from its envelope (decoration line class · tier · lease · shape · template with provenance on demand, the sent bytes on demand) with the lane's reply folded beneath it as the Console; the task class per prompt with free-form as the explicit default (Ruling 72); Addendum D's Prepare in every named state; Layout:StreamingThread adopted (reverses spec C §C1). Artifacts: DESIGN.md gained the section \"The session is a conversation\" (SC1–SC10, the measured thread contract, no colour role added, eleven recorded deviations) and Ruling 72 errata under the front-door and sheet sections; docs/mockups/session-conversation.html (+ .md hub): 43 harness states × turns 1/5/40 × theme × viewport × persona × motion, a self-measuring verdict strip (53 contrast pairs, targets, dangling ARIA references, the chat-like contract with its thresholds printed; the editor's top edge read at 1/5/40 in one pass); docs/mockups/new-session-sheet.html carried to Ruling 72 (budget as a state with an optional cap; free-form preselected; zero required inputs) and its pre-existing script error fixed (its verdict strip had never rendered); docs/reviews/ui-session-conversation.md (measurements, the structural read of D1's composer — 14 lacks for n turns —, findings, scorecard, ranked plan, the spec findings); two decision notes (session-design-thread-not-panes, session-design-decoration-line); DC-147 registered. Measured: craft gate 0 on the new mockup, the sheet and DESIGN.md, the corpus unchanged at 98 (60/38); design-lint strict clean; verify-design-modes OK; 86 headless renders (43 states × dark 1440 / light 1024) at 0 contrast fail · 0 chat-like miss · 0 target < 24px · 0 dangling ARIA reference · 0 script errors. Critique: three read-only adversaries (UX & Accessibility hard veto, UX Researcher/IA, Simplifier), two passes: pass 1 11 Blockers + 8 Majors + 41 Minors; pass 2 0 Blockers, 0 Majors, 12 Minors, all applied — UX&A PASS (veto cleared, not by the author), UX-IA PASS, Simplifier CLEARED. Findings for the specs (the conductor's): C §C1/§B2 StreamingThread adopted and the earlier-turns paragraph, the Score outline as the jump list, the write-scope region as the lease segment; A §A2 the canvas beside the composer as the on-demand split; B :181 / C §B2 / US-C13 the header's template control and shape reserved for Message | Goal-block; D §B2/§B4/§B5 the tier control's home, task_class in inputs_sha, the cancelled and reused strings, mode: mechanical-only unrendered, the stopped and refused-before-start vocabulary, when a cap asks vs refuses; a sentence on a send while a turn runs (Inferred one-run-at-a-time); an Owner ruling on the refusal sentence (compiles at T2 vs is a goal block, tier-blind). Highest-leverage change: the thread's ItemsControl with the feed's keyboard model (SC8) and the announcement policy (SC9). Residual: UI-T4 native proof (P-1, P-9, P-11, P-12, P-13, SC8/SC9 rows) is the slice's; Ctrl+K,Z toggling and one-run-at-a-time are Inferred.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/session-conversation.html",
+        "docs/mockups/session-conversation.md",
+        "docs/reviews/ui-session-conversation.md",
+        "DESIGN.md",
+        "docs/mockups/new-session-sheet.html",
+        "docs/notes/session-design-thread-not-panes.md",
+        "docs/notes/session-design-decoration-line.md"
+      ],
+      "tags": [
+        "addendum-c",
+        "addendum-d",
+        "ui-design",
+        "session"
+      ],
+      "outcome": "success",
+      "goal": "Run /ui-design elevate on the session as a conversation over D1's composer: the thread, the per-turn decorations with provenance, Prepare, the whole real estate; measured, critiqued, documented",
+      "done_when": "docs/mockups/session-conversation.html (+ .md) with every named state and the harness axes, craft gate 0 on it, design-lint strict clean, docs/reviews/ui-session-conversation.md with measurements/scorecard/ranked plan/spec findings, decision notes, derive, audit, gates green, commit pushed to feature/session-elevation",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-11T21:52:21Z",
+      "duration_seconds": 5135.0,
+      "persona_yield": [
+        {
+          "persona": "ux-accessibility",
+          "raised": 30,
+          "accepted": 30
+        },
+        {
+          "persona": "ux-researcher-ia",
+          "raised": 26,
+          "accepted": 26
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 24,
+          "accepted": 22
+        }
+      ],
+      "git": {
+        "sha": "8214ecd50e880d46ec7d5d6459dc426b94a12bf8",
+        "short": "8214ecd50",
+        "branch": "feature/session-elevation",
         "pushed": null
       }
     }
