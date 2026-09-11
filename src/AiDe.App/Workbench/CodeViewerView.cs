@@ -23,7 +23,7 @@ public sealed class CodeViewerView : ContentControl
     public CodeViewerView(string title = "Source")
     {
         AutomationProperties.SetName(this, title);
-        SetResourceReference(BackgroundProperty, "SunkenBrush");
+        SetResourceReference(BackgroundProperty, "SurfaceSunkenBrush");
 
         _root = new DockPanel { LastChildFill = true };
 

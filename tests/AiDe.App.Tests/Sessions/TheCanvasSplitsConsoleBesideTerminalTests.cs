@@ -14,8 +14,20 @@ namespace AiDe.App.Tests.Sessions;
 /// identity across the switch on <i>both</i> halves, which is what distinguishes two live panes from
 /// one live pane and one that looks live when you happen to be looking at it.
 /// </remarks>
-public sealed class TheCanvasSplitsConsoleBesideTerminalTests
+/// <remarks>
+/// <b>Registers the Terminal row Ruling 45 cut from <c>BuiltIn</c>.</b> The mechanism under test
+/// here needs a SECOND canvas mode to exist at all; which modes the product ships is a different
+/// question, and Ruling 45 answered it by cutting a row whose content Phase 1 cannot bind. Every
+/// assertion below is unchanged — the proof survives the cut rather than being weakened by it, which
+/// is also Ruling 22's clause re-proven against a test-registered mode.
+/// </remarks>
+[Collection(CanvasModes.Name)]
+public sealed class TheCanvasSplitsConsoleBesideTerminalTests : IDisposable
 {
+    private readonly TerminalModeForTests _terminal = new();
+
+    public void Dispose() => _terminal.Dispose();
+
     private static SessionDocumentViewModel Model() => new(
         "20260910T120000Z-deadbeef",
         "Front door",

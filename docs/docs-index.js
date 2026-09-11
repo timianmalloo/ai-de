@@ -1446,7 +1446,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 328 members, 70% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 331 members, 70% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1459,7 +1459,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9925e3ac8c40a76a589f20339afce30525e14c016e7ca2194f21baeedb18a240"
+      "sourceSha256": "7e0472c15789b0ff979a3f652cf250fe1c9801b4275698871869a70a3be5f003"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -1471,7 +1471,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 45 members, 87% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 47 members, 88% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1484,7 +1484,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7d09188f96a1e8f14587f34803e53e79bd74d3116da9f23a0dab553641b292c3"
+      "sourceSha256": "999a84a50af98da0b81364aebcae68876e8737a834c7e82fbe181eddd7a9dbf0"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -1496,7 +1496,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 58 members, 93% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 59 members, 93% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1509,7 +1509,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6a85049edb599eee99c64aea2ecfa64daba7a2de277aec96d0ef558f96ceb7b5"
+      "sourceSha256": "35925a90e28dcb1e54bacb1f5cdd1ea012db5c622dcffee6c57296fafa3d9537"
     },
     {
       "id": "api-aide-core",
@@ -1721,7 +1721,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation: 32 types, 83 members, 64% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation: 32 types, 84 members, 65% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1734,7 +1734,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7000558540508ecc26119ac8c9242f689e0dd0614b2564a132dff92adb0f45aa"
+      "sourceSha256": "db1487d42d6075b42a3bf50f883a3a39916ee2dce69362e4e9fde08658c94ed8"
     },
     {
       "id": "api-aide-core-presentation-composer",
@@ -1746,7 +1746,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 30 types, 71 members, 86% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 30 types, 72 members, 86% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1759,7 +1759,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0e00afd6cdbfac78096f4196dbb0c95b8c5727ba26a3f14b445750cae81dbca3"
+      "sourceSha256": "0d56e518b14c71aa9745dddf040735a427ae52a9d53046be4b81fecdd0539eff"
     },
     {
       "id": "api-aide-core-presentation-sessions",
@@ -1771,7 +1771,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 12 types, 70 members, 98% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 14 types, 78 members, 98% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1784,7 +1784,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1efdbff16861d509426b5d56a0db17425a41459ff48df6ebd5a5ae080d32d962"
+      "sourceSha256": "6dc967e041920914d5d5b7975a58f1a4d78229f0a20063079b3d7f0b6e6e3012"
     },
     {
       "id": "api-aide-core-projections",
@@ -2991,6 +2991,146 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "ec9241e2678513842acfd782cdde7304799225f77c8cab9d307f89bb6ebb1799"
+    },
+    {
+      "id": "note-addendum-c-coding-default-layout",
+      "path": "docs/notes/addendum-c-coding-default-layout.md",
+      "title": "The Coding perspective's default layout is the session's place: Center empty until a session opens, Terminal sessions left, one terminal below; Evidence and the fleet views leave the default",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Ruling 55d fixes what leaves the Coding default (the Explore pane, the Domain/Provenance duplication); this note fixes what stays. Center: nothing until a session opens; Left: the watcher of observed terminal sessions, captioned \"Terminal sessions\"; Bottom: one terminal; Right: empty. The Evidence master-detail moves to Architecture; the Loomkeeper fleet views (board, leaderboard, ledger, daydreams) are admitted to Coding but reachable from the derived menu, not present by default. Blast radius: the first thing every operator sees.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "coding",
+        "default-layout",
+        "loomkeeper",
+        "evidence"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-current-state-inventory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "98e6dbe61d6bdf8e501b6e43bc5e896c144f49186afd3fe7e7e2dc88efb1c6d0"
+    },
+    {
+      "id": "note-addendum-c-inadmissible-kind-routing",
+      "path": "docs/notes/addendum-c-inadmissible-kind-routing.md",
+      "title": "A kind-opening request the active perspective cannot satisfy routes to the first admitting perspective in the order Architecture · Coding and announces; in-body node actions never route — no dialog, no silent drop",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "When an admitted surface raises a kind-opening request its perspective cannot satisfy (a reader node in Explore → \"View source\" or \"Class diagram\"), the shell activates the first perspective in the routing order Architecture · Coding that admits the kind, opens it there, and announces the switch; the operator returns by activating the origin perspective (Escape, from Explore). In-body actions (Read document, Metadata & edges, Reveal in graph) never route — they act in the raising body. A target that fails to build leaves the perspective unchanged and says why. Blast radius: every cross-perspective \"Open as…\" and drill-to-node path.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "perspective",
+        "routing",
+        "allow-list",
+        "ux"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f57a49247acf87427d6e7d7e87bed37f2d2e02af2bf6235798bc3924a3cf6bf5"
+    },
+    {
+      "id": "note-addendum-c-menu-derivation-rule",
+      "path": "docs/notes/addendum-c-menu-derivation-rule.md",
+      "title": "The menu is three derived sets — perspective-independent entries, body-conditional entries, allow-list entries — and a structurally inapplicable command is absent, not disabled",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Ruling 55b says the per-perspective menu is derived; this note fixes the derivation's three inputs and two edge rules — entry verbs (session.new, terminal.new, the derived \"New <Harness> session\" rows) are global, live in File, and route to Coding, and \"not admitted here\" means absent while \"cannot run right now\" means disabled with a reason. Blast radius: MainMenuBuilder, CommandPalette, and every command row.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "menu",
+        "palette",
+        "derivation",
+        "entry-verb"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-app-facelift",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2d0388f698d6a36573b46ad8db0618bc3ddba8ccfe62f0667be9db5497918c44"
+    },
+    {
+      "id": "note-addendum-c-persistence-slots",
+      "path": "docs/notes/addendum-c-persistence-slots.md",
+      "title": "One persistence slot per docking-host perspective; a pre-Addendum-C envelope migrates into the Coding slot; surfaces of a kind Coding does not admit are dropped with a report and not carried to another slot",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Ruling 52 says an old envelope carrying a now-disallowed kind migrates by drop-with-report, never crash; this note fixes the two things it left open — the old envelope becomes the Coding slot (expand, never discard, closing the zone schema's no-migration gap), and dropped surfaces are not re-homed into Architecture's slot, which starts from its default. Blast radius: every saved layout.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "persistence",
+        "layout-envelope",
+        "migration",
+        "adr-0013"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0013-layout-persistence-envelope",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "43706b39a40e5e6be67ff9998252bbb2dd5f71e8dab6007f6661a6b341658304"
     },
     {
       "id": "note-ai-native-ide-architecture-review-depth",
@@ -5725,7 +5865,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "48a7627c86737107a77a6e66c064779d2e52f0187c4df9269a948121ab695d17"
+      "sourceSha256": "7d30d392febfc2603c0c53a6ca6c5f3edee191d4a806a0c670a4288d34f3859c"
     },
     {
       "id": "design-session-profiler",
@@ -6634,6 +6774,102 @@ window.DOCS_INDEX = {
       "sourceSha256": "bf5ead48ffaf206188af85737793da995de0409692d2133165110d2891a55a73"
     },
     {
+      "id": "note-addendum-c-council-rulings",
+      "path": "docs/notes/addendum-c-council-rulings.md",
+      "title": "Decision note — Rulings 50–63: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "Rulings 50–55 issued before any Addendum C spec was written; 56–62 issued at the spec's gate — 56 and 57 file the operator's own composer verdicts, 58–62 rule on the reconciliation table. Six rulings the Owner issued before any Addendum C spec was written, on the evidence the conductor brought at node R0 of plan-addendum-c-modes. They fix the vocabulary (Perspective), the phasing (F5 untouched; code after F5 merges), ADR-0017's fate (retained and amended), the graph model (one substrate, two surfaces), the build order under the operator's 80% case, and four page-one facts a spec written without them would get wrong.",
+      "tags": [
+        "decision-note",
+        "ruling",
+        "conductor",
+        "addendum-c",
+        "perspective",
+        "ui",
+        "docking",
+        "explorer"
+      ],
+      "links": [
+        {
+          "to": "plan-addendum-c-modes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-knowledge-exploration",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-uml-erm-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-front-door-council-rulings",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f8502c5f835818944b92fe7513b438f70d7d4ba70d3994e92652e7dd2f75f433"
+    },
+    {
+      "id": "note-addendum-c-current-state-inventory",
+      "path": "docs/notes/addendum-c-current-state-inventory.md",
+      "title": "Addendum C — current-state inventory (M0)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "Read-only inventory of the workbench shell at main@7f0b67a3: every surface, menu/command, the two-mode shell (Workbench/Explorer, ADR-0017), zone/layout persistence, the specs and ADRs that already govern this surface, a local craft-gate run (104 findings), and the test-coverage ratio for the layout service the shell actually runs.",
+      "tags": [
+        "addendum-c",
+        "inventory",
+        "ux",
+        "workbench"
+      ],
+      "links": [
+        {
+          "to": "plan-addendum-c-modes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-named-dock-zones",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "67b6351ffc527659f43fcf2c8b6f2ed3bce587e45530107c258f911e0e52638e"
+    },
+    {
       "id": "note-front-door-rulings-45-48",
       "path": "docs/notes/front-door-rulings-45-48.md",
       "title": "Decision note — Rulings 45–48: Terminal leaves Phase 1, edge ownership, maximize-on-create, craft-gate corpus",
@@ -6668,7 +6904,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "65523ae89b659a14490b9c4e35e7dbbef8b0d0715bf2c9c39c70a40e3aad59d1"
+      "sourceSha256": "5ebb9fe3c2487e03893938193b2b2df66fd4911d74179a707c5d915ebab81dfb"
     },
     {
       "id": "perf-results-phase-1",
@@ -6703,6 +6939,54 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "db224bf7106c094b4c7a3e4f54182436c18f5f3f712a52021fde24f07fc3dcef"
+    },
+    {
+      "id": "plan-addendum-c-modes",
+      "path": "docs/plans/addendum-c-modes.md",
+      "title": "Execution graph — F5 to the gesture boundary, and Addendum C (modes tied to use cases)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "Two tracks planned as one graph. F5 is independent and runs at the head to the operator-gesture boundary Ruling 49 fixes. Addendum C is a serial chain by real data and decision edges (specify → ui-design → define-architecture → prepare-for-coordination), so the optimization is not width but pulling three things off the chain to its head: the Owner's vocabulary-and-phasing ruling, the current-state inventory, and the architecture recovery. ADR-0017's body-swap Explorer is the decision Addendum C contests, and it is named before any spec is written.",
+      "tags": [
+        "plan",
+        "execution-graph",
+        "addendum-c",
+        "modes",
+        "use-cases",
+        "f5",
+        "coordination",
+        "ui-design"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-ui-and-windowing",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Stage 9 — Before and after",
+          "mermaid": "graph LR\n  F5a[F5a commit + gates<br/>sonnet] --> H1((operator gesture)) --> F5b[F5b discharge clauses<br/>opus]\n  R0[R0 Owner ruling<br/>fable] --> S1[S1 /specify<br/>opus]\n  M0[M0 inventory + baseline<br/>sonnet] --> S1\n  M0 --> D1\n  M0 --> A1\n  S1 --> D1[D1 /ui-design<br/>opus] --> A1[A1 /define-architecture<br/>opus] --> P1[P1 /prepare-for-coordination<br/>opus] --> X{{dispatch under P1's contract}}"
+        }
+      ],
+      "sourceSha256": "bc6abb2214a1c7b14323a72b5381d2ce96e11e93b4a22ed2c487fb904c9316ba"
     },
     {
       "id": "plan-agentic-watcher-substrate",
@@ -7986,6 +8270,59 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "b234911b74883e52df5498c42cd6495c034e6763148eee75867d94a5dfafb6b8"
+    },
+    {
+      "id": "inv-0007-composer-entry-areas-starved-by-the-compiled-view",
+      "path": "docs/investigations/INV-0007-composer-entry-areas-starved-by-the-compiled-view.md",
+      "title": "The composer's entry areas have no room: the read-only compiled view takes the editor's height, and the next render kills the page",
+      "type": "investigation",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-front-door",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "\"I cannot type in the composer\" / \"I could not see the entry areas\" after File → New Session. Verified by measurement in the real shell under the operator's recorded arrangement: the composer's WebView2 laid out at 0px (F5 tree) and 105–110px (main) of a 485–689px composer, because the read-only compiled-view TextBox has no height ceiling, sits in a StackPanel docked Bottom, and is measured unconstrained before the editor host gets the remainder — a 28-line goal block costs 465px, and editor = composer − compiled − 114px. Capping the compiled view from outside the product gave the editor 202px in the same 485px and the run went green (necessity). A second, independent defect was found and reproduced: any later Adapter.Render() re-parents the WebView2, WPF raises Loaded again, InitialiseAsync navigates the page again, and the router drops the new page's editor.ready as a duplicate — no host.init, zero fields, the operator's on-screen text gone. The graph canvas shares the Loaded→navigate shape (measured: one render, one reload). Two red tests are committed; the fix is not.",
+      "tags": [
+        "composer",
+        "webview2",
+        "wpf",
+        "layout",
+        "docking",
+        "handshake",
+        "observability",
+        "session-document",
+        "ruling-47"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "refines"
+        },
+        {
+          "to": "note-front-door-rulings-45-48",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0015-canvas-hosting-and-overlay-strategy",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0021-named-dock-zones",
+          "rel": "depends-on"
+        },
+        {
+          "to": "inv-0006-workbench-pane-swap-on-native-tab-drag",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "System map",
+          "mermaid": "flowchart TD\n  MW[MainWindow.NewSession → opened] --> OSD[Shell.OpenSessionDocument → Adapter.Render #1]\n  MW --> BC[BindComposer → ComposerSurface.Configure]\n  MW -->|main only| GT[GiveItTheWholeTree → Adapter.Render #2]\n  OSD --> SDS[SessionDocumentSurface: Grid · composer col ⟷ canvas col]\n  SDS --> CS[ComposerSurface: DockPanel]\n  CS --> P[template picker · Dock.Top · Auto]\n  CS --> B[Send/Attach bar · Dock.Bottom · Auto]\n  CS --> F[footer StackPanel · Dock.Bottom · Auto<br/>label · compiled TextBox (MinHeight 90, no MaxHeight) · lease · status]\n  CS --> V[WebView2 · LastChildFill = the remainder]\n  F -. measured first, unconstrained .-> V\n  V --> L[Loaded → InitialiseAsync → EnsureCoreWebView2 → subscribe → Navigate]\n  L --> PG[composer.mjs: editor.ready → router.Ready once → MarkReady → host.init → render fields]\n  R[any later Adapter.Render] -->|Manager.Layout replaced → re-parent| V\n  V -->|Loaded again| L"
+        }
+      ],
+      "sourceSha256": "fc30cc6a719178cfe437ee214487eaaa8e8c6622bd5bcd730bea11f529e9f7da"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -11390,6 +11727,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "70be47bec3d22b82a75fcceb9b51b67671c6eb0175f97f7d178ca72999c2ab77"
     },
     {
+      "id": "proof-composer-entry-areas",
+      "path": "docs/proof/composer-entry-areas.md",
+      "title": "Proof Pack — the composer's entry areas keep their room, and the page survives a render (INV-0007, phases 1–4)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-front-door",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Evidence for INV-0007 phases 1–4: the compiled view is capped to the smaller of 35% of the composer and half of what the chrome leaves (set in MeasureOverride, one pass); both WebView2 surfaces initialise once through one WebSurfaceHost and the router's readiness is per document; bounds, every handshake transition and the first accepted keystroke are emitted on the normal path. Nine new tests, four of them through the real docking host; every one observed red first or red by a named mutation. Probe exit 24 → 0 (editor 110px/465px → 334px/241px) and 25 → 0.",
+      "tags": [
+        "composer",
+        "webview2",
+        "wpf",
+        "layout",
+        "handshake",
+        "observability",
+        "proof-pack",
+        "inv-0007",
+        "dc-136",
+        "dc-137"
+      ],
+      "links": [
+        {
+          "to": "inv-0007-composer-entry-areas-starved-by-the-compiled-view",
+          "rel": "implements"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "da6b4af0c9eab8f5f7b94546b4c43f2ee1abb7982d150116f21d95616757e912"
+    },
+    {
       "id": "proof-conductor-agent-plane",
       "path": "docs/proof/conductor-agent-plane.md",
       "title": "Proof Pack — Conductor agent plane, Phase 1 (N0–N7)",
@@ -12424,6 +12797,145 @@ window.DOCS_INDEX = {
       "sourceSha256": "fa128429155af92c08c52f48033ebd5764a806c77b75aa71aa0a2a0d2a716b96"
     },
     {
+      "id": "spec-addendum-c-perspectives",
+      "path": "docs/specs/addendum-c-perspectives.md",
+      "title": "Addendum C — Perspectives: the use case the tool is in, the surfaces each perspective admits, the rail and the perspective-contextual menu",
+      "type": "spec",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Addendum C to the Conductor spec. Introduces the Perspective — the use case the whole tool is in (Coding · Explore · Architecture; Tests reserved) — selected from the activity rail, with each perspective admitting a declared subset of the existing surface kinds, contributing a derived menu, owning a default layout and a persistence slot. Binds the six Owner rulings (50–55), records the operator's three composer verdicts as page-one supersessions of R15/R18/R19 clauses (for the Owner to file), adds the token-only contrast NFR proven by a runtime census, reconciles against ADR-0017 and the seven shell specs it refines, and names the deferred understanding views, the structure deriver and Use Case 4 as non-goals.",
+      "tags": [
+        "conductor",
+        "addendum-c",
+        "perspective",
+        "rail",
+        "menu",
+        "docking",
+        "explorer",
+        "architecture",
+        "coding",
+        "composer",
+        "contrast",
+        "ux",
+        "ui",
+        "wpf"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-current-state-inventory",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-named-dock-zones",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-app-facelift",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-knowledge-exploration",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-uml-erm-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-terminal-sessions",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-editor-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-addendum-c-modes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-spec-errata-policy",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-front-door-rulings-41-42",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-coding-default-layout",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-inadmissible-kind-routing",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-menu-derivation-rule",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-persistence-slots",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "B5. User flows",
+          "mermaid": "flowchart TD\n  A[Coding active: session streaming, terminal live] -->|rail item / gesture / View menu| A1{Drag or lazy build in progress?}\n  A1 -->|tab drag| A2[Cancel the drag as a no-op drop] --> B\n  A1 -->|a build is running| A3[Ignore; status line: 'Opening Architecture…'] --> A\n  A1 -->|no| B{Target body built?}\n  B -->|yes, retained| C[Body swap: show target host]\n  B -->|no, first entry| D[Rail item: opening state; focus stays on the trigger; build lazily]\n  D -->|built| C\n  D -->|build fails| E[Rail item: error state with reason; stay in Coding; focus unchanged; status + live region]\n  E -->|user activates again| D\n  C --> F[Live region announces, then focus lands on the target body's first focusable]\n  F --> G[Coding body retained: pid unchanged, console buffering]\n  G -->|permission request arrives| H[Queue overlay visible after one frame — RootLayer, outside the swap]\n  G -->|activate Coding again — rail / gesture / menu| I[Return: same instances, same layout]\n  C -->|switch emits event| J[(from, to, trigger, first_entry, duration_ms)]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "B5. User flows",
+          "mermaid": "flowchart TD\n  A[Any perspective] -->|New session: rail / Ctrl+N / File / palette — always enabled| B{Workspace bound?}\n  B -->|no| C[Workspace chooser interposes — Addendum A §A4.2]\n  C -->|cancel| A\n  C -->|chosen| D\n  B -->|yes| D[New Session sheet — modal; tier, fan-out cap, budget prefilled from workspace defaults]\n  D -->|cancel| A2[Current perspective unchanged]\n  D -->|create| E{Document opened in host A?}\n  E -->|no| E2[Stay in the current perspective; failure reported]\n  E -->|yes| F[Document takes the stack — Ruling 47]\n  F --> G[Coding perspective activates — one transaction with the open]\n  G --> H[Live region: 'Coding perspective — session <name> opened']"
+        },
+        {
+          "kind": "flowchart",
+          "title": "B5. User flows",
+          "mermaid": "flowchart TD\n  A[Node action raised in Explore or Architecture] --> B{In-body action?}\n  B -->|Read document / Metadata & edges / Reveal in graph| C[Act in the raising body — no switch]\n  B -->|kind-opening: View source / Class diagram / Sequence diagram| D{Active perspective admits K?}\n  D -->|yes| E[Open in the active host, zone by kind]\n  D -->|no| F[Target = first of Architecture · Coding that admits K]\n  F --> G{Target body builds?}\n  G -->|yes| H[Activate target; open K there; live region: 'Opened Class diagram in Architecture']\n  H -->|activate the origin perspective; Escape if it was Explore| I[Origin perspective restored, unchanged]\n  G -->|no| J[Stay; focus unchanged; status + live region: 'Couldn't open Class diagram — Architecture failed to open: reason']\n  D -->|no perspective admits K — impossible by construction| K[Test asserts every kind row has a non-empty set]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "B5. User flows",
+          "mermaid": "flowchart TD\n  A[Startup] --> B{Envelope present?}\n  B -->|none| C[Each perspective: default layout]\n  B -->|newer schema| D[Refuse with report; defaults — as today]\n  B -->|corrupt| D\n  B -->|pre-slot schema| E[Migrate into the Coding slot — expand, never discard]\n  E --> F{Surfaces of a kind Coding does not admit, or duplicate one-instance kinds?}\n  F -->|none| G[Coding restored as saved]\n  F -->|some| H[Drop them from the Coding slot]\n  H --> H2{Any surface left?}\n  H2 -->|no| H3[Apply the Coding default; the report says so]\n  H2 -->|yes| I[Status + live region: the §C4 report string; event carries count + kinds]\n  H3 --> I\n  I --> J[Architecture slot: default layout — dropped surfaces are not carried over]\n  B -->|slot schema| L[Each slot restored independently]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "B5. User flows",
+          "mermaid": "flowchart TD\n  A[Focus in a pane or inside the terminal HWND] -->|Tab cycle reaches the rail once| B[Rail: Up/Down between items, Enter/Space activates]\n  A -->|bound perspective gesture| C[Switch without visiting the rail — P-7 when focus is in the HWND]\n  C --> D[Announcement, then focus lands in the new body — never on the rail, never lost to the window]\n  D -->|Alt / F10| E[Menu bar: only this perspective's menus]\n  E -->|Ctrl+K| F[Palette: only this perspective's commands, chord strings announced]\n  B -->|Tab| A\n  D -->|Escape, Explore only, from the surface root| G[Previous perspective]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "B5. User flows",
+          "mermaid": "flowchart TD\n  A[Session document open: one editor, structure collapsed, compiled collapsed] -->|type prose| B{Draft settles: objective derivable?}\n  A -->|shape control: pick a template — B:181 kept| T[Template fields render as the derived structure, prefilled from the text where possible]\n  T --> E\n  B -->|no| C[Structure stays one collapsed line; a T2 send will mark Goal and Done when]\n  C -->|type more| B\n  C --> E\n  B -->|yes| D[Derived structure expands beneath the editor: Goal · Done when · Not in scope, marked derived]\n  D -->|edit a line inline| D\n  D --> E{@path mention present?}\n  E -->|no| F[Write-scope line: elicitation text; Send → refusal names @path and offers the picker — Ruling 42 intact]\n  F -->|add a mention| E\n  E -->|yes| G[Write-scope line: 'src/…/** — from your mention']\n  G -->|open Compiled disclosure| H[Exactly the outgoing text; no diff, no summary; editor does not shrink]\n  H --> G\n  G -->|Send Ctrl+Enter| I{T2 and a content field empty?}\n  I -->|yes| J[Inline marks on every gap at once; one-line reason each; nothing sent]\n  J -->|fix| D\n  I -->|no| K[Sent: compiled prompt carries the session's tier · fan-out · budget in the CT19 block]\n  K --> K2[Reply streams in the Console canvas; the block joins the Score outline]\n  K2 -->|conductor answers with a drafted template — S-8| K3[Next message's draft: the reply's text with its derived structure inline]\n  K3 --> D\n  K2 -->|operator writes the next message| A\n  A -->|session settings on the header| L[Edit fan-out ceiling / budget for the session; tier is compiled, not set here]\n  L -->|re-validate the current draft| B"
+        }
+      ],
+      "sourceSha256": "bd0cf2b8b7196a34eb870d6567f88abbcdfeb964b26d3dd243759150be464780"
+    },
+    {
       "id": "spec-agentic-watcher-substrate",
       "path": "docs/specs/agentic-watcher-substrate.md",
       "title": "Loomkeeper - Agentic Watcher Substrate and Observatory",
@@ -12667,7 +13179,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4433ace5f820c0cb3acb1e7e7b02adac9d9afc9796a10dc76919b4d3e0b23be7"
+      "sourceSha256": "3ece0948aa158aaddb1dc6f38bb0589d59e877efc3cd2418976e59ff84d27cf0"
     },
     {
       "id": "spec-editor-surfaces",
@@ -13218,5 +13730,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "b140ea6d498f91f49158b77fc7bcd27071e83bde81377648d9d23b79a569bcfb"
+  "graphSha256": "ff4cbc0af0218cf03eb16e86988d9fa5894f3f89ed65190371c2037659ed01b7"
 };

@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation.Sessions: 12 types, 70 members, 98% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation.Sessions: 14 types, 78 members, 98% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation.Sessions`
 
-**12 public types · 70 public members · 98% documented.**
+**14 public types · 78 public members · 98% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -177,6 +177,8 @@ the "Start from template" row, which would create a back-edge from the composer 
 | `string WorkspaceId { get; }` | The bound workspace's key. |
 | `string Name { get; set; }` | The operator-facing session name. Defaults to a date slug (A4.3). |
 | `string? TaskClass { get; set; }` | The kind of work. **Required, with no default** — see the type's remarks (Ruling 19). |
+| `IReadOnlyList<TaskClassOption> TaskClassOptions` | The classes the sheet offers, so the operator CHOOSES one rather than spelling it (RQ1). |
+| `bool TaskClassAnswered` | Whether the required, undefaulted task class has been answered (RQ4). |
 | `IReadOnlyList<AgentBackendRow> Backends` | The agent backends on offer: every catalog engine whose provider the registry carries, once per configured account, with the registry's live health. |
 | `IReadOnlyList<string> EnabledBackends` | The backends the operator has enabled for this session. |
 | `IReadOnlyList<string> RoutableBackends` | The enabled backends the router may bind — `needs-login` excluded (Ruling 20's "not cut" half). |
@@ -198,6 +200,22 @@ the "Start from template" row, which would create a back-edge from the composer 
 - **`now`** — Stamps the default name and the created session.
 - **`launchEngineNativeLogin`** — Launches the engine's own login flow and returns whether it was started. Null in a build with no way to launch one, which `SignIn` reports rather than pretending.
 - **`reprobe`** — Re-reads provider health after a login. Null means health is not re-read.
+
+### `IReadOnlyList<TaskClassOption> TaskClassOptions`
+
+The classes the sheet offers, so the operator CHOOSES one rather than spelling it (RQ1).
+
+**Remarks.** Exposed here rather than reached for by the view, so the sheet's vocabulary and the sheet's
+rules are read from one object. The list is provisional and says so on
+`TaskClassVocabulary`; nothing in it is preselected.
+
+### `bool TaskClassAnswered`
+
+Whether the required, undefaulted task class has been answered (RQ4).
+
+**Remarks.** A visible STATE rather than an asterisk, and read by the view as a word and a glyph so it is
+never carried by colour alone. It flips on the answer, which is what makes "why is this
+mandatory" answerable by looking rather than by asking twice.
 
 ### `IReadOnlyList<AgentBackendRow> Backends`
 
@@ -474,3 +492,66 @@ The preset A2 names: composer left, canvas right, splitter between.
 
 **Remarks.** 0.42 rather than 0.5: the mockups put the wider half on the output canvas, which is where a
 running session's attention is, while the composer stays wide enough for a goal block.
+
+## `TaskClassOption`
+
+*record* — `TaskClassVocabulary.cs`
+
+One offered task class, and what choosing it decides for the operator.
+
+## `TaskClassVocabulary`
+
+*class* — `TaskClassVocabulary.cs`
+
+The task classes the New Session sheet offers.
+
+**Remarks.** **Why a set at all (RQ1).** A task class's only use is exact string equality against a
+cohort key, and it was collected through a free text box with no options, no placeholder and no
+autocomplete. A typo there is worse than a default: `Leaderboard` scopes by record
+equality, so one mistyped character forms a cohort of one, every facet fails its
+`cohort < 5` minimum and renders *Not Comparable*, the real cohort silently loses
+the episode from its median, and the standing composer finds no predecessor so the trend renders
+absent — on the one surface whose job is telling an agent whether it is improving. The shipped
+helper text warned only about *defaulting*.
+
+
+
+
+
+**PROVISIONAL, and said so rather than implied.** A controlled vocabulary is already
+owed to Phase 3 (`conductor-programme`, `LaneCohort`, ADR-0028) and the specification
+section that would define it does not exist yet. These six are the set the reviewed design
+artifact renders (`docs/mockups/session-front-door.html`), drawn from values observed in
+this repository's own fixtures and specs — `feature` and `refactor` are the two that
+appear in committed code. **This list is a rendering of a decision that has not been ratified,
+not the decision.** When §8.4 lands, this type is where it lands, and the sheet does not
+change.
+
+
+
+
+
+**Why the sheet still accepts a value from outside the list.**
+`TaskClass` stays a plain nullable string: a reopened
+session, a test, and a future vocabulary all set it directly. The *sheet* offers only the
+set, which is where the typo was being made. Narrowing the type would make today's provisional
+list a contract, which is precisely the decision this list is not allowed to make.
+
+| Member | Summary |
+|---|---|
+| `string Explanation =` | What a wrong answer costs, in the operator's terms (RQ2). |
+| `string RequiredLabel = "Required, no default"` | The label for the unanswered state (RQ4). Never a bare asterisk, never colour alone. |
+| `string AnsweredLabel = "Answered"` | The label once a class is chosen (RQ4). |
+| `string ChooseOneToCreate = "Choose a task class to create the session."` | The reason a disabled Create carries beside itself (RQ5). |
+| `string NoDefaultRule =` | The rule itself, for a caller that ignored `CanCreate` and called `Create` anyway. |
+| `IReadOnlyList<TaskClassOption> Offered { get; } =` | The offered set. Nothing here is a default; see the type's remarks. |
+
+### `string NoDefaultRule =`
+
+The rule itself, for a caller that ignored `CanCreate` and called `Create` anyway.
+
+**Remarks.** **A different audience from `ChooseOneToCreate`, which is why it is a different
+sentence.** RQ5's copy is what an operator reads beside a disabled button: short, and
+naming the field. An exception message is read by whoever wrote the call that should have
+checked first, and there the useful content is the contract (Ruling 19) rather than the next
+click. Collapsing the two would make one of them worse.

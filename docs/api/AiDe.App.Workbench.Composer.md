@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 45 members, 87% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Composer: 9 types, 47 members, 88% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Composer`
 
-**9 public types · 45 public members · 87% documented.**
+**9 public types · 47 public members · 88% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -215,6 +215,7 @@ claim, and paste is handled inside the page by the editor that received it.
 | Member | Summary |
 |---|---|
 | `ComposerSurface(string surfaceId, string title)` | **(gap)** |
+| `double CompiledShareCeiling = 0.35` | The most of the composer's height the read-only compiled view may take — and it never takes more than the editor host: **the writer is never smaller than the reader.** |
 | `string SurfaceId { get; }` | The surface's stable id. |
 | `string? DisplayName` | **(gap)** |
 | `long ClipboardReads { get; }` | How many times this control read the clipboard. It is zero, always, across typing, focus changes and sends — the observable behind "no clipboard access outside the paste gesture". |
@@ -240,6 +241,7 @@ claim, and paste is handled inside the page by the editor that received it.
 | `AttachOutcome Attach(IReadOnlyList<string> filePaths)` | Offers files to the draft through the attach gate. |
 | `System.Text.Json.Nodes.JsonObject CommittedRecord()` | The committed-channel record for this send: counts, and one boolean. |
 | `void Dispose()` | Releases the hosted browser control. |
+| `Size MeasureOverride(Size constraint)` | **The writer is sized first (DC-137).** A DockPanel measures its docked children before the fill child, each with infinite extent on the docked axis, so an uncapped compiled view took its whole content height and the … |
 
 ### `ComposerSurface(string surfaceId, string title)`
 

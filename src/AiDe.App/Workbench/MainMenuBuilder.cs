@@ -40,6 +40,7 @@ internal static class MainMenuBuilder
             _ when id.Contains("terminal", StringComparison.Ordinal) => "IconTerminal",
             _ when id.Contains("prompt", StringComparison.Ordinal) || id.Contains("dispatch", StringComparison.Ordinal) => "IconSend",
             "workspace.open" => "IconFolderOpen",
+            "shell.toggleExplorer" => "IconExplore",
             _ when id.Contains("index", StringComparison.Ordinal) => "IconGraph",
             _ when id.Contains("refresh", StringComparison.Ordinal) => "IconRefresh",
             _ when id.Contains("canvas", StringComparison.Ordinal) => "IconGraph",
@@ -75,7 +76,10 @@ internal static class MainMenuBuilder
         // is the object the product is about (R13 b1).
         ("_File", ["session.new", "workspace.open", "workspace.indexSolution", "workspace.reindexAll", "workspace.refresh"]),
         ("_Edit", ["workbench.moveSurface", "workbench.resizePane"]),
-        ("_View", ["workbench.focusCanvas", "workbench.nextSurface", "workbench.previousSurface",
+        // "shell.toggleExplorer" leads the View menu because it is a WHOLE MODE of the shell, and
+        // until now its only door was one 44x44 icon in the rail (AR5).
+        ("_View", ["shell.toggleExplorer",
+                   "workbench.focusCanvas", "workbench.nextSurface", "workbench.previousSurface",
                    "workbench.reorderSurface", "watcher.raiseDispute", "workbench.newSearch",
                    "workbench.newClassDiagram",
                    "workbench.newSequenceDiagram",

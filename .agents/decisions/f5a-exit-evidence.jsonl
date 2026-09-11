@@ -1,0 +1,9 @@
+{"agent": "claude-f5a", "at": 1789147775.5866551, "code": null, "kind": "allowed", "path": "docs/notes/front-door-ruling-49.md", "session": "f5a-exit-evidence", "wi": ""}
+{"agent": "claude-f5a", "at": 1789148114.027393, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "f5a-exit-evidence", "wi": ""}
+{"agent": "claude-f5a", "at": 1789148114.0293932, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "f5a-exit-evidence", "wi": ""}
+{"agent": "claude-f5a", "at": 1789148114.0303931, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "f5a-exit-evidence", "wi": ""}
+{"agent": "claude-f5a", "at": 1789148114.0330935, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "f5a-exit-evidence", "wi": ""}
+{"agent": "claude-f5a", "at": 1789148114.0340924, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "f5a-exit-evidence", "wi": ""}
+{"agent": "claude-f5a", "at": 1789148114.0350938, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "f5a-exit-evidence", "wi": ""}
+{"agent": "claude-f5a", "at": 1789148114.0370898, "code": null, "kind": "allowed", "path": "site/index.html", "session": "f5a-exit-evidence", "wi": ""}
+{"agent": "claude-f5a", "at": 1789148114.0380905, "code": null, "kind": "allowed", "path": "site/model.html", "session": "f5a-exit-evidence", "wi": ""}

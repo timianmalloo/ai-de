@@ -18,18 +18,21 @@ review-by: 2026-12-09
 
 # AI-DE Conductor — specification inputs
 
-Provenance for the two source artifacts in this directory.
+Provenance for the source artifacts in this directory, and the in-repo addendum that refines them.
 
 | File | Role | Authority | SHA-256 |
 | --- | --- | --- | --- |
 | `ai-de-conductor-spec-v1.html` | Specification v1.0-draft, dated 2026-09-09 | **Authoritative.** Supersedes the proposal and the mockups wherever they conflict. | `8aac1ce1375c619438278329c0cae8c0f34681088bc98bc70fde7329d0172a49` |
 | `ai-de-conductor-mockups-v2.html` | UX intent (Score/Performance, coordination board, Agent Profiler, routing) | Subordinate to the spec. | `72e0fec4aa98d70aba1dfc9d5f9dd0bffdfb326309f97d8b7d26169fce0ff29b` |
 | `ai-de-spec-addendum-a-session-experience.html` | **Addendum A — The Session Experience**, dated 2026-09-09 | **Normative. SUPERSEDES v1.0 where they conflict.** Adds R13–R16 to Phase 1, R17 to Phase 3, repairs the "session" vocabulary collision (A3), and rewrites Phase 1's exit evidence. | `f23fe61168e395bbddae8e63c47e18b46875a5c90a21322fe36f258940f3361c` |
+| `../addendum-c-perspectives.md` (`spec-addendum-c-perspectives`) | **Addendum C — Perspectives**, dated 2026-09-11 | **Normative** for the perspective set (Coding · Explore · Architecture), the rail, the per-perspective surface allow-lists, the derived menu, the default layouts and the persistence slots. **Does not amend Addendum A's text** (Ruling 51): a conflict with A is surfaced in its §R as a finding for the Owner, and A stands until ruled. Binds Rulings 50–55 (`note-addendum-c-council-rulings`). | *authored in-repo, not ingested — a living markdown artifact with no frozen checksum; its history is git's* |
 
-Ingested 2026-09-09 from the operator's `Downloads` directory, unmodified. The
-spec's own provenance line records its sources as `timianmalloo/ai-de`,
-`timianmalloo/ai-forward` and `timianmalloo/cfd-bench`, read at HEAD of `main`
-on 2026-09-09.
+The three HTML files were ingested 2026-09-09 from the operator's `Downloads`
+directory, unmodified. The spec's own provenance line records its sources as
+`timianmalloo/ai-de`, `timianmalloo/ai-forward` and `timianmalloo/cfd-bench`,
+read at HEAD of `main` on 2026-09-09. Addendum C is the first addendum authored
+in the repository rather than ingested; the errata policy below applies to the
+byte-frozen HTML only.
 
 Decisions locked by the spec before this programme starts:
 

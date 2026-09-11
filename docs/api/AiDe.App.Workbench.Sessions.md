@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 58 members, 93% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 59 members, 93% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Sessions`
 
-**12 public types · 58 public members · 93% documented.**
+**12 public types · 59 public members · 93% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -71,11 +71,53 @@ default on session open; the document takes the first row rather than naming a c
 | Member | Summary |
 |---|---|
 | `string ConsoleModeId = "console"` | The merged-stream mode. First, because R16 b1 makes it the default on session open. |
-| `string TerminalModeId = "terminal"` | The terminal mode — today's real terminal surface, unchanged. |
-| `IReadOnlyList<CanvasMode> BuiltIn { get; } =` | The two rows this phase ships. Console and Terminal only — no placeholder. |
+| `string TerminalModeId = "terminal"` | The terminal mode's id. **The id survives Ruling 45; the built-in row does not.** |
+| `IReadOnlyList<CanvasMode> BuiltIn { get; } =` | The one row this phase ships (Ruling 45). |
 | `IReadOnlyList<CanvasMode> All` | Every mode a session document offers: the built-in rows, then any appended. |
 | `IDisposable Register(CanvasMode mode)` | Appends a mode. Disposing the returned handle removes it again. |
 | `CanvasMode? Find(string modeId)` | Finds a mode by id, or null when nothing has registered it. |
+
+### `string TerminalModeId = "terminal"`
+
+The terminal mode's id. **The id survives Ruling 45; the built-in row does not.**
+
+**Remarks.** It is persisted in session document envelopes, so removing the constant would make a saved
+session's restored mode unresolvable rather than merely unavailable — and Terminal
+re-registers as a row, showing *existing observed lanes* per §A6.1, in the phase that
+binds observed lanes to a session. A mode id is a name; a row is a promise that something is
+behind it.
+
+### `IReadOnlyList<CanvasMode> BuiltIn { get; } =`
+
+The one row this phase ships (Ruling 45).
+
+**Remarks.** **Terminal was cut, and not because the operator asked.** Addendum A §A6.1 defines
+the Terminal mode as *"observed lanes' live terminals for this session"* — terminals
+that already exist. The row that was here constructed a **new** `TerminalSurface` per
+session, whose constructor starts a ConPTY session, which is not what §A6.1 specifies; and
+Phase 1 binds no observed lanes, its own ratified goal block reading *"with zero terminal
+hosting"*. The ratification note had already cut Artifacts, Profiler and Board on the rule
+*"a tab with nothing behind it is dead UI"*. This is that rule reaching the row that was
+left in.
+
+
+
+
+
+**A registration cut, not a spec change and not a default change.** Ruling 21 —
+*"the canvas split is IN"* — stands; the split mechanism is untouched and is re-proven
+against a test-registered mode. Console was already the default on session open (R16 b1), so
+no default moves. `TerminalSurface`, `Dispatch/`, `Terminal/`, File → New
+Terminal Session and ADR-0017 are all untouched: dispatching to a real terminal is a
+different capability from hosting one inside a session pane, and it keeps working.
+
+
+
+
+
+**Adding a mode is still adding a row** (Ruling 22). That claim is now carried
+entirely by `Register` rather than by a second shipped row, which is a stronger
+proof of it than two hard-coded entries ever were.
 
 ### `IDisposable Register(CanvasMode mode)`
 
@@ -185,7 +227,16 @@ wrongly.
 
 **Task class carries no pre-filled value**, deliberately: pre-filling one is how a
 default arrives by another route, and a defaulted class ranks in the wrong cohort (DC-110). The
-Create button stays disabled, with its reason on screen, until the operator types one.
+Create button stays disabled, with its reason beside it, until the operator chooses one.
+
+
+
+
+
+**It is a picker now, not a text box (RQ1).** The requirement was never the failure; the
+control was. A value whose only use is exact equality against a set is entered by choosing from
+that set, because a free text box makes a typo indistinguishable from an answer. Nothing is
+preselected, so choosing is still an act and the no-default contract is untouched.
 
 
 
@@ -337,6 +388,7 @@ are unchanged and the standalone draft surface still exists, exactly as Addendum
 | `string SurfaceId { get; }` | The layout surface id. |
 | `ComposerSurface Composer { get; }` | The composer half of the paired zone. |
 | `IReadOnlyList<string> ModeTabs` | The mode captions currently offered, in catalog order. No placeholder is ever added. |
+| `string? ModeStripTitle` | The pane title the strip shows at ONE mode (MS2), or null when it is showing tabs. |
 | `double RenderedComposerWeight` | The rendered composer share of the paired zone — what the splitter actually shows. |
 | `double RenderedCanvasWeight` | The rendered canvas share of the paired zone. |
 | `double RenderedPrimaryWeight` | The rendered share of the canvas given to the active mode. |
@@ -365,6 +417,23 @@ The surface kind `SurfaceContentFactory` builds this for.
 **Remarks.** **`session-document`, never `session` (Ruling 18).** The factory already carries
 `sessions` — the Loomkeeper watcher pane — and a kind one letter away from it would be
 resolved by whichever row was read first, silently.
+
+### `IReadOnlyList<string> ModeTabs`
+
+The mode captions currently offered, in catalog order. No placeholder is ever added.
+
+**Remarks.** Empty when the strip is in its one-mode form (MS2), because there are no tabs then — see
+`ModeStripTitle`. A caption list that reported one tab would be describing a
+control the pane does not render.
+
+### `string? ModeStripTitle`
+
+The pane title the strip shows at ONE mode (MS2), or null when it is showing tabs.
+
+**Remarks.** Exposed because the two forms of the strip are a design rule with an oracle, not a rendering
+detail: at one mode the honest form is the title every other pane uses, because a canvas mode
+carries no name, no close control and no drag handle of its own — which is why MS5 says the
+"single-surface stacks keep their tab strip" rule does not reach this strip.
 
 ### `FrameworkElement ContentFor(string modeId)`
 

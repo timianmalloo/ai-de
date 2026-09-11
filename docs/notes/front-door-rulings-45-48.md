@@ -132,6 +132,30 @@ so **this product behaviour currently has no oracle at all**.
    needing a ruling*, with the control being that a review's **"needs an Owner nod"** phrase becomes
    a **plan floor node**, not prose.
 
+### CORRECTION, 2026-09-11 — this ruling's premise does not hold for the running path
+
+**The ruling's reasoning cited coverage that does not cover the product.** It said
+`StackState.Maximized` and `workbench.maximizePane` are *"pre-existing and tested"*, naming
+`WorkbenchLayoutTests.cs:285-311` and `WorkbenchControllerTests.cs:171-180`. Node U2 opened them:
+both construct **`new LayoutService()`**, the tree service. The shell constructs
+**`new ZoneBackedLayoutService()`** (`WorkbenchShell.cs:113`), whose projection builds every stack
+at the default `Docked` and hands `Layout` an **always-empty** maximize memo
+(`ZonesToTree.cs:67` — `ImmutableDictionary<string, StackState>.Empty`). **`StackState` does not
+round-trip, so `Maximized` is unobservable in this product.**
+
+Swept: **66 tests construct the tree service, 8 construct the one the shell runs.**
+
+**The ruling itself stands** — maximize-on-create is still ratified, and the behaviour still
+arrives, because `ZoneLayoutService.Maximize` really does minimise siblings and `ZonesToTree`
+renders that by omitting a collapsed zone. What was wrong was the *evidence* the ruling rested on,
+which I supplied. The condition saved it: demanding a red-first oracle is what exposed the premise,
+because the obvious assertion went red against a stub and **stayed red against the real body**. The
+shipped oracle observes the effect `DESIGN.md` promises rather than the unobservable state.
+
+Registered as **DC-135**. The lesson for every future ruling: *"pre-existing and tested"* must name
+**which implementation** the coverage constructs, or it ratifies a property of code that does not
+ship.
+
 **Constrains.** Admits maximize-on-create as the delivery of feedback item 3's *"full window"*
 request. Freezes `ShellViewMode` at two values. Cuts any *"third shell mode"* reading.
 
