@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 73 · partially-controlled 57 · uncontrolled 15
+**Status counts:** controlled 74 · partially-controlled 57 · uncontrolled 15
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -6259,4 +6259,47 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Control:** `verify-ui-craft-floor.py` `gated_mockups()` — the exemption is the thing that must
   be written; `--self-test` still discriminates (Nit fails, Major passes on the front door). Green on
   this commit over five gated files.
+- **Status:** `controlled`.
+
+### DC-146 — A derivation reads the render instead of the source
+- **Shape:** a security-relevant derivation (a scope, a permission, a lease) is fed the fully
+  *compiled/rendered* artifact rather than the narrower, trusted input the derivation is actually
+  meant to read. Everything the render additionally carries — an attachment's file content, a
+  catalog template's fixed prose, any other text a later feature folds into the compiled view — is
+  content the person never typed, and it silently rides along into the derivation because the
+  derivation cannot tell the two apart: both are just characters in the same string by the time it
+  sees them. The bug widens a security boundary (here, a lane's exclusive write scope) rather than
+  narrowing it, so it fails open, not closed.
+- **Signature:** a `Derive(...)`/`Extract(...)`-shaped function whose parameter is a `.Text` off a
+  `Compiled*`/`Rendered*` record, rather than a member of the input the operator actually edits; two
+  call sites of the same derivation (a "what will be sent" site and a "what is displayed" site) that
+  happen to agree only because they both read the same over-broad blob; a fixture that types the
+  probe mention into the one editable field the test author had in mind and never into an
+  attachment or a template body, so the widening path is never exercised.
+- **Instance (Ruling 66 / F-2, `addendum-c-chain`, 2026-09-11):** `ComposerSendGate.cs:164` derived
+  the sent lease, and `ComposerSurface.cs:449` derived the displayed lease, both from
+  `ComposerCompiler.Compile(draft, template).Text` — the whole rendered prompt, which
+  `ComposerCompiler.RenderAttachment` (`ComposerCompiler.cs:136`) and `TemplateCompiler.Compile`
+  fold an attachment's file content and a template's fixed body into, verbatim. A file the operator
+  attached, or a catalog template's own prose, could therefore name a path the operator never
+  referenced and widen the lane's write scope. Fixed by `ComposerDraft.SourceText`
+  (`ComposerDraft.cs`) — a shape-scoped accessor over only what the operator typed (the free-form
+  text, the six goal-block field values, or the active template's field values) — and re-pointing
+  both call sites at it.
+- **Sweep:** every other `.Derive(`/`.Extract(`-named function in `src/` (`grep -rn
+  "static.*Derive(\|static.*Extract("`) is `DeterministicSignalsDeriver`, which reads an explicit,
+  already-structured `AuditSignals` record, not a rendered blob — not an instance. Every other
+  reader of `CompiledPrompt.Text` (`ComposerSendGate.Prompt`, `ComposerSurface.CompiledView`,
+  `ComposerSendRecord.Committed`'s attachment *counts*) is meant to read the whole rendered text —
+  that is the compiled view's whole point (Security C15) — so none of those is this shape.
+- **Control:** `EveryLeaseDerivationCallSiteInSrcPassesTheSourceTextSymbol`
+  (`tests/AiDe.App.Tests/Composer/TheLeaseDerivesFromTheEditorsSourceTextTests.cs`) — a source-scan
+  guard, root `src/`, recursive excluding `bin/`/`obj/`, over the token set
+  `{LeaseDerivation.Derive(, LeaseDerivation.Patterns(}` with no allowlist: every call site found
+  must pass an argument ending in `.SourceText`, and today's two sites are named, not counted, so a
+  third site added later fails this test by name until it is updated. The behavioural half —
+  `AnAttachmentBodyMentionDerivesNoPatternButTheEditorTextStillDoes` and
+  `ATemplateBodyMentionDerivesNoPatternButAFieldValueStillDoes` — was observed red on `main` before
+  the fix (attachment case: `Assert.DoesNotContain` found `"src/AiDe.Core/Bar.cs"` in the derived
+  lease; template case: found `"docs/plan.md"`).
 - **Status:** `controlled`.

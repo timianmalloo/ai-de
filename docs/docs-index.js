@@ -1746,7 +1746,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 30 types, 72 members, 86% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 30 types, 73 members, 86% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1759,7 +1759,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0d56e518b14c71aa9745dddf040735a427ae52a9d53046be4b81fecdd0539eff"
+      "sourceSha256": "13aa9f499a05c37bac4d93e8d38fb55a2d66dbf3f38b4d0333548b4a92934fb1"
     },
     {
       "id": "api-aide-core-presentation-sessions",
@@ -6188,7 +6188,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1d3971f39bd4aec2a0b7c55f11f63fc0031ea8c44257d86426c3deb983f5b7e7"
+      "sourceSha256": "adb77c41f5f614f87fc06297c81760134063736c408f186ed41d09ee9988a707"
     },
     {
       "id": "design-session-profiler",
@@ -12558,6 +12558,34 @@ window.DOCS_INDEX = {
       "sourceSha256": "bbd84d853610c99acba5a8104724b4a2e1d5ddd7680c660140c168dc2f67c452"
     },
     {
+      "id": "proof-lease-source-text",
+      "path": "docs/proof/lease-source-text.md",
+      "title": "Proof Pack - Lease Derivation Runs Over The Editor's Source Text (Ruling 66 / F-2)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c-chain",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Proof Pack for Ruling 66 / F-2: LeaseDerivation.Derive and LeaseDerivation.Patterns now read ComposerDraft.SourceText (the operator's own typed content) rather than the fully compiled prompt, so an attachment body or a template's fixed prose can no longer widen a lane's write scope. Red observed on main before the fix; Core 2240/0, App 605/0 after.",
+      "tags": [
+        "composer",
+        "lease",
+        "security",
+        "ruling-66",
+        "f-2",
+        "proof-pack"
+      ],
+      "links": [
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6c5c67e487b6bb2c9497ce5e10e0191a7c68dc102d699ffb26af00ece93516c1"
+    },
+    {
       "id": "proof-terminal-cursor-render-crash",
       "path": "docs/proof/terminal-cursor-render-crash.md",
       "title": "Proof Pack - Terminal cursor render crash fix (DC-061)",
@@ -14474,5 +14502,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "174f46834dc10f9eee93d9f2d3c94dd4176c1c4b05c3713204a59f7751a6182d"
+  "graphSha256": "da91b29f27ed76213cb0c428ba7729b4c4c406394626d22c905ce8e0cbec2b47"
 };
