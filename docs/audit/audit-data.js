@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T17:29:43Z",
+  "generated": "2026-09-11T17:34:29Z",
   "audit": [
     {
       "actor": null,
@@ -11697,6 +11697,38 @@ window.AUDIT_DATA = {
       },
       "skill": "optimize-graph",
       "summary": "Naive: 6 nodes in series, F5 at the head of a chain it has no edge into. Optimized: 9 nodes + dispatch; span R0->S1->D1->A1->P1 (all real data/decision edges); F5a and M0 off the span; three nodes pulled from inside S1/D1/A1 to the head (the Owner's vocabulary/phasing/ADR-0017 ruling; the current-state inventory + craft-gate baseline; the architecture recovery collapsed into M0). Width 3 at the head, 1 on the chain, P1's own contract at dispatch. 12 floors named + Security named-not-triggered; 4 loops bounded; shared surfaces with jointly-satisfiable clauses. Found: Ruling 49 cited in 3 files, filed in none; ShellViewMode{Workbench,Explorer} (ADR-0017 body swap) is the decision Addendum C supersedes. Span Inferred ~6000s; specify's one 65s data point labelled not credible.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "datetime": "2026-09-11T17:33:47Z",
+      "done_when": "Rulings 50-55 filed verbatim with evidence in docs/notes/addendum-c-council-rulings.md; plan checkpoints 1 and 2 discharged",
+      "git": {
+        "branch": "conductor/addendum-c",
+        "pushed": null,
+        "sha": "9927192bcb3fc1999e86780f94479758417dd35d",
+        "short": "9927192bc"
+      },
+      "goal": "Owner rules on Addendum C's vocabulary, phasing, ADR-0017, graph substrate, priority and page-one facts before any spec is written",
+      "id": "al-01M28RGPG1E9BYRWZF02AKPWQX",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "Node R0 of plan-addendum-c-modes: six questions to the Owner (fable) with verified evidence — Q1 vocabulary, Q2 phasing vs F5, Q3 ADR-0017, Q4 UC2 vs UC3 graph, Q5 the 80% case, Q6 anything missed.",
+      "session": "conductor-addendum-c",
+      "shortname": "r0-owner-rulings-50-55",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "Ruling 50: the concept is Perspective (Coding, Explore, Architecture; Tests reserved); canvas mode and primary view mode keep their names. Ruling 51: F5 stands untouched; Addendum C spec in parallel, code from main after F5 merges. Ruling 52: ADR-0017 retained AND amended — a perspective is a primary view mode, its body may be an allow-listed docking host (Coding = today's host, Architecture = a second host), Explore stays full-window; second-host no-rebuild test owed (Inferred). Ruling 53: one graph substrate, two surfaces, no in-surface toggle. Ruling 54: build order Coding, mechanism, Explore-unchanged, Architecture-existing-surfaces; entry-points, data-flow, ER, bicep-derived diagrams named-and-deferred; UC4 non-goal. Ruling 55: five canvas modes (Terminal is the hybrid), derived menus, New-session in every perspective, Coding layout resolves the Explore/Domain/Provenance duplication. Checkpoint 2 discharged with a third outcome the plan had not named.",
       "tags": [],
       "tier": "T2",
       "tool": null
