@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 64 · partially-controlled 53 · uncontrolled 13
+**Status counts:** controlled 65 · partially-controlled 53 · uncontrolled 13
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -5553,3 +5553,46 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Control:** Bound the lease at the guard rather than in prose: cap the TTL, and require a recorded reason above a stated threshold. Report the TTL distribution in doctor so the drift is visible as a number. The rule that should hold — 'a lease covers the minutes you are editing a file, never an area you intend to own' — is only real if something refuses the twelve-hour lease. (automated control)
 - **Boundary:** Applies where leases are advisory over shared files. A long lease is legitimate for a genuinely exclusive, long-running operation — which should be a different verb, not a longer default.
 - **Confidence:** v  - **Source:** fleet (drm-0009/p21)
+
+### DC-131 — A defect reported as a POPULATION is closed by fixing a MECHANISM, and the population is never counted
+
+- **Shape:** the report is a count — a screenshot of a process list, a growing table, *"these are
+  accumulating"*. Investigation finds a real leak, fixes it, and proves the fix with a real test.
+  The report is then closed on the strength of that test. **But the evidence offered was a
+  population and the evidence returned was a mechanism**, and nothing ever went back and counted.
+  The symptom survives, because a population can have more than one source and the fix addressed
+  the source that was looked for. **Every individual claim is true and the answer to the question
+  asked is still wrong.**
+- **Signature:** *"fixed — here is the test"* answering *"there are still N of them"*; a close with
+  no post-fix census; a census with no attribution column, so the count cannot be split by owner; a
+  second report of the same symptom treated as a regression of the first fix rather than as
+  evidence of a second source.
+- **Instance (terminal hosts, 2026-09-11) — reported THREE times, wrong twice:** TH1 fixed a test
+  launcher that closed handles without ending processes. TH2 fixed the product leaking an entire
+  ACP engine tree (`AcpEngineProcess.cs:117`), measured from outside the leaking process, red then
+  green. **Both were real, both are still fixed.** Both were reported to the operator as the answer.
+  The first census of the whole population was taken only after the third report: **287 console-host
+  processes, of which 256 were held by `node.exe` under `copilot.exe` — a different application
+  entirely — 20 by orphaned MSBuild `/nodeReuse:true` workers, and ZERO by anything named `AiDe`.**
+  The two fixes were complete and the operator's screenshot was accurate; they were about different
+  populations. *No test that passed could have told me that, because none of them counted anything.*
+- **What the census cost, and why it was never taken:** one process enumeration with an ancestry
+  walk. It was not taken because the mechanism was found quickly and confirming it felt like
+  confirming the report — **the fix was verified and the ANSWER was not**. The orphan check that was
+  run looked one level up, found every host's direct parent alive, and reported zero orphans; the
+  20 MSBuild workers were invisible to it because *they* were the orphans and the hosts beneath them
+  were correctly parented. **A containment check one level deep confirms containment one level deep.**
+- **Control:** when a defect arrives as a count, **the close requires a census with an attribution
+  column** — every member of the population assigned to an owner, including the members that turn
+  out to belong to someone else. *"Zero of these are ours"* is a result; *"the leak I found is
+  fixed"* is not an answer to *"why are there still so many"*. Ancestry walks run to the root, not
+  one level. For this instance the mechanism control is
+  `tools/verify-node-reuse-control.py` + `Directory.Build.rsp` (falsified both directions: 16 → 0),
+  and the gate carries `--behaviour` so its own oracle is executable rather than asserted.
+- **Relationship to DC-123:** DC-123 is the *mechanism* half — containment installed one ring in
+  and absent one ring out, which is exactly why `verify-test-run.py`'s environment variable did not
+  reach a hand-typed `dotnet build`. **This is the *reporting* half:** DC-123 explains why the
+  symptom persisted, DC-131 explains why it was declared resolved twice while it did.
+- **Status:** `controlled` — the boundary gate is wired and red-first on both clauses, and the
+  census shape is written into the close. The general discipline is only as strong as the reviewer
+  who asks *"what is the denominator?"*
