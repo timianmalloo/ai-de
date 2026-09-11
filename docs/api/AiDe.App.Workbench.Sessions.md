@@ -185,7 +185,16 @@ wrongly.
 
 **Task class carries no pre-filled value**, deliberately: pre-filling one is how a
 default arrives by another route, and a defaulted class ranks in the wrong cohort (DC-110). The
-Create button stays disabled, with its reason on screen, until the operator types one.
+Create button stays disabled, with its reason beside it, until the operator chooses one.
+
+
+
+
+
+**It is a picker now, not a text box (RQ1).** The requirement was never the failure; the
+control was. A value whose only use is exact equality against a set is entered by choosing from
+that set, because a free text box makes a typo indistinguishable from an answer. Nothing is
+preselected, so choosing is still an act and the no-default contract is untouched.
 
 
 

@@ -9,6 +9,7 @@ colors:
   border: "#2A313B"
   text: "#E4E9EF"
   text-muted: "#98A3B2"
+  text-disabled: "#7C8896"
   accent: "#5B9DD9"
   accent-contrast: "#0D1014"
   verified: "#5FB98F"
@@ -72,6 +73,7 @@ chrome competes with evidence, so chrome loses.
 |---|---|---|
 | `{colors.text}` | primary evidence text | 13.9:1 — AA/AAA body |
 | `{colors.text-muted}` | secondary metadata, `not recorded` | 6.4:1 — AA body |
+| `{colors.text-disabled}` | the ink of an unavailable control — **a pairing, never an opacity** | 5.1:1 — AA body |
 | `{colors.accent}` | selection, focus affordance, links | 6.1:1 — AA body, AA non-text |
 | `{colors.verified}` | Verified confidence chip | 7.2:1 |
 | `{colors.inferred}` / `{colors.stale}` | Inferred confidence, stale state | 8.3:1 |
@@ -468,6 +470,15 @@ platform-default white list.
 `{colors.surface-sunken}` measures **2.73:1**, below the 3:1 floor for a meaningful graphic. A disabled
 control carries its own token pairing that clears the floor, plus a reason on hover. An unreadable
 control is not a gentler way of saying unavailable.
+
+That pairing is `{colors.text-disabled}`, and it is a token because it was already a value: the same
+grey appeared three times as a raw literal on the disabled menu-item foreground, which is one palette
+copy per site waiting to drift (TC5). It measures **5.1:1 on `{colors.surface}`**, **4.6:1 on
+`{colors.surface-raised}`** and **5.3:1 on `{colors.surface-sunken}`** — computed from the resolved
+brushes by `ContrastFloorTests`, not asserted here (TC6). It is deliberately dimmer than
+`{colors.text-muted}`, so *unavailable* and *secondary* remain different readings, and it clears the
+**text** floor rather than merely the graphic one: an operator has to be able to read what it is they
+cannot use.
 
 ### Required fields — a required answer is explained where it is asked
 

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T13:40:02Z",
+  "generated": "2026-09-11T14:26:35Z",
   "audit": [
     {
       "actor": null,
@@ -11346,6 +11346,48 @@ window.AUDIT_DATA = {
       "summary": "Elevate review of the session front door. Six of seven feedback items are unimplemented spec or measured defect, not taste. Item 4's systemic cause named at the token level: only 6 implicit WPF styles exist, none for a text or input control, so 18 base types fall back to platform light defaults - 11 measured failing pairs, worst 1.15:1, plus the inverse at 1.22:1 caused by a previous partial fix. Composer: CodeMirror is vendored and navigated to but Configure has zero callers and host.init/editor.ready deadlock, so it never initializes. Task class is a free-text box for a cohort key where a typo costs more than a default. Explore/Provenance/Domain are one class instantiated three times, and the operator's proposed fix keeps the wrong one. Rail: 3 of 4 icons inert, the 4th is the only door to Explorer mode. Console-only mode strip designed per Ruling 45. Rubric variant 5 majors -> 0 in 2 passes; cap did not fire. Nine false claims in the brief reported.",
       "tags": [],
       "tool": null
+    },
+    {
+      "id": "al-01M28DSXJFATYK40B3T5ZBAWAF",
+      "shortname": "node-u2-ui-implementation",
+      "datetime": "2026-09-11T14:26:35Z",
+      "session": "session_01PXGs6quw67gGZao37P7xSC",
+      "prompt": "feat(theme): implicit defaults for the base control set, measured\n\nItem 1 of the ranked plan in docs/reviews/ui-operator-feedback.md, plus\nitems 4 and 5.\n\nThe shell themed its CONTAINERS and left its LEAVES to WPF, whose default\nis a light theme. Six implicit styles existed, none for a text or input\ncontrol; eighteen base types fell back to the platform and twenty-eight\ninstantiations did. App.xaml now carries an implicit default for every\ntype TC1 names, each setting INK AND GROUND TOGETHER - the partial\npairing is what turned dark-on-dark into light-on-white at 1.22:1.\n\n- The palette tokens move above the templates, because a StaticResource\n  cannot reference a brush declared below it.\n- DisabledTextBrush (#7C8896) is now a token, not a literal repeated three\n  times, and disabled is that pairing rather than Opacity 0.5 - which\n  measured 2.73:1 against a 3:1 floor (A4).\n- The focus ring is its own 2px outline. The old trigger recoloured a\n  border whose thickness every rail button sets to zero, so it rendered\n  nothing while a comment claimed otherwise (A1/AR4).\n- CheckBox and RadioButton are retemplated: the platform bullet paints its\n  glyph in a fixed near-black, so on a dark ground the two states\n  composite to nearly the same image.\n- SunkenBrush/RaisedBrush were referenced from six sites and declared\n  nowhere. A missing key is a silent no-op (TC3); the six now name the\n  keys that exist.\n- AvalonDock's chrome keeps a transparent button pairing in its own\n  resource scope, which is nearer in the tree than Application.Resources.\n\nControls, not prose (CI6):\n- ContrastFloorTests re-measures all eleven pairings from real controls in\n  a real shown window under the real App.xaml, and writes the table.\n- A theory over the eighteen TC1 types fails when one has no implicit\n  default, or sets only one of ink and ground.\n- A rendered-pixel test fails when a checked box is not visibly different\n  from an unchecked one.\n- TokenDisciplineTests fails when any named resource key is undeclared.\n\nMeasured after the change: pairs 1-10 clear their floors (13.57-15.62:1\nfor text, 5.28:1 for the disabled glyph). Pair 11 is DESIGN.md's declared\nborder deviation and is reported, not asserted.\n\nNo layout, geometry, template binding or command is changed by any of\nthis, so tab placement and drag behaviour are untouched.\n\nCo-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01PXGs6quw67gGZao37P7xSC",
+      "summary": "Node U2 — built U1's ranked plan for the theme, contrast, icon, surface-content and sheet concern.\n\nBUILT. Item 1: implicit TargetType defaults in App.xaml for the eighteen base control types TC1\nnames, each setting ink and ground together. Item 4: the rail focus ring is its own 2px outline\n(the old trigger recoloured a border every rail button sets to zero width). Item 5: the six\nreferences to the undeclared SunkenBrush/RaisedBrush keys now name the keys that exist, and a\ncheck fails when any named key is undeclared. Item 3: the task class is a bounded picker with\nRQ2-RQ5 copy and nothing preselected. Item 6: the pane no longer hard-codes Verified. Item 8: three\ndisabled rail placeholders deleted, New Session added as the accent primary, Explorer given a\ncatalog command. Item 10: MaxSearchResultsCeiling, and a capped read renders as a lower bound.\nItem 11: both dialogs opt their caption into DWM dark mode through one factory. A4: disabled is a\ntoken pairing, not Opacity 0.5 at 2.73:1.\n\nMEASURED, NOT ASSERTED. ContrastFloorTests instantiates real controls in a real shown window under\nthe real App.xaml and computes every pairing. Pairs 1-10 clear (13.57-15.62:1 text, 5.28:1 the\ndisabled glyph); pair 11 is DESIGN.md's declared border deviation at 1.39:1, reported and not\nasserted. A rendered-pixel test proves a checked box differs visibly from an unchecked one.\n\nPROPOSED, AWAITING RATIFICATION. Creating a session maximizes its document's stack — the maximized\ndock state DESIGN.md already defines — because the requested full-window view conflicts with A4.4\nand ADR-0017.\n\nDEFERRED WITH REASONS. Item 2 and the composer half of 5/6 belong to node F4b. Item 7 renders in\nSessionDocumentSurface.cs, which F4b holds. Items 12 and 16 depend on item 2. Item 9 is a finding\nleft where the deletion would be made: the operator's own fix is backwards, and nothing was\ndeleted. Items 13 and 15 are product decisions or cross reserved files. RQ6 is not built because\nthe operator's last answer is persisted nowhere.\n\nFALSE IN MY BRIEF. Item 1 clears 8 of 11 measured pairs, not 7 — pair 8 is a ListBox ground and the\nimplicit ListBox style clears it. The palette needed one addition (a disabled ink token) for A4,\nwhich the brief's \"no behaviour change, one file\" framing did not anticipate. The craft gate with\n--gate exits 0 over docs/mockups with 66 Majors and 38 Minors present, so --gate is no more\ndiscriminating than a bare run unless a Blocker is mapped.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "src/AiDe.App/App.xaml",
+        "tests/AiDe.App.Tests/ContrastFloorTests.cs",
+        "tests/AiDe.App.Tests/ThemeProbe.cs",
+        "tests/AiDe.App.Tests/Sessions/TheTaskClassIsChosenNotTypedTests.cs",
+        "tests/AiDe.Core.Tests/TheEvidencePaneDoesNotInventConfidenceTests.cs",
+        "src/AiDe.Core/Presentation/Sessions/TaskClassVocabulary.cs",
+        "src/AiDe.App/Workbench/DarkCaption.cs"
+      ],
+      "tags": [
+        "ui",
+        "contrast",
+        "theme"
+      ],
+      "outcome": "success",
+      "goal": "Implement U1's ranked plan for the theme, contrast, icon, surface-content and sheet concern, on feature/ui-implementation, without altering tab placement or move behaviour.",
+      "done_when": "Each ranked item is built, deferred or refused with a reason; the eleven measured pairings are re-measured after item 1 rather than asserted; the maximized proposal is built and marked awaiting ratification; the IA finding is produced with nothing deleted; test floors met; gates run with --gate on the craft gate; branch pushed.",
+      "tier": "T2",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "0a63a731d863d0636bbcf215c4540311b988eae7",
+        "short": "0a63a731d",
+        "branch": "feature/ui-implementation",
+        "pushed": null
+      }
     }
   ],
   "changes": [

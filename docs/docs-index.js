@@ -1446,7 +1446,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 325 members, 69% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 326 members, 70% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1459,7 +1459,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fdbc42d0d79fb2f2884fbdf7f49b3dfa0f6eb53712949ec5efe2d4df133b1693"
+      "sourceSha256": "3e00e71ff46d2337227540ee8e0429a638943d1d6b69c9c2750233041870ae33"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -1509,7 +1509,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "11797566bd655dbcd9a5021da18522b18da2370d78258d3f460b4e83a4597c66"
+      "sourceSha256": "4c04de461a4c5ee98ee42cff06663b3fcf2e9f374a15d1ac6254a0c6d182e140"
     },
     {
       "id": "api-aide-core",
@@ -1721,7 +1721,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation: 32 types, 83 members, 64% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation: 32 types, 84 members, 65% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1734,7 +1734,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7000558540508ecc26119ac8c9242f689e0dd0614b2564a132dff92adb0f45aa"
+      "sourceSha256": "db1487d42d6075b42a3bf50f883a3a39916ee2dce69362e4e9fde08658c94ed8"
     },
     {
       "id": "api-aide-core-presentation-composer",
@@ -1771,7 +1771,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 12 types, 70 members, 98% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 14 types, 78 members, 98% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1784,7 +1784,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "eb450364757f7ee6590c65a3d855c94b090831346eec8cca08da5011d7ef958c"
+      "sourceSha256": "e70f60d4ca63ae819f2d2cb3eb1879adaf0458c6f7ec1c4df67b85528f76b9ac"
     },
     {
       "id": "api-aide-core-projections",
@@ -13029,5 +13029,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c0fce0335c316f55c345e9b64b719d2267653d9e4080729587e4bed4fb37a1aa"
+  "graphSha256": "d4ea12f7f883b5022473dc22cb299e960787e872e85d33ececcc34f9277ef460"
 };
