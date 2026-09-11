@@ -4884,6 +4884,18 @@ for both or split.*
   Control (a) is amended: **the conclusion field is the signal; a watch exit code is at most a
   liveness hint.** That this class's own instrument carried the class is the sharpest
   instance of it so far.
+- **Fourth instance, and it widens the class from PLATFORM to ENVIRONMENT (2026-09-11).** A node
+  reported *"full gate set bare: every gate exit 0"* and CI then went red on the same branch.
+  **Neither statement was false.** The local run used **the working tree it had**, including
+  untracked scratch; CI runs the same gate on a **clean checkout**. The node's own account is
+  the precise one: *"The local green and the CI red were not in conflict; my claim was simply
+  narrower than it sounded. **Local gate results are not a CI prediction, and I stated one as
+  though it were the other.**"*
+  So the class is not only *which platform* — it is **which environment**, and a dirty working
+  tree is a different environment from a checkout in exactly the way a Windows runner is a
+  different environment from a Linux one. **Control (a) extends: a completion claim names the
+  environment it covers, not only the platforms** — and "I ran the gates" and "the gates pass
+  on this commit" are different claims that share a sentence.
 - **Relationship to DC-117:** DC-117 is the same family one axis over — there the invisible variable
   was the **host** (console vs console-less), here it is the **operating system**. Both are *the
   environment a test ran in is not recorded in the claim that it passed.*
