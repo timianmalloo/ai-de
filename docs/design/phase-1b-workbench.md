@@ -13,7 +13,8 @@ links:
   - { to: adr-0013-layout-persistence-envelope, rel: depends-on }
   - { to: mockup-workbench, rel: relates-to }
 review-by: 2027-02-26
-review-suggested: []
+review-suggested:
+  - { by: adr-0013-layout-persistence-envelope, on: 2026-09-11, reason: "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback" }
 summary: >-
   The implementable blueprint for the dockable workbench: an owned, headless layout model (tree →
   stack → surface) that both the pointer and the keyboard mutate through one command set, an

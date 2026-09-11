@@ -10,16 +10,20 @@ links:
   - { to: architecture, rel: implements }
   - { to: adr-0012-docking-shell-library, rel: relates-to }
   - { to: adr-0002-workspace-fact-store, rel: relates-to }
-review-by: 2027-02-26
+  - { to: adr-0032-perspective-layout-slots, rel: relates-to }
+  - { to: adr-0017-primary-view-mode, rel: relates-to }
+review-by: 2027-03-11
 summary: >-
   Workbench layouts are user preference, not evidence. They are stored per workspace beside the fact
   store — never inside it — wrapped in an owned {schemaVersion, appVersion, payload} envelope, and a
   layout that cannot be read degrades to the default arrangement while the original file is kept.
+review-suggested:
+  - { by: adr-0017-primary-view-mode, on: 2026-09-11, reason: "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent" }
 ---
 
 # ADR-0013: Persist the workbench layout in an owned versioned envelope, outside the fact store
 
-- **Status:** Accepted
+- **Status:** Accepted — **amended 2026-09-11** (see *Amendment* at the end; the decision itself stands)
 - **Date:** 2026-08-26
 - **Deciders:** Product owner, Data & Persistence Architect, UX & Accessibility, Release Engineer
 - **Context spec/architecture:** docs/architecture.md · US-9
@@ -94,3 +98,38 @@ in a file the Workbench Layout Service owns, shaped as:
 `LeftSide`, `BottomSide`, `FloatingWindows`, `Hidden` — no version field [Verified]. AvalonDock's
 `UnresolvedContentHandling.Remove | Hide` gives the primitive for the "surface no longer exists" path
 [Verified]. The degradation contract is required by US-9 and by the spec's Portability NFR.
+
+## Amendment — 2026-09-11 (Ruling 52; ADR-0017's named amendment, decided as ADR-0032)
+
+The decision above stands unchanged: layouts live per workspace beside the fact store in an owned
+versioned envelope, and an unreadable layout degrades to the default with the original preserved.
+Under the Perspective set (ADR-0017 as amended) the envelope is **per host perspective**:
+
+- **One zone-envelope file per host.** Coding keeps today's file (`<layout>.zones.json`,
+  `ZoneEnvelope` schema 1, byte-compatible — no migration of its bytes); Architecture gets a sibling
+  (`<layout>.architecture.zones.json`) in the same schema. Explore has no slot (Addendum C
+  non-goal 5). A new host perspective is a new file, never a schema bump — **expand-only**.
+- **Drop-with-report at restore.** A surface whose kind the perspective does not admit (ADR-0030's
+  allow-list) is dropped from that slot at restore and **reported by caption and kind, naming the
+  perspective that admits it**; it is never carried into another perspective's slot; if the drop
+  leaves zero surfaces the perspective's default layout applies and the report says so; a
+  one-instance kind saved twice keeps the first. Before the first save that would rewrite a file the
+  drop changed, the original is preserved as `<layout>.zones.json.pre-perspectives.bak` — **the
+  mechanism (atomic replace with the `.bak` as backup) is stated once, in ADR-0032 rules 3–4**; the
+  `layout.json.bak` rule above applied to the migration: the original is preserved for manual
+  restoration; a rollback build reads the rewritten Coding file (same schema, fewer surfaces), never
+  the `.bak`.
+- **A newer schema is refused with a report** (the tree store's rule at `LayoutStore.cs:161-181`),
+  not silently discarded — `ZoneLayoutStore.Load`'s null-on-mismatch (`ZoneLayoutStore.cs:103`,
+  inventory finding 9) becomes a reported refusal in the slice; a corrupt file likewise; and the
+  refused file is preserved as `<file>.bak` by the same ADR-0032 rule 4, so the refusal never
+  becomes a silent overwrite at exit.
+- **Tested rollback:** a build that predates the amendment reads the post-amendment Coding file
+  unchanged (same schema, same store) and never sees the Architecture file — asserted by a golden
+  round-trip in the slice (ADR-0032's falsifying test).
+
+Rejected at the amendment, and why: a single envelope with a `slots` map and a schema bump (the zone
+store has no migration chain, so every user's arrangement would be discarded on the bump and refused
+whole on a rollback); the *named layouts* mechanism above (a perspective slot is implicit and
+exclusive, not an arrangement the operator applies). The full record is ADR-0032.
+

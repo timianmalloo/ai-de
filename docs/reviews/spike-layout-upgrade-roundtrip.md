@@ -11,7 +11,8 @@ links:
   - { to: adr-0012-docking-shell-library, rel: relates-to }
   - { to: design-phase-1b-workbench, rel: relates-to }
 review-by: 2027-02-26
-review-suggested: []
+review-suggested:
+  - { by: adr-0013-layout-persistence-envelope, on: 2026-09-11, reason: "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback" }
 summary: >-
   The ADR-0012 round-trip spike, run. It found that the versioned envelope had a version field but no
   migration hook, so the first release to rename a surface would have degraded every saved layout to

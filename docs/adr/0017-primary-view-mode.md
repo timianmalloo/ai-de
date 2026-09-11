@@ -2,7 +2,7 @@
 id: adr-0017-primary-view-mode
 title: "ADR-0017 — Full-window surfaces are a primary view mode (body-content swap), not a dock pane or a modal overlay"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: ""
 tags: [architecture, ui-shell, view-mode, explorer, docking, accessibility]
@@ -13,18 +13,29 @@ links:
   - { to: adr-0012-docking-shell-library, rel: relates-to }
   - { to: adr-0013-layout-persistence-envelope, rel: relates-to }
   - { to: adr-0015-canvas-hosting-and-overlay-strategy, rel: relates-to }
-review-by: 2027-02-28
+  - { to: spec-addendum-c-perspectives, rel: implements }
+  - { to: note-addendum-c-council-rulings, rel: relates-to }
+  - { to: adr-0030-perspective-registry-and-allow-lists, rel: relates-to }
+  - { to: adr-0031-second-docking-host, rel: relates-to }
+  - { to: adr-0032-perspective-layout-slots, rel: relates-to }
+review-by: 2027-03-11
 summary: >-
   A surface that needs the whole body (the Knowledge Explorer's graph+reader) is presented as a
   primary VIEW MODE the shell holds — Workbench | Explorer — realised as a body-content swap of the
   region the docking host occupies, with the activity rail as the mode selector. Rejects making it a
   dock pane (it would compete for space — the defect being fixed) and a modal overlay (the rail must
   persist and it is not dismiss-only). The non-active mode's state is retained, never rebuilt.
+  AMENDED 2026-09-11 (Ruling 52): the closed set is the Perspective set (Coding · Explore ·
+  Architecture); a mode's body may itself be a docking host; the Inferred second-host clause is
+  discharged by spikes/second-dock-host-unparent.
+review-suggested:
+  - { by: adr-0013-layout-persistence-envelope, on: 2026-09-11, reason: "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback" }
 ---
 
 # ADR-0017 primary-view-mode: Full-window surfaces are a primary view mode (body-content swap)
 
-- **Status:** Proposed 2026-08-30. Raised for the full-window Knowledge Explorer
+- **Status:** **Accepted as amended, 2026-09-11** (Ruling 52 — retained and amended, not
+  superseded; see *Amendment* at the end). Proposed 2026-08-30. Raised for the full-window Knowledge Explorer
   (`spec-knowledge-explorer-mode`); the mechanism is a general one (any future full-window surface —
   a diagram studio, a dashboard — uses the same seam), so it is recorded as an architecture decision,
   not a one-off in the Explorer's component design.
@@ -122,3 +133,76 @@ a **body-content swap** of the docking-host region — distinct from a dock pane
    rendered, code in the read-only editor. Mocked seam from Phase 1 becomes the real Core query.
 3. **Keyboard cycle + responsive** — the canvas-trap↔reader focus routing and the narrow-viewport
    stacking (US-E8), each with its test.
+
+## Amendment — 2026-09-11 (Ruling 52; `/define-architecture` of Addenda C and D)
+
+Ruling 52 (`note-addendum-c-council-rulings`) **retains** this decision and its load-bearing
+invariant and **amends** it in four clauses; a fifth (clause 4, from INV-0009) was added at the
+Addenda C/D architecture gate. The original text above is left intact; the amendment
+is read over it.
+
+1. **The closed set is the Perspective set.** The primary-view-mode value's closed set becomes
+   **Coding · Explore · Architecture** (Tests is a reserved name with no row and no rail item —
+   Ruling 54). A *Perspective* (Addendum C page one, Ruling 50) **is** a primary view mode: the rail
+   selects it, the body is its projection, the menu/title/status strips persist outside the swapped
+   region. `ShellViewMode` is renamed `Perspective` **only in the commit that implements this
+   amendment** (Ruling 50). The registry that carries the set and its order is ADR-0030.
+2. **A body may be a docking host of its own.** Coding's body is today's workbench host, unchanged in
+   mechanism; **Architecture's body is a second AvalonDock host** under the same presenter, with a
+   surface-kind allow-list (ADR-0030) and its own layout service, controller and persistence slot
+   (ADR-0031, ADR-0032). "New full-window surfaces are new modes, not new shell mechanisms" still
+   holds: a host-bodied mode is the same seam with a different body.
+3. **Explore stays the full-window `ExplorerSurface`** and does not become docked panes (Ruling 52d,
+   Ruling 53: one graph substrate, two surfaces).
+4. **A mode that unparents the docking host must say what a docking command does while it is the
+   body — switch back, or refuse with a reason; never a silent model update.** INV-0009
+   (`docs/investigations/INV-0009-a-session-document-opened-into-a-body-that-is-not-on-screen.md`,
+   on `investigate/session-document-render`; its first defect class, registered there) reproduced it red: with Explore as the body,
+   every `AddSurface` + `Render` command in `WorkbenchShell` (`:268-364`, `:1574`, `:2909`) opened a
+   document into the layout model, configured it, and announced success from the model while
+   nothing could render — the operator pressed File → New Session in Explore and saw nothing. The
+   rule this record now carries: **a catalog command that opens a dock document is covered by one
+   shell seam** (INV-0009 F1: `WorkbenchShell.DocumentOpening` — a `Func<bool> EnsureWorkbenchBody`
+   invoked at the top of every such command), which **switches the body to the host that admits the
+   kind, document first, then the switch, and folds *"Left Explore."* into the announcement**;
+   retain-never-rebuild is kept (the switch is a view change). Under Addendum C that seam **is**
+   `PerspectiveShell`'s routed kind-open (ADR-0030 `Resolve`; ADR-0031 rule 2's entry-verb rule) —
+   the fix on `fix/session-document-render` is its walking skeleton, not a second mechanism.
+   **Falsifying test:** `ANewSessionCreatedWhileExplorerIsTheBodyIsShown` (red today, exit 30 through
+   `dotnet test`) and its sibling `LeavingExplorerShowsTheSessionCreatedInsideIt`; a `ShellModeController`
+   unit test asserts one `shell.mode` diagnostic line per `Set` (INV-0009 F5). Two adjacent findings
+   the same investigation verified are carried by ADR-0031 and the P1 note: **its second class** (a session
+   created through the chooser with no workspace open — the operator ruled the chooser opens the
+   workspace, then creates) and the reopen path's binder (`SessionComposerBinder.Bind(shell,
+   config, providers, workspace, affirmation)` as the **one** construction site shared by New,
+   Reopen and restore — still one registry / send-context / attachment-gate site, Ruling 47).
+5. **Layout persistence gains one slot per host perspective** — the ADR-0013 amendment this record
+   already named, now decided as ADR-0032 (one zone-envelope file per host; expand-only; an envelope
+   carrying a kind its perspective no longer admits migrates by **drop-with-report**, never a
+   crash and never silently). The Explore slot this ADR named for the split ratio and last node is
+   **not built** (Addendum C non-goal 5); in-process retention within a run stands.
+
+**The invariant, extended and re-proven.** *Retain, never rebuild* now holds across three bodies and
+two hosts: the presenter holds every body alive and only unparents. Ruling 52 labelled the second
+host **Inferred** ("a hidden `HwndHost` in host 2 restarts" was the named falsifier). Discharged:
+`spikes/second-dock-host-unparent` (2026-09-11, PASS, exit 0) put two `DockingManager`s under one
+`ContentControl`, a live `WebView2` and a raw `HwndHost` inside host B, cycled A → B → A → B three
+times and B → Explore → B, and observed the same `CoreWebView2` object (reference identity), page
+state (`n = 41`, `scrollY = 500`) intact, and the raw `HwndHost`'s HWND identical with zero
+`DestroyWindowCore` calls — the "initialised once" count is enforced by the spike's own once-guard
+and is not itself the evidence. **[Verified — run, for the presenter swap within one top-level
+window]** Ruling 52's CONDITIONS do not fire;
+Architecture's body stays a docking host. The slice's control is Addendum C **P-4** (a class diagram
+in host B keeps its selection and scroll offset across a cycle; no `CoreWebView2` re-initialisation)
+plus the headless identity test over all three bodies (US-C2), which re-scopes
+`ExplorerModeTests.Toggle_FlipsModeAndRaisesModeChanged` (Addendum C §A12).
+
+**Falsifying test for the amendment:** the P-4 runtime item, or the headless `Assert.Same` over
+three bodies, fails — a second factory call, a new instance, or a `CoreWebView2` re-initialisation
+across a perspective cycle. If it fails, Ruling 52's CONDITIONS apply: Architecture's body becomes a
+non-docking composite and the ruling is re-issued.
+
+**Rejected at the amendment:** *superseding* this ADR with a "perspective" ADR (the mechanism is
+unchanged — a supersession would re-decide options A and B, which still lose for the same reasons);
+*making Explore a docked pane inside Architecture* (option A's defect, re-opened; Ruling 52 cuts it).
+

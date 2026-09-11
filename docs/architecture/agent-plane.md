@@ -23,8 +23,11 @@ links:
   - { to: note-conductor-latency-slo-not-assertion, rel: relates-to }
   - { to: note-conductor-observed-auth-label-correspondence, rel: relates-to }
   - { to: note-conductor-tos-invariant-observed-auth, rel: relates-to }
+  - { to: adr-0035-compile-session-binding-and-pin, rel: relates-to }
+  - { to: note-addendum-cd-second-entry-point-ledger, rel: relates-to }
 review-by: 2027-03-09
-review-suggested: []
+review-suggested:
+  - { by: adr-0035-compile-session-binding-and-pin, on: 2026-09-11, reason: "the compile call composes the plane's pieces apart from the run root; the lane pin (Ruling 71) is the only tool control because the operator keeps Bash(git push:*)" }
 summary: >-
   AgentPlane is the governed half of the Conductor: it spawns an ACP-speaking coding engine into a
   provisioned worktree, holds the bidirectional protocol session, maps its wire traffic onto one
@@ -393,6 +396,26 @@ recorded in `docs/plans/conductor-programme.md`; this document does not repeat t
 - **The model is a declared cohort label, not an observed fact.** The adapter reports modes and
   commands but no model identity this client reads; Phase 3's standings work needs an observed model
   and today's declared value would rank two different models in one cohort.
+- **A governed lane is not toolless, and the operator keeps the repository's `Bash(git push:*)`
+  auto-allow — so the lane pin is the only control.** Adapter 0.75.1 resolves the permission mode
+  from `settingSources: ["user","project","local"]` and gives the SDK the `claude_code` tool preset
+  unless `session/new` `_meta` says otherwise; auto-allowed tools never reach the host's
+  `canUseTool` (`spikes/compile-session-tool-pin`, source-verified). Ruling 71 makes the typed
+  `session/new` tools argument on `AcpLaneClient.NewSessionAsync` the standing control
+  (`disallowedTools: ["Bash"]` for a governed lane; `tools: []` for a compile session —
+  `adr-0035-compile-session-binding-and-pin`), with the P-D5 wire spike as its observation. The
+  operator has decided (2026-09-11, relayed by the conductor) to **keep** `.claude/settings.json:4`'s
+  `Bash(git push:*)` allow rather than drop it; the lane control therefore does not rely on the
+  repository's settings and must not — a lane whose `session/new` lacks the pin holds a shell that
+  can push. The `NewSessionAsync` argument had **not** landed on `feature/exit-evidence` at
+  `757af057` (`AcpLaneClient.cs:152-189` still sends `{cwd, mcpServers: []}`); the F5 exit run may
+  not proceed without it (Ruling 71 (a)). **A related path, named:** a governed lane's merged edit to
+  `.claude/settings.json` becomes a hook the next compile session runs (ADR-0035) — model output
+  reaching executable configuration across sessions. Mitigated by the lease (`ToPattern` drops a
+  leading `.`, `LeaseDerivation.cs:124-133`, so `.claude/` is unleasable and any edit there is out of
+  lease and raises a seam), by Ruling 71's `disallowedTools: ["Bash"]` (no unannounced shell write),
+  and by the operator's merge; the control's test: a lane `Edit` to `.claude/settings.json` raises a
+  seam that forces `Blocked`.
 
 ## 13. Gate record
 

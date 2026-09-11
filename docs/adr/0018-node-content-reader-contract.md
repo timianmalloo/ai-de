@@ -17,6 +17,8 @@ summary: >-
   graph payload deliberately does not carry. It is fetched on demand for the one selected node via a
   new bounded Core query (a sibling of GraphOverview), not by fattening CanvasNode — because content on
   every node would blow the IPC transport bound (US-K12) for a value only the selected node needs.
+review-suggested:
+  - { by: adr-0017-primary-view-mode, on: 2026-09-11, reason: "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent" }
 ---
 
 # ADR-0018 node-content-reader-contract: The reader fetches node content on demand via a bounded Core query

@@ -725,8 +725,14 @@ window.DOCS_INDEX = {
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "0",
-      "reviewBy": "2027-02-26",
-      "reviewSuggested": [],
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [
+        {
+          "by": "adr-0017-primary-view-mode",
+          "on": "2026-09-11",
+          "reason": "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent"
+        }
+      ],
       "summary": "Workbench layouts are user preference, not evidence. They are stored per workspace beside the fact store — never inside it — wrapped in an owned {schemaVersion, appVersion, payload} envelope, and a layout that cannot be read degrades to the default arrangement while the original file is kept.",
       "tags": [
         "architecture",
@@ -747,10 +753,18 @@ window.DOCS_INDEX = {
         {
           "to": "adr-0002-workspace-fact-store",
           "rel": "relates-to"
+        },
+        {
+          "to": "adr-0032-perspective-layout-slots",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c8e1bdbea455700c2b6f9ab34fc7dbef4fb2baa8ceca7ee3d0dff23f72498993"
+      "sourceSha256": "9973788d32d21e9c0fb179531bc7a987672eb2092e10556b73a3af2911095bef"
     },
     {
       "id": "adr-0014-accessibility-posture",
@@ -872,12 +886,18 @@ window.DOCS_INDEX = {
       "path": "docs/adr/0017-primary-view-mode.md",
       "title": "ADR-0017 — Full-window surfaces are a primary view mode (body-content swap), not a dock pane or a modal overlay",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "",
-      "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
-      "summary": "A surface that needs the whole body (the Knowledge Explorer's graph+reader) is presented as a primary VIEW MODE the shell holds — Workbench | Explorer — realised as a body-content swap of the region the docking host occupies, with the activity rail as the mode selector. Rejects making it a dock pane (it would compete for space — the defect being fixed) and a modal overlay (the rail must persist and it is not dismiss-only). The non-active mode's state is retained, never rebuilt.",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [
+        {
+          "by": "adr-0013-layout-persistence-envelope",
+          "on": "2026-09-11",
+          "reason": "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback"
+        }
+      ],
+      "summary": "A surface that needs the whole body (the Knowledge Explorer's graph+reader) is presented as a primary VIEW MODE the shell holds — Workbench | Explorer — realised as a body-content swap of the region the docking host occupies, with the activity rail as the mode selector. Rejects making it a dock pane (it would compete for space — the defect being fixed) and a modal overlay (the rail must persist and it is not dismiss-only). The non-active mode's state is retained, never rebuilt. AMENDED 2026-09-11 (Ruling 52): the closed set is the Perspective set (Coding · Explore · Architecture); a mode's body may itself be a docking host; the Inferred second-host clause is discharged by spikes/second-dock-host-unparent.",
       "tags": [
         "architecture",
         "ui-shell",
@@ -910,10 +930,30 @@ window.DOCS_INDEX = {
         {
           "to": "adr-0015-canvas-hosting-and-overlay-strategy",
           "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0031-second-docking-host",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0032-perspective-layout-slots",
+          "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a0fd25f41ccbbcc1c1de6317ccca478e2e77b800403234c6fd68582c9acc6773"
+      "sourceSha256": "32ac5ff8e05da9f6880e1b73f7d5b6b69ed1cfe20a651a95bb3df07c5dabcc02"
     },
     {
       "id": "adr-0018-node-content-reader-contract",
@@ -924,7 +964,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "adr-0017-primary-view-mode",
+          "on": "2026-09-11",
+          "reason": "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent"
+        }
+      ],
       "summary": "The Explorer's reader needs a selected node's CONTENT (source/markdown/html) and metadata, which the graph payload deliberately does not carry. It is fetched on demand for the one selected node via a new bounded Core query (a sibling of GraphOverview), not by fattening CanvasNode — because content on every node would blow the IPC transport bound (US-K12) for a value only the selected node needs.",
       "tags": [
         "architecture",
@@ -953,7 +999,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c130a64221c086e88ffd7b3865b90bcaf09f910e404c422680e717376424e8e3"
+      "sourceSha256": "f24e0e743081df3113f4698dc6bba2ab0a28a675289ff53f466c305f4469dbb6"
     },
     {
       "id": "adr-0019-advisory-evaluator-calibration",
@@ -1319,10 +1365,14 @@ window.DOCS_INDEX = {
         {
           "to": "adr-0023-watcher-observation-projection",
           "rel": "relates-to"
+        },
+        {
+          "to": "adr-0033-prompt-compilation-bounded-context",
+          "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4ad5dc7706afdc81db98466ffad1a09ed4df6f2a246ae5ddd9f05660b6d9092c"
+      "sourceSha256": "96ca1e2b817d7c81f1db5bae23a11fa502334e3cf9d330ff89029f14063785fc"
     },
     {
       "id": "adr-0029-latency-slo-recorded-not-asserted",
@@ -1360,6 +1410,477 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "eefecec58ed69dc4369f697987ca8250fa4bc568a191519045db1ff0b4b0c620"
+    },
+    {
+      "id": "adr-0030-perspective-registry-and-allow-lists",
+      "path": "docs/adr/0030-perspective-registry-and-allow-lists.md",
+      "title": "ADR-0030 — The Perspective set is a closed Core data row set; the allow-list is a column on the App's surface-kind rows; menu, palette, rail and routing are derived from the join",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [
+        {
+          "by": "adr-0017-primary-view-mode",
+          "on": "2026-09-11",
+          "reason": "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent"
+        }
+      ],
+      "summary": "Perspectives are three data rows in Core (id, order, body kind, gesture) with a fixed routing order; each App surface-kind descriptor row gains an explicit, non-empty allow-list column; the rail, the View menu's perspective radio, the derived \"New/Show <Title>\" entries, the palette rows and a routed kind-open are all computed from the join of those two row sets — never a second hand-written list. Rejected: a per-command Modes column on the catalog, a per-perspective tuple list, a switch arm.",
+      "tags": [
+        "architecture",
+        "ui-shell",
+        "perspective",
+        "allow-list",
+        "menu",
+        "command-catalog",
+        "addendum-c"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "refines"
+        },
+        {
+          "to": "note-addendum-c-current-state-inventory",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-menu-derivation-rule",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-inadmissible-kind-routing",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2da989385e7e1bef8f9f9ba33eee69e09ebe1afc9da4653b7c6e5932b4d8618b"
+    },
+    {
+      "id": "adr-0031-second-docking-host",
+      "path": "docs/adr/0031-second-docking-host.md",
+      "title": "ADR-0031 — Architecture's body is a second AvalonDock host composed as a DockHost unit (manager · adapter · zone service · controller · rails · persistence) under one presenter; one controller per host, one catalog, one factory",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [
+        {
+          "by": "adr-0017-primary-view-mode",
+          "on": "2026-09-11",
+          "reason": "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent"
+        }
+      ],
+      "summary": "The Architecture perspective's body is a second AvalonDock DockingManager with its own ZoneBackedLayoutService, WorkbenchAdapter, WorkbenchController, ZoneRails and LayoutPersistence — the DockHost unit WorkbenchShell composes today for Coding, extracted and composed twice — under the ADR-0017 presenter, sharing one SurfaceContentFactory, one command catalog, one announcer and one palette. The Owner's residual (one WorkbenchController or two) is decided: one per host; a shell-level PerspectiveShell routes commands to the active host. Verified by spikes/second-dock-host-unparent.",
+      "tags": [
+        "architecture",
+        "ui-shell",
+        "docking",
+        "avalondock",
+        "perspective",
+        "workbench",
+        "addendum-c"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0012-docking-shell-library",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0021-named-dock-zones",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-cd-web-surface-host-sharing",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a65d031c84e0f6283f6faef8a71e44b2e6cec181bc78361635f8b309a42b1243"
+    },
+    {
+      "id": "adr-0032-perspective-layout-slots",
+      "path": "docs/adr/0032-perspective-layout-slots.md",
+      "title": "ADR-0032 — One zone-envelope file per host perspective; the pre-perspective file is Coding's slot byte-for-byte; restore drops an inadmissible kind with a report; rollback is a golden round-trip",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [
+        {
+          "by": "adr-0017-primary-view-mode",
+          "on": "2026-09-11",
+          "reason": "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent"
+        },
+        {
+          "by": "adr-0013-layout-persistence-envelope",
+          "on": "2026-09-11",
+          "reason": "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback"
+        }
+      ],
+      "summary": "The ADR-0013 amendment Ruling 52 named, decided: each host perspective persists its zone layout in its own file of the existing ZoneEnvelope schema 1 — Coding keeps today's file unchanged, Architecture gets a sibling — so there is no schema bump and no in-place migration; a restore drops a surface whose kind the perspective does not admit and reports it by caption, kind and the perspective that admits it; a one-time .pre-perspectives.bak precedes the first rewriting save; a newer schema or a corrupt file is refused with a report. Rejected: a slots map with a schema bump; named layouts; an Explore slot.",
+      "tags": [
+        "architecture",
+        "ui-shell",
+        "layout",
+        "persistence",
+        "migration",
+        "perspective",
+        "addendum-c",
+        "dm-data-modelling"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0013-layout-persistence-envelope",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-persistence-slots",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "116e7c1026462bdd38147ded4647ad4a6b612d0d90ece70662864f7962264842"
+    },
+    {
+      "id": "adr-0033-prompt-compilation-bounded-context",
+      "path": "docs/adr/0033-prompt-compilation-bounded-context.md",
+      "title": "ADR-0033 — Prompt Compilation is a bounded context in AiDe.Core with one seam (typed text → compiled envelope + projections); Project() is the sole assembler at the composer's send site; budget and task class are projected from settings that carry explicit defaults",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-d",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "The compile step is a new bounded context, AiDe.Core/Compilation, whose one seam is Compile(typed text, settings, context) → compiled envelope, and whose one projection Project(Fold(events)) is the sole function that assembles the CT19 block, the lease and the prompt for ComposerSendGate.Send — GovernedRunRequest, SpawnContract.Validate, LeaseDerivation and TemplateCompiler are unchanged. The operator's two decisions of 2026-09-11 are reflected: budget is an optional cap projected onto the unchanged RunBudget as a declared subscription-bounded value when absent; the session's default task class is the explicit value free-form, changeable per prompt, with no refusal for a missing class. Rejected: a compile inside the composer's WPF surface; a second request type for the run; a nullable budget in the contract.",
+      "tags": [
+        "architecture",
+        "compile",
+        "composer",
+        "envelope",
+        "projection",
+        "spawn-contract",
+        "addendum-d",
+        "dm-data-modelling"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "refines"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-d-compile-trigger",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-d-lease-source-text",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0034-envelope-event-store",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0035-compile-session-binding-and-pin",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0028-mode-cohort-not-partition",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "46dee4b0310967bfd1eeffbd1d7ce8df394d7cca6aed3849446c21bdad3371f5"
+    },
+    {
+      "id": "adr-0034-envelope-event-store",
+      "path": "docs/adr/0034-envelope-event-store.md",
+      "title": "ADR-0034 — The compiled-envelope store is an append-only, exclusively written, sha-chained JSONL sidecar per session, owned by the session document's lifetime; the eval corpus and the Proof Pack are projections; purge deletes the file and the Session's own delete cascades to it",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-d",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [
+        {
+          "by": "adr-0013-layout-persistence-envelope",
+          "on": "2026-09-11",
+          "reason": "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback"
+        }
+      ],
+      "summary": "Promotes note-addendum-d-envelope-store (its own promotion rule) to the durable-representation ADR for Prompt Compilation: one row in <workspace>/.aide/sessions/<id>/envelope-events.jsonl is one event on one envelope keyed (envelope_id, seq); the writer is one EnvelopeStore in Core opened FileShare.None by the session document that owns the composer; prev_sha chains the raw previous line; the eval corpus and the Proof Pack summary are rebuildable projections; expand-only schema evolution; aide session purge deletes the file only, and Addendum A's session deletion cascades to it by directory containment. Rejected: SQLite, one row per turn, a stored lease, a redactor, a shared cross-session file.",
+      "tags": [
+        "architecture",
+        "compile",
+        "envelope",
+        "store",
+        "append-only",
+        "channel-b",
+        "privacy",
+        "addendum-d",
+        "dm-data-modelling"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-d-envelope-store",
+          "rel": "supersedes"
+        },
+        {
+          "to": "adr-0033-prompt-compilation-bounded-context",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0002-workspace-fact-store",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0013-layout-persistence-envelope",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "369d92ba4caa7d7d9ec46d4817c8b8f793ad345982a9bcf30dbc63b42899d53f"
+    },
+    {
+      "id": "adr-0035-compile-session-binding-and-pin",
+      "path": "docs/adr/0035-compile-session-binding-and-pin.md",
+      "title": "ADR-0035 — The agentic compile is one pinned ACP session on the session's bound (engine, model, account), composed by a CompileCallHost in AiDe.App/Conductor that is not a run's composition root: it authorizes through SpawnContract.Authorize, pins tools to none through the typed session/new tools argument, and opens a compile-call activity the run-root ledger does not count",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-d",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "The compile call reuses the agent plane's pieces (EngineCatalog, ProviderRegistry, AcpEngineProcess, AcpPeer, AcpLaneClient, SpawnContract.Authorize) in a second, smaller composition — CompileCallHost — that never provisions a worktree, opens an episode, constructs a GovernedRunRequest or scores; it pins the session's tools to none through Ruling 71's typed session/new tools argument — a sealed two-value type (_meta.claudeCode.options.tools: [] primary, the settings deny belt, disallowedTools braces, mcpServers: []; disableBuiltInTools dropped as dead) on a pinned triple (adapter sha, SDK version, CLI binary sha), and is distinguished in the composition-root ledger by opening compile-call.compose, not governed-run.compose. Rejected: a separate assist provider, a compile-specific settings.json, trusting the reject-all handler, an in-process SDK call.",
+      "tags": [
+        "architecture",
+        "compile",
+        "acp",
+        "adapter",
+        "security",
+        "composition-root",
+        "agent-plane",
+        "addendum-d"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture-agent-plane",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-d-compile-session-tools",
+          "rel": "supersedes"
+        },
+        {
+          "to": "note-addendum-cd-second-entry-point-ledger",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0033-prompt-compilation-bounded-context",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0036-compile-mode-ladder-deployment-gates",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0027-acp-lane-separate-shape",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a11a65b6ab7e66d31e5f2a5cc4f0400d7476cc0cf2a5c0ed4f17f3db89c13043"
+    },
+    {
+      "id": "adr-0036-compile-mode-ladder-deployment-gates",
+      "path": "docs/adr/0036-compile-mode-ladder-deployment-gates.md",
+      "title": "ADR-0036 — The compile-mode ladder (mechanical-only → agentic-advisory → agentic) is a set of deployment gates read by the settings model at runtime: the pin-spike artifact with a matching adapter sha, then the 50-scored/50-holdout eval report meeting fixed floors; the eval harness is the AI Systems Engineer's gate and ships before the first agentic rung",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-d",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "The agentic compile is the one model-backed capability Addenda C and D add. It ships behind an eval gate realised as deployment gates the product reads: no agentic rung is selectable without the P-D5 artifact (adapter sha equal to the installed adapter's); agentic-advisory projects no derived text and feeds the corpus; agentic (Send confirms derived rows) opens only when the holdout report meets §A14.4's fixed floors; the A6 prompt-version ring re-runs on any (contract, prompt_sha, profile.sha) change; the drift detector re-runs the golden set. Rejected: a feature flag, a build-time switch, thresholds judged on the sample they were set from.",
+      "tags": [
+        "architecture",
+        "compile",
+        "eval",
+        "deployment-gate",
+        "ai-systems",
+        "non-determinism",
+        "addendum-d"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0033-prompt-compilation-bounded-context",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0035-compile-session-binding-and-pin",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0019-advisory-evaluator-calibration",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "332fdde18663ef112e2f4db3bb6d56bfbcb8859bca13b822cab92409d567a551"
+    },
+    {
+      "id": "adr-0037-family-craft-profile-dimension",
+      "path": "docs/adr/0037-family-craft-profile-dimension.md",
+      "title": "ADR-0037 — The family craft profile is a Type-2 dimension realised as one immutable pack-owned markdown file per (family, version), selected mechanically from the engine's provider, pinned on the envelope by (family, version, sha), applied as a template in v1",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-d",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "How to make a prompt effective on one model family is a versioned, sourced document the pack owns — `.claude/knowledge/craft-profiles/<family>@<version>.md` (Copilot: `.github/knowledge/`) — one immutable file per version, never overwritten; the pre-compile selects the family from EngineCatalog.Find(engineId).Provider and the current version (max semver present, one per family), pins (family, version, sha) on the envelope, and in v1 applies the profile as a deterministic template (preamble + suffix, a labelled block in the sent bytes); a content change without a version bump fails the sha test; the pack's deployment map is append-only for this set. Rejected: one file per family overwritten in place; a profile in the workspace; a model rewrite of the framing.",
+      "tags": [
+        "architecture",
+        "compile",
+        "craft-profile",
+        "dimension",
+        "type-2",
+        "pack",
+        "addendum-d",
+        "dm-data-modelling"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0033-prompt-compilation-bounded-context",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0034-envelope-event-store",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0036-compile-mode-ladder-deployment-gates",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "92658f5a21220d232e56dd004be03f4e3f4e03482e87ff9c6408730016e864d7"
     },
     {
       "id": "api-aide-app",
@@ -1994,15 +2515,25 @@ window.DOCS_INDEX = {
       "status": "in-review",
       "owner": "@timianmalloo",
       "phase": "0",
-      "reviewBy": "2027-02-26",
+      "reviewBy": "2027-03-11",
       "reviewSuggested": [
         {
           "by": "spec-ai-native-ide",
           "on": "2026-08-26",
           "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
+        },
+        {
+          "by": "adr-0017-primary-view-mode",
+          "on": "2026-09-11",
+          "reason": "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent"
+        },
+        {
+          "by": "adr-0013-layout-persistence-envelope",
+          "on": "2026-09-11",
+          "reason": "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback"
         }
       ],
-      "summary": "Defines AI-DE as a WPF+WebView2 workspace shell over a per-workspace local authority core that builds provenance-labelled facts from repository artifacts, serves derived visual projections and session-class-governed MCP tools, delivers prompts under a write-ahead two-phase receipt, and keeps agent/model capability outside deterministic source truth. Supersedes the 2026-08-25 draft; resolves the council review's three hard and two soft vetoes.",
+      "summary": "Defines AI-DE as a WPF+WebView2 workspace shell over a per-workspace local authority core that builds provenance-labelled facts from repository artifacts, serves derived visual projections and session-class-governed MCP tools, delivers prompts under a write-ahead two-phase receipt, and keeps agent/model capability outside deterministic source truth. Supersedes the 2026-08-25 draft; resolves the council review's three hard and two soft vetoes. Amended 2026-09-11 for Addenda C and D: the Perspective shell (ADR-0017 as amended; ADR-0030–0032) and the Prompt Compilation bounded context (ADR-0033–0037).",
       "tags": [
         "architecture",
         "ai-native-ide",
@@ -2091,6 +2622,62 @@ window.DOCS_INDEX = {
         {
           "to": "adr-0013-layout-persistence-envelope",
           "rel": "depends-on"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0031-second-docking-host",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0032-perspective-layout-slots",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0033-prompt-compilation-bounded-context",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0034-envelope-event-store",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0035-compile-session-binding-and-pin",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0036-compile-mode-ladder-deployment-gates",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0037-family-craft-profile-dimension",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-cd-architecture-p1-inputs",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture-agent-plane",
+          "rel": "relates-to"
         }
       ],
       "diagrams": [
@@ -2098,9 +2685,19 @@ window.DOCS_INDEX = {
           "kind": "flowchart",
           "title": "System shape",
           "mermaid": "flowchart LR\n  User[Workspace operator]\n  Shell[WPF Shell + WebView2 host]\n  Boot[Shell Bootstrap / Updater]\n  Session[Terminal Session Runtime]\n  View[Visual Surface Host]\n  Core[Workspace Authority Core]\n  Registry[Workspace Registry]\n  Ingest[Ingestion Scheduler]\n  Freshness[Freshness Prober]\n  Extractors[Extractor Adapters]\n  Store[(SQLite Fact Store)]\n  Incidents[(Health Incident Sidecar)]\n  Projection[Query and Projection Service]\n  Audit[Audit Reader]\n  Coordination[Coordination Reader]\n  Mcp[MCP Tool Gateway]\n  Repos[Repositories and Worktrees]\n  Agents[Claude Code / Copilot CLI sessions]\n\n  User --> Shell\n  Boot -. supervises/upgrades .-> Core\n  Shell --> Session\n  Shell --> View\n  Shell <--> Core\n  Session <--> Agents\n  Session --> Core\n  View <--> Core\n  Repos --> Ingest\n  Repos --> Freshness\n  Freshness --> Ingest\n  Ingest --> Extractors\n  Extractors --> Core\n  Core --> Registry\n  Core --> Store\n  Core --> Incidents\n  Core --> Projection\n  Core --> Audit\n  Core --> Coordination\n  Mcp <--> Core\n  Agents <--> Mcp"
+        },
+        {
+          "kind": "flowchart",
+          "title": "C/D.4 Component map — the perspective shell",
+          "mermaid": "flowchart TB\n  classDef core fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF\n  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF\n  classDef ext fill:#0D1014,stroke:#98A3B2,stroke-dasharray:4 3,color:#98A3B2\n\n  subgraph core[\"AiDe.Core/Workbench — data and services (T0)\"]\n    PSet[\"PerspectiveSet.All<br/>3 rows: id · order · body kind · command · routing order<br/>(ADR-0030)\"]\n    Catalog[\"WorkbenchCommandCatalog<br/>+ perspective.* rows derived from PSet\"]\n    ZSvcA[\"ZoneBackedLayoutService (host A)<br/>+ admitted-kind set\"]\n    ZSvcB[\"ZoneBackedLayoutService (host B)<br/>+ admitted-kind set\"]\n    Store[\"ZoneLayoutStore ×2<br/>one file per host slot (ADR-0032)\"]\n  end\n\n  subgraph app[\"AiDe.App — the shell\"]\n    Window[\"MainWindow<br/>rail · menu · title · status (outside the swap)\"]\n    Presenter[\"PerspectiveShell (ADR-0017 presenter, 3 bodies)<br/>active · previous · routes Execute(id)\"]\n    Kinds[\"SurfaceContentFactory.Kinds<br/>18 rows + Perspectives column + Instances (ADR-0030)\"]\n    Menu[\"PerspectiveMenu.For(perspective, Kinds, catalog)<br/>menu · palette · rail · title — one derivation\"]\n    HostA[\"DockHost A — Coding<br/>Manager · Adapter · Controller · Rails · Persistence\"]\n    HostB[\"DockHost B — Architecture<br/>Manager · Adapter · Controller · Rails · Persistence (ADR-0031)\"]\n    Explore[\"ExplorerSurface<br/>full-window, unchanged (Ruling 53)\"]\n    Web[\"WebSurfaceHost<br/>once-gate per surface (DC-138)\"]\n    Doc[\"SessionDocumentSurface<br/>composer (a conversation, US-C13) · canvas\"]\n  end\n\n  Canvas2[\"2nd CanvasSurface<br/>kind filter code·data·architecture\"]:::ext\n\n  PSet --> Catalog\n  PSet --> Presenter\n  Kinds --> Menu\n  Catalog --> Menu\n  Menu --> Window\n  Window --> Presenter\n  Presenter --> HostA\n  Presenter --> HostB\n  Presenter --> Explore\n  HostA --> ZSvcA --> Store\n  HostB --> ZSvcB --> Store\n  Kinds --> HostA\n  Kinds --> HostB\n  HostB --> Canvas2\n  Canvas2 --> Web\n  HostA --> Doc\n  class core,PSet,Catalog,ZSvcA,ZSvcB,Store core\n  class app,Window,Presenter,Kinds,Menu,HostA,HostB,Explore,Web,Doc app"
+        },
+        {
+          "kind": "flowchart",
+          "title": "C/D.5 Component map — the compile step",
+          "mermaid": "flowchart LR\n  classDef core fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF\n  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF\n  classDef ext fill:#0D1014,stroke:#98A3B2,stroke-dasharray:4 3,color:#98A3B2\n  classDef store fill:#0D1014,stroke:#D8A650,color:#D8A650\n\n  Editor[\"Composer editor<br/>source_text (the only lease source — Ruling 66)\"]:::app\n  Pre[\"PreCompile (T0, debounced, in memory)<br/>shape · tier rule · cap · lease display · profile ·<br/>constitution manifest · history window · snapshots\"]:::core\n  Send1[\"Send gesture #1<br/>opens the envelope\"]:::app\n  Call[\"CompileCallHost (App/Conductor, T3)<br/>ResolveLaunch → process → handshake → Authorize →<br/>session/new tools:[] → prompt ≤ 60 s → counts<br/>(ADR-0035)\"]:::app\n  TB{{\"CompileOutputValidator (T0)<br/>schema · allow-list · open lines · type ·<br/>mention scan · spans (ADR-0033)\"}}:::core\n  Env[(\"EnvelopeStore<br/>envelope-events.jsonl · append-only ·<br/>FileShare.None · prev_sha (ADR-0034)\")]:::store\n  Prep[\"Prepare (App, WPF controls)<br/>marks · tier control · what-was-read ·<br/>operator rows\"]:::app\n  Proj[\"Project(Fold(events)) (T0)<br/>shape · tier+rationale · cap · GoalBlock ·<br/>lease · prompt · task class · projection_sha\"]:::core\n  Gate[\"ComposerSendGate.Send<br/>the 2nd named construction site of<br/>GovernedRunRequest — unchanged\"]:::app\n  Root[\"GovernedRunHost.RunAsync<br/>the one run root (agent-plane §4)\"]:::app\n  Adapter[\"claude-agent-acp 0.75.1<br/>sha pinned\"]:::ext\n  Profile[\"craft-profiles/<family>@<version>.md<br/>pack-owned Type-2 (ADR-0037)\"]:::store\n  Gates[\"Deployment gates (ADR-0036)<br/>compile-pin-spike.json ·<br/>compile-eval-admission.json\"]:::store\n\n  Editor --> Pre --> Send1 --> Env\n  Send1 -->|\"mode admits\"| Call --> Adapter\n  Adapter --> Call --> TB --> Env\n  Env --> Prep --> Env\n  Env --> Proj --> Gate --> Root\n  Profile -.-> Pre\n  Gates -.->|\"settings model reads\"| Send1\n  Root -.->|\"consumed {run_id}\"| Env"
         }
       ],
-      "sourceSha256": "f406eb168e57a38893b5e4f552b0513bb4a715e4de280094f21ffb316e3c3cf8"
+      "sourceSha256": "abb24e6209073378930d8129f8a546faa1605e1e6fea60058b4b377aeb752729"
     },
     {
       "id": "architecture-agent-plane",
@@ -2111,7 +2708,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "1",
       "reviewBy": "2027-03-09",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "adr-0035-compile-session-binding-and-pin",
+          "on": "2026-09-11",
+          "reason": "the compile call composes the plane's pieces apart from the run root; the lane pin (Ruling 71) is the only tool control because the operator keeps Bash(git push:*)"
+        }
+      ],
       "summary": "AgentPlane is the governed half of the Conductor: it spawns an ACP-speaking coding engine into a provisioned worktree, holds the bidirectional protocol session, maps its wire traffic onto one run-event envelope, enforces a fail-closed spend and lease boundary, and closes the episode into the existing Watcher's unchanged scorer as a second, distinguishable cohort. Phase 1 only: claude-code, one launch path, zero terminal hosting, one governed run proven end to end.",
       "tags": [
         "conductor",
@@ -2185,6 +2788,14 @@ window.DOCS_INDEX = {
         {
           "to": "note-conductor-tos-invariant-observed-auth",
           "rel": "relates-to"
+        },
+        {
+          "to": "adr-0035-compile-session-binding-and-pin",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-cd-second-entry-point-ledger",
+          "rel": "relates-to"
         }
       ],
       "diagrams": [
@@ -2194,7 +2805,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TB\n  classDef ext fill:#0D1014,stroke:#98A3B2,stroke-dasharray:4 3,color:#98A3B2\n  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF\n  classDef plane fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF\n  classDef watcher fill:#1A1F26,stroke:#2A313B,color:#E4E9EF\n  classDef frozen fill:#0D1014,stroke:#D8A650,stroke-dasharray:4 3,color:#D8A650\n\n  subgraph app[\"AiDe.App / Conductor — the one composition root\"]\n    ConductorEntry[\"ConductorEntry<br/>headless launcher: run file → result file\"]\n    GovernedRunHost[\"GovernedRunHost.RunAsync<br/>catalog → process → handshake →<br/>observed auth → authorize → worktree →<br/>episode → prompt → seams → close → score\"]\n  end\n\n  subgraph plane[\"AiDe.Core/AgentPlane — new\"]\n    EngineCatalog[\"EngineCatalog<br/>3 data rows, 1 launch path, 3 named refusals\"]\n    ProviderRegistry[\"ProviderRegistry<br/>accounts, observed health, ObservedAuthLabel\"]\n    GoalBlock[\"GoalBlock / SpawnContract<br/>6-field goal + fail-closed auth gate\"]\n    AcpEngineProcess[\"AcpEngineProcess<br/>child spawn, env inspection, tree reap\"]\n    AcpPeer[\"AcpPeer<br/>NDJSON framing, correlation, backpressure\"]\n    AcpLaneClient[\"AcpLaneClient<br/>handshake · session · prompt · permission\"]\n    AcpRunEventMapper[\"AcpRunEventMapper<br/>ACP frame → RunEvent, one mapper\"]\n    WorktreeProvisioner[\"WorktreeProvisioner<br/>namespaced branch, coord install inside it\"]\n    GovernedSessionSource[\"GovernedLaneSource<br/>opens/closes the episode\"]\n    LeaseAndSeams[\"Lease / LeaseMonitor<br/>out-of-lease edit → seam → forces Blocked\"]\n    LaneCohort[\"LaneMode / LaneScoring<br/>stamps the mode cohort, requires taskClass\"]\n    TerminalHostingLedger[\"TerminalHostingLedger<br/>counts terminal.start; oracle for == 0\"]\n    RunTriage[\"RunTriage<br/>Stage-0: skip plan/council for T0/T1\"]\n  end\n\n  subgraph watcher[\"AiDe.Core/Watcher — existing, unchanged semantics\"]\n    IngestHost[\"IngestHost<br/>OpenEpisode / DeclareArtifacts / CloseEpisode\"]\n    Registrar[\"ITrustedRegistrar\"]\n    ClosedScoring[\"ClosedEpisodeScoring\"]\n    ScoringService[\"ScoringService / WeaveScorer<br/>R4-core: byte-unchanged\"]\n    Store[\"SqliteWatcherObservationStore<br/>v6: + mode TEXT NULL, expand-only\"]\n  end\n\n  subgraph frozen[\"AiDe.Core/Terminal — frozen for Phase 1\"]\n    ITerminalSession[\"ITerminalSession<br/>Output never persisted\"]\n    ConPty[\"ConPtyTerminalSession<br/>emits terminal.start on aide.terminal.runtime\"]\n  end\n\n  Adapter[\"claude-agent-acp adapter<br/>node process, wraps Claude Code Agent SDK\"]\n  Repo[(\"Repository + worktrees\")]\n\n  ConductorEntry --> GovernedRunHost\n  GovernedRunHost --> EngineCatalog\n  GovernedRunHost --> ProviderRegistry\n  GovernedRunHost --> AcpEngineProcess\n  AcpEngineProcess --> AcpPeer\n  AcpPeer --> AcpLaneClient\n  GovernedRunHost --> AcpLaneClient\n  GovernedRunHost --> GoalBlock\n  GovernedRunHost --> WorktreeProvisioner\n  GovernedRunHost --> GovernedSessionSource\n  GovernedRunHost --> TerminalHostingLedger\n  GovernedRunHost --> LaneCohort\n  AcpLaneClient --> AcpRunEventMapper\n  AcpRunEventMapper --> LeaseAndSeams\n  GovernedSessionSource --> IngestHost\n  IngestHost --> Registrar\n  LaneCohort --> ClosedScoring\n  ClosedScoring --> ScoringService\n  LaneCohort -.writes mode.-> Store\n  ScoringService --> Store\n\n  AcpEngineProcess -.spawns.-> Adapter\n  AcpLaneClient -.stdio ACP.-> Adapter\n  WorktreeProvisioner -.git worktree add.-> Repo\n  TerminalHostingLedger -.listens, never calls.-> ConPty\n\n  class app,ConductorEntry,GovernedRunHost app\n  class plane,EngineCatalog,ProviderRegistry,GoalBlock,AcpEngineProcess,AcpPeer,AcpLaneClient,AcpRunEventMapper,WorktreeProvisioner,GovernedSessionSource,LeaseAndSeams,LaneCohort,TerminalHostingLedger,RunTriage plane\n  class watcher,IngestHost,Registrar,ClosedScoring,ScoringService,Store watcher\n  class frozen,ITerminalSession,ConPty frozen\n  class Adapter,Repo ext"
         }
       ],
-      "sourceSha256": "5e73ae8369785d9e626504c07a3bc0ac30a85456315fef7f71ec6a7079f026ae"
+      "sourceSha256": "3578e4c25494391bbfc37d503326d32ffed5d7767cfcfcbdc856b3991d662642"
     },
     {
       "id": "architecture-loomkeeper",
@@ -3297,7 +3908,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "next-delivery (after F5 merges — Ruling 51)",
       "reviewBy": "2027-03-11",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "adr-0013-layout-persistence-envelope",
+          "on": "2026-09-11",
+          "reason": "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback"
+        }
+      ],
       "summary": "Ruling 52 says an old envelope carrying a now-disallowed kind migrates by drop-with-report, never crash; this note fixes the two things it left open — the old envelope becomes the Coding slot (expand, never discard, closing the zone schema's no-migration gap), and dropped surfaces are not re-homed into Architecture's slot, which starts from its default. Blast radius: every saved layout.",
       "tags": [
         "decision-note",
@@ -3322,7 +3939,89 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "43706b39a40e5e6be67ff9998252bbb2dd5f71e8dab6007f6661a6b341658304"
+      "sourceSha256": "08ca52e3cb9d4450833f193a4a8a45b2f541fb0ddea4b4265092946b42c69f88"
+    },
+    {
+      "id": "note-addendum-cd-second-entry-point-ledger",
+      "path": "docs/notes/addendum-cd-second-entry-point-ledger.md",
+      "title": "The compile call is not a second composition root for a run — it opens compile-call.compose, not governed-run.compose, so CompositionRootLedger.Roots reads 0 for a compile and 1 for a compiled run; C16's named census and a negative-reference census over CompileCallHost hold the distinction",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-d",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Ruling 13's condition — the launch path is the one composition root, no second entry point — is enforced by two oracles: the named two-site census of `new GovernedRunRequest` and the CompositionRootLedger that counts governed-run.compose activities. The compile call composes the same agent-plane pieces in a smaller order and is kept out of both oracles by construction: it builds a CompileRequest, opens compile-call.compose on the same activity source, and references none of the run root's seven types. Blast radius: the F5 exit evidence's \"one run, one root\" clause, which stays a number.",
+      "tags": [
+        "decision-note",
+        "addendum-d",
+        "composition-root",
+        "ruling-13",
+        "compile",
+        "ledger"
+      ],
+      "links": [
+        {
+          "to": "adr-0035-compile-session-binding-and-pin",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture-agent-plane",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-phase1-plan-approval",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "222c829d92164746201559cc72b8ade2d9ee9a3b239ea5e4967e72b3f9490055"
+    },
+    {
+      "id": "note-addendum-cd-web-surface-host-sharing",
+      "path": "docs/notes/addendum-cd-web-surface-host-sharing.md",
+      "title": "Every web surface in the second docking host goes through WebSurfaceHost — the docking host attaches a pane's content twice on first entry and once per presenter cycle, and initialisation must be gated to the surface's lifetime, not the attach",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [
+        {
+          "by": "adr-0017-primary-view-mode",
+          "on": "2026-09-11",
+          "reason": "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent"
+        }
+      ],
+      "summary": "The second-dock-host spike measured Loaded firing twice on host B's first attach and once per presenter cycle while CoreWebView2 initialised once behind a once-gate; so host B's canvas and any later web surface must share WebSurfaceHost (DC-138) — a surface that initialised on Loaded would restart on every perspective switch. Blast radius: the Architecture canvas, the composer page if a session document ever docks in host B (it does not), any future web surface.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "webview2",
+        "docking",
+        "dc-138",
+        "perspective"
+      ],
+      "links": [
+        {
+          "to": "adr-0031-second-docking-host",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f434505db544805888b28a4b308e0409263dd58fbe366336c15728e6d447a3ac"
     },
     {
       "id": "note-addendum-d-compile-session-tools",
@@ -4742,7 +5441,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "adr-0017-primary-view-mode",
+          "on": "2026-09-11",
+          "reason": "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent"
+        }
+      ],
       "summary": "Component design for the Phase-1 walking skeleton of the full-window Explorer mode: the ShellViewMode swap (WorkbenchHost.Content toggles Manager↔ExplorerSurface, Shell held so the workbench and its live ConPTY/WebView2 children hide-not-destroy), a dedicated CanvasSurface in Explorer (not reparented), a new CanvasSurface.NodeSelected seam the reader follows, and a NodeReaderView stub (metadata + walkable edges; content deferred to ADR-0018 node-content-reader-contract Phase 2). Resolves the mechanism the ADRs deferred, with a red-first test plan whose key control is \"a live terminal survives an Explorer round-trip\".",
       "tags": [
         "explorer",
@@ -4777,7 +5482,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  Rail[Explore rail item] -->|Toggle| SMC[ShellModeController]\n  SMC -->|Workbench| WH[WorkbenchHost.Content = Shell.Manager]\n  SMC -->|Explorer| EX[WorkbenchHost.Content = ExplorerSurface]\n  EX --> G[CanvasSurface 'explorer-graph']\n  EX --> R[NodeReaderView]\n  G -->|NodeSelected CanvasNodeRef| R\n  R -->|activate edge -> RefreshAsync target| G\n  G -. GraphSource .-> VM[CanvasGraphViewModel over IWorkspaceQueries]"
         }
       ],
-      "sourceSha256": "fd5e5efd36e8264327a3aaa7a6d98b0dfe90dbdd6724ff2fb5ea4e47b2ec816d"
+      "sourceSha256": "96e3c9b29aef9942dfca8d559f60848942f9e1807208b1a8960b515c0596bf9f"
     },
     {
       "id": "design-mcp-enlightened-path",
@@ -4930,7 +5635,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "1b",
       "reviewBy": "2027-02-26",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "adr-0013-layout-persistence-envelope",
+          "on": "2026-09-11",
+          "reason": "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback"
+        }
+      ],
       "summary": "The implementable blueprint for the dockable workbench: an owned, headless layout model (tree → stack → surface) that both the pointer and the keyboard mutate through one command set, an AvalonDock adapter that renders it, and a versioned envelope that persists it.",
       "tags": [
         "design",
@@ -4963,7 +5674,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0bf355c353ee96606afda54ba48530644f023c64758729f70f53da3ad7f3e7f7"
+      "sourceSha256": "4909156d64a7433f912fef1cf1a1e64b08336dd7e6c8757924b570da3152747b"
     },
     {
       "id": "design-phase-2-real-code-and-terminal",
@@ -7443,7 +8154,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "1",
       "reviewBy": "2026-12-11",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "adr-0017-primary-view-mode",
+          "on": "2026-09-11",
+          "reason": "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent"
+        }
+      ],
       "summary": "Rulings 50–55 issued before any Addendum C spec was written; 56–62 issued at the spec's gate — 56 and 57 file the operator's own composer verdicts, 58–62 rule on the reconciliation table. Six rulings the Owner issued before any Addendum C spec was written, on the evidence the conductor brought at node R0 of plan-addendum-c-modes. They fix the vocabulary (Perspective), the phasing (F5 untouched; code after F5 merges), ADR-0017's fate (retained and amended), the graph model (one substrate, two surfaces), the build order under the operator's 80% case, and four page-one facts a spec written without them would get wrong.",
       "tags": [
         "decision-note",
@@ -7494,7 +8211,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0b0df1bde64c74d20f620c14b6c62257f775830184831e18d5e3caa33fcc2a44"
+      "sourceSha256": "731788629427286a66acb8b256987a52ec9aa7a0f7eb7dc4cd504f65728b4ce3"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -7533,6 +8250,83 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "67b6351ffc527659f43fcf2c8b6f2ed3bce587e45530107c258f911e0e52638e"
+    },
+    {
+      "id": "note-addendum-cd-architecture-p1-inputs",
+      "path": "docs/notes/addendum-cd-architecture-p1-inputs.md",
+      "title": "P1's inputs from the Addenda C and D architecture — components with owners-to-be, the seams, the E7 surface list, the ordered gates, and the non-goals",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "The explicit hand-off from A1 (/define-architecture of Addenda C and D) to P1 (/prepare-for-coordination): every component the architecture names with the persona that owns its design, the seams between them (each a contract a mock can stand in for), the E7 surface list for the whole refactor, the ordered gates (spike → advisory → measured → agentic) with the prerequisites that have not landed, and the non-goals that must not become work.",
+      "tags": [
+        "addendum-c",
+        "addendum-d",
+        "coordination",
+        "plan-input",
+        "architecture",
+        "perspective",
+        "compile"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-addendum-c-modes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0031-second-docking-host",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0032-perspective-layout-slots",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0033-prompt-compilation-bounded-context",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0034-envelope-event-store",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0035-compile-session-binding-and-pin",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0036-compile-mode-ladder-deployment-gates",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0037-family-craft-profile-dimension",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ee6e4bc28bebc9b2cd3474cdd6bf256708efffea345f7741fa2c7ba473fdac47"
     },
     {
       "id": "note-addendum-d-compile-step-proposal",
@@ -8681,7 +9475,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "1b",
       "reviewBy": "2027-02-26",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "adr-0013-layout-persistence-envelope",
+          "on": "2026-09-11",
+          "reason": "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback"
+        }
+      ],
       "summary": "The ADR-0012 round-trip spike, run. It found that the versioned envelope had a version field but no migration hook, so the first release to rename a surface would have degraded every saved layout to the default. The hook is now implemented and pinned by tests.",
       "tags": [
         "spike",
@@ -8705,7 +9505,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "87360ac96ef97fa830bbcee369a8ec3a8f5545eae3d45d82dbb9433a460e93ef"
+      "sourceSha256": "f6c1a0910153a261f45ebfab36ba1b997632fafdcc0d102df000988a11ddcdd7"
     },
     {
       "id": "ui-review-operator-feedback",
@@ -14761,5 +15561,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ce2e8210c0d0e799e272edf51c6e920622280e8e2bf8cfe4bef86b871af77586"
+  "graphSha256": "8611d582f80c7f7823a37038d6f2b1ebf1c0c55d34dd99150f39c463f2c58447"
 };
