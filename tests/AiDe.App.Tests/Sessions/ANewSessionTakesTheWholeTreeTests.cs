@@ -73,7 +73,7 @@ public sealed class ANewSessionTakesTheWholeTreeTests : IDisposable
     /// <summary>Runs a body against a real shell in a real shown window.</summary>
     private static T WithShell<T>(Func<WorkbenchShell, T> assert) => Sta.Run(() =>
     {
-        var shell = new WorkbenchShell(queries: null);
+        using var shell = new WorkbenchShell(queries: null);
         var window = new Window
         {
             Content = shell.Manager,

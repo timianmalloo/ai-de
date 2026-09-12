@@ -29,6 +29,10 @@ public interface IProcessRunner
 ///
 /// <para><b>Both streams are read before waiting</b> — a child that fills the stderr pipe while the
 /// parent waits on exit deadlocks, which is the classic shape of this bug.</para>
+///
+/// <para><b>And the reads are bounded too</b> — the child's exit does not close a pipe another
+/// process inherited, so a wait on the exit alone is a bound on the wrong thing
+/// (<c>ProcessRunnerBoundsTheReadTests</c>).</para>
 /// </remarks>
 public sealed class ProcessRunner : IProcessRunner
 {
@@ -81,7 +85,21 @@ public sealed class ProcessRunner : IProcessRunner
                 return new ProcessResult(-1, string.Empty, $"'{fileName}' did not finish within {_timeout}");
             }
 
-            return new ProcessResult(process.ExitCode, stdout.GetAwaiter().GetResult(), stderr.GetAwaiter().GetResult());
+            // The exit is not the end of the streams. End-of-stream arrives when the LAST handle to
+            // the pipe's write end closes, and a process that inherited that handle — a background
+            // child the command started, anything created while the pipe was inheritable — keeps
+            // the reader waiting for as long as it lives. Measured 2026-09-12: the App test host sat
+            // 30 minutes in ReadToEnd after git had exited. So the read is bounded by the same
+            // timeout, and a read that does not finish is reported as the reason it is.
+            if (!Task.WaitAll([stdout, stderr], _timeout))
+            {
+                return new ProcessResult(
+                    process.ExitCode,
+                    stdout.IsCompletedSuccessfully ? stdout.Result : string.Empty,
+                    $"'{fileName}' exited {process.ExitCode} but its output pipe was held open past {_timeout} by another process; the output is not recorded");
+            }
+
+            return new ProcessResult(process.ExitCode, stdout.Result, stderr.Result);
         }
         catch (System.ComponentModel.Win32Exception error)
         {

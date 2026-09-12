@@ -22,6 +22,7 @@ internal static partial class ConPtyInterop
 
     private const uint EXTENDED_STARTUPINFO_PRESENT = 0x00080000;
     private const uint CREATE_UNICODE_ENVIRONMENT = 0x00000400;
+    private const int STARTF_USESTDHANDLES = 0x00000100;
 
     /// <summary>Documented attribute id that binds a pseudo console to a new process.</summary>
     private static readonly IntPtr PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE = 0x00020016;
@@ -289,9 +290,20 @@ internal static partial class ConPtyInterop
                     "UpdateProcThreadAttribute(PSEUDOCONSOLE) failed");
             }
 
+            // STARTF_USESTDHANDLES with all three handles left null, which is how Windows Terminal
+            // starts its own clients (ConptyConnection.cpp, _LaunchAttachedClient). Without the
+            // flag, CreateProcess hands a console-subsystem child DUPLICATES of this process's
+            // standard handles whenever they are not console handles — bInheritHandles=false does
+            // not stop it — so a child started from a process whose stdout is a pipe (every test
+            // host; any launch under a redirected parent) writes its stdout into that pipe, not the
+            // pseudo console it was attached to. Observed 2026-09-12: PowerShell's prompt bytes
+            // inside the session-render probe's stdout, on the same line as a measurement
+            // (ConPtyChildStandardHandlesTests). With the flag and null handles the child inherits
+            // nothing and takes its standard handles from the pseudo console, as the App's own
+            // window-subsystem process — which has no standard handles to duplicate — always did.
             var startup = new StartupInfoEx
             {
-                StartupInfo = new StartupInfo { cb = Marshal.SizeOf<StartupInfoEx>() },
+                StartupInfo = new StartupInfo { cb = Marshal.SizeOf<StartupInfoEx>(), dwFlags = STARTF_USESTDHANDLES },
                 AttributeList = attributeList,
             };
 

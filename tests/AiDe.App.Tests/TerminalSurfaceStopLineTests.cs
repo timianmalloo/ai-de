@@ -214,7 +214,7 @@ public sealed class TerminalSurfaceStopLineTests
         {
             using var capture = new SinkCapture();
 
-            var shell = new WorkbenchShell(queries: null);
+            using var shell = new WorkbenchShell(queries: null);
             var ids = shell.Service.Current.AllStacks()
                 .SelectMany(s => s.Surfaces)
                 .Where(s => s.Kind == "terminal")

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T18:06:00Z",
+  "generated": "2026-09-12T19:16:25Z",
   "audit": [
     {
       "actor": null,
@@ -14069,6 +14069,38 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T2",
       "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-12T14:21:05Z",
+      "id": "al-01M2AZWJ3NBA6Y0N21JE9MK0P8",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "Operator: 'sigh... not sure about progress from my user perspective' - the lease issue persists, the UX is still the individual text blocks, the task class is still required with no default; keep going; also 'I am still seeing terminal hosts that are not being cleaned up - /investigate AGAIN'. Later: approves INV-0010 slices 1-4 now; slice 5 (the global Copilot MCP config) is the operator's.",
+      "session": "prompt-log",
+      "shortname": "Operator: 'sigh... not sure about progress from my user perspective' - t…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "id": "al-01M2BGSB09J4SXDSR80PNJB8PX",
+      "shortname": "investigate-terminal-hosts-sixth-x2",
+      "datetime": "2026-09-12T19:16:25Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "ok - this is ridiculous... go look at the number of zombie terminal hosts being created AGAIN ... and dont say it is the copilot session because that is working on this repo as well so it should have any fixes you already claimed to have done",
+      "summary": "INV-0011 (X-2). Counted first: 32 powershell + 36 conhost born in the hour, all children of CV-1's App test host, alive 25 min - ours. The host was hung 30 min in WorkbenchShell.Git -> ReadToEnd after git exited (DC-165: the read was bounded by the child's exit, not the call; fixed in ProcessRunner, Git() reuses it; red 7.1 s -> green 2 s). On the way in: a ConPTY child of a redirected parent inherited its std handles and wrote into its stdout (DC-164: STARTF_USESTDHANDLES with null handles as Windows Terminal does; red token-on-pipe -> green; DC-014's 2026-08-26 instance re-attributed). WorkbenchShell.Dispose now disposes its terminal panes and every App test disposes its shell: ledger 64/14 -> 64/62. The census then saw the Target session face at 1.03:1 (readiness never reached the test host before) -> ChromeComboBoxTemplate, 120/120. App 783/783, Core Windows half 155/155. The 513 node/conhost under wta.exe -> copilot.exe are INV-0010's pre-fix pool, unchanged; operator's call to end it.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Diagnose the sixth terminal-host report to a measured cause in our own infra, fix with red-first controls, and say from the operator's chair what remains",
+      "done_when": "population counted and attributed; the hang class and the stdout-leak class each red->green with an E2E proof; App and Core Windows suites green; INV-0011 + proof pack + register entries committed"
     }
   ],
   "changes": [

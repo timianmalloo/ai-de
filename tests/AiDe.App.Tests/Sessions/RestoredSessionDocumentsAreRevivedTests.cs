@@ -35,7 +35,7 @@ public sealed class RestoredSessionDocumentsAreRevivedTests : IDisposable
     /// <summary>A shown shell whose layout carries a restored session-document surface for <paramref name="sessionId"/> and nothing registered for it.</summary>
     private static T WithRestoredSurface<T>(string sessionId, Func<WorkbenchShell, string, T> body) => Sta.Run(() =>
     {
-        var shell = new WorkbenchShell(queries: null);
+        using var shell = new WorkbenchShell(queries: null);
         var window = new Window
         {
             Content = shell.Manager,

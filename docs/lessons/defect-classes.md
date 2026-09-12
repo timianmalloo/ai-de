@@ -467,6 +467,16 @@ for both or split.*
   *what does the test host lack that a real run has* before changing any code under test. The
   distinguishing measurement here was three lines — `GetConsoleWindow()`, the std handle file types,
   and `GetConsoleProcessList` — and it should have been the first thing run, not the last.
+- **Amended 2026-09-12 (X-2, DC-164):** the 2026-08-26 mechanism was misread. The test host
+  does not lack a console the child needs; the child was being handed **duplicates of the host's
+  redirected standard handles** — `CreateProcess` does that for a console-subsystem child whenever
+  the parent's handles are not console handles, `bInheritHandles = false` notwithstanding — so its
+  stdout was the host's pipe, not the pseudo console, and the `Output` channel stayed empty. With
+  `STARTF_USESTDHANDLES` and null handles (Windows Terminal's own launch shape) the in-process
+  form now passes in a `dotnet test` host: `ConPtyChildStandardHandlesTests` reads the child's
+  token on the channel. The out-of-process helper remains a valid control for the attached-console
+  configuration; it is no longer the *only* way to observe the channel. The class stands — the
+  diagnostic bullet below is what would have found this too — but its instance is re-attributed.
 - **Instances:** 2026-08-27 — the same class, reached from the other side. Building the terminal
   renderer raised the question this entry's own wording appeared to settle: `AiDe.App` is a GUI
   application with **no console at all**, so if "the host must own a real console" were the rule,
@@ -6726,6 +6736,18 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   (`EnvironmentBlockTests`, `TerminalChildEnvironmentTests`); the census carries the cause and the
   correlation; the post-fix re-count (INV-0010 phase 5: restart Windows Terminal, compare against
   371) is the operator's, and a birth after the fix is a finding.
+- **Recurrence (sixth report, 2026-09-12 19:00Z, X-2):** "zombie terminal hosts being created
+  AGAIN". Counted: 304 `conhost`, 257 `node`, 34 `powershell`; **32 `powershell` + 36 `conhost`
+  born in the previous hour, every one a child of the App test host (`testhost.exe` 56892) of the
+  CV-1 lane's run, alive 25 minutes after birth** — ours, not foreign. The host was hung (0.55 s CPU
+  over 8 s, 30 minutes into a 2-minute suite) in `WorkbenchShell.Git → ReadToEnd` (DC-165); the 32
+  sessions were born *during* the hang, over 70 s, from no test thread (parallelization is off).
+  Killing the host released all 32 and their hosts (job kill-on-close held). The remaining 513
+  (`node` + `conhost` under `wta.exe → copilot.exe`) are the pre-fix pool INV-0010 attributed —
+  born before the WT_* scrub, unchanged in count since, never reaped by the census (foreign by
+  parent). A clean run of the same suite afterwards peaked at 3 short-lived `powershell` children.
+  **Not yet attributed:** which code path started 32 shells in a hung host — the App tests' default
+  diagnostics sink discards `terminal.start`, so the births had no source (INV-0011 §Open).
 
 ### DC-156 — A resource acquired for a child is released with the owner, not with the child
 
@@ -6982,3 +7004,62 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   `--long-edit` names the reason. Until (2) lands the control is the brief and the contract.
 - **Status:** `partially-controlled` — the instance is released; the brief is fixed for every
   node dispatched after this entry; the mechanical refusal is a pack proposal.
+
+### DC-164 — A child started under a redirected parent inherits the parent's standard handles, so its output lands in the parent's stream instead of the console it was attached to
+
+- **Shape:** `CreateProcess` with `bInheritHandles = false` and no `STARTF_USESTDHANDLES` still
+  hands a **console-subsystem** child duplicates of the parent's standard handles when those are
+  not console handles. A pseudo-console child (ConPTY) of a process whose stdout is a pipe —
+  every test host, every probe the tests run with `RedirectStandardOutput`, any launch under a
+  redirected parent — therefore writes its stdout into the *parent's* pipe. The pseudo console the
+  child was attached to is not where its bytes go. A window-subsystem parent (the App from
+  Explorer) has no standard handles, so the App never shows it and every test host does.
+- **Signature:** shell bytes (`ESC ]133;B BEL`, a prompt, PowerShell's `#< CLIXML` on stderr) in
+  a probe's captured stdout; a measurement line that no longer *begins* a line (`StartsWith`
+  fails while `Contains` passes); a test that is a race between a shell's prompt and a
+  `WriteLine`; a ConPTY `Output` channel that stays empty in-process while the same code works
+  from a terminal (DC-014's 2026-08-26 instance — this was its mechanism).
+- **Instance (CV-1, 2026-09-12):** `ANewSessionRendersInTheOperatorsRestoredArrangement` failed
+  once on `7007e4ac` — *the probe printed no 'restore (22:33:53Z replay):' line* — because
+  `terminal-1`'s PowerShell prompt reached the probe's stdout 1.5 s after the restore started,
+  without a newline, and the restore line followed it on the same line. Reproduced outside the
+  runner: the probe run with `> file` carried `ShellType;powershell` twice in stdout and CLIXML
+  in stderr.
+- **Sweep:** one launch site (`ConPtyInterop.StartAttachedProcess`); `ProcessRunner` and
+  `AcpEngineProcess` use `Process.Start` with redirects, which sets `STARTF_USESTDHANDLES` itself.
+- **Control:** `dwFlags = STARTF_USESTDHANDLES` with all three handles null — Windows Terminal's
+  own client launch (`ConptyConnection.cpp`, `_LaunchAttachedClient`, read 2026-09-12). Red-first:
+  `ConPtyChildStandardHandlesTests.AChildsStdoutIsThePseudoConsoleNotTheHostsRedirectedPipe`
+  points the host's own stdout at a pipe, starts `cmd /c echo <token>` through the product's
+  session, and asserts the token is on the `Output` channel and **not** on the pipe (red: token on
+  the pipe; green after the flag). E2E: the session-render probe run with redirected stdout carries
+  0 shell bytes (was 2) and its restore line begins a line.
+- **Status:** `controlled`.
+
+### DC-165 — A read of a child's output bounded by the child's exit is bounded by the wrong event: end-of-stream comes from the pipe's last writer, which need not be the child
+
+- **Shape:** `ReadToEnd()` (or `ReadToEndAsync().Result`) on a redirected child's stream returns
+  when the **last handle to the pipe's write end** closes. The child's exit closes the child's
+  handle only. Any process that inherited the handle — a background child the command started
+  (`start /b`), anything created while the handle was inheritable — keeps the reader waiting for
+  as long as it lives. A `WaitForExit(timeout)` placed *after* the read never runs; placed before
+  it, the read after it is still unbounded.
+- **Signature:** a managed stack blocked in `StreamReader.ReadToEnd` under a process helper while
+  the child is gone from the process list; a test host at ~0 CPU tens of minutes into a suite that
+  takes two; a hung run whose only red is a timeout somewhere else.
+- **Instance (CV-1 run, 2026-09-12):** the App test host sat 30 minutes in `WorkbenchShell.Git →
+  ReadToEnd` inside `SessionIdentityReportsTheRealWorktreeTests.ANonRepository_ReportsAnUnknownBranch_NeverAGuess`
+  (stacks read with `dotnet-stack report -p 56892`); the same test passes alone in 179 ms. Its
+  `WaitForExit(3000)` came after the read. The holder was not identified (the host was ended to
+  release 32 shells it was keeping alive); the class does not depend on who it was.
+- **Sweep:** `WorkbenchShell.Git` (read before the wait — the instance); `ProcessRunner.Run`
+  (async reads, bounded exit, then an unbounded `GetResult()` on the reads — the same class, one
+  step later). `AcpEngineProcess` streams JSON-RPC and never reads to end.
+- **Control:** `ProcessRunner.Run` bounds the reads with the same timeout and reports a read that
+  did not finish as the reason on the result (`… output pipe was held open past …`), never as a
+  wait; `WorkbenchShell.Git` now calls the runner instead of keeping its own copy (one definition).
+  Red-first: `ProcessRunnerBoundsTheReadTests.AStrangerHoldingTheOutputPipeCannotHoldTheCaller` —
+  `cmd /c start /b ping -n 8 & echo …` hands the pipe to a 7-second holder and exits; red took
+  7.1 s against a 2 s bound, green returns at 2 s with exit 0 and the reason.
+- **Status:** `controlled`.
+

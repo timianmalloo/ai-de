@@ -49,7 +49,7 @@ public sealed class SearchProviderBoundTests
     private static IReadOnlyList<SearchResult> Search(IWorkspaceQueries queries) =>
         OnStaThread(() =>
         {
-            var shell = new WorkbenchShell(queries);
+            using var shell = new WorkbenchShell(queries);
             return shell.SearchWorkspaceAsync("marker").GetAwaiter().GetResult();
         });
 
