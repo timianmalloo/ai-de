@@ -139,9 +139,11 @@ break of the implementation with the new test in place.
 
 | 43 | **SC4 / U13** — the tilde and the inferred ink mark a model-derived value only (`Source == "model"`); a rule's and a derived lease's values are text; the rest-state composer wears no tilde | `Composer/TheComposerRendersItsFieldLevelErrorsTests.TheTildeAndTheInferredInkMarkAModelDerivedValueOnly` | **mutation** (the old rule, `row.Name == "tier"`): `Assert.Equal() Failure: Strings differ ↓ (pos 0) Expected: "T1"` — the rule's value wore the tilde | `T1` / `~ T1`; `TextBrush` / `InferredBrush`; the rest state's tier `T0` in `TextBrush` | Verified | — |
 
-**Suite counts (from the run record, DC-160):** App `Failed: 0, Passed: 743, Total: 743` (2 m 24 s);
-Core `Failed: 0, Passed: 2331, Total: 2331` (1 m 54 s) — see the closing section; the floors in
-`tools/expected-test-counts.json` are the conductor's `verify-test-run.py --update` at the join.
+**Suite counts (from the run record, DC-160 — the trx in `artifacts/test-results/` of the
+committed tree after the second merge, `7007e4ac`):** App `Failed: 0, Passed: 793, Total: 793`
+(`Completed`, 2 m 20 s); Core `Failed: 0, Passed: 2349, Total: 2349` (`Completed`, 1 m 54 s);
+`verify-test-run.py --no-run`: OK — 3142 executed across 2 projects, every project over its
+baseline (App 783, Core 2312 — main's floors; the conductor's `--update` at the join).
 
 ## The states of the mockup reached
 
@@ -215,6 +217,13 @@ a skipped version is a `THR-0003` record with `(expected, received)`, the feed n
 | conductor | Addendum B §B4 row `goal-block` (`:135`) lists six core fields; the template now declares three (deviation iii in `BuiltInCatalogIsTranscribedTests`) | the spec's owner |
 | conductor | `ComposerDraftStore.Load` (no product consumer today — grep) would throw on a drafts file holding `tier` / `fan_out_cap` / `budget` | the store's owner skips retired keys when it gets a consumer |
 | conductor | `tools/expected-test-counts.json`: `verify-test-run.py --update` at the join (never the node) | the floors |
+
+## The merges of main (never a rebase)
+
+| main | Merge commit | Conflicts | Resolution |
+|---|---|---|---|
+| `b0e092b5` (INV-0010's fix; SH-1 — `ShellViewMode` → `Perspective`) | `fc6d8954` (+ `8f375049`, the derived views) | none | the rename reached no file of this lane; `site/*` and `docs/_meta.json` from main, the audit logs a union, `expected-test-counts.json` main's; `regenerate-derived.py` green |
+| `b4e61022` (SH-2 — `PerspectiveShell`, two hosts, the rail, DESIGN.md's three role rows; X-1 — the census reach) | `867c2bd9` (+ `7007e4ac`) | `site/index.html` (content) — main's side. **Two semantic conflicts, neither a textual one:** (1) SH-2's `PerspectiveShellTests` carries a private `IWorkbenchAnnouncer` double that predates this lane's typed `Announce(Announcement)` — resolved in this lane's file by making the typed member a **default interface member** that speaks the text as a status (additive by construction; the two real announcers override it); (2) X-1's census reach forced a disabled checkbox on the Console's lane-filter row, which Ruling 74 retired — the composed shell has no `CheckBox` at rest (the New Session sheet's are a separate window), so the reach's answer is the probe's recorded omission, and the test accepts the omission row (DC-016: said, never a silent zero) — a one-assertion edit under a ten-minute claim, released | the audit logs a union (0 duplicate ids), `expected-test-counts.json` main's (App 783 / Core 2312 floors), `regenerate-derived.py` green before the merge commit; the register's three CV-1 classes stayed `DC-nnn` beside main's newly allocated DC-161…163 |
 
 ## Attended rows — RUN-PENDING (each with its steps and its consequence on red)
 
