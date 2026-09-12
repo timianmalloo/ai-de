@@ -27,6 +27,10 @@ summary: >-
 
 # ADR-0036: The compile-mode ladder is a set of runtime deployment gates behind an eval
 
+- **Amended 2026-09-11 (Ruling 76, `note-addendum-c-council-rulings`):** the floor table's degraded-rate
+  floor takes **X = 5 %** as its first value (the stricter reading), and `latency_p95 ≤ 60,000 ms` is
+  struck as a floor — latency is a reported, right-censored measurement until 50 measured compiles set
+  a floor from the data. Nothing else in this decision moves.
 - **Status:** Accepted · **Date:** 2026-09-11 · **Deciders:** node A1 (`addendum-c-chain`) with the
   **AI Systems Engineer** (veto holder — the agentic stage's eval gate and non-determinism
   containment) in Peer Mode; the Release Engineer's lens applied; attacked at the gate
@@ -101,17 +105,21 @@ We will:
      somebody writes (the AI Systems Engineer's finding). The floors, fixed in advance and revised
      only upward: `schema_fail ≤ 2 %`; `applied_denied = 0` and `tool_calls = 0` as invariants over
      **every** `called` row; **a degraded-rate floor** `(timed_out + malformed + unavailable) /
-     every called row ≤ X %` with **X = 10 % as the first value** (Inferred; **its one home is the
+     every called row ≤ X %` with **X = 5 % as the first value** (**Ruling 76** — the stricter reading;
+     Inferred as a first value under IO7; **its one home is the
      host-compiled floor table** — N, X and Δ are admission constants the settings model owns, not
      compile inputs, so they do not ride `opened.constants`, which carries only what that envelope's
      compile consumed: `k`, `byte_bound`, `bound_ms` — the Simplifier's finding; **N is revised only
      upward, floors only stricter** — for a `≤` floor "upward" would loosen it, the Tech Lead's
      finding) — without it a model that times out a third of its calls passes every
-     other floor, because `EffectiveMode` folds those rows to `mechanical`; **`latency_p95 ≤
-     60,000 ms`** (the spec's §A14.4 floor; §A16's 15 s p95 is a *target*, reported, not a floor)
-     over **every** `called` row, `n_measured = n_total`, with timed-out rows reported as
-     **right-censored** — `n_censored` beside `n_measured`, and the p95 labelled "≥" when a censored
-     row sits at or above it, never a plausible exact number; the token thresholds against
+     other floor, because `EffectiveMode` folds those rows to `mechanical`; **latency is a reported
+     measurement, not a floor** (**Ruling 76** struck the spec's `latency_p95 ≤ 60,000 ms` floor: with
+     `bound_ms = 60000` it was the degraded-rate floor in disguise, two floors on one quantity) —
+     p50/p95 over succeeded rows with `n_measured / n_total`, timed-out rows reported as
+     **right-censored** (`n_censored` beside `n_measured`, the p95 labelled "≥" when a censored row
+     sits at or above it, never a plausible exact number), no latency floor until 50 measured
+     compiles, then a floor set from the measurement and revised only stricter (§A16's 15 s p95 is
+     a *target*, reported, not a floor); the token thresholds against
      `prefix_measured` under the same key;
      `≥ 90 %` resolving spans; acceptance ≥ 60 %, missed ≤ 20 %, emptied ≤ 20 %, shape-flip kept
      ≥ 80 %. **The treatment arm is defined once:** `opened.compile_mode ∈ {agentic-advisory,
@@ -231,8 +239,8 @@ We will:
   Δ (the baseline margin) and the constants (K = 5, 32 KiB, 60 s, 1 s) are first values
   labelled Inferred (IO7) — K and the bounds on `opened.constants` (compile inputs), N/X/Δ in the
   host floor table; N revised only upward, floors only stricter; the spec's `latency_p95 ≤ 60 s`
-  floor overlaps X (with the bound at 60 s it is a ≤ 5 % timeout-rate floor in disguise) — a spec
-  floor A1 does not thin, recorded as a finding for the Owner;
+  floor overlapped X (with the bound at 60 s it was a ≤ 5 % timeout-rate floor in disguise) — the
+  finding was ruled: Ruling 76 struck the latency floor and set X = 5 % (the stricter reading);
   the `anthropic@1.0.0` profile does not exist (compiles run with profile `none` until
   `/collectknowledge` authors it — ADR-0037).
 

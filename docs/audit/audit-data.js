@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T23:49:14Z",
+  "generated": "2026-09-12T00:12:20Z",
   "audit": [
     {
       "actor": null,
@@ -12679,6 +12679,60 @@ window.AUDIT_DATA = {
         "sha": "eba82d5f17bee3d1447bb24bcf94ecb03bd2f72b",
         "short": "eba82d5f1",
         "branch": "conductor/addendum-c",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M29FA5AXC6164KBKFBBR2RQE",
+      "shortname": "apply-errata-74-78",
+      "datetime": "2026-09-12T00:12:10Z",
+      "session": "errata-74-78",
+      "prompt": "Conductor (conductor-addendum-c): errata node — apply Rulings 74-78 and errata E1-E7 (note-addendum-c-council-rulings) to Addendum C, Addendum D, ADR-0036's floor table, DESIGN.md and the three mockups; errata notes for the frozen Addendum A/B HTML; craft gate must stay 98 (60/38) with the three mockups at 0; confirm E2's tab order against the mockup's P-13 trace; commit and push docs/errata-74-78, no merge to main.",
+      "summary": "Rulings 74-78 and errata E1-E7 applied verbatim to the artifacts they name. Ruling 74: C §C1 adopts Layout:StreamingThread for the session document (shell unchanged), §B2's earlier-turns paragraph rewritten (reply folded per turn; Console split on demand; Score outline -> jump list); Addendum A :104/:159/:185/:238-242 and B :186 corrected by errata notes (frozen HTML untouched). Ruling 75: the one refusal sentence, tier-blind, in C §C4, US-C13, D Flow D-1, DESIGN.md :937/PS-C3/PS-C7, both mockups (gaps/refused now exactly one gap). Ruling 76: D §A14.4 and ADR-0036's floor table — X = 5 %, latency struck as a floor and reported censored; Amended line added. Ruling 77: no Send-now during preparing, Cancel's description, one governed run at a time (D §A10.1, US-D5, §B5's three refused-gesture rows, Part C copy). Ruling 78: spend on the outcome line and the header's budget state; the cap asks, never refuses (D §A11/§B2/Part C; DESIGN.md :1151/:1153/header row; new-session-sheet :261; session-conversation capask copy). E1 template control (C §B2 :971/:977, S-9, Flow 6, US-C13, glossary; B :181/:186 by note). E2 tier control on the decoration line (D §A11 table, §B2, §B4, §B5, US-D6, Flows) — tab order confirmed against the session-conversation mockup's DOM order, which places the compile line BEFORE the decoration line; the mockup's order filed. E3 task_class in inputs_sha + class change stales (Flow D-2). E4 cancelled stays row 7; reused a tenth string. E5 mode: mechanical-only is provenance. E6 consumed.reason; submitted.accepted:false. E7 disableBuiltInTools dropped, phantom adapter quote replaced by :5274-5279/:5856 (verified against spikes/compile-session-tool-pin/RESULT.md), §A22 row 5 superseded by Ruling 71, projection_sha -> Current(task_class).value ‖ source, US-C12 outcome/error_code, P-7 -> WebView2 pages. Craft gate 98 (60/38) before and after, the three mockups at 0; design-lint strict clean; docs-graph derived (one pre-existing dangling link on main, not this node's).",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/addendum-c-perspectives.md",
+        "docs/specs/addendum-d-compile-step.md",
+        "docs/adr/0036-compile-mode-ladder-deployment-gates.md",
+        "DESIGN.md",
+        "docs/mockups/conversation-composer.html",
+        "docs/mockups/session-conversation.html",
+        "docs/mockups/new-session-sheet.html",
+        "docs/notes/conductor-spec-errata-session-thread.md",
+        "docs/notes/conductor-spec-errata-template-control.md",
+        "docs/specs/conductor/README.md"
+      ],
+      "tags": [
+        "errata",
+        "ruling-74",
+        "ruling-75",
+        "ruling-76",
+        "ruling-77",
+        "ruling-78"
+      ],
+      "outcome": "success",
+      "goal": "Apply Rulings 74-78 and E1-E7 verbatim to the named artifacts; errata notes for the frozen HTML; gates green; push the branch",
+      "done_when": "Every item applied or reported unresolved; craft gate 98 (60/38) with the three at 0; design-lint strict clean; regenerate-derived green; gates green; commit pushed to docs/errata-74-78; no merge to main",
+      "tier": "T1",
+      "main_calls": 60,
+      "main_budget": 80,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-11T23:50:10Z",
+      "duration_seconds": 1320.0,
+      "git": {
+        "sha": "f891b331dfdcf95ccce6aed0445ae82ed7dac7be",
+        "short": "f891b331d",
+        "branch": "docs/errata-74-78",
         "pushed": null
       }
     }

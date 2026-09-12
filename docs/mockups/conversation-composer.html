@@ -233,7 +233,7 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
       <option value="settings">session settings opened from the header</option>
       <option value="attaching">attaching: drop target over the editor</option>
       <option value="attachoff">attaching is off for this session</option>
-      <option value="refused">refused: content gaps (compiles at T2)</option>
+      <option value="refused">refused: a goal block with blank Not in scope</option>
       <option value="noscope">refused: no write scope</option>
       <option value="inflight">sending (marks confirmed)</option>
       <option value="sendfailed">send failed (draft kept, compiled updated)</option>
@@ -338,8 +338,8 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
             </div>
             <div data-show="refused">
               <div class="line"><span class="k">Goal</span><span class="v edit" tabindex="0" role="textbox" aria-label="Goal" aria-describedby="m-rg">Refuse a newer layout schema with a report instead of a silent reset</span><span class="mark d" id="m-rg">~ derived</span></div>
-              <div class="line" style="flex-wrap:wrap"><span class="k">Done when</span><span class="v edit empty" tabindex="0" role="textbox" aria-label="Done when" aria-invalid="true" aria-describedby="m-rd" aria-errormessage="why-rd">empty</span><span class="mark x" id="m-rd">! missing</span><span class="why" id="why-rd">This prompt compiles at T2 and needs Done when.</span></div>
-              <div class="line" style="flex-wrap:wrap"><span class="k">Not in scope</span><span class="v edit empty" tabindex="0" role="textbox" aria-label="Not in scope" aria-invalid="true" aria-describedby="m-rn" aria-errormessage="why-rn">empty</span><span class="mark x" id="m-rn">! missing</span><span class="why" id="why-rn">This prompt compiles at T2 and needs Not in scope — the boundary is what the lease is checked against.</span></div>
+              <div class="line"><span class="k">Done when</span><span class="v edit" tabindex="0" role="textbox" aria-label="Done when" aria-describedby="m-rd">a v6 envelope is refused, reported on the status strip, and the v5 file is untouched</span><span class="mark d" id="m-rd">~ derived</span></div>
+              <div class="line" style="flex-wrap:wrap"><span class="k">Not in scope</span><span class="v edit empty" tabindex="0" role="textbox" aria-label="Not in scope" aria-invalid="true" aria-describedby="m-rn" aria-errormessage="why-rn">empty</span><span class="mark x" id="m-rn">! missing</span><span class="why" id="why-rn">This prompt is a goal block and needs Not in scope.</span></div>
             </div>
           </div>
         </details>
@@ -384,7 +384,7 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
         <span class="sp"></span>
         <span class="reason fi" data-show="empty"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Write something to send.</span>
         <span class="reason fi" data-show="loading"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Editor starting…</span>
-        <span class="reason fi" data-show="refused"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>2 lines need filling — this prompt compiles at T2.</span>
+        <span class="reason fi" data-show="refused"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>This prompt is a goal block and needs Not in scope.</span>
         <span class="reason fi" data-show="noscope"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Send needs a write scope.</span>
         <span class="reason fi" data-show="inflight"><span class="ring" aria-hidden="true"></span>Sending…</span>
         <button class="send fi" data-show="default overflow deriving template settings attaching attachoff">Send <span class="kbd">Ctrl+Enter</span><span class="fo">12</span></button>
@@ -457,7 +457,7 @@ var LEGEND={
   'settings':'<b>Session settings, opened from the header.</b> The gear and the settings line open the same popover: the sheet’s Session settings row (fan-out ceiling, budget), saved for this session. One control, two doors; no tier.',
   'attaching':'<b>Attaching.</b> A drop target over the editor says what a drop does; the editor keeps its size and its text.',
   'attachoff':'<b>Attaching is off for this session.</b> The census’s <code>#drop-hint</code> site (4.47:1 in page CSS), now a token pair: muted ink on the island, one line beneath the editor.',
-  'refused':'<b>Refused, every gap at once.</b> This prompt compiles at T2, so an empty Done-when and Not-in-scope refuse the send inline, one reason per line, nothing modal, nothing sent; the reason beside the disabled Send counts the gaps and names the tier. Fix a line in place and Ctrl+Enter again. Which tier a prompt compiles to is the compile step’s rule, not yet specified.',
+  'refused':'<b>Refused: one gap (Ruling 75).</b> Goal and Done when are filled, so this prompt is a goal block, and a goal block needs Not in scope at any tier: the empty line refuses the send inline with the one sentence, nothing modal, nothing sent; the reason beside the disabled Send says the same. A blank Goal or Done when is never refused — the prompt is a Message. Fill the line in place and Ctrl+Enter again.',
   'noscope':'<b>Refused: no write scope.</b> Send is disabled with the reason beside it; the refusal says what derives a lease and how to add one (an @path mention), and the picker opens at the caret. Who computes the lease is unchanged (Ruling 42): still only the mentions.',
   'inflight':'<b>Sending.</b> The editor is read-only for the round trip, the row shows progress, the derived marks have cleared (send confirmed them, and the compiled header now says T1 confirmed), and the Console starts streaming beside the composer.',
   'sendfailed':'<b>Send failed.</b> The reason, and the promise: your draft is kept. The compiled header says <i>updated</i> because the text changed since it was last opened. Try again is the same Ctrl+Enter.',
@@ -491,7 +491,7 @@ function render(){
   if (st==='overflow') legend+=' The ceiling is the session’s; the effective cap is the tier’s within it (Inferred: the conductor’s reconciliation of CT19 with the operator’s correction).';
   document.getElementById('legend').innerHTML=legend;
   var L=[];
-  if (st==='refused'){ L.push(['UIA notification','Send refused: 2 lines need filling. This prompt compiles at T2 and needs Done when. This prompt compiles at T2 and needs Not in scope.']); L.push(['focus','the first invalid line (Done when); its ItemStatus reads "missing", its HelpText carries the reason']); }
+  if (st==='refused'){ L.push(['UIA notification','Send refused: this prompt is a goal block and needs Not in scope.']); L.push(['focus','the invalid line (Not in scope); its ItemStatus reads "missing", its HelpText carries the reason']); }
   else if (st==='noscope'){ L.push(['UIA notification','Send needs a write scope. Mention the files or folders this run may write, as @path.']); L.push(['focus','the editor, with the mention picker (a listbox) open at the caret']); }
   else if (st==='inflight'){ L.push(['UIA notification','Sending block b3 as a goal block, tier T1.']); }
   else if (st==='sendfailed'){ L.push(['UIA notification',"Couldn't send — the conductor closed the connection. Your draft is kept."]); L.push(['focus','Try again']); }

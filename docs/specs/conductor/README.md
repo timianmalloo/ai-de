@@ -13,6 +13,8 @@ links:
   - { to: architecture, rel: relates-to }
   - { to: note-conductor-spec-errata-policy, rel: relates-to }
   - { to: note-conductor-spec-errata-lane-rename, rel: relates-to }
+  - { to: note-conductor-spec-errata-session-thread, rel: relates-to }
+  - { to: note-conductor-spec-errata-template-control, rel: relates-to }
 review-by: 2026-12-09
 ---
 
@@ -58,3 +60,11 @@ corrected line, verbatim, with its line number; never edit the HTML):
 - `note-conductor-spec-errata-providers-json` — v1.0 §4.3 (line 209) and §14.2 (lines 472–473)
   name `~/.aide/providers.yaml`; this repository reads `~/.aide/providers.json` (Ruling 23's
   ladder applied to the file Ruling 23 named as the open case, under Ruling 36's YAML scope).
+- `note-conductor-spec-errata-session-thread` — Addendum A §A2 (line 104), §A6 (line 159), §A6.1
+  (line 185) and R16 (lines 238–242) draw the session as composer-beside-canvas; Ruling 74 makes
+  the session document a thread with the lane's reply folded per turn and the Console split on
+  demand (Ruling 21 honoured as on-demand; Ruling 45 unchanged).
+- `note-conductor-spec-errata-template-control` — Addendum B B6 (line 181) names a "Shape control:
+  Free-form | Template picker"; erratum E1 renames it the template control
+  (`template: none | <id>@<version>`). B6 (line 186)'s Score outline with its shape badge is
+  superseded by the jump list (Ruling 74, condition 3).

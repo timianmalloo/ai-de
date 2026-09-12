@@ -171,7 +171,7 @@ number at filing — this document cites none until one exists, which is what
 | S-5 | Addendum B `:216` (R19 b2): *"Template picker renders any catalog template as a validated form; a required-field gap blocks send with a field-level error; view-compiled shows the exact outgoing text."* | "As a validated form" → as the inline derived structure of S-3; "required-field gap blocks send" stands for content fields only; "view-compiled shows the exact outgoing text" **stands**. | Ruling 57 |
 | S-6 *(reaffirmed, not superseded)* | Addendum B `:184`: *"View compiled toggle shows exactly the text the conductor will receive. No hidden prompt assembly."* | **Kept as written** — a *toggle* is on demand. The as-built composer renders the compiled prompt **permanently** in a plain `TextBox` below the fields (`ComposerSurface.cs:25-27,77-107` **[Verified]**), which is what the operator saw; verdict (3) restores B:184's own words: compiled text **on demand** (collapsed by default; a preview — no diff, no summary, per §C4), never a permanently rendered block. | — (no ruling needed; a finding for the composer slice) |
 | S-8 *[Inferred — an extension of verdict (3) to the conductor's round-trips, not the operator's words]* | Addendum B `:187` (B6): *"Conductor round-trips: the conductor may answer a free-form message with a drafted template (a filled change-order, a goal block) — it arrives as a reviewable form in the composer, exactly like an assist result."* | "As a reviewable form" → as the **inline derived structure** of S-3 laid over the reply's text in the composer; reviewable, editable, sent by the operator's explicit act. The rest of the clause (the ruling-request template auto-applied to Owner convenings) stands. | Ruling 57 |
-| S-9 *(kept intact)* | Addendum B `:181` (B6): *"Shape control in the composer header: Free-form \| Template picker (searchable, grouped by intent, recents first). Per block; switching shapes preserves content …"* | **Not superseded.** The shape control stays in the composer header; choosing a template renders its fields as the inline derived structure (S-3), never as a form of boxes. The twelve built-in templates (B4) remain reachable from it. | — |
+| S-9 *(kept intact)* | Addendum B `:181` (B6): *"Shape control in the composer header: Free-form \| Template picker (searchable, grouped by intent, recents first). Per block; switching shapes preserves content …"* | **Not superseded; renamed by E1.** The control stays in the composer header as the **template control** (`template: none \| <id>@<version>` — B `:181` as amended, `note-conductor-spec-errata-template-control`); choosing a template renders its fields as the inline derived structure (S-3), never as a form of boxes. The twelve built-in templates (B4) remain reachable from it. | E1 |
 | S-7 *(kept intact)* | Ruling 42 (`note-front-door-rulings-41-42` §Ruling 42): the lease is **derived** from the goal block's mentions and never operator-typed; `LeaseDerivation.Patterns` derives from `@mentions` in the compiled text (`LeaseDerivation.cs:49-50` **[Verified]**) | **Not superseded.** The UX change is *how the mention is elicited and explained*: the refusal at `ComposerSurface.cs:289-292` **[Verified]** says a write scope could not be derived but not that **only an `@path` mention derives one** — US-C13 requires the message to say so and to offer the mention picker. Who computes the glob is unchanged. | — |
 
 **Findings from the same entry, not specified here:** verdict (1) is a layout defect — the fields
@@ -676,10 +676,11 @@ drop.** `[R52] [ADR-0013 amendment]`
   handler exists (*falsifier:* a literal "Ctrl+K, 3" or "Ctrl+K, I" in copy; a palette row spoken
   as "New class diagram. Ctrl+K, M" while nothing is bound to it) — headless on the palette rows'
   accessible names.
-- **Given** focus is inside the terminal's hosted HWND in Coding, **When** the Architecture gesture is
-  pressed, **Then** Architecture becomes active — **runtime Proof Pack item P-7** (a keystroke inside
-  an `HwndHost` may never reach WPF; `TerminalSurface.cs` shows no WPF key routing per the reviewer
-  **[Inferred]**); the headless half asserts the binding exists at window scope.
+- **Given** focus is inside a **WebView2 page** in Coding (the composer editor; the Explorer's pages —
+  re-targeted from the terminal HWND by ADR-0031, which draws the terminal in WPF; E7), **When** the
+  Architecture gesture is pressed, **Then** Architecture becomes active — **runtime Proof Pack item
+  P-7** (a keystroke inside an `HwndHost` may never reach WPF); the headless half asserts the binding
+  exists at window scope.
 - **Given** the rail has focus, **When** Up/Down are pressed, **Then** focus moves between rail items
   and Tab leaves the rail (roving tab-stop, `MainWindow.xaml:67-69,86-87` **[Verified]**) — P-1.
 
@@ -694,10 +695,11 @@ drop.** `[R52] [ADR-0013 amendment]`
 **US-C12 — Every switch is measured.** `[IO1–IO12]`
 - **Given** any perspective switch, **Then** one structured event is emitted on the normal path with
   `from`, `to`, `trigger` (rail / gesture / menu / routed-open / escape),
-  `first_entry` (true when the target body was built by this switch) and `duration_ms` — **start** =
+  `first_entry` (true when the target body was built by this switch), `duration_ms` — **start** =
   the command's invocation; **stop** = the first `Loaded`/`LayoutUpdated` of the new body after the
-  presenter set its content (*falsifier:* a switch with no event; a duration without the two named
-  edges).
+  presenter set its content — and, per E7, `outcome` and `error_code` (the IO failure-rate axis;
+  stable codes per the observability standard; `null` on success) (*falsifier:* a switch with no
+  event; a duration without the two named edges; a failed switch with no `error_code`).
 - **Given** ≥ 20 retained (`first_entry == false`) switches on the reference machine, **Then** p95
   `duration_ms` ≤ 150 — **runtime Proof Pack item P-8**, never a unit assert (a timing assert in
   CI is the flake class D0). First-entry durations are recorded and reported, with no budget until
@@ -738,14 +740,17 @@ superseded on page one] [Ruling 42 intact]`
   *derived* mark (**red today** — no deriver seam exists); with **no deriver**, the lines are empty,
   editable, and carry the *"fill in, or add an assist provider in settings"* copy. The editor's
   rendered height at the startup width is **P-12**.
-- **Given** a T2 session, **When** the operator sends with an empty Goal, Done-when or Not-in-scope
-  after derivation, **Then** send is refused with an **inline mark on every gap at once** and a one-line
-  reason per line — the CT19 discipline for *content* fields survives (S-1); **an empty Not-in-scope is
-  refused inline, not warned** — `SpawnContract.Validate` refuses a blank boundary by design
-  (`GoalBlock.cs:124-132`, *"CT19 requires the boundary to be written"*), so Addendum B `:176`'s
+- **Given** a goal block (Goal and Done when both non-blank), **When** the operator sends with an
+  empty Not in scope after derivation, **Then** send is refused inline with the one sentence *"This
+  prompt is a goal block and needs Not in scope."* — tier-blind, the only content-gap refusal that
+  exists (Ruling 75); a blank Goal or Done when is **not** refused: the turn is a Message (Addendum D
+  §A12.2), shown live on the decoration line and spoken at Send (*"…as a message, tier T0"* — a silent
+  demotion is the falsifier) — the CT19 discipline for *content* fields survives (S-1); **an empty
+  Not-in-scope is refused inline, not warned** — `SpawnContract.Validate` refuses a blank boundary by
+  design (`GoalBlock.cs:131-134`, *"CT19 requires the boundary to be written"*), so Addendum B `:176`'s
   *"or send will warn"* is superseded here (NB-1, gate pass 3)
-  (*falsifier:* a send with no done-when on a T2 session succeeds; a modal error; two serial
-  refusals for two gaps). **Send is the confirmation** of the derived lines — there is no separate
+  (*falsifier:* a Goal-block send with a blank Not in scope succeeds; a refusal that names a tier or
+  a blank Done when; a modal error). **Send is the confirmation** of the derived lines — there is no separate
   confirm act; the *derived* marks clear on send (or on an inline edit), so a prompt at defaults is
   one action (§B7 zero per-prompt settings). **Oracle — headless.** The refusal half is **green
   today** (the form engine already refuses a gap); the **red-first half is the positive send**: a
@@ -783,11 +788,12 @@ superseded on page one] [Ruling 42 intact]`
 - **Deferred as D-6 (§A5):** the conductor's round-trips (Addendum B `:187`, S-8) arriving as
   derived structure. Its admission test is stated there; until it lands, no composer slice claims
   it.
-- **Given** the operator picks a template from the shape control (Addendum B `:181`, S-9 — kept),
-  **Then** the template's fields render as the inline derived structure, prefilled where the
-  conversation text supplies a value and empty-editable where it does not; content fields gate the
-  send inline; the shape badge on the send row names the template (*falsifier:* a form of boxes; a
-  template whose fields are unreachable from the composer). **Oracle — headless:** the picker's
+- **Given** the operator picks a template from the template control (Addendum B `:181` as amended by
+  E1 — `template: none | <id>@<version>`; S-9's position kept), **Then** the template's fields render
+  as the inline derived structure, prefilled where the conversation text supplies a value and
+  empty-editable where it does not; content fields gate the send inline; the decoration line's
+  `template` segment names the template — there is no shape badge on the send row (E1) (*falsifier:* a
+  form of boxes; a template whose fields are unreachable from the composer; a shape badge). **Oracle — headless:** the picker's
   selection reaches the surface's descriptor set and the rendered field names equal the template's.
 - **Given** the rendered composer in the dark theme, **Then** every ink/ground pair in it (the
   editor, the derived structure, the write-scope line, the disclosure, the status line) is a
@@ -824,8 +830,8 @@ switch requested mid tab-drag (the drag is cancelled as a no-op drop first — t
 during a drag, `WorkbenchShell.cs:1262-1263` per the reviewer) · switch with the New Session sheet
 open (impossible — modal) · create-session failure after the sheet (no switch, reported) · body build
 failure, and a retry from the rail (no automatic retry loop — each retry is a user activation) ·
-keyboard-only operation of rail, gestures and menus · a bound gesture pressed with focus inside the
-terminal's HWND (P-7) · Escape with the palette open, during move/resize, and from an Architecture
+keyboard-only operation of rail, gestures and menus · a bound gesture pressed with focus inside a
+WebView2 page (P-7, E7) · Escape with the palette open, during move/resize, and from an Architecture
 pane (no switch in any of the three) · a kind-opening request from Explore for a shared kind
 (`codeviewer` → Architecture) · an in-body action from Explore ("Reveal in graph" → Explore's own
 canvas) · a kind admitted by no perspective (impossible by construction; test asserts) · a rail item
@@ -881,7 +887,7 @@ change as the behaviour (test names **[Verified — files read]**):
 | P-4 | Class diagram in host B keeps selection id and scroll offset across a cycle; no `CoreWebView2` re-initialisation for a hidden `WebView2` in host B (A1's spike, promoted) | US-C2, Ruling 52 CONDITIONS |
 | P-5 | Permission overlay visible after one dispatcher frame while Architecture is active (if not headless) | US-C2 |
 | P-6 | Architecture canvas renders only code/data/architecture nodes for a mixed fixture | US-C8 |
-| P-7 | Perspective gesture pressed with focus inside the terminal HWND switches perspective | US-C10 |
+| P-7 | Perspective gesture pressed with focus inside a **WebView2 page** (the composer editor; the Explorer's pages) switches perspective — re-targeted from the terminal HWND by ADR-0031, which draws the terminal in WPF (E7) | US-C10 |
 | P-8 | p95 retained-switch `duration_ms` ≤ 150 over ≥ 20 switches; first-entry durations reported | US-C12 |
 | P-9 | Screen-reader trace: announcement precedes focus move on switch, no double-speak; Escape from the Explore root returns | §C5 |
 | P-11 | **Contrast census** over the composed visual tree of every perspective (defaults open; the session document in each canvas mode; the composer with derived structure and the compiled disclosure open) and over the WebView2 pages' composed DOM, in dark and light: zero ink/ground pairs below floor, zero non-token colours, **and a measured-pair count ≥ 1 for every named surface — a surface that measured zero is a failure row, never a pass** (the existing test guards the same way with `Assert.Equal(11, measured.Count)`); **mutation:** seeding one `Brushes.White` `TextBox` into the composer fixture must produce a census row. WebView2 pages report "not measured" until the census walks them — never a pass. | §A9, §C7, US-C13 |
@@ -968,20 +974,26 @@ No fifth item. "Tests" is a reserved name in the vocabulary table and nowhere el
 
 | Region (top → bottom in the composer zone) | Content | Default state |
 | --- | --- | --- |
-| **Header: shape control** | Free-form \| Template picker (searchable, grouped by intent, recents first) — Addendum B `:181` kept (S-9); the session-settings affordance sits beside it | Free-form |
+| **Header: template control** | `template: none \| <id>@<version>` — Addendum B `:181` as amended; the session-settings affordance beside it | `none` |
 | **Editor** | the one prompt editor for the **current message** (rich, markdown-live, `@`-mention picker — Addendum A R15 b1 kept) | fills the zone; declared minimum height |
 | **Derived structure** | *Goal · Done when · Not in scope*, prefilled from the text; each line editable inline; *derived* marks until confirmed; inline validation marks on a refused send | collapsed to one line until the text yields a structure; expands beneath the editor without shrinking it below its minimum |
 | **Inherited settings line** | *"T2 · fan-out 3 · budget from session"* — a link to session settings, no per-prompt override | one muted line |
 | **Write scope line** | *"Write scope: `<derived>` — from your mention"* or the elicitation text when none | one line |
 | **Compiled disclosure** | *"Compiled prompt"* expander: exactly the outgoing text (Addendum B `:184`) | collapsed |
-| **Send row** | Send (Ctrl+Enter), shape badge, provenance — unchanged from Addendum B `:173` | — |
+| **Send row** | Send (Ctrl+Enter), provenance — no shape badge; the decoration line's `<shape>` and `template` segments carry it | — |
 
-**Where the conversation's earlier turns live:** the composer is the *current message* only. Prior
-messages, the conductor's replies and every lane's output are the **Console canvas mode** of the same
-session document (Addendum A §A6.1 — the merged stream, R16), and the sequence of blocks is the
-**Score outline** (Addendum B `:186`). A conductor round-trip (S-8) lands in the composer as the next
-message's draft. The thread is therefore the session document as a whole — composer (now) beside
-canvas (before) — which is the `Layout:StreamingThread` §C1 names; nothing new is invented for it.
+**Where the conversation's earlier turns live (Ruling 74):** the composer is the *current message*
+only — the last region of the thread. Prior turns live **in the thread** above it, each with the
+lane's reply (the conductor's reply and the lane's output) **folded beneath the turn that caused it**;
+the **Console split** (Addendum A §A6.1's merged stream, R16; Ruling 21 honoured as on-demand) is an
+**on-demand view of the same stream opened at a turn** — derived from the turns' events, never a
+second store, reachable from the header and in the F6 cycle. The sequence of turns is the **jump
+list** on the header's turn count — each turn's ordinal · words · outcome — which supersedes
+Addendum B `:186`'s Score outline (`note-conductor-spec-errata-template-control`). A conductor
+round-trip (S-8) lands in the composer as the next message's draft. The thread is therefore the
+session document as a whole — the `Layout:StreamingThread` §C1 adopts; nothing new is invented for
+it. (§B6's earlier skeleton — composer beside canvas — is superseded by this paragraph; the drawn
+structure is the `session-conversation` mockup.)
 
 Session settings (fan-out ceiling, budget, backends, routing, autonomy, policy — **not tier**, Ruling 63)
 live in the **New Session sheet** (prefilled from workspace defaults) and in a **session settings** affordance on the
@@ -990,7 +1002,8 @@ session document's header — not in the composer.
 **Labels that feed the glossary** (the repository has no glossary file yet — a finding, §R):
 *perspective*, *rail*, *body*, *allow-list*, *slot*, *entry verb*, *routed open*,
 *drop-with-report*, *previous perspective*, *terminal session* (Addendum A §A3, reused), *derived
-structure*, *session settings*, *write scope*.
+structure*, *session settings*, *write scope*. Three words are reserved (E1): *shape* is Message |
+Goal-block (Addendum A R15 b2); *template* is `none | id@version`; *class* is the task class.
 
 ### B3. The menu derivation rule (Ruling 55b)
 
@@ -1143,8 +1156,8 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  A[Focus in a pane or inside the terminal HWND] -->|Tab cycle reaches the rail once| B[Rail: Up/Down between items, Enter/Space activates]
-  A -->|bound perspective gesture| C[Switch without visiting the rail — P-7 when focus is in the HWND]
+  A[Focus in a pane or inside a WebView2 page] -->|Tab cycle reaches the rail once| B[Rail: Up/Down between items, Enter/Space activates]
+  A -->|bound perspective gesture| C[Switch without visiting the rail — P-7 when focus is in a WebView2 page]
   C --> D[Announcement, then focus lands in the new body — never on the rail, never lost to the window]
   D -->|Alt / F10| E[Menu bar: only this perspective's menus]
   E -->|Ctrl+K| F[Palette: only this perspective's commands, chord strings announced]
@@ -1158,7 +1171,7 @@ inherited settings · compiled on demand)** — US-C13
 ```mermaid
 flowchart TD
   A[Session document open: one editor, structure collapsed, compiled collapsed] -->|type prose| B{Draft settles: objective derivable?}
-  A -->|shape control: pick a template — B:181 kept| T[Template fields render as the derived structure, prefilled from the text where possible]
+  A -->|template control: pick a template — B:181 as amended, E1| T[Template fields render as the derived structure, prefilled from the text where possible]
   T --> E
   B -->|no| C[Structure stays one collapsed line; a T2 send will mark Goal and Done when]
   C -->|type more| B
@@ -1282,15 +1295,17 @@ PerspectiveShell {
   visible, with their active state) but *entered serially* (exactly one body at a time). The body
   inside each spoke keeps its own signature: Coding and Architecture are `MultiPanelWorkstation`
   hosts (the shell's row); Explore is `spec-knowledge-explorer-mode`'s Spatial-Canvas × Master-Detail
-  (C1×B2). **The composer inside the session document takes D1 · Generative Stream Thread as its nearest
-  row** — the operator's verdict (3) stated as an archetype; its previous shape was an unnamed form
-  wizard, which is why it felt "chunky". **Adopted from D1:** `Feedback:Generative` and the U13–U15
-  obligations (§C5 AI-UX). **Not adopted, with rationale (G9):** `Layout:StreamingThread` — the
-  thread is the session document as a whole (composer = the current message; the Console canvas and
-  the Score outline hold the turns, §B2), not an auto-scrolling column with the input anchored
-  beneath it; `Pacing`, `Persistence`, `Sync`, `Transition` stay the shell's (`Freeform`,
-  `LocalDevice`, `LocalFirst`, `HardCut`) because the composer is a pane inside a `LocalFirst`
-  workbench, not a hosted chat. D1's exemplars are direction evidence for the *feel* only. The shape of the task was checked against the grammar: a perspective switch is not a
+  (C1×B2). **The session document takes D1 · Generative Stream Thread as its nearest row** — the
+  operator's verdict (3) stated as an archetype; its previous shape was an unnamed form wizard, which
+  is why it felt "chunky". **Adopted from D1:** `Feedback:Generative`, the U13–U15 obligations (§C5
+  AI-UX), and — **Ruling 74** — **`Layout:StreamingThread` for the session document**: the thread is
+  a feed of turns with the composer as its last region, each turn carrying the lane's reply folded
+  beneath it, and the Console split an on-demand view of the same stream opened at a turn (§B2;
+  `DESIGN.md` SC1/SC7). The shell's signature above is unchanged — Ruling 74 amends the session
+  document's row only. **Not adopted, with rationale (G9):** `Pacing`, `Persistence`, `Sync`,
+  `Transition` stay the shell's (`Freeform`, `LocalDevice`, `LocalFirst`, `HardCut`) because the
+  session document is a document inside a `LocalFirst` workbench, not a hosted chat. D1's exemplars
+  are direction evidence for the *feel* only. The shape of the task was checked against the grammar: a perspective switch is not a
   state machine (no locked order — `Pacing:Freeform`), not a funnel, and not a single-page view swap
   that hides the selector (which would be ADR-0017's rejected option B).
 - **Deviations from the nearest rows and from the shell's own signature, with rationale (G9):**
@@ -1378,7 +1393,9 @@ order apply to them directly:
 - *Derived structure:* **collapsed** (one line: *"Goal · Done when · Not in scope — will appear as you
   write"*) · **derived** (prefilled, each line with the *derived* mark) · **confirmed** (mark cleared
   on edit or explicit confirm) · **invalid** (inline `{colors.danger}` mark on the offending line with
-  the reason, e.g. *"A T2 session needs Done when."*) · loading (assist provider deriving: a
+  the reason — *"This prompt is a goal block and needs Not in scope."*, the one content-gap refusal
+  that exists, tier-blind (Ruling 75); a blank Goal or Done when is not refused: the turn is a
+  Message, shown live on the decoration line and spoken at Send) · loading (assist provider deriving: a
   one-line skeleton, never a spinner over the editor) · unavailable (no provider: the lines are empty
   and editable, marked *"fill in, or add an assist provider in settings"*).
 - *Compiled header line:* default (*"T1 — derived · fan-out ≤ 3 · budget from session"* — the tier
@@ -1607,9 +1624,10 @@ operator's own decisions, quoted by line, awaiting filing as rulings.)
   probe; if it fails, Architecture's body becomes a non-docking composite. Cheapest probe: A1's spike
   — two AvalonDock hosts under one `ContentControl`, unparent one holding a `WebView2`, assert no
   `CoreWebView2` re-initialisation.
-- **[Flagged] A bound gesture from inside the terminal HWND** (P-7): if keystrokes never leave the
-  hosted HWND, the rail is the only door from a focused terminal; then the terminal surface must
-  forward the perspective gestures — a `/design-slice` decision.
+- **[Flagged] A bound gesture from inside a WebView2 page** (P-7 — re-targeted from the terminal HWND
+  by ADR-0031 / E7): if keystrokes never leave the hosted HWND, the rail is the only door from a
+  focused page; then the web surface must forward the perspective gestures — a `/design-slice`
+  decision.
 - **[Flagged] INV-0006 merge state** gates US-C6 (Ruling 55 CONDITIONS). Probe: `git log` for the
   zone/tree repair before the Coding default-layout node starts.
 - **[Inferred] Envelope migration strategy** (§A14 release lens): the requirement is stated; the
@@ -1788,3 +1806,18 @@ budget as a state and the class preselected — D2 carries the change.
 to a **write-shaped** turn only. A send with no `@mention` runs as a **read-only turn** — the default
 conversation — with the lease line reading *"read-only — nothing will be written"*; the operator adds
 a mention when the turn must write. Session persistence is the tool's purview, never a field.
+
+**Errata after Rulings 74–75 and the D2/A1 batch E1/E7 (2026-09-11, `note-addendum-c-council-rulings`),
+applied by the conductor's errata node:** **Ruling 74** — §C1 adopts `Layout:StreamingThread` for the
+session document (the shell's signature unchanged); §B2's earlier-turns paragraph now reads that the
+turns live in the thread with the lane's reply folded beneath the turn that caused it, the Console
+split an on-demand view of the same stream opened at a turn, and the Score outline superseded by the
+jump list (Addendum A §A2/§A6/R16 and Addendum B `:186` by errata note —
+`note-conductor-spec-errata-session-thread`, `note-conductor-spec-errata-template-control`); §B6's
+composer-beside-canvas skeleton is superseded by the same paragraph. **Ruling 75** — the one content-gap
+refusal is *"This prompt is a goal block and needs Not in scope."*, tier-blind (§C4, US-C13 amended by
+substitution; a blank Goal or Done when makes a Message). **E1** — the header control is the template
+control (`template: none | <id>@<version>`; §B2 `:971`/`:977`, S-9, Flow 6, US-C13); *shape* · *template*
+· *class* reserved in the glossary. **E7** — US-C12's switch event gains `outcome` and `error_code`; P-7
+is re-targeted from the terminal HWND to the WebView2 pages (§A8 US-C10, §A10, §A13, Flow 5, §Flagged).
+Verified by re-read; `verify-ruling-citations.py` green.
