@@ -157,6 +157,19 @@ FAMILIES = [
         # refusal was deleted, and a template that used to fail load would now pass it.
         "contiguous": True,
     },
+    {
+        # Declared at CV-2's join (2026-09-12), on the gate's own report — the compile step's
+        # stable refusal codes (ADR-0034's store, the fold, purge). The allocator is the constant
+        # list, as for AP- and TS-: docs/api/AiDe.Core.PromptCompilation.md carries the same codes
+        # in a DERIVED view and was the file the report named.
+        "prefix": "CE",
+        "path": "src/AiDe.Core/Compilation/EnvelopeStoreException.cs",
+        "kind": "heading",
+        "pattern": r'^\s*public const string \w+ = "(CE-\d+)";',
+        "what": "compile-step refusal codes",
+        # Contiguous for the same reason: a refusal is never re-issued; a hole is a deleted refusal.
+        "contiguous": True,
+    },
 ]
 
 # A token that looks like a monotonic id: a short prefix, a dash, a zero-padded number.

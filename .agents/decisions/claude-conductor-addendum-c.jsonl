@@ -90,3 +90,15 @@
 {"agent": "claude-conductor", "at": 1789245472.3341289, "code": null, "kind": "allowed", "path": "site/index.html", "session": "claude-conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789245472.338129, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/TerminalHostLauncher.cs", "session": "claude-conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789245472.3421857, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/TerminalHostLauncherConfigurationTests.cs", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789246151.1807547, "code": null, "kind": "allowed", "path": ".agents/decisions/atlas-e0-candidate-gpt55.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789246151.1847537, "code": null, "kind": "allowed", "path": ".agents/decisions/claude-conductor-addendum-c.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789246151.1877499, "code": null, "kind": "allowed", "path": ".agents/decisions/cv-2.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789246151.1917512, "code": null, "kind": "allowed", "path": ".agents/log/atlas-e0-candidate-gpt55.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789246151.1957552, "code": null, "kind": "allowed", "path": ".agents/log/copilot-atlas-fleet-45bbc625.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789246151.1987534, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789246151.2032783, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789246151.2062812, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789246151.2102773, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789246151.2132785, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789246151.2167954, "code": null, "kind": "allowed", "path": "site/index.html", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789246151.220806, "code": null, "kind": "allowed", "path": "tools/expected-test-counts.json", "session": "claude-conductor-addendum-c", "wi": ""}

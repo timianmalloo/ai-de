@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T21:59:38Z",
+  "generated": "2026-09-12T22:13:31Z",
   "audit": [
     {
       "actor": null,
@@ -14409,6 +14409,30 @@ window.AUDIT_DATA = {
         "short": "d995505e9",
         "branch": "lane/conversation-cv2",
         "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2BTXKN7AJVGEDND9GYN30HY",
+      "shortname": "join-cv2",
+      "datetime": "2026-09-12T22:13:30Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "keep going (the join of CV-2 - the build the operator waits for)",
+      "summary": "Join: CV-2 (4b48ae20) merged to main (68dfe554) clean; DC-172..176 allocated; the two seams the slice requested applied at the join: the CE- family declared in verify-id-allocators.py (9 families, 15 CE ids, no holes) and the App.OnStartup dispatch for Cli.CliEntry (smoke: the Release exe runs  /  headless and exits 64 with usage on bad args, no window). Recount App 820 / Core 2495 = 2325 + 170; 0 WT attaches over three suite runs.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/mechanical-compile.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land CV-2 on main with its seams closed, the floors recounted, and a Release build the operator can run A-1..A-3 on",
+      "done_when": "main pushed green through run-verify-gates; Release built at the new sha; the three attended steps handed to the operator",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
       }
     }
   ],

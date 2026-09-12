@@ -7236,7 +7236,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Status:** `controlled`.
 
 
-### DC-nnn (CV-2 a) — A bounded context named after a referenced library's type shadows that type in every sibling namespace
+### DC-172 — A bounded context named after a referenced library's type shadows that type in every sibling namespace
 
 - **Shape:** a new namespace `<Root>.<Name>` is created where `<Name>` is also the simple name of a
   type a referenced library exports and a sibling namespace `<Root>.<Other>` uses unqualified. C#
@@ -7260,7 +7260,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   before naming it.
 - **Status:** `controlled`.
 
-### DC-nnn (CV-2 b) — A named-call-site census that scans whole files counts a token spelled in prose as a call site
+### DC-173 — A named-call-site census that scans whole files counts a token spelled in prose as a call site
 
 - **Shape:** a source-scan guard looks for `Type.Method(` across `src/`. An XML doc comment or a
   code comment that spells the token with its parenthesis (`<c>LeaseDerivation.Derive(</c>`) is
@@ -7280,7 +7280,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   uses: code lines only); the census' four-part statement in the Proof Pack names the rule.
 - **Status:** `controlled`.
 
-### DC-nnn (CV-2 c) — A test of an exclusive-handle store reads the file under the handle it asserts is exclusive
+### DC-174 — A test of an exclusive-handle store reads the file under the handle it asserts is exclusive
 
 - **Shape:** a store opens its file `FileShare.None` and the test, wanting to assert what landed,
   reads the file with `File.ReadAllBytes` while the store is still `using`-held. The read fails
@@ -7298,7 +7298,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   `[CE-0002]`, so a widened share mode fails a test rather than quietly passing one.
 - **Status:** `controlled`.
 
-### DC-nnn (CV-2 d) — A schema version cited in a plan row is a snapshot of the code at planning time, and the migration lands one version off
+### DC-175 — A schema version cited in a plan row is a snapshot of the code at planning time, and the migration lands one version off
 
 - **Shape:** a coordination plan names a migration as `vN → vN+1` from the schema the planner read.
   Another track lands `vN+1` before dispatch. The implementer who trusts the plan's number writes a
@@ -7315,7 +7315,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   plan; the drift is recorded in the test's remarks and the Proof Pack so the join reads it.
 - **Status:** `controlled`.
 
-### DC-nnn (CV-2 e) — A persistence feature whose deletion path lives behind a seam request is a writer shipped without its eraser
+### DC-176 — A persistence feature whose deletion path lives behind a seam request is a writer shipped without its eraser
 
 - **Shape:** a slice lands a store that records work data on the normal path (every send) and
   puts the deletion command in a component it does not own — a CLI verb whose process dispatch is

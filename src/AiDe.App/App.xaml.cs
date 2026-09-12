@@ -46,6 +46,18 @@ public partial class App : Application
             return;
         }
 
+        // THE COMPILE STEP'S VERBS — `aide compile fold`, `aide session purge` (Addendum D, CV-2;
+        // wired at the join, the seam the slice requested). Same shape as the conductor's branch and
+        // for the same reason: no window, the exit code is the report, the output file is named on
+        // the console the shell gave us (none, for a window-subsystem exe started from a prompt —
+        // the verbs write their report file regardless).
+        if (Cli.CliEntry.IsRequested(e?.Args ?? []))
+        {
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            _ = RunCliAsync(e!.Args);
+            return;
+        }
+
         // The interactive shell's first window. Declared here rather than in App.xaml so the branch
         // above can decline it; see the comment there.
         StartupUri = new Uri("MainWindow.xaml", UriKind.Relative);
@@ -88,6 +100,24 @@ public partial class App : Application
         catch (Exception error)
         {
             WorkbenchDiagnostics.Crash("conduct", error);
+        }
+        finally
+        {
+            Shutdown(code);
+        }
+    }
+
+    /// <summary>Drives one compile-step verb and ends the process with its exit code.</summary>
+    private async Task RunCliAsync(string[] args)
+    {
+        var code = 3;
+        try
+        {
+            code = await Cli.CliEntry.RunAsync(args, System.Console.Out).ConfigureAwait(true);
+        }
+        catch (Exception error)
+        {
+            WorkbenchDiagnostics.Crash("cli", error);
         }
         finally
         {
