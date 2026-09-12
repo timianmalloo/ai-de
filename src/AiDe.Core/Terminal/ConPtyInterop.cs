@@ -196,12 +196,24 @@ internal static partial class ConPtyInterop
     /// sets <c>ERROR_INSUFFICIENT_BUFFER</c>, which is success for that call.
     /// </remarks>
     /// <summary>
-    /// Builds the child's environment block: this process's, plus <paramref name="extra"/>.
+    /// Builds the child's environment block: this process's, minus Windows Terminal's own
+    /// variables, plus <paramref name="extra"/>.
     /// </summary>
     /// <remarks>
     /// <para>Sorted case-insensitively by name, which is the documented block convention, and
-    /// terminated by a second null. Returns null when there is nothing extra to add, so the child
-    /// inherits exactly as before and the common path is untouched.</para>
+    /// terminated by a second null. Returns null when there is nothing extra to add AND nothing to
+    /// strip, so that child inherits exactly as before and the common path is untouched.</para>
+    ///
+    /// <para><b><c>WT_*</c> never reaches a child (INV-0010, slice 0 — measured, not reasoned).</b>
+    /// A process started from a Windows Terminal tab inherits <c>WT_SESSION</c>, <c>WT_PROFILE_ID</c>
+    /// (and <c>WT_COM_CLSID</c>); a ConPTY session whose parent carries them is treated by Windows
+    /// Terminal's agent host (<c>wta.exe → copilot.exe --acp --stdio</c>) as one of its own, and it
+    /// attaches an agent session per shell — one <c>node higgsfield-mcp</c> + one console host,
+    /// kept for Windows Terminal's lifetime. Four product-shaped sessions with the variables: four
+    /// births in 40 s; the same four without: zero (2026-09-12, this repository's fifth straggler
+    /// report — 111 → 291 such processes in a day, all counted as someone else's). A ConPTY child
+    /// of ours is not a Windows Terminal tab, and this is the one place every such child is
+    /// started, so the variables leave here. Everything else passes through (INV-0001).</para>
     ///
     /// <para><b>There is deliberately no total-size guard here, and the reason is measured.</b> An
     /// earlier version of this method refused past 32,647 characters, from a bisection that had
@@ -219,18 +231,21 @@ internal static partial class ConPtyInterop
     /// </remarks>
     internal static char[]? BuildEnvironmentBlock(IReadOnlyDictionary<string, string>? extra)
     {
-        if (extra is null || extra.Count == 0) { return null; }
-
         var merged = new SortedDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var stripped = false;
         foreach (System.Collections.DictionaryEntry e in Environment.GetEnvironmentVariables())
         {
             var name = e.Key?.ToString();
-            if (!string.IsNullOrEmpty(name)) { merged[name] = e.Value?.ToString() ?? string.Empty; }
+            if (string.IsNullOrEmpty(name)) { continue; }
+            if (IsWindowsTerminalVariable(name)) { stripped = true; continue; }
+            merged[name] = e.Value?.ToString() ?? string.Empty;
         }
 
-        foreach (var (name, value) in extra)
+        if ((extra is null || extra.Count == 0) && !stripped) { return null; }
+
+        foreach (var (name, value) in extra ?? new Dictionary<string, string>())
         {
-            if (!string.IsNullOrEmpty(name)) { merged[name] = value ?? string.Empty; }
+            if (!string.IsNullOrEmpty(name) && !IsWindowsTerminalVariable(name)) { merged[name] = value ?? string.Empty; }
         }
 
         var builder = new System.Text.StringBuilder();
@@ -245,6 +260,10 @@ internal static partial class ConPtyInterop
         builder.CopyTo(0, block, 0, builder.Length);
         return block;
     }
+
+    /// <summary>Windows Terminal's per-tab variables: <c>WT_SESSION</c>, <c>WT_PROFILE_ID</c>, <c>WT_COM_CLSID</c>, and any other <c>WT_</c> prefix.</summary>
+    internal static bool IsWindowsTerminalVariable(string name) =>
+        name.StartsWith("WT_", StringComparison.OrdinalIgnoreCase);
 
     internal static ProcessInformation StartAttachedProcess(
         IntPtr console, string commandLine, string? workingDirectory,

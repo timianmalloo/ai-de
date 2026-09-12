@@ -51,6 +51,63 @@ public sealed class TerminalHostingLedgerTests
     }
 
     /// <summary>
+    /// The other half of the pair (INV-0010): a session that ends is a completion, so
+    /// <i>starts − completions</i> is the number of hosts still held — and it can be shown going
+    /// 1 → 0 on the two end paths the runtime has.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Why a counter and not a process list.</b> The census reads a host under a live App
+    /// as <c>ours-live</c> whether the pane is working or ended (DC-154); the log carried 4,115
+    /// starts and no ends. A ledger that counts both makes "still hosted" a subtraction a gate can
+    /// read, from the product's own emissions.</para>
+    /// <para><b>Exactly one completion per session.</b> A session whose child exits is then
+    /// disposed — the App's tab-close path — and must complete <i>once</i>, or the subtraction
+    /// undercounts what is held.</para>
+    /// </remarks>
+    [Fact]
+    public async Task ALedgerCountsOneCompletionPerSession_OnDisposeAndOnChildExit()
+    {
+        using var ledger = TerminalHostingLedger.Open();
+        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+
+        var disposed = await ConPtyTerminalSession.StartAsync(
+            new TerminalSessionRequest(
+                SessionId: "ledger-completion-disposed",
+                Generation: 1,
+                CommandLine: "cmd.exe",
+                WorkingDirectory: Path.GetTempPath(),
+                Columns: 80,
+                Rows: 25,
+                ProcessingClass: SessionProcessingClass.LocalOnly),
+            deadline.Token);
+        await disposed.DisposeAsync();
+
+        Assert.Equal(1, ledger.Constructions);
+        Assert.Equal(1, ledger.Completions);
+
+        var exited = await ConPtyTerminalSession.StartAsync(
+            new TerminalSessionRequest(
+                SessionId: "ledger-completion-exited",
+                Generation: 1,
+                CommandLine: "cmd.exe /c exit 0",
+                WorkingDirectory: Path.GetTempPath(),
+                Columns: 80,
+                Rows: 25,
+                ProcessingClass: SessionProcessingClass.LocalOnly),
+            deadline.Token);
+        await using (exited)
+        {
+            await exited.WaitForExitAsync(deadline.Token);
+            Assert.Equal(2, ledger.Completions);
+        }
+
+        // Disposing the exited session is the App's tab-close after an `exit`: no second completion.
+        Assert.Equal(2, ledger.Constructions);
+        Assert.Equal(2, ledger.Completions);
+        Assert.Equal(0, ledger.Constructions - ledger.Completions);
+    }
+
+    /// <summary>
     /// A closed ledger stops counting, so "none happened while this ran" is bounded to the run.
     /// </summary>
     /// <remarks>

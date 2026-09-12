@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T14:15:05Z",
+  "generated": "2026-09-12T14:56:47Z",
   "audit": [
     {
       "actor": null,
@@ -13527,6 +13527,59 @@ window.AUDIT_DATA = {
         "sha": "8d54aadc0016c343f08f752d6d9927059c8e0718",
         "short": "8d54aadc0",
         "branch": "investigate/terminal-hosts-5",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2B1XF068Q7KXJ553TC67Q5H",
+      "shortname": "implement-inv-0010-slices-1-4",
+      "datetime": "2026-09-12T14:56:31Z",
+      "session": "hosts-fix",
+      "prompt": "/implement INV-0010 slices 1-4: terminal.stop on every end-of-life path and the ledger's completions; the census attributes an orphaned product host (ours-orphaned) and prints an action line for the largest foreign root; the pty and job close when a pane's shell exits; the exit paths as a slow-ring CI gate. (Dispatched by the conductor, session conductor-addendum-c; the operator approved slices 1-4; slice 5 is theirs. Worktree C:\\Projects\\ai-de-fix-terminal-hosts-5, branch fix/terminal-hosts-5.)",
+      "summary": "INV-0010 slices 1-4 shipped on fix/terminal-hosts-5, every red observed before green. (1) terminal.stop: a runtime activity in ConPtyTerminalSession.Complete (once per session, both end paths; the start-failed catch closes its own pair) tagged session.id/generation/killed/exit_code/end_reason/duration_ms; TerminalHostingLedger.Completions so starts - stops is the number of held hosts; WorkbenchDiagnostics.TerminalStop written by TerminalSurface on child exit (with the code), at the top of Dispose (killed | disposed) and by WorkbenchShell.Dispose for every live pane (owner-closing) - one line per surface, paired with terminal.start by surface id; App tests get a no-op sink default so fixtures stop writing into the operator's log. (2) reap-stragglers.py: ours-orphaned by the runtime's signature (--headless host beside a shell whose -EncodedCommand decodes to $global:__AideNonce, same dead parent, +-2 s); Windows Terminal and Ollama foreign by executable path (one hop, after the worktree rule); a build server's console filed with it; assert_clean reads ours-orphaned; the report ends with an ACTION line for the largest foreign root (live: 291 under wta.exe -> copilot.exe, 145 x node higgsfield-mcp/src/server.js -> ~/.copilot/mcp-config.json); self-test 22/10 -> 43/16, count derived. (3) The held host: WatchForExitAsync -> Complete -> ReleaseHost closes the pty and the job under the state gate; DisposeAsync takes the same handles through the same gate; measured 1 -> 0 at +3 s with the owner alive (was 1 -> 1). (4) tools/verify-terminal-host-exit-paths.py reads the five exit paths by name from the Windows job's .trx (absent is a failure) with a --self-test; one step appended at the end of build.yml's build job. Register: DC-154 controlled, DC-155 controlled, DC-131 recurrence 4 noted, DC-156 new (a positive control satisfied by the defect it guards). Gates: build 0/0 with TreatWarningsAsErrors; verify-test-run App 643/639, Core 2263/2256; every verify-*.py green (stranded-audit reports the conductor's tree, not this one). Proof Pack docs/proof/terminal-hosts-fifth.md.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Terminal/ConPtyTerminalSession.cs",
+        "src/AiDe.Core/AgentPlane/TerminalHostingLedger.cs",
+        "src/AiDe.App/Workbench/WorkbenchDiagnostics.cs",
+        "src/AiDe.App/Workbench/TerminalSurface.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "tools/reap-stragglers.py",
+        "tools/verify-terminal-host-exit-paths.py",
+        ".github/workflows/build.yml",
+        "docs/proof/terminal-hosts-fifth.md",
+        "docs/lessons/defect-classes.md",
+        "tests/AiDe.Core.TerminalHost/Program.cs",
+        "tests/AiDe.App.Tests/TerminalSurfaceStopLineTests.cs",
+        "tests/AiDe.Core.Tests/AgentPlane/TerminalHostingLedgerTests.cs",
+        "tests/AiDe.App.Tests/AssemblyInfo.cs"
+      ],
+      "tags": [
+        "inv-0010",
+        "terminal",
+        "dc-154",
+        "dc-155",
+        "dc-156"
+      ],
+      "outcome": "success",
+      "goal": "INV-0010 slices 1-4 implemented on fix/terminal-hosts-5 and pushed: terminal.stop + ledger completions, ours-orphaned + the action line, the held host released with its child, the exit paths as a CI gate",
+      "done_when": "the INV's reds are green without weakening (stop events x2, stop line, in-life child-exit 1->0, self-test rows 5d/5e); the four prior exit paths stay green; build 0 warnings; both full suites through verify-test-run; every verify-*.py green; DC-154/DC-155 controlled; Proof Pack committed; branch pushed, main untouched",
+      "tier": "T1",
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-12T14:22:17Z",
+      "duration_seconds": 2054.0,
+      "git": {
+        "sha": "0ed1fa401947fe6528c2f8ad133f2baadcb20710",
+        "short": "0ed1fa401",
+        "branch": "fix/terminal-hosts-5",
         "pushed": null
       }
     }

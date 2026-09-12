@@ -12,10 +12,11 @@ namespace AiDe.Core.Tests;
 /// <para><b>The two paths the exit-path facts cannot see.</b> Closing a terminal TAB disposes its
 /// session while the App keeps running (<c>WorkbenchAdapter.Render</c> →
 /// <c>TerminalSurface.Dispose</c> → <c>DisposeAsync</c>, fire-and-forget). Typing <c>exit</c> ends
-/// the shell while the pane keeps running: <c>WatchForExitAsync</c> completes the session and
-/// closes nothing — not the pseudo console, not the job — so whatever the host does next, it does
-/// on its own. An operator with the App open all day accumulates whichever of these keeps its
-/// host, and sees it under <c>AiDe.App.exe</c> in Task Manager until the App closes.</para>
+/// the shell while the pane keeps running: until INV-0010's fix, <c>WatchForExitAsync</c>
+/// completed the session and closed nothing — not the pseudo console, not the job — so the host
+/// lived on under the App (measured 1 → 1); it now releases both with the child (1 → 0). An
+/// operator with the App open all day would otherwise accumulate one host per ended pane, under
+/// <c>AiDe.App.exe</c> in Task Manager until the App closed.</para>
 ///
 /// <para>Same discipline as <see cref="TerminalHostExitPathTests"/>: the key is shown to see ≥ 1
 /// host, then the count is taken three seconds after the state is reached, with the owner alive.
@@ -52,14 +53,19 @@ public sealed class TerminalHostInLifePathTests(ITestOutputHelper output)
             var ownerPid = await ReadMarkerAsync(report, "pid=", TimeSpan.FromSeconds(20));
             var pid = int.Parse(ownerPid);
 
-            // The dispose path holds the session two seconds first; the child-exit path's child is
-            // gone almost at once, so the host is caught while the session is still starting.
+            // The dispose path holds the session two seconds first; the child-exit path's child
+            // lives seven seconds (DC-156: a child gone in 50 ms is gone before one CIM read).
             var live = await ConsoleHostCensus.WaitForHeadlessHostAsync(pid, TimeSpan.FromSeconds(5));
             liveCount = live.HeadlessHostsOwnedBy(pid).Count;
             output.WriteLine($"[{mode}] owner {pid} live; headless hosts it owns: {liveCount} {ConsoleHostCensus.Describe(live.HeadlessHostsOwnedBy(pid))}");
 
             var reached = await ReadMarkerAsync(report, stateMarker, TimeSpan.FromSeconds(30));
             output.WriteLine($"[{mode}] state reached: {stateMarker}{reached}");
+            if (mode == "child-exit-then-hold")
+            {
+                // The child's OWN exit, not a kill: the helper's child ends with `exit 3`.
+                Assert.Contains("code=3", reached);
+            }
 
             await Task.Delay(SettleAfterState);
             var after = ConsoleHostCensus.Take();

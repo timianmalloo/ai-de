@@ -1967,7 +1967,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 337 members, 71% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 338 members, 71% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1980,7 +1980,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8625acb118bdaf11948c57f320812f9905513515c8f0891fd8088f84ef30ba59"
+      "sourceSha256": "8057d1cbb6b76c074c4c2f5ede51d223344a086dbbc54f98d38d2271bcb91263"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -2067,7 +2067,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 57 types, 140 members, 90% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 57 types, 142 members, 90% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2080,7 +2080,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9e5b8169973ff68c892d566aede6b2bd7b8e99654efc8a7739b87c185989413d"
+      "sourceSha256": "c8b076d0833ebdbf5450cb16fddb83dbc86d79b7e6b51ad066fa14a6bd974c6e"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -7570,7 +7570,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "92b5104a7f9bb192c894b630d77ac794447535a889a0c42ac6dd43ea095a3a31"
+      "sourceSha256": "044e9b9ca965438e730127a554243662d26f004b5e651d9fa590089491a9cb18"
     },
     {
       "id": "design-session-profiler",
@@ -14475,6 +14475,54 @@ window.DOCS_INDEX = {
       "sourceSha256": "73d32a73a5484953d8ff84c5c83b4b246ba24c2276512cad029ec55b1ce49e0c"
     },
     {
+      "id": "proof-terminal-hosts-fifth",
+      "path": "docs/proof/terminal-hosts-fifth.md",
+      "title": "Proof Pack - Terminal hosts, the fifth report: INV-0010 slices 1-4",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-addendum-c",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Evidence for INV-0010's four repair slices: `terminal.stop` on every end-of-life path (runtime activity + workbench line, paired by id with `terminal.start`) and the ledger's completions so `starts − stops` is the number of held hosts; the census attributes an orphaned product host (`ours-orphaned`, by the runtime's own signature), files Windows Terminal and Ollama by executable path, and ends with an ACTION line for the largest foreign root (DC-155); the pty and the job are released when a pane's shell exits (DC-154, measured 1 → 0 with the owner alive); and the five exit paths are read by name in the Windows CI job by a gate with its own self-test. Every red was observed on the un-fixed code before it went green.",
+      "tags": [
+        "terminal",
+        "conpty",
+        "conhost",
+        "straggler",
+        "census",
+        "reap-stragglers",
+        "terminal-stop",
+        "ledger",
+        "dc-131",
+        "dc-154",
+        "dc-155",
+        "dc-156",
+        "proof-pack",
+        "inv-0010"
+      ],
+      "links": [
+        {
+          "to": "inv-0010-terminal-hosts-the-fifth-report",
+          "rel": "tested-by"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0005-terminal-runtime-boundary",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0006-terminal-delivery-semantics",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fa073be02615efb448f9dfc06f51ba975d64dac611d215f5daf1cc4c7e7a3d14"
+    },
+    {
       "id": "proof-watcher-advisory-evaluator",
       "path": "docs/proof/watcher-advisory-evaluator.md",
       "title": "Proof Pack - Loomkeeper Local Advisory Evaluator & Egress Guard (connective 3)",
@@ -16391,5 +16439,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ecb6fe2d571a90480f83c9785771f35b2ab77fcc8acbc31346433e9df7b91dcb"
+  "graphSha256": "d36759fa612f900df0967e3c9f770ff2a9e85f0d5abb08a014ad9c5c82bb2185"
 };

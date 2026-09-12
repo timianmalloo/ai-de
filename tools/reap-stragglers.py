@@ -34,6 +34,28 @@ SO THE ANSWER HAS FOUR PARTS AND ONLY ONE OF THEM IS A BUG. A tool that reports 
 count without the attribution column reproduces the exact failure that caused four
 reports.
 
+THE FIFTH REPORT (INV-0010, 2026-09-12) found the column right and the close wrong, three
+ways, each now a rule here:
+
+  * A product host whose OWNER IS DEAD hid in `unknown`: a `conhost.exe --headless` has one
+    hop of ancestry, no path and no name. It is named by the RUNTIME'S OWN SIGNATURE
+    (`ours-orphaned`): the headless host beside a shell carrying our integration script,
+    same dead parent, created within two seconds of each other.
+  * Windows Terminal's own seven processes and Ollama's launcher inflated `unknown` by nine:
+    FOREIGN_ROOTS carried the right tokens and was matched against NAMES, while the tokens
+    live in the EXECUTABLE PATH (`Microsoft.IntelligentTerminal_.../OpenConsole.exe`) or in
+    the program a `cmd.exe /C` wrapper runs. A process's own executable path -- and its
+    direct parent's -- is a structural fact; the whole chain's argv is still a rumour.
+  * The largest class was `foreign` twice running and the close said "reported only"; the
+    pool regrew and the operator reported it a fifth time (DC-155). The report now ends
+    with the ONE ACTION that shrinks the largest foreign root, and asks for the re-count.
+    And the pool was OURS BY CAUSE, foreign only by parent: a ConPTY shell of ours that
+    inherited WT_SESSION from the Windows Terminal tab this harness runs in is treated by
+    Windows Terminal's agent host as one of its tabs, which attaches an agent session (its
+    MCP servers) per shell. Measured 4/4 -> 0/4 with WT_* stripped (INV-0010 slice 0). So
+    ancestry is not attribution: the report also states how many of the pool were born
+    beside one of our own terminal.start lines, and says "not recorded" when it cannot.
+
 DESIGN RULES, each of them a scar:
 
   * DRY-RUN BY DEFAULT. `--reap` is opt-in. Nothing is ended without it.
@@ -60,6 +82,8 @@ MODES
                  documented shutdown clears it. ~30s. The falsifier must fire.
 """
 import argparse
+import base64
+import binascii
 import json
 import os
 import pathlib
@@ -67,6 +91,7 @@ import re
 import subprocess
 import sys
 import time
+from datetime import datetime
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
@@ -125,6 +150,25 @@ FOREIGN_ROOTS = re.compile(
     r"ArmouryCrate|PresentMon|LM Studio|nvcontainer|NVIDIA|msedge\.exe|"
     r"M365Copilot|SearchHost", re.I)
 
+# The ConPTY host's shape. `CreatePseudoConsole` starts `conhost.exe --headless --width W
+# --height H --signal 0x.. --server 0x..`; a console attached to an ordinary process is
+# `conhost.exe 0x4`. Windows Terminal's `OpenConsole.exe --headless` carries the flag too,
+# which is why the flag alone never attributes anything.
+HEADLESS_HOST = re.compile(r"conhost\.exe.*--headless", re.I)
+# Our shell integration travels as `-EncodedCommand <base64 of UTF-16LE script>` and the
+# script sets `$global:__AideNonce` (ShellIntegration.cs). Decoded, never substring-matched
+# on the base64: the marker is in the script, and the script is what the shell runs.
+ENCODED_COMMAND = re.compile(r"-EncodedCommand\s+([A-Za-z0-9+/=]+)", re.I)
+INTEGRATION_MARKER = "$global:__AideNonce"
+SHELL_NAMES = {"powershell.exe", "pwsh.exe"}
+# A host and its shell are created by one StartAsync, back to back. Two seconds is an order
+# of magnitude above the measured gap (0.2 s, INV-0010 13:39:05.7 -> 13:39:05.9) and an order
+# below the interval at which panes are opened by hand.
+SIBLING_WINDOW_SECONDS = 2.0
+# A `cmd.exe /C ...` wrapper: the program it runs is the last quoted `.exe` path in its argv.
+CMD_WRAPPER = re.compile(r'cmd\.exe"?\s+/[cC]\b')
+QUOTED_EXE = re.compile(r'"([A-Za-z]:\\[^"]*\.exe)"', re.I)
+
 
 def snapshot():
     """Every process: pid, ppid, name, start time, command line. Windows only."""
@@ -163,13 +207,114 @@ def ancestry(procs, pid, limit=40):
     """Walk to the ROOT. Stops at a dead parent or pid 0, never at one level (DC-131)."""
     chain = []
     seen = set()
+    reused = False
     cur = pid
     while cur and cur in procs and cur not in seen and len(chain) < limit:
         seen.add(cur)
         chain.append(procs[cur])
+        parent = procs.get(procs[cur]["ppid"])
+        # PID REUSE: a parent created AFTER its child is not its parent -- the owner died and
+        # the id was handed to something else. The walk stops here, which is what makes the
+        # orphaned-session signature (one hop, dead parent) reachable at all.
+        if parent is not None:
+            child_at, parent_at = created_at(procs[cur]), created_at(parent)
+            if child_at is not None and parent_at is not None and parent_at > child_at:
+                reused = True
+                break
         cur = procs[cur]["ppid"]
-    orphaned = bool(chain) and chain[-1]["ppid"] != 0 and chain[-1]["ppid"] not in procs
+    orphaned = bool(chain) and chain[-1]["ppid"] != 0 and (chain[-1]["ppid"] not in procs or reused)
     return chain, orphaned
+
+
+def created_at(proc):
+    """The creation time as a datetime, or None when the row carries none. Never guessed."""
+    text = (proc.get("created") or "").strip()
+    if not text:
+        return None
+    # Win32_Process gives seven fractional digits; trim to the six datetime accepts everywhere.
+    text = re.sub(r"(\.\d{6})\d+", r"\1", text)
+    try:
+        return datetime.fromisoformat(text)
+    except ValueError:
+        return None
+
+
+def carries_integration_script(proc):
+    """True when this process's -EncodedCommand decodes to our shell integration."""
+    if proc["name"].lower() not in SHELL_NAMES:
+        return False
+    m = ENCODED_COMMAND.search(proc["cmd"])
+    if not m:
+        return False
+    try:
+        script = base64.b64decode(m.group(1), validate=False).decode("utf-16-le", errors="ignore")
+    except (ValueError, binascii.Error):
+        return False
+    return INTEGRATION_MARKER in script
+
+
+def is_headless_host(proc):
+    """A ConPTY host by shape. Whether its owner is dead is the caller's question (ancestry)."""
+    return proc["name"].lower() == "conhost.exe" and bool(HEADLESS_HOST.search(proc["cmd"]))
+
+
+def orphaned_session_sibling(procs, proc):
+    """For an orphaned headless host: our orphaned shell beside it, or None.
+
+    Same dead parent, our integration script, created within SIBLING_WINDOW_SECONDS. All
+    three, or nothing: a lone orphaned `--headless` host with no sibling stays `unknown`.
+    """
+    when = created_at(proc)
+    if when is None:
+        return None
+    for other in procs.values():
+        if other["pid"] == proc["pid"] or other["ppid"] != proc["ppid"]:
+            continue
+        if not carries_integration_script(other):
+            continue
+        other_when = created_at(other)
+        if other_when is None:
+            continue
+        if abs((other_when - when).total_seconds()) <= SIBLING_WINDOW_SECONDS:
+            return other
+    return None
+
+
+def executable_paths(proc):
+    """The paths this process RUNS: its own image, and for a `cmd.exe /C` wrapper the program
+    it launches (the last quoted .exe path in its argv). Structural, unlike the argv blob."""
+    cmd = proc["cmd"]
+    paths = []
+    m = QUOTED_EXE.match(cmd)
+    if m:
+        paths.append(m.group(1))
+    elif cmd:
+        paths.append(cmd.split(" ", 1)[0])
+    if CMD_WRAPPER.search(cmd):
+        quoted = QUOTED_EXE.findall(cmd)
+        if len(quoted) > 1:
+            paths.append(quoted[-1])
+    return paths
+
+
+def foreign_by_path(procs, proc):
+    """A FOREIGN_ROOTS token in the executable path of this process or of its DIRECT parent.
+
+    Not the whole chain: everything the operator runs interactively descends from Windows
+    Terminal, and a chain-wide path match would file this repository's own test runs as
+    Windows Terminal's. One hop names a tab (OpenConsole, the tab's shell) and a wrapper's
+    console host, and nothing further down.
+    """
+    candidates = [proc]
+    parent = procs.get(proc["ppid"])
+    if parent is not None:
+        candidates.append(parent)
+    for p in candidates:
+        for path in executable_paths(p):
+            hit = FOREIGN_ROOTS.search(path)
+            if hit:
+                return "%s (%s)" % (p["name"], hit.group(0))
+    return None
 
 
 def repo_paths():
@@ -193,6 +338,26 @@ def classify(procs, proc, paths):
     if name in BUILD_SERVER_NAMES or (name == "dotnet.exe" and BUILD_SERVER_CMD.search(proc["cmd"])):
         state = "orphaned" if orphaned else "parented"
         return BUILD_SERVER, ".NET build server, %s, retired by `dotnet build-server shutdown`" % state
+    # A build server's own console host goes with its server: it ends when the server is
+    # retired, and filing it `unknown` while the server is `build-server` splits one thing
+    # across two rows (INV-0010).
+    if name == "conhost.exe" and len(chain) > 1 and (
+            chain[1]["name"].lower() in BUILD_SERVER_NAMES
+            or (chain[1]["name"].lower() == "dotnet.exe" and BUILD_SERVER_CMD.search(chain[1]["cmd"]))):
+        return BUILD_SERVER, "console host of a .NET build server, retired with it"
+    # OURS BY SIGNATURE, WHEN ANCESTRY HAS NOTHING TO SAY (INV-0010). The owner is dead, so
+    # the chain is one hop and carries no path and no name. A `--headless` host beside our
+    # shell -- same dead parent, our integration script in its -EncodedCommand, created
+    # within two seconds -- is a session of ours whose owner died. Both rows are ours.
+    if orphaned and len(chain) == 1:
+        if carries_integration_script(proc):
+            return OURS_ORPHANED, ("our terminal runtime's shell (integration script in "
+                                   "-EncodedCommand), owner pid %d dead" % proc["ppid"])
+        if is_headless_host(proc):
+            sibling = orphaned_session_sibling(procs, proc)
+            if sibling is not None:
+                return OURS_ORPHANED, ("ConPTY host beside our orphaned shell pid %d, owner pid %d dead"
+                                       % (sibling["pid"], proc["ppid"]))
     # MATCHED AGAINST ANCESTOR PROCESS NAMES ONLY, NEVER THE COMMAND-LINE BLOB.
     #
     # The first cut of this searched the concatenated command lines of the whole chain,
@@ -222,6 +387,11 @@ def classify(procs, proc, paths):
             return ((OURS_STRAGGLER if orphaned else OURS_LIVE),
                     "worktree %s, %s" % (hit, "ORPHANED" if orphaned else "live run"))
         return OURS_LIVE, "worktree %s" % hit
+    # AFTER the worktree-path rule, so a run of ours launched from a Windows Terminal tab is
+    # still ours; the tab itself, its OpenConsole, and a wrapper's console host are not.
+    by_path = foreign_by_path(procs, proc)
+    if by_path:
+        return FOREIGN, "executable path of %s -- another application, reported only" % by_path
     return UNKNOWN, "no worktree path and no known root in its ancestry -- reported, never removed"
 
 
@@ -266,13 +436,13 @@ def headline(items):
     return text
 
 
-def report(rows):
+def report(rows, procs):
     buckets = {}
     for klass, p, why in rows:
         buckets.setdefault(klass, []).append((p, why))
     print("%-16s%7s   %s" % ("CLASS", "COUNT", "WHAT IT IS"))
     print("-" * 96)
-    for klass in (OURS_LIVE, OURS_DETACHED, OURS_STRAGGLER, BUILD_SERVER, FOREIGN, UNKNOWN):
+    for klass in (OURS_LIVE, OURS_DETACHED, OURS_STRAGGLER, OURS_ORPHANED, BUILD_SERVER, FOREIGN, UNKNOWN):
         items = buckets.get(klass, [])
         if not items:
             continue
@@ -284,13 +454,164 @@ def report(rows):
             print("%-16s%7d     %s" % ("", len(ps), name))
     print("-" * 96)
     print("%-16s%7d" % ("TOTAL", len(rows)))
+    action = foreign_action(procs, buckets)
+    if action:
+        print("\n" + action)
     return buckets
+
+
+def foreign_root_of(procs, proc):
+    """The TOPMOST ancestor whose name is a foreign root, and the first one met on the way up."""
+    chain, _orphaned = ancestry(procs, proc["pid"])
+    hits = [p for p in chain if FOREIGN_ROOTS.search(p["name"])]
+    if not hits:
+        return None, None
+    return hits[-1], hits[0]
+
+
+# What shrinks a known foreign pool. Keyed on the process the pool hangs from (`via`), because
+# that is the thing whose lifecycle is leaking; the text is the operator's action, not ours.
+KNOWN_ACTIONS = (
+    (re.compile(r"copilot\.exe", re.I),
+     "CAUSED BY THIS REPOSITORY, foreign only by parent: a ConPTY shell of ours that inherited "
+     "WT_SESSION/WT_PROFILE_ID from the Windows Terminal tab the harness runs in is treated by "
+     "Windows Terminal's agent host as one of its own tabs, and it attaches an agent session "
+     "(its MCP servers) per shell, kept for Windows Terminal's lifetime (INV-0010 slice 0, "
+     "measured 4/4 -> 0/4). The runtime now strips WT_* from every ConPTY child; the pool that "
+     "exists was born before that and does not shrink on its own. Restart Windows Terminal, then "
+     "re-count with this tool: a birth AFTER the fix is a spawn path that still inherits WT_*."),
+)
+
+# The birth window: a member born this soon after one of our terminal.start lines is counted as
+# correlated. The agent host attached within a second in the measurement; ten is generous.
+BIRTH_WINDOW_SECONDS = 10.0
+
+
+def our_terminal_starts():
+    """UTC timestamps of every `terminal.start` line in today's and yesterday's workbench log,
+    or None when no log can be read -- the correlation then reads "not recorded", never 0."""
+    base = pathlib.Path(os.environ.get("LOCALAPPDATA", "")) / "AiDe" / "logs"
+    if not base.is_dir():
+        return None
+    from datetime import timedelta, timezone
+    now = datetime.now(timezone.utc)
+    starts = []
+    found = False
+    for day in (now, now - timedelta(days=1)):
+        log = base / ("workbench-%s.log" % day.strftime("%Y%m%d"))
+        if not log.is_file():
+            continue
+        found = True
+        for line in log.read_text(encoding="utf-8", errors="replace").splitlines():
+            if '"evt":"terminal.start"' not in line:
+                continue
+            try:
+                ts = json.loads(line).get("ts") or ""
+                starts.append(datetime.fromisoformat(re.sub(r"(\.\d{6})\d+", r"\1", ts)))
+            except (ValueError, TypeError):
+                continue
+    return sorted(starts) if found else None
+
+
+def births_near(members, starts, window=BIRTH_WINDOW_SECONDS):
+    """How many members were born within `window` seconds AFTER one of `starts`.
+
+    The cause-vs-parent rule (DC-155): a process whose parent is another application's and whose
+    birth follows one of OUR terminal starts is ours by cause. Members with no creation time are
+    not counted either way -- an honest denominator is the count of those that have one.
+    """
+    counted = 0
+    dated = 0
+    for p in members:
+        when = created_at(p)
+        if when is None:
+            continue
+        dated += 1
+        for start in starts:
+            gap = (when - start).total_seconds()
+            if 0 <= gap <= window:
+                counted += 1
+                break
+    return counted, dated
+
+
+def leaf_of(proc):
+    """`name <last three path segments of the first argument>` -- the workload a pool member runs."""
+    cmd = proc["cmd"]
+    m = QUOTED_EXE.match(cmd)
+    rest = cmd[m.end():] if m else (cmd.split(" ", 1)[1] if " " in cmd else "")
+    arg = rest.strip().split(" ", 1)[0].strip('"') if rest.strip() else ""
+    parts = re.split(r"[\\/]", arg)
+    label = "/".join(parts[-3:]) if arg else ""
+    return ("%s %s" % (proc["name"], label)).strip()
+
+
+def foreign_action(procs, buckets):
+    """DC-155's control: the one action that shrinks the largest foreign root, or None.
+
+    A census whose largest class is `foreign` and whose close says "reported only" leaves the
+    operator's screen exactly as it was; the same pool was attributed twice and reported a
+    fifth time. The label was right. The close answered the wrong question.
+    """
+    items = buckets.get(FOREIGN, [])
+    if not items:
+        return None
+    groups = {}
+    for p, _why in items:
+        root, via = foreign_root_of(procs, p)
+        if root is None:
+            key = ("path", foreign_by_path(procs, p) or "executable path")
+            groups.setdefault(key, {"root": None, "vias": {}, "members": []})["members"].append(p)
+            continue
+        group = groups.setdefault(("root", root["pid"]), {"root": root, "vias": {}, "members": []})
+        group["members"].append(p)
+        group["vias"][via["pid"]] = via
+        group.setdefault("via_counts", {})[via["pid"]] = group.get("via_counts", {}).get(via["pid"], 0) + 1
+    key, group = max(groups.items(), key=lambda kv: len(kv[1]["members"]))
+    members = group["members"]
+    if group["root"] is None:
+        return ("ACTION: %d under %s: not AiDe's -- another application's own processes; "
+                "reported only." % (len(members), key[1]))
+    root = group["root"]
+    # The process the pool hangs from: the ancestor most of the members share, not whichever
+    # member was enumerated first (a header that names a minority is DC-131 inside the tool).
+    via_pid = max(group["via_counts"].items(), key=lambda kv: kv[1])[0]
+    via = group["vias"][via_pid]
+    # The workload: the most common leaf command among the pool's non-console members.
+    leaves = {}
+    for p in members:
+        if p["name"].lower() == "conhost.exe":
+            continue
+        leaf = leaf_of(p)
+        leaves[leaf] = leaves.get(leaf, 0) + 1
+    workload = ""
+    if leaves:
+        leaf, n = max(leaves.items(), key=lambda kv: kv[1])
+        workload = " (%d x %s)" % (n, leaf[:80])
+    text = ("not AiDe's -- reported only. The action that shrinks it belongs to %s's owner: "
+            "end or restart it, then re-count." % root["name"])
+    for pattern, known in KNOWN_ACTIONS:
+        if pattern.search(via["name"]) or pattern.search(root["name"]):
+            text = known
+            break
+    chain = "%s[%d]" % (root["name"], root["pid"])
+    if via["pid"] != root["pid"]:
+        chain += " -> %s[%d]" % (via["name"], via["pid"])
+    starts = our_terminal_starts()
+    if starts is None:
+        correlation = "birth correlation with our terminal.start lines: not recorded (no workbench log)"
+    else:
+        near, dated = births_near(members, starts)
+        correlation = ("%d of %d dated members born within %ds of one of our %d terminal.start lines "
+                       "(workbench log: the App's sessions; test-run sessions are not in it)"
+                       % (near, dated, BIRTH_WINDOW_SECONDS, len(starts)))
+    return "ACTION: %d under %s%s: %s\n        %s" % (len(members), chain, workload, text, correlation)
 
 
 def reap(procs, buckets):
     busy, who = build_is_busy(procs)
-    servers = buckets.get(BUILD_SERVER, [])
-    stragglers = buckets.get(OURS_STRAGGLER, [])
+    servers = [(p, w) for p, w in buckets.get(BUILD_SERVER, []) if p["name"].lower() != "conhost.exe"]
+    stragglers = buckets.get(OURS_STRAGGLER, []) + buckets.get(OURS_ORPHANED, [])
     if not servers and not stragglers:
         print("\nnothing attributable to retire.")
         return 0
@@ -317,7 +638,7 @@ def assert_clean(procs, paths, since):
         before = json.loads(pathlib.Path(since).read_text(encoding="utf-8"))
     survivors = []
     for klass, p, why in census(procs, paths):
-        if klass not in (OURS_STRAGGLER, BUILD_SERVER):
+        if klass not in (OURS_STRAGGLER, OURS_ORPHANED, BUILD_SERVER):
             continue
         if before.get(str(p["pid"])) == p["created"]:
             continue          # predates the window -- not ours to answer for
@@ -343,16 +664,23 @@ def _table(rows):
 def self_test():
     """Prove BOTH clauses can fail: attribution, and the clean assertion."""
     failures = []
+    checks = [0]
+    tables = [0]
 
     def expect(label, got, want):
+        checks[0] += 1
         if got != want:
             failures.append("%s: got %r, wanted %r" % (label, got, want))
+
+    def table(rows):
+        tables[0] += 1
+        return _table(rows)
 
     wt = str(ROOT).lower()
 
     # 1. ancestry runs to the ROOT, not one level. This is the DC-131 falsifier: the
     #    conhost's direct parent is ALIVE, and the thing above it is dead.
-    procs = _table([
+    procs = table([
         {"pid": 100, "ppid": 999, "name": "VBCSCompiler.exe", "created": "", "cmd": "-pipename:abc"},
         {"pid": 101, "ppid": 100, "name": "conhost.exe", "created": "", "cmd": "conhost 0x4"},
     ])
@@ -365,7 +693,7 @@ def self_test():
     expect("orphaned build server", classify(procs, procs[100], {wt})[0], BUILD_SERVER)
 
     # 3. foreign is foreign, and is never ours even though it is a conhost.
-    procs = _table([
+    procs = table([
         {"pid": 1, "ppid": 0, "name": "copilot.exe", "created": "", "cmd": "copilot.exe --acp --stdio"},
         {"pid": 2, "ppid": 1, "name": "node.exe", "created": "", "cmd": "node higgsfield-mcp/src/server.js"},
         {"pid": 3, "ppid": 2, "name": "conhost.exe", "created": "", "cmd": "conhost 0x4"},
@@ -373,7 +701,7 @@ def self_test():
     expect("copilot pool is foreign", classify(procs, procs[3], {wt})[0], FOREIGN)
 
     # 4. a LIVE run of ours is ours-live, not a straggler. Reaping this breaks a test run.
-    procs = _table([
+    procs = table([
         {"pid": 10, "ppid": 0, "name": "dotnet.exe", "created": "",
          "cmd": "dotnet test %s\\tests\\x.csproj" % wt},
         {"pid": 11, "ppid": 10, "name": "testhost.exe", "created": "",
@@ -391,7 +719,7 @@ def self_test():
     # 5b. THE WTA TRAP. `copilot --acp --stdio` is character-for-character what AI-DE's own
     #     EngineCatalog would run for a native-ACP engine. Attribution must still put it
     #     with Windows Terminal. This assertion is the one that was wrong twice.
-    procs = _table([
+    procs = table([
         {"pid": 60, "ppid": 0, "name": "wta.exe", "created": "",
          "cmd": 'wta.exe --master \\\\.\\pipe\\wta --agent "copilot --acp --stdio" --agent-id copilot'},
         {"pid": 61, "ppid": 60, "name": "copilot.exe", "created": "", "cmd": '"copilot.exe" --acp --stdio'},
@@ -404,7 +732,7 @@ def self_test():
     # 5c. THE DAEMON. Parentless, own console host, nothing waiting on it -- the exact
     #     shape of an orphan, and reaping it drops a live workspace. It must NOT be a
     #     straggler, and --reap must never include it.
-    procs = _table([
+    procs = table([
         {"pid": 70, "ppid": 71, "name": "AiDe.Daemon.exe", "created": "",
          "cmd": "%s\\src\\AiDe.Daemon\\bin\\AiDe.Daemon.exe %s" % (wt, wt)},
         {"pid": 72, "ppid": 70, "name": "conhost.exe", "created": "", "cmd": "conhost 0x4"},
@@ -424,7 +752,7 @@ def self_test():
     #     SIGNATURE is what names it: `conhost.exe --headless` (CreatePseudoConsole's shape, not a
     #     console-attached `0x4`) created within seconds of a sibling shell that carries our
     #     integration script, both recording the same dead parent.
-    procs = _table([
+    procs = table([
         {"pid": 80, "ppid": 500, "name": "conhost.exe", "created": "2026-09-12T13:39:05.7000000+00:00",
          "cmd": r"\??\C:\Windows\system32\conhost.exe --headless --width 120 --height 30 --signal 0x1a4 --server 0x1a0"},
         {"pid": 81, "ppid": 500, "name": "powershell.exe", "created": "2026-09-12T13:39:05.9000000+00:00",
@@ -440,7 +768,7 @@ def self_test():
     # 5e. The negative half, so the rule cannot be satisfied by matching `--headless` alone:
     #     Windows Terminal's OpenConsole is headless too, and a lone orphaned conhost with no
     #     sibling and no signature is NOT ours -- it stays honestly unattributed.
-    procs = _table([
+    procs = table([
         {"pid": 90, "ppid": 91, "name": "WindowsTerminal.exe", "created": "", "cmd": "WindowsTerminal.exe"},
         {"pid": 92, "ppid": 90, "name": "OpenConsole.exe", "created": "",
          "cmd": "OpenConsole.exe --headless --textMeasurement graphemes --width 120 --height 27 --signal 0x8dc --server 0x8d4"},
@@ -452,17 +780,138 @@ def self_test():
     expect("a lone orphaned headless host with no signature stays unknown",
            classify(procs, procs[93], {wt})[0], UNKNOWN)
 
+    # 5f. WINDOWS TERMINAL'S OWN PROCESSES, by executable PATH (INV-0010). The token is in the
+    #     package directory, not the image name, so a name match filed all seven `unknown`. The
+    #     tab shell has no token of its own -- its DIRECT parent does. And a run of OURS launched
+    #     from that tab keeps its worktree attribution: the path rule is one hop, never the chain.
+    pkg = r"C:\Program Files\WindowsApps\Microsoft.IntelligentTerminal_0.2.2395.0_x64__8wekyb3d8bbwe"
+    procs = table([
+        {"pid": 100, "ppid": 0, "name": "explorer.exe", "created": "", "cmd": "explorer.exe"},
+        {"pid": 101, "ppid": 100, "name": "WindowsTerminal.exe", "created": "", "cmd": '"%s\\WindowsTerminal.exe" ' % pkg},
+        {"pid": 102, "ppid": 101, "name": "OpenConsole.exe", "created": "",
+         "cmd": '"%s\\OpenConsole.exe" --headless --textMeasurement graphemes --width 120 --height 27 --signal 0x8dc --server 0x8d4' % pkg},
+        {"pid": 103, "ppid": 101, "name": "powershell.exe", "created": "",
+         "cmd": '"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"'},
+        {"pid": 104, "ppid": 103, "name": "dotnet.exe", "created": "", "cmd": "dotnet test %s\\tests\\x.csproj" % wt},
+        {"pid": 105, "ppid": 104, "name": "conhost.exe", "created": "", "cmd": "conhost --headless"},
+    ])
+    expect("Windows Terminal itself is foreign by path", classify(procs, procs[101], {wt})[0], FOREIGN)
+    expect("its OpenConsole tab host is foreign by path", classify(procs, procs[102], {wt})[0], FOREIGN)
+    expect("its tab shell is foreign by its parent's path", classify(procs, procs[103], {wt})[0], FOREIGN)
+    expect("a run of ours from that tab is still OURS", classify(procs, procs[104], {wt})[0], OURS_LIVE)
+    expect("and its host is ours, not Windows Terminal's", classify(procs, procs[105], {wt})[0], OURS_LIVE)
+    # ONE HOP, pinned: a token-less shell two hops under Windows Terminal (a bash the tab shell
+    # started) is not the tab's -- it stays honestly unknown, which is what keeps this rule from
+    # being the chain-wide match that filed 543 of 547 processes foreign once.
+    procs[106] = {"pid": 106, "ppid": 103, "name": "bash.exe", "created": "", "cmd": '"C:\\Program Files\\Git\\bin\\bash.exe"'}
+    expect("two hops under Windows Terminal is not one hop", classify(procs, procs[106], {wt})[0], UNKNOWN)
+
+    # 5g. OLLAMA'S LAUNCHER: a `cmd.exe /C` wrapper whose program is the quoted path it runs,
+    #     and the wrapper's own console host one hop below. Both foreign; neither `unknown`.
+    procs = table([
+        {"pid": 110, "ppid": 999, "name": "cmd.exe", "created": "",
+         "cmd": '"C:\\Windows\\system32\\cmd.exe" /C set PATH=C:\\Users\\x\\AppData\\Local\\Programs\\Ollama;%PATH% & "C:\\Users\\x\\AppData\\Local\\Programs\\Ollama\\ollama app.exe"'},
+        {"pid": 111, "ppid": 110, "name": "conhost.exe", "created": "", "cmd": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4"},
+    ])
+    expect("Ollama's cmd wrapper is foreign by the program it runs", classify(procs, procs[110], {wt})[0], FOREIGN)
+    expect("and its console host follows it", classify(procs, procs[111], {wt})[0], FOREIGN)
+
+    # 5h. A build server's console host is filed WITH its server, not `unknown`.
+    procs = table([
+        {"pid": 120, "ppid": 999, "name": "VBCSCompiler.exe", "created": "", "cmd": "-pipename:abc"},
+        {"pid": 121, "ppid": 120, "name": "conhost.exe", "created": "", "cmd": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4"},
+    ])
+    expect("the compiler server's console host is build-server", classify(procs, procs[121], {wt})[0], BUILD_SERVER)
+
+    # 5i. assert_clean READS ours-orphaned: an orphaned session of ours fails the gate.
+    procs = table([
+        {"pid": 130, "ppid": 500, "name": "conhost.exe", "created": "2026-09-12T13:39:05.7000000+00:00",
+         "cmd": r"\??\C:\Windows\system32\conhost.exe --headless --width 120 --height 30 --signal 0x1a4 --server 0x1a0"},
+        {"pid": 131, "ppid": 500, "name": "powershell.exe", "created": "2026-09-12T13:39:05.9000000+00:00",
+         "cmd": '"powershell.exe" -NoLogo -NoExit -EncodedCommand IwAgAEEASQAtAEQARQAgAHMAaABlAGwAbAAgAGkAbgB0AGUAZwByAGEAdABpAG8AbgAuAAoAJABnAGwAbwBiAGEAbAA6AF8AXwBBAGkAZABlAE4AbwBuAGMAZQAgAD0AIAAnAGQAZQBhAGQAYgBlAGUAZgBjAGEAZgBlAGYAMAAwAGQAJwAKAA=='},
+    ])
+    expect("assert_clean fires on an orphaned session of ours", assert_clean(procs, {wt}, None), 1)
+    # ... but not when the host and the shell are FOUR seconds apart: two panes, not one session.
+    apart = table([
+        dict(procs[130]),
+        dict(procs[131], created="2026-09-12T13:39:09.9000000+00:00"),
+    ])
+    expect("a host four seconds from the shell is not its sibling",
+           classify(apart, apart[130], {wt})[0], UNKNOWN)
+    expect("the lone shell is still ours by its script", classify(apart, apart[131], {wt})[0], OURS_ORPHANED)
+
+    # 5j. DC-155's CONTROL: the report names the ONE ACTION that shrinks the largest foreign
+    #     root. A close that says "foreign -- reported only" left the same pool for a fifth
+    #     report. Three MCP servers and their hosts under wta -> copilot, one PresentMon: the
+    #     line must name wta, copilot and the config file, and count the pool, not PresentMon.
+    procs = table([
+        {"pid": 60, "ppid": 0, "name": "wta.exe", "created": "",
+         "cmd": 'wta.exe --master \\\\.\\pipe\\wta --agent "copilot --acp --stdio" --agent-id copilot'},
+        {"pid": 61, "ppid": 60, "name": "copilot.exe", "created": "", "cmd": '"copilot.exe" --acp --stdio'},
+        {"pid": 62, "ppid": 61, "name": "node.exe", "created": "", "cmd": "node higgsfield-mcp/src/server.js"},
+        {"pid": 63, "ppid": 62, "name": "conhost.exe", "created": "", "cmd": "conhost 0x4"},
+        {"pid": 64, "ppid": 61, "name": "node.exe", "created": "", "cmd": "node higgsfield-mcp/src/server.js"},
+        {"pid": 65, "ppid": 64, "name": "conhost.exe", "created": "", "cmd": "conhost 0x4"},
+        {"pid": 66, "ppid": 61, "name": "node.exe", "created": "", "cmd": "node higgsfield-mcp/src/server.js"},
+        {"pid": 67, "ppid": 66, "name": "conhost.exe", "created": "", "cmd": "conhost 0x4"},
+        {"pid": 70, "ppid": 0, "name": "PresentMonService.exe", "created": "", "cmd": "PresentMonService.exe"},
+        {"pid": 71, "ppid": 70, "name": "conhost.exe", "created": "", "cmd": "conhost 0x4"},
+    ])
+    buckets = {}
+    for klass, p, why in census(procs, {wt}):
+        buckets.setdefault(klass, []).append((p, why))
+    action = foreign_action(procs, buckets) or ""
+    expect("the report carries an action line", action.startswith("ACTION: "), True)
+    expect("it counts the largest root's pool, not PresentMon's", action.startswith("ACTION: 6 under wta.exe[60]"), True)
+    expect("it names the process the pool hangs from", "copilot.exe[61]" in action, True)
+    expect("it names the workload", "higgsfield-mcp" in action, True)
+    expect("it names the cause: our shells, not the operator's config",
+           "CAUSED BY THIS REPOSITORY" in action and "WT_SESSION" in action, True)
+    expect("it does not send the operator to their MCP config", "mcp-config.json" in action, False)
+    expect("it carries the birth correlation or says not recorded",
+           "born within" in action or "not recorded" in action, True)
+    expect("no foreign rows, no action line", foreign_action(procs, {}), None)
+
+    # 5k. THE CAUSE-VS-PARENT RULE (DC-155): births beside our terminal.start lines are counted,
+    #     births elsewhere are not, and a member with no creation time is left out of both.
+    from datetime import timedelta, timezone
+    t0 = datetime(2026, 9, 12, 13, 39, 5, tzinfo=timezone.utc)
+    pool = [
+        {"pid": 1, "ppid": 0, "name": "node.exe", "created": (t0 + timedelta(seconds=1)).isoformat(), "cmd": ""},
+        {"pid": 2, "ppid": 0, "name": "node.exe", "created": (t0 + timedelta(seconds=9)).isoformat(), "cmd": ""},
+        {"pid": 3, "ppid": 0, "name": "node.exe", "created": (t0 + timedelta(seconds=60)).isoformat(), "cmd": ""},
+        {"pid": 4, "ppid": 0, "name": "node.exe", "created": (t0 - timedelta(seconds=5)).isoformat(), "cmd": ""},
+        {"pid": 5, "ppid": 0, "name": "node.exe", "created": "", "cmd": ""},
+    ]
+    expect("two of four dated births follow the start", births_near(pool, [t0]), (2, 4))
+    expect("no starts, no correlation", births_near(pool, []), (0, 4))
+
+    # 5l. PID REUSE: the dead owner's id was handed to a process created AFTER our shell. The
+    #     walk must not adopt the impostor as the parent, or the signature rule never fires and
+    #     the orphan hides under whatever the impostor's chain says.
+    procs = table([
+        {"pid": 500, "ppid": 0, "name": "explorer.exe", "created": "2026-09-12T14:00:00.0000000+00:00", "cmd": "explorer.exe"},
+        {"pid": 130, "ppid": 500, "name": "conhost.exe", "created": "2026-09-12T13:39:05.7000000+00:00",
+         "cmd": r"\??\C:\Windows\system32\conhost.exe --headless --width 120 --height 30 --signal 0x1a4 --server 0x1a0"},
+        {"pid": 131, "ppid": 500, "name": "powershell.exe", "created": "2026-09-12T13:39:05.9000000+00:00",
+         "cmd": '"powershell.exe" -NoLogo -NoExit -EncodedCommand IwAgAEEASQAtAEQARQAgAHMAaABlAGwAbAAgAGkAbgB0AGUAZwByAGEAdABpAG8AbgAuAAoAJABnAGwAbwBiAGEAbAA6AF8AXwBBAGkAZABlAE4AbwBuAGMAZQAgAD0AIAAnAGQAZQBhAGQAYgBlAGUAZgBjAGEAZgBlAGYAMAAwAGQAJwAKAA=='},
+    ])
+    _chain, reused = ancestry(procs, 130)
+    expect("a parent born after its child ends the walk", len(_chain), 1)
+    expect("and the shell is still ours-orphaned under a reused pid", classify(procs, procs[131], {wt})[0], OURS_ORPHANED)
+    expect("and so is its host", classify(procs, procs[130], {wt})[0], OURS_ORPHANED)
+
     # 6. unattributable stays unattributable -- it must NOT be swept into 'ours'.
-    procs = _table([{"pid": 20, "ppid": 0, "name": "conhost.exe", "created": "", "cmd": "conhost 0x4"}])
+    procs = table([{"pid": 20, "ppid": 0, "name": "conhost.exe", "created": "", "cmd": "conhost 0x4"}])
     expect("unknown stays unknown", classify(procs, procs[20], {wt})[0], UNKNOWN)
 
     # 7. assert_clean FAILS on a straggler and PASSES when the window is clean -- both
     #    directions, because a check that only ever passes proves nothing (DC-104).
-    dirty = _table([
+    dirty = table([
         {"pid": 40, "ppid": 41, "name": "VBCSCompiler.exe", "created": "T1", "cmd": "-pipename:z"},
     ])
     expect("assert_clean fires on a straggler", assert_clean(dirty, {wt}, None), 1)
-    clean = _table([
+    clean = table([
         {"pid": 50, "ppid": 0, "name": "conhost.exe", "created": "T1", "cmd": "conhost 0x4"},
     ])
     expect("assert_clean passes when clean", assert_clean(clean, {wt}, None), 0)
@@ -489,13 +938,16 @@ def self_test():
         for f in failures:
             print("  " + f)
         return 1
-    print("\nself-test: 22 assertions over 10 synthetic process tables, all passing.")
+    print("\nself-test: %d assertions over %d synthetic process tables, all passing." % (checks[0], tables[0]))
     print("  The DC-131 falsifier: a conhost whose DIRECT PARENT IS ALIVE and whose")
     print("    grandparent is dead. A one-level orphan check scores that clean.")
     print("  The wta trap: `copilot --acp --stdio` is byte-identical to what our own")
     print("    EngineCatalog would run, and must still attribute to Windows Terminal.")
     print("  The daemon: parentless by design, and reaping it drops a live workspace.")
     print("  assert_clean in BOTH directions, plus the pre-existing-process exclusion.")
+    print("  INV-0010: an orphaned session of ours is named by the runtime's signature; Windows")
+    print("    Terminal and Ollama are foreign by executable path; the largest foreign root")
+    print("    gets an ACTION line, not a label (DC-155).")
     return 0
 
 
@@ -593,7 +1045,7 @@ def main():
     if args.assert_clean:
         return assert_clean(procs, paths, args.since)
 
-    buckets = report(census(procs, paths))
+    buckets = report(census(procs, paths), procs)
     if not args.reap:
         print("\nDRY RUN. Nothing was ended. Re-run with --reap to act.")
         print("`foreign` and `unknown` are NEVER reaped, at any flag -- reported only.")

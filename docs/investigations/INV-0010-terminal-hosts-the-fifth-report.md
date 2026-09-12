@@ -30,7 +30,10 @@ summary: >-
   and closes nothing) — one client-less host per ended pane, invisible to a census that labels
   everything under a live App `ours-live`. Two instrumentation gaps pinned red: no `terminal.stop`
   activity or log line exists, and the census cannot name a dead-parent host from our runtime.
-  Red tests and self-test rows committed; no fix made.
+  Red tests and self-test rows committed; no fix made. CORRECTED the same day (slice 0): the
+  223 are ours by cause and foreign only by parent — a ConPTY shell of ours inheriting
+  WT_SESSION from the Windows Terminal tab the harness runs in makes Windows Terminal's agent
+  host attach an agent session (its MCP servers) to it; measured 4/4 → 0/4 with WT_* stripped.
 ---
 
 # INV-0010 — Terminal hosts are still not cleaned up: the fifth report
@@ -66,6 +69,48 @@ creation time, command line, session) so that every `unknown` row could be attri
 | `foreign` | 240 (222 under `copilot.exe`, 6 `SearchHost`, 6 `M365Copilot`, +4) | 240 (224 under `copilot.exe`, 6, 6, +4) |
 | `unknown` | 30 (13 bash, 8 conhost, 4 OpenConsole, 3 powershell, 1 cmd, 1 WindowsTerminal) | 25 (10, 7, 4, 2, 1, 1) |
 | **product ConPTY hosts (`conhost.exe --headless`, any parent, alive or dead)** | *not distinguished by the tool* | **0** |
+
+## Correction — 2026-09-12, slice 0: the 223 are ours by cause, foreign only by parent
+
+**What this report got wrong.** The 223 (`node higgsfield-mcp` + console hosts under
+`wta.exe → copilot.exe --acp --stdio`) were attributed to Windows Terminal's agent by *parent*
+and closed as *"not AiDe's"*, with the action pointed at the operator's global MCP config. The
+parent was right. The **cause** is ours: this harness runs inside a Windows Terminal tab, so
+every process it spawns — sub-agents, `dotnet test`, the helper, the App's ConPTY shells — inherits
+`WT_SESSION`, `WT_PROFILE_ID` (and `WT_COM_CLSID`), and nothing in `src/AiDe.Core/Terminal`, the
+App's terminal surface or the test helper stripped them. Windows Terminal's agent host (started
+with Windows Terminal, not by the operator, who had not run Copilot or used higgsfield in weeks)
+treats each ConPTY shell that carries `WT_SESSION` as one of its own tabs and attaches an agent
+session to it, which loads the global MCP config and spawns one `node higgsfield-mcp` + one
+console host per shell, kept for Windows Terminal's lifetime. The conductor's correlation
+(`terminal.start` per local hour vs node births: 12:00 315/19, 15:00 279/20, 17:00 398/30,
+06:00 121/26, 07:00 343/46) put the births on our test runs; the operator confirmed the reading.
+
+**Measured (this session, this machine, read-only except for its own spawns).** Four
+product-shaped ConPTY sessions (the helper's `exit-undisposed`: PowerShell + integration, 6 s):
+with `WT_*` inherited, **4 `node higgsfield-mcp` births** in 40 s (alive 166 → 170), one per
+session; the same four with `WT_*` removed, **0**. Four plain hidden `powershell.exe` with
+`WT_*` inherited and no console of their own: 0 — the trigger is a ConPTY session carrying
+`WT_SESSION`, not the variable alone. After the fix, four helpers that themselves still inherit
+`WT_*` but whose ConPTY child is scrubbed: **0** (was 4) — the child is the trigger.
+
+**Slice 0 (landed first, `fix/terminal-hosts-5`).** `ConPtyInterop.BuildEnvironmentBlock` strips
+every `WT_*` variable from the block of every ConPTY child and builds the block whenever the
+parent carries one, even with nothing else to add; the rest of the user's environment passes
+through unchanged (INV-0001). `TerminalHostLauncher` hands the helper the same block. Red first:
+`EnvironmentBlockTests.AParentInsideWindowsTerminal_HandsItsChildNoWT_Variable_AndEverythingElse`
+(the block builder) and `TerminalChildEnvironmentTests` (the helper's `env-scrub` mode: a real
+pseudo console runs `cmd.exe /c set`; three `WT_` lines arrived on the un-fixed runtime, none
+after). The census's action line now names the cause and the mechanism, and reports the birth
+correlation with our own `terminal.start` lines (DC-155's corrected control). The pool that
+exists — 371 host-like processes under `wta.exe` at 14:58Z, 185 servers — was born before the
+fix and does not shrink on its own: restart Windows Terminal, then re-count; **a birth after the
+fix is a spawn path that still inherits `WT_*`**.
+
+**What stands from the original census:** 0 product ConPTY hosts alive at either census; the
+held-host mechanism (path 5); the two instrumentation gaps; the harness loops. What changes:
+the class of the largest population — *foreign by parent, ours by cause* — and the phase-5 action,
+which is no longer the operator's MCP config but a Windows Terminal restart after the fix.
 
 ## The census, attributed beyond ancestry
 
@@ -174,7 +219,7 @@ only at App exit is invisible to a census that reads a live App as `ours-live`.
 
 | # | hypothesis | evidence for | evidence against | verdict |
 |---|---|---|---|---|
-| H1 | Windows Terminal's Copilot agent leaks one `node higgsfield-mcp` (+ conhost) per use | 111 + 111 under `wta.exe`→`copilot.exe`, creation times spread over 20 h in usage-shaped bursts; 256 at the fourth census; reset at WT restart | none | **Verified foreign** — the population the operator most plausibly sees |
+| H1 | Windows Terminal's Copilot agent leaks one `node higgsfield-mcp` (+ conhost) per use | 111 + 111 under `wta.exe`→`copilot.exe`, creation times spread over 20 h in usage-shaped bursts; 256 at the fourth census; reset at WT restart | **corrected (slice 0):** the "use" is one of OUR ConPTY shells carrying an inherited `WT_SESSION`; 4/4 → 0/4 measured | **Verified foreign by parent, ours by cause** — the population the operator sees, and ours to stop |
 | H2 | test runs leave product hosts behind (the lanes' `dotnet test`; the killed testhost) | 4,115 `terminal.start`/day from tests | 0 headless hosts at 06:40Z, 13:39Z, 13:50Z, 14:03–14:04Z (9 samples); the kill path measured 1 → 0 | **Refuted for today**; transient during a run (not sampled during one — none ran in the window) |
 | H3 | Claude Code's own shells | 5 `Monitor` loops + 5 conhosts from yesterday | not the product | **Verified harness** — for the conductor, not the repair plan |
 | H4 | the App's exit leaves its ConPTY hosts | `WorkbenchShell.Dispose` disposes no surface | measured: window close 1 → 0; exit-undisposed 1 → 0; kill 1 → 0 | **Refuted** |
@@ -305,7 +350,8 @@ their own, and this investigation did not end them.
 | **2 — attribution** | `reap-stragglers.py`: `ours-orphaned` rule (signature + creation-time correlation), `FOREIGN_ROOTS` on path as well as name, build-server console filed with its server, `--reap` extended under the idle guard; the report names an action for the largest foreign root | a dead-parent product host hides in `unknown`; Windows Terminal and Ollama inflate `unknown`; the foreign share is a label with no outcome | `--self-test` rows 5d/5e red → green (and the 19 existing rows still green); a live census on this machine shows `unknown` ≤ the harness loops | — |
 | **3 — the held host** | `WatchForExitAsync` closes the pty and the job after `Complete`; `DisposeAsync` idempotent over a closed pty; `TerminalSurface` shows the ended state it already captures | one client-less `conhost.exe --headless` per ended pane for the App's lifetime | `TerminalHostInLifePathTests.ASessionWhoseChildExited…` red → green; paths 1–4 stay green; `TerminalSessionConformanceTests` green | 1 (the stop event is how the fix is observed in the field) |
 | **4 — exit paths as a gate** | keep `TerminalHostExitPathTests`, `TerminalHostInLifePathTests`, `AppWindowCloseLeavesNoTerminalHostTests` in the slow ring; `verify-test-run.py --assert-clean` reads `ours-orphaned` | a regression on any exit path is caught by a count, not a comment | the three classes green in `verify-test-run.py`; `--assert-clean` fails on a fixture orphan | 2 |
-| **5 — the operator's population** | not code: the operator scopes or removes the global `higgsfield` MCP server (or files the lifecycle defect with Copilot CLI / Windows Terminal), restarts Windows Terminal, and the next census is compared with this one's 223 | the same foreign pool regrows and is reported a sixth time | a census 24 h later with `copilot.exe`-rooted rows ≪ 223 | the operator's answer to the question above |
+| **0 — the cause (correction, landed first)** | `ConPtyInterop.BuildEnvironmentBlock` strips `WT_*` from every ConPTY child; the launcher hands the helper the same block; the census's action line names the cause and reports the birth correlation | our shells make Windows Terminal's agent spawn one MCP server + host per shell, for WT's lifetime | `EnvironmentBlockTests` + `TerminalChildEnvironmentTests` red → green; 4/4 → 0/4 births measured | — |
+| **5 — the operator's population** | not code: restart Windows Terminal after slice 0 is running (the existing pool was born before the fix); the next census is compared with 371 (14:58Z). The global `higgsfield` MCP server is the operator's choice — it was never the cause | the same pool regrows and is reported a sixth time | a census 24 h later with `copilot.exe`-rooted rows ≈ 0 and the action line's correlation at 0 | slice 0 |
 
 ## Residual risk & follow-ups
 

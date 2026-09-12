@@ -76,6 +76,14 @@ internal static class Program
             return await InLifePathAsync(report, log, childExits: mode == "child-exit-then-hold");
         }
 
+        if (mode == "env-scrub")
+        {
+            // INV-0010 slice 0: what the runtime hands a child. Windows Terminal's own variables
+            // must not reach it (each one that did cost a `node higgsfield-mcp` under WT's agent
+            // host, measured 4/4 → 0/4); everything else must.
+            return await EnvironmentScrubAsync(report, log);
+        }
+
         if (mode is "exit-undisposed" or "kill-self")
         {
             // INV-0010: the App's exit path, reproduced. `WorkbenchShell.Dispose` disposes no
@@ -332,7 +340,16 @@ internal static class Program
                 new TerminalSessionRequest(
                     SessionId: childExits ? "in-life-child-exit" : "in-life-dispose",
                     Generation: 1,
-                    CommandLine: childExits ? "cmd.exe /c exit 0" : "powershell.exe",
+
+                    // A child that LIVES long enough to be counted, then exits on its own. The
+                    // first shape of this was `cmd.exe /c exit 0`, and the caller's live census
+                    // still saw a host — only because the un-fixed runtime kept the host after
+                    // the exit (INV-0010, path 5). Once the host follows the child, a child gone
+                    // in 50 ms is gone before one CIM read completes, and the fact fails on its
+                    // positive clause ("the key can see a host") rather than proving anything.
+                    // Seven seconds of ping is longer than the caller's 5 s polling window; the
+                    // non-zero code shows the exit is the child's own, not a kill.
+                    CommandLine: childExits ? "cmd.exe /c \"ping -n 8 127.0.0.1 >nul & exit 3\"" : "powershell.exe",
                     WorkingDirectory: Path.GetTempPath(),
                     Columns: 80,
                     Rows: 25,
@@ -391,6 +408,82 @@ internal static class Program
         }
 
         return 0;
+    }
+
+    /// <summary>
+    /// Starts a session under a parent that carries <c>WT_*</c> and a control variable, has the
+    /// child print its environment, and reports what arrived. Exit <b>0</b>: no <c>WT_</c> line and
+    /// the control present; <b>2</b>: a <c>WT_</c> line arrived, or the control did not; <b>3</b>:
+    /// could not start; <b>5</b>: the child's output never completed.
+    /// </summary>
+    private static async Task<int> EnvironmentScrubAsync(string? report, StringBuilder log)
+    {
+        const string control = "AIDE_ENV_PROBE";
+
+        // The parent's state is SET here rather than assumed from the launcher: the fact is about
+        // what the runtime strips, and a parent that happened to carry no WT_* would make "no WT_
+        // line" true for a reason that is not the runtime's.
+        Environment.SetEnvironmentVariable("WT_SESSION", "probe-6238a91b-f02c-4aca-86ee-08e02378260a");
+        Environment.SetEnvironmentVariable("WT_PROFILE_ID", "{probe-61c54bbd-c2c6-5271-96e7-009a87ff44bf}");
+        Environment.SetEnvironmentVariable(control, "kept");
+
+        ConPtyTerminalSession session;
+        try
+        {
+            session = await ConPtyTerminalSession.StartAsync(
+                new TerminalSessionRequest(
+                    SessionId: "env-scrub",
+                    Generation: 1,
+                    CommandLine: "cmd.exe /c set",
+                    WorkingDirectory: Path.GetTempPath(),
+                    Columns: 200,
+                    Rows: 50,
+                    ProcessingClass: SessionProcessingClass.LocalOnly),
+                CancellationToken.None);
+        }
+        catch (Exception ex)
+        {
+            log.AppendLine($"StartAsync threw {ex.GetType().Name}: {ex.Message}");
+            Write(report, log);
+            return 3;
+        }
+
+        var seen = new StringBuilder();
+        await using (session)
+        {
+            using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(20));
+            try
+            {
+                while (await session.Output.WaitToReadAsync(deadline.Token))
+                {
+                    while (session.Output.TryRead(out var chunk))
+                    {
+                        seen.Append(Encoding.UTF8.GetString(chunk.Bytes.Span));
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                log.AppendLine("timed out waiting for the child's environment listing");
+                Write(report, log);
+                return 5;
+            }
+        }
+
+        // `set` prints NAME=value per line; the pty wraps at the column width, so a name is read
+        // from a line start only. The pty's own VT sequences (CSI and OSC) are stripped first.
+        var plain = System.Text.RegularExpressions.Regex.Replace(
+            seen.ToString(), "\u001b\\[[0-9;?]*[A-Za-z]|\u001b\\][^\u0007]*\u0007", "");
+        var lines = plain.Split('\n')
+            .Select(l => l.Trim('\r', ' '))
+            .ToList();
+        var wt = lines.Where(l => l.StartsWith("WT_", StringComparison.OrdinalIgnoreCase)).ToList();
+        var kept = lines.Any(l => l.StartsWith(control + "=kept", StringComparison.Ordinal));
+
+        log.AppendLine($"lines={lines.Count} wt-lines={wt.Count} control-present={kept}");
+        foreach (var l in wt) { log.AppendLine("  WT line: " + l); }
+        Write(report, log);
+        return wt.Count == 0 && kept ? 0 : 2;
     }
 
     private static async Task<int> ExitPathAsync(string? report, StringBuilder log, bool kill)

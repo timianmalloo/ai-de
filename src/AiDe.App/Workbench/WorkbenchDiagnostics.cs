@@ -137,6 +137,45 @@ public static class WorkbenchDiagnostics
     }
 
     /// <summary>
+    /// Records that a terminal pane ended — the other half of <see cref="TerminalStart"/>, keyed by
+    /// the same surface id so the two lines pair and a census can subtract.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Why this exists (INV-0010).</b> The operator's log carried 4,115 <c>terminal.start</c>
+    /// lines for one day and no end of any kind, so a leaked host — a start with no end — was exactly
+    /// the shape the log could not show, and every "terminal hosts are not cleaned up" report
+    /// restarted from a process list. Written once per pane, on the normal path, at the top of the
+    /// end path (the attempt, not the success).</para>
+    /// <para><paramref name="reason"/> is one of <c>child-exited</c> (the shell ended itself;
+    /// <paramref name="exitCode"/> is its code), <c>killed</c> (the pane was closed over a live
+    /// shell, which the runtime terminated), <c>disposed</c> (the pane was closed with no live
+    /// session — a start that failed), or <c>owner-closing</c> (the window is closing with the
+    /// pane open; the process exit ends the shell). A value this writer does not know is
+    /// <c>null</c>, never 0 (DC-137): a killed shell has no exit code, and a pane with no session
+    /// has no session id.</para>
+    /// </remarks>
+    public static void TerminalStop(
+        string surfaceId, string? sessionId, string reason, double? durationMs, int? exitCode)
+    {
+        using var activity = Source.StartActivity("workbench.terminal.stop");
+        activity?.SetTag("workbench.surface", surfaceId);
+        activity?.SetTag("session.id", sessionId);
+        activity?.SetTag("session.end_reason", reason);
+        activity?.SetTag("session.exit_code", exitCode);
+
+        Write(new
+        {
+            ts = DateTimeOffset.UtcNow.ToString("O"),
+            evt = "terminal.stop",
+            surface = surfaceId,
+            session = sessionId,
+            reason,
+            durationMs,
+            exitCode,
+        });
+    }
+
+    /// <summary>
     /// Records an unhandled exception, with the context that says which gesture produced it.
     /// </summary>
     /// <remarks>

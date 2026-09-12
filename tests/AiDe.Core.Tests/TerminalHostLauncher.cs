@@ -49,6 +49,7 @@ internal static class TerminalHostLauncher
         Func<int, Task>? afterExit = null)
     {
         const uint CREATE_NEW_CONSOLE = 0x00000010;
+        const uint CREATE_UNICODE_ENVIRONMENT = 0x00000400;
 
         var startup = new NativeStartupInfo { cb = Marshal.SizeOf<NativeStartupInfo>() };
         // The mode is the second argument, so the existing one-argument call keeps its
@@ -64,15 +65,28 @@ internal static class TerminalHostLauncher
         // leaked, and a leaked KILL_ON_JOB_CLOSE handle is worse than an ordinary one: the job
         // outlives the run, so the reaping it exists to do never happens.
         var job = IntPtr.Zero;
+        var environment = IntPtr.Zero;
         NativeProcessInformation info = default;
 
         try
         {
             job = ConPtyInterop.CreateKillOnCloseJob();
 
+            // The helper's own block is the runtime's (WT_* stripped, INV-0010 slice 0), so a
+            // helper started from a Windows Terminal tab has the shape it has on a CI runner. Null
+            // when there is nothing to strip: inherit, as before. The helper's ConPTY children are
+            // scrubbed by the runtime itself; measured, that alone stops the births (4/4 → 0/4).
+            var block = ConPtyInterop.BuildEnvironmentBlock(null);
+            if (block is not null)
+            {
+                environment = Marshal.AllocHGlobal(block.Length * sizeof(char));
+                Marshal.Copy(block, 0, environment, block.Length);
+            }
+
             if (!CreateProcessW(
-                    null, ref commandLine[0], IntPtr.Zero, IntPtr.Zero, false, CREATE_NEW_CONSOLE,
-                    IntPtr.Zero, Path.GetDirectoryName(exe), ref startup, out info))
+                    null, ref commandLine[0], IntPtr.Zero, IntPtr.Zero, false,
+                    CREATE_NEW_CONSOLE | CREATE_UNICODE_ENVIRONMENT,
+                    environment, Path.GetDirectoryName(exe), ref startup, out info))
             {
                 Assert.Fail($"could not start the helper: Win32 error {Marshal.GetLastWin32Error()}");
             }
@@ -118,6 +132,11 @@ internal static class TerminalHostLauncher
             if (job != IntPtr.Zero)
             {
                 ConPtyInterop.CloseHandle(job);
+            }
+
+            if (environment != IntPtr.Zero)
+            {
+                Marshal.FreeHGlobal(environment);
             }
         }
     }

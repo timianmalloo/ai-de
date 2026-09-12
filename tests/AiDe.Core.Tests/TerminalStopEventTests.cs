@@ -71,6 +71,54 @@ public sealed class TerminalStopEventTests
         Assert.Equal(true, stop.GetTagItem("session.killed"));
     }
 
+    /// <summary>
+    /// A construction that fails after its start was counted closes its own pair: one stop,
+    /// <c>start-failed</c>, no exit code — or <i>starts − stops</i> drifts by one per failure in
+    /// the direction that reads as a held host.
+    /// </summary>
+    [Fact]
+    public async Task AStartThatFails_EmitsOneTerminalStop_SoThePairIsClosed()
+    {
+        var stops = new List<Activity>();
+        using var listener = new ActivityListener
+        {
+            ShouldListenTo = source => source.Name == TerminalHostingLedger.TerminalActivitySource,
+            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
+            ActivityStarted = activity =>
+            {
+                if (activity.OperationName == StopActivity)
+                {
+                    lock (stops) { stops.Add(activity); }
+                }
+            },
+        };
+        ActivitySource.AddActivityListener(listener);
+        using var ledger = TerminalHostingLedger.Open();
+
+        await Assert.ThrowsAnyAsync<Exception>(() => ConPtyTerminalSession.StartAsync(
+            new TerminalSessionRequest(
+                SessionId: "stop-event-start-failed",
+                Generation: 1,
+                CommandLine: $"aide-no-such-shell-{Guid.NewGuid():N}.exe",
+                WorkingDirectory: Path.GetTempPath(),
+                Columns: 80,
+                Rows: 25,
+                ProcessingClass: SessionProcessingClass.LocalOnly),
+            CancellationToken.None));
+
+        Activity stop;
+        lock (stops)
+        {
+            stop = Assert.Single(stops);
+        }
+
+        Assert.Equal("stop-event-start-failed", stop.GetTagItem("session.id"));
+        Assert.Equal("start-failed", stop.GetTagItem("session.end_reason"));
+        Assert.Null(stop.GetTagItem("session.exit_code"));
+        Assert.Equal(1, ledger.Constructions);
+        Assert.Equal(1, ledger.Completions);
+    }
+
     [Fact]
     public async Task ASessionWhoseChildExits_EmitsTerminalStopWithTheExitCode()
     {

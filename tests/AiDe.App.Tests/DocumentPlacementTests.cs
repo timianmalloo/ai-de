@@ -86,6 +86,7 @@ public sealed class WorkbenchDiagnosticsTests
     public void LayoutMutation_EmitsAStructuredRecord_WithTheOperationPlacementAndTopology()
     {
         var captured = new List<string>();
+        var previous = WorkbenchDiagnostics.Sink;
         WorkbenchDiagnostics.Sink = captured.Add;
         try
         {
@@ -104,7 +105,10 @@ public sealed class WorkbenchDiagnosticsTests
         }
         finally
         {
-            WorkbenchDiagnostics.Sink = null;
+            // The PREVIOUS sink, not null: the assembly installs a no-op default so fixture panes
+            // do not write into the operator's log (INV-0010), and null would undo it for every
+            // test that runs after this one.
+            WorkbenchDiagnostics.Sink = previous;
         }
     }
 }
