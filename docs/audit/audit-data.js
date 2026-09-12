@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T00:15:27Z",
+  "generated": "2026-09-12T00:16:19Z",
   "audit": [
     {
       "actor": null,
@@ -12651,36 +12651,81 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M29E052588QJ65T5FD0FHNX7",
-      "shortname": "owner-rulings-74-78-errata-batch",
-      "datetime": "2026-09-11T23:49:13Z",
-      "session": "conductor-addendum-c",
-      "prompt": "Owner: D2's five findings and A1's four open items in one batch.",
-      "summary": "74 the session document is a StreamingThread, the Console the reply side folded per turn, split on demand (C §C1/§B2, A §A2/§A6/R16 amended). 75 one content-gap refusal: a goal block needs Not in scope, tier-blind; blank Goal/Done-when yields a Message. 76 one degraded-rate floor X=5%; latency p95 struck as a floor, reported censored. 77 no Send-now during preparing; one governed run at a time per session (Owner extension). 78 spend renders per turn on the outcome line and per session in the header; an enforced cap asks, never refuses, never stops a running turn. Errata E1-E7 (template control, tier control home, task_class in inputs_sha, cancelled/reused, mechanical-only as provenance, consumed.reason + submitted.accepted:false, A1's supersessions incl. disableBuiltInTools and the phantom adapter quote).",
-      "kind": "manual",
-      "skill": null,
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/notes/addendum-c-council-rulings.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "File Rulings 74-78 and the D2/A1 errata batch verbatim; the errata node applies E1-E7",
+      "datetime": "2026-09-11T23:49:13Z",
       "done_when": "Rulings in the note; errata node dispatched with the note as its brief; gates green",
-      "tier": "T2",
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
       "git": {
-        "sha": "eba82d5f17bee3d1447bb24bcf94ecb03bd2f72b",
-        "short": "eba82d5f1",
         "branch": "conductor/addendum-c",
-        "pushed": null
-      }
+        "pushed": null,
+        "sha": "eba82d5f17bee3d1447bb24bcf94ecb03bd2f72b",
+        "short": "eba82d5f1"
+      },
+      "goal": "File Rulings 74-78 and the D2/A1 errata batch verbatim; the errata node applies E1-E7",
+      "id": "al-01M29E052588QJ65T5FD0FHNX7",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "Owner: D2's five findings and A1's four open items in one batch.",
+      "session": "conductor-addendum-c",
+      "shortname": "owner-rulings-74-78-errata-batch",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "74 the session document is a StreamingThread, the Console the reply side folded per turn, split on demand (C §C1/§B2, A §A2/§A6/R16 amended). 75 one content-gap refusal: a goal block needs Not in scope, tier-blind; blank Goal/Done-when yields a Message. 76 one degraded-rate floor X=5%; latency p95 struck as a floor, reported censored. 77 no Send-now during preparing; one governed run at a time per session (Owner extension). 78 spend renders per turn on the outcome line and per session in the header; an enforced cap asks, never refuses, never stops a running turn. Errata E1-E7 (template control, tier control home, task_class in inputs_sha, cancelled/reused, mechanical-only as provenance, consumed.reason + submitted.accepted:false, A1's supersessions incl. disableBuiltInTools and the phantom adapter quote).",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "docs/coordination/addendum-cd.md",
+        "docs/coordination/addendum-cd.html",
+        "docs/notes/coordination-two-lanes-not-three.md",
+        "docs/notes/coordination-plan-artifact-type.md",
+        ".gitattributes"
+      ],
+      "datetime": "2026-09-12T00:11:43Z",
+      "done_when": "docs/coordination/addendum-cd.md + .html committed on feature/addendum-c with the audit entry, gates green, branch pushed; no merge to main; no write under src/tests/specs/adr",
+      "duration_seconds": 1964.0,
+      "fan_out": 3,
+      "git": {
+        "branch": "feature/addendum-c",
+        "pushed": false,
+        "sha": "eba82d5f17bee3d1447bb24bcf94ecb03bd2f72b",
+        "short": "eba82d5f1"
+      },
+      "goal": "Divide Addenda C and D across parallel sessions with a serial spine, one owner per authored file, exit evidence per track, honest cost",
+      "id": "al-01M29F9B61V737BTK4HAQR05T0",
+      "kind": "skill",
+      "main_budget": 90,
+      "main_calls": 62,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "You are node **P1** of plan `docs/plans/addendum-c-modes.md`: run the **`/prepare-for-coordination`** skill (Skill tool: `prepare-for-coordination`, args: `Addenda C and D — the perspective shell and the compile step — divided across parallel sessions per the architecture (ADR-0017 amended, ADRs 0030–0037), Rulings 50–73, and the P1 inputs note; horizon: the first parallel wave and its serial spine`). The conductor is Claude Opus (session `conductor-addendum-c`); you produce the plan it dispatches. Read `C:\\projects\\ai-de\\CLAUDE.md` and `AGENTS.md` first; the pack's rules apply in full (the skill's own stages: interdict the rush, turn the layer on, read the intent end to end, classify the contention with evidence, real dependencies only, name the serial spine, cost it honestly — one session if that is the honest answer — assign, disconfirm, converge). Use `python`, not `python3`; `$env:PYTHONIOENCODING='utf-8'`.\n\n## Your worktree — the only tree you write to\n`C:\\Projects\\ai-de-feature-addendum-c`, branch `feature/addendum-c`, HEAD = `main` `eba82d5f`. From inside it:\n```\n$env:AGENT_SESSION='addendum-c-chain'; $env:AGENT_NAME='claude-p1-coordination'; $env:PYTHONIOENCODING='utf-8'\npython docs/ai-forward-pack/scripts/audit-log.py start --session addendum-c-chain\n```\n**Stage 1 caution (DC-112):** the coordination layer is already on in this repository — `.agents/artifacts.yml` exists (6 derived declarations, registry coverage green), `coord install` was done once in the primary checkout. **Do not run `coord install` in this worktree** (a worktree is not a clone; it inherits `.git/config` and hooks). Run `python docs/ai-forward-pack/scripts/coord-core.py doctor` to read the inherited state back, and `classify init` only if `doctor` says the registry is missing (it is not). Extend `artifacts.yml` by hand only for artifacts this plan's tracks will generate that are not yet declared — running each regenerate command first.\n\n## Inputs, in this order (all on `main`)\n1. **`docs/notes/addendum-cd-architecture-p1-inputs.md`** — A1 wrote it for you: components with owners-to-be, seams with their mocks, the E7 surface list, the ordered gates (spike → advisory → measured → agentic), non-goals, findings. And **`docs/architecture.md` §C/D.12–13** — the slices C-0…D-3 with their planned-reds table.\n2. **The ADRs:** 0017 (accepted as amended), 0013, 0028 amendments; 0030 registry; 0031 second host; 0032 layout slots; 0033 the compile context; 0034 the envelope store; 0035 the compile-session binding and pin; 0036 the mode ladder as deployment gates; 0037 the craft profile.\n3. **`docs/notes/addendum-c-council-rulings.md` — Rulings 50–73**; the ones that ORDER the work: **51** (Addendum C code branches from `main` only after `feature/exit-evidence` merges — F5 is one attended operator run away, on tree `C:\\Projects\\ai-de-feature-exit-evidence` @ `135e05e1`, which also carries Ruling 71's `LaneSessionOptions` — so **every track that needs the tools argument, or touches the shell, waits for the F5 merge**; put the F5 merge on the spine as its first node, owned by the conductor); **54/59** (build order: Coding → mechanism → Explore unchanged → Architecture with existing kinds); **68** (spike → advisory → 50 → holdout 50 → agentic, deployment gates); **71** (the lane pin; the compile session's `tools: []` reuses it); **72** (budget optional cap; task class `free-form` default); **73** (**the read-only turn is Coding's FIRST slice** — a Message/no-scope turn runs with write tools disallowed and no lease; the REPL is the 80% case's daily loop).\n4. **The specs:** `docs/specs/addendum-c-perspectives.md`, `docs/specs/addendum-d-compile-step.md` (both accepted, with errata appended at their ends — read the errata; they supersede body text).\n5. **The design:** `DESIGN.md` (PS-*, SC1–SC10), `docs/mockups/{perspective-shell,conversation-composer,new-session-sheet,session-conversation}.html`, `docs/reviews/ui-perspective-shell.md` and `ui-session-conversation.md` (ranked plans — D2's top item, the thread `ItemsControl` with its keyboard/announcement model, is a `/design-slice` before its implementation).\n6. **In flight, not yet on `main`:** `fix/session-document-render` (INV-0009 phases 1–4: documents open into the workbench body; reopen/restore bind; the chooser opens the workspace; emitters) — lands before any shell track starts; treat as a spine node owned by the conductor. `docs/investigations/INV-0007..0009`, `docs/proof/composer-entry-areas.md`, `contrast-census.md`, `lane-pin-ruling-71.md`, `lease-source-text.md`.\n7. **Ownership register:** `docs/collaboration/session-contracts.md` §2 is the sole authority on file ownership today — your plan's `Tracks` table becomes the new §2 rows for these tracks; write them so a reader of §2 can apply them (one owner per authored file; `derived` and `register` artifacts need no owner — say so). `.agents/sessions/README.md` for liveness.\n8. **Harness facts:** the conductor dispatches Claude Code sub-agents (opus/sonnet per node), each in its own git worktree created by `coord worktree new`, with `AGENT_SESSION` set so `coord precommit` checks leases; the conductor merges to `main` in the primary checkout (the recorded WT1 exception); **width cap 3 concurrent writing sessions** (the plan's standing contract, raised to 4 once today on the record); persona reviews are read-only sub-agents and do not count. Record what the harness is *qualified* to do (enforced / observed-only / unsupported) from what you can verify in `coord-core.py` and today's audit log — never advertise a mode not exercised. **The operator is the human at the end: every track with an attended step names it.**\n\n## What the plan must settle\n- **Layer state** (already on; say what `doctor` reported). **Artifact classes** for every artifact the tracks touch, with why (derived/register → no coordination; authored → one owner).\n- **Tracks**, cut from bounded contexts and aggregates, not directories: the candidates are the architecture's slices (C-0 read-only turn · C-1 registry + allow-lists + derived menu · C-2 second host + layout slots · C-3 Coding default + the thread `ItemsControl` (after its `/design-slice`) · Architecture-perspective kinds · D-0 envelope store · D-1 compile context + projections + Prepare states · D-2 compile-session binding/pin + the P-D5 wire spike · D-3 mode ladder gates · the craft profile · the census/contrast follow-ups (phases 6–7, DC-147's mockup sweep) · the composer phases 5–6). **Apply GO5 and the coupling test honestly; strike tracks that do not clear the 15× multiplier and say why.**\n- **The serial spine**: F5 merge → INV-0009 fix merge → then what must be serial (interfaces first: the registry contract, the envelope schema, `LaneSessionOptions` reuse) before width opens; the first commit after any registry change verifies the driver; **the read-only turn (Ruling 73) ships first on the Coding side.**\n- **Seams** with jointly-satisfiable fail-clauses per shared surface (GO14a: scoped to a concern, never a directory; every scan-shaped guard states root/recursion/token set/allowlist).\n- **Per track:** owner (a sub-agent role + model tier per GO19: sonnet for low-novelty iteration, opus for contract/protocol/evidence judgement), authored paths owned, depends-on, expected seam requests, tier, fan-out cap, budget (tool calls / wall, from today's measured node costs in the audit log — cite `duration_seconds`), **exit evidence** (the Proof Pack rows and the red-first oracles the architecture's planned-reds table names), harness qualification, and the attended operator step if any.\n- **Struck tracks** with reasons; **order of operations** as the executable list `/execute-with-coordination` parses.\n- **Cost honestly:** the multiplier per track and the one-session alternative for each.\n\n## Output\n`docs/coordination/addendum-cd.md` (canonical, V2 frontmatter, the skill's schema verbatim — `/execute-with-coordination` parses it) and `docs/coordination/addendum-cd.html` (self-contained, dependency-free, theme-aware, `DESIGN.md` tokens). Decision notes for below-ADR judgements (`docs/notes/coordination-<topic>.md`). Frontmatter + typed links (`implements` the architecture, `relates-to` both specs and the rulings note); `docs-graph.py derive`.\n\n## Close (DC-082 order): audit entry (`--shortname prepare-for-coordination-addenda-c-d --session addendum-c-chain --skill prepare-for-coordination --kind skill --tier T2 --fan-out 3 --git …` + signals), `regenerate-derived.py` (ends green), gates bare and stop-on-first-red (`verify-no-conflict-markers` · `verify-derived-views` · `verify-ruling-citations` · `verify-audit-log` · `verify-stranded-audit` · `verify-id-allocators` · `verify-surface-ownership` — read what it checks first; the plan's §2 rows may need to satisfy it), commit with the attribution lines, then `git push origin feature/addendum-c`. **Do not merge to `main`.**\n\n## Fails if (stop and report instead)\n- `coord install` in the worktree; a track that splits an aggregate; two tracks authoring one file; a track with no exit evidence or no owner; a width above 3 without a recorded justification; a harness mode advertised without evidence; any write under `src/`/`tests/`/`docs/specs/`/`docs/adr/`; `git stash`; a rebase; a push to `main`; DC-120.\n\n## Report back (compact)\nThe tracks table (id · owner/model · depends-on · exit evidence · attended step) and the struck list; the spine in order; the width and the multiplier verdict; `doctor`'s output; the harness qualification rows; gate table; commit shas and the pushed sha; anything unverified, labelled.",
+      "session": "addendum-c-chain",
+      "shortname": "prepare-for-coordination-addenda-c-d",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "prepare-for-coordination",
+      "started_at": "2026-09-11T23:38:59Z",
+      "summary": "Coordination plan for Addenda C and D: 2 code lanes (Shell: SH-1 registry -> SH-2 hosts/presenter/slots/rail -> SH-3 Coding default + Evidence pair; Conversation: CV-0 read-only turn -> CV-1 composer as conversation -> CV-2 mechanical compile + store + Prepare + purge -> CV-3 compile call + pin + gate 1 + harness -> CV-4 admission code) + 3 side tracks (DS-1 design-slice thread ItemsControl; PD-5 wire spike, attended; X-1 census controls), width 3. Spine: S0 F5 merge (attended exit run) -> S1 INV-0009 merge (Owner ruling on phase 3) -> S2 settings + sentinels commit (verifies the driver at its join). Struck 7: D-0 separate, a third Compile lane (GO5-admissible, refused on the lexicographic objective), C-2 separate, Architecture kinds, D-3 as a track (a calendar gate), the craft profile (pack-owned), composer phases 5-6 (folded). Layer: doctor registry ok 11 patterns, driver effective; docs/_meta.json registered derived but had no merge attribute (repaired after running its generator); 7 owed regenerations regenerated with no diff and the stale tracked marker removed on this branch; SIDE EFFECT: coord regen deleted the primary checkout's .agents/regen-owed.txt (per-repository record) - restore or accept; the node was refused permission to reverse it. Harness: pre-commit floor enforced (shared hook, primary's script); PreToolUse edit boundary unsupported here (not wired); cleanup fail-safe enforced, conductor-only. Budgets from measured duration_seconds (implement median 2945 s, max 4127 s, n=7). Three read-only digests: ADRs 111 s, specs/design/in-flight 225 s, harness/costs 275 s. Two decision notes; two classes ready to append at the join (ids allocated then).",
+      "tags": [
+        "coordination",
+        "addendum-c",
+        "addendum-d"
+      ],
+      "tier": "T2",
+      "tool": null
     }
   ],
   "changes": [

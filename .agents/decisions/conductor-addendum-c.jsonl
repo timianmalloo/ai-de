@@ -331,3 +331,11 @@
 {"agent": "claude-conductor", "at": 1789170558.4054198, "code": null, "kind": "allowed", "path": "docs/notes/addendum-c-council-rulings.md", "session": "conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789170558.4064226, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789170558.4079282, "code": null, "kind": "allowed", "path": "site/index.html", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172141.2251325, "code": null, "kind": "allowed", "path": ".agents/decisions/addendum-c-chain.jsonl", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172141.227142, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-addendum-c.jsonl", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172141.228142, "code": null, "kind": "allowed", "path": ".agents/decisions/errata-74-78.jsonl", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172141.2301533, "code": null, "kind": "allowed", "path": ".agents/decisions/render-fix.jsonl", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172141.2311423, "code": null, "kind": "allowed", "path": ".agents/log/errata-74-78.jsonl", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172141.233137, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172141.2351422, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172141.2361422, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "conductor-addendum-c", "wi": ""}
