@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T20:37:49Z",
+  "generated": "2026-09-12T20:44:48Z",
   "audit": [
     {
       "actor": null,
@@ -14339,6 +14339,30 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Close the regrowth path behind the sixth report with a measured mechanism and a gate, and give the join line one status to chain on",
       "done_when": "helper suites headless with 0 WT attaches measured; the gate red on the pre-fix tree and green after; run-verify-gates self-tested; register, INV-0011 s7, proof rows 8-9, CI step committed",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M2BNV598W2APV6Y4BRPYQ5CF",
+      "shortname": "join-x2b-dc171",
+      "datetime": "2026-09-12T20:44:47Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "keep going (X-2b and DC-171 landed)",
+      "summary": "Join: X-2b (d9a8e90f) and the DC-171 fix (f65c48f2) merged to main; the first recount on e2c3aa7f failed 10 helper tests against a stale Release helper (DC-171), fixed and recounted: App 798 / Core 2361 = 2191 + 170; 0 WT agent attaches born during the whole recount (was 25 at the SH-3 join).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/terminal-hosts-sixth.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land the regrowth fix and the gate runner on main with green floors and a Release build",
+      "done_when": "main pushed green; 0 attaches measured over a whole recount; Release built",
       "signals": {
         "verification_path": true,
         "verification_executed": true,
