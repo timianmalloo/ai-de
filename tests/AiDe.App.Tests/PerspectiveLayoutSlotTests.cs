@@ -407,18 +407,44 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         Assert.Empty(host.Zones.Floating);
     }
 
-    // The seed default's own drops are on record, not silent: today's one Default() seeds two
-    // `view` surfaces, so the Architecture host's interim default reports the second as a
-    // duplicate. SH-3's Default(perspective) retires the drop; this pins what it retires.
+    // SH-2's interim default seeded EVERY host from one combined WorkbenchLayout.Default() and
+    // filtered it per host, which reported "domain" (kind "view") as a duplicate of "explore" in
+    // Architecture. SH-3's WorkbenchLayout.Default(perspective) seeds each host from its OWN §B4
+    // table (ZoneLayout.cs), so construction has nothing left to drop — this pins that retirement.
     [Fact]
-    public void TheArchitectureHostsInterimDefault_ReportsWhatTheSeedDropped()
+    public void TheArchitectureAndCodingDefaults_SeedCleanly_WithNoDrops()
     {
-        var host = Host(PerspectiveSet.Architecture);
+        Assert.Empty(Host(PerspectiveSet.Architecture).DefaultDropped);
+        Assert.Empty(Host(PerspectiveSet.Coding).DefaultDropped);
+    }
 
-        var duplicate = Assert.Single(host.DefaultDropped, d => d.Reason == DropReason.DuplicateOneInstance);
-        Assert.Equal("domain", duplicate.Surface.SurfaceId);
-        Assert.All(host.DefaultDropped.Where(d => d.Reason == DropReason.KindNotAdmitted), d => Assert.Same(PerspectiveSet.Coding, d.AdmittedBy));   // the seed's Coding kinds
-        Assert.DoesNotContain(Host(PerspectiveSet.Coding).DefaultDropped, d => d.Reason == DropReason.DuplicateOneInstance);
+    public static IEnumerable<object[]> HostPerspectives()
+    {
+        yield return [PerspectiveSet.Coding];
+        yield return [PerspectiveSet.Architecture];
+    }
+
+    // The one-instance invariant SH-2 named: WorkbenchLayout.Default(perspective) must place only
+    // kinds that perspective's own allow-list admits, and never a second instance of a one-instance
+    // kind — the same invariant SurfaceAdmission.Filter enforces at open/restore, checked here
+    // against the SEED itself (which SH-3's DefaultLayout() no longer routes through a lossy filter
+    // to discover).
+    [Theory]
+    [MemberData(nameof(HostPerspectives))]
+    public void DefaultPerspective_PlacesOnlyAdmittedKinds_OneInstanceKindsAtMostOnce(Perspective perspective)
+    {
+        var admission = DockHost.AdmissionFor(perspective);
+        var seenOneInstance = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (var surface in WorkbenchLayout.Default(perspective).AllSurfaces())
+        {
+            Assert.True(admission.Admits(surface.Kind), $"'{surface.Kind}' is not admitted by {perspective.Title}");
+
+            if (admission.IsOneInstance(surface.Kind))
+            {
+                Assert.True(seenOneInstance.Add(surface.Kind), $"'{surface.Kind}' is one-instance and appears twice in {perspective.Title}'s default");
+            }
+        }
     }
 
     // ADR-0032 test 1's last clause / US-C12 b3 — the event carries the dropped count and kinds,
@@ -457,9 +483,11 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         var architecture = Assert.Single(restores, e => e.GetProperty("perspective").GetString() == "architecture" && e.GetProperty("placement").GetString() == "keep-current");
         Assert.Equal(0, architecture.GetProperty("dropped_count").GetInt32());
 
-        var seeds = restores.Where(e => e.GetProperty("placement").GetString() == "default-filtered").ToList();
-        Assert.Equal(["coding", "architecture"], seeds.Select(e => e.GetProperty("perspective").GetString()).ToList());
-        Assert.Contains("DuplicateOneInstance", seeds[1].GetProperty("dropped_reasons").EnumerateArray().Select(k => k.GetString()));
+        // SH-3: each host seeds from its OWN §B4 table (ZoneLayout.cs), so construction drops
+        // nothing for either host and no "default-filtered" event is logged at all — unlike the
+        // interim combined-and-filtered seed this pins the retirement of (see
+        // TheArchitectureAndCodingDefaults_SeedCleanly_WithNoDrops).
+        Assert.DoesNotContain(restores, e => e.GetProperty("placement").GetString() == "default-filtered");
     }
 
     private string DuplicateIdFile()

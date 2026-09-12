@@ -389,6 +389,17 @@ public sealed class DaemonProcessTests
             Assert.True(document.IsKnowledge, "the document arrived across the pipe as source");
             Assert.Equal("decision-note", document.Kind);
 
+            // ---- ExcludeKnowledge crosses the pipe too (Ruling 53; US-C8) --------------------
+            // GraphRequest used to drop this field entirely — a filter set in process and silently
+            // ignored over the wire is the "arrives defaulted to false" defect above, one field
+            // over. Proven against the SAME running daemon: the knowledge document disappears, the
+            // source node from the fixture's own code does not.
+            var withoutKnowledge = await client.GraphAsync(
+                new GraphQuery(2_000, ExcludeKnowledge: true), CancellationToken.None);
+
+            Assert.DoesNotContain(withoutKnowledge.Nodes, n => n.Id == "probe-note");
+            Assert.Contains(withoutKnowledge.Nodes, n => !n.IsKnowledge);
+
             // ---- and a ROUTE crosses the pipe ------------------------------------------------
             // A path is the one result whose shape is a list of lists, so it is the one most likely
             // to arrive flattened, empty, or with its edge direction lost — none of which would look

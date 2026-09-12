@@ -328,6 +328,30 @@ refused; `unsupported` = no code path wired here. No mode is advertised that was
   Compilation Conformist to the Agent Plane, Shared Kernel with Sessions); the pack-owned craft profile
   is outside this repository and struck. Cleared.
 
+## Execution ledger — planned vs actual (Stage 10, kept as nodes land)
+
+Actual = the node's audit entry `duration_seconds` (Verified, measured from its own marker);
+planned = the wave table above (Inferred at planning). The **W1–W3 median ratio is 2.2×**, the same
+ratio the parent plan measured for P1; the plan's implement figures were medians of smaller inputs.
+
+| Node | Planned | Actual | Ratio | Note |
+| --- | --- | --- | --- | --- |
+| S2 settings & sentinels (sonnet) | 1,500 | 1,960 | 1.3× | additive fields; the `_meta.json` regeneration observed at its join |
+| INV-0010 fix node (slices 1–4, then slice 0's correction) | — | 2,054 + (slice 0, marker consumed) | — | unplanned; the fifth report |
+| CV-0 read-only turn (opus) | 2,945 | 5,344 | 1.8× | Ruling 73's turn; the attended row still open |
+| SH-1 registry, allow-lists, derived menu (opus) | 2,945 | 7,065 | 2.4× | |
+| X-1 census controls (sonnet) | 2,945 | 3,770 | 1.3× | |
+| SH-2 second host, presenter, slots, rail (opus) | 4,127 | 6,392 | 1.5× | |
+| CV-1 the composer as a conversation (opus) | 4,812 | **13,061** | **2.7×** | two review rounds, 43 proof rows, two merges from `main`; the lease refusals at its join (DC-163) |
+| X-2 INV-0011 (conductor) | — | ≈ 3,300 (Inferred: 18:52Z–19:47Z from the census to the join; no marker was set) | — | unplanned; the sixth report — two classes, a teardown, a contrast defect |
+| SH-3 (sonnet) | 2,945 | running | | |
+| CV-2 (opus) | 4,127 | running (dispatched 19:44Z) | | at the measured ratio: ≈ 9,000–11,000 s |
+
+**Rework at the joins:** register ids collided across branches (allocated at every join since;
+DC-163's lease shape delayed two joins ≈ 50 min); a merge left conflict markers in figure-patched
+`site/*.html` (DC-136; the marker gate now runs first in `regenerate-derived.py`); a stray file in the
+primary from a node's mangled scratchpad path (DC-150's shape, once more, removed at the X-2 join).
+
 ## Status
 
 | Completed | Remaining | Best next action |

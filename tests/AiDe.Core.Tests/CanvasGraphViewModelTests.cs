@@ -68,9 +68,16 @@ public sealed class CanvasGraphViewModelTests
         public Task<WorkspaceOverview> OverviewAsync(OverviewQuery query, CancellationToken ct) =>
             throw new NotSupportedException();
 
-        public Task<WorkspaceGraph> GraphAsync(GraphQuery query, CancellationToken ct) =>
-            Throw is not null ? Task.FromException<WorkspaceGraph>(Throw) : Task.FromResult(Graph);
+        /// <summary>Every <see cref="GraphQuery"/> this stub has received, in order — the recording
+        /// half of US-C8's oracle ("a recording FakeWorkspaceQueries sees the kind filter … on every
+        /// GraphQuery it receives").</summary>
+        public List<GraphQuery> ReceivedQueries { get; } = [];
 
+        public Task<WorkspaceGraph> GraphAsync(GraphQuery query, CancellationToken ct)
+        {
+            ReceivedQueries.Add(query);
+            return Throw is not null ? Task.FromException<WorkspaceGraph>(Throw) : Task.FromResult(Graph);
+        }
     }
 
     private static EdgeView Edge(string subject, string predicate, string obj) =>
@@ -306,5 +313,48 @@ public sealed class CanvasGraphViewModelTests
         // The whole-graph fallback is rooted on null, not on a group.
         Assert.Null(graph.RootId);
         Assert.Single(graph.Nodes);
+    }
+
+    /// <summary>
+    /// US-C8's oracle: "a recording FakeWorkspaceQueries sees the kind filter code · data ·
+    /// architecture on every GraphQuery it receives (headless), and no second graph store exists"
+    /// (Ruling 53). Excluding knowledge — a declared flag, never an allow-list of kind spellings
+    /// (see <see cref="GraphQuery.ExcludeKnowledge"/>) — IS "code, data and architecture": every
+    /// node that is not knowledge already falls in one of those three.
+    /// </summary>
+    [Fact]
+    public async Task WithExcludeKnowledgeSet_EveryGraphQueryIssued_CarriesTheFilter()
+    {
+        var queries = new StubQueries
+        {
+            Graph = new WorkspaceGraph(
+                [new GraphNode("Shop.Order", "Order", "class", 1, IsExternal: false)], [], 0, [], "rev-1"),
+        };
+        var vm = new CanvasGraphViewModel(queries) { ExcludeKnowledge = true };
+
+        await vm.LoadAsync();               // WholeGraphAsync's GraphQuery
+        await vm.GroupAsync("Shop");         // GroupAsync's GraphQuery
+
+        Assert.Equal(2, queries.ReceivedQueries.Count);
+        Assert.All(queries.ReceivedQueries, q => Assert.True(q.ExcludeKnowledge));
+
+        // No second store: one IWorkspaceQueries, one GraphQuery shape — a parameter, not a new type.
+        Assert.IsType<GraphQuery>(queries.ReceivedQueries[0]);
+    }
+
+    [Fact]
+    public async Task WithExcludeKnowledgeUnset_TheDefaultDrawsEveryKind()
+    {
+        // The Explorer's own canvas instance (CreateExplorerGraph) never sets this — Explore reads
+        // every kind, knowledge included (Ruling 53: Explore is unchanged).
+        var queries = new StubQueries
+        {
+            Graph = new WorkspaceGraph(
+                [new GraphNode("Shop.Order", "Order", "class", 1, IsExternal: false)], [], 0, [], "rev-1"),
+        };
+
+        await new CanvasGraphViewModel(queries).LoadAsync();
+
+        Assert.False(Assert.Single(queries.ReceivedQueries).ExcludeKnowledge);
     }
 }

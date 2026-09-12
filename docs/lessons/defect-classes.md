@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 84 · partially-controlled 63 · uncontrolled 21
+**Status counts:** controlled 86 · partially-controlled 65 · uncontrolled 20
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -474,8 +474,11 @@ for both or split.*
   stdout was the host's pipe, not the pseudo console, and the `Output` channel stayed empty. With
   `STARTF_USESTDHANDLES` and null handles (Windows Terminal's own launch shape) the in-process
   form now passes in a `dotnet test` host: `ConPtyChildStandardHandlesTests` reads the child's
-  token on the channel. The out-of-process helper remains a valid control for the attached-console
-  configuration; it is no longer the *only* way to observe the channel. The class stands — the
+  token on the channel. The out-of-process helper remains a valid control for owner-lifetime claims; it is no longer
+  the *only* way to observe the channel, and it no longer needs a console window (DC-170).
+  `TerminalGuiHostTests` had recorded the true condition on 2026-08-27 — *"it is which standard
+  handles the host was given"* — as a comment in a test, never as a change to the runtime: a
+  memoir (CI6), read back only when the sixth report forced the measurement. The class stands — the
   diagnostic bullet below is what would have found this too — but its instance is re-attributed.
 - **Instances:** 2026-08-27 — the same class, reached from the other side. Building the terminal
   renderer raised the question this entry's own wording appeared to settle: `AiDe.App` is a GUI
@@ -4508,7 +4511,7 @@ for both or split.*
   discarded by a pipe. In each the mechanism reports success, and the absence has no signature. That
   meta-shape is the thing to look for, and it is why each was found by *measuring the control itself*
   rather than by trusting its green.
-- **Status:** `uncontrolled` — recorded, with the exposure scoped to interactive and agent sessions
+- **Status:** `partially-controlled` — the gate runner (`tools/run-verify-gates.py`, recurrence 3) gives the join line one status to chain on; recorded, with the exposure scoped to interactive and agent sessions
 
 ---
 
@@ -4522,6 +4525,19 @@ for both or split.*
   stops the line — applied to every resolution line since; the pre-commit hook does not run the
   gate set and should not (it would double CI). The class is unchanged; the instance is the
   conductor forgetting its own register.
+
+- **Recurrence 3 (conductor-addendum-c, 2026-09-12, the SH-3 join) — and the mechanical control:**
+  a `for g in tools/verify-*.py; do …; done` loop counted its failures into a variable, printed
+  `FAIL rc=1 tools/verify-stranded-audit.py`, and the line went on to `git commit … && git push`
+  because nothing chained on the count. Recurrence 2's control — "`&&`-chain every gate" — cannot
+  reach a loop: a loop has no single status to chain on, and the conductor wrote one by hand at a
+  join for the third time. The red was transient (a peer tree's uncommitted log; green on re-run)
+  and `main`'s content was verified, but the shape pushed before it knew. **Control:**
+  `tools/run-verify-gates.py` runs every `tools/verify-*.py` and exits 1 on any failure
+  (`--self-test` proves a red gate is reported red), so the only join line is
+  `python tools/run-verify-gates.py && git commit …` and no loop is written at a join again.
+  Status moves to `partially-controlled`: the runner exists; the resolution path's own use of it
+  is the conductor's habit until the join is a script.
 
 ### DC-114 — A fix to the deployment mechanism cannot deploy itself: correct, tested, green, and unreachable
 
@@ -7122,4 +7138,100 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   the fill step as prose; this is its executable half.
 - **Status:** `uncontrolled` — the cells are pasted; the manifest and the gate do not exist.
 
+### DC-169 — The drag reconcile's view-to-model mapping assumes every rendered pane and column stands for a real model occupant, and breaks when one does not
+
+- **Shape:** two related gaps in the position-based reconcile that maps AvalonDock's rendered
+  tree back onto the zone model (`WorkbenchAdapter.MapNode`, `ZoneBackedLayoutService.
+  TryMapByPosition`), both surfacing only once a default layout can legitimately give a zone
+  exactly one surface or none: (1) `MapNode` treats an AvalonDock `LayoutDocumentPane` left in the
+  tree with zero documents — which is what happens when a one-surface zone's only tab is dragged
+  elsewhere — as an unrecognised shape and fails the WHOLE reconcile, not just that zone; (2)
+  `TryMapByPosition` anchors a column to a zone only by majority membership of the zone's OWN
+  model surfaces, so a zone that starts with none (Coding's Center before any session opens —
+  Ruling 55d/60's "No session open" state) can never be anchored, even though its column is
+  plainly rendered (holding `ZonesToTree.WelcomePlaceholder`, a view-only stand-in the model never
+  carries) — so every native drag in that host silently reverted, with no refusal logged.
+- **Signature:** `ReadLayoutFromView()`/`MapNode` returning null (logged `"view-unreadable"`) for a
+  drag that touches an unrelated zone entirely; a native-drag test asserting `expectedAfter` gets
+  back the surface's ORIGINAL zone with no error; a default layout where at least one docking zone
+  holds exactly one surface, or a perspective whose Center starts with none.
+- **Instance (SH-3, 2026-09-12):** landing `WorkbenchLayout.Default(perspective)` (Addendum C §B4)
+  gave Architecture's Left/Right exactly one surface each (Evidence/Provenance) and Coding's
+  Center none — the FIRST defaults in this codebase shaped that way. Six
+  `WorkbenchDragCompletedHookTests` and one theory row went red purely from the shape change, not
+  from a defect in the new defaults themselves; two of the six needed `MapNode`'s fix, the seventh
+  (`coding`/`sessions`/`terminal-1`) needed `TryMapByPosition`'s elimination fallback.
+- **Sweep:** no earlier default in this codebase ever gave a zone exactly one surface or an empty
+  Center, so no other call site was exposed; both fixes are shape-general (any future
+  one-surface-zone or empty-Center default is covered), not special-cased to these two hosts.
+- **Control:** `MapNode` now skips a `LayoutDocumentPane` with zero documents rather than
+  returning null for it (the zone is correctly ABSENT, not unmappable); `TryMapByPosition` now
+  falls back to "the one column neither Left nor Right claims is Center" only when Center's own
+  anchor search comes back empty, and only when exactly one such column remains (still refuses,
+  never guesses, when more than one does). Regression-pinned by
+  `ZoneBackedLayoutServiceTests.ReconcileFromView_WithAModelEmptyCenter_StillAnchorsCenterByElimination`
+  (the fallback firing) and `…_WithTwoUnanchorableColumns_RefusesRatherThanGuesses` (the fallback's
+  own refusal, closing the Test Architect's mutation-coverage finding on that branch), plus the
+  seven `WorkbenchDragCompletedHookTests` cases exercising Architecture's and Coding's new
+  one-surface zones.
+- **Status:** `partially-controlled` — pinned by the tests above; no static lint (the shape is a
+  runtime view/model mismatch, not a pattern greppable in source). id pending conductor allocation
+  at the join (contiguous DC family; DC-168 is the last landed).
+
 ## 5. What this note does not decide
+
+### DC-170 — A test that opens a new console on a machine whose default terminal is Windows Terminal opens a Windows Terminal tab, and the tab's agent outlives the test
+
+- **Shape:** `CreateProcess(... CREATE_NEW_CONSOLE ...)` asks Windows for a console *with a window*.
+  When Windows Terminal is the **default terminal application**, that console is handed to Windows
+  Terminal as a tab; Windows Terminal's agent host (`wta.exe`) attaches an agent session to every
+  tab — a `copilot.exe --acp --stdio` child and one `node.exe` MCP server per tab — and keeps them
+  for Windows Terminal's lifetime after the tab closes. A test suite that launches a helper this
+  way leaves one agent pair per launch, forever, on the operator's machine. `WT_SESSION` in the
+  launcher's environment is not the condition: measured with and without it, two launches → two
+  `node.exe`. (INV-0010's WT_* scrub closed the *other* attach path — a ConPTY shell of ours
+  treated as a tab — and left this one, which is not a ConPTY shell at all.)
+- **Signature:** `node.exe … higgsfield-mcp/src/server.js` and `conhost.exe` pairs under
+  `wta.exe → copilot.exe`, born in bursts that line up with test runs, none within 10 s of a
+  product `terminal.start`; a Windows Terminal tab that flashes open during a test; a census whose
+  largest class is *foreign by parent* and grows by about the number of helper launches per run.
+- **Instance (INV-0011 §7, 2026-09-12):** after the pool of 257 was ended, 25 were born during one
+  whole-suite recount (19:58–20:10Z); `TerminalHostExitPathTests` alone (two helper launches):
+  2 born with `WT_SESSION` set, 2 with it unset. Nine Core test classes launched
+  `AiDe.Core.TerminalHost` with `CREATE_NEW_CONSOLE` on DC-014's premise that the helper needed a
+  real console — a premise DC-164 retired.
+- **Sweep:** one launch site (`tests/AiDe.Core.Tests/TerminalHostLauncher.cs`); the App's GUI probe
+  and window-close test use `UseShellExecute = true` on a window-subsystem exe (no console, no tab);
+  no product code creates a console.
+- **Control:** the launcher uses `CREATE_NO_WINDOW` (a headless console: the helper still owns a
+  console, ConPTY still works, no tab exists to attach to) — the same 21 tests, 0 born; the whole
+  `Platform=Windows` half (166), 0 born. The helper's exit code 4 ("no console window") and the four
+  assertions on it are retired with the premise. Gate: `tools/verify-no-new-console-launches.py`
+  (every `*.cs` under `src/` and `tests/`, code lines only, token `CREATE_NEW_CONSOLE`, no
+  allowlist; `--self-test`), run by `run-verify-gates.py` and in CI.
+- **Status:** `controlled`.
+
+### DC-171 — A test that locates a helper binary by "the newest configuration on disk" runs whichever program was built last in that configuration, not the one built with the test
+
+- **Shape:** a test launches a helper executable found by path. The lookup prefers one
+  configuration (`Release` if it exists, else `Debug`) instead of the configuration the test
+  assembly itself was built in. The test step builds the helper (a project reference) in the
+  tests' configuration; the other configuration's binary stays as it was — an older program with
+  the same name, chosen every time it exists. The test then measures a change in a binary that
+  does not contain it.
+- **Signature:** helper tests failing on an exit code or message the helper's source no longer
+  has (`exit 4: no console window — launch with CREATE_NEW_CONSOLE` after the exit was retired);
+  green in a tree with one configuration, red in a tree with two; a fix that "does not take" only
+  in the primary checkout, where Release builds have happened.
+- **Instance (X-2b's join, 2026-09-12):** ten `Platform=Windows` tests failed on `main` at
+  `e2c3aa7f` against a Release `AiDe.Core.TerminalHost.exe` built at 10:59 (before DC-170's
+  change) while the Debug one built at 13:32 sat beside it; the same tests were green in the
+  conductor tree, which had no Release helper.
+- **Sweep:** `TerminalHostLauncher.LocateHelper` (the instance); `AcpProbeLauncher` and the App's
+  `LocateProbe` resolve relative to the test assembly's own output directory (no configuration
+  preference) — not the class.
+- **Control:** `LocateHelper` reads the configuration from the test assembly's own `bin/<configuration>/`
+  segment and uses only that; `TerminalHostLauncherConfigurationTests` asserts the helper path
+  carries the tests' configuration and not the other, and the segment reader on three shapes.
+- **Status:** `controlled`.
+

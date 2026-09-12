@@ -179,8 +179,24 @@ public sealed class SurfaceContentTests
         });
     }
 
+    /// <summary>
+    /// Re-scoped per §A12/§876's instruction: the legacy <c>Layout.Default()</c> single-host tree
+    /// this test pinned is retired by the perspective shell (SH-2/SH-3). "In the default layout" is
+    /// no longer a single fact — §B4 gives each perspective its OWN table — so the oracle becomes
+    /// "reachable from the derived menu of the perspective that admits it" (US-C3 b5: an explicit,
+    /// non-empty <c>Perspectives</c> row and a Derived/Verb opener — never absent by omission).
+    /// </summary>
+    private static void AssertReachableFromItsPerspectiveMenu(string kind, Perspective perspective)
+    {
+        var row = SurfaceContentFactory.Kinds.Single(k => k.Kind == kind);
+        Assert.Contains(perspective, row.Perspectives);
+        Assert.True(
+            row.Entry is SurfaceContentFactory.SurfaceEntry.Derived or SurfaceContentFactory.SurfaceEntry.Verb,
+            $"'{kind}' has no opener — it would be reachable from nowhere");
+    }
+
     [Fact]
-    public void TheJoinsSurfaceIsBuilt_AndIsInTheDefaultLayout()
+    public void TheJoinsSurfaceIsBuilt_AndIsReachableFromArchitecturesMenu()
     {
         // JoinProjection was written, tested, and never called by the running application. A
         // projection nobody can see is a control that cannot fire.
@@ -188,8 +204,13 @@ public sealed class SurfaceContentTests
             new SurfaceContentFactory(null).Create(new Surface("joins", "joins", "Joins")));
 
         Assert.IsType<JoinSurface>(Unwrap(content));
-        Assert.Contains(Layout.Default().AllStacks().SelectMany(s => s.Surfaces),
-            s => s.Kind == "joins");
+        AssertReachableFromItsPerspectiveMenu("joins", PerspectiveSet.Architecture);
+
+        // Ruling 59's CONDITIONS: admitted, but left out of Architecture's DEFAULT pending the
+        // attended real-content check (docs/proof/perspective-content.md) — a default tab that may
+        // render empty is the Explore-pane defect Ruling 55d already removed.
+        Assert.DoesNotContain(
+            WorkbenchLayout.Default(PerspectiveSet.Architecture).AllSurfaces(), s => s.Kind == "joins");
     }
 
     [Fact]
@@ -242,14 +263,14 @@ public sealed class SurfaceContentTests
     [Fact]
     public void TheSessionsSurface_IsInTheDefaultLayout()
     {
-        // The same visibility lesson as Joins: a surface not in the default layout is a control
-        // nobody can see. Sessions is the point of the watcher UI.
-        Assert.Contains(Layout.Default().AllStacks().SelectMany(s => s.Surfaces),
+        // Ruling 60/§B4: "Terminal sessions" is the ONE Loomkeeper kind Coding's default carries —
+        // the watcher's live list, alone in the Left zone.
+        Assert.Contains(WorkbenchLayout.Default(PerspectiveSet.Coding).AllSurfaces(),
             s => s.Kind == "sessions");
     }
 
     [Fact]
-    public void TheBoardSurface_ShowsAPost_AndIsInTheDefaultLayout()
+    public void TheBoardSurface_ShowsAPost_AndIsReachableFromCodingsMenu()
     {
         // The Message Board surface (US-4) renders honestly and synchronously - one post reaches the
         // ListBox, and the status is not a Loading message (the load is a local fold).
@@ -268,7 +289,10 @@ public sealed class SurfaceContentTests
 
         Assert.Equal(1, view.ItemCount);
         Assert.DoesNotContain("Loading", view.StatusText, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains(Layout.Default().AllStacks().SelectMany(s => s.Surfaces), s => s.Kind == "board");
+        AssertReachableFromItsPerspectiveMenu("board", PerspectiveSet.Coding);
+
+        // §B4: admitted, not in Coding's default (only "sessions" is) — reachable from the View menu.
+        Assert.DoesNotContain(WorkbenchLayout.Default(PerspectiveSet.Coding).AllSurfaces(), s => s.Kind == "board");
     }
 
     [Fact]
@@ -287,7 +311,7 @@ public sealed class SurfaceContentTests
     }
 
     [Fact]
-    public void TheLeaderboardSurface_ShowsACell_AndIsInTheDefaultLayout()
+    public void TheLeaderboardSurface_ShowsACell_AndIsReachableFromCodingsMenu()
     {
         // The Leaderboard surface (US-14) renders honestly and synchronously - a comparable cohort
         // reaches the ListBox as at least one cell, and the status is not a Loading message.
@@ -311,11 +335,12 @@ public sealed class SurfaceContentTests
 
         Assert.True(view.ItemCount >= 1);
         Assert.DoesNotContain("Loading", view.StatusText, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains(Layout.Default().AllStacks().SelectMany(s => s.Surfaces), s => s.Kind == "leaderboard");
+        AssertReachableFromItsPerspectiveMenu("leaderboard", PerspectiveSet.Coding);
+        Assert.DoesNotContain(WorkbenchLayout.Default(PerspectiveSet.Coding).AllSurfaces(), s => s.Kind == "leaderboard");
     }
 
     [Fact]
-    public void TheLedgerSurface_ShowsAnEpisode_AndIsInTheDefaultLayout()
+    public void TheLedgerSurface_ShowsAnEpisode_AndIsReachableFromCodingsMenu()
     {
         // The Ledger (US: "the ledger viewable too") renders honestly and synchronously — one recorded
         // work episode reaches the ListBox as a row, and the status is not a Loading message (the load
@@ -339,7 +364,8 @@ public sealed class SurfaceContentTests
 
         Assert.Equal(1, view.ItemCount);
         Assert.DoesNotContain("Loading", view.StatusText, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains(Layout.Default().AllStacks().SelectMany(s => s.Surfaces), s => s.Kind == "ledger");
+        AssertReachableFromItsPerspectiveMenu("ledger", PerspectiveSet.Coding);
+        Assert.DoesNotContain(WorkbenchLayout.Default(PerspectiveSet.Coding).AllSurfaces(), s => s.Kind == "ledger");
     }
 
     [Fact]

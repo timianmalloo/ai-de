@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation: 32 types, 84 members, 65% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation: 33 types, 89 members, 66% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation`
 
-**32 public types · 84 public members · 65% documented.**
+**33 public types · 89 public members · 66% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -87,6 +87,8 @@ blank canvas for all three tells the user nothing (**DC-011**).
 | `Task<CanvasGraph> RouteAsync(` | The declared context a node belongs to, or null.  How one node reaches another, rendered as the same graph the canvas already draws. |
 | `Func<string, string?> ContextLookup { get; set; } = _` | **(gap)** |
 | `string? ContextFilter { get; set; }` | When set, only nodes in this context are drawn. |
+| `bool ExcludeKnowledge { get; set; }` | When true, every `GraphQuery` this view model issues excludes knowledge nodes (Ruling 53; US-C8): the Architecture canvas's kind-filtered second instance — code, data and architecture/infrastructure only — expressed a… |
+| `IReadOnlyList<string>? KindFilter { get; set; }` | When set, every `GraphQuery` this view model issues keeps only these `has_type` values (Ruling 54's class-diagram scaling fix, patterns-expert review): the SAME allow-list the diagram itself draws (`ClassHierarchyMode… |
 
 ### `int OverviewNodeCap = 1_500`
 
@@ -296,7 +298,22 @@ result-limit state as the Phase-2 canvas will.
 | `void MarkStale(string reason)` | Marks the view stale without discarding it — the last successful revision still renders. |
 | `void Filter(string term)` | **(gap)** |
 | `Task SelectAsync(string nodeId, CancellationToken cancellationToken = default)` | Selects a node and builds its provenance in the spec's fixed order: what it is → confidence/provenance → related nodes → source location → actions. |
-| `string EmptySelectionMessage` | Empty-pane copy, shown before anything is selected. |
+| `string EmptySelectionMessage` | Empty-pane copy, shown before anything is selected — spec §C4, verbatim (US-C6). |
+
+## `EvidenceSelectionSource`
+
+*class* — `EvidencePaneViewModel.cs`
+
+The seam between the Evidence master and Provenance detail panes (Ruling 61; US-C6): a shared,
+UI-framework-agnostic channel so selecting a row in one pane is exactly what changes the other,
+with no second definition of "what is selected". One instance per host, held by whatever builds
+both panes — testable without a docking host (US-C6's positive oracle).
+
+| Member | Summary |
+|---|---|
+| `string? SelectedNodeId { get; private set; }` | The currently selected node, or null when nothing is selected. |
+| `event Action<string?>? Changed` | Raised whenever the selection changes, including to null (nothing selected). |
+| `void Select(string? nodeId)` | Selects  (or clears the selection when null). A no-op re-selection announces nothing new. |
 
 ## `WatcherBoardRow`
 

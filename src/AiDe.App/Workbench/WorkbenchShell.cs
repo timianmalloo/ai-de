@@ -180,9 +180,11 @@ public sealed class WorkbenchShell : IDisposable
         foreach (var host in Hosts)
         {
             // What the host's DEFAULT dropped to satisfy its own invariant is on record, never
-            // silent (the D&P reviewer's finding): today's one Default() seeds two `view`
-            // surfaces, so Architecture's interim default keeps one — SH-3's Default(perspective)
-            // retires the drop, and this line is how the next reader knows it happened.
+            // silent (the D&P reviewer's finding). SH-3's WorkbenchLayout.Default(perspective)
+            // seeds each host from its OWN §B4 table, so a well-formed build drops nothing here —
+            // the interim combined-and-filtered seed's "Architecture keeps one `view`" duplicate is
+            // retired. The guard stays: an empty drop list is not worth an event, and a future
+            // regression that DOES seed a drop is still reported by the same line.
             if (host.Service.DefaultDropped.Count > 0)
             {
                 WorkbenchDiagnostics.LayoutRestoreReport(host.Row.Id, "default-filtered", host.Service.DefaultDropped, null);
@@ -1270,6 +1272,13 @@ public sealed class WorkbenchShell : IDisposable
         // make navigation cost scale with the map.
         graph.ContextLookup = BuildContextLookup();
 
+        // Architecture's kind-filtered second instance (Ruling 53; US-C8): this docked "canvas" kind
+        // is admitted only to Architecture, so BindCanvas always binds ITS graph, never the
+        // Explorer's own (CreateExplorerGraph, which stays unfiltered — Explore reads every kind).
+        // A parameter on the existing neighbourhood query, never a second store or an in-surface
+        // toggle.
+        graph.ExcludeKnowledge = true;
+
         canvas.GraphSource = (rootId, ct) => LoadRouted(graph, rootId, ct);
 
         // Subscribed once per canvas instance: reconcile reuses the surface across renders, and a
@@ -2033,7 +2042,20 @@ public sealed class WorkbenchShell : IDisposable
 
         try
         {
-            var vm = new CanvasGraphViewModel(_queries) { ContextLookup = BuildContextLookup() };
+            // Ruling 54's scaling fix, routed to the substrate (US-U7/US-K10-K11): the diagram only
+            // ever draws ClassHierarchyModel.TypeKinds (IsType already discards everything else), so
+            // asking the OVERVIEW's node cap for exactly that set — the same GraphQuery.Kinds filter
+            // every other kind-scoped query already uses, wired end to end — spends the whole 1,500-
+            // node budget on classes/interfaces instead of splitting it with tables, infrastructure
+            // resources and the knowledge corpus alike. More real types reach the diagram, and less
+            // work builds and discards nodes it was always going to throw away (patterns-expert
+            // review: a narrower, already-wired allow-list beats reusing Ruling 53's knowledge-only
+            // exclusion here). Measured: docs/proof/perspective-content.md.
+            var vm = new CanvasGraphViewModel(_queries)
+            {
+                ContextLookup = BuildContextLookup(),
+                KindFilter = [.. ClassHierarchyModel.TypeKinds],
+            };
             var graph = await vm.LoadAsync(null, cancellationToken: CancellationToken.None);
             foreach (var surface in surfaces)
             {
