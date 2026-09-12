@@ -103,7 +103,7 @@ public partial class MainWindow : Window
 
         // File → New Session (R13 b1). Wired here for the same reason as the folder picker: the
         // sheet and the workspace chooser are both windows, and only a Window can show one.
-        Shell.Controller.NewSessionRequested = NewSession;
+        Shell.Controller.NewSessionRequested = NewSessionAsync;
 
         // AR5 — Explorer is a catalog command, so it reaches the menu and the palette and is no
         // longer reachable only by pressing one 44×44 icon.
@@ -196,10 +196,14 @@ public partial class MainWindow : Window
     /// Runs <c>File → New Session</c> (R13 b1) and returns what to announce.
     /// </summary>
     /// <remarks>
-    /// <para><b>The chooser interposes here, not in the sheet.</b> With no workspace open the flow
-    /// calls <see cref="ChooseWorkspaceForSession"/> first, and a cancelled chooser ends the flow
-    /// having created nothing — the sheet is not even constructed, because it is not constructible
-    /// without a workspace.</para>
+    /// <para><b>The chooser interposes here, not in the sheet — and the chosen workspace is opened
+    /// before the sheet.</b> With no workspace open the flow calls
+    /// <see cref="ChooseWorkspaceForSession"/> first, opens the chosen folder through
+    /// <see cref="OpenWorkspaceAtAsync"/> — the same path as File → Open Workspace, with its restore,
+    /// its <c>workspace-open</c> line and its recent-list entry — and only then builds the sheet,
+    /// bound to the workspace the window now reports (INV-0009 Phase 3, DC-149). A cancelled chooser
+    /// ends the flow having created nothing; a folder that does not open ends it with that path's
+    /// own reason.</para>
     ///
     /// <para><b>The provider registry is read here, once, and handed to BOTH consumers.</b>
     /// <c>~/.aide/providers.json</c> — §14.2's <c>providers.yaml</c>, with the <c>.yaml</c> filed as
@@ -214,7 +218,7 @@ public partial class MainWindow : Window
     /// file and the field, because a registry read empty out of a broken file renders as the first
     /// state and is a wrong claim about a file the operator wrote (Ruling 47 (b)).</para>
     /// </remarks>
-    private string NewSession()
+    private async Task<string> NewSessionAsync()
     {
         if (ReadProviders() is { } malformed)
         {
@@ -226,6 +230,13 @@ public partial class MainWindow : Window
         var flow = new Workbench.Sessions.NewSessionFlow(
             activeWorkspaceRoot: () => (DataContext as MainWindowViewModel)?.WorkspaceRoot,
             chooseWorkspace: ChooseWorkspaceForSession,
+            openWorkspace: async folder =>
+            {
+                // The ordinary open path, then the window's own reading of whether it opened: the
+                // path returns a sentence in both outcomes, and Queries is the fact.
+                var said = await OpenWorkspaceAtAsync(folder);
+                return (DataContext as MainWindowViewModel)?.Queries is null ? said : null;
+            },
             showSheet: sheet => Workbench.Sessions.NewSessionSheetDialog.Show(
                 sheet, this, Shell.Announcer.Announce),
             registry: () => _providers?.Registry ?? new AiDe.Core.AgentPlane.ProviderRegistry([]),
@@ -247,7 +258,7 @@ public partial class MainWindow : Window
                 RebuildMenu();
             });
 
-        return flow.Start().Announcement;
+        return (await flow.StartAsync()).Announcement;
     }
 
     /// <summary>

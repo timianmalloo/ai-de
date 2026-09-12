@@ -47,9 +47,10 @@ internal static partial class Program
         /// <param name="Reopen">Run the reopen choreography (MainWindow.ReopenSessionAsync's one shell call) instead of New Session.</param>
         /// <param name="Sibling">In the same state, open a code viewer — a sibling dock document — and measure whether it loads.</param>
         /// <param name="BindOnRestore">Run the workspace-open choreography for restored session documents (MainWindow.AttachWorkspace's revive-and-bind) instead of New Session.</param>
+        /// <param name="Chooser">Run File → New Session with NO workspace open — the chooser interposes — through the product's NewSessionFlow, then a second run with the chooser cancelled.</param>
         /// <param name="WindowHeight">The window's height; 720 is the operator's.</param>
         private sealed record Options(
-            bool PriorDocument, bool Explorer, bool ReturnToWorkbench, bool Reopen, bool Sibling, bool BindOnRestore, double WindowHeight);
+            bool PriorDocument, bool Explorer, bool ReturnToWorkbench, bool Reopen, bool Sibling, bool BindOnRestore, bool Chooser, double WindowHeight);
 
         /// <summary>
         /// The <c>layout.mutation</c> line the operator's shell wrote at 2026-09-11T22:33:53.717Z
@@ -111,6 +112,7 @@ internal static partial class Program
                 Reopen: args.Contains("--reopen", StringComparer.Ordinal),
                 Sibling: args.Contains("--sibling", StringComparer.Ordinal),
                 BindOnRestore: args.Contains("--bind-on-restore", StringComparer.Ordinal),
+                Chooser: args.Contains("--chooser", StringComparer.Ordinal),
                 WindowHeight: Height(args));
 
             var echo = WorkbenchDiagnostics.Sink;
@@ -201,7 +203,7 @@ internal static partial class Program
         {
             Console.Out.WriteLine(
                 $"options: priorDocument={options.PriorDocument} explorer={options.Explorer} returnToWorkbench={options.ReturnToWorkbench} "
-                + $"reopen={options.Reopen} sibling={options.Sibling} bindOnRestore={options.BindOnRestore} windowHeight={options.WindowHeight}");
+                + $"reopen={options.Reopen} sibling={options.Sibling} bindOnRestore={options.BindOnRestore} chooser={options.Chooser} windowHeight={options.WindowHeight}");
 
             await Task.Delay(800);
 
@@ -284,6 +286,7 @@ internal static partial class Program
 
             var verdict = options.Reopen ? await ReopenAsync(shell, root)
                 : options.BindOnRestore ? await BindOnRestoreAsync(shell, root)
+                : options.Chooser ? await ChooserAsync(shell, root)
                 : await NewSessionAsync(window, shell, mode, root, options);
 
             persistence.Dispose();
@@ -529,6 +532,126 @@ internal static partial class Program
 
             Console.Out.WriteLine("the restored session document is live, its composer bound and mounted six fields; the session that is gone kept its island");
             return Ok;
+        }
+
+        /// <summary>
+        /// <c>MainWindow.NewSessionAsync</c> with no workspace open, as it stands after INV-0009 Phase 3:
+        /// the product's <see cref="NewSessionFlow"/>, whose chooser answers with a workspace, whose
+        /// <c>openWorkspace</c> is the window's open path — stood in for by setting what the window
+        /// reports, since the real path reaches a daemon — and whose <c>opened</c> callback is the
+        /// window's: open the document, bind through the product's binder with the window's root,
+        /// give it the tree. Then the same flow with the chooser cancelled. Measured: the composer
+        /// binds to the CHOSEN root and reaches init-pushed; a cancelled chooser creates nothing.
+        /// </summary>
+        private static async Task<int> ChooserAsync(WorkbenchShell shell, string root)
+        {
+            var providers = WriteProviderFile(root);
+            var chosen = Path.Combine(root, "chosen-workspace");
+            Directory.CreateDirectory(chosen);
+            string? windowRoot = null;
+            var order = new List<string>();
+            ComposerSurface? composer = null;
+
+            NewSessionFlow Flow(Func<string?> choose) => new(
+                activeWorkspaceRoot: () => windowRoot,
+                chooseWorkspace: choose,
+                openWorkspace: folder =>
+                {
+                    order.Add("open");
+                    windowRoot = folder;
+                    return Task.FromResult<string?>(null);
+                },
+                showSheet: sheet =>
+                {
+                    order.Add("sheet:" + (sheet.WorkspaceRoot == windowRoot ? "window-root" : "other-root"));
+                    sheet.TaskClass = "probe";
+                    return true;
+                },
+                registry: () => providers.Registry,
+                workspaceId: folder => folder,
+                opened: created =>
+                {
+                    order.Add("opened");
+                    var said = shell.OpenSessionDocument(created.Config);
+                    composer = shell.SessionComposer(created.Config.SessionId);
+                    said = NewSessionPlacement.GiveItTheWholeTree(
+                        shell.Service, created.Config.SessionId,
+                        said + " " + SessionComposerBinder.Bind(
+                            shell, created.Config, created.RoutableBackends, created.TaskClass,
+                            repositoryRoot: windowRoot, dataDirectory: windowRoot,
+                            providers, new NeverAffirms()));
+                    shell.Adapter.Render();
+                    Console.Out.WriteLine($"chooser: announced='{said}'");
+                });
+
+            var outcome = await Flow(() => { order.Add("choose"); return chosen; }).StartAsync();
+            Console.Out.WriteLine(
+                $"chooser: order=[{string.Join(",", order)}] created={outcome.Created is not null} outcome='{outcome.Announcement}'");
+
+            if (composer is null)
+            {
+                Console.Error.WriteLine("the chooser flow created no document whose composer the shell holds");
+                return TheChooserSessionWasNotBoundToTheChosenWorkspace;
+            }
+
+            await WaitAsync(() => Count(composer.SurfaceId, "init-pushed") >= 1, TimeSpan.FromSeconds(30));
+            await Task.Delay(1000);
+
+            var view = FindWebView(composer);
+            var fields = view?.CoreWebView2 is null ? "(no page)" : await Eval(view, "String(document.querySelectorAll('#fields .field').length)");
+            var boundTo = BoundRepositoryRoot(composer.SurfaceId);
+            Console.Out.WriteLine(
+                $"chooser: composer configured={Count(composer.SurfaceId, "configured")} init-pushed={Count(composer.SurfaceId, "init-pushed")} "
+                + $"page fields={fields} status='{composer.Status}' "
+                + $"bound-to-chosen-root={string.Equals(boundTo, chosen, StringComparison.OrdinalIgnoreCase)}");
+
+            // The cancelled chooser, from a window with no workspace open again: nothing opened,
+            // nothing created, no surface added.
+            var surfacesBefore = shell.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Count();
+            var sessionsBefore = Directory.GetDirectories(SessionPaths.SessionsRoot(chosen)).Length;
+            windowRoot = null;
+            order.Clear();
+            var cancelled = await Flow(() => { order.Add("choose"); return null; }).StartAsync();
+            var surfacesAfter = shell.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Count();
+            var sessionsAfter = Directory.GetDirectories(SessionPaths.SessionsRoot(chosen)).Length;
+            Console.Out.WriteLine(
+                $"chooser cancelled: order=[{string.Join(",", order)}] created={cancelled.Created is not null} "
+                + $"surfaces before={surfacesBefore} after={surfacesAfter} sessions before={sessionsBefore} after={sessionsAfter} "
+                + $"outcome='{cancelled.Announcement}'");
+
+            if (!string.Equals(boundTo, chosen, StringComparison.OrdinalIgnoreCase)
+                || Count(composer.SurfaceId, "init-pushed") == 0 || fields != "6")
+            {
+                Console.Error.WriteLine(
+                    $"the session created through the chooser was not bound to the chosen workspace: bound to '{boundTo ?? "(nothing)"}', "
+                    + $"expected '{chosen}'; init-pushed={Count(composer.SurfaceId, "init-pushed")} fields={fields} status='{composer.Status}'");
+                return TheChooserSessionWasNotBoundToTheChosenWorkspace;
+            }
+
+            if (cancelled.Created is not null || surfacesAfter != surfacesBefore || sessionsAfter != sessionsBefore || order.Contains("open"))
+            {
+                Console.Error.WriteLine("a cancelled chooser opened a workspace or created a session");
+                return TheChooserSessionWasNotBoundToTheChosenWorkspace;
+            }
+
+            Console.Out.WriteLine(
+                "the chooser opened the chosen workspace, the session was created and bound in it, and a cancelled chooser created nothing");
+            return Ok;
+        }
+
+        /// <summary>The <c>repositoryRoot</c> on the <c>session-document.bound</c> line for the composer, or null when none was written.</summary>
+        private static string? BoundRepositoryRoot(string composerSurfaceId)
+        {
+            lock (Lines)
+            {
+                var line = Lines.LastOrDefault(l =>
+                    l.Contains("\"evt\":\"session-document.bound\"", StringComparison.Ordinal)
+                    && l.Contains($"\"surface\":\"{composerSurfaceId}\"", StringComparison.Ordinal));
+                if (line is null) { return null; }
+
+                using var document = JsonDocument.Parse(line);
+                return document.RootElement.GetProperty("repositoryRoot").GetString();
+            }
         }
 
         private sealed record Measured(string Line, int Loaded, int Initialising, int InitPushed, string Fields);

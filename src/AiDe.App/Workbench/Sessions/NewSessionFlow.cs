@@ -21,13 +21,24 @@ public sealed record NewSessionOutcome(NewSessionResult? Created, string Announc
 /// sheet is not constructible without a workspace, so there is no path through this type that
 /// reaches <c>SessionConfigStore.Create</c> without one.</para>
 ///
-/// <para><b>Every exit announces.</b> Cancel at the chooser, cancel at the sheet, and a refusal
-/// inside the sheet each say what happened; only the create path says a session exists.</para>
+/// <para><b>The chosen workspace is opened, then the session is created in it (INV-0009 Phase 3,
+/// DC-149).</b> The chooser used to hand its root to the session store and nowhere else: the
+/// session was bound to workspace W while the window still had none open, and the composer's first
+/// guard then refused — <i>repositoryRoot: this window has no open workspace</i> — over a workspace
+/// the operator had just chosen in a dialog this flow put up. The chosen root now goes through the
+/// window's ordinary open path first, and the sheet binds to the workspace the window reports once
+/// that has happened, so the window and the session are bound to the same workspace before the
+/// composer is. A workspace that does not open ends the flow with the open path's own reason.</para>
+///
+/// <para><b>Every exit announces.</b> Cancel at the chooser, a workspace that did not open, cancel
+/// at the sheet, and a refusal inside the sheet each say what happened; only the create path says a
+/// session exists.</para>
 /// </remarks>
 public sealed class NewSessionFlow
 {
     private readonly Func<string?> _activeWorkspaceRoot;
     private readonly Func<string?>? _chooseWorkspace;
+    private readonly Func<string, Task<string?>>? _openWorkspace;
     private readonly Func<NewSessionSheetViewModel, bool> _showSheet;
     private readonly Func<ProviderRegistry> _registry;
     private readonly Func<string, string> _workspaceId;
@@ -38,6 +49,10 @@ public sealed class NewSessionFlow
     /// <param name="chooseWorkspace">
     /// Interposes the workspace chooser and returns the chosen root, or null when cancelled. Null
     /// means this build has no chooser, which the flow reports rather than working around.
+    /// </param>
+    /// <param name="openWorkspace">
+    /// Opens the chosen root in the window through its ordinary open path and returns null, or the
+    /// reason it did not open. Null means this build cannot open one, which the flow reports.
     /// </param>
     /// <param name="showSheet">
     /// Shows the sheet and returns whether the operator pressed Create. The sheet is handed in
@@ -51,6 +66,7 @@ public sealed class NewSessionFlow
     public NewSessionFlow(
         Func<string?> activeWorkspaceRoot,
         Func<string?>? chooseWorkspace,
+        Func<string, Task<string?>>? openWorkspace,
         Func<NewSessionSheetViewModel, bool> showSheet,
         Func<ProviderRegistry> registry,
         Func<string, string> workspaceId,
@@ -64,6 +80,7 @@ public sealed class NewSessionFlow
 
         _activeWorkspaceRoot = activeWorkspaceRoot;
         _chooseWorkspace = chooseWorkspace;
+        _openWorkspace = openWorkspace;
         _showSheet = showSheet;
         _registry = registry;
         _workspaceId = workspaceId;
@@ -75,7 +92,7 @@ public sealed class NewSessionFlow
     public NewSessionSheetViewModel? LastSheet { get; private set; }
 
     /// <summary>Runs the flow once.</summary>
-    public NewSessionOutcome Start()
+    public async Task<NewSessionOutcome> StartAsync()
     {
         LastSheet = null;
 
@@ -83,19 +100,35 @@ public sealed class NewSessionFlow
 
         if (string.IsNullOrWhiteSpace(root))
         {
-            if (_chooseWorkspace is null)
+            if (_chooseWorkspace is null || _openWorkspace is null)
             {
                 return new NewSessionOutcome(
                     null, "A session must belong to a workspace, and this build cannot open one.");
             }
 
-            root = _chooseWorkspace();
+            var chosen = _chooseWorkspace();
 
-            if (string.IsNullOrWhiteSpace(root))
+            if (string.IsNullOrWhiteSpace(chosen))
             {
                 // Cancel aborts cleanly: nothing was written, and the flow says so rather than
                 // leaving the operator wondering whether a half-made session exists.
                 return new NewSessionOutcome(null, "New session cancelled — no workspace was chosen.");
+            }
+
+            // OPENED, not merely recorded. The session is created in the workspace the window has
+            // open, which is now the one the operator chose — and the sheet reads that root back
+            // from the window rather than from the chooser, so the two cannot name different places.
+            if (await _openWorkspace(chosen) is { } notOpened)
+            {
+                return new NewSessionOutcome(null, notOpened);
+            }
+
+            root = _activeWorkspaceRoot();
+
+            if (string.IsNullOrWhiteSpace(root))
+            {
+                return new NewSessionOutcome(
+                    null, $"New session cancelled — {chosen} opened, but this window reports no workspace.");
             }
         }
 

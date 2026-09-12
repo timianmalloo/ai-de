@@ -171,6 +171,38 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
         Assert.Contains("\"evt\":\"session-document.bound\",\"session\":\"20260911T175821Z-1edfa710\"", stdout, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// <b>INV-0009 Phase 3 (DC-149), the Owner's ruling.</b> File → New Session with no workspace
+    /// open: the chooser interposes, the chosen workspace is <b>opened</b> before the sheet, the
+    /// session is created in it and its composer is bound to the chosen root — the product's own
+    /// <c>NewSessionFlow</c>, with the window's open path stood in by what the window reports. And a
+    /// cancelled chooser opens nothing and creates nothing.
+    /// </summary>
+    /// <remarks>
+    /// <b>The red this replaces</b> is the state the <c>--prior-document</c> step replays and
+    /// <see cref="ANewSessionRendersInTheOperatorsRestoredArrangement"/> asserts: the chooser-bound
+    /// session's composer refused with <i>repositoryRoot: this window has no open workspace</i> —
+    /// the flow handed the chosen root to the session store and never to the window. The flow's
+    /// own unit oracle (<c>TheChooserOpensTheChosenWorkspace_ThenTheSheetBindsToWhatTheWindowReports</c>)
+    /// would not compile against the flow that had no open step.
+    /// </remarks>
+    [Fact]
+    public void ASessionCreatedThroughTheChooserIsBoundToTheChosenWorkspace()
+    {
+        var (exitCode, stdout, stderr) = ComposerHostIntegrationTests.RunProbe(
+            "--session-render --chooser --height 720", Budget);
+
+        Assert.True(exitCode == 0, $"the session-render probe failed with exit {exitCode}. {stdout} {stderr}");
+
+        // Open before the sheet; the sheet bound to the workspace the window reports; then the callback.
+        Assert.Contains("chooser: order=[choose,open,sheet:window-root,opened] created=True", stdout, StringComparison.Ordinal);
+
+        var composer = Line(stdout, "chooser: composer ");
+        Assert.Contains(" configured=1 init-pushed=1 page fields=6 status='' bound-to-chosen-root=True", composer, StringComparison.Ordinal);
+
+        Assert.Contains("chooser cancelled: order=[choose] created=False surfaces before=9 after=9 sessions before=1 after=1", stdout, StringComparison.Ordinal);
+    }
+
     /// <summary>The <c>composer wpf loaded=N</c> count on a measurement line.</summary>
     private static int LoadedCount(string line)
     {

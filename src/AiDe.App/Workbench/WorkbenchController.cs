@@ -40,11 +40,12 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     /// that, which the command reports rather than doing nothing.
     /// </summary>
     /// <remarks>
-    /// Synchronous, unlike <see cref="WorkspaceRefresh"/>: the flow is a modal sheet on the UI
-    /// thread, and a Task here would only describe the wait for a dialog the user is already looking
-    /// at.
+    /// A task, like <see cref="WorkspaceOpen"/>: with no workspace open the flow opens the chosen
+    /// one through the window's ordinary open path before the sheet (INV-0009 Phase 3), and that
+    /// path reaches a daemon. The sheet itself is still a modal on the UI thread; the outcome
+    /// arrives on the announcement channel either way.
     /// </remarks>
-    public Func<string>? NewSessionRequested { get; set; }
+    public Func<Task<string>>? NewSessionRequested { get; set; }
 
     /// <summary>
     /// Swaps the shell's primary view mode and returns what to announce. Set by the window; null
@@ -596,10 +597,13 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     /// </remarks>
     private bool NewSession()
     {
-        announcer.Announce(NewSessionRequested is null
-            ? "Creating a session is not available in this build."
-            : NewSessionRequested());
+        if (NewSessionRequested is null)
+        {
+            announcer.Announce("Creating a session is not available in this build.");
+            return true;
+        }
 
+        _ = RunAndAnnounce(NewSessionRequested);
         return true;
     }
 
@@ -672,7 +676,7 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
         }
         catch (Exception ex)
         {
-            announcer.Announce($"Indexing failed: {ex.Message}");
+            announcer.Announce($"The command failed: {ex.Message}");
         }
     }
 
