@@ -1830,7 +1830,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "332fdde18663ef112e2f4db3bb6d56bfbcb8859bca13b822cab92409d567a551"
+      "sourceSha256": "b337312b60e56ed174735817f1c38e51dbbc7858476feafa0050568d2909d4f8"
     },
     {
       "id": "adr-0037-family-craft-profile-dimension",
@@ -4720,6 +4720,111 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "569f2b8bfa93b44d9eb277254e153e3fe07320a484fcefea2fef652fbb69f616"
+    },
+    {
+      "id": "note-conductor-spec-errata-session-thread",
+      "path": "docs/notes/conductor-spec-errata-session-thread.md",
+      "title": "Spec erratum — Addendum A §A2/§A6/R16 draw the session as composer-beside-canvas; Ruling 74 makes the session document a thread with the Console split on demand",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Addendum A's Phase-1 default draws the session document as a composer pane beside an output canvas (§A2 line 104, §A6 line 159, the §A6.1 note at line 185, R16 at lines 238-242). Ruling 74 amends that default: the session document is a Layout:StreamingThread — the turns live in the thread with the lane's reply folded beneath the turn that caused it, and the Console split is an on-demand view of the same stream opened at a turn. Ruling 21's split and Ruling 45's Console-only strip stand. The HTML stays byte-frozen; this note is the correction.",
+      "tags": [
+        "conductor",
+        "spec",
+        "errata",
+        "addendum-a",
+        "addendum-c",
+        "session",
+        "thread",
+        "console",
+        "ruling-74",
+        "ruling-21"
+      ],
+      "links": [
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-spec-errata-policy",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-session-design-thread-not-panes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-session-conversation",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "26fd2fa4163f3828f984ea6e958c79b47e629081073f82b6591c0d52e7a139b5"
+    },
+    {
+      "id": "note-conductor-spec-errata-template-control",
+      "path": "docs/notes/conductor-spec-errata-template-control.md",
+      "title": "Spec erratum — Addendum B :181's shape control is the template control (template: none | <id>@<version>); B :186's Score outline is superseded by the jump list",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "next-delivery (after F5 merges — Ruling 51)",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Addendum B names the composer header's control a \"Shape control: Free-form | Template picker\" (line 181) and gives each block a \"shape badge (free-form or template id@version)\" in the Score outline (line 186). Erratum E1 of the D2/A1 batch renames it the template control — template: none | <id>@<version> — because Free-form is now the default task class (Ruling 72) and shape names Message | Goal-block (Addendum A R15 b2); and Ruling 74's condition 3 records the Score outline as superseded by the jump list, not silently dropped. The HTML stays byte-frozen.",
+      "tags": [
+        "conductor",
+        "spec",
+        "errata",
+        "addendum-b",
+        "addendum-c",
+        "template",
+        "shape",
+        "jump-list",
+        "score-outline",
+        "ruling-74",
+        "errata-e1"
+      ],
+      "links": [
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-spec-errata-policy",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-spec-errata-session-thread",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-session-conversation",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "828f0a90685dedc7c4e8b208960300392aee8f1c6e5492743d3fe5f97d6c2b05"
     },
     {
       "id": "note-conductor-subscription-use-authorised",
@@ -14817,15 +14922,15 @@ window.DOCS_INDEX = {
         {
           "kind": "flowchart",
           "title": "B5. User flows",
-          "mermaid": "flowchart TD\n  A[Focus in a pane or inside the terminal HWND] -->|Tab cycle reaches the rail once| B[Rail: Up/Down between items, Enter/Space activates]\n  A -->|bound perspective gesture| C[Switch without visiting the rail — P-7 when focus is in the HWND]\n  C --> D[Announcement, then focus lands in the new body — never on the rail, never lost to the window]\n  D -->|Alt / F10| E[Menu bar: only this perspective's menus]\n  E -->|Ctrl+K| F[Palette: only this perspective's commands, chord strings announced]\n  B -->|Tab| A\n  D -->|Escape, Explore only, from the surface root| G[Previous perspective]"
+          "mermaid": "flowchart TD\n  A[Focus in a pane or inside a WebView2 page] -->|Tab cycle reaches the rail once| B[Rail: Up/Down between items, Enter/Space activates]\n  A -->|bound perspective gesture| C[Switch without visiting the rail — P-7 when focus is in a WebView2 page]\n  C --> D[Announcement, then focus lands in the new body — never on the rail, never lost to the window]\n  D -->|Alt / F10| E[Menu bar: only this perspective's menus]\n  E -->|Ctrl+K| F[Palette: only this perspective's commands, chord strings announced]\n  B -->|Tab| A\n  D -->|Escape, Explore only, from the surface root| G[Previous perspective]"
         },
         {
           "kind": "flowchart",
           "title": "B5. User flows",
-          "mermaid": "flowchart TD\n  A[Session document open: one editor, structure collapsed, compiled collapsed] -->|type prose| B{Draft settles: objective derivable?}\n  A -->|shape control: pick a template — B:181 kept| T[Template fields render as the derived structure, prefilled from the text where possible]\n  T --> E\n  B -->|no| C[Structure stays one collapsed line; a T2 send will mark Goal and Done when]\n  C -->|type more| B\n  C --> E\n  B -->|yes| D[Derived structure expands beneath the editor: Goal · Done when · Not in scope, marked derived]\n  D -->|edit a line inline| D\n  D --> E{@path mention present?}\n  E -->|no| F[Write-scope line: elicitation text; Send → refusal names @path and offers the picker — Ruling 42 intact]\n  F -->|add a mention| E\n  E -->|yes| G[Write-scope line: 'src/…/** — from your mention']\n  G -->|open Compiled disclosure| H[Exactly the outgoing text; no diff, no summary; editor does not shrink]\n  H --> G\n  G -->|Send Ctrl+Enter| I{T2 and a content field empty?}\n  I -->|yes| J[Inline marks on every gap at once; one-line reason each; nothing sent]\n  J -->|fix| D\n  I -->|no| K[Sent: compiled prompt carries the session's tier · fan-out · budget in the CT19 block]\n  K --> K2[Reply streams in the Console canvas; the block joins the Score outline]\n  K2 -->|conductor answers with a drafted template — S-8| K3[Next message's draft: the reply's text with its derived structure inline]\n  K3 --> D\n  K2 -->|operator writes the next message| A\n  A -->|session settings on the header| L[Edit fan-out ceiling / budget for the session; tier is compiled, not set here]\n  L -->|re-validate the current draft| B"
+          "mermaid": "flowchart TD\n  A[Session document open: one editor, structure collapsed, compiled collapsed] -->|type prose| B{Draft settles: objective derivable?}\n  A -->|template control: pick a template — B:181 as amended, E1| T[Template fields render as the derived structure, prefilled from the text where possible]\n  T --> E\n  B -->|no| C[Structure stays one collapsed line; a T2 send will mark Goal and Done when]\n  C -->|type more| B\n  C --> E\n  B -->|yes| D[Derived structure expands beneath the editor: Goal · Done when · Not in scope, marked derived]\n  D -->|edit a line inline| D\n  D --> E{@path mention present?}\n  E -->|no| F[Write-scope line: elicitation text; Send → refusal names @path and offers the picker — Ruling 42 intact]\n  F -->|add a mention| E\n  E -->|yes| G[Write-scope line: 'src/…/** — from your mention']\n  G -->|open Compiled disclosure| H[Exactly the outgoing text; no diff, no summary; editor does not shrink]\n  H --> G\n  G -->|Send Ctrl+Enter| I{T2 and a content field empty?}\n  I -->|yes| J[Inline marks on every gap at once; one-line reason each; nothing sent]\n  J -->|fix| D\n  I -->|no| K[Sent: compiled prompt carries the session's tier · fan-out · budget in the CT19 block]\n  K --> K2[Reply streams in the Console canvas; the block joins the Score outline]\n  K2 -->|conductor answers with a drafted template — S-8| K3[Next message's draft: the reply's text with its derived structure inline]\n  K3 --> D\n  K2 -->|operator writes the next message| A\n  A -->|session settings on the header| L[Edit fan-out ceiling / budget for the session; tier is compiled, not set here]\n  L -->|re-validate the current draft| B"
         }
       ],
-      "sourceSha256": "ed9ca5c0ff0d7f9dbfae9c3bdaf80fcafabc40857e1d4a977cd0f22eed229ede"
+      "sourceSha256": "cefaa39e610b09f0cfe518d9c2e92f980aa41e7706cdeb56077316ba74eca384"
     },
     {
       "id": "spec-addendum-d-compile-step",
@@ -14897,12 +15002,12 @@ window.DOCS_INDEX = {
         {
           "kind": "flowchart",
           "title": "B3. User flows",
-          "mermaid": "flowchart TD\n  A[draft: in-memory projections live — write scope, shape, tier] -->|Ctrl+Enter / Send| M{Compile mode · structure open?}\n  M -->|mechanical-only, or all three lines supplied| P3[envelope opened · prepared: lines empty-editable or supplied; tier from rule; Send = submit]\n  M -->|agentic rung, ≥ 1 line open| C[envelope opened · preparing: skeleton; editor editable; Cancel; ≤ 60 s]\n  C -->|Ctrl+Enter| C\n  C -->|operator edits text| A\n  C -->|Cancel / unavailable / refused / timed out / malformed| P4[prepared — compiled mechanically — reason · Prepare again]\n  C -->|tool call or permission request seen| P5[prepared — suspect: reason; per-line suspect marks; Prepare again]\n  C -->|zero proposals| P6[prepared — no goal block proposed; sends as a message]\n  C -->|succeeded| P[prepared: derived lines; compile line with tier + rationale; disclosure]\n  P4 -->|Prepare again| C\n  P5 -->|Prepare again| C\n  P -->|edit / keep / restore a line · override the tier| P\n  P -->|edit text| S[stale: live projections with a stale mark; press again to prepare]\n  S -->|Ctrl+Enter, inputs changed| C\n  S -->|Ctrl+Enter, inputs unchanged after a success| P\n  P -->|Ctrl+Enter| G{Send gate}\n  P3 -->|Ctrl+Enter| G\n  P4 -->|Ctrl+Enter| G\n  P5 -->|Ctrl+Enter| G\n  P6 -->|Ctrl+Enter| G\n  G -->|no write scope| R1[refused inline: mention @path — Ruling 42 elicitation]\n  G -->|T2 content gap| R2[refused inline: marks on every gap at once]\n  G -->|rendered view stale| S\n  R1 --> P\n  R2 --> P\n  G -->|ok| K[submitted: one event with text_sha256 + projection_sha; run starts; derived marks become kept]\n  K --> K2[reply streams in the Console canvas; consumed on the run result; next draft starts at A]"
+          "mermaid": "flowchart TD\n  A[draft: in-memory projections live — write scope, shape, tier] -->|Ctrl+Enter / Send| M{Compile mode · structure open?}\n  M -->|mechanical-only, or all three lines supplied| P3[envelope opened · prepared: lines empty-editable or supplied; tier from rule; Send = submit]\n  M -->|agentic rung, ≥ 1 line open| C[envelope opened · preparing: skeleton; editor editable; Cancel; ≤ 60 s]\n  C -->|Ctrl+Enter| C\n  C -->|operator edits text: cancelled — the abandoned envelope's compile line carries the cancelled string, E4| A\n  C -->|Cancel / unavailable / refused / timed out / malformed| P4[prepared — compiled mechanically — reason · Prepare again]\n  C -->|tool call or permission request seen| P5[prepared — suspect: reason; per-line suspect marks; Prepare again]\n  C -->|zero proposals| P6[prepared — no goal block proposed; sends as a message]\n  C -->|succeeded| P[prepared: derived lines; compile line with the call's provenance; tier + rationale on the decoration line — E2; disclosure]\n  P4 -->|Prepare again| C\n  P5 -->|Prepare again| C\n  P -->|edit / keep / restore a line · override the tier| P\n  P -->|edit text| S[stale: live projections with a stale mark; press again to prepare]\n  S -->|Ctrl+Enter, inputs changed| C\n  S -->|Ctrl+Enter, inputs unchanged after a success| P\n  P -->|Ctrl+Enter| G{Send gate}\n  P3 -->|Ctrl+Enter| G\n  P4 -->|Ctrl+Enter| G\n  P5 -->|Ctrl+Enter| G\n  P6 -->|Ctrl+Enter| G\n  G -->|no write scope| R1[refused inline: mention @path — Ruling 42 elicitation]\n  G -->|goal block with blank Not in scope — Ruling 75| R2[refused inline: This prompt is a goal block and needs Not in scope.]\n  G -->|rendered view stale| S\n  R1 --> P\n  R2 --> P\n  G -->|ok| K[submitted: one event with text_sha256 + projection_sha; run starts; derived marks become kept]\n  K --> K2[reply streams in the Console canvas; consumed on the run result; next draft starts at A]"
         },
         {
           "kind": "flowchart",
           "title": "B3. User flows",
-          "mermaid": "flowchart LR\n  H[session header: ceiling · budget · compile mode] -->|edit while draft| A2[draft: projections re-run in memory]\n  H -->|edit while prepared| S2[stale: live projections with a stale mark]\n  S2 -->|Ctrl+Enter| C2[re-prepare per Flow D-1]\n  H -.->|tier is not here — Ruling 63| X[(compile line owns tier)]"
+          "mermaid": "flowchart LR\n  H[session header: ceiling · budget · compile mode] -->|edit while draft| A2[draft: projections re-run in memory]\n  H -->|edit while prepared| S2[stale: live projections with a stale mark]\n  T[decoration line: task class changed for this prompt] -->|after Prepare — E3| S2\n  S2 -->|Ctrl+Enter| C2[re-prepare per Flow D-1]\n  H -.->|tier is not here — Ruling 63| X[(decoration line owns tier — E2)]"
         },
         {
           "kind": "flowchart",
@@ -14910,7 +15015,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  U[aide session purge id] --> V{id is one segment of the session-id grammar, resolved under .aide/sessions/?}\n  V -->|no| X[refused before any file is touched]\n  V -->|yes| W[confirmation: name · id · workspace root · resolved file path · envelope count · newest at]\n  W -->|decline| Y[nothing deleted]\n  W -->|confirm or --yes| Z[envelope-events.jsonl deleted; session.json and session-events.jsonl survive]\n  Z --> Q[session document reopens: history purged; Proof Pack citations resolve as purged]"
         }
       ],
-      "sourceSha256": "96821258bb38bc611a74f51585fe187c75f69f5eed2e86dcf18d4d8745976352"
+      "sourceSha256": "755d02cee67c247514ace9d6f65aedf2b2a552c5d2d6518a148f391d4d321182"
     },
     {
       "id": "spec-agentic-watcher-substrate",
@@ -15153,10 +15258,18 @@ window.DOCS_INDEX = {
         {
           "to": "note-conductor-spec-errata-lane-rename",
           "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-spec-errata-session-thread",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-spec-errata-template-control",
+          "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "830c0aba1f77ad721fd19eec32697a61dee097ee8e03b3e00235622cbde3741f"
+      "sourceSha256": "430d21bd7fe77910ecf67996e2a698d0ea3826483f9b4037e8bd81c5707311c8"
     },
     {
       "id": "spec-editor-surfaces",
@@ -15747,5 +15860,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "f67dce2310f9a84cb1b1074dc4a8a1752cfaea88d390914647ddfa652c7eac2c"
+  "graphSha256": "5e6bb5b7abae785e2abdf385950175de174650a3ce18be1661aac010f3590947"
 };

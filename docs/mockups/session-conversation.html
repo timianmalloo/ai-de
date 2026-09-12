@@ -330,7 +330,7 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
         <option value="stale-settings">stale: session settings changed since it was prepared</option>
       </optgroup>
       <optgroup label="Send">
-        <option value="gaps">refused: content gaps (compiles at T2)</option>
+        <option value="gaps">refused: a goal block with blank Not in scope</option>
         <option value="noscope">refused: no write scope</option>
         <option value="quota">refused before start: the subscription window is exhausted</option>
         <option value="sending">sending (marks kept)</option>
@@ -340,7 +340,7 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
         <option value="laneerror">lane error: the lane exited 1</option>
         <option value="stopped">stopped by you</option>
         <option value="permission">permission request waiting on the last turn</option>
-        <option value="capask">a cap is enforced and the turn would pass it</option>
+        <option value="capask">a cap is enforced and spend has reached it</option>
       </optgroup>
       <optgroup label="Chrome and failure">
         <option value="settings">session settings opened from the header</option>
@@ -409,7 +409,7 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
                 <h4>Session settings</h4>
                 <div class="settings">
                   <div class="setting"><div class="sl">Fan-out ceiling<span class="src">workspace default</span></div><div class="ctl"><input class="num" value="3" aria-label="Fan-out ceiling, sub-agents" inputmode="numeric"><span class="unit">sub-agents</span></div><p class="sh">Most sub-agents any turn may convene. The compiled tier decides how many it uses, up to this.</p></div>
-                  <div class="setting"><div class="sl">Budget<span class="src" data-show="settings">default</span><span class="src" data-show="settings-cap">cap enforced</span></div><div class="ctl" data-show="settings"><span>Bounded by your subscription</span></div><label class="check" data-show="settings"><input type="checkbox" aria-describedby="cap-help"> Enforce a cap for this session</label><label class="check" data-show="settings-cap"><input type="checkbox" checked aria-describedby="cap-help"> Enforce a cap for this session</label><div class="ctl" data-show="settings-cap"><input class="num" value="40,000" aria-label="Cap, tokens per session" inputmode="numeric"><span class="unit">tokens per session</span></div><p class="sh" id="cap-help">Off: spend stops where your subscription stops. On: you set a number of tokens, and a turn that would pass it asks first.</p></div>
+                  <div class="setting"><div class="sl">Budget<span class="src" data-show="settings">default</span><span class="src" data-show="settings-cap">cap enforced</span></div><div class="ctl" data-show="settings"><span>Bounded by your subscription</span></div><label class="check" data-show="settings"><input type="checkbox" aria-describedby="cap-help"> Enforce a cap for this session</label><label class="check" data-show="settings-cap"><input type="checkbox" checked aria-describedby="cap-help"> Enforce a cap for this session</label><div class="ctl" data-show="settings-cap"><input class="num" value="40,000" aria-label="Cap, tokens per session" inputmode="numeric"><span class="unit">tokens per session</span></div><p class="sh" id="cap-help">Off: spend stops where your subscription stops. On: you set a number of tokens; a new turn will not start past it without asking; a running turn finishes.</p></div>
                   <div class="setting"><div class="sl">Default task class<span class="src">free-form on open</span></div><div class="ctl"><select class="sel" aria-label="Default task class"><option>free-form</option><option>extraction</option><option>feature</option><option>defect</option><option>migration</option><option>review</option><option>ui-feedback</option></select></div><p class="sh">Every new prompt starts with this class. Change it on any prompt from its decoration line; that never changes this default.</p></div>
                   <div class="setting"><div class="sl">Compile mode<span class="src">session</span></div><div class="ctl"><select class="sel" aria-label="Compile mode"><option>mechanical-only</option><option>agentic-advisory</option><option selected>agentic</option></select></div><p class="sh">Agentic: Ctrl+Enter prepares the turn on the session&rsquo;s bound model first; the same key sends it. Advisory: a derived line counts only once you keep or edit it. Mechanical-only: one gesture, you fill the structure.</p></div>
                   <div class="setting" style="grid-column:1/-1"><div class="sl">Backends<span class="src">session</span></div><div class="ctl"><span class="chip ok"><span class="dot"></span>ready</span><span class="mono">claude-code</span><span class="unit">max-personal</span><span class="chip ok"><span class="dot"></span>ready</span><span class="mono">codex</span><span class="unit">chatgpt-personal</span><span class="sp"></span><button class="btn">Change&hellip;</button></div><p class="sh">A run uses the session&rsquo;s one routable backend; the compile runs on the same binding.</p></div>
@@ -649,8 +649,8 @@ var LAST_VARIANTS={
     boxkind:'wait', box:'<b>claude-code asks to write outside the declared scope:</b> <code>docs/audit/audit-log.jsonl</code>. The lease is <code>docs/proof/**</code>. Allow once lets this one write through; Deny keeps the lease and the lane continues without it.',
     acts:['Deny','Allow once'], reason:'b5 is waiting for you; the next turn waits for it.'},
   capask:{st:'wait',word:'waiting for you',lane:'conductor',parts:['3 s','2 events'],live:true,
-    ev:[['15:22:30','conductor','Block b5 accepted, tier T1, 1 lane, lease <code>docs/proof/**</code>'],['15:22:31','conductor','this turn would pass the cap you enforced: 38,900 of 40,000 tokens used; the lane is not started']],
-    boxkind:'wait', box:'<b>This turn would pass the cap you enforced</b> (38,900 of 40,000 tokens used this session). Allow this turn to run past it, raise the cap in session settings, or stop it here. Nothing has run.',
+    ev:[['15:22:30','conductor','Block b5 accepted, tier T1, 1 lane, lease <code>docs/proof/**</code>'],['15:22:31','conductor','spend has reached the cap you set: 40,120 of 40,000 tokens; the lane is not started']],
+    boxkind:'wait', box:'<b>Spend has reached the cap you set</b> (40,120 of 40,000 tokens this session): allow this turn, raise the cap, or stop. Nothing has run.',
     acts:['Allow this turn','Open session settings','Stop this turn'], reason:'b5 is waiting for you; the next turn waits for it.'}
 };
 
@@ -698,7 +698,7 @@ var SCEN={
   nostructure:{text:'What does <code>ZoneLayoutStore</code> do on a schema mismatch today, and where is that decided? Touch nothing under <span class="mention">@src/AiDe.Core/Workbench/</span>.',lines:'fill',tier:['nd','T0','no goal block proposed'],lease:L1,shape:'message',send:['Send',true,''],cline:{st:'ok',text:'No goal block proposed; sends as a message · <span class="model">'+MODEL+'</span> · read 5 turns · 1,120 tokens',read:true}},
   stale:      {text:DRAFT+' Keep the v1 reader working for one release.',lines:'derived',tier:['nd','T1','rule R2: goal block, one lease (live, unconfirmed)'],lease:L1,shape:'goal block',send:['Prepare',true,''],cline:{st:'stale',text:'Your draft changed since it was prepared — press again to prepare it.'}},
   'stale-settings':{text:DRAFT,lines:'derived',tier:['nd','T1','rule R2: goal block, one lease (live, unconfirmed)'],lease:L1,shape:'goal block',send:['Prepare',true,''],cline:{st:'stale',text:'Session settings changed since it was prepared (fan-out ceiling 3 → 1) — press again to prepare it.'},ceil:1},
-  gaps:       {text:DRAFT2,lines:'gaps',tier:['d','T2','derived: two leases'],lease:['src/AiDe.Core/Workbench/**','src/AiDe.App/Workbench/**'],shape:'goal block',send:['Send',false,'2 lines need filling; this prompt compiles at T2.'],cline:{st:'ok',text:'Compiled on <span class="model">'+MODEL+'</span> · '+PROFILE+' · read 5 turns · the model filled Goal only · 1 request',read:true}},
+  gaps:       {text:DRAFT2,lines:'gaps',tier:['d','T2','derived: two leases'],lease:['src/AiDe.Core/Workbench/**','src/AiDe.App/Workbench/**'],shape:'goal block',send:['Send',false,'This prompt is a goal block and needs Not in scope.'],cline:{st:'ok',text:'Compiled on <span class="model">'+MODEL+'</span> · '+PROFILE+' · read 5 turns · the model filled Goal and Done when · 1 request',read:true}},
   noscope:    {text:DRAFT_NOSCOPE,lines:'derived',tier:['d','T1','derived: goal block, no write scope yet'],lease:null,shape:'goal block',send:['Send',false,'Send needs a write scope.'],cline:{st:'ok',text:'Compiled on <span class="model">'+MODEL+'</span> · '+PROFILE+' · read 5 turns · the model filled Goal and Done when · 1 request',read:true}},
   quota:      Object.assign({},PREPARED,{send:['Try again',true,'Refused before it started; a retry before 16:00 is refused again and spends nothing.'],collapsed:true}),
   sending:    {text:DRAFT,lines:'kept',tier:['c','T1','confirmed'],lease:L1,shape:'goal block',send:['Send',false,''],busy:'Sending…',ro:true,cline:COMPILED_OK},
@@ -736,7 +736,7 @@ var LEGEND={
   timedout:'<b>SC5: <i>Compiled mechanically — the 60 s compile bound passed</i>.</b> A late answer is never applied; Prepare again or send as is.',
   malformed:'<b>SC5: <i>Compiled mechanically — the output failed the schema</i>.</b> Nothing was applied; the lines are yours to fill.',
   byyou:'<b>SC5: <i>Structure supplied by you · no request made</i>.</b> All three lines filled by the operator, so the compile made no call; the tier is the rule’s (T1) and Send is one more gesture.',
-  'settings-cap':'<b>PS-S1 erratum, Ruling 72.</b> A cap enforced: the checkbox on, the number the operator typed, and the promise that a turn which would pass it asks first (see the <i>capask</i> state).',
+  'settings-cap':'<b>PS-S1 erratum, Rulings 72 and 78.</b> A cap enforced: the checkbox on, the number the operator typed, and the promise stated truthfully — a new turn will not start past it without asking; a running turn finishes (see the <i>capask</i> state).',
   reused:'<b>SC5: <i>reused, no new request</i>.</b> The second gesture on unchanged inputs made no model call and the line says so (Addendum D §B5).',
   classmenu:'<b>SC3.</b> The class menu: seven classes with their sentences; <i>free-form</i> checked as the session default; making a choice the session default is a separate row (Ruling 70, condition 3).',
   override:'<b>SC3, SC4.</b> <i>class defect &middot; chosen for this prompt</i>; <i>T2 &middot; operator (rule said T1)</i>; the settings line derives the cap: min(cap(T2) = 4, ceiling 3) = 3.',
@@ -746,7 +746,7 @@ var LEGEND={
   nostructure:'<b>SC5: <i>No goal block proposed; sends as a message</i>.</b> A question; a success, not a failure; shape message, tier T0, Send still the second gesture.',
   stale:'<b>SC5: <i>Your draft changed since it was prepared</i>.</b> The compile line is the one carrier of <i>stale</i>; the tier shows the rule&rsquo;s live value; the button says Prepare.',
   'stale-settings':'<b>SC5, Addendum D Flow D-2.</b> A settings edit while prepared also stales the envelope; the line names what changed (the ceiling) and the settings line already derives the new cap.',
-  gaps:'<b>PS-C3.</b> Two mentions, two leases, T2: Done when and Not in scope refused inline with one reason each; Send disabled with the count and the tier.',
+  gaps:'<b>PS-C3 after Ruling 75.</b> Two mentions, two leases; Goal and Done when derived, so this is a goal block, and a goal block needs Not in scope at any tier: exactly one gap, refused inline with the one sentence; Send disabled with the same sentence. A blank Goal or Done when would make a Message, never a refusal.',
   noscope:'<b>PS-C3, Ruling 42.</b> A goal block with no lease: the segment says <i>none yet</i>, the refusal says what derives one and how, the picker opens at the caret.',
   quota:'<b>SC7 (refusal before start is composer-side).</b> The conductor refused b6 before it started, so no turn joined the thread (Feedback:+Confirmed): the reason sits beside Send, the draft and its envelope are kept, the recovery names session settings, which carry the backends.',
   sending:'<b>PS-C2.</b> Editor read-only for the round trip; marks became <i>kept</i>; tier confirmed; b6 joins the thread when the conductor accepts it.',
@@ -754,7 +754,7 @@ var LEGEND={
   laneerror:'<b>SC7: <i>lane exited 1</i>.</b> The last four lines, what did not happen, two recoveries, in the thread where it happened.',
   stopped:'<b>SC7: <i>stopped by you</i>.</b> What Stop produced: edits so far, tokens, the partial file named, the same two recoveries.',
   permission:'<b>SC7: <i>waiting for you</i>.</b> The permission request in the turn that raised it, with Allow once and Deny; the next turn waits.',
-  capask:'<b>SC7 with a cap enforced (Ruling 72).</b> The turn would pass the cap the operator set; the conductor waits before starting the lane; Allow, raise the cap, or stop.',
+  capask:'<b>SC7 with a cap enforced (Rulings 72 and 78).</b> Measured spend has reached the cap the operator set, so the conductor asks in-thread before starting the lane — allow this turn, raise the cap, or stop; the cap never refuses, never predicts a turn\u2019s spend, and never stops a running turn (its outcome line reports the overrun).',
   settings:'<b>PS-S1–PS-S4 after Ruling 72.</b> The ceiling; the budget as a state (<i>bounded by your subscription</i>) with the cap as a deliberate act; the default class; the compile mode; the backends. No tier anywhere.',
   split:'<b>SC1, Ruling 21.</b> The Console split: the same events the thread folds, unfolded in time, following the running turn; the thread keeps its rhythm.',
   attaching:'<b>PS-C (attaching).</b> A drop target over the editor says what a drop does; the editor keeps its size and its text.',
@@ -858,7 +858,7 @@ function renderStructure(sc){
   else if (mode==='derived-long'){ rows=lineHtml('Goal','Regenerate every Markdown projection under src/AiDe.Core/Presentation/Sessions/Composer/Rendering/Markdown/ and reconcile the fixture set against the payments-aggregate golden master without ever rewriting a migration that has shipped, reporting rather than regenerating when the master and the projection disagree','derived')+lineHtml('Done when','the characterization suite passes before and after; the diff is the deliverable; the golden master is untouched','derived')+lineHtml('Not in scope',N,'edited'); }
   else if (mode==='suspect'){ rows=lineHtml('Goal',G,'suspect')+lineHtml('Done when',D,'suspect')+lineHtml('Not in scope','','fill'); }
   else if (mode==='kept'){ rows=lineHtml('Goal',G,'kept',{ro:true})+lineHtml('Done when',D,'kept',{ro:true})+lineHtml('Not in scope',N,'kept',{ro:true}); }
-  else if (mode==='gaps'){ rows=lineHtml('Goal',G,'derived')+lineHtml('Done when','','invalid',{why:'This prompt compiles at T2 and needs Done when.'})+lineHtml('Not in scope','','invalid',{why:'This prompt compiles at T2 and needs Not in scope — the boundary is what the lease is checked against.'}); }
+  else if (mode==='gaps'){ rows=lineHtml('Goal',G,'derived')+lineHtml('Done when',D,'derived')+lineHtml('Not in scope','','invalid',{why:'This prompt is a goal block and needs Not in scope.'}); }
   b.innerHTML=rows;
 }
 function compiledText(sc, cls, ceil){
@@ -869,7 +869,7 @@ function compiledText(sc, cls, ceil){
   var struct = (sc.lines==='derived'||sc.lines==='kept'||sc.lines==='suspect'||sc.lines==='byyou') ? 'goal: '+G+'\ndone_when: '+D+'\nnot_in_scope: '+(sc.lines==='suspect'?'':N)+'\n'
     : sc.lines==='advisory' ? 'goal:\ndone_when:\nnot_in_scope: '+N+'\n'
     : sc.lines==='derived-long' ? 'goal: Regenerate every Markdown projection under src/AiDe.Core/Presentation/Sessions/Composer/Rendering/Markdown/ and reconcile the fixture set against the payments-aggregate golden master\ndone_when: the characterization suite passes before and after; the diff is the deliverable; the golden master is untouched\nnot_in_scope: '+N+'\n'
-    : sc.lines==='gaps' ? 'goal: '+G+'\ndone_when:\nnot_in_scope:\n'
+    : sc.lines==='gaps' ? 'goal: '+G+'\ndone_when: '+D+'\nnot_in_scope:\n'
     : sc.lines==='template' ? 'what_changed: ZoneLayoutStore refuses a newer zone schema with a report\namended_done_when: a v2 zone envelope is refused and reported; the v1 file is untouched\nnot_in_scope:\n' : '';
   var msg = sc.text ? 'message: |\n  '+sc.text.replace(/<[^>]+>/g,'').replace(/(.{88,}?)\s/g,'$1\n  ')+'\n' : 'message: |\n\n';
   return head+struct+msg;
@@ -964,7 +964,7 @@ function render(){
   else if (st==='classmenu') { L.push(['class menu','menu "Task class for this prompt", 7 radio items; free-form checked: session default, no class ranks this turn; then one item: Use the chosen class as the session default']); }
   else if (st==='override') { L.push(['decoration line','class defect, chosen for this prompt; tier T2, operator, rule said T1; settings: fan-out cap 3, ceiling 3']); }
   else if (st==='forced') { L.push(['UIA notification','Choose a tier for this prompt: the rule could not decide. Menu: T0, no fan-out; T1, cap 2; T2, cap 4.']); L.push(['focus','the tier control, invalid; its description carries the reason']); }
-  else if (st==='gaps'){ L.push(['UIA notification','Send refused: 2 lines need filling. This prompt compiles at T2 and needs Done when. This prompt compiles at T2 and needs Not in scope.']); L.push(['focus','the first invalid line (Done when); ItemStatus "invalid", HelpText carries the reason']); }
+  else if (st==='gaps'){ L.push(['UIA notification','Send refused: this prompt is a goal block and needs Not in scope.']); L.push(['focus','the invalid line (Not in scope); ItemStatus "invalid", HelpText carries the reason']); }
   else if (st==='noscope'){ L.push(['UIA notification','Send needs a write scope. Mention the files or folders this run may write, as @path.']); L.push(['focus','the editor, with the mention picker (a listbox) open at the caret: Down and Up move the active option, Enter inserts it, Escape closes the picker']); }
   else if (st==='quota'){ L.push(['UIA notification','Refused before it started: your subscription’s window is exhausted until 16:00. Nothing was spent; your draft is kept.']); L.push(['focus','Open session settings']); }
   else if (st==='sending'){ L.push(['UIA notification','Sending block b6 as a goal block, tier T1, class free-form.']); L.push(['editor','Message, edit text, read only']); }
@@ -972,7 +972,7 @@ function render(){
   else if (st==='laneerror'){ L.push(['on outcome (assertive)','Turn b5: the lane exited 1 before any edit. Send again as a new turn, or open the log.']); L.push(['focus','stays in the editor; the turn is reachable with PageUp']); }
   else if (st==='stopped'){ L.push(['on stop (status)','Turn b5 stopped by you after 1 edit; 3,900 tokens. Send again as a new turn, or open the log.']); }
   else if (st==='permission'){ L.push(['on request (assertive)','Turn b5 is waiting for you: claude-code asks to write outside the declared scope, docs/audit/audit-log.jsonl. Deny or Allow once.']); L.push(['focus','stays where it is (the request is an alert, never a focus steal); F6 then PageUp reaches the turn; Deny is the first button']); L.push(['on an ignored Ctrl+Enter (status)','b5 is waiting for you; the next turn waits for it.']); }
-  else if (st==='capask'){ L.push(['on request (assertive)','Turn b5 is waiting for you: it would pass the cap you enforced, 38,900 of 40,000 tokens used. Allow this turn, open session settings, or stop it.']); }
+  else if (st==='capask'){ L.push(['on request (assertive)','Turn b5 is waiting for you: spend has reached the cap you set, 40,120 of 40,000 tokens. Allow this turn, raise the cap, or stop.']); }
   else if (st==='editorerror'){ L.push(['UIA notification',"Editor couldn't start — WebView2 runtime not found."]); L.push(['focus','Retry']); }
   else if (st==='loading'){ L.push(['UIA notification','Restoring payments extraction. Editor starting.']); }
   else if (st==='template'){ L.push(['on template (status)','Template change-order v2 applied: two lines supplied, one to fill in. Tier T1 by rule. This prompt is a goal block and needs Not in scope.']); }

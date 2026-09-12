@@ -258,7 +258,7 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
               <label class="check fx" data-show="default answered creating failed overflow noworkspace"><input type="checkbox" aria-describedby="cap-help"> Enforce a cap for this session</label>
               <label class="check fx" data-show="invalid"><input type="checkbox" checked aria-describedby="budget-why"> Enforce a cap for this session</label>
               <div class="ctl fx" data-show="invalid"><input class="num" value="0" aria-label="Cap, tokens per session" aria-invalid="true" aria-describedby="budget-why" inputmode="numeric"><span class="unit">tokens per session</span></div>
-              <p class="sh fi" data-show="default answered creating failed overflow noworkspace" style="display:block" id="cap-help">Off: spend stops where your subscription stops. On: you set a number of tokens, and a turn that would pass it asks first. Never a number you must type to start.</p>
+              <p class="sh fi" data-show="default answered creating failed overflow noworkspace" style="display:block" id="cap-help">Off: spend stops where your subscription stops. On: you set a number of tokens; a new turn will not start past it without asking; a running turn finishes. Never a number you must type to start.</p>
               <p class="inval fi" data-show="invalid" id="budget-why"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>A cap of 0 tokens can't run anything. Enter at least 1,000, or turn the cap off.</p>
             </div>
           </div>
