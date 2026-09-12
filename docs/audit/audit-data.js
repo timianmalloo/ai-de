@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T15:55:11Z",
+  "generated": "2026-09-12T17:46:04Z",
   "audit": [
     {
       "actor": null,
@@ -13859,6 +13859,176 @@ window.AUDIT_DATA = {
       ],
       "tier": "T2",
       "tool": null
+    },
+    {
+      "id": "al-01M2BBK33XE20A69BHZ9F3XJ55",
+      "shortname": "sh-2-second-host-presenter-slots-rail",
+      "datetime": "2026-09-12T17:45:37Z",
+      "session": "sh-2",
+      "prompt": "You are track **SH-2** of the Shell lane in `docs/coordination/addendum-cd.md` — **read your row in full, the Seams table, the §2 rows and the fan-out contract first.** Run the **`/implement`** skill (Skill tool: `implement`, args: `SH-2: the second docking host, the shell presenter (PerspectiveShell), one persisted layout slot per host, the rail with three destinations — ADR-0031/0032, ADR-0017 amended; reds first per the plan and ADR-0032's seven tests`). The conductor is Claude Opus (session `conductor-addendum-c`). Read `C:\\projects\\ai-de\\CLAUDE.md` and `AGENTS.md`; the pack's rules apply in full (red first; smallest correct; the Data & Persistence Architect's hard veto on the layout-slot migration — expand-only with a tested rollback; the UX & Accessibility hard veto on the rail; the Test Architect's veto; DC-135 — construct the layout service the shell constructs). Use `python`, not `python3`; `$env:PYTHONIOENCODING='utf-8'`.\n\n## Your worktree — the only tree you write to\n`C:\\Projects\\ai-de-lane-shell-sh2`, branch `lane/shell-sh2`, HEAD = `main` `b0e092b5` (SH-1 joined: `Perspectives.cs`, the allow-list columns, `PerspectiveMenu`, derived menu/palette, `ShellViewMode → Perspective` enum rename; CV-0; INV-0010's scrub). From inside it:\n```\n$env:AGENT_SESSION='sh-2'; $env:AGENT_NAME='claude-sh-2'; $env:PYTHONIOENCODING='utf-8'\npython docs/ai-forward-pack/scripts/audit-log.py start --session sh-2\n```\nClaim what you edit (`coord-core.py claim --path <file> --wi SH-2 --ttl 3600`); release at close; a refused claim is a plan defect — stop and report. **Never `taskkill` by image name; never reap** — CV-1 and X-1 are live.\n\n## What you build (ADR-0031 `docs/adr/0031-second-docking-host.md`, ADR-0032 `docs/adr/0032-perspective-layout-slots.md`, ADR-0017 as amended; spec §B4 default layouts, US-C1/C2/C4/C9; DS-1 nothing; Rulings 52, 47, 59–61, 74)\n- `src/AiDe.App/Workbench/DockHost.cs` (new): the `DockHost` record composed twice under one presenter; Coding = today's host unchanged in mechanism; Architecture = a second `AvalonDock` host — **the spike `spikes/second-dock-host-unparent` proved the retain-never-rebuild invariant across the swap (same `CoreWebView2`, raw HWND identical, zero `DestroyWindowCore`); cite it, and keep its property as a test.** One `WorkbenchController` per host (the Owner's residual, decided in ADR-0031); the router in the presenter, bounded; the opener delegates collapse to one routed `OpenKind` (US-C3, SH-1's `PerspectiveMenu.Resolve`/`RoutingOrder` — landed with no product caller: you are the caller).\n- `ShellModeController.cs → PerspectiveShell.cs` (the rename **in this commit only**, Ruling 50): the closed Perspective set; Explore stays the full-window `ExplorerSurface`; the `DocumentOpening` seam from S1 generalises — a docking command while a non-host body is showing switches to the document's host (ADR-0017 amended clause; `ANewSessionCreatedWhileExplorerIsTheBodyIsShown` **stays green through the extraction**); Escape / previous-perspective (US-C1); activating the active perspective is a no-op.\n- `WorkbenchShell.cs` — the `DockHost` extraction (2,967 lines; the largest edit — go in small, verified steps; every existing test stays green at each step); `WebSurfaceHost.cs` (DC-138 once-gate unchanged); `WorkbenchController.cs`.\n- `LayoutPersistence.cs` + `src/AiDe.Core/Workbench/ZoneLayoutStore.cs` + `ZoneBackedLayoutService.cs`: **one persisted slot per host** (`SlotPathFor`, `RestoreResult`, `.pre-perspectives.bak`); admitted kinds at construction; an old envelope carrying a kind the host disallows migrates **drop-with-report** (Ruling 52); **ADR-0032's tests 1–7 red first** (pre-C file restore drops `classdiagram`/`canvas`/`view` from Coding; one-instance duplicates; independent A/B files; the golden rollback round-trip with the frozen schema-1 DTO; `File.Replace` atomic backup) — the D&P Architect reviews these.\n- **The rail** in `MainWindow.xaml(.cs)`: three destinations with **manual activation** (a single-selection group: arrows move focus, Enter/Space activates — spec §C4 as amended; PS-R*), the real selected state through UIA (no \"(active)\" name suffix — SH-1's seam note), `Ctrl+1/2/3`, the title suffix, the status strip; `DockRoundedTabs.xaml` (review P-2: selected-inactive on `surface` + the 2 px muted edge; no local ink under an accent trigger — the census `ShellContrastCensusTests` must stay 0 with the rail and both hosts walked); `DESIGN.md` — **you own it this horizon**: PS-R*, PS-T*, the menu brushes onto tokens (P-5: `surface-raised` / `float-chrome` / `border`; the keyboard highlight is the `{colors.focus}` ring, not the hover ground), and the three additive `ComposerPageTheme.Roles` rows CV-1 will request (`--inferred`, `--verified`, `--border-strong`) — add them now so the seam is satisfied before it is asked.\n- `WorkbenchDiagnostics.cs`: the perspective-switch event with `outcome` and `error_code` (C US-C12 as amended, E7).\n- **SH-1's seam notes to you** (from its report; verify each in the tree): `ReconcileViewIntoModel` resets a stack's active tab to index 0 (INV-0006's class — measure it, fix if it is in your path); `DocumentPlacementPolicy.DocumentKinds` lists 2 of the 15 kinds now routed past it; `App.xaml`'s menu template has no `IsChecked` glyph — when it gains one, delete `MainMenuBuilder.CheckGlyph` in the same commit; `ImportantAll` + focus on switch (P-1/P-7).\n\n## Reds first (observe each)\nADR-0032 tests 1–7 · ADR-0031's identity test across three bodies (US-C2: the same `CoreWebView2`/HWND after A→B→A→Explore→A) and the routing test (Architecture active → host B only) · the allow-list refusal at the service · `ANewSessionCreatedWhileExplorerIsTheBodyIsShown` and `AReopenedSessionIsShownAndItsComposerIsBound` green throughout · the rail's manual-activation test (Down does not switch; Enter does) · the switch event's shape · **the DC-135 ratio watch**: `new LayoutService(` vs `new ZoneBackedLayoutService(` under `tests/` must not widen from the recorded ratio (find it in the register's DC-135 entry; report the numbers).\n\n## Floors\n- E7 before coding: `ZoneLayoutStore` (per-host file) → `ZoneBackedLayoutService` (admitted kinds) → `LayoutPersistence` (slots, migration, rollback) → `DockHost` ×2 → `PerspectiveShell` (presenter, router, the seam) → `WorkbenchShell`/`WorkbenchController` → the rail in `MainWindow` → `WorkbenchDiagnostics` switch event → tests + the census.\n- Seams (plan §Seams): the Conversation lane owns `Workbench/Composer/**`, `Workbench/Sessions/**`, `Presentation/**`, `AgentPlane/**`, `Conductor/**` — do not write there; if the extraction needs a Sessions-side change, file a seam request in your report and mock it. The `\"free-form\"` and `Projection.Project(` censuses are not yours to touch.\n- Reviews (read-only, ≤ 3 concurrent; loop cap 2): **Data & Persistence Architect (hard)** on the slot migration and rollback; **UX & Accessibility (hard)** on the rail (manual activation, UIA selected state, the census); **Test Architect (hard)**; the Simplifier on the presenter/router; the WPF styling lens on the second host's airspace.\n- Gates at close, bare, stop on the first red: `dotnet build` Core + App + both test projects `-p:TreatWarningsAsErrors=true`; both full test projects; `verify-test-run.py` CHECK only (never `--update`); every `tools/verify-*.py`; `design-lint.py DESIGN.md --strict`; `verify-design-modes.py`; `ui-craft-gate.py docs/mockups` unchanged; `regenerate-derived.py` after the audit entry. New classes from the allocator at commit (DC-160 is the highest on `main`).\n- Audit entry (`--shortname sh-2-second-host-presenter-slots-rail --session sh-2 --skill implement --kind skill --tier T2 --fan-out 3 --git …` + signals + `--main-budget <calls>/6200`), Proof Pack `docs/proof/perspective-shell.md` (the reds → green; the spike's property re-measured in the product; the ratio watch numbers; the census rows; `RUN-PENDING` attended rows P-1/P-4/P-5/P-7/P-8 with steps), commit in small units with:\n```\nCo-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01Pc51aWLB1FKK2b8AqUPAun\n```\nthen `git push -u origin lane/shell-sh2`. **Do not merge to `main`.** Release claims. **Rebuild Release** at the end.\n\n## Fails if (stop and report)\nThe Explorer surface rebuilt rather than kept; a destructive layout migration or one without a tested rollback; a rail item with automatic activation or a name-suffixed state; a write outside the Shell lane's §2 paths; a red made green by weakening; `ConductorEntry.cs` changed; `verify-test-run.py --update`; `git stash`; a rebase; a push to `main`; DC-120; a model call or governed run.\n\n## Report back (compact)\nThe reds → green (names, before/after); the extraction's shape in five lines; the slot migration's before/after files and the rollback proof; the rail's activation model as landed; the ratio watch numbers; reviews raised/cleared; seam requests; gate table; new classes; commit shas, the pushed sha, the Release build's ProductVersion.",
+      "summary": "Landed on lane/shell-sh2: SurfaceAdmission (Core; the allow-list and one-instance rule as data, enforced at open, restore and reset), ZoneLayoutStore.Read with a reason and an atomic Save with a backup, ZoneBackedLayoutService(admission) with DefaultDropped and a reconcile that keeps the view's active tab; LayoutPersistence slots (SlotPathFor; drop-with-report through the same RestoreResult; .pre-perspectives.bak once, .bak every refusal; SaveFailed reported; a golden pre-C fixture and the frozen schema-1 DTO round-trip); DockHost composed twice; PerspectiveShell (rename of ShellModeController) as presenter and table-driven router with the seam after the applied add; the PerspectiveRail (manual activation, one writer of the selection, UIA tab list, Tab enters on the selected item by tab index); the title and status strip; shell.mode/shell.mode.shown/layout.restore events; DESIGN.md PS-R5, PS-C4's three roles, five deviations; DockRoundedTabs P-2. Reds: compile-red then twelve mutations (M1-M12) observed. Reviews: D&P BLOCK->PASS-WITH-CONDITIONS; Test Architect BLOCK->PASS-WITH-CONDITIONS; UX&A VETO->VETO(NEW-1, cap fired; falsifier run red, prescribed fix applied, green - conductor confirms); Simplifier soft veto -> zero-caller class deleted; WPF lens ESCALATE (the palette over airspace, pre-existing) + F2 glyphs fixed. Gates: build 0/0 x4; Core 2312/2312; App 781/781; verify-test-run OK; DC-135 65:38. Proof Pack docs/proof/perspective-shell.md; decision note docs/notes/sh2-presenter-router-and-slots.md; DC-135 recurrence 3 and DC-161 (placeholder id) registered.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/SurfaceAdmission.cs",
+        "src/AiDe.Core/Workbench/ZoneLayoutStore.cs",
+        "src/AiDe.Core/Workbench/ZoneBackedLayoutService.cs",
+        "src/AiDe.App/Workbench/LayoutPersistence.cs",
+        "src/AiDe.App/Workbench/DockHost.cs",
+        "src/AiDe.App/Workbench/PerspectiveShell.cs",
+        "src/AiDe.App/Workbench/PerspectiveRail.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/Workbench/WorkbenchController.cs",
+        "src/AiDe.App/Workbench/WorkbenchDiagnostics.cs",
+        "src/AiDe.App/Workbench/CommandPalette.cs",
+        "src/AiDe.App/Workbench/MainMenuBuilder.cs",
+        "src/AiDe.App/Workbench/DockRoundedTabs.xaml",
+        "src/AiDe.App/MainWindow.xaml",
+        "src/AiDe.App/MainWindow.xaml.cs",
+        "DESIGN.md",
+        "tests/AiDe.Core.Tests/SurfaceAdmissionTests.cs",
+        "tests/AiDe.Core.Tests/ZoneLayoutStoreTests.cs",
+        "tests/AiDe.Core.Tests/ZoneBackedLayoutServiceTests.cs",
+        "tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs",
+        "tests/AiDe.App.Tests/PerspectiveShellTests.cs",
+        "tests/AiDe.App.Tests/PerspectiveRailTests.cs",
+        "tests/AiDe.App.Tests/Fixtures/pre-perspectives.zones.json",
+        "tests/AiDe.App.ComposerProbe/Program.SessionRender.cs",
+        "docs/proof/perspective-shell.md",
+        "docs/notes/sh2-presenter-router-and-slots.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "SH-2: the second docking host (DockHost x2), the PerspectiveShell presenter and router, one persisted layout slot per host (ADR-0032 tests 1-7), the rail with three destinations under manual activation; reds first per the plan",
+      "done_when": "the plan's reds observed red then green; the D&P, UX&A and Test Architect vetoes raised and cleared or their post-cap fixes applied as prescribed; gates green (build warnings-as-errors x4, both suites, verify-test-run CHECK, every tools/verify-*.py, design-lint --strict, verify-design-modes, ui-craft-gate unchanged); Proof Pack, decision note, register entries, audit entry committed and pushed to lane/shell-sh2; claims released; Release rebuilt",
+      "tier": "T2",
+      "main_calls": 210,
+      "main_budget": 6200,
+      "main_over_budget": false,
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-12T15:59:05Z",
+      "duration_seconds": 6392.0,
+      "agent_runs": [
+        {
+          "agent": "data-persistence-architect",
+          "started_at": "2026-09-12T16:52:00Z",
+          "ended_at": "2026-09-12T16:59:26Z",
+          "duration_seconds": 446.0,
+          "calls": 27,
+          "budget_calls": 60,
+          "over_budget": false
+        },
+        {
+          "agent": "ux-accessibility",
+          "started_at": "2026-09-12T16:52:00Z",
+          "ended_at": "2026-09-12T17:03:11Z",
+          "duration_seconds": 671.0,
+          "calls": 21,
+          "budget_calls": 60,
+          "over_budget": false
+        },
+        {
+          "agent": "test-architect",
+          "started_at": "2026-09-12T16:52:00Z",
+          "ended_at": "2026-09-12T17:01:22Z",
+          "duration_seconds": 562.0,
+          "calls": 36,
+          "budget_calls": 60,
+          "over_budget": false
+        },
+        {
+          "agent": "data-persistence-architect",
+          "started_at": "2026-09-12T17:12:00Z",
+          "ended_at": "2026-09-12T17:16:50Z",
+          "duration_seconds": 290.0,
+          "calls": 32,
+          "budget_calls": 40,
+          "over_budget": false
+        },
+        {
+          "agent": "ux-accessibility",
+          "started_at": "2026-09-12T17:12:00Z",
+          "ended_at": "2026-09-12T17:25:20Z",
+          "duration_seconds": 800.0,
+          "calls": 27,
+          "budget_calls": 40,
+          "over_budget": false
+        },
+        {
+          "agent": "test-architect",
+          "started_at": "2026-09-12T17:12:00Z",
+          "ended_at": "2026-09-12T17:19:13Z",
+          "duration_seconds": 433.0,
+          "calls": 32,
+          "budget_calls": 40,
+          "over_budget": false
+        },
+        {
+          "agent": "the-simplifier",
+          "started_at": "2026-09-12T17:18:00Z",
+          "ended_at": "2026-09-12T17:27:04Z",
+          "duration_seconds": 544.0,
+          "calls": 33,
+          "budget_calls": 60,
+          "over_budget": false
+        },
+        {
+          "agent": "wpf-styling-expert",
+          "started_at": "2026-09-12T17:26:00Z",
+          "ended_at": "2026-09-12T17:41:57Z",
+          "duration_seconds": 957.0,
+          "calls": 77,
+          "budget_calls": 80,
+          "over_budget": false
+        }
+      ],
+      "parallelism": {
+        "agent_seconds": 4703.0,
+        "span_seconds": 2468.0,
+        "speedup": 1.91,
+        "peak_concurrency": 3
+      },
+      "persona_yield": [
+        {
+          "persona": "data-persistence-architect",
+          "raised": 16,
+          "accepted": 13
+        },
+        {
+          "persona": "ux-accessibility",
+          "raised": 26,
+          "accepted": 22
+        },
+        {
+          "persona": "test-architect",
+          "raised": 23,
+          "accepted": 20
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 19,
+          "accepted": 16
+        },
+        {
+          "persona": "wpf-styling-expert",
+          "raised": 11,
+          "accepted": 2
+        }
+      ],
+      "git": {
+        "sha": "b0e092b5f4176766f2e1870124665d9f74748d00",
+        "short": "b0e092b5f",
+        "branch": "lane/shell-sh2",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -17550,6 +17720,35 @@ window.AUDIT_DATA = {
         "adr-0030"
       ],
       "title": "SH-1: a Scope column on the catalog row, an Entry column on the kind row, derived surface.new/show.<kind> openers, the four chord collisions, a non-checkable radio item with a Toggle peer, and one OnDocumentOpening rule"
+    },
+    {
+      "id": "cl-01M2BBKPRD59256PKGCQ70W5T2",
+      "datetime": "2026-09-12T17:45:57Z",
+      "session": "sh-2",
+      "kind": "decision",
+      "skill": "implement",
+      "title": "SH-2: ten decisions below ADR weight for the second host, the presenter/router, the slots and the rail",
+      "prompt": "SH-2 (/implement): the second docking host, PerspectiveShell, one layout slot per host, the rail",
+      "summary": "The router reads the catalog's CommandScope (no switch on an id); DocumentOpening names its host and follows the APPLIED add (document first, then the switch); a kind-open asks from the host that raised it; host B's interim default is today's default filtered to its kinds until SH-3's Default(perspective); the switch is two log lines (shell.mode, shell.mode.shown); the rail is a ListBox with one writer of its selection and a tab index that puts the selected destination first; a refused file is preserved every time and the pre-perspective bytes once; a reconcile keeps the view's active tab; focus after a switch is the window's EntryFocus hook; the admission's refusal codes live beside the rule.",
+      "rationale": "Each is defended in docs/notes/sh2-presenter-router-and-slots.md with the reviewer finding that shaped it; the ADR-0032 text items (the .bak once-rule's scope, the rollback-re-upgrade loss, ReplaceFile partial failures, the zone-walk order) are relayed to the ADR's owner rather than edited here.",
+      "artifacts": [
+        "docs/notes/sh2-presenter-router-and-slots.md",
+        "docs/proof/perspective-shell.md"
+      ],
+      "tags": [
+        "addendum-c",
+        "shell-lane",
+        "adr-0031",
+        "adr-0032"
+      ],
+      "git": {
+        "before": "b0e092b5",
+        "after": "b0e092b5f4176766f2e1870124665d9f74748d00",
+        "branch": "lane/shell-sh2",
+        "pushed": null,
+        "commits": []
+      },
+      "audit_ref": "al-01M2BBK33XE20A69BHZ9F3XJ55"
     }
   ]
 };
