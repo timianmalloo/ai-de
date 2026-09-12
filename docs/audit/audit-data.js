@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T20:01:59Z",
+  "generated": "2026-09-12T20:10:44Z",
   "audit": [
     {
       "actor": null,
@@ -14251,6 +14251,30 @@ window.AUDIT_DATA = {
       "supersedes": "al-01M2BGSB09J4SXDSR80PNJB8PX",
       "tags": [],
       "tool": null
+    },
+    {
+      "id": "al-01M2BKWRNZHT2HR974DW1230SD",
+      "shortname": "join-sh3",
+      "datetime": "2026-09-12T20:10:43Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "keep going (the join of SH-3)",
+      "summary": "Join: SH-3 (9b16a394) merged to main (b55e51ba) clean; DC-169 was self-allocated by the node after its merge collided with DC-164-168 - the sequence is unbroken, the register gate green; floors recounted App 798 / Core 2357 = 2191 + 166.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/perspective-content.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land SH-3 on main with the floors recounted and a Release build for the operator",
+      "done_when": "main pushed with the merge and green gates; Release built at the new sha",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      }
     }
   ],
   "changes": [
