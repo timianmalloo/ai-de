@@ -44,8 +44,9 @@ is invented here, and this worker does not duplicate its research.
 **R2 preflight checkpoint, Conductor-reported:** source-only review proposes `File.OpenHandle`,
 `GetFinalPathNameByHandleW` and `GetFileInformationByHandle`, with raw-byte hashing and decoding
 of the same buffer. These are **candidate APIs, not an accepted/executed safe-reader contract**.
-Opened-root anchoring, sharing/lifetime semantics and native execution remain pending. Owner
-authoring permission remains pending; neither this report nor its inclusion admits source dispatch.
+Opened-root anchoring, sharing/lifetime semantics and native execution remain pending. Authoring
+was pending at that checkpoint; **Owner turns 7/8 now grant the branch-local new-file authoring
+scope in §1.4 and §13.1**. R2 still grants no safety certification or production integration.
 
 ## 1. Scope, framing and grounding
 
@@ -102,6 +103,29 @@ Plan used: contract grounding → concrete design → structural checks/commit, 
 path with no child agents. Estimated work/span 20 minutes (**Inferred**, not runtime latency).
 Source-safety research and Owner coordination run externally, not duplicated here. No floor was
 waived to produce a document: execution, native proof and independent design admission remain gates.
+
+### 1.4 Owner turns 7/8 — authoring grant, not an integration freeze
+
+Conductor relays explicit Owner admission for **one candidate writer** to author the exact new
+Core/Understanding, dedicated tests, and detached inert App/Workbench/Understanding files in §13.1.
+The candidate worktree is being created from **executor-observed main `b4e61022`**. This is a
+reported base, not this document's independent inspection of that checkout. The writer verifies
+the named paths are new in its checkout; any collision is reported, not overwritten.
+
+Identity, authorized inventory logic and **real Roslyn declaration collection** may start under
+this grant. Use purpose-built owned fixtures and real compiler objects, not display parsing or a
+fake compiler. Unknown live-filesystem safety must not block pure identity/compiler authoring;
+it must block unproved source reads on the product path. Source reading is supplied by the separate
+native safety writer, not reimplemented in presentation or hidden in a test adapter.
+
+Detached presentation is expressly admitted: construct and test inert controls from typed fixture
+results or an explicit test substitute. They are **candidate evidence**, not product registration
+or native end-to-end delivery proof. No default fake query client, alternate host/daemon or
+test-only composition is installed into production.
+
+No existing product, project, package or shared file may be edited. Shared wire/host/writer/history
+joins and actual safety acceptance remain independent gates; they are **not a freeze on the
+new-file grant**. Standalone candidate fallback is conditional and exactly bounded in §13.2.
 
 ## 2. Domain model and durable grain
 
@@ -235,7 +259,7 @@ No Atlas product producer is wired until that proof exists.
 
 ### 3.2 Refresh and commit algorithm
 
-All mutation is performed by a new `Understanding/AtlasObservationWriter` using the **injected
+All mutation is performed by the new `Understanding/AtlasStore` using the **injected
 Core-owned WorkspaceStore**, never opening its own DB. The write-admission port in §4.2 supplies
 the real StoreWriter lease; no component touches its internal connection or reflection.
 
@@ -337,8 +361,9 @@ expand → compatible backfill/unknown → read comparison → rollback → sepa
 
 ## 4. Ports, ownership and concrete component contracts
 
-These are **proposed signatures**, not claims that these types already exist. Implement them under
-`src/AiDe.Core/Understanding/` and companion new test paths only after explicit authoring admission.
+These are **proposed signatures**, not claims that these types already exist. Owner turns 7/8 admit
+their implementation only in the exact new `src/AiDe.Core/Understanding/` and companion paths in
+§13.1. That grant does not admit shared adapters or unproved live-source access.
 Use immutable records/value types, guard clauses, cancellation tokens and existing error conventions.
 No new package, project, service, framework or model dependency is selected.
 
@@ -347,17 +372,17 @@ No new package, project, service, framework or model dependency is selected.
 | Component / proposed file | Exposes / consumes | Ownership, lifetime and terminal behavior |
 |---|---|---|
 | `AtlasIdentity.cs` | CanonicalTuple/typed IDs, checked span/value validation | Pure, deterministic; no I/O or caches. Reject duplicate/collision/over-limit rather than repair identity. |
-| `AtlasContracts.cs` | Records, enums, error codes, budget profile and versioned DTOs | One vocabulary for writer/query/wire/native readers; no WPF/SQL/provider types. |
+| `AtlasContracts.cs` | Records/value IDs, enums, errors, budget profile, versioned DTOs, `IAtlasQueries`, narrow adapter ports and shared serialization options | One vocabulary; consolidate the previously proposed Ports/Serialization files here. No WPF/SQL/provider types in public query contracts. |
 | `AtlasInventory.cs` | `EnumerateAsync(AuthorizedRoot, InventoryPolicy, ObservationTarget, ct)` → InventoryObservation + records | One bounded root job; consumes safe enumeration/metadata port. Maintains visited authorized file identity set; no semantic-node input. |
 | `AtlasDeclarations.cs` | `CollectAsync(CompilationInputBundle, ObservationTarget, ct)` → ScopeObservation + declarations | Consumes real approved project/TFM/options/references and exact bound syntax inputs; installed Roslyn 4.14 only. No `has_member` parsing or synthetic no-reference production fallback. |
-| `AtlasObservationWriter.cs` | `StageAsync(ObservationChunk, RootFence, ct)`; `SealAsync(ManifestDraft, RootFence, ct)` | Uses injected store plus real admitted writer leases. Bounded transactions, root+scope fencing, receipt/idempotency rules. |
-| `AtlasRefresh.cs` | `RefreshAsync(AtlasRefreshRequest, CallerContext, ct)` → `AtlasRefreshResult` | Owns queues and finite run state; no shared transport registration. One active root coordinator; at most two compilation jobs. |
-| `AtlasQueries.cs` | Capabilities/Inventory/Outline/Source/Manifest queries | Uses fixed historical SQL and source port; current policy checked on each query and continuation. No App file read. |
-| `AtlasSerialization.cs` | `SerializeV1`/`ParseV1`, size validation and canonical golden fixtures | Data-only tests can run without live IPC edits. It is not a substitute IPC server/client. |
-| `AtlasPorts.cs` | Narrow source/compilation/writer-admission/authority ports | Ports name unresolved real adapters; test fakes stay in tests and cannot be registered as product defaults. |
+| `AtlasStore.cs` | `StageAsync`, `SealAsync`, exact-reference read/replay methods | Cohesive bounded persistence implementation over the injected store and admitted writer leases; no new DB, public SQL or extra repository layer. Candidate real-store tests are distinct from shared writer admission. |
+| `AtlasService.cs` | `RefreshAsync` and capabilities/inventory/outline/source/manifest query methods implementing `IAtlasQueries` | Owns bounded queues and finite request state; delegates records to AtlasStore and source operations to S-SAFE. Current policy checked on every read/continuation. No transport registration or App file read. |
 
 No new `AtlasNavigation` domain aggregate/class is mandated. Native views use existing view-local
-state/Memento restoration; Core validates selection through AtlasQueries.
+state/Memento restoration; Core validates selection through AtlasService. `SerializeV1`/`ParseV1`
+and the codec contract live with AtlasContracts; their isolated tests do not create a second IPC
+implementation. The six-file Core manifest replaces, rather than supplements, the earlier nine-file
+proposal—do not create speculative extra layers.
 
 ### 4.2 Required real adapter joins — no fake wiring
 
@@ -414,8 +439,8 @@ handle lifecycle and observations from those runs before clearing S-SAFE. No saf
 label is derived from the source-only report.
 
 These are bounded **implementation joins**, not reasons to stop drafting or to reopen the whole
-council. The producer and query logic can be written/tested after their separate new-namespace
-admission; claiming the deployed walking skeleton waits for the real joins. Shared adapters are
+council. The producer and query logic now have the scoped new-file authoring grant in §13.1 and can be
+written/tested while joins resolve; claiming the deployed walking skeleton waits for the real joins. Shared adapters are
 serialized handoffs, never parallel edits disguised as another filename.
 
 ### 4.3 Compilation and source collection algorithm
@@ -471,7 +496,7 @@ policyRevision, manifestId?, outcome, error?, capabilities, coverage, bounds, da
 Transport/refusal and content state are separate: a successful read can truthfully return
 `LiveChanged` without being an indexed-source success. Failure cannot serialize as empty success.
 
-Use existing web-default JSON conventions explicitly pinned in `AtlasSerialization`: camelCase,
+Use existing web-default JSON conventions explicitly pinned in `AtlasContracts.cs`: camelCase,
 closed string enums; no integer enum acceptance; reject duplicate properties and unknown **required
 capabilities**; bounded depth 16. Unknown envelope/schema/operation is refused, not defaulted.
 Unknown optional fields within negotiated v1 may be ignored only where the schema says optional;
@@ -777,7 +802,7 @@ fact schema golden compatibility; **D7** every fake paired with the real admitte
 local-IPC compatibility proof instead. **A1–A6** are not triggered: no model/MCP/tool/prompt
 capability is added. This design document is not a shipped model prompt.
 
-| ID / proposed test class | Assertions and red mutation | Real/substitute boundary |
+| ID / test family (grouped into §13.1's exact test files) | Assertions and red mutation | Real/substitute boundary |
 |---|---|---|
 | T01 `AtlasContractValidationTests` | Reject malformed IDs, enum integers, duplicate/deep JSON, missing critical fields, overflows; remove a validator to observe red | Pure serialized records. |
 | T02 `AtlasInventoryPolicyTests` | Unsupported/generated/vendor/migration remain; hidden counts withheld; linked project memberships do not duplicate FileId; remove nonsemantic entries ⇒ red | Safe fixtures plus real admitted enumeration pair. |
@@ -802,8 +827,9 @@ capability is added. This design document is not a shipped model prompt.
 | T21 `AtlasTelemetryPrivacyTests` | Trace context, stable code/unit, unsampled coverage, series/log caps; seeded private path/body never emitted | Captured real Activity/Meter/log sinks and native operation. |
 | T22 `AtlasLegacyCompatibilityTests` | Atlas persisted predicates do not change existing graph/evidence behavior; disable capability rollback leaves legacy operable | **Shared-owner serial test handoff**, no live SH3 test edits by this track. |
 
-All new test files belong under `tests/AiDe.Core.Tests/Understanding/` or, only when explicitly
-admitted, `tests/AiDe.App.Tests/Workbench/Understanding/`. Existing forbidden tests are not edited.
+All new test code belongs in §13.1's **five Core and two App test files**, now admitted for the
+single candidate writer. T01–T22 names above are coverage families, not permission to create
+22 separate files. Existing forbidden tests are not edited.
 Each new control is observed red by old behavior or an intentional mutation before claiming green.
 Use deterministic clocks/fault points rather than sleeps. Temporary fixture resources are isolated
 inside approved test-owned project artifact paths, disposed and counted before/after; no private corpus.
@@ -815,13 +841,74 @@ read TRX counts, serialized data, actual store state, normal-path telemetry and 
 ## 13. Exact smallest vertical worklist and serialized handoffs
 
 Each row is an independently demonstrable vertical **subset of the same E-0 path**, not a future
-Atlas phase. Authoring permission is separate and still pending. Implementation delegates are
-expected to be GPT-5.5 after Conductor/Owner admission; no child agents were launched here.
+Atlas phase. **Branch-local authoring of §13.1 is granted by Owner turns 7/8**; real adapter/
+integration admission is separate. One GPT-5.5 candidate writer owns the manifest; no child agents
+were launched here and no additional ownership lanes are implied.
+
+### 13.1 Exact new-file manifest — single candidate writer
+
+These **15 files** are the entire normal authored set. No globs, existing-file edits or additional
+helper/fixture files are implied. Reuse private/nested helpers where needed rather than expanding
+the manifest. Test fixture content is generated by tests in their isolated disposable artifact area,
+not committed private data. Build outputs remain in existing ignored locations.
+
+| Exact new path | Bounded responsibility / mapped test families |
+|---|---|
+| `src/AiDe.Core/Understanding/AtlasContracts.cs` | Typed records/IDs, `IAtlasQueries`, narrow ports, error/budget profile and serialization contract; no runtime adapters. |
+| `src/AiDe.Core/Understanding/AtlasIdentity.cs` | Canonical logical/version IDs and span/value validation; no I/O. |
+| `src/AiDe.Core/Understanding/AtlasInventory.cs` | Policy-bounded physical membership/category logic and observation production through the admitted metadata port; no semantic-node inventory substitute. |
+| `src/AiDe.Core/Understanding/AtlasDeclarations.cs` | Real Roslyn mandatory-family extraction from explicitly supplied, bound compilation inputs; overload/partial/scope identity. No arbitrary project execution. |
+| `src/AiDe.Core/Understanding/AtlasStore.cs` | Bounded real-store chunk/seal/pinned-read/replay implementation; no store opener or shared schema modification. |
+| `src/AiDe.Core/Understanding/AtlasService.cs` | Bounded coordinator and query implementation; Core-validated selection, cancellation/limits and typed unavailable for unadmitted real ports. |
+| `tests/AiDe.Core.Tests/Understanding/AtlasIdentityTests.cs` | T01 value guards, T04 canonical/scoped/moved identities. |
+| `tests/AiDe.Core.Tests/Understanding/AtlasDeclarationTests.cs` | T05/T06 real Roslyn mandatory symbols and supplied-input binding; real production loader join remains separate. |
+| `tests/AiDe.Core.Tests/Understanding/AtlasInventoryTests.cs` | T02/T03 policy/membership and T07 source-port result/binding contract; native safety execution comes from the separate safety writer. |
+| `tests/AiDe.Core.Tests/Understanding/AtlasStoreTests.cs` | T08–T11/T14/T20 storage, fences, exact generations, replay/growth; T22 candidate compatibility characterization without editing shared readers/tests. |
+| `tests/AiDe.Core.Tests/Understanding/AtlasContractBudgetTests.cs` | T01 payload guards, T12/T13/T15/T16/T19/T21 queues/cancel/wire/auth/budgets/telemetry. Real shared-adapter assertions remain explicit joins. |
+| `src/AiDe.App/Workbench/Understanding/AtlasExplorerView.cs` | Detached inert tree/outline/inspector and view-local selection/history; typed query dependency, no factory/menu/host registration. |
+| `src/AiDe.App/Workbench/Understanding/AtlasSourceView.cs` | Detached read-only typed source rendering, available/changed/unavailable states and anchor disabling. No filesystem/native-reader implementation. |
+| `tests/AiDe.App.Tests/Workbench/Understanding/AtlasDetachedViewTests.cs` | T17/T18 detached control states, UIA/input/token/inert-content checks. Explicitly not real registered-host proof. |
+| `tests/AiDe.App.Tests/Workbench/Understanding/AtlasSelectionTests.cs` | T13/T17/T18 generation guard, policy/manifest selection, Back/focus restoration and no old-body substitution in detached views. |
+
+The writer must report T-family coverage as **candidate-executed**, **real-adapter-pending** or
+**not yet implemented**, not turn missing native/integration assertions into skipped green tests.
+Real Roslyn execution over owned compiler fixtures is real compiler evidence; it is not a claim
+that the product project loader or native source reader has been installed.
+
+Inventory/source boundary: safe owned metadata fixtures and membership logic can run now.
+Before S-SAFE is admitted, the candidate must not enable unproved link/race-sensitive live-source
+reads. Source queries return explicit adapter-unavailable/unverifiable states rather than an
+insecure fallback. The detached UI may render typed owned fixture results in tests, never install
+them as a production default.
+
+### 13.2 Conditional standalone fallback — only after an observed project constraint
+
+Owner permits **only if existing project constraints prevent an additive build without shared
+edits**:
+
+1. `spikes/code-atlas-e0-candidate/CodeAtlas.E0.Candidate.csproj`
+2. `spikes/code-atlas-e0-candidate/Program.cs`
+
+Record the actual failed build/constraint before creating these two files. Use existing pinned
+dependencies and the admitted new-source contracts; do not modify an existing project/package
+manifest, install a new provider, or invent a product replacement. The standalone harness proves
+only its stated candidate subset. If it cannot exercise a real adapter, report that limitation.
+No new README/helper/test project is implicitly authorized by this fallback.
+
+The separate safety writer owns its separately assigned `spikes/code-atlas-source-reader` probe
+and proof artifacts; **none** of those paths belongs to this candidate manifest.
+
+### 13.3 Execution order and product exits
+
+Start identity/contracts and real-compiler declaration tests immediately under the scoped grant;
+develop inventory/store/service and detached presentation as their inputs become available.
+No existing source/package/project edits are a prerequisite the candidate may make itself.
+The following product exits remain distinct from branch-local candidate progress:
 
 | Slice | Authored new paths / bounded task | End-to-end exit, real vs substitutes | Dependency / owner handoff |
 |---|---|---|---|
-| **E0-V1 one authorized physical file** | Core Understanding `AtlasIdentity.cs`, `AtlasContracts.cs`, `AtlasPorts.cs`, `AtlasInventory.cs`, minimal `AtlasObservationWriter.cs`/`AtlasQueries.cs`; associated T01/T02/T08/T15; new native view files only if admitted | One actual allowed unsupported text file appears through real SQLite/read DTO/native tree/source or typed unavailable. Source/writer fakes prove unit contracts only; real native composition required before deployable slice exit. | S-SAFE, S-WRITE, S-AUTH, S-COMPAT and first serialized S-WIRE/S-HOST installation. Core/Shell retain all shared edits. |
-| **E0-V2 one project and mandatory declarations** | `AtlasDeclarations.cs`, bounded `AtlasRefresh.cs`; scope/outline additions in the same new files; T04–T07/T11/T17 | Real project/TFM file → type → overload/property/accessor/constructor → chosen partial declaration → bound source; unsupported files remain. No no-reference compiler in product. | S-COMP actual loader; same admitted writer/query/native path, not a second composition. |
+| **E0-V1 one authorized physical file** | Manifest's `AtlasIdentity.cs`, `AtlasContracts.cs`, `AtlasInventory.cs`, minimal `AtlasStore.cs`/`AtlasService.cs` and two detached views; grouped T01/T02/T08/T15 tests | Candidate logic/real-store and detached-view tests proceed now. Product exit: one actual allowed unsupported file through real SQLite/query/native composition and source or typed unavailable; no fixture installed as production wiring. | S-SAFE, S-WRITE, S-AUTH, S-COMPAT and serialized S-WIRE/S-HOST installation are product joins, not a freeze on candidate authoring. |
+| **E0-V2 one project and mandatory declarations** | `AtlasDeclarations.cs` and bounded `AtlasService.cs`; scope/outline changes only in the same manifest files; grouped T04–T07/T11/T17 | Candidate real Roslyn tests proceed now. Product exit: real project/TFM file → mandatory type/member → chosen partial declaration → bound source; unsupported files remain. | S-COMP actual loader and admitted source/native path; no synthetic/no-reference production fallback. |
 | **E0-V3 history, concurrency and mixed refresh** | Finish manifest/queue/cursor/source continuation and view-local Back in existing new Understanding files; T03/T09–T16/T18 | Index then edit, cancel refresh, A-new/B-failed, policy revoke, restart and Back. Real facts/IPC/source/native state agree; fault injection only at failure boundaries. | Writer-admission/compaction/transport cancellation handshake proven; shared changes serialized by owners. |
 | **E0-V4 workload and admission proof** | No new abstraction by default; bounded fixes in admitted new files, T19–T22 and proof artifact authored by Conductor | Approved real workload meets named limits; data beyond limits fails honestly; replay/rollback and legacy compatibility demonstrated; human keyboard/pointer demo completed. | Independent design/implementation review, source-safety and Owner horizon gate. E0 closure does not admit E-1…E-4. |
 
@@ -881,7 +968,7 @@ It deliberately **does not tick executed/independently reviewed items**:
 
 `GATE atlas-e0-design-content · 2026-09-12 · independent focused review via Conductor/Owner · criteria: concrete bounded writer/read/native contracts and numeric profile accepted, S-SAFE/S-COMP/S-WRITE and shared joins dispositioned · verdict: PROPOSED, REVIEW PENDING · author does not clear hard vetoes.`
 
-`GATE atlas-e0-authoring · 2026-09-12 · Owner + Conductor/Core/Shell · criteria: exact new-path authoring permission and shared serialized handoffs recorded, current-main/SH3 responsibilities reconciled · verdict: NOT GRANTED BY THIS DOCUMENT.`
+`GATE atlas-e0-authoring · 2026-09-12 · Owner turns 7/8, relayed by Conductor · criteria: one candidate writer, exact 15 new files in §13.1, conditional two-file fallback in §13.2, no existing/shared/project/package edits · verdict: BRANCH-LOCAL AUTHORING GRANTED; source-safety and product integration gates remain separate.`
 
 `GATE atlas-e0-delivery · 2026-09-12 · Test/Security/Distributed/Privacy/native + Owner · criteria: real adapter and native path, red-first controls, workload/telemetry/replay/rollback readback, no fake production seam · verdict: UNEXECUTED.`
 
@@ -897,11 +984,12 @@ It deliberately **does not tick executed/independently reviewed items**:
 | Retention/rights coverage for new metadata | Privacy owner confirms existing policy covers E-0 classes and approved sink/maintenance behavior. No arbitrary retention period is supplied. |
 | Cursor token facility | Authority owner binds the specified authenticated cursor contract to its actual approved facility; no new crypto provider selected here. |
 
-The next action is **focused E-0 design/authoring admission and the explicit joins**, not another
-whole-architecture council and not abandonment while Owner resolves coordination. This design
-provides executable task boundaries and falsifiers now; it does not mislabel incomplete real adapters
-as production wiring. Later Atlas phases are outside this worklist.
+The next action is **dispatch the single candidate writer on §13.1 under the existing Owner
+turn-7/8 grant**, while Conductor resolves the explicit real joins. No further whole-architecture
+council or blanket authoring freeze is needed. The candidate records measured progress and
+unmet product gates without mislabelling detached views or test adapters as production wiring.
+Later Atlas phases are outside this worklist.
 
 | Completed | Remaining | Best next action |
 |---|---|---|
-| Concrete E-0 records, canonical IDs, generic fact/manifest write algorithm, versioned read/wire contracts, numeric candidate budgets, native state contract and T01–T22 matrix. | Focused design/budget countersign, real safety/compiler/writer/SH3/history joins and explicit authoring admission; all execution/native proof. | Conductor/Owner admit the exact E0-V1 new-path task and serialize its required real adapters; continue the bounded E-0 worklist without reopening the full vision. |
+| Concrete E-0 contracts/budgets/T01–T22 plus the exact 15-file single-writer manifest and conditional two-file fallback; Owner branch-local grant recorded. | Candidate implementation/tests, budget evidence/countersign and real safety/compiler/writer/SH3/history/product-native joins; no existing shared edit authorized. | Conductor dispatches the single candidate writer now using §13.1 while serializing the real adapters independently. |
