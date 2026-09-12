@@ -1,6 +1,6 @@
 ---
 id: note-addendum-c-council-rulings
-title: "Decision note — Rulings 50–78: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
+title: "Decision note — Rulings 50–79: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
 type: doc
 status: accepted
 owner: "@timianmalloo"
@@ -29,7 +29,7 @@ review-suggested:
   - { by: adr-0017-primary-view-mode, on: 2026-09-11, reason: "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent" }
 ---
 
-# Decision note — Rulings 50–78
+# Decision note — Rulings 50–79
 
 ## Provenance
 
@@ -1264,3 +1264,47 @@ b2 / `projection_sha`, US-C12 `outcome`/`error_code`, P-7 → WebView2.
 reading is D §A8.1's *"the call is skipped when all three lines are already non-blank"*, so a fully
 filled template never calls the model and a partially filled one names only its open lines — no new
 rule needed.
+
+---
+
+## Ruling 79 — the operator's decision filed: Ruling 51 relaxed — Addendum C/D code branches from `main` now; F5's tree is frozen for its run; the lane pin is carried onto `main` ahead of the F5 merge
+
+**RULING:** (a) The implementation of Addenda C and D starts from `main` **now**; Ruling 51's
+*"code from `main` only after `feature/exit-evidence` merges"* is superseded. (b) `feature/exit-evidence`
+is **frozen at `135e05e1`** until the operator's attended exit run: it does not merge `main` again
+before the run, its Release build (`1.0.0+135e05e1…`) is the binary the run uses, and its exit
+evidence cites that sha — the shell it measures is the shell it was built for, which is what Ruling
+51 protected. After the run, F5b merges `main` into the F5 tree (never rebases — DC-128), discharges
+the clauses, and merges F5 into `main`. (c) The two lane-pin commits (`246b38a3`, `135e05e1` —
+`LaneSessionOptions`, the governed `Bash` pin, the `session/new` frame recorded on the normal path;
+code, tests, their notes and Proof Pack; **not** the frozen oracle, **not** `ConductorEntry.cs`) are
+**cherry-picked onto `main`** so that CV-0's read-only pin, CV-3's `tools: []` and PD-5 reuse the
+one typed argument; the coordination plan's S0 becomes this cherry-pick, and the F5 merge moves to
+the converge step.
+
+**BECAUSE:** The operator's words (`al-` entry of 2026-09-11, session `conductor-addendum-c`):
+*"keep going — relax ruling 51 … let's get all of this stuff implemented so I can do deeper user
+testing with a more complete build."* Ruling 51's reason was that a run taken against a changed
+shell would measure something Addendum A did not specify; freezing the F5 tree at a named sha
+preserves that guarantee without holding every downstream track behind a gesture the operator has
+deferred. The cherry-pick is safe by inspection: the two commits touch `AcpLaneClient.cs`,
+`GovernedRunHost.cs`, `WorkbenchDiagnostics.cs`, their tests, docs and derived views — the oracle
+`tools/verify-front-door-exit-evidence.py` is not in either (checked with `git show --name-only`).
+Their tests ran green on the F5 tree (Core AgentPlane 182/182, App Conductor 12/12) and run again on
+`main` at the pick.
+
+**CONFIDENCE:** Verified (the operator's words; the commits' file lists; the tests on the F5 tree).
+
+**SCOPE EFFECT:** Supersedes Ruling 51's ordering clause; keeps its measurement guarantee by the
+freeze. The coordination plan (`docs/coordination/addendum-cd.md`) reads: S0 = cherry-pick the lane
+pin; S1, S2, W1… unchanged; the F5 merge joins the converge step. F5b's evidence gains one line: the
+tree's sha and the fact that it was frozen while `main` moved.
+
+**CONDITIONS:** (1) The cherry-picked tests are green on `main` before anything branches from it.
+(2) If the F5 run is taken and its evidence cites any sha but `135e05e1`, the freeze was broken and
+the run is *not recorded*. (3) The F5 tree's `git merge main` happens only after the run's
+`exit-evidence.json` exists.
+
+**RECORD AS:** Ruling 79 — Ruling 51 relaxed: Addendum C/D code from `main` now; F5's tree frozen at
+`135e05e1` for its run; the lane-pin commits cherry-picked onto `main` as S0; the F5 merge moves to
+converge.

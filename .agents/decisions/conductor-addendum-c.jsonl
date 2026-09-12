@@ -418,3 +418,12 @@
 {"agent": "claude-conductor", "at": 1789172735.6718998, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789172735.6738994, "code": null, "kind": "allowed", "path": "site/index.html", "session": "conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789172735.6749, "code": null, "kind": "allowed", "path": "site/model.html", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172763.8827114, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-addendum-c.jsonl", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172763.884711, "code": null, "kind": "allowed", "path": ".agents/decisions/render-fix.jsonl", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172763.8857121, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172763.8877118, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172763.8897111, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172763.8907123, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172763.8927112, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172763.8937159, "code": null, "kind": "allowed", "path": "site/index.html", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172763.8957155, "code": null, "kind": "allowed", "path": "site/model.html", "session": "conductor-addendum-c", "wi": ""}

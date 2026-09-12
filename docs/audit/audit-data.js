@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T00:25:31Z",
+  "generated": "2026-09-12T00:26:05Z",
   "audit": [
     {
       "actor": null,
@@ -13056,6 +13056,54 @@ window.AUDIT_DATA = {
         "instrumentation"
       ],
       "tier": "T0",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-12T00:21:30Z",
+      "id": "al-01M29FV80QV2A5994K7F9S0YB1",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "Operator: keep going - relax Ruling 51. Continue with best next actions using the owner-conductor model. Let's get all of this implemented so I can do deeper user testing with a more complete build.",
+      "session": "prompt-log",
+      "shortname": "Operator: keep going - relax Ruling 51. Continue with best next actions …",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/addendum-c-council-rulings.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "datetime": "2026-09-12T00:25:04Z",
+      "done_when": "Ruling 79 filed; 246b38a3 and 135e05e1 cherry-picked onto main with AgentPlane 182/182 and Conductor 12/12; §2 rows applied as moves, verify-surface-ownership green",
+      "git": {
+        "branch": "conductor/addendum-c",
+        "pushed": null,
+        "sha": "7a3f7b698388336ed0802a7a3d9982b6569d5b94",
+        "short": "7a3f7b698"
+      },
+      "goal": "Relax Ruling 51 as the operator decided; carry the lane pin onto main; apply the plan's §2 rows",
+      "id": "al-01M29G1RTD2XEDPB4BEAKQ32QP",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "Operator: keep going - relax ruling 51; continue with the owner-conductor model; get it all implemented for deeper user testing.",
+      "session": "conductor-addendum-c",
+      "shortname": "ruling-79-and-s0-lane-pin-on-main",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "Ruling 79: Addendum C/D code from main now; F5's tree frozen at 135e05e1 for its run; the lane-pin commits cherry-picked onto main as S0 (3ab712c6, 57da088d), tests green on main. §2: nine surfaces moved from Core/Design to the Shell and Conversation lanes for the horizon; one prose mention neutralised so the gate reads one owner.",
+      "tags": [],
+      "tier": "T1",
       "tool": null
     }
   ],
