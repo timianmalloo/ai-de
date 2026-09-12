@@ -1,4 +1,3 @@
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using AiDe.Core.AgentPlane;
 using AiDe.Core.Presentation.Composer;
@@ -25,8 +24,8 @@ namespace AiDe.Core.PromptCompilation;
 /// <param name="TaskClass"><c>Current(task_class).value</c>.</param>
 /// <param name="TaskClassSource"><c>Current(task_class).source</c>: <c>session-default</c> or <c>operator</c>.</param>
 /// <param name="ProjectionSha">sha256 over the canonical rebuildable domain — <c>submitted.projection_sha</c>'s value.</param>
-/// <param name="Prompt">The sent bytes, when the held bodies were supplied; null for an offline rebuild.</param>
-/// <param name="TextSha256">sha256 of <see cref="Prompt"/>, when rendered.</param>
+/// <param name="Compiled">The render — the sent bytes and the attachment totals — when the held bodies were supplied; null for an offline rebuild.</param>
+/// <param name="TextSha256">sha256 of the sent bytes, when rendered.</param>
 public sealed record CompiledProjection(
     string Shape,
     string Tier,
@@ -42,11 +41,14 @@ public sealed record CompiledProjection(
     string TaskClass,
     string TaskClassSource,
     string ProjectionSha,
-    string? Prompt,
+    CompiledPrompt? Compiled,
     string? TextSha256)
 {
     /// <summary>Ruling 73's access projection: read-only when no lease was derived.</summary>
     public bool IsReadOnly => Lease is null;
+
+    /// <summary>The sent bytes, when rendered.</summary>
+    public string? Prompt => Compiled?.Text;
 }
 
 /// <summary>
@@ -136,14 +138,15 @@ public static class Projection
             envelope.Current(DecorationNames.Attachments)?.Value,
             taskClassValue, taskClass.Source);
 
-        string? prompt = null;
+        CompiledPrompt? compiled = null;
         string? textSha = null;
         if (draft is not null)
         {
             // THE RENDER, FROM THIS PROJECTION'S OWN BLOCK: the tier the operator sees in the block is
-            // the tier this projection computed, override included — one producer of the sent bytes.
-            prompt = ComposerCompiler.Compile(draft, template, block).Text;
-            textSha = EnvelopeHash.Sha256Hex(prompt);
+            // the tier this projection computed, override included — the one producer of the sent
+            // bytes, which the send gate's RenderView and Send both call.
+            compiled = ComposerCompiler.Compile(draft, template, block);
+            textSha = EnvelopeHash.Sha256Hex(compiled.Text);
         }
 
         return new CompiledProjection(
@@ -152,7 +155,7 @@ public static class Projection
             fanOutCap, ceiling, budget,
             block, lease, patterns,
             taskClassValue, taskClass.Source,
-            sha, prompt, textSha);
+            sha, compiled, textSha);
     }
 
     /// <summary>
@@ -191,7 +194,7 @@ public static class Projection
             taskClassSource,
         };
 
-        return EnvelopeHash.Sha256Hex(domain.ToJsonString(new JsonSerializerOptions { WriteIndented = false }));
+        return EnvelopeHash.Sha256Hex(domain.ToJsonString());
     }
 
     private static (int Ceiling, RunBudget Budget) ReadCeilings(Envelope envelope)

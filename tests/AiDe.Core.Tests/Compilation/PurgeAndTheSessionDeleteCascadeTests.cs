@@ -90,7 +90,6 @@ public sealed class PurgeAndTheSessionDeleteCascadeTests : IDisposable
         var plan = EnvelopePurge.Resolve(_workspace, _config.SessionId);
         Assert.Equal(0, plan.EnvelopeCount);
         Assert.Null(plan.NewestAt);
-        Assert.False(plan.FileExists);
         Assert.False(plan.HasHistory);
         EnvelopePurge.Execute(plan);   // nothing to remove is not an error
         Assert.True(File.Exists(SessionPaths.SessionFile(_workspace, _config.SessionId)));
@@ -238,7 +237,7 @@ public sealed class PurgeAndTheSessionDeleteCascadeTests : IDisposable
     {
         var outside = Path.Combine(_workspace, "README.md");
         File.WriteAllText(outside, "keep");
-        var forged = new PurgePlan("payments", _config.SessionId, Path.GetFullPath(_workspace), Path.GetFullPath(outside), true, 1, 0, null);
+        var forged = new PurgePlan("payments", _config.SessionId, Path.GetFullPath(_workspace), Path.GetFullPath(outside), 1, 0, null);
 
         var refused = Assert.Throws<EnvelopeStoreException>(() => EnvelopePurge.Execute(forged));
         Assert.Equal(EnvelopeStoreErrorCodes.PurgeRefused, refused.Code);

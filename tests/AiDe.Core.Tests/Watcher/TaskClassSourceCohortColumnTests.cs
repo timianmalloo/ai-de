@@ -220,6 +220,11 @@ public sealed class TaskClassSourceCohortColumnTests : IDisposable
         Assert.Equal("session-default", store.FindScoredEpisode("ep-legacy-1")!.TaskClassSource);
 
         Assert.Throws<ArgumentException>(() => store.RecordEpisodeTaskClassSource("ep-legacy-1", " "));
+
+        // Idempotent, never a silent rewrite: the same value again succeeds; a different value is refused and the first stands.
+        Assert.True(store.RecordEpisodeTaskClassSource("ep-legacy-1", "session-default"));
+        Assert.False(store.RecordEpisodeTaskClassSource("ep-legacy-1", "operator"));
+        Assert.Equal("session-default", store.FindEpisodeTaskClassSource("ep-legacy-1"));
     }
 
     /// <summary>The in-memory store mirrors the SQL store: a stamp needs a scored cell; the read returns null for "not recorded".</summary>
@@ -229,6 +234,13 @@ public sealed class TaskClassSourceCohortColumnTests : IDisposable
         var store = new InMemoryWatcherObservationStore();
         Assert.False(store.RecordEpisodeTaskClassSource("ep-1", "operator"));
         Assert.Null(store.FindEpisodeTaskClassSource("ep-1"));
+
+        var segment = new ScoreSegment(WorkspaceKey.From("C:/repos/app"), TaskClasses.FreeForm, "weave/1");
+        store.RecordScorecard(Episode("ep-1", "op-a", segment));
+        Assert.True(store.RecordEpisodeTaskClassSource("ep-1", "operator"));
+        Assert.True(store.RecordEpisodeTaskClassSource("ep-1", "operator"));
+        Assert.False(store.RecordEpisodeTaskClassSource("ep-1", "session-default"));
+        Assert.Equal("operator", store.FindScoredEpisode("ep-1")!.TaskClassSource);
     }
 
     /// <summary>The compute reader: a leaderboard cell counts the episodes whose class was the session's default, and "not recorded" counts as neither.</summary>

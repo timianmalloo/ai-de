@@ -26,9 +26,12 @@ public static class EnvelopeHash
 /// — the members in one fixed order, no indentation, so the same event is the same bytes (US-D2).
 /// </summary>
 /// <remarks>
-/// Hand-written over <see cref="JsonObject"/> rather than reflection-serialized: the member order
-/// and the wire names are the schema (§A12.1), and a serializer's defaults are a second definition
-/// of it that drifts silently on a rename.
+/// Hand-written over <see cref="JsonObject"/> rather than reflection-serialized for the READER's
+/// sake, not the writer's: the fold is lenient by contract (DM11 g — a missing member reads
+/// <i>not recorded</i>, an unknown kind or schema is skipped and counted, a key is read from any
+/// line), which a serializer over positional records refuses at the first absent member without a
+/// converter per record. The writer's fixed member order (§A12.1) rides along; an attribute could
+/// give that alone.
 /// </remarks>
 internal static class EnvelopeRowCodec
 {
@@ -215,7 +218,7 @@ internal static class EnvelopeRowCodec
 
             EnvelopeEventKinds.Consumed => new Consumed(
                 envelopeId,
-                Str(row, "run_id") ?? string.Empty,
+                Str(row, "run_id") ?? Envelope.NotRecorded,
                 Str(row, "episode_id"),
                 Str(row, "outcome") ?? Envelope.NotRecorded,
                 Str(row, "reason") ?? Envelope.NotRecorded),

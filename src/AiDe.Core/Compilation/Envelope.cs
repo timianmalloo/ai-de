@@ -53,9 +53,6 @@ public sealed class Envelope
     /// <summary>The <c>consumed</c> row, or null.</summary>
     public Consumed? Consumed => _events.OfType<Consumed>().FirstOrDefault();
 
-    /// <summary>The highest <c>seq</c> in the fold — what the writer's next append exceeds.</summary>
-    public int LastSeq => _events.Count == 0 ? 0 : _events[^1].Seq;
-
     /// <summary>Abandoned: no accepted <c>submitted</c>. A stable read, because no writer holds the file while a reader folds it.</summary>
     public bool IsAbandoned => Submitted is null;
 

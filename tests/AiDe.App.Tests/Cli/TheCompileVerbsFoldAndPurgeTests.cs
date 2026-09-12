@@ -46,7 +46,7 @@ public sealed class TheCompileVerbsFoldAndPurgeTests : IDisposable
         for (var i = 0; i < n; i++)
         {
             var gate = new ComposerSendGate();
-            gate.BindSession(_config.SessionId, CompileModes.MechanicalOnly);
+            gate.BindSession(_config.SessionId, CompileModes.MechanicalOnly, "claude-code", "free-form");
             gate.UseEnvelopeStore(store, null);
             var draft = new ComposerDraft();
             draft.SwitchTo(ComposerShape.GoalBlock);

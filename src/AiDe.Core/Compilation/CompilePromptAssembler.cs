@@ -112,7 +112,4 @@ public static class CompilePromptAssembler
         var fence = new string('`', longest + 1);
         return fence + "text\n" + (text.EndsWith('\n') ? text : text + "\n") + fence;
     }
-
-    /// <summary>The prompt's byte count, for the report — never a tokenizer estimate presented as billed tokens.</summary>
-    public static int Bytes(string prompt) => Encoding.UTF8.GetByteCount(prompt ?? throw new ArgumentNullException(nameof(prompt)));
 }

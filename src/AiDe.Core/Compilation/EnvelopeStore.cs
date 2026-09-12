@@ -43,7 +43,6 @@ public sealed class EnvelopeStore : IDisposable
 
     private static readonly ActivitySource Signal = new(CompileSignal.SourceName);
     private static readonly UTF8Encoding Utf8 = new(encoderShouldEmitUTF8Identifier: false);
-    private static readonly IReadOnlyList<string> Tiers = ["T0", "T1", "T2"];
     private static readonly IReadOnlyList<string> Sources = [DecorationSources.Mechanical, DecorationSources.Derived, DecorationSources.Operator, DecorationSources.SessionDefault];
 
     private readonly Stream _stream;
@@ -384,7 +383,7 @@ public sealed class EnvelopeStore : IDisposable
         }
 
         if (string.Equals(d.Name, DecorationNames.Tier, StringComparison.Ordinal)
-            && !Tiers.Contains(d.ValueAsString ?? string.Empty, StringComparer.Ordinal))
+            && !Presentation.Composer.ComposerCompiler.IsTier(d.ValueAsString))
         {
             throw new EnvelopeStoreException(EnvelopeStoreErrorCodes.TierRefused, $"a tier row's value is one of T0, T1, T2; '{d.ValueAsString ?? d.Value?.ToJsonString() ?? "null"}' is refused and the prior row stands");
         }

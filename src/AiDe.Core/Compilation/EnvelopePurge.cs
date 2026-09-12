@@ -10,8 +10,7 @@ namespace AiDe.Core.PromptCompilation;
 /// <param name="SessionId">The id, validated as one segment of the session-id grammar.</param>
 /// <param name="WorkspaceRoot">The workspace the id was resolved under.</param>
 /// <param name="ResolvedFilePath">The absolute path of the one file the purge removes.</param>
-/// <param name="FileExists">Whether the file is there at all (the store creates it empty at open).</param>
-/// <param name="Rows">How many lines the file holds — zero is an empty file, nothing to purge.</param>
+/// <param name="Rows">How many lines the file holds — zero (or no file: the store creates it empty at open) is nothing to purge.</param>
 /// <param name="EnvelopeCount">How many envelopes the file folds to.</param>
 /// <param name="NewestAt">The newest <c>at</c> in the file, or null.</param>
 public sealed record PurgePlan(
@@ -19,13 +18,12 @@ public sealed record PurgePlan(
     string SessionId,
     string WorkspaceRoot,
     string ResolvedFilePath,
-    bool FileExists,
     int Rows,
     int EnvelopeCount,
     DateTimeOffset? NewestAt)
 {
     /// <summary>Whether there is any history to purge: a file with at least one line (an empty file is the store's own handle, not history).</summary>
-    public bool HasHistory => FileExists && Rows > 0;
+    public bool HasHistory => Rows > 0;
 
     /// <summary>The confirmation, one line per fact.</summary>
     public string Describe() =>
@@ -92,7 +90,7 @@ public static class EnvelopePurge
         }
 
         var fold = EnvelopeStore.ReadFile(file);
-        return new PurgePlan(name, sessionId, root, file, File.Exists(file), fold.Rows, fold.Envelopes.Count, fold.NewestAt);
+        return new PurgePlan(name, sessionId, root, file, fold.Rows, fold.Envelopes.Count, fold.NewestAt);
     }
 
     /// <summary>Removes the one file the plan names. A file already absent is not an error.</summary>
@@ -118,6 +116,11 @@ public static class EnvelopePurge
         if (!File.Exists(file))
         {
             return;
+        }
+
+        if (new FileInfo(file).Attributes.HasFlag(FileAttributes.ReparsePoint))
+        {
+            throw new EnvelopeStoreException(EnvelopeStoreErrorCodes.PurgeRefused, $"'{file}' became a symbolic link between the plan and the act; nothing was touched");
         }
 
         try

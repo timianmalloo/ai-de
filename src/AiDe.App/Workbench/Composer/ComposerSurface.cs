@@ -392,7 +392,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
         // THE ENVELOPE'S IDENTITY (ADR-0034 rule 1): every opened row names this session; the
         // compile mode is a provenance fact on it (E5) — mechanical-only until the ladder admits more.
-        _gate.BindSession(config.SessionId, config.CompileMode);
+        _gate.BindSession(config.SessionId, config.CompileMode, context.EngineId, _taskClass);
 
         _fields.Clear();
         _fields.AddRange(fields);
@@ -777,7 +777,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     public System.Text.Json.Nodes.JsonObject CommittedRecord() =>
         ComposerSendRecord.Committed(
             _attachEnabled,
-            _gate.RenderedView ?? ComposerCompiler.Compile(_draft, _template),
+            _gate.RenderedView ?? _gate.RenderView(_draft, _template),
             _blockedByAttachSetting);
 
     private void RenderCompiledView()

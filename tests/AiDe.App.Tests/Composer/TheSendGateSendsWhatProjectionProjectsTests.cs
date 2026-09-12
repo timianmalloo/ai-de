@@ -213,14 +213,22 @@ public sealed class TheSendGateSendsWhatProjectionProjectsTests
     [Fact]
     public void ProjectionProjectHasExactlyThreeNamedCallSitesByPath()
     {
-        var sites = Scan("Projection.Project(").Select(s => s.File).Order(StringComparer.Ordinal).ToList();
+        var sites = Scan("Projection.Project(")
+            .GroupBy(s => s.File, StringComparer.Ordinal)
+            .Select(g => (File: g.Key, Calls: g.Count()))
+            .OrderBy(s => s.File, StringComparer.Ordinal)
+            .ToList();
 
+        // THE THREE PATHS, AND HOW MANY CALLS EACH MAKES: the gate calls once for the view
+        // (RenderView) and once for the send — the same function at both ends of C15's window, which
+        // is what makes the view and the sent bytes one producer's output rather than two producers
+        // checked for agreement (the Simplifier's finding).
         Assert.Equal(
             new[]
             {
-                "AiDe.App/Cli/CompileFold.cs",
-                "AiDe.App/Workbench/Composer/ComposerSendGate.cs",
-                "AiDe.Core/Presentation/Composer/ComposerCompiler.cs",
+                ("AiDe.App/Cli/CompileFold.cs", 1),
+                ("AiDe.App/Workbench/Composer/ComposerSendGate.cs", 2),
+                ("AiDe.Core/Presentation/Composer/ComposerCompiler.cs", 1),
             },
             sites);
     }

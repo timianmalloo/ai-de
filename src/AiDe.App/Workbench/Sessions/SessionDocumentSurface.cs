@@ -590,7 +590,8 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
                 return true;
             }
 
-            CompileSignal.Degraded("task-class-source-not-stamped", "no scored cell");
+            // No scored cell, or a cell already stamped with a DIFFERENT provenance (never rewritten).
+            CompileSignal.Degraded("task-class-source-not-stamped", "no scored cell, or a different provenance already recorded");
             return false;
         }
         catch (Exception error) when (error is IOException or InvalidOperationException or Microsoft.Data.Sqlite.SqliteException)
@@ -621,37 +622,56 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     /// <returns>What happened, in the operator's terms; announced too.</returns>
     public string PurgeCompileHistory()
     {
-        string outcome;
+        // THE IDENTITY FROM THE HELD STORE, THE QUESTION OUTSIDE THE LOCK: the store stays open while
+        // the operator reads and answers (a run completing meanwhile still records its consumed row,
+        // and the run's continuation never waits on a modal box); only the act takes the gate.
+        string identity;
+        int rows;
         lock (_envelopeGate)
         {
-            _envelopes?.Dispose();
-            _envelopes = null;
-
-            try
+            if (_envelopes is not { } held)
             {
-                var plan = EnvelopePurge.Resolve(Model.WorkspaceRoot, Model.SessionId);
-                if (!plan.HasHistory)
+                var refused = "purge refused — " + (Composer.HistoryState ?? "compile history is not open here");
+                _announcer.Announce(new Announcement(refused, Urgency.Status, AnnouncementKind.Aborted));
+                return refused;
+            }
+
+            var fold = held.Read();
+            rows = fold.Rows;
+            identity = new PurgePlan(Model.Title, Model.SessionId, Path.GetFullPath(Model.WorkspaceRoot), held.Path, fold.Rows, fold.Envelopes.Count, fold.NewestAt).Describe();
+        }
+
+        string outcome;
+        if (rows == 0)
+        {
+            outcome = "no compile history to purge";
+        }
+        else if (!PurgeConfirmation(identity))
+        {
+            outcome = "purge cancelled; nothing was touched";
+        }
+        else
+        {
+            lock (_envelopeGate)
+            {
+                _envelopes?.Dispose();
+                _envelopes = null;
+
+                try
                 {
-                    outcome = "no compile history to purge";
-                }
-                else if (!PurgeConfirmation(plan.Describe()))
-                {
-                    outcome = "purge cancelled; nothing was touched";
-                }
-                else
-                {
+                    var plan = EnvelopePurge.Resolve(Model.WorkspaceRoot, Model.SessionId);
                     EnvelopePurge.Execute(plan);
                     _purgedThisOpen++;
                     outcome = string.Create(CultureInfo.InvariantCulture, $"compile history purged — {plan.EnvelopeCount} envelope(s) removed");
                 }
-            }
-            catch (EnvelopeStoreException error)
-            {
-                outcome = "purge refused — " + error.Message;
-            }
+                catch (EnvelopeStoreException error)
+                {
+                    outcome = "purge refused — " + error.Message;
+                }
 
-            (_envelopes, var historyState) = OpenEnvelopeStore(Model.WorkspaceRoot, Model.SessionId);
-            Composer.Gate.UseEnvelopeStore(_envelopes, historyState);
+                (_envelopes, var historyState) = OpenEnvelopeStore(Model.WorkspaceRoot, Model.SessionId);
+                Composer.Gate.UseEnvelopeStore(_envelopes, historyState);
+            }
         }
 
         _announcer.Announce(new Announcement(outcome, Urgency.Status, AnnouncementKind.Completed));

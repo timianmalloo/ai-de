@@ -117,7 +117,7 @@ public interface IWatcherObservationStore
     /// the <c>mode</c> column's own pattern. An UPDATE over an already-scored cell: nothing to label
     /// without one.
     /// </summary>
-    /// <returns><c>true</c> when a scored cell was stamped; <c>false</c> when there was none to stamp.</returns>
+    /// <returns><c>true</c> when a scored cell was stamped (or already carried this value); <c>false</c> when there was none to stamp, or it carries a different value — provenance is never silently rewritten.</returns>
     bool RecordEpisodeTaskClassSource(string episodeId, string source);
 
     /// <summary>The class provenance recorded for an episode, or <c>null</c> meaning <b>not recorded</b> — what every row written before the column existed reads.</summary>
@@ -222,7 +222,6 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
     // cell, and putting it on the record would have made it part of the value the leaderboard
     // partitions and compares.
     private readonly Dictionary<string, string> _modes = new(StringComparer.Ordinal);
-    private readonly Dictionary<string, string> _taskClassSources = new(StringComparer.Ordinal);
     private readonly Dictionary<string, ScoreDispute> _disputes = new();
     private readonly HashSet<string> _ended = new();
 
@@ -524,7 +523,12 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
                 return false;
             }
 
-            _taskClassSources[episodeId] = source;
+            // Idempotent, never a silent rewrite (the SQL store's own rule); the record IS the store.
+            if (_scored[episodeId].TaskClassSource is { } existing && !string.Equals(existing, source, StringComparison.Ordinal))
+            {
+                return false;
+            }
+
             _scored[episodeId] = _scored[episodeId] with { TaskClassSource = source };
             return true;
         }
@@ -534,7 +538,7 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
     {
         lock (_gate)
         {
-            return _taskClassSources.TryGetValue(episodeId, out var source) ? source : null;
+            return _scored.TryGetValue(episodeId, out var scored) ? scored.TaskClassSource : null;
         }
     }
 

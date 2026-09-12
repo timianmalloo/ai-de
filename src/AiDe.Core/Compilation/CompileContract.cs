@@ -4,7 +4,7 @@ namespace AiDe.Core.PromptCompilation;
 
 /// <summary>
 /// The versioned pair the agentic rung calls (ADR-0033 rule 1): <c>compile-prompt/1</c> in,
-/// <c>compile-output/1</c> out — the contract's constants, its allow-list, its deny-list and the
+/// <c>compile-output/1</c> out — the contract's constants, its allow-list and the
 /// two host-embedded texts. <b>Shipped inert in this slice</b>: no model call exists here (the
 /// agentic rung is CV-3's, behind PD-5 and the eval gate); the validator and the assembler are
 /// tested red-first over authored fixtures so the rung has a typed boundary to call.
@@ -12,11 +12,13 @@ namespace AiDe.Core.PromptCompilation;
 /// <remarks>
 /// <para><b>The header and the template are host-compiled bytes</b> — never read from the workspace
 /// or <c>.claude/</c> (§A8.3; P-D3's falsifier: a workspace file named like the template changes no
-/// byte). <c>simplify:</c> they are string constants rather than <c>EmbeddedResource</c> files
-/// because adding a resource glob is a <c>*.csproj</c> change the plan reserves to the conductor
-/// (a seam request is filed in the Proof Pack); the upgrade trigger is that glob landing, at which
-/// point the two texts move to <c>Compilation/Resources/</c> and <see cref="CompilePromptAssembler.PromptSha"/>
-/// is unchanged as long as the bytes are.</para>
+/// byte). They are string constants — the ladder's lower rung (host-compiled bytes need no resource
+/// pipeline) and the shape a <c>const</c> keeps deterministic; ADR-0033's "embedded resources" named
+/// the property (host-embedded, never read from disk), which a constant satisfies. <c>simplify:</c>
+/// ceiling — a template over ~200 lines, or a second family's profile shipped as text, moves the
+/// texts to <c>Compilation/Resources/</c> under an <c>EmbeddedResource</c> glob (a csproj edit the
+/// conductor owns; the seam request is filed); <see cref="CompilePromptAssembler.PromptSha"/> is
+/// unchanged as long as the bytes are.</para>
 /// </remarks>
 public static class CompileContract
 {
@@ -34,14 +36,6 @@ public static class CompileContract
 
     /// <summary>The allow-list (v1): the three structure lines, and only the ones the prompt named as open. Case-sensitive.</summary>
     public static readonly IReadOnlyList<string> AllowList = DecorationNames.StructureLines;
-
-    /// <summary>
-    /// The deny-list — dropped and counted, never applied, never persisted (§A8.3). Named so a
-    /// reader can see what the boundary refuses; <b>any unknown name</b> is refused the same way,
-    /// so this list is documentation of intent, not the mechanism.
-    /// </summary>
-    public static readonly IReadOnlyList<string> DenyList =
-        ["lease", "task_class", "fan_out_cap", "fan_out_ceiling", "fan_out_effective", "budget", "engine", "model", "account", "shape", "tier", "template", "history_window", "constitution", "compile_mode", "source"];
 
     /// <summary>
     /// The fixed host header — <b>the prompt's first bytes, always</b>: a prompt whose first bytes

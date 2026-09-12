@@ -820,9 +820,12 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         {
             // An UPDATE, not an upsert, exactly as `mode`: a provenance without a scorecard would be a
             // cohort label on a cell that does not exist. RecordScorecard's column list omits
-            // `task_class_source`, so a re-score preserves whatever was stamped.
+            // `task_class_source`, so a re-score preserves whatever was stamped. IDEMPOTENT, never a
+            // silent rewrite: a same-value re-stamp succeeds, a different value is refused (false) —
+            // the caller says so (`compile.degraded{task-class-source-restamped}`) rather than
+            // overwriting provenance (DM-F).
             using var command = _connection.CreateCommand();
-            command.CommandText = "UPDATE scored_episode_cell SET task_class_source = $source WHERE episode_id = $id;";
+            command.CommandText = "UPDATE scored_episode_cell SET task_class_source = $source WHERE episode_id = $id AND (task_class_source IS NULL OR task_class_source = $source);";
             command.Parameters.AddWithValue("$source", source);
             command.Parameters.AddWithValue("$id", episodeId);
             return command.ExecuteNonQuery() == 1;
@@ -1301,7 +1304,11 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
             mode              TEXT    NULL,
             -- The PROVENANCE of the task class (v7): 'session-default' or 'operator'. NULL for a
             -- row written before v7 or never stamped - "not recorded", never backfilled. A cohort
-            -- attribute beside mode, never inside ScoreSegment. Declared LAST, as above.
+            -- attribute beside mode, never inside ScoreSegment. A COPY, deliberately: the source of
+            -- truth is the envelope's Current(task_class).source, joined on consumed.episode_id; the
+            -- envelope is purgeable work data and scores are not, so after a purge this column is the
+            -- provenance's only home (ADR-0033 rule 4, the Simplifier's finding under the D&P condition).
+            -- Rebuildable by that join while the envelope exists. Declared LAST, as above.
             task_class_source TEXT    NULL
         );
         CREATE INDEX ix_scored_episode_task ON scored_episode_cell (task_class, schema_version);

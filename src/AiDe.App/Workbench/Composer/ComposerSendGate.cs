@@ -115,16 +115,20 @@ public sealed class ComposerSendGate
     /// <summary>The last envelope this gate opened and did not submit (a stale view abandons it and the next names it in <c>supersedes</c>).</summary>
     private string? _abandoned;
 
-    /// <summary>Binds the session's identity: the id every <c>opened</c> row carries and the compile mode (the composer's <c>Configure</c>, from the session config).</summary>
-    public void BindSession(string sessionId, string compileMode)
+    /// <summary>Binds the session's identity: the id every <c>opened</c> row carries, the compile mode, the engine and the default class (the composer's <c>Configure</c>, from the session config and the binding).</summary>
+    public void BindSession(string sessionId, string compileMode, string engineId, string defaultTaskClass)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sessionId);
         ArgumentException.ThrowIfNullOrWhiteSpace(compileMode);
+        ArgumentException.ThrowIfNullOrWhiteSpace(engineId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(defaultTaskClass);
 
         lock (_gate)
         {
             SessionId = sessionId;
             CompileMode = compileMode;
+            EngineId = engineId;
+            DefaultTaskClass = defaultTaskClass;
         }
     }
 
@@ -155,6 +159,7 @@ public sealed class ComposerSendGate
         {
             SendCount = 0;
             RenderedView = null;
+            _stamped.Clear();
         }
     }
 
@@ -169,9 +174,22 @@ public sealed class ComposerSendGate
     public CompiledPrompt RenderView(ComposerDraft draft, PromptTemplate? template = null)
     {
         ArgumentNullException.ThrowIfNull(draft);
-        RenderedView = ComposerCompiler.Compile(draft, template);
+
+        // THE ONE PRODUCER (ADR-0033 rule 2): the view is the projection's own render over the live
+        // pre-compile — the same function Send projects the persisted envelope through. Not a
+        // second compile that Send then checks for agreement.
+        RenderedView = Projection.Project(PreCompile.Live(Input(draft, template)), draft, template).Compiled!;
         return RenderedView;
     }
+
+    /// <summary>The engine every <c>opened</c> row names, and whose provider is the family; <see cref="Envelope.NotRecorded"/> until bound.</summary>
+    public string EngineId { get; private set; } = Envelope.NotRecorded;
+
+    /// <summary>The session's <c>default_task_class</c> (Ruling 72) — <see cref="AiDe.Core.Watcher.TaskClasses.FreeForm"/> until bound, the vocabulary's one home.</summary>
+    public string DefaultTaskClass { get; private set; } = AiDe.Core.Watcher.TaskClasses.FreeForm;
+
+    private PreCompileInput Input(ComposerDraft draft, PromptTemplate? template) =>
+        new(draft, template, SessionId, EngineId, CompileMode, DefaultTaskClass);
 
     /// <summary>
     /// Builds the run request from the rendered view, or refuses and says which field.
@@ -228,8 +246,7 @@ public sealed class ComposerSendGate
             // THE VIEW IS THE SOURCE OF THE TEXT. Not the draft, and not a second compile: the bytes
             // sent are the bytes rendered, and re-compiling here would be a second chance for them to
             // differ.
-            var compiled = RenderedView ?? ComposerCompiler.Compile(draft, template);
-            RenderedView = compiled;
+            var compiled = RenderedView ?? RenderView(draft, template);
 
             // Nothing typed: the message is blank and no goal block exists, so the compiled bytes are
             // empty — an empty prompt is not a task (Ruling 75 makes a blank Goal a Message; a Message
@@ -243,10 +260,10 @@ public sealed class ComposerSendGate
             // THE ENVELOPE IS OPENED BY THE SEND GESTURE (§A10.1; ADR-0033 rule 2): the mechanical
             // pre-compile's rows — opened, the snapshots, the refs, the operator's lines and override —
             // then ONE projection over the fold produces everything the request carries.
-            var input = new PreCompileInput(draft, template, SessionId, context.EngineId, CompileMode, context.TaskClass);
+            _stamped.Clear();
             var envelopeId = EnvelopeIds.New();
-            var rows = PreCompile.Open(input, envelopeId, _abandoned);
-            var envelope = Persist(rows) ?? Envelope.Pending(rows);
+            var rows = PreCompile.Open(Input(draft, template) with { EngineId = context.EngineId, DefaultTaskClass = context.TaskClass }, envelopeId, _abandoned);
+            var envelope = TryAppend(rows) ? Envelope.Fold(_stamped)[0] : Envelope.Pending(rows);
 
             var projection = Projection.Project(envelope, draft, template);
 
@@ -255,7 +272,7 @@ public sealed class ComposerSendGate
             // with a lease from other bytes than the ones the operator read (US-D4).
             if (!string.Equals(projection.Prompt, compiled.Text, StringComparison.Ordinal))
             {
-                Record(new Submitted(envelopeId, Accepted: false, Refusal: "stale", TextSha256: EnvelopeHash.Sha256Hex(compiled.Text), ProjectionSha: projection.ProjectionSha, ProjectorVersion: Projection.Version));
+                TryAppend([new Submitted(envelopeId, Accepted: false, Refusal: "stale", TextSha256: EnvelopeHash.Sha256Hex(compiled.Text), ProjectionSha: projection.ProjectionSha, ProjectorVersion: Projection.Version)]);
                 _abandoned = envelopeId;
                 refusal = new ComposerSendRefusal([], "your draft changed since it was prepared — press again to prepare it");
                 return null;
@@ -290,8 +307,8 @@ public sealed class ComposerSendGate
                 CoordCommand: context.CoordCommand,
                 PromptTimeout: context.PromptTimeout);
 
-            Record(new Submitted(envelopeId, Accepted: true, Refusal: null, TextSha256: projection.TextSha256!, ProjectionSha: projection.ProjectionSha, ProjectorVersion: Projection.Version));
-            LastSubmission = new SubmittedEnvelope(envelopeId, projection.ProjectionSha, projection.TextSha256!, projection.TaskClass, projection.TaskClassSource, projection.Tier, projection.Rationale, Envelopes is not null && HistoryState is null);
+            TryAppend([new Submitted(envelopeId, Accepted: true, Refusal: null, TextSha256: projection.TextSha256!, ProjectionSha: projection.ProjectionSha, ProjectorVersion: Projection.Version)]);
+            LastSubmission = new SubmittedEnvelope(envelopeId, projection.ProjectionSha, projection.TaskClassSource, Envelopes is not null && HistoryState is null);
             _abandoned = null;
 
             SendCount++;
@@ -303,52 +320,43 @@ public sealed class ComposerSendGate
         return request;
     }
 
+    /// <summary>The rows the last <see cref="TryAppend"/> stamped — the persisted envelope's own events, folded without re-reading the store.</summary>
+    private readonly List<EnvelopeEvent> _stamped = [];
+
     /// <summary>
-    /// Appends the rows to the store and folds what it holds; null when there is no store or the
+    /// Appends rows to the store; false when there is no store, history is already degraded, or an
     /// append failed — the send then proceeds on the in-memory fold and the reason is shown
     /// (ADR-0034 rule 3: <c>compile.degraded{reason: store-append-failed}</c>; the store's one
-    /// otherwise-silent path, named).
+    /// otherwise-silent path, named). A store closed under this send (the document purging or
+    /// closing) degrades the same way.
     /// </summary>
-    private Envelope? Persist(IReadOnlyList<EnvelopeEvent> rows)
+    private bool TryAppend(IReadOnlyList<EnvelopeEvent> rows)
     {
         if (Envelopes is not { BrokenAt: null } store || HistoryState is not null)
         {
-            return null;
+            return false;
         }
 
         try
         {
             foreach (var row in rows)
             {
-                store.Append(row);
+                _stamped.Add(store.Append(row));
             }
 
-            return store.Read().Find(rows[0].EnvelopeId);
+            return true;
         }
         catch (EnvelopeStoreException error)
         {
             HistoryState = $"compile history not recorded — {error.Message}";
             CompileSignal.Degraded("store-append-failed", error.Code);
-            return null;
+            return false;
         }
-    }
-
-    /// <summary>Appends one row after the envelope's open; a failure degrades (recorded on <see cref="HistoryState"/>) and never blocks the send.</summary>
-    private void Record(EnvelopeEvent row)
-    {
-        if (Envelopes is not { BrokenAt: null } store || HistoryState is not null)
+        catch (ObjectDisposedException)
         {
-            return;
-        }
-
-        try
-        {
-            store.Append(row);
-        }
-        catch (EnvelopeStoreException error)
-        {
-            HistoryState = $"compile history not recorded — {error.Message}";
-            CompileSignal.Degraded("store-append-failed", error.Code);
+            HistoryState = "compile history not recorded — the store was closed during this send";
+            CompileSignal.Degraded("store-append-failed", "store closed");
+            return false;
         }
     }
 
@@ -376,23 +384,15 @@ public sealed class ComposerSendGate
 
 }
 
-/// <summary>What one send submitted — the envelope by id and its witnesses (ADR-0034 rule 7 reads the id at <c>consumed</c>).</summary>
+/// <summary>What one send submitted — the envelope by id, the rebuild's oracle and the class's provenance (ADR-0034 rule 7 reads the id at <c>consumed</c>; the document captures the provenance with the ordinal at launch).</summary>
 /// <param name="EnvelopeId">The envelope.</param>
-/// <param name="ProjectionSha">The rebuild's oracle.</param>
-/// <param name="TextSha256">C15's witness over the sent bytes.</param>
-/// <param name="TaskClass">The class the request carried.</param>
+/// <param name="ProjectionSha">The rebuild's oracle — what the <c>submitted</c> row recorded.</param>
 /// <param name="TaskClassSource"><c>session-default</c> or <c>operator</c> — the cohort attribute the leaderboard stamps (ADR-0028 amendment).</param>
-/// <param name="Tier">The tier the request carried.</param>
-/// <param name="Rationale">Why.</param>
 /// <param name="Recorded">Whether the rows reached the store; false when history is not recorded (the reason is on the gate).</param>
 public sealed record SubmittedEnvelope(
     string EnvelopeId,
     string ProjectionSha,
-    string TextSha256,
-    string TaskClass,
     string TaskClassSource,
-    string Tier,
-    string Rationale,
     bool Recorded);
 
 /// <summary>

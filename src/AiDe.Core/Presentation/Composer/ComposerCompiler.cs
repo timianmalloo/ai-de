@@ -95,11 +95,9 @@ public static class ComposerCompiler
     /// (CV-2) and is not here. The same two inputs <see cref="IsReadOnly"/> reads, so the shape,
     /// the access and the tier can never disagree about whether a goal block exists.</para>
     ///
-    /// <para><b>The rationale names who filled the structure.</b> <c>simplify:</c> until the
-    /// compile step writes <c>derived</c> rows (CV-2), every structure line is the operator's, so the
-    /// rationale reads <i>filled by you</i>; the upgrade trigger is a <c>derived</c> or
-    /// <c>template</c> row in the envelope fold, at which point <paramref name="structureSource"/>
-    /// is read from it.</para>
+    /// <para><b>The rationale names who filled the structure</b> — <paramref name="structureSource"/>
+    /// is read from the fold by <c>Projection.Project</c> (<c>operator</c> · <c>template</c> · the
+    /// model), which is the one caller that passes anything but the default.</para>
     /// </remarks>
     /// <param name="shape">The turn's shape — P.</param>
     /// <param name="patterns"><see cref="LeaseDerivation.Patterns"/> over the source text — L is its count.</param>

@@ -39,9 +39,6 @@ public static class EnvelopeEventKinds
     public const string Called = "called";
     public const string Submitted = "submitted";
     public const string Consumed = "consumed";
-
-    /// <summary>All five, in lifecycle order.</summary>
-    public static readonly IReadOnlyList<string> All = [Opened, Decorated, Called, Submitted, Consumed];
 }
 
 /// <summary>The rule's constants an <c>opened</c> row pins so a change never rewrites history (§A12.4, IO7).</summary>
@@ -120,11 +117,11 @@ public static class DecorationSources
     /// <summary>The bound model proposed it, through the typed boundary (CV-3's rung).</summary>
     public const string Derived = "derived";
 
-    /// <summary>The operator wrote or overrode it in Prepare, or typed it as a structure line.</summary>
-    public const string Operator = "operator";
+    /// <summary>The operator wrote or overrode it in Prepare, or typed it as a structure line — one spelling with the cohort column's (<see cref="Watcher.TaskClasses.Sources"/>).</summary>
+    public const string Operator = Watcher.TaskClasses.Sources.Operator;
 
-    /// <summary>The session's default, snapshotted for this prompt (the <c>task_class</c> row, Ruling 70).</summary>
-    public const string SessionDefault = "session-default";
+    /// <summary>The session's default, snapshotted for this prompt (the <c>task_class</c> row, Ruling 70) — one spelling with the cohort column's.</summary>
+    public const string SessionDefault = Watcher.TaskClasses.Sources.SessionDefault;
 }
 
 /// <summary>The decoration names this slice writes or reads — one spelling each (DM7).</summary>
@@ -141,7 +138,6 @@ public static class DecorationNames
     public const string Attachments = "attachments";
     public const string HistoryWindow = "history_window";
     public const string Constitution = "constitution";
-    public const string TierPrompt = "tier_prompt";
 
     /// <summary>The three structure lines, in §14.3 order.</summary>
     public static readonly IReadOnlyList<string> StructureLines = [Goal, DoneWhen, NotInScope];
@@ -237,7 +233,7 @@ public static class ConsumedReasons
 {
     public const string Completed = "completed";
     public const string StoppedByOperator = "stopped_by_operator";
-    public const string DocumentClosed = "document closed";
+    public const string DocumentClosed = "document_closed";
 
     /// <summary><c>lane_exited{code}</c>, rendered with the exit code — or <c>lane_exited</c> alone when none was recorded.</summary>
     public static string LaneExited(int? code) => code is { } c

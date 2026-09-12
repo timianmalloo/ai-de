@@ -7314,3 +7314,29 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   `Migrations` table (the v6 fixture asserts `max(version) = 7` after the open) rather than from the
   plan; the drift is recorded in the test's remarks and the Proof Pack so the join reads it.
 - **Status:** `controlled`.
+
+### DC-nnn (CV-2 e) — A persistence feature whose deletion path lives behind a seam request is a writer shipped without its eraser
+
+- **Shape:** a slice lands a store that records work data on the normal path (every send) and
+  puts the deletion command in a component it does not own — a CLI verb whose process dispatch is
+  another lane's file, a settings screen another slice builds. The writer is reachable from the
+  product the day the slice merges; the eraser is reachable only after a request nobody has to
+  honour on that day. The spec's *"deletion ships with the store"* is true of the tree and false
+  of the shipped path.
+- **Signature:** a purge that exists only as a test-reachable verb; a seam request whose subject
+  is the only way the operator can delete what the feature wrote; a privacy posture that cites the
+  command by name while the product cannot run it.
+- **Instance (CV-2, 2026-09-12):** `aide session purge` shipped as `Cli/PurgeHistoryVerb.cs` with
+  its dispatch in `App.OnStartup` (a Design-lane file) filed as a seam request; the document
+  opened the writer on every session. The Security lens's Blocker.
+- **Sweep:** the other work-data writers this slice touches — the watcher's `task_class_source`
+  (the Session aggregate's own delete cascades to nothing there; scores are not work data by the
+  spec's line) and `session-events.jsonl` (Addendum A's) — no second instance; the composer's
+  draft store (`ComposerDraftStore`) predates this rule and is cleared by the product's own path.
+- **Control:** the eraser ships **beside** the writer, in the component that holds it —
+  `SessionDocumentSurface.PurgeCompileHistory`, reachable from the session settings popup, tested
+  through the real document (`TheDocumentPurgesItsOwnCompileHistoryAndRecordsAgainAfterwards`);
+  the CLI verb stays as the headless path and its dispatch stays a seam request that no longer
+  gates deletion. Rule for the next writer: the slice that opens a store on the normal path lands
+  the operator-reachable delete in the same slice, in a file it owns, or does not open the store.
+- **Status:** `controlled`.
