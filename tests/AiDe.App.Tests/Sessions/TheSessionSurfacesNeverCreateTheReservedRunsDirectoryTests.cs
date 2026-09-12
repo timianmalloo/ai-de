@@ -24,18 +24,8 @@ namespace AiDe.App.Tests.Sessions;
 /// <para><b>Each case asserts the session directory DOES exist first.</b> Without that, all three
 /// would pass over a workspace where nothing was written at all (DC-016).</para>
 /// </remarks>
-/// <remarks>
-/// <b>Registers the Terminal row Ruling 45 cut from <c>BuiltIn</c>.</b> The mechanism under test
-/// here needs a SECOND canvas mode to exist at all; which modes the product ships is a different
-/// question, and Ruling 45 answered it by cutting a row whose content Phase 1 cannot bind. Every
-/// assertion below is unchanged — the proof survives the cut rather than being weakened by it, which
-/// is also Ruling 22's clause re-proven against a test-registered mode.
-/// </remarks>
-[Collection(CanvasModes.Name)]
 public sealed class TheSessionSurfacesNeverCreateTheReservedRunsDirectoryTests : IDisposable
 {
-    private readonly TerminalModeForTests _terminal = new();
-
     private readonly string _root = Path.Combine(
         Path.GetTempPath(), "aide-f2-runlog-" + Guid.NewGuid().ToString("N"));
 
@@ -46,12 +36,10 @@ public sealed class TheSessionSurfacesNeverCreateTheReservedRunsDirectoryTests :
 
     public void Dispose()
     {
-        _terminal.Dispose();
-
         try { Directory.Delete(_root, recursive: true); } catch (IOException) { }
     }
 
-    /// <summary>Surface 1 of 3: the session document, opened, switched, split and persisted.</summary>
+    /// <summary>Surface 1 of 3: the session document, opened, the Console split opened and closed, a turn accepted and concluded.</summary>
     [Fact]
     public void TheSessionDocumentNeverCreatesIt()
     {
@@ -63,32 +51,24 @@ public sealed class TheSessionSurfacesNeverCreateTheReservedRunsDirectoryTests :
         {
             using var document = new SessionDocumentSurface(model, store);
 
-            model.SetActiveMode(CanvasModeCatalog.TerminalModeId);
-            model.Split(CanvasModeCatalog.ConsoleModeId);
-            model.SetCanvasSplitWeight(0.35);
-            model.SetActiveMode(CanvasModeCatalog.ConsoleModeId);
+            var ordinal = document.ReadModel.Accept("read the log", [], "bytes", DateTimeOffset.UtcNow);
+            document.OpenSplit(ordinal);
+            document.CloseSplit();
+            document.ReadModel.Conclude(ordinal, AiDe.Core.Presentation.Sessions.TurnState.Completed, DateTimeOffset.UtcNow);
         });
 
         AssertReservedPathIsUntouched(sessionId);
     }
 
-    /// <summary>Surface 2 of 3: the paired-zone preset, opened and its splitter moved and saved.</summary>
+    /// <summary>Surface 2 of 3: the document store, written by the model's own envelope (the conversation persists no layout, but the store still exists for reopen).</summary>
     [Fact]
-    public void ThePairedZonePresetNeverCreatesIt()
+    public void TheDocumentStoreNeverCreatesIt()
     {
         var sessionId = CreateSession();
         var store = new SessionDocumentStore(_root, sessionId);
         var model = Model(sessionId);
 
-        Sta.Run(() =>
-        {
-            using var document = new SessionDocumentSurface(model, store);
-
-            model.SetComposerWeight(0.6);
-            model.SetComposerWeight(0.2);
-
-            Assert.Equal(SessionZonePreset.PairedZone.ComposerZoneId, model.Preset.ComposerZoneId);
-        });
+        store.Save(model.Envelope());
 
         // The envelope really was written — otherwise "nothing created runs/" is true of a store
         // that wrote nothing at all.
@@ -117,13 +97,19 @@ public sealed class TheSessionSurfacesNeverCreateTheReservedRunsDirectoryTests :
 
         Sta.Run(() =>
         {
-            using var console = new ConsoleSurface(model.Console);
+            // The split (Ruling 74) is a view of the thread's fold; it is shown the turns and derives
+            // its rows — a heading per turn, then the lines — touching no path.
+            var console = new ConsoleSurface();
+            var thread = new RunChannelSessionThread();
+            var ordinal = thread.Accept("read the log", [], "bytes", DateTimeOffset.UtcNow);
+            foreach (var row in model.Console.Rows)
+            {
+                thread.Append(ordinal, new EventLine(DateTimeOffset.UtcNow, row.LaneName, row.Kind, row.Text, "run"));
+            }
 
-            model.Console.SetLaneVisible("lane-1", false);
-            model.Console.SetLaneVisible("lane-1", true);
-            model.Console.SetKindVisible("lane-1", "agent.msg", false);
+            console.Show(thread.Current.Turns);
 
-            Assert.NotEmpty(console.RenderedRows);
+            Assert.Equal(1 + model.Console.Rows.Count, console.Rows.Count);
         });
 
         AssertReservedPathIsUntouched(sessionId);
@@ -139,7 +125,7 @@ public sealed class TheSessionSurfacesNeverCreateTheReservedRunsDirectoryTests :
 
     private SessionDocumentViewModel Model(string sessionId) => new(
         sessionId, SessionName, _root,
-        [CanvasModeCatalog.ConsoleModeId, CanvasModeCatalog.TerminalModeId]);
+        [CanvasModeCatalog.ConsoleModeId]);
 
     /// <summary>
     /// The shared assertion: the exercised surface left the reserved run-log path empty.

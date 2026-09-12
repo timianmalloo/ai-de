@@ -2726,33 +2726,29 @@ public sealed class WorkbenchShell : IDisposable
     }
 
     /// <summary>One git query. Any failure returns null — never a guessed value.</summary>
+    /// <remarks>
+    /// The Core runner, not a private copy: it reads both streams before the wait and bounds the
+    /// reads as well as the exit. This method's own copy bounded only the exit — the read came
+    /// first — and the App test host sat 30 minutes in it on 2026-09-12 after git had already
+    /// exited, because a handle to the pipe lived on elsewhere (<c>ProcessRunnerBoundsTheReadTests</c>).
+    /// </remarks>
     private static string? Git(string workingDirectory, params string[] args)
     {
         try
         {
-            var info = new System.Diagnostics.ProcessStartInfo("git")
+            var result = new AiDe.Core.AgentPlane.ProcessRunner(TimeSpan.FromSeconds(3)).Run("git", args, workingDirectory);
+            if (result.ExitCode != 0)
             {
-                WorkingDirectory = workingDirectory,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-            };
-            foreach (var a in args) { info.ArgumentList.Add(a); }
+                // git missing, not a repository, blocked, or timed out: the caller substitutes an honest unknown.
+                return null;
+            }
 
-            using var process = System.Diagnostics.Process.Start(info);
-            if (process is null) { return null; }
-
-            var output = process.StandardOutput.ReadToEnd();
-            if (!process.WaitForExit(3000)) { try { process.Kill(true); } catch { /* best effort */ } return null; }
-            if (process.ExitCode != 0) { return null; }
-
-            var trimmed = output.Trim();
+            var trimmed = result.StandardOutput.Trim();
             return string.IsNullOrEmpty(trimmed) ? null : trimmed;
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            // git missing, not a repository, or blocked: the caller substitutes an honest unknown.
+            // A working directory that is gone, or a launcher fault: still an honest unknown.
             return null;
         }
     }
@@ -3004,15 +3000,20 @@ public sealed class WorkbenchShell : IDisposable
 
     public void Dispose()
     {
-        // The window is closing. No terminal surface is disposed here — the process exit ends every
-        // shell, and INV-0010 measured that path leaving nothing behind — but each live pane writes
-        // its `terminal.stop` now, so the log pairs every start with an end and a census can read
-        // "still hosted" as a subtraction instead of a process list.
+        // The owner is closing. Each live pane writes its `terminal.stop` first — the reason is
+        // `owner-closing`, recorded once, so the log pairs every start with an end and a census can
+        // read "still hosted" as a subtraction instead of a process list — and is then DISPOSED, which
+        // kills its shell now. In the App the process exit would end every shell anyway (INV-0010
+        // measured that path clean); in any other owner — a test host composing shells by the
+        // dozen — nothing ends a pane the owner let go of except the garbage collector closing the
+        // job handle, which is a lifetime measured in "whenever": INV-0011 found 32 shells alive for
+        // 30 minutes in a host that had gone idle. Disposal is the deterministic end.
         try
         {
             foreach (var terminal in TerminalSurfaces().ToList())
             {
                 terminal.RecordOwnerClosing();
+                terminal.Dispose();
             }
         }
         catch (InvalidOperationException)

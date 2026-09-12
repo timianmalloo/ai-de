@@ -43,7 +43,7 @@ public sealed class EnvironmentContractSurvivesNoWorkspaceTests
             TerminalSurface.EnvironmentFor = null;
             try
             {
-                _ = new WorkbenchShell(queries: null);
+                using var shell = new WorkbenchShell(queries: null);
                 return TerminalSurface.EnvironmentFor?.Invoke("agent:claude#abc123");
             }
             finally
@@ -80,7 +80,7 @@ public sealed class EnvironmentContractSurvivesNoWorkspaceTests
             TerminalSurface.EnvironmentFor = null;
             try
             {
-                _ = new WorkbenchShell(queries: null);
+                using var shell = new WorkbenchShell(queries: null);
                 return TerminalSurface.EnvironmentFor?.Invoke("terminal-1");
             }
             finally

@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Composer: 10 types, 52 members, 89% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Composer: 11 types, 74 members, 91% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Composer`
 
-**10 public types · 52 public members · 89% documented.**
+**11 public types · 74 public members · 91% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -147,6 +147,8 @@ not two runs.
 | `event Action<GovernedRunRequest>? Sent` | Raised with the request a send produced, once per send, **after the gate's lock is released**. |
 | `long SendCount { get; private set; }` | How many runs this block has started. The observable US-ED5/ED6/ED7 rest on. |
 | `CompiledPrompt? RenderedView { get; private set; }` | The compiled text of the last rendered view — what the operator read. |
+| `long BlocksSent { get; private set; }` | How many blocks this gate has started, across the session: the conversation's send count. |
+| `void NextBlock()` | The block was accepted and the composer starts the next one (SC1: the session is a conversation of n turns through one composer). `SendCount` is per block — one block, one send — so it returns to zero; `BlocksSent` ke… |
 | `CompiledPrompt RenderView(ComposerDraft draft, PromptTemplate? template = null)` | Renders the compiled view. Everything after this point is byte-for-byte what gets sent. |
 | `GovernedRunRequest? Send(` | Builds the run request from the rendered view, or refuses and says which field. |
 
@@ -234,9 +236,22 @@ message.
 
 
 
-**The compiled view is a plain text box showing the whole prompt.** Not a summary, not a
-preview, and not virtualized: the bytes that will be sent are legible before the send, because
-one human read is the entire Phase-1 containment for every non-edit tool call.
+**The compiled prompt is a plain text box showing the whole prompt, on demand.** Not a
+summary, not a preview, not a diff, and not virtualized (Ruling 57): the bytes that will be sent
+are legible before the send, because one human read is the entire Phase-1 containment for every
+non-edit tool call. It is collapsed at rest — the decoration line and the structure lines are
+the reading surface (SC2), the bytes one disclosure away.
+
+
+
+
+
+**The composer is the current turn** (`DESIGN.md` SC1–SC6; CV-1): one message
+editor (the page), then beneath it the structure lines (Goal · Done when · Not in scope — empty
+and editable under `mechanical-only`), the decoration line in the thread's one grammar
+(*This turn · class · tier · lease · shape [· template]*), the settings line the session's
+ceilings derive, the compiled prompt, and the send row. No per-prompt tier, cap or budget field
+exists (Rulings 56, 63, 72); the values are the session's and the compile step's.
 
 
 
@@ -256,15 +271,27 @@ claim, and paste is handled inside the page by the editor that received it.
 
 | Member | Summary |
 |---|---|
-| `ComposerSurface(string surfaceId, string title)` | **(gap)** |
-| `double CompiledShareCeiling = 0.35` | The most of the composer's height the read-only compiled view may take — and it never takes more than the editor host: **the writer is never smaller than the reader.** |
+| `ComposerSurface(string surfaceId, string title, IWorkbenchAnnouncer? announcer = null)` | **(gap)** |
+| `double EditorFloor = 130` | The editor host's floor (DESIGN.md:1092 ≥ 130 px) — what the composer declares under an infinite constraint (spike Q14). |
+| `double CompiledPromptMaxHeight = 200` | The compiled prompt's ceiling when expanded (DESIGN.md:1109 ≤ 200 px, scrolls) — and it never takes the editor's floor (DC-137). |
+| `double CompiledPromptMinHeight = 48` | The compiled prompt's floor when it is open: three lines of the mono face, so a reader the operator asked for is a reader (INV-0007's "the reader gets its share"). Under a constraint that cannot hold the floor, the ed… |
+| `string ModelSource = "model"` | The decoration source that earns the tilde and the inferred ink: a value the model proposed (CV-2's compile step). A rule's value is text. |
+| `ICanvasFocusTarget FocusTarget { get; }` | The editor as a focus region of the document's F6 cycle: SetFocus on the host HWND with a read-back (DS-1 seam 1). |
+| `event Action? PageReady` | Raised once per page mount — after `MarkReady`; the document places focus in the editor on it (K7). |
+| `bool CompiledPromptOpen` | Whether the compiled prompt disclosure is open — collapsed at rest (Ruling 57). |
+| `IReadOnlyList<DecorationRow> Decorations` | The decoration rows this turn carries — the same projection the thread will show for it (SC2). |
+| `string SettingsLine` | The settings line as rendered: *fan-out cap 2 (ceiling 3) · budget: bounded by your subscription · from session settings*. |
+| `IReadOnlyDictionary<string, string> StructureMarks` | The structure lines' marks by wire name (*— fill in* · *edited*), for a test that reads the marks. |
 | `string SurfaceId { get; }` | The surface's stable id. |
 | `string? DisplayName` | **(gap)** |
 | `long ClipboardReads { get; }` | How many times this control read the clipboard. It is zero, always, across typing, focus changes and sends — the observable behind "no clipboard access outside the paste gesture". |
 | `ComposerSendGate Gate` | The send gate. Exposed so the seam's counter is readable by a test. |
 | `ComposerDraft Draft` | The draft this surface composes. |
 | `string Status` | The last thing that happened, in a sentence. |
-| `string LeaseLine` | The lease line as rendered: the read-only state, or the patterns (Ruling 73). |
+| `event Action<int>? TurnRequested` | Raised when the operator activates the in-flight turn's link in a refused-gesture reason (Ruling 77; SC8: the ordinal is a link to the turn) — the document focuses that turn's container. |
+| `double BeltHeight` | The document's belt (DS-1 Q14): the height this composer may take before the compiled prompt yields — a share of the document, set by the document at its measure. The composer's own minimum (its lines and the editor's… |
+| `double MinimumHeight { get; private set; }` | The composer's minimum height at its last measure: the lines, the picker, the send row and the editor's floor. |
+| `string LeaseLine` | The lease line: the read-only state, or the patterns (Ruling 73) — the decoration line's lease segment, prefixed. |
 | `bool IsConfigured` | Whether `Configure` has run — a bound composer is not bound again (INV-0009 Phase 2). |
 | `ComposerMessageRouter Router` | The router. Built with the surface, so a mount is heard before the session is wired. |
 | `bool PageIsReady` | Whether the page has reported that it mounted. |
@@ -278,19 +305,28 @@ claim, and paste is handled inside the page by the editor that received it.
 | `bool OnAcceleratorKey(uint virtualKey, bool controlHeld, bool isKeyDown)` | Handles a WebView2 accelerator. Ctrl-Enter is the send, and it is marked handled so the page never sees it either (Security C11). |
 | `void MarkReady()` | **(gap)** |
 | `void SetFieldText(string fieldId, long revision, string text)` | **(gap)** |
-| `void MoveFocus()` | **(gap)** |
+| `void MoveFocus(bool backward)` | **(gap)** |
+| `event Action? FocusLeftBackward` | Raised when the page posts a backward `focus.leave`; the document routes it into the thread. |
+| `bool FocusFirstLine()` | The composer's first WPF stop — the Goal line — for a document whose page is not up yet (F6 still has somewhere to land). |
+| `bool StructureOpen` | Whether the structure lines are open — collapsed at rest (DESIGN.md:1088). |
+| `bool EditorHasFocus` | Whether Win32 focus is inside the editor's window — the page holds it and WPF's focused element reads null. |
+| `void SetInFlight(TurnView? turn)` | The in-flight turn, or null (Ruling 77): while one runs or waits, a Send gesture is refused with its ordinal named. Set by the document from the thread's snapshot; never inferred here. |
+| `string RefusedGestureReason(TurnView inFlight)` | The refused-gesture reason (Ruling 77 condition 1; DESIGN.md copy): *b1 is running; the next turn waits for it.* |
+| `void BeginNextTurn()` | The turn was accepted: the composer starts the next one — the message and the structure lines empty, the gate on a new block, the page told (Feedback:+Confirmed — the turn now lives in the thread). |
+| `void UseAsNextDraft(string sourceText)` | A past turn's words become the next draft (*Use as the next draft* · *Send again as a new turn*) — a host→page push, never a second Configure. |
 | `void OfferAttachment(IReadOnlyList<string> filePaths)` | **(gap)** |
 | `void RecordMetric(string name, long value)` | **(gap)** |
 | `Dictionary<string, long> Metrics { get; } = new(StringComparer.Ordinal)` | Diagnostic counters the page moved. Nothing outside diagnostics is reachable. |
 | `AttachOutcome Attach(IReadOnlyList<string> filePaths)` | Offers files to the draft through the attach gate. |
 | `System.Text.Json.Nodes.JsonObject CommittedRecord()` | The committed-channel record for this send: counts, and one boolean. |
 | `void Dispose()` | Releases the hosted browser control. |
-| `Size MeasureOverride(Size constraint)` | **The writer is sized first (DC-137).** A DockPanel measures its docked children before the fill child, each with infinite extent on the docked axis, so an uncapped compiled view took its whole content height and the … |
+| `Size MeasureOverride(Size constraint)` | **The writer is sized first (DC-137).** A DockPanel measures its docked children before the fill child, each with what remains of the constraint after the ones before it, so an uncapped compiled prompt would take its … |
 
-### `ComposerSurface(string surfaceId, string title)`
+### `ComposerSurface(string surfaceId, string title, IWorkbenchAnnouncer? announcer = null)`
 
 - **`surfaceId`** — The surface's stable id, as every other surface carries one.
 - **`title`** — Its accessible name.
+- **`announcer`** — Where the status line is spoken (SC6 / SC9: a refusal is announced, never silent). The document passes its own so the page has one channel; null builds one over the status line itself — WPF raises no `LiveRegionChanged` on a text change, the app must.
 
 ### `void Configure(`
 
@@ -382,16 +418,22 @@ Builds the field descriptors for a shape — host-side, from host-side vocabular
 
 | Member | Summary |
 |---|---|
-| `IReadOnlyList<string> Tiers = ["T0", "T1", "T2"]` | The tier values the enum widget offers. |
 | `IReadOnlyList<ComposerFieldDescriptor> FreeForm()` | The single free-form field. |
-| `IReadOnlyList<ComposerFieldDescriptor> GoalBlock()` | The six goal-block fields, in the order §14.3 lists them, each with its Ruling 33 widget. |
+| `IReadOnlyList<ComposerFieldDescriptor> GoalBlock()` | The goal-block form's page half: **one message editor** (DESIGN.md SC1; Ruling 66). The three structure lines (Goal · Done when · Not in scope) are WPF controls beneath the editor, and tier, fan-out cap and budget are… |
 | `IReadOnlyList<ComposerFieldDescriptor> ForTemplate(PromptTemplate template)` | The declared fields of a template, each with its Ruling 33 widget. |
 | `string Mint(string name)` | Mints a field id. **The host mints; the page matches.** The id is opaque and unguessable so a page that wanted to address a field it was not given cannot construct one. |
 
-### `IReadOnlyList<ComposerFieldDescriptor> GoalBlock()`
+## `StructureDeriver`
 
-The six goal-block fields, in the order §14.3 lists them, each with its Ruling 33 widget.
+*class* — `ComposerSurface.cs`
 
-**Remarks.** The list is derived from `All` rather than typed out: a fixture
-that restates a list the product declares is the defect class the fixture-derivation gate
-exists for, and here it would also let the form and the spawn contract drift apart.
+The seam the compile step fills (Addendum D §A8; CV-2): what a structure line starts with.
+
+**Remarks.** **A fake returning three empty strings — D-5's first slice, as the plan says.** Under
+`mechanical-only` nothing derives a line (a *— fill in* mark is the truthful state);
+the seam exists so Prepare's regions are real controls before the deriver is. It never invents a
+plausible value.
+
+| Member | Summary |
+|---|---|
+| `string Fake(string field)` | **(gap)** |

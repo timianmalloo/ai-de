@@ -46,7 +46,7 @@ public sealed class WorkbenchDragCompletedHookTests
     /// </summary>
     private static T WithRealizedWorkbench<T>(Func<Harness, T> body) => Sta.Run(() =>
     {
-        var shell = new WorkbenchShell(queries: null);
+        using var shell = new WorkbenchShell(queries: null);
         var window = new Window
         {
             Content = shell,
@@ -287,7 +287,7 @@ public sealed class WorkbenchDragCompletedHookTests
                 {
                     // Nothing saved yet: the honest sentence is the KEPT one, and the record must say
                     // keep-current — where it used to say restore-zones whatever actually happened.
-                    var first = new WorkbenchShell(queries: null, workspaceDataDirectory: directory);
+                    using var first = new WorkbenchShell(queries: null, workspaceDataDirectory: directory);
                     var firstSaid = first.Announcer.Last;
                     var firstSeen = lines.ToList();
 
@@ -297,7 +297,7 @@ public sealed class WorkbenchDragCompletedHookTests
                     first.Coding.Persistence!.SaveNow();
 
                     lines.Clear();
-                    var second = new WorkbenchShell(queries: null, workspaceDataDirectory: directory);
+                    using var second = new WorkbenchShell(queries: null, workspaceDataDirectory: directory);
                     return (firstSaid, firstSeen, second.Announcer.Last, lines.ToList());
                 }
                 finally { WorkbenchDiagnostics.Sink = previous; }
@@ -347,7 +347,7 @@ public sealed class WorkbenchDragCompletedHookTests
         {
             var (onScreen, reopened) = Sta.Run(() =>
             {
-                var shell = new WorkbenchShell(queries: null, workspaceDataDirectory: directory);
+                using var shell = new WorkbenchShell(queries: null, workspaceDataDirectory: directory);
                 var window = new Window
                 {
                     Content = shell,
@@ -367,7 +367,7 @@ public sealed class WorkbenchDragCompletedHookTests
                 shell.Architecture.Persistence!.SaveNow();
                 window.Close();
 
-                var next = new WorkbenchShell(queries: null, workspaceDataDirectory: directory);
+                using var next = new WorkbenchShell(queries: null, workspaceDataDirectory: directory);
                 return (afterDrag, next.Architecture.Service.Zones.Shape());
             }, 60);
 

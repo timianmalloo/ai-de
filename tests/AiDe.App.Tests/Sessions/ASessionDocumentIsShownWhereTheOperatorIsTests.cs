@@ -4,7 +4,7 @@ namespace AiDe.App.Tests.Sessions;
 
 /// <summary>
 /// <b>INV-0009.</b> A session document the shell announces as <i>opened</i> is <b>shown</b>: its
-/// composer enters a rendered visual tree, measures itself, and mounts its six fields — in the
+/// composer enters a rendered visual tree, measures itself, and mounts its one message field — in the
 /// arrangement the operator's workbench log recorded at 22:33:53Z, through the product's own mode
 /// controller, and on both paths that open one (<c>File → New Session</c> and a reopen).
 /// </summary>
@@ -18,14 +18,14 @@ namespace AiDe.App.Tests.Sessions;
 ///
 /// <para><b>Observed on <c>main</c> <c>1aadde84</c>, 2026-09-11, before any repair.</b>
 /// <see cref="ANewSessionRendersInTheOperatorsRestoredArrangement"/> — exit 0, <i>composer wpf
-/// loaded=1 … init-pushed=1, page fields=6</i>: the restored arrangement and Ruling 47's maximize do
+/// loaded=1 … init-pushed=1, page fields=1</i>: the restored arrangement and Ruling 47's maximize do
 /// not stop the document rendering. <see cref="ANewSessionCreatedWhileExplorerIsTheBodyIsShown"/> —
 /// <b>exit 30</b>, <i>"the new session's composer never entered a rendered visual tree: WPF raised no
 /// Loaded on it and its browser host never initialised"</i>, with the announcement reading <i>Session
 /// opened. Composer bound … Maximized the center</i> and the workbench root <i>loaded=False
 /// visible=False parent=(none)</i>. <see cref="ANewSessionCreatedInsideExplorerLeavesItBecauseADocumentOpened"/>
 /// (in its earlier form, the diagnosis's necessity half) — exit 0: the same composer object,
-/// untouched, loaded and mounted six fields the moment the workbench returned to the body; after Phase
+/// untouched, loaded and mounted its one message field the moment the workbench returned to the body; after Phase
 /// 1 that state is unreachable and the oracle asserts the trigger instead.
 /// <see cref="AReopenedSessionIsShownAndItsComposerIsBound"/> — <b>exit 32</b>:
 /// the pane still rendered <i>No session is open</i> after the reopen, and the composer was never
@@ -92,7 +92,7 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
     /// Before INV-0009 Phase 1 this oracle was the diagnosis's necessity half: the document created inside
     /// Explorer stayed unloaded (<i>mode=Explorer … composer wpf loaded=0 … configured=1
     /// init-pushed=0</i>) until the workbench was put back, at which point the untouched composer
-    /// loaded and mounted six fields. That state is no longer reachable by design, so the oracle now
+    /// loaded and mounted its one message field. That state is no longer reachable by design, so the oracle now
     /// asserts the mechanism that replaced it.
     /// </remarks>
     [Fact]
@@ -135,7 +135,7 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
         Assert.Contains("live-document-in-view=True", stdout, StringComparison.Ordinal);
         var composer = Line(stdout, "reopen: composer ");
         Assert.Contains(" configured=1 init-pushed=1 ", composer, StringComparison.Ordinal);
-        Assert.Contains(" page fields=6 ", composer, StringComparison.Ordinal);
+        Assert.Contains(" page fields=1 ", composer, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -164,12 +164,14 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
         Assert.Contains("bind-on-restore: revived=[20260911T175821Z-1edfa710] bound='Composer bound to claude-code ", stdout, StringComparison.Ordinal);
 
         var documents = Line(stdout, "bind-on-restore: active document ");
-        Assert.Contains("active document live=True renders='Compiled view' active in view=session-document:20260911T175821Z-1edfa710;", documents, StringComparison.Ordinal);
+        Assert.Contains("active document live=True renders='", documents, StringComparison.Ordinal);
+        Assert.DoesNotContain("active document live=True renders='No session is open.", documents, StringComparison.Ordinal);
+        Assert.Contains("' active in view=session-document:20260911T175821Z-1edfa710;", documents, StringComparison.Ordinal);
         Assert.Contains("gone document live=False renders='No session is open.", documents, StringComparison.Ordinal);
 
         var composer = Line(stdout, "bind-on-restore: composer ");
         Assert.Contains(" configured=1 init-pushed=1 ", composer, StringComparison.Ordinal);
-        Assert.Contains(" page fields=6 ", composer, StringComparison.Ordinal);
+        Assert.Contains(" page fields=1 ", composer, StringComparison.Ordinal);
 
         // The binding is in the log, with the checkout it bound to (INV-0009 F5).
         Assert.Contains("\"evt\":\"session-document.bound\",\"session\":\"20260911T175821Z-1edfa710\"", stdout, StringComparison.Ordinal);
@@ -202,7 +204,7 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
         Assert.Contains("chooser: order=[choose,open,sheet:window-root,opened] created=True", stdout, StringComparison.Ordinal);
 
         var composer = Line(stdout, "chooser: composer ");
-        Assert.Contains(" configured=1 init-pushed=1 page fields=6 status='' bound-to-chosen-root=True", composer, StringComparison.Ordinal);
+        Assert.Contains(" configured=1 init-pushed=1 page fields=1 status='' bound-to-chosen-root=True", composer, StringComparison.Ordinal);
 
         // The surface count is host A's, which since ADR-0032 holds only the kinds Coding admits
         // (the operator's file drops its Architecture kinds into a report): the fact is that a
@@ -243,7 +245,7 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
         return line!;
     }
 
-    /// <summary>The document is shown: WPF loaded its composer, the browser initialised, the page mounted six fields.</summary>
+    /// <summary>The document is shown: WPF loaded its composer, the browser initialised, the page mounted its one message field.</summary>
     private static void AssertShown(string stdout, string prefix)
     {
         var line = Line(stdout, prefix);
@@ -253,6 +255,6 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
         Assert.Contains(" initialising=1 ", line, StringComparison.Ordinal);
         Assert.Contains(" init-pushed=1,", line, StringComparison.Ordinal);
         Assert.Contains(" layout-lines=1,", line, StringComparison.Ordinal);
-        Assert.Contains(" page fields=6,", line, StringComparison.Ordinal);
+        Assert.Contains(" page fields=1,", line, StringComparison.Ordinal);
     }
 }

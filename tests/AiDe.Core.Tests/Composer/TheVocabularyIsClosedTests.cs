@@ -37,7 +37,7 @@ public sealed class TheVocabularyIsClosedTests
 
         public void SetFieldText(string fieldId, long revision, string text) => Fields++;
 
-        public void MoveFocus() => Focus++;
+        public void MoveFocus(bool backward) => Focus++;
 
         public void OfferAttachment(IReadOnlyList<string> filePaths)
         {

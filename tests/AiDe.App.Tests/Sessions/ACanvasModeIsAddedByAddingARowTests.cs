@@ -51,24 +51,17 @@ public sealed class ACanvasModeIsAddedByAddingARowTests
         {
             Assert.Contains(CanvasModeCatalog.All, m => m.ModeId == ThrowawayModeId);
 
-            Sta.Run(() =>
-            {
-                // The catalog's OWN rows, so the throwaway registration is what puts the third
-                // mode in front of the document.
-                var model = new SessionDocumentViewModel(
-                    "20260910T120000Z-deadbeef", "Front door", Path.GetTempPath(),
-                    CanvasModeCatalog.All.Select(m => m.ModeId).ToList());
-
-                using var document = new SessionDocumentSurface(model);
-
-                // It is offered as a tab...
-                Assert.Contains("Probe", document.ModeTabs);
-
-                // ...and it really renders, rather than merely being listed.
-                model.SetActiveMode(ThrowawayModeId);
-                Assert.Equal(ThrowawayModeId, model.ActiveModeId);
-                Assert.True(document.HasBuilt(ThrowawayModeId));
-            });
+            // The catalog's OWN rows are what a document's view model is built from (the shell
+            // passes them, WorkbenchShell.RegisterSessionDocument), so the throwaway row reaches the
+            // model without a factory edit. The document itself no longer renders modes (Ruling 74:
+            // the Console is the reply side of each turn, the split on demand) — what is proven here
+            // is the registration's data shape, the half Ruling 22 is about.
+            var model = new SessionDocumentViewModel(
+                "20260910T120000Z-deadbeef", "Front door", Path.GetTempPath(),
+                CanvasModeCatalog.All.Select(m => m.ModeId).ToList());
+            Assert.Contains(ThrowawayModeId, model.AvailableModes);
+            model.SetActiveMode(ThrowawayModeId);
+            Assert.Equal(ThrowawayModeId, model.ActiveModeId);
 
             // AND NO FACTORY EDIT. If registering a mode had needed one, the id would be in one of
             // these files — which is the difference between data and a switch arm.

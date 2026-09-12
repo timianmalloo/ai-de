@@ -609,7 +609,7 @@ public sealed class PerspectiveMenuTests
         {
             OnSta(() =>
             {
-                var shell = new WorkbenchShell(queries: null);
+                using var shell = new WorkbenchShell(queries: null);
                 var window = new Window
                 {
                     Content = new ContentControl(),
@@ -693,7 +693,7 @@ public sealed class PerspectiveMenuTests
     {
         var said = Sta.Run(() =>
         {
-            var shell = new WorkbenchShell(queries: null);
+            using var shell = new WorkbenchShell(queries: null);
             Assert.True(shell.Controller.Execute("surface.new.no-such-kind"));
             return shell.Announcer.Last;
         }, 60);

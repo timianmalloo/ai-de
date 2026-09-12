@@ -166,8 +166,10 @@ internal static partial class Program
             // THE DRAFT IS WRITTEN BEFORE ANYTHING IS PUSHED. This is the value the second render
             // used to wipe: PushInit sent `value = ""` for every field, so a form rebuilt after the
             // operator had typed came back empty.
+            // The message is the page's one field (CV-1: the structure lines are WPF); it is what
+            // the second render used to wipe.
             surface.Draft.SwitchTo(ComposerShape.GoalBlock);
-            surface.Draft.SetGoalValue(GoalBlockFields.GoalKey, SeededGoal);
+            surface.Draft.SetFreeFormText(SeededGoal);
 
             if (configureBeforeShow)
             {
@@ -650,10 +652,12 @@ internal static partial class Program
             view.CoreWebView2InitializationCompleted += (_, _) => WireCore();
 
             // BindComposer, exactly: the goal-block shape, then Configure with a send context and an
-            // attach gate built from one binding. The three prose fields carry what the operator had
-            // typed by the time of the screenshot, so the compiled view is the ~30 lines it was.
+            // attach gate built from one binding. The message and the three structure lines carry
+            // what the operator had typed by the time of the screenshot, so the compiled prompt is
+            // the ~30 lines it was (CV-1: the message is the page's field; the lines are WPF).
             composer.Draft.SwitchTo(ComposerShape.GoalBlock);
-            composer.Draft.SetGoalValue(GoalBlockFields.GoalKey, "Investigate why the composer accepts no typing.\nName the cause.\nStop before the fix.");
+            composer.Draft.SetFreeFormText("Investigate why the composer accepts no typing.\nName the cause.\nStop before the fix.");
+            composer.Draft.SetGoalValue(GoalBlockFields.GoalKey, "Investigate why the composer accepts no typing.");
             composer.Draft.SetGoalValue(GoalBlockFields.DoneWhenKey, "A red test exists.\nThe INV is written.");
             composer.Draft.SetGoalValue(GoalBlockFields.NotInScopeKey, "The vendored bundle.\nThe test-log pollution.");
             composer.Configure(
@@ -884,7 +888,7 @@ internal static partial class Program
                 var fieldsAfter = await Eval(view, "String(document.querySelectorAll('#fields .field').length)");
                 var initsAfter = await Eval(view, "String(window.__composerInitCount)");
                 var textAfter = await Eval(view, "String((document.querySelector('.cm-content') || {}).textContent || '')");
-                var firstGoalLine = composer.Draft.GoalValues.TryGetValue(GoalBlockFields.GoalKey, out var goalNow) ? goalNow.Split('\n')[0] : string.Empty;
+                var firstGoalLine = composer.Draft.FreeFormText.Split('\n')[0];
                 Console.Out.WriteLine(
                     $"after a reload: remounted={remounted}, composer navigation-started {startedBefore}->{Count("navigation-started")}, "
                     + $"init-pushed {pushedBefore}->{Count("init-pushed")}, editor.ready posted +{readyPosted - readyBefore}, "
@@ -928,7 +932,7 @@ internal static partial class Program
                 var fieldsAfter = await Eval(view, "String(document.querySelectorAll('#fields .field').length)");
                 var initsAfter = await Eval(view, "String(window.__composerInitCount)");
                 var textAfter = await Eval(view, "String((document.querySelector('.cm-content') || {}).textContent || '')");
-                var firstGoalLine = composer.Draft.GoalValues.TryGetValue(GoalBlockFields.GoalKey, out var goal) ? goal.Split('\n')[0] : string.Empty;
+                var firstGoalLine = composer.Draft.FreeFormText.Split('\n')[0];
                 Console.Out.WriteLine(
                     $"after one later render: wpf loaded={loaded} unloaded={unloaded}, navigations started={navigationsStarted} (+{navigationsStarted - navBefore}), "
                     + $"editor.ready posted={readyPosted} (+{readyPosted - readyBefore}), router drops={composer.Router.Dropped}, "

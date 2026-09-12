@@ -82,7 +82,7 @@ public sealed class SearchBoundEndToEndTests
 
     private static string SearchAndRender(IWorkspaceQueries queries) => OnSta(() =>
     {
-        var shell = new WorkbenchShell(queries);
+        using var shell = new WorkbenchShell(queries);
 
         // The REAL provider — the same delegate SurfaceContentFactory hands the surface.
         var hits = shell.SearchWorkspaceAsync("marker").GetAwaiter().GetResult();
