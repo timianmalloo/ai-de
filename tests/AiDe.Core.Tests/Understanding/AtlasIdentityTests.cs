@@ -8,6 +8,16 @@ namespace AiDe.Core.Tests.Understanding;
 public sealed class AtlasIdentityTests
 {
     [Fact]
+    public void ForType_CurrentRoslynFixture_MatchesCapturedGoldenValue()
+    {
+        var type = CompileType("namespace Demo { public sealed class Widget { } }", "Demo.Widget");
+
+        var identity = AtlasIdentity.ForType("workspace", "Core", "net10.0", type);
+
+        Assert.Equal("17:YXRsYXMtaWRlbnRpdHkvdjE=;4:dHlwZQ==;9:d29ya3NwYWNl;4:Q29yZQ==;7:bmV0MTAuMA==;2:QyM=;9:TmFtZWRUeXBl;18:QXRsYXNJZGVudGl0eVRlc3Rz;13:VDpEZW1vLldpZGdldA==;", identity.Value);
+    }
+
+    [Fact]
     public void ForType_DifferentScopeProjectOrTargetFramework_ProducesDifferentIdentity()
     {
         var type = CompileType("namespace Demo { public sealed class Widget { } }", "Demo.Widget");
@@ -149,7 +159,7 @@ public sealed class AtlasIdentityTests
     }
 
     [Fact]
-    public void ForMember_PartialMethodDefinitionAndImplementationParts_ShareLogicalIdentity()
+    public void ForMember_PartialMethodDefinitionAndImplementationParts_MatchCapturedGoldenValue()
     {
         var type = CompileType(
             """
@@ -168,13 +178,12 @@ public sealed class AtlasIdentityTests
             """,
             "Demo.Widget");
         var method = type.GetMembers("M").OfType<IMethodSymbol>().Single();
-
         var definition = method.PartialDefinitionPart ?? method;
         var implementation = method.PartialImplementationPart ?? method;
+        const string expected = "17:YXRsYXMtaWRlbnRpdHkvdjE=;6:bWVtYmVy;9:d29ya3NwYWNl;4:Q29yZQ==;7:bmV0MTAuMA==;2:QyM=;6:TWV0aG9k;18:QXRsYXNJZGVudGl0eVRlc3Rz;15:TTpEZW1vLldpZGdldC5N;";
 
-        Assert.Equal(
-            AtlasIdentity.ForMember("workspace", "Core", "net10.0", definition),
-            AtlasIdentity.ForMember("workspace", "Core", "net10.0", implementation));
+        Assert.Equal(expected, AtlasIdentity.ForMember("workspace", "Core", "net10.0", definition).Value);
+        Assert.Equal(expected, AtlasIdentity.ForMember("workspace", "Core", "net10.0", implementation).Value);
     }
 
     [Fact]

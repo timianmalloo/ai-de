@@ -1,5 +1,3 @@
-using System.Globalization;
-using System.Text;
 using Microsoft.CodeAnalysis;
 
 namespace AiDe.Core.Understanding;
@@ -10,8 +8,6 @@ namespace AiDe.Core.Understanding;
 /// </summary>
 public sealed class AtlasIdentity : IEquatable<AtlasIdentity>
 {
-    private static readonly UTF8Encoding Utf8 = new(encoderShouldEmitUTF8Identifier: false);
-
     private AtlasIdentity(string value) => Value = value;
 
     public string Value { get; }
@@ -60,28 +56,7 @@ public sealed class AtlasIdentity : IEquatable<AtlasIdentity>
         ISymbol symbol)
     {
         symbol = CanonicalSymbol(symbol);
-        var assemblyName = symbol.ContainingAssembly?.Identity.Name;
-        if (string.IsNullOrWhiteSpace(assemblyName))
-        {
-            throw new ArgumentException("Symbol must have a containing assembly.", nameof(symbol));
-        }
-
-        var declarationId = DocumentationCommentId.CreateDeclarationId(symbol);
-        if (string.IsNullOrWhiteSpace(declarationId))
-        {
-            throw new ArgumentException("Symbol must have a compiler declaration identity.", nameof(symbol));
-        }
-
-        return new AtlasIdentity(EncodeComponents(
-            "atlas-identity/v1",
-            symbolContext,
-            Required(scope, nameof(scope)),
-            Required(project, nameof(project)),
-            Required(targetFramework, nameof(targetFramework)),
-            Required(symbol.Language, nameof(symbol)),
-            symbol.Kind.ToString(),
-            Required(assemblyName, nameof(symbol)),
-            declarationId));
+        return new AtlasIdentity(AtlasIdentityCodec.ForSymbol(symbolContext, scope, project, targetFramework, symbol));
     }
 
     private static ISymbol CanonicalSymbol(ISymbol symbol) =>
@@ -115,53 +90,4 @@ public sealed class AtlasIdentity : IEquatable<AtlasIdentity>
         }
     }
 
-    private static string EncodeComponents(params string[] components)
-    {
-        var builder = new StringBuilder();
-        foreach (var component in components)
-        {
-            var checkedComponent = ValidUnicode(component, nameof(component));
-            var bytes = Utf8.GetBytes(checkedComponent);
-            builder
-                .Append(bytes.Length.ToString(CultureInfo.InvariantCulture))
-                .Append(':')
-                .Append(Convert.ToBase64String(bytes))
-                .Append(';');
-        }
-
-        return builder.ToString();
-    }
-
-    private static string Required(string value, string name)
-    {
-        ArgumentNullException.ThrowIfNull(value, name);
-        var checkedValue = ValidUnicode(value, name);
-        return string.IsNullOrWhiteSpace(checkedValue)
-            ? throw new ArgumentException("Value must not be blank.", name)
-            : checkedValue;
-    }
-
-    private static string ValidUnicode(string value, string name)
-    {
-        for (var i = 0; i < value.Length; i++)
-        {
-            var current = value[i];
-            if (!char.IsSurrogate(current))
-            {
-                continue;
-            }
-
-            if (char.IsHighSurrogate(current)
-                && i + 1 < value.Length
-                && char.IsLowSurrogate(value[i + 1]))
-            {
-                i++;
-                continue;
-            }
-
-            throw new ArgumentException("Value must contain valid Unicode scalar values.", name);
-        }
-
-        return value;
-    }
 }
