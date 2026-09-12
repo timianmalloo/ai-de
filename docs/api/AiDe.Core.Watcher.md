@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 163 types, 319 members, 65% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 164 types, 328 members, 64% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**163 public types · 319 public members · 65% documented.**
+**164 public types · 328 public members · 64% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1784,6 +1784,17 @@ spellings of one string is the defect DM7 names.
 |---|---|
 | `string FreeForm = "free-form"` | The session's default task class (Ruling 70; Ruling 72): "the basic should be free-form upon open, and then I can change it" — an **explicit, declared** value, not an absence. Unlike `Unclassified`, a segment carrying… |
 
+## `Sources`
+
+*class* — `Leaderboard.cs`
+
+The provenance vocabulary of an episode's task class (ADR-0028's amendment) — the envelope's `task_class.source`, spelled once for the cohort column.
+
+| Member | Summary |
+|---|---|
+| `string SessionDefault = "session-default"` | The session's declared default applied (Ruling 72). |
+| `string Operator = "operator"` | Chosen for that prompt (Ruling 70). |
+
 ## `ScoredEpisode`
 
 *record* — `Leaderboard.cs`
@@ -1795,6 +1806,7 @@ stored score; it is derived, DM7).
 | Member | Summary |
 |---|---|
 | `string TaskClass` | The kind of work, from `Segment`. |
+| `string? TaskClassSource { get; init; }` | Where the class came from — `session-default` or `operator` (Ruling 70; ADR-0033 rule 4) — or `null` for **not recorded**: a row written before the column existed, or an episode nothing stamped. A cohort attribute bes… |
 | `string SchemaVersion` | The score schema version, from `Segment`. |
 | `double Weave` | **(gap)** |
 | `double? CoverageRatio` | **(gap)** |
@@ -1813,6 +1825,11 @@ The three leaderboard axes (spec US-14). There is deliberately no per-operator f
 One leaderboard cell. A cell below the cohort minimum or one that resolves to a single operator
 renders Not Comparable, never a rank (spec US-14/US-10). Every comparable cell carries its cohort
 size and Evidence Coverage.
+
+| Member | Summary |
+|---|---|
+| `int DefaultedClass { get; init; }` | How many of the cohort ranked under the session's DEFAULT class (`task_class_source = session-default`) — so a defaulted `free-form` is told from a chosen one (ADR-0028's amendment). |
+| `int ChosenClass { get; init; }` | How many of the cohort ranked under a class CHOSEN for the prompt (`operator`). The remainder is not recorded — never counted as either. |
 
 ## `Leaderboard`
 
@@ -2639,6 +2656,8 @@ Upgrade trigger: read volume grows enough to want the WorkspaceStore read/write 
 | `IReadOnlyList<ScoredEpisode> AllScoredEpisodes()` | **(gap)** |
 | `bool RecordEpisodeMode(string episodeId, string mode)` | **(gap)** |
 | `string? FindEpisodeMode(string episodeId)` | **(gap)** |
+| `bool RecordEpisodeTaskClassSource(string episodeId, string source)` | **(gap)** |
+| `string? FindEpisodeTaskClassSource(string episodeId)` | **(gap)** |
 | `void AppendScoreDispute(ScoreDispute dispute)` | **(gap)** |
 | `IReadOnlyList<ScoreDispute> DisputesForEpisode(string episodeId)` | **(gap)** |
 | `IReadOnlyList<ScoreDispute> AllDisputes()` | **(gap)** |
@@ -3134,6 +3153,8 @@ trigger: the SQLite store lands (remaining Phase-1 task), which bounds and persi
 | `IReadOnlyList<ScoredEpisode> AllScoredEpisodes()` | **(gap)** |
 | `bool RecordEpisodeMode(string episodeId, string mode)` | **(gap)** |
 | `string? FindEpisodeMode(string episodeId)` | **(gap)** |
+| `bool RecordEpisodeTaskClassSource(string episodeId, string source)` | **(gap)** |
+| `string? FindEpisodeTaskClassSource(string episodeId)` | **(gap)** |
 | `void AppendScoreDispute(ScoreDispute dispute)` | **(gap)** |
 | `IReadOnlyList<ScoreDispute> DisputesForEpisode(string episodeId)` | **(gap)** |
 | `IReadOnlyList<ScoreDispute> AllDisputes()` | **(gap)** |

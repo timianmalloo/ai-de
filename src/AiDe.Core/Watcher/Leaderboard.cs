@@ -82,6 +82,16 @@ public sealed record ScoreSegment(WorkspaceKey? Workspace, string TaskClass, str
 /// </remarks>
 public static class TaskClasses
 {
+    /// <summary>The provenance vocabulary of an episode's task class (ADR-0028's amendment) — the envelope's <c>task_class.source</c>, spelled once for the cohort column.</summary>
+    public static class Sources
+    {
+        /// <summary>The session's declared default applied (Ruling 72).</summary>
+        public const string SessionDefault = "session-default";
+
+        /// <summary>Chosen for that prompt (Ruling 70).</summary>
+        public const string Operator = "operator";
+    }
+
     /// <summary>
     /// The session's default task class (Ruling 70; Ruling 72): "the basic should be free-form upon
     /// open, and then I can change it" — an <b>explicit, declared</b> value, not an absence. Unlike
@@ -103,6 +113,15 @@ public sealed record ScoredEpisode(
     /// <summary>The kind of work, from <see cref="Segment"/>.</summary>
     public string TaskClass => Segment.TaskClass;
 
+    /// <summary>
+    /// Where the class came from — <c>session-default</c> or <c>operator</c> (Ruling 70; ADR-0033
+    /// rule 4) — or <c>null</c> for <b>not recorded</b>: a row written before the column existed,
+    /// or an episode nothing stamped. A cohort attribute beside <see cref="Segment"/>, never inside
+    /// it (ADR-0028's amendment): it changes no cell's membership, only what the board can say
+    /// about the cell.
+    /// </summary>
+    public string? TaskClassSource { get; init; }
+
     /// <summary>The score schema version, from <see cref="Segment"/>.</summary>
     public string SchemaVersion => Segment.SchemaVersion;
 
@@ -123,7 +142,14 @@ public enum LeaderboardFacet { Harness, Model, HarnessModel }
 /// </summary>
 public sealed record LeaderboardCell(
     LeaderboardFacet Facet, string Label, int Cohort, double? MedianWeave, double? Coverage,
-    int? Rank, bool Comparable, string? NotComparableReason);
+    int? Rank, bool Comparable, string? NotComparableReason)
+{
+    /// <summary>How many of the cohort ranked under the session's DEFAULT class (<c>task_class_source = session-default</c>) — so a defaulted <c>free-form</c> is told from a chosen one (ADR-0028's amendment).</summary>
+    public int DefaultedClass { get; init; }
+
+    /// <summary>How many of the cohort ranked under a class CHOSEN for the prompt (<c>operator</c>). The remainder is not recorded — never counted as either.</summary>
+    public int ChosenClass { get; init; }
+}
 
 /// <summary>A leaderboard for one <see cref="ScoreSegment"/> (comparisons never cross it).</summary>
 public sealed record Leaderboard(ScoreSegment Segment, IReadOnlyList<LeaderboardCell> Cells)
@@ -202,7 +228,11 @@ public sealed class LeaderboardComposer
                     comparable ? Median(members.Where(m => m.CoverageRatio is not null).Select(m => m.CoverageRatio!.Value)) : null,
                     Rank: null,
                     comparable,
-                    reason);
+                    reason)
+                {
+                    DefaultedClass = members.Count(m => string.Equals(m.TaskClassSource, TaskClasses.Sources.SessionDefault, StringComparison.Ordinal)),
+                    ChosenClass = members.Count(m => string.Equals(m.TaskClassSource, TaskClasses.Sources.Operator, StringComparison.Ordinal)),
+                };
             })
             .ToList();
 

@@ -188,7 +188,7 @@ public sealed class ScoredEpisodeModeMigrationTests : IDisposable
         Assert.Equal(2, Read(DbPath, c => Convert.ToInt64(Scalar(c, "SELECT count(*) FROM scored_episode_cell;"))));
     }
 
-    /// <summary>The column exists, is nullable, and is declared last so a fresh database matches a migrated one.</summary>
+    /// <summary>The column exists, is nullable, and is declared in migration order (after workspace, before v7's task_class_source) so a fresh database matches a migrated one.</summary>
     [Fact]
     public void TheModeColumnIsAddedNullableAndLast()
     {
@@ -208,7 +208,11 @@ public sealed class ScoredEpisodeModeMigrationTests : IDisposable
 
         Assert.Equal(0, notNull);
         Assert.Equal("<none>", defaultValue);
-        Assert.Equal(count - 1, position);
+
+        // Second-to-last since v7 appended `task_class_source` after it (CV-2; ADR-0028's amendment):
+        // every expand-only column is declared after the one before it, so a fresh database and a
+        // migrated one still agree — the property the position asserts.
+        Assert.Equal(count - 2, position);
     }
 
     /// <summary>

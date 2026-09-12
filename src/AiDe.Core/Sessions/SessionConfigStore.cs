@@ -123,6 +123,88 @@ public sealed class SessionConfigStore
         }
     }
 
+    /// <summary>
+    /// The Session aggregate's own delete: removes the session directory, and with it — by
+    /// containment, never by a second delete path — the compile history the composer keeps beside
+    /// <c>session.json</c> (ADR-0034 rule 6; F-12).
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Probe → move to a tombstone → delete the envelope file → delete the rest.</b> The
+    /// envelope file is first opened exclusively as a probe, so a composer (or a second AI-DE) that
+    /// holds it refuses the whole delete by name before anything is removed. The directory is then
+    /// moved to a tombstone: a directory move fails on Windows while any file inside is open, so it
+    /// is the directory-level lock the design lacked — a writer that opened in the window after the
+    /// probe refuses the delete whole, and once moved no writer can open at the session's path
+    /// (<c>EnvelopeStore.Open</c> refuses <c>NoSessionDirectory</c>). Then the envelope file, then
+    /// the siblings. The naive order — acquire, release, recursive delete — reopens the race: a
+    /// recursive delete on Windows removes the siblings and then fails on a locked file, leaving
+    /// <c>session.json</c> gone and <c>envelope-events.jsonl</c> orphaned, the exact orphan the
+    /// cascade exists to prevent (the D&amp;P Architect's finding, twice).</para>
+    /// </remarks>
+    /// <exception cref="PromptCompilation.EnvelopeStoreException">
+    /// <see cref="PromptCompilation.EnvelopeStoreErrorCodes.HeldByAnotherWriter"/> — refused whole, nothing removed.
+    /// </exception>
+    /// <exception cref="IOException">A sibling could not be removed; the envelope file is already gone by then.</exception>
+    public void Delete()
+    {
+        lock (_gate)
+        {
+            var directory = SessionPaths.SessionDirectory(WorkspaceRoot, SessionId);
+            if (!Directory.Exists(directory))
+            {
+                return;
+            }
+
+            var envelopes = Path.Combine(directory, PromptCompilation.EnvelopeStore.FileName);
+            if (File.Exists(envelopes))
+            {
+                try
+                {
+                    // A PROBE, not the deletion: an exclusive open detects a live writer and names it;
+                    // the file itself goes with its directory below, after the move has made a new
+                    // writer impossible — so a refusal here leaves everything exactly as it was.
+                    using var held = new FileStream(envelopes, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+                }
+                catch (IOException error) when (error is not FileNotFoundException)
+                {
+                    throw new PromptCompilation.EnvelopeStoreException(
+                        PromptCompilation.EnvelopeStoreErrorCodes.HeldByAnotherWriter,
+                        $"another AI-DE has this session's compile history open ({envelopes}); the session was not deleted",
+                        error);
+                }
+            }
+
+            // THE TOMBSTONE CLOSES THE WINDOW between the handle's release and the recursive delete: a
+            // writer that opened the file in that window (OpenOrCreate) would otherwise leave the
+            // recursive delete removing session.json and failing on the held file — the orphan. A
+            // directory move fails on Windows while any file inside is open, so the move is the
+            // directory-level lock the design lacks; once moved, EnvelopeStore.Open at the session's
+            // path refuses NoSessionDirectory, and the tombstone is removed whole.
+            var tombstone = directory + ".deleting-" + Guid.NewGuid().ToString("n")[..8];
+            try
+            {
+                Directory.Move(directory, tombstone);
+            }
+            catch (IOException error)
+            {
+                throw new PromptCompilation.EnvelopeStoreException(
+                    PromptCompilation.EnvelopeStoreErrorCodes.HeldByAnotherWriter,
+                    $"a file in '{directory}' is open elsewhere; the session was not deleted",
+                    error);
+            }
+
+            // The envelope file first, then the siblings — the order ADR-0034 rule 6 names, now with
+            // no window in which a writer could recreate it.
+            var moved = Path.Combine(tombstone, PromptCompilation.EnvelopeStore.FileName);
+            if (File.Exists(moved))
+            {
+                File.Delete(moved);
+            }
+
+            Directory.Delete(tombstone, recursive: true);
+        }
+    }
+
     private SessionConfig ReadConfigUnsafe()
     {
         var path = SessionPaths.SessionFile(WorkspaceRoot, SessionId);

@@ -1,0 +1,16 @@
+{"agent": "copilot-atlas-live-core", "at": 1789249089.512648, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Understanding/AtlasIdentity.cs", "session": "atlas-live-core-gpt55", "wi": ""}
+{"agent": "copilot-atlas-live-core", "at": 1789249089.5176487, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Understanding/AtlasIdentityCodec.cs", "session": "atlas-live-core-gpt55", "wi": ""}
+{"agent": "copilot-atlas-live-core", "at": 1789249089.5216486, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Understanding/AtlasManifest.cs", "session": "atlas-live-core-gpt55", "wi": ""}
+{"agent": "copilot-atlas-live-core", "at": 1789249089.5268385, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Understanding/AtlasQueryContracts.cs", "session": "atlas-live-core-gpt55", "wi": ""}
+{"agent": "copilot-atlas-live-core", "at": 1789249089.5308383, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasIdentityCodecTests.cs", "session": "atlas-live-core-gpt55", "wi": ""}
+{"agent": "copilot-atlas-live-core", "at": 1789249089.5348384, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasIdentityTests.cs", "session": "atlas-live-core-gpt55", "wi": ""}
+{"agent": "copilot-atlas-live-core", "at": 1789249089.538839, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasManifestTests.cs", "session": "atlas-live-core-gpt55", "wi": ""}
+{"agent": "copilot-atlas-live-core", "at": 1789249089.5428433, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasQueryContractsTests.cs", "session": "atlas-live-core-gpt55", "wi": ""}
+{"agent": "copilot-atlas-live-core", "at": 1789249912.3476536, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Understanding/AtlasIdentityCodec.cs", "session": "atlas-live-core-gpt55", "wi": ""}
+{"agent": "copilot-atlas-live-core", "at": 1789249912.3526492, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Understanding/AtlasManifest.cs", "session": "atlas-live-core-gpt55", "wi": ""}
+{"agent": "copilot-atlas-live-core", "at": 1789249912.3566506, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Understanding/AtlasQueryContracts.cs", "session": "atlas-live-core-gpt55", "wi": ""}
+{"agent": "copilot-atlas-live-core", "at": 1789249912.3606584, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasIdentityCodecTests.cs", "session": "atlas-live-core-gpt55", "wi": ""}
+{"agent": "copilot-atlas-live-core", "at": 1789249912.364651, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasManifestTests.cs", "session": "atlas-live-core-gpt55", "wi": ""}
+{"agent": "copilot-atlas-live-core", "at": 1789249912.3696494, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasQueryContractsTests.cs", "session": "atlas-live-core-gpt55", "wi": ""}
+{"agent": "copilot-atlas-live-core", "at": 1789250227.161898, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Understanding/AtlasManifest.cs", "session": "atlas-live-core-gpt55", "wi": ""}
+{"agent": "copilot-atlas-live-core", "at": 1789250227.1658971, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasManifestTests.cs", "session": "atlas-live-core-gpt55", "wi": ""}

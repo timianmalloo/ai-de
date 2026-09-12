@@ -1,0 +1,2 @@
+{"agent": "copilot-atlas-declarations", "at": 1789250951.571194, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Understanding/CSharpDeclarationObservation.cs", "session": "atlas-live-declarations-gpt55", "wi": ""}
+{"agent": "copilot-atlas-declarations", "at": 1789250951.5751977, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/CSharpDeclarationObservationTests.cs", "session": "atlas-live-declarations-gpt55", "wi": ""}
