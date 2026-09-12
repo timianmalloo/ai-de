@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T19:23:28Z",
+  "generated": "2026-09-12T19:47:52Z",
   "audit": [
     {
       "actor": null,
@@ -14543,6 +14543,31 @@ window.AUDIT_DATA = {
       "fan_out": 4,
       "started_at": "2026-09-12T19:21:20Z",
       "duration_seconds": 127.0
+    },
+    {
+      "id": "al-01M2BJJWYHMDJVYZMGX70AWKER",
+      "shortname": "atlas-native-safety-reviewed-join",
+      "datetime": "2026-09-12T19:47:51Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Joined reviewed standalone probe source only: worker8db3335c mapped to conductor0c1b3cf1 through d8bc7fad/c4511956. Independent pinned replay19PASS0FAIL2NOT_PROVEN51ms; joined replay samecounts55ms, runtime10.0.11. Parsed counts, not exit0, define incomplete symlink disposition0x80070522. Security/Test conditional bounded-evidence clearance and CSharp targetedPASS recorded. Fixed historical raw-green pointer via final join proof. DC015/019/156 recurrences recorded for coarse oracles, adjacent hash/identity authority, and failed-acquisition handle lifetime. Original worker reports30/30 safetycalls exhausted. E0 candidate design/filemanifest still awaited; reader direction needs Owner restricted-input choice. No product/native/main acceptance.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-source-safety-join.md",
+        "docs/proof/code-atlas-source-safety.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Execute and independently verify the Owner-admitted isolated E0 foundation without touching Claude shared files.",
+      "done_when": "Admitted safety and candidate checkpoints return observed evidence and the next shared integration decision is resolved; this is the bounded safety join, not programme completion.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-12T19:23:33Z",
+      "duration_seconds": 1458.0
     }
   ],
   "changes": [

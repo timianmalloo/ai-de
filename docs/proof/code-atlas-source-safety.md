@@ -13,9 +13,9 @@ links:
 review-by: 2027-03-12
 review-suggested: []
 summary: >-
-  Isolated Windows/.NET 10 probe for opened-object source reading. It proves the first holding
-  mechanism for E0 source safety under synthetic disposable roots, records disconfirmed variants,
-  and leaves unsupported symlink fixtures as NOT_PROVEN rather than passing them by assumption.
+  Isolated Windows/.NET 10 probe recording bounded opened-object and byte/hash facts under
+  synthetic disposable roots. Initial and repaired observations are distinguished; unsupported
+  symlink fixtures remain NOT_PROVEN, and this is not native-product acceptance.
 ---
 
 # Proof Pack — Code Atlas opened-object source safety probe
@@ -24,7 +24,9 @@ summary: >-
 - **Base readback:** `4d3964116cf45ce310ceec22a95db1563fb893cb` before edits.
 - **Identity:** `AGENT_SESSION=atlas-e0-source-safety-gpt55`; `AGENT_NAME=copilot-atlas-source-safety`.
 - **Authored paths only:** `spikes/code-atlas-source-reader/CodeAtlas.SourceReaderProbe.csproj`, `Program.cs`, `OpenedSourceReader.cs`, `SourceReaderProbeCases.cs`; `docs/proof/code-atlas-source-safety.md`.
-- **Raw result location:** ignored path `.agents/artifacts/atlas-e0-source-safety-gpt55/source-reader/raw-green.txt`; `git check-ignore --quiet` verified the raw path before the green run.
+- **Initial raw result (15/0/2):** ignored path `.agents/artifacts/atlas-e0-source-safety-gpt55/source-reader/raw-green.txt`; this is historical, not the repaired result.
+- **Worker repair raw result (19/0/2):** `.agents/artifacts/atlas-e0-source-safety-gpt55/source-reader/raw-repair.txt`.
+- **Independent final evidence:** `docs/proof/code-atlas-source-safety-join.md` records the separate pinned replay and joined-branch replay. It corrects the earlier implication that `raw-green.txt` named the final result.
 - **Not claimed:** integrated/native product E0 completion, production reader acceptance, security approval, or broad K0 rerun.
 
 ## Authoritative contracts used
@@ -39,7 +41,11 @@ summary: >-
 | `BY_HANDLE_FILE_INFORMATION` | Carries attributes, size, link count, volume serial and file index. | <https://learn.microsoft.com/en-us/windows/win32/api/fileapi/ns-fileapi-by_handle_file_information> |
 | Hard links / junctions | Hard links are multiple paths to one file on a volume; junctions are reparse-point directory links. | <https://learn.microsoft.com/en-us/windows/win32/fileio/hard-links-and-junctions> |
 
-## Mechanism proven by the probe
+## Initial mechanism investigated, before the repair below
+
+This section describes the initial experiment, not the admitted candidate contract. The repair
+adds expected root/file identity binding and no-text nonmatch semantics. Neither version proves
+actual editor span/range behavior.
 
 1. Open the root directory with `CreateFileW`, `GENERIC_READ`, share mode `0`, `OPEN_EXISTING`, `FILE_FLAG_BACKUP_SEMANTICS`; hold it until after read/hash/decode and final metadata checks.
 2. Open each intermediate directory ancestor the same way and hold those handles too. Root handle alone was not enough.
@@ -57,7 +63,7 @@ summary: >-
 | Candidate native red | First implemented directory handle with desired access `0`. Probe output: `FAIL|root rename blocked while root handle held`; `FAIL|ancestor rename blocked while ancestor handle held`. | If metadata-only directory handles protected root/ancestor replacement, those moves would have been blocked. They were not. |
 | Holding mechanism green | Changing directory handles to `GENERIC_READ` with share mode `0` turned root and ancestor relocation cases green. | The case fails if either directory move succeeds while the handle is held. |
 
-## Commands and observed results
+## Initial commands and observed results
 
 | Command | Result |
 |---|---|
@@ -65,7 +71,7 @@ summary: >-
 | `dotnet restore spikes\code-atlas-source-reader\CodeAtlas.SourceReaderProbe.csproj --source "%USERPROFILE%\.nuget\packages" --nologo --verbosity:minimal` | Restored SDK-only probe project in 47 ms. No package references and no manifest/dependency additions. Source was bounded to the local NuGet package folder; no network source was configured for this restore command. |
 | `dotnet run --project spikes\code-atlas-source-reader\CodeAtlas.SourceReaderProbe.csproj --no-restore` | Final green run: `SUMMARY|passed=15|failed=0|not_proven=2|duration_ms=45`; runtime `10.0.11`; OS `Microsoft Windows NT 10.0.26200.0`. |
 
-Final raw output:
+Initial pre-review raw output (15/0/2, retained as history):
 
 ```text
 SUMMARY|passed=15|failed=0|not_proven=2|duration_ms=45

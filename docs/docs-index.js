@@ -8075,7 +8075,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "159a61207a66d7521f13d5ed37c360a58fb7e774852318321b8535d67a4ea268"
+      "sourceSha256": "c416a8f91377ac0644d4388b588ff8ead3156f79d4a2de17bcb5d38b37147641"
     },
     {
       "id": "design-session-profiler",
@@ -15337,6 +15337,75 @@ window.DOCS_INDEX = {
       "sourceSha256": "70be47bec3d22b82a75fcceb9b51b67671c6eb0175f97f7d178ca72999c2ab77"
     },
     {
+      "id": "proof-code-atlas-source-safety",
+      "path": "docs/proof/code-atlas-source-safety.md",
+      "title": "Proof Pack — Code Atlas opened-object source safety probe",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "atlas-e0-source-safety",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Isolated Windows/.NET 10 probe recording bounded opened-object and byte/hash facts under synthetic disposable roots. Initial and repaired observations are distinguished; unsupported symlink fixtures remain NOT_PROVEN, and this is not native-product acceptance.",
+      "tags": [
+        "proof-pack",
+        "code-atlas",
+        "source-safety",
+        "windows",
+        "probe"
+      ],
+      "links": [
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-01M2BBCCAYMNMM1MFH0653Z0XF",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-code-atlas-contract-grounding",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "104c935b04d769fb62dfb2f2f687d049cd290d5bf889674474a2dbbcf4145505"
+    },
+    {
+      "id": "proof-code-atlas-source-safety-join",
+      "path": "docs/proof/code-atlas-source-safety-join.md",
+      "title": "Code Atlas source-safety join - independent bounded replay",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "atlas-e0-source-safety-join",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Independent pinned and joined-branch runs observed 19 passed, zero failed and two not-proven symlink cases. Records final review conditions, corrects the historical raw-result pointer, and does not promote a successful process exit into native-product acceptance.",
+      "tags": [
+        "code-atlas",
+        "proof-pack",
+        "windows",
+        "source-safety"
+      ],
+      "links": [
+        {
+          "to": "proof-code-atlas-source-safety",
+          "rel": "documents"
+        },
+        {
+          "to": "note-atlas-isolated-authoring",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5330bfa6f6412a51e0e0e4a307ceb4dbb4376d36600dd2899d80d0b67c3b93e9"
+    },
+    {
       "id": "proof-composer-entry-areas",
       "path": "docs/proof/composer-entry-areas.md",
       "title": "Proof Pack — the composer's entry areas keep their room, and the page survives a render (INV-0007, phases 1–4)",
@@ -17917,5 +17986,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "149a0c8c97ff2c10a387fc8bda3c52c64d4a4c5c50b3261794d8d58146d9ea59"
+  "graphSha256": "7ea3bda0509c93bee6085b129b3e766fc20222a10ebeb9d14c801268bf75625e"
 };

@@ -493,6 +493,18 @@ for both or split.*
 
 
 ### DC-015 — A success check coarser than the claim it is standing in for
+- **Recurrence (2026-09-12, Atlas native probe):** a hash-match case was labelled as span
+  activation although the result carried no range; rename/write cases accepted any I/O exception
+  as a sharing block; an ADS case accepted any nonmatch. Independent review found all three.
+  The repaired probe names byte/hash behavior, asserts exact no-text refusal states, creates a
+  real ADS, and checks sharing error codes plus successful identical mutations after release.
+  **Sweep:** the probe's case labels, mutation helpers, ADS helper and proof pointers were checked;
+  `raw-green.txt` was also found to be the historical 15-case run, not the final 19-case result.
+  **Derive/control:** the final proof uses the named case outcomes rather than exit status or
+  historical labels; `proof-code-atlas-source-safety-join` records independent pinned and joined
+  19/0/2 runs. Exit 0 still includes two NOT_PROVEN cases and is explicitly not admission. The
+  earlier metadata-only handle variant was observed red by the worker; not every historical
+  mutation was independently rerun, and no editor-range proof is claimed.
 - **Signature:** a verification passes, and it would also have passed had the specific thing it
   exists to prove never happened. The check is real, the green is real, and it is answering a
   broader question than the one being asked — "did *something* succeed" in place of "did *this*
@@ -635,6 +647,16 @@ for both or split.*
 - **Status:** `partially-controlled`
 
 ### DC-019 — A trust boundary assumed safe because an adjacent control was proven
+- **Recurrence (2026-09-12, Atlas source binding):** matching bytes were initially treated as
+  sufficient old-anchor evidence while opened-object identity was not an expected input;
+  Changed/Unverifiable results also carried live text. Hash integrity did not establish object
+  identity or permission to show changed content under an old selection. **Sweep:** binding,
+  status-to-text release, ADS aliases, hard links and reparse cases were reviewed together.
+  **Derive/control:** the indexed binding overload compares expected root/file identities and hash;
+  only IndexedMatch releases text, and relative ADS syntax is refused before resolution.
+  The same-byte file-replacement, missing/mismatched hash and real ADS cases were independently
+  replayed in `proof-code-atlas-source-safety-join`. The hash-only helper is not old-anchor
+  authority; unexecuted symlink cases remain outside the proved boundary, not covered by adjacency.
 - **Signature:** a control is designed, measured and shown to work against one mechanism, and the
   boundary it sits on is thereafter treated as closed. A *different* mechanism crossing the same
   boundary is never probed, because the proven control is remembered as protecting the boundary
@@ -6720,6 +6742,17 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 
 ### DC-156 — A resource acquired for a child is released with the owner, not with the child
 
+- **Related recurrence (2026-09-12, Atlas partial acquisition):** `OpenAncestors` acquired a set
+  of native directory handles for one read, but a later acquisition failure abandoned the earlier
+  handles to SafeHandle finalization. The failed read had ended; its share-denying resources had
+  not. **Sweep:** root, ancestor-set and final-file acquisition/cancellation paths were reviewed;
+  cancellation after open also escaped the intended typed result. **Derive/control:** the
+  ancestor-set builder disposes partial acquisition before rethrowing; using scopes own successful
+  acquisition; requested cancellation returns Canceled with no text. The probe's
+  `PartialAncestorFailureReleasesPriorHandle` immediately renames the earlier directory without
+  GC, and the cancellation-after-open case checks the typed result. Independent C# review and
+  the 19/0/2 replay are recorded in `proof-code-atlas-source-safety-join`; no separate
+  mutation-after-cancel oracle or blocking-syscall interruption claim is made.
 - **Shape:** an object acquires an OS resource *for* a child (a pseudo console for a shell, a job
   for a process). The child ends; the object records the end as **state** (`Ended`, `Complete`,
   an exit code) and touches no **handle**. The resource then lives as long as the *owner* — the
