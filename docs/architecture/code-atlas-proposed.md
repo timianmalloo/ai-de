@@ -84,6 +84,14 @@ map is not evidence of that newer host implementation: after acknowledgment, rec
 factory/menu/host/SH2 seams against current main **before E-0 design or dispatch**.
 E-1…E-4 remain roadmap stages, not work implicitly admitted into E-0.
 
+**Owner turn 6 — “Atlas whole-architecture obligations separated from E0 runtime composition”:**
+separate Owner agent `61e506c4-2d12-42e9-85cb-153f2f916811`, relayed by Conductor. Keep the whole
+proposed overlay and future contracts, but distinguish E-0 durable roots/runtime composition from
+later-stage obligations. Navigation is view-local restoration state with Core-validated selection,
+not an append-only domain aggregate or new Memento framework/class. Simplifier clearance is
+conditional on verification of this delta; Conductor records that verdict. No source, registration,
+main integration or overall architecture acceptance follows.
+
 ### 1.1 Decision index
 
 These native IDs were supplied by Conductor after `verify-id-allocators.py` at 37 existing ADRs
@@ -187,22 +195,38 @@ flowchart LR
 
 ## 4. Conceptual and logical model — decided before storage
 
-### 4.1 Bounded contexts and small aggregates
+### 4.1 Bounded contexts, E-0 durable roots and future obligations
 
 The names refine candidate E §A2, rather than replacing its domain. A “snapshot” below is a
 **manifest of observations**, not an atomic operating-system snapshot.
+
+**PROPOSED E-0 durable append/seal roots only:**
 
 | Bounded context | Aggregate root / invariant | References outside aggregate |
 |---|---|---|
 | Repository Evidence Inventory | **InventoryObservation**: one authorized enumeration run has a declared root/policy boundary and completion state; absence of semantics cannot erase a visible file. Individual **SourceObservation**: any active anchor is bound to the exact decoded bytes it describes. | Workspace/root, file logical IDs, policy revision. |
 | Repository Evidence Inventory — semantic membership | **DeclarationObservation**: one logical symbol's declaration locations belong to named content observations and compiler scope. **WorkspaceManifest**: a sealed manifest references an explicit immutable scope/observation set; it never substitutes a newer scope silently. | Symbol, file, scope snapshot IDs; manifest entries by identity, not an in-memory workspace object graph. |
-| Code Atlas Views | **NavigationSession**: tree, outline, source and diagrams share one accepted selection token; a late response cannot overwrite newer selection. View preferences are disposable state, not evidence. | Manifest, file/symbol/declaration and lens IDs. |
-| Static Behavior Reconstruction | **BehaviorObservation**: every static call/control/data-flow assertion cites an originating declaration and source version, or names an unresolved target. | Declaration versions and evidence IDs. |
-| Architecture Resource Model | **ResourceDeclaration**: one evidenced resource root per canonical identity; aliases do not create additional roots or grants. | Scope, declaration, software component and alias IDs. |
-| Specification Correspondence | **Assessment**: immutable input vector and rule version explain its state. **DecisionRecord**: one accepted/effective statement has a verified authorizing actor or accepted delegation chain and explicit scope; unresolved authority stays unresolved. | Source manifest, clause versions, authority references, predecessor/supersession IDs. |
-| Bounded Interpretation Harness | **InterpretationRun**: exactly the previewed, authorized, bounded context may cross the model boundary; origin cannot be upgraded by acceptance. | Context manifest, processing authorization, model/prompt/validator/eval versions. |
 
-Roots do not contain each other. Each append transaction protects one root's invariant.
+**Code Atlas Views is a presentation context, not another durable domain aggregate.** Its
+view-local history/preferences retain immutable selection references and restore state. Core
+validates selection/manifest/policy at the query boundary; the Generation-Token guard prevents
+stale responses from replacing current state. No append-only `NavigationSession` domain root
+or navigation fact stream is introduced.
+
+#### Future-contract obligations — not E-0 durable roots or implementation tasks
+
+The whole-system architecture retains these later obligations. Their contracts, prerequisites,
+invariants and independent admission/proof gates remain in §§8–9 and §13; this phase label does
+not delete or silently weaken any part of the full vision.
+
+| Stage / bounded context | Future root obligation and invariant | Dependencies / identity references |
+|---|---|---|
+| **E-1 Static Behavior Reconstruction** | **BehaviorObservation**: every static call/control/data-flow assertion cites an originating declaration and source version, or names an unresolved target. | E-0 declaration/content identities and manifests; declaration versions and evidence IDs. |
+| **E-2 Architecture Resource Model** | **ResourceDeclaration**: one evidenced resource root per canonical identity; aliases do not create additional roots or grants. | E-0 source binding and E-1 presentation; scope/declaration/software-component/alias IDs. |
+| **E-3 Specification Correspondence** | **Assessment**: immutable input vector and rule version explain its state. **DecisionRecord**: accepted/effective authority requires a verified actor or accepted delegation and explicit scope; relevant unaccepted/disputed evidence retains its status and unresolved authority. | Stable historical source/clause observations, selected decision evidence, authority lineage, predecessor/supersession IDs and privacy admission. |
+| **E-4 Bounded Interpretation Harness** | **InterpretationRun**: exactly the previewed, authorized, bounded context may cross the read-only model boundary; human acceptance cannot upgrade its origin. | Context/processing authorization, model/prompt/validator/eval versions, relevant earlier-stage evidence and separate adapter/admission. |
+
+For each stage's admitted durable roots, roots do not contain each other. Each append transaction protects one root's invariant.
 Manifest entries may be staged as immutable observations; a small seal records their digest,
 count and references after completeness checks. Orphaned unsealed entries are not a visible manifest.
 This uses eventual consistency across scope observations without claiming a distributed transaction.
@@ -410,14 +434,17 @@ store. App/daemon compatibility is checked before open; unknown fact vocabulary 
 
 ## 7. Composition and complete read contract
 
-### 7.1 Layered architecture
+### 7.1 PROPOSED E-0 runtime composition
+
+This diagram contains only the proposed first horizon. §3 remains the **whole PROPOSED overlay**;
+§4.1's future-contract subsection and §§8–9/13 retain the later contracts, dependencies and gates.
+Nothing in this diagram establishes current implementation or ownership permission.
 
 ```mermaid
 flowchart TB
   subgraph Presentation["Presentation — existing Shell authority, native first"]
     Tree["Physical tree / outline"]
     Source["Source / inspector"]
-    Diagram["Derived diagrams / comparison — later"]
     Nav["Selection and Back history"]
     Broker["Trusted human-action broker"]
   end
@@ -428,7 +455,6 @@ flowchart TB
   subgraph Application["Workspace authority — deterministic T0"]
     Proj["Bounded projection and authority policy"]
     Read["Authorized hash-bound file reader"]
-    ModelPort["Read-only interpretation orchestration — E-4 only"]
   end
   subgraph Evidence["Evidence acquisition and persistence"]
     Inv["Inventory / semantic extractors"]
@@ -437,13 +463,11 @@ flowchart TB
   end
   Tree --> Query
   Source --> Query
-  Diagram --> Query
   Nav --> Selection --> Query
   Broker --> Proj
   Query --> Proj
   Proj --> Read
   Proj --> DB
-  ModelPort --> Proj
   Inv --> Fence --> DB
 ```
 
@@ -485,13 +509,20 @@ Raw model/repository exceptions and sensitive paths are not reflected verbatim t
 
 ### 7.3 Native journey and selection
 
-**Memento-backed navigation history** retains immutable selection snapshots, not source bodies.
+**Memento-backed navigation history** means restoration of view-local state, not a new framework,
+class, persistent aggregate or append-only record stream. Reuse existing view-state mechanisms.
+History retains immutable selection snapshots, not source bodies.
 A **Generation-Token/request-correlation guard** protects every asynchronous result application.
 An immutable selection contains manifest, root/file, optional compilation scope/symbol/declaration,
 altitude/lens and navigation generation. View-local focus/scroll, selected partial declaration and
 branch/worktree context are carried in bounded Back/Forward entries. New selection cancels old
 requests; results are applied only to the matching generation and manifest. Back does not rebind an
 old symbol to whichever declaration happens to resolve first today.
+
+Core validates restored selection IDs, manifest membership and current policy on every read/action;
+restoring view state never restores permission or bypasses that boundary. Tree/outline/source/
+inspector remain synchronized by the accepted selection token. If matching old bytes are gone,
+Back retains selection/manifest but the old body is **Unavailable** and old anchors remain disabled.
 
 E-0 uses native WPF tree/list/source/inspector where existing approved controls suffice. It does
 not require a WebView dependency to demonstrate physical source navigation. Shared `CodeViewerView`
@@ -896,7 +927,7 @@ authored files and tests; two workers never write the same seam.
 | E0 source/bounded projection | `src/AiDe.Core/Projections/IWorkspaceQueries.cs`, `ProjectionService.cs`, `NodeContent.cs`; no incompatible legacy payload rewrite | `src/AiDe.Core/Understanding/AtlasSource.cs`, `AtlasQueryContracts.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasSourceTests.cs`, `AtlasProjectionTests.cs`; regress `tests/AiDe.Core.Tests/NodeContentTests.cs`, `WorkspaceIndexTests.cs` | Core source-policy and query owner. |
 | E0 persistence | `src/AiDe.Core/Store/WorkspaceSchema.cs`, `StoreWriter.cs`, `StoreReader.cs` only if design proves needed | `tests/AiDe.Core.Tests/Understanding/AtlasReplayTests.cs`; existing `tests/AiDe.Core.Tests/StoreImmutabilityTests.cs`, `StoreCompactionTests.cs` | Core/Data; no automatic migration task. |
 | E0 wire | `src/AiDe.Core/Ipc/WorkspaceOperations.cs`, `WorkspaceClient.cs`, `IpcContract.cs`; daemon composition through existing operation registration | `tests/AiDe.Core.Tests/Understanding/AtlasWireTests.cs`; existing `tests/AiDe.Core.Tests/BoundaryDispatchTests.cs`, `DaemonOperationsTests.cs` | Core/daemon contract owner. |
-| E0 native content/history | Core-owned `src/AiDe.App/Workbench/NodeReaderView.cs`, `CodeViewerView.cs` only through agreed adapter | `src/AiDe.App/Workbench/Understanding/AtlasExplorerView.cs`, `AtlasSourceView.cs`; Core model `src/AiDe.Core/Understanding/AtlasNavigation.cs`; new `tests/AiDe.App.Tests/Workbench/Understanding/AtlasJourneyTests.cs` | Explicit Core/presentation carve-out; Shell consumes seam. |
+| E0 native content/history | Core-owned `src/AiDe.App/Workbench/NodeReaderView.cs`, `CodeViewerView.cs` only through agreed adapter | `src/AiDe.App/Workbench/Understanding/AtlasExplorerView.cs`, `AtlasSourceView.cs`; view-local history and Core selection validation through proposed `AtlasQueryContracts.cs`, no new Memento class required; new `tests/AiDe.App.Tests/Workbench/Understanding/AtlasJourneyTests.cs` | Explicit Core/presentation carve-out; Shell consumes seam. |
 | E0 shared registration/menu/host | `src/AiDe.App/Workbench/SurfaceContentFactory.cs`; actual active `PerspectiveMenu`/`DockHost`/`PerspectiveShell` and SH2 composition files must be resolved against acknowledged current main before dispatch | Existing `tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs`; phase-native tests above. K0's `SurfaceContentTests` exact path was not confirmed here and must be located by Shell, not guessed. | Claude/Shell-authored integration commit; no Atlas edit authority. |
 | E1–E3 later views | Existing `Projections/Interaction.cs`, `GraphProjection.cs`, `ProjectionService.cs` under Core; later resource/knowledge producers identified at admission, not broad inventory now | Narrow `Understanding/Behavior`, `Resources`, `Correspondence` contracts/test sets only after their design | Core/Data and registered native view owners. |
 | E4 later interpretation | Canonical `src/AiDe.App/Conductor/GovernedRunHost.cs` is a boundary to preserve, not a suggested generic analysis API | Abstract port under `src/AiDe.Core/Understanding/Interpretation/`; concrete adapter path determined only by admitted runtime spike and Conversation agreement | Conversation/runtime owner plus Core/AI/Security/Privacy. |

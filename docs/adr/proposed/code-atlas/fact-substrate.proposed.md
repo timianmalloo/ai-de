@@ -60,6 +60,14 @@ No second graph engine or bespoke event store; no mandatory new table merely bec
 | Later relationship/clause/resource | One attributable typed assertion at one immutable input version. |
 | Later assessment/review/run | One pinned assessment or authority/review event or invocation disposition; origin immutable. |
 
+**Stage boundary, Owner turn 6:** E-0 durable roots are only inventory/source/declaration
+observations and manifest membership/seals. The “Later” rows above are future-contract obligations,
+not E-0 tables, aggregates or implementation assignments. Navigation is view-local state restoration
+with Core selection/manifest/policy validation, not a durable append-only aggregate or fact stream.
+The whole later model, invariants and admission dependencies remain in architecture §§4.1/8–9/13.
+Source: **“Atlas whole-architecture obligations separated from E0 runtime composition”**, separate
+Owner agent `61e506c4-2d12-42e9-85cb-153f2f916811`, turn 6, relayed by Conductor.
+
 Canonical typed predicate/object values define the logical schema and are versioned.
 An observation is consumable only after its fields validate and its seal/commit exists.
 Observation identity/revision distinguishes repeated observations across generations under the
