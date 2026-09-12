@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T19:30:25Z",
+  "generated": "2026-09-12T20:01:21Z",
   "audit": [
     {
       "actor": null,
@@ -14203,6 +14203,51 @@ window.AUDIT_DATA = {
         "acceptance_met": true
       },
       "supersedes": "al-01M2BGSB09J4SXDSR80PNJB8PX"
+    },
+    {
+      "id": "al-01M2BKBKVZV0JE3G00Y6TRV3BX",
+      "shortname": "ok - this is ridiculous... go look at the number of zombie terminal host…",
+      "datetime": "2026-09-12T20:01:21Z",
+      "session": "prompt-log",
+      "prompt": "ok - this is ridiculous... go look at the number of zombie terminal hosts being created AGAIN ... and dont say it is the copilot session because that is working on this repo as well so it should have any fixes you already claimed to have done",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2BKBM0SH1GNVN04DRTSW6XH",
+      "shortname": "the term hosts are multiplying right now... great opportunity for you to…",
+      "datetime": "2026-09-12T20:01:21Z",
+      "session": "prompt-log",
+      "prompt": "the term hosts are multiplying right now... great opportunity for you to debug",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2BKBM5VDEM1ZYNRV4DBT25N",
+      "shortname": "keep going / you end the WT pool / i will probably wait for CV-2 to fini…",
+      "datetime": "2026-09-12T20:01:21Z",
+      "session": "prompt-log",
+      "prompt": "keep going / you end the WT pool / i will probably wait for CV-2 to finish before doing a manual test",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
