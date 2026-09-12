@@ -71,6 +71,27 @@ public sealed record ScoreSegment(WorkspaceKey? Workspace, string TaskClass, str
 }
 
 /// <summary>
+/// The task-class vocabulary a session or a prompt may declare — as opposed to
+/// <see cref="ScoreSegment.Unclassified"/>, which names the ABSENCE of a declaration.
+/// </summary>
+/// <remarks>
+/// One home for the quoted literal (ADR-0033 §4): a census asserts <c>"free-form"</c> appears
+/// exactly once in <c>src/</c>, here. <see cref="AiDe.Core.Sessions.SessionConfig.DefaultTaskClass"/>
+/// and <c>ComposerSendContext.TaskClass</c> read this constant rather than re-quoting it — two
+/// spellings of one string is the defect DM7 names.
+/// </remarks>
+public static class TaskClasses
+{
+    /// <summary>
+    /// The session's default task class (Ruling 70; Ruling 72): "the basic should be free-form upon
+    /// open, and then I can change it" — an <b>explicit, declared</b> value, not an absence. Unlike
+    /// <see cref="ScoreSegment.Unclassified"/>, a segment carrying this <b>is</b> a cohort: it
+    /// partitions and ranks like any other task class (Ruling 72's reading of ADR-0028).
+    /// </summary>
+    public const string FreeForm = "free-form";
+}
+
+/// <summary>
 /// A scored episode with its harness/model/operator attribution - the input to the leaderboard and
 /// standing. <see cref="Weave"/> is the sum of the scored dimensions' earned points (there is no single
 /// stored score; it is derived, DM7).

@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 162 types, 318 members, 64% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 163 types, 319 members, 65% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**162 public types · 318 public members · 64% documented.**
+**163 public types · 319 public members · 65% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1767,6 +1767,22 @@ Why this segment is not a cohort, or `null` when it is one.
 has no rank. "No rank" with no cause is an empty state naming nothing (DC-087), and the two
 causes want opposite responses: an undeclared task class is something the agent can fix, an
 unresolvable repository is not.
+
+## `TaskClasses`
+
+*class* — `Leaderboard.cs`
+
+The task-class vocabulary a session or a prompt may declare — as opposed to
+`Unclassified`, which names the ABSENCE of a declaration.
+
+**Remarks.** One home for the quoted literal (ADR-0033 §4): a census asserts `"free-form"` appears
+exactly once in `src/`, here. `DefaultTaskClass`
+and `ComposerSendContext.TaskClass` read this constant rather than re-quoting it — two
+spellings of one string is the defect DM7 names.
+
+| Member | Summary |
+|---|---|
+| `string FreeForm = "free-form"` | The session's default task class (Ruling 70; Ruling 72): "the basic should be free-form upon open, and then I can change it" — an **explicit, declared** value, not an absence. Unlike `Unclassified`, a segment carrying… |
 
 ## `ScoredEpisode`
 

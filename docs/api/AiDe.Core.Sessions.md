@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Sessions: 22 types, 58 members, 88% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Sessions: 23 types, 65 members, 89% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Sessions`
 
-**22 public types · 58 public members · 88% documented.**
+**23 public types · 65 public members · 89% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -33,6 +33,10 @@ namespace names only this container — never a Watcher/Dispatch/Terminal-intern
 | Member | Summary |
 |---|---|
 | `bool AttachEnabled { get; init; }` | Whether this session may attach files to a composed prompt (Security/Privacy **C21**). **Off by default**, confirmed by the human on 2026-09-10. |
+| `int FanOutCeiling { get; init; } = 2` | The most sub-agents any turn in this session may convene — `fan_out_ceiling` in ADR-0033 §3 / `docs/architecture.md`'s vocabulary (Ruling 56). The eventual `FanOutCap = min(cap(tier), ceiling)` the compile step comput… |
+| `RunBudget? BudgetCap { get; init; }` | An enforced request/token ceiling for this session, or `null` — the session is bounded by the subscription instead (Ruling 72; ADR-0033 §3's `budget_cap`). |
+| `string CompileMode { get; init; } = CompileModes.MechanicalOnly` | How much of the compile step's agentic stage this session admits (ADR-0033 §A10.1; Ruling 68) — one of `CompileModes`. |
+| `string DefaultTaskClass { get; init; } = TaskClasses.FreeForm` | The task class a prompt in this session carries when it declares none of its own (Ruling 70; Ruling 72; ADR-0033 §4) — `default_task_class` in the ADR's vocabulary. |
 
 ### `bool AttachEnabled { get; init; }`
 
@@ -73,6 +77,98 @@ per-session and operator-writable, so this is **a default with a safe initial st
 enforceable policy**. A deployment that must *prevent* attach needs a
 non-session-overridable layer, which is Phase 2 — named here as the upgrade trigger. Nothing
 may describe this field as restricting or preventing attach for a deployment.
+
+### `int FanOutCeiling { get; init; } = 2`
+
+The most sub-agents any turn in this session may convene — `fan_out_ceiling` in
+ADR-0033 §3 / `docs/architecture.md`'s vocabulary (Ruling 56). The eventual
+`FanOutCap = min(cap(tier), ceiling)` the compile step computes reads this value; this
+record only carries it — nothing here derives or enforces a cap from it (that projection has
+no code home yet, per ADR-0033's own finding).
+
+**Remarks.** **Default is 2, and no workspace-default mechanism exists in code to source it from —
+checked, not assumed.** The architecture doc and the New Session sheet mockups both call
+this value a "workspace default" (`docs/architecture.md:786`;
+`docs/mockups/new-session-sheet.html`), but no `WorkspaceDefaults` type or
+workspace-level setting exists anywhere in `src/` today: this session-settings node is
+the first code home for the ceiling at all, and it has no workspace layer beneath it to read a
+default from. 2 is the nearest ruled number instead — CT19's own T1 fan-out cap
+(`communication-and-task-discipline.instructions.md`: "0 at T0, 2 at T1") — used here as
+a per-session default, not as evidence the workspace-default plumbing exists.
+
+
+
+
+
+**An old `session.json` reads as 2, not as an error.** This field is additive,
+exactly like `AttachEnabled`: a file written before it existed has no key for it,
+and `Load` must keep reading such a file.
+
+### `RunBudget? BudgetCap { get; init; }`
+
+An enforced request/token ceiling for this session, or `null` — the session is bounded by
+the subscription instead (Ruling 72; ADR-0033 §3's `budget_cap`).
+
+**Remarks.** **Absent by default, never a required number.** The operator's own words: "budgets
+should be max … by default and then optionally I can enforce a cap" (Ruling 72). `null`
+is the shipped default; a caller that needs an actual `RunBudget` for a spawn
+reads `SubscriptionBounded` when this is `null` — that substitution
+belongs to the projection that reads this setting, not to this record (derive, don't store;
+DM7), so it is not performed here.
+
+
+
+
+
+**Reuses `RunBudget` rather than a second `(requests, tokens)`
+shape.** ADR-0033 §3 names the setting's shape as exactly `{requests, tokens} | none` —
+the same two fields `RunBudget` already carries — and two definitions of one
+quantity is a defect signature (DM7).
+
+### `string CompileMode { get; init; } = CompileModes.MechanicalOnly`
+
+How much of the compile step's agentic stage this session admits (ADR-0033 §A10.1;
+Ruling 68) — one of `CompileModes`.
+
+**Remarks.** Default `MechanicalOnly` (Ruling 68): a session opens with only the
+free, in-memory, mechanical pre-compile; the two agentic rungs are opt-in as the eval gate
+admits them.
+
+### `string DefaultTaskClass { get; init; } = TaskClasses.FreeForm`
+
+The task class a prompt in this session carries when it declares none of its own (Ruling 70;
+Ruling 72; ADR-0033 §4) — `default_task_class` in the ADR's vocabulary.
+
+**Remarks.** **Which "TaskClass" this is, and which it is not.** `SessionConfig`
+carried no `TaskClass` member before this field — there is nothing here renamed or
+removed. Two other, unrelated members share the name and are untouched: `GovernedRunRequest
+.TaskClass` (F5's tree; the per-run, required, already-resolved value a governed run
+carries) and `ScoreSegment`'s `TaskClass` (what the Watcher reads back
+for scoring). This field is the session-level **default** that
+`ComposerSendContext.TaskClass` is populated from when a prompt names no class of its
+own (ADR-0033 §4: "the session config's `default_task_class` … never a second literal") —
+a different point in the pipeline from either.
+
+
+
+
+
+Default `FreeForm` (Ruling 72): "the basic should be free-form
+upon open, and then I can change it" — an explicit, operator-visible value present from the
+moment a session opens, never a null a caller must special-case.
+
+## `CompileModes`
+
+*class* — `SessionConfig.cs`
+
+The `compile_mode` vocabulary a `SessionConfig` declares (ADR-0033 §A10.1;
+Ruling 68) — mechanical always runs; the two agentic rungs are opt-in behind an eval gate.
+
+| Member | Summary |
+|---|---|
+| `string MechanicalOnly = "mechanical-only"` | The default (Ruling 68): only the free, in-memory mechanical pre-compile runs. |
+| `string AgenticAdvisory = "agentic-advisory"` | The agentic compile runs, but a `derived` decoration needs confirmation before Send. |
+| `string Agentic = "agentic"` | The agentic compile's result is admitted without a confirmation step. |
 
 ## `SessionEventKinds`
 

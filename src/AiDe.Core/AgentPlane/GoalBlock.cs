@@ -6,7 +6,39 @@ namespace AiDe.Core.AgentPlane;
 /// rather than alone. Both must be positive: a zero budget is not a small budget, it is a spawn that
 /// can never do anything, which is a typo rather than an intent.
 /// </remarks>
-public sealed record RunBudget(int Requests, long Tokens);
+public sealed record RunBudget(int Requests, long Tokens)
+{
+    /// <summary>
+    /// The declared value for "no cap chosen — bounded by the subscription instead" (Ruling 72;
+    /// ADR-0033 §3), never a required number.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>A maximal, positive value rather than a nullable <see cref="RunBudget"/> or a second
+    /// contract shape.</b> <see cref="SpawnContract.Validate"/>'s six fields are tier-blind and
+    /// budget is one of them; making it optional there would be a contract change (ADR-0033's
+    /// "Alternatives considered"). A declared maximal value keeps <see cref="SpawnContract.Validate"/>
+    /// byte-identical and turns "no cap" into a value <see cref="IsSubscriptionBounded"/> can read,
+    /// rather than an absence a caller must guess at.</para>
+    ///
+    /// <para><b>A one-way door.</b> This value crosses JSON into persisted run and result files
+    /// (<c>ConductorEntry.cs</c>); every file ever written with <c>2147483647</c> /
+    /// <c>9223372036854775807</c> must read as subscription-bounded forever, so
+    /// <see cref="IsSubscriptionBounded"/> is a reader that can never be removed.</para>
+    /// </remarks>
+    public static readonly RunBudget SubscriptionBounded = new(Requests: int.MaxValue, Tokens: long.MaxValue);
+
+    /// <summary>
+    /// Whether this is the declared <see cref="SubscriptionBounded"/> value, by field equality.
+    /// </summary>
+    /// <remarks>
+    /// <b>Value equality, not reference equality.</b> <see cref="RunBudget"/> crosses JSON (a request
+    /// or result file deserializes a brand-new instance), so a caller checking
+    /// <c>ReferenceEquals(budget, SubscriptionBounded)</c> would silently stop working the moment the
+    /// value was read back from disk. Records already compare by value, so equality against the
+    /// constant is exactly this predicate.
+    /// </remarks>
+    public bool IsSubscriptionBounded => this == SubscriptionBounded;
+}
 
 /// <summary>
 /// The six fields spec §14.3 names, by their wire names. The error a caller sees uses these, so the

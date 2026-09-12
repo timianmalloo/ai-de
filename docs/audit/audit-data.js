@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T00:26:05Z",
+  "generated": "2026-09-12T01:00:10Z",
   "audit": [
     {
       "actor": null,
@@ -13105,6 +13105,56 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M29J1N0KDNJNBNWE1YD1Q481",
+      "shortname": "s2-settings-and-sentinels",
+      "datetime": "2026-09-12T00:59:57Z",
+      "session": "s2-settings",
+      "prompt": "Run as spine node S2 of coordination plan docs/coordination/addendum-cd.md: implement \"the\nsettings and sentinels commit\" — SessionConfig gains fan_out_ceiling, budget_cap (optional),\ncompile_mode, default_task_class, additive with defaults; TaskClasses.FreeForm;\nRunBudget.SubscriptionBounded accepted by SpawnContract.Validate; red first. Values are fixed by\nADR-0033 and Rulings 56/63/68/70/72 — no judgement left. Scope: SessionConfig.cs +\nSessionConfigStore.cs, Leaderboard.cs, GoalBlock.cs and their tests only; no composer/sheet/shell\nchanges; ConductorEntry.cs byte-unchanged; commit and push to feature/s2-settings-and-sentinels,\nnever merge to main.",
+      "summary": "SessionConfig gains four additive init-only properties, all persisted through the store's existing\ngeneric JSON contract with no change to SessionConfigStore's read/write logic: FanOutCeiling (int,\ndefault 2 — checked: no WorkspaceDefaults type exists anywhere in src/ today, so \"workspace default\"\nis documentation-only; 2 is CT19's own ruled T1 fan-out cap, used as the per-session default\ninstead), BudgetCap (RunBudget?, default null — reuses RunBudget rather than a second shape, per\nDM7), CompileMode (string, default CompileModes.MechanicalOnly), DefaultTaskClass (string, default\nTaskClasses.FreeForm). Checked and found the task's stated premise about an \"existing TaskClass\nmember\" inaccurate: SessionConfig carried no TaskClass member before this change — GovernedRunRequest\n.TaskClass (AiDe.App) and ScoreSegment.TaskClass (Watcher) are separate, untouched members sharing\nthe name, documented as such on DefaultTaskClass's XML doc rather than assumed. TaskClasses.FreeForm\n= \"free-form\" added beside ScoreSegment.Unclassified in Leaderboard.cs; a segment carrying it is\ncomparable (a real cohort), unlike Unclassified. RunBudget.SubscriptionBounded (int.MaxValue,\nlong.MaxValue) added to GoalBlock.cs with a value-equality IsSubscriptionBounded reader (needed\nbecause the record crosses JSON and loses reference identity); SpawnContract.Validate needed no code\nchange — its existing positivity check already accepts the sentinel, proven by test rather than\nassumed. No rendering site touched: ADR-0033 names ComposerCompiler.RenderGoalBlock/Projection.cs as\nthe render sites and explicitly defers the exact \"subscription-bounded\" wording to a later node (A1);\nthe coordination plan's own CV-0/CV-1 rows independently confirm the render is not S2's. All three\nreds observed as C# compiler refusals (CS0103/CS0117/CS1061) against the new members before they\nexisted, captured by reverting the three production files to HEAD (git checkout, never git stash)\nwith the new tests already in place, then restored from a local backup copy. 10 new tests added\nacross SessionConfigStoreTests.cs (+3), LeaderboardTests.cs (+2), SpawnContractTests.cs (+5). Full\ngate green: Core build/App build 0 warnings under TreatWarningsAsErrors; Core tests 2256/2256; App\ntests 610/610 including the one-registry guard and the session-origin-on-command-path test;\nverify-test-run.py (no --update) OK at 2866 executed over baselines 2239/554; every tools/verify-*.py\nOK except verify-derived-views.py/verify-site-figures.py (stale public-symbol counts from the new\npublic members — fixed by regenerate-derived.py, run after this entry) and verify-stranded-audit.py\n(flags the PRIMARY checkout C:\\projects\\ai-de's own pre-existing uncommitted audit-log state, a\ndifferent tree, out of this node's scope). git diff scope: exactly the 3 source files + 3 test files\n+ this Proof Pack; ConductorEntry.cs byte-unchanged.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "src/AiDe.Core/Sessions/SessionConfig.cs",
+        "src/AiDe.Core/Watcher/Leaderboard.cs",
+        "src/AiDe.Core/AgentPlane/GoalBlock.cs",
+        "tests/AiDe.Core.Tests/Sessions/SessionConfigStoreTests.cs",
+        "tests/AiDe.Core.Tests/Watcher/LeaderboardTests.cs",
+        "tests/AiDe.Core.Tests/AgentPlane/SpawnContractTests.cs",
+        "docs/proof/s2-settings-and-sentinels.md"
+      ],
+      "tags": [
+        "coordination",
+        "addendum-c",
+        "addendum-d",
+        "s2",
+        "sessions",
+        "agent-plane",
+        "watcher",
+        "adr-0033"
+      ],
+      "outcome": "success",
+      "goal": "Land S2 -- the settings and sentinels commit: additive SessionConfig fields (fan_out_ceiling, budget_cap, compile_mode, default_task_class), TaskClasses.FreeForm, and RunBudget.SubscriptionBounded accepted by SpawnContract.Validate -- the fixed shared vocabulary every other Addendum C/D track depends on.",
+      "done_when": "All four SessionConfig fields exist with the ruled defaults and an old session.json reads them back correctly (red-first observed as a compiler refusal, green after); TaskClasses.FreeForm exists beside ScoreSegment.Unclassified and partitions as an ordinary class; RunBudget.SubscriptionBounded exists and SpawnContract.Validate accepts it unchanged; full Core+App suites green under TreatWarningsAsErrors; every tools/verify-*.py checked; a Proof Pack, audit entry and derived-docs regeneration committed and pushed to feature/s2-settings-and-sentinels without merging to main.",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-12T00:27:17Z",
+      "duration_seconds": 1960.0,
+      "git": {
+        "sha": "4a3e34ae921be0a83a2e9ecff0cc59ad9aebc47e",
+        "short": "4a3e34ae9",
+        "branch": "feature/s2-settings-and-sentinels",
+        "pushed": null
+      }
     }
   ],
   "changes": [

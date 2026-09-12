@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.AgentPlane: 57 types, 138 members, 90% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.AgentPlane: 57 types, 140 members, 90% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.AgentPlane`
 
-**57 public types · 138 public members · 90% documented.**
+**57 public types · 140 public members · 90% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -633,6 +633,42 @@ The per-run budget a goal block declares (§14.3 `budget: { requests, tokens }`)
 **Remarks.** A budget with no convergence condition is a timer, so the numbers live beside the done-condition
 rather than alone. Both must be positive: a zero budget is not a small budget, it is a spawn that
 can never do anything, which is a typo rather than an intent.
+
+| Member | Summary |
+|---|---|
+| `RunBudget SubscriptionBounded = new(Requests: int.MaxValue, Tokens: long.MaxValue)` | The declared value for "no cap chosen — bounded by the subscription instead" (Ruling 72; ADR-0033 §3), never a required number. |
+| `bool IsSubscriptionBounded` | Whether this is the declared `SubscriptionBounded` value, by field equality. |
+
+### `RunBudget SubscriptionBounded = new(Requests: int.MaxValue, Tokens: long.MaxValue)`
+
+The declared value for "no cap chosen — bounded by the subscription instead" (Ruling 72;
+ADR-0033 §3), never a required number.
+
+**Remarks.** **A maximal, positive value rather than a nullable `RunBudget` or a second
+contract shape.** `Validate`'s six fields are tier-blind and
+budget is one of them; making it optional there would be a contract change (ADR-0033's
+"Alternatives considered"). A declared maximal value keeps `Validate`
+byte-identical and turns "no cap" into a value `IsSubscriptionBounded` can read,
+rather than an absence a caller must guess at.
+
+
+
+
+
+**A one-way door.** This value crosses JSON into persisted run and result files
+(`ConductorEntry.cs`); every file ever written with `2147483647` /
+`9223372036854775807` must read as subscription-bounded forever, so
+`IsSubscriptionBounded` is a reader that can never be removed.
+
+### `bool IsSubscriptionBounded`
+
+Whether this is the declared `SubscriptionBounded` value, by field equality.
+
+**Remarks.** **Value equality, not reference equality.** `RunBudget` crosses JSON (a request
+or result file deserializes a brand-new instance), so a caller checking
+`ReferenceEquals(budget, SubscriptionBounded)` would silently stop working the moment the
+value was read back from disk. Records already compare by value, so equality against the
+constant is exactly this predicate.
 
 ## `GoalBlockFields`
 

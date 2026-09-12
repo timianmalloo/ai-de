@@ -2067,7 +2067,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 57 types, 138 members, 90% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 57 types, 140 members, 90% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2080,7 +2080,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b0b152bb796d1b9984a8d142d0768c5a62b96e31c07f55de1f0a6010820268cb"
+      "sourceSha256": "9e5b8169973ff68c892d566aede6b2bd7b8e99654efc8a7739b87c185989413d"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -2342,7 +2342,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Sessions: 22 types, 58 members, 88% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Sessions: 23 types, 65 members, 89% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2355,7 +2355,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "83a0b4068daefef096ee3acff1e727c8211e6e7811a92a8faa735d3f2fbf9dda"
+      "sourceSha256": "5906674ca753ab8c441e0c428a36646c3cdb47f45cf9b11f78892d14802e6949"
     },
     {
       "id": "api-aide-core-store",
@@ -2442,7 +2442,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Watcher: 162 types, 318 members, 64% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Watcher: 163 types, 319 members, 65% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2455,7 +2455,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ab210e6f877e9444c6a3bd5e699c246326eb1e900bfb350f566eaab421a8f8c2"
+      "sourceSha256": "1d44dfaeb02210548ad6906930f9f648f5f139e92b84728a72ea8e12755084e5"
     },
     {
       "id": "api-aide-core-workbench",
@@ -14004,6 +14004,51 @@ window.DOCS_INDEX = {
       "sourceSha256": "6c5c67e487b6bb2c9497ce5e10e0191a7c68dc102d699ffb26af00ece93516c1"
     },
     {
+      "id": "proof-s2-settings-and-sentinels",
+      "path": "docs/proof/s2-settings-and-sentinels.md",
+      "title": "Proof Pack — S2: the settings and sentinels commit",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Evidence that SessionConfig gains four additive session settings (fan-out ceiling, an optional budget cap, compile mode, default task class) that an old session.json reads back with the ruled defaults; that TaskClasses.FreeForm is a declared, comparable task class beside ScoreSegment.Unclassified; and that RunBudget.SubscriptionBounded is accepted by SpawnContract.Validate untouched, with a value-equality reader that survives a JSON round trip. All three reds observed as compiler refusals before the members existed. No rendering site touched — ADR-0033 names the exact subscription-bounded wording as a later node's decision.",
+      "tags": [
+        "proof-pack",
+        "sessions",
+        "agent-plane",
+        "watcher",
+        "adr-0033",
+        "ruling-56",
+        "ruling-68",
+        "ruling-70",
+        "ruling-72",
+        "s2",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0033-prompt-compilation-bounded-context",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "df0f469d825982df88190a8b4b375a8d30ec0053a59396111e5f6cf22d19f9e9"
+    },
+    {
       "id": "proof-terminal-cursor-render-crash",
       "path": "docs/proof/terminal-cursor-render-crash.md",
       "title": "Proof Pack - Terminal cursor render crash fix (DC-061)",
@@ -15950,5 +15995,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "66a0a76c4513eb6edb5466b6a3b467cd90aed8bf894e736959c771afa4c9b950"
+  "graphSha256": "3e153c2d3d45e9eae4587415f756c4ffd91ed98c7beaa96b4089742ae6df223c"
 };
