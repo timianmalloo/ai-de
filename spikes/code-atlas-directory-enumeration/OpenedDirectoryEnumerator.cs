@@ -29,8 +29,7 @@ internal sealed class OpenedDirectoryEnumerator(
     int maxEntries,
     int maxDepth,
     int maxDescriptors,
-    Action? afterEntryObserved = null,
-    bool skipRootBindingCheck = false)
+    Action? afterEntryObserved = null)
 {
     private const uint GenericRead = 0x80000000;
     private const uint FileShareRead = 0x00000001;
@@ -109,8 +108,7 @@ internal sealed class OpenedDirectoryEnumerator(
             var rootFinal = FinalPath(rootHandle.Handle);
             if (binding is not null
                 && (binding.VolumeSerialNumber != rootInfo.VolumeSerialNumber
-                    || binding.FileIndex != rootInfo.FileIndex)
-                && !skipRootBindingCheck)
+                    || binding.FileIndex != rootInfo.FileIndex))
             {
                 return Result(DirectoryEnumerationStatus.Unverifiable, [], "opened root identity differs from authorized binding");
             }
