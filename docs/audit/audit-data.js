@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T15:55:11Z",
+  "generated": "2026-09-12T17:18:50Z",
   "audit": [
     {
       "actor": null,
@@ -13858,6 +13858,46 @@ window.AUDIT_DATA = {
         "adr-0030"
       ],
       "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "claude-x-1",
+      "artifacts": [],
+      "datetime": "2026-09-12T16:51:39Z",
+      "done_when": "the reach reports counts then asserts at the floor with residuals named not faked; verify-mockup-audits.py --self-test observed red then green and is wired into the gates job; the four mockups sweep clean; the full App.Tests suite and every tools/verify-*.py are green; a Proof Pack, DC-147 status and a new register entry for the reach's own finding are committed",
+      "duration_seconds": 3770.0,
+      "fan_out": 1,
+      "git": {
+        "branch": "side/x1-census-controls",
+        "pushed": null,
+        "sha": "a38026f94eb8060feb39b9a12e611bdac692a335",
+        "short": "a38026f94"
+      },
+      "goal": "INV-0008 phase 6's census reach (disabled check/radio/menu-item states, hover, selected-inactive), DC-147's control (tools/verify-mockup-audits.py, wired into CI, red first) and the four legacy mockups' h_theme ReferenceError, per docs/coordination/addendum-cd.md X-1",
+      "id": "al-01M2B8G8NS3DYDCCG8Z55XTJRX",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "/implement X-1: the census controls -- INV-0008 phase 6 (census reach: disabled check/radio/menu-item states, hover and selected-inactive triggers), DC-147's control (tools/verify-mockup-audits.py in CI, red first), and the four legacy mockups' script errors",
+      "session": "x-1",
+      "shortname": "x-1-census-controls",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-12T15:48:49Z",
+      "summary": "Census reach: forced a real disabled checkbox (Console lane filter) and a real disabled submenu MenuItem (File > New session) on the composed shell; 4 new rows, 0 below floor. Hover/pressed and disabled RadioButton named as genuine residuals (no public setter; no product site). The reach itself surfaced a real defect (App.xaml's menu templates: a local gesture-chord ink and a missing top-level-header trigger) -- registered as DC-158 and routed to the Shell lane as a seam request, not fixed (App.xaml is outside this track's owned paths); pinned by a dedicated test so it cannot silently widen. Built tools/verify-mockup-audits.py (stdlib only): a headless Chromium-family sweep over docs/mockups/*.html that fails on an Uncaught console error or a #verdict strip stuck on its placeholder -- red observed via --self-test (planted breakage caught; detection-disabled control case also verified red), green restored, wired as the last step of build.yml's gates job. Fixed the four legacy mockups' h_theme ReferenceError (hyphenated ids referenced as bare underscored identifiers) with one const-alias block per file -- red observed pre-fix via git show HEAD, green after; ui-craft-gate.py findings unchanged at 98. DC-147 updated to controlled. Full App.Tests suite green (703, baseline 701) after one observed unrelated flake (TerminalSurfaceStopLineTests, reproduced green in isolation and on a second run). verify-id-allocators.py flags DC-158 colliding with origin/main -- named, expected per the session contract, left for the conductor's join.",
+      "tags": [
+        "census",
+        "contrast",
+        "dc-147",
+        "dc-158",
+        "mockups",
+        "inv-0008"
+      ],
+      "tier": "T1",
       "tool": null
     }
   ],

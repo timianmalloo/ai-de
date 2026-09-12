@@ -2,6 +2,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
@@ -10,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using AiDe.App.Workbench;
 using AiDe.App.Workbench.Composer;
+using AiDe.Core.AgentPlane;
 using AiDe.Core.Workbench;
 using Microsoft.Web.WebView2.Wpf;
 
@@ -235,10 +237,76 @@ internal static class ShellContrastCensus
 
         omissions.Add(new Omission("wpf", "combo drop-downs, tooltips, context menus", "Popup visuals are not in the window's visual tree until opened; the composer's template picker is collapsed with no catalog"));
         omissions.Add(new Omission("wpf", "the New Session sheet", "a separate window; ContrastFloorTests site 7 measures it"));
-        omissions.Add(new Omission("wpf", "hover / pressed states", "the census reads the rest state; a pointer-only pairing is unmeasured here (selected-inactive IS measured: the selected tab of every pane that lost focus is in the rest state)"));
+        omissions.Add(new Omission("wpf", "hover / pressed states", "IsMouseOver and IsPressed are read-only, device-driven properties with no public setter; forcing them would mean reaching into WPF's private render-state cache by reflection, which is not how any real input ever drives them (INV-0008 §10, phase 6: a state the census cannot reach headlessly stays a residual, never faked). Selected-inactive IS measured: the selected tab of every pane that lost focus is in the rest state."));
+        omissions.Add(new Omission("wpf", "disabled RadioButton", "App.xaml declares ChromeRadioButtonTemplate's IsEnabled=False trigger (the same DisabledTextBrush mechanism as CheckBox and MenuItem, INV-0008 §8's confirmed-by-structure sibling), but no RadioButton is ever instantiated anywhere in src/AiDe.App or src/AiDe.Core (verified: zero `new RadioButton`/`<RadioButton` sites) — there is no product site to force, not merely one the walk cannot reach."));
         omissions.Add(new Omission("terminal", "TerminalView cells", "GlyphRun renderer over the ANSI palette a child process chooses from; App.xaml's palette table is the pairing set"));
 
-        // 6. The two WebView2 pages: the composer and the graph canvas.
+        // 6. Census reach (INV-0008 phase 6): disabled check/radio/menu-item states. RadioButton
+        //    has no site to force (above); CheckBox and MenuItem do, and are forced on REAL,
+        //    already-composed controls — the same technique step 5 already uses to force a menu's
+        //    IsSubmenuOpen — never constructed on a throwaway window (ContrastFloorTests'
+        //    population, INV-0008 H3/DC-135). Each reach row is reported by count in the log
+        //    before the floor facts assert over it, so a reach that finds nothing is visible as a
+        //    0, not silently absent.
+        document.Model.Console.Append("census-lane", "Census lane", new RunEvent(
+            "census-run", "census-lane", null, 1, DateTimeOffset.UtcNow, "census.row", null,
+            new JsonObject(), new JsonObject()));
+        document.Model.SetActiveMode(AiDe.App.Workbench.Sessions.CanvasModeCatalog.ConsoleModeId);
+        window.UpdateLayout();
+
+        var laneCheckbox = Visuals(frame).OfType<CheckBox>().FirstOrDefault();
+        if (laneCheckbox is not null)
+        {
+            ForceDisabledAndRemeasure(window, frame, theme, seen, sites, log, laneCheckbox, "disabled checkbox (forced: Console lane filter)");
+        }
+        else
+        {
+            omissions.Add(new Omission("wpf", "disabled checkbox", "the seeded census lane did not render a filter row to force disabled — ConsoleSurface built no CheckBox"));
+        }
+
+        // A SUBMENU item, not a top-level header: forcing "_File" itself surfaced a real, separate
+        // gap (DC-158, reported to the Shell lane, not fixed here — App.xaml is outside this
+        // track's owned paths) — MenuItemTopLevelHeader's ControlTemplate carries no
+        // IsEnabled=False trigger, unlike its three sibling menu templates, so a disabled
+        // top-level header keeps TextBrush instead of DisabledTextBrush. A submenu command (here,
+        // File's first item) uses MenuItemSubmenuItem, which IS wired correctly, so this is the
+        // real, already-correct disabled-menu-item state the reach closes.
+        var fileHeader = menu.Items.OfType<MenuItem>().FirstOrDefault();
+        MenuItem? submenuItem = null;
+        FrameworkElement? submenuRoot = null;
+
+        if (fileHeader is not null)
+        {
+            fileHeader.IsSubmenuOpen = true;
+            window.UpdateLayout();
+
+            if ((fileHeader.Template?.FindName("Popup", fileHeader) ?? fileHeader.Template?.FindName("PART_Popup", fileHeader))
+                is System.Windows.Controls.Primitives.Popup { Child: FrameworkElement fileSubmenuRoot })
+            {
+                fileSubmenuRoot.UpdateLayout();
+                submenuRoot = fileSubmenuRoot;
+                submenuItem = Visuals(fileSubmenuRoot).OfType<MenuItem>().FirstOrDefault();
+            }
+        }
+
+        if (submenuItem is not null && submenuRoot is not null)
+        {
+            // A popup's content renders on its own visual root, never as a descendant of `frame` —
+            // exactly why step 5 walks `popupRoot`, not `frame`, when a menu is open. The same root
+            // must be used here or BoundsIn's descendant check silently drops every glyph inside it.
+            ForceDisabledAndRemeasure(window, submenuRoot, theme, seen, sites, log, submenuItem, $"disabled menu item (forced: {submenuItem.Header})");
+        }
+        else
+        {
+            omissions.Add(new Omission("wpf", "disabled menu item", "the File menu's submenu presented no MenuItem to force disabled"));
+        }
+
+        if (fileHeader is not null)
+        {
+            fileHeader.IsSubmenuOpen = false;
+        }
+
+        // 7. The two WebView2 pages: the composer and the graph canvas.
         var pageTheme = await WebViewsAsync(window, document, sites, omissions, log);
 
         // The theme the shell pushed on host.init, beside the custom properties the page's root
@@ -362,6 +430,40 @@ internal static class ShellContrastCensus
                 else element.SetValue(UIElement.OpacityProperty, local);
             }
         }
+    }
+
+    /// <summary>
+    /// Forces a real, already-composed control's <c>IsEnabled</c> to <c>false</c>, re-walks the
+    /// frame so its glyphs are measured in that state, then restores it.
+    /// </summary>
+    /// <remarks>
+    /// The census reach for INV-0008 phase 6: the rest state the product renders on open never
+    /// includes a disabled checkbox or menu item, but the mechanism (App.xaml's <c>IsEnabled=False</c>
+    /// trigger reaching the glyphs by inheritance) is the same one <c>ADisabledControlsInkIsTheDisabledToken</c>
+    /// already asserts over. This forces the SAME control the product built into that state rather
+    /// than constructing a stand-in — <c>Walk</c> is called again over the whole frame (it must be,
+    /// to render and sample pixels correctly), but every element already in <paramref name="seen"/>
+    /// is skipped, so only the one control just un-marked is newly measured.
+    /// </remarks>
+    private static void ForceDisabledAndRemeasure(
+        Window window, FrameworkElement measurementRoot, ResourceDictionary theme, HashSet<object> seen,
+        List<Site> sites, List<string> log, Control control, string label)
+    {
+        var wasEnabled = control.IsEnabled;
+        control.IsEnabled = false;
+        window.UpdateLayout();
+
+        foreach (var visual in Visuals(control))
+        {
+            seen.Remove(visual);
+        }
+
+        var before = sites.Count;
+        Walk(window, measurementRoot, theme, seen, sites, log);
+        log.Add($"{label}: +{sites.Count - before} sites ({sites.Count} total)");
+
+        control.IsEnabled = wasEnabled;
+        window.UpdateLayout();
     }
 
     private static Site Measure(

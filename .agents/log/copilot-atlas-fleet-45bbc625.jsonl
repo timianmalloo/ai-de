@@ -4,3 +4,7 @@
 {"agent": "copilot-atlas-conductor", "at": 1789231767.6426892, "kind": "claim", "path": "docs/collaboration/session-contracts.md", "seq": 4, "session": "copilot-atlas-fleet-45bbc625", "ttl": 300.0, "wi": "atlas-fleet-coordination-request"}
 {"agent": "copilot-atlas-conductor", "at": 1789232042.8539898, "kind": "release", "path": "docs/collaboration/session-contracts.md", "seq": 5, "session": "copilot-atlas-fleet-45bbc625", "wi": "WI-0"}
 {"agent": "copilot-atlas-conductor", "at": 1789232320.900236, "kind": "claim", "path": "docs/notes/atlas-owner", "seq": 6, "session": "copilot-atlas-fleet-45bbc625", "ttl": 1200.0, "wi": "atlas-owner-rulings"}
+{"agent": "copilot-atlas-conductor", "at": 1789233304.111755, "kind": "claim", "path": "docs/reviews/code-atlas-data-constraints.md", "seq": 7, "session": "copilot-atlas-fleet-45bbc625", "ttl": 1200.0, "wi": "atlas-data-model-review"}
+{"agent": "copilot-atlas-conductor", "at": 1789234450.053689, "kind": "claim", "path": "docs/reviews/code-atlas-spec-content-gates.md", "seq": 8, "session": "copilot-atlas-fleet-45bbc625", "ttl": 1200.0, "wi": "atlas-spec-gates"}
+{"agent": "copilot-atlas-conductor", "at": 1789235208.1947937, "kind": "claim", "path": "docs/coordination/code-atlas-resume.md", "seq": 9, "session": "copilot-atlas-fleet-45bbc625", "ttl": 1200.0, "wi": "atlas-resume-ledger"}
+{"agent": "copilot-atlas-conductor", "at": 1789235443.1959393, "kind": "claim", "path": "docs/specs/addendum-e-code-atlas.md", "seq": 10, "session": "copilot-atlas-fleet-45bbc625", "ttl": 600.0, "wi": "atlas-spec-final-ledger"}

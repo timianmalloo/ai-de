@@ -31,3 +31,35 @@
 {"agent": "claude-sh-2", "at": 1789232049.7822235, "kind": "claim", "path": "tests/AiDe.App.Tests/RailButtonsDoNotLieTests.cs", "seq": 31, "session": "sh-2", "ttl": 3600.0, "wi": "SH-2"}
 {"agent": "claude-sh-2", "at": 1789232049.8394096, "kind": "claim", "path": "tests/AiDe.App.Tests/TheWebSurfacesInitialiseOnceAcrossReparentsTests.cs", "seq": 32, "session": "sh-2", "ttl": 3600.0, "wi": "SH-2"}
 {"agent": "claude-sh-2", "at": 1789232049.8999982, "kind": "claim", "path": "tests/AiDe.App.Tests/WorkbenchDragCompletedHookTests.cs", "seq": 33, "session": "sh-2", "ttl": 3600.0, "wi": "SH-2"}
+{"agent": "claude-sh-2", "at": 1789233634.05278, "kind": "release", "path": "docs/lessons/defect-classes.md", "seq": 34, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235400.370627, "kind": "release", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 35, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235400.4227636, "kind": "release", "path": "src/AiDe.App/Workbench/DockHost.cs", "seq": 36, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235400.4746428, "kind": "release", "path": "src/AiDe.App/Workbench/ShellModeController.cs", "seq": 37, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235400.526378, "kind": "release", "path": "src/AiDe.App/Workbench/PerspectiveShell.cs", "seq": 38, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235400.580373, "kind": "release", "path": "src/AiDe.App/Workbench/LayoutPersistence.cs", "seq": 39, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235400.630905, "kind": "release", "path": "src/AiDe.Core/Workbench/ZoneBackedLayoutService.cs", "seq": 40, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235400.6839015, "kind": "release", "path": "src/AiDe.Core/Workbench/ZoneLayoutStore.cs", "seq": 41, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235400.734946, "kind": "release", "path": "src/AiDe.Core/Workbench/SurfaceAdmission.cs", "seq": 42, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235400.7864623, "kind": "release", "path": "src/AiDe.App/Workbench/WorkbenchController.cs", "seq": 43, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235400.836498, "kind": "release", "path": "src/AiDe.App/Workbench/WebSurfaceHost.cs", "seq": 44, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235400.891623, "kind": "release", "path": "src/AiDe.App/MainWindow.xaml", "seq": 45, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235400.9426641, "kind": "release", "path": "src/AiDe.App/MainWindow.xaml.cs", "seq": 46, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235400.994662, "kind": "release", "path": "src/AiDe.App/Workbench/WorkbenchDiagnostics.cs", "seq": 47, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235401.0451977, "kind": "release", "path": "src/AiDe.App/Workbench/DockRoundedTabs.xaml", "seq": 48, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235401.0977242, "kind": "release", "path": "DESIGN.md", "seq": 49, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235401.1499403, "kind": "release", "path": "src/AiDe.App/Workbench/CommandPalette.cs", "seq": 50, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235401.2032177, "kind": "release", "path": "src/AiDe.App/Workbench/MainMenuBuilder.cs", "seq": 51, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235401.2561939, "kind": "release", "path": "docs/proof/perspective-shell.md", "seq": 52, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235401.3071938, "kind": "release", "path": "src/AiDe.App/Workbench/PerspectiveRail.cs", "seq": 53, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235401.360237, "kind": "release", "path": "tests/AiDe.App.ComposerProbe/Program.SessionRender.cs", "seq": 54, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235401.411773, "kind": "release", "path": "tests/AiDe.App.Tests/ExplorerModeTests.cs", "seq": 55, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235401.4622984, "kind": "release", "path": "tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs", "seq": 56, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235401.5133061, "kind": "release", "path": "tests/AiDe.App.Tests/WorkbenchShellTests.cs", "seq": 57, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235401.5643666, "kind": "release", "path": "tests/AiDe.Core.Tests/ZoneLayoutStoreTests.cs", "seq": 58, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235401.6153734, "kind": "release", "path": "tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs", "seq": 59, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235401.666892, "kind": "release", "path": "tests/AiDe.App.Tests/PerspectiveRailTests.cs", "seq": 60, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235401.7199068, "kind": "release", "path": "tests/AiDe.App.Tests/PerspectiveShellTests.cs", "seq": 61, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235401.7722127, "kind": "release", "path": "tests/AiDe.Core.Tests/SurfaceAdmissionTests.cs", "seq": 62, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235401.8243413, "kind": "release", "path": "tests/AiDe.App.Tests/RailButtonsDoNotLieTests.cs", "seq": 63, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235401.8763602, "kind": "release", "path": "tests/AiDe.App.Tests/TheWebSurfacesInitialiseOnceAcrossReparentsTests.cs", "seq": 64, "session": "sh-2", "wi": "WI-0"}
+{"agent": "claude-sh-2", "at": 1789235401.9284115, "kind": "release", "path": "tests/AiDe.App.Tests/WorkbenchDragCompletedHookTests.cs", "seq": 65, "session": "sh-2", "wi": "WI-0"}

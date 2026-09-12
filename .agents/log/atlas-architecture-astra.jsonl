@@ -1,0 +1,3 @@
+{"agent": "copilot-atlas-conductor", "at": 1789234917.0471246, "kind": "session-start", "path": "-", "seq": 1, "session": "atlas-architecture-astra", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-atlas-architecture"}
+{"agent": "atlas-architecture-astra", "at": 1789235347.994999, "kind": "claim", "path": "docs/architecture/code-atlas-proposed.md", "seq": 2, "session": "atlas-architecture-astra", "ttl": 1800.0, "wi": "code-atlas-proposed-architecture"}
+{"agent": "atlas-architecture-astra", "at": 1789235348.0691636, "kind": "claim", "path": "docs/adr/proposed/code-atlas", "seq": 3, "session": "atlas-architecture-astra", "ttl": 1800.0, "wi": "code-atlas-proposed-architecture"}

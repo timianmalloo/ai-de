@@ -73,6 +73,23 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
     /// implicit style's ink instead, and "unavailable" renders exactly like "available". A contrast
     /// floor cannot see this — 13.57:1 clears — so it is asserted on provenance.
     /// </remarks>
+    /// <remarks>
+    /// <para><b>DC-161 (INV-0008 phase 6, this reach).</b> Forcing a real submenu <c>MenuItem</c>
+    /// disabled — the census reach's own new site — found one further gap the same way: the
+    /// gesture-chord <c>TextBlock</c> (<c>App.xaml</c>'s <c>MenuItemSubmenuItem</c> template,
+    /// <c>Foreground="{DynamicResource TextMutedBrush}"</c>) is a LOCAL value on the glyph itself,
+    /// so <c>IsEnabled=False</c>'s trigger — set on the container — never reaches it by
+    /// inheritance; "Ctrl+N" reads exactly as legible disabled as enabled. Forcing the top-level
+    /// menu HEADER (<c>_File</c> itself, Role <c>TopLevelHeader</c>) found a second, structural
+    /// instance: that ControlTemplate carries no <c>IsEnabled=False</c> trigger at all, unlike its
+    /// three sibling menu templates — App.xaml, out of this track's owned paths, so not forced in
+    /// the steady-state reach below (see the comment at the call site). Both ratios still clear
+    /// (6.83:1, 14.30:1) by coincidence — the state distinction is what is lost. Routed to the
+    /// Shell lane (App.xaml's owner) as a seam request; not fixed here. <see
+    /// cref="TheDC161MenuInkGapIsNamedAndDoesNotWiden"/> pins the one exception this fact allows,
+    /// so a THIRD site failing here goes red rather than silently joining the list.
+    /// </para>
+    /// </remarks>
     [Fact]
     public void ADisabledControlsInkIsTheDisabledToken()
     {
@@ -84,10 +101,71 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
         Assert.True(disabled.Count > 0, "the composed shell rendered no disabled text, so the disabled pairing measured nothing (DC-016)");
 
         var wrongInk = disabled.Where(s => !s.InkSource.StartsWith("DisabledTextBrush", StringComparison.Ordinal)).ToList();
+        var unnamed = wrongInk.Where(s => !IsDC161KnownSite(s)).ToList();
 
-        Assert.True(wrongInk.Count == 0,
-            $"{wrongInk.Count} of {disabled.Count} disabled controls render their ENABLED ink — the IsEnabled trigger's "
-            + "DisabledTextBrush never reaches the glyphs:" + Environment.NewLine + Table(wrongInk));
+        Assert.True(unnamed.Count == 0,
+            $"{unnamed.Count} of {disabled.Count} disabled controls render their ENABLED ink — the IsEnabled trigger's "
+            + "DisabledTextBrush never reaches the glyphs:" + Environment.NewLine + Table(unnamed));
+    }
+
+    /// <summary>
+    /// Pins DC-161's one live exception to <c>ADisabledControlsInkIsTheDisabledToken</c> by shape —
+    /// exactly the gesture-chord text a disabled submenu item renders — so the exception cannot
+    /// silently grow to cover a different, unrelated defect.
+    /// </summary>
+    [Fact]
+    public void TheDC161MenuInkGapIsNamedAndDoesNotWiden()
+    {
+        var census = Taken.Value;
+
+        Assert.True(census.Failure is null, "the census was not taken: " + census.Failure);
+
+        var disabled = census.Sites.Where(s => s.Population == "wpf" && !s.Enabled).ToList();
+        var wrongInk = disabled.Where(s => !s.InkSource.StartsWith("DisabledTextBrush", StringComparison.Ordinal)).ToList();
+        var known = wrongInk.Where(IsDC161KnownSite).ToList();
+
+        Assert.True(known.Count <= 1,
+            "DC-161's named exception widened beyond its one recorded gesture-chord site — a NEW "
+            + "site is sharing the exception rather than being reported on its own:"
+            + Environment.NewLine + Table(known));
+
+        Assert.Equal(known.Count, wrongInk.Count);
+    }
+
+    /// <summary>DC-161's one named, evidenced, out-of-scope exception (App.xaml, Shell lane's to fix).</summary>
+    private static bool IsDC161KnownSite(Site s) =>
+        s.Population == "wpf" && !s.Enabled && s.Text == "Ctrl+N"
+        && s.InkSource.StartsWith("TextMutedBrush", StringComparison.Ordinal);
+
+    /// <summary>
+    /// INV-0008 phase 6, the census reach itself: the states the walk did not reach before this
+    /// track — a disabled checkbox, a disabled submenu command — forced on the real, already-
+    /// composed controls (never constructed on a throwaway window, ContrastFloorTests' population).
+    /// Reported as a count first (rows added; below-floor count), then asserted at the floor —
+    /// the stricter ink-provenance invariant is a separate fact, above.
+    /// </summary>
+    [Fact]
+    public void TheCensusReachAddsTheDisabledCheckboxAndMenuItemStates()
+    {
+        var census = Taken.Value;
+
+        Assert.True(census.Failure is null, "the census was not taken: " + census.Failure);
+
+        var checkbox = census.Sites.Where(s => s.Population == "wpf" && s.Surface.StartsWith("Census lane", StringComparison.Ordinal)).ToList();
+        var menuItem = census.Sites.Where(s => s.Population == "wpf" && !s.Enabled && (s.Text == "New session…" || s.Text == "Ctrl+N")).ToList();
+
+        var checkboxBelowFloor = checkbox.Where(s => !s.Clears).ToList();
+        var menuItemBelowFloor = menuItem.Where(s => !s.Clears).ToList();
+
+        output.WriteLine(
+            $"reach: disabled checkbox rows={checkbox.Count} (below floor={checkboxBelowFloor.Count}); "
+            + $"disabled menu item rows={menuItem.Count} (below floor={menuItemBelowFloor.Count})");
+
+        Assert.True(checkbox.Count > 0, "the reach forced no disabled checkbox — the seeded census lane never rendered a filter row (DC-016)");
+        Assert.True(menuItem.Count > 0, "the reach forced no disabled menu item — the File menu's submenu never rendered a command (DC-016)");
+
+        Assert.True(checkboxBelowFloor.Count == 0, "the forced disabled checkbox is below its floor:" + Environment.NewLine + Table(checkboxBelowFloor));
+        Assert.True(menuItemBelowFloor.Count == 0, "the forced disabled menu item is below its floor:" + Environment.NewLine + Table(menuItemBelowFloor));
     }
 
     [Fact]

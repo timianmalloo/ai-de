@@ -22,3 +22,17 @@
 {"agent": "claude-cv-1", "at": 1789228634.6721518, "kind": "claim", "path": "tests/AiDe.Core.Tests/Composer", "seq": 22, "session": "cv-1", "ttl": 3600.0, "wi": "CV-1"}
 {"agent": "claude-cv-1", "at": 1789228634.7291653, "kind": "claim", "path": "tests/AiDe.Core.Tests/Sessions", "seq": 23, "session": "cv-1", "ttl": 3600.0, "wi": "CV-1"}
 {"agent": "claude-cv-1", "at": 1789228634.7847147, "kind": "claim", "path": "docs/proof/composer-as-conversation.md", "seq": 24, "session": "cv-1", "ttl": 3600.0, "wi": "CV-1"}
+{"agent": "claude-cv-1", "at": 1789234947.4705215, "kind": "claim", "path": "docs/lessons/defect-classes.md", "seq": 25, "session": "cv-1", "ttl": 3600.0, "wi": "CV-1"}
+{"agent": "claude-cv-1", "at": 1789234947.5471716, "kind": "claim", "path": "tests/AiDe.App.Tests/Conductor/AGovernedRunReachesTheConsoleTests.cs", "seq": 26, "session": "cv-1", "ttl": 3600.0, "wi": "CV-1"}
+{"agent": "claude-cv-1", "at": 1789234947.6488023, "kind": "claim", "path": "tests/AiDe.App.Tests/ShellContrastCensusTests.cs", "seq": 27, "session": "cv-1", "ttl": 3600.0, "wi": "CV-1"}
+{"agent": "claude-cv-1", "at": 1789234947.750928, "kind": "claim", "path": "tests/AiDe.App.Tests/Composer/TheWriterKeepsItsRoomTests.cs", "seq": 28, "session": "cv-1", "ttl": 3600.0, "wi": "CV-1"}
+{"agent": "claude-cv-1", "at": 1789234947.8429494, "kind": "claim", "path": "tests/AiDe.App.Tests/Composer/TheComposerRendersItsFieldLevelErrorsTests.cs", "seq": 29, "session": "cv-1", "ttl": 3600.0, "wi": "CV-1"}
+{"agent": "claude-cv-1", "at": 1789234947.9363859, "kind": "claim", "path": "tests/AiDe.Core.Tests/Composer/TheComposerIsOneValidationMechanismTests.cs", "seq": 30, "session": "cv-1", "ttl": 3600.0, "wi": "CV-1"}
+{"agent": "claude-cv-1", "at": 1789234948.0289052, "kind": "claim", "path": "tests/AiDe.Core.Tests/Composer/TheTierIsTheMechanicalRulesProjectionTests.cs", "seq": 31, "session": "cv-1", "ttl": 3600.0, "wi": "CV-1"}
+{"agent": "claude-cv-1", "at": 1789234948.123506, "kind": "claim", "path": "tests/AiDe.Core.Tests/Sessions/Thread/TheThreadAnnouncesByTransitionTests.cs", "seq": 32, "session": "cv-1", "ttl": 3600.0, "wi": "CV-1"}
+{"agent": "claude-cv-1", "at": 1789234948.2195408, "kind": "claim", "path": "docs/notes/cv1-f6-and-the-announcer-until-the-shell-lane-lands-them.md", "seq": 33, "session": "cv-1", "ttl": 3600.0, "wi": "CV-1"}
+{"agent": "claude-cv-1", "at": 1789234948.3125596, "kind": "claim", "path": "docs/notes/cv1-waiting-is-not-produced-in-phase-1.md", "seq": 34, "session": "cv-1", "ttl": 3600.0, "wi": "CV-1"}
+{"agent": "claude-cv-1", "at": 1789234948.408376, "kind": "claim", "path": "src/AiDe.Core/Presentation/Composer/ComposerCompiler.cs", "seq": 35, "session": "cv-1", "ttl": 3600.0, "wi": "CV-1"}
+{"agent": "claude-cv-1", "at": 1789234948.5009851, "kind": "claim", "path": "src/AiDe.Core/Presentation/Sessions/ThreadAnnouncementPolicy.cs", "seq": 36, "session": "cv-1", "ttl": 3600.0, "wi": "CV-1"}
+{"agent": "claude-cv-1", "at": 1789235598.6471148, "kind": "release", "path": "docs/lessons/defect-classes.md", "seq": 37, "session": "cv-1", "wi": "WI-0"}
+{"agent": "claude-cv-1", "at": 1789235678.2080827, "kind": "release", "path": "tests/AiDe.App.Tests/ShellContrastCensusTests.cs", "seq": 38, "session": "cv-1", "wi": "WI-0"}
