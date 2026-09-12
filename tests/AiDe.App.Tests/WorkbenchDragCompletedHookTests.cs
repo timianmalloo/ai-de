@@ -22,11 +22,22 @@ namespace AiDe.App.Tests;
 /// </remarks>
 public sealed class WorkbenchDragCompletedHookTests
 {
+    /// <summary>
+    /// The host under the drag is <b>host B (Architecture)</b>: the kinds these drags move — the
+    /// graph, the evidence views, contexts — are Architecture's by ADR-0030's allow-list, and the
+    /// hook is wired per host (ADR-0031), so driving host B proves the wiring the second host got.
+    /// Host B's default here is today's default filtered to its kinds (SH-3 lands §B4's own):
+    /// Center: graph · Left: explore, provenance, contexts, joins.
+    /// </summary>
     private sealed record Harness(WorkbenchShell Shell, Window Window)
     {
-        public WorkbenchAdapter Adapter => Shell.Adapter;
+        public DockHost? HostOverride { get; init; }
 
-        public ZoneBackedLayoutService Zones => (ZoneBackedLayoutService)Shell.Service;
+        public DockHost Host => HostOverride ?? Shell.Architecture;
+
+        public WorkbenchAdapter Adapter => Host.Adapter;
+
+        public ZoneBackedLayoutService Zones => Host.Service;
     }
 
     /// <summary>
@@ -49,7 +60,10 @@ public sealed class WorkbenchDragCompletedHookTests
         };
 
         window.Show();
-        Settle(window, shell.Manager);
+        foreach (var host in shell.Hosts)
+        {
+            Settle(window, host.Manager);
+        }
 
         try { return body(new Harness(shell, window)); }
         finally { window.Close(); }
@@ -62,21 +76,28 @@ public sealed class WorkbenchDragCompletedHookTests
     }
 
     /// <summary>
-    /// The control for F1. RED before the hook existed: the model still held "domain" in the Center
-    /// minutes after the drag, because nothing told it.
+    /// The control for F1. RED before the hook existed: the model still held the dragged pane in
+    /// its old zone minutes after the drag, because nothing told it.
     /// </summary>
-    [Fact]
-    public void ANativeDrag_ReachesTheModelImmediately_WithoutWaitingForAnUnrelatedCommand()
+    [Theory]
+    [InlineData("architecture", "contexts", "graph", ZoneId.Left, ZoneId.Center)]
+    [InlineData("coding", "board", "terminal-1", ZoneId.Center, ZoneId.Bottom)]
+    public void ANativeDrag_ReachesTheModelImmediately_WithoutWaitingForAnUnrelatedCommand(
+        string perspective, string dragged, string onto, ZoneId expectedBefore, ZoneId expectedAfter)
     {
+        // Both hosts: the hook is wired per host (ADR-0031), so INV-0006 F1 is proven for host A
+        // (the original) and host B alike, each with a pair its own allow-list admits.
         var (zoneBefore, zoneAfter) = WithRealizedWorkbench(h =>
         {
-            var before = h.Zones.Zones.FindZoneOf("domain");
-            DragDocumentIntoPane(h, "domain", "explore");
-            return (before, h.Zones.Zones.FindZoneOf("domain"));
+            var host = h.Shell.Hosts.Single(x => x.Row.Id == perspective);
+            var hh = h with { HostOverride = host };
+            var before = host.Service.Zones.FindZoneOf(dragged);
+            DragDocumentIntoPane(hh, dragged, onto);
+            return (before, host.Service.Zones.FindZoneOf(dragged));
         });
 
-        Assert.Equal(ZoneId.Center, zoneBefore);
-        Assert.Equal(ZoneId.Left, zoneAfter);
+        Assert.Equal(expectedBefore, zoneBefore);
+        Assert.Equal(expectedAfter, zoneAfter);
     }
 
     /// <summary>
@@ -88,12 +109,12 @@ public sealed class WorkbenchDragCompletedHookTests
         var (before, after) = WithRealizedWorkbench(h =>
         {
             var start = ZoneOfEverySurface(h.Zones);
-            DragDocumentIntoPane(h, "domain", "explore");
+            DragDocumentIntoPane(h, "contexts", "graph");
             return (start, ZoneOfEverySurface(h.Zones));
         });
 
         var moved = before.Keys.Where(id => before[id] != after[id]).OrderBy(id => id, StringComparer.Ordinal).ToList();
-        Assert.Equal(["domain"], moved);
+        Assert.Equal(["contexts"], moved);
     }
 
     /// <summary>
@@ -107,15 +128,15 @@ public sealed class WorkbenchDragCompletedHookTests
         var (before, after) = WithRealizedWorkbench(h =>
         {
             var start = ZoneOfEverySurface(h.Zones);
-            DragDocumentIntoPane(h, "domain", "explore");
-            DragDocumentIntoPane(h, "sessions", "explore");
+            DragDocumentIntoPane(h, "contexts", "graph");
+            DragDocumentIntoPane(h, "joins", "graph");
             return (start, ZoneOfEverySurface(h.Zones));
         });
 
         var moved = before.Keys.Where(id => before[id] != after[id]).OrderBy(id => id, StringComparer.Ordinal).ToList();
-        Assert.Equal(["domain", "sessions"], moved);
-        Assert.Equal(ZoneId.Left, after["domain"]);
-        Assert.Equal(ZoneId.Left, after["sessions"]);
+        Assert.Equal(["contexts", "joins"], moved);
+        Assert.Equal(ZoneId.Center, after["contexts"]);
+        Assert.Equal(ZoneId.Center, after["joins"]);
     }
 
     /// <summary>
@@ -168,7 +189,7 @@ public sealed class WorkbenchDragCompletedHookTests
             h.Adapter.Manager.Layout.Updated += (_, _) => docking++;
             h.Adapter.Manager.LayoutUpdated += (_, _) => wpf++;
 
-            DragDocumentIntoPane(h, "domain", "explore");
+            DragDocumentIntoPane(h, "contexts", "graph");
             return (docking, wpf);
         });
 
@@ -186,7 +207,7 @@ public sealed class WorkbenchDragCompletedHookTests
     {
         var records = CapturingDiagnostics(() => WithRealizedWorkbench(h =>
         {
-            DragDocumentIntoPane(h, "domain", "explore");
+            DragDocumentIntoPane(h, "contexts", "graph");
             return 0;
         }));
 
@@ -204,9 +225,9 @@ public sealed class WorkbenchDragCompletedHookTests
 
         // The pair is the point: either half alone cannot separate a correct reconcile from a
         // whole-column relabel, which is the distinction the original report could not be answered on.
-        Assert.Contains("Center:[graph+domain+", before, StringComparison.Ordinal);
-        Assert.Contains("Left:[domain+explore+", after, StringComparison.Ordinal);
-        Assert.Equal(["domain"], moved);
+        Assert.Contains("Left:[explore+provenance+contexts+joins", before, StringComparison.Ordinal);
+        Assert.Contains("Center:[contexts+graph", after, StringComparison.Ordinal);   // dropped first in the pane
+        Assert.Equal(["contexts"], moved);
     }
 
     /// <summary>
@@ -224,11 +245,15 @@ public sealed class WorkbenchDragCompletedHookTests
             WorkbenchDiagnostics.Sink = records.Add;
             try
             {
-                h.Shell.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed));
+                // Right gets two panes so a drag out of it leaves it rendered; Left stays collapsed
+                // while still holding two. The drag goes Right -> Center, both rendered.
+                h.Zones.Apply(new LayoutOperation.MoveSurface("provenance", new DropTarget(ZonesToTree.RightStackId, DropKind.JoinStack)));
+                h.Zones.Apply(new LayoutOperation.MoveSurface("joins", new DropTarget(ZonesToTree.RightStackId, DropKind.JoinStack)));
+                h.Zones.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed));
                 h.Adapter.Render();
                 Settle(h.Window, h.Adapter.Manager);
 
-                DragDocumentIntoPane(h, "domain", "terminal-1");
+                DragDocumentIntoPane(h, "provenance", "graph");
                 return (h.Shell.Announcer.Last, records.Count(r => r.Contains("position-mapping-refused", StringComparison.Ordinal)));
             }
             finally { WorkbenchDiagnostics.Sink = previous; }
@@ -268,8 +293,8 @@ public sealed class WorkbenchDragCompletedHookTests
 
                     // Rearrange, flush, and open the workspace again.
                     first.Service.Apply(new LayoutOperation.MoveSurface(
-                        "domain", new DropTarget(ZonesToTree.LeftStackId, DropKind.JoinStack)));
-                    first.Persistence!.SaveNow();
+                        "board", new DropTarget(ZonesToTree.LeftStackId, DropKind.JoinStack)));
+                    first.Coding.Persistence!.SaveNow();
 
                     lines.Clear();
                     var second = new WorkbenchShell(queries: null, workspaceDataDirectory: directory);
@@ -335,18 +360,18 @@ public sealed class WorkbenchDragCompletedHookTests
                     ShowActivated = false,
                 };
                 window.Show();
-                Settle(window, shell.Manager);
+                Settle(window, shell.Architecture.Manager);
 
-                DragDocumentIntoPane(new Harness(shell, window), "domain", "explore");
-                var afterDrag = ((ZoneBackedLayoutService)shell.Service).Zones.Shape();
-                shell.Persistence!.SaveNow();
+                DragDocumentIntoPane(new Harness(shell, window), "contexts", "graph");
+                var afterDrag = shell.Architecture.Service.Zones.Shape();
+                shell.Architecture.Persistence!.SaveNow();
                 window.Close();
 
                 var next = new WorkbenchShell(queries: null, workspaceDataDirectory: directory);
-                return (afterDrag, ((ZoneBackedLayoutService)next.Service).Zones.Shape());
+                return (afterDrag, next.Architecture.Service.Zones.Shape());
             }, 60);
 
-            Assert.Contains("Left:[domain+explore+", onScreen, StringComparison.Ordinal);
+            Assert.Contains("Center:[contexts+graph", onScreen, StringComparison.Ordinal);
             Assert.Equal(onScreen, reopened);
         }
         finally

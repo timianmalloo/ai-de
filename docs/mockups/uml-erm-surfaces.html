@@ -153,6 +153,12 @@
 
 <script>
   const H=document.documentElement;
+  // DC-147: hyphenated ids (h-theme, st-gen, ...) carry no implicit named-access global — every
+  // bare reference below threw ReferenceError before the strip could render a verdict.
+  const h_theme=document.getElementById('h-theme'), h_motion=document.getElementById('h-motion'),
+    h_state=document.getElementById('h-state'), h_edit=document.getElementById('h-edit'),
+    st_gen=document.getElementById('st-gen'), st_err=document.getElementById('st-err'),
+    st_cur=document.getElementById('st-cur');
   h_theme.onchange=e=>H.setAttribute('data-theme',e.target.value);
   h_motion.onchange=e=>H.setAttribute('data-motion',e.target.value);
   function show(v){['er','uml','c4'].forEach(x=>document.getElementById('v-'+x).hidden=x!==v);

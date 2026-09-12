@@ -18,7 +18,17 @@ public interface IWorkbenchAnnouncer
     /// Announces with an urgency and a kind (SC9; DS-1 P6): a status is queued after what is being
     /// read, an assertive announcement interrupts it. <c>Announce(string)</c> is the status form.
     /// </summary>
-    void Announce(Announcement announcement);
+    /// <remarks>
+    /// Additive by construction: an implementer that knows only the status form (the shell's test
+    /// doubles predate this member — the merge of SH-2 met one) speaks the text as a status. The
+    /// two real announcers override it: the workbench's raises the mapped notification, the
+    /// recording one keeps the urgency for a test to read.
+    /// </remarks>
+    void Announce(Announcement announcement)
+    {
+        ArgumentNullException.ThrowIfNull(announcement);
+        Announce(announcement.Text);
+    }
 
     /// <summary>
     /// Empties the status line.

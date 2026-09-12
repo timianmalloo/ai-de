@@ -27,14 +27,24 @@ namespace AiDe.App.Workbench;
 /// </remarks>
 public sealed class CommandPalette
 {
-    private readonly WorkbenchController _controller;
+    private readonly Func<string, bool> _execute;
     private readonly IWorkbenchAnnouncer _announcer;
     private IInputElement? _focusBeforeOpen;
     private PerspectiveMenu _menu = PerspectiveMenu.For(PerspectiveSet.Initial);
 
+    /// <summary>A palette over one controller — a headless test's shape; the shell passes its router.</summary>
+    /// <remarks>simplify: a test-only overload (eleven test sites, one of them in a file the census
+    /// track owns this horizon). Ceiling: this constructor; trigger: when those sites can be edited,
+    /// substitute <c>controller.Execute</c> at each and delete this.</remarks>
     public CommandPalette(WorkbenchController controller, IWorkbenchAnnouncer announcer)
+        : this((controller ?? throw new ArgumentNullException(nameof(controller))).Execute, announcer)
     {
-        _controller = controller;
+    }
+
+    /// <param name="execute">Where a chosen row goes: the shell-level router (ADR-0031), which resolves the host a command reaches.</param>
+    public CommandPalette(Func<string, bool> execute, IWorkbenchAnnouncer announcer)
+    {
+        _execute = execute ?? throw new ArgumentNullException(nameof(execute));
         _announcer = announcer;
 
         SearchBox = new TextBox();
@@ -117,7 +127,7 @@ public sealed class CommandPalette
         }
 
         Close();
-        _controller.Execute(command.Id);
+        _execute(command.Id);
         return true;
     }
 

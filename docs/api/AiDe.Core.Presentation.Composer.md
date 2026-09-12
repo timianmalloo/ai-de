@@ -264,7 +264,7 @@ order, and nothing reads a clock, a culture or the environment.
 | `string LeaseNoneYet = "none yet — mention the files this run may write as @path"` | The lease segment's empty state on the decoration line (SC2's words). |
 | `TierProjection Tier(TurnShape shape, IReadOnlyList<string> patterns, string structureSource = "you")` | Addendum D §A9's mechanical tier rule — a deterministic, **total** function of two inputs: **P**, whether a goal block exists (`TurnShape`), and **L**, the count of distinct lease patterns the source text derives. Not… |
 | `int CapOf(string tier)` | The cap function (CT19; GO7): `cap(T0) = 0`, `cap(T1) = 2`, `cap(T2) = 4`. |
-| `int EffectiveFanOut(string tier, int ceiling)` | Effective fan-out = `min(cap(tier), ceiling)` (Ruling 64) — a projection, never stored, never raised from a prompt. |
+| `int EffectiveFanOut(string tier, int ceiling)` | Effective fan-out = `min(cap(tier), ceiling)` (Ruling 64) — a projection, never stored, never raised from a prompt. A negative ceiling is NOT clamped to 0: it is a broken session setting, and the contract refuses the … |
 | `string SettingsLine(string tier, int ceiling, RunBudget? budgetCap)` | The composer's settings line (`DESIGN.md` copy): *fan-out cap 2 (ceiling 3) · budget: bounded by your subscription · from session settings*; at T0, *T0 — the ceiling of 3 does not apply to this turn*. Never a numeral … |
 | `IReadOnlyList<Sessions.DecorationRow> Decorations(ComposerDraft draft, string taskClass)` | The current turn's decoration rows in SC2's one grammar — `class · tier · lease · shape [· template]`, each with its source and reason — read from the same two inputs the shape, the access and the tier read, so the li… |
 | `CompiledPrompt Compile(ComposerDraft draft, PromptTemplate? template = null)` | Compiles the draft.  is required only for a template draft. |
@@ -424,7 +424,7 @@ written one is overwritten with.
 | `string FreeFormText` | The retained free-form text — the message, in every form but a template's. |
 | `IReadOnlyList<string> SessionSuppliedGoalFields { get; } =` | The three goal-block fields the session and the compile step supply — never the operator, per prompt (Rulings 56, 63, 72): the tier is the compile step's projection (`Tier`), the cap and the budget are the session's (… |
 | `IReadOnlyList<string> PerPromptGoalFields { get; } =` | The goal-block fields a prompt carries: the three content lines. |
-| `SessionCeilings Ceilings { get; private set; } = SessionCeilings.Default` | The session's ceilings the compiled block reads (Ruling 56; ADR-0033 §3's `ceilings` snapshot): the fan-out ceiling and the budget cap. Set by the shell from the session's config; an unbound draft carries the config's… |
+| `Ceilings Ceilings { get; private set; } = Composer.Ceilings.Default` | The session's ceilings the compiled block reads (Ruling 56; ADR-0033 §3's `ceilings` snapshot): the fan-out ceiling and the budget cap. Set by the shell from the session's config; an unbound draft carries the config's… |
 | `void UseSessionSettings(SessionConfig config)` | Binds the session's ceilings (Ruling 56: one home, never a per-prompt override). |
 | `string? TemplateId { get; private set; }` | The template this draft is bound to, when its shape is a template. |
 | `IReadOnlyDictionary<string, string> GoalValues` | The goal-block field values, by wire name. |
@@ -497,7 +497,7 @@ lease read (Addendum D §A9); the cap is `min(cap(tier), ceiling)` (Ruling 64); 
 is the session's cap or `SubscriptionBounded`. So a send with nothing
 typed for them is complete, and `Validate` stays byte-identical.
 
-## `SessionCeilings`
+## `Ceilings`
 
 *record* — `ComposerDraft.cs`
 
@@ -506,7 +506,7 @@ the budget cap, `null` for *bounded by the subscription* (Ruling 72).
 
 | Member | Summary |
 |---|---|
-| `SessionCeilings Default = new(SessionConfig.DefaultFanOutCeiling, null)` | What an unbound draft carries: the config's own defaults, never a compile-time invention. |
+| `Ceilings Default = new(SessionConfig.DefaultFanOutCeiling, null)` | What an unbound draft carries: the config's own defaults, never a compile-time invention. |
 
 ## `PersistedComposerDraft`
 

@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Workbench: 70 types, 132 members, 53% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Workbench: 78 types, 147 members, 58% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Workbench`
 
-**70 public types · 132 public members · 53% documented.**
+**78 public types · 147 public members · 58% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -608,6 +608,64 @@ row (Ruling 54): adding it is adding a row here, and every derived surface follo
 | `IReadOnlyList<Perspective> RoutingOrder { get; } = [Architecture, Coding]` | Where a kind-open the active perspective does not admit is routed (US-C3): the first of these that admits the kind. Architecture before Coding because the requester is always a reading surface, so the reading host win… |
 | `Perspective? ByCommandId(string commandId)` | The row whose command has this id, or null — the one lookup the controller needs. |
 
+## `KindRule`
+
+*record* — `SurfaceAdmission.cs`
+
+One kind's admission row: which perspectives admit it, and whether a host holds at most one.
+
+## `DropReason`
+
+*enum* — `SurfaceAdmission.cs`
+
+Why a surface was dropped from a host's arrangement (ADR-0032 rule 2).
+
+## `DroppedSurface`
+
+*record* — `SurfaceAdmission.cs`
+
+A surface the admission filter removed, with the reason and the perspective that admits its kind (null for a duplicate, or a kind no perspective admits).
+
+## `AdmissionFilter`
+
+*record* — `SurfaceAdmission.cs`
+
+What `Filter` produced: the admitted arrangement and every drop.
+
+## `SurfaceAdmission`
+
+*class* — `SurfaceAdmission.cs`
+
+The Perspective Layout aggregate's invariant as data (ADR-0030 rule 2; ADR-0031 rule 3;
+ADR-0032 rule 2): the kinds one host perspective admits, which of them are one-instance, and
+— for the report — which perspective admits a kind this host refuses.
+
+**Remarks.** **Enforced by the host's layout service, never by the store.** The store filters by
+*availability* and stays perspective-blind so one class serves every slot; admissibility
+is the host's invariant and is applied wherever the host's arrangement is set — an add, a
+restore, a reset (ADR-0032, alternatives).
+
+
+
+
+
+**Rows, not a switch.** The rules are the App's kind table (its `Perspectives` and
+`Instances` columns) handed down as data, so a kind added as a row is admitted, refused and
+reported with no edit here.
+
+| Member | Summary |
+|---|---|
+| `string RefusalCode = "AIDE-LAYOUT-KIND-NOT-ADMITTED"` | The stable code a host's service refuses an inadmissible surface with (ADR-0031 rule 3; US-C3 b1). Beside `LayoutErrorCodes`' family, named here because the rule is this type's. |
+| `string OneInstanceCode = "AIDE-LAYOUT-ONE-INSTANCE"` | The stable code a host's service refuses a second surface of a one-instance kind with. |
+| `SurfaceAdmission(Perspective perspective, IReadOnlyDictionary<string, KindRule> rules)` | **(gap)** |
+| `SurfaceAdmission Unrestricted { get; } = new()` | Admits every kind, any number of times — the behaviour every caller had before perspectives (the legacy tree path, and every test that constructs a bare service). Never the shell's. |
+| `Perspective Perspective { get; }` | The perspective whose host this admission guards. |
+| `bool IsUnrestricted { get; }` | True for `Unrestricted` only. |
+| `bool Admits(string kind)` | Whether this host admits a surface of . |
+| `bool IsOneInstance(string kind)` | Whether a host holds at most one surface of . |
+| `Perspective? AdmittedBy(string kind)` | The perspective that admits  — the first of `RoutingOrder` that does — or null for a kind no perspective admits. What the drop report names, and where a routed open lands (US-C3). |
+| `AdmissionFilter Filter(WorkbenchLayout layout)` | Removes from  every surface this host does not admit and every second instance of a one-instance kind, in zone order (Left · Right · Bottom · Center, then the floating stacks), reporting each drop. A stack left empty … |
+
 ## `TreeToZones`
 
 *class* — `TreeToZones.cs`
@@ -726,13 +784,33 @@ persistence or shell wiring, all of which speak `ILayoutService`.
 | Member | Summary |
 |---|---|
 | `ZoneBackedLayoutService(WorkbenchLayout? initial = null)` | **(gap)** |
+| `ZoneBackedLayoutService(SurfaceAdmission admission, WorkbenchLayout? initial = null)` | A host's service:  is the perspective's allow-list and one-instance rule, enforced at open, restore and reset (ADR-0031 rule 3). The initial arrangement — , else the default — is filtered by the same rule, so the host… |
+| `IReadOnlyList<DroppedSurface> DefaultDropped { get; }` | What the seed default dropped to satisfy this host's invariant — non-empty only while the one `Default` seeds a kind or a duplicate a perspective refuses (today: Architecture drops the second `view`). The shell record… |
+| `SurfaceAdmission Admission { get; }` | The allow-list this host enforces; `Unrestricted` for a bare service. |
 | `WorkbenchLayout Zones` | The zone model — the real source of truth behind the projected tree. |
-| `void RestoreZones(WorkbenchLayout zones)` | Replaces the whole zone arrangement (used by persistence restore). |
+| `WorkbenchLayout DefaultLayout()` | The arrangement this host starts from and resets to: the default, holding only admitted kinds and at most one of each one-instance kind. |
+| `ZoneRestoreReport RestoreZones(WorkbenchLayout zones)` | Replaces the whole zone arrangement (persistence restore), dropping what this host does not admit and reporting each drop (ADR-0032 rule 2). Zero surfaces left → the default is applied and the report says so; the host… |
 | `Layout Current` | **(gap)** |
 | `bool IsLocked { get; set; }` | **(gap)** |
 | `void Restore(Layout layout)` | **(gap)** |
 | `bool ReconcileFromView(Layout layout)` | Reconciles a native drag from the VIEW's fixed-frame tree by POSITION only. Returns true when it mapped confidently and applied; returns **false without touching the model** when it cannot — so an unmappable drag reve… |
 | `LayoutResult Apply(LayoutOperation operation)` | **(gap)** |
+
+### `WorkbenchLayout DefaultLayout()`
+
+The arrangement this host starts from and resets to: the default, holding only admitted
+kinds and at most one of each one-instance kind.
+
+**Remarks.** simplify: today's one `Default` filtered per host; the per-
+perspective defaults of Addendum C §B4 are `WorkbenchLayout.Default(perspective)` (the
+Shell lane's next slice, SH-3), which replaces the filter here with the row's own table.
+Ceiling: the two hosts; trigger: that method landing.
+
+## `ZoneRestoreReport`
+
+*record* — `ZoneBackedLayoutService.cs`
+
+What a zone restore did to the arrangement it was given: every drop, and whether the default was applied because nothing admissible was left.
 
 ## `ZoneId`
 
@@ -896,6 +974,18 @@ remedy for DC-063: there is no operation that restructures the relationship betw
 
 *No doc comment on this type.* **(gap)**
 
+## `ZoneLoadRefusal`
+
+*enum* — `ZoneLayoutStore.cs`
+
+Why `Read` returned no layout (ADR-0032 rule 4). `None` when it returned one.
+
+## `ZoneLoadResult`
+
+*record* — `ZoneLayoutStore.cs`
+
+What a read produced: the layout, or null with the reason.
+
 ## `ZoneLayoutStore`
 
 *class* — `ZoneLayoutStore.cs`
@@ -910,8 +1000,18 @@ becomes a placeholder, never a broken pane.
 |---|---|
 | `int CurrentSchemaVersion = 1` | **(gap)** |
 | `string FilePath` | **(gap)** |
-| `void Save(WorkbenchLayout layout)` | **(gap)** |
-| `WorkbenchLayout? Load(IReadOnlySet<string> availableSurfaces, IReadOnlySet<string> restorableKinds)` | Loads the saved zone layout, dropping surfaces that are no longer available. Returns null when there is no file, it cannot be read, or it does not deserialize — the caller then keeps its current arrangement (or the de… |
+| `string TempPath` | The sibling a save is written to before it replaces the file: `<file>.tmp`. |
+| `void Save(WorkbenchLayout layout, string? backupPath = null)` | Writes the arrangement — atomically (ADR-0032 rule 3). The envelope is serialised to `TempPath` and then moved over the destination in one step, so the file the product reads is never a torn write: a crash before the … |
+| `ZoneLoadResult Read(IReadOnlySet<string> availableSurfaces, IReadOnlySet<string> restorableKinds)` | Loads the saved zone layout, dropping surfaces that are no longer available, and, when nothing is returned, says why (ADR-0032 rule 4): no file · a newer schema than this build reads · a corrupt file (unreadable JSON,… |
+
+### `void Save(WorkbenchLayout layout, string? backupPath = null)`
+
+Writes the arrangement — atomically (ADR-0032 rule 3). The envelope is serialised to
+`TempPath` and then moved over the destination in one step, so the file the
+product reads is never a torn write: a crash before the move leaves the original, and a
+stale temp file is overwritten by the next save.
+
+- **`backupPath`** — When given and the destination exists, the SAME call that replaces the original preserves it there (`Replace(string, string, string?)`): the pre-perspective bytes, or a refused file, are kept by the write that would otherwise lose them. A backup that cannot be created fails the save and leaves the destination untouched — the caller reports it; the original is never written over on a best-effort promise.
 
 ## `ZonesToTree`
 

@@ -20,17 +20,27 @@ using AiDe.Core.Facts;
 namespace AiDe.App.Workbench;
 
 /// <summary>
-/// The composition root for the workbench: model, adapter, controller, announcer and the docking
-/// host, assembled and wired.
+/// The composition root for the workbench: the two docking hosts (ADR-0031), the shared factory,
+/// announcer, palette and prompt bar, and everything workspace-level, assembled and wired.
 /// </summary>
 /// <remarks>
-/// This is the E10 reachability piece. Everything in Phase 1b was built and tested but unreachable —
-/// the window still showed the superseded fixed grid, so a user could not touch any of it. A
-/// capability nobody can open is not delivered.
+/// <para>This is the E10 reachability piece. Everything in Phase 1b was built and tested but
+/// unreachable — the window still showed the superseded fixed grid, so a user could not touch any
+/// of it. A capability nobody can open is not delivered.</para>
 ///
-/// Composition happens in one place on purpose: the live region, the controller and the adapter must
-/// share the same <see cref="ILayoutService"/> instance, or the keyboard would mutate one layout
-/// while the view rendered another.
+/// <para><b>Two hosts, one of each shared thing (ADR-0031).</b> Host A (<see cref="Coding"/>) is
+/// today's instances, unchanged in mechanism; host B (<see cref="Architecture"/>) is the same
+/// <see cref="DockHost"/> unit composed a second time. Each host owns its service, manager, adapter,
+/// controller, rails and persistence slot; the shell owns both units and every workspace-level
+/// member — the factory, the session documents, the watcher, dispatch, the canvas binding. A pane
+/// binder walks <i>both</i> hosts, because the kind it binds lives in whichever host admits it.
+/// The members <see cref="Service"/>, <see cref="Manager"/>, <see cref="Adapter"/>,
+/// <see cref="Controller"/>, <see cref="WorkbenchRoot"/> and <see cref="Persistence"/> are host A's,
+/// kept so every existing caller of the one-host shell reads the same instances it always did.</para>
+///
+/// <para>Composition happens in one place on purpose: the live region, a host's controller and its
+/// adapter must share the same <see cref="ILayoutService"/> instance, or the keyboard would mutate
+/// one layout while the view rendered another.</para>
 /// </remarks>
 public sealed class WorkbenchShell : IDisposable
 {
@@ -56,7 +66,6 @@ public sealed class WorkbenchShell : IDisposable
     // opened on demand and shows the most recent index's coverage rather than re-indexing itself.
     private AiDe.Core.Ipc.IndexSummary? _lastIndex;
     private AiDe.Core.Presentation.WorkspaceDiagnosticsViewModel? _diagnosticsVm;
-    private readonly ZoneRails _rails;
     // Cross-restart prompt drafts, keyed by the stable SurfaceId (off the Core layout model).
     private PromptDraftStore? _promptDraftStore;
 
@@ -108,10 +117,6 @@ public sealed class WorkbenchShell : IDisposable
 
     public WorkbenchShell(IWorkspaceQueries? queries, string? workspaceDataDirectory = null)
     {
-        // ADR-0021: the layout is zone-based. The Strangler service projects zones to the fixed-shape
-        // tree the adapter/persistence render, so moving/closing a pane can no longer relocate others.
-        Service = new ZoneBackedLayoutService();
-
         LiveRegion = new TextBlock
         {
             // A status strip is ONE line. Wrapping + an Auto-height row let a long announcement (a
@@ -161,45 +166,58 @@ public sealed class WorkbenchShell : IDisposable
         // without them fails silently rather than loudly (DC-084).
         TerminalSurface.WorkingDirectoryFor =
             surfaceId => _agentWorktrees.TryGetValue(surfaceId, out var path) ? path : null;
-        Manager = new DockingManager();
-        AutomationProperties.SetName(Manager, "Workbench");
 
-        // Indirected through a field so the workspace can arrive AFTER the window exists. The
-        // shell is built synchronously and shown immediately; reaching a daemon may take a cold
-        // start, and a window that appears only once a process has launched looks like a failure to
-        // launch.
-        Adapter = new WorkbenchAdapter(Manager, Service, surface => _factory.Create(surface));
-        Controller = new WorkbenchController(Service, Announcer);
+        // ADR-0031: the per-host composition — ADR-0021's zone service, the manager, the adapter,
+        // the controller and the collapse-to-rail strips — is one unit, built twice from the ONE
+        // shared factory and announcer. The factory is read through a delegate so the workspace can
+        // arrive AFTER the window exists: the shell is built synchronously and shown immediately;
+        // reaching a daemon may take a cold start, and a window that appears only once a process
+        // has launched looks like a failure to launch.
+        Coding = DockHost.Create(PerspectiveSet.Coding, surface => _factory.Create(surface), Announcer, ExpandZone);
+        Architecture = DockHost.Create(PerspectiveSet.Architecture, surface => _factory.Create(surface), Announcer, ExpandZone);
+        Hosts = [Coding, Architecture];
 
-        // ADR-0021 collapse-to-rail: wrap the docking host in edge rails that appear when a tool zone
-        // is collapsed. The rail's one-click expand returns the zone (its panes were retained in the
-        // model). Rails refresh whenever the projection is re-rendered (Manager.LayoutChanged fires
-        // when Render replaces the layout).
-        _rails = new ZoneRails(
-            Manager,
-            () => (Service as ZoneBackedLayoutService)?.Zones,
-            ExpandZone);
-        Manager.LayoutChanged += (_, _) => _rails.Refresh();
+        foreach (var host in Hosts)
+        {
+            // What the host's DEFAULT dropped to satisfy its own invariant is on record, never
+            // silent (the D&P reviewer's finding): today's one Default() seeds two `view`
+            // surfaces, so Architecture's interim default keeps one — SH-3's Default(perspective)
+            // retires the drop, and this line is how the next reader knows it happened.
+            if (host.Service.DefaultDropped.Count > 0)
+            {
+                WorkbenchDiagnostics.LayoutRestoreReport(host.Row.Id, "default-filtered", host.Service.DefaultDropped, null);
+            }
 
-        // INV-0006 F1 — the drag-completed hook. A native tab drag is AvalonDock's own gesture: it
-        // mutates the docking tree and tells nobody, so before this the zone model learned about a
-        // drag only when one of four UNRELATED commands happened to reconcile (new terminal, new
-        // agent terminal, new prompt draft, open reference document). In the reported session that
-        // was 3m49s and eight drags later, and a reconcile handed that much drift swaps both columns
-        // whole. Reconciling as the drag lands keeps every reconcile one drag from the model, which
-        // is the regime the zone tests already prove correct.
-        //
-        // Deliberately does NOT re-render: the view already shows the drop the user made, so the
-        // model is catching up to the view, not the other way round. Rendering here would re-parent
-        // every pane and re-seat every tab for a change already on screen.
-        Adapter.ViewArrangementChanged += (_, _) => ReconcileViewIntoModel("drag");
+            // INV-0006 F1 — the drag-completed hook. A native tab drag is AvalonDock's own gesture:
+            // it mutates the docking tree and tells nobody, so before this the zone model learned
+            // about a drag only when one of four UNRELATED commands happened to reconcile (new
+            // terminal, new agent terminal, new prompt draft, open reference document). In the
+            // reported session that was 3m49s and eight drags later, and a reconcile handed that
+            // much drift swaps both columns whole. Reconciling as the drag lands keeps every
+            // reconcile one drag from the model, which is the regime the zone tests already prove
+            // correct.
+            //
+            // Deliberately does NOT re-render: the view already shows the drop the user made, so
+            // the model is catching up to the view, not the other way round. Rendering here would
+            // re-parent every pane and re-seat every tab for a change already on screen.
+            var dragged = host;
+            host.Adapter.ViewArrangementChanged += (_, _) => ReconcileViewIntoModel(dragged, "drag");
 
-        Palette = new CommandPalette(Controller, Announcer);
+            // The derived "New/Show <title>" entries (ADR-0030 rule 3) reach the shell through one
+            // seam keyed on the KIND, per host — the host that raised it is where the open lands
+            // when it admits the kind, else the open is routed (ADR-0030 Resolve; US-C3). A kind
+            // added as a row is openable with no edit here.
+            host.Controller.OpenSurfaceRequested = (kind, showExisting) => OpenKind(dragged, kind, showExisting);
+        }
+
+        Palette = new CommandPalette(Execute, Announcer);
         Prompt = new PromptBar(Announcer);
 
+        // The entry verbs (US-C11) and the workspace verbs are Global commands: the router sends
+        // them to the initial host's controller, so their delegates are wired there and there only.
         Controller.NewAgentTerminalRequested = agent =>
         {
-            ReconcileViewIntoModel();
+            ReconcileViewIntoModel(Coding);
 
             // The harness is CHOSEN, not discovered. The previous command took whatever was first on
             // PATH, so it could not say which harness it had started — and a session's harness cannot
@@ -250,9 +268,12 @@ public sealed class WorkbenchShell : IDisposable
             // nobody is in — the worst of both.
             var worktreeNote = ProvisionAgentWorktree(id, agent);
 
-            OpeningDocument();
             var result = Service.Apply(new LayoutOperation.AddSurface(
                 terminalStackId, new Surface(id, "terminal", title)));
+            if (result.Applied)
+            {
+                OpeningDocument(Coding);   // document first, then the switch (US-C5, US-C11)
+            }
 
             Adapter.Render();
             Adapter.ActivateInView(id); // opening a session focuses it — you open it to type in it (#2)
@@ -268,7 +289,7 @@ public sealed class WorkbenchShell : IDisposable
         };
         Controller.NewTerminalRequested = () =>
         {
-            ReconcileViewIntoModel();
+            ReconcileViewIntoModel(Coding);
             // Beside an existing terminal when there is one; otherwise into the Bottom zone, which
             // is where terminals live by definition (ZoneId.Bottom — "terminals, diagnostics,
             // output").
@@ -290,9 +311,12 @@ public sealed class WorkbenchShell : IDisposable
             // and the title is "Terminal" — never an agent name. The guid keeps ids unique so a new
             // terminal is ADDED to the collection, never replacing an existing session.
             var id = $"terminal#{Guid.NewGuid().ToString("N")[..6]}";
-            OpeningDocument();
             var result = Service.Apply(new LayoutOperation.AddSurface(
                 terminalStackId, new Surface(id, "terminal", "Terminal")));
+            if (result.Applied)
+            {
+                OpeningDocument(Coding);   // document first, then the switch (US-C5, US-C11)
+            }
 
             Adapter.Render();
             Adapter.ActivateInView(id); // focus the new terminal — you open it to type in it (#2)
@@ -310,11 +334,6 @@ public sealed class WorkbenchShell : IDisposable
         // against the latest scored episode. It records evidence for review; it never changes the score.
         Controller.RaiseDisputeRequested = () => RaiseDisputeOnLatestScore();
 
-        // The derived "New/Show <title>" entries (ADR-0030 rule 3) reach the shell through one seam
-        // keyed on the KIND, so a kind added as a row is openable with no edit here — the six
-        // per-kind delegates this replaces were the second list the derivation removes.
-        Controller.OpenSurfaceRequested = OpenKind;
-
         // Persistence is per workspace and lives beside the fact store (ADR-0013). With no workspace
         // open there is nothing to persist against, so first-run simply starts from the default.
         //
@@ -323,10 +342,6 @@ public sealed class WorkbenchShell : IDisposable
         // it arranges is answered by another process.
         if (!string.IsNullOrEmpty(workspaceDataDirectory))
         {
-            var surfaces = Service.Current.AllStacks()
-                .SelectMany(s => s.Surfaces).Select(s => s.SurfaceId)
-                .ToHashSet(StringComparer.Ordinal);
-
             // Readiness markers are workspace state, like the layout: the agent a team runs and the
             // prompt it draws are properties of the repository being worked on, not of the machine.
             TerminalSurface.Profiles = AgentReadinessProfiles.Load(workspaceDataDirectory);
@@ -337,35 +352,56 @@ public sealed class WorkbenchShell : IDisposable
                 Announcer.Announce(problem);
             }
 
-            Persistence = new LayoutPersistence(
-                Service, Path.Combine(workspaceDataDirectory, "layout.json"), surfaces,
-                restorableKinds: SurfaceContentFactory.KnownKinds.ToHashSet(StringComparer.Ordinal));
-
-            _customizationStore = new TerminalCustomizationStore(
-                Path.Combine(workspaceDataDirectory, "terminal-customization.json"));
-
+            AttachPersistence(workspaceDataDirectory);
             RestoreArrangementOnWorkspaceOpen();
         }
 
-        Adapter.Render();
+        RenderAll();
         TrackFocusedPane();
         PersistOnEveryChange();
     }
 
-    public ILayoutService Service { get; }
+    /// <summary>Host A — Coding: today's instances, unchanged in mechanism (ADR-0031).</summary>
+    public DockHost Coding { get; }
 
-    public DockingManager Manager { get; }
+    /// <summary>Host B — Architecture: the same unit composed a second time, over its own allow-list and slot.</summary>
+    public DockHost Architecture { get; }
+
+    /// <summary>Both hosts, in rail order.</summary>
+    public IReadOnlyList<DockHost> Hosts { get; }
+
+    /// <summary>The host whose model holds <paramref name="surfaceId"/>, or null when no host does.</summary>
+    private DockHost? HostOf(string surfaceId) =>
+        Hosts.FirstOrDefault(h => h.Service.Zones.AllSurfaces().Any(s => string.Equals(s.SurfaceId, surfaceId, StringComparison.Ordinal)));
 
     /// <summary>
-    /// The docking host wrapped in collapse-to-rail edge strips (ADR-0021). Host this instead of
-    /// <see cref="Manager"/> so a collapsed tool zone shows a one-click rail back. Falls back to the
-    /// bare manager when the layout is not zone-based.
+    /// Where a catalog command goes. Set by the window to the presenter's router
+    /// (<see cref="PerspectiveShell.Execute"/>), which resolves the host a body-conditional command
+    /// reaches; unset — a headless shell, the replay — every command reaches host A's controller,
+    /// which is the one-host shell's behaviour.
     /// </summary>
-    public FrameworkElement WorkbenchRoot => _rails.Root;
+    public Func<string, bool>? CommandRouter { get; set; }
 
-    public WorkbenchAdapter Adapter { get; }
+    /// <summary>Runs a catalog command through <see cref="CommandRouter"/>, or host A's controller when none is set.</summary>
+    public bool Execute(string commandId) => (CommandRouter ?? Controller.Execute)(commandId);
 
-    public WorkbenchController Controller { get; }
+    /// <summary>Host A's layout service (the one-host shell's member, kept for its callers).</summary>
+    public ILayoutService Service => Coding.Service;
+
+    /// <summary>Host A's docking manager.</summary>
+    public DockingManager Manager => Coding.Manager;
+
+    /// <summary>
+    /// Host A's docking host wrapped in collapse-to-rail edge strips (ADR-0021). Host this instead of
+    /// <see cref="Manager"/> so a collapsed tool zone shows a one-click rail back.
+    /// </summary>
+    public FrameworkElement WorkbenchRoot => Coding.Root;
+
+    /// <summary>Host A's adapter.</summary>
+    public WorkbenchAdapter Adapter => Coding.Adapter;
+
+    /// <summary>Host A's controller — where the entry verbs' and workspace verbs' delegates are wired.</summary>
+    public WorkbenchController Controller => Coding.Controller;
 
     public IWorkbenchAnnouncer Announcer { get; }
 
@@ -378,13 +414,20 @@ public sealed class WorkbenchShell : IDisposable
     /// <summary>Stages a prompt for the focused terminal and reports the delivery receipt.</summary>
     public PromptBar Prompt { get; }
 
-    /// <summary>Saves and restores the arrangement across restarts. Null on first run.</summary>
-    public LayoutPersistence? Persistence { get; private set; }
-
     /// <summary>Binds keyboard commands and the palette to a host element — normally the window.</summary>
     public void Bind(UIElement host)
     {
-        Controller.Bind(host);
+        // The catalog's gestures are bound once, at window scope, and route through Execute — the
+        // presenter's router when the window has set one. A keyboard resize in flight belongs to
+        // whichever host's controller began it.
+        Controller.Bind(host, Execute);
+        host.PreviewKeyDown += (_, e) =>
+        {
+            if (Architecture.Controller.HandleResizeKey(e.Key))
+            {
+                e.Handled = true;
+            }
+        };
 
         // The palette must intercept BEFORE the workbench sees the key, or Up/Down would move the
         // pane selection underneath it while the user is choosing a command.
@@ -422,23 +465,27 @@ public sealed class WorkbenchShell : IDisposable
     /// </remarks>
     private void TrackFocusedPane()
     {
-        Manager.GotKeyboardFocus += (_, e) =>
+        foreach (var host in Hosts)
         {
-            if (e.NewFocus is not DependencyObject element)
+            var focused = host;
+            host.Manager.GotKeyboardFocus += (_, e) =>
             {
-                return;
-            }
+                if (e.NewFocus is not DependencyObject element)
+                {
+                    return;
+                }
 
-            var surfaceId = FindSurfaceId(element);
-            if (surfaceId is null)
-            {
-                return;
-            }
+                var surfaceId = FindSurfaceId(element);
+                if (surfaceId is null)
+                {
+                    return;
+                }
 
-            var stack = Service.Current.FindStackOf(surfaceId);
-            Controller.FocusedSurfaceId = surfaceId;
-            Controller.FocusedStackId = stack?.Id;
-        };
+                var stack = focused.Service.Current.FindStackOf(surfaceId);
+                focused.Controller.FocusedSurfaceId = surfaceId;
+                focused.Controller.FocusedStackId = stack?.Id;
+            };
+        }
     }
 
     /// <summary>Walks up from a focused element to the surface it belongs to.</summary>
@@ -476,12 +523,60 @@ public sealed class WorkbenchShell : IDisposable
     /// </remarks>
     private void PersistOnEveryChange()
     {
-        if (Persistence is null)
+        foreach (var host in Hosts)
         {
-            return;
+            if (host.Persistence is not { } persistence)
+            {
+                continue;
+            }
+
+            host.Manager.LayoutUpdated += (_, _) => persistence.MarkDirty();
+        }
+    }
+
+    /// <summary>
+    /// Gives each host its own persistence slot (ADR-0032 rule 1) beside the fact store, and routes
+    /// a save that could not be written to the live region and the log — it fires on the debounce
+    /// timer's thread, so it is marshalled to the UI thread first.
+    /// </summary>
+    private void AttachPersistence(string dataDirectory)
+    {
+        var restorable = SurfaceContentFactory.KnownKinds.ToHashSet(StringComparer.Ordinal);
+        var layoutPath = Path.Combine(dataDirectory, "layout.json");
+
+        foreach (var host in Hosts)
+        {
+            var surfaces = host.Service.Current.AllStacks()
+                .SelectMany(s => s.Surfaces).Select(s => s.SurfaceId)
+                .ToHashSet(StringComparer.Ordinal);
+
+            var persistence = new LayoutPersistence(host.Service, layoutPath, surfaces, restorableKinds: restorable);
+            persistence.SaveFailed += reason => _dispatcher.BeginInvoke(() => Announcer.Announce(reason));
+            host.Persistence = persistence;
         }
 
-        Manager.LayoutUpdated += (_, _) => Persistence.MarkDirty();
+        _customizationStore = new TerminalCustomizationStore(
+            Path.Combine(dataDirectory, "terminal-customization.json"));
+    }
+
+    /// <summary>Every surface in every host, with the host that holds it.</summary>
+    private IEnumerable<(DockHost Host, Surface Surface)> AllHostSurfaces() =>
+        Hosts.SelectMany(h => h.Service.Current.AllStacks().SelectMany(st => st.Surfaces).Select(s => (h, s)));
+
+    /// <summary>The rendered content of every surface (of <paramref name="kind"/>, when given) of type <typeparamref name="T"/>, across both hosts.</summary>
+    private IEnumerable<T> SurfaceContents<T>(string? kind = null) where T : class =>
+        AllHostSurfaces()
+            .Where(x => kind is null || string.Equals(x.Surface.Kind, kind, StringComparison.Ordinal))
+            .Select(x => x.Host.Adapter.SurfaceContent<T>(x.Surface.SurfaceId))
+            .OfType<T>();
+
+    /// <summary>Renders every host's projection.</summary>
+    private void RenderAll()
+    {
+        foreach (var host in Hosts)
+        {
+            host.Adapter.Render();
+        }
     }
 
     /// <summary>
@@ -526,10 +621,13 @@ public sealed class WorkbenchShell : IDisposable
         // pane read "not available in this build" against a fully indexed workspace, forever. Same
         // defect, swept only as far as the pane somebody reported.
         var rebuildable = WorkspaceDependentPaneKinds;
-        Adapter.Invalidate(Service.Current.AllStacks()
-            .SelectMany(s => s.Surfaces)
-            .Where(s => rebuildable.Contains(s.Kind))
-            .Select(s => s.SurfaceId));
+        foreach (var host in Hosts)
+        {
+            host.Adapter.Invalidate(host.Service.Current.AllStacks()
+                .SelectMany(s => s.Surfaces)
+                .Where(s => rebuildable.Contains(s.Kind))
+                .Select(s => s.SurfaceId));
+        }
 
         // The palette's re-index command is inert until a workspace exists to re-index. Wiring it
         // here rather than at construction is what makes it act on THIS workspace.
@@ -598,12 +696,8 @@ public sealed class WorkbenchShell : IDisposable
                     .Describe();
         }
 
-        if (!string.IsNullOrEmpty(dataDirectory) && Persistence is null)
+        if (!string.IsNullOrEmpty(dataDirectory) && Coding.Persistence is null)
         {
-            var surfaces = Service.Current.AllStacks()
-                .SelectMany(stack => stack.Surfaces).Select(surface => surface.SurfaceId)
-                .ToHashSet(StringComparer.Ordinal);
-
             // Readiness markers are workspace state, like the layout: the agent a team runs and the
             // prompt it draws are properties of the repository being worked on, not of the machine.
             TerminalSurface.Profiles = AgentReadinessProfiles.Load(dataDirectory);
@@ -614,17 +708,12 @@ public sealed class WorkbenchShell : IDisposable
                 Announcer.Announce(problem);
             }
 
-            Persistence = new LayoutPersistence(
-                Service, Path.Combine(dataDirectory, "layout.json"), surfaces,
-                restorableKinds: SurfaceContentFactory.KnownKinds.ToHashSet(StringComparer.Ordinal));
-
-            _customizationStore = new TerminalCustomizationStore(
-                Path.Combine(dataDirectory, "terminal-customization.json"));
-
+            AttachPersistence(dataDirectory);
             RestoreArrangementOnWorkspaceOpen();
+            PersistOnEveryChange();
         }
 
-        Adapter.Render();
+        RenderAll();
         BindCanvas();
         BindContexts();
         BindJoins();
@@ -642,11 +731,7 @@ public sealed class WorkbenchShell : IDisposable
     /// <summary>Connects the context pane to the workspace's declared map, if there is one.</summary>
     internal void BindContexts()
     {
-        var pane = Service.Current.AllStacks()
-            .SelectMany(stack => stack.Surfaces)
-            .Select(surface => Adapter.SurfaceContent<ContextMapSurface>(surface.SurfaceId))
-            .OfType<ContextMapSurface>()
-            .FirstOrDefault();
+        var pane = SurfaceContents<ContextMapSurface>().FirstOrDefault();
 
         if (pane is null || string.IsNullOrEmpty(_workspaceRoot) || _queries is null) return;
 
@@ -770,11 +855,7 @@ public sealed class WorkbenchShell : IDisposable
     {
         // Materialised before iterating: applying a saved rename triggers a re-render, and enumerating
         // lazily while the view rebuilds is asking for trouble.
-        var terminals = Service.Current.AllStacks()
-            .SelectMany(stack => stack.Surfaces)
-            .Select(surface => Adapter.ContentFor(surface.SurfaceId))
-            .OfType<TerminalSurface>()
-            .ToList();
+        var terminals = SurfaceContents<TerminalSurface>().ToList();
 
         foreach (var terminal in terminals)
         {
@@ -830,7 +911,7 @@ public sealed class WorkbenchShell : IDisposable
     // A rename lives on the surface (reconcile keeps it alive); re-render so the tab caption, which
     // BuildPane reads from the surface's DisplayName, reflects it. Reconcile makes this cheap and
     // leaves every live session untouched.
-    private void OnTerminalRenamed(object? sender, EventArgs e) => Adapter.Render();
+    private void OnTerminalRenamed(object? sender, EventArgs e) => RenderAll();
 
     /// <summary>
     /// The operator's name for a terminal, or <c>null</c> when they have not given one.
@@ -1002,11 +1083,7 @@ public sealed class WorkbenchShell : IDisposable
     /// <summary>Connects the joins pane to the workspace's own evidence.</summary>
     internal void BindJoins()
     {
-        var pane = Service.Current.AllStacks()
-            .SelectMany(stack => stack.Surfaces)
-            .Select(surface => Adapter.SurfaceContent<JoinSurface>(surface.SurfaceId))
-            .OfType<JoinSurface>()
-            .FirstOrDefault();
+        var pane = SurfaceContents<JoinSurface>().FirstOrDefault();
 
         if (pane is null || _queries is null) return;
 
@@ -1040,9 +1117,8 @@ public sealed class WorkbenchShell : IDisposable
 
     internal void RereadDataSurfaces()
     {
-        var contents = Service.Current.AllStacks()
-            .SelectMany(stack => stack.Surfaces)
-            .Select(surface => Adapter.ContentFor(surface.SurfaceId))
+        var contents = AllHostSurfaces()
+            .Select(x => x.Host.Adapter.ContentFor(x.Surface.SurfaceId))
             .ToList();
 
         foreach (var content in contents)
@@ -1132,11 +1208,7 @@ public sealed class WorkbenchShell : IDisposable
 
     private void OnJoinNodeSelected(object? sender, string nodeId)
     {
-        var canvas = Service.Current.AllStacks()
-            .SelectMany(stack => stack.Surfaces)
-            .Select(surface => Adapter.ContentFor(surface.SurfaceId))
-            .OfType<CanvasSurface>()
-            .FirstOrDefault();
+        var canvas = OpenCanvas();
 
         if (canvas is null) return;
 
@@ -1151,11 +1223,7 @@ public sealed class WorkbenchShell : IDisposable
 
     private void OnContextSelected(object? sender, string context)
     {
-        var canvas = Service.Current.AllStacks()
-            .SelectMany(stack => stack.Surfaces)
-            .Select(surface => Adapter.ContentFor(surface.SurfaceId))
-            .OfType<CanvasSurface>()
-            .FirstOrDefault();
+        var canvas = OpenCanvas();
 
         if (canvas is null || _canvasGraph is null) return;
 
@@ -1173,20 +1241,24 @@ public sealed class WorkbenchShell : IDisposable
 
     internal void BindCanvas()
     {
-        var canvas = Service.Current.AllStacks()
-            .SelectMany(stack => stack.Surfaces)
-            .Select(surface => Adapter.ContentFor(surface.SurfaceId))
-            .OfType<CanvasSurface>()
-            .FirstOrDefault();
+        var canvas = OpenCanvas();
 
-        if (canvas is null)
+        // The focus router and the drag-state hand-off belong to the host that HOLDS the canvas —
+        // Architecture's, by its allow-list (ADR-0030) — since `workbench.focusCanvas` is routed to
+        // the host that admits the kind and a drag is a per-host gesture.
+        var owner = canvas is null ? null : HostOf(canvas.SurfaceId);
+        if (canvas is null || owner is null)
         {
-            Controller.CanvasFocus = null;
+            foreach (var host in Hosts)
+            {
+                host.Controller.CanvasFocus = null;
+            }
+
             return;
         }
 
-        var router = new CanvasFocusRouter(canvas.FocusTarget, new WpfHostFocusScope(Manager));
-        Controller.CanvasFocus = router;
+        var router = new CanvasFocusRouter(canvas.FocusTarget, new WpfHostFocusScope(owner.Manager));
+        owner.Controller.CanvasFocus = router;
 
         // The canvas reads the SAME projection every other pane does, rather than a graph-shaped
         // API of its own: two ways to ask what the graph contains is two answers that can disagree.
@@ -1212,8 +1284,8 @@ public sealed class WorkbenchShell : IDisposable
         // ADR-0015's snapshot swap, driven by the real drag rather than left as a method nothing
         // calls. While it is set the canvas also REFUSES focus and says why (P2-FOCUS-04), so the
         // two halves of "the canvas is standing aside" cannot drift apart.
-        Controller.DragStateChanged -= canvas.SetObscured;
-        Controller.DragStateChanged += canvas.SetObscured;
+        owner.Controller.DragStateChanged -= canvas.SetObscured;
+        owner.Controller.DragStateChanged += canvas.SetObscured;
 
         // Follow graph selection into any open Source pane (§4s — Design owns which node a viewer
         // shows; the answer is "the one you just selected"). Named handler with -=/+= so repeated
@@ -1254,22 +1326,26 @@ public sealed class WorkbenchShell : IDisposable
     // selection→viewer routing. New viewers fill from _lastSelectedNodeId on their next bind.
     private void OpenNodeView(string nodeId, NodeViewKind kind)
     {
+        // In-body node actions act in the RAISING body (US-C3 b2): the kind opens in the host that
+        // holds the graph — Architecture's — and only routes away when that host does not admit it.
+        var raising = OpenCanvas() is { } graph ? HostOf(graph.SurfaceId) ?? Architecture : Architecture;
+
         switch (kind)
         {
             case NodeViewKind.Source:
             case NodeViewKind.Read:
                 _lastSelectedNodeId = nodeId;
-                Controller.OpenSurfaceRequested?.Invoke("codeviewer", false);          // opens a Code viewer pane
+                Announcer.Announce(OpenKind(raising, "codeviewer", false));          // opens a Code viewer pane
                 _ = ShowNodeInCodeViewersAsync(nodeId, OpenCodeViewers());  // fill any already open
                 break;
 
             case NodeViewKind.ClassDiagram:
-                Controller.OpenSurfaceRequested?.Invoke("classdiagram", false);
+                Announcer.Announce(OpenKind(raising, "classdiagram", false));
                 break;
 
             case NodeViewKind.Sequence:
                 _lastSequenceNodeId = nodeId;
-                Controller.OpenSurfaceRequested?.Invoke("sequence", false);
+                Announcer.Announce(OpenKind(raising, "sequence", false));
                 _ = ShowNodeInSequenceDiagramsAsync(nodeId, OpenSequenceDiagrams());
                 break;
 
@@ -1284,13 +1360,7 @@ public sealed class WorkbenchShell : IDisposable
         }
     }
 
-    private List<SequenceDiagramSurface> OpenSequenceDiagrams() =>
-        Service.Current.AllStacks()
-            .SelectMany(s => s.Surfaces)
-            .Where(s => s.Kind == "sequence")
-            .Select(s => Adapter.SurfaceContent<SequenceDiagramSurface>(s.SurfaceId))
-            .OfType<SequenceDiagramSurface>()
-            .ToList();
+    private List<SequenceDiagramSurface> OpenSequenceDiagrams() => SurfaceContents<SequenceDiagramSurface>("sequence").ToList();
 
     // Feeds a node's ordered outgoing calls (Core's InteractionAsync — the real §4k feed) into open
     // sequence diagrams as a SequenceModel. Not the `calls` edges: those dedupe per pair and destroy a
@@ -1324,12 +1394,7 @@ public sealed class WorkbenchShell : IDisposable
         _ = ShowNodeInSequenceDiagramsAsync(id, surfaces);
     }
 
-    private CanvasSurface? OpenCanvas() =>
-        Service.Current.AllStacks()
-            .SelectMany(s => s.Surfaces)
-            .Select(s => Adapter.ContentFor(s.SurfaceId))
-            .OfType<CanvasSurface>()
-            .FirstOrDefault();
+    private CanvasSurface? OpenCanvas() => SurfaceContents<CanvasSurface>().FirstOrDefault();
 
     /// <summary>
     /// Builds a graph canvas for the full-window Explorer surface (design D2), bound to the SAME
@@ -1476,12 +1541,7 @@ public sealed class WorkbenchShell : IDisposable
     }
 
     /// <summary>Every live terminal surface in the current layout.</summary>
-    private IEnumerable<TerminalSurface> TerminalSurfaces() =>
-        Service.Current.AllStacks()
-            .SelectMany(s => s.Surfaces)
-            .Where(s => s.Kind == "terminal")
-            .Select(s => Adapter.ContentFor(s.SurfaceId))
-            .OfType<TerminalSurface>();
+    private IEnumerable<TerminalSurface> TerminalSurfaces() => SurfaceContents<TerminalSurface>("terminal");
 
     /// <summary>
     /// Wires every prompt-draft surface to the shell after a render (US-ED5/ED6): the live ready
@@ -1495,11 +1555,10 @@ public sealed class WorkbenchShell : IDisposable
                 ? Path.Combine(Path.GetTempPath(), "aide-prompt-drafts.json")
                 : Path.Combine(_workspaceRoot, ".aide", "prompt-drafts.json"));
 
-        foreach (var stack in Service.Current.AllStacks())
+        foreach (var (host, surface) in AllHostSurfaces().Where(x => x.Surface.Kind == "prompt").ToList())
         {
-            foreach (var surface in stack.Surfaces.Where(s => s.Kind == "prompt"))
             {
-                if (Adapter.SurfaceContent<PromptDraftSurface>(surface.SurfaceId) is not { } draft) { continue; }
+                if (host.Adapter.SurfaceContent<PromptDraftSurface>(surface.SurfaceId) is not { } draft) { continue; }
 
                 var id = surface.SurfaceId;
                 draft.Configure(
@@ -1539,27 +1598,46 @@ public sealed class WorkbenchShell : IDisposable
     /// rebuilt — so a document is only ever opened into a body that is on screen.</para>
     ///
     /// <para><b>One seam, not a per-command check.</b> Every opening command calls
-    /// <see cref="OpeningDocument"/> immediately before its <c>AddSurface</c>;
+    /// <see cref="OpeningDocument"/> with the host it added into, immediately after an
+    /// <c>AddSurface</c> that was APPLIED and before the render that realises the pane;
     /// <c>EveryOpeningCommandPassesThroughTheSeamTests</c> scans this file for a command that does
-    /// not. A refusal that happens before the add (no profile, no pane) does not raise it: a refusal
-    /// changes nothing on screen and should not swap the body.</para>
+    /// not. <b>Document first, then the switch</b> (ADR-0031 rule 2; US-C5, US-C11): a refused add
+    /// — a locked layout, no pane — changes nothing on screen and never swaps the body, so a
+    /// failure leaves the operator in the perspective they were in with the refusal announced. The
+    /// pane's content is built by the render that follows, into a body that is by then on screen —
+    /// INV-0009's guarantee, kept.</para>
+    ///
+    /// <para><b>Generalised to two hosts (ADR-0017 amendment clause 4; ADR-0031 rule 2).</b> The
+    /// argument is the perspective whose host the document opens in; the presenter switches to it
+    /// only when it is not the body — so a host perspective's own openers never switch it away, and
+    /// a routed open (a kind the active host does not admit) lands in the host that admits it.</para>
     /// </remarks>
-    public event Action? DocumentOpening;
+    public event Action<Perspective>? DocumentOpening;
 
-    /// <summary>Raises <see cref="DocumentOpening"/>. Called before every <c>AddSurface</c> that opens a document.</summary>
-    private void OpeningDocument() => DocumentOpening?.Invoke();
+    /// <summary>Raises <see cref="DocumentOpening"/> for <paramref name="host"/>. Called after every APPLIED <c>AddSurface</c> that opens a document, before its render.</summary>
+    private void OpeningDocument(DockHost host) => DocumentOpening?.Invoke(host.Row);
+
+    /// <summary>
+    /// The host a kind opens in when <paramref name="from"/> asks (US-C3): <paramref name="from"/>
+    /// itself when its perspective admits the kind, else the first in routing order that does
+    /// (ADR-0030 <c>Resolve</c>). A kind no host admits falls back to the asking host, whose
+    /// service refuses it with the reason.
+    /// </summary>
+    private DockHost ResolveHost(DockHost from, string kind) =>
+        PerspectiveMenu.Resolve(kind, from.Row) is { } resolved ? Hosts.FirstOrDefault(h => h.Row == resolved) ?? from : from;
 
     /// <summary>
     /// Opens a surface of <paramref name="kind"/> by its row — the target of every derived
     /// "New/Show &lt;title&gt;" entry (ADR-0030 rule 3).
     /// </summary>
+    /// <param name="from">The host that asked — the active one for a menu or palette entry, the raising body for an in-surface action.</param>
     /// <param name="kind">A row of <see cref="SurfaceContentFactory.Kinds"/>.</param>
     /// <param name="showExisting">
     /// True for a "Show" entry: the one open surface of the kind is activated instead of a second
     /// being added. A "New" entry always adds.
     /// </param>
     /// <returns>What to announce.</returns>
-    private string OpenKind(string kind, bool showExisting)
+    private string OpenKind(DockHost from, string kind, bool showExisting)
     {
         var row = SurfaceContentFactory.Kinds.FirstOrDefault(k => string.Equals(k.Kind, kind, StringComparison.Ordinal));
         if (row is null)
@@ -1568,17 +1646,35 @@ public sealed class WorkbenchShell : IDisposable
             return $"There is no '{kind}' surface in this build.";
         }
 
+        var target = ResolveHost(from, kind);
+
         if (showExisting)
         {
-            ReconcileViewIntoModel();
-            var open = Service.Current.AllStacks().SelectMany(st => st.Surfaces)
+            ReconcileViewIntoModel(target);
+
+            // The ZONE model, not the projected tree: a collapsed zone's content is retained in the
+            // model and absent from the projection, so a one-instance kind held in a collapsed rail
+            // read as "not open" and a second was added — which the one-instance rule now refuses
+            // (the D&P reviewer's finding). The holding zone is expanded first, or the activation
+            // would have nothing on screen to show.
+            var open = target.Service.Zones.AllSurfaces()
                 .FirstOrDefault(su => string.Equals(su.Kind, kind, StringComparison.Ordinal));
 
             if (open is not null)
             {
-                var activated = Service.Apply(new LayoutOperation.ActivateSurface(open.SurfaceId));
-                Adapter.Render();
-                return activated.Applied ? $"{row.Title} shown." : activated.Announcement;
+                if (target.Service.Zones.FindZoneOf(open.SurfaceId) is { } holder && target.Service.Zones.Zone(holder).Collapsed)
+                {
+                    ExpandZone(target, holder);
+                }
+
+                var activated = target.Service.Apply(new LayoutOperation.ActivateSurface(open.SurfaceId));
+                if (activated.Applied)
+                {
+                    OpeningDocument(target);   // showing is opening from the operator's side: the body must be on screen
+                }
+
+                target.Adapter.Render();
+                return activated.Applied ? Routed(target, from, $"{row.Title} shown") : activated.Announcement;
             }
         }
 
@@ -1589,37 +1685,42 @@ public sealed class WorkbenchShell : IDisposable
         // becomes a column on the row read by DocumentPlacementPolicy, and that policy's own
         // DocumentKinds hand list retires with it.
         var besideTerminal = string.Equals(kind, "prompt", StringComparison.Ordinal)
-            ? (Service.Current.AllStacks().FirstOrDefault(st => st.Surfaces.Any(su => su.Kind == "terminal"))
-               ?? Service.Current.AllStacks().FirstOrDefault())?.Id
+            ? (target.Service.Current.AllStacks().FirstOrDefault(st => st.Surfaces.Any(su => su.Kind == "terminal"))
+               ?? target.Service.Current.AllStacks().FirstOrDefault())?.Id
             : null;
 
         return OpenReferenceDocument(
+            target,
             new Surface($"{kind}#{Guid.NewGuid().ToString("N")[..6]}", kind, row.Title),
-            $"{row.Title} opened.",
+            Routed(target, from, $"{row.Title} opened"),
             $"There is no pane for {row.Title.ToLowerInvariant()}. Window → Reset workbench layout restores one.",
             intoStackId: besideTerminal);
     }
 
+    /// <summary>The sentence a routed open says (spec §C5): where it opened, when that is not where it was asked.</summary>
+    private static string Routed(DockHost target, DockHost from, string said) =>
+        ReferenceEquals(target, from) ? $"{said}." : $"{said} in {target.Row.Title}.";
+
+    /// <param name="host">The host the document opens in — resolved by the caller (<see cref="ResolveHost"/>).</param>
     /// <param name="intoStackId">
     /// When given, the surface is tabbed into this stack and the placement policy is not consulted
     /// — the prompt kind's own rule (see <see cref="OpenKind"/>). Null for every other kind.
     /// </param>
-    private string OpenReferenceDocument(Surface surface, string okMessage, string noPaneMessage, string? intoStackId = null)
+    private string OpenReferenceDocument(DockHost host, Surface surface, string okMessage, string noPaneMessage, string? intoStackId = null)
     {
-        ReconcileViewIntoModel();
+        ReconcileViewIntoModel(host);
 
         var placement = intoStackId is not null
             ? new DocumentPlacement(intoStackId, null)
-            : DocumentPlacementPolicy.Decide(Service.Current, Adapter.ActiveSurfaceId);
+            : DocumentPlacementPolicy.Decide(host.Service.Current, host.Adapter.ActiveSurfaceId);
         if (placement is null) { return noPaneMessage; }
 
-        OpeningDocument();
         LayoutResult result;
         string mode;
         if (placement.TabIntoStackId is { } tabStackId)
         {
             mode = "tab";
-            result = Service.Apply(new LayoutOperation.AddSurface(tabStackId, surface));
+            result = host.Service.Apply(new LayoutOperation.AddSurface(tabStackId, surface));
         }
         else
         {
@@ -1641,13 +1742,18 @@ public sealed class WorkbenchShell : IDisposable
                 ? ZonesToTree.RightStackId
                 : ZonesToTree.CenterStackId;
 
-            result = Service.Apply(new LayoutOperation.AddSurface(beside, surface));
+            result = host.Service.Apply(new LayoutOperation.AddSurface(beside, surface));
+        }
+
+        if (result.Applied)
+        {
+            OpeningDocument(host);   // document first, then the switch (US-C5); a refused add swaps nothing
         }
 
         WorkbenchDiagnostics.LayoutMutation(
-            $"open-{surface.Kind}", mode, surface.SurfaceId, Adapter.ActiveSurfaceId, Service.Current);
+            $"open-{surface.Kind}", mode, surface.SurfaceId, host.Adapter.ActiveSurfaceId, host.Service.Current);
 
-        Adapter.Render();
+        host.Adapter.Render();
         BindCanvas();
         BindContexts();
         BindJoins();
@@ -1666,17 +1772,17 @@ public sealed class WorkbenchShell : IDisposable
     // preserves their arrangement instead of reverting it. Fail-safe: ReadLayoutFromView returns null
     // on any shape it cannot map losslessly, and this is then a no-op — the pre-existing revert
     // stands, never a corrupted layout.
-    private void ReconcileViewIntoModel(string trigger = "command")
+    private void ReconcileViewIntoModel(DockHost host, string trigger = "command")
     {
-        var zones = Service as ZoneBackedLayoutService;
-        var before = zones?.Zones;
+        var zones = host.Service;
+        var before = zones.Zones;
 
-        if (Adapter.ReadLayoutFromView() is not { } reconciled)
+        if (host.Adapter.ReadLayoutFromView() is not { } reconciled)
         {
             // Nothing rendered yet is not a gesture; anything else is one we are about to revert.
-            if (Adapter.HoldsDocuments())
+            if (host.Adapter.HoldsDocuments())
             {
-                WorkbenchDiagnostics.LayoutReconcile(trigger, before?.Shape(), before?.Shape(), [], "view-unreadable");
+                WorkbenchDiagnostics.LayoutReconcile(trigger, before.Shape(), before.Shape(), [], "view-unreadable");
             }
 
             return;
@@ -1685,15 +1791,9 @@ public sealed class WorkbenchShell : IDisposable
         // A live drag is reconciled by POSITION only — never the kind-based conversion, which
         // re-seats every stack and moved a bystander zone on a single drag (smoke 9-2 #3). An
         // unmappable drag is left for the next Render to revert. Persistence still uses Restore.
-        if (zones is null)
-        {
-            Service.Restore(reconciled);
-            return;
-        }
-
         var applied = zones.ReconcileFromView(reconciled);
         var after = zones.Zones;
-        var moved = SurfacesThatChangedZone(before!, after);
+        var moved = SurfacesThatChangedZone(before, after);
 
         // INV-0006 F2. A drag used to emit nothing at all, which is why the reported gesture is
         // permanently unrecoverable. Written whenever the reconcile moved something or refused;
@@ -1701,13 +1801,13 @@ public sealed class WorkbenchShell : IDisposable
         if (!applied || moved.Count > 0)
         {
             WorkbenchDiagnostics.LayoutReconcile(
-                trigger, before!.Shape(), after.Shape(), moved,
+                trigger, before.Shape(), after.Shape(), moved,
                 applied ? null : "position-mapping-refused");
         }
 
         if (!applied)
         {
-            Announcer.Announce(RefusedReconcileAnnouncement(before!));
+            Announcer.Announce(RefusedReconcileAnnouncement(before));
         }
     }
 
@@ -1758,35 +1858,46 @@ public sealed class WorkbenchShell : IDisposable
     // to a degenerate layout. So the earlier keep-current guard is subsumed by faithful restore.
     private void RestoreArrangementOnWorkspaceOpen()
     {
-        if (Persistence is not { } persistence)
+        foreach (var host in Hosts)
         {
-            WorkbenchDiagnostics.LayoutMutation(
-                "workspace-open", "no-persistence", "layout", null, Service.Current);
-            return;
+            if (host.Persistence is not { } persistence)
+            {
+                WorkbenchDiagnostics.LayoutMutation(
+                    "workspace-open", "no-persistence", "layout", null, host.Service.Current);
+                continue;
+            }
+
+            var restore = persistence.Restore();
+
+            // INV-0006 F4. Restore() has always COMPOSED the sentence — "Restored your saved workbench
+            // arrangement." — and the caller used the result only for a null test and threw the
+            // sentence away. Opening a workspace replaces the whole arrangement, so every pane moves
+            // at once; with nothing said, that reads as "the tabs rearranged without me doing
+            // anything", which is half of what was reported. The system knew exactly what it had done.
+            //
+            // Host A's sentence is the one the operator hears (its body is on screen); host B's is
+            // heard only when it dropped or refused something (ADR-0032 rules 2 and 4) — a live
+            // region read twice in a row for two hosts is two interruptions for one open.
+            if (ReferenceEquals(host, Coding) || restore.ErrorCode is not null)
+            {
+                Announcer.Announce(restore.Announcement);
+            }
+
+            // And the placement is now the branch that actually ran. Restore() returns a RestoreResult
+            // in both cases and never null, so `restore is null ? "keep-current" : "restore-zones"`
+            // recorded "restore-zones" every time — including every time it restored nothing.
+            var placement = restore.WasDefaulted ? "default"
+                : persistence.LastRestoreAppliedASavedArrangement ? "restore-zones"
+                : "keep-current";
+            WorkbenchDiagnostics.LayoutMutation("workspace-open", placement, "layout", null, host.Service.Current);
+            WorkbenchDiagnostics.LayoutRestoreReport(host.Row.Id, placement, persistence.LastRestoreDropped, restore.ErrorCode);
         }
-
-        var restore = persistence.Restore();
-
-        // INV-0006 F4. Restore() has always COMPOSED the sentence — "Restored your saved workbench
-        // arrangement." — and the caller used the result only for a null test and threw the sentence
-        // away. Opening a workspace replaces the whole arrangement, so every pane moves at once; with
-        // nothing said, that reads as "the tabs rearranged without me doing anything", which is half
-        // of what was reported. The system knew exactly what it had done.
-        Announcer.Announce(restore.Announcement);
-
-        // And the placement is now the branch that actually ran. Restore() returns a RestoreResult in
-        // both cases and never null, so `restore is null ? "keep-current" : "restore-zones"` recorded
-        // "restore-zones" every time — including every time it restored nothing.
-        WorkbenchDiagnostics.LayoutMutation(
-            "workspace-open",
-            persistence.LastRestoreAppliedASavedArrangement ? "restore-zones" : "keep-current",
-            "layout", null, Service.Current);
     }
 
     // Expands a collapsed tool zone from its rail (ADR-0021 collapse-to-rail). SetStackState(Docked)
     // maps to ExpandZone on the zone service; the re-render then reincludes the zone's pane and the
     // rail hides itself.
-    private void ExpandZone(ZoneId zone)
+    private void ExpandZone(DockHost host, ZoneId zone)
     {
         var stackId = zone switch
         {
@@ -1801,8 +1912,8 @@ public sealed class WorkbenchShell : IDisposable
             return;
         }
 
-        Service.Apply(new LayoutOperation.SetStackState(stackId, StackState.Docked));
-        Adapter.Render();
+        host.Service.Apply(new LayoutOperation.SetStackState(stackId, StackState.Docked));
+        host.Adapter.Render();
     }
 
     // The breadth-search provider (app-search-breadth), wired to the two Core queries that shipped for
@@ -1867,12 +1978,7 @@ public sealed class WorkbenchShell : IDisposable
     /// <summary>Wires each open search surface's activation to graph navigation (idempotent per surface).</summary>
     internal void BindSearchSurfaces()
     {
-        var surfaces = Service.Current.AllStacks()
-            .SelectMany(s => s.Surfaces)
-            .Where(s => s.Kind == "search")
-            .Select(s => Adapter.SurfaceContent<SearchSurface>(s.SurfaceId))
-            .OfType<SearchSurface>()
-            .ToList();
+        var surfaces = SurfaceContents<SearchSurface>("search").ToList();
 
         foreach (var surface in surfaces)
         {
@@ -1884,11 +1990,7 @@ public sealed class WorkbenchShell : IDisposable
     // join endpoint does. A file hit carries the NodeId of its file's node, so this works for every kind.
     private void OnSearchResultActivated(SearchResult hit)
     {
-        var canvas = Service.Current.AllStacks()
-            .SelectMany(stack => stack.Surfaces)
-            .Select(surface => Adapter.ContentFor(surface.SurfaceId))
-            .OfType<CanvasSurface>()
-            .FirstOrDefault();
+        var canvas = OpenCanvas();
 
         if (canvas is null)
         {
@@ -1907,12 +2009,7 @@ public sealed class WorkbenchShell : IDisposable
 
     internal void BindClassDiagrams()
     {
-        var all = Service.Current.AllStacks()
-            .SelectMany(s => s.Surfaces)
-            .Where(s => s.Kind == "classdiagram")
-            .Select(s => Adapter.SurfaceContent<ClassDiagramSurface>(s.SurfaceId))
-            .OfType<ClassDiagramSurface>()
-            .ToList();
+        var all = SurfaceContents<ClassDiagramSurface>("classdiagram").ToList();
 
         // Right-click "Open as…" on a type box, reusing the graph's dispatcher (Phase C/D). Idempotent
         // per surface, the same -=/+= idiom the canvas uses.
@@ -1991,13 +2088,7 @@ public sealed class WorkbenchShell : IDisposable
         _ = ShowNodeInCodeViewersAsync(selection.Node.Id, OpenCodeViewers());
     }
 
-    private List<CodeViewerView> OpenCodeViewers() =>
-        Service.Current.AllStacks()
-            .SelectMany(s => s.Surfaces)
-            .Where(s => s.Kind == "codeviewer")
-            .Select(s => Adapter.SurfaceContent<CodeViewerView>(s.SurfaceId))
-            .OfType<CodeViewerView>()
-            .ToList();
+    private List<CodeViewerView> OpenCodeViewers() => SurfaceContents<CodeViewerView>("codeviewer").ToList();
 
     // Loads one node's content into the given code viewers through the SAME source the whole app uses
     // (real when a workspace is open, mock never — see NodeContentSource). Internal so a shell test can
@@ -2023,11 +2114,7 @@ public sealed class WorkbenchShell : IDisposable
     /// </summary>
     internal void BindCodeViewers()
     {
-        var surfaces = Service.Current.AllStacks()
-            .SelectMany(s => s.Surfaces)
-            .Where(s => s.Kind == "codeviewer")
-            .Select(s => Adapter.SurfaceContent<CodeViewerView>(s.SurfaceId))
-            .OfType<CodeViewerView>()
+        var surfaces = SurfaceContents<CodeViewerView>("codeviewer")
             .Where(v => v.NodeId is null)   // first load only
             .ToList();
         if (surfaces.Count == 0) { return; }
@@ -2067,12 +2154,7 @@ public sealed class WorkbenchShell : IDisposable
 
     internal void BindDiagnostics()
     {
-        var surfaces = Service.Current.AllStacks()
-            .SelectMany(s => s.Surfaces)
-            .Where(s => s.Kind == "diagnostics")
-            .Select(s => Adapter.SurfaceContent<DiagnosticsSurface>(s.SurfaceId))
-            .OfType<DiagnosticsSurface>()
-            .ToList();
+        var surfaces = SurfaceContents<DiagnosticsSurface>("diagnostics").ToList();
         if (surfaces.Count == 0) { return; }
 
         var report = BuildDiagnosticsReport();
@@ -2112,15 +2194,9 @@ public sealed class WorkbenchShell : IDisposable
     /// </remarks>
     internal TerminalSurface? FocusedTerminal()
     {
+        // Terminals are Coding's kind (ADR-0030), so the focused one is host A's controller's.
         var focused = Controller.FocusedSurfaceId;
-        if (focused is null) return null;
-
-        return Manager.GetType() is not null
-            ? FindTerminal(Adapter, focused)
-            : null;
-
-        static TerminalSurface? FindTerminal(WorkbenchAdapter adapter, string surfaceId) =>
-            adapter.ContentFor(surfaceId) as TerminalSurface;
+        return focused is null ? null : Adapter.ContentFor(focused) as TerminalSurface;
     }
 
     /// <summary>
@@ -2465,7 +2541,7 @@ public sealed class WorkbenchShell : IDisposable
     private IReadOnlyList<(string Id, string Agent)> TerminalSnapshot()
     {
         var list = new List<(string, string)>();
-        foreach (var stack in Service.Current.AllStacks())
+        foreach (var stack in Hosts.SelectMany(h => h.Service.Current.AllStacks()))
         {
             foreach (var surface in stack.Surfaces)
             {
@@ -2863,10 +2939,13 @@ public sealed class WorkbenchShell : IDisposable
             return;
         }
 
-        Adapter.RefreshInPlace(Service.Current.AllStacks()
-            .SelectMany(s => s.Surfaces)
-            .Where(s => WatcherPaneKinds.Contains(s.Kind))
-            .Select(s => s.SurfaceId));
+        foreach (var host in Hosts)
+        {
+            host.Adapter.RefreshInPlace(host.Service.Current.AllStacks()
+                .SelectMany(s => s.Surfaces)
+                .Where(s => WatcherPaneKinds.Contains(s.Kind))
+                .Select(s => s.SurfaceId));
+        }
     }
 
     /// <summary>
@@ -2920,7 +2999,10 @@ public sealed class WorkbenchShell : IDisposable
             // already tearing down must not take the layout's flush below with it.
         }
 
-        Persistence?.Dispose();
+        foreach (var host in Hosts)
+        {
+            host.Dispose();
+        }
 
         // The ONE place a session document is disposed. A mode switch, a tab switch and a re-render
         // reach none of this — the invariant is ADR-0017's, and SessionDisposalLedger is what checks
@@ -2965,7 +3047,10 @@ public sealed class WorkbenchShell : IDisposable
 
         var surfaceId = RegisterSessionDocument(config);
 
+        // A session document is Coding's kind (ADR-0030): it opens in host A, and the seam brings
+        // host A's body on screen if another body is showing (US-C5, document first).
         return OpenReferenceDocument(
+            ResolveHost(Coding, Sessions.SessionDocumentSurface.Kind),
             new Surface(surfaceId, Sessions.SessionDocumentSurface.Kind, config.Name),
             $"Session “{config.Name}” opened.",
             "There is no pane to open a session document in.");

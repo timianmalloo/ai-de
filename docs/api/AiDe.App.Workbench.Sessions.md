@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Sessions: 30 types, 159 members, 70% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Sessions: 30 types, 157 members, 71% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Sessions`
 
-**30 public types · 159 public members · 70% documented.**
+**30 public types · 157 public members · 71% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -235,8 +235,8 @@ Raise a leave request the document routes (Ctrl+End → the editor, Ctrl+Home �
 
 The virtualized feed base the session thread and the Console split share (DS-1 P1, P2, P7):
 a `ListBox` over a recycling `VirtualizingStackPanel` with pixel
-scrolling, the six owned keys as a pure decision plus an act, a structural pin for the follow
-rule, and containers that carry their own template so the theme's selection band never paints
+scrolling, the six owned keys as a pure decision plus an act, the follow rule's structural anchor,
+and containers that carry their own template so the theme's selection band never paints
 the reading caret.
 
 **Remarks.** **The theme never reaches a subclass on its own.** `App.xaml` delivers the whole
@@ -773,12 +773,10 @@ state of its own.
 | `string CompiledName` | **(gap)** |
 | `string FoldHeader` | **(gap)** |
 | `bool IsLive` | **(gap)** |
-| `bool IsRunning` | **(gap)** |
-| `bool HasReason` | **(gap)** |
 | `IReadOnlyList<EventLine> FoldedEvents` | The fold's content: the last `FoldLines` lines, bounded, no inner scroller. |
 | `int OtherEvents` | How many lines the fold does not show; 0 when it shows them all. |
 | `bool HasOtherEvents` | **(gap)** |
-| `string TailText` | *the other 136, in the Console* — the tail button's text. |
+| `string TailText` | *the other 136, in the Console* — the tail button's text (the button is collapsed when the fold shows every line: `HasOtherEvents`). |
 | `IReadOnlyList<TurnActionKind> Actions` | The actions this turn offers, Deny first (SC7). A completed or past-failed turn offers none. |
 | `bool HasActions` | **(gap)** |
 | `bool IsLast` | Whether this is the thread's last turn — a failed PAST turn folds like a completed one (SC7). |

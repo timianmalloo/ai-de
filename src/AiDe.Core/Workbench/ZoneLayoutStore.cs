@@ -41,6 +41,24 @@ public sealed record ZoneSurfaceDto(
     [property: JsonPropertyName("kind")] string Kind,
     [property: JsonPropertyName("title")] string Title);
 
+/// <summary>Why <see cref="ZoneLayoutStore.Read"/> returned no layout (ADR-0032 rule 4). <see cref="None"/> when it returned one.</summary>
+public enum ZoneLoadRefusal
+{
+    None,
+
+    /// <summary>No file at the slot's path — a first run, or a slot never written.</summary>
+    NoFile,
+
+    /// <summary>A <c>schemaVersion</c> this build does not read; the file is refused whole, never partially applied.</summary>
+    NewerSchema,
+
+    /// <summary>Unreadable JSON, no layout, or an arrangement that breaks the frame invariant (a duplicated surface id).</summary>
+    Corrupt,
+}
+
+/// <summary>What a read produced: the layout, or null with the reason.</summary>
+public sealed record ZoneLoadResult(WorkbenchLayout? Layout, ZoneLoadRefusal Refusal);
+
 /// <summary>
 /// Saves and restores a <see cref="WorkbenchLayout"/> of named zones as JSON (ADR-0021 dz-persist),
 /// preserving what the projected tree cannot: collapsed-zone content, per-zone extent, and exact
@@ -60,7 +78,23 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
 
     public string FilePath => filePath;
 
-    public void Save(WorkbenchLayout layout)
+    /// <summary>The sibling a save is written to before it replaces the file: <c>&lt;file&gt;.tmp</c>.</summary>
+    public string TempPath => filePath + ".tmp";
+
+    /// <summary>
+    /// Writes the arrangement — atomically (ADR-0032 rule 3). The envelope is serialised to
+    /// <see cref="TempPath"/> and then moved over the destination in one step, so the file the
+    /// product reads is never a torn write: a crash before the move leaves the original, and a
+    /// stale temp file is overwritten by the next save.
+    /// </summary>
+    /// <param name="backupPath">
+    /// When given and the destination exists, the SAME call that replaces the original preserves
+    /// it there (<see cref="File.Replace(string, string, string?)"/>): the pre-perspective bytes,
+    /// or a refused file, are kept by the write that would otherwise lose them. A backup that
+    /// cannot be created fails the save and leaves the destination untouched — the caller reports
+    /// it; the original is never written over on a best-effort promise.
+    /// </param>
+    public void Save(WorkbenchLayout layout, string? backupPath = null)
     {
         ArgumentNullException.ThrowIfNull(layout);
 
@@ -75,19 +109,38 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
             Directory.CreateDirectory(directory);
         }
 
-        File.WriteAllText(filePath, JsonSerializer.Serialize(envelope, Json));
+        File.WriteAllText(TempPath, JsonSerializer.Serialize(envelope, Json));
+        try
+        {
+            if (backupPath is not null && File.Exists(filePath))
+            {
+                File.Replace(TempPath, filePath, backupPath);
+            }
+            else
+            {
+                File.Move(TempPath, filePath, overwrite: true);
+            }
+        }
+        finally
+        {
+            // A replace that failed leaves the temp file beside the intact original; it is removed
+            // so the next save starts clean, and the failure still propagates to the caller.
+            try { File.Delete(TempPath); } catch (IOException) { } catch (UnauthorizedAccessException) { }
+        }
     }
 
     /// <summary>
-    /// Loads the saved zone layout, dropping surfaces that are no longer available. Returns null when
-    /// there is no file, it cannot be read, or it does not deserialize — the caller then keeps its
-    /// current arrangement (or the default). Never throws on a bad file.
+    /// Loads the saved zone layout, dropping surfaces that are no longer available, and, when
+    /// nothing is returned, says why (ADR-0032 rule 4): no file · a newer schema than this build
+    /// reads · a corrupt file (unreadable JSON, a missing layout, or an arrangement that breaks
+    /// the frame invariant). Never throws on a bad file. The file is never rewritten by a read; a
+    /// refused file is left in place for the caller to back up before its slot is next saved.
     /// </summary>
-    public WorkbenchLayout? Load(IReadOnlySet<string> availableSurfaces, IReadOnlySet<string> restorableKinds)
+    public ZoneLoadResult Read(IReadOnlySet<string> availableSurfaces, IReadOnlySet<string> restorableKinds)
     {
         if (!File.Exists(filePath))
         {
-            return null;
+            return new ZoneLoadResult(null, ZoneLoadRefusal.NoFile);
         }
 
         ZoneEnvelope? envelope;
@@ -97,12 +150,24 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
         }
         catch (JsonException)
         {
-            return null; // unreadable → keep current; the file is left in place for inspection
+            return new ZoneLoadResult(null, ZoneLoadRefusal.Corrupt); // the file is left in place for inspection
         }
 
-        if (envelope?.Layout is null || envelope.SchemaVersion != CurrentSchemaVersion)
+        if (envelope?.Layout is null)
         {
-            return null;
+            return new ZoneLoadResult(null, ZoneLoadRefusal.Corrupt);
+        }
+
+        if (envelope.SchemaVersion > CurrentSchemaVersion)
+        {
+            return new ZoneLoadResult(null, ZoneLoadRefusal.NewerSchema);
+        }
+
+        if (envelope.SchemaVersion < CurrentSchemaVersion)
+        {
+            // No store ever wrote a lower version (schema 1 is the first); a 0 or a missing field
+            // is a file this store did not write, not a newer build's.
+            return new ZoneLoadResult(null, ZoneLoadRefusal.Corrupt);
         }
 
         bool Available(ZoneSurfaceDto s) =>
@@ -132,10 +197,10 @@ public sealed class ZoneLayoutStore(string filePath, string appVersion = "0.3.0"
         }
         catch (InvalidOperationException)
         {
-            return null; // a corrupt saved layout (e.g. a duplicated surface) → keep current
+            return new ZoneLoadResult(null, ZoneLoadRefusal.Corrupt); // e.g. a duplicated surface → keep current
         }
 
-        return layout;
+        return new ZoneLoadResult(layout, ZoneLoadRefusal.None);
     }
 
     // ── mapping ────────────────────────────────────────────────────────────────────────────

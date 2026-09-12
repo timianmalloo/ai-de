@@ -344,10 +344,10 @@ send is accepted, its lines arrive from the run's sink, its outcome from the run
 **Remarks.** **CV-1's implementer of `ISessionThread`; CV-2's is the envelope fold.**
 This type folds the two stores that exist today — the accepted send and the run channel — and
 nothing durable: a reopened session has no history here (the envelope store, ADR-0034, is CV-2's
-and replaces this with `SessionThreadProjection` behind the same seam). What it does
-honour is the read model's delivery contract, proven by `M4`: one raise per applied event
-after catch-up, `Version` incremented by one, the snapshot in the
-event.
+and replaces this with an envelope-backed implementer behind the same seam). What it does
+honour is the read model's delivery contract, proven by
+`TheReadModelPublishesOneSnapshotPerAppliedEventTests`: one raise per applied event after
+catch-up, `Version` incremented by one, the snapshot in the event.
 
 
 
@@ -566,8 +566,8 @@ apply time, because two raises before one apply would read one state and lose a 
 publishes snapshots with `IsCaughtUp` false at any cadence; the first
 caught-up snapshot is the folded history; after it, `Changed` is raised exactly once
 per applied event with `Version` incremented by one, raises
-serialized. `M4` proves it on the run-channel implementer; `R1` (CV-2) on the
-envelope-backed one.
+serialized. `TheReadModelPublishesOneSnapshotPerAppliedEventTests` proves it on the
+run-channel implementer; CV-2's twin proves it on the envelope-backed one.
 
 ## `ThreadSnapshot`
 

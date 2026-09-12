@@ -3,8 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:wb="clr-namespace:AiDe.App.Workbench"
         mc:Ignorable="d"
-        Title="{Binding WindowTitle}"
+        Title="AI-DE"
         Width="1180"
         Height="720"
         MinWidth="820"
@@ -13,6 +14,68 @@
         Background="{StaticResource SurfaceBrush}"
         FontFamily="Segoe UI Variable Text, Segoe UI"
         FontSize="13">
+    <Window.Resources>
+        <!--  PS-R4: every rail glyph is a registry entry, resolved by the row's title (Icon<Title>).
+              IconExplore and IconAdd live in App.xaml's registry; these two are the rows Addendum C
+              adds, kept beside the rail until they join that registry (seam request: App.xaml).  -->
+        <Geometry x:Key="IconCoding">M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14</Geometry>
+        <Geometry x:Key="IconArchitecture">M4 20h16M6 20V9l6-4 6 4v11M10 20v-5h4v5M9.5 11h5</Geometry>
+
+        <!--  The rail destination (DESIGN.md PS-R2 state table): rest - text-muted on the sunken
+              rail; hover - text on surface-raised; selected - accent glyph on surface-raised with
+              the 3px accent bar; focus - a 2px outer focus ring; error - a danger badge. The leaf
+              never states its own ink: the container pairs, the glyph inherits (PS-T1's rule).
+              No disabled state exists (AR3). 44 x 44 target (SC 2.5.8).  -->
+        <Style TargetType="wb:PerspectiveRailItem">
+            <!--  2px above and below: the outer focus ring's headroom, so the first destination's
+                  ring is not clipped by the list's scroll presenter.  -->
+            <Setter Property="Margin" Value="0,2,0,2" />
+            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="wb:PerspectiveRailItem">
+                        <Grid Background="Transparent">
+                            <Border x:Name="AccentBar" Width="3" Height="26" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                    CornerRadius="0,2,2,0" Background="{StaticResource AccentBrush}" Visibility="Collapsed" />
+                            <!--  The focus ring is OUTER (DESIGN.md's rail rule): a sibling drawn 2px outside
+                                  the pill, never inset into the 44 x 44 target or over the pill's ground.  -->
+                            <Border x:Name="FocusRing" Margin="4,-2,4,-2" CornerRadius="12" BorderThickness="2"
+                                    BorderBrush="{StaticResource FocusBrush}" Visibility="Collapsed" />
+                            <Border x:Name="Pill" Margin="6,0,6,0" CornerRadius="10" Background="{TemplateBinding Background}">
+                                <Grid>
+                                    <Path Width="22" Height="22" Stretch="Uniform" Data="{TemplateBinding Glyph}"
+                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}"
+                                          StrokeThickness="1.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                                    <Ellipse x:Name="ErrorBadge" Width="8" Height="8" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                             Margin="0,4,4,0" Fill="{StaticResource DangerBrush}" Visibility="Collapsed" />
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                                <Setter TargetName="Pill" Property="Background" Value="{StaticResource SurfaceRaisedBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                <Setter TargetName="Pill" Property="Background" Value="{StaticResource SurfaceRaisedBrush}" />
+                                <Setter TargetName="AccentBar" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="FocusRing" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="HasFailure" Value="True">
+                                <Setter TargetName="ErrorBadge" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <!--  RootLayer lets the command palette overlay the workbench without displacing it.  -->
     <Grid x:Name="RootLayer">
     <!--  Layout:MultiPanelWorkstation — the docking host owns the whole body. Nothing here is a
@@ -62,10 +125,12 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
+            <!--  No TabNavigation=Once on this container (the UX & Accessibility reviewer's blocker):
+                  a Once group is ONE stop, so Tab from New session would leave the rail and never
+                  enter the destinations. The destinations carry their own roving tab-stop.  -->
             <StackPanel x:Name="ActivityRail"
                         Grid.Column="0"
                         Background="{StaticResource SurfaceSunkenBrush}"
-                        KeyboardNavigation.TabNavigation="Once"
                         KeyboardNavigation.DirectionalNavigation="Cycle">
                 <!--  AR2 — THE ONE PRIMARY ACTION, above the group and separated from it. The rail
                       holds DESTINATIONS (AR1); "new session" is a verb, so it does not join them,
@@ -84,39 +149,12 @@
                           StrokeThickness="1.8" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                 </Button>
                 <Border Height="1" Margin="12,4,12,6" Background="{StaticResource BorderBrush}" />
-                <!--  Roving tab-stop: Tab lands on the rail once; Up/Down arrows move between its
-                      buttons (DirectionalNavigation=Cycle), the standard toolbar/activity-bar idiom.  -->
-                <!--  Icon-only vertical navigation rail (VS Code / JetBrains idiom): the 56px column
-                      cannot hold a legible text label under a 20px glyph, so labels were clipped
-                      ("Coordinate" -> "ordina"). Discoverability is carried by the tooltip and the
-                      accessibility by AutomationProperties.Name, so no meaning is lost by dropping the
-                      caption. Targets are 44x44 (WCAG 2.5.8 comfortable). The active item is an accent
-                      glyph on a soft raised pill with NO hard border, to match the rounded facelift.  -->
-                <!--  Active item: a 3px left accent bar (the VS Code cue) beside the raised pill, so
-                      the current mode reads at a glance and by more than colour alone.  -->
-                <Grid Margin="0,8,0,4">
-                    <Border x:Name="ExploreAccentBar" Width="3" Height="26" HorizontalAlignment="Left" VerticalAlignment="Center"
-                            CornerRadius="0,2,2,0" Background="{StaticResource AccentBrush}" Visibility="Collapsed" />
-                    <Button x:Name="ExploreRailButton" Click="OnToggleExplorer" Margin="6,0,6,0" Height="44" Style="{StaticResource RoundedButton}"
-                            AutomationProperties.Name="Explore perspective" Background="Transparent"
-                            BorderThickness="0" Foreground="{StaticResource TextMutedBrush}" ToolTip="Explore perspective">
-                        <Path Width="22" Height="22" Stretch="Uniform" Data="{StaticResource IconExplore}"
-                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                              StrokeThickness="1.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
-                    </Button>
-                </Grid>
-                <!--  AR3 — A RAIL ITEM IS PRESENT ONLY IF IT DOES SOMETHING. Three buttons used to
-                      sit here, IsEnabled="False", announcing "Coordinate", "Compose" and "Audit" -
-                      perspectives the Perspective set does not have. Disabling them removed the lie and kept the
-                      dead UI: at rest they were the same 44x44 pill in the same muted foreground as
-                      the one that works, so "none of these icons do anything" was a fair reading of
-                      a rail where three of four did not.
-
-                      They are DELETED rather than re-enabled because whether those modes get built
-                      is a product decision and an absent row is the honest state of one that has not
-                      been made. Explorer stays: it is the ONLY door to the Knowledge Explorer in the
-                      product, and the instruction as written ("get rid of them") would have removed
-                      it along with the placeholders.  -->
+                <!--  AR1 / PS-R2 - THE DESTINATIONS: Coding · Explore · Architecture, one selected,
+                      manual activation (Up/Down move focus; Enter, Space or a click activate; Tab
+                      leaves the rail once). A vertical tab list to UIA, its selected state the real
+                      one - never a "(active)" name suffix. AR3: a destination that cannot be
+                      entered is removed, never disabled; Tests is a reserved name with no row.  -->
+                <wb:PerspectiveRail x:Name="Rail" Margin="0,4,0,0" />
             </StackPanel>
 
             <!--  The docking host is injected by the composition root, not declared here: the
@@ -133,6 +171,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <ContentControl x:Name="LiveRegionHost"
                             Grid.Column="0"
@@ -142,6 +181,13 @@
                        AutomationProperties.Name="Workspace health"
                        Foreground="{StaticResource TextMutedBrush}"
                        Text="{Binding StatusMessage}" />
+            <!--  The active perspective, named on the strip after every switch (spec §C6). No
+                  AutomationProperties.Name: on a TextBlock it would REPLACE the text as the UIA
+                  name, and AT would read the label instead of the perspective.  -->
+            <TextBlock x:Name="PerspectiveStatus"
+                       Grid.Column="2"
+                       Margin="12,6"
+                       Foreground="{StaticResource TextMutedBrush}" />
         </Grid>
     </Grid>
     </Grid>

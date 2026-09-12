@@ -172,6 +172,13 @@ resolved 3 direct, 11 transitive callers
 
 <script>
   const H=document.documentElement;
+  // DC-147: these ids are hyphenated (h-theme, prov-body, ...), so the DOM's implicit
+  // named-access globals (which only exist for hyphen-free ids) never bind them — every
+  // bare reference below threw ReferenceError before the strip could render a verdict.
+  const h_theme=document.getElementById('h-theme'), h_motion=document.getElementById('h-motion'),
+    h_density=document.getElementById('h-density'), h_state=document.getElementById('h-state'),
+    h_focus=document.getElementById('h-focus'), prov_body=document.getElementById('prov-body'),
+    prov_empty=document.getElementById('prov-empty'), prov_err=document.getElementById('prov-err');
   h_theme.onchange=e=>H.setAttribute('data-theme',e.target.value);
   h_motion.onchange=e=>H.setAttribute('data-motion',e.target.value);
   h_density.onchange=e=>H.setAttribute('data-density',e.target.value);

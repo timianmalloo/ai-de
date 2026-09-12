@@ -484,6 +484,22 @@ jobs:
         if: ${{ !cancelled() }}
         run: python tools/verify-aide-gitignore.py --self-test
 
+      # DC-147/DC-158 (INV-0008 phase 6, X-1): a mockup's own in-artifact measurement can throw
+      # before it renders and leave its verdict strip on the placeholder forever, invisible to
+      # `verify-ui-craft-floor.py` (it reads markup and computed style; it never executes the page
+      # the way a browser does). This is the browser console DC-147 says nobody opened, run in CI —
+      # a headless sweep over every docs/mockups/*.html that fails on an Uncaught console error or
+      # a verdict strip still reading "measuring...". stdlib only; shells out to whichever
+      # Chromium-family browser is already on the runner (Microsoft Edge / Google Chrome /
+      # Chromium — ubuntu-latest ships all three).
+      - name: Mockup audits gate — self-test
+        if: ${{ !cancelled() }}
+        run: python tools/verify-mockup-audits.py --self-test
+
+      - name: Every mockup's own audit actually ran
+        if: ${{ !cancelled() }}
+        run: python tools/verify-mockup-audits.py
+
   # ---------------------------------------------------------------------------------------------
   # THE PORTABLE 94% OF THE CORE SUITE, ON LINUX AT 1x.
   #

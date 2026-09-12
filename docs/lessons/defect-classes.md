@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 81 · partially-controlled 60 · uncontrolled 19
+**Status counts:** controlled 82 · partially-controlled 61 · uncontrolled 20
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -5963,6 +5963,19 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Status:** `partially-controlled` — the contrast instance is controlled by a census over the
   real composition; the general shape (a test constructing what the product resolves) still has no
   gate, and the next slice decomposed the same way would cite the same coverage again.
+- **Recurrence 3 (SH-2, 2026-09-12) — the census's population shrank and the census stayed green.**
+  `ShellContrastCensus` adds every kind row to `shell.Service` — host A's — and walks the window.
+  Under ADR-0031/0032 host A's service refuses the seven Architecture kinds (the graph, the two
+  evidence views, provenance, contexts, joins, the class diagram, the sequence diagram) and the
+  probe logs `add <kind>: … cannot open in Coding` and moves on: those surfaces are now composed in
+  host B, which the census never shows, so their rows are **not measured** and the verdict reads
+  *0 failing* over a smaller population. The gate has no floor on its own row count per surface
+  (spec §C7's "a surface that measured zero is a failure row, never a pass" is the missing
+  control). Seam request to X-1 (`tests/AiDe.App.ContrastProbe/**`): add the kinds through the
+  host that admits them (`shell.HostFor(PerspectiveMenu.Resolve(kind, …))`), switch the
+  presenter to Architecture and walk the body, walk the rail's three destinations in their
+  selected/unselected states, and fail a named surface that measured zero rows. Until then the
+  Proof Pack reports the census as *host A and the rail's rest state only*.
 
 ### DC-136 — A merge resolved as "regenerate, then stage everything" leaves markers in a file that is patched in place, not regenerated
 - **Shape:** the documented resolution for the two recurring conflicts is *union the append-only
@@ -6417,13 +6430,27 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   legacy mockups (`app-facelift`, `context-map-join`, `knowledge-explorer`, `uml-erm-surfaces`:
   `Uncaught ReferenceError: h_theme is not defined`) — reported to the conductor, not fixed in this
   node. The three Addendum C/D mockups and the new session mockup render their strips.
-- **Control:** this run — a headless sweep of every mockup and every harness state that fails on
-  `Uncaught` in the console or a verdict strip still reading its placeholder (recorded in
-  `ui-review-session-conversation` §2c and §10). **Proposed** (ranked plan item 5): the same sweep
-  as `tools/verify-mockup-audits.py` beside `verify-ui-craft-floor.py` in `build.yml`, so the
-  craft gate's green never stands alone over a strip that never measured.
-- **Status:** `partially-controlled` — the instance is fixed and the class swept by this run's headless
-  sweep; the gate is prose until the sweep is a script in CI.
+- **Control:** `tools/verify-mockup-audits.py` (X-1, INV-0008 phase 6's sibling track) — a headless
+  sweep, stdlib only, that shells out to whatever Chromium-family browser is already installed
+  (Microsoft Edge / Google Chrome / Chromium — `ubuntu-latest` ships all three, verified against
+  `actions/runner-images`' Ubuntu 24.04 software manifest; Windows ships Edge) with
+  `--headless=new --dump-dom` and `--enable-logging=stderr --v=1`, exactly reproducing the browser
+  console DC-147 says nobody opened. `--self-test` plants a broken verdict strip (an undefined
+  bare identifier, the four legacy mockups' own shape) and asserts BOTH that the planted breakage
+  is caught and that a healthy fixture stays clean — observed red with detection disabled, green
+  with it restored. Wired as the last step of the `gates` job in `.github/workflows/build.yml`,
+  beside `verify-ui-craft-floor.py`. All 17 `docs/mockups/*.html` swept clean after the four
+  legacy mockups' fix below.
+- **Instance, the four legacy mockups (2026-09-12):** each declared its harness controls with
+  hyphenated ids (`h-theme`, `s-ctx`, `st-gen`, …) and then referenced them as bare identifiers
+  with underscores (`h_theme`, `s_ctx`, `st_gen`, …) — relying on the DOM's implicit named-access
+  globals, which exist only for hyphen-free ids. Every such reference threw
+  `Uncaught ReferenceError` before the harness (theme/motion/density/state toggles) could wire up.
+  Fixed with the smallest correct change: one `const` block per file aliasing each hyphenated id to
+  its bare name via `document.getElementById`, touching no markup, no CSS, no other logic.
+- **Status:** `controlled` — the instance (`new-session-sheet.html`) and the sweep's four
+  legacy-mockup instances are both fixed; the control is a script in CI (`--self-test` red-first,
+  then wired into `gates`), not prose.
 
 ### DC-148 — A command mutates the model of a view that is not on screen, and reports the model's success as the screen's
 
@@ -6941,3 +6968,95 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Status:** `uncontrolled` — the cells are pasted; the manifest and the gate do not exist.
 
 ## 5. What this note does not decide
+
+### DC-161 — A container's disabled-state trigger only reaches ink that inherits it, and a template that sets ink locally, or carries no trigger at all, is invisible to a floor that never renders the state
+
+- **Shape:** INV-0008's own register (§8) marked `MenuItem IsEnabled=False → DisabledTextBrush on
+  the *item*` **"confirmed by structure"** for every menu header and item — read from the XAML,
+  never rendered. INV-0008 phase 6 (X-1, the census reach) forced two real, already-composed
+  `MenuItem`s disabled — a submenu command and a top-level header — and rendered what the
+  structural read had not: two DIFFERENT sub-shapes of the same class. (a) `MenuItemSubmenuItem`'s
+  gesture-chord `TextBlock` (`Foreground="{DynamicResource TextMutedBrush}"`, a LOCAL value on the
+  glyph itself) never inherits the container's `IsEnabled=False` trigger, so "Ctrl+N" reads exactly
+  as legible disabled as enabled. (b) `MenuItemTopLevelHeader`'s `ControlTemplate` carries no
+  `IsEnabled=False` trigger at all — unlike its three sibling menu templates
+  (`MenuItemTopLevelItem`, `MenuItemSubmenuItem`, `MenuItemSubmenuHeader`) — so a disabled
+  top-level header (`_File` itself) keeps `TextBrush`. Both ratios still clear (6.83:1, 14.30:1) by
+  coincidence; what is lost is the STATE distinction, not the floor.
+- **Signature:** a menu (or any container) template with an `IsEnabled=False` trigger on some but
+  not all of its sibling templates; a glyph inside such a template whose `Foreground` is set
+  directly (not inherited) so a container trigger can never reach it; a register entry that says
+  "confirmed by structure" for a state no test has ever rendered.
+- **Instance (2026-09-12, INV-0008 phase 6, `tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs`
+  `ForceDisabledAndRemeasure`):** both sub-shapes above, found by forcing real `MenuItem`s (the
+  File menu's first submenu command; the `_File` top-level header) disabled and re-walking the
+  composed shell — never constructed on a throwaway window. `App.xaml` is outside this track's
+  owned paths (`docs/coordination/addendum-cd.md` §2); **not fixed here**, routed to the Shell lane
+  (App.xaml's owner) as a seam request. The steady-state reach measures the submenu command (not
+  the top-level header, whose ONLY gap this class explains and which the reach does not force, to
+  avoid asserting a fix this track cannot make); its one known exception (the gesture-chord text) is
+  pinned by `ShellContrastCensusTests.TheDC154MenuInkGapIsNamedAndDoesNotWiden` so a THIRD site
+  cannot silently join it.
+- **Control:** the census reach itself (X-1) — a disabled state is now rendered, not read from the
+  template; `ADisabledControlsInkIsTheDisabledToken`'s zero-tolerance assertion stays in force for
+  everywhere except this one named, cited exception. **Proposed for the Shell lane:** add the
+  missing `IsEnabled=False` trigger to `MenuItemTopLevelHeader`; move the gesture-chord `TextBlock`'s
+  ink to a container-level pairing (a trigger on the template) instead of a local `Foreground`.
+- **Status:** `partially-controlled` — both instances are measured, registered and pinned so
+  neither can regress silently or widen unnoticed; the `App.xaml` fix is a seam request, not yet
+  landed.
+
+### DC-162 — A test's expected order is typed from the author's picture of the data, not read from the code's documented iteration order
+
+- **Shape:** an assertion expects a sequence (`Assert.Equal(["a", "b"], …)`) whose order the code
+  under test defines elsewhere — an enum's declaration order, a dictionary built in that order, a
+  documented "Left · Right · Bottom · Center" walk — and the author writes the order they *picture*
+  (Center first, because that is where they put the interesting surface). The test goes red
+  against correct code; the fix is to the expectation, but the first instinct is to suspect the
+  code, and a hurried author can "fix" the code's order to match the picture.
+- **Signature:** a red whose message is *Collections differ* at position 0 with the same members
+  in a different order; two such reds in one test file within minutes; an expectation that would
+  have been order-insensitive had the author asked "does the order matter here?".
+- **Instance (SH-2, 2026-09-12):** `SurfaceAdmissionTests.RestoreZones_DropsInadmissibleKinds…`
+  expected `["t-1", "cv-1", "sessions"]` then `["graph", "domain"]`; `WorkbenchLayout.AllSurfaces()`
+  walks the zones in `ZoneId` order (Left before Center) and the filter documents that order in its
+  own summary. Both reds were the expectation's. Sweep: no other new test in the slice asserted a
+  cross-zone order; the drag tests assert per-zone.
+- **Control:** where order is not the property under test, assert per zone or order-insensitively
+  (the fix applied); where it is, cite the code's ordering rule in the assertion's comment so the
+  reader can check the expectation against a rule and not a picture. Red first: the red itself is
+  the detector — the class is registered so the second-instinct fix (change the code's order) is
+  recognised as the wrong one.
+- **Status:** `uncontrolled` — no gate; the register entry is the memoir until a
+  lint over `Assert.Equal([` with a cross-container sequence exists, which the Simplifier would
+  strike for one instance.
+
+## 5. What this note does not decide
+
+### DC-163 — A lease sized to the node's lifetime instead of the edit's minutes turns a shared control into a serial resource, and every join queues behind it
+
+- **Shape:** the coordination layer's claim is *"for the minutes you are editing it"* (README,
+  `.agents/sessions/`; the collaboration contract §"Before you edit anything shared"). A node that
+  claims every file it will touch at its start, with a TTL the length of its run, holds shared
+  controls — the defect register, the contrast census test — for an hour while it edits none of
+  them. The conductor's join, which must append to the register (ids are allocated at the join)
+  and merge the census, is refused by the pre-commit boundary and waits; two joins queued behind
+  one lease on 2026-09-12 for ~50 minutes, and the lease had to be released by message.
+- **Signature:** `REFUSED … held by <node> — expires in N s` on a file the holder is not editing;
+  a join delayed by a lease rather than by a conflict; `--ttl 3600` in a brief.
+- **Instance (conductor-addendum-c, 2026-09-12):** the conductor's own briefs to SH-1, CV-0,
+  CV-1, SH-2 and X-1 said *"claim what you edit … `--ttl 3600`"*; SH-2 then held
+  `docs/lessons/defect-classes.md` and CV-1 held it and `ShellContrastCensusTests.cs` for the
+  full TTL. The X-1 join was refused twice and the SH-2 join once. Both nodes released on request;
+  no data was at risk — the cost was serialisation of the joins.
+- **Sweep:** every open brief in this session carried the same clause; the plan's shared-surface
+  rule (`docs/coordination/addendum-cd.md` §Seams: the register is append-only, ids at the join;
+  whoever owns the file under test owns its test) already said the right thing and the brief
+  contradicted it.
+- **Control:** (1) the brief template now reads *claim a shared file for the minutes of the edit
+  with the default TTL (300 s) and release immediately; never claim a `register`-class artifact
+  (`.agents/artifacts.yml`) — append with a placeholder id and commit*; (2) proposed for the pack:
+  `coord claim` refuses a `register`-class path outright and caps `--ttl` at 900 s unless
+  `--long-edit` names the reason. Until (2) lands the control is the brief and the contract.
+- **Status:** `partially-controlled` — the instance is released; the brief is fixed for every
+  node dispatched after this entry; the mechanical refusal is a pack proposal.

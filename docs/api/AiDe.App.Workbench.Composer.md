@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Composer: 11 types, 68 members, 90% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Composer: 11 types, 74 members, 91% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Composer`
 
-**11 public types · 68 public members · 90% documented.**
+**11 public types · 74 public members · 91% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -271,9 +271,11 @@ claim, and paste is handled inside the page by the editor that received it.
 
 | Member | Summary |
 |---|---|
-| `ComposerSurface(string surfaceId, string title)` | **(gap)** |
+| `ComposerSurface(string surfaceId, string title, IWorkbenchAnnouncer? announcer = null)` | **(gap)** |
 | `double EditorFloor = 130` | The editor host's floor (DESIGN.md:1092 ≥ 130 px) — what the composer declares under an infinite constraint (spike Q14). |
 | `double CompiledPromptMaxHeight = 200` | The compiled prompt's ceiling when expanded (DESIGN.md:1109 ≤ 200 px, scrolls) — and it never takes the editor's floor (DC-137). |
+| `double CompiledPromptMinHeight = 48` | The compiled prompt's floor when it is open: three lines of the mono face, so a reader the operator asked for is a reader (INV-0007's "the reader gets its share"). Under a constraint that cannot hold the floor, the ed… |
+| `string ModelSource = "model"` | The decoration source that earns the tilde and the inferred ink: a value the model proposed (CV-2's compile step). A rule's value is text. |
 | `ICanvasFocusTarget FocusTarget { get; }` | The editor as a focus region of the document's F6 cycle: SetFocus on the host HWND with a read-back (DS-1 seam 1). |
 | `event Action? PageReady` | Raised once per page mount — after `MarkReady`; the document places focus in the editor on it (K7). |
 | `bool CompiledPromptOpen` | Whether the compiled prompt disclosure is open — collapsed at rest (Ruling 57). |
@@ -286,6 +288,9 @@ claim, and paste is handled inside the page by the editor that received it.
 | `ComposerSendGate Gate` | The send gate. Exposed so the seam's counter is readable by a test. |
 | `ComposerDraft Draft` | The draft this surface composes. |
 | `string Status` | The last thing that happened, in a sentence. |
+| `event Action<int>? TurnRequested` | Raised when the operator activates the in-flight turn's link in a refused-gesture reason (Ruling 77; SC8: the ordinal is a link to the turn) — the document focuses that turn's container. |
+| `double BeltHeight` | The document's belt (DS-1 Q14): the height this composer may take before the compiled prompt yields — a share of the document, set by the document at its measure. The composer's own minimum (its lines and the editor's… |
+| `double MinimumHeight { get; private set; }` | The composer's minimum height at its last measure: the lines, the picker, the send row and the editor's floor. |
 | `string LeaseLine` | The lease line: the read-only state, or the patterns (Ruling 73) — the decoration line's lease segment, prefixed. |
 | `bool IsConfigured` | Whether `Configure` has run — a bound composer is not bound again (INV-0009 Phase 2). |
 | `ComposerMessageRouter Router` | The router. Built with the surface, so a mount is heard before the session is wired. |
@@ -303,6 +308,7 @@ claim, and paste is handled inside the page by the editor that received it.
 | `void MoveFocus(bool backward)` | **(gap)** |
 | `event Action? FocusLeftBackward` | Raised when the page posts a backward `focus.leave`; the document routes it into the thread. |
 | `bool FocusFirstLine()` | The composer's first WPF stop — the Goal line — for a document whose page is not up yet (F6 still has somewhere to land). |
+| `bool StructureOpen` | Whether the structure lines are open — collapsed at rest (DESIGN.md:1088). |
 | `bool EditorHasFocus` | Whether Win32 focus is inside the editor's window — the page holds it and WPF's focused element reads null. |
 | `void SetInFlight(TurnView? turn)` | The in-flight turn, or null (Ruling 77): while one runs or waits, a Send gesture is refused with its ordinal named. Set by the document from the thread's snapshot; never inferred here. |
 | `string RefusedGestureReason(TurnView inFlight)` | The refused-gesture reason (Ruling 77 condition 1; DESIGN.md copy): *b1 is running; the next turn waits for it.* |
@@ -314,12 +320,13 @@ claim, and paste is handled inside the page by the editor that received it.
 | `AttachOutcome Attach(IReadOnlyList<string> filePaths)` | Offers files to the draft through the attach gate. |
 | `System.Text.Json.Nodes.JsonObject CommittedRecord()` | The committed-channel record for this send: counts, and one boolean. |
 | `void Dispose()` | Releases the hosted browser control. |
-| `Size MeasureOverride(Size constraint)` | **The writer is sized first (DC-137).** A DockPanel measures its docked children before the fill child, each with infinite extent on the docked axis, so an uncapped compiled prompt would take its whole content height … |
+| `Size MeasureOverride(Size constraint)` | **The writer is sized first (DC-137).** A DockPanel measures its docked children before the fill child, each with what remains of the constraint after the ones before it, so an uncapped compiled prompt would take its … |
 
-### `ComposerSurface(string surfaceId, string title)`
+### `ComposerSurface(string surfaceId, string title, IWorkbenchAnnouncer? announcer = null)`
 
 - **`surfaceId`** — The surface's stable id, as every other surface carries one.
 - **`title`** — Its accessible name.
+- **`announcer`** — Where the status line is spoken (SC6 / SC9: a refusal is announced, never silent). The document passes its own so the page has one channel; null builds one over the status line itself — WPF raises no `LiveRegionChanged` on a text change, the app must.
 
 ### `void Configure(`
 

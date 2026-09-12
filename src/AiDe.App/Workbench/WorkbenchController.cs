@@ -48,8 +48,10 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     public Func<Task<string>>? NewSessionRequested { get; set; }
 
     /// <summary>
-    /// Swaps the shell's primary view mode and returns what to announce. Set by the window; null
-    /// before that, which the command reports rather than doing nothing.
+    /// Swaps the shell's primary view mode and returns what to announce. Null in the product: the
+    /// presenter's router (<c>PerspectiveShell.Execute</c>) answers every perspective command before
+    /// a host controller sees it, so this is the headless answer — a controller reached directly
+    /// reports the perspective as not available rather than doing nothing (DC-011).
     /// </summary>
     /// <remarks>
     /// A delegate for the same reason as <see cref="NewSessionRequested"/>: the mode swap owns a
@@ -686,16 +688,21 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
         return true;
     }
 
-    /// <summary>Binds the catalog's gestures to this controller on a WPF element.</summary>
-    public void Bind(UIElement host)
+    /// <summary>
+    /// Binds the catalog's gestures on a WPF element — to <paramref name="execute"/> when given (the
+    /// shell-level router of ADR-0031, which resolves the host a command reaches), else to this
+    /// controller — and this controller's keyboard-resize keys.
+    /// </summary>
+    public void Bind(UIElement host, Func<string, bool>? execute = null)
     {
+        var run = execute ?? Execute;
         foreach (var command in WorkbenchCommandCatalog.All)
         {
             var routed = new RoutedUICommand(command.Title, command.Id, typeof(WorkbenchController));
             var id = command.Id;
             host.CommandBindings.Add(new CommandBinding(routed, (_, e) =>
             {
-                Execute(id);
+                run(id);
                 e.Handled = true;
             }));
 
