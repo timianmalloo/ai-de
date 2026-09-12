@@ -5,7 +5,7 @@ type: investigation
 status: accepted
 owner: "@timianmalloo"
 phase: "conductor-addendum-c"
-tags: [terminal, conpty, conhost, straggler, census, test-host, hang, stdout, handle-inheritance, dc-164, dc-165, dc-155, dc-014, x-2]
+tags: [terminal, conpty, conhost, straggler, census, test-host, hang, stdout, handle-inheritance, windows-terminal, create-new-console, dc-164, dc-165, dc-170, dc-155, dc-014, x-2]
 links:
   - { to: inv-0010-terminal-hosts-the-fifth-report, rel: relates-to }
   - { to: defect-classes, rel: relates-to }
@@ -24,7 +24,10 @@ summary: >-
   instance. Both fixed red→green with E2E proof. The 513 node/conhost pairs under Windows
   Terminal's agent host are the pre-fix pool of INV-0010, unchanged in count. Still open: which
   code path started 32 shells inside a hung host — the tests' default sink discarded the events;
-  it now writes a per-run ledger.
+  it now writes a per-run ledger. §7, after the pool was ended: it regrew by 25 during one
+  recount, from CREATE_NEW_CONSOLE helper launches that Windows Terminal (the default terminal)
+  turns into tabs and attaches an agent to — with or without WT_SESSION; the launcher is now
+  headless and a gate keeps it so (DC-170).
 ---
 
 # INV-0011 — Terminal hosts, the sixth report
@@ -107,11 +110,10 @@ stays as the attached-console control.
   each alive for seconds (fixtures that start a real shell). Peak 3 on the clean run.
 - **During a hung run:** everything born in it, for as long as the hang lasts — 32 here. The hang
   class is closed (DC-165); the births are not yet attributed (§6).
-- **Always, until Windows Terminal is restarted:** the 513-member pool under `wta.exe →
-  copilot.exe` (INV-0010's foreign class). It is not growing — 257 `node.exe` at both the 06:40Z
-  and the 18:52Z census — and nothing of ours has been born under it since the WT_* scrub. Ending
-  `copilot.exe[27168]` would release it (`Stop-Process -Id 27168`), but it is Windows Terminal's
-  own agent host; that is the operator's call, not the census tool's.
+- **The 513-member pool** under `wta.exe → copilot.exe` (INV-0010's foreign class) was ended on
+  the operator's word at 19:52Z (`Stop-Process -Id 27168`: `conhost` 270 → 14, `node` 257 → 1).
+  It had been growing by about one agent pair per helper launch in every test run — §7 — and
+  that path is now closed; what Windows Terminal re-attaches to is the operator's own live tabs.
 
 ## 5. Controls landed (X-2)
 
@@ -133,7 +135,32 @@ timestamps that would name the path do not exist. The sink now writes them; a re
 attributable by reading the ledger against the run's timeline. Not modeled further (IO4: the gap is
 named, and closed for the next instance rather than reasoned around).
 
-## 7. Prior reports
+## 7. The pool regrows — and the mechanism that was never WT_SESSION (20:10Z)
+
+Forty minutes after the pool was ended (`Stop-Process -Id 27168`: `conhost` 270 → 14, `node` 257 →
+1), the census read 25 new `node.exe higgsfield` under Windows Terminal's re-spawned agent
+(`copilot.exe` 40000), born 19:58–20:10Z — the SH-3 join's recount — and **0 of them within 10 s
+of a product `terminal.start`**. The product's WT_* scrub was verified in place
+(`BuildEnvironmentBlock` strips whenever the parent carries `WT_*`). So the trigger was not a
+ConPTY shell of ours.
+
+Measured (`wt-attach-probe.ps1`: count `node.exe higgsfield` before, run a filter, wait 25 s, count):
+
+| Run | `WT_SESSION` in the host | born |
+|---|---|---|
+| `ConPtyChildStandardHandlesTests` + `ProcessRunnerBoundsTheReadTests` + `JobContainmentTests` (one pseudo console, no helper) | set | **0** |
+| `TerminalHostExitPathTests` (two `CREATE_NEW_CONSOLE` helper launches) | set | **2** |
+| the same | unset | **2** |
+| the nine helper-launching classes (21 tests), launcher on `CREATE_NO_WINDOW` | set | **0** |
+| the whole `Platform=Windows` half (166 tests), headless | set | **0** |
+
+`CREATE_NEW_CONSOLE` on a machine whose default terminal is Windows Terminal **is a Windows
+Terminal tab**, and the agent host attaches to every tab. → **DC-170**; the launcher is headless,
+the helper's "no console window" exit is retired with DC-014's premise, and
+`tools/verify-no-new-console-launches.py` holds the line. INV-0010's "≈5/hour since Windows
+Terminal was restarted" was this: the helper suites, run by every node's gate set.
+
+## 8. Prior reports
 
 INV-0010 (fifth), and the four before it that INV-0010 lists. This report's population was the
 first in which the largest class was ours *and alive*; every earlier census had found 0 product

@@ -7752,7 +7752,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ad79ba46b90a355b8092f5599ada91879ae17a01357cf4b4f5b50998cd92ec12"
+      "sourceSha256": "31a2bcd8176bebb1a31b9e7a7fcf61be0c94a1a0049b5c4d1da75d771395d302"
     },
     {
       "id": "defect-classes",
@@ -7781,7 +7781,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "00846a6063304e466b672a30840bb41a6c46e2dc55f50f95a23b621fe4b8f250"
+      "sourceSha256": "eedb1294cb2f3e9cc26099dcaf6d112b5765296c2dcde121213d5868a8839c9c"
     },
     {
       "id": "design-session-profiler",
@@ -10911,7 +10911,7 @@ window.DOCS_INDEX = {
       "phase": "conductor-addendum-c",
       "reviewBy": "",
       "reviewSuggested": [],
-      "summary": "The operator's sixth report, 2026-09-12 ~19:00Z. Counted first: 32 powershell.exe and 36 conhost.exe born in the previous hour, every one a child of the CV-1 lane's App test host, alive 25 minutes after birth — ours. The host was hung at ~0 CPU, 30 minutes into a suite that takes two, in WorkbenchShell.Git → StreamReader.ReadToEnd after git had exited; the read was unbounded and the WaitForExit(3000) bound sat after it (DC-165). Ending the host released all 32 (the job's kill-on-close held). A second defect was found on the way in: a ConPTY child of a redirected parent inherits the parent's standard handles and writes into its stdout (DC-164) — the mechanism behind CV-1's one flaky probe test and, re-read, behind DC-014's 2026-08-26 instance. Both fixed red→green with E2E proof. The 513 node/conhost pairs under Windows Terminal's agent host are the pre-fix pool of INV-0010, unchanged in count. Still open: which code path started 32 shells inside a hung host — the tests' default sink discarded the events; it now writes a per-run ledger.",
+      "summary": "The operator's sixth report, 2026-09-12 ~19:00Z. Counted first: 32 powershell.exe and 36 conhost.exe born in the previous hour, every one a child of the CV-1 lane's App test host, alive 25 minutes after birth — ours. The host was hung at ~0 CPU, 30 minutes into a suite that takes two, in WorkbenchShell.Git → StreamReader.ReadToEnd after git had exited; the read was unbounded and the WaitForExit(3000) bound sat after it (DC-165). Ending the host released all 32 (the job's kill-on-close held). A second defect was found on the way in: a ConPTY child of a redirected parent inherits the parent's standard handles and writes into its stdout (DC-164) — the mechanism behind CV-1's one flaky probe test and, re-read, behind DC-014's 2026-08-26 instance. Both fixed red→green with E2E proof. The 513 node/conhost pairs under Windows Terminal's agent host are the pre-fix pool of INV-0010, unchanged in count. Still open: which code path started 32 shells inside a hung host — the tests' default sink discarded the events; it now writes a per-run ledger. §7, after the pool was ended: it regrew by 25 during one recount, from CREATE_NEW_CONSOLE helper launches that Windows Terminal (the default terminal) turns into tabs and attaches an agent to — with or without WT_SESSION; the launcher is now headless and a gate keeps it so (DC-170).",
       "tags": [
         "terminal",
         "conpty",
@@ -10922,8 +10922,11 @@ window.DOCS_INDEX = {
         "hang",
         "stdout",
         "handle-inheritance",
+        "windows-terminal",
+        "create-new-console",
         "dc-164",
         "dc-165",
+        "dc-170",
         "dc-155",
         "dc-014",
         "x-2"
@@ -10947,7 +10950,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "607c1103e59b4f488185941accda8a5cde79d997c903d86e9d031f302cc8e5f7"
+      "sourceSha256": "2122bcb7ecb421695f758e544427505235dd28a09b7511b1dca941c4d61d772f"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -15145,7 +15148,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "32c4f2d721d8c12405460191909939f10034eaf2c0263470cb29caf5b12abdd3"
+      "sourceSha256": "e86758a2394dc823c88a985417bdad57f0cb1221620620c3172042cb3e03a430"
     },
     {
       "id": "proof-watcher-advisory-evaluator",
@@ -17064,5 +17067,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "3f94c61298cab8b2a8b03cdcc9701516bf0303d65a7e3fda97b3915d51a4f5a8"
+  "graphSha256": "3e1fd41c0076db9702ba50013211694da0463bc0bfd429d44c627c928151412e"
 };

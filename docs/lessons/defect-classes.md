@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 84 · partially-controlled 64 · uncontrolled 21
+**Status counts:** controlled 85 · partially-controlled 65 · uncontrolled 20
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -474,8 +474,11 @@ for both or split.*
   stdout was the host's pipe, not the pseudo console, and the `Output` channel stayed empty. With
   `STARTF_USESTDHANDLES` and null handles (Windows Terminal's own launch shape) the in-process
   form now passes in a `dotnet test` host: `ConPtyChildStandardHandlesTests` reads the child's
-  token on the channel. The out-of-process helper remains a valid control for the attached-console
-  configuration; it is no longer the *only* way to observe the channel. The class stands — the
+  token on the channel. The out-of-process helper remains a valid control for owner-lifetime claims; it is no longer
+  the *only* way to observe the channel, and it no longer needs a console window (DC-170).
+  `TerminalGuiHostTests` had recorded the true condition on 2026-08-27 — *"it is which standard
+  handles the host was given"* — as a comment in a test, never as a change to the runtime: a
+  memoir (CI6), read back only when the sixth report forced the measurement. The class stands — the
   diagnostic bullet below is what would have found this too — but its instance is re-attributed.
 - **Instances:** 2026-08-27 — the same class, reached from the other side. Building the terminal
   renderer raised the question this entry's own wording appeared to settle: `AiDe.App` is a GUI
@@ -4508,7 +4511,7 @@ for both or split.*
   discarded by a pipe. In each the mechanism reports success, and the absence has no signature. That
   meta-shape is the thing to look for, and it is why each was found by *measuring the control itself*
   rather than by trusting its green.
-- **Status:** `uncontrolled` — recorded, with the exposure scoped to interactive and agent sessions
+- **Status:** `partially-controlled` — the gate runner (`tools/run-verify-gates.py`, recurrence 3) gives the join line one status to chain on; recorded, with the exposure scoped to interactive and agent sessions
 
 ---
 
@@ -4522,6 +4525,19 @@ for both or split.*
   stops the line — applied to every resolution line since; the pre-commit hook does not run the
   gate set and should not (it would double CI). The class is unchanged; the instance is the
   conductor forgetting its own register.
+
+- **Recurrence 3 (conductor-addendum-c, 2026-09-12, the SH-3 join) — and the mechanical control:**
+  a `for g in tools/verify-*.py; do …; done` loop counted its failures into a variable, printed
+  `FAIL rc=1 tools/verify-stranded-audit.py`, and the line went on to `git commit … && git push`
+  because nothing chained on the count. Recurrence 2's control — "`&&`-chain every gate" — cannot
+  reach a loop: a loop has no single status to chain on, and the conductor wrote one by hand at a
+  join for the third time. The red was transient (a peer tree's uncommitted log; green on re-run)
+  and `main`'s content was verified, but the shape pushed before it knew. **Control:**
+  `tools/run-verify-gates.py` runs every `tools/verify-*.py` and exits 1 on any failure
+  (`--self-test` proves a red gate is reported red), so the only join line is
+  `python tools/run-verify-gates.py && git commit …` and no loop is written at a join again.
+  Status moves to `partially-controlled`: the runner exists; the resolution path's own use of it
+  is the conductor's habit until the join is a script.
 
 ### DC-114 — A fix to the deployment mechanism cannot deploy itself: correct, tested, green, and unreachable
 
@@ -7163,3 +7179,35 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   at the join (contiguous DC family; DC-168 is the last landed).
 
 ## 5. What this note does not decide
+
+### DC-170 — A test that opens a new console on a machine whose default terminal is Windows Terminal opens a Windows Terminal tab, and the tab's agent outlives the test
+
+- **Shape:** `CreateProcess(... CREATE_NEW_CONSOLE ...)` asks Windows for a console *with a window*.
+  When Windows Terminal is the **default terminal application**, that console is handed to Windows
+  Terminal as a tab; Windows Terminal's agent host (`wta.exe`) attaches an agent session to every
+  tab — a `copilot.exe --acp --stdio` child and one `node.exe` MCP server per tab — and keeps them
+  for Windows Terminal's lifetime after the tab closes. A test suite that launches a helper this
+  way leaves one agent pair per launch, forever, on the operator's machine. `WT_SESSION` in the
+  launcher's environment is not the condition: measured with and without it, two launches → two
+  `node.exe`. (INV-0010's WT_* scrub closed the *other* attach path — a ConPTY shell of ours
+  treated as a tab — and left this one, which is not a ConPTY shell at all.)
+- **Signature:** `node.exe … higgsfield-mcp/src/server.js` and `conhost.exe` pairs under
+  `wta.exe → copilot.exe`, born in bursts that line up with test runs, none within 10 s of a
+  product `terminal.start`; a Windows Terminal tab that flashes open during a test; a census whose
+  largest class is *foreign by parent* and grows by about the number of helper launches per run.
+- **Instance (INV-0011 §7, 2026-09-12):** after the pool of 257 was ended, 25 were born during one
+  whole-suite recount (19:58–20:10Z); `TerminalHostExitPathTests` alone (two helper launches):
+  2 born with `WT_SESSION` set, 2 with it unset. Nine Core test classes launched
+  `AiDe.Core.TerminalHost` with `CREATE_NEW_CONSOLE` on DC-014's premise that the helper needed a
+  real console — a premise DC-164 retired.
+- **Sweep:** one launch site (`tests/AiDe.Core.Tests/TerminalHostLauncher.cs`); the App's GUI probe
+  and window-close test use `UseShellExecute = true` on a window-subsystem exe (no console, no tab);
+  no product code creates a console.
+- **Control:** the launcher uses `CREATE_NO_WINDOW` (a headless console: the helper still owns a
+  console, ConPTY still works, no tab exists to attach to) — the same 21 tests, 0 born; the whole
+  `Platform=Windows` half (166), 0 born. The helper's exit code 4 ("no console window") and the four
+  assertions on it are retired with the premise. Gate: `tools/verify-no-new-console-launches.py`
+  (every `*.cs` under `src/` and `tests/`, code lines only, token `CREATE_NEW_CONSOLE`, no
+  allowlist; `--self-test`), run by `run-verify-gates.py` and in CI.
+- **Status:** `controlled`.
+

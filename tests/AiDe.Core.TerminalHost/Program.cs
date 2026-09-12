@@ -19,13 +19,14 @@ namespace AiDe.Core.TerminalHost;
 /// is. Measured 2026-08-26: identical code captures the child's stdout under <c>dotnet run</c> from
 /// a terminal (90 bytes, marker present) and captures nothing under a console-less host.</para>
 ///
-/// <para>The conformance suite launches this executable with <c>CREATE_NEW_CONSOLE</c>, which gives
-/// it a console of its own, and asserts on the exit code. That keeps the claim testable rather than
-/// downgrading it to a comment, which is what a "known environment limitation" note would have
-/// been.</para>
+/// <para>The conformance suite launches this executable in a headless console (<c>CREATE_NO_WINDOW</c>
+/// — a new console would be a Windows Terminal tab with an agent attached, DC-170) and asserts on
+/// the exit code. That keeps the claim testable rather than downgrading it to a comment, which is
+/// what a "known environment limitation" note would have been.</para>
 ///
 /// <para>Exit codes are the contract: <b>0</b> the child's output was captured, <b>2</b> it was not,
-/// <b>3</b> the session could not start, <b>4</b> no console (the caller forgot the flag).</para>
+/// <b>3</b> the session could not start. (<b>4</b>, "no console window", was retired with DC-014's
+/// premise: the window was never the operative condition.)</para>
 /// </remarks>
 [SupportedOSPlatform("windows")]
 internal static class Program
@@ -45,12 +46,11 @@ internal static class Program
         // Fail loudly rather than quietly reporting "not captured": a missing console is the
         // caller's mistake, and reporting it as a product failure would be a false negative that
         // looks exactly like a real one.
-        if (GetConsoleWindow() == IntPtr.Zero)
-        {
-            log.AppendLine("no console window — launch with CREATE_NEW_CONSOLE");
-            Write(report, log);
-            return 4;
-        }
+        // Recorded, not required (X-2: DC-014's premise was DC-164's mechanism; the runtime's
+        // channel works with no console window at all). A headless console is what CREATE_NO_WINDOW
+        // gives this process, and it is what keeps Windows Terminal — the default terminal on the
+        // reporting machine — from opening a tab for every launch and attaching an agent to it.
+        log.AppendLine(GetConsoleWindow() == IntPtr.Zero ? "console window: none (headless)" : "console window: present");
 
         if (mode == "osc")
         {
