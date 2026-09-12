@@ -100,6 +100,33 @@ public sealed class CSharpDeclarationObservationTests
         Assert.Throws<InvalidOperationException>(() => VerifiedSourceBuffer.FromBytes(bomObservation, AtlasSourceBinding.Create("manifest:1", FileValue("src\\Utf8.cs"), "policy", NativeToken(RootIdentity()), NativeToken(FileIdentity()), Sha256(Encoding.UTF8.GetBytes(source))), utf8Bom));
     }
 
+
+    [Fact]
+    public void GetDecodedUtf16Length_UsesStrictDecoderForSourceBootstrapMetadata()
+    {
+        const string source = "namespace Demo { public sealed class Widget { } }";
+        var utf8 = Encoding.UTF8.GetBytes(source);
+        var utf8Bom = Encoding.UTF8.GetPreamble().Concat(utf8).ToArray();
+        var utf16LeBom = new byte[] { 0xFF, 0xFE }.Concat(Encoding.Unicode.GetBytes(source)).ToArray();
+        var utf16BeBom = new byte[] { 0xFE, 0xFF }.Concat(Encoding.BigEndianUnicode.GetBytes(source)).ToArray();
+
+        Assert.Equal(source.Length, VerifiedSourceBuffer.GetDecodedUtf16Length(utf8, "utf-8"));
+        Assert.Equal(source.Length, VerifiedSourceBuffer.GetDecodedUtf16Length(utf8Bom, "utf-8-bom"));
+        Assert.Equal(source.Length, VerifiedSourceBuffer.GetDecodedUtf16Length(utf16LeBom, "utf-16le-bom"));
+        Assert.Equal(source.Length, VerifiedSourceBuffer.GetDecodedUtf16Length(utf16BeBom, "utf-16be-bom"));
+        Assert.Throws<InvalidOperationException>(() => VerifiedSourceBuffer.GetDecodedUtf16Length(Encoding.Unicode.GetBytes(source), "utf-16le"));
+        Assert.Throws<InvalidOperationException>(() => VerifiedSourceBuffer.GetDecodedUtf16Length(utf8, "utf-16le-bom"));
+        Assert.Throws<InvalidOperationException>(() => VerifiedSourceBuffer.GetDecodedUtf16Length(utf8, "windows-1252"));
+    }
+
+    [Fact]
+    public void GetDecodedUtf16Length_RejectsOversizeBeforeDecode()
+    {
+        var tooLarge = new byte[(8 * 1024 * 1024) + 1];
+
+        Assert.Throws<InvalidOperationException>(() => VerifiedSourceBuffer.GetDecodedUtf16Length(tooLarge, "utf-8"));
+    }
+
     [Fact]
     public void Observe_LimitAndCancellation_ReturnTypedPartialStatus()
     {
