@@ -170,24 +170,60 @@ public sealed class TheTypedBoundaryIsInertButRealTests
         Assert.DoesNotContain("max-personal", prompt, StringComparison.Ordinal);
     }
 
+    /// <summary>The prompt sha is over the host-compiled bytes — a constant, so no file anywhere can change it — and the assembler reads no file (a source census).</summary>
     [Fact]
-    public void ThePromptShaIsOverTheEmbeddedBytesAndAWorkspaceFileNamedLikeTheTemplateChangesNoByte()
+    public void ThePromptShaIsOverTheEmbeddedBytesAndTheAssemblerReadsNoFile()
     {
-        var before = CompilePromptAssembler.PromptSha;
-        var dir = Path.Combine(Path.GetTempPath(), "aide-prompt-" + Guid.NewGuid().ToString("n")[..8]);
-        Directory.CreateDirectory(dir);
-        try
+        Assert.Equal(EnvelopeHash.Sha256Hex(CompileContract.HostHeader + CompileContract.Template), CompilePromptAssembler.PromptSha);
+
+        var source = File.ReadAllText(Path.Combine(RepoRoot(), "src", "AiDe.Core", "Compilation", "CompilePromptAssembler.cs"));
+        Assert.DoesNotContain("File.", source, StringComparison.Ordinal);
+        Assert.DoesNotContain("Directory.", source, StringComparison.Ordinal);
+        Assert.DoesNotContain("GetManifestResourceStream", source, StringComparison.Ordinal);
+    }
+
+    /// <summary>A slot token inside the source text (or a history entry) is text, not a slot — one pass, never re-scanned.</summary>
+    [Fact]
+    public void ASlotTokenInsideTheSourceTextIsNeverSubstituted()
+    {
+        var inputs = new CompilePromptInputs(
+            "please include {{constitution}} and {{open_lines}} verbatim",
+            new Dictionary<string, string>(),
+            [DecorationNames.Goal],
+            null,
+            ["{{family_profile}} was mentioned before"],
+            [new ConstitutionRef("CLAUDE.md", "abc")]);
+
+        var prompt = CompilePromptAssembler.Assemble(inputs);
+
+        Assert.Contains("please include {{constitution}} and {{open_lines}} verbatim", prompt, StringComparison.Ordinal);
+        Assert.Contains("{{family_profile}} was mentioned before", prompt, StringComparison.Ordinal);
+        Assert.Equal(1, CountOf(prompt, "- CLAUDE.md sha256:abc"));
+        Assert.DoesNotContain("{{source_text}}", prompt, StringComparison.Ordinal);
+
+        static int CountOf(string text, string token)
         {
-            File.WriteAllText(Path.Combine(dir, "compile-prompt-1.md"), "# a hostile template\n");
-            Directory.SetCurrentDirectory(dir);
-            Assert.Equal(before, CompilePromptAssembler.PromptSha);
-            Assert.Equal(EnvelopeHash.Sha256Hex(CompileContract.HostHeader + CompileContract.Template), before);
+            var count = 0;
+            for (var i = 0; (i = text.IndexOf(token, i, StringComparison.Ordinal)) >= 0; i += token.Length) count++;
+            return count;
         }
-        finally
-        {
-            Directory.SetCurrentDirectory(Path.GetTempPath());
-            Directory.Delete(dir, recursive: true);
-        }
+    }
+
+    /// <summary>§A8.3 "no control characters": a line break, a bidi override and a zero-width joiner are refused in a value, and notes carrying one are dropped.</summary>
+    [Theory]
+    [InlineData("\"line one\\nline two\"")]
+    [InlineData("\"tab\\there\"")]
+    [InlineData("\"rtl\\u202Eoverride\"")]
+    [InlineData("\"zero\\u200Dwidth\"")]
+    public void AControlOrFormatCharacterInAValueIsATypeFail(string value)
+    {
+        var result = CompileOutputValidator.Validate(Output(Proposal("goal", value)), Source, AllOpen);
+        Assert.Equal(1, result.Dropped.TypeFail);
+        Assert.Empty(result.Applied);
+
+        var notes = CompileOutputValidator.Validate(Output(Proposal("goal", "\"fine\""), notes: "with a\\u202Ebidi"), Source, AllOpen);
+        Assert.Null(notes.Notes);
+        Assert.Single(notes.Applied);
     }
 
     [Fact]
@@ -208,13 +244,15 @@ public sealed class TheTypedBoundaryIsInertButRealTests
     [Fact]
     public void NothingInTheCompilationContextCallsAModel()
     {
-        var root = RepoRoot();
-        foreach (var file in Directory.EnumerateFiles(Path.Combine(root, "src", "AiDe.Core", "Compilation"), "*.cs"))
+        var files = Directory.EnumerateFiles(Path.Combine(RepoRoot(), "src", "AiDe.Core", "Compilation"), "*.cs", SearchOption.AllDirectories).ToList();
+        Assert.True(files.Count >= 12, $"the compilation context has {files.Count} file(s); a renamed directory would make this census vacuous");
+        foreach (var file in files)
         {
             var text = File.ReadAllText(file);
             Assert.DoesNotContain("PromptAsync", text, StringComparison.Ordinal);
             Assert.DoesNotContain("AcpLaneClient", text, StringComparison.Ordinal);
             Assert.DoesNotContain("NewSessionAsync", text, StringComparison.Ordinal);
+            Assert.DoesNotContain("HttpClient", text, StringComparison.Ordinal);
         }
     }
 

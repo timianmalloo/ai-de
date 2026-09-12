@@ -91,6 +91,7 @@ public sealed class PurgeAndTheSessionDeleteCascadeTests : IDisposable
         Assert.Equal(0, plan.EnvelopeCount);
         Assert.Null(plan.NewestAt);
         Assert.False(plan.FileExists);
+        Assert.False(plan.HasHistory);
         EnvelopePurge.Execute(plan);   // nothing to remove is not an error
         Assert.True(File.Exists(SessionPaths.SessionFile(_workspace, _config.SessionId)));
     }
@@ -177,21 +178,71 @@ public sealed class PurgeAndTheSessionDeleteCascadeTests : IDisposable
     }
 
     /// <summary>
-    /// The delete's ordering is observed: the envelope file is gone before any sibling is removed.
-    /// A sibling held open makes the recursive delete fail — and at that point the envelope file is
-    /// already gone while <c>session.json</c> is still there, which is the order ADR-0034 rule 6
-    /// requires (acquire → delete under the handle → siblings).
+    /// The delete's ordering, as the D&amp;P lens re-shaped it: acquire the envelope file (refuse if
+    /// held) → move the whole directory to a tombstone (a directory move fails while ANY file inside
+    /// is open, so the window between the handle's release and the recursive delete is closed) →
+    /// delete the tombstone. A sibling held open therefore refuses the delete WHOLE — nothing is
+    /// removed, nothing is orphaned — rather than leaving session.json gone and the envelope file behind.
     /// </summary>
     [Fact]
-    public void TheEnvelopeFileIsGoneBeforeAnySiblingIsRemoved()
+    public void ASiblingHeldOpenRefusesTheDeleteWholeAndNothingIsOrphaned()
     {
         WriteTwoEnvelopes();
         using var held = new FileStream(SessionPaths.EventsFile(_workspace, _config.SessionId), FileMode.Open, FileAccess.Read, FileShare.None);
 
-        Assert.ThrowsAny<IOException>(() => _sessions.Delete());
+        var refused = Assert.Throws<EnvelopeStoreException>(() => _sessions.Delete());
+        Assert.Equal(EnvelopeStoreErrorCodes.HeldByAnotherWriter, refused.Code);
 
-        Assert.False(File.Exists(EnvelopeFile));
+        Assert.True(File.Exists(EnvelopeFile));
+        Assert.True(File.Exists(SessionPaths.SessionFile(_workspace, _config.SessionId)));
         Assert.True(File.Exists(SessionPaths.EventsFile(_workspace, _config.SessionId)));
+        Assert.True(Directory.Exists(SessionDir));
+        Assert.Empty(Directory.EnumerateDirectories(SessionPaths.SessionsRoot(_workspace), "*.deleting-*"));
+    }
+
+    /// <summary>A writer that opens in the window after the acquire cannot orphan anything: the session path is gone (moved), so its open refuses NoSessionDirectory.</summary>
+    [Fact]
+    public void AfterTheDeleteAWriterAtTheSessionPathIsRefusedNotCreated()
+    {
+        WriteTwoEnvelopes();
+        _sessions.Delete();
+        var refused = Assert.Throws<EnvelopeStoreException>(() => EnvelopeStore.Open(SessionDir));
+        Assert.Equal(EnvelopeStoreErrorCodes.NoSessionDirectory, refused.Code);
+        Assert.False(Directory.Exists(SessionDir));
+    }
+
+    /// <summary>
+    /// A symbolic link where the envelope file should be is refused before any touch — the target is
+    /// not this session's history. A FILE symbolic link has no junction fallback, so on a host
+    /// without the privilege the test is <b>skipped with the reason</b> (visible in the count as
+    /// skipped, never a vacuous pass) — <see cref="SymbolicLinkFactAttribute"/>.
+    /// </summary>
+    [SymbolicLinkFact]
+    public void PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched()
+    {
+        var target = Path.Combine(_workspace, "elsewhere.jsonl");
+        File.WriteAllText(target, "{}" + Environment.NewLine);
+        File.CreateSymbolicLink(EnvelopeFile, target);
+        Assert.True(new FileInfo(EnvelopeFile).Attributes.HasFlag(FileAttributes.ReparsePoint));
+
+        var refused = Assert.Throws<EnvelopeStoreException>(() => EnvelopePurge.Resolve(_workspace, _config.SessionId));
+        Assert.Equal(EnvelopeStoreErrorCodes.PurgeRefused, refused.Code);
+        Assert.Contains("symbolic link", refused.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.True(File.Exists(target));
+        Assert.Equal("{}" + Environment.NewLine, File.ReadAllText(target));
+    }
+
+    /// <summary>Execute re-validates the path it deletes: a plan pointing outside the session's envelope file is refused, whatever its other fields say.</summary>
+    [Fact]
+    public void ExecuteRefusesAPlanWhosePathIsNotTheSessionsEnvelopeFile()
+    {
+        var outside = Path.Combine(_workspace, "README.md");
+        File.WriteAllText(outside, "keep");
+        var forged = new PurgePlan("payments", _config.SessionId, Path.GetFullPath(_workspace), Path.GetFullPath(outside), true, 1, 0, null);
+
+        var refused = Assert.Throws<EnvelopeStoreException>(() => EnvelopePurge.Execute(forged));
+        Assert.Equal(EnvelopeStoreErrorCodes.PurgeRefused, refused.Code);
+        Assert.Equal("keep", File.ReadAllText(outside));
     }
 
     /// <summary>A directory junction (no privilege needed on Windows) or a symlink elsewhere — the fixture the refusal is proven against.</summary>
@@ -212,6 +263,41 @@ public sealed class PurgeAndTheSessionDeleteCascadeTests : IDisposable
         })!;
         mklink.WaitForExit();
         Assert.True(mklink.ExitCode == 0, "mklink /J failed: " + mklink.StandardError.ReadToEnd());
+    }
+
+    /// <summary>A fact that runs only where the host can create a file symbolic link; elsewhere it is skipped with the reason.</summary>
+    private sealed class SymbolicLinkFactAttribute : FactAttribute
+    {
+        private static readonly Lazy<string?> Reason = new(Probe);
+
+        public SymbolicLinkFactAttribute()
+        {
+            if (Reason.Value is { } reason)
+            {
+                Skip = reason;
+            }
+        }
+
+        private static string? Probe()
+        {
+            var dir = Path.Combine(Path.GetTempPath(), "aide-symlink-probe-" + Guid.NewGuid().ToString("n")[..8]);
+            Directory.CreateDirectory(dir);
+            try
+            {
+                var target = Path.Combine(dir, "target");
+                File.WriteAllText(target, "x");
+                File.CreateSymbolicLink(Path.Combine(dir, "link"), target);
+                return null;
+            }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+            {
+                return $"this host cannot create a file symbolic link ({error.GetType().Name}: enable Developer Mode or run elevated); the refusal is covered by the directory-junction fixture";
+            }
+            finally
+            {
+                try { Directory.Delete(dir, recursive: true); } catch (IOException) { }
+            }
+        }
     }
 
     private sealed class FixedTime(DateTimeOffset now) : TimeProvider

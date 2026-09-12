@@ -36,6 +36,8 @@ public static class CompilePromptAssembler
     /// <summary>sha256 over the host header and template bytes — a wording edit to the prompt changes it, a workspace file never does.</summary>
     public static string PromptSha { get; } = EnvelopeHash.Sha256Hex(CompileContract.TemplateBytes);
 
+    private static readonly System.Text.RegularExpressions.Regex Slot = new(@"\{\{([a-z_]+)\}\}", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.CultureInvariant);
+
     /// <summary>The prompt, first bytes the host header.</summary>
     public static string Assemble(CompilePromptInputs inputs)
     {
@@ -47,15 +49,20 @@ public static class CompilePromptAssembler
             facts.Append("- ").Append(key).Append(": ").Append(value).Append('\n');
         }
 
-        var body = CompileContract.Template
-            .Replace("{{source_text}}", Fence(inputs.SourceText), StringComparison.Ordinal)
-            .Replace("{{mechanical_facts}}", facts.Length == 0 ? "(none)" : facts.ToString().TrimEnd('\n'), StringComparison.Ordinal)
-            .Replace("{{open_lines}}", inputs.OpenLines.Count == 0 ? "(none — every line is supplied; do not propose any)" : string.Join(", ", inputs.OpenLines), StringComparison.Ordinal)
-            .Replace("{{family_profile}}", inputs.ProfileBody ?? "(none)", StringComparison.Ordinal)
-            .Replace("{{history_window}}", inputs.HistoryEntries.Count == 0 ? "(none)" : string.Join("\n\n", inputs.HistoryEntries.Select(Fence)), StringComparison.Ordinal)
-            .Replace("{{constitution}}", inputs.Constitution.Count == 0
+        // ONE PASS over the template's slots: a value is never re-scanned for slots, so a source text
+        // (or a history entry, or the profile) that spells `{{constitution}}` is text, not a slot.
+        var slots = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["source_text"] = Fence(inputs.SourceText),
+            ["mechanical_facts"] = facts.Length == 0 ? "(none)" : facts.ToString().TrimEnd('\n'),
+            ["open_lines"] = inputs.OpenLines.Count == 0 ? "(none — every line is supplied; do not propose any)" : string.Join(", ", inputs.OpenLines),
+            ["family_profile"] = inputs.ProfileBody ?? "(none)",
+            ["history_window"] = inputs.HistoryEntries.Count == 0 ? "(none)" : string.Join("\n\n", inputs.HistoryEntries.Select(Fence)),
+            ["constitution"] = inputs.Constitution.Count == 0
                 ? "(none)"
-                : "Already in your context; do not request them.\n" + string.Join("\n", inputs.Constitution.Select(c => $"- {c.Id} sha256:{c.Sha}")), StringComparison.Ordinal);
+                : "Already in your context; do not request them.\n" + string.Join("\n", inputs.Constitution.Select(c => $"- {c.Id} sha256:{c.Sha}")),
+        };
+        var body = Slot.Replace(CompileContract.Template, m => slots.TryGetValue(m.Groups[1].Value, out var value) ? value : m.Value);
 
         return CompileContract.HostHeader + "\n" + body;
     }

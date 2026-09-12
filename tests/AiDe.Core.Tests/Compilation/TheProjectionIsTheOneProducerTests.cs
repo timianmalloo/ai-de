@@ -90,6 +90,73 @@ public sealed class TheProjectionIsTheOneProducerTests
         Assert.Equal(baseline, Projection.Project(PreCompile.Live(Input(GoalBlockDraft()))).ProjectionSha);
     }
 
+    /// <summary>
+    /// The domain, one member at a time (the Test Architect's condition): each of the twelve
+    /// members of §A12.2's <c>projection_sha</c> moves the sha when it alone changes — so a mutation
+    /// dropping any one member from the canonical array cannot survive.
+    /// </summary>
+    public static TheoryData<string, Func<Args, Args>> Members() => new()
+    {
+        { "goal", a => a with { Goal = "other" } },
+        { "done_when", a => a with { DoneWhen = "other" } },
+        { "not_in_scope", a => a with { NotInScope = "other" } },
+        { "tier", a => a with { Tier = "T2" } },
+        { "fan_out_cap", a => a with { FanOutCap = 3 } },
+        { "budget", a => a with { Budget = new RunBudget(1, 2) } },
+        { "exclusive", a => a with { Exclusive = ["src/B/**"] } },
+        { "source_text", a => a with { SourceText = "other text" } },
+        { "family_profile", a => a with { FamilyProfile = JsonNode.Parse("{\"family\":\"openai\",\"version\":null,\"sha\":null}") } },
+        { "attachments", a => a with { Attachments = JsonNode.Parse("[{\"path\":\"y\",\"sha256\":\"b\"}]") } },
+        { "task_class", a => a with { TaskClass = "defect" } },
+        { "task_class_source", a => a with { TaskClassSource = DecorationSources.Operator } },
+    };
+
+    public sealed record Args(
+        string? Goal, string? DoneWhen, string? NotInScope, string Tier, int FanOutCap, RunBudget Budget,
+        IReadOnlyList<string> Exclusive, string SourceText, JsonNode? FamilyProfile, JsonNode? Attachments, string TaskClass, string TaskClassSource)
+    {
+        public static readonly Args Baseline = new(
+            "g", "d", "n", "T1", 2, RunBudget.SubscriptionBounded, ["src/A/**"], "text",
+            JsonNode.Parse("{\"family\":\"anthropic\",\"version\":null,\"sha\":null}"),
+            JsonNode.Parse("[{\"path\":\"x\",\"sha256\":\"a\"}]"),
+            "free-form", DecorationSources.SessionDefault);
+
+        public string Sha() => Projection.ProjectionSha(Goal, DoneWhen, NotInScope, Tier, FanOutCap, Budget, Exclusive, SourceText, FamilyProfile, Attachments, TaskClass, TaskClassSource);
+    }
+
+    [Theory]
+    [MemberData(nameof(Members))]
+    public void EachMemberOfTheShaDomainMovesTheShaAlone(string member, Func<Args, Args> vary)
+    {
+        var baseline = Args.Baseline.Sha();
+        Assert.NotEqual(baseline, vary(Args.Baseline).Sha());
+        Assert.Equal(baseline, Args.Baseline.Sha());   // deterministic
+        Assert.NotNull(member);
+    }
+
+    /// <summary>§A9: a mechanical structure row is a template's only when its inputs name the template writer; an unnamed mechanical writer reads <i>not recorded</i>, never a plausible "template".</summary>
+    [Fact]
+    public void AMechanicalStructureRowWithNoTemplateWriterReadsNotRecorded()
+    {
+        var events = new List<EnvelopeEvent>
+        {
+            new Opened("e", "text", Session, "claude-code", CompileModes.MechanicalOnly, null, PreCompile.ConstantsFor("1")),
+            new Decorated("e", DecorationNames.Ceilings, new JsonObject { ["fan_out"] = 3, ["budget"] = null }, DecorationSources.Mechanical),
+            new Decorated("e", DecorationNames.TaskClass, JsonValue.Create("free-form"), DecorationSources.SessionDefault),
+            new Decorated("e", DecorationNames.Goal, JsonValue.Create("g"), DecorationSources.Mechanical),
+            new Decorated("e", DecorationNames.DoneWhen, JsonValue.Create("d"), DecorationSources.Mechanical),
+        };
+
+        var unnamed = Projection.Project(Envelope.Pending(events));
+        Assert.Equal(Envelope.NotRecorded, unnamed.StructureSource);
+        Assert.Equal("goal block filled by an unnamed writer, no write scope", unnamed.Rationale);
+
+        var named = events.Select(e => e is Decorated { Source: DecorationSources.Mechanical, Name: DecorationNames.Goal or DecorationNames.DoneWhen } d
+            ? d with { Inputs = [new DecorationInput(PreCompile.TemplateWriter, "goal-block", "1")] }
+            : e).ToList();
+        Assert.Equal(StructureSources.Template, Projection.Project(Envelope.Pending(named)).StructureSource);
+    }
+
     /// <summary>DM11 (b): the paired test — render Prepare from a fold, submit the same fold, the GoalBlock is equal.</summary>
     [Fact]
     public void TheRenderAndTheSubmitReadOneProjection()
@@ -230,7 +297,17 @@ public sealed class TheProjectionIsTheOneProducerTests
     [Fact]
     public void HasMentionAndPatternsShareOneRegexInstance()
     {
-        Assert.Same(LeaseDerivation.MentionRegex, LeaseDerivation.MentionRegex);
+        // EXACTLY ONE Regex lives in LeaseDerivation (the sharing proof: a private copy for HasMention
+        // would be a second field), and the validator owns no Regex of its own (a census over its source).
+        var regexFields = typeof(LeaseDerivation)
+            .GetFields(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+            .Where(f => f.FieldType == typeof(System.Text.RegularExpressions.Regex))
+            .ToList();
+        Assert.Single(regexFields);
+        Assert.Same(regexFields[0].GetValue(null), LeaseDerivation.MentionRegex);
+        var validatorSource = File.ReadAllText(Path.Combine(RepoRoot(), "src", "AiDe.Core", "Compilation", "CompileOutputValidator.cs"));
+        Assert.DoesNotContain("Regex", validatorSource, StringComparison.Ordinal);
+        Assert.Contains("LeaseDerivation.HasMention(", validatorSource, StringComparison.Ordinal);
         Assert.True(LeaseDerivation.HasMention("read @src/x.cs"));
         Assert.True(LeaseDerivation.HasMention("@../x"));            // a token, even where Patterns drops it: the scan refuses, never widens
         Assert.False(LeaseDerivation.HasMention("read src/x.cs"));
@@ -251,5 +328,17 @@ public sealed class TheProjectionIsTheOneProducerTests
             .Order()
             .ToList();
         Assert.Equal([("Derive", true), ("HasMention", false), ("Patterns", true), ("ToPattern", false)], methods);
+    }
+
+    private static string RepoRoot()
+    {
+        var dir = new DirectoryInfo(AppContext.BaseDirectory);
+        while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "AiDe.sln")))
+        {
+            dir = dir.Parent;
+        }
+
+        Assert.NotNull(dir);
+        return dir!.FullName;
     }
 }

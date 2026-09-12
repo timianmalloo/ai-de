@@ -19,9 +19,11 @@ public sealed class TheTierRuleHasFourteenInputsTests
     /// <summary>A fold with the structure filled by <paramref name="by"/>, over <paramref name="text"/>.</summary>
     private static Envelope Fold(string text, string? goal, string? doneWhen, string by = StructureSources.Operator, string? tierOverride = null)
     {
+        // A derived row exists only under an agentic rung (no call is made under mechanical-only),
+        // so the fixture opens the envelope in the mode the product would.
         var events = new List<EnvelopeEvent>
         {
-            new Opened("e", text, Session, "claude-code", CompileModes.MechanicalOnly, null, PreCompile.ConstantsFor("1")),
+            new Opened("e", text, Session, "claude-code", by == StructureSources.Derived ? CompileModes.Agentic : CompileModes.MechanicalOnly, null, PreCompile.ConstantsFor("1")),
             new Decorated("e", DecorationNames.Ceilings, new JsonObject { ["fan_out"] = 3, ["budget"] = null }, DecorationSources.Mechanical),
             new Decorated("e", DecorationNames.TaskClass, JsonValue.Create("free-form"), DecorationSources.SessionDefault),
         };

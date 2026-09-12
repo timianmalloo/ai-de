@@ -33,8 +33,12 @@ public static class CompileFold
             return 64;
         }
 
-        var outFile = CliEntry.Value(args, "--out") ?? Path.Combine(Path.GetTempPath(), $"aide-compile-fold-{sessionId}.json");
+        // THE REPORT STAYS IN CHANNEL B BY DEFAULT (§A13.5 rule 4): beside the store it folds, under
+        // the git-ignored .aide/ — never the temp directory. An operator who wants it elsewhere names
+        // the path. And it carries shas and mechanical fields only: no structure-line text, no
+        // source text — the rebuild oracle needs nothing else.
         var file = Path.Combine(SessionPaths.SessionDirectory(workspace, sessionId), EnvelopeStore.FileName);
+        var outFile = CliEntry.Value(args, "--out") ?? Path.Combine(SessionPaths.SessionDirectory(workspace, sessionId), "compile-fold.json");
 
         EnvelopeFold fold;
         try
@@ -80,9 +84,9 @@ public static class CompileFold
                     ["lease"] = projection.Lease is { } lease ? new JsonArray([.. lease.Exclusive.Select(p => JsonValue.Create(p))]) : null,
                     ["task_class"] = projection.TaskClass,
                     ["task_class_source"] = projection.TaskClassSource,
-                    ["goal"] = projection.GoalBlock?.Goal,
-                    ["done_when"] = projection.GoalBlock?.DoneWhen,
-                    ["not_in_scope"] = projection.GoalBlock?.NotInScope,
+                    ["structure_lines_present"] = projection.GoalBlock is { } block
+                        ? new JsonArray([.. new[] { (DecorationNames.Goal, block.Goal), (DecorationNames.DoneWhen, block.DoneWhen), (DecorationNames.NotInScope, block.NotInScope) }.Where(l => l.Item2 is not null).Select(l => JsonValue.Create(l.Item1))])
+                        : new JsonArray(),
                 };
                 row["rebuilt_projection_sha"] = projection.ProjectionSha;
 

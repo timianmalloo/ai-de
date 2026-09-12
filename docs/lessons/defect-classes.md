@@ -7235,3 +7235,82 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   carries the tests' configuration and not the other, and the segment reader on three shapes.
 - **Status:** `controlled`.
 
+
+### DC-nnn (CV-2 a) — A bounded context named after a referenced library's type shadows that type in every sibling namespace
+
+- **Shape:** a new namespace `<Root>.<Name>` is created where `<Name>` is also the simple name of a
+  type a referenced library exports and a sibling namespace `<Root>.<Other>` uses unqualified. C#
+  resolves the simple name to the enclosing namespace's member (the new namespace) before any
+  `using`, so every existing file in the sibling breaks with *"'<Name>' is a namespace but is used
+  like a type"* — in files the new context's author does not own.
+- **Signature:** `CS0118` in untouched files the moment an empty directory gains its first
+  `namespace` line; an ADR that named the context by its domain word without opening the sibling
+  namespaces.
+- **Instance (CV-2, 2026-09-12):** ADR-0033 named the context `AiDe.Core/Compilation`; the first
+  file with `namespace AiDe.Core.Compilation;` broke `Extraction/CSharpExtractor.cs` and
+  `CSharpProjectReader.cs` (Roslyn's `Microsoft.CodeAnalysis.Compilation`, used unqualified) — seven
+  errors in Shell-lane-adjacent files the slice may not edit.
+- **Sweep:** every namespace under `AiDe.Core` against the simple type names the sibling
+  namespaces use unqualified from referenced packages — no other collision today (the build is
+  the oracle).
+- **Control:** the namespace is `AiDe.Core.PromptCompilation` (the context's full name) in the
+  `Compilation/` directory the plan reserved; `-p:TreatWarningsAsErrors=true` on both assemblies
+  is the gate that fires on the class. Named for the ADRs as a finding: an ADR that names a
+  namespace checks the referenced libraries' exported simple names in the sibling namespaces
+  before naming it.
+- **Status:** `controlled`.
+
+### DC-nnn (CV-2 b) — A named-call-site census that scans whole files counts a token spelled in prose as a call site
+
+- **Shape:** a source-scan guard looks for `Type.Method(` across `src/`. An XML doc comment or a
+  code comment that spells the token with its parenthesis (`<c>LeaseDerivation.Derive(</c>`) is
+  found as a site, and the census goes red — or, worse, an allowlist widened to admit the prose
+  entry then admits a real site with the same shape.
+- **Signature:** a census red with an "argument" that is doc text (`</c> call (Ruling 66; §A13.3
+  d′`); a fix that rewords the comment rather than the scan.
+- **Instance (CV-2, 2026-09-12):** the `LeaseDerivation.Derive(` and `Patterns(` census read two
+  doc comments in `Compilation/Projection.cs` as sites; both comments were reworded first (the
+  memoir), then the scan was made code-lines-only.
+- **Sweep:** `TheSendVerbIsHostOwnedTests.C16_…` (whole-file scan for `new GovernedRunRequest`),
+  the `"free-form"` literal census, the `RunBudget` member cap — each scans whole files; none has
+  hit a prose token yet (their tokens do not read naturally in prose), recorded rather than fixed
+  here (their files are other slices').
+- **Control:** `TheSendGateSendsWhatProjectionProjectsTests.Scan` reads lines and skips any whose
+  first non-blank characters are `//` (the shape `tools/verify-no-new-console-launches.py` already
+  uses: code lines only); the census' four-part statement in the Proof Pack names the rule.
+- **Status:** `controlled`.
+
+### DC-nnn (CV-2 c) — A test of an exclusive-handle store reads the file under the handle it asserts is exclusive
+
+- **Shape:** a store opens its file `FileShare.None` and the test, wanting to assert what landed,
+  reads the file with `File.ReadAllBytes` while the store is still `using`-held. The read fails
+  with *"being used by another process"* — the store's own guarantee, misread as a defect.
+- **Signature:** `IOException` from `File.ReadAllLines` / `ReadAllBytes` inside a test whose
+  subject is the exclusive writer; a "fix" that widens the store's share mode.
+- **Instance (CV-2, 2026-09-12):** two of the first store tests
+  (`AppendAssignsSeqPerEnvelope…`, `ReopeningOnABrokenFile…`) read the raw file while the store
+  held it; the store was right and the tests moved their reads after `Dispose`.
+- **Sweep:** every `EnvelopeStore` test reads the file after the `using` block closes, or through
+  `EnvelopeStore.ReadFile` (which is itself refused while a writer holds the file — the visible
+  refusal the tests assert).
+- **Control:** the pattern in the tests (dispose → read) with the reason in a comment beside
+  each; `TwoWritersOnOneFileSeeExactlyOneRefusal…` asserts the refusal is the product's own
+  `[CE-0002]`, so a widened share mode fails a test rather than quietly passing one.
+- **Status:** `controlled`.
+
+### DC-nnn (CV-2 d) — A schema version cited in a plan row is a snapshot of the code at planning time, and the migration lands one version off
+
+- **Shape:** a coordination plan names a migration as `vN → vN+1` from the schema the planner read.
+  Another track lands `vN+1` before dispatch. The implementer who trusts the plan's number writes a
+  duplicate version row or a migration keyed on the wrong predecessor.
+- **Signature:** two migrations with one version number; a fixture database written to "the
+  pre-migration shape" that is already one column behind the real one.
+- **Instance (CV-2, 2026-09-12):** the plan row said `task_class_source` is v5→v6; the store was
+  at v6 (`mode`, ADR-0028) when the slice opened. The column is v7; the test's pre-migration
+  fixture is the hand-written v6 shape.
+- **Sweep:** the plan's other version literals (`compiled-envelope/1`, `projector_version 1`) name
+  new schemas, not successors — not the class.
+- **Control:** the migration test reads the predecessor from the code's own `SchemaVersion` and
+  `Migrations` table (the v6 fixture asserts `max(version) = 7` after the open) rather than from the
+  plan; the drift is recorded in the test's remarks and the Proof Pack so the join reads it.
+- **Status:** `controlled`.

@@ -9,7 +9,7 @@ namespace AiDe.App.Cli;
 /// confirmation prints the session's name, id, workspace root, the resolved file path, the envelope
 /// count and the newest <c>at</c> — an identity, never a count alone (DC-120).
 /// </summary>
-public static class SessionPurge
+public static class PurgeHistoryVerb
 {
     public static int Run(IReadOnlyList<string> args, TextWriter? console, Func<string, bool>? confirm)
     {
@@ -21,7 +21,9 @@ public static class SessionPurge
             return 64;
         }
 
-        var outFile = CliEntry.Value(args, "--out") ?? Path.Combine(Path.GetTempPath(), $"aide-session-purge-{Sanitize(sessionId)}.txt");
+        // The confirmation carries the session's name and the file path — work data — so it stays
+        // under the workspace's .aide/ unless the operator names another path.
+        var outFile = CliEntry.Value(args, "--out") ?? Path.Combine(workspace, ".aide", $"session-purge-{Sanitize(sessionId)}.txt");
 
         PurgePlan plan;
         try
@@ -35,7 +37,7 @@ public static class SessionPurge
         }
 
         var description = plan.Describe();
-        if (!plan.FileExists)
+        if (!plan.HasHistory)
         {
             CliEntry.Emit(outFile, description + "\nno compile history to purge", console);
             return 0;

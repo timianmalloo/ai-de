@@ -50,8 +50,9 @@ public sealed class TheSendGateSendsWhatProjectionProjectsTests
         Assert.NotNull(request);
 
         // THE GOLDEN, FIELD BY FIELD: the literal values the gate produced before the compile step
-        // existed (observed on `main` 5ce4b08e by running this test against that gate — the Proof
-        // Pack records the run). A record equality would compare the two lists by reference.
+        // existed — observed by running this test against the unchanged gate at `f3e394dc` (the
+        // store commit; `ComposerSendGate.cs` there is byte-identical to `main` 5ce4b08e's — the
+        // Proof Pack records the run). A record equality would compare the two lists by reference.
         Assert.Equal(@"C:\repo", request!.RepositoryRoot);
         Assert.Equal(@"C:\data", request.DataDirectory);
         Assert.Equal(@"C:\adapter", request.AdapterInstallRoot);
@@ -89,11 +90,28 @@ public sealed class TheSendGateSendsWhatProjectionProjectsTests
         var request = new ComposerSendGate().Send(Context("free-form"), draft, null, out var refusal);
 
         Assert.Null(refusal);
-        Assert.Null(request!.Goal);
+        Assert.NotNull(request);
+        AssertHostFields(request);
+        Assert.Equal("free-form", request.TaskClass);
+        Assert.Null(request.Goal);
         Assert.Null(request.Lease);
         Assert.True(request.IsReadOnly);
-        Assert.Equal("free-form", request.TaskClass);
         Assert.Equal("Explain the store in @src/AiDe.Core/Compilation/.\n", request.Prompt);
+    }
+
+    /// <summary>The ten host-side fields every golden carries — literal, as the context supplied them (C16).</summary>
+    private static void AssertHostFields(GovernedRunRequest request)
+    {
+        Assert.Equal(@"C:\repo", request.RepositoryRoot);
+        Assert.Equal(@"C:\data", request.DataDirectory);
+        Assert.Equal(@"C:\adapter", request.AdapterInstallRoot);
+        Assert.Equal("claude-code", request.EngineId);
+        Assert.Equal("sonnet", request.Model);
+        Assert.Equal("max-personal", request.AccountLabel);
+        Assert.Equal(["docs/proof/pp-0001.md"], request.ProofPackArtifacts);
+        Assert.Empty(request.Providers);
+        Assert.Equal("coord", request.CoordCommand);
+        Assert.Null(request.PromptTimeout);
     }
 
     /// <summary>A template draft: the template's render, read-only.</summary>
@@ -113,9 +131,12 @@ public sealed class TheSendGateSendsWhatProjectionProjectsTests
         var request = new ComposerSendGate().Send(Context(), draft, template, out var refusal);
 
         Assert.Null(refusal);
-        Assert.Null(request!.Goal);
+        Assert.NotNull(request);
+        AssertHostFields(request);
+        Assert.Equal("implement", request.TaskClass);
+        Assert.Null(request.Goal);
         Assert.Null(request.Lease);
-        Assert.Equal(TemplateCompiler.Compile(template, draft.TemplateValues), request.Prompt);
+        Assert.True(request.IsReadOnly);
         Assert.Equal("Read @docs/plan.md before you begin.\n\nAlso check @src/AiDe.App/Foo.cs\n", request.Prompt);
     }
 
@@ -233,6 +254,40 @@ public sealed class TheSendGateSendsWhatProjectionProjectsTests
     }
 
     /// <summary>
+    /// §A13.3's census oracle, strengthened (Security C4; d′): <c>new Lease(</c> at exactly two sites
+    /// by path — the derivation and the headless entry's request file — and zero hits for the three
+    /// ways a <c>Lease</c> could be minted without the constructor's name. Same root, recursion and
+    /// code-lines rule as the censuses above.
+    /// </summary>
+    [Fact]
+    public void ALeaseIsMintedAtExactlyTwoNamedSitesAndByNoOtherPattern()
+    {
+        Assert.Equal(
+            new[] { "AiDe.App/Conductor/ConductorEntry.cs", "AiDe.Core/Presentation/Composer/LeaseDerivation.cs" },
+            Scan("new Lease(").Select(s => s.File).Order(StringComparer.Ordinal));
+
+        foreach (var pattern in new[] { "with { Exclusive", "with { Lease", "Deserialize<Lease>" })
+        {
+            Assert.Empty(Scan(pattern).Select(s => s.File));
+        }
+    }
+
+    /// <summary>
+    /// The negative census the call-site censuses cannot see (the Test Architect's finding): a
+    /// <c>using static</c> of the projection or the derivation, or a method-group assignment, would
+    /// let a bare <c>Project(</c> / <c>Derive(</c> escape the token. Root <c>src/</c>, recursive,
+    /// code lines only, tokens as listed, allowlist none.
+    /// </summary>
+    [Fact]
+    public void NoFileImportsTheProjectionOrTheDerivationStaticallyOrTakesThemAsAMethodGroup()
+    {
+        foreach (var token in new[] { "using static AiDe.Core.PromptCompilation.Projection", "using static AiDe.Core.Presentation.Composer.LeaseDerivation", "= Projection.Project;", "= LeaseDerivation.Derive;", "= LeaseDerivation.Patterns;", "Projection.Project (" })
+        {
+            Assert.Empty(Scan(token).Select(s => s.File));
+        }
+    }
+
+    /// <summary>
     /// The <c>RunBudget</c> named-member cap (ADR-0033 rule 3): every file in <c>src/</c> that reads
     /// <c>.Requests</c> / <c>.Tokens</c> on a budget (a file naming <c>RunBudget</c> or
     /// <c>BudgetCap</c>) is one of the named set, and every render site is guarded by
@@ -256,26 +311,47 @@ public sealed class TheSendGateSendsWhatProjectionProjectsTests
             ["AiDe.Core/Presentation/Sessions/NewSessionSheetViewModel.cs"] = "BudgetCap",
         };
 
-        var found = new List<string>();
+        // THE PRECONDITION: a file reads a budget member when it names the type (`RunBudget`), the
+        // setting (`BudgetCap`) or the block's field (`.Budget.` / `Budget!.` / `Budget?.` / `Budget is`)
+        // — so a read through `var` off a goal block is seen. Files reading `.Requests`/`.Tokens` on
+        // the cost and spend types name none of these and stay outside the cap by construction.
+        var member = new System.Text.RegularExpressions.Regex(@"\.(Requests|Tokens)\b");
+        var precondition = new System.Text.RegularExpressions.Regex(@"RunBudget|BudgetCap|\.Budget\b|Budget!\.|Budget\?\.|Budget is");
+        var found = new Dictionary<string, List<int>>(StringComparer.Ordinal);
         foreach (var file in SourceFiles())
         {
-            var text = File.ReadAllText(file);
-            if (!(text.Contains("RunBudget", StringComparison.Ordinal) || text.Contains("BudgetCap", StringComparison.Ordinal)))
+            var lines = File.ReadAllLines(file);
+            if (!lines.Any(l => precondition.IsMatch(l)))
             {
                 continue;
             }
 
-            if (System.Text.RegularExpressions.Regex.IsMatch(text, @"\.(Requests|Tokens)\b"))
+            var hits = lines.Select((l, i) => (Line: l, Index: i))
+                .Where(x => !x.Line.TrimStart().StartsWith("//", StringComparison.Ordinal) && member.IsMatch(x.Line))
+                .Select(x => x.Index)
+                .ToList();
+            if (hits.Count > 0)
             {
-                found.Add(Relative(file));
+                found[Relative(file)] = hits;
             }
         }
 
-        Assert.Equal(guards.Keys.Order(StringComparer.Ordinal), found.Order(StringComparer.Ordinal));
+        Assert.Equal(guards.Keys.Order(StringComparer.Ordinal), found.Keys.Order(StringComparer.Ordinal));
 
+        // THE GUARD AT EACH READ, not somewhere in the file: within three lines before or two after —
+        // or the read is a COST or SPEND read (`RunEventCost` / `Spend` share the member names and
+        // carry no sentinel), which is not a budget read at all.
         foreach (var (file, guard) in guards.Where(g => !g.Value.StartsWith("exempt", StringComparison.Ordinal)))
         {
-            Assert.Contains(guard, File.ReadAllText(Path.Combine(RepoRoot(), "src", file)), StringComparison.Ordinal);
+            var lines = File.ReadAllLines(Path.Combine(RepoRoot(), "src", file));
+            foreach (var hit in found[file])
+            {
+                var window = string.Join('\n', lines.Skip(Math.Max(0, hit - 3)).Take(6));
+                var guarded = window.Contains(guard, StringComparison.Ordinal)
+                    || lines[hit].Contains("Cost", StringComparison.Ordinal)
+                    || lines[hit].Contains("Spend(", StringComparison.Ordinal);
+                Assert.True(guarded, $"{file}:{hit + 1} reads a budget member with no `{guard}` within three lines before or two after");
+            }
         }
     }
 
@@ -287,25 +363,37 @@ public sealed class TheSendGateSendsWhatProjectionProjectsTests
     [Fact]
     public void ThePublicSignaturesOfTheThreeContractTypesAreUnchangedAndTheRequestHasFourteenParameters()
     {
+        static string TypeName(Type t) => t.IsGenericType
+            ? t.Name[..t.Name.IndexOf('`')] + "<" + string.Join(", ", t.GetGenericArguments().Select(TypeName)) + ">"
+            : t.Name;
+
         static IReadOnlyList<string> Signatures(Type type) =>
             type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly)
                 .Where(m => !m.IsSpecialName)
-                .Select(m => $"{m.ReturnType.Name} {m.Name}({string.Join(", ", m.GetParameters().Select(p => p.ParameterType.Name + " " + p.Name))})")
+                .Select(m => $"{TypeName(m.ReturnType)} {m.Name}({string.Join(", ", m.GetParameters().Select(p => TypeName(p.ParameterType) + " " + p.Name))})")
                 .Order(StringComparer.Ordinal)
                 .ToList();
 
         Assert.Equal(
-            ["IReadOnlyList`1 Validate(GoalBlock block)", "Spawn Authorize(SpawnRequest request, ProviderRegistry registry)"],
+            ["IReadOnlyList<GoalBlockError> Validate(GoalBlock block)", "Spawn Authorize(SpawnRequest request, ProviderRegistry registry)"],
             Signatures(typeof(SpawnContract)));
         Assert.Equal(
-            ["IReadOnlyList`1 Patterns(String compiledText)", "Lease Derive(String compiledText)"],
+            ["IReadOnlyList<String> Patterns(String compiledText)", "Lease Derive(String compiledText)"],
             Signatures(typeof(LeaseDerivation)));
         Assert.Equal(
-            ["String Compile(PromptTemplate template, IReadOnlyDictionary`2 values)"],
+            ["String Compile(PromptTemplate template, IReadOnlyDictionary<String, IReadOnlyList<String>> values)"],
             Signatures(typeof(TemplateCompiler)));
 
+        // THE REQUEST'S FOURTEEN, BY NAME AND TYPE — a same-count type swap fails here.
         var ctor = Assert.Single(typeof(GovernedRunRequest).GetConstructors());
-        Assert.Equal(14, ctor.GetParameters().Length);
+        Assert.Equal(
+            new[]
+            {
+                "String RepositoryRoot", "String DataDirectory", "String AdapterInstallRoot", "String EngineId", "String Model", "String AccountLabel",
+                "String TaskClass", "GoalBlock Goal", "Lease Lease", "String Prompt", "IReadOnlyList<String> ProofPackArtifacts",
+                "IReadOnlyList<ProviderRow> Providers", "String CoordCommand", "Nullable<TimeSpan> PromptTimeout",
+            },
+            ctor.GetParameters().Select(p => TypeName(p.ParameterType) + " " + p.Name));
     }
 
     // ── the scan ──
@@ -318,24 +406,37 @@ public sealed class TheSendGateSendsWhatProjectionProjectsTests
     private static string Relative(string file) =>
         Path.GetRelativePath(Path.Combine(RepoRoot(), "src"), file).Replace('\\', '/');
 
+    /// <summary>
+    /// The named-call-site scan: code lines only — a line whose first non-blank characters are
+    /// <c>//</c> is prose (an XML doc or a comment) and never a call site (register class CV-2 b:
+    /// a census token spelled in a doc comment reddened the guard). The argument is the text up to
+    /// the first <c>)</c> or <c>,</c>.
+    /// </summary>
     private static List<(string File, string Argument)> Scan(string token)
     {
         var sites = new List<(string, string)>();
         foreach (var file in SourceFiles())
         {
-            var text = File.ReadAllText(file);
-            for (var i = 0; (i = text.IndexOf(token, i, StringComparison.Ordinal)) >= 0; i += token.Length)
+            foreach (var line in File.ReadLines(file))
             {
-                var argStart = i + token.Length;
-                var argEnd = text.IndexOf(')', argStart);
-                Assert.True(argEnd > 0, $"{Relative(file)}: unterminated {token} call");
-                var argument = text[argStart..argEnd].Trim();
-                if (argument.Contains(',', StringComparison.Ordinal))
+                if (line.TrimStart().StartsWith("//", StringComparison.Ordinal))
                 {
-                    argument = argument[..argument.IndexOf(',', StringComparison.Ordinal)].Trim();
+                    continue;
                 }
 
-                sites.Add((Relative(file), argument));
+                for (var i = 0; (i = line.IndexOf(token, i, StringComparison.Ordinal)) >= 0; i += token.Length)
+                {
+                    var argStart = i + token.Length;
+                    var argEnd = line.IndexOf(')', argStart);
+                    Assert.True(argEnd > 0, $"{Relative(file)}: a {token} call whose argument does not end on its line");
+                    var argument = line[argStart..argEnd].Trim();
+                    if (argument.Contains(',', StringComparison.Ordinal))
+                    {
+                        argument = argument[..argument.IndexOf(',', StringComparison.Ordinal)].Trim();
+                    }
+
+                    sites.Add((Relative(file), argument));
+                }
             }
         }
 

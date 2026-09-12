@@ -108,7 +108,7 @@ public static class CompileOutputValidator
 
             // 4. Type: a string, bounded, no control characters; confidence in [0, 1].
             if (proposal["value"] is not JsonValue v || !v.TryGetValue(out string? value)
-                || value.Length == 0 || value.Length > CompileContract.MaxValueChars || value.Any(c => char.IsControl(c) && c != '\n' && c != '\t'))
+                || value.Length == 0 || value.Length > CompileContract.MaxValueChars || CarriesAControlCharacter(value))
             {
                 typeFail++;
                 continue;
@@ -142,6 +142,7 @@ public static class CompileOutputValidator
         string? notes = null;
         if (root["notes"] is JsonValue notesValue && notesValue.TryGetValue(out string? notesText)
             && notesText.Length > 0 && notesText.Length <= CompileContract.MaxNotesChars
+            && !CarriesAControlCharacter(notesText)
             && !LeaseDerivation.HasMention(notesText))
         {
             notes = notesText;
@@ -160,6 +161,14 @@ public static class CompileOutputValidator
 
     private static ValidationResult Malformed(string reason) =>
         new([], DroppedCounts.None, null, CallOutcomes.Malformed, reason);
+
+    /// <summary>
+    /// §A8.3: no control characters — every <c>char.IsControl</c> (a line break included: a structure
+    /// line is one line, and a break would forge a second rendered line), and the format (Cf) set —
+    /// bidi overrides and zero-width joiners — which display-spoof what the operator reads in Prepare.
+    /// </summary>
+    private static bool CarriesAControlCharacter(string text) =>
+        text.Any(c => char.IsControl(c) || char.GetUnicodeCategory(c) == System.Globalization.UnicodeCategory.Format);
 
     /// <summary>The one JSON object in the text: the model may wrap it in a fence or prose; nothing else is read.</summary>
     private static string ExtractObject(string rawText)

@@ -10,7 +10,8 @@ namespace AiDe.Core.PromptCompilation;
 /// <param name="SessionId">The id, validated as one segment of the session-id grammar.</param>
 /// <param name="WorkspaceRoot">The workspace the id was resolved under.</param>
 /// <param name="ResolvedFilePath">The absolute path of the one file the purge removes.</param>
-/// <param name="FileExists">Whether there is anything to remove.</param>
+/// <param name="FileExists">Whether the file is there at all (the store creates it empty at open).</param>
+/// <param name="Rows">How many lines the file holds — zero is an empty file, nothing to purge.</param>
 /// <param name="EnvelopeCount">How many envelopes the file folds to.</param>
 /// <param name="NewestAt">The newest <c>at</c> in the file, or null.</param>
 public sealed record PurgePlan(
@@ -19,9 +20,13 @@ public sealed record PurgePlan(
     string WorkspaceRoot,
     string ResolvedFilePath,
     bool FileExists,
+    int Rows,
     int EnvelopeCount,
     DateTimeOffset? NewestAt)
 {
+    /// <summary>Whether there is any history to purge: a file with at least one line (an empty file is the store's own handle, not history).</summary>
+    public bool HasHistory => FileExists && Rows > 0;
+
     /// <summary>The confirmation, one line per fact.</summary>
     public string Describe() =>
         $"session: {Name}\nid: {SessionId}\nworkspace: {WorkspaceRoot}\nfile: {ResolvedFilePath}\nenvelopes: {EnvelopeCount}\nnewest: {(NewestAt is { } at ? at.ToUniversalTime().ToString("O", System.Globalization.CultureInfo.InvariantCulture) : Envelope.NotRecorded)}";
@@ -87,7 +92,7 @@ public static class EnvelopePurge
         }
 
         var fold = EnvelopeStore.ReadFile(file);
-        return new PurgePlan(name, sessionId, root, file, File.Exists(file), fold.Envelopes.Count, fold.NewestAt);
+        return new PurgePlan(name, sessionId, root, file, File.Exists(file), fold.Rows, fold.Envelopes.Count, fold.NewestAt);
     }
 
     /// <summary>Removes the one file the plan names. A file already absent is not an error.</summary>
@@ -95,7 +100,22 @@ public static class EnvelopePurge
     public static void Execute(PurgePlan plan)
     {
         ArgumentNullException.ThrowIfNull(plan);
-        if (!File.Exists(plan.ResolvedFilePath))
+
+        // THE PATH IS RE-VALIDATED HERE, not trusted from the plan: a PurgePlan is a public record, so
+        // containment lives at the moment of deletion too — the file is the envelope file, directly
+        // under <workspace>/.aide/sessions/<one segment>/, and that segment is the plan's session id.
+        var file = Path.GetFullPath(plan.ResolvedFilePath);
+        var directory = Path.GetDirectoryName(file);
+        var expected = Path.GetFullPath(Path.Combine(SessionPaths.SessionDirectory(plan.WorkspaceRoot, plan.SessionId), EnvelopeStore.FileName));
+        if (!SessionId.IsValid(plan.SessionId)
+            || !string.Equals(file, expected, StringComparison.Ordinal)
+            || directory is null
+            || new DirectoryInfo(directory).Attributes.HasFlag(FileAttributes.ReparsePoint))
+        {
+            throw new EnvelopeStoreException(EnvelopeStoreErrorCodes.PurgeRefused, $"'{plan.ResolvedFilePath}' is not the envelope file of session '{plan.SessionId}' under {plan.WorkspaceRoot}; nothing was touched");
+        }
+
+        if (!File.Exists(file))
         {
             return;
         }
@@ -104,7 +124,11 @@ public static class EnvelopePurge
         {
             // Acquire exclusively and delete under the handle: a writer that opened the file since
             // the plan was read is refused here rather than raced.
-            using var handle = new FileStream(plan.ResolvedFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None, 1, FileOptions.DeleteOnClose);
+            using var handle = new FileStream(file, FileMode.Open, FileAccess.ReadWrite, FileShare.None, 1, FileOptions.DeleteOnClose);
+        }
+        catch (FileNotFoundException)
+        {
+            // Gone between the plan and the act — the outcome the operator asked for.
         }
         catch (IOException error)
         {

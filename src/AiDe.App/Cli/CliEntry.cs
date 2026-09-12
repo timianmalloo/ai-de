@@ -41,7 +41,7 @@ public static class CliEntry
 
         return string.Equals(args[0], "compile", StringComparison.Ordinal)
             ? Task.FromResult(CompileFold.Run(args, console))
-            : Task.FromResult(SessionPurge.Run(args, console, confirm));
+            : Task.FromResult(PurgeHistoryVerb.Run(args, console, confirm));
     }
 
     /// <summary>The value after <paramref name="name"/>, or null.</summary>

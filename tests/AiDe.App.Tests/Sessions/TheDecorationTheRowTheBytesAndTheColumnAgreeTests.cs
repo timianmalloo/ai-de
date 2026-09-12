@@ -254,8 +254,119 @@ public sealed class TheDecorationTheRowTheBytesAndTheColumnAgreeTests
         });
     }
 
+    /// <summary>
+    /// The column's wiring (the fourth surface): the provenance captured with the envelope at
+    /// launch lands on the scored cell through the run host's own watcher composition — over a
+    /// temp data directory whose watcher already holds the scored cell a real run would have written.
+    /// </summary>
     [Fact]
-    public void ClosingTheDocumentWithARunInFlightConsumesTheEnvelopeAsDocumentClosed()
+    public void TheClassProvenanceCapturedAtLaunchIsStampedOnTheScoredCell()
+    {
+        var data = Path.Combine(Path.GetTempPath(), "aide-e7-stamp", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(data);
+        try
+        {
+            using (var store = SqliteWatcherObservationStore.Open(Path.Combine(data, "watcher.db")))
+            {
+                store.RecordScorecard(new ScoredEpisode(
+                    "ep-1", "claude-code", "sonnet", "op-a",
+                    new ScoreSegment(WorkspaceKey.From("C:/repo"), "defect", "weave/1"),
+                    new Scorecard("ep-1", "weave/1", WeaveVerdict.Scored, [], [], new EvidenceCoverage(1, 1), "Scored", DateTimeOffset.UnixEpoch)));
+            }
+
+            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+
+            var scored = Result("ep-1", scored: true);
+            Assert.True(SessionDocumentSurface.StampTaskClassSource(data, scored, TaskClasses.Sources.Operator));
+
+            // A read-only turn (no episode) and a turn with no envelope stamp nothing.
+            Assert.False(SessionDocumentSurface.StampTaskClassSource(data, Result(Envelope.NotRecorded, scored: false), TaskClasses.Sources.Operator));
+            Assert.False(SessionDocumentSurface.StampTaskClassSource(data, scored, null));
+
+            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+            using var reopened = SqliteWatcherObservationStore.OpenReadOnly(Path.Combine(data, "watcher.db"));
+            Assert.Equal(TaskClasses.Sources.Operator, reopened.FindEpisodeTaskClassSource("ep-1"));
+            Assert.Equal(TaskClasses.Sources.Operator, reopened.FindScoredEpisode("ep-1")!.TaskClassSource);
+        }
+        finally
+        {
+            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+            try { Directory.Delete(data, recursive: true); } catch (IOException) { }
+        }
+
+        static GovernedRunResult Result(string episodeId, bool scored) => new(
+            RunId: "r-1", SessionId: "s-1", EpisodeId: episodeId, WorktreePath: "C:/repo", WorktreeBranch: "b", CoordInstalled: false,
+            ObservedAuthKind: "account", ObservedAuthLabel: "Claude Max", ObservedAuthPlan: "max", TerminalHostConstructions: 0,
+            Stages: [], SkippedPlanAndCouncil: true, TriageReason: "t", EventsObserved: 0, EventKinds: [], LatencyMeasured: 0,
+            LatencyP50Ms: null, LatencyP95Ms: null, LatencyHost: "h", SeamsRaised: 0, SeamResolutionRatio: 1.0, Outcome: "Completed",
+            WorktreeDisposition: "kept", Scored: scored, ScoreVerdict: "Scored", ScoreHeadline: "Scored", TaskClass: "defect",
+            SegmentIsComparable: true, IncomparableReason: null, Mode: "governed", EngineProcessId: 0, EngineExited: true,
+            EnvironmentFindings: [], Diagnostics: []);
+    }
+
+    /// <summary>The eraser ships beside the writer (§A13.5 rule 1; Security C3): the document purges its own history — identity shown, confirmation asked, the one file removed, the store reopened — and reports it.</summary>
+    [Fact]
+    public void TheDocumentPurgesItsOwnCompileHistoryAndRecordsAgainAfterwards()
+    {
+        Sta.Run(() =>
+        {
+            var (root, config) = Session();
+            try
+            {
+                using var document = new SessionDocumentSurface(new SessionDocumentViewModel(config.SessionId, "payments", root, [CanvasModeCatalog.ConsoleModeId]));
+                Configure(document, root, config);
+                var file = Path.Combine(SessionPaths.SessionDirectory(root, config.SessionId), EnvelopeStore.FileName);
+
+                document.Composer.Draft.SetFreeFormText("first\n");
+                Assert.NotNull(document.Composer.Send());
+                Assert.True(document.LastLaunch.Wait(Bound));
+                document.Composer.Draft.SetFreeFormText("second\n");
+                Assert.NotNull(document.Composer.Send());
+                Assert.True(document.LastLaunch.Wait(Bound));
+
+                // Declined: the identity was shown, nothing was touched, the store records on.
+                string? shown = null;
+                document.PurgeConfirmation = plan => { shown = plan; return false; };
+                Assert.Equal("purge cancelled; nothing was touched", document.PurgeCompileHistory());
+                Assert.Contains("session: payments", shown, StringComparison.Ordinal);
+                Assert.Contains("envelopes: 2", shown, StringComparison.Ordinal);
+                Assert.Contains($"file: {Path.GetFullPath(file)}", shown, StringComparison.Ordinal);
+                Assert.True(File.Exists(file));
+                Assert.NotNull(document.Envelopes);
+                Assert.Equal(0, document.PurgedThisOpen);
+
+                // Confirmed: the file is gone, session.json and the events file survive, the store is
+                // reopened (fresh), and the next send records again.
+                document.PurgeConfirmation = _ => true;
+                Assert.Equal("compile history purged — 2 envelope(s) removed", document.PurgeCompileHistory());
+                Assert.Equal(1, document.PurgedThisOpen);
+                Assert.True(File.Exists(SessionPaths.SessionFile(root, config.SessionId)));
+                Assert.True(File.Exists(SessionPaths.EventsFile(root, config.SessionId)));
+                Assert.NotNull(document.Envelopes);
+                Assert.Null(document.Composer.HistoryState);
+                Assert.Empty(document.Envelopes!.Read().Envelopes);
+
+                document.Composer.Draft.SetFreeFormText("third\n");
+                Assert.NotNull(document.Composer.Send());
+                Assert.True(document.Composer.Gate.LastSubmission!.Recorded);
+                Assert.Single(document.Envelopes!.Read().Envelopes);
+                Assert.True(document.LastLaunch.Wait(Bound));
+
+                // Purged again: the one envelope goes; purged once more with nothing there: said so.
+                Assert.Equal("compile history purged — 1 envelope(s) removed", document.PurgeCompileHistory());
+                Assert.Equal("no compile history to purge", document.PurgeCompileHistory());
+                Assert.Equal(2, document.PurgedThisOpen);
+            }
+            finally
+            {
+                try { Directory.Delete(root, recursive: true); } catch (IOException) { }
+            }
+        });
+    }
+
+    /// <summary>Closing with a run in flight: exactly ONE consumed row lands — by the run's completion or by Dispose (document closed), whichever wins the race — never an absent row.</summary>
+    [Fact]
+    public void ClosingTheDocumentWithARunInFlightLeavesExactlyOneConsumedRow()
     {
         Sta.Run(() =>
         {

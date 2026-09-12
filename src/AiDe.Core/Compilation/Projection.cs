@@ -222,10 +222,18 @@ public static class Projection
         return string.IsNullOrWhiteSpace(value) ? null : value;
     }
 
+    /// <summary>
+    /// Who filled the structure (§A9): an <c>operator</c> row is the operator's; a <c>derived</c> row
+    /// the model's; a <c>mechanical</c> row is a template's <b>only when its inputs name the template
+    /// writer</b> — a mechanical structure row with no named writer reads <i>not recorded</i>, never
+    /// a plausible "template".
+    /// </summary>
     private static string StructureSourceOf(Decorated confirmed) => confirmed.Source switch
     {
         DecorationSources.Derived => StructureSources.Derived,
-        DecorationSources.Mechanical => StructureSources.Template,
+        DecorationSources.Mechanical => confirmed.Inputs?.Any(i => string.Equals(i.Writer, PreCompile.TemplateWriter, StringComparison.Ordinal)) == true
+            ? StructureSources.Template
+            : Envelope.NotRecorded,
         _ => StructureSources.Operator,
     };
 
@@ -233,7 +241,8 @@ public static class Projection
     {
         StructureSources.Derived => "the model",
         StructureSources.Template => "the template",
-        _ => "you",
+        StructureSources.Operator => "you",
+        _ => "an unnamed writer",
     };
 }
 

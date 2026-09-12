@@ -46,7 +46,7 @@ public sealed class EnvelopeStore : IDisposable
     private static readonly IReadOnlyList<string> Tiers = ["T0", "T1", "T2"];
     private static readonly IReadOnlyList<string> Sources = [DecorationSources.Mechanical, DecorationSources.Derived, DecorationSources.Operator, DecorationSources.SessionDefault];
 
-    private readonly FileStream _stream;
+    private readonly Stream _stream;
     private readonly TimeProvider _time;
     private readonly Lock _gate = new();
     private readonly Dictionary<string, int> _lastSeq;
@@ -62,8 +62,9 @@ public sealed class EnvelopeStore : IDisposable
     private string? _lastLine;
     private bool _needsNewline;
     private bool _disposed;
+    private string? _failed;
 
-    private EnvelopeStore(FileStream stream, string path, string sessionId, TimeProvider time, Walk walk, long walkMs)
+    private EnvelopeStore(Stream stream, string path, string sessionId, TimeProvider time, Walk walk, Stopwatch clock)
     {
         _stream = stream;
         _time = time;
@@ -82,7 +83,10 @@ public sealed class EnvelopeStore : IDisposable
         _lastLine = walk.LastLine;
         _needsNewline = walk.NeedsNewline;
         BrokenAt = walk.BrokenAt;
-        OpenReport = new EnvelopeStoreOpenReport(walk.Bytes, walk.Rows, FoldNow().Envelopes.Count, walk.BrokenAt, walkMs);
+
+        // walk_ms covers the walk AND the first fold: what the open cost, measured where it is paid.
+        var envelopes = FoldNow().Envelopes.Count;
+        OpenReport = new EnvelopeStoreOpenReport(walk.Bytes, walk.Rows, envelopes, walk.BrokenAt, clock.ElapsedMilliseconds);
     }
 
     /// <summary>The file this store holds exclusively.</summary>
@@ -106,7 +110,14 @@ public sealed class EnvelopeStore : IDisposable
     /// <exception cref="EnvelopeStoreException">
     /// <see cref="EnvelopeStoreErrorCodes.NoSessionDirectory"/>; <see cref="EnvelopeStoreErrorCodes.HeldByAnotherWriter"/>.
     /// </exception>
-    public static EnvelopeStore Open(string sessionDirectory, TimeProvider? time = null)
+    public static EnvelopeStore Open(string sessionDirectory, TimeProvider? time = null) => OpenWith(sessionDirectory, null, time);
+
+    /// <summary>
+    /// The fault seam for the append-failure tests (ADR-0034 rule 3's "an Append that throws after
+    /// open"): <paramref name="wrap"/> decorates the exclusive file stream — a test wraps it in one
+    /// that throws mid-write. Internal: the product opens through <see cref="Open"/> only.
+    /// </summary>
+    internal static EnvelopeStore OpenWith(string sessionDirectory, Func<Stream, Stream>? wrap, TimeProvider? time = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sessionDirectory);
 
@@ -143,7 +154,7 @@ public sealed class EnvelopeStore : IDisposable
             var bytes = new byte[stream.Length];
             stream.ReadExactly(bytes);
             var walk = WalkAll(bytes);
-            var store = new EnvelopeStore(stream, path, sessionId, time ?? TimeProvider.System, walk, clock.ElapsedMilliseconds);
+            var store = new EnvelopeStore(wrap is null ? stream : wrap(stream), path, sessionId, time ?? TimeProvider.System, walk, clock);
 
             activity?.SetTag("bytes", walk.Bytes);
             activity?.SetTag("rows", walk.Rows);
@@ -174,7 +185,9 @@ public sealed class EnvelopeStore : IDisposable
         byte[] bytes;
         try
         {
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None);
+            // FileShare.Read: two readers (purge's plan, a fold) may read at once; a writer's
+            // FileShare.None still refuses a reader, and an open reader refuses a writer — visibly.
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
             bytes = new byte[stream.Length];
             stream.ReadExactly(bytes);
         }
@@ -212,6 +225,15 @@ public sealed class EnvelopeStore : IDisposable
                     $"compile history is broken at line {broken}; purge it to start again (aide session purge {SessionId}) — nothing is appended past a break");
             }
 
+            // LATCHED AFTER A FAILED WRITE: bytes may have partially landed, so the tail is unknown
+            // — a later append would glue its row to the partial prefix into one torn line whose key
+            // nothing folds, and the next open would re-mint that seq (two rows, one key). The store
+            // refuses every append for the life of this open; a reopen walks the real tail.
+            if (_failed is { } failed)
+            {
+                throw new EnvelopeStoreException(EnvelopeStoreErrorCodes.AppendFailed, $"an earlier append to '{Path}' failed ({failed}); nothing is appended until the store is reopened");
+            }
+
             Validate(evt);
 
             var last = _lastSeq.GetValueOrDefault(evt.EnvelopeId);
@@ -229,10 +251,18 @@ public sealed class EnvelopeStore : IDisposable
 
                 _stream.Write(Utf8.GetBytes(line));
                 _stream.Write("\n"u8);
-                _stream.Flush(flushToDisk: true);
+                if (_stream is FileStream file)
+                {
+                    file.Flush(flushToDisk: true);   // the row is durable before the append returns
+                }
+                else
+                {
+                    _stream.Flush();
+                }
             }
             catch (IOException error)
             {
+                _failed = error.Message;
                 throw new EnvelopeStoreException(EnvelopeStoreErrorCodes.AppendFailed, $"the append to '{Path}' failed: {error.Message}", error);
             }
 
@@ -344,10 +374,13 @@ public sealed class EnvelopeStore : IDisposable
             throw new EnvelopeStoreException(EnvelopeStoreErrorCodes.DecorationNameRefused, "no decoration is named lease: the lease is a projection of the source text and has one home (DM-A)");
         }
 
-        if (string.Equals(d.Source, DecorationSources.Operator, StringComparison.Ordinal)
+        // A SETTING, A REF OR A PROJECTION HAS ONE WRITER — the mechanical pre-compile. An operator
+        // row (US-D1) or a derived row (the model, C5) named like one is refused, whatever the validator
+        // upstream admitted: Current() reads by name and would otherwise take the model's ceilings.
+        if (!string.Equals(d.Source, DecorationSources.Mechanical, StringComparison.Ordinal)
             && DecorationNames.NeverOperator.Contains(d.Name, StringComparer.Ordinal))
         {
-            throw new EnvelopeStoreException(EnvelopeStoreErrorCodes.DecorationNameRefused, $"'{d.Name}' is a setting or a projection, never an operator decoration (US-D1: one home)");
+            throw new EnvelopeStoreException(EnvelopeStoreErrorCodes.DecorationNameRefused, $"'{d.Name}' is a setting, a ref or a projection with one mechanical writer, never a {d.Source} decoration (US-D1: one home)");
         }
 
         if (string.Equals(d.Name, DecorationNames.Tier, StringComparison.Ordinal)
@@ -356,18 +389,20 @@ public sealed class EnvelopeStore : IDisposable
             throw new EnvelopeStoreException(EnvelopeStoreErrorCodes.TierRefused, $"a tier row's value is one of T0, T1, T2; '{d.ValueAsString ?? d.Value?.ToJsonString() ?? "null"}' is refused and the prior row stands");
         }
 
-        if (string.Equals(d.Name, DecorationNames.Attachments, StringComparison.Ordinal) && CarriesABody(d.Value))
+        if (string.Equals(d.Name, DecorationNames.Attachments, StringComparison.Ordinal) && !IsByReferenceOnly(d.Value))
         {
-            throw new EnvelopeStoreException(EnvelopeStoreErrorCodes.AttachmentBodyRefused, "an attachment value carries a body member; bodies are never persisted — path, sha256, bytes and outside_workspace only (§A13.5)");
+            throw new EnvelopeStoreException(EnvelopeStoreErrorCodes.AttachmentBodyRefused, "an attachment value carries more than its reference; bodies are never persisted — exactly path, sha256, bytes and outside_workspace, each a scalar (§A13.5)");
         }
     }
 
-    private static bool CarriesABody(JsonNode? value) => value switch
-    {
-        JsonObject o => o.ContainsKey("body") || o.ContainsKey("text"),
-        JsonArray a => a.Any(CarriesABody),
-        _ => false,
-    };
+    /// <summary>The attachment refs' shape, as an allow-list (not a deny-list a nested or re-cased body slips past): an array of objects whose members are exactly the four scalars.</summary>
+    private static readonly IReadOnlyList<string> AttachmentMembers = ["path", "sha256", "bytes", "outside_workspace"];
+
+    private static bool IsByReferenceOnly(JsonNode? value) =>
+        value is JsonArray refs && refs.All(r =>
+            r is JsonObject o
+            && o.Count == AttachmentMembers.Count
+            && AttachmentMembers.All(m => o.ContainsKey(m) && o[m] is JsonValue));
 
     private static EnvelopeStoreException Held(string path, Exception error) => new(
         EnvelopeStoreErrorCodes.HeldByAnotherWriter,

@@ -12,7 +12,7 @@ namespace AiDe.Core.Tests.PromptCompilation;
 /// the walk is schema-agnostic; the lifetime is the caller's handle.
 /// </summary>
 /// <remarks>
-/// <b>Red first (recorded in the Proof Pack):</b> no <c>AiDe.Core.Compilation</c> namespace existed
+/// <b>Red first (recorded in the Proof Pack):</b> no <c>AiDe.Core.PromptCompilation</c> namespace existed
 /// when these were written — the first run of this file is a compile failure of the test project,
 /// which is the red for a type that does not exist.
 /// </remarks>
@@ -75,6 +75,94 @@ public sealed class TheEnvelopeStoreIsAppendOnlyTests : IDisposable
             || m.Contains("Remove", StringComparison.OrdinalIgnoreCase)
             || m.Contains("Truncate", StringComparison.OrdinalIgnoreCase)
             || m.Contains("Clear", StringComparison.OrdinalIgnoreCase));
+
+        // AND THE NON-PUBLIC, NON-PRIVATE SURFACE IS EXACTLY THE FAULT SEAM: an `internal` writer
+        // would be invisible to the public census above and visible to this test project.
+        var nonPublic = typeof(EnvelopeStore)
+            .GetMembers(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
+            .Where(m => m is MethodInfo { IsAssembly: true } or MethodInfo { IsFamilyOrAssembly: true } or FieldInfo { IsAssembly: true } or PropertyInfo)
+            .Where(m => m is not PropertyInfo p || (p.GetMethod?.IsAssembly ?? false))
+            .Select(m => m.Name)
+            .ToList();
+        Assert.Equal(["OpenWith"], nonPublic);
+    }
+
+    /// <summary>ADR-0034 rule 3: an append that throws after a good open latches the store — nothing is appended until a reopen walks the real tail (the D&amp;P lens's condition).</summary>
+    [Fact]
+    public void AnAppendThatThrowsAfterOpenLatchesTheStoreUntilItIsReopened()
+    {
+        using (var seed = EnvelopeStore.Open(SessionDir))
+        {
+            seed.Append(OpenedRow("e1"));
+        }
+
+        var faulting = new FaultingStream();
+        using (var store = EnvelopeStore.OpenWith(SessionDir, inner => faulting.Over(inner)))
+        {
+            store.Append(new Decorated("e1", "goal", JsonValue.Create("g"), DecorationSources.Operator));   // a good append first
+
+            faulting.FailAfterBytes = 20;   // the next write lands a prefix, then throws — disk full mid-row
+            var refused = Assert.Throws<EnvelopeStoreException>(() =>
+                store.Append(new Decorated("e1", "done_when", JsonValue.Create("d"), DecorationSources.Operator)));
+            Assert.Equal(EnvelopeStoreErrorCodes.AppendFailed, refused.Code);
+
+            // LATCHED: a later append is refused with the earlier failure named — it does not glue a
+            // row to the partial prefix.
+            faulting.FailAfterBytes = null;
+            var latched = Assert.Throws<EnvelopeStoreException>(() =>
+                store.Append(new Consumed("e1", "r", null, "Completed", ConsumedReasons.Completed)));
+            Assert.Equal(EnvelopeStoreErrorCodes.AppendFailed, latched.Code);
+            Assert.Contains("until the store is reopened", latched.Message, StringComparison.Ordinal);
+        }
+
+        // A reopen walks the real tail: the partial row is a torn last line (counted), the chain is
+        // whole up to it, the next seq is unique, and the appended row chains over the torn bytes.
+        using var reopened = EnvelopeStore.Open(SessionDir);
+        Assert.Null(reopened.BrokenAt);
+        Assert.Equal(1, reopened.Read().SkippedTorn);
+        var next = reopened.Append(new Decorated("e1", "done_when", JsonValue.Create("d"), DecorationSources.Operator));
+        Assert.Equal(3, next.Seq);
+        reopened.Dispose();
+        Assert.Null(EnvelopeStore.ReadFile(FilePath).BrokenAt);
+    }
+
+    /// <summary>A stream that lands a prefix of one write and then throws — the disk-full shape.</summary>
+    private sealed class FaultingStream
+    {
+        public int? FailAfterBytes { get; set; }
+
+        public Stream Over(Stream inner) => new Wrapper(inner, this);
+
+        private sealed class Wrapper(Stream inner, FaultingStream owner) : Stream
+        {
+            public override bool CanRead => inner.CanRead;
+            public override bool CanSeek => inner.CanSeek;
+            public override bool CanWrite => inner.CanWrite;
+            public override long Length => inner.Length;
+            public override long Position { get => inner.Position; set => inner.Position = value; }
+            public override void Flush() => inner.Flush();
+            public override int Read(byte[] buffer, int offset, int count) => inner.Read(buffer, offset, count);
+            public override long Seek(long offset, SeekOrigin origin) => inner.Seek(offset, origin);
+            public override void SetLength(long value) => inner.SetLength(value);
+            public override void Write(byte[] buffer, int offset, int count) => Write(buffer.AsSpan(offset, count));
+            public override void Write(ReadOnlySpan<byte> buffer)
+            {
+                if (owner.FailAfterBytes is { } n && buffer.Length > n)
+                {
+                    inner.Write(buffer[..n]);
+                    inner.Flush();
+                    throw new IOException("There is not enough space on the disk.");
+                }
+
+                inner.Write(buffer);
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) inner.Dispose();
+                base.Dispose(disposing);
+            }
+        }
     }
 
     [Fact]
@@ -159,6 +247,66 @@ public sealed class TheEnvelopeStoreIsAppendOnlyTests : IDisposable
         Assert.Equal(EnvelopeStoreErrorCodes.DecorationNameRefused, refused.Code);
     }
 
+    /// <summary>§A9 input (14) at the store: a tier row outside {T0, T1, T2} is refused and the prior row stands.</summary>
+    [Fact]
+    public void ATierRowOutsideTheThreeTiersIsRefusedAtTheStore()
+    {
+        using var store = EnvelopeStore.Open(SessionDir);
+        store.Append(OpenedRow("e1"));
+        store.Append(new Decorated("e1", DecorationNames.Tier, JsonValue.Create("T2"), DecorationSources.Operator));
+
+        var refused = Assert.Throws<EnvelopeStoreException>(() =>
+            store.Append(new Decorated("e1", DecorationNames.Tier, JsonValue.Create("T9"), DecorationSources.Operator)));
+        Assert.Equal(EnvelopeStoreErrorCodes.TierRefused, refused.Code);
+        Assert.Equal("T2", store.Read().Envelopes.Single().Current(DecorationNames.Tier)!.ValueAsString);
+    }
+
+    /// <summary>A setting, a ref or a projection has one mechanical writer: a derived row named like one is refused too (C5), not only an operator row.</summary>
+    [Theory]
+    [InlineData("ceilings", DecorationSources.Derived)]
+    [InlineData("attachments", DecorationSources.Derived)]
+    [InlineData("shape", DecorationSources.Derived)]
+    [InlineData("fan_out_effective", DecorationSources.SessionDefault)]
+    public void ANonMechanicalRowNamedASettingARefOrAProjectionIsRefused(string name, string source)
+    {
+        using var store = EnvelopeStore.Open(SessionDir);
+        store.Append(OpenedRow("e1"));
+        var refused = Assert.Throws<EnvelopeStoreException>(() =>
+            store.Append(new Decorated("e1", name, JsonValue.Create("x"), source)));
+        Assert.Equal(EnvelopeStoreErrorCodes.DecorationNameRefused, refused.Code);
+    }
+
+    /// <summary>The attachment refs are an allow-list of four scalars, so a nested, re-cased or extra member is refused as a body would be.</summary>
+    [Theory]
+    [InlineData("{\"path\":\"x\",\"sha256\":\"a\",\"bytes\":1,\"outside_workspace\":false,\"meta\":{\"body\":\"hidden\"}}")]
+    [InlineData("{\"path\":\"x\",\"sha256\":\"a\",\"bytes\":1,\"outside_workspace\":false,\"Body\":\"re-cased\"}")]
+    [InlineData("{\"path\":\"x\",\"sha256\":\"a\",\"bytes\":1,\"outside_workspace\":false,\"content\":\"x\"}")]
+    [InlineData("{\"path\":{\"nested\":true},\"sha256\":\"a\",\"bytes\":1,\"outside_workspace\":false}")]
+    [InlineData("{\"path\":\"x\",\"sha256\":\"a\",\"bytes\":1}")]
+    public void AnAttachmentValueOutsideTheFourScalarsIsRefused(string element)
+    {
+        using var store = EnvelopeStore.Open(SessionDir);
+        store.Append(OpenedRow("e1"));
+        var refused = Assert.Throws<EnvelopeStoreException>(() =>
+            store.Append(new Decorated("e1", DecorationNames.Attachments, new JsonArray(JsonNode.Parse(element)), DecorationSources.Mechanical)));
+        Assert.Equal(EnvelopeStoreErrorCodes.AttachmentBodyRefused, refused.Code);
+    }
+
+    /// <summary>Two readers may fold at once (FileShare.Read); a writer refuses them and they it.</summary>
+    [Fact]
+    public void TwoReadersMayFoldAtOnceAndAReaderRefusesAWriter()
+    {
+        using (var seed = EnvelopeStore.Open(SessionDir))
+        {
+            seed.Append(OpenedRow("e1"));
+        }
+
+        using var reader = new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        Assert.Single(EnvelopeStore.ReadFile(FilePath).Envelopes);   // a second reader beside the first
+        var refused = Assert.Throws<EnvelopeStoreException>(() => EnvelopeStore.Open(SessionDir));   // a writer while a reader holds it
+        Assert.Equal(EnvelopeStoreErrorCodes.HeldByAnotherWriter, refused.Code);
+    }
+
     [Fact]
     public void AnOpenedRowWhoseSessionIdDiffersFromTheDirectorySegmentIsRefused()
     {
@@ -205,24 +353,30 @@ public sealed class TheEnvelopeStoreIsAppendOnlyTests : IDisposable
     {
         using (var store = EnvelopeStore.Open(SessionDir))
         {
-            store.Append(OpenedRow("e1"));
-            store.Append(new Decorated("e1", "goal", JsonValue.Create("keep the store small"), DecorationSources.Operator));
-            store.Append(new Submitted("e1", true, null, "t", "p", "1"));
-            store.Append(OpenedRow("e2"));
+            store.Append(OpenedRow("e0"));                                                   // line 1
+            store.Append(new Submitted("e0", true, null, "t", "p", "1"));                    // line 2 — e0 is whole before the break
+            store.Append(OpenedRow("e1"));                                                   // line 3
+            store.Append(new Decorated("e1", "goal", JsonValue.Create("keep the store small"), DecorationSources.Operator));   // line 4 — flipped
+            store.Append(new Submitted("e1", true, null, "t", "p", "1"));                    // line 5
+            store.Append(OpenedRow("e2"));                                                   // line 6
             store.Append(new Decorated("e2", "goal", JsonValue.Create("second"), DecorationSources.Operator));
         }
 
-        // Flip one byte INSIDE a JSON string of line 2 — still valid JSON, a plausible fold without the chain.
+        // Flip one byte INSIDE a JSON string of line 4 — still valid JSON, a plausible fold without the chain.
         var lines = File.ReadAllText(FilePath, Encoding.UTF8).Split('\n');
         Assert.Equal("", lines[^1]);
-        lines[1] = lines[1].Replace("keep the store small", "keep the store SMALL", StringComparison.Ordinal);
+        lines[3] = lines[3].Replace("keep the store small", "keep the store SMALL", StringComparison.Ordinal);
         File.WriteAllText(FilePath, string.Join('\n', lines), new UTF8Encoding(false));
 
         var fold = EnvelopeStore.ReadFile(FilePath);
 
-        Assert.Equal(2, fold.BrokenAt);
-        Assert.Contains("record broken at line 2", fold.Report, StringComparison.Ordinal);
-        Assert.Empty(fold.Envelopes);   // e1 spans the break; e2 is past it — no envelope past N
+        Assert.Equal(4, fold.BrokenAt);
+        Assert.Contains("record broken at line 4", fold.Report, StringComparison.Ordinal);
+
+        // e0 lies wholly before the break and folds; e1 spans it and e2 is past it — no envelope past N.
+        var only = Assert.Single(fold.Envelopes);
+        Assert.Equal("e0", only.EnvelopeId);
+        Assert.False(only.IsAbandoned);
     }
 
     [Fact]

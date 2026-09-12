@@ -70,9 +70,10 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     private readonly GridSplitter _splitter = new();
     private readonly CancellationTokenSource _closing = new();
     private readonly Dictionary<int, CancellationTokenSource> _runs = [];
-    private readonly Dictionary<int, string> _envelopeByOrdinal = [];
+    private readonly Dictionary<int, (string EnvelopeId, string TaskClassSource)> _envelopeByOrdinal = [];
     private readonly Lock _envelopeGate = new();
-    private readonly EnvelopeStore? _envelopes;
+    private EnvelopeStore? _envelopes;
+    private int _purgedThisOpen;
     private bool _operatorActed;
     private bool _placedFocus;
     private bool _disposed;
@@ -456,11 +457,13 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
 
         var cancel = CancellationTokenSource.CreateLinkedTokenSource(_closing.Token);
         _runs[ordinal] = cancel;
+        // THE ENVELOPE AND ITS CLASS PROVENANCE, CAPTURED WITH THE ORDINAL AT LAUNCH — never read
+        // from the gate at completion, where the next block's submission may already stand.
         if (Composer.Gate.LastSubmission is { } submission)
         {
             lock (_envelopeGate)
             {
-                _envelopeByOrdinal[ordinal] = submission.EnvelopeId;
+                _envelopeByOrdinal[ordinal] = (submission.EnvelopeId, submission.TaskClassSource);
             }
         }
 
@@ -500,8 +503,8 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
             var result = await GovernedRunHost.RunAsync(request, cancel.Token, sink).ConfigureAwait(false);
             LastRunResult = result;
             _thread.Conclude(ordinal, request.Goal is null ? TurnState.Answered : TurnState.Completed, DateTimeOffset.Now);
-            RecordConsumed(ordinal, result.RunId, result.EpisodeId, result.Outcome, ConsumedReasons.Completed);
-            StampTaskClassSource(request, result);
+            var consumed = RecordConsumed(ordinal, result.RunId, result.EpisodeId, result.Outcome, ConsumedReasons.Completed);
+            StampTaskClassSource(request.DataDirectory, result, consumed?.TaskClassSource);
         }
         catch (OperationCanceledException) when (cancel.IsCancellationRequested && !_closing.IsCancellationRequested)
         {
@@ -530,20 +533,25 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     /// exactly once per envelope; a refusal (a second row, a closed store) is recorded on the
     /// composer's history state, never thrown into the run's completion.
     /// </summary>
-    private void RecordConsumed(int ordinal, string runId, string? episodeId, string outcome, string reason)
+    private (string EnvelopeId, string TaskClassSource)? RecordConsumed(int ordinal, string runId, string? episodeId, string outcome, string reason)
     {
         // One gate over the ordinal map and the append: the run's continuation and the document's
         // Dispose race for the same envelope, and exactly one of them writes its consumed row.
         lock (_envelopeGate)
         {
-            if (!_envelopeByOrdinal.Remove(ordinal, out var envelopeId) || _envelopes is null)
+            if (!_envelopeByOrdinal.Remove(ordinal, out var envelope))
             {
-                return;
+                return null;
+            }
+
+            if (_envelopes is null)
+            {
+                return envelope;
             }
 
             try
             {
-                _envelopes.Append(new Consumed(envelopeId, runId, episodeId, outcome, reason));
+                _envelopes.Append(new Consumed(envelope.EnvelopeId, runId, episodeId, outcome, reason));
             }
             catch (EnvelopeStoreException error)
             {
@@ -553,6 +561,8 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
             {
                 CompileSignal.Degraded("consumed-not-recorded", "store closed");
             }
+
+            return envelope;
         }
     }
 
@@ -561,25 +571,91 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     /// class it ranked under (ADR-0028's amendment; ADR-0033 rule 4) — on the watcher's cell, through
     /// the same watcher composition the run host used. A read-only turn opens no episode and is not stamped.
     /// </summary>
-    private void StampTaskClassSource(GovernedRunRequest request, GovernedRunResult result)
+    /// <param name="dataDirectory">The run's data directory — the watcher's home.</param>
+    /// <param name="result">The run's result; only a scored episode is stamped.</param>
+    /// <param name="taskClassSource">The provenance captured with the envelope at launch; null when the turn had no envelope.</param>
+    /// <returns>Whether a scored cell was stamped.</returns>
+    internal static bool StampTaskClassSource(string dataDirectory, GovernedRunResult result, string? taskClassSource)
     {
-        if (!result.Scored || string.IsNullOrWhiteSpace(result.EpisodeId) || Composer.Gate.LastSubmission is not { } submission)
+        if (!result.Scored || string.IsNullOrWhiteSpace(result.EpisodeId) || taskClassSource is null)
         {
-            return;
+            return false;
         }
 
         try
         {
-            using var watcher = WatcherHost.Open(request.DataDirectory, Path.Combine(request.DataDirectory, "loomkeeper-coord"));
-            if (!watcher.Store.RecordEpisodeTaskClassSource(result.EpisodeId, submission.TaskClassSource))
+            using var watcher = WatcherHost.Open(dataDirectory, Path.Combine(dataDirectory, "loomkeeper-coord"));
+            if (watcher.Store.RecordEpisodeTaskClassSource(result.EpisodeId, taskClassSource))
             {
-                CompileSignal.Degraded("task-class-source-not-stamped", "no scored cell for episode " + result.EpisodeId);
+                return true;
             }
+
+            CompileSignal.Degraded("task-class-source-not-stamped", "no scored cell");
+            return false;
         }
         catch (Exception error) when (error is IOException or InvalidOperationException or Microsoft.Data.Sqlite.SqliteException)
         {
             CompileSignal.Degraded("task-class-source-not-stamped", error.GetType().Name);
+            return false;
         }
+    }
+
+    // ── purge: the eraser ships beside the writer (§A13.5 rule 1; Security C3) ──
+
+    /// <summary>
+    /// The confirmation seam for <see cref="PurgeCompileHistory"/>: the plan's text in, yes or no
+    /// out. The product asks with a message box; a test injects its answer.
+    /// </summary>
+    public Func<string, bool> PurgeConfirmation { get; set; } = plan =>
+        MessageBox.Show(plan + "\n\nDelete this session's compile history? Nothing else is touched.", "Purge compile history", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes;
+
+    /// <summary>How many times this document purged its compile history since it opened — the fact behind <i>history purged</i>.</summary>
+    public int PurgedThisOpen => _purgedThisOpen;
+
+    /// <summary>
+    /// Purges this session's compile history from the document that holds it — releases the
+    /// handle, resolves the plan (the identity: name · id · workspace · file · count · newest),
+    /// asks, deletes the one file, and reopens the store so the next send records again. The
+    /// writer never ships without its eraser (ADR-0034 rule 6; US-D13).
+    /// </summary>
+    /// <returns>What happened, in the operator's terms; announced too.</returns>
+    public string PurgeCompileHistory()
+    {
+        string outcome;
+        lock (_envelopeGate)
+        {
+            _envelopes?.Dispose();
+            _envelopes = null;
+
+            try
+            {
+                var plan = EnvelopePurge.Resolve(Model.WorkspaceRoot, Model.SessionId);
+                if (!plan.HasHistory)
+                {
+                    outcome = "no compile history to purge";
+                }
+                else if (!PurgeConfirmation(plan.Describe()))
+                {
+                    outcome = "purge cancelled; nothing was touched";
+                }
+                else
+                {
+                    EnvelopePurge.Execute(plan);
+                    _purgedThisOpen++;
+                    outcome = string.Create(CultureInfo.InvariantCulture, $"compile history purged — {plan.EnvelopeCount} envelope(s) removed");
+                }
+            }
+            catch (EnvelopeStoreException error)
+            {
+                outcome = "purge refused — " + error.Message;
+            }
+
+            (_envelopes, var historyState) = OpenEnvelopeStore(Model.WorkspaceRoot, Model.SessionId);
+            Composer.Gate.UseEnvelopeStore(_envelopes, historyState);
+        }
+
+        _announcer.Announce(new Announcement(outcome, Urgency.Status, AnnouncementKind.Completed));
+        return outcome;
     }
 
     private static bool IsCompileEvent(RunEvent evt) => CompileSignal.IsCompileEvent(evt);
@@ -944,7 +1020,13 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         Row("Budget", ceilings.BudgetCap is { } cap ? string.Create(CultureInfo.InvariantCulture, $"{cap.Tokens:N0} tokens per session · cap enforced") : "Bounded by your subscription", "Off: spend stops where your subscription stops. On: you set a number of tokens; a new turn will not start past it without asking; a running turn finishes.");
         Row("Default task class", Composer.Decorations.FirstOrDefault(d => d.Name == "class")?.Value ?? AiDe.Core.Watcher.TaskClasses.FreeForm, "Every new prompt starts with this class. Change it on any prompt from its decoration line; that never changes this default.");
         Row("Compile mode", Composer.Gate.CompileMode, "Mechanical-only: one gesture, you fill the structure.");
-        Row("Compile history", Composer.HistoryState ?? $"recorded in {_envelopes?.Path ?? Envelope.NotRecorded}", "Every send is a row in this session's append-only envelope file; purge it with aide session purge.");
+        Row("Compile history", Composer.HistoryState ?? (_purgedThisOpen > 0 ? "history purged; recording again" : $"recorded in {_envelopes?.Path ?? Envelope.NotRecorded}"), "Every send is a row in this session's append-only envelope file. Purge removes that file and nothing else.");
+
+        var purge = new Button { Content = "Purge compile history…", Margin = new Thickness(0, 6, 0, 0), HorizontalAlignment = HorizontalAlignment.Left, Padding = new Thickness(8, 2, 8, 2) };
+        AutomationProperties.SetName(purge, "Purge compile history");
+        AutomationProperties.SetHelpText(purge, "Shows the session's name, id, workspace, file, envelope count and newest entry, then deletes the envelope file only.");
+        purge.Click += (_, _) => PurgeCompileHistory();
+        rows.Children.Add(purge);
 
         return new Popup
         {
