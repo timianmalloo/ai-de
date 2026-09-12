@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T20:01:21Z",
+  "generated": "2026-09-12T20:17:14Z",
   "audit": [
     {
       "actor": null,
@@ -14179,75 +14179,147 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2BHJNQVJ1P3K02B0FD0JRE1",
-      "shortname": "join-cv1-x2",
-      "datetime": "2026-09-12T19:30:15Z",
-      "session": "claude-conductor-addendum-c",
-      "prompt": "keep going (the join of CV-1 and X-2); the term hosts are multiplying right now... great opportunity for you to debug",
-      "summary": "Join: X-2 (8f73b74e) and CV-1 (7b800e8c) merged to main; CV-1's three register placeholders allocated DC-166/167/168; whole-suite recount App 793 / Core 2351 = 2185 + 166; every verify gate green. Supersedes the X-2 entry, which named no proof artifact: the evidence is docs/proof/terminal-hosts-sixth.md (rows 1-7, red->green) and docs/proof/composer-as-conversation.md (CV-1, 43 rows). Census at the operator's 'multiplying right now' (19:28Z-19:31Z): births in the last 12 min = this census; alive from the last hour = 3 bash, 1 powershell, 1 conhost (ours, this census), sleeps; conhost 269 / node 257 = the WT agent pool, unchanged; no testhost or dotnet test alive; the Copilot proposal tree has no test binaries. The births the operator saw were the recount's three suite runs (19:00Z-19:27Z).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/terminal-hosts-sixth.md",
         "docs/proof/composer-as-conversation.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Land CV-1 and X-2 on main with the floors recounted and a Release build for the operator; answer the sixth report with a measurement taken while it was being made",
+      "datetime": "2026-09-12T19:30:15Z",
       "done_when": "main pushed with both merges and green gates; Release built at the new sha; the census at the moment of the report recorded",
+      "goal": "Land CV-1 and X-2 on main with the floors recounted and a Release build for the operator; answer the sixth report with a measurement taken while it was being made",
+      "id": "al-01M2BHJNQVJ1P3K02B0FD0JRE1",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (the join of CV-1 and X-2); the term hosts are multiplying right now... great opportunity for you to debug",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-cv1-x2",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
+        "verification_path": true
       },
-      "supersedes": "al-01M2BGSB09J4SXDSR80PNJB8PX"
+      "skill": "execute-with-coordination",
+      "summary": "Join: X-2 (8f73b74e) and CV-1 (7b800e8c) merged to main; CV-1's three register placeholders allocated DC-166/167/168; whole-suite recount App 793 / Core 2351 = 2185 + 166; every verify gate green. Supersedes the X-2 entry, which named no proof artifact: the evidence is docs/proof/terminal-hosts-sixth.md (rows 1-7, red->green) and docs/proof/composer-as-conversation.md (CV-1, 43 rows). Census at the operator's 'multiplying right now' (19:28Z-19:31Z): births in the last 12 min = this census; alive from the last hour = 3 bash, 1 powershell, 1 conhost (ours, this census), sleeps; conhost 269 / node 257 = the WT agent pool, unchanged; no testhost or dotnet test alive; the Copilot proposal tree has no test binaries. The births the operator saw were the recount's three suite runs (19:00Z-19:27Z).",
+      "supersedes": "al-01M2BGSB09J4SXDSR80PNJB8PX",
+      "tags": [],
+      "tool": null
     },
     {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-12T20:01:21Z",
       "id": "al-01M2BKBKVZV0JE3G00Y6TRV3BX",
-      "shortname": "ok - this is ridiculous... go look at the number of zombie terminal host…",
-      "datetime": "2026-09-12T20:01:21Z",
-      "session": "prompt-log",
+      "kind": "prompt",
+      "outcome": "success",
       "prompt": "ok - this is ridiculous... go look at the number of zombie terminal hosts being created AGAIN ... and dont say it is the copilot session because that is working on this repo as well so it should have any fixes you already claimed to have done",
-      "summary": "prompt logged for reuse",
-      "kind": "prompt",
+      "session": "prompt-log",
+      "shortname": "ok - this is ridiculous... go look at the number of zombie terminal host…",
       "skill": null,
-      "tool": null,
-      "actor": null,
-      "artifacts": [],
+      "summary": "prompt logged for reuse",
       "tags": [],
-      "outcome": "success"
+      "tool": null
     },
     {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-12T20:01:21Z",
       "id": "al-01M2BKBM0SH1GNVN04DRTSW6XH",
-      "shortname": "the term hosts are multiplying right now... great opportunity for you to…",
-      "datetime": "2026-09-12T20:01:21Z",
-      "session": "prompt-log",
-      "prompt": "the term hosts are multiplying right now... great opportunity for you to debug",
-      "summary": "prompt logged for reuse",
       "kind": "prompt",
+      "outcome": "success",
+      "prompt": "the term hosts are multiplying right now... great opportunity for you to debug",
+      "session": "prompt-log",
+      "shortname": "the term hosts are multiplying right now... great opportunity for you to…",
       "skill": null,
-      "tool": null,
-      "actor": null,
-      "artifacts": [],
+      "summary": "prompt logged for reuse",
       "tags": [],
-      "outcome": "success"
+      "tool": null
     },
     {
-      "id": "al-01M2BKBM5VDEM1ZYNRV4DBT25N",
-      "shortname": "keep going / you end the WT pool / i will probably wait for CV-2 to fini…",
-      "datetime": "2026-09-12T20:01:21Z",
-      "session": "prompt-log",
-      "prompt": "keep going / you end the WT pool / i will probably wait for CV-2 to finish before doing a manual test",
-      "summary": "prompt logged for reuse",
-      "kind": "prompt",
-      "skill": null,
-      "tool": null,
       "actor": null,
       "artifacts": [],
+      "datetime": "2026-09-12T20:01:21Z",
+      "id": "al-01M2BKBM5VDEM1ZYNRV4DBT25N",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "keep going / you end the WT pool / i will probably wait for CV-2 to finish before doing a manual test",
+      "session": "prompt-log",
+      "shortname": "keep going / you end the WT pool / i will probably wait for CV-2 to fini…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
       "tags": [],
-      "outcome": "success"
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/ZoneLayout.cs",
+        "src/AiDe.Core/Workbench/ZoneBackedLayoutService.cs",
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
+        "src/AiDe.App/Workbench/WorkbenchAdapter.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/Workbench/ClassHierarchyModel.cs",
+        "src/AiDe.Core/Presentation/CanvasGraphViewModel.cs",
+        "src/AiDe.Core/Presentation/EvidencePaneViewModel.cs",
+        "src/AiDe.Core/Projections/GraphProjection.cs",
+        "src/AiDe.Core/Ipc/WorkspaceClient.cs",
+        "src/AiDe.Core/Ipc/WorkspaceOperations.cs",
+        "docs/proof/perspective-content.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-12T19:31:31Z",
+      "done_when": "The five re-scoped SurfaceContentTests reds are green; the US-C6 master/detail positive oracle is green; the US-C8 kind-filter oracle is green end to end incl. the wire; the class-diagram scaling numbers are measured and recorded; every gate (build+test warnings-as-errors, verify-*.py, verify-test-run.py) is green; Test Architect hard veto cleared",
+      "duration_seconds": 5002.0,
+      "git": {
+        "branch": "lane/shell-sh3",
+        "pushed": null,
+        "sha": "b4e610224f20d5070f930c4c35cabf20bae41099",
+        "short": "b4e610224"
+      },
+      "goal": "Land Coding's and Architecture's per-perspective default layouts, the Evidence/Provenance selection channel, the kind-filtered Architecture canvas and the class-diagram scaling fix per Rulings 54/59/60/61, reds first",
+      "id": "al-01M2BHMZZE0DWVYX23TJQJ9NGT",
+      "kind": "skill",
+      "main_budget": 4127,
+      "main_calls": 180,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "SH-3: Coding's default layout, the Evidence master/detail pair, Architecture's existing content (the kind-filtered second canvas; the class-diagram scaling fix) - Rulings 54/59/61; reds first per the plan",
+      "session": "sh-3",
+      "shortname": "sh-3-perspective-content",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-12T18:08:09Z",
+      "summary": "WorkbenchLayout.Default(Perspective) for Coding (Left=Terminal sessions, Bottom=one terminal, Center=empty) and Architecture (Center=Graph/Domain/Contexts, Left=Evidence, Right=Provenance); the Evidence/Provenance EvidenceSelectionSource seam (US-C6 positive oracle); Architecture's canvas kind-filtered via GraphQuery.ExcludeKnowledge end-to-end incl. the wire (Ruling 53); the class-diagram scaling fix via GraphQuery.KindFilter=ClassHierarchyModel.TypeKinds (Ruling 54, measured 0->500 types on a 1500-node fixture); DC-164 registered for two drag-reconcile fixes the new one-surface-zone/empty-Center defaults exposed. Test Architect hard-veto PASS-WITH-CONDITIONS and opus patterns-expert PASS-WITH-CONDITIONS, both rounds of findings fixed. Full build+test green (2318 Core, 788 App), verify-test-run.py/verify-surface-ownership.py/verify-defect-register.py and the rest of tools/verify-*.py green. Proof Pack docs/proof/perspective-content.md.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/perspective-content.md"
+      ],
+      "datetime": "2026-09-12T20:10:43Z",
+      "done_when": "main pushed with the merge and green gates; Release built at the new sha",
+      "goal": "Land SH-3 on main with the floors recounted and a Release build for the operator",
+      "id": "al-01M2BKWRNZHT2HR974DW1230SD",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (the join of SH-3)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-sh3",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Join: SH-3 (9b16a394) merged to main (b55e51ba) clean; DC-169 was self-allocated by the node after its merge collided with DC-164-168 - the sequence is unbroken, the register gate green; floors recounted App 798 / Core 2357 = 2191 + 166.",
+      "tags": [],
+      "tool": null
     }
   ],
   "changes": [

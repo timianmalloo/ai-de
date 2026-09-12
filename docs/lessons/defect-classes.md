@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 84 · partially-controlled 64 · uncontrolled 21
+**Status counts:** controlled 84 · partially-controlled 65 · uncontrolled 20
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -4508,7 +4508,7 @@ for both or split.*
   discarded by a pipe. In each the mechanism reports success, and the absence has no signature. That
   meta-shape is the thing to look for, and it is why each was found by *measuring the control itself*
   rather than by trusting its green.
-- **Status:** `uncontrolled` — recorded, with the exposure scoped to interactive and agent sessions
+- **Status:** `partially-controlled` — the gate runner (`tools/run-verify-gates.py`, recurrence 3) gives the join line one status to chain on; recorded, with the exposure scoped to interactive and agent sessions
 
 ---
 
@@ -4522,6 +4522,19 @@ for both or split.*
   stops the line — applied to every resolution line since; the pre-commit hook does not run the
   gate set and should not (it would double CI). The class is unchanged; the instance is the
   conductor forgetting its own register.
+
+- **Recurrence 3 (conductor-addendum-c, 2026-09-12, the SH-3 join) — and the mechanical control:**
+  a `for g in tools/verify-*.py; do …; done` loop counted its failures into a variable, printed
+  `FAIL rc=1 tools/verify-stranded-audit.py`, and the line went on to `git commit … && git push`
+  because nothing chained on the count. Recurrence 2's control — "`&&`-chain every gate" — cannot
+  reach a loop: a loop has no single status to chain on, and the conductor wrote one by hand at a
+  join for the third time. The red was transient (a peer tree's uncommitted log; green on re-run)
+  and `main`'s content was verified, but the shape pushed before it knew. **Control:**
+  `tools/run-verify-gates.py` runs every `tools/verify-*.py` and exits 1 on any failure
+  (`--self-test` proves a red gate is reported red), so the only join line is
+  `python tools/run-verify-gates.py && git commit …` and no loop is written at a join again.
+  Status moves to `partially-controlled`: the runner exists; the resolution path's own use of it
+  is the conductor's habit until the join is a script.
 
 ### DC-114 — A fix to the deployment mechanism cannot deploy itself: correct, tested, green, and unreachable
 
