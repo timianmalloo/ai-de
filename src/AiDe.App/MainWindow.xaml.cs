@@ -262,8 +262,11 @@ public partial class MainWindow : Window
     /// binder refuses by name when a run needs one. A malformed file: the message names the file
     /// and the field, and the caller refuses rather than proceeding over an empty registry that
     /// would render as "no agent backend is configured" — a wrong claim about a file the operator
-    /// wrote (Ruling 47 (b)). Read on every path that binds a composer, so a reopen sees the file
-    /// as it is now rather than as the last New Session left it.
+    /// wrote (Ruling 47 (b)). Read on every path that binds a composer, so a session bound on
+    /// reopen or at workspace-open sees the file as it is now rather than as the last New Session
+    /// left it — a composer already bound keeps its binding (the binder does not bind twice; a
+    /// rebind would re-mint the fields), so a provider-file edit reaches it only through a fresh
+    /// document.
     /// </remarks>
     private string? ReadProviders()
     {

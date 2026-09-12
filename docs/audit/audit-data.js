@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T23:27:49Z",
+  "generated": "2026-09-12T00:29:55Z",
   "audit": [
     {
       "actor": null,
@@ -12568,6 +12568,56 @@ window.AUDIT_DATA = {
       ],
       "tier": "T2",
       "tool": null
+    },
+    {
+      "id": "al-01M29GA5GBYPVM0ZDW27YTTBB8",
+      "shortname": "implement-inv-0009",
+      "datetime": "2026-09-12T00:29:39Z",
+      "session": "render-fix",
+      "prompt": "You are the **implementation node** for INV-0009, dispatched by the conductor (Claude Opus, session `conductor-addendum-c`). The operator reviewed the investigation and approved **phases 1, 2, 2b and 4**, and ruled phase 3: **the workspace chooser opens the chosen workspace and then creates the session** (Addendum A R13 b1's interposing chooser, completed) — not a refusal. Run the **`/implement`** skill (Skill tool: `implement`, args: `INV-0009 phases 1, 2, 2b, 3(open), 4: a document opens into the workbench body; reopen and restore bind the composer; the chooser opens the workspace then creates; emitters for maximize and bind`). Read `C:\\projects\\ai-de\\CLAUDE.md` and `AGENTS.md` first; the pack's rules apply in full (red first — the INV's two red oracles are your reds; smallest correct; class → sweep → derive → prevent in writing). Use `python`, not `python3`; `$env:PYTHONIOENCODING='utf-8'`.\n\n## Your worktree — the only tree you write to\n`C:\\Projects\\ai-de-fix-session-document-render`, branch `fix/session-document-render`, HEAD `28732255` (= `investigate/session-document-render` = `main` `1aadde84` + INV-0009 and its reds). From inside it:\n```\n$env:AGENT_SESSION='render-fix'; $env:AGENT_NAME='claude-fix-render'; $env:PYTHONIOENCODING='utf-8'\npython docs/ai-forward-pack/scripts/audit-log.py start --session render-fix\n```\n**Then `git merge main`** (never rebase; `main` is `f92aa810`: Ruling 66's lease fix (DC-146), D2's session design (DC-147), Ruling 72). Resolve `site/*.html` / `docs/_meta.json` from `main`'s side; union `docs/audit/*.jsonl` with `tools/merge-append-only-log.py`; `docs/lessons/defect-classes.md` — keep both sides' entries in id order (the INV already re-issued its classes as DC-148/149 above `main`'s DC-147); `python tools/regenerate-derived.py` must end green before you commit the merge. Re-run `python tools/verify-id-allocators.py` before any commit that touches the register.\n\n## Ground truth — read first\n- `docs/investigations/INV-0009-a-session-document-opened-into-a-body-that-is-not-on-screen.md` — §11 is the plan; the reds are `tests/AiDe.App.Tests/Sessions/ASessionDocumentIsShownWhereTheOperatorIsTests.cs` (`ANewSessionCreatedWhileExplorerIsTheBodyIsShown` exit 30; `AReopenedSessionIsShownAndItsComposerIsBound` exit 32) driving `tests/AiDe.App.ComposerProbe/Program.SessionRender.cs` (`--session-render` mode). **Run them first and observe both red.**\n- The root causes: (B) `ShellModeController.Set(Explorer)` unparents the docking host; every `AddSurface`+`Render` command in `WorkbenchShell` (`:268–364`, `:1574`, `:2909`) then opens into a body that is not on screen and announces from the model (DC-148). (A1) `BindComposer` runs only in `MainWindow.NewSession()` (`:206`, `:235-281`), never on the reopen path (`:387`) or at workspace-open for restored documents (DC-084 rec.); (A2) a restored surface's \"No session is open…\" island is reused by `Render` because nothing `Invalidate`s it (`WorkbenchAdapter.cs:238`; DC-040 rec.). (C) New Session through the chooser with no workspace open → `BindComposer` refuses `repositoryRoot` → a blank editor (DC-149).\n- `src/AiDe.App/MainWindow.xaml.cs` (`NewSession`, `BindComposer`, the reopen path, the chooser at `:390+`), `src/AiDe.App/Workbench/ShellModeController.cs` (ADR-0017: retain-never-rebuild — you keep that invariant), `WorkbenchShell.cs`, `WorkbenchAdapter.cs`, `Sessions/NewSessionPlacement.cs`, `WorkbenchDiagnostics.cs`, `SurfaceContentFactory.cs:158-175`.\n- Guards that must stay green: `TheRunBindingComesFromTheProviderFileTests.TheShellConstructsOneRegistryOneSendContextAndOneAttachmentGate` (one registry/send-context/attachment-gate construction — a shared binder must not become a second site: it must be *the* site), `ANewSessionTakesTheWholeTreeTests` (Ruling 47), `TheSessionOriginIsSetOnlyOnTheCommandPathTests` (origin stamped only on the `Ctrl+N`/`MainMenuBuilder` path — reopen must NOT stamp `main-menu.new-session`), the INV-0007 `--shell` oracle, the lane-pin tests are on `feature/exit-evidence` (not here).\n\n## The phases\n1. **Documents open into the workbench body.** One shell seam (`DocumentOpening` or the smallest equivalent) raised before any `AddSurface`+`Render` that opens a document; `MainWindow` handles it by `_mode.Set(Workbench)` if Explore is the body (retain-never-rebuild holds — the Explorer surface is kept, only unparented as today), and `WorkbenchDiagnostics` logs `shell.mode` on every mode change with the trigger. Sweep: every opening command in `WorkbenchShell` goes through the seam (INV's list), not only New Session. Exit-30 test → green.\n2. **Reopen binds.** `Adapter.Invalidate` for the restored surface on reopen so the live document replaces the island; a single `SessionComposerBinder` (or the existing `BindComposer` refactored to take a `SessionConfig`) used by New and Reopen — **the one construction site, moved, not duplicated** (the one-registry guard proves it). Reopen does **not** stamp the front-door origin. Exit-32 test → green. **2b.** At workspace-open, restored session documents are bound the same way (add a red test first: restore a layout with a session document → its composer reaches `init-pushed`).\n3. **The chooser opens the workspace, then creates** (the operator's ruling): New Session with no workspace open → the chooser → the chosen workspace is opened through the normal open path (same `workspace-open` mutation and diagnostics) → the session is created and bound in it. Red first: a test that the created session's composer reaches `init-pushed` with the chosen workspace's repository root, and that no session is created if the chooser is cancelled. The origin stays `main-menu.new-session` (it is still the command path).\n4. **Emitters**: a `layout.mutation` line for the maximize itself (`operation: maximize-stack`, the stack id, the projected tree after — through the existing `LayoutMutation` writer); `session-document.bound` (session id, surface id, repository root) and `session-document.refused` (reason) from the binder; all on the normal path, degrading to `not recorded`, never a plausible zero.\n\n## Floors\n- Red first (the INV's two + your new ones for 2b and 3), then green, then the Test Architect's adversarial pass and the Simplifier (read-only, ≤ 2 concurrent) — the Simplifier on the seam and the binder: smallest correct, no new abstraction beyond what the four phases need.\n- E7 surface list before coding: `ShellModeController` → `WorkbenchShell` opening commands → `MainWindow` (NewSession / reopen / chooser) → the binder → `WorkbenchAdapter.Invalidate` → `WorkbenchDiagnostics` events → the probe + tests → the register.\n- Gates at close, bare, stop on the first red: `dotnet build` App + both test projects `-p:TreatWarningsAsErrors=true`; `dotnet test tests/AiDe.App.Tests` (full) and `tests/AiDe.Core.Tests` (full); `verify-test-run.py` CHECK only; every `tools/verify-*.py`; `regenerate-derived.py` after the audit entry.\n- Register: the INV proposed DC-148/149 and the recurrences — mark their controls (the tests above; a source-scan guard that every opening command in `WorkbenchShell` passes through the seam, with root/recursion/token set/allowlist stated) and statuses; ids from the allocator at commit time. Audit entry (`--shortname implement-inv-0009 --session render-fix --skill implement --kind skill --tier T1 --git …` + signals); Proof Pack `docs/proof/session-document-render.md` (frontmatter, typed link to INV-0009, the red→green observations, the gate table, residuals: phase 5 the ADR-0017 amendment is A1's; the four legacy mockups' script errors are D2's finding).\n- Commit messages end with:\n```\nCo-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01Pc51aWLB1FKK2b8AqUPAun\nEOF\n```\n(omit the literal `EOF`). `git push -u origin fix/session-document-render`. **Do not merge to `main`.**\n\n## Fails if (stop and report instead)\n- A red made green by weakening; a second registry/send-context/attachment-gate site; the origin stamped on reopen; the Explorer surface rebuilt rather than kept; `ConductorEntry.cs` changed; any write outside your worktree; `git stash`; a rebase; a push to `main`; `verify-test-run.py --update`; DC-120. No governed run.\n\n## Report back (compact)\nRed→green for all four oracles (names, before/after text); the seam and the binder in two sentences each; the chooser's new flow; the emitters by name; register ids/statuses; gate table; residuals; commit shas and the pushed sha.",
+      "summary": "Shipped: Phase 1 WorkbenchShell.DocumentOpening seam raised before every AddSurface, MainWindow → ShellModeController.Set(Workbench, 'document-opening'), shell.mode line (exit 30 → 0; EveryOpeningCommandPassesThroughTheSeamTests). Phase 2 SessionComposerBinder — BindComposer moved, not duplicated (the one-site guard now on the binder, none in the window); RegisterSessionDocument invalidates a restored island; ComposerSendContext.TaskClass nullable with Send refusing by name (exit 32 → 0). Phase 2b ReviveRestoredSessionDocuments at workspace-open, one AttachWorkspace site (exit 34 → 0). Phase 3 NewSessionFlow.StartAsync opens the chosen workspace through OpenWorkspaceAtAsync before the sheet; NewSessionRequested is a task command (chooser oracle red by construction → green). Phase 4 maximize-stack mutation line, session-document.bound/refused. Test Architect held then cleared the veto (window-wiring scan, de-tautologised stand-in, null session.json, wider sweep, no second bind); Simplifier PASS −18. Gates: App 635/0, Core 2240/0, verify-test-run OK, 31 verify scripts OK. Register: DC-148/149 controlled, DC-040/084 controlled, DC-150 registered (uncontrolled). Proof Pack docs/proof/session-document-render.md; decision note docs/notes/session-document-binding-on-record.md.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/Workbench/ShellModeController.cs",
+        "src/AiDe.App/Workbench/Sessions/SessionComposerBinder.cs",
+        "src/AiDe.App/MainWindow.xaml.cs",
+        "src/AiDe.App/Workbench/Sessions/NewSessionFlow.cs",
+        "src/AiDe.App/Workbench/WorkbenchDiagnostics.cs",
+        "tests/AiDe.App.ComposerProbe/Program.SessionRender.cs",
+        "tests/AiDe.App.Tests/Sessions/ASessionDocumentIsShownWhereTheOperatorIsTests.cs",
+        "tests/AiDe.App.Tests/Sessions/EveryOpeningCommandPassesThroughTheSeamTests.cs",
+        "docs/proof/session-document-render.md",
+        "docs/notes/session-document-binding-on-record.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "inv-0009",
+        "dc-148",
+        "dc-149",
+        "session-document"
+      ],
+      "outcome": "success",
+      "goal": "Implement INV-0009 phases 1, 2, 2b, 3(open) and 4 on fix/session-document-render: a dock document opens into a body that is on screen; reopen and workspace-open restore bind the composer through one binder; the chooser opens the chosen workspace then creates; the maximize and the binding are logged.",
+      "done_when": "The INV's two reds (exit 30, exit 32) and the two new reds (2b: exit 34; 3: the chooser refusal) are green; the named guards stay green; build (warnings as errors), both full suites, verify-test-run CHECK, every verify-*.py and regenerate-derived are green; register, Proof Pack and audit entry written; committed and pushed to the branch, not main.",
+      "tier": "T1",
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-11T23:25:05Z",
+      "duration_seconds": 3874.0,
+      "git": {
+        "sha": "4d7c5bfa419b9d3772df97a25c4afe3a35b769bd",
+        "short": "4d7c5bfa4",
+        "branch": "fix/session-document-render",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -15779,6 +15829,38 @@ window.AUDIT_DATA = {
         "commits": []
       },
       "audit_ref": "al-01M29642AFD8BYVDQCWFZBQ88Z"
+    },
+    {
+      "id": "cl-01M29GAF33P1MKRGBEX67RYWZF",
+      "datetime": "2026-09-12T00:29:49Z",
+      "session": "render-fix",
+      "kind": "decision",
+      "skill": "implement",
+      "title": "A session that already exists is bound from what is on record (INV-0009 Phase 2/2b decisions)",
+      "prompt": null,
+      "summary": "Reopen and workspace-open restore bind a session's composer from session.json: no task class (ComposerSendContext.TaskClass nullable per Ruling 70's constraint; Send refuses by name until one is chosen — never a guessed cohort, DC-110); a malformed provider file is a named refusal on the shown composer rather than a document withheld; a bound composer is never bound again (a second Configure re-mints the fields); the routable set is the sheet's own RoutableAmong derivation (DM7). Also: the INV's necessity oracle asserted the pre-fix state by construction and became the trigger oracle.",
+      "rationale": "Ruling 70 constrains the context's task class to the nullable session default and Ruling 72's free-form default belongs to the session model (D2's lane); Ruling 47 (b) forbids a bound composer over an empty registry read from a broken file; the page's fields are re-minted on Configure. Recorded in docs/notes/session-document-binding-on-record.md.",
+      "artifacts": [
+        "docs/notes/session-document-binding-on-record.md",
+        "src/AiDe.App/Workbench/Sessions/SessionComposerBinder.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSendGate.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": "4c19b497",
+        "after": "4d7c5bfa419b9d3772df97a25c4afe3a35b769bd",
+        "branch": "fix/session-document-render",
+        "pushed": null,
+        "commits": [
+          "4d7c5bfa test(sessions): the review's reds â€” the window's wiring, a null session file, a second bind, the sweep, the stand-in's own form (INV-0009 Stage 4)",
+          "58c991ca feat(diagnostics): the maximize and the binding are in the log (INV-0009 Phase 4)",
+          "d2409515 feat(sessions): the workspace chooser opens the chosen workspace, then creates the session (INV-0009 Phase 3, DC-149)",
+          "45c713e5 fix(sessions): restored session documents are revived and bound at workspace-open (INV-0009 Phase 2b)",
+          "d4d39cff fix(sessions): a reopened session is shown and its composer is bound (INV-0009 Phase 2, DC-040/DC-084 rec.)",
+          "228339d6 fix(shell): a dock document opens into a body that is on screen (INV-0009 Phase 1, DC-148)"
+        ]
+      },
+      "audit_ref": "al-01M29GA5GBYPVM0ZDW27YTTBB8"
     }
   ]
 };

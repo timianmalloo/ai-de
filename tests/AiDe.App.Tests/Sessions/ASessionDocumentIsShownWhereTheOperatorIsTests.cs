@@ -24,7 +24,7 @@ namespace AiDe.App.Tests.Sessions;
 /// Loaded on it and its browser host never initialised"</i>, with the announcement reading <i>Session
 /// opened. Composer bound … Maximized the center</i> and the workbench root <i>loaded=False
 /// visible=False parent=(none)</i>. <see cref="ANewSessionCreatedInsideExplorerLeavesItBecauseADocumentOpened"/>
-/// (then <c>LeavingExplorerShowsTheSessionCreatedInsideIt</c>) — exit 0: the same composer object,
+/// (in its earlier form, the diagnosis's necessity half) — exit 0: the same composer object,
 /// untouched, loaded and mounted six fields the moment the workbench returned to the body; after Phase
 /// 1 that state is unreachable and the oracle asserts the trigger instead.
 /// <see cref="AReopenedSessionIsShownAndItsComposerIsBound"/> — <b>exit 32</b>:
@@ -85,7 +85,7 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
     /// no-op: the composer loaded once, so nothing was re-parented (DC-138).
     /// </summary>
     /// <remarks>
-    /// Before INV-0009 Phase 1 this was the diagnosis's necessity half: the document created inside
+    /// Before INV-0009 Phase 1 this oracle was the diagnosis's necessity half: the document created inside
     /// Explorer stayed unloaded (<i>mode=Explorer … composer wpf loaded=0 … configured=1
     /// init-pushed=0</i>) until the workbench was put back, at which point the untouched composer
     /// loaded and mounted six fields. That state is no longer reachable by design, so the oracle now

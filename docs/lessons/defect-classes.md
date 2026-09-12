@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 73 · partially-controlled 59 · uncontrolled 17
+**Status counts:** controlled 77 · partially-controlled 57 · uncontrolled 16
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -1694,8 +1694,13 @@ for both or split.*
   control (read live at use time) was applied to the Explorer graph and never to this pane; the
   class control is the oracle, and the fix is to invalidate the surface when a document is
   registered for an id the layout already holds (INV-0009 Phase 2).
-- **Status:** `partially-controlled` — the live-read + refresh-on-entry fix is landed for the
-  Explorer graph; the restored-pane instance has its red oracle and no fix yet.
+- **Status:** `controlled` — the live-read + refresh-on-entry fix is landed for the Explorer
+  graph; the restored-pane instance is fixed by INV-0009 Phase 2 (`WorkbenchShell.RegisterSessionDocument`
+  names a restored pane for rebuild when the live document registers, and only when the pane holds
+  something other than a live document) and Phase 2b (`ReviveRestoredSessionDocuments` at
+  workspace-open, so the island stands only for a session whose `session.json` is gone) — oracles
+  `AReopenedSessionIsShownAndItsComposerIsBound` (exit 32 → 0) and
+  `ARestoredSessionDocumentIsRevivedAndBoundAtWorkspaceOpen` (exit 34 → 0).
 
 
 ### DC-041 — Two "kind" fields with different granularity, and the coarse one shown where the fine was meant
@@ -3218,8 +3223,12 @@ for both or split.*
   (`EnvironmentContractSurvivesNoWorkspaceTests`) was written to the terminal hook and could not
   see this; the class control is the oracle above, which every path that opens a session document
   must pass.
-- **Status:** `partially-controlled` — the terminal-environment instance is controlled; the
-  composer-binding instance has its red oracle and no fix yet (INV-0009 Phase 2).
+- **Status:** `controlled` — the terminal-environment instance is controlled; the composer
+  binding moved out of the create path into `SessionComposerBinder` (INV-0009 Phase 2, `d4d39cff`),
+  reached from New Session, Reopen and the workspace-open restore, with the one-construction-site
+  guard (`TheShellConstructsOneRegistryOneSendContextAndOneAttachmentGate`) now asserting the counts
+  on the binder and **none** in the window. Oracle `AReopenedSessionIsShownAndItsComposerIsBound`
+  (`configured=0` → `configured=1 init-pushed=1`).
 
 ### DC-085 — A prefix-stripping pattern eats the first character when the prefix is absent
 
@@ -6394,12 +6403,19 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   consults the mode. `ReopenSessionAsync` too. Nothing in `WorkbenchController` or the catalog
   carries a "needs the workbench body" attribute.
 - **Control:** `ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionCreatedWhileExplorerIsTheBodyIsShown`
-  (probe `--session-render --explorer --sibling`), **observed red on `main` `1aadde84`** (exit 30).
-  The fix (INV-0009 Phase 1) gives the shell one seam — *a dock document is about to open* — that
-  the window wires to `ShellModeController.Set(Workbench)`, plus a `shell.mode` diagnostic line so
-  the body is in the log rather than inferred. Until then: `register-only` for the sibling commands,
-  oracle for the session document.
-- **Status:** `uncontrolled` — red oracle committed; no fix landed.
+  (probe `--session-render --explorer --sibling`), **observed red on `main` `1aadde84`** (exit 30)
+  and on the merged branch `4c19b497`; **green on `228339d6`** (INV-0009 Phase 1): the shell raises
+  one seam, `WorkbenchShell.DocumentOpening`, immediately before every `AddSurface` that opens a
+  document, and `MainWindow` handles it with `ShellModeController.Set(Workbench, "document-opening")`
+  — the Explorer surface retained, only unparented (ADR-0017 holds). The mode is in the log:
+  `shell.mode` with its trigger, one line per change. The structural half is
+  `EveryOpeningCommandPassesThroughTheSeamTests` — root `WorkbenchShell.cs` only, no recursion,
+  token set `new LayoutOperation.AddSurface(` / `OpeningDocument();`, allowlist empty — which also
+  asserts the window's and the replay's wiring by one token (DC-135). The necessity oracle
+  (`LeavingExplorerShowsTheSessionCreatedInsideIt`) asserted the pre-fix state by construction and
+  became `ANewSessionCreatedInsideExplorerLeavesItBecauseADocumentOpened`, which asserts the trigger.
+- **Status:** `controlled` — both halves red-then-green on 2026-09-11/12; the sibling code viewer
+  measured `isLoaded=True` in the same run.
 
 ### DC-149 — A flow acquires a resource by asking the operator, uses it for one half of the work, and refuses the other half for lack of that resource
 
@@ -6425,8 +6441,50 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   step, whose status reads the same sentence). This is the *"blank editor with the compiled box
   under it"* the operator described. At 22:33:53Z the operator opened the workspace and the restore
   dropped the document from the layout.
-- **Control:** none yet that fails. The oracle is *"New Session via the chooser yields a bound
-  composer"*, and it needs the seam the fix introduces (the flow opens — or is handed — the chosen
-  workspace before `opened` runs), so it lands with INV-0009 Phase 3. `ShowFieldRefusal` gains a
-  `session-document.refused` diagnostic line in Phase 4 so the next instance is in the log.
-- **Status:** `uncontrolled` — registered; oracle and fix in INV-0009's plan.
+- **Control:** the Owner ruled the flow **opens** the chosen workspace (not a refusal).
+  `NewSessionFlow.StartAsync` runs the chooser's root through the window's ordinary open path
+  (`openWorkspace` → `MainWindow.OpenWorkspaceAtAsync`) before the sheet, and the sheet binds to
+  the workspace the window then reports. Oracles:
+  `TheNewSessionSheetTests.TheChooserOpensTheChosenWorkspace_ThenTheSheetBindsToWhatTheWindowReports`
+  (order `choose → open → sheet`, the sheet's root is the window's) and
+  `…_AndAFailedOpenCreatesNothing` — neither compiled against the flow with no open step; and
+  `ASessionDocumentIsShownWhereTheOperatorIsTests.ASessionCreatedThroughTheChooserIsBoundToTheChosenWorkspace`
+  (probe `--session-render --chooser`): `bound-to-chosen-root=True`, `init-pushed=1`, six fields,
+  and a cancelled chooser adds no surface and no session. The refusal is in the log now:
+  `SessionComposerBinder` writes `session-document.refused` with the field and the reason
+  (`TheBinderRecordsWhatItBoundTests`).
+- **Status:** `controlled` — INV-0009 Phase 3 (`d2409515`) and Phase 4 (`58c991ca`).
+
+### DC-150 — A shell's location and the runtime's current directory are two states, and a relative path is resolved against the one the operator is not looking at
+
+- **Shape:** an agent works in a worktree with `Set-Location <worktree>` and then calls a runtime
+  file API with a *relative* path — `[System.IO.File]::ReadAllLines('docs/lessons/defect-classes.md')`.
+  PowerShell's location is a PowerShell state; .NET's `[Environment]::CurrentDirectory` is the
+  process's, still pointing at wherever the process started (the primary checkout). The read and
+  the write both succeed, in the wrong tree; nothing fails loudly; the worktree file is untouched
+  and the primary's is rewritten. The session-worktree discipline (WT1–WT12) exists precisely so
+  that two agents never share a checkout, and this defeats it from inside a single command.
+- **Signature:** a relative path handed to a runtime API (`[System.IO.*]`, `Path.GetFullPath`,
+  Python's `open()` after `os.chdir` was *not* called) from a shell whose location was set with
+  `cd`/`Set-Location`; `git status` in the primary showing a file the session never meant to touch;
+  a write that "did nothing" in the tree the agent is looking at.
+- **Instance (2026-09-11, this run, the INV-0009 implementation node):** resolving a merge
+  conflict in the register from the fix worktree, a PowerShell one-liner read and wrote
+  `docs/lessons/defect-classes.md` through `[System.IO.File]` with a relative path; the primary
+  checkout's copy was rewritten with CRLF line endings (content identical — `git diff` empty) and
+  the worktree's copy was unchanged, so the conflict "resolution" resolved nothing and the primary
+  showed ` M docs/lessons/defect-classes.md`. Caught by the marker count after the edit reading 6,
+  not 0. The primary was left as found except for the line endings, which the operator restores
+  with `git checkout -- docs/lessons/defect-classes.md` there.
+- **Why it survives:** the two cwds agree in every interactive session (a person starts the
+  shell where the work is), so the habit of relative paths is never punished; an agent's shell is
+  started once, in the primary, and then moved.
+- **Control:** every file operation from an agent's shell uses an **absolute** path, and file
+  edits go through a script that is itself launched from the worktree (a native process inherits
+  the shell's location; a runtime API call inside the shell does not). What fails when the shape
+  recurs: the pre-commit boundary check runs on staged paths in the worktree and cannot see the
+  primary — so the control is the session's closing `git status` in the **primary** checkout,
+  recorded in the node's report (this run's report carries it). Proposed: `coord worktree list`
+  gains a `--dirty-primary` line so a session that dirtied the primary is told at cleanup.
+- **Status:** `uncontrolled` — the instance was reverted in content and reported; no gate fails
+  on the shape yet.

@@ -1452,7 +1452,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 332 members, 70% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 336 members, 71% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1465,7 +1465,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "38bd1b075d3a57455d2b44c04310915d9408e7b662f226b3b4cdbb76c7c9be04"
+      "sourceSha256": "bfac3f7810ab7120211f06ebb3e4ccbdcc136e1a9f21b9007bb15c85a047fb07"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -1477,7 +1477,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 10 types, 50 members, 88% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 10 types, 51 members, 89% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1490,7 +1490,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "70623ec42ead604738e7e96027e40b1c828ccc9f8734af4a82ca6d7fb761d05e"
+      "sourceSha256": "063cf6b17a39e680823bf4ad03f5b9895edbd4ce2600ad48e07989df3fb8c80a"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -1502,7 +1502,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 59 members, 93% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 60 members, 93% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1515,7 +1515,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "35925a90e28dcb1e54bacb1f5cdd1ea012db5c622dcffee6c57296fafa3d9537"
+      "sourceSha256": "57666f80a09661e4841adc259a56dd16258622e9857db3b96fa6548f9664436e"
     },
     {
       "id": "api-aide-core",
@@ -1777,7 +1777,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 14 types, 78 members, 98% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 14 types, 79 members, 98% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1790,7 +1790,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d5b90ffcedcff15f74838f12cd43c0c4bdcf80acba5504c4af2cd83de5921b44"
+      "sourceSha256": "d9fc0e91561d4b323f76bb34afbc87d160f734920f9a101e212611c2731a6f45"
     },
     {
       "id": "api-aide-core-projections",
@@ -2883,6 +2883,44 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "548f04adda56a93f377779873224a9f8c48952ff87efac92419652b7a04f92ef"
+    },
+    {
+      "id": "note-20260912-session-document-binding-on-record",
+      "path": "docs/notes/session-document-binding-on-record.md",
+      "title": "A session that already exists is shown and bound from what is on record: no task class until one is chosen, a malformed provider file as a refusal on the composer, and never bound twice",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-front-door",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Reopen and workspace-open restore bind a session's composer from what session.json carries: the routable set derived by the sheet's own rule, no task class (Send refuses by name until one is chosen), a malformed provider file surfaced as a named refusal on the shown composer, and a bound composer left alone. Blast radius: every path that shows an existing session document; Ruling 72's per-prompt class will replace the refusal with the default.",
+      "tags": [
+        "decision-note",
+        "session-document",
+        "composer",
+        "reopen",
+        "layout-restore",
+        "dc-084",
+        "dc-040",
+        "ruling-70"
+      ],
+      "links": [
+        {
+          "to": "inv-0009-a-session-document-opened-into-a-body-that-is-not-on-screen",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-session-document-render",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "17a604d817395ebd49cb25ce288d6b9d0dd5de1e47af235fad2310cc28b53b45"
     },
     {
       "id": "note-addendum-a-ratification",
@@ -6311,7 +6349,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f6644c408aa028730670ee245847e4acdf1b115f48cf9f302dc45d0de491d957"
+      "sourceSha256": "577e37a77d7ced4c5221ecd2647d5d2335e62d87ed56c29c930e1f237cc94df5"
     },
     {
       "id": "design-session-profiler",
@@ -12902,6 +12940,48 @@ window.DOCS_INDEX = {
       "sourceSha256": "6c5c67e487b6bb2c9497ce5e10e0191a7c68dc102d699ffb26af00ece93516c1"
     },
     {
+      "id": "proof-session-document-render",
+      "path": "docs/proof/session-document-render.md",
+      "title": "Proof Pack - A Session Document Is Shown Where The Operator Is (INV-0009 Phases 1-4)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-front-door",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Proof Pack for INV-0009 phases 1, 2, 2b, 3 and 4 on fix/session-document-render: a dock document opens into a body that is on screen (one shell seam, the mode in the log); a reopened session and a restored session document are shown with their composers bound through one binder; the workspace chooser opens the chosen workspace before it creates; the maximize and the binding are logged. Four probe oracles red (exit 30, 32, 34, the chooser refusal) then green; App 635/0, Core 2240/0.",
+      "tags": [
+        "session-document",
+        "composer",
+        "explorer-mode",
+        "shell-view-mode",
+        "layout-restore",
+        "workspace-chooser",
+        "observability",
+        "dc-148",
+        "dc-149",
+        "dc-040",
+        "dc-084",
+        "proof-pack"
+      ],
+      "links": [
+        {
+          "to": "inv-0009-a-session-document-opened-into-a-body-that-is-not-on-screen",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "depends-on"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "16a8f3ec7058860d25ab4444fc5877c2ba0322800d08b1af2d90da34b45c9c44"
+    },
+    {
       "id": "proof-terminal-cursor-render-crash",
       "path": "docs/proof/terminal-cursor-render-crash.md",
       "title": "Proof Pack - Terminal cursor render crash fix (DC-061)",
@@ -14826,5 +14906,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c2ee126522535bfb0f140acd65506a1bedba75bd10086d53a0b5c7c501ace958"
+  "graphSha256": "c1388f76e3a08dc456ed8b8269eb0e0cf76e050e1e9852f544e8dbe2f5d74d86"
 };
