@@ -152,3 +152,17 @@
 {"agent": "claude-a1-architecture", "at": 1789169542.2025936, "code": null, "kind": "allowed", "path": "site/index.html", "session": "addendum-c-chain", "wi": ""}
 {"agent": "claude-a1-architecture", "at": 1789169542.2035918, "code": null, "kind": "allowed", "path": "site/model.html", "session": "addendum-c-chain", "wi": ""}
 {"agent": "claude-a1-architecture", "at": 1789169567.9667659, "code": null, "kind": "allowed", "path": ".agents/log/addendum-c-chain.jsonl", "session": "addendum-c-chain", "wi": ""}
+{"agent": "claude-p1-coordination", "at": 1789172033.5009084, "code": null, "kind": "allowed", "path": ".agents/regen-owed.txt", "session": "addendum-c-chain", "wi": ""}
+{"agent": "claude-p1-coordination", "at": 1789172033.502911, "code": null, "kind": "allowed", "path": ".gitattributes", "session": "addendum-c-chain", "wi": ""}
+{"agent": "claude-p1-coordination", "at": 1789172033.504911, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "addendum-c-chain", "wi": ""}
+{"agent": "claude-p1-coordination", "at": 1789172033.505911, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "addendum-c-chain", "wi": ""}
+{"agent": "claude-p1-coordination", "at": 1789172033.5079112, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "addendum-c-chain", "wi": ""}
+{"agent": "claude-p1-coordination", "at": 1789172033.508911, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "addendum-c-chain", "wi": ""}
+{"agent": "claude-p1-coordination", "at": 1789172033.5109112, "code": null, "kind": "allowed", "path": "docs/coordination/addendum-cd.html", "session": "addendum-c-chain", "wi": ""}
+{"agent": "claude-p1-coordination", "at": 1789172033.5119112, "code": null, "kind": "allowed", "path": "docs/coordination/addendum-cd.md", "session": "addendum-c-chain", "wi": ""}
+{"agent": "claude-p1-coordination", "at": 1789172033.5139108, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "addendum-c-chain", "wi": ""}
+{"agent": "claude-p1-coordination", "at": 1789172033.515911, "code": null, "kind": "allowed", "path": "docs/notes/coordination-plan-artifact-type.md", "session": "addendum-c-chain", "wi": ""}
+{"agent": "claude-p1-coordination", "at": 1789172033.5174155, "code": null, "kind": "allowed", "path": "docs/notes/coordination-two-lanes-not-three.md", "session": "addendum-c-chain", "wi": ""}
+{"agent": "claude-p1-coordination", "at": 1789172033.518418, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "addendum-c-chain", "wi": ""}
+{"agent": "claude-p1-coordination", "at": 1789172033.5204184, "code": null, "kind": "allowed", "path": "site/index.html", "session": "addendum-c-chain", "wi": ""}
+{"agent": "claude-p1-coordination", "at": 1789172033.522421, "code": null, "kind": "allowed", "path": "site/model.html", "session": "addendum-c-chain", "wi": ""}
