@@ -28,7 +28,7 @@ summary: >-
 
 ## Context
 
-Candidate E at `4b78b241` requires implementation-to-intent comparison without compliance scores,
+Integrated candidate E at `a50329b2` requires implementation-to-intent comparison without compliance scores,
 decision authority without carrier confusion and model interpretation without origin laundering.
 Canonical architecture §§C/D.2–C/D.5 fixes prompt compilation as its own bounded context.
 The requested development GPT fleet is not authorization to change product runtime providers.

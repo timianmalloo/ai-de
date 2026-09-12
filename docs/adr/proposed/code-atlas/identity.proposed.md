@@ -28,7 +28,7 @@ summary: >-
 
 ## Context and evidence
 
-Candidate E at `4b78b241` requires real physical files and independently addressable members.
+Integrated candidate E at `a50329b2` requires real physical files and independently addressable members.
 K0 at `e4229845` reports executed Roslyn 4.14.0.0 results:
 
 1. `M:Same.Widget.Save(System.Int32)` differs from the string overload.

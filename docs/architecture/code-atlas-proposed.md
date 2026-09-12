@@ -41,7 +41,7 @@ Subsequent **E-1…E-4** names follow the candidate spec. These are different nu
 | Input | Pinned evidence and how used |
 |---|---|
 | Existing authority architecture and Core | Worktree base `e42298455b91712b3e8be48201cba005ad5b5003`; `docs/architecture.md`, especially the original component map and §§C/D.1–C/D.5. Its original starter-baseline paragraph is historical, not a current implementation inventory. |
-| Candidate specification | `atlas/specification` commit `4b78b2414e6a357a4af17d12258a8d02656e78e3`, `docs/specs/addendum-e-code-atlas.md`; clean worktree observed during reading. This is newer than the reported `ba969e0c` security/test repair and includes phase-scoped native UI criteria. Final content verdicts are **not** inferred from that commit. |
+| Candidate specification | Integrated Conductor commit `a50329b23cfebee6e84e2fcf54474fd6e57030dd`, `docs/specs/addendum-e-code-atlas.md`. Initially read at clean `atlas/specification` commit `4b78b2414e6a357a4af17d12258a8d02656e78e3`; then directly compared that exact file to `a50329b2`. The delta splits SourceOnly, 79 Core, 40 Store/IPC and synthetic Roslyn evidence and explicitly denies native/full-suite/registration/production implications; no functional or native-phase requirement changed. Final content verdicts are **not** inferred from a commit. |
 | Owner decisions | `docs/notes/atlas-owner/{delivery-horizon,e1-identity,contract-probes,draft-content-while-blocked,reference-custody,lane-admission}.md`, read in Conductor worktree whose HEAD was observed at `e4229845`. Drafting exception permits this document, not acceptance. |
 | Contract evidence | `docs/proof/code-atlas-contract-grounding.md` at `e4229845`, including the correction probe and separately executed Store/IPC batch. Embedded results are reviewed evidence, **not this author's independent test execution**. |
 | Data constraints and resume | `docs/reviews/code-atlas-data-constraints.md` and `docs/coordination/code-atlas-resume.md`, read as Conductor working-tree inputs on 2026-09-12; no separate committed revision asserted for the resume note. |
@@ -57,6 +57,14 @@ regenerate or alter global indices, registries, audit files or site counters.
 **Status is four separate questions:** content review pending; normative registration/acceptance
 pending; ownership acknowledgment pending; runtime delivery not admitted. A complete proposal
 does not answer any of the other three. The separate Owner, never this author, rules on forks.
+
+**Conductor checkpoint, 2026-09-12:** Security spec-content blockers cleared; Test Architect
+spec-content PASS-with-conditions (no blocking fix; one optional redundant row); UX/UI spec-content
+PASS; Data spec-content review pending. These are **Conductor-reported review outcomes**, not
+independent reviews performed by this author. Final architecture/ADR content gates remain pending.
+E-0 still has no mandatory WebView dependency where native WPF suffices; later WebView proof applies
+only where the admitted design uses it. The architecture's existing evidence split and phase ledger
+already conform to the inspected candidate delta.
 
 ### 1.1 Decision index
 
@@ -819,4 +827,4 @@ reader/query-integrity spikes disprove the minimal live-read/generic-fact design
 
 | Completed | Remaining | Best next action |
 |---|---|---|
-| Whole PROPOSED architecture and five decisions; exact existing/new seam requests; source/evidence limits recorded. | Independent content gates, Owner forks, registration/acknowledgment, E-0 design/native safety proof and all production delivery. | Conductor join and independent review against candidate spec `4b78b241`, then separate Owner ruling; no source dispatch meanwhile. |
+| Whole PROPOSED architecture and five decisions; exact existing/new seam requests; source/evidence limits recorded. | Independent architecture/ADR and Data spec-content gates, Owner forks, registration/acknowledgment, E-0 design/native safety proof and all production delivery. | Conductor join and independent review against integrated candidate spec `a50329b2`, then separate Owner ruling; no source dispatch meanwhile. |
