@@ -49,9 +49,21 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
         // DC-016: a walk that measured nothing passes every floor. The named sites are the ones the
         // operator photographed; if the walk cannot find them it is not walking the product.
         Assert.True(wpf.Count > 0, "the census walked the composed shell and found no text at all");
-        Assert.Contains(wpf, s => s.Text.StartsWith("Compiled view", StringComparison.Ordinal));
-        Assert.Contains(wpf, s => s.Text.StartsWith("Lease:", StringComparison.Ordinal));
-        Assert.Contains(wpf, s => s.Element.Contains("Compiled prompt", StringComparison.Ordinal));
+        // The conversation composer's sites (CV-1; DESIGN.md SC1–SC6): the structure line, the
+        // decoration line, the settings line, the compiled prompt's disclosure, and the thread's
+        // empty state above the editor.
+        foreach (var (anchor, site) in new (string, Func<Site, bool>)[]
+                 {
+                     ("the structure disclosure 'Goal · Done when · Not in scope' (collapsed at rest, DESIGN.md:1088)", s => s.Text.StartsWith("Goal · Done when", StringComparison.Ordinal)),
+                     ("the decoration line 'This turn'", s => s.Text == "This turn"),
+                     ("the budget state 'bounded by your subscription' (the census truncates a site's text)", s => s.Text.Contains("bounded by your", StringComparison.Ordinal)),
+                     ("the compiled prompt disclosure", s => s.Text.StartsWith("Compiled prompt", StringComparison.Ordinal)),
+                     ("the thread's empty state", s => s.Text.StartsWith("Nothing has run yet.", StringComparison.Ordinal)),
+                 })
+        {
+            Assert.True(wpf.Any(site), $"the census did not walk {anchor}; the sites it saw: {string.Join(" | ", wpf.Select(s => s.Text).Distinct().Take(80))}");
+        }
+
         Assert.Contains(wpf, s => s.Surface.StartsWith("tab:", StringComparison.Ordinal));
         Assert.Contains(wpf, s => s.Text == "File" && s.Element.Contains("AccessText", StringComparison.Ordinal));
 
@@ -161,7 +173,12 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
             $"reach: disabled checkbox rows={checkbox.Count} (below floor={checkboxBelowFloor.Count}); "
             + $"disabled menu item rows={menuItem.Count} (below floor={menuItemBelowFloor.Count})");
 
-        Assert.True(checkbox.Count > 0, "the reach forced no disabled checkbox — the seeded census lane never rendered a filter row (DC-016)");
+        // After Ruling 74 (CV-1) the Console's lane-filter row is retired: the composed shell has no
+        // CheckBox at rest (the New Session sheet's are a separate window — ContrastFloorTests site 7),
+        // so the reach has no product site to force — the RadioButton case, not a silent zero. The
+        // census must SAY so (an omission row), never merely report 0 (DC-016).
+        var checkboxOmitted = census.Omissions.Any(o => o.Population == "wpf" && o.What == "disabled checkbox");
+        Assert.True(checkbox.Count > 0 || checkboxOmitted, "the reach forced no disabled checkbox and recorded no omission for it — the seeded census lane never rendered a filter row (DC-016)");
         Assert.True(menuItem.Count > 0, "the reach forced no disabled menu item — the File menu's submenu never rendered a command (DC-016)");
 
         Assert.True(checkboxBelowFloor.Count == 0, "the forced disabled checkbox is below its floor:" + Environment.NewLine + Table(checkboxBelowFloor));

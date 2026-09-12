@@ -1,189 +1,185 @@
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Data;
 using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Workbench.Sessions;
 
+/// <summary>One row of the Console split: a heading per turn, or one event line under it.</summary>
+public abstract record ConsoleSplitRow(int Ordinal)
+{
+    /// <summary><i>b5 · 15:02</i> — a <c>ListItem</c> with <c>HeadingLevel</c> 4 (SC10).</summary>
+    public sealed record TurnHeading(int Ordinal, string Time) : ConsoleSplitRow(Ordinal)
+    {
+        public string Text => string.Create(CultureInfo.InvariantCulture, $"b{Ordinal} · {Time}");
+    }
+
+    /// <summary>One event line, named by its text.</summary>
+    public sealed record Line(int Ordinal, EventLine Event) : ConsoleSplitRow(Ordinal)
+    {
+        public string Text => Event.Text;
+    }
+}
+
 /// <summary>
-/// The Console canvas mode (R16 b1): the merged stream across every lane of one session, with a
-/// lane rail and tree filtering.
+/// The Console split (SC1; Ruling 74): the same events the thread folds per turn, unfolded in time
+/// — a flat list of rows (a heading per turn, then its lines), <b>a view of the same fold</b>,
+/// never a second store (Ruling 74 condition 1: the split's rows equal the folded events, in order).
 /// </summary>
 /// <remarks>
-/// <para><b>Attribution is on the row, not on the layout.</b> Every line carries the lane that
-/// produced it and renders it as a chip beside the text, so a two-lane stream can never present as
-/// one voice — which is the failure R16 b1's clause names. The rail on the left is the same fact
-/// summarised: who is talking, and how much.</para>
-///
-/// <para><b>Filtering is a tree, and it hides rather than drops.</b> A lane node excludes the whole
-/// lane; a kind node under it excludes one kind of that lane's traffic. The model keeps every row it
-/// ever received either way, so a filter can never destroy the history the ordinal oracle reads.</para>
-///
-/// <para><b>Disposal is announced</b> (<see cref="SessionDisposalSignal"/>). This surface is
-/// retained across a canvas mode switch and a tab switch; the ledger is how that claim is checked
-/// rather than asserted, because <c>Assert.Same</c> passes on a disposed instance.</para>
+/// <para><b>The old merged-stream renderer is gone.</b> It rendered <c>ConsoleStreamModel</c> —
+/// the run channel with no turn boundary — through a <c>StackPanel</c> rebuilt on every change
+/// (the 40-turn cliff by construction). This is the second <see cref="FeedList"/> consumer: the
+/// same virtualization, the same keys, the same pin. Opened from a fold's tail the caret is that
+/// turn's heading; while a turn runs it follows.</para>
 /// </remarks>
-public sealed class ConsoleSurface : ContentControl, IDisposable
+public sealed class ConsoleSurface : FeedList
 {
-    private readonly StackPanel _rows = new();
-    private readonly TreeView _filter = new();
-    private readonly ConsoleStreamModel _model;
-    private bool _disposed;
+    private readonly ObservableCollection<ConsoleSplitRow> _rows = [];
+    private int? _at;
 
-    /// <param name="model">The merged stream. Shared with the document, never copied.</param>
-    public ConsoleSurface(ConsoleStreamModel model)
+    public ConsoleSurface()
     {
-        ArgumentNullException.ThrowIfNull(model);
+        AutomationProperties.SetName(this, "Console: the merged stream");
+        AutomationProperties.SetHelpText(this, "Every turn in time order: a heading per turn, then its lines. Page Down and Page Up move by row");
+        AutomationProperties.SetItemStatus(this, "at the end");
 
-        _model = model;
-
-        AutomationProperties.SetName(this, "Console");
-        SetResourceReference(BackgroundProperty, "SurfaceBrush");
-
-        AutomationProperties.SetName(_filter, "Lane and kind filter");
-        _filter.Width = 190;
-        _filter.BorderThickness = new Thickness(0);
-        _filter.Background = null;
-
-        var rail = new DockPanel { LastChildFill = true, Margin = new Thickness(10, 10, 6, 10) };
-        var railHeading = Muted("Lanes");
-        railHeading.FontWeight = FontWeights.SemiBold;
-        DockPanel.SetDock(railHeading, Dock.Top);
-        rail.Children.Add(railHeading);
-        rail.Children.Add(_filter);
-        DockPanel.SetDock(rail, Dock.Left);
-
-        AutomationProperties.SetName(_rows, "Merged stream");
-
-        var scroller = new ScrollViewer
-        {
-            Content = _rows,
-            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
-            Margin = new Thickness(6, 10, 10, 10),
-        };
-
-        var root = new DockPanel { LastChildFill = true };
-        root.Children.Add(rail);
-        root.Children.Add(scroller);
-        Content = root;
-
-        _model.Changed += Render;
-        Render();
+        Resources[new DataTemplateKey(typeof(ConsoleSplitRow.TurnHeading))] = HeadingTemplate();
+        Resources[new DataTemplateKey(typeof(ConsoleSplitRow.Line))] = LineTemplate();
+        ItemContainerStyle = RowContainerStyle();
+        ItemsSource = _rows;
     }
 
-    /// <summary>The merged stream this console shows.</summary>
-    public ConsoleStreamModel Model => _model;
+    /// <summary>The rows as rendered — the identity oracle's left side (M1).</summary>
+    public IReadOnlyList<ConsoleSplitRow> Rows => _rows;
 
-    /// <summary>The lane names the rail is showing, in rail order — what a test reads instead of the tree.</summary>
-    public IReadOnlyList<string> RailLanes =>
-        [.. _filter.Items.OfType<TreeViewItem>().Select(i => (string)i.Tag)];
+    /// <summary>The turn the split is at (the caret's heading), or null when following the end.</summary>
+    public int? At => _at;
 
-    /// <summary>Every rendered line, as "lane: text" — the rendered attribution, not the model's.</summary>
-    public IReadOnlyList<string> RenderedRows =>
-        [.. _rows.Children.OfType<FrameworkElement>().Select(e => (string)e.Tag)];
-
-    private void Render()
+    /// <summary>
+    /// Re-derives the rows from the thread's turns — one list, in order. Called by the document on
+    /// every applied snapshot while the split is open, and once when it opens.
+    /// </summary>
+    /// <param name="turns">The fold.</param>
+    /// <param name="at">The turn to open at (a tail button, <i>Open the log</i>), or null to keep the caret.</param>
+    public void Show(IReadOnlyList<TurnView> turns, int? at = null)
     {
-        _rows.Children.Clear();
+        ArgumentNullException.ThrowIfNull(turns);
 
-        foreach (var row in _model.VisibleRows)
+        var pinned = IsPinnedAtEnd;
+
+        // Positional merge, like the thread's: rows are appended, never replaced (the caret is the
+        // selection, and a Replace drops it — spike Q10).
+        var wanted = Derive(turns);
+        for (var i = 0; i < wanted.Count; i++)
         {
-            var chip = new Border
+            if (i < _rows.Count)
             {
-                CornerRadius = new CornerRadius(4),
-                BorderThickness = new Thickness(1),
-                Padding = new Thickness(6, 0, 6, 0),
-                Margin = new Thickness(0, 1, 8, 0),
-                VerticalAlignment = VerticalAlignment.Top,
-                Child = new TextBlock { Text = row.LaneName, FontSize = 11 },
-            };
-            chip.SetResourceReference(Border.BorderBrushProperty, "BorderBrush");
-
-            var text = new TextBlock { Text = row.Text, TextWrapping = TextWrapping.Wrap };
-            text.SetResourceReference(TextBlock.ForegroundProperty, "TextBrush");
-
-            var line = new StackPanel
-            {
-                Orientation = System.Windows.Controls.Orientation.Horizontal,
-                Margin = new Thickness(0, 2, 0, 2),
-
-                // The rendered attribution, in one readable string, so a test asserts on what the
-                // pane shows rather than on the model it was built from.
-                Tag = $"{row.LaneName}: {row.Text}",
-            };
-            line.Children.Add(chip);
-            line.Children.Add(text);
-            AutomationProperties.SetName(line, $"{row.LaneName}, {row.Kind}: {row.Text}");
-
-            _rows.Children.Add(line);
-        }
-
-        RenderFilter();
-    }
-
-    private void RenderFilter()
-    {
-        _filter.Items.Clear();
-
-        foreach (var lane in _model.Rail)
-        {
-            var laneNode = new TreeViewItem
-            {
-                Header = FilterHeader(
-                    $"{lane.LaneName} ({lane.Rows})",
-                    lane.Visible,
-                    visible => _model.SetLaneVisible(lane.LaneId, visible)),
-                IsExpanded = true,
-                Tag = lane.LaneId,
-            };
-
-            foreach (var kind in _model.FilterTree.Where(
-                n => string.Equals(n.LaneId, lane.LaneId, StringComparison.Ordinal) && n.Kind is not null))
-            {
-                laneNode.Items.Add(new TreeViewItem
+                if (!_rows[i].Equals(wanted[i]))
                 {
-                    Header = FilterHeader(
-                        $"{kind.Label} ({kind.Rows})",
-                        kind.Visible,
-                        visible => _model.SetKindVisible(kind.LaneId, kind.Kind!, visible)),
-                    Tag = $"{kind.LaneId}/{kind.Kind}",
-                });
+                    _rows[i] = wanted[i];
+                }
             }
-
-            _filter.Items.Add(laneNode);
+            else
+            {
+                _rows.Add(wanted[i]);
+            }
         }
-    }
 
-    private static FrameworkElement FilterHeader(string label, bool visible, Action<bool> onChanged)
-    {
-        var box = new CheckBox { Content = label, IsChecked = visible };
-        AutomationProperties.SetName(box, label);
-        box.Checked += (_, _) => onChanged(true);
-        box.Unchecked += (_, _) => onChanged(false);
-        return box;
-    }
-
-    private static TextBlock Muted(string text)
-    {
-        var block = new TextBlock { Text = text, FontSize = 12, Margin = new Thickness(0, 0, 0, 6) };
-        block.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
-        return block;
-    }
-
-    /// <summary>Detaches from the stream. Announced first, so the disposal is counted either way.</summary>
-    public void Dispose()
-    {
-        if (_disposed)
+        while (_rows.Count > wanted.Count)
         {
-            return;
+            _rows.RemoveAt(_rows.Count - 1);
         }
 
-        // Started BEFORE anything is torn down: the ledger counts the attempt, not the success.
-        using var counted = SessionDisposalSignal.Source.StartActivity(
-            SessionDisposalLedger.SurfaceDisposeActivity);
+        UpdateLayout();
 
-        _disposed = true;
-        _model.Changed -= Render;
+        if (at is { } ordinal)
+        {
+            _at = ordinal;
+            var index = IndexOfHeading(ordinal);
+            if (index >= 0)
+            {
+                FocusItem(index);
+            }
+        }
+        else if (pinned)
+        {
+            ScrollToEndOfFeed();
+        }
+
+        var running = turns.LastOrDefault(t => t.State is TurnState.Running or TurnState.Waiting);
+        AutomationProperties.SetItemStatus(
+            this,
+            _at is { } here ? string.Create(CultureInfo.InvariantCulture, $"at b{here}")
+            : running is not null ? string.Create(CultureInfo.InvariantCulture, $"following b{running.Ordinal}")
+            : "at the end");
+    }
+
+    /// <summary>The status word the header's Console toggle announces: <i>following b5</i> · <i>at b2</i> · <i>at the end</i>.</summary>
+    public string Status => AutomationProperties.GetItemStatus(this);
+
+    /// <summary>The rows a fold yields: for each turn, its heading then its lines — the identity's right side (M1).</summary>
+    public static IReadOnlyList<ConsoleSplitRow> Derive(IReadOnlyList<TurnView> turns)
+    {
+        ArgumentNullException.ThrowIfNull(turns);
+
+        var rows = new List<ConsoleSplitRow>();
+        foreach (var turn in turns)
+        {
+            rows.Add(new ConsoleSplitRow.TurnHeading(turn.Ordinal, turn.At.ToLocalTime().ToString("HH:mm", CultureInfo.InvariantCulture)));
+            foreach (var line in turn.Events)
+            {
+                rows.Add(new ConsoleSplitRow.Line(turn.Ordinal, line));
+            }
+        }
+
+        return rows;
+    }
+
+    private int IndexOfHeading(int ordinal)
+    {
+        for (var i = 0; i < _rows.Count; i++)
+        {
+            if (_rows[i] is ConsoleSplitRow.TurnHeading heading && heading.Ordinal == ordinal)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private static DataTemplate HeadingTemplate()
+    {
+        var text = new FrameworkElementFactory(typeof(ThreadText));
+        text.SetBinding(TextBlock.TextProperty, new Binding(nameof(ConsoleSplitRow.TurnHeading.Text)));
+        text.SetValue(TextBlock.FontSizeProperty, 12.0);
+        text.SetValue(TextBlock.FontWeightProperty, FontWeights.SemiBold);
+        text.SetValue(TextBlock.FontFamilyProperty, ThreadFeed.Mono);
+        text.SetResourceReference(TextBlock.ForegroundProperty, "AccentBrush");
+        text.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 10, 0, 2));
+        text.SetValue(FrameworkElement.MinHeightProperty, 24.0);
+        text.SetValue(AutomationProperties.HeadingLevelProperty, AutomationHeadingLevel.Level4);
+        return new DataTemplate(typeof(ConsoleSplitRow.TurnHeading)) { VisualTree = text };
+    }
+
+    /// <summary>The line row binds the event through its <c>Event</c> facet with the thread's one event-line template.</summary>
+    private static DataTemplate LineTemplate()
+    {
+        var host = new FrameworkElementFactory(typeof(ContentPresenter));
+        host.SetBinding(ContentPresenter.ContentProperty, new Binding(nameof(ConsoleSplitRow.Line.Event)));
+        host.SetValue(ContentPresenter.ContentTemplateProperty, ThreadFeed.EventLineTemplate());
+        return new DataTemplate(typeof(ConsoleSplitRow.Line)) { VisualTree = host };
+    }
+
+    private static Style RowContainerStyle()
+    {
+        var style = new Style(typeof(ListBoxItem), ContainerStyle());
+        style.Setters.Add(new Setter(AutomationProperties.NameProperty, new Binding("Text")));
+        style.Setters.Add(new Setter(PaddingProperty, new Thickness(10, 0, 10, 0)));
+        return style;
     }
 }

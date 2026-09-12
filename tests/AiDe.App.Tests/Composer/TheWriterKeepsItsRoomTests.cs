@@ -33,8 +33,6 @@ public sealed class TheWriterKeepsItsRoomTests
     private const double Width = 495;
 
     /// <summary>INV-0007's stated ceiling, held here so a drift in the product's constant is a red, not a re-definition.</summary>
-    private const double Ceiling = 0.35;
-
     /// <summary>
     /// Two refusals on one line, as the status shows them — five lines at the composer's width. At
     /// 485px the share ceiling leaves the editor ~33px of slack; this chrome takes ~64px of it.
@@ -55,7 +53,8 @@ public sealed class TheWriterKeepsItsRoomTests
     [InlineData(485, true)]
     public void TheEditorHostIsNeverSmallerThanTheCompiledViewAndTheCompiledViewKeepsToItsCeiling(double height, bool statusWraps)
     {
-        Assert.Equal(Ceiling, ComposerSurface.CompiledShareCeiling);
+        Assert.Equal(130, ComposerSurface.EditorFloor);
+        Assert.Equal(200, ComposerSurface.CompiledPromptMaxHeight);
 
         Sta.Run(() =>
         {
@@ -70,10 +69,14 @@ public sealed class TheWriterKeepsItsRoomTests
                 var surface = Build(root);
                 if (statusWraps)
                 {
-                    // The boundary the arithmetic hides: at 485px the fixed chrome leaves ~33px of
+                    // The boundary the arithmetic hides: at 485px the fixed chrome leaves little
                     // slack, and a refusal that wraps to four lines takes more than that.
                     surface.ShowFieldRefusal("lease", WrappedStatus);
                 }
+
+                // The compiled prompt is on demand (Ruling 57): opened here so its box is laid out and
+                // the rule has something to bind on.
+                surface.CompiledPromptOpen = true;
 
                 surface.Measure(new Size(Width, height));
                 surface.Arrange(new Rect(0, 0, Width, height));
@@ -85,24 +88,27 @@ public sealed class TheWriterKeepsItsRoomTests
                 // NON-VACUITY: the compiled text really is the ~30 lines the operator had, and the
                 // box was laid out at a real height — a 0px reader would make "writer >= reader" free.
                 Assert.True(surface.CompiledView.Count(c => c == '\n') >= 28, "the compiled view is not the ~30 lines the operator had");
-                Assert.True(compiled.ActualHeight >= 90, $"the compiled box was laid out at {compiled.ActualHeight:F0}px");
+                // THE READER GETS ITS SHARE: the compiled prompt the operator opened is never cut
+                // below its three-line floor, whatever the chrome wraps to — at 485 px with a
+                // four-line refusal the composer's minimum simply exceeds the constraint (the
+                // document's belt yields; here the fixed arrange records the overflow).
+                // Red observed: `the compiled box was laid out at 2px` (12 px provenance, no floor).
+                Assert.True(compiled.ActualHeight >= ComposerSurface.CompiledPromptMinHeight - 0.5, $"the compiled box was laid out at {compiled.ActualHeight:F0}px; its floor is {ComposerSurface.CompiledPromptMinHeight}px");
                 Assert.Equal(height, surface.ActualHeight, 0.5);
+                Assert.True(surface.MinimumHeight >= ComposerSurface.EditorFloor + ComposerSurface.CompiledPromptMinHeight, $"the composer's minimum reads {surface.MinimumHeight:F0}px");
 
-                var share = compiled.ActualHeight / surface.ActualHeight;
+                // THE FLOOR AND THE CEILING (DESIGN.md:1092, :1109; DC-137): the editor host keeps
+                // its 130 px whatever the chrome wraps to, the compiled prompt never exceeds 200 px,
+                // and the writer is never smaller than the reader.
+                Assert.True(
+                    editor.ActualHeight >= ComposerSurface.EditorFloor - 0.5,
+                    $"the editor host was starved to {editor.ActualHeight:F0}px; its floor is {ComposerSurface.EditorFloor}px");
+                Assert.True(
+                    compiled.ActualHeight <= ComposerSurface.CompiledPromptMaxHeight + 0.5,
+                    $"the compiled view takes {compiled.ActualHeight:F0}px; its ceiling is {ComposerSurface.CompiledPromptMaxHeight}px");
                 Assert.True(
                     editor.ActualHeight >= compiled.ActualHeight,
                     $"the writer is smaller than the reader: editor host {editor.ActualHeight:F0}px, compiled view {compiled.ActualHeight:F0}px of the composer's {surface.ActualHeight:F0}px");
-                Assert.True(
-                    share <= Ceiling,
-                    $"the compiled view takes {share:P0} of the composer; the ceiling is {Ceiling:P0}");
-
-                // AND THE READER GETS ITS SHARE. The content is 465px, above any ceiling here, so the
-                // box must sit AT the rule — its share of the height, or half of what the chrome
-                // leaves, whichever binds — never collapsed to its MinHeight (the opposite starvation).
-                var ruled = Math.Min(Math.Floor(height * Ceiling), Math.Floor((editor.ActualHeight + compiled.ActualHeight) / 2));
-                Assert.True(
-                    compiled.ActualHeight >= ruled - 1,
-                    $"the compiled view was starved to {compiled.ActualHeight:F0}px; the rule gives it {ruled:F0}px");
 
                 // THE LOG AGREES WITH THE SCREEN, and there is ONE line for one layout: the ceiling
                 // is set before the children are measured, so no pass ever arranged the editor at 0px
@@ -145,6 +151,7 @@ public sealed class TheWriterKeepsItsRoomTests
             try
             {
                 var surface = Build(root);
+                surface.CompiledPromptOpen = true;
                 surface.Measure(new Size(Width, 485));
                 surface.Arrange(new Rect(0, 0, Width, 485));
                 surface.UpdateLayout();
@@ -168,7 +175,7 @@ public sealed class TheWriterKeepsItsRoomTests
         });
     }
 
-    /// <summary>The goal-block draft the shell probe seeds: three prose answers, ~30 compiled lines.</summary>
+    /// <summary>The goal-block draft the shell probe seeds: three prose answers and a message, ~30 compiled lines.</summary>
     private static ComposerSurface Build(string root)
     {
         var surface = new ComposerSurface("composer:s-room", "s-room — composer");
@@ -176,6 +183,7 @@ public sealed class TheWriterKeepsItsRoomTests
         surface.Draft.SetGoalValue(GoalBlockFields.GoalKey, "Investigate why the composer accepts no typing.\nName the cause.\nStop before the fix.");
         surface.Draft.SetGoalValue(GoalBlockFields.DoneWhenKey, "A red test exists.\nThe INV is written.");
         surface.Draft.SetGoalValue(GoalBlockFields.NotInScopeKey, "The vendored bundle.\nThe test-log pollution.");
+        surface.Draft.SetFreeFormText("Find out why typing into @src/AiDe.App/Web/composer.mjs reaches nothing.\nRead the handshake first.\nThen the router.\n");
 
         surface.Configure(
             new SessionConfig("s-room", "room", "w-1", DateTimeOffset.UnixEpoch, ["claude-code"]),

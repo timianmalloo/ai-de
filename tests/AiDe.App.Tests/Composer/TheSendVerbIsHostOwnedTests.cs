@@ -34,7 +34,7 @@ public sealed class TheSendVerbIsHostOwnedTests
 
         public void SetFieldText(string fieldId, long revision, string text) => draft.SetFreeFormText(text);
 
-        public void MoveFocus()
+        public void MoveFocus(bool backward)
         {
         }
 
@@ -189,12 +189,10 @@ public sealed class TheSendVerbIsHostOwnedTests
         // derived one, not the one the draft asked for.
         var block = new ComposerDraft();
         block.SwitchTo(ComposerShape.GoalBlock);
-        block.SetGoalValue(GoalBlockFields.GoalKey, draft.FreeFormText);
+        block.SetFreeFormText(draft.FreeFormText);
+        block.SetGoalValue(GoalBlockFields.GoalKey, "the goal");
         block.SetGoalValue(GoalBlockFields.DoneWhenKey, "done");
         block.SetGoalValue(GoalBlockFields.NotInScopeKey, "nothing else");
-        block.SetGoalValue(GoalBlockFields.TierKey, "T1");
-        block.SetGoalValue(GoalBlockFields.FanOutCapKey, "0");
-        block.SetGoalValue(GoalBlockFields.BudgetKey, "10,1000");
 
         var write = new ComposerSendGate().Send(context, block, null, out _);
 

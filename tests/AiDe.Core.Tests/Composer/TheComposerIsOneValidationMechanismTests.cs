@@ -16,6 +16,7 @@ public sealed class TheComposerIsOneValidationMechanismTests
         int? cap = 0, RunBudget? budget = null) =>
         new(goal, doneWhen, notInScope, tier, cap, budget ?? new RunBudget(10, 1000));
 
+    /// <summary>A goal-block draft carrying the block's three content lines — the per-prompt set (Rulings 56, 63, 72).</summary>
     private static ComposerDraft GoalDraft(GoalBlock block)
     {
         var draft = new ComposerDraft();
@@ -24,9 +25,6 @@ public sealed class TheComposerIsOneValidationMechanismTests
         Set(GoalBlockFields.GoalKey, block.Goal);
         Set(GoalBlockFields.DoneWhenKey, block.DoneWhen);
         Set(GoalBlockFields.NotInScopeKey, block.NotInScope);
-        Set(GoalBlockFields.TierKey, block.Tier);
-        Set(GoalBlockFields.FanOutCapKey, block.FanOutCap?.ToString());
-        Set(GoalBlockFields.BudgetKey, block.Budget is { } b ? $"{b.Requests},{b.Tokens}" : null);
 
         return draft;
 
@@ -39,35 +37,95 @@ public sealed class TheComposerIsOneValidationMechanismTests
         }
     }
 
+    /// <summary>
+    /// Ruling 26b, re-scoped by Rulings 56, 63 and 72: the form still <i>calls</i> the contract, so
+    /// the two name one field set for every per-prompt input — and the contract never names a
+    /// field the operator cannot type, because the draft supplies the tier, the cap and the budget
+    /// itself. <b>Red observed before the change</b>: a draft with nothing typed for <c>tier</c>
+    /// reported <i>the goal block field 'tier' is required</i> (recorded in the Proof Pack).
+    /// </summary>
     [Fact]
     public void Ruling26b_TheFormEngineAndTheSpawnContractNameOneFieldSetForEveryInput()
     {
-        // Every combination of present/absent across the six fields, plus the two invalid-value
-        // cases. If a second definition of goal-block validity existed anywhere, it would disagree on
-        // one of these 66 inputs and nothing else would notice.
-        var inputs = new List<GoalBlock>();
-
-        for (var mask = 0; mask < 64; mask++)
+        // Every combination of present/absent across the three per-prompt fields. If a second
+        // definition of goal-block validity existed anywhere, it would disagree on one of these
+        // eight inputs and nothing else would notice.
+        for (var mask = 0; mask < 8; mask++)
         {
-            inputs.Add(new GoalBlock(
+            var draft = GoalDraft(new GoalBlock(
                 (mask & 1) != 0 ? "g" : null,
                 (mask & 2) != 0 ? "d" : null,
                 (mask & 4) != 0 ? "n" : null,
-                (mask & 8) != 0 ? "T1" : null,
-                (mask & 16) != 0 ? 0 : null,
-                (mask & 32) != 0 ? new RunBudget(10, 1000) : null));
-        }
+                Tier: null, FanOutCap: null, Budget: null));
 
-        inputs.Add(Block(cap: -1));
-        inputs.Add(Block(budget: new RunBudget(0, 0)));
-
-        foreach (var block in inputs)
-        {
-            var contract = SpawnContract.Validate(block).Select(e => e.Field).Order(StringComparer.Ordinal);
-            var form = ComposerFormEngine.Validate(GoalDraft(block)).Select(e => e.Field).Order(StringComparer.Ordinal);
+            var contract = SpawnContract.Validate(draft.ToGoalBlock()).Select(e => e.Field).Order(StringComparer.Ordinal).ToList();
+            var form = ComposerFormEngine.Validate(draft).Select(e => e.Field).Order(StringComparer.Ordinal).ToList();
 
             Assert.Equal(contract, form);
+
+            // THE SESSION SUPPLIES WHAT THE OPERATOR NO LONGER TYPES: no input can be refused on
+            // tier, fan_out_cap or budget, whatever is or is not written.
+            Assert.DoesNotContain(contract, field => ComposerDraft.SessionSuppliedGoalFields.Contains(field, StringComparer.Ordinal));
         }
+    }
+
+    /// <summary>The control behind the anti-goal: a per-prompt tier, cap or budget cannot be written into a draft at all.</summary>
+    [Theory]
+    [InlineData("tier")]
+    [InlineData("fan_out_cap")]
+    [InlineData("budget")]
+    public void Rulings56_63_72_ASessionSuppliedFieldIsRefusedOnTheDraft(string field)
+    {
+        var draft = new ComposerDraft();
+        draft.SwitchTo(ComposerShape.GoalBlock);
+
+        var refused = Assert.Throws<ArgumentOutOfRangeException>(() => draft.SetGoalValue(field, "x"));
+        Assert.Contains("not a per-prompt field", refused.Message, StringComparison.Ordinal);
+    }
+
+    /// <summary>The positive send with nothing typed for tier, fan-out cap or budget: the block is complete from the session's values.</summary>
+    [Fact]
+    public void Rulings56_63_72_AGoalBlockWithNothingTypedForTierCapOrBudgetIsCompleteFromTheSession()
+    {
+        var draft = GoalDraft(Block());
+        draft.SetFreeFormText("Rename the helper in @src/Payments/Money.cs.\n");
+
+        Assert.Empty(ComposerFormEngine.Validate(draft));
+
+        var block = draft.ToGoalBlock();
+        Assert.Equal("T1", block.Tier);
+        Assert.Equal(2, block.FanOutCap);
+        Assert.True(block.Budget!.IsSubscriptionBounded);
+        Assert.Empty(SpawnContract.Validate(block));
+    }
+
+    /// <summary>
+    /// The two invalid-value rows the per-prompt form used to carry (a cap of −1, a budget of 0/0)
+    /// moved with the values: they are the SESSION's now, and the contract refuses them at the
+    /// send — the one validation mechanism still names the field (Ruling 26b), the composer never
+    /// invents a second check.
+    /// </summary>
+    [Fact]
+    public void Rulings56_63_72_ASessionCeilingOutOfRangeIsRefusedByTheContractAtTheSend()
+    {
+        var draft = GoalDraft(Block());
+        draft.SetFreeFormText("Rename the helper in @src/Payments/Money.cs.\n");
+        draft.UseSessionSettings(new SessionConfig("s", "n", "w", DateTimeOffset.UnixEpoch, ["claude-code"])
+        {
+            FanOutCeiling = -1,
+            BudgetCap = new RunBudget(0, 0),
+        });
+
+        // ONE MECHANISM: the form engine IS the contract for a goal block — it names the two
+        // session values by their wire names, the same two the contract names, in the same order.
+        var errors = SpawnContract.Validate(draft.ToGoalBlock());
+        Assert.Equal(["fan_out_cap", "budget"], errors.Select(e => e.Field).ToList());
+        Assert.Contains("a negative bound is not one", errors[0].Message, StringComparison.Ordinal);
+        Assert.Contains("a spawn that can do nothing is a typo", errors[1].Message, StringComparison.Ordinal);
+        Assert.Equal(errors.Select(e => (e.Field, e.Message)), ComposerFormEngine.Validate(draft).Select(e => (e.Field, e.Message)));
+
+        // And the -1 was never clamped to a plausible 0 on the way (the mutation: Math.Max(0, ceiling)).
+        Assert.Equal(-1, draft.ToGoalBlock().FanOutCap);
     }
 
     [Fact]
@@ -185,9 +243,9 @@ public sealed class TheComposerIsOneValidationMechanismTests
         var draft = new ComposerDraft();
         draft.SwitchTo(ComposerShape.GoalBlock);
 
-        foreach (var field in GoalBlockFields.All)
+        foreach (var field in ComposerDraft.PerPromptGoalFields)
         {
-            draft.SetGoalValue(field, field == GoalBlockFields.BudgetKey ? "10,1000" : $"value of {field}");
+            draft.SetGoalValue(field, $"value of {field}");
         }
 
         var before = draft.GoalValues.ToDictionary(StringComparer.Ordinal);
@@ -206,10 +264,12 @@ public sealed class TheComposerIsOneValidationMechanismTests
         draft.SwitchTo(ComposerShape.GoalBlock);
 
         // Set in one order; the renderer walks the TEMPLATE's declared order, not the caller's.
-        foreach (var field in GoalBlockFields.All.Reverse())
+        foreach (var field in ComposerDraft.PerPromptGoalFields.Reverse())
         {
-            draft.SetGoalValue(field, field == GoalBlockFields.BudgetKey ? "10,1000" : $"v-{field}");
+            draft.SetGoalValue(field, $"v-{field}");
         }
+
+        draft.SetFreeFormText("the message, with @src/A/ mentioned\n");
 
         var first = ComposerCompiler.Compile(draft).Text;
         for (var i = 0; i < 20; i++)
@@ -218,6 +278,15 @@ public sealed class TheComposerIsOneValidationMechanismTests
         }
 
         Assert.StartsWith("## goal", first, StringComparison.Ordinal);
+
+        // The six sections in §14.3's order, the three supplied ones from the session, then the message.
+        var order = new[] { "## goal", "## done_when", "## not_in_scope", "## tier", "## fan_out_cap", "## budget", "## message" }
+            .Select(h => first.IndexOf(h, StringComparison.Ordinal)).ToList();
+        Assert.All(order, i => Assert.True(i >= 0));
+        Assert.Equal(order.Order(), order);
+        Assert.Contains("## tier\n\nT1\n", first, StringComparison.Ordinal);
+        Assert.Contains(RunBudget.SubscriptionBoundedDisplay, first, StringComparison.Ordinal);
+        Assert.EndsWith("## message\n\nthe message, with @src/A/ mentioned\n\n", first, StringComparison.Ordinal);
     }
 
     [Fact]

@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation.Composer: 31 types, 78 members, 87% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation.Composer: 33 types, 90 members, 89% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation.Composer`
 
-**31 public types · 78 public members · 87% documented.**
+**33 public types · 90 public members · 89% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -261,8 +261,15 @@ order, and nothing reads a clock, a culture or the environment.
 | `string GoalBlockNeedsNotInScope = "This prompt is a goal block and needs Not in scope."` | The one content-gap refusal (Ruling 75): tier-blind, and the only sentence a blank line on a goal block can refuse with. A blank Goal or Done when is never refused — it makes a Message. |
 | `bool IsReadOnly(TurnShape shape, IReadOnlyList<string> patterns)` | Ruling 73's access projection: a turn is read-only when it is a Message (whatever it mentions — lease ≠ tier, §A9 R0) or a goal block whose source text derives no write scope (§A9 R1). Only a goal block with a derived… |
 | `string LeaseLine(IReadOnlyList<string>? lease)` | The lease line as the surface shows it: the read-only state for `null`, else the patterns that are (or will be) the lane's lease. The caller passes `null` exactly when `IsReadOnly` says so before Send, and the request… |
+| `string LeaseNoneYet = "none yet — mention the files this run may write as @path"` | The lease segment's empty state on the decoration line (SC2's words). |
+| `TierProjection Tier(TurnShape shape, IReadOnlyList<string> patterns, string structureSource = "you")` | Addendum D §A9's mechanical tier rule — a deterministic, **total** function of two inputs: **P**, whether a goal block exists (`TurnShape`), and **L**, the count of distinct lease patterns the source text derives. Not… |
+| `int CapOf(string tier)` | The cap function (CT19; GO7): `cap(T0) = 0`, `cap(T1) = 2`, `cap(T2) = 4`. |
+| `int EffectiveFanOut(string tier, int ceiling)` | Effective fan-out = `min(cap(tier), ceiling)` (Ruling 64) — a projection, never stored, never raised from a prompt. A negative ceiling is NOT clamped to 0: it is a broken session setting, and the contract refuses the … |
+| `string SettingsLine(string tier, int ceiling, RunBudget? budgetCap)` | The composer's settings line (`DESIGN.md` copy): *fan-out cap 2 (ceiling 3) · budget: bounded by your subscription · from session settings*; at T0, *T0 — the ceiling of 3 does not apply to this turn*. Never a numeral … |
+| `IReadOnlyList<Sessions.DecorationRow> Decorations(ComposerDraft draft, string taskClass)` | The current turn's decoration rows in SC2's one grammar — `class · tier · lease · shape [· template]`, each with its source and reason — read from the same two inputs the shape, the access and the tier read, so the li… |
 | `CompiledPrompt Compile(ComposerDraft draft, PromptTemplate? template = null)` | Compiles the draft.  is required only for a template draft. |
 | `string RenderGoalBlock(GoalBlock block)` | The goal block as prompt text, in the order §14.3 lists the fields. |
+| `string MessageKey = "message"` | The message section under a goal block: the operator's words, verbatim, under the one heading that is not a §14.3 field. |
 | `string RenderAttachment(ComposerAttachment attachment)` | One attachment as a visible fenced block whose header names the source and its byte count. |
 
 ### `string ReadOnlyScope = "read-only — nothing will be written"`
@@ -282,6 +289,41 @@ mentions — lease ≠ tier, §A9 R0) or a goal block whose source text derives 
 
 - **`shape`** — The turn's shape, `TurnShape`.
 - **`patterns`** — `Patterns` over the draft's `SourceText` — the caller derives it from the editor's source text (Ruling 66) so this projection reads what the send will send.
+
+### `TierProjection Tier(TurnShape shape, IReadOnlyList<string> patterns, string structureSource = "you")`
+
+Addendum D §A9's mechanical tier rule — a deterministic, **total** function of two inputs:
+**P**, whether a goal block exists (`TurnShape`), and **L**,
+the count of distinct lease patterns the source text derives. Nothing else.
+
+- **`shape`** — The turn's shape — P.
+- **`patterns`** — `Patterns` over the source text — L is its count.
+- **`structureSource`** — Who filled Goal and Done when: `you`, `the model` or `the template`.
+
+**Remarks.** R0: no goal block → T0. R1: a goal block with no write scope → T1 (it runs read-only,
+Ruling 73). R2: one lease → T1. R3: two or more → T2. R4, the operator override, is Prepare's
+(CV-2) and is not here. The same two inputs `IsReadOnly` reads, so the shape,
+the access and the tier can never disagree about whether a goal block exists.
+
+
+
+
+
+**The rationale names who filled the structure.** `simplify:` until the
+compile step writes `derived` rows (CV-2), every structure line is the operator's, so the
+rationale reads *filled by you*; the upgrade trigger is a `derived` or
+`template` row in the envelope fold, at which point
+is read from it.
+
+### `IReadOnlyList<Sessions.DecorationRow> Decorations(ComposerDraft draft, string taskClass)`
+
+The current turn's decoration rows in SC2's one grammar — `class · tier · lease · shape
+[· template]`, each with its source and reason — read from the same two inputs the shape,
+the access and the tier read, so the line the operator confirms at Send is the line the
+thread will show for the turn.
+
+- **`draft`** — The draft.
+- **`taskClass`** — The prompt's class — the session's default until a prompt chooses one (Ruling 70).
 
 ### `string RenderGoalBlock(GoalBlock block)`
 
@@ -319,6 +361,12 @@ is the same defect class as a truncation with a better disguise.
 decision already taken** — the control that bites is the affirmation at the pick
 (C14(e)(iii)). Both exist because the label alone is read only by the person who already
 decided.
+
+## `TierProjection`
+
+*record* — `ComposerCompiler.cs`
+
+The §A9 rule's answer: the tier, why, and which row decided it.
 
 ## `ComposerShape`
 
@@ -373,7 +421,11 @@ written one is overwritten with.
 | `ComposerShape Shape { get; private set; } = ComposerShape.FreeForm` | The active shape. Free-form is the default, and needs no template anywhere. |
 | `string SourceText` | The editor's own held source text — what the operator typed, and nothing else (Ruling 66). |
 | `TurnShape TurnShape` | The compiled turn's shape (Ruling 75; Addendum D §A9's **P**): a goal block only when the editor is on the goal-block form *and* Goal and Done when are both non-blank. |
-| `string FreeFormText` | The retained free-form text. |
+| `string FreeFormText` | The retained free-form text — the message, in every form but a template's. |
+| `IReadOnlyList<string> SessionSuppliedGoalFields { get; } =` | The three goal-block fields the session and the compile step supply — never the operator, per prompt (Rulings 56, 63, 72): the tier is the compile step's projection (`Tier`), the cap and the budget are the session's (… |
+| `IReadOnlyList<string> PerPromptGoalFields { get; } =` | The goal-block fields a prompt carries: the three content lines. |
+| `Ceilings Ceilings { get; private set; } = Composer.Ceilings.Default` | The session's ceilings the compiled block reads (Ruling 56; ADR-0033 §3's `ceilings` snapshot): the fan-out ceiling and the budget cap. Set by the shell from the session's config; an unbound draft carries the config's… |
+| `void UseSessionSettings(SessionConfig config)` | Binds the session's ceilings (Ruling 56: one home, never a per-prompt override). |
 | `string? TemplateId { get; private set; }` | The template this draft is bound to, when its shape is a template. |
 | `IReadOnlyDictionary<string, string> GoalValues` | The goal-block field values, by wire name. |
 | `IReadOnlyDictionary<string, IReadOnlyList<string>> TemplateValues` | The template field values, by field name. |
@@ -412,6 +464,14 @@ editor is on the goal-block form *and* Goal and Done when are both non-blank.
 **Remarks.** Blank is whitespace, exactly as `Validate` reads a field — so the
 shape and the validator can never disagree about whether a line was written.
 
+### `IReadOnlyList<string> PerPromptGoalFields { get; } =`
+
+The goal-block fields a prompt carries: the three content lines.
+
+**Remarks.** Derived by subtraction from `All` rather than typed out, so a
+seventh contract field would appear here rather than silently miss the form, and so the
+contract's own list stays the one home of the wire names (DM7).
+
 ### `void SwitchTo(ComposerShape shape, string? goalBlockText = null)`
 
 Switches shape, retaining every shape's own content.
@@ -423,8 +483,30 @@ Switches shape, retaining every shape's own content.
 
 The goal block this draft declares, as a value the one validation mechanism can read.
 
-**Remarks.** Nullable throughout, exactly as `GoalBlock` is: a blank field must be expressible
-so the form engine can name it, rather than being defaulted into something that validates.
+**Remarks.** The three content lines are nullable, exactly as `GoalBlock` is: a blank
+field must be expressible so the form engine can name it, rather than being defaulted into
+something that validates.
+
+
+
+
+
+**The other three are supplied, never typed (Rulings 56, 63, 72).** The tier is
+`Tier`'s projection over the same two inputs the shape and the
+lease read (Addendum D §A9); the cap is `min(cap(tier), ceiling)` (Ruling 64); the budget
+is the session's cap or `SubscriptionBounded`. So a send with nothing
+typed for them is complete, and `Validate` stays byte-identical.
+
+## `Ceilings`
+
+*record* — `ComposerDraft.cs`
+
+The session's two ceilings as the compiled block reads them (Ruling 56): the fan-out ceiling and
+the budget cap, `null` for *bounded by the subscription* (Ruling 72).
+
+| Member | Summary |
+|---|---|
+| `Ceilings Default = new(SessionConfig.DefaultFanOutCeiling, null)` | What an unbound draft carries: the config's own defaults, never a compile-time invention. |
 
 ## `PersistedComposerDraft`
 

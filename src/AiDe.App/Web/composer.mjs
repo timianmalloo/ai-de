@@ -28,6 +28,8 @@ const state = {
   revision: 0,
   editors: new Map(),
   attachEnabled: false,
+  placeholder: "",
+  editorHelp: "",
 };
 
 function post(kind, body) {
@@ -72,8 +74,21 @@ function fieldEditor(field, host) {
     markdown: field.widget !== "mentions",
     fileCandidates: field.widget === "mentions" || field.widget === "long-text" ? state.fileCandidates : null,
     graphCandidates: field.widget === "mentions" || field.widget === "long-text" ? state.graphCandidates : null,
-    onChange: (text) => changed(field.id, text),
+    onChange: (text) => { host.classList.toggle("empty", text.length === 0); changed(field.id, text); },
   });
+
+  // The placeholder and the description come from host.init (DESIGN.md copy; SC6, SC8): the page
+  // renders them as the editor's aria-placeholder / aria-describedby and never invents its own.
+  host.classList.toggle("empty", (field.value || "").length === 0);
+  host.setAttribute("data-ph", state.placeholder || "");
+  const content = host.querySelector(".cm-content");
+  if (content) {
+    content.setAttribute("aria-label", field.label);
+    content.setAttribute("aria-placeholder", state.placeholder || "");
+    if (state.editorHelp) {
+      content.setAttribute("aria-describedby", "editor-help");
+    }
+  }
 
   // The paste handler sits in the CAPTURE phase so it runs before the editor's own input handling,
   // and it dispatches the replacement through the editor rather than mutating the DOM.
@@ -240,6 +255,9 @@ function onHostMessage(event) {
     state.fileCandidates = message.fileCandidates || [];
     state.graphCandidates = message.graphCandidates || [];
     state.attachEnabled = message.attachEnabled === true;
+    state.placeholder = typeof message.placeholder === "string" ? message.placeholder : "";
+    state.editorHelp = typeof message.editorHelp === "string" ? message.editorHelp : "";
+    document.getElementById("editor-help").textContent = state.editorHelp;
     applyTheme(message.theme);
     document.getElementById("drop-hint").textContent = state.attachEnabled
       ? "Drop a file here to attach it."
@@ -275,12 +293,24 @@ function wireDrop() {
 function wireFocus() {
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Tab") return;
-    // The shell takes focus back at the end of the page's tab ring — existing behaviour, nothing new.
     const focusables = document.querySelectorAll("input, select, button, .cm-content");
+    const first = focusables[0];
     const last = focusables[focusables.length - 1];
+    // The shell takes focus back at both ends of the page's tab ring: forward off the last stop
+    // (existing behaviour) and backward off the first (DS-1 seam 3 — into the thread's last stop).
     if (!event.shiftKey && document.activeElement === last) {
       post("focus.leave", {});
+    } else if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      post("focus.leave", { direction: "backward" });
     }
+  });
+
+  // Focus handed to the page's window (the host's SetFocus on the HWND, F6, a click on the
+  // chrome) lands in the message editor — the one focal point (SC1, K7) — never on the body.
+  window.addEventListener("focus", () => {
+    const editor = state.editors.values().next().value;
+    if (editor && document.activeElement === document.body) editor.focus();
   });
 }
 

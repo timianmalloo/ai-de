@@ -79,7 +79,10 @@ public sealed class TheReadOnlyTurnNeedsNoLeaseTests
     public void AGoalBlockWithADerivedScopeStillTakesTheLeaseGateUnchanged()
     {
         var draft = CompleteGoalBlock();
-        draft.SetGoalValue(GoalBlockFields.GoalKey, "Rename the helper in @src/Payments/Money.cs.");
+
+        // The lease derives from the MESSAGE (Ruling 66: the editor's source text), never from a
+        // structure line — a mention typed into Goal widens nothing.
+        draft.SetFreeFormText("Rename the helper in @src/Payments/Money.cs.\n");
 
         var request = new ComposerSendGate().Send(Context(), draft, null, out var refusal);
 
@@ -159,20 +162,25 @@ public sealed class TheReadOnlyTurnNeedsNoLeaseTests
     }
 
     /// <summary>
-    /// A goal-block form with no content line written — nothing, or only a tier or a number — is an
-    /// empty prompt, not a Message of headings; one content line makes it a Message.
+    /// A goal-block form with nothing in the message is an empty prompt, whatever structure line is
+    /// written alone (a line with no goal block behind it is not a prompt — Ruling 75 makes the
+    /// draft a Message, and a Message with no words is nothing); words in the message make a Message.
+    /// The retired per-prompt tier and cap rows cannot even be written (Rulings 56, 63, 72).
     /// </summary>
     [Theory]
     [InlineData(null, null, false)]
-    [InlineData("tier", "T1", false)]
-    [InlineData("fan_out_cap", "0", false)]
-    [InlineData("not_in_scope", "the ADR", true)]
-    [InlineData("done_when", "it compiles", true)]
+    [InlineData("not_in_scope", "the ADR", false)]
+    [InlineData("done_when", "it compiles", false)]
+    [InlineData("message", "explain the store", true)]
     public void AGoalBlockFormWithNoContentLineIsRefusedAsAnEmptyPrompt(string? field, string? value, bool sends)
     {
         var draft = new ComposerDraft();
         draft.SwitchTo(ComposerShape.GoalBlock);
-        if (field is not null)
+        if (field == "message")
+        {
+            draft.SetFreeFormText(value!);
+        }
+        else if (field is not null)
         {
             draft.SetGoalValue(field, value!);
         }
@@ -263,22 +271,21 @@ public sealed class TheReadOnlyTurnNeedsNoLeaseTests
                     @"C:\repo", new AttachmentFileReader(), new NeverAsked(), "Anthropic (Claude Code)", "max-personal"));
 
             surface.Draft.SwitchTo(ComposerShape.GoalBlock);
+            surface.Draft.SetGoalValue(GoalBlockFields.GoalKey, "Rename the helper.");
             surface.Draft.SetGoalValue(GoalBlockFields.DoneWhenKey, "It compiles.");
             surface.Draft.SetGoalValue(GoalBlockFields.NotInScopeKey, "Nothing else.");
-            surface.Draft.SetGoalValue(GoalBlockFields.TierKey, "T1");
-            surface.Draft.SetGoalValue(GoalBlockFields.FanOutCapKey, "0");
-            surface.Draft.SetGoalValue(GoalBlockFields.BudgetKey, "10,1000");
 
-            var goal = surface.Fields[0].Id;
+            // The page's one field is the message (CV-1); the structure lines are WPF.
+            var message = surface.Fields[0].Id;
 
-            surface.SetFieldText(goal, 1, "Rename the helper in @src/Payments/Money.cs.");
+            surface.SetFieldText(message, 1, "Rename the helper in @src/Payments/Money.cs.");
             Assert.Equal("Lease: src/Payments/Money.cs", surface.LeaseLine);
 
-            surface.SetFieldText(goal, 2, "Rename the helper.");
+            surface.SetFieldText(message, 2, "Rename the helper.");
             Assert.Equal("Lease: read-only — nothing will be written", surface.LeaseLine);
 
             // Demote to a Message by blanking Done when: read-only, said so.
-            surface.SetFieldText(surface.Fields[1].Id, 3, " ");
+            surface.Draft.SetGoalValue(GoalBlockFields.DoneWhenKey, " ");
             var request = surface.Send();
 
             Assert.NotNull(request);
@@ -296,9 +303,7 @@ public sealed class TheReadOnlyTurnNeedsNoLeaseTests
         draft.SetGoalValue(GoalBlockFields.GoalKey, "Rename the helper.");
         draft.SetGoalValue(GoalBlockFields.DoneWhenKey, "It compiles under the new name.");
         draft.SetGoalValue(GoalBlockFields.NotInScopeKey, "Nothing else changes.");
-        draft.SetGoalValue(GoalBlockFields.TierKey, "T1");
-        draft.SetGoalValue(GoalBlockFields.FanOutCapKey, "0");
-        draft.SetGoalValue(GoalBlockFields.BudgetKey, "10,1000");
+        draft.SetFreeFormText("Rename the helper.\n");
         return draft;
     }
 

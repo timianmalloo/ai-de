@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 91 types, 400 members, 73% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 92 types, 406 members, 73% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**91 public types · 400 public members · 73% documented.**
+**92 public types · 406 public members · 73% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -2064,6 +2064,8 @@ the one place AI-DE is deliberately ahead of the category rather than matching i
 |---|---|
 | `WorkbenchAnnouncer(TextBlock liveRegion)` | **(gap)** |
 | `string Last { get; private set; } = string.Empty` | **(gap)** |
+| `(AutomationNotificationKind Kind, AutomationNotificationProcessing Processing, string ActivityId)? LastRaise { get; private set; }` | The raise seam (DS-1 A2): what the last notification was raised with — `(kind, processing, activityId)` — so a test can hold the announcer to the mapping it claims rather than trusting the call was made. Null until th… |
+| `void Announce(Announcement announcement)` | **(gap)** |
 | `void Clear()` | **(gap)** |
 | `void Announce(string message)` | **(gap)** |
 
@@ -2079,6 +2081,22 @@ A headless announcer for tests and for any host without a live region yet.
 | `string Last` | **(gap)** |
 | `void Clear()` | **(gap)** |
 | `void Announce(string message)` | **(gap)** |
+| `IReadOnlyList<Announcement> Announcements` | Every typed announcement, in order — the urgency and kind a test reads beside the text. |
+| `void Announce(Announcement announcement)` | **(gap)** |
+
+## `NotificationMapping`
+
+*class* — `WorkbenchAnnouncer.cs`
+
+The pure mapping from an announcement's urgency and kind to the UIA notification API's two
+enums (DS-1 A2) — on NVDA's real processing semantics: `event_UIA_notification` cancels
+speech only for `MostRecent` / `ImportantMostRecent`, so a status is `All`
+(queued) and an assertive announcement `ImportantMostRecent` (interrupts).
+
+| Member | Summary |
+|---|---|
+| `string ThreadActivityId = "aide.session.thread"` | The activity id every thread announcement is raised under. |
+| `(AutomationNotificationKind Kind, AutomationNotificationProcessing Processing) For(Urgency urgency, AnnouncementKind kind)` | **(gap)** |
 
 ## `WorkbenchController`
 

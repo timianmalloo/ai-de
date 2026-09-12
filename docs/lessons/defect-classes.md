@@ -6861,7 +6861,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 
 ### DC-159 — A probe prints a type's default `ToString()` across a process boundary and a test asserts the string
 
-*Id left for the conductor to allocate at the join.*
+*Id left for the conductor to allocate at the join (the plan's shared-surface rule: the register is append-only, ids are allocated at each join).*
 
 - **Shape:** an out-of-process probe writes a value to stdout by interpolating the value itself
   (`mode={mode.Mode}`), so what crosses the boundary is the type's **default** `ToString()` — an
@@ -6886,7 +6886,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 
 ### DC-160 — A Proof Pack figure or "red observed" cell is written before the measurement that would fill it
 
-*Id left for the conductor to allocate at the join.*
+*Id left for the conductor to allocate at the join (the plan's shared-surface rule: the register is append-only, ids are allocated at each join).*
 
 - **Shape:** the pack is drafted while the suites run, and a cell that will hold a measured number —
   a test count, a mutation's red list — is filled with a **plausible** value so the sentence reads
@@ -6910,6 +6910,84 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   from the JSON must be reported by whatever fills the table.
 - **Status:** `uncontrolled` — the fill-from-record step is prose; the mutation table is generated,
   the counts are not.
+
+### DC-nnn (CV-1 a) — A name given to a code-built Style or Template is not in any name scope, and the first trigger that needs it throws inside the render
+
+*Id left for the conductor to allocate at the join (the plan's shared-surface rule: the register is append-only, ids are allocated at each join).*
+
+- **Shape:** a `Style` or `ControlTemplate` is built in code (`FrameworkElementFactory`, `Setter`,
+  `Trigger`) and a part is named — `BeginStoryboard.Name`, a factory's part name — the way XAML's
+  `x:Name` is. XAML registers that name in the Style's or Template's `INameScope`; code does not.
+  Nothing fails at construction, at bind, or at the first render: the name is only resolved by the
+  first trigger that needs it (`StopStoryboard.BeginStoryboardName`, `Template.FindName`), which is
+  the first state change — so the surface renders correctly at rest and throws on its first
+  transition, inside whatever catch keeps the channel alive.
+- **Signature:** `'Spin' name cannot be found in the name scope of 'System.Windows.Style'` (or of
+  `ControlTemplate`) in a log line the surface's fault path wrote; a surface that is right at rest
+  and stops on its first outcome; a test that finds a template part by `FrameworkElement.Name` and
+  reads an empty string.
+- **Instance (CV-1, 2026-09-12):** the running ring's `StopStoryboard` in the thread's code-built
+  `RingStyle` — the first running → stopped transition threw inside `ThreadFeed.Apply`, the DC-134
+  catch stopped the feed with `THR-0001`, and `AnActionKeepsFocusOnTheTurn…` (A4) read
+  `IsStopped = true` where the stopped turn's actions should have been. `((INameScope)style)
+  .RegisterName("Spin", begin)` is the fix; the tests looking up `HeaderSite` by
+  `FrameworkElement.Name` were the same class on the reading side, fixed by
+  `Template.FindName`.
+- **Control:** every code-built Style or Template that names a part registers it on the Style's or
+  Template's `INameScope` in the same method; the render tests drive at least one **transition**
+  through the template (a running turn concluding — A3, A4, C1), never only the at-rest render.
+  Red first: A4 was red with the name unregistered.
+- **Status:** `partially-controlled` — the transition rows exist for the thread; no lint finds a
+  named part with no `RegisterName` in code-built styles.
+
+### DC-nnn (CV-1 b) — An entry rule keyed on a focus event handles every cause of the event
+
+*Id left for the conductor to allocate at the join (the plan's shared-surface rule: the register is append-only, ids are allocated at each join).*
+
+- **Shape:** a control wants keyboard *traversal* into it to land somewhere specific (the caret's
+  container, not whichever container the platform realized), and implements the rule on
+  `GotKeyboardFocus`. The event does not say why focus arrived — Tab, a mouse click on a child,
+  a programmatic `Focus()` — so the rule re-routes all three: a click on b7 lands on b40, a test's
+  `container.Focus()` returns false while focus is visibly inside the list.
+- **Signature:** `Focus()` returning false with `IsKeyboardFocusWithin` true; a click that selects a
+  different item from the one clicked; a re-route that fires from a programmatic focus in a test
+  and nowhere in the operator's hands.
+- **Instance (CV-1, 2026-09-12):** the feed's first entry rule re-routed any focus entering the
+  list from outside; L5's `container.Focus()` read false. The rule moved to where the cause is
+  known: the document's `PreviewKeyDown` sees the Tab press off the header's last stop and calls
+  `FocusCurrentItem()` itself (DS-1 P4 — the document mediates); the feed keeps only the case the
+  event does identify (focus landing on the list itself).
+- **Control:** an entry rule lives where the gesture is observable (a key handler), never on the
+  focus event it produces; K5's Tab-from-the-header row and L5's direct `Focus()` row are both in
+  the suite so the two causes are distinguished by tests. Red first: L5 was red with the
+  focus-event rule in place.
+- **Status:** `partially-controlled` — two rows; no rule forbids a `GotKeyboardFocus` re-route in
+  general.
+
+### DC-nnn (CV-1 c) — A mutation pass whose breaks and captured output live outside the repository is a record, not a control
+
+*Id left for the conductor to allocate at the join (the plan's shared-surface rule: the register is append-only, ids are allocated at each join).*
+
+- **Shape:** a Proof Pack's "red observed" cells are filled by breaking the product on purpose,
+  running the named test, and pasting the failure text (DC-160's fill-from-record). The scripts
+  that applied the breaks and the output they captured are written to a session scratchpad and
+  the product is reverted with `git checkout` — so the repository holds the pasted text and
+  nothing that can re-run it. A reviewer can corroborate each text against the assertion's shape
+  (the index in `pos 36`, the `Expected: 136 Actual: 135` under `FoldLines = 5`) but cannot
+  re-execute the pass; the next slice that touches the guard has no red to re-observe short of
+  re-doing the whole pass by hand.
+- **Signature:** a mutation table in a Proof Pack with no path under `tools/` or `tests/` beside
+  it; "the scripts are in the session scratchpad"; a reviewer's finding worded *a paste I can
+  corroborate, not re-run*.
+- **Instance (CV-1, 2026-09-12):** sixteen cells of `docs/proof/composer-as-conversation.md` filled
+  from three scratchpad batches (`mutate.py A / B1 / B2`); the Test Architect's round-2 Minor.
+- **Control (proposed, not built this slice):** a committed mutation manifest — one JSON row per
+  cell (`file`, `old`, `new`, `test`, `expected_failure_substring`) under `tests/mutations/`, and
+  a `tools/verify-mutations.py` that applies each row on a scratch worktree, runs the named test,
+  asserts the substring, and reverts — so the pack's cells are regenerated, never pasted, and a
+  guard that stops discriminating is a red gate rather than a stale cell. DC-160's control names
+  the fill step as prose; this is its executable half.
+- **Status:** `uncontrolled` — the cells are pasted; the manifest and the gate do not exist.
 
 ## 5. What this note does not decide
 

@@ -56,12 +56,10 @@ public sealed class TheRunBindingComesFromTheProviderFileTests
         draft.SwitchTo(ComposerShape.GoalBlock);
         // The mention is what the lease is derived from, so it is not decoration: a draft naming
         // nothing refuses the send before any binding field is reached.
-        draft.SetGoalValue(GoalBlockFields.GoalKey, "Rename the helper in @src/Payments/Money.cs.");
+        draft.SetGoalValue(GoalBlockFields.GoalKey, "Rename the helper.");
+        draft.SetFreeFormText("Rename the helper in @src/Payments/Money.cs.\n");
         draft.SetGoalValue(GoalBlockFields.DoneWhenKey, "@src/Payments/Money.cs compiles with the new name.");
         draft.SetGoalValue(GoalBlockFields.NotInScopeKey, "Any file outside @src/Payments/Money.cs.");
-        draft.SetGoalValue(GoalBlockFields.TierKey, "T1");
-        draft.SetGoalValue(GoalBlockFields.FanOutCapKey, "0");
-        draft.SetGoalValue(GoalBlockFields.BudgetKey, "10,1000");
         return draft;
     }
 

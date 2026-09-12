@@ -252,7 +252,9 @@ public sealed class ConsoleStreamModel
     }
 
     /// <summary>
-    /// What a row shows: the event's own text when it carries one, else its kind.
+    /// What a row shows: the event's own text when it carries one, else its kind. Public so the
+    /// session thread's fold (CV-1) reads the same definition of a line's text — one derivation,
+    /// two readers (DM7).
     /// </summary>
     /// <remarks>
     /// <b>The two shapes are the mapper's, read rather than guessed.</b> An <c>agent.msg</c> body is
@@ -261,7 +263,7 @@ public sealed class ConsoleStreamModel
     /// deliberate: a blank row reads as an event with nothing in it rather than as one this
     /// projection did not recognise, and the kind is always true.
     /// </remarks>
-    private static string TextOf(RunEvent evt) =>
+    public static string TextOf(RunEvent evt) =>
         Text(evt.Body)
         ?? (evt.Body["content"] is JsonObject content ? Text(content) : null)
         ?? evt.Kind;

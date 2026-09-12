@@ -103,8 +103,8 @@ public sealed class ComposerHostIntegrationTests
     /// choreography — the shell opens the document, <c>Configure</c> runs as <c>MainWindow.BindComposer</c>
     /// calls it, the pane takes the tree (Ruling 47) — in the arrangement the operator's workbench log
     /// recorded, the composer's entry areas <b>keep their room</b>: the editor host is never smaller
-    /// than the read-only compiled view, the compiled view keeps to 35% of the composer, the page
-    /// mounts six fields, and a keystroke reaches the draft.
+    /// than the read-only compiled view, the compiled prompt (collapsed at rest, Ruling 57) never takes the editor's floor, the page
+    /// mounts its one message field, and a keystroke reaches the draft.
     /// </summary>
     /// <remarks>
     /// <para><b>Observed red on main, 2026-09-11, before any repair:</b> exit 24 — <i>"the editor
@@ -133,7 +133,7 @@ public sealed class ComposerHostIntegrationTests
 
         // NON-VACUITY. The page mounted its fields, the writer kept at least the reader's room, and a
         // keystroke reached the draft — each line could only be printed after it happened.
-        Assert.Contains("fields=6 editors=3", stdout, StringComparison.Ordinal);
+        Assert.Contains("fields=1 editors=1", stdout, StringComparison.Ordinal);
         Assert.Contains("writer >= reader: True", stdout, StringComparison.Ordinal);
         Assert.Contains("reached draft=True", stdout, StringComparison.Ordinal);
 
@@ -178,7 +178,7 @@ public sealed class ComposerHostIntegrationTests
         // NON-VACUITY: the fields were there after the render, and the render actually happened
         // (the line is printed only on the --render-after-mount path).
         Assert.Contains("after one later render:", stdout, StringComparison.Ordinal);
-        Assert.Contains("fields=6, editor text=", stdout, StringComparison.Ordinal);
+        Assert.Contains("fields=1, editor text=", stdout, StringComparison.Ordinal);
 
         // INV-0007 PHASE 2/3: the re-parent was heard and declined — one line says the docking host
         // attached the surface again, and no line says a ready was dropped or a page reloaded.
@@ -191,7 +191,7 @@ public sealed class ComposerHostIntegrationTests
     /// <summary>
     /// <b>DC-138, the allowed branch.</b> A genuine reload of the composer page — crash recovery's
     /// shape — is a new document whose <c>editor.ready</c> is a mount: one more navigation, one more
-    /// <c>host.init</c> carrying the draft the host still holds, no ready dropped, six fields back.
+    /// <c>host.init</c> carrying the draft the host still holds, no ready dropped, the field back.
     /// </summary>
     /// <remarks>
     /// Seen red by mutation through this probe: with the surface's <c>BeginNavigation</c> call
@@ -205,7 +205,7 @@ public sealed class ComposerHostIntegrationTests
 
         Assert.True(exitCode == 0, $"the composer shell probe failed with exit {exitCode}. {stdout} {stderr}");
 
-        Assert.Contains("after a reload: remounted=True, composer navigation-started 1->2, init-pushed 1->2, editor.ready posted +1, router drops +0, host.init count=1 fields=6", stdout, StringComparison.Ordinal);
+        Assert.Contains("after a reload: remounted=True, composer navigation-started 1->2, init-pushed 1->2, editor.ready posted +1, router drops +0, host.init count=1 fields=1", stdout, StringComparison.Ordinal);
 
         var composerLines = ComposerDiagnostics(stdout);
         Assert.Equal(2, composerLines.Count(l => l.Contains("\"transition\":\"navigation-started\"", StringComparison.Ordinal)));
