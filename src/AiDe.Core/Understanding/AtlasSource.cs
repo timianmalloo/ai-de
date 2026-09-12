@@ -98,6 +98,85 @@ internal sealed class AtlasSource
         this.readChunk = readChunk ?? throw new ArgumentNullException(nameof(readChunk));
     }
 
+    /// <summary>
+    /// Observes an approved ordinary local directory without issuing authority or reading source bytes.
+    /// Approval includes the composition's recorded consent and expiry policy. Complete alone carries
+    /// identity; Partial uses atlas.root.unverifiable or atlas.root.unavailable, while refusal and
+    /// cancellation use atlas.root.refused and atlas.root.canceled. Reasons never contain private paths.
+    /// Detected root/ancestor reparses are rejected; path-based checks are not a race-free traversal claim.
+    /// </summary>
+    internal (AtlasCompletionState Completion, AtlasObjectIdentity? Identity, string? Reason)
+        ObserveApprovedRootIdentity(string approvedAbsoluteRoot, Func<bool> isApprovalCurrent, CancellationToken cancellationToken)
+    {
+        using var activity = Activities.StartActivity("atlas.source.root-observe");
+        (AtlasCompletionState Completion, AtlasObjectIdentity? Identity, string? Reason) result;
+        try
+        {
+            result = (AtlasCompletionState.Complete, ObserveRoot(approvedAbsoluteRoot, isApprovalCurrent, cancellationToken), null);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            result = (AtlasCompletionState.Canceled, null, "atlas.root.canceled");
+        }
+        catch (SourceFailure failure)
+        {
+            result = failure.State is SourceProjectionState.Refused
+                ? (AtlasCompletionState.Refused, null, "atlas.root.refused")
+                : (AtlasCompletionState.Partial, null, "atlas.root.unverifiable");
+        }
+        catch (UnauthorizedAccessException)
+        {
+            result = (AtlasCompletionState.Refused, null, "atlas.root.refused");
+        }
+        catch (Win32Exception exception)
+        {
+            result = exception.NativeErrorCode is 5 or 32 or 33
+                ? (AtlasCompletionState.Refused, null, "atlas.root.refused")
+                : (AtlasCompletionState.Partial, null, "atlas.root.unavailable");
+        }
+        catch (IOException exception)
+        {
+            result = (exception.HResult & 0xFFFF) is 5 or 32 or 33
+                ? (AtlasCompletionState.Refused, null, "atlas.root.refused")
+                : (AtlasCompletionState.Partial, null, "atlas.root.unavailable");
+        }
+        catch (Exception exception) when (exception is ArgumentException or NotSupportedException)
+        {
+            result = (AtlasCompletionState.Refused, null, "atlas.root.refused");
+        }
+        activity?.SetTag("atlas.root.completion", result.Completion.ToString());
+        activity?.SetTag("atlas.root.reason", result.Reason);
+        return result;
+    }
+
+    private static AtlasObjectIdentity ObserveRoot(string approvedAbsoluteRoot, Func<bool> isApprovalCurrent, CancellationToken cancellationToken)
+    {
+        CheckRootApproval(isApprovalCurrent, cancellationToken);
+        ValidateRootPath(approvedAbsoluteRoot);
+        Require(OperatingSystem.IsWindows(), SourceProjectionState.Unverifiable);
+        var rootPath = Path.GetFullPath(approvedAbsoluteRoot);
+        Require(new DriveInfo(Path.GetPathRoot(rootPath)!).DriveType is not DriveType.Network, SourceProjectionState.Refused);
+        RejectRootReparseChain(rootPath);
+        CheckRootApproval(isApprovalCurrent, cancellationToken);
+        using var held = new HeldDirectories();
+        var root = held.Open(rootPath);
+        CheckRootApproval(isApprovalCurrent, cancellationToken);
+        Require(held.IsStable(), SourceProjectionState.ReadUnstable);
+        RejectRootReparseChain(rootPath);
+        CheckRootApproval(isApprovalCurrent, cancellationToken);
+        Require(held.IsStable(), SourceProjectionState.ReadUnstable);
+        cancellationToken.ThrowIfCancellationRequested();
+        return root.Before.Identity;
+    }
+
+    private static void CheckRootApproval(Func<bool> isApprovalCurrent, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        ArgumentNullException.ThrowIfNull(isApprovalCurrent);
+        Require(isApprovalCurrent(), SourceProjectionState.Refused);
+        cancellationToken.ThrowIfCancellationRequested();
+    }
+
     internal Task<AtlasSourceReadResult> ObserveAsync(AtlasSourceReadRequest request, CancellationToken cancellationToken) =>
         RunAsync(request, null, cancellationToken);
 
@@ -347,12 +426,18 @@ internal sealed class AtlasSource
 
     private static void ValidatePaths(string root, string relative)
     {
+        ValidateRootPath(root);
+        Require(!string.IsNullOrWhiteSpace(relative) && !Path.IsPathRooted(relative)
+            && relative.Replace('\\', '/').Split('/').All(SafePart), SourceProjectionState.Refused);
+    }
+
+    private static void ValidateRootPath(string root)
+    {
+        ArgumentNullException.ThrowIfNull(root);
         Require(root.Length >= 3 && char.IsAsciiLetter(root[0]) && root[1] is ':' && root[2] is '\\' or '/'
             && !root[2..].Contains(':') && Path.IsPathFullyQualified(root), SourceProjectionState.Refused);
         var rootParts = root[3..].Replace('\\', '/').TrimEnd('/').Split('/');
         Require(rootParts.All(part => part.Length is 0 || SafePart(part)), SourceProjectionState.Refused);
-        Require(!string.IsNullOrWhiteSpace(relative) && !Path.IsPathRooted(relative)
-            && relative.Replace('\\', '/').Split('/').All(SafePart), SourceProjectionState.Refused);
     }
 
     private static bool SafePart(string part)
