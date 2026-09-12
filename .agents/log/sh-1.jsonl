@@ -27,3 +27,31 @@
 {"agent": "claude-sh-1", "at": 1789221088.143073, "kind": "claim", "path": "docs/lessons/defect-classes.md", "seq": 27, "session": "sh-1", "ttl": 3600.0, "wi": "SH-1"}
 {"agent": "claude-sh-1", "at": 1789222522.1203878, "kind": "claim", "path": "tests/AiDe.App.Tests/Sessions/ASessionDocumentIsShownWhereTheOperatorIsTests.cs", "seq": 28, "session": "sh-1", "ttl": 3600.0, "wi": "SH-1"}
 {"agent": "claude-sh-1", "at": 1789225976.309192, "kind": "claim", "path": "docs/notes/sh1-scope-and-entry-columns.md", "seq": 29, "session": "sh-1", "ttl": 3600.0, "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227911.7375722, "kind": "release", "path": "src/AiDe.Core/Workbench/Perspectives.cs", "seq": 30, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227911.7906406, "kind": "release", "path": "src/AiDe.Core/Workbench/WorkbenchCommands.cs", "seq": 31, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227911.842673, "kind": "release", "path": "src/AiDe.App/Workbench/SurfaceContentFactory.cs", "seq": 32, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227911.8972642, "kind": "release", "path": "src/AiDe.App/Workbench/PerspectiveMenu.cs", "seq": 33, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227911.9512827, "kind": "release", "path": "src/AiDe.App/Workbench/MainMenuBuilder.cs", "seq": 34, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227912.0046232, "kind": "release", "path": "src/AiDe.App/Workbench/CommandPalette.cs", "seq": 35, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227912.0568223, "kind": "release", "path": "src/AiDe.App/Workbench/ShellModeController.cs", "seq": 36, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227912.1073399, "kind": "release", "path": "src/AiDe.App/Workbench/WorkbenchController.cs", "seq": 37, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227912.1588597, "kind": "release", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 38, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227912.2123902, "kind": "release", "path": "src/AiDe.App/Workbench/WorkbenchDiagnostics.cs", "seq": 39, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227912.2639215, "kind": "release", "path": "src/AiDe.App/MainWindow.xaml.cs", "seq": 40, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227912.3154578, "kind": "release", "path": "src/AiDe.App/MainWindow.xaml", "seq": 41, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227912.366982, "kind": "release", "path": "tests/AiDe.App.ComposerProbe/Program.SessionRender.cs", "seq": 42, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227912.4176211, "kind": "release", "path": "tests/AiDe.App.Tests/MainMenuTests.cs", "seq": 43, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227912.4681606, "kind": "release", "path": "tests/AiDe.App.Tests/ExplorerModeTests.cs", "seq": 44, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227912.520376, "kind": "release", "path": "tests/AiDe.App.Tests/CommandPaletteTests.cs", "seq": 45, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227912.5754158, "kind": "release", "path": "tests/AiDe.App.Tests/WorkbenchShellTests.cs", "seq": 46, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227912.6259484, "kind": "release", "path": "tests/AiDe.App.Tests/Sessions/EveryOpeningCommandPassesThroughTheSeamTests.cs", "seq": 47, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227912.6774757, "kind": "release", "path": "tests/AiDe.App.Tests/Sessions/TheFrontDoorIsInTheFileMenuTests.cs", "seq": 48, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227912.7304752, "kind": "release", "path": "tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs", "seq": 49, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227912.7830122, "kind": "release", "path": "tests/AiDe.Core.Tests/Workbench/PerspectiveSetTests.cs", "seq": 50, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227912.8355422, "kind": "release", "path": "tests/AiDe.Core.Tests/Workbench/HarnessSessionCommandsAreDerivedTests.cs", "seq": 51, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227912.8857386, "kind": "release", "path": "tests/AiDe.Core.Tests/Phase3SurfacingTests.cs", "seq": 52, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227912.937739, "kind": "release", "path": "tests/AiDe.Core.Tests/WorkbenchCommandTests.cs", "seq": 53, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227912.9892755, "kind": "release", "path": "docs/proof/perspective-registry.md", "seq": 54, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227913.040419, "kind": "release", "path": "docs/lessons/defect-classes.md", "seq": 55, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227913.0914726, "kind": "release", "path": "tests/AiDe.App.Tests/Sessions/ASessionDocumentIsShownWhereTheOperatorIsTests.cs", "seq": 56, "session": "sh-1", "wi": "SH-1"}
+{"agent": "claude-sh-1", "at": 1789227913.1409948, "kind": "release", "path": "docs/notes/sh1-scope-and-entry-columns.md", "seq": 57, "session": "sh-1", "wi": "SH-1"}
