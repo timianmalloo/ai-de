@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T00:16:58Z",
+  "generated": "2026-09-12T00:18:44Z",
   "audit": [
     {
       "actor": null,
@@ -12780,6 +12780,39 @@ window.AUDIT_DATA = {
       ],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M29FP5VJFPGV1GKCGSPDB4GV",
+      "shortname": "conductor-addendum-c-close",
+      "datetime": "2026-09-12T00:18:44Z",
+      "session": "conductor-addendum-c",
+      "prompt": "The operator's turn of 2026-09-11 17:17Z (al-01M28QJMWGJT5AK438M37KJ9ZT) and its mid-turn directives.",
+      "summary": "Everything but the dispatch is on main at 7d8aa596: Addenda C and D accepted, Rulings 50-78, ADR-0017 amended + ADRs 0030-0037, the design language and four mockups at zero craft findings, the coordination plan, five product fixes with classes DC-136-149. The dispatch waits on S0 — the operator's attended F5 exit run (Ruling 51) — with INV-0009's fix live and the F5 tree pinned at 135e05e1. Ledger in the plan's Stage 10: the planning chain ran ~17,000 s against an Inferred 6,000 s; three shell-line red-ignored merges and one blind cleanup registered as classes.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/addendum-c-modes.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Land the straggler fix and prune; resume F5 to the gesture boundary; open Addendum C through specify, ui-design, define-architecture, prepare-for-coordination; dispatch the refactor",
+      "done_when": "Straggler merged, branches pruned; F5 tree committed, pinned, gates green, waiting only on the operator's gesture; C and D specified/designed/architected with a coordination plan on main; refactor dispatched under P1's contract",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false,
+        "regression": false
+      },
+      "git": {
+        "sha": "7d8aa596bfff428648e16f0ae4aa75662f7373f2",
+        "short": "7d8aa596b",
+        "branch": "conductor/addendum-c",
+        "pushed": null
+      }
     }
   ],
   "changes": [

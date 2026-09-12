@@ -227,6 +227,51 @@ reached four times and never exceeded.
 gate lines that could not stop); DC-142 (cleanup removed an open node's tree). Each with its
 control in the register.
 
-## Stage 10 — Cost vs delivery (filled at close)
+## Stage 10 — Cost vs delivery (the conductor's close, 2026-09-11)
 
-_Planned vs actual, rework passes, floors met — appended when the chain closes._
+**Planned vs actual, per node** (Verified = the audit entry's `duration_seconds`; the S1 entry's
+marker was consumed mid-run by a `prompt-log.py add` — a pack control gap — so its figure is
+Inferred from timestamps).
+
+| Node | Planned (Inferred) | Actual | Note |
+| --- | --- | --- | --- |
+| optimize-graph | 511 s | — (marker consumed by the same gap) | |
+| R0 Owner ruling | ~300 s | 230 s | Verified (agent wall) |
+| M0 inventory | — | 324 s | Verified |
+| F5a | ~600 s | 476 s | Verified |
+| S1 `/specify` C | ~1500 s | **≈ 4,000 s** (Inferred; entry `duration_seconds` null) | the council cap fired once; a third pass cleared |
+| D1 `/ui-design` | 1341 s | **4,812 s** | 3.6× — two mid-run directives folded, the rubric loop ran to pass 3 |
+| S2 `/specify` D (inserted at re-plan) | — | 4,992 s | three hard vetoes cleared at pass 2 |
+| D2 `/ui-design` session (inserted on the operator's ask) | — | 5,135 s | 43 states |
+| A1 `/define-architecture` | 1987 s | **5,826 s** | 2.9× — two specs, two spikes run, nine ADRs |
+| P1 `/prepare-for-coordination` | ~900 s | 1,964 s | 2.2× — first measured run of this skill here |
+| Detours: INV-0007 → fix; INV-0008 → fix; Ruling 66 fix; INV-0009 (fix live at close) | — | 2,399 + 3,519 + 2,655 + 3,131 + 1,258 + (INV-0009 ≈ 2,600) s | none planned; every one traced to an operator observation on a real build |
+
+**Measured node-seconds today:** 43,378 (entries with a duration) + the S1/INV-0009 figures above.
+**The planning chain's span** (R0 → S1 → {D1 ∥ S2} → A1 → P1) ≈ **17,000 s** against the plan's
+Inferred 6,000 s — the model under-estimated every reasoning node by 2–4×; the one Verified figure
+it had (D1's predecessor at 1,341 s) was the smallest run of that skill, not a median. **Lesson for
+the next plan:** size a skill node from the *largest* comparable run when the input is larger than
+the comparable's, and never from a single point.
+
+**Rework passes:** S1's gate — one bounded third pass (cap fired on new material, not a stuck loop);
+the F5 tree removed and re-added once (DC-142); three merge resolutions that shipped or committed
+red because of the shape of a shell line (DC-113 recurrence 2; DC-136); P1's merge attempted twice
+(a dirty primary refused `ort`, the chain went on and mis-titled a commit).
+
+**Width:** cap 3 held except one recorded raise to 4 (INV-0009 dispatched while three writers were
+live, the operator blocked on the critical path, disjoint files).
+
+**Floors:** every triggered veto convened and cleared by its holder (never the author); every
+control red-first or red-by-mutation; every node's audit entry from its own tree; the census, the
+craft gate and the marker gate now run in the resolution path or CI. **Not met at close:** the F5
+exit run (the operator's gesture, S0 of the coordination spine) — every downstream track waits on
+it by Ruling 51.
+
+**Delivered on `main` at close (`7d8aa596`):** Addendum C and Addendum D specified and accepted with
+their errata; Rulings 50–78; the architecture (ADR-0017 accepted as amended, ADRs 0030–0037, two
+spikes run); the design language and four mockups at zero craft findings; the coordination plan
+(`docs/coordination/addendum-cd.md`); five product fixes (INV-0007, INV-0008/contrast, Ruling 66,
+the lane pin and its frame record on F5's tree; INV-0009's fix live) with their classes DC-136–149
+and controls.
+

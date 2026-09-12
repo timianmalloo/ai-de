@@ -8758,7 +8758,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph LR\n  F5a[F5a commit + gates<br/>sonnet] --> H1((operator gesture)) --> F5b[F5b discharge clauses<br/>opus]\n  R0[R0 Owner ruling<br/>fable] --> S1[S1 /specify<br/>opus]\n  M0[M0 inventory + baseline<br/>sonnet] --> S1\n  M0 --> D1\n  M0 --> A1\n  S1 --> D1[D1 /ui-design<br/>opus] --> A1[A1 /define-architecture<br/>opus] --> P1[P1 /prepare-for-coordination<br/>opus] --> X{{dispatch under P1's contract}}"
         }
       ],
-      "sourceSha256": "73aa48c756821554dbff18a1fd597036a2977cb037b2422ae4e0051e4b170ed2"
+      "sourceSha256": "f6deb3334e05104b109e16211952698a5a59c1c68e87e99f6255b70f64d20d20"
     },
     {
       "id": "plan-agentic-watcher-substrate",
@@ -15860,5 +15860,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "5e6bb5b7abae785e2abdf385950175de174650a3ce18be1661aac010f3590947"
+  "graphSha256": "e01753b3749f622e04e2158a71e9c8505f26df13a7cbda476e007b9ec7a53e28"
 };
