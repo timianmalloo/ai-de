@@ -177,3 +177,29 @@ hostile Unicode/delimiters, closed/validated immutable records, expected-root bi
 unknown totals not zero, page requests bounded, FileLimited not project-accurate, no manifest
 body retention, and selection requests cannot mint grant/binding authority. Pure port/type
 absence is a scope fact, not proof of implemented security or native behavior.
+
+## Foundation return and explicit replan
+
+Foundation `34a9e652` returned eight files and 53 passing tests after 32 calls, exceeding its
+18-call allocation. The Conductor independently replayed 53/53 and read the retained one-test
+codec mutation red. That evidence does not establish complete common-contract behavior.
+
+Data and Test reviews blocked the proposal: default native identities/limits/pages bypass
+validation; row/limit/total consistency is incomplete; the selection uses an outline string,
+five-state source enum and mandatory percentage instead of the required structured projection;
+failure observations require invented hash/decoder fields; an explicit unknown profile can gain
+logical identity; manifest references are not cross-validated. The codec work is retained.
+
+Owner turn 13 authorizes one **16-call correction on the same eight files**, after Conductor
+readback of a response-only mini-contract. Semantic falsifiers must fail on the old code before
+repair; the parent independently replays the corrected suite. No producer or I/O work is added.
+
+The previous 60-call implementation estimate is explicitly replaced for the next producer
+checkpoint: **32 spent + 16 F correction + 24 E inventory/enumeration + 24 D declarations = 96**.
+This is not retrospective approval of the overrun. Source/query/native assembly is the next
+planned checkpoint, not falsely claimed to fit the remainder. E and D get separate trees and
+disjoint files only after corrected common types are pinned; total width remains at most four.
+
+One review evidence correction is also retained: a glob miss was reported as absent TRX files.
+Direct absolute-path XML reads confirmed the codec mutant red and 53-test green; the reviewer
+withdrew only the missing-artifact finding. The real contract blockers remain.

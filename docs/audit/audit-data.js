@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T21:31:38Z",
+  "generated": "2026-09-12T21:48:31Z",
   "audit": [
     {
       "actor": null,
@@ -15146,6 +15146,30 @@ window.AUDIT_DATA = {
       "done_when": "Actual inventory/member/source/Back journey is implemented and independently proven under the admitted limits; this entry records active prerequisite dispatch only.",
       "tier": "T2",
       "fan_out": 4
+    },
+    {
+      "id": "al-01M2BSFTJCYHGBE05B0QRS55RY",
+      "shortname": "atlas-enumeration-reviewed-join",
+      "datetime": "2026-09-12T21:48:30Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "Continue the real Code Atlas reader through isolated fleet worktrees.",
+      "summary": "Joinedcleanedenumerationprobe through8450ce06. Parentobserved29PASS0FAIL2NOT_PROVEN atworkerf1e(58ms) andjoinedbranch(55ms),parsedresultsnotexit0. Removedmutationbypass; exactnativecode2/no-pathdiagnostic,recursivepeak3andpost-returnmutationsobserved. Security/Testlimitedordinary-local evidencecleared; requirespriorrootbinding/detectedreparseexclusion; symlinksNOTPROVEN, notrace-freeobjectopenorliveproductclaim. Prooftranscriptionandsemantic-vs-compile-redcorrectionscommitted. Fcommonproposalheldonactualmodelgaps; meaningfulTRXsconfirmeddespiteglobmiss.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-enumeration-safety.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Produce reviewed enumeration evidence and preserve the corrected foundation/producer execution plan.",
+      "done_when": "Bounded enumeration result is joined and evidenced; foundation correction continues toward real detached-reader implementation.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-12T21:31:44Z",
+      "duration_seconds": 1006.0
     }
   ],
   "changes": [
@@ -19103,6 +19127,29 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "054b8b56381e4cf42717c2a8012f2e64a116e10d",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2BSFTFF71SDKNYCENMJDK2P",
+      "datetime": "2026-09-12T21:48:30Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "decision",
+      "skill": "execute-with-coordination",
+      "title": "Atlas foundation correction and explicit producer rebudget",
+      "prompt": "Keep executing with separate sub-agent worktrees and Conductor-controlled gates.",
+      "summary": "Ownerturn13 retainsFwriter forone16callsame-eight-filecorrection afterminicontractread. Replaceinadequate60estimate with96cumulativeF/E/D:32spent+16repair+24E+24D. Source/query/nativeassemblyseparatenextcheckpoint. Fproposal53greenbutData/Testblockersremain; no producerdispatchfromincompletecontracts.",
+      "rationale": "Recordactualoverrun andrepairtypedcontracts beforeparallelproducers; do not silentlytradeprooforfundremainingreaderworkwithaninadequateremainder.",
+      "artifacts": [
+        "docs/notes/atlas-owner/live-reader-horizon.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "8450ce062397e0cee09380b374783be4f86464d5",
         "branch": "conductor/code-atlas",
         "pushed": null,
         "commits": []

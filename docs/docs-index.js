@@ -4706,7 +4706,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bc7c853d985ef5e1541770761f8579653a48520834206e6d23a915546624675b"
+      "sourceSha256": "240a63cb54b2811d9a1e2e176fb7fac732b50a35f6319eac783151473a3f2b0f"
     },
     {
       "id": "note-avalondock-tab-styling",
@@ -11428,7 +11428,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "766ddbaa27cf7962bf94a3d9f6d23c23bc16554afe33883210d80a447fd40a5d"
+      "sourceSha256": "46f92296d9f696eeae6ef2995b4f227befea7e26aa0caabeb83d3e454689c86a"
     },
     {
       "id": "session-profiles",
@@ -15652,6 +15652,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "a92734fa7845b6e7ad4a33a691fe588436959f29a8ab7340d01343356a9def94"
     },
     {
+      "id": "proof-code-atlas-enumeration-safety",
+      "path": "docs/proof/code-atlas-enumeration-safety.md",
+      "title": "Proof Pack — Code Atlas opened-directory enumeration safety probe",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "atlas-live-reader-enumeration",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Isolated Windows/.NET 10 probe for safe ordinary local directory enumeration. It verifies no-follow reparse refusal before listing, root identity binding, handle-budget accounting, bounded cancellation, and explicit NOT_PROVEN symlink limits. It is not production admission.",
+      "tags": [
+        "proof-pack",
+        "code-atlas",
+        "directory-enumeration",
+        "windows",
+        "probe"
+      ],
+      "links": [
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-01M2BBCCAYMNMM1MFH0653Z0XF",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-code-atlas-source-safety",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e7d5674ddc94028586a92329fb41a5212800ed694eac6ad45902b93e546cedb5"
+    },
+    {
       "id": "proof-code-atlas-identity-unit",
       "path": "docs/proof/code-atlas-identity-unit.md",
       "title": "Code Atlas first Core unit - identity and source binding",
@@ -18541,5 +18576,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "07ce758cce362cad1f45c89ad004bb97c6cd0d30fcb68d6dc4716fd5fdb8c131"
+  "graphSha256": "f8d07cf31abc4dde65fa1a1e01519d2aba9242d03fc89e9ee87afad3330fcb97"
 };

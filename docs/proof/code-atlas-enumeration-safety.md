@@ -105,4 +105,37 @@ The unsafe-stub red and root-binding mutation red are semantic controls. The mis
 
 ## Budget ledger
 
-Budget was 25 total wrapper/leaf calls for this investigation. Before this cleanup, 22/25 were used. This cleanup uses 3 calls through final status. Total observed consumption is 25/25, with 0 remaining.
+Budget was 25 total wrapper/leaf calls for this investigation. Before this cleanup, 22/25 were used. This cleanup uses 3 calls through final status. Total reported consumption is 25/25, with 0 remaining.
+
+## Independent Conductor replay and join
+
+The Conductor read the exact five-file delta and independently replayed the successive pinned
+checkpoints. At final worker `f1e76c4f869876547b68483aa6f71b29a5bf453a`, the cleaned probe
+returned **29 PASS / 0 FAIL / 2 NOT_PROVEN**, 58 ms. The retained `skipRootBindingCheck`
+mutation switch was removed, not merely disabled. Root-binding validation is unconditional when
+the caller supplies a binding.
+
+Worker commits were joined into `conductor/code-atlas` as `818c59d5`, `b8fa7e9e`, `45686338`,
+`961c31ba` and `8450ce06`. The joined replay returned the same **29/0/2** in 55 ms on
+.NET `10.0.11`, Windows `10.0.26200.0`. These individual runs are not a throughput claim.
+The parent read case outcomes, not exit 0: symlink cases remain NOT_PROVEN.
+
+The final replay observed recursive descriptor exhaustion after traversal began, peak three,
+and immediate post-return root mutation. Missing-directory errors carried actual native code
+`2` and public detail `native open failed`, not a raw path or the low word of a generic HRESULT.
+Cancel/limit paths released their handles. The root-binding mutation's 28/1/2 red and earlier
+unsafe-stub red remain semantic evidence; missing-API compilation red does not.
+
+Security reviewer `3facf06b-883c-4039-a461-51b93a236f11` and Test Architect
+`e8c73a03-3fa2-4a77-8d17-68cdf80188b1` cleared the bounded evidence with explicit conditions:
+Core incorporation requires expected authorized root binding, ordinary local relative paths,
+detected reparse exclusion, no outside enumeration-name/count disclosure, bounded resources
+and no promotion of partial/canceled output to complete.
+
+This does **not** prove that an outside object can never be opened during every possible
+inspection/open race. No symlink support, arbitrary filesystem authority, live-user-workspace
+permission or native-product acceptance is inferred. The candidate adapter must retain the
+strict supported domain and undergo its own composition proof.
+
+Full parent outputs are retained in the session's `files/atlas-enumeration-cleaned.txt` and
+`files/atlas-enumeration-joined.txt`. The summaries and dispositions above are the durable record.
