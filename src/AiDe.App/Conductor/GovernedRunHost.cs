@@ -24,6 +24,23 @@ namespace AiDe.App.Conductor;
 /// the configuration claims; and the worktree is cut after the authorization because a refused spawn
 /// must leave nothing behind.</para>
 ///
+/// <para><b>A read-only turn is the same root with the write half left out</b> (Ruling 73). The
+/// request carries no lease (<see cref="GovernedRunRequest.IsReadOnly"/>), and from that one fact:
+/// the spawn is authorized read-only (<see cref="SpawnRequest.ReadOnly"/>: the identity gates
+/// unchanged, the goal-block precondition waived), <b>no worktree is cut</b> — the ACP session is rooted in the
+/// repository root itself, because the lane cannot write and a throwaway tree would be exactly the
+/// thing the operator must then clean up (Ruling 73's constraint; ADR-0035 roots the compile session
+/// the same way, and outside the repository the constitution does not load) — the session is opened
+/// with <see cref="ReadOnlyLaneSession"/>, no episode is opened and nothing is scored (an episode is
+/// work judged against a done-condition; a Message has none), no seam monitor runs (there is no
+/// lease to monitor), and the permission chooser refuses any edit that arrives anyway. The
+/// composition-root activity is opened once either way, so one send reads one root whichever shape
+/// the turn takes. <b>Boundary named:</b> rooted in the repository, the lane loads the repository's
+/// own settings and hooks (<c>settingSources</c> user · project · local) — repository content runs
+/// in the lane, the same exposure as opening Claude Code there (ADR-0035 accepts it for the
+/// compile session on the same grounds). After the turn the tree is measured against its own
+/// baseline (<see cref="TreeDelta"/>): a changed tree is Ruling 73 condition (2)'s stop.</para>
+///
 /// <para><b>It hosts no terminal, and the run says so with a number.</b>
 /// <see cref="TerminalHostingLedger"/> is opened around the whole run and its count travels on the
 /// result, so the absence is a measurement rather than a sentence.</para>
@@ -36,6 +53,9 @@ public static class GovernedRunHost
     /// <summary>The ACP tool-call kind the captured corpus carries for a write.</summary>
     private const string EditToolKind = "edit";
 
+    /// <summary>The adapter's tool-call kinds that only read (<c>tools.js:64, :137, :201, :226</c>).</summary>
+    private static readonly HashSet<string> ReadOnlyKinds = new(["read", "search", "fetch", "think"], StringComparer.Ordinal);
+
     /// <summary>
     /// What the governed lane's model may hold: everything the adapter's preset allows <b>except the
     /// shell</b>. Ruling 71 — the lease bounds the file writes the seams observe; it does not bound
@@ -43,6 +63,62 @@ public static class GovernedRunHost
     /// and the local settings allow. The pin is one value on one site, tested on the outgoing frame.
     /// </summary>
     internal static readonly LaneSessionOptions GovernedLaneSession = new(DisallowedTools: ["Bash"]);
+
+    /// <summary>
+    /// What a read-only turn's model may hold: everything the adapter's preset allows <b>except
+    /// every tool that writes the tree or a durable file, executes code, a shell or a process,
+    /// delegates to an agent, sends a local file anywhere, or cannot be read</b> — Ruling 73, the
+    /// second use of Ruling 71's typed argument.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Read, not recalled.</b> Two sources, both installed under
+    /// <c>spikes/acp-subscription-lane/node_modules/</c> and read at the cited lines: the SDK's schema
+    /// union (<c>@anthropic-ai/claude-agent-sdk</c> 0.3.257 <c>sdk-tools.d.ts:11-56</c>) and the
+    /// shipped CLI's own tool-name table (<c>claude-agent-sdk-win32-x64/claude.exe</c>, the
+    /// <c>Amo</c> array, 183 names — the schema is a subset of the pool, and <c>PowerShell</c> is a
+    /// shell the schema does not list). Every name in either is classified in
+    /// <c>docs/proof/read-only-turn.md</c>. The SDK forwards the list verbatim as
+    /// <c>--disallowedTools</c> (<c>sdk.mjs:100</c>); the adapter spreads it after its own
+    /// (<c>acp-agent.js:6007</c>). Asserted as a set equality against a literal
+    /// (<c>TheGovernedLaneHasNoShellTests</c>); an SDK or adapter bump re-reads both sources — the
+    /// trigger P-D5 carries for the compile pin.</para>
+    ///
+    /// <para><b>A name in the CLI's table with no readable tool object is pinned, not cut:</b>
+    /// <c>PowerShell</c> is the proof that such a name becomes a live tool by a remote flag with no
+    /// version bump, and an unmatched deny is inert.</para>
+    ///
+    /// <para><b>Not closed here, named:</b> <c>mcp__*</c> tools the adapter loads from settings or
+    /// claude.ai connectors independently of the frame's <c>mcpServers: []</c> (<c>acp-agent.js:5962</c>,
+    /// <c>:5971</c>) — closing them needs <c>strictMcpConfig</c> / <c>disableClaudeAiConnectors</c>
+    /// on the wire, a widening of Ruling 71's two-member record that is the conductor's to rule on
+    /// (CV-3's settings belt; P-D5's check: no <c>mcp__</c> name in the observed tool list).</para>
+    /// </remarks>
+    internal static readonly LaneSessionOptions ReadOnlyLaneSession = new(DisallowedTools:
+    [
+        // The tree and durable files.
+        "Write", "Edit", "MultiEdit", "NotebookEdit", "EnterWorktree", "ExitWorktree", "CronCreate", "CronDelete",
+
+        // Code, shells and processes.
+        "Bash", "PowerShell", "REPL", "Monitor", "Tmux", "LSP", "self_hosted_runner_spawn_local",
+
+        // Delegation to another agent, local or remote.
+        "Agent", "Task", "Workflow", "RemoteTrigger", "self_hosted_runner_requeue_session",
+
+        // A local file sent or saved by a side door, or a consequential remote write.
+        "Artifact", "Projects", "SendFile", "SendUserFile",
+
+        // Opaque — fail-closed.
+        "ClaudeDesign", "Snip", "WebBrowser", "SubscribePR", "DesignSync", "ConnectGitHub",
+    ]);
+
+    /// <summary>
+    /// Stage-0 triage for a read-only turn: no plan, no council, no seam to steward. Not
+    /// <see cref="RunTriage.For"/>'s (a Message has no block; the skip path there stewards seams).
+    /// </summary>
+    private static readonly RunTriage ReadOnlyTriage = new(
+        SkipsPlanAndCouncil: true,
+        Stages: [RunStage.Triage, RunStage.Dispatch, RunStage.Converge],
+        Reason: "a read-only turn writes nothing: no plan, no council, no seam to steward (Ruling 73)");
 
     /// <summary>
     /// Runs one governed lane to completion and scores it.
@@ -86,7 +162,14 @@ public static class GovernedRunHost
         // happens inside the window it counts.
         using var terminals = TerminalHostingLedger.Open();
 
-        var triage = RunTriage.For(request.Goal);
+        // R2 BEFORE ANY ENGINE: a write-shaped request (a lease) with no goal block is not a third
+        // shape and is not demoted to read-only — it is the goal block's own refusal, here rather
+        // than after a process was started for it.
+        var triage = request.IsReadOnly
+            ? ReadOnlyTriage
+            : RunTriage.For(request.Goal ?? throw new AgentPlaneException(
+                AgentPlaneErrorCodes.GoalBlockIncomplete,
+                "a write-shaped run carries a lease and no goal block; no block, no spawn (R2)"));
         Report("triage: " + triage.Reason);
 
         var launch = EngineCatalog.ResolveLaunch(request.EngineId, request.AdapterInstallRoot);
@@ -98,9 +181,11 @@ public static class GovernedRunHost
         var provisioner = new WorktreeProvisioner(new ProcessRunner(), request.CoordCommand);
         var registry = new ProviderRegistry(request.Providers);
 
-        // The shell's own watcher composition (WorkbenchShell), not a second one.
-        using var watcher = WatcherHost.Open(
-            request.DataDirectory, Path.Combine(request.DataDirectory, "loomkeeper-coord"), time);
+        // The shell's own watcher composition (WorkbenchShell), not a second one. A read-only turn
+        // opens no episode and scores nothing, so it opens no watcher either.
+        using var watcher = request.IsReadOnly
+            ? null
+            : WatcherHost.Open(request.DataDirectory, Path.Combine(request.DataDirectory, "loomkeeper-coord"), time);
 
         ProvisionedWorktree? worktree = null;
 
@@ -121,15 +206,111 @@ public static class GovernedRunHost
 
         var observed = await AwaitObservedAuthAsync(peer, cancellationToken).ConfigureAwait(false);
 
-        // R2 and §4.2: no block, no spawn; and no observed subscription, no spawn.
-        var spawn = SpawnContract.Authorize(
-            new SpawnRequest(request.Goal, request.EngineId, request.Model, request.AccountLabel, observed),
-            registry);
+        // R2 and §4.2: no block, no spawn (for a lane that can write); and no observed subscription,
+        // no spawn (for every lane). The shape is the lease's absence — the same fact that pins the
+        // lane's tools below — never a claim the request makes about itself.
+        var spawn = SpawnContract.Authorize(SpawnRequestFor(request, observed), registry);
+
+        if (request.IsReadOnly)
+        {
+            // THE READ-ONLY HALF, inline so the write path's statements below stay where they are:
+            // session at the repository root under the pin, the prompt, the drain with no seam
+            // monitor, the tree measured against its own baseline — no worktree, no episode, no score.
+            Report($"read-only turn: no worktree, no lease, no episode; lane {laneId} on {spawn.Binding.EngineId}");
+
+            var runner = new ProcessRunner();
+            var baseline = TreeStatus(runner, request.RepositoryRoot);
+
+            var readOnlySession = await OpenReadOnlySessionAsync(client, request.RepositoryRoot, runId, laneId, Report, cancellationToken)
+                .ConfigureAwait(false);
+
+            var readOnlyPrompt = client.PromptAsync(readOnlySession, request.Prompt, cancellationToken);
+
+            var readOnlyDrained = await DrainAsync(peer.Events, readOnlyPrompt, seams: null, Report, sink, cancellationToken)
+                .ConfigureAwait(false);
+
+            var readOnlyOutcome = EpisodeOutcome.Completed;
+            try
+            {
+                var answer = await readOnlyPrompt.ConfigureAwait(false);
+                Report("prompt stopReason: " + (StringValue(answer["stopReason"]) ?? NotRecorded));
+            }
+            catch (AgentPlaneException error)
+            {
+                Report($"prompt refused {error.Code}: {error.Message}");
+                readOnlyOutcome = EpisodeOutcome.Blocked;
+            }
+
+            // RULING 73 CONDITION (2), MEASURED ON THE NORMAL PATH: the tree after the turn against
+            // the tree before it. Zero is the expected reading; anything else is an irreversible act
+            // outside the plan and stops at the human — reported here by name, never averaged away.
+            var delta = TreeDelta(baseline, TreeStatus(runner, request.RepositoryRoot));
+            Report(delta switch
+            {
+                null => "read-only tree check: not recorded (git did not answer)",
+                0 => "read-only tree check: unchanged against its baseline",
+                _ => $"READ-ONLY VIOLATION: {delta} line(s) of the tree's state changed during the turn — stop at the human; the pin is re-spiked (Ruling 73 condition 2)",
+            });
+
+            if (delta > 0)
+            {
+                // A turn that wrote did not complete under its contract; a consumer must not read
+                // Completed beside a non-zero delta.
+                readOnlyOutcome = EpisodeOutcome.Blocked;
+            }
+
+            engine.Dispose();
+            try
+            {
+                await pump.ConfigureAwait(false);
+            }
+            catch (Exception error) when (error is OperationCanceledException or AgentPlaneException or IOException)
+            {
+                Report("peer loop ended: " + error.Message);
+            }
+
+            return new GovernedRunResult(
+                RunId: runId,
+                SessionId: NotRecorded,
+                EpisodeId: NotRecorded,
+                WorktreePath: request.RepositoryRoot,
+                WorktreeBranch: NotRecorded,
+                CoordInstalled: false,
+                ObservedAuthKind: observed?.Kind ?? NotRecorded,
+                ObservedAuthLabel: observed?.Label ?? NotRecorded,
+                ObservedAuthPlan: observed?.Plan ?? NotRecorded,
+                TerminalHostConstructions: terminals.Constructions,
+                Stages: [.. triage.Stages.Select(s => s.ToString())],
+                SkippedPlanAndCouncil: triage.SkipsPlanAndCouncil,
+                TriageReason: triage.Reason,
+                EventsObserved: readOnlyDrained.Events,
+                EventKinds: [.. readOnlyDrained.Kinds.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)],
+                LatencyMeasured: readOnlyDrained.LatenciesMs.Count,
+                LatencyP50Ms: Percentile(readOnlyDrained.LatenciesMs, 0.50),
+                LatencyP95Ms: Percentile(readOnlyDrained.LatenciesMs, 0.95),
+                LatencyHost: Environment.MachineName,
+                SeamsRaised: 0,
+                SeamResolutionRatio: 1.0,
+                Outcome: readOnlyOutcome.ToString(),
+                WorktreeDisposition: "none: a read-only turn cuts no worktree (Ruling 73)",
+                Scored: false,
+                ScoreVerdict: NotRecorded,
+                ScoreHeadline: NotRecorded,
+                TaskClass: NotRecorded,
+                SegmentIsComparable: false,
+                IncomparableReason: "a read-only turn opens no episode and is not scored",
+                Mode: null,
+                EngineProcessId: engine.ProcessId,
+                EngineExited: engine.HasExited,
+                EnvironmentFindings: engine.EnvironmentFindings,
+                Diagnostics: [.. diagnostics],
+                ReadOnlyTreeDelta: delta);
+        }
 
         worktree = provisioner.Provision(request.RepositoryRoot, spawn.Binding.EngineId, laneId);
         Report($"worktree: {worktree.Branch} at {worktree.Path} (coord install: {worktree.CoordInstalled})");
 
-        var seams = new LeaseMonitor(request.Lease, worktree.Path);
+        var seams = new LeaseMonitor(request.Lease!, worktree.Path);
 
         var identity = new LaneIdentity(
             LaneId: laneId,
@@ -141,7 +322,7 @@ public static class GovernedRunHost
             Harness: spawn.Binding.EngineId,
             Model: spawn.Binding.Model);
 
-        var session = new GovernedLaneSource(watcher.Ingest).Open(identity, request.Goal);
+        var session = new GovernedLaneSource(watcher!.Ingest).Open(identity, request.Goal!);
         Report($"episode {session.EpisodeId} opened on session {session.SessionId}");
 
         var acpSession = await OpenSessionAsync(client, worktree, runId, laneId, Report, cancellationToken)
@@ -247,13 +428,123 @@ public static class GovernedRunHost
         // is passed rather than a path string, so the lane cannot be rooted anywhere else. Ruling 71:
         // and the lane's shell is pinned off on the same frame.
         var acpSession = await client.NewSessionAsync(worktree, GovernedLaneSession, cancellationToken).ConfigureAwait(false);
+        RecordSessionNew(client, acpSession, runId, laneId, report);
+        return acpSession;
+    }
 
+    /// <summary>
+    /// Opens a <b>read-only</b> turn's session rooted in the repository root — no worktree is cut
+    /// (Ruling 73) — with every write-capable tool disallowed, and records the frame exactly as
+    /// <see cref="OpenSessionAsync"/> does.
+    /// </summary>
+    /// <remarks>
+    /// The host's second session site. A string root, not a <see cref="ProvisionedWorktree"/>: what
+    /// bounds where this lane may write is the pin, not its cwd.
+    /// </remarks>
+    internal static async Task<string> OpenReadOnlySessionAsync(
+        AcpLaneClient client,
+        string repositoryRoot,
+        string runId,
+        string laneId,
+        Action<string> report,
+        CancellationToken cancellationToken)
+    {
+        var acpSession = await client.NewSessionAsync(repositoryRoot, ReadOnlyLaneSession, cancellationToken).ConfigureAwait(false);
+        RecordSessionNew(client, acpSession, runId, laneId, report);
+        return acpSession;
+    }
+
+    /// <summary>
+    /// Records the <c>session/new</c> params the client actually sent, <c>_meta</c> included, on the
+    /// run's report and as a <c>lane.session-new</c> workbench log line.
+    /// </summary>
+    private static void RecordSessionNew(AcpLaneClient client, string acpSession, string runId, string laneId, Action<string> report)
+    {
         // What was sent, not what should have been: the object the client handed the peer. A client
         // that recorded nothing reads as "not recorded" — never as the frame it was meant to send.
         var sent = client.SessionNewParameters;
         report($"acp session {acpSession} opened with session/new params {sent?.ToJsonString() ?? NotRecorded}");
         WorkbenchDiagnostics.LaneSessionNew(runId, laneId, acpSession, sent);
-        return acpSession;
+    }
+
+    /// <summary>
+    /// The spawn request a run makes, with its shape read from the one fact the lane's pin is also
+    /// read from — the request carries no lease (Ruling 73) — never from a claim.
+    /// </summary>
+    internal static SpawnRequest SpawnRequestFor(GovernedRunRequest request, ObservedAuthStatus? observed)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        return new SpawnRequest(
+            request.Goal, request.EngineId, request.Model, request.AccountLabel, observed, ReadOnly: request.IsReadOnly);
+    }
+
+    /// <summary>
+    /// The tree's state at <paramref name="root"/> as text — <c>git status --porcelain</c>, the
+    /// working-tree diff against <c>HEAD</c>, and a content hash per untracked path — or <c>null</c>
+    /// when git did not answer: "not recorded", never an empty reading taken as clean.
+    /// </summary>
+    /// <remarks>
+    /// Porcelain alone cannot see a second modification of a file that was already dirty at the
+    /// baseline (the common case in a working checkout): its line is identical before and after.
+    /// The diff makes a tracked re-modification visible; the hashes make an untracked one visible.
+    /// Ignored paths and nested repositories are invisible to all three — a named gap.
+    /// </remarks>
+    internal static string? TreeStatus(IProcessRunner runner, string root)
+    {
+        ArgumentNullException.ThrowIfNull(runner);
+
+        var status = runner.Run("git", ["status", "--porcelain"], root);
+        if (status.ExitCode != 0)
+        {
+            return null;
+        }
+
+        var diff = runner.Run("git", ["diff", "HEAD"], root);
+        if (diff.ExitCode != 0)
+        {
+            return null;
+        }
+
+        var untracked = status.StandardOutput
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+            .Select(line => line.TrimEnd('\r'))
+            .Where(line => line.StartsWith("?? ", StringComparison.Ordinal))
+            .Select(line => line[3..].Trim('"'))
+            .ToList();
+
+        var hashes = string.Empty;
+        if (untracked.Count > 0)
+        {
+            var hashed = runner.Run("git", ["hash-object", "--", .. untracked], root);
+            if (hashed.ExitCode != 0)
+            {
+                return null;
+            }
+
+            hashes = hashed.StandardOutput;
+        }
+
+        return status.StandardOutput + "\n--- diff ---\n" + diff.StandardOutput + "\n--- untracked ---\n" + hashes;
+    }
+
+    /// <summary>
+    /// How many lines differ between two readings of the tree (<see cref="TreeStatus"/>) — the
+    /// operator's tree may be dirty before the turn, so the oracle is <i>unchanged against its
+    /// baseline</i>, not <i>clean</i>. <c>null</c> when either reading is not recorded.
+    /// </summary>
+    internal static int? TreeDelta(string? before, string? after)
+    {
+        if (before is null || after is null)
+        {
+            return null;
+        }
+
+        var a = Lines(before);
+        var b = Lines(after);
+        return a.Except(b, StringComparer.Ordinal).Count() + b.Except(a, StringComparer.Ordinal).Count();
+
+        static HashSet<string> Lines(string status) =>
+            [.. status.Split('\n', StringSplitOptions.RemoveEmptyEntries).Select(l => l.TrimEnd('\r'))];
     }
 
     /// <summary>What one drain of the plane's queue observed. The run's own numbers, at their source.</summary>
@@ -285,21 +576,23 @@ public static class GovernedRunHost
     /// </remarks>
     /// <param name="queue">The plane's own queue for this lane.</param>
     /// <param name="prompt">The in-flight prompt. Its completion is half the exit condition.</param>
-    /// <param name="seams">The lease monitor every observed event is offered to.</param>
+    /// <param name="seams">
+    /// The lease monitor every observed event is offered to; <c>null</c> for a read-only turn, which
+    /// has no lease to monitor (Ruling 73 — the pin and <see cref="Decide"/> are its controls).
+    /// </param>
     /// <param name="report">Where a raised seam is named.</param>
     /// <param name="sink">The optional second consumer. Null is inert.</param>
     /// <param name="cancellationToken">Bounds the drain.</param>
     internal static async Task<DrainedEvents> DrainAsync(
         AcpEventQueue queue,
         Task prompt,
-        LeaseMonitor seams,
+        LeaseMonitor? seams,
         Action<string> report,
         Action<ObservedRunEvent>? sink,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(queue);
         ArgumentNullException.ThrowIfNull(prompt);
-        ArgumentNullException.ThrowIfNull(seams);
         ArgumentNullException.ThrowIfNull(report);
 
         var kinds = new List<string>();
@@ -318,7 +611,7 @@ public static class GovernedRunHost
                 latencies.Add(latency.TotalMilliseconds);
             }
 
-            foreach (var seam in seams.Observe(run.Event))
+            foreach (var seam in seams?.Observe(run.Event) ?? [])
             {
                 report($"seam {seam.SeamId}: {seam.Path} is outside the lease");
             }
@@ -388,12 +681,38 @@ public static class GovernedRunHost
     /// reads and shell calls would leave the lane unable to see what it is editing, which is not what
     /// the control says. An edit whose locations are not stated is refused: an unstated target cannot
     /// be shown to be inside the scope, and a governance control degrades toward saying no.</para>
+    ///
+    /// <para><b>A read-only turn has no lease, and only a read is allowed</b> (Ruling 73). The
+    /// adapter's <c>kind</c> is coarse — <c>edit</c> is Write/Edit only, a notebook edit or a shell
+    /// arrives as <c>other</c> or <c>execute</c> (<c>tools.js:39, :100, :292</c>) — so on a lane with
+    /// no lease the chooser allows the read kinds (<c>read</c>, <c>search</c>, <c>fetch</c>,
+    /// <c>think</c>) and refuses everything else by name. The pin means no such request should ever
+    /// arrive; this is the second belt, reported by name so the Proof Pack's observed tool-call names
+    /// can carry it.</para>
     /// </remarks>
-    private static string Decide(JsonObject parameters, Lease lease, string? worktreeRoot, Action<string> report)
+    internal static string Decide(JsonObject parameters, Lease? lease, string? worktreeRoot, Action<string> report)
     {
+        ArgumentNullException.ThrowIfNull(parameters);
+        ArgumentNullException.ThrowIfNull(report);
+
         var options = parameters["options"] as JsonArray ?? [];
         var toolCall = parameters["toolCall"] as JsonObject;
         var kind = StringValue(toolCall?["kind"]);
+
+        if (lease is null)
+        {
+            // The pinned NAME first (the request carries it, presentation.js:63): `Agent` arrives
+            // as kind `think`, so a kind allow-list alone would let a delegation through if the pin
+            // ever failed. Then the kind: only a read is allowed.
+            var name = StringValue(toolCall?["name"]);
+            var pinned = name is not null && ReadOnlyLaneSession.DisallowedTools!.Contains(name, StringComparer.Ordinal);
+
+            return !pinned && ReadOnlyKinds.Contains(kind ?? string.Empty)
+                ? Option(options, "allow", report, $"a '{kind}' call reads")
+                : Option(
+                    options, "reject", report,
+                    $"READ-ONLY TURN: '{name ?? "unnamed"}' ({kind ?? "no-kind"}; {StringValue(toolCall?["title"]) ?? "untitled"}) was asked for on a lane opened with every write-capable tool disallowed; refused (Ruling 73 condition 2)");
+        }
 
         if (!string.Equals(kind, EditToolKind, StringComparison.Ordinal))
         {

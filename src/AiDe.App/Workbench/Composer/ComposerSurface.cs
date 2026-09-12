@@ -98,7 +98,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         };
         AutomationProperties.SetName(_compiled, "Compiled prompt — exactly what will be sent");
 
-        _lease = new TextBlock { Text = "Lease: not derivable until the draft names something", Margin = new Thickness(0, 4, 0, 0) };
+        _lease = new TextBlock { Text = ComposerCompiler.LeaseLine(null), Margin = new Thickness(0, 4, 0, 0) };
         _status = new TextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 4, 0, 0) };
 
         // Built after the status line it reports into: a browser that cannot start says so there.
@@ -170,6 +170,9 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
     /// <summary>The last thing that happened, in a sentence.</summary>
     public string Status => _status.Text;
+
+    /// <summary>The lease line as rendered: the read-only state, or the patterns (Ruling 73).</summary>
+    public string LeaseLine => _lease.Text;
 
     /// <summary>Whether <see cref="Configure"/> has run — a bound composer is not bound again (INV-0009 Phase 2).</summary>
     public bool IsConfigured => _configured;
@@ -300,32 +303,24 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
         RenderCompiledView();
 
-        try
+        var request = _gate.Send(_context, _draft, _template, out var refusal);
+        if (request is null)
         {
-            var request = _gate.Send(_context, _draft, _template, out var refusal);
-            if (request is null)
-            {
-                _status.Text = refusal is { Errors.Count: > 0 }
-                    ? string.Join("  ", refusal.Errors.Select(e => e.Message))
-                    : refusal?.Message ?? "the send was refused";
-                return null;
-            }
-
-            _lease.Text = "Lease: " + string.Join(", ", request.Lease.Exclusive);
-            _status.Text = "sent";
-            return request;
-        }
-        catch (ArgumentException error)
-        {
-            // The lease refused to be constructed because nothing was derivable. Reported, never
-            // softened into a default: an all-covering lease never seams and looks like it is
-            // working, which is the exact case the seam control refuses.
-            _status.Text =
-                "the send was refused: no write scope could be derived from this draft, so the lane "
-                + "would have no seam monitor. Reference the files or directories this run may write "
-                + $"({error.Message})";
+            _status.Text = refusal is { Errors.Count: > 0 }
+                ? string.Join("  ", refusal.Errors.Select(e => e.Message))
+                : refusal?.Message ?? "the send was refused";
             return null;
         }
+
+        // THE SENT LEASE, AS SENT (Ruling 73): the request's own absent lease is the read-only state.
+        _lease.Text = ComposerCompiler.LeaseLine(request.Lease?.Exclusive);
+
+        // Ruling 75 condition (2): a goal-block form that compiled as a Message is said so, never
+        // demoted silently. SC9's spoken announcement is CV-1's; the status line is the floor here.
+        _status.Text = _draft.Shape == ComposerShape.GoalBlock && request.Goal is null
+            ? "sent as a message — read-only"
+            : "sent";
+        return request;
     }
 
     /// <summary>
@@ -450,12 +445,11 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         _compiled.Text = compiled.Text;
 
         // THE DRAFT'S OWN SOURCE TEXT, NOT THE COMPILED PROMPT (Ruling 66) — the same symbol
-        // `ComposerSendGate.Send` derives the sent lease from, so the displayed lease and the sent
-        // lease can never disagree.
+        // `ComposerSendGate.Send` derives the sent lease from, and THE SAME TWO INPUTS it decides the
+        // shape on (Ruling 73), so the displayed lease and the sent lease can never disagree: a
+        // Message, or a goal block with no scope, reads read-only here and sends no lease there.
         var patterns = LeaseDerivation.Patterns(_draft.SourceText);
-        _lease.Text = patterns.Count == 0
-            ? "Lease: not derivable until the draft names something"
-            : "Lease: " + string.Join(", ", patterns);
+        _lease.Text = ComposerCompiler.LeaseLine(ComposerCompiler.IsReadOnly(_draft.TurnShape, patterns) ? null : patterns);
     }
 
     /// <summary>

@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.AgentPlane: 57 types, 140 members, 90% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.AgentPlane: 57 types, 141 members, 90% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.AgentPlane`
 
-**57 public types · 140 public members · 90% documented.**
+**57 public types · 141 public members · 90% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -638,6 +638,7 @@ can never do anything, which is a typo rather than an intent.
 |---|---|
 | `RunBudget SubscriptionBounded = new(Requests: int.MaxValue, Tokens: long.MaxValue)` | The declared value for "no cap chosen — bounded by the subscription instead" (Ruling 72; ADR-0033 §3), never a required number. |
 | `bool IsSubscriptionBounded` | Whether this is the declared `SubscriptionBounded` value, by field equality. |
+| `string SubscriptionBoundedDisplay = "bounded by your subscription — not measured here"` | How the absent cap reads wherever it is shown — Ruling 72 condition (1)'s words: the subscription's own limit is not readable by the product, so the state never reads as a number. One constant for the compiled block a… |
 
 ### `RunBudget SubscriptionBounded = new(Requests: int.MaxValue, Tokens: long.MaxValue)`
 
@@ -750,7 +751,8 @@ Everything a spawn attempt states about itself.
 
 *record* — `GoalBlock.cs`
 
-An authorized spawn: a complete goal block, a resolved binding, an observed subscription.
+An authorized spawn: a resolved binding, an observed subscription, and — for a write, always;
+for a read-only turn, when the turn had one — the goal block.
 
 ## `SpawnContract`
 
@@ -800,6 +802,15 @@ accident rather than read it.
 
 **The observed-auth gate fails closed.** A subscription-configured account with no
 observed status is refused, never assumed.
+
+
+
+
+
+**The goal-block precondition is the write shape's** (Ruling 73). A
+`ReadOnly` request opens a lane that cannot write, so R2's "no
+block, no spawn" has nothing to protect there and is not applied; everything else — the
+order, the identity gates, the binding — is the same for both shapes.
 
 
 

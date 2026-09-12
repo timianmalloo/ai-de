@@ -78,7 +78,13 @@ public sealed record SessionConfig(
     /// exactly like <see cref="AttachEnabled"/>: a file written before it existed has no key for it,
     /// and <see cref="SessionConfigStore.Load"/> must keep reading such a file.</para>
     /// </remarks>
-    public int FanOutCeiling { get; init; } = 2;
+    public int FanOutCeiling { get; init; } = DefaultFanOutCeiling;
+
+    /// <summary>
+    /// The ruled per-session default for <see cref="FanOutCeiling"/> — CT19's T1 cap, 2 — named
+    /// once so the New Session sheet prefills what an unset file reads (derive, don't store; DM7).
+    /// </summary>
+    public const int DefaultFanOutCeiling = 2;
 
     /// <summary>
     /// An enforced request/token ceiling for this session, or <c>null</c> — the session is bounded by

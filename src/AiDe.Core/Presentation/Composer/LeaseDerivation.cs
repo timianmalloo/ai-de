@@ -22,10 +22,15 @@ namespace AiDe.Core.Presentation.Composer;
 /// like it is working". <see cref="Derive"/> re-runs C17's own oracle against the lease it just
 /// built and refuses rather than returning one that cannot discriminate.</para>
 ///
-/// <para><b>Nothing derivable means no lease, and no lease means no run.</b> The empty case is
-/// returned as an empty pattern list so the caller constructs <see cref="Lease"/> with it and the
-/// constructor's own refusal fires. <b>That exception failing closed is the control</b>, and
-/// catching it into a default is how the control is switched off while looking present.</para>
+/// <para><b>Nothing derivable means no lease, and no lease means no write capability</b>
+/// (Ruling 73, narrowing the earlier <i>no lease means no run</i>). A turn whose source text
+/// derives nothing runs <b>read-only</b> — its lane opened with every write-capable tool
+/// disallowed, no lease derived and none required — and the send gate decides that shape from
+/// <see cref="Patterns"/> before ever calling <see cref="Derive"/>. For a write-shaped turn the
+/// empty case is still returned as an empty pattern list so the caller constructs
+/// <see cref="Lease"/> with it and the constructor's own refusal fires. <b>That exception failing
+/// closed is the control</b>, and catching it into a default is how the control is switched off
+/// while looking present.</para>
 /// </remarks>
 public static class LeaseDerivation
 {

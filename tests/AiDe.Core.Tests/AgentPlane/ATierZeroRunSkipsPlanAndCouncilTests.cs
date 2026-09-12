@@ -61,6 +61,7 @@ public sealed class ATierZeroRunSkipsPlanAndCouncilTests
         var spawn = SpawnContract.Authorize(
             new SpawnRequest(block, "claude-code", "sonnet", "max-personal", new ObservedAuthStatus("account", "max", "Claude Max")),
             Registry());
+        Assert.NotNull(spawn.Goal);
         Assert.Equal("T0", spawn.Goal.Tier);
 
         var store = new InMemoryWatcherObservationStore();

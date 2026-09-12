@@ -38,6 +38,13 @@ public sealed record RunBudget(int Requests, long Tokens)
     /// constant is exactly this predicate.
     /// </remarks>
     public bool IsSubscriptionBounded => this == SubscriptionBounded;
+
+    /// <summary>
+    /// How the absent cap reads wherever it is shown — Ruling 72 condition (1)'s words: the
+    /// subscription's own limit is not readable by the product, so the state never reads as a
+    /// number. One constant for the compiled block and the sheet (DM7).
+    /// </summary>
+    public const string SubscriptionBoundedDisplay = "bounded by your subscription — not measured here";
 }
 
 /// <summary>
@@ -126,15 +133,27 @@ public sealed record ObservedAuthStatus(string Kind, string? Plan, string? Label
 /// <param name="Model">The requested model.</param>
 /// <param name="AccountLabel">The requested account.</param>
 /// <param name="ObservedAuth">What the adapter reported, or <c>null</c> when nothing was observed.</param>
+/// <param name="ReadOnly">
+/// Ruling 73's read-only shape: the lane will hold no write-capable tool and no lease, so R2's
+/// goal-block precondition — a rule about lanes that can write — is not applied; the identity
+/// gates are. False by default, so every caller that existed before the ruling keeps R2 without
+/// saying so. The host derives it from the request's missing lease — the same fact that picks the
+/// lane's pin — never from a claim.
+/// </param>
 public sealed record SpawnRequest(
     GoalBlock? Goal,
     string EngineId,
     string Model,
     string AccountLabel,
-    ObservedAuthStatus? ObservedAuth);
+    ObservedAuthStatus? ObservedAuth,
+    bool ReadOnly = false);
 
-/// <summary>An authorized spawn: a complete goal block, a resolved binding, an observed subscription.</summary>
-public sealed record Spawn(GoalBlock Goal, LaneBinding Binding, ObservedAuthStatus ObservedAuth);
+/// <summary>
+/// An authorized spawn: a resolved binding, an observed subscription, and — for a write, always;
+/// for a read-only turn, when the turn had one — the goal block.
+/// </summary>
+/// <param name="Goal">Complete for a write. <c>null</c> only for a read-only Message (Ruling 73).</param>
+public sealed record Spawn(GoalBlock? Goal, LaneBinding Binding, ObservedAuthStatus ObservedAuth);
 
 /// <summary>
 /// The spawn precondition — spec R2 ("no block, no spawn"), §4.2's terms-of-service prohibition, and
@@ -204,6 +223,11 @@ public static class SpawnContract
     /// <para><b>The observed-auth gate fails closed.</b> A subscription-configured account with no
     /// observed status is refused, never assumed.</para>
     ///
+    /// <para><b>The goal-block precondition is the write shape's</b> (Ruling 73). A
+    /// <see cref="SpawnRequest.ReadOnly"/> request opens a lane that cannot write, so R2's "no
+    /// block, no spawn" has nothing to protect there and is not applied; everything else — the
+    /// order, the identity gates, the binding — is the same for both shapes.</para>
+    ///
     /// <para><b>And the observed account is checked, when there is something to check it against.</b>
     /// The observed label is a display string the adapter chooses ("Claude Max"); the configured
     /// label is an operator's own name for a login ("max-personal"). Neither determines the other, so
@@ -236,7 +260,10 @@ public static class SpawnContract
                 + "'claude-code' engine instead; there is no direct-api entry while the subscription stands");
         }
 
-        RequireGoalBlock(request.Goal);
+        if (!request.ReadOnly)
+        {
+            RequireGoalBlock(request.Goal);
+        }
 
         var binding = registry.Bind(request.EngineId, request.Model, request.AccountLabel);
 
@@ -244,7 +271,7 @@ public static class SpawnContract
         {
             // An API-key provider has nothing for the observed-subscription gate to check. It is
             // disabled by default and reaches here only where an operator turned it on deliberately.
-            return new Spawn(request.Goal!, binding, request.ObservedAuth ?? new ObservedAuthStatus("apiKey", null, null));
+            return new Spawn(request.Goal, binding, request.ObservedAuth ?? new ObservedAuthStatus("apiKey", null, null));
         }
 
         if (request.ObservedAuth is not { } observed)
@@ -275,7 +302,7 @@ public static class SpawnContract
                 + "different account than the lane was bound to, and the work would bill and rank against that one");
         }
 
-        return new Spawn(request.Goal!, binding, observed);
+        return new Spawn(request.Goal, binding, observed);
     }
 
     /// <summary>Throws a single refusal naming every field the block is missing.</summary>

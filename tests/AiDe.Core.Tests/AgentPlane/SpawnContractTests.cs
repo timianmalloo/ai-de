@@ -233,7 +233,7 @@ public sealed class SpawnContractTests
         Assert.Equal("sonnet", spawn.Binding.Model);
         Assert.Equal("max-personal", spawn.Binding.Account.Label);
         Assert.Equal("Claude Max", spawn.ObservedAuth.Label);
-        Assert.Equal("T1", spawn.Goal.Tier);
+        Assert.Equal("T1", spawn.Goal?.Tier);
     }
 
     /// <summary>A quota-degraded account still spawns; the pressure travels with the binding.</summary>
@@ -312,6 +312,7 @@ public sealed class SpawnContractTests
             Request(Complete() with { Budget = RunBudget.SubscriptionBounded }, auth: Subscription()),
             SubscriptionRegistry());
 
+        Assert.NotNull(spawn.Goal);
         Assert.True(spawn.Goal.Budget!.IsSubscriptionBounded);
     }
 
@@ -366,5 +367,77 @@ public sealed class SpawnContractTests
             new ProviderRegistry([new ProviderRow("anthropic", ProviderAuth.Subscription, [account])]));
 
         Assert.Equal("Anything At All", spawn.ObservedAuth.Label);
+    }
+
+    // ------------------------------------------------------------ the read-only shape (Ruling 73)
+
+    /// <summary>
+    /// Ruling 73: a Message carries no goal block, and a read-only spawn — every write-capable tool
+    /// disallowed on its lane — is authorized without one. R2's "no block, no spawn" is a rule about
+    /// lanes that can write.
+    /// </summary>
+    [Fact]
+    public void AReadOnlySpawnWithNoGoalBlockIsAuthorized()
+    {
+        var spawn = SpawnContract.Authorize(
+            new SpawnRequest(null, "claude-code", "sonnet", "max-personal", Subscription(), ReadOnly: true),
+            SubscriptionRegistry());
+
+        Assert.Null(spawn.Goal);
+        Assert.Equal("claude-code", spawn.Binding.EngineId);
+        Assert.Equal("Claude Max", spawn.ObservedAuth.Label);
+    }
+
+    /// <summary>A scopeless goal block runs read-only too, and its block travels on the spawn.</summary>
+    [Fact]
+    public void AReadOnlySpawnWithAGoalBlockCarriesIt()
+    {
+        var spawn = SpawnContract.Authorize(
+            new SpawnRequest(Complete(), "claude-code", "sonnet", "max-personal", Subscription(), ReadOnly: true),
+            SubscriptionRegistry());
+
+        Assert.Equal("T1", spawn.Goal?.Tier);
+    }
+
+    /// <summary>
+    /// The control against over-narrowing: the write shape is the default, and it still requires the
+    /// block — an absent block on a write-shaped spawn is R2's refusal, unchanged.
+    /// </summary>
+    [Fact]
+    public void AWriteSpawnWithNoGoalBlockIsStillRefusedByField()
+    {
+        var error = Assert.Throws<AgentPlaneException>(
+            () => SpawnContract.Authorize(
+                new SpawnRequest(null, "claude-code", "sonnet", "max-personal", Subscription()),
+                SubscriptionRegistry()));
+
+        Assert.Equal(AgentPlaneErrorCodes.GoalBlockIncomplete, error.Code);
+        Assert.False(new SpawnRequest(null, "e", "m", "a", null).ReadOnly);
+    }
+
+    /// <summary>
+    /// The identity half is not waived by the shape: the ToS refusal and the observed-auth gate
+    /// fire for a read-only spawn exactly as for a write.
+    /// </summary>
+    [Fact]
+    public void TheIdentityGatesStillFireForAReadOnlySpawn()
+    {
+        var tos = Assert.Throws<AgentPlaneException>(
+            () => SpawnContract.Authorize(
+                new SpawnRequest(null, ProviderRegistry.DirectApiEngineId, "sonnet", "max-personal", Subscription(), ReadOnly: true),
+                SubscriptionRegistry()));
+        Assert.Equal(AgentPlaneErrorCodes.DirectApiRefusedByToS, tos.Code);
+
+        var unrecorded = Assert.Throws<AgentPlaneException>(
+            () => SpawnContract.Authorize(
+                new SpawnRequest(null, "claude-code", "sonnet", "max-personal", null, ReadOnly: true),
+                SubscriptionRegistry()));
+        Assert.Equal(AgentPlaneErrorCodes.ObservedAuthNotRecorded, unrecorded.Code);
+
+        var apiKey = Assert.Throws<AgentPlaneException>(
+            () => SpawnContract.Authorize(
+                new SpawnRequest(null, "claude-code", "sonnet", "max-personal", new ObservedAuthStatus("apiKey", null, null), ReadOnly: true),
+                SubscriptionRegistry()));
+        Assert.Equal(AgentPlaneErrorCodes.ObservedAuthNotSubscription, apiKey.Code);
     }
 }

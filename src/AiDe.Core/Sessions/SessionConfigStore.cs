@@ -1,4 +1,5 @@
 using System.Text.Json;
+using AiDe.Core.AgentPlane;
 using System.Text.Json.Nodes;
 
 namespace AiDe.Core.Sessions;
@@ -36,12 +37,29 @@ public sealed class SessionConfigStore
     public string SessionId { get; }
 
     /// <summary>Creates the session: writes <c>session.json</c> and emits <c>session.open</c>.</summary>
+    /// <param name="fanOutCeiling">The session's fan-out ceiling (Ruling 56); <c>null</c> writes the ruled default.</param>
+    /// <param name="budgetCap">An enforced cap, or <c>null</c> — bounded by the subscription (Ruling 72).</param>
+    /// <param name="defaultTaskClass">The session's default task class; <c>null</c> writes <c>free-form</c> (Ruling 72).</param>
+    /// <remarks>The sheet's three decisions at create (Rulings 56, 63, 72); absent, the record's own defaults apply.</remarks>
     public SessionConfig Create(
-        string name, string workspaceId, IReadOnlyList<string> enabledBackends, DateTimeOffset now)
+        string name,
+        string workspaceId,
+        IReadOnlyList<string> enabledBackends,
+        DateTimeOffset now,
+        int? fanOutCeiling = null,
+        RunBudget? budgetCap = null,
+        string? defaultTaskClass = null)
     {
         lock (_gate)
         {
             var config = new SessionConfig(SessionId, name, workspaceId, now, [.. enabledBackends]);
+            config = config with
+            {
+                FanOutCeiling = fanOutCeiling ?? config.FanOutCeiling,
+                BudgetCap = budgetCap,
+                DefaultTaskClass = defaultTaskClass ?? config.DefaultTaskClass,
+            };
+
             WriteConfigUnsafe(config);
             AppendEventUnsafe(SessionEventKinds.Open, config, now);
             return config;

@@ -66,8 +66,18 @@ public sealed class TheComposerRendersItsFieldLevelErrorsTests
             {
                 var surface = Build(root, attachEnabled: false);
 
-                // The goal-block shape with nothing filled in: every one of the six fields blocks.
+                // The goal-block form with nothing filled in is an empty prompt (Ruling 75 makes a
+                // blank Goal a Message, and a Message of six empty headings is not a task).
                 surface.Draft.SwitchTo(ComposerShape.GoalBlock);
+
+                Assert.Null(surface.Send());
+                Assert.Equal(0, surface.Gate.SendCount);
+                Assert.Equal("an empty prompt is not a task", surface.Status);
+
+                // A goal block that EXISTS (Goal and Done when written) with the other four blank:
+                // every remaining field blocks, by name, on screen.
+                surface.Draft.SetGoalValue(GoalBlockFields.GoalKey, "Rename the helper.");
+                surface.Draft.SetGoalValue(GoalBlockFields.DoneWhenKey, "It compiles.");
 
                 Assert.Null(surface.Send());
                 Assert.Equal(0, surface.Gate.SendCount);
@@ -79,10 +89,18 @@ public sealed class TheComposerRendersItsFieldLevelErrorsTests
                     Assert.Contains(field, rendered, StringComparison.Ordinal);
                 }
 
-                // And it is the CONTRACT'S OWN message that is on screen, not a paraphrase the
-                // surface invented — the same sentence the spawn contract would refuse with.
-                var contractMessage = SpawnContract.Validate(surface.Draft.ToGoalBlock())[0].Message;
-                Assert.Contains(contractMessage, rendered, StringComparison.Ordinal);
+                // The not-in-scope gap is Ruling 75's one sentence, on screen verbatim...
+                Assert.Contains(ComposerCompiler.GoalBlockNeedsNotInScope, rendered, StringComparison.Ordinal);
+
+                // ...and every other gap is the CONTRACT'S OWN message, not a paraphrase the surface
+                // invented — the same sentence the spawn contract would refuse with.
+                var contractErrors = SpawnContract.Validate(surface.Draft.ToGoalBlock());
+                foreach (var error in contractErrors.Where(e => e.Field != GoalBlockFields.NotInScopeKey))
+                {
+                    Assert.Contains(error.Message, rendered, StringComparison.Ordinal);
+                }
+
+                Assert.Equal(4, contractErrors.Count);
             }
             finally
             {

@@ -6581,6 +6581,32 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Status:** `partially-controlled` - reported and the branch removes the stale marker; the
   mechanism is unchanged.
 
+### DC-nnn — A security control written for one shape is applied to every shape, and refuses work it cannot protect
+
+- **Shape:** a control derived for a shape that carries a risk (a lane that can write needs a lease,
+  so the seam monitor can discriminate) is applied by the gate to every instance of the broader type
+  (every send), the shape without the risk included. The refusal is correct by the control's letter
+  and protects nothing; the operator experiences the constitution as "too restrictive in
+  straightforward scenarios" (Ruling 73 (c): *a security control gates only the shape it protects*).
+- **Signature:** a refusal whose remedy names a resource the operation does not use (*"reference the
+  files this run may write"* on a question); a doc line *"no X means no run"* where X matters for a
+  subset; a test asserting the refusal on the shape without the risk; a control whose name says the
+  broader type (*the lane's pin*) rather than the shape (*the lane that can write*).
+- **Instance (2026-09-11, CV-0):** C17's lease gate on every send — `ComposerSendGate.Send` called
+  `LeaseDerivation.Derive` for a free-form Message, `Lease`'s constructor threw
+  (`LeaseAndSeams.cs:47`), and the surface read *"no write scope could be derived… Reference the files
+  or directories this run may write"*. Fixed by projecting the shape first (`ComposerDraft.TurnShape`,
+  `ComposerCompiler.IsReadOnly`), applying the gate to the write shape only, and removing the
+  capability from the read-only shape instead (`GovernedRunHost.ReadOnlyLaneSession`).
+- **Control:** the test pair in `tests/AiDe.App.Tests/Composer/TheReadOnlyTurnNeedsNoLeaseTests.cs` —
+  `AMessageWithNoMentionDerivesNoLeaseAndIsNotRefused` (red on `main`) beside
+  `AGoalBlockWithADerivedScopeStillTakesTheLeaseGateUnchanged` (green throughout): a control that
+  fires on both shapes is the signature. The Security lens's rule on every finding — *name the shape
+  the control protects; a shape without the risk is exempt by construction; a finding that names no
+  shape is returned, not applied* — is prose until the persona audit gains the check (a finding for
+  the pack).
+- **Status:** `controlled` by the pair; the lens rule is `partially-controlled`.
+
 ## 5. What this note does not decide
 
 The CLI home for `aide compile fold` / `aide session purge` (`/design-slice`'s call; the plan

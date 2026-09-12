@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation.Sessions: 14 types, 79 members, 98% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation.Sessions: 14 types, 84 members, 98% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation.Sessions`
 
-**14 public types · 79 public members · 98% documented.**
+**14 public types · 84 public members · 98% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -153,12 +153,20 @@ this type at all.
 
 
 
-**`TaskClass` has no default, deliberately (Ruling 19).**
-`GovernedRunRequest`'s own comment states the reason: *a defaulted class ranks in the
-wrong cohort* — that is DC-110, and a hidden default would make the exit run
-`IsComparable == false` on its own. It is nullable here and `CanCreate` is false
-until the operator names one; there is no overload, no optional parameter and no fallback that
-could supply it.
+**`TaskClass` opens as `free-form` — the operator's declared default,
+visible as a row and changeable (Ruling 72 (b), superseding Ruling 19's "no default" for the
+session default; DC-110 was about a *guessed* class). It stays nullable so a cleared class
+still blocks `CanCreate`.
+
+
+
+
+
+The budget is a state, and a cap is optional (Ruling 72 (a)).** `BudgetCap`
+is `null` — *bounded by your subscription* — until the operator enforces one with
+`EnforceCap`; no number is ever required. `FanOutCeiling` is prefilled
+from the session's ruled default (Ruling 56). **No tier is on the sheet** (Ruling 63): tier is
+compiled, never typed.
 
 
 
@@ -176,14 +184,19 @@ the "Start from template" row, which would create a back-edge from the composer 
 | `string WorkspaceRoot { get; }` | The bound workspace's root. |
 | `string WorkspaceId { get; }` | The bound workspace's key. |
 | `string Name { get; set; }` | The operator-facing session name. Defaults to a date slug (A4.3). |
-| `string? TaskClass { get; set; }` | The kind of work. **Required, with no default** — see the type's remarks (Ruling 19). |
-| `IReadOnlyList<TaskClassOption> TaskClassOptions` | The classes the sheet offers, so the operator CHOOSES one rather than spelling it (RQ1). |
-| `bool TaskClassAnswered` | Whether the required, undefaulted task class has been answered (RQ4). |
+| `string? TaskClass { get; set; } = TaskClasses.FreeForm` | The session's default task class — `free-form` from open, changeable (Ruling 72 (b)); see the type's remarks. |
+| `IReadOnlyList<TaskClassOption> TaskClassOptions` | The classes the sheet offers, so the operator CHOOSES one rather than spelling it (RQ1): `free-form` first — the declared default, a row like any other — then the provisional vocabulary. |
+| `int? FanOutCeiling { get; set; } = SessionConfig.DefaultFanOutCeiling` | The most sub-agents any turn in this session may convene (Ruling 56); prefilled from the ruled default. `null` is "not a number was written" — the platform's absent value, so a blocked reason can say so rather than re… |
+| `RunBudget? BudgetCap { get; private set; }` | An enforced request/token cap, or `null` — bounded by the subscription (Ruling 72 (a)). Set through `EnforceCap`, cleared through `ClearCap`; never typed as a required number. |
+| `string BudgetDisplay` | What the sheet says about the budget: the state (Ruling 72 condition (1)), or the cap the operator enforced. |
+| `void EnforceCap(RunBudget cap)` | Enforces a cap on this session — the operator's deliberate act (Ruling 72 (a)). |
+| `void ClearCap()` | Removes the cap: the session is bounded by the subscription again. |
+| `bool TaskClassAnswered` | Whether the task class is answered (RQ4) — true from open (Ruling 72), false only for a class cleared programmatically. |
 | `IReadOnlyList<AgentBackendRow> Backends` | The agent backends on offer: every catalog engine whose provider the registry carries, once per configured account, with the registry's live health. |
 | `IReadOnlyList<string> EnabledBackends` | The backends the operator has enabled for this session. |
 | `IReadOnlyList<string> RoutableBackends` | The enabled backends the router may bind — `needs-login` excluded (Ruling 20's "not cut" half). |
 | `IReadOnlyList<string> RoutableAmong(IEnumerable<string> enabled, ProviderRegistry registry)` | The backends in  the router may bind against — `needs-login` excluded (§4.3). |
-| `string LeaseDisplay = "not derivable until a goal block exists"` | What the sheet says about the lease. **A sentence, never a `Lease`** (Ruling 42). |
+| `string LeaseDisplay =` | What the sheet says about the lease. **A sentence, never a `Lease`** (Ruling 42; Ruling 73). |
 | `bool CanCreate` | Whether `Create` would succeed. |
 | `string? BlockedReason` | Why `Create` would refuse, or null when it would not. |
 | `void SetBackendEnabled(string engineId, bool enabled)` | Enables or disables a backend for this session. |
@@ -204,19 +217,28 @@ the "Start from template" row, which would create a back-edge from the composer 
 
 ### `IReadOnlyList<TaskClassOption> TaskClassOptions`
 
-The classes the sheet offers, so the operator CHOOSES one rather than spelling it (RQ1).
+The classes the sheet offers, so the operator CHOOSES one rather than spelling it (RQ1):
+`free-form` first — the declared default, a row like any other — then the provisional
+vocabulary.
 
 **Remarks.** Exposed here rather than reached for by the view, so the sheet's vocabulary and the sheet's
 rules are read from one object. The list is provisional and says so on
-`TaskClassVocabulary`; nothing in it is preselected.
+`TaskClassVocabulary`; the first row is preselected by the dialog because it is
+what `TaskClass` already holds, never the other way round.
+
+### `void EnforceCap(RunBudget cap)`
+
+Enforces a cap on this session — the operator's deliberate act (Ruling 72 (a)).
+
+**Throws `ArgumentOutOfRangeException`.** A zero or negative cap: the spawn contract's own rule — a spawn that can do nothing is a typo, not a budget — applied where the number is typed rather than at the first run.
 
 ### `bool TaskClassAnswered`
 
-Whether the required, undefaulted task class has been answered (RQ4).
+Whether the task class is answered (RQ4) — true from open (Ruling 72), false only for a
+class cleared programmatically.
 
 **Remarks.** A visible STATE rather than an asterisk, and read by the view as a word and a glyph so it is
-never carried by colour alone. It flips on the answer, which is what makes "why is this
-mandatory" answerable by looking rather than by asking twice.
+never carried by colour alone.
 
 ### `IReadOnlyList<AgentBackendRow> Backends`
 
@@ -239,13 +261,16 @@ choices; a reopened or restored session derives it from the config's
 now (INV-0009 Phase 2). A second spelling of "routable" in the binder is the shape that lets
 a session bind on reopen to an engine the sheet would have refused.
 
-### `string LeaseDisplay = "not derivable until a goal block exists"`
+### `string LeaseDisplay =`
 
-What the sheet says about the lease. **A sentence, never a `Lease`** (Ruling 42).
+What the sheet says about the lease. **A sentence, never a `Lease`** (Ruling 42;
+Ruling 73).
 
 **Remarks.** R19 asks the sheet to show the lease, and at sheet time there is nothing to derive one
-from: a lease is the goal block's `lease.exclusive` (spec §14.3), and the block belongs
-to the composer. The honest display is therefore the absence itself.
+from: a lease is derived per prompt from the operator's `@mentions` in a goal block
+(Rulings 42, 66), and a prompt that names no write scope — the default conversation — runs
+read-only with no lease at all (Ruling 73). The honest display is therefore the rule, not a
+value.
 
 
 

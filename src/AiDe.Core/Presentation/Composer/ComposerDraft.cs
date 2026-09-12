@@ -15,6 +15,27 @@ public enum ComposerShape
     Template,
 }
 
+/// <summary>
+/// The compiled turn's shape — Ruling 75 and Addendum D §A9's <b>P</b>: a goal block exists only
+/// when Goal and Done when are both non-blank; everything else compiles as a Message.
+/// </summary>
+/// <remarks>
+/// <b>A projection over the draft, never a stored decoration</b> (ADR-0033). It is distinct from
+/// <see cref="ComposerShape"/>, which is the <i>editor's</i> form: a goal-block form with a blank
+/// Goal is a Message, and a free-form or template draft is a Message until the compile step reads
+/// a template's structure (Addendum D's <c>structure_source: template</c>, CV-2). The turn's
+/// <i>access</i> — read-only or write — is the second projection, <see cref="ComposerCompiler.IsReadOnly"/>,
+/// which reads this shape and the derived lease patterns together (Ruling 73).
+/// </remarks>
+public enum TurnShape
+{
+    /// <summary>No goal block: the turn runs read-only whatever it mentions (§A9 R0 — lease ≠ tier).</summary>
+    Message,
+
+    /// <summary>Goal and Done when are both written: the six-field block is validated and sent.</summary>
+    GoalBlock,
+}
+
 /// <summary>One attachment, as it will appear in the prompt and nowhere else.</summary>
 /// <param name="DisplayPath">
 /// What the fence header names: a repository-relative path for an inside-workspace file, the
@@ -86,6 +107,19 @@ public sealed class ComposerDraft
         ComposerShape.Template => string.Join('\n', _templateValues.Values.SelectMany(values => values)),
         _ => throw new ArgumentOutOfRangeException(nameof(Shape), Shape, "unknown composer shape"),
     };
+
+    /// <summary>
+    /// The compiled turn's shape (Ruling 75; Addendum D §A9's <b>P</b>): a goal block only when the
+    /// editor is on the goal-block form <i>and</i> Goal and Done when are both non-blank.
+    /// </summary>
+    /// <remarks>
+    /// Blank is whitespace, exactly as <see cref="SpawnContract.Validate"/> reads a field — so the
+    /// shape and the validator can never disagree about whether a line was written.
+    /// </remarks>
+    public TurnShape TurnShape =>
+        Shape == ComposerShape.GoalBlock && Written(GoalBlockFields.GoalKey) && Written(GoalBlockFields.DoneWhenKey)
+            ? TurnShape.GoalBlock
+            : TurnShape.Message;
 
     /// <summary>The retained free-form text.</summary>
     public string FreeFormText => _freeForm;
@@ -186,9 +220,12 @@ public sealed class ComposerDraft
             int.TryParse(Text(GoalBlockFields.FanOutCapKey), out var cap) ? cap : null,
             ParseBudget(Text(GoalBlockFields.BudgetKey)));
 
-        string? Text(string field) =>
-            _goalValues.TryGetValue(field, out var value) && !string.IsNullOrWhiteSpace(value) ? value : null;
+        string? Text(string field) => Written(field) ? _goalValues[field] : null;
     }
+
+    /// <summary>Whether a goal-block field holds anything but whitespace — the validator's own reading of "written".</summary>
+    private bool Written(string field) =>
+        _goalValues.TryGetValue(field, out var value) && !string.IsNullOrWhiteSpace(value);
 
     /// <summary>
     /// Reads a budget written as <c>requests,tokens</c> — the two native number inputs, joined.
