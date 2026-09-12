@@ -1,0 +1,4 @@
+{"agent": "claude-conductor", "at": 1789239804.38896, "kind": "claim", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 1, "session": "claude-conductor-addendum-c", "ttl": 300.0, "wi": "X-2"}
+{"agent": "claude-conductor", "at": 1789239847.246442, "kind": "release", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 2, "session": "claude-conductor-addendum-c", "wi": "X-2"}
+{"agent": "claude-conductor", "at": 1789240312.185083, "kind": "claim", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 3, "session": "claude-conductor-addendum-c", "ttl": 300.0, "wi": "X-2"}
+{"agent": "claude-conductor", "at": 1789240312.3166308, "kind": "release", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 4, "session": "claude-conductor-addendum-c", "wi": "X-2"}

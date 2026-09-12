@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 82 · partially-controlled 61 · uncontrolled 20
+**Status counts:** controlled 84 · partially-controlled 63 · uncontrolled 21
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -500,7 +500,6 @@ for both or split.*
   corollary from this instance: **a stand-in for a configuration is not evidence about that
   configuration** — if the answer decides whether a feature exists, reproduce the real thing.
 - **Status:** `controlled`
-
 
 ### DC-015 — A success check coarser than the claim it is standing in for
 - **Signature:** a verification passes, and it would also have passed had the specific thing it
@@ -1744,7 +1743,6 @@ for both or split.*
   `AReopenedSessionIsShownAndItsComposerIsBound` (exit 32 → 0) and
   `ARestoredSessionDocumentIsRevivedAndBoundAtWorkspaceOpen` (exit 34 → 0).
 
-
 ### DC-041 — Two "kind" fields with different granularity, and the coarse one shown where the fine was meant
 - **Signature:** a domain has both a fine type (`has_type` → `azure-resource`, `table`, `class`) and a coarse dimensional class (`node_kind` → `source` vs `knowledge`), and a reader/label displays the coarse one where a user expects the fine one — a bicep resource reads "kind: knowledge".
 - **Why it survives:** both fields are individually correct and individually tested; the overview path uses the fine one and the describe/reader path uses the coarse one, so no single test compares the two surfaces (E2E-D: component tests that can't see each other).
@@ -1818,7 +1816,6 @@ for both or split.*
   The IPC operation names, the join projection's predicates and the canvas's node kinds are all
   keyed this way; only extraction routing is asserted so far.
 - **Status:** `partially-controlled`
-
 
 - **Instance, 2026-08-31 — the compaction check.** `WorkspaceCore.CheckCompactionNeeded` was complete, tested, and called by nothing: no shell, no daemon, no command. A workspace could pass the generation threshold, slow measurably past its refresh budget, and the diagnosis would sit in a method nobody invoked. Found while answering "why is the store growing", not by any test. MEASURED on the user's workspace: 2 generations per scope against a threshold of 8 — under the trigger, and yet **half the store (23,672 of 47,809 assertions) was already superseded**, because the threshold is tuned for LATENCY and the symptom people see is SIZE. The daemon now calls it at startup, which is the moment the store is open, no session is in progress, and an operator is looking. **The residual is the threshold itself:** nothing yet triggers on size, and reclaiming space needs `retain: 1`, which drops the diagnostic history the default keeps. That is a decision, not an oversight, and it is still open.
 
@@ -2444,7 +2441,6 @@ for both or split.*
   test fails on any new offender, and the whole of it was observed working from a real linked
   worktree in this repository
 
-
 ### DC-072 — Ambient input handler competes with a focused capture surface
 - **Signature:** a window-level key handler — a tunnelling `PreviewKeyDown`, an ancestor
   `InputBinding`/`KeyBinding`, or a modal key-capture — acts on keys a **focused capture surface**
@@ -2630,7 +2626,6 @@ for both or split.*
   tree is safe; modifying a listed one is not** — opposite rules, easily mistaken for one. The
   upstream fix (teaching the pack's tools one definition of "the repo") is deferred, not rejected.
 - **Status:** `controlled`
-
 
 ### DC-076 — A fix's test set is drawn from the defect report, so the reported case is the only one repaired
 
@@ -4709,7 +4704,6 @@ for both or split.*
   two-doors asymmetry. Not upgraded to `controlled`, because each of those is a real case in which an
   agent that produced evidence is still told it produced none.
 
-
 ### DC-116 — The conductor briefs an agent with a repo fact asserted from memory, dressed as verified
 
 - **Shape:** a coordinator hands a delegate a factual premise about the repository — a file that
@@ -5005,7 +4999,6 @@ for both or split.*
   fails when the shape recurs, and the next Windows-only "all green" will read exactly as
   convincing as this one did
 
-
 ### DC-120 — A node runs a repo-wide destructive command while sibling nodes are live, and a node is unprotected until its first commit
 
 - **Shape:** a fan-out gives each node its own worktree, which is the containment boundary. One node
@@ -5051,7 +5044,6 @@ for both or split.*
   repository nothing yet stops a node typing a repo-wide destructive command, and the briefs that
   would carry clause (a) are written fresh each time
 
-
 ### DC-121 — A brief's exclusion is scoped by PATH when its purpose was a KIND, and silently suppresses an unrelated obligation
 
 - **Shape:** a coordinator writes a negative instruction into a node's brief to prevent one specific
@@ -5089,7 +5081,6 @@ for both or split.*
 - **Status:** `uncontrolled` — briefs are written fresh each time and nothing checks their exclusion
   lists against the artifact registry. The one thing working here is the standing instruction to
   report anything in a brief that looks wrong, which is what surfaced it
-
 
 ### DC-122 — A comment declares a security property the code does not have, and is then cited as evidence of that property
 
@@ -5137,7 +5128,6 @@ for both or split.*
 - **Status:** `uncontrolled` — the instance is corrected (the comment now states what the line does)
   and the two measured defects are recorded as their own next step, but nothing fails when a comment
   claims a property no test asserts
-
 
 ### DC-123 — Containment exists one ring in and is absent one ring out, and the leak is unobservable from inside the harness that leaks it
 
@@ -5246,7 +5236,6 @@ for both or split.*
   this leak is **episodic rather than monotonic**, and every statement about its frequency,
   including the conductor's, is modelled rather than observed
 
-
 ### DC-125 — A call that ESTABLISHES a safety property reports failure by return value, and the return value is discarded
 
 - **Shape:** a safety property — containment, a lock, a permission drop, a limit — is established by
@@ -5289,7 +5278,6 @@ for both or split.*
   `bool`-returning establish-a-property call can still be written in statement position, and the
   control that would catch it — an analyzer or a gate over interop call sites — is named here and
   not built
-
 
 ### DC-126 — A gate verifies that an instruction is DOCUMENTED, not that it is FOLLOWABLE, and the capability it names does not exist
 
@@ -5335,7 +5323,6 @@ for both or split.*
 - **Status:** `uncontrolled` — the gap is measured and recorded, the gate is unchanged, and the
   channel is still unset, so the next slice will produce the same zero observations with the same
   green gate
-
 
 ### DC-127 — A fixture written by the same mind as the reader shares its blind spot, so a reader tested only against its fixture is tested against its own assumption
 
@@ -5416,7 +5403,6 @@ for both or split.*
   repository carries a byte comparison**, and the plan-authoring habit that produced the weak form is
   unchanged
 
-
 ### DC-129 — A launch that detaches returns success immediately, so the caller measures a run that has not happened
 
 - **Shape:** a caller invokes an executable and waits on **the call** rather than on **the process**. If
@@ -5456,7 +5442,6 @@ for both or split.*
 - **Status:** `uncontrolled` — the instance is understood and the constraint is written into the
   exit-run harness's brief, but nothing in the repository fails when a caller waits on the call
   instead of the process, and the next harness author inherits only prose
-
 
 ### DC-130 — Adjacent nodes each build one end of a seam that no clause assigned, and every node passes
 
@@ -5506,7 +5491,6 @@ for both or split.*
 - **Status:** `uncontrolled` — the instance is being repaired by a node ruled into existence for it,
   and the control is stated, but **no plan in this repository currently carries an edge-ownership
   list**, and the next slice decomposed the same way would produce the same gap
-
 
 ---
 
@@ -5866,7 +5850,6 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 > `main`. `verify-defect-register.py` passed in both, because it enforces one-entry-per-class
 > **within a tree**. The tiebreak was *which tree is `main`*, which carries no information about
 > merit. **DC-013 recurrence 5.**
-
 
 - **Shape:** a .NET event is raised over a multicast delegate, and an exception in one handler
   **stops the invocation list** — later subscribers never run. When the raiser is across an interop
@@ -6911,86 +6894,6 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Status:** `uncontrolled` — the fill-from-record step is prose; the mutation table is generated,
   the counts are not.
 
-### DC-nnn (CV-1 a) — A name given to a code-built Style or Template is not in any name scope, and the first trigger that needs it throws inside the render
-
-*Id left for the conductor to allocate at the join (the plan's shared-surface rule: the register is append-only, ids are allocated at each join).*
-
-- **Shape:** a `Style` or `ControlTemplate` is built in code (`FrameworkElementFactory`, `Setter`,
-  `Trigger`) and a part is named — `BeginStoryboard.Name`, a factory's part name — the way XAML's
-  `x:Name` is. XAML registers that name in the Style's or Template's `INameScope`; code does not.
-  Nothing fails at construction, at bind, or at the first render: the name is only resolved by the
-  first trigger that needs it (`StopStoryboard.BeginStoryboardName`, `Template.FindName`), which is
-  the first state change — so the surface renders correctly at rest and throws on its first
-  transition, inside whatever catch keeps the channel alive.
-- **Signature:** `'Spin' name cannot be found in the name scope of 'System.Windows.Style'` (or of
-  `ControlTemplate`) in a log line the surface's fault path wrote; a surface that is right at rest
-  and stops on its first outcome; a test that finds a template part by `FrameworkElement.Name` and
-  reads an empty string.
-- **Instance (CV-1, 2026-09-12):** the running ring's `StopStoryboard` in the thread's code-built
-  `RingStyle` — the first running → stopped transition threw inside `ThreadFeed.Apply`, the DC-134
-  catch stopped the feed with `THR-0001`, and `AnActionKeepsFocusOnTheTurn…` (A4) read
-  `IsStopped = true` where the stopped turn's actions should have been. `((INameScope)style)
-  .RegisterName("Spin", begin)` is the fix; the tests looking up `HeaderSite` by
-  `FrameworkElement.Name` were the same class on the reading side, fixed by
-  `Template.FindName`.
-- **Control:** every code-built Style or Template that names a part registers it on the Style's or
-  Template's `INameScope` in the same method; the render tests drive at least one **transition**
-  through the template (a running turn concluding — A3, A4, C1), never only the at-rest render.
-  Red first: A4 was red with the name unregistered.
-- **Status:** `partially-controlled` — the transition rows exist for the thread; no lint finds a
-  named part with no `RegisterName` in code-built styles.
-
-### DC-nnn (CV-1 b) — An entry rule keyed on a focus event handles every cause of the event
-
-*Id left for the conductor to allocate at the join (the plan's shared-surface rule: the register is append-only, ids are allocated at each join).*
-
-- **Shape:** a control wants keyboard *traversal* into it to land somewhere specific (the caret's
-  container, not whichever container the platform realized), and implements the rule on
-  `GotKeyboardFocus`. The event does not say why focus arrived — Tab, a mouse click on a child,
-  a programmatic `Focus()` — so the rule re-routes all three: a click on b7 lands on b40, a test's
-  `container.Focus()` returns false while focus is visibly inside the list.
-- **Signature:** `Focus()` returning false with `IsKeyboardFocusWithin` true; a click that selects a
-  different item from the one clicked; a re-route that fires from a programmatic focus in a test
-  and nowhere in the operator's hands.
-- **Instance (CV-1, 2026-09-12):** the feed's first entry rule re-routed any focus entering the
-  list from outside; L5's `container.Focus()` read false. The rule moved to where the cause is
-  known: the document's `PreviewKeyDown` sees the Tab press off the header's last stop and calls
-  `FocusCurrentItem()` itself (DS-1 P4 — the document mediates); the feed keeps only the case the
-  event does identify (focus landing on the list itself).
-- **Control:** an entry rule lives where the gesture is observable (a key handler), never on the
-  focus event it produces; K5's Tab-from-the-header row and L5's direct `Focus()` row are both in
-  the suite so the two causes are distinguished by tests. Red first: L5 was red with the
-  focus-event rule in place.
-- **Status:** `partially-controlled` — two rows; no rule forbids a `GotKeyboardFocus` re-route in
-  general.
-
-### DC-nnn (CV-1 c) — A mutation pass whose breaks and captured output live outside the repository is a record, not a control
-
-*Id left for the conductor to allocate at the join (the plan's shared-surface rule: the register is append-only, ids are allocated at each join).*
-
-- **Shape:** a Proof Pack's "red observed" cells are filled by breaking the product on purpose,
-  running the named test, and pasting the failure text (DC-160's fill-from-record). The scripts
-  that applied the breaks and the output they captured are written to a session scratchpad and
-  the product is reverted with `git checkout` — so the repository holds the pasted text and
-  nothing that can re-run it. A reviewer can corroborate each text against the assertion's shape
-  (the index in `pos 36`, the `Expected: 136 Actual: 135` under `FoldLines = 5`) but cannot
-  re-execute the pass; the next slice that touches the guard has no red to re-observe short of
-  re-doing the whole pass by hand.
-- **Signature:** a mutation table in a Proof Pack with no path under `tools/` or `tests/` beside
-  it; "the scripts are in the session scratchpad"; a reviewer's finding worded *a paste I can
-  corroborate, not re-run*.
-- **Instance (CV-1, 2026-09-12):** sixteen cells of `docs/proof/composer-as-conversation.md` filled
-  from three scratchpad batches (`mutate.py A / B1 / B2`); the Test Architect's round-2 Minor.
-- **Control (proposed, not built this slice):** a committed mutation manifest — one JSON row per
-  cell (`file`, `old`, `new`, `test`, `expected_failure_substring`) under `tests/mutations/`, and
-  a `tools/verify-mutations.py` that applies each row on a scratch worktree, runs the named test,
-  asserts the substring, and reverts — so the pack's cells are regenerated, never pasted, and a
-  guard that stops discriminating is a red gate rather than a stale cell. DC-160's control names
-  the fill step as prose; this is its executable half.
-- **Status:** `uncontrolled` — the cells are pasted; the manifest and the gate do not exist.
-
-## 5. What this note does not decide
-
 ### DC-161 — A container's disabled-state trigger only reaches ink that inherits it, and a template that sets ink locally, or carries no trigger at all, is invisible to a floor that never renders the state
 
 - **Shape:** INV-0008's own register (§8) marked `MenuItem IsEnabled=False → DisabledTextBrush on
@@ -7141,3 +7044,82 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   7.1 s against a 2 s bound, green returns at 2 s with exit 0 and the reason.
 - **Status:** `controlled`.
 
+### DC-166 — A name given to a code-built Style or Template is not in any name scope, and the first trigger that needs it throws inside the render
+
+*Id left for the conductor to allocate at the join (the plan's shared-surface rule: the register is append-only, ids are allocated at each join).*
+
+- **Shape:** a `Style` or `ControlTemplate` is built in code (`FrameworkElementFactory`, `Setter`,
+  `Trigger`) and a part is named — `BeginStoryboard.Name`, a factory's part name — the way XAML's
+  `x:Name` is. XAML registers that name in the Style's or Template's `INameScope`; code does not.
+  Nothing fails at construction, at bind, or at the first render: the name is only resolved by the
+  first trigger that needs it (`StopStoryboard.BeginStoryboardName`, `Template.FindName`), which is
+  the first state change — so the surface renders correctly at rest and throws on its first
+  transition, inside whatever catch keeps the channel alive.
+- **Signature:** `'Spin' name cannot be found in the name scope of 'System.Windows.Style'` (or of
+  `ControlTemplate`) in a log line the surface's fault path wrote; a surface that is right at rest
+  and stops on its first outcome; a test that finds a template part by `FrameworkElement.Name` and
+  reads an empty string.
+- **Instance (CV-1, 2026-09-12):** the running ring's `StopStoryboard` in the thread's code-built
+  `RingStyle` — the first running → stopped transition threw inside `ThreadFeed.Apply`, the DC-134
+  catch stopped the feed with `THR-0001`, and `AnActionKeepsFocusOnTheTurn…` (A4) read
+  `IsStopped = true` where the stopped turn's actions should have been. `((INameScope)style)
+  .RegisterName("Spin", begin)` is the fix; the tests looking up `HeaderSite` by
+  `FrameworkElement.Name` were the same class on the reading side, fixed by
+  `Template.FindName`.
+- **Control:** every code-built Style or Template that names a part registers it on the Style's or
+  Template's `INameScope` in the same method; the render tests drive at least one **transition**
+  through the template (a running turn concluding — A3, A4, C1), never only the at-rest render.
+  Red first: A4 was red with the name unregistered.
+- **Status:** `partially-controlled` — the transition rows exist for the thread; no lint finds a
+  named part with no `RegisterName` in code-built styles.
+
+### DC-167 — An entry rule keyed on a focus event handles every cause of the event
+
+*Id left for the conductor to allocate at the join (the plan's shared-surface rule: the register is append-only, ids are allocated at each join).*
+
+- **Shape:** a control wants keyboard *traversal* into it to land somewhere specific (the caret's
+  container, not whichever container the platform realized), and implements the rule on
+  `GotKeyboardFocus`. The event does not say why focus arrived — Tab, a mouse click on a child,
+  a programmatic `Focus()` — so the rule re-routes all three: a click on b7 lands on b40, a test's
+  `container.Focus()` returns false while focus is visibly inside the list.
+- **Signature:** `Focus()` returning false with `IsKeyboardFocusWithin` true; a click that selects a
+  different item from the one clicked; a re-route that fires from a programmatic focus in a test
+  and nowhere in the operator's hands.
+- **Instance (CV-1, 2026-09-12):** the feed's first entry rule re-routed any focus entering the
+  list from outside; L5's `container.Focus()` read false. The rule moved to where the cause is
+  known: the document's `PreviewKeyDown` sees the Tab press off the header's last stop and calls
+  `FocusCurrentItem()` itself (DS-1 P4 — the document mediates); the feed keeps only the case the
+  event does identify (focus landing on the list itself).
+- **Control:** an entry rule lives where the gesture is observable (a key handler), never on the
+  focus event it produces; K5's Tab-from-the-header row and L5's direct `Focus()` row are both in
+  the suite so the two causes are distinguished by tests. Red first: L5 was red with the
+  focus-event rule in place.
+- **Status:** `partially-controlled` — two rows; no rule forbids a `GotKeyboardFocus` re-route in
+  general.
+
+### DC-168 — A mutation pass whose breaks and captured output live outside the repository is a record, not a control
+
+*Id left for the conductor to allocate at the join (the plan's shared-surface rule: the register is append-only, ids are allocated at each join).*
+
+- **Shape:** a Proof Pack's "red observed" cells are filled by breaking the product on purpose,
+  running the named test, and pasting the failure text (DC-160's fill-from-record). The scripts
+  that applied the breaks and the output they captured are written to a session scratchpad and
+  the product is reverted with `git checkout` — so the repository holds the pasted text and
+  nothing that can re-run it. A reviewer can corroborate each text against the assertion's shape
+  (the index in `pos 36`, the `Expected: 136 Actual: 135` under `FoldLines = 5`) but cannot
+  re-execute the pass; the next slice that touches the guard has no red to re-observe short of
+  re-doing the whole pass by hand.
+- **Signature:** a mutation table in a Proof Pack with no path under `tools/` or `tests/` beside
+  it; "the scripts are in the session scratchpad"; a reviewer's finding worded *a paste I can
+  corroborate, not re-run*.
+- **Instance (CV-1, 2026-09-12):** sixteen cells of `docs/proof/composer-as-conversation.md` filled
+  from three scratchpad batches (`mutate.py A / B1 / B2`); the Test Architect's round-2 Minor.
+- **Control (proposed, not built this slice):** a committed mutation manifest — one JSON row per
+  cell (`file`, `old`, `new`, `test`, `expected_failure_substring`) under `tests/mutations/`, and
+  a `tools/verify-mutations.py` that applies each row on a scratch worktree, runs the named test,
+  asserts the substring, and reverts — so the pack's cells are regenerated, never pasted, and a
+  guard that stops discriminating is a red gate rather than a stale cell. DC-160's control names
+  the fill step as prose; this is its executable half.
+- **Status:** `uncontrolled` — the cells are pasted; the manifest and the gate do not exist.
+
+## 5. What this note does not decide

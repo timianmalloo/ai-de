@@ -1967,7 +1967,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 91 types, 400 members, 73% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 92 types, 406 members, 73% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1980,7 +1980,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6afd1cb24b934adc007520e1f20ea17b16fcf24c1659cdb73ea89df3dbcbdb51"
+      "sourceSha256": "b6bfc74b11522f2c3fc0ad04ba079ff821d77ac5a82418bc479b8b68fdb0920b"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -1992,7 +1992,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 10 types, 52 members, 89% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 11 types, 74 members, 91% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2005,7 +2005,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "14fb8cc32edd842547e330f71b3991133607c0d53c4f3159f74a91d9994e15fc"
+      "sourceSha256": "dac4ff6f0a1ee277659df214edf84e00d55875b20bc1fd4c51ab4f656eedec5a"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -2017,7 +2017,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 60 members, 93% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 30 types, 157 members, 71% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2030,7 +2030,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "48aaef86ed379f1b5e455c6038982bf24b5b9641a3872548e9556c504a0e9157"
+      "sourceSha256": "484f9dcade5299debf584a0abb8fbbc852f3d0ad377ce31dc7e47bc17d94821e"
     },
     {
       "id": "api-aide-core",
@@ -2080,7 +2080,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0715ae90de7040d989370389a9e195f2b8a07658d319b9e9e9f382ad1d6266a0"
+      "sourceSha256": "8a4373ddba2f1581c28c2182b0029d8aa08367809a9f4ed729ac22127581bca8"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -2267,7 +2267,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 31 types, 78 members, 87% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 33 types, 90 members, 89% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2280,7 +2280,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bfa1c67b93ec12bfc1c0400ba82e3a38a4f07f8020eea7c6cbc1a719f18b450a"
+      "sourceSha256": "96096eac595c44a39a8b27a3e208dd0f0aa0449addc289baedf2720898fe807e"
     },
     {
       "id": "api-aide-core-presentation-sessions",
@@ -2292,7 +2292,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 14 types, 84 members, 98% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 30 types, 128 members, 96% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2305,7 +2305,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9c85d9da36cbbddf47b5270022df51c8f875d4c9b245b3d70e70bdcf2ed13d39"
+      "sourceSha256": "2941d5bc4583dc34d6551b4517cb831fb739d68ac37ab269fac59a32d50de4f7"
     },
     {
       "id": "api-aide-core-projections",
@@ -5042,6 +5042,82 @@ window.DOCS_INDEX = {
       "sourceSha256": "eb392aa7f5b15309836d03bf982cd53380260250580bfdab8cb6dac0dde2147a"
     },
     {
+      "id": "note-cv1-f6-and-the-announcer-until-the-shell-lane-lands-them",
+      "path": "docs/notes/cv1-f6-and-the-announcer-until-the-shell-lane-lands-them.md",
+      "title": "F6 is the session document's own key handler and the document builds its own live region until the Shell lane lands the two registry rows and passes the shell's announcer",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "DS-1 P4 puts F6 on the command registry (WorkbenchCommands.cs) and SC9 through the shell's one announcer; both files are the Shell lane's this horizon. CV-1 lands the behaviour where it owns the file — the document's PreviewKeyDown and an optional announcer parameter with a document-owned polite live region as the default — and files the two seam requests. Holds until SH-2 merges them; then the interim handler and the default region are deleted.",
+      "tags": [
+        "decision-note",
+        "conversation-lane",
+        "cv-1",
+        "sc8",
+        "sc9",
+        "seam",
+        "shell-lane",
+        "dc-068",
+        "dc-072"
+      ],
+      "links": [
+        {
+          "to": "proof-composer-as-conversation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-session-thread-itemscontrol",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "842f5fa2dc01643d7cc81235811e4188864050f336d02947c0df3c438d20d063"
+    },
+    {
+      "id": "note-cv1-waiting-is-not-produced-in-phase-1",
+      "path": "docs/notes/cv1-waiting-is-not-produced-in-phase-1.md",
+      "title": "The run-channel read model never produces a Waiting turn in Phase 1: the run host answers permission itself, and the cap is validated, not enforced",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "CV-1 renders every turn state the run channel can truthfully reach; a Waiting turn (the permission request or the cap ask, SC7's permission / capask states) is not one of them, because GovernedRunHost answers permission requests by its own policy and no cap is enforced in Phase 1. The read model, the policy and the actions carry Waiting and are tested pure; the projection does not invent it. Holds until CV-3's operator channel lands.",
+      "tags": [
+        "decision-note",
+        "conversation-lane",
+        "cv-1",
+        "sc7",
+        "ruling-26c",
+        "ruling-78",
+        "waiting"
+      ],
+      "links": [
+        {
+          "to": "proof-composer-as-conversation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-session-thread-itemscontrol",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4cfedc5859c7e42721b0262e7e521f3343c578a617f8ff2864e2afa485cb726f"
+    },
+    {
       "id": "note-dc-115-evidence-in-a-lanes-own-checkout",
       "path": "docs/notes/dc-115-evidence-in-a-lanes-own-checkout.md",
       "title": "DC-115 — verifying a lane's evidence in the checkout it committed it in",
@@ -7705,7 +7781,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "801c652ecb75596e0580c9ec5fc387b930f070f30e958fe7a437c75fe2f4d3c5"
+      "sourceSha256": "6e048b33d7429ddb3937d43d8e6b6d42f0765362006b7518f1e7c8a0edbc2320"
     },
     {
       "id": "design-session-profiler",
@@ -14318,6 +14394,75 @@ window.DOCS_INDEX = {
       "sourceSha256": "a92734fa7845b6e7ad4a33a691fe588436959f29a8ab7340d01343356a9def94"
     },
     {
+      "id": "proof-composer-as-conversation",
+      "path": "docs/proof/composer-as-conversation.md",
+      "title": "Proof Pack — CV-1, the composer as a conversation: the thread feed per DS-1 (SC8 keys, SC9 announcements, SC10 UIA), the folded Console per turn, the decoration line, and tier / fan-out / budget off the per-prompt form",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Evidence for CV-1 on the Conversation lane: the session document is a feed of turns above one pinned composer (DS-1's FeedList / ThreadFeed over a recycling VirtualizingStackPanel), the editor's top edge is equal at 1 / 5 / 40 turns with the editor never below its 130 px floor and the thread never starved (both mechanisms measured: the floor on the host, the belt on the document), the SC8 keyboard model is a pure decision plus an act with the six owned keys, the SC9 policy announces each transition once and never a line, the SC10 properties are real over the UIA peers, the folded Console per turn and the on-demand split are one list (Ruling 74 condition 1), tier / fan-out / budget left the per-prompt form (the tier is §A9's projection on the compiler, the cap and budget the session's), the eight named reds and DS-1's headless oracles went red → green, and the attended rows (P-11/12/13, A6) are RUN-PENDING with their steps.",
+      "tags": [
+        "proof-pack",
+        "conversation-lane",
+        "cv-1",
+        "ds-1",
+        "session-thread",
+        "composer",
+        "ruling-56",
+        "ruling-63",
+        "ruling-72",
+        "ruling-74",
+        "ruling-77",
+        "ruling-78",
+        "sc1-sc10",
+        "accessibility",
+        "virtualization"
+      ],
+      "links": [
+        {
+          "to": "design-session-thread-itemscontrol",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-read-only-turn",
+          "rel": "refines"
+        },
+        {
+          "to": "mockup-session-conversation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0034-envelope-event-store",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "cefbdeaad3f27d4af8aa4c955b6c7688d6837c5755b98e34fdde96ca5818434d"
+    },
+    {
       "id": "proof-composer-entry-areas",
       "path": "docs/proof/composer-entry-areas.md",
       "title": "Proof Pack — the composer's entry areas keep their room, and the page survives a render (INV-0007, phases 1–4)",
@@ -16885,5 +17030,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "b2c25ce1ac9ef7914e912a15dbf79b03dbd578e0315493254a0aaf4619a821ad"
+  "graphSha256": "87ac2b64ebdc1aca0b100638f5fce0abe2f9f3107d056e891df5a9e29af17b2a"
 };
