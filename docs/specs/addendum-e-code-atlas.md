@@ -18,6 +18,7 @@ links:
   - { to: note-atlas-lane-admission, rel: depends-on }
   - { to: note-atlas-reference-custody, rel: depends-on }
   - { to: note-atlas-identifier-discipline, rel: depends-on }
+  - { to: proof-code-atlas-contract-grounding, rel: depends-on }
 review-by: 2027-03-12
 summary: >-
   Candidate Addendum E specifies the Architecture perspective's Code Atlas: a repository-backed
@@ -37,6 +38,7 @@ summary: >-
 - **Base evidence:** durable note `note-atlas-reference-custody` records current main tree `b0e092b5` and proposal `1065a851` as observed by the executor **[Verified by note read; the Owner did not independently verify Git state]**. The proposal input was read locally from `C:\Projects\ai-de-proposal-code-atlas\docs\proposals\code-atlas\README.md`, `index.html`, and `mockup.template.html` **[Verified by local read]**. The proposal branch is private input, not merged history. This spec does not copy TheTerrace raw source, fixture JSON, screenshots or session quotes into the delivery tree.
 - **Delivery stance:** the user wants the full eventual implementation through the fleet, not another toy mockup. This draft therefore specifies the real product contract and marks unadmitted or unproven capabilities as planned, deferred, unknown or blocked.
 - **Metadata stance:** this remains `type: spec`. Any supporting delivery ledger or plan must use a registry-known document type because the installed docs graph rejects `type: plan`.
+- **K0 contract grounding:** `proof-code-atlas-contract-grounding` at `22a6d4c` supplies source-only and targeted-test facts. It does **not** admit its earlier type-only minimal slice; the Conductor rejected that slice as incompatible with the Owner-required physical inventory and addressable-member journey.
 
 Every load-bearing claim is labelled **[Verified]** (opened / fetched / observed), **[Inferred]** (reasoned from evidence), or **[Flagged]** (unknown or pending). This is a candidate spec, so the gate record is intentionally **PENDING/BLOCKED**, not pass.
 
@@ -54,6 +56,8 @@ Every load-bearing claim is labelled **[Verified]** (opened / fetched / observed
 | Windows apps should follow Fluent/Windows design guidance across input and form factors. | Microsoft Learn "Design Windows apps overview", fetched 2026-09-12. | [Verified] |
 | Current method/member extraction contracts are not settled by this worker. | The user assigned separate contract work and instructed this spec not to duplicate deep source research. | [Flagged] |
 | The six Owner framing notes are durable accepted docs in the conductor branch at `b1acd4df`. | `note-atlas-next-addendum`, `note-atlas-development-models`, `note-atlas-delivery-horizon`, `note-atlas-lane-admission`, `note-atlas-reference-custody`, `note-atlas-identifier-discipline` read from `C:\Projects\ai-de-conductor-code-atlas`. | [Verified] |
+| K0 verified the current source-only contracts and targeted Core baseline: .NET SDK `10.0.303`, Roslyn `4.14.0`, and 79 targeted Core tests passing. | `proof-code-atlas-contract-grounding` Runtime/package and Commands sections. | [Verified] |
+| K0 found the current Core seams are source/store/IPC/native-source-only for Atlas purposes: `has_member` values are display strings, no independent method/member node identity exists, `Interaction` is type-level, and `NodeContent` for indexed types is not complete physical inventory. | `proof-code-atlas-contract-grounding` Contract table, Barriers and "Conductor disposition". | [Verified] |
 
 ## Page one — what Addendum E decides
 
@@ -65,6 +69,7 @@ Addendum E admits the **Code Atlas** as the Architecture perspective's repositor
 4. Concrete UML, ER, layer/component, Azure and implementation↔spec views are **evidence-grounded projections**, not editable source models and not compliance verdicts.
 5. Optional model interpretation is admitted only through an approved bounded harness with context preview, no tool authority, no private-corpus shipping and an eval gate before its output can influence a user-facing claim.
 6. Authority uncertainty is never silently cleared by AI. Human/authorized Owner/Conductor/audit/session references remain the authority trail; timestamps are ordering evidence, not authority by themselves.
+7. The current K0 facts are a **design barrier**, not a scope cut: physical inventory and addressable member identity must be designed and admitted before E-0 implementation. A type-only or indexed-node-only slice cannot close the Owner journey.
 
 **Owner Astra initial rulings folded into this draft from durable notes:**
 
@@ -210,11 +215,11 @@ Every Code Atlas view renders a capability disclosure before or beside the conte
 
 | Capability | Initial status | Admission rule |
 |---|---|---|
-| Physical tracked-file inventory | Supported | Given a snapshot, every supported tracked path appears exactly once or is listed under an explicit exclusion with reason. |
-| Source view with anchors | Partial | Only files whose content is available under policy open source; unavailable files show a non-substituted unsupported state. |
-| C# type/member extraction | Flagged | Pending the separate contract worker; until then examples are curated and labelled. |
+| Physical tracked-file inventory | Design barrier | Given a snapshot, every supported tracked path appears exactly once or is listed under an explicit exclusion with reason. K0's indexed `NodeContent` seam is insufficient because indexed types are not a complete file inventory. |
+| Source view with anchors | Partial / source-only | Current `NodeContent` is authority-side, path-confined and capped for indexed nodes; it is not a complete file explorer. Only files whose content is available under policy open source; unavailable files show a non-substituted unsupported state. |
+| C# type/member extraction | Design barrier | Roslyn 4.14 type/source-span extraction has targeted tests, but `has_member` strings are UML display payloads, not durable member IDs. Addressable member identity requires a new admitted contract. |
 | UML class/member relationships | Partial | Only supported relationship kinds render; unresolved relationships are gaps. |
-| Method sequence/activity | Partial | Static reconstruction only; no runtime order claim. |
+| Method sequence/activity | Blocked beyond type-level | K0 verifies `Interaction` is type-level and method nodes do not exist. Static reconstruction only; no runtime order claim. Method-level activation waits for member/method identity. |
 | ER/domain view | Partial | Requires schema/conceptual evidence and `spec-uml-erm-surfaces` notation gates. |
 | Azure declaration view | Partial | Bicep/resource declarations and source-backed config references only; deployed state is unknown. |
 | Implementation↔spec mapping | Planned | Requires clause authority model and review workflow; no percentage. |
@@ -593,11 +598,11 @@ Applicable HAX and Shape-of-AI patterns:
 
 ## Delivery phases — vertical, not toy
 
-Only **E-0** is in the first implementation horizon. It must be an integrated deterministic C# walking skeleton from file to type/member to actual source. E-1 through E-4 are intentionally specified so architecture can cover the whole vision, but they are not silently admitted for implementation and they are not declared done by E-0.
+Only **E-0** is in the first implementation horizon. It must be an integrated deterministic C# walking skeleton from file to type/member to actual source. E-1 through E-4 are intentionally specified so architecture can cover the whole vision, but they are not silently admitted for implementation and they are not declared done by E-0. K0's current-source facts make E-0 a contract/design barrier first: `has_member` display strings are not IDs, and `NodeContent` for indexed types is not physical inventory.
 
 | Phase | Delivers | Gate |
 |---|---|---|
-| **E-0 Physical Atlas walking skeleton — first horizon only** | Deterministic C# source identity path: physical file inventory subset sufficient for the fixture, type/member extraction for admitted C# cases, source viewer with real source anchors, selection history and Back. | US-E1/E2/E4/E13 on an approved fixture; actual source opens; no semantic completeness, behavior, data, Azure, comparison or AI claim. |
+| **E-0 Physical Atlas walking skeleton — first horizon only** | Deterministic C# source identity path: physical inventory contract, addressable C# type/member contract, source viewer with real source anchors, selection history and Back. | First design admits physical inventory and member-ID contracts; then US-E1/E2/E4/E13 on an approved real workspace fixture; actual source opens; no semantic completeness, behavior, data, Azure, comparison or AI claim. |
 | **E-1 Concrete static code views — later admission required** | Broader type/member extraction contract, bounded UML/class, method sequence/activity with confidence/unknowns. | Separate `/design-slice`, contract worker output, exit criteria and Owner admission; US-E5/E6. |
 | **E-2 Domain/ER/layer/Azure views — later admission required** | ER/domain/layer/component/Azure declaration views with resource aliases and typed relationships. | Separate design plus `spec-uml-erm-surfaces` gates; C D-4 amendment enforced; US-E7/E8. |
 | **E-3 Implementation↔spec and decision provenance — later admission required** | Clause authority/status/scope/supersession model and mapping states. | Separate design and Owner admission; US-E10/E11, no percent. |
@@ -612,6 +617,9 @@ Only **E-0** is in the first implementation horizon. It must be an integrated de
 | Native seam remains open. | Claude/Core seam acknowledgement and lane carve-outs before source edits; until then only uncontested docs and read-only seam analysis. |
 | Numeric ruling/ADR/DC ids are not allocated here. | Conductor uses repository allocator/checks; this spec links semantic note ids only. |
 | Method/type/member extraction contract is separate and not settled here. | Accept or reject the contract worker's declared symbol/relationship model before E-1. |
+| K0 report has a report-only correction pending. | Use its observed facts and exact citations, not its rejected type-only recommendation, until the corrected report joins. |
+| Current `has_member` and `Interaction` seams cannot satisfy member-level journey. | Design and admit member/method identity and source-span contract before E-0 implementation. |
+| Current `NodeContent` seam cannot satisfy physical inventory. | Design and admit real physical inventory contract before E-0 implementation. |
 | Physical inventory source of truth needs final policy: `git ls-files`, workspace index, exclusions and generated/vendor categories. | `/design-slice` data contract with fixture and exclusions. |
 | Initial performance budgets are inferred from product intent, not measured in AI-DE. | Measure E-0 fixture runs; revise budgets only with evidence. |
 | Private corpus handling needs formal processing-class policy for model interpretation. | Privacy/Data Governance + Security gate before E-4. |
