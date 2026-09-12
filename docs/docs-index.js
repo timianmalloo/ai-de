@@ -1883,6 +1883,209 @@ window.DOCS_INDEX = {
       "sourceSha256": "92658f5a21220d232e56dd004be03f4e3f4e03482e87ff9c6408730016e864d7"
     },
     {
+      "id": "adr-01M2BBCC9EHCWVR1R4ZCZ7502T",
+      "path": "docs/adr/proposed/code-atlas/identity.proposed.md",
+      "title": "PROPOSED — Atlas logical identities and declaration/source versions",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "atlas-proposed-architecture",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Separates logical files/types/members from revision-bound declaration/content observations. Scope-qualified compiler identity prevents project collisions; partials and moved spans remain explicit.",
+      "tags": [
+        "code-atlas",
+        "proposed",
+        "identity",
+        "roslyn",
+        "provenance"
+      ],
+      "links": [
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-addendum-e-code-atlas",
+          "rel": "refines"
+        },
+        {
+          "to": "proof-code-atlas-contract-grounding",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-atlas-e1-identity",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6974d47b91bfedfdba44a88cbefc27b3d1c3609590346cca75c8bf455f6a69da"
+    },
+    {
+      "id": "adr-01M2BBCCAYMNMM1MFH0653Z0XF",
+      "path": "docs/adr/proposed/code-atlas/inventory-source-manifest.proposed.md",
+      "title": "PROPOSED — independent inventory, manifests and live source binding",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "atlas-proposed-architecture",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Proposes policy-bounded physical inventory independent of semantic coverage, sealed observation manifests, and hash-validated live source reads without default retained source bodies.",
+      "tags": [
+        "code-atlas",
+        "proposed",
+        "inventory",
+        "source",
+        "coherence",
+        "privacy"
+      ],
+      "links": [
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-01M2BBCC9EHCWVR1R4ZCZ7502T",
+          "rel": "depends-on"
+        },
+        {
+          "to": "review-code-atlas-data-constraints",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-code-atlas-contract-grounding",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "00f919ceb65dcd5198722bdd4556ef3dee1c8f10092960701c028bce998d62d8"
+    },
+    {
+      "id": "adr-01M2BBCCCDC207J5KQW74WX2M2",
+      "path": "docs/adr/proposed/code-atlas/fact-substrate.proposed.md",
+      "title": "PROPOSED — one SQLite fact substrate and evidence-led schema evolution",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "atlas-proposed-architecture",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Reuses existing generic evidence facts and dimensions for Atlas observations and seals. New physical schema requires measured need, additive compatibility, replay and tested rollback.",
+      "tags": [
+        "code-atlas",
+        "proposed",
+        "persistence",
+        "dimensional",
+        "replay",
+        "migration"
+      ],
+      "links": [
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-01M2BBCCAYMNMM1MFH0653Z0XF",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-code-atlas-contract-grounding",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "bc4a763a53b1e883c44fbf52bd3560ec98bc8dcbeefda9ace121dcebab781ebb"
+    },
+    {
+      "id": "adr-01M2BBCCDZT9CGP0W5YE3YKXDW",
+      "path": "docs/adr/proposed/code-atlas/bounded-native-queries.proposed.md",
+      "title": "PROPOSED — bounded Atlas contracts and native Architecture integration",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "atlas-proposed-architecture",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Extends the existing Core query/local-IPC boundary with versioned manifest-bound Atlas reads. Native views consume identity, content state and bounds through existing owner-controlled host seams.",
+      "tags": [
+        "code-atlas",
+        "proposed",
+        "query",
+        "ipc",
+        "native",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-01M2BBCCAYMNMM1MFH0653Z0XF",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-atlas-lane-admission",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0f1e277cc675de4ab76bb8fbe1280dc078a5973aaa657c5163464fd239e17294"
+    },
+    {
+      "id": "adr-01M2BBCCFJ34ZR3ND7HMHP5QA6",
+      "path": "docs/adr/proposed/code-atlas/comparison-authority-ai.proposed.md",
+      "title": "PROPOSED — pinned comparison, explicit authority and governed interpretation",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "atlas-proposed-architecture",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Binds comparison to immutable source/clause/decision inputs and keeps carrier, authority, origin and review separate. Defines a no-tool abstract interpretation port without selecting a provider.",
+      "tags": [
+        "code-atlas",
+        "proposed",
+        "comparison",
+        "authority",
+        "privacy",
+        "ai"
+      ],
+      "links": [
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-addendum-e-code-atlas",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-01M2BBCCCDC207J5KQW74WX2M2",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-atlas-reference-custody",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "36d1689907c6a567032dba77d91c1b6106f48e206271c01850af2aa1a770dccc"
+    },
+    {
       "id": "api-aide-app",
       "path": "docs/api/AiDe.App.md",
       "title": "API: AiDe.App",
@@ -2806,6 +3009,112 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "3578e4c25494391bbfc37d503326d32ffed5d7767cfcfcbdc856b3991d662642"
+    },
+    {
+      "id": "architecture-code-atlas-proposed",
+      "path": "docs/architecture/code-atlas-proposed.md",
+      "title": "Code Atlas — proposed whole-system architecture",
+      "type": "architecture",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "atlas-proposed-architecture",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Proposed Atlas overlay on AI-DE's existing authority, SQLite, query/IPC and Architecture host. Defines physical inventory, logical symbols, version-bound source, manifests, later static/data/ comparison views and separately admitted read-only interpretation. No source dispatch or acceptance.",
+      "tags": [
+        "code-atlas",
+        "architecture",
+        "proposed",
+        "source-identity",
+        "bounded-queries",
+        "native",
+        "governed-ai"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-addendum-e-code-atlas",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-code-atlas-contract-grounding",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-code-atlas-proposal-provenance",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-atlas-draft-content-while-blocked",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-atlas-delivery-horizon",
+          "rel": "depends-on"
+        },
+        {
+          "to": "review-code-atlas-data-constraints",
+          "rel": "depends-on"
+        },
+        {
+          "to": "coordination-code-atlas-resume",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-01M2BBCC9EHCWVR1R4ZCZ7502T",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-01M2BBCCAYMNMM1MFH0653Z0XF",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-01M2BBCCCDC207J5KQW74WX2M2",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-01M2BBCCDZT9CGP0W5YE3YKXDW",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-01M2BBCCFJ34ZR3ND7HMHP5QA6",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "3. AS-IS whole-system map and Atlas overlay",
+          "mermaid": "flowchart LR\n  User[\"Human operator\"] --> Shell[\"WPF shell: Coding / Explore / Architecture\"]\n  Shell --> Host[\"Architecture host and shared factory/menu\"]\n  Shell --> Sessions[\"Terminal and session surfaces\"]\n  Shell --> Composer[\"Composer / Prepare\"]\n  Composer --> Compile[\"C/D compilation and governed run boundaries\"]\n  Compile --> Runtime[\"Approved headless Claude / subscription runtime\"]\n  Sessions --> Agents[\"External coding harness sessions\"]\n  Host --> Client[\"IWorkspaceQueries / WorkspaceClient\"]\n  Client --> IPC[\"Existing authenticated local IPC\"]\n  IPC --> Core[\"Workspace authority / single writer\"]\n  Repos[\"Authorized repositories and worktrees\"] --> Ingest[\"Registry / refresh / extractors\"]\n  Ingest --> Core\n  Core --> Store[(\"SQLite facts and dimensions\")]\n  Store --> Projection[\"Bounded projections\"]\n  Projection --> Client\n  Logs[\"Audit / coordination inputs\"] --> Core\n  Agents --> MCP[\"Existing governed MCP gateway\"] --> Core\n  Core --> Health[\"Independent health incident channel\"]\n  subgraph Atlas[\"PROPOSED overlay; not current functionality\"]\n    Inventory[\"Physical inventory and source binding\"]\n    Symbols[\"Structured symbols and declaration versions\"]\n    Manifest[\"Manifest seal and coverage\"]\n    Queries[\"Atlas bounded read contracts\"]\n    Native[\"Native tree / outline / source / history\"]\n    Later[\"Static diagrams / data / comparison\"]\n    AI[\"Separate read-only interpretation port\"]\n  end\n  Ingest -. \"new contracts\" .-> Inventory\n  Ingest -.-> Symbols\n  Inventory -.-> Manifest\n  Symbols -.-> Manifest\n  Manifest -. \"same store\" .-> Store\n  Projection -.-> Queries\n  Queries -.-> Native\n  Queries -.-> Later\n  Host -. \"owner-authored integration\" .-> Native\n  Host -.-> Later\n  Queries -. \"previewed context only, E-4\" .-> AI"
+        },
+        {
+          "kind": "class",
+          "title": "4.2 One identity vocabulary",
+          "mermaid": "classDiagram\n  class FileIdentity\n  class SymbolIdentity\n  class SourceObservation\n  class DeclarationObservation\n  class Manifest\n  class ManifestEntry\n  class Selection\n  FileIdentity \"1\" <-- \"0..*\" SourceObservation : identifies file\n  SymbolIdentity \"1\" <-- \"0..*\" DeclarationObservation : identifies symbol\n  SourceObservation \"1\" <-- \"0..*\" DeclarationObservation : binds text\n  Manifest \"1\" <-- \"0..*\" ManifestEntry : selected membership\n  ManifestEntry --> SourceObservation : references\n  ManifestEntry --> DeclarationObservation : references scope evidence\n  Selection --> Manifest : pins\n  Selection --> FileIdentity : may select\n  Selection --> SymbolIdentity : may select"
+        },
+        {
+          "kind": "flowchart",
+          "title": "7.1 Layered architecture",
+          "mermaid": "flowchart TB\n  subgraph Presentation[\"Presentation — existing Shell authority, native first\"]\n    Tree[\"Physical tree / outline\"]\n    Source[\"Source / inspector\"]\n    Diagram[\"Derived diagrams / comparison — later\"]\n    Nav[\"Selection and Back history\"]\n    Broker[\"Trusted human-action broker\"]\n  end\n  subgraph Contracts[\"Versioned local/IPC contract — Core-owned\"]\n    Query[\"Atlas query records / capability / refusal / bounds\"]\n    Selection[\"Manifest-bound selection token\"]\n  end\n  subgraph Application[\"Workspace authority — deterministic T0\"]\n    Proj[\"Bounded projection and authority policy\"]\n    Read[\"Authorized hash-bound file reader\"]\n    ModelPort[\"Read-only interpretation orchestration — E-4 only\"]\n  end\n  subgraph Evidence[\"Evidence acquisition and persistence\"]\n    Inv[\"Inventory / semantic extractors\"]\n    Fence[\"Scope fencing / observation seals\"]\n    DB[(\"Existing SQLite fact substrate\")]\n  end\n  Tree --> Query\n  Source --> Query\n  Diagram --> Query\n  Nav --> Selection --> Query\n  Broker --> Proj\n  Query --> Proj\n  Proj --> Read\n  Proj --> DB\n  ModelPort --> Proj\n  Inv --> Fence --> DB"
+        },
+        {
+          "kind": "sequence",
+          "title": "7.4 Source journey sequence",
+          "mermaid": "sequenceDiagram\n  actor Human\n  participant UI as Native Architecture view\n  participant Client as Query client\n  participant Core as Authority projection\n  participant DB as SQLite\n  participant Reader as Authorized source reader\n  Human->>UI: Select physical file / member\n  UI->>Client: Manifest + IDs + selection generation\n  Client->>Core: Versioned AtlasSource request\n  Core->>DB: Read pinned declaration and policy evidence\n  DB-->>Core: Scope/content binding + spans\n  Core->>Reader: Resolve, authorize, read/hash same opened object\n  Reader-->>Core: Exact bytes/hash or typed unavailable/refusal\n  alt Indexed hash and decoding match\n    Core-->>Client: IndexedMatch + validated span + bounds\n  else Changed/unverifiable\n    Core-->>Client: LiveChanged/unavailable + no active old span\n  end\n  Client-->>UI: Preserve all identity/coverage/bounds fields\n  UI->>UI: Apply only matching generation; retain history\n  Human->>UI: Back\n  UI->>Client: Previous manifest/selection, never guessed rebinding"
+        }
+      ],
+      "sourceSha256": "ceca8f33f09c2038d74836ff44c55ad4daef30ab64c2019bb68c343788c28ec7"
     },
     {
       "id": "architecture-loomkeeper",
@@ -9039,6 +9348,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "3d1fdfc212a742b174ccff69c77d496535dd63d7e005df6bf4ea2ab61f255a9c"
     },
     {
+      "id": "note-atlas-candidate-content-ready",
+      "path": "docs/notes/atlas-owner/candidate-content-ready.md",
+      "title": "Candidate E conditional document-content readiness without product admission",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "atlas-document-gates",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Countersigns Candidate E as document-content-ready for proposed architecture, conditional on removing report-derived verification inflation. All registration, source, data-form, integration and runtime approvals remain separate.",
+      "tags": [
+        "code-atlas",
+        "owner-ruling",
+        "specification",
+        "evidence"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-e-code-atlas",
+          "rel": "relates-to"
+        },
+        {
+          "to": "review-code-atlas-spec-content-gates",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-atlas-draft-content-while-blocked",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "493e9de924420f389e39e7f08729fb6a541bd37622ec4a978b23506b11b5f967"
+    },
+    {
       "id": "note-atlas-contract-probes",
       "path": "docs/notes/atlas-owner/contract-probes.md",
       "title": "Bounded synthetic Roslyn and isolated contract-test research permitted",
@@ -10075,7 +10418,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1dea7ebee49cc283f3efe40faf41d6afc31771c123560a19c881c97fde215b21"
+      "sourceSha256": "69782aca11cb41a6c8d1eb9f8305457924f9cfa35b60a5be9f944605494650b9"
     },
     {
       "id": "review-front-door-council",
@@ -16388,7 +16731,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  A[User requests interpretation] --> B{Harness admitted?}\n  B -->|no| C[Disabled with admission reason]\n  B -->|yes| D[Show context preview: files, clauses, tokens, cost, privacy class]\n  D --> E{User confirms?}\n  E -->|cancel| F[No call; deterministic view unchanged]\n  E -->|confirm| G[Run no-tool bounded model]\n  G --> H{Valid cited output?}\n  H -->|yes| I[Show proposal with confidence and review controls]\n  H -->|no| J[Reject/quarantine; show error]"
         }
       ],
-      "sourceSha256": "898131923b1173ef347be69100828a907900cc92624fd7e907d41cbc62265239"
+      "sourceSha256": "40b2c4dade07505e50324b56c01560af5b622c52ac0b1f963aff5e2548e3ad71"
     },
     {
       "id": "spec-agentic-watcher-substrate",
@@ -17233,5 +17576,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "15bb37412a264292dea60e177b670046988a3c1365cd5deeeeb746f00b30bfdc"
+  "graphSha256": "7a50ebecf59b1a28d5dd19101fe3facb7065e33637d596671368f4b4c46e5124"
 };

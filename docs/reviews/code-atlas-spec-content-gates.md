@@ -47,7 +47,16 @@ and an unbuilt feature cannot be required to have already passed before architec
 
 ## Pending
 
-The author has committed repairs and is incorporating the final UX scoping clauses.
-Final content verdicts will cite the corrected revision. External Core/Claude acknowledgment,
-registration, source dispatch and native/runtime evidence remain separately pending regardless
-of those verdicts.
+The corrected integrated candidate is `a50329b2`, following author revision `4b78b241` and the
+Conductor's explicit evidence-ledger separation.
+
+| Final content gate | Verdict | Evidence / boundary |
+|---|---|---|
+| Security/identity/privacy | PASS-WITH-CONDITIONS; prior blockers cleared | Reviewed repairs at ba969e0c. The later delta changes phase-scoped native criteria and evidence labels, not the accepted trust-boundary/authority clauses. Downstream negative security tests and processing-class approval remain required. |
+| Functional/testability | PASS-WITH-CONDITIONS at a50329b2 | Oracle matrix, E0 subset, collision/NFR cases and 79/40/synthetic evidence separation accepted. One redundant ledger row is optional cleanup, not a blocker. |
+| UX/IA/UI | PASS at a50329b2 | C7 now scopes states/native criteria to the phase and does not force WebView2 into E0. No native implementation claim. |
+| Data/model | PASS-WITH-CONCERNS at a50329b2 | Conceptual constraints and falsifiers suffice for PROPOSED architecture. Preserve stable logical identity, authorized physical visibility and revision-bound source/hash/span records; no schema/migration approval. |
+
+**Content disposition:** candidate specification is content-ready for proposed architecture
+authoring. External Core/Claude acknowledgment, E registration/normative acceptance, source
+dispatch and native/runtime evidence remain pending. Document gates do not satisfy those conditions.
