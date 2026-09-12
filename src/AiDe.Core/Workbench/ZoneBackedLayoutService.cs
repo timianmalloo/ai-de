@@ -33,10 +33,19 @@ public sealed class ZoneBackedLayoutService : ILayoutService
     public ZoneBackedLayoutService(SurfaceAdmission admission, WorkbenchLayout? initial = null)
     {
         Admission = admission ?? throw new ArgumentNullException(nameof(admission));
-        var filtered = Admission.Filter(initial ?? WorkbenchLayout.Default());
+        var filtered = Admission.Filter(initial ?? SeedDefault(Admission));
         _zones = filtered.Layout;
         DefaultDropped = initial is null ? filtered.Dropped : [];
     }
+
+    /// <summary>
+    /// The seed a host with no explicit initial arrangement starts from: a real (non-Unrestricted)
+    /// admission gets ITS perspective's own §B4 table (<see cref="WorkbenchLayout.Default(Perspective)"/>,
+    /// SH-3); the bare/test <see cref="SurfaceAdmission.Unrestricted"/> keeps the legacy combined seed
+    /// so every existing bare-service construction is unchanged.
+    /// </summary>
+    private static WorkbenchLayout SeedDefault(SurfaceAdmission admission) =>
+        admission.IsUnrestricted ? WorkbenchLayout.Default() : WorkbenchLayout.Default(admission.Perspective);
 
     /// <summary>
     /// What the seed default dropped to satisfy this host's invariant — non-empty only while the
@@ -57,12 +66,13 @@ public sealed class ZoneBackedLayoutService : ILayoutService
     /// kinds and at most one of each one-instance kind.
     /// </summary>
     /// <remarks>
-    /// simplify: today's one <see cref="WorkbenchLayout.Default"/> filtered per host; the per-
-    /// perspective defaults of Addendum C §B4 are <c>WorkbenchLayout.Default(perspective)</c> (the
-    /// Shell lane's next slice, SH-3), which replaces the filter here with the row's own table.
-    /// Ceiling: the two hosts; trigger: that method landing.
+    /// SH-3: seeded from THIS host's own §B4 table (<see cref="SeedDefault"/>), not the old combined
+    /// seed filtered down — the source of the "Domain wired to the Evidence list" and "Explore/
+    /// Provenance/Contexts/Joins stacked as sibling tabs" defects a shared, generic seed produced.
+    /// Still run through <see cref="SurfaceAdmission.Filter"/>: defensive, and what applies the
+    /// one-instance rule for a caller that mutates the seed before this runs.
     /// </remarks>
-    public WorkbenchLayout DefaultLayout() => Admission.Filter(WorkbenchLayout.Default()).Layout;
+    public WorkbenchLayout DefaultLayout() => Admission.Filter(SeedDefault(Admission)).Layout;
 
     /// <summary>
     /// Replaces the whole zone arrangement (persistence restore), dropping what this host does not
@@ -176,19 +186,37 @@ public sealed class ZoneBackedLayoutService : ILayoutService
             return best >= 0 ? best : null;
         }
 
+        var leftAnchor = AnchorFor(ZoneId.Left);
+        var rightAnchor = AnchorFor(ZoneId.Right);
         var centerAnchor = AnchorFor(ZoneId.Center);
+
+        if (centerAnchor is null)
+        {
+            // Center owns no surfaces of its own to anchor by — the Coding default before any
+            // session opens (Ruling 55d/60: "No session open", the empty state) — so the VIEW's
+            // Center column holds only the synthetic ZonesToTree.WelcomePlaceholder, which the
+            // MODEL never carries and majority-membership can never match. Center is mandatory and
+            // every OTHER column is claimed by Left or Right, so the one column neither claims IS
+            // Center by elimination — never a guess among several: still refuse when that leaves
+            // more than one candidate.
+            var unclaimed = Enumerable.Range(0, colChildren.Count)
+                .Where(i => i != leftAnchor && i != rightAnchor)
+                .ToList();
+            centerAnchor = unclaimed.Count == 1 ? unclaimed[0] : null;
+        }
+
         if (centerAnchor is not { } centerIndex)
         {
             return null; // no column carries the Center's content — not our frame; let the caller revert
         }
 
         var anchorZone = new Dictionary<int, ZoneId>();
-        if (AnchorFor(ZoneId.Left) is { } li)
+        if (leftAnchor is { } li)
         {
             anchorZone[li] = ZoneId.Left;
         }
 
-        if (AnchorFor(ZoneId.Right) is { } ri)
+        if (rightAnchor is { } ri)
         {
             anchorZone[ri] = ZoneId.Right;
         }

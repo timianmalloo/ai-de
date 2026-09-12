@@ -51,7 +51,13 @@ public static class ClassHierarchyModel
 {
     // The fine has_type values that are a "type" for a class diagram. Enums are excluded (they are not
     // classes/interfaces in the generalization sense); azure/table/etc. are not types.
-    private static readonly HashSet<string> TypeKinds = new(StringComparer.OrdinalIgnoreCase)
+    //
+    // Internal (not private): this IS the pre-cap kind allow-list Ruling 54's scaling fix wants
+    // (patterns-expert review) — GraphQuery.Kinds already exists, is already wired end to end
+    // (Graph and Overview), and drawing the SAME set the diagram keeps means the cap's whole
+    // budget goes to types instead of splitting it with tables, azure resources, functions and
+    // knowledge alike. WorkbenchShell reads it when building the class-diagram's graph query.
+    internal static readonly HashSet<string> TypeKinds = new(StringComparer.OrdinalIgnoreCase)
     {
         "class", "interface", "struct", "record",
         "python-class", "typescript-class", "typescript-interface",

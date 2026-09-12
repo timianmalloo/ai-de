@@ -162,6 +162,89 @@ public sealed record WorkbenchLayout(
         return new WorkbenchLayout(zones, [], Maximized: null);
     }
 
+    /// <summary>
+    /// The per-perspective default (Addendum C §B4; Rulings 54/59/60/61) — each docking host's OWN
+    /// table, never the combined seed <see cref="Default()"/> filtered down (the trap
+    /// <c>ZoneBackedLayoutService</c> named: filtering one shared seed re-points "Domain" at the
+    /// Evidence list and stacks Explore/Provenance/Contexts/Joins into one Left tab strip).
+    /// </summary>
+    /// <remarks>
+    /// Only Coding and Architecture have a docking host (<see cref="PerspectiveBody.DockHost"/>);
+    /// Explore's full-window body has no zone layout and no caller ever asks this for it
+    /// (<c>DockHost.Create</c> refuses a non-host perspective first) — so anything other than
+    /// Architecture falls back to Coding's table, which is the only other member of the closed set
+    /// this method is ever actually asked for.
+    /// </remarks>
+    public static WorkbenchLayout Default(Perspective perspective)
+    {
+        ArgumentNullException.ThrowIfNull(perspective);
+
+        return string.Equals(perspective.Id, "architecture", StringComparison.Ordinal)
+            ? ArchitectureDefault()
+            : CodingDefault();
+    }
+
+    /// <summary>
+    /// Coding's default (Ruling 60; US-C6): the session's own empty state in the Center — never a
+    /// fleet-view tab strip beside a session (Ruling 55d) — the watcher's live Terminal sessions list
+    /// alone in the Left, one terminal in the Bottom. No Explore/Domain/Provenance/Graph/Contexts/
+    /// Joins caption anywhere in this host (US-C6's falsifier).
+    /// </summary>
+    private static WorkbenchLayout CodingDefault()
+    {
+        var left = new ZoneStack([new Surface("sessions", "sessions", "Terminal sessions")]);
+        var bottom = new ZoneStack([new Surface("terminal-1", "terminal", "Terminal — pwsh")]);
+
+        var zones = ImmutableDictionary.CreateRange(new[]
+        {
+            KeyValuePair.Create(ZoneId.Left, new ZoneState(ZoneId.Left, left, ZoneState.DefaultExtent, Collapsed: false)),
+            KeyValuePair.Create(ZoneId.Right, new ZoneState(ZoneId.Right, Content: null, ZoneState.DefaultExtent, Collapsed: false)),
+            KeyValuePair.Create(ZoneId.Bottom, new ZoneState(ZoneId.Bottom, bottom, 0.30, Collapsed: false)),
+            // The Center holds no surface: the session's own empty state answers "No session open",
+            // not a tab strip of Loomkeeper/graph panes a session shares the Center with.
+            KeyValuePair.Create(ZoneId.Center, new ZoneState(ZoneId.Center, Content: null, Extent: 1.0, Collapsed: false)),
+        });
+
+        return new WorkbenchLayout(zones, [], Maximized: null);
+    }
+
+    /// <summary>
+    /// Architecture's default (Rulings 59/61): the graph, the class model ("Domain" — Ruling 55d's
+    /// re-pointing off the Evidence list), and Contexts as Center tabs; the Evidence/Provenance
+    /// master-detail pair split Left/Right, never sibling tabs in one stack (only one tab renders at
+    /// once, which cannot be master-detail).
+    /// </summary>
+    /// <remarks>
+    /// <c>joins</c> is admitted to Architecture (Ruling 59) but left out of THIS default pending the
+    /// attended real-content check Ruling 59's CONDITIONS require (a default tab that may render
+    /// empty is the Explore-pane defect Ruling 55d already removed) — see
+    /// <c>docs/proof/perspective-content.md</c>. It stays reachable from the derived View menu
+    /// either way; re-add it here as a fifth Center tab the moment the check finds real content.
+    /// </remarks>
+    private static WorkbenchLayout ArchitectureDefault()
+    {
+        var center = new ZoneStack(
+        [
+            new Surface("graph", "canvas", "Graph"),
+            new Surface("domain", "classdiagram", "Domain"),
+            new Surface("contexts", "contexts", "Contexts"),
+        ]);
+
+        var left = new ZoneStack([new Surface("evidence", "view", "Evidence")]);
+        var right = new ZoneStack([new Surface("provenance", "inspector", "Provenance")]);
+
+        var zones = ImmutableDictionary.CreateRange(new[]
+        {
+            KeyValuePair.Create(ZoneId.Left, new ZoneState(ZoneId.Left, left, ZoneState.DefaultExtent, Collapsed: false)),
+            KeyValuePair.Create(ZoneId.Right, new ZoneState(ZoneId.Right, right, ZoneState.DefaultExtent, Collapsed: false)),
+            // (empty, collapsed) per §B4: Diagnostics is a Show entry, not a default.
+            KeyValuePair.Create(ZoneId.Bottom, new ZoneState(ZoneId.Bottom, Content: null, ZoneState.DefaultExtent, Collapsed: true)),
+            KeyValuePair.Create(ZoneId.Center, new ZoneState(ZoneId.Center, center, Extent: 1.0, Collapsed: false)),
+        });
+
+        return new WorkbenchLayout(zones, [], Maximized: null);
+    }
+
     /// <summary>An empty frame — all four zones present, none with content. Used by the converter as a base.</summary>
     public static WorkbenchLayout Empty()
     {

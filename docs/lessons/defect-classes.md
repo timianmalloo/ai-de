@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 82 · partially-controlled 61 · uncontrolled 20
+**Status counts:** controlled 82 · partially-controlled 62 · uncontrolled 20
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -6982,3 +6982,41 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   `--long-edit` names the reason. Until (2) lands the control is the brief and the contract.
 - **Status:** `partially-controlled` — the instance is released; the brief is fixed for every
   node dispatched after this entry; the mechanical refusal is a pack proposal.
+
+### DC-164 — The drag reconcile's view-to-model mapping assumes every rendered pane and column stands for a real model occupant, and breaks when one does not
+
+- **Shape:** two related gaps in the position-based reconcile that maps AvalonDock's rendered
+  tree back onto the zone model (`WorkbenchAdapter.MapNode`, `ZoneBackedLayoutService.
+  TryMapByPosition`), both surfacing only once a default layout can legitimately give a zone
+  exactly one surface or none: (1) `MapNode` treats an AvalonDock `LayoutDocumentPane` left in the
+  tree with zero documents — which is what happens when a one-surface zone's only tab is dragged
+  elsewhere — as an unrecognised shape and fails the WHOLE reconcile, not just that zone; (2)
+  `TryMapByPosition` anchors a column to a zone only by majority membership of the zone's OWN
+  model surfaces, so a zone that starts with none (Coding's Center before any session opens —
+  Ruling 55d/60's "No session open" state) can never be anchored, even though its column is
+  plainly rendered (holding `ZonesToTree.WelcomePlaceholder`, a view-only stand-in the model never
+  carries) — so every native drag in that host silently reverted, with no refusal logged.
+- **Signature:** `ReadLayoutFromView()`/`MapNode` returning null (logged `"view-unreadable"`) for a
+  drag that touches an unrelated zone entirely; a native-drag test asserting `expectedAfter` gets
+  back the surface's ORIGINAL zone with no error; a default layout where at least one docking zone
+  holds exactly one surface, or a perspective whose Center starts with none.
+- **Instance (SH-3, 2026-09-12):** landing `WorkbenchLayout.Default(perspective)` (Addendum C §B4)
+  gave Architecture's Left/Right exactly one surface each (Evidence/Provenance) and Coding's
+  Center none — the FIRST defaults in this codebase shaped that way. Six
+  `WorkbenchDragCompletedHookTests` and one theory row went red purely from the shape change, not
+  from a defect in the new defaults themselves; two of the six needed `MapNode`'s fix, the seventh
+  (`coding`/`sessions`/`terminal-1`) needed `TryMapByPosition`'s elimination fallback.
+- **Sweep:** no earlier default in this codebase ever gave a zone exactly one surface or an empty
+  Center, so no other call site was exposed; both fixes are shape-general (any future
+  one-surface-zone or empty-Center default is covered), not special-cased to these two hosts.
+- **Control:** `MapNode` now skips a `LayoutDocumentPane` with zero documents rather than
+  returning null for it (the zone is correctly ABSENT, not unmappable); `TryMapByPosition` now
+  falls back to "the one column neither Left nor Right claims is Center" only when Center's own
+  anchor search comes back empty, and only when exactly one such column remains (still refuses,
+  never guesses, when more than one does). Regression-pinned by
+  `ZoneBackedLayoutServiceTests.ReconcileFromView_WithAModelEmptyCenter_StillAnchorsCenterByElimination`
+  and the seven `WorkbenchDragCompletedHookTests` cases exercising Architecture's and Coding's new
+  one-surface zones.
+- **Status:** `partially-controlled` — pinned by the tests above; no static lint (the shape is a
+  runtime view/model mismatch, not a pattern greppable in source). id pending conductor allocation
+  at the join (contiguous DC family; DC-163 is the last landed).

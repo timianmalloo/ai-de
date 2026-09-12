@@ -87,13 +87,34 @@ public sealed record GraphEdge(string From, string To, string Predicate, Verific
 /// <para>Applied BEFORE the cap, like every other filter here. An excluded edge frees its bytes for
 /// nodes rather than being trimmed after the ranking has already been paid for (DC-035).</para>
 /// </remarks>
+/// <param name="ExcludeKnowledge">
+/// Drop every node the producer declared knowledge (<c>node_class = knowledge</c>) rather than
+/// source (Ruling 53; US-C8): Architecture's canvas asks for code, data and architecture/
+/// infrastructure — never the knowledge/spec corpus Explore already reads.
+/// </param>
+/// <remarks>
+/// <para><b>Excluding one declared flag, not an allow-list of "code/data/architecture" kind
+/// spellings.</b> An allow-list would restate the extractors' <c>has_type</c> vocabulary here and go
+/// stale the first time a reader emitted a spelling nobody had added to it — the exact DC-033 trap
+/// this file already names for the Knowledge chip ("the knowledge kinds are <c>spec</c> and
+/// <c>knowledge-epl-fan-platform</c>… widening the list only moves the problem to the next
+/// repository"). <see cref="AiDe.Core.Projections.GraphNode.IsKnowledge"/> is a DECLARED dimension
+/// the producer already carries for exactly this reason, so excluding by it is safe across
+/// repositories the way an include-list of kind spellings is not.</para>
+///
+/// <para>Every non-knowledge node — code, data and architecture/infrastructure alike — passes this
+/// filter, which is what makes "exclude knowledge" the same result as "keep code, data and
+/// architecture" without Core ever learning that three-way taxonomy (a UI-layer concept the
+/// remarks on <see cref="WorkspaceGraph.DeclaredByKind"/> already keep out of Core).</para>
+/// </remarks>
 public sealed record GraphQuery(
     int MaxNodes = GraphProjection.DefaultMaxNodes,
     IReadOnlyList<string>? Kinds = null,
     string? ScopeId = null,
     bool IncludeExternal = true,
     string? GroupId = null,
-    IReadOnlyList<string>? ExcludeEdges = null);
+    IReadOnlyList<string>? ExcludeEdges = null,
+    bool ExcludeKnowledge = false);
 
 /// <summary>The whole graph, and what it left out.</summary>
 /// <param name="Omitted">Nodes present in the evidence and not returned, because a cap applied.</param>
@@ -258,6 +279,7 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
         var included = mentioned
             .Where(id => query.IncludeExternal || declared.Contains(id))
             .Where(id => wanted is null || wanted.Contains(kinds.GetValueOrDefault(id, "external")))
+            .Where(id => !query.ExcludeKnowledge || !knowledge.Contains(id))
             .Where(id => query.ScopeId is null
                 || string.Equals(declaredIn.GetValueOrDefault(id), query.ScopeId, StringComparison.Ordinal))
             .Where(id => query.GroupId is null || InGroup(id, query.GroupId))

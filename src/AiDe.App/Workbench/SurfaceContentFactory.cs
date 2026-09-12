@@ -37,8 +37,16 @@ public sealed class SurfaceContentFactory(
     // Appended for the same reason as its two neighbours above. Resolves the live session document
     // for a `session-document` surface; null in a build (or a test) with no session open, which the
     // pane says plainly rather than rendering an empty document.
-    Func<Surface, Sessions.SessionDocumentSurface?>? sessionDocumentFor = null)
+    Func<Surface, Sessions.SessionDocumentSurface?>? sessionDocumentFor = null,
+
+    // Appended last, same reason as its neighbours. The Evidence(master)/Provenance(detail) seam
+    // (Ruling 61; US-C6): null lets production wire itself (lazily, in Selection below); a test
+    // supplies its own so the pair is testable without a docking host.
+    EvidenceSelectionSource? evidenceSelection = null)
 {
+    /// <summary>The one selection channel this factory's Evidence pair shares (lazily created).</summary>
+    private EvidenceSelectionSource Selection => evidenceSelection ??= new EvidenceSelectionSource();
+
     /// <summary>How many surfaces of a kind a host holds at once — what §A7's "Instances" column says.</summary>
     public enum Instances
     {
@@ -169,12 +177,12 @@ public sealed class SurfaceContentFactory(
         // ────────────────────────────────────────────────────────────────────────────────
         new("view", "Evidence",
             "The evidence list: every fact the workspace's daemon has indexed, searchable.",
-            static (f, s) => f.Evidence(s),
+            static (f, s) => f.EvidenceMaster(s),
             Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View")),
 
         new("inspector", "Provenance",
             "The selected evidence row's detail: where a fact came from and what cites it.",
-            static (f, s) => f.Evidence(s),
+            static (f, s) => f.EvidenceDetail(s),
             Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View")),
 
         new("classdiagram", "Class diagram",
@@ -338,13 +346,21 @@ public sealed class SurfaceContentFactory(
     /// the constructor's arguments are in scope for this method and not for a lambda, and pushing
     /// the check down here is what keeps every row a one-line call.
     /// </remarks>
-    private FrameworkElement Evidence(Surface surface) =>
-        queries is not null ? EvidenceContent(surface) : WorkspaceNeeded(surface);
+    private FrameworkElement EvidenceMaster(Surface surface) =>
+        queries is not null ? EvidenceMasterContent(surface) : WorkspaceNeeded(surface);
+
+    /// <summary>
+    /// The Provenance detail pane (Ruling 61; US-C6): renders the §C4 empty copy until a row is
+    /// selected in the Evidence master, then that row's <see cref="EvidencePaneViewModel.SelectAsync"/>
+    /// sections — never a second copy of the master's list.
+    /// </summary>
+    private FrameworkElement EvidenceDetail(Surface surface) =>
+        queries is not null ? EvidenceDetailContent(surface) : WorkspaceNeeded(surface);
 
     /// <summary>The breadth-search pane, wired to the shell's provider.</summary>
     private FrameworkElement SearchPane() => new SearchSurface { Provider = searchProvider };
 
-    private FrameworkElement EvidenceContent(Surface surface)
+    private FrameworkElement EvidenceMasterContent(Surface surface)
     {
         var pane = new EvidencePaneViewModel(queries!);
 
@@ -373,6 +389,11 @@ public sealed class SurfaceContentFactory(
             Background = null,
         };
         AutomationProperties.SetName(list, $"{surface.Title} items");
+
+        // The master half of the seam (Ruling 61; US-C6): selecting a row here is exactly what
+        // changes the Provenance detail — never a second definition of "what is selected" kept in
+        // sync by hand.
+        list.SelectionChanged += (_, _) => Selection.Select((list.SelectedItem as EvidenceRow)?.NodeId);
 
         var status = new TextBlock
         {
@@ -430,6 +451,108 @@ public sealed class SurfaceContentFactory(
         {
             list.ItemsSource = pane.Rows;
             status.Text = pane.StatusMessage;
+        });
+    }
+
+    /// <summary>
+    /// The Provenance detail's content: subscribes to the shared <see cref="Selection"/> and re-renders
+    /// whenever it changes — the id line plus the selected row's <see cref="EvidencePaneViewModel.SelectAsync"/>
+    /// sections, or the §C4 empty copy while nothing is selected. No list of rows ever appears here
+    /// (US-C6's positive oracle).
+    /// </summary>
+    private FrameworkElement EvidenceDetailContent(Surface surface)
+    {
+        var pane = new EvidencePaneViewModel(queries!);
+        var stack = new StackPanel { Margin = new Thickness(12) };
+        AutomationProperties.SetName(stack, $"{surface.Title} detail");
+        var gen = 0;
+
+        void RenderEmpty()
+        {
+            stack.Children.Clear();
+            var empty = new TextBlock
+            {
+                Text = EvidencePaneViewModel.EmptySelectionMessage,
+                TextWrapping = TextWrapping.Wrap,
+            };
+            empty.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+            stack.Children.Add(empty);
+        }
+
+        void OnSelectionChanged(string? nodeId)
+        {
+            var mine = ++gen;   // supersedes an in-flight SelectAsync from an earlier selection
+
+            if (nodeId is null)
+            {
+                RenderEmpty();
+                return;
+            }
+
+            stack.Children.Clear();
+            var idLine = new TextBlock
+            {
+                Text = nodeId,
+                FontWeight = FontWeights.SemiBold,
+                TextWrapping = TextWrapping.Wrap,
+                TextTrimming = TextTrimming.CharacterEllipsis,
+            };
+            stack.Children.Add(idLine);
+
+            _ = LoadDetailInto(pane, nodeId, stack, () => gen == mine);
+        }
+
+        // Started at construction: a pane built after a selection already exists (the detail opened
+        // second, or rebuilt after a workspace attach) shows that selection immediately rather than
+        // the empty copy until the next click (US-C6's oracle names both directions).
+        OnSelectionChanged(Selection.SelectedNodeId);
+        Selection.Changed += OnSelectionChanged;
+
+        // The Selection source outlives this one pane (it is the factory's, shared across
+        // rebuilds), so the subscription must not — every close/reopen of Provenance without this
+        // adds a zombie handler that keeps firing a DescribeAsync round trip on someone else's
+        // selection forever (patterns-expert review: Lapsed Listener).
+        stack.Unloaded += (_, _) => Selection.Changed -= OnSelectionChanged;
+
+        return stack;
+    }
+
+    /// <summary>Runs the selected row's provenance query and appends its sections, on the UI thread.</summary>
+    /// <remarks>Guarded by <paramref name="stillCurrent"/> so a superseded selection (the operator
+    /// clicked again before this returned) never overwrites the newer render.</remarks>
+    private static async Task LoadDetailInto(
+        EvidencePaneViewModel pane, string nodeId, StackPanel stack, Func<bool> stillCurrent)
+    {
+        try
+        {
+            await pane.SelectAsync(nodeId);
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+
+        await stack.Dispatcher.InvokeAsync(() =>
+        {
+            if (!stillCurrent()) { return; }
+
+            foreach (var section in pane.Provenance)
+            {
+                var heading = new TextBlock
+                {
+                    Text = section.Heading,
+                    FontWeight = FontWeights.SemiBold,
+                    Margin = new Thickness(0, 10, 0, 2),
+                };
+                stack.Children.Add(heading);
+
+                foreach (var line in section.Lines)
+                {
+                    var text = new TextBlock { Text = line, TextWrapping = TextWrapping.Wrap };
+                    text.SetResourceReference(TextBlock.ForegroundProperty, "TextBrush");
+                    stack.Children.Add(text);
+                }
+            }
         });
     }
 

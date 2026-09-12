@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T18:06:00Z",
+  "generated": "2026-09-12T19:31:31Z",
   "audit": [
     {
       "actor": null,
@@ -14069,6 +14069,54 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T2",
       "tool": null
+    },
+    {
+      "id": "al-01M2BHMZZE0DWVYX23TJQJ9NGT",
+      "shortname": "sh-3-perspective-content",
+      "datetime": "2026-09-12T19:31:31Z",
+      "session": "sh-3",
+      "prompt": "SH-3: Coding's default layout, the Evidence master/detail pair, Architecture's existing content (the kind-filtered second canvas; the class-diagram scaling fix) - Rulings 54/59/61; reds first per the plan",
+      "summary": "WorkbenchLayout.Default(Perspective) for Coding (Left=Terminal sessions, Bottom=one terminal, Center=empty) and Architecture (Center=Graph/Domain/Contexts, Left=Evidence, Right=Provenance); the Evidence/Provenance EvidenceSelectionSource seam (US-C6 positive oracle); Architecture's canvas kind-filtered via GraphQuery.ExcludeKnowledge end-to-end incl. the wire (Ruling 53); the class-diagram scaling fix via GraphQuery.KindFilter=ClassHierarchyModel.TypeKinds (Ruling 54, measured 0->500 types on a 1500-node fixture); DC-164 registered for two drag-reconcile fixes the new one-surface-zone/empty-Center defaults exposed. Test Architect hard-veto PASS-WITH-CONDITIONS and opus patterns-expert PASS-WITH-CONDITIONS, both rounds of findings fixed. Full build+test green (2318 Core, 788 App), verify-test-run.py/verify-surface-ownership.py/verify-defect-register.py and the rest of tools/verify-*.py green. Proof Pack docs/proof/perspective-content.md.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/ZoneLayout.cs",
+        "src/AiDe.Core/Workbench/ZoneBackedLayoutService.cs",
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
+        "src/AiDe.App/Workbench/WorkbenchAdapter.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/Workbench/ClassHierarchyModel.cs",
+        "src/AiDe.Core/Presentation/CanvasGraphViewModel.cs",
+        "src/AiDe.Core/Presentation/EvidencePaneViewModel.cs",
+        "src/AiDe.Core/Projections/GraphProjection.cs",
+        "src/AiDe.Core/Ipc/WorkspaceClient.cs",
+        "src/AiDe.Core/Ipc/WorkspaceOperations.cs",
+        "docs/proof/perspective-content.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land Coding's and Architecture's per-perspective default layouts, the Evidence/Provenance selection channel, the kind-filtered Architecture canvas and the class-diagram scaling fix per Rulings 54/59/60/61, reds first",
+      "done_when": "The five re-scoped SurfaceContentTests reds are green; the US-C6 master/detail positive oracle is green; the US-C8 kind-filter oracle is green end to end incl. the wire; the class-diagram scaling numbers are measured and recorded; every gate (build+test warnings-as-errors, verify-*.py, verify-test-run.py) is green; Test Architect hard veto cleared",
+      "tier": "T1",
+      "main_calls": 180,
+      "main_budget": 4127,
+      "main_over_budget": false,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-12T18:08:09Z",
+      "duration_seconds": 5002.0,
+      "git": {
+        "sha": "b4e610224f20d5070f930c4c35cabf20bae41099",
+        "short": "b4e610224",
+        "branch": "lane/shell-sh3",
+        "pushed": null
+      }
     }
   ],
   "changes": [
