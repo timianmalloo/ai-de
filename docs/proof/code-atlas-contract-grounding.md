@@ -108,3 +108,69 @@ The earlier type-level slice and type-only recommendation are not adopted. Owner
 - Put five altitudes in the spec as user-facing navigation levels, with member/method altitude blocked until identity and source-span contracts exist.
 - Keep TheTerrace as read-only acceptance corpus. Do not copy it as a production fixture.
 - Keep model-backed analysis out of the first slice unless it runs through the approved harness and has an eval/proof path.
+
+
+## Bounded synthetic Roslyn and isolated contract-test research permitted
+
+- **Owner ruling:** Bounded synthetic Roslyn and isolated contract-test research permitted; agent61e506... turn1.
+- **Boundary:** research only. No tracked source/project edits, no package upgrades, no network-intended dependency changes, no TheTerrace/user data/model/cloud calls.
+- **Ignored probe area:** `.agents\artifacts\atlas-contracts-gpt55\roslyn-probe\Probe.csproj`; verified with `git check-ignore --quiet` before creation.
+- **Probe artifacts kept ignored:** `.agents\artifacts\atlas-contracts-gpt55\roslyn-probe\Program.cs`, `Probe.csproj`, `raw-output.txt`, `bin/`, `obj/`.
+
+### Roslyn synthetic-source probe
+
+| Item | Evidence |
+|---|---|
+| Exact command | `dotnet run --project .agents\artifacts\atlas-contracts-gpt55\roslyn-probe\Probe.csproj --no-restore` after an ignored probe-project restore with `dotnet restore .agents\artifacts\atlas-contracts-gpt55\roslyn-probe\Probe.csproj --ignore-failed-sources --nologo --verbosity:minimal`. |
+| Loaded assembly versions | Raw output reported `Microsoft.CodeAnalysis 4.14.0.0` and `Microsoft.CodeAnalysis.CSharp 4.14.0.0`. |
+| Synthetic inputs | Scope `csharp:P1:net10.0`: two syntax trees, `P1/Widget.Part1.cs` and `P1/Widget.Part2.cs`, with `namespace Same; public partial class Widget`, constructors, property `Name`, expression property `Count`, overloads `Save(int)`/`Save(string)`, and partial method declaration/implementation `Hook`. Scope `csharp:P2:net10.0`: `P2/Widget.cs` with the same `Same.Widget`, `Name`, and `Save(int)`. |
+| Observed API behavior | Roslyn documentation IDs are semantic but not scope-qualified: both scopes emitted `T:Same.Widget`, and `Save(int)` doc IDs also compared equal across scopes. Partial type symbol carried two source locations. Constructors, properties, property accessors, overloads and partial methods all had documentation IDs and source spans. Missing type/member declaration IDs resolved to null. |
+| Falsifying outcome | If documentation IDs were globally unique across projects/scopes, `COLLISION_ACROSS_SCOPES typeDocEqual` and `memberDocEqual` would be `False`; observed `True`, so any member identity design must include a scope/project axis. |
+
+Raw probe output:
+
+```text
+ASSEMBLY|Microsoft.CodeAnalysis|4.14.0.0
+ASSEMBLY|Microsoft.CodeAnalysis.CSharp|4.14.0.0
+TYPE|csharp:P1:net10.0|Same.Widget|doc=T:Same.Widget|locs=P1/Widget.Part1.cs:2:22-2:28,P1/Widget.Part2.cs:2:22-2:28
+MEMBER|csharp:P1:net10.0|Method|Same.Widget.Widget()|doc=M:Same.Widget.#ctor|locs=P1/Widget.Part1.cs:4:12-4:18
+MEMBER|csharp:P1:net10.0|Method|Same.Widget.Widget(int)|doc=M:Same.Widget.#ctor(System.Int32)|locs=P1/Widget.Part1.cs:5:12-5:18
+MEMBER|csharp:P1:net10.0|Method|Same.Widget.Count.get|doc=M:Same.Widget.get_Count~System.Int32|locs=P1/Widget.Part1.cs:7:25-7:26
+MEMBER|csharp:P1:net10.0|Method|Same.Widget.Name.get|doc=M:Same.Widget.get_Name~System.String|locs=P1/Widget.Part1.cs:6:26-6:29
+MEMBER|csharp:P1:net10.0|Method|Same.Widget.Hook()|doc=M:Same.Widget.Hook|locs=P1/Widget.Part1.cs:9:18-9:22
+MEMBER|csharp:P1:net10.0|Method|Same.Widget.Save(int)|doc=M:Same.Widget.Save(System.Int32)|locs=P1/Widget.Part1.cs:8:17-8:21
+MEMBER|csharp:P1:net10.0|Method|Same.Widget.Save(string)|doc=M:Same.Widget.Save(System.String)|locs=P1/Widget.Part2.cs:4:17-4:21
+MEMBER|csharp:P1:net10.0|Method|Same.Widget.Name.set|doc=M:Same.Widget.set_Name(System.String)|locs=P1/Widget.Part1.cs:6:31-6:34
+MEMBER|csharp:P1:net10.0|Property|Same.Widget.Count|doc=P:Same.Widget.Count|locs=P1/Widget.Part1.cs:7:16-7:21
+MEMBER|csharp:P1:net10.0|Property|Same.Widget.Name|doc=P:Same.Widget.Name|locs=P1/Widget.Part1.cs:6:19-6:23
+TYPE|csharp:P2:net10.0|Same.Widget|doc=T:Same.Widget|locs=P2/Widget.cs:2:14-2:20
+MEMBER|csharp:P2:net10.0|Method|Same.Widget.Name.get|doc=M:Same.Widget.get_Name~System.String|locs=P2/Widget.cs:4:26-4:29
+MEMBER|csharp:P2:net10.0|Method|Same.Widget.Save(int)|doc=M:Same.Widget.Save(System.Int32)|locs=P2/Widget.cs:5:17-5:21
+MEMBER|csharp:P2:net10.0|Method|Same.Widget.Name.set|doc=M:Same.Widget.set_Name(System.String)|locs=P2/Widget.cs:4:31-4:34
+MEMBER|csharp:P2:net10.0|Property|Same.Widget.Name|doc=P:Same.Widget.Name|locs=P2/Widget.cs:4:19-4:23
+COLLISION_ACROSS_SCOPES|typeDocEqual=True|p1=T:Same.Widget|p2=T:Same.Widget
+COLLISION_ACROSS_SCOPES|memberDocEqual=True
+MISSING_ID|nullType=True|nullMember=True
+```
+
+### Existing isolated contract suites
+
+| Item | Evidence |
+|---|---|
+| Fixture isolation inspected | `UpgradingTheExtractorReExtractsTests` uses `Path.GetTempPath()` + `Guid.NewGuid()` and deletes in `Dispose`; `StoreImmutabilityTests` and `StoreCompactionTests` use `TestWorkspace.Create()`/disposable temp stores; `BoundaryDispatchTests` and `DaemonOperationsTests` use `TestWorkspace.Create()` plus unique pipe names from `Guid.NewGuid()`. |
+| Exact command | `dotnet test tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj --no-restore --filter "FullyQualifiedName~UpgradingTheExtractorReExtractsTests|FullyQualifiedName~StoreImmutabilityTests|FullyQualifiedName~StoreCompactionTests|FullyQualifiedName~BoundaryDispatchTests|FullyQualifiedName~DaemonOperationsTests" --logger "trx;LogFileName=atlas-contracts-batch2.trx" --results-directory C:\Users\malla\.copilot\session-state\45bbc625-37e9-40a8-a2d0-8b39402c8e90\files\atlas-contracts-test-results-2 --verbosity:minimal`. |
+| Readback counts | Console and TRX agreed: `Failed: 0, Passed: 40, Skipped: 0, Total: 40`; TRX counters `total=40 executed=40 passed=40 failed=0 skipped=0`. |
+| Covered contract classes | Source-revision re-extraction, fact-store immutability/compaction, boundary dispatch IPC, and daemon operation payload/refusal/version paths. |
+
+### Observed API behavior vs proposed identity design
+
+| Observed behavior | Design implication |
+|---|---|
+| Roslyn `DocumentationCommentId` distinguishes overloads (`Save(System.Int32)` vs `Save(System.String)`), constructors (`#ctor` with overload parameters), properties (`P:` IDs), accessors (`get_`/`set_`) and partial methods. | It is usable as one component of member identity. |
+| Roslyn IDs do not include project/scope; same namespace/type/member in two compilations collided. | Member IDs for Atlas must include at least scope/project identity plus documentation ID, and likely source path/span for display/navigation. |
+| Partial type locations are multiple; partial method declaration/implementation collapsed to one symbol with one observed implementation span in this probe. | Source walking must support multiple declaration spans for types and must define how declaration vs implementation spans are represented for partial members. |
+| Missing declaration IDs resolve to null. | Query contracts must return explicit not-found/shortfall results, not fabricate member nodes. |
+
+### Updated barrier
+
+Physical-inventory and member-ID contracts remain first-order barriers. The new probe strengthens, not relaxes, the prior correction: addressable members are feasible with Roslyn 4.14 evidence, but only if the identity design includes scope/project qualification and explicit source-span semantics. A type-only `NodeContent` journey remains insufficient for Owner's native Architecture requirement.
