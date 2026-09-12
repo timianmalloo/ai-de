@@ -3,7 +3,7 @@ id: proof-code-atlas-contract-grounding
 title: "Code Atlas contract grounding spike"
 type: doc
 status: draft
-owner: "atlas-contracts-gpt55"
+owner: "@timianmalloo"
 phase: "atlas-contracts-spike"
 tags: [proof, code-atlas, contracts, spike, grounding]
 links:
@@ -39,8 +39,8 @@ summary: >-
 |---|---|---|
 | `dotnet test AiDe.sln --no-restore --list-tests --filter ...` | Exit 0, no listed tests. | Not treated as proof; output did not show discovered tests. |
 | `dotnet build tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj --no-restore --nologo --verbosity:minimal` | Failed with `NETSDK1004` missing `tests\AiDe.Core.Tests\obj\project.assets.json`. | This satisfied the no-restore-first rule and justified restore. |
-| `dotnet restore tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj --nologo --verbosity:minimal` | Restored Core, Daemon, MCP and probe projects in 149 ms. | No new dependencies installed. |
-| `dotnet test tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj --no-restore --filter "FullyQualifiedName~CSharpExtractorTests|...|FullyQualifiedName~InteractionTests" --logger trx ...` | `Passed! Failed: 0, Passed: 79, Skipped: 0, Total: 79, Duration: 2 s`. TRX counters: `total=79 executed=79 passed=79 failed=0`. | Targeted baseline for extraction, calls, members, workspace discovery, graph projection, describe knowledge, node content and interaction. TRX persisted in session artifact only: `files\atlas-contracts-test-results\atlas-contracts.trx`. |
+| `dotnet restore tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj --nologo --verbosity:minimal` | Restored Core, Daemon, MCP and probe projects in 149 ms. | No manifest or dependency additions were made. |
+| `dotnet test tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj --no-restore --filter "FullyQualifiedName~CSharpExtractorTests|FullyQualifiedName~CallEdgeTests|FullyQualifiedName~TypeMembersTests|FullyQualifiedName~WorkspaceIndexTests|FullyQualifiedName~GraphProjectionTests|FullyQualifiedName~DescribeCarriesKnowledgeTests|FullyQualifiedName~NodeContentTests|FullyQualifiedName~InteractionTests" --logger "trx;LogFileName=atlas-contracts.trx" --results-directory C:\Users\malla\.copilot\session-state\45bbc625-37e9-40a8-a2d0-8b39402c8e90\files\atlas-contracts-test-results` | `Passed! Failed: 0, Passed: 79, Skipped: 0, Total: 79, Duration: 2 s`. TRX counters: `total=79 executed=79 passed=79 failed=0`. | Targeted baseline for extraction, calls, members, workspace discovery, graph projection, describe knowledge, node content and interaction. TRX persisted in session artifact only: `files\atlas-contracts-test-results\atlas-contracts.trx`. |
 
 ## Contract table
 
@@ -87,13 +87,11 @@ summary: >-
 | App Architecture tests not executed in this spike. | Surface registry hooks are source-grounded, not executed here. | Conductor/Shell owner should run `PerspectiveMenuTests` and `SurfaceContentTests` when seam approval allows Shell-owned paths. |
 | Store immutability not executed in this spike. | Storage contract is source-grounded only. | If architecture depends on store mutation guarantees, run the smallest Store tests or propose an isolated store spike path. |
 
-## Minimal vertical first slice
+## Conductor disposition: barrier before vertical slice
 
-1. **Input:** selected graph node ID from current WPF Architecture perspective.
-2. **Core calls:** `DescribeAsync(nodeId, cap)`, `NodeContentAsync(nodeId)`, and, for type nodes only, `InteractionAsync(nodeId, cap)`.
-3. **Render:** file-first left pane from `NodeContent`; visual-first right pane from existing class/sequence surfaces; shortfall banners from `ResultBounds`, `Truncated`, and `NodeContent.Shortfall`.
-4. **Do not add:** provider SDK, second store, App-side file reads, parsed `has_member` identity, method-level claims, Azure layer taxonomy, or Shell registry changes before seam approval.
-5. **First missing contract to decide:** whether Atlas needs method nodes. This constrains source extraction, store facts, selection IDs, NodeContent addressing, sequence diagram fidelity and lineage.
+The earlier type-level slice and type-only recommendation are not adopted. Owner requires an integrated deterministic C# physical file -> type/member -> actual source walking skeleton, with a native Architecture journey over a real selectable workspace. Unsupported and unindexed files must remain visible. `NodeContent` for a selected indexed type is not a solution explorer, and a silent type-only scope cut is not allowed.
+
+**Barrier:** physical-inventory and member-ID contracts must be designed and admitted before implementation. The existing source findings still hold: `has_member` is display text, no method/member node identity exists, and `Interaction` is type-level. These are blockers to the required journey, not reasons to complete with a type-only Atlas.
 
 ## Proof and residual risk
 
@@ -105,8 +103,8 @@ summary: >-
 
 ## Recommendations to the spec author
 
-- Phrase current facts as **type-level Code Atlas**, not method-level Atlas.
-- Use current Core query names and result records as the vocabulary until a missing contract is accepted.
-- Put five altitudes in the spec as user-facing navigation levels, but mark the member/method altitude as **blocked by method identity** unless Owner approves a new extractor fact.
+- Treat physical inventory and member identity as required contracts, not optional later enhancements.
+- Use current Core query names and result records as source evidence only; do not declare the native Architecture journey complete until physical file inventory and addressable member IDs are admitted.
+- Put five altitudes in the spec as user-facing navigation levels, with member/method altitude blocked until identity and source-span contracts exist.
 - Keep TheTerrace as read-only acceptance corpus. Do not copy it as a production fixture.
 - Keep model-backed analysis out of the first slice unless it runs through the approved harness and has an eval/proof path.
