@@ -58,13 +58,22 @@ regenerate or alter global indices, registries, audit files or site counters.
 pending; ownership acknowledgment pending; runtime delivery not admitted. A complete proposal
 does not answer any of the other three. The separate Owner, never this author, rules on forks.
 
-**Conductor checkpoint, 2026-09-12:** Security spec-content blockers cleared; Test Architect
-spec-content PASS-with-conditions (no blocking fix; one optional redundant row); UX/UI spec-content
-PASS; Data spec-content review pending. These are **Conductor-reported review outcomes**, not
-independent reviews performed by this author. Final architecture/ADR content gates remain pending.
+**Conductor checkpoint, 2026-09-12:** all spec-content gates on candidate `a50329b2` are clear
+for proposed architecture: Security prior blockers cleared; Test Architect PASS-with-conditions
+(no blocking fix; one optional redundant row); UX/IA/UI PASS; Data PASS-with-concerns (no blockers).
+These are **Conductor-reported review outcomes**, not independent reviews performed by this author.
+Final architecture/ADR content gates remain pending and are separate from spec-content clearance,
+normative Addendum E acceptance/registration and Core/Claude code acknowledgment.
 E-0 still has no mandatory WebView dependency where native WPF suffices; later WebView proof applies
 only where the admitted design uses it. The architecture's existing evidence split and phase ledger
 already conform to the inspected candidate delta.
+
+The Data concerns are interpreted by the stronger contracts below: a source line is a
+version-bound location, **never a logical ID**; supported physical inventory means the authorized
+physical scope, **not only extractor-supported languages**; every usable SourceAnchor retains its
+content hash/decoder and declaration-version binding. The grain/history/coherence/live-source/
+cache/evolution decisions in §§4–6 and the ADRs are proposed choices awaiting their own review,
+not unresolved concepts delegated to UI code and not already accepted implementation contracts.
 
 ### 1.1 Decision index
 
@@ -827,4 +836,4 @@ reader/query-integrity spikes disprove the minimal live-read/generic-fact design
 
 | Completed | Remaining | Best next action |
 |---|---|---|
-| Whole PROPOSED architecture and five decisions; exact existing/new seam requests; source/evidence limits recorded. | Independent architecture/ADR and Data spec-content gates, Owner forks, registration/acknowledgment, E-0 design/native safety proof and all production delivery. | Conductor join and independent review against integrated candidate spec `a50329b2`, then separate Owner ruling; no source dispatch meanwhile. |
+| Whole PROPOSED architecture and five decisions; exact existing/new seam requests; source/evidence limits recorded; Conductor reports all spec-content gates clear. | Independent architecture/ADR gates, Owner forks, registration/acknowledgment, E-0 design/native safety proof and all production delivery. | Conductor join and independent architecture review against integrated candidate spec `a50329b2`, then separate Owner ruling; no source dispatch meanwhile. |
