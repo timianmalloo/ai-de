@@ -20,8 +20,12 @@ summary: >-
 
 # Proof Pack: SH-3 — perspective content
 
-- **Change:** branch `lane/shell-sh3`, HEAD `b4e61022` + this slice's commits (worktree
-  `C:\Projects\ai-de-lane-shell-sh3`).
+- **Change:** branch `lane/shell-sh3`, from `b4e61022` — `6065a2b6` (this slice's implementation)
+  merged with `origin/main`'s `5ce4b08e` (CV-1 + X-2's join) at `11668bd4` (worktree
+  `C:\Projects\ai-de-lane-shell-sh3`). The merge renumbered this slice's defect-class placeholder
+  from DC-164 to **DC-169** — DC-164/165 were already taken by X-2's join (INV-0011) and
+  DC-166/167/168 by CV-1's; every "DC-164" reference in this Proof Pack below predates the merge
+  and now means DC-169 in `docs/lessons/defect-classes.md`.
 - **Spec / design:** `docs/specs/addendum-c-perspectives.md` §B4, US-C6, US-C8 ·
   `docs/notes/addendum-c-council-rulings.md` Rulings 53/54/59/60/61 ·
   `docs/coordination/addendum-cd.md` (SH-3 row).
@@ -200,15 +204,15 @@ summary: >-
 - **Confidence:** Verified.
 - **Residual risk:** none identified beyond Claim 1's.
 
-### Claim 6 — a real native drag reaches the model immediately in BOTH hosts' new defaults, including the one-surface-zone and empty-Center shapes those defaults introduce for the first time in this codebase (DC-164)
+### Claim 6 — a real native drag reaches the model immediately in BOTH hosts' new defaults, including the one-surface-zone and empty-Center shapes those defaults introduce for the first time in this codebase (DC-169)
 - **Evidence:** `src/AiDe.App/Workbench/WorkbenchAdapter.cs`'s `MapNode` now skips an AvalonDock
   `LayoutDocumentPane` left with zero documents (a one-surface zone's only tab dragged elsewhere)
   instead of failing the whole reconcile; `src/AiDe.Core/Workbench/ZoneBackedLayoutService.cs`'s
   `TryMapByPosition` now falls back to "the one column neither Left nor Right claims is Center"
   when Center's own majority-membership anchor search comes back empty (Coding's Center before any
   session opens has no MODEL surfaces at all — only the view-only `ZonesToTree.WelcomePlaceholder`).
-  Registered as **DC-164** (`docs/lessons/defect-classes.md`, id pending conductor allocation at
-  the join).
+  Registered as **DC-169** (`docs/lessons/defect-classes.md` — landed at that number after the
+  merge with `origin/main` renumbered it from its original DC-164 placeholder).
 - **Oracle:** `ZoneBackedLayoutServiceTests.ReconcileFromView_WithAModelEmptyCenter_StillAnchorsCenterByElimination`
   (headless, hand-built `Layout`, no WPF) proves the Center-anchor fallback in isolation. The full
   `WorkbenchDragCompletedHookTests` suite (10 tests, including the 2-row `ANativeDrag_ReachesTheModelImmediately_WithoutWaitingForAnUnrelatedCommand`
@@ -282,18 +286,41 @@ python tools/verify-surface-ownership.py
   case), the suggestion is a clarity improvement, not a correctness fix, and is left for a future
   pass.
 - `tools/verify-derived-views.py`/`verify-site-figures.py` were stale after this slice's code and
-  defect-register changes (new public symbols; DC-164) until `regenerate-derived.py` ran — recorded
-  here as expected, not a defect: regenerated as this slice's last documentation step.
-- `tools/verify-stranded-audit.py` reports uncommitted `docs/audit/audit-log.jsonl` lines in
-  `C:\Projects\ai-de-conductor-addendum-c` — **not this worktree**; reported to the conductor,
-  out of this session's authority to touch (a different tree entirely).
+  defect-register changes (new public symbols; DC-169) until `regenerate-derived.py` ran — recorded
+  here as expected, not a defect: regenerated as this slice's last documentation step, both before
+  and again after merging `origin/main`.
+- `tools/verify-stranded-audit.py` reported (before the merge) uncommitted `docs/audit/audit-log.jsonl`
+  lines in `C:\Projects\ai-de-conductor-addendum-c` — **not this worktree**; reported to the
+  conductor, out of this session's authority to touch. Clean after the merge (no longer reproduces).
+
+## Merging `origin/main` (CV-1 + X-2's join, `5ce4b08e`)
+The conductor's message mid-session named three touch points; all resolved:
+1. `WorkbenchShell.cs` — X-2's `Git()` → `ProcessRunner` (DC-165) and `Dispose()` → `RecordOwnerClosing()`
+   (INV-0011) merged cleanly alongside this slice's `BindCanvas`/`PopulateClassDiagramsAsync` edits
+   (different regions of the file; `git merge` auto-merged, verified by grep after: both sets of
+   symbols present).
+2. `using var shell = new WorkbenchShell(...)` (the terminal-ledger leak convention, 14 files) —
+   auto-merged into this slice's edited test files (`WorkbenchDragCompletedHookTests.cs`,
+   `WorkbenchShellTests.cs`); none of this slice's other new/edited tests construct a
+   `WorkbenchShell` directly, so no further changes were needed.
+3. `docs/lessons/defect-classes.md` conflicted (both branches appended after DC-163): resolved by
+   keeping origin's DC-164–168 (X-2/CV-1's join) and renumbering this slice's entry DC-164 → **DC-169**
+   (the next free id, per the conductor's message), updating its "last landed" cross-reference and
+   folding in the ambiguous-refusal test added after the Test Architect's review. `site/*.html`
+   (derived) conflicts resolved by taking `origin/main`'s content, then regenerating.
+- **Floors after the merge:** App 798/793, Core 2357/2351 (both above the post-join baseline;
+  `verify-test-run.py` OK). `ShellContrastCensusTests` still green (7/7) against the merged
+  `App.xaml` (X-1/CV-1's `ChromeComboBoxTemplate` addition). Full `dotnet build`
+  (`-p:TreatWarningsAsErrors=true`, all four projects) and full `dotnet test` (both projects)
+  re-run green after the merge. Every `tools/verify-*.py` green after `regenerate-derived.py`'s
+  second (post-merge) run.
 
 ## Status & next action
 | | |
 |---|---|
-| **Completed** | `WorkbenchLayout.Default(Perspective)` for Coding/Architecture; the Evidence/Provenance selection channel; the kind-filtered Architecture canvas and its full wire path; the class-diagram scaling fix, measured; DC-164's two reconcile fixes; every named red re-scoped or added and observed green; full `dotnet build`/`test` (both projects, warnings-as-errors) green; `verify-test-run.py`, `verify-surface-ownership.py` and the rest of `tools/verify-*.py` green (two pre-existing/out-of-scope findings noted above). |
+| **Completed** | `WorkbenchLayout.Default(Perspective)` for Coding/Architecture; the Evidence/Provenance selection channel; the kind-filtered Architecture canvas and its full wire path; the class-diagram scaling fix (corrected to `KindFilter=TypeKinds` on review), measured; DC-169's two reconcile fixes; every named red re-scoped or added and observed green; two review rounds (Test Architect hard veto, opus patterns-expert) each PASS-WITH-CONDITIONS with every finding resolved; merged with `origin/main`'s CV-1/X-2 join, conflicts resolved per the plan's seam rules; full `dotnet build`/`test` (both projects, warnings-as-errors) green post-merge; `verify-test-run.py`, `verify-surface-ownership.py` and the rest of `tools/verify-*.py` green. |
 | **Remaining** | Attended rows 1-4 (operator, real workspace); the `joins` default-inclusion decision contingent on row 3; `OverviewRequest`'s wire gap (Flagged, next slice). |
-| **Best next action** | Conductor: allocate DC-164's real id at the join; run the four attended rows against a real workspace; if row 3 finds real `joins` content, land the one-line `ArchitectureDefault()` addition as a follow-up. |
+| **Best next action** | Conductor: confirm DC-169's final id at the next join (it may shift again if another lane's placeholder lands first); run the four attended rows against a real workspace; if row 3 finds real `joins` content, land the one-line `ArchitectureDefault()` addition as a follow-up. |
 
 ## Gate record
 `GATE implement · 2026-09-12 · Test Architect (hard), patterns-expert/opus (selection channel + LOD choice) · criteria met: see Claims 1-6 · verdict: PASS · vetoes→resolution: see below`

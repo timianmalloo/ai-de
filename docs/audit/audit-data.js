@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T19:31:31Z",
+  "generated": "2026-09-12T20:01:59Z",
   "audit": [
     {
       "actor": null,
@@ -14071,15 +14071,6 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2BHMZZE0DWVYX23TJQJ9NGT",
-      "shortname": "sh-3-perspective-content",
-      "datetime": "2026-09-12T19:31:31Z",
-      "session": "sh-3",
-      "prompt": "SH-3: Coding's default layout, the Evidence master/detail pair, Architecture's existing content (the kind-filtered second canvas; the class-diagram scaling fix) - Rulings 54/59/61; reds first per the plan",
-      "summary": "WorkbenchLayout.Default(Perspective) for Coding (Left=Terminal sessions, Bottom=one terminal, Center=empty) and Architecture (Center=Graph/Domain/Contexts, Left=Evidence, Right=Provenance); the Evidence/Provenance EvidenceSelectionSource seam (US-C6 positive oracle); Architecture's canvas kind-filtered via GraphQuery.ExcludeKnowledge end-to-end incl. the wire (Ruling 53); the class-diagram scaling fix via GraphQuery.KindFilter=ClassHierarchyModel.TypeKinds (Ruling 54, measured 0->500 types on a 1500-node fixture); DC-164 registered for two drag-reconcile fixes the new one-surface-zone/empty-Center defaults exposed. Test Architect hard-veto PASS-WITH-CONDITIONS and opus patterns-expert PASS-WITH-CONDITIONS, both rounds of findings fixed. Full build+test green (2318 Core, 788 App), verify-test-run.py/verify-surface-ownership.py/verify-defect-register.py and the rest of tools/verify-*.py green. Proof Pack docs/proof/perspective-content.md.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Workbench/ZoneLayout.cs",
@@ -14096,27 +14087,170 @@ window.AUDIT_DATA = {
         "docs/proof/perspective-content.md",
         "docs/lessons/defect-classes.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Land Coding's and Architecture's per-perspective default layouts, the Evidence/Provenance selection channel, the kind-filtered Architecture canvas and the class-diagram scaling fix per Rulings 54/59/60/61, reds first",
+      "datetime": "2026-09-12T19:31:31Z",
       "done_when": "The five re-scoped SurfaceContentTests reds are green; the US-C6 master/detail positive oracle is green; the US-C8 kind-filter oracle is green end to end incl. the wire; the class-diagram scaling numbers are measured and recorded; every gate (build+test warnings-as-errors, verify-*.py, verify-test-run.py) is green; Test Architect hard veto cleared",
-      "tier": "T1",
-      "main_calls": 180,
-      "main_budget": 4127,
-      "main_over_budget": false,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "started_at": "2026-09-12T18:08:09Z",
       "duration_seconds": 5002.0,
       "git": {
-        "sha": "b4e610224f20d5070f930c4c35cabf20bae41099",
-        "short": "b4e610224",
         "branch": "lane/shell-sh3",
-        "pushed": null
-      }
+        "pushed": null,
+        "sha": "b4e610224f20d5070f930c4c35cabf20bae41099",
+        "short": "b4e610224"
+      },
+      "goal": "Land Coding's and Architecture's per-perspective default layouts, the Evidence/Provenance selection channel, the kind-filtered Architecture canvas and the class-diagram scaling fix per Rulings 54/59/60/61, reds first",
+      "id": "al-01M2BHMZZE0DWVYX23TJQJ9NGT",
+      "kind": "skill",
+      "main_budget": 4127,
+      "main_calls": 180,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "SH-3: Coding's default layout, the Evidence master/detail pair, Architecture's existing content (the kind-filtered second canvas; the class-diagram scaling fix) - Rulings 54/59/61; reds first per the plan",
+      "session": "sh-3",
+      "shortname": "sh-3-perspective-content",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-12T18:08:09Z",
+      "summary": "WorkbenchLayout.Default(Perspective) for Coding (Left=Terminal sessions, Bottom=one terminal, Center=empty) and Architecture (Center=Graph/Domain/Contexts, Left=Evidence, Right=Provenance); the Evidence/Provenance EvidenceSelectionSource seam (US-C6 positive oracle); Architecture's canvas kind-filtered via GraphQuery.ExcludeKnowledge end-to-end incl. the wire (Ruling 53); the class-diagram scaling fix via GraphQuery.KindFilter=ClassHierarchyModel.TypeKinds (Ruling 54, measured 0->500 types on a 1500-node fixture); DC-164 registered for two drag-reconcile fixes the new one-surface-zone/empty-Center defaults exposed. Test Architect hard-veto PASS-WITH-CONDITIONS and opus patterns-expert PASS-WITH-CONDITIONS, both rounds of findings fixed. Full build+test green (2318 Core, 788 App), verify-test-run.py/verify-surface-ownership.py/verify-defect-register.py and the rest of tools/verify-*.py green. Proof Pack docs/proof/perspective-content.md.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-12T14:21:05Z",
+      "id": "al-01M2AZWJ3NBA6Y0N21JE9MK0P8",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "Operator: 'sigh... not sure about progress from my user perspective' - the lease issue persists, the UX is still the individual text blocks, the task class is still required with no default; keep going; also 'I am still seeing terminal hosts that are not being cleaned up - /investigate AGAIN'. Later: approves INV-0010 slices 1-4 now; slice 5 (the global Copilot MCP config) is the operator's.",
+      "session": "prompt-log",
+      "shortname": "Operator: 'sigh... not sure about progress from my user perspective' - t…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-12T19:16:25Z",
+      "done_when": "population counted and attributed; the hang class and the stdout-leak class each red->green with an E2E proof; App and Core Windows suites green; INV-0011 + proof pack + register entries committed",
+      "goal": "Diagnose the sixth terminal-host report to a measured cause in our own infra, fix with red-first controls, and say from the operator's chair what remains",
+      "id": "al-01M2BGSB09J4SXDSR80PNJB8PX",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "ok - this is ridiculous... go look at the number of zombie terminal hosts being created AGAIN ... and dont say it is the copilot session because that is working on this repo as well so it should have any fixes you already claimed to have done",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "investigate-terminal-hosts-sixth-x2",
+      "skill": "investigate",
+      "summary": "INV-0011 (X-2). Counted first: 32 powershell + 36 conhost born in the hour, all children of CV-1's App test host, alive 25 min - ours. The host was hung 30 min in WorkbenchShell.Git -> ReadToEnd after git exited (DC-165: the read was bounded by the child's exit, not the call; fixed in ProcessRunner, Git() reuses it; red 7.1 s -> green 2 s). On the way in: a ConPTY child of a redirected parent inherited its std handles and wrote into its stdout (DC-164: STARTF_USESTDHANDLES with null handles as Windows Terminal does; red token-on-pipe -> green; DC-014's 2026-08-26 instance re-attributed). WorkbenchShell.Dispose now disposes its terminal panes and every App test disposes its shell: ledger 64/14 -> 64/62. The census then saw the Target session face at 1.03:1 (readiness never reached the test host before) -> ChromeComboBoxTemplate, 120/120. App 783/783, Core Windows half 155/155. The 513 node/conhost under wta.exe -> copilot.exe are INV-0010's pre-fix pool, unchanged; operator's call to end it.",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/composer-as-conversation.md",
+        "docs/design/session-thread-itemscontrol.md",
+        "src/AiDe.Core/Presentation/Sessions/SessionThread.cs",
+        "src/AiDe.Core/Presentation/Sessions/ThreadAnnouncementPolicy.cs",
+        "src/AiDe.Core/Presentation/Sessions/RunChannelSessionThread.cs",
+        "src/AiDe.Core/Presentation/Composer/ComposerCompiler.cs",
+        "src/AiDe.Core/Presentation/Composer/ComposerDraft.cs",
+        "src/AiDe.App/Workbench/Sessions/FeedList.cs",
+        "src/AiDe.App/Workbench/Sessions/ThreadFeed.cs",
+        "src/AiDe.App/Workbench/Sessions/TurnItem.cs",
+        "src/AiDe.App/Workbench/Sessions/ConsoleSurface.cs",
+        "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs",
+        "src/AiDe.App/Workbench/WorkbenchAnnouncer.cs",
+        "tests/AiDe.App.Tests/Sessions/Thread/TheThreadIsChatLikeTests.cs",
+        "tests/AiDe.App.Tests/Sessions/Thread/TheThreadIsAFeedOfTurnsTests.cs",
+        "tests/AiDe.App.Tests/Sessions/Thread/TheThreadAnnouncesAndExposesRealPropertiesTests.cs",
+        "tests/AiDe.Core.Tests/Sessions/Thread/TheThreadAnnouncesByTransitionTests.cs",
+        "tests/AiDe.Core.Tests/Sessions/Thread/TheReadModelPublishesOneSnapshotPerAppliedEventTests.cs",
+        "tests/AiDe.Core.Tests/Composer/TheTierIsTheMechanicalRulesProjectionTests.cs",
+        "docs/notes/cv1-waiting-is-not-produced-in-phase-1.md",
+        "docs/notes/cv1-f6-and-the-announcer-until-the-shell-lane-lands-them.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-12T18:56:39Z",
+      "done_when": "the named reds and DS-1's headless oracles red then green with the run record; the mockup's states reached or named as not; the E7 surface list ticked; the hard vetoes (Test Architect, UX & A) cleared; every tools/verify-*.py green; the Proof Pack committed; the lane pushed, never merged to main",
+      "duration_seconds": 13061.0,
+      "fan_out": 3,
+      "git": {
+        "branch": "lane/conversation-cv1",
+        "pushed": null,
+        "sha": "7007e4ac81e50c1af7b9b2734d2a940dabd595a1",
+        "short": "7007e4ac8"
+      },
+      "goal": "CV-1: the session document as a conversation — DS-1's thread ItemsControl (SC8 keys, SC9 announcements, SC10 UIA), the folded Console per turn and the split, the decoration line, tier as the mechanical projection with tier/fan-out/budget off the per-prompt form, the document taking the whole tree",
+      "id": "al-01M2BFN5G877G6CWTAFDBDE9SB",
+      "kind": "skill",
+      "main_budget": 6000,
+      "main_calls": 700,
+      "main_over_budget": false,
+      "outcome": "success",
+      "persona_yield": [
+        {
+          "accepted": 17,
+          "persona": "ux-accessibility",
+          "raised": 21
+        },
+        {
+          "accepted": 15,
+          "persona": "test-architect",
+          "raised": 17
+        },
+        {
+          "accepted": 11,
+          "persona": "wpf-styling-expert",
+          "raised": 13
+        }
+      ],
+      "prompt": "You are track **CV-1** of the Conversation lane in `docs/coordination/addendum-cd.md` — **read your row in full, the Seams table, the §2 rows and the fan-out contract first.** Run the **`/implement`** skill (Skill tool: `implement`, args: `CV-1: the composer as a conversation — the thread ItemsControl per DS-1 (SC8 keyboard model, SC9 announcements), the folded Console per turn, the decoration line, tier/fan-out/budget off the per-prompt form, the session document taking the whole tree; reds first per the plan and DS-1's named oracles`). The conductor is Claude Opus (session `conductor-addendum-c`). Read `C:\\projects\\ai-de\\CLAUDE.md` and `AGENTS.md`; the pack's rules apply in full (red first; smallest correct; the UX & Accessibility hard veto on the rendered surface; the Test Architect's veto; the census as the acceptance floor; DC-135 — construct what the product constructs). Use `python`, not `python3`; `$env:PYTHONIOENCODING='utf-8'`.\n\n**This is the slice the operator is waiting to see.** Their words on the current build: *\"the ux is still the individual text blocks not even close to the mockups we reviewed.\"* The target is `docs/mockups/session-conversation.html` (ratified) built to `DESIGN.md` SC1–SC10 and the design `docs/design/session-thread-itemscontrol.md` (DS-1). Every state the mockup renders that this slice can reach must reach it.\n\n## Your worktree — the only tree you write to\n`C:\\Projects\\ai-de-lane-conversation-cv1`, branch `lane/conversation-cv1`, HEAD = `main` `11ab0e74` (CV-0 joined: the read-only turn, `ComposerDraft.TurnShape`, `ComposerCompiler.IsReadOnly/ReadOnlyScope`, `RunBudget.SubscriptionBoundedDisplay`, the sheet at Rulings 72/56/63; S1's `SessionComposerBinder`; S2's settings fields; DS-1's design). From inside it:\n```\n$env:AGENT_SESSION='cv-1'; $env:AGENT_NAME='claude-cv-1'; $env:PYTHONIOENCODING='utf-8'\npython docs/ai-forward-pack/scripts/audit-log.py start --session cv-1\n```\nClaim what you edit (`coord-core.py claim --path <file> --wi CV-1 --ttl 3600`); release at close; a refused claim is a plan defect — stop and report. **Never `taskkill` by image name; never reap** — SH-1 and the INV-0010 fix node are live and their test hosts are legitimate.\n\n## What you build (your §2 paths; DS-1 is the design you implement — read it whole)\n- **The thread** in `src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs` (+ new files under `Workbench/Sessions/` as DS-1 names them: `FeedList : ListBox` with a recycling `VirtualizingStackPanel`, `TurnItem`, `ThreadAnnouncementPolicy`, the `ISessionThread`/`ThreadSnapshot` seam — for this slice the read model is a **fixture over today's stores** (the run's events; CV-2 replaces it with the envelope fold — keep the seam), the pinned composer beneath with `MinHeight 130` on the editor host **and** the document's `MaxHeight` belt (DS-1 Q14: an `Auto` row alone gives a 0 px editor — measured), \"follow only while pinned at the end\", the jump list.\n- **SC8 keyboard model** (focus lands in the editor on open; F6 cycle header → thread → composer → Console split; the six feed keys as DS-1's pure `Decide` + act; Tab stops per turn; Escape; Ctrl+Home/End) and **SC9 announcements** (`ThreadAnnouncementPolicy.Next(snapshot)` — once per outcome, assertive for lane exit / waiting, never for lines/folds/scroll) through `WorkbenchAnnouncer`; **SC10 UIA** properties.\n- **The folded Console per turn** (`ConsoleSurface.cs` — SC7: outcome word + counts with units + reply + *N events*; the split on demand, Ruling 74; **Ruling 74 condition 1: the split's rows equal the folded events in order** — a red test).\n- **The composer** (`Workbench/Composer/*`, `Web/composer.html`, `composer.mjs`): one prompt editor; the **decoration line** (`class · tier · lease · shape [· template]`, provenance one disclosure away; the read-only state from CV-0's `ReadOnlyScope`; tier shown as *derived* per Ruling 63/64 with **no derivation yet** — display the mechanical rule's value if `ComposerCompiler` exposes one, else *\"tier: not derived yet\"*); **TIER / FAN_OUT_CAP / BUDGET leave the per-prompt form** (Rulings 56/63/72 — the compiled block carries the session's values from `SessionConfig` and `SubscriptionBoundedDisplay`; `ComposerDraft.ParseBudget` retired); the compiled prompt on demand (collapsed, no diff — Ruling 57); the goal/done-when/not-in-scope structure as **inline derived lines that are empty and editable** (D-5's first slice: a **fake deriver returning three strings** behind the seam, as the plan says, so the Prepare regions exist as WPF/page controls); Ruling 75's one refusal; Ruling 77's refused-gesture states (preparing · running · waiting — announced, never silent); spend per turn on the outcome line and per session in the header's budget state (Ruling 78) reading the measured `RunEventCost` where it exists, *not recorded* otherwise.\n- **The session takes the whole tree** in Coding — Ruling 47's `GiveItTheWholeTree` is already on the create path; make sure the thread layout renders inside it at 1/5/40 turns (DS-1's L1: the editor's top edge equal at 1/5/40; neither region starves).\n- **INV-0007 phases 5–6**: keyboard entry focuses a field; `composer.html` under the page-side contrast floor (the census's webview half).\n\n## Reds first (the plan's and DS-1's; observe each)\n`TheComposerRendersItsFieldLevelErrorsTests.ARequiredFieldGapBlocksSend…` (six fields on screen → three content lines) · `TheComposerIsOneValidationMechanismTests.Ruling26b_…` (form set == contract set, re-scoped) · `GoalBlockTemplateTests.TheTemplatesFieldsAreTheSameSetAsGoalBlockFields` (tier/fan-out/budget leave the per-prompt set) · the positive send with nothing typed for tier/fan-out/budget (*\"'tier' is required\"* today) · the `\"free-form\"` quoted-literal census (allowlist `Watcher/Leaderboard.cs`) · the numeral-absence render test for `SubscriptionBounded` · **DS-1's 30 named oracles** (`docs/design/session-thread-itemscontrol.md` §oracles: K1a/K1b feed keys, K5 tab stops, K6 F6, K7 focus on open, K8 Escape, K9 jump list, K10 the split, A1–A4 announcement policy, U1/U2/U5 UIA, L1–L5 layout incl. the 40-turn measure, M1 fold/split identity, M2 not-recorded, C1/C2, S1, T1 telemetry) — implement the headless ones; the attended (A6 NVDA) and P-n runtime rows are Proof Pack `RUN-PENDING` rows with steps.\n\n## Floors\n- E7 before coding, written in the Proof Pack: store (today's run/event stores via the fixture read model) → `ThreadSnapshot` → `FeedList`/`TurnItem` → `SessionDocumentSurface` → `ConsoleSurface` fold → the composer page (`host.init` carries what the decoration line needs) → `WorkbenchAnnouncer` → tests + the census.\n- Seams (plan §Seams): CV-2's `Projection.Project(` census — do not introduce it; the `\"free-form\"` literal census; three additive `ComposerPageTheme.Roles` tokens (`--inferred`, `--verified`, `--border-strong`) are yours to add to the page and to **request** from the Shell lane for `DESIGN.md` — you do not edit `DESIGN.md`; nothing under the Shell lane's paths (`SurfaceContentFactory.cs`, `MainMenuBuilder.cs`, `WorkbenchShell.cs`, `ShellModeController.cs`, `MainWindow.xaml*`, `DockRoundedTabs.xaml`).\n- Reviews (read-only, ≤ 3 concurrent; loop cap 2): **UX & Accessibility (hard)** on the rendered thread and composer against the mockup's states and SC1–SC10 (the census `ShellContrastCensusTests` must stay 0 below floor with your new surfaces walked); **Test Architect (hard)**; the Simplifier; the WPF styling lens for the airspace/focus questions DS-1 flagged.\n- Gates at close, bare, stop on the first red: `dotnet build` Core + App + both test projects `-p:TreatWarningsAsErrors=true`; both full test projects; `verify-test-run.py` CHECK only (never `--update`); every `tools/verify-*.py`; `python docs/ai-forward-pack/scripts/ui-craft-gate.py docs/mockups` (unchanged), `verify-ui-craft-floor.py` (the page); `regenerate-derived.py` after the audit entry. New classes from the allocator at commit (DC-154 is the highest on `main`; the INV-0010 fix will take 155/156 — re-run the allocator at commit).\n- Audit entry (`--shortname cv-1-composer-as-conversation --session cv-1 --skill implement --kind skill --tier T2 --fan-out 3 --git …` + signals + `--main-budget <calls>/6000`), Proof Pack `docs/proof/composer-as-conversation.md` (the reds → green; L1's numbers at 1/5/40; the census rows; the `RUN-PENDING` attended rows with steps), commit in sensible units with:\n```\nCo-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01Pc51aWLB1FKK2b8AqUPAun\n```\nthen `git push -u origin lane/conversation-cv1`. **Do not merge to `main`.** Release claims. **Rebuild Release** at the end (`dotnet build src/AiDe.App/AiDe.App.csproj -c Release`) so the conductor can hand the operator a build from your branch immediately if the join lags.\n\n## Fails if (stop and report)\nA per-prompt tier/fan-out/budget field; a form of boxes above a render; bubbles; a diff view; a second store for the thread (Ruling 74/SC1 — one fold, rendered three ways); a red made green by weakening; a write outside the Conversation lane's §2 paths or to `DESIGN.md`; `ConductorEntry.cs` changed; `verify-test-run.py --update`; `git stash`; a rebase; a push to `main`; DC-120; any governed run or model call.\n\n## Report back (compact)\nThe reds → green (names, before/after); L1's measured numbers at 1/5/40 turns; the states of the mockup reached vs not (list the unreached with the reason); the keyboard model and announcement policy as landed (one line each per gesture/transition or a pointer to the Proof Pack table); the seam requests to the Shell lane; reviews raised/cleared; gate table; new classes; commit shas, the pushed sha, and the Release build's ProductVersion.",
+      "session": "cv-1",
+      "shortname": "cv-1-composer-as-conversation",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-12T15:18:58Z",
+      "summary": "CV-1 shipped the session document as a conversation on lane/conversation-cv1 (Proof Pack docs/proof/composer-as-conversation.md; base 11ab0e74, main merged twice: b0e092b5 and b4e61022). The thread is DS-1's FeedList (a recycling virtualized ListBox over TurnItem rows: P1–P9 — owned keys as a pure Decide + Act, the read model ISessionThread/ThreadSnapshot with versioned catch-up-flagged snapshots implemented by RunChannelSessionThread over today's run channel, the document mediating F6 and the Tab entry, in-place rows, ThreadAnnouncementPolicy as a transition function, the structural pin, keyed Expander disclosures, the jump list with TextSearch). The composer is one message editor with the structure lines (Goal · Done when · Not in scope, collapsed at rest per DESIGN.md:1088, marks — fill in · edited · invalid), the decoration line in SC2's grammar with the provenance inline, the settings line with no numeral for an absent cap (Ruling 72), the compiled prompt on demand (Ruling 57); tier is the mechanical §A9 projection (R0–R3) and tier / fan_out_cap / budget are nowhere on a per-prompt form (Rulings 56/63/72 — the two invalid-value rows live on the session's side and a negative ceiling is carried to the contract, never clamped). Every composer status is spoken through the document's one announcer (refusals assertive, sent a status); Ruling 77's refusal names the in-flight turn as a link to its container. The folded Console per turn (last four lines, the tail into the split) and the split on demand as an identity over Turns (Ruling 74 condition 1). The document takes the whole tree (header · thread · composer · split) with the belt yielding to the composer's declared minimum (L1 at 1/5/40 turns, 1440/1024/800 wide, 832/600 tall: the editor's top edge equal, nothing clipped, nothing overlapping). SC8 keys (K1a/K1b/K5/K6/K8/K9/K10 + the refusal link), SC9 announcements (A1–A4, C1 with the arrange-valid oracle and THR-0003), SC10 UIA (U1/U2/U5 as a census over four states × two disclosure states × two widths). 43 reds recorded — the named reds first, then DS-1's headless oracles, sixteen filled by a mutation pass, the round-1 reds (the spoken status, the running link, DP-precedence ink, the belt at 600 px, the RunSink leg) — every one green; A6 / P-11 / P-12 / P-13 RUN-PENDING. Reviews: UX & A FAIL → PASS-WITH-CONDITIONS (conditions landed; the editorerror Retry is a WebSurfaceHost.Retry() seam with a lane-boundary rationale for the owner); Test Architect BLOCK → PASS-WITH-CONDITIONS (the mutation record, the equations, the census, the sink leg); WPF lens PASS-WITH-CONDITIONS → PASS. Seams: the shell's Announcer into the document, F6 registry rows, WebSurfaceHost.Retry(), WorkbenchDiagnostics.Write, the BorderStrongBrush for --border-strong (DESIGN.md's row landed with SH-2). Three defect classes appended with DC-nnn placeholders (the code-built name scope; the focus-event entry rule; a mutation pass with no repository artifact). Suite: App 743→ see the pack's DC-160 row, Core 2331→ see the pack; every tools/verify-*.py green (the p95 ratio declared with perf-budget); INV-0007 phases 5–6 are the editor floor + the belt rows.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/terminal-hosts-sixth.md",
+        "docs/proof/composer-as-conversation.md"
+      ],
+      "datetime": "2026-09-12T19:30:15Z",
+      "done_when": "main pushed with both merges and green gates; Release built at the new sha; the census at the moment of the report recorded",
+      "goal": "Land CV-1 and X-2 on main with the floors recounted and a Release build for the operator; answer the sixth report with a measurement taken while it was being made",
+      "id": "al-01M2BHJNQVJ1P3K02B0FD0JRE1",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (the join of CV-1 and X-2); the term hosts are multiplying right now... great opportunity for you to debug",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-cv1-x2",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Join: X-2 (8f73b74e) and CV-1 (7b800e8c) merged to main; CV-1's three register placeholders allocated DC-166/167/168; whole-suite recount App 793 / Core 2351 = 2185 + 166; every verify gate green. Supersedes the X-2 entry, which named no proof artifact: the evidence is docs/proof/terminal-hosts-sixth.md (rows 1-7, red->green) and docs/proof/composer-as-conversation.md (CV-1, 43 rows). Census at the operator's 'multiplying right now' (19:28Z-19:31Z): births in the last 12 min = this census; alive from the last hour = 3 bash, 1 powershell, 1 conhost (ours, this census), sleeps; conhost 269 / node 257 = the WT agent pool, unchanged; no testhost or dotnet test alive; the Copilot proposal tree has no test binaries. The births the operator saw were the recount's three suite runs (19:00Z-19:27Z).",
+      "supersedes": "al-01M2BGSB09J4SXDSR80PNJB8PX",
+      "tags": [],
+      "tool": null
     }
   ],
   "changes": [
