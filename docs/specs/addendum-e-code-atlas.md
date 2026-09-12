@@ -57,6 +57,7 @@ Every load-bearing claim is labelled **[Verified]** (opened / fetched / observed
 | Current method/member extraction contracts are not settled by this worker. | The user assigned separate contract work and instructed this spec not to duplicate deep source research. | [Flagged] |
 | The six Owner framing notes are durable accepted docs in the conductor branch at `b1acd4df`. | `note-atlas-next-addendum`, `note-atlas-development-models`, `note-atlas-delivery-horizon`, `note-atlas-lane-admission`, `note-atlas-reference-custody`, `note-atlas-identifier-discipline` read from `C:\Projects\ai-de-conductor-code-atlas`. | [Verified] |
 | K0 verified the current source-only contracts and targeted Core baseline: .NET SDK `10.0.303`, Roslyn `4.14.0`, and 79 targeted Core tests passing. | `proof-code-atlas-contract-grounding` Runtime/package and Commands sections. | [Verified] |
+| K0 Store/IPC evidence is separate from the 79-test Core baseline: 40 Store/IPC tests executed separately. | User-provided gate input, 2026-09-12. | [Verified by parent report; exact report join pending] |
 | K0 found the current Core seams are source/store/IPC/native-source-only for Atlas purposes: `has_member` values are display strings, no independent method/member node identity exists, `Interaction` is type-level, and `NodeContent` for indexed types is not complete physical inventory. | `proof-code-atlas-contract-grounding` Contract table, Barriers and "Conductor disposition". | [Verified] |
 | K0's synthetic Roslyn 4.14 probe found documentation IDs distinguish overloads, constructors, properties and accessors, but collide across project/scope; partial types have multiple source locations; missing declaration IDs resolve to null. | `proof-code-atlas-contract-grounding` §Roslyn synthetic-source probe and §Updated barrier. | [Verified] |
 | Data lens requirements: current `NodeContent` reads live file bytes and lacks indexed/current hash binding; stale-writer fencing is per extraction scope, not whole-workspace coherence; stable logical identities must be distinct from revision-bound declaration/content/span records. | User-provided Data lens findings, 2026-09-12. | [Verified as reviewer requirement; no schema/native approval] |
@@ -70,7 +71,7 @@ Addendum E admits the **Code Atlas** as the Architecture perspective's repositor
 3. Every view states its **altitude**: system → component → type → member → source.
 4. Concrete UML, ER, layer/component, Azure and implementation↔spec views are **evidence-grounded projections**, not editable source models and not compliance verdicts.
 5. Optional model interpretation is admitted only through an approved bounded harness with context preview, no tool authority, no private-corpus shipping and an eval gate before its output can influence a user-facing claim.
-6. Authority uncertainty is never silently cleared by AI. Human/authorized Owner/Conductor/audit/session references remain the authority trail; timestamps are ordering evidence, not authority by themselves.
+6. Authority uncertainty is never silently cleared by AI. Audit/session/commit records are **carriers**, not authority. Authority requires a trusted actor/provenance plus appropriate human authorization or accepted Owner/Conductor delegation, scope, acceptance/effective order and supersession. The root human owner needs no fictional delegation; their direct accepted decision is authority.
 7. The current K0 facts are a **design barrier**, not a scope cut: physical inventory and addressable member identity must be designed and admitted before E-0 implementation. A type-only or indexed-node-only slice cannot close the Owner journey.
 8. **E-0 cannot downgrade.** It requires real physical inventory, including unsupported/unindexed files, plus independently addressable type/member-to-source navigation. It therefore needs new inventory/file-source and structured member-identity contracts before implementation.
 
@@ -120,7 +121,7 @@ The model is stated before the UX/UI. It is domain language only; storage shape,
 | **Unknown** | A labelled gap in supported evidence. It is not silently promoted to inferred or verified. |
 | **Supported capability declaration** | A visible statement of which extractor, language, relationship kind and view capability is supported for this snapshot. |
 | **Mapping assessment** | A correspondence state between source evidence and a governing clause: aligned, planned, contrary, unknown, deferred or not-assessed. |
-| **Authority reference** | A human/Owner/Conductor/audit/session/spec reference with scope and supersession. Timestamp orders the reference; it does not create authority. |
+| **Authority reference** | A human/Owner/Conductor/spec decision reference with trusted actor/provenance, scope, acceptance/effective order and supersession. Audit, session and commit records carry that reference; they are not authority by themselves. Timestamp orders the reference; it does not create authority. |
 
 #### Entities and value objects
 
@@ -165,7 +166,7 @@ The model is stated before the UX/UI. It is domain language only; storage shape,
 | **RelationshipClaim** | Every relationship has a typed predicate, source/provenance, confidence and unknown handling. Runtime order is not inferred from static call order. |
 | **ResourceDeclaration** | Resource roots and aliases are not doubled. Grants, network/config/runtime relationships exist only from supported declaration/evidence kinds; no grant is created by lookup name or comment annotation alone. |
 | **SpecificationClause** | Document status, authority, scope, revision and supersession are visible before any implementation mapping is assessed. |
-| **DecisionRecord** | Only human, authorized Owner/Conductor, committed audit or session references can supply authority. AI may summarize or propose; it cannot clear uncertainty. |
+| **DecisionRecord** | Authority requires trusted actor/provenance plus appropriate human authorization or accepted Owner/Conductor delegation, scope, acceptance/effective order and supersession. Audit/session/commit are carriers only. The root human owner's direct accepted decision needs no fictional delegation. AI may summarize or propose; it cannot clear uncertainty. |
 | **InterpretationRun** | A model proposal is bounded by an approved context preview, no tool authority, no private-corpus shipping, output validation and an eval gate before admission. |
 
 ### A3. Target users and jobs-to-be-done
@@ -190,7 +191,7 @@ A developer opens the Architecture perspective for a workspace. They choose **So
 4. **D-3 ER and domain/entity views.** ER/class/data views refine `spec-uml-erm-surfaces` and stay notation-correct, read-only and source-grounded.
 5. **D-4 Layer, component and Azure declaration views.** Views show logical layers, components and named service declarations with typed relationships and unresolved counts.
 6. **Implementation↔spec correspondence.** Views map source evidence to clauses, document authority, status, scope, supersession and mapping state.
-7. **Decision provenance.** Human/Owner/Conductor/audit/session references are displayed with scope and timestamps, while authority uncertainty remains explicit.
+7. **Decision provenance.** Human/Owner/Conductor decision references are displayed with scope, carrier, effective order and timestamps. Audit/session/commit carriers are never shown as authority by themselves.
 8. **Optional model interpretation.** Admitted only through the bounded harness in this spec.
 9. **Full E7 surface list for this feature:** evidence store/projection model → extraction contracts → query/projection service → Architecture host/wire → client view models/types → WPF/WebView2 UI → compute readers for identity, coverage, relationships, mapping states and authority.
 
@@ -326,18 +327,18 @@ Every Code Atlas view renders a capability disclosure before or beside the conte
 
 ### A10. Non-functional requirements (ISO/IEC 25010)
 
-| Attribute | Requirement |
-|---|---|
-| Functional suitability | All views carry snapshot, coverage, source/provenance and confidence. Each US-E acceptance criterion has a future automated or manual oracle. |
-| Performance efficiency | [Inferred initial budget] On the approved TheTerrace-class fixture (≈2,500 tracked files), open the physical tree in ≤ 2 s p95, filter tree in ≤ 150 ms p95, switch already-rendered altitudes in ≤ 150 ms p95, and keep WPF UI thread responsive. Diagram rendering declares a node/edge bound before implementation. |
-| Reliability | Extraction failure, stale snapshot, unsupported files, malformed files, cancellation and partial results degrade to explicit states. A stale view is never shown as current. |
-| Security | WebView2 renders repository and model content as inert data under the existing host CSP posture. Model interpretation has no tool authority. Grants are never created by lookup/annotation. |
-| Usability | File-first and visual-first journeys each reach source and Back without losing selection. Unsupported states give a reason and next action. |
-| Compatibility | Native Windows WPF shell with WebView2 surfaces; design must remain compatible with Addendum C Architecture host and existing Perspective rail. |
-| Maintainability | Physical inventory, semantic extraction and views are separate contracts. Each supported relationship kind is declared once and tested by fixtures. |
-| Portability | Windows-first; no cloud service dependency for deterministic views. Private corpora remain local unless an approved processing class permits egress. |
-| Accessibility | WCAG 2.2 AA; full keyboard operation; UI Automation (UIA) names/roles for native controls; diagram/list alternatives; not color-only confidence. |
-| Observability | Normal path emits extraction duration, counts, truncation/omission, stale state, model-call cost/latency, validation outcome and error codes. Missing telemetry is an instrumentation gap. |
+| Attribute | Fixture / decision | Metric | Threshold | Protocol / gate |
+|---|---|---|---|---|
+| Functional suitability | E-0 approved real-workspace fixture with authorized in-scope files, unsupported files and C# overload/partial cases. | US-E clause pass/fail. | 100% of E-0 subset rows in §Acceptance matrix pass; later-stage rows remain `not-admitted`, not skipped. | Test matrix below; no current-implementation/red-run claim in this draft. |
+| Performance efficiency | TheTerrace-class fixture (≈2,500 authorized visible paths) or Owner-approved equivalent before implementation. | Tree open p95, tree filter p95, retained view switch p95, UI-thread responsiveness. | Open ≤ 2 s p95; filter ≤ 150 ms p95; retained switch ≤ 150 ms p95; no UI-thread block over the design-approved frame budget. | Measured native run required before E-0 acceptance. If fixture size changes, Owner/design decision required before implementation. |
+| Reliability | Fixtures: index→edit-without-reindex, mixed scope A-new/B-old, unsupported file, extraction failure, refresh cancel. | State correctness. | View shows `current`, `live-changed`, `stale`, `mixed`, `partial`, `last-successful`, `unsupported` or `cancelled` as applicable; no stale view shown as coherent. | Store/IPC/native proof path; manifest/coherence oracle. |
+| Security | Fixtures in §A12 boundary table. | Negative-oracle pass/fail. | 100% reject or inert-render as specified. | Security gate before acceptance. |
+| Usability | E-0 real native journey over a selectable workspace. | Completion and recovery steps. | File → type/member → actual source → Back completes by keyboard and pointer; unsupported/unindexed files remain visible within authorized visibility. | Manual + automated UI proof path. |
+| Compatibility | Windows WPF + WebView2 Architecture host. | Runtime/platform proof. | Works in existing Architecture perspective with no Coding/Explore/Composer redesign. | Claude/Core seam acknowledgement and native proof required. |
+| Maintainability | Contract fixtures for inventory/file-source/member identity. | One owner per contract, one identity rule. | No parsing `has_member`; no path-only snapshot claim; no duplicated graph substrate. | Design review before source admission. |
+| Portability | Windows-first local workspace. | Egress and dependency count. | Deterministic E-0 has no cloud/model dependency; private corpus not exported/persisted without separate authorization. | Privacy/security gate. |
+| Accessibility | Native E-0 UI fixture. | Keyboard/UIA/contrast/list alternative. | WCAG 2.2 AA; all controls named; diagram/source alternatives navigable. | UX/accessibility gate. |
+| Observability | Normal-path E-0 runs. | Duration, counts, coherence state, omissions, errors. | Every run emits extraction/read durations, path counts, unsupported counts, hash/coherence state, shortfall and stable error codes; missing values emit `not recorded`. | Instrumentation gate; no invented region/cost terms. |
 
 ### A11. Boundary set
 
@@ -354,12 +355,27 @@ Every Code Atlas view renders a capability disclosure before or beside the conte
 | Mixed workspace coherence | Manifest state says `mixed`, `partial` or `last-successful`; no view claims one coherent workspace revision unless the manifest proves it. |
 | Missing source body under policy | No substituted source; state says unavailable. |
 | Inferred relationship | Distinct visual + textual label; inspector explains basis. |
-| Unknown authority | Cannot be cleared by AI; requires human/Owner/Conductor/audit evidence. |
+| Unknown authority | Cannot be cleared by AI; audit/session/commit are carriers only, not authority. Authority requires trusted actor/provenance plus appropriate human authorization or accepted delegation, scope, acceptance/effective order and supersession. |
 | Cancellation | Cancelled state and partial disclosure; no promotion to complete. |
 | Model unavailable/quota | Deterministic views work; model interpretation disabled with reason. |
 | Private corpus export | Block or redact per processing class; raw private content not committed. |
 
-### A12. Applicable governance lenses
+### A12. Normative security and trust-boundary table before acceptance
+
+This table is acceptance-blocking. It names logical policy responsibilities, not required production class signatures.
+
+| Boundary | Untrusted input | Trusted-side policy owner | Allowed output | Rejection condition | Named negative oracle |
+|---|---|---|---|---|---|
+| File/source open | Path, symlink, stale source anchor, workspace-relative URI | Repository Evidence Inventory policy | SourceContentRecord bound to authorized FileLogicalId, snapshot/hash/span/coherence state, cap and shortfall | Path escape, symlink escape, TOCTOU hash mismatch, mutable old-anchor substitution, policy-forbidden metadata | `SEC-E0-PATH-ESCAPE-SYMLINK-TOCTOU` |
+| Source export | Selected files/spans and manifest | Reference custody + Privacy/Data Governance | Minimal export with source revision, hashes, ranges and classification | Raw private fixture/source/session export without explicit separate authorization, classification and scanning | `SEC-E0-RAW-PRIVATE-EXPORT` |
+| WebView2 render | Repository text, Markdown, HTML-like text, URI strings, model output | Architecture presentation policy | Inert DOM/text, allow-listed navigation commands only | Script execution, host-object bridge, direct SDK bridge, untrusted URI navigation, command URI execution | `SEC-E0-HOSTILE-HTML-URI` |
+| Model context preview | Files, clauses, source ranges, decisions, user prompt | Bounded Interpretation Harness + Privacy/Data Governance | ModelContextManifest: exact source hashes/ranges, redaction, destination, processing class, retention, budget and confirmation | Unknown term, missing hash/range, missing processing class/retention/budget, invented region/cost, no confirmation | `SEC-E4-MODEL-CONTEXT-MANIFEST` |
+| Model output validation | Proposed explanation, mapping, citation, tool request | Bounded Interpretation Harness validator | Quarantined proposal with citations to previewed evidence and no tool authority | Invented citation, cited source outside preview, tool request, authority-clearing claim, schema failure | `SEC-E4-INVENTED-CITATION-TOOL` |
+| Decision/authority display | Audit entry, session message, commit, note, model summary | Specification Correspondence + DecisionRecord policy | DecisionRecord or annotation showing origin, evidence confidence, review disposition and authority separately | False audit/session authority, missing actor/provenance, missing scope, missing acceptance/effective order, unresolved conflict hidden | `SEC-E3-FALSE-AUTHORITY` |
+| Human acceptance of AI proposal | AI-origin proposal plus human action | DecisionRecord policy | New human annotation/decision record preserving AI origin and review disposition | Promoting AI-origin text into extracted/observed fact or upgrading evidence confidence because a human accepted it | `SEC-E3-AI-ORIGIN-NOT-UPGRADED` |
+| Infrastructure/grant view | Bicep, config, comments, names, annotations | Architecture Resource Model policy | Typed declaration/config/network/grant/runtime relationship with evidence and unresolved counts | Grant by lookup/name/comment/annotation alone; Bicep resource mapped automatically to C4 software container | `SEC-E2-NO-GRANT-BY-LOOKUP` |
+
+### A13. Applicable governance lenses
 
 - **Quality attributes / NFRs:** Applies. Budgets are listed in §A10 and must become measured gates.
 - **Threat model:** Applies. WebView2, model interpretation, hostile repository content and authority display are trust boundaries.
@@ -370,7 +386,7 @@ Every Code Atlas view renders a capability disclosure before or beside the conte
 - **Observability:** Applies. Extraction/view/model/error measurements must emit on the normal path.
 - **Supply chain:** Applies if external parser/rendering/model libraries are introduced; not decided here.
 
-### A13. AI-integrated allocation
+### A14. AI-integrated allocation
 
 - **LOA archetype:** Primary remains **F — Copilot Aside Hot Path** for AI-DE. Deterministic extraction, identity preservation, authority, grants, mapping states, bounds and UI routing are T0. Optional interpretation is an aside that proposes explanations and mappings.
 - **Provider contract:** Development use of Astra/GPT models in this fleet does **not** alter the runtime product contract. AI-DE's runtime conductor remains the existing headless-Claude/subscription path unless a separate accepted spec/architecture change amends it.
@@ -380,7 +396,7 @@ Every Code Atlas view renders a capability disclosure before or beside the conte
   - T1/T2: deterministic ranking/label suggestions only if measured need beats deterministic baseline.
   - T3: optional model interpretation through the approved harness only; no tool authority; context preview; citations required; eval before admission; human review before any interpretation becomes a persisted claim.
 
-### A14. Comparables and evidence
+### A15. Comparables and evidence
 
 | Claim | Source | Confidence |
 |---|---|---|
@@ -616,6 +632,74 @@ Applicable HAX and Shape-of-AI patterns:
 | US-E12 | Flows 5–6 | Export, preview, provenance |
 | US-E13 | All flows | Empty/loading/error/partial/cancel/hostile states |
 
+## Acceptance test matrix — draft oracles, no current-run claim
+
+Each Gherkin clause below has a positive fixture, falsifying fixture, expected result/oracle, execution mode and intended proof path. This matrix is a requirement, not a claim that current implementation passed or that a red run has happened.
+
+| Clause | Positive fixture | Falsifying fixture | Expected result / oracle | Mode | Intended suite / proof path |
+|---|---|---|---|---|---|
+| US-E1.a | Authorized workspace with visible code/docs/generated files | Missing authorized path or duplicate path | Every authorized in-scope path exactly once; policy-hidden categories disclosed where allowed | Auto | E0 inventory contract tests |
+| US-E1.b | Unsupported language file selected | File hidden because semantic extractor unsupported | File remains selectable; semantic unavailable state shown | Auto | E0 inventory/source tests |
+| US-E1.c | Generated, migration, vendor files | Category hidden or counted as hand-authored semantic coverage | Category visible; separate coverage counts | Auto | E0 inventory coverage tests |
+| US-E1.d | Unsupported/unindexed file in tree | No addressable file record | File record has path/revision/source availability/disabled semantic reason | Auto | E0 inventory tests |
+| US-E1.e | Index, edit file without reindex | Source shown as snapshot-consistent from path safety | `live-changed`/`stale`/`unknown` from manifest/hash evidence | Auto | E0 file-source hash tests |
+| US-E2.a | File with supported type/member | Selecting outline loses file/snapshot | CodeElement plus file path/source anchor/snapshot visible | Auto | E0 native journey test |
+| US-E2.b | Overloads, constructors, accessors, partials | Selection derived from `has_member` display string | Structured member identity plus revision-bound span records | Auto | E0 member-ID contract tests |
+| US-E2.c | Same member, moved span across revisions | New logical member identity created by moved span | Logical id stable; declaration records show old/new spans | Auto | E0 moved-span fixture |
+| US-E2.d | Member with supported relationship evidence | Sequence treats missing evidence as verified | Entry node shown; every message has anchor or unknown | Auto/manual | E1 later behavior proof |
+| US-E2.e | Step up then Back | Back loses file/member/scroll/history | Previous file, member, source line, branch and scroll restored | Auto/manual | E0 native journey test |
+| US-E3.a | Visual component with source anchor | Inspector lacks evidence/source action | Evidence visible; source drill-down offered | Auto/manual | E1 visual journey |
+| US-E3.b | Visual element without source anchor | Invented file offered | Missing-source reason and supported fallback shown | Auto | E1 visual negative |
+| US-E3.c | Reveal active file | Tree reveals different artifact | Tree selection matches artifact identity | Auto | E0/E1 integration |
+| US-E4.a | Any Atlas view | Missing altitude label | Current altitude displayed | Auto | E0 UI state test |
+| US-E4.b | Transition with evidence both levels | Snapshot/selection identity changes silently | Same snapshot and identity across breadcrumb/tree/diagram/source | Auto | E0/E1 identity test |
+| US-E4.c | Unsupported lower level | Lower representation fabricated | Unsupported state with missing capability and fallback | Auto | E0 unsupported test |
+| US-E5.a | Diagram above declared bound | Hairball or no omitted counts | Fold/elide with shown/omitted counts and expand/search route | Auto/manual | E1 bounded diagram |
+| US-E5.b | Concept map | Concrete fields/operations claimed | Responsibility labels only, confidence shown | Manual/auto | E1 concept-map oracle |
+| US-E5.c | Supported UML type | Missing fields/ops or unsupported members fabricated | Compartments show only supported fields/ops/visibility/signatures | Auto/manual | E1 UML fixture |
+| US-E5.d | Inferred/ambiguous relationship | Rendered as extracted or color-only | Visual + text label distinguishes confidence | Auto/manual | E1 relationship fixture |
+| US-E6.a | Supported method entry | Message without participant/predicate/anchor/confidence | Each message lists all required evidence fields | Auto/manual | E1 sequence fixture |
+| US-E6.b | Branch/exception/cancel/unknown target | Gap omitted | Decision/gap node shown with static condition/confidence | Auto/manual | E1 activity fixture |
+| US-E6.c | No runtime trace | Timing/order/frequency shown | "Static reconstruction" copy and no timing/frequency | Auto | E1 negative runtime claim |
+| US-E6.d | Async/cancel/error evidence | Cancel/error paths hidden | Nodes shown or unresolved count increments | Auto/manual | E1 behavior fixture |
+| US-E7.a | Supported domain evidence | Entity/invariant lacks source/spec evidence | Domain view cites evidence and confidence | Manual/auto | E2 domain proof |
+| US-E7.b | ER fixture | Wrong cardinality/key/M:N | Crow's-foot, keys and associative entity correct | Auto/manual | E2 UML/ERM gate |
+| US-E7.c | Layer evidence | Untyped or unsupported edge rendered | Typed source edge or unsupported list | Auto/manual | E2 layer proof |
+| US-E7.d | Target architecture vs current source | Target shown as current failure | Status/scope label prevents current-implementation overclaim | Manual | E2/E3 review fixture |
+| US-E8.a | Bicep/resource declaration | Missing service family/source anchor | Service type, layer, declaration file, anchor, relationship kind | Auto/manual | E2 Azure proof |
+| US-E8.b | Resource aliases | Same root doubled | One root with aliases | Auto | E2 alias fixture |
+| US-E8.c | Mixed relationship kinds | Deployment/config/grant/runtime conflated | Explicit kind and unresolved counts | Auto/manual | E2 relationship fixture |
+| US-E8.d | Grant by name/comment only | Grant edge created | Candidate listed unsupported/unknown; no grant edge | Auto | `SEC-E2-NO-GRANT-BY-LOOKUP` |
+| US-E8.e | Absent example service | AKS/Cosmos inserted from vocabulary | Absent service omitted or labelled absent | Auto/manual | E2 absent-service fixture |
+| US-E9.a | Interpretation not admitted | Model capability visible as product | No model explanation shown; deterministic views work | Auto | E4 admission gate |
+| US-E9.b | Admitted harness | Call starts with no preview | Context preview with files/clauses/tokens/cost bounds | Auto/manual | `SEC-E4-MODEL-CONTEXT-MANIFEST` |
+| US-E9.c | Valid model output | Output persisted as fact | Proposal label, citations, no tool authority | Auto/manual | E4 validator |
+| US-E9.d | Tool request/invented source/out-of-bounds | Output accepted | Rejected/quarantined; deterministic view unchanged | Auto | `SEC-E4-INVENTED-CITATION-TOOL` |
+| US-E9.e | No eval admission | UI exposes model feature | Build/admission gate blocks or feature hidden | Auto | E4 eval gate |
+| US-E10.a | Clause + evidence | Mapping shown before authority/status/scope | Document id/status/authority/scope/revision/supersession first | Auto/manual | E3 comparison proof |
+| US-E10.b | Computed mapping | Missing source/clause revision or rule version | Source rev, clause rev, rule/version, decisions, coverage, origin bound | Auto | E3 mapping contract |
+| US-E10.c | Assessable evidence | State outside allowed enum or missing reason | One allowed state with reason/source | Auto | E3 state fixture |
+| US-E10.d | Missing evidence | Missing becomes proof of absence | `unknown` or `not-assessed` | Auto/manual | E3 unknown fixture |
+| US-E10.e | Target-state clause | Future target shown as failed current requirement | Status/scope prevents false failure | Manual | E3 target-current fixture |
+| US-E10.f | Export | Compliance percent emitted | State counts/evidence only; no percent | Auto | E3 export test |
+| US-E11.a | Decision reference | Carrier shown as authority | Actor/provenance/scope/acceptance/supersession visible | Auto/manual | `SEC-E3-FALSE-AUTHORITY` |
+| US-E11.b | Timestamped note without authority | Timestamp promotes authority | Timestamp orders only; authority unresolved | Auto/manual | E3 authority fixture |
+| US-E11.c | AI decision summary | Summary clears unknown authority | Proposal label; unknown remains | Auto | E3/E4 authority negative |
+| US-E11.d | Human accepts AI proposal | AI origin upgraded to extracted/observed fact | New human annotation/decision; AI origin preserved | Auto/manual | `SEC-E3-AI-ORIGIN-NOT-UPGRADED` |
+| US-E11.e | Contradictory decisions | Conflict hidden | Conflict surfaced; each source opens | Auto/manual | E3 conflict fixture |
+| US-E12.a | Product artifact write | Raw private source/fixture/session copied | Block unless explicitly authorized/classified/scanned | Auto/manual | `SEC-E0-RAW-PRIVATE-EXPORT` |
+| US-E12.b | Persist/export evidence | Unneeded raw content stored | Minimal anchors/provenance only | Auto/manual | E0/E3 privacy proof |
+| US-E12.c | Private model preview | Call proceeds without permitted processing class | User can cancel; policy blocks if class disallows | Auto/manual | E4 privacy gate |
+| US-E13.a | No workspace indexed | Fake demo data shown | Empty/needs-index state and next action | Auto | E0 deterministic subset |
+| US-E13.b | Extraction running/stale | Stale content shown as current | Stale/refreshing while readable | Auto | E0 deterministic subset |
+| US-E13.c | Extraction failure | No code/scope/recovery | Stable code, affected scope, recovery action | Auto | E0 deterministic subset |
+| US-E13.d | Malformed/unsupported file | File hidden or semantic controls enabled | Physical file shown; semantic disabled with reason | Auto | E0 deterministic subset |
+| US-E13.e | Hostile repository text | Script/tool/navigation executes | Inert rendering; no tool/navigation authority | Auto | `SEC-E0-HOSTILE-HTML-URI` |
+| US-E13.f | Refresh cancelled | Partial promoted to complete | Partial/cancelled disclosure; no promotion | Auto | E0 deterministic subset |
+| US-E13.g | Model unavailable/quota | Deterministic Atlas blocked | Deterministic views work; model disabled with reason | Auto/manual | E4 later model subset |
+
+**E-0 US-E13 deterministic subset:** workspace/index loading, stale, unsupported/malformed files, hostile repository text and refresh cancellation. **E-4 model subset:** model unavailable/quota and all interpretation preview/validation cases.
+
 ## Delivery phases — vertical, not toy
 
 Only **E-0** is in the first implementation horizon. It must be an integrated deterministic C# walking skeleton from file to type/member to actual source. E-1 through E-4 are intentionally specified so architecture can cover the whole vision, but they are not silently admitted for implementation and they are not declared done by E-0. K0's current-source facts make E-0 a contract/design barrier first: `has_member` display strings are not IDs, and `NodeContent` for indexed types is not physical inventory.
@@ -652,7 +736,7 @@ Only **E-0** is in the first implementation horizon. It must be an integrated de
 
 ## Draft gate record
 
-`GATE specify-addendum-e-code-atlas · 2026-09-12 · author atlas-spec-gpt55 · adversaries required: Product Strategist, Data & Persistence Architect, UX Researcher/IA, UX & Accessibility, Test Architect, Security & Identity, Privacy/Data Governance, AI Systems Engineer, SRE, Simplifier · criteria met by draft: three layers present, conceptual model first, US-E stories, UX flows, UI archetype, reconciliation and risks · verdict: PENDING/BLOCKED — Addendum E is conditionally admitted but not registered; Conductor provenance note pending; adversaries have not reviewed; extraction contracts unresolved; later phases lack their required designs/admissions · vetoes: not cleared by author.`
+`GATE specify-addendum-e-code-atlas · 2026-09-12 · author atlas-spec-gpt55 · adversaries required: Product Strategist, Data & Persistence Architect, UX Researcher/IA, UX & Accessibility, Test Architect, Security & Identity, Privacy/Data Governance, AI Systems Engineer, SRE, Simplifier · criteria met by repaired draft: three layers present, conceptual model first, US-E stories, UX flows, UI archetype, reconciliation and risks, full clause matrix, NFR metrics/protocols, trust-boundary table, authority-carrier correction, and E-0 non-downgrade barriers · verdict: READY FOR RE-REVIEW BUT STILL PENDING/BLOCKED — Addendum E is conditionally admitted but not registered; Core/Claude/native seam acknowledgement is pending; Conductor provenance note has not joined this branch; adversaries have not reviewed this repair; extraction/inventory/member contracts unresolved; later phases lack their required designs/admissions · vetoes: not cleared by author.`
 
 ---
 
