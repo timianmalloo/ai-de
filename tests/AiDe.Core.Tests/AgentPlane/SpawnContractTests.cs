@@ -285,6 +285,56 @@ public sealed class SpawnContractTests
         Assert.Contains("Claude Team", error.Message, StringComparison.Ordinal);
     }
 
+    // ------------------------------------------------------------ S2: RunBudget.SubscriptionBounded
+
+    /// <summary>The sentinel's exact declared value (ADR-0033 §3): maximal, and positive on both fields.</summary>
+    [Fact]
+    public void SubscriptionBoundedIsTheDeclaredMaximalValue()
+    {
+        Assert.Equal(int.MaxValue, RunBudget.SubscriptionBounded.Requests);
+        Assert.Equal(long.MaxValue, RunBudget.SubscriptionBounded.Tokens);
+    }
+
+    /// <summary>
+    /// A goal block carrying the sentinel validates with no error — <c>Validate</c> is tier-blind and
+    /// stays byte-identical (ADR-0033's "Alternatives considered"): the sentinel is accepted because
+    /// it is a positive value like any other, not because of a special case in the validator.
+    /// </summary>
+    [Fact]
+    public void AGoalBlockCarryingSubscriptionBoundedValidatesWithNoError()
+        => Assert.Empty(SpawnContract.Validate(Complete() with { Budget = RunBudget.SubscriptionBounded }));
+
+    /// <summary>The same block authorizes a spawn, carrying the sentinel through untouched.</summary>
+    [Fact]
+    public void AGoalBlockCarryingSubscriptionBoundedAuthorizesASpawn()
+    {
+        var spawn = SpawnContract.Authorize(
+            Request(Complete() with { Budget = RunBudget.SubscriptionBounded }, auth: Subscription()),
+            SubscriptionRegistry());
+
+        Assert.True(spawn.Goal.Budget!.IsSubscriptionBounded);
+    }
+
+    /// <summary>
+    /// <see cref="RunBudget.IsSubscriptionBounded"/> is value equality, not reference equality — the
+    /// case that matters once the record has crossed JSON and come back as a new instance (ADR-0033
+    /// §3: "a <c>RunBudget(int.MaxValue, long.MaxValue)</c> read from a request file satisfies the
+    /// predicate").
+    /// </summary>
+    [Fact]
+    public void IsSubscriptionBoundedIsValueEqualityNotReferenceEquality()
+    {
+        var separatelyConstructed = new RunBudget(int.MaxValue, long.MaxValue);
+
+        Assert.NotSame(RunBudget.SubscriptionBounded, separatelyConstructed);
+        Assert.True(separatelyConstructed.IsSubscriptionBounded);
+    }
+
+    /// <summary>An ordinary, finite budget is not mistaken for the sentinel.</summary>
+    [Fact]
+    public void AnOrdinaryBudgetIsNotSubscriptionBounded()
+        => Assert.False(new RunBudget(250, 600_000).IsSubscriptionBounded);
+
     /// <summary>The matching case authorizes — the check is a correspondence, not a second refusal.</summary>
     [Fact]
     public void AnObservedLabelThatMatchesTheRecordedOneAuthorizes()

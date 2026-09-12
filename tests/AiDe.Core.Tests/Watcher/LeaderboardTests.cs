@@ -156,4 +156,39 @@ public sealed class LeaderboardTests
         Assert.Contains("Reasons", names);
         Assert.Contains("Trend", names);
     }
+
+    // ---- S2: TaskClasses.FreeForm is an ordinary class, not a second Unclassified -----------------
+
+    /// <summary>
+    /// <c>free-form</c> is a declared class, not an absence: a segment carrying it is a cohort, unlike
+    /// one carrying <see cref="ScoreSegment.Unclassified"/> (ADR-0033 §4; Ruling 72's reading of
+    /// ADR-0028: "a `free-form` class is a legitimate cohort key").
+    /// </summary>
+    [Fact]
+    public void ASegmentCarryingFreeFormIsComparable_UnlikeUnclassified()
+    {
+        var freeForm = new ScoreSegment(TestWorkspaces.Repo, TaskClasses.FreeForm, "weave/1");
+        var unclassified = new ScoreSegment(TestWorkspaces.Repo, ScoreSegment.Unclassified, "weave/1");
+
+        Assert.True(freeForm.IsComparable, freeForm.IncomparableReason);
+        Assert.Null(freeForm.IncomparableReason);
+
+        Assert.False(unclassified.IsComparable);
+        Assert.NotNull(unclassified.IncomparableReason);
+    }
+
+    /// <summary>The partition key treats <c>free-form</c> as its own cohort, distinct from other classes.</summary>
+    [Fact]
+    public void FreeFormPartitionsAsItsOwnCohort_SeparateFromOtherTaskClasses()
+    {
+        var episodes = Cohort("Claude Code", "Opus 4.8", 80, 82, 84, 86, 88)
+            .Select(e => e with { Segment = e.Segment with { TaskClass = TaskClasses.FreeForm } })
+            .ToList();
+
+        var board = Composer.Compose(episodes, new ScoreSegment(TestWorkspaces.Repo, TaskClasses.FreeForm, "weave/1"));
+        var cell = board.Cell(LeaderboardFacet.Harness, "Claude Code")!;
+
+        Assert.True(cell.Comparable);
+        Assert.Equal(5, cell.Cohort);
+    }
 }

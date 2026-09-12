@@ -1,4 +1,7 @@
+using System.Text.Json;
+using AiDe.Core.AgentPlane;
 using AiDe.Core.Sessions;
+using AiDe.Core.Watcher;
 
 namespace AiDe.Core.Tests.Sessions;
 
@@ -147,5 +150,86 @@ public sealed class SessionConfigStoreTests : IDisposable
 
         Assert.False(Directory.Exists(runsDirectory), $"{runsDirectory} must not exist — RunLogStore is Phase 3");
         Assert.False(File.Exists(reservedRunLog), $"{reservedRunLog} must not exist — RunLogStore is Phase 3");
+    }
+
+    // ---- S2: the settings and sentinels commit (ADR-0033 §3/§4; Rulings 56, 68, 70, 72) ----------
+
+    /// <summary>
+    /// The red this commit's four new fields must turn green: a <c>session.json</c> written by
+    /// TODAY'S code — before this commit — carries none of them, and reading it back must yield the
+    /// ruled defaults rather than an error or a silently wrong value. Written by hand, from the exact
+    /// shape the store's writer produced before this change (no
+    /// <c>FanOutCeiling</c>/<c>BudgetCap</c>/<c>CompileMode</c>/<c>DefaultTaskClass</c> keys), rather
+    /// than produced by today's store — the file under test must predate the code under test.
+    /// </summary>
+    [Fact]
+    public void Load_AnOldSessionFileWithNoneOfTheFourNewFields_ReadsBackWithTheirDefaults()
+    {
+        var sessionId = SessionId.New();
+        Directory.CreateDirectory(SessionPaths.SessionDirectory(_workspaceRoot, sessionId));
+
+        const string oldShapeJson = """
+            {
+              "SessionId": "will-be-replaced",
+              "Name": "payments extraction",
+              "WorkspaceId": "workspace-1",
+              "CreatedAt": "2026-01-01T00:00:00+00:00",
+              "EnabledBackends": ["claude-code"],
+              "AttachEnabled": false
+            }
+            """;
+        File.WriteAllText(
+            SessionPaths.SessionFile(_workspaceRoot, sessionId),
+            oldShapeJson.Replace("will-be-replaced", sessionId, StringComparison.Ordinal));
+
+        var loaded = new SessionConfigStore(_workspaceRoot, sessionId).Load();
+
+        Assert.Equal(2, loaded.FanOutCeiling);
+        Assert.Null(loaded.BudgetCap);
+        Assert.Equal(CompileModes.MechanicalOnly, loaded.CompileMode);
+        Assert.Equal(TaskClasses.FreeForm, loaded.DefaultTaskClass);
+    }
+
+    /// <summary>A session created by today's <see cref="SessionConfigStore.Create"/> gets the same defaults.</summary>
+    [Fact]
+    public void Create_SetsTheRuledDefaultsForTheFourNewFields()
+    {
+        var sessionId = SessionId.New();
+        var store = new SessionConfigStore(_workspaceRoot, sessionId);
+
+        var created = store.Create("payments extraction", "workspace-1", ["claude-code"], DateTimeOffset.UtcNow);
+
+        Assert.Equal(2, created.FanOutCeiling);
+        Assert.Null(created.BudgetCap);
+        Assert.Equal(CompileModes.MechanicalOnly, created.CompileMode);
+        Assert.Equal(TaskClasses.FreeForm, created.DefaultTaskClass);
+    }
+
+    /// <summary>Each new field round-trips a non-default value through the store's own JSON contract.</summary>
+    [Fact]
+    public void EachOfTheFourNewFields_RoundTripsANonDefaultValueThroughPersistedJson()
+    {
+        var sessionId = SessionId.New();
+        var store = new SessionConfigStore(_workspaceRoot, sessionId);
+        var created = store.Create("payments extraction", "workspace-1", ["claude-code"], DateTimeOffset.UtcNow);
+
+        var nonDefault = created with
+        {
+            FanOutCeiling = 4,
+            BudgetCap = new RunBudget(250, 600_000),
+            CompileMode = CompileModes.Agentic,
+            DefaultTaskClass = "refactor",
+        };
+
+        File.WriteAllText(
+            SessionPaths.SessionFile(_workspaceRoot, sessionId),
+            JsonSerializer.Serialize(nonDefault));
+
+        var loaded = new SessionConfigStore(_workspaceRoot, sessionId).Load();
+
+        Assert.Equal(4, loaded.FanOutCeiling);
+        Assert.Equal(new RunBudget(250, 600_000), loaded.BudgetCap);
+        Assert.Equal(CompileModes.Agentic, loaded.CompileMode);
+        Assert.Equal("refactor", loaded.DefaultTaskClass);
     }
 }

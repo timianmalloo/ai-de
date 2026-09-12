@@ -1,4 +1,6 @@
 using System.Text.Json.Nodes;
+using AiDe.Core.AgentPlane;
+using AiDe.Core.Watcher;
 
 namespace AiDe.Core.Sessions;
 
@@ -53,6 +55,97 @@ public sealed record SessionConfig(
     /// may describe this field as restricting or preventing attach for a deployment.</para>
     /// </remarks>
     public bool AttachEnabled { get; init; }
+
+    /// <summary>
+    /// The most sub-agents any turn in this session may convene — <c>fan_out_ceiling</c> in
+    /// ADR-0033 §3 / <c>docs/architecture.md</c>'s vocabulary (Ruling 56). The eventual
+    /// <c>FanOutCap = min(cap(tier), ceiling)</c> the compile step computes reads this value; this
+    /// record only carries it — nothing here derives or enforces a cap from it (that projection has
+    /// no code home yet, per ADR-0033's own finding).
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Default is 2, and no workspace-default mechanism exists in code to source it from —
+    /// checked, not assumed.</b> The architecture doc and the New Session sheet mockups both call
+    /// this value a "workspace default" (<c>docs/architecture.md:786</c>;
+    /// <c>docs/mockups/new-session-sheet.html</c>), but no <c>WorkspaceDefaults</c> type or
+    /// workspace-level setting exists anywhere in <c>src/</c> today: this session-settings node is
+    /// the first code home for the ceiling at all, and it has no workspace layer beneath it to read a
+    /// default from. 2 is the nearest ruled number instead — CT19's own T1 fan-out cap
+    /// (<c>communication-and-task-discipline.instructions.md</c>: "0 at T0, 2 at T1") — used here as
+    /// a per-session default, not as evidence the workspace-default plumbing exists.</para>
+    ///
+    /// <para><b>An old <c>session.json</c> reads as 2, not as an error.</b> This field is additive,
+    /// exactly like <see cref="AttachEnabled"/>: a file written before it existed has no key for it,
+    /// and <see cref="SessionConfigStore.Load"/> must keep reading such a file.</para>
+    /// </remarks>
+    public int FanOutCeiling { get; init; } = 2;
+
+    /// <summary>
+    /// An enforced request/token ceiling for this session, or <c>null</c> — the session is bounded by
+    /// the subscription instead (Ruling 72; ADR-0033 §3's <c>budget_cap</c>).
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Absent by default, never a required number.</b> The operator's own words: "budgets
+    /// should be max … by default and then optionally I can enforce a cap" (Ruling 72). <c>null</c>
+    /// is the shipped default; a caller that needs an actual <see cref="RunBudget"/> for a spawn
+    /// reads <see cref="RunBudget.SubscriptionBounded"/> when this is <c>null</c> — that substitution
+    /// belongs to the projection that reads this setting, not to this record (derive, don't store;
+    /// DM7), so it is not performed here.</para>
+    ///
+    /// <para><b>Reuses <see cref="RunBudget"/> rather than a second <c>(requests, tokens)</c>
+    /// shape.</b> ADR-0033 §3 names the setting's shape as exactly <c>{requests, tokens} | none</c> —
+    /// the same two fields <see cref="RunBudget"/> already carries — and two definitions of one
+    /// quantity is a defect signature (DM7).</para>
+    /// </remarks>
+    public RunBudget? BudgetCap { get; init; }
+
+    /// <summary>
+    /// How much of the compile step's agentic stage this session admits (ADR-0033 §A10.1;
+    /// Ruling 68) — one of <see cref="CompileModes"/>.
+    /// </summary>
+    /// <remarks>
+    /// Default <see cref="CompileModes.MechanicalOnly"/> (Ruling 68): a session opens with only the
+    /// free, in-memory, mechanical pre-compile; the two agentic rungs are opt-in as the eval gate
+    /// admits them.
+    /// </remarks>
+    public string CompileMode { get; init; } = CompileModes.MechanicalOnly;
+
+    /// <summary>
+    /// The task class a prompt in this session carries when it declares none of its own (Ruling 70;
+    /// Ruling 72; ADR-0033 §4) — <c>default_task_class</c> in the ADR's vocabulary.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Which "TaskClass" this is, and which it is not.</b> <see cref="SessionConfig"/>
+    /// carried no <c>TaskClass</c> member before this field — there is nothing here renamed or
+    /// removed. Two other, unrelated members share the name and are untouched: <c>GovernedRunRequest
+    /// .TaskClass</c> (F5's tree; the per-run, required, already-resolved value a governed run
+    /// carries) and <see cref="ScoreSegment"/>'s <c>TaskClass</c> (what the Watcher reads back
+    /// for scoring). This field is the session-level <b>default</b> that
+    /// <c>ComposerSendContext.TaskClass</c> is populated from when a prompt names no class of its
+    /// own (ADR-0033 §4: "the session config's <c>default_task_class</c> … never a second literal") —
+    /// a different point in the pipeline from either.</para>
+    ///
+    /// <para>Default <see cref="TaskClasses.FreeForm"/> (Ruling 72): "the basic should be free-form
+    /// upon open, and then I can change it" — an explicit, operator-visible value present from the
+    /// moment a session opens, never a null a caller must special-case.</para>
+    /// </remarks>
+    public string DefaultTaskClass { get; init; } = TaskClasses.FreeForm;
+}
+
+/// <summary>
+/// The <c>compile_mode</c> vocabulary a <see cref="SessionConfig"/> declares (ADR-0033 §A10.1;
+/// Ruling 68) — mechanical always runs; the two agentic rungs are opt-in behind an eval gate.
+/// </summary>
+public static class CompileModes
+{
+    /// <summary>The default (Ruling 68): only the free, in-memory mechanical pre-compile runs.</summary>
+    public const string MechanicalOnly = "mechanical-only";
+
+    /// <summary>The agentic compile runs, but a `derived` decoration needs confirmation before Send.</summary>
+    public const string AgenticAdvisory = "agentic-advisory";
+
+    /// <summary>The agentic compile's result is admitted without a confirmation step.</summary>
+    public const string Agentic = "agentic";
 }
 
 /// <summary>
