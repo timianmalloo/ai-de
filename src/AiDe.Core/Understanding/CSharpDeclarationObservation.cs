@@ -11,30 +11,40 @@ using Microsoft.CodeAnalysis.Text;
 namespace AiDe.Core.Understanding;
 
 /// <summary>Request-local verified source text. It owns cloned bytes and never reads paths.</summary>
-public sealed class VerifiedSourceBuffer
+internal sealed class VerifiedSourceBuffer : IDisposable
 {
+    internal const int MaxSourceBytes = 8 * 1024 * 1024;
+    private static readonly byte[] Utf8Bom = [0xEF, 0xBB, 0xBF];
+    private static readonly byte[] Utf16LeBom = [0xFF, 0xFE];
+    private static readonly byte[] Utf16BeBom = [0xFE, 0xFF];
     private static readonly UTF8Encoding StrictUtf8 = new(false, true);
     private static readonly UnicodeEncoding StrictUtf16Le = new(false, false, true);
     private static readonly UnicodeEncoding StrictUtf16Be = new(true, false, true);
-    private readonly byte[] rawBytes;
+    private byte[]? rawBytes;
+    private string? fullText;
 
     private VerifiedSourceBuffer(AtlasSourceObservation sourceObservation, AtlasSourceBinding binding, byte[] rawBytes, string fullText)
     {
         SourceObservation = sourceObservation;
         Binding = binding;
         this.rawBytes = rawBytes;
-        FullText = fullText;
+        this.fullText = fullText;
     }
 
-    public AtlasSourceObservation SourceObservation { get; }
-    public AtlasSourceBinding Binding { get; }
-    public string FullText { get; }
-    public int RawByteLength => rawBytes.Length;
+    internal AtlasSourceObservation SourceObservation { get; }
+    internal AtlasSourceBinding Binding { get; }
+    internal string FullText => fullText ?? throw new ObjectDisposedException(nameof(VerifiedSourceBuffer));
+    internal int RawByteLength => rawBytes?.Length ?? throw new ObjectDisposedException(nameof(VerifiedSourceBuffer));
 
-    public static VerifiedSourceBuffer FromBytes(AtlasSourceObservation sourceObservation, AtlasSourceBinding binding, ReadOnlySpan<byte> rawBytes)
+    internal static VerifiedSourceBuffer FromBytes(AtlasSourceObservation sourceObservation, AtlasSourceBinding binding, ReadOnlySpan<byte> rawBytes)
     {
         ArgumentNullException.ThrowIfNull(sourceObservation);
         ArgumentNullException.ThrowIfNull(binding);
+        if (rawBytes.Length > MaxSourceBytes)
+        {
+            throw new InvalidOperationException("Verified source input exceeds the 8 MiB request limit.");
+        }
+
         if (sourceObservation.Status is not AtlasSourceObservationStatus.Verified)
         {
             throw new InvalidOperationException("Only verified source observations can produce source buffers.");
@@ -48,8 +58,7 @@ public sealed class VerifiedSourceBuffer
             throw new InvalidOperationException("Source binding does not match the verified source observation.");
         }
 
-        var actualHash = CanonicalSha256(ownedBytes);
-        if (!string.Equals(actualHash, sourceObservation.CanonicalSha256, StringComparison.Ordinal))
+        if (!string.Equals(CanonicalSha256(ownedBytes), sourceObservation.CanonicalSha256, StringComparison.Ordinal))
         {
             throw new InvalidOperationException("Raw source bytes do not match the verified content hash.");
         }
@@ -59,62 +68,141 @@ public sealed class VerifiedSourceBuffer
             throw new InvalidOperationException("Raw source byte length does not match the verified observation.");
         }
 
-        var fullText = Decode(ownedBytes, sourceObservation.DecoderId!);
-        AtlasIdentityCodec.ValidUnicode(fullText, nameof(rawBytes));
-        if (sourceObservation.DecodedUtf16Length != fullText.Length)
+        var text = Decode(ownedBytes, sourceObservation.DecoderId!);
+        AtlasIdentityCodec.ValidUnicode(text, nameof(rawBytes));
+        if (sourceObservation.DecodedUtf16Length != text.Length)
         {
             throw new InvalidOperationException("Decoded UTF-16 length does not match the verified observation.");
         }
 
-        return new(sourceObservation, binding, ownedBytes, fullText);
+        return new(sourceObservation, binding, ownedBytes, text);
+    }
+
+    public void Dispose()
+    {
+        rawBytes = null;
+        fullText = null;
     }
 
     private static string Decode(byte[] bytes, string decoderId) => decoderId switch
     {
-        "utf-8" => StrictUtf8.GetString(bytes),
-        "utf-8-bom" => DecodeAfterPreamble(bytes, [0xEF, 0xBB, 0xBF], StrictUtf8, decoderId),
-        "utf-16le" => DecodeEven(bytes, StrictUtf16Le, decoderId),
-        "utf-16le-bom" => DecodeAfterPreamble(bytes, [0xFF, 0xFE], StrictUtf16Le, decoderId),
-        "utf-16be" => DecodeEven(bytes, StrictUtf16Be, decoderId),
-        "utf-16be-bom" => DecodeAfterPreamble(bytes, [0xFE, 0xFF], StrictUtf16Be, decoderId),
+        "utf-8" => StartsWith(bytes, Utf8Bom) ? throw new InvalidOperationException("UTF-8 BOM requires decoder utf-8-bom.") : StrictUtf8.GetString(bytes),
+        "utf-8-bom" => DecodeAfterPreamble(bytes, Utf8Bom, StrictUtf8, decoderId),
+        "utf-16le" or "utf-16be" => throw new InvalidOperationException("UTF-16 source requires an explicit byte-order mark decoder."),
+        "utf-16le-bom" => DecodeAfterPreamble(bytes, Utf16LeBom, StrictUtf16Le, decoderId),
+        "utf-16be-bom" => DecodeAfterPreamble(bytes, Utf16BeBom, StrictUtf16Be, decoderId),
         _ => throw new InvalidOperationException("Unsupported source decoder."),
     };
 
     private static string DecodeAfterPreamble(byte[] bytes, byte[] preamble, Encoding encoding, string decoderId)
     {
-        if (bytes.Length < preamble.Length || !bytes.AsSpan(0, preamble.Length).SequenceEqual(preamble))
+        if (!StartsWith(bytes, preamble))
         {
             throw new InvalidOperationException($"Decoder {decoderId} requires its byte-order mark.");
         }
 
-        return DecodeEven(bytes.AsSpan(preamble.Length).ToArray(), encoding, decoderId);
-    }
-
-    private static string DecodeEven(byte[] bytes, Encoding encoding, string decoderId)
-    {
-        if (decoderId.StartsWith("utf-16", StringComparison.Ordinal) && bytes.Length % 2 != 0)
+        var body = bytes.AsSpan(preamble.Length);
+        if (encoding is UnicodeEncoding && body.Length % 2 != 0)
         {
             throw new InvalidOperationException("UTF-16 source bytes must have an even length.");
         }
 
-        return encoding.GetString(bytes);
+        return encoding.GetString(body);
     }
+
+    private static bool StartsWith(byte[] bytes, byte[] prefix) =>
+        bytes.Length >= prefix.Length && bytes.AsSpan(0, prefix.Length).SequenceEqual(prefix);
 
     private static string CanonicalSha256(byte[] bytes) =>
         "sha256:" + Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
 }
 
-public sealed class CSharpDeclarationObservationLimits
+/// <summary>Core-issued syntax-tree/source association. It validates file metadata without decoding identity tokens.</summary>
+internal sealed class CSharpDeclarationSourceInput : IDisposable
 {
-    public CSharpDeclarationObservationLimits(int maxDeclarations)
+    private CSharpDeclarationSourceInput(SyntaxTree syntaxTree, AtlasFileEntry file, AtlasRootGrant rootGrant, string canonicalRelativePath, VerifiedSourceBuffer buffer)
+    {
+        SyntaxTree = syntaxTree;
+        File = file;
+        RootGrant = rootGrant;
+        CanonicalRelativePath = canonicalRelativePath;
+        Buffer = buffer;
+    }
+
+    internal SyntaxTree SyntaxTree { get; }
+    internal AtlasFileEntry File { get; }
+    internal AtlasRootGrant RootGrant { get; }
+    internal string CanonicalRelativePath { get; }
+    internal VerifiedSourceBuffer Buffer { get; }
+
+    internal static CSharpDeclarationSourceInput Create(SyntaxTree syntaxTree, AtlasRootGrant rootGrant, AtlasFileEntry file, AtlasSourceObservation sourceObservation, AtlasSourceBinding binding, ReadOnlySpan<byte> rawBytes, string canonicalRelativePath)
+    {
+        ArgumentNullException.ThrowIfNull(syntaxTree);
+        ArgumentNullException.ThrowIfNull(rootGrant);
+        ArgumentNullException.ThrowIfNull(file);
+        ArgumentNullException.ThrowIfNull(sourceObservation);
+        var relativePath = AtlasIdentityCodec.RequiredToken(canonicalRelativePath, nameof(canonicalRelativePath));
+        var expectedFileValue = AtlasIdentityCodec.ForFile(rootGrant.WorkspaceToken, rootGrant.RootToken, relativePath);
+        if (!Same(expectedFileValue, file.FileValue) || !Same(file.FileValue, sourceObservation.FileValue))
+        {
+            throw new InvalidOperationException("File value does not match the supplied root/file metadata.");
+        }
+
+        if (!Same(file.RelativePath, relativePath) || !MatchesTreePath(syntaxTree.FilePath, rootGrant.ApprovedAbsoluteRoot, relativePath))
+        {
+            throw new InvalidOperationException("Syntax tree path does not match its intended canonical file.");
+        }
+
+        if (!Equals(sourceObservation.RootIdentity, rootGrant.ExpectedNativeRootIdentity))
+        {
+            throw new InvalidOperationException("Source root identity does not match the grant.");
+        }
+
+        if (file.ObservedIdentity is not null && !Equals(sourceObservation.FileIdentity, file.ObservedIdentity))
+        {
+            throw new InvalidOperationException("Source file identity does not match the file entry.");
+        }
+
+        var buffer = VerifiedSourceBuffer.FromBytes(sourceObservation, binding, rawBytes);
+        if (!Same(syntaxTree.GetText().ToString(), buffer.FullText))
+        {
+            buffer.Dispose();
+            throw new InvalidOperationException("Compilation syntax tree text does not match the verified source buffer.");
+        }
+
+        return new(syntaxTree, file, rootGrant, relativePath, buffer);
+    }
+
+    public void Dispose() => Buffer.Dispose();
+
+    private static bool MatchesTreePath(string treePath, string approvedAbsoluteRoot, string relativePath)
+    {
+        var tree = NormalizeSeparators(AtlasIdentityCodec.RequiredToken(treePath, nameof(treePath)));
+        var relative = NormalizeSeparators(relativePath);
+        if (Same(tree, relative))
+        {
+            return true;
+        }
+
+        var root = NormalizeSeparators(AtlasIdentityCodec.RequiredToken(approvedAbsoluteRoot, nameof(approvedAbsoluteRoot))).TrimEnd('/');
+        return Same(tree, root + "/" + relative);
+    }
+
+    private static string NormalizeSeparators(string value) => value.Replace('\\', '/');
+    private static bool Same(string left, string right) => string.Equals(left, right, StringComparison.Ordinal);
+}
+
+internal sealed class CSharpDeclarationObservationLimits
+{
+    internal CSharpDeclarationObservationLimits(int maxDeclarations)
     {
         MaxDeclarations = maxDeclarations > 0
             ? maxDeclarations
             : throw new ArgumentOutOfRangeException(nameof(maxDeclarations), maxDeclarations, "Declaration limit must be positive.");
     }
 
-    public int MaxDeclarations { get; }
-    public static CSharpDeclarationObservationLimits Default { get; } = new(2048);
+    internal int MaxDeclarations { get; }
+    internal static CSharpDeclarationObservationLimits Default { get; } = new(2048);
 }
 
 public sealed class CSharpDeclarationObservationResult
@@ -124,7 +212,7 @@ public sealed class CSharpDeclarationObservationResult
         Declarations = declarations.ToImmutableArray();
         Completion = AtlasBounds.Defined(completion, nameof(completion));
         Bounds = bounds ?? throw new ArgumentNullException(nameof(bounds));
-        Limitations = limitations.Select(static value => AtlasIdentityCodec.RequiredToken(value, nameof(limitations))).ToImmutableArray();
+        Limitations = limitations.Select(static value => AtlasIdentityCodec.RequiredToken(value, nameof(limitations))).Distinct(StringComparer.Ordinal).ToImmutableArray();
     }
 
     public ImmutableArray<AtlasDeclaration> Declarations { get; }
@@ -136,13 +224,9 @@ public sealed class CSharpDeclarationObservationResult
 public static class CSharpDeclarationObservation
 {
     private static readonly ActivitySource Telemetry = new("aide.atlas.declarations");
+    private const int MaxLimitations = 32;
 
-    public static CSharpDeclarationObservationResult Observe(
-        CSharpCompilation compilation,
-        AtlasCompilationScope context,
-        IEnumerable<VerifiedSourceBuffer> sources,
-        CSharpDeclarationObservationLimits? limits = null,
-        CancellationToken cancellationToken = default)
+    internal static CSharpDeclarationObservationResult Observe(CSharpCompilation compilation, AtlasCompilationScope context, IEnumerable<CSharpDeclarationSourceInput> sources, CSharpDeclarationObservationLimits? limits = null, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(compilation);
         ArgumentNullException.ThrowIfNull(context);
@@ -154,203 +238,154 @@ public static class CSharpDeclarationObservation
 
         try
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var sourceMap = MapSources(compilation, sources.ToImmutableArray(), cancellationToken);
             var seen = new HashSet<string>(StringComparer.Ordinal);
-            foreach (var type in SourceTypes(compilation.GlobalNamespace).OrderBy(static t => t.MetadataName, StringComparer.Ordinal))
+            foreach (var tree in compilation.SyntaxTrees)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                if (!AddType(type, context, sourceMap, declarations, limitations, seen, limits.MaxDeclarations))
+                var input = sourceMap[tree];
+                var semanticModel = compilation.GetSemanticModel(input.SyntaxTree);
+                foreach (var node in input.SyntaxTree.GetRoot(cancellationToken).DescendantNodes(descendIntoChildren: static _ => true))
                 {
-                    return Complete(declarations, limitations, AtlasCompletionState.BudgetExceeded, limits.MaxDeclarations);
-                }
+                    cancellationToken.ThrowIfCancellationRequested();
+                    if (!TryCreateDeclaration(node, input, semanticModel, context, limitations, out var occurrenceKey, out var declaration))
+                    {
+                        continue;
+                    }
 
-                if (!AddMembers(type, context, sourceMap, declarations, limitations, seen, limits.MaxDeclarations, cancellationToken))
-                {
-                    return Complete(declarations, limitations, AtlasCompletionState.BudgetExceeded, limits.MaxDeclarations);
+                    if (!seen.Add(occurrenceKey))
+                    {
+                        continue;
+                    }
+
+                    if (declarations.Count >= limits.MaxDeclarations)
+                    {
+                        AddLimitation(limitations, "declaration-limit");
+                        return Complete(declarations, limitations, AtlasCompletionState.BudgetExceeded, limits.MaxDeclarations);
+                    }
+
+                    declarations.Add(declaration);
                 }
             }
 
             activity?.SetTag("atlas.declarations.count", declarations.Count);
-            activity?.SetTag("atlas.declarations.limitations", limitations.Count);
+            activity?.SetTag("atlas.declarations.limitations", limitations.Distinct(StringComparer.Ordinal).Count());
             return Complete(declarations, limitations, AtlasCompletionState.Complete, limits.MaxDeclarations);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            limitations.Add("canceled");
+            AddLimitation(limitations, "canceled");
             activity?.SetTag("atlas.declarations.canceled", true);
             return Complete(declarations, limitations, AtlasCompletionState.Canceled, limits.MaxDeclarations);
         }
     }
 
-    private static bool AddType(INamedTypeSymbol type, AtlasCompilationScope context, IReadOnlyDictionary<SyntaxTree, VerifiedSourceBuffer> sourceMap, List<AtlasDeclaration> declarations, List<string> limitations, HashSet<string> seen, int maxDeclarations) =>
-        AddSymbolReferences(type, AtlasDeclarationKind.Type, AtlasDeclarationRole.Ordinary, context, sourceMap, declarations, limitations, seen, maxDeclarations);
-
-    private static bool AddMembers(INamedTypeSymbol type, AtlasCompilationScope context, IReadOnlyDictionary<SyntaxTree, VerifiedSourceBuffer> sourceMap, List<AtlasDeclaration> declarations, List<string> limitations, HashSet<string> seen, int maxDeclarations, CancellationToken cancellationToken)
+    private static IReadOnlyDictionary<SyntaxTree, CSharpDeclarationSourceInput> MapSources(CSharpCompilation compilation, ImmutableArray<CSharpDeclarationSourceInput> sources, CancellationToken cancellationToken)
     {
-        foreach (var member in type.GetMembers().OrderBy(static m => m.MetadataName, StringComparer.Ordinal))
+        var trees = new HashSet<SyntaxTree>(compilation.SyntaxTrees, ReferenceEqualityComparer.Instance);
+        if (trees.Count != sources.Length)
+        {
+            throw new InvalidOperationException("Every compilation syntax tree must have exactly one verified source association.");
+        }
+
+        var map = new Dictionary<SyntaxTree, CSharpDeclarationSourceInput>(ReferenceEqualityComparer.Instance);
+        foreach (var input in sources)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            switch (member)
+            if (!trees.Contains(input.SyntaxTree) || !map.TryAdd(input.SyntaxTree, input))
             {
-                case INamedTypeSymbol nested:
-                    if (!AddType(nested, context, sourceMap, declarations, limitations, seen, maxDeclarations)
-                        || !AddMembers(nested, context, sourceMap, declarations, limitations, seen, maxDeclarations, cancellationToken))
-                    {
-                        return false;
-                    }
-                    break;
-                case IMethodSymbol { MethodKind: MethodKind.Ordinary } method:
-                    if (!AddOrdinaryMethod(method, context, sourceMap, declarations, limitations, seen, maxDeclarations)) return false;
-                    break;
-                case IMethodSymbol { MethodKind: MethodKind.Constructor or MethodKind.StaticConstructor } constructor:
-                    if (!AddSymbolReferences(constructor, AtlasDeclarationKind.Constructor, AtlasDeclarationRole.Ordinary, context, sourceMap, declarations, limitations, seen, maxDeclarations)) return false;
-                    break;
-                case IMethodSymbol { MethodKind: MethodKind.PropertyGet or MethodKind.PropertySet }:
-                    break;
-                case IMethodSymbol method:
-                    limitations.Add("unsupported-method-kind:" + method.MethodKind);
-                    break;
-                case IPropertySymbol property:
-                    if (!AddProperty(property, context, sourceMap, declarations, limitations, seen, maxDeclarations)) return false;
-                    break;
-            }
-        }
-
-        return true;
-    }
-
-    private static bool AddOrdinaryMethod(IMethodSymbol method, AtlasCompilationScope context, IReadOnlyDictionary<SyntaxTree, VerifiedSourceBuffer> sourceMap, List<AtlasDeclaration> declarations, List<string> limitations, HashSet<string> seen, int maxDeclarations)
-    {
-        var symbols = new List<IMethodSymbol> { method };
-        if (method.PartialDefinitionPart is not null) symbols.Add(method.PartialDefinitionPart);
-        if (method.PartialImplementationPart is not null) symbols.Add(method.PartialImplementationPart);
-        foreach (var symbol in symbols.Cast<ISymbol>().Distinct(SymbolEqualityComparer.Default).OfType<IMethodSymbol>())
-        {
-            var role = symbol.PartialImplementationPart is not null
-                ? AtlasDeclarationRole.PartialDefinition
-                : symbol.PartialDefinitionPart is not null ? AtlasDeclarationRole.PartialImplementation : AtlasDeclarationRole.Ordinary;
-            if (!AddSymbolReferences(symbol, AtlasDeclarationKind.Method, role, context, sourceMap, declarations, limitations, seen, maxDeclarations))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private static bool AddProperty(IPropertySymbol property, AtlasCompilationScope context, IReadOnlyDictionary<SyntaxTree, VerifiedSourceBuffer> sourceMap, List<AtlasDeclaration> declarations, List<string> limitations, HashSet<string> seen, int maxDeclarations)
-    {
-        if (!AddSymbolReferences(property, AtlasDeclarationKind.Property, AtlasDeclarationRole.Ordinary, context, sourceMap, declarations, limitations, seen, maxDeclarations))
-        {
-            return false;
-        }
-
-        foreach (var accessor in new[] { property.GetMethod, property.SetMethod }.Where(static accessor => null != accessor).Cast<IMethodSymbol>())
-        {
-            if (!AddSymbolReferences(accessor, AtlasDeclarationKind.Accessor, AtlasDeclarationRole.Ordinary, context, sourceMap, declarations, limitations, seen, maxDeclarations))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private static bool AddSymbolReferences(ISymbol symbol, AtlasDeclarationKind kind, AtlasDeclarationRole role, AtlasCompilationScope context, IReadOnlyDictionary<SyntaxTree, VerifiedSourceBuffer> sourceMap, List<AtlasDeclaration> declarations, List<string> limitations, HashSet<string> seen, int maxDeclarations)
-    {
-        if (symbol.DeclaringSyntaxReferences.Length == 0)
-        {
-            limitations.Add("synthesized-member-skipped");
-            return true;
-        }
-
-        foreach (var syntaxReference in symbol.DeclaringSyntaxReferences.OrderBy(static reference => reference.Span.Start))
-        {
-            if (declarations.Count >= maxDeclarations)
-            {
-                limitations.Add("declaration-limit");
-                return false;
+                throw new InvalidOperationException("Source association must reference one unique syntax tree from the supplied compilation.");
             }
 
-            var syntax = syntaxReference.GetSyntax();
-            if (!sourceMap.TryGetValue(syntax.SyntaxTree, out var buffer))
-            {
-                throw new InvalidOperationException("Declaration syntax tree is not bound to a verified source buffer.");
-            }
-
-            var identifier = IdentifierToken(syntax);
-            var unique = string.Create(CultureInfo.InvariantCulture, $"{buffer.SourceObservation.ObservationKey}:{syntax.Span.Start}:{syntax.Span.Length}:{kind}:{role}");
-            if (!seen.Add(unique))
-            {
-                continue;
-            }
-
-            var logicalValue = LogicalIdentity(symbol, kind, context, limitations);
-            declarations.Add(new AtlasDeclaration(
-                ObservationKey(buffer, context, symbol, syntax.Span, kind, role, declarations.Count),
-                logicalValue,
-                buffer.SourceObservation.ObservationKey,
-                context.ObservationKey,
-                buffer.Binding,
-                kind,
-                role,
-                DisplaySignature(symbol),
-                identifier.ValueText,
-                ValidateSpan(identifier.Span, buffer),
-                ValidateSpan(syntax.Span, buffer),
-                BodySpan(syntax, buffer),
-                logicalValue is null ? UnresolvedReason(context) : null));
-        }
-
-        return true;
-    }
-
-    private static IReadOnlyDictionary<SyntaxTree, VerifiedSourceBuffer> MapSources(CSharpCompilation compilation, ImmutableArray<VerifiedSourceBuffer> sources, CancellationToken cancellationToken)
-    {
-        var trees = compilation.SyntaxTrees.ToImmutableArray();
-        if (trees.Length != sources.Length)
-        {
-            throw new InvalidOperationException("Compilation syntax trees must match the supplied verified source buffers exactly.");
-        }
-
-        var map = new Dictionary<SyntaxTree, VerifiedSourceBuffer>();
-        var remaining = sources.ToList();
-        foreach (var tree in trees)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var text = tree.GetText(cancellationToken).ToString();
-            var matches = remaining.Where(source => string.Equals(source.FullText, text, StringComparison.Ordinal)).ToArray();
-            if (matches.Length != 1)
-            {
-                throw new InvalidOperationException("Compilation syntax tree text does not map to exactly one verified source buffer.");
-            }
-
-            map.Add(tree, matches[0]);
-            remaining.Remove(matches[0]);
+            _ = input.Buffer.FullText;
         }
 
         return map;
     }
 
-    private static IEnumerable<INamedTypeSymbol> SourceTypes(INamespaceSymbol symbol)
+    private static bool TryCreateDeclaration(SyntaxNode node, CSharpDeclarationSourceInput input, SemanticModel semanticModel, AtlasCompilationScope context, List<string> limitations, out string occurrenceKey, out AtlasDeclaration declaration)
     {
-        foreach (var type in symbol.GetTypeMembers())
+        occurrenceKey = string.Empty;
+        declaration = null!;
+        var kind = DeclarationKind(node, limitations, out var role);
+        if (kind is null)
         {
-            foreach (var nested in Flatten(type)) yield return nested;
+            return false;
         }
 
-        foreach (var child in symbol.GetNamespaceMembers())
+        var symbol = SymbolFor(node, semanticModel);
+        if (symbol is null)
         {
-            foreach (var type in SourceTypes(child)) yield return type;
+            AddLimitation(limitations, "declaration-symbol-unavailable");
+            return false;
         }
+
+        if (role is AtlasDeclarationRole.PartialDefinition && symbol is IMethodSymbol { PartialImplementationPart: null })
+        {
+            AddLimitation(limitations, "partial-definition-without-implementation");
+        }
+
+        var identifier = IdentifierToken(node);
+        var declarationSpan = ValidateSpan(node.Span, input.Buffer);
+        var symbolValue = LogicalIdentity(symbol, kind.Value, context, limitations);
+        occurrenceKey = OccurrenceKey(input, context, kind.Value, role, declarationSpan);
+        declaration = new AtlasDeclaration(
+            occurrenceKey,
+            symbolValue,
+            input.Buffer.SourceObservation.ObservationKey,
+            context.ObservationKey,
+            input.Buffer.Binding,
+            kind.Value,
+            role,
+            DisplaySignature(symbol),
+            identifier.ValueText,
+            ValidateSpan(identifier.Span, input.Buffer),
+            declarationSpan,
+            BodySpan(node, input.Buffer),
+            symbolValue is null ? UnresolvedReason(context) : null);
+        return true;
     }
 
-    private static IEnumerable<INamedTypeSymbol> Flatten(INamedTypeSymbol type)
+    private static AtlasDeclarationKind? DeclarationKind(SyntaxNode node, List<string> limitations, out AtlasDeclarationRole role)
     {
-        yield return type;
-        foreach (var nested in type.GetTypeMembers().SelectMany(Flatten)) yield return nested;
+        role = AtlasDeclarationRole.Ordinary;
+        return node switch
+        {
+            BaseTypeDeclarationSyntax => AtlasDeclarationKind.Type,
+            ConstructorDeclarationSyntax => AtlasDeclarationKind.Constructor,
+            PropertyDeclarationSyntax => AtlasDeclarationKind.Property,
+            AccessorDeclarationSyntax => AtlasDeclarationKind.Accessor,
+            MethodDeclarationSyntax method => MethodKind(method, out role),
+            OperatorDeclarationSyntax or ConversionOperatorDeclarationSyntax or DestructorDeclarationSyntax => Unsupported(limitations, "unsupported-method-declaration"),
+            EventDeclarationSyntax or EventFieldDeclarationSyntax or FieldDeclarationSyntax => Unsupported(limitations, "unsupported-member-declaration"),
+            _ => null,
+        };
     }
+
+    private static AtlasDeclarationKind MethodKind(MethodDeclarationSyntax method, out AtlasDeclarationRole role)
+    {
+        var isPartial = method.Modifiers.Any(SyntaxKind.PartialKeyword);
+        role = isPartial && method.Body is null && method.ExpressionBody is null
+            ? AtlasDeclarationRole.PartialDefinition
+            : isPartial ? AtlasDeclarationRole.PartialImplementation : AtlasDeclarationRole.Ordinary;
+        return AtlasDeclarationKind.Method;
+    }
+
+    private static AtlasDeclarationKind? Unsupported(List<string> limitations, string reason)
+    {
+        AddLimitation(limitations, reason);
+        return null;
+    }
+
+    private static ISymbol? SymbolFor(SyntaxNode node, SemanticModel semanticModel) => node switch
+    {
+        BaseTypeDeclarationSyntax type => semanticModel.GetDeclaredSymbol(type),
+        ConstructorDeclarationSyntax constructor => semanticModel.GetDeclaredSymbol(constructor),
+        MethodDeclarationSyntax method => semanticModel.GetDeclaredSymbol(method),
+        PropertyDeclarationSyntax property => semanticModel.GetDeclaredSymbol(property),
+        AccessorDeclarationSyntax accessor => semanticModel.GetDeclaredSymbol(accessor),
+        _ => null,
+    };
 
     private static SyntaxToken IdentifierToken(SyntaxNode syntax) => syntax switch
     {
@@ -404,7 +439,7 @@ public static class CSharpDeclarationObservation
         }
         catch (ArgumentException)
         {
-            limitations.Add("logical-identity-unavailable");
+            AddLimitation(limitations, "logical-identity-unavailable");
             return null;
         }
     }
@@ -416,27 +451,24 @@ public static class CSharpDeclarationObservation
 
     private static string DisplaySignature(ISymbol symbol) => symbol switch
     {
-        IMethodSymbol { MethodKind: MethodKind.StaticConstructor } method => "static " + method.ContainingType.Name + "()",
-        IMethodSymbol { MethodKind: MethodKind.Constructor } method => method.ContainingType.Name + "(" + string.Join(", ", method.Parameters.Select(static p => p.Type.Name + " " + p.Name)) + ")",
-        IMethodSymbol { MethodKind: MethodKind.PropertyGet } method => "get " + method.AssociatedSymbol?.Name,
-        IMethodSymbol { MethodKind: MethodKind.PropertySet } method => "set " + method.AssociatedSymbol?.Name,
+        IMethodSymbol { MethodKind: Microsoft.CodeAnalysis.MethodKind.StaticConstructor } method => "static " + method.ContainingType.Name + "()",
+        IMethodSymbol { MethodKind: Microsoft.CodeAnalysis.MethodKind.Constructor } method => method.ContainingType.Name + "(" + string.Join(", ", method.Parameters.Select(static p => p.Type.Name + " " + p.Name)) + ")",
+        IMethodSymbol { MethodKind: Microsoft.CodeAnalysis.MethodKind.PropertyGet } method => "get " + method.AssociatedSymbol?.Name,
+        IMethodSymbol { MethodKind: Microsoft.CodeAnalysis.MethodKind.PropertySet } method => "set " + method.AssociatedSymbol?.Name,
         _ => symbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
     };
 
-    private static string ObservationKey(VerifiedSourceBuffer buffer, AtlasCompilationScope context, ISymbol symbol, TextSpan span, AtlasDeclarationKind kind, AtlasDeclarationRole role, int sequence) =>
+    private static string OccurrenceKey(CSharpDeclarationSourceInput input, AtlasCompilationScope context, AtlasDeclarationKind kind, AtlasDeclarationRole role, AtlasTextSpan span) =>
         AtlasIdentityCodec.EncodeComponents(
             "atlas-declaration-observation/v1",
             context.ObservationKey,
-            buffer.SourceObservation.ObservationKey,
-            buffer.SourceObservation.FileValue,
-            buffer.SourceObservation.CanonicalSha256!,
-            buffer.SourceObservation.DecoderId!,
+            input.File.FileValue,
+            input.Buffer.SourceObservation.CanonicalSha256!,
+            input.Buffer.SourceObservation.DecoderId!,
             kind.ToString(),
             role.ToString(),
-            DocumentationCommentId.CreateDeclarationId(symbol) ?? symbol.MetadataName,
             span.Start.ToString(CultureInfo.InvariantCulture),
-            span.Length.ToString(CultureInfo.InvariantCulture),
-            sequence.ToString(CultureInfo.InvariantCulture));
+            span.Length.ToString(CultureInfo.InvariantCulture));
 
     private static CSharpDeclarationObservationResult Complete(List<AtlasDeclaration> declarations, List<string> limitations, AtlasCompletionState completion, int requestedLimit)
     {
@@ -446,6 +478,13 @@ public static class CSharpDeclarationObservation
             : new AtlasBounds(requestedLimit, requestedLimit, declarations.Count, 0, null, AtlasDenominatorState.Unknown, completion.ToString(), "declarations");
         return new(declarations, completion, bounds, distinctLimitations);
     }
-}
 
+    private static void AddLimitation(List<string> limitations, string reason)
+    {
+        if (limitations.Count < MaxLimitations && !limitations.Contains(reason, StringComparer.Ordinal))
+        {
+            limitations.Add(reason);
+        }
+    }
+}
 
