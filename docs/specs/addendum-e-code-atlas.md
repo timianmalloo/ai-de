@@ -12,6 +12,12 @@ links:
   - { to: architecture, rel: refines }
   - { to: spec-addendum-d-compile-step, rel: relates-to }
   - { to: note-code-atlas-proposal-provenance, rel: depends-on }
+  - { to: note-atlas-next-addendum, rel: depends-on }
+  - { to: note-atlas-development-models, rel: depends-on }
+  - { to: note-atlas-delivery-horizon, rel: depends-on }
+  - { to: note-atlas-lane-admission, rel: depends-on }
+  - { to: note-atlas-reference-custody, rel: depends-on }
+  - { to: note-atlas-identifier-discipline, rel: depends-on }
 review-by: 2027-03-12
 summary: >-
   Candidate Addendum E specifies the Architecture perspective's Code Atlas: a repository-backed
@@ -26,10 +32,11 @@ summary: >-
 - **Status:** Draft candidate. **Not accepted. No gate self-cleared.**
 - **Tier (cost-of-error):** T2 — this admits user-facing Architecture surfaces, evidence/authority semantics, model-assisted interpretation, privacy-sensitive repository content and misleading-compliance risks.
 - **Author / date:** `atlas-spec-gpt55`, 2026-09-12.
-- **Reservation:** Owner Astra's initial ruling admits candidate Addendum E **conditional on registration**. The current registered maximum addendum is still **D** until Core/Claude/Conductor acknowledgement lands. This file remains a draft and reserves no global authority until registration and gates complete.
+- **Reservation:** Owner Astra's durable note `note-atlas-next-addendum` admits candidate Addendum E **conditional on registration**. The current registered maximum addendum is still **D** until Core/Claude/Conductor acknowledgement lands. This file remains a draft and reserves no global authority until registration and gates complete.
 - **Upstream:** Addendum C (`spec-addendum-c-perspectives`), UML/ERM surfaces (`spec-uml-erm-surfaces`), Architecture (`architecture`), and the pending provenance note `note-code-atlas-proposal-provenance`.
-- **Base evidence:** current main tree `b0e092b5` and proposal `1065a851` were confirmed by the parent/Owner record **[Verified by parent report; not re-read here]**. The proposal input was read locally from `C:\Projects\ai-de-proposal-code-atlas\docs\proposals\code-atlas\README.md`, `index.html`, and `mockup.template.html` **[Verified by local read]**. The proposal branch is private input, not merged history. This spec does not copy TheTerrace raw source, fixture JSON, screenshots or session quotes into the delivery tree.
+- **Base evidence:** durable note `note-atlas-reference-custody` records current main tree `b0e092b5` and proposal `1065a851` as observed by the executor **[Verified by note read; the Owner did not independently verify Git state]**. The proposal input was read locally from `C:\Projects\ai-de-proposal-code-atlas\docs\proposals\code-atlas\README.md`, `index.html`, and `mockup.template.html` **[Verified by local read]**. The proposal branch is private input, not merged history. This spec does not copy TheTerrace raw source, fixture JSON, screenshots or session quotes into the delivery tree.
 - **Delivery stance:** the user wants the full eventual implementation through the fleet, not another toy mockup. This draft therefore specifies the real product contract and marks unadmitted or unproven capabilities as planned, deferred, unknown or blocked.
+- **Metadata stance:** this remains `type: spec`. Any supporting delivery ledger or plan must use a registry-known document type because the installed docs graph rejects `type: plan`.
 
 Every load-bearing claim is labelled **[Verified]** (opened / fetched / observed), **[Inferred]** (reasoned from evidence), or **[Flagged]** (unknown or pending). This is a candidate spec, so the gate record is intentionally **PENDING/BLOCKED**, not pass.
 
@@ -46,6 +53,7 @@ Every load-bearing claim is labelled **[Verified]** (opened / fetched / observed
 | Bicep is a declarative language for Azure resource deployment; Azure topology claims can be grounded in `.bicep` declarations, but deployed runtime state remains separate. | Microsoft Learn "What is Bicep?", fetched 2026-09-12. | [Verified] |
 | Windows apps should follow Fluent/Windows design guidance across input and form factors. | Microsoft Learn "Design Windows apps overview", fetched 2026-09-12. | [Verified] |
 | Current method/member extraction contracts are not settled by this worker. | The user assigned separate contract work and instructed this spec not to duplicate deep source research. | [Flagged] |
+| The six Owner framing notes are durable accepted docs in the conductor branch at `b1acd4df`. | `note-atlas-next-addendum`, `note-atlas-development-models`, `note-atlas-delivery-horizon`, `note-atlas-lane-admission`, `note-atlas-reference-custody`, `note-atlas-identifier-discipline` read from `C:\Projects\ai-de-conductor-code-atlas`. | [Verified] |
 
 ## Page one — what Addendum E decides
 
@@ -58,14 +66,14 @@ Addendum E admits the **Code Atlas** as the Architecture perspective's repositor
 5. Optional model interpretation is admitted only through an approved bounded harness with context preview, no tool authority, no private-corpus shipping and an eval gate before its output can influence a user-facing claim.
 6. Authority uncertainty is never silently cleared by AI. Human/authorized Owner/Conductor/audit/session references remain the authority trail; timestamps are ordering evidence, not authority by themselves.
 
-**Owner Astra initial rulings folded into this draft:**
+**Owner Astra initial rulings folded into this draft from durable notes:**
 
-- **[Verified by parent report]** Candidate Addendum E is admitted only **conditional on registration**. Until Core/Claude acknowledgement, work is limited to uncontested registered docs and read-only seam analysis; no product source edits are authorized.
-- **[Verified by parent report]** The whole vision belongs inside the existing **Architecture** perspective, with the existing three Perspectives and one graph substrate. There is no fourth Perspective and no second graph store.
-- **[Verified by parent report]** Addendum C D-4 is amended by this quoted constraint: **"A Bicep resource is not automatically a C4 software container."** Infrastructure declarations may support deployment/resource views and some architecture relationships; they do not by themselves create software containers or components.
-- **[Verified by parent report]** The development Astra/GPT fleet does not replace the runtime headless-Claude/subscription contract and does not genericize the prompt compiler. Prompt compilation remains Addendum D's contract.
-- **[Verified by parent report]** Architecture must cover all stages, but the first implementation horizon is only the integrated deterministic C# walking skeleton: **file → type/member → actual source**.
-- **[Verified by parent report]** Later semantic/behavior, data/Azure, comparison/decision and governed-AI stages each need their own design, exit criteria and Owner admission before implementation.
+- **[Verified: `note-atlas-next-addendum`]** Candidate Addendum E is admitted only **conditional on registration**. The whole vision stays inside Architecture, with the existing three Perspectives and one graph substrate. C D-4 carries the explicit amendment: **"A Bicep resource is not automatically a C4 software container."**
+- **[Verified: `note-atlas-development-models`]** The development Astra/GPT fleet does not replace the runtime headless-Claude/subscription contract and does not genericize the prompt compiler. Prompt compilation remains Addendum D's contract.
+- **[Verified: `note-atlas-delivery-horizon`]** Architecture must cover all stages, but the first implementation horizon is only the integrated deterministic C# walking skeleton: **file → type/member → actual source**. Later semantic/behavior, data/Azure, comparison/decision and governed-AI stages each need their own design, exit criteria and Owner admission before implementation.
+- **[Verified: `note-atlas-lane-admission`]** Until Core/Claude acknowledgement, work is limited to uncontested registered docs and read-only seam analysis; no product source edits are authorized.
+- **[Verified: `note-atlas-reference-custody`]** Delivery starts from clean main; proposal `1065a851` remains a local reference. Only reviewed safe summaries and independently safe test material may enter delivery artifacts.
+- **[Verified: `note-atlas-identifier-discipline`]** The Conductor records semantic note IDs now and allocates any numeric ruling, ADR or defect id only through the repository allocator/checks. This draft cites no guessed global numbers.
 
 ## Part A — Functional specification
 
@@ -600,7 +608,9 @@ Only **E-0** is in the first implementation horizon. It must be an integrated de
 | Risk / unknown | Cheapest next contract or decision |
 |---|---|
 | Addendum E number is conditionally admitted but not registered. | Core/Claude/Conductor acknowledgement of `E` registration before any acceptance or source implementation. |
-| `note-code-atlas-proposal-provenance` is pending from the Conductor. | Join the note id and verify the typed edge before acceptance. |
+| `note-code-atlas-proposal-provenance` exists in the conductor branch but has not joined this branch. | Join the note id and verify the typed edge before acceptance. |
+| Native seam remains open. | Claude/Core seam acknowledgement and lane carve-outs before source edits; until then only uncontested docs and read-only seam analysis. |
+| Numeric ruling/ADR/DC ids are not allocated here. | Conductor uses repository allocator/checks; this spec links semantic note ids only. |
 | Method/type/member extraction contract is separate and not settled here. | Accept or reject the contract worker's declared symbol/relationship model before E-1. |
 | Physical inventory source of truth needs final policy: `git ls-files`, workspace index, exclusions and generated/vendor categories. | `/design-slice` data contract with fixture and exclusions. |
 | Initial performance budgets are inferred from product intent, not measured in AI-DE. | Measure E-0 fixture runs; revise budgets only with evidence. |
