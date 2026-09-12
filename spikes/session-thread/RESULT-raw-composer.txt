@@ -1,0 +1,14 @@
+MEASURE q14.auto.composer_actual_height=945.8
+MEASURE q14.auto.composer_desired_height=945.8
+MEASURE q14.auto.editor_host_actual_height=0
+MEASURE q14.auto.compiled_actual_height=831.9
+MEASURE q14.auto.compiled_max_height=Infinity
+MEASURE q14.auto.thread_row_actual_height=0
+MEASURE q14.auto.composer_top=28
+MEASURE q14.belt.composer_actual_height=254.8
+MEASURE q14.belt.composer_desired_height=254.8
+MEASURE q14.belt.editor_host_actual_height=0
+MEASURE q14.belt.compiled_actual_height=141
+MEASURE q14.belt.compiled_max_height=141
+MEASURE q14.belt.thread_row_actual_height=617.2
+MEASURE q14.belt.composer_top=645.2
