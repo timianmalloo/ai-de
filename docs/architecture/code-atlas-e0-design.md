@@ -41,6 +41,12 @@ inferred from those commits.
 handle/link/race/decoder mechanism is pending this design's join. No report or safe native API
 is invented here, and this worker does not duplicate its research.
 
+**R2 preflight checkpoint, Conductor-reported:** source-only review proposes `File.OpenHandle`,
+`GetFinalPathNameByHandleW` and `GetFileInformationByHandle`, with raw-byte hashing and decoding
+of the same buffer. These are **candidate APIs, not an accepted/executed safe-reader contract**.
+Opened-root anchoring, sharing/lifetime semantics and native execution remain pending. Owner
+authoring permission remains pending; neither this report nor its inclusion admits source dispatch.
+
 ## 1. Scope, framing and grounding
 
 ### 1.1 Terminal behavior and explicit exclusions
@@ -365,6 +371,48 @@ state/Memento restoration; Core validates selection through AtlasQueries.
 | **S-HOST: native integration** | Owner registers actual Architecture tree/source/outline/inspector using the existing factory/menu/host and injects query client; state persists through retained host, no fourth perspective. | SurfaceContentFactory/WorkbenchShell/WorkbenchAdapter and live Canvas/Evidence/GraphProjection/ZoneLayout files/tests are forbidden during this track. Reconcile actual current main after acknowledgment; reported SH2 `b4e61022` is not an unopened source contract. |
 | **S-COMPAT: shared evidence/history** | Existing graph/evidence consumers must ignore/isolate Atlas storage predicates; compaction cannot silently invalidate retained manifests. Real-store/legacy-query and history-retirement tests establish this. | Core/shared-reader owners resolve before product writes. No broad filter edit or fake presentation bypass in the new namespace. |
 
+#### R2 source-only candidate and remaining S-SAFE acceptance evidence
+
+R2's proposed mechanism reads/hash-checks/decodes the same byte buffer through an opened file
+handle and inspects final path/file information. It has **not** established that this defeats
+replacement/link races or meets the selected cancellation/resource budgets. The Core source
+adapter, not presentation, owns all native calls, root/file handles, hash/decoder state and cleanup.
+WPF consumes the typed result; it must not reconstruct a source reader or retry by opening a path.
+
+The source-safety join must specify and execute:
+
+- Which **opened root object** anchors authorization; how its identity is retained and compared
+  when a root path is replaced, renamed or redirected; final-path inspection alone is not proof.
+- Exact file/directory access and share modes, link/reparse traversal policy, volume/file identity
+  interpretation, and behavior on hard links. No share flags are guessed by this design.
+- Handle ownership and lifetime across root validation, file open, identity checks, buffer read,
+  hashing, decoding, post-read checks, cancellation and errors. No close/reopen-by-path gap.
+- Mutation detection and the meaning of `ReadUnstable` versus `Unverifiable`, including what
+  cannot be established from the native metadata. Never promote a partial hash to an exact binding.
+- Decoder/BOM rules and byte→UTF-16 mapping from the same buffer, plus disposal/quiescence evidence.
+
+R2 adapter vocabulary is translated explicitly at the Core port; it is not silently coerced into
+the existing NodeContent shape:
+
+| R2 proposed result | E-0 result meaning |
+|---|---|
+| `IndexedMatch` | `IndexedMatch` only after exact expected hash/decoder/span validation; active indexed anchor permitted. |
+| `Changed` | `LiveChanged`; indexed anchor disabled; explicit user open-live/refresh path. |
+| `Unavailable` | `Unavailable`; no substitute body or active old anchor. |
+| `Unverifiable` | `Unverifiable`; proof is insufficient, distinct from absence. No active indexed anchor or verified-binding claim. |
+| `UnsupportedEncoding`, `TooLargeToVerify`, `ReadUnstable`, `Refused` | Preserve the same typed condition and permitted recovery, never empty-success or IndexedMatch. |
+| `Canceled` | Envelope outcome `cancelled`; no source body/active anchor published. Resource quiescence remains separately observed, not inferred from the outcome. |
+
+`LiveUnindexed` remains an Atlas query case for an authorized file with no indexed binding,
+not an invented R2 `IndexedMatch` result. The adapter must establish how it represents such a
+read before that path is enabled; missing expected hash is not proof of a match.
+
+R2 names these **required fixtures, not passing tests**: normal/hash match, line movement,
+file/root replacement, symlink inside/outside, junction cycle/escape, hard link, deleted/denied
+file, invalid BOM/UTF-8, oversize and cancellation. Record actual Windows behavior, flags, buffer/
+handle lifecycle and observations from those runs before clearing S-SAFE. No safety/Verified
+label is derived from the source-only report.
+
 These are bounded **implementation joins**, not reasons to stop drafting or to reopen the whole
 council. The producer and query logic can be written/tested after their separate new-namespace
 admission; claiming the deployed walking skeleton waits for the real joins. Shared adapters are
@@ -412,7 +460,7 @@ command; the other five are read-only. No `atlas.interpret`, diagram, comparison
 | Manifest | Requested ManifestId or explicit latest-observed/last-successful selector | Exact observation vector, coherent/mixed/partial/unknown, freshness, policy and retained-history availability. |
 | Inventory | ManifestId, parent key/filter, cursor?, pageSize | One physical record per FileId, project memberships separately, counts/denominator, continuation and source/semantic availability. |
 | Outline | ManifestId, FileId, optional CompilationScopeId, cursor? | Scope alternatives or mandatory-kind logical symbols and declaration choices; no display-derived IDs. |
-| Source | ManifestId, FileId, optional DeclarationId, cursor? | IndexedMatch / LiveChanged / LiveUnindexed / Unavailable / UnsupportedEncoding / TooLargeToVerify / ReadUnstable / Refused; active spans only for IndexedMatch. |
+| Source | ManifestId, FileId, optional DeclarationId, cursor? | IndexedMatch / LiveChanged / LiveUnindexed / Unavailable / Unverifiable / UnsupportedEncoding / TooLargeToVerify / ReadUnstable / Refused; active spans only for IndexedMatch. Cancellation is the separate cancelled envelope outcome. |
 
 Common envelope fields:
 
@@ -737,7 +785,7 @@ capability is added. This design document is not a shipped model prompt.
 | T04 `AtlasIdentityTests` | Cross-project/TFM collisions prevented, whitespace/line shift preserves SymbolId; delimiter/unicode/culture properties; remove scope or add revision ⇒ red | Roslyn 4.14 synthetic inputs and canonical golden bytes. |
 | T05 `AtlasDeclarationTests` | Every mandatory family, overload/property/accessor distinction, partial definition+implementation; first-only partial or parsed display key ⇒ red | Installed Roslyn with real syntax inputs. |
 | T06 `AtlasCompilationBindingTests` | Real project options/reference/TFM preserved; text/hash mismatch, unsupported language/version/null ID, virtual generated inputs disclosed | Fake bundle pair plus actual Core loader integration; no synthetic product fallback. |
-| T07 `AtlasSourceSafetyContractTests` | Escape/link/replacement/concurrent write, changed bytes, BOM/CRLF/non-BMP, invalid encoding, byte/UTF-16 bounds, cancellation/handles | **Source-worker real Windows adapter required**, not a mocked proof. |
+| T07 `AtlasSourceSafetyContractTests` | Normal/hash match, line move, file/root replacement, inside/outside symlink, junction cycle/escape, hard link, delete/denied, concurrent write, BOM/CRLF/non-BMP, invalid BOM/UTF-8, oversize, byte/UTF-16 bounds, cancellation and handle/share lifetime; R2 statuses preserve their meaning | **Source-worker real Windows adapter required**; R2 is source-only, not a passing native or mocked proof. |
 | T08 `AtlasStoreIdempotencyTests` | Same request/chunk retry returns original; A→B→A reuses the original immutable A chunk without a natural-key conflict; different fingerprint conflicts; unit separator cannot collide | Real disposable WorkspaceStore. |
 | T09 `AtlasStoreFencingTests` | New root desire defeats old chunk/seal; dispose rollback; fault between chunks/seal/reply; duplicate facts cannot be hidden by upsert | Real SQLite; fault injection at named boundaries. |
 | T10 `AtlasManifestTests` | A-new/B-old/failed, shared-file hash mismatch, partial/unknown independent of seal-row complete flag | Real stored observations; remove vector check ⇒ red. |
@@ -841,7 +889,7 @@ It deliberately **does not tick executed/independently reviewed items**:
 
 | Remaining join / uncertainty | Smallest resolving action, not broad new research |
 |---|---|
-| Windows handle/link/race/decoder/cancel contract | Join worker `90e3a4be`'s actual evidence and check S-SAFE fields/budgets; no inferred API. |
+| Windows handle/link/race/decoder/cancel contract | R2 proposes handle/final-path/file-information APIs, source-only. Join worker `90e3a4be`'s executed opened-root/share/lifetime/status/fixture evidence and check S-SAFE budgets; no inferred safety. |
 | Real compilation input exposure | Core owner confirms exact loader adapter and project trust policy, including text/hash identity; no declaration parsing fallback. |
 | Bounded writer acquisition/control fairness | Owner/Core admit the narrow real shared-writer change; current synchronous BeginWrite cannot prove the selected timeout. |
 | Shared wire/host and generic-reader safety | SH3 owner serially supplies S-WIRE/S-HOST/S-COMPAT after acknowledgment; run the real native/legacy contract tests. |
