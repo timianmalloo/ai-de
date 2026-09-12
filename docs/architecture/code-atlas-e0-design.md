@@ -57,6 +57,14 @@ These are attributed producer observations, **not this author's execution, Secur
 or an adopted safe-reader contract**. Security and Test review precede incorporation. Identity,
 inventory logic and real-compiler candidate authoring continue independently; no reader is recreated.
 
+**Consolidated review receipt, Conductor-reported:** native reader **reuse is BLOCKED**, not the
+programme or the §13.1 authoring grant. The original safety writer has one bounded repair batch
+(reported 16 of 30 calls remaining): partial ancestor-handle acquisition leaks; mid-read cancellation
+escapes; Changed/Unverifiable expose text; ADS is not pre-refused; expected manifest root/file
+observation identity is absent; race assertions accept arbitrary I/O errors; span claims exceed
+hash-only evidence; two symlink cases are NOT PROVEN. This design changes only its contract/defaults.
+Independent identity/inventory/real-compiler work proceeds; no second reader or broad review begins.
+
 ## 1. Scope, framing and grounding
 
 ### 1.1 Terminal behavior and explicit exclusions
@@ -201,7 +209,7 @@ Collections are immutable ordered arrays; absence is nullable only with a typed 
 | Record | Fields beyond common header | Writer → compute readers |
 |---|---|---|
 | `InventoryFileV1` | FileId + canonical tuple; relative path; parent FileId/path-node key; kind; tracked/untracked/nonGit membership; project-membership IDs; category flags; presence; source-availability; semantic-capability reason. | Inventory walker → tree/filter, outline routing, coverage fold and source authorization lookup. |
-| `ContentBindingV1` | FileId, byte hash/length, DecoderId, decoded-text hash/length, observed-state, optional VCS revision, provenance; hash absent only with explicit unverified/unavailable reason. No body. | Safe-read adapter/coordinator → declaration validator, live source comparison and manifest coherence. |
+| `ContentBindingV1` | FileId, RootObservationId/FileObservationId plus their provider-versioned native object identities, byte hash/length, DecoderId, decoded-text hash/length, observed-state, optional VCS revision, provenance; missing expected identity/hash is explicitly unverified. No body. | Admitted observation producer → source request's expected root/file/hash boundary, declaration validator and manifest coherence. Logical FileId/path is not native object identity. |
 | `SymbolDeclarationV1` | SymbolId + canonical tuple, CompilationScopeId, containing SymbolId?, kind, display signature, DeclarationId, FileId/ContentId/DecoderId, identifier/declaration/body spans, partial role/counterpart references, semantic status. | Roslyn declaration collector → scope chooser, outline, source span validation and Back identity. |
 | `ScopeObservationV1` | CompilationScopeId, options/reference digests, request target, completion state, member-kind capability set, chunk references, file-binding digest, permitted diagnostics and counts. | Semantic coordinator → manifest join and capability/coverage projection. |
 | `InventoryObservationV1` | Policy/root boundary, chunk references, observation interval, observed counts, excluded/withheld flags, completion/error/cancel state, membership digest. | Inventory coordinator → manifest join, physical tree, refresh disclosures. |
@@ -400,7 +408,7 @@ proposal—do not create speculative extra layers.
 
 | Join | Concrete required contract | Why still pending / who resolves |
 |---|---|---|
-| **S-SAFE: file capability** | `EnumerateAuthorizedAsync(rootCapability, policyRevision, budget, ct)` and `ReadVerifiedAsync(fileCapability, expectedBinding?, readBudget, ct)` return authorized metadata or exact immutable byte/text buffer with ContentId/DecoderId/state; refuse escape/race/invalid encoding, never active mismatched span. Dispose releases handles/buffers. | Source-safety worker `90e3a4be` establishes Windows handle/link/race/decoder semantics and cancellation. Use its executed result, not a chosen API here. |
+| **S-SAFE: file capability** | `EnumerateAuthorizedAsync(rootCapability, policyRevision, budget, ct)` and indexed-anchor `ReadVerifiedAsync(fileCapability, ExpectedSourceBindingV1, readBudget, ct)` require the manifest's expected root/file observation identities and hash. Text/buffer may cross the indexed-anchor port only on IndexedMatch; all other outcomes have no text/active span. Dispose releases every partially acquired handle/buffer. | Original source-safety writer repairs the blocked reader, then independent review/execution establishes the contract. Do not bootstrap expected identities/hash from the same current read or substitute logical path/FileId for object identity. |
 | **S-COMP: real compilation inputs** | `LoadCompilationInputsAsync(CompilationScopeRequest, ct)` returns actual project FileId, TFM/configuration, compiler options/reference digests, approved metadata references and source-tree inputs tied to FileId/ContentId/DecoderId. Every tree's text is exactly its recorded decoded input. | Core owner binds its real project reader/discovery to this contract. Existing IExtractor output alone has no semantic object contract. No arbitrary project task/target execution or permissive MSBuild load is authorized by selecting a file. Any required build evaluation runs under existing approved trust policy. |
 | **S-WRITE: bounded writer lease** | `AcquireAtlasWriteAsync(rootFence, admissionBudget, ct)` returns the real `StoreWriter` lease or typed busy/cancel/stale; max wait 500 ms, one Atlas lease, 8 pending control/16 pending Atlas requests, control priority with fairness below. All acquisitions pass the shared writer-admission owner. | Existing `BeginWrite` is synchronous/uncancellable. Core must supply a serialized cancellation/timeout-capable admission seam, potentially a narrow Store API addition, and integrate legacy control priority. No fake scheduler or abandoned Task.Run establishes this. |
 | **S-AUTH: policy/epoch** | Validated `CallerContext` binds principal, workspace, CoreEpoch, root capability, permissions and current policy revision. Native/IPC inputs cannot mint it. Reauthorize stale policy/epoch and narrow continuation results. | Existing authority owner supplies the context; new Understanding code does not open/authenticate a second authority. |
@@ -434,15 +442,51 @@ the existing NodeContent shape:
 | R2 proposed result | E-0 result meaning |
 |---|---|
 | `IndexedMatch` | `IndexedMatch` only after exact expected hash/decoder/span validation; active indexed anchor permitted. |
-| `Changed` | `LiveChanged`; indexed anchor disabled; explicit user open-live/refresh path. |
+| `Changed` | `LiveChanged`; **no Text/buffer**, indexed anchor disabled; explicit refresh/rebind path, never old-body substitution. |
 | `Unavailable` | `Unavailable`; no substitute body or active old anchor. |
-| `Unverifiable` | `Unverifiable`; proof is insufficient, distinct from absence. No active indexed anchor or verified-binding claim. |
-| `UnsupportedEncoding`, `TooLargeToVerify`, `ReadUnstable`, `Refused` | Preserve the same typed condition and permitted recovery, never empty-success or IndexedMatch. |
+| `Unverifiable` | `Unverifiable`; proof is insufficient, distinct from absence. **No Text/buffer**, active indexed anchor or verified-binding claim. |
+| `UnsupportedEncoding`, `TooLargeToVerify`, `ReadUnstable`, `Refused` | Preserve the same typed condition and permitted recovery, with **no Text/buffer**; never empty-success or IndexedMatch. |
 | `Canceled` | Envelope outcome `cancelled`; no source body/active anchor published. Resource quiescence remains separately observed, not inferred from the outcome. |
 
-`LiveUnindexed` remains an Atlas query case for an authorized file with no indexed binding,
-not an invented R2 `IndexedMatch` result. The adapter must establish how it represents such a
-read before that path is enabled; missing expected hash is not proof of a match.
+`LiveUnindexed` is an Atlas metadata-only case when a source binding is absent; it does not unlock
+an unverified text-return path. Missing expected identity/hash is not proof of a match.
+An unsupported **semantic** file may still show text when its separate physical source observation
+has an admitted expected root/file/hash binding and the reader returns IndexedMatch.
+Establishing that initial trustworthy observation belongs to the admitted observation/safety join;
+the display reader must not invent its expected values from the read it is supposed to verify.
+
+**Indexed-anchor default:** `Text` (and any equivalent body/buffer field) is present **only on
+IndexedMatch**. The service and detached source view clear prior text and active anchors on every
+other result. “Open live” cannot bypass this rule: first produce an explicitly authorized fresh
+observation/binding, then request its IndexedMatch read. No unapproved second live-reader path.
+
+**ExpectedSourceBindingV1** carries ManifestId/PolicyRevision, RootObservationId and expected
+root native object identity, FileObservationId and expected file native object identity,
+expected raw-byte hash/length, ContentId and DecoderId. Core resolves these from the pinned
+authorized manifest; untrusted UI input cannot mint them. Native identities are provider-versioned
+opaque structured values until the repaired adapter contract is established, not guessed volume/
+file-index encodings. Hash equality alone cannot satisfy root/file identity equality.
+
+**E-0 source input/reparse policy:** only a server-resolved registered-root-relative file identity;
+pre-refuse ADS/colon-qualified components, absolute/drive/UNC/device paths, empty/dot/dot-dot
+segments, embedded NUL/control characters and ambiguous trailing-dot/space components before any
+file open. No unproven reparse traversal is admitted: a reparse point in the selected file/root/
+ancestor chain is refused until its precise reviewed policy and fixture pass are admitted.
+Hard links require the repaired provider's explicit policy/identity evidence; absent that
+evidence, refuse rather than infer confinement. This refusal default is not a claim that the
+two unproven symlink cases passed.
+
+Resource/race oracles must distinguish **the intended refusal and postcondition** from unrelated
+I/O failures. Assert stable outcome/code, absence of text, no outside-root content access, expected
+identity comparison and return of owned handle count to baseline after partial acquisition,
+replacement and mid-read cancellation. Cancellation at every acquisition/read boundary returns
+Canceled/cancelled with no body and disposes acquired ancestors; an escaping OCE is not a passing
+result contract. An arbitrary IOException/AccessDenied cannot prove that a race was prevented.
+
+**Span ownership:** the native probe establishes only its actual hash/object/decoder/lifetime
+evidence; it does not prove source-span mapping. Candidate T05/T06/T17 own UTF-16 declaration/body/
+identifier offsets, line movement, CRLF/non-BMP/BOM and exact rendered highlight checks over a
+matching buffer. Keep these two proof sets distinct.
 
 R2 names these **required fixtures, not passing tests**: normal/hash match, line movement,
 file/root replacement, symlink inside/outside, junction cycle/escape, hard link, deleted/denied
@@ -519,7 +563,9 @@ not ordering/authority keys.
 
 Scope/revision vectors are typed arrays; no comma-separated scope string. Span fields include
 unit=`utf16`, ContentId, DecoderId and range. Source result carries indexed and read hash IDs
-separately, read timestamp, byte/decoded bounds and disabled-anchor reason.
+separately, expected/observed root and file observation identities, read timestamp, byte/decoded
+bounds and disabled-anchor reason. Text/page bytes exist only for IndexedMatch; every other
+content state returns no body and disables indexed anchors.
 Source page bytes use UTF-8 encoded text in a base64 field with explicit encoding; this is framing,
 **not encryption or a privacy permission**. Page boundaries cannot split a code point or lie about
 UTF-16 offsets. The safe-decoder adapter owns transcoding/offset proof.
@@ -680,7 +726,7 @@ The Shell owner supplies the actual Architecture composition after SH3 handoff.
 |---|---|
 | Physical tree | Virtualized project/folder/file hierarchy; one FileId record with separate project aliases/memberships. Filter does not change inventory scope. Unsupported files stay selectable. |
 | Outline | Explicit project/TFM chooser when ambiguous; mandatory kinds, overload signatures and partial declaration choices. Unsupported kinds labelled, never parsed from display strings. |
-| Source | Exact selected file/version label, read-state badge, active span only if hash/decoder matches; no body retained in history. LiveChanged requires explicit open-live/refresh action. |
+| Source | Exact selected file/version label and read-state badge; text/active span only on IndexedMatch with expected root/file/hash/decoder validation. No body retained in history. LiveChanged clears text/anchors and offers explicit refresh/rebind, not an unverified reader. |
 | Inspector/status | Root/policy/manifest, scope/revision vector, coverage/denominator/bounds and source availability. UI renders Core truth; no independent count/authority computation. |
 | Back/Forward | View-local Memento snapshots: manifest/file/scope/symbol/declaration, lens, selection generation, focus and scroll. Core reauthorizes every restored read/action. No navigation fact stream or mandated new class. |
 
@@ -725,7 +771,7 @@ Stable registry in `AtlasContracts.cs`, not interpolated messages:
 |---|---|---|
 | `AIDE-ATLAS-INVALID-REQUEST` | Refuse before I/O; bounded field-path diagnostics | Empty IDs, duplicate JSON, invalid span/range, overflow/depth. |
 | `AIDE-ATLAS-POLICY-REFUSED` / `EPOCH-STALE` | Refuse; no sensitive path/count/body; reauthorize | Forged root/principal, policy change mid-page or Back. |
-| `AIDE-ATLAS-SOURCE-UNAVAILABLE` / `SOURCE-CHANGED` / `SOURCE-UNSTABLE` | Typed source state; disable old spans; refresh/open-live only by user | Deleted/replaced/changing file, hash/decoder mismatch. |
+| `AIDE-ATLAS-SOURCE-UNAVAILABLE` / `SOURCE-CHANGED` / `SOURCE-UNSTABLE` | Typed source state; no text or old spans; refresh/rebind only by user | Deleted/replaced/changing file, root/file object identity or hash/decoder mismatch. |
 | `AIDE-ATLAS-ENCODING-UNSUPPORTED` | No verified text/spans; retain physical entry | Invalid bytes/BOM or unapproved decoder. |
 | `AIDE-ATLAS-SYMBOL-UNRESOLVED` / `SCOPE-AMBIGUOUS` | Show source-safe occurrence or scope choices; never fabricate ID | Null ID, malformed declaration, same file in two TFMs. |
 | `AIDE-ATLAS-IDENTITY-CONFLICT` | Reject conflicting record and seal; incident | Canonical tuple hash collision/fault injection or delimiter trick. |
