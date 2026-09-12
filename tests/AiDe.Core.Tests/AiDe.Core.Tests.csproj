@@ -92,6 +92,7 @@
          hand-written stubs across two assemblies. Linked rather than packaged, because a project
          for forty lines is more machinery than the churn it removes. -->
     <Compile Include="..\Shared\FakeWorkspaceQueries.cs" Link="FakeWorkspaceQueries.cs" />
+    <Compile Include="..\Shared\ConsoleHostCensus.cs" Link="ConsoleHostCensus.cs" />
   </ItemGroup>
 
 </Project>

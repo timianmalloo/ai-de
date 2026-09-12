@@ -45,7 +45,8 @@ internal static class TerminalHostLauncher
     /// interop of its own.
     /// </remarks>
     internal static async Task<int> RunInNewConsoleAsync(
-        string exe, string report, TimeSpan limit, string? mode = null)
+        string exe, string report, TimeSpan limit, string? mode = null,
+        Func<int, Task>? afterExit = null)
     {
         const uint CREATE_NEW_CONSOLE = 0x00000010;
 
@@ -83,6 +84,16 @@ internal static class TerminalHostLauncher
             using var process = System.Diagnostics.Process.GetProcessById(info.dwProcessId);
             using var deadline = new CancellationTokenSource(limit);
             await process.WaitForExitAsync(deadline.Token);
+
+            // BEFORE the job is released. The helper's console hosts are in its job, so a count
+            // taken after `finally` would find them killed by THIS launcher's containment and
+            // report the product's exit path as clean for a reason that does not exist in the
+            // product (INV-0010). The hook runs with the helper dead and the job still open.
+            if (afterExit is not null)
+            {
+                await afterExit(info.dwProcessId);
+            }
+
             return process.ExitCode;
         }
         catch (OperationCanceledException)

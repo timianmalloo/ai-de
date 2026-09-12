@@ -1,0 +1,20 @@
+CLASS             COUNT   WHAT IT IS
+------------------------------------------------------------------------------------------------
+build-server          1   .NET build server, orphaned, retired by `dotnet build-server shutdown`
+                      1     VBCSCompiler.exe
+foreign             240   224 x ancestor copilot.exe -- another application, reported only; 6 x ancestor SearchHost.exe -- another application, reported only; 6 x ancestor M365Copilot.exe -- another application, reported only; +4 more reason(s)
+                    116     conhost.exe
+                    112     node.exe
+                     12     msedgewebview2.exe
+unknown              30   no worktree path and no known root in its ancestry -- reported, never removed
+                     13     bash.exe
+                      8     conhost.exe
+                      4     OpenConsole.exe
+                      3     powershell.exe
+                      1     cmd.exe
+                      1     WindowsTerminal.exe
+------------------------------------------------------------------------------------------------
+TOTAL               271
+
+DRY RUN. Nothing was ended. Re-run with --reap to act.
+`foreign` and `unknown` are NEVER reaped, at any flag -- reported only.

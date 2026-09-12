@@ -7570,7 +7570,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e8be1e93188d84c9a91b5ffa1f77b07c14ac7fe1538027925f9ebd0910c2449a"
+      "sourceSha256": "92b5104a7f9bb192c894b630d77ac794447535a889a0c42ac6dd43ea095a3a31"
     },
     {
       "id": "design-session-profiler",
@@ -10626,6 +10626,69 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "cc4312d3408f6f357e848047f3242ed2cfe2859af80e5c0f8be143547e3866f5"
+    },
+    {
+      "id": "inv-0010-terminal-hosts-the-fifth-report",
+      "path": "docs/investigations/INV-0010-terminal-hosts-the-fifth-report.md",
+      "title": "Terminal hosts are still not cleaned up — the fifth report: the population counted and attributed beyond ancestry, the exit paths measured, and the one product mechanism the four fixes never touched",
+      "type": "investigation",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-addendum-c",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "The fifth report of \"terminal hosts are not cleaned up\". The population was counted first, twice (06:40Z, 13:39Z), and every host attributed beyond ancestry: 0 product ConPTY hosts alive at either census; 223 of 271 host-like processes are 111 `node.exe higgsfield-mcp/src/server.js` servers and their console hosts under Windows Terminal's own agent (`wta.exe` → `copilot.exe --acp --stdio`), accumulating at ~5/hour since Windows Terminal was restarted yesterday 17:02Z — the same foreign pool the fourth census attributed and left; 15 are Claude Code's own Monitor loops (`until false; do sleep 30; done`) from yesterday evening; 25 `unknown` are Windows Terminal's own tabs, Ollama's launcher, the compiler server's console and those loops. The four exit/containment paths were measured, not reasoned: App window close, owner exit without dispose, owner killed, and tab-close dispose all leave 0 hosts. One in-life path is red: a session whose child exits keeps its `conhost.exe --headless` alive for the App's lifetime (`WatchForExitAsync` completes the session and closes nothing) — one client-less host per ended pane, invisible to a census that labels everything under a live App `ours-live`. Two instrumentation gaps pinned red: no `terminal.stop` activity or log line exists, and the census cannot name a dead-parent host from our runtime. Red tests and self-test rows committed; no fix made.",
+      "tags": [
+        "terminal",
+        "conpty",
+        "conhost",
+        "straggler",
+        "census",
+        "reap-stragglers",
+        "job-object",
+        "observability",
+        "terminal-stop",
+        "dc-131",
+        "dc-123",
+        "dc-117",
+        "dc-154",
+        "dc-155",
+        "windows-terminal",
+        "copilot",
+        "mcp"
+      ],
+      "links": [
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0005-terminal-runtime-boundary",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0006-terminal-delivery-semantics",
+          "rel": "depends-on"
+        },
+        {
+          "to": "inv-0001-agent-terminal-environment",
+          "rel": "relates-to"
+        },
+        {
+          "to": "inv-0002-terminal-rebuild-kills-sessions",
+          "rel": "relates-to"
+        },
+        {
+          "to": "inv-0008-contrast-floor-passes-while-the-shell-fails",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "715f090bc78527997e1cb9b03c62ba9bc6d50d93e621d5f9808823b984bdfa5e"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -16328,5 +16391,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "7a8dad406ca9edeb20773fd8e7be754d5879becea364af40b464055b0c160ded"
+  "graphSha256": "ecb6fe2d571a90480f83c9785771f35b2ab77fcc8acbc31346433e9df7b91dcb"
 };

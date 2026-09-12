@@ -86,6 +86,12 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 OURS_LIVE = "ours-live"
 OURS_DETACHED = "ours-detached"
 OURS_STRAGGLER = "ours-straggler"
+# OURS_ORPHANED  a console host or shell from OUR terminal runtime whose owner is dead. Named by
+#                the runtime's own signature -- a `--headless` conhost beside a shell carrying our
+#                integration script (`-EncodedCommand` of `$global:__AideNonce`), both created
+#                within seconds, both recording the same dead parent -- because ancestry cannot
+#                name a host whose parent is gone, and `unknown` is where a straggler hides (INV-0010).
+OURS_ORPHANED = "ours-orphaned"
 BUILD_SERVER = "build-server"
 FOREIGN = "foreign"
 UNKNOWN = "unknown"
@@ -409,6 +415,42 @@ def self_test():
            classify(procs, procs[70], {wt})[0], OURS_DETACHED)
     expect("and so is its console host", classify(procs, procs[72], {wt})[0], OURS_DETACHED)
     expect("assert_clean does not fire on a detached daemon", assert_clean(procs, {wt}, None), 0)
+
+    # 5d. THE ORPHANED SESSION (INV-0010, the fifth report). A ConPTY host is a child of the
+    #     process that called CreatePseudoConsole, and when that owner dies -- the App closed, a
+    #     test host killed -- the host's ppid still names it, and ancestry stops dead at the
+    #     first hop. Nothing in the chain is named AiDe, no worktree path is in a conhost's argv,
+    #     so the census files it under `unknown` and never counts it as ours. The RUNTIME'S OWN
+    #     SIGNATURE is what names it: `conhost.exe --headless` (CreatePseudoConsole's shape, not a
+    #     console-attached `0x4`) created within seconds of a sibling shell that carries our
+    #     integration script, both recording the same dead parent.
+    procs = _table([
+        {"pid": 80, "ppid": 500, "name": "conhost.exe", "created": "2026-09-12T13:39:05.7000000+00:00",
+         "cmd": r"\??\C:\Windows\system32\conhost.exe --headless --width 120 --height 30 --signal 0x1a4 --server 0x1a0"},
+        {"pid": 81, "ppid": 500, "name": "powershell.exe", "created": "2026-09-12T13:39:05.9000000+00:00",
+         "cmd": '"powershell.exe" -NoLogo -NoExit -EncodedCommand IwAgAEEASQAtAEQARQAgAHMAaABlAGwAbAAgAGkAbgB0AGUAZwByAGEAdABpAG8AbgAuAAoAJABnAGwAbwBiAGEAbAA6AF8AXwBBAGkAZABlAE4AbwBuAGMAZQAgAD0AIAAnAGQAZQBhAGQAYgBlAGUAZgBjAGEAZgBlAGYAMAAwAGQAJwAKAA=='},
+    ])
+    _chain, session_orphaned = ancestry(procs, 80)
+    expect("the orphaned session host LOOKS unattributable", session_orphaned, True)
+    expect("an orphaned ConPTY host beside our orphaned shell is OURS-ORPHANED",
+           classify(procs, procs[80], {wt})[0], OURS_ORPHANED)
+    expect("and the orphaned shell carrying our integration script is OURS-ORPHANED",
+           classify(procs, procs[81], {wt})[0], OURS_ORPHANED)
+
+    # 5e. The negative half, so the rule cannot be satisfied by matching `--headless` alone:
+    #     Windows Terminal's OpenConsole is headless too, and a lone orphaned conhost with no
+    #     sibling and no signature is NOT ours -- it stays honestly unattributed.
+    procs = _table([
+        {"pid": 90, "ppid": 91, "name": "WindowsTerminal.exe", "created": "", "cmd": "WindowsTerminal.exe"},
+        {"pid": 92, "ppid": 90, "name": "OpenConsole.exe", "created": "",
+         "cmd": "OpenConsole.exe --headless --textMeasurement graphemes --width 120 --height 27 --signal 0x8dc --server 0x8d4"},
+        {"pid": 93, "ppid": 600, "name": "conhost.exe", "created": "2026-09-12T13:39:05.7000000+00:00",
+         "cmd": r"\??\C:\Windows\system32\conhost.exe --headless --width 80 --height 25 --signal 0x2 --server 0x3"},
+    ])
+    expect("Windows Terminal's own headless host is not ours",
+           classify(procs, procs[92], {wt})[0] != OURS_ORPHANED, True)
+    expect("a lone orphaned headless host with no signature stays unknown",
+           classify(procs, procs[93], {wt})[0], UNKNOWN)
 
     # 6. unattributable stays unattributable -- it must NOT be swept into 'ours'.
     procs = _table([{"pid": 20, "ppid": 0, "name": "conhost.exe", "created": "", "cmd": "conhost 0x4"}])

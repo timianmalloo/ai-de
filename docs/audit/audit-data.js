@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T13:31:00Z",
+  "generated": "2026-09-12T14:15:05Z",
   "audit": [
     {
       "actor": null,
@@ -13481,6 +13481,54 @@ window.AUDIT_DATA = {
       ],
       "tier": "T2",
       "tool": null
+    },
+    {
+      "id": "al-01M2AZFT741CYQ5H04HMSH9DTJ",
+      "shortname": "investigate-terminal-hosts-5",
+      "datetime": "2026-09-12T14:14:07Z",
+      "session": "stragglers-5",
+      "prompt": "You are the investigation node for the operator's report — the fifth time this population has been reported: \"I am still seeing terminal hosts that are not being cleaned up. /investigate AGAIN.\" Run the /investigate skill (args: Terminal hosts are still not cleaned up — the fifth report; the previous four fixed mechanisms; this one must find why the controls do not hold and what the operator is actually seeing). The conductor is Claude Opus (session conductor-addendum-c). DC-131 is the standing lesson for this exact defect: a defect reported as a POPULATION is closed by fixing a MECHANISM, and the population is never counted. Count first. Attribute every host. Then the mechanism. Worktree C:\\Projects\\ai-de-investigate-terminal-hosts-5, branch investigate/terminal-hosts-5. Never reap anything. Never taskkill anything. Never git worktree prune, git clean, git stash. Produce: (1) the census attributed beyond ancestry, every unknown host classified ours-orphaned / harness / foreign with the rule, and ask the operator what they are looking at; (2) the controls that did not hold, named: (a) terminal.stop does not exist — add it red first; (b) the census cannot see an orphan — extend classification with a creation-time + command-line + ConPTY-signature rule, self-test rows red first; (c) the App's and the probes' exit paths — measure red-first whether closing the App leaves ConPTY hosts alive 5 s later; (d) job-object coverage table; (3) the class generalised, the sweep, a repair plan in one-node T1 slices — stop before the fixes; (4) docs/investigations/INV-<next>.md with frontmatter and typed links, docs-graph derive, audit entry, regenerate-derived, gates, commit with attribution, push -u origin investigate/terminal-hosts-5. Do not merge to main.",
+      "summary": "INV-0010, the fifth report of \"terminal hosts are not cleaned up\". Counted first (DC-131): two censuses (06:40Z, 13:39Z), every `unknown` attributed by creation time + command line + parent-at-creation + the ConPTY signature. Result: 0 product ConPTY hosts alive at either census (and in 9 samples 14:03-14:04Z); 223 of 271 are 111 `node.exe higgsfield-mcp/src/server.js` + 111 conhost under Windows Terminal's own agent (`wta.exe` -> `copilot.exe --acp --stdio`, created 17:02:02Z 09-11), the SAME foreign pool the 4th census attributed (256 then), reset by a WT restart and regrown at ~5/h from the operator's global ~/.copilot/mcp-config.json; 15 are Claude Code Monitor loops (`until false; do sleep 30; done`, 20:57-21:26Z 09-11, still running); the 25 `unknown` = WT's own 7 (name-vs-path miss on IntelligentTerminal), Ollama's cmd wrapper + conhost, VBCSCompiler's conhost, and the loops. Operator question asked in the report (which view, which names, how many, under which app). Exit paths MEASURED with the key shown to see >=1 first: App window close on the real binary (ShellExecute launch, shell alive beside host) 1->0 at +5s; owner exit without dispose 1->0; owner killed (TerminateProcess) 1->0; tab-close DisposeAsync 1->0 at +3s with owner alive. ONE path RED: a session whose child exits keeps its `conhost.exe --headless` alive for the App's lifetime (WatchForExitAsync -> Complete closes nothing) 1->1 at +3s -- DC-154. Instrumentation gap red: no terminal.stop activity or log line (TerminalStopEventTests x2, TerminalSurfaceStopLineTests). Attribution gap red: reap-stragglers.py --self-test rows 5d/5e (`got 'unknown', wanted 'ours-orphaned'` x2). Job-object table: shell in KILL_ON_JOB_CLOSE job, the pty host outside it and following the pty handle; AcpEngineProcess and TerminalHostLauncher contained; daemon detached by design. Class: DC-155 (a symptom owned by someone else is closed by attribution, not by an outcome) + DC-154; DC-131 recurrence 4. Plan: 5 one-node T1 slices -- instrumentation, attribution, the held host, exit paths as a gate, the operator's foreign share. Side finding: launching the App with inherited handles from a null-stdin console kills its terminal shell at once (the TerminalGuiHostTests finding). Nothing reaped or killed; no fix made; stopped at the report.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0010-terminal-hosts-the-fifth-report.md",
+        "tests/AiDe.Core.Tests/TerminalHostExitPathTests.cs",
+        "tests/AiDe.Core.Tests/TerminalHostInLifePathTests.cs",
+        "tests/AiDe.Core.Tests/TerminalStopEventTests.cs",
+        "tests/AiDe.App.Tests/AppWindowCloseLeavesNoTerminalHostTests.cs",
+        "tests/AiDe.App.Tests/TerminalSurfaceStopLineTests.cs",
+        "tools/reap-stragglers.py",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "terminal",
+        "census",
+        "dc-131",
+        "dc-154",
+        "dc-155"
+      ],
+      "outcome": "success",
+      "goal": "Find why four terminal-host fixes do not hold and what the operator is seeing: count and attribute the population first, then measure the exit paths, then name the mechanism",
+      "done_when": "Attributed census per class with rules; operator question; four controls' findings (a-d) with the exit paths measured; class + sweep + T1 plan; INV-0010 committed and pushed to investigate/terminal-hosts-5, not merged",
+      "tier": "T1",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-12T13:38:50Z",
+      "duration_seconds": 2117.0,
+      "git": {
+        "sha": "8d54aadc0016c343f08f752d6d9927059c8e0718",
+        "short": "8d54aadc0",
+        "branch": "investigate/terminal-hosts-5",
+        "pushed": null
+      }
     }
   ],
   "changes": [
