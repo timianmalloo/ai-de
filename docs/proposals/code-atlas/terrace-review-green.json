@@ -1,0 +1,8 @@
+{
+  "back_preserves_whole_journey": true,
+  "read_selection_refuses_write_walkthrough": true,
+  "operation_names_visible": [
+    "- ScoreAsync() : Task<(int Scored, int\u2026",
+    "- SealAsync(\u2026) : Task<int>"
+  ]
+}

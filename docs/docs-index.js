@@ -9467,7 +9467,39 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0e01813def6aa67e7a1c4ce8db533c1866e464f9acef126ee8ecda11e14407b0"
+      "sourceSha256": "b4c779f87ae99eb0ee795abcc8961305262d118ed440b2672cec0917dcee38b1"
+    },
+    {
+      "id": "proof-code-atlas-terrace",
+      "path": "docs/proof/code-atlas-terrace.md",
+      "title": "Code Atlas 02 - TheTerrace journey evidence",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "proposal",
+      "reviewBy": "2026-10-12",
+      "reviewSuggested": [],
+      "summary": "Evidence for the repository-backed Code Atlas revision: measured physical inventory, explicitly bounded declaration/semantic coverage, file-first and visual-first journeys, and source-anchored class/sequence/deployment views. No application execution is implied.",
+      "tags": [
+        "code-atlas",
+        "theterrace",
+        "source",
+        "solution-explorer",
+        "prototype",
+        "evidence"
+      ],
+      "links": [
+        {
+          "to": "proposal-code-atlas",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3fa10720acf2d7095ebd979a17794960ea42a47f2ab26d0be5d5dd471c4a41ea"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -9502,21 +9534,20 @@ window.DOCS_INDEX = {
     {
       "id": "proposal-code-atlas",
       "path": "docs/proposals/code-atlas/README.md",
-      "title": "Code Atlas - an evidence-first Architecture workspace",
+      "title": "Code Atlas 02 - TheTerrace, from solution to source",
       "type": "doc",
       "status": "draft",
       "owner": "@timianmalloo",
       "phase": "proposal",
       "reviewBy": "2026-10-12",
       "reviewSuggested": [],
-      "summary": "An exploratory proposal and interactive browser mockup for understanding a repository through structure, entry points, domain candidates, class models, layers and Azure infrastructure. Extends the intent of the existing Architecture perspective without changing the active shell/session implementation or promoting AI interpretation to extracted evidence.",
+      "summary": "A repository-backed redesign of Code Atlas using TheTerrace. A full tracked-file explorer and visual-first overview converge on the same feature, type, member, sequence and source identities. Preserves the concept-map abstraction while adding concrete UML and source-line drill-down.",
       "tags": [
         "proposal",
         "architecture",
         "code-understanding",
-        "graph",
-        "reverse-engineering",
-        "ai",
+        "solution-explorer",
+        "theterrace",
         "ux"
       ],
       "links": [
@@ -9531,10 +9562,14 @@ window.DOCS_INDEX = {
         {
           "to": "architecture",
           "rel": "relates-to"
+        },
+        {
+          "to": "proof-code-atlas-terrace",
+          "rel": "tested-by"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8e1d2d992c76613d80ec4a8c4a1d61041004048a7ef9aac2abf34180678e7c23"
+      "sourceSha256": "1b91c0186f7f5fd6ada2a77d0c15610c961cb19964a0a7f9f65f5d60bef0b9cf"
     },
     {
       "id": "release-plan-ai-native-ide",
@@ -16318,7 +16353,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-proposals-code-atlas-index",
       "path": "docs/proposals/code-atlas/index.html",
-      "title": "Code Atlas | AI-DE Architecture workspace proposal",
+      "title": "Code Atlas 02 | TheTerrace, from solution to source",
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "proposal-code-atlas"
@@ -16326,7 +16361,14 @@ window.DOCS_INDEX = {
     {
       "id": "surface-proposals-code-atlas-mockup",
       "path": "docs/proposals/code-atlas/mockup.html",
-      "title": "Code Atlas | Interactive Architecture study",
+      "title": "Code Atlas 02 | TheTerrace, solution to source",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
+      "id": "surface-proposals-code-atlas-mockup-template",
+      "path": "docs/proposals/code-atlas/mockup.template.html",
+      "title": "Code Atlas 02 | TheTerrace, solution to source",
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact."
     },
@@ -16411,5 +16453,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "bdb4c099d2d7a4cea113d12da0ad7c62de20b17a67a85b96da74644982cc3681"
+  "graphSha256": "f87ff10424732da43d58a344f66afab2e737dbd11d4d056c1d11687c459fdd66"
 };

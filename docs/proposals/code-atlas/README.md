@@ -1,189 +1,226 @@
 ---
 id: proposal-code-atlas
-title: "Code Atlas - an evidence-first Architecture workspace"
+title: "Code Atlas 02 - TheTerrace, from solution to source"
 type: doc
 status: draft
 owner: "@timianmalloo"
 phase: proposal
-tags: [proposal, architecture, code-understanding, graph, reverse-engineering, ai, ux]
+tags: [proposal, architecture, code-understanding, solution-explorer, theterrace, ux]
 links:
   - { to: spec-addendum-c-perspectives, rel: relates-to }
   - { to: spec-uml-erm-surfaces, rel: relates-to }
   - { to: architecture, rel: relates-to }
+  - { to: proof-code-atlas-terrace, rel: tested-by }
 review-by: 2026-10-12
 summary: >-
-  An exploratory proposal and interactive browser mockup for understanding a repository through
-  structure, entry points, domain candidates, class models, layers and Azure infrastructure.
-  Extends the intent of the existing Architecture perspective without changing the active
-  shell/session implementation or promoting AI interpretation to extracted evidence.
+  A repository-backed redesign of Code Atlas using TheTerrace. A full tracked-file explorer and
+  visual-first overview converge on the same feature, type, member, sequence and source identities.
+  Preserves the concept-map abstraction while adding concrete UML and source-line drill-down.
 ---
 
-# Code Atlas: proposal, not an approved specification
+# Code Atlas 02: TheTerrace, from solution to source
 
-Open [the proposal](index.html) and [the interactive mockup](mockup.html).
-Both are standalone, local HTML documents. The mockup uses a deliberately fictional repository:
-its diagrams and source excerpts are fixtures, not findings about AI-DE.
+[Proposal](index.html) | [Interactive mockup](mockup.html)
 
-## Scope and authority
+## What changed in the brief
 
-User request, 2026-09-12: explore the code/architecture use case in a separate worktree and
-produce an HTML proposal and mockup for iteration. No production implementation is authorized.
+The user's correction is structural, not a request to put real labels on the toy graph.
+Revision 1's graph-to-tree toggle exposed the same small semantic sample. It was not a solution
+explorer. It also offered diagram modes without an explicit journey between abstraction levels.
+Revision 2 makes the physical file hierarchy first-class and binds every concrete diagram action
+to an actual TheTerrace file and source line.
 
-Base: `8d54aadc`; branch: `proposal/code-atlas`; worktree:
-`C:\Projects\ai-de-proposal-code-atlas`.
-Claude remains the primary implementation session. This proposal does not edit `src/`, the
-shell's registry, `DESIGN.md`, the accepted specs, CI or Claude's lane-owned artifacts.
-Machine-local coordination registers this session; the proposal does not reassign ownership.
+This is still a proposal, not AI-DE implementation. Claude owns the current UI/session delivery.
+The accepted Architecture perspective, its sidebar destination and retained host are unchanged.
 
-**Verified from the accepted spec:** Addendum C already defines three perspectives:
-Coding, Explore, Architecture. The Architecture rail destination is part of the shell lane.
-This proposal fills the content of that destination; it does not add a fourth perspective.
-The mockup's rail icon is an illustration of that destination, not an implemented shell change.
+## Grounding and measured scale
 
-**Grounding path:** `spec-addendum-c-perspectives` links to `spec-uml-erm-surfaces` and
-`spec-ai-native-ide`; `docs/architecture.md`, C/D.1-C/D.4, supplies the retained second host
-and projection boundary. Addendum C A5 explicitly defers D-0 (solution tree), D-1 (entry points),
-D-2 (data flow), D-3 (ER), and D-4 (layers/components/code-infrastructure).
-Its D-5 and D-6 belong to the conversation compiler and are not this proposal's work.
-The existing graphify query returned truncated, largely documentation-level matches; direct
-source inspection is used for capability claims, not an inference that the graph is complete.
+Read-only source: `C:\Projects\TheTerrace`, clean HEAD
+`dba2a29c868d9844cb144d693555265d071ecdeb` (observed 2026-09-12).
+The source repository is not modified, run, deployed or sent to a model.
 
-Corrections to the earlier status analysis: missing old worktrees do not prove the sessions
-ended; an unmentioned path does not prove that it is unowned or safe to change. This proposal
-uses the current ownership register and an explicit, new artifact scope instead.
+Initial inventory from `git ls-files`: **2,531 tracked files; 577 under src; 474 C# files;
+85 Razor files; 401 test-tree files; 127 migration C# files**. There are four solution projects:
+one product project and three test/compatibility projects. The 194,702 physical C# source lines
+include generated migrations/snapshots, so they are not described as hand-authored code.
+`terrace-evidence.json` carries the measured counters, source revision, path inventory and hashes.
+No count from revision 1's Northstar fixture is retained.
 
-## Part A: the problem and conceptual model
+The full tracked-file inventory is browsable. Semantic diagrams and source bodies are a declared
+curated subset, not a claim that AI-DE has automatically analyzed every file. Unsupported or
+unembedded files remain visible with that limitation; selecting one never substitutes another file.
 
-**Job:** A developer enters an unfamiliar repository, discovers how work enters it, follows a
-specific behavior, understands the domain and architecture, and leaves with a source-backed
-explanation they can challenge. An architect additionally compares intended boundaries with
-observed dependencies. A platform engineer follows declared deployment structure without
-mistaking it for live Azure state.
+A broader source scan also captures **1,008 non-migration C# declaration candidates** across the
+feature folders. These are lexical declarations, not distinct compiler-resolved types; partial,
+nested and conditional declarations are not collapsed into a false type count. Every feature can
+descend to its declaration inventory. The deep class/member/sequence examples remain explicitly
+curated, and other declarations do not acquire invented members or source bodies.
 
-The conceptual boundary is **repository understanding**, downstream of the existing workspace
-authority. A source-backed symbol/resource is not an AI claim about its role.
+**Reading path:** TheTerrace README and solution -> Predictions UI components -> IPredictionStore
+and PredictionStore -> Prediction invariants -> AppDbContext mapping -> lifecycle/settlement/scoring
+-> existing tests. The independent architecture read covers TheTerrace's spec/architecture and
+Bicep declarations. Graphify returned truncated documentation-level leads; direct source reads
+establish this study's concrete journeys.
 
-| Concept | Meaning / invariant |
+## Part A - one model, several altitudes
+
+| Identity | What remains stable |
 |---|---|
-| Repository snapshot | A named input revision plus dirty-file overlay identity and extraction coverage. Views never silently combine incompatible snapshots. |
-| Evidence assertion | Existing store concept: a located claim from a named extractor or observation. Preserve its provenance and limitations. |
-| Interpretation | A candidate explanation, grouping or role that references evidence. Human acceptance is an annotation, not a promotion to observed runtime truth. |
-| View specification | Scope, selected IDs, lens, filters, expansion and layout. Derived rendering is never a second source of domain truth. |
-| Investigation trail | Ordered navigation and pinned questions/evidence. Changing presentation preserves selected identity and scope. |
+| Repository snapshot | Git revision and per-file hash. No deployment/runtime claim. |
+| File | Real repository-relative path, even when no semantic node or embedded source exists. |
+| Type | Declaring file + declared name + source anchor. File and class are not interchangeable. |
+| Member | Owning type + member/signature + source anchor. An interface declaration is distinct from its implementation. |
+| Relationship/message | Its predicate, participants, supporting file/line and evidence kind. |
+| View | Starting style, altitude, lens, selection, open folders, source location and history. |
 
-No database schema, migration, new execution authority or public API is fixed by this proposal.
-If approved, the architecture design must choose durable representations and lifecycle policies.
-The current single-writer fact store and bounded projection contracts remain authoritative.
+The physical hierarchy, semantic model and architectural interpretation are different projections.
+A feature folder is not automatically a microservice or bounded context. This is one web
+application; the abstraction may suggest boundaries but never invent deployable services.
 
-## Part B: IA and flows, before visual design
+## Part B - two entrances, a continuous journey
 
-Two navigation representations share one selection: **Graph / Tree**. A separate **question
-lens** determines what to examine: Structure, Entry points, Domain, Classes, Layers, Azure,
-and Impact. These are not seven perspectives. An inspector carries source, evidence and
-candidate interpretations. A trace is a drill-down from an entry point, not a whole-repository
-sequence diagram.
+**File-first developer**
 
-```text
-Architecture destination
-  -> choose repository snapshot and scope
-  -> graph overview OR solution tree
-  -> choose a node / entry point
-  -> inspect source and evidence
-  -> choose a question lens / bounded trace
-  -> optional AI context preview -> candidate -> accept annotation / reject / correct
-  -> bookmark or export the view and its provenance
+1. Start in the familiar Solution Explorer: solution, projects, folders, files, source editor.
+2. Expand `src/TheTerrace/Components/Shared`; open `PredictCard.razor`.
+3. Select `SubmitAsync` in its member outline or activate the event's source-line link.
+4. Step up to the containing type/class model or trace that member's behavior.
+5. Follow the `IPredictionStore` call, inspect its registration and concrete implementation.
+6. Follow a sequence message to the exact supporting source line.
+7. Go back without losing the previous file, member, branch or diagram.
 
-Missing index -> explain coverage -> show unindexed placeholder -> retry
-No matching files -> distinguish no matches from unsupported language
-Unresolved dispatch -> explicit gap -> inspect caller / narrow scope
-AI unavailable -> static views stay usable
-Source changed -> retain snapshot marked stale -> explicit refresh
-```
+**Visual-first architect**
 
-Graph/tree pivot preserves selected ID, scope, search and navigation history. If a selected
-symbol is outside the current lens, show why and offer to reveal it; never select a different
-symbol silently. No folder name proves a domain boundary. A public method is not necessarily
-a use-case entry point. An IaC dependency is not a runtime request.
+1. Start with the system overview or entry-point catalogue.
+2. Choose the Predictions capability, not an undifferentiated repository graph.
+3. Keep the existing concept map for responsibility/relationship understanding.
+4. Switch to concrete UML: visibility, property types, method signatures, interface realization,
+   and schema-backed associations where known.
+5. Select a method, inspect callers/branches, then drill into its sequence or source.
+6. The physical explorer reveals the same file; it does not disappear because the user started visually.
 
-## Part C: direction brief
+**Altitude is explicit:** system -> component/feature -> type -> member -> file/source line.
+Raising altitude preserves the concrete selection as context; descending never fabricates a
+lower-level representation that is unavailable. Breadcrumbs and Back carry the return path.
+Source is the lowest altitude, not an inspector teaser showing a few invented lines.
 
-**Medium:** browser review artifact for a future Windows WPF + WebView2 native workstation.
-Microsoft Fluent conventions and the existing AI-DE `DESIGN.md` govern the direction.
-Native UIA, HWND focus handoff, DPI and screen-reader behavior require later native proof;
-HTML evidence cannot clear those claims.
+**Two complete behavior examples**
 
-**Archetype:** a linked multi-panel workstation, closest to technical catalog G6, with a
-spatial exploration canvas and a solution tree. Not a metrics dashboard or a chat-first agent.
-The job is parallel reading and progressive narrowing, not serial form entry.
+- Submit a prediction: `PredictCard.SubmitAsync` -> `PredictionStore.SubmitAsync` -> fixture
+  lookup -> server clock / `Prediction.IsOpenAt` -> Closed / revise / create -> `SaveChangesAsync`
+  -> outcome message and reload. `/match/{FixtureId:guid}` is a Blazor route; no fictional HTTP
+  `POST /orders` endpoint is invented.
+- Settle and score: `PredictionLifecycle.RunAsync` -> `PredictionSettlement.SettleAsync` ->
+  seal -> conditional intermediate save -> score -> `PredictionScoring.Score` -> final save.
+  A method-level static reconstruction, not a runtime trace or timing report.
 
-**Qualities:** precise, not overconfident; dense, not cramped; exploratory, not disorienting.
+Each sequence message and activity decision has a source anchor. The `Closed`/`NoSuchFixture`
+branches and existing/new prediction branches stay distinct. Tests are linked source evidence,
+not claimed as executed in this task or as measured coverage.
 
-**Type:** existing Segoe UI stack for navigation; Cascadia/Consolas for identifiers and source.
-**Color:** existing dark/light semantic tokens; blue for selection, amber for interpretation;
-provenance always has text and line style, never color alone.
-**Space:** restrained chrome; a large central diagram; compact navigator; inspectable evidence
-at the right. Expand by question, not by loading the entire repository.
+## Azure refinement
 
-**References to examine:** VS Code's Explorer/call hierarchy; Visual Studio Code Map's scope
-expansion; JetBrains' class/member drill-down; NDepend's dependency matrix; C4/Structurizr's
-level separation; Bicep's visualizer and its deployment-dependency semantics. Borrow interaction
-principles only; do not copy brand assets or product screenshots.
+Show **named service types within layers**, with component responsibility and source-backed
+connections: compute, data, secrets/identity, storage and observability as appropriate to the
+actual declarations. “AKS, Key Vault, Cosmos DB” are examples of service vocabulary, not permission
+to insert AKS or Cosmos DB into TheTerrace if the inspected Bicep does not declare them.
 
-**Anti-goals:** no graph hairball; no 3D as the default; no decorative dashboards; no
-"AI verified" badge; no invented entry-point completeness; no direct model API or Azure
-connection; no changes to Coding or Explore.
+Keep logical application layers separate from deployment layers. Every resource can descend to
+its declaration and configuration evidence. Distinguish deployment dependency, parent/child,
+configuration reference and inferred runtime use. Resource health and deployed instances remain
+not observed. Layer placement is a curated interpretation over declaration evidence.
 
-**Triggered standards:** UI-T1 expert visualization applies (bounded counts, provenance,
-stable layouts, accessible alternatives); UI-T3 applies to the proposed model-assisted surface
-(context preview, refusal and wrong-answer correction); UI-T4 describes the intended native
-product but native verification is deferred, explicitly; UI-T2 does not apply (no generated
-imagery). Reuse `DESIGN.md`, do not edit the Shell lane's token source.
+The completed source check finds 24 declarations in `infra/main.bicep`: App Service plan/web,
+VNet/subnet, SQL server/database/network rule, Storage/Blob/key-ring container, configuration
+Key Vault/wrapping key, provider Key Vault, Application Insights/Log Analytics, communication/email
+domain/sender, and role assignments. The separate provider-vault template overlaps these resources
+and references an existing app. AKS and Cosmos DB are not declared in either inspected root.
+Code references show Blob's Data Protection use, separate credential custody, SQL provider and
+Azure Monitor configuration. Declarations, configured use and observed operations remain distinct.
 
-## Prototype acceptance contract
+**Important regrounding result:** TheTerrace's top-level architecture is now an in-review
+editorial target, explicitly not a description of the running implementation. Proposed
+Studio/PublicReader/PrivatePreview hosts and target DDD contexts are not manufactured as source
+components. This mockup shows current source, with that design gap called out.
 
-1. A visible Architecture rail destination opens this study; Coding and Explore are clearly
-   out-of-scope previews, with an explicit return path.
-2. Graph/tree pivot preserves selected fixture identity. A filtered-out selection is explained.
-3. Every requested lens has a distinct view and source/evidence inspection. Entry-point tracing
-   distinguishes candidate sequence, activity and data-flow semantics.
-4. Domain candidates cannot masquerade as confirmed aggregate boundaries. Layers carry
-   interpretation disclosure. Azure arrows name deployment or proposed runtime relationships.
-5. Class diagrams disclose scope and omitted members; progressive detail is operable.
-6. AI work is simulated, opt-in and inspectable; no remote requests or provider credentials.
-   Rejected suggestions disappear from the candidate overlay, not from source evidence.
-7. Empty, loading, failure, partial, stale, overflow and AI-unavailable states are reviewable;
-   recovery is reachable without leaving the study.
-8. Keyboard operation, visible focus, named controls, dark/light/high-contrast preview,
-   compact/wide widths, reduced motion and a readable diagram alternative are provided.
-9. Export describes a synthetic fixture, snapshot, scope and provenance; it makes no claim
-   to be a real project analysis.
+## Implementation versus specification
 
-## Bounded execution graph
+The user added this direction after the original redesign passed its review checkpoint. The
+comparison is a view over **two evidence sets**, not a Git diff and not a conformance percentage:
 
-| Node | Capability | Input -> exit | Dependency |
-|---|---|---|---|
-| G | Deterministic mechanics | worktree + spec snapshot -> isolated artifact scope | none |
-| R | Reasoning | source + primary references -> capability/gap inventory | G |
-| P | Reasoning | user goals + spec -> proposal and agreed-for-prototype IA | G |
-| M | Reasoning | IA + existing design tokens -> interactive mockup | P |
-| V | Independent review + deterministic mechanics | artifacts -> interaction evidence and dispositioned blockers | R, M |
-| C | Deterministic mechanics | evidence -> linked, audited, persistent branch | V |
+- **As implemented:** the scoped code/declaration snapshot, its revision and extraction coverage.
+- **As specified:** selected documents/clauses, their revision, authority, status and supersession.
+- **Correspondence:** which source elements may implement which clause, with the basis visible.
+- **Assessment:** aligned evidence, planned addition, contrary evidence, uncertain mapping or
+  not assessed. Missing evidence is not proof of absence; a future target is not a failed requirement.
 
-The naive sequence G-R-P-M-V-C unnecessarily makes mockup work wait for all capability research.
-R and P/M are independent: the mockup uses explicit synthetic data and promises no current
-product capability. They join before the proposal is finalized. Review is not collapsed into
-authoring. Width <=3; no parallel writes to the same artifact. Each delegate has its own bounded
-file scope and tool budget. On failure, keep a named gap, do not silently drop a requested lens.
-Review corrections drain a finite blocker list; two review passes, then report unresolved risks.
+TheTerrace is a useful real example because code and target documents can be in the **same git
+revision** while describing different delivery states. The architecture's in-review target is not
+silently promoted to an accepted specification. A candidate match between the current app and
+"Studio" needs review; similar worker names do not establish matching responsibilities.
 
-**Inferred planning units, not elapsed measurements:** G=1, R=3, P=2, M=5, V=2, C=1.
-Serial work T1=14 units; optimized span Tinf=11 units. With p=2 the Brent upper bound is
-12.5 units; maximum removable serial wait is three units, before dispatch overhead.
-No claim about realized speedup or native performance follows from this estimate.
+Each difference must open both its document clause and its source evidence. The proposed analysis
+pipeline is: identify authority/scope -> retrieve candidates -> show the evidence -> classify the
+gap under an explicit rule -> human review. AI may propose correspondence and explanations; it must
+not invent the governing requirement and then declare the code compliant with it. A real conflict
+requires contrary source evidence against an applicable, authoritative clause.
 
-## Iteration boundary
+This addition is still T1 proposal work, with the same two-agent cap and a bounded 15-call
+main-line addition estimate. It adds no product implementation or repository-wide compliance claim.
 
-The HTML proposal contains the full operation catalogue, static/AI split, staged delivery
-suggestions and decisions for the next iteration. Browser checks and review outcomes belong
-in `docs/proof/code-atlas-prototype.md`. Approval would authorize a subsequent spec/design
-slice, not automatically authorize every operation in the catalogue.
+## Part C - direction
+
+**Medium:** standalone HTML iteration artifact for a future Windows WPF/WebView2 workstation.
+Reuse AI-DE's DESIGN.md tokens; do not edit the Shell lane's design language.
+**Archetype:** linked IDE workstation, file explorer + editor/canvas + outline/evidence.
+**Qualities:** familiar, not constraining; visual, not vague; concrete, not overwhelming.
+
+The main visual change is a permanent, recognizable file explorer, not a second graph-shaped tree.
+Use restrained file/folder glyphs, indentation, expanders, selected rows and visible extensions.
+Separate the entry-style choice from the operation/lens and the altitude. Preserve the concept
+view as an abstraction; add real class compartments, member selection and a full code-reading surface.
+Named references remain VS/VS Code for file navigation, UML tools for concrete class/member
+drill-down, Code Map for progressive scope, and Azure resource diagrams for layered service identity.
+
+UI-T1 (expert visualization) and UI-T3 (model interpretation) apply. UI-T4 describes the future
+native product but this artifact cannot prove native UIA or windowing. UI-T2 does not apply.
+No real analysis model call is made. AI suggestions remain explicitly simulated interpretations.
+
+## Acceptance: prove journeys, not the existence of tabs
+
+1. Every tracked path appears in the data inventory; the explorer preserves real folder/file names.
+2. Opening a curated file reveals its actual source body/excerpt, hash, original line numbers and
+   coverage. Opening an unembedded file states that fact without substituted source.
+3. File-first can reach member -> sequence -> message -> concrete source -> Back.
+4. Visual-first can reach system -> feature -> concept map -> UML class -> member -> source.
+5. Class member names/signatures and sequence anchors match the selected source revision.
+6. The same selected file/type/member is represented in tree, breadcrumb, diagram and source.
+7. Both prediction submission and settlement have distinct, source-backed sequences; branch choice
+   is hypothetical/static, never reported as an observed execution.
+8. Azure names the actual service families, their layers, roles and relationship semantics, and
+   lets the user open the declaring Bicep. Absent examples are labelled absent, not fabricated.
+9. The selected snapshot is consistent everywhere; scale disclosures separate complete file
+   inventory, curated semantic coverage and visible diagram bounds.
+10. Keyboard, focus, error/unavailable, empty/filter and wide/compact reading remain usable.
+
+## Execution shape and stop
+
+Read-only repository snapshot and source trace -> revised IA -> bounded data fixture + HTML ->
+exact-journey browser proof -> independent review -> local commit. Architecture/infra reading is
+independent of the main-line Predictions trace, so those run in parallel. Both join before the
+mockup is finalized. Width <=2; no shared artifact writers. The reviewer is read-only.
+Per-branch budgets are explicit; at most two review passes, draining a finite blocker list.
+
+The previous run measured 2,162 seconds for its main UI-design episode. No claim is made that
+this different, larger-corpus revision will be faster. The critical path is the source-to-journey
+binding, not the number of diagram modes. Stop when the ten acceptance statements have evidence;
+do not implement the underlying AI-DE feature.
+
+## Correction class
+
+**Semantic sample mistaken for physical exploration.** A graph's filtered node list cannot stand
+in for a developer's file hierarchy; a collection of diagram tabs cannot stand in for a journey.
+Sweep: both entry styles, all altitude transitions, source availability, declaration-vs-type IDs,
+and message-to-source navigation. Derive every representation from the same snapshot and
+selection state. Control: execute both starting paths through to a real source anchor and back,
+and compare all representations' identities. Revision 1 could not satisfy this contract.

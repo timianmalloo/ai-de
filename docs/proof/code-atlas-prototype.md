@@ -18,6 +18,11 @@ summary: >-
 
 # Code Atlas proposal: evidence, not native product certification
 
+**Historical revision 1 evidence, for commit `089dd3ef`.** The active mockup now uses TheTerrace.
+The revision-one captures and JSON reports are retained under `docs/proposals/code-atlas/v1/`;
+the current proof is [Code Atlas 02](code-atlas-terrace.md). This record does not certify the
+current HTML against the former Northstar fixture.
+
 Scope: `docs/proposals/code-atlas/`, on `proposal/code-atlas`, based on `8d54aadc`.
 No product source, accepted specification, CI or `DESIGN.md` changes.
 The user authorized exploration and an HTML proposal/mockup, not implementation.
@@ -53,10 +58,10 @@ The user authorized exploration and an HTML proposal/mockup, not implementation.
 
 ## Reproduction and artifacts
 
-- `docs/proposals/code-atlas/mockup-checks.json`: complete interaction run.
-- `docs/proposals/code-atlas/proposal-checks.json`: proposal contrast, headings, table headers, widths.
-- `docs/proposals/code-atlas/hover-checks.json`: actual hovered computed colors.
-- `docs/proposals/code-atlas/mockup-preview.png`, `domain-preview.png`, `azure-preview.png`:
+- `docs/proposals/code-atlas/v1/mockup-checks.json`: complete interaction run.
+- `docs/proposals/code-atlas/v1/proposal-checks.json`: proposal contrast, headings, table headers, widths.
+- `docs/proposals/code-atlas/v1/hover-checks.json`: actual hovered computed colors.
+- `docs/proposals/code-atlas/v1/mockup-preview.png`, `domain-preview.png`, `azure-preview.png`:
   Chromium captures for visual review, not native application screenshots.
 - Local run driver: `C:\Users\malla\.copilot\session-state\45bbc625-37e9-40a8-a2d0-8b39402c8e90\files\verify_code_atlas_interactions.py`.
   It uses the already-installed Python Playwright and launches Chromium. The preview's in-page

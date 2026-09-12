@@ -1,0 +1,7 @@
+{
+  "curated_comparison_rows": 4,
+  "primary_prompt_and_session_reference": true,
+  "audit_linkage_gap_visible": true,
+  "decision_to_source_and_back": true,
+  "empty_conflict_filter_not_compliance": true
+}

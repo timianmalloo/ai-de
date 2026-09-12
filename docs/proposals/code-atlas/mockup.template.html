@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Code Atlas 02 | TheTerrace, solution to source</title>
+<style>
+:root{--surface:#12151A;--raised:#1A1F26;--sunken:#0D1014;--border:#2A313B;--text:#E4E9EF;--muted:#98A3B2;--accent:#5B9DD9;--ink:#0D1014;--fact:#5FB98F;--candidate:#D8A650;--danger:#E07A6F;--focus:#8FC0EA;--control:#7C8896;--ui:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;--mono:"Cascadia Mono",Consolas,ui-monospace,monospace;--space:8px;--radius:6px;--row:30px}
+body.light{--surface:#F4F6F8;--raised:#FFFFFF;--sunken:#E7EBEF;--border:#C7CFD8;--text:#1A1F26;--muted:#55606E;--accent:#27649A;--ink:#FFFFFF;--fact:#1C724A;--candidate:#7D5900;--danger:#A8372B;--focus:#1B4F7E;--control:#5F6977}
+body.hc{--surface:#000000;--raised:#000000;--sunken:#000000;--border:#FFFFFF;--text:#FFFFFF;--muted:#FFFFFF;--accent:#FFFF00;--ink:#000000;--fact:#FFFFFF;--candidate:#FFFF00;--danger:#FFFFFF;--focus:#FFFF00;--control:#FFFFFF}
+*{box-sizing:border-box}body{margin:0;background:var(--surface);color:var(--text);font:13px/1.5 var(--ui)}
+button,input,select,textarea{font:inherit;color:var(--text)}
+button,.button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:32px;padding:4px 10px;border:1px solid var(--control);border-radius:var(--radius);background:var(--raised);cursor:pointer;text-decoration:none}
+button:hover,.button:hover{background:var(--sunken)}
+button[aria-pressed=true],.primary{background:var(--accent);color:var(--ink);border-color:var(--accent)}
+.primary:hover{background:var(--accent);color:var(--ink);text-decoration:underline}
+button:disabled{background:var(--surface);color:var(--muted);cursor:not-allowed}
+input,select,textarea{background:var(--sunken);border:1px solid var(--control);border-radius:4px;min-height:32px;padding:4px 8px;min-width:0}
+a{color:var(--accent);text-underline-offset:3px}:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.muted{color:var(--muted)}.fact{color:var(--fact)}.candidate{color:var(--candidate)}.mono{font-family:var(--mono);overflow-wrap:anywhere}
+.skip{position:absolute;top:-70px;left:16px;z-index:10;background:var(--raised);padding:12px}.skip:focus{top:8px}
+.review{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:8px 16px;background:var(--sunken);border-bottom:1px solid var(--border);font-size:12px}
+.review label{display:inline-flex;gap:4px;align-items:center}.review select{min-height:28px;font-size:12px;max-width:170px}.review input[type=checkbox]{width:24px;min-height:24px;accent-color:var(--accent)}
+.spacer{flex:1}.titlebar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 16px;background:var(--sunken);border-bottom:1px solid var(--border)}
+.brand{display:flex;align-items:center;gap:12px;font-size:15px;font-weight:600}.brand svg{width:22px;height:22px;color:var(--accent)}
+.badge{display:inline-flex;padding:3px 8px;border:1px solid var(--border);border-radius:4px;font-size:12px}.caption{font-size:11px;letter-spacing:.06em;color:var(--muted);font-weight:600;margin:12px 0 8px}
+.workspace{display:grid;grid-template-columns:54px 286px minmax(0,1fr) 282px;min-height:800px}
+.rail{display:flex;flex-direction:column;gap:8px;align-items:center;background:var(--sunken);border-right:1px solid var(--border);padding:12px 4px}
+.rail button{width:44px;height:44px;padding:8px}.rail svg{width:22px;height:22px}
+.explorer{min-width:0;border-right:1px solid var(--border);display:flex;flex-direction:column}
+.explorer-head{padding:12px;border-bottom:1px solid var(--border)}.explorer-head h2{font-size:12px;margin:0 0 10px;letter-spacing:.04em}
+.row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.explorer-head input{width:100%;margin-top:10px}
+.explorer-mode button{font-size:12px;flex:1}.explorer-tools{justify-content:space-between;margin-top:8px;font-size:11px;color:var(--muted)}
+.explorer-tools button{font-size:11px;min-height:26px}
+#file-tree{height:548px;overflow:auto;padding:6px 0;min-width:0}
+.tree-row{display:flex;align-items:center;justify-content:flex-start;gap:6px;width:100%;min-height:28px;border:0;border-radius:0;background:transparent;text-align:left;font:12px/1.4 var(--ui);white-space:nowrap}
+.tree-row:hover{background:var(--raised)}.tree-row[aria-selected=true]{background:var(--raised);color:var(--text);box-shadow:inset 3px 0 var(--accent)}
+.tree-row .label{overflow:hidden;text-overflow:ellipsis}.tree-row .count{color:var(--muted);margin-left:auto;padding-right:8px;font-size:11px}
+.tree-glyph{width:18px;flex:none;font:10px/1 var(--mono);color:var(--accent)}.folder-glyph{color:var(--candidate)}
+.expander{display:inline-block;width:12px;flex:none;color:var(--muted)}
+.tree-disclosure{padding:8px 12px;font-size:11px;color:var(--muted);border-top:1px solid var(--border)}
+.outline{border-top:1px solid var(--border);padding:8px 12px;max-height:250px;overflow:auto}
+.outline button{display:flex;width:100%;justify-content:flex-start;text-align:left;border:0;border-radius:0;background:transparent;font:12px/1.4 var(--mono);min-height:28px;padding:4px}
+.outline button[aria-pressed=true]{background:var(--raised);color:var(--accent)}
+.main{min-width:0;display:flex;flex-direction:column}
+.contextbar{padding:12px 16px;border-bottom:1px solid var(--border)}
+.contextbar h1{margin:10px 0 4px;font-size:22px;line-height:1.3;font-weight:600}
+.contextbar p{margin:0;color:var(--muted);font-size:12px}
+.breadcrumbs{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px}
+.breadcrumbs button{min-height:26px;padding:2px 6px;font-size:12px}
+.altitude{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-top:12px}
+.altitude .caption{margin:0 6px 0 0}
+.altitude button{min-height:30px;padding:3px 8px;font-size:12px}
+.work-tabs{display:flex;align-items:center;gap:4px;flex-wrap:wrap;padding:8px 16px;border-bottom:1px solid var(--border)}
+.work-tabs button{min-height:32px;padding:4px 9px;background:transparent;border-color:var(--border)}
+.work-tabs button[aria-pressed=true]{background:var(--raised);border-color:var(--accent);color:var(--text)}
+.journey{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:8px 16px;background:var(--sunken);font-size:12px;border-bottom:1px solid var(--border)}
+.journey select{font-size:12px}.journey button{min-height:28px;font-size:12px}
+.banner{margin:12px 16px 0;padding:12px;background:var(--raised);border:1px solid var(--control);border-radius:var(--radius)}
+.banner p{margin:4px 0 0;font-size:12px}
+.canvas{background:var(--sunken);min-height:470px;max-height:780px;overflow:auto;flex:1;position:relative;border-bottom:1px solid var(--border)}
+.pane{padding:24px}.pane h2{font-size:18px;margin:0 0 8px}.pane p{margin:0 0 16px}.pane h3{font-size:15px;margin:20px 0 8px}
+.entry-choices{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+.comparison-columns{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+.comparison-panel{padding:16px;border:1px solid var(--border);border-radius:6px;background:var(--raised)}
+.comparison-panel h3{margin:0 0 8px}.comparison-panel p{font-size:12px}
+.decision-quote{white-space:pre-wrap;font:13px/1.6 var(--ui);padding:12px;border:1px solid var(--border);background:var(--sunken)}
+#decision-dialog{width:min(800px,92vw);max-height:88vh;overflow:auto}
+.choice{padding:16px;background:var(--raised);border:1px solid var(--border);border-radius:6px}.choice h3{margin:0 0 8px}.choice p{font-size:12px;color:var(--muted)}
+.feature-grid{display:grid;grid-template-columns:repeat(3,minmax(160px,1fr));gap:8px;margin-top:16px}
+.feature{display:flex;align-items:flex-start;flex-direction:column;justify-content:center;text-align:left;padding:12px;min-height:72px;background:var(--raised);border-color:var(--border)}
+.feature small{color:var(--muted);font-size:11px}.feature strong{font-weight:600}
+.diagram{display:block;width:980px;min-width:980px;height:auto}
+.diagram text{font-family:var(--ui);fill:var(--text);font-size:13px}
+.diagram .tiny{fill:var(--muted);font-size:11px}.diagram .warning{fill:var(--candidate);font-size:12px}
+.diagram .box{fill:var(--raised);stroke:var(--control)}.diagram .selected .box{stroke:var(--accent);stroke-width:2}
+.diagram .node{cursor:pointer;outline:none}.diagram .node:focus-visible .box{stroke:var(--focus);stroke-width:3}
+.diagram g[role=button]:focus-visible rect[data-hit]{stroke:var(--focus);stroke-width:2}
+.diagram .edge{stroke:var(--control);fill:none;stroke-width:1.5}.diagram .inferred{stroke:var(--candidate);stroke-dasharray:5 4}
+.diagram .band{fill:var(--surface);stroke:var(--border)}.diagram .title{font-size:15px;font-weight:600}
+.diagram .member{font-family:var(--mono);font-size:11px;cursor:pointer}.diagram .member:hover{fill:var(--accent)}
+.diagram .message{cursor:pointer;outline:none}.diagram .message:focus-visible text{fill:var(--focus);text-decoration:underline}
+.table-wrap{overflow:auto}.data-table{width:100%;border-collapse:collapse;font-size:12px}.data-table th,.data-table td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.data-table th{color:var(--muted);font-weight:600;background:var(--surface)}.data-table button{font-size:12px;min-height:28px;text-align:left}
+.entry-list{max-height:480px;overflow:auto}.entry-list button{max-width:100%;overflow-wrap:anywhere}
+.codebar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 12px;background:var(--raised);border-bottom:1px solid var(--border)}
+.codebar strong{font:12px var(--mono);overflow-wrap:anywhere}.codebar input{width:84px;min-height:28px}.codebar button{min-height:28px;font-size:12px}
+.source{font:12px/1.75 var(--mono);overflow:auto;max-height:630px;background:var(--sunken);outline:none;counter-reset:source-line}
+.code-line{display:flex;align-items:stretch;min-width:max-content;min-height:24px}
+.code-line .line-number{display:inline-block;min-width:58px;text-align:right;padding:0 12px 0 8px;color:var(--muted);text-decoration:none;background:var(--surface);cursor:pointer;border:0;border-radius:0;font:11px/24px var(--mono);min-height:24px}
+.code-line code{white-space:pre;padding:0 16px 0 8px;font:inherit}
+.code-line.active{background:var(--raised);box-shadow:inset 3px 0 var(--accent)}.code-line.active .line-number{color:var(--accent)}
+.code-line .keyword{color:var(--accent)}.code-line .comment{color:var(--muted)}
+.source-note{padding:10px 12px;color:var(--muted);font:11px/1.5 var(--mono);border-top:1px solid var(--border)}
+.method-signature{font:13px/1.6 var(--mono);white-space:pre-wrap;padding:16px;background:var(--raised);border:1px solid var(--border);border-radius:6px}
+.method-actions{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.symbol-list{display:flex;flex-wrap:wrap;gap:6px;padding:10px 16px;border-bottom:1px solid var(--border)}
+.symbol-list button{font-size:12px;min-height:28px}.coverage{padding:10px 16px;color:var(--muted);font-size:11px}
+.next-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid var(--border)}
+.next-actions button{font-size:12px;min-height:28px}
+.inspector{min-width:0;border-left:1px solid var(--border)}
+.inspector-head{padding:16px;border-bottom:1px solid var(--border)}
+.inspector-head h2{font-size:15px;line-height:1.4;overflow-wrap:anywhere;margin:6px 0}.inspector-head .mono{font-size:11px}
+.inspect-tabs{display:flex;gap:4px;padding:8px;border-bottom:1px solid var(--border)}.inspect-tabs button{flex:1;font-size:12px;min-height:30px;padding:3px 6px}
+.inspect-body{padding:16px;overflow-wrap:anywhere}.inspect-body h3{font-size:13px;margin:0 0 8px}.inspect-body p{font-size:12px;margin:0 0 12px}
+.inspect-body dt{font-size:11px;color:var(--muted);margin-top:14px}.inspect-body dd{margin:2px 0 0;font-size:12px}
+.inspect-body .block{width:100%;margin-top:8px;font-size:12px}.inspect-body textarea{width:100%;min-height:110px}
+.statusbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:8px 16px;background:var(--sunken);color:var(--muted);font-size:11px;border-top:1px solid var(--border)}
+.cloud-grid{padding:16px}.cloud-layer{border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:12px;background:var(--surface)}.cloud-layer h3{font-size:12px;margin:0 0 10px;color:var(--muted)}
+.cloud-resources{display:flex;flex-wrap:wrap;gap:8px}.cloud-resource{min-width:200px;max-width:300px;flex:1;padding:12px;display:block;text-align:left}
+.cloud-resource strong{display:block;font-size:13px}.cloud-resource small{display:block;color:var(--muted);margin-top:4px;font-size:11px}
+.cloud-service{display:inline-flex;border:1px solid var(--control);border-radius:4px;padding:3px 6px;color:var(--accent);font-family:var(--mono);font-size:11px;margin-bottom:8px}
+.journey-note{padding:12px 16px;font-size:12px;color:var(--muted)}
+.skeleton{height:80px;border:1px solid var(--border);background:var(--raised);margin:16px;border-radius:6px}
+.audit-output{font:11px/1.5 var(--mono);white-space:pre-wrap;padding:16px}
+dialog{width:min(520px,90vw);padding:24px;background:var(--raised);color:var(--text);border:1px solid var(--control);border-radius:6px}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+.reduced *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media(max-width:1250px){.workspace{grid-template-columns:54px 260px minmax(0,1fr)}.rail{grid-row:1 / 3}.inspector{grid-column:2 / 4;border-left:0;border-top:1px solid var(--border)}.inspect-body{max-width:100%}.feature-grid{grid-template-columns:repeat(2,minmax(150px,1fr))}}
+@media(max-width:820px){.workspace{grid-template-columns:48px minmax(0,1fr)}.rail{grid-row:1 / 4}.explorer{grid-column:2;border-right:0;border-bottom:1px solid var(--border)}#file-tree{height:260px}.outline{max-height:180px}.main,.inspector{grid-column:2}.entry-choices{grid-template-columns:1fr}.feature-grid{grid-template-columns:repeat(2,minmax(120px,1fr))}.titlebar{padding:10px}.pane{padding:16px}}
+</style>
+</head>
+<body>
+<a class="skip" href="#canvas-title">Skip to workspace</a>
+<div class="review">
+ <strong>CODE ATLAS 02</strong>
+ <label>Start <select id="start-style"><option value="files">File-first developer</option><option value="visual">Visual-first architect</option></select></label>
+ <label>Theme <select id="theme"><option value="dark">Dark</option><option value="light">Light</option><option value="hc">High contrast preview</option></select></label>
+ <label>Review state <select id="scenario"><option value="ready">Source snapshot ready</option><option value="empty">Index unavailable</option><option value="loading">Refreshing</option><option value="error">Extraction error</option><option value="stale">Source changed</option><option value="ai-unavailable">AI unavailable</option></select></label>
+ <label><input id="reduced" type="checkbox">Reduced motion</label>
+ <button id="audit" type="button">Audit</button><span class="spacer"></span><a href="index.html">Read proposal ↗</a>
+</div>
+<header class="titlebar">
+ <div class="brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2 22 7 12 12 2 7Z M2 12l10 5 10-5 M2 17l10 5 10-5"/></svg>AI-DE <span class="muted">/ TheTerrace / Architecture</span></div>
+ <div class="row"><span id="repo-badge" class="badge fact"></span><span class="badge">Repository-backed prototype · not live analysis</span></div>
+</header>
+<div class="workspace">
+ <nav class="rail" aria-label="Perspectives">
+  <button data-preview="Coding" aria-label="Coding perspective preview" title="Coding"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m8 5-6 7 6 7m8-14 6 7-6 7m-3-15-2 18"/></svg></button>
+  <button data-preview="Explore" aria-label="Explore perspective preview" title="Explore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="8" r="3"/><circle cx="12" cy="19" r="3"/><path d="m9 6 6 1M7 9l4 7m6-5-4 5"/></svg></button>
+  <button aria-label="Architecture perspective" aria-pressed="true" data-view="system" title="Architecture"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2 22 7 12 12 2 7Z M2 12l10 5 10-5 M2 17l10 5 10-5"/></svg></button>
+ </nav>
+ <aside class="explorer" aria-label="Solution Explorer">
+  <div class="explorer-head">
+   <h2>SOLUTION EXPLORER</h2>
+   <div class="row explorer-mode"><button id="tree-solution" aria-pressed="true">Solution</button><button id="tree-files" aria-pressed="false">Repository files</button></div>
+   <input id="file-search" type="search" aria-label="Search repository paths" placeholder="Search files and folders">
+   <div class="row explorer-tools"><span id="inventory-count"></span><button id="reveal-file">Reveal active file</button><button id="collapse-all">Collapse</button></div>
+  </div>
+  <div id="file-tree" role="tree" aria-label="TheTerrace files"></div>
+  <div id="tree-disclosure" class="tree-disclosure"></div>
+  <section class="outline" aria-label="File outline"><div class="caption">TYPES &amp; MEMBERS IN ACTIVE FILE</div><div id="outline"></div></section>
+ </aside>
+ <main class="main">
+  <div class="contextbar">
+   <div class="breadcrumbs"><button id="back" disabled>← Back</button><div class="row" id="breadcrumbs"></div></div>
+   <h1 id="canvas-title" tabindex="-1"></h1><p id="subtitle"></p>
+   <div class="altitude" role="group" aria-label="Abstraction altitude"><span class="caption">ALTITUDE</span><button data-altitude="system">1 System</button><span aria-hidden="true">›</span><button data-altitude="component">2 Component</button><span aria-hidden="true">›</span><button data-altitude="type">3 Type</button><span aria-hidden="true">›</span><button data-altitude="member">4 Member</button><span aria-hidden="true">›</span><button data-altitude="source">5 Source</button></div>
+  </div>
+  <div class="work-tabs" role="group" aria-label="Understanding views"><button data-view="system">Overview</button><button data-view="entries">Entry points</button><button data-view="classes">Class model</button><button data-view="sequence">Sequence</button><button data-view="activity">Activity</button><button data-view="azure">Azure layers</button><button data-view="compare">Implementation ↔ spec</button><button data-view="source">Source</button></div>
+  <div class="journey">
+   <label for="journey">Walkthrough</label><select id="journey"><option value="submit">Submit a prediction</option><option value="settle">Settle and score</option></select>
+   <button id="journey-start">Start at entry file</button>
+   <label id="branch-label" for="branch">Path</label><select id="branch"><option value="submitted">New prediction</option><option value="revised">Revise existing</option><option value="closed">Closed at kickoff</option></select>
+   <span class="spacer"></span><button id="export">Export view</button>
+  </div>
+  <div id="banner" class="banner" hidden></div>
+  <div id="canvas" class="canvas" tabindex="-1" aria-label="Diagram or source workspace"></div>
+  <div id="symbol-list" class="symbol-list" aria-label="Diagram selection alternative"></div>
+  <div id="coverage" class="coverage"></div>
+  <div class="next-actions"><span class="muted">FROM HERE</span><button data-altitude="component">↑ Feature context</button><button data-altitude="type">Class &amp; members</button><button data-view="sequence">Trace behavior</button><button data-view="source">Open concrete source</button></div>
+ </main>
+ <aside class="inspector" aria-label="Evidence inspector">
+  <div class="inspector-head"><div class="caption">SELECTION &amp; EVIDENCE</div><h2 id="selection-title"></h2><div id="selection-path" class="mono muted"></div><span id="snapshot-label" class="badge"></span></div>
+  <div class="inspect-tabs"><button data-inspect="evidence" aria-pressed="true">Evidence</button><button data-inspect="interpretation">Interpretation</button></div>
+  <div id="inspector-content" class="inspect-body" tabindex="-1"></div>
+ </aside>
+</div>
+<footer class="statusbar"><span id="status" role="status" aria-live="polite"></span><span id="source-stat"></span></footer>
+<pre id="audit-output" class="audit-output" hidden></pre>
+<dialog id="preview-dialog" aria-labelledby="preview-title"><h2 id="preview-title"></h2><p>That perspective remains the primary session's work. This study changes only the Architecture proposal.</p><button id="close-preview" class="primary">Return to Architecture</button></dialog>
+<dialog id="decision-dialog" aria-labelledby="decision-title"><h2 id="decision-title">Decision lineage</h2><div id="decision-content"></div><button id="close-decision" class="primary">Return to comparison</button></dialog>
+<script id="terrace-data" type="application/json">@@TERRACE_DATA@@</script>
+<script>
+(() => {
+'use strict';
+const D=JSON.parse(document.getElementById('terrace-data').textContent),$=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const symbol=id=>D.symbols.find(s=>s.id===id),source=p=>D.sources[p],current=()=>symbol(S.symbolId);
+const S={view:'source',altitude:'source',symbolId:'card',file:symbol('card').file,line:1,memberId:null,feature:'Predictions',journey:'submit',branch:'submitted',classStyle:'concept',inspector:'evidence',scenario:'ready',treeMode:'solution',search:'',treeFocus:'',history:[],expanded:new Set(),interpretations:{},selectedMessage:null,cloudId:null,startStyle:'files',comparisonFilter:'all'};
+const navFields=['view','altitude','symbolId','file','line','memberId','feature','journey','branch','classStyle','selectedMessage','cloudId','comparisonFilter'];
+function snapshot(){return Object.fromEntries(navFields.map(k=>[k,S[k]]))}
+function go(patch,announce=true){S.history.push(snapshot());Object.assign(S,patch);revealAncestors(S.file);render();if(announce)$('canvas-title').focus();say(`Opened ${$('canvas-title').textContent}. ${D.meta.shortRevision}.`)}
+function say(s){$('status').textContent=s}
+function members(){return D.symbols.filter(s=>s.file===S.file)}
+function selectedMember(){return current()?.members.find(m=>m.id===S.memberId)}
+function selectionIdentity(){return S.cloudId?'cloud:'+S.cloudId:S.memberId||S.symbolId||D.declarations.find(d=>d.file===S.file&&d.line===S.line)?.id||'file:'+S.file}
+function journey(){return D.journeys.find(j=>j.id===S.journey)}
+function featureFor(path){return path.match(/\/Features\/([^/]+)\//)?.[1]||'Repository'}
+function openFile(path,line=1,id=undefined,memberId=null){const s=id?symbol(id):id===null?null:D.symbols.filter(x=>x.file===path&&x.line<=line&&line<=x.endLine).sort((a,b)=>b.line-a.line)[0];go({view:'source',altitude:'source',file:path,line,symbolId:s?.id||null,memberId,feature:s?.feature||featureFor(path),selectedMessage:null,cloudId:null});requestAnimationFrame(()=>$('source-code')?.focus())}
+function selectSymbol(id,to='classes'){const s=symbol(id);if(!s)return;go({symbolId:id,file:s.file,line:s.line,memberId:null,view:to,altitude:to==='source'?'source':'type',feature:s.feature,selectedMessage:null,cloudId:null})}
+function selectMember(id){const s=D.symbols.find(s=>s.members.some(m=>m.id===id));const m=s?.members.find(m=>m.id===id);if(s&&m)go({symbolId:s.id,file:s.file,line:m.line,memberId:id,view:'member',altitude:'member',feature:s.feature,selectedMessage:null,cloudId:null})}
+function startJourney(id=S.journey){const j=D.journeys.find(j=>j.id===id),s=symbol(j.start),m=s.members.find(m=>m.name===j.method);go({journey:id,file:j.file,line:j.line,symbolId:j.start,memberId:m?.id||null,view:'source',altitude:'source',feature:'Predictions',selectedMessage:null,cloudId:null});say(`Journey entry: ${j.title}. Select the member, then Sequence, then any message to open its call site.`)}
+function traceForSelection(){
+ if(S.feature!=='Predictions')return null;
+ const id=S.symbolId,m=selectedMember()?.name;
+ const map={card:'submit',store:'submit',contract:'submit',prediction:'submit',lifecycle:'settle',settlement:'settle',scoring:'settle',score:'settle'};
+ if(!map[id])return null;
+ if(id==='prediction'&&m==='Seal')return 'settle';
+ const supported={card:['SubmitAsync'],store:['SubmitAsync'],contract:['SubmitAsync'],prediction:['Revise','IsOpenAt'],lifecycle:['RunAsync'],settlement:['SettleAsync','SealAsync','ScoreAsync'],scoring:['Score'],score:['Rescore']};
+ return !m||supported[id].includes(m)?map[id]:null;
+}
+function knownTrace(){return Boolean(traceForSelection())}
+function showView(view){
+ if(['sequence','activity'].includes(view)&&!knownTrace()){say('No curated behavior trace for this selection. Choose a named walkthrough explicitly.');$('banner').hidden=false;$('banner').innerHTML='<strong>No trace for this selection.</strong> Choose a walkthrough and press “Start at entry file”; no unrelated trace was substituted.';return}
+ if(view==='classes'&&!current()&&(members().length||D.declarations.some(d=>d.file===S.file))){go({view:'filetypes',altitude:'type'});return}
+ if(['classes','member'].includes(view)&&!current()){say('No curated type model for this file. The file remains selected.');return}
+ const patch={view,altitude:({system:'system',entries:'system',component:'component',classes:'type',sequence:'member',activity:'member',member:'member',source:'source',azure:'system',compare:'system'})[view],selectedMessage:null};
+ if(['sequence','activity'].includes(view)){patch.journey=traceForSelection();if(S.symbolId==='prediction'&&selectedMember()?.name==='Revise')patch.branch='revised'}
+ go(patch);
+}
+function altitude(level){if(S.file.startsWith('infra/')&&['system','component'].includes(level)){showView('azure');return}showView(({system:'system',component:'component',type:'classes',member:'member',source:'source'})[level])}
+function revealAncestors(path){const bits=path.split('/');for(let i=1;i<bits.length;i++)S.expanded.add(bits.slice(0,i).join('/'));S.expanded.add('');S.expanded.add('@solution');S.expanded.add('@other');S.treeFocus=path}
+const folders=new Map([['',{key:'',path:'',label:'TheTerrace',folder:true,children:[],count:0,parent:null}]]);
+for(const f of D.files){const parts=f.path.split('/');let parent='';folders.get('').count++;for(let i=0;i<parts.length;i++){const key=parts.slice(0,i+1).join('/');if(!folders.has(key)){const item={key,path:key,label:parts[i],folder:i<parts.length-1,children:[],parent,count:0};folders.set(key,item);folders.get(parent).children.push(key)}const n=folders.get(key);if(n.folder)n.count++;parent=key}}
+const projectRoots=['src/TheTerrace','tests/TheTerrace.Tests','tests/TheTerrace.E2ETests','tests/TheTerrace.PackageACompatibility'];
+function children(key){return folders.get(key).children.map(k=>folders.get(k)).sort((a,b)=>Number(b.folder)-Number(a.folder)||a.label.localeCompare(b.label))}
+let treeRows=[];
+function treeItems(){
+ const matches=S.search?D.files.filter(f=>f.path.toLowerCase().includes(S.search.toLowerCase())):null;
+ if(matches)return matches.slice(0,220).map(f=>({...folders.get(f.path),level:1,label:f.path}));
+ const out=[];function walk(node,level){out.push({...node,level});if(node.folder&&S.expanded.has(node.key))children(node.key).forEach(n=>walk(n,level+1))}
+ if(S.treeMode==='files')walk(folders.get(''),1);
+ else{
+  out.push({key:'@solution',path:'TheTerrace.slnx',label:'Solution “TheTerrace” · 4 projects',folder:true,parent:null,count:4,level:1});
+  if(S.expanded.has('@solution'))for(const path of projectRoots){const n=folders.get(path);if(n)walk({...n,label:n.label+' · project',parent:'@solution'},2)}
+  const other={key:'@other',path:'',label:'Repository items · outside projects',folder:true,parent:null,count:D.files.filter(f=>!projectRoots.some(p=>f.path.startsWith(p+'/'))).length};
+  out.push({...other,level:1});if(S.expanded.has('@other'))children('').filter(n=>!['src','tests'].includes(n.key)).forEach(n=>walk(n,2));
+ }return out;
+}
+function renderTree(focus=false){
+ treeRows=treeItems();const first=treeRows.find(r=>r.key===S.treeFocus)||treeRows.find(r=>r.path===S.file)||treeRows[0];
+ $('file-tree').innerHTML=treeRows.map(r=>`<button type="button" role="treeitem" class="tree-row" aria-level="${r.level}" ${r.folder?`aria-expanded="${S.expanded.has(r.key)}"`:''} aria-selected="${!r.folder&&r.path===S.file}" tabindex="${r.key===first?.key?0:-1}" data-tree="${esc(r.key)}" style="padding-left:${8+(r.level-1)*14}px" title="${esc(r.path||r.label)}"><span class="expander" aria-hidden="true">${r.folder?(S.expanded.has(r.key)?'▾':'▸'):''}</span><span class="tree-glyph ${r.folder?'folder-glyph':''}" aria-hidden="true">${r.folder?'▱':r.path.endsWith('.cs')?'C#':r.path.endsWith('.razor')?'&lt;&gt;':r.path.endsWith('.bicep')?'Az':r.path.endsWith('.slnx')?'SL':'·'}</span><span class="label">${esc(r.label)}</span>${r.folder?`<span class="count">${r.count}</span>`:source(r.path)?'<span class="count" title="Source embedded">●</span>':''}</button>`).join('');
+ $('inventory-count').textContent=`${D.meta.counts.trackedFiles.toLocaleString()} tracked files`;
+ const matchCount=S.search?D.files.filter(f=>f.path.toLowerCase().includes(S.search.toLowerCase())).length:null;
+ $('tree-disclosure').textContent=matchesText(matchCount);
+ $('tree-solution').setAttribute('aria-pressed',String(S.treeMode==='solution'));$('tree-files').setAttribute('aria-pressed',String(S.treeMode==='files'));
+ if(focus&&first)$('file-tree').querySelector(`[data-tree="${CSS.escape(first.key)}"]`)?.focus();
+}
+function matchesText(n){return n===null?`${treeRows.length} expanded rows · complete tracked path inventory · ● = source embedded`:`${Math.min(n,220)} of ${n} matching paths shown${n>220?' · narrow your search':''}. ${n===0?'No file was substituted.':''}`}
+function focusTree(index){const row=treeRows[Math.max(0,Math.min(index,treeRows.length-1))];if(row){S.treeFocus=row.key;renderTree(true)}}
+$('file-tree').addEventListener('keydown',e=>{
+ const row=treeRows.find(r=>r.key===e.target.dataset.tree),i=treeRows.indexOf(row);if(!row)return;
+ if(['ArrowDown','ArrowUp','Home','End','ArrowLeft','ArrowRight'].includes(e.key))e.preventDefault();
+ if(e.key==='ArrowDown')focusTree(i+1);if(e.key==='ArrowUp')focusTree(i-1);if(e.key==='Home')focusTree(0);if(e.key==='End')focusTree(treeRows.length-1);
+ if(e.key==='ArrowRight'&&row.folder){if(!S.expanded.has(row.key)){S.expanded.add(row.key);renderTree(true)}else focusTree(i+1)}
+ if(e.key==='ArrowLeft'){if(row.folder&&S.expanded.has(row.key)){S.expanded.delete(row.key);renderTree(true)}else{const p=treeRows.findIndex(r=>r.key===row.parent);if(p>=0)focusTree(p)}}
+});
+function outline(){
+ const entries=members();$('outline').innerHTML=entries.length?entries.map(s=>`<button data-symbol="${s.id}" title="Open ${esc(s.kind)}"><strong>${esc(s.name)}</strong> <span class="muted">:${s.line}</span></button>${s.members.map(m=>`<button data-member="${esc(m.id)}" aria-pressed="${S.memberId===m.id}" title="${esc(m.signature)}"><span class="muted">${m.kind==='method'?'ƒ':'·'}</span>${esc(m.name)} <span class="muted">:${m.line}</span></button>`).join('')}`).join(''):'<p class="muted">No curated symbol outline for this file. The real path remains in the explorer.</p>';
+}
+function svg(label,h=540){return `<svg class="diagram" viewBox="0 0 980 ${h}" xmlns="http://www.w3.org/2000/svg" aria-label="${esc(label)}"><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10" fill="none" stroke="var(--control)" stroke-width="1.5"/></marker><marker id="triangle" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto"><path d="M1 1 11 6 1 11Z" fill="var(--sunken)" stroke="var(--control)"/></marker></defs>`}
+function node(s,x,y,w=220,h=78){return `<g class="node ${S.symbolId===s.id?'selected':''}" role="button" tabindex="0" data-symbol="${s.id}" aria-label="${esc(s.name+', '+s.kind)}"><rect class="box" x="${x}" y="${y}" width="${w}" height="${h}" rx="6"/><text x="${x+12}" y="${y+23}" class="title">${esc(s.name)}</text><text x="${x+12}" y="${y+45}" class="tiny">${esc(s.kind)}</text><text x="${x+12}" y="${y+64}" class="tiny">${esc(s.file.split('/').pop())}:${s.line}</text></g>`}
+function sourceLink(file,line,label='Open source'){return `<button data-source="${esc(file)}" data-line="${line}">${esc(label)} · L${line}</button>`}
+function systemView(){
+ const names=Object.entries(D.features);return `<div class="pane"><span class="badge">One ASP.NET Core / Blazor product project · not 31 microservices</span><h2 style="margin-top:16px">TheTerrace: from files to a system</h2><p class="muted">${D.meta.counts.trackedFiles.toLocaleString()} tracked files · ${D.meta.counts.sourceFiles} source-tree files · ${D.meta.counts.featureFolders} feature folders. Counts are measured; architecture grouping is curated.</p><div class="entry-choices"><section class="choice"><h3>Start where the code is</h3><p>Open a real file, pick a member, then step up to its class and behavior.</p><button data-start="files" class="primary">Open PredictCard.razor</button></section><section class="choice"><h3>Start with what the system does</h3><p>Choose an entry point or feature; descend through types and messages to source.</p><button data-view="entries">Browse entry points</button></section></div><h3>Feature folders, grouped for orientation</h3><p class="muted">All ${names.length} groups are available. Only Predictions has a deep curated semantic journey in this prototype.</p><div class="feature-grid">${names.map(([name,count])=>`<button class="feature" data-feature="${esc(name)}"><strong>${esc(name)}</strong><small>${count} tracked files · physical feature folder</small></button>`).join('')}</div><h3>Deployment is a separate altitude</h3><p>Azure layers identify services and how the application uses them. A feature folder is not a deployable container.</p><button data-view="azure">Inspect Azure layers &amp; components</button></div>`;
+}
+function componentView(){
+ if(!Object.hasOwn(D.features,S.feature))return unavailable('No component assignment for this file',`${S.file} remains selected. Use the system overview to choose a feature, or stay in the physical explorer. No unrelated component was substituted.`);
+ if(S.feature!=='Predictions'){
+  const types=D.declarations.filter(d=>d.file.includes('/Features/'+S.feature+'/'));
+  return `<div class="pane"><h2>${esc(S.feature)}: declarations in the real feature folder</h2><p>${D.features[S.feature]??'Unknown'} tracked files · ${types.length} lexical declaration candidates. Partial declarations are counted separately; this is not a semantic compiler result.</p><button data-action="folder-source">Browse this feature's files</button><button data-action="predictions">Open the complete Predictions journey</button><h3>Descend from this component</h3><table class="data-table"><thead><tr><th scope="col">Type / declaration</th><th scope="col">Kind</th><th scope="col">File</th></tr></thead><tbody>${types.map(d=>`<tr><td><button data-declaration="${esc(d.id)}">${esc(d.name)}</button></td><td>${esc(d.kind)}</td><td class="mono">${esc(d.file.split('/').pop())}:${d.line}</td></tr>`).join('')}</tbody></table></div>`;
+ }
+ const ids=['card','store','prediction','context','lifecycle','scoring'],pos={card:[35,65],store:[370,65],prediction:[705,65],context:[370,270],lifecycle:[35,270],scoring:[705,270]};
+ let out=svg('Predictions responsibilities, source-backed curated slice',450);
+ out+='<text x="35" y="28" class="tiny">Presentation → application policy → domain invariants; persistence and scheduled work below</text>';
+ for(const [a,b,label] of [['card','store','SubmitAsync'],['store','prediction','IsOpenAt / Revise'],['store','context','read / save'],['lifecycle','context','settle / save'],['lifecycle','scoring','via PredictionSettlement']]){
+  const p=pos[a],q=pos[b];out+=`<path class="edge" d="M${p[0]+110} ${p[1]+80} L${q[0]+110} ${q[1]}" marker-end="url(#arrow)"/><text class="tiny" x="${(p[0]+q[0])/2+80}" y="${(p[1]+q[1])/2+105}">${label}</text>`;
+ }for(const id of ids)out+=node(symbol(id),...pos[id]);return out+'</svg><div class="journey-note">Curated responsibility map, not a container diagram. Select a type for its concrete class and source.</div>';
+}
+function entriesView(){return `<div class="pane"><h2>Where work enters</h2><p class="muted">${D.entrypoints.length} declaration candidates from Razor @page and explicit Program.cs Map calls, plus two curated handlers. Conditional registration is not evaluated; this is not complete runtime reachability.</p><div class="row"><button data-walk="submit" class="primary">Walk prediction submission</button><button data-walk="settle">Walk scheduled settlement</button></div></div><div class="entry-list table-wrap"><table class="data-table"><thead><tr><th scope="col">Entry / contract</th><th scope="col">Kind</th><th scope="col">Source</th></tr></thead><tbody>${D.entrypoints.map(e=>`<tr><td>${esc(e.name)}</td><td>${esc(e.kind)}</td><td>${sourceLink(e.file,e.line,e.file.split('/').pop())}</td></tr>`).join('')}</tbody></table></div>`}
+function classView(){
+ if(!current())return unavailable('No curated type for this file','The file identity is preserved. Choose a type from the outline or a curated feature.');
+ const neighbors=D.relations.filter(r=>r.from===S.symbolId||r.to===S.symbolId).flatMap(r=>[r.from,r.to]);
+ const ids=[...new Set([S.symbolId,...neighbors,'prediction','score','amendment','store','contract','fixture'])].slice(0,6);
+ const positions=Object.fromEntries(ids.map((id,i)=>[id,[30+(i%3)*325,55+Math.floor(i/3)*395]]));
+ const uml=S.classStyle==='uml';let out=`<div class="journey"><strong>Class model</strong><button data-class-style="concept" aria-pressed="${!uml}">Concept map</button><button data-class-style="uml" aria-pressed="${uml}">Concrete UML</button><span class="muted">6 types · bounded neighborhood · no whole-repository class dump</span></div>`;
+ if(!uml){let g=svg('Prediction concept map',470);const p=Object.fromEntries(ids.map((id,i)=>[id,[35+(i%3)*320,55+Math.floor(i/3)*225]]));
+  for(const r of D.relations.filter(r=>ids.includes(r.from)&&ids.includes(r.to))){const a=p[r.from],b=p[r.to];g+=`<path class="edge ${r.kind==='dependency'?'inferred':''}" d="M${a[0]+110} ${a[1]+80}L${b[0]+110} ${b[1]}" marker-end="url(#arrow)"/>`}
+  for(const id of ids)g+=node(symbol(id),...p[id]);out+=g+'</svg><div class="journey-note">Preserved abstraction: responsibility and relationships. “Prediction is an aggregate root” is not asserted by this picture. Switch to Concrete UML for actual members.</div>';
+ }else{
+  let g=svg('Concrete UML class view from actual source declarations',880);
+  for(const r of D.relations.filter(r=>ids.includes(r.from)&&ids.includes(r.to))){const a=positions[r.from],b=positions[r.to];const same=a[1]===b[1],right=b[0]>a[0];const d=same?`M${a[0]+(right?270:0)} ${a[1]+35}L${b[0]+(right?0:270)} ${b[1]+35}`:`M${a[0]+135} ${a[1]+350}L${b[0]+135} ${b[1]}`;g+=`<path class="edge" ${r.kind==='realization'?'stroke-dasharray="5 4"':''} d="${d}" marker-end="url(#${r.kind==='realization'?'triangle':'arrow'})"><title>${esc(r.label)}</title></path>`}
+  for(const id of ids){
+   const s=symbol(id),p=positions[id],props=s.members.filter(m=>m.kind!=='method').slice(0,6),methods=s.members.filter(m=>m.kind==='method').slice(0,5);
+   const rows=(list,start)=>list.map((m,i)=>`<text class="member" role="button" tabindex="0" data-member="${esc(m.id)}" aria-label="${esc(s.name+'.'+m.name+', '+m.signature)}" x="${p[0]+10}" y="${p[1]+start+i*17}"><title>${esc(m.signature)}</title>${esc((m.visibility.startsWith('public')?'+ ':m.visibility==='protected'?'# ':'- ')+shortSignature(m,37))}</text>`).join('');
+   const omitted=s.members.length-props.length-methods.length;
+   g+=`<g class="${S.symbolId===id?'selected':''}"><rect class="box" x="${p[0]}" y="${p[1]}" width="270" height="350" rx="4"/><g class="node" data-symbol="${id}" role="button" tabindex="0" aria-label="${esc(s.name)}"><text x="${p[0]+12}" y="${p[1]+22}" class="title">${esc(s.name)}</text></g><path class="edge" d="M${p[0]} ${p[1]+35}h270"/><text class="tiny" x="${p[0]+10}" y="${p[1]+51}">${s.kind==='interface'?'«interface» · ':''}Attributes</text>${rows(props,70)}<path class="edge" d="M${p[0]} ${p[1]+180}h270"/><text class="tiny" x="${p[0]+10}" y="${p[1]+198}">Operations · source-language signatures</text>${rows(methods,217)}<text class="tiny" x="${p[0]+10}" y="${p[1]+326}">${omitted?`${omitted} more in outline · `:''}${esc(s.file.split('/').pop())}:${s.line}</text></g>`;
+  }
+  out+=g+'</svg><div class="journey-note">Visibility and signatures come from source. Dashed hollow triangle = interface realization. PredictionScore and PredictionAmendment associations use explicit EF mapping; FixtureId is only labelled a logical reference. No lifecycle-composition diamonds are invented.</div>';
+ }
+ return out+`<div class="table-wrap"><table class="data-table"><thead><tr><th scope="col">Relationship</th><th scope="col">Evidence / source</th></tr></thead><tbody>${D.relations.filter(r=>ids.includes(r.from)&&ids.includes(r.to)).map(r=>`<tr><td>${esc(symbol(r.from).name)} → ${esc(symbol(r.to).name)}<br>${esc(r.label)}</td><td>${sourceLink(r.file,r.line,'Inspect supporting line')}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function shortSignature(m,n){
+ const clean=m.signature.replace(/^(public|private|protected|internal)\s+/,'').replace(/^(?:(?:static|async|readonly|override|virtual|sealed)\s+)+/,'');
+ const at=clean.indexOf(m.name),type=at>=0?clean.slice(0,at).trim():'';
+ const label=m.kind==='method'?`${m.name}(${clean.slice(at+m.name.length).replace(/[();\s]/g,'')?'…':''})${type?' : '+type:''}`:`${m.name}${type?' : '+type:''}`;
+ return label.length>n?label.slice(0,Math.max(n-1,m.name.length+2))+'…':label;
+}
+function methodView(){
+ const s=current();if(!s)return unavailable('No curated member','Choose a real file and its outline first.');
+ const m=selectedMember();return `<div class="pane"><span class="badge">${esc(s.kind)} / ${esc(s.name)}</span><h2 style="margin-top:16px">${esc(m?.name||s.name)}${m?' — member altitude':' — choose a member'}</h2><pre class="method-signature">${esc(m?.signature||s.name)}</pre><p class="mono muted">${esc(s.file)}:${m?.line||s.line}</p><div class="method-actions">${sourceLink(s.file,m?.line||s.line,'Open exact source')}<button data-view="sequence" ${knownTrace()?'':'disabled'}>Trace this walkthrough</button><button data-view="classes">↑ Containing class</button></div><h3>Members in this type</h3><table class="data-table"><thead><tr><th scope="col">Visibility / kind</th><th scope="col">Signature</th><th scope="col">Line</th></tr></thead><tbody>${s.members.map(m=>`<tr><td>${esc(m.visibility)}<br>${esc(m.kind)}</td><td><button data-member="${esc(m.id)}">${esc(m.signature)}</button></td><td>${sourceLink(s.file,m.line,'Source')}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function selectedMessages(){return journey().messages.filter(m=>m.branch==='all'||m.branch===S.branch)}
+function sequenceView(){
+ const j=journey(),ms=selectedMessages(),ids=[...j.participants];for(const m of ms)for(const id of [m.from,m.to])if(!ids.includes(id))ids.push(id);
+ const w=980,step=(w-80)/ids.length,x=id=>40+step*(ids.indexOf(id)+.5),height=170+ms.length*66;let g=svg(j.title+' — static sequence',height);
+ for(const id of ids){const s=symbol(id),cx=x(id),split=step<180&&s.name.startsWith('Prediction'),first=split?'Prediction':s.name,last=split?s.name.slice(10):s.kind;g+=`<g class="node" data-symbol="${id}" role="button" tabindex="0" aria-label="${esc(s.name)}"><title>${esc(s.name)}</title><rect class="box" x="${cx-step*.44}" y="22" width="${step*.88}" height="64" rx="4"/><text x="${cx-step*.4}" y="47">${esc(first)}</text><text class="tiny" x="${cx-step*.4}" y="67">${esc(last)}</text></g><path class="edge" stroke-dasharray="4 4" d="M${cx} 90V${height-30}"/>`}
+ ms.forEach((m,i)=>{const y=128+i*66,a=x(m.from),b=x(m.to),reverse=m.label.startsWith('return');g+=`<g class="message" role="button" tabindex="0" data-message="${m.id}" aria-label="${esc(`${i+1}. ${m.label}. ${m.file}:${m.line}`)}"><title>${esc(m.evidence)}</title><path class="edge" ${reverse?'stroke-dasharray="4 4"':''} d="M${a} ${y}H${b}" marker-end="url(#arrow)"/><text x="${Math.min(a,b)+6}" y="${y-11}">${i+1}. ${esc(m.label)}</text><text class="tiny" x="${Math.min(a,b)+6}" y="${y+18}">${esc(m.file.split('/').pop())}:${m.line} · open call site</text></g>`});
+ return `<div class="journey-note"><strong>${esc(j.title)}</strong> · source-reconstructed sequence, no observed runtime or timing. ${j.id==='submit'?`Hypothetical branch: ${esc(S.branch)}. Interface binding is supported by IdentityRegistration.cs:236.`:'Loops, queries and return plumbing are summarized; each drawn operation carries its source anchor.'}</div>${g}</svg><div class="table-wrap"><table class="data-table"><thead><tr><th scope="col">Message</th><th scope="col">Evidence</th></tr></thead><tbody>${ms.map((m,i)=>`<tr><td><button data-message="${m.id}">${i+1}. ${esc(m.label)}</button></td><td>${esc(m.evidence)}<br><span class="mono">${esc(m.file)}:${m.line}</span></td></tr>`).join('')}</tbody></table></div>`;
+}
+function activityView(){
+ if(S.journey==='settle')return `<div class="pane"><h2>Settlement control flow</h2><p>Source abstraction: seal due predictions, save if any were sealed, then score candidates. The caller performs the final save.</p>${['t1','t2','t3','t4','t6'].map(id=>{const m=journey().messages.find(m=>m.id===id);return `<div class="notice">${sourceLink(m.file,m.line,m.label)}</div>`}).join('')}</div>`;
+ const f='src/TheTerrace/Features/Predictions/PredictionStore.cs';let g=svg('Prediction submission decisions',710);
+ const boxes=[{x:370,y:35,label:'Read fixture kickoff',line:86},{x:60,y:265,label:'return NoSuchFixture',line:92},{x:370,y:265,label:'Check server-clock deadline',line:98},{x:50,y:475,label:'return Closed',line:98},{x:380,y:475,label:'Revise existing + save',line:108},{x:710,y:475,label:'Create prediction + save',line:113}];
+ g+='<circle cx="480" cy="15" r="6" fill="var(--text)"/><path class="edge" d="M480 22V35"/><path class="edge" d="M480 100V145"/><path d="M480 145 555 195 480 245 405 195Z" class="box"/><text x="436" y="200">fixture exists?</text><path class="edge" d="M405 195H170V265" marker-end="url(#arrow)"/><text class="tiny" x="255" y="181">[no]</text><path class="edge" d="M480 245V265" marker-end="url(#arrow)"/><text class="tiny" x="488" y="257">[yes]</text><path class="edge" d="M480 330V375"/><path d="M480 370 555 420 480 470 405 420Z" class="box"/><text x="442" y="422">before kickoff?</text><path class="edge" d="M405 420H160V475" marker-end="url(#arrow)"/><text class="tiny" x="260" y="407">[no]</text><path class="edge" d="M555 420H820V475" marker-end="url(#arrow)"/><text class="tiny" x="601" y="405">[yes, no existing row]</text><path class="edge" d="M480 470V475" marker-end="url(#arrow)"/><text class="tiny" x="410" y="585">[yes, existing row] → revise; otherwise create</text>';
+ for(const a of boxes)g+=`<g class="node" role="button" tabindex="0" data-source="${f}" data-line="${a.line}" aria-label="${a.label}, line ${a.line}"><rect class="box" x="${a.x}" y="${a.y}" width="220" height="65" rx="6"/><text x="${a.x+12}" y="${a.y+26}">${a.label}</text><text class="tiny" x="${a.x+12}" y="${a.y+48}">PredictionStore.cs:${a.line}</text></g>`;
+ return '<div class="journey-note">Decision abstraction from SubmitAsync. Arrows describe source branches; click an action for the concrete statement. Persistence query internals and exceptions are not expanded.</div>'+g+'</svg>';
+}
+function sourceView(){
+ const src=source(S.file);if(!src){const declaration=D.declarations.find(d=>d.file===S.file&&d.line===S.line);return `<div class="pane"><span class="badge">Real tracked file · full source not embedded</span><h2 style="margin-top:16px">${esc(S.file.split('/').pop())}</h2><p class="mono">${esc(S.file)}:${S.line}</p>${declaration?`<h3>Captured declaration prefix</h3><pre class="method-signature">${esc(declaration.prefix)}</pre><p class="muted">Exact prefix at line ${S.line}, not the whole line or type body.</p>`:''}<p>This path is in the measured inventory. Its source body was not copied into the prototype. No unrelated source file or method is substituted.</p><p class="muted">${Object.keys(D.sources).length} files or explicit excerpts are embedded for complete journeys. Production would read this exact path from the workspace authority at the selected revision.</p><button data-walk="submit">Open the complete submission walkthrough</button></div>`}
+ const lines=src.lines.map((text,i)=>{const num=src.lineNumbers?.[i]??src.startLine+i;let code=esc(text);if(text.trim().startsWith('//')||text.trim().startsWith('///'))code=`<span class="comment">${code}</span>`;else code=code.replace(/\b(public|private|protected|static|sealed|class|interface|return|if|else|await|async|using|var|new|void|bool|int|string|readonly|namespace)\b/g,'<span class="keyword">$1</span>');return `<div class="code-line ${num===S.line?'active':''}" id="line-${num}" data-line-row="${num}"><button class="line-number" tabindex="-1" data-cursor="${num}" aria-label="Select line ${num}">${num}</button><code>${code||' '}</code></div>`}).join('');
+ const missing=src.lineNumbers?!src.lineNumbers.includes(S.line):S.line<src.startLine||S.line>src.endLine;
+ return `${missing?`<div class="banner"><strong>Requested line ${S.line} is not embedded.</strong><p>The other captured excerpts below are not a substitute for that location. The file and requested line remain selected.</p></div>`:''}<div class="codebar"><strong>${esc(S.file)}</strong><span class="spacer"></span><label for="line-jump">Go to line</label><input id="line-jump" type="number" min="1" max="${src.totalLines}" value="${S.line}"><button id="go-line">Go</button></div><div id="source-code" class="source" tabindex="0" aria-label="${esc(S.file)} source at ${D.meta.shortRevision}">${lines}</div><div class="source-note">${esc(src.coverage)} · original lines ${src.startLine}–${src.endLine} of ${src.totalLines} · SHA-256 ${src.sha256.slice(0,16)}… · source, not executed behavior</div>`;
+}
+function azureView(){
+ const a=D.azure;if(!a.resources.length)return unavailable('Azure declaration evidence is being prepared','No resources are invented while the source review is incomplete.');
+ const groups=[...new Set(a.resources.map(r=>r.layer))];
+ const layers=groups.map(layer=>{
+  const resources=a.resources.filter(r=>r.layer===layer);
+  const cards=resources.map(r=>`<button class="cloud-resource" data-cloud="${esc(r.id)}"><span class="cloud-service">${esc(r.service)}</span><strong>symbol: ${esc(r.name)}</strong><small>${esc(r.role)}</small><small class="mono">${esc(r.type)} @ ${esc(r.apiVersion)}</small><small>${esc(r.file)}:${r.line}${r.conditional?' · CONDITIONAL':''}</small></button>`).join('');
+  return layer==='Authorization grants'?`<details class="cloud-layer"><summary>${esc(layer)} · ${resources.length} declarations</summary><div class="cloud-resources">${cards}</div></details>`:`<section class="cloud-layer"><h3>${esc(layer)}</h3><div class="cloud-resources">${cards}</div></section>`;
+ }).join('');
+ const edges=a.relations.map(r=>`<tr><td>${esc(r.from)} → ${esc(r.to)}</td><td>${esc(r.label)}<br><span class="${r.basis.startsWith('Source')?'fact':'candidate'}">${esc(r.basis)}</span></td><td>${sourceLink(r.file,r.line,'Supporting source')}</td></tr>`).join('');
+ const alternatives=(a.alternateTemplate||[]).map(r=>`<tr><td>${esc(r.name)}${r.existing?' · existing reference':''}</td><td>${esc(r.type)}</td><td>${sourceLink(r.file,r.line,'Template declaration')}</td></tr>`).join('');
+ return `<div class="cloud-grid"><h2>Azure: which services, where, and how</h2><p class="muted">${a.resources.length} resource declarations in main.bicep, including conditional resources. These are not deployed instance counts. Layers are curated groupings; role/configuration intent is not observed connectivity.</p>${layers}<div class="banner"><strong>Not declared in the two inspected roots</strong><p>${esc((a.absentExamples||[]).join(' · '))}. Compute is App Service; application data is Azure SQL.</p></div><h3>How components connect</h3><p class="muted">Containment, references, network permissions, authorization and configured code use are different relationships. No evaluated deployment DAG or live traffic trace was produced.</p><div class="table-wrap"><table class="data-table"><thead><tr><th scope="col">From → to</th><th scope="col">Meaning / certainty</th><th scope="col">Source</th></tr></thead><tbody>${edges}</tbody></table></div><h3>Standalone provider-vault template</h3><p>This is a narrower deployment of the same logical provider vault and grant, using an existing web app. It is not a second application or necessarily an extra vault.</p><table class="data-table"><thead><tr><th scope="col">Symbol</th><th scope="col">Type</th><th scope="col">Source</th></tr></thead><tbody>${alternatives}</tbody></table><div class="banner"><strong>Source now versus design target</strong><p>${esc(a.targetWarning||'')}</p></div></div>`;
+}
+function unavailable(title,text){return `<div class="pane"><h2>${esc(title)}</h2><p>${esc(text)}</p></div>`}
+function comparisonView(){
+ const c=D.comparison;if(!c)return unavailable('Comparison evidence unavailable','No code/spec relationship is invented without a captured comparison.');
+ const rows=c.rows.filter(r=>S.comparisonFilter==='all'||r.classification===S.comparisonFilter);
+ const rowHtml=rows.map(r=>`<tr><td><strong>${esc(r.title)}</strong><p class="muted">${esc(r.documentStatus)}</p><p>${esc(r.requirement)}</p>${sourceLink(r.document.file,r.document.line,'Read governing text')}</td><td><p>${esc(r.evidence)}</p>${sourceLink(r.implementation.file,r.implementation.line,'Inspect implementation')}</td><td><span class="badge ${r.classification==='decision'?'fact':'candidate'}">${esc(r.label)}</span><p style="margin-top:10px">${esc(r.assessment)}</p>${r.decisionId?`<button data-decision="${esc(r.decisionId)}">Why this is not a code defect · decision trail</button>`:'<p class="muted">No overriding decision is asserted for this row.</p>'}</td></tr>`).join('');
+ return `<div class="pane"><h2>As implemented ↔ as specified</h2><p>Compare source, intent <em>and the decisions between them</em>. A missing mapping is not proof of absence; an in-review target is not a failed current requirement.</p><div class="comparison-columns"><section class="comparison-panel"><span class="badge fact">AS IMPLEMENTED · source snapshot</span><h3 style="margin-top:12px">TheTerrace web application</h3><p>One product project and one logical web-app declaration in the inspected source topology.</p><p class="mono">${esc(c.sourceRevision.slice(0,8))}</p>${sourceLink('TheTerrace.slnx',3,'Solution evidence')}${sourceLink('infra/main.bicep',240,'Web declaration')}</section><section class="comparison-panel"><span class="badge candidate">AS SPECIFIED · target in review</span><h3 style="margin-top:12px">Studio + PublicReader + PrivatePreview</h3><p>Selected editorial target. These roles are not promoted to implemented components merely because the document is committed.</p><p class="mono">${esc(c.documentRevision.slice(0,8))} · same revision, different delivery state</p>${sourceLink('docs/architecture.md',34,'Read target status')}</section></div><div class="banner"><strong>Decisions can explain a difference.</strong><p>A located, applicable human instruction or authorized owner/conductor ruling can explain why code differs from older wording. Check authority, scope, acceptance, supersession and remaining gaps. An assistant suggestion alone cannot clear a conflict.</p></div><div class="journey" style="margin-top:16px"><label for="comparison-filter">Show</label><select id="comparison-filter"><option value="all">All curated comparisons</option><option value="decision">Decision-backed exceptions</option><option value="planned">Planned additions</option><option value="uncertain">Uncertain correspondence</option><option value="conflict">Contrary implementation evidence</option></select><span class="muted">${rows.length} of ${c.rows.length} curated rows · no conformance percentage</span></div><div class="table-wrap"><table class="data-table"><thead><tr><th scope="col">Requirement / document authority</th><th scope="col">Implementation evidence</th><th scope="col">Delta and decision context</th></tr></thead><tbody>${rowHtml}</tbody></table></div>${!rows.length?'<div class="banner">No contrary-evidence finding is captured in this sample. That is not a repository compliance verdict.</div>':''}<h3>What a genuine conflict needs</h3><p>An applicable authoritative clause, contrary source evidence within a declared assessment scope, and a check for superseding human/owner/conductor decisions. Missing history stays “decision evidence unavailable,” not “no decision was made.”</p></div>`;
+}
+function openDecision(id){
+ const d=D.comparison?.decisions.find(d=>d.id===id);if(!d)return;
+ $('decision-title').textContent=d.title+' · decision lineage';
+ $('decision-content').innerHTML=`<span class="badge fact">Primary user message located</span><h3>1 · Earlier design wording</h3><p>The blanket immutability statement must be read with its recorded exception.</p>${sourceLink(d.prior.file,d.prior.line,'Earlier wording')}<h3>2 · The instruction that changed the decision</h3><blockquote class="decision-quote">${esc(d.quote)}</blockquote><dl><dt>Actor / authority</dt><dd>${esc(d.actorKind)}. ${esc(d.authorityNote)}</dd><dt>Original location</dt><dd class="mono">Session ${esc(d.sessionId)} · turn ${d.turnIndex}<br>${esc(d.timestamp)}</dd><dt>Scope</dt><dd>${esc(d.scope)}</dd><dt>Reason</dt><dd>${esc(d.reason)}</dd></dl><p class="muted">${esc(d.dateNote)}</p><h3>3 · Follow-on design and source</h3><div class="row">${sourceLink(d.design.file,d.design.line,'Recorded design exception')}${sourceLink(d.implementation.file,d.implementation.line,'Domain amendment source')}</div><p>${esc(d.implementationLimit)}</p><h3>4 · Audit/session linkage and remaining checks</h3><p class="candidate">${esc(d.auditGap)}</p><p>Full later revocation/supersession history is not assessed in this sample. This is evidence against flagging a code defect from the old wording alone, not blanket certification of the current product.</p><p>No owner-model or conductor ruling is invented for this case. Those records need the same actor, delegated authority, accepted status, scope and source anchors before they can resolve a discrepancy.</p><a href="terrace-decision-evidence.json">Open the minimal captured decision record</a><p class="muted">Only the relevant instruction and provenance are captured, not the full session or personal account details.</p>`;
+ $('decision-dialog').showModal();
+}
+function declarationView(){
+ const d=D.declarations.find(d=>d.file===S.file&&d.line===S.line);
+ return d?`<div class="pane"><span class="badge">${esc(d.kind)} · declaration candidate</span><h2 style="margin-top:16px">${esc(d.name)}</h2><pre class="method-signature">${esc(d.prefix)}</pre><p class="mono">${esc(d.file)}:${d.line}</p><p>The declaration is captured from source. Members, resolved inheritance and relationships have not been curated for this type; they are not invented.</p>${sourceLink(d.file,d.line,'Inspect declaration source')}<button data-altitude="component">↑ Feature context</button></div>`:unavailable('Declaration unavailable','The current file identity is retained.');
+}
+function fileTypesView(){
+ const deep=members(),shallow=D.declarations.filter(d=>d.file===S.file&&!deep.some(s=>s.line===d.line));
+ return `<div class="pane"><h2>One file, several declared shapes</h2><p class="mono">${esc(S.file)}</p><p>Choose a type explicitly. A source file is not silently replaced by its first class.</p><table class="data-table"><thead><tr><th scope="col">Type</th><th scope="col">Detail available</th><th scope="col">Anchor</th></tr></thead><tbody>${deep.map(s=>`<tr><td><button data-symbol="${s.id}">${esc(s.name)}</button></td><td>${s.members.length} curated outline entries</td><td>${sourceLink(s.file,s.line,'Source')}</td></tr>`).join('')}${shallow.map(d=>`<tr><td><button data-declaration="${esc(d.id)}">${esc(d.name)}</button></td><td>Lexical ${esc(d.kind)} declaration candidate</td><td>${sourceLink(d.file,d.line,'Source')}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function inspector(){
+ const s=current(),m=selectedMember(),resource=D.azure.resources.find(r=>r.id===S.cloudId);
+ $('selection-title').textContent=resource?resource.service+' / '+resource.name:m?s.name+'.'+m.name:s?.name||S.file.split('/').pop();
+ $('selection-path').textContent=`${S.file}:${S.line}`;$('snapshot-label').textContent=D.meta.shortRevision+' · source snapshot';
+ document.querySelectorAll('[data-inspect]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.inspect===S.inspector)));
+ if(['empty','loading','error'].includes(S.scenario)){$('inspector-content').innerHTML='<p>Inspection unavailable in this simulated extraction state. Navigation identity is retained.</p>';return}
+ const key=D.meta.revision+':'+selectionIdentity(),annotation=S.interpretations[key];
+ if(S.inspector==='interpretation'){
+  if(S.scenario==='ai-unavailable'){$('inspector-content').innerHTML='<h3>AI unavailable</h3><p>Source navigation and diagrams remain usable. No substitute provider is selected.</p>';return}
+  const suggestion=`${s?.name||S.file.split('/').pop()} belongs to the selected ${S.feature} reading scope. Folder membership is established; domain/aggregate ownership needs separate evidence.`;
+  $('inspector-content').innerHTML=`<h3>Optional interpretation</h3><p class="candidate">Simulated AI interaction. No model call or source egress.</p><dl><dt>Context</dt><dd>${esc(S.file)}:${S.line}<br>${D.meta.shortRevision}; selected source and curated relationships only.</dd><dt>Provider / cost</dt><dd>Not connected / not recorded.</dd></dl>${annotation?`<div class="banner"><strong>${annotation.status==='accepted'?'Accepted annotation':annotation.status==='rejected'?'Rejected':'Candidate'}</strong><p>Origin remains simulated interpretation, never source-extracted or runtime-observed.</p></div><label for="annotation">Correct the interpretation</label><textarea id="annotation">${esc(annotation.text)}</textarea><div class="row"><button data-action="accept">Accept annotation</button><button data-action="reject">Reject</button></div>`:`<button class="primary block" data-action="simulate">Simulate an explanation</button>`}<p class="muted" style="margin-top:12px">A class name, folder or database relationship alone cannot establish an aggregate root.</p>`;
+  return;
+ }
+ $('inspector-content').innerHTML=`<h3>${resource?'Service evidence':'Concrete selection'}</h3><p>${resource?esc(resource.role):'Every drill-down keeps the real file, declared symbol and source line. The diagram is a curated reading of this snapshot.'}</p><dl><dt>Identity</dt><dd class="mono">${esc(m?.id||s?.id||S.file)}</dd><dt>Altitude</dt><dd>${esc(S.altitude)}</dd><dt>Source coverage</dt><dd>${source(S.file)?esc(source(S.file).coverage):'Metadata only; source not embedded'}</dd><dt>Confidence boundary</dt><dd>${resource?'Declaration inspected. Layer and runtime role are curated interpretations. Health is not observed.':'Source inspected, not executed. Method outline is a bounded lexical aid; runtime dispatch and completeness are not claimed.'}</dd><dt>Tracked-file scale</dt><dd>${D.meta.counts.trackedFiles.toLocaleString()} paths; ${D.meta.counts.sourceFiles} src files; ${D.meta.counts.featureFolders} feature folders.</dd></dl>${sourceLink(S.file,S.line,'Open supporting source')}<button class="block" data-action="reveal">Reveal in file explorer</button>${knownTrace()?'<button class="block" data-view="sequence">Open walkthrough sequence</button>':''}${s?.id==='contract'||s?.id==='store'?sourceLink('src/TheTerrace/Features/Identity/IdentityRegistration.cs',236,'Inspect DI registration'):''}`;
+}
+function render(){
+ $('repo-badge').textContent=D.meta.repository+' @ '+D.meta.shortRevision;$('source-stat').textContent=`${Object.keys(D.sources).length} curated source files/excerpts · no runtime/model/Azure calls`;
+ const m=selectedMember(),s=current();$('canvas-title').textContent=({system:'TheTerrace, at system altitude',entries:'Entry points and contracts',component:S.feature+' · feature context',classes:S.classStyle==='uml'?'Concrete class structure':'Prediction concepts and relationships',member:m?s.name+'.'+m.name:s?.name||'Member selection',sequence:journey().title+' · sequence',activity:journey().title+' · activity',azure:'Azure layers and components',source:S.file.split('/').pop(),declaration:D.declarations.find(d=>d.file===S.file&&d.line===S.line)?.name||'Declaration',filetypes:'Types in '+S.file.split('/').pop(),compare:'Implementation ↔ specification'})[S.view];
+ $('subtitle').textContent=S.view==='source'?'The lowest altitude: actual file and original source lines. Raise the view without losing the selection.':`Source-backed, curated semantic slice at ${D.meta.shortRevision}. The complete physical file hierarchy stays available on the left.`;
+ $('breadcrumbs').innerHTML=`<button data-altitude="system">TheTerrace.slnx</button><span>›</span><button data-altitude="component">${S.file.startsWith('infra/')?'Azure deployment':esc(S.feature)}</button>${s?`<span>›</span><button data-symbol="${s.id}">${esc(s.name)}</button>`:''}${m?`<span>›</span><button data-member="${esc(m.id)}">${esc(m.name)}</button>`:''}<span>›</span><button data-view="source">${esc(S.file.split('/').pop())}:${S.line}</button>`;
+ document.querySelectorAll('[data-altitude]').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.altitude===S.altitude));b.disabled=b.dataset.altitude==='member'&&!s||b.dataset.altitude==='type'&&!s&&!members().length&&!D.declarations.some(d=>d.file===S.file)});
+ document.querySelectorAll('.work-tabs [data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===S.view||b.dataset.view==='classes'&&S.view==='filetypes')));
+ $('back').disabled=!S.history.length;$('branch').hidden=$('branch-label').hidden=S.journey!=='submit'||!['sequence','activity'].includes(S.view);$('branch').value=S.branch;$('journey').value=S.journey;
+ renderTree();outline();
+ const blocked=['empty','loading','error'].includes(S.scenario);
+ $('banner').hidden=S.scenario==='ready';$('banner').innerHTML=S.scenario==='stale'?'<strong>Source changed: still showing the pinned snapshot.</strong><p>Refresh in this prototype restores the same captured revision; it does not pretend to re-index TheTerrace.</p><button data-action="recover">Keep captured snapshot</button>':S.scenario==='ai-unavailable'?'<strong>AI unavailable.</strong> Static file, class and source journeys remain usable.':blocked?`<strong>${esc(S.scenario==='empty'?'No active index':S.scenario==='loading'?'Refreshing the selected scope':'Extraction did not complete')}</strong><p>No empty-success or invented source is substituted.</p><button data-action="recover">Restore captured evidence</button>`:'';
+ $('export').disabled=blocked;
+ const views={system:systemView,entries:entriesView,component:componentView,classes:classView,member:methodView,sequence:sequenceView,activity:activityView,source:sourceView,azure:azureView,declaration:declarationView,filetypes:fileTypesView,compare:comparisonView};
+ $('canvas').innerHTML=blocked?unavailable('Evidence temporarily unavailable','Use Restore captured evidence. File inventory remains navigable without inventing analysis.')+(S.scenario==='loading'?'<div class="skeleton"></div><div class="skeleton"></div>':''):views[S.view]();
+ $('canvas').querySelectorAll('svg g[role=button]').forEach(g=>{
+  if(g.querySelector('rect.box'))return;
+  const box=g.getBBox(),hit=document.createElementNS('http://www.w3.org/2000/svg','rect');
+  for(const [k,v] of Object.entries({x:box.x-3,y:box.y-3,width:Math.max(24,box.width+6),height:Math.max(24,box.height+6),fill:'transparent','pointer-events':'all','data-hit':''}))hit.setAttribute(k,String(v));
+  g.insertBefore(hit,g.firstChild);
+ });
+ if($('comparison-filter')){$('comparison-filter').value=S.comparisonFilter;$('comparison-filter').onchange=e=>{S.comparisonFilter=e.target.value;render();$('comparison-filter').focus()}}
+ const ids=['component','classes'].includes(S.view)?['card','store','prediction','contract','score','amendment','fixture','lifecycle','scoring']:S.view==='sequence'?journey().participants:[];
+ $('symbol-list').hidden=!ids.length||blocked;$('symbol-list').innerHTML=ids.map(id=>`<button data-symbol="${id}" aria-pressed="${S.symbolId===id}">${esc(symbol(id).name)}</button>`).join('');
+ $('coverage').textContent=`Complete paths: ${D.meta.counts.trackedFiles.toLocaleString()} · ${D.declarations.length} non-migration C# declaration candidates · ${D.symbols.length} deep-curated types/components and ${D.symbols.reduce((n,s)=>n+s.members.length,0)} outline entries. Lexical coverage is not resolved semantic coverage.`;
+ inspector();
+ if(S.view==='source'&&source(S.file))requestAnimationFrame(()=>{const line=$('line-'+S.line),box=$('source-code');if(line&&box)box.scrollTop=Math.max(0,line.offsetTop-box.offsetTop-90)});
+}
+function sourceAction(file,line){const s=D.symbols.filter(s=>s.file===file&&s.line<=line&&line<=s.endLine).sort((a,b)=>b.line-a.line)[0];const m=s?.members.find(m=>m.kind==='method'&&m.line<=line&&line<=m.endLine);openFile(file,line,s?.id||null,m?.id||null)}
+document.addEventListener('click',e=>{
+ const tree=e.target.closest('[data-tree]');if(tree){const key=tree.dataset.tree,row=treeRows.find(r=>r.key===key);S.treeFocus=key;if(row.folder){S.expanded.has(key)?S.expanded.delete(key):S.expanded.add(key);renderTree(true)}else openFile(row.path);return}
+ const member=e.target.closest('[data-member]');if(member){selectMember(member.dataset.member);return}
+ const decl=e.target.closest('[data-declaration]');if(decl){const d=D.declarations.find(d=>d.id===decl.dataset.declaration);if(d)go({view:'declaration',altitude:'type',file:d.file,line:d.line,symbolId:null,memberId:null,selectedMessage:null,cloudId:null});return}
+ const sym=e.target.closest('[data-symbol]');if(sym){selectSymbol(sym.dataset.symbol);return}
+ const src=e.target.closest('[data-source]');if(src){if($('decision-dialog').open)$('decision-dialog').close();sourceAction(src.dataset.source,Number(src.dataset.line));return}
+ const decision=e.target.closest('[data-decision]');if(decision){openDecision(decision.dataset.decision);return}
+ const msg=e.target.closest('[data-message]');if(msg){const m=journey().messages.find(m=>m.id===msg.dataset.message);if(m){sourceAction(m.file,m.line);S.selectedMessage=m.id;say(`Message ${m.label}: exact source ${m.file}:${m.line}. Back returns to the sequence.`)}return}
+ const cloud=e.target.closest('[data-cloud]');if(cloud){const r=D.azure.resources.find(r=>r.id===cloud.dataset.cloud);go({file:r.file,line:r.line,symbolId:null,memberId:null,cloudId:r.id,view:'azure',altitude:'component',selectedMessage:null});return}
+ const feature=e.target.closest('[data-feature]');if(feature){const name=feature.dataset.feature,path='src/TheTerrace/Features/'+name;const file=D.files.find(f=>f.path.startsWith(path+'/'))?.path;S.expanded.add(path);go({feature:name,view:'component',altitude:'component',symbolId:name==='Predictions'?'prediction':null,file:name==='Predictions'?symbol('prediction').file:file||S.file,line:1,memberId:null});return}
+ const a=e.target.closest('[data-altitude]');if(a){altitude(a.dataset.altitude);return}
+ const view=e.target.closest('[data-view]');if(view){showView(view.dataset.view);return}
+ const walk=e.target.closest('[data-walk]');if(walk){startJourney(walk.dataset.walk);return}
+ const style=e.target.closest('[data-class-style]');if(style){go({classStyle:style.dataset.classStyle,view:'classes',altitude:'type'});return}
+ const start=e.target.closest('[data-start]');if(start){$('start-style').value=start.dataset.start;S.startStyle=start.dataset.start;startJourney();return}
+ const preview=e.target.closest('[data-preview]');if(preview){$('preview-title').textContent=preview.dataset.preview+' is outside this study';$('preview-dialog').showModal();return}
+ const tab=e.target.closest('[data-inspect]');if(tab){S.inspector=tab.dataset.inspect;inspector();return}
+ const cursor=e.target.closest('[data-cursor]');if(cursor){sourceAction(S.file,Number(cursor.dataset.cursor));$('source-code')?.focus();say(`Selected source line ${S.line}.`);return}
+ const action=e.target.closest('[data-action]')?.dataset.action;
+ if(action==='recover'){S.scenario='ready';$('scenario').value='ready';render();$('canvas-title').focus();say('Restored the captured source snapshot; no live refresh occurred.')}
+ if(action==='reveal'){revealAncestors(S.file);S.search='';$('file-search').value='';renderTree(true)}
+ if(action==='folder-source'){S.treeMode='files';S.search='src/TheTerrace/Features/'+S.feature+'/';$('file-search').value=S.search;renderTree()}
+ if(action==='predictions'){go({feature:'Predictions',view:'component',altitude:'component',symbolId:'prediction',file:symbol('prediction').file,line:symbol('prediction').line})}
+ const key=D.meta.revision+':'+selectionIdentity();
+ if(action==='simulate'){S.interpretations[key]={status:'candidate',text:`${current()?.name||S.file.split('/').pop()} participates in ${S.feature}. The role is a candidate reading, not a proven aggregate boundary.`};inspector();$('inspector-content').focus()}
+ if(action==='accept'||action==='reject'){S.interpretations[key]={status:action==='accept'?'accepted':'rejected',text:$('annotation').value};inspector();$('inspector-content').focus();say('Interpretation disposition recorded for this symbol and snapshot only.')}
+ if(e.target.id==='go-line'){const n=Number($('line-jump').value),src=source(S.file);if(!Number.isInteger(n)||n<src.startLine||n>src.endLine||src.lineNumbers&&!src.lineNumbers.includes(n)){say(`Line ${n} is not embedded in the captured source; source is not substituted.`);return}sourceAction(S.file,n);$('source-code').focus()}
+});
+document.addEventListener('keydown',e=>{if(['Enter',' '].includes(e.key)&&e.target.matches('g[data-symbol],text[data-member],g[data-message],g[data-source]')){e.preventDefault();e.target.dispatchEvent(new MouseEvent('click',{bubbles:true}))}});
+$('file-search').oninput=e=>{S.search=e.target.value;renderTree()};$('reveal-file').onclick=()=>{S.search='';$('file-search').value='';revealAncestors(S.file);renderTree(true)};
+$('collapse-all').onclick=()=>{S.expanded.clear();S.treeFocus='';renderTree(true)};
+$('tree-solution').onclick=()=>{S.treeMode='solution';renderTree()};$('tree-files').onclick=()=>{S.treeMode='files';renderTree()};
+$('back').onclick=()=>{const prior=S.history.pop();if(prior){Object.assign(S,prior);revealAncestors(S.file);render();$('canvas-title').focus();say('Restored the previous file, member, view and branch.')}};
+$('start-style').onchange=e=>{S.startStyle=e.target.value;if(S.startStyle==='files')startJourney();else go({view:'system',altitude:'system'})};
+$('journey').onchange=e=>startJourney(e.target.value);$('journey-start').onclick=()=>startJourney();
+$('branch').onchange=e=>{go({branch:e.target.value});say(`Hypothetical source branch: ${S.branch}; not an observed execution.`)};
+$('theme').onchange=e=>{document.body.classList.remove('light','hc');if(e.target.value!=='dark')document.body.classList.add(e.target.value)};
+$('scenario').onchange=e=>{S.scenario=e.target.value;render()};$('reduced').onchange=e=>document.body.classList.toggle('reduced',e.target.checked);
+$('close-preview').onclick=()=>$('preview-dialog').close();
+$('close-decision').onclick=()=>$('decision-dialog').close();
+$('export').onclick=()=>{const payload={kind:'code-atlas-view',version:2,repository:D.meta.repository,revision:D.meta.revision,sourceState:D.meta.sourceState,...snapshot(),treeMode:S.treeMode,expanded:[...S.expanded],interpretations:S.interpretations,limits:D.meta.scope};const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='theterrace-code-atlas-view.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);say('Exported source-backed view identity and its declared limits.')};
+function audit(){
+ const css=getComputedStyle(document.body),rgb=c=>{const el=document.createElement('span');el.style.color=c;document.body.append(el);const x=getComputedStyle(el).color.match(/[\d.]+/g).slice(0,3).map(Number);el.remove();return x};
+ const lum=a=>a.map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4}).reduce((n,v,i)=>n+v*[.2126,.7152,.0722][i],0);
+ const pairs=[['--text','--surface'],['--muted','--raised'],['--candidate','--raised'],['--ink','--accent']].map(([f,b])=>{const a=lum(rgb(css.getPropertyValue(f))),c=lum(rgb(css.getPropertyValue(b)));return{foreground:f,background:b,ratio:Number(((Math.max(a,c)+.05)/(Math.min(a,c)+.05)).toFixed(2)),minimum:4.5}});
+ return{pairs,trackedPaths:D.files.length,curatedSources:Object.keys(D.sources).length,sourceRevision:D.meta.revision,renderedTreeRows:treeRows.length,nativeProof:'not established; standalone browser prototype'};
+}
+$('audit').onclick=()=>{$('audit-output').hidden=false;$('audit-output').textContent=JSON.stringify(audit(),null,2)};
+window.codeAtlas={getState:()=>({...snapshot(),startStyle:S.startStyle,treeMode:S.treeMode,scenario:S.scenario,revision:D.meta.revision,historyDepth:S.history.length}),getAudit:audit,getInventory:()=>D.files.map(f=>f.path)};
+const initial=new URLSearchParams(location.search);
+if(initial.get('journey')==='settle'){const j=D.journeys.find(j=>j.id==='settle');S.journey=j.id;S.symbolId=j.start;S.file=j.file;S.line=j.line}
+if(initial.get('start')==='visual'){S.startStyle='visual';S.view='system';S.altitude='system';$('start-style').value='visual'}
+revealAncestors(S.file);render();say(`TheTerrace ${D.meta.shortRevision}. File-first: select SubmitAsync in the outline, then step up to its class or sequence.`);
+})();
+</script>
+</body>
+</html>

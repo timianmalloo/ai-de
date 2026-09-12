@@ -1,0 +1,6 @@
+{
+  "back_mixes_card_with_settlement": true,
+  "read_operation_routed_to_write_sequence": true,
+  "uml_hides_visible_operation_name": true,
+  "visible_signature": "- static async Task<(int Scored, int C\u2026"
+}

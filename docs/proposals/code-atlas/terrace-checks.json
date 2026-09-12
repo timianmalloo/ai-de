@@ -1,0 +1,119 @@
+{
+  "source_revision": "dba2a29c868d9844cb144d693555265d071ecdeb",
+  "complete_tracked_inventory": 2531,
+  "declaration_prefixes_checked": 1008,
+  "source_hashes_and_original_lines_checked": 18,
+  "source_repository_clean": true,
+  "file_first_member_sequence_exact_source_and_back": true,
+  "back_restores_journey_not_just_file": true,
+  "hypothetical_branches_distinct": true,
+  "visual_first_concepts_uml_member_source": true,
+  "multiple_types_in_one_file_not_conflated": true,
+  "settlement_sequence_to_callsite": true,
+  "uml_names_and_parameters_visible": "- ScoreAsync(\u2026) : Task<(int Scored, in\u2026",
+  "read_only_selection_does_not_invent_write_trace": true,
+  "broad_feature_declarations_and_missing_body": true,
+  "physical_explorer_filter_empty_and_keyboard_expand": true,
+  "azure_families_layers_roles_source_and_absences": true,
+  "sparse_source_never_invents_intervening_lines": true,
+  "export_retains_real_source_identity": true,
+  "sampled_theme_contrast": [
+    {
+      "theme": "dark",
+      "pairs": [
+        {
+          "foreground": "--text",
+          "background": "--surface",
+          "ratio": 14.98,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--muted",
+          "background": "--raised",
+          "ratio": 6.48,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--candidate",
+          "background": "--raised",
+          "ratio": 7.48,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--ink",
+          "background": "--accent",
+          "ratio": 6.6,
+          "minimum": 4.5
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "pairs": [
+        {
+          "foreground": "--text",
+          "background": "--surface",
+          "ratio": 15.29,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--muted",
+          "background": "--raised",
+          "ratio": 6.39,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--candidate",
+          "background": "--raised",
+          "ratio": 6.36,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--ink",
+          "background": "--accent",
+          "ratio": 6.22,
+          "minimum": 4.5
+        }
+      ]
+    },
+    {
+      "theme": "hc",
+      "pairs": [
+        {
+          "foreground": "--text",
+          "background": "--surface",
+          "ratio": 21,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--muted",
+          "background": "--raised",
+          "ratio": 21,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--candidate",
+          "background": "--raised",
+          "ratio": 19.56,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--ink",
+          "background": "--accent",
+          "ratio": 19.56,
+          "minimum": 4.5
+        }
+      ]
+    }
+  ],
+  "hard_states_and_static_fallback": true,
+  "browser_widths": [
+    1600,
+    1280,
+    1024,
+    768
+  ],
+  "named_preview_dialog": true,
+  "page_errors": [],
+  "remote_requests": []
+}

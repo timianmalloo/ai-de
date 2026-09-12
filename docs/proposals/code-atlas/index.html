@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="dark light">
-<title>Code Atlas | AI-DE Architecture workspace proposal</title>
+<title>Code Atlas 02 | TheTerrace, from solution to source</title>
 <style>
 :root {
   --surface:#12151A; --raised:#1A1F26; --sunken:#0D1014; --border:#2A313B;
@@ -104,17 +104,19 @@ footer { padding:var(--s6) 0; font-size:13px; color:var(--muted) }
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2 22 7 12 12 2 7Z M2 12l10 5 10-5 M2 17l10 5 10-5"/></svg>
     AI-DE <span class="muted">/ Architecture studies</span>
   </div>
-  <div class="row"><span class="tag">Proposal 01 · 12 Sep 2026</span><button id="theme" type="button" aria-pressed="false">Light theme</button></div>
+  <div class="row"><span class="tag">Proposal 02 · TheTerrace · 12 Sep 2026</span><button id="theme" type="button" aria-pressed="false">Light theme</button></div>
 </header>
 <div class="layout">
 <nav aria-label="Proposal sections">
   <div class="label">CODE ATLAS</div>
   <a href="#thesis" aria-current="location">01 / The proposition</a>
-  <a href="#experience">02 / The workspace</a>
+  <a href="#terrace">02 / The real repository</a>
+  <a href="#experience">03 / Two entrances, five altitudes</a>
   <a href="#operations">03 / Operation catalogue</a>
   <a href="#evidence-model">04 / Static analysis + AI</a>
   <a href="#scale">05 / Diagrams that scale</a>
   <a href="#azure">06 / Azure architecture</a>
+  <a href="#comparison">Implementation ↔ specification</a>
   <a href="#foundation">07 / Fit with AI-DE</a>
   <a href="#delivery">08 / Delivery options</a>
   <a href="#decisions">09 / Iteration decisions</a>
@@ -123,23 +125,25 @@ footer { padding:var(--s6) 0; font-size:13px; color:var(--muted) }
 </nav>
 <main id="main">
 <section id="thesis">
-  <div class="eyebrow">A REPOSITORY IS A SYSTEM, NOT A PILE OF FILES</div>
-  <h1>Find where work enters.<br>Follow what happens.<br>Understand why it is shaped this way.</h1>
-  <p class="lead">Code Atlas is a proposed evolution of AI-DE's <strong>Architecture</strong> perspective:
-  a source-backed workspace for moving from the whole system to one meaningful behavior, without
-  losing your bearings or confusing a model's interpretation with evidence.</p>
-  <div class="row actions"><a class="button primary" href="mockup.html">Explore the interactive mockup</a><a class="button" href="#operations">Browse the operations</a></div>
+  <div class="eyebrow">START WITH A FILE OR A SYSTEM. ARRIVE AT THE SAME SOURCE.</div>
+  <h1>TheTerrace, from solution<br>to architecture — and all<br>the way down to a line of code.</h1>
+  <p class="lead">Code Atlas now begins in a real repository. A familiar solution explorer and a
+  visual-first overview converge on the same component, class, member and source identity.
+  The useful abstraction from revision 1 stays; it is no longer the only way in.</p>
+  <div class="row actions"><a class="button primary" href="mockup.html?start=files">Start file-first</a><a class="button" href="mockup.html?start=visual">Start visual-first</a><a class="button" href="mockup.html?journey=settle">Walk the scoring journey</a></div>
   <div class="notice">
-    <p><strong class="candidate">Exploratory, not approved.</strong> This is a proposal and a synthetic
-    interaction prototype, not a product implementation. Claude's UI/session work remains untouched.</p>
+    <p><strong class="candidate">Exploratory, not approved.</strong> The file inventory and curated
+    source are from TheTerrace at <code>dba2a29c</code>. Diagrams are reconstructed from source,
+    not observed runtime traces. AI interactions remain simulated. Neither TheTerrace nor
+    Claude's product code is changed.</p>
     <p><strong>One Architecture destination, not another app.</strong> The accepted shell already
     has Coding, Explore and Architecture. We deepen Architecture's contents and use its planned
     sidebar icon and retained docking host. “Code Atlas” is the study name, not a fourth perspective.</p>
   </div>
   <div class="twocol">
-    <div><h2>What the developer should gain</h2><p>Within a few purposeful moves: “These are the ways
-    into this system; this is the domain concept that matters; this is the path this request can
-    take; these dependencies contradict the architecture we intended.”</p></div>
+    <div><h2>What the developer should gain</h2><p>“I can find the file where I would normally start,
+    inspect its real members, understand the larger behavior around them, then open the precise
+    source behind a diagram arrow without losing my place.”</p></div>
     <div><h2>What we should not build</h2><p>A repository-sized class diagram, an attractive but
     unverifiable AI architecture poster, or a chat window that makes the user describe a symbol
     already selected on screen.</p></div>
@@ -148,44 +152,99 @@ footer { padding:var(--s6) 0; font-size:13px; color:var(--muted) }
   of the same evidence, and keep every answer connected to its source.</strong></p>
 </section>
 
+<section id="terrace">
+  <div class="eyebrow">MEASURED REPOSITORY, DECLARED SEMANTIC COVERAGE</div>
+  <h2>A useful step up from the toy fixture</h2>
+  <p>TheTerrace is a private football club-room application built with ASP.NET Core / Blazor on
+  .NET 10. Its solution contains one product project and three test/compatibility projects.
+  It is not a set of independently deployed feature microservices.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Measured input</th><th scope="col">Count</th><th scope="col">What the number means</th></tr></thead>
+    <tbody>
+      <tr><td>Tracked files</td><td>2,531</td><td>Complete git-tracked path inventory, including docs, tools and the installed methodology pack.</td></tr>
+      <tr><td>Source-tree files</td><td>577</td><td>474 C# files, 85 Razor files and other source-tree content.</td></tr>
+      <tr><td>Feature folders</td><td>31</td><td>Physical groups under Features; not asserted bounded contexts or services.</td></tr>
+      <tr><td>Declaration candidates</td><td>1,008</td><td>Lexical scan of non-migration C#; partial/nested/conditional declarations are not a count of distinct compiled types.</td></tr>
+      <tr><td>Test-tree files</td><td>401</td><td>Files, not a test-case count or coverage percentage.</td></tr>
+      <tr><td>Migration C# files</td><td>127</td><td>Visible in the explorer, collapsed by default.</td></tr>
+      <tr><td>Physical C# lines</td><td>194,702 / 65,437</td><td>All source C# / excluding Migrations. Neither is described as pure hand-authored code.</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Snapshot:</strong> <code>dba2a29c868d9844cb144d693555265d071ecdeb</code>, clean at capture.
+  The prototype contains the complete path inventory and a declared subset of source bodies and
+  semantic models. It does not claim complete semantic analysis of 2,531 files.</p>
+  <p><strong>The source changes the design:</strong> prediction submission starts in a Razor
+  component event, not an invented REST endpoint. <code>PredictCard.SubmitAsync</code> calls
+  <code>IPredictionStore.SubmitAsync</code>; registration points at <code>PredictionStore</code>.
+  The server reads kickoff and its own clock before refusing, revising or creating a prediction.</p>
+  <p><strong>A second real journey:</strong> <code>PredictionLifecycle.RunAsync</code> calls
+  <code>PredictionSettlement.SettleAsync</code>, conditionally saves seals, calls the pure
+  <code>PredictionScoring.Score</code>, and performs the final save. The sequence can descend
+  to the actual formula rather than stopping at a service box.</p>
+  <div class="notice"><p><strong class="candidate">Architecture intent and source disagree in time.</strong>
+  TheTerrace's current <code>docs/architecture.md</code> is an <em>in-review editorial-pivot target</em>.
+  It explicitly replaces the description, not the running system (lines 34–45). Studio,
+  PublicReader and PrivatePreview are selected target hosts, not source components to invent in
+  this mockup. The current-source view stays one feature-organized web application; the target
+  is a separate, labelled design input.</p></div>
+</section>
+
 <section id="experience">
-  <div class="eyebrow">ONE SELECTION · MANY USEFUL WAYS TO READ IT</div>
-  <h2>A linked workstation, not a dashboard</h2>
-  <p>Use a familiar solution explorer for orientation and a graph for relationships. Both are
-  projections of the same scoped snapshot. Switching between them preserves selection, filters
-  and history. A question lens changes the analysis, not the repository or the active perspective.</p>
+  <div class="eyebrow">PHYSICAL FILES, SEMANTIC TYPES, ARCHITECTURAL MEANING</div>
+  <h2>Two ways in. Five explicit altitudes.</h2>
+  <p><strong>The correction:</strong> revision 1's graph-to-tree toggle was still a small semantic
+  sample. Developers need the actual solution, project, folder and file hierarchy, including
+  files with no semantic representation. A permanent Solution Explorer supplies that grounding;
+  visual navigation is another entrance, not a replacement.</p>
   <div class="diagram" aria-label="Workspace structure">
     <div class="pipeline">
-      <div class="stage"><span class="num">ORIENT</span><b>Repository navigator</b><p>Projects → folders →
-      files → symbols. Or a bounded graph overview. Search within scope; distinguish excluded,
-      unindexed and unsupported content.</p></div>
-      <div class="stage"><span class="num">UNDERSTAND</span><b>Question canvas</b><p>Entry points, domain,
-      classes, layers, deployment and impact. Each opens at the right level of detail, never with
-      every node expanded.</p></div>
-      <div class="stage"><span class="num">CHALLENGE</span><b>Evidence inspector</b><p>Source at the input
-      revision, relation type, extractor, coverage, caveats and candidate interpretations.
-      Open the evidence behind an arrow, not only behind a box.</p></div>
+      <div class="stage"><span class="num">FILE-FIRST</span><b>Solution Explorer + source</b><p>Real
+      projects, expandable folders, filenames and extensions, an editor and member outline.
+      Step up from a file or member to a class, component or behavior.</p></div>
+      <div class="stage"><span class="num">VISUAL-FIRST</span><b>Overview + entry points</b><p>Choose a
+      feature, preserve the concept map, then switch to concrete UML. Descend through members
+      and messages to the code that supports the diagram.</p></div>
+      <div class="stage"><span class="num">SAME IDENTITY</span><b>Evidence + return path</b><p>Explorer,
+      breadcrumb, class, sequence and source agree on identity and revision. Back restores
+      the previous altitude and branch, not just a node name.</p></div>
     </div>
   </div>
   <p><strong>Chosen UX archetype:</strong> a linked multi-panel workstation, closest to the technical
   catalogue's G6. Developers read structure and evidence in parallel, then narrow their scope.
   This is not a sequential form or a chat-first workflow.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Altitude</th><th scope="col">Question</th><th scope="col">TheTerrace stop</th></tr></thead>
+    <tbody>
+      <tr><td>1 · System</td><td>What is this application made of?</td><td>One web product project, test projects, feature folders and the separate Azure deployment view.</td></tr>
+      <tr><td>2 · Component / feature</td><td>Which responsibility matters here?</td><td>Predictions: UI entry, submission policy, domain model, persistence and lifecycle.</td></tr>
+      <tr><td>3 · Type</td><td>What structure and relationships exist?</td><td>Concept map or concrete UML for Prediction, store/interface, score, amendment and Fixture.</td></tr>
+      <tr><td>4 · Member</td><td>What does this operation do?</td><td>SubmitAsync, SettleAsync and Score: signature, source branches, sequence and supporting calls.</td></tr>
+      <tr><td>5 · Source line</td><td>What is the exact code?</td><td>Actual file text, original line numbers, member outline, source hash and full-file/excerpt disclosure.</td></tr>
+    </tbody>
+  </table></div>
+  <p>A file is not a class: <code>Prediction.cs</code> contains both Prediction and
+  PredictionAmendment; PredictionStore.cs contains the interface and implementation.
+  File, type and member identities must remain distinct. Source navigation cannot simply
+  pick whichever type was first in a file.</p>
   <div class="walk">
-    <h3>Journey 1 — “What happens when an order is submitted?”</h3>
-    <p><strong>Entry points → POST /orders → Trace behavior.</strong> Inspect the contract and
-    handler, then pivot through candidate sequence, activity branches and data movement.
-    A DI or message-bus dispatch we cannot resolve stays an explicit gap. Ask the bound model
-    to explain that slice, not the entire repository. Open each cited method in source.</p>
-    <h3>Journey 2 — “What is the core domain?”</h3>
-    <p><strong>Domain → Orders candidate boundary → Order.</strong> See identity, invariants,
-    methods that change state and collaborating value objects. Review an AI suggestion that
-    Order is an aggregate root. Accept it as an architectural annotation or reject it.
-    A class called “Entity” or an ORM key is evidence to inspect, not proof of an aggregate.</p>
-    <h3>Journey 3 — “What runs in Azure, and how does this code reach it?”</h3>
-    <p><strong>Azure → deployment root + parameter set → API module.</strong> Expand App Service,
-    identity, secret store and data resources. Switch the relationship legend between deployment
-    dependencies and proposed runtime links. An unresolved module or conditional resource remains
-    visible. Follow a code-to-resource candidate through configuration evidence.</p>
+    <h3>Journey 1 — developer: file → member → sequence → source</h3>
+    <p><strong>Solution Explorer → Components/Shared/PredictCard.razor → SubmitAsync.</strong>
+    Read the real component, choose the member in its outline, and open the source-reconstructed
+    sequence. Choose the new, revised or closed branch. Activate a message to open its exact call
+    site, then return with Back. Inspect the interface registration before assuming its implementation.</p>
+    <h3>Journey 2 — architect: system → feature → concept → UML → method</h3>
+    <p><strong>Overview → Predictions → Class model.</strong> Keep the concept map for orientation.
+    Concrete UML adds visibility, property types, method signatures and interface realization.
+    PredictionScore and amendment associations have EF mapping evidence. A FixtureId field alone
+    is only a logical reference. Select a member and descend to its source body.</p>
+    <h3>Journey 3 — scheduled behavior → settlement → pure function</h3>
+    <p><strong>Settle and score → PredictionLifecycle.RunAsync → SettleAsync → Score.</strong>
+    Inspect the intermediate save, the actual scoring formula and the test that describes exact
+    score and correct-result points. Tests are read as evidence, not reported as executed or as coverage.</p>
+    <h3>Journey 4 — cloud layer → named service → declaration</h3>
+    <p><strong>Azure layers → compute, data, secrets, storage and observability.</strong>
+    Each component identifies its Azure service family, role, declaring Bicep and connection semantics.
+    AKS and Cosmos DB are examples of service vocabulary, not boxes to invent if absent from this repository.</p>
   </div>
   <h3>Make investigation feel continuous</h3>
   <ul>
@@ -236,8 +295,8 @@ footer { padding:var(--s6) 0; font-size:13px; color:var(--muted) }
   </table>
   </div>
   <p id="no-ops" hidden>No operations match. Clear the search or choose another horizon.</p>
-  <p class="print-note">The mockup samples seven lenses and the entry-point trace pivots. This catalogue
-  is intentionally wider than the prototype and wider than a first implementation.</p>
+  <p class="print-note">The repository-backed mockup demonstrates two complete code journeys and
+  cloud layer/component drill-down. This catalogue remains wider than the prototype and a first implementation.</p>
 </section>
 
 <section id="evidence-model">
@@ -356,6 +415,30 @@ footer { padding:var(--s6) 0; font-size:13px; color:var(--muted) }
   <p>Start with the Bicep declaration graph. A richer cloud architecture explanation is a second,
   separately labelled layer. No Azure subscription connection, deployment or live resource query
   is needed for the first slice.</p>
+  <h3>TheTerrace: actual layers and named service families</h3>
+  <p>The inspected main template contains <strong>24 resource declarations</strong>, including
+  conditional resources. That is not a deployed-instance count. The layer grouping below is
+  curated; resource types and source references were checked against the pinned files.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Layer</th><th scope="col">What is declared</th><th scope="col">Used where and how</th></tr></thead>
+    <tbody>
+      <tr><td>Ingress / compute</td><td>Linux App Service Plan + Linux App Service Web App</td><td>Hosts the ASP.NET Core / Blazor application and in-process workers. HTTPS endpoint; plan and integration-subnet references. No AKS declaration.</td></tr>
+      <tr><td>Network / service access</td><td>Virtual Network, App Service integration subnet, SQL VNet rule</td><td>Subnet delegation and Storage/Key Vault/SQL service endpoints; referenced by resource network rules. Connectivity is not observed.</td></tr>
+      <tr><td>Application data</td><td>Azure SQL server + Azure SQL Database</td><td>EF Core's SQL Server provider is registered in Program.cs:330. No Cosmos DB database-account declaration in the inspected roots.</td></tr>
+      <tr><td>Protection-state storage</td><td>Storage account → Blob service → Data Protection container</td><td>Program.cs:1194 persists Data Protection keys to Blob Storage. This is not assumed to be a media or editorial-asset store.</td></tr>
+      <tr><td>Keys / configuration</td><td>Configuration Key Vault + wrapping key</td><td>Configuration uses the vault and managed identity (Program.cs:1172–1174); Data Protection keys are protected with Key Vault at line 1195.</td></tr>
+      <tr><td>Provider credential custody</td><td>A separate provider Key Vault</td><td>Program.cs:1234–1235 configures SecretClient and the provider credential store. Provider keys are read/written here, not displayed or stored as database values.</td></tr>
+      <tr><td>Observability</td><td>Application Insights + Log Analytics workspace</td><td>Insights references the workspace; Program.cs:377 configures Azure Monitor. Telemetry delivery is not tested by this study.</td></tr>
+      <tr><td>Outbound communication</td><td>Azure Communication Services, Email Communication Service, domain and sender</td><td>Domain/sender containment and a linked-domain reference establish the configured email capability, not a successful email send.</td></tr>
+      <tr><td>Authorization</td><td>Five role-assignment declarations using the web-app principal</td><td>Resource-scoped grants; configuration-vault secret access is conditional on enableExternalId. Declared grants are not effective-permission proof.</td></tr>
+    </tbody>
+  </table></div>
+  <p><code>infra/provider-vault.bicep</code> is an alternative narrow deployment surface: its web app
+  is an <strong>existing reference</strong> and its provider vault/grant overlap the main template.
+  It must not be drawn as an extra application or necessarily another vault.</p>
+  <p><strong>AKS and Cosmos DB are not declared in these two inspected roots.</strong> A future
+  repository using them should get those named service types and roles. Adding them to this
+  diagram just because they were examples would make the mockup misleading.</p>
   <div class="table-wrap"><table>
     <thead><tr><th scope="col">Representation</th><th scope="col">Derivation</th><th scope="col">Important boundary</th></tr></thead>
     <tbody>
@@ -371,6 +454,49 @@ footer { padding:var(--s6) 0; font-size:13px; color:var(--muted) }
   extractor has different guarantees from the Bicep compiler. If richer semantics need compiler
   output, pin its version, constrain module restore/network access, preserve source maps, and
   label missing inputs. Never use AI to silently repair a compiler failure.</p>
+</section>
+
+<section id="comparison">
+  <div class="eyebrow">SOURCE, INTENT, AND THE DECISIONS THAT CONNECT THEM</div>
+  <h2>As implemented versus as specified</h2>
+  <p>This should be a first-class reading view, not just a Git diff. Compare the implemented
+  source snapshot with selected specification/architecture clauses, preserving each document's
+  status and authority. Show the correspondence and its evidence before assigning a verdict.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Finding</th><th scope="col">What it means</th><th scope="col">Decision evidence needed</th></tr></thead>
+    <tbody>
+      <tr><td>Aligned evidence</td><td>The assessed source supports an applicable clause within the declared scope.</td><td>Governing version, source anchors and the check performed; not blanket product certification.</td></tr>
+      <tr><td>Decision-backed exception</td><td>The source follows an applicable later instruction or ruling rather than older wording.</td><td>Original prompt or authorized owner/conductor call, actor, scope, accepted status, supersession and implementation anchor.</td></tr>
+      <tr><td>Planned addition</td><td>A draft/future target has no mapped source counterpart in the inspected scope.</td><td>Target status and release horizon. Do not call this a violation of current requirements.</td></tr>
+      <tr><td>Contrary implementation evidence</td><td>Source contradicts an applicable authoritative clause after checking relevant decisions.</td><td>Both sides of the contradiction, plus any competing, rejected, scoped or superseding decisions. Never infer “no decision” from a missing record.</td></tr>
+      <tr><td>Uncertain correspondence / not assessed</td><td>The mapping or coverage is insufficient to decide.</td><td>State what was inspected and the missing evidence. Similar names, or two things both called workers, do not establish identity.</td></tr>
+    </tbody>
+  </table></div>
+  <h3>A real TheTerrace decision trail</h3>
+  <p>The earlier prediction design contains blanket immutability wording. I located the
+  <strong>primary user instruction</strong> permitting administrator amendments in local session
+  <code>a653ef29-df17-44c4-b3a0-0e9dc99bb32f</code>, turn <code>71</code>,
+  recorded at <code>2026-08-02T03:34:53.063Z</code>:</p>
+  <blockquote class="callout">yes an admin should be able amend a sealed prediction<br>finish these</blockquote>
+  <p>The design explicitly records the exception at <code>docs/design/prediction.md:45</code>;
+  <code>Prediction.Amend</code> at line 119 implements the domain capability. A comparison that
+  reads only the older blanket sentence would produce a misleading code-conflict finding.
+  The view instead opens the decision trail and its boundaries.</p>
+  <p><strong>Keep the limits:</strong> the design is historical/pre-pivot and proposed; current
+  administrator UI reachability, caller authorization and later revocation history are not
+  assessed by this sample. The relevant session turn was found, but a matching linked record was
+  not located in the inspected audit/change logs. That linkage gap is displayed, not hidden.</p>
+  <h3>Owner and conductor calls belong in the same chain</h3>
+  <p>A decision card should carry <strong>actor and role, authority/delegation, scope, effective
+  order, accepted/rejected status, rationale, supersedes/superseded-by links, audit ID and session
+  turn</strong>. Human instructions and properly authorized owner/conductor rulings can explain a
+  difference. A model's unaccepted suggestion cannot silently become the governing requirement.
+  A timestamp alone does not prove authority or causality.</p>
+  <p>Use the same source/altitude navigation to inspect either side: clause → decision → source
+  method → diagram, and back. AI can suggest mappings and explain discrepancies; deterministic
+  checks and explicit review govern classification. No universal conformance percentage is
+  proposed without an established denominator and assessed coverage.</p>
+  <a class="button primary" href="mockup.html">Open the mockup → Implementation ↔ spec</a>
 </section>
 
 <section id="foundation">
@@ -431,7 +557,7 @@ footer { padding:var(--s6) 0; font-size:13px; color:var(--muted) }
   <div class="table-wrap"><table>
     <thead><tr><th scope="col">Slice</th><th scope="col">User outcome</th><th scope="col">Exit evidence</th><th scope="col">Coordination boundary</th></tr></thead>
     <tbody>
-      <tr><td>0 · This study</td><td>Agree the workspace, operations and evidence model using the HTML prototype.</td><td>Requested lenses reachable; graph/tree pivot; wrong-answer and incomplete states visible. Fixture data labelled.</td><td>Only new proposal artifacts, own worktree. No app change.</td></tr>
+      <tr><td>0 · This study</td><td>Agree the file-first and visual-first journeys using the TheTerrace prototype.</td><td>Both entrances reach class/member/sequence/source and return; full physical inventory and curated semantic coverage are distinguished.</td><td>Only proposal artifacts, own worktree. No app or TheTerrace change.</td></tr>
       <tr><td>1 · Orient and follow</td><td>Open Architecture, find an entry point, inspect a class and follow a bounded possible call path.</td><td>One supported framework/language fixture end-to-end; graph/tree selection identity; explicit dispatch gaps; source anchor preservation; large-scope bounds.</td><td>After Shell's host/registry seams settle. Negotiate Core query and rendering ownership.</td></tr>
       <tr><td>2 · Domain and layers</td><td>Get reviewable domain and architecture interpretations from the bound model.</td><td>Independent eval admission, context/egress review, provenance validator, abstention and revision invalidation; static-only path remains useful.</td><td>Dedicated analysis contract, not an edit to the active Conversation compile lane.</td></tr>
       <tr><td>3 · Azure and data</td><td>Understand one Bicep deployment root and join it to source/config; inspect an evidenced ER model.</td><td>Conditions/loops/existing resources/module failures; distinct edge semantics; ambiguity-aware joins; no live deployment claim.</td><td>Extractor and projection slice; no cloud write authority.</td></tr>
@@ -498,8 +624,34 @@ footer { padding:var(--s6) 0; font-size:13px; color:var(--muted) }
   <h2>What this proposal rests on</h2>
   <p><strong class="fact">Verified document content:</strong> the cited specs and architecture define the
   current direction and boundaries. <strong class="candidate">Proposed / inferred:</strong> interaction
-  choices, initial display budgets and delivery order. <strong>Fixture:</strong> every concrete
-  repository diagram in the mockup. None of those categories silently becomes implemented behavior.</p>
+  choices, initial display budgets and delivery order. <strong>Repository-backed:</strong> TheTerrace
+  paths, selected source bodies, declarations and call-site anchors at dba2a29c.
+  <strong>Curated:</strong> diagrams and architectural groupings, not automated whole-repository
+  analysis. <strong>Simulated:</strong> AI interaction. None implies observed runtime behavior.</p>
+  <h3>TheTerrace source anchors</h3>
+  <ul class="source-list">
+    <li><code>TheTerrace.slnx</code>: one src project and three tests/compatibility projects.</li>
+    <li><code>Components/Shared/PredictCard.razor:29,85–100</code>: event, submission and reload;
+    <code>Components/Pages/MatchCentre.razor:1,148</code>: route and component placement.</li>
+    <li><code>Features/Predictions/PredictionStore.cs:81–117</code>: fixture lookup, server deadline,
+    existing/new branch and saves; <code>Features/Identity/IdentityRegistration.cs:236</code>: binding.</li>
+    <li><code>Features/Predictions/Prediction.cs:26,87,103,119,144,148</code>: types and invariant-bearing members.</li>
+    <li><code>Infrastructure/Data/AppDbContext.cs:2158–2206</code>: prediction uniqueness and score/amendment relationships.</li>
+    <li><code>PredictionLifecycle.cs:39–51</code>, <code>PredictionSettlement.cs:59–70,123</code>
+    and <code>PredictionScoring.cs:25–43</code>: scheduled settlement and the pure scoring rule.</li>
+    <li><code>tests/TheTerrace.Tests/PredictionTests.cs:25–36,57–64,169–182</code>:
+    scoring, deadline boundary and uniqueness assertions. Located/read, not executed in this task.</li>
+    <li><code>infra/main.bicep:163–670</code>: network, compute, SQL, storage, Key Vault,
+    observability, communication and grants. Only verified declaration/reference lines are embedded;
+    parameters and secret configuration values are not copied.</li>
+    <li><code>infra/provider-vault.bicep:39,43,73</code>: existing web reference and overlapping
+    provider-vault deployment. <code>docs/architecture.md:34–45,119–190</code>: target-versus-current
+    distinction; those proposed hosts are not treated as source implementation.</li>
+  </ul>
+  <p class="print-note">Paths under Components, Features and Infrastructure are relative to
+  TheTerrace's <code>src/TheTerrace/</code>. The fixture metadata preserves full paths and hashes:
+  <a href="terrace-evidence.json">captured evidence bundle</a>. No configuration credentials,
+  repository content or runtime data were sent to external analysis services.</p>
   <h3>Repository sources, snapshot 8d54aadc</h3>
   <ul class="source-list">
     <li><a href="../../specs/addendum-c-perspectives.md">Addendum C</a>, A5 lines 295–322:
@@ -534,14 +686,14 @@ footer { padding:var(--s6) 0; font-size:13px; color:var(--muted) }
   2026. No product code, protected visual identity, diagrams, icons or screenshots are copied.</p>
   <h3>Review and reproducibility</h3>
   <p><a href="README.md">Direction, conceptual model, flows and prototype acceptance contract</a>.
-  <a href="../../proof/code-atlas-prototype.md">Prototype evidence and residual risks</a>.
+  <a href="../../proof/code-atlas-terrace.md">Revision 2 evidence and residual risks</a>.
   Open these artifacts locally; no backend, build, sign-in or model connection is required.</p>
   <p>The worktree is intentionally retained for iteration. Merging, implementation, source egress and
   changes to Claude's active UI/session work require a subsequent decision.</p>
 </section>
 <footer>
-  Code Atlas · proposal 01 · AI-DE Architecture study · 12 September 2026<br>
-  <code>proposal/code-atlas</code> · authored from <code>8d54aadc</code> · no product implementation
+  Code Atlas · proposal 02 · TheTerrace source-backed study · 12 September 2026<br>
+  <code>proposal/code-atlas</code> · TheTerrace <code>dba2a29c</code> · no product implementation
 </footer>
 </main>
 </div>

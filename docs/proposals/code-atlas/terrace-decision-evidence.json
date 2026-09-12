@@ -1,0 +1,29 @@
+{
+  "id": "prediction-admin-amendment",
+  "title": "Administrator may amend a sealed prediction",
+  "actorKind": "Human user instruction",
+  "authorityNote": "Primary user message located; the design identifies it as a Product Owner decision. No model-authored suggestion is promoted to authority.",
+  "quote": "yes an admin should be able amend a sealed prediction\nfinish these",
+  "sessionId": "a653ef29-df17-44c4-b3a0-0e9dc99bb32f",
+  "turnIndex": 71,
+  "timestamp": "2026-08-02T03:34:53.063Z",
+  "origin": "Read-only local session-store query, exact session and amendment-era turn",
+  "scope": "Historical/pre-pivot prediction behavior: permit administrator amendments. This is not approval of the later editorial architecture or a blanket override of other constraints.",
+  "reason": "Not stated in the user message. Transparency/required-reason safeguards are recorded in the follow-on design and source.",
+  "dateNote": "Transcript time is UTC. The design dates the decision 2026-08-01; that date-only reference is preserved, not silently normalized.",
+  "design": {
+    "file": "docs/design/prediction.md",
+    "line": 45
+  },
+  "prior": {
+    "file": "docs/design/prediction.md",
+    "line": 38
+  },
+  "implementation": {
+    "file": "src/TheTerrace/Features/Predictions/Prediction.cs",
+    "line": 119
+  },
+  "auditGap": "No matching linked amendment record was located in the inspected 466-row audit / 85-row change log using amendment/design-artifact searches. The primary session turn was found. This is a scoped linkage gap, not proof that no audit exists.",
+  "implementationLimit": "The domain amendment method and record are source-backed. Administrator UI reachability, caller authorization and runtime behavior are not assessed here.",
+  "quoteSha256": "2edec4f96062811571d1847afb3839ca7c16db376307b84455e1f247b76dafae"
+}
