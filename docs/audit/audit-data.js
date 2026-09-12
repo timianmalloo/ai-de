@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T22:04:58Z",
+  "generated": "2026-09-12T23:09:52Z",
   "audit": [
     {
       "actor": null,
@@ -15195,6 +15195,54 @@ window.AUDIT_DATA = {
       "fan_out": 4,
       "started_at": "2026-09-12T21:48:36Z",
       "duration_seconds": 982.0
+    },
+    {
+      "id": "al-01M2BY4RP46PGETQHEYGAB9Q0J",
+      "shortname": "investigate-atlas-native-controls",
+      "datetime": "2026-09-12T23:09:51Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "Diagnose the three remaining E native repair failures, preserve evidence, and obtain delegated Owner approval before repairs.",
+      "summary": "Conductorisolatedtwoverifiedmechanisms:metadata-only0x80doesnotenforceheldwrite/renameexclusion;GenericRead0x80000000doeswith0x80070020andafterreleaseworks. Junctionrecursivefixturedeletionfailedwithoutenumerator;directunlink-firstpreservedtargetandcompletedcleanup. SREdisconfirmed,Ownerturn16approvedexact6callrepair; candidateandparent95/95thenjoinedF/E/D110/110. No universalrace/symlinkclaim. Diagnosticfixtureexplicitlyremoved. Anyauto-durationbelongsbroadercoordinatorphase; isolatedRCAelapsedwasnotseparatelyrecorded.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/code-atlas-native-repair-controls.md",
+        "docs/proof/code-atlas-live-reader-candidate.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Verify the causes of the three E failures and execute only the Owner-approved bounded repair.",
+      "done_when": "Controlledcauseevidence,reviewedplan,Ownerapprovalandexactrepairedregressionsarepreserved; unrelatednative/source/UIworkisnotclaimed.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-12T22:05:03Z",
+      "duration_seconds": 3888.0
+    },
+    {
+      "id": "al-01M2BY4RS1FJX31GH4PBBRKBWG",
+      "shortname": "atlas-native-direction-and-source-seam",
+      "datetime": "2026-09-12T23:09:51Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "Implement the approved Code Atlas native reading journey with separate worker worktrees and Conductor-controlled gates.",
+      "summary": "Reusedapprovedfile-first/altitudeproposal andexistingDESIGN; recordednativedirection/statecontract, UI-T1/T4apply,T2/T3notthisslice. UXbriefPASS/platformconditionalPASS beforetwo-fileNativePhaseB. No newmockup/palette/privatefixtureimport; nativecode/liverunnerproofpending. Dbootstrap300c8c5d exposedoneinternal8MiB-cappeddecodedlengthhelperthroughsameDecoder; joinedbf57b0ee112testsandSbe99fcf0beforeSPhaseB. Ownerturn17Q36/native20/runner12/proof15fundsrecorded; S/nativeparallel, actualquery/runnerstillpendingSreceipt.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-reader-native-direction.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Apply settled native UI direction and close the precise decoder bootstrap seam without duplicating source logic.",
+      "done_when": "Directionandcontractgatesareexplicit,twowritersexecutetheirgrants,andlaternativeproofisnotconfusedwithinjectedfixtures.",
+      "tier": "T2",
+      "fan_out": 4
     }
   ],
   "changes": [

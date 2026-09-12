@@ -25,8 +25,8 @@ summary: >-
 | Identity/binding first unit | Joined | `proof-code-atlas-identity-unit`; pure values, not filesystem or native behavior |
 | Directory-enumeration investigation | Joined | `proof-code-atlas-enumeration-safety`; 29 passing cases, two NOT_PROVEN symlink cases; restricted ordinary-local evidence |
 | F common foundation | Cleared and joined | Final worker `07d877ce`, Conductor pin `02695471`; 63 independently executed passing tests |
-| E inventory producer | Dispatched | Own tree, four exact files and 24 calls; implementation evidence not received yet |
-| D declaration producer | Dispatched | Own tree, two exact files and 24 calls; implementation evidence not received yet |
+| E inventory producer | Repaired and joined | Candidate `c7f6caf9`, Conductor `d947fcee`; 95 producer tests and 110 combined F/E/D tests independently passed |
+| D declaration producer | Repaired and joined | Candidate `0c426cd1`, Conductor `7584c0ae`; 78 independently executed passing tests |
 | Source/query/native assembly | Not dispatched | Depends on producer join and its next explicit allocation |
 | Independent detached native journey | Not executed | No tree/member/source/Back or real-workspace acceptance claim yet |
 
@@ -102,3 +102,66 @@ The next evidence must demonstrate actual authorized file inventory and actual c
 declarations/ranges from complete hash-bound inputs. Fake graph fixtures, display strings as
 identity, fabricated project/TFM context, unbound source rereads and a supplied DTO collection
 presented as a live native journey are not accepted substitutes.
+
+## E inventory producer
+
+The initial proposal `e54f21e1` passed 73 tests but was held on actual native/resource/policy
+defects. Owner assigned the same four-file scope to a separate execution-capable Astra writer.
+The old writer's leases were checked free; a remaining coordination registration was corrected
+by that writer using the actual session-end command and state readback.
+
+The replacement's first 30-call proposal retained 92 passing and three failing tests. The bounded
+investigation `investigation-code-atlas-native-repair-controls` separated metadata-only handle
+sharing from junction teardown. After Owner approval, the exact three failures passed, then all
+95 targeted tests passed. The Conductor independently repeated 95/95 at `c7f6caf9`.
+
+The fixed producer enforces current/expiring grants before and during work, expected native root
+identity, same-handle metadata, operation-local resource state, bounded collection and descriptor
+accounting, typed errors, actual parent keys, explicit known/non-Git/unavailable membership,
+and zero returned source-content bytes for metadata results. Unknown membership does not become
+authorization. Core keeps raw grant/session/root details; later UI/IPC projections must be redacted.
+
+Security reviewer `3facf06b-883c-4039-a461-51b93a236f11` and Test Architect
+`e8c73a03-3fa2-4a77-8d17-68cdf80188b1` cleared bounded candidate Core incorporation with the
+ordinary-local/reparse-exclusion, grant-current predicate and private-grant conditions retained.
+No symlink or universal race-free claim is made.
+
+The two E commits joined as `5a4cdede` and `d947fcee`. The combined F/E/D run executed
+**110 tests, 110 passed, zero failed/skipped**. Parent TRX is in this session's
+`files/atlas-producers-joined`; candidate red/intermediate/final artifacts remain in the E
+repair tree's `.e-repair-results` directory. Reported replacement expenditure is 30 + 6 leaf
+calls, separate from the original E allowance and handoff overhead.
+
+No live-user-workspace, source-content, query/receipt, native UI or E0 completion is asserted.
+
+## D declaration producer
+
+The initial two-file proposal `00a85823` passed 70 tests but was held after code review:
+text-only tree mapping, traversal-dependent occurrence keys, uncapped/public buffers and nested
+double traversal did not satisfy the frozen contract. The writer's reported 37 leaf calls against
+24 remain an overrun, not 19 top-level calls substituted for leaf execution.
+
+Owner authorized one 20-leaf correction. The Conductor read a response-only repair contract before
+release. `0c426cd1` implements explicit syntax-tree/file/root/source binding with exact text/hash,
+stable own-occurrence keys, an 8 MiB pre-clone limit, admitted BOM-directed decoding, internal
+disposable source leases, source-only single traversal and deduplication before cap accounting.
+FileLimited remains observation-only and does not become a real project/TFM claim.
+
+The Conductor read seven retained semantic red failures:
+
+- identical-content files remain distinct;
+- wrong file/tree mapping rejects;
+- unrelated earlier files do not change an occurrence key;
+- oversized/BOM-less inputs reject;
+- disposed source leases reject use;
+- nested/exact-limit traversal is not charged for duplicates;
+- unimplemented partial definitions keep their role and limitation.
+
+Candidate and joined runs each executed **78 tests, 78 passed, zero failed/skipped**. The retained
+red is `tests/AiDe.Core.Tests/TestResults/atlas-declarations-phaseb-red.trx`; parent results are
+in this session's `files/atlas-declarations-repaired` and `files/atlas-declarations-joined`.
+Data reviewer `91c51d36-21fc-4c00-8cf4-57fa50a1cb00` cleared the D data-contract blockers.
+
+Commits joined as `0711be09` and `7584c0ae`. The repair was reported as 12/20 leaf calls.
+No files outside the two-file grant changed. This proves a non-I/O declaration producer over
+supplied bound inputs, not a project loader, filesystem authority, source reader, UI or E0 delivery.

@@ -2620,7 +2620,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Understanding: 37 types, 186 members, 14% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Understanding: 43 types, 199 members, 14% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2633,7 +2633,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "401511ebbe771b7ff1b98b24790a2849cf71a12ae16cac0874ab2d0f5fe463f2"
+      "sourceSha256": "94f9f85d18c90615c05d6f9a89026c07e9701e7a1603328ab580d9b854f6b63d"
     },
     {
       "id": "api-aide-core-upgrade",
@@ -4706,7 +4706,41 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fa7977614e28488471a1eb45ab1e377c5f9cb157e82d701dbe300442e5587a63"
+      "sourceSha256": "726eff7991b60c1ab92431f5a81ea062875f17e7caa709c64debc9fce3db2d15"
+    },
+    {
+      "id": "note-atlas-reader-native-direction",
+      "path": "docs/notes/atlas-reader-native-direction.md",
+      "title": "Code Atlas native reader - direction and state contract",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Applies the already approved file-first/altitude proposal and existing DESIGN.md to the detached native reader. It does not redesign the shared shell or import private mockup data.",
+      "tags": [
+        "code-atlas",
+        "native",
+        "ui",
+        "accessibility"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-e-code-atlas",
+          "rel": "refines"
+        },
+        {
+          "to": "note-atlas-live-reader-horizon",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-code-atlas-live-reader-candidate",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "83c57ba43bd9ab3a371d3564ede7f4f0ee4980ec48ed57edeeba8bd3ad1b95f1"
     },
     {
       "id": "note-avalondock-tab-styling",
@@ -8297,7 +8331,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d91f5b7d9138b2775682e1c108b822610ff2ad970850f7e6fa98dde01a56ed91"
+      "sourceSha256": "dc23216c503eaef60dec5f376010170a6b00bb2092fb65f6dd68461370d29b75"
     },
     {
       "id": "design-session-profiler",
@@ -11428,7 +11462,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2dadcbbd4e9718924c8dbac808edb8cbe134d6b6e21c1abd020a16f4526a4378"
+      "sourceSha256": "58befd9902649e59361b9ec6555a9cbe0a1377ecd6e26c4e70c50b563bb219f7"
     },
     {
       "id": "session-profiles",
@@ -12281,6 +12315,41 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "ff71dbe76956b39245cdb544b102aa05b5dda15741ff768a2fe8e9065fedfebd"
+    },
+    {
+      "id": "investigation-code-atlas-native-repair-controls",
+      "path": "docs/investigations/code-atlas-native-repair-controls.md",
+      "title": "Code Atlas E repair - handle access and junction teardown failures",
+      "type": "investigation",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "atlas-e-native-diagnosis",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Isolates the three failing E repair tests into two mechanisms: metadata-only native access does not enforce the tested sharing exclusion, and recursive junction fixture teardown fails without the product enumerator. Proposes a bounded correction for Owner review.",
+      "tags": [
+        "code-atlas",
+        "investigation",
+        "windows",
+        "native",
+        "tests"
+      ],
+      "links": [
+        {
+          "to": "proof-code-atlas-enumeration-safety",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-atlas-live-reader-horizon",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7b5ab959b71fba5a9a1515532fb4f6b0f1b3c9f0d78041713eaec85f8299b33d"
     },
     {
       "id": "investigation-redraw-isolation",
@@ -15756,7 +15825,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "472e7a4d16f5f0a7ef86646dbb2898800bb9800873da6199b68fdae86686f429"
+      "sourceSha256": "f3cd99d2b13b9df0924bfc7c543665cf0ef7a69e904482351aa965963f3031bb"
     },
     {
       "id": "proof-code-atlas-source-safety",
@@ -18614,5 +18683,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "412047eb504fccb3af1ae05767bdafc8703f311aabe0e1b423097231494859a6"
+  "graphSha256": "85879d099ee171d14180e7c2931c56e2529812aa4e2ea4f9f45cd6251304ce7c"
 };

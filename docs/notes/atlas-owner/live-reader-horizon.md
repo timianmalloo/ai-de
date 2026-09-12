@@ -221,3 +221,131 @@ E and D now have exact disjoint file grants in section 2, separate worktrees at 
 production; D owns actual compiler declarations/ranges from supplied full source buffers.
 They cannot install private contract variants or invent missing root/project authority. Source,
 query and detached native assembly follow their joined receipts.
+
+## Producer return and one consolidated repair allocation
+
+E returned `e54f21e1` with 73 passing Understanding tests; D returned `00a85823` with 70.
+The Conductor independently executed both sets and read their retained red cases. Those runs
+did not clear the producers: Security/Test blocked E and Data blocked D on actual code paths.
+
+E's repair contract preserves the narrow ordinary-local domain and requires grant expiry before
+I/O, metadata from the same inspected handle, final-path/confinement checks, invocation-local
+state, counting every live handle, and bounded enumeration before sorting/materialization.
+Parent keys must be actual parent identities, not policy text. Unknown membership cannot become
+authorized availability or complete Git coverage; explicit membership input must remain distinct
+from non-Git and unavailable states. Returned-byte fields must not contain elapsed milliseconds.
+Junction setup failure cannot silently pass; Core tests must exercise the relevant resource,
+unknown/unsupported/generated-file and partial-result paths.
+
+D's repair contract requires explicit syntax-tree/file/source binding rather than text-only
+matching, stable occurrence keys without global traversal order, admission of the 8 MiB bound
+before cloning, only the frozen decoders, request-scoped internal buffers, source-only traversal,
+one nested-type traversal path, deduplication before declaration caps, and semantic regression
+cases. No filesystem or project execution is introduced.
+
+Owner turn 14 reassigns E's single repair to an execution-capable **GPT-6 Astra** writer,
+**30 additional leaf calls on the same four files**, after the previous writer explicitly
+hands off. D retains its writer for **20 additional leaf calls on the same two files** after
+Conductor contract readback. Both writers retain separate worktrees and frozen F remains read-only.
+Any necessary F amendment is an explicit seam request, never a private replacement contract.
+
+The prior producer allowance was exhausted: the reported subtotal was at least
+**F 46 + E 13 + D 37 = 96 leaf calls**, before unresolved handoff/other overhead. D's 19
+top-level calls do not replace its 37 leaf calls. The prospective writer ceiling is **B + 50**,
+where B is the reconciled charged baseline; currently at least 146 plus unrecorded prior overhead.
+Eight targeted validation leaf calls are separately reserved. No unrecorded count becomes zero.
+Source/query/native assembly remains unbuilt and receives its own next allocation.
+
+This is an explicit repair replan, not retrospective approval of overruns or scope expansion.
+Maximum two active writers, fleet width at most four, one writer per file, and Conductor-controlled
+gates/joins remain unchanged. A cap does not waive an unresolved falsifier.
+
+### Conductor minimum E repair contract
+
+The Astra replacement receives only the four E files in a new tree at `e54f21e1`. Preserve
+the probe's narrow ordinary-local/no-detected-reparse boundary; do not claim general race-free
+opens. Enforce grant expiry before I/O and on long work, use one captured identity/attributes/
+size source per inspected handle, restore final-path checks, count inspection and held handles,
+and isolate all operation state so overlapping calls cannot reset one another's budgets.
+Bound collection before sorting; retain cancellation and release-on-all-exits controls.
+
+Correct tree parents using canonical parent keys. Treat classification, physical availability
+and membership authorization separately. Unknown membership is not non-Git, authorization or
+complete coverage. Explicit known membership may be supplied as a policy-bound immutable set;
+no arbitrary repository code/Git hook execution is admitted. Policy-hidden names/counts must
+not leak. Unsupported/generated/migration files remain visible when authorized.
+
+Do not put time in `ReturnedBytes`, sum file lengths as transferred bytes, or invent a wire
+size. The exact in-process byte-measure meaning is a named Data seam; other repair work proceeds
+while it is resolved. Keep raw root/session authority Core-side and out of future UI/IPC
+projections; the frozen-F grant property is not a permission to expose it.
+
+**Byte seam resolved:** the Data owner defined `AtlasBounds.ReturnedBytes` as bytes of returned
+source/content payload governed by source-page limits. Directory/inventory observations return
+metadata rows, not source content, so their value is exactly zero. Duration remains separate
+telemetry. No file-size sum, serialization-size estimate or elapsed milliseconds substitutes for
+this measure. Later source pages report their actual returned payload bytes.
+
+Junction setup failure must fail or explicitly report unsupported execution, not return green.
+Add exact Core adapter regressions for expiry, same-handle metadata, concurrent calls, entry/depth/
+descriptor budgets, cancellation, hierarchy, authorized unsupported files and partial/unknown
+membership outcomes. Fix only the named defects; no new files or private common contracts.
+
+## S source node is independently admitted
+
+Owner turn 15 admits an execution-capable Astra writer in a separate tree at `7584c0ae`,
+with **30 new writer leaf calls and eight targeted validation leaf calls**. These are new
+source-node funds, not a transfer or refund of E/D expenditure. Exact files are in section 2.
+The first three writer calls return the minimum contract for Conductor readback before code.
+
+S consumes RootGrant authority and validates expiry/context, manifest/policy/file identity,
+expected opened root/file identities and hash. It does not issue grants or provide a hash-only
+old-anchor route. Preserve conservative ordinary-local/reparse exclusion; no general race-free
+or symlink-support claim.
+
+Enforce 8 MiB before allocation/copy/decode; reuse D's internal verified-buffer decoder and keep
+full compiler input request-scoped. Display pages are limited to 128 KiB UTF-8 text bytes, with
+global UTF-16 page/highlight offsets and no split surrogate pair. There are **nine source states
+total: IndexedMatch plus eight non-match states**. Only IndexedMatch may expose text/highlights.
+All eight non-match cases, binding/range/cancel/lifetime boundaries require executable proof.
+
+No source/query/native-journey completion follows from source-node tests. No real user workspace,
+issuer, query implementation, UI, store or IPC is included; frozen F/D cannot be silently changed.
+
+**Explicit D-to-S bootstrap seam:** S's first contract read established that the internal
+`VerifiedSourceBuffer.FromBytes` factory needs decoded length in its observation while D's strict
+decoder is private. The Conductor assigned at most four leaf calls from D's remaining correction
+allowance, on the same D source/test files, to expose bounded Core-only decoded-length metadata
+through that existing decoder. This admits no second decoder, new I/O or source authority.
+S stays at contract readback until the actual helper API/commit is joined. Its initial six calls
+(including a failed shell search and bounded file-read fallback) remain charged to the 30-call
+source allowance.
+
+## Query, native view and proof composition allocation
+
+Owner turn 17 admits **20 new native-view leaf calls**, **36 new Q leaf calls**, and
+**12 new runner/composition leaf calls**, with the existing **15-call independent real-workspace
+proof** allowance retained. S + native run now; after S handoff, Q + native/runner may run,
+never more than two writers or total width four. These funds do not rewrite prior expenditure.
+
+Native owns only `AtlasReaderView.cs` and its dedicated App test. Q owns only
+`AtlasQueryService.cs` and its dedicated Core test. The Astra runner integrator owns only the
+already named candidate runner project/Program. No existing host, IPC, store or shared-file edit.
+Native must consume `IAtlasQueries`; fixture-state proof is not the actual reading-loop proof.
+
+Core composition may issue grants only from an explicit recorded proof-root approval, observed
+native identity, current session/policy and expiry. Q revalidates on every operation, bounds
+in-memory manifests/receipts, rejects stale responses and restores the original binding. It may
+not refresh old history silently or expose raw grant/session/root data in outward projections.
+
+The detached proof uses a new clean registered AI-DE proof worktree and an explicit selected
+root such as `src/AiDe.Core`, disclosed rather than called whole-repository completeness.
+Read-only Git membership acquisition must use argument arrays, bounded output, explicit executable/
+version/arguments/results, no shell, hooks/fsmonitor/external helpers/network/submodule recursion.
+Failure is UnavailableMembership, never NonGit fallback. No inspected-project MSBuild evaluation.
+
+Initial source binding comes through S's checked opened-object/buffer path and creates a new
+observation; no ad-hoc file reader or old-selection recapture. If S lacks that entry point, one
+exact amendment by its owner is allowed up to four calls charged to Q after Conductor seam
+readback. The actual detached file -> member -> source -> Back journey remains the horizon exit,
+with source/span/decoder/focus/cancel/changed-history evidence and targeted Security/Test clearance.

@@ -92,8 +92,10 @@ ownership rows, normative Addendum E acceptance, or permission to integrate into
 | `atlas-e0-candidate-gpt55` / `atlas/e0-candidate` | `src/AiDe.Core/Understanding/AtlasIdentity.cs`; `src/AiDe.Core/Understanding/AtlasSourceBinding.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasIdentityTests.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasSourceBindingTests.cs` | Within the unchanged 60-call candidate ceiling: 25 initial, 12 Owner-admitted correction, then 6 Conductor-allocated boundary-close calls for the executed trailing-LF defect and constructor/partial oracles. Conservative allocated ceiling 43; 17 reserved. Same four files, no reader, persistence, IPC or UI. |
 | `atlas-live-enumeration-gpt55` / `atlas/live-reader-enumeration` | `spikes/code-atlas-directory-enumeration/CodeAtlas.DirectoryEnumerationProbe.csproj`; `spikes/code-atlas-directory-enumeration/Program.cs`; `spikes/code-atlas-directory-enumeration/OpenedDirectoryEnumerator.cs`; `spikes/code-atlas-directory-enumeration/DirectoryEnumerationProbeCases.cs`; `docs/proof/code-atlas-enumeration-safety.md` | Owner turn-12 new horizon: 25 calls for one synthetic safe-enumeration investigation. No private corpus, privilege/configuration changes, shared files or product admission. |
 | `atlas-live-core-gpt55` / `atlas/live-reader-core` | Existing `src/AiDe.Core/Understanding/AtlasIdentity.cs`, `tests/AiDe.Core.Tests/Understanding/AtlasIdentityTests.cs`; new `src/AiDe.Core/Understanding/AtlasIdentityCodec.cs`, `AtlasManifest.cs`, `AtlasQueryContracts.cs`; new `tests/AiDe.Core.Tests/Understanding/AtlasIdentityCodecTests.cs`, `AtlasManifestTests.cs`, `AtlasQueryContractsTests.cs` | F proposal used 32 against 18 planned calls. Owner turn 13 admits one 16-call same-eight-file correction after Conductor contract readback. New cumulative F/E/D ceiling 96; no filesystem, issuer operation, producer/query implementation, native UI or shared-file edit in F. |
-| `atlas-live-inventory-gpt55` / `atlas/live-reader-inventory` | `src/AiDe.Core/Understanding/AtlasInventory.cs`; `src/AiDe.Core/Understanding/AtlasDirectoryEnumerator.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasInventoryTests.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasDirectoryEnumeratorTests.cs` | Owner turn-13 E allowance: 24 calls, actual authorized inventory and narrow enumeration adapter only. Frozen F files are read-only. No source-content reader, query/native assembly or shared adapters. |
-| `atlas-live-declarations-gpt55` / `atlas/live-reader-declarations` | `src/AiDe.Core/Understanding/CSharpDeclarationObservation.cs`; `tests/AiDe.Core.Tests/Understanding/CSharpDeclarationObservationTests.cs` | Owner turn-13 D allowance: 24 calls, actual compiler declarations and ranges from supplied hash-bound full buffers only. No filesystem, project evaluation, source reader, query/native assembly or frozen-F edits. |
+| `atlas-live-inventory-repair-astra` / `atlas/live-reader-inventory-repair` | `src/AiDe.Core/Understanding/AtlasInventory.cs`; `src/AiDe.Core/Understanding/AtlasDirectoryEnumerator.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasInventoryTests.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasDirectoryEnumeratorTests.cs` | Owner turn-14 repair used 30 leaf calls and retained 92/95 passing proposal. After bounded diagnosis, Owner turn 16 admits six more leaf calls for held GenericRead and test-owned junction cleanup only. Frozen F read-only; no source-content reader, query/native assembly or shared adapters. |
+| `atlas-live-declarations-gpt55` / `atlas/live-reader-declarations` | `src/AiDe.Core/Understanding/CSharpDeclarationObservation.cs`; `tests/AiDe.Core.Tests/Understanding/CSharpDeclarationObservationTests.cs` | Owner turn-14 D repair: 20 additional leaf calls after Conductor mini-contract readback. Prior 37/24 leaf overrun retained. No filesystem, project evaluation, source reader, query/native assembly or frozen-F edits. |
+| `atlas-live-source-astra` / `atlas/live-reader-source` | `src/AiDe.Core/Understanding/AtlasSource.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasSourceTests.cs` | Owner turn-15 S allowance: 30 new writer leaf calls, eight targeted validation leaf calls separately. First three writer calls establish and return the minimum contract before implementation. No grant issuer, query/native UI, store, IPC, real-user workspace or frozen F/D edits. |
+| `atlas-live-native-gpt55` / `atlas/live-reader-native` | `src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs`; `tests/AiDe.App.Tests/Workbench/Understanding/AtlasReaderViewTests.cs` | Owner turn-17 native-view allowance: 20 leaf calls. Injected IAtlasQueries only; fixtures/native unit evidence are not live-reader proof. No filesystem/provider/root issuance, existing host/theme/layout/project/IPC changes or extra files. |
 
 The first source writer's worktree is `C:\Projects\ai-de-atlas-e0-source-safety`, created from
 executor-observed main `4d396411`. A separate candidate tree
@@ -130,6 +132,22 @@ leases before the Conductor join; no TTL wait or self-integration was used. E's 
 `C:\Projects\ai-de-atlas-live-reader-declarations`. Both resolve to that same pin, and their
 six new files were observed absent before dispatch. E and D cannot alter common contracts;
 required amendments return to the Conductor as seam requests.
+
+E's replacement tree is `C:\Projects\ai-de-atlas-live-reader-inventory-repair`, based on
+the preserved E proposal `e54f21e1`. The old E tree remains intact and is no longer a writer.
+An old-session registration cleanup discrepancy was detected by state readback and returned
+to that writer; released edit leases, not a claimed command invocation, were checked before
+replacement assignment.
+
+S's independent tree is `C:\Projects\ai-de-atlas-live-reader-source`, pinned to
+`7584c0ae` (cleared F and D plus source-probe evidence). E completion is not its prerequisite.
+E and S are the only implementation writers; D is frozen and joined. The Conductor reads S's
+input/result/lifetime/falsifier contract before releasing source implementation.
+
+Native view tree: `C:\Projects\ai-de-atlas-live-reader-native`, pin `bf57b0ee`, with a
+separate read-only native-review tree at the same pin. The direction is
+`note-atlas-reader-native-direction`. Q/runner work remains undispatched until S's actual
+receipt; exact files and integrator will be recorded here before that release.
 
 ### Core owns
 

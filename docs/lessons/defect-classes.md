@@ -505,6 +505,17 @@ for both or split.*
 - **Status:** `controlled`
 
 ### DC-015 — A success check coarser than the claim it is standing in for
+- **Recurrence (2026-09-12, Atlas joins and evidence lookup):** a fresh-tree `dotnet test
+  --no-restore` returned zero with no TRX because test assets were absent; ignored-artifact glob
+  misses were separately called missing proof although direct XML reads found the files.
+  **Sweep/control:** the Conductor read actual result-file existence and executed counts, restored
+  missing assets, and required 38/63/78/95/110/112-case receipts at the relevant joins. Reviewer
+  absence claims were corrected by direct absolute-path reads, not another glob. The same
+  state-not-status control applied to junction teardown: recursive delete threw after removing
+  the junction, so failure did not mean unchanged state. The controlled unlink-first fixture
+  preserved its target. Evidence: `investigation-code-atlas-native-repair-controls`,
+  `proof-code-atlas-identity-unit`, and `proof-code-atlas-live-reader-candidate`. A passing
+  process or a tool's empty search result is never substituted for its intended observation.
 - **Recurrence (2026-09-12, Atlas native probe):** a hash-match case was labelled as span
   activation although the result carried no range; rename/write cases accepted any I/O exception
   as a sharing block; an ADS case accepted any nonmatch. Independent review found all three.
@@ -659,6 +670,19 @@ for both or split.*
 - **Status:** `partially-controlled`
 
 ### DC-019 — A trust boundary assumed safe because an adjacent control was proven
+- **Recurrence (2026-09-12, Atlas native repair):** a reviewed `GENERIC_READ` held-object
+  sharing control was changed to metadata-only `FILE_READ_ATTRIBUTES` as a smaller access
+  request, without proving that the sharing exclusion survived. The metadata call still
+  worked while the mutation assertion failed. **Class/sweep:** one E native open helper
+  governed the affected handles; its metadata capability was being mistaken for exclusion.
+  **Derive/control:** the Conductor changed only the desired-access mask in a synthetic CLR
+  10 fixture: attributes-only allowed write and rename while held; GenericRead blocked both
+  with `0x80070020`, and both succeeded after disposal. The Core regression
+  `EnumerateAsync_InspectedMetadata_BlocksReplacementAndWriteUntilReleased` retained those
+  assertions; the approved repair reached 95/95 and the combined producers 110/110.
+  `investigation-code-atlas-native-repair-controls` preserves the competing teardown diagnosis
+  and limits. This is bounded sharing evidence, not a claim of universal race-free opens or
+  support for ACLs that permit metadata but not GenericRead.
 - **Recurrence (2026-09-12, Atlas source binding):** matching bytes were initially treated as
   sufficient old-anchor evidence while opened-object identity was not an expected input;
   Changed/Unverifiable results also carried live text. Hash integrity did not establish object
@@ -7285,4 +7309,3 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   segment and uses only that; `TerminalHostLauncherConfigurationTests` asserts the helper path
   carries the tests' configuration and not the other, and the segment reader on three shapes.
 - **Status:** `controlled`.
-
