@@ -77,12 +77,24 @@ Atlas proposes content and selection contracts; Claude/Shell authors shared regi
 SH2 integration after acknowledgment. Existing Core-owned `NodeReaderView`/`CodeViewerView`
 can be adapted only by agreement; their old unbound payload is not source-version proof.
 
-Use **Memento-backed navigation history** for immutable manifest-bound selections, not body
-snapshots, and a **Generation-Token/request-correlation guard** for late asynchronous results.
+Owner turn 6, **“Atlas whole-architecture obligations separated from E0 runtime composition”**
+(agent `61e506c4-2d12-42e9-85cb-153f2f916811`, relayed by Conductor), keeps navigation
+**view-local history/state with Core-validated selection**, not an append-only domain aggregate.
+**Memento-backed navigation history** names restoration of immutable manifest-bound selection
+state, not body snapshots, a new framework or a required new class. Reuse existing view-state
+mechanisms. A **Generation-Token/request-correlation guard** protects late asynchronous results.
 New selection increments generation and cancels old
 requests. Apply a response only if both generation and manifest match. Back restores file/member/
 partial declaration/lens/branch context and focus/scroll without guessing rebinding. Deleted or
-changed historical content retains a truthful unavailable/stale state.
+changed historical content retains a truthful unavailable/stale state. Core revalidates selection,
+manifest membership and current policy on every restored read/action; history is not permission.
+If matching old bytes are gone, retain selection/manifest but return old body **Unavailable** and
+disable old anchors. Tree/outline/source/inspector synchronization is preserved.
+
+Architecture §7.1 is explicitly the **PROPOSED E-0 runtime composition**, without future diagram/
+comparison/model-port boxes. §3 retains the whole proposed overlay; the future-contract subsection
+of §4.1 and §§8–9/13 retain every E-1…E-4 invariant, dependency and gate. This scope correction
+does not delete the vision, add a new implementation task or grant normative/source acceptance.
 
 Only a typed **CommandGateway / TrustedGestureCommandBroker** responding to a human gesture may
 copy, navigate or export after policy checks. This is not an event bus.
