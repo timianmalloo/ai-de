@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Sessions: 30 types, 157 members, 71% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Sessions: 30 types, 161 members, 71% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Sessions`
 
-**30 public types · 157 public members · 71% documented.**
+**30 public types · 161 public members · 71% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -526,6 +526,7 @@ refusal is announced (`THR-0002`), never silent.
 | `SessionDocumentViewModel Model { get; }` | This document's state. |
 | `string SurfaceId { get; }` | The layout surface id. |
 | `ComposerSurface Composer { get; }` | The composer — the document's last region. |
+| `EnvelopeStore? Envelopes` | The envelope store this document holds for its lifetime, or null with the reason on `HistoryState`. |
 | `ThreadFeed Thread` | The thread — the feed of turns. |
 | `RunChannelSessionThread ReadModel` | The read model the thread renders. CV-1's implementer; a test feeds it directly. |
 | `ConsoleSurface Split` | The Console split, whether or not it is open. |
@@ -548,6 +549,9 @@ refusal is announced (`THR-0002`), never silent.
 | `Region? CurrentRegion` | The region holding keyboard focus, or null when focus is elsewhere. |
 | `CanvasFocusResult CycleRegion(int delta)` | F6 (+1) / Shift+F6 (−1): header → thread → composer → (split) → header. A refusal is announced, never silent. |
 | `CanvasFocusResult FocusRegion(Region region, string gesture = "direct", Region? from = null)` | Focuses a region's target directly (Ctrl+Home → header, Ctrl+End → composer, the tail → the split). |
+| `Func<string, bool> PurgeConfirmation { get; set; } = plan` | The confirmation seam for `PurgeCompileHistory`: the plan's text in, yes or no out. The product asks with a message box; a test injects its answer. |
+| `int PurgedThisOpen` | How many times this document purged its compile history since it opened — the fact behind *history purged*. |
+| `string PurgeCompileHistory()` | Purges this session's compile history from the document that holds it — releases the handle, resolves the plan (the identity: name · id · workspace · file · count · newest), asks, deletes the one file, and reopens the… |
 | `void OpenSplit(int? ordinal = null)` | Opens the Console beside the thread — at 's heading, focused, or following the end. |
 | `void CloseSplit()` | Closes the split; the thread keeps its rhythm. |
 | `Size MeasureOverride(Size constraint)` | The belt (DS-1 Q14): the composer never takes more than its share, so the thread's row is guaranteed by arithmetic. |
@@ -558,6 +562,15 @@ refusal is announced (`THR-0002`), never silent.
 - **`model`** — The document's state.
 - **`store`** — Where the document's envelope is persisted, or null to keep none. Kept for the shell's call; the conversation persists no layout of its own.
 - **`announcer`** — The shell's announcer (one across hosts, ADR-0031). Null — the shell does not pass it yet, a seam request to the Shell lane — builds a document-owned polite live region so SC9 is never silent; the two are never both live.
+
+### `string PurgeCompileHistory()`
+
+Purges this session's compile history from the document that holds it — releases the
+handle, resolves the plan (the identity: name · id · workspace · file · count · newest),
+asks, deletes the one file, and reopens the store so the next send records again. The
+writer never ships without its eraser (ADR-0034 rule 6; US-D13).
+
+**Returns.** What happened, in the operator's terms; announced too.
 
 ## `Region`
 

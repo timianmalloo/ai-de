@@ -1,0 +1,63 @@
+namespace AiDe.Core.PromptCompilation;
+
+/// <summary>Stable error codes for the envelope store and the projections over it (the <c>CE-</c> family; O-standard: every failure carries one).</summary>
+public static class EnvelopeStoreErrorCodes
+{
+    /// <summary>The session directory does not exist — the store never creates the Session aggregate's directory.</summary>
+    public const string NoSessionDirectory = "CE-0001";
+
+    /// <summary>Another writer holds the file (<c>FileShare.None</c>): a second AI-DE, or a composer while a reader asks.</summary>
+    public const string HeldByAnotherWriter = "CE-0002";
+
+    /// <summary>The chain is broken at line N; <c>Append</c> is refused for the life of this open.</summary>
+    public const string StoreBroken = "CE-0003";
+
+    /// <summary>An <c>opened</c> row's <c>session_id</c> differs from the directory segment.</summary>
+    public const string SessionIdMismatch = "CE-0004";
+
+    /// <summary>A supplied <c>seq</c> is not the envelope's next.</summary>
+    public const string SeqNotIncreasing = "CE-0005";
+
+    /// <summary>A <c>decorated</c> after an accepted <c>submitted</c>.</summary>
+    public const string DecoratedAfterSubmitted = "CE-0006";
+
+    /// <summary>A second accepted <c>submitted</c> on one envelope.</summary>
+    public const string SubmittedTwice = "CE-0007";
+
+    /// <summary>A second <c>consumed</c> on one envelope.</summary>
+    public const string ConsumedTwice = "CE-0008";
+
+    /// <summary>An attachment value carrying a <c>body</c> member — bodies are never persisted (§A13.5).</summary>
+    public const string AttachmentBodyRefused = "CE-0009";
+
+    /// <summary>A decoration named <c>lease</c> (DM-A), an <c>operator</c> row named a setting, or an unknown source.</summary>
+    public const string DecorationNameRefused = "CE-0010";
+
+    /// <summary>A <c>tier</c> row outside {T0, T1, T2} (§A9 R4's falsifier).</summary>
+    public const string TierRefused = "CE-0011";
+
+    /// <summary>An event on an envelope with no <c>opened</c> row, or a second <c>opened</c>.</summary>
+    public const string NotOpened = "CE-0012";
+
+    /// <summary>The append's write failed after a good open (disk full, an IO error) — the send proceeds degraded.</summary>
+    public const string AppendFailed = "CE-0013";
+
+    /// <summary>A purge was refused before any file was touched: a traversal, a non-segment id, a junction.</summary>
+    public const string PurgeRefused = "CE-0014";
+
+    /// <summary>A fold is incomplete for projection: no <c>opened</c> row, or no well-formed <c>ceilings</c> row.</summary>
+    public const string ProjectionIncomplete = "CE-0015";
+}
+
+/// <summary>A refusal by the envelope store, with its stable code (<see cref="EnvelopeStoreErrorCodes"/>).</summary>
+public sealed class EnvelopeStoreException : Exception
+{
+    public EnvelopeStoreException(string code, string message, Exception? inner = null)
+        : base($"[{code}] {message}", inner)
+    {
+        Code = code;
+    }
+
+    /// <summary>The stable code.</summary>
+    public string Code { get; }
+}

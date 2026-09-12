@@ -95,11 +95,9 @@ public static class ComposerCompiler
     /// (CV-2) and is not here. The same two inputs <see cref="IsReadOnly"/> reads, so the shape,
     /// the access and the tier can never disagree about whether a goal block exists.</para>
     ///
-    /// <para><b>The rationale names who filled the structure.</b> <c>simplify:</c> until the
-    /// compile step writes <c>derived</c> rows (CV-2), every structure line is the operator's, so the
-    /// rationale reads <i>filled by you</i>; the upgrade trigger is a <c>derived</c> or
-    /// <c>template</c> row in the envelope fold, at which point <paramref name="structureSource"/>
-    /// is read from it.</para>
+    /// <para><b>The rationale names who filled the structure</b> — <paramref name="structureSource"/>
+    /// is read from the fold by <c>Projection.Project</c> (<c>operator</c> · <c>template</c> · the
+    /// model), which is the one caller that passes anything but the default.</para>
     /// </remarks>
     /// <param name="shape">The turn's shape — P.</param>
     /// <param name="patterns"><see cref="LeaseDerivation.Patterns"/> over the source text — L is its count.</param>
@@ -120,6 +118,9 @@ public static class ComposerCompiler
             var n => new TierProjection("T2", string.Create(System.Globalization.CultureInfo.InvariantCulture, $"goal block filled by {structureSource}, {n} leases"), "R3"),
         };
     }
+
+    /// <summary>The three tiers a turn may carry — an override outside them is refused (§A9 R4's falsifier: <c>T9</c>).</summary>
+    public static bool IsTier(string? tier) => tier is "T0" or "T1" or "T2";
 
     /// <summary>The cap function (CT19; GO7): <c>cap(T0) = 0</c>, <c>cap(T1) = 2</c>, <c>cap(T2) = 4</c>.</summary>
     public static int CapOf(string tier) => tier switch
@@ -157,42 +158,64 @@ public static class ComposerCompiler
 
     /// <summary>
     /// The current turn's decoration rows in SC2's one grammar — <c>class · tier · lease · shape
-    /// [· template]</c>, each with its source and reason — read from the same two inputs the shape,
-    /// the access and the tier read, so the line the operator confirms at Send is the line the
-    /// thread will show for the turn.
+    /// [· template]</c>, each with its source and reason — <b>read from <see cref="PromptCompilation.Projection.Project"/>
+    /// over the live pre-compile</b> (ADR-0033 rule 2: the render site calls <c>Project()</c>), so the
+    /// line the operator confirms at Send is the projection the send gate puts on the wire.
     /// </summary>
     /// <param name="draft">The draft.</param>
-    /// <param name="taskClass">The prompt's class — the session's default until a prompt chooses one (Ruling 70).</param>
-    public static IReadOnlyList<Sessions.DecorationRow> Decorations(ComposerDraft draft, string taskClass)
+    /// <param name="taskClass">The session's default class — the prompt's own choice on the draft supersedes it (Ruling 70).</param>
+    /// <param name="template">The bound template, for a template draft.</param>
+    /// <param name="engineId">The bound engine, or null before the composer is bound.</param>
+    /// <param name="sessionId">The session, or null before the composer is bound.</param>
+    /// <param name="compileMode">The session's compile mode.</param>
+    public static IReadOnlyList<Sessions.DecorationRow> Decorations(
+        ComposerDraft draft,
+        string taskClass,
+        PromptTemplate? template = null,
+        string? engineId = null,
+        string? sessionId = null,
+        string compileMode = CompileModes.MechanicalOnly)
     {
         ArgumentNullException.ThrowIfNull(draft);
         ArgumentException.ThrowIfNullOrWhiteSpace(taskClass);
 
-        var shape = draft.TurnShape;
-        var patterns = LeaseDerivation.Patterns(draft.SourceText);
-        var tier = Tier(shape, patterns);
-        var readOnly = IsReadOnly(shape, patterns);
+        var input = new PromptCompilation.PreCompileInput(
+            draft, template,
+            sessionId ?? PromptCompilation.Envelope.NotRecorded,
+            engineId ?? PromptCompilation.Envelope.NotRecorded,
+            compileMode,
+            taskClass);
+        return Decorations(PromptCompilation.Projection.Project(PromptCompilation.PreCompile.Live(input)), draft);
+    }
+
+    /// <summary>The decoration rows of one projection — the one row builder the live line and a persisted envelope share (DM7).</summary>
+    public static IReadOnlyList<Sessions.DecorationRow> Decorations(PromptCompilation.CompiledProjection projection, ComposerDraft draft)
+    {
+        ArgumentNullException.ThrowIfNull(projection);
+        ArgumentNullException.ThrowIfNull(draft);
 
         var rows = new List<Sessions.DecorationRow>
         {
-            new("class", taskClass, "session-default",
-                string.Equals(taskClass, Watcher.TaskClasses.FreeForm, StringComparison.Ordinal)
-                    ? "no class ranks this turn"
-                    : "the session's default task class"),
-            new("tier", tier.Tier, "rule", tier.Rationale),
+            new("class", projection.TaskClass, projection.TaskClassSource,
+                projection.TaskClassSource == PromptCompilation.DecorationSources.Operator
+                    ? "chosen for this prompt"
+                    : string.Equals(projection.TaskClass, Watcher.TaskClasses.FreeForm, StringComparison.Ordinal)
+                        ? "no class ranks this turn"
+                        : "the session's default task class"),
+            new("tier", projection.Tier, projection.Rule == "R4" ? PromptCompilation.DecorationSources.Operator : "rule", projection.Rationale),
             new("lease",
-                readOnly ? ReadOnlyScope : string.Join(" · ", patterns),
+                projection.IsReadOnly ? ReadOnlyScope : string.Join(" · ", projection.Patterns),
                 "derived",
-                patterns.Count switch
+                projection.Patterns.Count switch
                 {
                     0 => LeaseNoneYet,
                     1 => "from your mention",
                     _ => "from your mentions",
                 }),
             new("shape",
-                shape == TurnShape.GoalBlock ? "goal block" : "message",
+                projection.Shape,
                 "projection",
-                shape == TurnShape.GoalBlock
+                projection.GoalBlock is not null
                     ? "Goal and Done when are both written"
                     : "a blank Goal or Done when makes a message"),   // Ruling 75 — the id stays here, never on the screen (U11)
         };
@@ -209,6 +232,18 @@ public static class ComposerCompiler
     public static CompiledPrompt Compile(ComposerDraft draft, PromptTemplate? template = null)
     {
         ArgumentNullException.ThrowIfNull(draft);
+        return Compile(draft, template, draft.TurnShape == TurnShape.GoalBlock ? draft.ToGoalBlock() : null);
+    }
+
+    /// <summary>
+    /// Compiles the draft around a projected block: <see cref="PromptCompilation.Projection.Project"/>
+    /// renders the sent bytes through this overload with <i>its</i> block, so the tier in the block
+    /// is the tier the projection computed (an override included) — one producer of the bytes.
+    /// </summary>
+    /// <param name="block">The six-field block for a goal-block turn, or null for a Message (Ruling 75).</param>
+    public static CompiledPrompt Compile(ComposerDraft draft, PromptTemplate? template, GoalBlock? block)
+    {
+        ArgumentNullException.ThrowIfNull(draft);
 
         var body = draft.Shape switch
         {
@@ -218,8 +253,8 @@ public static class ComposerCompiler
             // six sections and then the message; a blank Goal or Done when makes a Message, whose
             // bytes are the message alone — exactly the free-form form's, so a demotion never
             // changes what the lane receives except by the block's absence.
-            ComposerShape.GoalBlock => draft.TurnShape == TurnShape.GoalBlock
-                ? RenderGoalBlock(draft.ToGoalBlock()) + RenderMessage(draft.FreeFormText)
+            ComposerShape.GoalBlock => block is not null
+                ? RenderGoalBlock(block) + RenderMessage(draft.FreeFormText)
                 : draft.FreeFormText,
             ComposerShape.Template => RenderTemplate(draft, template),
             _ => throw new ArgumentOutOfRangeException(nameof(draft), draft.Shape, "unknown composer shape"),

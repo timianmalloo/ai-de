@@ -162,6 +162,35 @@ public sealed class ComposerDraft
     /// <summary>The template this draft is bound to, when its shape is a template.</summary>
     public string? TemplateId { get; private set; }
 
+    /// <summary>
+    /// The operator's tier override for this prompt (Addendum D §A9 R4; §A11: the tier is the one
+    /// decoration Prepare may override), or null — the rule's value stands. The only stored tier:
+    /// it becomes a <c>tier</c> row with <c>source: operator</c> at Send.
+    /// </summary>
+    public string? TierOverride { get; private set; }
+
+    /// <summary>
+    /// The task class this prompt chose (Ruling 70: changeable per prompt; the session's default is
+    /// untouched), or null — the session's default applies with <c>source: session-default</c>.
+    /// </summary>
+    public string? TaskClassChoice { get; private set; }
+
+    /// <summary>Overrides the tier (T0 / T1 / T2), or clears the override with null. Anything else is refused and the prior value stands (§A9 input 14).</summary>
+    /// <exception cref="ArgumentOutOfRangeException">The value is not one of the three tiers.</exception>
+    public void OverrideTier(string? tier)
+    {
+        if (tier is not null && !ComposerCompiler.IsTier(tier))
+        {
+            throw new ArgumentOutOfRangeException(nameof(tier), tier, "an override is one of T0, T1, T2; the rule's value stands");
+        }
+
+        TierOverride = tier;
+    }
+
+    /// <summary>Chooses this prompt's task class, or returns to the session's default with null or blank.</summary>
+    public void ChooseTaskClass(string? taskClass) =>
+        TaskClassChoice = string.IsNullOrWhiteSpace(taskClass) ? null : taskClass.Trim();
+
     /// <summary>The goal-block field values, by wire name.</summary>
     public IReadOnlyDictionary<string, string> GoalValues => _goalValues;
 
@@ -265,7 +294,9 @@ public sealed class ComposerDraft
     /// </remarks>
     public GoalBlock ToGoalBlock()
     {
-        var tier = ComposerCompiler.Tier(TurnShape, LeaseDerivation.Patterns(this.SourceText)).Tier;
+        // THE RULE, OR THE OPERATOR'S OVERRIDE (§A9 R4) — the same answer Projection.Project gives
+        // for this draft's envelope, so the block a render shows and the block the send projects agree.
+        var tier = TierOverride ?? ComposerCompiler.Tier(TurnShape, LeaseDerivation.Patterns(this.SourceText)).Tier;
 
         return new GoalBlock(
             Text(GoalBlockFields.GoalKey),
