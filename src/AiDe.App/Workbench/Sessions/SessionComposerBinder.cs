@@ -67,11 +67,17 @@ internal static class SessionComposerBinder
         ArgumentNullException.ThrowIfNull(routableBackends);
         ArgumentNullException.ThrowIfNull(affirmation);
 
-        if (shell.SessionComposer(config.SessionId) is not { } composer)
+        if (OnScreen(shell, config) is not { } composer)
         {
-            WorkbenchDiagnostics.SessionDocumentRefused(
-                config.SessionId, null, "composer", "no document is open for this session");
-            return "Its composer is not on screen, so nothing was wired to a run.";
+            return NotOnScreen;
+        }
+
+        // ONCE. A reopen of a session whose document the workspace-open restore already revived
+        // reaches here a second time, and a second Configure after the page mounted re-mints the
+        // fields and pushes a second host.init over whatever the operator typed.
+        if (composer.IsConfigured)
+        {
+            return "Composer already bound.";
         }
 
         if (repositoryRoot is null || dataDirectory is null)
@@ -152,14 +158,24 @@ internal static class SessionComposerBinder
         ArgumentNullException.ThrowIfNull(shell);
         ArgumentNullException.ThrowIfNull(config);
 
-        if (shell.SessionComposer(config.SessionId) is not { } composer)
+        return OnScreen(shell, config) is { } composer
+            ? Refuse(config, composer, field, message)
+            : NotOnScreen;
+    }
+
+    private const string NotOnScreen = "Its composer is not on screen, so nothing was wired to a run.";
+
+    /// <summary>The composer of the session's open document, or null — recorded as a refusal — when no document is open for it.</summary>
+    private static ComposerSurface? OnScreen(WorkbenchShell shell, SessionConfig config)
+    {
+        if (shell.SessionComposer(config.SessionId) is { } composer)
         {
-            WorkbenchDiagnostics.SessionDocumentRefused(
-                config.SessionId, null, "composer", "no document is open for this session");
-            return "Its composer is not on screen, so nothing was wired to a run.";
+            return composer;
         }
 
-        return Refuse(config, composer, field, message);
+        WorkbenchDiagnostics.SessionDocumentRefused(
+            config.SessionId, null, "composer", "no document is open for this session");
+        return null;
     }
 
     /// <summary>Puts a field-level refusal on the composer, records it, and returns it for the announcement.</summary>

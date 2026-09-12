@@ -68,6 +68,61 @@ public sealed class EveryOpeningCommandPassesThroughTheSeamTests
         }
     }
 
+    /// <summary>
+    /// <b>The window's half of Phases 2, 2b and 3, which no headless test can execute (the window
+    /// shows modal sheets and reaches a daemon).</b> The replay drives the shell's revive, the
+    /// binder and the flow with its own callbacks; this asserts the window calls the same things in
+    /// the same order, so a window that stopped calling them would go red here rather than in an
+    /// operator's log (DC-135). Root <c>MainWindow.xaml.cs</c>; tokens as spelled below; each looked
+    /// up inside the named member only.
+    /// </summary>
+    [Fact]
+    public void TheWindow_RevivesThenRendersThenBinds_AndReopensBound_AndOpensTheChosenWorkspace()
+    {
+        var window = SourceFile("src", "AiDe.App", "MainWindow.xaml.cs");
+
+        // 2b: AttachWorkspace — the one site — revives, renders, then binds on record.
+        var attach = Member(window, "private void AttachWorkspace(");
+        Assert.Single(Occurrences(window, "Shell.AttachWorkspace("));
+        Assert.Contains("Shell.AttachWorkspace(", attach, StringComparison.Ordinal);
+        AssertInOrder(attach, "Shell.ReviveRestoredSessionDocuments(", "Shell.Adapter.Render();", "BindOnRecord(config,");
+
+        // 2: the reopen binds on record after the open, and does not maximize (Ruling 47's guard covers that).
+        var reopen = Member(window, "private async Task ReopenSessionAsync(");
+        AssertInOrder(reopen, "Shell.OpenSessionDocument(config)", "BindOnRecord(config,");
+
+        // 3: the flow's openWorkspace is the window's ordinary open path, and Queries is the fact.
+        var newSession = Member(window, "private async Task<string> NewSessionAsync()");
+        Assert.Contains("openWorkspace: OpenWorkspaceOrSayWhyAsync,", newSession, StringComparison.Ordinal);
+        var open = Member(window, "private async Task<string?> OpenWorkspaceOrSayWhyAsync(");
+        AssertInOrder(open, "await OpenWorkspaceAtAsync(folder)", "?.Queries is null ? said : null");
+
+        // And BindOnRecord is the binder, with the sheet's own routable derivation and no task class.
+        var onRecord = Member(window, "private string BindOnRecord(");
+        Assert.Contains("SessionComposerBinder.Refuse(Shell, config, \"providers\", reason)", onRecord, StringComparison.Ordinal);
+        Assert.Contains("BindComposer(config, RoutableBackendsOf(config), taskClass: null)", onRecord, StringComparison.Ordinal);
+    }
+
+    /// <summary>The member's text from its signature to the next member at method indentation.</summary>
+    private static string Member(string source, string signature)
+    {
+        var at = source.IndexOf(signature, StringComparison.Ordinal);
+        Assert.True(at >= 0, $"MainWindow.xaml.cs has no {signature} — this test is reading a document whose shape it does not understand (DC-016).");
+        var next = source.IndexOf("\n    private ", at + signature.Length, StringComparison.Ordinal);
+        return next < 0 ? source[at..] : source[at..next];
+    }
+
+    private static void AssertInOrder(string text, params string[] tokens)
+    {
+        var from = 0;
+        foreach (var token in tokens)
+        {
+            var at = text.IndexOf(token, from, StringComparison.Ordinal);
+            Assert.True(at >= 0, $"'{token}' does not follow the previous token in:\n{text}");
+            from = at + token.Length;
+        }
+    }
+
     /// <summary>The mode is in the log, not inferred from it: one <c>shell.mode</c> line per change, with its trigger.</summary>
     [Fact]
     public void Set_ToADifferentMode_WritesOneShellModeLineNamingTheTrigger()

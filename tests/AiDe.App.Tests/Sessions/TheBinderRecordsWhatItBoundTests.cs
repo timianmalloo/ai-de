@@ -122,6 +122,35 @@ public sealed class TheBinderRecordsWhatItBoundTests : IDisposable
         Assert.Empty(Of(lines, "session-document.refused"));
     }
 
+    /// <summary>
+    /// A composer that is already bound is not bound again: a reopen of a session whose document
+    /// the workspace-open restore already revived reaches the binder a second time, and a second
+    /// <c>Configure</c> after the page mounted would re-mint the fields and push a second
+    /// <c>host.init</c> over whatever the operator had typed.
+    /// </summary>
+    [Fact]
+    public void Bind_OfAComposerAlreadyBound_ChangesNothingAndSaysSo()
+    {
+        var config = Create(["claude-code"]);
+        var providers = Providers();
+
+        var (said, lines) = WithShell(shell =>
+        {
+            shell.OpenSessionDocument(config);
+            string Bind() => SessionComposerBinder.Bind(
+                shell, config, ["claude-code"], "feature",
+                repositoryRoot: _root, dataDirectory: _root, providers, new NeverAffirms());
+            var first = Bind();
+            return (first, Second: Bind());
+        });
+
+        Assert.StartsWith("Composer bound to claude-code", said.first, StringComparison.Ordinal);
+        Assert.Equal("Composer already bound.", said.Second);
+        Assert.Single(Of(lines, "session-document.bound"));
+        Assert.Single(lines, e => e.GetProperty("evt").GetString() == "web-surface.handshake"
+            && e.GetProperty("transition").GetString() == "configured");
+    }
+
     [Fact]
     public void Bind_WithNoWorkspaceOpen_RefusesRepositoryRootOnTheComposerAndInTheLog()
     {
@@ -165,6 +194,91 @@ public sealed class TheBinderRecordsWhatItBoundTests : IDisposable
         var refused = Assert.Single(Of(lines, "session-document.refused"));
         Assert.Equal("engineId", refused.GetProperty("field").GetString());
         Assert.Empty(Of(lines, "session-document.bound"));
+    }
+
+    [Fact]
+    public void Bind_WithNoProviderFile_RefusesProvidersNamingThePath()
+    {
+        var config = Create(["claude-code"]);
+
+        var (_, lines) = WithShell(shell =>
+        {
+            shell.OpenSessionDocument(config);
+            return SessionComposerBinder.Bind(
+                shell, config, ["claude-code"], "feature",
+                repositoryRoot: _root, dataDirectory: _root, providers: null, new NeverAffirms());
+        });
+
+        var refused = Assert.Single(Of(lines, "session-document.refused"));
+        Assert.Equal("providers", refused.GetProperty("field").GetString());
+        Assert.Contains(ProviderConfiguration.DefaultPath, refused.GetProperty("reason").GetString(), StringComparison.Ordinal);
+        Assert.Empty(Of(lines, "session-document.bound"));
+    }
+
+    /// <summary>The registry's own refusal (an ambiguous account) is recorded under the registry's field name.</summary>
+    [Fact]
+    public void Bind_WithAnAmbiguousAccount_RecordsTheRegistrysRefusal()
+    {
+        var config = Create(["claude-code"]);
+        var path = Path.Combine(_root, "providers.json");
+        File.WriteAllText(path, """
+            {
+              "adapterInstallRoot": "C:/adapters",
+              "providers": { "anthropic": { "auth": "subscription", "accounts": [
+                { "label": "max-personal", "health": "ready" },
+                { "label": "max-work", "health": "ready" } ] } },
+              "engines": { "claude-code": { "model": "model-from-the-file" } }
+            }
+            """);
+        var providers = ProviderConfiguration.Read(path);
+
+        var (_, lines) = WithShell(shell =>
+        {
+            shell.OpenSessionDocument(config);
+            return SessionComposerBinder.Bind(
+                shell, config, ["claude-code"], "feature",
+                repositoryRoot: _root, dataDirectory: _root, providers, new NeverAffirms());
+        });
+
+        var refused = Assert.Single(Of(lines, "session-document.refused"));
+        Assert.Equal("accountLabel", refused.GetProperty("field").GetString());
+        Assert.Empty(Of(lines, "session-document.bound"));
+    }
+
+    /// <summary>The window's own refusal — a malformed provider file on a reopen or a restore — lands on the composer and in the log by the same route.</summary>
+    [Fact]
+    public void Refuse_FromTheWindow_LandsOnTheComposerAndInTheLog()
+    {
+        var config = Create(["claude-code"]);
+
+        var (status, lines) = WithShell(shell =>
+        {
+            shell.OpenSessionDocument(config);
+            SessionComposerBinder.Refuse(shell, config, "providers", "providers.json: 'engines' is not an object");
+            return shell.SessionComposer(config.SessionId)!.Status;
+        });
+
+        Assert.Equal("providers: providers.json: 'engines' is not an object", status);
+        var refused = Assert.Single(Of(lines, "session-document.refused"));
+        Assert.Equal("providers", refused.GetProperty("field").GetString());
+        Assert.Equal("providers.json: 'engines' is not an object", refused.GetProperty("reason").GetString());
+    }
+
+    /// <summary>No document open for the session: refused under <c>composer</c>, with no surface to name.</summary>
+    [Fact]
+    public void Bind_WithNoDocumentOpen_RefusesUnderComposer()
+    {
+        var config = Create(["claude-code"]);
+        var providers = Providers();
+
+        var (said, lines) = WithShell(shell => SessionComposerBinder.Bind(
+            shell, config, ["claude-code"], "feature",
+            repositoryRoot: _root, dataDirectory: _root, providers, new NeverAffirms()));
+
+        Assert.Equal("Its composer is not on screen, so nothing was wired to a run.", said);
+        var refused = Assert.Single(Of(lines, "session-document.refused"));
+        Assert.Equal("composer", refused.GetProperty("field").GetString());
+        Assert.Equal(JsonValueKind.Null, refused.GetProperty("surface").ValueKind);
     }
 
     private sealed class NeverAffirms : IAttachmentAffirmation

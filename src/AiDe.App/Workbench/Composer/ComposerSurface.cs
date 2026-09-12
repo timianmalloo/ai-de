@@ -171,6 +171,9 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// <summary>The last thing that happened, in a sentence.</summary>
     public string Status => _status.Text;
 
+    /// <summary>Whether <see cref="Configure"/> has run — a bound composer is not bound again (INV-0009 Phase 2).</summary>
+    public bool IsConfigured => _configured;
+
     /// <summary>The router. Built with the surface, so a mount is heard before the session is wired.</summary>
     public ComposerMessageRouter Router => _router;
 

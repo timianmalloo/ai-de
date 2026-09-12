@@ -234,12 +234,15 @@ public sealed class TheRunBindingComesFromTheProviderFileTests
         Assert.Equal(1, Occurrences(host, "new ProviderRegistry("));
         Assert.Contains("new ProviderRegistry(request.Providers)", host, StringComparison.Ordinal);
 
-        // And nowhere else in the SHELL constructs either one.
+        // And nowhere else in the SHELL constructs any of them — in either spelling, qualified or
+        // not — and nowhere else configures a composer.
         //
         // The sweep is over `src/AiDe.App/` rather than all of `src/`, and that is the scope the
         // claim actually has: `ProviderConfiguration` in Core is the reader — turning the file into a
         // registry is its whole job. What must not happen twice is the SHELL deciding what a registry
         // or an attach gate is made OF, because the second one would be the one that disagrees.
+        // The window keeps its one registry construction (asserted above), so the registry token is
+        // swept everywhere but there.
         foreach (var path in Directory.EnumerateFiles(
                      Path.Combine(RepoRoot(), "src", "AiDe.App"), "*.cs", SearchOption.AllDirectories))
         {
@@ -251,9 +254,23 @@ public sealed class TheRunBindingComesFromTheProviderFileTests
                 continue;
             }
 
+            // A construction is `new X(` or `new Some.Namespace.X(`; the record/class declarations
+            // (`record ComposerSendContext(`) are not constructions and are not matched.
             var text = File.ReadAllText(path);
-            Assert.DoesNotContain("new AttachmentGate(", text, StringComparison.Ordinal);
-            Assert.DoesNotContain("new ProviderRegistry(", text, StringComparison.Ordinal);
+            foreach (var type in new[] { "AttachmentGate(", "ComposerSendContext(" })
+            {
+                Assert.DoesNotContain("new " + type, text, StringComparison.Ordinal);
+                Assert.DoesNotContain("." + type, text, StringComparison.Ordinal);
+            }
+
+            Assert.DoesNotContain("composer.Configure(", text, StringComparison.Ordinal);
+            Assert.DoesNotContain("Composer.Configure(", text, StringComparison.Ordinal);
+
+            if (!path.EndsWith("MainWindow.xaml.cs", StringComparison.Ordinal))
+            {
+                Assert.DoesNotContain("new ProviderRegistry(", text, StringComparison.Ordinal);
+                Assert.DoesNotContain(".ProviderRegistry(", text, StringComparison.Ordinal);
+            }
         }
     }
 

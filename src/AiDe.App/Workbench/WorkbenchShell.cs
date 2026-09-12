@@ -2987,10 +2987,12 @@ public sealed class WorkbenchShell : IDisposable
             {
                 config = new AiDe.Core.Sessions.SessionConfigStore(workspaceRoot, sessionId).Load();
             }
-            catch (Exception error) when (error is IOException or System.Text.Json.JsonException)
+            catch (Exception error) when (error is IOException or System.Text.Json.JsonException or InvalidOperationException)
             {
                 // Unreadable is "gone" for this purpose: the island says no session is open, which
-                // is what a reopen of it would also conclude (ReopenSessionAsync's catch).
+                // is what a reopen of it would also conclude (ReopenSessionAsync's catch). The
+                // third case is the store's own "deserialized to null" for a file that reads as
+                // `null` — a launch must not throw over a session file, whatever is in it.
                 continue;
             }
 
@@ -3038,14 +3040,11 @@ public sealed class WorkbenchShell : IDisposable
             // A surface the saved arrangement restored BEFORE this session was reopened holds the
             // factory's "No session is open" island, and the reconcile reuses a pane's content
             // unless something names it for rebuild (DC-029). Nothing did, so the reopen activated
-            // the island and announced the session (INV-0009 §6, DC-040). Named here — and only when
-            // the pane exists and holds something other than a live document — so the next Render
-            // hands the pane this document.
-            if (Adapter.ContentFor(document.SurfaceId) is not null
-                && Adapter.SurfaceContent<Sessions.SessionDocumentSurface>(document.SurfaceId) is null)
-            {
-                Adapter.Invalidate([document.SurfaceId]);
-            }
+            // the island and announced the session (INV-0009 §6, DC-040). Named here, inside the
+            // branch where no live document was registered — so the pane, if it exists, can only
+            // hold the island (never a live document: ADR-0017) — and the next Render hands it this
+            // document. A surface not in the layout is built fresh regardless.
+            Adapter.Invalidate([document.SurfaceId]);
         }
 
         return surfaceId;

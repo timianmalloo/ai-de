@@ -106,6 +106,10 @@ public sealed class TheNewSessionSheetTests : IDisposable
     [Fact]
     public async Task TheChooserOpensTheChosenWorkspace_ThenTheSheetBindsToWhatTheWindowReports()
     {
+        // The window reports the opened root in ITS OWN form — here, upper-cased, the same directory
+        // on Windows — so the sheet's root can be told apart from the chooser's: a flow that binds
+        // the sheet to the chosen string rather than to what the window reports goes red here.
+        var windowForm = _root.ToUpperInvariant();
         string? windowRoot = null;
         var order = new List<string>();
 
@@ -115,7 +119,7 @@ public sealed class TheNewSessionSheetTests : IDisposable
             openWorkspace: root =>
             {
                 order.Add("open:" + root);
-                windowRoot = root;                            // what the window reports once opened
+                windowRoot = windowForm;                      // what the window reports once opened
                 return Task.FromResult<string?>(null);
             },
             showSheet: sheet => { order.Add("sheet:" + sheet.WorkspaceRoot); sheet.TaskClass = "feature"; return true; },
@@ -125,10 +129,34 @@ public sealed class TheNewSessionSheetTests : IDisposable
 
         var outcome = await flow.StartAsync();
 
-        Assert.Equal(["choose", "open:" + _root, "sheet:" + _root], order);
+        Assert.Equal(["choose", "open:" + _root, "sheet:" + windowForm], order);
         Assert.NotNull(outcome.Created);
-        Assert.Equal(_root, outcome.Created.Config.WorkspaceId);
+        Assert.Equal(windowForm, outcome.Created.Config.WorkspaceId);
         Assert.True(Directory.Exists(SessionPaths.SessionDirectory(_root, outcome.Created.Config.SessionId)));
+    }
+
+    /// <summary>The open path said yes and the window still reports no workspace: the flow refuses, naming the folder, rather than binding to the chooser's string.</summary>
+    [Fact]
+    public async Task TheChooserOpensTheChosenWorkspace_AndAWindowThatStillReportsNoneCreatesNothing()
+    {
+        var sheetShown = false;
+
+        var flow = new NewSessionFlow(
+            activeWorkspaceRoot: () => null,
+            chooseWorkspace: () => _root,
+            openWorkspace: _ => Task.FromResult<string?>(null),   // "opened", but the window never reports it
+            showSheet: _ => { sheetShown = true; return true; },
+            registry: () => Registry(),
+            workspaceId: root => root,
+            time: new FixedTime(Now));
+
+        var outcome = await flow.StartAsync();
+
+        Assert.Null(outcome.Created);
+        Assert.False(sheetShown);
+        Assert.Contains(_root, outcome.Announcement, StringComparison.Ordinal);
+        Assert.Contains("reports no workspace", outcome.Announcement, StringComparison.Ordinal);
+        Assert.False(Directory.Exists(SessionPaths.SessionsRoot(_root)));
     }
 
     /// <summary>A workspace that does not open is a refusal that says why; no sheet, no session.</summary>

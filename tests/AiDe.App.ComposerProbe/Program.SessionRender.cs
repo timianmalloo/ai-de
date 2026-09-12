@@ -557,8 +557,10 @@ internal static partial class Program
                 chooseWorkspace: choose,
                 openWorkspace: folder =>
                 {
+                    // The window reports the opened root in its own form — upper-cased here, the
+                    // same directory — so a sheet bound to the chooser's string reads "other-root".
                     order.Add("open");
-                    windowRoot = folder;
+                    windowRoot = folder.ToUpperInvariant();
                     return Task.FromResult<string?>(null);
                 },
                 showSheet: sheet =>

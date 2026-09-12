@@ -166,9 +166,7 @@ public partial class MainWindow : Window
         var malformed = ReadProviders();
         foreach (var config in revived)
         {
-            _ = malformed is { } reason
-                ? Workbench.Sessions.SessionComposerBinder.Refuse(Shell, config, "providers", reason)
-                : BindComposer(config, RoutableBackendsOf(config), taskClass: null);
+            _ = BindOnRecord(config, malformed);
         }
     }
 
@@ -230,13 +228,7 @@ public partial class MainWindow : Window
         var flow = new Workbench.Sessions.NewSessionFlow(
             activeWorkspaceRoot: () => (DataContext as MainWindowViewModel)?.WorkspaceRoot,
             chooseWorkspace: ChooseWorkspaceForSession,
-            openWorkspace: async folder =>
-            {
-                // The ordinary open path, then the window's own reading of whether it opened: the
-                // path returns a sentence in both outcomes, and Queries is the fact.
-                var said = await OpenWorkspaceAtAsync(folder);
-                return (DataContext as MainWindowViewModel)?.Queries is null ? said : null;
-            },
+            openWorkspace: OpenWorkspaceOrSayWhyAsync,
             showSheet: sheet => Workbench.Sessions.NewSessionSheetDialog.Show(
                 sheet, this, Shell.Announcer.Announce),
             registry: () => _providers?.Registry ?? new AiDe.Core.AgentPlane.ProviderRegistry([]),
@@ -359,15 +351,11 @@ public partial class MainWindow : Window
     {
         var current = (DataContext as MainWindowViewModel)?.WorkspaceRoot;
 
-        if (!string.Equals(current, entry.WorkspaceRoot, StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(current, entry.WorkspaceRoot, StringComparison.OrdinalIgnoreCase)
+            && await OpenWorkspaceOrSayWhyAsync(entry.WorkspaceRoot) is { } notOpened)
         {
-            var opened = await OpenWorkspaceAtAsync(entry.WorkspaceRoot);
-
-            if ((DataContext as MainWindowViewModel)?.Queries is null)
-            {
-                Shell.Announcer.Announce(opened);
-                return;
-            }
+            Shell.Announcer.Announce(notOpened);
+            return;
         }
 
         var store = new AiDe.Core.Sessions.SessionConfigStore(entry.WorkspaceRoot, entry.SessionId);
@@ -377,24 +365,32 @@ public partial class MainWindow : Window
         {
             config = store.Load();
         }
-        catch (Exception error) when (error is System.IO.IOException or System.Text.Json.JsonException)
+        catch (Exception error) when (error is System.IO.IOException or System.Text.Json.JsonException or InvalidOperationException)
         {
+            // The third is the store's own "deserialized to null" for a session.json that reads
+            // as `null` — the same "could not be read" to the operator (INV-0009 Phase 2b's sweep).
             Shell.Announcer.Announce($"“{entry.Name}” could not be read from its workspace.");
             return;
         }
 
         // Shown AND bound (INV-0009 §6). The reopen used to end at the open, so the document was
-        // shown with a composer nothing had configured; the routable set is derived from the
-        // config's enabled backends against the registry as it reads now, and the task class is
-        // whatever the session has on record — none, until the operator chooses one for a prompt.
-        // A malformed provider file is a refusal on the composer, by name: the session exists and
-        // is shown; a bound composer over an empty registry would be a wrong claim about the file.
+        // shown with a composer nothing had configured.
         var shown = Shell.OpenSessionDocument(config);
-        var malformed = ReadProviders();
-        Shell.Announcer.Announce(shown + " " + (malformed is { } reason
-            ? Workbench.Sessions.SessionComposerBinder.Refuse(Shell, config, "providers", reason)
-            : BindComposer(config, RoutableBackendsOf(config), taskClass: null)));
+        Shell.Announcer.Announce(shown + " " + BindOnRecord(config, ReadProviders()));
     }
+
+    /// <summary>
+    /// Binds the composer of a session that already exists — a reopen, or a document a saved
+    /// arrangement restored — from what is on record: the routable set derived from the config's
+    /// enabled backends against the registry as it reads now, and no task class until the operator
+    /// chooses one for a prompt. A malformed provider file is a refusal on the composer, by name:
+    /// the session is shown, and a bound composer over an empty registry would be a wrong claim
+    /// about the file.
+    /// </summary>
+    private string BindOnRecord(AiDe.Core.Sessions.SessionConfig config, string? malformedProviders) =>
+        malformedProviders is { } reason
+            ? Workbench.Sessions.SessionComposerBinder.Refuse(Shell, config, "providers", reason)
+            : BindComposer(config, RoutableBackendsOf(config), taskClass: null);
 
     /// <summary>
     /// The backends a session on record may bind now: its enabled set, filtered by the registry's
@@ -405,6 +401,17 @@ public partial class MainWindow : Window
         _providers is { } providers
             ? AiDe.Core.Presentation.Sessions.NewSessionSheetViewModel.RoutableAmong(config.EnabledBackends, providers.Registry)
             : [];
+
+    /// <summary>
+    /// Opens a folder through the ordinary open path and returns null when it opened, or the path's
+    /// own sentence when it did not — the window's reading of which is <c>Queries</c>, not the
+    /// sentence, because the path returns one in both outcomes.
+    /// </summary>
+    private async Task<string?> OpenWorkspaceOrSayWhyAsync(string folder)
+    {
+        var said = await OpenWorkspaceAtAsync(folder);
+        return (DataContext as MainWindowViewModel)?.Queries is null ? said : null;
+    }
 
     /// <summary>Shows the workspace chooser that interposes when no workspace is open (R13 b1).</summary>
     private string? ChooseWorkspaceForSession()
