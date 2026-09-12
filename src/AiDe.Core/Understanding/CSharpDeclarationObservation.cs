@@ -36,14 +36,21 @@ internal sealed class VerifiedSourceBuffer : IDisposable
     internal string FullText => fullText ?? throw new ObjectDisposedException(nameof(VerifiedSourceBuffer));
     internal int RawByteLength => rawBytes?.Length ?? throw new ObjectDisposedException(nameof(VerifiedSourceBuffer));
 
+    internal static int GetDecodedUtf16Length(byte[] ownedSnapshot, string decoderId)
+    {
+        ArgumentNullException.ThrowIfNull(ownedSnapshot);
+        AtlasIdentityCodec.RequiredToken(decoderId, nameof(decoderId));
+        EnsureWithinByteLimit(ownedSnapshot.Length);
+        var text = Decode(ownedSnapshot, decoderId);
+        AtlasIdentityCodec.ValidUnicode(text, nameof(ownedSnapshot));
+        return text.Length;
+    }
+
     internal static VerifiedSourceBuffer FromBytes(AtlasSourceObservation sourceObservation, AtlasSourceBinding binding, ReadOnlySpan<byte> rawBytes)
     {
         ArgumentNullException.ThrowIfNull(sourceObservation);
         ArgumentNullException.ThrowIfNull(binding);
-        if (rawBytes.Length > MaxSourceBytes)
-        {
-            throw new InvalidOperationException("Verified source input exceeds the 8 MiB request limit.");
-        }
+        EnsureWithinByteLimit(rawBytes.Length);
 
         if (sourceObservation.Status is not AtlasSourceObservationStatus.Verified)
         {
@@ -82,6 +89,14 @@ internal sealed class VerifiedSourceBuffer : IDisposable
     {
         rawBytes = null;
         fullText = null;
+    }
+
+    private static void EnsureWithinByteLimit(int byteLength)
+    {
+        if (byteLength > MaxSourceBytes)
+        {
+            throw new InvalidOperationException("Verified source input exceeds the 8 MiB request limit.");
+        }
     }
 
     private static string Decode(byte[] bytes, string decoderId) => decoderId switch
@@ -487,4 +502,5 @@ public static class CSharpDeclarationObservation
         }
     }
 }
+
 
