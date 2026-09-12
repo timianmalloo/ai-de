@@ -72,8 +72,17 @@ The Data concerns are interpreted by the stronger contracts below: a source line
 version-bound location, **never a logical ID**; supported physical inventory means the authorized
 physical scope, **not only extractor-supported languages**; every usable SourceAnchor retains its
 content hash/decoder and declaration-version binding. The grain/history/coherence/live-source/
-cache/evolution decisions in §§4–6 and the ADRs are proposed choices awaiting their own review,
+cache/evolution decisions in §§4–6 and the ADRs are proposed choices under final content convergence,
 not unresolved concepts delegated to UI code and not already accepted implementation contracts.
+
+**Final content-refinement checkpoint, Conductor-reported:** Data, Security, Distributed Systems
+and AI architecture-content gates passed with future implementation conditions. Enterprise,
+Patterns and SRE advisory findings are incorporated below; this author does not self-clear their
+review or normative acceptance. The separate Owner's turn-5 choices are recorded in §15.1.
+Conductor also reports SH2 merged on current main at **`b4e61022`**. This branch's earlier source
+map is not evidence of that newer host implementation: after acknowledgment, reconcile the actual
+factory/menu/host/SH2 seams against current main **before E-0 design or dispatch**.
+E-1…E-4 remain roadmap stages, not work implicitly admitted into E-0.
 
 ### 1.1 Decision index
 
@@ -215,13 +224,17 @@ Keys use an unambiguous versioned canonical tuple encoding, not string concatena
 unescaped separators. If compact hashes are used as indexes, retain/check the full tuple on a
 collision; the tuple, not accidental hash equality, defines identity.
 
-**C# E-0 capability floor:** source-declared types; ordinary methods and overloads; instance/static
-constructors; properties and indexers with addressable accessors; fields/constants; events and
-explicit event accessors; operators/conversions and destructors where the declared-ID/span
-contract is established. The existing probe executes only a subset: ordinary methods,
-constructors, properties/accessors and partial methods/types. Unprobed kinds require the E-0
-design's parameterized compiler tests before being advertised as supported. E-0 cannot omit
-the probed mandatory kinds to obtain a passing type-only demonstration.
+**C# E-0 mandatory symbol floor, Owner turn 5:** source-declared types; ordinary methods and
+overloads; constructors; properties and addressable accessors; partial type/member declaration
+navigation, including distinct definition and implementation locations. These cannot be removed
+to obtain a passing type-only demonstration. The existing probe covers representative cases,
+not every boundary; the admitted design must test the full mandatory floor.
+
+Other unprobed kinds — indexers, fields/constants, events/explicit event accessors, operators/
+conversions, destructors and any additional compiler-specific kind — are explicit **staged
+obligations**, not advertised E-0 capabilities. Their later semantic-stage admission requires
+kind-specific declaration-ID/span tests. Do not convert a future obligation into an E-0 promise
+by listing it beside a probed kind.
 
 Implicit/synthesized members, metadata-only symbols, locals, lambdas, local functions, malformed
 syntax, unresolved symbols and null declaration-ID creation receive typed capability/availability
@@ -282,8 +295,8 @@ Policy may prohibit even metadata: do not leak paths/counts through “excluded�
 Show a policy limitation with withheld denominator where necessary.
 
 One physical file has one file record; linked/project memberships are distinct relations.
-Two projects including the same file do not produce two physical files. Directory/symlink
-cycles, case collisions, unreadable directories, deleted files and scan interruption prevent a
+Two projects including the same file do not produce two physical files. Missing tracked files,
+inaccessible paths, directory/symlink cycles, case collisions, unreadable directories, deleted files and scan interruption prevent a
 false `complete`. No OS shell command is built from a path read from repository data.
 
 ### 5.2 Manifest grain and state
@@ -310,7 +323,7 @@ Old complete observations remain available while the new manifest is mixed/parti
 
 ### 5.3 Proposed source policy: hash-validated live reads
 
-**Default: do not persist raw source bodies.** Store minimal identity/hash/span/provenance;
+**Owner turn-5 content choice: do not persist raw source bodies by default.** Store minimal identity/hash/span/provenance;
 read authorized bytes on demand at Core, hash and decode the same bounded buffer used for rendering.
 This avoids a private repository mirror and ongoing body-retention cost. It deliberately cannot
 promise historical bodies after files change. Back preserves old identities and unavailable/stale
@@ -329,10 +342,12 @@ Source text is returned only after authorization/path checks; no partial data on
 The contract carries indexed hash, read hash (nullable only with explicit verification state),
 read time, encoding, byte/character bounds, content state and optional validated spans.
 
-Proposed first design bounds, **not measured production constants**: 256 KiB UTF-8 response page,
-16 MiB maximum whole-file verification buffer, 256 inventory rows/page, graph 200 nodes/500 edges
-initial view, 5,000 nodes absolute existing-query ceiling. E-0 design must reconcile response
-envelope overhead with the existing IPC frame limit before selecting effective limits.
+The existing contracts supply a 256 KiB content ceiling and a 5,000-node graph-query ceiling,
+not permission to allocate that much in every new operation. E-0 design must set
+`max_verified_file_bytes`, `max_inventory_rows_per_page`, `initial_graph_nodes`,
+`initial_graph_edges` and effective response limits from the admitted workload and real IPC
+framing. These values are **unset admission blockers**, not arbitrary new defaults or measured
+production constants. Reconcile response-envelope overhead and decoder allocation before code.
 Above verification bounds, no whole-file hash is fabricated from a prefix. Content can be shown
 only as explicitly unverified live text without semantic highlighting, subject to policy; larger
 verified historical reading requires a separately admitted chunk/snapshot strategy.
@@ -470,6 +485,8 @@ Raw model/repository exceptions and sensitive paths are not reflected verbatim t
 
 ### 7.3 Native journey and selection
 
+**Memento-backed navigation history** retains immutable selection snapshots, not source bodies.
+A **Generation-Token/request-correlation guard** protects every asynchronous result application.
 An immutable selection contains manifest, root/file, optional compilation scope/symbol/declaration,
 altitude/lens and navigation generation. View-local focus/scroll, selected partial declaration and
 branch/worktree context are carried in bounded Back/Forward entries. New selection cancels old
@@ -482,7 +499,8 @@ can be reused only after its Core owner agrees an explicit binding-aware adapter
 `NodeContent` payload alone is insufficient. Future graph/diagram surfaces use the accepted host,
 not an Atlas-specific second docking host or a fourth perspective.
 
-Only a **trusted UI broker handling an actual user gesture** may navigate, copy or export.
+Only a typed **CommandGateway / TrustedGestureCommandBroker** handling an actual human gesture
+may navigate, copy or export. This is a closed command boundary, **not an event bus**.
 It validates typed object IDs and policy again. Content text, Markdown links, command URIs,
 session messages, specs and model output cannot invoke it. Where WebView is later used, no host
 objects/direct SDK bridge; deny scripts/navigation from content and use a closed allow-listed
@@ -632,7 +650,26 @@ available, is not evidence for this new interpretation contract.
 | Unsupported client/daemon | Negotiated capability disabled with stable code; old query endpoints keep behavior. No result shape coercion into plausible defaults. |
 | Restart / crash | Replay committed observations/seals; unsealed work invisible; resume freshness checks; cursor expiration explicit. Last successful is labelled. |
 
-### 10.1 STRIDE and policy boundaries
+### 10.1 E-0 bounded-work admission table
+
+The design must complete every field below **before code admission**, using the agreed workload,
+benchmark evidence and Owner/appropriate reviewer ruling. `design-required` means an admission
+blocker, not infinity, a library default or a measured number. Queue exhaustion returns an explicit
+operator-visible `BudgetExceeded`/busy outcome with affected scope, limiting dimension and permitted
+recovery. It must not silently drop work and report a complete scan.
+
+| Work class | `queue_capacity` | `full_mode` | `coalescing_key` | `control_priority` | `max_in_flight` | `deadline` | `metric` |
+|---|---|---|---|---|---|---|---|
+| Inventory enumeration | design-required, count + buffered bytes | Reject/defer new run visibly; partial current run disclosed | Workspace/root/policy; only superseded unstarted run, never accepted observation | Below control operations; starvation bound design-required | design-required | Run/page/cancel bounds design-required | queue depth/wait, visible refusals, run duration/bytes |
+| Semantic extraction | design-required, count + estimated memory | Backpressure/reject explicitly; keep last-successful | Scope + latest desired target; only obsolete unstarted work | Existing control-first rule; fairness bound design-required | design-required by memory/CPU measurement | Scope and cancellation bounds design-required | queue depth/wait, obsolete coalesces, duration, stale rejects |
+| Interactive query/source read | design-required, requests + response/buffer bytes | Busy/BudgetExceeded; no successful empty substitute | Navigation session + selection generation + operation; discard obsolete request | Interactive admission cannot starve authority control | design-required | Query/read/cancel bounds design-required | active reads, queue wait, hashed/returned bytes, late drops |
+| Writer/manifest seal | design-required, queued requests + payload bytes | Backpressure/refuse before acceptance; never drop accepted command | Same idempotency ID only; differing payload is conflict | Preserve existing control priority; fairness bound design-required | One workspace writer; prove no bypass | Admission/transaction/cancel bounds design-required | commit wait/duration, rejected seals, command conflicts |
+
+Changing a queue bound or `full_mode` after design is a recorded admission change. Tests saturate
+each queue, race cancellation/replacement and verify terminal outcomes, fairness and unchanged
+complete-manifest semantics. No timing guarantee is inferred from a cancellation token alone.
+
+### 10.2 STRIDE and policy boundaries
 
 | Threat | Boundary / concrete control | Falsifier to execute before admission |
 |---|---|---|
@@ -659,6 +696,53 @@ spans/counters below are **delivery requirements**, not observed emissions.
 | How expensive is interpretation? | `aide.atlas.interpretation` receipt, E-4 | model/version/tier, context volume, measured tokens/spend where available, quota, duration, outcome, validator result; unavailable = not recorded. |
 | Is persistent growth bounded and recoverable? | store/cache/compaction diagnostics | fact/cache bytes, replay duration, retained observation range, failures and denied purge; no silent history deletion. |
 
+### 11.1 Telemetry contract and privacy budget
+
+Allowed **aggregate metric attributes** are a closed, versioned vocabulary: operation/work class,
+phase, outcome, stable error-code category, content/coherence state, capability/schema version and
+bounded language/member category with `other/unsupported` buckets. Attributes have a declared
+maximum value set and cardinality budget before admission. Workspace/root/file/symbol/manifest/
+session/request IDs, hashes, model prompts and arbitrary exception text are not metric labels.
+
+Default emissions are aggregate counters/histograms plus one privacy-minimized run/query completion
+record. No default per-file logs, raw paths, source bodies, source excerpts or session/model content.
+Controlled traces may carry correlation/request/manifest references only under access-controlled
+retention and redaction policy; these are not permission to emit raw paths or bodies.
+Per-file diagnostic sampling is off by default. A controlled debug mode requires explicit purpose,
+authorization, finite duration, sample/byte caps, retention, redaction and teardown; those values
+are design admission fields. Redaction applies before sink emission, including failures.
+An aggregate count or bound used to explain completeness is never sampled; optional traces may be
+sampled with the sampling decision recorded. Missing measurements remain `not recorded`, not zero.
+
+### 11.2 Store/cache-growth, replay and performance admission
+
+Use the candidate spec's approved workload (approximately 2,500 authorized visible paths or an
+Owner-approved equivalent) and existing targets below. No additional numeric success threshold is
+invented here. Before E-0 code, record dataset/policy/member counts, machine, warm/cold protocol,
+sample count and accepted values for each currently **design-required** field:
+
+| Budget field | What is bounded / admission evidence |
+|---|---|
+| `max_store_bytes`, `store_growth_bytes_per_manifest` | Retained fact/dimension volume and growth on representative repeated refreshes; counts distinguish unchanged reuse from new observations. |
+| `max_cache_bytes`, `cache_growth_bytes_per_manifest` | Rebuildable cache volume separately from primary evidence; cache eviction/rebuild must preserve results and disclose cold-read cost. |
+| `retained_manifest_range`, `retention_policy_version` | Authorized queryable history and deletion basis, not an automatic purge target to make a benchmark pass. |
+| `max_replay_duration`, `max_replay_peak_memory` | Drop-cache/replay measurements from retained facts, with canonical result/bounds equality. |
+| `max_query_p95`, `max_query_peak_memory` | Warm/cold bounded inventory/outline/source queries and their actual SQLite query plans. |
+| `max_ui_thread_block`, `max_history_entries`, `max_history_bytes` | Native responsiveness and bounded Memento state; history eviction is explicit and never deletes evidence. |
+| `min_free_disk_bytes`, `growth_warning_threshold` | Early warning and safe admission refusal before storage failure; no automatic evidence deletion. |
+
+Every unset value is an E-0 design/Owner admission blocker. On breach, emit the limiting dimension,
+observed value/limit where known and scope in a typed **BudgetExceeded** result/health state; preserve
+last-successful evidence and offer retry, authorized narrower scope, or a separately approved budget/
+maintenance decision. Never auto-drop/purge evidence, hide included files or weaken a required test
+to fit a budget. Scope changes create a new disclosed request/manifest, not a silent partial success.
+
+Dedicated schema evolution is triggered only by recorded repeated benchmark failure or an integrity
+failure **and** the actual query-plan/replay evidence identifying generic representation as the
+cause. First assess existing indexes/bounded query shape. If those cannot meet the accepted budget,
+take the additive-schema alternative through Data/Owner review, migration/replay/rollback proof;
+database size or a slow UI alone is not evidence that a second graph database is needed.
+
 Candidate E §A10 supplies **targets**, not achieved values: approximately 2,500 authorized paths
 on an Owner-approved safe real workspace; tree open p95 ≤2 s, filter and retained switch p95
 ≤150 ms. E-0 design sets a measurable UI-thread frame budget and resource bounds before code.
@@ -681,7 +765,10 @@ Existing external **H** sessions remain external; Atlas does not implement a T4 
 | T4 composed ensemble | Not required for product Atlas; reject until a separate demonstrated need and architecture admission. The development fleet is not a runtime tier. |
 
 Named patterns: **Ports and Adapters** (existing local/IPC query boundary), **CQRS** (one writer,
-read-only derived projections), **immutable observation + manifest** (versioned evidence selection),
+read-only derived projections), **ImmutableObservation + ManifestSeal** (versioned evidence selection,
+not an unproved Event Sourcing system), **Memento** (bounded navigation snapshots),
+**Generation-Token/request correlation** (late-result guard), **CommandGateway /
+TrustedGestureCommandBroker** (typed human-action boundary, not an event bus),
 **LOA 1.4 Hot Path Bypass**, **3.1 Deterministic Verifier**, **4.1 Grounded Context Injector**,
 **4.3 Receipt Ledger**, **2.4 Token Budget Throttle**, **2.5 Schema-Constrained Output**,
 **5.3 Idempotent Action**, **6.3 Audit Trail**, **6.5 Graceful Degradation**.
@@ -799,19 +886,24 @@ Conductor owns audit/index regeneration at join; none ran in this worker.
 
 `GATE atlas-proposed-drafting · 2026-09-12 · separate Owner ruling note-atlas-draft-content-while-blocked · exit criteria: isolated proposed docs only; preserve all barriers · verdict: permitted drafting, not content acceptance.`
 
-`GATE atlas-final-architecture · 2026-09-12 · independent Data, Security/Privacy, Distributed, AI, native/UX/UML, Test and maintainability review coordinated by Conductor · exit criteria: corrected spec content verdicts, source binding/storage/authority forks resolved, complete seam/proof ledger · verdict: PENDING · vetoes: author cannot clear.`
+`GATE atlas-final-architecture · 2026-09-12 · independent reviews coordinated by Conductor · reported content results: Data/Security/Distributed/AI passed with future conditions; Enterprise/Patterns/SRE refinements incorporated; final convergence/remaining reviews recorded by Conductor · exit criteria: corrected spec verdicts, Owner content choices, complete seam/proof/budget ledger · verdict: PROPOSED CONTENT UNDER FINAL CONVERGENCE, NOT NORMATIVE ACCEPTANCE · vetoes: author cannot clear.`
 
 `GATE atlas-source-dispatch · 2026-09-12 · Claude/Core/Shell acknowledgment plus Owner · exit criteria: req-01M2B86TXF7SHG61B31P4H4173 resolved, section-2 ownership updated, current-main reconciliation, E-0 design/test admission · verdict: BLOCKED.`
 
-### 15.1 Owner forks — recommendations, not accepted rulings
+### 15.1 Owner content choices — overall architecture remains PROPOSED
 
-| Fork | Options | Recommendation and consequence |
+**Source:** separate Astra Owner agent `61e506c4-2d12-42e9-85cb-153f2f916811`, **turn 5**,
+as relayed by Conductor on 2026-09-12. The five topic titles below identify the choices; Conductor
+will record their durable notes. No guessed note path, ruling number or normative acceptance is
+introduced. These choices resolve the content forks; they do not grant source permission.
+
+| Owner choice topic | Alternatives considered | Selected content choice and consequence |
 |---|---|---|
-| Source retention | A hash-validated live reads; B policy-authorized immutable captured bodies; C commit-object reads plus explicit dirty-overlay handling. | **A for E-0.** Minimal work-data retention, but old body may be unavailable on Back. If exact historic body is required, separately admit B/C with retention/deletion and adapter execution. Never silently claim A provides it. |
-| Physical visibility default | A tracked + authorized nonignored untracked, disclosed excluded categories; B all authorized files including ignored; C tracked only with explicit limitation. | **A**, with generated/vendor/migration not blanket omissions. Root policy and metadata-hidden counts remain authoritative. Owner must accept boundary before claiming completeness. |
-| Generic facts vs physical schema | A generic versioned observations and seals; B additive dedicated fact tables after query/integrity proof. | **A first.** Trigger B only when an executed plan/invariant spike proves need; no destructive migration now. |
-| Symbol capability breadth | A probed mandatory kinds plus explicit per-kind admission; B advertise every C# kind immediately. | **A.** Expand compiler tests within E-0 for promised kinds; do not fabricate support or reduce the journey to types. |
-| E-4 runtime | A separate read-only adapter under accepted runtime contract; B amend product provider; C defer interpretation. | **C until A is spiked/evaluated.** B requires a separate product ruling; development fleet choice is not that ruling. |
+| E-0 source policy | Hash-validated live reads; captured bodies; commit-object reads with dirty-overlay handling. | **Hash-validated live reads.** Back retains selection/manifest; if matching bytes are gone, old body is Unavailable and anchors disabled. No historical-body guarantee. Captured/commit history requires a future separate admission. |
+| Physical inventory boundary | Tracked + authorized nonignored untracked; all authorized including ignored; tracked only. | **Tracked + authorized nonignored untracked, versioned policy.** Non-Git roots enumerate physically. Unsupported/generated/vendor/migration are not blanket exclusions. Missing tracked files, inaccessible paths or cycles prevent a false complete claim; hidden paths/counts remain withheld. |
+| Durable representation | Generic versioned facts/seals/replay; dedicated additive fact tables. | **Generic facts + seals + replay first.** Dedicated tables require executed need and additive compatibility/replay/rollback proof; no speculative/destructive migration. |
+| E-0 mandatory symbol floor | Mandatory proven-family navigation versus advertising all C# kinds. | **Source-declared types, ordinary methods/overloads, constructors, properties/accessors, partial type/member declaration navigation.** Other unprobed kinds are explicit staged obligations, not advertised E-0 support. |
+| E-4 interpretation admission | Separate read-only adapter; product-provider amendment; defer. | **Defer until separate read-only adapter, processing and eval admission.** No product-provider change or prompt-compiler reuse is authorized. |
 
 ### 15.2 Resume and handoff
 
@@ -822,18 +914,21 @@ Shell (factory/menu/host/SH2), later Conversation (runtime), and separate Astra 
 (content/horizon decisions). Silence or lease expiry does not grant authority.
 
 Conductor joins this draft commit with the pinned candidate spec and safe notes, records content
-verdicts and allocator provenance, resolves forks, updates the sole ownership register only after
-actual acknowledgment, and reconciles current main. Only then run E-0 `/design-slice` and
+verdicts, the turn-5 Owner choices and allocator provenance, updates the sole ownership register
+only after actual acknowledgment, and reconciles actual host seams against current main
+(reported SH2 merge `b4e61022`). Only then run E-0 `/design-slice`, settle every design-required
+budget field before code admission, and perform
 red-first implementation in assigned worktrees. Join serially, append audit through existing
 tools, and regenerate derived views after audit. This worker neither edits those shared
 artifacts nor claims their gates passed.
 
 **Architecture proof is not production proof.** This document supplies a coherent proposed
 contract and falsifiers; only the later executed native/source/store/wire/eval evidence can
-establish the product. The remaining uncertainty that can change this architecture is whether
-the approved source-retention requirement demands exact historical bodies or the native safe
-reader/query-integrity spikes disprove the minimal live-read/generic-fact design.
+establish the product. An explicit future requirement for guaranteed historical bodies would
+reopen the selected retention policy. Native safe-reader/query-integrity spikes may still disprove
+the minimal implementation of the chosen live-read/generic-fact design; until they pass, no code
+admission or runtime guarantee is inferred.
 
 | Completed | Remaining | Best next action |
 |---|---|---|
-| Whole PROPOSED architecture and five decisions; exact existing/new seam requests; source/evidence limits recorded; Conductor reports all spec-content gates clear. | Independent architecture/ADR gates, Owner forks, registration/acknowledgment, E-0 design/native safety proof and all production delivery. | Conductor join and independent architecture review against integrated candidate spec `a50329b2`, then separate Owner ruling; no source dispatch meanwhile. |
+| Whole PROPOSED architecture and five decisions; turn-5 Owner content choices and advisory controls incorporated; Conductor-reported content outcomes recorded. | Final architecture/ADR convergence, normative acceptance/registration/acknowledgment, actual-main host reconciliation, E-0 design budgets/native safety proof and all production delivery. | Conductor join and final proposal convergence against candidate `a50329b2`; preserve the acknowledgment barrier and admit only E-0 design afterward. |

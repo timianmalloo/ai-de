@@ -25,6 +25,11 @@ summary: >-
   supplied to author, registration pending. Not a numbered global ADR reservation.
 - **Status:** PROPOSED. Factory/menu/host/SH2 ownership unchanged.
 
+**Host checkpoint:** Conductor reports current main contains SH2 merge `b4e61022`.
+After actual acknowledgment, reconcile the active host/factory/menu/routing seams against that
+main-line state before E-0 design/dispatch. This earlier source map is not proof of the new host.
+E-1…E-4 references remain roadmap-only, not implied E-0 implementation assignments.
+
 ## Context
 
 K0 establishes `IWorkspaceQueries`, `ProjectionService`, operation registration and
@@ -72,13 +77,16 @@ Atlas proposes content and selection contracts; Claude/Shell authors shared regi
 SH2 integration after acknowledgment. Existing Core-owned `NodeReaderView`/`CodeViewerView`
 can be adapted only by agreement; their old unbound payload is not source-version proof.
 
-Selection is immutable and manifest-bound. New selection increments generation and cancels old
+Use **Memento-backed navigation history** for immutable manifest-bound selections, not body
+snapshots, and a **Generation-Token/request-correlation guard** for late asynchronous results.
+New selection increments generation and cancels old
 requests. Apply a response only if both generation and manifest match. Back restores file/member/
 partial declaration/lens/branch context and focus/scroll without guessing rebinding. Deleted or
 changed historical content retains a truthful unavailable/stale state.
 
-Only a trusted broker responding to a human gesture may copy, navigate or export after policy
-checks. Repository/spec/session/model strings are inert. WebView, if used later, has no direct
+Only a typed **CommandGateway / TrustedGestureCommandBroker** responding to a human gesture may
+copy, navigate or export after policy checks. This is not an event bus.
+Repository/spec/session/model strings are inert. WebView, if used later, has no direct
 SDK/host-object bridge and no untrusted URI navigation. Closed typed UI messages cannot grant
 authority beyond the current selection and user action.
 
@@ -93,6 +101,13 @@ authority beyond the current selection and user action.
 - Do not hold database read transactions while waiting on model/UI. Source binding is independent.
 - Stale late responses are discarded even when remote cancellation races.
 - Missing/unsupported capability has a reason and recovery; no spinner without terminal outcome.
+
+Architecture §10.1 is the authoritative E-0 admission table for `queue_capacity`, `full_mode`,
+`coalescing_key`, `control_priority`, `max_in_flight`, `deadline` and `metric` for inventory,
+extraction, interactive reads and writer/seals. Every unset value requires measured design/Owner
+admission before code; it is not an ambient library default. Saturation tests must observe explicit
+busy/**BudgetExceeded** results, control fairness, cancellation and no falsely complete scan.
+Do not create a second queue policy table here to drift from the architecture.
 
 ## Alternatives
 
@@ -115,7 +130,11 @@ proof. WebView focus/list proof applies only when the admitted phase actually us
 Candidate performance targets: tree open ≤2 s p95; filter/retained switch ≤150 ms p95 on the
 approved approximately 2,500-path workload. These are targets, not measured outcomes.
 Record query/render/cancel/late-drop/bytes/omissions on normal paths with correlation and no
-sensitive high-cardinality metric labels.
+sensitive high-cardinality metric labels. Architecture §11.1 defines the closed allowed attribute
+set and cardinality budget: aggregate counters/histograms are not sampled; optional controlled
+traces may be. No raw paths/source bodies or default per-file logs; bounded authorized debug has
+sample/byte/time/retention caps and redaction before emission. Unset debug/admission numbers block
+enabling that path. Architecture §11.2 governs store/cache/replay/native-history budgets.
 
 **LOA:** F/T0, Ports and Adapters, CQRS, Hot Path Bypass, Graceful Degradation;
 P1/P2/P3/P7/P9/P11 and C4/C7/C8/C9/C11. **Rollback:** disable new capability and remove
