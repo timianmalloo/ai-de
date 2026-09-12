@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T00:18:44Z",
+  "generated": "2026-09-12T00:25:31Z",
   "audit": [
     {
       "actor": null,
@@ -12782,37 +12782,281 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M29FP5VJFPGV1GKCGSPDB4GV",
-      "shortname": "conductor-addendum-c-close",
-      "datetime": "2026-09-12T00:18:44Z",
-      "session": "conductor-addendum-c",
-      "prompt": "The operator's turn of 2026-09-11 17:17Z (al-01M28QJMWGJT5AK438M37KJ9ZT) and its mid-turn directives.",
-      "summary": "Everything but the dispatch is on main at 7d8aa596: Addenda C and D accepted, Rulings 50-78, ADR-0017 amended + ADRs 0030-0037, the design language and four mockups at zero craft findings, the coordination plan, five product fixes with classes DC-136-149. The dispatch waits on S0 — the operator's attended F5 exit run (Ruling 51) — with INV-0009's fix live and the F5 tree pinned at 135e05e1. Ledger in the plan's Stage 10: the planning chain ran ~17,000 s against an Inferred 6,000 s; three shell-line red-ignored merges and one blind cleanup registered as classes.",
-      "kind": "manual",
-      "skill": null,
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/plans/addendum-c-modes.md"
       ],
-      "tags": [],
-      "outcome": "partial",
-      "goal": "Land the straggler fix and prune; resume F5 to the gesture boundary; open Addendum C through specify, ui-design, define-architecture, prepare-for-coordination; dispatch the refactor",
+      "datetime": "2026-09-12T00:18:44Z",
       "done_when": "Straggler merged, branches pruned; F5 tree committed, pinned, gates green, waiting only on the operator's gesture; C and D specified/designed/architected with a coordination plan on main; refactor dispatched under P1's contract",
-      "tier": "T2",
       "fan_out": 3,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": false,
-        "regression": false
-      },
       "git": {
-        "sha": "7d8aa596bfff428648e16f0ae4aa75662f7373f2",
-        "short": "7d8aa596b",
         "branch": "conductor/addendum-c",
-        "pushed": null
-      }
+        "pushed": null,
+        "sha": "7d8aa596bfff428648e16f0ae4aa75662f7373f2",
+        "short": "7d8aa596b"
+      },
+      "goal": "Land the straggler fix and prune; resume F5 to the gesture boundary; open Addendum C through specify, ui-design, define-architecture, prepare-for-coordination; dispatch the refactor",
+      "id": "al-01M29FP5VJFPGV1GKCGSPDB4GV",
+      "kind": "manual",
+      "outcome": "partial",
+      "prompt": "The operator's turn of 2026-09-11 17:17Z (al-01M28QJMWGJT5AK438M37KJ9ZT) and its mid-turn directives.",
+      "session": "conductor-addendum-c",
+      "shortname": "conductor-addendum-c-close",
+      "signals": {
+        "acceptance_met": false,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "Everything but the dispatch is on main at 7d8aa596: Addenda C and D accepted, Rulings 50-78, ADR-0017 amended + ADRs 0030-0037, the design language and four mockups at zero craft findings, the coordination plan, five product fixes with classes DC-136-149. The dispatch waits on S0 — the operator's attended F5 exit run (Ruling 51) — with INV-0009's fix live and the F5 tree pinned at 135e05e1. Ledger in the plan's Stage 10: the planning chain ran ~17,000 s against an Inferred 6,000 s; three shell-line red-ignored merges and one blind cleanup registered as classes.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "node-f5",
+      "artifacts": [
+        "docs/proof/conductor-front-door.md",
+        "tools/verify-front-door-exit-evidence.py"
+      ],
+      "datetime": "2026-09-11T13:48:59Z",
+      "done_when": "A governed run rooted in the linked worktree has closed, its scored_episode_cell row read, and either IsComparable == true is recorded or the Not Scored verdict has been escalated as Ruling 17's EvaluatorIntegrity trip.",
+      "duration_seconds": 1812.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "feature/exit-evidence",
+        "pushed": true,
+        "sha": "1374401d171b1ec6be5d56c25b1d1e00608abc18",
+        "short": "1374401d1"
+      },
+      "goal": "Measure, before the exit run, every live dependency the exit run has: the pinned adapter starting, observed auth arriving, worktree provisioning from inside a linked worktree, coord genuinely absent, and whether the linked-worktree shape scores comparable.",
+      "id": "al-01M28BN2WPZKCAE3VT8228QY5H",
+      "kind": "script",
+      "outcome": "success",
+      "prompt": "Node F5 — exit evidence and the Proof Pack. Pre-flight only: buy Ruling 17's answer (does the linked-worktree shape score?) through the existing --conduct entry before spending the front-door exit run, which cannot be re-taken.",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "shortname": "f5-preflight-live-run",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "started_at": "2026-09-11T13:18:47Z",
+      "summary": "A LIVE GOVERNED RUN THAT IS NOT THE EXIT EVIDENCE, recorded because a live run that appears in no record is worse than one that appears with its purpose stated.\n\nWHAT IT WAS FOR. F5's exit run launches through the front door and cannot be re-taken; Ruling 17 makes \"does the linked-worktree shape score?\" a question that must reach the conductor rather than a qualification to carry. This bought that answer through the existing `--conduct` headless entry, for one trivial turn, before spending the run whose evidence is the deliverable.\n\nBOUNDS. Task class `front-door-preflight` in its own scratch data directory, so nothing shares the exit run's cohort — ScoreSegment partitions on (Workspace, TaskClass, SchemaVersion) and a throwaway episode in the measured cohort would be DC-110's shape. Lease exactly `spikes/conductor-front-door-exit-run/**`; 6-minute prompt timeout; the lane wrote one file containing one word.\n\nWHAT IT MEASURED, and it is the reason to keep the record. repositoryRoot was the LINKED WORKTREE `C:/projects/ai-de-feature-exit-evidence`. The episode scored `Partial: 15 / 15 observed`, `mode=governed`, `IsComparable == true`, `IncomparableReason == null` — and its `workspace` column reads `c:\\projects\\ai-de`, the PARENT repository, which does not contain `docs/proof/conductor-front-door.md` in its working tree or in HEAD (`9f01fdc`), verified both ways. The declared artifact was therefore credited from the LANE'S OWN CHECKOUT: DC-115's Phase-2 control (`ProofPackVerifier.VerifyInCheckouts` + `ClosedEpisodeScoring.CheckoutsOf`) observed doing its job on the shape Phase 1 could not use. Phase 1 avoided the defect by rooting in a clone; this did not have to.\n\nOTHER MEASUREMENTS. terminalHostConstructions 0. eventsObserved 43, latencyMeasured 43, p50 0.0204 ms, p95 0.2858 ms on TIMMALLSTRIX — recorded, never asserted (ADR-0029). observedAuth kind=account label=\"Claude Max\" plan=max. seamsRaised 0, seamResolutionRatio 1. Exit code 0, so ConductorEntry's four-point floor held. Wall clock 14 s for the run that was waited on.\n\ncoordInstalled: FALSE, DELIBERATELY. `coord` is not on this machine's PATH and no shim was supplied, because supplying one would have run `coord install` inside a linked worktree that SHARES `.git/config` with its parent — measured: `extensions.worktreeConfig` is unset on C:/projects/ai-de and both merge drivers live in `file:.git/config`. That is DC-112, and it would have repointed the main clone's merge drivers at a lane tree that is then released, breaking merges across twenty-one live worktrees, in the one run nobody would think to suspect. `ProcessRunner.Run` catches Win32Exception and returns -1, so the provisioner records false and the run proceeds. The main clone's merge drivers were re-read after the runs and after cleanup: unchanged.\n\nA MISTAKE, RECORDED RATHER THAN TIDIED. TWO runs happened, not one. `& $exe --conduct ...` on a WinExe returns immediately — the GUI subsystem detaches — so the first invocation reported no exit code and 0 seconds while a real governed run continued in the background. The second, launched with Start-Process -Wait, is the one measured above. Both provisioned a lane worktree and both scored `Partial: 15 / 15 observed`; the store holds two episodes in the preflight cohort. The subscription cost was doubled by a harness error, not by design. Anything launching this shell must wait on the process object, never on the call.\n\nCLEANUP. Both lane worktrees removed (`git worktree remove --force`, opt-in after reading what each held: one untracked `preflight.txt` containing `ready`, HEAD at 1374401 which exists on feature/exit-evidence, so no commit existed nowhere else), both agent branches deleted, `git worktree prune` run, count back to 21 with zero lane trees remaining.\n\nWHAT THIS DOES NOT COVER, stated so a green is not over-quoted later. It launched through `--conduct`, NOT the front door. It is no evidence for clause 2 (composed in the composer, streamed in Console mode) or clause 5 (launched through the same composition root, ledger counting roots) — those are precisely the path it does not touch. Clause 9's qualification is discharged by the exit run, not by this one. This is evidence about the plumbing, not a verdict.",
+      "tags": [
+        "conductor",
+        "front-door",
+        "f5",
+        "pre-flight",
+        "dc-115",
+        "dc-112",
+        "not-exit-evidence"
+      ],
+      "tier": "T2",
+      "tool": "AiDe.App.exe --conduct"
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/conductor-front-door.md",
+        "tools/verify-front-door-exit-evidence.py",
+        "tools/expected-test-counts.json"
+      ],
+      "datetime": "2026-09-11T15:24:10Z",
+      "done_when": "Clauses 0-9 reported with evidence; terminalHostConstructions == 0 with its falsifier; no Residual cell reading 'none'; counts reported; gates green; pushed; CI read back with gh run view --json conclusion.",
+      "fan_out": 3,
+      "git": {
+        "branch": "feature/exit-evidence",
+        "pushed": false,
+        "sha": "b7f41d1c4ac9f2f8f61a88ff55e63d7cb9593aa0",
+        "short": "b7f41d1c4"
+      },
+      "goal": "Run the frozen oracle against a real governed run through the App shell and close F5's Proof Pack.",
+      "id": "al-01M28H3BREVHK9EA4YVVJ6JDMD",
+      "kind": "manual",
+      "outcome": "blocked",
+      "prompt": "You are node F5 of the AI-DE Conductor front-door slice, resuming. Merge main (never rebase), run the\nfrozen oracle at 1374401d against a real governed run through the App shell - composed in the\ncomposer, streamed in Console mode, scored episode - report all nine clauses plus clause 0 with their\nevidence, terminalHostConstructions == 0 with its falsifier, write the Proof Pack with no Residual\ncell reading \"none\", report the counts, gates green, push and read CI back with\n`gh run view --json conclusion`. Treat every claim in this brief as Inferred unless labelled\nVerified, and report back which of them were false.",
+      "session": "conductor-front-door-f5-exit-evidence",
+      "shortname": "F5 exit evidence: blocked by DC-130's second instance, with the counts and gates measured",
+      "signals": {
+        "acceptance_met": false,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "THE EXIT RUN DID NOT HAPPEN, AND THE REASON IS STRUCTURAL. The shipped product cannot send from the\nfront door at this commit, so clauses 2, 3, 5, 6 and 9 are unsatisfiable - five of nine, the same\narithmetic DC-130's first instance produced.\n\nMEASURED, not inferred. `grep -rn \"ComposerSendContext\" src` returns five hits and ZERO\nconstructions: a declaration, a doc-comment cref, two parameters, a field. The only\n`new ComposerSendContext` in the repository is in a test (ASendLaunchesAGovernedRunTests.cs:79).\nComposerSurface.Send() opens with `if (_context is null) { ... return null; }` at :224, and `_context`\nis assigned only in Configure at :166, which nothing under src/ calls. A type whose only construction\nin the repository is inside a test cannot be supplied at runtime.\n\nDC-130's SECOND INSTANCE IN THIS SLICE, with its signature verbatim: a constructed value returned to\na discarding caller. MainWindow.xaml.cs:160 passes only `created.Config` from a\nNewSessionResult(Config, TaskClass, RoutableBackends) - dropping TaskClass, the one field the sheet\nrefuses to default because a defaulted class ranks in the wrong cohort (DC-110). F4b closed the seam\nbelow (request -> run); the seam above (session config + task class -> composer send context) is\nstill unowned. Both nodes green against every clause they were given. OpenSessionDocument's own\ndoc-comment records the conflict without resolving it - DC-130's other tell.\n\nWHY THIS NODE DID NOT WIRE IT. A driver CAN call Composer.Configure() itself and press Send(); the\nrun would be real, the episode would score, and the oracle would read composerSendCount == 1 and\nlaunchedBy under src/ - both true, both green, product still broken. That is DC-127 manufactured\ndeliberately inside the pack whose job is to refuse it. And the edge is a decomposition ruling\n(where a reopened session's task class comes from), not an evidence node's call.\n\nTHE ORACLE'S OWN BLIND SPOT, recorded rather than patched. Clauses 2 and 5 never ask WHO wired the\ncomposer, so they cannot separate a product-wired send from a harness-wired one. The closure is a\nsource scan of the form TheProductItselfConstructsASessionLane already uses. NOT ADDED: clause 0\ncompares the oracle's bytes against 1374401d, so widening it after the fact reddens clause 0. The\ncontrol refused its own author, which is the behaviour it was committed early to have.\n\nWHAT IS DISCHARGED. Clause 0 holds: 1374401d is an ancestor of this branch, is NOT reachable from\nmain, and the oracle's bytes are byte-identical to that commit after the merge. Clauses 1, 4, 7, 8\nare discharged. The oracle's --self-test exits 0: \"the oracle reddens on every clause it claims to\ncheck\". Bare, it exits 1 because its subject does not exist - a gate refusing an absent subject is\nnot a broken gate, which is why only the self-test is wired in CI.\n\nCOUNTS, measured on the merged tree, --update NEVER run. App 512 (floor 512, +0). Core 2214 (floor\n2210, +4). Core portable 2060 (floor 2056, +4). Core non-portable 154 (floor 154, +0).\n2060 + 154 = 2214 by three separate observations that agree. The +4 is this node's own four origin\ntests from bc6d6a4b. Build 0 warnings 0 errors. 29 of 30 gates green.\n\nDURATION IS NOT RECORDED rather than estimated: no `audit-log.py start` marker was set at grounding\nfor this run, and a modeled duration would be a plausible wrong number (IO12).\n\nFOUR CONDUCTOR CLAIMS REFUTED, listed in the node's report; the load-bearing one is \"There is now an\nexit run for your oracle to observe\" - F4b made the seam real, not the path.",
+      "tags": [
+        "f5",
+        "dc-130",
+        "blocked"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/conductor-front-door.md",
+        "tools/verify-front-door-exit-evidence.py"
+      ],
+      "datetime": "2026-09-11T16:18:22Z",
+      "done_when": "F6's edge verified by opening the file; oracle bytes still match 1374401d; counts and gates reported; the run taken or its remaining preconditions named as findings.",
+      "fan_out": 3,
+      "git": {
+        "branch": "feature/exit-evidence",
+        "pushed": false,
+        "sha": "c5ca7b1ff3d5105da27d6b81a2a95e063680630e",
+        "short": "c5ca7b1ff"
+      },
+      "goal": "Verify the cleared blocker against the tree, then take the front-door exit run without touching clause 0.",
+      "id": "al-01M28M6KP2YYN6M6F4NZ8HDNSD",
+      "kind": "manual",
+      "outcome": "blocked",
+      "prompt": "Your blocker is cleared on main - F6 built the edge, and your report is what proved it was missing.\nMerge main (never rebase), then take the run: task class no earlier run has used checked against the\nstore, harness waits on the process object (DC-129), terminalHostConstructions == 0 with N7's\nfalsifier verbatim, every Residual cell naming a measurement or an explicit uncovered input. Do not\ntouch clause 0 - satisfy the blind spot by a companion demonstration in the Proof Pack instead, and\nsay so if that is the wrong shape.",
+      "session": "conductor-front-door-f5-exit-evidence",
+      "shortname": "F5: F6's edge verified, oracle blind spot closed from outside, run blocked on two operator inputs",
+      "signals": {
+        "acceptance_met": false,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "THE BLOCKER IS CLEARED AND VERIFIED, AND THE RUN IS STILL NOT TAKEN. F6's edge is real on the merged\ntree: MainWindow.xaml.cs:263 calls composer.Configure(...) and :265 constructs\nnew Workbench.Composer.ComposerSendContext(...) with TaskClass: created.TaskClass -- the field that\nwas being dropped. All of the coordinator's claims were checked against the tree this time and ALL\nWERE TRUE: floors App 517 / Core 2234 / portable 2080 / non-portable 154; register 134 classes\n(66/53/15); Ruling 46 filed as the edge-ownership ruling; verify-ruling-citations.py present and\ngreen (43 cited, 34 defined, 9 frozen); ComposerProbe is a ProjectReference at line 81.\n\nTHE ORACLE'S BLIND SPOT IS CLOSED FROM OUTSIDE, NOT BY WIDENING IT. Clause 0 was not touched and the\noracle's bytes still match 1374401d across a second merge.\nTheRunBindingComesFromTheProviderFileTests.TheShellConstructsOneRegistryOneSendContextAndOneAttachmentGate\nasserts EXACTLY ONE composer.Configure( and EXACTLY ONE new Workbench.Composer.ComposerSendContext(\nin the shell, then sweeps every other file under src/AiDe.App/. Because there is one Configure call\nsite and it is product code, a run reaching Send() with a populated context reached it through\nBindComposer. That is the companion the conductor asked for, and it already existed.\n\nWHY THE RUN STILL DID NOT HAPPEN -- two preconditions, neither of them code, neither this node's.\n(1) ~/.aide/providers.json is ABSENT on this machine (ProviderConfiguration.DefaultPath, checked).\nBindComposer refuses by name without it, and the file names THE ACCOUNT THE RUN BILLS. Inventing that\nlabel is DC-110's defect exactly, and LaneBinding refuses to pick between two accounts for the same\nreason. The schema is settled; the value is the operator's.\n(2) THERE IS NO HEADLESS FRONT DOOR. ConductorEntry.IsRequested is the only argument the shell reads.\nFile -> New Session opens a modal Window via NewSessionSheetDialog.Show, and showSheet is hard-wired\ninside MainWindow.NewSession(), so nothing substitutes it without editing product code. \"The harness\nwaits on the process object\" does not apply -- there is no process to launch for this path. The\ngesture is the operator's hands or UI automation of a live modal on a billing path.\n(3) Cohort: no AI-DE episode store exists at any default location, so the \"class no earlier run has\nused\" check must be made against the store the workspace's DataDirectory creates at run time.\n\nREADY: the ACP adapter is installed at C:/Projects/ai-de/spikes/acp-subscription-lane; subscription\nuse is authorised by the operator in their own words (al-01M23SEGAS071BX81W0MA9RF92), scoped to the\noperator's own subscription on their own machine for their own project.\n\nA NEAR-MISS CORRECTED BEFORE IT WAS REPORTED. I first swept for coverage by grepping the private\nmethod name BindComposer, found nothing, and was about to report the path untested. It is thoroughly\ntested: F6's E7-chain test covers file -> reader -> registry -> sheet -> EnabledBackends ->\nComposerSendContext -> Send -> GovernedRunRequest with a named refusal at each link. THE METHOD NAME\nIS NOT THE PATH'S NAME. Third grep-shaped false negative in this node -- the first was\nnamespace-qualified `new Sessions.SessionDocumentSurface`, which the conductor then walked into too.\n\nPROOF PACK CORRECTED RATHER THAN APPENDED TO. The pack asserted \"the shipped product cannot send\nfrom the front door\", which is now FALSE of the tree. That section is now Part 1 (what was measured,\nmarked no longer true) and Part 2 (what F6 closed, what remains). Counts corrected twice by\nre-measuring: this table has now named three different floor sets, and each was stale when carried\nrather than measured. Gate count measured by `ls`, not recalled -- my first draft said 32.\n\nCOUNTS on the merged tree, --update NEVER run: App 517 (floor 517, +0), Core 2238 (floor 2234, +4),\nportable 2084 (floor 2080, +4), non-portable 154 (floor 154, +0). 2084 + 154 = 2238 by three\nobservations that agree. The +4 is this node's own four origin tests. Build 0/0. 30 of 31 gates\ngreen; the thirty-first is this slice's oracle refusing an absent subject, whose --self-test is green.",
+      "tags": [
+        "f5",
+        "dc-130",
+        "blocked",
+        "providers"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/front-door-ruling-49.md"
+      ],
+      "datetime": "2026-09-11T17:34:51Z",
+      "done_when": "The three prior-session files and the new Ruling 49 note are committed; every tools/verify-*.py gate plus the Core build, tests build, and filtered test run have recorded exit codes; the audit entry and derived views are regenerated and committed; the branch is pushed to origin/feature/exit-evidence.",
+      "duration_seconds": 407.0,
+      "git": {
+        "branch": "feature/exit-evidence",
+        "pushed": false,
+        "sha": "2a363f4fedcdbf634ddce40e97a0cc32f54faadf",
+        "short": "2a363f4fe"
+      },
+      "goal": "Bring feature/exit-evidence to the operator-gesture boundary: commit the prior session's uncommitted files, file Ruling 49 as a note, run every gate, and push, so the only missing input for F5 is the operator's own File -> New Session gesture.",
+      "id": "al-01M28RJNCKQZPTG05SMVRWR16V",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "Bring feature/exit-evidence to the operator-gesture boundary: everything committed, gates green, pushed, so the only missing input for F5 is the operator's own File -> New Session gesture (Ruling 49). Do not perform that gesture, launch the app, or run any session.",
+      "session": "f5a-exit-evidence",
+      "shortname": "f5a-ruling-49-committed",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "started_at": "2026-09-11T17:28:04Z",
+      "summary": "Read and confirmed coherent the three prior-session diffs (residuals-carried table, Proof Pack Part 3 / clause table / oracle-integrity rows, and a test <remarks> comment); nothing was half-written. Filed docs/notes/front-door-ruling-49.md (verified absent by grep and by verify-ruling-citations.py before filing; passes after). Checked docs/notes/front-door-council-rulings.md and confirmed it is a specific decision note (Rulings 19-25), not an index -- no row added there. Committed the three prior-session files (bc3ba59c) and the ruling note (2a363f4f) as two separate commits. Ran all 32 tools/verify-*.py gates bare, one exit code each: 30 passed (0); verify-front-door-exit-evidence.py failed (1) as expected -- spikes/conductor-front-door-exit-run/exit-evidence.json does not exist because the operator's gesture has not happened, which is the exact state Ruling 49 describes; verify-derived-views.py and verify-site-figures.py both failed (1) as expected because the new note is not yet reflected in the derived views -- both are resolved by this same commit's regenerate-derived.py run, checked again after. dotnet build src/AiDe.Core/AiDe.Core.csproj -c Release -p:TreatWarningsAsErrors=true: 0 Warnings, 0 Errors. dotnet build tests/AiDe.Core.Tests -c Release: 0 Warnings, 0 Errors. Filtered test TheSessionOriginIsSetOnlyOnTheCommandPathTests: 4 passed, 0 failed. Full verify-test-run.py (bare, check mode, background due to length): exit 0, 2755 tests across AiDe.App.Tests (517) and AiDe.Core.Tests (2238), both met baseline. verify-test-run.py --update was never run.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/AgentPlane/AcpLaneClient.cs",
+        "src/AiDe.App/Conductor/GovernedRunHost.cs",
+        "tests/AiDe.Core.Tests/AgentPlane/AcpLaneClientTests.cs",
+        "tests/AiDe.App.Tests/Conductor/TheGovernedLaneHasNoShellTests.cs",
+        "tests/AiDe.Core.AcpProbe/Program.cs",
+        "docs/notes/lane-pin-spike.md",
+        "docs/proof/lane-pin-ruling-71.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-11T22:16:41Z",
+      "done_when": "Spike note records the adapter path from source (0.75.1 :5859-5860, :6007); wire test red then green; null-path byte-equality test green; GovernedRunHost passes the pin at its one site; Security lens clears; builds 0 warnings; Core+App full suites green and verify-test-run --no-run OK; every tools/verify-*.py green after regeneration; oracle byte-identical to 1374401d; committed, Release rebuilt, pushed",
+      "duration_seconds": 1565.0,
+      "fan_out": 1,
+      "git": {
+        "branch": "feature/exit-evidence",
+        "pushed": false,
+        "sha": "b6652f64979ffcd9c59aa38b190d860528daf2ac",
+        "short": "b6652f649"
+      },
+      "goal": "Ruling 71 lane pin: a typed LaneSessionOptions {Tools?, DisallowedTools?} on both AcpLaneClient.NewSessionAsync overloads; the governed lane sends _meta.claudeCode.options.disallowedTools [Bash]; null path byte-identical; red-first on the outgoing frame",
+      "id": "al-01M298PPTEJDBYAQQ3DCJW9MTE",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "/implement Ruling 71: the governed lane's session/new carries _meta.claudeCode.options.disallowedTools [\"Bash\"], typed on AcpLaneClient.NewSessionAsync, asserted red-first on the outgoing frame\n\nDispatched by the conductor (session conductor-addendum-c) onto the F5 tree C:\\Projects\\ai-de-feature-exit-evidence (feature/exit-evidence @ 757af057); merge main (a3f760a3) first, never rebase; the frozen oracle tools/verify-front-door-exit-evidence.py stays byte-identical to tag f5-oracle-frozen (1374401d).\n\nRuling 71 (verbatim, docs/notes/addendum-c-council-rulings.md): (a) The F5 exit run may proceed only after AcpLaneClient.NewSessionAsync sends _meta.claudeCode.options.disallowedTools: [\"Bash\"] for the governed lane, a unit test asserts that member on the outgoing session/new JSON, the run is attended, and the run's Proof Pack records the outgoing frame, every observed tool-call name, and origin/main's sha before and after; (b) the standing control is a typed session/new tools argument on the one NewSessionAsync site (the agent-plane's; reused later by Addendum D's C1 with tools: []) — a record {tools?, disallowedTools?}, two callers, not a launch-profile abstraction; (c) .claude/settings.json:4 (Bash(git push:*)) is a finding for the operator, not yours to change.\n\nDone when: 1. Spike (bounded, source-only): confirm from the adapter source the _meta path, the type of disallowedTools, and that \"Bash\" is the SDK's shell tool name; record in docs/notes/lane-pin-spike.md. 2. Red first: a Core AgentPlane test asserting the outgoing session/new params contain _meta.claudeCode.options.disallowedTools == [\"Bash\"] when the governed options are passed — observed red on the current client. 3. The change: a small record accepted by NewSessionAsync (both overloads; a null/absent record sends exactly today's frame — a second test proves byte-equality); GovernedRunHost passes DisallowedTools: [\"Bash\"]; ConductorEntry.cs byte-unchanged; no other behaviour change. 4. Green, then the Security lens (read-only sub-agent) confirms: the pin is on the single site, the null path is byte-identical, nothing widens, the settings.json:4 finding is recorded not edited. 5. Gates, bare, stop on the first red: dotnet build Core, App, both test projects with -p:TreatWarningsAsErrors=true; dotnet test Core (full) and App (full); verify-test-run.py CHECK only; every tools/verify-*.py; regenerate-derived.py after the audit entry; the oracle diff empty. 6. Register the class if new (check DC-019 first), audit entry, regenerate, commit, rebuild Release, push origin feature/exit-evidence.\n\nFails if: any change to the frozen oracle, ConductorEntry.cs, .claude/settings.json, the vendored bundle; a launch-profile abstraction; a merge to main; git stash; a rebase; verify-test-run.py --update; a repo-wide destructive command. No governed run, no model call — the operator performs the gesture.",
+      "session": "f5-lane-pin",
+      "shortname": "f5-lane-pin-ruling-71",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-11T21:50:36Z",
+      "summary": "Shipped Ruling 71's lane pin on feature/exit-evidence. Spike (source-only, docs/notes/lane-pin-spike.md): adapter 0.75.1 reads _meta.claudeCode.options at acp-agent.js:5859-5860, spreads disallowedTools at :6007 (string[]), Bash is the SDK shell tool (sdk-tools.d.ts:750) — the ruling's spelling holds verbatim. LaneSessionOptions(Tools?, DisallowedTools?) record on both NewSessionAsync overloads; ToMeta null iff both null so the absent/empty record sends the prior frame byte for byte (characterization theory, exact string). Red observed: the pin and tools-[] tests NullReference'd on the plumbing-only client; blank-name test sent a frame and timed out before the guard; App tests turned red by mutating the host (no pin; bare call). GovernedRunHost.GovernedLaneSession = DisallowedTools [Bash] at the one site; a sweep test requires every NewSessionAsync in src/ to name its tools (DC-019: the boundary, not the site). Security lens (read-only): CLEARED WITH FINDINGS — no blocker; nothing widens (:5964 spread collides with nothing security-relevant); next-ruling findings: Monitor/REPL/Agent/hooks remain reachable; settings.json:4 recorded as an operator finding, not edited. Instrumentation gap recorded: the host reports the session id, not the outgoing frame. DC-019 recurrence registered with the sweep as control. Core 2250/2250, App 603/603, verify-test-run --no-run OK; every verify-*.py green except the frozen F5 oracle (red by design until the operator's run). Proof Pack docs/proof/lane-pin-ruling-71.md.",
+      "tags": [
+        "ruling-71",
+        "f5",
+        "agent-plane",
+        "security"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/AgentPlane/AcpLaneClient.cs",
+        "src/AiDe.App/Conductor/GovernedRunHost.cs",
+        "src/AiDe.App/Workbench/WorkbenchDiagnostics.cs",
+        "tests/AiDe.App.Tests/Conductor/TheGovernedLaneHasNoShellTests.cs",
+        "tests/AiDe.Core.Tests/AgentPlane/AcpLaneClientTests.cs",
+        "docs/proof/lane-pin-ruling-71.md"
+      ],
+      "datetime": "2026-09-11T22:26:21Z",
+      "done_when": "Red: the Core assert on SessionNewParameters and the App test on the report/log lines fail on the step-A host; green after; Core AgentPlane 182/182 and App Conductor 12/12; builds 0 warnings; oracle diff empty; committed, Release rebuilt, pushed",
+      "duration_seconds": 313.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "feature/exit-evidence",
+        "pushed": true,
+        "sha": "246b38a3e871dc85db983abb077f04673db95ab0",
+        "short": "246b38a3e"
+      },
+      "goal": "The frame a governed lane is opened with is recorded on the normal path: report line + lane.session-new log line carrying the params the client sent",
+      "id": "al-01M2998D6N54QJ5J6VC9PK805W",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "Coordinator: close finding 1 in the same tree/session — at the one governed site emit the outgoing session/new params on the normal path (the exact JSON the client sent: cwd, mcpServers, _meta) through the host's existing Report channel AND WorkbenchDiagnostics (evt lane.session-new, run/lane/session id, the params object), so the attended F5 run leaves the frame in %LOCALAPPDATA%\\AiDe\\logs and in the run's report. Red first with the existing fake peer, green, no other change; oracle byte-identical; ConductorEntry.cs untouched. Build with TreatWarningsAsErrors, run the Core AgentPlane suite and the App Conductor tests, audit entry (manual, T0), regenerate-derived, commit, rebuild Release, push, report ProductVersion.",
+      "session": "f5-lane-pin",
+      "shortname": "f5-lane-pin-frame-recorded",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "started_at": "2026-09-11T22:21:08Z",
+      "summary": "AcpLaneClient.SessionNewParameters records the params object handed to the peer (outbound mirror of AcpPeer.ObservedAuth). GovernedRunHost.OpenSessionAsync (the one site, extracted so a fake peer can drive it) reports 'acp session <id> opened with session/new params <json>' and emits WorkbenchDiagnostics.LaneSessionNew (evt lane.session-new; run, lane, session, params); a client that recorded nothing reads as not recorded. Red observed: Core Expected {cwd…} Actual null; App Sub-string not found on the id-only report. Test compares the recorded params to the frame the peer actually wrote to the engine's stdin. Core AgentPlane 182/182, App Conductor 12/12, 0 warnings. Proof Pack claims 10-11 added.",
+      "tags": [
+        "ruling-71",
+        "f5",
+        "instrumentation"
+      ],
+      "tier": "T0",
+      "tool": null
     }
   ],
   "changes": [

@@ -32,3 +32,14 @@
 {"agent": "claude-fix-render", "at": 1789171473.058151, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/WorkbenchDiagnostics.cs", "session": "render-fix", "wi": ""}
 {"agent": "claude-fix-render", "at": 1789171473.059148, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/ANewSessionTakesTheWholeTreeTests.cs", "session": "render-fix", "wi": ""}
 {"agent": "claude-fix-render", "at": 1789171473.0611482, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/TheBinderRecordsWhatItBoundTests.cs", "session": "render-fix", "wi": ""}
+{"agent": "claude-fix-render", "at": 1789172436.5273132, "code": null, "kind": "allowed", "path": "src/AiDe.App/MainWindow.xaml.cs", "session": "render-fix", "wi": ""}
+{"agent": "claude-fix-render", "at": 1789172436.5293033, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Composer/ComposerSurface.cs", "session": "render-fix", "wi": ""}
+{"agent": "claude-fix-render", "at": 1789172436.5313032, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/SessionComposerBinder.cs", "session": "render-fix", "wi": ""}
+{"agent": "claude-fix-render", "at": 1789172436.5323036, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "session": "render-fix", "wi": ""}
+{"agent": "claude-fix-render", "at": 1789172436.5343037, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "session": "render-fix", "wi": ""}
+{"agent": "claude-fix-render", "at": 1789172436.5363026, "code": null, "kind": "allowed", "path": "tests/AiDe.App.ComposerProbe/Program.SessionRender.cs", "session": "render-fix", "wi": ""}
+{"agent": "claude-fix-render", "at": 1789172436.537304, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Composer/TheRunBindingComesFromTheProviderFileTests.cs", "session": "render-fix", "wi": ""}
+{"agent": "claude-fix-render", "at": 1789172436.5393028, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/EveryOpeningCommandPassesThroughTheSeamTests.cs", "session": "render-fix", "wi": ""}
+{"agent": "claude-fix-render", "at": 1789172436.5403037, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/RestoredSessionDocumentsAreRevivedTests.cs", "session": "render-fix", "wi": ""}
+{"agent": "claude-fix-render", "at": 1789172436.5423033, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/TheBinderRecordsWhatItBoundTests.cs", "session": "render-fix", "wi": ""}
+{"agent": "claude-fix-render", "at": 1789172436.544303, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/TheNewSessionSheetTests.cs", "session": "render-fix", "wi": ""}
