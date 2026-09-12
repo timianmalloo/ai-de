@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Workbench: 65 types, 121 members, 51% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Workbench: 70 types, 132 members, 53% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Workbench`
 
-**65 public types · 121 public members · 51% documented.**
+**70 public types · 132 public members · 53% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -566,6 +566,48 @@ that are actually connected.
 - **`availableSurfaces`** — Surface ids the application can currently provide.
 - **`displayIsConnected`** — Whether a floating pane's display is still present.
 
+## `PerspectiveBody`
+
+*enum* — `Perspectives.cs`
+
+What fills the body region while a perspective is active (Addendum C §A6).
+
+## `Perspective`
+
+*record* — `Perspectives.cs`
+
+One perspective — the use case the whole tool is in (Addendum C, Ruling 50). A row of data,
+never a class with behaviour: the shell projects it, the rail lists it, the catalog derives its
+command from it.
+
+| Member | Summary |
+|---|---|
+| `string Gesture` | The bound single-stroke gesture, spelled from the row (US-C10; `Ctrl+` the rail digit). |
+
+## `PerspectiveSet`
+
+*class* — `Perspectives.cs`
+
+The closed Perspective set (ADR-0030): three rows in routing order, and the order a kind-open the
+active perspective does not admit is routed in. Pure data; constructible in any test.
+
+**Remarks.** **Why a static row set and not an enum.** An enum in the App beside the presenter was the
+shape before this (`ShellViewMode`, two values). The three perspective commands must be
+catalog rows in Core, derived from the set — or the catalog carries a hand-listed copy that a
+fourth perspective would silently miss. Rows in Core let the catalog, the rail, the menu radio,
+the palette and the routed open all read ONE definition. **Tests** is a reserved name with no
+row (Ruling 54): adding it is adding a row here, and every derived surface follows.
+
+| Member | Summary |
+|---|---|
+| `Perspective Coding { get; } = new(` | **(gap)** |
+| `Perspective Explore { get; } = new(` | **(gap)** |
+| `Perspective Architecture { get; } = new(` | **(gap)** |
+| `IReadOnlyList<Perspective> All { get; } = [Coding, Explore, Architecture]` | The rows, in rail order: Coding · Explore · Architecture. |
+| `Perspective Initial` | The perspective the shell starts in (US-C1). |
+| `IReadOnlyList<Perspective> RoutingOrder { get; } = [Architecture, Coding]` | Where a kind-open the active perspective does not admit is routed (US-C3): the first of these that admits the kind. Architecture before Coding because the requester is always a reading surface, so the reading host win… |
+| `Perspective? ByCommandId(string commandId)` | The row whose command has this id, or null — the one lookup the controller needs. |
+
 ## `TreeToZones`
 
 *class* — `TreeToZones.cs`
@@ -583,21 +625,45 @@ scattering). Stacks that map to the same zone are concatenated. Floating stacks 
 |---|---|
 | `WorkbenchLayout Convert(Layout tree)` | Converts a tree layout to zones, losing no surface. |
 
+## `CommandScope`
+
+*record* — `WorkbenchCommands.cs`
+
+Where a command is offered: the rule that decides, per perspective, whether the menu and the
+palette list it (Addendum C §B3 rule 2; ADR-0030).
+
+**Remarks.** **What the command NEEDS, never which perspectives list it.** A perspective list on a
+command row would be a second home for a fact the perspective rows and the kind rows already
+hold (ADR-0030, alternatives). What a row can honestly state is its precondition — a docking
+host to operate on, a graph canvas to focus, a surface kind the perspective must admit — and
+`PerspectiveMenu` evaluates that against the active perspective's body and allow-list.
+Adding a perspective needs no edit here; adding a command states its precondition once.
+
+| Member | Summary |
+|---|---|
+| `CommandScope Global { get; } = new(CommandScopeKind.Global)` | Offered in every perspective: entry verbs, workspace verbs, the perspective radio, the status line. |
+| `CommandScope DockHost { get; } = new(CommandScopeKind.DockHost)` | Offered iff the active body is a docking host: every layout operation. |
+| `CommandScope Admits(string surfaceKind)` | Offered iff the active perspective admits  — the command acts on such a surface. |
+
+## `CommandScopeKind`
+
+*enum* — `WorkbenchCommands.cs`
+
+*No doc comment on this type.* **(gap)**
+
 ## `WorkbenchCommand`
 
 *record* — `WorkbenchCommands.cs`
 
-One keyboard-reachable layout command, as the command palette lists it.
+One keyboard-reachable command, as the command palette lists it.
 
 **Remarks.** This catalog is the machine-checkable form of SC 2.5.7: every operation reachable by dragging
 must have a keyboard equivalent. Because both the palette and the conformance test read the same
 list, an operation added without a command fails the suite instead of shipping mouse-only.
 
-**Placement is a Core decision that used to live in a Design-owned file.** Adding a command
-and putting it in a menu is one atomic change — a conformance test requires every catalog command
-to be reachable — so a Core addition forced an edit to `MainMenuBuilder`. Declaring it here lets
-the menu builder derive its grouping instead, and the seam stops crossing. Additive with a
-default, so nothing breaks before the builder reads it.
+**Placement is a Core decision.** Adding a command and putting it in a menu is one atomic
+change — the menu builder derives its grouping from  and ,
+so there is no second list in the App to keep in step (Ruling 55b).
 
 ## `WorkbenchCommandCatalog`
 
@@ -607,8 +673,20 @@ default, so nothing breaks before the builder reads it.
 
 | Member | Summary |
 |---|---|
-| `IReadOnlyList<WorkbenchCommand> All { get; } =` | The commands, in palette order. Gestures follow Windows/Fluent conventions and deliberately avoid the Alt+<letter> menu-mnemonic space. |
-| `IEnumerable<WorkbenchCommand> Search(string term)` | **(gap)** |
+| `IReadOnlyList<WorkbenchCommand> All { get; } =` | The commands, grouped by menu in menu order — which is the order the menu and the palette offer them. Gestures follow Windows/Fluent conventions and deliberately avoid the Alt+<letter> menu-mnemonic space. |
+| `IEnumerable<WorkbenchCommand> Search(IEnumerable<WorkbenchCommand> commands, string term)` | The rows of  whose title or hint contains ; all of them for a blank term. |
+
+### `IReadOnlyList<WorkbenchCommand> All { get; } =`
+
+The commands, grouped by menu in menu order — which is the order the menu and the palette
+offer them. Gestures follow Windows/Fluent conventions and deliberately avoid the
+Alt+<letter> menu-mnemonic space.
+
+**Remarks.** **Not here: the "New/Show <Title>" openers for surface kinds.** Those are derived
+from the App's kind rows and their allow-lists (ADR-0030 rule 3) — a row per kind carrying
+both a Core command and an App kind would be two rows that must agree, which is the defect
+Ruling 22 removed for kinds. `terminal.new` and `session.new` stay: they are entry
+verbs (US-C11), offered in File in every perspective and routed to Coding.
 
 ## `KeyboardResizeSession`
 

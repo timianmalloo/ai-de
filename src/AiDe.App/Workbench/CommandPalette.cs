@@ -8,13 +8,18 @@ using AiDe.Core.Workbench;
 namespace AiDe.App.Workbench;
 
 /// <summary>
-/// The keyboard route to every layout command.
+/// The keyboard route to every command the active perspective offers.
 /// </summary>
 /// <remarks>
 /// This is the mechanism US-9 names for SC 2.5.7: "an equivalent command exists and is reachable
 /// from the command palette". Without it the catalog is a list nobody can invoke — the conformance
 /// test would still pass while the product remained mouse-only, which is exactly the gap between
 /// *tested* and *usable* that the criterion exists to close.
+///
+/// <b>Its rows are exactly the menu bar's commands (Addendum C US-C4 b3).</b> There is no
+/// palette-only set: the rows come from the same <see cref="PerspectiveMenu"/> the bar renders,
+/// set by the presenter on every switch through <see cref="Menu"/>, so a command the active
+/// perspective cannot offer is absent here as it is there (PS-M3).
 ///
 /// Focus handling is the load-bearing part. Opening moves focus into the search box deliberately
 /// (the user asked for it); closing **restores focus to wherever it was**, so invoking a command
@@ -25,6 +30,7 @@ public sealed class CommandPalette
     private readonly WorkbenchController _controller;
     private readonly IWorkbenchAnnouncer _announcer;
     private IInputElement? _focusBeforeOpen;
+    private PerspectiveMenu _menu = PerspectiveMenu.For(PerspectiveSet.Initial);
 
     public CommandPalette(WorkbenchController controller, IWorkbenchAnnouncer announcer)
     {
@@ -32,10 +38,10 @@ public sealed class CommandPalette
         _announcer = announcer;
 
         SearchBox = new TextBox();
-        AutomationProperties.SetName(SearchBox, "Search layout commands");
+        AutomationProperties.SetName(SearchBox, "Search commands");
 
         Results = new ListBox { DisplayMemberPath = nameof(WorkbenchCommand.Title) };
-        AutomationProperties.SetName(Results, "Layout commands");
+        AutomationProperties.SetName(Results, "Commands");
 
         Root = BuildRoot();
         SearchBox.TextChanged += (_, _) => Refresh();
@@ -49,6 +55,21 @@ public sealed class CommandPalette
     public ListBox Results { get; }
 
     public bool IsOpen => Root.Visibility == Visibility.Visible;
+
+    /// <summary>
+    /// The active perspective's contribution — the rows this palette offers. Starts as the initial
+    /// perspective's; the presenter sets it on every switch with the same model it hands the menu
+    /// builder, so the two surfaces cannot disagree (E12).
+    /// </summary>
+    public PerspectiveMenu Menu
+    {
+        get => _menu;
+        set
+        {
+            _menu = value ?? throw new ArgumentNullException(nameof(value));
+            Refresh();
+        }
+    }
 
     /// <summary>The commands currently listed — what a test and the UI both read.</summary>
     public IReadOnlyList<WorkbenchCommand> Visible =>
@@ -65,7 +86,7 @@ public sealed class CommandPalette
 
         // Announced because a palette that opens silently is invisible to a screen-reader user until
         // they happen to arrow into it.
-        _announcer.Announce($"Command palette. {Visible.Count} layout commands. Type to filter.");
+        _announcer.Announce($"Command palette. {Visible.Count} commands in the {_menu.Perspective.Title} perspective. Type to filter.");
     }
 
     public void Close()
@@ -141,15 +162,22 @@ public sealed class CommandPalette
 
         // Selection moves without focus leaving the search box, so the change has to be announced
         // explicitly — the listbox never gets focus and therefore never announces itself.
+        //
+        // A keystroke is spoken only when one is BOUND (PS-M4, US-C10 b3): the catalog's chord
+        // strings are announced data nothing binds, and "New class diagram. Ctrl+K, M." promised a
+        // key that did nothing. The palette's role for an unbound command is to run it.
         if (Results.SelectedItem is WorkbenchCommand command)
         {
-            _announcer.Announce($"{command.Title}. {command.Gesture}. {command.Hint}");
+            var bound = KeyGestures.For(command).FirstOrDefault();
+            _announcer.Announce(bound is null
+                ? $"{command.Title}. {command.Hint}"
+                : $"{command.Title}. {bound.GetDisplayStringForCulture(System.Globalization.CultureInfo.CurrentCulture)}. {command.Hint}");
         }
     }
 
     private void Refresh()
     {
-        var matches = WorkbenchCommandCatalog.Search(SearchBox.Text ?? string.Empty).ToList();
+        var matches = _menu.Search(SearchBox.Text ?? string.Empty).ToList();
         Results.ItemsSource = matches;
         Results.SelectedIndex = matches.Count > 0 ? 0 : -1;
 
@@ -161,7 +189,7 @@ public sealed class CommandPalette
     {
         var heading = new TextBlock
         {
-            Text = "Layout commands",
+            Text = "Commands",
             Margin = new Thickness(0, 0, 0, 6),
             FontWeight = FontWeights.SemiBold,
         };

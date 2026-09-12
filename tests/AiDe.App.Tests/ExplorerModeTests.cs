@@ -1,6 +1,7 @@
 using System.Windows.Controls;
 using AiDe.App.Workbench;
 using AiDe.Core.Presentation;
+using AiDe.Core.Workbench;
 
 namespace AiDe.App.Tests;
 
@@ -29,9 +30,9 @@ public sealed class ExplorerModeTests
             var mode = new ShellModeController(host, workbench, () => { built++; return new Grid(); });
 
             Assert.Same(workbench, host.Content);     // starts on the workbench
-            mode.Set(ShellViewMode.Explorer, "test");
+            mode.Set(PerspectiveSet.Explore, "test");
             Assert.NotSame(workbench, host.Content);  // now the Explorer surface
-            mode.Set(ShellViewMode.Workbench, "test");
+            mode.Set(PerspectiveSet.Coding, "test");
             Assert.Same(workbench, host.Content);     // the SAME workbench instance returns
             Assert.Equal(1, built);                   // Explorer built once, not per entry
         });
@@ -48,33 +49,52 @@ public sealed class ExplorerModeTests
             var built = 0;
             var mode = new ShellModeController(host, new Border(), () => { built++; return new Grid(); });
 
-            mode.Set(ShellViewMode.Explorer, "test");
+            mode.Set(PerspectiveSet.Explore, "test");
             var first = host.Content;
-            mode.Set(ShellViewMode.Workbench, "test");
-            mode.Set(ShellViewMode.Explorer, "test");
+            mode.Set(PerspectiveSet.Coding, "test");
+            mode.Set(PerspectiveSet.Explore, "test");
 
             Assert.Same(first, host.Content);         // the same Explorer instance
             Assert.Equal(1, built);
         });
     }
 
-    // T5 — Toggle flips the mode and raises ModeChanged with the new mode.
+    // T5, re-scoped by Addendum C (US-C1; ADR-0030 rule 4). The set is three-valued, so "toggle"
+    // became "activate a named perspective": Set raises ModeChanged with the new perspective for a
+    // real switch, and activating the ACTIVE perspective is a no-op — nothing changes, no event is
+    // raised. Was `Toggle_FlipsModeAndRaisesModeChanged` over the two-valued ShellViewMode.
     [Fact]
-    public void Toggle_FlipsModeAndRaisesModeChanged()
+    public void Set_ActivatesANamedPerspective_AndActivatingTheActiveOneIsANoOp()
     {
         OnSta(() =>
         {
             var host = new ContentControl();
-            var mode = new ShellModeController(host, new Border(), () => new Grid());
-            var seen = new List<ShellViewMode>();
+            var workbench = new Border();
+            var mode = new ShellModeController(host, workbench, () => new Grid());
+            var seen = new List<Perspective>();
             mode.ModeChanged += (_, m) => seen.Add(m);
 
-            Assert.Equal(ShellViewMode.Workbench, mode.Mode);
-            mode.Toggle("test");
-            Assert.Equal(ShellViewMode.Explorer, mode.Mode);
-            mode.Toggle("test");
-            Assert.Equal(ShellViewMode.Workbench, mode.Mode);
-            Assert.Equal(new[] { ShellViewMode.Explorer, ShellViewMode.Workbench }, seen);
+            Assert.Same(PerspectiveSet.Coding, mode.Mode);   // the initial perspective (US-C1)
+
+            mode.Set(PerspectiveSet.Coding, "test");         // already active: a no-op
+            Assert.Empty(seen);
+            Assert.Same(workbench, host.Content);
+
+            mode.Set(PerspectiveSet.Explore, "test");
+            Assert.Same(PerspectiveSet.Explore, mode.Mode);
+            Assert.NotSame(workbench, host.Content);
+
+            mode.Set(PerspectiveSet.Explore, "test");        // already active: a no-op
+            Assert.Single(seen);
+
+            mode.Set(PerspectiveSet.Architecture, "test");
+            Assert.Same(PerspectiveSet.Architecture, mode.Mode);
+            Assert.Same(workbench, host.Content);            // a host body: the one workbench today
+
+            mode.Set(PerspectiveSet.Coding, "test");
+            Assert.Equal(
+                new[] { PerspectiveSet.Explore, PerspectiveSet.Architecture, PerspectiveSet.Coding },
+                seen);
         });
     }
 

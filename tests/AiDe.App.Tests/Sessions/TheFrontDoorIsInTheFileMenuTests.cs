@@ -42,7 +42,7 @@ public sealed class TheFrontDoorIsInTheFileMenuTests : IDisposable
         Assert.Single(WorkbenchCommandCatalog.All, c => c.Gesture == "Ctrl+N");
 
         var menu = new Menu();
-        MainMenuBuilder.Build(menu, new WorkbenchController(new LayoutService(), new RecordingAnnouncer()));
+        MainMenuBuilder.Build(menu, new WorkbenchController(new ZoneBackedLayoutService(), new RecordingAnnouncer()), PerspectiveMenu.For(PerspectiveSet.Coding));
 
         Assert.Contains(Items(menu), i => Equals(i.Header, command.Title));
     });
@@ -105,11 +105,14 @@ public sealed class TheFrontDoorIsInTheFileMenuTests : IDisposable
         // terminal kind are all unchanged, and the factory still builds a real TerminalSurface for
         // the "terminal" kind.
         var terminal = WorkbenchCommandCatalog.All.Single(c => c.Id == "terminal.new");
-        Assert.Equal("_Terminal", terminal.Menu);
+        // An ENTRY VERB (Addendum C US-C11, §B3 rule 1): placed in File in every perspective, beside
+        // New session, because it starts work and routes to Coding. The Terminal menu it lived in is
+        // now the Prompt menu (PS-M1), which holds only prompt verbs.
+        Assert.Equal("_File", terminal.Menu);
         Assert.Equal("Ctrl+K, T", terminal.Gesture);
 
         var menu = new Menu();
-        MainMenuBuilder.Build(menu, new WorkbenchController(new LayoutService(), new RecordingAnnouncer()));
+        MainMenuBuilder.Build(menu, new WorkbenchController(new ZoneBackedLayoutService(), new RecordingAnnouncer()), PerspectiveMenu.For(PerspectiveSet.Coding));
         Assert.Contains(Items(menu), i => Equals(i.Header, terminal.Title));
 
         // Every launchable harness still has its own command, derived from the profiles.
@@ -211,7 +214,8 @@ public sealed class TheFrontDoorIsInTheFileMenuTests : IDisposable
 
         MainMenuBuilder.Build(
             menu,
-            new WorkbenchController(new LayoutService(), new RecordingAnnouncer()),
+            new WorkbenchController(new ZoneBackedLayoutService(), new RecordingAnnouncer()),
+            PerspectiveMenu.For(PerspectiveSet.Coding),
             recentSessions: [new RecentSessionEntry("s1", "payments extraction", @"C:\repo")],
             onOpenRecentSession: opened.Add);
 

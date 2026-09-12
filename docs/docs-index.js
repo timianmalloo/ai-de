@@ -1967,7 +1967,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 337 members, 71% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 86 types, 347 members, 71% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1980,7 +1980,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8625acb118bdaf11948c57f320812f9905513515c8f0891fd8088f84ef30ba59"
+      "sourceSha256": "c838e0bcd391e19e4ecb204d9387999009786dc89124ada4c26e161cbb8f6105"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -2467,7 +2467,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Workbench: 65 types, 121 members, 51% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Workbench: 70 types, 132 members, 53% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2480,7 +2480,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bde1462310d173beaae3b3df61813862ca278a50dab56002f5f8bf3d9dc4a5ef"
+      "sourceSha256": "db87d03a74fd34ac159976e40d32d7f7373c56e638e66048a40aefe433278a62"
     },
     {
       "id": "api-aide-mcp",
@@ -5604,6 +5604,46 @@ window.DOCS_INDEX = {
       "sourceSha256": "8559beb5e946d5f7fe7dfa05f1497be483a283b3ae257162d5150914bc1bd713"
     },
     {
+      "id": "note-sh1-scope-and-entry-columns",
+      "path": "docs/notes/sh1-scope-and-entry-columns.md",
+      "title": "SH-1 decisions below ADR weight: a Scope column on the catalog row, an Entry column on the kind row, derived opener ids, and how the four chord collisions were resolved",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Five choices ADR-0030 left to the implementing slice, made and defended here: the catalog row states what a command NEEDS (CommandScope) rather than which perspectives list it; the kind row states how it reaches the menu (SurfaceEntry: Derived(menu) | Verb(commandId)) so no kind can be unreachable by omission; the six per-kind opener commands are retired for derived surface.new/show.<kind> ids; three of the four US-C10 collisions vanish by derivation and the fourth is re-lettered; the prompt kind's bespoke placement stays a marked arm until a second kind needs one.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "perspective",
+        "command-catalog",
+        "allow-list",
+        "shell-lane"
+      ],
+      "links": [
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "refines"
+        },
+        {
+          "to": "proof-perspective-registry",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-design-menu-names",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1c42ee919c3f5f6b468787a724c94c49ca704a38e971961decc6a82e4ccf73e9"
+    },
+    {
       "id": "note-terminal-customization-persistence",
       "path": "docs/notes/terminal-customization-persistence.md",
       "title": "Decision — terminal customization persistence & busy-close",
@@ -7570,7 +7610,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e8be1e93188d84c9a91b5ffa1f77b07c14ac7fe1538027925f9ebd0910c2449a"
+      "sourceSha256": "99585bd3bbc7b6bad8cd4b6f3a190608da34de8be049295ebc03e7e254ecb312"
     },
     {
       "id": "design-session-profiler",
@@ -14295,6 +14335,55 @@ window.DOCS_INDEX = {
       "sourceSha256": "6c5c67e487b6bb2c9497ce5e10e0191a7c68dc102d699ffb26af00ece93516c1"
     },
     {
+      "id": "proof-perspective-registry",
+      "path": "docs/proof/perspective-registry.md",
+      "title": "Proof Pack — The Perspective registry, the allow-list column and the derived menu, palette and routing (SH-1, ADR-0030)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "SH-1 of the Shell lane: PerspectiveSet's three Core rows, the Perspectives/Instances/Entry columns on the eighteen kind rows, and PerspectiveMenu — one derivation the menu bar, the palette and the routed kind-open all read. The plan's nine reds observed (five against the old code, the rest by mutation), twenty-five mutations run across three passes, the four US-C10 chord collisions resolved, ShellViewMode renamed to the row set. Core 2,262/0, App 673/0 at close (pasted from the runner after the last rebuild).",
+      "tags": [
+        "proof-pack",
+        "addendum-c",
+        "perspective",
+        "allow-list",
+        "menu",
+        "command-catalog",
+        "shell-lane"
+      ],
+      "links": [
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-design-menu-names",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-sh1-scope-and-entry-columns",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1843a96dda43c5b909fc39d0e7a104cde242e40913c87e05dfd3f991da88330f"
+    },
+    {
       "id": "proof-s2-settings-and-sentinels",
       "path": "docs/proof/s2-settings-and-sentinels.md",
       "title": "Proof Pack — S2: the settings and sentinels commit",
@@ -16328,5 +16417,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "7a8dad406ca9edeb20773fd8e7be754d5879becea364af40b464055b0c160ded"
+  "graphSha256": "784680a4e63a2c57ad454851034ca762f72ce27d916968c72797c9bb09211c21"
 };

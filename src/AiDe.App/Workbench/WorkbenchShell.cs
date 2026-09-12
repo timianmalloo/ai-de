@@ -310,60 +310,10 @@ public sealed class WorkbenchShell : IDisposable
         // against the latest scored episode. It records evidence for review; it never changes the score.
         Controller.RaiseDisputeRequested = () => RaiseDisputeOnLatestScore();
 
-        Controller.NewPromptDraftRequested = () =>
-        {
-            ReconcileViewIntoModel();
-            // Open the draft beside a terminal (its transfer target) when there is one, else in any
-            // stack — a draft is useful even before a session exists (it just cannot transfer yet).
-            var stack = Service.Current.AllStacks()
-                .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "terminal"))
-                ?? Service.Current.AllStacks().FirstOrDefault();
-
-            if (stack is null) return "There is no pane to open a prompt draft in.";
-
-            var id = $"prompt#{Guid.NewGuid().ToString("N")[..6]}";
-            OpeningDocument();
-            var result = Service.Apply(new LayoutOperation.AddSurface(
-                stack.Id, new Surface(id, "prompt", "Prompt draft")));
-
-            Adapter.Render();
-            BindCanvas();
-            BindContexts();
-            BindJoins();
-            BindTerminalAttention();
-
-            return result.Applied ? "Prompt draft opened." : result.Announcement;
-        };
-
-        Controller.NewClassDiagramRequested = () =>
-            OpenReferenceDocument(
-                new Surface($"classdiagram#{Guid.NewGuid().ToString("N")[..6]}", "classdiagram", "Class diagram"),
-                "Class diagram opened.",
-                "There is no pane to open a class diagram in.");
-
-        Controller.NewSequenceDiagramRequested = () =>
-            OpenReferenceDocument(
-                new Surface($"sequence#{Guid.NewGuid().ToString("N")[..6]}", "sequence", "Sequence diagram"),
-                "Sequence diagram opened.",
-                "There is no pane to open a sequence diagram in.");
-
-        Controller.NewSearchRequested = () =>
-            OpenReferenceDocument(
-                new Surface($"search#{Guid.NewGuid().ToString("N")[..6]}", "search", "Search"),
-                "Search opened.",
-                "There is no pane to open search in.");
-
-        Controller.NewCodeViewerRequested = () =>
-            OpenReferenceDocument(
-                new Surface($"codeviewer#{Guid.NewGuid().ToString("N")[..6]}", "codeviewer", "Source"),
-                "Code viewer opened.",
-                "There is no pane to open a code viewer in.");
-
-        Controller.NewDiagnosticsRequested = () =>
-            OpenReferenceDocument(
-                new Surface($"diagnostics#{Guid.NewGuid().ToString("N")[..6]}", "diagnostics", "Diagnostics"),
-                "Diagnostics opened.",
-                "There is no pane to open diagnostics in.");
+        // The derived "New/Show <title>" entries (ADR-0030 rule 3) reach the shell through one seam
+        // keyed on the KIND, so a kind added as a row is openable with no edit here — the six
+        // per-kind delegates this replaces were the second list the derivation removes.
+        Controller.OpenSurfaceRequested = OpenKind;
 
         // Persistence is per workspace and lives beside the fact store (ADR-0013). With no workspace
         // open there is nothing to persist against, so first-run simply starts from the default.
@@ -1309,17 +1259,17 @@ public sealed class WorkbenchShell : IDisposable
             case NodeViewKind.Source:
             case NodeViewKind.Read:
                 _lastSelectedNodeId = nodeId;
-                Controller.NewCodeViewerRequested?.Invoke();          // opens a Source pane
+                Controller.OpenSurfaceRequested?.Invoke("codeviewer", false);          // opens a Code viewer pane
                 _ = ShowNodeInCodeViewersAsync(nodeId, OpenCodeViewers());  // fill any already open
                 break;
 
             case NodeViewKind.ClassDiagram:
-                Controller.NewClassDiagramRequested?.Invoke();
+                Controller.OpenSurfaceRequested?.Invoke("classdiagram", false);
                 break;
 
             case NodeViewKind.Sequence:
                 _lastSequenceNodeId = nodeId;
-                Controller.NewSequenceDiagramRequested?.Invoke();
+                Controller.OpenSurfaceRequested?.Invoke("sequence", false);
                 _ = ShowNodeInSequenceDiagramsAsync(nodeId, OpenSequenceDiagrams());
                 break;
 
@@ -1599,11 +1549,68 @@ public sealed class WorkbenchShell : IDisposable
     /// <summary>Raises <see cref="DocumentOpening"/>. Called before every <c>AddSurface</c> that opens a document.</summary>
     private void OpeningDocument() => DocumentOpening?.Invoke();
 
-    private string OpenReferenceDocument(Surface surface, string okMessage, string noPaneMessage)
+    /// <summary>
+    /// Opens a surface of <paramref name="kind"/> by its row — the target of every derived
+    /// "New/Show &lt;title&gt;" entry (ADR-0030 rule 3).
+    /// </summary>
+    /// <param name="kind">A row of <see cref="SurfaceContentFactory.Kinds"/>.</param>
+    /// <param name="showExisting">
+    /// True for a "Show" entry: the one open surface of the kind is activated instead of a second
+    /// being added. A "New" entry always adds.
+    /// </param>
+    /// <returns>What to announce.</returns>
+    private string OpenKind(string kind, bool showExisting)
+    {
+        var row = SurfaceContentFactory.Kinds.FirstOrDefault(k => string.Equals(k.Kind, kind, StringComparison.Ordinal));
+        if (row is null)
+        {
+            // A derived entry names a row by construction; this is the honest answer for a stale id.
+            return $"There is no '{kind}' surface in this build.";
+        }
+
+        if (showExisting)
+        {
+            ReconcileViewIntoModel();
+            var open = Service.Current.AllStacks().SelectMany(st => st.Surfaces)
+                .FirstOrDefault(su => string.Equals(su.Kind, kind, StringComparison.Ordinal));
+
+            if (open is not null)
+            {
+                var activated = Service.Apply(new LayoutOperation.ActivateSurface(open.SurfaceId));
+                Adapter.Render();
+                return activated.Applied ? $"{row.Title} shown." : activated.Announcement;
+            }
+        }
+
+        // simplify: one kind places itself — a prompt draft opens beside a terminal (its transfer
+        // target) when there is one, else in any stack, where every other kind follows the document
+        // placement policy. A kind-keyed branch beside a row set is the shape Ruling 22 removes;
+        // ceiling: this one kind. Trigger: a second kind needing bespoke placement — then placement
+        // becomes a column on the row read by DocumentPlacementPolicy, and that policy's own
+        // DocumentKinds hand list retires with it.
+        var besideTerminal = string.Equals(kind, "prompt", StringComparison.Ordinal)
+            ? (Service.Current.AllStacks().FirstOrDefault(st => st.Surfaces.Any(su => su.Kind == "terminal"))
+               ?? Service.Current.AllStacks().FirstOrDefault())?.Id
+            : null;
+
+        return OpenReferenceDocument(
+            new Surface($"{kind}#{Guid.NewGuid().ToString("N")[..6]}", kind, row.Title),
+            $"{row.Title} opened.",
+            $"There is no pane for {row.Title.ToLowerInvariant()}. Window → Reset workbench layout restores one.",
+            intoStackId: besideTerminal);
+    }
+
+    /// <param name="intoStackId">
+    /// When given, the surface is tabbed into this stack and the placement policy is not consulted
+    /// — the prompt kind's own rule (see <see cref="OpenKind"/>). Null for every other kind.
+    /// </param>
+    private string OpenReferenceDocument(Surface surface, string okMessage, string noPaneMessage, string? intoStackId = null)
     {
         ReconcileViewIntoModel();
 
-        var placement = DocumentPlacementPolicy.Decide(Service.Current, Adapter.ActiveSurfaceId);
+        var placement = intoStackId is not null
+            ? new DocumentPlacement(intoStackId, null)
+            : DocumentPlacementPolicy.Decide(Service.Current, Adapter.ActiveSurfaceId);
         if (placement is null) { return noPaneMessage; }
 
         OpeningDocument();
@@ -3064,9 +3071,5 @@ public sealed class WorkbenchShell : IDisposable
     internal Composer.ComposerSurface? SessionComposer(string sessionId) =>
         _sessionDocuments
             .GetValueOrDefault(Sessions.SessionDocumentSurface.SurfaceIdFor(sessionId))?.Composer;
-
-    /// <summary>The command palette's rows: every keyboard-reachable layout command.</summary>
-    public static IReadOnlyList<WorkbenchCommand> PaletteCommands(string search) =>
-        [.. WorkbenchCommandCatalog.Search(search)];
 }
 

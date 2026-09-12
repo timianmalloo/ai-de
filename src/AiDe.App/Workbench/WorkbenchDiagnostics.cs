@@ -339,7 +339,7 @@ public static class WorkbenchDiagnostics
     }
 
     /// <summary>
-    /// Records a change of the shell's primary view mode — which body is on screen — and what asked
+    /// Records a change of the shell's active perspective — which body is on screen — and what asked
     /// for it.
     /// </summary>
     /// <remarks>
@@ -349,19 +349,21 @@ public static class WorkbenchDiagnostics
     /// from a side effect, never stated. The mode is the one fact every "I opened X and saw nothing"
     /// report turns on, so it is written on the normal path, once per change, with its trigger.
     /// </remarks>
-    public static void ShellMode(ShellViewMode from, ShellViewMode to, string trigger)
+    public static void ShellMode(AiDe.Core.Workbench.Perspective from, AiDe.Core.Workbench.Perspective to, string trigger)
     {
         using var activity = Source.StartActivity("workbench.shell.mode");
-        activity?.SetTag("workbench.mode", to.ToString());
-        activity?.SetTag("workbench.mode.from", from.ToString());
+        activity?.SetTag("workbench.mode", to.Id);
+        activity?.SetTag("workbench.mode.from", from.Id);
         activity?.SetTag("workbench.trigger", trigger);
 
+        // The perspective's stable id (`coding` · `explore` · `architecture`), never its title: a
+        // reader greps the log for the row, and a caption can be re-worded without re-keying history.
         Write(new
         {
             ts = DateTimeOffset.UtcNow.ToString("O"),
             evt = "shell.mode",
-            mode = to.ToString(),
-            from = from.ToString(),
+            mode = to.Id,
+            from = from.Id,
             trigger,
         });
     }

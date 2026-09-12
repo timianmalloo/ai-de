@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T13:31:00Z",
+  "generated": "2026-09-12T15:42:36Z",
   "audit": [
     {
       "actor": null,
@@ -13481,6 +13481,141 @@ window.AUDIT_DATA = {
       ],
       "tier": "T2",
       "tool": null
+    },
+    {
+      "id": "al-01M2B41BRPX53SAAHTB82HV76B",
+      "shortname": "sh-1-perspective-registry",
+      "datetime": "2026-09-12T15:33:36Z",
+      "session": "sh-1",
+      "prompt": "You are track SH-1 of the Shell lane in docs/coordination/addendum-cd.md — read your row, the Seams table, the §2 rows (what the Shell lane owns) and the fan-out contract first. Run the /implement skill (Skill tool: implement, args: SH-1: the Perspective registry, the allow-list column on the kind rows, and the derived menu/palette/rail (ADR-0030); reds first per the plan). The conductor is Claude Opus (session conductor-addendum-c). Read CLAUDE.md and AGENTS.md; the pack's rules apply in full (red first; smallest correct; class → sweep → derive → prevent; the Test Architect's hard veto; UX & Accessibility reviews PS-M1–M4). Use python, not python3; $env:PYTHONIOENCODING='utf-8'.\n\nYour worktree — the only tree you write to: C:\\Projects\\ai-de-lane-shell-sh1, branch lane/shell-sh1, HEAD = main 8d54aadc (S0–S2 and DS-1 are in). Claim the files you edit with coord-core.py claim --path <file> --wi SH-1 --ttl 3600 before editing shared surfaces; release at close. A refused claim is a plan defect — stop and report, do not wait it out.\n\nWhat you build (ADR-0030; spec docs/specs/addendum-c-perspectives.md §A7 allow-lists, §B3 the menu derivation rule, US-C3 routing, US-C10 gestures; Rulings 50, 52, 55b, 59, 60, 61):\n- src/AiDe.Core/Workbench/Perspectives.cs (new): Perspective (Coding · Explore · Architecture; Tests reserved, absent) and PerspectiveSet.All — three rows in routing order; the rename ShellViewMode → Perspective happens only in the commit that implements this (Ruling 50) and touches ShellModeController no further than the enum (SH-2 owns the presenter).\n- src/AiDe.Core/Workbench/WorkbenchCommands.cs: perspective.* rows replace shell.toggleExplorer; bound-only chords (the Ctrl+K, X chords are announced, never bound — US-C10; Ctrl+1/2/3 per D1's menu-names note); src/AiDe.Core/Workbench/LayoutModel.cs (kind rows).\n- src/AiDe.App/Workbench/SurfaceContentFactory.cs: the Perspectives and Instances columns on the existing descriptor rows (Ruling 22: rows, not switch arms) — every kind names its admitting perspectives explicitly, no default, with Rulings 59/60/61's membership.\n- src/AiDe.App/Workbench/PerspectiveMenu.cs (new: For(perspective), Resolve(kind) — the routed kind-open per US-C3, Architecture · Coding order, the reading host wins a shared kind); MainMenuBuilder.cs and CommandPalette.cs derive from the join of the command catalog and the allow-lists (Ruling 55b: never a second hand-written list; the MainMenuBuilder.Layout carve-out is suspended — the mapping moves onto the catalog entry).\n\nReds first (the plan names them; observe each red, then green): MainMenuTests.TheMenuCoversEveryCatalogCommand (re-scoped to ≥ 1 perspective ∪ entry verbs) · EveryMenuItemShowsItsKeyboardChord (bound-only) · ExplorerModeTests.Toggle_FlipsModeAndRaisesModeChanged (three-row set; activating the active perspective is a no-op) · the announced-gesture uniqueness collector (four collisions exist today — US-C10 b2; the test lists them red) · the Perspectives non-empty-set build test · the §B3 literal-table menu oracle · the US-C3 routing table test · the palette-rows-equal-menu test · the mutation test (a test-time kind row appears only where admitted).\n\nFloors: E7 before coding; seams (SH-2 consumes your types next — leave ShellModeController's presenter logic to SH-2; the Conversation lane's \"free-form\" census allows only Watcher/Leaderboard.cs; CV-2's Projection.Project( census — do not call it); reviews (read-only, ≤ 3 concurrent): Test Architect (hard), UX & Accessibility (PS-M1–M4), the Simplifier, the Patterns Expert on the registry shape; gates at close, bare, stop on the first red: dotnet build Core + App + both test projects -p:TreatWarningsAsErrors=true; dotnet test both (full); verify-test-run.py CHECK only (--no-run after the run; never --update); every tools/verify-*.py; regenerate-derived.py after the audit entry. Register any new class with ids from verify-id-allocators.py (DC-153 is the highest on main). Audit entry, the Proof Pack, commit with the attribution lines, git push -u origin lane/shell-sh1. Do not merge to main. Release your claims.\n\nFails if (stop and report): a second hand-written menu/palette list; a kind row with a default or empty admitting set; a bound Ctrl+K, X chord; a write outside the Shell lane's §2 paths (in particular none under Workbench/Composer/**, Workbench/Sessions/**, Presentation/Composer/**, AgentPlane/**, Conductor/**, DESIGN.md); a red made green by weakening; verify-test-run.py --update; git stash; a rebase; a push to main; DC-120.\n\nReport back (compact): the reds → green; the registry's three rows and the allow-list matrix as landed; the derivation rule's oracle; the four chord collisions' resolution; reviews raised/cleared; gate table; new classes; commit shas and the pushed sha; seam requests for SH-2 or the Conversation lane, if any.",
+      "summary": "Landed on lane/shell-sh1: Perspectives.cs (Coding/Explore/Architecture rows, routing order Architecture then Coding), the catalog's Scope column with perspective.* rows derived from the set (shell.toggleExplorer and six per-kind openers retired; entry verbs in File; Terminal renamed Prompt; Diagnostics report), the kind rows' Perspectives/Instances/Entry columns (18 rows, no defaults), PerspectiveMenu.For/Resolve/Opener, MainMenuBuilder and CommandPalette deriving from one model (bound-only keystrokes; a non-checkable radio item with a Toggle peer and an accent check glyph), the ShellViewMode->Perspective rename, one OnDocumentOpening rule. Reds: 5 seen against the old code (EveryMenuItemShowsItsKeyboardChord, the four-collision collector, three _Terminal->_File/_Prompt pins) + 25 mutations over three passes, all killed. Reviews: Test Architect VETO->PASS-WITH-CONDITIONS (A done, B superseded, C/D recorded); UX&A VETO->VETO on a new round-2 Blocker, whose prescribed fix was applied and proven after the cap (M21-M23) but not re-reviewed - conductor's call; Simplifier SOFT VETO->CLEARED. Core 2,262/0, App 673/0. Proof Pack docs/proof/perspective-registry.md; decision note docs/notes/sh1-scope-and-entry-columns.md; register: DC-023 recurrence + three DC-nnn entries (ids for the join). Forced writes outside the listed paths, claimed and reported: tests/AiDe.App.ComposerProbe/Program.SessionRender.cs and tests/AiDe.App.Tests/Sessions/ASessionDocumentIsShownWhereTheOperatorIsTests.cs (the rename's references).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "src/AiDe.Core/Workbench/Perspectives.cs",
+        "src/AiDe.Core/Workbench/WorkbenchCommands.cs",
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
+        "src/AiDe.App/Workbench/PerspectiveMenu.cs",
+        "src/AiDe.App/Workbench/MainMenuBuilder.cs",
+        "src/AiDe.App/Workbench/CommandPalette.cs",
+        "src/AiDe.App/Workbench/ShellModeController.cs",
+        "src/AiDe.App/Workbench/WorkbenchController.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/MainWindow.xaml.cs",
+        "tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs",
+        "tests/AiDe.Core.Tests/Workbench/PerspectiveSetTests.cs",
+        "docs/proof/perspective-registry.md",
+        "docs/notes/sh1-scope-and-entry-columns.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "addendum-c",
+        "shell-lane",
+        "adr-0030"
+      ],
+      "outcome": "success",
+      "goal": "SH-1: the Perspective registry (three Core rows), the allow-list columns on the eighteen kind rows, and PerspectiveMenu - one derivation the menu bar, the palette and the routed kind-open read (ADR-0030); reds first per the plan",
+      "done_when": "the plan's nine reds observed red then green; gates green (build with warnings-as-errors, both suites, verify-test-run check, every tools/verify-*.py); Proof Pack, audit entry and decision note committed and pushed to lane/shell-sh1; claims released",
+      "tier": "T2",
+      "main_calls": 150,
+      "main_budget": 4127,
+      "main_over_budget": false,
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-12T13:35:51Z",
+      "duration_seconds": 7065.0,
+      "agent_runs": [
+        {
+          "agent": "test-architect",
+          "started_at": "2026-09-12T15:05:00Z",
+          "ended_at": "2026-09-12T15:17:00Z",
+          "duration_seconds": 720.0,
+          "calls": 42,
+          "budget_calls": 60,
+          "over_budget": false
+        },
+        {
+          "agent": "ux-accessibility",
+          "started_at": "2026-09-12T15:05:00Z",
+          "ended_at": "2026-09-12T15:17:00Z",
+          "duration_seconds": 720.0,
+          "calls": 31,
+          "budget_calls": 60,
+          "over_budget": false
+        },
+        {
+          "agent": "the-simplifier",
+          "started_at": "2026-09-12T15:05:00Z",
+          "ended_at": "2026-09-12T15:11:00Z",
+          "duration_seconds": 360.0,
+          "calls": 14,
+          "budget_calls": 60,
+          "over_budget": false
+        },
+        {
+          "agent": "test-architect",
+          "started_at": "2026-09-12T15:58:00Z",
+          "ended_at": "2026-09-12T16:03:00Z",
+          "duration_seconds": 300.0,
+          "calls": 16,
+          "budget_calls": 40,
+          "over_budget": false
+        },
+        {
+          "agent": "ux-accessibility",
+          "started_at": "2026-09-12T15:58:00Z",
+          "ended_at": "2026-09-12T16:02:00Z",
+          "duration_seconds": 240.0,
+          "calls": 9,
+          "budget_calls": 40,
+          "over_budget": false
+        },
+        {
+          "agent": "the-simplifier",
+          "started_at": "2026-09-12T15:58:00Z",
+          "ended_at": "2026-09-12T15:59:00Z",
+          "duration_seconds": 60.0,
+          "calls": 4,
+          "budget_calls": 40,
+          "over_budget": false
+        }
+      ],
+      "parallelism": {
+        "agent_seconds": 2400.0,
+        "span_seconds": 1020.0,
+        "speedup": 2.35,
+        "peak_concurrency": 3
+      },
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 13,
+          "accepted": 11
+        },
+        {
+          "persona": "ux-accessibility",
+          "raised": 19,
+          "accepted": 16
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 13,
+          "accepted": 11
+        }
+      ],
+      "change": "cl-01M2B40BA74K1EWBYGDSH3PPWT",
+      "git": {
+        "sha": "8d54aadc0016c343f08f752d6d9927059c8e0718",
+        "short": "8d54aadc0",
+        "branch": "lane/shell-sh1",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -17116,6 +17251,35 @@ window.AUDIT_DATA = {
       "summary": "DS-1 /design-slice: docs/design/session-thread-itemscontrol.md (new) — the session thread as a FeedList base (a ListBox over a recycling VirtualizingStackPanel, the six feed keys owned as a pure Decide + an act, a structural pin) with two consumers (the turn feed; the Console split as a flat list of heading and line rows), one INotifyPropertyChanged row per accepted turn carrying its three disclosure flags, the composer pinned beneath (MinHeight 130 on the editor host + the document's MaxHeight belt), a read model that publishes versioned snapshots with a catch-up flag, a one-method transition policy over them with a total transition table, SC9 on NVDA's fetched processing semantics (Status -> All, Assertive -> ImportantMostRecent; Core enums mapped in App), the SC10 UIA contract (List/ListItem, ItemStatus = decoration line, HelpText = the reason sentence, keyed disclosure template, one focusable outside text), the seams (ISessionThread, Announce(Announcement) + raise seam, ComposerSurface.FocusTarget + F6 forward + focus.leave Backward + picker focus echo + editor MinHeight, two WorkbenchCommands, no App.xaml change), the E7 list with a retire row, and 30 red-first oracles with falsifying rows. Spike spikes/session-thread (Q1-Q15, RESULT.md + three raw files) falsified eight platform assumptions: the ListBox's Up/End in a variable-height feed; TabNavigation Local/Continue trap Tab; offset-at-max is not \"followed\" (extent estimate); a collection Replace drops the caret; a roving IsTabStop binding is unnecessary under the default Once; recycling hands one turn's expanded fold to another turn (Q13); the real ComposerSurface in an Auto Grid row lays out the editor at 0 px and the thread at 0 px (Q14); virtualization off is 12.9x on first layout (Q15). Gate: two passes each for Patterns Expert, Simplifier, UX & Accessibility (hard veto CLEARED at pass 2), Test Architect (FAIL both passes: a residual Blocker on the restore/seed lifecycle, resolved by the versioned flagged snapshot — applied post-cap), WPF styling lens (PASS-WITH-CONDITIONS, no escalation; its Blocker measured as Q14). The pass-2 conditions of all lenses are applied in the final revision for the conductor's diff (cap 2 reached; the author cleared nothing). Three decision notes (keys owned by the feed; assertive through one region; the split is a view of the fold). One defect class appended with the id left as DC-nnn (an oracle reads a value clamped at its bound). Findings for owners: DESIGN.md:1092 (the composer row's growth rule), App.xaml (dotted FocusVisualStyle beside the ring), spec/mockup drift (Flow 6, Flow D-1 K2, E2's tab order, the mockup's T badge and skeleton turns), webview2-airspace RESULT over-generalisation, front-door-ruling-49's dangling link, ConsoleSurface/CanvasModeCatalog retirement (CV-1 grep), ConsoleStreamModel as a second store (CV-2). Sub-agent starts are reconstructed from launch order and reported durations; durations and call counts are the harness's.",
       "tags": [],
       "title": "The session thread is a FeedList over versioned catch-up-flagged snapshots: the feed owns its keys, the row owns its view state, the composer declares its floor, the policy announces by transition"
+    },
+    {
+      "id": "cl-01M2B40BA74K1EWBYGDSH3PPWT",
+      "datetime": "2026-09-12T15:33:03Z",
+      "session": "sh-1",
+      "kind": "design",
+      "skill": "implement",
+      "title": "SH-1: a Scope column on the catalog row, an Entry column on the kind row, derived surface.new/show.<kind> openers, the four chord collisions, a non-checkable radio item with a Toggle peer, and one OnDocumentOpening rule",
+      "prompt": "You are track SH-1 of the Shell lane in docs/coordination/addendum-cd.md — read your row, the Seams table, the §2 rows (what the Shell lane owns) and the fan-out contract first. Run the /implement skill (Skill tool: implement, args: SH-1: the Perspective registry, the allow-list column on the kind rows, and the derived menu/palette/rail (ADR-0030); reds first per the plan). The conductor is Claude Opus (session conductor-addendum-c). Read CLAUDE.md and AGENTS.md; the pack's rules apply in full (red first; smallest correct; class → sweep → derive → prevent; the Test Architect's hard veto; UX & Accessibility reviews PS-M1–M4). Use python, not python3; $env:PYTHONIOENCODING='utf-8'.\n\nYour worktree — the only tree you write to: C:\\Projects\\ai-de-lane-shell-sh1, branch lane/shell-sh1, HEAD = main 8d54aadc (S0–S2 and DS-1 are in). Claim the files you edit with coord-core.py claim --path <file> --wi SH-1 --ttl 3600 before editing shared surfaces; release at close. A refused claim is a plan defect — stop and report, do not wait it out.\n\nWhat you build (ADR-0030; spec docs/specs/addendum-c-perspectives.md §A7 allow-lists, §B3 the menu derivation rule, US-C3 routing, US-C10 gestures; Rulings 50, 52, 55b, 59, 60, 61):\n- src/AiDe.Core/Workbench/Perspectives.cs (new): Perspective (Coding · Explore · Architecture; Tests reserved, absent) and PerspectiveSet.All — three rows in routing order; the rename ShellViewMode → Perspective happens only in the commit that implements this (Ruling 50) and touches ShellModeController no further than the enum (SH-2 owns the presenter).\n- src/AiDe.Core/Workbench/WorkbenchCommands.cs: perspective.* rows replace shell.toggleExplorer; bound-only chords (the Ctrl+K, X chords are announced, never bound — US-C10; Ctrl+1/2/3 per D1's menu-names note); src/AiDe.Core/Workbench/LayoutModel.cs (kind rows).\n- src/AiDe.App/Workbench/SurfaceContentFactory.cs: the Perspectives and Instances columns on the existing descriptor rows (Ruling 22: rows, not switch arms) — every kind names its admitting perspectives explicitly, no default, with Rulings 59/60/61's membership.\n- src/AiDe.App/Workbench/PerspectiveMenu.cs (new: For(perspective), Resolve(kind) — the routed kind-open per US-C3, Architecture · Coding order, the reading host wins a shared kind); MainMenuBuilder.cs and CommandPalette.cs derive from the join of the command catalog and the allow-lists (Ruling 55b: never a second hand-written list; the MainMenuBuilder.Layout carve-out is suspended — the mapping moves onto the catalog entry).\n\nReds first (the plan names them; observe each red, then green): MainMenuTests.TheMenuCoversEveryCatalogCommand (re-scoped to ≥ 1 perspective ∪ entry verbs) · EveryMenuItemShowsItsKeyboardChord (bound-only) · ExplorerModeTests.Toggle_FlipsModeAndRaisesModeChanged (three-row set; activating the active perspective is a no-op) · the announced-gesture uniqueness collector (four collisions exist today — US-C10 b2; the test lists them red) · the Perspectives non-empty-set build test · the §B3 literal-table menu oracle · the US-C3 routing table test · the palette-rows-equal-menu test · the mutation test (a test-time kind row appears only where admitted).\n\nFloors: E7 before coding; seams (SH-2 consumes your types next — leave ShellModeController's presenter logic to SH-2; the Conversation lane's \"free-form\" census allows only Watcher/Leaderboard.cs; CV-2's Projection.Project( census — do not call it); reviews (read-only, ≤ 3 concurrent): Test Architect (hard), UX & Accessibility (PS-M1–M4), the Simplifier, the Patterns Expert on the registry shape; gates at close, bare, stop on the first red: dotnet build Core + App + both test projects -p:TreatWarningsAsErrors=true; dotnet test both (full); verify-test-run.py CHECK only (--no-run after the run; never --update); every tools/verify-*.py; regenerate-derived.py after the audit entry. Register any new class with ids from verify-id-allocators.py (DC-153 is the highest on main). Audit entry, the Proof Pack, commit with the attribution lines, git push -u origin lane/shell-sh1. Do not merge to main. Release your claims.\n\nFails if (stop and report): a second hand-written menu/palette list; a kind row with a default or empty admitting set; a bound Ctrl+K, X chord; a write outside the Shell lane's §2 paths (in particular none under Workbench/Composer/**, Workbench/Sessions/**, Presentation/Composer/**, AgentPlane/**, Conductor/**, DESIGN.md); a red made green by weakening; verify-test-run.py --update; git stash; a rebase; a push to main; DC-120.\n\nReport back (compact): the reds → green; the registry's three rows and the allow-list matrix as landed; the derivation rule's oracle; the four chord collisions' resolution; reviews raised/cleared; gate table; new classes; commit shas and the pushed sha; seam requests for SH-2 or the Conversation lane, if any.",
+      "summary": "ADR-0030 left seven choices to the implementing slice, made here: the catalog row states what a command NEEDS (CommandScope: Global/DockHost/Admits) rather than which perspectives list it; the kind row states how it reaches the menu (SurfaceEntry: Derived(menu) | Verb(commandId), a closed record hierarchy, no default); the six per-kind opener commands are retired for derived surface.new/show.<kind> ids with one controller case and one shell method; three of the four US-C10 collisions vanish by derivation and focusCanvas is re-lettered; the prompt kind's placement stays a marked simplify: arm; the View radio is a non-checkable MenuItem whose peer exposes Toggle (WPF's click pipeline untouched, the menu closes); a document opens where the operator is - only a full-window body hands over to Coding - as one static MainWindow.OnDocumentOpening the window, the replay and the test call.",
+      "rationale": "Recorded in docs/notes/sh1-scope-and-entry-columns.md with the alternatives and the reviews that shaped items 6-7 (the Test Architect's Blocker on the DocumentOpening handler; the UX & Accessibility lens's round-2 Blocker on the OnClick override).",
+      "artifacts": [
+        "docs/notes/sh1-scope-and-entry-columns.md",
+        "docs/proof/perspective-registry.md",
+        "src/AiDe.Core/Workbench/Perspectives.cs",
+        "src/AiDe.App/Workbench/PerspectiveMenu.cs"
+      ],
+      "tags": [
+        "addendum-c",
+        "shell-lane",
+        "adr-0030"
+      ],
+      "git": {
+        "before": "8d54aadc0016c343f08f752d6d9927059c8e0718",
+        "after": "8d54aadc0016c343f08f752d6d9927059c8e0718",
+        "branch": "lane/shell-sh1",
+        "pushed": null,
+        "commits": []
+      }
     }
   ]
 };
