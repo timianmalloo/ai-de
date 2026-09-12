@@ -26,9 +26,9 @@ summary: >-
 - **Status:** Draft candidate. **Not accepted. No gate self-cleared.**
 - **Tier (cost-of-error):** T2 — this admits user-facing Architecture surfaces, evidence/authority semantics, model-assisted interpretation, privacy-sensitive repository content and misleading-compliance risks.
 - **Author / date:** `atlas-spec-gpt55`, 2026-09-12.
-- **Reservation:** `E` is requested but **pending**. The current registered maximum addendum is **D**. This file reserves no authority until the Owner/Claude/Conductor acknowledgement lands.
+- **Reservation:** Owner Astra's initial ruling admits candidate Addendum E **conditional on registration**. The current registered maximum addendum is still **D** until Core/Claude/Conductor acknowledgement lands. This file remains a draft and reserves no global authority until registration and gates complete.
 - **Upstream:** Addendum C (`spec-addendum-c-perspectives`), UML/ERM surfaces (`spec-uml-erm-surfaces`), Architecture (`architecture`), and the pending provenance note `note-code-atlas-proposal-provenance`.
-- **Proposal input:** read-only from `C:\Projects\ai-de-proposal-code-atlas\docs\proposals\code-atlas\README.md`, `index.html`, and `mockup.template.html` at proposal commit `at1065a851` **[Verified by local read]**. The proposal branch is private input, not merged history. This spec does not copy TheTerrace raw source, fixture JSON, screenshots or session quotes into the delivery tree.
+- **Base evidence:** current main tree `b0e092b5` and proposal `1065a851` were confirmed by the parent/Owner record **[Verified by parent report; not re-read here]**. The proposal input was read locally from `C:\Projects\ai-de-proposal-code-atlas\docs\proposals\code-atlas\README.md`, `index.html`, and `mockup.template.html` **[Verified by local read]**. The proposal branch is private input, not merged history. This spec does not copy TheTerrace raw source, fixture JSON, screenshots or session quotes into the delivery tree.
 - **Delivery stance:** the user wants the full eventual implementation through the fleet, not another toy mockup. This draft therefore specifies the real product contract and marks unadmitted or unproven capabilities as planned, deferred, unknown or blocked.
 
 Every load-bearing claim is labelled **[Verified]** (opened / fetched / observed), **[Inferred]** (reasoned from evidence), or **[Flagged]** (unknown or pending). This is a candidate spec, so the gate record is intentionally **PENDING/BLOCKED**, not pass.
@@ -57,6 +57,15 @@ Addendum E admits the **Code Atlas** as the Architecture perspective's repositor
 4. Concrete UML, ER, layer/component, Azure and implementation↔spec views are **evidence-grounded projections**, not editable source models and not compliance verdicts.
 5. Optional model interpretation is admitted only through an approved bounded harness with context preview, no tool authority, no private-corpus shipping and an eval gate before its output can influence a user-facing claim.
 6. Authority uncertainty is never silently cleared by AI. Human/authorized Owner/Conductor/audit/session references remain the authority trail; timestamps are ordering evidence, not authority by themselves.
+
+**Owner Astra initial rulings folded into this draft:**
+
+- **[Verified by parent report]** Candidate Addendum E is admitted only **conditional on registration**. Until Core/Claude acknowledgement, work is limited to uncontested registered docs and read-only seam analysis; no product source edits are authorized.
+- **[Verified by parent report]** The whole vision belongs inside the existing **Architecture** perspective, with the existing three Perspectives and one graph substrate. There is no fourth Perspective and no second graph store.
+- **[Verified by parent report]** Addendum C D-4 is amended by this quoted constraint: **"A Bicep resource is not automatically a C4 software container."** Infrastructure declarations may support deployment/resource views and some architecture relationships; they do not by themselves create software containers or components.
+- **[Verified by parent report]** The development Astra/GPT fleet does not replace the runtime headless-Claude/subscription contract and does not genericize the prompt compiler. Prompt compilation remains Addendum D's contract.
+- **[Verified by parent report]** Architecture must cover all stages, but the first implementation horizon is only the integrated deterministic C# walking skeleton: **file → type/member → actual source**.
+- **[Verified by parent report]** Later semantic/behavior, data/Azure, comparison/decision and governed-AI stages each need their own design, exit criteria and Owner admission before implementation.
 
 ## Part A — Functional specification
 
@@ -184,6 +193,8 @@ A developer opens the Architecture perspective for a workspace. They choose **So
 | Addendum C D-6 conductor round-trips | Prompt/Composer compile/reply capability. | Out of scope; Addendum D owns it. |
 | Addendum C Architecture allow-list | Code Atlas uses the Architecture host and admits only Architecture reading surfaces. | Refines, not replaces. |
 | Architecture Addenda C/D | Existing WPF/WebView2 shell, bounded projections and evidence posture stand. | No provider or runtime-conductor change. |
+
+**Quoted amendment for C D-4:** "A Bicep resource is not automatically a C4 software container." Addendum E may use Bicep declarations as evidence for Azure/resource and deployment relationships; it must not map a resource declaration to a C4 software container unless a separate software-system/container/component rule establishes that mapping with code or architecture evidence.
 
 ### A8. Supported capability declarations
 
@@ -329,6 +340,8 @@ Every Code Atlas view renders a capability disclosure before or beside the conte
 ### A13. AI-integrated allocation
 
 - **LOA archetype:** Primary remains **F — Copilot Aside Hot Path** for AI-DE. Deterministic extraction, identity preservation, authority, grants, mapping states, bounds and UI routing are T0. Optional interpretation is an aside that proposes explanations and mappings.
+- **Provider contract:** Development use of Astra/GPT models in this fleet does **not** alter the runtime product contract. AI-DE's runtime conductor remains the existing headless-Claude/subscription path unless a separate accepted spec/architecture change amends it.
+- **Prompt compiler boundary:** Addendum E does not genericize the Addendum D prompt compiler. Any model used for Code Atlas interpretation is a bounded Architecture-reading aid, not a compiler provider.
 - **Tier allocation:**
   - T0: physical inventory, source anchors, relationship validation, map bounds, authority/mapping-state rules, grant rejection, exports.
   - T1/T2: deterministic ranking/label suggestions only if measured need beats deterministic baseline.
@@ -572,19 +585,21 @@ Applicable HAX and Shape-of-AI patterns:
 
 ## Delivery phases — vertical, not toy
 
+Only **E-0** is in the first implementation horizon. It must be an integrated deterministic C# walking skeleton from file to type/member to actual source. E-1 through E-4 are intentionally specified so architecture can cover the whole vision, but they are not silently admitted for implementation and they are not declared done by E-0.
+
 | Phase | Delivers | Gate |
 |---|---|---|
-| **E-0 Physical Atlas spine** | Snapshot, physical inventory, Solution Explorer, source anchors, coverage disclosure, file-first Back path. | US-E1/E2/E4/E13 on an approved fixture; no semantic completeness claim. |
-| **E-1 Concrete static code views** | Type/member extraction contract, bounded UML/class, method sequence/activity with confidence/unknowns. | Contract worker output admitted; US-E5/E6. |
-| **E-2 Domain/ER/layer/Azure views** | ER/domain/layer/component/Azure declaration views with resource aliases and typed relationships. | `spec-uml-erm-surfaces` gates plus US-E7/E8. |
-| **E-3 Implementation↔spec and decision provenance** | Clause authority/status/scope/supersession model and mapping states. | US-E10/E11, no percent. |
-| **E-4 Optional interpretation** | Bounded no-tool model interpretation with preview, eval and rejection path. | US-E9/E12 plus eval admission. |
+| **E-0 Physical Atlas walking skeleton — first horizon only** | Deterministic C# source identity path: physical file inventory subset sufficient for the fixture, type/member extraction for admitted C# cases, source viewer with real source anchors, selection history and Back. | US-E1/E2/E4/E13 on an approved fixture; actual source opens; no semantic completeness, behavior, data, Azure, comparison or AI claim. |
+| **E-1 Concrete static code views — later admission required** | Broader type/member extraction contract, bounded UML/class, method sequence/activity with confidence/unknowns. | Separate `/design-slice`, contract worker output, exit criteria and Owner admission; US-E5/E6. |
+| **E-2 Domain/ER/layer/Azure views — later admission required** | ER/domain/layer/component/Azure declaration views with resource aliases and typed relationships. | Separate design plus `spec-uml-erm-surfaces` gates; C D-4 amendment enforced; US-E7/E8. |
+| **E-3 Implementation↔spec and decision provenance — later admission required** | Clause authority/status/scope/supersession model and mapping states. | Separate design and Owner admission; US-E10/E11, no percent. |
+| **E-4 Optional interpretation — later admission required** | Bounded no-tool model interpretation with preview, eval and rejection path. | Separate AI/privacy/security design, eval admission and Owner admission; US-E9/E12. |
 
 ## Flagged risks and residual unknowns
 
 | Risk / unknown | Cheapest next contract or decision |
 |---|---|
-| Addendum E number is not yet authorized. | Owner/Claude/Conductor acknowledgement of `E` reservation. |
+| Addendum E number is conditionally admitted but not registered. | Core/Claude/Conductor acknowledgement of `E` registration before any acceptance or source implementation. |
 | `note-code-atlas-proposal-provenance` is pending from the Conductor. | Join the note id and verify the typed edge before acceptance. |
 | Method/type/member extraction contract is separate and not settled here. | Accept or reject the contract worker's declared symbol/relationship model before E-1. |
 | Physical inventory source of truth needs final policy: `git ls-files`, workspace index, exclusions and generated/vendor categories. | `/design-slice` data contract with fixture and exclusions. |
@@ -596,8 +611,8 @@ Applicable HAX and Shape-of-AI patterns:
 
 ## Draft gate record
 
-`GATE specify-addendum-e-code-atlas · 2026-09-12 · author atlas-spec-gpt55 · adversaries required: Product Strategist, Data & Persistence Architect, UX Researcher/IA, UX & Accessibility, Test Architect, Security & Identity, Privacy/Data Governance, AI Systems Engineer, SRE, Simplifier · criteria met by draft: three layers present, conceptual model first, US-E stories, UX flows, UI archetype, reconciliation and risks · verdict: PENDING/BLOCKED — Owner has not acknowledged E reservation; Conductor provenance note pending; adversaries have not reviewed; extraction contracts unresolved · vetoes: not cleared by author.`
+`GATE specify-addendum-e-code-atlas · 2026-09-12 · author atlas-spec-gpt55 · adversaries required: Product Strategist, Data & Persistence Architect, UX Researcher/IA, UX & Accessibility, Test Architect, Security & Identity, Privacy/Data Governance, AI Systems Engineer, SRE, Simplifier · criteria met by draft: three layers present, conceptual model first, US-E stories, UX flows, UI archetype, reconciliation and risks · verdict: PENDING/BLOCKED — Addendum E is conditionally admitted but not registered; Conductor provenance note pending; adversaries have not reviewed; extraction contracts unresolved; later phases lack their required designs/admissions · vetoes: not cleared by author.`
 
 ---
 
-**Handoff:** → Owner/Conductor acknowledgement of Addendum E reservation and provenance note join, then `/define-architecture` or `/design-slice` for E-0 only. Implementation starts vertically at E-0; E-4 model interpretation waits for eval and privacy/security gates.
+**Handoff:** → Core/Claude/Conductor registration of Addendum E and provenance note join, then `/define-architecture` or `/design-slice` for **E-0 only**. No product source edit is authorized before registration. Later stages require separate design, exit criteria and Owner admission; E-4 model interpretation waits for eval and privacy/security gates.
