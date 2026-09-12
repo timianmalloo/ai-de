@@ -57,6 +57,13 @@ internal static class NewSessionPlacement
         var result = service.Apply(
             new LayoutOperation.SetStackState(stack.Id, StackState.Maximized));
 
+        // In the log on the normal path, applied or refused (INV-0009 F5): the operator's log
+        // showed this maximize only by its consequence — a reconcile three lines later reading
+        // three collapsed zones. The active surface is not known here (the adapter is the window's),
+        // so it is recorded as null rather than as the surface this maximize was for.
+        WorkbenchDiagnostics.LayoutMutation(
+            "maximize-stack", result.Applied ? "maximized" : "refused", surfaceId, null, service.Current, stack.Id);
+
         return $"{announcement} {result.Announcement}";
     }
 }

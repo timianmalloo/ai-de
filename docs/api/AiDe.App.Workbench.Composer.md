@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Composer: 10 types, 50 members, 88% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Composer: 10 types, 51 members, 89% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Composer`
 
-**10 public types · 50 public members · 88% documented.**
+**10 public types · 51 public members · 89% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -257,6 +257,7 @@ claim, and paste is handled inside the page by the editor that received it.
 | `ComposerSendGate Gate` | The send gate. Exposed so the seam's counter is readable by a test. |
 | `ComposerDraft Draft` | The draft this surface composes. |
 | `string Status` | The last thing that happened, in a sentence. |
+| `bool IsConfigured` | Whether `Configure` has run — a bound composer is not bound again (INV-0009 Phase 2). |
 | `ComposerMessageRouter Router` | The router. Built with the surface, so a mount is heard before the session is wired. |
 | `bool PageIsReady` | Whether the page has reported that it mounted. |
 | `string CompiledView` | What the operator will read before sending: the whole compiled prompt. |

@@ -175,9 +175,68 @@ public sealed class ANewSessionTakesTheWholeTreeTests : IDisposable
 
         const string Call = "GiveTheNewSessionTheWholeTree";
 
-        Assert.Contains(Call, Method(source, "private string NewSession()"), StringComparison.Ordinal);
+        // New Session became a task command when the chooser began opening the chosen workspace
+        // (INV-0009 Phase 3); the maximize is still on it and on nothing that shows an existing
+        // session — a reopen, or the documents a saved arrangement restores at workspace-open.
+        Assert.Contains(Call, Method(source, "private async Task<string> NewSessionAsync()"), StringComparison.Ordinal);
         Assert.DoesNotContain(Call, Method(source, "private void ReopenSession("), StringComparison.Ordinal);
         Assert.DoesNotContain(Call, Method(source, "private async Task ReopenSessionAsync("), StringComparison.Ordinal);
+        Assert.DoesNotContain(Call, Method(source, "private void AttachWorkspace("), StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// <b>INV-0009 Phase 4.</b> The maximize is in the log: one <c>layout.mutation</c> line with
+    /// <c>operation: maximize-stack</c>, the stack it maximized, and the projected tree after — and
+    /// the same line, <c>placement: refused</c>, when the service refuses it. The operator's log
+    /// showed the maximize only by its consequence, three lines later, as a reconcile reading three
+    /// collapsed zones (INV-0009 §3, line 21).
+    /// </summary>
+    [Fact]
+    public void TheMaximizeWritesItsOwnMutationLine()
+    {
+        var config = Create("Logged");
+        var lines = new List<string>();
+        var previous = WorkbenchDiagnostics.Sink;
+        WorkbenchDiagnostics.Sink = lines.Add;
+
+        try
+        {
+            WithShell(shell =>
+            {
+                shell.OpenSessionDocument(config);
+                NewSessionPlacement.GiveItTheWholeTree(shell.Service, config.SessionId, "Session opened.");
+
+                // A second maximize while one stands is refused by the service, and that is logged too.
+                return NewSessionPlacement.GiveItTheWholeTree(shell.Service, config.SessionId, "Again.");
+            });
+        }
+        finally
+        {
+            WorkbenchDiagnostics.Sink = previous;
+        }
+
+        var maximizes = lines
+            .Select(l => System.Text.Json.JsonDocument.Parse(l).RootElement)
+            .Where(e => e.GetProperty("evt").GetString() == "layout.mutation"
+                && e.GetProperty("operation").GetString() == "maximize-stack")
+            .ToList();
+
+        Assert.Equal(2, maximizes.Count);
+
+        var surfaceId = SessionDocumentSurface.SurfaceIdFor(config.SessionId);
+        Assert.Equal("maximized", maximizes[0].GetProperty("placement").GetString());
+        Assert.Equal(surfaceId, maximizes[0].GetProperty("surface").GetString());
+
+        // The stack it names is in the tree after, holding the session's surface.
+        var stackId = maximizes[0].GetProperty("stack").GetString();
+        Assert.False(string.IsNullOrEmpty(stackId), "the maximized stack is not named");
+        var stack = Assert.Single(
+            maximizes[0].GetProperty("stacks").EnumerateArray(),
+            s => s.GetProperty("id").GetString() == stackId);
+        Assert.Contains(stack.GetProperty("surfaces").EnumerateArray(), v => v.GetString()!.StartsWith(surfaceId, StringComparison.Ordinal));
+
+        Assert.Equal("refused", maximizes[1].GetProperty("placement").GetString());
+        Assert.Equal(stackId, maximizes[1].GetProperty("stack").GetString());
     }
 
     private static string MainWindowSource()

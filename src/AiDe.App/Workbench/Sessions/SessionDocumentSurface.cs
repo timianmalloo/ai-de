@@ -104,7 +104,13 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     }
 
     /// <summary>The layout surface id a session document docks under.</summary>
-    public static string SurfaceIdFor(string sessionId) => $"session-document:{sessionId}";
+    public static string SurfaceIdFor(string sessionId) => $"{Kind}:{sessionId}";
+
+    /// <summary>The inverse of <see cref="SurfaceIdFor"/>: the session id a surface id names, or null when it is not one.</summary>
+    public static string? SessionIdOf(string surfaceId) =>
+        surfaceId.StartsWith(Kind + ":", StringComparison.Ordinal) && surfaceId.Length > Kind.Length + 1
+            ? surfaceId[(Kind.Length + 1)..]
+            : null;
 
     /// <summary>The surface kind <c>SurfaceContentFactory</c> builds this for.</summary>
     /// <remarks>

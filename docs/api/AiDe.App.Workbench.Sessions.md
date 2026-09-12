@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 59 members, 93% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 60 members, 93% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Sessions`
 
-**12 public types · 59 public members · 93% documented.**
+**12 public types · 60 public members · 93% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -191,19 +191,34 @@ reaches `SessionConfigStore.Create` without one.
 
 
 
-**Every exit announces.** Cancel at the chooser, cancel at the sheet, and a refusal
-inside the sheet each say what happened; only the create path says a session exists.
+**The chosen workspace is opened, then the session is created in it (INV-0009 Phase 3,
+DC-149).** The chooser used to hand its root to the session store and nowhere else: the
+session was bound to workspace W while the window still had none open, and the composer's first
+guard then refused — *repositoryRoot: this window has no open workspace* — over a workspace
+the operator had just chosen in a dialog this flow put up. The chosen root now goes through the
+window's ordinary open path first, and the sheet binds to the workspace the window reports once
+that has happened, so the window and the session are bound to the same workspace before the
+composer is. A workspace that does not open ends the flow with the open path's own reason.
+
+
+
+
+
+**Every exit announces.** Cancel at the chooser, a workspace that did not open, cancel
+at the sheet, and a refusal inside the sheet each say what happened; only the create path says a
+session exists.
 
 | Member | Summary |
 |---|---|
 | `NewSessionFlow(` | **(gap)** |
 | `NewSessionSheetViewModel? LastSheet { get; private set; }` | The sheet the last `Start` built, or null when none was reached. |
-| `NewSessionOutcome Start()` | Runs the flow once. |
+| `Task<NewSessionOutcome> StartAsync()` | Runs the flow once. |
 
 ### `NewSessionFlow(`
 
 - **`activeWorkspaceRoot`** — The workspace the shell has open, or null.
 - **`chooseWorkspace`** — Interposes the workspace chooser and returns the chosen root, or null when cancelled. Null means this build has no chooser, which the flow reports rather than working around.
+- **`openWorkspace`** — Opens the chosen root in the window through its ordinary open path and returns null, or the reason it did not open. Null means this build cannot open one, which the flow reports.
 - **`showSheet`** — Shows the sheet and returns whether the operator pressed Create. The sheet is handed in already bound, so the view never has to decide what a session belongs to.
 - **`registry`** — The provider registry, read fresh each time the sheet opens.
 - **`workspaceId`** — Maps a workspace root to the key the session config records.
@@ -383,6 +398,7 @@ are unchanged and the standalone draft surface still exists, exactly as Addendum
 |---|---|
 | `SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null)` | **(gap)** |
 | `string SurfaceIdFor(string sessionId)` | The layout surface id a session document docks under. |
+| `string? SessionIdOf(string surfaceId)` | The inverse of `SurfaceIdFor`: the session id a surface id names, or null when it is not one. |
 | `string Kind = "session-document"` | The surface kind `SurfaceContentFactory` builds this for. |
 | `SessionDocumentViewModel Model { get; }` | This document's state. |
 | `string SurfaceId { get; }` | The layout surface id. |

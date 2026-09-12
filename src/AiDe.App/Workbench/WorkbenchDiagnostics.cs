@@ -25,14 +25,16 @@ public static class WorkbenchDiagnostics
     public static Action<string>? Sink { get; set; }
 
     /// <summary>Records a layout mutation and the resulting stack/surface topology.</summary>
+    /// <param name="stackId">The stack the operation acted on, when it acted on one (a maximize); null — recorded as null, never as a guess — otherwise.</param>
     public static void LayoutMutation(
-        string operation, string placement, string surfaceId, string? activeSurfaceId, Layout after)
+        string operation, string placement, string surfaceId, string? activeSurfaceId, Layout after, string? stackId = null)
     {
         using var activity = Source.StartActivity("workbench.layout.mutation");
         activity?.SetTag("workbench.operation", operation);
         activity?.SetTag("workbench.placement", placement);
         activity?.SetTag("workbench.surface", surfaceId);
         activity?.SetTag("workbench.active", activeSurfaceId);
+        activity?.SetTag("workbench.stack", stackId);
 
         var stacks = after.AllStacks()
             .Select(s => new
@@ -51,6 +53,7 @@ public static class WorkbenchDiagnostics
             placement,
             surface = surfaceId,
             active = activeSurfaceId,
+            stack = stackId,
             stacks,
         });
     }
@@ -332,6 +335,88 @@ public static class WorkbenchDiagnostics
             detail,
             errorCode,
             exceptionType,
+        });
+    }
+
+    /// <summary>
+    /// Records a change of the shell's primary view mode — which body is on screen — and what asked
+    /// for it.
+    /// </summary>
+    /// <remarks>
+    /// <b>Why this exists (INV-0009).</b> Two session documents were opened into the docking host
+    /// while the Explorer was the body, and the shell announced each as opened. The log could show
+    /// the mode had been entered only by an <c>explorer-graph</c> surface initialising — inferred
+    /// from a side effect, never stated. The mode is the one fact every "I opened X and saw nothing"
+    /// report turns on, so it is written on the normal path, once per change, with its trigger.
+    /// </remarks>
+    public static void ShellMode(ShellViewMode from, ShellViewMode to, string trigger)
+    {
+        using var activity = Source.StartActivity("workbench.shell.mode");
+        activity?.SetTag("workbench.mode", to.ToString());
+        activity?.SetTag("workbench.mode.from", from.ToString());
+        activity?.SetTag("workbench.trigger", trigger);
+
+        Write(new
+        {
+            ts = DateTimeOffset.UtcNow.ToString("O"),
+            evt = "shell.mode",
+            mode = to.ToString(),
+            from = from.ToString(),
+            trigger,
+        });
+    }
+
+    /// <summary>
+    /// Records that a session document's composer was bound to a run context — which session, which
+    /// surface, and the checkout a run would be cut from.
+    /// </summary>
+    /// <remarks>
+    /// The binding was the one step of <c>File → New Session</c> with no line of its own: the
+    /// composer's <c>configured</c> transition says fields were pushed, not what they were bound to
+    /// (INV-0009 F5). <paramref name="repositoryRoot"/> is the fact finding C could only infer.
+    /// </remarks>
+    public static void SessionDocumentBound(string sessionId, string surfaceId, string repositoryRoot)
+    {
+        using var activity = Source.StartActivity("workbench.session-document.bound");
+        activity?.SetTag("workbench.session", sessionId);
+        activity?.SetTag("workbench.surface", surfaceId);
+
+        Write(new
+        {
+            ts = DateTimeOffset.UtcNow.ToString("O"),
+            evt = "session-document.bound",
+            session = sessionId,
+            surface = surfaceId,
+            repositoryRoot,
+        });
+    }
+
+    /// <summary>
+    /// Records that a session document's composer was left without a run binding, naming the field
+    /// the refusal points at.
+    /// </summary>
+    /// <remarks>
+    /// The refusal the operator read at 22:33:28Z (<i>repositoryRoot: this window has no open
+    /// workspace…</i>) reached the composer's status line and nowhere else; the investigation had to
+    /// reconstruct it from the code path (INV-0009 §7). The field and the reason are recorded as the
+    /// operator read them; a reason names at most a path this log already carries (the workspace,
+    /// the provider file), never a draft's text.
+    /// </remarks>
+    public static void SessionDocumentRefused(string sessionId, string? surfaceId, string field, string reason)
+    {
+        using var activity = Source.StartActivity("workbench.session-document.refused");
+        activity?.SetTag("workbench.session", sessionId);
+        activity?.SetTag("workbench.surface", surfaceId);
+        activity?.SetTag("workbench.field", field);
+
+        Write(new
+        {
+            ts = DateTimeOffset.UtcNow.ToString("O"),
+            evt = "session-document.refused",
+            session = sessionId,
+            surface = surfaceId,
+            field,
+            reason,
         });
     }
 

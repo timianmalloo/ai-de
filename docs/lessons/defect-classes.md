@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 74 · partially-controlled 58 · uncontrolled 15
+**Status counts:** controlled 77 · partially-controlled 57 · uncontrolled 16
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 6.
@@ -1703,8 +1703,25 @@ for both or split.*
   can arrive or change after the surface exists, do not snapshot it at construction — resolve it each
   time, or re-resolve when the surface is shown. Retention (US-E6 "don't rebuild") is about the VIEW,
   never a licence to freeze its data source.
-- **Status:** `partially-controlled` — the live-read + refresh-on-entry fix is landed; a realized-shell
-  integration test (Explorer shows the graph after a workspace opens) is a follow-on.
+- **Recurrence 2 (INV-0009, 2026-09-11) — the restored session-document pane.** A saved layout
+  restores `session-document:<id>` surfaces before any session is reopened, so
+  `SurfaceContentFactory.SessionDocument` builds the *"No session is open"* island for each. When
+  the operator then reopens that session, `OpenSessionDocument` registers the live document — and
+  `WorkbenchAdapter.Render` **reuses** the island, because the surface id is already in the layout
+  and nothing called `Invalidate` for it (the DC-029 reconcile, doing its job). The pane the
+  operator clicked keeps saying no session is open while the shell announces *"Session opened."*
+  **Observed red:** the same oracle as DC-084's recurrence — `live-document-in-view=False`,
+  `renders='No session is open. Create one from File → New Session.'` after the reopen. The first
+  control (read live at use time) was applied to the Explorer graph and never to this pane; the
+  class control is the oracle, and the fix is to invalidate the surface when a document is
+  registered for an id the layout already holds (INV-0009 Phase 2).
+- **Status:** `controlled` — the live-read + refresh-on-entry fix is landed for the Explorer
+  graph; the restored-pane instance is fixed by INV-0009 Phase 2 (`WorkbenchShell.RegisterSessionDocument`
+  names a restored pane for rebuild when the live document registers, and only when the pane holds
+  something other than a live document) and Phase 2b (`ReviveRestoredSessionDocuments` at
+  workspace-open, so the island stands only for a session whose `session.json` is gone) — oracles
+  `AReopenedSessionIsShownAndItsComposerIsBound` (exit 32 → 0) and
+  `ARestoredSessionDocumentIsRevivedAndBoundAtWorkspaceOpen` (exit 34 → 0).
 
 
 ### DC-041 — Two "kind" fields with different granularity, and the coarse one shown where the fine was meant
@@ -3214,7 +3231,25 @@ for both or split.*
   depends on the thing being set up.* Where it does not, it belongs at construction — the setup
   method is a convenient place, not a correct one, and convenience is how a capability ends up
   conditional on something it has nothing to do with.
-- **Status:** `controlled`
+- **Recurrence 2 (INV-0009, 2026-09-11) — the composer's run binding.** `MainWindow.BindComposer`
+  is *"the only caller of `ComposerSurface.Configure` in the product"*, and it takes a
+  `NewSessionResult` — so it is reachable only from `File → New Session`'s `opened` callback. The
+  reopen path (`ReopenSessionAsync` → `Shell.OpenSessionDocument(config)`) and the layout restore
+  never bind: a reopened session's composer has no send context, pushes no `host.init`, and mounts
+  no fields. The binding depends on the **session config and the provider file**, both of which the
+  reopen path holds; it does not depend on the sheet's result. Same shape, same tell — the method
+  that binds sits where the code that *creates* lives. **Observed red:**
+  `ASessionDocumentIsShownWhereTheOperatorIsTests.AReopenedSessionIsShownAndItsComposerIsBound`
+  (probe exit 32, `configured=0 init-pushed=0 host fields=0`). The first control
+  (`EnvironmentContractSurvivesNoWorkspaceTests`) was written to the terminal hook and could not
+  see this; the class control is the oracle above, which every path that opens a session document
+  must pass.
+- **Status:** `controlled` — the terminal-environment instance is controlled; the composer
+  binding moved out of the create path into `SessionComposerBinder` (INV-0009 Phase 2, `d4d39cff`),
+  reached from New Session, Reopen and the workspace-open restore, with the one-construction-site
+  guard (`TheShellConstructsOneRegistryOneSendContextAndOneAttachmentGate`) now asserting the counts
+  on the binder and **none** in the window. Oracle `AReopenedSessionIsShownAndItsComposerIsBound`
+  (`configured=0` → `configured=1 init-pushed=1`).
 
 ### DC-085 — A prefix-stripping pattern eats the first character when the prefix is absent
 
@@ -6353,3 +6388,124 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   craft gate's green never stands alone over a strip that never measured.
 - **Status:** `partially-controlled` — the instance is fixed and the class swept by this run's headless
   sweep; the gate is prose until the sweep is a script in CI.
+
+### DC-148 — A command mutates the model of a view that is not on screen, and reports the model's success as the screen's
+
+- **Shape:** the shell holds two bodies — the docking workbench and the full-body Explorer — and
+  swaps which one is the window's content (ADR-0017). Every catalog command that opens a dock
+  document (`session.new`, `workbench.newCodeViewer`, class diagram, sequence diagram, search,
+  diagnostics, prompt draft, terminal) stays reachable from the menu, the rail, the palette and
+  the chords **while Explorer is the body**. Each applies its zone operation, renders the docking
+  manager, and composes its announcement from the layout result — *"Session opened. Composer bound
+  … Maximized the center."* — all of which is true **of the model**. The docking host is
+  unparented (`ShellModeController.Set(Explorer)` → `_host.Content = _explorer`), so nothing in it
+  can raise `Loaded`, measure, or start a browser; the operator sees the Explorer, unchanged. It is
+  DC-011's inverse: the system speaks, and speaks about a tree nobody is looking at.
+- **Signature:** an `open-*` `layout.mutation` line followed by `configured` and **nothing else**
+  for the surface — no `initialising`, no `composer.layout` — after an `explorer-graph` line; a
+  `WorkbenchRoot.Parent == null` at command time; an announcement built from `LayoutResult` with no
+  reference to what hosts the layout; a shell that does not know which body is showing.
+- **Why it survives:** ADR-0017 says the non-active mode is *retained, never rebuilt*, and every
+  test of that invariant proves the workbench survives a mode switch — none asks what a workbench
+  command does **during** one. The harness that proved New Session (INV-0007's `--shell` probe)
+  hosted the workbench as the window's content directly, with no mode controller, so the state was
+  unreachable there (DC-135). And the log had no `shell.mode` line, so the mode had to be inferred
+  from a surface that initialises only inside it.
+- **Instance (INV-0009, 2026-09-11 22:34:09Z):** the operator entered Explorer at 22:34:00Z
+  (`explorer-graph initialising`), ran `File → New Session` twice, saw nothing, and closed the app.
+  Both documents logged `configured fields 6` and no `initialising`. Replayed from the log's own
+  restore payload through the product's `ShellModeController`: **red** with the Explorer as the
+  body (`composer wpf loaded=0 … initialising=0 configured=1`), **green** with the workbench as
+  the body in the identical arrangement, and green again when the workbench returned to the body
+  with the document untouched — necessary and sufficient. The sibling code viewer measured the
+  same (`wpf loaded=0 isLoaded=False`).
+- **Sweep:** every `OpenReferenceDocument` caller and every `Service.Apply(AddSurface)` +
+  `Adapter.Render()` command in `WorkbenchShell` (`:283–360`, `:1574`, `:2909`) has the shape; none
+  consults the mode. `ReopenSessionAsync` too. Nothing in `WorkbenchController` or the catalog
+  carries a "needs the workbench body" attribute.
+- **Control:** `ASessionDocumentIsShownWhereTheOperatorIsTests.ANewSessionCreatedWhileExplorerIsTheBodyIsShown`
+  (probe `--session-render --explorer --sibling`), **observed red on `main` `1aadde84`** (exit 30)
+  and on the merged branch `4c19b497`; **green on `228339d6`** (INV-0009 Phase 1): the shell raises
+  one seam, `WorkbenchShell.DocumentOpening`, immediately before every `AddSurface` that opens a
+  document, and `MainWindow` handles it with `ShellModeController.Set(Workbench, "document-opening")`
+  — the Explorer surface retained, only unparented (ADR-0017 holds). The mode is in the log:
+  `shell.mode` with its trigger, one line per change. The structural half is
+  `EveryOpeningCommandPassesThroughTheSeamTests` — root `WorkbenchShell.cs` only, no recursion,
+  token set `new LayoutOperation.AddSurface(` / `OpeningDocument();`, allowlist empty — which also
+  asserts the window's and the replay's wiring by one token (DC-135). The necessity oracle
+  (`LeavingExplorerShowsTheSessionCreatedInsideIt`) asserted the pre-fix state by construction and
+  became `ANewSessionCreatedInsideExplorerLeavesItBecauseADocumentOpened`, which asserts the trigger.
+- **Status:** `controlled` — both halves red-then-green on 2026-09-11/12; the sibling code viewer
+  measured `isLoaded=True` in the same run.
+
+### DC-149 — A flow acquires a resource by asking the operator, uses it for one half of the work, and refuses the other half for lack of that resource
+
+- **Shape:** with no workspace open, `File → New Session` interposes a workspace chooser; the
+  chosen root binds the session (`SessionConfigStore(root, …).Create`) and the document opens. The
+  window's own workspace is **not** opened. `BindComposer`'s first guard then reads the window —
+  `DataContext … WorkspaceRoot` — and refuses: *"repositoryRoot: this window has no open workspace,
+  so a run has no checkout to cut a worktree from."* Every word is true, and the operator just
+  chose that workspace in a dialog the flow put up. The refusal names the window's state, not the
+  flow that produced it, so the next action the operator infers (open the workspace) replaces the
+  layout and drops the document they just made.
+- **Signature:** a chooser whose result reaches a store constructor and never a `DataContext`; a
+  refusal message about a precondition the same flow could have established; a session created in
+  workspace W while the window shows "No workspace open".
+- **Why it survives:** the design says *"a session cannot exist unbound"* and the flow honours it
+  for the *session*; nothing says the *window* must be bound to the same workspace, and the two
+  consumers of the root (the store and the composer's run context) were wired in different files.
+  The refusal path is announced and shown (DC-011 honoured), which reads as correct behaviour.
+- **Instance (INV-0009, 2026-09-11 22:33:28Z):** session `…ba326cf3` — the operator's first action
+  after launch. Its composer rendered (`page-ready`, 617 px editor) and was never configured; the
+  status line carried the `repositoryRoot` refusal (not logged — inferred from the code path and
+  the single `workspace-open` line at 22:33:53Z, and replayed in the probe's `--prior-document`
+  step, whose status reads the same sentence). This is the *"blank editor with the compiled box
+  under it"* the operator described. At 22:33:53Z the operator opened the workspace and the restore
+  dropped the document from the layout.
+- **Control:** the Owner ruled the flow **opens** the chosen workspace (not a refusal).
+  `NewSessionFlow.StartAsync` runs the chooser's root through the window's ordinary open path
+  (`openWorkspace` → `MainWindow.OpenWorkspaceAtAsync`) before the sheet, and the sheet binds to
+  the workspace the window then reports. Oracles:
+  `TheNewSessionSheetTests.TheChooserOpensTheChosenWorkspace_ThenTheSheetBindsToWhatTheWindowReports`
+  (order `choose → open → sheet`, the sheet's root is the window's) and
+  `…_AndAFailedOpenCreatesNothing` — neither compiled against the flow with no open step; and
+  `ASessionDocumentIsShownWhereTheOperatorIsTests.ASessionCreatedThroughTheChooserIsBoundToTheChosenWorkspace`
+  (probe `--session-render --chooser`): `bound-to-chosen-root=True`, `init-pushed=1`, six fields,
+  and a cancelled chooser adds no surface and no session. The refusal is in the log now:
+  `SessionComposerBinder` writes `session-document.refused` with the field and the reason
+  (`TheBinderRecordsWhatItBoundTests`).
+- **Status:** `controlled` — INV-0009 Phase 3 (`d2409515`) and Phase 4 (`58c991ca`).
+
+### DC-150 — A shell's location and the runtime's current directory are two states, and a relative path is resolved against the one the operator is not looking at
+
+- **Shape:** an agent works in a worktree with `Set-Location <worktree>` and then calls a runtime
+  file API with a *relative* path — `[System.IO.File]::ReadAllLines('docs/lessons/defect-classes.md')`.
+  PowerShell's location is a PowerShell state; .NET's `[Environment]::CurrentDirectory` is the
+  process's, still pointing at wherever the process started (the primary checkout). The read and
+  the write both succeed, in the wrong tree; nothing fails loudly; the worktree file is untouched
+  and the primary's is rewritten. The session-worktree discipline (WT1–WT12) exists precisely so
+  that two agents never share a checkout, and this defeats it from inside a single command.
+- **Signature:** a relative path handed to a runtime API (`[System.IO.*]`, `Path.GetFullPath`,
+  Python's `open()` after `os.chdir` was *not* called) from a shell whose location was set with
+  `cd`/`Set-Location`; `git status` in the primary showing a file the session never meant to touch;
+  a write that "did nothing" in the tree the agent is looking at.
+- **Instance (2026-09-11, this run, the INV-0009 implementation node):** resolving a merge
+  conflict in the register from the fix worktree, a PowerShell one-liner read and wrote
+  `docs/lessons/defect-classes.md` through `[System.IO.File]` with a relative path; the primary
+  checkout's copy was rewritten with CRLF line endings (content identical — `git diff` empty) and
+  the worktree's copy was unchanged, so the conflict "resolution" resolved nothing and the primary
+  showed ` M docs/lessons/defect-classes.md`. Caught by the marker count after the edit reading 6,
+  not 0. The primary was left as found except for the line endings, which the operator restores
+  with `git checkout -- docs/lessons/defect-classes.md` there.
+- **Why it survives:** the two cwds agree in every interactive session (a person starts the
+  shell where the work is), so the habit of relative paths is never punished; an agent's shell is
+  started once, in the primary, and then moved.
+- **Control:** every file operation from an agent's shell uses an **absolute** path, and file
+  edits go through a script that is itself launched from the worktree (a native process inherits
+  the shell's location; a runtime API call inside the shell does not). What fails when the shape
+  recurs: the pre-commit boundary check runs on staged paths in the worktree and cannot see the
+  primary — so the control is the session's closing `git status` in the **primary** checkout,
+  recorded in the node's report (this run's report carries it). Proposed: `coord worktree list`
+  gains a `--dirty-primary` line so a session that dirtied the primary is told at cleanup.
+- **Status:** `uncontrolled` — the instance was reverted in content and reported; no gate fails
+  on the shape yet.

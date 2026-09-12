@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 81 types, 333 members, 70% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 81 types, 337 members, 71% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**81 public types · 333 public members · 70% documented.**
+**81 public types · 337 public members · 71% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1019,8 +1019,26 @@ re-entering Explorer does not rebuild it and its graph/reader survive a round-tr
 | `ShellViewMode Mode { get; private set; } = ShellViewMode.Workbench` | **(gap)** |
 | `event EventHandler<ShellViewMode>? ModeChanged` | Raised after the mode changes, with the new mode. |
 | `UIElement? ExplorerSurface` | The Explorer surface once it has been created; null until first entry. |
-| `void Toggle()` | **(gap)** |
-| `void Set(ShellViewMode mode)` | **(gap)** |
+| `void Toggle(string trigger)` | **(gap)** |
+| `void Set(ShellViewMode mode, string trigger)` | Makes  the body, and records the change and what triggered it. |
+
+### `void Toggle(string trigger)`
+
+- **`trigger`** — What asked for the swap — recorded on the `shell.mode` line.
+
+### `void Set(ShellViewMode mode, string trigger)`
+
+Makes  the body, and records the change and what triggered it.
+
+- **`mode`** — The body to show.
+- **`trigger`** — What asked for it — a catalog command id, a seam name, a replay step.
+
+**Remarks.** **The mode is in the log, not inferred from it (INV-0009, IO1).** The operator's 22:34Z
+launch could only be read as "Explorer was entered" from an `explorer-graph` surface
+initialising — a surface that loads only inside that mode. One `shell.mode` line per
+change, naming the trigger, is what lets the next report say which body a command ran into.
+A call that changes nothing writes nothing: a log that records every no-op is a log nobody
+reads.
 
 ## `SurfaceChrome`
 
@@ -1815,7 +1833,7 @@ is indistinguishable from a broken key.
 | `string? FocusedSurfaceId { get; set; }` | The surface within the focused stack, when one is selected. |
 | `bool IsResizing` | **(gap)** |
 | `Func<Task<string>>? WorkspaceRefresh { get; set; }` | Asks the workspace to re-index itself. Set when a workspace attaches; null before that. |
-| `Func<string>? NewSessionRequested { get; set; }` | Runs `File → New Session` and returns what to announce. Set by the shell; null before that, which the command reports rather than doing nothing. |
+| `Func<Task<string>>? NewSessionRequested { get; set; }` | Runs `File → New Session` and returns what to announce. Set by the shell; null before that, which the command reports rather than doing nothing. |
 | `Func<string>? ExplorerToggleRequested { get; set; }` | Swaps the shell's primary view mode and returns what to announce. Set by the window; null before that, which the command reports rather than doing nothing. |
 | `event Action? WorkspaceDataChanged` | Raised after a command that CHANGED what the store holds has finished. |
 | `CanvasFocusRouter? CanvasFocus { get; set; }` | Routes focus across the canvas boundary. Set when a graph canvas surface attaches. |
@@ -1852,14 +1870,15 @@ Asks the workspace to re-index itself. Set when a workspace attaches; null befor
 **Remarks.** A delegate rather than a workspace handle: the controller's job is layout and command
 dispatch, and giving it something it could read evidence from would invite exactly that.
 
-### `Func<string>? NewSessionRequested { get; set; }`
+### `Func<Task<string>>? NewSessionRequested { get; set; }`
 
 Runs `File → New Session` and returns what to announce. Set by the shell; null before
 that, which the command reports rather than doing nothing.
 
-**Remarks.** Synchronous, unlike `WorkspaceRefresh`: the flow is a modal sheet on the UI
-thread, and a Task here would only describe the wait for a dialog the user is already looking
-at.
+**Remarks.** A task, like `WorkspaceOpen`: with no workspace open the flow opens the chosen
+one through the window's ordinary open path before the sheet (INV-0009 Phase 3), and that
+path reaches a daemon. The sheet itself is still a modal on the UI thread; the outcome
+arrives on the announcement channel either way.
 
 ### `Func<string>? ExplorerToggleRequested { get; set; }`
 
@@ -1976,6 +1995,15 @@ path swallows its own failure.
 | `void AppStart(string theme, DpiScale dpi, double width, double height, string windowState)` | Records that the shell started, naming the binary it is: the informational version and the commit inside it, the build configuration, the docking theme, the DPI and the window. |
 | `void ComposerLayout(` | Records the composer's rendered bounds: the editor host, the read-only compiled view, and the composer they share — at first layout and whenever either part moves past the surface's threshold. |
 | `void WebSurfaceHandshake(` | Records one transition of a web surface's host↔page handshake, with the surface's counts as they stood at that moment. |
+| `void ShellMode(ShellViewMode from, ShellViewMode to, string trigger)` | Records a change of the shell's primary view mode — which body is on screen — and what asked for it. |
+| `void SessionDocumentBound(string sessionId, string surfaceId, string repositoryRoot)` | Records that a session document's composer was bound to a run context — which session, which surface, and the checkout a run would be cut from. |
+| `void SessionDocumentRefused(string sessionId, string? surfaceId, string field, string reason)` | Records that a session document's composer was left without a run binding, naming the field the refusal points at. |
+
+### `void LayoutMutation(`
+
+Records a layout mutation and the resulting stack/surface topology.
+
+- **`stackId`** — The stack the operation acted on, when it acted on one (a maximize); null — recorded as null, never as a guess — otherwise.
 
 ### `void LayoutReconcile(`
 
@@ -2124,6 +2152,37 @@ navigation), `disposed`. Counts are lifetime totals as they stood at the transit
 a count the caller does not measure is `null`, never invented. No character of the
 draft is ever recorded.
 
+### `void ShellMode(ShellViewMode from, ShellViewMode to, string trigger)`
+
+Records a change of the shell's primary view mode — which body is on screen — and what asked
+for it.
+
+**Remarks.** **Why this exists (INV-0009).** Two session documents were opened into the docking host
+while the Explorer was the body, and the shell announced each as opened. The log could show
+the mode had been entered only by an `explorer-graph` surface initialising — inferred
+from a side effect, never stated. The mode is the one fact every "I opened X and saw nothing"
+report turns on, so it is written on the normal path, once per change, with its trigger.
+
+### `void SessionDocumentBound(string sessionId, string surfaceId, string repositoryRoot)`
+
+Records that a session document's composer was bound to a run context — which session, which
+surface, and the checkout a run would be cut from.
+
+**Remarks.** The binding was the one step of `File → New Session` with no line of its own: the
+composer's `configured` transition says fields were pushed, not what they were bound to
+(INV-0009 F5).  is the fact finding C could only infer.
+
+### `void SessionDocumentRefused(string sessionId, string? surfaceId, string field, string reason)`
+
+Records that a session document's composer was left without a run binding, naming the field
+the refusal points at.
+
+**Remarks.** The refusal the operator read at 22:33:28Z (*repositoryRoot: this window has no open
+workspace…*) reached the composer's status line and nowhere else; the investigation had to
+reconstruct it from the code path (INV-0009 §7). The field and the reason are recorded as the
+operator read them; a reason names at most a path this log already carries (the workspace,
+the provider file), never a draft's text.
+
 ## `WorkbenchShell`
 
 *class* — `WorkbenchShell.cs`
@@ -2157,6 +2216,7 @@ while the view rendered another.
 | `CanvasSurface CreateExplorerGraph()` | Builds a graph canvas for the full-window Explorer surface (design D2), bound to the SAME workspace queries the workbench canvas reads — two graph-shaped APIs would be two answers that can disagree. A dedicated instan… |
 | `Task<bool> DispatchToAsync(string sessionId, string body)` | Transfers a prompt-draft body to a NAMED ready session (spec-editor-surfaces US-ED6), by its session id, through the same choreography as the focused path. Returns whether the terminal accepted the write (PtyWriteAcce… |
 | `IReadOnlyList<PromptTarget> ReadyPromptTargets()` | The ready terminal sessions a prompt draft may transfer to (US-ED6), live. |
+| `event Action? DocumentOpening` | Raised just before a command adds a dock document to the layout — a terminal, a prompt draft, a reference document, a session document. |
 | `void Dispose()` | **(gap)** |
 | `IReadOnlyList<WorkbenchCommand> PaletteCommands(string search)` | The command palette's rows: every keyboard-reachable layout command. |
 
@@ -2166,6 +2226,30 @@ Points the shell at a workspace that became available after it was built.
 
 **Remarks.** Panes already on screen are re-rendered, because a pane showing "not available in this build"
 after the workspace opened is worse than one that never claimed anything.
+
+### `event Action? DocumentOpening`
+
+Raised just before a command adds a dock document to the layout — a terminal, a prompt draft,
+a reference document, a session document.
+
+**Remarks.** **The shell does not know which body is on screen, and this is how it stops needing
+to (INV-0009, DC-148).** The window swaps the body between the docking host and the
+full-body Explorer (ADR-0017); every opening command here mutates the layout model, renders
+the docking manager and announces from the result, all of which is true of the model whether
+or not the host is in a visual tree. Two session documents were opened that way into a host
+that was unparented, announced as *opened … maximized*, and never seen. The window
+handles this event by making the workbench the body — the Explorer surface is retained, not
+rebuilt — so a document is only ever opened into a body that is on screen.
+
+
+
+
+
+**One seam, not a per-command check.** Every opening command calls
+`OpeningDocument` immediately before its `AddSurface`;
+`EveryOpeningCommandPassesThroughTheSeamTests` scans this file for a command that does
+not. A refusal that happens before the add (no profile, no pane) does not raise it: a refusal
+changes nothing on screen and should not swap the body.
 
 ## `WpfHostFocusScope`
 

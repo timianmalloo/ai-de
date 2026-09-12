@@ -58,7 +58,7 @@ public sealed class TheFrontDoorIsInTheFileMenuTests : IDisposable
 
         var controller = new WorkbenchController(new LayoutService(), new RecordingAnnouncer())
         {
-            NewSessionRequested = () => { ran.Add("session.new"); return "Session created."; },
+            NewSessionRequested = () => { ran.Add("session.new"); return Task.FromResult("Session created."); },
         };
 
         controller.Bind(host);
@@ -93,7 +93,7 @@ public sealed class TheFrontDoorIsInTheFileMenuTests : IDisposable
         Assert.True(controller.Execute("session.new"));
         Assert.Contains("not available", announcer.Last, StringComparison.OrdinalIgnoreCase);
 
-        controller.NewSessionRequested = () => "Session “x” created.";
+        controller.NewSessionRequested = () => Task.FromResult("Session “x” created.");
         Assert.True(controller.Execute("session.new"));
         Assert.Contains("created", announcer.Last, StringComparison.OrdinalIgnoreCase);
     });

@@ -427,3 +427,13 @@
 {"agent": "claude-conductor", "at": 1789172763.8927112, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789172763.8937159, "code": null, "kind": "allowed", "path": "site/index.html", "session": "conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789172763.8957155, "code": null, "kind": "allowed", "path": "site/model.html", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172769.8914175, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-addendum-c.jsonl", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172769.8934174, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172769.8954177, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172769.8974178, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172769.8999214, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172769.9019306, "code": null, "kind": "allowed", "path": "docs/collaboration/session-contracts.md", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172769.904932, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172769.9078112, "code": null, "kind": "allowed", "path": "docs/notes/addendum-c-council-rulings.md", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172769.9098108, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789172769.9118109, "code": null, "kind": "allowed", "path": "site/index.html", "session": "conductor-addendum-c", "wi": ""}

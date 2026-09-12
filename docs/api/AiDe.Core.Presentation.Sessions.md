@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation.Sessions: 14 types, 78 members, 98% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation.Sessions: 14 types, 79 members, 98% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation.Sessions`
 
-**14 public types · 78 public members · 98% documented.**
+**14 public types · 79 public members · 98% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -182,6 +182,7 @@ the "Start from template" row, which would create a back-edge from the composer 
 | `IReadOnlyList<AgentBackendRow> Backends` | The agent backends on offer: every catalog engine whose provider the registry carries, once per configured account, with the registry's live health. |
 | `IReadOnlyList<string> EnabledBackends` | The backends the operator has enabled for this session. |
 | `IReadOnlyList<string> RoutableBackends` | The enabled backends the router may bind — `needs-login` excluded (Ruling 20's "not cut" half). |
+| `IReadOnlyList<string> RoutableAmong(IEnumerable<string> enabled, ProviderRegistry registry)` | The backends in  the router may bind against — `needs-login` excluded (§4.3). |
 | `string LeaseDisplay = "not derivable until a goal block exists"` | What the sheet says about the lease. **A sentence, never a `Lease`** (Ruling 42). |
 | `bool CanCreate` | Whether `Create` would succeed. |
 | `string? BlockedReason` | Why `Create` would refuse, or null when it would not. |
@@ -226,6 +227,17 @@ once per configured account, with the registry's live health.
 account set is the registry's; an engine whose provider is not configured is simply absent,
 which is the same answer `Find` gives, rather than a row that
 renders and then refuses.
+
+### `IReadOnlyList<string> RoutableAmong(IEnumerable<string> enabled, ProviderRegistry registry)`
+
+The backends in  the router may bind against
+— `needs-login` excluded (§4.3).
+
+**Remarks.** **One derivation, two readers (DM7).** The sheet derives it at create from the operator's
+choices; a reopened or restored session derives it from the config's
+`EnabledBackends` and the registry as it reads
+now (INV-0009 Phase 2). A second spelling of "routable" in the binder is the shape that lets
+a session bind on reopen to an engine the sheet would have refused.
 
 ### `string LeaseDisplay = "not derivable until a goal block exists"`
 

@@ -48,7 +48,7 @@ public sealed class TheNewSessionSheetTests : IDisposable
     }
 
     [Fact]
-    public void WithAnActiveWorkspaceTheSheetOpensPreBound()
+    public async Task WithAnActiveWorkspaceTheSheetOpensPreBound()
     {
         NewSessionSheetViewModel? shown = null;
 
@@ -56,12 +56,14 @@ public sealed class TheNewSessionSheetTests : IDisposable
             activeWorkspaceRoot: () => _root,
             chooseWorkspace: () => throw new InvalidOperationException(
                 "the chooser must not interpose when a workspace is active"),
+            openWorkspace: _ => throw new InvalidOperationException(
+                "nothing is opened when a workspace is active"),
             showSheet: sheet => { shown = sheet; sheet.TaskClass = "feature"; return true; },
             registry: () => Registry(),
             workspaceId: root => root,
             time: new FixedTime(Now));
 
-        var outcome = flow.Start();
+        var outcome = await flow.StartAsync();
 
         Assert.NotNull(shown);
         Assert.Equal(_root, shown.WorkspaceRoot);
@@ -70,43 +72,114 @@ public sealed class TheNewSessionSheetTests : IDisposable
     }
 
     [Fact]
-    public void WithNoWorkspaceTheChooserInterposes_AndCancelAbortsCleanly()
+    public async Task WithNoWorkspaceTheChooserInterposes_AndCancelAbortsCleanly()
     {
         var sheetShown = false;
+        var opened = new List<string>();
 
         var flow = new NewSessionFlow(
             activeWorkspaceRoot: () => null,
             chooseWorkspace: () => null,                     // cancelled
+            openWorkspace: root => { opened.Add(root); return Task.FromResult<string?>(null); },
             showSheet: _ => { sheetShown = true; return true; },
             registry: () => Registry(),
             workspaceId: root => root,
             time: new FixedTime(Now));
 
-        var outcome = flow.Start();
+        var outcome = await flow.StartAsync();
 
         Assert.Null(outcome.Created);
         Assert.False(sheetShown, "the sheet opened after the chooser was cancelled");
+        Assert.Empty(opened);
         Assert.Contains("cancelled", outcome.Announcement, StringComparison.OrdinalIgnoreCase);
 
         // Nothing was written: no session can exist unbound, so a cancelled chooser leaves no trace.
         Assert.False(Directory.Exists(SessionPaths.SessionsRoot(_root)));
     }
 
+    /// <summary>
+    /// <b>INV-0009 Phase 3 (DC-149).</b> The chosen workspace is OPENED in the window before the
+    /// sheet, and the sheet binds to the workspace the window then reports — so the session and the
+    /// window are bound to the same workspace before the composer is, and the refusal of 22:33:28Z
+    /// (<i>repositoryRoot: this window has no open workspace</i>) cannot occur.
+    /// </summary>
     [Fact]
-    public void TheChooserFeedsTheSheetWhenAWorkspaceIsChosen()
+    public async Task TheChooserOpensTheChosenWorkspace_ThenTheSheetBindsToWhatTheWindowReports()
     {
+        // The window reports the opened root in ITS OWN form — here, upper-cased, the same directory
+        // on Windows — so the sheet's root can be told apart from the chooser's: a flow that binds
+        // the sheet to the chosen string rather than to what the window reports goes red here.
+        var windowForm = _root.ToUpperInvariant();
+        string? windowRoot = null;
+        var order = new List<string>();
+
         var flow = new NewSessionFlow(
-            activeWorkspaceRoot: () => null,
-            chooseWorkspace: () => _root,
-            showSheet: sheet => { sheet.TaskClass = "feature"; return true; },
+            activeWorkspaceRoot: () => windowRoot,
+            chooseWorkspace: () => { order.Add("choose"); return _root; },
+            openWorkspace: root =>
+            {
+                order.Add("open:" + root);
+                windowRoot = windowForm;                      // what the window reports once opened
+                return Task.FromResult<string?>(null);
+            },
+            showSheet: sheet => { order.Add("sheet:" + sheet.WorkspaceRoot); sheet.TaskClass = "feature"; return true; },
             registry: () => Registry(),
             workspaceId: root => root,
             time: new FixedTime(Now));
 
-        var outcome = flow.Start();
+        var outcome = await flow.StartAsync();
 
+        Assert.Equal(["choose", "open:" + _root, "sheet:" + windowForm], order);
         Assert.NotNull(outcome.Created);
+        Assert.Equal(windowForm, outcome.Created.Config.WorkspaceId);
         Assert.True(Directory.Exists(SessionPaths.SessionDirectory(_root, outcome.Created.Config.SessionId)));
+    }
+
+    /// <summary>The open path said yes and the window still reports no workspace: the flow refuses, naming the folder, rather than binding to the chooser's string.</summary>
+    [Fact]
+    public async Task TheChooserOpensTheChosenWorkspace_AndAWindowThatStillReportsNoneCreatesNothing()
+    {
+        var sheetShown = false;
+
+        var flow = new NewSessionFlow(
+            activeWorkspaceRoot: () => null,
+            chooseWorkspace: () => _root,
+            openWorkspace: _ => Task.FromResult<string?>(null),   // "opened", but the window never reports it
+            showSheet: _ => { sheetShown = true; return true; },
+            registry: () => Registry(),
+            workspaceId: root => root,
+            time: new FixedTime(Now));
+
+        var outcome = await flow.StartAsync();
+
+        Assert.Null(outcome.Created);
+        Assert.False(sheetShown);
+        Assert.Contains(_root, outcome.Announcement, StringComparison.Ordinal);
+        Assert.Contains("reports no workspace", outcome.Announcement, StringComparison.Ordinal);
+        Assert.False(Directory.Exists(SessionPaths.SessionsRoot(_root)));
+    }
+
+    /// <summary>A workspace that does not open is a refusal that says why; no sheet, no session.</summary>
+    [Fact]
+    public async Task TheChooserOpensTheChosenWorkspace_AndAFailedOpenCreatesNothing()
+    {
+        var sheetShown = false;
+
+        var flow = new NewSessionFlow(
+            activeWorkspaceRoot: () => null,
+            chooseWorkspace: () => _root,
+            openWorkspace: _ => Task.FromResult<string?>("Could not reach the workspace daemon."),
+            showSheet: _ => { sheetShown = true; return true; },
+            registry: () => Registry(),
+            workspaceId: root => root,
+            time: new FixedTime(Now));
+
+        var outcome = await flow.StartAsync();
+
+        Assert.Null(outcome.Created);
+        Assert.False(sheetShown, "the sheet opened over a workspace that did not open");
+        Assert.Equal("Could not reach the workspace daemon.", outcome.Announcement);
+        Assert.False(Directory.Exists(SessionPaths.SessionsRoot(_root)));
     }
 
     // ── backends (R13 b2) ─────────────────────────────────────────────────────────────────

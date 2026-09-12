@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T00:26:05Z",
+  "generated": "2026-09-12T13:22:36Z",
   "audit": [
     {
       "actor": null,
@@ -13105,100 +13105,225 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0009-a-session-document-opened-into-a-body-that-is-not-on-screen.md",
+        "tests/AiDe.App.ComposerProbe/Program.SessionRender.cs",
+        "tests/AiDe.App.Tests/Sessions/ASessionDocumentIsShownWhereTheOperatorIsTests.cs",
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-11T23:17:55Z",
+      "done_when": "Red oracles observed in the operator's arrangement (exit 30 Explorer body; exit 32 reopen), green controls, INV-0009 with typed links, register updated, gates green, branch pushed",
+      "duration_seconds": 2354.0,
+      "fan_out": 2,
+      "git": {
+        "branch": "investigate/session-document-render",
+        "pushed": null,
+        "sha": "1aadde843a950c9d56a7dc5f034bca0254d52f4b",
+        "short": "1aadde843"
+      },
+      "goal": "Prove by red reproduction in the product's restored-layout state why File → New Session shows nothing and why a reopened session's composer is never configured; generalise; plan; stop before the fix",
+      "id": "al-01M29C6TT50SFYN2J9Z8JFVAEY",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "You are the investigation node for the defect that blocks the operator's F5 exit run, dispatched by the conductor (Claude Opus, session conductor-addendum-c). Run the /investigate skill (Skill tool: investigate, args: A new session document created by File → New Session is never rendered when the app starts from a restored layout that already holds a session document; and a restored/reopened session document's composer is never configured). Read CLAUDE.md and AGENTS.md first; the pack's rules apply in full — a root cause is proven by a reproduction that fails first, in the state the product was actually in (DC-135, three times today: the harness constructed a state the product was not in). Use python, not python3; $env:PYTHONIOENCODING='utf-8'.\n\n## Your worktree — the only tree you write to\nC:\\Projects\\ai-de-investigate-session-document-render, branch investigate/session-document-render, HEAD = main 1aadde84. From inside it: $env:AGENT_SESSION='session-render'; $env:AGENT_NAME='claude-investigate-render'; $env:PYTHONIOENCODING='utf-8'; python docs/ai-forward-pack/scripts/audit-log.py start --session session-render\nNote: main does not yet carry the F5 tree's lane pin (feature/exit-evidence @ 135e05e1); it does carry the composer fix (WebSurfaceHost, the handshake/layout telemetry — DC-137/138) and the contrast fix. The telemetry below was recorded by the F5 tree's Release build 1.0.0+135e05e1…, whose composer/session code equals main's.\n\n## The evidence — the operator's launch, verbatim, in your tree\ndocs/investigations/operator-launch-22-33Z.log.jsonl — 26 lines from %LOCALAPPDATA%\\AiDe\\logs\\workbench-20260911.log, 22:33:20Z–22:34:30Z, terminal noise removed. Read every line. The story it tells:\n1. app.start 22:33:21Z, Release 135e05e1, DPI 1.5, dark theme.\n2. 22:33:28 layout.mutation open-session-document placement=split-beside-graph surface=session-document:…ba326cf3 active=graph — this document was restored from the persisted layout at startup (the operator did nothing yet); its composer: initialising → navigation-started (1) → page-ready; composer.layout editor 617 px, visible:true, loaded:true — but never configured, never init-pushed → the page mounted with no fields. This is what the operator saw: a blank editor area with the compiled box under it.\n3. 22:34:09 open-session-document placement=split-beside-graph surface=…c5547968 active=graph — the operator's File → New Session; its composer logs configured (fields 6) and nothing else: no initialising, navigations: 0, no composer.layout → the surface was never Loaded, never measured — never in a rendered visual tree.\n4. 22:34:20 open-session-document placement=tab surface=…b62cbcd3 active=…c5547968 (zone-center, active index 9) — a second File → New Session; same: configured, never initialised, never laid out.\n5. 22:34:26 all three composers disposed (the app closed). The graph surface re-attached repeatedly; explorer-graph initialised at 22:34:00.\n\n## The code paths (checked this turn)\n- src/AiDe.App/MainWindow.xaml.cs:172-206 NewSession(): Shell.OpenSessionDocument(created.Config) → GiveTheNewSessionTheWholeTree(sessionId, opened + \" \" + BindComposer(created)) — BindComposer (:235-281, the only Configure call, :281) runs only here; the reopen path :387 (OpenSessionDocument(config) after reading session.json) and the startup restore never bind → defect A: a restored/reopened document's composer has no send context and never pushes host.init.\n- src/AiDe.App/Workbench/Sessions/NewSessionPlacement.cs:31-58 GiveItTheWholeTree: service.Current.FindStackOf(surfaceId) → SetStackState(stack.Id, StackState.Maximized) (Ruling 47; its oracle tests/AiDe.App.Tests/Sessions/ANewSessionTakesTheWholeTreeTests.cs passes on a clean layout). src/AiDe.App/Workbench/WorkbenchShell.cs:1590 (mode = \"split-beside-graph\"), :2909 OpenSessionDocument, ZoneBackedLayoutService / ZonesToTree (src/AiDe.Core/Workbench/; DC-135: StackState.Maximized does not round-trip — the projection omits collapsed zones), LayoutPersistence.cs (the restored layout), SurfaceContentFactory.cs:158-175 (the factory hands back the shell's live document for a session-document surface; sessionDocumentFor).\n- src/AiDe.App/Workbench/Composer/ComposerSurface.cs + WebSurfaceHost.cs (owner.Loaded += OnAttachedAsync; initialising logged there — so no initialising ⇒ Loaded never fired on the new document's composer), WorkbenchDiagnostics.cs (composer.layout from MeasureOverride).\n- The harness that passed: tests/AiDe.App.ComposerProbe/Program.cs --shell mode and tests/AiDe.App.Tests/Composer/ComposerHostIntegrationTests.cs (TheComposersEntryAreasKeepTheirRoomAfterTheNewSessionChoreography: opens a session document on a fresh shell, applies Ruling 47's maximize, fields=6, editor 334 px). The product's state differed: a restored layout already containing a session document (zone-left held explore:view, provenance:inspector, contexts, joins; the restored document sat beside the graph) — reproduce THAT.\n\n## Hypotheses to disconfirm by observation (none is a conclusion)\nH1 With a restored layout, OpenSessionDocument's split-beside-graph places the new document into a stack/zone that the subsequent Maximize of FindStackOf(surfaceId) collapses or that the projection omits (active: graph in the mutation says the new surface was not activated) — so the new document exists in the zone model but not in the rendered tree.\nH2 The restored session document's surface id or the persisted StackState leaves the zone service in a state where a second session-document cannot be projected (e.g. one visible document per zone; the restored one wins).\nH3 The new document was rendered but hidden behind another tab (then Loaded would still fire for AvalonDock content? — verify; a hidden tab's content is usually not loaded) — distinguish \"in the tree, collapsed\" from \"not in the tree\".\nH4 Something in the restore path (A) also prevents (B): e.g. the restored document holds the sessionDocumentFor slot so the factory hands back the OLD document for the NEW surface.\n\n## What you must produce\n1. Reproductions that fail first, in the product's state: extend the --shell probe / the integration test with a restored-layout precondition (persist a layout containing a session document beside the graph as the operator's did — the mutation line carries the zone/stack payload; use it), then File → New Session through MainWindow.NewSession()'s real choreography (OpenSessionDocument → GiveItTheWholeTree → BindComposer), and assert the new document's composer is Loaded, measured (composer.layout present), and reaches init-pushed with fields 6. Observe it red. A second red test for (A): reopening a session (:387 path) yields a composer that reaches configured and init-pushed.\n2. The verified root cause for (B) with the observation that proves it and the alternative ruled out; the cause for (A) is already visible in the code — confirm it by the red test.\n3. The class, generalised (sweep: every other place a document is opened without BindComposer; every placement/maximize path evaluated against a non-empty persisted layout), and a repair plan — code + tests + the missing instrumentation (a layout.mutation line for the maximize itself with the resulting projected tree; a session-document.bound / unbound event so an unconfigured document is visible in the log). Stop before the fix; the operator reviews — but write the plan so the fix is a one-node T1.\n4. docs/investigations/INV-<next>.md (allocator: INV-0008 is the highest on main; python tools/verify-id-allocators.py immediately before commit), frontmatter, typed links, the log excerpt cited by line; docs-graph.py derive; audit entry (--shortname investigate-session-document-render --session session-render --skill investigate --kind skill --tier T1 --git … + signals); regenerate-derived.py; gates bare stop-on-first-red; commit with the attribution lines, then git push -u origin investigate/session-document-render.\n\n## Fails if (stop and report instead)\n- A root cause asserted without the restored-layout reproduction observed red; the harness \"fixed\" to pass rather than the product; any write outside your worktree; git stash; a rebase; a push to main; verify-test-run.py --update; DC-120. No governed run, no model call, no billing.\n\n## Report back (compact)\nThe red observations (test names, failure text); the root cause of (B) and its proof; (A) confirmed; siblings; the plan; INV path and shas; the operator question if any.",
+      "session": "session-render",
+      "shortname": "investigate-session-document-render",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "investigate",
+      "started_at": "2026-09-11T22:38:41Z",
+      "summary": "INV-0009. (B) VERIFIED: the New Session at 22:34:09Z was opened while Explorer was the window's body (explorer-graph initialising at 22:34:00Z is built only inside ShellModeController.Set(Explorer)); the docking host was unparented, so the document's composer was configured and never Loaded, and the shell announced 'opened … bound … maximized' about the model. Replayed from the log's own restore payload through the product's LayoutPersistence and ShellModeController (ComposerProbe --session-render): workbench body GREEN (rules out H1-H4: restored layout, second restored document, maximize, factory slot), Explorer body RED exit 30, return-to-workbench GREEN (necessary+sufficient); sibling code viewer red in the same state. (A) VERIFIED red exit 32: the reopen path never binds the composer (DC-084 rec. 2) AND, for a surface the restore already placed, the pane keeps its 'No session is open' island because Render reuses content nothing invalidated (DC-040 rec. 2). (C) the brief's premise corrected: session …ba326cf3 at 22:33:28Z was CREATED (id minted that second), via the chooser with no workspace open; BindComposer refused 'repositoryRoot' — the blank editor the operator saw (DC-148). DC-147 registered. Four oracles in ASessionDocumentIsShownWhereTheOperatorIsTests: 2 red, 2 green. Plan: Phase 1 one seam DocumentOpening → mode.Set(Workbench) + shell.mode line; Phase 2 Invalidate on reopen + SessionComposerBinder(SessionConfig) shared by both paths; 2b bind restored documents at workspace-open; Phase 3 Owner's choice for the chooser path; Phase 4 emitters (maximize-stack, session-document.bound/refused); Phase 5 ADR-0017 amendment (flagged review-suggested). No fix made. Operator question: did you enter Explorer at 22:34:00Z before New Session?",
+      "tags": [
+        "investigation",
+        "session-document",
+        "explorer-mode",
+        "dc-147",
+        "dc-148"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0009-a-session-document-opened-into-a-body-that-is-not-on-screen.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-11T23:21:04Z",
+      "done_when": "verify-id-allocators and verify-defect-register green on the branch",
+      "fan_out": 2,
+      "git": {
+        "branch": "investigate/session-document-render",
+        "pushed": null,
+        "sha": "efc65a8996b0b50872ea422ed3c17973926938e3",
+        "short": "efc65a899"
+      },
+      "goal": "Keep INV-0009's ids unique across every branch before push",
+      "id": "al-01M29CCKH3RASB2HZZTYPYXX13",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Re-issue the defect-class ids INV-0009 allocated (DC-013): verify-id-allocators reported DC-147 allocated independently on origin/feature/session-elevation after this branch's first commit.",
+      "session": "session-render",
+      "shortname": "investigate-session-document-render-reissue",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "investigate",
+      "summary": "Ids re-issued, nothing else changed: the class 'a command mutates the model of a view that is not on screen, and reports the model's success as the screen's' is DC-148 (was DC-147); 'a flow acquires a resource by asking the operator, uses it for one half of the work, and refuses the other half for lack of that resource' is DC-149 (was DC-148). main's DC-146 and feature/session-elevation's DC-147 are carried verbatim so the register's sequence is unbroken on this branch. INV-0009, the register and ADR-0017's review-suggested flag renumbered; the superseded entry's summary should be read with this substitution.",
+      "supersedes": "al-01M29C6TT50SFYN2J9Z8JFVAEY",
+      "tags": [
+        "investigation",
+        "dc-013",
+        "dc-148",
+        "dc-149"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/Workbench/ShellModeController.cs",
+        "src/AiDe.App/Workbench/Sessions/SessionComposerBinder.cs",
+        "src/AiDe.App/MainWindow.xaml.cs",
+        "src/AiDe.App/Workbench/Sessions/NewSessionFlow.cs",
+        "src/AiDe.App/Workbench/WorkbenchDiagnostics.cs",
+        "tests/AiDe.App.ComposerProbe/Program.SessionRender.cs",
+        "tests/AiDe.App.Tests/Sessions/ASessionDocumentIsShownWhereTheOperatorIsTests.cs",
+        "tests/AiDe.App.Tests/Sessions/EveryOpeningCommandPassesThroughTheSeamTests.cs",
+        "docs/proof/session-document-render.md",
+        "docs/notes/session-document-binding-on-record.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-12T00:29:39Z",
+      "done_when": "The INV's two reds (exit 30, exit 32) and the two new reds (2b: exit 34; 3: the chooser refusal) are green; the named guards stay green; build (warnings as errors), both full suites, verify-test-run CHECK, every verify-*.py and regenerate-derived are green; register, Proof Pack and audit entry written; committed and pushed to the branch, not main.",
+      "duration_seconds": 3874.0,
+      "fan_out": 2,
+      "git": {
+        "branch": "fix/session-document-render",
+        "pushed": null,
+        "sha": "4d7c5bfa419b9d3772df97a25c4afe3a35b769bd",
+        "short": "4d7c5bfa4"
+      },
+      "goal": "Implement INV-0009 phases 1, 2, 2b, 3(open) and 4 on fix/session-document-render: a dock document opens into a body that is on screen; reopen and workspace-open restore bind the composer through one binder; the chooser opens the chosen workspace then creates; the maximize and the binding are logged.",
+      "id": "al-01M29GA5GBYPVM0ZDW27YTTBB8",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "You are the **implementation node** for INV-0009, dispatched by the conductor (Claude Opus, session `conductor-addendum-c`). The operator reviewed the investigation and approved **phases 1, 2, 2b and 4**, and ruled phase 3: **the workspace chooser opens the chosen workspace and then creates the session** (Addendum A R13 b1's interposing chooser, completed) — not a refusal. Run the **`/implement`** skill (Skill tool: `implement`, args: `INV-0009 phases 1, 2, 2b, 3(open), 4: a document opens into the workbench body; reopen and restore bind the composer; the chooser opens the workspace then creates; emitters for maximize and bind`). Read `C:\\projects\\ai-de\\CLAUDE.md` and `AGENTS.md` first; the pack's rules apply in full (red first — the INV's two red oracles are your reds; smallest correct; class → sweep → derive → prevent in writing). Use `python`, not `python3`; `$env:PYTHONIOENCODING='utf-8'`.\n\n## Your worktree — the only tree you write to\n`C:\\Projects\\ai-de-fix-session-document-render`, branch `fix/session-document-render`, HEAD `28732255` (= `investigate/session-document-render` = `main` `1aadde84` + INV-0009 and its reds). From inside it:\n```\n$env:AGENT_SESSION='render-fix'; $env:AGENT_NAME='claude-fix-render'; $env:PYTHONIOENCODING='utf-8'\npython docs/ai-forward-pack/scripts/audit-log.py start --session render-fix\n```\n**Then `git merge main`** (never rebase; `main` is `f92aa810`: Ruling 66's lease fix (DC-146), D2's session design (DC-147), Ruling 72). Resolve `site/*.html` / `docs/_meta.json` from `main`'s side; union `docs/audit/*.jsonl` with `tools/merge-append-only-log.py`; `docs/lessons/defect-classes.md` — keep both sides' entries in id order (the INV already re-issued its classes as DC-148/149 above `main`'s DC-147); `python tools/regenerate-derived.py` must end green before you commit the merge. Re-run `python tools/verify-id-allocators.py` before any commit that touches the register.\n\n## Ground truth — read first\n- `docs/investigations/INV-0009-a-session-document-opened-into-a-body-that-is-not-on-screen.md` — §11 is the plan; the reds are `tests/AiDe.App.Tests/Sessions/ASessionDocumentIsShownWhereTheOperatorIsTests.cs` (`ANewSessionCreatedWhileExplorerIsTheBodyIsShown` exit 30; `AReopenedSessionIsShownAndItsComposerIsBound` exit 32) driving `tests/AiDe.App.ComposerProbe/Program.SessionRender.cs` (`--session-render` mode). **Run them first and observe both red.**\n- The root causes: (B) `ShellModeController.Set(Explorer)` unparents the docking host; every `AddSurface`+`Render` command in `WorkbenchShell` (`:268–364`, `:1574`, `:2909`) then opens into a body that is not on screen and announces from the model (DC-148). (A1) `BindComposer` runs only in `MainWindow.NewSession()` (`:206`, `:235-281`), never on the reopen path (`:387`) or at workspace-open for restored documents (DC-084 rec.); (A2) a restored surface's \"No session is open…\" island is reused by `Render` because nothing `Invalidate`s it (`WorkbenchAdapter.cs:238`; DC-040 rec.). (C) New Session through the chooser with no workspace open → `BindComposer` refuses `repositoryRoot` → a blank editor (DC-149).\n- `src/AiDe.App/MainWindow.xaml.cs` (`NewSession`, `BindComposer`, the reopen path, the chooser at `:390+`), `src/AiDe.App/Workbench/ShellModeController.cs` (ADR-0017: retain-never-rebuild — you keep that invariant), `WorkbenchShell.cs`, `WorkbenchAdapter.cs`, `Sessions/NewSessionPlacement.cs`, `WorkbenchDiagnostics.cs`, `SurfaceContentFactory.cs:158-175`.\n- Guards that must stay green: `TheRunBindingComesFromTheProviderFileTests.TheShellConstructsOneRegistryOneSendContextAndOneAttachmentGate` (one registry/send-context/attachment-gate construction — a shared binder must not become a second site: it must be *the* site), `ANewSessionTakesTheWholeTreeTests` (Ruling 47), `TheSessionOriginIsSetOnlyOnTheCommandPathTests` (origin stamped only on the `Ctrl+N`/`MainMenuBuilder` path — reopen must NOT stamp `main-menu.new-session`), the INV-0007 `--shell` oracle, the lane-pin tests are on `feature/exit-evidence` (not here).\n\n## The phases\n1. **Documents open into the workbench body.** One shell seam (`DocumentOpening` or the smallest equivalent) raised before any `AddSurface`+`Render` that opens a document; `MainWindow` handles it by `_mode.Set(Workbench)` if Explore is the body (retain-never-rebuild holds — the Explorer surface is kept, only unparented as today), and `WorkbenchDiagnostics` logs `shell.mode` on every mode change with the trigger. Sweep: every opening command in `WorkbenchShell` goes through the seam (INV's list), not only New Session. Exit-30 test → green.\n2. **Reopen binds.** `Adapter.Invalidate` for the restored surface on reopen so the live document replaces the island; a single `SessionComposerBinder` (or the existing `BindComposer` refactored to take a `SessionConfig`) used by New and Reopen — **the one construction site, moved, not duplicated** (the one-registry guard proves it). Reopen does **not** stamp the front-door origin. Exit-32 test → green. **2b.** At workspace-open, restored session documents are bound the same way (add a red test first: restore a layout with a session document → its composer reaches `init-pushed`).\n3. **The chooser opens the workspace, then creates** (the operator's ruling): New Session with no workspace open → the chooser → the chosen workspace is opened through the normal open path (same `workspace-open` mutation and diagnostics) → the session is created and bound in it. Red first: a test that the created session's composer reaches `init-pushed` with the chosen workspace's repository root, and that no session is created if the chooser is cancelled. The origin stays `main-menu.new-session` (it is still the command path).\n4. **Emitters**: a `layout.mutation` line for the maximize itself (`operation: maximize-stack`, the stack id, the projected tree after — through the existing `LayoutMutation` writer); `session-document.bound` (session id, surface id, repository root) and `session-document.refused` (reason) from the binder; all on the normal path, degrading to `not recorded`, never a plausible zero.\n\n## Floors\n- Red first (the INV's two + your new ones for 2b and 3), then green, then the Test Architect's adversarial pass and the Simplifier (read-only, ≤ 2 concurrent) — the Simplifier on the seam and the binder: smallest correct, no new abstraction beyond what the four phases need.\n- E7 surface list before coding: `ShellModeController` → `WorkbenchShell` opening commands → `MainWindow` (NewSession / reopen / chooser) → the binder → `WorkbenchAdapter.Invalidate` → `WorkbenchDiagnostics` events → the probe + tests → the register.\n- Gates at close, bare, stop on the first red: `dotnet build` App + both test projects `-p:TreatWarningsAsErrors=true`; `dotnet test tests/AiDe.App.Tests` (full) and `tests/AiDe.Core.Tests` (full); `verify-test-run.py` CHECK only; every `tools/verify-*.py`; `regenerate-derived.py` after the audit entry.\n- Register: the INV proposed DC-148/149 and the recurrences — mark their controls (the tests above; a source-scan guard that every opening command in `WorkbenchShell` passes through the seam, with root/recursion/token set/allowlist stated) and statuses; ids from the allocator at commit time. Audit entry (`--shortname implement-inv-0009 --session render-fix --skill implement --kind skill --tier T1 --git …` + signals); Proof Pack `docs/proof/session-document-render.md` (frontmatter, typed link to INV-0009, the red→green observations, the gate table, residuals: phase 5 the ADR-0017 amendment is A1's; the four legacy mockups' script errors are D2's finding).\n- Commit messages end with:\n```\nCo-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01Pc51aWLB1FKK2b8AqUPAun\nEOF\n```\n(omit the literal `EOF`). `git push -u origin fix/session-document-render`. **Do not merge to `main`.**\n\n## Fails if (stop and report instead)\n- A red made green by weakening; a second registry/send-context/attachment-gate site; the origin stamped on reopen; the Explorer surface rebuilt rather than kept; `ConductorEntry.cs` changed; any write outside your worktree; `git stash`; a rebase; a push to `main`; `verify-test-run.py --update`; DC-120. No governed run.\n\n## Report back (compact)\nRed→green for all four oracles (names, before/after text); the seam and the binder in two sentences each; the chooser's new flow; the emitters by name; register ids/statuses; gate table; residuals; commit shas and the pushed sha.",
+      "session": "render-fix",
+      "shortname": "implement-inv-0009",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-11T23:25:05Z",
+      "summary": "Shipped: Phase 1 WorkbenchShell.DocumentOpening seam raised before every AddSurface, MainWindow → ShellModeController.Set(Workbench, 'document-opening'), shell.mode line (exit 30 → 0; EveryOpeningCommandPassesThroughTheSeamTests). Phase 2 SessionComposerBinder — BindComposer moved, not duplicated (the one-site guard now on the binder, none in the window); RegisterSessionDocument invalidates a restored island; ComposerSendContext.TaskClass nullable with Send refusing by name (exit 32 → 0). Phase 2b ReviveRestoredSessionDocuments at workspace-open, one AttachWorkspace site (exit 34 → 0). Phase 3 NewSessionFlow.StartAsync opens the chosen workspace through OpenWorkspaceAtAsync before the sheet; NewSessionRequested is a task command (chooser oracle red by construction → green). Phase 4 maximize-stack mutation line, session-document.bound/refused. Test Architect held then cleared the veto (window-wiring scan, de-tautologised stand-in, null session.json, wider sweep, no second bind); Simplifier PASS −18. Gates: App 635/0, Core 2240/0, verify-test-run OK, 31 verify scripts OK. Register: DC-148/149 controlled, DC-040/084 controlled, DC-150 registered (uncontrolled). Proof Pack docs/proof/session-document-render.md; decision note docs/notes/session-document-binding-on-record.md.",
+      "tags": [
+        "inv-0009",
+        "dc-148",
+        "dc-149",
+        "session-document"
+      ],
+      "tier": "T1",
+      "tool": null
     }
   ],
   "changes": [
     {
-      "id": "cl-0001",
-      "datetime": "2026-08-23T20:09:31Z",
-      "session": "b5f931c6-a515-4e72-95f8-37dc8e3d0495",
-      "kind": "architecture",
-      "skill": "adopt",
-      "title": "Record the current single-container WPF architecture",
-      "prompt": "sigh - the original session was supposed to make this a github repo\ncreate a new github repo ai-de under my tim.ian.malloo account (public repo, mit license)\nthen commit and push the content here\nthen run /adopt",
-      "summary": "Recovered AI-DE as one .NET 10 WPF runtime container with a minimal MVVM seam; seeded the connected knowledge graph and phased missing product, design, proof, and documentation work.",
-      "rationale": "Source and history show one runtime executable and no recorded product or multi-tier architecture; adoption records that baseline without inventing provenance.",
       "artifacts": [
         "docs/architecture.md",
         "docs/ai-forward-pack-adoption.md"
       ],
+      "datetime": "2026-08-23T20:09:31Z",
+      "git": {
+        "after": "5612e54e39dcb3cc612e30efde4ff3ae0dd1f197",
+        "before": "ef30e96e1386b597ffee3ecef0403b11654fdf9d",
+        "branch": "docs/adopt-knowledge-graph",
+        "commits": [
+          "5612e54 docs: bootstrap repository knowledge graph"
+        ],
+        "pushed": true
+      },
+      "id": "cl-0001",
+      "kind": "architecture",
+      "prompt": "sigh - the original session was supposed to make this a github repo\ncreate a new github repo ai-de under my tim.ian.malloo account (public repo, mit license)\nthen commit and push the content here\nthen run /adopt",
+      "rationale": "Source and history show one runtime executable and no recorded product or multi-tier architecture; adoption records that baseline without inventing provenance.",
+      "session": "b5f931c6-a515-4e72-95f8-37dc8e3d0495",
+      "skill": "adopt",
+      "summary": "Recovered AI-DE as one .NET 10 WPF runtime container with a minimal MVVM seam; seeded the connected knowledge graph and phased missing product, design, proof, and documentation work.",
       "tags": [
         "adoption",
         "architecture"
       ],
-      "git": {
-        "before": "ef30e96e1386b597ffee3ecef0403b11654fdf9d",
-        "after": "5612e54e39dcb3cc612e30efde4ff3ae0dd1f197",
-        "branch": "docs/adopt-knowledge-graph",
-        "pushed": true,
-        "commits": [
-          "5612e54 docs: bootstrap repository knowledge graph"
-        ]
-      }
+      "title": "Record the current single-container WPF architecture"
     },
     {
-      "id": "cl-0002",
-      "datetime": "2026-08-23T22:41:33Z",
-      "session": "collectknowledge-20260823",
-      "kind": "knowledge",
-      "skill": "collectknowledge",
-      "title": "Domain knowledge base established for AI-DE; Kuzu, MCP and lease-fencing findings invalidate three seed-architecture assumptions",
-      "prompt": "/collectknowledge on the AI-native IDE architecture sketch, the agent coordination spec, and the named modelling/visualization domains",
-      "summary": "Ten sourced domain knowledge bases established as the evidence base for AI-DE. Load-bearing findings: (1) Kuzu archived 2025-10-10, and no embedded+maintained+permissive+.NET Cypher store exists to replace it, so the IGraphStore seam is now essential; (2) MCP spec 2026-07-28 is stateless and deprecates Sampling/Roots/Logging, while the C# SDK is Microsoft+Anthropic maintained and stable; (3) Claude Code hooks have no Copilot equivalent, so a file event bus is the universal floor; (4) TTL+heartbeat leases are advisory without fencing tokens (Kleppmann, unrefuted); (5) DI, ASP.NET routes and EF mapping are structurally invisible to static analysis; (6) bounded contexts are not extractable; (7) inventory is not architecture - curation is the product.",
-      "rationale": "The seed architecture sketch selected Kuzu as the graph store and assumed an MCP surface that has since changed shape; the coordination spec relies on leases whose correctness properties the distributed-systems literature explicitly denies. Establishing this evidence before design means those three decisions are remade deliberately rather than discovered during implementation. The disconfirming research also reframes the project thesis into the form (code-derived views, code authoritative) that escapes four of the five historical failure modes of model-driven engineering.",
       "artifacts": [
         "docs/knowledge/index.md",
         "docs/knowledge/code-knowledge-graphs/index.md",
         "docs/knowledge/mcp-and-agent-integration/index.md",
         "docs/knowledge/multi-agent-coordination/index.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-23T22:41:33Z",
       "git": {
-        "before": "9065ea4f1e6a62139e340c271e14b99a9c4944e4",
         "after": "9065ea4f1e6a62139e340c271e14b99a9c4944e4",
+        "before": "9065ea4f1e6a62139e340c271e14b99a9c4944e4",
         "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0002",
+      "kind": "knowledge",
+      "prompt": "/collectknowledge on the AI-native IDE architecture sketch, the agent coordination spec, and the named modelling/visualization domains",
+      "rationale": "The seed architecture sketch selected Kuzu as the graph store and assumed an MCP surface that has since changed shape; the coordination spec relies on leases whose correctness properties the distributed-systems literature explicitly denies. Establishing this evidence before design means those three decisions are remade deliberately rather than discovered during implementation. The disconfirming research also reframes the project thesis into the form (code-derived views, code authoritative) that escapes four of the five historical failure modes of model-driven engineering.",
+      "session": "collectknowledge-20260823",
+      "skill": "collectknowledge",
+      "summary": "Ten sourced domain knowledge bases established as the evidence base for AI-DE. Load-bearing findings: (1) Kuzu archived 2025-10-10, and no embedded+maintained+permissive+.NET Cypher store exists to replace it, so the IGraphStore seam is now essential; (2) MCP spec 2026-07-28 is stateless and deprecates Sampling/Roots/Logging, while the C# SDK is Microsoft+Anthropic maintained and stable; (3) Claude Code hooks have no Copilot equivalent, so a file event bus is the universal floor; (4) TTL+heartbeat leases are advisory without fencing tokens (Kleppmann, unrefuted); (5) DI, ASP.NET routes and EF mapping are structurally invisible to static analysis; (6) bounded contexts are not extractable; (7) inventory is not architecture - curation is the product.",
+      "tags": [],
+      "title": "Domain knowledge base established for AI-DE; Kuzu, MCP and lease-fencing findings invalidate three seed-architecture assumptions"
     },
     {
-      "id": "cl-0003",
-      "datetime": "2026-08-24T13:23:21Z",
-      "session": "6c940bbc-816b-41ed-a92a-0e954ac70a37",
-      "kind": "spec",
-      "skill": "specify",
-      "title": "Specify AI-native IDE product boundary and user experience",
-      "prompt": "create a specification (md and html) for my AI-IDE\n- use this proposal as the seed idea: \"C:\\Users\\malla\\Downloads\\ai-native-ide-architecture-sketch.md\"\n- key scenarios: visually understand implemented logical/as-built architecture; core data/domain models including class hierarchy and aggregate roots; data/process flow; cross-service/library/infrastructure dependencies; cross-agent coordination; repository knowledge as graph/hierarchy; rich-text staged prompts; audit logs; and work/task backlog across sessions and worktrees.\n- typical workflow: one or more Claude Code or GitHub Copilot sessions in terminal tabs, isolated worktrees, coordinated artifacts/graph updates, visual tabs for feedback, and rich-text prompt tabs.\n- reuse existing repositories and libraries where justified; take inspiration from VS Code and Eclipse while keeping code transient rather than the product.",
-      "summary": "Defined a code-derived, provenance-labelled visual workspace with session coordination, prompt staging, audit inspection, privacy controls, and implementation spikes.",
-      "rationale": "The seed needs a testable product contract that preserves its user goals while deferring invalidated or unproven implementation choices to spikes.",
       "artifacts": [
         "docs/specs/ai-native-ide.md",
         "docs/specs/ai-native-ide.html",
         "docs/security/ai-native-ide-privacy-review.md"
       ],
+      "datetime": "2026-08-24T13:23:21Z",
+      "git": {
+        "after": "0427582ccd915c52c68f170703a64760b3a152bb",
+        "before": "0427582ccd915c52c68f170703a64760b3a152bb",
+        "branch": "docs/ai-ide-specification",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0003",
+      "kind": "spec",
+      "prompt": "create a specification (md and html) for my AI-IDE\n- use this proposal as the seed idea: \"C:\\Users\\malla\\Downloads\\ai-native-ide-architecture-sketch.md\"\n- key scenarios: visually understand implemented logical/as-built architecture; core data/domain models including class hierarchy and aggregate roots; data/process flow; cross-service/library/infrastructure dependencies; cross-agent coordination; repository knowledge as graph/hierarchy; rich-text staged prompts; audit logs; and work/task backlog across sessions and worktrees.\n- typical workflow: one or more Claude Code or GitHub Copilot sessions in terminal tabs, isolated worktrees, coordinated artifacts/graph updates, visual tabs for feedback, and rich-text prompt tabs.\n- reuse existing repositories and libraries where justified; take inspiration from VS Code and Eclipse while keeping code transient rather than the product.",
+      "rationale": "The seed needs a testable product contract that preserves its user goals while deferring invalidated or unproven implementation choices to spikes.",
+      "session": "6c940bbc-816b-41ed-a92a-0e954ac70a37",
+      "skill": "specify",
+      "summary": "Defined a code-derived, provenance-labelled visual workspace with session coordination, prompt staging, audit inspection, privacy controls, and implementation spikes.",
       "tags": [
         "ai-native-ide",
         "specification",
         "agent-coordination"
       ],
-      "git": {
-        "before": "0427582ccd915c52c68f170703a64760b3a152bb",
-        "after": "0427582ccd915c52c68f170703a64760b3a152bb",
-        "branch": "docs/ai-ide-specification",
-        "pushed": null,
-        "commits": []
-      }
+      "title": "Specify AI-native IDE product boundary and user experience"
     },
     {
-      "id": "cl-0004",
-      "datetime": "2026-08-25T22:53:28Z",
-      "session": "6c940bbc-816b-41ed-a92a-0e954ac70a37",
-      "kind": "architecture",
-      "skill": "define-architecture",
-      "title": "Adopt local workspace daemon and fact-store architecture for AI-DE",
-      "prompt": "go ahead and merge the PR\nthe /define-architecture on the ai-ide-specification",
-      "summary": "Defined a WPF shell over a per-workspace daemon, SQLite dimensions and append-only evidence facts, bounded MCP tools, ConPTY-owned sessions, threat/privacy/release plans, ADRs, and vertical phases.",
-      "rationale": "The merged specification requires provenance-labelled derived views, bounded agent coordination, local-first data protection, and a durable representation that does not depend on the archived Kuzu store.",
       "artifacts": [
         "docs/architecture.md",
         "docs/design/conceptual-model.md",
@@ -13213,6 +13338,21 @@ window.AUDIT_DATA = {
         "docs/adr/0006-terminal-delivery-semantics.md",
         "docs/adr/0007-agent-session-adapter.md"
       ],
+      "datetime": "2026-08-25T22:53:28Z",
+      "git": {
+        "after": "bc50c41853fb2314a783709c58eb0f065f48c402",
+        "before": "bc50c41853fb2314a783709c58eb0f065f48c402",
+        "branch": "architecture/ai-native-ide",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0004",
+      "kind": "architecture",
+      "prompt": "go ahead and merge the PR\nthe /define-architecture on the ai-ide-specification",
+      "rationale": "The merged specification requires provenance-labelled derived views, bounded agent coordination, local-first data protection, and a durable representation that does not depend on the archived Kuzu store.",
+      "session": "6c940bbc-816b-41ed-a92a-0e954ac70a37",
+      "skill": "define-architecture",
+      "summary": "Defined a WPF shell over a per-workspace daemon, SQLite dimensions and append-only evidence facts, bounded MCP tools, ConPTY-owned sessions, threat/privacy/release plans, ADRs, and vertical phases.",
       "tags": [
         "ai-native-ide",
         "architecture",
@@ -13220,2335 +13360,2320 @@ window.AUDIT_DATA = {
         "sqlite",
         "conpty"
       ],
-      "git": {
-        "before": "bc50c41853fb2314a783709c58eb0f065f48c402",
-        "after": "bc50c41853fb2314a783709c58eb0f065f48c402",
-        "branch": "architecture/ai-native-ide",
-        "pushed": null,
-        "commits": []
-      }
+      "title": "Adopt local workspace daemon and fact-store architecture for AI-DE"
     },
     {
-      "id": "cl-0005",
-      "datetime": "2026-08-26T00:36:34Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": "define-architecture",
-      "title": "AI-DE architecture v2 supersedes the 2026-08-25 draft",
-      "prompt": "C:/Program Files/Git/define-architecture ai-ide-arch-v2 — redo the architecture to meet your bar",
-      "summary": "Write-ahead two-phase dispatch receipt (ADR-0010); in-process-first authority core (ADR-0009); MCP authorization bound to session processing class (ADR-0011); WPF+WebView2 shell host recorded (ADR-0008); 3 committed re-runnable spikes; contradictions fixed at source",
-      "rationale": "Ten-persona adversary review of the prior draft raised 3 hard and 2 soft vetoes and verified internal contradictions; this revision resolves each with a mechanism, artifact, or test rather than prose",
       "artifacts": [
         "docs/architecture.md",
         "docs/adr/0010-two-phase-dispatch-receipt.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-26T00:36:34Z",
       "git": {
-        "before": "2b134da951bd364d7f4eca58a663774a918b6001",
         "after": "2b134da951bd364d7f4eca58a663774a918b6001",
+        "before": "2b134da951bd364d7f4eca58a663774a918b6001",
         "branch": "architecture/ai-ide-arch-v2",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0005",
+      "kind": "architecture",
+      "prompt": "C:/Program Files/Git/define-architecture ai-ide-arch-v2 — redo the architecture to meet your bar",
+      "rationale": "Ten-persona adversary review of the prior draft raised 3 hard and 2 soft vetoes and verified internal contradictions; this revision resolves each with a mechanism, artifact, or test rather than prose",
+      "session": null,
+      "skill": "define-architecture",
+      "summary": "Write-ahead two-phase dispatch receipt (ADR-0010); in-process-first authority core (ADR-0009); MCP authorization bound to session processing class (ADR-0011); WPF+WebView2 shell host recorded (ADR-0008); 3 committed re-runnable spikes; contradictions fixed at source",
+      "tags": [],
+      "title": "AI-DE architecture v2 supersedes the 2026-08-25 draft"
     },
     {
-      "id": "cl-0006",
-      "datetime": "2026-08-26T00:49:08Z",
-      "session": null,
-      "kind": "design",
-      "skill": "design",
-      "title": "Phase-1 walking skeleton design",
-      "prompt": "C:/Program Files/Git/design phase-1 the walking skeleton",
-      "summary": "Blueprint for the thinnest end-to-end slice: fact store with enforced immutability, in-process core with write-ahead dispatch, bounded projections incl. knowledge (US-4), stdio MCP with egress binding, health sidecar, freshness prober, accessible provenance pane",
-      "rationale": "Turns the v2 architecture into an implementable slice while keeping every council-veto mechanism testable red-first",
       "artifacts": [
         "docs/design/phase-1-walking-skeleton.md",
         "DESIGN.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-26T00:49:08Z",
       "git": {
-        "before": "a0bd6998aa345435ef995a7dc8d117e10e3e8383",
         "after": "a0bd6998aa345435ef995a7dc8d117e10e3e8383",
+        "before": "a0bd6998aa345435ef995a7dc8d117e10e3e8383",
         "branch": "feat/phase-1-walking-skeleton",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0006",
+      "kind": "design",
+      "prompt": "C:/Program Files/Git/design phase-1 the walking skeleton",
+      "rationale": "Turns the v2 architecture into an implementable slice while keeping every council-veto mechanism testable red-first",
+      "session": null,
+      "skill": "design",
+      "summary": "Blueprint for the thinnest end-to-end slice: fact store with enforced immutability, in-process core with write-ahead dispatch, bounded projections incl. knowledge (US-4), stdio MCP with egress binding, health sidecar, freshness prober, accessible provenance pane",
+      "tags": [],
+      "title": "Phase-1 walking skeleton design"
     },
     {
-      "id": "cl-0007",
-      "datetime": "2026-08-26T19:35:00Z",
-      "session": null,
-      "kind": "design",
-      "skill": "design",
-      "title": "Phase-2 design: scope-per-project, bidirectional terminal seam, restored cross-process boundary",
-      "prompt": "C:/Program Files/Git/design phase 2",
-      "summary": "No new fact table; one scope per project rather than per solution; ITerminalSession extended with a pull-based bounded output channel; analyzers/generators disabled during extraction",
-      "rationale": "Streaming extraction would leak partial results into a store whose invariant is complete-snapshot-only; an event-based output path would let a fast producer drive unbounded work; loading a repository must never execute its code",
       "artifacts": [
         "docs/design/phase-2-real-code-and-terminal.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-26T19:35:00Z",
       "git": {
-        "before": "d42ad03d539bdca589838e86b25285c0928eb691",
         "after": "d42ad03d539bdca589838e86b25285c0928eb691",
+        "before": "d42ad03d539bdca589838e86b25285c0928eb691",
         "branch": "design/phase-2",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0007",
+      "kind": "design",
+      "prompt": "C:/Program Files/Git/design phase 2",
+      "rationale": "Streaming extraction would leak partial results into a store whose invariant is complete-snapshot-only; an event-based output path would let a fast producer drive unbounded work; loading a repository must never execute its code",
+      "session": null,
+      "skill": "design",
+      "summary": "No new fact table; one scope per project rather than per solution; ITerminalSession extended with a pull-based bounded output channel; analyzers/generators disabled during extraction",
+      "tags": [],
+      "title": "Phase-2 design: scope-per-project, bidirectional terminal seam, restored cross-process boundary"
     },
     {
-      "id": "cl-0008",
-      "datetime": "2026-08-26T19:57:48Z",
-      "session": null,
-      "kind": "design",
-      "skill": "investigate",
-      "title": "Analyzer-execution control moves from MSBuild properties to stripping AnalyzerReferences",
-      "prompt": "Spike S2",
-      "summary": "The Phase-2 design's named mitigation was measured ineffective. The control that holds is solution.WithProjectAnalyzerReferences(id, []) before any compilation is requested",
-      "rationale": "MSBuild properties govern the build rather than the workspace project model, and they are the repository's own build configuration — a control a hostile repository can influence is not a control. Stripping is applied after load, in our process, and depends on nothing in the repository cooperating.",
       "artifacts": [
         "spikes/roslyn-msbuild-workspace/RESULT.md",
         "docs/design/phase-2-real-code-and-terminal.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-26T19:57:48Z",
       "git": {
-        "before": "b8b7c08",
         "after": "b8b7c0849435b0cd84e8fb8009e6b1be1308065c",
+        "before": "b8b7c08",
         "branch": "fix/defect-register-and-spike-s2",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0008",
+      "kind": "design",
+      "prompt": "Spike S2",
+      "rationale": "MSBuild properties govern the build rather than the workspace project model, and they are the repository's own build configuration — a control a hostile repository can influence is not a control. Stripping is applied after load, in our process, and depends on nothing in the repository cooperating.",
+      "session": null,
+      "skill": "investigate",
+      "summary": "The Phase-2 design's named mitigation was measured ineffective. The control that holds is solution.WithProjectAnalyzerReferences(id, []) before any compilation is requested",
+      "tags": [],
+      "title": "Analyzer-execution control moves from MSBuild properties to stripping AnalyzerReferences"
     },
     {
-      "id": "cl-0009",
-      "datetime": "2026-08-26T20:38:23Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": "investigate",
-      "title": "Accessibility withdrawn as a conformance target; terminal renderer chosen; ADR-0008's reversal trigger met",
-      "prompt": "Spike S3 and S4; disclose absent generated code; suppress accessibility vetos",
-      "summary": "ADR-0014 accepted. S3 selects an owned WPF renderer with GlyphRun-per-line binding. S4 leaves ADR-0008 unsettled: airspace is real and the composition control crashes the process on float",
-      "rationale": "The owner is not optimising for accessibility, so the veto is suppressed and every artifact claiming WCAG 2.2 AA is corrected rather than left asserting conformance the product does not pursue. S3/S4 are measured rather than reasoned: 21x spread between draw paths, and a native access violation on float.",
       "artifacts": [
         "docs/adr/0014-accessibility-posture.md",
         "docs/adr/0008-shell-host.md",
         "docs/adr/0005-terminal-runtime-boundary.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-26T20:38:23Z",
       "git": {
-        "before": "e59738a",
         "after": "e59738a654ebf8b908075d4f5ea5504ceb025ae5",
+        "before": "e59738a",
         "branch": "spike/s3-s4-and-a11y-posture",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0009",
+      "kind": "architecture",
+      "prompt": "Spike S3 and S4; disclose absent generated code; suppress accessibility vetos",
+      "rationale": "The owner is not optimising for accessibility, so the veto is suppressed and every artifact claiming WCAG 2.2 AA is corrected rather than left asserting conformance the product does not pursue. S3/S4 are measured rather than reasoned: 21x spread between draw paths, and a native access violation on float.",
+      "session": null,
+      "skill": "investigate",
+      "summary": "ADR-0014 accepted. S3 selects an owned WPF renderer with GlyphRun-per-line binding. S4 leaves ADR-0008 unsettled: airspace is real and the composition control crashes the process on float",
+      "tags": [],
+      "title": "Accessibility withdrawn as a conformance target; terminal renderer chosen; ADR-0008's reversal trigger met"
     },
     {
-      "id": "cl-0010",
-      "datetime": "2026-08-26T21:17:40Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": "design",
-      "title": "Canvas keeps the windowed WebView2; overlaps handled by snapshot swap; focus routed via Win32",
-      "prompt": "go with your recommendation; design the focus piece; snapshot-swap spike",
-      "summary": "ADR-0015 accepted. ADR-0008 not reversed. Focus enters via SetFocus on the HwndHost handle and leaves via a page-to-host message, because CoreWebView2Controller is not exposed",
-      "rationale": "The windowed control fails as a constraint; the composition control fails as a crash. The snapshot swap was measured aligned to within a pixel of rounding at 150% DPI. The documented focus API does not exist on this control - established by enumerating the public surface, not by grepping the assembly, whose string table contains the names.",
       "artifacts": [
         "docs/adr/0015-canvas-hosting-and-overlay-strategy.md",
         "docs/adr/0008-shell-host.md",
         "docs/design/phase-2-real-code-and-terminal.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-26T21:17:40Z",
       "git": {
-        "before": "41ac91e",
         "after": "41ac91e537282c472ab7461313e2d3be77d6f49b",
+        "before": "41ac91e",
         "branch": "feat/s4-decision-and-focus",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0010",
+      "kind": "architecture",
+      "prompt": "go with your recommendation; design the focus piece; snapshot-swap spike",
+      "rationale": "The windowed control fails as a constraint; the composition control fails as a crash. The snapshot swap was measured aligned to within a pixel of rounding at 150% DPI. The documented focus API does not exist on this control - established by enumerating the public surface, not by grepping the assembly, whose string table contains the names.",
+      "session": null,
+      "skill": "design",
+      "summary": "ADR-0015 accepted. ADR-0008 not reversed. Focus enters via SetFocus on the HwndHost handle and leaves via a page-to-host message, because CoreWebView2Controller is not exposed",
+      "tags": [],
+      "title": "Canvas keeps the windowed WebView2; overlaps handled by snapshot swap; focus routed via Win32"
     },
     {
-      "id": "cl-0011",
-      "datetime": "2026-08-28T16:28:49Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "decision",
-      "skill": null,
-      "title": "D1 — Terminal processes stay in the shell; the daemon-crash failure row is corrected",
-      "prompt": "D1..D7 answered by the product owner",
-      "summary": "Terminals remain owned by the shell process (TerminalSurface creates ConPtyTerminalSession). The P2-TERM-05 failure row is rewritten from 'Daemon crashes' to 'Shell crashes', because the Job Object that mitigates it is owned by the creating process.",
-      "rationale": "The mitigation already exists and already fires: JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE is implemented in ConPtyInterop and reaps children when the owning process dies. Only the threat sentence was wrong. Moving terminals to the daemon would add a second IPC lane, framing cost and a backpressure design for a stream whose consumer (the WPF surface, measured 5.50ms p95) lives in the shell — and would invert ADR-0003, which scopes the daemon to evidence rather than UI.",
       "artifacts": [
         "docs/design/phase-2-real-code-and-terminal.md"
       ],
+      "datetime": "2026-08-28T16:28:49Z",
+      "git": {
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0011",
+      "kind": "decision",
+      "prompt": "D1..D7 answered by the product owner",
+      "rationale": "The mitigation already exists and already fires: JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE is implemented in ConPtyInterop and reaps children when the owning process dies. Only the threat sentence was wrong. Moving terminals to the daemon would add a second IPC lane, framing cost and a backpressure design for a stream whose consumer (the WPF surface, measured 5.50ms p95) lives in the shell — and would invert ADR-0003, which scopes the daemon to evidence rather than UI.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "Terminals remain owned by the shell process (TerminalSurface creates ConPtyTerminalSession). The P2-TERM-05 failure row is rewritten from 'Daemon crashes' to 'Shell crashes', because the Job Object that mitigates it is owned by the creating process.",
       "tags": [
         "phase-2"
       ],
-      "git": {
-        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
-        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "D1 — Terminal processes stay in the shell; the daemon-crash failure row is corrected"
     },
     {
-      "id": "cl-0012",
-      "datetime": "2026-08-28T16:28:49Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "decision",
-      "skill": null,
-      "title": "D2 — MSBuildWorkspace advisories: adopt the spike's reference posture and verify the output; do not block Component 1",
-      "prompt": "D1..D7 answered by the product owner",
-      "summary": "The shipped extractor adopts ExcludeAssets=runtime plus MSBuildLocator, as the S2 spike did. The advisory finding is then verified by inspecting the built output directory for the flagged assemblies. Component 1 is NOT gated on this.",
-      "rationale": "S2's csproj records that every reference is compile-time only and MSBuild is loaded at runtime from the installed SDK, so none of the flagged assemblies reach the output. The exposure is therefore very likely a reference-assembly artifact rather than shipped code, and the residual is the user's own SDK which they already execute to build. Verification is cheap and concrete (list bin/), turning a scanner finding into a measured fact. Abandoning MSBuildWorkspace would discard S2's measured result to solve a problem that may not exist.",
       "artifacts": [
         "spikes/roslyn-msbuild-workspace/RESULT.md"
       ],
+      "datetime": "2026-08-28T16:28:49Z",
+      "git": {
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0012",
+      "kind": "decision",
+      "prompt": "D1..D7 answered by the product owner",
+      "rationale": "S2's csproj records that every reference is compile-time only and MSBuild is loaded at runtime from the installed SDK, so none of the flagged assemblies reach the output. The exposure is therefore very likely a reference-assembly artifact rather than shipped code, and the residual is the user's own SDK which they already execute to build. Verification is cheap and concrete (list bin/), turning a scanner finding into a measured fact. Abandoning MSBuildWorkspace would discard S2's measured result to solve a problem that may not exist.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "The shipped extractor adopts ExcludeAssets=runtime plus MSBuildLocator, as the S2 spike did. The advisory finding is then verified by inspecting the built output directory for the flagged assemblies. Component 1 is NOT gated on this.",
       "tags": [
         "phase-2"
       ],
-      "git": {
-        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
-        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "D2 — MSBuildWorkspace advisories: adopt the spike's reference posture and verify the output; do not block Component 1"
     },
     {
-      "id": "cl-0013",
-      "datetime": "2026-08-28T16:28:49Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "decision",
-      "skill": null,
-      "title": "D3 — Repository-authored MSBuild tasks are spiked before Component 1, results returned for review",
-      "prompt": "D1..D7 answered by the product owner",
-      "summary": "A spike loads a fixture project carrying a hostile UsingTask through MSBuildWorkspace and asserts the task never executes. Results are reported for a separate product-owner decision; Component 1 remains gated on it.",
-      "rationale": "Loading a repository must never execute its code, and this path is unproven: S2 established that analyzers and generators can be suppressed, but MSBuild evaluation still runs to load projects and repository-supplied task assemblies were never tested. Intuition has already failed once in this exact area — the design's named mitigation (MSBuild properties) was measured ineffective, and EnforceExtendedAnalyzerRules turned out to be one line the attacker sets in their own project.",
       "artifacts": [
         "spikes/msbuild-task-execution/"
       ],
+      "datetime": "2026-08-28T16:28:49Z",
+      "git": {
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0013",
+      "kind": "decision",
+      "prompt": "D1..D7 answered by the product owner",
+      "rationale": "Loading a repository must never execute its code, and this path is unproven: S2 established that analyzers and generators can be suppressed, but MSBuild evaluation still runs to load projects and repository-supplied task assemblies were never tested. Intuition has already failed once in this exact area — the design's named mitigation (MSBuild properties) was measured ineffective, and EnforceExtendedAnalyzerRules turned out to be one line the attacker sets in their own project.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "A spike loads a fixture project carrying a hostile UsingTask through MSBuildWorkspace and asserts the task never executes. Results are reported for a separate product-owner decision; Component 1 remains gated on it.",
       "tags": [
         "phase-2"
       ],
-      "git": {
-        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
-        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "D3 — Repository-authored MSBuild tasks are spiked before Component 1, results returned for review"
     },
     {
-      "id": "cl-0014",
-      "datetime": "2026-08-28T16:28:50Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "decision",
-      "skill": null,
-      "title": "D4 — ADR-0001..0013 promoted to accepted; ADR-0010 held at proposed",
-      "prompt": "D1..D7 answered by the product owner",
-      "summary": "Twelve ADRs move from status: proposed to status: accepted. ADR-0010 (two-phase dispatch receipt) stays proposed.",
-      "rationale": "These are not proposals, they are shipped: ADR-0003's boundary is a running daemon, ADR-0012's docking shell is the workbench, ADR-0013's envelope round-trips in tests. Recording a decision the product depends on as 'proposed' is a false record and makes the two genuinely recent decisions (0014, 0015) indistinguishable from settled ones. ADR-0010 is held because nothing is built and it depends on D1.",
       "artifacts": [
         "docs/adr/"
       ],
+      "datetime": "2026-08-28T16:28:50Z",
+      "git": {
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0014",
+      "kind": "decision",
+      "prompt": "D1..D7 answered by the product owner",
+      "rationale": "These are not proposals, they are shipped: ADR-0003's boundary is a running daemon, ADR-0012's docking shell is the workbench, ADR-0013's envelope round-trips in tests. Recording a decision the product depends on as 'proposed' is a false record and makes the two genuinely recent decisions (0014, 0015) indistinguishable from settled ones. ADR-0010 is held because nothing is built and it depends on D1.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "Twelve ADRs move from status: proposed to status: accepted. ADR-0010 (two-phase dispatch receipt) stays proposed.",
       "tags": [
         "phase-2"
       ],
-      "git": {
-        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
-        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "D4 — ADR-0001..0013 promoted to accepted; ADR-0010 held at proposed"
     },
     {
-      "id": "cl-0015",
-      "datetime": "2026-08-28T16:28:50Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "decision",
-      "skill": null,
-      "title": "D5 — Cross-monitor DPI accepted as a documented unverified risk, non-blocking",
-      "prompt": "D1..D7 answered by the product owner",
-      "summary": "Cross-monitor DPI verification is deferred and explicitly non-blocking. It is validated once multi-monitor hardware is available and the product is further along.",
-      "rationale": "The owner is working on a laptop without a second display, so the measurement is hardware-gated rather than decision-gated. The DPI arithmetic already has evidence — the snapshot swap measured aligned to within a pixel of rounding at 150% DPI — so what is missing is the monitor-transition case specifically. The failure mode is visual misalignment on a multi-monitor drag: user-visible, not data-threatening, and fixable when observed.",
       "artifacts": [
         "docs/design/phase-2-real-code-and-terminal.md"
       ],
+      "datetime": "2026-08-28T16:28:50Z",
+      "git": {
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0015",
+      "kind": "decision",
+      "prompt": "D1..D7 answered by the product owner",
+      "rationale": "The owner is working on a laptop without a second display, so the measurement is hardware-gated rather than decision-gated. The DPI arithmetic already has evidence — the snapshot swap measured aligned to within a pixel of rounding at 150% DPI — so what is missing is the monitor-transition case specifically. The failure mode is visual misalignment on a multi-monitor drag: user-visible, not data-threatening, and fixable when observed.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "Cross-monitor DPI verification is deferred and explicitly non-blocking. It is validated once multi-monitor hardware is available and the product is further along.",
       "tags": [
         "phase-2"
       ],
-      "git": {
-        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
-        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "D5 — Cross-monitor DPI accepted as a documented unverified risk, non-blocking"
     },
     {
-      "id": "cl-0016",
-      "datetime": "2026-08-28T16:28:50Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "decision",
-      "skill": null,
-      "title": "D6 — Terminal ships viewport-only for Phase 2; scrollback goes to the backlog",
-      "prompt": "D1..D7 answered by the product owner",
-      "summary": "TerminalScreen remains viewport-only for Phase 2. Scrollback is recorded as a backlog item with its designed upgrade path, and named as a known product limitation rather than a technical note.",
-      "rationale": "Growing the viewport to provide history would put an unbounded allocation behind an innocuous property, sized by an untrusted child process. The upgrade path is already designed — a bounded ring beside the screen, not inside it — so this is deferral rather than debt. It is named as a product limitation because Phase 2's human validation is 'launch pwsh and observe real session state', and a developer who cannot scroll back to read build errors will read that as broken.",
       "artifacts": [
         "src/AiDe.Core/Terminal/TerminalScreen.cs"
       ],
+      "datetime": "2026-08-28T16:28:50Z",
+      "git": {
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0016",
+      "kind": "decision",
+      "prompt": "D1..D7 answered by the product owner",
+      "rationale": "Growing the viewport to provide history would put an unbounded allocation behind an innocuous property, sized by an untrusted child process. The upgrade path is already designed — a bounded ring beside the screen, not inside it — so this is deferral rather than debt. It is named as a product limitation because Phase 2's human validation is 'launch pwsh and observe real session state', and a developer who cannot scroll back to read build errors will read that as broken.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "TerminalScreen remains viewport-only for Phase 2. Scrollback is recorded as a backlog item with its designed upgrade path, and named as a known product limitation rather than a technical note.",
       "tags": [
         "phase-2"
       ],
-      "git": {
-        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
-        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "D6 — Terminal ships viewport-only for Phase 2; scrollback goes to the backlog"
     },
     {
-      "id": "cl-0017",
-      "datetime": "2026-08-28T16:28:50Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "decision",
-      "skill": null,
-      "title": "D7 — Phase-2 performance is baselined before Component 1",
-      "prompt": "D1..D7 answered by the product owner",
-      "summary": "P2-PERF is established before the Roslyn extractor lands, so the extractor's cost is a delta against a known floor rather than a first observation.",
-      "rationale": "Six simplify: ceilings are live in shipped code and no upgrade trigger has ever been evaluated. Measuring after Component 1 lands entangles the first real number with the largest new subsystem, leaving it unclear which half moved it. NOTE: discovered while planning — P2-PERF-01..03 is named in the test plan but never specified, and its only stated budget (scope settlement p95 > 10s) measures Roslyn extraction, which does not exist. The work is therefore specify-and-build, not run.",
       "artifacts": [
         "bench/AiDe.Bench/"
       ],
+      "datetime": "2026-08-28T16:28:50Z",
+      "git": {
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0017",
+      "kind": "decision",
+      "prompt": "D1..D7 answered by the product owner",
+      "rationale": "Six simplify: ceilings are live in shipped code and no upgrade trigger has ever been evaluated. Measuring after Component 1 lands entangles the first real number with the largest new subsystem, leaving it unclear which half moved it. NOTE: discovered while planning — P2-PERF-01..03 is named in the test plan but never specified, and its only stated budget (scope settlement p95 > 10s) measures Roslyn extraction, which does not exist. The work is therefore specify-and-build, not run.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "P2-PERF is established before the Roslyn extractor lands, so the extractor's cost is a delta against a known floor rather than a first observation.",
       "tags": [
         "phase-2"
       ],
-      "git": {
-        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
-        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "D7 — Phase-2 performance is baselined before Component 1"
     },
     {
-      "id": "cl-0018",
-      "datetime": "2026-08-28T16:36:01Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "decision",
-      "skill": null,
-      "title": "D3 spike result: MSBuildWorkspace executes repository-supplied code — Component 1 blocked",
-      "prompt": null,
-      "summary": "Loading a hostile project through MSBuildWorkspace.OpenProjectAsync executed all four repository-supplied vectors (Exec in InitialTargets, RoslynCodeTaskFactory inline task, UsingTask assembly, design-time target hook) with zero WorkspaceFailed diagnostics and a cleanly loaded project. Two vectors require nothing but the checked-in .csproj. Registered as DC-019.",
-      "rationale": "The principle is absolute: loading a repository must never execute its code. S2's analyzer/generator control is correct but covers a mechanism rather than the boundary. The probe carries a positive control and a non-vacuity guard, and the positive control caught a real path bug on the first run that would otherwise have produced a false all-clear. No containment has been designed or tested; candidates are labelled Inferred.",
       "artifacts": [
         "spikes/msbuild-task-execution/RESULT.md"
       ],
+      "datetime": "2026-08-28T16:36:01Z",
+      "git": {
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0018",
+      "kind": "decision",
+      "prompt": null,
+      "rationale": "The principle is absolute: loading a repository must never execute its code. S2's analyzer/generator control is correct but covers a mechanism rather than the boundary. The probe carries a positive control and a non-vacuity guard, and the positive control caught a real path bug on the first run that would otherwise have produced a false all-clear. No containment has been designed or tested; candidates are labelled Inferred.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "Loading a hostile project through MSBuildWorkspace.OpenProjectAsync executed all four repository-supplied vectors (Exec in InitialTargets, RoslynCodeTaskFactory inline task, UsingTask assembly, design-time target hook) with zero WorkspaceFailed diagnostics and a cleanly loaded project. Two vectors require nothing but the checked-in .csproj. Registered as DC-019.",
       "tags": [
         "phase-2",
         "security"
       ],
-      "git": {
-        "before": null,
-        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "D3 spike result: MSBuildWorkspace executes repository-supplied code — Component 1 blocked"
     },
     {
-      "id": "cl-0019",
-      "datetime": "2026-08-28T16:39:16Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "design",
-      "skill": null,
-      "title": "P2-PERF-01..03 specified; P2-PERF-02 measured — the daemon boundary costs ~0.35ms flat",
-      "prompt": null,
-      "summary": "The suite was named in the test plan with no cases and one budget that measured a component which does not exist. Now specified with three cases and budgets. P2-PERF-02 measured: describe 0.58ms in process vs 0.92ms over the pipe, impact 0.43ms vs 0.79ms, on a 50k-edge corpus, 30 warm samples, Release.",
-      "rationale": "A simplify: ceiling whose upgrade trigger points at an unspecified suite has no trigger. The boundary tax is ~0.35ms flat and reads as 1.6-1.8x only because the projections are sub-millisecond; against the 100ms describe budget that is 0.35 percent. P2-PERF-01 stays blocked behind Component 1. Scope: one client, one connection, no contention.",
       "artifacts": [
         "bench/AiDe.Bench/P2Perf.cs"
       ],
+      "datetime": "2026-08-28T16:39:16Z",
+      "git": {
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0019",
+      "kind": "design",
+      "prompt": null,
+      "rationale": "A simplify: ceiling whose upgrade trigger points at an unspecified suite has no trigger. The boundary tax is ~0.35ms flat and reads as 1.6-1.8x only because the projections are sub-millisecond; against the 100ms describe budget that is 0.35 percent. P2-PERF-01 stays blocked behind Component 1. Scope: one client, one connection, no contention.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "The suite was named in the test plan with no cases and one budget that measured a component which does not exist. Now specified with three cases and budgets. P2-PERF-02 measured: describe 0.58ms in process vs 0.92ms over the pipe, impact 0.43ms vs 0.79ms, on a 50k-edge corpus, 30 warm samples, Release.",
       "tags": [
         "phase-2",
         "performance"
       ],
-      "git": {
-        "before": null,
-        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "P2-PERF-01..03 specified; P2-PERF-02 measured — the daemon boundary costs ~0.35ms flat"
     },
     {
-      "id": "cl-0020",
-      "datetime": "2026-08-28T16:56:10Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "design",
-      "skill": null,
-      "title": "Containment spike: both options work — low-integrity sandbox and no-MSBuild extraction measured",
-      "prompt": null,
-      "summary": "A job object alone does not contain the D3 attack (4/4 vectors land). Low integrity plus a job object blocks all four and extraction still succeeds. A no-MSBuild path (project file parsed as data, Roslyn compiled directly) recovers 159 of 159 types on src/AiDe.Core in 359ms against MSBuildWorkspace's 2210ms, and never runs repository code.",
-      "rationale": "Option A's first run appeared to show low integrity breaks MSBuild; the real cause was the child inheriting an unwritable TEMP, and repointing TMP/TEMP fixed it entirely - a containment that fails environmentally is indistinguishable from one that cannot work. Option B's structural safety is bounded by project.assets.json, which is data but is produced by restore, which is itself MSBuild evaluation. Network egress under Option A is unmeasured; Option B's fidelity on ProjectReference, multi-targeting and custom globs is untested.",
       "artifacts": [
         "spikes/extraction-containment/RESULT.md"
       ],
+      "datetime": "2026-08-28T16:56:10Z",
+      "git": {
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0020",
+      "kind": "design",
+      "prompt": null,
+      "rationale": "Option A's first run appeared to show low integrity breaks MSBuild; the real cause was the child inheriting an unwritable TEMP, and repointing TMP/TEMP fixed it entirely - a containment that fails environmentally is indistinguishable from one that cannot work. Option B's structural safety is bounded by project.assets.json, which is data but is produced by restore, which is itself MSBuild evaluation. Network egress under Option A is unmeasured; Option B's fidelity on ProjectReference, multi-targeting and custom globs is untested.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "A job object alone does not contain the D3 attack (4/4 vectors land). Low integrity plus a job object blocks all four and extraction still succeeds. A no-MSBuild path (project file parsed as data, Roslyn compiled directly) recovers 159 of 159 types on src/AiDe.Core in 359ms against MSBuildWorkspace's 2210ms, and never runs repository code.",
       "tags": [
         "phase-2",
         "security"
       ],
-      "git": {
-        "before": null,
-        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Containment spike: both options work — low-integrity sandbox and no-MSBuild extraction measured"
     },
     {
-      "id": "cl-0021",
-      "datetime": "2026-08-28T17:01:55Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "architecture",
-      "skill": null,
-      "title": "Component 1 adopts Strategy 1: extraction never runs repository code; MSBuildWorkspace dropped",
-      "prompt": null,
-      "summary": "The Roslyn extractor reads the project file as data and compiles with Roslyn directly, always. MSBuildWorkspace is not used. Where package references cannot be resolved the projection discloses the omission rather than answering silently. The low-integrity sandbox (A2) is kept as a measured escape hatch, adopted only by a further decision that closes its network-egress gap.",
-      "rationale": "Strategy 1 is the only option where 'loading a repository never executes its code' stays literally true rather than conditional. It is 6.2x faster on the common path (359ms vs 2210ms) and its failure mode is a visible disclosed omission rather than a silent one, matching the precedent S1 set for absent generated symbols. Accepted risk: Option B's fidelity is measured on one project with no ProjectReference; multi-targeting, custom globs and Directory.Build.props are untested, and fidelity failures in an extractor are silent - so a fidelity spike against AiDe.App and a multi-targeted project is owed before the extractor ships.",
       "artifacts": [
         "docs/design/phase-2-real-code-and-terminal.md"
       ],
+      "datetime": "2026-08-28T17:01:55Z",
+      "git": {
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0021",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": "Strategy 1 is the only option where 'loading a repository never executes its code' stays literally true rather than conditional. It is 6.2x faster on the common path (359ms vs 2210ms) and its failure mode is a visible disclosed omission rather than a silent one, matching the precedent S1 set for absent generated symbols. Accepted risk: Option B's fidelity is measured on one project with no ProjectReference; multi-targeting, custom globs and Directory.Build.props are untested, and fidelity failures in an extractor are silent - so a fidelity spike against AiDe.App and a multi-targeted project is owed before the extractor ships.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "The Roslyn extractor reads the project file as data and compiles with Roslyn directly, always. MSBuildWorkspace is not used. Where package references cannot be resolved the projection discloses the omission rather than answering silently. The low-integrity sandbox (A2) is kept as a measured escape hatch, adopted only by a further decision that closes its network-egress gap.",
       "tags": [
         "phase-2",
         "security"
       ],
-      "git": {
-        "before": null,
-        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Component 1 adopts Strategy 1: extraction never runs repository code; MSBuildWorkspace dropped"
     },
     {
-      "id": "cl-0022",
-      "datetime": "2026-08-28T17:27:43Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "design",
-      "skill": null,
-      "title": "Component 1 contract rewritten against a measured prototype; scope grain is (project, target framework)",
-      "prompt": null,
-      "summary": "Option B measured 100% dependency-edge resolution and zero type loss against MSBuildWorkspace on four project shapes including ProjectReference, WPF and multi-targeting, at ~25x the speed. Contract rewritten: CSharpExtractor, one scope per (project, target framework), project file read as data, three named disclosure states.",
-      "rationale": "The scope grain changed from per-project to per-(project,TFM) because a multi-targeted project's #if-gated types differ between frameworks and a single scope would be silently wrong about the others. The spike's own first run reported 82-89% edge resolution, which was two harness defects - missing implicit usings (the SDK generates them into obj/, which the extractor deliberately does not read) and a WindowsBase 4.0 facade shadowing the real 10.0 assembly - not a limit of the approach; stopping at that number would probably have reversed the strategy. Measuring edges rather than types was decisive: a broken project reference leaves every local type intact and turns its edges into error types, which a type count scores as perfect.",
       "artifacts": [
         "spikes/extraction-fidelity/RESULT.md"
       ],
+      "datetime": "2026-08-28T17:27:43Z",
+      "git": {
+        "after": "a45ba05ab7f43b4d552a72954d076b78f1b6ac51",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0022",
+      "kind": "design",
+      "prompt": null,
+      "rationale": "The scope grain changed from per-project to per-(project,TFM) because a multi-targeted project's #if-gated types differ between frameworks and a single scope would be silently wrong about the others. The spike's own first run reported 82-89% edge resolution, which was two harness defects - missing implicit usings (the SDK generates them into obj/, which the extractor deliberately does not read) and a WindowsBase 4.0 facade shadowing the real 10.0 assembly - not a limit of the approach; stopping at that number would probably have reversed the strategy. Measuring edges rather than types was decisive: a broken project reference leaves every local type intact and turns its edges into error types, which a type count scores as perfect.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "Option B measured 100% dependency-edge resolution and zero type loss against MSBuildWorkspace on four project shapes including ProjectReference, WPF and multi-targeting, at ~25x the speed. Contract rewritten: CSharpExtractor, one scope per (project, target framework), project file read as data, three named disclosure states.",
       "tags": [
         "phase-2",
         "extraction"
       ],
-      "git": {
-        "before": null,
-        "after": "a45ba05ab7f43b4d552a72954d076b78f1b6ac51",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Component 1 contract rewritten against a measured prototype; scope grain is (project, target framework)"
     },
     {
-      "id": "cl-0023",
-      "datetime": "2026-08-28T17:33:41Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "design",
-      "skill": null,
-      "title": "P2-FOCUS-01/02/04 built at the host seam; P2-FOCUS-03 recorded as owed, not approximated",
-      "prompt": null,
-      "summary": "CanvasFocusRouter holds the focus policy in Core with no WPF dependency; workbench.focusCanvas (Ctrl+K, G) is in the catalog and routed through WorkbenchController. 12 tests. The graph canvas surface itself does not exist - no WebView2 reference in AiDe.App - so the command refuses and announces rather than being hidden.",
-      "rationale": "Splitting policy from mechanism lets the rules that do not need a window be tested without one; a rule that can only be tested with a real WebView2 running is a rule that stops being tested. P2-FOCUS-03 is deliberately NOT written against the fake: a keyboard-trap test that cannot fail for the reason it exists would report the trap as tested (DC-016). Keeping the command visible-and-refusing rather than hidden follows DC-011 - silence is indistinguishable from a broken key.",
       "artifacts": [
         "src/AiDe.Core/Workbench/CanvasFocusRouter.cs"
       ],
+      "datetime": "2026-08-28T17:33:41Z",
+      "git": {
+        "after": "a45ba05ab7f43b4d552a72954d076b78f1b6ac51",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0023",
+      "kind": "design",
+      "prompt": null,
+      "rationale": "Splitting policy from mechanism lets the rules that do not need a window be tested without one; a rule that can only be tested with a real WebView2 running is a rule that stops being tested. P2-FOCUS-03 is deliberately NOT written against the fake: a keyboard-trap test that cannot fail for the reason it exists would report the trap as tested (DC-016). Keeping the command visible-and-refusing rather than hidden follows DC-011 - silence is indistinguishable from a broken key.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "CanvasFocusRouter holds the focus policy in Core with no WPF dependency; workbench.focusCanvas (Ctrl+K, G) is in the catalog and routed through WorkbenchController. 12 tests. The graph canvas surface itself does not exist - no WebView2 reference in AiDe.App - so the command refuses and announces rather than being hidden.",
       "tags": [
         "phase-2",
         "focus"
       ],
-      "git": {
-        "before": null,
-        "after": "a45ba05ab7f43b4d552a72954d076b78f1b6ac51",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "P2-FOCUS-01/02/04 built at the host seam; P2-FOCUS-03 recorded as owed, not approximated"
     },
     {
-      "id": "cl-0024",
-      "datetime": "2026-08-28T17:43:08Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "design",
-      "skill": null,
-      "title": "Prompt dispatch crosses the boundary; a stale-epoch refusal would have killed the daemon (DC-020)",
-      "prompt": null,
-      "summary": "BoundaryDispatcher splits ADR-0010's two-phase receipt so the daemon owns durability and the shell owns the pty. dispatch.begin and dispatch.finalize registered; WorkspaceClient extended; 6 tests covering agreement, idempotency, retried-finalize, the shell-crash window, and the two checks that must stay on their own side of the boundary.",
-      "rationale": "D1 put terminals in the shell and the store in the daemon, so the two halves of a two-phase delivery are now in different processes. The session-binding check stays with the caller because the daemon has no session to check against - checking there would compare the caller's claim with itself. A test written to assert no attempt is recorded on a stale epoch instead brought the server down: the WorkspaceStoreException escaped Handle (which guards only decoding) and left IpcServer's listen loop, so one client with a stale epoch would have killed the daemon for every shell. Registered as DC-020 and fixed by mapping only WorkspaceStoreException - the type carrying a stable denial code - onto IpcResponse.Error.",
       "artifacts": [
         "src/AiDe.Core/Dispatch/BoundaryDispatcher.cs"
       ],
+      "datetime": "2026-08-28T17:43:08Z",
+      "git": {
+        "after": "a45ba05ab7f43b4d552a72954d076b78f1b6ac51",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0024",
+      "kind": "design",
+      "prompt": null,
+      "rationale": "D1 put terminals in the shell and the store in the daemon, so the two halves of a two-phase delivery are now in different processes. The session-binding check stays with the caller because the daemon has no session to check against - checking there would compare the caller's claim with itself. A test written to assert no attempt is recorded on a stale epoch instead brought the server down: the WorkspaceStoreException escaped Handle (which guards only decoding) and left IpcServer's listen loop, so one client with a stale epoch would have killed the daemon for every shell. Registered as DC-020 and fixed by mapping only WorkspaceStoreException - the type carrying a stable denial code - onto IpcResponse.Error.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "BoundaryDispatcher splits ADR-0010's two-phase receipt so the daemon owns durability and the shell owns the pty. dispatch.begin and dispatch.finalize registered; WorkspaceClient extended; 6 tests covering agreement, idempotency, retried-finalize, the shell-crash window, and the two checks that must stay on their own side of the boundary.",
       "tags": [
         "phase-2",
         "dispatch"
       ],
-      "git": {
-        "before": null,
-        "after": "a45ba05ab7f43b4d552a72954d076b78f1b6ac51",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Prompt dispatch crosses the boundary; a stale-epoch refusal would have killed the daemon (DC-020)"
     },
     {
-      "id": "cl-0025",
-      "datetime": "2026-08-28T17:43:08Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "design",
-      "skill": null,
-      "title": "P2-PERF-03 measured: 1 MiB/s held for 10s with drift tracked",
-      "prompt": null,
-      "summary": "Sustained 1.00 MiB/s through the VT parser and screen model for 10s: chunk parse p50 1.05ms, p95 1.80ms, per-chunk drift +0.293ms first-to-last quarter, unthrottled ceiling 77 MiB/s.",
-      "rationale": "A burst measures the fast path; holding the rate is what exposes accumulation, which is why the gate fails on per-chunk growth rather than only on absolute latency. S3's 2361x figure is scanning only - this measures scan plus screen-model application - so S3's number must never be quoted as end-to-end terminal throughput. The draw half stays in the App tests because it needs a dispatcher and a visual tree; this number is not a frame time.",
       "artifacts": [
         "bench/AiDe.Bench/TerminalThroughput.cs"
       ],
+      "datetime": "2026-08-28T17:43:08Z",
+      "git": {
+        "after": "a45ba05ab7f43b4d552a72954d076b78f1b6ac51",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0025",
+      "kind": "design",
+      "prompt": null,
+      "rationale": "A burst measures the fast path; holding the rate is what exposes accumulation, which is why the gate fails on per-chunk growth rather than only on absolute latency. S3's 2361x figure is scanning only - this measures scan plus screen-model application - so S3's number must never be quoted as end-to-end terminal throughput. The draw half stays in the App tests because it needs a dispatcher and a visual tree; this number is not a frame time.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "Sustained 1.00 MiB/s through the VT parser and screen model for 10s: chunk parse p50 1.05ms, p95 1.80ms, per-chunk drift +0.293ms first-to-last quarter, unthrottled ceiling 77 MiB/s.",
       "tags": [
         "phase-2",
         "performance"
       ],
-      "git": {
-        "before": null,
-        "after": "a45ba05ab7f43b4d552a72954d076b78f1b6ac51",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "P2-PERF-03 measured: 1 MiB/s held for 10s with drift tracked"
     },
     {
-      "id": "cl-0026",
-      "datetime": "2026-08-28T18:26:17Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "design",
-      "skill": null,
-      "title": "P2-FOCUS complete: the canvas ships and the keyboard-trap test runs out of process",
-      "prompt": null,
-      "summary": "CanvasSurface (windowed WebView2, ADR-0015) with inlined boundary handlers, CanvasFocusTarget over the HwndHost, and the canvas surface kind wired into the shell. P2-FOCUS-01..04 all pass; -03 runs out of process via tests/AiDe.App.CanvasProbe.",
-      "rationale": "Two input routes failed before the third worked, and both failed with the SAME symptom as a genuine keyboard trap: a posted WM_KEYDOWN never reaches Chromium's key handling, and SendInput goes to the foreground window which no test host can hold. Diagnosed rather than guessed - the page reported activeElement=first while window.__tabsSeen was 0, proving focus had landed and the keys had not arrived. A trap test that fails because input never arrived is DC-016 wearing the right label and would have been 'fixed' by weakening the assertion. Residual: injecting at the renderer's input layer does not cover the OS-to-browser hop.",
       "artifacts": [
         "src/AiDe.App/Workbench/CanvasSurface.cs"
       ],
+      "datetime": "2026-08-28T18:26:17Z",
+      "git": {
+        "after": "78777c88f521256134172e627dc46a78ebd6feff",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0026",
+      "kind": "design",
+      "prompt": null,
+      "rationale": "Two input routes failed before the third worked, and both failed with the SAME symptom as a genuine keyboard trap: a posted WM_KEYDOWN never reaches Chromium's key handling, and SendInput goes to the foreground window which no test host can hold. Diagnosed rather than guessed - the page reported activeElement=first while window.__tabsSeen was 0, proving focus had landed and the keys had not arrived. A trap test that fails because input never arrived is DC-016 wearing the right label and would have been 'fixed' by weakening the assertion. Residual: injecting at the renderer's input layer does not cover the OS-to-browser hop.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "CanvasSurface (windowed WebView2, ADR-0015) with inlined boundary handlers, CanvasFocusTarget over the HwndHost, and the canvas surface kind wired into the shell. P2-FOCUS-01..04 all pass; -03 runs out of process via tests/AiDe.App.CanvasProbe.",
       "tags": [
         "phase-2",
         "focus"
       ],
-      "git": {
-        "before": null,
-        "after": "78777c88f521256134172e627dc46a78ebd6feff",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "P2-FOCUS complete: the canvas ships and the keyboard-trap test runs out of process"
     },
     {
-      "id": "cl-0027",
-      "datetime": "2026-08-28T18:26:37Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "architecture",
-      "skill": null,
-      "title": "CSharpExtractor ships: real C# symbols with no MSBuild, disclosures as facts",
-      "prompt": null,
-      "summary": "CSharpProjectReader reads the project file as data and produces a Roslyn compilation; CSharpExtractor emits has_type, declared_in, inherits, implements and depends_on assertions plus disclosure facts on the scope node. 11 tests. P2-PERF-01 measured: AiDe.Core settles in 723ms p95 against a 10s budget, 1,281 assertions.",
-      "rationale": "Disclosures are emitted as ordinary facts on a scope node rather than a new table, keeping the Phase-2 decision that no new fact table is added - and making them queryable by every existing projection for free. An edge that did not resolve is NOT emitted: labelling it Inferred would be worse than silence because the name is whatever the source typed and the edge would point at a node that may not exist. Complete stays true when extraction succeeds, because the disclosures are IN the snapshot rather than missing from it; marking it incomplete would quarantine every unrestored project, which is most of them on a fresh clone.",
       "artifacts": [
         "src/AiDe.Core/Extraction/CSharpExtractor.cs"
       ],
+      "datetime": "2026-08-28T18:26:37Z",
+      "git": {
+        "after": "78777c88f521256134172e627dc46a78ebd6feff",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0027",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": "Disclosures are emitted as ordinary facts on a scope node rather than a new table, keeping the Phase-2 decision that no new fact table is added - and making them queryable by every existing projection for free. An edge that did not resolve is NOT emitted: labelling it Inferred would be worse than silence because the name is whatever the source typed and the edge would point at a node that may not exist. Complete stays true when extraction succeeds, because the disclosures are IN the snapshot rather than missing from it; marking it incomplete would quarantine every unrestored project, which is most of them on a fresh clone.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "CSharpProjectReader reads the project file as data and produces a Roslyn compilation; CSharpExtractor emits has_type, declared_in, inherits, implements and depends_on assertions plus disclosure facts on the scope node. 11 tests. P2-PERF-01 measured: AiDe.Core settles in 723ms p95 against a 10s budget, 1,281 assertions.",
       "tags": [
         "phase-2",
         "extraction"
       ],
-      "git": {
-        "before": null,
-        "after": "78777c88f521256134172e627dc46a78ebd6feff",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "CSharpExtractor ships: real C# symbols with no MSBuild, disclosures as facts"
     },
     {
-      "id": "cl-0028",
-      "datetime": "2026-08-28T18:26:37Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "design",
-      "skill": null,
-      "title": "Prompt dispatch reaches the UI; DC-020's control widened to every operation",
-      "prompt": null,
-      "summary": "PromptBar stages a prompt for the focused terminal and reports the receipt, with a distinct sentence per DispatchState and DeliveryUnknown never shown as success. workbench.dispatchPrompt (Ctrl+K, P). Every registered IPC operation now goes through Refusable, not just dispatch.",
-      "rationale": "The receipt is what the UI exists to surface: a prompt delivered to an agent session cannot be undone, so DeliveryUnknown must read as unknown and warn about resending rather than rounding to sent. A dispatch that threw is not a dispatch that did not happen - the write-ahead attempt may already be durable - so the UI says 'did not complete, check the receipt' rather than 'failed'. DC-020's control was widened past the operations that needed it: no read projection throws a domain refusal today, and nothing would have failed if one were added.",
       "artifacts": [
         "src/AiDe.App/Workbench/PromptBar.cs"
       ],
+      "datetime": "2026-08-28T18:26:37Z",
+      "git": {
+        "after": "78777c88f521256134172e627dc46a78ebd6feff",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0028",
+      "kind": "design",
+      "prompt": null,
+      "rationale": "The receipt is what the UI exists to surface: a prompt delivered to an agent session cannot be undone, so DeliveryUnknown must read as unknown and warn about resending rather than rounding to sent. A dispatch that threw is not a dispatch that did not happen - the write-ahead attempt may already be durable - so the UI says 'did not complete, check the receipt' rather than 'failed'. DC-020's control was widened past the operations that needed it: no read projection throws a domain refusal today, and nothing would have failed if one were added.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "PromptBar stages a prompt for the focused terminal and reports the receipt, with a distinct sentence per DispatchState and DeliveryUnknown never shown as success. workbench.dispatchPrompt (Ctrl+K, P). Every registered IPC operation now goes through Refusable, not just dispatch.",
       "tags": [
         "phase-2",
         "dispatch"
       ],
-      "git": {
-        "before": null,
-        "after": "78777c88f521256134172e627dc46a78ebd6feff",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Prompt dispatch reaches the UI; DC-020's control widened to every operation"
     },
     {
-      "id": "cl-0029",
-      "datetime": "2026-08-28T18:33:35Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "design",
-      "skill": null,
-      "title": "The graph canvas joins the default layout as a tab in the primary stack",
-      "prompt": null,
-      "summary": "Layout.Default gains a 'graph' canvas surface alongside Explore and Domain. Test fixtures enumerating the shipped surface set were updated, and WorkbenchAdapterTests now derives its expected count from the model instead of hardcoding it.",
-      "rationale": "Without this the canvas is unreachable: there is no command to open a surface, so a built-but-unlisted canvas would be dead code the user cannot see. A tab in the primary stack rather than a fourth pane, because it is an alternative reading of the same evidence Explore shows and a default layout that opens a WebView2 in its own pane pays for the browser on every start. The hardcoded count of 4 in WorkbenchAdapterTests was replaced by one derived from Layout.Default: the assertion is 'every surface is projected', and a typed count turns adding a surface into a failure that says nothing about projection.",
       "artifacts": [
         "src/AiDe.Core/Workbench/LayoutModel.cs"
       ],
+      "datetime": "2026-08-28T18:33:35Z",
+      "git": {
+        "after": "34bcab91205a203402b00a487c3a7c49357b2234",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0029",
+      "kind": "design",
+      "prompt": null,
+      "rationale": "Without this the canvas is unreachable: there is no command to open a surface, so a built-but-unlisted canvas would be dead code the user cannot see. A tab in the primary stack rather than a fourth pane, because it is an alternative reading of the same evidence Explore shows and a default layout that opens a WebView2 in its own pane pays for the browser on every start. The hardcoded count of 4 in WorkbenchAdapterTests was replaced by one derived from Layout.Default: the assertion is 'every surface is projected', and a typed count turns adding a surface into a failure that says nothing about projection.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "Layout.Default gains a 'graph' canvas surface alongside Explore and Domain. Test fixtures enumerating the shipped surface set were updated, and WorkbenchAdapterTests now derives its expected count from the model instead of hardcoding it.",
       "tags": [
         "phase-2",
         "ui"
       ],
-      "git": {
-        "before": null,
-        "after": "34bcab91205a203402b00a487c3a7c49357b2234",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "The graph canvas joins the default layout as a tab in the primary stack"
     },
     {
-      "id": "cl-0030",
-      "datetime": "2026-08-28T19:33:14Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "architecture",
-      "skill": null,
-      "title": "Phase 2 exits: all three components built, measured, and gated PASS-WITH-CONDITIONS",
-      "prompt": null,
-      "summary": "Extractor wired to the shell (Ctrl+K, I) with one scope per (project, framework) and per-scope quarantine; canvas renders real projection data with omissions and disclosures shown; snapshot swap driven by the real drag; DC-020's control widened; Phase-2 exit review written. 541 tests, four gates green, all three perf budgets met.",
-      "rationale": "Two conditions attach to the pass. The Option-B fidelity spike must be extended to shared projects and Directory.Build.props before another repository is indexed in anger, because a fidelity failure in an extractor is silent and the 100 percent result comes from four shapes that do not include them. ADR-0010 stays proposed until dispatch runs against a real agent session rather than a terminal. Discovery gained a scope for unreadable projects after a test found they VANISHED entirely - not indexed, not failed, not counted - which is the silent incompleteness this design exists to prevent.",
       "artifacts": [
         "docs/reviews/phase-2-exit.md"
       ],
+      "datetime": "2026-08-28T19:33:14Z",
+      "git": {
+        "after": "f415e024016455119fe36d82ef72e9dfbd1f209d",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0030",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": "Two conditions attach to the pass. The Option-B fidelity spike must be extended to shared projects and Directory.Build.props before another repository is indexed in anger, because a fidelity failure in an extractor is silent and the 100 percent result comes from four shapes that do not include them. ADR-0010 stays proposed until dispatch runs against a real agent session rather than a terminal. Discovery gained a scope for unreadable projects after a test found they VANISHED entirely - not indexed, not failed, not counted - which is the silent incompleteness this design exists to prevent.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "Extractor wired to the shell (Ctrl+K, I) with one scope per (project, framework) and per-scope quarantine; canvas renders real projection data with omissions and disclosures shown; snapshot swap driven by the real drag; DC-020's control widened; Phase-2 exit review written. 541 tests, four gates green, all three perf budgets met.",
       "tags": [
         "phase-2",
         "review"
       ],
-      "git": {
-        "before": null,
-        "after": "f415e024016455119fe36d82ef72e9dfbd1f209d",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Phase 2 exits: all three components built, measured, and gated PASS-WITH-CONDITIONS"
     },
     {
-      "id": "cl-0031",
-      "datetime": "2026-08-28T20:08:27Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "design",
-      "skill": null,
-      "title": "Fidelity extended to an external repository: two real gaps found and closed",
-      "prompt": null,
-      "summary": "Measured against TheTerrace (811 C# files, Directory.Build.props, central package management, Blazor Web SDK). Two gaps closed: inherited build properties, and the ASP.NET Core reference pack. Result: no worse than MSBuildWorkspace on any project measured; TheTerrace itself now 100 percent edge resolution over 17,501 edges.",
-      "rationale": "AiDe's own projects were the corpus the extractor was built against, which makes them the worst possible evidence that it works. The external repository immediately exposed what its own could not: REHEARSAL is defined in Directory.Build.props so five test classes were compiled out and disappeared from the graph entirely, and Microsoft.NET.Sdk.Web implies a framework reference that no NuGet package supplies. The verdict now compares against the BASELINE rather than perfection, because MSBuildWorkspace carries 46 bad edges on one of these projects itself and 'worse than 100 percent' would condemn Option B for a limitation both share.",
       "artifacts": [
         "spikes/extraction-fidelity/RESULT-theterrace.txt"
       ],
+      "datetime": "2026-08-28T20:08:27Z",
+      "git": {
+        "after": "a77bb092728cab170e5043baddb06fac06b91740",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0031",
+      "kind": "design",
+      "prompt": null,
+      "rationale": "AiDe's own projects were the corpus the extractor was built against, which makes them the worst possible evidence that it works. The external repository immediately exposed what its own could not: REHEARSAL is defined in Directory.Build.props so five test classes were compiled out and disappeared from the graph entirely, and Microsoft.NET.Sdk.Web implies a framework reference that no NuGet package supplies. The verdict now compares against the BASELINE rather than perfection, because MSBuildWorkspace carries 46 bad edges on one of these projects itself and 'worse than 100 percent' would condemn Option B for a limitation both share.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "Measured against TheTerrace (811 C# files, Directory.Build.props, central package management, Blazor Web SDK). Two gaps closed: inherited build properties, and the ASP.NET Core reference pack. Result: no worse than MSBuildWorkspace on any project measured; TheTerrace itself now 100 percent edge resolution over 17,501 edges.",
       "tags": [
         "phase-2",
         "extraction"
       ],
-      "git": {
-        "before": null,
-        "after": "a77bb092728cab170e5043baddb06fac06b91740",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Fidelity extended to an external repository: two real gaps found and closed"
     },
     {
-      "id": "cl-0032",
-      "datetime": "2026-08-28T20:08:27Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "design",
-      "skill": null,
-      "title": "Phase 3 opened and grounded: the planned DDL parser is replaced by an EF-migration reader",
-      "prompt": null,
-      "summary": "Phase-3 design written against a real repository rather than the phase plan. TheTerrace has zero .sql files and 63 EF Core migration classes, so the planned DDL parser would have had no corpus. Three components: Bicep-as-data, EF-migration schema reader, and the joins with their confidence rules.",
-      "rationale": "Checking the plan against a repository that was not written for this tool changed the component list before any code existed - the failure the Phase-2 spikes were introduced to prevent. Both new extractors inherit Phase 2's constraint that a build is never invoked: bicep build is a compiler on repository-supplied input, which is the D3 shape again. Confidence is the deliverable rather than the edge, because an inferred join across three artifacts looks more impressive than a verified one inside one and is exactly what a user would act on without checking.",
       "artifacts": [
         "docs/design/phase-3-architecture-data-infra.md"
       ],
+      "datetime": "2026-08-28T20:08:27Z",
+      "git": {
+        "after": "a77bb092728cab170e5043baddb06fac06b91740",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0032",
+      "kind": "design",
+      "prompt": null,
+      "rationale": "Checking the plan against a repository that was not written for this tool changed the component list before any code existed - the failure the Phase-2 spikes were introduced to prevent. Both new extractors inherit Phase 2's constraint that a build is never invoked: bicep build is a compiler on repository-supplied input, which is the D3 shape again. Confidence is the deliverable rather than the edge, because an inferred join across three artifacts looks more impressive than a verified one inside one and is exactly what a user would act on without checking.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "Phase-3 design written against a real repository rather than the phase plan. TheTerrace has zero .sql files and 63 EF Core migration classes, so the planned DDL parser would have had no corpus. Three components: Bicep-as-data, EF-migration schema reader, and the joins with their confidence rules.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "a77bb092728cab170e5043baddb06fac06b91740",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Phase 3 opened and grounded: the planned DDL parser is replaced by an EF-migration reader"
     },
     {
-      "id": "cl-0033",
-      "datetime": "2026-08-28T20:39:23Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "design",
-      "skill": null,
-      "title": "Phase-3 spikes clear: Bicep readable as data, EF migrations are viable schema evidence",
-      "prompt": null,
-      "summary": "Bicep declarative read recovers 24/24 resources, 19/19 types and 18/18 parameters against an az bicep build oracle. The EF migration fold recovers 62/62 tables EF maps in 99ms, plus two the model does not map. Both confirm Phase-3 components 1 and 2 as designed.",
-      "rationale": "Both spikes existed to test a CONTRACT, not an optimisation: the product may not run bicep build or dotnet ef for the same reason it may not run MSBuild, so if the declarative read had been insufficient the design would have had to change rather than the principle. The EF result is asymmetric on purpose - the fold found two tables EF's own snapshot omits, created by a migration's Up and never dropped, so the fold is more correct than its oracle about what the database contains. Treating that as an error would have taught the component to hide real tables. Residual: raw Sql() statements are not read, and 8 of 24 Bicep names are expressions that stay unresolved and disclosed.",
       "artifacts": [
         "spikes/ef-migration-schema/RESULT.md"
       ],
+      "datetime": "2026-08-28T20:39:23Z",
+      "git": {
+        "after": "e8f521d185d7c66ecf1916a89535a698ece80764",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0033",
+      "kind": "design",
+      "prompt": null,
+      "rationale": "Both spikes existed to test a CONTRACT, not an optimisation: the product may not run bicep build or dotnet ef for the same reason it may not run MSBuild, so if the declarative read had been insufficient the design would have had to change rather than the principle. The EF result is asymmetric on purpose - the fold found two tables EF's own snapshot omits, created by a migration's Up and never dropped, so the fold is more correct than its oracle about what the database contains. Treating that as an error would have taught the component to hide real tables. Residual: raw Sql() statements are not read, and 8 of 24 Bicep names are expressions that stay unresolved and disclosed.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "Bicep declarative read recovers 24/24 resources, 19/19 types and 18/18 parameters against an az bicep build oracle. The EF migration fold recovers 62/62 tables EF maps in 99ms, plus two the model does not map. Both confirm Phase-3 components 1 and 2 as designed.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "e8f521d185d7c66ecf1916a89535a698ece80764",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Phase-3 spikes clear: Bicep readable as data, EF migrations are viable schema evidence"
     },
     {
-      "id": "cl-0034",
-      "datetime": "2026-08-28T20:39:23Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "architecture",
-      "skill": null,
-      "title": "ADR-0016 proposed: bounded contexts are declared in one validated file, never inferred",
-      "prompt": null,
-      "summary": "A committed docs/bounded-contexts.yaml authored by a human and validated against extracted symbols: unknown namespaces fail, coverage is reported, and overlap is an error rather than a merge. Folder convention rejected on measured grounds.",
-      "rationale": "The corpus repository's obvious candidate - src/TheTerrace/Features - has 31 folders that are UI features, not bounded contexts: AskAi, Ai and Conversation almost certainly share one model. Inferring 31 contexts from 31 folders would produce a diagram that looks authoritative and teaches the user something false about their own system, which is worse than a missing one because a wrong boundary is harder to notice. Attributes in code were rejected because they require editing the analysed repository to analyse it. STATUS PROPOSED: this is the one Phase-3 input with no evidence behind it and needs the product owner's confirmation.",
       "artifacts": [
         "docs/adr/0016-bounded-context-declaration.md"
       ],
+      "datetime": "2026-08-28T20:39:23Z",
+      "git": {
+        "after": "e8f521d185d7c66ecf1916a89535a698ece80764",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0034",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": "The corpus repository's obvious candidate - src/TheTerrace/Features - has 31 folders that are UI features, not bounded contexts: AskAi, Ai and Conversation almost certainly share one model. Inferring 31 contexts from 31 folders would produce a diagram that looks authoritative and teaches the user something false about their own system, which is worse than a missing one because a wrong boundary is harder to notice. Attributes in code were rejected because they require editing the analysed repository to analyse it. STATUS PROPOSED: this is the one Phase-3 input with no evidence behind it and needs the product owner's confirmation.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "A committed docs/bounded-contexts.yaml authored by a human and validated against extracted symbols: unknown namespaces fail, coverage is reported, and overlap is an error rather than a merge. Folder convention rejected on measured grounds.",
       "tags": [
         "phase-3",
         "ddd"
       ],
-      "git": {
-        "before": null,
-        "after": "e8f521d185d7c66ecf1916a89535a698ece80764",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "ADR-0016 proposed: bounded contexts are declared in one validated file, never inferred"
     },
     {
-      "id": "cl-0035",
-      "datetime": "2026-08-28T20:39:23Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "architecture",
-      "skill": null,
-      "title": "ADR-0010 promoted to accepted: dispatch proven against a live session",
-      "prompt": null,
-      "summary": "DispatchLiveSessionTests runs a real daemon over a real pipe, dispatches to a real ConPTY PowerShell, and requires a unique marker to come back OUT of the terminal before passing. Also added workspace.open (Ctrl+K, O) so a workspace can be chosen rather than only inherited from an environment variable.",
-      "rationale": "The existing dispatch tests wrote to a FIXTURE session, so they proved the receipt consistent with itself and said nothing about whether an accepted prompt reached a process that could act on it. A receipt alone cannot distinguish delivered from written-into-a-void; the marker can. Residual stated rather than closed: the live session is a shell, not an agent CLI, so agent-specific behaviour belongs to the session adapter (ADR-0007) rather than to this receipt - and if dispatching to a real agent CLI later shows the receipt itself must change, this decision is the one to revisit.",
       "artifacts": [
         "docs/adr/0010-two-phase-dispatch-receipt.md"
       ],
+      "datetime": "2026-08-28T20:39:23Z",
+      "git": {
+        "after": "e8f521d185d7c66ecf1916a89535a698ece80764",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0035",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": "The existing dispatch tests wrote to a FIXTURE session, so they proved the receipt consistent with itself and said nothing about whether an accepted prompt reached a process that could act on it. A receipt alone cannot distinguish delivered from written-into-a-void; the marker can. Residual stated rather than closed: the live session is a shell, not an agent CLI, so agent-specific behaviour belongs to the session adapter (ADR-0007) rather than to this receipt - and if dispatching to a real agent CLI later shows the receipt itself must change, this decision is the one to revisit.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "DispatchLiveSessionTests runs a real daemon over a real pipe, dispatches to a real ConPTY PowerShell, and requires a unique marker to come back OUT of the terminal before passing. Also added workspace.open (Ctrl+K, O) so a workspace can be chosen rather than only inherited from an environment variable.",
       "tags": [
         "phase-2",
         "dispatch"
       ],
-      "git": {
-        "before": null,
-        "after": "e8f521d185d7c66ecf1916a89535a698ece80764",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "ADR-0010 promoted to accepted: dispatch proven against a live session"
     },
     {
-      "id": "cl-0036",
-      "datetime": "2026-08-28T21:16:30Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "architecture",
-      "skill": null,
-      "title": "ADR-0016 accepted: bounded contexts declared in one validated file",
-      "prompt": null,
-      "summary": "Promoted from proposed to accepted on the product owner's confirmation. A committed docs/bounded-contexts.yaml validated against extracted symbols; unknown namespaces fail, coverage is reported, overlap is an error.",
-      "rationale": "Raised as proposed because it is the one Phase-3 input evidence cannot decide, and recorded as a judgement made once rather than a finding so a later reader is not misled about its basis.",
       "artifacts": [
         "docs/adr/0016-bounded-context-declaration.md"
       ],
+      "datetime": "2026-08-28T21:16:30Z",
+      "git": {
+        "after": "46598e7812ea9bfe854ead3abeaf8e53fe7c8450",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0036",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": "Raised as proposed because it is the one Phase-3 input evidence cannot decide, and recorded as a judgement made once rather than a finding so a later reader is not misled about its basis.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "Promoted from proposed to accepted on the product owner's confirmation. A committed docs/bounded-contexts.yaml validated against extracted symbols; unknown namespaces fail, coverage is reported, overlap is an error.",
       "tags": [
         "phase-3",
         "ddd"
       ],
-      "git": {
-        "before": null,
-        "after": "46598e7812ea9bfe854ead3abeaf8e53fe7c8450",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "ADR-0016 accepted: bounded contexts declared in one validated file"
     },
     {
-      "id": "cl-0037",
-      "datetime": "2026-08-28T21:16:30Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "design",
-      "skill": null,
-      "title": "Phase-3 components 1 and 2 built; joins computed with confidence as the deliverable",
-      "prompt": null,
-      "summary": "BicepExtractor and EfSchemaExtractor ship, wired into discovery and the composite router. JoinProjection computes code-to-schema, schema-to-infrastructure and code-to-infrastructure edges, each carrying how it was established. TheTerrace now indexes 7 scopes and 12,034 assertions with five disclosures.",
-      "rationale": "Joins are computed rather than stored: writing a derived claim back as a fact would put two definitions of one quantity in the store and they would drift the first time an extractor changed. A convention-derived join is Inferred however obvious it looks, and no join is made on an unresolved Bicep name at all - the gap is disclosed instead. Indexing TheTerrace exposed a defect the fidelity work could not: api_version put dates in the graph and resource_name_expression put unevaluated strings there, because every assertion object was being upserted as a node. The predicate rule now lives in one place used by both ingest and search - the first fix touched only ingest and search kept returning the junk, which is two places deciding the same thing with one of them wrong.",
       "artifacts": [
         "src/AiDe.Core/Projections/JoinProjection.cs"
       ],
+      "datetime": "2026-08-28T21:16:30Z",
+      "git": {
+        "after": "46598e7812ea9bfe854ead3abeaf8e53fe7c8450",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0037",
+      "kind": "design",
+      "prompt": null,
+      "rationale": "Joins are computed rather than stored: writing a derived claim back as a fact would put two definitions of one quantity in the store and they would drift the first time an extractor changed. A convention-derived join is Inferred however obvious it looks, and no join is made on an unresolved Bicep name at all - the gap is disclosed instead. Indexing TheTerrace exposed a defect the fidelity work could not: api_version put dates in the graph and resource_name_expression put unevaluated strings there, because every assertion object was being upserted as a node. The predicate rule now lives in one place used by both ingest and search - the first fix touched only ingest and search kept returning the junk, which is two places deciding the same thing with one of them wrong.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "BicepExtractor and EfSchemaExtractor ship, wired into discovery and the composite router. JoinProjection computes code-to-schema, schema-to-infrastructure and code-to-infrastructure edges, each carrying how it was established. TheTerrace now indexes 7 scopes and 12,034 assertions with five disclosures.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "46598e7812ea9bfe854ead3abeaf8e53fe7c8450",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Phase-3 components 1 and 2 built; joins computed with confidence as the deliverable"
     },
     {
-      "id": "cl-0038",
-      "datetime": "2026-08-28T21:16:30Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "design",
-      "skill": null,
-      "title": "Agent dispatch measured: the receipt is right and agents have no readiness signal",
-      "prompt": null,
-      "summary": "Dispatch into a real claude CLI records PtyWriteAccepted and the agent never answers, because Claude Code opens on a modal trust gate that consumes the prompt. Reproduced in two working directories. ADR-0010's residual is re-characterised rather than closed.",
-      "rationale": "The protocol behaved exactly as designed: a write WAS accepted, bytes reached the pty, and the receipt never claimed delivery to an agent because it never claims that - the independent marker check caught the difference. The gap is that an agent CLI has no equivalent of OSC 133: showing a trust gate, authenticating, mid-response and ready all look identical from outside, and a prompt dispatched into any of the first three is silently consumed. That is ADR-0007's contract to grow, with a refusal when readiness cannot be established. The trust dialog was deliberately NOT auto-confirmed - that would be the tool answering a safety question on the user's behalf, and a green result bought that way is worse than a red one.",
       "artifacts": [
         "spikes/agent-dispatch/RESULT.md"
       ],
+      "datetime": "2026-08-28T21:16:30Z",
+      "git": {
+        "after": "46598e7812ea9bfe854ead3abeaf8e53fe7c8450",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0038",
+      "kind": "design",
+      "prompt": null,
+      "rationale": "The protocol behaved exactly as designed: a write WAS accepted, bytes reached the pty, and the receipt never claimed delivery to an agent because it never claims that - the independent marker check caught the difference. The gap is that an agent CLI has no equivalent of OSC 133: showing a trust gate, authenticating, mid-response and ready all look identical from outside, and a prompt dispatched into any of the first three is silently consumed. That is ADR-0007's contract to grow, with a refusal when readiness cannot be established. The trust dialog was deliberately NOT auto-confirmed - that would be the tool answering a safety question on the user's behalf, and a green result bought that way is worse than a red one.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "Dispatch into a real claude CLI records PtyWriteAccepted and the agent never answers, because Claude Code opens on a modal trust gate that consumes the prompt. Reproduced in two working directories. ADR-0010's residual is re-characterised rather than closed.",
       "tags": [
         "phase-2",
         "dispatch"
       ],
-      "git": {
-        "before": null,
-        "after": "46598e7812ea9bfe854ead3abeaf8e53fe7c8450",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Agent dispatch measured: the receipt is right and agents have no readiness signal"
     },
     {
-      "id": "cl-0039",
-      "datetime": "2026-08-28T22:15:43Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "design",
-      "skill": null,
-      "title": "Dispatch refuses when session readiness cannot be established (ADR-0007)",
-      "prompt": null,
-      "summary": "SessionReadiness is three-valued - Ready, NotReady, Unknown - and BoundaryDispatcher refuses anything but Ready, before the write-ahead so a refusal leaves no durable attempt. Readiness evidence today means shell integration: OSC 133 signed with the session nonce.",
-      "rationale": "Unknown and NotReady are different situations with different correct responses, and collapsing them is how a prompt gets sent into a dialog box - measured against a real agent CLI whose trust gate consumed the prompt. Derived output timing deliberately does not count as evidence: a quiet agent mid-thought looks exactly like an idle one. The refusal happens before anything is made durable, so there is no Pending attempt to sweep and a retry once ready is a first attempt rather than a duplicate.",
       "artifacts": [
         "src/AiDe.Core/Dispatch/SessionReadiness.cs"
       ],
+      "datetime": "2026-08-28T22:15:43Z",
+      "git": {
+        "after": "0f4223c3b22d86a4df15b551be43bd62dc351104",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0039",
+      "kind": "design",
+      "prompt": null,
+      "rationale": "Unknown and NotReady are different situations with different correct responses, and collapsing them is how a prompt gets sent into a dialog box - measured against a real agent CLI whose trust gate consumed the prompt. Derived output timing deliberately does not count as evidence: a quiet agent mid-thought looks exactly like an idle one. The refusal happens before anything is made durable, so there is no Pending attempt to sweep and a retry once ready is a first attempt rather than a duplicate.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "SessionReadiness is three-valued - Ready, NotReady, Unknown - and BoundaryDispatcher refuses anything but Ready, before the write-ahead so a refusal leaves no durable attempt. Readiness evidence today means shell integration: OSC 133 signed with the session nonce.",
       "tags": [
         "phase-2",
         "dispatch"
       ],
-      "git": {
-        "before": null,
-        "after": "0f4223c3b22d86a4df15b551be43bd62dc351104",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Dispatch refuses when session readiness cannot be established (ADR-0007)"
     },
     {
-      "id": "cl-0040",
-      "datetime": "2026-08-28T22:15:43Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "design",
-      "skill": null,
-      "title": "Bounded contexts load and validate; TheTerrace's map covers 68% of its declared symbols",
-      "prompt": null,
-      "summary": "BoundedContextReader loads a deliberately small YAML subset, validates every include pattern against extracted symbols, treats overlap as an error and reports coverage. TheTerrace's authored map: 5 contexts, 68% of 1,432 declared symbols, 459 deliberately uncovered.",
-      "rationale": "Two corrections came from first real use. The subset reader rejected the first genuine map because it used folded block scalars - that is the simplify: marker's named upgrade trigger firing rather than the parser growing on convenience, so folded scalars are supported and anchors and nested maps are still rejected by name. And coverage was first computed over every node in the graph, reporting 52 percent of 2,086 symbols with a denominator that included AngleSharp and Azure package types nobody can assign to a context; it is now over subjects the repository DECLARES, which is 68 percent of 1,432. A percentage with the wrong denominator is a confident wrong number, and coverage is exactly the figure someone would quote.",
       "artifacts": [
         "src/AiDe.Core/Extraction/BoundedContextMap.cs"
       ],
+      "datetime": "2026-08-28T22:15:43Z",
+      "git": {
+        "after": "0f4223c3b22d86a4df15b551be43bd62dc351104",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0040",
+      "kind": "design",
+      "prompt": null,
+      "rationale": "Two corrections came from first real use. The subset reader rejected the first genuine map because it used folded block scalars - that is the simplify: marker's named upgrade trigger firing rather than the parser growing on convenience, so folded scalars are supported and anchors and nested maps are still rejected by name. And coverage was first computed over every node in the graph, reporting 52 percent of 2,086 symbols with a denominator that included AngleSharp and Azure package types nobody can assign to a context; it is now over subjects the repository DECLARES, which is 68 percent of 1,432. A percentage with the wrong denominator is a confident wrong number, and coverage is exactly the figure someone would quote.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "BoundedContextReader loads a deliberately small YAML subset, validates every include pattern against extracted symbols, treats overlap as an error and reports coverage. TheTerrace's authored map: 5 contexts, 68% of 1,432 declared symbols, 459 deliberately uncovered.",
       "tags": [
         "phase-3",
         "ddd"
       ],
-      "git": {
-        "before": null,
-        "after": "0f4223c3b22d86a4df15b551be43bd62dc351104",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Bounded contexts load and validate; TheTerrace's map covers 68% of its declared symbols"
     },
     {
-      "id": "cl-0041",
-      "datetime": "2026-08-28T22:31:22Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "design",
-      "skill": null,
-      "title": "The terminal loads the user's profile; the menu bar makes commands discoverable",
-      "prompt": null,
-      "summary": "Two user-reported defects. -NoProfile removed the user's own tooling from PATH inside the product's terminal; the profile now loads and the integration wraps whatever prompt it finds. And a menu bar built from the command catalog replaces chord-only access to opening a workspace. New terminals also open in the workspace root.",
-      "rationale": "The determinism argument for -NoProfile was real and was the wrong trade for a developer tool: a terminal in which the user's tools are not on PATH is not a terminal they can work in. It is met by ORDER instead - the profile runs first, then the integration script captures and wraps the prompt it finds, so a profile cannot redefine the prompt after us. A test asserts -NoProfile is absent, because it is a one-word change nothing else would notice. The menu is built from the same catalog the palette reads, so it cannot offer something the product no longer does, and every item shows its chord - a command reachable only by an untold chord is not a feature.",
       "artifacts": [
         "src/AiDe.App/Workbench/MainMenuBuilder.cs"
       ],
+      "datetime": "2026-08-28T22:31:22Z",
+      "git": {
+        "after": "4bbda153310879b4501b4125ca8062cef1600eae",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0041",
+      "kind": "design",
+      "prompt": null,
+      "rationale": "The determinism argument for -NoProfile was real and was the wrong trade for a developer tool: a terminal in which the user's tools are not on PATH is not a terminal they can work in. It is met by ORDER instead - the profile runs first, then the integration script captures and wraps the prompt it finds, so a profile cannot redefine the prompt after us. A test asserts -NoProfile is absent, because it is a one-word change nothing else would notice. The menu is built from the same catalog the palette reads, so it cannot offer something the product no longer does, and every item shows its chord - a command reachable only by an untold chord is not a feature.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "Two user-reported defects. -NoProfile removed the user's own tooling from PATH inside the product's terminal; the profile now loads and the integration wraps whatever prompt it finds. And a menu bar built from the command catalog replaces chord-only access to opening a workspace. New terminals also open in the workspace root.",
       "tags": [
         "defect",
         "terminal"
       ],
-      "git": {
-        "before": null,
-        "after": "4bbda153310879b4501b4125ca8062cef1600eae",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "The terminal loads the user's profile; the menu bar makes commands discoverable"
     },
     {
-      "id": "cl-0042",
-      "datetime": "2026-08-28T22:31:22Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "design",
-      "skill": null,
-      "title": "Contexts are drawn; agents can now be READY; a declared [Table] join is Verified",
-      "prompt": null,
-      "summary": "ContextProjection groups the graph by declared context and counts crossings separately from internal edges, with direction kept. AgentReadinessWatcher gives an agent a positive readiness signal from a configured prompt marker, named as weaker evidence than the nonce. A [Table] attribute produces a Verified code-to-schema join and suppresses the conventional one. Bicep modules are exercised.",
-      "rationale": "Owners are resolved for edge TARGETS as well as subjects - resolving only subjects left every node that appears solely as a target outside every context, so a crossing between two contexts counted as none. Readiness from an observed pattern is accepted because the alternative measured in spikes/agent-dispatch is that an agent can only ever be refused, a correct refusal that is also a dead end; it is a distinct evidence kind because ADR-0007's bar for claiming the agent ACCEPTED a prompt is unchanged and still unmet, and readiness is lost again on new output because a watcher that latched would report a mid-response agent as available. A declared table suppresses the conventional match so the user is never given two edges for one question the code already answers.",
       "artifacts": [
         "src/AiDe.Core/Projections/ContextProjection.cs"
       ],
+      "datetime": "2026-08-28T22:31:22Z",
+      "git": {
+        "after": "4bbda153310879b4501b4125ca8062cef1600eae",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0042",
+      "kind": "design",
+      "prompt": null,
+      "rationale": "Owners are resolved for edge TARGETS as well as subjects - resolving only subjects left every node that appears solely as a target outside every context, so a crossing between two contexts counted as none. Readiness from an observed pattern is accepted because the alternative measured in spikes/agent-dispatch is that an agent can only ever be refused, a correct refusal that is also a dead end; it is a distinct evidence kind because ADR-0007's bar for claiming the agent ACCEPTED a prompt is unchanged and still unmet, and readiness is lost again on new output because a watcher that latched would report a mid-response agent as available. A declared table suppresses the conventional match so the user is never given two edges for one question the code already answers.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "ContextProjection groups the graph by declared context and counts crossings separately from internal edges, with direction kept. AgentReadinessWatcher gives an agent a positive readiness signal from a configured prompt marker, named as weaker evidence than the nonce. A [Table] attribute produces a Verified code-to-schema join and suppresses the conventional one. Bicep modules are exercised.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "4bbda153310879b4501b4125ca8062cef1600eae",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Contexts are drawn; agents can now be READY; a declared [Table] join is Verified"
     },
     {
-      "id": "cl-0043",
-      "datetime": "2026-08-28T22:43:41Z",
-      "session": "decisions-d1-d7-2026-08-28",
-      "kind": "design",
-      "skill": null,
-      "title": "The context map is drawn; agents can be dispatched to; Fluent ToTable is a declaration",
-      "prompt": null,
-      "summary": "ContextMapSurface renders contexts as boxes with symbol, internal-edge and crossing counts, colour-matched to the canvas, and refuses to draw an invalid map. TerminalSurface feeds AgentReadinessWatcher from the same chunks the screen gets. Fluent Entity<T>().ToTable(\"name\") is read as a declaration. Menu gains Edit/Window and recent workspaces.",
-      "rationale": "The crossing count is what a context map exists to show - a context with none is isolated and one with hundreds is not bounded, and neither is visible from a list of names. An invalid map renders its problems rather than a partial diagram, because a diagram drawn from a file that failed validation is wrong in a way nobody can see. Readiness is fed from the same chunk the screen receives so it cannot disagree with what the user is looking at. Only literal table names are read, the same rule the Bicep reader follows. A new coverage test caught workbench.reorderSurface having no menu entry - a command in the catalog and no menu is reachable only by a chord again, which is the defect the menu exists to fix.",
       "artifacts": [
         "src/AiDe.App/Workbench/ContextMapSurface.cs"
       ],
+      "datetime": "2026-08-28T22:43:41Z",
+      "git": {
+        "after": "e1941d81ade0d23d75aed97a7995cd79c9180674",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0043",
+      "kind": "design",
+      "prompt": null,
+      "rationale": "The crossing count is what a context map exists to show - a context with none is isolated and one with hundreds is not bounded, and neither is visible from a list of names. An invalid map renders its problems rather than a partial diagram, because a diagram drawn from a file that failed validation is wrong in a way nobody can see. Readiness is fed from the same chunk the screen receives so it cannot disagree with what the user is looking at. Only literal table names are read, the same rule the Bicep reader follows. A new coverage test caught workbench.reorderSurface having no menu entry - a command in the catalog and no menu is reachable only by a chord again, which is the defect the menu exists to fix.",
+      "session": "decisions-d1-d7-2026-08-28",
+      "skill": null,
+      "summary": "ContextMapSurface renders contexts as boxes with symbol, internal-edge and crossing counts, colour-matched to the canvas, and refuses to draw an invalid map. TerminalSurface feeds AgentReadinessWatcher from the same chunks the screen gets. Fluent Entity<T>().ToTable(\"name\") is read as a declaration. Menu gains Edit/Window and recent workspaces.",
       "tags": [
         "phase-3",
         "ui"
       ],
-      "git": {
-        "before": null,
-        "after": "e1941d81ade0d23d75aed97a7995cd79c9180674",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "The context map is drawn; agents can be dispatched to; Fluent ToTable is a declaration"
     },
     {
-      "id": "cl-0044",
-      "datetime": "2026-08-28T23:09:29Z",
-      "session": null,
-      "kind": "design",
-      "skill": null,
-      "title": "Client defects: menu legibility, dead anchor strips, default layout, drop placement",
-      "prompt": null,
-      "summary": "Four defects reported against the running client, all fixed with a control each.\n\n1. **Menu wording illegible.** The Menu had a dark background and light foreground, but a\n   MenuItem's *dropdown* renders in a popup that keeps the system light template — so light text\n   landed on a light background. Fixed by styling MenuItem/ContextMenu/Separator in App.xaml, not\n   by recolouring the Menu again.\n2. **Dead icon strips down the left and right edges.** They were AvalonDock's auto-hide anchor\n   sides, rendered permanently because the theme gives them a visible background even when empty.\n   Nothing in this build auto-hides a pane, so a control that cannot do anything was showing\n   controls. Collapsed via a LayoutAnchorSideControl style.\n3. **Default layout.** Now console at the bottom, workspace column on the left (Explore,\n   Provenance, Contexts), graph column on the right (Graph, Domain) — 0.38/0.62 across, 0.68/0.32\n   down.\n4. **Dropping a tab reordered unrelated panes.** MoveSurface always wrapped the target in a NEW\n   split, so dropping right of the right-hand pane produced [Left, [Right, New]]: the pane landed\n   where the user asked in the tree and somewhere else on screen, and the nested split's fresh\n   50/50 weights moved panes the user never touched. Now, when the parent split already runs in\n   the drop's orientation, the surface is inserted as a SIBLING at the requested index and takes\n   half of the target pane's own weight — every other pane keeps its width. Three tests pin it,\n   including that the neighbours' weights are unchanged.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.App/App.xaml",
         "src/AiDe.Core/Workbench/LayoutService.cs",
         "src/AiDe.Core/Workbench/LayoutModel.cs"
       ],
+      "datetime": "2026-08-28T23:09:29Z",
+      "git": {
+        "after": "bdfd15cc0b7c30bc3f156e2ba877ce0b5afeae75",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0044",
+      "kind": "design",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "Four defects reported against the running client, all fixed with a control each.\n\n1. **Menu wording illegible.** The Menu had a dark background and light foreground, but a\n   MenuItem's *dropdown* renders in a popup that keeps the system light template — so light text\n   landed on a light background. Fixed by styling MenuItem/ContextMenu/Separator in App.xaml, not\n   by recolouring the Menu again.\n2. **Dead icon strips down the left and right edges.** They were AvalonDock's auto-hide anchor\n   sides, rendered permanently because the theme gives them a visible background even when empty.\n   Nothing in this build auto-hides a pane, so a control that cannot do anything was showing\n   controls. Collapsed via a LayoutAnchorSideControl style.\n3. **Default layout.** Now console at the bottom, workspace column on the left (Explore,\n   Provenance, Contexts), graph column on the right (Graph, Domain) — 0.38/0.62 across, 0.68/0.32\n   down.\n4. **Dropping a tab reordered unrelated panes.** MoveSurface always wrapped the target in a NEW\n   split, so dropping right of the right-hand pane produced [Left, [Right, New]]: the pane landed\n   where the user asked in the tree and somewhere else on screen, and the nested split's fresh\n   50/50 weights moved panes the user never touched. Now, when the parent split already runs in\n   the drop's orientation, the surface is inserted as a SIBLING at the requested index and takes\n   half of the target pane's own weight — every other pane keeps its width. Three tests pin it,\n   including that the neighbours' weights are unchanged.",
       "tags": [
         "defect",
         "ui"
       ],
-      "git": {
-        "before": null,
-        "after": "bdfd15cc0b7c30bc3f156e2ba877ce0b5afeae75",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Client defects: menu legibility, dead anchor strips, default layout, drop placement"
     },
     {
-      "id": "cl-0045",
-      "datetime": "2026-08-28T23:09:29Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "Phase 3: contexts surface, proven dispatch refusal, context filter, agent terminals, dependsOn",
-      "prompt": null,
-      "summary": "Five steps on the Phase 3 join.\n\n1. **Contexts surface.** Declared bounded contexts render as boxes carrying symbols, internal\n   edges and crossings — the crossing count is the evidence for whether the boundary held. An\n   invalid map renders its problems rather than a partial diagram.\n2. **Dispatch refuses an unready agent, proven.** The agent-dispatch spike now exits 8 (REFUSED)\n   where it previously reported PtyWriteAccepted for a prompt Claude Code's trust gate ate. The\n   refusal happens before the write-ahead, so nothing is typed into whatever dialog is on screen\n   and no durable attempt is recorded.\n3. **Context click filters the graph.** Choosing a context box shows only that context on the\n   canvas and states how many neighbours were hidden — a filter that hides without saying so is\n   how a graph starts lying. Mouse and keyboard both, with automation names.\n4. **New agent terminal command.** Ctrl+K, A opens a terminal bound to a chosen agent CLI, offered\n   only for agents actually on PATH. AddSurface joined the layout operation union and the SC 2.5.7\n   conformance test immediately failed it for having no declared keyboard equivalent — the control\n   working, not a nuisance.\n5. **Bicep dependsOn edges.** depends_on is now extracted, bounded to each declaration's own span\n   so a later resource's dependencies cannot be attributed to an earlier one.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.App/Workbench/ContextMapSurface.cs",
         "spikes/agent-dispatch/RESULT.md",
         "src/AiDe.Core/Extraction/BicepExtractor.cs"
       ],
+      "datetime": "2026-08-28T23:09:29Z",
+      "git": {
+        "after": "bdfd15cc0b7c30bc3f156e2ba877ce0b5afeae75",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0045",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "Five steps on the Phase 3 join.\n\n1. **Contexts surface.** Declared bounded contexts render as boxes carrying symbols, internal\n   edges and crossings — the crossing count is the evidence for whether the boundary held. An\n   invalid map renders its problems rather than a partial diagram.\n2. **Dispatch refuses an unready agent, proven.** The agent-dispatch spike now exits 8 (REFUSED)\n   where it previously reported PtyWriteAccepted for a prompt Claude Code's trust gate ate. The\n   refusal happens before the write-ahead, so nothing is typed into whatever dialog is on screen\n   and no durable attempt is recorded.\n3. **Context click filters the graph.** Choosing a context box shows only that context on the\n   canvas and states how many neighbours were hidden — a filter that hides without saying so is\n   how a graph starts lying. Mouse and keyboard both, with automation names.\n4. **New agent terminal command.** Ctrl+K, A opens a terminal bound to a chosen agent CLI, offered\n   only for agents actually on PATH. AddSurface joined the layout operation union and the SC 2.5.7\n   conformance test immediately failed it for having no declared keyboard equivalent — the control\n   working, not a nuisance.\n5. **Bicep dependsOn edges.** depends_on is now extracted, bounded to each declaration's own span\n   so a later resource's dependencies cannot be attributed to an earlier one.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "bdfd15cc0b7c30bc3f156e2ba877ce0b5afeae75",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Phase 3: contexts surface, proven dispatch refusal, context filter, agent terminals, dependsOn"
     },
     {
-      "id": "cl-0046",
-      "datetime": "2026-08-28T23:46:55Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "Phase 3 surfacing: restorable runtime surfaces, configurable readiness, openable crossings, a joins pane, ranked uncovered",
-      "prompt": null,
-      "summary": "Five steps to make the Phase 3 evidence usable. Two of the five were proposed on a wrong premise and\nwere corrected by opening the code first.\n\n1. **A surface created at runtime now survives a restart.** Layout persistence already existed and\n   was wired — the proposal to \"add\" it was wrong. The real defect was that availability was decided\n   from a whitelist of surface IDS snapshotted from the default layout, so an agent terminal, whose\n   id is minted when it opens (agent:claude#a1b2c3), was dropped on EVERY launch and announced as no\n   longer available. Availability is now \"can content be built for this\", which is a property of the\n   surface's KIND. A surface whose kind this build no longer has is still dropped and still reported,\n   so the control keeps firing for the case it was written for.\n2. **Readiness markers are configurable per agent.** A built-in marker that does not match a real\n   agent's prompt refuses that agent forever, and the only way to change one was a rebuild.\n   agent-readiness.json in the workspace state directory overrides or adds them. A pattern that does\n   not compile is reported and the built-in stays in force — never \"assume ready\". An explicitly\n   empty marker means \"this agent has none\", which makes the refusal deliberate rather than the\n   accident of a pattern that happens never to match. AgentReadinessWatcher.LastJudged exposes the\n   tail it actually tested, so tuning is measurement rather than guessing at what an agent prints.\n3. **A crossing can be opened.** \"Editorial → Football, 47 edges\" was a claim about the user's code\n   they could not check, act on or disagree with. Each crossing now carries the member edges, capped\n   at 200 — with Weight staying the true total and Undisclosed stating the difference, so the cap\n   never becomes a quieter wrong number.\n4. **The joins are visible.** JoinProjection was written, tested, and had NO production caller: a\n   projection nobody can see. It is now a surface in the workspace column, rendering Verified and\n   Inferred under separate headings with the basis on every row, and stating what could not be\n   joined rather than reading as completeness.\n5. **Uncovered symbols became a task.** \"68% of 1,432 covered\" tells the user a number and gives\n   them nowhere to start. Uncovered symbols are now ranked by namespace, largest first, with\n   examples. The grouping is presentation only — nothing assigns a symbol to a context, because a\n   symbol placed in \"the nearest\" one is inference dressed as a declaration.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Workbench/LayoutStore.cs",
         "src/AiDe.Core/Terminal/AgentReadinessProfiles.cs",
         "src/AiDe.Core/Projections/ContextProjection.cs",
         "src/AiDe.App/Workbench/JoinSurface.cs"
       ],
+      "datetime": "2026-08-28T23:46:55Z",
+      "git": {
+        "after": "971a687bb86a177cc464a087645ec42a0737ac39",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0046",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "Five steps to make the Phase 3 evidence usable. Two of the five were proposed on a wrong premise and\nwere corrected by opening the code first.\n\n1. **A surface created at runtime now survives a restart.** Layout persistence already existed and\n   was wired — the proposal to \"add\" it was wrong. The real defect was that availability was decided\n   from a whitelist of surface IDS snapshotted from the default layout, so an agent terminal, whose\n   id is minted when it opens (agent:claude#a1b2c3), was dropped on EVERY launch and announced as no\n   longer available. Availability is now \"can content be built for this\", which is a property of the\n   surface's KIND. A surface whose kind this build no longer has is still dropped and still reported,\n   so the control keeps firing for the case it was written for.\n2. **Readiness markers are configurable per agent.** A built-in marker that does not match a real\n   agent's prompt refuses that agent forever, and the only way to change one was a rebuild.\n   agent-readiness.json in the workspace state directory overrides or adds them. A pattern that does\n   not compile is reported and the built-in stays in force — never \"assume ready\". An explicitly\n   empty marker means \"this agent has none\", which makes the refusal deliberate rather than the\n   accident of a pattern that happens never to match. AgentReadinessWatcher.LastJudged exposes the\n   tail it actually tested, so tuning is measurement rather than guessing at what an agent prints.\n3. **A crossing can be opened.** \"Editorial → Football, 47 edges\" was a claim about the user's code\n   they could not check, act on or disagree with. Each crossing now carries the member edges, capped\n   at 200 — with Weight staying the true total and Undisclosed stating the difference, so the cap\n   never becomes a quieter wrong number.\n4. **The joins are visible.** JoinProjection was written, tested, and had NO production caller: a\n   projection nobody can see. It is now a surface in the workspace column, rendering Verified and\n   Inferred under separate headings with the basis on every row, and stating what could not be\n   joined rather than reading as completeness.\n5. **Uncovered symbols became a task.** \"68% of 1,432 covered\" tells the user a number and gives\n   them nowhere to start. Uncovered symbols are now ranked by namespace, largest first, with\n   examples. The grouping is presentation only — nothing assigns a symbol to a context, because a\n   symbol placed in \"the nearest\" one is inference dressed as a declaration.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "971a687bb86a177cc464a087645ec42a0737ac39",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Phase 3 surfacing: restorable runtime surfaces, configurable readiness, openable crossings, a joins pane, ranked uncovered"
     },
     {
-      "id": "cl-0047",
-      "datetime": "2026-08-28T23:46:55Z",
-      "session": null,
-      "kind": "knowledge",
-      "skill": null,
-      "title": "DC-021 registered: a fixture that restates what the product declares",
-      "prompt": null,
-      "summary": "DC-021 — a fixture restates what the product declares, so shipping a feature breaks unrelated tests.\n\nAdding the joins surface turned LayoutUpgradeTests red with AIDE-LAYOUT-PARTIAL-RESTORE: a migration\nerror, for a change that had nothing to do with migration. The fixture held its own copy of \"the\nsurfaces this release ships\".\n\nThis was the THIRD occurrence and the first time it was registered. WorkbenchStoreTests hit it twice\nand was fixed in place, with a comment saying so — a repair scoped to the file where it hurt rather\nthan to the class. Registered now, with every layout fixture deriving its surface set from\nLayout.Default(). Residual risk recorded honestly: derivation is a convention, and nothing yet fails\nwhen a new fixture types the list out again.",
-      "rationale": null,
       "artifacts": [
         "docs/lessons/defect-classes.md"
       ],
+      "datetime": "2026-08-28T23:46:55Z",
+      "git": {
+        "after": "971a687bb86a177cc464a087645ec42a0737ac39",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0047",
+      "kind": "knowledge",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "DC-021 — a fixture restates what the product declares, so shipping a feature breaks unrelated tests.\n\nAdding the joins surface turned LayoutUpgradeTests red with AIDE-LAYOUT-PARTIAL-RESTORE: a migration\nerror, for a change that had nothing to do with migration. The fixture held its own copy of \"the\nsurfaces this release ships\".\n\nThis was the THIRD occurrence and the first time it was registered. WorkbenchStoreTests hit it twice\nand was fixed in place, with a comment saying so — a repair scoped to the file where it hurt rather\nthan to the class. Registered now, with every layout fixture deriving its surface set from\nLayout.Default(). Residual risk recorded honestly: derivation is a convention, and nothing yet fails\nwhen a new fixture types the list out again.",
       "tags": [
         "continuous-improvement"
       ],
-      "git": {
-        "before": null,
-        "after": "971a687bb86a177cc464a087645ec42a0737ac39",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "DC-021 registered: a fixture that restates what the product declares"
     },
     {
-      "id": "cl-0048",
-      "datetime": "2026-08-29T00:05:32Z",
-      "session": null,
-      "kind": "knowledge",
-      "skill": null,
-      "title": "Agent readiness measured: the marker approach cannot work for a full-screen agent",
-      "prompt": null,
-      "summary": "Step 1 of the five was \"tune claude's readiness marker against real output — one measurement turns\ndispatch from always-refused into working.\" The measurement was taken, and it withdraws my own\nnext-step.\n\nA new instrument, `observe-agent`, launches an agent CLI under ConPTY and prints what it actually\ndraws, with control characters made visible, and reports whether each configured marker matched THAT\noutput. It asserts nothing; it exists so a marker is written against measured bytes.\n\nThree findings, all recorded in spikes/agent-readiness/RESULT.md.\n\n1. The trust gate appears even in C:\\Projects\\ai-de — the directory where this project's Claude Code\n   sessions run every day. It is not an artefact of an unfamiliar folder; it is the normal first\n   screen for a session this shell starts.\n2. The chevron IS in the output — at ESC[14;2H, as the selection cursor of the trust dialog, sitting\n   on \"No, exit\". A looser marker, which is the obvious repair when a pattern does not match, would\n   have reported READY at the exact moment dispatch is most dangerous: the Enter that submits a\n   prompt is the Enter that confirms \"No, exit\". The shipped conservative pattern correctly reports\n   no match.\n3. The output is a full-screen TUI drawn with absolute cursor addressing, not lines. A tail-anchored\n   regex over the byte stream asks where the cursor went last, not what the screen says. Making the\n   pattern cleverer cannot fix that — the information is not in the ordering of the bytes.\n   Establishing readiness for a full-screen agent needs a VT parser maintaining a cell grid.\n\nConsequence: the marker mechanism is kept, the built-in claude marker is left exactly as it is\nbecause refusing is the right answer for the screens observed, and screen-buffer readiness is\nrecorded as the next real step rather than attempted. The captured output is committed as a test\nfixture and ARealTrustGateIsNotMistakenForAPrompt pins it — observed failing on a loosened marker\nbefore being accepted.",
-      "rationale": null,
       "artifacts": [
         "spikes/agent-readiness/RESULT.md",
         "tests/AiDe.Core.TerminalHost/ObserveProbe.cs"
       ],
+      "datetime": "2026-08-29T00:05:32Z",
+      "git": {
+        "after": "97aad79e5061819896356312a83a957cc4152280",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0048",
+      "kind": "knowledge",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "Step 1 of the five was \"tune claude's readiness marker against real output — one measurement turns\ndispatch from always-refused into working.\" The measurement was taken, and it withdraws my own\nnext-step.\n\nA new instrument, `observe-agent`, launches an agent CLI under ConPTY and prints what it actually\ndraws, with control characters made visible, and reports whether each configured marker matched THAT\noutput. It asserts nothing; it exists so a marker is written against measured bytes.\n\nThree findings, all recorded in spikes/agent-readiness/RESULT.md.\n\n1. The trust gate appears even in C:\\Projects\\ai-de — the directory where this project's Claude Code\n   sessions run every day. It is not an artefact of an unfamiliar folder; it is the normal first\n   screen for a session this shell starts.\n2. The chevron IS in the output — at ESC[14;2H, as the selection cursor of the trust dialog, sitting\n   on \"No, exit\". A looser marker, which is the obvious repair when a pattern does not match, would\n   have reported READY at the exact moment dispatch is most dangerous: the Enter that submits a\n   prompt is the Enter that confirms \"No, exit\". The shipped conservative pattern correctly reports\n   no match.\n3. The output is a full-screen TUI drawn with absolute cursor addressing, not lines. A tail-anchored\n   regex over the byte stream asks where the cursor went last, not what the screen says. Making the\n   pattern cleverer cannot fix that — the information is not in the ordering of the bytes.\n   Establishing readiness for a full-screen agent needs a VT parser maintaining a cell grid.\n\nConsequence: the marker mechanism is kept, the built-in claude marker is left exactly as it is\nbecause refusing is the right answer for the screens observed, and screen-buffer readiness is\nrecorded as the next real step rather than attempted. The captured output is committed as a test\nfixture and ARealTrustGateIsNotMistakenForAPrompt pins it — observed failing on a loosened marker\nbefore being accepted.",
       "tags": [
         "spike",
         "dispatch"
       ],
-      "git": {
-        "before": null,
-        "after": "97aad79e5061819896356312a83a957cc4152280",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Agent readiness measured: the marker approach cannot work for a full-screen agent"
     },
     {
-      "id": "cl-0049",
-      "datetime": "2026-08-29T00:05:32Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "Joins to graph, a real layout migration, dependsOn consumed, and a gate for DC-021",
-      "prompt": null,
-      "summary": "The remaining four steps.\n\n**Joins are clickable through to the graph.** A pane naming symbols the canvas can already draw, and\nleaving the user to retype them into a search box, is two tools sharing a window. Activating a join\nrow centres the graph on its From end — the side the user is reasoning about — clearing any context\nfilter first, because centring on a node the canvas has been told not to draw would look like a\nclick that did nothing.\n\n**A real migration replaced the placeholder.** LayoutMigrations shipped with one entry: a worked\nEXAMPLE describing a rename the product never performed. The chain therefore looked exercised while\ndoing nothing, and the joins pane added last turn would have reached only users with no saved layout\n— nobody who has used the product. The chain now carries the real v1 to v2 step, which adds the pane\nbeside its anchor in whatever tree the user actually has; the rename example moved into the test that\ndocuments it. If the anchor is gone the migration does nothing: a user who closed that area has said\nsomething, and re-opening it under a new name is not an upgrade.\n\n**dependsOn is consumed.** The Bicep extractor emitted depends_on and nothing read it — the same\nshipped-but-unreachable shape as the join projection itself. It is now a Verified join edge, and this\nis the one place in the projection where Verified is cheap to earn: both ends are symbols the\ntemplate names, and the edge is read rather than corresponded.\n\n**DC-021 has an automated control.** tools/verify-fixture-derivation.py derives the product's own\nvocabulary from the product and fails when three or more of those identifiers appear as literals in\none collection in a test. It found two live cases the hour it was written — one of them the kinds set\nI added the previous day, in the same commit that registered the class. Wired into CI. It fails\nclosed: an empty derived vocabulary is an error, not a pass over everything.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Workbench/LayoutMigrations.cs",
         "tools/verify-fixture-derivation.py",
         "src/AiDe.Core/Projections/JoinProjection.cs"
       ],
+      "datetime": "2026-08-29T00:05:32Z",
+      "git": {
+        "after": "97aad79e5061819896356312a83a957cc4152280",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0049",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "The remaining four steps.\n\n**Joins are clickable through to the graph.** A pane naming symbols the canvas can already draw, and\nleaving the user to retype them into a search box, is two tools sharing a window. Activating a join\nrow centres the graph on its From end — the side the user is reasoning about — clearing any context\nfilter first, because centring on a node the canvas has been told not to draw would look like a\nclick that did nothing.\n\n**A real migration replaced the placeholder.** LayoutMigrations shipped with one entry: a worked\nEXAMPLE describing a rename the product never performed. The chain therefore looked exercised while\ndoing nothing, and the joins pane added last turn would have reached only users with no saved layout\n— nobody who has used the product. The chain now carries the real v1 to v2 step, which adds the pane\nbeside its anchor in whatever tree the user actually has; the rename example moved into the test that\ndocuments it. If the anchor is gone the migration does nothing: a user who closed that area has said\nsomething, and re-opening it under a new name is not an upgrade.\n\n**dependsOn is consumed.** The Bicep extractor emitted depends_on and nothing read it — the same\nshipped-but-unreachable shape as the join projection itself. It is now a Verified join edge, and this\nis the one place in the projection where Verified is cheap to earn: both ends are symbols the\ntemplate names, and the edge is read rather than corresponded.\n\n**DC-021 has an automated control.** tools/verify-fixture-derivation.py derives the product's own\nvocabulary from the product and fails when three or more of those identifiers appear as literals in\none collection in a test. It found two live cases the hour it was written — one of them the kinds set\nI added the previous day, in the same commit that registered the class. Wired into CI. It fails\nclosed: an empty derived vocabulary is an error, not a pass over everything.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "97aad79e5061819896356312a83a957cc4152280",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Joins to graph, a real layout migration, dependsOn consumed, and a gate for DC-021"
     },
     {
-      "id": "cl-0050",
-      "datetime": "2026-08-29T14:50:34Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "Readiness moves to a screen model; the trust gate becomes a state the user can act on",
-      "prompt": null,
-      "summary": "The readiness question, answered at the right layer.\n\n**A screen model.** ScreenBuffer is a small VT interpreter — cursor movement, erasure, text, and\nnothing else. Colour, styling, scroll regions and alternate buffers are consumed and discarded\nbecause none of them change which cell a character occupies. It exists because the measurement said\nthe byte stream cannot answer the question: an agent draws with absolute cursor addressing, so the\nlast bytes are wherever the cursor went, not what the user is looking at. Fed the captured trust-gate\nbytes, it reconstructs the dialog across rows 1 to 16.\n\n**Readiness now matches the rendered screen**, anchored to the last drawn line rather than the tail\nof the buffer. The built-in markers are anchored at both ends: the measured gate draws \"❯ No, exit\",\nand a pattern allowing text after the chevron would call that dialog a prompt. They remain unverified\nagainst a READY agent, because reaching one means answering the trust gate, which this tool will not\ndo on the user's behalf — that is stated where the patterns live.\n\n**Attention is a state, not a silent refusal.** An agent showing a trust gate is not busy and not\nready; it is waiting for a person, and the measurement showed that gate is the NORMAL first screen.\nThe watcher reports NeedsAttention with the line that matched, searched across the whole screen\nrather than the last line, because the gate puts its question ten rows above its buttons. Attention\noutranks readiness. The pane announces it once per transition, not per repaint.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Terminal/ScreenBuffer.cs",
         "src/AiDe.Core/Terminal/AgentReadinessWatcher.cs"
       ],
+      "datetime": "2026-08-29T14:50:34Z",
+      "git": {
+        "after": "27ce744843701cf1416eb4140acddad2c4a0b2f9",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0050",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "The readiness question, answered at the right layer.\n\n**A screen model.** ScreenBuffer is a small VT interpreter — cursor movement, erasure, text, and\nnothing else. Colour, styling, scroll regions and alternate buffers are consumed and discarded\nbecause none of them change which cell a character occupies. It exists because the measurement said\nthe byte stream cannot answer the question: an agent draws with absolute cursor addressing, so the\nlast bytes are wherever the cursor went, not what the user is looking at. Fed the captured trust-gate\nbytes, it reconstructs the dialog across rows 1 to 16.\n\n**Readiness now matches the rendered screen**, anchored to the last drawn line rather than the tail\nof the buffer. The built-in markers are anchored at both ends: the measured gate draws \"❯ No, exit\",\nand a pattern allowing text after the chevron would call that dialog a prompt. They remain unverified\nagainst a READY agent, because reaching one means answering the trust gate, which this tool will not\ndo on the user's behalf — that is stated where the patterns live.\n\n**Attention is a state, not a silent refusal.** An agent showing a trust gate is not busy and not\nready; it is waiting for a person, and the measurement showed that gate is the NORMAL first screen.\nThe watcher reports NeedsAttention with the line that matched, searched across the whole screen\nrather than the last line, because the gate puts its question ten rows above its buttons. Attention\noutranks readiness. The pane announces it once per transition, not per repaint.",
       "tags": [
         "dispatch"
       ],
-      "git": {
-        "before": null,
-        "after": "27ce744843701cf1416eb4140acddad2c4a0b2f9",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Readiness moves to a screen model; the trust gate becomes a state the user can act on"
     },
     {
-      "id": "cl-0051",
-      "datetime": "2026-08-29T14:50:34Z",
-      "session": null,
-      "kind": "knowledge",
-      "skill": null,
-      "title": "DC-022: a predicate shared by two extractors, joined as if it had one meaning",
-      "prompt": null,
-      "summary": "The Joins pane, run over TheTerrace — and the defect that found.\n\nFour turns of extractors and panes had shipped without anyone asking whether the joins are any good\non a real codebase. The first run answered: 7,426 verified joins, every one carrying \"declared in the\nresource's dependsOn\", in a repository with no Bicep and no dependsOn anywhere in it.\n\ndepends_on is not a Bicep word. The C# extractor emits it for type dependencies. The join was written\nagainst the PREDICATE rather than the kind of thing the predicate was on, and the basis was a fixed\nstring that never had to agree with the evidence again. It failed in the flattering direction: the\nlargest Verified count the pane had ever shown. Registered as DC-022 and fixed by qualifying on the\nsubject carrying resource_type; two tests, because narrowing a join until it cannot fire is not a fix.\n\nAfter the fix: 0 verified, 59 inferred. Zero is the correct answer for a repository that declares no\n[Table] attributes and has no infrastructure templates, and the pane says so plainly rather than\nimplying completeness.\n\nThe contexts pane in the same run is usable. Operations carries 172 crossings against 225 internal\nedges on 198 symbols — nearly as much traffic leaving as staying — while Football, four times its\nsize, keeps 902 internal against 190 crossing. And 360 of the 474 uncovered symbols are tests, which\nno context map should claim: the namespace grouping turned a number that reads as a gap into one line\nthat reads as correct plus four small namespaces worth a decision.\n\nAlso: the fixture-derivation gate now watches command ids as well (29 identifiers), observed firing\non a planted three-command literal; and the migration chain has an end-to-end test plus one asserting\nthe steps JOIN UP, which fails the moment a version is bumped without a migration beside it.",
-      "rationale": null,
       "artifacts": [
         "spikes/joins-on-a-real-repo/RESULT.md",
         "src/AiDe.Core/Projections/JoinProjection.cs",
         "docs/lessons/defect-classes.md"
       ],
+      "datetime": "2026-08-29T14:50:34Z",
+      "git": {
+        "after": "27ce744843701cf1416eb4140acddad2c4a0b2f9",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0051",
+      "kind": "knowledge",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "The Joins pane, run over TheTerrace — and the defect that found.\n\nFour turns of extractors and panes had shipped without anyone asking whether the joins are any good\non a real codebase. The first run answered: 7,426 verified joins, every one carrying \"declared in the\nresource's dependsOn\", in a repository with no Bicep and no dependsOn anywhere in it.\n\ndepends_on is not a Bicep word. The C# extractor emits it for type dependencies. The join was written\nagainst the PREDICATE rather than the kind of thing the predicate was on, and the basis was a fixed\nstring that never had to agree with the evidence again. It failed in the flattering direction: the\nlargest Verified count the pane had ever shown. Registered as DC-022 and fixed by qualifying on the\nsubject carrying resource_type; two tests, because narrowing a join until it cannot fire is not a fix.\n\nAfter the fix: 0 verified, 59 inferred. Zero is the correct answer for a repository that declares no\n[Table] attributes and has no infrastructure templates, and the pane says so plainly rather than\nimplying completeness.\n\nThe contexts pane in the same run is usable. Operations carries 172 crossings against 225 internal\nedges on 198 symbols — nearly as much traffic leaving as staying — while Football, four times its\nsize, keeps 902 internal against 190 crossing. And 360 of the 474 uncovered symbols are tests, which\nno context map should claim: the namespace grouping turned a number that reads as a gap into one line\nthat reads as correct plus four small namespaces worth a decision.\n\nAlso: the fixture-derivation gate now watches command ids as well (29 identifiers), observed firing\non a planted three-command literal; and the migration chain has an end-to-end test plus one asserting\nthe steps JOIN UP, which fails the moment a version is bumped without a migration beside it.",
       "tags": [
         "continuous-improvement",
         "spike"
       ],
-      "git": {
-        "before": null,
-        "after": "27ce744843701cf1416eb4140acddad2c4a0b2f9",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "DC-022: a predicate shared by two extractors, joined as if it had one meaning"
     },
     {
-      "id": "cl-0052",
-      "datetime": "2026-08-29T15:28:36Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "Four defects: a Cartesian join, a wrong denominator, a dead Graph pane, and a stale probe",
-      "prompt": null,
-      "summary": "Four defects, found by running the panes over a real repository and by a clean rebuild.\n\n**1. A Cartesian product presented as 192 findings.** With the Bicep extractor finally routed\ncorrectly, hosted_on matched the whole Microsoft.Sql/* family: 64 tables joined to a server, a\ndatabase AND a virtual-network rule, each edge claiming \"the only literally-named SQL resource in\nthis template\" — of which there were three. Second instance of DC-022, in the join immediately below\nthe one that produced it. A table lives in a DATABASE; narrowed to that, with exactly one candidate\njoining and more than one producing no edges plus a sql-database-ambiguous disclosure. 192 to 64.\n\n**2. Coverage counted artifacts the map was never about.** The uncovered list's second-largest bucket\nwas \"(no namespace)\" at 114, and they were Bicep parameters. A bounded-context map is a statement\nabout a codebase's domain, and counting a template's parameters against it gets worse the more\ninfrastructure a team writes. Coverage is judged against code symbols only now, one rule in one\nplace. 525 uncovered to 412.\n\n**3. The Graph pane rendered nothing at all.** The canvas page carried a JavaScript syntax error —\na stray quote in the legend string — which broke the entire script. The C# compiler cannot see\ninside an embedded page and no unit test renders one.\n\n**4. The control that should have caught it was running a stale binary.** AiDe.App.CanvasProbe was\nnever a ProjectReference of AiDe.App.Tests, unlike the terminal probe and daemon beside it. It had\nbeen built once by a full-solution build and every run since exercised that old executable. The full\nclean the user asked for is what exposed it: the test failed with \"the canvas probe was not built\",\nand once rebuilt from current source it failed for real. Registered as DC-023.\n\nAlso: the readiness watcher now uses the SAME TerminalScreen and VtParser the pane renders with. The\nScreenBuffer written for it last turn was a duplicate of a screen model this repository already had —\ndeleted, because two models of one terminal disagree the first time either is fixed, and readiness\ndisagreeing with what the user is looking at is the whole defect it was built to close.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Projections/JoinProjection.cs",
         "src/AiDe.App/Workbench/CanvasPage.cs",
         "tests/AiDe.App.Tests/AiDe.App.Tests.csproj",
         "docs/lessons/defect-classes.md"
       ],
+      "datetime": "2026-08-29T15:28:36Z",
+      "git": {
+        "after": "27adc7d93c323fd278bf0edc91f6fbf7da7c139e",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0052",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "Four defects, found by running the panes over a real repository and by a clean rebuild.\n\n**1. A Cartesian product presented as 192 findings.** With the Bicep extractor finally routed\ncorrectly, hosted_on matched the whole Microsoft.Sql/* family: 64 tables joined to a server, a\ndatabase AND a virtual-network rule, each edge claiming \"the only literally-named SQL resource in\nthis template\" — of which there were three. Second instance of DC-022, in the join immediately below\nthe one that produced it. A table lives in a DATABASE; narrowed to that, with exactly one candidate\njoining and more than one producing no edges plus a sql-database-ambiguous disclosure. 192 to 64.\n\n**2. Coverage counted artifacts the map was never about.** The uncovered list's second-largest bucket\nwas \"(no namespace)\" at 114, and they were Bicep parameters. A bounded-context map is a statement\nabout a codebase's domain, and counting a template's parameters against it gets worse the more\ninfrastructure a team writes. Coverage is judged against code symbols only now, one rule in one\nplace. 525 uncovered to 412.\n\n**3. The Graph pane rendered nothing at all.** The canvas page carried a JavaScript syntax error —\na stray quote in the legend string — which broke the entire script. The C# compiler cannot see\ninside an embedded page and no unit test renders one.\n\n**4. The control that should have caught it was running a stale binary.** AiDe.App.CanvasProbe was\nnever a ProjectReference of AiDe.App.Tests, unlike the terminal probe and daemon beside it. It had\nbeen built once by a full-solution build and every run since exercised that old executable. The full\nclean the user asked for is what exposed it: the test failed with \"the canvas probe was not built\",\nand once rebuilt from current source it failed for real. Registered as DC-023.\n\nAlso: the readiness watcher now uses the SAME TerminalScreen and VtParser the pane renders with. The\nScreenBuffer written for it last turn was a duplicate of a screen model this repository already had —\ndeleted, because two models of one terminal disagree the first time either is fixed, and readiness\ndisagreeing with what the user is looking at is the whole defect it was built to close.",
       "tags": [
         "defect"
       ],
-      "git": {
-        "before": null,
-        "after": "27adc7d93c323fd278bf0edc91f6fbf7da7c139e",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Four defects: a Cartesian join, a wrong denominator, a dead Graph pane, and a stale probe"
     },
     {
-      "id": "cl-0053",
-      "datetime": "2026-08-29T15:28:36Z",
-      "session": null,
-      "kind": "knowledge",
-      "skill": null,
-      "title": "TheTerrace measured: 57 of 72 crossings are one DbContext",
-      "prompt": null,
-      "summary": "What the panes show on TheTerrace, and the one recommendation worth acting on.\n\n7 of 7 scopes, 12,043 assertions, 4.5 seconds. One verified join — invitationPepper, declared\n@secure(), value never read. 123 inferred: 64 hosted_on and 59 maps_to, every one resting on EF's\nnaming convention and saying so on its own row. Six disclosures.\n\nOperations looked like a boundary that never held — 172 crossings against 225 internal edges on 198\nsymbols. Opening the crossing says otherwise: 57 of the 72 Football-to-Operations edges are a single\nclass, TheTerrace.Infrastructure.Data.AppDbContext, which sits inside Operations' Infrastructure.*\npattern. Every repository that touches the database registers as a domain boundary crossing. That is\nshared persistence, not coupling between two contexts.\n\nThe recommendation, which is TheTerrace's to make and not this repository's: give shared\ninfrastructure its own context named for what it is, or leave it uncovered. Either way the crossing\ncounts start measuring domain coupling instead of counting the ORM. The other crossings survive that\nchange and are real — IAiCompletion and IPromptMapper reaching from Football and Editorial into\nAssistant, ICoachReader and ISquadReader reaching back.\n\nThe DC-022 residual is now measured rather than assumed. A predicate-by-extractor census over the\nsame run: declared_in, has_type and discloses are each emitted by all three extractors. has_type is\nconsumed by predicate in three places and is safe BY ACCIDENT — its object values happen to partition\ncleanly by producer, and nothing enforces that. The spike prints the census on every run so the next\ncollision is visible before it is joined.",
-      "rationale": null,
       "artifacts": [
         "spikes/joins-on-a-real-repo/RESULT.md"
       ],
+      "datetime": "2026-08-29T15:28:36Z",
+      "git": {
+        "after": "27adc7d93c323fd278bf0edc91f6fbf7da7c139e",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0053",
+      "kind": "knowledge",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "What the panes show on TheTerrace, and the one recommendation worth acting on.\n\n7 of 7 scopes, 12,043 assertions, 4.5 seconds. One verified join — invitationPepper, declared\n@secure(), value never read. 123 inferred: 64 hosted_on and 59 maps_to, every one resting on EF's\nnaming convention and saying so on its own row. Six disclosures.\n\nOperations looked like a boundary that never held — 172 crossings against 225 internal edges on 198\nsymbols. Opening the crossing says otherwise: 57 of the 72 Football-to-Operations edges are a single\nclass, TheTerrace.Infrastructure.Data.AppDbContext, which sits inside Operations' Infrastructure.*\npattern. Every repository that touches the database registers as a domain boundary crossing. That is\nshared persistence, not coupling between two contexts.\n\nThe recommendation, which is TheTerrace's to make and not this repository's: give shared\ninfrastructure its own context named for what it is, or leave it uncovered. Either way the crossing\ncounts start measuring domain coupling instead of counting the ORM. The other crossings survive that\nchange and are real — IAiCompletion and IPromptMapper reaching from Football and Editorial into\nAssistant, ICoachReader and ISquadReader reaching back.\n\nThe DC-022 residual is now measured rather than assumed. A predicate-by-extractor census over the\nsame run: declared_in, has_type and discloses are each emitted by all three extractors. has_type is\nconsumed by predicate in three places and is safe BY ACCIDENT — its object values happen to partition\ncleanly by producer, and nothing enforces that. The spike prints the census on every run so the next\ncollision is visible before it is joined.",
       "tags": [
         "spike"
       ],
-      "git": {
-        "before": null,
-        "after": "27adc7d93c323fd278bf0edc91f6fbf7da7c139e",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "TheTerrace measured: 57 of 72 crossings are one DbContext"
     },
     {
-      "id": "cl-0054",
-      "datetime": "2026-08-29T15:32:49Z",
-      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
-      "kind": "knowledge",
-      "skill": "collectknowledge",
-      "title": "Established WPF modern-styling and operational/test-dashboard knowledge for the AiDe.App client",
-      "prompt": "Build a WPF client with modern/softer styling (rounded corners, drop shadows): acquire best practices for WPF window/tab styling; best permissive-license open-source WPF UI control/styling libraries; exemplars for modern native UX, IDE and video-editing interfaces; plus diagramming, UML/generative-from-UML, ERM/ORM visualization, and visualizing test results, CI/CD execution and operational logs/metrics.",
-      "summary": "Design should reach the modern-soft look via the in-box .NET 9/10 Fluent theme + WindowChrome + DWM rounded corners (library-optional); reserve WPF effects for chrome not hosted panes (airspace); build three distinct dashboard panes (test/CI/metrics) that expose silent failures (percentiles, gate-ran, flaky-vs-failing) and use MIT charting only.",
-      "rationale": "The client must look modern rather than boxy; these are the sourced, permissive-license means and the design rules, with diagram/UML/ERM reconciled to existing bases.",
       "artifacts": [
         "docs/knowledge/wpf-modern-ui-styling/index.md",
         "docs/knowledge/operational-and-test-dashboards/index.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-29T15:32:49Z",
       "git": {
-        "before": "27adc7d93c323fd278bf0edc91f6fbf7da7c139e",
         "after": "68598f3479f1ce2028f54b9007d7aec40d085847",
+        "before": "27adc7d93c323fd278bf0edc91f6fbf7da7c139e",
         "branch": "main",
-        "pushed": true,
         "commits": [
           "68598f3 docs: two knowledge bases on the client's visual layer",
           "5c23ffe fix: the Graph pane was rendering nothing, and the test for it was a month stale"
-        ]
-      }
+        ],
+        "pushed": true
+      },
+      "id": "cl-0054",
+      "kind": "knowledge",
+      "prompt": "Build a WPF client with modern/softer styling (rounded corners, drop shadows): acquire best practices for WPF window/tab styling; best permissive-license open-source WPF UI control/styling libraries; exemplars for modern native UX, IDE and video-editing interfaces; plus diagramming, UML/generative-from-UML, ERM/ORM visualization, and visualizing test results, CI/CD execution and operational logs/metrics.",
+      "rationale": "The client must look modern rather than boxy; these are the sourced, permissive-license means and the design rules, with diagram/UML/ERM reconciled to existing bases.",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "skill": "collectknowledge",
+      "summary": "Design should reach the modern-soft look via the in-box .NET 9/10 Fluent theme + WindowChrome + DWM rounded corners (library-optional); reserve WPF effects for chrome not hosted panes (airspace); build three distinct dashboard panes (test/CI/metrics) that expose silent failures (percentiles, gate-ran, flaky-vs-failing) and use MIT charting only.",
+      "tags": [],
+      "title": "Established WPF modern-styling and operational/test-dashboard knowledge for the AiDe.App client"
     },
     {
-      "id": "cl-0055",
-      "datetime": "2026-08-29T15:39:44Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "Embedded scripts get a parser; DC-022's residual closed by qualifying on subject shape",
-      "prompt": null,
-      "summary": "An embedded page gets no compiler, no analyzer and no test — so it now gets a parser.\n\nverify-embedded-scripts.py parses every inline <script> this repository embeds in a C# string or an\nHTML template. With Node present it uses node --check, which is the parser the browser uses; without\nit, a narrower lexical scan for unterminated strings and unbalanced brackets. It NAMES which mode it\nran in, because a gate that silently degrades to a weaker check is worse than one that fails, and it\nfails closed when it finds nothing to check.\n\nThirteen script blocks in under a second: the canvas page, and twelve in the docs templates — the\nDocs Explorer, the Audit Explorer, the dream and mockup harnesses — every one of which would fail\nexactly as silently, rendering an empty shell nobody would attribute to a typo.\n\nThe gate's FIRST finding was its own false positive: a <script src> inside an HTML comment, reported\nas a dead script. Fixed rather than tuned around. Then verified against the real defect —\nreintroducing the stray quote produced \"CanvasPage.cs: script starts at line 52 — SyntaxError:\nInvalid or unexpected token\".\n\nThat answers both the \"add a check\" and the \"audit the other pages\" steps: the audit is the gate, and\nit runs on every push rather than once.",
-      "rationale": null,
       "artifacts": [
         "tools/verify-embedded-scripts.py",
         ".github/workflows/build.yml"
       ],
+      "datetime": "2026-08-29T15:39:44Z",
+      "git": {
+        "after": "68598f3479f1ce2028f54b9007d7aec40d085847",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0055",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "An embedded page gets no compiler, no analyzer and no test — so it now gets a parser.\n\nverify-embedded-scripts.py parses every inline <script> this repository embeds in a C# string or an\nHTML template. With Node present it uses node --check, which is the parser the browser uses; without\nit, a narrower lexical scan for unterminated strings and unbalanced brackets. It NAMES which mode it\nran in, because a gate that silently degrades to a weaker check is worse than one that fails, and it\nfails closed when it finds nothing to check.\n\nThirteen script blocks in under a second: the canvas page, and twelve in the docs templates — the\nDocs Explorer, the Audit Explorer, the dream and mockup harnesses — every one of which would fail\nexactly as silently, rendering an empty shell nobody would attribute to a typo.\n\nThe gate's FIRST finding was its own false positive: a <script src> inside an HTML comment, reported\nas a dead script. Fixed rather than tuned around. Then verified against the real defect —\nreintroducing the stray quote produced \"CanvasPage.cs: script starts at line 52 — SyntaxError:\nInvalid or unexpected token\".\n\nThat answers both the \"add a check\" and the \"audit the other pages\" steps: the audit is the gate, and\nit runs on every push rather than once.",
       "tags": [
         "defect"
       ],
-      "git": {
-        "before": null,
-        "after": "68598f3479f1ce2028f54b9007d7aec40d085847",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Embedded scripts get a parser; DC-022's residual closed by qualifying on subject shape"
     },
     {
-      "id": "cl-0056",
-      "datetime": "2026-08-29T15:39:44Z",
-      "session": null,
-      "kind": "knowledge",
-      "skill": null,
-      "title": "TheTerrace's map, measured: Operations 172 crossings to 47",
-      "prompt": null,
-      "summary": "DC-022's residual, closed for the consumer that had it.\n\nA predicate-by-extractor census over a real repository showed declared_in, has_type and discloses are\neach emitted by all three extractors, and that has_type's object values partition by producer ONLY BY\nACCIDENT — class, record, table, azure-parameter happen not to collide, and nothing enforced that.\n\nEvery has_type read in JoinProjection is now qualified by the shape of the SUBJECT as well as the\nobject value: a table must carry the table: prefix, an Azure parameter must carry a # fragment, and a\ncode type must be a dotted symbol with no scope prefix. Three tests: a bicep-scoped subject claiming\nto be a class is not joined as one, a code type still IS joined to its table, and a code symbol\ndescribed as a \"table\" by some future extractor does not become a join target. The middle one matters\nas much as the others — a qualifier that also blocks the real case is not a fix.\n\nAlso measured, not asserted: the recommendation for TheTerrace's context map. proposed/\nbounded-contexts.yaml moves TheTerrace.Infrastructure.* out of Operations into a Platform context and\nwas run through the same projection. Operations goes from 198 symbols / 225 internal / 172 crossings\nto 109 / 170 / 47, and Football-to-Operations falls from 72 to 15. Platform then carries 161 crossings\nagainst 37 internal edges, which is what shared infrastructure looks like once it is labelled as\nsuch. Operations was never the problem — it was a boundary that mostly holds, wearing the ORM's\ntraffic. Nothing was applied to TheTerrace; the proposed map lives here so the numbers reproduce.\n\nThe dangling docs link resolved itself when the other session's knowledge bases were committed. The\ngraph reports zero dangling targets; I did not fix it and am not claiming to have.",
-      "rationale": null,
       "artifacts": [
         "spikes/joins-on-a-real-repo/RESULT.md",
         "src/AiDe.Core/Projections/JoinProjection.cs"
       ],
+      "datetime": "2026-08-29T15:39:44Z",
+      "git": {
+        "after": "68598f3479f1ce2028f54b9007d7aec40d085847",
+        "before": null,
+        "branch": "main",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0056",
+      "kind": "knowledge",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "DC-022's residual, closed for the consumer that had it.\n\nA predicate-by-extractor census over a real repository showed declared_in, has_type and discloses are\neach emitted by all three extractors, and that has_type's object values partition by producer ONLY BY\nACCIDENT — class, record, table, azure-parameter happen not to collide, and nothing enforced that.\n\nEvery has_type read in JoinProjection is now qualified by the shape of the SUBJECT as well as the\nobject value: a table must carry the table: prefix, an Azure parameter must carry a # fragment, and a\ncode type must be a dotted symbol with no scope prefix. Three tests: a bicep-scoped subject claiming\nto be a class is not joined as one, a code type still IS joined to its table, and a code symbol\ndescribed as a \"table\" by some future extractor does not become a join target. The middle one matters\nas much as the others — a qualifier that also blocks the real case is not a fix.\n\nAlso measured, not asserted: the recommendation for TheTerrace's context map. proposed/\nbounded-contexts.yaml moves TheTerrace.Infrastructure.* out of Operations into a Platform context and\nwas run through the same projection. Operations goes from 198 symbols / 225 internal / 172 crossings\nto 109 / 170 / 47, and Football-to-Operations falls from 72 to 15. Platform then carries 161 crossings\nagainst 37 internal edges, which is what shared infrastructure looks like once it is labelled as\nsuch. Operations was never the problem — it was a boundary that mostly holds, wearing the ORM's\ntraffic. Nothing was applied to TheTerrace; the proposed map lives here so the numbers reproduce.\n\nThe dangling docs link resolved itself when the other session's knowledge bases were committed. The\ngraph reports zero dangling targets; I did not fix it and am not claiming to have.",
       "tags": [
         "spike"
       ],
-      "git": {
-        "before": null,
-        "after": "68598f3479f1ce2028f54b9007d7aec40d085847",
-        "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "TheTerrace's map, measured: Operations 172 crossings to 47"
     },
     {
-      "id": "cl-0057",
-      "datetime": "2026-08-29T16:00:16Z",
-      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
-      "kind": "knowledge",
-      "skill": "collectknowledge",
-      "title": "Established unified graph-experience and content-rendering knowledge for the AiDe.App editor",
-      "prompt": "Rich end-to-end experience over the unified code graph + knowledge graph: navigate and introspect any node (walk from a C# file node to read code, then to related metadata/knowledge that informed it). We use Obsidian and Graphify for graph enablement with the LLM; compose them for a great in-editor experience. Accumulate knowledge on: knowledge graphs/GraphRAG/Obsidian/Graphify; connected 2D/3D graph and knowledge-base visualization; building KG visualizations/explorers in WPF (best practices, repos, libraries, controls); design/review surfaces for code-editor viewing leveraging VS Code/Eclipse/JetBrains (public-domain/permissive only); and markdown/HTML visualization/rendering controls for the editor (permissive only).",
-      "summary": "Design should: build a node-introspection router that fuses the Graphify code graph and the docs knowledge graph and routes each node to its renderer; host the graph explorer as a web force-graph (Sigma/3d-force-graph) in the shared WebView2 pane, not native GraphX; use hybrid GraphRAG (bounded neighbourhoods) and evaluate LazyGraphRAG/LightRAG on the code graph; render content native (Markdig.Wpf, AvalonEdit/RoslynPad) for plain markdown/C# and web (Monaco/HTML) for breadth/interactivity; carry edge provenance/confidence everywhere.",
-      "rationale": "The core user scenario is walking from a C# node to the knowledge that informed it; these are the sourced, permissive-license means (all MIT/BSD/Apache) and the composition of Obsidian+Graphify, with GraphRAG cost reconciled.",
       "artifacts": [
         "docs/knowledge/graph-experience-and-visualization/index.md",
         "docs/knowledge/editor-and-content-rendering-surfaces/index.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-29T16:00:16Z",
       "git": {
-        "before": "f335c4f6ef9dd5544c99ba7565982f58bd7ed2bf",
         "after": "f335c4f6ef9dd5544c99ba7565982f58bd7ed2bf",
+        "before": "f335c4f6ef9dd5544c99ba7565982f58bd7ed2bf",
         "branch": "main",
-        "pushed": true,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0057",
+      "kind": "knowledge",
+      "prompt": "Rich end-to-end experience over the unified code graph + knowledge graph: navigate and introspect any node (walk from a C# file node to read code, then to related metadata/knowledge that informed it). We use Obsidian and Graphify for graph enablement with the LLM; compose them for a great in-editor experience. Accumulate knowledge on: knowledge graphs/GraphRAG/Obsidian/Graphify; connected 2D/3D graph and knowledge-base visualization; building KG visualizations/explorers in WPF (best practices, repos, libraries, controls); design/review surfaces for code-editor viewing leveraging VS Code/Eclipse/JetBrains (public-domain/permissive only); and markdown/HTML visualization/rendering controls for the editor (permissive only).",
+      "rationale": "The core user scenario is walking from a C# node to the knowledge that informed it; these are the sourced, permissive-license means (all MIT/BSD/Apache) and the composition of Obsidian+Graphify, with GraphRAG cost reconciled.",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "skill": "collectknowledge",
+      "summary": "Design should: build a node-introspection router that fuses the Graphify code graph and the docs knowledge graph and routes each node to its renderer; host the graph explorer as a web force-graph (Sigma/3d-force-graph) in the shared WebView2 pane, not native GraphX; use hybrid GraphRAG (bounded neighbourhoods) and evaluate LazyGraphRAG/LightRAG on the code graph; render content native (Markdig.Wpf, AvalonEdit/RoslynPad) for plain markdown/C# and web (Monaco/HTML) for breadth/interactivity; carry edge provenance/confidence everywhere.",
+      "tags": [],
+      "title": "Established unified graph-experience and content-rendering knowledge for the AiDe.App editor"
     },
     {
-      "id": "cl-0058",
-      "datetime": "2026-08-29T16:24:22Z",
-      "session": null,
-      "kind": "knowledge",
-      "skill": null,
-      "title": "DC-024: the worktree cleanup asked a ledger whether anyone was there",
-      "prompt": null,
-      "summary": "This session moved into its own worktree, which repo guidance required from the start and it did not\ndo. Every commit before this one was written directly in the primary checkout — recorded here rather\nthan quietly corrected, because the register exists for the agent's own defects too.\n\nCleaning up afterwards produced a worse finding. coord worktree cleanup --remove deleted\nC:/Projects/ai-de-facelift reporting \"clean, merged, unheld\" — and a LIVE session recreated the tree\nwithin the minute and wrote a marker reading \"facelift worktree in use\". Nothing was lost: the\ncleanliness checks were all correct, the tree had no uncommitted work and no unique commits. The\nLIVENESS check was the wrong one. It read live_keys — a registration ledger — and that session had\nnever run coord session start. A ledger says who signed in; it never says nobody is there.\n\nRegistered as DC-024 and controlled: worktree_safety now ends with a filesystem condition. A tree\nwhose files were modified within the last hour is HELD whatever the ledger says. The scan skips build\noutput, is capped at 4,000 files, and treats hitting the cap as in-use rather than as an answer,\nbecause a partial scan cannot prove absence. The reason string carries the age, so \"idle\" is a\nmeasurement someone can disagree with rather than a verdict.\n\nObserved failing in both directions on a scratch tree: clean, merged and unregistered it reported\nKEEP - touched recently - last modified 0 minute(s) ago; with its files backdated two hours it became\nWOULD - clean, merged, unheld, idle - last modified 120 minute(s) ago. A safety rule that never\npermits anything is not a safety rule.",
-      "rationale": null,
       "artifacts": [
         "docs/ai-forward-pack/scripts/coord-core.py",
         ".claude/knowledge/session-worktree-discipline.md"
       ],
+      "datetime": "2026-08-29T16:24:22Z",
+      "git": {
+        "after": "21068ab3fcf1a7cd9021ac5babfa9d7f95495b6c",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0058",
+      "kind": "knowledge",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "This session moved into its own worktree, which repo guidance required from the start and it did not\ndo. Every commit before this one was written directly in the primary checkout — recorded here rather\nthan quietly corrected, because the register exists for the agent's own defects too.\n\nCleaning up afterwards produced a worse finding. coord worktree cleanup --remove deleted\nC:/Projects/ai-de-facelift reporting \"clean, merged, unheld\" — and a LIVE session recreated the tree\nwithin the minute and wrote a marker reading \"facelift worktree in use\". Nothing was lost: the\ncleanliness checks were all correct, the tree had no uncommitted work and no unique commits. The\nLIVENESS check was the wrong one. It read live_keys — a registration ledger — and that session had\nnever run coord session start. A ledger says who signed in; it never says nobody is there.\n\nRegistered as DC-024 and controlled: worktree_safety now ends with a filesystem condition. A tree\nwhose files were modified within the last hour is HELD whatever the ledger says. The scan skips build\noutput, is capped at 4,000 files, and treats hitting the cap as in-use rather than as an answer,\nbecause a partial scan cannot prove absence. The reason string carries the age, so \"idle\" is a\nmeasurement someone can disagree with rather than a verdict.\n\nObserved failing in both directions on a scratch tree: clean, merged and unregistered it reported\nKEEP - touched recently - last modified 0 minute(s) ago; with its files backdated two hours it became\nWOULD - clean, merged, unheld, idle - last modified 120 minute(s) ago. A safety rule that never\npermits anything is not a safety rule.",
       "tags": [
         "continuous-improvement"
       ],
-      "git": {
-        "before": null,
-        "after": "21068ab3fcf1a7cd9021ac5babfa9d7f95495b6c",
-        "branch": "session/phase3-pane-probes",
-        "pushed": null,
-        "commits": []
-      }
+      "title": "DC-024: the worktree cleanup asked a ledger whether anyone was there"
     },
     {
-      "id": "cl-0059",
-      "datetime": "2026-08-29T16:24:23Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "Panes rendered and read; a second repository finds absence rendered as coverage",
-      "prompt": null,
-      "summary": "The panes are now rendered and read, and a second repository was measured.\n\nPaneRenderTests walks the visual tree of the Joins and Contexts panes and asserts on CONTENT, never\non a control count — \"has four children\" passes for four empty labels. In-process on an STA thread\nrather than as another out-of-process probe: the canvas needs a real foreground window because it\ndrives a browser through SendInput, and these panes build their own children. The last case is the\nrule both must keep: no evidence pane, in any of its six states, may render no readable text.\nObserved failing by making one pane silent.\n\nA crossing dominated by one object now says which one. Found by eye once — 57 of 72 edges were\nAppDbContext — and a signal a person has to notice is a signal that gets noticed once. Majority of\nthe listed members, computed over what was actually examined rather than extrapolated to the full\nweight, with the undisclosed count still beside it. Three tests including the boundary: exactly half\nis not domination.\n\nBioHacker was measured as a second repository, deliberately a different shape — 25 scopes, 26 Bicep\nresources, no Entity Framework. Zero joins is the correct answer there and the pane says so. But it\nhas no context map, and the pane reported \"0 uncovered\" and \"Every declared symbol belongs to a\ncontext\" — the sentence a fully-mapped codebase produces. The arithmetic was right, which is why a\ncleverer count could not have fixed it. ContextMapView carries IsDeclared now and says plainly that\nnothing has been claimed about the code yet. One repository could not have found this: TheTerrace has\na map, so every path that runs when there is none had never been exercised.\n\nAnd TheTerrace's Platform split is applied on a branch in its own worktree — docs/platform-context,\ncommitted locally and NOT pushed, because that repository is the user's to publish.",
-      "rationale": null,
       "artifacts": [
         "tests/AiDe.App.Tests/PaneRenderTests.cs",
         "src/AiDe.Core/Projections/ContextProjection.cs"
       ],
+      "datetime": "2026-08-29T16:24:23Z",
+      "git": {
+        "after": "21068ab3fcf1a7cd9021ac5babfa9d7f95495b6c",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0059",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "The panes are now rendered and read, and a second repository was measured.\n\nPaneRenderTests walks the visual tree of the Joins and Contexts panes and asserts on CONTENT, never\non a control count — \"has four children\" passes for four empty labels. In-process on an STA thread\nrather than as another out-of-process probe: the canvas needs a real foreground window because it\ndrives a browser through SendInput, and these panes build their own children. The last case is the\nrule both must keep: no evidence pane, in any of its six states, may render no readable text.\nObserved failing by making one pane silent.\n\nA crossing dominated by one object now says which one. Found by eye once — 57 of 72 edges were\nAppDbContext — and a signal a person has to notice is a signal that gets noticed once. Majority of\nthe listed members, computed over what was actually examined rather than extrapolated to the full\nweight, with the undisclosed count still beside it. Three tests including the boundary: exactly half\nis not domination.\n\nBioHacker was measured as a second repository, deliberately a different shape — 25 scopes, 26 Bicep\nresources, no Entity Framework. Zero joins is the correct answer there and the pane says so. But it\nhas no context map, and the pane reported \"0 uncovered\" and \"Every declared symbol belongs to a\ncontext\" — the sentence a fully-mapped codebase produces. The arithmetic was right, which is why a\ncleverer count could not have fixed it. ContextMapView carries IsDeclared now and says plainly that\nnothing has been claimed about the code yet. One repository could not have found this: TheTerrace has\na map, so every path that runs when there is none had never been exercised.\n\nAnd TheTerrace's Platform split is applied on a branch in its own worktree — docs/platform-context,\ncommitted locally and NOT pushed, because that repository is the user's to publish.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "21068ab3fcf1a7cd9021ac5babfa9d7f95495b6c",
-        "branch": "session/phase3-pane-probes",
-        "pushed": null,
-        "commits": []
-      }
+      "title": "Panes rendered and read; a second repository finds absence rendered as coverage"
     },
     {
-      "id": "cl-0060",
-      "datetime": "2026-08-29T16:35:40Z",
-      "session": null,
-      "kind": "decision",
-      "skill": null,
-      "title": "A written contract between the core and design sessions",
-      "prompt": null,
-      "summary": "Two sessions now work this repository at once — core capabilities here, styling and design surfaces\nin the other tree. docs/collaboration/session-contracts.md is the proposal, written down because\n\"we'll coordinate\" is not a coordination mechanism and the first thing two sessions lose is not code\nbut agreement about what each thought was true.\n\nThe seam is one sentence: Core produces view models, Design renders them. A view model is a record\nwith no behaviour and no WPF types, carrying what the user needs to know INCLUDING what could not be\nestablished — a projection that hides a gap forces the surface to invent one. Neither side reaches\nacross: Core does not choose colour or control, Design does not compute a number, because a number\ncomputed in a surface is a second definition of a quantity that already has one.\n\nFile ownership is listed rather than described, with the shared files and the rule each carries.\nDerived files — docs-index.js, audit-data.js — are called out because a hand-merged generated file is\na conflict resolved into a lie.\n\nSection 6 is deliberate: what this does NOT settle. Fast-forward versus pull request, whether view\nmodels should carry presentation hints, and where visual regression evidence lives are joint\ndecisions, and writing one session's preference down as settled is how a proposal becomes a fait\naccompli. Status is proposed, not accepted.\n\nThree requests to Design are recorded in 4a rather than made in conversation, each additive and\nalready on main.",
-      "rationale": null,
       "artifacts": [
         "docs/collaboration/session-contracts.md"
       ],
+      "datetime": "2026-08-29T16:35:40Z",
+      "git": {
+        "after": "6db9b6f43e70b8a05994becd344aa86e58e9b37c",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0060",
+      "kind": "decision",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "Two sessions now work this repository at once — core capabilities here, styling and design surfaces\nin the other tree. docs/collaboration/session-contracts.md is the proposal, written down because\n\"we'll coordinate\" is not a coordination mechanism and the first thing two sessions lose is not code\nbut agreement about what each thought was true.\n\nThe seam is one sentence: Core produces view models, Design renders them. A view model is a record\nwith no behaviour and no WPF types, carrying what the user needs to know INCLUDING what could not be\nestablished — a projection that hides a gap forces the surface to invent one. Neither side reaches\nacross: Core does not choose colour or control, Design does not compute a number, because a number\ncomputed in a surface is a second definition of a quantity that already has one.\n\nFile ownership is listed rather than described, with the shared files and the rule each carries.\nDerived files — docs-index.js, audit-data.js — are called out because a hand-merged generated file is\na conflict resolved into a lie.\n\nSection 6 is deliberate: what this does NOT settle. Fast-forward versus pull request, whether view\nmodels should carry presentation hints, and where visual regression evidence lives are joint\ndecisions, and writing one session's preference down as settled is how a proposal becomes a fait\naccompli. Status is proposed, not accepted.\n\nThree requests to Design are recorded in 4a rather than made in conversation, each additive and\nalready on main.",
       "tags": [
         "collaboration"
       ],
-      "git": {
-        "before": null,
-        "after": "6db9b6f43e70b8a05994becd344aa86e58e9b37c",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "A written contract between the core and design sessions"
     },
     {
-      "id": "cl-0061",
-      "datetime": "2026-08-29T16:35:40Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "One extractor composition, and a bounded read that says what it missed",
-      "prompt": null,
-      "summary": "Two core defects, both about a boundary telling the truth about itself.\n\n**The running app could not see what the spike could.** The daemon composed only the C# extractor and\nthe fixture adapter, so infrastructure and schema were invisible to the product while a spike\ncomposed all four and reported joins the app had no way to show — two answers to \"what does this tool\nread\", depending which door you came in. WorkspaceExtractors.Default() is now the single composition,\nused by the daemon and the spike, with named arguments.\n\nThat matters because the hand-written form is easy to get wrong SILENTLY: the spike once passed its\nextractors positionally, which put BicepExtractor in the fallback slot and routed every bicep scope\nto the schema extractor. Both failed and the write-up concluded the repository had no Bicep. It has\ntwo templates and 24 resource declarations. CompositeExtractor.RouteFor now exposes the routing\ndecision so a test can read it, and the test was observed failing on that exact mis-ordering:\nexpected \"bicep\", actual \"schema\".\n\n**Every number both panes show was computed from a bounded read that never said so.** The shell\nsearches with a 20,000 cap, describes 4,000 of the matches, and takes 60 neighbours from each. On the\nrepositories measured so far all three are slack — and nothing in the output would change if they\nwere not. The counts would simply be smaller and still be presented as facts. EvidenceRead carries\nwhat the read did not see; the shell announces it once per distinct sentence, and reports BOTH causes\nseparately because \"bigger than the search cap\" and \"these nodes are unusually connected\" have\nopposite fixes. A node returning exactly the limit counts as truncated, because the read cannot tell\nthe difference and guessing in the flattering direction is how a cap becomes a quieter wrong number.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Extraction/WorkspaceExtractors.cs",
         "src/AiDe.Core/Projections/EvidenceRead.cs",
         "src/AiDe.Daemon/Program.cs"
       ],
+      "datetime": "2026-08-29T16:35:40Z",
+      "git": {
+        "after": "6db9b6f43e70b8a05994becd344aa86e58e9b37c",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0061",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "Two core defects, both about a boundary telling the truth about itself.\n\n**The running app could not see what the spike could.** The daemon composed only the C# extractor and\nthe fixture adapter, so infrastructure and schema were invisible to the product while a spike\ncomposed all four and reported joins the app had no way to show — two answers to \"what does this tool\nread\", depending which door you came in. WorkspaceExtractors.Default() is now the single composition,\nused by the daemon and the spike, with named arguments.\n\nThat matters because the hand-written form is easy to get wrong SILENTLY: the spike once passed its\nextractors positionally, which put BicepExtractor in the fallback slot and routed every bicep scope\nto the schema extractor. Both failed and the write-up concluded the repository had no Bicep. It has\ntwo templates and 24 resource declarations. CompositeExtractor.RouteFor now exposes the routing\ndecision so a test can read it, and the test was observed failing on that exact mis-ordering:\nexpected \"bicep\", actual \"schema\".\n\n**Every number both panes show was computed from a bounded read that never said so.** The shell\nsearches with a 20,000 cap, describes 4,000 of the matches, and takes 60 neighbours from each. On the\nrepositories measured so far all three are slack — and nothing in the output would change if they\nwere not. The counts would simply be smaller and still be presented as facts. EvidenceRead carries\nwhat the read did not see; the shell announces it once per distinct sentence, and reports BOTH causes\nseparately because \"bigger than the search cap\" and \"these nodes are unusually connected\" have\nopposite fixes. A node returning exactly the limit counts as truncated, because the read cannot tell\nthe difference and guessing in the flattering direction is how a cap becomes a quieter wrong number.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "6db9b6f43e70b8a05994becd344aa86e58e9b37c",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "One extractor composition, and a bounded read that says what it missed"
     },
     {
-      "id": "cl-0062",
-      "datetime": "2026-08-29T16:46:10Z",
-      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
-      "kind": "decision",
-      "skill": "ui-design",
-      "title": "Domain experts + facelift/knowledge/UML-ERM specs and mockups",
-      "prompt": "domain experts + specify + ui-design chain",
-      "summary": "Roster 26; flat->soft-islands; node-introspection router; derived read-only UML/ERM.",
-      "rationale": "Subject-matter judgment + three grounded surfaces.",
       "artifacts": [
         "docs/domain-experts.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-29T16:46:10Z",
       "git": {
-        "before": null,
         "after": "d81828191646a2031f702165854e6f816918571a",
+        "before": null,
         "branch": "feature/app-facelift-and-graph-surfaces",
-        "pushed": true,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0062",
+      "kind": "decision",
+      "prompt": "domain experts + specify + ui-design chain",
+      "rationale": "Subject-matter judgment + three grounded surfaces.",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "skill": "ui-design",
+      "summary": "Roster 26; flat->soft-islands; node-introspection router; derived read-only UML/ERM.",
+      "tags": [],
+      "title": "Domain experts + facelift/knowledge/UML-ERM specs and mockups"
     },
     {
-      "id": "cl-0063",
-      "datetime": "2026-08-29T17:03:02Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "The panes were reading 50 nodes; the search now has its own ceiling",
-      "prompt": null,
-      "summary": "Two defects the panes had been living with, both about a boundary lying about how much it saw.\n\n**The panes were computing from at most 50 nodes.** ProjectionService.Find borrowed\nMaxNeighborsCeiling, which is 50. The workbench asked for 20,000 matches to build the context and\njoin panes and received 50 — so crossing counts, join counts and coverage were computed from roughly\nthree percent of a real workspace and presented as the answer, while the spike read the store\ndirectly and showed the whole picture. The two disagreed for days and nothing said so. A search\nreturns identity columns only, so its payload per row is small and its ceiling can be large;\nMaxSearchResultsCeiling is now its own constant at 20,000. On TheTerrace the panes went from 50 nodes\nto 2,164.\n\n**And the read reported a total it had made up.** ReadAssertions counted the rows in front of it and\ncalled that the number of matching nodes, while ResultBounds.OmittedNodes had been carrying the true\nremainder all along. The shell reads the bounds now. The neighbour limit was also wrong in the other\ndirection — the shell asked for 60 against a ceiling of 50, so the truncation check compared against\na limit that could never be reached: a control that could not fire, guarding a cap that was already\nbiting. It reads the service's own constant now, and on TheTerrace it fires for real on 26 nodes.\n\nAlso proven across the pipe: the daemon returns infrastructure evidence, asserted against the\nprovenance extractor id rather than a predicate name. That test first failed against a STALE Release\ndaemon, because LocateDaemon preferred Release if the folder existed rather than following the\nconfiguration the tests were built in — DC-023 in the harness, fixed.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Projections/ProjectionService.cs",
         "src/AiDe.App/Workbench/WorkbenchShell.cs",
         "tests/AiDe.Core.Tests/DaemonProcessTests.cs"
       ],
+      "datetime": "2026-08-29T17:03:02Z",
+      "git": {
+        "after": "62fe22519a048983d643746158f665b8079f8541",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": false
+      },
+      "id": "cl-0063",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "Two defects the panes had been living with, both about a boundary lying about how much it saw.\n\n**The panes were computing from at most 50 nodes.** ProjectionService.Find borrowed\nMaxNeighborsCeiling, which is 50. The workbench asked for 20,000 matches to build the context and\njoin panes and received 50 — so crossing counts, join counts and coverage were computed from roughly\nthree percent of a real workspace and presented as the answer, while the spike read the store\ndirectly and showed the whole picture. The two disagreed for days and nothing said so. A search\nreturns identity columns only, so its payload per row is small and its ceiling can be large;\nMaxSearchResultsCeiling is now its own constant at 20,000. On TheTerrace the panes went from 50 nodes\nto 2,164.\n\n**And the read reported a total it had made up.** ReadAssertions counted the rows in front of it and\ncalled that the number of matching nodes, while ResultBounds.OmittedNodes had been carrying the true\nremainder all along. The shell reads the bounds now. The neighbour limit was also wrong in the other\ndirection — the shell asked for 60 against a ceiling of 50, so the truncation check compared against\na limit that could never be reached: a control that could not fire, guarding a cap that was already\nbiting. It reads the service's own constant now, and on TheTerrace it fires for real on 26 nodes.\n\nAlso proven across the pipe: the daemon returns infrastructure evidence, asserted against the\nprovenance extractor id rather than a predicate name. That test first failed against a STALE Release\ndaemon, because LocateDaemon preferred Release if the folder existed rather than following the\nconfiguration the tests were built in — DC-023 in the harness, fixed.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "62fe22519a048983d643746158f665b8079f8541",
-        "branch": "session/phase3-pane-probes",
-        "pushed": false,
-        "commits": []
-      }
+      "title": "The panes were reading 50 nodes; the search now has its own ceiling"
     },
     {
-      "id": "cl-0064",
-      "datetime": "2026-08-29T17:03:02Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "Incremental re-index, and the restart that could never index twice",
-      "prompt": null,
-      "summary": "Incremental re-index, and two defects it uncovered on the way.\n\nEvery index re-extracted every scope: 4.3 seconds on TheTerrace, 2.8 on another repository, paid in\nfull whether one file changed or none. ScopeFingerprints digests each scope's input files by path,\nsize and modification time, plus an extractor generation so upgrading the product invalidates\neverything rather than leaving a graph built by two extractor versions with nothing saying which.\nTheTerrace re-indexes in 0.1s now, ten scopes reused.\n\nThe reuse is counted separately from the indexing. \"7 of 7 indexed\" would be a true sentence about a\nrun that read nothing, and the question after a surprising graph is always whether it actually\nlooked. It fails towards re-extraction: an unreadable directory, a missing sidecar or a scope whose\ncommitted evidence has gone all produce a re-read, because the cost of an unnecessary extraction is\nseconds and the cost of a skipped one is a graph describing code that no longer exists.\n\nTesting it across a reopen found something unrelated and worse: THE SECOND INDEX OF ANY WORKSPACE\nAFTER A RESTART FAILED. The generation counter lives in memory and started at zero on every open\nwhile the store did not, so it re-used generation 1 and violated the desired-generation primary key.\nThe daemon opens the store fresh every time it starts. Nothing had ever indexed twice across a\nreopen, so nothing had ever noticed. Seeded from the store now.\n\nAnd re-extracting a revision the store already holds surfaced as a raw SQLite UNIQUE-constraint\nexception from the middle of a run. The first fix silenced the natural key with INSERT OR IGNORE —\nwhich broke an existing test asserting that key rejects duplicates, and rightly so: that control is\ndeliberate. The caller is idempotent instead. Re-extracting a revision already committed returns\nwithout writing, the store stays strict, and \"index again\" answers the user's real question, which\nis whether the graph is current for this revision.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Extraction/ScopeFingerprints.cs",
         "src/AiDe.Core/WorkspaceCore.cs"
       ],
+      "datetime": "2026-08-29T17:03:02Z",
+      "git": {
+        "after": "62fe22519a048983d643746158f665b8079f8541",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": false
+      },
+      "id": "cl-0064",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "Incremental re-index, and two defects it uncovered on the way.\n\nEvery index re-extracted every scope: 4.3 seconds on TheTerrace, 2.8 on another repository, paid in\nfull whether one file changed or none. ScopeFingerprints digests each scope's input files by path,\nsize and modification time, plus an extractor generation so upgrading the product invalidates\neverything rather than leaving a graph built by two extractor versions with nothing saying which.\nTheTerrace re-indexes in 0.1s now, ten scopes reused.\n\nThe reuse is counted separately from the indexing. \"7 of 7 indexed\" would be a true sentence about a\nrun that read nothing, and the question after a surprising graph is always whether it actually\nlooked. It fails towards re-extraction: an unreadable directory, a missing sidecar or a scope whose\ncommitted evidence has gone all produce a re-read, because the cost of an unnecessary extraction is\nseconds and the cost of a skipped one is a graph describing code that no longer exists.\n\nTesting it across a reopen found something unrelated and worse: THE SECOND INDEX OF ANY WORKSPACE\nAFTER A RESTART FAILED. The generation counter lives in memory and started at zero on every open\nwhile the store did not, so it re-used generation 1 and violated the desired-generation primary key.\nThe daemon opens the store fresh every time it starts. Nothing had ever indexed twice across a\nreopen, so nothing had ever noticed. Seeded from the store now.\n\nAnd re-extracting a revision the store already holds surfaced as a raw SQLite UNIQUE-constraint\nexception from the middle of a run. The first fix silenced the natural key with INSERT OR IGNORE —\nwhich broke an existing test asserting that key rejects duplicates, and rightly so: that control is\ndeliberate. The caller is idempotent instead. Re-extracting a revision already committed returns\nwithout writing, the store stays strict, and \"index again\" answers the user's real question, which\nis whether the graph is current for this revision.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "62fe22519a048983d643746158f665b8079f8541",
-        "branch": "session/phase3-pane-probes",
-        "pushed": false,
-        "commits": []
-      }
+      "title": "Incremental re-index, and the restart that could never index twice"
     },
     {
-      "id": "cl-0065",
-      "datetime": "2026-08-29T17:28:43Z",
-      "session": null,
-      "kind": "knowledge",
-      "skill": null,
-      "title": "DC-013 prevented: ids allocated from a lock-guarded counter every worktree shares",
-      "prompt": null,
-      "summary": "DC-013 is prevented now rather than detected. Three occurrences, the last between two AGENTS rather\nthan two trees of one — which broke the previous control, because \"run log-writing scripts in the\ntree where the work is\" is advice that cannot reach a session that is not yours.\n\nEvery worktree of a repository shares ONE git common directory. A counter placed there is visible to\nall of them, and an exclusive-create lock makes the read-modify-write atomic. The file's own highest\nid remains the floor, so a counter that is missing, stale or from a fresh clone can only ever be\ncaught up to reality, never fall behind it.\n\nSixteen concurrent allocations issued from two different worktrees of this repository returned\nsixteen distinct ids. The previous allocator returns the same one to all sixteen. Gaps are expected\nand harmless: an id is an identifier, not a count, and the gate checks uniqueness rather than\ncontiguity. Promoted to controlled, with the honest residual — two separate CLONES do not share a\ngit directory and would still collide, and a stale lock falls back to the old behaviour by design.\n\nTwo more things the fingerprint work needed. The scope SET is part of a workspace's shape and changes\nwithout any individual scope changing, so a departed scope is now reconciled out of the sidecar and\nrecorded as a health incident rather than reused forever while its evidence describes code that no\nlonger exists. And a single-file scope is fingerprinted by its own file: treating a Bicep template as\nits containing directory made two templates in one infra/ folder share a basis, so deleting either\ninvalidated both.",
-      "rationale": null,
       "artifacts": [
         "docs/ai-forward-pack/scripts/audit-log.py",
         "src/AiDe.Core/Extraction/ScopeFingerprints.cs"
       ],
+      "datetime": "2026-08-29T17:28:43Z",
+      "git": {
+        "after": "dd1c53793935746bc3aa6c5a175c1cf5c99f9a8b",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0065",
+      "kind": "knowledge",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "DC-013 is prevented now rather than detected. Three occurrences, the last between two AGENTS rather\nthan two trees of one — which broke the previous control, because \"run log-writing scripts in the\ntree where the work is\" is advice that cannot reach a session that is not yours.\n\nEvery worktree of a repository shares ONE git common directory. A counter placed there is visible to\nall of them, and an exclusive-create lock makes the read-modify-write atomic. The file's own highest\nid remains the floor, so a counter that is missing, stale or from a fresh clone can only ever be\ncaught up to reality, never fall behind it.\n\nSixteen concurrent allocations issued from two different worktrees of this repository returned\nsixteen distinct ids. The previous allocator returns the same one to all sixteen. Gaps are expected\nand harmless: an id is an identifier, not a count, and the gate checks uniqueness rather than\ncontiguity. Promoted to controlled, with the honest residual — two separate CLONES do not share a\ngit directory and would still collide, and a stale lock falls back to the old behaviour by design.\n\nTwo more things the fingerprint work needed. The scope SET is part of a workspace's shape and changes\nwithout any individual scope changing, so a departed scope is now reconciled out of the sidecar and\nrecorded as a health incident rather than reused forever while its evidence describes code that no\nlonger exists. And a single-file scope is fingerprinted by its own file: treating a Bicep template as\nits containing directory made two templates in one infra/ folder share a basis, so deleting either\ninvalidated both.",
       "tags": [
         "continuous-improvement"
       ],
-      "git": {
-        "before": null,
-        "after": "dd1c53793935746bc3aa6c5a175c1cf5c99f9a8b",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "DC-013 prevented: ids allocated from a lock-guarded counter every worktree shares"
     },
     {
-      "id": "cl-0066",
-      "datetime": "2026-08-29T17:28:43Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "Force is reachable, and a fourth repository finds absence rendered as emptiness",
-      "prompt": null,
-      "summary": "Two escape hatches and a fourth repository.\n\n**Force is reachable.** It existed as an API parameter with nothing able to reach it. Ctrl+K, Shift+I\nre-reads every scope ignoring the cache, threaded through the wire contract additively — a client\nbuilt before the field still decodes and still means \"use the cache\", which is the safe reading of an\nabsent flag. The command announces that it is ignoring the cache, because the only reason to run it\nis that the user does not trust the fast answer and a command that looks identical gives them no way\nto tell which they got. IndexSummary reports reuse in words for the same reason: \"Indexed 0 of 7\"\nwith nothing else reads as a failure.\n\nAdding a command required one line in a Design-owned file, because the conformance test makes adding\na command and placing it in a menu one atomic change. Written down rather than done quietly: the\ncommand-to-menu mapping is now recorded as Core-owned DATA inside a Design-owned file, with a\nproposal to move it onto the catalog entry so the seam stops crossing there.\n\n**A fourth repository, chosen for what it lacks.** 63 Python files, 40 TypeScript, no C#, no Bicep,\nno migrations. It produced zero scopes, zero assertions and an EMPTY DISCLOSURE LIST —\nindistinguishable from an empty directory, with the mechanism whose entire job is to say what was not\nread saying nothing. Third repository in a row to find the same shape: a missing context map read as\nperfect coverage, a bounded search read as the whole workspace, unreadable source read as no source.\nEach time the arithmetic was right and the claim was false.\n\nUnanalysedLanguages names what is present and unread, with counts, because \"some Python\" and \"10,760\nPython files\" are different statements about how much of a repository the graph is silent on.\nVendored directories are excluded and a C#-only workspace discloses nothing, because a disclosure\nthat fires everywhere is noise.\n\nAnd the caps fix is now checkable on every run: 122 of 124 join edges agree between the pane read and\nthe store, the two missing are cut by the neighbour cap, and the shortfall line reports them.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Extraction/UnanalysedLanguages.cs",
         "src/AiDe.Core/Workbench/WorkbenchCommands.cs",
         "docs/collaboration/session-contracts.md"
       ],
+      "datetime": "2026-08-29T17:28:43Z",
+      "git": {
+        "after": "dd1c53793935746bc3aa6c5a175c1cf5c99f9a8b",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0066",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "Two escape hatches and a fourth repository.\n\n**Force is reachable.** It existed as an API parameter with nothing able to reach it. Ctrl+K, Shift+I\nre-reads every scope ignoring the cache, threaded through the wire contract additively — a client\nbuilt before the field still decodes and still means \"use the cache\", which is the safe reading of an\nabsent flag. The command announces that it is ignoring the cache, because the only reason to run it\nis that the user does not trust the fast answer and a command that looks identical gives them no way\nto tell which they got. IndexSummary reports reuse in words for the same reason: \"Indexed 0 of 7\"\nwith nothing else reads as a failure.\n\nAdding a command required one line in a Design-owned file, because the conformance test makes adding\na command and placing it in a menu one atomic change. Written down rather than done quietly: the\ncommand-to-menu mapping is now recorded as Core-owned DATA inside a Design-owned file, with a\nproposal to move it onto the catalog entry so the seam stops crossing there.\n\n**A fourth repository, chosen for what it lacks.** 63 Python files, 40 TypeScript, no C#, no Bicep,\nno migrations. It produced zero scopes, zero assertions and an EMPTY DISCLOSURE LIST —\nindistinguishable from an empty directory, with the mechanism whose entire job is to say what was not\nread saying nothing. Third repository in a row to find the same shape: a missing context map read as\nperfect coverage, a bounded search read as the whole workspace, unreadable source read as no source.\nEach time the arithmetic was right and the claim was false.\n\nUnanalysedLanguages names what is present and unread, with counts, because \"some Python\" and \"10,760\nPython files\" are different statements about how much of a repository the graph is silent on.\nVendored directories are excluded and a C#-only workspace discloses nothing, because a disclosure\nthat fires everywhere is noise.\n\nAnd the caps fix is now checkable on every run: 122 of 124 join edges agree between the pane read and\nthe store, the two missing are cut by the neighbour cap, and the shortfall line reports them.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "dd1c53793935746bc3aa6c5a175c1cf5c99f9a8b",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Force is reachable, and a fourth repository finds absence rendered as emptiness"
     },
     {
-      "id": "cl-0067",
-      "datetime": "2026-08-29T17:48:34Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "The panes read the store exactly: a paged bulk evidence query",
-      "prompt": null,
-      "summary": "The panes now see exactly what the store holds — 12,100 of 12,100 assertions, 124 of 124 join edges,\nzero divergence. They were rebuilding that set node by node through Describe, which bounds neighbours\nat 50 and lost two edges doing it, and which asks the store for a graph walk when what is wanted is a\ntable scan.\n\nEvidenceAsync is the question they were actually asking: one page of every current assertion, paged\nbecause it crosses a pipe and an unbounded response would breach the result-byte cap. The cursor is\nthe last row's (subject, predicate, object) — the same tuple the ORDER BY uses, so a page boundary\ncannot skip or repeat a row; an id-based cursor would order by something the query does not, which is\nhow paging quietly loses records. A malformed cursor restarts rather than throwing, because it is\nopaque and a caller was never meant to construct one.\n\nPinned with a page size of ONE, so every boundary in the set is exercised: the union of the pages\nequals the whole set, nothing repeated. A comfortable page size would test that the query runs, not\nthat the cursor is right.\n\nTwo more things landed with it. A departed scope's evidence is now retired by committing an EMPTY\nsnapshot at a higher generation — superseded, never deleted, because the store is append-only and\ndestroying the rows would destroy the record of what the graph once said. Removing a project used to\nleave its symbols and crossings in every projection indefinitely. And every catalog command now\ndeclares its menu, so the builder can derive its grouping and Core stops needing to edit a\ndesign-owned file to add a command at all.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Projections/ProjectionService.cs",
         "src/AiDe.Core/Store/StoreReader.cs",
         "src/AiDe.App/Workbench/WorkbenchShell.cs"
       ],
+      "datetime": "2026-08-29T17:48:34Z",
+      "git": {
+        "after": "5af8dd94aeae26d187fd0b6b805453b04e60b06c",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": false
+      },
+      "id": "cl-0067",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "The panes now see exactly what the store holds — 12,100 of 12,100 assertions, 124 of 124 join edges,\nzero divergence. They were rebuilding that set node by node through Describe, which bounds neighbours\nat 50 and lost two edges doing it, and which asks the store for a graph walk when what is wanted is a\ntable scan.\n\nEvidenceAsync is the question they were actually asking: one page of every current assertion, paged\nbecause it crosses a pipe and an unbounded response would breach the result-byte cap. The cursor is\nthe last row's (subject, predicate, object) — the same tuple the ORDER BY uses, so a page boundary\ncannot skip or repeat a row; an id-based cursor would order by something the query does not, which is\nhow paging quietly loses records. A malformed cursor restarts rather than throwing, because it is\nopaque and a caller was never meant to construct one.\n\nPinned with a page size of ONE, so every boundary in the set is exercised: the union of the pages\nequals the whole set, nothing repeated. A comfortable page size would test that the query runs, not\nthat the cursor is right.\n\nTwo more things landed with it. A departed scope's evidence is now retired by committing an EMPTY\nsnapshot at a higher generation — superseded, never deleted, because the store is append-only and\ndestroying the rows would destroy the record of what the graph once said. Removing a project used to\nleave its symbols and crossings in every projection indefinitely. And every catalog command now\ndeclares its menu, so the builder can derive its grouping and Core stops needing to edit a\ndesign-owned file to add a command at all.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "5af8dd94aeae26d187fd0b6b805453b04e60b06c",
-        "branch": "session/phase3-pane-probes",
-        "pushed": false,
-        "commits": []
-      }
+      "title": "The panes read the store exactly: a paged bulk evidence query"
     },
     {
-      "id": "cl-0068",
-      "datetime": "2026-08-29T17:48:34Z",
-      "session": null,
-      "kind": "knowledge",
-      "skill": null,
-      "title": "DC-025 absence rendered as success, and DC-026 a merge that de-duplicates on the disputed key",
-      "prompt": null,
-      "summary": "Two defect classes registered, one of them mine.\n\nDC-025, absence rendered as success. A projection computes over a set that is empty BECAUSE NOTHING\nWAS COLLECTED, the arithmetic is correct, and the surface renders that zero with the vocabulary of\ncompleteness. Four instances now, all found by pointing the panes at real repositories and none by a\ntest: a missing context map read as perfect coverage; a search bounded at fifty read as the whole\nworkspace; unreadable source read as no source; and now a file that does not parse. Roslyn does not\nthrow on broken source — it returns a tree with error nodes — so extraction succeeds and simply finds\nless, which is indistinguishable from a smaller file. That is the state a developer is in most often,\nand it disclosed nothing. Fixed with source-did-not-parse, which names the files and their count\nwhile still contributing what did parse.\n\nWorth recording honestly: the fourth instance was nearly reported from an experiment that had not\nrun. The script meant to corrupt a file silently did nothing, and the assertion-count difference I\nwas about to attribute to a syntax error had another cause entirely. It became a finding only after\nthe broken file was verified to exist.\n\nDC-026 is mine. Resolving an append-only merge conflict by unioning KEYED BY ID, with setdefault,\nsilently dropped a design-session entry — the gate stayed green throughout, because uniqueness was\nsatisfied precisely by the removal. The defect is not the collision; it is de-duplicating on the\nfield that is in dispute. tools/merge-append-only-log.py unions by content so nothing can be dropped,\nre-issues a contested id from the shared counter, and prints the count in, the count out, and every\nre-issue — a merge that resolves silently is indistinguishable from one that lost something.",
-      "rationale": null,
       "artifacts": [
         "docs/lessons/defect-classes.md",
         "tools/merge-append-only-log.py"
       ],
+      "datetime": "2026-08-29T17:48:34Z",
+      "git": {
+        "after": "5af8dd94aeae26d187fd0b6b805453b04e60b06c",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": false
+      },
+      "id": "cl-0068",
+      "kind": "knowledge",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "Two defect classes registered, one of them mine.\n\nDC-025, absence rendered as success. A projection computes over a set that is empty BECAUSE NOTHING\nWAS COLLECTED, the arithmetic is correct, and the surface renders that zero with the vocabulary of\ncompleteness. Four instances now, all found by pointing the panes at real repositories and none by a\ntest: a missing context map read as perfect coverage; a search bounded at fifty read as the whole\nworkspace; unreadable source read as no source; and now a file that does not parse. Roslyn does not\nthrow on broken source — it returns a tree with error nodes — so extraction succeeds and simply finds\nless, which is indistinguishable from a smaller file. That is the state a developer is in most often,\nand it disclosed nothing. Fixed with source-did-not-parse, which names the files and their count\nwhile still contributing what did parse.\n\nWorth recording honestly: the fourth instance was nearly reported from an experiment that had not\nrun. The script meant to corrupt a file silently did nothing, and the assertion-count difference I\nwas about to attribute to a syntax error had another cause entirely. It became a finding only after\nthe broken file was verified to exist.\n\nDC-026 is mine. Resolving an append-only merge conflict by unioning KEYED BY ID, with setdefault,\nsilently dropped a design-session entry — the gate stayed green throughout, because uniqueness was\nsatisfied precisely by the removal. The defect is not the collision; it is de-duplicating on the\nfield that is in dispute. tools/merge-append-only-log.py unions by content so nothing can be dropped,\nre-issues a contested id from the shared counter, and prints the count in, the count out, and every\nre-issue — a merge that resolves silently is indistinguishable from one that lost something.",
       "tags": [
         "continuous-improvement"
       ],
-      "git": {
-        "before": null,
-        "after": "5af8dd94aeae26d187fd0b6b805453b04e60b06c",
-        "branch": "session/phase3-pane-probes",
-        "pushed": false,
-        "commits": []
-      }
+      "title": "DC-025 absence rendered as success, and DC-026 a merge that de-duplicates on the disputed key"
     },
     {
-      "id": "cl-0069",
-      "datetime": "2026-08-29T18:04:06Z",
-      "session": null,
-      "kind": "knowledge",
-      "skill": null,
-      "title": "A corpus of workspaces defined by what they lack, and a gate that notices a shrinking log",
-      "prompt": null,
-      "summary": "DC-025 has a control instead of a habit, and the gate that missed DC-026 now looks for the loss.\n\nLackingWorkspaceTests is a corpus of workspaces defined by what they LACK: empty, only-Python, source\nthat will not parse, no context map, a read that was bounded, and a scope whose extraction failed so\nthe graph shows an older revision. Every case asserts a SENTENCE, never a count, because the counts\nwere always right — that is what made the class survive four times. Fixtures always have the thing:\nthey are written by the person building the feature, so they contain a context map, compile, and are\nin the language the extractor reads. This corpus is the deliberate opposite. Its last case is the\ngeneralisation itself — a workspace missing something must never produce a result that is silent\nabout it — so adding a new kind of absence is how the next instance gets caught before a real\nrepository finds it.\n\nverify-audit-log.py now compares each log against HEAD and fails when an id present in the committed\nversion has disappeared. It only counted duplicates before, which is exactly why it stayed green\nwhile my merge removed an entry: uniqueness was satisfied PRECISELY BY the removal. Observed failing\non a log with its last entry deleted. The residual is honest — it sees losses against HEAD, so a loss\nintroduced and committed in one step is still invisible.\n\nAnd the paged evidence read is proven across the daemon, at a page size of one so the cursor is\nexercised at every boundary rather than the test proving only that a single response deserialises.\nThe last three cross-boundary defects were all \"right in process, wrong through the pipe\".",
-      "rationale": null,
       "artifacts": [
         "tests/AiDe.Core.Tests/LackingWorkspaceTests.cs",
         "tools/verify-audit-log.py"
       ],
+      "datetime": "2026-08-29T18:04:06Z",
+      "git": {
+        "after": "8ec320e3553fa7d9a11a9dd288c67ca5b02985e4",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0069",
+      "kind": "knowledge",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "DC-025 has a control instead of a habit, and the gate that missed DC-026 now looks for the loss.\n\nLackingWorkspaceTests is a corpus of workspaces defined by what they LACK: empty, only-Python, source\nthat will not parse, no context map, a read that was bounded, and a scope whose extraction failed so\nthe graph shows an older revision. Every case asserts a SENTENCE, never a count, because the counts\nwere always right — that is what made the class survive four times. Fixtures always have the thing:\nthey are written by the person building the feature, so they contain a context map, compile, and are\nin the language the extractor reads. This corpus is the deliberate opposite. Its last case is the\ngeneralisation itself — a workspace missing something must never produce a result that is silent\nabout it — so adding a new kind of absence is how the next instance gets caught before a real\nrepository finds it.\n\nverify-audit-log.py now compares each log against HEAD and fails when an id present in the committed\nversion has disappeared. It only counted duplicates before, which is exactly why it stayed green\nwhile my merge removed an entry: uniqueness was satisfied PRECISELY BY the removal. Observed failing\non a log with its last entry deleted. The residual is honest — it sees losses against HEAD, so a loss\nintroduced and committed in one step is still invisible.\n\nAnd the paged evidence read is proven across the daemon, at a page size of one so the cursor is\nexercised at every boundary rather than the test proving only that a single response deserialises.\nThe last three cross-boundary defects were all \"right in process, wrong through the pipe\".",
       "tags": [
         "continuous-improvement"
       ],
-      "git": {
-        "before": null,
-        "after": "8ec320e3553fa7d9a11a9dd288c67ca5b02985e4",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "A corpus of workspaces defined by what they lack, and a gate that notices a shrinking log"
     },
     {
-      "id": "cl-0070",
-      "datetime": "2026-08-29T18:04:06Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "Stale scopes are stated, not retracted; and the read scales where extraction does not",
-      "prompt": null,
-      "summary": "A step changed on inspection, and a measurement taken rather than guessed.\n\nThe listed step was \"retract on scope failure, not just departure\". Opening the code first showed\nthat keeping the last good snapshot on failure is a DELIBERATE decision, recorded in\nRefreshScopeAsync: blanking the graph on a build error would be worse. Retracting would have\ncontradicted that rather than built on it. The real gap was that what renders is then OLD and nothing\nsaid so — a stale scope drew exactly like a current one, and only the incident sidecar knew. So the\nfailure now discloses stale-scope with the revision still being shown, and the snapshot keeps\nrendering.\n\nScale, measured on a SYNTHETIC workspace and labelled as such because nothing available here is much\nlarger than TheTerrace: 20 projects, 2,400 types, 21,066 assertions.\n\n  first index                13.5s  (about 0.68s per project of 120 types, roughly linear)\n  re-index, nothing changed   0.1s  (20 scopes reused)\n  paged read of everything   185ms  (11 pages, exact agreement with the store)\n  shortfall                  none   (no cap bit at 21,066 assertions)\n\nThe read is not the problem at this size; extraction is. 185ms to page 21,066 assertions against\n13.5s to produce them says the next scale work belongs in the extractor rather than the query path —\nand the fingerprint cache already means that 13.5s is paid once rather than per refresh. The honest\nlimit: this says nothing about deep inheritance, heavy generics or thousands of package references,\nbecause the generator produces none of those. It bounds the shape it tested and no more.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/WorkspaceCore.cs",
         "spikes/joins-on-a-real-repo/RESULT.md"
       ],
+      "datetime": "2026-08-29T18:04:06Z",
+      "git": {
+        "after": "8ec320e3553fa7d9a11a9dd288c67ca5b02985e4",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0070",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "A step changed on inspection, and a measurement taken rather than guessed.\n\nThe listed step was \"retract on scope failure, not just departure\". Opening the code first showed\nthat keeping the last good snapshot on failure is a DELIBERATE decision, recorded in\nRefreshScopeAsync: blanking the graph on a build error would be worse. Retracting would have\ncontradicted that rather than built on it. The real gap was that what renders is then OLD and nothing\nsaid so — a stale scope drew exactly like a current one, and only the incident sidecar knew. So the\nfailure now discloses stale-scope with the revision still being shown, and the snapshot keeps\nrendering.\n\nScale, measured on a SYNTHETIC workspace and labelled as such because nothing available here is much\nlarger than TheTerrace: 20 projects, 2,400 types, 21,066 assertions.\n\n  first index                13.5s  (about 0.68s per project of 120 types, roughly linear)\n  re-index, nothing changed   0.1s  (20 scopes reused)\n  paged read of everything   185ms  (11 pages, exact agreement with the store)\n  shortfall                  none   (no cap bit at 21,066 assertions)\n\nThe read is not the problem at this size; extraction is. 185ms to page 21,066 assertions against\n13.5s to produce them says the next scale work belongs in the extractor rather than the query path —\nand the fingerprint cache already means that 13.5s is paid once rather than per refresh. The honest\nlimit: this says nothing about deep inheritance, heavy generics or thousands of package references,\nbecause the generator produces none of those. It bounds the shape it tested and no more.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "8ec320e3553fa7d9a11a9dd288c67ca5b02985e4",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Stale scopes are stated, not retracted; and the read scales where extraction does not"
     },
     {
-      "id": "cl-0071",
-      "datetime": "2026-08-29T18:24:27Z",
-      "session": null,
-      "kind": "decision",
-      "skill": null,
-      "title": "INV-0001: a 22,297-character PATH, and cmd.exe drops it",
-      "prompt": null,
-      "summary": "Reported: \"the agent sessions do not have my profile or my environment variables — ghcp and claude\nare both installed so they should both work.\"\n\nThe verified cause is not in this product. The machine's PATH is 22,297 characters and cmd.exe\nsilently drops a variable that large, so every .cmd shim — which is every npm-installed CLI — starts\nwith an EMPTY PATH and cannot find node, git or itself. claude works because claude.exe is a real\nexecutable with no cmd in the path; ghcp does not exist at all, and the Copilot CLI has an npm .cmd\nshim. That asymmetry is the entire symptom.\n\nNecessary and sufficient, both measured: at 22,297 characters a cmd child receives an empty PATH,\nreproduced twice including once with no part of AI-DE involved; trimmed to 1,799 characters the same\nchild receives the full PATH. AI-DE passes the environment correctly — PowerShell started from the\nsame inherited block reads all 22,297 characters and resolves claude.\n\nFive hypotheses were ruled out with evidence, including one flag removed and re-measured, and the\nbelief that the profile was at fault — which is where two turns of work went first, because the\nsymptom is indistinguishable from a launcher bug.\n\nThe cause of the 22,297 characters: roughly 190 entries of the shape Temp\\biohacker-nuget-<guid>\\\ndotnet-home\\.dotnet\\tools, appended to the PERSISTED user PATH by another project's build tooling and\nnever removed. Each is unique, so there is nothing to de-duplicate.\n\nWhat was ours is the silence. The terminal opened, looked healthy, and the tools were absent with\nnothing saying why. EnvironmentHealth.Inspect now states the size, the limit and the largest repeated\ngroup — because 200 unique paths is a number, not a lead — announced once per shell, never per pane.\nIt does not edit PATH: a tool that silently rewrites the environment to make itself work has hidden\nthe problem from the only person who can fix it.\n\nAgents are now hosted in the login shell rather than launched beside it, which delivers the profile\nhalf of the request and makes .ps1 shims resolve. It is recorded honestly as NOT fixing the reported\nsymptom — a .cmd shim invoked from the hosting shell still starts cmd, which still drops the PATH.\nMeasured, not assumed.\n\nRegistered as DC-027: the environment a parent hands a child is not the one the child receives.",
-      "rationale": null,
       "artifacts": [
         "docs/investigations/INV-0001-agent-terminals-lack-the-users-environment.md",
         "src/AiDe.Core/Terminal/EnvironmentHealth.cs"
       ],
+      "datetime": "2026-08-29T18:24:27Z",
+      "git": {
+        "after": "2731758925df4bb4b06ffae1f2186ad43cc82958",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0071",
+      "kind": "decision",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "Reported: \"the agent sessions do not have my profile or my environment variables — ghcp and claude\nare both installed so they should both work.\"\n\nThe verified cause is not in this product. The machine's PATH is 22,297 characters and cmd.exe\nsilently drops a variable that large, so every .cmd shim — which is every npm-installed CLI — starts\nwith an EMPTY PATH and cannot find node, git or itself. claude works because claude.exe is a real\nexecutable with no cmd in the path; ghcp does not exist at all, and the Copilot CLI has an npm .cmd\nshim. That asymmetry is the entire symptom.\n\nNecessary and sufficient, both measured: at 22,297 characters a cmd child receives an empty PATH,\nreproduced twice including once with no part of AI-DE involved; trimmed to 1,799 characters the same\nchild receives the full PATH. AI-DE passes the environment correctly — PowerShell started from the\nsame inherited block reads all 22,297 characters and resolves claude.\n\nFive hypotheses were ruled out with evidence, including one flag removed and re-measured, and the\nbelief that the profile was at fault — which is where two turns of work went first, because the\nsymptom is indistinguishable from a launcher bug.\n\nThe cause of the 22,297 characters: roughly 190 entries of the shape Temp\\biohacker-nuget-<guid>\\\ndotnet-home\\.dotnet\\tools, appended to the PERSISTED user PATH by another project's build tooling and\nnever removed. Each is unique, so there is nothing to de-duplicate.\n\nWhat was ours is the silence. The terminal opened, looked healthy, and the tools were absent with\nnothing saying why. EnvironmentHealth.Inspect now states the size, the limit and the largest repeated\ngroup — because 200 unique paths is a number, not a lead — announced once per shell, never per pane.\nIt does not edit PATH: a tool that silently rewrites the environment to make itself work has hidden\nthe problem from the only person who can fix it.\n\nAgents are now hosted in the login shell rather than launched beside it, which delivers the profile\nhalf of the request and makes .ps1 shims resolve. It is recorded honestly as NOT fixing the reported\nsymptom — a .cmd shim invoked from the hosting shell still starts cmd, which still drops the PATH.\nMeasured, not assumed.\n\nRegistered as DC-027: the environment a parent hands a child is not the one the child receives.",
       "tags": [
         "investigation"
       ],
-      "git": {
-        "before": null,
-        "after": "2731758925df4bb4b06ffae1f2186ad43cc82958",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "INV-0001: a 22,297-character PATH, and cmd.exe drops it"
     },
     {
-      "id": "cl-0072",
-      "datetime": "2026-08-29T20:13:51Z",
-      "session": null,
-      "kind": "decision",
-      "skill": null,
-      "title": "The PATH is cleaned, the cmd limit is measured, and extraction is profiled",
-      "prompt": null,
-      "summary": "The reported symptom is fixed, at its actual cause.\n\nThe user PATH went from 21,528 characters and 206 entries to 1,150 and 19. The 187 removed entries\nwere all of the shape Temp\\biohacker-nuget-<guid>\\dotnet-home\\.dotnet\\tools, and every one of them\nwas ALREADY ABSENT FROM DISK — a directory that does not exist cannot be providing a tool, which is\nwhat made the removal safe rather than a judgement call. The previous value is backed up to\n%LOCALAPPDATA%\\AiDe\\user-path-backup-<timestamp>.txt. Verified after: a .cmd shim in a fresh process\nreceives the PATH, and both copilot and claude resolve through it.\n\nThe cmd limit is now measured rather than quoted. Bisected: cmd carries 8,151 characters and drops\n8,152, printing \"The input line is too long\" and losing the value. The documented figure is 8,191 and\nthe ~40-character difference is the variable's own name plus block overhead, which is why the message\nstill says \"may be dropped\" — not because the number is unmeasured, but because it shifts with the\nname.\n\nEnvironmentHealth now measures every variable, not only PATH: any oversized one is dropped by the\nsame mechanism, and checking only the variable that happened to bite is how a class gets found twice.\n\nAnd AvailableAgents no longer trusts a filter the environment invalidates. When the environment is\nunhealthy the PATH filter is skipped and every agent is offered, because a menu that silently omits\nan agent is invisible while a launch that fails is not — and the shell has already said why.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Terminal/EnvironmentHealth.cs",
         "src/AiDe.App/Workbench/TerminalSurface.cs"
       ],
+      "datetime": "2026-08-29T20:13:51Z",
+      "git": {
+        "after": "f5fb23aaa1ed763026de8a647956f7475824174c",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0072",
+      "kind": "decision",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "The reported symptom is fixed, at its actual cause.\n\nThe user PATH went from 21,528 characters and 206 entries to 1,150 and 19. The 187 removed entries\nwere all of the shape Temp\\biohacker-nuget-<guid>\\dotnet-home\\.dotnet\\tools, and every one of them\nwas ALREADY ABSENT FROM DISK — a directory that does not exist cannot be providing a tool, which is\nwhat made the removal safe rather than a judgement call. The previous value is backed up to\n%LOCALAPPDATA%\\AiDe\\user-path-backup-<timestamp>.txt. Verified after: a .cmd shim in a fresh process\nreceives the PATH, and both copilot and claude resolve through it.\n\nThe cmd limit is now measured rather than quoted. Bisected: cmd carries 8,151 characters and drops\n8,152, printing \"The input line is too long\" and losing the value. The documented figure is 8,191 and\nthe ~40-character difference is the variable's own name plus block overhead, which is why the message\nstill says \"may be dropped\" — not because the number is unmeasured, but because it shifts with the\nname.\n\nEnvironmentHealth now measures every variable, not only PATH: any oversized one is dropped by the\nsame mechanism, and checking only the variable that happened to bite is how a class gets found twice.\n\nAnd AvailableAgents no longer trusts a filter the environment invalidates. When the environment is\nunhealthy the PATH filter is skipped and every agent is offered, because a menu that silently omits\nan agent is invisible while a launch that fails is not — and the shell has already said why.",
       "tags": [
         "investigation"
       ],
-      "git": {
-        "before": null,
-        "after": "f5fb23aaa1ed763026de8a647956f7475824174c",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "The PATH is cleaned, the cmd limit is measured, and extraction is profiled"
     },
     {
-      "id": "cl-0073",
-      "datetime": "2026-08-29T20:13:51Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "98% of extraction is the read, not the walk",
-      "prompt": null,
-      "summary": "Extraction profiled, and the answer moves the next optimisation to the other half.\n\nThe previous measurement said \"the read is not the problem at this size; extraction is\" — true and\nuseless, because it did not say which part of extraction. AIDE_EXTRACTION_TIMING splits each scope\ninto the READ phase (parse the sources, build the compilation, resolve references) and the WALK phase\n(visit symbols, emit assertions):\n\n  read 505-616ms per project, walk 6-15ms once the JIT is warm\n\nRoughly 98% of the cost is the read. The first scope's 260ms walk is JIT rather than work, and a\ntotal without the split would have attributed it to the walk and sent the next optimisation at the\nwrong half.\n\nSo incremental work belongs in AVOIDING the read — which the fingerprint cache already does per\nscope and would do better per file. Making the symbol walk faster would recover about one percent.\n\nEmitted on the normal path as activity tags, with an env var for the console form: a feature is not\ndone until its behaviour is measurable without a re-run.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Extraction/CSharpExtractor.cs",
         "spikes/joins-on-a-real-repo/RESULT.md"
       ],
+      "datetime": "2026-08-29T20:13:51Z",
+      "git": {
+        "after": "f5fb23aaa1ed763026de8a647956f7475824174c",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0073",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "Extraction profiled, and the answer moves the next optimisation to the other half.\n\nThe previous measurement said \"the read is not the problem at this size; extraction is\" — true and\nuseless, because it did not say which part of extraction. AIDE_EXTRACTION_TIMING splits each scope\ninto the READ phase (parse the sources, build the compilation, resolve references) and the WALK phase\n(visit symbols, emit assertions):\n\n  read 505-616ms per project, walk 6-15ms once the JIT is warm\n\nRoughly 98% of the cost is the read. The first scope's 260ms walk is JIT rather than work, and a\ntotal without the split would have attributed it to the walk and sent the next optimisation at the\nwrong half.\n\nSo incremental work belongs in AVOIDING the read — which the fingerprint cache already does per\nscope and would do better per file. Making the symbol walk faster would recover about one percent.\n\nEmitted on the normal path as activity tags, with an env var for the console form: a feature is not\ndone until its behaviour is measurable without a re-run.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "f5fb23aaa1ed763026de8a647956f7475824174c",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "98% of extraction is the read, not the walk"
     },
     {
-      "id": "cl-0074",
-      "datetime": "2026-08-29T20:31:04Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "File I/O is 97% of extraction, not parsing — and a timer that said otherwise",
-      "prompt": null,
-      "summary": "File-granularity incremental extraction, and a measurement of mine that was wrong twice before it was\nright.\n\nThe profile said the READ phase is 98% of extraction. Splitting it further produced \"parsing is 97%\nof the read, so cache the trees\" — plausible, confident, and wrong, because the timer wrapped\nFile.ReadAllText and ParseText together and reported the total as \"parse\". Timed apart on freshly\nwritten files: read 576-690ms, parse 4-5ms. Disk I/O is ~99% of the read, which makes file I/O\nroughly 97% of everything extraction does — the opposite half from the one the bundled timer pointed\nat.\n\nIt was caught only because a follow-up run produced a 40x speedup with ZERO cache hits, and no\ncorrect model explained that. Appended as an instance to DC-009: an instrument reports what it\nmeasured, so a timer around two operations must be named for both or split.\n\nSyntaxTreeCache was built on the wrong rationale and is right anyway, because a hit skips the whole\nfactory — the disk read as well as the parse. Keyed by path, length, modification time and the parse\noptions: hashing the bytes to decide whether to read the bytes is a cache that costs what it saves.\nForced re-index in the same process, with a distinct revision so the store's already-committed\nshort-circuit could not answer for it: 720 of 720 trees reused, 0ms read, 0ms parse, and the whole\nrun 1.0s instead of 1.0s+ at 0.6s. This is the case the scope fingerprint cannot cover — one file\nedited in a project of a hundred and twenty, where the scope must be re-read and 119 files did not\nmove.\n\nPATH regrowth is now caught by SHAPE rather than by size. The oversize check only fires once PATH is\npast cmd's limit, which is to say after the damage; 187 dead build directories accumulated before\nanything noticed. Ten or more entries pointing at directories that do not exist is now a finding,\nwith the largest group named — so regrowth is caught at twenty entries rather than a hundred and\neighty-seven. A handful of dead entries stays quiet, because this is looking for accumulation rather\nthan tidiness.\n\nWhat appends those entries was NOT found: no repository on this machine contains the string, so it\nwas not a checked-in script. The guard is the durable answer available from here.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Extraction/SyntaxTreeCache.cs",
         "src/AiDe.Core/Terminal/EnvironmentHealth.cs"
       ],
+      "datetime": "2026-08-29T20:31:04Z",
+      "git": {
+        "after": "192fb3d05894f43aac6eb4e1cc920f572bf682dc",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0074",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "File-granularity incremental extraction, and a measurement of mine that was wrong twice before it was\nright.\n\nThe profile said the READ phase is 98% of extraction. Splitting it further produced \"parsing is 97%\nof the read, so cache the trees\" — plausible, confident, and wrong, because the timer wrapped\nFile.ReadAllText and ParseText together and reported the total as \"parse\". Timed apart on freshly\nwritten files: read 576-690ms, parse 4-5ms. Disk I/O is ~99% of the read, which makes file I/O\nroughly 97% of everything extraction does — the opposite half from the one the bundled timer pointed\nat.\n\nIt was caught only because a follow-up run produced a 40x speedup with ZERO cache hits, and no\ncorrect model explained that. Appended as an instance to DC-009: an instrument reports what it\nmeasured, so a timer around two operations must be named for both or split.\n\nSyntaxTreeCache was built on the wrong rationale and is right anyway, because a hit skips the whole\nfactory — the disk read as well as the parse. Keyed by path, length, modification time and the parse\noptions: hashing the bytes to decide whether to read the bytes is a cache that costs what it saves.\nForced re-index in the same process, with a distinct revision so the store's already-committed\nshort-circuit could not answer for it: 720 of 720 trees reused, 0ms read, 0ms parse, and the whole\nrun 1.0s instead of 1.0s+ at 0.6s. This is the case the scope fingerprint cannot cover — one file\nedited in a project of a hundred and twenty, where the scope must be re-read and 119 files did not\nmove.\n\nPATH regrowth is now caught by SHAPE rather than by size. The oversize check only fires once PATH is\npast cmd's limit, which is to say after the damage; 187 dead build directories accumulated before\nanything noticed. Ten or more entries pointing at directories that do not exist is now a finding,\nwith the largest group named — so regrowth is caught at twenty entries rather than a hundred and\neighty-seven. A handful of dead entries stays quiet, because this is looking for accumulation rather\nthan tidiness.\n\nWhat appends those entries was NOT found: no repository on this machine contains the string, so it\nwas not a checked-in script. The guard is the durable answer available from here.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "192fb3d05894f43aac6eb4e1cc920f572bf682dc",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "File I/O is 97% of extraction, not parsing — and a timer that said otherwise"
     },
     {
-      "id": "cl-0075",
-      "datetime": "2026-08-29T21:08:10Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "A second language extractor, and the paging tie it exposed",
-      "prompt": null,
-      "summary": "A second language, and a paging defect the second language exposed.\n\nPythonExtractor reads modules, top-level classes and functions, and import edges. Six repositories\nhad disclosed unread Python before it existed; the disclosure was right and it is not a substitute,\nbecause a graph that says \"there is Python here and I cannot see it\" is honest and still blind.\n\nIt reads STRUCTURE, not semantics, and says so on every scope: imports are not resolved, nested\ndeclarations are invisible, dynamic imports are not followed. Declarations are recognised at column\nzero only — an indented def is a method, and claiming it as a module-level function would put a\nsymbol in the graph that no importer can reach. Import edges are INFERRED, because the target is the\nmodule path as written and whether it resolves to anything is not established here; calling that\nVerified is precisely the defect DC-022 is about. A simplify: marker records the ceiling and the\nupgrade trigger.\n\nPython also came OFF the unanalysed-languages list on the same day, because a closed gap reported as\nopen is the same defect as an open one hidden.\n\nMeasured on the repository that started this: ai-forward produced ZERO assertions and an empty\ndisclosure list three turns ago. It now produces 2,158 assertions across 5 scopes in 0.2 seconds,\nwith its remaining gaps named.\n\nAnd that run exposed a real paging defect: 2,158 in the store, 2,157 through the paged read.\n(subject, predicate, object) is NOT unique — two scopes can assert the same triple — so a cursor over\nthat ordering silently loses exactly the rows that tie, when a page boundary lands on one. Scope is\npart of the ordering and the cursor now, and a test builds two identical Python packages to\nmanufacture the tie deliberately.\n\nThe I/O question was measured rather than assumed and is only half answered. Raw reads of 120 files\ncost 5ms outside this product and 73ms on first touch from a different process — a 15x first-access\npenalty consistent with on-access scanning. Inside the extractor the same volume costs ~500ms, which\nis seven times worse again and is NOT explained. Recorded as a gap rather than a claim; the tree\ncache removes the cost on re-index whichever explanation turns out to be right.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Extraction/PythonExtractor.cs",
         "src/AiDe.Core/Store/StoreReader.cs"
       ],
+      "datetime": "2026-08-29T21:08:10Z",
+      "git": {
+        "after": "ccd9276972fdd91b6bb5df921979224e02ed476f",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": false
+      },
+      "id": "cl-0075",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "A second language, and a paging defect the second language exposed.\n\nPythonExtractor reads modules, top-level classes and functions, and import edges. Six repositories\nhad disclosed unread Python before it existed; the disclosure was right and it is not a substitute,\nbecause a graph that says \"there is Python here and I cannot see it\" is honest and still blind.\n\nIt reads STRUCTURE, not semantics, and says so on every scope: imports are not resolved, nested\ndeclarations are invisible, dynamic imports are not followed. Declarations are recognised at column\nzero only — an indented def is a method, and claiming it as a module-level function would put a\nsymbol in the graph that no importer can reach. Import edges are INFERRED, because the target is the\nmodule path as written and whether it resolves to anything is not established here; calling that\nVerified is precisely the defect DC-022 is about. A simplify: marker records the ceiling and the\nupgrade trigger.\n\nPython also came OFF the unanalysed-languages list on the same day, because a closed gap reported as\nopen is the same defect as an open one hidden.\n\nMeasured on the repository that started this: ai-forward produced ZERO assertions and an empty\ndisclosure list three turns ago. It now produces 2,158 assertions across 5 scopes in 0.2 seconds,\nwith its remaining gaps named.\n\nAnd that run exposed a real paging defect: 2,158 in the store, 2,157 through the paged read.\n(subject, predicate, object) is NOT unique — two scopes can assert the same triple — so a cursor over\nthat ordering silently loses exactly the rows that tie, when a page boundary lands on one. Scope is\npart of the ordering and the cursor now, and a test builds two identical Python packages to\nmanufacture the tie deliberately.\n\nThe I/O question was measured rather than assumed and is only half answered. Raw reads of 120 files\ncost 5ms outside this product and 73ms on first touch from a different process — a 15x first-access\npenalty consistent with on-access scanning. Inside the extractor the same volume costs ~500ms, which\nis seven times worse again and is NOT explained. Recorded as a gap rather than a claim; the tree\ncache removes the cost on re-index whichever explanation turns out to be right.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "ccd9276972fdd91b6bb5df921979224e02ed476f",
-        "branch": "session/phase3-pane-probes",
-        "pushed": false,
-        "commits": []
-      }
+      "title": "A second language extractor, and the paging tie it exposed"
     },
     {
-      "id": "cl-0076",
-      "datetime": "2026-08-29T21:45:33Z",
-      "session": null,
-      "kind": "knowledge",
-      "skill": null,
-      "title": "DC-028: the synthetic benchmark was measuring itself",
-      "prompt": null,
-      "summary": "The extraction profile is explained, and both earlier conclusions were artefacts of the benchmark.\n\nA fresh .NET process reading 120 newly-created files took 493ms (4.11ms/file); a SECOND fresh process\nover the same files took 6ms, and the repository's own source reads at 0.19ms/file. So the ~500ms\nwas a one-time, system-wide, per-file cost on the first read after creation — the signature of\non-access scanning — and it never recurs. It is not extraction's cost at all.\n\nRun against a real repository the profile inverts completely. TheTerrace, 463 files in its main\nscope: read 53ms, parse 694ms, walk 1,167ms. The walk is the LARGEST cost on real code and looked\nfree on the synthetic workload, because the generated types were trivial — no inheritance, no\ngenerics, four fields each.\n\nTwo independent flaws in one generator, each inverting a published conclusion. Registered as DC-028:\na synthetic benchmark measures the benchmark unless its workload resembles the real one in the\ndimensions that drive cost. The control is that the spike prints the same timings for named real\nrepositories, so the synthetic figure and the real one appear side by side.\n\nPython imports are resolved within their scope now. An import naming a module the scope contains\npoints at a file that exists and was read, so the edge is VERIFIED; anything else stays INFERRED with\nthe name as written, because it may be a package, a module in another scope, or nothing, and\nasserting which is the guess DC-022 is about. Relative imports resolve against the importing module's\npackage, one level per leading dot, and climbing above the root resolves to nothing rather than\nthrowing. On the real Python repository 82 of 330 imports now resolve, and the disclosure carries the\ncount of those that do not — a blanket \"imports are not resolved\" became a closed gap reported as\nopen the moment resolution landed.\n\nThe cursor audit found one more thing and cleared another. ResultBounds.NextCursor is ALWAYS null and\nno projection returning it pages — said out loud in the type, because a caller could loop on it and\nnever leave the first page with nothing failing. And DeriveClaimCurrent folds statuses with Max under\na comment saying the weakest wins: correct only because the enum is ordered strongest-first, so a\nreordering would silently invert it into manufacturing confidence. Pinned by a test.",
-      "rationale": null,
       "artifacts": [
         "docs/lessons/defect-classes.md",
         "spikes/joins-on-a-real-repo/RESULT.md"
       ],
+      "datetime": "2026-08-29T21:45:33Z",
+      "git": {
+        "after": "a286b981cb8b83aaaf594921e1de5cad65377cce",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0076",
+      "kind": "knowledge",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "The extraction profile is explained, and both earlier conclusions were artefacts of the benchmark.\n\nA fresh .NET process reading 120 newly-created files took 493ms (4.11ms/file); a SECOND fresh process\nover the same files took 6ms, and the repository's own source reads at 0.19ms/file. So the ~500ms\nwas a one-time, system-wide, per-file cost on the first read after creation — the signature of\non-access scanning — and it never recurs. It is not extraction's cost at all.\n\nRun against a real repository the profile inverts completely. TheTerrace, 463 files in its main\nscope: read 53ms, parse 694ms, walk 1,167ms. The walk is the LARGEST cost on real code and looked\nfree on the synthetic workload, because the generated types were trivial — no inheritance, no\ngenerics, four fields each.\n\nTwo independent flaws in one generator, each inverting a published conclusion. Registered as DC-028:\na synthetic benchmark measures the benchmark unless its workload resembles the real one in the\ndimensions that drive cost. The control is that the spike prints the same timings for named real\nrepositories, so the synthetic figure and the real one appear side by side.\n\nPython imports are resolved within their scope now. An import naming a module the scope contains\npoints at a file that exists and was read, so the edge is VERIFIED; anything else stays INFERRED with\nthe name as written, because it may be a package, a module in another scope, or nothing, and\nasserting which is the guess DC-022 is about. Relative imports resolve against the importing module's\npackage, one level per leading dot, and climbing above the root resolves to nothing rather than\nthrowing. On the real Python repository 82 of 330 imports now resolve, and the disclosure carries the\ncount of those that do not — a blanket \"imports are not resolved\" became a closed gap reported as\nopen the moment resolution landed.\n\nThe cursor audit found one more thing and cleared another. ResultBounds.NextCursor is ALWAYS null and\nno projection returning it pages — said out loud in the type, because a caller could loop on it and\nnever leave the first page with nothing failing. And DeriveClaimCurrent folds statuses with Max under\na comment saying the weakest wins: correct only because the enum is ordered strongest-first, so a\nreordering would silently invert it into manufacturing confidence. Pinned by a test.",
       "tags": [
         "continuous-improvement"
       ],
-      "git": {
-        "before": null,
-        "after": "a286b981cb8b83aaaf594921e1de5cad65377cce",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "DC-028: the synthetic benchmark was measuring itself"
     },
     {
-      "id": "cl-0077",
-      "datetime": "2026-08-30T14:37:24Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "The graph surface had never shown a graph: two nodes of 2,813",
-      "prompt": null,
-      "summary": "The graph surface had never shown a graph.\n\nReported by the user, comparing TheTerrace in this tool against the same repository in Obsidian: two\nnodes versus a full graph. The cause was not extraction — the store held 12,100 assertions across\n2,164 nodes — it was that the canvas called FindAsync with a limit of ONE to pick a root and then\ndrew that root's neighbours. A workspace of two thousand nodes rendered as the alphabetically first\nsymbol and its single neighbour, correctly, from the day it was written. Four unit tests described\nthat behaviour approvingly.\n\nGraphProjection answers the question the surface exists for: every node and edge, bounded by a cap\nthat is reported rather than silent. Attributes fold onto nodes instead of being drawn as edges — a\nhas_type arrow would put the string \"class\" in the graph as a thing other things point at — using the\nsame single definition the search already applies. LoadAsync with no root now means the whole graph;\na root means drill-down. Proven across the daemon as well, because every cross-boundary defect so far\nhas been right in process and wrong through the pipe.\n\nA second finding sat inside the first. With the graph finally visible, its six most-connected nodes\nwere string, int, Task<TResult>, DateTimeOffset, IReadOnlyList<T> and Guid — 773 edges to string\nalone. A graph whose centre is the BCL is not a picture of anybody's domain, and a cap ordered by raw\ndegree drops the user's own types to keep framework primitives. Nodes carry IsExternal now (nothing\nin the workspace declares them) and declared nodes are kept first. The same repository's centre\nbecame AppDbContext, Fixture, SportMonksProvider, ScheduledRefresh.\n\nRegistered as DC-031: a surface asks a narrower question than the one it exists to answer. The\ngeneralisation is one question — what is the cardinality of what this shows, against the cardinality\nof what it fetched — and the related tell is a test suite that describes the slice fluently.\n\nTheTerrace now: 28 scopes, 13,530 assertions, 2,813 nodes and 8,602 edges with nothing omitted.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Projections/GraphProjection.cs",
         "src/AiDe.Core/Presentation/CanvasGraphViewModel.cs"
       ],
+      "datetime": "2026-08-30T14:37:24Z",
+      "git": {
+        "after": "fb43ecd5fb72deffe4471525ef8eac483487b9a7",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": false
+      },
+      "id": "cl-0077",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "The graph surface had never shown a graph.\n\nReported by the user, comparing TheTerrace in this tool against the same repository in Obsidian: two\nnodes versus a full graph. The cause was not extraction — the store held 12,100 assertions across\n2,164 nodes — it was that the canvas called FindAsync with a limit of ONE to pick a root and then\ndrew that root's neighbours. A workspace of two thousand nodes rendered as the alphabetically first\nsymbol and its single neighbour, correctly, from the day it was written. Four unit tests described\nthat behaviour approvingly.\n\nGraphProjection answers the question the surface exists for: every node and edge, bounded by a cap\nthat is reported rather than silent. Attributes fold onto nodes instead of being drawn as edges — a\nhas_type arrow would put the string \"class\" in the graph as a thing other things point at — using the\nsame single definition the search already applies. LoadAsync with no root now means the whole graph;\na root means drill-down. Proven across the daemon as well, because every cross-boundary defect so far\nhas been right in process and wrong through the pipe.\n\nA second finding sat inside the first. With the graph finally visible, its six most-connected nodes\nwere string, int, Task<TResult>, DateTimeOffset, IReadOnlyList<T> and Guid — 773 edges to string\nalone. A graph whose centre is the BCL is not a picture of anybody's domain, and a cap ordered by raw\ndegree drops the user's own types to keep framework primitives. Nodes carry IsExternal now (nothing\nin the workspace declares them) and declared nodes are kept first. The same repository's centre\nbecame AppDbContext, Fixture, SportMonksProvider, ScheduledRefresh.\n\nRegistered as DC-031: a surface asks a narrower question than the one it exists to answer. The\ngeneralisation is one question — what is the cardinality of what this shows, against the cardinality\nof what it fetched — and the related tell is a test suite that describes the slice fluently.\n\nTheTerrace now: 28 scopes, 13,530 assertions, 2,813 nodes and 8,602 edges with nothing omitted.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "fb43ecd5fb72deffe4471525ef8eac483487b9a7",
-        "branch": "session/phase3-pane-probes",
-        "pushed": false,
-        "commits": []
-      }
+      "title": "The graph surface had never shown a graph: two nodes of 2,813"
     },
     {
-      "id": "cl-0078",
-      "datetime": "2026-08-30T14:37:24Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "TypeScript read, and the symbol walk profiled",
-      "prompt": null,
-      "summary": "TypeScript is read, and the symbol walk is profiled.\n\nTypeScriptExtractor closes the largest remaining disclosure — typescript-not-analysed (165 files) on\na repository whose C# half was fully mapped. Same bargain as Python: structure, not semantics.\nExported top-level class, interface, type, enum, function and const; import and re-export\nspecifiers; nothing inside a function or a namespace block. Declaration files (.d.ts) are skipped\nbecause they re-state types defined elsewhere and indexing them would put every symbol in the graph\ntwice, once with nothing behind it.\n\nSpecifiers resolve only when RELATIVE and only to a file this scope contains — extensions optional,\na directory meaning its index file. A bare specifier is a package or a path alias and resolving it\nneeds configuration this extractor deliberately does not read, so it stays Inferred with the\nspecifier as written. TypeScript and JavaScript left the unanalysed-languages list the same day.\n\nIt is deliberately NOT a shared base with PythonExtractor. They look alike and are not the same:\nTypeScript's specifiers carry extensions and index files, its declarations are export-gated rather\nthan column-zero, and JSX changes what a valid line looks like. A base parameterised by all of that\nis more machinery than either extractor contains; a third language that fits the pattern is when the\nabstraction is earned.\n\nIndexing TheTerrace with it immediately raised a real store error: two files can share a module name\n— app.ts beside a compiled app.js — so the same triple was asserted twice in one scope and the\nnatural key rejected it, correctly. Identical facts are one fact, so both extractors deduplicate\nbefore returning. Silencing the key would have weakened a control that is doing its job.\n\nAnd the symbol walk, which the real-repository profile named as the largest cost, is now split:\nenumerating the namespace tree is 135ms for 1,026 types, and reading each type's members is 1,074ms\n— about 89% of the walk and half the whole scope. The next hypothesis worth testing is\nToDisplayString, called per symbol, but that is a hypothesis and is written down as one rather than\nacted on.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Extraction/TypeScriptExtractor.cs",
         "src/AiDe.Core/Extraction/CSharpExtractor.cs"
       ],
+      "datetime": "2026-08-30T14:37:24Z",
+      "git": {
+        "after": "fb43ecd5fb72deffe4471525ef8eac483487b9a7",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": false
+      },
+      "id": "cl-0078",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "TypeScript is read, and the symbol walk is profiled.\n\nTypeScriptExtractor closes the largest remaining disclosure — typescript-not-analysed (165 files) on\na repository whose C# half was fully mapped. Same bargain as Python: structure, not semantics.\nExported top-level class, interface, type, enum, function and const; import and re-export\nspecifiers; nothing inside a function or a namespace block. Declaration files (.d.ts) are skipped\nbecause they re-state types defined elsewhere and indexing them would put every symbol in the graph\ntwice, once with nothing behind it.\n\nSpecifiers resolve only when RELATIVE and only to a file this scope contains — extensions optional,\na directory meaning its index file. A bare specifier is a package or a path alias and resolving it\nneeds configuration this extractor deliberately does not read, so it stays Inferred with the\nspecifier as written. TypeScript and JavaScript left the unanalysed-languages list the same day.\n\nIt is deliberately NOT a shared base with PythonExtractor. They look alike and are not the same:\nTypeScript's specifiers carry extensions and index files, its declarations are export-gated rather\nthan column-zero, and JSX changes what a valid line looks like. A base parameterised by all of that\nis more machinery than either extractor contains; a third language that fits the pattern is when the\nabstraction is earned.\n\nIndexing TheTerrace with it immediately raised a real store error: two files can share a module name\n— app.ts beside a compiled app.js — so the same triple was asserted twice in one scope and the\nnatural key rejected it, correctly. Identical facts are one fact, so both extractors deduplicate\nbefore returning. Silencing the key would have weakened a control that is doing its job.\n\nAnd the symbol walk, which the real-repository profile named as the largest cost, is now split:\nenumerating the namespace tree is 135ms for 1,026 types, and reading each type's members is 1,074ms\n— about 89% of the walk and half the whole scope. The next hypothesis worth testing is\nToDisplayString, called per symbol, but that is a hypothesis and is written down as one rather than\nacted on.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "fb43ecd5fb72deffe4471525ef8eac483487b9a7",
-        "branch": "session/phase3-pane-probes",
-        "pushed": false,
-        "commits": []
-      }
+      "title": "TypeScript read, and the symbol walk profiled"
     },
     {
-      "id": "cl-0079",
-      "datetime": "2026-08-30T15:22:12Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "The join reader recognised one spelling of EF, and module ids collided",
-      "prompt": null,
-      "summary": "The hypothesis that `ToDisplayString` dominated the symbol walk was **wrong**, and measuring it found\na much larger defect than the one it was looking for.\n\nSplitting the walk by operation: display 46ms across 7,312 calls — **3.9%**. The real costs were\ndepends-on 613ms (51%) and attributes 403ms (34%). The attribute cost was one call:\n`FluentTableMappings` ran `DescendantNodes()` over all 1,026 type declarations, hunting an EF\n`ToTable` call. Hoisting it to the compilation with a source-text prefilter cut it to 1ms of\nprefilter across 465 files and 217ms of walking the 66 that survived.\n\nThen the 66 files were the finding. Most were EF migration `*.Designer.cs` snapshots — and the three\nthat were not revealed that the reader **did not work**. It matched `Entity<T>()...ToTable(\"x\")` as a\nsingle expression. TheTerrace, like most EF codebases, writes:\n\n    var terrace = modelBuilder.Entity<Terrace>();\n    terrace.ToTable(\"Terrace\", \"setup\");\n\nSo the extractor recovered **1 declared mapping and guessed 123**, on a repository that states every\none of them outright. Every one of those 123 inferred `maps_to` edges was a name-matching guess\nstanding where a declaration already existed. The same reader also emitted the entity name as\nwritten in source (`Order`) where every other assertion uses the display string (`Shop.Order`) — so\neven its successes were edges whose subject matched no node.\n\nResolved semantically now: ask the model for the RECEIVER's type. One rule answers every style —\nchained, local-variable, lambda-configuration, `IEntityTypeConfiguration<T>` — because in all of them\nthe receiver is an `EntityTypeBuilder<TEntity>`, and the symbol's display string is the name the rest\nof the extractor emits. **Verified joins 1 → 64, inferred 123 → 73, `declares_table` facts 63.**\n\nGenerated files are skipped, on correctness grounds before performance ones: EF writes a model\nsnapshot per migration, each calling `ToTable` for every entity *as it stood then*, so reading them\nasserts a table renamed three migrations ago as current fact wearing the same Verified badge. 63 of\nthe 66 files were these. `fluent-scan` fell 1,418ms → 60ms warm as a side effect, not as the goal.\nThe skip is disclosed with a count, because skipped is not absent.\n\nDC-032 registered: **a reader recognises one spelling of a pattern and reports the rest as absent.**\nThe signature is a ratio nobody looks at — precise hits against fallback hits on real input — and it\nsurvives because the fallback is doing its job, so the surface looks populated and coverage stays\ngreen. The control was observed failing with the skip disabled.\n\n**Module ids were colliding, certainly rather than theoretically.** Both module-shaped extractors\nnamed a module by its path relative to its OWN SCOPE, and a scope is one directory. Every Python\npackage has an `__init__.py`, so a repository with five packages produced five scopes each declaring\na module called `__init__` — one node in the graph carrying the merged edges of five unrelated files.\nThe same for `index.ts`, `main`, `setup`, `conftest`. Ids are now the repository-relative path:\nunique by construction, readable, and the string a person would type to open the file.\n\nThat made cross-scope resolution possible, which was the actual next step. An import naming a sibling\npackage resolves to a file in a different scope, so it could never resolve from inside the one doing\nthe importing. `ExtractionRequest` now carries the workspace's module set, computed once per revision\nfrom the FILESYSTEM — not from the store, because resolving against what has already been extracted\nwould make an edge depend on the order the scopes happened to run in, the trap the Python extractor\nalready avoids one level down. Null means \"not supplied\", which is not \"there is nothing there\": the\nedge stays Inferred and the disclosure fires.\n\nA test comment had encoded the defective rule approvingly — *\"modules are named relative to it:\n`models`, not `src/models`\"* — which is DC-031's tell in its own words.\n\n**The graph surface is now queryable, not just fetchable.** `GraphQuery` filters by kind, by scope,\nand by whether to include nodes nothing declares. The filter runs BEFORE the cap and degree is\ncounted over what survives it: filtering afterwards would rank and trim the whole graph and only then\ndiscard, so a caller asking for the domain model would receive the wrong 5,000 nodes trimmed to the\nright kind, with nothing in the result saying so. Proven across the daemon as well as in process,\nbecause every cross-boundary defect here so far has been right in process and wrong through the pipe.\n\n**A next step I listed last turn was wrong and is withdrawn.** \"The index still walks every scope\" —\nit does not. `ScopeFingerprints` already skips an unchanged scope and counts it as *reused* rather\nthan *indexed*, deliberately, so \"28 of 28 indexed\" cannot be a true sentence about a run that read\nnothing. I asserted its absence without opening the file. The residual — incrementality BELOW the\nscope, so a one-file edit does not re-walk 1,026 types — is real, but it conflicts with the\nappend-only per-scope snapshot model and is a design decision, not a tidy-up.\n\n717 tests green (App 121, Core 596). Six gates clean. Zero design-owned files.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Extraction/CSharpExtractor.cs",
         "src/AiDe.Core/Extraction/ModuleNaming.cs",
         "src/AiDe.Core/Projections/GraphProjection.cs"
       ],
+      "datetime": "2026-08-30T15:22:12Z",
+      "git": {
+        "after": "acce3698269f5a36ad113b845875f5f19a051cac",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0079",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "The hypothesis that `ToDisplayString` dominated the symbol walk was **wrong**, and measuring it found\na much larger defect than the one it was looking for.\n\nSplitting the walk by operation: display 46ms across 7,312 calls — **3.9%**. The real costs were\ndepends-on 613ms (51%) and attributes 403ms (34%). The attribute cost was one call:\n`FluentTableMappings` ran `DescendantNodes()` over all 1,026 type declarations, hunting an EF\n`ToTable` call. Hoisting it to the compilation with a source-text prefilter cut it to 1ms of\nprefilter across 465 files and 217ms of walking the 66 that survived.\n\nThen the 66 files were the finding. Most were EF migration `*.Designer.cs` snapshots — and the three\nthat were not revealed that the reader **did not work**. It matched `Entity<T>()...ToTable(\"x\")` as a\nsingle expression. TheTerrace, like most EF codebases, writes:\n\n    var terrace = modelBuilder.Entity<Terrace>();\n    terrace.ToTable(\"Terrace\", \"setup\");\n\nSo the extractor recovered **1 declared mapping and guessed 123**, on a repository that states every\none of them outright. Every one of those 123 inferred `maps_to` edges was a name-matching guess\nstanding where a declaration already existed. The same reader also emitted the entity name as\nwritten in source (`Order`) where every other assertion uses the display string (`Shop.Order`) — so\neven its successes were edges whose subject matched no node.\n\nResolved semantically now: ask the model for the RECEIVER's type. One rule answers every style —\nchained, local-variable, lambda-configuration, `IEntityTypeConfiguration<T>` — because in all of them\nthe receiver is an `EntityTypeBuilder<TEntity>`, and the symbol's display string is the name the rest\nof the extractor emits. **Verified joins 1 → 64, inferred 123 → 73, `declares_table` facts 63.**\n\nGenerated files are skipped, on correctness grounds before performance ones: EF writes a model\nsnapshot per migration, each calling `ToTable` for every entity *as it stood then*, so reading them\nasserts a table renamed three migrations ago as current fact wearing the same Verified badge. 63 of\nthe 66 files were these. `fluent-scan` fell 1,418ms → 60ms warm as a side effect, not as the goal.\nThe skip is disclosed with a count, because skipped is not absent.\n\nDC-032 registered: **a reader recognises one spelling of a pattern and reports the rest as absent.**\nThe signature is a ratio nobody looks at — precise hits against fallback hits on real input — and it\nsurvives because the fallback is doing its job, so the surface looks populated and coverage stays\ngreen. The control was observed failing with the skip disabled.\n\n**Module ids were colliding, certainly rather than theoretically.** Both module-shaped extractors\nnamed a module by its path relative to its OWN SCOPE, and a scope is one directory. Every Python\npackage has an `__init__.py`, so a repository with five packages produced five scopes each declaring\na module called `__init__` — one node in the graph carrying the merged edges of five unrelated files.\nThe same for `index.ts`, `main`, `setup`, `conftest`. Ids are now the repository-relative path:\nunique by construction, readable, and the string a person would type to open the file.\n\nThat made cross-scope resolution possible, which was the actual next step. An import naming a sibling\npackage resolves to a file in a different scope, so it could never resolve from inside the one doing\nthe importing. `ExtractionRequest` now carries the workspace's module set, computed once per revision\nfrom the FILESYSTEM — not from the store, because resolving against what has already been extracted\nwould make an edge depend on the order the scopes happened to run in, the trap the Python extractor\nalready avoids one level down. Null means \"not supplied\", which is not \"there is nothing there\": the\nedge stays Inferred and the disclosure fires.\n\nA test comment had encoded the defective rule approvingly — *\"modules are named relative to it:\n`models`, not `src/models`\"* — which is DC-031's tell in its own words.\n\n**The graph surface is now queryable, not just fetchable.** `GraphQuery` filters by kind, by scope,\nand by whether to include nodes nothing declares. The filter runs BEFORE the cap and degree is\ncounted over what survives it: filtering afterwards would rank and trim the whole graph and only then\ndiscard, so a caller asking for the domain model would receive the wrong 5,000 nodes trimmed to the\nright kind, with nothing in the result saying so. Proven across the daemon as well as in process,\nbecause every cross-boundary defect here so far has been right in process and wrong through the pipe.\n\n**A next step I listed last turn was wrong and is withdrawn.** \"The index still walks every scope\" —\nit does not. `ScopeFingerprints` already skips an unchanged scope and counts it as *reused* rather\nthan *indexed*, deliberately, so \"28 of 28 indexed\" cannot be a true sentence about a run that read\nnothing. I asserted its absence without opening the file. The residual — incrementality BELOW the\nscope, so a one-file edit does not re-walk 1,026 types — is real, but it conflicts with the\nappend-only per-scope snapshot model and is a design decision, not a tidy-up.\n\n717 tests green (App 121, Core 596). Six gates clean. Zero design-owned files.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "acce3698269f5a36ad113b845875f5f19a051cac",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "The join reader recognised one spelling of EF, and module ids collided"
     },
     {
-      "id": "cl-0080",
-      "datetime": "2026-08-30T15:47:03Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "Two more perf hypotheses died; routes, generated types, and a gate for every id allocator",
-      "prompt": null,
-      "summary": "Two more performance hypotheses died, and the second death is the useful one.\n\nSplitting `depends_on`: **`SymbolEqualityComparer` dedupe is 3ms of 600ms — 0.5%** across 13,906 raw\nsymbols. Gather is 597ms. So the cost of `depends_on` IS the semantic work — `GetMembers()` binding\nevery member signature — and it cannot be made cheaper, only avoided. Two turns, two suspects\n(`ToDisplayString` at 3.9%, then the comparer at 0.5%), both wrong, both named before being believed.\nThe measurement is now fine-grained enough that the next guess has nowhere to hide.\n\n**Generated types are excluded from the whole extractor**, not just the fluent scan — a type is\ndropped only when EVERY file declaring it is auto-generated, so a partial class with a hand-written\nhalf (a WPF window, an EF migration people edit) is kept. Disclosed with a count.\n\n**And the estimate that motivated it was wrong.** I predicted ~600 excluded types on TheTerrace. The\nreal number is **1**. EF marks only the snapshot half (`*.Designer.cs`) as generated; the migration\nhalf starts with a plain `using System;`, so each migration type has a hand-written declaration and\nis correctly kept. The rule is right and its effect here is small — recorded that way rather than\nquietly dropped, because \"I expected 600 and got 1\" is the part worth knowing.\n\n**Routes are answerable now.** `GraphPaths` returns how one node reaches another: shortest routes\nonly, directed (walking an edge backwards would answer \"these are related\" while looking like \"a\nchange here reaches there\"), with the route's status taken from its WEAKEST edge so one inferred link\ncannot launder itself into a verified chain. A missing endpoint returns a reason, not an empty list\nthat reads as \"unconnected\". Proven across the daemon pipe as well as in process — a path is the one\nresult shaped as a list of lists, so it is the one most likely to arrive flattened.\n\n**The id-allocator gap is closed, and closing it found two more allocators.**\n`tools/verify-id-allocators.py` asks the generalising question behind DC-013 — *what else here is\nnumbered by reading the highest and adding one?* — as a check rather than a note. It guards five\nfamilies in one place (adding one is a line, not a script) and reports any UNDECLARED sequence, so\nthe next allocator is guarded on the day it is invented. Observed failing on both shapes before it\nwas believed.\n\nOn its first run it found `adr-` (16 decisions, allocated by FILENAME — a kind the first draft could\nnot even express) and, on inspection, `INV-`, which was below the threshold at two entries and was\ndeclared anyway.\n\nTwo first-draft errors are recorded in DC-013 because they are the interesting part. It reported\neighteen holes in the audit log as failures — but a hole is the merge protocol working: a contested\nid is resolved by re-issuing the loser, leaving the number unused. Verified with `git log -S`: none\nof the missing ids has ever existed, so nothing was lost. **A control that flags the fix as the\ndefect is how a control teaches people to ignore it**, so contiguity is opt-in per family now. It\nalso first read ADR ids out of `architecture.md`, which only cites them — an allocator is where an id\nis CREATED, never where it is mentioned.\n\n**Electing a single allocator between sessions was considered and rejected** (the user asked). The\nsessions work in separate worktrees on purpose and an election needs a rendezvous they do not have:\na session an hour into its work has not fetched, so \"ask the allocator\" is stale or a blocking round\ntrip through `main`, and it would make one session wait on another to record a lesson. The class is\nnot \"the wrong allocator won\", it is \"a shared sequence with two writers\".\n\n**Sub-scope incrementality is written up, not built.** `docs/notes/note-20260830-sub-scope-\nincrementality.md` states four options with what each costs, recommends one (keep the atomic\ngeneration, skip the walk for unchanged types) and explicitly does not take it: the per-scope and\nper-parse layers already exist, and nobody has measured whether edit-to-graph latency is a 1.2s\non-demand cost or a per-keystroke one. Instrumenting that is cheaper than any of the four options and\nshould come first. The decision changes the store's contract, so it is the user's call.\n\nA build gap worth naming: the spike project is not in `AiDe.sln`, so last turn's solution build never\ncompiled it and the first measurement this turn silently ran a **stale binary**. Caught because the\nnew timing fields did not appear in the output.\n\n730 tests green (App 123, Core 607). Six gates clean, one of them new. Zero design-owned files.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Projections/GraphPaths.cs",
         "tools/verify-id-allocators.py",
         "docs/notes/note-20260830-sub-scope-incrementality.md"
       ],
+      "datetime": "2026-08-30T15:47:03Z",
+      "git": {
+        "after": "2f80b0b780a0e37a246006b072b851e98e2c33b2",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0080",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "Two more performance hypotheses died, and the second death is the useful one.\n\nSplitting `depends_on`: **`SymbolEqualityComparer` dedupe is 3ms of 600ms — 0.5%** across 13,906 raw\nsymbols. Gather is 597ms. So the cost of `depends_on` IS the semantic work — `GetMembers()` binding\nevery member signature — and it cannot be made cheaper, only avoided. Two turns, two suspects\n(`ToDisplayString` at 3.9%, then the comparer at 0.5%), both wrong, both named before being believed.\nThe measurement is now fine-grained enough that the next guess has nowhere to hide.\n\n**Generated types are excluded from the whole extractor**, not just the fluent scan — a type is\ndropped only when EVERY file declaring it is auto-generated, so a partial class with a hand-written\nhalf (a WPF window, an EF migration people edit) is kept. Disclosed with a count.\n\n**And the estimate that motivated it was wrong.** I predicted ~600 excluded types on TheTerrace. The\nreal number is **1**. EF marks only the snapshot half (`*.Designer.cs`) as generated; the migration\nhalf starts with a plain `using System;`, so each migration type has a hand-written declaration and\nis correctly kept. The rule is right and its effect here is small — recorded that way rather than\nquietly dropped, because \"I expected 600 and got 1\" is the part worth knowing.\n\n**Routes are answerable now.** `GraphPaths` returns how one node reaches another: shortest routes\nonly, directed (walking an edge backwards would answer \"these are related\" while looking like \"a\nchange here reaches there\"), with the route's status taken from its WEAKEST edge so one inferred link\ncannot launder itself into a verified chain. A missing endpoint returns a reason, not an empty list\nthat reads as \"unconnected\". Proven across the daemon pipe as well as in process — a path is the one\nresult shaped as a list of lists, so it is the one most likely to arrive flattened.\n\n**The id-allocator gap is closed, and closing it found two more allocators.**\n`tools/verify-id-allocators.py` asks the generalising question behind DC-013 — *what else here is\nnumbered by reading the highest and adding one?* — as a check rather than a note. It guards five\nfamilies in one place (adding one is a line, not a script) and reports any UNDECLARED sequence, so\nthe next allocator is guarded on the day it is invented. Observed failing on both shapes before it\nwas believed.\n\nOn its first run it found `adr-` (16 decisions, allocated by FILENAME — a kind the first draft could\nnot even express) and, on inspection, `INV-`, which was below the threshold at two entries and was\ndeclared anyway.\n\nTwo first-draft errors are recorded in DC-013 because they are the interesting part. It reported\neighteen holes in the audit log as failures — but a hole is the merge protocol working: a contested\nid is resolved by re-issuing the loser, leaving the number unused. Verified with `git log -S`: none\nof the missing ids has ever existed, so nothing was lost. **A control that flags the fix as the\ndefect is how a control teaches people to ignore it**, so contiguity is opt-in per family now. It\nalso first read ADR ids out of `architecture.md`, which only cites them — an allocator is where an id\nis CREATED, never where it is mentioned.\n\n**Electing a single allocator between sessions was considered and rejected** (the user asked). The\nsessions work in separate worktrees on purpose and an election needs a rendezvous they do not have:\na session an hour into its work has not fetched, so \"ask the allocator\" is stale or a blocking round\ntrip through `main`, and it would make one session wait on another to record a lesson. The class is\nnot \"the wrong allocator won\", it is \"a shared sequence with two writers\".\n\n**Sub-scope incrementality is written up, not built.** `docs/notes/note-20260830-sub-scope-\nincrementality.md` states four options with what each costs, recommends one (keep the atomic\ngeneration, skip the walk for unchanged types) and explicitly does not take it: the per-scope and\nper-parse layers already exist, and nobody has measured whether edit-to-graph latency is a 1.2s\non-demand cost or a per-keystroke one. Instrumenting that is cheaper than any of the four options and\nshould come first. The decision changes the store's contract, so it is the user's call.\n\nA build gap worth naming: the spike project is not in `AiDe.sln`, so last turn's solution build never\ncompiled it and the first measurement this turn silently ran a **stale binary**. Caught because the\nnew timing fields did not appear in the output.\n\n730 tests green (App 123, Core 607). Six gates clean, one of them new. Zero design-owned files.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "2f80b0b780a0e37a246006b072b851e98e2c33b2",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Two more perf hypotheses died; routes, generated types, and a gate for every id allocator"
     },
     {
-      "id": "cl-0081",
-      "datetime": "2026-08-30T16:05:29Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "Refresh cost measured, no project uncompiled, DC-033 swept, routes on a surface",
-      "prompt": null,
-      "summary": "**The measurement the sub-scope decision was blocked on now exists.** A refresh had a span but its\nSTATUS carried no duration, so the only thing a caller could read was how many assertions came back.\n`ScopeRefreshStatus` now carries `QueuedMilliseconds` and `DurationMilliseconds` — kept separate\nbecause waiting is a concurrency problem and running is a cost problem, and one number hides which\none a user is feeling. `RefreshMetrics` adds p50/p95/max over a bounded window plus first/last\nobserved, exposed over IPC as `refresh.metrics` with no request body and no failure mode: an operator\nasking what re-indexing costs should never be told it depends on what they enable first.\n\nDeliberately **no rate is computed**. \"Refreshes per hour\" from two samples is a number with no error\nbar that gets quoted as if it had one; the raw facts let a reader compute it when there is enough of\nit to mean something and notice when there is not. Failed refreshes are timed too — a run that takes\ntwenty seconds and then throws is the one an operator most wants to see, and excluding failures is\nhow a percentile ends up describing only the easy cases. With nothing measured everything reports\nzero and null rather than an interpolation of nothing.\n\n**No tracked project escapes compilation now.** `spikes/joins-on-a-real-repo` — the harness behind\nnearly every performance and join number in this log — is not in `AiDe.sln`, so a change to\n`GraphAsync` broke it while the solution build stayed green, and the next measurement silently ran a\nSTALE BINARY. Caught only because an expected timing field did not appear. Had the change not added a\nfield, the numbers would have looked fine and been wrong. That is DC-023 with a twist: the gate was\nnot stale, it was NARROW.\n\n`tools/verify-project-coverage.py` builds every tracked project the solution does not contain. A\ngate rather than solution membership, because `AiDe.sln` answers \"what ships\" and these are evidence\nartifacts. **The cost claim in its own header was wrong and is corrected in place:** it was written\nexpecting to belong in the slow at-readiness ring and measures **16 seconds for 19 projects**, which\nputs it on every push. It prints its wall time on every run so that stays a measured decision.\nObserved failing against a deliberately broken spike.\n\n**DC-033 swept, and it found a second instance.** The class says its signature is a ratio on real\ninput, so the sweep measured. `TypeScriptExtractor` knew `class|interface|type|enum|function|const`\nand did not know `async`, the generator star, `namespace`, `let` or `var`. TheTerrace declares 124\n`export interface`, 26 `export type`, 16 `export const` and **4 `export namespace`** — four\ndeclarations reported as absent rather than unread. `PythonExtractor` is clean; the Bicep and schema\nreaders are narrow by *declared* ceiling and disclose it.\n\nThe important half is not the wider pattern, which will be wrong again for the next spelling. **The\nreader now counts its own misses and discloses them** — `typescript-exports-not-recognised (N)` — so\nthe next unanticipated form announces itself on the scope. Re-exports are excluded deliberately:\ncounting them gives a miss rate that never reaches zero and therefore says nothing.\n\n**Routes reach a surface.** `CanvasGraphViewModel.RouteAsync(from, to)` returns the **same\n`CanvasGraph`** the canvas already binds, because a route IS a subgraph and giving it its own shape\nwould mean a second renderer and a second place for the two sessions to disagree about what a node\nlooks like. Endpoints arrive with `IsRoot = true`; the caption names the count, the shortest length\nand **the weakest link**, because a route drawn without that looks like a fact about the code when\none inferred edge makes the whole claim inferred. Every empty case says which one it is, and the\nprojection's own reason survives to the caption — \"not in this graph\" and \"no route within 8 edges\"\nsend a user to different places.\n\n**The `GraphQuery` filter question is put to the design session as a decision, not a request.** All\nthree filters are on the wire and proven across the daemon; which of them belong in the UI, and as\nwhat control, is an information-architecture call this session does not own. §4a states the three\nwith what each is worth, recommends a **preset** over toggles (three named views are one decision a\nuser makes once; three toggles are a combinatorial space they must reason about) and says plainly\nthat this is a guess about users. What Core commits to either way is the tested property: the filter\nruns before the cap and degree is computed over what survives it.\n\n765 tests green (App 131, Core 634). Seven gates clean, one of them new.\nZero design-owned files.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Ipc/ScopeRefreshService.cs",
         "tools/verify-project-coverage.py",
         "src/AiDe.Core/Presentation/CanvasGraphViewModel.cs"
       ],
+      "datetime": "2026-08-30T16:05:29Z",
+      "git": {
+        "after": "1885098af60677e9d066a5f234d55baa9719bc9b",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0081",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "**The measurement the sub-scope decision was blocked on now exists.** A refresh had a span but its\nSTATUS carried no duration, so the only thing a caller could read was how many assertions came back.\n`ScopeRefreshStatus` now carries `QueuedMilliseconds` and `DurationMilliseconds` — kept separate\nbecause waiting is a concurrency problem and running is a cost problem, and one number hides which\none a user is feeling. `RefreshMetrics` adds p50/p95/max over a bounded window plus first/last\nobserved, exposed over IPC as `refresh.metrics` with no request body and no failure mode: an operator\nasking what re-indexing costs should never be told it depends on what they enable first.\n\nDeliberately **no rate is computed**. \"Refreshes per hour\" from two samples is a number with no error\nbar that gets quoted as if it had one; the raw facts let a reader compute it when there is enough of\nit to mean something and notice when there is not. Failed refreshes are timed too — a run that takes\ntwenty seconds and then throws is the one an operator most wants to see, and excluding failures is\nhow a percentile ends up describing only the easy cases. With nothing measured everything reports\nzero and null rather than an interpolation of nothing.\n\n**No tracked project escapes compilation now.** `spikes/joins-on-a-real-repo` — the harness behind\nnearly every performance and join number in this log — is not in `AiDe.sln`, so a change to\n`GraphAsync` broke it while the solution build stayed green, and the next measurement silently ran a\nSTALE BINARY. Caught only because an expected timing field did not appear. Had the change not added a\nfield, the numbers would have looked fine and been wrong. That is DC-023 with a twist: the gate was\nnot stale, it was NARROW.\n\n`tools/verify-project-coverage.py` builds every tracked project the solution does not contain. A\ngate rather than solution membership, because `AiDe.sln` answers \"what ships\" and these are evidence\nartifacts. **The cost claim in its own header was wrong and is corrected in place:** it was written\nexpecting to belong in the slow at-readiness ring and measures **16 seconds for 19 projects**, which\nputs it on every push. It prints its wall time on every run so that stays a measured decision.\nObserved failing against a deliberately broken spike.\n\n**DC-033 swept, and it found a second instance.** The class says its signature is a ratio on real\ninput, so the sweep measured. `TypeScriptExtractor` knew `class|interface|type|enum|function|const`\nand did not know `async`, the generator star, `namespace`, `let` or `var`. TheTerrace declares 124\n`export interface`, 26 `export type`, 16 `export const` and **4 `export namespace`** — four\ndeclarations reported as absent rather than unread. `PythonExtractor` is clean; the Bicep and schema\nreaders are narrow by *declared* ceiling and disclose it.\n\nThe important half is not the wider pattern, which will be wrong again for the next spelling. **The\nreader now counts its own misses and discloses them** — `typescript-exports-not-recognised (N)` — so\nthe next unanticipated form announces itself on the scope. Re-exports are excluded deliberately:\ncounting them gives a miss rate that never reaches zero and therefore says nothing.\n\n**Routes reach a surface.** `CanvasGraphViewModel.RouteAsync(from, to)` returns the **same\n`CanvasGraph`** the canvas already binds, because a route IS a subgraph and giving it its own shape\nwould mean a second renderer and a second place for the two sessions to disagree about what a node\nlooks like. Endpoints arrive with `IsRoot = true`; the caption names the count, the shortest length\nand **the weakest link**, because a route drawn without that looks like a fact about the code when\none inferred edge makes the whole claim inferred. Every empty case says which one it is, and the\nprojection's own reason survives to the caption — \"not in this graph\" and \"no route within 8 edges\"\nsend a user to different places.\n\n**The `GraphQuery` filter question is put to the design session as a decision, not a request.** All\nthree filters are on the wire and proven across the daemon; which of them belong in the UI, and as\nwhat control, is an information-architecture call this session does not own. §4a states the three\nwith what each is worth, recommends a **preset** over toggles (three named views are one decision a\nuser makes once; three toggles are a combinatorial space they must reason about) and says plainly\nthat this is a guess about users. What Core commits to either way is the tested property: the filter\nruns before the cap and degree is computed over what survives it.\n\n765 tests green (App 131, Core 634). Seven gates clean, one of them new.\nZero design-owned files.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "1885098af60677e9d066a5f234d55baa9719bc9b",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Refresh cost measured, no project uncompiled, DC-033 swept, routes on a surface"
     },
     {
-      "id": "cl-0082",
-      "datetime": "2026-08-30T16:18:29Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "INV-0003: the graph could not fit through the pipe, and the default should never have asked",
-      "prompt": null,
-      "summary": "The graph pane has been broken on TheTerrace since the whole-graph change, and it is my defect. The\ndesign session investigated it (INV-0003), verified the cause and handed it to Core.\n\nMEASURED: the whole-graph response is 1,522,284 bytes against a 1,048,576-byte IPC frame. It could\nnever have been delivered. `IpcFraming.WriteAsync` threw, the serve loop caught `IOException` and\n`OperationCanceledException` but not that, the exception escaped, the connection closed with no\nreply — so \"the answer is too big to send\" reached the user as \"the daemon closed the connection\nwithout responding\", which sends them to look at the daemon.\n\nTwo fixes, both Core's:\n\n**The transport no longer closes silently.** `IpcServer.Respond` checks the encoded size BEFORE\nwriting and returns a new `ipc.payload_too_large` carrying the actual and permitted byte counts.\nChecked before rather than caught after on purpose: a partially written frame leaves the peer reading\na length prefix whose body never arrives, which is a hang rather than an error. The writer's own throw\nis correct and stays.\n\n**The default view is bounded by construction.** No focus now asks for 1,500 declared nodes ranked by\ndegree rather than the whole graph — 533,495 bytes, fits, 618 omitted and named in the caption.\n\nThe transport failure exposed the larger error, and the design session is right about it: the fix for\nDC-031 over-corrected. The graph pane rendering two nodes of two thousand was a real defect; loading\nEVERYTHING overshot the spec that was being restored — `knowledge-exploration.md` US-K2 already said\nthe whole graph is never rendered at once. The answer to \"one arbitrary alphabetical node\" was a\nbounded overview of MEANINGFUL nodes. DC-031 and DC-035 are the same axis overshot in opposite\ndirections, and a fix for one lands on the other unless the spec is re-read when the new default is\nchosen. That is recorded on DC-035 as mine.\n\nBounding by size and bounding by meaning turned out to be the same change: measured, the six\nmost-connected nodes of a real repository were `string`, `int`, `Task<T>`, `DateTimeOffset`,\n`IReadOnlyList<T>` and `Guid`, so a first view centred on the BCL was unreadable as well as\nundeliverable.\n\nDC-035 moves from `uncontrolled` to `partially-controlled`. Core's half is landed and tested,\nincluding the byte measurements pinned as an assertion so that raising the frame cap without\nrevisiting the default fails there first. **Design's half is open and named:** the aggregated /\nlevel-of-detail overview for a graph too large to show node-by-node, and the \"narrow your focus\"\nstate. Until that exists a repository whose declared code exceeds the cap gets a truthful truncation\nrather than a designed overview.\n\n775 tests green (App 131, Core 639). Seven gates clean. Zero design-owned files.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Ipc/IpcServer.cs",
         "src/AiDe.Core/Presentation/CanvasGraphViewModel.cs"
       ],
+      "datetime": "2026-08-30T16:18:29Z",
+      "git": {
+        "after": "bbeeb9f832efa1a06e83c1e9df15b0a9bc5cac32",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0082",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "The graph pane has been broken on TheTerrace since the whole-graph change, and it is my defect. The\ndesign session investigated it (INV-0003), verified the cause and handed it to Core.\n\nMEASURED: the whole-graph response is 1,522,284 bytes against a 1,048,576-byte IPC frame. It could\nnever have been delivered. `IpcFraming.WriteAsync` threw, the serve loop caught `IOException` and\n`OperationCanceledException` but not that, the exception escaped, the connection closed with no\nreply — so \"the answer is too big to send\" reached the user as \"the daemon closed the connection\nwithout responding\", which sends them to look at the daemon.\n\nTwo fixes, both Core's:\n\n**The transport no longer closes silently.** `IpcServer.Respond` checks the encoded size BEFORE\nwriting and returns a new `ipc.payload_too_large` carrying the actual and permitted byte counts.\nChecked before rather than caught after on purpose: a partially written frame leaves the peer reading\na length prefix whose body never arrives, which is a hang rather than an error. The writer's own throw\nis correct and stays.\n\n**The default view is bounded by construction.** No focus now asks for 1,500 declared nodes ranked by\ndegree rather than the whole graph — 533,495 bytes, fits, 618 omitted and named in the caption.\n\nThe transport failure exposed the larger error, and the design session is right about it: the fix for\nDC-031 over-corrected. The graph pane rendering two nodes of two thousand was a real defect; loading\nEVERYTHING overshot the spec that was being restored — `knowledge-exploration.md` US-K2 already said\nthe whole graph is never rendered at once. The answer to \"one arbitrary alphabetical node\" was a\nbounded overview of MEANINGFUL nodes. DC-031 and DC-035 are the same axis overshot in opposite\ndirections, and a fix for one lands on the other unless the spec is re-read when the new default is\nchosen. That is recorded on DC-035 as mine.\n\nBounding by size and bounding by meaning turned out to be the same change: measured, the six\nmost-connected nodes of a real repository were `string`, `int`, `Task<T>`, `DateTimeOffset`,\n`IReadOnlyList<T>` and `Guid`, so a first view centred on the BCL was unreadable as well as\nundeliverable.\n\nDC-035 moves from `uncontrolled` to `partially-controlled`. Core's half is landed and tested,\nincluding the byte measurements pinned as an assertion so that raising the frame cap without\nrevisiting the default fails there first. **Design's half is open and named:** the aggregated /\nlevel-of-detail overview for a graph too large to show node-by-node, and the \"narrow your focus\"\nstate. Until that exists a repository whose declared code exceeds the cap gets a truthful truncation\nrather than a designed overview.\n\n775 tests green (App 131, Core 639). Seven gates clean. Zero design-owned files.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "bbeeb9f832efa1a06e83c1e9df15b0a9bc5cac32",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "INV-0003: the graph could not fit through the pipe, and the default should never have asked"
     },
     {
-      "id": "cl-0083",
-      "datetime": "2026-08-30T16:39:59Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "Every response is bounded by bytes, and the incrementality question answered by a grep",
-      "prompt": null,
-      "summary": "The graph was found by a user opening a repository, not by us, so every other read operation was\nmeasured at its own ceiling against the 1 MiB frame. **Two more were one repository away from\nINV-0003, and a third could never have succeeded.**\n\n| operation | before | after |\n|---|---|---|\n| evidence (2,000/page) | 1,004,397 B — **95.8% of the frame** | 659,164 B, 1,310 rows, cursor continues |\n| graph (5,000-node ceiling) | 1,522,915 B — **overflows** | 474,437 B, shrunk to fit, `Omitted` reports |\n| find (20,000 ceiling) | 461,750 B returned while **reporting a 64 KiB cap** | byte-bounded, `ByteCapped` set |\n\nThe class behind all three: **every ceiling in the read surface counts ITEMS and the transport limit\nis in BYTES**, and every item's size comes from repository content. A count-only cap admits an\nunbounded payload. `Evidence`'s own documentation claimed a page \"can cross a pipe without breaching\nthe result-byte cap\" — it was fifteen times over that cap. `Find` declared `MaxBytes: 65,536` beside\n461,750 bytes of results, a control that could not fire (DC-016).\n\nTruncating an evidence page is **lossless**, which is why the bound belongs in the projection: the\ncursor continues from the last row actually returned, so it costs a round trip and never a row. A\ntest pages a corpus to exhaustion and asserts every assertion comes back exactly once. Every response\nkeeps at least one item — a caller that receives nothing because its first row is enormous can never\nmake progress.\n\nThe byte guard uses a **measured** constant, not a guessed one: 2,000 assertions whose fields total\n238,002 bytes serialise to 1,004,397, so JSON scaffolding is **383 bytes per row**. Rounded up,\nbecause a guard that under-counts is a guard that lets the frame overflow.\n\n**The sub-scope-incrementality decision is resolved, and not by the instrument built for it.** The\nnote said the answer depended on how often edit-to-graph happens, and `RefreshMetrics` was built to\nmeasure that. One grep answered it instead: **there is no `FileSystemWatcher` anywhere in `src/`**.\nIndexing runs only from explicit commands, so the cost is paid deliberately by a user pressing a\nbutton. Breaking the per-scope snapshot's atomicity to shorten a deliberate 1.2s action is a poor\ntrade, so none of options A–D is built. The note stays, status `resolved`, naming the trigger that\nwould change it: **re-index on save**, which converts a bounded cost into a per-edit one.\n\nWorth recording because it nearly went the other way. Three hypotheses in this area have now been\nwrong — `ToDisplayString` (3.9%), `SymbolEqualityComparer` (0.5%), \"the index still walks every\nscope\" (it does not). This would have been the fourth: collecting a distribution and reasoning\ncarefully about a number that answered a question nobody was asking.\n\n**My own new gate cried wolf and is fixed.** `verify-id-allocators` reported an undeclared family\ncalled `nDC-` — it was matching the `n` of a JSON-escaped newline before a *mentioned* `DC-` id in a\nlog summary. A mention is not an allocation, which is the same distinction the first draft got wrong\nwhen it read ADR ids out of `architecture.md`. Fixed with a lookbehind, and the narrative files are\nexcluded from the candidate scan: a record of a mention must never nominate an allocator. This is the\nsecond time this script has flagged correct behaviour as a defect; a control that does that twice is\none people switch off.\n\n790 tests green (App 131, Core 645). Seven gates clean. Zero design-owned files.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Projections/ProjectionService.cs",
         "docs/notes/note-20260830-sub-scope-incrementality.md"
       ],
+      "datetime": "2026-08-30T16:39:59Z",
+      "git": {
+        "after": "1c273b0b29bf76e7fc453e5f77f733ec512f19e8",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0083",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "The graph was found by a user opening a repository, not by us, so every other read operation was\nmeasured at its own ceiling against the 1 MiB frame. **Two more were one repository away from\nINV-0003, and a third could never have succeeded.**\n\n| operation | before | after |\n|---|---|---|\n| evidence (2,000/page) | 1,004,397 B — **95.8% of the frame** | 659,164 B, 1,310 rows, cursor continues |\n| graph (5,000-node ceiling) | 1,522,915 B — **overflows** | 474,437 B, shrunk to fit, `Omitted` reports |\n| find (20,000 ceiling) | 461,750 B returned while **reporting a 64 KiB cap** | byte-bounded, `ByteCapped` set |\n\nThe class behind all three: **every ceiling in the read surface counts ITEMS and the transport limit\nis in BYTES**, and every item's size comes from repository content. A count-only cap admits an\nunbounded payload. `Evidence`'s own documentation claimed a page \"can cross a pipe without breaching\nthe result-byte cap\" — it was fifteen times over that cap. `Find` declared `MaxBytes: 65,536` beside\n461,750 bytes of results, a control that could not fire (DC-016).\n\nTruncating an evidence page is **lossless**, which is why the bound belongs in the projection: the\ncursor continues from the last row actually returned, so it costs a round trip and never a row. A\ntest pages a corpus to exhaustion and asserts every assertion comes back exactly once. Every response\nkeeps at least one item — a caller that receives nothing because its first row is enormous can never\nmake progress.\n\nThe byte guard uses a **measured** constant, not a guessed one: 2,000 assertions whose fields total\n238,002 bytes serialise to 1,004,397, so JSON scaffolding is **383 bytes per row**. Rounded up,\nbecause a guard that under-counts is a guard that lets the frame overflow.\n\n**The sub-scope-incrementality decision is resolved, and not by the instrument built for it.** The\nnote said the answer depended on how often edit-to-graph happens, and `RefreshMetrics` was built to\nmeasure that. One grep answered it instead: **there is no `FileSystemWatcher` anywhere in `src/`**.\nIndexing runs only from explicit commands, so the cost is paid deliberately by a user pressing a\nbutton. Breaking the per-scope snapshot's atomicity to shorten a deliberate 1.2s action is a poor\ntrade, so none of options A–D is built. The note stays, status `resolved`, naming the trigger that\nwould change it: **re-index on save**, which converts a bounded cost into a per-edit one.\n\nWorth recording because it nearly went the other way. Three hypotheses in this area have now been\nwrong — `ToDisplayString` (3.9%), `SymbolEqualityComparer` (0.5%), \"the index still walks every\nscope\" (it does not). This would have been the fourth: collecting a distribution and reasoning\ncarefully about a number that answered a question nobody was asking.\n\n**My own new gate cried wolf and is fixed.** `verify-id-allocators` reported an undeclared family\ncalled `nDC-` — it was matching the `n` of a JSON-escaped newline before a *mentioned* `DC-` id in a\nlog summary. A mention is not an allocation, which is the same distinction the first draft got wrong\nwhen it read ADR ids out of `architecture.md`. Fixed with a lookbehind, and the narrative files are\nexcluded from the candidate scan: a record of a mention must never nominate an allocator. This is the\nsecond time this script has flagged correct behaviour as a defect; a control that does that twice is\none people switch off.\n\n790 tests green (App 131, Core 645). Seven gates clean. Zero design-owned files.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "1c273b0b29bf76e7fc453e5f77f733ec512f19e8",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Every response is bounded by bytes, and the incrementality question answered by a grep"
     },
     {
-      "id": "cl-0084",
-      "datetime": "2026-08-30T17:14:13Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "The workspace as groups: the aggregated overview, and a reflective frame-fit gate",
-      "prompt": null,
-      "summary": "**The aggregated overview closes Core's half of DC-035.** The bounded default fixed the transport\nfailure by drawing 1,500 of 2,118 declared nodes and saying so — honest, and still a truncation. A\nuser opening a repository wants its SHAPE, and 1,500 dots is not a shape.\n\n`GraphOverview` returns the workspace as GROUPS, grouped by the ids' own hierarchy — a C# symbol is\n`TheTerrace.Features.Competitions.Season`, a module is `src/app/models`, so the first `Depth`\nsegments name what a developer would call \"where that lives\", and Depth is the zoom control.\n\nMEASURED on TheTerrace at depth 3: `Features.Fixtures` 117, `Features.Teams` 117, `Features.Matches`\n107, `Infrastructure.Data` 70, `Features.Identity` 47, `Features.Competitions` 44 — the actual shape\nof that repository, in **55,758 bytes** against 533,484 for the node graph.\n\n**No community-detection algorithm, deliberately.** Its output is unstable under small changes to the\ngraph, so the same repository would regroup between two indexes and the picture would move for\nreasons the user cannot see. Prefix grouping is stable by construction.\n\nEach group carries `NodeCount` — a dot standing for 240 types is only honest while the 240 is on it,\nwhich is the whole difference between an overview and a smaller lie. Each link carries `Weight` for\nthickness and the **weakest** status of the edges it bundles, because drawing a bundle as Verified\nbecause most of its members were would launder guesses into facts at a grain where the user can no\nlonger see the members. Edges inside a group are counted, not drawn.\n\n**My own first default was the failure the overview exists to prevent.** `MaxClusters` shipped at 200,\nand TheTerrace has 689 groups at depth 3 — returning 200 of them is a hairball at a coarser grain,\nwhich my own doc comment named as the thing to avoid. Measured and lowered to 60.\n\n**The frame-fit control is reflective, because hand-auditing found the last three and would not find\nthe next.** `EveryOperationFitsTheFrameTests` derives the operation list from `IWorkspaceQueries`\nitself and fails when a method is added with no size check — observed failing with an entry removed,\nnaming the method. Writing the list by hand would restate the product's own list (DC-021) and go\nstale in exactly the case that matters.\n\n**The write side was audited and needs nothing.** An `IndexSummary` for 28 scopes is **1,724 bytes** —\nthree orders of magnitude below the frame. Recorded rather than guarded: a control whose failure\nnobody can name is one to drop.\n\n**Degree on the wire was already done, by the other session.** They shipped force-directed layout with\ndegree-sized dots (DC-036), so that next step was stale when I wrote it. What layout still could not\ndo is cluster, which is what the overview provides. `GraphOverview.GroupFor` is public now so the\ncanvas groups detail nodes the SAME way the overview does — two definitions of one grouping is\nDC-022's shape, and the divergence would render a node in the wrong cluster and look like a layout\nbug.\n\n**A shared test double replaces four hand-written stubs.** Every method added to `IWorkspaceQueries`\nhas broken the same four stubs across two projects — four rounds of identical churn, which is a\nmeasured recurrence rather than a predicted one. `FakeWorkspaceQueries` throws rather than returning\nempty: a stub that quietly answers a question the test did not intend to ask turns a wrong call site\ninto a passing test.\n\n791 tests green (App 132, Core 659). Seven gates clean. Zero design-owned files.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Projections/GraphOverview.cs",
         "tests/AiDe.Core.Tests/EveryOperationFitsTheFrameTests.cs"
       ],
+      "datetime": "2026-08-30T17:14:13Z",
+      "git": {
+        "after": "13a488b5028bc352171f202df353915e0f791ac2",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": false
+      },
+      "id": "cl-0084",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "**The aggregated overview closes Core's half of DC-035.** The bounded default fixed the transport\nfailure by drawing 1,500 of 2,118 declared nodes and saying so — honest, and still a truncation. A\nuser opening a repository wants its SHAPE, and 1,500 dots is not a shape.\n\n`GraphOverview` returns the workspace as GROUPS, grouped by the ids' own hierarchy — a C# symbol is\n`TheTerrace.Features.Competitions.Season`, a module is `src/app/models`, so the first `Depth`\nsegments name what a developer would call \"where that lives\", and Depth is the zoom control.\n\nMEASURED on TheTerrace at depth 3: `Features.Fixtures` 117, `Features.Teams` 117, `Features.Matches`\n107, `Infrastructure.Data` 70, `Features.Identity` 47, `Features.Competitions` 44 — the actual shape\nof that repository, in **55,758 bytes** against 533,484 for the node graph.\n\n**No community-detection algorithm, deliberately.** Its output is unstable under small changes to the\ngraph, so the same repository would regroup between two indexes and the picture would move for\nreasons the user cannot see. Prefix grouping is stable by construction.\n\nEach group carries `NodeCount` — a dot standing for 240 types is only honest while the 240 is on it,\nwhich is the whole difference between an overview and a smaller lie. Each link carries `Weight` for\nthickness and the **weakest** status of the edges it bundles, because drawing a bundle as Verified\nbecause most of its members were would launder guesses into facts at a grain where the user can no\nlonger see the members. Edges inside a group are counted, not drawn.\n\n**My own first default was the failure the overview exists to prevent.** `MaxClusters` shipped at 200,\nand TheTerrace has 689 groups at depth 3 — returning 200 of them is a hairball at a coarser grain,\nwhich my own doc comment named as the thing to avoid. Measured and lowered to 60.\n\n**The frame-fit control is reflective, because hand-auditing found the last three and would not find\nthe next.** `EveryOperationFitsTheFrameTests` derives the operation list from `IWorkspaceQueries`\nitself and fails when a method is added with no size check — observed failing with an entry removed,\nnaming the method. Writing the list by hand would restate the product's own list (DC-021) and go\nstale in exactly the case that matters.\n\n**The write side was audited and needs nothing.** An `IndexSummary` for 28 scopes is **1,724 bytes** —\nthree orders of magnitude below the frame. Recorded rather than guarded: a control whose failure\nnobody can name is one to drop.\n\n**Degree on the wire was already done, by the other session.** They shipped force-directed layout with\ndegree-sized dots (DC-036), so that next step was stale when I wrote it. What layout still could not\ndo is cluster, which is what the overview provides. `GraphOverview.GroupFor` is public now so the\ncanvas groups detail nodes the SAME way the overview does — two definitions of one grouping is\nDC-022's shape, and the divergence would render a node in the wrong cluster and look like a layout\nbug.\n\n**A shared test double replaces four hand-written stubs.** Every method added to `IWorkspaceQueries`\nhas broken the same four stubs across two projects — four rounds of identical churn, which is a\nmeasured recurrence rather than a predicted one. `FakeWorkspaceQueries` throws rather than returning\nempty: a stub that quietly answers a question the test did not intend to ask turns a wrong call site\ninto a passing test.\n\n791 tests green (App 132, Core 659). Seven gates clean. Zero design-owned files.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "13a488b5028bc352171f202df353915e0f791ac2",
-        "branch": "session/phase3-pane-probes",
-        "pushed": false,
-        "commits": []
-      }
+      "title": "The workspace as groups: the aggregated overview, and a reflective frame-fit gate"
     },
     {
-      "id": "cl-0085",
-      "datetime": "2026-08-30T17:31:16Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "Drill-down closes the overview loop, and a third repository found a defect in my own control",
-      "prompt": null,
-      "summary": "**Drill-down closes the loop the overview opened.** `GraphQuery.GroupId` returns the nodes inside one\ncluster, and the depth is read back out of the group id rather than passed alongside it — a separate\ndepth parameter would let a caller ask for `TheTerrace.Features` at depth 3 and receive nothing, with\nno error and no way to tell that from an empty group.\n\nThe property that makes the overview trustworthy is asserted, not assumed: **every cluster's\n`NodeCount` equals what drilling into it returns**, and every cluster's `InternalEdges` equals what\ndrilling in draws. For every group, not a sampled one — the interesting failure is the group whose\nnaming rule differs, and that is never the group a test author picks by hand. Both paths compute\nmembership from one definition (`GraphOverview.GroupFor`), which is why the round trip holds.\n\n**Proven across the pipe.** The overview is nested — clusters and weighted links — so it is the\nresponse most likely to arrive with an inner list flattened or a count defaulted to zero, and a\ncluster's count is a claim a user can check. The daemon test now drills from the largest cluster back\nto its nodes and asserts the counts agree.\n\n**Three repositories now, not one — and the third one found a defect in my own control.** Every\nmeasurement in this project had come from TheTerrace. Running BioHacker (32 scopes, no `DbContext` at\nall, so 0 joins is correct rather than a failure) and meridian-finance-planner (31 scopes, 9,165\nassertions, 165 TypeScript files) confirmed every operation fits the frame on all three.\n\nBioHacker reported `typescript-exports-not-recognised (1)` — the DC-033 control firing on the first\nnew repository it saw, which is what it is for. But the miss was **mine**: `export default\ndefineConfig({…})` and `export default test;` declare nothing new, and the miss-counter's own doc\ncomment said `export default someExpression` was excluded while the pattern never excluded it.\n`export default` is ubiquitous, so the disclosure would have fired on nearly every real TypeScript\ncodebase and become noise. Fixed; the 165-file repository now reports zero.\n\n**The shape is worth naming because it is the third instance this session.** The exclusion was written\nin the comment before it was implemented — exactly like the evidence page documenting a byte cap it\ndid not apply, and `find` reporting a `MaxBytes` it never enforced. **A claim in prose that the code\ndoes not make true.** When a comment states a bound, the next question is which line applies it.\n\nAnd the meta-lesson, recorded on DC-033: **a control's false-positive rate is only observable on input\nit was not written against.** Validating on one repository validates against one repository.\n\n**The shared test double now covers both projects.** `FakeWorkspaceQueries` moved to `tests/Shared`\nunder a neutral namespace and is linked into both test csproj files — linked source rather than a new\nassembly, because a project for forty lines is more machinery than the churn it removes. The two\nApp-project stubs that hand-implemented the whole seam now override only what they answer.\n\n800 tests green (App 132, Core 668). Seven gates clean. Zero design-owned files.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Projections/GraphProjection.cs",
         "src/AiDe.Core/Extraction/TypeScriptExtractor.cs",
         "tests/Shared/FakeWorkspaceQueries.cs"
       ],
+      "datetime": "2026-08-30T17:31:16Z",
+      "git": {
+        "after": "431cb97ebb26f9a9bab19d2f484a833dc78cdd9a",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0085",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "**Drill-down closes the loop the overview opened.** `GraphQuery.GroupId` returns the nodes inside one\ncluster, and the depth is read back out of the group id rather than passed alongside it — a separate\ndepth parameter would let a caller ask for `TheTerrace.Features` at depth 3 and receive nothing, with\nno error and no way to tell that from an empty group.\n\nThe property that makes the overview trustworthy is asserted, not assumed: **every cluster's\n`NodeCount` equals what drilling into it returns**, and every cluster's `InternalEdges` equals what\ndrilling in draws. For every group, not a sampled one — the interesting failure is the group whose\nnaming rule differs, and that is never the group a test author picks by hand. Both paths compute\nmembership from one definition (`GraphOverview.GroupFor`), which is why the round trip holds.\n\n**Proven across the pipe.** The overview is nested — clusters and weighted links — so it is the\nresponse most likely to arrive with an inner list flattened or a count defaulted to zero, and a\ncluster's count is a claim a user can check. The daemon test now drills from the largest cluster back\nto its nodes and asserts the counts agree.\n\n**Three repositories now, not one — and the third one found a defect in my own control.** Every\nmeasurement in this project had come from TheTerrace. Running BioHacker (32 scopes, no `DbContext` at\nall, so 0 joins is correct rather than a failure) and meridian-finance-planner (31 scopes, 9,165\nassertions, 165 TypeScript files) confirmed every operation fits the frame on all three.\n\nBioHacker reported `typescript-exports-not-recognised (1)` — the DC-033 control firing on the first\nnew repository it saw, which is what it is for. But the miss was **mine**: `export default\ndefineConfig({…})` and `export default test;` declare nothing new, and the miss-counter's own doc\ncomment said `export default someExpression` was excluded while the pattern never excluded it.\n`export default` is ubiquitous, so the disclosure would have fired on nearly every real TypeScript\ncodebase and become noise. Fixed; the 165-file repository now reports zero.\n\n**The shape is worth naming because it is the third instance this session.** The exclusion was written\nin the comment before it was implemented — exactly like the evidence page documenting a byte cap it\ndid not apply, and `find` reporting a `MaxBytes` it never enforced. **A claim in prose that the code\ndoes not make true.** When a comment states a bound, the next question is which line applies it.\n\nAnd the meta-lesson, recorded on DC-033: **a control's false-positive rate is only observable on input\nit was not written against.** Validating on one repository validates against one repository.\n\n**The shared test double now covers both projects.** `FakeWorkspaceQueries` moved to `tests/Shared`\nunder a neutral namespace and is linked into both test csproj files — linked source rather than a new\nassembly, because a project for forty lines is more machinery than the churn it removes. The two\nApp-project stubs that hand-implemented the whole seam now override only what they answer.\n\n800 tests green (App 132, Core 668). Seven gates clean. Zero design-owned files.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "431cb97ebb26f9a9bab19d2f484a833dc78cdd9a",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Drill-down closes the overview loop, and a third repository found a defect in my own control"
     },
     {
-      "id": "cl-0086",
-      "datetime": "2026-08-30T19:18:26Z",
-      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
-      "kind": "design",
-      "skill": "specify",
-      "title": "Knowledge exploration becomes a full-window Explorer mode (dual-pane graph+reader), not a dock pane",
-      "prompt": "reconsider the graph view as a full-window dual-pane surface entered from a rail icon",
-      "summary": "Specified a distinct 'primary view mode' (Workbench | Explorer): a rail icon slides the exploration open body-wide with graph+search | reader, reusing the existing reader (US-K3) and node-walk (US-K4). Additive and toggleable; docked graph pane can remain during rollout.",
-      "rationale": "On a single monitor the docked graph pane competes with reading a node's contents; a dedicated full-window dual-pane mode is the requested remedy and matches the VS Code/JetBrains/Obsidian idiom.",
       "artifacts": [
         "docs/specs/knowledge-explorer-mode.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-30T19:18:26Z",
       "git": {
-        "before": "d347415",
         "after": "d3474150954e972f971ac0e3013edb5c9fa5ef1b",
+        "before": "d347415",
         "branch": "feature/app-facelift-and-graph-surfaces",
-        "pushed": true,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0086",
+      "kind": "design",
+      "prompt": "reconsider the graph view as a full-window dual-pane surface entered from a rail icon",
+      "rationale": "On a single monitor the docked graph pane competes with reading a node's contents; a dedicated full-window dual-pane mode is the requested remedy and matches the VS Code/JetBrains/Obsidian idiom.",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "skill": "specify",
+      "summary": "Specified a distinct 'primary view mode' (Workbench | Explorer): a rail icon slides the exploration open body-wide with graph+search | reader, reusing the existing reader (US-K3) and node-walk (US-K4). Additive and toggleable; docked graph pane can remain during rollout.",
+      "tags": [],
+      "title": "Knowledge exploration becomes a full-window Explorer mode (dual-pane graph+reader), not a dock pane"
     },
     {
-      "id": "cl-0087",
-      "datetime": "2026-08-30T19:21:30Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "A comment that states a bound the code does not apply, and raw SQL schemas read",
-      "prompt": null,
-      "summary": "**The sweep found the class was live in the tree, and the class now has a control.**\n\nThree instances this session were the same shape — a comment states a bound the code does not apply.\nThe sweep found a fourth still standing: `MaxEvidencePageCeiling` documented as \"sized so a page\nstays comfortably inside `MaxResultBytes`\" when 2,000 assertions serialise to **1,004,397 bytes**,\nfifteen times that constant. Corrected to name the mechanism that actually bounds it.\n\n`tools/verify-bounds-are-enforced.py` requires every constant whose NAME claims a limit to appear in\na comparison, a clamp or a take — searched over code with comments stripped, so prose cannot count as\nproof. On its first run it found `WholeGraphNodeCap`: declared last turn as a \"retained name\",\ndocumented as a ceiling, **zero usages**. Deleted. One false positive (`OverviewNodeCap`, applied\nindirectly through `GraphQuery.MaxNodes`) became a justified exemption rather than a weaker rule,\nbecause \"it is passed somewhere\" is exactly what made `find` look safe.\n\n**The control says what it cannot do.** It checks a bound is APPLIED, not that a sentence describing\nit is TRUE — the TypeScript instance, a regex differing from its comment, is invisible to it. Half\nthe class is mechanised; claiming otherwise would be this class applied to its own control.\n\n**Measurement is repeatable now.** `tools/measure-repositories.py` runs the harness over three\ncodebases chosen for contrast and prints them side by side. It exists because every number in this\nproject came from one repository until a second was tried by hand, and the third exposed a defect in\na control that looked correct against the first.\n\n**The overview's default depth was the useless one, and three repositories showed it:**\n\n    TheTerrace                d1:  74 groups,  1 link    d2: 200,  6    d3: 200, 263\n    BioHacker                 d1:  17 groups,  0 links   d2:  56,  6    d3: 200, 323\n    meridian-finance-planner  d1:  92 groups,  6 links   d2: 159, 18    d3: 200,  93\n\nDepths 1 and 2 are almost linkless in ALL THREE, for an arithmetic reason: at a coarse grain nearly\nevery edge is internal to a group, counted and not drawn. A picture of disconnected islands is\ncorrect and says nothing about structure. Default moved 2 → 3, from evidence rather than taste.\n\n**Raw SQL schemas are read.** BioHacker declares its whole schema in one 197-line file with eight\n`CREATE TABLE`s; the tool said `sql-not-analysed (2 file(s))` and produced **zero** joins — honest,\nand blind to that repository's entire schema side. `SqlSchemaExtractor` emits the SAME node shape as\nthe EF reader (`table:Name`, `has_type table`, `has_column`), because a second spelling would be\nDC-022 with two producers of one predicate and the joins would silently see half the tables.\n\nColumn parsing matches parentheses rather than scanning to the first `)`, so `DECIMAL(9,2)` does not\ntruncate the column list; constraint lines are not claimed as columns; the schema qualifier is\nstripped so `dbo.Principal` and `Principal` are one node.\n\nBioHacker: joins **0 → 8**, 54 `has_column` facts. meridian: 30 → 33 inferred, 31 → 34 scopes.\n\nAnd `.sql` came out of `UnanalysedLanguages`. A closed gap reported as open is the same defect as\nhiding one that is not — **the third time that list has needed this correction, once per extractor\nadded**, so the rule is now written where the list is: it is the LAST STEP of adding an extractor.\n\nDC-038 registered, with its residual risk stated: name-based detection misses a bound named without\none of those suffixes, and a limit written as a magic number is invisible to it.\n\n812 tests green (App 132, Core 680). Eight gates clean, one of them new. Zero design-owned files.",
-      "rationale": null,
       "artifacts": [
         "tools/verify-bounds-are-enforced.py",
         "src/AiDe.Core/Extraction/SqlSchemaExtractor.cs",
         "tools/measure-repositories.py"
       ],
+      "datetime": "2026-08-30T19:21:30Z",
+      "git": {
+        "after": "4314a5efc2057dbca92d34e36b598cc74600931b",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0087",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "**The sweep found the class was live in the tree, and the class now has a control.**\n\nThree instances this session were the same shape — a comment states a bound the code does not apply.\nThe sweep found a fourth still standing: `MaxEvidencePageCeiling` documented as \"sized so a page\nstays comfortably inside `MaxResultBytes`\" when 2,000 assertions serialise to **1,004,397 bytes**,\nfifteen times that constant. Corrected to name the mechanism that actually bounds it.\n\n`tools/verify-bounds-are-enforced.py` requires every constant whose NAME claims a limit to appear in\na comparison, a clamp or a take — searched over code with comments stripped, so prose cannot count as\nproof. On its first run it found `WholeGraphNodeCap`: declared last turn as a \"retained name\",\ndocumented as a ceiling, **zero usages**. Deleted. One false positive (`OverviewNodeCap`, applied\nindirectly through `GraphQuery.MaxNodes`) became a justified exemption rather than a weaker rule,\nbecause \"it is passed somewhere\" is exactly what made `find` look safe.\n\n**The control says what it cannot do.** It checks a bound is APPLIED, not that a sentence describing\nit is TRUE — the TypeScript instance, a regex differing from its comment, is invisible to it. Half\nthe class is mechanised; claiming otherwise would be this class applied to its own control.\n\n**Measurement is repeatable now.** `tools/measure-repositories.py` runs the harness over three\ncodebases chosen for contrast and prints them side by side. It exists because every number in this\nproject came from one repository until a second was tried by hand, and the third exposed a defect in\na control that looked correct against the first.\n\n**The overview's default depth was the useless one, and three repositories showed it:**\n\n    TheTerrace                d1:  74 groups,  1 link    d2: 200,  6    d3: 200, 263\n    BioHacker                 d1:  17 groups,  0 links   d2:  56,  6    d3: 200, 323\n    meridian-finance-planner  d1:  92 groups,  6 links   d2: 159, 18    d3: 200,  93\n\nDepths 1 and 2 are almost linkless in ALL THREE, for an arithmetic reason: at a coarse grain nearly\nevery edge is internal to a group, counted and not drawn. A picture of disconnected islands is\ncorrect and says nothing about structure. Default moved 2 → 3, from evidence rather than taste.\n\n**Raw SQL schemas are read.** BioHacker declares its whole schema in one 197-line file with eight\n`CREATE TABLE`s; the tool said `sql-not-analysed (2 file(s))` and produced **zero** joins — honest,\nand blind to that repository's entire schema side. `SqlSchemaExtractor` emits the SAME node shape as\nthe EF reader (`table:Name`, `has_type table`, `has_column`), because a second spelling would be\nDC-022 with two producers of one predicate and the joins would silently see half the tables.\n\nColumn parsing matches parentheses rather than scanning to the first `)`, so `DECIMAL(9,2)` does not\ntruncate the column list; constraint lines are not claimed as columns; the schema qualifier is\nstripped so `dbo.Principal` and `Principal` are one node.\n\nBioHacker: joins **0 → 8**, 54 `has_column` facts. meridian: 30 → 33 inferred, 31 → 34 scopes.\n\nAnd `.sql` came out of `UnanalysedLanguages`. A closed gap reported as open is the same defect as\nhiding one that is not — **the third time that list has needed this correction, once per extractor\nadded**, so the rule is now written where the list is: it is the LAST STEP of adding an extractor.\n\nDC-038 registered, with its residual risk stated: name-based detection misses a bound named without\none of those suffixes, and a limit written as a magic number is invisible to it.\n\n812 tests green (App 132, Core 680). Eight gates clean, one of them new. Zero design-owned files.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "4314a5efc2057dbca92d34e36b598cc74600931b",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "A comment that states a bound the code does not apply, and raw SQL schemas read"
     },
     {
-      "id": "cl-0088",
-      "datetime": "2026-08-30T19:34:24Z",
-      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
-      "kind": "architecture",
-      "skill": "define-architecture",
-      "title": "Full-window surfaces are a primary view mode (body-content swap); the Explorer reader fetches node content via a bounded Core query",
-      "prompt": "/define-architecture the full-window Explorer mode",
-      "summary": "ADR-0017 (primary view mode via body-content swap, retain-not-rebuild) + ADR-0018 (on-demand bounded NodeContentAsync reader contract). Additive to the workbench/docking model; amends ADR-0013 (per-mode persistence) and ADR-0015 (graph<->reader keyboard cycle).",
-      "rationale": "A full-window graph+reader must not compete as a dock pane nor be a dismiss-only modal; a body-content swap keyed by a shell view-mode is the smallest correct mechanism and generalises to future full-window surfaces. Content on the graph payload would overflow the IPC frame, so the reader fetches per-node on demand.",
       "artifacts": [
         "docs/adr/0017-primary-view-mode.md",
         "docs/adr/0018-node-content-reader-contract.md",
         "docs/architecture.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-30T19:34:24Z",
       "git": {
-        "before": "ceb2389",
         "after": "ceb2389e829e25c991f5e0a916f68c7863796399",
+        "before": "ceb2389",
         "branch": "feature/app-facelift-and-graph-surfaces",
-        "pushed": true,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0088",
+      "kind": "architecture",
+      "prompt": "/define-architecture the full-window Explorer mode",
+      "rationale": "A full-window graph+reader must not compete as a dock pane nor be a dismiss-only modal; a body-content swap keyed by a shell view-mode is the smallest correct mechanism and generalises to future full-window surfaces. Content on the graph payload would overflow the IPC frame, so the reader fetches per-node on demand.",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "skill": "define-architecture",
+      "summary": "ADR-0017 (primary view mode via body-content swap, retain-not-rebuild) + ADR-0018 (on-demand bounded NodeContentAsync reader contract). Additive to the workbench/docking model; amends ADR-0013 (per-mode persistence) and ADR-0015 (graph<->reader keyboard cycle).",
+      "tags": [],
+      "title": "Full-window surfaces are a primary view mode (body-content swap); the Explorer reader fetches node content via a bounded Core query"
     },
     {
-      "id": "cl-0089",
-      "datetime": "2026-08-30T19:49:35Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "SQL folded, usage not mapping, and three gates that CI had never run",
-      "prompt": null,
-      "summary": "**SQL scripts are folded, not just read.** MEASURED: one repository carries **125 `ALTER TABLE … ADD`**\nstatements, so reading `CREATE` alone showed its schema as it stood at the first migration and called\nthat current. Adds, `DROP COLUMN` and `DROP TABLE` are now applied in file order — drops especially,\nbecause a column that no longer exists is a **wrong** fact rather than a missing one. Renames are\ncounted and disclosed rather than guessed: every dialect spells them differently, and guessing\nproduces a confidently wrong column name.\n\n**Three gates I wrote this session were not in CI.** `verify-id-allocators`,\n`verify-project-coverage` and `verify-bounds-are-enforced` sat in `tools/` for several commits with\nno workflow line — they ran only when I remembered. A gate nobody invokes is the \"lesson recorded as\nprose\" failure wearing an executable's clothes: it looks like a control in every review and fires\nnever. All three wired, and `verify-project-coverage` now asks the same question about gates that it\nasks about projects — **what exists to be run, and is not run.** Observed failing with a gate removed\nfrom the workflow.\n\n**The `simplify:` marker audit found one triggered and one premise already false.** `IpcFraming`'s\ntrigger fired during INV-0003 — and the answer was **none of the two exits the marker listed**.\nNeither a bigger frame nor a data lane: the operation did not legitimately need to carry more. A\n2,815-node hairball was never a useful answer and the spec had always said so, so every response was\nbounded below the cap instead. Recorded, because a marker naming two exits invites you to take one.\n\nIts stated premise — *\"a control lane carries envelopes, not payloads: the largest legitimate message\nis a command with a small JSON body\"* — was **already false when audited**: ordinary responses are an\nevidence page at 659,164 bytes, a graph at 475,223, an overview at 345,507. That sentence had not\nbeen re-read since it was true. The other twelve markers were reviewed with no evidence of firing.\n\n**\"Verified joins for non-EF repositories\" turned out to be the wrong question, and the finding is\nbetter than the feature.** BioHacker has zero `DbContext` files, zero `[Table]` attributes and 191\nSQL literals naming tables from inside store classes. There is **no declaration of a code→schema\nmapping to verify** — and there should not be one invented. A store class issuing four statements\nagainst three tables is not *mapped* to any of them.\n\nWhat the source does declare is **usage**, so that is what is emitted: `uses_table`, Verified because\nthe literal is in the type. **62 edges on BioHacker**, structure it simply did not have. Deliberately\nnot `maps_to` — reusing the mapping predicate would launder usage into a mapping exactly where a\nreader trusts it (DC-022's shape). Joins there remain 0 verified / 8 inferred, which is the honest\nanswer.\n\n**Deduplication moved into one place on its third copy.** Python and TypeScript each grew the same\nsix lines after the same raw `UNIQUE constraint failed` from mid-index; `uses_table` hit it a third\ntime immediately, because one store names the same table in four statements. `ExtractionFacts.Distinct`\nnow owns it, so the fourth extractor inherits it. The store's key stays strict — silencing it would\ntrade a loud correct failure for a quiet wrong graph.\n\n**And \"make the measurement a CI nightly\" was wrong, stated rather than quietly dropped.** The\nrepositories are sibling checkouts on one machine; a hosted runner has none of them, so the job would\nfail or skip every night — a gate that cannot fire, dressed as diligence. `--record` is the\nachievable half: readings append to `docs/measurements/repositories.jsonl`, so drift shows up in\n`git diff` rather than in somebody's memory. First reading committed.\n\n831 tests green (App 132, Core 699). Eight gates clean, all eight now actually run by CI. Zero\ndesign-owned files.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Extraction/SqlSchemaExtractor.cs",
         "src/AiDe.Core/Extraction/CSharpExtractor.cs",
         ".github/workflows/build.yml"
       ],
+      "datetime": "2026-08-30T19:49:35Z",
+      "git": {
+        "after": "fd8516ff7fafe459cebb0ce2f55e68de32bc1881",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": false
+      },
+      "id": "cl-0089",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "**SQL scripts are folded, not just read.** MEASURED: one repository carries **125 `ALTER TABLE … ADD`**\nstatements, so reading `CREATE` alone showed its schema as it stood at the first migration and called\nthat current. Adds, `DROP COLUMN` and `DROP TABLE` are now applied in file order — drops especially,\nbecause a column that no longer exists is a **wrong** fact rather than a missing one. Renames are\ncounted and disclosed rather than guessed: every dialect spells them differently, and guessing\nproduces a confidently wrong column name.\n\n**Three gates I wrote this session were not in CI.** `verify-id-allocators`,\n`verify-project-coverage` and `verify-bounds-are-enforced` sat in `tools/` for several commits with\nno workflow line — they ran only when I remembered. A gate nobody invokes is the \"lesson recorded as\nprose\" failure wearing an executable's clothes: it looks like a control in every review and fires\nnever. All three wired, and `verify-project-coverage` now asks the same question about gates that it\nasks about projects — **what exists to be run, and is not run.** Observed failing with a gate removed\nfrom the workflow.\n\n**The `simplify:` marker audit found one triggered and one premise already false.** `IpcFraming`'s\ntrigger fired during INV-0003 — and the answer was **none of the two exits the marker listed**.\nNeither a bigger frame nor a data lane: the operation did not legitimately need to carry more. A\n2,815-node hairball was never a useful answer and the spec had always said so, so every response was\nbounded below the cap instead. Recorded, because a marker naming two exits invites you to take one.\n\nIts stated premise — *\"a control lane carries envelopes, not payloads: the largest legitimate message\nis a command with a small JSON body\"* — was **already false when audited**: ordinary responses are an\nevidence page at 659,164 bytes, a graph at 475,223, an overview at 345,507. That sentence had not\nbeen re-read since it was true. The other twelve markers were reviewed with no evidence of firing.\n\n**\"Verified joins for non-EF repositories\" turned out to be the wrong question, and the finding is\nbetter than the feature.** BioHacker has zero `DbContext` files, zero `[Table]` attributes and 191\nSQL literals naming tables from inside store classes. There is **no declaration of a code→schema\nmapping to verify** — and there should not be one invented. A store class issuing four statements\nagainst three tables is not *mapped* to any of them.\n\nWhat the source does declare is **usage**, so that is what is emitted: `uses_table`, Verified because\nthe literal is in the type. **62 edges on BioHacker**, structure it simply did not have. Deliberately\nnot `maps_to` — reusing the mapping predicate would launder usage into a mapping exactly where a\nreader trusts it (DC-022's shape). Joins there remain 0 verified / 8 inferred, which is the honest\nanswer.\n\n**Deduplication moved into one place on its third copy.** Python and TypeScript each grew the same\nsix lines after the same raw `UNIQUE constraint failed` from mid-index; `uses_table` hit it a third\ntime immediately, because one store names the same table in four statements. `ExtractionFacts.Distinct`\nnow owns it, so the fourth extractor inherits it. The store's key stays strict — silencing it would\ntrade a loud correct failure for a quiet wrong graph.\n\n**And \"make the measurement a CI nightly\" was wrong, stated rather than quietly dropped.** The\nrepositories are sibling checkouts on one machine; a hosted runner has none of them, so the job would\nfail or skip every night — a gate that cannot fire, dressed as diligence. `--record` is the\nachievable half: readings append to `docs/measurements/repositories.jsonl`, so drift shows up in\n`git diff` rather than in somebody's memory. First reading committed.\n\n831 tests green (App 132, Core 699). Eight gates clean, all eight now actually run by CI. Zero\ndesign-owned files.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "fd8516ff7fafe459cebb0ce2f55e68de32bc1881",
-        "branch": "session/phase3-pane-probes",
-        "pushed": false,
-        "commits": []
-      }
+      "title": "SQL folded, usage not mapping, and three gates that CI had never run"
     },
     {
-      "id": "cl-0090",
-      "datetime": "2026-08-30T20:46:13Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "A matcher that invents facts is worse than one that misses them",
-      "prompt": null,
-      "summary": "**I shipped a defect last turn and this turn's sweep caught it.** The `uses_table` reader matched a\nSQL keyword followed by a word ANYWHERE in a string literal, so *\"we update the record\"* produced an\nedge to a table called `the`. MEASURED: 63 prose strings in TheTerrace, and its `uses_table` count\nfell from **150 to 56** once the reader required a statement SHAPE.\n\nUnder-matching hides real facts; over-matching invents them — and the invented ones are worse,\nbecause they arrive labelled **Verified**. Same root cause as DC-033 in the opposite direction: the\nmatcher's fit to real input had never been measured. **A matcher is not finished until you know both\nwhat it misses and what it invents.**\n\n**The naive fix broke the real case, which is exactly why both directions must be measured\ntogether.** Requiring each literal to begin with a verb found **nothing at all** on the repository\nthat motivated the feature — real code splits SQL across concatenated literals, and the fragment\nholding `FROM dbo.AssessmentJob` begins with `FROM`. The reader folds the `+` chain and reads it as\none statement; a chain containing anything non-literal is skipped whole rather than half-read.\n\nA smaller lesson: the regex form of that shape test silently returned false for\n`\"INSERT INTO dbo.AssessmentJob (…)\"` — a string plainly beginning with one of its own alternatives —\nand cost more to diagnose than the check was worth. It is explicit code now.\n\n**`uses_table` reaches the Joins pane.** A distinct kind, never folded into `maps_to`: a store class\nissuing four statements against three tables is not mapped to any of them, and counting usage as\nmapping would make the verified/inferred ratio the pane exists to show meaningless. BioHacker's pane\ngoes from **0 verified / 8 inferred to 57 / 8** — a repository that showed nothing now shows what its\ncode actually touches.\n\n**Step 2 needed no work and step 3 was answered by measurement.** The EF reader ALREADY folds\n`CreateTable`, `AddColumn`, `DropColumn`, `DropTable`, `RenameTable` and raw `Sql` — I assumed it\nmight not, without checking, which is the habit this session keeps catching. Measured against real\nusage: the operations it does not handle (`CreateIndex` 113, `AddForeignKey` 19, `AlterColumn`) do\nnot change which tables or columns EXIST. One genuine gap found and closed: `RenameColumn` was\nunhandled with no default case, so a renamed column silently kept its old name — a wrong fact. EF\nstates renames in named arguments, so unlike raw SQL it is simply readable.\n\n**Python and TypeScript do not embed SQL, so nothing was built for them.** The counts looked\npromising — 186, 61, 1,162 \"SQL literals\" — and sampling showed *\"update the\"*, *\"select more than\none option from this\"*, and **zero** files containing `insert into`. Building `uses_table` there\nwould have emitted edges from English prose. Evidence for NOT building something is worth as much as\nevidence for building it.\n\n**The measurement log earns its keep at two readings.** Verified joins across the three repositories\nmoved **64 → 120**, **0 → 57**, **35 → 50**, with assertion counts slightly DOWN as prose noise left\nthe graph. One reading is a point; two is a direction, and the drift is now in `git diff` rather than\nin my memory of last turn's numbers.\n\n840 tests green (App 137, Core 703). Eight gates clean. Zero design-owned files.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Extraction/CSharpExtractor.cs",
         "src/AiDe.Core/Projections/JoinProjection.cs",
         "docs/measurements/repositories.jsonl"
       ],
+      "datetime": "2026-08-30T20:46:13Z",
+      "git": {
+        "after": "87f04b04886d1fb8a5a0c239c253565e765e81b7",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": false
+      },
+      "id": "cl-0090",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "**I shipped a defect last turn and this turn's sweep caught it.** The `uses_table` reader matched a\nSQL keyword followed by a word ANYWHERE in a string literal, so *\"we update the record\"* produced an\nedge to a table called `the`. MEASURED: 63 prose strings in TheTerrace, and its `uses_table` count\nfell from **150 to 56** once the reader required a statement SHAPE.\n\nUnder-matching hides real facts; over-matching invents them — and the invented ones are worse,\nbecause they arrive labelled **Verified**. Same root cause as DC-033 in the opposite direction: the\nmatcher's fit to real input had never been measured. **A matcher is not finished until you know both\nwhat it misses and what it invents.**\n\n**The naive fix broke the real case, which is exactly why both directions must be measured\ntogether.** Requiring each literal to begin with a verb found **nothing at all** on the repository\nthat motivated the feature — real code splits SQL across concatenated literals, and the fragment\nholding `FROM dbo.AssessmentJob` begins with `FROM`. The reader folds the `+` chain and reads it as\none statement; a chain containing anything non-literal is skipped whole rather than half-read.\n\nA smaller lesson: the regex form of that shape test silently returned false for\n`\"INSERT INTO dbo.AssessmentJob (…)\"` — a string plainly beginning with one of its own alternatives —\nand cost more to diagnose than the check was worth. It is explicit code now.\n\n**`uses_table` reaches the Joins pane.** A distinct kind, never folded into `maps_to`: a store class\nissuing four statements against three tables is not mapped to any of them, and counting usage as\nmapping would make the verified/inferred ratio the pane exists to show meaningless. BioHacker's pane\ngoes from **0 verified / 8 inferred to 57 / 8** — a repository that showed nothing now shows what its\ncode actually touches.\n\n**Step 2 needed no work and step 3 was answered by measurement.** The EF reader ALREADY folds\n`CreateTable`, `AddColumn`, `DropColumn`, `DropTable`, `RenameTable` and raw `Sql` — I assumed it\nmight not, without checking, which is the habit this session keeps catching. Measured against real\nusage: the operations it does not handle (`CreateIndex` 113, `AddForeignKey` 19, `AlterColumn`) do\nnot change which tables or columns EXIST. One genuine gap found and closed: `RenameColumn` was\nunhandled with no default case, so a renamed column silently kept its old name — a wrong fact. EF\nstates renames in named arguments, so unlike raw SQL it is simply readable.\n\n**Python and TypeScript do not embed SQL, so nothing was built for them.** The counts looked\npromising — 186, 61, 1,162 \"SQL literals\" — and sampling showed *\"update the\"*, *\"select more than\none option from this\"*, and **zero** files containing `insert into`. Building `uses_table` there\nwould have emitted edges from English prose. Evidence for NOT building something is worth as much as\nevidence for building it.\n\n**The measurement log earns its keep at two readings.** Verified joins across the three repositories\nmoved **64 → 120**, **0 → 57**, **35 → 50**, with assertion counts slightly DOWN as prose noise left\nthe graph. One reading is a point; two is a direction, and the drift is now in `git diff` rather than\nin my memory of last turn's numbers.\n\n840 tests green (App 137, Core 703). Eight gates clean. Zero design-owned files.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "87f04b04886d1fb8a5a0c239c253565e765e81b7",
-        "branch": "session/phase3-pane-probes",
-        "pushed": false,
-        "commits": []
-      }
+      "title": "A matcher that invents facts is worse than one that misses them"
     },
     {
-      "id": "cl-0091",
-      "datetime": "2026-08-30T21:03:59Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "Every extractor was inventing facts out of comments, and now a control says so",
-      "prompt": null,
-      "summary": "**The invent-direction of DC-033 now has a control, and it found four more defects on its first\nrun.** `ExtractorsDoNotInventTests` feeds every reader a corpus with no declarations and plenty of\ntext SHAPED like declarations, and asserts it produces nothing but disclosures:\n\n- the **SQL** reader read `-- CREATE TABLE Ghost` and `/* CREATE TABLE Historical */` as tables;\n- the **TypeScript** reader read `export class Removed {}` out of a block comment;\n- the **Python** reader read a class out of a **docstring** — the one place its column-zero rule\n  cannot tell documentation from declaration;\n- the **C#** reader turned *\"delete from your account to remove it\"* into `table:your`, because that\n  sentence genuinely begins with a SQL verb and last turn's shape test could not reject it.\n\n**Commented-out code is the worst possible input for a line-oriented reader**, and every repository\nis full of it — it is real syntax, because it *was* code. `SourceText` blanks comments before any\nreader believes a line, keeping newlines so provenance line numbers stay true. The C# case needed a\nsecond rule: a real table reference **ends where a clause can begin** — a keyword, punctuation, or\nthe end of the statement. In prose the next token is just another word.\n\n**Two things the fixes got wrong first, kept because they are the lesson.** Blanking string contents\nfor SQL deleted `\"main\".\"Thing\"`: in SQL a double quote is a quoted IDENTIFIER, not a string, so the\nreader lost the very names it exists to find — caught by a test in seconds, which is the cheapest\npossible way to learn that two languages disagree about a quote character. And `PRINT 'about to\ncreate table X'` names no table while `EXEC('CREATE TABLE …')` does; the reader can tell neither from\nthe other, so it reads neither and discloses the count.\n\n**Step 1 was answered by measurement and needed no change.** The Bicep and context readers were swept\non a repository they were not written against: Bicep's matchers are line-anchored on `resource`,\n`module` and `param`, and their values came back as real parameter names (`sqlServerName`,\n`identityName`) and real Azure types — nothing invented. The context map's `*` is a documented suffix\nwildcard and the real patterns end at a `.` boundary. Both pinned by the new control so they stay\nthat way.\n\n**The third reading shows the CORRECTION, which is what a third reading is for.** Verified joins:\n\n    TheTerrace                64 -> 120 -> 95\n    BioHacker                  0 ->  57 -> 55\n    meridian-finance-planner  35 ->  50 -> 46\n\nThe middle number was inflated by prose; the last is the honest one. **A single reading would have\nrecorded 120 as progress**, and two readings would have recorded it as a trend.\n\n**On `AlterColumn` — the decision, not an assumption.** It is not folded, and should not be. The\ngraph's `has_column` records that a column EXISTS; `AlterColumn` changes a type or nullability, which\nthat fact does not carry, so folding it would change nothing observable. Recording types is a\ndifferent feature — it would need a fact shape that can express them, both schema readers agreeing on\nit, and a consumer that wants it. None of those exists, so this stays where it is: named in the\nextractor's `simplify:` ceiling as the upgrade trigger, rather than half-built.\n\n848 tests green (App 139, Core 709). Eight gates clean. Zero design-owned files.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Extraction/SourceText.cs",
         "tests/AiDe.Core.Tests/ExtractorsDoNotInventTests.cs",
         "docs/measurements/repositories.jsonl"
       ],
+      "datetime": "2026-08-30T21:03:59Z",
+      "git": {
+        "after": "66bfcf62cc39fad546ab14fcfe32f6bffc3e7b4d",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0091",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "**The invent-direction of DC-033 now has a control, and it found four more defects on its first\nrun.** `ExtractorsDoNotInventTests` feeds every reader a corpus with no declarations and plenty of\ntext SHAPED like declarations, and asserts it produces nothing but disclosures:\n\n- the **SQL** reader read `-- CREATE TABLE Ghost` and `/* CREATE TABLE Historical */` as tables;\n- the **TypeScript** reader read `export class Removed {}` out of a block comment;\n- the **Python** reader read a class out of a **docstring** — the one place its column-zero rule\n  cannot tell documentation from declaration;\n- the **C#** reader turned *\"delete from your account to remove it\"* into `table:your`, because that\n  sentence genuinely begins with a SQL verb and last turn's shape test could not reject it.\n\n**Commented-out code is the worst possible input for a line-oriented reader**, and every repository\nis full of it — it is real syntax, because it *was* code. `SourceText` blanks comments before any\nreader believes a line, keeping newlines so provenance line numbers stay true. The C# case needed a\nsecond rule: a real table reference **ends where a clause can begin** — a keyword, punctuation, or\nthe end of the statement. In prose the next token is just another word.\n\n**Two things the fixes got wrong first, kept because they are the lesson.** Blanking string contents\nfor SQL deleted `\"main\".\"Thing\"`: in SQL a double quote is a quoted IDENTIFIER, not a string, so the\nreader lost the very names it exists to find — caught by a test in seconds, which is the cheapest\npossible way to learn that two languages disagree about a quote character. And `PRINT 'about to\ncreate table X'` names no table while `EXEC('CREATE TABLE …')` does; the reader can tell neither from\nthe other, so it reads neither and discloses the count.\n\n**Step 1 was answered by measurement and needed no change.** The Bicep and context readers were swept\non a repository they were not written against: Bicep's matchers are line-anchored on `resource`,\n`module` and `param`, and their values came back as real parameter names (`sqlServerName`,\n`identityName`) and real Azure types — nothing invented. The context map's `*` is a documented suffix\nwildcard and the real patterns end at a `.` boundary. Both pinned by the new control so they stay\nthat way.\n\n**The third reading shows the CORRECTION, which is what a third reading is for.** Verified joins:\n\n    TheTerrace                64 -> 120 -> 95\n    BioHacker                  0 ->  57 -> 55\n    meridian-finance-planner  35 ->  50 -> 46\n\nThe middle number was inflated by prose; the last is the honest one. **A single reading would have\nrecorded 120 as progress**, and two readings would have recorded it as a trend.\n\n**On `AlterColumn` — the decision, not an assumption.** It is not folded, and should not be. The\ngraph's `has_column` records that a column EXISTS; `AlterColumn` changes a type or nullability, which\nthat fact does not carry, so folding it would change nothing observable. Recording types is a\ndifferent feature — it would need a fact shape that can express them, both schema readers agreeing on\nit, and a consumer that wants it. None of those exists, so this stays where it is: named in the\nextractor's `simplify:` ceiling as the upgrade trigger, rather than half-built.\n\n848 tests green (App 139, Core 709). Eight gates clean. Zero design-owned files.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "66bfcf62cc39fad546ab14fcfe32f6bffc3e7b4d",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "Every extractor was inventing facts out of comments, and now a control says so"
     },
     {
-      "id": "cl-0092",
-      "datetime": "2026-08-30T21:44:42Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "knowledge",
-      "skill": "collectknowledge",
-      "title": "Establish agentic session observability and scoring evidence",
-      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
-      "summary": "Established that Loomkeeper should join session-scoped traces, append-only coordination, multidimensional evaluation, and review-gated context evolution while remaining local-only and non-personnel.",
-      "rationale": "The watcher concept depends on contracts spanning observability, distributed coordination, evaluation validity, Goodhart risk, and memory safety.",
       "artifacts": [
         "docs/knowledge/agentic-session-observability/index.md"
       ],
+      "datetime": "2026-08-30T21:44:42Z",
+      "git": {
+        "after": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "before": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "branch": "feature/agent-watcher-substrate",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0092",
+      "kind": "knowledge",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "rationale": "The watcher concept depends on contracts spanning observability, distributed coordination, evaluation validity, Goodhart risk, and memory safety.",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "collectknowledge",
+      "summary": "Established that Loomkeeper should join session-scoped traces, append-only coordination, multidimensional evaluation, and review-gated context evolution while remaining local-only and non-personnel.",
       "tags": [
         "watcher"
       ],
-      "git": {
-        "before": "160a6a69319abb23c0713495d09d3a9c856eec85",
-        "after": "160a6a69319abb23c0713495d09d3a9c856eec85",
-        "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+      "title": "Establish agentic session observability and scoring evidence"
     },
     {
-      "id": "cl-0093",
-      "datetime": "2026-08-30T21:44:42Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "spec",
-      "skill": "specify",
-      "title": "Specify Loomkeeper and the Weave Score authority split",
-      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
-      "summary": "Named Loomkeeper, defined the repo/worktree/terminal/session map, Message Board, six-dimension Weave Scorecard, Daydream promotion/retraction, and local-only privacy/security floors.",
-      "rationale": "Deterministic facts, advisory model judgments, and human-gated learning need separate authority so scoring cannot hide failed correctness or become surveillance.",
       "artifacts": [
         "docs/specs/agentic-watcher-substrate.md"
       ],
+      "datetime": "2026-08-30T21:44:42Z",
+      "git": {
+        "after": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "before": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "branch": "feature/agent-watcher-substrate",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0093",
+      "kind": "spec",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "rationale": "Deterministic facts, advisory model judgments, and human-gated learning need separate authority so scoring cannot hide failed correctness or become surveillance.",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "specify",
+      "summary": "Named Loomkeeper, defined the repo/worktree/terminal/session map, Message Board, six-dimension Weave Scorecard, Daydream promotion/retraction, and local-only privacy/security floors.",
       "tags": [
         "loomkeeper"
       ],
-      "git": {
-        "before": "160a6a69319abb23c0713495d09d3a9c856eec85",
-        "after": "160a6a69319abb23c0713495d09d3a9c856eec85",
-        "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+      "title": "Specify Loomkeeper and the Weave Score authority split"
     },
     {
-      "id": "cl-0094",
-      "datetime": "2026-08-30T21:44:42Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "design",
-      "skill": "ui-design",
-      "title": "Adopt the evidence-led G6 Observatory direction",
-      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
-      "summary": "Selected a specialized G6 Multi-Panel Data Terminal and produced an attention-first Observatory with Sessions, Scorecard, Message Board, Daydreams, Privacy, and Watcher Health.",
-      "rationale": "The operator reads many concurrent threads in parallel and needs causal drill-down; a generic dashboard or chat surface would hide identity and evidence.",
       "artifacts": [
         "docs/mockups/watcher-observatory.html",
         "DESIGN.md"
       ],
+      "datetime": "2026-08-30T21:44:42Z",
+      "git": {
+        "after": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "before": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "branch": "feature/agent-watcher-substrate",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0094",
+      "kind": "design",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "rationale": "The operator reads many concurrent threads in parallel and needs causal drill-down; a generic dashboard or chat surface would hide identity and evidence.",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "ui-design",
+      "summary": "Selected a specialized G6 Multi-Panel Data Terminal and produced an attention-first Observatory with Sessions, Scorecard, Message Board, Daydreams, Privacy, and Watcher Health.",
       "tags": [
         "ui",
         "observatory"
       ],
-      "git": {
-        "before": "160a6a69319abb23c0713495d09d3a9c856eec85",
-        "after": "160a6a69319abb23c0713495d09d3a9c856eec85",
-        "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+      "title": "Adopt the evidence-led G6 Observatory direction"
     },
     {
-      "id": "cl-0095",
-      "datetime": "2026-08-30T22:00:00Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "Knowledge was zero because nothing ever looked",
-      "prompt": null,
-      "summary": "**The knowledge graph was never being populated, and the reason is worse than a bug.** The reader had\nexisted since Phase 1, with tests, inside the fixture extractor. `CompositeExtractor` had a route for\nit. And `CSharpScopeDiscovery` produced six scope kinds — `csharp`, `bicep`, `schema`, `python`,\n`typescript`, `sql` — and **no knowledge scope at all**. The capability was correct, tested, and\nunreachable on every real repository for the life of the project.\n\nBoth halves passed their own tests. The producer is proven by unit tests that hand it input; the\nrouter is proven by fixtures that name the scope explicitly. Only DISCOVERY was untested against\nreality, and its gap is invisible from either side.\n\n**A zero that means \"nobody looked\" reads as \"there is none\"** — which is the shape this product\nexists to avoid, in the product's own headline surface, on a repository whose premise is that *docs\nhold intent, code holds reality, and the expensive defects live in the gap*. Half of that sentence\nwas never being read.\n\nMEASURED after wiring discovery, on this repository: **466 `owned_by`, 346 `refines`, 287\n`implements`, 272 `relates-to`, 66 `depends-on`**, centred on `knowledge-hub` with 78 edges. Scopes\nacross the three measured repositories: **28→66, 34→48, 34→56**. Every response still fits the frame.\n\n**Running it over real documents immediately found two defects in the new reader** — which is the\nlesson from last turn applied one turn later:\n\n- link lines carry a trailing YAML comment, and trimming from the END left it attached: the graph\n  gained a relation literally called `implements }   # typed edges — registry in …`. Parsing now\n  stops at the closing brace.\n- **templates** carry frontmatter in exactly the shape a real document does, with `<artifact-id>`\n  where the id goes — so they became nodes describing the shape of a document, linked to things that\n  do not exist. Excluded by filename and, independently, by rejecting angle-bracketed placeholders.\n\nDC-041 registered: **a capability is complete, tested, and nothing ever routes work to it.** The\nsignature is a count that is exactly zero on every real repository while a sibling count is large,\nand the question that finds it is *\"what produces the keys this router matches on, and does it\nproduce this one?\"*. The control compares the two lists in a test instead of in somebody's head:\n`EveryRouteHasAProducerAndEveryProducerHasARoute` fails if discovery emits a kind nothing routes, or\nif a route exists that nothing discovers.\n\n**The other next steps, carried:**\n\n- **Bicep is comment-stripped too.** It PASSED the invent control — line-anchored matchers, and a\n  sweep of an unfamiliar repository produced only real parameter names and real Azure types. Stripped\n  anyway: it was the last line-oriented reader still parsing raw text, and all three readers caught\n  inventing were caught reading commented-out code.\n- **Provenance line numbers are asserted, not assumed.** Comments are blanked rather than deleted\n  precisely so a claim can still be opened at the right line; a test now pins `5:1` for a table\n  declared after a multi-line comment. It was the reason for the design and had never been checked.\n- **The invent control now runs against real repository text**, which is how both knowledge defects\n  surfaced — synthetic noise is written by the same person as the reader (DC-028's shape).\n- **`GraphQuery` filters: ANSWERED by the user — presets, three named views.** Recorded in the\n  contract with the three query shapes (Domain / Everything / This project). `Kinds` is deliberately\n  not one of them: it is a refinement *within* a view, and folding it in would rebuild the\n  combinatorial space presets exist to avoid.\n\n859 tests green (App 139, Core 720). Eight gates clean. Zero design-owned files.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Extraction/KnowledgeExtractor.cs",
         "src/AiDe.Core/Extraction/CSharpScopeDiscovery.cs",
         "docs/collaboration/session-contracts.md"
       ],
+      "datetime": "2026-08-30T22:00:00Z",
+      "git": {
+        "after": "609b4e0d4892a919866f2e8e3eee7e2d4d425e95",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": false
+      },
+      "id": "cl-0095",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "**The knowledge graph was never being populated, and the reason is worse than a bug.** The reader had\nexisted since Phase 1, with tests, inside the fixture extractor. `CompositeExtractor` had a route for\nit. And `CSharpScopeDiscovery` produced six scope kinds — `csharp`, `bicep`, `schema`, `python`,\n`typescript`, `sql` — and **no knowledge scope at all**. The capability was correct, tested, and\nunreachable on every real repository for the life of the project.\n\nBoth halves passed their own tests. The producer is proven by unit tests that hand it input; the\nrouter is proven by fixtures that name the scope explicitly. Only DISCOVERY was untested against\nreality, and its gap is invisible from either side.\n\n**A zero that means \"nobody looked\" reads as \"there is none\"** — which is the shape this product\nexists to avoid, in the product's own headline surface, on a repository whose premise is that *docs\nhold intent, code holds reality, and the expensive defects live in the gap*. Half of that sentence\nwas never being read.\n\nMEASURED after wiring discovery, on this repository: **466 `owned_by`, 346 `refines`, 287\n`implements`, 272 `relates-to`, 66 `depends-on`**, centred on `knowledge-hub` with 78 edges. Scopes\nacross the three measured repositories: **28→66, 34→48, 34→56**. Every response still fits the frame.\n\n**Running it over real documents immediately found two defects in the new reader** — which is the\nlesson from last turn applied one turn later:\n\n- link lines carry a trailing YAML comment, and trimming from the END left it attached: the graph\n  gained a relation literally called `implements }   # typed edges — registry in …`. Parsing now\n  stops at the closing brace.\n- **templates** carry frontmatter in exactly the shape a real document does, with `<artifact-id>`\n  where the id goes — so they became nodes describing the shape of a document, linked to things that\n  do not exist. Excluded by filename and, independently, by rejecting angle-bracketed placeholders.\n\nDC-041 registered: **a capability is complete, tested, and nothing ever routes work to it.** The\nsignature is a count that is exactly zero on every real repository while a sibling count is large,\nand the question that finds it is *\"what produces the keys this router matches on, and does it\nproduce this one?\"*. The control compares the two lists in a test instead of in somebody's head:\n`EveryRouteHasAProducerAndEveryProducerHasARoute` fails if discovery emits a kind nothing routes, or\nif a route exists that nothing discovers.\n\n**The other next steps, carried:**\n\n- **Bicep is comment-stripped too.** It PASSED the invent control — line-anchored matchers, and a\n  sweep of an unfamiliar repository produced only real parameter names and real Azure types. Stripped\n  anyway: it was the last line-oriented reader still parsing raw text, and all three readers caught\n  inventing were caught reading commented-out code.\n- **Provenance line numbers are asserted, not assumed.** Comments are blanked rather than deleted\n  precisely so a claim can still be opened at the right line; a test now pins `5:1` for a table\n  declared after a multi-line comment. It was the reason for the design and had never been checked.\n- **The invent control now runs against real repository text**, which is how both knowledge defects\n  surfaced — synthetic noise is written by the same person as the reader (DC-028's shape).\n- **`GraphQuery` filters: ANSWERED by the user — presets, three named views.** Recorded in the\n  contract with the three query shapes (Domain / Everything / This project). `Kinds` is deliberately\n  not one of them: it is a refinement *within* a view, and folding it in would rebuild the\n  combinatorial space presets exist to avoid.\n\n859 tests green (App 139, Core 720). Eight gates clean. Zero design-owned files.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "609b4e0d4892a919866f2e8e3eee7e2d4d425e95",
-        "branch": "session/phase3-pane-probes",
-        "pushed": false,
-        "commits": []
-      }
+      "title": "Knowledge was zero because nothing ever looked"
     },
     {
-      "id": "cl-0096",
-      "datetime": "2026-08-30T22:26:01Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "spec",
-      "skill": "ui-design",
-      "title": "Loomkeeper scoring gains harness/model axes, a leaderboard, user credentials, and per-turn standing",
-      "prompt": "Add: harness+model as scoring/aggregation axes; a leaderboard by harness/model/harness-model; user-configurable watcher credentials (Claude Code / Copilot); leaderboard + why visible to the agent each turn.",
-      "summary": "Extended the watcher spec (US-13..16, domain model, NFR/governance), DESIGN.md, and the Observatory mockup with harness/model attribution, a task-class-calibrated non-personnel Leaderboard, a Configuration surface with local-secret credentials and an explicit egress opt-in, and a per-turn agent Standing view; also tightened prior gpt over-production (removed process residue, fixed nav/state gaps, replaced the false-precision score gauge).",
-      "rationale": "User requested the four capabilities; kept them inside the settled local-only/non-personnel/advisory floors.",
       "artifacts": [],
-      "tags": [],
+      "datetime": "2026-08-30T22:26:01Z",
       "git": {
-        "before": null,
         "after": "b326c18e75e6047944c7e650c0424ebaa843a995",
+        "before": null,
         "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0096",
+      "kind": "spec",
+      "prompt": "Add: harness+model as scoring/aggregation axes; a leaderboard by harness/model/harness-model; user-configurable watcher credentials (Claude Code / Copilot); leaderboard + why visible to the agent each turn.",
+      "rationale": "User requested the four capabilities; kept them inside the settled local-only/non-personnel/advisory floors.",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "ui-design",
+      "summary": "Extended the watcher spec (US-13..16, domain model, NFR/governance), DESIGN.md, and the Observatory mockup with harness/model attribution, a task-class-calibrated non-personnel Leaderboard, a Configuration surface with local-secret credentials and an explicit egress opt-in, and a per-turn agent Standing view; also tightened prior gpt over-production (removed process residue, fixed nav/state gaps, replaced the false-precision score gauge).",
+      "tags": [],
+      "title": "Loomkeeper scoring gains harness/model axes, a leaderboard, user credentials, and per-turn standing"
     },
     {
-      "id": "cl-0097",
-      "datetime": "2026-08-30T22:26:13Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "INV-0004: everything was knowledge because everything has a type",
-      "prompt": null,
-      "summary": "**INV-0004's root cause was a Phase-1 assumption that six extractors later made false.** Node\nclassification read:\n\n    var isKnowledge = result.Assertions.Any(a => a.Subject == nodeId && a.Predicate == \"has_type\");\n\n*Anything with a type is knowledge* — true when the fixture reader was the only producer of\n`has_type`, and false the moment a second extractor emitted it. By now every C# class, table, bicep\nresource and python module carried one, so almost the entire graph was classified `knowledge`, and it\nsurfaced exactly as the design session saw it: a bicep resource reading **\"kind: knowledge\"**. DC-022\nprecisely — a predicate gained producers and a consumer kept its assumption about who emits it.\n\n**Fixed by having the PRODUCER declare it.** Scope-id prefixes were the first attempt and were nearly\nright, but the fixture reader emits knowledge from a scope not named for it, so the id could not be\nthe authority either. A fact can be: both knowledge-reading paths now emit `node_class = knowledge`,\nand the core classifies from that. Nothing infers a node's half of the graph from a type name again.\n\n**Neighbours carry their real kind.** `DescribeResult` gained `NeighborKinds`; the canvas hardcoded\n`\"source\"` for every neighbour because the projection did not carry one, so a drill-down showed a\ntable, a bicep resource and a class as the same thing and the filter could not tell them apart. A\nrenderer inventing a default is a renderer stating a fact it does not have.\n\n**`UpsertNode` is a no-op when nothing changed.** It is a Type-2 dimension and every call closed the\ncurrent row and opened a new one, so re-indexing rewrote the history of every unchanged node. History\nwhose every row is an artefact of re-running the indexer cannot answer the question it exists for.\n\n**The knowledge pane was returning code.** It filtered on `has_type` alone — the same stale\nassumption, one projection along — so now that knowledge is finally indexed it would have shown C#\nclasses beside ADRs. It filters on `node_class` now, which is the dimension that knows.\n\n**`review-by` is read and overdue reviews are a health finding.** 460 review dates on this repository.\n`owned_by` and `review_by` joined the attribute set: a person and a date are not things to navigate\nto, and drawing them would have put \"@someone\" and \"2027-02-28\" in the graph as peers of the\ndocuments that carry them.\n\n**The one \"document with no id\" was a false positive of mine.** `INSTALL.md` opens with `doc:`,\n`bundle_version:` and `changes:` — a pack manifest that happens to use YAML, never a graph node. The\ncomplaint now fires only when the frontmatter is GRAPH frontmatter (a type, owner, links or review\ndate) and still has no id. Same mistake as reading prose into a schema, one field along.\n\n**The code↔knowledge join is NOT buildable today, and that is the finding.** Measured: **no knowledge\nlink in this repository targets a code symbol** — every `to:` names another document id. There is no\ndeclared relationship to read, and inferring one from titles or namespaces is exactly the guessing\nthis codebase refuses. What would unblock it is a change to how docs are WRITTEN, not to the reader:\na link such as `- { to: TheTerrace.Features.Fixtures, rel: governs }`. Recorded rather than invented.\n\n**DC-042's residual is now checkable.** `ConsumersReadWhatProducersEmitTests` reads the join\nprojection's predicate list FROM ITS SOURCE and asserts every name is one some extractor actually\nemits — so a renamed predicate fails a test instead of quietly returning fewer edges. Its first run\nreported `is_secret` and `resource_name_expression` as orphaned; they are emitted on real\nrepositories, and the gap was in the fixture I had written. A control validated against input its\nauthor wrote is a control that measures the author — so the fixture now exercises the whole bicep\nvocabulary.\n\n867 tests green (App 144, Core 723). Eight gates clean. Zero design-owned files.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/WorkspaceCore.cs",
         "src/AiDe.Core/Projections/ProjectionService.cs",
         "tests/AiDe.Core.Tests/ConsumersReadWhatProducersEmitTests.cs"
       ],
+      "datetime": "2026-08-30T22:26:13Z",
+      "git": {
+        "after": "df001100c4408da481fddf804225e7f01f8148a9",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": false
+      },
+      "id": "cl-0097",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "**INV-0004's root cause was a Phase-1 assumption that six extractors later made false.** Node\nclassification read:\n\n    var isKnowledge = result.Assertions.Any(a => a.Subject == nodeId && a.Predicate == \"has_type\");\n\n*Anything with a type is knowledge* — true when the fixture reader was the only producer of\n`has_type`, and false the moment a second extractor emitted it. By now every C# class, table, bicep\nresource and python module carried one, so almost the entire graph was classified `knowledge`, and it\nsurfaced exactly as the design session saw it: a bicep resource reading **\"kind: knowledge\"**. DC-022\nprecisely — a predicate gained producers and a consumer kept its assumption about who emits it.\n\n**Fixed by having the PRODUCER declare it.** Scope-id prefixes were the first attempt and were nearly\nright, but the fixture reader emits knowledge from a scope not named for it, so the id could not be\nthe authority either. A fact can be: both knowledge-reading paths now emit `node_class = knowledge`,\nand the core classifies from that. Nothing infers a node's half of the graph from a type name again.\n\n**Neighbours carry their real kind.** `DescribeResult` gained `NeighborKinds`; the canvas hardcoded\n`\"source\"` for every neighbour because the projection did not carry one, so a drill-down showed a\ntable, a bicep resource and a class as the same thing and the filter could not tell them apart. A\nrenderer inventing a default is a renderer stating a fact it does not have.\n\n**`UpsertNode` is a no-op when nothing changed.** It is a Type-2 dimension and every call closed the\ncurrent row and opened a new one, so re-indexing rewrote the history of every unchanged node. History\nwhose every row is an artefact of re-running the indexer cannot answer the question it exists for.\n\n**The knowledge pane was returning code.** It filtered on `has_type` alone — the same stale\nassumption, one projection along — so now that knowledge is finally indexed it would have shown C#\nclasses beside ADRs. It filters on `node_class` now, which is the dimension that knows.\n\n**`review-by` is read and overdue reviews are a health finding.** 460 review dates on this repository.\n`owned_by` and `review_by` joined the attribute set: a person and a date are not things to navigate\nto, and drawing them would have put \"@someone\" and \"2027-02-28\" in the graph as peers of the\ndocuments that carry them.\n\n**The one \"document with no id\" was a false positive of mine.** `INSTALL.md` opens with `doc:`,\n`bundle_version:` and `changes:` — a pack manifest that happens to use YAML, never a graph node. The\ncomplaint now fires only when the frontmatter is GRAPH frontmatter (a type, owner, links or review\ndate) and still has no id. Same mistake as reading prose into a schema, one field along.\n\n**The code↔knowledge join is NOT buildable today, and that is the finding.** Measured: **no knowledge\nlink in this repository targets a code symbol** — every `to:` names another document id. There is no\ndeclared relationship to read, and inferring one from titles or namespaces is exactly the guessing\nthis codebase refuses. What would unblock it is a change to how docs are WRITTEN, not to the reader:\na link such as `- { to: TheTerrace.Features.Fixtures, rel: governs }`. Recorded rather than invented.\n\n**DC-042's residual is now checkable.** `ConsumersReadWhatProducersEmitTests` reads the join\nprojection's predicate list FROM ITS SOURCE and asserts every name is one some extractor actually\nemits — so a renamed predicate fails a test instead of quietly returning fewer edges. Its first run\nreported `is_secret` and `resource_name_expression` as orphaned; they are emitted on real\nrepositories, and the gap was in the fixture I had written. A control validated against input its\nauthor wrote is a control that measures the author — so the fixture now exercises the whole bicep\nvocabulary.\n\n867 tests green (App 144, Core 723). Eight gates clean. Zero design-owned files.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "df001100c4408da481fddf804225e7f01f8148a9",
-        "branch": "session/phase3-pane-probes",
-        "pushed": false,
-        "commits": []
-      }
+      "title": "INV-0004: everything was knowledge because everything has a type"
     },
     {
-      "id": "cl-0098",
-      "datetime": "2026-08-30T22:40:54Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "architecture",
-      "skill": "define-architecture",
-      "title": "Loomkeeper architecture: a projection over the existing fact store, with a DPAPI/egress-opt-in credential model and calibrated advisory evaluators",
-      "prompt": "Define Loomkeeper's architecture, leading with the credential/egress model and evaluator calibration.",
-      "summary": "Loomkeeper is a projection layer composed into the AI-DE local authority core (reuses ADR-0001/0002/0006/0007/0011); adds ADR-0017 (watcher facts + harness/model dimensions, derived leaderboard/weave/liveness), ADR-0018 (DPAPI local-secret credentials, outbound-denied-by-default, per-path egress opt-in), ADR-0019 (evaluator qualification: stability + QWK>=0.75 + injection-invariance + anti-Goodhart, scoped comparability), ADR-0020 (trusted registrar + per-session capability + harness/model identity). Delivery phased vertically with a Phase-1 walking skeleton; spikes S1-S4 named as preconditions.",
-      "rationale": "Composing existing accepted ADRs keeps the watcher a single source of truth and makes the AI-Forward symbiosis structural; the two riskiest surfaces (S3 outbound denial, Phase-4 calibration) are isolated and provisional pending PoC.",
       "artifacts": [
         "docs/architecture/loomkeeper.md",
         "docs/adr/0017-watcher-observation-projection.md",
@@ -15556,791 +15681,788 @@ window.AUDIT_DATA = {
         "docs/adr/0019-advisory-evaluator-calibration.md",
         "docs/adr/0020-trusted-registrar-harness-model-identity.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-30T22:40:54Z",
       "git": {
-        "before": "3314ead45d033d0e567263c7719f683609205fd7",
         "after": "3314ead45d033d0e567263c7719f683609205fd7",
+        "before": "3314ead45d033d0e567263c7719f683609205fd7",
         "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0098",
+      "kind": "architecture",
+      "prompt": "Define Loomkeeper's architecture, leading with the credential/egress model and evaluator calibration.",
+      "rationale": "Composing existing accepted ADRs keeps the watcher a single source of truth and makes the AI-Forward symbiosis structural; the two riskiest surfaces (S3 outbound denial, Phase-4 calibration) are isolated and provisional pending PoC.",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "define-architecture",
+      "summary": "Loomkeeper is a projection layer composed into the AI-DE local authority core (reuses ADR-0001/0002/0006/0007/0011); adds ADR-0017 (watcher facts + harness/model dimensions, derived leaderboard/weave/liveness), ADR-0018 (DPAPI local-secret credentials, outbound-denied-by-default, per-path egress opt-in), ADR-0019 (evaluator qualification: stability + QWK>=0.75 + injection-invariance + anti-Goodhart, scoped comparability), ADR-0020 (trusted registrar + per-session capability + harness/model identity). Delivery phased vertically with a Phase-1 walking skeleton; spikes S1-S4 named as preconditions.",
+      "tags": [],
+      "title": "Loomkeeper architecture: a projection over the existing fact store, with a DPAPI/egress-opt-in credential model and calibrated advisory evaluators"
     },
     {
-      "id": "cl-0099",
-      "datetime": "2026-08-30T23:21:49Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "Knowledge read 0 because the store was a generation behind, and the chip matched type names",
-      "prompt": null,
-      "summary": "**The Knowledge chip read 0 on a repository holding 2,343 knowledge nodes. Two causes, both Core's.**\n\n**The store was cached from a build that had no knowledge reader.** `ScopeFingerprints` already\ncarried an `ExtractorGeneration` for exactly this — a constant in every fingerprint so that upgrading\nthe product invalidates the sidecar — and nobody bumped it. So the knowledge extractor, `node_class`,\ncomment stripping in four readers, the SQL fold and `uses_table` all shipped while every existing\nworkspace kept serving results produced by the previous generation. Bumped to `2026-08-30.1`; an\nupgraded app now rebuilds rather than reusing.\n\n**And the graph carried only each node's FINE kind.** MEASURED: TheTerrace's knowledge types are\n`spec` and **`knowledge-epl-fan-platform`** — a name that repository invented. A chip matching a\nfixed list of type names cannot work across repositories, and widening the list only moves the\nproblem to the next one (DC-033). `GraphNode.IsKnowledge` carries the DECLARED coarse dimension, so a\nfilter asks the question instead of recognising spellings.\n\nVerified end to end: TheTerrace now yields **2,343 `node_class`, 639 `owned_by`, 428 `refines`, 114\n`spec`** — 24,058 assertions across 66 scopes, every response still inside the frame.\n\n**The code↔knowledge join is closed by decision, not deferred.** The user's rule: *\"It's ok if docs\nand code are not linkable and orthogonal, they will tend to be orthogonal which is why pruning the\ngraph on one or the other is a meaningful cut. Do not infer — the graph should only be on observable\nlinks/relationships.\"*\n\nRecorded as a decision note, because it is a standing principle rather than one answer: **an edge is\na claim that something in the repository says so.** Orthogonality is information — because the two\nhalves are separate, \"show the knowledge\" and \"show the code\" are exact cuts rather than blurred\nones. Inference would have made membership depend on how good the guess was that day, and this\ncodebase has paid for that twice already (`depends_on` produced 7,426 false Verified edges;\n`uses_table` turned *\"we update the record\"* into a table called `the`). What would legitimately\nunblock a join is a link written down — `- { to: TheTerrace.Features.Fixtures, rel: governs }` — which\nthe frontmatter reader would index today with no code change.\n\n**Python dynamic and nested declarations: measured, and NOT built.** Dynamic imports are unobservable\nstatically, so reading them would be inference — ruled out by the principle above. Nested\ndeclarations are observable but MEASURED at 28/31/21 against 356/457/150 top-level across three\nrepositories (~7%), and they are implementation details inside functions with no type information to\nbuild edges from: the graph would gain volume, not structure. The existing disclosures already state\nexactly this. INV-0004's fourth handoff closes as a priority call answered.\n\n**DC-013 recurred a sixth time and the gate caught it.** Both sessions allocated `DC-042`; mine was\npublished first, so theirs is re-issued as `DC-043` per the contract. Their entry also arrived with an\nunbackticked `Status:` value for the second time — and the register gate reported it as *\"declares no\nStatus line\"* when the line was there and the FORMAT was wrong. That message misdirected me twice, so\nit now names the actual problem and shows the expected form. **A control that misnames its own finding\ncosts the reader the time the control saved.**\n\n869 tests green (App 144, Core 725). Eight gates clean. Zero design-owned files.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Extraction/ScopeFingerprints.cs",
         "src/AiDe.Core/Projections/GraphProjection.cs",
         "docs/notes/note-20260830-the-graph-carries-only-observable-links.md"
       ],
+      "datetime": "2026-08-30T23:21:49Z",
+      "git": {
+        "after": "693ce79705bd30345b23a2c93b0750de89324492",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": false
+      },
+      "id": "cl-0099",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "**The Knowledge chip read 0 on a repository holding 2,343 knowledge nodes. Two causes, both Core's.**\n\n**The store was cached from a build that had no knowledge reader.** `ScopeFingerprints` already\ncarried an `ExtractorGeneration` for exactly this — a constant in every fingerprint so that upgrading\nthe product invalidates the sidecar — and nobody bumped it. So the knowledge extractor, `node_class`,\ncomment stripping in four readers, the SQL fold and `uses_table` all shipped while every existing\nworkspace kept serving results produced by the previous generation. Bumped to `2026-08-30.1`; an\nupgraded app now rebuilds rather than reusing.\n\n**And the graph carried only each node's FINE kind.** MEASURED: TheTerrace's knowledge types are\n`spec` and **`knowledge-epl-fan-platform`** — a name that repository invented. A chip matching a\nfixed list of type names cannot work across repositories, and widening the list only moves the\nproblem to the next one (DC-033). `GraphNode.IsKnowledge` carries the DECLARED coarse dimension, so a\nfilter asks the question instead of recognising spellings.\n\nVerified end to end: TheTerrace now yields **2,343 `node_class`, 639 `owned_by`, 428 `refines`, 114\n`spec`** — 24,058 assertions across 66 scopes, every response still inside the frame.\n\n**The code↔knowledge join is closed by decision, not deferred.** The user's rule: *\"It's ok if docs\nand code are not linkable and orthogonal, they will tend to be orthogonal which is why pruning the\ngraph on one or the other is a meaningful cut. Do not infer — the graph should only be on observable\nlinks/relationships.\"*\n\nRecorded as a decision note, because it is a standing principle rather than one answer: **an edge is\na claim that something in the repository says so.** Orthogonality is information — because the two\nhalves are separate, \"show the knowledge\" and \"show the code\" are exact cuts rather than blurred\nones. Inference would have made membership depend on how good the guess was that day, and this\ncodebase has paid for that twice already (`depends_on` produced 7,426 false Verified edges;\n`uses_table` turned *\"we update the record\"* into a table called `the`). What would legitimately\nunblock a join is a link written down — `- { to: TheTerrace.Features.Fixtures, rel: governs }` — which\nthe frontmatter reader would index today with no code change.\n\n**Python dynamic and nested declarations: measured, and NOT built.** Dynamic imports are unobservable\nstatically, so reading them would be inference — ruled out by the principle above. Nested\ndeclarations are observable but MEASURED at 28/31/21 against 356/457/150 top-level across three\nrepositories (~7%), and they are implementation details inside functions with no type information to\nbuild edges from: the graph would gain volume, not structure. The existing disclosures already state\nexactly this. INV-0004's fourth handoff closes as a priority call answered.\n\n**DC-013 recurred a sixth time and the gate caught it.** Both sessions allocated `DC-042`; mine was\npublished first, so theirs is re-issued as `DC-043` per the contract. Their entry also arrived with an\nunbackticked `Status:` value for the second time — and the register gate reported it as *\"declares no\nStatus line\"* when the line was there and the FORMAT was wrong. That message misdirected me twice, so\nit now names the actual problem and shows the expected form. **A control that misnames its own finding\ncosts the reader the time the control saved.**\n\n869 tests green (App 144, Core 725). Eight gates clean. Zero design-owned files.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "693ce79705bd30345b23a2c93b0750de89324492",
-        "branch": "session/phase3-pane-probes",
-        "pushed": false,
-        "commits": []
-      }
+      "title": "Knowledge read 0 because the store was a generation behind, and the chip matched type names"
     },
     {
-      "id": "cl-0100",
-      "datetime": "2026-08-30T23:38:31Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "design",
-      "skill": "implement",
-      "title": "Loomkeeper Phase-1 deterministic core: capability-verified identity, content-addressed idempotent ingest, monotonic liveness, default-deny egress",
-      "prompt": "Design and implement the Phase-1 walking skeleton.",
-      "summary": "src/AiDe.Core/Watcher/ implements the T0 observation core over an IWatcherObservationStore seam (in-memory now, SQLite later): per-session capability (constant-time) with harness/model identity (ADR-0020), SHA256 content-addressed ObservedSpan with idempotent dedup (ADR-0006/0017), monotonic LivenessProjection resisting clock skew (US-2), and a default-deny EgressGate (ADR-0018). 30 tests, mutation-verified oracles.",
-      "rationale": "Reuses the codebase's sealed-record fact + SHA256 identity idiom (EvidenceAssertion) and the Facts/Projections/Store structure; smallest correct seam so the SQLite store and WPF row substitute later without redesign.",
       "artifacts": [
         "docs/design/watcher-phase1-skeleton.md",
         "docs/proof/watcher-phase1-skeleton.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-30T23:38:31Z",
       "git": {
-        "before": "d4b1727d3b4270d0a60383f4413e7a79c436e1bc",
         "after": "d4b1727d3b4270d0a60383f4413e7a79c436e1bc",
+        "before": "d4b1727d3b4270d0a60383f4413e7a79c436e1bc",
         "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0100",
+      "kind": "design",
+      "prompt": "Design and implement the Phase-1 walking skeleton.",
+      "rationale": "Reuses the codebase's sealed-record fact + SHA256 identity idiom (EvidenceAssertion) and the Facts/Projections/Store structure; smallest correct seam so the SQLite store and WPF row substitute later without redesign.",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "implement",
+      "summary": "src/AiDe.Core/Watcher/ implements the T0 observation core over an IWatcherObservationStore seam (in-memory now, SQLite later): per-session capability (constant-time) with harness/model identity (ADR-0020), SHA256 content-addressed ObservedSpan with idempotent dedup (ADR-0006/0017), monotonic LivenessProjection resisting clock skew (US-2), and a default-deny EgressGate (ADR-0018). 30 tests, mutation-verified oracles.",
+      "tags": [],
+      "title": "Loomkeeper Phase-1 deterministic core: capability-verified identity, content-addressed idempotent ingest, monotonic liveness, default-deny egress"
     },
     {
-      "id": "cl-0101",
-      "datetime": "2026-08-30T23:40:28Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "The knowledge pane capped before it filtered, and CI never ran on the branch that broke it",
-      "prompt": null,
-      "summary": "**The knowledge pane was STILL returning zero, and the reason was a second, independent defect.**\nChasing the render rather than the data found it: `Knowledge()` read the first 200 `has_type`\nassertions and filtered THOSE to knowledge — so on any real repository the 200 were code types in\nalphabetical order and the filter left nothing. MEASURED: **0 items on a workspace holding 468\nknowledge nodes**; now 50, the ceiling.\n\nThat is DC-035's shape one projection along — **a cap applied before a filter returns the wrong\nslice trimmed to the right shape, and nothing in the result says so.** I fixed exactly this in\n`GraphProjection` and did not look for siblings. Pinned by a test whose fixture puts 400 code types\nalphabetically ahead of the knowledge, which is the condition that hid it.\n\n**The generation bump is now a control instead of a memory.** `ExtractorGeneration` existed and was\ncomplete; using it was a thing somebody had to remember, and a full day of extractor changes shipped\nwithout it. `verify-extractor-generation.py` fails when anything under `src/AiDe.Core/Extraction/`\nchanged since the generation last did. Deliberately conservative — a comment-only edit trips it, and\nthe remedy is a one-line bump costing one re-index, where deciding which edits \"really\" change output\nis a judgement nobody can make reliably about a compiler-driven extractor. Observed failing by\nreplaying the real baseline: it lists the exact extractors that shipped unbumped.\n\nIt uses `git log -G`, not `-S`. `-S` counts occurrences, so replacing one generation value with\nanother leaves the count unchanged and the bump looks like no change at all.\n\n**CI only ran on `push: main` and `pull_request`.** The design session pushes to a long-lived feature\nbranch with no PR, so its work met no gate until it reached main — by which point it was merged. That\nis why an unbackticked `Status:` value arrived twice and a duplicate `DC-` id six times, each caught\nby whoever merged next rather than by the branch that introduced it. **A gate that only guards the\ndestination reports problems to the wrong person.** CI now runs on every branch.\n\n**And the new gate would not have fired in CI.** `actions/checkout@v4` is shallow by default, so the\nsearch for the last generation bump would have found nothing and the gate would have passed silently\n— the defect it exists to prevent, one layer up. `fetch-depth: 0` added.\n\n**`IsKnowledge` is proven across the pipe, with an assertion that can fail.** The first version I\nwrote was `Assert.Equal(n.IsKnowledge, n.IsKnowledge)` against a fixture with no knowledge in it —\na tautology over an empty set. The daemon fixture now holds a document beside the code, and the test\nasserts a known-knowledge node arrives with the flag set and a known-code node without it.\n\n**Knowledge health is computed and unrendered**, so it is a contract request rather than Core work:\n`owner not recorded`, `type not recorded`, `orphan`, `source location not recorded` and now `review\noverdue since <date>` — 460 review dates on this repository. Findings that exist and are shown\nnowhere are \"absence of evidence stays explicit\" failing at the last step.\n\n870 tests green (App 144, Core 726). Nine gates clean, all nine run by CI, on every branch.\nZero design-owned files.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Projections/ProjectionService.cs",
         "tools/verify-extractor-generation.py",
         ".github/workflows/build.yml"
       ],
+      "datetime": "2026-08-30T23:40:28Z",
+      "git": {
+        "after": "1b61599cc8be5ad753ad2725b61a78b27def6c69",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0101",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "**The knowledge pane was STILL returning zero, and the reason was a second, independent defect.**\nChasing the render rather than the data found it: `Knowledge()` read the first 200 `has_type`\nassertions and filtered THOSE to knowledge — so on any real repository the 200 were code types in\nalphabetical order and the filter left nothing. MEASURED: **0 items on a workspace holding 468\nknowledge nodes**; now 50, the ceiling.\n\nThat is DC-035's shape one projection along — **a cap applied before a filter returns the wrong\nslice trimmed to the right shape, and nothing in the result says so.** I fixed exactly this in\n`GraphProjection` and did not look for siblings. Pinned by a test whose fixture puts 400 code types\nalphabetically ahead of the knowledge, which is the condition that hid it.\n\n**The generation bump is now a control instead of a memory.** `ExtractorGeneration` existed and was\ncomplete; using it was a thing somebody had to remember, and a full day of extractor changes shipped\nwithout it. `verify-extractor-generation.py` fails when anything under `src/AiDe.Core/Extraction/`\nchanged since the generation last did. Deliberately conservative — a comment-only edit trips it, and\nthe remedy is a one-line bump costing one re-index, where deciding which edits \"really\" change output\nis a judgement nobody can make reliably about a compiler-driven extractor. Observed failing by\nreplaying the real baseline: it lists the exact extractors that shipped unbumped.\n\nIt uses `git log -G`, not `-S`. `-S` counts occurrences, so replacing one generation value with\nanother leaves the count unchanged and the bump looks like no change at all.\n\n**CI only ran on `push: main` and `pull_request`.** The design session pushes to a long-lived feature\nbranch with no PR, so its work met no gate until it reached main — by which point it was merged. That\nis why an unbackticked `Status:` value arrived twice and a duplicate `DC-` id six times, each caught\nby whoever merged next rather than by the branch that introduced it. **A gate that only guards the\ndestination reports problems to the wrong person.** CI now runs on every branch.\n\n**And the new gate would not have fired in CI.** `actions/checkout@v4` is shallow by default, so the\nsearch for the last generation bump would have found nothing and the gate would have passed silently\n— the defect it exists to prevent, one layer up. `fetch-depth: 0` added.\n\n**`IsKnowledge` is proven across the pipe, with an assertion that can fail.** The first version I\nwrote was `Assert.Equal(n.IsKnowledge, n.IsKnowledge)` against a fixture with no knowledge in it —\na tautology over an empty set. The daemon fixture now holds a document beside the code, and the test\nasserts a known-knowledge node arrives with the flag set and a known-code node without it.\n\n**Knowledge health is computed and unrendered**, so it is a contract request rather than Core work:\n`owner not recorded`, `type not recorded`, `orphan`, `source location not recorded` and now `review\noverdue since <date>` — 460 review dates on this repository. Findings that exist and are shown\nnowhere are \"absence of evidence stays explicit\" failing at the last step.\n\n870 tests green (App 144, Core 726). Nine gates clean, all nine run by CI, on every branch.\nZero design-owned files.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "1b61599cc8be5ad753ad2725b61a78b27def6c69",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "The knowledge pane capped before it filtered, and CI never ran on the branch that broke it"
     },
     {
-      "id": "cl-0102",
-      "datetime": "2026-08-31T00:12:08Z",
-      "session": null,
-      "kind": "architecture",
-      "skill": null,
-      "title": "The cap-before-filter sweep, and telling the other session what changed under them",
-      "prompt": null,
-      "summary": "**The cap-before-filter sweep, run properly this time.** Every bounded read in the projection service\nwas checked rather than spot-sampled: `Find` filters inside `SearchNodeIds`, `Describe` inside\n`AssertionsTouching`, `Impact` inside `OutgoingAssertions`, `Evidence` inside the cursor page — all\nfour apply the cap to rows the query has ALREADY filtered, which is the correct order and also the\ncheaper one, because the filter uses an index. `Knowledge` was the only place the order was inverted,\nand it was inverted for a reason worth naming: **its filter lived in C# rather than in the query.**\n\nThat gives the class a signature you can recognise without reading every projection: **a bounded read\nwhose `.Where(...)` is applied to the RESULT of the read rather than expressed in it.** If the filter\nis in the query the cap cannot be wrong; if it is in the caller, the cap chose the rows before anyone\nasked what was wanted. Recorded on DC-035 along with the one residual — `Knowledge` still reads each\nnode's touching assertions at 500 and splits them afterwards, so a document with ~495+ real links\nwould get an arbitrary 500 with no omission count. No repository measured comes close.\n\n**Measurements re-recorded after the knowledge work.** TheTerrace 24,058 assertions across 66 scopes,\nBioHacker 4,420 / 48, meridian 12,613 / 56 — every response still inside the frame.\n\n**The design session is told what changed under them, in their own file.** A new §4d says CI now runs\non every branch, that the next push to their branch will run all nine gates, and — because it will be\nnoisy the first time — names the two that will fire and how to satisfy them, with a worked example of\nthe accepted and rejected `Status:` forms. Neither is a new rule; both were always enforced, just not\nanywhere they could see them.\n\n**`review-by` on code: decided no, on the user's own rule.** The symmetry is tempting — 460 review\ndates on documents, so why not flag a stale class? Because nothing in a C# file, a Bicep template or\na SQL script DECLARES when it should next be read. A date could only be manufactured from\nlast-modified time or churn, and it would render identically to the dates documents actually declare.\nA reader could not tell the two apart, which is exactly the failure the no-inference note exists to\nprevent. A code artifact gets a review date the moment something writes one down; until then the\nabsence is accurate.\n\n**Still only verifiable by you:** whether the Knowledge chip lights up in the running app. Both known\ncauses are fixed and proven at every layer I can reach — the extractor, the store, the projection, and\nacross the daemon pipe — but I have not watched it render. It needs one re-index in the new build,\nbecause the generation bump makes that a rebuild rather than a reuse.\n\n870 tests green (App 144, Core 726). Nine gates clean, all nine run by CI, on every branch.\nZero design-owned files.",
-      "rationale": null,
       "artifacts": [
         "docs/lessons/defect-classes.md",
         "docs/collaboration/session-contracts.md",
         "docs/measurements/repositories.jsonl"
       ],
+      "datetime": "2026-08-31T00:12:08Z",
+      "git": {
+        "after": "aec47955ceaddd0f6c598c27952696dfe4a36e87",
+        "before": null,
+        "branch": "session/phase3-pane-probes",
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0102",
+      "kind": "architecture",
+      "prompt": null,
+      "rationale": null,
+      "session": null,
+      "skill": null,
+      "summary": "**The cap-before-filter sweep, run properly this time.** Every bounded read in the projection service\nwas checked rather than spot-sampled: `Find` filters inside `SearchNodeIds`, `Describe` inside\n`AssertionsTouching`, `Impact` inside `OutgoingAssertions`, `Evidence` inside the cursor page — all\nfour apply the cap to rows the query has ALREADY filtered, which is the correct order and also the\ncheaper one, because the filter uses an index. `Knowledge` was the only place the order was inverted,\nand it was inverted for a reason worth naming: **its filter lived in C# rather than in the query.**\n\nThat gives the class a signature you can recognise without reading every projection: **a bounded read\nwhose `.Where(...)` is applied to the RESULT of the read rather than expressed in it.** If the filter\nis in the query the cap cannot be wrong; if it is in the caller, the cap chose the rows before anyone\nasked what was wanted. Recorded on DC-035 along with the one residual — `Knowledge` still reads each\nnode's touching assertions at 500 and splits them afterwards, so a document with ~495+ real links\nwould get an arbitrary 500 with no omission count. No repository measured comes close.\n\n**Measurements re-recorded after the knowledge work.** TheTerrace 24,058 assertions across 66 scopes,\nBioHacker 4,420 / 48, meridian 12,613 / 56 — every response still inside the frame.\n\n**The design session is told what changed under them, in their own file.** A new §4d says CI now runs\non every branch, that the next push to their branch will run all nine gates, and — because it will be\nnoisy the first time — names the two that will fire and how to satisfy them, with a worked example of\nthe accepted and rejected `Status:` forms. Neither is a new rule; both were always enforced, just not\nanywhere they could see them.\n\n**`review-by` on code: decided no, on the user's own rule.** The symmetry is tempting — 460 review\ndates on documents, so why not flag a stale class? Because nothing in a C# file, a Bicep template or\na SQL script DECLARES when it should next be read. A date could only be manufactured from\nlast-modified time or churn, and it would render identically to the dates documents actually declare.\nA reader could not tell the two apart, which is exactly the failure the no-inference note exists to\nprevent. A code artifact gets a review date the moment something writes one down; until then the\nabsence is accurate.\n\n**Still only verifiable by you:** whether the Knowledge chip lights up in the running app. Both known\ncauses are fixed and proven at every layer I can reach — the extractor, the store, the projection, and\nacross the daemon pipe — but I have not watched it render. It needs one re-index in the new build,\nbecause the generation bump makes that a rebuild rather than a reuse.\n\n870 tests green (App 144, Core 726). Nine gates clean, all nine run by CI, on every branch.\nZero design-owned files.",
       "tags": [
         "phase-3"
       ],
-      "git": {
-        "before": null,
-        "after": "aec47955ceaddd0f6c598c27952696dfe4a36e87",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+      "title": "The cap-before-filter sweep, and telling the other session what changed under them"
     },
     {
-      "id": "cl-0103",
-      "datetime": "2026-08-31T00:20:11Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "design",
-      "skill": "implement",
-      "title": "Loomkeeper durable observation store: SQLite behind the IWatcherObservationStore seam, append-only enforced by triggers",
-      "prompt": "Implement the SQLite observation store behind the seam.",
-      "summary": "SqliteWatcherObservationStore substitutes the in-memory store on the same contract: reuses the ADR-0002 fact-store idiom (WAL, single writer, append-only via BEFORE UPDATE/DELETE triggers), content-addressed PK dedup (INSERT OR IGNORE never fires the update trigger), and current-state session/heartbeat/ended tables. Persistence proven across a real reopen; append-only invariant proven by a forbidden-update test and mutation-verified.",
-      "rationale": "Reuses the codebase's proven SQLite idiom rather than a new persistence pattern; INSERT OR IGNORE preserves append-only where INSERT OR REPLACE would bypass it; the seam contract is unchanged so both stores share tests (D7 fidelity).",
       "artifacts": [
         "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs",
         "docs/proof/watcher-phase1-skeleton.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-31T00:20:11Z",
       "git": {
-        "before": "896b3befb2cdb9dc59b100e19d2caee9183ad5dd",
         "after": "896b3befb2cdb9dc59b100e19d2caee9183ad5dd",
+        "before": "896b3befb2cdb9dc59b100e19d2caee9183ad5dd",
         "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0103",
+      "kind": "design",
+      "prompt": "Implement the SQLite observation store behind the seam.",
+      "rationale": "Reuses the codebase's proven SQLite idiom rather than a new persistence pattern; INSERT OR IGNORE preserves append-only where INSERT OR REPLACE would bypass it; the seam contract is unchanged so both stores share tests (D7 fidelity).",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "implement",
+      "summary": "SqliteWatcherObservationStore substitutes the in-memory store on the same contract: reuses the ADR-0002 fact-store idiom (WAL, single writer, append-only via BEFORE UPDATE/DELETE triggers), content-addressed PK dedup (INSERT OR IGNORE never fires the update trigger), and current-state session/heartbeat/ended tables. Persistence proven across a real reopen; append-only invariant proven by a forbidden-update test and mutation-verified.",
+      "tags": [],
+      "title": "Loomkeeper durable observation store: SQLite behind the IWatcherObservationStore seam, append-only enforced by triggers"
     },
     {
-      "id": "cl-0104",
-      "datetime": "2026-08-31T00:37:34Z",
-      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
-      "kind": "architecture",
-      "skill": "define-architecture",
-      "title": "Read-only code viewer renders with native AvalonEdit, not Monaco-in-WebView2",
-      "prompt": "define-architecture the viewer renderer choice",
-      "summary": "ADR-0019 chose native AvalonEdit (MIT) over Monaco-in-WebView2 for the read-only code viewer",
-      "rationale": "The repo's documented WebView2 airspace + float-crash cost (ADR-0015) outweighs Monaco's VS-Code parity, which a read-only viewer does not need; native avoids a second WebView2",
       "artifacts": [
         "docs/adr/0019-code-viewer-renderer.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-31T00:37:34Z",
       "git": {
-        "before": "425c514a8721ac19192961c5fa5e22f89b8935e7",
         "after": "425c514a8721ac19192961c5fa5e22f89b8935e7",
+        "before": "425c514a8721ac19192961c5fa5e22f89b8935e7",
         "branch": "feature/app-facelift-and-graph-surfaces",
-        "pushed": true,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0104",
+      "kind": "architecture",
+      "prompt": "define-architecture the viewer renderer choice",
+      "rationale": "The repo's documented WebView2 airspace + float-crash cost (ADR-0015) outweighs Monaco's VS-Code parity, which a read-only viewer does not need; native avoids a second WebView2",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "skill": "define-architecture",
+      "summary": "ADR-0019 chose native AvalonEdit (MIT) over Monaco-in-WebView2 for the read-only code viewer",
+      "tags": [],
+      "title": "Read-only code viewer renders with native AvalonEdit, not Monaco-in-WebView2"
     },
     {
-      "id": "cl-0105",
-      "datetime": "2026-08-31T00:38:20Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "design",
-      "skill": "implement",
-      "title": "Loomkeeper ingest wire: a dual-path anti-corruption mapper turns harness OTLP + registration events into observation",
-      "prompt": "Spike the harness OTLP ingest shape and design/implement the ingest wire.",
-      "summary": "Spike S1 established the contract (OTel span -> ObservedSpan; registration -> SessionBinding; service.name->harness, gen_ai.request.model->model; session.id is a claim, not authority). The ingest wire is an Adapter/ACL feeding the built TrustedRegistrar+SpanIngest; its deterministic core, OtelSpanMapper, is implemented and tested (11 tests). GenAI vocabulary is Development-status, pinned in OtelAttributes behind a mutation-verified A6 regression gate; malformed events raise LK-0004; unknown harness/model degrade to Not Recorded/Asserted.",
-      "rationale": "Isolate the preview OTel/GenAI vocabulary behind one ACL so upstream churn changes only the mapper + its gate; reuse the built registrar/ingest as the trust anchor rather than trusting a span's session.id; transport hosting deferred as OTLP/HTTP is stable.",
       "artifacts": [
         "spikes/watcher-otlp-ingest/FINDINGS.md",
         "docs/design/watcher-ingest-wire.md",
         "src/AiDe.Core/Watcher/OtelSpanMapper.cs"
       ],
-      "tags": [],
+      "datetime": "2026-08-31T00:38:20Z",
       "git": {
-        "before": "860cb6c4357b8008fbf2eb59db53f26290a809f9",
         "after": "860cb6c4357b8008fbf2eb59db53f26290a809f9",
+        "before": "860cb6c4357b8008fbf2eb59db53f26290a809f9",
         "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0105",
+      "kind": "design",
+      "prompt": "Spike the harness OTLP ingest shape and design/implement the ingest wire.",
+      "rationale": "Isolate the preview OTel/GenAI vocabulary behind one ACL so upstream churn changes only the mapper + its gate; reuse the built registrar/ingest as the trust anchor rather than trusting a span's session.id; transport hosting deferred as OTLP/HTTP is stable.",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "implement",
+      "summary": "Spike S1 established the contract (OTel span -> ObservedSpan; registration -> SessionBinding; service.name->harness, gen_ai.request.model->model; session.id is a claim, not authority). The ingest wire is an Adapter/ACL feeding the built TrustedRegistrar+SpanIngest; its deterministic core, OtelSpanMapper, is implemented and tested (11 tests). GenAI vocabulary is Development-status, pinned in OtelAttributes behind a mutation-verified A6 regression gate; malformed events raise LK-0004; unknown harness/model degrade to Not Recorded/Asserted.",
+      "tags": [],
+      "title": "Loomkeeper ingest wire: a dual-path anti-corruption mapper turns harness OTLP + registration events into observation"
     },
     {
-      "id": "cl-0106",
-      "datetime": "2026-08-31T00:50:10Z",
-      "session": "phase3-pane-probes",
-      "kind": "decision",
-      "skill": "investigate",
-      "title": "A fact's identity includes the reader that produced it",
-      "prompt": "knowledge still shows as 0 post re-index",
-      "summary": "The store's natural key said 'one revision, one answer' — true only while the extractor was fixed. A stored revision now carries the extractor generation that produced it (SourceRevision), so the same bytes read by a better reader are a different observation the key can represent. Applied inside RefreshScopeAsync so every entry point gets one answer instead of three; stripped at the read boundary so a surface still shows the revision the user named. Second decision: a command that changes the store raises WorkspaceDataChanged and the shell re-reads whatever panes are open — the last mile of a write is the screen.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Extraction/SourceRevision.cs"
       ],
-      "tags": [],
+      "audit_ref": "al-0169",
+      "datetime": "2026-08-31T00:50:10Z",
       "git": {
-        "before": null,
         "after": "d7ba31fdfa443b51fefa42c155320d906abb0b21",
+        "before": null,
         "branch": "session/phase3-pane-probes",
-        "pushed": false,
-        "commits": []
+        "commits": [],
+        "pushed": false
       },
-      "audit_ref": "al-0169"
+      "id": "cl-0106",
+      "kind": "decision",
+      "prompt": "knowledge still shows as 0 post re-index",
+      "rationale": null,
+      "session": "phase3-pane-probes",
+      "skill": "investigate",
+      "summary": "The store's natural key said 'one revision, one answer' — true only while the extractor was fixed. A stored revision now carries the extractor generation that produced it (SourceRevision), so the same bytes read by a better reader are a different observation the key can represent. Applied inside RefreshScopeAsync so every entry point gets one answer instead of three; stripped at the read boundary so a surface still shows the revision the user named. Second decision: a command that changes the store raises WorkspaceDataChanged and the shell re-reads whatever panes are open — the last mile of a write is the screen.",
+      "tags": [],
+      "title": "A fact's identity includes the reader that produced it"
     },
     {
-      "id": "cl-0107",
-      "datetime": "2026-08-31T03:39:19Z",
-      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
-      "kind": "architecture",
-      "skill": "define-architecture",
-      "title": "AvalonEdit confirmed for the read-only code viewer (ADR-0019 residual cleared by PoC)",
-      "prompt": "AvalonEdit read-only highlighting PoC",
-      "summary": "PoC passed: read-only + highlighting + no airspace (pure WPF Control); C#/py/js/sql covered, ts/bicep degrade to plain",
-      "rationale": "Confirms ADR-0019's Inferred residual by execution, so the read-only viewer is ready to build once Core ships NodeContentAsync",
       "artifacts": [
         "docs/adr/0019-code-viewer-renderer.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-31T03:39:19Z",
       "git": {
-        "before": "bf83370d7bf8d301024d21382f3724e6df4ed55e",
         "after": "bf83370d7bf8d301024d21382f3724e6df4ed55e",
+        "before": "bf83370d7bf8d301024d21382f3724e6df4ed55e",
         "branch": "feature/app-facelift-and-graph-surfaces",
-        "pushed": true,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0107",
+      "kind": "architecture",
+      "prompt": "AvalonEdit read-only highlighting PoC",
+      "rationale": "Confirms ADR-0019's Inferred residual by execution, so the read-only viewer is ready to build once Core ships NodeContentAsync",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "skill": "define-architecture",
+      "summary": "PoC passed: read-only + highlighting + no airspace (pure WPF Control); C#/py/js/sql covered, ts/bicep degrade to plain",
+      "tags": [],
+      "title": "AvalonEdit confirmed for the read-only code viewer (ADR-0019 residual cleared by PoC)"
     },
     {
-      "id": "cl-0108",
-      "datetime": "2026-08-31T03:40:28Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "design",
-      "skill": "implement",
-      "title": "Loomkeeper ingest host: sync control + async bounded span stream with drop-oldest backpressure",
-      "prompt": "Design and implement slice 1's ingest host.",
-      "summary": "Split registration/heartbeat (synchronous control) from the span stream (async, bounded Channel with DropOldest); the host drains to OtelSpanMapper+SpanIngest, rejecting forged spans and quarantining malformed ones without killing the loop, with IngestStats counters exposing every disposition. Transport is a substitutable IHarnessEventSource port; the OTLP network receiver is slice 1b.",
-      "rationale": "Registration must return a capability immediately while high-volume spans need bounded backpressure; reuse the repo Channel.CreateBounded+DropOldest idiom; keep the capability as the trust anchor and the transport behind a port so the receiver substitutes without redesign.",
       "artifacts": [
         "docs/design/watcher-ingest-host.md",
         "src/AiDe.Core/Watcher/IngestHost.cs"
       ],
-      "tags": [],
+      "datetime": "2026-08-31T03:40:28Z",
       "git": {
-        "before": "7c4755b88dcba32db809bc0a04fc9a2be7f80b0c",
         "after": "7c4755b88dcba32db809bc0a04fc9a2be7f80b0c",
+        "before": "7c4755b88dcba32db809bc0a04fc9a2be7f80b0c",
         "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0108",
+      "kind": "design",
+      "prompt": "Design and implement slice 1's ingest host.",
+      "rationale": "Registration must return a capability immediately while high-volume spans need bounded backpressure; reuse the repo Channel.CreateBounded+DropOldest idiom; keep the capability as the trust anchor and the transport behind a port so the receiver substitutes without redesign.",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "implement",
+      "summary": "Split registration/heartbeat (synchronous control) from the span stream (async, bounded Channel with DropOldest); the host drains to OtelSpanMapper+SpanIngest, rejecting forged spans and quarantining malformed ones without killing the loop, with IngestStats counters exposing every disposition. Transport is a substitutable IHarnessEventSource port; the OTLP network receiver is slice 1b.",
+      "tags": [],
+      "title": "Loomkeeper ingest host: sync control + async bounded span stream with drop-oldest backpressure"
     },
     {
-      "id": "cl-0109",
-      "datetime": "2026-08-31T03:59:43Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "design",
-      "skill": "implement",
-      "title": "Loomkeeper slice 1 ingest complete: OTLP/JSON receiver on stdlib, no protobuf dependency",
-      "prompt": "run /design then /implement on the OTLP receiver to complete slice 1",
-      "summary": "Receiver accepts OTLP/JSON at /v1/traces, resolves a per-session bearer token to the capability server-side (capability never on the wire), parses with System.Text.Json, enqueues onto the slice-1a host; loopback-only, body-capped, 200-on-drop. Decision: OTLP/JSON over protobuf removes the dependency; token-in-header binds spans to the registration capability.",
-      "rationale": "stdlib JSON keeps AiDe.Core dependency-free and the token seam aligns with ADR-0020 capability binding",
       "artifacts": [
         "docs/design/watcher-otlp-receiver.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-31T03:59:43Z",
       "git": {
-        "before": "0929bda564595d8defa7f24673ceea656ac54b44",
         "after": "5ed1dfa6781b898e186f62945476e6d0f63a1161",
+        "before": "0929bda564595d8defa7f24673ceea656ac54b44",
         "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
         "commits": [
           "5ed1dfa feat(watcher): OTLP/JSON receiver completes Loomkeeper slice 1 (ingest)"
-        ]
-      }
+        ],
+        "pushed": null
+      },
+      "id": "cl-0109",
+      "kind": "design",
+      "prompt": "run /design then /implement on the OTLP receiver to complete slice 1",
+      "rationale": "stdlib JSON keeps AiDe.Core dependency-free and the token seam aligns with ADR-0020 capability binding",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "implement",
+      "summary": "Receiver accepts OTLP/JSON at /v1/traces, resolves a per-session bearer token to the capability server-side (capability never on the wire), parses with System.Text.Json, enqueues onto the slice-1a host; loopback-only, body-capped, 200-on-drop. Decision: OTLP/JSON over protobuf removes the dependency; token-in-header binds spans to the registration capability.",
+      "tags": [],
+      "title": "Loomkeeper slice 1 ingest complete: OTLP/JSON receiver on stdlib, no protobuf dependency"
     },
     {
-      "id": "cl-0110",
-      "datetime": "2026-08-31T04:18:19Z",
-      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
-      "kind": "architecture",
-      "skill": "define-architecture",
-      "title": "Class diagram: App-side type-hierarchy from the existing graph, dependency-free; members/Mermaid deferred (ADR-0020)",
-      "prompt": "class-diagram define-architecture",
-      "summary": "ADR-0020 chose an App-side derived type-hierarchy view (inherits/implements) over vendoring Mermaid now; members via a Core has_member handoff",
-      "rationale": "The data already has inherits/implements as graph edges but no members; a Mermaid classDiagram with empty compartments is not worth ~3MB vendored, so defer it until has_member exists",
       "artifacts": [
         "docs/adr/0020-class-diagram-architecture.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-31T04:18:19Z",
       "git": {
-        "before": "140a9a5bd49b2cce968b4489178ea97de2007bab",
         "after": "140a9a5bd49b2cce968b4489178ea97de2007bab",
+        "before": "140a9a5bd49b2cce968b4489178ea97de2007bab",
         "branch": "feature/app-facelift-and-graph-surfaces",
-        "pushed": true,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0110",
+      "kind": "architecture",
+      "prompt": "class-diagram define-architecture",
+      "rationale": "The data already has inherits/implements as graph edges but no members; a Mermaid classDiagram with empty compartments is not worth ~3MB vendored, so defer it until has_member exists",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "skill": "define-architecture",
+      "summary": "ADR-0020 chose an App-side derived type-hierarchy view (inherits/implements) over vendoring Mermaid now; members via a Core has_member handoff",
+      "tags": [],
+      "title": "Class diagram: App-side type-hierarchy from the existing graph, dependency-free; members/Mermaid deferred (ADR-0020)"
     },
     {
-      "id": "cl-0111",
-      "datetime": "2026-08-31T04:30:34Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "design",
-      "skill": "implement",
-      "title": "Loomkeeper slice 2: injected coordination contract over coord-core append (one ledger, projected)",
-      "prompt": "run /design then /implement on the injected coordination-contract adapter to complete slice 2",
-      "summary": "A versioned (loomkeeper/1) injected contract lets a non-AI-Forward session register+heartbeat over the existing coord-core append log; a pure CoordContractParser reads it tolerantly and an InjectedContractIngest adapter mints/holds the per-session capability (never on the forgeable file) and feeds the same TrustedRegistrar/IngestHost. Decision: reuse coord-core append + stdlib JSON, no second ledger, no new dependency; capability lives in the adapter (symmetric with the OTLP token).",
-      "rationale": "one ledger projected not duplicated (US-5); ADR-0020 capability binding holds for a file transport by keeping the capability adapter-side",
       "artifacts": [
         "docs/design/watcher-coordination-contract.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-31T04:30:34Z",
       "git": {
-        "before": "5ed1dfa6781b898e186f62945476e6d0f63a1161",
         "after": "5ed1dfa6781b898e186f62945476e6d0f63a1161",
+        "before": "5ed1dfa6781b898e186f62945476e6d0f63a1161",
         "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0111",
+      "kind": "design",
+      "prompt": "run /design then /implement on the injected coordination-contract adapter to complete slice 2",
+      "rationale": "one ledger projected not duplicated (US-5); ADR-0020 capability binding holds for a file transport by keeping the capability adapter-side",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "implement",
+      "summary": "A versioned (loomkeeper/1) injected contract lets a non-AI-Forward session register+heartbeat over the existing coord-core append log; a pure CoordContractParser reads it tolerantly and an InjectedContractIngest adapter mints/holds the per-session capability (never on the forgeable file) and feeds the same TrustedRegistrar/IngestHost. Decision: reuse coord-core append + stdlib JSON, no second ledger, no new dependency; capability lives in the adapter (symmetric with the OTLP token).",
+      "tags": [],
+      "title": "Loomkeeper slice 2: injected coordination contract over coord-core append (one ledger, projected)"
     },
     {
-      "id": "cl-0112",
-      "datetime": "2026-08-31T04:38:55Z",
-      "session": "phase3-pane-probes",
-      "kind": "architecture",
-      "skill": "implement",
-      "title": "The IPC payload is JSON, not text about JSON",
-      "prompt": "do the next steps autonomously",
-      "summary": "IpcRequest/IpcResponse carry the payload as a JsonElement rather than a string containing serialised JSON, so the envelope no longer escapes it a second time. Version 3; IpcPayload.Read accepts a JSON string as a version-2 payload and parses its text, which is what keeps IpcVersion.Previous a real guarantee rather than a comment. Writing always produces the new form: two encodings on the write side is how a wire format ends up with no single answer to what it looks like. Measured: framing overhead 1.57x to 78 bytes.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Ipc/IpcContract.cs"
       ],
-      "tags": [],
+      "audit_ref": "al-0181",
+      "datetime": "2026-08-31T04:38:55Z",
       "git": {
-        "before": null,
         "after": "01850d5b0f75a41482b251be4d5aefb2943355bb",
+        "before": null,
         "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
+        "commits": [],
+        "pushed": true
       },
-      "audit_ref": "al-0181"
+      "id": "cl-0112",
+      "kind": "architecture",
+      "prompt": "do the next steps autonomously",
+      "rationale": null,
+      "session": "phase3-pane-probes",
+      "skill": "implement",
+      "summary": "IpcRequest/IpcResponse carry the payload as a JsonElement rather than a string containing serialised JSON, so the envelope no longer escapes it a second time. Version 3; IpcPayload.Read accepts a JSON string as a version-2 payload and parses its text, which is what keeps IpcVersion.Previous a real guarantee rather than a comment. Writing always produces the new form: two encodings on the write side is how a wire format ends up with no single answer to what it looks like. Measured: framing overhead 1.57x to 78 bytes.",
+      "tags": [],
+      "title": "The IPC payload is JSON, not text about JSON"
     },
     {
-      "id": "cl-0113",
-      "datetime": "2026-08-31T13:19:02Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "design",
-      "skill": "implement",
-      "title": "Loomkeeper slice 3: WPF Sessions surface closes the Phase-1 change-surface (compute reader)",
-      "prompt": "run /design then /implement on the WPF Sessions treegrid row to complete slice 3",
-      "summary": "A synchronous deterministic projection (store.AllSessions + liveness fold) feeds a testable WatcherSessionsPaneViewModel that renders sessions honestly (Not Recorded, no-colour-alone liveness badge, full state set), rendered by a 'sessions' surface kind in the default layout. Decision: synchronous local fold (not async) so the pane can never strand on Loading (DC-011); pane VM in AiDe.Core/Presentation for full unit-testability without WPF.",
-      "rationale": "closes the Phase-1 walking-skeleton compute reader (E7); honest Not Recorded (US-13) and no-colour-alone liveness (WCAG); a control in the default layout so it can actually fire (JoinSurface lesson)",
       "artifacts": [
         "docs/design/watcher-sessions-surface.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-31T13:19:02Z",
       "git": {
-        "before": "76422e861aa5b3a44a25fb84263cf2d5c1569070",
         "after": "76422e861aa5b3a44a25fb84263cf2d5c1569070",
+        "before": "76422e861aa5b3a44a25fb84263cf2d5c1569070",
         "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0113",
+      "kind": "design",
+      "prompt": "run /design then /implement on the WPF Sessions treegrid row to complete slice 3",
+      "rationale": "closes the Phase-1 walking-skeleton compute reader (E7); honest Not Recorded (US-13) and no-colour-alone liveness (WCAG); a control in the default layout so it can actually fire (JoinSurface lesson)",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "implement",
+      "summary": "A synchronous deterministic projection (store.AllSessions + liveness fold) feeds a testable WatcherSessionsPaneViewModel that renders sessions honestly (Not Recorded, no-colour-alone liveness badge, full state set), rendered by a 'sessions' surface kind in the default layout. Decision: synchronous local fold (not async) so the pane can never strand on Loading (DC-011); pane VM in AiDe.Core/Presentation for full unit-testability without WPF.",
+      "tags": [],
+      "title": "Loomkeeper slice 3: WPF Sessions surface closes the Phase-1 change-surface (compute reader)"
     },
     {
-      "id": "cl-0114",
-      "datetime": "2026-08-31T13:26:30Z",
-      "session": "phase3-pane-probes",
-      "kind": "architecture",
-      "skill": "implement",
-      "title": "A scope records where its files are",
-      "prompt": "unblock the design session",
-      "summary": "Provenance carries a path relative to a scope; nothing carried the scope's own location, so no node could be resolved to a file. Scopes now emit declared_at — an attribute, so scopes do not become graph nodes — and the content reader composes it with the provenance path, confined under the workspace root. This is what makes ADR-0018 buildable at all; the alternative was deriving directories from scope ids, which works for knowledge:docs/adr and fails for bicep:main.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/WorkspaceCore.cs"
       ],
-      "tags": [],
+      "datetime": "2026-08-31T13:26:30Z",
       "git": {
-        "before": null,
         "after": "1345cb811e502ba96fd4e02adcd3fa6634708195",
+        "before": null,
         "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0114",
+      "kind": "architecture",
+      "prompt": "unblock the design session",
+      "rationale": null,
+      "session": "phase3-pane-probes",
+      "skill": "implement",
+      "summary": "Provenance carries a path relative to a scope; nothing carried the scope's own location, so no node could be resolved to a file. Scopes now emit declared_at — an attribute, so scopes do not become graph nodes — and the content reader composes it with the provenance path, confined under the workspace root. This is what makes ADR-0018 buildable at all; the alternative was deriving directories from scope ids, which works for knowledge:docs/adr and fails for bicep:main.",
+      "tags": [],
+      "title": "A scope records where its files are"
     },
     {
-      "id": "cl-0115",
-      "datetime": "2026-08-31T13:57:31Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "design",
-      "skill": "implement",
-      "title": "Loomkeeper slice 4: Work Episode mirrors the AI-Forward CT19 goal-state (symbiotic, one vocabulary)",
-      "prompt": "reflect on the ai-forward done_when structure and implement slice 4 (Work Episode lifecycle)",
-      "summary": "The Work Episode binds one immutable goal + done-condition to one bounded interval of one authenticated session; the unit scoring attaches to. Decision informed by the AI-Forward done_when work: the episode uses the SAME (Goal, DoneWhen, NotInScope) triple as CT19, so a Loomkeeper episode is the durable, scoreable projection of a turn's goal-state - making the substrate symbiotic with the audit ledger rather than a parallel structure. Outcome is the DECLARED lifecycle terminal state; the honesty/drift judgment (PACK-O's three faces) is the Weave (slice 5). Changing the goal starts a new episode generation (the aggregate invariant).",
-      "rationale": "one ledger/vocabulary projected not duplicated; deterministic facts separated from advisory judgment (spec Work Evaluation); capability-verified lifecycle (ADR-0020)",
       "artifacts": [
         "docs/design/watcher-work-episode.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-31T13:57:31Z",
       "git": {
-        "before": "57c1e5eab0cb9d2283389c15609df2ef3c8e7c04",
         "after": "57c1e5eab0cb9d2283389c15609df2ef3c8e7c04",
+        "before": "57c1e5eab0cb9d2283389c15609df2ef3c8e7c04",
         "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0115",
+      "kind": "design",
+      "prompt": "reflect on the ai-forward done_when structure and implement slice 4 (Work Episode lifecycle)",
+      "rationale": "one ledger/vocabulary projected not duplicated; deterministic facts separated from advisory judgment (spec Work Evaluation); capability-verified lifecycle (ADR-0020)",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "implement",
+      "summary": "The Work Episode binds one immutable goal + done-condition to one bounded interval of one authenticated session; the unit scoring attaches to. Decision informed by the AI-Forward done_when work: the episode uses the SAME (Goal, DoneWhen, NotInScope) triple as CT19, so a Loomkeeper episode is the durable, scoreable projection of a turn's goal-state - making the substrate symbiotic with the audit ledger rather than a parallel structure. Outcome is the DECLARED lifecycle terminal state; the honesty/drift judgment (PACK-O's three faces) is the Weave (slice 5). Changing the goal starts a new episode generation (the aggregate invariant).",
+      "tags": [],
+      "title": "Loomkeeper slice 4: Work Episode mirrors the AI-Forward CT19 goal-state (symbiotic, one vocabulary)"
     },
     {
-      "id": "cl-0116",
-      "datetime": "2026-08-31T14:51:25Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "design",
-      "skill": "implement",
-      "title": "Loomkeeper slice 5: deterministic Weave scores done_when (drift + honest completion), advisory excluded until calibrated",
-      "prompt": "implement slice 5: five deterministic dimensions, hard floors, Evidence Coverage, honest Scorecard",
-      "summary": "A pure WeaveScorer turns a closed episode's deterministic evidence into an honest Scorecard. Decision: the deterministic observed weight is 70 (Outcome 30, Focus 15, Guidance 15, Coordination 10); the two advisory dimensions (Evidence discipline, Solution economy = 30) are declared and EXCLUDED from points until the grader passes calibration + QWK (ADR-0019, slice 7) - matching the spec's own '58 / 70 observed' example. Floors trip Blocked and suppress the numeric; missing goal/done/verification -> Not Scored; Partial never rescales to 0-100; Coverage is separate from points. This is where the AI-Forward done_when becomes measured: Focus counts work-after-done (drift) and Outcome checks the honest completion claim - the PACK-O faces.",
-      "rationale": "separate deterministic facts from advisory judgment (spec Work Evaluation); advisory cannot raise a deterministic fail nor enter points before calibration (rules 8-9); honest Partial/Blocked/Not-Scored",
       "artifacts": [
         "docs/design/watcher-weave-score.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-31T14:51:25Z",
       "git": {
-        "before": "2b75785294b530e434e1af09a8844fa523f7aa14",
         "after": "2b75785294b530e434e1af09a8844fa523f7aa14",
+        "before": "2b75785294b530e434e1af09a8844fa523f7aa14",
         "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0116",
+      "kind": "design",
+      "prompt": "implement slice 5: five deterministic dimensions, hard floors, Evidence Coverage, honest Scorecard",
+      "rationale": "separate deterministic facts from advisory judgment (spec Work Evaluation); advisory cannot raise a deterministic fail nor enter points before calibration (rules 8-9); honest Partial/Blocked/Not-Scored",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "implement",
+      "summary": "A pure WeaveScorer turns a closed episode's deterministic evidence into an honest Scorecard. Decision: the deterministic observed weight is 70 (Outcome 30, Focus 15, Guidance 15, Coordination 10); the two advisory dimensions (Evidence discipline, Solution economy = 30) are declared and EXCLUDED from points until the grader passes calibration + QWK (ADR-0019, slice 7) - matching the spec's own '58 / 70 observed' example. Floors trip Blocked and suppress the numeric; missing goal/done/verification -> Not Scored; Partial never rescales to 0-100; Coverage is separate from points. This is where the AI-Forward done_when becomes measured: Focus counts work-after-done (drift) and Outcome checks the honest completion claim - the PACK-O faces.",
+      "tags": [],
+      "title": "Loomkeeper slice 5: deterministic Weave scores done_when (drift + honest completion), advisory excluded until calibrated"
     },
     {
-      "id": "cl-0117",
-      "datetime": "2026-08-31T14:57:38Z",
-      "session": "phase3-pane-probes",
-      "kind": "architecture",
-      "skill": "implement",
-      "title": "Compaction runs at startup, retaining only what renders",
-      "prompt": "decide the compaction threshold",
-      "summary": "DefaultThreshold 8 to 1 and DefaultRetain 2 to 1. The old threshold came from the P1-PERF latency curve and answered when growth starts to hurt; it never answered how big the store gets, which is what a user sees, and it never fired on real usage. The retained second generation was kept for investigation and nothing could investigate it — every read composes with the latest-generation filter — so it was residue, not history, and the audit log is where this project records what happened. Safe at one because a failed extraction returns before committing, so the newest snapshot always renders. The daemon compacts before opening the store: the deliberate maintenance moment the design asks for.",
-      "rationale": null,
       "artifacts": [
         "src/AiDe.Core/Store/StoreCompactor.cs"
       ],
-      "tags": [],
+      "datetime": "2026-08-31T14:57:38Z",
       "git": {
-        "before": null,
         "after": "8865ad0418c7980c0db26e98f7ff8a077f55e573",
+        "before": null,
         "branch": "session/phase3-pane-probes",
-        "pushed": true,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0117",
+      "kind": "architecture",
+      "prompt": "decide the compaction threshold",
+      "rationale": null,
+      "session": "phase3-pane-probes",
+      "skill": "implement",
+      "summary": "DefaultThreshold 8 to 1 and DefaultRetain 2 to 1. The old threshold came from the P1-PERF latency curve and answered when growth starts to hurt; it never answered how big the store gets, which is what a user sees, and it never fired on real usage. The retained second generation was kept for investigation and nothing could investigate it — every read composes with the latest-generation filter — so it was residue, not history, and the audit log is where this project records what happened. Safe at one because a failed extraction returns before committing, so the newest snapshot always renders. The daemon compacts before opening the store: the deliberate maintenance moment the design asks for.",
+      "tags": [],
+      "title": "Compaction runs at startup, retaining only what renders"
     },
     {
-      "id": "cl-0118",
-      "datetime": "2026-08-31T16:21:03Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "design",
-      "skill": "implement",
-      "title": "Loomkeeper slice 6: per-repo Message Board (quarantined, no-orphan) + cross-repo Fleet map",
-      "prompt": "implement slice 6: per-repo append-only board + cross-repo repo->session map",
-      "summary": "The Message Board is an append-only, per-repository communication surface with author/session/time/trust provenance; a reply/ack references an existing parent in the same repo (no orphan). Decision: board content is untrusted by construction and stored QUARANTINED - no API feeds it to a grader as instructions (Confused Deputy mitigation) and injection shapes are flagged; the injection-invariance guarantee comes from the scorer's typed-signal design (slice 5), not from detection. A policy redaction is the one allowed content mutation (tombstone; envelope append-only). The Fleet aggregator builds the repo->session map across >=2 per-workspace stores, grouped by the session's own repository identity.",
-      "rationale": "align with coord-core one-file-per-session append semantics; untrusted content cannot instruct a grader (spec security NFR); envelope append-only with redactable payload (spec line 210)",
       "artifacts": [
         "docs/design/watcher-message-board.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-31T16:21:03Z",
       "git": {
-        "before": "4ddd278aba69220e95d4a2ea92eca3aa6ab0b1b2",
         "after": "4ddd278aba69220e95d4a2ea92eca3aa6ab0b1b2",
+        "before": "4ddd278aba69220e95d4a2ea92eca3aa6ab0b1b2",
         "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0118",
+      "kind": "design",
+      "prompt": "implement slice 6: per-repo append-only board + cross-repo repo->session map",
+      "rationale": "align with coord-core one-file-per-session append semantics; untrusted content cannot instruct a grader (spec security NFR); envelope append-only with redactable payload (spec line 210)",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "implement",
+      "summary": "The Message Board is an append-only, per-repository communication surface with author/session/time/trust provenance; a reply/ack references an existing parent in the same repo (no orphan). Decision: board content is untrusted by construction and stored QUARANTINED - no API feeds it to a grader as instructions (Confused Deputy mitigation) and injection shapes are flagged; the injection-invariance guarantee comes from the scorer's typed-signal design (slice 5), not from detection. A policy redaction is the one allowed content mutation (tombstone; envelope append-only). The Fleet aggregator builds the repo->session map across >=2 per-workspace stores, grouped by the session's own repository identity.",
+      "tags": [],
+      "title": "Loomkeeper slice 6: per-repo Message Board (quarantined, no-orphan) + cross-repo Fleet map"
     },
     {
-      "id": "cl-0119",
-      "datetime": "2026-08-31T16:43:42Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "design",
-      "skill": "implement",
-      "title": "Loomkeeper slice 7: advisory grader gated on ADR-0019 calibration; leaderboard cohort/privacy guards; no-scalar standing",
-      "prompt": "do the next steps and lets get all of slice 7 implemented",
-      "summary": "Advisory dimensions enter Weave points only after stability + QWK>=0.75 + anti-Goodhart gates pass; the fold never rescues a Blocked/NotScored verdict (rule 8); leaderboard is Not Comparable below cohort 5 or single-operator (rules 10-11, US-10), segmented by task/schema; AgentStanding carries rank+trend+per-dimension reasons but no single optimizable scalar (US-16), enforced by a reflection guard.",
-      "rationale": "A model-judged (probabilistic) dimension must not affect a score until calibrated against humans, and a public standing must not become a gameable target.",
       "artifacts": [
         "src/AiDe.Core/Watcher/AdvisoryScoring.cs",
         "src/AiDe.Core/Watcher/Leaderboard.cs"
       ],
-      "tags": [],
+      "datetime": "2026-08-31T16:43:42Z",
       "git": {
-        "before": "67586a8bbc7132395d13be04c3da7017ee5e7703",
         "after": "67586a8bbc7132395d13be04c3da7017ee5e7703",
+        "before": "67586a8bbc7132395d13be04c3da7017ee5e7703",
         "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0119",
+      "kind": "design",
+      "prompt": "do the next steps and lets get all of slice 7 implemented",
+      "rationale": "A model-judged (probabilistic) dimension must not affect a score until calibrated against humans, and a public standing must not become a gameable target.",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "implement",
+      "summary": "Advisory dimensions enter Weave points only after stability + QWK>=0.75 + anti-Goodhart gates pass; the fold never rescues a Blocked/NotScored verdict (rule 8); leaderboard is Not Comparable below cohort 5 or single-operator (rules 10-11, US-10), segmented by task/schema; AgentStanding carries rank+trend+per-dimension reasons but no single optimizable scalar (US-16), enforced by a reflection guard.",
+      "tags": [],
+      "title": "Loomkeeper slice 7: advisory grader gated on ADR-0019 calibration; leaderboard cohort/privacy guards; no-scalar standing"
     },
     {
-      "id": "cl-0120",
-      "datetime": "2026-08-31T17:24:23Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "design",
-      "skill": "implement",
-      "title": "Loomkeeper slice conn-2: Board + Leaderboard surfaces; watcher store wired into the running app",
-      "prompt": "do all of these next steps so i can smoke test the ux",
-      "summary": "WorkbenchShell opens <dataDir>/watcher.db and passes Sessions/Board/Leaderboard queries to the factory; panes render live and degrade to 'not available'; v2->v3 layout migration makes them reachable.",
-      "rationale": "Until the shell opened the store and passed the queries, even Sessions showed 'not available' - the read surfaces existed but nothing wired them to data.",
       "artifacts": [
         "src/AiDe.App/Workbench/WorkbenchShell.cs"
       ],
-      "tags": [],
+      "datetime": "2026-08-31T17:24:23Z",
       "git": {
-        "before": "8ca0574d22fe4a3b47f5c8b9341ff7abb51fb691",
         "after": "8ca0574d22fe4a3b47f5c8b9341ff7abb51fb691",
+        "before": "8ca0574d22fe4a3b47f5c8b9341ff7abb51fb691",
         "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0120",
+      "kind": "design",
+      "prompt": "do all of these next steps so i can smoke test the ux",
+      "rationale": "Until the shell opened the store and passed the queries, even Sessions showed 'not available' - the read surfaces existed but nothing wired them to data.",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "implement",
+      "summary": "WorkbenchShell opens <dataDir>/watcher.db and passes Sessions/Board/Leaderboard queries to the factory; panes render live and degrade to 'not available'; v2->v3 layout migration makes them reachable.",
+      "tags": [],
+      "title": "Loomkeeper slice conn-2: Board + Leaderboard surfaces; watcher store wired into the running app"
     },
     {
-      "id": "cl-0121",
-      "datetime": "2026-08-31T17:45:06Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "design",
-      "skill": "implement",
-      "title": "Loomkeeper conn-4: dispute is an append-only fact, Disputed is derived, never overwrites the score (rule 12)",
-      "prompt": "operator dispute path",
-      "summary": "ScoreDispute in its own append-only table; a dispute writes a fact and touches no score, so prior scores are preserved (rule 12); Disputed is derived from the facts (DM7), never stored; Leaderboard surfaces the disputed count.",
-      "rationale": "Rule 12 forbids overwriting a disputed score; a separate append-only fact + a derived state is the only shape that keeps the prior score and the dissent both immutable.",
       "artifacts": [
         "src/AiDe.Core/Watcher/ScoreDispute.cs"
       ],
-      "tags": [],
+      "datetime": "2026-08-31T17:45:06Z",
       "git": {
-        "before": "09c7dfee6a1c909dd8934ed142ca9a1b58b97923",
         "after": "09c7dfee6a1c909dd8934ed142ca9a1b58b97923",
+        "before": "09c7dfee6a1c909dd8934ed142ca9a1b58b97923",
         "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0121",
+      "kind": "design",
+      "prompt": "operator dispute path",
+      "rationale": "Rule 12 forbids overwriting a disputed score; a separate append-only fact + a derived state is the only shape that keeps the prior score and the dissent both immutable.",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "implement",
+      "summary": "ScoreDispute in its own append-only table; a dispute writes a fact and touches no score, so prior scores are preserved (rule 12); Disputed is derived from the facts (DM7), never stored; Leaderboard surfaces the disputed count.",
+      "tags": [],
+      "title": "Loomkeeper conn-4: dispute is an append-only fact, Disputed is derived, never overwrites the score (rule 12)"
     },
     {
-      "id": "cl-0122",
-      "datetime": "2026-08-31T20:56:56Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "architecture",
-      "skill": "implement",
-      "title": "Loomkeeper conn-5: ingest runs in-process in the WPF app; liveness now exact",
-      "prompt": "host the OTLP receiver + coordination ingest in a running process",
-      "summary": "WatcherHost composes and runs the ingest inside the app process; the registrar and liveness projection share one monotonic clock, so the cross-process liveness caveat recorded in conn-2 is removed. A 2s background coordination-log pump fills the shared store the panes read.",
-      "rationale": "Hosting the ingest beside the read surfaces is the only composition that makes monotonic liveness exact without a shared-epoch heartbeat, and it is the smallest runnable path from live-capable panes to live ones.",
       "artifacts": [
         "src/AiDe.Core/Watcher/WatcherHost.cs"
       ],
-      "tags": [],
+      "datetime": "2026-08-31T20:56:56Z",
       "git": {
-        "before": "b08993ab4233f88d2b8a3498408666ba7f2d104f",
         "after": "b08993ab4233f88d2b8a3498408666ba7f2d104f",
+        "before": "b08993ab4233f88d2b8a3498408666ba7f2d104f",
         "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0122",
+      "kind": "architecture",
+      "prompt": "host the OTLP receiver + coordination ingest in a running process",
+      "rationale": "Hosting the ingest beside the read surfaces is the only composition that makes monotonic liveness exact without a shared-epoch heartbeat, and it is the smallest runnable path from live-capable panes to live ones.",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "implement",
+      "summary": "WatcherHost composes and runs the ingest inside the app process; the registrar and liveness projection share one monotonic clock, so the cross-process liveness caveat recorded in conn-2 is removed. A 2s background coordination-log pump fills the shared store the panes read.",
+      "tags": [],
+      "title": "Loomkeeper conn-5: ingest runs in-process in the WPF app; liveness now exact"
     },
     {
-      "id": "cl-0123",
-      "datetime": "2026-08-31T22:52:10Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "design",
-      "skill": "implement",
-      "title": "conn-8: terminal panes auto-register as coordination sessions via a reconcile loop",
-      "prompt": "do the next steps (conn-8)",
-      "summary": "Chose a snapshot-reconcile driver (register/heartbeat/end from the set of live terminal panes) over precise per-pane start/close hooks, because the ConPTY session starts async and there is no clean close event; the reconcile reads only immutable Core layout data so it is safe off the UI thread. Also fixed DC-043 (coordination session-end must mark the store, not only drop the id mapping).",
-      "rationale": "A reconcile from the current terminal surfaces is robust to the async terminal lifecycle and matches the existing reconcile-not-rebuild philosophy (DC-029); ends are eventually-consistent (<=2s) which is acceptable for liveness.",
       "artifacts": [
         "src/AiDe.Core/Watcher/SessionCoordinationEmitter.cs",
         "src/AiDe.App/Workbench/WorkbenchShell.cs"
       ],
-      "tags": [],
+      "datetime": "2026-08-31T22:52:10Z",
       "git": {
-        "before": "77f25c3d37317881e27e4e158c421c8e70aef7c4",
         "after": "77f25c3d37317881e27e4e158c421c8e70aef7c4",
+        "before": "77f25c3d37317881e27e4e158c421c8e70aef7c4",
         "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0123",
+      "kind": "design",
+      "prompt": "do the next steps (conn-8)",
+      "rationale": "A reconcile from the current terminal surfaces is robust to the async terminal lifecycle and matches the existing reconcile-not-rebuild philosophy (DC-029); ends are eventually-consistent (<=2s) which is acceptable for liveness.",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "implement",
+      "summary": "Chose a snapshot-reconcile driver (register/heartbeat/end from the set of live terminal panes) over precise per-pane start/close hooks, because the ConPTY session starts async and there is no clean close event; the reconcile reads only immutable Core layout data so it is safe off the UI thread. Also fixed DC-043 (coordination session-end must mark the store, not only drop the id mapping).",
+      "tags": [],
+      "title": "conn-8: terminal panes auto-register as coordination sessions via a reconcile loop"
     },
     {
-      "id": "cl-0124",
-      "datetime": "2026-08-31T23:44:25Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "design",
-      "skill": "implement",
-      "title": "conn-10: auto-score imported episodes honestly; a committed Proof Pack is the one verification signal",
-      "prompt": "/design -> /implement conn-10",
-      "summary": "Derive DeterministicEpisodeSignals from observable audit evidence: a docs/proof artifact sets HasVerificationPath (honest, non-fuzzy); acceptance stays null (unknown, no floor trip); guidance/coordination 0 (Not-Recorded). Proof-pack -> Partial (Focus only); no proof -> Not-Scored. operatorId = session id.",
-      "rationale": "The spec forbids fabricating a missing signal (L127); the only honest verification signal in an audit entry is a committed Proof Pack, so scores are honestly Partial/Not-Scored until richer telemetry.",
       "artifacts": [
         "docs/design/watcher-signals-derivation.md"
       ],
-      "tags": [],
+      "datetime": "2026-08-31T23:44:25Z",
       "git": {
-        "before": "93c4eee87a21401981365a8dbee3c22925666972",
         "after": "93c4eee87a21401981365a8dbee3c22925666972",
+        "before": "93c4eee87a21401981365a8dbee3c22925666972",
         "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0124",
+      "kind": "design",
+      "prompt": "/design -> /implement conn-10",
+      "rationale": "The spec forbids fabricating a missing signal (L127); the only honest verification signal in an audit entry is a committed Proof Pack, so scores are honestly Partial/Not-Scored until richer telemetry.",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "implement",
+      "summary": "Derive DeterministicEpisodeSignals from observable audit evidence: a docs/proof artifact sets HasVerificationPath (honest, non-fuzzy); acceptance stays null (unknown, no floor trip); guidance/coordination 0 (Not-Recorded). Proof-pack -> Partial (Focus only); no proof -> Not-Scored. operatorId = session id.",
+      "tags": [],
+      "title": "conn-10: auto-score imported episodes honestly; a committed Proof Pack is the one verification signal"
     },
     {
-      "id": "cl-0125",
-      "datetime": "2026-09-01T00:00:31Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "design",
-      "skill": "implement",
-      "title": "conn-11: operator raise-dispute command; cloud judge deferred behind egress opt-in + calibration",
-      "prompt": "/design -> /implement conn-11",
-      "summary": "A keyboard command raises an append-only dispute (rule 12) against the latest genuinely-scored episode; the score is never changed; a Not-Scored card is not disputable; operatorId is a fixed local constant (no human identity). The real cloud judge plugs into ScoreAndRecord's evaluator+registry, deferred behind an operator egress opt-in, credentials, and calibration.",
-      "rationale": "Disputes must be append-only recourse without mutating scores (rule 12); the cloud judge must not egress episode content without operator consent + calibration, so it stays documented-not-wired until those exist.",
       "artifacts": [
         "docs/design/watcher-dispute-command.md"
       ],
-      "tags": [],
+      "datetime": "2026-09-01T00:00:31Z",
       "git": {
-        "before": "5865e971729385c7b4efa76165cbe4112d452cef",
         "after": "5865e971729385c7b4efa76165cbe4112d452cef",
+        "before": "5865e971729385c7b4efa76165cbe4112d452cef",
         "branch": "feature/agent-watcher-substrate",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0125",
+      "kind": "design",
+      "prompt": "/design -> /implement conn-11",
+      "rationale": "Disputes must be append-only recourse without mutating scores (rule 12); the cloud judge must not egress episode content without operator consent + calibration, so it stays documented-not-wired until those exist.",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "implement",
+      "summary": "A keyboard command raises an append-only dispute (rule 12) against the latest genuinely-scored episode; the score is never changed; a Not-Scored card is not disputable; operatorId is a fixed local constant (no human identity). The real cloud judge plugs into ScoreAndRecord's evaluator+registry, deferred behind an operator egress opt-in, credentials, and calibration.",
+      "tags": [],
+      "title": "conn-11: operator raise-dispute command; cloud judge deferred behind egress opt-in + calibration"
     },
     {
-      "id": "cl-0128",
-      "datetime": "2026-09-01T02:41:16Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "kind": "design",
-      "skill": "implement",
-      "title": "t3/t4: signals telemetry convention + advisory-evaluator seam",
-      "prompt": "do tasks 2-4",
-      "summary": "An optional audit signals object lets an instrumented turn record what it observed; the deriver uses explicit-or-conservative-default (no fabrication). The auto-score path accepts an optional advisory evaluator + calibration registry; the on-device local heuristic folds the advisory dimensions when qualified, the cloud judge is the same seam behind an egress opt-in + creds.",
-      "rationale": "Richer scores without fabrication require the turn to record its own signals (spec L127); the advisory fold must stay gated on calibration (ADR-0019) and egress opt-in, so the seam is operator-configurable and off by default.",
       "artifacts": [
         "docs/design/watcher-signals-telemetry.md"
       ],
-      "tags": [],
+      "datetime": "2026-09-01T02:41:16Z",
       "git": {
-        "before": "c1241a814329f1409a1c6daa1e9d0d9e05ecd8a4",
         "after": "c1241a814329f1409a1c6daa1e9d0d9e05ecd8a4",
+        "before": "c1241a814329f1409a1c6daa1e9d0d9e05ecd8a4",
         "branch": "feature/watcher-richer-signals",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0128",
+      "kind": "design",
+      "prompt": "do tasks 2-4",
+      "rationale": "Richer scores without fabrication require the turn to record its own signals (spec L127); the advisory fold must stay gated on calibration (ADR-0019) and egress opt-in, so the seam is operator-configurable and off by default.",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "implement",
+      "summary": "An optional audit signals object lets an instrumented turn record what it observed; the deriver uses explicit-or-conservative-default (no fabrication). The auto-score path accepts an optional advisory evaluator + calibration registry; the on-device local heuristic folds the advisory dimensions when qualified, the cloud judge is the same seam behind an egress opt-in + creds.",
+      "tags": [],
+      "title": "t3/t4: signals telemetry convention + advisory-evaluator seam"
     },
     {
-      "id": "cl-0126",
-      "datetime": "2026-09-01T02:08:52Z",
-      "session": "phase3-pane-probes",
-      "kind": "decision",
-      "skill": "implement",
-      "title": "Bicep resource names: fold against declared defaults, never invent",
-      "prompt": "5: lets get going on both TypeScript and Bicep",
-      "summary": "A default-deny constant folder, not an interpreter. Folds param-with-literal-default, var, string interpolation and four pure string functions; refuses and COUNTS everything else. A folded name is Inferred, a quoted literal stays Verified. Loop count resolution not built (zero loops measured) and format() not folded (zero uses measured), for the same reason schema-changed-by-raw-sql was not built. Secure-parameter defaults are never folded, so a secret cannot reach the store through the graph. Verified against Azure's own what-if output.",
-      "rationale": "The measurement meant to size roadmap item 4 found a shipped fabrication instead: IsLiteral was a list of exclusions, so a bare identifier passed it and 10 of 27 resource names in the graph were identifier text (workspaceName) rather than names (theterrace-s00-log). The item was ranked Large, low value on the premise that the alternative to evaluation was honest disclosure; it was not.",
       "artifacts": [
         "src/AiDe.Core/Extraction/BicepConstantFolder.cs"
       ],
-      "tags": [],
+      "datetime": "2026-09-01T02:08:52Z",
       "git": {
-        "before": null,
         "after": "d26d2ff04c11619afe96fc5f4b427452e6bdf5c1",
+        "before": null,
         "branch": "session/phase3-pane-probes",
-        "pushed": false,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": false
+      },
+      "id": "cl-0126",
+      "kind": "decision",
+      "prompt": "5: lets get going on both TypeScript and Bicep",
+      "rationale": "The measurement meant to size roadmap item 4 found a shipped fabrication instead: IsLiteral was a list of exclusions, so a bare identifier passed it and 10 of 27 resource names in the graph were identifier text (workspaceName) rather than names (theterrace-s00-log). The item was ranked Large, low value on the premise that the alternative to evaluation was honest disclosure; it was not.",
+      "session": "phase3-pane-probes",
+      "skill": "implement",
+      "summary": "A default-deny constant folder, not an interpreter. Folds param-with-literal-default, var, string interpolation and four pure string functions; refuses and COUNTS everything else. A folded name is Inferred, a quoted literal stays Verified. Loop count resolution not built (zero loops measured) and format() not folded (zero uses measured), for the same reason schema-changed-by-raw-sql was not built. Secure-parameter defaults are never folded, so a secret cannot reach the store through the graph. Verified against Azure's own what-if output.",
+      "tags": [],
+      "title": "Bicep resource names: fold against declared defaults, never invent"
     },
     {
-      "id": "cl-0127",
-      "datetime": "2026-09-01T02:10:46Z",
-      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
-      "kind": "architecture",
-      "skill": "define-architecture",
-      "title": "Adopt named absolute dock zones (replace the proportional split tree)",
-      "prompt": "Phase 3 absolute dock zones; full specify->ui-design->define-architecture loop",
-      "summary": "ADR-0021: fixed Left/Right/Bottom/Center zones as stable containers; within-zone splits only; zone-scoped ops; expand-migrate-contract migration. Fixes DC-063 structurally.",
-      "rationale": "The split tree relocated unrelated panes on collapse and rebuilt the whole view; named zones make containment a model invariant, matching every mainstream IDE and the user's stated mental model.",
       "artifacts": [
         "docs/adr/0021-named-dock-zones.md"
       ],
-      "tags": [],
+      "datetime": "2026-09-01T02:10:46Z",
       "git": {
-        "before": "25aecba209b9c28f1f46b7e054a079d6cf6153ce",
         "after": "25aecba209b9c28f1f46b7e054a079d6cf6153ce",
+        "before": "25aecba209b9c28f1f46b7e054a079d6cf6153ce",
         "branch": "feature/app-facelift-and-graph-surfaces",
-        "pushed": true,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": true
+      },
+      "id": "cl-0127",
+      "kind": "architecture",
+      "prompt": "Phase 3 absolute dock zones; full specify->ui-design->define-architecture loop",
+      "rationale": "The split tree relocated unrelated panes on collapse and rebuilt the whole view; named zones make containment a model invariant, matching every mainstream IDE and the user's stated mental model.",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "skill": "define-architecture",
+      "summary": "ADR-0021: fixed Left/Right/Bottom/Center zones as stable containers; within-zone splits only; zone-scoped ops; expand-migrate-contract migration. Fixes DC-063 structurally.",
+      "tags": [],
+      "title": "Adopt named absolute dock zones (replace the proportional split tree)"
     },
     {
-      "id": "cl-01M1PKDXXDDXMXBRM29F8GAN3B",
-      "datetime": "2026-09-04T16:18:34Z",
-      "session": null,
-      "kind": "design",
-      "skill": "define-architecture",
-      "title": "MCP authorization is bound to session identity, not to a data-processing class",
-      "prompt": "agreed the utterance-vs-content split is overly conservative - the security veto is invalid",
-      "summary": "ADR-0022 supersedes ADR-0011's processing-class gate on MCP tools.",
-      "rationale": "An agent in AI-DE has a terminal in the workspace and can read any file directly. Denying it the same content through a tool removes no capability it already has and only makes the enlightened path weaker than the shell beside it. A control that constrains the polite interface while the impolite one is open is a tax on the well-behaved, not a boundary. Owner override of the Privacy hard veto; residual risk is any agent without a shell in the tree.",
       "artifacts": [
         "docs/adr/0022-mcp-authorization-is-not-an-exfiltration-control.md"
       ],
-      "tags": [],
+      "datetime": "2026-09-04T16:18:34Z",
       "git": {
-        "before": null,
         "after": "a019ce9fd7d9352e3e09608503730eee6c090b77",
+        "before": null,
         "branch": "feature/ui-experience-refinement",
-        "pushed": false,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": false
+      },
+      "id": "cl-01M1PKDXXDDXMXBRM29F8GAN3B",
+      "kind": "design",
+      "prompt": "agreed the utterance-vs-content split is overly conservative - the security veto is invalid",
+      "rationale": "An agent in AI-DE has a terminal in the workspace and can read any file directly. Denying it the same content through a tool removes no capability it already has and only makes the enlightened path weaker than the shell beside it. A control that constrains the polite interface while the impolite one is open is a tax on the well-behaved, not a boundary. Owner override of the Privacy hard veto; residual risk is any agent without a shell in the tree.",
+      "session": null,
+      "skill": "define-architecture",
+      "summary": "ADR-0022 supersedes ADR-0011's processing-class gate on MCP tools.",
+      "tags": [],
+      "title": "MCP authorization is bound to session identity, not to a data-processing class"
     },
     {
-      "id": "cl-01M1PMT4F2F11RNFP2ME5VHC4S",
-      "datetime": "2026-09-04T16:42:42Z",
-      "session": null,
-      "kind": "design",
-      "skill": "design-slice",
-      "title": "MCP is a client of the coordination contract, not a privileged insider",
-      "prompt": "do next steps including the optional step",
-      "summary": "First MCP slice designed: aide_whoami, aide_board_read, aide_board_post over stdio.",
-      "rationale": "The server writes the same JSONL an agent writes by hand and reads the store read-only, so it holds no authority an agent lacks. That is what makes the owner's participation-not-parity principle enforceable rather than aspirational: two paths can only be guaranteed equivalent when one is a translation of the other, and the equivalence is a gate.",
       "artifacts": [
         "docs/design/mcp-enlightened-path.md"
       ],
-      "tags": [],
+      "datetime": "2026-09-04T16:42:42Z",
       "git": {
-        "before": null,
         "after": "566086ae0f65705b7d7ca5ed1814811bc77ea181",
+        "before": null,
         "branch": "feature/ui-experience-refinement",
-        "pushed": false,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": false
+      },
+      "id": "cl-01M1PMT4F2F11RNFP2ME5VHC4S",
+      "kind": "design",
+      "prompt": "do next steps including the optional step",
+      "rationale": "The server writes the same JSONL an agent writes by hand and reads the store read-only, so it holds no authority an agent lacks. That is what makes the owner's participation-not-parity principle enforceable rather than aspirational: two paths can only be guaranteed equivalent when one is a translation of the other, and the equivalence is a gate.",
+      "session": null,
+      "skill": "design-slice",
+      "summary": "First MCP slice designed: aide_whoami, aide_board_read, aide_board_post over stdio.",
+      "tags": [],
+      "title": "MCP is a client of the coordination contract, not a privileged insider"
     },
     {
-      "id": "cl-01M2964CX6490AR9XPRCH73EMD",
-      "datetime": "2026-09-11T21:31:44Z",
-      "session": "addendum-d-chain",
-      "kind": "spec",
-      "skill": "specify",
-      "title": "Addendum D — the compile step's data model, security boundary and phasing settled",
-      "prompt": "Addendum D — The Compile Step: typed text becomes a compiled envelope through a mechanical pre-compile, an agentic compile on the session-bound model, and an operator Prepare stage; settings vs compile context vs decorations",
-      "summary": "Prompt Compilation bounded context: an event-grained append-only envelope store (.aide/sessions/<id>/envelope-events.jsonl; the envelope is the fold; the lease, shape, tier and effective fan-out are projections); the craft profile a Type-2 dimension; the compile session's tools pinned by the host (a compile session is not toolless by default) with a spike gating every agentic rung; compile modes mechanical-only | agentic-advisory | agentic; six proposed rulings for the Owner.",
-      "rationale": "The data model is the highest-priority decision (DM1); the Data & Persistence Architect corrected the conductor's row-per-turn candidate to event grain and the lease to a projection (DM-A); Security found the proposal's no-tools premise false in adapter 0.75.1's source; the AI Systems Engineer's eval gate binds every agentic rung.",
       "artifacts": [
         "docs/specs/addendum-d-compile-step.md"
       ],
+      "audit_ref": "al-01M29642AFD8BYVDQCWFZBQ88Z",
+      "datetime": "2026-09-11T21:31:44Z",
+      "git": {
+        "after": "ca069ba506b5d3c76f43c6e7d3c8ebec40f609e5",
+        "before": "ca069ba5",
+        "branch": "feature/addendum-d",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2964CX6490AR9XPRCH73EMD",
+      "kind": "spec",
+      "prompt": "Addendum D — The Compile Step: typed text becomes a compiled envelope through a mechanical pre-compile, an agentic compile on the session-bound model, and an operator Prepare stage; settings vs compile context vs decorations",
+      "rationale": "The data model is the highest-priority decision (DM1); the Data & Persistence Architect corrected the conductor's row-per-turn candidate to event grain and the lease to a projection (DM-A); Security found the proposal's no-tools premise false in adapter 0.75.1's source; the AI Systems Engineer's eval gate binds every agentic rung.",
+      "session": "addendum-d-chain",
+      "skill": "specify",
+      "summary": "Prompt Compilation bounded context: an event-grained append-only envelope store (.aide/sessions/<id>/envelope-events.jsonl; the envelope is the fold; the lease, shape, tier and effective fan-out are projections); the craft profile a Type-2 dimension; the compile session's tools pinned by the host (a compile session is not toolless by default) with a spike gating every agentic rung; compile modes mechanical-only | agentic-advisory | agentic; six proposed rulings for the Owner.",
       "tags": [
         "addendum-d"
       ],
-      "git": {
-        "before": "ca069ba5",
-        "after": "ca069ba506b5d3c76f43c6e7d3c8ebec40f609e5",
-        "branch": "feature/addendum-d",
-        "pushed": null,
-        "commits": []
-      },
-      "audit_ref": "al-01M29642AFD8BYVDQCWFZBQ88Z"
+      "title": "Addendum D — the compile step's data model, security boundary and phasing settled"
     },
     {
-      "id": "cl-01M29CW734WAE5VACNN1YJM9FM",
-      "datetime": "2026-09-11T23:29:36Z",
-      "session": "addendum-c-chain",
-      "kind": "architecture",
-      "skill": "define-architecture",
-      "title": "ADR-0017 accepted as amended (Ruling 52): perspectives are primary view modes; a body may be a docking host; the second-host clause discharged; a docking command while a full-window body is on screen switches back (DC-148)",
-      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
-      "summary": "ADR-0017 moves from proposed to accepted-as-amended in five clauses: the closed set is the Perspective set (Coding, Explore, Architecture); Architecture is a second AvalonDock host; Explore stays full-window; a mode that unparents the docking host switches back for a docking command, document first, through one shell seam (INV-0009); one layout slot per host. The Inferred second-host clause is discharged by spikes/second-dock-host-unparent (PASS).",
-      "rationale": "Ruling 52 retained and amended rather than superseded; the spike observed the same CoreWebView2, page state and raw HWND across cycles; INV-0009 reproduced DC-148 red.",
       "artifacts": [
         "docs/adr/0017-primary-view-mode.md",
         "spikes/second-dock-host-unparent/RESULT.md",
         "docs/architecture.md"
       ],
-      "tags": [
-        "addendum-c",
-        "addendum-d"
-      ],
+      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9",
+      "datetime": "2026-09-11T23:29:36Z",
       "git": {
-        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "after": "808224647cdfd8fdef9909feac1750562d886698",
+        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "branch": "feature/addendum-c",
-        "pushed": false,
         "commits": [
           "80822464 Merge remote-tracking branch 'origin/main' into feature/addendum-c",
           "1ab56904 wip: architecture artifacts before the main merge (squashed into the close commits)",
@@ -16351,33 +16473,33 @@ window.AUDIT_DATA = {
           "ffb3b3aa Merge fix/lease-source-text â€” Ruling 66: the lease derives from the editor's source text only (DC-146)",
           "00e0e520 fix(composer): Ruling 66 â€” lease derivation reads the editor's source text, never the render (F-2)",
           "1aadde84 docs(rulings,specs): Ruling 72 â€” budget subscription-bounded by default, task class free-form, the auto-allow stays"
-        ]
+        ],
+        "pushed": false
       },
-      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
+      "id": "cl-01M29CW734WAE5VACNN1YJM9FM",
+      "kind": "architecture",
+      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
+      "rationale": "Ruling 52 retained and amended rather than superseded; the spike observed the same CoreWebView2, page state and raw HWND across cycles; INV-0009 reproduced DC-148 red.",
+      "session": "addendum-c-chain",
+      "skill": "define-architecture",
+      "summary": "ADR-0017 moves from proposed to accepted-as-amended in five clauses: the closed set is the Perspective set (Coding, Explore, Architecture); Architecture is a second AvalonDock host; Explore stays full-window; a mode that unparents the docking host switches back for a docking command, document first, through one shell seam (INV-0009); one layout slot per host. The Inferred second-host clause is discharged by spikes/second-dock-host-unparent (PASS).",
+      "tags": [
+        "addendum-c",
+        "addendum-d"
+      ],
+      "title": "ADR-0017 accepted as amended (Ruling 52): perspectives are primary view modes; a body may be a docking host; the second-host clause discharged; a docking command while a full-window body is on screen switches back (DC-148)"
     },
     {
-      "id": "cl-01M29CW77XATX7Y83JWCASE31S",
-      "datetime": "2026-09-11T23:29:36Z",
-      "session": "addendum-c-chain",
-      "kind": "architecture",
-      "skill": "define-architecture",
-      "title": "ADR-0013 amended: one zone-envelope file per host perspective; drop-with-report at restore; the refused or migrated file preserved by atomic replace with backup",
-      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
-      "summary": "The workbench layout envelope gains one file per host perspective in the existing schema (Coding keeps today's file; Architecture a sibling); an inadmissible kind is dropped at restore with a report; the original is preserved as a .bak by File.Replace before the first rewriting save; rollback is a golden round-trip against a frozen schema-1 DTO. Decided as ADR-0032.",
-      "rationale": "Expand-only with no schema bump: the zone store has no migration chain, so a slots map would have discarded every arrangement and refused rollback.",
       "artifacts": [
         "docs/adr/0013-layout-persistence-envelope.md",
         "docs/adr/0032-perspective-layout-slots.md"
       ],
-      "tags": [
-        "addendum-c",
-        "addendum-d"
-      ],
+      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9",
+      "datetime": "2026-09-11T23:29:36Z",
       "git": {
-        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "after": "808224647cdfd8fdef9909feac1750562d886698",
+        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "branch": "feature/addendum-c",
-        "pushed": false,
         "commits": [
           "80822464 Merge remote-tracking branch 'origin/main' into feature/addendum-c",
           "1ab56904 wip: architecture artifacts before the main merge (squashed into the close commits)",
@@ -16388,32 +16510,32 @@ window.AUDIT_DATA = {
           "ffb3b3aa Merge fix/lease-source-text â€” Ruling 66: the lease derives from the editor's source text only (DC-146)",
           "00e0e520 fix(composer): Ruling 66 â€” lease derivation reads the editor's source text, never the render (F-2)",
           "1aadde84 docs(rulings,specs): Ruling 72 â€” budget subscription-bounded by default, task class free-form, the auto-allow stays"
-        ]
+        ],
+        "pushed": false
       },
-      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
+      "id": "cl-01M29CW77XATX7Y83JWCASE31S",
+      "kind": "architecture",
+      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
+      "rationale": "Expand-only with no schema bump: the zone store has no migration chain, so a slots map would have discarded every arrangement and refused rollback.",
+      "session": "addendum-c-chain",
+      "skill": "define-architecture",
+      "summary": "The workbench layout envelope gains one file per host perspective in the existing schema (Coding keeps today's file; Architecture a sibling); an inadmissible kind is dropped at restore with a report; the original is preserved as a .bak by File.Replace before the first rewriting save; rollback is a golden round-trip against a frozen schema-1 DTO. Decided as ADR-0032.",
+      "tags": [
+        "addendum-c",
+        "addendum-d"
+      ],
+      "title": "ADR-0013 amended: one zone-envelope file per host perspective; drop-with-report at restore; the refused or migrated file preserved by atomic replace with backup"
     },
     {
-      "id": "cl-01M29CW7CM5TJW1P53WVNXR0E5",
-      "datetime": "2026-09-11T23:29:36Z",
-      "session": "addendum-c-chain",
-      "kind": "architecture",
-      "skill": "define-architecture",
-      "title": "ADR-0030: the Perspective set is a closed Core row set; the allow-list is a column on the App kind rows; menu, palette, rail and routing are derived from the join",
-      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
-      "summary": "Three Perspective rows in Core (id, order, body kind, command, routing order Architecture then Coding); an explicit non-empty Perspectives column plus Instances on every SurfaceContentFactory.Kinds row; one App derivation (PerspectiveMenu.For) feeds the rail, the View radio, the New/Show entries, the palette and the routed kind-open; ShellViewMode renamed Perspective only in the implementing commit.",
-      "rationale": "Rulings 22, 50, 52c, 55b: kinds are rows, the allow-list is a column, the menu is derived — never a second list; a per-command Modes column would be a second home.",
       "artifacts": [
         "docs/adr/0030-perspective-registry-and-allow-lists.md"
       ],
-      "tags": [
-        "addendum-c",
-        "addendum-d"
-      ],
+      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9",
+      "datetime": "2026-09-11T23:29:36Z",
       "git": {
-        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "after": "808224647cdfd8fdef9909feac1750562d886698",
+        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "branch": "feature/addendum-c",
-        "pushed": false,
         "commits": [
           "80822464 Merge remote-tracking branch 'origin/main' into feature/addendum-c",
           "1ab56904 wip: architecture artifacts before the main merge (squashed into the close commits)",
@@ -16424,33 +16546,33 @@ window.AUDIT_DATA = {
           "ffb3b3aa Merge fix/lease-source-text â€” Ruling 66: the lease derives from the editor's source text only (DC-146)",
           "00e0e520 fix(composer): Ruling 66 â€” lease derivation reads the editor's source text, never the render (F-2)",
           "1aadde84 docs(rulings,specs): Ruling 72 â€” budget subscription-bounded by default, task class free-form, the auto-allow stays"
-        ]
+        ],
+        "pushed": false
       },
-      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
+      "id": "cl-01M29CW7CM5TJW1P53WVNXR0E5",
+      "kind": "architecture",
+      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
+      "rationale": "Rulings 22, 50, 52c, 55b: kinds are rows, the allow-list is a column, the menu is derived — never a second list; a per-command Modes column would be a second home.",
+      "session": "addendum-c-chain",
+      "skill": "define-architecture",
+      "summary": "Three Perspective rows in Core (id, order, body kind, command, routing order Architecture then Coding); an explicit non-empty Perspectives column plus Instances on every SurfaceContentFactory.Kinds row; one App derivation (PerspectiveMenu.For) feeds the rail, the View radio, the New/Show entries, the palette and the routed kind-open; ShellViewMode renamed Perspective only in the implementing commit.",
+      "tags": [
+        "addendum-c",
+        "addendum-d"
+      ],
+      "title": "ADR-0030: the Perspective set is a closed Core row set; the allow-list is a column on the App kind rows; menu, palette, rail and routing are derived from the join"
     },
     {
-      "id": "cl-01M29CW7HM3DW2F9RJJCAVWJVA",
-      "datetime": "2026-09-11T23:29:36Z",
-      "session": "addendum-c-chain",
-      "kind": "architecture",
-      "skill": "define-architecture",
-      "title": "ADR-0031: Architecture is a second AvalonDock host composed as a DockHost record twice; one WorkbenchController per host; the router stays in the presenter, bounded",
-      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
-      "summary": "A DockHost record (manager, adapter, zone service, controller, rails, persistence) built by one parameterised factory and composed for Coding and Architecture under the ADR-0017 presenter; one controller per host over its own service; PerspectiveShell routes Execute(id) to the active host, runs entry verbs document-first-then-Coding, and generalises INV-0009's DocumentOpening seam; the thirteen opener delegates collapse to one routed OpenKind; the allow-list is enforced by each host's layout service.",
-      "rationale": "The Owner's residual (one controller or two) decided: a swapped service would strand a resize session and focused ids; the Tech Lead ruled the router bounded in the presenter and the record over twelve parallel fields.",
       "artifacts": [
         "docs/adr/0031-second-docking-host.md",
         "docs/notes/addendum-cd-web-surface-host-sharing.md"
       ],
-      "tags": [
-        "addendum-c",
-        "addendum-d"
-      ],
+      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9",
+      "datetime": "2026-09-11T23:29:36Z",
       "git": {
-        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "after": "808224647cdfd8fdef9909feac1750562d886698",
+        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "branch": "feature/addendum-c",
-        "pushed": false,
         "commits": [
           "80822464 Merge remote-tracking branch 'origin/main' into feature/addendum-c",
           "1ab56904 wip: architecture artifacts before the main merge (squashed into the close commits)",
@@ -16461,32 +16583,32 @@ window.AUDIT_DATA = {
           "ffb3b3aa Merge fix/lease-source-text â€” Ruling 66: the lease derives from the editor's source text only (DC-146)",
           "00e0e520 fix(composer): Ruling 66 â€” lease derivation reads the editor's source text, never the render (F-2)",
           "1aadde84 docs(rulings,specs): Ruling 72 â€” budget subscription-bounded by default, task class free-form, the auto-allow stays"
-        ]
+        ],
+        "pushed": false
       },
-      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
+      "id": "cl-01M29CW7HM3DW2F9RJJCAVWJVA",
+      "kind": "architecture",
+      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
+      "rationale": "The Owner's residual (one controller or two) decided: a swapped service would strand a resize session and focused ids; the Tech Lead ruled the router bounded in the presenter and the record over twelve parallel fields.",
+      "session": "addendum-c-chain",
+      "skill": "define-architecture",
+      "summary": "A DockHost record (manager, adapter, zone service, controller, rails, persistence) built by one parameterised factory and composed for Coding and Architecture under the ADR-0017 presenter; one controller per host over its own service; PerspectiveShell routes Execute(id) to the active host, runs entry verbs document-first-then-Coding, and generalises INV-0009's DocumentOpening seam; the thirteen opener delegates collapse to one routed OpenKind; the allow-list is enforced by each host's layout service.",
+      "tags": [
+        "addendum-c",
+        "addendum-d"
+      ],
+      "title": "ADR-0031: Architecture is a second AvalonDock host composed as a DockHost record twice; one WorkbenchController per host; the router stays in the presenter, bounded"
     },
     {
-      "id": "cl-01M29CW7PCZCT6GW1Y7TQEH2QN",
-      "datetime": "2026-09-11T23:29:36Z",
-      "session": "addendum-c-chain",
-      "kind": "architecture",
-      "skill": "define-architecture",
-      "title": "ADR-0032: one zone-envelope file per host perspective, expand-only; drop-with-report; atomic replace with backup; tested rollback against a frozen DTO",
-      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
-      "summary": "Coding's slot is today's file (byte-compatible at read); Architecture gets a sibling; SlotPathFor is the one key-to-path map; drop-with-report is the host service's restore filter; File.Replace(temp, dest, backup) preserves the pre-perspective bytes once and a refused file before the slot's first save; a newer schema or corrupt file is refused with a reason; rollback is asserted against a frozen schema-1 DTO copy plus a constructor-parameter reflection check.",
-      "rationale": "The D&P Architect's conditions: a verified copy beside a non-atomic write still tears the file; a refused file overwritten at exit is a silent discard; the pre-ADR reader is a binary a test cannot run.",
       "artifacts": [
         "docs/adr/0032-perspective-layout-slots.md"
       ],
-      "tags": [
-        "addendum-c",
-        "addendum-d"
-      ],
+      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9",
+      "datetime": "2026-09-11T23:29:36Z",
       "git": {
-        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "after": "808224647cdfd8fdef9909feac1750562d886698",
+        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "branch": "feature/addendum-c",
-        "pushed": false,
         "commits": [
           "80822464 Merge remote-tracking branch 'origin/main' into feature/addendum-c",
           "1ab56904 wip: architecture artifacts before the main merge (squashed into the close commits)",
@@ -16497,33 +16619,33 @@ window.AUDIT_DATA = {
           "ffb3b3aa Merge fix/lease-source-text â€” Ruling 66: the lease derives from the editor's source text only (DC-146)",
           "00e0e520 fix(composer): Ruling 66 â€” lease derivation reads the editor's source text, never the render (F-2)",
           "1aadde84 docs(rulings,specs): Ruling 72 â€” budget subscription-bounded by default, task class free-form, the auto-allow stays"
-        ]
+        ],
+        "pushed": false
       },
-      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
+      "id": "cl-01M29CW7PCZCT6GW1Y7TQEH2QN",
+      "kind": "architecture",
+      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
+      "rationale": "The D&P Architect's conditions: a verified copy beside a non-atomic write still tears the file; a refused file overwritten at exit is a silent discard; the pre-ADR reader is a binary a test cannot run.",
+      "session": "addendum-c-chain",
+      "skill": "define-architecture",
+      "summary": "Coding's slot is today's file (byte-compatible at read); Architecture gets a sibling; SlotPathFor is the one key-to-path map; drop-with-report is the host service's restore filter; File.Replace(temp, dest, backup) preserves the pre-perspective bytes once and a refused file before the slot's first save; a newer schema or corrupt file is refused with a reason; rollback is asserted against a frozen schema-1 DTO copy plus a constructor-parameter reflection check.",
+      "tags": [
+        "addendum-c",
+        "addendum-d"
+      ],
+      "title": "ADR-0032: one zone-envelope file per host perspective, expand-only; drop-with-report; atomic replace with backup; tested rollback against a frozen DTO"
     },
     {
-      "id": "cl-01M29CW7V64FRRRMKDFX6C0NJY",
-      "datetime": "2026-09-11T23:29:37Z",
-      "session": "addendum-c-chain",
-      "kind": "architecture",
-      "skill": "define-architecture",
-      "title": "ADR-0033: Prompt Compilation is a bounded context in AiDe.Core with one seam; Project() is the sole assembler with three named call sites; budget is an optional cap as a Special Case; task class defaults to free-form with recorded provenance",
-      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
-      "summary": "AiDe.Core/Compilation owns the envelope, the fold, PreCompile, the typed boundary, the embedded compile contract and the store; ComposerSendGate.Send passes Project(Fold(events)) into the unchanged GovernedRunRequest; Project() reads only the fold (an incomplete fold goes stale and appends a fresh ceilings row); budget_cap none projects as RunBudget.SubscriptionBounded, a value predicate rendered in words; TaskClasses.FreeForm is the default with task_class_source as an expand-only cohort attribute; projection_sha hashes Current(task_class).value and source; LeaseDerivation gains one internal HasMention; the compile events carry origin in Ext, never a key pun.",
-      "rationale": "Ruling 72 leaves the representation of subscription-bounded to the architecture with a falsifying test; DM11 b/c require an offline-rebuildable projection; US-D12 fixes the contract as unchanged.",
       "artifacts": [
         "docs/adr/0033-prompt-compilation-bounded-context.md",
         "docs/adr/0028-mode-cohort-not-partition.md"
       ],
-      "tags": [
-        "addendum-c",
-        "addendum-d"
-      ],
+      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9",
+      "datetime": "2026-09-11T23:29:37Z",
       "git": {
-        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "after": "808224647cdfd8fdef9909feac1750562d886698",
+        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "branch": "feature/addendum-c",
-        "pushed": false,
         "commits": [
           "80822464 Merge remote-tracking branch 'origin/main' into feature/addendum-c",
           "1ab56904 wip: architecture artifacts before the main merge (squashed into the close commits)",
@@ -16534,32 +16656,32 @@ window.AUDIT_DATA = {
           "ffb3b3aa Merge fix/lease-source-text â€” Ruling 66: the lease derives from the editor's source text only (DC-146)",
           "00e0e520 fix(composer): Ruling 66 â€” lease derivation reads the editor's source text, never the render (F-2)",
           "1aadde84 docs(rulings,specs): Ruling 72 â€” budget subscription-bounded by default, task class free-form, the auto-allow stays"
-        ]
+        ],
+        "pushed": false
       },
-      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
+      "id": "cl-01M29CW7V64FRRRMKDFX6C0NJY",
+      "kind": "architecture",
+      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
+      "rationale": "Ruling 72 leaves the representation of subscription-bounded to the architecture with a falsifying test; DM11 b/c require an offline-rebuildable projection; US-D12 fixes the contract as unchanged.",
+      "session": "addendum-c-chain",
+      "skill": "define-architecture",
+      "summary": "AiDe.Core/Compilation owns the envelope, the fold, PreCompile, the typed boundary, the embedded compile contract and the store; ComposerSendGate.Send passes Project(Fold(events)) into the unchanged GovernedRunRequest; Project() reads only the fold (an incomplete fold goes stale and appends a fresh ceilings row); budget_cap none projects as RunBudget.SubscriptionBounded, a value predicate rendered in words; TaskClasses.FreeForm is the default with task_class_source as an expand-only cohort attribute; projection_sha hashes Current(task_class).value and source; LeaseDerivation gains one internal HasMention; the compile events carry origin in Ext, never a key pun.",
+      "tags": [
+        "addendum-c",
+        "addendum-d"
+      ],
+      "title": "ADR-0033: Prompt Compilation is a bounded context in AiDe.Core with one seam; Project() is the sole assembler with three named call sites; budget is an optional cap as a Special Case; task class defaults to free-form with recorded provenance"
     },
     {
-      "id": "cl-01M29CW7ZZMQ21YBJENSS403Q3",
-      "datetime": "2026-09-11T23:29:37Z",
-      "session": "addendum-c-chain",
-      "kind": "architecture",
-      "skill": "define-architecture",
-      "title": "ADR-0034: the compiled-envelope store is an append-only, exclusively written, sha-chained JSONL sidecar owned by the session document; a broken chain refuses the writer; purge deletes the file; the Session delete cascades under the held handle",
-      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
-      "summary": "EnvelopeStore exposes Append and a reader; the session document opens it FileShare.None and disposes it at close; the writer walks every line's key on open regardless of schema and refuses to append past a broken chain; the open emits bytes/rows/walk_ms; an Append failure degrades to mechanical-only; the eval corpus and the Proof Pack are projections; aide session purge deletes the file only, and Addendum A's session delete removes the envelope file under the held handle before the siblings; a run outliving its document yields consumed{not recorded, document closed}.",
-      "rationale": "Promotes note-addendum-d-envelope-store per its own rule; the D&P Architect's two Blockers (duplicate keys past a break; a live-setting read) are closed by rule and test.",
       "artifacts": [
         "docs/adr/0034-envelope-event-store.md"
       ],
-      "tags": [
-        "addendum-c",
-        "addendum-d"
-      ],
+      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9",
+      "datetime": "2026-09-11T23:29:37Z",
       "git": {
-        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "after": "808224647cdfd8fdef9909feac1750562d886698",
+        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "branch": "feature/addendum-c",
-        "pushed": false,
         "commits": [
           "80822464 Merge remote-tracking branch 'origin/main' into feature/addendum-c",
           "1ab56904 wip: architecture artifacts before the main merge (squashed into the close commits)",
@@ -16570,35 +16692,35 @@ window.AUDIT_DATA = {
           "ffb3b3aa Merge fix/lease-source-text â€” Ruling 66: the lease derives from the editor's source text only (DC-146)",
           "00e0e520 fix(composer): Ruling 66 â€” lease derivation reads the editor's source text, never the render (F-2)",
           "1aadde84 docs(rulings,specs): Ruling 72 â€” budget subscription-bounded by default, task class free-form, the auto-allow stays"
-        ]
+        ],
+        "pushed": false
       },
-      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
+      "id": "cl-01M29CW7ZZMQ21YBJENSS403Q3",
+      "kind": "architecture",
+      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
+      "rationale": "Promotes note-addendum-d-envelope-store per its own rule; the D&P Architect's two Blockers (duplicate keys past a break; a live-setting read) are closed by rule and test.",
+      "session": "addendum-c-chain",
+      "skill": "define-architecture",
+      "summary": "EnvelopeStore exposes Append and a reader; the session document opens it FileShare.None and disposes it at close; the writer walks every line's key on open regardless of schema and refuses to append past a broken chain; the open emits bytes/rows/walk_ms; an Append failure degrades to mechanical-only; the eval corpus and the Proof Pack are projections; aide session purge deletes the file only, and Addendum A's session delete removes the envelope file under the held handle before the siblings; a run outliving its document yields consumed{not recorded, document closed}.",
+      "tags": [
+        "addendum-c",
+        "addendum-d"
+      ],
+      "title": "ADR-0034: the compiled-envelope store is an append-only, exclusively written, sha-chained JSONL sidecar owned by the session document; a broken chain refuses the writer; purge deletes the file; the Session delete cascades under the held handle"
     },
     {
-      "id": "cl-01M29CW84Q3821VT0PBJEAGEK9",
-      "datetime": "2026-09-11T23:29:37Z",
-      "session": "addendum-c-chain",
-      "kind": "architecture",
-      "skill": "define-architecture",
-      "title": "ADR-0035: the agentic compile is one pinned ACP session on the bound engine, composed by CompileCallHost apart from the run root, with a pin triple and AuthorizeBinding",
-      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
-      "summary": "CompileCallHost composes ResolveLaunch, process, peer, client, AuthorizeBinding (the identity half of Authorize, factored because Authorize validates a block the compile exists to fill), NewSessionAsync(cwd, LaneSessionOptions.Compile), prompt under one linked 60 s deadline, counts; it opens compile-call.compose so CompositionRootLedger.Roots reads 0; the pin is a triple (adapter sha, SDK version, CLI binary sha) verified per call with CLAUDE_CODE_EXECUTABLE stripped; the settings deny belt is admitted only by P-D5; the hooks residual is measured on a never-trusted fixture; a Cost Model is recorded.",
-      "rationale": "Rulings 65, 68, 71; the adapter contract verified in source (spikes/compile-session-tool-pin); the Security Architect's nine conditions and the Tech Lead's rulings on the shared handshake and the ledger.",
       "artifacts": [
         "docs/adr/0035-compile-session-binding-and-pin.md",
         "docs/notes/addendum-cd-second-entry-point-ledger.md",
         "spikes/compile-session-tool-pin/RESULT.md",
         "docs/architecture/agent-plane.md"
       ],
-      "tags": [
-        "addendum-c",
-        "addendum-d"
-      ],
+      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9",
+      "datetime": "2026-09-11T23:29:37Z",
       "git": {
-        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "after": "808224647cdfd8fdef9909feac1750562d886698",
+        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "branch": "feature/addendum-c",
-        "pushed": false,
         "commits": [
           "80822464 Merge remote-tracking branch 'origin/main' into feature/addendum-c",
           "1ab56904 wip: architecture artifacts before the main merge (squashed into the close commits)",
@@ -16609,32 +16731,32 @@ window.AUDIT_DATA = {
           "ffb3b3aa Merge fix/lease-source-text â€” Ruling 66: the lease derives from the editor's source text only (DC-146)",
           "00e0e520 fix(composer): Ruling 66 â€” lease derivation reads the editor's source text, never the render (F-2)",
           "1aadde84 docs(rulings,specs): Ruling 72 â€” budget subscription-bounded by default, task class free-form, the auto-allow stays"
-        ]
+        ],
+        "pushed": false
       },
-      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
+      "id": "cl-01M29CW84Q3821VT0PBJEAGEK9",
+      "kind": "architecture",
+      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
+      "rationale": "Rulings 65, 68, 71; the adapter contract verified in source (spikes/compile-session-tool-pin); the Security Architect's nine conditions and the Tech Lead's rulings on the shared handshake and the ledger.",
+      "session": "addendum-c-chain",
+      "skill": "define-architecture",
+      "summary": "CompileCallHost composes ResolveLaunch, process, peer, client, AuthorizeBinding (the identity half of Authorize, factored because Authorize validates a block the compile exists to fill), NewSessionAsync(cwd, LaneSessionOptions.Compile), prompt under one linked 60 s deadline, counts; it opens compile-call.compose so CompositionRootLedger.Roots reads 0; the pin is a triple (adapter sha, SDK version, CLI binary sha) verified per call with CLAUDE_CODE_EXECUTABLE stripped; the settings deny belt is admitted only by P-D5; the hooks residual is measured on a never-trusted fixture; a Cost Model is recorded.",
+      "tags": [
+        "addendum-c",
+        "addendum-d"
+      ],
+      "title": "ADR-0035: the agentic compile is one pinned ACP session on the bound engine, composed by CompileCallHost apart from the run root, with a pin triple and AuthorizeBinding"
     },
     {
-      "id": "cl-01M29CW89E6PDFG6TT4YXVVN5M",
-      "datetime": "2026-09-11T23:29:37Z",
-      "session": "addendum-c-chain",
-      "kind": "architecture",
-      "skill": "define-architecture",
-      "title": "ADR-0036: the compile-mode ladder is a set of runtime deployment gates behind the eval — the pin artifact recounted, the admission report recomputed by the reader over a witnessed holdout, the A6 ring, the drift detector with readmitted_at as its watermark",
-      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
-      "summary": "Gate 1 is a staleness gate on the machine-level pin artifact with the frame log recounted; Gate 2 carries numerators and denominators the settings model recomputes against a host-owned floor table (including a degraded-rate floor and the bound model in the tuple) over a witnessed sample/holdout split; Gate 3 is the A6 ring with carried behavioural floors; the drift detector demotes on a trigger and re-admits only by re-run; agentic-advisory is shadow mode; committed fixtures are affirmed; the harness calls the product's own fold.",
-      "rationale": "The AI Systems Engineer's hard veto: no model-backed capability without an eval; the gates must be artifacts the product verifies, never a flag.",
       "artifacts": [
         "docs/adr/0036-compile-mode-ladder-deployment-gates.md"
       ],
-      "tags": [
-        "addendum-c",
-        "addendum-d"
-      ],
+      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9",
+      "datetime": "2026-09-11T23:29:37Z",
       "git": {
-        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "after": "808224647cdfd8fdef9909feac1750562d886698",
+        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "branch": "feature/addendum-c",
-        "pushed": false,
         "commits": [
           "80822464 Merge remote-tracking branch 'origin/main' into feature/addendum-c",
           "1ab56904 wip: architecture artifacts before the main merge (squashed into the close commits)",
@@ -16645,32 +16767,32 @@ window.AUDIT_DATA = {
           "ffb3b3aa Merge fix/lease-source-text â€” Ruling 66: the lease derives from the editor's source text only (DC-146)",
           "00e0e520 fix(composer): Ruling 66 â€” lease derivation reads the editor's source text, never the render (F-2)",
           "1aadde84 docs(rulings,specs): Ruling 72 â€” budget subscription-bounded by default, task class free-form, the auto-allow stays"
-        ]
+        ],
+        "pushed": false
       },
-      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
+      "id": "cl-01M29CW89E6PDFG6TT4YXVVN5M",
+      "kind": "architecture",
+      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
+      "rationale": "The AI Systems Engineer's hard veto: no model-backed capability without an eval; the gates must be artifacts the product verifies, never a flag.",
+      "session": "addendum-c-chain",
+      "skill": "define-architecture",
+      "summary": "Gate 1 is a staleness gate on the machine-level pin artifact with the frame log recounted; Gate 2 carries numerators and denominators the settings model recomputes against a host-owned floor table (including a degraded-rate floor and the bound model in the tuple) over a witnessed sample/holdout split; Gate 3 is the A6 ring with carried behavioural floors; the drift detector demotes on a trigger and re-admits only by re-run; agentic-advisory is shadow mode; committed fixtures are affirmed; the harness calls the product's own fold.",
+      "tags": [
+        "addendum-c",
+        "addendum-d"
+      ],
+      "title": "ADR-0036: the compile-mode ladder is a set of runtime deployment gates behind the eval — the pin artifact recounted, the admission report recomputed by the reader over a witnessed holdout, the A6 ring, the drift detector with readmitted_at as its watermark"
     },
     {
-      "id": "cl-01M29CW8ECKHX3EBB2TTT0Q3E1",
-      "datetime": "2026-09-11T23:29:37Z",
-      "session": "addendum-c-chain",
-      "kind": "architecture",
-      "skill": "define-architecture",
-      "title": "ADR-0037: the family craft profile is a Type-2 dimension — one immutable pack-owned file per version, content-canonicalised sha, a manifest registry row, applied as a template in v1",
-      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
-      "summary": "craft-profiles/<family>@<version>.md in the pack's knowledge tree with a manifest.json (family, version, sha) row the bundle test recomputes; the sha is over the four content sections canonicalised (LF, trailing whitespace stripped, frontmatter excluded) so maintenance fields stay Type-1 and one version has one sha on every consumer; a shared canonicalisation fixture binds the C# and pack implementations; selection is mechanical, none is a named state, a missing version reads profile not recorded.",
-      "rationale": "The D&P Architect's Blocker at the spec gate (Type-2 declared, Type-1 realised) and pass-2 conditions at this gate; Ruling 69 keeps framing mechanical in v1.",
       "artifacts": [
         "docs/adr/0037-family-craft-profile-dimension.md"
       ],
-      "tags": [
-        "addendum-c",
-        "addendum-d"
-      ],
+      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9",
+      "datetime": "2026-09-11T23:29:37Z",
       "git": {
-        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "after": "808224647cdfd8fdef9909feac1750562d886698",
+        "before": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
         "branch": "feature/addendum-c",
-        "pushed": false,
         "commits": [
           "80822464 Merge remote-tracking branch 'origin/main' into feature/addendum-c",
           "1ab56904 wip: architecture artifacts before the main merge (squashed into the close commits)",
@@ -16681,9 +16803,53 @@ window.AUDIT_DATA = {
           "ffb3b3aa Merge fix/lease-source-text â€” Ruling 66: the lease derives from the editor's source text only (DC-146)",
           "00e0e520 fix(composer): Ruling 66 â€” lease derivation reads the editor's source text, never the render (F-2)",
           "1aadde84 docs(rulings,specs): Ruling 72 â€” budget subscription-bounded by default, task class free-form, the auto-allow stays"
-        ]
+        ],
+        "pushed": false
       },
-      "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
+      "id": "cl-01M29CW8ECKHX3EBB2TTT0Q3E1",
+      "kind": "architecture",
+      "prompt": "/define-architecture Addenda C and D: the perspective shell and the compile step, as amendments and additions to the existing architecture (node A1, session addendum-c-chain)",
+      "rationale": "The D&P Architect's Blocker at the spec gate (Type-2 declared, Type-1 realised) and pass-2 conditions at this gate; Ruling 69 keeps framing mechanical in v1.",
+      "session": "addendum-c-chain",
+      "skill": "define-architecture",
+      "summary": "craft-profiles/<family>@<version>.md in the pack's knowledge tree with a manifest.json (family, version, sha) row the bundle test recomputes; the sha is over the four content sections canonicalised (LF, trailing whitespace stripped, frontmatter excluded) so maintenance fields stay Type-1 and one version has one sha on every consumer; a shared canonicalisation fixture binds the C# and pack implementations; selection is mechanical, none is a named state, a missing version reads profile not recorded.",
+      "tags": [
+        "addendum-c",
+        "addendum-d"
+      ],
+      "title": "ADR-0037: the family craft profile is a Type-2 dimension — one immutable pack-owned file per version, content-canonicalised sha, a manifest registry row, applied as a template in v1"
+    },
+    {
+      "artifacts": [
+        "docs/notes/session-document-binding-on-record.md",
+        "src/AiDe.App/Workbench/Sessions/SessionComposerBinder.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSendGate.cs"
+      ],
+      "audit_ref": "al-01M29GA5GBYPVM0ZDW27YTTBB8",
+      "datetime": "2026-09-12T00:29:49Z",
+      "git": {
+        "after": "4d7c5bfa419b9d3772df97a25c4afe3a35b769bd",
+        "before": "4c19b497",
+        "branch": "fix/session-document-render",
+        "commits": [
+          "4d7c5bfa test(sessions): the review's reds â€” the window's wiring, a null session file, a second bind, the sweep, the stand-in's own form (INV-0009 Stage 4)",
+          "58c991ca feat(diagnostics): the maximize and the binding are in the log (INV-0009 Phase 4)",
+          "d2409515 feat(sessions): the workspace chooser opens the chosen workspace, then creates the session (INV-0009 Phase 3, DC-149)",
+          "45c713e5 fix(sessions): restored session documents are revived and bound at workspace-open (INV-0009 Phase 2b)",
+          "d4d39cff fix(sessions): a reopened session is shown and its composer is bound (INV-0009 Phase 2, DC-040/DC-084 rec.)",
+          "228339d6 fix(shell): a dock document opens into a body that is on screen (INV-0009 Phase 1, DC-148)"
+        ],
+        "pushed": null
+      },
+      "id": "cl-01M29GAF33P1MKRGBEX67RYWZF",
+      "kind": "decision",
+      "prompt": null,
+      "rationale": "Ruling 70 constrains the context's task class to the nullable session default and Ruling 72's free-form default belongs to the session model (D2's lane); Ruling 47 (b) forbids a bound composer over an empty registry read from a broken file; the page's fields are re-minted on Configure. Recorded in docs/notes/session-document-binding-on-record.md.",
+      "session": "render-fix",
+      "skill": "implement",
+      "summary": "Reopen and workspace-open restore bind a session's composer from session.json: no task class (ComposerSendContext.TaskClass nullable per Ruling 70's constraint; Send refuses by name until one is chosen — never a guessed cohort, DC-110); a malformed provider file is a named refusal on the shown composer rather than a document withheld; a bound composer is never bound again (a second Configure re-mints the fields); the routable set is the sheet's own RoutableAmong derivation (DM7). Also: the INV's necessity oracle asserted the pre-fix state by construction and became the trigger oracle.",
+      "tags": [],
+      "title": "A session that already exists is bound from what is on record (INV-0009 Phase 2/2b decisions)"
     }
   ]
 };

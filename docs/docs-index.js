@@ -1967,7 +1967,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 333 members, 70% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 337 members, 71% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1980,7 +1980,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e5bbe1e3b6ac5b0d1ed891c0106fe8842090fac1ecfd057343fb3db20ad36086"
+      "sourceSha256": "8625acb118bdaf11948c57f320812f9905513515c8f0891fd8088f84ef30ba59"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -1992,7 +1992,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 10 types, 50 members, 88% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 10 types, 51 members, 89% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2005,7 +2005,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "70623ec42ead604738e7e96027e40b1c828ccc9f8734af4a82ca6d7fb761d05e"
+      "sourceSha256": "063cf6b17a39e680823bf4ad03f5b9895edbd4ce2600ad48e07989df3fb8c80a"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -2017,7 +2017,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 59 members, 93% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 60 members, 93% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2030,7 +2030,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "35925a90e28dcb1e54bacb1f5cdd1ea012db5c622dcffee6c57296fafa3d9537"
+      "sourceSha256": "57666f80a09661e4841adc259a56dd16258622e9857db3b96fa6548f9664436e"
     },
     {
       "id": "api-aide-core",
@@ -2292,7 +2292,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 14 types, 78 members, 98% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 14 types, 79 members, 98% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2305,7 +2305,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d5b90ffcedcff15f74838f12cd43c0c4bdcf80acba5504c4af2cd83de5921b44"
+      "sourceSha256": "d9fc0e91561d4b323f76bb34afbc87d160f734920f9a101e212611c2731a6f45"
     },
     {
       "id": "api-aide-core-projections",
@@ -3488,6 +3488,44 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "548f04adda56a93f377779873224a9f8c48952ff87efac92419652b7a04f92ef"
+    },
+    {
+      "id": "note-20260912-session-document-binding-on-record",
+      "path": "docs/notes/session-document-binding-on-record.md",
+      "title": "A session that already exists is shown and bound from what is on record: no task class until one is chosen, a malformed provider file as a refusal on the composer, and never bound twice",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-front-door",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Reopen and workspace-open restore bind a session's composer from what session.json carries: the routable set derived by the sheet's own rule, no task class (Send refuses by name until one is chosen), a malformed provider file surfaced as a named refusal on the shown composer, and a bound composer left alone. Blast radius: every path that shows an existing session document; Ruling 72's per-prompt class will replace the refusal with the default.",
+      "tags": [
+        "decision-note",
+        "session-document",
+        "composer",
+        "reopen",
+        "layout-restore",
+        "dc-084",
+        "dc-040",
+        "ruling-70"
+      ],
+      "links": [
+        {
+          "to": "inv-0009-a-session-document-opened-into-a-body-that-is-not-on-screen",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-session-document-render",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "17a604d817395ebd49cb25ce288d6b9d0dd5de1e47af235fad2310cc28b53b45"
     },
     {
       "id": "note-addendum-a-ratification",
@@ -7338,7 +7376,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "51e0afd7897d055326600158efd85f9c0d9d77313d4d4e3fc82e430ffcaa3fe1"
+      "sourceSha256": "590a23ed0077ebd9937285c728e3b3d2805ef2bc57900f8121171279e0d2a1ca"
     },
     {
       "id": "design-session-profiler",
@@ -10335,6 +10373,65 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "d00544d0b42b6172579cc926023e22354b094238e7a9dac0c7c3a09488b264d7"
+    },
+    {
+      "id": "inv-0009-a-session-document-opened-into-a-body-that-is-not-on-screen",
+      "path": "docs/investigations/INV-0009-a-session-document-opened-into-a-body-that-is-not-on-screen.md",
+      "title": "A session document opened into a body that is not on screen: New Session while Explorer is the body, and a reopen that never binds or shows",
+      "type": "investigation",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-front-door",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "The operator ran File → New Session twice after opening a workspace and saw nothing; the brief attributed it to the restored layout. Replayed from the log's own restore payload in the product's docking host under the product's mode controller: the restored arrangement renders the new document (green), and the one state the log names by its explorer-graph line — Explorer as the window's body — does not (red, exit 30): the document is added to an unparented docking host, its composer is configured and never loaded, and the shell announces \"opened … maximized\" about a tree nobody is looking at; putting the workbench back shows it untouched (necessary and sufficient). A second red: a reopened session whose surface the restore already placed keeps its \"No session is open\" island and its composer is never bound. A third finding: the operator's first document at 22:33:28Z was a New Session through the chooser with no workspace open, whose composer rendered and was refused for \"no open workspace\" — the blank editor they described. Four oracles committed (two red); the fix is not made.",
+      "tags": [
+        "session-document",
+        "composer",
+        "explorer-mode",
+        "shell-view-mode",
+        "docking",
+        "layout-restore",
+        "observability",
+        "ruling-47",
+        "dc-148",
+        "dc-149",
+        "dc-084",
+        "dc-040",
+        "dc-135"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0021-named-dock-zones",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-front-door-rulings-45-48",
+          "rel": "depends-on"
+        },
+        {
+          "to": "inv-0007-composer-entry-areas-starved-by-the-compiled-view",
+          "rel": "relates-to"
+        },
+        {
+          "to": "inv-0008-contrast-floor-passes-while-the-shell-fails",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "cc4312d3408f6f357e848047f3242ed2cfe2859af80e5c0f8be143547e3866f5"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -14004,6 +14101,48 @@ window.DOCS_INDEX = {
       "sourceSha256": "6c5c67e487b6bb2c9497ce5e10e0191a7c68dc102d699ffb26af00ece93516c1"
     },
     {
+      "id": "proof-session-document-render",
+      "path": "docs/proof/session-document-render.md",
+      "title": "Proof Pack - A Session Document Is Shown Where The Operator Is (INV-0009 Phases 1-4)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-front-door",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Proof Pack for INV-0009 phases 1, 2, 2b, 3 and 4 on fix/session-document-render: a dock document opens into a body that is on screen (one shell seam, the mode in the log); a reopened session and a restored session document are shown with their composers bound through one binder; the workspace chooser opens the chosen workspace before it creates; the maximize and the binding are logged. Four probe oracles red (exit 30, 32, 34, the chooser refusal) then green; App 635/0, Core 2240/0.",
+      "tags": [
+        "session-document",
+        "composer",
+        "explorer-mode",
+        "shell-view-mode",
+        "layout-restore",
+        "workspace-chooser",
+        "observability",
+        "dc-148",
+        "dc-149",
+        "dc-040",
+        "dc-084",
+        "proof-pack"
+      ],
+      "links": [
+        {
+          "to": "inv-0009-a-session-document-opened-into-a-body-that-is-not-on-screen",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "depends-on"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "16a8f3ec7058860d25ab4444fc5877c2ba0322800d08b1af2d90da34b45c9c44"
+    },
+    {
       "id": "proof-terminal-cursor-render-crash",
       "path": "docs/proof/terminal-cursor-render-crash.md",
       "title": "Proof Pack - Terminal cursor render crash fix (DC-061)",
@@ -15950,5 +16089,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "66a0a76c4513eb6edb5466b6a3b467cd90aed8bf894e736959c771afa4c9b950"
+  "graphSha256": "88e49476a81dd038d6d445dff4ddf4228e2250aaa119e5da9755babf7c68801b"
 };

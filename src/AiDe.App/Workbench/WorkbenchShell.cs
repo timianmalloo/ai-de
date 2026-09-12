@@ -250,6 +250,7 @@ public sealed class WorkbenchShell : IDisposable
             // nobody is in — the worst of both.
             var worktreeNote = ProvisionAgentWorktree(id, agent);
 
+            OpeningDocument();
             var result = Service.Apply(new LayoutOperation.AddSurface(
                 terminalStackId, new Surface(id, "terminal", title)));
 
@@ -289,6 +290,7 @@ public sealed class WorkbenchShell : IDisposable
             // and the title is "Terminal" — never an agent name. The guid keeps ids unique so a new
             // terminal is ADDED to the collection, never replacing an existing session.
             var id = $"terminal#{Guid.NewGuid().ToString("N")[..6]}";
+            OpeningDocument();
             var result = Service.Apply(new LayoutOperation.AddSurface(
                 terminalStackId, new Surface(id, "terminal", "Terminal")));
 
@@ -320,6 +322,7 @@ public sealed class WorkbenchShell : IDisposable
             if (stack is null) return "There is no pane to open a prompt draft in.";
 
             var id = $"prompt#{Guid.NewGuid().ToString("N")[..6]}";
+            OpeningDocument();
             var result = Service.Apply(new LayoutOperation.AddSurface(
                 stack.Id, new Surface(id, "prompt", "Prompt draft")));
 
@@ -1571,6 +1574,31 @@ public sealed class WorkbenchShell : IDisposable
     // NEVER tabs on top of the graph (the "graph pane disappeared" defect): it tabs into a document
     // stack, or splits a fresh one beside the graph so both stay visible. Shared so every reference
     // document places — and is traced — identically.
+    /// <summary>
+    /// Raised just before a command adds a dock document to the layout — a terminal, a prompt draft,
+    /// a reference document, a session document.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The shell does not know which body is on screen, and this is how it stops needing
+    /// to (INV-0009, DC-148).</b> The window swaps the body between the docking host and the
+    /// full-body Explorer (ADR-0017); every opening command here mutates the layout model, renders
+    /// the docking manager and announces from the result, all of which is true of the model whether
+    /// or not the host is in a visual tree. Two session documents were opened that way into a host
+    /// that was unparented, announced as <i>opened … maximized</i>, and never seen. The window
+    /// handles this event by making the workbench the body — the Explorer surface is retained, not
+    /// rebuilt — so a document is only ever opened into a body that is on screen.</para>
+    ///
+    /// <para><b>One seam, not a per-command check.</b> Every opening command calls
+    /// <see cref="OpeningDocument"/> immediately before its <c>AddSurface</c>;
+    /// <c>EveryOpeningCommandPassesThroughTheSeamTests</c> scans this file for a command that does
+    /// not. A refusal that happens before the add (no profile, no pane) does not raise it: a refusal
+    /// changes nothing on screen and should not swap the body.</para>
+    /// </remarks>
+    public event Action? DocumentOpening;
+
+    /// <summary>Raises <see cref="DocumentOpening"/>. Called before every <c>AddSurface</c> that opens a document.</summary>
+    private void OpeningDocument() => DocumentOpening?.Invoke();
+
     private string OpenReferenceDocument(Surface surface, string okMessage, string noPaneMessage)
     {
         ReconcileViewIntoModel();
@@ -1578,6 +1606,7 @@ public sealed class WorkbenchShell : IDisposable
         var placement = DocumentPlacementPolicy.Decide(Service.Current, Adapter.ActiveSurfaceId);
         if (placement is null) { return noPaneMessage; }
 
+        OpeningDocument();
         LayoutResult result;
         string mode;
         if (placement.TabIntoStackId is { } tabStackId)
@@ -2910,6 +2939,76 @@ public sealed class WorkbenchShell : IDisposable
     {
         ArgumentNullException.ThrowIfNull(config);
 
+        var surfaceId = RegisterSessionDocument(config);
+
+        return OpenReferenceDocument(
+            new Surface(surfaceId, Sessions.SessionDocumentSurface.Kind, config.Name),
+            $"Session “{config.Name}” opened.",
+            "There is no pane to open a session document in.");
+    }
+
+    /// <summary>
+    /// Gives every <c>session-document</c> surface the saved arrangement restored a live document,
+    /// where its <c>session.json</c> still loads from <paramref name="workspaceRoot"/> — in place,
+    /// with no layout change and no activation — and returns the sessions revived, for the window
+    /// to bind (INV-0009 Phase 2b).
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The island is for a session that is gone, not for one that has not been looked at
+    /// yet.</b> The factory hands a restored session-document surface the "No session is open"
+    /// island because, at restore, nothing had registered a document for it; the operator's
+    /// arrangement then opened on that island over a session that existed, as its active tab
+    /// (INV-0009 §3, line 14). A surface whose <c>session.json</c> is missing or unreadable keeps
+    /// the island — that is the honest state for it.</para>
+    ///
+    /// <para><b>Not through <see cref="OpenSessionDocument"/>,</b> whose open activates the surface:
+    /// reviving three restored tabs must not move the active one the restore chose.</para>
+    /// </remarks>
+    /// <param name="workspaceRoot">The workspace whose sessions the surfaces name.</param>
+    /// <returns>The configs whose documents were revived, in layout order. Each pane is named for rebuild; the caller renders.</returns>
+    internal IReadOnlyList<AiDe.Core.Sessions.SessionConfig> ReviveRestoredSessionDocuments(string workspaceRoot)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(workspaceRoot);
+
+        var revived = new List<AiDe.Core.Sessions.SessionConfig>();
+
+        foreach (var surface in Service.Current.AllStacks().SelectMany(s => s.Surfaces))
+        {
+            if (surface.Kind != Sessions.SessionDocumentSurface.Kind
+                || _sessionDocuments.ContainsKey(surface.SurfaceId)
+                || Sessions.SessionDocumentSurface.SessionIdOf(surface.SurfaceId) is not { } sessionId
+                || !File.Exists(AiDe.Core.Sessions.SessionPaths.SessionFile(workspaceRoot, sessionId)))
+            {
+                continue;
+            }
+
+            AiDe.Core.Sessions.SessionConfig config;
+            try
+            {
+                config = new AiDe.Core.Sessions.SessionConfigStore(workspaceRoot, sessionId).Load();
+            }
+            catch (Exception error) when (error is IOException or System.Text.Json.JsonException or InvalidOperationException)
+            {
+                // Unreadable is "gone" for this purpose: the island says no session is open, which
+                // is what a reopen of it would also conclude (ReopenSessionAsync's catch). The
+                // third case is the store's own "deserialized to null" for a file that reads as
+                // `null` — a launch must not throw over a session file, whatever is in it.
+                continue;
+            }
+
+            RegisterSessionDocument(config);
+            revived.Add(config);
+        }
+
+        return revived;
+    }
+
+    /// <summary>
+    /// Registers the live document for <paramref name="config"/> if none is registered yet, and
+    /// returns its surface id.
+    /// </summary>
+    private string RegisterSessionDocument(AiDe.Core.Sessions.SessionConfig config)
+    {
         var surfaceId = Sessions.SessionDocumentSurface.SurfaceIdFor(config.SessionId);
         var root = _workspaceRoot ?? config.WorkspaceId;
 
@@ -2937,12 +3036,18 @@ public sealed class WorkbenchShell : IDisposable
             // the dictionary must agree about which pane holds this session, and two derivations of
             // one key is the shape that lets them stop agreeing (DM7).
             _sessionDocuments[document.SurfaceId] = document;
+
+            // A surface the saved arrangement restored BEFORE this session was reopened holds the
+            // factory's "No session is open" island, and the reconcile reuses a pane's content
+            // unless something names it for rebuild (DC-029). Nothing did, so the reopen activated
+            // the island and announced the session (INV-0009 §6, DC-040). Named here, inside the
+            // branch where no live document was registered — so the pane, if it exists, can only
+            // hold the island (never a live document: ADR-0017) — and the next Render hands it this
+            // document. A surface not in the layout is built fresh regardless.
+            Adapter.Invalidate([document.SurfaceId]);
         }
 
-        return OpenReferenceDocument(
-            new Surface(surfaceId, Sessions.SessionDocumentSurface.Kind, config.Name),
-            $"Session “{config.Name}” opened.",
-            "There is no pane to open a session document in.");
+        return surfaceId;
     }
 
     /// <summary>
