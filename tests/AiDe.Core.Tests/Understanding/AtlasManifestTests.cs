@@ -66,6 +66,24 @@ public sealed class AtlasManifestTests
     }
 
     [Fact]
+    public void Create_PublicSourceConstructorWithNonVerifiedStatus_Throws()
+    {
+        Assert.Throws<ArgumentException>(() => new AtlasSourceObservation(
+            "source:bad",
+            "manifest:1",
+            "file:value",
+            "policy",
+            Identity(),
+            Identity(),
+            "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            12,
+            "utf-8",
+            12,
+            AtlasSourceObservationStatus.Unavailable,
+            BoundsKnown(1)));
+    }
+
+    [Fact]
     public void Create_FailureSourceWithoutMetadata_SucceedsAndVerifiedWithoutMetadataThrows()
     {
         var failed = AtlasSourceObservation.Unavailable("source:failed", "manifest:1", "file:value", "policy", BoundsUnknown(), "access-denied");
