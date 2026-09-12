@@ -153,7 +153,7 @@ internal static partial class Program
             // that is on screen. EveryOpeningCommandPassesThroughTheSeamTests asserts the product
             // and this replay carry the same wiring, so the replay cannot pass on a line the window
             // does not have (DC-135).
-            shell.DocumentOpening += () => mode.Set(ShellViewMode.Workbench, "document-opening");
+            shell.DocumentOpening += () => MainWindow.OnDocumentOpening(mode);
 
             var result = Crashed;
             window.Loaded += async (_, _) =>
@@ -276,11 +276,11 @@ internal static partial class Program
             // ---- 22:34:00Z. explorer-graph initialising: Explorer mode entered. ----
             if (options.Explorer)
             {
-                mode.Set(ShellViewMode.Explorer, "replay-22:34:00Z");
+                mode.Set(PerspectiveSet.Explore, "replay-22:34:00Z");
                 await WaitAsync(() => Count("explorer-graph", "initialising") >= 1, TimeSpan.FromSeconds(20));
                 await Task.Delay(500);
                 Console.Out.WriteLine(
-                    $"explorer (22:34:00Z replay): mode={mode.Mode} explorer-graph initialising={Count("explorer-graph", "initialising")} "
+                    $"explorer (22:34:00Z replay): mode={mode.Mode.Id} explorer-graph initialising={Count("explorer-graph", "initialising")} "
                     + $"workbench root loaded={shell.WorkbenchRoot.IsLoaded} visible={shell.WorkbenchRoot.IsVisible} parent={shell.WorkbenchRoot.Parent?.GetType().Name ?? "(none)"}");
             }
 
@@ -342,7 +342,7 @@ internal static partial class Program
                 // same state. A code viewer is a plain WPF control — no browser — so its Loaded is
                 // the whole question.
                 var before = shell.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.SurfaceId).ToHashSet(StringComparer.Ordinal);
-                shell.Controller.Execute("workbench.newCodeViewer");
+                shell.Controller.Execute("surface.new.codeviewer");
                 var siblingId = shell.Service.Current.AllStacks().SelectMany(s => s.Surfaces)
                     .Select(s => s.SurfaceId).FirstOrDefault(id => !before.Contains(id));
                 var sibling = siblingId is null ? null : shell.Adapter.ContentFor(siblingId);
@@ -358,7 +358,7 @@ internal static partial class Program
             if (options.ReturnToWorkbench)
             {
                 // THE NECESSITY HALF: remove the suspected cause and see whether the failure goes.
-                mode.Set(ShellViewMode.Workbench, "replay-return-to-workbench");
+                mode.Set(PerspectiveSet.Coding, "replay-return-to-workbench");
                 window.UpdateLayout();
                 await WaitAsync(() => Count(composer.SurfaceId, "init-pushed") >= 1, TimeSpan.FromSeconds(30));
                 await Task.Delay(1500);
@@ -667,7 +667,7 @@ internal static partial class Program
             var initialising = Count(composer.SurfaceId, "initialising");
             var pushed = Count(composer.SurfaceId, "init-pushed");
             var line =
-                $"{when}: mode={mode.Mode} last-mode-trigger={LastModeTrigger()} workbench root loaded={shell.WorkbenchRoot.IsLoaded} visible={shell.WorkbenchRoot.IsVisible}, "
+                $"{when}: mode={mode.Mode.Id} last-mode-trigger={LastModeTrigger()} workbench root loaded={shell.WorkbenchRoot.IsLoaded} visible={shell.WorkbenchRoot.IsVisible}, "
                 + $"composer wpf loaded={loaded} unloaded={unloaded} isLoaded={composer.IsLoaded} isVisible={composer.IsVisible} "
                 + $"size={composer.ActualWidth:F0}x{composer.ActualHeight:F0}, "
                 + $"transitions initialising={initialising} navigation-started={Count(composer.SurfaceId, "navigation-started")} "

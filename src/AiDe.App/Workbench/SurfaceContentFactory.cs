@@ -39,34 +39,94 @@ public sealed class SurfaceContentFactory(
     // pane says plainly rather than rendering an empty document.
     Func<Surface, Sessions.SessionDocumentSurface?>? sessionDocumentFor = null)
 {
+    /// <summary>How many surfaces of a kind a host holds at once — what §A7's "Instances" column says.</summary>
+    public enum Instances
+    {
+        /// <summary>At most one: its derived entry is "Show &lt;Title&gt;" (focus if open, else open).</summary>
+        One,
+
+        /// <summary>Any number: its derived entry is "New &lt;Title&gt;".</summary>
+        Many,
+    }
+
     /// <summary>
-    /// One surface kind, as a row of data: what it answers to, how it is built, and whether its
-    /// content owns a child window.
+    /// How a kind reaches the menu and the palette (Addendum C §B3 rule 3): its opener is either
+    /// DERIVED from this row ("New/Show &lt;Title&gt;" under the named menu) or it is an existing
+    /// catalog entry verb, in which case no entry is derived and the verb is the only door.
+    /// </summary>
+    /// <remarks>
+    /// Stated on every row rather than inferred from an absence, so an unreachable kind cannot be
+    /// created by omission (US-C3 b5): a row must say which it is, and the build test asserts that a
+    /// named verb exists in the catalog and is offered in every perspective.
+    /// </remarks>
+    public abstract record SurfaceEntry
+    {
+        private SurfaceEntry() { }
+
+        /// <summary>The opener is derived from the row and placed under <paramref name="Menu"/> (<c>_View</c>, or <c>_Prompt</c> for the prompt kind).</summary>
+        public sealed record Derived(string Menu) : SurfaceEntry;
+
+        /// <summary>The kind's only door is the catalog entry verb <paramref name="CommandId"/> (<c>terminal.new</c>, <c>session.new</c>); nothing is derived.</summary>
+        public sealed record Verb(string CommandId) : SurfaceEntry;
+    }
+
+    /// <summary>
+    /// One surface kind, as a row of data: what it answers to, how it is built, which perspectives
+    /// admit it, and how the menu names it.
     /// </summary>
     /// <param name="Kind">The <see cref="Surface.Kind"/> this row answers to.</param>
+    /// <param name="Title">The noun the derived "New/Show &lt;Title&gt;" entry and a newly opened surface's tab carry.</param>
+    /// <param name="Summary">What the surface shows — the derived entry's hint, as the palette speaks it.</param>
     /// <param name="Build">Builds the content for one surface of this kind.</param>
+    /// <param name="Perspectives">
+    /// <b>The allow-list column (Ruling 52c; ADR-0030 rule 2).</b> The perspectives that admit this
+    /// kind into their body — an explicit, non-empty set on every row, no default: an empty set
+    /// fails the build test, so an unreachable kind cannot be created by omission (US-C3 b5). The
+    /// membership is §A7's table as ruled (Rulings 59–61). Explore admits no docked kind — its body
+    /// is not a host — so no row names it.
+    /// </param>
+    /// <param name="Instances">One or many per host — "Show" or "New" (§A7).</param>
+    /// <param name="Entry">Derived opener, or the catalog entry verb that is this kind's only door.</param>
     /// <param name="Windowed">
     /// True for a kind whose content owns a child HWND (canvas, terminal). A windowed kind is
     /// returned UNWRAPPED — see the note at the end of <see cref="Create"/>.
     /// </param>
     public sealed record SurfaceKind(
         string Kind,
+        string Title,
+        string Summary,
         Func<SurfaceContentFactory, Surface, FrameworkElement> Build,
+        IReadOnlyList<Perspective> Perspectives,
+        Instances Instances,
+        SurfaceEntry Entry,
         bool Windowed = false);
 
     /// <summary>
     /// The surface kinds this factory builds — <b>a descriptor list, not a switch arm</b> (Ruling 22).
     /// </summary>
     /// <remarks>
-    /// <b>Adding a kind is adding a row.</b> This was a <c>switch</c> expression beside a
+    /// <para><b>Adding a kind is adding a row.</b> This was a <c>switch</c> expression beside a
     /// hand-maintained <see cref="KnownKinds"/> array, so a new surface meant editing two things
     /// that nothing checked against each other — and the array is load-bearing: the layout restore
     /// reads it to decide what it can rebuild, so a kind listed there and missing from the switch
     /// resurrected a pane that then rendered "not available in this build". One list now answers
-    /// both questions, and <c>SurfaceContentTests</c> walks it.
+    /// both questions, and <c>SurfaceContentTests</c> walks it.</para>
+    ///
+    /// <para><b>Row order is menu order.</b> The derived "New/Show" entries of a perspective's View
+    /// menu follow this list (Addendum C §B3's expected table), so the Architecture kinds come
+    /// first in their menu's order, then Coding's, with the one shared kind (<c>codeviewer</c>) where
+    /// both tables put it — last.</para>
     /// </remarks>
     public static IReadOnlyList<SurfaceKind> Kinds { get; } =
     [
+        // ── Architecture: the reading host (UC3) ──────────────────────────────────────────────
+
+        new("canvas", "Graph",
+            "A windowed graph canvas over the workspace's code, data and architecture nodes.",
+            static (_, s) => new CanvasSurface(s.SurfaceId, s.Title),
+            Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View"),
+            Windowed: true),
+
         // ────────────────────────────────────────────────────────────────────────────────
         // FINDING, NOT A FIX. THESE TWO ROWS BUILD THE SAME THING, AND THE OBVIOUS REPAIR IS
         // THE WRONG ONE. Read this before deleting either.
@@ -103,29 +163,114 @@ public sealed class SurfaceContentFactory(
         // THE CONTROL THAT IS OWED: a test that two surface kinds render different content. None
         // exists, and one written today would be red - correctly. It lands with the repair, not
         // before it, because a green test here would have to assert the duplicate.
+        //
+        // Ruling 61 homes the pair in Architecture (Left: Evidence, Right: Provenance); the
+        // selection channel and the owed test are SH-3's (Addendum C US-C6).
         // ────────────────────────────────────────────────────────────────────────────────
-        new("view", static (f, s) => f.Evidence(s)),
-        new("inspector", static (f, s) => f.Evidence(s)),
-        new("terminal", static (_, s) => Terminal(s), Windowed: true),
-        new("canvas", static (_, s) => new CanvasSurface(s.SurfaceId, s.Title), Windowed: true),
-        new("contexts", static (_, s) => new ContextMapSurface(s.Title)),
-        new("joins", static (_, s) => new JoinSurface(s.Title)),
-        new("sessions", static (f, s) => f.Sessions(s)),
-        new("board", static (f, s) => f.Board(s)),
-        new("leaderboard", static (f, s) => f.Leaderboard(s)),
-        new("ledger", static (f, s) => f.Ledger(s)),
-        new("daydreams", static (f, s) => f.Daydreams(s)),
-        new("prompt", static (_, s) => new PromptDraftSurface(s.SurfaceId, s.Title)),
-        new("classdiagram", static (_, s) => new ClassDiagramSurface(s.Title)),
-        new("sequence", static (_, _) => new SequenceDiagramSurface()),
-        new("search", static (f, _) => f.SearchPane()),
-        new("codeviewer", static (_, s) => new CodeViewerView(s.Title)),
-        new("diagnostics", static (_, s) => new DiagnosticsSurface(s.Title)),
+        new("view", "Evidence",
+            "The evidence list: every fact the workspace's daemon has indexed, searchable.",
+            static (f, s) => f.Evidence(s),
+            Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View")),
+
+        new("inspector", "Provenance",
+            "The selected evidence row's detail: where a fact came from and what cites it.",
+            static (f, s) => f.Evidence(s),
+            Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View")),
+
+        new("classdiagram", "Class diagram",
+            "The type hierarchy (classes and interfaces and their inheritance) of the open workspace.",
+            static (_, s) => new ClassDiagramSurface(s.Title),
+            Perspectives: [PerspectiveSet.Architecture], Instances.Many, new SurfaceEntry.Derived("_View")),
+
+        new("sequence", "Sequence diagram",
+            "Participant lifelines and the ordered messages exchanged between them.",
+            static (_, _) => new SequenceDiagramSurface(),
+            Perspectives: [PerspectiveSet.Architecture], Instances.Many, new SurfaceEntry.Derived("_View")),
+
+        new("contexts", "Contexts",
+            "The bounded contexts as boxes, with the traffic that crosses between them.",
+            static (_, s) => new ContextMapSurface(s.Title),
+            Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View")),
+
+        // Admitted by Ruling 59 — it exists and renders; whether it renders real content against a
+        // real workspace is SH-3's measurement, and decides only the DEFAULT layout, not the row.
+        new("joins", "Joins",
+            "Code, schema and infrastructure joins, each marked Verified or Inferred.",
+            static (_, s) => new JoinSurface(s.Title),
+            Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View")),
+
+        // ── Coding: the agentic host (UC1) ────────────────────────────────────────────────────
+
+        // Opened by the entry verb `terminal.new` (File, every perspective — US-C11), never by a
+        // derived entry: two doors to one kind is the second list this arrangement exists to remove.
+        new("terminal", "Terminal",
+            "One live shell session.",
+            static (_, s) => Terminal(s),
+            Perspectives: [PerspectiveSet.Coding], Instances.Many, new SurfaceEntry.Verb("terminal.new"),
+            Windowed: true),
+
+        // The Loomkeeper kinds, homed in Coding (Ruling 60): they observe the terminal side of UC1.
+        // "Terminal sessions", not "Sessions" — a session DOCUMENT is the product's object, and a
+        // watcher pane one word away from it was resolved by the reader, not the caption (§R row 17).
+        new("sessions", "Terminal sessions",
+            "The Loomkeeper watcher's live and inactive terminal sessions, with their harness and state.",
+            static (f, s) => f.Sessions(s),
+            Perspectives: [PerspectiveSet.Coding], Instances.One, new SurfaceEntry.Derived("_View")),
+
+        new("board", "Message board",
+            "The Loomkeeper message board: what the observed sessions have said to each other.",
+            static (f, s) => f.Board(s),
+            Perspectives: [PerspectiveSet.Coding], Instances.One, new SurfaceEntry.Derived("_View")),
+
+        new("leaderboard", "Leaderboard",
+            "The Loomkeeper scoring leaderboard over the observed sessions' episodes.",
+            static (f, s) => f.Leaderboard(s),
+            Perspectives: [PerspectiveSet.Coding], Instances.One, new SurfaceEntry.Derived("_View")),
+
+        new("ledger", "Ledger",
+            "The append-only episode ledger: every scored episode with its evidence.",
+            static (f, s) => f.Ledger(s),
+            Perspectives: [PerspectiveSet.Coding], Instances.One, new SurfaceEntry.Derived("_View")),
+
+        // Reachable from nowhere before the derived menu (no command, no default slot — Ruling 60);
+        // its entry now exists by construction.
+        new("daydreams", "Daydreams",
+            "Observed patterns and candidate lessons the watcher has noticed across episodes.",
+            static (f, s) => f.Daydreams(s),
+            Perspectives: [PerspectiveSet.Coding], Instances.One, new SurfaceEntry.Derived("_View")),
+
+        // Under the Prompt menu, beside "Dispatch prompt…" (§B3 rule 3's one exception besides terminal).
+        new("prompt", "Prompt draft",
+            "A staged prompt draft: compose a prompt and transfer it to a ready terminal session.",
+            static (_, s) => new PromptDraftSurface(s.SurfaceId, s.Title),
+            Perspectives: [PerspectiveSet.Coding], Instances.Many, new SurfaceEntry.Derived("_Prompt")),
+
+        // A scaffold with no index wired (Ruling 59 keeps it out of Architecture); openable in Coding today.
+        new("search", "Search",
+            "A breadth search: one query over the whole workspace \u2014 types, members, files and graph nodes.",
+            static (f, _) => f.SearchPane(),
+            Perspectives: [PerspectiveSet.Coding], Instances.Many, new SurfaceEntry.Derived("_View")),
+
+        // The one shared kind: "what did the agent change" in Coding; "View source" from a node in
+        // Architecture, where it must not leave the reading host (Ruling 59; US-C3).
+        new("codeviewer", "Code viewer",
+            "A read-only source view with syntax highlighting.",
+            static (_, s) => new CodeViewerView(s.Title),
+            Perspectives: [PerspectiveSet.Coding, PerspectiveSet.Architecture], Instances.Many, new SurfaceEntry.Derived("_View")),
+
+        new("diagnostics", "Diagnostics",
+            "The last re-index's analysis coverage (what was not analysed, grouped by category) and the daemon state.",
+            static (_, s) => new DiagnosticsSurface(s.Title),
+            Perspectives: [PerspectiveSet.Coding], Instances.One, new SurfaceEntry.Derived("_View")),
 
         // The session document (R13 b3, R16). "session-document", never "session" (Ruling 18): the
         // "sessions" row above is the Loomkeeper watcher pane, and a kind one letter away from it
-        // would be resolved by whichever row was read first, silently.
-        new(AiDe.App.Workbench.Sessions.SessionDocumentSurface.Kind, static (f, s) => f.SessionDocument(s)),
+        // would be resolved by whichever row was read first, silently. Opened by the front door
+        // `session.new` (File, every perspective), never by a derived entry.
+        new(AiDe.App.Workbench.Sessions.SessionDocumentSurface.Kind, "Session",
+            "One session: its composer and its canvas.",
+            static (f, s) => f.SessionDocument(s),
+            Perspectives: [PerspectiveSet.Coding], Instances.Many, new SurfaceEntry.Verb("session.new")),
     ];
 
     /// <summary>Surface kinds this factory can build. An unknown kind still gets an honest pane.</summary>

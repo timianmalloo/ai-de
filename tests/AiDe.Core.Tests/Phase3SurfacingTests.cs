@@ -461,8 +461,10 @@ public sealed class Phase3SurfacingTests : IDisposable
         // `MainMenuTests.TheMenuCoversEveryCatalogCommand`, App-side, against the actual builder.
         // What is left here is what Core CAN see and what actually holds: every command declares a
         // menu, and that menu is one the shell knows how to render.
+        // The six top-level names are the design language's (DESIGN.md PS-M1): Terminal became
+        // Prompt once the terminal verbs moved to File as entry verbs (Addendum C US-C11).
         var menus = new HashSet<string>(
-            ["_File", "_Edit", "_View", "_Window", "_Terminal", "_Help"], StringComparer.Ordinal);
+            ["_File", "_Edit", "_View", "_Window", "_Prompt", "_Help"], StringComparer.Ordinal);
 
         var undeclared = WorkbenchCommandCatalog.All
             .Where(c => string.IsNullOrEmpty(c.Menu) || !menus.Contains(c.Menu))

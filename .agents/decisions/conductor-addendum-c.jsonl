@@ -576,3 +576,6 @@
 {"agent": "claude-conductor", "at": 1789227646.592059, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789227646.5944366, "code": null, "kind": "allowed", "path": "site/index.html", "session": "conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789227646.5964358, "code": null, "kind": "allowed", "path": "tools/expected-test-counts.json", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789228057.162694, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-addendum-c.jsonl", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789228057.1646922, "code": null, "kind": "allowed", "path": ".agents/decisions/sh-1.jsonl", "session": "conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789228057.1667047, "code": null, "kind": "allowed", "path": ".agents/log/sh-1.jsonl", "session": "conductor-addendum-c", "wi": ""}

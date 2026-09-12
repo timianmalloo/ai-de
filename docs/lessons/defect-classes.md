@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 81 · partially-controlled 59 · uncontrolled 17
+**Status counts:** controlled 81 · partially-controlled 60 · uncontrolled 19
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -801,6 +801,14 @@ for both or split.*
 - **Instance, 2026-08-31 — two lists of "what is build output".** `CSharpScopeDiscovery.Skip` held `bin, obj, .git, node_modules`; `UnanalysedLanguages.Skip` held those plus `artifacts, dist, build, __pycache__, .venv, target, vendor`. Both answer the same question and only one had been kept current, so TypeScript discovery indexed `artifacts/s00/publish/wwwroot/_framework` — Blazor's published JavaScript — as source. MEASURED: 3 scopes of 67 on TheTerrace were build output, and their nodes could not be resolved back to a file at all, which is how they were noticed. `artifacts` is the .NET SDK's own output layout and belongs beside `bin` and `obj`; `publish` and `_framework` were added to the TypeScript set. **The generalisation:** when a second copy of a list appears, the question is not which is right but why there are two — a divergence found through a THIRD symptom is a divergence that has been wrong for a while.
 
 ### DC-023 — A gate keeps passing because it runs a stale build of the thing it tests
+- **Recurrence, 2026-09-12 — the mutation loop's own binary.** SH-1's mutation-sense loop applied a
+  mutant to a source file, built, ran the filtered tests, and restored the **source** in its
+  `finally` — and did not rebuild. The next `dotnet test --no-build` over both full suites ran the
+  last mutant's binary: `PerspectiveSetTests` red (the filtered-out perspective), `ShellBootstrapTests`
+  red (five daemon tests, a stale `AiDe.Core.dll` beside the test host), `AShowEntryOpensTheKindOnce`
+  red (the Show mutant). Every one read as a product failure. A rebuild from the restored sources
+  turned all of them green. **A restored source is not a restored artifact under test** — the loop
+  now rebuilds after its last restore, and the round-3 loop prints that it did.
 - **Recurrence, 2026-09-11 — the fourth probe, and the FIRST where the stale binary did not announce itself.** `AiDe.App.ComposerProbe` was added by node F6 and **was not a `ProjectReference` of `AiDe.App.Tests`**, unlike the other three, each of which carries a comment explaining exactly why it is. On the merge the test ran a probe built **32 minutes earlier**, before the three handshake fixes that same commit landed, so `TheHandshakePushesExactlyOneHostInitPerMountAndFieldValuesSurviveIt` asserted 2 and measured **0**.
 - **What made this one worse than its three predecessors.** Instances 1–3 were found by the probe being **absent**, which fails with an honest message naming the binary. This one was found by the probe being **present and old**, and a stale probe fails **as a product defect**: the assertion that broke was about `host.init`, so every reading pointed at the composer. **The identical tree passed in the worktree that had built the probe and failed in the checkout that had not** — same commit, same machine, opposite results — and nothing in the failure output named the binary. It survived a clean rebuild of the test project *and* of `src/AiDe.App`, because the probe is neither.
 - **Two wrong diagnoses before the right one, both recorded because they are the cost.** First: a `NO RESULTS` run read as *"the test host almost certainly crashed"* — the real cause was a backgrounded gate loop **of my own** holding the DLLs, which is contention, not a crash, and the gate named a cause it had not observed. Second: 12 live `msedgewebview2.exe` processes looked like a leak until their command lines showed them belonging to Office Hub and Windows CBS, 48 hours old. **DC-131's lesson, one hour after registering DC-131.**
@@ -6770,3 +6778,88 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   comment. DC-102's cousin: there the mechanism was never exercised; here the instrument was.
 - **Status:** `controlled` — the fact asserts both clauses and both were observed on the fix
   (`1` live, `0` at +3 s); the helper's comment names the shape.
+
+### DC-158 — A scheduled rename lists the declaring file, and its reference set is discovered by the build inside the node
+
+*Id left for the conductor to allocate at the join (`coordination-addendum-cd` §Seams: contiguous family, DC-013).*
+
+- **Shape:** a coordination plan (or the ADR it dispatches) schedules a type rename, and the track's
+  ownership row names the file that **declares** the type. The **references** live in files no row
+  owns — an out-of-process probe, a replay test that asserts the type's `ToString()` in stdout. The
+  node cannot build the solution without writing outside its paths, and the plan's own "fails if a
+  write lands outside the lane's paths" clause fires on a write the plan made necessary.
+- **Signature:** `grep -rln <OldName> src tests` returning a file outside the track's row; a compile
+  error in a project the track never listed (`tests/*Probe/`); a node's close report carrying a
+  "forced write, reported" note; a `Fails if` clause that the correct change trips.
+- **Instance (SH-1, 2026-09-12):** ADR-0030 rule 4 renames `ShellViewMode` → `Perspective` "only in
+  the commit that implements this ADR"; the plan's SH-1 row lists the Core/App files and `their
+  tests`. `ShellViewMode` was also referenced in `tests/AiDe.App.ComposerProbe/Program.SessionRender.cs`
+  (three `Set` calls, two `mode={mode.Mode}` prints) and asserted by string in
+  `tests/AiDe.App.Tests/Sessions/ASessionDocumentIsShownWhereTheOperatorIsTests.cs`
+  (`mode=Explorer`, `mode=Workbench` in the replay's stdout). The build found the first; the replay
+  tests found the second (red: *Sub-string not found*). Both edited under a recorded claim and
+  reported; the ADR's own Evidence section cites only `ShellModeController.cs:6-11`.
+- **Control:** a plan that schedules a rename computes the reference set at plan time — one
+  `grep -rln` per renamed identifier over `src/`, `tests/`, `spikes/` — and lists **every** file in
+  the owning row, or names the rename as a seam. The build is already the detector; the missing half
+  is the planning step, in `/prepare-for-coordination` and `/execute-with-coordination`. Red first: a
+  plan fixture that renames a type referenced across two rows must be reported by the planner.
+- **Sweep:** SH-2's own scheduled rename (`ShellModeController` → `PerspectiveShell`) has references
+  in `MainWindow.xaml.cs`, `tests/AiDe.App.ComposerProbe/Program.SessionRender.cs`,
+  `ExplorerModeTests.cs`, `EveryOpeningCommandPassesThroughTheSeamTests.cs` (the last two scan-shaped
+  on the type name) — the same shape, one slice later; the conductor should list them before dispatch.
+- **Status:** `uncontrolled` — the plan step is prose until the skill carries it.
+
+### DC-159 — A probe prints a type's default `ToString()` across a process boundary and a test asserts the string
+
+*Id left for the conductor to allocate at the join.*
+
+- **Shape:** an out-of-process probe writes a value to stdout by interpolating the value itself
+  (`mode={mode.Mode}`), so what crosses the boundary is the type's **default** `ToString()` — an
+  enum's member name today, a record's full positional dump tomorrow. The in-process test asserts
+  the string. The contract is therefore keyed on a type's *shape*, not on a stable identity, and any
+  change of shape (the enum becoming a record; a positional member added) re-writes the wire without
+  any caller changing.
+- **Signature:** a stdout/JSON line whose value is a bare `{x}` of a non-string type; a test
+  asserting `mode=Explorer`-style tokens; a rename that turns a green replay red with
+  *Sub-string not found* and no behavioural change.
+- **Instance (SH-1, 2026-09-12):** `Program.SessionRender.cs:283,670` printed `mode={mode.Mode}`;
+  when `ShellViewMode` became the `Perspective` record the line became
+  `mode=Perspective { Id = explore, ... }` and both replay assertions went red. Fixed by printing the
+  row's stable id (`mode.Mode.Id`) and asserting `mode=explore` / `mode=coding` — the same id the
+  `shell.mode` diagnostic line writes, so the probe and the log agree.
+- **Control:** a value that crosses a process boundary is written as its **stable id** (a string
+  field chosen for the purpose), never as the value itself; the assertion names the id. Where the
+  diagnostics already write an id (`WorkbenchDiagnostics.ShellMode` → `mode = to.Id`), the probe
+  writes the same one. The replay assertions are the detector and did their job; the rule is prose.
+- **Status:** `partially-controlled` — the detector exists; no scan refuses a bare `{value}` of a
+  non-string type in probe output.
+
+### DC-160 — A Proof Pack figure or "red observed" cell is written before the measurement that would fill it
+
+*Id left for the conductor to allocate at the join.*
+
+- **Shape:** the pack is drafted while the suites run, and a cell that will hold a measured number —
+  a test count, a mutation's red list — is filled with a **plausible** value so the sentence reads
+  complete. The measurement then lands somewhere else (the runner's summary, a JSON the loop
+  wrote) and the cell is never re-read against it. The document advertises "Verified" over a
+  number nobody observed. Sibling of DC-082 (a figure that was right and moved): this one was never
+  right, it was **typed**.
+- **Signature:** a count in a summary that no run output reproduces; a "red observed: Mn" cell
+  naming a mutation whose recorded red list does not contain the test; the tell that settles it —
+  the pack and the run record disagree and the pack is the rounder number.
+- **Instance (SH-1, 2026-09-12):** the pack's first draft said *"Core 2,268/0, App 680/0"* — no run
+  had produced either number (the runs said 2,262 and 666, then 673); and claims 1–2 cited mutation
+  M9 for `TheBodiesAreTwoHostsAndOneFullWindowSurface` and `EveryRowHasACatalogCommand…`, which M9's
+  recorded red list did not contain (a fourth row yields a fourth command, so the count still
+  matched). The Test Architect read the JSON against the pack and caught both; two further
+  mutations (M17, M18) were run to earn the cells.
+- **Control:** a pack's measured cells are **filled from the run record**, never typed — the
+  mutation table is generated from the loop's JSON (as SH-1's now is), and the suite counts are
+  pasted from the runner's summary line after the last rebuild. The reviewer's check is the
+  detector: *does the record support each cell?* Red first: a pack cell naming a mutation absent
+  from the JSON must be reported by whatever fills the table.
+- **Status:** `uncontrolled` — the fill-from-record step is prose; the mutation table is generated,
+  the counts are not.
+
+## 5. What this note does not decide

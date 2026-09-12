@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 81 types, 338 members, 71% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 86 types, 348 members, 71% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**81 public types · 338 public members · 71% documented.**
+**86 public types · 348 public members · 71% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -239,12 +239,17 @@ bounded (US-ED3), and an honest fallback when there is no inline content (US-ED8
 
 *class* — `CommandPalette.cs`
 
-The keyboard route to every layout command.
+The keyboard route to every command the active perspective offers.
 
 **Remarks.** This is the mechanism US-9 names for SC 2.5.7: "an equivalent command exists and is reachable
 from the command palette". Without it the catalog is a list nobody can invoke — the conformance
 test would still pass while the product remained mouse-only, which is exactly the gap between
 *tested* and *usable* that the criterion exists to close.
+
+**Its rows are exactly the menu bar's commands (Addendum C US-C4 b3).** There is no
+palette-only set: the rows come from the same `PerspectiveMenu` the bar renders,
+set by the presenter on every switch through `Menu`, so a command the active
+perspective cannot offer is absent here as it is there (PS-M3).
 
 Focus handling is the load-bearing part. Opening moves focus into the search box deliberately
 (the user asked for it); closing **restores focus to wherever it was**, so invoking a command
@@ -257,6 +262,7 @@ never strands a keyboard user somewhere they did not choose (SC 2.4.3).
 | `TextBox SearchBox { get; }` | **(gap)** |
 | `ListBox Results { get; }` | **(gap)** |
 | `bool IsOpen` | **(gap)** |
+| `PerspectiveMenu Menu` | The active perspective's contribution — the rows this palette offers. Starts as the initial perspective's; the presenter sets it on every switch with the same model it hands the menu builder, so the two surfaces canno… |
 | `IReadOnlyList<WorkbenchCommand> Visible` | The commands currently listed — what a test and the UI both read. |
 | `void Open()` | **(gap)** |
 | `void Close()` | **(gap)** |
@@ -662,6 +668,78 @@ the Knowledge chip. Pure and dependency-free so the mapping is unit-tested off t
 |---|---|
 | `IReadOnlyList<NodeViewOption> OptionsFor(string? nodeKind, bool isKnowledge)` | The viewers this node supports, most specific first. Never empty. |
 
+## `PerspectiveMenuGroup`
+
+*record* — `PerspectiveMenu.cs`
+
+One menu of the derived contribution: its catalog rows, then its derived "New/Show <Title>"
+rows, in the order the menu shows them.
+
+| Member | Summary |
+|---|---|
+| `IEnumerable<WorkbenchCommand> Commands` | **(gap)** |
+
+## `PerspectiveMenu`
+
+*class* — `PerspectiveMenu.cs`
+
+The menu contribution of one perspective — what the menu bar, the palette and the rail read —
+DERIVED from the join of the command catalog and the kind rows' allow-lists (ADR-0030 rule 3;
+Addendum C §B3, Ruling 55b). Never a per-perspective list.
+
+**Remarks.** **The rule, in three sets.** (1) Perspective-independent entries: every catalog command
+whose `CommandScope` is `Global` — the entry verbs and
+workspace verbs in File, the perspective radio and the status line in View, the diagnostics
+report in Help. (2) Body-conditional entries: a catalog command whose scope names what it needs
+— a docking host, or an admitted surface kind — evaluated against the active perspective's body
+and allow-list. (3) Allow-list-derived entries: one per admitted kind whose
+row says its opener is derived — "New <Title>" for a many-instance kind, "Show
+<Title>" for a one-instance kind — under the menu the row names.
+
+
+
+
+
+**Why one function and not a table in the builder.** The US-C4 mutation test appends a
+test-time kind row admitted only by Architecture and asserts its entry appears there and nowhere
+else with no edit to the builder. A table cannot pass that; a join can.
+
+
+
+
+
+**Structurally inapplicable is absent; transiently unavailable is disabled.** A command
+this function does not offer is not in the menu or the palette at all (PS-M3). Whether an
+offered command can run right now (a focused pane, an open workspace) is the controller's answer
+when it runs, never a second filter here.
+
+| Member | Summary |
+|---|---|
+| `IReadOnlyList<string> MenuOrder { get; } = ["_File", "_Edit", "_View", "_Window", "_Prompt", "_Help"]` | The six top-level names, in bar order (DESIGN.md PS-M1). |
+| `string NewCommandPrefix = "surface.new."` | The id prefix of a derived "New <Title>" opener; the kind follows it. |
+| `string ShowCommandPrefix = "surface.show."` | The id prefix of a derived "Show <Title>" opener; the kind follows it. |
+| `Perspective Perspective { get; }` | **(gap)** |
+| `IReadOnlyList<PerspectiveMenuGroup> Menus { get; }` | The non-empty menus, in bar order. An empty menu is absent, never rendered empty. |
+| `IReadOnlyList<WorkbenchCommand> Commands { get; }` | Every command the menu bar offers, flat, in the order the bar shows them — the palette's rows (US-C4 b3). |
+| `PerspectiveMenu For(Perspective perspective)` | The contribution of  over the product's rows. |
+| `PerspectiveMenu For(` | The contribution of  over the given rows — the seam the mutation test uses to append a kind row without editing the product's list. |
+| `WorkbenchCommand Opener(SurfaceContentFactory.SurfaceKind row)` | The derived opener of a kind row: "New <title>" for a many-instance kind, "Show <title>" for a one-instance kind — the title lower-cased after the verb, in the catalog's own voice ("New terminal", "Close surface"). No… |
+| `bool TryParseOpener(string? commandId, out bool showExisting, out string kind)` | Splits a derived opener id into its verb and kind; false for any other id. What the controller reads so one case handles every derived entry. |
+| `bool Admits(Perspective perspective, string kind)` | Whether  admits  into its body (§A7). |
+| `bool Admits(Perspective perspective, string kind, IReadOnlyList<SurfaceContentFactory.SurfaceKind> kinds)` | **(gap)** |
+| `Perspective? Resolve(string kind, Perspective active)` | Where a kind-open lands (US-C3): the active perspective if it admits the kind, else the first of `RoutingOrder` that does, else null — a kind no perspective admits, which the build test makes unreachable. |
+| `Perspective? Resolve(string kind, Perspective active, IReadOnlyList<SurfaceContentFactory.SurfaceKind> kinds)` | **(gap)** |
+| `IEnumerable<WorkbenchCommand> Search(string term)` | The offered commands whose title or hint contains  — the palette's filter. |
+
+### `WorkbenchCommand Opener(SurfaceContentFactory.SurfaceKind row)`
+
+The derived opener of a kind row: "New <title>" for a many-instance kind, "Show
+<title>" for a one-instance kind — the title lower-cased after the verb, in the
+catalog's own voice ("New terminal", "Close surface"). No gesture: nothing binds one, and an
+unbound chord is shown nowhere (PS-M4).
+
+**Throws `ArgumentException`.** The row's entry is a catalog verb — nothing is derived for it.
+
 ## `PromptBar`
 
 *class* — `PromptBar.cs`
@@ -984,24 +1062,18 @@ showed 3 "✓ Alive" agents leading but ~13 "~ Stale" terminals cluttering the s
 (partitioning Stale as live was too generous). Leading with Alive and collapsing everything else
 is the fix. Pure and dependency-free (UX-SESSIONS-GRAVEYARD).
 
-## `ShellViewMode`
-
-*enum* — `ShellModeController.cs`
-
-The shell's primary view mode (ADR-0017 primary-view-mode).
-
 ## `ShellModeController`
 
 *class* — `ShellModeController.cs`
 
-Owns the shell's primary `ShellViewMode` and the body-content swap that realises it
-(ADR-0017 primary-view-mode). Switching mode only changes what fills the body region; it never disposes the
-workbench.
+Owns the shell's active `Perspective` and the body-content swap that realises it
+(ADR-0017 primary-view-mode, as amended by Ruling 52; ADR-0030). Switching only changes what
+fills the body region; it never disposes a body.
 
 **Remarks.** **Retain, never rebuild (the load-bearing invariant).** The workbench object is held by
 the caller for the window's life, so a switch merely *unparents* the docking host — a
-terminal running inside it keeps running while Explorer is open, and returning to the workbench
-shows the same instance. WPF hides an unparented `HwndHost`/`WebView2` child rather than
+terminal running inside it keeps running while Explore is the body, and returning shows the
+same instance. WPF hides an unparented `HwndHost`/`WebView2` child rather than
 destroying it, which is what makes the swap a view change and not a session loss. The design's T1
 control proves this against a real terminal rather than trusting it
 (`docs/design/knowledge-explorer-mode.md`).
@@ -1010,35 +1082,46 @@ control proves this against a real terminal rather than trusting it
 
 
 
-**Lazy, then retained.** The Explorer surface is created on first entry and then held, so
-re-entering Explorer does not rebuild it and its graph/reader survive a round-trip (US-E6).
+**Lazy, then retained.** The Explore surface is created on first entry and then held, so
+re-entering does not rebuild it and its graph/reader survive a round-trip (US-E6).
+
+
+
+
+
+**One host today.** Every `DockHost` perspective shows the
+one workbench object; the second host, its slot and the per-host allow-list enforcement are
+ADR-0031/0032's (the Shell lane's next slice), which also renames this presenter. This commit
+carries the closed set and the rename of its values only (Ruling 50).
 
 | Member | Summary |
 |---|---|
 | `ShellModeController(ContentControl host, object workbench, Func<UIElement> explorerFactory)` | **(gap)** |
-| `ShellViewMode Mode { get; private set; } = ShellViewMode.Workbench` | **(gap)** |
-| `event EventHandler<ShellViewMode>? ModeChanged` | Raised after the mode changes, with the new mode. |
-| `UIElement? ExplorerSurface` | The Explorer surface once it has been created; null until first entry. |
-| `void Toggle(string trigger)` | **(gap)** |
-| `void Set(ShellViewMode mode, string trigger)` | Makes  the body, and records the change and what triggered it. |
+| `Perspective Mode { get; private set; } = PerspectiveSet.Initial` | The active perspective; `Initial` until a switch. |
+| `event EventHandler<Perspective>? ModeChanged` | Raised after the active perspective changes, with the new one. Never for a no-op. |
+| `UIElement? ExplorerSurface` | The Explore surface once it has been created; null until first entry. |
+| `void Set(Perspective perspective, string trigger)` | Makes  the active one, and records the change and what triggered it. |
 
-### `void Toggle(string trigger)`
+### `void Set(Perspective perspective, string trigger)`
 
-- **`trigger`** — What asked for the swap — recorded on the `shell.mode` line.
+Makes  the active one, and records the change and what triggered it.
 
-### `void Set(ShellViewMode mode, string trigger)`
-
-Makes  the body, and records the change and what triggered it.
-
-- **`mode`** — The body to show.
+- **`perspective`** — The perspective to show.
 - **`trigger`** — What asked for it — a catalog command id, a seam name, a replay step.
 
-**Remarks.** **The mode is in the log, not inferred from it (INV-0009, IO1).** The operator's 22:34Z
-launch could only be read as "Explorer was entered" from an `explorer-graph` surface
-initialising — a surface that loads only inside that mode. One `shell.mode` line per
-change, naming the trigger, is what lets the next report say which body a command ran into.
-A call that changes nothing writes nothing: a log that records every no-op is a log nobody
-reads.
+**Remarks.** **Activating the active perspective is a no-op (US-C1):** nothing changes, no event is
+raised, nothing is written — a checked radio item does not un-check itself.
+
+
+
+
+
+**The perspective is in the log, not inferred from it (INV-0009, IO1).** The
+operator's 22:34Z launch could only be read as "Explorer was entered" from an
+`explorer-graph` surface initialising — a surface that loads only inside that body. One
+`shell.mode` line per change, naming the trigger, is what lets the next report say which
+body a command ran into. A call that changes nothing writes nothing: a log that records every
+no-op is a log nobody reads.
 
 ## `SurfaceChrome`
 
@@ -1082,12 +1165,42 @@ Builds the content for one surface.
 content are independent of where it is docked (US-9). This factory is the single place that
 mapping lives, so adding a surface kind never means touching the layout model.
 
+## `Instances`
+
+*enum* — `SurfaceContentFactory.cs`
+
+How many surfaces of a kind a host holds at once — what §A7's "Instances" column says.
+
+## `SurfaceEntry`
+
+*record* — `SurfaceContentFactory.cs`
+
+How a kind reaches the menu and the palette (Addendum C §B3 rule 3): its opener is either
+DERIVED from this row ("New/Show <Title>" under the named menu) or it is an existing
+catalog entry verb, in which case no entry is derived and the verb is the only door.
+
+**Remarks.** Stated on every row rather than inferred from an absence, so an unreachable kind cannot be
+created by omission (US-C3 b5): a row must say which it is, and the build test asserts that a
+named verb exists in the catalog and is offered in every perspective.
+
+## `Derived`
+
+*record* — `SurfaceContentFactory.cs`
+
+The opener is derived from the row and placed under  (`_View`, or `_Prompt` for the prompt kind).
+
+## `Verb`
+
+*record* — `SurfaceContentFactory.cs`
+
+The kind's only door is the catalog entry verb  (`terminal.new`, `session.new`); nothing is derived.
+
 ## `SurfaceKind`
 
 *record* — `SurfaceContentFactory.cs`
 
-One surface kind, as a row of data: what it answers to, how it is built, and whether its
-content owns a child window.
+One surface kind, as a row of data: what it answers to, how it is built, which perspectives
+admit it, and how the menu names it.
 
 ## `TerminalColorScheme`
 
@@ -1834,7 +1947,7 @@ is indistinguishable from a broken key.
 | `bool IsResizing` | **(gap)** |
 | `Func<Task<string>>? WorkspaceRefresh { get; set; }` | Asks the workspace to re-index itself. Set when a workspace attaches; null before that. |
 | `Func<Task<string>>? NewSessionRequested { get; set; }` | Runs `File → New Session` and returns what to announce. Set by the shell; null before that, which the command reports rather than doing nothing. |
-| `Func<string>? ExplorerToggleRequested { get; set; }` | Swaps the shell's primary view mode and returns what to announce. Set by the window; null before that, which the command reports rather than doing nothing. |
+| `Func<Perspective, string>? PerspectiveRequested { get; set; }` | Swaps the shell's primary view mode and returns what to announce. Set by the window; null before that, which the command reports rather than doing nothing. |
 | `event Action? WorkspaceDataChanged` | Raised after a command that CHANGED what the store holds has finished. |
 | `CanvasFocusRouter? CanvasFocus { get; set; }` | Routes focus across the canvas boundary. Set when a graph canvas surface attaches. |
 | `bool Execute(string commandId)` | Runs a catalog command by id. Returns false when the id is unknown. |
@@ -1855,12 +1968,7 @@ is indistinguishable from a broken key.
 | `Func<string, string>? NewAgentTerminalRequested { get; set; }` | Opens a terminal running an agent CLI. Set by the shell that can create surfaces. |
 | `Func<string>? NewTerminalRequested { get; set; }` | Opens a plain shell terminal (never an agent). Set by the shell that can create surfaces. |
 | `Func<string>? RaiseDisputeRequested { get; set; }` | Raises an append-only dispute against the latest scored episode. Set by the shell (US rule 12). |
-| `Func<string>? NewPromptDraftRequested { get; set; }` | Opens a prompt-draft surface. Set by the shell that can create surfaces. |
-| `Func<string>? NewClassDiagramRequested { get; set; }` | Opens a class-diagram surface. Set by the shell that can create surfaces. |
-| `Func<string>? NewSequenceDiagramRequested { get; set; }` | Opens a sequence-diagram surface. Set by the shell that can create surfaces. |
-| `Func<string>? NewSearchRequested { get; set; }` | Opens a workspace breadth-search surface. Set by the shell that can create surfaces. |
-| `Func<string>? NewCodeViewerRequested { get; set; }` | Opens a read-only code-viewer surface. Set by the shell that can create surfaces. |
-| `Func<string>? NewDiagnosticsRequested { get; set; }` | Opens the workspace diagnostics surface. Set by the shell that can create surfaces. |
+| `Func<string, bool, string>? OpenSurfaceRequested { get; set; }` | Opens a surface of the named kind — a derived "New/Show <title>" entry (ADR-0030 rule 3). Set by the shell that can create surfaces; the kind is a row of `Kinds`. The second argument is true for a "Show" entry: the on… |
 | `void Bind(UIElement host)` | Binds the catalog's gestures to this controller on a WPF element. |
 
 ### `Func<Task<string>>? WorkspaceRefresh { get; set; }`
@@ -1880,7 +1988,7 @@ one through the window's ordinary open path before the sheet (INV-0009 Phase 3),
 path reaches a daemon. The sheet itself is still a modal on the UI thread; the outcome
 arrives on the announcement channel either way.
 
-### `Func<string>? ExplorerToggleRequested { get; set; }`
+### `Func<Perspective, string>? PerspectiveRequested { get; set; }`
 
 Swaps the shell's primary view mode and returns what to announce. Set by the window; null
 before that, which the command reports rather than doing nothing.
@@ -1996,7 +2104,7 @@ path swallows its own failure.
 | `void AppStart(string theme, DpiScale dpi, double width, double height, string windowState)` | Records that the shell started, naming the binary it is: the informational version and the commit inside it, the build configuration, the docking theme, the DPI and the window. |
 | `void ComposerLayout(` | Records the composer's rendered bounds: the editor host, the read-only compiled view, and the composer they share — at first layout and whenever either part moves past the surface's threshold. |
 | `void WebSurfaceHandshake(` | Records one transition of a web surface's host↔page handshake, with the surface's counts as they stood at that moment. |
-| `void ShellMode(ShellViewMode from, ShellViewMode to, string trigger)` | Records a change of the shell's primary view mode — which body is on screen — and what asked for it. |
+| `void ShellMode(AiDe.Core.Workbench.Perspective from, AiDe.Core.Workbench.Perspective to, string trigger)` | Records a change of the shell's active perspective — which body is on screen — and what asked for it. |
 | `void SessionDocumentBound(string sessionId, string surfaceId, string repositoryRoot)` | Records that a session document's composer was bound to a run context — which session, which surface, and the checkout a run would be cut from. |
 | `void SessionDocumentRefused(string sessionId, string? surfaceId, string field, string reason)` | Records that a session document's composer was left without a run binding, naming the field the refusal points at. |
 
@@ -2175,9 +2283,9 @@ navigation), `disposed`. Counts are lifetime totals as they stood at the transit
 a count the caller does not measure is `null`, never invented. No character of the
 draft is ever recorded.
 
-### `void ShellMode(ShellViewMode from, ShellViewMode to, string trigger)`
+### `void ShellMode(AiDe.Core.Workbench.Perspective from, AiDe.Core.Workbench.Perspective to, string trigger)`
 
-Records a change of the shell's primary view mode — which body is on screen — and what asked
+Records a change of the shell's active perspective — which body is on screen — and what asked
 for it.
 
 **Remarks.** **Why this exists (INV-0009).** Two session documents were opened into the docking host
@@ -2241,7 +2349,6 @@ while the view rendered another.
 | `IReadOnlyList<PromptTarget> ReadyPromptTargets()` | The ready terminal sessions a prompt draft may transfer to (US-ED6), live. |
 | `event Action? DocumentOpening` | Raised just before a command adds a dock document to the layout — a terminal, a prompt draft, a reference document, a session document. |
 | `void Dispose()` | **(gap)** |
-| `IReadOnlyList<WorkbenchCommand> PaletteCommands(string search)` | The command palette's rows: every keyboard-reachable layout command. |
 
 ### `void AttachWorkspace(`
 

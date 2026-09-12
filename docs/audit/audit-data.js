@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T15:40:30Z",
+  "generated": "2026-09-12T15:55:11Z",
   "audit": [
     {
       "actor": null,
@@ -13644,15 +13644,6 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2B3F6HHA652K5MCZBAC28QX",
-      "shortname": "implement-inv-0010-slice-0-correction",
-      "datetime": "2026-09-12T15:23:41Z",
-      "session": "hosts-fix",
-      "prompt": "Conductor correction to INV-0010's attribution, applied as SLICE 0 before slices 1-4: the 223 \"foreign\" processes are caused by us — every process we spawn inherits WT_SESSION/WT_PROFILE_ID from the Windows Terminal tab the harness runs in, and Windows Terminal's agent host attaches an agent session (its MCP servers) per shell. The terminal runtime scrubs every WT_* variable from the child environment of every ConPTY spawn (product and the test helper), red first, plus a manual A/B measurement in the Proof Pack; correct INV-0010 §census, DC-155's entry (cause-vs-parent rule) and the reaper's action line. Then: main allocated DC-154 to CV-0's class — re-issue INV-0010's classes as DC-155/156/157 on the merge; note which measurements ran while CV-1 and SH-1 were live.",
-      "summary": "Slice 0 landed first: ConPtyInterop.BuildEnvironmentBlock strips every WT_* variable from every ConPTY child (builds the block whenever the parent carries one; the rest passes through); TerminalHostLauncher hands the helper the same block. Red first at two levels: EnvironmentBlockTests (Assert.NotNull failed — no block was built) and TerminalChildEnvironmentTests via the helper's env-scrub mode (three WT_ lines arrived through a real pseudo console), both green after. Measured on this machine: 4 product-shaped ConPTY sessions with WT_* inherited -> 4 node higgsfield-mcp births in 40 s; the same 4 without -> 0; 4 hidden plain shells with WT_* -> 0 (the trigger is a ConPTY session carrying WT_SESSION); after the fix, helpers that still inherit WT_* -> 0 (the child is the trigger). INV-0010 gained a Correction section (H1: foreign by parent, ours by cause; phase 0/5 rows); the register's attribution class gained instance 2 (the misattribution) and the cause-vs-parent control; the reaper's ACTION line names the cause and the WT_SESSION mechanism (never the operator's MCP config) and reports the birth correlation with our terminal.start lines (not recorded when the log is unreadable) — self-test 5j corrected, 5k births_near, 5l pid reuse; 51 assertions / 17 tables. Reviews: Test Architect (veto held, then cleared: runtime start-failed stop fact, a deterministic exit-4 child with E12 runtime<->workbench agreement, a start-failed pane -> disposed fact, mutation-observed reds), SRE lens (the read loop drains to EOF so ClosePseudoConsole cannot wedge; tokens captured before dispose; Dispose after an unrecorded exit writes child-exited; pid-reuse guard in ancestry; the job-close-at-child-exit semantic named as a decision). Merge of origin/main: DC-154 stays CV-0's; INV-0010's classes re-issued as DC-155 (resource released with the owner), DC-156 (closed by attribution) and DC-157 (positive control satisfied by the defect); every citation in this tree follows; the stale investigate/terminal-hosts-5 branch still carries the old ids and trips verify-id-allocators cross-branch until retired. CV-1 and SH-1 were live during the measurements; the Proof Pack states how the A/B windows exclude their shells.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Terminal/ConPtyInterop.cs",
@@ -13665,6 +13656,29 @@ window.AUDIT_DATA = {
         "docs/lessons/defect-classes.md",
         "docs/proof/terminal-hosts-fifth.md"
       ],
+      "datetime": "2026-09-12T15:23:41Z",
+      "done_when": "EnvironmentBlockTests + TerminalChildEnvironmentTests red then green; A/B births measured 4/4 -> 0/4 and recorded; the ACTION line names WT_SESSION and not the operator's config (self-test red then green); INV and register corrected; DC-155/156/157 re-issued with every citation updated; verify-id-allocators run before the commit; both suites green post-merge; pushed",
+      "fan_out": 2,
+      "git": {
+        "branch": "fix/terminal-hosts-5",
+        "pushed": null,
+        "sha": "63624f0b11c244c21e851227fa176a4a89cd2655",
+        "short": "63624f0b1"
+      },
+      "goal": "Slice 0: no ConPTY child of ours carries WT_*; the census names the cause; INV-0010/DC-156 corrected; classes re-issued on the merge of main",
+      "id": "al-01M2B3F6HHA652K5MCZBAC28QX",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Conductor correction to INV-0010's attribution, applied as SLICE 0 before slices 1-4: the 223 \"foreign\" processes are caused by us — every process we spawn inherits WT_SESSION/WT_PROFILE_ID from the Windows Terminal tab the harness runs in, and Windows Terminal's agent host attaches an agent session (its MCP servers) per shell. The terminal runtime scrubs every WT_* variable from the child environment of every ConPTY spawn (product and the test helper), red first, plus a manual A/B measurement in the Proof Pack; correct INV-0010 §census, DC-155's entry (cause-vs-parent rule) and the reaper's action line. Then: main allocated DC-154 to CV-0's class — re-issue INV-0010's classes as DC-155/156/157 on the merge; note which measurements ran while CV-1 and SH-1 were live.",
+      "session": "hosts-fix",
+      "shortname": "implement-inv-0010-slice-0-correction",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "summary": "Slice 0 landed first: ConPtyInterop.BuildEnvironmentBlock strips every WT_* variable from every ConPTY child (builds the block whenever the parent carries one; the rest passes through); TerminalHostLauncher hands the helper the same block. Red first at two levels: EnvironmentBlockTests (Assert.NotNull failed — no block was built) and TerminalChildEnvironmentTests via the helper's env-scrub mode (three WT_ lines arrived through a real pseudo console), both green after. Measured on this machine: 4 product-shaped ConPTY sessions with WT_* inherited -> 4 node higgsfield-mcp births in 40 s; the same 4 without -> 0; 4 hidden plain shells with WT_* -> 0 (the trigger is a ConPTY session carrying WT_SESSION); after the fix, helpers that still inherit WT_* -> 0 (the child is the trigger). INV-0010 gained a Correction section (H1: foreign by parent, ours by cause; phase 0/5 rows); the register's attribution class gained instance 2 (the misattribution) and the cause-vs-parent control; the reaper's ACTION line names the cause and the WT_SESSION mechanism (never the operator's MCP config) and reports the birth correlation with our terminal.start lines (not recorded when the log is unreadable) — self-test 5j corrected, 5k births_near, 5l pid reuse; 51 assertions / 17 tables. Reviews: Test Architect (veto held, then cleared: runtime start-failed stop fact, a deterministic exit-4 child with E12 runtime<->workbench agreement, a start-failed pane -> disposed fact, mutation-observed reds), SRE lens (the read loop drains to EOF so ClosePseudoConsole cannot wedge; tokens captured before dispose; Dispose after an unrecorded exit writes child-exited; pid-reuse guard in ancestry; the job-close-at-child-exit semantic named as a decision). Merge of origin/main: DC-154 stays CV-0's; INV-0010's classes re-issued as DC-155 (resource released with the owner), DC-156 (closed by attribution) and DC-157 (positive control satisfied by the defect); every citation in this tree follows; the stale investigate/terminal-hosts-5 branch still carries the old ids and trips verify-id-allocators cross-branch until retired. CV-1 and SH-1 were live during the measurements; the Proof Pack states how the A/B windows exclude their shells.",
       "tags": [
         "inv-0010",
         "terminal",
@@ -13673,57 +13687,178 @@ window.AUDIT_DATA = {
         "dc-156",
         "dc-157"
       ],
-      "outcome": "success",
-      "goal": "Slice 0: no ConPTY child of ours carries WT_*; the census names the cause; INV-0010/DC-156 corrected; classes re-issued on the merge of main",
-      "done_when": "EnvironmentBlockTests + TerminalChildEnvironmentTests red then green; A/B births measured 4/4 -> 0/4 and recorded; the ACTION line names WT_SESSION and not the operator's config (self-test red then green); INV and register corrected; DC-155/156/157 re-issued with every citation updated; verify-id-allocators run before the commit; both suites green post-merge; pushed",
       "tier": "T1",
-      "fan_out": 2,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "git": {
-        "sha": "63624f0b11c244c21e851227fa176a4a89cd2655",
-        "short": "63624f0b1",
-        "branch": "fix/terminal-hosts-5",
-        "pushed": null
-      }
+      "tool": null
     },
     {
-      "id": "al-01M2B3WBGTXVVM8H3P6NCDSX6S",
-      "shortname": "implement-inv-0010-close",
-      "datetime": "2026-09-12T15:30:52Z",
-      "session": "hosts-fix",
-      "prompt": "Close of the INV-0010 implement run: the id re-issue's final order, the post-merge gates, the push.",
-      "summary": "Final numbering after the merge of main (DC-154 = CV-0's): DC-155 = a symptom owned by someone else is closed by attribution (the number investigate/terminal-hosts-5 already gave it, so the branches do not allocate independently), DC-156 = a resource acquired for a child is released with the owner, DC-157 = a test's positive control satisfied by the defect it guards; verify-id-allocators green across 32 branches. Post-merge gates: build 0 warnings with TreatWarningsAsErrors; verify-test-run App 701 (>= 695), Core 2288 (>= 2278), both Completed; verify-terminal-host-exit-paths OK over the run's trx; every ring-0 gate green; regenerate-derived green. Pushed fix/terminal-hosts-5; main untouched.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [],
+      "datetime": "2026-09-12T15:30:52Z",
+      "done_when": "gates green, derived views current, pushed",
+      "fan_out": 2,
+      "git": {
+        "branch": "fix/terminal-hosts-5",
+        "pushed": null,
+        "sha": "63624f0b11c244c21e851227fa176a4a89cd2655",
+        "short": "63624f0b1"
+      },
+      "goal": "Branch fix/terminal-hosts-5 complete and pushed with every gate green",
+      "id": "al-01M2B3WBGTXVVM8H3P6NCDSX6S",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Close of the INV-0010 implement run: the id re-issue's final order, the post-merge gates, the push.",
+      "session": "hosts-fix",
+      "shortname": "implement-inv-0010-close",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "summary": "Final numbering after the merge of main (DC-154 = CV-0's): DC-155 = a symptom owned by someone else is closed by attribution (the number investigate/terminal-hosts-5 already gave it, so the branches do not allocate independently), DC-156 = a resource acquired for a child is released with the owner, DC-157 = a test's positive control satisfied by the defect it guards; verify-id-allocators green across 32 branches. Post-merge gates: build 0 warnings with TreatWarningsAsErrors; verify-test-run App 701 (>= 695), Core 2288 (>= 2278), both Completed; verify-terminal-host-exit-paths OK over the run's trx; every ring-0 gate green; regenerate-derived green. Pushed fix/terminal-hosts-5; main untouched.",
       "tags": [
         "inv-0010",
         "dc-155",
         "dc-156",
         "dc-157"
       ],
-      "outcome": "success",
-      "goal": "Branch fix/terminal-hosts-5 complete and pushed with every gate green",
-      "done_when": "gates green, derived views current, pushed",
       "tier": "T1",
-      "fan_out": 2,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
+      "tool": null
+    },
+    {
+      "actor": "claude-opus-5",
+      "agent_runs": [
+        {
+          "agent": "test-architect",
+          "budget_calls": 60,
+          "calls": 42,
+          "duration_seconds": 720.0,
+          "ended_at": "2026-09-12T15:17:00Z",
+          "over_budget": false,
+          "started_at": "2026-09-12T15:05:00Z"
+        },
+        {
+          "agent": "ux-accessibility",
+          "budget_calls": 60,
+          "calls": 31,
+          "duration_seconds": 720.0,
+          "ended_at": "2026-09-12T15:17:00Z",
+          "over_budget": false,
+          "started_at": "2026-09-12T15:05:00Z"
+        },
+        {
+          "agent": "the-simplifier",
+          "budget_calls": 60,
+          "calls": 14,
+          "duration_seconds": 360.0,
+          "ended_at": "2026-09-12T15:11:00Z",
+          "over_budget": false,
+          "started_at": "2026-09-12T15:05:00Z"
+        },
+        {
+          "agent": "test-architect",
+          "budget_calls": 40,
+          "calls": 16,
+          "duration_seconds": 300.0,
+          "ended_at": "2026-09-12T16:03:00Z",
+          "over_budget": false,
+          "started_at": "2026-09-12T15:58:00Z"
+        },
+        {
+          "agent": "ux-accessibility",
+          "budget_calls": 40,
+          "calls": 9,
+          "duration_seconds": 240.0,
+          "ended_at": "2026-09-12T16:02:00Z",
+          "over_budget": false,
+          "started_at": "2026-09-12T15:58:00Z"
+        },
+        {
+          "agent": "the-simplifier",
+          "budget_calls": 40,
+          "calls": 4,
+          "duration_seconds": 60.0,
+          "ended_at": "2026-09-12T15:59:00Z",
+          "over_budget": false,
+          "started_at": "2026-09-12T15:58:00Z"
+        }
+      ],
+      "artifacts": [
+        "src/AiDe.Core/Workbench/Perspectives.cs",
+        "src/AiDe.Core/Workbench/WorkbenchCommands.cs",
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
+        "src/AiDe.App/Workbench/PerspectiveMenu.cs",
+        "src/AiDe.App/Workbench/MainMenuBuilder.cs",
+        "src/AiDe.App/Workbench/CommandPalette.cs",
+        "src/AiDe.App/Workbench/ShellModeController.cs",
+        "src/AiDe.App/Workbench/WorkbenchController.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/MainWindow.xaml.cs",
+        "tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs",
+        "tests/AiDe.Core.Tests/Workbench/PerspectiveSetTests.cs",
+        "docs/proof/perspective-registry.md",
+        "docs/notes/sh1-scope-and-entry-columns.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "change": "cl-01M2B40BA74K1EWBYGDSH3PPWT",
+      "datetime": "2026-09-12T15:33:36Z",
+      "done_when": "the plan's nine reds observed red then green; gates green (build with warnings-as-errors, both suites, verify-test-run check, every tools/verify-*.py); Proof Pack, audit entry and decision note committed and pushed to lane/shell-sh1; claims released",
+      "duration_seconds": 7065.0,
+      "fan_out": 3,
       "git": {
-        "sha": "63624f0b11c244c21e851227fa176a4a89cd2655",
-        "short": "63624f0b1",
-        "branch": "fix/terminal-hosts-5",
-        "pushed": null
-      }
+        "branch": "lane/shell-sh1",
+        "pushed": null,
+        "sha": "8d54aadc0016c343f08f752d6d9927059c8e0718",
+        "short": "8d54aadc0"
+      },
+      "goal": "SH-1: the Perspective registry (three Core rows), the allow-list columns on the eighteen kind rows, and PerspectiveMenu - one derivation the menu bar, the palette and the routed kind-open read (ADR-0030); reds first per the plan",
+      "id": "al-01M2B41BRPX53SAAHTB82HV76B",
+      "kind": "skill",
+      "main_budget": 4127,
+      "main_calls": 150,
+      "main_over_budget": false,
+      "outcome": "success",
+      "parallelism": {
+        "agent_seconds": 2400.0,
+        "peak_concurrency": 3,
+        "span_seconds": 1020.0,
+        "speedup": 2.35
+      },
+      "persona_yield": [
+        {
+          "accepted": 11,
+          "persona": "test-architect",
+          "raised": 13
+        },
+        {
+          "accepted": 16,
+          "persona": "ux-accessibility",
+          "raised": 19
+        },
+        {
+          "accepted": 11,
+          "persona": "the-simplifier",
+          "raised": 13
+        }
+      ],
+      "prompt": "You are track SH-1 of the Shell lane in docs/coordination/addendum-cd.md — read your row, the Seams table, the §2 rows (what the Shell lane owns) and the fan-out contract first. Run the /implement skill (Skill tool: implement, args: SH-1: the Perspective registry, the allow-list column on the kind rows, and the derived menu/palette/rail (ADR-0030); reds first per the plan). The conductor is Claude Opus (session conductor-addendum-c). Read CLAUDE.md and AGENTS.md; the pack's rules apply in full (red first; smallest correct; class → sweep → derive → prevent; the Test Architect's hard veto; UX & Accessibility reviews PS-M1–M4). Use python, not python3; $env:PYTHONIOENCODING='utf-8'.\n\nYour worktree — the only tree you write to: C:\\Projects\\ai-de-lane-shell-sh1, branch lane/shell-sh1, HEAD = main 8d54aadc (S0–S2 and DS-1 are in). Claim the files you edit with coord-core.py claim --path <file> --wi SH-1 --ttl 3600 before editing shared surfaces; release at close. A refused claim is a plan defect — stop and report, do not wait it out.\n\nWhat you build (ADR-0030; spec docs/specs/addendum-c-perspectives.md §A7 allow-lists, §B3 the menu derivation rule, US-C3 routing, US-C10 gestures; Rulings 50, 52, 55b, 59, 60, 61):\n- src/AiDe.Core/Workbench/Perspectives.cs (new): Perspective (Coding · Explore · Architecture; Tests reserved, absent) and PerspectiveSet.All — three rows in routing order; the rename ShellViewMode → Perspective happens only in the commit that implements this (Ruling 50) and touches ShellModeController no further than the enum (SH-2 owns the presenter).\n- src/AiDe.Core/Workbench/WorkbenchCommands.cs: perspective.* rows replace shell.toggleExplorer; bound-only chords (the Ctrl+K, X chords are announced, never bound — US-C10; Ctrl+1/2/3 per D1's menu-names note); src/AiDe.Core/Workbench/LayoutModel.cs (kind rows).\n- src/AiDe.App/Workbench/SurfaceContentFactory.cs: the Perspectives and Instances columns on the existing descriptor rows (Ruling 22: rows, not switch arms) — every kind names its admitting perspectives explicitly, no default, with Rulings 59/60/61's membership.\n- src/AiDe.App/Workbench/PerspectiveMenu.cs (new: For(perspective), Resolve(kind) — the routed kind-open per US-C3, Architecture · Coding order, the reading host wins a shared kind); MainMenuBuilder.cs and CommandPalette.cs derive from the join of the command catalog and the allow-lists (Ruling 55b: never a second hand-written list; the MainMenuBuilder.Layout carve-out is suspended — the mapping moves onto the catalog entry).\n\nReds first (the plan names them; observe each red, then green): MainMenuTests.TheMenuCoversEveryCatalogCommand (re-scoped to ≥ 1 perspective ∪ entry verbs) · EveryMenuItemShowsItsKeyboardChord (bound-only) · ExplorerModeTests.Toggle_FlipsModeAndRaisesModeChanged (three-row set; activating the active perspective is a no-op) · the announced-gesture uniqueness collector (four collisions exist today — US-C10 b2; the test lists them red) · the Perspectives non-empty-set build test · the §B3 literal-table menu oracle · the US-C3 routing table test · the palette-rows-equal-menu test · the mutation test (a test-time kind row appears only where admitted).\n\nFloors: E7 before coding; seams (SH-2 consumes your types next — leave ShellModeController's presenter logic to SH-2; the Conversation lane's \"free-form\" census allows only Watcher/Leaderboard.cs; CV-2's Projection.Project( census — do not call it); reviews (read-only, ≤ 3 concurrent): Test Architect (hard), UX & Accessibility (PS-M1–M4), the Simplifier, the Patterns Expert on the registry shape; gates at close, bare, stop on the first red: dotnet build Core + App + both test projects -p:TreatWarningsAsErrors=true; dotnet test both (full); verify-test-run.py CHECK only (--no-run after the run; never --update); every tools/verify-*.py; regenerate-derived.py after the audit entry. Register any new class with ids from verify-id-allocators.py (DC-153 is the highest on main). Audit entry, the Proof Pack, commit with the attribution lines, git push -u origin lane/shell-sh1. Do not merge to main. Release your claims.\n\nFails if (stop and report): a second hand-written menu/palette list; a kind row with a default or empty admitting set; a bound Ctrl+K, X chord; a write outside the Shell lane's §2 paths (in particular none under Workbench/Composer/**, Workbench/Sessions/**, Presentation/Composer/**, AgentPlane/**, Conductor/**, DESIGN.md); a red made green by weakening; verify-test-run.py --update; git stash; a rebase; a push to main; DC-120.\n\nReport back (compact): the reds → green; the registry's three rows and the allow-list matrix as landed; the derivation rule's oracle; the four chord collisions' resolution; reviews raised/cleared; gate table; new classes; commit shas and the pushed sha; seam requests for SH-2 or the Conversation lane, if any.",
+      "session": "sh-1",
+      "shortname": "sh-1-perspective-registry",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-12T13:35:51Z",
+      "summary": "Landed on lane/shell-sh1: Perspectives.cs (Coding/Explore/Architecture rows, routing order Architecture then Coding), the catalog's Scope column with perspective.* rows derived from the set (shell.toggleExplorer and six per-kind openers retired; entry verbs in File; Terminal renamed Prompt; Diagnostics report), the kind rows' Perspectives/Instances/Entry columns (18 rows, no defaults), PerspectiveMenu.For/Resolve/Opener, MainMenuBuilder and CommandPalette deriving from one model (bound-only keystrokes; a non-checkable radio item with a Toggle peer and an accent check glyph), the ShellViewMode->Perspective rename, one OnDocumentOpening rule. Reds: 5 seen against the old code (EveryMenuItemShowsItsKeyboardChord, the four-collision collector, three _Terminal->_File/_Prompt pins) + 25 mutations over three passes, all killed. Reviews: Test Architect VETO->PASS-WITH-CONDITIONS (A done, B superseded, C/D recorded); UX&A VETO->VETO on a new round-2 Blocker, whose prescribed fix was applied and proven after the cap (M21-M23) but not re-reviewed - conductor's call; Simplifier SOFT VETO->CLEARED. Core 2,262/0, App 673/0. Proof Pack docs/proof/perspective-registry.md; decision note docs/notes/sh1-scope-and-entry-columns.md; register: DC-023 recurrence + three DC-nnn entries (ids for the join). Forced writes outside the listed paths, claimed and reported: tests/AiDe.App.ComposerProbe/Program.SessionRender.cs and tests/AiDe.App.Tests/Sessions/ASessionDocumentIsShownWhereTheOperatorIsTests.cs (the rename's references).",
+      "tags": [
+        "addendum-c",
+        "shell-lane",
+        "adr-0030"
+      ],
+      "tier": "T2",
+      "tool": null
     }
   ],
   "changes": [
@@ -17361,31 +17496,60 @@ window.AUDIT_DATA = {
       "title": "The session thread is a FeedList over versioned catch-up-flagged snapshots: the feed owns its keys, the row owns its view state, the composer declares its floor, the policy announces by transition"
     },
     {
-      "id": "cl-01M2B2F0VFD7RE1FPXP4P7FMF9",
-      "datetime": "2026-09-12T15:06:07Z",
-      "session": "cv-0",
-      "kind": "decision",
-      "skill": "implement",
-      "title": "A read-only turn runs in the workspace root, opens no episode and is not scored (Ruling 73's Inferred half decided)",
-      "prompt": null,
-      "summary": "GovernedRunHost's read-only branch opens the ACP session with cwd = the repository root under ReadOnlyLaneSession (30 disallowed tool names read from the SDK schema union and the CLI binary's tool table), cuts no worktree, opens no WatcherHost/episode, runs no LeaseMonitor, and measures the tree before and after (ReadOnlyTreeDelta). Decision note docs/notes/read-only-lane-runs-in-the-workspace-root.md.",
-      "rationale": "Ruling 73's constraint (cut nothing the operator must clean up); the pin makes the tree safe by construction; the REPL reads the live working state; ADR-0035 roots the compile session the same way. A Message has no done-condition to judge, so no episode and no score; the measurement is the run result (frame, events, latencies, the tree delta) and the workbench log.",
       "artifacts": [
         "docs/notes/read-only-lane-runs-in-the-workspace-root.md",
         "src/AiDe.App/Conductor/GovernedRunHost.cs"
       ],
+      "audit_ref": "al-01M2B2EHNVA62607PWZMQ0QBDS",
+      "datetime": "2026-09-12T15:06:07Z",
+      "git": {
+        "after": "8d54aadc0016c343f08f752d6d9927059c8e0718",
+        "before": "8d54aadc",
+        "branch": "lane/conversation-cv0",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2B2F0VFD7RE1FPXP4P7FMF9",
+      "kind": "decision",
+      "prompt": null,
+      "rationale": "Ruling 73's constraint (cut nothing the operator must clean up); the pin makes the tree safe by construction; the REPL reads the live working state; ADR-0035 roots the compile session the same way. A Message has no done-condition to judge, so no episode and no score; the measurement is the run result (frame, events, latencies, the tree delta) and the workbench log.",
+      "session": "cv-0",
+      "skill": "implement",
+      "summary": "GovernedRunHost's read-only branch opens the ACP session with cwd = the repository root under ReadOnlyLaneSession (30 disallowed tool names read from the SDK schema union and the CLI binary's tool table), cuts no worktree, opens no WatcherHost/episode, runs no LeaseMonitor, and measures the tree before and after (ReadOnlyTreeDelta). Decision note docs/notes/read-only-lane-runs-in-the-workspace-root.md.",
       "tags": [
         "ruling-73",
         "cv-0"
       ],
+      "title": "A read-only turn runs in the workspace root, opens no episode and is not scored (Ruling 73's Inferred half decided)"
+    },
+    {
+      "artifacts": [
+        "docs/notes/sh1-scope-and-entry-columns.md",
+        "docs/proof/perspective-registry.md",
+        "src/AiDe.Core/Workbench/Perspectives.cs",
+        "src/AiDe.App/Workbench/PerspectiveMenu.cs"
+      ],
+      "datetime": "2026-09-12T15:33:03Z",
       "git": {
-        "before": "8d54aadc",
         "after": "8d54aadc0016c343f08f752d6d9927059c8e0718",
-        "branch": "lane/conversation-cv0",
-        "pushed": null,
-        "commits": []
+        "before": "8d54aadc0016c343f08f752d6d9927059c8e0718",
+        "branch": "lane/shell-sh1",
+        "commits": [],
+        "pushed": null
       },
-      "audit_ref": "al-01M2B2EHNVA62607PWZMQ0QBDS"
+      "id": "cl-01M2B40BA74K1EWBYGDSH3PPWT",
+      "kind": "design",
+      "prompt": "You are track SH-1 of the Shell lane in docs/coordination/addendum-cd.md — read your row, the Seams table, the §2 rows (what the Shell lane owns) and the fan-out contract first. Run the /implement skill (Skill tool: implement, args: SH-1: the Perspective registry, the allow-list column on the kind rows, and the derived menu/palette/rail (ADR-0030); reds first per the plan). The conductor is Claude Opus (session conductor-addendum-c). Read CLAUDE.md and AGENTS.md; the pack's rules apply in full (red first; smallest correct; class → sweep → derive → prevent; the Test Architect's hard veto; UX & Accessibility reviews PS-M1–M4). Use python, not python3; $env:PYTHONIOENCODING='utf-8'.\n\nYour worktree — the only tree you write to: C:\\Projects\\ai-de-lane-shell-sh1, branch lane/shell-sh1, HEAD = main 8d54aadc (S0–S2 and DS-1 are in). Claim the files you edit with coord-core.py claim --path <file> --wi SH-1 --ttl 3600 before editing shared surfaces; release at close. A refused claim is a plan defect — stop and report, do not wait it out.\n\nWhat you build (ADR-0030; spec docs/specs/addendum-c-perspectives.md §A7 allow-lists, §B3 the menu derivation rule, US-C3 routing, US-C10 gestures; Rulings 50, 52, 55b, 59, 60, 61):\n- src/AiDe.Core/Workbench/Perspectives.cs (new): Perspective (Coding · Explore · Architecture; Tests reserved, absent) and PerspectiveSet.All — three rows in routing order; the rename ShellViewMode → Perspective happens only in the commit that implements this (Ruling 50) and touches ShellModeController no further than the enum (SH-2 owns the presenter).\n- src/AiDe.Core/Workbench/WorkbenchCommands.cs: perspective.* rows replace shell.toggleExplorer; bound-only chords (the Ctrl+K, X chords are announced, never bound — US-C10; Ctrl+1/2/3 per D1's menu-names note); src/AiDe.Core/Workbench/LayoutModel.cs (kind rows).\n- src/AiDe.App/Workbench/SurfaceContentFactory.cs: the Perspectives and Instances columns on the existing descriptor rows (Ruling 22: rows, not switch arms) — every kind names its admitting perspectives explicitly, no default, with Rulings 59/60/61's membership.\n- src/AiDe.App/Workbench/PerspectiveMenu.cs (new: For(perspective), Resolve(kind) — the routed kind-open per US-C3, Architecture · Coding order, the reading host wins a shared kind); MainMenuBuilder.cs and CommandPalette.cs derive from the join of the command catalog and the allow-lists (Ruling 55b: never a second hand-written list; the MainMenuBuilder.Layout carve-out is suspended — the mapping moves onto the catalog entry).\n\nReds first (the plan names them; observe each red, then green): MainMenuTests.TheMenuCoversEveryCatalogCommand (re-scoped to ≥ 1 perspective ∪ entry verbs) · EveryMenuItemShowsItsKeyboardChord (bound-only) · ExplorerModeTests.Toggle_FlipsModeAndRaisesModeChanged (three-row set; activating the active perspective is a no-op) · the announced-gesture uniqueness collector (four collisions exist today — US-C10 b2; the test lists them red) · the Perspectives non-empty-set build test · the §B3 literal-table menu oracle · the US-C3 routing table test · the palette-rows-equal-menu test · the mutation test (a test-time kind row appears only where admitted).\n\nFloors: E7 before coding; seams (SH-2 consumes your types next — leave ShellModeController's presenter logic to SH-2; the Conversation lane's \"free-form\" census allows only Watcher/Leaderboard.cs; CV-2's Projection.Project( census — do not call it); reviews (read-only, ≤ 3 concurrent): Test Architect (hard), UX & Accessibility (PS-M1–M4), the Simplifier, the Patterns Expert on the registry shape; gates at close, bare, stop on the first red: dotnet build Core + App + both test projects -p:TreatWarningsAsErrors=true; dotnet test both (full); verify-test-run.py CHECK only (--no-run after the run; never --update); every tools/verify-*.py; regenerate-derived.py after the audit entry. Register any new class with ids from verify-id-allocators.py (DC-153 is the highest on main). Audit entry, the Proof Pack, commit with the attribution lines, git push -u origin lane/shell-sh1. Do not merge to main. Release your claims.\n\nFails if (stop and report): a second hand-written menu/palette list; a kind row with a default or empty admitting set; a bound Ctrl+K, X chord; a write outside the Shell lane's §2 paths (in particular none under Workbench/Composer/**, Workbench/Sessions/**, Presentation/Composer/**, AgentPlane/**, Conductor/**, DESIGN.md); a red made green by weakening; verify-test-run.py --update; git stash; a rebase; a push to main; DC-120.\n\nReport back (compact): the reds → green; the registry's three rows and the allow-list matrix as landed; the derivation rule's oracle; the four chord collisions' resolution; reviews raised/cleared; gate table; new classes; commit shas and the pushed sha; seam requests for SH-2 or the Conversation lane, if any.",
+      "rationale": "Recorded in docs/notes/sh1-scope-and-entry-columns.md with the alternatives and the reviews that shaped items 6-7 (the Test Architect's Blocker on the DocumentOpening handler; the UX & Accessibility lens's round-2 Blocker on the OnClick override).",
+      "session": "sh-1",
+      "skill": "implement",
+      "summary": "ADR-0030 left seven choices to the implementing slice, made here: the catalog row states what a command NEEDS (CommandScope: Global/DockHost/Admits) rather than which perspectives list it; the kind row states how it reaches the menu (SurfaceEntry: Derived(menu) | Verb(commandId), a closed record hierarchy, no default); the six per-kind opener commands are retired for derived surface.new/show.<kind> ids with one controller case and one shell method; three of the four US-C10 collisions vanish by derivation and focusCanvas is re-lettered; the prompt kind's placement stays a marked simplify: arm; the View radio is a non-checkable MenuItem whose peer exposes Toggle (WPF's click pipeline untouched, the menu closes); a document opens where the operator is - only a full-window body hands over to Coding - as one static MainWindow.OnDocumentOpening the window, the replay and the test call.",
+      "tags": [
+        "addendum-c",
+        "shell-lane",
+        "adr-0030"
+      ],
+      "title": "SH-1: a Scope column on the catalog row, an Entry column on the kind row, derived surface.new/show.<kind> openers, the four chord collisions, a non-checkable radio item with a Toggle peer, and one OnDocumentOpening rule"
     }
   ]
 };

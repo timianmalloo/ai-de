@@ -69,7 +69,7 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
 
         Assert.True(exitCode == 0, $"the session-render probe failed with exit {exitCode}. {stdout} {stderr}");
 
-        Assert.Contains("explorer (22:34:00Z replay): mode=Explorer explorer-graph initialising=1", stdout, StringComparison.Ordinal);
+        Assert.Contains("explorer (22:34:00Z replay): mode=explore explorer-graph initialising=1", stdout, StringComparison.Ordinal);
         AssertShown(stdout, "after New Session:");
 
         // THE CLASS: a sibling dock document opened by a catalog command in the same state.
@@ -99,16 +99,16 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
 
         Assert.True(exitCode == 0, $"the session-render probe failed with exit {exitCode}. {stdout} {stderr}");
 
-        Assert.Contains("explorer (22:34:00Z replay): mode=Explorer explorer-graph initialising=1", stdout, StringComparison.Ordinal);
+        Assert.Contains("explorer (22:34:00Z replay): mode=explore explorer-graph initialising=1", stdout, StringComparison.Ordinal);
 
         var after = Line(stdout, "after New Session:");
-        Assert.Contains("mode=Workbench last-mode-trigger=document-opening ", after, StringComparison.Ordinal);
+        Assert.Contains("mode=coding last-mode-trigger=document-opening ", after, StringComparison.Ordinal);
         AssertShown(stdout, "after New Session:");
 
         // The explicit return is a no-op: the same trigger on record, and not one more WPF Loaded on
         // the composer — nothing was re-parented by a body that was already the workbench.
         var returned = Line(stdout, "after returning to the workbench:");
-        Assert.Contains("mode=Workbench last-mode-trigger=document-opening ", returned, StringComparison.Ordinal);
+        Assert.Contains("mode=coding last-mode-trigger=document-opening ", returned, StringComparison.Ordinal);
         Assert.Equal(LoadedCount(after), LoadedCount(returned));
         AssertShown(stdout, "after returning to the workbench:");
     }

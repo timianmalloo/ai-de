@@ -56,7 +56,7 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     /// <c>ContentControl</c> in the window's tree, and a controller that could reach it would be a
     /// second place the shell's mode can change.
     /// </remarks>
-    public Func<string>? ExplorerToggleRequested { get; set; }
+    public Func<Perspective, string>? PerspectiveRequested { get; set; }
 
     /// <summary>
     /// Raised after a command that CHANGED what the store holds has finished.
@@ -126,8 +126,17 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
             case "session.new":
                 return NewSession();
 
-            case "shell.toggleExplorer":
-                return ToggleExplorer();
+            // One case for every perspective, matched against the closed set (ADR-0030), so adding
+            // a row never needs a case here. Replaces `shell.toggleExplorer`.
+            case var id when PerspectiveSet.ByCommandId(id) is { } perspective:
+                return ActivatePerspective(perspective);
+
+            // One case for every derived "New/Show <Title>" entry (ADR-0030 rule 3): the id names the
+            // kind, and the shell opens it by its row. Replaces the six per-kind commands that each
+            // needed a case, a seam and a method here — a kind added as a row now reaches the menu,
+            // the palette and this switch with no edit to any of them.
+            case var id when PerspectiveMenu.TryParseOpener(id, out var showExisting, out var kind):
+                return OpenSurface(kind, showExisting);
 
             // One case for every harness, matched by the id the profile itself spells
             // (AgentReadinessProfile.CommandIdFor), so adding a harness never needs a case here.
@@ -147,24 +156,6 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
 
             case "workbench.dispatchPrompt":
                 return OpenPromptBar();
-
-            case "workbench.newPromptDraft":
-                return NewPromptDraft();
-
-            case "workbench.newClassDiagram":
-                return NewClassDiagram();
-
-            case "workbench.newSequenceDiagram":
-                return NewSequenceDiagram();
-
-            case "workbench.newSearch":
-                return NewSearch();
-
-            case "workbench.newCodeViewer":
-                return NewCodeViewer();
-
-            case "workbench.newDiagnostics":
-                return NewDiagnostics();
 
             case "workbench.toggleLock":
                 service.IsLocked = !service.IsLocked;
@@ -485,23 +476,13 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
         return true;
     }
 
-    /// <summary>Opens a prompt-draft surface. Set by the shell that can create surfaces.</summary>
-    public Func<string>? NewPromptDraftRequested { get; set; }
-
-    /// <summary>Opens a class-diagram surface. Set by the shell that can create surfaces.</summary>
-    public Func<string>? NewClassDiagramRequested { get; set; }
-
-    /// <summary>Opens a sequence-diagram surface. Set by the shell that can create surfaces.</summary>
-    public Func<string>? NewSequenceDiagramRequested { get; set; }
-
-    /// <summary>Opens a workspace breadth-search surface. Set by the shell that can create surfaces.</summary>
-    public Func<string>? NewSearchRequested { get; set; }
-
-    /// <summary>Opens a read-only code-viewer surface. Set by the shell that can create surfaces.</summary>
-    public Func<string>? NewCodeViewerRequested { get; set; }
-
-    /// <summary>Opens the workspace diagnostics surface. Set by the shell that can create surfaces.</summary>
-    public Func<string>? NewDiagnosticsRequested { get; set; }
+    /// <summary>
+    /// Opens a surface of the named kind — a derived "New/Show &lt;title&gt;" entry (ADR-0030
+    /// rule 3). Set by the shell that can create surfaces; the kind is a row of
+    /// <see cref="SurfaceContentFactory.Kinds"/>. The second argument is true for a "Show" entry:
+    /// the one open surface of the kind is activated instead of a second being added.
+    /// </summary>
+    public Func<string, bool, string>? OpenSurfaceRequested { get; set; }
 
     private bool NewAgentTerminal(string agent)
     {
@@ -512,57 +493,16 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
         return true;
     }
 
-    private bool NewPromptDraft()
+    private bool OpenSurface(string kind, bool showExisting)
     {
-        announcer.Announce(NewPromptDraftRequested is null
-            ? "Prompt drafts are not available in this build."
-            : NewPromptDraftRequested());
+        if (OpenSurfaceRequested is null)
+        {
+            var title = SurfaceContentFactory.Kinds.FirstOrDefault(k => k.Kind == kind)?.Title ?? kind;
+            announcer.Announce($"The {char.ToLowerInvariant(title[0]) + title[1..]} pane is not available in this build.");
+            return true;
+        }
 
-        return true;
-    }
-
-    private bool NewClassDiagram()
-    {
-        announcer.Announce(NewClassDiagramRequested is null
-            ? "Class diagrams are not available in this build."
-            : NewClassDiagramRequested());
-
-        return true;
-    }
-
-    private bool NewSequenceDiagram()
-    {
-        announcer.Announce(NewSequenceDiagramRequested is null
-            ? "Sequence diagrams are not available in this build."
-            : NewSequenceDiagramRequested());
-
-        return true;
-    }
-
-    private bool NewSearch()
-    {
-        announcer.Announce(NewSearchRequested is null
-            ? "Workspace search is not available in this build."
-            : NewSearchRequested());
-
-        return true;
-    }
-
-    private bool NewCodeViewer()
-    {
-        announcer.Announce(NewCodeViewerRequested is null
-            ? "The code viewer is not available in this build."
-            : NewCodeViewerRequested());
-
-        return true;
-    }
-
-    private bool NewDiagnostics()
-    {
-        announcer.Announce(NewDiagnosticsRequested is null
-            ? "Diagnostics are not available in this build."
-            : NewDiagnosticsRequested());
-
+        announcer.Announce(OpenSurfaceRequested(kind, showExisting));
         return true;
     }
 
@@ -607,12 +547,12 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
         return true;
     }
 
-    /// <summary>Swaps the shell between the workbench and Explorer (ADR-0017 primary-view-mode).</summary>
-    private bool ToggleExplorer()
+    /// <summary>Activates a perspective (ADR-0030; US-C1). The window owns the presenter and says what happened.</summary>
+    private bool ActivatePerspective(Perspective perspective)
     {
-        announcer.Announce(ExplorerToggleRequested is null
-            ? "Explorer mode is not available in this build."
-            : ExplorerToggleRequested());
+        announcer.Announce(PerspectiveRequested is null
+            ? $"The {perspective.Title} perspective is not available in this build."
+            : PerspectiveRequested(perspective));
 
         return true;
     }
@@ -804,6 +744,14 @@ internal static class KeyGestures
                 // object — a front door reachable only through the palette is a front door nobody
                 // finds.
                 yield return new KeyGesture(Key.N, ModifierKeys.Control);
+                break;
+            case var id when PerspectiveSet.ByCommandId(id) is { } perspective:
+                // Ctrl+<rail digit>, on the number row AND the numeric keypad (US-C10, D1's decision):
+                // a perspective switch is the one gesture an operator reaches for from anywhere, so
+                // it is bound at window scope rather than announced as a chord. The digit is the
+                // row's Order, so the announced string and the binding cannot disagree.
+                yield return new KeyGesture(Key.D0 + perspective.Order, ModifierKeys.Control);
+                yield return new KeyGesture(Key.NumPad0 + perspective.Order, ModifierKeys.Control);
                 break;
             default:
                 yield break;   // chorded — reachable through the command palette

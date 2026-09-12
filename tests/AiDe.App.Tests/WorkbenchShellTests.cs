@@ -129,14 +129,6 @@ public sealed class WorkbenchShellTests
         Assert.True(empties.Count == 0, "surfaces with no content: " + string.Join(", ", empties));
     }
 
-    // The palette is the accessible route to the chorded commands, so it must actually list them.
-    [Fact]
-    public void ThePalette_ListsEveryKeyboardCommand()
-    {
-        Assert.Equal(WorkbenchCommandCatalog.All.Count, WorkbenchShell.PaletteCommands(string.Empty).Count);
-        Assert.Contains(WorkbenchShell.PaletteCommands("resize"), c => c.Id == "workbench.resizePane");
-    }
-
     [Fact]
     public void FindSurfaceId_WalksUpToTheOwningSurface()
     {
@@ -211,7 +203,7 @@ public sealed class WorkbenchShellTests
 
             var was = centre.Surfaces[centre.ActiveIndex].SurfaceId;
 
-            Assert.True(shell.Controller.Execute("workbench.newCodeViewer"));
+            Assert.True(shell.Controller.Execute("surface.new.codeviewer"));
 
             var centreNow = shell.Service.Current.AllStacks()
                 .First(st => st.Surfaces.Any(x => x.Kind == "canvas"));
@@ -225,6 +217,60 @@ public sealed class WorkbenchShellTests
 
         Assert.Equal(before, after);
         Assert.True(wentElsewhere, "the document landed in the graph's own stack, not beside it");
+    }
+
+    // ADR-0030 rule 3, through the real shell (E11): a derived "Show <Title>" entry focuses the one
+    // open surface of its kind, else opens it; a "New <Title>" entry adds every time. `daydreams` is
+    // in no default layout (Ruling 60), so the first Show opens it and the second finds it. RED
+    // before the seams were wired: the controller announced "not available in this build" and
+    // the tree held no daydreams surface.
+    [Fact]
+    public void AShowEntryOpensTheKindOnce_ThenFocusesIt_AndANewEntryAddsEveryTime()
+    {
+        var (daydreams, tabIndex, activeBeforeShow, activeAfterShow, viewers, said) = WithShell((shell, _) =>
+        {
+            // A code viewer first, so that daydreams is NOT the first tab of its stack: the shell
+            // reconciles the view into the model before a Show, and a reconcile that lands on tab 0
+            // would hand a mutated Show its answer for free (measured — the Test Architect's finding
+            // that the "focuses it" half had no failing input).
+            Assert.True(shell.Controller.Execute("surface.new.codeviewer"));
+            Assert.True(shell.Controller.Execute("surface.show.daydreams"));
+            var home = shell.Service.Current.AllStacks().First(st => st.Surfaces.Any(s => s.Kind == "daydreams"));
+            var daydreamsTab = home.Surfaces.ToList().FindIndex(s => s.Kind == "daydreams");
+            Assert.True(home.Surfaces.Count > 1 && daydreamsTab > 0, "daydreams did not land beside the code viewer as a later tab — this test would prove nothing (DC-016)");
+            Assert.Equal(1, shell.Service.Current.AllStacks().SelectMany(st => st.Surfaces).Count(s => s.Kind == "daydreams"));
+
+            // Make the viewer the active tab, in the model and in the view.
+            var viewer = home.Surfaces.First(s => s.Kind == "codeviewer");
+            Assert.True(shell.Service.Apply(new LayoutOperation.ActivateSurface(viewer.SurfaceId)).Applied);
+            shell.Adapter.Render();
+            AvalonDock.Layout.Extensions.Descendents(shell.Manager.Layout).OfType<AvalonDock.Layout.LayoutDocument>()
+                .First(d => d.ContentId == viewer.SurfaceId).IsSelected = true;
+            var before = ActiveKindOf(shell, "daydreams");
+
+            Assert.True(shell.Controller.Execute("surface.show.daydreams"));
+            var count = shell.Service.Current.AllStacks().SelectMany(st => st.Surfaces).Count(s => s.Kind == "daydreams");
+            var after = ActiveKindOf(shell, "daydreams");
+
+            Assert.True(shell.Controller.Execute("surface.new.codeviewer"));
+            var viewerCount = shell.Service.Current.AllStacks().SelectMany(st => st.Surfaces).Count(s => s.Kind == "codeviewer");
+
+            return (count, daydreamsTab, before, after, viewerCount, shell.Announcer.Last);
+        });
+
+        Assert.Equal(1, daydreams);
+        Assert.True(tabIndex > 0);
+        Assert.Equal("codeviewer", activeBeforeShow);
+        Assert.Equal("daydreams", activeAfterShow);
+        Assert.Equal(2, viewers);
+        Assert.Equal("Code viewer opened.", said);
+    }
+
+    /// <summary>The kind of the active tab in the stack that holds a surface of <paramref name="kind"/>.</summary>
+    private static string ActiveKindOf(WorkbenchShell shell, string kind)
+    {
+        var stack = shell.Service.Current.AllStacks().First(st => st.Surfaces.Any(s => s.Kind == kind));
+        return stack.Surfaces[stack.ActiveIndex].Kind;
     }
 
     private sealed class BareQueries : FakeWorkspaceQueries

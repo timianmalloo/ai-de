@@ -38,17 +38,18 @@ public sealed class CommandPaletteTests
         finally { window.Close(); }
     });
 
-    // The headline: every catalog command is reachable here.
+    // The headline, re-scoped by Addendum C (US-C4 b3): the palette lists exactly what the menu bar
+    // offers in the active perspective — no palette-only set, nothing the perspective cannot offer.
+    // It starts in the initial perspective; the cross-perspective form is PerspectiveMenuTests.
     [Fact]
-    public void ThePalette_ListsEveryLayoutCommand()
+    public void ThePalette_ListsExactlyTheMenusCommands()
     {
         var listed = With((palette, _, _) => palette.Visible.Select(c => c.Id).ToList());
 
-        Assert.Equal(WorkbenchCommandCatalog.All.Count, listed.Count);
-        foreach (var command in WorkbenchCommandCatalog.All)
-        {
-            Assert.Contains(command.Id, listed);
-        }
+        Assert.Equal(PerspectiveMenu.For(PerspectiveSet.Initial).Commands.Select(c => c.Id), listed);
+        Assert.Contains("session.new", listed);
+        Assert.Contains("surface.show.daydreams", listed);        // reachable by construction (Ruling 60)
+        Assert.DoesNotContain("surface.new.classdiagram", listed); // Architecture's, not Coding's
     }
 
     [Fact]
@@ -76,7 +77,8 @@ public sealed class CommandPaletteTests
             return announcer.Last;
         });
 
-        Assert.Contains(WorkbenchCommandCatalog.All[1].Title, announced, StringComparison.Ordinal);
+        var second = With((palette, _, _) => palette.Visible[1].Title);
+        Assert.Contains(second, announced, StringComparison.Ordinal);
     }
 
     [Fact]

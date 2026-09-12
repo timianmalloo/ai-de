@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Windows.Controls;
 using AiDe.App.Workbench;
+using AiDe.Core.Workbench;
 
 namespace AiDe.App.Tests.Sessions;
 
@@ -26,10 +27,16 @@ public sealed class EveryOpeningCommandPassesThroughTheSeamTests
     private const string Opening = "new LayoutOperation.AddSurface(";
     private const string Seam = "OpeningDocument();";
     private const string Wiring = "DocumentOpening += () => ";
-    private const string Handling = ".Set(ShellViewMode.Workbench, \"document-opening\");";
+    /// <summary>
+    /// The one handler (ADR-0030, SH-1): <c>MainWindow.OnDocumentOpening</c> — a document opens
+    /// where the operator is when a host is on screen; only from a full-window body does the initial
+    /// host return. The rule lives in one static the window, the replay and the pairing test all
+    /// call, so what the test proves is what the product runs; this scan only asserts both wire it.
+    /// </summary>
+    private const string Handling = "OnDocumentOpening(";
 
-    /// <summary>The heads a command body starts at: a controller delegate assignment, or the shared open method.</summary>
-    private static readonly string[] Heads = ["Requested = ", "private string OpenReferenceDocument("];
+    /// <summary>The heads a command body starts at: a controller delegate assignment, or one of the two shared open methods (the derived "New/Show" opener since ADR-0030).</summary>
+    private static readonly string[] Heads = ["Requested = ", "private string OpenReferenceDocument(", "private string OpenKind("];
 
     [Fact]
     public void EveryAddSurfaceInTheShell_IsPrecededByTheSeamWithinItsCommand()
@@ -64,7 +71,7 @@ public sealed class EveryOpeningCommandPassesThroughTheSeamTests
             var line = text[wired..text.IndexOf('\n', wired)];
             Assert.True(
                 line.Contains(Handling, StringComparison.Ordinal),
-                $"{name} handles DocumentOpening with something other than Set(Workbench, \"document-opening\"): {line}");
+                $"{name} handles DocumentOpening with something other than MainWindow.OnDocumentOpening: {line}");
         }
     }
 
@@ -137,8 +144,8 @@ public sealed class EveryOpeningCommandPassesThroughTheSeamTests
             {
                 var mode = new ShellModeController(new ContentControl(), new Border(), () => new Grid());
 
-                mode.Set(ShellViewMode.Explorer, "shell.toggleExplorer");
-                mode.Set(ShellViewMode.Workbench, "document-opening");
+                mode.Set(PerspectiveSet.Explore, "perspective.explore");
+                mode.Set(PerspectiveSet.Coding, "document-opening");
             }, 30);
         }
         finally
@@ -150,12 +157,13 @@ public sealed class EveryOpeningCommandPassesThroughTheSeamTests
             .Where(e => e.GetProperty("evt").GetString() == "shell.mode")
             .ToList();
 
+        // The perspective's stable id, never its title (ADR-0030; the rename of Ruling 50).
         Assert.Equal(2, modes.Count);
-        Assert.Equal("Explorer", modes[0].GetProperty("mode").GetString());
-        Assert.Equal("Workbench", modes[0].GetProperty("from").GetString());
-        Assert.Equal("shell.toggleExplorer", modes[0].GetProperty("trigger").GetString());
-        Assert.Equal("Workbench", modes[1].GetProperty("mode").GetString());
-        Assert.Equal("Explorer", modes[1].GetProperty("from").GetString());
+        Assert.Equal("explore", modes[0].GetProperty("mode").GetString());
+        Assert.Equal("coding", modes[0].GetProperty("from").GetString());
+        Assert.Equal("perspective.explore", modes[0].GetProperty("trigger").GetString());
+        Assert.Equal("coding", modes[1].GetProperty("mode").GetString());
+        Assert.Equal("explore", modes[1].GetProperty("from").GetString());
         Assert.Equal("document-opening", modes[1].GetProperty("trigger").GetString());
     }
 
@@ -173,7 +181,7 @@ public sealed class EveryOpeningCommandPassesThroughTheSeamTests
             {
                 var mode = new ShellModeController(new ContentControl(), new Border(), () => new Grid());
 
-                mode.Set(ShellViewMode.Workbench, "document-opening");
+                mode.Set(PerspectiveSet.Coding, "document-opening");
             }, 30);
         }
         finally
