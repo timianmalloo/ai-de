@@ -39,16 +39,24 @@ public sealed class WorkbenchShellTests
         finally { window.Close(); }
     });
 
+    // ADR-0031: the default arrangement is composed across BOTH hosts, each holding the kinds its
+    // perspective admits (ADR-0030) — the Coding kinds in host A, the reading kinds in host B — and
+    // neither host holds a kind of the other's.
     [Fact]
-    public void Shell_ComposesTheWorkbenchWithEverySurfaceFromTheDefaultLayout()
+    public void Shell_ComposesTheWorkbenchWithEverySurfaceFromTheDefaultLayout_AcrossBothHosts()
     {
-        var titles = WithShell((shell, _) =>
-            shell.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.Title).ToList());
+        var (coding, architecture) = WithShell((shell, _) => (
+            shell.Coding.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.Title).ToList(),
+            shell.Architecture.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.Title).ToList()));
 
-        Assert.Contains("Explore", titles);
-        Assert.Contains("Domain", titles);
-        Assert.Contains("Provenance", titles);
-        Assert.Contains("Terminal — pwsh", titles);
+        Assert.Contains("Terminal — pwsh", coding);
+        Assert.Contains("Sessions", coding);
+        Assert.DoesNotContain("Graph", coding);
+
+        Assert.Contains("Graph", architecture);
+        Assert.Contains("Provenance", architecture);
+        Assert.Contains("Contexts", architecture);
+        Assert.DoesNotContain("Terminal — pwsh", architecture);
     }
 
     // The whole point of composing in one place: keyboard, view and model must share ONE service, or
@@ -137,7 +145,7 @@ public sealed class WorkbenchShellTests
             AvalonDock.Layout.LayoutDocument? doc = null;
             void Walk(AvalonDock.Layout.ILayoutElement e)
             {
-                if (e is AvalonDock.Layout.LayoutDocument d && d.ContentId == "explore") { doc = d; }
+                if (e is AvalonDock.Layout.LayoutDocument d && d.ContentId == "sessions") { doc = d; }
                 if (e is AvalonDock.Layout.ILayoutContainer c)
                 {
                     foreach (var child in c.Children) { Walk(child); }
@@ -148,7 +156,7 @@ public sealed class WorkbenchShellTests
             return doc?.ContentId;
         });
 
-        Assert.Equal("explore", found);
+        Assert.Equal("sessions", found);
     }
 
     /// <summary>A concrete no-op workspace read surface for attach tests (base defaults, nothing thrown).</summary>
@@ -196,19 +204,22 @@ public sealed class WorkbenchShellTests
         // "Visible" in the sense that its zone is on screen is not the sense a user means. This
         // asserts about the zone the document did NOT go to, which is the half a placement test
         // naturally omits — and the half the defect was in.
+        // The graph is Architecture's kind (ADR-0030), so the placement rule is exercised in host B,
+        // through host B's controller — the one a code viewer opened from the graph reaches.
         var (before, after, wentElsewhere) = WithShell((shell, _) =>
         {
-            var centre = shell.Service.Current.AllStacks()
+            var service = shell.Architecture.Service;
+            var centre = service.Current.AllStacks()
                 .First(st => st.Surfaces.Any(x => x.Kind == "canvas"));
 
             var was = centre.Surfaces[centre.ActiveIndex].SurfaceId;
 
-            Assert.True(shell.Controller.Execute("surface.new.codeviewer"));
+            Assert.True(shell.Architecture.Controller.Execute("surface.new.codeviewer"));
 
-            var centreNow = shell.Service.Current.AllStacks()
+            var centreNow = service.Current.AllStacks()
                 .First(st => st.Surfaces.Any(x => x.Kind == "canvas"));
 
-            var doc = shell.Service.Current.AllStacks()
+            var doc = service.Current.AllStacks()
                 .SelectMany(st => st.Surfaces.Select(x => (Stack: st, Surface: x)))
                 .First(x => x.Surface.Kind == "codeviewer");
 
@@ -217,6 +228,52 @@ public sealed class WorkbenchShellTests
 
         Assert.Equal(before, after);
         Assert.True(wentElsewhere, "the document landed in the graph's own stack, not beside it");
+    }
+
+    // The D&P reviewer's finding on the one-instance rule at open: a "Show <one-instance kind>" whose
+    // only instance sits in a COLLAPSED zone must expand that zone and activate it — never add a
+    // second (now refused) and never leave nothing on screen. RED before the fix: the Show branch
+    // read the projection, which omits a collapsed zone, and the add was refused.
+    [Fact]
+    public void AShowEntry_ForAOneInstanceKindHeldInACollapsedZone_ExpandsTheZoneAndActivatesIt()
+    {
+        var (count, collapsed, said) = WithShell((shell, _) =>
+        {
+            Assert.True(shell.Controller.Execute("surface.show.diagnostics"));
+            var zone = shell.Coding.Service.Zones.FindZoneOf(
+                shell.Coding.Service.Zones.AllSurfaces().Single(s => s.Kind == "diagnostics").SurfaceId)!.Value;
+            var stackId = zone switch
+            {
+                ZoneId.Left => ZonesToTree.LeftStackId,
+                ZoneId.Right => ZonesToTree.RightStackId,
+                ZoneId.Bottom => ZonesToTree.BottomStackId,
+                _ => ZonesToTree.CenterStackId,
+            };
+            if (zone == ZoneId.Center)
+            {
+                // The Center never collapses; move the pane to a tool zone so the case is reachable.
+                shell.Coding.Service.Apply(new LayoutOperation.MoveSurface(
+                    shell.Coding.Service.Zones.AllSurfaces().Single(s => s.Kind == "diagnostics").SurfaceId,
+                    new DropTarget(ZonesToTree.BottomStackId, DropKind.JoinStack)));
+                zone = ZoneId.Bottom;
+                stackId = ZonesToTree.BottomStackId;
+            }
+
+            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(stackId, StackState.Collapsed)).Applied);
+            shell.Adapter.Render();
+            Assert.True(shell.Coding.Service.Zones.Zone(zone).Collapsed);
+
+            Assert.True(shell.Controller.Execute("surface.show.diagnostics"));
+
+            return (
+                shell.Coding.Service.Zones.AllSurfaces().Count(s => s.Kind == "diagnostics"),
+                shell.Coding.Service.Zones.Zone(zone).Collapsed,
+                shell.Announcer.Last);
+        });
+
+        Assert.Equal(1, count);
+        Assert.False(collapsed);
+        Assert.Equal("Diagnostics shown.", said);
     }
 
     // ADR-0030 rule 3, through the real shell (E11): a derived "Show <Title>" entry focuses the one

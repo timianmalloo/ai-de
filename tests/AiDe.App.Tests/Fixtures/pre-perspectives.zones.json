@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "appVersion": "0.3.0",
+  "savedUtc": "2026-09-11T22:33:53.717768+00:00",
+  "layout": {
+    "zones": [
+      {
+        "id": "Left",
+        "content": {
+          "kind": "stack",
+          "tabs": [
+            {
+              "surfaceId": "explore",
+              "kind": "view",
+              "title": "Explore"
+            },
+            {
+              "surfaceId": "provenance",
+              "kind": "inspector",
+              "title": "Provenance"
+            },
+            {
+              "surfaceId": "contexts",
+              "kind": "contexts",
+              "title": "Contexts"
+            },
+            {
+              "surfaceId": "joins",
+              "kind": "joins",
+              "title": "Joins"
+            }
+          ],
+          "activeIndex": 0
+        },
+        "extent": 0.22,
+        "collapsed": false
+      },
+      {
+        "id": "Right",
+        "extent": 0.22,
+        "collapsed": false
+      },
+      {
+        "id": "Bottom",
+        "content": {
+          "kind": "stack",
+          "tabs": [
+            {
+              "surfaceId": "terminal-1",
+              "kind": "terminal",
+              "title": "Terminal \u2014 pwsh"
+            }
+          ],
+          "activeIndex": 0
+        },
+        "extent": 0.3,
+        "collapsed": false
+      },
+      {
+        "id": "Center",
+        "content": {
+          "kind": "stack",
+          "tabs": [
+            {
+              "surfaceId": "graph",
+              "kind": "canvas",
+              "title": "Graph"
+            },
+            {
+              "surfaceId": "domain",
+              "kind": "view",
+              "title": "Domain"
+            },
+            {
+              "surfaceId": "sessions",
+              "kind": "sessions",
+              "title": "Sessions"
+            },
+            {
+              "surfaceId": "board",
+              "kind": "board",
+              "title": "Board"
+            },
+            {
+              "surfaceId": "leaderboard",
+              "kind": "leaderboard",
+              "title": "Leaderboard"
+            },
+            {
+              "surfaceId": "ledger",
+              "kind": "ledger",
+              "title": "Ledger"
+            },
+            {
+              "surfaceId": "classdiagram#a1b2c3",
+              "kind": "classdiagram",
+              "title": "Class diagram"
+            }
+          ],
+          "activeIndex": 6
+        },
+        "extent": 1,
+        "collapsed": false
+      }
+    ],
+    "floating": []
+  }
+}

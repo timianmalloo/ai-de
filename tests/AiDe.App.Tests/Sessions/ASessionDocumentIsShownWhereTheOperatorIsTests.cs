@@ -50,7 +50,11 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
 
         // NON-VACUITY: the replay reached the operator's arrangement (the probe exits 33 otherwise),
         // the prior document rendered unconfigured as the log shows, and the new one loaded.
+        // The operator's pre-perspective file drops its six Architecture surfaces into the report
+        // when read into the Coding slot (ADR-0032 rule 2): graph, domain, explore, provenance,
+        // contexts, joins — and the count is on the line, not inferred from the shape.
         Assert.Contains("restore (22:33:53Z replay): applied-saved=True", stdout, StringComparison.Ordinal);
+        Assert.Contains(" dropped=6 zones=", Line(stdout, "restore (22:33:53Z replay):"), StringComparison.Ordinal);
         Assert.Contains("prior document (22:33:28Z replay): announced=", stdout, StringComparison.Ordinal);
         Assert.Contains(" configured=0 init-pushed=0 layout-lines=1 status='repositoryRoot:", stdout, StringComparison.Ordinal);
         AssertShown(stdout, "after New Session:");
@@ -200,7 +204,25 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
         var composer = Line(stdout, "chooser: composer ");
         Assert.Contains(" configured=1 init-pushed=1 page fields=6 status='' bound-to-chosen-root=True", composer, StringComparison.Ordinal);
 
-        Assert.Contains("chooser cancelled: order=[choose] created=False surfaces before=9 after=9 sessions before=1 after=1", stdout, StringComparison.Ordinal);
+        // The surface count is host A's, which since ADR-0032 holds only the kinds Coding admits
+        // (the operator's file drops its Architecture kinds into a report): the fact is that a
+        // cancelled chooser adds nothing, so the count is read back rather than typed.
+        var cancelled = Line(stdout, "chooser cancelled:");
+        Assert.Contains("chooser cancelled: order=[choose] created=False surfaces before=", cancelled, StringComparison.Ordinal);
+        var before = Between(cancelled, "surfaces before=", " after=");
+        Assert.True(int.Parse(before, System.Globalization.CultureInfo.InvariantCulture) > 0, $"the count read back is vacuous: {cancelled}");
+        Assert.Contains($"surfaces before={before} after={before} sessions before=1 after=1", cancelled, StringComparison.Ordinal);
+    }
+
+    /// <summary>The text between two markers on a measurement line.</summary>
+    private static string Between(string line, string start, string end)
+    {
+        var at = line.IndexOf(start, StringComparison.Ordinal);
+        Assert.True(at >= 0, $"the line carries no '{start}': {line}");
+        var from = at + start.Length;
+        var to = line.IndexOf(end, from, StringComparison.Ordinal);
+        Assert.True(to >= 0, $"the line carries no '{end}' after '{start}': {line}");
+        return line[from..to];
     }
 
     /// <summary>The <c>composer wpf loaded=N</c> count on a measurement line.</summary>

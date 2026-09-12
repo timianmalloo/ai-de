@@ -42,12 +42,25 @@ public sealed class RailButtonsDoNotLieTests
 
     private static readonly XNamespace Xaml = "http://schemas.microsoft.com/winfx/2006/xaml";
 
-    /// <summary>The rail's own buttons — the surface this file is a review of.</summary>
-    private static List<XElement> RailButtons() =>
-        [.. XDocument.Load(MainWindowXaml())
+    private static readonly XNamespace Workbench = "clr-namespace:AiDe.App.Workbench";
+
+    private static XElement ActivityRail() =>
+        XDocument.Load(MainWindowXaml())
             .Descendants()
-            .First(e => (string?)e.Attribute(Xaml + "Name") == "ActivityRail")
-            .Descendants(Presentation + "Button")];
+            .First(e => (string?)e.Attribute(Xaml + "Name") == "ActivityRail");
+
+    /// <summary>The rail's own buttons — the surface this file is a review of.</summary>
+    private static List<XElement> RailButtons() => [.. ActivityRail().Descendants(Presentation + "Button")];
+
+    /// <summary>
+    /// The rail's interactive items: its buttons plus the destinations the <c>PerspectiveRail</c>
+    /// declares (ADR-0031, SH-2) — one per row of the closed Perspective set, so the destination
+    /// count is read from the product's set, never typed here. The destinations' own "not inert"
+    /// proof is <c>PerspectiveRailTests</c> (Enter, Space and a click each raise an activation).
+    /// </summary>
+    private static int RailInteractiveItems() =>
+        RailButtons().Count
+        + (ActivityRail().Descendants(Workbench + "PerspectiveRail").Any() ? AiDe.Core.Workbench.PerspectiveSet.All.Count : 0);
 
     private static string MainWindowXaml()
     {
@@ -77,14 +90,14 @@ public sealed class RailButtonsDoNotLieTests
         // of dead controls. Two is the floor because the rail is, by AR1/AR2, at least one
         // destination and one primary action — and because a floor that encodes how many
         // destinations the product HAS is a floor that fails when the product changes.
-        var rail = RailButtons();
+        var rail = RailInteractiveItems();
 
-        Assert.True(rail.Count >= 2,
-            $"found {rail.Count} Button element(s) inside the ActivityRail; the rail holds at least "
+        Assert.True(rail >= 2,
+            $"found {rail} interactive item(s) inside the ActivityRail; the rail holds at least "
             + "its primary action and one destination, so this test is reading the wrong document "
             + "rather than a correct one");
 
-        Assert.True(buttons.Count >= rail.Count,
+        Assert.True(buttons.Count >= RailButtons().Count,
             "the whole-window scan found fewer buttons than the rail scan, which cannot be true of "
             + "the same document");
 

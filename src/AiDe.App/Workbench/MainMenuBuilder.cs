@@ -139,6 +139,7 @@ internal static class MainMenuBuilder
     /// drift the derivation exists to make impossible. The window passes the model it also hands
     /// the palette, so the two cannot disagree (E12).
     /// </param>
+    /// <remarks>simplify: a test-only overload (six test sites); ceiling: this overload; trigger: substitute <c>controller.Execute</c> at each and delete.</remarks>
     internal static void Build(
         Menu menu,
         WorkbenchController controller,
@@ -149,8 +150,23 @@ internal static class MainMenuBuilder
         IReadOnlyList<Sessions.RecentSessionEntry>? recentSessions = null,
         Action<string>? onOpenRecentSession = null)
     {
-        ArgumentNullException.ThrowIfNull(menu);
         ArgumentNullException.ThrowIfNull(controller);
+        Build(menu, controller.Execute, derived, onExit, recent, onOpenRecent, recentSessions, onOpenRecentSession);
+    }
+
+    /// <param name="execute">Where a clicked item goes: the shell-level router (ADR-0031), which resolves the host a command reaches; a headless test passes one controller's <c>Execute</c>.</param>
+    internal static void Build(
+        Menu menu,
+        Func<string, bool> execute,
+        PerspectiveMenu derived,
+        Action? onExit = null,
+        IReadOnlyList<string>? recent = null,
+        Action<string>? onOpenRecent = null,
+        IReadOnlyList<Sessions.RecentSessionEntry>? recentSessions = null,
+        Action<string>? onOpenRecentSession = null)
+    {
+        ArgumentNullException.ThrowIfNull(menu);
+        ArgumentNullException.ThrowIfNull(execute);
         ArgumentNullException.ThrowIfNull(derived);
 
         menu.Items.Clear();
@@ -171,7 +187,7 @@ internal static class MainMenuBuilder
                     top.Items.Add(new Separator());
                 }
 
-                top.Items.Add(Item(command, controller, isPerspective, derived.Perspective));
+                top.Items.Add(Item(command, execute, isPerspective, derived.Perspective));
                 previousWasPerspective = isPerspective;
             }
 
@@ -183,7 +199,7 @@ internal static class MainMenuBuilder
 
             foreach (var command in group.Derived)
             {
-                top.Items.Add(Item(command, controller, isPerspective: false, derived.Perspective));
+                top.Items.Add(Item(command, execute, isPerspective: false, derived.Perspective));
             }
 
             if (top.Items.Count == 0) continue;
@@ -261,7 +277,7 @@ internal static class MainMenuBuilder
     /// itself). The check is drawn in the icon column as the accent glyph the design's state table
     /// names, because the app's menu template renders no check of its own.</para>
     /// </remarks>
-    private static MenuItem Item(WorkbenchCommand command, WorkbenchController controller, bool isPerspective, Perspective active)
+    private static MenuItem Item(WorkbenchCommand command, Func<string, bool> execute, bool isPerspective, Perspective active)
     {
         var bound = KeyGestures.For(command).FirstOrDefault();
         var isActive = isPerspective && string.Equals(command.Id, active.CommandId, StringComparison.Ordinal);
@@ -275,7 +291,7 @@ internal static class MainMenuBuilder
         item.ToolTip = command.Hint;
 
         var captured = command.Id;
-        item.Click += (_, _) => controller.Execute(captured);
+        item.Click += (_, _) => execute(captured);
 
         return item;
     }

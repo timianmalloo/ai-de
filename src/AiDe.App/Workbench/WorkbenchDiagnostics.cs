@@ -388,12 +388,22 @@ public static class WorkbenchDiagnostics
     /// from a side effect, never stated. The mode is the one fact every "I opened X and saw nothing"
     /// report turns on, so it is written on the normal path, once per change, with its trigger.
     /// </remarks>
-    public static void ShellMode(AiDe.Core.Workbench.Perspective from, AiDe.Core.Workbench.Perspective to, string trigger)
+    /// <param name="from">The perspective that was active.</param>
+    /// <param name="to">The perspective asked for.</param>
+    /// <param name="trigger">What asked: a catalog command id, <c>rail</c>, <c>escape</c>, <c>document-opening</c>, a replay step.</param>
+    /// <param name="firstEntry">True when the target body was built by this switch (US-C12).</param>
+    /// <param name="outcome"><c>switched</c> · <c>failed</c> (the body could not be built; <paramref name="to"/> is not active) · <c>refused</c> (a host command with no host; nothing changed).</param>
+    /// <param name="errorCode">The stable code of a failure or refusal; null on success (E7: the IO failure-rate axis).</param>
+    public static void ShellMode(
+        AiDe.Core.Workbench.Perspective from, AiDe.Core.Workbench.Perspective to, string trigger,
+        bool firstEntry, string outcome, string? errorCode)
     {
         using var activity = Source.StartActivity("workbench.shell.mode");
         activity?.SetTag("workbench.mode", to.Id);
         activity?.SetTag("workbench.mode.from", from.Id);
         activity?.SetTag("workbench.trigger", trigger);
+        activity?.SetTag("outcome", outcome);
+        activity?.SetTag("error.code", errorCode);
 
         // The perspective's stable id (`coding` · `explore` · `architecture`), never its title: a
         // reader greps the log for the row, and a caption can be re-worded without re-keying history.
@@ -404,6 +414,63 @@ public static class WorkbenchDiagnostics
             mode = to.Id,
             from = from.Id,
             trigger,
+            first_entry = firstEntry,
+            outcome,
+            error_code = errorCode,
+        });
+    }
+
+    /// <summary>
+    /// Records the stop edge of a perspective switch (US-C12): the new body's first <c>Loaded</c>
+    /// after the presenter set its content, with the duration from the command's invocation.
+    /// </summary>
+    /// <remarks>
+    /// A second line rather than a field on <see cref="ShellMode"/>, because the switch line is
+    /// written synchronously — INV-0009's readers and the headless tests depend on it — and the
+    /// stop edge is asynchronous; a body with no presentation source never reaches it, and its
+    /// duration is then absent from the log rather than modelled (IO12). Joined to the switch line
+    /// by <c>mode</c> and <c>trigger</c>.
+    /// </remarks>
+    public static void ShellModeShown(AiDe.Core.Workbench.Perspective to, string trigger, double durationMs)
+    {
+        using var activity = Source.StartActivity("workbench.shell.mode.shown");
+        activity?.SetTag("workbench.mode", to.Id);
+        activity?.SetTag("workbench.trigger", trigger);
+        activity?.SetTag("duration.ms", durationMs);
+
+        Write(new
+        {
+            ts = DateTimeOffset.UtcNow.ToString("O"),
+            evt = "shell.mode.shown",
+            mode = to.Id,
+            trigger,
+            duration_ms = Math.Round(durationMs, 1),
+        });
+    }
+
+    /// <summary>
+    /// Records what a slot's restore did (US-C12 b3; ADR-0032 rule 2): the perspective, the
+    /// placement branch, and the dropped count and kinds — or the refusal's code.
+    /// </summary>
+    public static void LayoutRestoreReport(
+        string perspectiveId, string placement, IReadOnlyList<AiDe.Core.Workbench.DroppedSurface> dropped, string? errorCode)
+    {
+        using var activity = Source.StartActivity("workbench.layout.restore");
+        activity?.SetTag("workbench.mode", perspectiveId);
+        activity?.SetTag("placement", placement);
+        activity?.SetTag("dropped.count", dropped.Count);
+        activity?.SetTag("error.code", errorCode);
+
+        Write(new
+        {
+            ts = DateTimeOffset.UtcNow.ToString("O"),
+            evt = "layout.restore",
+            perspective = perspectiveId,
+            placement,
+            dropped_count = dropped.Count,
+            dropped_kinds = dropped.Select(d => d.Surface.Kind).ToArray(),
+            dropped_reasons = dropped.Select(d => d.Reason.ToString()).ToArray(),
+            error_code = errorCode,
         });
     }
 
