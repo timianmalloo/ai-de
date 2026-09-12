@@ -256,6 +256,10 @@ public sealed class AtlasSourceObservation
     public AtlasSourceObservation(string observationKey, string manifestToken, string fileValue, string policyToken, AtlasObjectIdentity rootIdentity, AtlasObjectIdentity fileIdentity, string canonicalSha256, long byteLength, string decoderId, int decodedUtf16Length, AtlasSourceObservationStatus status, AtlasBounds bounds)
         : this(observationKey, manifestToken, fileValue, policyToken, rootIdentity, fileIdentity, canonicalSha256, byteLength, decoderId, decodedUtf16Length, status, bounds, null)
     {
+        if (status is not AtlasSourceObservationStatus.Verified)
+        {
+            throw new ArgumentException("The public all-fields constructor only creates verified source observations; use a failure-state factory for non-verified states.", nameof(status));
+        }
     }
 
     private AtlasSourceObservation(string observationKey, string manifestToken, string fileValue, string policyToken, AtlasObjectIdentity? rootIdentity, AtlasObjectIdentity? fileIdentity, string? canonicalSha256, long? byteLength, string? decoderId, int? decodedUtf16Length, AtlasSourceObservationStatus status, AtlasBounds bounds, string? reason)
