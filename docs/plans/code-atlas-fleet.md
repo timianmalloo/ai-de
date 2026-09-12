@@ -118,6 +118,56 @@ minimization and no implicit model egress; capability/eval admission; failure-mo
 questions; Testing Strategy trigger union and red-first oracles; E7 full surface reach; native
 rendering and cross-surface identity proofs; independent vetoes; durable audit and proof capture.
 
-The future `docs/coordination/code-atlas.md` is the execution driver's canonical track plan.
-This checkpoint plan does not pretend that source ownership or implementation phases are already
-accepted.
+`docs/coordination/code-atlas.md` is now the execution driver's PROPOSED canonical track plan.
+It does not assign ownership or admit implementation.
+
+## Actual checkpoint and cost ledger
+
+| Planned node | Actual outcome at documentation checkpoint |
+|---|---|
+| F0 / O0 | Separate trees and scoped Owner decisions recorded. No change to Claude's integration authority. |
+| S0 / K0 / S1 | Candidate E content reviewed; bounded Core/Store/IPC and synthetic compiler evidence joined, with overclaims corrected. |
+| A0 / A1 | Whole proposed architecture and five proposed ADRs authored and reviewed. Owner choices and final E0-versus-whole conditions recorded. |
+| C0 | Proposed plan exists; admission is blocked by the unresolved native request. |
+| Dn / In / Jn | No product implementation, native acceptance or main integration executed. |
+
+The ten planned nodes remain ten logical checkpoints. The external decision edge, not another
+worker, prevents delivery. Specification and contract grounding ran independently and joined before
+content acceptance. Documentation closure uses deterministic generation/check/commit mechanics,
+not another model fan-out.
+
+```mermaid
+flowchart LR
+  F0 --> O0
+  F0 --> S0
+  F0 --> K0
+  O0 --> S1
+  S0 --> S1
+  K0 --> S1
+  S1 --> A0
+  A0 --> A1
+  A1 --> C0
+  ACK[External ownership acknowledgment] --> C0
+  C0 --> DI[Dn / In: not dispatched]
+  DI --> JN[Jn: not executed]
+```
+
+The diagram shows the final acceptance dependencies, not a claim that proposed architecture
+drafting waited for the last specification-content receipt. The documentation-only exception above
+allowed that draft overlap; it did not bypass the acceptance join.
+
+**Cost confidence:** total work `T1`, span `Tinf`, exact per-phase calls/tokens, actual peak
+concurrency and total rework passes were not recorded as a complete measurement. No speedup is
+claimed. The bound `Tp <= (T1 - Tinf) / p + Tinf` cannot be evaluated numerically from partial
+receipts. Initial 50-call and per-worker limits are planning estimates, not measurements of actual
+cost. The documentation-close pass declares no additional agents.
+
+**Recorded process gap:** the native audit selfcheck found no missing goal/tier fields or declared
+fan-out overruns in the fourteen existing Conductor entries, but all fourteen lacked main-line
+actual/budget fields. Historical values are not backfilled from guesses. This is incomplete cost
+instrumentation, not proof that the initial estimate held.
+
+Known repairs were bounded by named findings: candidate security/oracle/phase criteria, compiler
+evidence attribution, privacy/operational admission fields, and whole-versus-E0 scoping. Their
+records preserve the corrections; no aggregate rework count is invented. Required implementation
+floors remain blocked rather than removed.

@@ -1919,7 +1919,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6974d47b91bfedfdba44a88cbefc27b3d1c3609590346cca75c8bf455f6a69da"
+      "sourceSha256": "0c94be6e5ad0ecf5abed5a8abc5db50a5784f3f1068a8814bc93d1bcc6a2cfef"
     },
     {
       "id": "adr-01M2BBCCAYMNMM1MFH0653Z0XF",
@@ -1959,7 +1959,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "00f919ceb65dcd5198722bdd4556ef3dee1c8f10092960701c028bce998d62d8"
+      "sourceSha256": "4e2dece44ab7352b7f6ad08ad2831433b01e99f283e2683b8d3ace1af7fefda8"
     },
     {
       "id": "adr-01M2BBCCCDC207J5KQW74WX2M2",
@@ -1999,7 +1999,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bc4a763a53b1e883c44fbf52bd3560ec98bc8dcbeefda9ace121dcebab781ebb"
+      "sourceSha256": "157321fc1517630d29c548c8d3b9be1399f9cb284f6027124cab123ce7521774"
     },
     {
       "id": "adr-01M2BBCCDZT9CGP0W5YE3YKXDW",
@@ -2039,7 +2039,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0f1e277cc675de4ab76bb8fbe1280dc078a5973aaa657c5163464fd239e17294"
+      "sourceSha256": "143d5125a3c703a09a5aa41f16cc7d861c38026fdfdcf4a63940aa1c9fc55efd"
     },
     {
       "id": "adr-01M2BBCCFJ34ZR3ND7HMHP5QA6",
@@ -2083,7 +2083,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "36d1689907c6a567032dba77d91c1b6106f48e206271c01850af2aa1a770dccc"
+      "sourceSha256": "984e3226a4bf2485d46c1d6513007fade53be38f648fa71eba022835557d8f5a"
     },
     {
       "id": "api-aide-app",
@@ -3105,8 +3105,8 @@ window.DOCS_INDEX = {
         },
         {
           "kind": "flowchart",
-          "title": "7.1 Layered architecture",
-          "mermaid": "flowchart TB\n  subgraph Presentation[\"Presentation — existing Shell authority, native first\"]\n    Tree[\"Physical tree / outline\"]\n    Source[\"Source / inspector\"]\n    Diagram[\"Derived diagrams / comparison — later\"]\n    Nav[\"Selection and Back history\"]\n    Broker[\"Trusted human-action broker\"]\n  end\n  subgraph Contracts[\"Versioned local/IPC contract — Core-owned\"]\n    Query[\"Atlas query records / capability / refusal / bounds\"]\n    Selection[\"Manifest-bound selection token\"]\n  end\n  subgraph Application[\"Workspace authority — deterministic T0\"]\n    Proj[\"Bounded projection and authority policy\"]\n    Read[\"Authorized hash-bound file reader\"]\n    ModelPort[\"Read-only interpretation orchestration — E-4 only\"]\n  end\n  subgraph Evidence[\"Evidence acquisition and persistence\"]\n    Inv[\"Inventory / semantic extractors\"]\n    Fence[\"Scope fencing / observation seals\"]\n    DB[(\"Existing SQLite fact substrate\")]\n  end\n  Tree --> Query\n  Source --> Query\n  Diagram --> Query\n  Nav --> Selection --> Query\n  Broker --> Proj\n  Query --> Proj\n  Proj --> Read\n  Proj --> DB\n  ModelPort --> Proj\n  Inv --> Fence --> DB"
+          "title": "7.1 PROPOSED E-0 runtime composition",
+          "mermaid": "flowchart TB\n  subgraph Presentation[\"Presentation — existing Shell authority, native first\"]\n    Tree[\"Physical tree / outline\"]\n    Source[\"Source / inspector\"]\n    Nav[\"Selection and Back history\"]\n    Broker[\"Trusted human-action broker\"]\n  end\n  subgraph Contracts[\"Versioned local/IPC contract — Core-owned\"]\n    Query[\"Atlas query records / capability / refusal / bounds\"]\n    Selection[\"Manifest-bound selection token\"]\n  end\n  subgraph Application[\"Workspace authority — deterministic T0\"]\n    Proj[\"Bounded projection and authority policy\"]\n    Read[\"Authorized hash-bound file reader\"]\n  end\n  subgraph Evidence[\"Evidence acquisition and persistence\"]\n    Inv[\"Inventory / semantic extractors\"]\n    Fence[\"Scope fencing / observation seals\"]\n    DB[(\"Existing SQLite fact substrate\")]\n  end\n  Tree --> Query\n  Source --> Query\n  Nav --> Selection --> Query\n  Broker --> Proj\n  Query --> Proj\n  Proj --> Read\n  Proj --> DB\n  Inv --> Fence --> DB"
         },
         {
           "kind": "sequence",
@@ -3114,7 +3114,7 @@ window.DOCS_INDEX = {
           "mermaid": "sequenceDiagram\n  actor Human\n  participant UI as Native Architecture view\n  participant Client as Query client\n  participant Core as Authority projection\n  participant DB as SQLite\n  participant Reader as Authorized source reader\n  Human->>UI: Select physical file / member\n  UI->>Client: Manifest + IDs + selection generation\n  Client->>Core: Versioned AtlasSource request\n  Core->>DB: Read pinned declaration and policy evidence\n  DB-->>Core: Scope/content binding + spans\n  Core->>Reader: Resolve, authorize, read/hash same opened object\n  Reader-->>Core: Exact bytes/hash or typed unavailable/refusal\n  alt Indexed hash and decoding match\n    Core-->>Client: IndexedMatch + validated span + bounds\n  else Changed/unverifiable\n    Core-->>Client: LiveChanged/unavailable + no active old span\n  end\n  Client-->>UI: Preserve all identity/coverage/bounds fields\n  UI->>UI: Apply only matching generation; retain history\n  Human->>UI: Back\n  UI->>Client: Previous manifest/selection, never guessed rebinding"
         }
       ],
-      "sourceSha256": "ceca8f33f09c2038d74836ff44c55ad4daef30ab64c2019bb68c343788c28ec7"
+      "sourceSha256": "8a5dad96b0eca2c4fe8467f742f24b0357e92f1552ef7951a029e571eb5fc360"
     },
     {
       "id": "architecture-loomkeeper",
@@ -7939,6 +7939,44 @@ window.DOCS_INDEX = {
       "sourceSha256": "ad79ba46b90a355b8092f5599ada91879ae17a01357cf4b4f5b50998cd92ec12"
     },
     {
+      "id": "coordination-code-atlas",
+      "path": "docs/coordination/code-atlas.md",
+      "title": "Coordination plan - Code Atlas first delivery horizon",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Proposed, not dispatched: one coherent Atlas implementation writer, the existing Shell owner for integration, and an independent proof lane. Actual code ownership, registration, source-reader spike and Owner design/dispatch admission remain prerequisites.",
+      "tags": [
+        "code-atlas",
+        "coordination",
+        "worktrees",
+        "blocked"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-e-code-atlas",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "depends-on"
+        },
+        {
+          "to": "coordination-code-atlas-resume",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-atlas-lane-admission",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2657c1bebb12765754af92247d50d2d8f46d92fbe6d435a486360b11512556c0"
+    },
+    {
       "id": "coordination-code-atlas-resume",
       "path": "docs/coordination/code-atlas-resume.md",
       "title": "Code Atlas - blocked delivery and explicit resume conditions",
@@ -7970,7 +8008,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3795b42249dc385dd426e147e54ae2739638f8f587075625ec6fc6702b109c9c"
+      "sourceSha256": "4453fb66bb4c047e0f77bec705775ddffe5efe2d5aae4847a91c99712ecfcec0"
     },
     {
       "id": "defect-classes",
@@ -9557,6 +9595,35 @@ window.DOCS_INDEX = {
       "sourceSha256": "2f6aa84e0fd743f07555bde850d4140318bdb250cea69267175d6f98f863eabe"
     },
     {
+      "id": "note-atlas-generic-facts",
+      "path": "docs/notes/atlas-owner/generic-facts.md",
+      "title": "Atlas generic fact and seal design precedes evidence-driven schema expansion",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "atlas-architecture-content",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Chooses generic versioned facts, seals and replay before dedicated schema, without claiming current generic storage enforces every proposed invariant. Evolution requires executed evidence.",
+      "tags": [
+        "code-atlas",
+        "owner-ruling",
+        "persistence"
+      ],
+      "links": [
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-01M2BBCCCDC207J5KQW74WX2M2",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1cd507d1d150fc6c88a731362d9a6d26da7178e63ad54443b2db58757e8dab68"
+    },
+    {
       "id": "note-atlas-identifier-discipline",
       "path": "docs/notes/atlas-owner/identifier-discipline.md",
       "title": "Atlas decision titles precede collision-checked identifier allocation",
@@ -9580,6 +9647,65 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "41b990ee3fe43a0f4d2b12f04b5fcf50cb878c9896cf3a3c177c6f82257aa915"
+    },
+    {
+      "id": "note-atlas-interpretation-deferred",
+      "path": "docs/notes/atlas-owner/interpretation-deferred.md",
+      "title": "Atlas interpretation remains deferred behind separate runtime and evaluation admission",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "atlas-architecture-content",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Keeps interpretation unadmitted until a separate read-only runtime adapter, processing basis and independent evaluation pass. Development fleet choices do not alter the product provider.",
+      "tags": [
+        "code-atlas",
+        "owner-ruling",
+        "ai",
+        "admission"
+      ],
+      "links": [
+        {
+          "to": "note-atlas-development-models",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-01M2BBCCFJ34ZR3ND7HMHP5QA6",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a4c33879e9708aeba2fee093bee3f7eb22497a367741cb47b57b8b7413105a93"
+    },
+    {
+      "id": "note-atlas-inventory-default",
+      "path": "docs/notes/atlas-owner/inventory-default.md",
+      "title": "Atlas physical inventory default and policy-relative completeness",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "atlas-architecture-content",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Chooses tracked plus authorized nonignored untracked files under versioned inclusion policy. Completeness is policy-relative; semantic support never silently determines physical visibility.",
+      "tags": [
+        "code-atlas",
+        "owner-ruling",
+        "inventory"
+      ],
+      "links": [
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-01M2BBCCAYMNMM1MFH0653Z0XF",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0fe3983ee387de731a1620685849fbc98b96a298b8a7d09fdec5bfeab56c4f2a"
     },
     {
       "id": "note-atlas-lane-admission",
@@ -9609,6 +9735,35 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "6f4de8c4ff1ec20882abb41cb420215eb4df8cd6d964e3212b5333037faf5596"
+    },
+    {
+      "id": "note-atlas-live-source",
+      "path": "docs/notes/atlas-owner/live-source.md",
+      "title": "Atlas E0 uses hash-validated live source without historical-body guarantees",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "atlas-architecture-content",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Chooses hash-validated live reads for E0. Historical source may be unavailable; retaining selection and manifest never permits substituting changed bytes or stale anchors.",
+      "tags": [
+        "code-atlas",
+        "owner-ruling",
+        "source"
+      ],
+      "links": [
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-01M2BBCCAYMNMM1MFH0653Z0XF",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8456096e34cd70aaa7dd975f532f2f9a06cd8600eca0ea5d5ae119f6200fe300"
     },
     {
       "id": "note-atlas-next-addendum",
@@ -9663,6 +9818,64 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "30e2562df50253e6d9b7a8dddea3db911e75af96ce741085978c120125e63dc5"
+    },
+    {
+      "id": "note-atlas-symbol-floor",
+      "path": "docs/notes/atlas-owner/symbol-floor.md",
+      "title": "Atlas E0 mandatory symbol subset and per-kind capability admission",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "atlas-architecture-content",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Makes E0's real member-navigation floor explicit while refusing blanket C# support claims. Per-kind compiler and native journey evidence is required before capability advertisement.",
+      "tags": [
+        "code-atlas",
+        "owner-ruling",
+        "symbols"
+      ],
+      "links": [
+        {
+          "to": "note-atlas-e1-identity",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-01M2BBCC9EHCWVR1R4ZCZ7502T",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "85fee345705f5f81994fb09abc38ddf290ef669c12b46875ebab7c2c4eea99df"
+    },
+    {
+      "id": "note-atlas-whole-versus-e0",
+      "path": "docs/notes/atlas-owner/whole-versus-e0.md",
+      "title": "Atlas whole-architecture obligations separated from E0 runtime composition",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "atlas-architecture-content",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Resolves the Simplifier objection without deleting the required whole architecture: future contracts stay explicit, E0 composition excludes them, and navigation is view-local restoration state validated by Core rather than an append-only domain aggregate.",
+      "tags": [
+        "code-atlas",
+        "owner-ruling",
+        "simplification"
+      ],
+      "links": [
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "refines"
+        },
+        {
+          "to": "review-code-atlas-architecture-content-gates",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "be5efbcdf387d6010bdf97436a0a5689fae2aa8dabbe27ccc85bf37ee40daf2d"
     },
     {
       "id": "note-code-atlas-proposal-provenance",
@@ -9967,8 +10180,14 @@ window.DOCS_INDEX = {
           "rel": "relates-to"
         }
       ],
-      "diagrams": [],
-      "sourceSha256": "b4cb97f836b81e37218d1d3c54695b941802859f2b6f68b187fa1b05af2df95a"
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Actual checkpoint and cost ledger",
+          "mermaid": "flowchart LR\n  F0 --> O0\n  F0 --> S0\n  F0 --> K0\n  O0 --> S1\n  S0 --> S1\n  K0 --> S1\n  S1 --> A0\n  A0 --> A1\n  A1 --> C0\n  ACK[External ownership acknowledgment] --> C0\n  C0 --> DI[Dn / In: not dispatched]\n  DI --> JN[Jn: not executed]"
+        }
+      ],
+      "sourceSha256": "9be4c7b6057e6bae4849937acadd6a656c0f238fe535d3d4b3442e5fb7b91cca"
     },
     {
       "id": "plan-conductor-front-door",
@@ -10285,6 +10504,48 @@ window.DOCS_INDEX = {
       "sourceSha256": "595df53634e154fc3c5c192ffb68aec60ca66bf3156f6d970c6dbcaa8771a5e9"
     },
     {
+      "id": "proof-code-atlas-documentation-checkpoint",
+      "path": "docs/proof/code-atlas-documentation-checkpoint.md",
+      "title": "Code Atlas documentation checkpoint - content ready, delivery blocked",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "documentation-content closure",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Names the concrete document/contract evidence produced by the GPT fleet and the unclosed external admission gate. This checkpoint does not claim an implemented feature, native acceptance, source permission or programme completion.",
+      "tags": [
+        "code-atlas",
+        "proof",
+        "blocked",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-e-code-atlas",
+          "rel": "documents"
+        },
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "documents"
+        },
+        {
+          "to": "review-code-atlas-spec-content-gates",
+          "rel": "depends-on"
+        },
+        {
+          "to": "review-code-atlas-architecture-content-gates",
+          "rel": "depends-on"
+        },
+        {
+          "to": "coordination-code-atlas-resume",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ffd8c6ef083b86d964831eb493694e9aba70e94deab8c6ff2dedd5769b97fb0b"
+    },
+    {
       "id": "proof-pack-phase-1-walking-skeleton",
       "path": "docs/design/phase-1-proof-pack.md",
       "title": "Phase 1 walking skeleton — Proof Pack",
@@ -10354,6 +10615,40 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "c6d8f6ca4e8896ef7c8169785f3c2e9f45a7012ec9bb580df466e7cf1d204da2"
+    },
+    {
+      "id": "review-code-atlas-architecture-content-gates",
+      "path": "docs/reviews/code-atlas-architecture-content-gates.md",
+      "title": "Code Atlas proposed architecture - independent content gates",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "atlas-architecture-content",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Separates proposed-architecture content review from source, schema, native, provider and integration admission. Records independent GPT reviews, Owner choices and the remaining explicit design-proof floors without converting documents into runtime evidence.",
+      "tags": [
+        "code-atlas",
+        "architecture",
+        "review",
+        "gates"
+      ],
+      "links": [
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "documents"
+        },
+        {
+          "to": "review-code-atlas-spec-content-gates",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-atlas-draft-content-while-blocked",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d1a138aa7698d64064d96d94ea0654de10782c134a0ddb90544dbb1fd0fbf349"
     },
     {
       "id": "review-code-atlas-data-constraints",
@@ -17496,6 +17791,14 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     },
     {
+      "id": "surface-coordination-code-atlas",
+      "path": "docs/coordination/code-atlas.html",
+      "title": "Code Atlas coordination — proposed, not dispatched",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "coordination-code-atlas"
+    },
+    {
       "id": "surface-mockups-context-map-join",
       "path": "docs/mockups/context-map-join.html",
       "title": "Context Map & Join surfaces — Core→Design §4a (mockup)",
@@ -17576,5 +17879,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "7a50ebecf59b1a28d5dd19101fe3facb7065e33637d596671368f4b4c46e5124"
+  "graphSha256": "f67cfa8ea95567c511501af287ccfd0ccb4453fcd9762a5e0110bb8301a7baae"
 };

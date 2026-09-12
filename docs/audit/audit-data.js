@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T18:15:44Z",
+  "generated": "2026-09-12T19:06:34Z",
   "audit": [
     {
       "actor": null,
@@ -14159,6 +14159,320 @@ window.AUDIT_DATA = {
         "branch": "conductor/code-atlas",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2BEMRY2982SWFP0WEWD6FRC",
+      "shortname": "execute-code-atlas-preflight-blocked",
+      "datetime": "2026-09-12T18:38:58Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean",
+      "summary": "Preflight did not admit source execution. Plan headings/schema are present, but plan is proposed/not-dispatched and req-01M2B86TXF7SHG61B31P4H4173 remainsopen. Inheriteddrivers effective; sharedprimaryregen-owed marker remains reported, not cleared byworker. No productsource workers opened. Documentation/research fleet work and Owner rulings remain valid, separate from delivery admission; resume contract names exactrequiredacknowledgers/seams.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/code-atlas.md",
+        "docs/coordination/code-atlas-resume.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Execute the accepted Code Atlas coordination plan only after required ownership and admission gates.",
+      "done_when": "Preflight proves admitted paths, registration and acknowledgment before any product track is opened.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-12T18:38:20Z",
+      "duration_seconds": 38.0
+    },
+    {
+      "id": "al-01M2BG4Y666QVVX65C872VV3MN",
+      "shortname": "atlas-owner-live-source",
+      "datetime": "2026-09-12T19:05:16Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "summary": "E0 uses hash-validated live source. Back may report old matching content unavailable; it never applies old anchors to changed bytes. Ruling preserved; no product/main permission. Original decision duration and historical main-line cost were not recorded.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/live-source.md"
+      ],
+      "tags": [
+        "code-atlas",
+        "documentation-checkpoint",
+        "delivery-blocked"
+      ],
+      "outcome": "partial",
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "done_when": "Candidate E, proposed architecture, reviews and resume instructions are preserved on the isolated branch; product delivery remains explicitly blocked.",
+      "tier": "T2",
+      "fan_out": 0,
+      "change": "cl-01M2BG4Y37Y1AHGTEMJ5QPWNR2"
+    },
+    {
+      "id": "al-01M2BG4YDTHQ2KA6ZRGZ9CS40N",
+      "shortname": "atlas-owner-inventory-default",
+      "datetime": "2026-09-12T19:05:16Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "summary": "E0 inventories tracked plus authorized nonignored untracked files under a versioned policy, with explicit non-Git enumeration and visibility/read separation. Ruling preserved; no product/main permission. Original decision duration and historical main-line cost were not recorded.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/inventory-default.md"
+      ],
+      "tags": [
+        "code-atlas",
+        "documentation-checkpoint",
+        "delivery-blocked"
+      ],
+      "outcome": "partial",
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "done_when": "Candidate E, proposed architecture, reviews and resume instructions are preserved on the isolated branch; product delivery remains explicitly blocked.",
+      "tier": "T2",
+      "fan_out": 0,
+      "change": "cl-01M2BG4YAZ4MAQBZZ3ZH6PZQ3D"
+    },
+    {
+      "id": "al-01M2BG4YN8N4E03TN4GJNPZXX4",
+      "shortname": "atlas-owner-generic-facts",
+      "datetime": "2026-09-12T19:05:17Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "summary": "E0 first reuses generic versioned facts, completion seals and replay in the existing substrate. A typed-store addition requires separate evidence. Ruling preserved; no product/main permission. Original decision duration and historical main-line cost were not recorded.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/generic-facts.md"
+      ],
+      "tags": [
+        "code-atlas",
+        "documentation-checkpoint",
+        "delivery-blocked"
+      ],
+      "outcome": "partial",
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "done_when": "Candidate E, proposed architecture, reviews and resume instructions are preserved on the isolated branch; product delivery remains explicitly blocked.",
+      "tier": "T2",
+      "fan_out": 0,
+      "change": "cl-01M2BG4YJKYVJY0RCSERZQYPKV"
+    },
+    {
+      "id": "al-01M2BG4YWGJCSKGCFAPDK918R1",
+      "shortname": "atlas-owner-symbol-floor",
+      "datetime": "2026-09-12T19:05:17Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "summary": "E0 advertises the probed source-type/method/overload/constructor/property/accessor/partial-declaration subset. Unsupported kinds remain explicit, not blanket C# support. Ruling preserved; no product/main permission. Original decision duration and historical main-line cost were not recorded.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/symbol-floor.md"
+      ],
+      "tags": [
+        "code-atlas",
+        "documentation-checkpoint",
+        "delivery-blocked"
+      ],
+      "outcome": "partial",
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "done_when": "Candidate E, proposed architecture, reviews and resume instructions are preserved on the isolated branch; product delivery remains explicitly blocked.",
+      "tier": "T2",
+      "fan_out": 0,
+      "change": "cl-01M2BG4YSWFVYAQX257V8Q9MTB"
+    },
+    {
+      "id": "al-01M2BG4Z3Y1YH23HX7RJ79BG6K",
+      "shortname": "atlas-owner-interpretation-deferred",
+      "datetime": "2026-09-12T19:05:17Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "summary": "E4 interpretation awaits its separate adapter, processing, provider and eval admission. The development GPT fleet does not replace the product Claude runtime. Ruling preserved; no product/main permission. Original decision duration and historical main-line cost were not recorded.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/interpretation-deferred.md"
+      ],
+      "tags": [
+        "code-atlas",
+        "documentation-checkpoint",
+        "delivery-blocked"
+      ],
+      "outcome": "partial",
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "done_when": "Candidate E, proposed architecture, reviews and resume instructions are preserved on the isolated branch; product delivery remains explicitly blocked.",
+      "tier": "T2",
+      "fan_out": 0,
+      "change": "cl-01M2BG4Z18JPT8G5E862Q8RGA3"
+    },
+    {
+      "id": "al-01M2BG4ZB3T0STAA4MWPEFGXST",
+      "shortname": "atlas-owner-whole-versus-e0",
+      "datetime": "2026-09-12T19:05:17Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "summary": "Whole future architecture obligations remain proposed; E0 composition excludes later Diagram/ModelPort. Navigation is view-local Memento with Core validation, not a durable aggregate. Ruling preserved; no product/main permission. Original decision duration and historical main-line cost were not recorded.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/whole-versus-e0.md"
+      ],
+      "tags": [
+        "code-atlas",
+        "documentation-checkpoint",
+        "delivery-blocked"
+      ],
+      "outcome": "partial",
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "done_when": "Candidate E, proposed architecture, reviews and resume instructions are preserved on the isolated branch; product delivery remains explicitly blocked.",
+      "tier": "T2",
+      "fan_out": 0,
+      "change": "cl-01M2BG4Z8EAYAFPD4FSMT9752K"
+    },
+    {
+      "id": "al-01M2BG4ZDTJYCCNRPSJ5KR333J",
+      "shortname": "specify-code-atlas-candidate-content",
+      "datetime": "2026-09-12T19:05:18Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "summary": "Candidate Addendum E content is complete with Functional/UX/UI layers, per-clause oracles and phase-native criteria. Security/Test/UX/Data content gates and Owner countersign retained. Not normative E registration, source admission or implemented acceptance. Bounded worker evidence is attributed; no native/full-suite claim. Duration was not recorded for the complete skill run.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/addendum-e-code-atlas.md",
+        "docs/reviews/code-atlas-spec-content-gates.md",
+        "docs/proof/code-atlas-contract-grounding.md"
+      ],
+      "tags": [
+        "code-atlas",
+        "documentation-checkpoint",
+        "delivery-blocked"
+      ],
+      "outcome": "partial",
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "done_when": "Candidate E, proposed architecture, reviews and resume instructions are preserved on the isolated branch; product delivery remains explicitly blocked.",
+      "tier": "T2",
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M2BG4ZNXPC93WKJ2KG5Z6W5S",
+      "shortname": "define-architecture-code-atlas-content",
+      "datetime": "2026-09-12T19:05:18Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "summary": "Whole proposed architecture and five proposed ADRs content-ready after independent gates, Owner content choices and final E0-versus-whole scoping. Source/handle/race, exact budget, wire/store/native and provider proofs remain admission obligations. req-01M2B86TXF7SHG61B31P4H4173 remains open. No product implementation, main integration or publication. Complete phase duration not recorded.",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/architecture/code-atlas-proposed.md",
+        "docs/reviews/code-atlas-architecture-content-gates.md",
+        "docs/proof/code-atlas-documentation-checkpoint.md"
+      ],
+      "tags": [
+        "code-atlas",
+        "documentation-checkpoint",
+        "delivery-blocked"
+      ],
+      "outcome": "partial",
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "done_when": "Candidate E, proposed architecture, reviews and resume instructions are preserved on the isolated branch; product delivery remains explicitly blocked.",
+      "tier": "T2",
+      "fan_out": 0,
+      "change": "cl-01M2BG4ZJE0PHS0BHZMRSP47BR"
+    },
+    {
+      "id": "al-01M2BG4ZRJ8Q8Y39W6ECMADHQ3",
+      "shortname": "prepare-code-atlas-proposed-plan",
+      "datetime": "2026-09-12T19:05:18Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "summary": "Proposed machine-readable plan and synchronized HTML preserved. Exact future Core/Shell seams, E0 safety/build/integration/proof responsibilities, budgets and resume predicates are stated but not dispatched. Inherited coordination configuration reused; no worker reinstall or primary regeneration-marker clearing. External acknowledgment prevents source admission.",
+      "kind": "skill",
+      "skill": "prepare-for-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/code-atlas.md",
+        "docs/coordination/code-atlas.html",
+        "docs/coordination/code-atlas-resume.md"
+      ],
+      "tags": [
+        "code-atlas",
+        "documentation-checkpoint",
+        "delivery-blocked"
+      ],
+      "outcome": "partial",
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "done_when": "Candidate E, proposed architecture, reviews and resume instructions are preserved on the isolated branch; product delivery remains explicitly blocked.",
+      "tier": "T2",
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M2BG4ZV5QJC9EHXAW7HJ813Y",
+      "shortname": "optimize-graph-code-atlas-checkpoint",
+      "datetime": "2026-09-12T19:05:18Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "summary": "Ten logical checkpoints retained. Independent spec/contract branches joined before content gates; whole proposed architecture and bounded documentation closure completed while external C0 acknowledgment blocks Dn/In/Jn. No added source fan-out. Actual total work/span/peak concurrency/tokens and aggregate rework count are not recorded; no speedup claimed. Audit selfcheck: fourteen prior Conductor entries have goal/tier, but all lack main-line actual/budget fields. Historical measurements not fabricated. Current closure uses deterministic generation/check/commit with no further agents.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/code-atlas-fleet.md",
+        "docs/coordination/code-atlas.md",
+        "docs/proof/code-atlas-documentation-checkpoint.md"
+      ],
+      "tags": [
+        "code-atlas",
+        "documentation-checkpoint",
+        "delivery-blocked"
+      ],
+      "outcome": "partial",
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "done_when": "Candidate E, proposed architecture, reviews and resume instructions are preserved on the isolated branch; product delivery remains explicitly blocked.",
+      "tier": "T2",
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M2BG79H3TZW3A5JEWA778EPJ",
+      "shortname": "atlas-documentation-checkpoint",
+      "datetime": "2026-09-12T19:06:33Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean",
+      "summary": "Preserving documentation-content-ready checkpoint; delivery externally blocked. Observed: coordination HTML canonical text/hash/local links match after stale-text detection; source/tests/package/canonical-architecture diff from common main base empty; private proposal1065a851 is not an ancestor; derived/conflict/figure/defect/audit/id checks passed. Full docs graph is NOT green: sole defect is pre-existing frozen-F5 proof-conductor-front-door link;53 existing review suggestions. Core/Claude request remains open, no product dispatch or main integration. Cleanup report deleted nothing; Atlas trees retained. Main-budget value covers this bounded post-summary closure through this write, not historical fleet calls. AIDE contract environment is absent, so no episode event was fabricated.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-documentation-checkpoint.md",
+        "docs/coordination/code-atlas-resume.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "done_when": "Candidate E, proposed architecture, review records and resume instructions are committed in the isolated worktree; delivery blockers remain explicit.",
+      "tier": "T2",
+      "main_calls": 18,
+      "main_budget": 20,
+      "main_over_budget": false,
+      "fan_out": 0
     }
   ],
   "changes": [
@@ -17850,6 +18164,175 @@ window.AUDIT_DATA = {
         "adr-0030"
       ],
       "title": "SH-1: a Scope column on the catalog row, an Entry column on the kind row, derived surface.new/show.<kind> openers, the four chord collisions, a non-checkable radio item with a Toggle peer, and one OnDocumentOpening rule"
+    },
+    {
+      "id": "cl-01M2BG4Y37Y1AHGTEMJ5QPWNR2",
+      "datetime": "2026-09-12T19:05:16Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "decision",
+      "skill": "define-architecture",
+      "title": "PROPOSED Code Atlas Owner choice: live-source",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "summary": "E0 uses hash-validated live source. Back may report old matching content unavailable; it never applies old anchors to changed bytes. This is content direction only; source ownership and implementation admission remain blocked.",
+      "rationale": "Scoped Astra Owner ruling under the explicit documentation-only exception; not a waiver of external ownership or hard floors.",
+      "artifacts": [
+        "docs/notes/atlas-owner/live-source.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "aac360e7ab87e6ce991f4343440438dab88b08ba",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2BG4YAZ4MAQBZZ3ZH6PZQ3D",
+      "datetime": "2026-09-12T19:05:16Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "decision",
+      "skill": "define-architecture",
+      "title": "PROPOSED Code Atlas Owner choice: inventory-default",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "summary": "E0 inventories tracked plus authorized nonignored untracked files under a versioned policy, with explicit non-Git enumeration and visibility/read separation. This is content direction only; source ownership and implementation admission remain blocked.",
+      "rationale": "Scoped Astra Owner ruling under the explicit documentation-only exception; not a waiver of external ownership or hard floors.",
+      "artifacts": [
+        "docs/notes/atlas-owner/inventory-default.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "aac360e7ab87e6ce991f4343440438dab88b08ba",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2BG4YJKYVJY0RCSERZQYPKV",
+      "datetime": "2026-09-12T19:05:17Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "decision",
+      "skill": "define-architecture",
+      "title": "PROPOSED Code Atlas Owner choice: generic-facts",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "summary": "E0 first reuses generic versioned facts, completion seals and replay in the existing substrate. A typed-store addition requires separate evidence. This is content direction only; source ownership and implementation admission remain blocked.",
+      "rationale": "Scoped Astra Owner ruling under the explicit documentation-only exception; not a waiver of external ownership or hard floors.",
+      "artifacts": [
+        "docs/notes/atlas-owner/generic-facts.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "aac360e7ab87e6ce991f4343440438dab88b08ba",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2BG4YSWFVYAQX257V8Q9MTB",
+      "datetime": "2026-09-12T19:05:17Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "decision",
+      "skill": "define-architecture",
+      "title": "PROPOSED Code Atlas Owner choice: symbol-floor",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "summary": "E0 advertises the probed source-type/method/overload/constructor/property/accessor/partial-declaration subset. Unsupported kinds remain explicit, not blanket C# support. This is content direction only; source ownership and implementation admission remain blocked.",
+      "rationale": "Scoped Astra Owner ruling under the explicit documentation-only exception; not a waiver of external ownership or hard floors.",
+      "artifacts": [
+        "docs/notes/atlas-owner/symbol-floor.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "aac360e7ab87e6ce991f4343440438dab88b08ba",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2BG4Z18JPT8G5E862Q8RGA3",
+      "datetime": "2026-09-12T19:05:17Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "decision",
+      "skill": "define-architecture",
+      "title": "PROPOSED Code Atlas Owner choice: interpretation-deferred",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "summary": "E4 interpretation awaits its separate adapter, processing, provider and eval admission. The development GPT fleet does not replace the product Claude runtime. This is content direction only; source ownership and implementation admission remain blocked.",
+      "rationale": "Scoped Astra Owner ruling under the explicit documentation-only exception; not a waiver of external ownership or hard floors.",
+      "artifacts": [
+        "docs/notes/atlas-owner/interpretation-deferred.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "aac360e7ab87e6ce991f4343440438dab88b08ba",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2BG4Z8EAYAFPD4FSMT9752K",
+      "datetime": "2026-09-12T19:05:17Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "decision",
+      "skill": "define-architecture",
+      "title": "PROPOSED Code Atlas Owner choice: whole-versus-e0",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "summary": "Whole future architecture obligations remain proposed; E0 composition excludes later Diagram/ModelPort. Navigation is view-local Memento with Core validation, not a durable aggregate. This is content direction only; source ownership and implementation admission remain blocked.",
+      "rationale": "Scoped Astra Owner ruling under the explicit documentation-only exception; not a waiver of external ownership or hard floors.",
+      "artifacts": [
+        "docs/notes/atlas-owner/whole-versus-e0.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "aac360e7ab87e6ce991f4343440438dab88b08ba",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2BG4ZJE0PHS0BHZMRSP47BR",
+      "datetime": "2026-09-12T19:05:18Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "PROPOSED Code Atlas whole architecture and isolated first delivery horizon",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "summary": "Defined the whole proposed architecture and five proposed ADRs; final author 51961b6c joined through aac360e7. Content reviews and scoped Owner decisions complete; no normative acceptance or implementation admission.",
+      "rationale": "One fact substrate, scoped logical identities and revision-bound observations, policy-relative physical inventory, hash-validated source, bounded native queries and separately admitted comparison/AI preserve the requested whole vision without premature E0 runtime layers.",
+      "artifacts": [
+        "docs/architecture/code-atlas-proposed.md",
+        "docs/adr/proposed/code-atlas/identity.proposed.md",
+        "docs/adr/proposed/code-atlas/inventory-source-manifest.proposed.md",
+        "docs/adr/proposed/code-atlas/fact-substrate.proposed.md",
+        "docs/adr/proposed/code-atlas/bounded-native-queries.proposed.md",
+        "docs/adr/proposed/code-atlas/comparison-authority-ai.proposed.md",
+        "docs/reviews/code-atlas-architecture-content-gates.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "a50329b2",
+        "after": "aac360e7ab87e6ce991f4343440438dab88b08ba",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": [
+          "aac360e7 docs(atlas): separate E0 composition from future architecture obligations",
+          "86cce603 docs(atlas): clarify source availability and capability privacy admission",
+          "664f7a64 docs(atlas): resolve Owner content choices and bound operational admission",
+          "1ae62024 docs: record candidate Atlas content readiness without delivery admission",
+          "fce928a7 Integrate proposed Code Atlas architecture and ADRs for content gates",
+          "12e6bf0e docs(atlas): record cleared spec-content gates without architecture acceptance",
+          "b8bc351e docs(atlas): align proposal with integrated candidate a50329b2",
+          "f34b617e docs(atlas): propose whole-system architecture and isolated decisions"
+        ]
+      }
     }
   ]
 };

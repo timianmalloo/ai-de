@@ -72,10 +72,16 @@ established merge mechanisms; regenerating is not a reason to edit another sessi
 - K0 contract proof: joined report and correction commits through `e4229845`; source/SDK/store/IPC
   proof is bounded and does not establish native E0 or code admission.
 - Proposed architecture writer: `atlas/architecture`,
-  `docs/architecture/code-atlas-proposed.md`, with isolated proposed ADRs. Final revision/gates pending.
-- Remaining content checks: corrected spec test/security/UX/data gate; proposed architecture
-  data/security/distributed/AI/maintainability/native-test review; unresolved contract/retention/
-  source-binding decisions and migration obligations stated explicitly.
+  `docs/architecture/code-atlas-proposed.md`, with five isolated proposed ADRs; final author revision
+  `51961b6c`, joined through `aac360e7`. Content reviews, Owner choices and the checked final
+  simplification conditions are recorded in
+  `review-code-atlas-architecture-content-gates` and the linked Owner notes.
+- Spec content: integrated candidate through `a50329b2`, with subsequent report-attribution wording
+  correction under the Owner's conditional countersign. It remains candidate/draft.
+- Remaining admission checks: registration/ownership; then-current main/SH2 reconciliation;
+  native opened-object/hard-link/race and decoder tests; exact resource budgets; generic encoding/
+  seal/replay and new wire proofs; phase-specific design/implementation/native/provider gates.
+  None was satisfied by document review.
 
 ## Resume sequence
 
