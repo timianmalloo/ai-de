@@ -173,7 +173,12 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
             $"reach: disabled checkbox rows={checkbox.Count} (below floor={checkboxBelowFloor.Count}); "
             + $"disabled menu item rows={menuItem.Count} (below floor={menuItemBelowFloor.Count})");
 
-        Assert.True(checkbox.Count > 0, "the reach forced no disabled checkbox — the seeded census lane never rendered a filter row (DC-016)");
+        // After Ruling 74 (CV-1) the Console's lane-filter row is retired: the composed shell has no
+        // CheckBox at rest (the New Session sheet's are a separate window — ContrastFloorTests site 7),
+        // so the reach has no product site to force — the RadioButton case, not a silent zero. The
+        // census must SAY so (an omission row), never merely report 0 (DC-016).
+        var checkboxOmitted = census.Omissions.Any(o => o.Population == "wpf" && o.What == "disabled checkbox");
+        Assert.True(checkbox.Count > 0 || checkboxOmitted, "the reach forced no disabled checkbox and recorded no omission for it — the seeded census lane never rendered a filter row (DC-016)");
         Assert.True(menuItem.Count > 0, "the reach forced no disabled menu item — the File menu's submenu never rendered a command (DC-016)");
 
         Assert.True(checkboxBelowFloor.Count == 0, "the forced disabled checkbox is below its floor:" + Environment.NewLine + Table(checkboxBelowFloor));
