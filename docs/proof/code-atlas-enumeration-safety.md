@@ -24,7 +24,7 @@ summary: >-
 - **Baseline readback:** `054b8b56381e4cf42717c2a8012f2e64a116e10d`.
 - **Identity:** `AGENT_SESSION=atlas-live-enumeration-gpt55`; `AGENT_NAME=copilot-atlas-enumeration`.
 - **Authored files only:** `spikes/code-atlas-directory-enumeration/CodeAtlas.DirectoryEnumerationProbe.csproj`, `Program.cs`, `OpenedDirectoryEnumerator.cs`, `DirectoryEnumerationProbeCases.cs`; `docs/proof/code-atlas-enumeration-safety.md`.
-- **Raw outputs retained:** `.agents/artifacts/atlas-live-enumeration-gpt55/directory-enumeration/raw-red.txt`, `raw-green.txt`, `raw-review-red.txt`, `raw-review-green.txt`.
+- **Raw outputs retained:** `.agents/artifacts/atlas-live-enumeration-gpt55/directory-enumeration/raw-red.txt`, `raw-green.txt`, `raw-review-red.txt`, `raw-review-green.txt`, `raw-final-red.txt`, `raw-final-green.txt`.
 - **TRX:** not applicable. This probe is a `dotnet run` executable, not a test runner.
 - **Not claimed:** product reader admission, integrated native E0 completion, source declaration identity, broad K0 rerun, or new filesystem authority.
 
@@ -57,6 +57,7 @@ Two red stages were observed:
 |---|---|---|
 | Unsafe stub | `raw-red.txt` | `SUMMARY|passed=2|failed=10|not_proven=2`; failures included empty stub listing, relocation not blocked, missing refusals and missing limits. |
 | Consolidated review harness against old enumerator | `raw-review-red.txt` | Compile red: missing `CaptureRootBinding`, missing `afterEntryObserved`, and no `PeakHeldHandles`. |
+| Root-binding mutation | `raw-final-red.txt` | `SUMMARY|passed=28|failed=1|not_proven=2`; disabling the root-binding guard made replacement-root enumeration leak entries and fail `root binding guard blocks replacement-root leak`. |
 
 These reds are semantic controls: the final API and behavior could not pass before the repair.
 
@@ -66,20 +67,20 @@ These reds are semantic controls: the final API and behavior could not pass befo
 |---|---|
 | `python docs\ai-forward-pack\scripts\pack-doctor.py --root .` | 10 PASS, 2 WARN, 1 pre-existing knowledge-graph FAIL. No install performed. |
 | `dotnet restore spikes\code-atlas-directory-enumeration\CodeAtlas.DirectoryEnumerationProbe.csproj --source "%USERPROFILE%\.nuget\packages" --nologo --verbosity:minimal` | Restored SDK-only probe project in 47 ms. The probe project has no package references. |
-| `dotnet run --project spikes\code-atlas-directory-enumeration\CodeAtlas.DirectoryEnumerationProbe.csproj --no-restore` | Final consolidated run: `SUMMARY|passed=25|failed=0|not_proven=2|duration_ms=52`; runtime `10.0.11`; OS `Microsoft Windows NT 10.0.26200.0`. |
+| `dotnet run --project spikes\code-atlas-directory-enumeration\CodeAtlas.DirectoryEnumerationProbe.csproj --no-restore` | Final consolidated run: `SUMMARY|passed=29|failed=0|not_proven=2|duration_ms=55`; runtime `10.0.11`; OS `Microsoft Windows NT 10.0.26200.0`. |
 
 ## Final per-case disposition
 
 | Case | Outcome |
 |---|---|
 | Hardlink | PASS. Listed only as an ordinary file name; no source custody or content claim. |
-| Ordinary local listing while handles are held | PASS. `Complete`; 4 entries; peak 4 handles; root identity example `vol=861e054a`, file index recorded in raw output. |
+| Ordinary local listing while handles are held | PASS. `Complete`; 4 entries; peak 4 handles; root identity example `vol=861e054a`, file index recorded in raw output. Peak assertion added. |
 | Approved-root isolation | PASS. Expected in-root entries were present; escape target names were absent. |
 | Root relocation while held | PASS. Blocked with `IOException`, `hresult=0x80070020`, Win32 32; after-release move succeeded. |
 | Ancestor relocation while held | PASS. Blocked with `IOException`, `hresult=0x80070020`, Win32 32; after-release move succeeded. |
 | Old binding against replaced root | PASS. `Unverifiable`, zero entries, detail `opened root identity differs from authorized binding`. |
 | Empty directory | PASS. `Complete`, zero entries. |
-| Missing directory | PASS. Typed `Unavailable`, zero entries. |
+| Missing directory | PASS. Typed `Unavailable`, zero entries; public detail is `native open failed`; native code is `2`; no absolute path is in the public result detail. |
 | Direct target junction | PASS. `Unverifiable`, zero entries, refused before target listing. |
 | Reparse root | PASS. `Unverifiable`, zero entries, refused before listing. |
 | Parent-listed junction | PASS. Target names did not leak; junction entry was marked `Unverifiable`. |
@@ -87,7 +88,7 @@ These reds are semantic controls: the final API and behavior could not pass befo
 | Directory symlink inside/outside/cycle | NOT_PROVEN. Host symlink privilege limitation retained: `0x80070522`. |
 | Entry limit | PASS. `LimitExceeded`, 5 entries, peak 3 handles. Immediate root move after return succeeded. |
 | Depth limit | PASS. `LimitExceeded`, peak 3 handles. Immediate ancestor move after return succeeded. |
-| Descriptor limit | PASS. `LimitExceeded`, zero entries, peak 1 handle, before opening over-budget ancestors. Immediate ancestor move after return succeeded. |
+| Descriptor limit | PASS. Direct target-acquisition limit: `LimitExceeded`, zero entries, peak 1. Recursive descriptor exhaustion: `LimitExceeded`, one entry, peak 3 under cap 3. Immediate mutations after both returns succeeded. |
 | Cancellation after start | PASS. `Canceled`, zero entries, peak 3 handles. Immediate root move after return succeeded. |
 | Pre-cancel | PASS. `Canceled`, zero entries, peak 0. |
 | Relative escape | PASS. `Refused`, zero entries. |
@@ -98,10 +99,10 @@ These reds are semantic controls: the final API and behavior could not pass befo
 ## Residuals for independent review
 
 - Symlink fixtures remain NOT_PROVEN and must be run on a host that can create symlinks, or the production input domain must categorically refuse them.
-- This probe uses synthetic disposable roots only. It does not exercise repository stores, MSBuild, user workspaces, product IPC, or production UI.
+- This probe uses synthetic disposable roots only. It does not exercise repository stores, MSBuild, user workspaces, product IPC, or production UI. It proves manifest-bound ordinary local directory behavior with detected reparse paths excluded and no outside names/counts, not an absolute race-free filesystem-opening guarantee.
 - This is Windows/.NET 10 behavior on this host only. It does not claim POSIX portability.
 - Parent should send this proof and the four probe source files to independent Security/Test admission before any production reader use.
 
 ## Budget ledger
 
-Budget was 25 total wrapper/leaf calls for this investigation. The first pass used 8 calls. This consolidated repair used 9 additional wrapper/leaf calls, including one failed default-checkout patch attempt that made no change to this worktree and the final verification readback. Total observed consumption is 17/25, with 8 remaining.
+Budget was 25 total wrapper/leaf calls for this investigation. Before this final batch, 17/25 were used. This final batch used 4 wrapper calls through commit. Total observed consumption is 21/25, with 4 remaining.

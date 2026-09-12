@@ -17,7 +17,8 @@ internal sealed record DirectoryEnumerationResult(
     DirectoryEnumerationStatus Status,
     IReadOnlyList<DirectoryEntryObservation> Entries,
     string Detail,
-    int PeakHeldHandles = 0);
+    int PeakHeldHandles = 0,
+    int? NativeErrorCode = null);
 
 internal sealed record RootBinding(ulong VolumeSerialNumber, ulong FileIndex, string FinalPath)
 {
@@ -28,7 +29,8 @@ internal sealed class OpenedDirectoryEnumerator(
     int maxEntries,
     int maxDepth,
     int maxDescriptors,
-    Action? afterEntryObserved = null)
+    Action? afterEntryObserved = null,
+    bool skipRootBindingCheck = false)
 {
     private const uint GenericRead = 0x80000000;
     private const uint FileShareRead = 0x00000001;
@@ -107,7 +109,8 @@ internal sealed class OpenedDirectoryEnumerator(
             var rootFinal = FinalPath(rootHandle.Handle);
             if (binding is not null
                 && (binding.VolumeSerialNumber != rootInfo.VolumeSerialNumber
-                    || binding.FileIndex != rootInfo.FileIndex))
+                    || binding.FileIndex != rootInfo.FileIndex)
+                && !skipRootBindingCheck)
             {
                 return Result(DirectoryEnumerationStatus.Unverifiable, [], "opened root identity differs from authorized binding");
             }
@@ -134,7 +137,7 @@ internal sealed class OpenedDirectoryEnumerator(
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or Win32Exception or ArgumentException or NotSupportedException)
         {
-            return Result(DirectoryEnumerationStatus.Unavailable, [], ErrorDetail(ex));
+            return Result(DirectoryEnumerationStatus.Unavailable, [], PublicErrorDetail(ex), NativeCode(ex));
         }
     }
 
@@ -149,8 +152,9 @@ internal sealed class OpenedDirectoryEnumerator(
     private DirectoryEnumerationResult Result(
         DirectoryEnumerationStatus status,
         IReadOnlyList<DirectoryEntryObservation> entries,
-        string detail) =>
-        new(status, entries, detail, _peak);
+        string detail,
+        int? nativeErrorCode = null) =>
+        new(status, entries, detail, _peak, nativeErrorCode);
 
     private void EnumerateDirectory(
         string root,
@@ -373,7 +377,19 @@ internal sealed class OpenedDirectoryEnumerator(
     }
 
     private static string ErrorDetail(Exception ex) =>
-        $"{ex.GetType().Name};hresult=0x{ex.HResult:X8};win32={ex.HResult & 0xFFFF};message={ex.Message}";
+        $"{ex.GetType().Name};hresult=0x{ex.HResult:X8};native={NativeCode(ex)?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "none"};message={ex.Message}";
+
+    private static string PublicErrorDetail(Exception ex) => ex switch
+    {
+        Win32Exception => "native open failed",
+        IOException => "io unavailable",
+        UnauthorizedAccessException => "access denied",
+        ArgumentException => "invalid path",
+        NotSupportedException => "unsupported path",
+        _ => "unavailable",
+    };
+
+    private static int? NativeCode(Exception ex) => ex is Win32Exception win32 ? win32.NativeErrorCode : null;
 
     private static OpenedObjectInfo Information(SafeFileHandle handle)
     {
