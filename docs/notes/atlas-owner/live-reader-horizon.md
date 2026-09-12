@@ -203,3 +203,21 @@ disjoint files only after corrected common types are pinned; total width remains
 One review evidence correction is also retained: a glob miss was reported as absent TRX files.
 Direct absolute-path XML reads confirmed the codec mutant red and 53-test green; the reviewer
 withdrew only the missing-artifact finding. The real contract blockers remain.
+
+## F clearance and E/D dispatch
+
+Corrections `bac95e92` and `07d877ce` closed the contract blockers. The last fix constrained the
+public all-fields source-observation constructor to verified state; its named semantic red was
+retained. Data cleared the final blocker, Test cleared the corrected model oracles, and the
+Conductor independently executed 63 passing tests in both the candidate and the joined tree.
+F is pinned at `02695471` after joins `8808a1b2`, `b12c05c0` and `02695471`.
+
+The Conductor's first join attempt was refused by F's still-held lease. The actual writer released
+all eight leases and ended its coordination session; the Conductor then joined. A completed
+report did not silently override a live lease.
+
+E and D now have exact disjoint file grants in section 2, separate worktrees at that pin and
+24-call allowances each. They consume frozen common records. E owns actual directory/inventory
+production; D owns actual compiler declarations/ranges from supplied full source buffers.
+They cannot install private contract variants or invent missing root/project authority. Source,
+query and detached native assembly follow their joined receipts.

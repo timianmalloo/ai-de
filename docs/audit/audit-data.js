@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T21:48:31Z",
+  "generated": "2026-09-12T22:04:58Z",
   "audit": [
     {
       "actor": null,
@@ -15170,6 +15170,31 @@ window.AUDIT_DATA = {
       "fan_out": 4,
       "started_at": "2026-09-12T21:31:44Z",
       "duration_seconds": 1006.0
+    },
+    {
+      "id": "al-01M2BTDYW54WX8FA02BXR8T5C9",
+      "shortname": "atlas-foundation-cleared-producers-dispatched",
+      "datetime": "2026-09-12T22:04:58Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "Continue Code Atlas with isolated sub-agent worktrees and Conductor-controlled assignments, gates and merges.",
+      "summary": "Fclearedandjoined02695471 afteractualwriterleaserelease,notTTLwait. Parentcandidateandjoinedruns63executed63passed; namedsemanticredandfinalconstructorguardread. ExactF8filesretained; noIO/nativeclaim. CreatedEandDseparatetreesatsamepin; E4files24callsactualinventory, D2files24callsactualcompilerdeclarations/rangesfromfullboundinputs; neithereditscommoncontracts. Explicit96F/E/Dreplanandearlieroverrunskept; source/query/nativeassemblyfuturecheckpoint.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-live-reader-candidate.md",
+        "docs/collaboration/session-contracts.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Deliver the real Code Atlas reading journey through isolated producer tracks and explicit joins.",
+      "done_when": "E/D return executable scoped producers on the cleared common contract, then source/query/native assembly and independent real-workspace proof complete the admitted horizon.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-12T21:48:36Z",
+      "duration_seconds": 982.0
     }
   ],
   "changes": [

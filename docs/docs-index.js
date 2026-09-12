@@ -2620,7 +2620,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Understanding: 3 types, 23 members, 8% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Understanding: 37 types, 186 members, 14% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2633,7 +2633,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1223591692f9b2337c08e8efa5345e46f0fecbf4f91e8ec45621dbecaa45ff99"
+      "sourceSha256": "401511ebbe771b7ff1b98b24790a2849cf71a12ae16cac0874ab2d0f5fe463f2"
     },
     {
       "id": "api-aide-core-upgrade",
@@ -4706,7 +4706,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "240a63cb54b2811d9a1e2e176fb7fac732b50a35f6319eac783151473a3f2b0f"
+      "sourceSha256": "fa7977614e28488471a1eb45ab1e377c5f9cb157e82d701dbe300442e5587a63"
     },
     {
       "id": "note-avalondock-tab-styling",
@@ -11428,7 +11428,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "46f92296d9f696eeae6ef2995b4f227befea7e26aa0caabeb83d3e454689c86a"
+      "sourceSha256": "2dadcbbd4e9718924c8dbac808edb8cbe134d6b6e21c1abd020a16f4526a4378"
     },
     {
       "id": "session-profiles",
@@ -15721,6 +15721,44 @@ window.DOCS_INDEX = {
       "sourceSha256": "3ed0c4e060c9c69047f02130189c7f3ac643b38e1ef0bd4cd64ce9844770d844"
     },
     {
+      "id": "proof-code-atlas-live-reader-candidate",
+      "path": "docs/proof/code-atlas-live-reader-candidate.md",
+      "title": "Code Atlas live-reader candidate - staged execution evidence",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "atlas-live-reader-producers",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Records the cleared common foundation and separate producer dispatch. This ledger does not claim a completed native reader: inventory, declarations, source/query/native assembly and independent real-workspace proof are recorded by stage as their evidence arrives.",
+      "tags": [
+        "code-atlas",
+        "proof-pack",
+        "live-reader",
+        "worktrees"
+      ],
+      "links": [
+        {
+          "to": "note-atlas-live-reader-horizon",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-code-atlas-identity-unit",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-code-atlas-enumeration-safety",
+          "rel": "depends-on"
+        },
+        {
+          "to": "coordination-code-atlas",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "472e7a4d16f5f0a7ef86646dbb2898800bb9800873da6199b68fdae86686f429"
+    },
+    {
       "id": "proof-code-atlas-source-safety",
       "path": "docs/proof/code-atlas-source-safety.md",
       "title": "Proof Pack — Code Atlas opened-object source safety probe",
@@ -18576,5 +18614,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "f8d07cf31abc4dde65fa1a1e01519d2aba9242d03fc89e9ee87afad3330fcb97"
+  "graphSha256": "412047eb504fccb3af1ae05767bdafc8703f311aabe0e1b423097231494859a6"
 };

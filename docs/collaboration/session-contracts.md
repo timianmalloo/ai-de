@@ -92,6 +92,8 @@ ownership rows, normative Addendum E acceptance, or permission to integrate into
 | `atlas-e0-candidate-gpt55` / `atlas/e0-candidate` | `src/AiDe.Core/Understanding/AtlasIdentity.cs`; `src/AiDe.Core/Understanding/AtlasSourceBinding.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasIdentityTests.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasSourceBindingTests.cs` | Within the unchanged 60-call candidate ceiling: 25 initial, 12 Owner-admitted correction, then 6 Conductor-allocated boundary-close calls for the executed trailing-LF defect and constructor/partial oracles. Conservative allocated ceiling 43; 17 reserved. Same four files, no reader, persistence, IPC or UI. |
 | `atlas-live-enumeration-gpt55` / `atlas/live-reader-enumeration` | `spikes/code-atlas-directory-enumeration/CodeAtlas.DirectoryEnumerationProbe.csproj`; `spikes/code-atlas-directory-enumeration/Program.cs`; `spikes/code-atlas-directory-enumeration/OpenedDirectoryEnumerator.cs`; `spikes/code-atlas-directory-enumeration/DirectoryEnumerationProbeCases.cs`; `docs/proof/code-atlas-enumeration-safety.md` | Owner turn-12 new horizon: 25 calls for one synthetic safe-enumeration investigation. No private corpus, privilege/configuration changes, shared files or product admission. |
 | `atlas-live-core-gpt55` / `atlas/live-reader-core` | Existing `src/AiDe.Core/Understanding/AtlasIdentity.cs`, `tests/AiDe.Core.Tests/Understanding/AtlasIdentityTests.cs`; new `src/AiDe.Core/Understanding/AtlasIdentityCodec.cs`, `AtlasManifest.cs`, `AtlasQueryContracts.cs`; new `tests/AiDe.Core.Tests/Understanding/AtlasIdentityCodecTests.cs`, `AtlasManifestTests.cs`, `AtlasQueryContractsTests.cs` | F proposal used 32 against 18 planned calls. Owner turn 13 admits one 16-call same-eight-file correction after Conductor contract readback. New cumulative F/E/D ceiling 96; no filesystem, issuer operation, producer/query implementation, native UI or shared-file edit in F. |
+| `atlas-live-inventory-gpt55` / `atlas/live-reader-inventory` | `src/AiDe.Core/Understanding/AtlasInventory.cs`; `src/AiDe.Core/Understanding/AtlasDirectoryEnumerator.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasInventoryTests.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasDirectoryEnumeratorTests.cs` | Owner turn-13 E allowance: 24 calls, actual authorized inventory and narrow enumeration adapter only. Frozen F files are read-only. No source-content reader, query/native assembly or shared adapters. |
+| `atlas-live-declarations-gpt55` / `atlas/live-reader-declarations` | `src/AiDe.Core/Understanding/CSharpDeclarationObservation.cs`; `tests/AiDe.Core.Tests/Understanding/CSharpDeclarationObservationTests.cs` | Owner turn-13 D allowance: 24 calls, actual compiler declarations and ranges from supplied hash-bound full buffers only. No filesystem, project evaluation, source reader, query/native assembly or frozen-F edits. |
 
 The first source writer's worktree is `C:\Projects\ai-de-atlas-e0-source-safety`, created from
 executor-observed main `4d396411`. A separate candidate tree
@@ -120,6 +122,14 @@ assignment; it authors no repository file. The enumeration writer above uses
 `054b8b56`, current main `ca7443e8` reconciled with reviewed Atlas commits in the Conductor
 tree. Exact implementation subsets must be added here after contract freeze; the Owner's
 ceiling manifest in `note-atlas-live-reader-horizon` is not permission to create unused files.
+
+**Producer pin:** F is cleared and joined at `02695471264cfe0ae29f9a5a2784070cdc0f11b4`;
+candidate and Conductor runs each executed 63 passing tests. F's writer explicitly released its
+leases before the Conductor join; no TTL wait or self-integration was used. E's tree is
+`C:\Projects\ai-de-atlas-live-reader-inventory`; D's is
+`C:\Projects\ai-de-atlas-live-reader-declarations`. Both resolve to that same pin, and their
+six new files were observed absent before dispatch. E and D cannot alter common contracts;
+required amendments return to the Conductor as seam requests.
 
 ### Core owns
 
