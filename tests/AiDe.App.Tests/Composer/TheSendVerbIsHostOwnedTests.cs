@@ -180,9 +180,27 @@ public sealed class TheSendVerbIsHostOwnedTests
         Assert.Equal(context.ProofPackArtifacts, request.ProofPackArtifacts);
         Assert.Equal(context.Providers, request.Providers);
 
-        // And the lease is the derived one, not the one the draft asked for.
-        Assert.False(request.Lease.Covers(LeaseDerivation.UncoveredProbePath));
-        Assert.Equal(["src/Payments/**"], request.Lease.Exclusive);
+        // And the typed lease minted nothing: a Message runs read-only with no lease at all
+        // (Ruling 73) — the draft asked for `**` and got no write capability.
+        Assert.True(request.IsReadOnly);
+        Assert.Null(request.Lease);
+
+        // The same hostile text on a WRITE-shaped turn (a complete goal block): the lease is the
+        // derived one, not the one the draft asked for.
+        var block = new ComposerDraft();
+        block.SwitchTo(ComposerShape.GoalBlock);
+        block.SetGoalValue(GoalBlockFields.GoalKey, draft.FreeFormText);
+        block.SetGoalValue(GoalBlockFields.DoneWhenKey, "done");
+        block.SetGoalValue(GoalBlockFields.NotInScopeKey, "nothing else");
+        block.SetGoalValue(GoalBlockFields.TierKey, "T1");
+        block.SetGoalValue(GoalBlockFields.FanOutCapKey, "0");
+        block.SetGoalValue(GoalBlockFields.BudgetKey, "10,1000");
+
+        var write = new ComposerSendGate().Send(context, block, null, out _);
+
+        Assert.NotNull(write?.Lease);
+        Assert.False(write!.Lease!.Covers(LeaseDerivation.UncoveredProbePath));
+        Assert.Equal(["src/Payments/**"], write.Lease.Exclusive);
     }
 
     [Fact]
@@ -251,15 +269,31 @@ public sealed class TheSendVerbIsHostOwnedTests
         Assert.True(typeof(string).IsSealed);
     }
 
+    /// <summary>
+    /// A send with nothing derivable never gets a default lease. Before Ruling 73 that meant a
+    /// refusal; now it means a <b>read-only</b> request with <i>no</i> lease — the lane holds no
+    /// write-capable tool, so there is nothing an all-covering default could have switched off.
+    /// The one thing that must never happen — a lease that covers everything, minted from nothing —
+    /// is asserted as the absence of any lease at all.
+    /// </summary>
     [Fact]
-    public void ASendWithNothingDerivableAsALeaseFailsClosedRatherThanDefaulting()
+    public void ASendWithNothingDerivableAsALeaseGetsNoLeaseRatherThanADefault()
     {
         var gate = new ComposerSendGate();
         var draft = new ComposerDraft();
         draft.SetFreeFormText("do something, somewhere\n");
 
-        Assert.Throws<ArgumentException>(() => gate.Send(Context(), draft, null, out _));
-        Assert.Equal(0, gate.SendCount);
+        var request = gate.Send(Context(), draft, null, out var refusal);
+
+        Assert.Null(refusal);
+        Assert.NotNull(request);
+        Assert.True(request!.IsReadOnly);
+        Assert.Null(request.Lease);
+        Assert.Equal(1, gate.SendCount);
+
+        // And the lease type itself still refuses to be built from nothing — the control that a
+        // write-shaped turn relies on is unchanged.
+        Assert.Throws<ArgumentException>(() => new Lease([]));
     }
 
     private static string RepoRoot()

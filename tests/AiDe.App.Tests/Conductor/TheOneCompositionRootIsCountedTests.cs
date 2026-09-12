@@ -55,6 +55,40 @@ public sealed class TheOneCompositionRootIsCountedTests
         Assert.Equal(2, ledger.Roots);
     }
 
+    /// <summary>
+    /// Ruling 73: a read-only turn (no goal block, no lease) composes through the <b>same</b> root —
+    /// one send, one root, whichever shape the turn takes. The read-only path is a branch inside
+    /// <see cref="GovernedRunHost.RunAsync"/>, never a second host.
+    /// </summary>
+    [Fact]
+    public async Task AReadOnlyTurnCountsOneRootThroughTheSameHost()
+    {
+        using var ledger = CompositionRootLedger.Open();
+
+        var readOnly = RefusedRequest() with { Goal = null, Lease = null };
+        Assert.True(readOnly.IsReadOnly);
+
+        await Assert.ThrowsAsync<AgentPlaneException>(() => GovernedRunHost.RunAsync(readOnly));
+        await Assert.ThrowsAsync<AgentPlaneException>(() => GovernedRunHost.RunAsync(RefusedRequest()));
+
+        Assert.Equal(2, ledger.Roots);
+    }
+
+    /// <summary>
+    /// R2, unchanged: a write-shaped request (a lease) with no goal block is refused with the goal
+    /// block's own code — before any engine starts — never run as though it were read-only.
+    /// </summary>
+    [Fact]
+    public async Task AWriteShapedRequestWithNoGoalBlockIsRefusedNotDemoted()
+    {
+        var malformed = RefusedRequest(engineId: "claude-code") with { Goal = null };
+        Assert.False(malformed.IsReadOnly);
+
+        var error = await Assert.ThrowsAsync<AgentPlaneException>(() => GovernedRunHost.RunAsync(malformed));
+
+        Assert.Equal(AgentPlaneErrorCodes.GoalBlockIncomplete, error.Code);
+    }
+
     [Fact]
     public async Task EventsFlowingWithNoRootCountNoRoots()
     {

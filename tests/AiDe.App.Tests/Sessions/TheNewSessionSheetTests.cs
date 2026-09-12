@@ -6,6 +6,7 @@ using AiDe.App.Workbench.Sessions;
 using AiDe.Core.AgentPlane;
 using AiDe.Core.Sessions;
 using AiDe.Core.Presentation.Sessions;
+using AiDe.Core.Watcher;
 
 namespace AiDe.App.Tests.Sessions;
 
@@ -255,22 +256,111 @@ public sealed class TheNewSessionSheetTests : IDisposable
         Assert.Contains("claude-code", sheet.RoutableBackends);
     }
 
-    // ── task class and lease (Ruling 19) ─────────────────────────────────────────────────
+    // ── task class, budget, ceiling and lease (Rulings 19 → 72, 56, 63, 42 → 73) ────────
 
+    /// <summary>
+    /// Ruling 72 (b): the sheet opens with <c>free-form</c> selected — an explicit, operator-visible
+    /// value, offered as a row and changeable — and Ruling 19's "no default" is superseded for the
+    /// <i>session</i> default. A class that is <i>cleared</i> (only reachable programmatically; the
+    /// picker has no deselect) still blocks: the rule that a run never starts on a class nobody
+    /// declared is intact — the declaration is now the operator's, made once, at open.
+    /// </summary>
     [Fact]
-    public void ARunCannotStartOnADefaultedTaskClass()
+    public void TheSheetOpensAnsweredWithFreeForm_AndAClearedClassStillBlocks()
     {
         var sheet = Sheet();
 
-        Assert.Null(sheet.TaskClass);
+        Assert.Equal(TaskClasses.FreeForm, sheet.TaskClass);
+        Assert.True(sheet.TaskClassAnswered);
+        Assert.True(sheet.CanCreate);
+        Assert.Equal(TaskClasses.FreeForm, sheet.TaskClassOptions[0].Id);
+
+        sheet.TaskClass = null;
+
         Assert.False(sheet.CanCreate);
         Assert.Contains("task class", sheet.BlockedReason!, StringComparison.OrdinalIgnoreCase);
-
         var refused = Assert.Throws<InvalidOperationException>(() => sheet.Create(Now));
-        Assert.Contains("no default", refused.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(TaskClassVocabulary.ChooseOneToCreate, refused.Message);
 
         // Nothing was written by the refusal.
         Assert.False(Directory.Exists(SessionPaths.SessionsRoot(_root)));
+    }
+
+    /// <summary>
+    /// US-C5's falsifiers, all three: a sheet that cannot create until a budget is typed; a sheet
+    /// that requires a task class; a numeric budget prefilled. Create on defaults, zero inputs, and
+    /// the file carries the ruled values.
+    /// </summary>
+    [Fact]
+    public void TheSheetCreatesOnDefaultsWithZeroRequiredInputs()
+    {
+        var sheet = Sheet();
+
+        Assert.Null(sheet.BudgetCap);
+        Assert.Equal(RunBudget.SubscriptionBoundedDisplay, sheet.BudgetDisplay);
+        Assert.DoesNotContain(sheet.BudgetDisplay, char.IsDigit);
+        Assert.Equal(SessionConfig.DefaultFanOutCeiling, sheet.FanOutCeiling);
+        Assert.True(sheet.CanCreate);
+
+        var created = sheet.Create(Now);
+
+        Assert.Equal(TaskClasses.FreeForm, created.TaskClass);
+        Assert.Equal(created.Config.DefaultTaskClass, created.TaskClass);
+        Assert.Null(created.Config.BudgetCap);
+        Assert.Equal(SessionConfig.DefaultFanOutCeiling, created.Config.FanOutCeiling);
+
+        var loaded = new SessionConfigStore(_root, created.Config.SessionId).Load();
+        Assert.Equal(TaskClasses.FreeForm, loaded.DefaultTaskClass);
+        Assert.Null(loaded.BudgetCap);
+        Assert.Equal(SessionConfig.DefaultFanOutCeiling, loaded.FanOutCeiling);
+    }
+
+    /// <summary>Ruling 72 (a): the cap is optional, enforced deliberately, and clearable.</summary>
+    [Fact]
+    public void ACapIsOptional_EnforcedDeliberately_AndWrittenToTheSession()
+    {
+        var sheet = Sheet();
+
+        sheet.EnforceCap(new RunBudget(40, 90_000));
+        Assert.Equal(new RunBudget(40, 90_000), sheet.BudgetCap);
+        Assert.Contains("40", sheet.BudgetDisplay, StringComparison.Ordinal);
+        Assert.Contains("90000", sheet.BudgetDisplay, StringComparison.Ordinal);
+
+        sheet.FanOutCeiling = 3;
+
+        var created = sheet.Create(Now);
+        Assert.Equal(new RunBudget(40, 90_000), created.Config.BudgetCap);
+        Assert.Equal(3, created.Config.FanOutCeiling);
+
+        sheet.ClearCap();
+        Assert.Null(sheet.BudgetCap);
+        Assert.Equal(RunBudget.SubscriptionBoundedDisplay, sheet.BudgetDisplay);
+    }
+
+    /// <summary>A zero or negative cap is a typo, not a budget — the contract's own rule, applied at the sheet.</summary>
+    [Theory]
+    [InlineData(0, 10)]
+    [InlineData(10, 0)]
+    [InlineData(-1, 10)]
+    public void ANonPositiveCapIsRefusedAtTheSheet(int requests, long tokens)
+    {
+        var sheet = Sheet();
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => sheet.EnforceCap(new RunBudget(requests, tokens)));
+        Assert.Null(sheet.BudgetCap);
+    }
+
+    /// <summary>A ceiling is a whole number, 0 or more; a negative or unparseable entry blocks by name, never as a plausible bound.</summary>
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(null)]
+    public void ANegativeOrUnwrittenFanOutCeilingBlocksCreateByName(int? ceiling)
+    {
+        var sheet = Sheet();
+        sheet.FanOutCeiling = ceiling;
+
+        Assert.False(sheet.CanCreate);
+        Assert.Contains("fan-out", sheet.BlockedReason!, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -307,7 +397,7 @@ public sealed class TheNewSessionSheetTests : IDisposable
 
         // The sheet still SAYS something about the lease — the absence itself, which is the true
         // statement — and it is a sentence rather than a Lease.
-        Assert.Equal("not derivable until a goal block exists", NewSessionSheetViewModel.LeaseDisplay);
+        Assert.Contains("@", NewSessionSheetViewModel.LeaseDisplay, StringComparison.Ordinal);
         Assert.IsType<string>(NewSessionSheetViewModel.LeaseDisplay);
 
         // And the check is looking at something: the result really does carry its other two fields.
@@ -327,8 +417,10 @@ public sealed class TheNewSessionSheetTests : IDisposable
         var rendered = Blocks(body).Select(b => b.Text).ToList();
 
         Assert.Contains("Lease", rendered);
-        Assert.Contains("not derivable until a goal block exists", rendered);
+        Assert.Contains(NewSessionSheetViewModel.LeaseDisplay, rendered);
+        Assert.Contains(rendered, line => line.Contains("read-only", StringComparison.Ordinal));
         Assert.DoesNotContain(rendered, line => line.Contains("the whole of", StringComparison.Ordinal));
+        Assert.DoesNotContain(rendered, line => line.Contains("not derivable", StringComparison.Ordinal));
     });
 
     /// <summary>
@@ -365,7 +457,8 @@ public sealed class TheNewSessionSheetTests : IDisposable
             .Select(m => m.Name)
             .ToList();
 
-        foreach (var cut in (string[])["Routing", "Autonomy", "Policy", "Mcp"])
+        // Ruling 63 adds tier to the cut: tier is compiled, never typed, so no sheet member names it.
+        foreach (var cut in (string[])["Routing", "Autonomy", "Policy", "Mcp", "Tier"])
         {
             Assert.DoesNotContain(members, m => m.Contains(cut, StringComparison.OrdinalIgnoreCase));
         }

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T13:31:00Z",
+  "generated": "2026-09-12T15:06:13Z",
   "audit": [
     {
       "actor": null,
@@ -13481,6 +13481,66 @@ window.AUDIT_DATA = {
       ],
       "tier": "T2",
       "tool": null
+    },
+    {
+      "id": "al-01M2B2EHNVA62607PWZMQ0QBDS",
+      "shortname": "cv-0-read-only-turn",
+      "datetime": "2026-09-12T15:05:51Z",
+      "session": "cv-0",
+      "prompt": "You are track CV-0 of the Conversation lane in docs/coordination/addendum-cd.md — read your row, the Seams table, the §2 rows (what the Conversation lane owns) and the fan-out contract first. Run the /implement skill (Skill tool: implement, args: CV-0: the read-only turn (Ruling 73) — a Message or no-scope send runs on a lane with every write-capable tool disallowed and no lease; the lease gate applies to write-shaped turns only; RunBudget.SubscriptionBounded rendered; reds first). The conductor is Claude Opus (session conductor-addendum-c). Read CLAUDE.md and AGENTS.md; the pack's rules apply in full (red first; smallest correct; the Security & Identity lens holds the hard veto on the tool set and the lease; the Test Architect's veto; the Spike Protocol — the SDK's tool names are read from the adapter/SDK source, not recalled).\n\nWorktree C:\\Projects\\ai-de-lane-conversation-cv0, branch lane/conversation-cv0, HEAD = main 8d54aadc. Claim what you edit; release at close.\n\nRulings that bind: 73 (a turn that writes nothing needs no lease: Message / no-scope goal block → read-only lane, every write-capable tool disallowed via LaneSessionOptions — the exact set read from the SDK's tool list, cite lines; no lease derived, none required; the lease gate applies only to write-shaped turns, unchanged; decoration line \"read-only — nothing will be written\"), 75 (the only content-gap refusal is \"This prompt is a goal block and needs Not in scope.\"; a blank Goal or Done-when yields a Message), 72 (RunBudget.SubscriptionBounded rendered as a declared subscription-bounded value, never the raw max numbers), 71 (the governed lane's Bash pin stays; the read-only pin is the second use), 66 (lease from ComposerDraft.SourceText only).\n\nBuild: ComposerSendGate.cs, ComposerCompiler.cs + ComposerDraft.cs, ComposerSurface.cs + composer.html/mjs, LeaseDerivation.cs (:25 premise only), GoalBlock.cs (SpawnContract accepts the read-only shape; say how the request carries it), LeaseAndSeams.cs, GovernedRunHost.cs (ReadOnlyLaneSession beside GovernedLaneSession; decide and state whether the read-only lane runs in the workspace root; ADR-0035), GovernedRunRequest.cs; tests incl. AcpLaneClientTests.cs, TheGovernedLaneHasNoShellTests.cs, the composer tests.\n\nReds first: (1) the read-only lane's session/new exact-key-set wire test (set equality); (2) a Message-shaped send derives no lease and is not refused; (3) a scoped goal block still takes the lease gate unchanged (control); a scopeless goal block runs read-only; (4) CompositionRootLedger.Roots unchanged; (5) SubscriptionBounded renders as the declared value; (6) Ruling 75's refusal sentence, and no refusal for a blank Done-when.\n\nAttended (the operator): one real read-only turn in the built app — the frame (lane.session-new), the observed tool-call names, a clean tree after. You do not run it; leave the Proof Pack row RUN-PENDING with the exact steps.\n\nFloors: E7 before coding; seams (\"free-form\" literal census; no Projection.Project(; nothing under the Shell lane's paths; DS-1 names the decoration line CV-1 renders — you define the state); reviews read-only ≤ 3 concurrent, loop cap 2 (Security & Identity hard; Test Architect hard; the Simplifier); gates at close bare, stop on the first red; audit entry; Proof Pack docs/proof/read-only-turn.md; commit; push lane/conversation-cv0; do not merge to main; release claims.\n\nConductor's scope addition (after the six reds are green): bring the New Session sheet to Rulings 72 and 63 — NewSessionSheetViewModel.cs and NewSessionSheetDialog.cs: (1) task class preselected to TaskClasses.FreeForm, never required, changeable; (2) budget is NOT a required numeric field — the state \"bounded by your subscription\" with an optional \"enforce a cap\" affordance (SessionConfig.BudgetCap null = subscription-bounded); (3) the fan-out ceiling prefilled from SessionConfig.FanOutCeiling; (4) no tier on the sheet. Red first (US-C5's falsifiers). Keep the composer's goal-block form as it is beyond the read-only work; if removing TIER / FAN_OUT_CAP / BUDGET from the composer form is bounded, do it; if it pulls in CV-1's form rewrite, leave it and say so. Report the additions separately.",
+      "summary": "CV-0 shipped Ruling 73's read-only turn on lane/conversation-cv0. The turn's shape is one projection over the draft (ComposerDraft.TurnShape: Message | GoalBlock — Goal and Done when both written; ComposerCompiler.IsReadOnly: Message or zero patterns). A Message or a scopeless goal block builds a GovernedRunRequest with Lease = null (IsReadOnly => Lease is null — the shape is the lease's absence, never a claim) and no refusal; a scoped goal block takes the lease gate unchanged (Derive over SourceText, Ruling 66). GovernedRunHost: the read-only branch is inline in RunAsync after Authorize — no worktree (the session is rooted in the repository root; decision note note-read-only-lane-runs-in-the-workspace-root), no episode, no score, no seam monitor; ReadOnlyLaneSession = 30 disallowed tool names read from two sources (the SDK 0.3.257 sdk-tools.d.ts union and the shipped CLI binary's own tool table, which lists PowerShell — a shell the schema does not list), asserted as a set equality on the outgoing session/new frame ({cwd, mcpServers: [], _meta.claudeCode.options.disallowedTools}); SpawnRequest.ReadOnly (bool, built in SpawnRequestFor from the missing lease) waives R2's goal-block precondition only, the identity gates unchanged; Decide on a null lease refuses any pinned tool name and allows only the read kinds; the tree is measured before and after the turn (git status --porcelain + git diff HEAD + untracked hashes) and the delta is ReadOnlyTreeDelta on the result — non-zero says READ-ONLY VIOLATION and Outcome: Blocked. Ruling 75: the one refusal sentence on the not_in_scope field and as the refusal; a blank Goal or Done when is a Message, said on the status line (\"sent as a message — read-only\"). Ruling 72: RunBudget.SubscriptionBoundedDisplay rendered in the compiled block, no numerals. LeaseDerivation's :25 premise narrowed (doc only). Surface lease line: \"Lease: read-only — nothing will be written\" (ReadOnlyScope for CV-1's decoration line). Conductor's addition: the New Session sheet creates on defaults with zero required inputs — free-form preselected and changeable, budget a state with an optional cap (built once, toggled), fan-out ceiling prefilled (int?, unparseable = not written), no tier; SessionConfigStore.Create takes the three settings; the composer's TIER/FAN_OUT_CAP/BUDGET fields left for CV-1 (tier has no derivation rule until CV-2's §A9). Six reds observed on main before the change (recorded verbatim), all green; 2278/2278 Core, 695/695 App, verify-test-run OK, every verify-*.py OK (derived views regenerated at close; verify-stranded-audit reports two OTHER worktrees). Reviews: Security & Identity BLOCK → PASS-WITH-CONDITIONS (PowerShell, Projects, the chooser's kind hole, the tree check, the porcelain false negative all applied; the MCP/connector residual named for CV-3/Owner; the governed lane's [\"Bash\"] shares the PowerShell gap — a finding for the Owner); Test Architect BLOCK → PASS-WITH-CONDITIONS (every finding applied; the attended run is the remaining condition); Simplifier soft BLOCK → applied (−140 lines). Proof Pack docs/proof/read-only-turn.md with the attended row RUN-PENDING (the operator's steps verbatim) and the DC-nnn class appended to the register for the conductor to allocate.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/read-only-turn.md",
+        "docs/notes/read-only-lane-runs-in-the-workspace-root.md",
+        "src/AiDe.App/Conductor/GovernedRunHost.cs",
+        "src/AiDe.App/Conductor/GovernedRunRequest.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSendGate.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs",
+        "src/AiDe.Core/AgentPlane/GoalBlock.cs",
+        "src/AiDe.Core/Presentation/Composer/ComposerCompiler.cs",
+        "src/AiDe.Core/Presentation/Composer/ComposerDraft.cs",
+        "src/AiDe.Core/Presentation/Composer/LeaseDerivation.cs",
+        "src/AiDe.Core/Presentation/Sessions/NewSessionSheetViewModel.cs",
+        "src/AiDe.App/Workbench/Sessions/NewSessionSheetDialog.cs",
+        "src/AiDe.Core/Sessions/SessionConfig.cs",
+        "src/AiDe.Core/Sessions/SessionConfigStore.cs",
+        "tests/AiDe.App.Tests/Composer/TheReadOnlyTurnNeedsNoLeaseTests.cs",
+        "tests/AiDe.Core.Tests/Composer/TheCompiledBlockRendersItsShapeTests.cs",
+        "tests/AiDe.App.Tests/Conductor/TheGovernedLaneHasNoShellTests.cs",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "ruling-73",
+        "ruling-75",
+        "ruling-72",
+        "conversation-lane",
+        "cv-0"
+      ],
+      "outcome": "success",
+      "goal": "CV-0: the read-only turn (Ruling 73) — a Message or scopeless goal block runs on a lane with every write-capable tool disallowed and no lease; the lease gate applies to write-shaped turns only; RunBudget.SubscriptionBounded rendered; Ruling 75's one refusal sentence; the New Session sheet at Rulings 72/56/63 (conductor's addition)",
+      "done_when": "the six reds observed red then green; build TWAE clean; both full suites green and verify-test-run CHECK OK; every tools/verify-*.py OK; Security and Test Architect vetoes cleared; Proof Pack docs/proof/read-only-turn.md with the attended row RUN-PENDING; audit entry; committed and pushed to lane/conversation-cv0; claims released",
+      "tier": "T2",
+      "main_calls": 118,
+      "main_budget": 4127,
+      "main_over_budget": false,
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-12T13:36:47Z",
+      "duration_seconds": 5344.0,
+      "git": {
+        "sha": "8d54aadc0016c343f08f752d6d9927059c8e0718",
+        "short": "8d54aadc0",
+        "branch": "lane/conversation-cv0",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -17116,6 +17176,33 @@ window.AUDIT_DATA = {
       "summary": "DS-1 /design-slice: docs/design/session-thread-itemscontrol.md (new) — the session thread as a FeedList base (a ListBox over a recycling VirtualizingStackPanel, the six feed keys owned as a pure Decide + an act, a structural pin) with two consumers (the turn feed; the Console split as a flat list of heading and line rows), one INotifyPropertyChanged row per accepted turn carrying its three disclosure flags, the composer pinned beneath (MinHeight 130 on the editor host + the document's MaxHeight belt), a read model that publishes versioned snapshots with a catch-up flag, a one-method transition policy over them with a total transition table, SC9 on NVDA's fetched processing semantics (Status -> All, Assertive -> ImportantMostRecent; Core enums mapped in App), the SC10 UIA contract (List/ListItem, ItemStatus = decoration line, HelpText = the reason sentence, keyed disclosure template, one focusable outside text), the seams (ISessionThread, Announce(Announcement) + raise seam, ComposerSurface.FocusTarget + F6 forward + focus.leave Backward + picker focus echo + editor MinHeight, two WorkbenchCommands, no App.xaml change), the E7 list with a retire row, and 30 red-first oracles with falsifying rows. Spike spikes/session-thread (Q1-Q15, RESULT.md + three raw files) falsified eight platform assumptions: the ListBox's Up/End in a variable-height feed; TabNavigation Local/Continue trap Tab; offset-at-max is not \"followed\" (extent estimate); a collection Replace drops the caret; a roving IsTabStop binding is unnecessary under the default Once; recycling hands one turn's expanded fold to another turn (Q13); the real ComposerSurface in an Auto Grid row lays out the editor at 0 px and the thread at 0 px (Q14); virtualization off is 12.9x on first layout (Q15). Gate: two passes each for Patterns Expert, Simplifier, UX & Accessibility (hard veto CLEARED at pass 2), Test Architect (FAIL both passes: a residual Blocker on the restore/seed lifecycle, resolved by the versioned flagged snapshot — applied post-cap), WPF styling lens (PASS-WITH-CONDITIONS, no escalation; its Blocker measured as Q14). The pass-2 conditions of all lenses are applied in the final revision for the conductor's diff (cap 2 reached; the author cleared nothing). Three decision notes (keys owned by the feed; assertive through one region; the split is a view of the fold). One defect class appended with the id left as DC-nnn (an oracle reads a value clamped at its bound). Findings for owners: DESIGN.md:1092 (the composer row's growth rule), App.xaml (dotted FocusVisualStyle beside the ring), spec/mockup drift (Flow 6, Flow D-1 K2, E2's tab order, the mockup's T badge and skeleton turns), webview2-airspace RESULT over-generalisation, front-door-ruling-49's dangling link, ConsoleSurface/CanvasModeCatalog retirement (CV-1 grep), ConsoleStreamModel as a second store (CV-2). Sub-agent starts are reconstructed from launch order and reported durations; durations and call counts are the harness's.",
       "tags": [],
       "title": "The session thread is a FeedList over versioned catch-up-flagged snapshots: the feed owns its keys, the row owns its view state, the composer declares its floor, the policy announces by transition"
+    },
+    {
+      "id": "cl-01M2B2F0VFD7RE1FPXP4P7FMF9",
+      "datetime": "2026-09-12T15:06:07Z",
+      "session": "cv-0",
+      "kind": "decision",
+      "skill": "implement",
+      "title": "A read-only turn runs in the workspace root, opens no episode and is not scored (Ruling 73's Inferred half decided)",
+      "prompt": null,
+      "summary": "GovernedRunHost's read-only branch opens the ACP session with cwd = the repository root under ReadOnlyLaneSession (30 disallowed tool names read from the SDK schema union and the CLI binary's tool table), cuts no worktree, opens no WatcherHost/episode, runs no LeaseMonitor, and measures the tree before and after (ReadOnlyTreeDelta). Decision note docs/notes/read-only-lane-runs-in-the-workspace-root.md.",
+      "rationale": "Ruling 73's constraint (cut nothing the operator must clean up); the pin makes the tree safe by construction; the REPL reads the live working state; ADR-0035 roots the compile session the same way. A Message has no done-condition to judge, so no episode and no score; the measurement is the run result (frame, events, latencies, the tree delta) and the workbench log.",
+      "artifacts": [
+        "docs/notes/read-only-lane-runs-in-the-workspace-root.md",
+        "src/AiDe.App/Conductor/GovernedRunHost.cs"
+      ],
+      "tags": [
+        "ruling-73",
+        "cv-0"
+      ],
+      "git": {
+        "before": "8d54aadc",
+        "after": "8d54aadc0016c343f08f752d6d9927059c8e0718",
+        "branch": "lane/conversation-cv0",
+        "pushed": null,
+        "commits": []
+      },
+      "audit_ref": "al-01M2B2EHNVA62607PWZMQ0QBDS"
     }
   ]
 };

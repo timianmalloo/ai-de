@@ -191,6 +191,43 @@ public sealed class AcpLaneClientTests
     }
 
     /// <summary>
+    /// Ruling 73's pin is the second use of the same argument: a read-only lane sends its whole
+    /// disallowed set — every name, in the order given, none dropped or re-spelled — on the plain
+    /// <c>cwd</c> overload (there is no worktree to root it in), with <c>tools</c> absent and the
+    /// frame's key set unchanged.
+    /// </summary>
+    /// <remarks>
+    /// <b>A control, green before and after CV-0:</b> the client needed no change for the read-only
+    /// lane — the set is the host's (<c>GovernedRunHost.ReadOnlyLaneSession</c>, asserted in
+    /// <c>TheGovernedLaneHasNoShellTests</c>); what this proves is that a set of any size reaches the
+    /// wire as itself.
+    /// </remarks>
+    [Fact]
+    public async Task AReadOnlyLaneSendsItsWholeDisallowedSetOnTheCwdOverload()
+    {
+        var absolute = Path.GetFullPath(Path.GetTempPath());
+        string[] disallowed = ["Write", "Edit", "MultiEdit", "NotebookEdit", "Bash", "REPL", "Agent"];
+        var harness = New();
+        var run = harness.Peer.RunAsync();
+        var session = harness.Client.NewSessionAsync(absolute, new LaneSessionOptions(DisallowedTools: disallowed));
+
+        harness.Input.Push("""{"jsonrpc":"2.0","id":1,"result":{"sessionId":"s-4"}}""" + "\n");
+        Assert.Equal("s-4", await session);
+
+        var parameters = Parse(Assert.Single(harness.Output.Lines).Line)["params"]!.AsObject();
+        var options = parameters["_meta"]!["claudeCode"]!["options"]!.AsObject();
+
+        Assert.Equal(disallowed, options["disallowedTools"]!.AsArray().Select(n => n!.GetValue<string>()));
+        Assert.False(options.ContainsKey("tools"));
+        Assert.Equal(["cwd", "mcpServers", "_meta"], parameters.Select(m => m.Key));
+        Assert.Empty(parameters["mcpServers"]!.AsArray());
+        Assert.Equal(absolute, parameters["cwd"]!.GetValue<string>());
+
+        harness.Input.EndOfStream();
+        await run;
+    }
+
+    /// <summary>
     /// The other member — Addendum D's C1 sends <c>tools: []</c> to disable every built-in tool. An
     /// empty list is sent as an empty array, not dropped as "nothing to say".
     /// </summary>

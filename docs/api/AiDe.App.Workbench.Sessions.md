@@ -240,18 +240,26 @@ wrongly.
 
 
 
-**Task class carries no pre-filled value**, deliberately: pre-filling one is how a
-default arrives by another route, and a defaulted class ranks in the wrong cohort (DC-110). The
-Create button stays disabled, with its reason beside it, until the operator chooses one.
+**Task class opens on `free-form`** (Ruling 72 (b)): the dialog selects the row
+the model already holds — it never decides the default itself — and the operator changes it by
+choosing another row. Create is enabled from open: the sheet has zero required inputs.
 
 
 
 
 
-**It is a picker now, not a text box (RQ1).** The requirement was never the failure; the
-control was. A value whose only use is exact equality against a set is entered by choosing from
-that set, because a free text box makes a typo indistinguishable from an answer. Nothing is
-preselected, so choosing is still an act and the no-default contract is untouched.
+**It is a picker, not a text box (RQ1).** A value whose only use is exact equality
+against a set is entered by choosing from that set, because a free text box makes a typo
+indistinguishable from an answer.
+
+
+
+
+
+**The budget is a state with an optional cap** (Ruling 72 (a)): *bounded by your
+subscription* until the operator ticks *Enforce a cap*, and only then do the two number
+boxes exist. **The fan-out ceiling is prefilled** (Ruling 56). **There is no tier**
+(Ruling 63).
 
 
 

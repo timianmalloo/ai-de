@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Composer: 10 types, 51 members, 89% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Composer: 10 types, 52 members, 89% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Composer`
 
-**10 public types · 51 public members · 89% documented.**
+**10 public types · 52 public members · 89% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -185,7 +185,14 @@ Builds the run request from the rendered view, or refuses and says which field.
 - **`template`** — The bound template, for a template draft.
 - **`refusal`** — Why not, when the result is null.
 
-**Throws `ArgumentException`.** Nothing was derivable as a lease, so `Lease` refused to be constructed. **Deliberately not caught here.** A lane with no declared write scope has no seam monitor, and catching this into a default lease is a disabled control wearing a shortcut's clothes.
+**Throws `InvalidOperationException`.** The derived lease of a write-shaped turn covers everything — unreachable by `LeaseDerivation`'s own rules and checked anyway. **Deliberately not caught here.** Catching it into a default lease is a disabled control wearing a shortcut's clothes.
+
+**Remarks.** **The shape decides the gate, and the shape is one projection** (Rulings 73, 75):
+`TurnShape` with `IsReadOnly` over the
+source text's patterns (Ruling 66). A Message or a scopeless goal block builds a read-only
+request — no lease derived, none required; only a scoped goal block takes the lease gate
+(Ruling 42, C17), unchanged. The one content-gap refusal is
+`GoalBlockNeedsNotInScope`.
 
 ## `ComposerAccelerator`
 
@@ -257,6 +264,7 @@ claim, and paste is handled inside the page by the editor that received it.
 | `ComposerSendGate Gate` | The send gate. Exposed so the seam's counter is readable by a test. |
 | `ComposerDraft Draft` | The draft this surface composes. |
 | `string Status` | The last thing that happened, in a sentence. |
+| `string LeaseLine` | The lease line as rendered: the read-only state, or the patterns (Ruling 73). |
 | `bool IsConfigured` | Whether `Configure` has run — a bound composer is not bound again (INV-0009 Phase 2). |
 | `ComposerMessageRouter Router` | The router. Built with the surface, so a mount is heard before the session is wired. |
 | `bool PageIsReady` | Whether the page has reported that it mounted. |

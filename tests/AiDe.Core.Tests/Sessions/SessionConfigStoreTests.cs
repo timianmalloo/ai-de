@@ -206,6 +206,34 @@ public sealed class SessionConfigStoreTests : IDisposable
     }
 
     /// <summary>Each new field round-trips a non-default value through the store's own JSON contract.</summary>
+    /// <summary>
+    /// Rulings 72 and 56: the New Session sheet decides the ceiling, the cap and the default class at
+    /// create, so <c>Create</c> takes them — and an old caller that passes none still gets the ruled
+    /// defaults (the S2 test above). Red before CV-0: <c>Create</c> took only the four original
+    /// arguments.
+    /// </summary>
+    [Fact]
+    public void Create_WritesTheSettingsItIsGiven_AndTheyReadBack()
+    {
+        var now = new DateTimeOffset(2026, 9, 12, 9, 0, 0, TimeSpan.Zero);
+        var store = new SessionConfigStore(_workspaceRoot, "20260912T090000Z-settings");
+
+        var created = store.Create(
+            "settings", "w-1", ["claude-code"], now,
+            fanOutCeiling: 3,
+            budgetCap: new RunBudget(40, 90_000),
+            defaultTaskClass: "review");
+
+        Assert.Equal(3, created.FanOutCeiling);
+        Assert.Equal(new RunBudget(40, 90_000), created.BudgetCap);
+        Assert.Equal("review", created.DefaultTaskClass);
+
+        var loaded = new SessionConfigStore(_workspaceRoot, "20260912T090000Z-settings").Load();
+        Assert.Equal(3, loaded.FanOutCeiling);
+        Assert.Equal(new RunBudget(40, 90_000), loaded.BudgetCap);
+        Assert.Equal("review", loaded.DefaultTaskClass);
+    }
+
     [Fact]
     public void EachOfTheFourNewFields_RoundTripsANonDefaultValueThroughPersistedJson()
     {

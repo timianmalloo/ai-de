@@ -1,6 +1,7 @@
 using System.Globalization;
 using AiDe.Core.AgentPlane;
 using AiDe.Core.Sessions;
+using AiDe.Core.Watcher;
 
 namespace AiDe.Core.Presentation.Sessions;
 
@@ -82,12 +83,16 @@ public sealed record NewSessionResult(
 /// interposes the chooser when there is no active workspace, and a cancelled chooser never reaches
 /// this type at all.</para>
 ///
-/// <para><b><see cref="TaskClass"/> has no default, deliberately (Ruling 19).</b>
-/// <c>GovernedRunRequest</c>'s own comment states the reason: <i>a defaulted class ranks in the
-/// wrong cohort</i> — that is DC-110, and a hidden default would make the exit run
-/// <c>IsComparable == false</c> on its own. It is nullable here and <see cref="CanCreate"/> is false
-/// until the operator names one; there is no overload, no optional parameter and no fallback that
-/// could supply it.</para>
+/// <para><b><see cref="TaskClass"/> opens as <c>free-form</c> — the operator's declared default,
+/// visible as a row and changeable (Ruling 72 (b), superseding Ruling 19's "no default" for the
+/// session default; DC-110 was about a <i>guessed</i> class). It stays nullable so a cleared class
+/// still blocks <see cref="CanCreate"/>.</para>
+///
+/// <para><b>The budget is a state, and a cap is optional (Ruling 72 (a)).</b> <see cref="BudgetCap"/>
+/// is <c>null</c> — <i>bounded by your subscription</i> — until the operator enforces one with
+/// <see cref="EnforceCap"/>; no number is ever required. <see cref="FanOutCeiling"/> is prefilled
+/// from the session's ruled default (Ruling 56). <b>No tier is on the sheet</b> (Ruling 63): tier is
+/// compiled, never typed.</para>
 ///
 /// <para><b>What the sheet does NOT carry (Ruling 19's cut):</b> routing mode, autonomy, default
 /// policy and per-session MCP selection. <c>GovernedRunRequest</c> takes none of them, so a field
@@ -161,27 +166,73 @@ public sealed class NewSessionSheetViewModel
     public string Name { get; set; }
 
     /// <summary>
-    /// The kind of work. <b>Required, with no default</b> — see the type's remarks (Ruling 19).
+    /// The session's default task class — <c>free-form</c> from open, changeable (Ruling 72 (b));
+    /// see the type's remarks.
     /// </summary>
-    public string? TaskClass { get; set; }
+    public string? TaskClass { get; set; } = TaskClasses.FreeForm;
 
     /// <summary>
-    /// The classes the sheet offers, so the operator CHOOSES one rather than spelling it (RQ1).
+    /// The classes the sheet offers, so the operator CHOOSES one rather than spelling it (RQ1):
+    /// <c>free-form</c> first — the declared default, a row like any other — then the provisional
+    /// vocabulary.
     /// </summary>
     /// <remarks>
     /// Exposed here rather than reached for by the view, so the sheet's vocabulary and the sheet's
     /// rules are read from one object. The list is provisional and says so on
-    /// <see cref="TaskClassVocabulary"/>; nothing in it is preselected.
+    /// <see cref="TaskClassVocabulary"/>; the first row is preselected by the dialog because it is
+    /// what <see cref="TaskClass"/> already holds, never the other way round.
     /// </remarks>
-    public IReadOnlyList<TaskClassOption> TaskClassOptions => TaskClassVocabulary.Offered;
+    public IReadOnlyList<TaskClassOption> TaskClassOptions =>
+    [
+        // simplify: the free-form row is minted here because TaskClassVocabulary.cs is outside the
+        // Conversation lane's paths this horizon. Ceiling: this one row. Upgrade trigger: move it
+        // into TaskClassVocabulary.Offered (and retire the "no default" copy there) at the join.
+        new(TaskClasses.FreeForm, "Conversation and unclassified work; the default for a session opened with no task in mind."),
+        .. TaskClassVocabulary.Offered,
+    ];
 
     /// <summary>
-    /// Whether the required, undefaulted task class has been answered (RQ4).
+    /// The most sub-agents any turn in this session may convene (Ruling 56); prefilled from the
+    /// ruled default. <c>null</c> is "not a number was written" — the platform's absent value, so a
+    /// blocked reason can say so rather than read an unparseable entry as a negative bound.
+    /// </summary>
+    public int? FanOutCeiling { get; set; } = SessionConfig.DefaultFanOutCeiling;
+
+    /// <summary>
+    /// An enforced request/token cap, or <c>null</c> — bounded by the subscription (Ruling 72 (a)).
+    /// Set through <see cref="EnforceCap"/>, cleared through <see cref="ClearCap"/>; never typed
+    /// as a required number.
+    /// </summary>
+    public RunBudget? BudgetCap { get; private set; }
+
+    /// <summary>What the sheet says about the budget: the state (Ruling 72 condition (1)), or the cap the operator enforced.</summary>
+    public string BudgetDisplay => BudgetCap is { } cap
+        ? string.Create(CultureInfo.InvariantCulture, $"cap: {cap.Requests} requests, {cap.Tokens} tokens")
+        : RunBudget.SubscriptionBoundedDisplay;
+
+    /// <summary>Enforces a cap on this session — the operator's deliberate act (Ruling 72 (a)).</summary>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// A zero or negative cap: the spawn contract's own rule — a spawn that can do nothing is a typo,
+    /// not a budget — applied where the number is typed rather than at the first run.
+    /// </exception>
+    public void EnforceCap(RunBudget cap)
+    {
+        ArgumentNullException.ThrowIfNull(cap);
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(cap.Requests, 0, nameof(cap));
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(cap.Tokens, 0, nameof(cap));
+        BudgetCap = cap;
+    }
+
+    /// <summary>Removes the cap: the session is bounded by the subscription again.</summary>
+    public void ClearCap() => BudgetCap = null;
+
+    /// <summary>
+    /// Whether the task class is answered (RQ4) — true from open (Ruling 72), false only for a
+    /// class cleared programmatically.
     /// </summary>
     /// <remarks>
     /// A visible STATE rather than an asterisk, and read by the view as a word and a glyph so it is
-    /// never carried by colour alone. It flips on the answer, which is what makes "why is this
-    /// mandatory" answerable by looking rather than by asking twice.
+    /// never carried by colour alone.
     /// </remarks>
     public bool TaskClassAnswered => !string.IsNullOrWhiteSpace(TaskClass);
 
@@ -242,12 +293,15 @@ public sealed class NewSessionSheetViewModel
     ];
 
     /// <summary>
-    /// What the sheet says about the lease. <b>A sentence, never a <c>Lease</c></b> (Ruling 42).
+    /// What the sheet says about the lease. <b>A sentence, never a <c>Lease</c></b> (Ruling 42;
+    /// Ruling 73).
     /// </summary>
     /// <remarks>
     /// <para>R19 asks the sheet to show the lease, and at sheet time there is nothing to derive one
-    /// from: a lease is the goal block's <c>lease.exclusive</c> (spec §14.3), and the block belongs
-    /// to the composer. The honest display is therefore the absence itself.</para>
+    /// from: a lease is derived per prompt from the operator's <c>@mentions</c> in a goal block
+    /// (Rulings 42, 66), and a prompt that names no write scope — the default conversation — runs
+    /// read-only with no lease at all (Ruling 73). The honest display is therefore the rule, not a
+    /// value.</para>
     ///
     /// <para><b>Why not derive "the whole workspace" and mark it <c>simplify:</c>.</b> That was this
     /// node's first implementation, and it is worse than a weak display rather than equivalent to
@@ -258,7 +312,8 @@ public sealed class NewSessionSheetViewModel
     /// like it is working". A <c>simplify:</c> whose stated ceiling is "the seam control does not
     /// discriminate" is not a bounded shortcut; it is a disabled control wearing one's clothes.</para>
     /// </remarks>
-    public const string LeaseDisplay = "not derivable until a goal block exists";
+    public const string LeaseDisplay =
+        "derived per prompt from the @mentions in a goal block; a prompt that names none runs read-only";
 
     /// <summary>Whether <see cref="Create"/> would succeed.</summary>
     public bool CanCreate => BlockedReason is null;
@@ -281,8 +336,14 @@ public sealed class NewSessionSheetViewModel
                 // operator asked why the field was mandatory while the answer was on screen, and
                 // asked again in the same session — which is evidence about the affordance, not
                 // about the operator. The full explanation sits AT the field; this is the reason the
-                // disabled button carries.
+                // disabled button carries. Reachable only by clearing the class in code: the sheet
+                // opens answered (Ruling 72).
                 return TaskClassVocabulary.ChooseOneToCreate;
+            }
+
+            if (FanOutCeiling is null or < 0)
+            {
+                return "Write the fan-out ceiling as a whole number, 0 or more.";
             }
 
             return null;
@@ -371,18 +432,21 @@ public sealed class NewSessionSheetViewModel
     {
         if (BlockedReason is { } reason)
         {
-            // The operator's sentence, plus the rule, for the reader this one actually has: whoever
-            // wrote a call that skipped CanCreate. See TaskClassVocabulary.NoDefaultRule.
-            throw new InvalidOperationException(
-                reason == TaskClassVocabulary.ChooseOneToCreate
-                    ? $"{reason} {TaskClassVocabulary.NoDefaultRule}"
-                    : reason);
+            // The operator's sentence, for the reader this one actually has: whoever wrote a call
+            // that skipped CanCreate.
+            throw new InvalidOperationException(reason);
         }
 
         var store = new SessionConfigStore(WorkspaceRoot, SessionId.New(now));
-        var config = store.Create(Name.Trim(), WorkspaceId, EnabledBackends, now);
+        var config = store.Create(
+            Name.Trim(), WorkspaceId, EnabledBackends, now,
+            fanOutCeiling: FanOutCeiling!.Value,
+            budgetCap: BudgetCap,
+            defaultTaskClass: TaskClass!.Trim());
 
-        return new NewSessionResult(config, TaskClass!.Trim(), RoutableBackends);
+        // The result's class IS the config's default (Ruling 72; ADR-0033 §4) — one source, read
+        // back from what was written, never a second copy of the sheet's field.
+        return new NewSessionResult(config, config.DefaultTaskClass, RoutableBackends);
     }
 
     /// <summary>The registry the sheet last read, so a re-probe is observable from outside.</summary>
