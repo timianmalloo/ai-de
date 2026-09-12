@@ -27,7 +27,7 @@ internal static class DirectoryEnumerationProbeCases
 
             var binding = e.CaptureRootBinding(root);
             var normal = e.Enumerate(root, "src", binding);
-            results.Add(CheckResult("held root/ancestor permits ordinary listing", normal, DirectoryEnumerationStatus.Complete));
+            results.Add(CheckResult("held root/ancestor permits ordinary listing", normal, DirectoryEnumerationStatus.Complete, maxPeak: 16));
             results.Add(Check("ordinary listing contains only approved root entries", normal.Entries.Any(x => x.RelativePath == "src/A.cs") && normal.Entries.Any(x => x.RelativePath == "src/nested/B.cs") && normal.Entries.All(x => !x.RelativePath.Contains("Secret", StringComparison.OrdinalIgnoreCase))));
             results.Add(Check("root rename blocked while held and succeeds after release", e.RenameRootBlocked(root), e.LastMutationDetail));
             results.Add(Check("ancestor rename blocked while held and succeeds after release", e.RenameAncestorBlocked(root, "src"), e.LastMutationDetail));
@@ -43,7 +43,9 @@ internal static class DirectoryEnumerationProbeCases
             var empty = Path.Combine(root, "empty");
             Directory.CreateDirectory(empty);
             results.Add(CheckResult("empty directory is complete zero", e.Enumerate(root, "empty", binding), DirectoryEnumerationStatus.Complete, expectEntries: 0));
-            results.Add(CheckResult("missing directory is typed unavailable zero", e.Enumerate(root, "missing", binding), DirectoryEnumerationStatus.Unavailable, expectEntries: 0));
+            var missing = e.Enumerate(root, "missing", binding);
+            results.Add(CheckResult("missing directory is typed unavailable zero", missing, DirectoryEnumerationStatus.Unavailable, expectEntries: 0));
+            results.Add(Check("missing directory diagnostic has native code and no path", missing.NativeErrorCode is > 0 && !missing.Detail.Contains(root, StringComparison.OrdinalIgnoreCase), $"native={missing.NativeErrorCode};detail={missing.Detail}"));
 
             var directTarget = Path.Combine(root, "direct-junction");
             File.WriteAllText(Path.Combine(escape, "Secret.cs"), "class Secret {}", Encoding.UTF8);
@@ -74,24 +76,41 @@ internal static class DirectoryEnumerationProbeCases
 
             var shallow = new OpenedDirectoryEnumerator(maxEntries: 50, maxDepth: 1, maxDescriptors: 16);
             var depthLimited = shallow.Enumerate(root, "src", binding);
-            results.Add(CheckResult("depth limit is explicit", depthLimited, DirectoryEnumerationStatus.LimitExceeded));
+            results.Add(CheckResult("depth limit is explicit", depthLimited, DirectoryEnumerationStatus.LimitExceeded, maxPeak: 16));
             results.Add(Check("depth-limit releases handles", MoveRoundTrip(Path.Combine(root, "src"))));
 
             Directory.CreateDirectory(Path.Combine(root, "a", "b", "c"));
             var descriptorBound = new OpenedDirectoryEnumerator(maxEntries: 50, maxDepth: 8, maxDescriptors: 2);
             var descriptorResult = descriptorBound.Enumerate(root, "a/b/c", binding);
             results.Add(CheckResult("descriptor limit is explicit", descriptorResult, DirectoryEnumerationStatus.LimitExceeded, maxPeak: 2));
+
+            var recursiveRoot = Path.Combine(root, "recursive");
+            var current = recursiveRoot;
+            for (var i = 0; i < 5; i++) { Directory.CreateDirectory(current); current = Path.Combine(current, "d" + i); }
+            var recursiveBound = new OpenedDirectoryEnumerator(maxEntries: 100, maxDepth: 10, maxDescriptors: 3);
+            var recursiveResult = recursiveBound.Enumerate(root, "recursive", binding);
+            results.Add(CheckResult("recursive descriptor exhaustion is explicit", recursiveResult, DirectoryEnumerationStatus.LimitExceeded, maxPeak: 3));
+            results.Add(Check("recursive-descriptor release allows root mutation", MoveRoundTrip(root)));
             results.Add(Check("descriptor-limit releases handles", MoveRoundTrip(Path.Combine(root, "a"))));
 
             using var startedCancel = new CancellationTokenSource();
             var canceling = new OpenedDirectoryEnumerator(maxEntries: 50, maxDepth: 3, maxDescriptors: 16, afterEntryObserved: startedCancel.Cancel);
             var canceledAfterStart = canceling.Enumerate(root, "src", binding, startedCancel.Token);
-            results.Add(CheckResult("cancel after start returns canceled zero", canceledAfterStart, DirectoryEnumerationStatus.Canceled, expectEntries: 0));
+            results.Add(CheckResult("cancel after start returns canceled zero", canceledAfterStart, DirectoryEnumerationStatus.Canceled, expectEntries: 0, maxPeak: 16));
             results.Add(Check("cancel releases handles", MoveRoundTrip(root)));
 
             using var cts = new CancellationTokenSource();
             cts.Cancel();
-            results.Add(CheckResult("precancel returns canceled", e.Enumerate(root, "src", binding, cts.Token), DirectoryEnumerationStatus.Canceled, expectEntries: 0));
+            results.Add(CheckResult("precancel returns canceled", e.Enumerate(root, "src", binding, cts.Token), DirectoryEnumerationStatus.Canceled, expectEntries: 0, maxPeak: 0));
+            var mutationBinding = binding;
+            var movedRoot = root + ".mutation-old";
+            Directory.Move(root, movedRoot);
+            Directory.CreateDirectory(Path.Combine(root, "src"));
+            File.WriteAllText(Path.Combine(root, "src", "A.cs"), "class A {}", Encoding.UTF8);
+            var guarded = e.Enumerate(root, "src", mutationBinding);
+            results.Add(Check("root binding guard blocks replacement-root leak", guarded.Status == DirectoryEnumerationStatus.Unverifiable && guarded.Entries.Count == 0));
+            Directory.Delete(root, true);
+            Directory.Move(movedRoot, root);
             results.Add(CheckResult("relative escape refused", e.Enumerate(root, ".."), DirectoryEnumerationStatus.Refused, expectEntries: 0));
             results.Add(CheckResult("ads syntax refused", e.Enumerate(root, "src:A"), DirectoryEnumerationStatus.Refused, expectEntries: 0));
             results.Add(CheckResult("device path refused before IO", e.Enumerate(root, "\\\\.\\NUL"), DirectoryEnumerationStatus.Refused, expectEntries: 0));
@@ -112,7 +131,7 @@ internal static class DirectoryEnumerationProbeCases
     private static CaseResult CheckResult(string name, DirectoryEnumerationResult result, DirectoryEnumerationStatus expected, int? expectEntries = null, int? maxPeak = null)
     {
         var pass = result.Status == expected && (expectEntries is null || result.Entries.Count == expectEntries) && (maxPeak is null || result.PeakHeldHandles <= maxPeak);
-        return new CaseResult(pass ? "PASS" : "FAIL", name, $"actual={result.Status};expected={expected};entries={result.Entries.Count};peak={result.PeakHeldHandles};detail={result.Detail}");
+        return new CaseResult(pass ? "PASS" : "FAIL", name, $"actual={result.Status};expected={expected};entries={result.Entries.Count};peak={result.PeakHeldHandles};native={result.NativeErrorCode?.ToString() ?? "none"};detail={result.Detail}");
     }
     private static CaseResult Check(string name, bool pass, string detail = "") => new(pass ? "PASS" : "FAIL", name, (pass ? "observed" : "falsified") + (string.IsNullOrWhiteSpace(detail) ? "" : ";" + detail));
     private static CaseResult NotProven(string name, string detail) => new("NOT_PROVEN", name, detail);
