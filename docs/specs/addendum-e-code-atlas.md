@@ -56,13 +56,20 @@ Every load-bearing claim is labelled **[Verified]** (opened / fetched / observed
 | Windows apps should follow Fluent/Windows design guidance across input and form factors. | Microsoft Learn "Design Windows apps overview", fetched 2026-09-12. | [Verified] |
 | Current method/member extraction contracts are not settled by this worker. | The user assigned separate contract work and instructed this spec not to duplicate deep source research. | [Flagged] |
 | The six Owner framing notes are durable accepted docs in the conductor branch at `b1acd4df`. | `note-atlas-next-addendum`, `note-atlas-development-models`, `note-atlas-delivery-horizon`, `note-atlas-lane-admission`, `note-atlas-reference-custody`, `note-atlas-identifier-discipline` read from `C:\Projects\ai-de-conductor-code-atlas`. | [Verified] |
-| K0 verified the current source-only contracts and targeted Core baseline: .NET SDK `10.0.303`, Roslyn `4.14.0`, and 79 targeted Core tests passing. | `proof-code-atlas-contract-grounding` Runtime/package and Commands sections. | [Verified] |
+| **SourceOnly:** K0 inspected existing contracts/seams and centrally pinned packages. Source reads do not establish runtime behavior. | `proof-code-atlas-contract-grounding` source-only rows and Runtime/package section. | [Verified source/document content only] |
+| **Executed:** K0 ran 79 targeted Core baseline tests; console and TRX report 79 executed/passed. | `proof-code-atlas-contract-grounding` Commands section. | [Executed, bounded to the named targeted Core command] |
+| **Executed:** the later isolated Store/IPC command ran 40 tests; console and TRX report 40 executed/passed. | `proof-code-atlas-contract-grounding` Existing isolated contract suites section. | [Executed, bounded to the named isolated suites] |
+| **Executed:** the synthetic Roslyn 4.14 probe observed scope collisions, overload distinction, partial definition/implementation spans and stable IDs under line movement. | `proof-code-atlas-contract-grounding` corrected probe output. | [Executed synthetic SDK evidence, not product implementation] |
 | K0 Store/IPC evidence is separate from the 79-test Core baseline: 40 Store/IPC tests executed separately. | User-provided gate input, 2026-09-12. | [Verified by parent report; exact report join pending] |
 | K0 found the current Core seams are source/store/IPC/native-source-only for Atlas purposes: `has_member` values are display strings, no independent method/member node identity exists, `Interaction` is type-level, and `NodeContent` for indexed types is not complete physical inventory. | `proof-code-atlas-contract-grounding` Contract table, Barriers and "Conductor disposition". | [Verified] |
 | K0's synthetic Roslyn 4.14 probe found documentation IDs distinguish overloads, constructors, properties and accessors, but collide across project/scope; partial types have multiple source locations; missing declaration IDs resolve to null. | `proof-code-atlas-contract-grounding` §Roslyn synthetic-source probe and §Updated barrier. | [Verified] |
 | Data lens requirements: current `NodeContent` reads live file bytes and lacks indexed/current hash binding; stale-writer fencing is per extraction scope, not whole-workspace coherence; stable logical identities must be distinct from revision-bound declaration/content/span records. | User-provided Data lens findings, 2026-09-12. | [Verified as reviewer requirement; no schema/native approval] |
 
 ## Page one — what Addendum E decides
+
+The observations above are **not native UI proof, full-suite proof, product-source admission,
+production admission or Addendum E registration**. A proposed contract still needs its own
+implementation and phase-appropriate proof.
 
 Addendum E admits the **Code Atlas** as the Architecture perspective's repository-understanding surface. It does **not** create a fourth perspective. It fills Addendum C's D-0…D-4 gap with a source-backed product contract:
 

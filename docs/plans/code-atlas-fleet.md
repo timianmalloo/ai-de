@@ -56,16 +56,22 @@ Each writer receives exact cwd, identity, owned files, input contracts, budget a
 | S0 Draft specification | Reasoning | Proposal plus governing specs | Full draft Functional/UX/UI layers and unresolved questions | F0; acceptance depends on O0 |
 | K0 Contract grounding | Reasoning + deterministic mechanics | Current code/manifests/tests | Cited internal contracts and executed minimal baseline/spikes | F0 |
 | S1 Specification gate | Independent review | S0, O0, K0 | Scope/model/UX/UI and verifiability gates cleared | S0, O0, K0 |
-| A0 Whole architecture | Reasoning | Accepted spec, contract evidence | Bounded contexts, storage, composition, versioned seams, failure modes, vertical phases | S1 |
-| A1 Architecture gate | Independent review | Architecture/ADRs/spikes | Security, data, distributed/async, AI, test and other triggered vetoes resolved | A0 |
+| A0 PROPOSED whole architecture | Reasoning | Pinned candidate spec, contract evidence, Owner draft-content exception | Complete proposed contexts, storage, composition, versioned seams, failure modes and phases; no acceptance claim | O0, K0, candidate S0 |
+| A1 Architecture content gate | Independent review | Corrected spec content and proposed architecture/ADRs/spikes | Security, data, distributed/async, AI, test and other triggered content vetoes resolved | A0, S1 |
 | C0 Coordination admission | Reasoning + deterministic mechanics | Architecture, Claude acknowledgment | Canonical section-2 responsibilities and machine-readable track plan | A1; external seam agreement |
 | Dn / In Vertical slices | Reasoning + deterministic mechanics | Admitted contracts and exact ownership | Design-slice -> red/green -> native/E2E proof -> independent review | C0; actual per-slice data edges |
 | Jn Join and close | Deterministic mechanics + Owner decision | Worker commits/proofs | Integrated slice evidence, clean state, recorded residuals and Owner sign-off | In |
 
 S0 and K0 are independent at draft time: one develops requirements, the other establishes
 implementation evidence. Neither chooses an incompatible production signature. They join before
-the spec gate. Architecture is not run in parallel with undecided requirements. Implementation
-never runs ahead of unsettled shared interfaces.
+the spec gate. Architecture cannot be accepted over undecided requirements. Under the Owner's
+subsequent documentation-only exception, a PROPOSED architecture draft may proceed against a
+pinned candidate while known spec-content corrections are reviewed; A1 still depends on S1.
+Implementation never runs ahead of unsettled shared interfaces or external acknowledgment.
+
+**Replan trigger observed:** the native request is a pull log, not cross-harness delivery, and the
+user was unavailable to relay it. `note-atlas-draft-content-while-blocked` permits isolated
+draft-content completion, not source dispatch. The programme remains delivery-blocked.
 
 No runtime-cost forecast is represented as a measurement. Prior prototype work is not a useful
 duration baseline for a new native/code-analysis capability. Work/span will be costed at the

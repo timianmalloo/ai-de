@@ -1,0 +1,93 @@
+---
+id: coordination-code-atlas-resume
+title: "Code Atlas - blocked delivery and explicit resume conditions"
+type: doc
+status: proposed
+owner: "@timianmalloo"
+phase: "documentation-content preparation"
+tags: [code-atlas, coordination, worktrees, blocker]
+links:
+  - { to: note-atlas-draft-content-while-blocked, rel: depends-on }
+  - { to: note-atlas-lane-admission, rel: depends-on }
+  - { to: plan-code-atlas-fleet, rel: relates-to }
+review-by: 2026-12-12
+summary: >-
+  Records the real cross-conductor delivery blocker, source ownership requests and safe resume
+  sequence. It is a request ledger, not a second ownership register or permission to dispatch code.
+---
+# Code Atlas: delivery is externally blocked
+
+## Actual blocker and channel
+
+Full native request ID: **`req-01M2B86TXF7SHG61B31P4H4173`**, addressed to
+`conductor-addendum-c`. It requests Addendum E reservation and Core/Claude responsibilities.
+
+`coord-core.py:1718-1763` appends, resolves and lists request records.
+`cmd_collaborate` includes them only in its `summary` output. No call in that path injects a
+message into the other harness. The shared `.agents/requests.jsonl` is visible from all
+worktrees, but visibility is not a delivery acknowledgment.
+
+The request remained open at the most recent recorded checkpoint. A one-time human relay was
+requested because no acknowledged cross-harness delivery had occurred; the user was unavailable.
+Do not infer approval or attempt to resume the Claude process in a second concurrent session.
+
+## Required acknowledgers
+
+- **Claude primary conductor**: reserve/confirm E, route Core responsibility, agree serialization
+  of main integration and preserve its active SH/CV/X1/F5 boundaries.
+- **Core owner through that coordination**: inventory, C# member facts and query/source/IPC changes.
+- **Shell lane owner**: Architecture host integration, surface registration/menu/routing and native
+  window/layout seams. Atlas does not write these concurrently.
+- **Conversation owner, later only if needed**: any agent-plane/read-only analysis integration.
+- **Astra Owner**: content/scope decisions and horizon exit. Owner framing does not waive the
+  other sessions' acknowledgment or a hard floor.
+
+## Proposed change surfaces to negotiate
+
+These are **requests**, not ownership assignments. Section 2 of
+`docs/collaboration/session-contracts.md` remains the sole register. Architecture authoring will
+refine the new-path names; no rename here grants edit authority.
+
+| Requested work | Proposed new/affected paths | Required agreement |
+|---|---|---|
+| Inventory, logical identity and source binding | New narrow namespace under `src/AiDe.Core/Understanding/`; corresponding `tests/AiDe.Core.Tests/Understanding/` | Core accepts the exact carve-out and contract scope before code dispatch. |
+| C# member/declaration production | `src/AiDe.Core/Extraction/CSharpExtractor.cs` and its existing/new targeted tests | One Core-agreed owner; no `has_member` parsing shortcut. |
+| Bounded query and source contracts | `IWorkspaceQueries.cs`, `ProjectionService.cs`, `NodeContent.cs` or an explicitly versioned successor; `WorkspaceCore.cs` if required | Core agrees the model, source/hash semantics and backward-compatible seam. |
+| Wire | `src/AiDe.Core/Ipc/WorkspaceOperations.cs`, `WorkspaceClient.cs`, relevant message/schema contracts | Core/daemon owner; version/capability/refusal compatibility evidence. |
+| Native Atlas surface | New narrow `src/AiDe.App/Workbench/Understanding/` and corresponding App test folder, subject to final architecture | Registered owner for the new surface/test set; no inferred ownership from a free path. |
+| Shell integration | Existing `SurfaceContentFactory.cs`, `WorkbenchShell.cs` / `DockHost.cs`, `PerspectiveShell.cs`, controller/menu/layout files only as actually required | Remains Shell-owned; consume an agreed seam or request a Shell-authored integration commit. |
+| Store evolution, if needed | Existing Workspace store schema/writer/reader | Explicit additive migration and rollback/cache-rebuild contract; no speculative second store. |
+| Later analysis | Existing Conversation-owned agent-plane/Conductor contracts | Not part of E0; separate stage admission and seam agreement. |
+
+No simultaneous writer may target one authored file. Register/derived artifacts retain their
+established merge mechanisms; regenerating is not a reason to edit another session's primary index.
+
+## Draft provenance and remaining gates
+
+- Conductor branch/worktree: `conductor/code-atlas`,
+  `C:\Projects\ai-de-conductor-code-atlas`.
+- Proposal: `proposal/code-atlas` @ `1065a851`, local reference only; private corpus not imported.
+- Candidate spec: `atlas/specification`, `docs/specs/addendum-e-code-atlas.md`, final corrected
+  revision and content verdicts recorded at join.
+- K0 contract proof: joined report and correction commits through `e4229845`; source/SDK/store/IPC
+  proof is bounded and does not establish native E0 or code admission.
+- Proposed architecture writer: `atlas/architecture`,
+  `docs/architecture/code-atlas-proposed.md`, with isolated proposed ADRs. Final revision/gates pending.
+- Remaining content checks: corrected spec test/security/UX/data gate; proposed architecture
+  data/security/distributed/AI/maintainability/native-test review; unresolved contract/retention/
+  source-binding decisions and migration obligations stated explicitly.
+
+## Resume sequence
+
+1. Have the intended counterpart read the full request and this ledger; obtain actual resolution
+   and section-2 responsibility updates. Re-check that E is still the right addendum letter.
+2. Reground against current main and active lanes; do not fast-forward/rebase another person's
+   dirty tree or treat old commit evidence as the current shell contract.
+3. Finalize the content gates and proposed decisions; distinguish document readiness from normative
+   acceptance, ownership and source dispatch.
+4. Release only E0, the Owner's first integrated physical file/type/member/source horizon.
+   Run `/design-slice`, tests red-first, implementation, native real-workspace journey and independent
+   review in assigned worktrees. No type-only or static-fixture substitute.
+5. Converge serially through the agreed integrator, union append-only records, regenerate derived
+   views after audit changes, read back gates/state and seek the Owner's horizon closure.
+6. Admit each later stage separately. Until then report the later stages as unbuilt.

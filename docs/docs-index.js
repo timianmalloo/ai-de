@@ -7630,6 +7630,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "ad79ba46b90a355b8092f5599ada91879ae17a01357cf4b4f5b50998cd92ec12"
     },
     {
+      "id": "coordination-code-atlas-resume",
+      "path": "docs/coordination/code-atlas-resume.md",
+      "title": "Code Atlas - blocked delivery and explicit resume conditions",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "documentation-content preparation",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Records the real cross-conductor delivery blocker, source ownership requests and safe resume sequence. It is a request ledger, not a second ownership register or permission to dispatch code.",
+      "tags": [
+        "code-atlas",
+        "coordination",
+        "worktrees",
+        "blocker"
+      ],
+      "links": [
+        {
+          "to": "note-atlas-draft-content-while-blocked",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-atlas-lane-admission",
+          "rel": "depends-on"
+        },
+        {
+          "to": "plan-code-atlas-fleet",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3795b42249dc385dd426e147e54ae2739638f8f587075625ec6fc6702b109c9c"
+    },
+    {
       "id": "defect-classes",
       "path": "docs/lessons/defect-classes.md",
       "title": "Defect-class register",
@@ -9005,6 +9039,35 @@ window.DOCS_INDEX = {
       "sourceSha256": "3d1fdfc212a742b174ccff69c77d496535dd63d7e005df6bf4ea2ab61f255a9c"
     },
     {
+      "id": "note-atlas-contract-probes",
+      "path": "docs/notes/atlas-owner/contract-probes.md",
+      "title": "Bounded synthetic Roslyn and isolated contract-test research permitted",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "atlas-contract-grounding",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Permits one synthetic Roslyn 4.14 probe batch and isolated existing SDK/Core/store/IPC tests, using cached dependencies and ignored worker outputs. This is non-product research, not code admission.",
+      "tags": [
+        "code-atlas",
+        "owner-ruling",
+        "spike"
+      ],
+      "links": [
+        {
+          "to": "note-atlas-e1-identity",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-code-atlas-contract-grounding",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "15286ce85d4b5a341d250239759166952fe6a7da3d367f03ae3a7fdbd63c2927"
+    },
+    {
       "id": "note-atlas-delivery-horizon",
       "path": "docs/notes/atlas-owner/delivery-horizon.md",
       "title": "Code Atlas whole-architecture roadmap and walking-skeleton horizon",
@@ -9061,6 +9124,94 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "314ee1a6f8e45c1a1237df3ab0abfdbcf40c77e299198a4f9ed4c2ac20b38c07"
+    },
+    {
+      "id": "note-atlas-draft-content-while-blocked",
+      "path": "docs/notes/atlas-owner/draft-content-while-blocked.md",
+      "title": "Atlas draft-content completion permitted while registration and code acknowledgment remain blocked",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "atlas-document-gates",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "The Owner permits isolated candidate spec and proposed architecture/ADR completion while registration and cross-Claude ownership remain blocked. This is not normative acceptance, source permission, main integration or programme closure.",
+      "tags": [
+        "code-atlas",
+        "owner-ruling",
+        "coordination",
+        "blocker"
+      ],
+      "links": [
+        {
+          "to": "note-atlas-lane-admission",
+          "rel": "refines"
+        },
+        {
+          "to": "note-atlas-delivery-horizon",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "daf5ed9784f6b7dc64064905b0db6418ba2a6e2a95bfe25b112c6c5e7d15d5bd"
+    },
+    {
+      "id": "note-atlas-e1-identity",
+      "path": "docs/notes/atlas-owner/e1-identity.md",
+      "title": "E1 retains physical inventory and addressable member contracts",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "atlas-contract-grounding",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "The Owner rejects substituting a node-addressed type viewer for real physical inventory and member navigation. Missing inventory/member contracts must be designed, not specified away.",
+      "tags": [
+        "code-atlas",
+        "owner-ruling",
+        "identity"
+      ],
+      "links": [
+        {
+          "to": "note-atlas-delivery-horizon",
+          "rel": "refines"
+        },
+        {
+          "to": "proof-code-atlas-contract-grounding",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "04e11a7e58b4fddc0e86238871587831b35901e2a978ea34a878fd31882deaea"
+    },
+    {
+      "id": "note-atlas-evidence-corrections",
+      "path": "docs/notes/atlas-owner/evidence-corrections.md",
+      "title": "K0 evidence corrections acknowledged without scope extension",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "atlas-contract-grounding",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Preserves the research-only boundary while correcting partial-span, missing-ID, line-movement and restore-network claims. No new production permission or unobserved disclosure is inferred.",
+      "tags": [
+        "code-atlas",
+        "owner-ruling",
+        "evidence"
+      ],
+      "links": [
+        {
+          "to": "note-atlas-contract-probes",
+          "rel": "refines"
+        },
+        {
+          "to": "proof-code-atlas-contract-grounding",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2f6aa84e0fd743f07555bde850d4140318bdb250cea69267175d6f98f863eabe"
     },
     {
       "id": "note-atlas-identifier-discipline",
@@ -9474,7 +9625,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7578bd530764f23b018e1dbe1996eabe9c1b5f7400715133409f4664080ce072"
+      "sourceSha256": "b4cb97f836b81e37218d1d3c54695b941802859f2b6f68b187fa1b05af2df95a"
     },
     {
       "id": "plan-conductor-front-door",
@@ -9760,6 +9911,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "e7e9efde10072578ca62a776d034b4eedd7f1173516a82aec73bb1e5fe25294c"
     },
     {
+      "id": "proof-code-atlas-contract-grounding",
+      "path": "docs/proof/code-atlas-contract-grounding.md",
+      "title": "Code Atlas contract grounding spike",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "atlas-contracts-spike",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Source-only plus targeted baseline-test grounding for the current Code Atlas implementation. It records the exact contracts observed before architecture decisions: extraction, source identity, graph/query/read surfaces, IPC wiring, storage grain, WPF surface registration, missing seams and barriers. Product code was not changed.",
+      "tags": [
+        "proof",
+        "code-atlas",
+        "contracts",
+        "spike",
+        "grounding"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "595df53634e154fc3c5c192ffb68aec60ca66bf3156f6d970c6dbcaa8771a5e9"
+    },
+    {
       "id": "proof-pack-phase-1-walking-skeleton",
       "path": "docs/design/phase-1-proof-pack.md",
       "title": "Phase 1 walking skeleton — Proof Pack",
@@ -9829,6 +10011,71 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "c6d8f6ca4e8896ef7c8169785f3c2e9f45a7012ec9bb580df466e7cf1d204da2"
+    },
+    {
+      "id": "review-code-atlas-data-constraints",
+      "path": "docs/reviews/code-atlas-data-constraints.md",
+      "title": "Code Atlas data and identity constraints before architecture",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "atlas-specification",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Records the independent Data/Persistence review's pre-model constraints: physical inventory, logical identity versus revision-bound spans, honest source binding, per-scope versus workspace coherence, and provenance/authority for interpretations and comparisons.",
+      "tags": [
+        "code-atlas",
+        "data",
+        "identity",
+        "review"
+      ],
+      "links": [
+        {
+          "to": "note-atlas-e1-identity",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-code-atlas-contract-grounding",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "76c0407efa2fe4a2b1e7770b065b2235d7cec007caa72271fc5c6a82fba6c873"
+    },
+    {
+      "id": "review-code-atlas-spec-content-gates",
+      "path": "docs/reviews/code-atlas-spec-content-gates.md",
+      "title": "Code Atlas specification content gates",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "atlas-specification",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Records independent specification-content findings and separates those gates from future implementation proof and external ownership/registration admission. Initial gates are blocked; corrections are reviewed against pinned revisions, not guessed from the author's report.",
+      "tags": [
+        "code-atlas",
+        "gates",
+        "security",
+        "testing",
+        "ux"
+      ],
+      "links": [
+        {
+          "to": "note-atlas-draft-content-while-blocked",
+          "rel": "depends-on"
+        },
+        {
+          "to": "review-code-atlas-data-constraints",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1dea7ebee49cc283f3efe40faf41d6afc31771c123560a19c881c97fde215b21"
     },
     {
       "id": "review-front-door-council",
@@ -16036,6 +16283,114 @@ window.DOCS_INDEX = {
       "sourceSha256": "755d02cee67c247514ace9d6f65aedf2b2a552c5d2d6518a148f391d4d321182"
     },
     {
+      "id": "spec-addendum-e-code-atlas",
+      "path": "docs/specs/addendum-e-code-atlas.md",
+      "title": "Addendum E — Code and Architecture Understanding (Code Atlas)",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "candidate-next-addendum",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Candidate Addendum E specifies the Architecture perspective's Code Atlas: a repository-backed understanding surface where physical Solution/files inventory, bounded visual maps, UML/ER/layer/Azure views, method-level static behavior, implementation-to-spec correspondence and decision provenance all preserve evidence, confidence, authority and source identity. It is a draft only; the Addendum E reservation and acceptance gate remain pending Owner/Conductor acknowledgement.",
+      "tags": [
+        "conductor",
+        "addendum-e",
+        "code-atlas",
+        "architecture-perspective",
+        "code-understanding",
+        "solution-explorer",
+        "uml",
+        "erm",
+        "azure",
+        "provenance",
+        "ai-interpretation"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-uml-erm-surfaces",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-code-atlas-proposal-provenance",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-atlas-next-addendum",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-atlas-development-models",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-atlas-delivery-horizon",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-atlas-lane-admission",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-atlas-reference-custody",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-atlas-identifier-discipline",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-code-atlas-contract-grounding",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Flow 1 — File-first source-to-architecture",
+          "mermaid": "flowchart TD\n  A[Open Architecture perspective] --> B[Solution Explorer lists physical inventory]\n  B --> C[Search or expand project/folder]\n  C --> D{File selectable?}\n  D -->|yes| E[Open source with snapshot and anchor]\n  D -->|content unavailable| U[Unsupported source state with reason] --> C\n  E --> F{Semantic outline available?}\n  F -->|yes| G[Select type/member]\n  F -->|no| P[Partial coverage state; file remains active]\n  G --> H[Open sequence/activity or UML]\n  H --> I[Inspect evidence/confidence]\n  I --> J[Step up to component/system]\n  J --> K[Back restores file/member/source line]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Flow 2 — Visual-first overview-to-source",
+          "mermaid": "flowchart TD\n  A[Open Architecture overview] --> B[Select component or concept]\n  B --> C{Concrete evidence exists?}\n  C -->|supported| D[Open UML/ER/layer view]\n  C -->|partial| P[Show partial and unresolved counts]\n  D --> E[Select relationship or member]\n  E --> F{Source anchor exists?}\n  F -->|yes| G[Open source and reveal tree path]\n  F -->|no| U[Explain missing anchor and fallback]\n  G --> H[Return to visual history]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Flow 3 — Method-level behavior with uncertainty",
+          "mermaid": "flowchart TD\n  A[Select entry point or member] --> B[Build static sequence/activity]\n  B --> C{All call targets resolved?}\n  C -->|yes| D[Render messages and branches with anchors]\n  C -->|no| E[Render unknown call/gap nodes]\n  D --> F{Runtime trace available?}\n  E --> F\n  F -->|no| G[Label static reconstruction, no timing/order claim]\n  F -->|yes| H[Render observed trace only from telemetry source]\n  G --> I[Open source for message]\n  H --> I"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Flow 4 — Azure declaration and relationship review",
+          "mermaid": "flowchart TD\n  A[Open Azure layers] --> B[Read supported infrastructure declarations]\n  B --> C[Group resource roots and aliases]\n  C --> D[Classify relationships]\n  D --> E{Grant evidence supported?}\n  E -->|declaration-backed| F[Show grant relationship]\n  E -->|lookup/annotation only| G[Show unsupported candidate, no grant edge]\n  D --> H[Show unresolved counts]\n  H --> I[Open declaring file/source anchor]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Flow 5 — Implementation to specification correspondence",
+          "mermaid": "flowchart TD\n  A[Open Implementation to spec] --> B[Select document or clause]\n  B --> C[Show status, authority, scope, revision, supersession]\n  C --> D[Retrieve source evidence candidates]\n  D --> E{Assessment possible?}\n  E -->|yes| F[Classify aligned/planned/contrary]\n  E -->|not enough evidence| G[Classify unknown/not-assessed]\n  E -->|future or out of scope| H[Classify deferred/planned]\n  F --> I[Open clause and source side by side]\n  G --> I\n  H --> I"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Flow 6 — Model interpretation with preview and rejection",
+          "mermaid": "flowchart TD\n  A[User requests interpretation] --> B{Harness admitted?}\n  B -->|no| C[Disabled with admission reason]\n  B -->|yes| D[Show context preview: files, clauses, tokens, cost, privacy class]\n  D --> E{User confirms?}\n  E -->|cancel| F[No call; deterministic view unchanged]\n  E -->|confirm| G[Run no-tool bounded model]\n  G --> H{Valid cited output?}\n  H -->|yes| I[Show proposal with confidence and review controls]\n  H -->|no| J[Reject/quarantine; show error]"
+        }
+      ],
+      "sourceSha256": "898131923b1173ef347be69100828a907900cc92624fd7e907d41cbc62265239"
+    },
+    {
       "id": "spec-agentic-watcher-substrate",
       "path": "docs/specs/agentic-watcher-substrate.md",
       "title": "Loomkeeper - Agentic Watcher Substrate and Observatory",
@@ -16878,5 +17233,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "bc2ea681f60ad4bb63a037b0f0f7640e579251d3b4b534c0911ea53d9c276fcc"
+  "graphSha256": "15bb37412a264292dea60e177b670046988a3c1365cd5deeeeb746f00b30bfdc"
 };
