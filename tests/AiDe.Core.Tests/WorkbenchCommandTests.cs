@@ -60,14 +60,14 @@ public sealed class WorkbenchCommandTests
     [InlineData("float", "workbench.floatPane")]
     public void Search_FindsCommandsByTitleOrHint(string term, string expectedId)
     {
-        var hits = WorkbenchCommandCatalog.Search(term).Select(c => c.Id).ToList();
+        var hits = WorkbenchCommandCatalog.Search(WorkbenchCommandCatalog.All, term).Select(c => c.Id).ToList();
         Assert.Contains(expectedId, hits);
     }
 
     [Fact]
     public void Search_WithNoTerm_ReturnsEverything()
     {
-        Assert.Equal(WorkbenchCommandCatalog.All.Count, WorkbenchCommandCatalog.Search("  ").Count());
+        Assert.Equal(WorkbenchCommandCatalog.All.Count, WorkbenchCommandCatalog.Search(WorkbenchCommandCatalog.All, "  ").Count());
     }
 
     // ── The Eclipse-pattern resize session ────────────────────────────────────────────────

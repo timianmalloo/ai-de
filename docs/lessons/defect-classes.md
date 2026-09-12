@@ -28,10 +28,10 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 78 · partially-controlled 59 · uncontrolled 17
+**Status counts:** controlled 81 · partially-controlled 60 · uncontrolled 19
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
-**Recurrences since last review:** 6.
+**Recurrences since last review:** 7.
 - **DC-008**, whose first control was scoped to one test project when the cause was not project-specific.
 - **DC-001**, whose first control checked links between files and so could not see three classes cited by ID with no entry in this register.
 - **DC-013**, which recurred the same day it was first caused, because the first occurrence was repaired without being registered at all.
@@ -41,6 +41,9 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 - **DC-019**, whose "generalisation to apply elsewhere" was prose: the lease was proven to bound a
   lane's file writes and the lane's *tools* crossed the same boundary unbounded (Ruling 71) — a
   memoir is not a control, and the sweep now names the boundary.
+- **DC-131**, whose census control was taken with the right key and still closed the wrong
+  question: the column said *foreign*, the operator saw the same screen, and the fifth report came
+  (INV-0010; DC-155 is the half the control lacked).
 
 *All three are CI4: a second occurrence means the control was wrong, not that someone was careless. In the first two the control had been written to fit the instances rather than the class; in the third there was no control at all, because the first occurrence was repaired and never registered — which is the failure this file exists to prevent.*
 
@@ -798,6 +801,14 @@ for both or split.*
 - **Instance, 2026-08-31 — two lists of "what is build output".** `CSharpScopeDiscovery.Skip` held `bin, obj, .git, node_modules`; `UnanalysedLanguages.Skip` held those plus `artifacts, dist, build, __pycache__, .venv, target, vendor`. Both answer the same question and only one had been kept current, so TypeScript discovery indexed `artifacts/s00/publish/wwwroot/_framework` — Blazor's published JavaScript — as source. MEASURED: 3 scopes of 67 on TheTerrace were build output, and their nodes could not be resolved back to a file at all, which is how they were noticed. `artifacts` is the .NET SDK's own output layout and belongs beside `bin` and `obj`; `publish` and `_framework` were added to the TypeScript set. **The generalisation:** when a second copy of a list appears, the question is not which is right but why there are two — a divergence found through a THIRD symptom is a divergence that has been wrong for a while.
 
 ### DC-023 — A gate keeps passing because it runs a stale build of the thing it tests
+- **Recurrence, 2026-09-12 — the mutation loop's own binary.** SH-1's mutation-sense loop applied a
+  mutant to a source file, built, ran the filtered tests, and restored the **source** in its
+  `finally` — and did not rebuild. The next `dotnet test --no-build` over both full suites ran the
+  last mutant's binary: `PerspectiveSetTests` red (the filtered-out perspective), `ShellBootstrapTests`
+  red (five daemon tests, a stale `AiDe.Core.dll` beside the test host), `AShowEntryOpensTheKindOnce`
+  red (the Show mutant). Every one read as a product failure. A rebuild from the restored sources
+  turned all of them green. **A restored source is not a restored artifact under test** — the loop
+  now rebuilds after its last restore, and the round-3 loop prints that it did.
 - **Recurrence, 2026-09-11 — the fourth probe, and the FIRST where the stale binary did not announce itself.** `AiDe.App.ComposerProbe` was added by node F6 and **was not a `ProjectReference` of `AiDe.App.Tests`**, unlike the other three, each of which carries a comment explaining exactly why it is. On the merge the test ran a probe built **32 minutes earlier**, before the three handshake fixes that same commit landed, so `TheHandshakePushesExactlyOneHostInitPerMountAndFieldValuesSurviveIt` asserted 2 and measured **0**.
 - **What made this one worse than its three predecessors.** Instances 1–3 were found by the probe being **absent**, which fails with an honest message naming the binary. This one was found by the probe being **present and old**, and a stale probe fails **as a product defect**: the assertion that broke was about `host.init`, so every reading pointed at the composer. **The identical tree passed in the worktree that had built the probe and failed in the checkout that had not** — same commit, same machine, opposite results — and nothing in the failure output named the binary. It survived a clean rebuild of the test project *and* of `src/AiDe.App`, because the probe is neither.
 - **Two wrong diagnoses before the right one, both recorded because they are the cost.** First: a `NO RESULTS` run read as *"the test host almost certainly crashed"* — the real cause was a backgrounded gate loop **of my own** holding the DLLs, which is contention, not a crash, and the gate named a cause it had not observed. Second: 12 live `msedgewebview2.exe` processes looked like a leak until their command lines showed them belonging to Office Hub and Windows CBS, 48 hours old. **DC-131's lesson, one hour after registering DC-131.**
@@ -5725,6 +5736,31 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   `inherited`, `page-css`, `token`) — found 14 below floor the floor could not see and split them
   by owner: 13 to the fix's own leaf style, 1 to the composer page's CSS. Same rule, same answer:
   **the close of a count is a count.** After the fix, the census is 180 / 0 and it is the control.
+- **Recurrence 4 (2026-09-12, the FIFTH report — INV-0010).** The census existed, its key was
+  right, and the population was reported again. Counted first this time, twice, every `unknown`
+  attributed by creation time + command line + parent-at-creation + the ConPTY signature: **0
+  product hosts** at either census; **223 of 271** are 111 `node.exe higgsfield-mcp` servers and
+  their console hosts under Windows Terminal's own agent — the *same* foreign pool recurrence 2/3
+  attributed (256 then), reset by a Windows Terminal restart at 17:02Z and regrown at ~5/hour; 15
+  are Claude Code's own `Monitor` loops; the 25 `unknown` are Windows Terminal's tabs, Ollama's
+  launcher, the compiler server's console and those loops. **The control asked "whose is it?" and
+  the operator asked "why is it still there?"** — a correct attribution column closed our side and
+  changed nothing on the screen (DC-155). And the product's own share was unmeasurable from the
+  product: 4,115 `terminal.start` lines in a day and no stop event exists, so each report re-ran the
+  whole investigation from a process list. Measured on the way, the one product mechanism the four
+  fixes never touched: a session whose child exits keeps its `conhost.exe --headless` for the App's
+  lifetime (DC-156) — counted `ours-live` by this census because its parent is a live App.
+  **Control (recurrence 4):** the close of a population report carries (i) an action for the
+  largest *foreign* class and the re-count that proves it, (ii) a start/stop pair on the product's
+  own emissions so the next report is answered from the log, and (iii) an `ours-orphaned` rule so a
+  dead-parent product host cannot hide in `unknown` — the red tests and self-test rows are in
+  INV-0010; all three landed on `fix/terminal-hosts-5` (2026-09-12): the `ACTION:` line (DC-155),
+  `terminal.stop` + `TerminalHostingLedger.Completions` (starts − stops), and `ours-orphaned`
+  (self-test 5d/5e green), plus the held host released with its child (DC-156). **And the
+  population itself was ours by cause** (slice 0, the same day): our ConPTY shells inherited
+  `WT_SESSION` and Windows Terminal's agent attached one MCP server per shell — the fifth census's
+  largest class, attributed "foreign" by a correct ancestry column, was a leak of this repository's
+  making. Measured 4/4 → 0/4; the runtime now strips `WT_*`.
 - **Status:** `controlled` — the boundary gate is wired and red-first on both clauses, and the
   census shape is written into the close. The general discipline is only as strong as the reviewer
   who asks *"what is the denominator?"* — and, after recurrence 2, *"what is the key, and can it
@@ -6606,3 +6642,224 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   shape is returned, not applied* — is prose until the persona audit gains the check (a finding for
   the pack).
 - **Status:** `controlled` by the pair; the lens rule is `partially-controlled`.
+
+### DC-155 — A symptom owned by someone else is closed by attribution, not by an outcome
+
+- **Shape:** a population report is investigated to DC-131's standard: counted, every member
+  attributed, and the largest class turns out to belong to **another application**. The close says
+  *"foreign — reported only, never removed"* and stops. The population regrows (it was never
+  touched), the operator's screen is unchanged, and the next report arrives with the same count —
+  read as a recurrence of *our* defect, which re-runs the whole investigation.
+- **Signature:** the largest class in a census is `foreign`; the close carries no action for it;
+  the same foreign root (`wta.exe` → `copilot.exe --acp --stdio` → `node higgsfield-mcp`) appears
+  in two consecutive censuses with a reset between them; the operator's report count keeps rising
+  while "zero of these are ours" keeps being true.
+- **Why it survives:** DC-131's control demands an attribution column and gets one. Attribution is
+  a *finding*; the operator's symptom is an *outcome*. Nothing in the standard asks the closer to
+  hand the operator the one action that shrinks the foreign share, or to re-count after it — so a
+  correct census closes the investigation and leaves the screen.
+- **Instance (INV-0010, 2026-09-12 — the fifth report):** recurrence 2/3 of DC-131 found 256 MCP
+  servers under Windows Terminal's agent and filed them `foreign`. Windows Terminal was restarted;
+  by the fifth report the pool was 111 (+111 console hosts) and growing ~5/hour. The source is the
+  operator's **global** `~/.copilot/mcp-config.json` (`higgsfield`, the pack's own reference
+  generation backend), spawned per use by the `wta.exe` host and never reaped — a Copilot CLI /
+  Windows Terminal lifecycle defect, triggered by a configuration we recommended.
+- **Control:** `reap-stragglers.py`'s report names, for the largest foreign root, **the action that
+  shrinks it** (scope or remove the global MCP server; restart the host; file the lifecycle defect
+  upstream) and the close of any population report includes a **post-action re-count**. Red first:
+  the report on a fixture with a dominant foreign root must carry an action line. INV-0010 phase 2
+  and phase 5.
+- **Instance 2 (2026-09-12, the correction — the misattribution itself):** the first fix of this
+  entry, hours earlier, printed an action line that sent the operator to *their* MCP config:
+  *"not AiDe's -- the Copilot agent spawns this MCP server per use … scope or remove the server in
+  ~/.copilot/mcp-config.json"*. The parent was right and the **cause was ours**: a ConPTY shell of
+  ours inheriting `WT_SESSION` from the Windows Terminal tab the harness runs in makes Windows
+  Terminal's agent host attach an agent session (its MCP servers) to it. The conductor's hourly
+  correlation of `terminal.start` against node births put the pool on our test runs; measured here
+  4/4 → 0/4 with `WT_*` stripped. **A cause attributed by ancestry alone is a label, and the label
+  pointed at the wrong owner twice** — "foreign, reported only" and then "foreign, here is your
+  action". INV-0010 slice 0.
+- **Fix (2026-09-12, `fix/terminal-hosts-5`, corrected the same day):** the cause is removed
+  (`ConPtyInterop.BuildEnvironmentBlock` strips `WT_*` from every ConPTY child); `reap-stragglers.py`
+  `report()` ends with an `ACTION:` line for the largest foreign root that names **the cause and the
+  mechanism** — *"CAUSED BY THIS REPOSITORY, foreign only by parent: a ConPTY shell of ours that
+  inherited WT_SESSION … Restart Windows Terminal, then re-count: a birth AFTER the fix is a spawn
+  path that still inherits WT_*"* — and, on a second line, **the birth correlation**: how many of
+  the pool were born within 10 s of one of our own `terminal.start` lines (the workbench log; *not
+  recorded* when the log cannot be read, never 0). Live at 14:58Z: 371 under `wta.exe`, 185
+  servers, *54 of 371 dated members born within 10 s of one of our 5,218 terminal.start lines
+  (App sessions; test-run sessions are not in the log)*.
+- **Control (corrected):** the **cause-vs-parent rule** — a census reports, for the largest foreign
+  class, the birth correlation with the product's own start events and not only the ancestry, and
+  its action line names the mechanism. Self-test rows 5j (the line names the cause and the
+  `WT_SESSION` mechanism and does **not** name the operator's MCP config — observed red on the
+  first fix's text) and 5k (`births_near`: 2 of 4 dated births follow a start; a member with no
+  creation time is in neither count).
+- **Status:** `controlled` — the cause is removed and proven red-first at two levels
+  (`EnvironmentBlockTests`, `TerminalChildEnvironmentTests`); the census carries the cause and the
+  correlation; the post-fix re-count (INV-0010 phase 5: restart Windows Terminal, compare against
+  371) is the operator's, and a birth after the fix is a finding.
+
+### DC-156 — A resource acquired for a child is released with the owner, not with the child
+
+- **Shape:** an object acquires an OS resource *for* a child (a pseudo console for a shell, a job
+  for a process). The child ends; the object records the end as **state** (`Ended`, `Complete`,
+  an exit code) and touches no **handle**. The resource then lives as long as the *owner* — the
+  App, the test host — and nothing in the owner's life ever revisits it, because "the session
+  ended" reads as "the session is finished with".
+- **Signature:** an `Ended`/`Completed` state that still owns OS objects; a `Complete`/`OnEnded`
+  path with no `Close*`/`Dispose`; a count of hosts equal to *panes* rather than to *live
+  children*; a resource whose release is only ever measured on the owner's exit path.
+- **Why it survives:** every exit-path test measures the owner ending (window close, process exit,
+  kill, dispose) — INV-0010 measured four of them clean. The in-life path is not an "exit" and is
+  never on the list; and a census attributes a host under a live owner as *live* because the key
+  (parent pid, worktree path) cannot distinguish a held host from a working one.
+- **Instance (INV-0010, 2026-09-12):** `ConPtyTerminalSession.WatchForExitAsync` → `Complete(exit)`
+  marks the session `Ended` and closes neither the pseudo console nor the job; `TerminalSurface.PumpAsync`
+  returns and keeps the dead session. Measured with the owner alive: `cmd.exe /c exit 0` → 1
+  `conhost.exe --headless` before, **1 three seconds after the exit** (`TerminalHostInLifePathTests
+  .ASessionWhoseChildExited_ReleasesItsHeadlessHostWhileTheOwnerLives`, red). Tab-close dispose on
+  the same runtime measured 1 → 0.
+- **Sweep:** `AcpEngineProcess` closes its job with the process (ruled out by reading);
+  `ShellBootstrap` holds no handle (ruled out); `WebSurfaceHost` (a WebView2 browser process per
+  surface) **not yet swept** — next step.
+- **Control:** the red in-life test above (observed failing on the un-fixed code: `1 headless
+  console host(s) still owned by the live owner 3s after 'child-exit-then-hold'`); once `terminal.stop`
+  lands, `TerminalHostingLedger.Completions` makes *held = starts − stops* a number a gate can read.
+- **Fix (2026-09-12, `fix/terminal-hosts-5`):** `ConPtyTerminalSession.WatchForExitAsync` →
+  `Complete(exit)` → `ReleaseHost()`: the pseudo console and the job are taken out of their fields
+  under the state gate and closed the moment the child's exit is seen; `DisposeAsync` takes the same
+  handles through the same gate and finds zero. Measured with the owner alive: 1 headless host while
+  the child (`cmd.exe /c "ping -n 8 … & exit 3"`) ran, **0 three seconds after its exit**, exit code
+  3 — the child's own. Paths 1–4 re-measured 0. The read loop now ends on the child's exit too (the
+  host's departure is its EOF), so the pump thread is released with the child as well — and it
+  drains to EOF unconditionally, because `ClosePseudoConsole` waits for the host and the host
+  waits for its pipe (the SRE lens's finding: a loop that stopped at completion could wedge the
+  closer with the host alive after `terminal.stop`). **Decided, not assumed:** closing the job at
+  the child's exit ends anything the shell left running inside it (a `Start-Process`, a background
+  server) at the shell's exit rather than at the tab's close — the containment ADR-0005 states,
+  now applied at the child's end; INV-0010's "the job, which is then empty" was a belief.
+- **Sweep (this fix):** `AcpEngineProcess` — same shape (the job outlives the engine's own exit
+  until the lane's `Dispose`), bounded by the run rather than the App and the job's close *is* the
+  tree's reaping, no change; `WebSurfaceHost` — the browser process is the resource and its exit
+  releases it, but nothing handles `CoreWebView2.ProcessFailed`, so a browser that dies leaves a
+  blank pane with no line (a failure mode, not this class — next step); `WorktreeProvisioner`,
+  `WorkbenchShell.cs:2638` — `using` + `WaitForExit`, released with the child; `ShellBootstrap` —
+  no handle held.
+- **Status:** `controlled` — `TerminalHostInLifePathTests.ASessionWhoseChildExited_…` green on the
+  fix (observed red on the un-fixed code, 1 → 1); the five exit paths are read by name in CI
+  (`tools/verify-terminal-host-exit-paths.py`, appended to the Windows job, its own `--self-test`
+  firing on a failed and on an unexecuted path); `TerminalHostingLedger.Completions` makes
+  *held = starts − stops* a number.
+
+### DC-157 — A test's positive control is satisfied by the defect the test guards
+
+- **Shape:** a measured fact has two clauses — *the instrument can see the thing* (≥ 1 while it
+  exists) and *the thing is gone afterwards* (0). Written red against the defect, the first clause
+  passes because the defect **holds the thing still**: the leaked host is there to be counted for
+  as long as anyone likes. The fix releases it within milliseconds, the instrument's one read takes
+  a second, and the fact goes red on its *positive* clause — reading as "the fix broke the
+  instrument" when the instrument never saw a live child at all.
+- **Signature:** a red-first test whose ≥ 1 / non-zero pre-condition was only ever observed on
+  un-fixed code; a fixture whose transient is shorter than one instrument read (`cmd.exe /c exit 0`
+  under a CIM census); a fix that turns a fact's second clause green and its first clause red.
+- **Why it survives:** the positive clause is the DC-131 recurrence-2 control (*"can the key ever
+  return non-zero?"*) and it *did* return non-zero — for the wrong reason. Nobody re-asks the
+  question on the fixed code, because the fixed code is where the second clause is being watched.
+- **Instance (2026-09-12, INV-0010 phase 3):** `TerminalHostInLifePathTests
+  .ASessionWhoseChildExited_ReleasesItsHeadlessHostWhileTheOwnerLives` — red as `1 → 1` on the
+  un-fixed runtime; on the fixed runtime `liveCount` read 0 (*"the helper's session should have
+  owned a conhost.exe --headless while it started; saw 0"*). The helper's child became
+  `cmd.exe /c "ping -n 8 127.0.0.1 >nul & exit 3"`: seven seconds alive, then its own exit — and the
+  fact reads `1 → 0`, code 3.
+- **Control:** the positive clause stays in the fact and is **observed on the fixed code** before
+  the red is called green (the Proof Pack's red/green row carries both counts); a fixture whose
+  transient an instrument must catch outlives one instrument read by design, and says so in a
+  comment. DC-102's cousin: there the mechanism was never exercised; here the instrument was.
+- **Status:** `controlled` — the fact asserts both clauses and both were observed on the fix
+  (`1` live, `0` at +3 s); the helper's comment names the shape.
+
+### DC-158 — A scheduled rename lists the declaring file, and its reference set is discovered by the build inside the node
+
+*Id left for the conductor to allocate at the join (`coordination-addendum-cd` §Seams: contiguous family, DC-013).*
+
+- **Shape:** a coordination plan (or the ADR it dispatches) schedules a type rename, and the track's
+  ownership row names the file that **declares** the type. The **references** live in files no row
+  owns — an out-of-process probe, a replay test that asserts the type's `ToString()` in stdout. The
+  node cannot build the solution without writing outside its paths, and the plan's own "fails if a
+  write lands outside the lane's paths" clause fires on a write the plan made necessary.
+- **Signature:** `grep -rln <OldName> src tests` returning a file outside the track's row; a compile
+  error in a project the track never listed (`tests/*Probe/`); a node's close report carrying a
+  "forced write, reported" note; a `Fails if` clause that the correct change trips.
+- **Instance (SH-1, 2026-09-12):** ADR-0030 rule 4 renames `ShellViewMode` → `Perspective` "only in
+  the commit that implements this ADR"; the plan's SH-1 row lists the Core/App files and `their
+  tests`. `ShellViewMode` was also referenced in `tests/AiDe.App.ComposerProbe/Program.SessionRender.cs`
+  (three `Set` calls, two `mode={mode.Mode}` prints) and asserted by string in
+  `tests/AiDe.App.Tests/Sessions/ASessionDocumentIsShownWhereTheOperatorIsTests.cs`
+  (`mode=Explorer`, `mode=Workbench` in the replay's stdout). The build found the first; the replay
+  tests found the second (red: *Sub-string not found*). Both edited under a recorded claim and
+  reported; the ADR's own Evidence section cites only `ShellModeController.cs:6-11`.
+- **Control:** a plan that schedules a rename computes the reference set at plan time — one
+  `grep -rln` per renamed identifier over `src/`, `tests/`, `spikes/` — and lists **every** file in
+  the owning row, or names the rename as a seam. The build is already the detector; the missing half
+  is the planning step, in `/prepare-for-coordination` and `/execute-with-coordination`. Red first: a
+  plan fixture that renames a type referenced across two rows must be reported by the planner.
+- **Sweep:** SH-2's own scheduled rename (`ShellModeController` → `PerspectiveShell`) has references
+  in `MainWindow.xaml.cs`, `tests/AiDe.App.ComposerProbe/Program.SessionRender.cs`,
+  `ExplorerModeTests.cs`, `EveryOpeningCommandPassesThroughTheSeamTests.cs` (the last two scan-shaped
+  on the type name) — the same shape, one slice later; the conductor should list them before dispatch.
+- **Status:** `uncontrolled` — the plan step is prose until the skill carries it.
+
+### DC-159 — A probe prints a type's default `ToString()` across a process boundary and a test asserts the string
+
+*Id left for the conductor to allocate at the join.*
+
+- **Shape:** an out-of-process probe writes a value to stdout by interpolating the value itself
+  (`mode={mode.Mode}`), so what crosses the boundary is the type's **default** `ToString()` — an
+  enum's member name today, a record's full positional dump tomorrow. The in-process test asserts
+  the string. The contract is therefore keyed on a type's *shape*, not on a stable identity, and any
+  change of shape (the enum becoming a record; a positional member added) re-writes the wire without
+  any caller changing.
+- **Signature:** a stdout/JSON line whose value is a bare `{x}` of a non-string type; a test
+  asserting `mode=Explorer`-style tokens; a rename that turns a green replay red with
+  *Sub-string not found* and no behavioural change.
+- **Instance (SH-1, 2026-09-12):** `Program.SessionRender.cs:283,670` printed `mode={mode.Mode}`;
+  when `ShellViewMode` became the `Perspective` record the line became
+  `mode=Perspective { Id = explore, ... }` and both replay assertions went red. Fixed by printing the
+  row's stable id (`mode.Mode.Id`) and asserting `mode=explore` / `mode=coding` — the same id the
+  `shell.mode` diagnostic line writes, so the probe and the log agree.
+- **Control:** a value that crosses a process boundary is written as its **stable id** (a string
+  field chosen for the purpose), never as the value itself; the assertion names the id. Where the
+  diagnostics already write an id (`WorkbenchDiagnostics.ShellMode` → `mode = to.Id`), the probe
+  writes the same one. The replay assertions are the detector and did their job; the rule is prose.
+- **Status:** `partially-controlled` — the detector exists; no scan refuses a bare `{value}` of a
+  non-string type in probe output.
+
+### DC-160 — A Proof Pack figure or "red observed" cell is written before the measurement that would fill it
+
+*Id left for the conductor to allocate at the join.*
+
+- **Shape:** the pack is drafted while the suites run, and a cell that will hold a measured number —
+  a test count, a mutation's red list — is filled with a **plausible** value so the sentence reads
+  complete. The measurement then lands somewhere else (the runner's summary, a JSON the loop
+  wrote) and the cell is never re-read against it. The document advertises "Verified" over a
+  number nobody observed. Sibling of DC-082 (a figure that was right and moved): this one was never
+  right, it was **typed**.
+- **Signature:** a count in a summary that no run output reproduces; a "red observed: Mn" cell
+  naming a mutation whose recorded red list does not contain the test; the tell that settles it —
+  the pack and the run record disagree and the pack is the rounder number.
+- **Instance (SH-1, 2026-09-12):** the pack's first draft said *"Core 2,268/0, App 680/0"* — no run
+  had produced either number (the runs said 2,262 and 666, then 673); and claims 1–2 cited mutation
+  M9 for `TheBodiesAreTwoHostsAndOneFullWindowSurface` and `EveryRowHasACatalogCommand…`, which M9's
+  recorded red list did not contain (a fourth row yields a fourth command, so the count still
+  matched). The Test Architect read the JSON against the pack and caught both; two further
+  mutations (M17, M18) were run to earn the cells.
+- **Control:** a pack's measured cells are **filled from the run record**, never typed — the
+  mutation table is generated from the loop's JSON (as SH-1's now is), and the suite counts are
+  pasted from the runner's summary line after the last rebuild. The reviewer's check is the
+  detector: *does the record support each cell?* Red first: a pack cell naming a mutation absent
+  from the JSON must be reported by whatever fills the table.
+- **Status:** `uncontrolled` — the fill-from-record step is prose; the mutation table is generated,
+  the counts are not.
+
+## 5. What this note does not decide

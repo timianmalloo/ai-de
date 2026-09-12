@@ -639,3 +639,17 @@ jobs:
           name: test-results
           path: artifacts/test-results/*.trx
           if-no-files-found: warn
+
+      # INV-0010 (appended by the terminal-hosts track; X-1 owns this file — one step, at the end,
+      # nothing above it touched). The five terminal-host exit paths — window close, owner exit,
+      # owner killed, tab close, child exit — are measured by name in the test step above
+      # (`Platform=Windows` Core half + the App suite) and READ here: each must have executed and
+      # passed, or the build fails by a count. Absent is a failure: a renamed or filtered path is
+      # how a measured path silently stops being measured. A reader over the .trx already produced,
+      # not a second run (CE9). Runs even when an earlier step failed, so "not measured" is reported
+      # as itself rather than hidden behind the failure that skipped it.
+      - name: Terminal-host exit paths — five paths, zero headless hosts
+        if: always()
+        run: |
+          python tools/verify-terminal-host-exit-paths.py --self-test
+          python tools/verify-terminal-host-exit-paths.py

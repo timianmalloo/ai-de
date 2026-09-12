@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Runtime.Versioning;
 using System.Windows;
 using System.Windows.Automation;
@@ -39,6 +40,13 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
     private ConPtyTerminalSession? _session;
     private TerminalView? _view;
     private bool _disposed;
+
+    // The stop line's clock and its once-only guard (INV-0010). A pane has three end paths — the
+    // child exits, the tab closes, the window closes — and a pane can take two of them (exit, then
+    // close). One start, one stop, whichever end comes first; the guard is what keeps
+    // `starts − stops` an honest count of held panes rather than an undercount.
+    private readonly long _startedAt = Stopwatch.GetTimestamp();
+    private int _stopRecorded;
 
     /// <param name="executable">
     /// The CLI this pane runs, or null for a plain shell. A parameter rather than a settable
@@ -473,7 +481,48 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
             return;
         }
 
-        await PumpAsync(_session);
+        // Taken before the first await: Dispose cancels AND disposes the source on the UI thread,
+        // and a continuation that read `_shutdown.Token` afterwards would throw
+        // ObjectDisposedException into a discarded task — one false `crash` line per closed tab.
+        var shutdown = _shutdown.Token;
+        await PumpAsync(_session, shutdown);
+
+        // The pump ends when the session's output completes: the child exited (its exit is set
+        // within the watcher's poll interval), or the pane was disposed and the loop was cancelled
+        // (then Dispose already wrote the stop, and this waits on a cancelled token).
+        SessionExit? exit = null;
+        try
+        {
+            exit = await _session.WaitForExitAsync(shutdown);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+
+        if (exit is { Killed: false })
+        {
+            RecordStop("child-exited", exit.ExitCode);
+        }
+    }
+
+    /// <summary>
+    /// The window is closing with this pane open. <c>WorkbenchShell.Dispose</c> disposes no
+    /// surface — the process exit ends the shell, measured clean (INV-0010 path 1) — so the pane
+    /// says it ended here, or the operator's last session reads as a leak in the log.
+    /// </summary>
+    internal void RecordOwnerClosing() => RecordStop("owner-closing", exitCode: null);
+
+    /// <summary>Writes the pane's one <c>terminal.stop</c> line, the first time an end path asks.</summary>
+    private void RecordStop(string reason, int? exitCode)
+    {
+        if (Interlocked.Exchange(ref _stopRecorded, 1) != 0)
+        {
+            return;
+        }
+
+        WorkbenchDiagnostics.TerminalStop(
+            SurfaceId, _session?.SessionId, reason,
+            Stopwatch.GetElapsedTime(_startedAt).TotalMilliseconds, exitCode);
     }
 
     /// <summary>
@@ -486,11 +535,11 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
     /// every chunk to the dispatcher instead would put a megabyte a second of parse work on the
     /// thread that also has to stay responsive to typing.
     /// </remarks>
-    private async Task PumpAsync(ConPtyTerminalSession session)
+    private async Task PumpAsync(ConPtyTerminalSession session, CancellationToken shutdown)
     {
         try
         {
-            while (await session.Output.WaitToReadAsync(_shutdown.Token))
+            while (await session.Output.WaitToReadAsync(shutdown))
             {
                 while (session.Output.TryRead(out var chunk))
                 {
@@ -591,6 +640,22 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
         }
 
         _disposed = true;
+
+        // At the TOP, before any teardown: the attempt, not the success (SessionDisposalSignal's
+        // idiom). A live shell closed by its tab is killed by the runtime below; a pane with no
+        // session (its start failed) is merely disposed. A pane whose shell already exited wrote
+        // its stop from the pump's continuation — or, when the tab closed before that continuation
+        // ran (it is dispatcher-posted), writes it here with the child's own code: the count was
+        // never at risk, the reason was.
+        var exited = _session?.WaitForExitAsync(CancellationToken.None);
+        if (exited is { IsCompletedSuccessfully: true } && !exited.Result.Killed)
+        {
+            RecordStop("child-exited", exited.Result.ExitCode);
+        }
+        else
+        {
+            RecordStop(_session is { Activity: not SessionActivity.Ended } ? "killed" : "disposed", exitCode: null);
+        }
 
         if (_view is not null)
         {

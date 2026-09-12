@@ -35,7 +35,8 @@ public sealed class HarnessSessionCommandsAreDerivedTests
 
             Assert.Contains(profile.DisplayName!, command.Title, StringComparison.Ordinal);
             Assert.Equal(profile.Gesture, command.Gesture);
-            Assert.Equal("_Terminal", command.Menu);
+            // Entry verbs live in File in every perspective (Addendum C US-C11; PS-M1).
+            Assert.Equal("_File", command.Menu);
         }
     }
 

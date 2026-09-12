@@ -107,6 +107,7 @@ public sealed class ConPtyTerminalSession : ITerminalSession
     private readonly TerminalActivityState _state = new();
     private readonly OscParser _osc;
     private readonly List<OscEvent> _oscEvents = [];
+    private readonly long _startedAt = Stopwatch.GetTimestamp();
 
     private bool _truncatedSinceLastChunk;
     private bool _disposed;
@@ -286,6 +287,12 @@ public sealed class ConPtyTerminalSession : ITerminalSession
             ConPtyInterop.CloseHandle(job);
             inputWrite.Dispose();
             outputRead.Dispose();
+
+            // The start above was counted before anything could throw (the ledger counts the
+            // attempt). A start with no stop reads as a held host, so the failed construction
+            // closes its own pair here — otherwise `starts − stops` drifts by one per failure and
+            // the invariant the census reads is wrong in the direction that hides a leak.
+            EmitStop(request.SessionId, request.Generation, exitCode: null, killed: false, reason: "start-failed", durationMs: null);
             throw;
         }
 
@@ -430,12 +437,19 @@ public sealed class ConPtyTerminalSession : ITerminalSession
 
         try
         {
-            while (!_shutdown.IsCancellationRequested)
+            // TO EOF, UNCONDITIONALLY — not until the session ends. `ClosePseudoConsole` waits for
+            // the host to exit, and the host cannot exit while its output pipe is full; a loop that
+            // stopped reading when the session completed would leave the closer (the exit watcher's
+            // pool thread, or the UI thread on dispose) waiting on a pipe nobody drains, with the
+            // host alive after `terminal.stop` said otherwise. So the loop reads until the host is
+            // gone (EOF), the pipe breaks, or the stream is disposed under it; chunks that arrive
+            // after the channel completed are read and dropped.
+            while (true)
             {
                 var read = _fromProcess.Read(buffer, 0, buffer.Length);
                 if (read <= 0)
                 {
-                    break; // EOF: the console's write end is closed, so the process is gone.
+                    break; // EOF: the console's write end is closed, so the host is gone.
                 }
 
                 // Read for state BEFORE the chunk is published. The output channel drops the oldest
@@ -464,8 +478,8 @@ public sealed class ConPtyTerminalSession : ITerminalSession
                 if (!_output.Writer.TryWrite(chunk))
                 {
                     // DropOldest means TryWrite effectively always succeeds; a refusal here means the
-                    // channel completed under us, which is a shutdown rather than an error.
-                    break;
+                    // channel completed under us. Keep draining (see above) — just stop publishing.
+                    continue;
                 }
 
                 // The reader is behind if the channel is at capacity, so the NEXT chunk carries the
@@ -530,17 +544,30 @@ public sealed class ConPtyTerminalSession : ITerminalSession
         {
             // Poll rather than wait on the handle: a WaitHandle wrapper over a process handle we own
             // raw would need its own SafeHandle lifetime, and the resolution that matters here is
-            // "before a human notices", not milliseconds.
-            while (!_shutdown.IsCancellationRequested)
+            // "before a human notices", not milliseconds. The token is taken ONCE: reading
+            // `_shutdown.Token` after DisposeAsync disposed the source throws ObjectDisposedException,
+            // which the catch below does not cover.
+            var token = _shutdown.Token;
+            while (!token.IsCancellationRequested)
             {
                 if (ConPtyInterop.GetExitCodeProcess(_process, out var code)
                     && code != ConPtyInterop.STILL_ACTIVE)
                 {
                     Complete(new SessionExit(code, Killed: false, DateTimeOffset.UtcNow));
+
+                    // RELEASED WITH THE CHILD, NOT WITH THE OWNER (DC-156). The pseudo console
+                    // and the job were acquired for this process; its exit made both dead weight,
+                    // and until INV-0010 nothing revisited them — one client-less
+                    // `conhost.exe --headless` per ended pane for the App's lifetime, measured
+                    // 1 -> 1 three seconds after `cmd.exe /c exit 0` with the owner alive. Closing
+                    // the console ends the host and gives the read loop its EOF; closing the job's
+                    // last handle ends anything the shell left behind in it. The process and
+                    // thread handles stay for DisposeAsync, which still reads the exit code.
+                    ReleaseHost();
                     return;
                 }
 
-                await Task.Delay(50, _shutdown.Token).ConfigureAwait(false);
+                await Task.Delay(50, token).ConfigureAwait(false);
             }
         }
         catch (OperationCanceledException)
@@ -560,10 +587,67 @@ public sealed class ConPtyTerminalSession : ITerminalSession
             _state.OnEnded();
         }
 
+        // The other half of `terminal.start`, on the same source, ONCE per session: both end paths
+        // funnel through this guarded transition, so a child exit followed by the tab's dispose is
+        // one stop, and `starts - stops` (TerminalHostingLedger) is the number of hosts still held.
+        // Emitted before the channel completes — the attempt, not the success, the idiom the
+        // ledger records (INV-0010).
+        EmitStop(
+            SessionId, Generation, exit.ExitCode, exit.Killed,
+            reason: exit.Killed ? "killed" : "child-exited",
+            durationMs: Stopwatch.GetElapsedTime(_startedAt).TotalMilliseconds);
+
         // Complete the channel first so a reader woken by the exit and then draining finds a
         // completed channel rather than blocking forever on one more read.
         _output.Writer.TryComplete();
         _exit.TrySetResult(exit);
+    }
+
+    /// <summary>
+    /// Opens the <c>terminal.stop</c> activity. Tags are the session's identity and how it ended;
+    /// an exit code the runtime does not know is absent, never 0 (a killed session has none).
+    /// </summary>
+    private static void EmitStop(
+        string sessionId, long generation, int? exitCode, bool killed, string reason, double? durationMs)
+    {
+        using var span = Telemetry.StartActivity("terminal.stop");
+        span?.SetTag("session.id", sessionId);
+        span?.SetTag("session.generation", generation);
+        span?.SetTag("session.killed", killed);
+        span?.SetTag("session.exit_code", exitCode);
+        span?.SetTag("session.end_reason", reason);
+        span?.SetTag("session.duration_ms", durationMs);
+    }
+
+    /// <summary>
+    /// Closes the pseudo console and the job, whichever of the two this session still holds.
+    /// Idempotent, and safe against the other end path: each handle is taken under the state gate
+    /// exactly once, so the exit watcher and <see cref="DisposeAsync"/> cannot both close it.
+    /// </summary>
+    private void ReleaseHost()
+    {
+        var console = Take(ref _console);
+        if (console != IntPtr.Zero)
+        {
+            ConPtyInterop.ClosePseudoConsole(console);
+        }
+
+        var job = Take(ref _job);
+        if (job != IntPtr.Zero)
+        {
+            ConPtyInterop.CloseHandle(job);
+        }
+    }
+
+    /// <summary>Takes a handle out of its field under the state gate, leaving zero behind.</summary>
+    private IntPtr Take(ref IntPtr handle)
+    {
+        lock (_stateGate)
+        {
+            var taken = handle;
+            handle = IntPtr.Zero;
+            return taken;
+        }
     }
 
     public async ValueTask DisposeAsync()
@@ -581,11 +665,12 @@ public sealed class ConPtyTerminalSession : ITerminalSession
         await _shutdown.CancelAsync().ConfigureAwait(false);
 
         // Closing the console's handle is what tells the attached process its terminal is gone, so
-        // it is the polite way out and must come before the kill.
-        if (_console != IntPtr.Zero)
+        // it is the polite way out and must come before the kill. Taken under the gate: a session
+        // whose child already exited released it in WatchForExitAsync, and this finds zero.
+        var console = Take(ref _console);
+        if (console != IntPtr.Zero)
         {
-            ConPtyInterop.ClosePseudoConsole(_console);
-            _console = IntPtr.Zero;
+            ConPtyInterop.ClosePseudoConsole(console);
         }
 
         if (_process != IntPtr.Zero)
@@ -624,11 +709,11 @@ public sealed class ConPtyTerminalSession : ITerminalSession
         }
 
         // Last: closing the job's final handle is what kills anything the shell left behind, so it
-        // must outlive every other cleanup step.
-        if (_job != IntPtr.Zero)
+        // must outlive every other cleanup step. Zero here when the child's exit already closed it.
+        var job = Take(ref _job);
+        if (job != IntPtr.Zero)
         {
-            ConPtyInterop.CloseHandle(_job);
-            _job = IntPtr.Zero;
+            ConPtyInterop.CloseHandle(job);
         }
 
         _shutdown.Dispose();

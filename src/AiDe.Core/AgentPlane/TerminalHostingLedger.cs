@@ -37,8 +37,15 @@ public sealed class TerminalHostingLedger : IDisposable
     /// <summary>The activity name it opens for one construction.</summary>
     public const string TerminalStartActivity = "terminal.start";
 
+    /// <summary>
+    /// The activity name it opens once per session when the session ends — by its child's exit, by
+    /// disposal, or by a construction that failed after the start was counted (INV-0010).
+    /// </summary>
+    public const string TerminalStopActivity = "terminal.stop";
+
     private readonly ActivityListener _listener;
     private long _constructions;
+    private long _completions;
 
     private TerminalHostingLedger()
     {
@@ -56,6 +63,10 @@ public sealed class TerminalHostingLedger : IDisposable
                 {
                     Interlocked.Increment(ref _constructions);
                 }
+                else if (string.Equals(activity.OperationName, TerminalStopActivity, StringComparison.Ordinal))
+                {
+                    Interlocked.Increment(ref _completions);
+                }
             },
         };
 
@@ -64,6 +75,12 @@ public sealed class TerminalHostingLedger : IDisposable
 
     /// <summary>How many terminal hosts were constructed since this ledger opened.</summary>
     public long Constructions => Interlocked.Read(ref _constructions);
+
+    /// <summary>
+    /// How many sessions ended since this ledger opened. <c>Constructions − Completions</c> is the
+    /// number of hosts the runtime still holds — the census-time invariant INV-0010 could not check.
+    /// </summary>
+    public long Completions => Interlocked.Read(ref _completions);
 
     /// <summary>Opens a ledger. Counting starts here and stops at <see cref="Dispose"/>.</summary>
     public static TerminalHostingLedger Open() => new();

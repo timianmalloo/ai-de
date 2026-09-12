@@ -10,3 +10,16 @@
 // this is its second instance, which per CI4 means the first control was too narrow — it was applied
 // to one test project when the cause was not project-specific.
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
+
+/// <summary>
+/// The diagnostics sink's default for this assembly: nowhere. Without it every fixture pane a test
+/// builds writes <c>terminal.start</c>/<c>terminal.stop</c> into the OPERATOR's workbench log —
+/// INV-0010 counted 4,115 such lines in one day, most of them fixtures (<c>terminal-1</c>,
+/// <c>terminal#…</c>, <c>session-terminal:…deadbeef</c>) — so the operator's log was mostly not the
+/// operator's. A test that asserts on the log installs its own sink and restores THIS one.
+/// </summary>
+internal static class WorkbenchDiagnosticsSinkDefault
+{
+    [System.Runtime.CompilerServices.ModuleInitializer]
+    internal static void Install() => AiDe.App.Workbench.WorkbenchDiagnostics.Sink ??= _ => { };
+}

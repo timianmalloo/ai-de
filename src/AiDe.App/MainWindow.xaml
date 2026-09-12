@@ -98,8 +98,8 @@
                     <Border x:Name="ExploreAccentBar" Width="3" Height="26" HorizontalAlignment="Left" VerticalAlignment="Center"
                             CornerRadius="0,2,2,0" Background="{StaticResource AccentBrush}" Visibility="Collapsed" />
                     <Button x:Name="ExploreRailButton" Click="OnToggleExplorer" Margin="6,0,6,0" Height="44" Style="{StaticResource RoundedButton}"
-                            AutomationProperties.Name="Explorer mode" Background="Transparent"
-                            BorderThickness="0" Foreground="{StaticResource TextMutedBrush}" ToolTip="Explorer — graph &amp; reader">
+                            AutomationProperties.Name="Explore perspective" Background="Transparent"
+                            BorderThickness="0" Foreground="{StaticResource TextMutedBrush}" ToolTip="Explore perspective">
                         <Path Width="22" Height="22" Stretch="Uniform" Data="{StaticResource IconExplore}"
                               Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                               StrokeThickness="1.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
@@ -107,7 +107,7 @@
                 </Grid>
                 <!--  AR3 — A RAIL ITEM IS PRESENT ONLY IF IT DOES SOMETHING. Three buttons used to
                       sit here, IsEnabled="False", announcing "Coordinate", "Compose" and "Audit" -
-                      modes ShellViewMode does not have. Disabling them removed the lie and kept the
+                      perspectives the Perspective set does not have. Disabling them removed the lie and kept the
                       dead UI: at rest they were the same 44x44 pill in the same muted foreground as
                       the one that works, so "none of these icons do anything" was a fair reading of
                       a rail where three of four did not.

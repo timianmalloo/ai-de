@@ -1,5 +1,7 @@
+using System.Globalization;
 using System.IO;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Media;
 using AiDe.Core.Workbench;
@@ -7,13 +9,17 @@ using AiDe.Core.Workbench;
 namespace AiDe.App.Workbench;
 
 /// <summary>
-/// Builds the menu bar from the SAME command catalog the palette reads.
+/// Renders the menu bar from the derived contribution of the active perspective — the SAME model
+/// the palette reads (<see cref="PerspectiveMenu"/>).
 /// </summary>
 /// <remarks>
-/// <para><b>One catalog, three ways in.</b> Menu, palette and chord all resolve to a catalog id, so
-/// a command cannot exist in one and be missing from another — and the conformance test that walks
-/// the catalog covers all three at once. Hand-writing menu items beside a catalog is how a menu
-/// starts offering something the product no longer does.</para>
+/// <para><b>One derivation, three ways in.</b> Menu, palette and rail all read
+/// <see cref="PerspectiveMenu.For"/>, so a command cannot be offered by one and missing from another
+/// — and the tests that walk the derivation cover all three at once. This file used to hold a
+/// static tuple list of which commands sit under which menu; that list was Core-owned data in a
+/// Design-owned file and, once perspectives arrived, would have become a per-perspective list three
+/// times over (Ruling 55b, ADR-0030). The mapping now lives on the catalog row (<c>Menu</c>,
+/// <c>Scope</c>) and the kind row (<c>Entry</c>), and this builder only renders.</para>
 ///
 /// <para><b>Discoverability was the defect.</b> Opening a workspace was reachable only by
 /// <c>Ctrl+K, O</c> and by an environment variable set before launch — so the daemon path, indexing,
@@ -22,11 +28,6 @@ namespace AiDe.App.Workbench;
 /// </remarks>
 internal static class MainMenuBuilder
 {
-    /// <summary>Which catalog commands appear under which menu, in order.</summary>
-    /// <remarks>
-    /// Grouped by what the user is trying to DO, not by which subsystem implements it: opening a
-    /// workspace and indexing it are one errand, and they live in different classes.
-    /// </remarks>
     /// <summary>
     /// The icon for a menu command — a stroked <see cref="System.Windows.Shapes.Path"/> from the
     /// shared geometry set (App.xaml), keyed off the command id. Visual only (Design owns how a menu
@@ -40,7 +41,9 @@ internal static class MainMenuBuilder
             _ when id.Contains("terminal", StringComparison.Ordinal) => "IconTerminal",
             _ when id.Contains("prompt", StringComparison.Ordinal) || id.Contains("dispatch", StringComparison.Ordinal) => "IconSend",
             "workspace.open" => "IconFolderOpen",
-            "shell.toggleExplorer" => "IconExplore",
+            "perspective.explore" => "IconExplore",
+            _ when id.StartsWith("perspective.", StringComparison.Ordinal) => "IconLayout",
+            _ when id.Contains("search", StringComparison.Ordinal) => "IconSearch",
             _ when id.Contains("index", StringComparison.Ordinal) => "IconGraph",
             _ when id.Contains("refresh", StringComparison.Ordinal) => "IconRefresh",
             _ when id.Contains("canvas", StringComparison.Ordinal) => "IconGraph",
@@ -65,38 +68,6 @@ internal static class MainMenuBuilder
             StrokeEndLineCap = PenLineCap.Round,
         };
     }
-
-    private static readonly (string Menu, string[] CommandIds)[] Layout =
-    [
-        // CORE-OWNED DATA in a design-owned file: which commands exist and which menu they belong
-        // to is a Core decision, and TheMenuCoversEveryCatalogCommand makes adding a command and
-        // placing it one atomic change. Recorded in docs/collaboration/session-contracts.md, with a
-        // proposal to move this mapping onto the catalog entry so the seam stops crossing here.
-        // "session.new" leads: the front door is the first thing the File menu offers, and a session
-        // is the object the product is about (R13 b1).
-        ("_File", ["session.new", "workspace.open", "workspace.indexSolution", "workspace.reindexAll", "workspace.refresh"]),
-        ("_Edit", ["workbench.moveSurface", "workbench.resizePane"]),
-        // "shell.toggleExplorer" leads the View menu because it is a WHOLE MODE of the shell, and
-        // until now its only door was one 44x44 icon in the rail (AR5).
-        ("_View", ["shell.toggleExplorer",
-                   "workbench.focusCanvas", "workbench.nextSurface", "workbench.previousSurface",
-                   "workbench.reorderSurface", "watcher.raiseDispute", "workbench.newSearch",
-                   "workbench.newClassDiagram",
-                   "workbench.newSequenceDiagram",
-                   "workbench.newCodeViewer", "workbench.newDiagnostics", "workbench.clearStatus"]),
-        ("_Window", ["workbench.floatPane", "workbench.collapsePane", "workbench.maximizePane",
-                     "workbench.closeSurface", "workbench.toggleLock", "workbench.resetLayout"]),
-        // The agent entries are DERIVED from the same profile set the catalog derives from, so the
-        // menu and the catalog cannot disagree about which harnesses exist. Listing them here would
-        // be the second list this arrangement exists to remove.
-        ("_Terminal", ["terminal.new",
-                       .. AiDe.Core.Terminal.AgentReadinessProfiles.BuiltIn.All
-                            .Where(profile => profile.Launchable)
-                            .OrderBy(profile => profile.DisplayName, StringComparer.Ordinal)
-                            .Select(profile => profile.CommandId),
-                       "workbench.dispatchPrompt", "workbench.newPromptDraft"]),
-        ("_Help", ["workspace.diagnostics"]),
-    ];
 
     /// <summary>
     /// Recently opened workspaces, most recent first.
@@ -162,9 +133,16 @@ internal static class MainMenuBuilder
     /// is bound to — which is what reopening one restores first.
     /// </param>
     /// <param name="onOpenRecentSession">Reopens a recent session by id.</param>
+    /// <param name="derived">
+    /// The active perspective's contribution (<see cref="PerspectiveMenu.For"/>). Required: a
+    /// builder that defaulted it would render one perspective's menu inside another, which is the
+    /// drift the derivation exists to make impossible. The window passes the model it also hands
+    /// the palette, so the two cannot disagree (E12).
+    /// </param>
     internal static void Build(
         Menu menu,
         WorkbenchController controller,
+        PerspectiveMenu derived,
         Action? onExit = null,
         IReadOnlyList<string>? recent = null,
         Action<string>? onOpenRecent = null,
@@ -173,33 +151,39 @@ internal static class MainMenuBuilder
     {
         ArgumentNullException.ThrowIfNull(menu);
         ArgumentNullException.ThrowIfNull(controller);
+        ArgumentNullException.ThrowIfNull(derived);
 
         menu.Items.Clear();
 
-        foreach (var (header, commandIds) in Layout)
+        foreach (var group in derived.Menus)
         {
+            var header = group.Menu;
             var top = new MenuItem { Header = header };
+            var previousWasPerspective = false;
 
-            foreach (var id in commandIds)
+            foreach (var command in group.Catalog)
             {
-                var command = WorkbenchCommandCatalog.All.FirstOrDefault(c => c.Id == id);
+                var isPerspective = PerspectiveSet.ByCommandId(command.Id) is not null;
 
-                // A layout entry naming a command the catalog does not have is a bug, not something
-                // to render as a dead item. Skipped rather than shown, and the catalog conformance
-                // test is what stops it happening silently.
-                if (command is null) continue;
-
-                var item = new MenuItem
+                // The perspective radio group is its own block at the head of View (§B3 rule 1).
+                if (previousWasPerspective && !isPerspective)
                 {
-                    Header = command.Title,
-                    InputGestureText = command.Gesture,
-                    ToolTip = command.Hint,
-                    Icon = IconFor(command.Id),
-                };
+                    top.Items.Add(new Separator());
+                }
 
-                var captured = command.Id;
-                item.Click += (_, _) => controller.Execute(captured);
-                top.Items.Add(item);
+                top.Items.Add(Item(command, controller, isPerspective, derived.Perspective));
+                previousWasPerspective = isPerspective;
+            }
+
+            // The allow-list-derived "New/Show <Title>" block follows the catalog rows (§B3 rule 3).
+            if (group.Catalog.Count > 0 && group.Derived.Count > 0)
+            {
+                top.Items.Add(new Separator());
+            }
+
+            foreach (var command in group.Derived)
+            {
+                top.Items.Add(Item(command, controller, isPerspective: false, derived.Perspective));
             }
 
             if (top.Items.Count == 0) continue;
@@ -260,6 +244,87 @@ internal static class MainMenuBuilder
             }
 
             menu.Items.Add(top);
+        }
+    }
+
+    /// <summary>One menu item for one offered command.</summary>
+    /// <remarks>
+    /// <para><b>The keystroke column shows a BOUND gesture or nothing (PS-M4, US-C10 b3).</b> The
+    /// catalog's <c>Ctrl+K, X</c> chords are announced strings nothing binds; a menu that printed
+    /// them promised keystrokes that did nothing. What is shown is the binding's own display string,
+    /// so the label follows the keyboard layout.</para>
+    ///
+    /// <para><b>The perspective entries are a radio group with the active one checked (PS-M1).</b>
+    /// A <see cref="PerspectiveMenuItem"/>: its automation peer exposes the Toggle state a screen
+    /// reader announces, and a click never toggles it — the presenter owns the state (US-C1:
+    /// activating the active perspective is a no-op, and a checked radio item does not un-check
+    /// itself). The check is drawn in the icon column as the accent glyph the design's state table
+    /// names, because the app's menu template renders no check of its own.</para>
+    /// </remarks>
+    private static MenuItem Item(WorkbenchCommand command, WorkbenchController controller, bool isPerspective, Perspective active)
+    {
+        var bound = KeyGestures.For(command).FirstOrDefault();
+        var isActive = isPerspective && string.Equals(command.Id, active.CommandId, StringComparison.Ordinal);
+
+        MenuItem item = isPerspective
+            ? new PerspectiveMenuItem { IsChecked = isActive, Icon = isActive ? CheckGlyph() : IconFor(command.Id) }
+            : new MenuItem { Icon = IconFor(command.Id) };
+
+        item.Header = command.Title;
+        item.InputGestureText = bound?.GetDisplayStringForCulture(CultureInfo.CurrentCulture) ?? string.Empty;
+        item.ToolTip = command.Hint;
+
+        var captured = command.Id;
+        item.Click += (_, _) => controller.Execute(captured);
+
+        return item;
+    }
+
+    /// <summary>The accent check glyph that marks the active perspective (DESIGN.md, the menu state table's "checked" row).</summary>
+    internal static System.Windows.Shapes.Path CheckGlyph() => new()
+    {
+        Data = CheckGeometry,
+        Stretch = Stretch.Uniform,
+        Width = 15,
+        Height = 15,
+        Stroke = Application.Current?.TryFindResource("AccentBrush") as Brush ?? Brushes.Transparent,
+        StrokeThickness = 2,
+        StrokeLineJoin = PenLineJoin.Round,
+        StrokeStartLineCap = PenLineCap.Round,
+        StrokeEndLineCap = PenLineCap.Round,
+        Tag = CheckTag,
+    };
+
+    /// <summary>The check mark's shape — a glyph, not a token; brushes and sizes follow the icon set.</summary>
+    internal static readonly Geometry CheckGeometry = Geometry.Parse("M 2,8 L 6,12 L 14,4");
+
+    /// <summary>What a test reads to know the active row carries the check and no other row does.</summary>
+    internal const string CheckTag = "perspective-check";
+
+    /// <summary>
+    /// A menu item whose checked state the presenter owns and whose click never toggles it.
+    /// </summary>
+    /// <remarks>
+    /// <para>WPF's <see cref="MenuItem.OnClick"/> flips <see cref="MenuItem.IsChecked"/> for a
+    /// checkable item before raising <see cref="MenuItem.Click"/> — one render frame later for a
+    /// user click — so a "restore the check in the handler" repair speaks an un-checked state to a
+    /// screen reader and draws it for a frame; and overriding <c>OnClick</c> to raise <c>Click</c>
+    /// alone skips <c>PreviewClick</c>, which is the event the menu closes on, leaving the popup
+    /// open in menu mode (both the UX &amp; Accessibility reviewer's findings, rounds 1 and 2).</para>
+    ///
+    /// <para>So the item is <b>not</b> checkable — WPF's own click pipeline runs untouched: no
+    /// toggle, PreviewClick closes the menu, Click is deferred past the render — and the Toggle
+    /// pattern a screen reader reads is exposed by the peer instead, from <see cref="MenuItem.IsChecked"/>,
+    /// which <see cref="MenuItem.OnIsCheckedChanged"/> still announces through that peer.</para>
+    /// </remarks>
+    internal sealed class PerspectiveMenuItem : MenuItem
+    {
+        protected override AutomationPeer OnCreateAutomationPeer() => new Peer(this);
+
+        private sealed class Peer(MenuItem owner) : MenuItemAutomationPeer(owner)
+        {
+            public override object? GetPattern(PatternInterface patternInterface) =>
+                patternInterface == PatternInterface.Toggle ? this : base.GetPattern(patternInterface);
         }
     }
 }

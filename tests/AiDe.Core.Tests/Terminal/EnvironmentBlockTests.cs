@@ -28,10 +28,88 @@ namespace AiDe.Core.Tests.Terminal;
 public sealed class EnvironmentBlockTests
 {
     [Fact]
-    public void NoExtras_MeansInherit_SoTheCommonPathIsUnchanged()
+    public void NoExtras_AndNoWindowsTerminalVariables_MeansInherit_SoTheCommonPathIsUnchanged()
     {
+        using var _ = new WithoutWindowsTerminalVariables();
+
         Assert.Null(ConPtyInterop.BuildEnvironmentBlock(null));
         Assert.Null(ConPtyInterop.BuildEnvironmentBlock(new Dictionary<string, string>()));
+    }
+
+    /// <summary>
+    /// Windows Terminal's own variables never reach a ConPTY child (INV-0010, slice 0).
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Measured, 2026-09-12, this machine.</b> Four product-shaped ConPTY sessions whose
+    /// parent inherited <c>WT_SESSION</c>/<c>WT_PROFILE_ID</c> from the Windows Terminal tab this
+    /// harness runs in caused <b>four</b> <c>node higgsfield-mcp</c> servers (+ four console hosts)
+    /// to be born under Windows Terminal's agent host (<c>wta.exe → copilot.exe</c>) within 40 s —
+    /// one per session, kept for Windows Terminal's lifetime; the same four with <c>WT_*</c> removed
+    /// caused <b>zero</b>. That pool (111 → 291 in a day) was the "foreign" population of five
+    /// straggler reports: foreign by parent, ours by cause.</para>
+    /// <para>So the block is built whenever the parent carries a <c>WT_</c> variable, even with
+    /// nothing extra to add, and carries none of them; everything else passes through unchanged
+    /// (INV-0001: the user's environment reaches the shell — only <c>WT_*</c> leaves).</para>
+    /// </remarks>
+    [Fact]
+    public void AParentInsideWindowsTerminal_HandsItsChildNoWT_Variable_AndEverythingElse()
+    {
+        const string control = "AIDE_BLOCK_TEST_PASSTHROUGH";
+        Environment.SetEnvironmentVariable("WT_SESSION", "6238a91b-f02c-4aca-86ee-08e02378260a");
+        Environment.SetEnvironmentVariable("WT_PROFILE_ID", "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}");
+        Environment.SetEnvironmentVariable("wt_probe_lowercase", "also-scrubbed");
+        Environment.SetEnvironmentVariable(control, "kept");
+        try
+        {
+            var block = ConPtyInterop.BuildEnvironmentBlock(null);
+
+            Assert.NotNull(block);
+            var entries = new string(block!).Split('\0', StringSplitOptions.RemoveEmptyEntries);
+
+            Assert.DoesNotContain(entries, e => e.StartsWith("WT_", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains($"{control}=kept", entries);
+            Assert.Contains(entries, e => e.StartsWith("PATH=", StringComparison.OrdinalIgnoreCase));
+
+            // With extras too: the scrub and the contract compose.
+            var withExtras = ConPtyInterop.BuildEnvironmentBlock(new Dictionary<string, string> { ["AIDE_SESSION"] = "s" });
+            var withExtrasEntries = new string(withExtras!).Split('\0', StringSplitOptions.RemoveEmptyEntries);
+            Assert.DoesNotContain(withExtrasEntries, e => e.StartsWith("WT_", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains("AIDE_SESSION=s", withExtrasEntries);
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("WT_SESSION", null);
+            Environment.SetEnvironmentVariable("WT_PROFILE_ID", null);
+            Environment.SetEnvironmentVariable("wt_probe_lowercase", null);
+            Environment.SetEnvironmentVariable(control, null);
+        }
+    }
+
+    /// <summary>Removes every <c>WT_*</c> variable from this process for the scope, and restores it after.</summary>
+    private sealed class WithoutWindowsTerminalVariables : IDisposable
+    {
+        private readonly Dictionary<string, string?> _saved = new(StringComparer.OrdinalIgnoreCase);
+
+        public WithoutWindowsTerminalVariables()
+        {
+            foreach (System.Collections.DictionaryEntry e in Environment.GetEnvironmentVariables())
+            {
+                var name = e.Key?.ToString();
+                if (name is not null && name.StartsWith("WT_", StringComparison.OrdinalIgnoreCase))
+                {
+                    _saved[name] = e.Value?.ToString();
+                    Environment.SetEnvironmentVariable(name, null);
+                }
+            }
+        }
+
+        public void Dispose()
+        {
+            foreach (var (name, value) in _saved)
+            {
+                Environment.SetEnvironmentVariable(name, value);
+            }
+        }
     }
 
     [Fact]

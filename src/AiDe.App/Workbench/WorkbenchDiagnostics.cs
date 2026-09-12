@@ -137,6 +137,45 @@ public static class WorkbenchDiagnostics
     }
 
     /// <summary>
+    /// Records that a terminal pane ended — the other half of <see cref="TerminalStart"/>, keyed by
+    /// the same surface id so the two lines pair and a census can subtract.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Why this exists (INV-0010).</b> The operator's log carried 4,115 <c>terminal.start</c>
+    /// lines for one day and no end of any kind, so a leaked host — a start with no end — was exactly
+    /// the shape the log could not show, and every "terminal hosts are not cleaned up" report
+    /// restarted from a process list. Written once per pane, on the normal path, at the top of the
+    /// end path (the attempt, not the success).</para>
+    /// <para><paramref name="reason"/> is one of <c>child-exited</c> (the shell ended itself;
+    /// <paramref name="exitCode"/> is its code), <c>killed</c> (the pane was closed over a live
+    /// shell, which the runtime terminated), <c>disposed</c> (the pane was closed with no live
+    /// session — a start that failed), or <c>owner-closing</c> (the window is closing with the
+    /// pane open; the process exit ends the shell). A value this writer does not know is
+    /// <c>null</c>, never 0 (DC-137): a killed shell has no exit code, and a pane with no session
+    /// has no session id.</para>
+    /// </remarks>
+    public static void TerminalStop(
+        string surfaceId, string? sessionId, string reason, double? durationMs, int? exitCode)
+    {
+        using var activity = Source.StartActivity("workbench.terminal.stop");
+        activity?.SetTag("workbench.surface", surfaceId);
+        activity?.SetTag("session.id", sessionId);
+        activity?.SetTag("session.end_reason", reason);
+        activity?.SetTag("session.exit_code", exitCode);
+
+        Write(new
+        {
+            ts = DateTimeOffset.UtcNow.ToString("O"),
+            evt = "terminal.stop",
+            surface = surfaceId,
+            session = sessionId,
+            reason,
+            durationMs,
+            exitCode,
+        });
+    }
+
+    /// <summary>
     /// Records an unhandled exception, with the context that says which gesture produced it.
     /// </summary>
     /// <remarks>
@@ -339,7 +378,7 @@ public static class WorkbenchDiagnostics
     }
 
     /// <summary>
-    /// Records a change of the shell's primary view mode — which body is on screen — and what asked
+    /// Records a change of the shell's active perspective — which body is on screen — and what asked
     /// for it.
     /// </summary>
     /// <remarks>
@@ -349,19 +388,21 @@ public static class WorkbenchDiagnostics
     /// from a side effect, never stated. The mode is the one fact every "I opened X and saw nothing"
     /// report turns on, so it is written on the normal path, once per change, with its trigger.
     /// </remarks>
-    public static void ShellMode(ShellViewMode from, ShellViewMode to, string trigger)
+    public static void ShellMode(AiDe.Core.Workbench.Perspective from, AiDe.Core.Workbench.Perspective to, string trigger)
     {
         using var activity = Source.StartActivity("workbench.shell.mode");
-        activity?.SetTag("workbench.mode", to.ToString());
-        activity?.SetTag("workbench.mode.from", from.ToString());
+        activity?.SetTag("workbench.mode", to.Id);
+        activity?.SetTag("workbench.mode.from", from.Id);
         activity?.SetTag("workbench.trigger", trigger);
 
+        // The perspective's stable id (`coding` · `explore` · `architecture`), never its title: a
+        // reader greps the log for the row, and a caption can be re-worded without re-keying history.
         Write(new
         {
             ts = DateTimeOffset.UtcNow.ToString("O"),
             evt = "shell.mode",
-            mode = to.ToString(),
-            from = from.ToString(),
+            mode = to.Id,
+            from = from.Id,
             trigger,
         });
     }
