@@ -56,15 +56,16 @@ headings/columns below retain the skill's machine-readable schema.
 
 ## Tracks
 
-Only the exact source-safety files/writer currently recorded in the section-2 exception are dispatched.
-The candidate's exact file manifest must be added there before dispatch. Other `owns` entries below
-remain proposed integration responsibilities, not a grant.
+The exact source-safety files and the first four-file identity/binding unit are recorded in the
+section-2 exception. The safety checkpoint is joined with bounded evidence; the first candidate
+writer is dispatched. Other `owns` entries below remain proposed integration responsibilities,
+not a grant.
 Budgets are Inferred planning circuit breakers. A firing cap reports a finding; it never drops a gate.
 
 | track | owns (authored) | depends on | tier | fan-out cap | budget | exit evidence | harness |
 |---|---|---|---|---|---|---|---|
 | E0-SAFETY | Four exact new probe project/source files and `docs/proof/code-atlas-source-safety.md`, listed in section 2 | Explicit Owner probe admission, now recorded | T2 | 0 | 30 calls including preflight/clarification, one bounded native handle/race batch | Windows opened-object/root/link/replacement/hash/decoder semantics observed; refusal/race falsifiers; no userdata or shared-store mutation | Existing GPT-5.5 writer, new `atlas/e0-source-safety` tree at `4d396411`; dispatched |
-| E0-BUILD | Exact new `Core/Understanding` and detached `App/Workbench/Understanding` source/tests, named by E0 design and recorded in section 2 before dispatch | Owner new-file grant; E0 design; safety receipt before reader incorporation | T2 | 0 | 60 calls to one reviewed candidate checkpoint; no reset on a seam | Generated real files and compiler symbols, bounded inventory/identity/binding/history tests, inert supplied-projection controls; no fake host proof | One GPT-5.5 writer in reserved `atlas/e0-candidate` tree at `4d396411`; existing-file fallback uses a separately named standalone candidate |
+| E0-BUILD first unit | Exact `AtlasIdentity.cs`, `AtlasSourceBinding.cs` and their two Core test files recorded in section 2 | Owner turn-9 unit grant; narrow unit model/oracle gates; not the complete E0 document | T2 | 0 | 25 calls within the existing 60-call candidate budget, including at most five unit-design calls | Compiled revision-independent scoped identity, unambiguous encoding, manifest/root/file/hash binding mismatch oracles and observed red/green; no I/O or UI claim | Single GPT-5.5 writer `f4db534a-6b1c-4a34-9f1b-24cde7be2b6f` in `atlas/e0-candidate` at `4d396411`; subsequent inventory/reader/native work requires the next exact assignment |
 | SH-INTEGRATION | Existing factory/menu/host/layout files retained by Claude/Shell | Stable E0-BUILD seam and accepted integration request | T2 | per current Claude plan | Set by owning conductor, not invented here | Registry/routing/layout/native-host path reaches the real new content; current SH2 behavior remains intact | Existing acknowledged Claude/Shell lane, its own worktree |
 | E0-PROOF | New agreed proof/tests/probe artifacts, not product source | Joined E0-BUILD + SH-INTEGRATION revision | T2 | 0 | 30 calls, one bounded evidence pass plus named repairs | Actual Architecture entry -> file -> member -> source -> Back with UIA/focus/theme/DPI/bounds/stale/unknown states; independent source/wire/store consistency proof | GPT-5.5 proof worker, separate pinned worktree; relevant independent specialist reviewers |
 
@@ -116,6 +117,10 @@ No guard may require removal of another lane's authorized behavior.
 now under the exact section-2 grant. The sequence below governs production integration and native
 acceptance; step 1 is not a predecessor of every independent authoring node. No existing SH3 file,
 project/package file, live data or shared store is touched by the admitted candidate.
+
+The Owner's `note-atlas-candidate-first-unit` also removes the complete E0 design document as a
+predecessor of its already specified deterministic identity/binding unit. The remaining detailed
+design is input to subsequent work, not an excuse to idle this source writer.
 
 | # | action | cost | why now |
 |---|---|---|---|

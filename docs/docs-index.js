@@ -2611,6 +2611,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "d86ab0f8e2d101aad3312250b8c93808e5a3ce20cc900b4a061577280310070d"
     },
     {
+      "id": "api-aide-core-understanding",
+      "path": "docs/api/AiDe.Core.Understanding.md",
+      "title": "API: AiDe.Core.Understanding",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Understanding: 3 types, 23 members, 8% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1223591692f9b2337c08e8efa5345e46f0fecbf4f91e8ec45621dbecaa45ff99"
+    },
+    {
       "id": "api-aide-core-upgrade",
       "path": "docs/api/AiDe.Core.Upgrade.md",
       "title": "API: AiDe.Core.Upgrade",
@@ -4572,6 +4597,40 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "7ea5df0924025831925b7064e9769adbb912fc28e69dc6a09ed91540e8cfdd8a"
+    },
+    {
+      "id": "note-atlas-candidate-first-unit",
+      "path": "docs/notes/atlas-owner/candidate-first-unit.md",
+      "title": "Atlas Owner - conservative indexed reader and first identity unit",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Selects manifest-bound indexed reads with explicit unsupported input classes, and admits one four-file deterministic identity/binding unit independently of the whole E0 design receipt.",
+      "tags": [
+        "code-atlas",
+        "owner",
+        "identity",
+        "source-binding"
+      ],
+      "links": [
+        {
+          "to": "note-atlas-isolated-authoring",
+          "rel": "refines"
+        },
+        {
+          "to": "proof-code-atlas-source-safety-join",
+          "rel": "depends-on"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "da0416f805206fe97471b2f348bf5c27b90d1dd0394893d6546b662b253c7d28"
     },
     {
       "id": "note-atlas-isolated-authoring",
@@ -8012,7 +8071,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "79e3418ead1b0f294f59e69316fbc8eb8ffd2a4a0ce320a88510e843feb7e54a"
+      "sourceSha256": "44a0d5bb2cf6761fd86c1dcab982ad163d966660fc5c4f60e130bc58d47616dc"
     },
     {
       "id": "coordination-code-atlas-resume",
@@ -11206,7 +11265,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e4bf7aba52facc3e25218426ad4988fb880bfcbceae2febbe5ffc4d204d7bf97"
+      "sourceSha256": "9f6c49804c46e3c7198c5e88615a17a4d352f8c16d23ed5385d0731b9c603cd8"
     },
     {
       "id": "session-profiles",
@@ -15337,6 +15396,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "70be47bec3d22b82a75fcceb9b51b67671c6eb0175f97f7d178ca72999c2ab77"
     },
     {
+      "id": "proof-code-atlas-identity-unit",
+      "path": "docs/proof/code-atlas-identity-unit.md",
+      "title": "Code Atlas first Core unit - identity and source binding",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "atlas-e0-identity-unit",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Four new Core/test files implement immutable scoped identity and six-component source-binding comparison. Independent candidate and joined runs executed 38 tests. Records semantic counterexamples, targeted Data clearance and budget failures without claiming native E0 delivery.",
+      "tags": [
+        "code-atlas",
+        "proof-pack",
+        "identity",
+        "source-binding"
+      ],
+      "links": [
+        {
+          "to": "note-atlas-candidate-first-unit",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-code-atlas-source-safety-join",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3ed0c4e060c9c69047f02130189c7f3ac643b38e1ef0bd4cd64ce9844770d844"
+    },
+    {
       "id": "proof-code-atlas-source-safety",
       "path": "docs/proof/code-atlas-source-safety.md",
       "title": "Proof Pack — Code Atlas opened-object source safety probe",
@@ -17986,5 +18079,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "7ea3bda0509c93bee6085b129b3e766fc20222a10ebeb9d14c801268bf75625e"
+  "graphSha256": "5ec55c743ed9b791fd2ef0d19389c1b18f6546c4a042c9b7fecc5395103e2449"
 };

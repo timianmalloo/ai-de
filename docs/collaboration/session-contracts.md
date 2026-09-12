@@ -89,11 +89,14 @@ ownership rows, normative Addendum E acceptance, or permission to integrate into
 | Writer / branch | Exact new authored files | Limit |
 |---|---|---|
 | `atlas-e0-source-safety-gpt55` / `atlas/e0-source-safety` | `spikes/code-atlas-source-reader/CodeAtlas.SourceReaderProbe.csproj`; `spikes/code-atlas-source-reader/Program.cs`; `spikes/code-atlas-source-reader/OpenedSourceReader.cs`; `spikes/code-atlas-source-reader/SourceReaderProbeCases.cs`; `docs/proof/code-atlas-source-safety.md` | One bounded synthetic Windows safety batch, 30 calls; no user data or existing product/project edits. |
+| `atlas-e0-candidate-gpt55` / `atlas/e0-candidate` | `src/AiDe.Core/Understanding/AtlasIdentity.cs`; `src/AiDe.Core/Understanding/AtlasSourceBinding.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasIdentityTests.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasSourceBindingTests.cs` | Within the unchanged 60-call candidate ceiling: 25 initial, 12 Owner-admitted correction, then 6 Conductor-allocated boundary-close calls for the executed trailing-LF defect and constructor/partial oracles. Conservative allocated ceiling 43; 17 reserved. Same four files, no reader, persistence, IPC or UI. |
 
 The first source writer's worktree is `C:\Projects\ai-de-atlas-e0-source-safety`, created from
 executor-observed main `4d396411`. A separate candidate tree
-`C:\Projects\ai-de-atlas-e0-candidate`, branch `atlas/e0-candidate`, is reserved; its exact new
-Core/App/test file list must be recorded here before its one writer is dispatched.
+`C:\Projects\ai-de-atlas-e0-candidate`, branch `atlas/e0-candidate`, has the exact first-unit file
+grant above under the Owner's turn-9 ruling (`note-atlas-candidate-first-unit`). All four files
+were observed absent in both that tree and current main before dispatch. Additional Core/App/test
+files still require their own exact record here; this first-unit grant does not implicitly admit them.
 
 The Owner permits that candidate's new files only under `Core/Understanding`, its dedicated
 Core tests, `App/Workbench/Understanding`, and its dedicated App tests. Detached presentation

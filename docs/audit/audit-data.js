@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T19:47:52Z",
+  "generated": "2026-09-12T20:55:35Z",
   "audit": [
     {
       "actor": null,
@@ -14568,6 +14568,30 @@ window.AUDIT_DATA = {
       "fan_out": 4,
       "started_at": "2026-09-12T19:23:33Z",
       "duration_seconds": 1458.0
+    },
+    {
+      "id": "al-01M2BPEX3VKJSPDKX3564J5J6K",
+      "shortname": "atlas-identity-unit-reviewed-join",
+      "datetime": "2026-09-12T20:55:34Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "Fleet mode is permitted, each sub-agent must have its own worktree, and the conductor still pulls the strings.",
+      "summary": "Conductor joined only the four granted Core/test files through a5257f0c and independentlyobserved38executed38passed in candidate and joined trees. First joined no-restore returned0withoutTRX; missingassets observed, local-source restore followed, thenactualTRXread. DataBLOCK clearedafteractualLFcounterexample correction, staticconstructor andpartialcases. Addedpartialimplementation-presence stability probe. Semantic/mutation history split reportedfromobserved; retainedpartialredTRX read. Currentmainca7443e8; SH3head9b16a394 actuallyancestorofmain andtreeclean; primarydirtyonlycoordlogs. Requestsremainopen,noackfabricated. NextOwnerhorizonrequested with IDcodec reconciliation and freshsharedboundary, notprogrammeclosure.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-identity-unit.md",
+        "docs/notes/atlas-owner/candidate-first-unit.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Implement the user-requested Code Atlas through isolated worker trees under Conductor-controlled scopes, gates and joins.",
+      "done_when": "The admitted first pure identity/binding unit is integrated into the conductor branch with observed evidence; full native Code Atlas remains subsequent work.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-12T19:47:56Z",
+      "duration_seconds": 4058.0
     }
   ],
   "changes": [
@@ -18448,6 +18472,30 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "cd2e6e9e7defc8415159f6e861a5aa39843c13be",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2BPEX0YHSGSCEN593JWP68Q",
+      "datetime": "2026-09-12T20:55:34Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "decision",
+      "skill": "implement",
+      "title": "Atlas first Core unit and bounded correctness decisions",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Owner selected conservative manifest-bound source input and admitted four-file pure identity unit; later twelve-call correction and Conductor boundary-close kept the same files/overall60call candidate ceiling. Actual code is joined at a5257f0c with independent38-test evidence, Data clearance and explicit reported46/60 budget overrun. Whole native E0 remains unbuilt.",
+      "rationale": "Separate logical identity from source observations, preserve opaque tokens, validate exact hashes and supported compiler symbols; execute semantic counterexamples rather than treating passing tests or source review as proof of untested boundaries.",
+      "artifacts": [
+        "docs/notes/atlas-owner/candidate-first-unit.md",
+        "docs/proof/code-atlas-identity-unit.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "a5257f0cc4b352f4ea0ad9784b81a120201a66a3",
         "branch": "conductor/code-atlas",
         "pushed": null,
         "commits": []
