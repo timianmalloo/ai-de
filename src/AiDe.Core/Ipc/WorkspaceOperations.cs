@@ -55,7 +55,8 @@ public sealed record GraphRequest(
     IReadOnlyList<string>? Kinds = null,
     string? ScopeId = null,
     bool IncludeExternal = true,
-    string? GroupId = null);
+    string? GroupId = null,
+    bool ExcludeKnowledge = false);
 
 /// <inheritdoc cref="DescribeRequest"/>
 public sealed record KnowledgeRequest(string? Term, string? Type, int MaxResults);
@@ -197,7 +198,8 @@ public static class WorkspaceOperations
         endpoint.Register(Graph, (request, _) =>
             Refusable(() => Handle<GraphRequest>(request, body => projections.Graph(
                 new GraphQuery(
-                    body.MaxNodes, body.Kinds, body.ScopeId, body.IncludeExternal, body.GroupId)))));
+                    body.MaxNodes, body.Kinds, body.ScopeId, body.IncludeExternal, body.GroupId,
+                    ExcludeKnowledge: body.ExcludeKnowledge)))));
 
         // Reads a FILE, unlike every other operation here — which is exactly why it is on this side
         // of the boundary. The projection confines the path to the workspace root; a client that did

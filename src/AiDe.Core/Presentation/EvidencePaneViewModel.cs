@@ -256,6 +256,33 @@ public sealed class EvidencePaneViewModel(IWorkspaceQueries queries)
         LiveAnnouncement = $"Selected {describe.Node.DisplayLabel}. {sections.Count} provenance sections.";
     }
 
-    /// <summary>Empty-pane copy, shown before anything is selected.</summary>
-    public static string EmptySelectionMessage => "Select an item to see its provenance.";
+    /// <summary>Empty-pane copy, shown before anything is selected — spec §C4, verbatim (US-C6).</summary>
+    public static string EmptySelectionMessage => "Select an evidence row to see its provenance.";
+}
+
+/// <summary>
+/// The seam between the Evidence master and Provenance detail panes (Ruling 61; US-C6): a shared,
+/// UI-framework-agnostic channel so selecting a row in one pane is exactly what changes the other,
+/// with no second definition of "what is selected". One instance per host, held by whatever builds
+/// both panes — testable without a docking host (US-C6's positive oracle).
+/// </summary>
+public sealed class EvidenceSelectionSource
+{
+    /// <summary>The currently selected node, or null when nothing is selected.</summary>
+    public string? SelectedNodeId { get; private set; }
+
+    /// <summary>Raised whenever the selection changes, including to null (nothing selected).</summary>
+    public event Action<string?>? Changed;
+
+    /// <summary>Selects <paramref name="nodeId"/> (or clears the selection when null). A no-op re-selection announces nothing new.</summary>
+    public void Select(string? nodeId)
+    {
+        if (string.Equals(SelectedNodeId, nodeId, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        SelectedNodeId = nodeId;
+        Changed?.Invoke(SelectedNodeId);
+    }
 }

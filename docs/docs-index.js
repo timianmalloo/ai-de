@@ -2242,7 +2242,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation: 32 types, 84 members, 65% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation: 33 types, 89 members, 66% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2255,7 +2255,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "db1487d42d6075b42a3bf50f883a3a39916ee2dce69362e4e9fde08658c94ed8"
+      "sourceSha256": "d7baf782f688d7ff2cf6960f762036ca47d2ebf58de343f447a0c737f1b3e91e"
     },
     {
       "id": "api-aide-core-presentation-composer",
@@ -2330,7 +2330,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "931922b7daf24b6592406a843d77a6399488e3959ad3ae2ed1c3d24637223c11"
+      "sourceSha256": "b3bd7d072b23497d38f1a5fb961a00ba10c2879cc5b8d5b8af7af70ac88454e5"
     },
     {
       "id": "api-aide-core-sessions",
@@ -2467,7 +2467,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Workbench: 78 types, 147 members, 58% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Workbench: 78 types, 148 members, 58% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2480,7 +2480,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0bd495e9658e911aaa7ad956b7392e9354ae38d6503e6c48fd34c8465dfaa3e9"
+      "sourceSha256": "8fb20ea8b0e1bf8870e1b0695b41c85bbae6f3ae5214bb49bf1c94f58dc57742"
     },
     {
       "id": "api-aide-mcp",
@@ -7781,7 +7781,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6e048b33d7429ddb3937d43d8e6b6d42f0765362006b7518f1e7c8a0edbc2320"
+      "sourceSha256": "00846a6063304e466b672a30840bb41a6c46e2dc55f50f95a23b621fe4b8f250"
     },
     {
       "id": "design-session-profiler",
@@ -14728,6 +14728,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "6c5c67e487b6bb2c9497ce5e10e0191a7c68dc102d699ffb26af00ece93516c1"
     },
     {
+      "id": "proof-perspective-content",
+      "path": "docs/proof/perspective-content.md",
+      "title": "Proof Pack: SH-3 — perspective content",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Coding's and Architecture's per-perspective default layouts (§B4; Rulings 54/59/60/61), the Evidence master/Provenance detail selection channel (US-C6), the kind-filtered second canvas and the class-diagram scaling fix (Ruling 53), each proven red-before-green with the numbers recorded.",
+      "tags": [
+        "proof-pack",
+        "addendum-c",
+        "shell-lane",
+        "sh-3"
+      ],
+      "links": [
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1c4a3c3d9a322a95f2fafb93336830fdd0306e810fbbca8e10c602e5a082391e"
+    },
+    {
       "id": "proof-perspective-registry",
       "path": "docs/proof/perspective-registry.md",
       "title": "Proof Pack — The Perspective registry, the allow-list column and the derived menu, palette and routing (SH-1, ADR-0030)",
@@ -17030,5 +17064,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "87ac2b64ebdc1aca0b100638f5fce0abe2f9f3107d056e891df5a9e29af17b2a"
+  "graphSha256": "3f94c61298cab8b2a8b03cdcc9701516bf0303d65a7e3fda97b3915d51a4f5a8"
 };

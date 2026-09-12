@@ -150,7 +150,10 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
     private async Task<CanvasGraph> WholeGraphAsync(CancellationToken cancellationToken)
     {
         var graph = await queries!
-            .GraphAsync(new GraphQuery(OverviewNodeCap, IncludeExternal: false), cancellationToken)
+            .GraphAsync(
+                new GraphQuery(
+                    OverviewNodeCap, KindFilter, IncludeExternal: false, ExcludeKnowledge: ExcludeKnowledge),
+                cancellationToken)
             .ConfigureAwait(false);
 
         if (graph.Nodes.Count == 0)
@@ -223,6 +226,7 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
 
             var edges = new List<CanvasEdge>();
             var filtered = 0;
+            var excludedKnowledge = 0;
             var seen = new HashSet<string>(StringComparer.Ordinal) { describe.Node.NodeId };
             var disclosures = new List<string>();
 
@@ -240,6 +244,17 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
                 var other = string.Equals(edge.Subject, describe.Node.NodeId, StringComparison.Ordinal)
                     ? edge.Object
                     : edge.Subject;
+
+                // The same filter the overview applies BEFORE the cap (Ruling 53) has to apply here
+                // too, or drilling into a node from Architecture's kind-filtered canvas would draw
+                // its knowledge neighbours right back in — the exact "leaky specification" a filter
+                // that only guards the entry point produces. The ROOT itself is never excluded here:
+                // it was explicitly requested (the same rule ContextFilter already follows).
+                if (ExcludeKnowledge && describe.KnowledgeIds?.Contains(other) == true)
+                {
+                    excludedKnowledge++;
+                    continue;
+                }
 
                 var otherContext = ContextOf(other);
                 if (ContextFilter is not null &&
@@ -279,11 +294,15 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
             // and so is the filter itself.
             var message = edges.Count == 0
                 ? ContextFilter is null
-                    ? $"{describe.Node.DisplayLabel} has no recorded relationships."
+                    ? excludedKnowledge > 0
+                        ? $"{describe.Node.DisplayLabel} has no neighbours outside the knowledge corpus."
+                        : $"{describe.Node.DisplayLabel} has no recorded relationships."
                     : $"{describe.Node.DisplayLabel} has no neighbours in {ContextFilter}."
                 : ContextFilter is not null
                     ? $"Showing only {ContextFilter}. {filtered} neighbour(s) in other contexts hidden."
-                    : null;
+                    : excludedKnowledge > 0
+                        ? $"{excludedKnowledge} knowledge neighbour(s) hidden."
+                        : null;
 
             return new CanvasGraph(
                 nodes, edges, describe.Node.NodeId, describe.Bounds.OmittedEdges,
@@ -333,7 +352,8 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
             var overview = await queries
                 .OverviewAsync(
                     new OverviewQuery(depth, Query: new GraphQuery(
-                        GraphProjection.DefaultMaxNodes, IncludeExternal: false)),
+                        GraphProjection.DefaultMaxNodes, KindFilter, IncludeExternal: false,
+                        ExcludeKnowledge: ExcludeKnowledge)),
                     cancellationToken)
                 .ConfigureAwait(false);
 
@@ -408,7 +428,9 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
         {
             var graph = await queries
                 .GraphAsync(
-                    new GraphQuery(OverviewNodeCap, IncludeExternal: false, GroupId: groupId),
+                    new GraphQuery(
+                        OverviewNodeCap, KindFilter, IncludeExternal: false, GroupId: groupId,
+                        ExcludeKnowledge: ExcludeKnowledge),
                     cancellationToken)
                 .ConfigureAwait(false);
 
@@ -570,6 +592,25 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
     /// looking at is one nobody trusts twice.
     /// </remarks>
     public string? ContextFilter { get; set; }
+
+    /// <summary>
+    /// When true, every <see cref="GraphQuery"/> this view model issues excludes knowledge nodes
+    /// (Ruling 53; US-C8): the Architecture canvas's kind-filtered second instance — code, data and
+    /// architecture/infrastructure only — expressed as a PARAMETER on the same neighbourhood query
+    /// every other view uses, never a second graph store. False (the default) draws every kind, as
+    /// the Explorer's own canvas instance does.
+    /// </summary>
+    public bool ExcludeKnowledge { get; set; }
+
+    /// <summary>
+    /// When set, every <see cref="GraphQuery"/> this view model issues keeps only these
+    /// <c>has_type</c> values (Ruling 54's class-diagram scaling fix, patterns-expert review): the
+    /// SAME allow-list the diagram itself draws (<c>ClassHierarchyModel.TypeKinds</c>, set by the
+    /// App layer — Core stays kind-blind, per <see cref="GraphQuery.Kinds"/>'s own contract), so the
+    /// node cap's whole budget goes to types instead of splitting it with tables, infrastructure
+    /// resources and knowledge alike.
+    /// </summary>
+    public IReadOnlyList<string>? KindFilter { get; set; }
 
     private string? ContextOf(string nodeId) => ContextLookup(nodeId);
 

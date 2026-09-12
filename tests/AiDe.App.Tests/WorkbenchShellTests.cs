@@ -50,7 +50,7 @@ public sealed class WorkbenchShellTests
             shell.Architecture.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.Title).ToList()));
 
         Assert.Contains("Terminal — pwsh", coding);
-        Assert.Contains("Sessions", coding);
+        Assert.Contains("Terminal sessions", coding);   // Ruling 62: the Coding default's caption
         Assert.DoesNotContain("Graph", coding);
 
         Assert.Contains("Graph", architecture);

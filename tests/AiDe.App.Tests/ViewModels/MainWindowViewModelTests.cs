@@ -107,7 +107,8 @@ public sealed class MainWindowViewModelTests : IDisposable
         viewModel.SelectedRow = null;
         await WaitForProvenance(viewModel);
 
-        Assert.Contains("Select an item", viewModel.ProvenanceText, StringComparison.Ordinal);
+        // §C4, verbatim (US-C6).
+        Assert.Contains("Select an evidence row", viewModel.ProvenanceText, StringComparison.Ordinal);
     }
 
     // A stale/failed extraction must reach the status strip, not stay buried in a log.
