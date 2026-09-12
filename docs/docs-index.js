@@ -9005,6 +9005,172 @@ window.DOCS_INDEX = {
       "sourceSha256": "3d1fdfc212a742b174ccff69c77d496535dd63d7e005df6bf4ea2ab61f255a9c"
     },
     {
+      "id": "note-atlas-delivery-horizon",
+      "path": "docs/notes/atlas-owner/delivery-horizon.md",
+      "title": "Code Atlas whole-architecture roadmap and walking-skeleton horizon",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "atlas-framing",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Define the complete architecture, but admit the first implementation horizon only through an integrated deterministic C# file/type/member/source journey. Later stages require separate admission.",
+      "tags": [
+        "code-atlas",
+        "owner-ruling",
+        "delivery"
+      ],
+      "links": [
+        {
+          "to": "note-atlas-next-addendum",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7d8c064a429130778e0573b3bcef70ce8868382332f0efda8c2d353575d05815"
+    },
+    {
+      "id": "note-atlas-development-models",
+      "path": "docs/notes/atlas-owner/development-models.md",
+      "title": "Development fleet does not amend product conductor hosting",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "atlas-framing",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Astra and GPT-5.5 are the user-selected engineering fleet. That choice does not replace the product's headless-Claude conductor or subscription-first access contract.",
+      "tags": [
+        "code-atlas",
+        "owner-ruling",
+        "models"
+      ],
+      "links": [
+        {
+          "to": "note-code-atlas-proposal-provenance",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "314ee1a6f8e45c1a1237df3ab0abfdbcf40c77e299198a4f9ed4c2ac20b38c07"
+    },
+    {
+      "id": "note-atlas-identifier-discipline",
+      "path": "docs/notes/atlas-owner/identifier-discipline.md",
+      "title": "Atlas decision titles precede collision-checked identifier allocation",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "atlas-framing",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Record named Owner decisions now; allocate any numeric ruling, ADR or defect identifier only through the repository's current allocator/checks. No silent sequence guessing.",
+      "tags": [
+        "code-atlas",
+        "owner-ruling",
+        "identifiers"
+      ],
+      "links": [
+        {
+          "to": "note-atlas-next-addendum",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "41b990ee3fe43a0f4d2b12f04b5fcf50cb878c9896cf3a3c177c6f82257aa915"
+    },
+    {
+      "id": "note-atlas-lane-admission",
+      "path": "docs/notes/atlas-owner/lane-admission.md",
+      "title": "Atlas lane carve-outs and acknowledgment-gated seam integration",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "atlas-framing",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "New Atlas namespaces are proposed rather than presumed unowned. Code dispatch waits for registered Core responsibility and Claude seam acknowledgment; uncontested drafting may continue.",
+      "tags": [
+        "code-atlas",
+        "owner-ruling",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "note-atlas-delivery-horizon",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-code-atlas-proposal-provenance",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6f4de8c4ff1ec20882abb41cb420215eb4df8cd6d964e3212b5333037faf5596"
+    },
+    {
+      "id": "note-atlas-next-addendum",
+      "path": "docs/notes/atlas-owner/next-addendum.md",
+      "title": "Code Atlas next-addendum scope and conditional E designation",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "atlas-framing",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "The Astra Owner admits the whole Code Atlas vision to specification as candidate Addendum E, conditional on registration. The existing Architecture perspective and current C/D horizon remain intact.",
+      "tags": [
+        "code-atlas",
+        "owner-ruling",
+        "scope"
+      ],
+      "links": [
+        {
+          "to": "note-code-atlas-proposal-provenance",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3f9bebadf4611c2a22fcf8cc814181af32bb5c6c22a4d46fe3de13c43b2fa3f7"
+    },
+    {
+      "id": "note-atlas-reference-custody",
+      "path": "docs/notes/atlas-owner/reference-custody.md",
+      "title": "Clean-main Atlas delivery with private proposal kept local",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "atlas-framing",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Delivery starts from confirmed main rather than importing the private proposal history. Only safe requirements summaries and independently safe test material enter delivery artifacts.",
+      "tags": [
+        "code-atlas",
+        "owner-ruling",
+        "privacy"
+      ],
+      "links": [
+        {
+          "to": "note-code-atlas-proposal-provenance",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "30e2562df50253e6d9b7a8dddea3db911e75af96ce741085978c120125e63dc5"
+    },
+    {
       "id": "note-code-atlas-proposal-provenance",
       "path": "docs/notes/code-atlas-proposal-provenance.md",
       "title": "Code Atlas delivery inputs and private-reference boundary",
@@ -9274,6 +9440,41 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "1e69075fe508c573e0487e1a1ae1973dbedc4331d09eecd65d4981e8cac3a590"
+    },
+    {
+      "id": "plan-code-atlas-fleet",
+      "path": "docs/plans/code-atlas-fleet.md",
+      "title": "Code Atlas - Owner-led fleet execution checkpoints",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "specification and architecture",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Bounds the user-requested Astra Owner/Conductor and GPT execution fleet. Specification and contract grounding are isolated now; implementation is admitted only after the model, architecture, vetoes and cross-Claude ownership/integration seams are established.",
+      "tags": [
+        "code-atlas",
+        "fleet",
+        "gpt",
+        "coordination",
+        "worktrees"
+      ],
+      "links": [
+        {
+          "to": "note-code-atlas-proposal-provenance",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7578bd530764f23b018e1dbe1996eabe9c1b5f7400715133409f4664080ce072"
     },
     {
       "id": "plan-conductor-front-door",
@@ -16677,5 +16878,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "578e563a27f711b2b0b074137b245f1d2d171580414ac9132025d0eacc8c2e81"
+  "graphSha256": "bc2ea681f60ad4bb63a037b0f0f7640e579251d3b4b534c0911ea53d9c276fcc"
 };

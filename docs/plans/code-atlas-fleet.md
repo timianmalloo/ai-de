@@ -1,7 +1,7 @@
 ---
 id: plan-code-atlas-fleet
 title: "Code Atlas - Owner-led fleet execution checkpoints"
-type: plan
+type: doc
 status: draft
 owner: "@timianmalloo"
 phase: "specification and architecture"
@@ -18,6 +18,10 @@ summary: >-
 ---
 
 # Code Atlas fleet: checkpoint plan
+
+Graph metadata uses the installed registry's `doc` type: its validator rejects `plan`, despite
+the reusable planning template suggesting it. The post-write inventory caught that mismatch.
+The content remains a plan; no unsupported metadata tag is silently accepted.
 
 ## Goal and termination
 
