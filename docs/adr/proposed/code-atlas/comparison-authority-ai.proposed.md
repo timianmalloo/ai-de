@@ -43,7 +43,9 @@ The requested development GPT fleet is not authorization to change product runti
 
 Persist one immutable assessment for one input vector:
 left/right source manifests, clause/document versions and status, applicable scope, accepted
-decision references, rule/version, origin and coverage basis. Changed/superseded inputs create a
+decision references **plus minimal relevant unaccepted/disputed evidence**, rule/version, origin
+and coverage basis. Accepted/effective records govern; other selected records explain uncertainty,
+retain their status and never acquire authority by selection. Changed/superseded inputs create a
 new assessment or explicit stale/lineage-qualified display, never mutate a past assessment.
 
 Mapping state is exactly `aligned|planned|contrary|unknown|deferred|not-assessed`.
@@ -117,6 +119,22 @@ silently keeping the bodies or claiming replay from hashes.
 
 Retention/deletion basis for model inputs/outputs, rejected text, decisions and evidence must be
 accepted before E-4. Provider terms unknown or source outside purpose ⇒ no dispatch.
+
+## Per-capability privacy admission
+
+Architecture §9.2 is the authoritative admission-field table, not a second policy to duplicate here.
+E-0 local reading, E-3 decision-history processing, E-4 model processing and export each require
+their own purpose/basis and authorization. E-3 admission cannot wait until the later E-4 gate.
+The decision selector records allowed record types, scope/history/count bounds, per-record relevance
+reason, PII fields and excluded history. Relevant unaccepted, rejected, disputed or superseded records
+may be retained minimally to explain uncertainty; they remain evidence **about** decisions, not authority.
+
+For each data class approve purpose, retention event, actual deletion/retirement mechanism, propagation
+to derived records/caches/logs/backups and rights handling. Values and mechanisms remain future admission
+fields; no arbitrary period, invented legal basis or silent fact rewrite is selected here.
+Exports additionally require recipient/audience, purpose, path/identifier/hash and denominator
+redaction, permitted provenance and limitations. Redact before serialization and never imply completeness
+after withholding metadata. Processing permission does not imply publication permission.
 
 ## Admission and falsifiers
 

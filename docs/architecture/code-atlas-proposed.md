@@ -561,7 +561,8 @@ does not create a grant. A Bicep resource is not automatically a C4 software con
 Absent services stay absent; unresolved identities remain symbolic rather than guessed.
 
 **E-3:** input vector = left/right source manifests, clause/document versions and statuses,
-applicable scope, accepted decision lineage, assessment-rule version and coverage basis.
+applicable scope, selected decision evidence (including relevant unaccepted/disputed records),
+applicable accepted decision lineage, assessment-rule version and coverage basis.
 States remain `aligned|planned|contrary|unknown|deferred|not-assessed`, never compliance percentages.
 Direction-correct impact follows the declared predicate orientation with an explicit
 `dependencies|dependents` direction; reversing the comparison reverses additions/removals, not
@@ -634,6 +635,48 @@ Development Astra/GPT choice does not amend the product headless-Claude/subscrip
 The architecture selects **no new SDK, provider or transport**. E-4 may adapt an accepted runtime
 boundary only after its separate contract is established; C/D compilation's executed contract, if
 available, is not evidence for this new interpretation contract.
+
+### 9.2 Privacy admission fields — separate capability purposes
+
+Conductor reports **Privacy content PASS with admission fields**. The fields below must receive
+explicit approval at the capability's design/admission gate; this draft invents no legal basis,
+retention period, recipient permission or deletion implementation. Authorization for local reading
+does not authorize durable decision-history collection, model egress or publication.
+
+| Capability / data class | Processing basis and minimization fields required before admission |
+|---|---|
+| **E-0 local inventory/source** | Purpose, requesting principal, authorized root/policy, allowed metadata/body categories, local-processing basis, policy-hidden paths/counts, transient-buffer handling and retained identity/hash/span fields. No model or export permission inherited. |
+| **E-3 correspondence/decision records** | Purpose and basis for decision-history processing; approved `decision_selector`, allowed `record_types`, source scopes, bounded history window/count, per-record `relevance_reason`, PII field inventory, minimization/redaction and explicit `excluded_history`. No wholesale session/audit ingestion justified merely by availability. |
+| **E-4 model context/results** | Separate model-processing basis and confirmed purpose; exact selected context, destination/account/model, required residency/retention/training terms, PII/redaction policy, budget, permitted result/receipt retention and rights handling. Unknown required terms block dispatch. |
+| **Export/publication** | Recipient/audience, purpose, separate publication authorization, allowed fields/formats, path/identifier/hash and denominator redaction, source restrictions, provenance/coverage disclosures and export-record retention. Viewing or model-processing permission is insufficient. |
+
+The E-3 selector chooses **minimal relevant evidence**, not only accepted records. Relevant
+unaccepted, rejected, disputed or superseded records can explain uncertainty and must retain their
+status, relevance reason and provenance without acquiring authority. The accepted/effective subset
+alone can govern an assessment. Scope/time/count constraints and excluded-history reasons remain
+explicit; missing/excluded history is not “no decision.” Carrier excerpts are permitted only when
+necessary and authorized, not because the record can be fetched.
+
+| Retained or transient class | Required lifecycle contract — purpose, trigger, mechanism and propagation |
+|---|---|
+| Inventory/declaration/hash/span metadata | Approved local purpose and retention event; authorized deletion/retirement mechanism; effect on manifests, comparison/history availability, caches, backups and diagnostics; access/correction/deletion request handling. |
+| Source buffers and any separately authorized body copy | Read-purpose lifetime and completion/cancel/error cleanup; approved disposal mechanism; prohibition on accidental logs/cache spill; handling of any separately approved retained copy and rights request. No historical-body promise from a hash. |
+| Decision evidence, assessments and authority/review records | Per-class purpose, retention event and approved deletion/withdrawal/rectification mechanism; lineage and minimum necessary audit basis; propagation to derived assessments, exports where controllable, logs/caches/backups and rights handling. |
+| Model context/results/receipts and quarantine | Separate per-class purpose, retention event and local/provider deletion route; provider obligations/limitations, redaction, derived annotations, diagnostics and access/correction/deletion handling. Rejected content is not retained by default. |
+| Exports and operational/debug telemetry | Approved recipient/debug purpose, retention event and disposal route; recipient-controlled copy limitations, aggregate-v-identifiable fields, downstream/cache/log/backup propagation and rights handling. |
+
+Each lifecycle decision names its accountable policy owner and approval/version. A tombstone or
+access withdrawal is not a claim of byte deletion. Append-only evidence rules remain intact:
+any real purge/retirement mechanism requires the existing authorized maintenance path or a separate
+admitted design, not in-place fact rewriting disguised as privacy compliance. Where rights and
+retention obligations conflict, record the decision/basis and limitations; do not fabricate deletion.
+No arbitrary retention periods or automatic evidence purge to meet a storage budget.
+
+Export validates recipient/purpose again at the trusted gesture broker. Redact forbidden paths,
+identifiers and counts **before serialization**; use `withheld/unknown` denominators where needed
+so omitted-count arithmetic cannot reveal hidden data. Retain permitted source-version/provenance,
+origin/authority/status and limitation disclosures; redaction must not leave a false completeness
+claim. The export record names the applied policy and redactions, not the redacted private content.
 
 ## 10. Concurrency, failure and trust controls
 
@@ -809,7 +852,7 @@ not admitted when E-0 exits. No static private fixture or screenshot closes a na
 
 | Phase | User capability and dependencies | Real vs mocked seams at exit | End-to-end test and human demo | Admission |
 |---|---|---|---|---|
-| **E-0 Physical Atlas** | Authorized file tree → scoped type/member → exact source → Back; inventory independent of semantics; manifest/content states. Requires spec/architecture content gates, native source safety spike and Core/Shell acknowledgment. | Real enumeration, Roslyn, SQLite, query serialization and native host. Fault injection may simulate read failures/races; product data is a selectable authorized workspace, not injected fixture JSON. Use actual daemon route if that is deployed composition. | `E0-JOURNEY`: unsupported/generated/vendor/migration + overload/partial + two projects + edit-after-index + A-new/B-failed. Verify same manifest/IDs/bounds through store→wire→tree/outline/source/inspector/history. Human keyboard/pointer demo plus UIA/theme/DPI and measured latency. | Separate Owner design/dispatch and final horizon exit; current drafting exception is insufficient. |
+| **E-0 Physical Atlas** | Authorized file tree → scoped type/member → **exact hash-bound available source OR typed live-changed/unavailable; no stale old-body substitution** → Back. Inventory independent of semantics; manifest/content states. Requires spec/architecture content gates, native source safety spike and Core/Shell acknowledgment. | Real enumeration, Roslyn, SQLite, query serialization and native host. Fault injection may simulate read failures/races; product data is a selectable authorized workspace, not injected fixture JSON. Use actual daemon route if that is deployed composition. | `E0-JOURNEY`: unsupported/generated/vendor/migration + overload/partial + two projects + edit-after-index + A-new/B-failed. Verify same manifest/IDs/bounds through store→wire→tree/outline/source/inspector/history; matching bytes enable the anchor, unavailable/changed bytes disable old anchors while Back retains selection/manifest. Human keyboard/pointer demo plus UIA/theme/DPI and measured latency. | Separate Owner design/dispatch and final horizon exit; current drafting exception is insufficient. |
 | **E-1 Static views** | Visual overview → component/concept → concrete UML/member → bounded sequence/activity/data flow → source/return. Requires E-0 identity/source foundation and semantic/diagram contract spikes where unfamiliar. | Real supported extraction, query and renderer; unknown dispatch/runtime deliberately unresolved. Safe synthetic cases supplement real-workspace journey. | `E1-BEHAVIOR`: repeated calls, overload targets, recursion, branches/error/cancel/async ambiguity, truncation and accessible alternative agreeing with diagram. Human visual-first drill-down, no runtime-order claim. | Separate Owner admission; UML/modeling, graph UX, native/a11y and Test gates. |
 | **E-2 Data/Azure** | Domain/ER/layer/component + named Azure declarations with aliases and distinct relationship types. Requires E-1 presentation and source-bound data/infra producer contracts. | Real schema/source/infra input; no mocked deployed Azure inventory presented as observation, no cloud credentials required by declaration-only mode. | `E2-DATA-RESOURCE`: keys/cardinalities/M:N, alias identity, absent service, unknown resource, config-vs-grant-vs-runtime distinction. Human source/diagram inspection. | Separate Owner admission plus Data/UML/Security/domain contract gates. |
 | **E-3 Comparison** | Compare pinned implementation/intent, decisions, directional impact, guided tours and minimal provenance export. Requires stable historical records and authority/retention policy. | Real versions/clauses/authority references; synthetic conflicts exercise negatives. Missing history stays unavailable, no invented source recovery. | `E3-CORRESPONDENCE`: target vs current, unknown authority, direct human and accepted delegation, supersession/conflict, reverse comparison and impact direction, export denial. Human side-by-side review and approved export readback. | Separate Owner authority/retention decision plus Data/Privacy/Security/Test gates. |
