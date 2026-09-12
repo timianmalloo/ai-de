@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 77 · partially-controlled 59 · uncontrolled 17
+**Status counts:** controlled 78 · partially-controlled 59 · uncontrolled 17
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 6.
@@ -6581,7 +6581,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Status:** `partially-controlled` - reported and the branch removes the stale marker; the
   mechanism is unchanged.
 
-### DC-nnn — A security control written for one shape is applied to every shape, and refuses work it cannot protect
+### DC-154 — A security control written for one shape is applied to every shape, and refuses work it cannot protect
 
 - **Shape:** a control derived for a shape that carries a risk (a lane that can write needs a lease,
   so the seam monitor can discriminate) is applied by the gate to every instance of the broader type
@@ -6606,10 +6606,3 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   shape is returned, not applied* — is prose until the persona audit gains the check (a finding for
   the pack).
 - **Status:** `controlled` by the pair; the lens rule is `partially-controlled`.
-
-## 5. What this note does not decide
-
-The CLI home for `aide compile fold` / `aide session purge` (`/design-slice`'s call; the plan
-reserves `src/AiDe.App/Cli/**`); the exact write-tool set for the read-only lane (CV-0 reads it from
-the SDK's tool list); whether a read-only turn runs in the workspace or a throwaway tree (Ruling 73
-leaves it to the architecture; CV-0's constraint is that it cuts nothing the operator must clean up).

@@ -1,0 +1,7 @@
+{"agent": "copilot-code-atlas", "at": 1789221553.2737746, "kind": "session-start", "path": "-", "seq": 1, "session": "copilot-code-atlas-45bbc625", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-proposal-code-atlas"}
+{"agent": "copilot-code-atlas", "at": 1789221610.62881, "kind": "claim", "path": "docs/proposals/code-atlas", "seq": 2, "session": "copilot-code-atlas-45bbc625", "ttl": 7200.0, "wi": "proposal-code-atlas"}
+{"agent": "copilot-code-atlas", "at": 1789221610.6865742, "kind": "claim", "path": "docs/proof/code-atlas-prototype.md", "seq": 3, "session": "copilot-code-atlas-45bbc625", "ttl": 7200.0, "wi": "proposal-code-atlas"}
+{"agent": "copilot-code-atlas", "at": 1789223926.8207433, "kind": "release", "path": "docs/proposals/code-atlas", "seq": 4, "session": "copilot-code-atlas-45bbc625", "wi": "WI-0"}
+{"agent": "copilot-code-atlas", "at": 1789223926.8747394, "kind": "release", "path": "docs/proof/code-atlas-prototype.md", "seq": 5, "session": "copilot-code-atlas-45bbc625", "wi": "WI-0"}
+{"agent": "copilot-code-atlas", "at": 1789224880.5253794, "kind": "claim", "path": "docs/proposals/code-atlas", "seq": 6, "session": "copilot-code-atlas-45bbc625", "ttl": 7200.0, "wi": "proposal-terrace-v2"}
+{"agent": "copilot-code-atlas", "at": 1789224880.5814946, "kind": "claim", "path": "docs/proof/code-atlas-terrace.md", "seq": 7, "session": "copilot-code-atlas-45bbc625", "ttl": 7200.0, "wi": "proposal-terrace-v2"}

@@ -245,7 +245,7 @@ seams; `RunTriage.cs` is outside the lane); `RecordSessionNew` and `OpenReadOnly
 
 ## Defect class (for the conductor to allocate at the join — the register was leased by SH-1 for the whole of this run)
 
-**DC-nnn — A security control written for one shape is applied to every shape, and refuses work the
+**DC-154 — A security control written for one shape is applied to every shape, and refuses work the
 control cannot protect** (Ruling 73 (c)). Shape: a control derived for a shape with a risk (a lane
 that can write → a lease so the seam monitor can discriminate) is applied by the gate to every
 instance of the broader type (every send), the shape without the risk included; the refusal is
@@ -308,7 +308,7 @@ is prose until the persona audit gains the check (a finding for the pack).
 | App tests | `dotnet test tests/AiDe.App.Tests` | **695 / 695** passed (floor 639) |
 | `verify-test-run.py` (CHECK only; `--update` never run; `tools/expected-test-counts.json` not edited) | `python tools/verify-test-run.py` | `OK — 2973 tests executed across 2 project(s), every project met its baseline` |
 | `tools/verify-*.py` (bare) | every gate, in a loop | all `OK` except `verify-derived-views` / `verify-site-figures` (derived artefacts regenerated at close by `regenerate-derived.py`) and `verify-stranded-audit` (two *other* worktrees — `ai-de-conductor-addendum-c`, `ai-de-proposal-code-atlas` — hold uncommitted audit-log lines; a finding for the conductor, not this tree's) |
-| `verify-defect-register.py`, `verify-id-allocators.py` | after the `DC-nnn` append | `OK` (the placeholder is allocated by the conductor at the join) |
+| `verify-defect-register.py`, `verify-id-allocators.py` | after the `DC-154` append | `OK` (the placeholder is allocated by the conductor at the join) |
 
 The counts above are from the run after the last edit (the reviewers' conditions applied); the
 closing audit entry records the same run.

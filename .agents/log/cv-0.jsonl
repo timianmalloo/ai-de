@@ -1,0 +1,54 @@
+{"agent": "claude-conductor", "at": 1789219982.5887392, "kind": "session-start", "path": "-", "seq": 1, "session": "cv-0", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-lane-conversation-cv0"}
+{"agent": "claude-cv-0", "at": 1789221279.0321445, "kind": "claim", "path": "src/AiDe.App/Workbench/Composer/ComposerSendGate.cs", "seq": 2, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789221279.087154, "kind": "claim", "path": "src/AiDe.App/Workbench/Composer/ComposerSurface.cs", "seq": 3, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789221279.13968, "kind": "claim", "path": "src/AiDe.Core/Presentation/Composer/ComposerCompiler.cs", "seq": 4, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789221279.1920292, "kind": "claim", "path": "src/AiDe.Core/Presentation/Composer/ComposerDraft.cs", "seq": 5, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789221279.2447972, "kind": "claim", "path": "src/AiDe.Core/Presentation/Composer/LeaseDerivation.cs", "seq": 6, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789221279.3010056, "kind": "claim", "path": "src/AiDe.Core/AgentPlane/GoalBlock.cs", "seq": 7, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789221279.3545163, "kind": "claim", "path": "src/AiDe.Core/AgentPlane/LeaseAndSeams.cs", "seq": 8, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789221279.406808, "kind": "claim", "path": "src/AiDe.App/Conductor/GovernedRunHost.cs", "seq": 9, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789221279.4598627, "kind": "claim", "path": "src/AiDe.App/Conductor/GovernedRunRequest.cs", "seq": 10, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789221279.5138628, "kind": "claim", "path": "tests/AiDe.Core.Tests/AgentPlane/AcpLaneClientTests.cs", "seq": 11, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789221279.5677583, "kind": "claim", "path": "tests/AiDe.App.Tests/Conductor/TheGovernedLaneHasNoShellTests.cs", "seq": 12, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789221279.6190522, "kind": "claim", "path": "tests/AiDe.App.Tests/Composer/TheLeaseDerivesFromTheEditorsSourceTextTests.cs", "seq": 13, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789221279.6717327, "kind": "claim", "path": "tests/AiDe.App.Tests/Composer/TheSendVerbIsHostOwnedTests.cs", "seq": 14, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789221279.723744, "kind": "claim", "path": "tests/AiDe.App.Tests/Composer/TheComposerRendersItsFieldLevelErrorsTests.cs", "seq": 15, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789221279.7772646, "kind": "claim", "path": "tests/AiDe.App.Tests/Conductor/TheOneCompositionRootIsCountedTests.cs", "seq": 16, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789221279.8307865, "kind": "claim", "path": "tests/AiDe.Core.Tests/AgentPlane/SpawnContractTests.cs", "seq": 17, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789221279.8832996, "kind": "claim", "path": "src/AiDe.Core/Presentation/Sessions/NewSessionSheetViewModel.cs", "seq": 18, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789221279.934825, "kind": "claim", "path": "src/AiDe.App/Workbench/Sessions/NewSessionSheetDialog.cs", "seq": 19, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789221279.9878328, "kind": "claim", "path": "src/AiDe.Core/Sessions/SessionConfigStore.cs", "seq": 20, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789221280.041305, "kind": "claim", "path": "tests/AiDe.App.Tests/Sessions/TheNewSessionSheetTests.cs", "seq": 21, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789221280.0935216, "kind": "claim", "path": "docs/proof/read-only-turn.md", "seq": 22, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789222143.0976977, "kind": "claim", "path": "tests/AiDe.Core.Tests/AgentPlane/ATierZeroRunSkipsPlanAndCouncilTests.cs", "seq": 23, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789222590.2966955, "kind": "claim", "path": "tests/AiDe.App.Tests/Sessions/TheTaskClassIsChosenNotTypedTests.cs", "seq": 24, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789222590.3546398, "kind": "claim", "path": "tests/AiDe.Core.Tests/Sessions/SessionConfigStoreTests.cs", "seq": 25, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789222590.4136376, "kind": "claim", "path": "src/AiDe.Core/Sessions/SessionConfig.cs", "seq": 26, "session": "cv-0", "ttl": 3600.0, "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789224920.69369, "kind": "claim", "path": "docs/lessons/defect-classes.md", "seq": 27, "session": "cv-0", "ttl": 1800.0, "wi": "CV-0"}
+{"kind": "episode-close", "contract": "loomkeeper/1", "session": "cv-0", "at": 1789225682, "seq": 28, "attrs": {"episode.outcome": "Completed", "episode.artifacts": "docs/proof/read-only-turn.md\ndocs/notes/read-only-lane-runs-in-the-workspace-root.md\ntests/AiDe.App.Tests/Composer/TheReadOnlyTurnNeedsNoLeaseTests.cs\ntests/AiDe.Core.Tests/Composer/TheCompiledBlockRendersItsShapeTests.cs\ntests/AiDe.App.Tests/Conductor/TheGovernedLaneHasNoShellTests.cs", "episode.note": "AIDE_CONTRACT_LOG unset in this node's environment (not an AI-DE terminal); appended to the session's coordination log as prior nodes did. The attended read-only run is RUN-PENDING in the Proof Pack (the operator's)."}}
+{"agent": "claude-cv-0", "at": 1789225733.2979906, "kind": "release", "path": "src/AiDe.App/Workbench/Composer/ComposerSendGate.cs", "seq": 29, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225733.3676753, "kind": "release", "path": "src/AiDe.App/Workbench/Composer/ComposerSurface.cs", "seq": 30, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225733.432705, "kind": "release", "path": "src/AiDe.Core/Presentation/Composer/ComposerCompiler.cs", "seq": 31, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225733.5003314, "kind": "release", "path": "src/AiDe.Core/Presentation/Composer/ComposerDraft.cs", "seq": 32, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225733.573451, "kind": "release", "path": "src/AiDe.Core/Presentation/Composer/LeaseDerivation.cs", "seq": 33, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225733.6384656, "kind": "release", "path": "src/AiDe.Core/AgentPlane/GoalBlock.cs", "seq": 34, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225733.7004697, "kind": "release", "path": "src/AiDe.Core/AgentPlane/LeaseAndSeams.cs", "seq": 35, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225733.7670667, "kind": "release", "path": "src/AiDe.App/Conductor/GovernedRunHost.cs", "seq": 36, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225733.8619022, "kind": "release", "path": "src/AiDe.App/Conductor/GovernedRunRequest.cs", "seq": 37, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225733.9495475, "kind": "release", "path": "tests/AiDe.Core.Tests/AgentPlane/AcpLaneClientTests.cs", "seq": 38, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225734.0340586, "kind": "release", "path": "tests/AiDe.App.Tests/Conductor/TheGovernedLaneHasNoShellTests.cs", "seq": 39, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225734.1246922, "kind": "release", "path": "tests/AiDe.App.Tests/Composer/TheLeaseDerivesFromTheEditorsSourceTextTests.cs", "seq": 40, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225734.1917014, "kind": "release", "path": "tests/AiDe.App.Tests/Composer/TheSendVerbIsHostOwnedTests.cs", "seq": 41, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225734.2800987, "kind": "release", "path": "tests/AiDe.App.Tests/Composer/TheComposerRendersItsFieldLevelErrorsTests.cs", "seq": 42, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225734.3444686, "kind": "release", "path": "tests/AiDe.App.Tests/Conductor/TheOneCompositionRootIsCountedTests.cs", "seq": 43, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225734.4061174, "kind": "release", "path": "tests/AiDe.Core.Tests/AgentPlane/SpawnContractTests.cs", "seq": 44, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225734.4663198, "kind": "release", "path": "src/AiDe.Core/Presentation/Sessions/NewSessionSheetViewModel.cs", "seq": 45, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225734.5477128, "kind": "release", "path": "src/AiDe.App/Workbench/Sessions/NewSessionSheetDialog.cs", "seq": 46, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225734.6102533, "kind": "release", "path": "src/AiDe.Core/Sessions/SessionConfigStore.cs", "seq": 47, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225734.6722486, "kind": "release", "path": "tests/AiDe.App.Tests/Sessions/TheNewSessionSheetTests.cs", "seq": 48, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225734.7378962, "kind": "release", "path": "docs/proof/read-only-turn.md", "seq": 49, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225734.8009124, "kind": "release", "path": "docs/lessons/defect-classes.md", "seq": 50, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225734.8599322, "kind": "release", "path": "tests/AiDe.Core.Tests/AgentPlane/ATierZeroRunSkipsPlanAndCouncilTests.cs", "seq": 51, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225734.9245486, "kind": "release", "path": "tests/AiDe.App.Tests/Sessions/TheTaskClassIsChosenNotTypedTests.cs", "seq": 52, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225734.990626, "kind": "release", "path": "tests/AiDe.Core.Tests/Sessions/SessionConfigStoreTests.cs", "seq": 53, "session": "cv-0", "wi": "CV-0"}
+{"agent": "claude-cv-0", "at": 1789225735.0511596, "kind": "release", "path": "src/AiDe.Core/Sessions/SessionConfig.cs", "seq": 54, "session": "cv-0", "wi": "CV-0"}
