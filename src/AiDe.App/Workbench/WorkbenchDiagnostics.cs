@@ -24,14 +24,16 @@ public static class WorkbenchDiagnostics
     public static Action<string>? Sink { get; set; }
 
     /// <summary>Records a layout mutation and the resulting stack/surface topology.</summary>
+    /// <param name="stackId">The stack the operation acted on, when it acted on one (a maximize); null — recorded as null, never as a guess — otherwise.</param>
     public static void LayoutMutation(
-        string operation, string placement, string surfaceId, string? activeSurfaceId, Layout after)
+        string operation, string placement, string surfaceId, string? activeSurfaceId, Layout after, string? stackId = null)
     {
         using var activity = Source.StartActivity("workbench.layout.mutation");
         activity?.SetTag("workbench.operation", operation);
         activity?.SetTag("workbench.placement", placement);
         activity?.SetTag("workbench.surface", surfaceId);
         activity?.SetTag("workbench.active", activeSurfaceId);
+        activity?.SetTag("workbench.stack", stackId);
 
         var stacks = after.AllStacks()
             .Select(s => new
@@ -50,6 +52,7 @@ public static class WorkbenchDiagnostics
             placement,
             surface = surfaceId,
             active = activeSurfaceId,
+            stack = stackId,
             stacks,
         });
     }
