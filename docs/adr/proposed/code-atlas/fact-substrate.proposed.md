@@ -20,10 +20,16 @@ summary: >-
 # PROPOSED: reuse the fact substrate before adding a schema
 
 - **Date / author:** 2026-09-12 / `atlas-architecture-astra`.
-- **Deciders:** separate Owner/Data/Distributed/Test review pending.
+- **Deciders:** Owner content choice recorded below; Conductor reports Data/Distributed content
+  passes with future conditions. Final convergence, Test admission and normative acceptance remain separate.
 - **Native ID provenance:** Conductor-supplied native allocation after 37-ADR/no-duplicate check;
   registration pending. Not an accepted numbered global ADR.
 - **Status:** PROPOSED; no migration or writer edit authorized.
+
+**Owner content choice — “Durable representation”:** separate Astra Owner
+`61e506c4-2d12-42e9-85cb-153f2f916811`, turn 5, relayed by Conductor: generic facts plus
+seals and replay first; physical evolution only after executed need and additive proof.
+This resolves the content choice, not normative acceptance or permission to migrate.
 
 ## Established local contract
 
@@ -42,8 +48,9 @@ an ODS/current-value store or create an independent analytical source of truth.
 
 Encode Atlas logical observation records as versioned generic predicates and immutable
 observation subjects in the existing store. Reuse node dimensions for stable entities.
-Use existing writer/fencing/transaction conventions. No second graph engine or bespoke event
-store; no mandatory new table merely because the conceptual model has a new name.
+Use existing writer/fencing/transaction conventions. The named pattern is
+**ImmutableObservation + ManifestSeal**, not an unproved Event Sourcing architecture.
+No second graph engine or bespoke event store; no mandatory new table merely because the conceptual model has a new name.
 
 | Record | Grain and invariant |
 |---|---|
@@ -88,6 +95,21 @@ metadata within existing workspace policy; queryable historical range must be ex
 Compaction/purge remains an authorized maintenance contract. If historical facts are no longer
 retained, comparison/Back reports unavailable rather than rebuilding from current state.
 Raw source/model/session text is not placed in a generic object field to evade privacy controls.
+
+## Growth, replay and query-budget admission
+
+Architecture §11.2 is the one budget-field definition. Before E-0 code, admit store/cache byte
+ceilings and growth per manifest, retained-history policy/range, replay duration/peak memory,
+query p95/peak memory and free-disk/warning thresholds against the approved workload.
+Unset values block design admission; none are supplied as invented measurements here.
+Exceeding a budget emits **BudgetExceeded**, preserves last-successful evidence and offers an
+explicit operator recovery/budget decision. Never auto-purge facts or hide included files to fit.
+Only disposable caches may be evicted under their admitted policy, with rebuild/cold-cost disclosure.
+
+An executed benchmark failure plus query-plan/replay evidence must establish that the generic
+representation is the cause before dedicated tables are selected. Try the established indexed/
+bounded query shape first. A slow render or large file count alone does not justify a schema change.
+Any accepted change follows the expansion and rollback proof below, not a second graph database.
 
 ## Alternatives and evolution gate
 

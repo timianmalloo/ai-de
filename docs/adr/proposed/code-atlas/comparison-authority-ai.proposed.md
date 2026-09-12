@@ -21,10 +21,16 @@ summary: >-
 # PROPOSED: interpretation cannot manufacture authority
 
 - **Date / author:** 2026-09-12 / `atlas-architecture-astra`.
-- **Deciders:** separate Owner, Data/Privacy/Security/AI/Test gates pending.
+- **Deciders:** Owner content choice recorded below; Conductor reports Data/Security/AI content
+  passes with future conditions. Final convergence, Privacy/Test admission and normative acceptance remain separate.
 - **Native ID provenance:** Conductor-supplied native allocator output after 37-ADR/no-duplicate
   check; registration pending. No global numeric sequence takeover.
 - **Status:** PROPOSED; comparison is E-3, interpretation E-4, each separately admitted.
+
+**Owner content choice — “E-4 interpretation admission”:** separate Astra Owner
+`61e506c4-2d12-42e9-85cb-153f2f916811`, turn 5, relayed by Conductor: defer until a separate
+read-only adapter and processing/eval admission exist. No provider change or source permission.
+This is a resolved content choice within an overall PROPOSED architecture.
 
 ## Context
 
