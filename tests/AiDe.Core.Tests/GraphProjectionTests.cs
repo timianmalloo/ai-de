@@ -184,6 +184,41 @@ public sealed class GraphProjectionTests
     }
 
     [Fact]
+    public void ExcludeKnowledge_DropsDeclaredKnowledgeNodes_ButKeepsEverythingElse()
+    {
+        // Ruling 53/US-C8: Architecture's canvas asks for code, data and architecture — never the
+        // knowledge/spec corpus. Excluding by the DECLARED node_class flag, exactly like
+        // ANodeCarriesTheCLASSItsProducerDeclared above — never an allow-list of "code/data/
+        // architecture" has_type spellings, which would go stale the first repository that used a
+        // spelling nobody had added (DC-033, the same trap this file already pins for the Knowledge
+        // chip).
+        var graph = new GraphProjection(
+        [
+            Say("Shop.Order", "has_type", "class"),
+            Say("adr-1", "has_type", "adr"),
+            Say("adr-1", "node_class", "knowledge"),
+            Say("adr-1", "depends_on", "Shop.Order"),
+        ], "rev-1").Compute(new GraphQuery(ExcludeKnowledge: true));
+
+        var node = Assert.Single(graph.Nodes);
+        Assert.Equal("Shop.Order", node.Id);
+        Assert.Empty(graph.Edges);   // the knowledge endpoint is gone, so its edge cannot be drawn
+    }
+
+    [Fact]
+    public void ExcludeKnowledge_Unset_DrawsKnowledgeNodesToo()
+    {
+        var graph = new GraphProjection(
+        [
+            Say("Shop.Order", "has_type", "class"),
+            Say("adr-1", "has_type", "adr"),
+            Say("adr-1", "node_class", "knowledge"),
+        ], "rev-1").Compute(new GraphQuery());
+
+        Assert.Equal(2, graph.Nodes.Count);
+    }
+
+    [Fact]
     public void ExcludingExternalsLeavesOnlyWhatTheWorkspaceDeclares()
     {
         var graph = new GraphProjection(

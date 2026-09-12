@@ -20,7 +20,7 @@ internal static partial class Program
 {
     /// <summary>
     /// <b>INV-0009.</b> The operator's 22:33Z launch, replayed step by step in the product's own
-    /// docking host, under the product's own <see cref="ShellModeController"/>, from the arrangement
+    /// docking host, under the product's own <see cref="PerspectiveShell"/>, from the arrangement
     /// the operator's workbench log recorded — and then <c>File → New Session</c>'s choreography, with
     /// the one question the log could not answer asked of WPF directly: <b>did the new document's
     /// composer ever enter a rendered visual tree?</b>
@@ -130,7 +130,6 @@ internal static partial class Program
             // the mode controller over that same ContentControl, with the same Explorer factory.
             var shell = new WorkbenchShell(null);
             var body = new ContentControl();
-            body.Content = shell.WorkbenchRoot;
             var window = new Window
             {
                 Title = "AiDe session-render replay (INV-0009)",
@@ -139,21 +138,28 @@ internal static partial class Program
                 Height = options.WindowHeight,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
             };
-            shell.Manager.Theme = new AvalonDock.Themes.Vs2013DarkTheme();
-            DockThemeAccents.Retokenise(shell.Manager);
-            DockRoundedTabs.Apply(shell.Manager);
-            shell.Bind(window);
+            foreach (var host in shell.Hosts)
+            {
+                host.Manager.Theme = new AvalonDock.Themes.Vs2013DarkTheme();
+                DockThemeAccents.Retokenise(host.Manager);
+                DockRoundedTabs.Apply(host.Manager);
+            }
 
-            var mode = new ShellModeController(
+            // The presenter over both hosts and the Explore factory (ADR-0031), as MainWindow builds
+            // it, and its router as the shell's command entry.
+            var mode = new PerspectiveShell(
                 body,
-                shell.WorkbenchRoot,
-                () => new ExplorerSurface(shell.CreateExplorerGraph(), new NodeReaderView()));
+                shell.Hosts,
+                () => new ExplorerSurface(shell.CreateExplorerGraph(), new NodeReaderView()),
+                shell.Announcer);
+            shell.CommandRouter = mode.Execute;
+            shell.Bind(window);
 
             // MainWindow's one line for INV-0009's seam, verbatim: a document opens into a body
             // that is on screen. EveryOpeningCommandPassesThroughTheSeamTests asserts the product
             // and this replay carry the same wiring, so the replay cannot pass on a line the window
             // does not have (DC-135).
-            shell.DocumentOpening += () => MainWindow.OnDocumentOpening(mode);
+            shell.DocumentOpening += host => mode.OnDocumentOpening(host);
 
             var result = Crashed;
             window.Loaded += async (_, _) =>
@@ -199,7 +205,7 @@ internal static partial class Program
         }
 
         private static async Task<int> ReplayAsync(
-            Window window, WorkbenchShell shell, ShellModeController mode, string root, Options options)
+            Window window, WorkbenchShell shell, PerspectiveShell mode, string root, Options options)
         {
             Console.Out.WriteLine(
                 $"options: priorDocument={options.PriorDocument} explorer={options.Explorer} returnToWorkbench={options.ReturnToWorkbench} "
@@ -239,7 +245,7 @@ internal static partial class Program
             var dataDirectory = Path.Combine(root, "shell-state");
             Directory.CreateDirectory(dataDirectory);
             var layoutPath = Path.Combine(dataDirectory, "layout.json");
-            new ZoneLayoutStore(Path.Combine(dataDirectory, "layout.zones.json")).Save(arrangement);
+            new ZoneLayoutStore(LayoutPersistence.SlotPathFor(layoutPath, PerspectiveSet.Coding)).Save(arrangement);
 
             var available = shell.Service.Current.AllStacks()
                 .SelectMany(s => s.Surfaces).Select(s => s.SurfaceId)
@@ -251,11 +257,16 @@ internal static partial class Program
             shell.Adapter.Render();
             await Task.Delay(1500);
 
+            // The operator's file was written before perspectives; read into the Coding slot it
+            // restores the surfaces Coding admits and drops the rest with a report (ADR-0032 rule 2:
+            // the graph, the two evidence views, provenance, contexts and joins belong to
+            // Architecture). The state the replay must reach is that projection of the log line —
+            // the product's own filter over the product's own rows — not the pre-perspective file.
             var restoredShape = Shape(shell);
-            var expectedShape = Shape(arrangement);
+            var expectedShape = Shape(shell.Coding.Service.Admission.Filter(arrangement).Layout);
             Console.Out.WriteLine(
                 $"restore (22:33:53Z replay): applied-saved={persistence.LastRestoreAppliedASavedArrangement} announced='{restore.Announcement}' "
-                + $"zones={restoredShape}");
+                + $"dropped={persistence.LastRestoreDropped.Count} zones={restoredShape}");
 
             if (!persistence.LastRestoreAppliedASavedArrangement || !string.Equals(restoredShape, expectedShape, StringComparison.Ordinal))
             {
@@ -276,11 +287,11 @@ internal static partial class Program
             // ---- 22:34:00Z. explorer-graph initialising: Explorer mode entered. ----
             if (options.Explorer)
             {
-                mode.Set(PerspectiveSet.Explore, "replay-22:34:00Z");
+                mode.Activate(PerspectiveSet.Explore, "replay-22:34:00Z");
                 await WaitAsync(() => Count("explorer-graph", "initialising") >= 1, TimeSpan.FromSeconds(20));
                 await Task.Delay(500);
                 Console.Out.WriteLine(
-                    $"explorer (22:34:00Z replay): mode={mode.Mode.Id} explorer-graph initialising={Count("explorer-graph", "initialising")} "
+                    $"explorer (22:34:00Z replay): mode={mode.Active.Id} explorer-graph initialising={Count("explorer-graph", "initialising")} "
                     + $"workbench root loaded={shell.WorkbenchRoot.IsLoaded} visible={shell.WorkbenchRoot.IsVisible} parent={shell.WorkbenchRoot.Parent?.GetType().Name ?? "(none)"}");
             }
 
@@ -298,7 +309,7 @@ internal static partial class Program
         /// opens the document; <c>BindComposer</c> configures its composer; the pane takes the tree.
         /// </summary>
         private static async Task<int> NewSessionAsync(
-            Window window, WorkbenchShell shell, ShellModeController mode, string root, Options options)
+            Window window, WorkbenchShell shell, PerspectiveShell mode, string root, Options options)
         {
             var now = DateTimeOffset.UtcNow;
             var config = new SessionConfigStore(root, SessionId.New(now)).Create("probe session", root, ["claude-code"], now);
@@ -358,7 +369,7 @@ internal static partial class Program
             if (options.ReturnToWorkbench)
             {
                 // THE NECESSITY HALF: remove the suspected cause and see whether the failure goes.
-                mode.Set(PerspectiveSet.Coding, "replay-return-to-workbench");
+                mode.Activate(PerspectiveSet.Coding, "replay-return-to-workbench");
                 window.UpdateLayout();
                 await WaitAsync(() => Count(composer.SurfaceId, "init-pushed") >= 1, TimeSpan.FromSeconds(30));
                 await Task.Delay(1500);
@@ -374,14 +385,14 @@ internal static partial class Program
                 return TheNewDocumentNeverLoaded;
             }
 
-            if (report.InitPushed == 0 || report.Fields != "6")
+            if (report.InitPushed == 0 || report.Fields != "1")
             {
                 Console.Error.WriteLine(
-                    $"the new session's composer loaded but never reached init-pushed with six fields (init-pushed={report.InitPushed}, fields={report.Fields})");
+                    $"the new session's composer loaded but never reached init-pushed with its one message field (CV-1: the structure lines are WPF) (init-pushed={report.InitPushed}, fields={report.Fields})");
                 return TheNewDocumentNeverPushedInit;
             }
 
-            Console.Out.WriteLine("the new session's composer entered the rendered tree, measured itself and mounted six fields");
+            Console.Out.WriteLine("the new session's composer entered the rendered tree, measured itself and mounted its one message field");
             return Ok;
         }
 
@@ -462,13 +473,13 @@ internal static partial class Program
                 return TheReopenedDocumentWasNeverConfigured;
             }
 
-            if (Count(composer.SurfaceId, "init-pushed") == 0 || fields != "6")
+            if (Count(composer.SurfaceId, "init-pushed") == 0 || fields != "1")
             {
-                Console.Error.WriteLine($"the reopened session's composer was configured but never reached init-pushed with six fields (fields={fields})");
+                Console.Error.WriteLine($"the reopened session's composer was configured but never reached init-pushed with its one message field (CV-1: the structure lines are WPF) (fields={fields})");
                 return TheNewDocumentNeverPushedInit;
             }
 
-            Console.Out.WriteLine("the reopened session's composer was configured and mounted six fields");
+            Console.Out.WriteLine("the reopened session's composer was configured and mounted its one message field");
             return Ok;
         }
 
@@ -522,7 +533,7 @@ internal static partial class Program
                 + $"configured={Count(composer.SurfaceId, "configured")} init-pushed={Count(composer.SurfaceId, "init-pushed")} "
                 + $"layout-lines={LayoutLines(composer.SurfaceId)} page fields={fields} host fields={composer.Fields.Count} status='{composer.Status}'");
 
-            if (!live || goneLive || Count(composer.SurfaceId, "configured") == 0 || Count(composer.SurfaceId, "init-pushed") == 0 || fields != "6")
+            if (!live || goneLive || Count(composer.SurfaceId, "configured") == 0 || Count(composer.SurfaceId, "init-pushed") == 0 || fields != "1")
             {
                 Console.Error.WriteLine(
                     $"the restored session document was not revived as a bound document: live={live} gone-live={goneLive} "
@@ -530,7 +541,7 @@ internal static partial class Program
                 return TheRestoredDocumentWasNotRevived;
             }
 
-            Console.Out.WriteLine("the restored session document is live, its composer bound and mounted six fields; the session that is gone kept its island");
+            Console.Out.WriteLine("the restored session document is live, its composer bound and mounted its one message field; the session that is gone kept its island");
             return Ok;
         }
 
@@ -622,7 +633,7 @@ internal static partial class Program
                 + $"outcome='{cancelled.Announcement}'");
 
             if (!string.Equals(boundTo, chosen, StringComparison.OrdinalIgnoreCase)
-                || Count(composer.SurfaceId, "init-pushed") == 0 || fields != "6")
+                || Count(composer.SurfaceId, "init-pushed") == 0 || fields != "1")
             {
                 Console.Error.WriteLine(
                     $"the session created through the chooser was not bound to the chosen workspace: bound to '{boundTo ?? "(nothing)"}', "
@@ -659,7 +670,7 @@ internal static partial class Program
         private sealed record Measured(string Line, int Loaded, int Initialising, int InitPushed, string Fields);
 
         private static async Task<Measured> Report(
-            string when, WorkbenchShell shell, ShellModeController mode, ComposerSurface composer,
+            string when, WorkbenchShell shell, PerspectiveShell mode, ComposerSurface composer,
             int loaded, int unloaded, int graphReattachedBefore)
         {
             var view = FindWebView(composer);
@@ -667,7 +678,7 @@ internal static partial class Program
             var initialising = Count(composer.SurfaceId, "initialising");
             var pushed = Count(composer.SurfaceId, "init-pushed");
             var line =
-                $"{when}: mode={mode.Mode.Id} last-mode-trigger={LastModeTrigger()} workbench root loaded={shell.WorkbenchRoot.IsLoaded} visible={shell.WorkbenchRoot.IsVisible}, "
+                $"{when}: mode={mode.Active.Id} last-mode-trigger={LastModeTrigger()} workbench root loaded={shell.WorkbenchRoot.IsLoaded} visible={shell.WorkbenchRoot.IsVisible}, "
                 + $"composer wpf loaded={loaded} unloaded={unloaded} isLoaded={composer.IsLoaded} isVisible={composer.IsVisible} "
                 + $"size={composer.ActualWidth:F0}x{composer.ActualHeight:F0}, "
                 + $"transitions initialising={initialising} navigation-started={Count(composer.SurfaceId, "navigation-started")} "

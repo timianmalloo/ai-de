@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 81 · partially-controlled 60 · uncontrolled 19
+**Status counts:** controlled 86 · partially-controlled 65 · uncontrolled 20
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -467,6 +467,19 @@ for both or split.*
   *what does the test host lack that a real run has* before changing any code under test. The
   distinguishing measurement here was three lines — `GetConsoleWindow()`, the std handle file types,
   and `GetConsoleProcessList` — and it should have been the first thing run, not the last.
+- **Amended 2026-09-12 (X-2, DC-164):** the 2026-08-26 mechanism was misread. The test host
+  does not lack a console the child needs; the child was being handed **duplicates of the host's
+  redirected standard handles** — `CreateProcess` does that for a console-subsystem child whenever
+  the parent's handles are not console handles, `bInheritHandles = false` notwithstanding — so its
+  stdout was the host's pipe, not the pseudo console, and the `Output` channel stayed empty. With
+  `STARTF_USESTDHANDLES` and null handles (Windows Terminal's own launch shape) the in-process
+  form now passes in a `dotnet test` host: `ConPtyChildStandardHandlesTests` reads the child's
+  token on the channel. The out-of-process helper remains a valid control for owner-lifetime claims; it is no longer
+  the *only* way to observe the channel, and it no longer needs a console window (DC-170).
+  `TerminalGuiHostTests` had recorded the true condition on 2026-08-27 — *"it is which standard
+  handles the host was given"* — as a comment in a test, never as a change to the runtime: a
+  memoir (CI6), read back only when the sixth report forced the measurement. The class stands — the
+  diagnostic bullet below is what would have found this too — but its instance is re-attributed.
 - **Instances:** 2026-08-27 — the same class, reached from the other side. Building the terminal
   renderer raised the question this entry's own wording appeared to settle: `AiDe.App` is a GUI
   application with **no console at all**, so if "the host must own a real console" were the rule,
@@ -490,7 +503,6 @@ for both or split.*
   corollary from this instance: **a stand-in for a configuration is not evidence about that
   configuration** — if the answer decides whether a feature exists, reproduce the real thing.
 - **Status:** `controlled`
-
 
 ### DC-015 — A success check coarser than the claim it is standing in for
 - **Recurrence (2026-09-12, Atlas native probe):** a hash-match case was labelled as span
@@ -1756,7 +1768,6 @@ for both or split.*
   `AReopenedSessionIsShownAndItsComposerIsBound` (exit 32 → 0) and
   `ARestoredSessionDocumentIsRevivedAndBoundAtWorkspaceOpen` (exit 34 → 0).
 
-
 ### DC-041 — Two "kind" fields with different granularity, and the coarse one shown where the fine was meant
 - **Signature:** a domain has both a fine type (`has_type` → `azure-resource`, `table`, `class`) and a coarse dimensional class (`node_kind` → `source` vs `knowledge`), and a reader/label displays the coarse one where a user expects the fine one — a bicep resource reads "kind: knowledge".
 - **Why it survives:** both fields are individually correct and individually tested; the overview path uses the fine one and the describe/reader path uses the coarse one, so no single test compares the two surfaces (E2E-D: component tests that can't see each other).
@@ -1830,7 +1841,6 @@ for both or split.*
   The IPC operation names, the join projection's predicates and the canvas's node kinds are all
   keyed this way; only extraction routing is asserted so far.
 - **Status:** `partially-controlled`
-
 
 - **Instance, 2026-08-31 — the compaction check.** `WorkspaceCore.CheckCompactionNeeded` was complete, tested, and called by nothing: no shell, no daemon, no command. A workspace could pass the generation threshold, slow measurably past its refresh budget, and the diagnosis would sit in a method nobody invoked. Found while answering "why is the store growing", not by any test. MEASURED on the user's workspace: 2 generations per scope against a threshold of 8 — under the trigger, and yet **half the store (23,672 of 47,809 assertions) was already superseded**, because the threshold is tuned for LATENCY and the symptom people see is SIZE. The daemon now calls it at startup, which is the moment the store is open, no session is in progress, and an operator is looking. **The residual is the threshold itself:** nothing yet triggers on size, and reclaiming space needs `retain: 1`, which drops the diagnostic history the default keeps. That is a decision, not an oversight, and it is still open.
 
@@ -2456,7 +2466,6 @@ for both or split.*
   test fails on any new offender, and the whole of it was observed working from a real linked
   worktree in this repository
 
-
 ### DC-072 — Ambient input handler competes with a focused capture surface
 - **Signature:** a window-level key handler — a tunnelling `PreviewKeyDown`, an ancestor
   `InputBinding`/`KeyBinding`, or a modal key-capture — acts on keys a **focused capture surface**
@@ -2642,7 +2651,6 @@ for both or split.*
   tree is safe; modifying a listed one is not** — opposite rules, easily mistaken for one. The
   upstream fix (teaching the pack's tools one definition of "the repo") is deferred, not rejected.
 - **Status:** `controlled`
-
 
 ### DC-076 — A fix's test set is drawn from the defect report, so the reported case is the only one repaired
 
@@ -4525,7 +4533,7 @@ for both or split.*
   discarded by a pipe. In each the mechanism reports success, and the absence has no signature. That
   meta-shape is the thing to look for, and it is why each was found by *measuring the control itself*
   rather than by trusting its green.
-- **Status:** `uncontrolled` — recorded, with the exposure scoped to interactive and agent sessions
+- **Status:** `partially-controlled` — the gate runner (`tools/run-verify-gates.py`, recurrence 3) gives the join line one status to chain on; recorded, with the exposure scoped to interactive and agent sessions
 
 ---
 
@@ -4539,6 +4547,19 @@ for both or split.*
   stops the line — applied to every resolution line since; the pre-commit hook does not run the
   gate set and should not (it would double CI). The class is unchanged; the instance is the
   conductor forgetting its own register.
+
+- **Recurrence 3 (conductor-addendum-c, 2026-09-12, the SH-3 join) — and the mechanical control:**
+  a `for g in tools/verify-*.py; do …; done` loop counted its failures into a variable, printed
+  `FAIL rc=1 tools/verify-stranded-audit.py`, and the line went on to `git commit … && git push`
+  because nothing chained on the count. Recurrence 2's control — "`&&`-chain every gate" — cannot
+  reach a loop: a loop has no single status to chain on, and the conductor wrote one by hand at a
+  join for the third time. The red was transient (a peer tree's uncommitted log; green on re-run)
+  and `main`'s content was verified, but the shape pushed before it knew. **Control:**
+  `tools/run-verify-gates.py` runs every `tools/verify-*.py` and exits 1 on any failure
+  (`--self-test` proves a red gate is reported red), so the only join line is
+  `python tools/run-verify-gates.py && git commit …` and no loop is written at a join again.
+  Status moves to `partially-controlled`: the runner exists; the resolution path's own use of it
+  is the conductor's habit until the join is a script.
 
 ### DC-114 — A fix to the deployment mechanism cannot deploy itself: correct, tested, green, and unreachable
 
@@ -4720,7 +4741,6 @@ for both or split.*
   are named above: a released tree, the `Unverifiable` collapse at `EpisodeEvidence`, and the
   two-doors asymmetry. Not upgraded to `controlled`, because each of those is a real case in which an
   agent that produced evidence is still told it produced none.
-
 
 ### DC-116 — The conductor briefs an agent with a repo fact asserted from memory, dressed as verified
 
@@ -5017,7 +5037,6 @@ for both or split.*
   fails when the shape recurs, and the next Windows-only "all green" will read exactly as
   convincing as this one did
 
-
 ### DC-120 — A node runs a repo-wide destructive command while sibling nodes are live, and a node is unprotected until its first commit
 
 - **Shape:** a fan-out gives each node its own worktree, which is the containment boundary. One node
@@ -5063,7 +5082,6 @@ for both or split.*
   repository nothing yet stops a node typing a repo-wide destructive command, and the briefs that
   would carry clause (a) are written fresh each time
 
-
 ### DC-121 — A brief's exclusion is scoped by PATH when its purpose was a KIND, and silently suppresses an unrelated obligation
 
 - **Shape:** a coordinator writes a negative instruction into a node's brief to prevent one specific
@@ -5101,7 +5119,6 @@ for both or split.*
 - **Status:** `uncontrolled` — briefs are written fresh each time and nothing checks their exclusion
   lists against the artifact registry. The one thing working here is the standing instruction to
   report anything in a brief that looks wrong, which is what surfaced it
-
 
 ### DC-122 — A comment declares a security property the code does not have, and is then cited as evidence of that property
 
@@ -5149,7 +5166,6 @@ for both or split.*
 - **Status:** `uncontrolled` — the instance is corrected (the comment now states what the line does)
   and the two measured defects are recorded as their own next step, but nothing fails when a comment
   claims a property no test asserts
-
 
 ### DC-123 — Containment exists one ring in and is absent one ring out, and the leak is unobservable from inside the harness that leaks it
 
@@ -5258,7 +5274,6 @@ for both or split.*
   this leak is **episodic rather than monotonic**, and every statement about its frequency,
   including the conductor's, is modelled rather than observed
 
-
 ### DC-125 — A call that ESTABLISHES a safety property reports failure by return value, and the return value is discarded
 
 - **Shape:** a safety property — containment, a lock, a permission drop, a limit — is established by
@@ -5301,7 +5316,6 @@ for both or split.*
   `bool`-returning establish-a-property call can still be written in statement position, and the
   control that would catch it — an analyzer or a gate over interop call sites — is named here and
   not built
-
 
 ### DC-126 — A gate verifies that an instruction is DOCUMENTED, not that it is FOLLOWABLE, and the capability it names does not exist
 
@@ -5347,7 +5361,6 @@ for both or split.*
 - **Status:** `uncontrolled` — the gap is measured and recorded, the gate is unchanged, and the
   channel is still unset, so the next slice will produce the same zero observations with the same
   green gate
-
 
 ### DC-127 — A fixture written by the same mind as the reader shares its blind spot, so a reader tested only against its fixture is tested against its own assumption
 
@@ -5428,7 +5441,6 @@ for both or split.*
   repository carries a byte comparison**, and the plan-authoring habit that produced the weak form is
   unchanged
 
-
 ### DC-129 — A launch that detaches returns success immediately, so the caller measures a run that has not happened
 
 - **Shape:** a caller invokes an executable and waits on **the call** rather than on **the process**. If
@@ -5468,7 +5480,6 @@ for both or split.*
 - **Status:** `uncontrolled` — the instance is understood and the constraint is written into the
   exit-run harness's brief, but nothing in the repository fails when a caller waits on the call
   instead of the process, and the next harness author inherits only prose
-
 
 ### DC-130 — Adjacent nodes each build one end of a seam that no clause assigned, and every node passes
 
@@ -5518,7 +5529,6 @@ for both or split.*
 - **Status:** `uncontrolled` — the instance is being repaired by a node ruled into existence for it,
   and the control is stated, but **no plan in this repository currently carries an edge-ownership
   list**, and the next slice decomposed the same way would produce the same gap
-
 
 ---
 
@@ -5879,7 +5889,6 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 > **within a tree**. The tiebreak was *which tree is `main`*, which carries no information about
 > merit. **DC-013 recurrence 5.**
 
-
 - **Shape:** a .NET event is raised over a multicast delegate, and an exception in one handler
   **stops the invocation list** — later subscribers never run. When the raiser is across an interop
   boundary (COM, a native callback, a browser host), the exception is also **caught and discarded
@@ -5985,6 +5994,19 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Status:** `partially-controlled` — the contrast instance is controlled by a census over the
   real composition; the general shape (a test constructing what the product resolves) still has no
   gate, and the next slice decomposed the same way would cite the same coverage again.
+- **Recurrence 3 (SH-2, 2026-09-12) — the census's population shrank and the census stayed green.**
+  `ShellContrastCensus` adds every kind row to `shell.Service` — host A's — and walks the window.
+  Under ADR-0031/0032 host A's service refuses the seven Architecture kinds (the graph, the two
+  evidence views, provenance, contexts, joins, the class diagram, the sequence diagram) and the
+  probe logs `add <kind>: … cannot open in Coding` and moves on: those surfaces are now composed in
+  host B, which the census never shows, so their rows are **not measured** and the verdict reads
+  *0 failing* over a smaller population. The gate has no floor on its own row count per surface
+  (spec §C7's "a surface that measured zero is a failure row, never a pass" is the missing
+  control). Seam request to X-1 (`tests/AiDe.App.ContrastProbe/**`): add the kinds through the
+  host that admits them (`shell.HostFor(PerspectiveMenu.Resolve(kind, …))`), switch the
+  presenter to Architecture and walk the body, walk the rail's three destinations in their
+  selected/unselected states, and fail a named surface that measured zero rows. Until then the
+  Proof Pack reports the census as *host A and the rail's rest state only*.
 
 ### DC-136 — A merge resolved as "regenerate, then stage everything" leaves markers in a file that is patched in place, not regenerated
 - **Shape:** the documented resolution for the two recurring conflicts is *union the append-only
@@ -6439,13 +6461,27 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   legacy mockups (`app-facelift`, `context-map-join`, `knowledge-explorer`, `uml-erm-surfaces`:
   `Uncaught ReferenceError: h_theme is not defined`) — reported to the conductor, not fixed in this
   node. The three Addendum C/D mockups and the new session mockup render their strips.
-- **Control:** this run — a headless sweep of every mockup and every harness state that fails on
-  `Uncaught` in the console or a verdict strip still reading its placeholder (recorded in
-  `ui-review-session-conversation` §2c and §10). **Proposed** (ranked plan item 5): the same sweep
-  as `tools/verify-mockup-audits.py` beside `verify-ui-craft-floor.py` in `build.yml`, so the
-  craft gate's green never stands alone over a strip that never measured.
-- **Status:** `partially-controlled` — the instance is fixed and the class swept by this run's headless
-  sweep; the gate is prose until the sweep is a script in CI.
+- **Control:** `tools/verify-mockup-audits.py` (X-1, INV-0008 phase 6's sibling track) — a headless
+  sweep, stdlib only, that shells out to whatever Chromium-family browser is already installed
+  (Microsoft Edge / Google Chrome / Chromium — `ubuntu-latest` ships all three, verified against
+  `actions/runner-images`' Ubuntu 24.04 software manifest; Windows ships Edge) with
+  `--headless=new --dump-dom` and `--enable-logging=stderr --v=1`, exactly reproducing the browser
+  console DC-147 says nobody opened. `--self-test` plants a broken verdict strip (an undefined
+  bare identifier, the four legacy mockups' own shape) and asserts BOTH that the planted breakage
+  is caught and that a healthy fixture stays clean — observed red with detection disabled, green
+  with it restored. Wired as the last step of the `gates` job in `.github/workflows/build.yml`,
+  beside `verify-ui-craft-floor.py`. All 17 `docs/mockups/*.html` swept clean after the four
+  legacy mockups' fix below.
+- **Instance, the four legacy mockups (2026-09-12):** each declared its harness controls with
+  hyphenated ids (`h-theme`, `s-ctx`, `st-gen`, …) and then referenced them as bare identifiers
+  with underscores (`h_theme`, `s_ctx`, `st_gen`, …) — relying on the DOM's implicit named-access
+  globals, which exist only for hyphen-free ids. Every such reference threw
+  `Uncaught ReferenceError` before the harness (theme/motion/density/state toggles) could wire up.
+  Fixed with the smallest correct change: one `const` block per file aliasing each hyphenated id to
+  its bare name via `document.getElementById`, touching no markup, no CSS, no other logic.
+- **Status:** `controlled` — the instance (`new-session-sheet.html`) and the sweep's four
+  legacy-mockup instances are both fixed; the control is a script in CI (`--self-test` red-first,
+  then wired into `gates`), not prose.
 
 ### DC-148 — A command mutates the model of a view that is not on screen, and reports the model's success as the screen's
 
@@ -6739,6 +6775,18 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   (`EnvironmentBlockTests`, `TerminalChildEnvironmentTests`); the census carries the cause and the
   correlation; the post-fix re-count (INV-0010 phase 5: restart Windows Terminal, compare against
   371) is the operator's, and a birth after the fix is a finding.
+- **Recurrence (sixth report, 2026-09-12 19:00Z, X-2):** "zombie terminal hosts being created
+  AGAIN". Counted: 304 `conhost`, 257 `node`, 34 `powershell`; **32 `powershell` + 36 `conhost`
+  born in the previous hour, every one a child of the App test host (`testhost.exe` 56892) of the
+  CV-1 lane's run, alive 25 minutes after birth** — ours, not foreign. The host was hung (0.55 s CPU
+  over 8 s, 30 minutes into a 2-minute suite) in `WorkbenchShell.Git → ReadToEnd` (DC-165); the 32
+  sessions were born *during* the hang, over 70 s, from no test thread (parallelization is off).
+  Killing the host released all 32 and their hosts (job kill-on-close held). The remaining 513
+  (`node` + `conhost` under `wta.exe → copilot.exe`) are the pre-fix pool INV-0010 attributed —
+  born before the WT_* scrub, unchanged in count since, never reaped by the census (foreign by
+  parent). A clean run of the same suite afterwards peaked at 3 short-lived `powershell` children.
+  **Not yet attributed:** which code path started 32 shells in a hung host — the App tests' default
+  diagnostics sink discards `terminal.start`, so the births had no source (INV-0011 §Open).
 
 ### DC-156 — A resource acquired for a child is released with the owner, not with the child
 
@@ -6863,7 +6911,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 
 ### DC-159 — A probe prints a type's default `ToString()` across a process boundary and a test asserts the string
 
-*Id left for the conductor to allocate at the join.*
+*Id left for the conductor to allocate at the join (the plan's shared-surface rule: the register is append-only, ids are allocated at each join).*
 
 - **Shape:** an out-of-process probe writes a value to stdout by interpolating the value itself
   (`mode={mode.Mode}`), so what crosses the boundary is the type's **default** `ToString()` — an
@@ -6888,7 +6936,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 
 ### DC-160 — A Proof Pack figure or "red observed" cell is written before the measurement that would fill it
 
-*Id left for the conductor to allocate at the join.*
+*Id left for the conductor to allocate at the join (the plan's shared-surface rule: the register is append-only, ids are allocated at each join).*
 
 - **Shape:** the pack is drafted while the suites run, and a cell that will hold a measured number —
   a test count, a mutation's red list — is filled with a **plausible** value so the sentence reads
@@ -6913,4 +6961,328 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Status:** `uncontrolled` — the fill-from-record step is prose; the mutation table is generated,
   the counts are not.
 
+### DC-161 — A container's disabled-state trigger only reaches ink that inherits it, and a template that sets ink locally, or carries no trigger at all, is invisible to a floor that never renders the state
+
+- **Shape:** INV-0008's own register (§8) marked `MenuItem IsEnabled=False → DisabledTextBrush on
+  the *item*` **"confirmed by structure"** for every menu header and item — read from the XAML,
+  never rendered. INV-0008 phase 6 (X-1, the census reach) forced two real, already-composed
+  `MenuItem`s disabled — a submenu command and a top-level header — and rendered what the
+  structural read had not: two DIFFERENT sub-shapes of the same class. (a) `MenuItemSubmenuItem`'s
+  gesture-chord `TextBlock` (`Foreground="{DynamicResource TextMutedBrush}"`, a LOCAL value on the
+  glyph itself) never inherits the container's `IsEnabled=False` trigger, so "Ctrl+N" reads exactly
+  as legible disabled as enabled. (b) `MenuItemTopLevelHeader`'s `ControlTemplate` carries no
+  `IsEnabled=False` trigger at all — unlike its three sibling menu templates
+  (`MenuItemTopLevelItem`, `MenuItemSubmenuItem`, `MenuItemSubmenuHeader`) — so a disabled
+  top-level header (`_File` itself) keeps `TextBrush`. Both ratios still clear (6.83:1, 14.30:1) by
+  coincidence; what is lost is the STATE distinction, not the floor.
+- **Signature:** a menu (or any container) template with an `IsEnabled=False` trigger on some but
+  not all of its sibling templates; a glyph inside such a template whose `Foreground` is set
+  directly (not inherited) so a container trigger can never reach it; a register entry that says
+  "confirmed by structure" for a state no test has ever rendered.
+- **Instance (2026-09-12, INV-0008 phase 6, `tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs`
+  `ForceDisabledAndRemeasure`):** both sub-shapes above, found by forcing real `MenuItem`s (the
+  File menu's first submenu command; the `_File` top-level header) disabled and re-walking the
+  composed shell — never constructed on a throwaway window. `App.xaml` is outside this track's
+  owned paths (`docs/coordination/addendum-cd.md` §2); **not fixed here**, routed to the Shell lane
+  (App.xaml's owner) as a seam request. The steady-state reach measures the submenu command (not
+  the top-level header, whose ONLY gap this class explains and which the reach does not force, to
+  avoid asserting a fix this track cannot make); its one known exception (the gesture-chord text) is
+  pinned by `ShellContrastCensusTests.TheDC154MenuInkGapIsNamedAndDoesNotWiden` so a THIRD site
+  cannot silently join it.
+- **Control:** the census reach itself (X-1) — a disabled state is now rendered, not read from the
+  template; `ADisabledControlsInkIsTheDisabledToken`'s zero-tolerance assertion stays in force for
+  everywhere except this one named, cited exception. **Proposed for the Shell lane:** add the
+  missing `IsEnabled=False` trigger to `MenuItemTopLevelHeader`; move the gesture-chord `TextBlock`'s
+  ink to a container-level pairing (a trigger on the template) instead of a local `Foreground`.
+- **Status:** `partially-controlled` — both instances are measured, registered and pinned so
+  neither can regress silently or widen unnoticed; the `App.xaml` fix is a seam request, not yet
+  landed.
+
+### DC-162 — A test's expected order is typed from the author's picture of the data, not read from the code's documented iteration order
+
+- **Shape:** an assertion expects a sequence (`Assert.Equal(["a", "b"], …)`) whose order the code
+  under test defines elsewhere — an enum's declaration order, a dictionary built in that order, a
+  documented "Left · Right · Bottom · Center" walk — and the author writes the order they *picture*
+  (Center first, because that is where they put the interesting surface). The test goes red
+  against correct code; the fix is to the expectation, but the first instinct is to suspect the
+  code, and a hurried author can "fix" the code's order to match the picture.
+- **Signature:** a red whose message is *Collections differ* at position 0 with the same members
+  in a different order; two such reds in one test file within minutes; an expectation that would
+  have been order-insensitive had the author asked "does the order matter here?".
+- **Instance (SH-2, 2026-09-12):** `SurfaceAdmissionTests.RestoreZones_DropsInadmissibleKinds…`
+  expected `["t-1", "cv-1", "sessions"]` then `["graph", "domain"]`; `WorkbenchLayout.AllSurfaces()`
+  walks the zones in `ZoneId` order (Left before Center) and the filter documents that order in its
+  own summary. Both reds were the expectation's. Sweep: no other new test in the slice asserted a
+  cross-zone order; the drag tests assert per-zone.
+- **Control:** where order is not the property under test, assert per zone or order-insensitively
+  (the fix applied); where it is, cite the code's ordering rule in the assertion's comment so the
+  reader can check the expectation against a rule and not a picture. Red first: the red itself is
+  the detector — the class is registered so the second-instinct fix (change the code's order) is
+  recognised as the wrong one.
+- **Status:** `uncontrolled` — no gate; the register entry is the memoir until a
+  lint over `Assert.Equal([` with a cross-container sequence exists, which the Simplifier would
+  strike for one instance.
+
 ## 5. What this note does not decide
+
+### DC-163 — A lease sized to the node's lifetime instead of the edit's minutes turns a shared control into a serial resource, and every join queues behind it
+
+- **Shape:** the coordination layer's claim is *"for the minutes you are editing it"* (README,
+  `.agents/sessions/`; the collaboration contract §"Before you edit anything shared"). A node that
+  claims every file it will touch at its start, with a TTL the length of its run, holds shared
+  controls — the defect register, the contrast census test — for an hour while it edits none of
+  them. The conductor's join, which must append to the register (ids are allocated at the join)
+  and merge the census, is refused by the pre-commit boundary and waits; two joins queued behind
+  one lease on 2026-09-12 for ~50 minutes, and the lease had to be released by message.
+- **Signature:** `REFUSED … held by <node> — expires in N s` on a file the holder is not editing;
+  a join delayed by a lease rather than by a conflict; `--ttl 3600` in a brief.
+- **Instance (conductor-addendum-c, 2026-09-12):** the conductor's own briefs to SH-1, CV-0,
+  CV-1, SH-2 and X-1 said *"claim what you edit … `--ttl 3600`"*; SH-2 then held
+  `docs/lessons/defect-classes.md` and CV-1 held it and `ShellContrastCensusTests.cs` for the
+  full TTL. The X-1 join was refused twice and the SH-2 join once. Both nodes released on request;
+  no data was at risk — the cost was serialisation of the joins.
+- **Sweep:** every open brief in this session carried the same clause; the plan's shared-surface
+  rule (`docs/coordination/addendum-cd.md` §Seams: the register is append-only, ids at the join;
+  whoever owns the file under test owns its test) already said the right thing and the brief
+  contradicted it.
+- **Control:** (1) the brief template now reads *claim a shared file for the minutes of the edit
+  with the default TTL (300 s) and release immediately; never claim a `register`-class artifact
+  (`.agents/artifacts.yml`) — append with a placeholder id and commit*; (2) proposed for the pack:
+  `coord claim` refuses a `register`-class path outright and caps `--ttl` at 900 s unless
+  `--long-edit` names the reason. Until (2) lands the control is the brief and the contract.
+- **Status:** `partially-controlled` — the instance is released; the brief is fixed for every
+  node dispatched after this entry; the mechanical refusal is a pack proposal.
+
+### DC-164 — A child started under a redirected parent inherits the parent's standard handles, so its output lands in the parent's stream instead of the console it was attached to
+
+- **Shape:** `CreateProcess` with `bInheritHandles = false` and no `STARTF_USESTDHANDLES` still
+  hands a **console-subsystem** child duplicates of the parent's standard handles when those are
+  not console handles. A pseudo-console child (ConPTY) of a process whose stdout is a pipe —
+  every test host, every probe the tests run with `RedirectStandardOutput`, any launch under a
+  redirected parent — therefore writes its stdout into the *parent's* pipe. The pseudo console the
+  child was attached to is not where its bytes go. A window-subsystem parent (the App from
+  Explorer) has no standard handles, so the App never shows it and every test host does.
+- **Signature:** shell bytes (`ESC ]133;B BEL`, a prompt, PowerShell's `#< CLIXML` on stderr) in
+  a probe's captured stdout; a measurement line that no longer *begins* a line (`StartsWith`
+  fails while `Contains` passes); a test that is a race between a shell's prompt and a
+  `WriteLine`; a ConPTY `Output` channel that stays empty in-process while the same code works
+  from a terminal (DC-014's 2026-08-26 instance — this was its mechanism).
+- **Instance (CV-1, 2026-09-12):** `ANewSessionRendersInTheOperatorsRestoredArrangement` failed
+  once on `7007e4ac` — *the probe printed no 'restore (22:33:53Z replay):' line* — because
+  `terminal-1`'s PowerShell prompt reached the probe's stdout 1.5 s after the restore started,
+  without a newline, and the restore line followed it on the same line. Reproduced outside the
+  runner: the probe run with `> file` carried `ShellType;powershell` twice in stdout and CLIXML
+  in stderr.
+- **Sweep:** one launch site (`ConPtyInterop.StartAttachedProcess`); `ProcessRunner` and
+  `AcpEngineProcess` use `Process.Start` with redirects, which sets `STARTF_USESTDHANDLES` itself.
+- **Control:** `dwFlags = STARTF_USESTDHANDLES` with all three handles null — Windows Terminal's
+  own client launch (`ConptyConnection.cpp`, `_LaunchAttachedClient`, read 2026-09-12). Red-first:
+  `ConPtyChildStandardHandlesTests.AChildsStdoutIsThePseudoConsoleNotTheHostsRedirectedPipe`
+  points the host's own stdout at a pipe, starts `cmd /c echo <token>` through the product's
+  session, and asserts the token is on the `Output` channel and **not** on the pipe (red: token on
+  the pipe; green after the flag). E2E: the session-render probe run with redirected stdout carries
+  0 shell bytes (was 2) and its restore line begins a line.
+- **Status:** `controlled`.
+
+### DC-165 — A read of a child's output bounded by the child's exit is bounded by the wrong event: end-of-stream comes from the pipe's last writer, which need not be the child
+
+- **Shape:** `ReadToEnd()` (or `ReadToEndAsync().Result`) on a redirected child's stream returns
+  when the **last handle to the pipe's write end** closes. The child's exit closes the child's
+  handle only. Any process that inherited the handle — a background child the command started
+  (`start /b`), anything created while the handle was inheritable — keeps the reader waiting for
+  as long as it lives. A `WaitForExit(timeout)` placed *after* the read never runs; placed before
+  it, the read after it is still unbounded.
+- **Signature:** a managed stack blocked in `StreamReader.ReadToEnd` under a process helper while
+  the child is gone from the process list; a test host at ~0 CPU tens of minutes into a suite that
+  takes two; a hung run whose only red is a timeout somewhere else.
+- **Instance (CV-1 run, 2026-09-12):** the App test host sat 30 minutes in `WorkbenchShell.Git →
+  ReadToEnd` inside `SessionIdentityReportsTheRealWorktreeTests.ANonRepository_ReportsAnUnknownBranch_NeverAGuess`
+  (stacks read with `dotnet-stack report -p 56892`); the same test passes alone in 179 ms. Its
+  `WaitForExit(3000)` came after the read. The holder was not identified (the host was ended to
+  release 32 shells it was keeping alive); the class does not depend on who it was.
+- **Sweep:** `WorkbenchShell.Git` (read before the wait — the instance); `ProcessRunner.Run`
+  (async reads, bounded exit, then an unbounded `GetResult()` on the reads — the same class, one
+  step later). `AcpEngineProcess` streams JSON-RPC and never reads to end.
+- **Control:** `ProcessRunner.Run` bounds the reads with the same timeout and reports a read that
+  did not finish as the reason on the result (`… output pipe was held open past …`), never as a
+  wait; `WorkbenchShell.Git` now calls the runner instead of keeping its own copy (one definition).
+  Red-first: `ProcessRunnerBoundsTheReadTests.AStrangerHoldingTheOutputPipeCannotHoldTheCaller` —
+  `cmd /c start /b ping -n 8 & echo …` hands the pipe to a 7-second holder and exits; red took
+  7.1 s against a 2 s bound, green returns at 2 s with exit 0 and the reason.
+- **Status:** `controlled`.
+
+### DC-166 — A name given to a code-built Style or Template is not in any name scope, and the first trigger that needs it throws inside the render
+
+*Id left for the conductor to allocate at the join (the plan's shared-surface rule: the register is append-only, ids are allocated at each join).*
+
+- **Shape:** a `Style` or `ControlTemplate` is built in code (`FrameworkElementFactory`, `Setter`,
+  `Trigger`) and a part is named — `BeginStoryboard.Name`, a factory's part name — the way XAML's
+  `x:Name` is. XAML registers that name in the Style's or Template's `INameScope`; code does not.
+  Nothing fails at construction, at bind, or at the first render: the name is only resolved by the
+  first trigger that needs it (`StopStoryboard.BeginStoryboardName`, `Template.FindName`), which is
+  the first state change — so the surface renders correctly at rest and throws on its first
+  transition, inside whatever catch keeps the channel alive.
+- **Signature:** `'Spin' name cannot be found in the name scope of 'System.Windows.Style'` (or of
+  `ControlTemplate`) in a log line the surface's fault path wrote; a surface that is right at rest
+  and stops on its first outcome; a test that finds a template part by `FrameworkElement.Name` and
+  reads an empty string.
+- **Instance (CV-1, 2026-09-12):** the running ring's `StopStoryboard` in the thread's code-built
+  `RingStyle` — the first running → stopped transition threw inside `ThreadFeed.Apply`, the DC-134
+  catch stopped the feed with `THR-0001`, and `AnActionKeepsFocusOnTheTurn…` (A4) read
+  `IsStopped = true` where the stopped turn's actions should have been. `((INameScope)style)
+  .RegisterName("Spin", begin)` is the fix; the tests looking up `HeaderSite` by
+  `FrameworkElement.Name` were the same class on the reading side, fixed by
+  `Template.FindName`.
+- **Control:** every code-built Style or Template that names a part registers it on the Style's or
+  Template's `INameScope` in the same method; the render tests drive at least one **transition**
+  through the template (a running turn concluding — A3, A4, C1), never only the at-rest render.
+  Red first: A4 was red with the name unregistered.
+- **Status:** `partially-controlled` — the transition rows exist for the thread; no lint finds a
+  named part with no `RegisterName` in code-built styles.
+
+### DC-167 — An entry rule keyed on a focus event handles every cause of the event
+
+*Id left for the conductor to allocate at the join (the plan's shared-surface rule: the register is append-only, ids are allocated at each join).*
+
+- **Shape:** a control wants keyboard *traversal* into it to land somewhere specific (the caret's
+  container, not whichever container the platform realized), and implements the rule on
+  `GotKeyboardFocus`. The event does not say why focus arrived — Tab, a mouse click on a child,
+  a programmatic `Focus()` — so the rule re-routes all three: a click on b7 lands on b40, a test's
+  `container.Focus()` returns false while focus is visibly inside the list.
+- **Signature:** `Focus()` returning false with `IsKeyboardFocusWithin` true; a click that selects a
+  different item from the one clicked; a re-route that fires from a programmatic focus in a test
+  and nowhere in the operator's hands.
+- **Instance (CV-1, 2026-09-12):** the feed's first entry rule re-routed any focus entering the
+  list from outside; L5's `container.Focus()` read false. The rule moved to where the cause is
+  known: the document's `PreviewKeyDown` sees the Tab press off the header's last stop and calls
+  `FocusCurrentItem()` itself (DS-1 P4 — the document mediates); the feed keeps only the case the
+  event does identify (focus landing on the list itself).
+- **Control:** an entry rule lives where the gesture is observable (a key handler), never on the
+  focus event it produces; K5's Tab-from-the-header row and L5's direct `Focus()` row are both in
+  the suite so the two causes are distinguished by tests. Red first: L5 was red with the
+  focus-event rule in place.
+- **Status:** `partially-controlled` — two rows; no rule forbids a `GotKeyboardFocus` re-route in
+  general.
+
+### DC-168 — A mutation pass whose breaks and captured output live outside the repository is a record, not a control
+
+*Id left for the conductor to allocate at the join (the plan's shared-surface rule: the register is append-only, ids are allocated at each join).*
+
+- **Shape:** a Proof Pack's "red observed" cells are filled by breaking the product on purpose,
+  running the named test, and pasting the failure text (DC-160's fill-from-record). The scripts
+  that applied the breaks and the output they captured are written to a session scratchpad and
+  the product is reverted with `git checkout` — so the repository holds the pasted text and
+  nothing that can re-run it. A reviewer can corroborate each text against the assertion's shape
+  (the index in `pos 36`, the `Expected: 136 Actual: 135` under `FoldLines = 5`) but cannot
+  re-execute the pass; the next slice that touches the guard has no red to re-observe short of
+  re-doing the whole pass by hand.
+- **Signature:** a mutation table in a Proof Pack with no path under `tools/` or `tests/` beside
+  it; "the scripts are in the session scratchpad"; a reviewer's finding worded *a paste I can
+  corroborate, not re-run*.
+- **Instance (CV-1, 2026-09-12):** sixteen cells of `docs/proof/composer-as-conversation.md` filled
+  from three scratchpad batches (`mutate.py A / B1 / B2`); the Test Architect's round-2 Minor.
+- **Control (proposed, not built this slice):** a committed mutation manifest — one JSON row per
+  cell (`file`, `old`, `new`, `test`, `expected_failure_substring`) under `tests/mutations/`, and
+  a `tools/verify-mutations.py` that applies each row on a scratch worktree, runs the named test,
+  asserts the substring, and reverts — so the pack's cells are regenerated, never pasted, and a
+  guard that stops discriminating is a red gate rather than a stale cell. DC-160's control names
+  the fill step as prose; this is its executable half.
+- **Status:** `uncontrolled` — the cells are pasted; the manifest and the gate do not exist.
+
+### DC-169 — The drag reconcile's view-to-model mapping assumes every rendered pane and column stands for a real model occupant, and breaks when one does not
+
+- **Shape:** two related gaps in the position-based reconcile that maps AvalonDock's rendered
+  tree back onto the zone model (`WorkbenchAdapter.MapNode`, `ZoneBackedLayoutService.
+  TryMapByPosition`), both surfacing only once a default layout can legitimately give a zone
+  exactly one surface or none: (1) `MapNode` treats an AvalonDock `LayoutDocumentPane` left in the
+  tree with zero documents — which is what happens when a one-surface zone's only tab is dragged
+  elsewhere — as an unrecognised shape and fails the WHOLE reconcile, not just that zone; (2)
+  `TryMapByPosition` anchors a column to a zone only by majority membership of the zone's OWN
+  model surfaces, so a zone that starts with none (Coding's Center before any session opens —
+  Ruling 55d/60's "No session open" state) can never be anchored, even though its column is
+  plainly rendered (holding `ZonesToTree.WelcomePlaceholder`, a view-only stand-in the model never
+  carries) — so every native drag in that host silently reverted, with no refusal logged.
+- **Signature:** `ReadLayoutFromView()`/`MapNode` returning null (logged `"view-unreadable"`) for a
+  drag that touches an unrelated zone entirely; a native-drag test asserting `expectedAfter` gets
+  back the surface's ORIGINAL zone with no error; a default layout where at least one docking zone
+  holds exactly one surface, or a perspective whose Center starts with none.
+- **Instance (SH-3, 2026-09-12):** landing `WorkbenchLayout.Default(perspective)` (Addendum C §B4)
+  gave Architecture's Left/Right exactly one surface each (Evidence/Provenance) and Coding's
+  Center none — the FIRST defaults in this codebase shaped that way. Six
+  `WorkbenchDragCompletedHookTests` and one theory row went red purely from the shape change, not
+  from a defect in the new defaults themselves; two of the six needed `MapNode`'s fix, the seventh
+  (`coding`/`sessions`/`terminal-1`) needed `TryMapByPosition`'s elimination fallback.
+- **Sweep:** no earlier default in this codebase ever gave a zone exactly one surface or an empty
+  Center, so no other call site was exposed; both fixes are shape-general (any future
+  one-surface-zone or empty-Center default is covered), not special-cased to these two hosts.
+- **Control:** `MapNode` now skips a `LayoutDocumentPane` with zero documents rather than
+  returning null for it (the zone is correctly ABSENT, not unmappable); `TryMapByPosition` now
+  falls back to "the one column neither Left nor Right claims is Center" only when Center's own
+  anchor search comes back empty, and only when exactly one such column remains (still refuses,
+  never guesses, when more than one does). Regression-pinned by
+  `ZoneBackedLayoutServiceTests.ReconcileFromView_WithAModelEmptyCenter_StillAnchorsCenterByElimination`
+  (the fallback firing) and `…_WithTwoUnanchorableColumns_RefusesRatherThanGuesses` (the fallback's
+  own refusal, closing the Test Architect's mutation-coverage finding on that branch), plus the
+  seven `WorkbenchDragCompletedHookTests` cases exercising Architecture's and Coding's new
+  one-surface zones.
+- **Status:** `partially-controlled` — pinned by the tests above; no static lint (the shape is a
+  runtime view/model mismatch, not a pattern greppable in source). id pending conductor allocation
+  at the join (contiguous DC family; DC-168 is the last landed).
+
+## 5. What this note does not decide
+
+### DC-170 — A test that opens a new console on a machine whose default terminal is Windows Terminal opens a Windows Terminal tab, and the tab's agent outlives the test
+
+- **Shape:** `CreateProcess(... CREATE_NEW_CONSOLE ...)` asks Windows for a console *with a window*.
+  When Windows Terminal is the **default terminal application**, that console is handed to Windows
+  Terminal as a tab; Windows Terminal's agent host (`wta.exe`) attaches an agent session to every
+  tab — a `copilot.exe --acp --stdio` child and one `node.exe` MCP server per tab — and keeps them
+  for Windows Terminal's lifetime after the tab closes. A test suite that launches a helper this
+  way leaves one agent pair per launch, forever, on the operator's machine. `WT_SESSION` in the
+  launcher's environment is not the condition: measured with and without it, two launches → two
+  `node.exe`. (INV-0010's WT_* scrub closed the *other* attach path — a ConPTY shell of ours
+  treated as a tab — and left this one, which is not a ConPTY shell at all.)
+- **Signature:** `node.exe … higgsfield-mcp/src/server.js` and `conhost.exe` pairs under
+  `wta.exe → copilot.exe`, born in bursts that line up with test runs, none within 10 s of a
+  product `terminal.start`; a Windows Terminal tab that flashes open during a test; a census whose
+  largest class is *foreign by parent* and grows by about the number of helper launches per run.
+- **Instance (INV-0011 §7, 2026-09-12):** after the pool of 257 was ended, 25 were born during one
+  whole-suite recount (19:58–20:10Z); `TerminalHostExitPathTests` alone (two helper launches):
+  2 born with `WT_SESSION` set, 2 with it unset. Nine Core test classes launched
+  `AiDe.Core.TerminalHost` with `CREATE_NEW_CONSOLE` on DC-014's premise that the helper needed a
+  real console — a premise DC-164 retired.
+- **Sweep:** one launch site (`tests/AiDe.Core.Tests/TerminalHostLauncher.cs`); the App's GUI probe
+  and window-close test use `UseShellExecute = true` on a window-subsystem exe (no console, no tab);
+  no product code creates a console.
+- **Control:** the launcher uses `CREATE_NO_WINDOW` (a headless console: the helper still owns a
+  console, ConPTY still works, no tab exists to attach to) — the same 21 tests, 0 born; the whole
+  `Platform=Windows` half (166), 0 born. The helper's exit code 4 ("no console window") and the four
+  assertions on it are retired with the premise. Gate: `tools/verify-no-new-console-launches.py`
+  (every `*.cs` under `src/` and `tests/`, code lines only, token `CREATE_NEW_CONSOLE`, no
+  allowlist; `--self-test`), run by `run-verify-gates.py` and in CI.
+- **Status:** `controlled`.
+
+### DC-171 — A test that locates a helper binary by "the newest configuration on disk" runs whichever program was built last in that configuration, not the one built with the test
+
+- **Shape:** a test launches a helper executable found by path. The lookup prefers one
+  configuration (`Release` if it exists, else `Debug`) instead of the configuration the test
+  assembly itself was built in. The test step builds the helper (a project reference) in the
+  tests' configuration; the other configuration's binary stays as it was — an older program with
+  the same name, chosen every time it exists. The test then measures a change in a binary that
+  does not contain it.
+- **Signature:** helper tests failing on an exit code or message the helper's source no longer
+  has (`exit 4: no console window — launch with CREATE_NEW_CONSOLE` after the exit was retired);
+  green in a tree with one configuration, red in a tree with two; a fix that "does not take" only
+  in the primary checkout, where Release builds have happened.
+- **Instance (X-2b's join, 2026-09-12):** ten `Platform=Windows` tests failed on `main` at
+  `e2c3aa7f` against a Release `AiDe.Core.TerminalHost.exe` built at 10:59 (before DC-170's
+  change) while the Debug one built at 13:32 sat beside it; the same tests were green in the
+  conductor tree, which had no Release helper.
+- **Sweep:** `TerminalHostLauncher.LocateHelper` (the instance); `AcpProbeLauncher` and the App's
+  `LocateProbe` resolve relative to the test assembly's own output directory (no configuration
+  preference) — not the class.
+- **Control:** `LocateHelper` reads the configuration from the test assembly's own `bin/<configuration>/`
+  segment and uses only that; `TerminalHostLauncherConfigurationTests` asserts the helper path
+  carries the tests' configuration and not the other, and the segment reader on three shapes.
+- **Status:** `controlled`.
+

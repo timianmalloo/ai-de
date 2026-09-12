@@ -2170,7 +2170,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 86 types, 348 members, 71% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 92 types, 406 members, 73% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2183,7 +2183,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9e62c746179e13290ab5594e192a1b39d3d168adfb1243140df763e2822f8d67"
+      "sourceSha256": "b6bfc74b11522f2c3fc0ad04ba079ff821d77ac5a82418bc479b8b68fdb0920b"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -2195,7 +2195,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 10 types, 52 members, 89% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 11 types, 74 members, 91% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2208,7 +2208,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "14fb8cc32edd842547e330f71b3991133607c0d53c4f3159f74a91d9994e15fc"
+      "sourceSha256": "dac4ff6f0a1ee277659df214edf84e00d55875b20bc1fd4c51ab4f656eedec5a"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -2220,7 +2220,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 60 members, 93% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 30 types, 157 members, 71% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2233,7 +2233,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "48aaef86ed379f1b5e455c6038982bf24b5b9641a3872548e9556c504a0e9157"
+      "sourceSha256": "484f9dcade5299debf584a0abb8fbbc852f3d0ad377ce31dc7e47bc17d94821e"
     },
     {
       "id": "api-aide-core",
@@ -2283,7 +2283,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0715ae90de7040d989370389a9e195f2b8a07658d319b9e9e9f382ad1d6266a0"
+      "sourceSha256": "8a4373ddba2f1581c28c2182b0029d8aa08367809a9f4ed729ac22127581bca8"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -2445,7 +2445,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation: 32 types, 84 members, 65% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation: 33 types, 89 members, 66% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2458,7 +2458,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "db1487d42d6075b42a3bf50f883a3a39916ee2dce69362e4e9fde08658c94ed8"
+      "sourceSha256": "d7baf782f688d7ff2cf6960f762036ca47d2ebf58de343f447a0c737f1b3e91e"
     },
     {
       "id": "api-aide-core-presentation-composer",
@@ -2470,7 +2470,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 31 types, 78 members, 87% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 33 types, 90 members, 89% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2483,7 +2483,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bfa1c67b93ec12bfc1c0400ba82e3a38a4f07f8020eea7c6cbc1a719f18b450a"
+      "sourceSha256": "96096eac595c44a39a8b27a3e208dd0f0aa0449addc289baedf2720898fe807e"
     },
     {
       "id": "api-aide-core-presentation-sessions",
@@ -2495,7 +2495,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 14 types, 84 members, 98% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 30 types, 128 members, 96% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2508,7 +2508,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9c85d9da36cbbddf47b5270022df51c8f875d4c9b245b3d70e70bdcf2ed13d39"
+      "sourceSha256": "2941d5bc4583dc34d6551b4517cb831fb739d68ac37ab269fac59a32d50de4f7"
     },
     {
       "id": "api-aide-core-projections",
@@ -2533,7 +2533,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "931922b7daf24b6592406a843d77a6399488e3959ad3ae2ed1c3d24637223c11"
+      "sourceSha256": "b3bd7d072b23497d38f1a5fb961a00ba10c2879cc5b8d5b8af7af70ac88454e5"
     },
     {
       "id": "api-aide-core-sessions",
@@ -2695,7 +2695,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Workbench: 70 types, 132 members, 53% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Workbench: 78 types, 148 members, 58% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2708,7 +2708,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "db87d03a74fd34ac159976e40d32d7f7373c56e638e66048a40aefe433278a62"
+      "sourceSha256": "8fb20ea8b0e1bf8870e1b0695b41c85bbae6f3ae5214bb49bf1c94f58dc57742"
     },
     {
       "id": "api-aide-mcp",
@@ -5448,6 +5448,82 @@ window.DOCS_INDEX = {
       "sourceSha256": "eb392aa7f5b15309836d03bf982cd53380260250580bfdab8cb6dac0dde2147a"
     },
     {
+      "id": "note-cv1-f6-and-the-announcer-until-the-shell-lane-lands-them",
+      "path": "docs/notes/cv1-f6-and-the-announcer-until-the-shell-lane-lands-them.md",
+      "title": "F6 is the session document's own key handler and the document builds its own live region until the Shell lane lands the two registry rows and passes the shell's announcer",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "DS-1 P4 puts F6 on the command registry (WorkbenchCommands.cs) and SC9 through the shell's one announcer; both files are the Shell lane's this horizon. CV-1 lands the behaviour where it owns the file — the document's PreviewKeyDown and an optional announcer parameter with a document-owned polite live region as the default — and files the two seam requests. Holds until SH-2 merges them; then the interim handler and the default region are deleted.",
+      "tags": [
+        "decision-note",
+        "conversation-lane",
+        "cv-1",
+        "sc8",
+        "sc9",
+        "seam",
+        "shell-lane",
+        "dc-068",
+        "dc-072"
+      ],
+      "links": [
+        {
+          "to": "proof-composer-as-conversation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-session-thread-itemscontrol",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "842f5fa2dc01643d7cc81235811e4188864050f336d02947c0df3c438d20d063"
+    },
+    {
+      "id": "note-cv1-waiting-is-not-produced-in-phase-1",
+      "path": "docs/notes/cv1-waiting-is-not-produced-in-phase-1.md",
+      "title": "The run-channel read model never produces a Waiting turn in Phase 1: the run host answers permission itself, and the cap is validated, not enforced",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "CV-1 renders every turn state the run channel can truthfully reach; a Waiting turn (the permission request or the cap ask, SC7's permission / capask states) is not one of them, because GovernedRunHost answers permission requests by its own policy and no cap is enforced in Phase 1. The read model, the policy and the actions carry Waiting and are tested pure; the projection does not invent it. Holds until CV-3's operator channel lands.",
+      "tags": [
+        "decision-note",
+        "conversation-lane",
+        "cv-1",
+        "sc7",
+        "ruling-26c",
+        "ruling-78",
+        "waiting"
+      ],
+      "links": [
+        {
+          "to": "proof-composer-as-conversation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-session-thread-itemscontrol",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4cfedc5859c7e42721b0262e7e521f3343c578a617f8ff2864e2afa485cb726f"
+    },
+    {
       "id": "note-dc-115-evidence-in-a-lanes-own-checkout",
       "path": "docs/notes/dc-115-evidence-in-a-lanes-own-checkout.md",
       "title": "DC-115 — verifying a lane's evidence in the checkout it committed it in",
@@ -6094,6 +6170,55 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "1c42ee919c3f5f6b468787a724c94c49ca704a38e971961decc6a82e4ccf73e9"
+    },
+    {
+      "id": "note-sh2-presenter-router-and-slots",
+      "path": "docs/notes/sh2-presenter-router-and-slots.md",
+      "title": "SH-2 decisions below ADR weight: the router is table-driven from the catalog's Scope, the seam names its host and follows the applied add, host B's interim default is today's default filtered, the switch is two log lines, and the rail is a ListBox that never selects on its own",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Ten choices ADR-0031/0032 left to the implementing slice, made and defended here: the presenter's router reads the catalog row's CommandScope and the kind rows' allow-lists (no switch on an id); DocumentOpening names the host it opens into and follows the applied add (document first); a kind-open asks from the host that raised it and resolves by ADR-0030's order; host B starts from today's default filtered to its admitted kinds until SH-3's Default(perspective); the switch writes a synchronous shell.mode line and an asynchronous shell.mode.shown line; the rail is a ListBox whose selection has one writer; a refused file is preserved every time; a reconcile keeps the view's active tab; focus after a switch is the window's hook; the refusal code lives beside the rule.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "perspective",
+        "docking",
+        "layout-persistence",
+        "rail",
+        "shell-lane"
+      ],
+      "links": [
+        {
+          "to": "adr-0031-second-docking-host",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0032-perspective-layout-slots",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-perspective-shell",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-sh1-scope-and-entry-columns",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5c75c6340e61c95d4953cad3cf8b76b032a410288cf1ba6683cfb75032c0d223"
     },
     {
       "id": "note-terminal-customization-persistence",
@@ -8033,7 +8158,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ad79ba46b90a355b8092f5599ada91879ae17a01357cf4b4f5b50998cd92ec12"
+      "sourceSha256": "31a2bcd8176bebb1a31b9e7a7fcf61be0c94a1a0049b5c4d1da75d771395d302"
     },
     {
       "id": "coordination-code-atlas",
@@ -8134,7 +8259,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c416a8f91377ac0644d4388b588ff8ead3156f79d4a2de17bcb5d38b37147641"
+      "sourceSha256": "d91f5b7d9138b2775682e1c108b822610ff2ad970850f7e6fa98dde01a56ed91"
     },
     {
       "id": "design-session-profiler",
@@ -11994,6 +12119,57 @@ window.DOCS_INDEX = {
       "sourceSha256": "00d5c8e045dd0eb0fa10474be388365bb2281b1d6e9181734d322302a1b2d716"
     },
     {
+      "id": "inv-0011-terminal-hosts-the-sixth-report",
+      "path": "docs/investigations/INV-0011-terminal-hosts-the-sixth-report.md",
+      "title": "Terminal hosts are being created AGAIN — the sixth report: 32 shells held alive by a hung test host, the two defects under it, and what is still unattributed",
+      "type": "investigation",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-addendum-c",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "The operator's sixth report, 2026-09-12 ~19:00Z. Counted first: 32 powershell.exe and 36 conhost.exe born in the previous hour, every one a child of the CV-1 lane's App test host, alive 25 minutes after birth — ours. The host was hung at ~0 CPU, 30 minutes into a suite that takes two, in WorkbenchShell.Git → StreamReader.ReadToEnd after git had exited; the read was unbounded and the WaitForExit(3000) bound sat after it (DC-165). Ending the host released all 32 (the job's kill-on-close held). A second defect was found on the way in: a ConPTY child of a redirected parent inherits the parent's standard handles and writes into its stdout (DC-164) — the mechanism behind CV-1's one flaky probe test and, re-read, behind DC-014's 2026-08-26 instance. Both fixed red→green with E2E proof. The 513 node/conhost pairs under Windows Terminal's agent host are the pre-fix pool of INV-0010, unchanged in count. Still open: which code path started 32 shells inside a hung host — the tests' default sink discarded the events; it now writes a per-run ledger. §7, after the pool was ended: it regrew by 25 during one recount, from CREATE_NEW_CONSOLE helper launches that Windows Terminal (the default terminal) turns into tabs and attaches an agent to — with or without WT_SESSION; the launcher is now headless and a gate keeps it so (DC-170).",
+      "tags": [
+        "terminal",
+        "conpty",
+        "conhost",
+        "straggler",
+        "census",
+        "test-host",
+        "hang",
+        "stdout",
+        "handle-inheritance",
+        "windows-terminal",
+        "create-new-console",
+        "dc-164",
+        "dc-165",
+        "dc-170",
+        "dc-155",
+        "dc-014",
+        "x-2"
+      ],
+      "links": [
+        {
+          "to": "inv-0010-terminal-hosts-the-fifth-report",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0005-terminal-runtime-boundary",
+          "rel": "depends-on"
+        },
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2122bcb7ecb421695f758e544427505235dd28a09b7511b1dca941c4d61d772f"
+    },
+    {
       "id": "inv-knowledge-chip-reads-zero-again",
       "path": "docs/investigations/knowledge-chip-reads-zero-again.md",
       "title": "The Knowledge category chip reads 0 again — the App ignores the IsKnowledge flag",
@@ -15396,6 +15572,48 @@ window.DOCS_INDEX = {
       "sourceSha256": "70be47bec3d22b82a75fcceb9b51b67671c6eb0175f97f7d178ca72999c2ab77"
     },
     {
+      "id": "proof-census-controls",
+      "path": "docs/proof/census-controls.md",
+      "title": "Proof Pack - The census controls (INV-0008 phase 6, DC-147's control, the four legacy mockups)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "X-1's three deliverables under `docs/coordination/addendum-cd.md`: INV-0008 phase 6's census reach (a disabled checkbox and a disabled submenu command forced on the real composed shell, 0 below floor; hover/pressed and a never-instantiated RadioButton named as genuine residuals, not faked); DC-147's control (`tools/verify-mockup-audits.py`, a headless browser sweep, red first, wired into CI); the four legacy mockups' `h_theme` ReferenceError fixed. One new finding (DC-161) surfaced by the reach and routed to the Shell lane, not fixed here (App.xaml is outside this track's owned paths).",
+      "tags": [
+        "proof-pack",
+        "ui",
+        "contrast",
+        "wcag",
+        "census",
+        "mockups",
+        "dc-147",
+        "dc-158"
+      ],
+      "links": [
+        {
+          "to": "inv-0008-contrast-floor-passes-while-the-shell-fails",
+          "rel": "tested-by"
+        },
+        {
+          "to": "proof-contrast-census",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a92734fa7845b6e7ad4a33a691fe588436959f29a8ab7340d01343356a9def94"
+    },
+    {
       "id": "proof-code-atlas-identity-unit",
       "path": "docs/proof/code-atlas-identity-unit.md",
       "title": "Code Atlas first Core unit - identity and source binding",
@@ -15497,6 +15715,75 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "5330bfa6f6412a51e0e0e4a307ceb4dbb4376d36600dd2899d80d0b67c3b93e9"
+    },
+    {
+      "id": "proof-composer-as-conversation",
+      "path": "docs/proof/composer-as-conversation.md",
+      "title": "Proof Pack — CV-1, the composer as a conversation: the thread feed per DS-1 (SC8 keys, SC9 announcements, SC10 UIA), the folded Console per turn, the decoration line, and tier / fan-out / budget off the per-prompt form",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Evidence for CV-1 on the Conversation lane: the session document is a feed of turns above one pinned composer (DS-1's FeedList / ThreadFeed over a recycling VirtualizingStackPanel), the editor's top edge is equal at 1 / 5 / 40 turns with the editor never below its 130 px floor and the thread never starved (both mechanisms measured: the floor on the host, the belt on the document), the SC8 keyboard model is a pure decision plus an act with the six owned keys, the SC9 policy announces each transition once and never a line, the SC10 properties are real over the UIA peers, the folded Console per turn and the on-demand split are one list (Ruling 74 condition 1), tier / fan-out / budget left the per-prompt form (the tier is §A9's projection on the compiler, the cap and budget the session's), the eight named reds and DS-1's headless oracles went red → green, and the attended rows (P-11/12/13, A6) are RUN-PENDING with their steps.",
+      "tags": [
+        "proof-pack",
+        "conversation-lane",
+        "cv-1",
+        "ds-1",
+        "session-thread",
+        "composer",
+        "ruling-56",
+        "ruling-63",
+        "ruling-72",
+        "ruling-74",
+        "ruling-77",
+        "ruling-78",
+        "sc1-sc10",
+        "accessibility",
+        "virtualization"
+      ],
+      "links": [
+        {
+          "to": "design-session-thread-itemscontrol",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-read-only-turn",
+          "rel": "refines"
+        },
+        {
+          "to": "mockup-session-conversation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0034-envelope-event-store",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "cefbdeaad3f27d4af8aa4c955b6c7688d6837c5755b98e34fdde96ca5818434d"
     },
     {
       "id": "proof-composer-entry-areas",
@@ -15764,6 +16051,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "6c5c67e487b6bb2c9497ce5e10e0191a7c68dc102d699ffb26af00ece93516c1"
     },
     {
+      "id": "proof-perspective-content",
+      "path": "docs/proof/perspective-content.md",
+      "title": "Proof Pack: SH-3 — perspective content",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Coding's and Architecture's per-perspective default layouts (§B4; Rulings 54/59/60/61), the Evidence master/Provenance detail selection channel (US-C6), the kind-filtered second canvas and the class-diagram scaling fix (Ruling 53), each proven red-before-green with the numbers recorded.",
+      "tags": [
+        "proof-pack",
+        "addendum-c",
+        "shell-lane",
+        "sh-3"
+      ],
+      "links": [
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1c4a3c3d9a322a95f2fafb93336830fdd0306e810fbbca8e10c602e5a082391e"
+    },
+    {
       "id": "proof-perspective-registry",
       "path": "docs/proof/perspective-registry.md",
       "title": "Proof Pack — The Perspective registry, the allow-list column and the derived menu, palette and routing (SH-1, ADR-0030)",
@@ -15811,6 +16132,59 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "1843a96dda43c5b909fc39d0e7a104cde242e40913c87e05dfd3f991da88330f"
+    },
+    {
+      "id": "proof-perspective-shell",
+      "path": "docs/proof/perspective-shell.md",
+      "title": "Proof Pack — The second docking host, the PerspectiveShell presenter and router, one layout slot per host, and the rail's three destinations (SH-2, ADR-0031/0032)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "SH-2 of the Shell lane: the DockHost unit composed twice under the PerspectiveShell presenter and router; each host's layout service guarded by its perspective's allow-list at open, restore and reset; one zone-envelope slot per host with drop-with-report, a once-only pre-perspective backup, a refused file always preserved, and a golden rollback round-trip; the rail's three destinations with manual activation and one writer of the selection. The plan's reds observed (compile-red, then eleven mutations); three hard vetoes raised, two cleared in two rounds and the third's post-cap fix applied as prescribed for the conductor to confirm; the DC-135 ratio narrowed from 65:29 to 65:38. Suite counts pasted from the runner at close.",
+      "tags": [
+        "proof-pack",
+        "addendum-c",
+        "perspective",
+        "docking",
+        "layout-persistence",
+        "rail",
+        "shell-lane"
+      ],
+      "links": [
+        {
+          "to": "adr-0031-second-docking-host",
+          "rel": "tested-by"
+        },
+        {
+          "to": "adr-0032-perspective-layout-slots",
+          "rel": "tested-by"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-sh2-presenter-router-and-slots",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-perspective-registry",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3264731c2329c8b67ab28ee9ab8679edfe1f830be131139e431a1fb0e2a09dc1"
     },
     {
       "id": "proof-read-only-turn",
@@ -16045,6 +16419,56 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "a14650121e843a0780b918ff5400781428d882ebf72d8d5794963cd0354fb3d0"
+    },
+    {
+      "id": "proof-terminal-hosts-sixth",
+      "path": "docs/proof/terminal-hosts-sixth.md",
+      "title": "Proof Pack - Terminal hosts, the sixth report: INV-0011 (X-2)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-addendum-c",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Evidence for INV-0011. Two classes red→green in Core: a ConPTY child no longer inherits its redirected parent's standard handles (DC-164: token on the host's pipe → on the Output channel only), and a child-process read is bounded by the call, not by the child's exit (DC-165: 7.1 s → 2 s against a 2 s bound). E2E: the session-render probe run with redirected stdout carries 0 shell bytes (was 2). The App test host's shells now end with their owner: a per-run terminal ledger reads 64 starts / 62 stops (was 64 / 14), with the shell disposing its panes and every test disposing its shell. One contrast pairing the census could only see once test-host shells reached readiness (the \"Target session\" face, 1.03:1) is templated on token grounds: 120/120.",
+      "tags": [
+        "terminal",
+        "conpty",
+        "conhost",
+        "test-host",
+        "hang",
+        "stdout",
+        "handle-inheritance",
+        "ledger",
+        "contrast",
+        "dc-164",
+        "dc-165",
+        "dc-014",
+        "dc-155",
+        "proof-pack",
+        "inv-0011",
+        "x-2"
+      ],
+      "links": [
+        {
+          "to": "inv-0011-terminal-hosts-the-sixth-report",
+          "rel": "tested-by"
+        },
+        {
+          "to": "proof-terminal-hosts-fifth",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0005-terminal-runtime-boundary",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e86758a2394dc823c88a985417bdad57f0cb1221620620c3172042cb3e03a430"
     },
     {
       "id": "proof-watcher-advisory-evaluator",
@@ -18079,5 +18503,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "5ec55c743ed9b791fd2ef0d19389c1b18f6546c4a042c9b7fecc5395103e2449"
+  "graphSha256": "df0988696047e94ccf0ade4b47cb08edfee5fba043ca2b04f9b483de2b98f83f"
 };

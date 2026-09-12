@@ -20,18 +20,73 @@ public sealed class ZoneBackedLayoutService : ILayoutService
     private Layout? _projection;
 
     public ZoneBackedLayoutService(WorkbenchLayout? initial = null)
+        : this(SurfaceAdmission.Unrestricted, initial)
     {
-        _zones = initial ?? WorkbenchLayout.Default();
     }
+
+    /// <summary>
+    /// A host's service: <paramref name="admission"/> is the perspective's allow-list and
+    /// one-instance rule, enforced at open, restore and reset (ADR-0031 rule 3). The initial
+    /// arrangement — <paramref name="initial"/>, else the default — is filtered by the same rule, so
+    /// the host never starts holding a kind it would refuse.
+    /// </summary>
+    public ZoneBackedLayoutService(SurfaceAdmission admission, WorkbenchLayout? initial = null)
+    {
+        Admission = admission ?? throw new ArgumentNullException(nameof(admission));
+        var filtered = Admission.Filter(initial ?? SeedDefault(Admission));
+        _zones = filtered.Layout;
+        DefaultDropped = initial is null ? filtered.Dropped : [];
+    }
+
+    /// <summary>
+    /// The seed a host with no explicit initial arrangement starts from: a real (non-Unrestricted)
+    /// admission gets ITS perspective's own §B4 table (<see cref="WorkbenchLayout.Default(Perspective)"/>,
+    /// SH-3); the bare/test <see cref="SurfaceAdmission.Unrestricted"/> keeps the legacy combined seed
+    /// so every existing bare-service construction is unchanged.
+    /// </summary>
+    private static WorkbenchLayout SeedDefault(SurfaceAdmission admission) =>
+        admission.IsUnrestricted ? WorkbenchLayout.Default() : WorkbenchLayout.Default(admission.Perspective);
+
+    /// <summary>
+    /// What the seed default dropped to satisfy this host's invariant — non-empty only while the
+    /// one <see cref="WorkbenchLayout.Default"/> seeds a kind or a duplicate a perspective refuses
+    /// (today: Architecture drops the second <c>view</c>). The shell records it; a construction that
+    /// dropped something is on record, never silent.
+    /// </summary>
+    public IReadOnlyList<DroppedSurface> DefaultDropped { get; }
+
+    /// <summary>The allow-list this host enforces; <see cref="SurfaceAdmission.Unrestricted"/> for a bare service.</summary>
+    public SurfaceAdmission Admission { get; }
 
     /// <summary>The zone model — the real source of truth behind the projected tree.</summary>
     public WorkbenchLayout Zones => _zones;
 
-    /// <summary>Replaces the whole zone arrangement (used by persistence restore).</summary>
-    public void RestoreZones(WorkbenchLayout zones)
+    /// <summary>
+    /// The arrangement this host starts from and resets to: the default, holding only admitted
+    /// kinds and at most one of each one-instance kind.
+    /// </summary>
+    /// <remarks>
+    /// SH-3: seeded from THIS host's own §B4 table (<see cref="SeedDefault"/>), not the old combined
+    /// seed filtered down — the source of the "Domain wired to the Evidence list" and "Explore/
+    /// Provenance/Contexts/Joins stacked as sibling tabs" defects a shared, generic seed produced.
+    /// Still run through <see cref="SurfaceAdmission.Filter"/>: defensive, and what applies the
+    /// one-instance rule for a caller that mutates the seed before this runs.
+    /// </remarks>
+    public WorkbenchLayout DefaultLayout() => Admission.Filter(SeedDefault(Admission)).Layout;
+
+    /// <summary>
+    /// Replaces the whole zone arrangement (persistence restore), dropping what this host does not
+    /// admit and reporting each drop (ADR-0032 rule 2). Zero surfaces left → the default is applied
+    /// and the report says so; the host is never four empty zones.
+    /// </summary>
+    public ZoneRestoreReport RestoreZones(WorkbenchLayout zones)
     {
         ArgumentNullException.ThrowIfNull(zones);
-        Set(zones);
+
+        var filtered = Admission.Filter(zones);
+        var defaulted = !Admission.IsUnrestricted && !filtered.Layout.AllSurfaces().Any();
+        Set(defaulted ? DefaultLayout() : filtered.Layout);
+        return new ZoneRestoreReport(filtered.Dropped, defaulted);
     }
 
     public Layout Current => _projection ??= ZonesToTree.ToTree(_zones);
@@ -48,7 +103,7 @@ public sealed class ZoneBackedLayoutService : ILayoutService
         //  (2) persistence/migration passes an arbitrary or legacy tree — position mapping returns
         //      null and we fall back to kind-based conversion (AC-F9). A reconcile shape we cannot
         //      map confidently also returns null, and the fallback keeps the surfaces without a flip.
-        Set(TryMapByPosition(layout, _zones) ?? TreeToZones.Convert(layout));
+        Set(Admission.Filter(TryMapByPosition(layout, _zones) ?? TreeToZones.Convert(layout)).Layout);
     }
 
     /// <summary>
@@ -131,19 +186,37 @@ public sealed class ZoneBackedLayoutService : ILayoutService
             return best >= 0 ? best : null;
         }
 
+        var leftAnchor = AnchorFor(ZoneId.Left);
+        var rightAnchor = AnchorFor(ZoneId.Right);
         var centerAnchor = AnchorFor(ZoneId.Center);
+
+        if (centerAnchor is null)
+        {
+            // Center owns no surfaces of its own to anchor by — the Coding default before any
+            // session opens (Ruling 55d/60: "No session open", the empty state) — so the VIEW's
+            // Center column holds only the synthetic ZonesToTree.WelcomePlaceholder, which the
+            // MODEL never carries and majority-membership can never match. Center is mandatory and
+            // every OTHER column is claimed by Left or Right, so the one column neither claims IS
+            // Center by elimination — never a guess among several: still refuse when that leaves
+            // more than one candidate.
+            var unclaimed = Enumerable.Range(0, colChildren.Count)
+                .Where(i => i != leftAnchor && i != rightAnchor)
+                .ToList();
+            centerAnchor = unclaimed.Count == 1 ? unclaimed[0] : null;
+        }
+
         if (centerAnchor is not { } centerIndex)
         {
             return null; // no column carries the Center's content — not our frame; let the caller revert
         }
 
         var anchorZone = new Dictionary<int, ZoneId>();
-        if (AnchorFor(ZoneId.Left) is { } li)
+        if (leftAnchor is { } li)
         {
             anchorZone[li] = ZoneId.Left;
         }
 
-        if (AnchorFor(ZoneId.Right) is { } ri)
+        if (rightAnchor is { } ri)
         {
             anchorZone[ri] = ZoneId.Right;
         }
@@ -157,6 +230,12 @@ public sealed class ZoneBackedLayoutService : ILayoutService
             [ZoneId.Right] = new List<Surface>(),
         };
 
+        // The view's ACTIVE surface per zone, so the model catches up to the tab the user is looking
+        // at rather than resetting every reconciled stack to its first tab (INV-0006's class: a
+        // reconcile that rebuilt the stack with ActiveIndex 0 moved the active tab on the next
+        // render — SH-1's seam note, measured by SH-2's create-failure test).
+        var activeIn = new Dictionary<ZoneId, string>();
+
         for (var i = 0; i < colChildren.Count; i++)
         {
             var target = anchorZone.TryGetValue(i, out var z)
@@ -166,11 +245,19 @@ public sealed class ZoneBackedLayoutService : ILayoutService
                 // lands in Left — never merged into the Center or swapped to the wrong side.
                 : i < centerIndex ? ZoneId.Left : ZoneId.Right;
             ((List<Surface>)assigned[target]).AddRange(SurfacesUnder(colChildren[i]));
+            if (!activeIn.ContainsKey(target) && ActiveUnder(colChildren[i]) is { } active)
+            {
+                activeIn[target] = active;
+            }
         }
 
         if (bottom is not null)
         {
             assigned[ZoneId.Bottom] = SurfacesUnder(bottom);
+            if (ActiveUnder(bottom) is { } activeBottom)
+            {
+                activeIn[ZoneId.Bottom] = activeBottom;
+            }
         }
 
         // Build the result from the current model (so extents / collapsed tool zones are preserved),
@@ -194,9 +281,12 @@ public sealed class ZoneBackedLayoutService : ILayoutService
             }
 
             var welcomeOnly = surfaces.Count == 1 && surfaces[0].SurfaceId == ZonesToTree.WelcomePlaceholder.SurfaceId;
+            var activeIndex = activeIn.TryGetValue(id, out var activeId)
+                ? Math.Max(0, surfaces.ToList().FindIndex(s => string.Equals(s.SurfaceId, activeId, StringComparison.Ordinal)))
+                : 0;
             ZoneContent? content = surfaces.Count == 0 || welcomeOnly
                 ? null
-                : new ZoneStack([.. surfaces]);
+                : new ZoneStack([.. surfaces], activeIndex);
             result = result.WithZone(result.Zone(id) with { Content = content });
         }
 
@@ -212,6 +302,14 @@ public sealed class ZoneBackedLayoutService : ILayoutService
         result.AssertInvariant();
         return result;
     }
+
+    /// <summary>The active surface of the first stack under <paramref name="node"/> — the tab the view shows — or null.</summary>
+    private static string? ActiveUnder(LayoutNode node) => node switch
+    {
+        StackNode s => s.Surfaces.Count > 0 ? s.Active.SurfaceId : null,
+        SplitNode p => p.Children.Select(ActiveUnder).FirstOrDefault(a => a is not null),
+        _ => null,
+    };
 
     private static IReadOnlyList<Surface> SurfacesUnder(LayoutNode node)
     {
@@ -248,6 +346,30 @@ public sealed class ZoneBackedLayoutService : ILayoutService
             return Refuse(LayoutErrorCodes.Locked, "Layout is locked. Unlock to rearrange panes.");
         }
 
+        // The allow-list, at open (ADR-0031 rule 3; US-C3 b1): a surface of a kind this perspective
+        // does not admit never enters the host, whatever path asked, and the refusal names where it
+        // belongs so the caller can route it (ADR-0030 Resolve) or say so.
+        if (operation is LayoutOperation.AddSurface add)
+        {
+            if (!Admission.Admits(add.Surface.Kind))
+            {
+                var home = Admission.AdmittedBy(add.Surface.Kind);
+                return Refuse(SurfaceAdmission.RefusalCode, home is null
+                    ? $"{add.Surface.Title} cannot open in {Admission.Perspective.Title}: no perspective admits a '{add.Surface.Kind}' surface."
+                    : $"{add.Surface.Title} cannot open in {Admission.Perspective.Title}; it belongs to {home.Title}.");
+            }
+
+            // The one-instance rule, at open (the same invariant restore enforces — ADR-0032 rule 2):
+            // a second surface of a one-instance kind is refused with the first named, never added.
+            if (Admission.IsOneInstance(add.Surface.Kind)
+                && _zones.AllSurfaces().FirstOrDefault(s => string.Equals(s.Kind, add.Surface.Kind, StringComparison.Ordinal)) is { } existing
+                && !string.Equals(existing.SurfaceId, add.Surface.SurfaceId, StringComparison.Ordinal))
+            {
+                return Refuse(SurfaceAdmission.OneInstanceCode,
+                    $"{add.Surface.Title} is already open ({existing.Title}); {Admission.Perspective.Title} holds one.");
+            }
+        }
+
         ZoneLayoutResult zoneResult;
         try
         {
@@ -261,7 +383,7 @@ public sealed class ZoneBackedLayoutService : ILayoutService
                 LayoutOperation.ResizeSplit op => Resize(op),
                 LayoutOperation.SetStackState op => SetState(op),
                 LayoutOperation.ResetToDefault => new ZoneLayoutResult(
-                    WorkbenchLayout.Default(), true, null, "Workbench layout reset to the default."),
+                    DefaultLayout(), true, null, "Workbench layout reset to the default."),
                 _ => new ZoneLayoutResult(_zones, false, LayoutErrorCodes.InvalidTarget, "Unsupported layout operation."),
             };
         }
@@ -411,3 +533,6 @@ public sealed class ZoneBackedLayoutService : ILayoutService
     private LayoutResult Refuse(string code, string announcement) =>
         new(Current, false, code, announcement);
 }
+
+/// <summary>What a zone restore did to the arrangement it was given: every drop, and whether the default was applied because nothing admissible was left.</summary>
+public sealed record ZoneRestoreReport(IReadOnlyList<DroppedSurface> Dropped, bool DefaultApplied);

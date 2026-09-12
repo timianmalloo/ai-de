@@ -17,8 +17,12 @@ public interface IComposerMessageSink
     /// <summary>Replace the host-side mirror of one host-minted field.</summary>
     void SetFieldText(string fieldId, long revision, string text);
 
-    /// <summary>Move WPF focus off the web control — existing behaviour, nothing new.</summary>
-    void MoveFocus();
+    /// <summary>
+    /// Move WPF focus off the web control: forward (Tab from the page's last stop — existing
+    /// behaviour) or backward (Shift+Tab from its first stop — DS-1 seam 3, into the thread's last
+    /// stop). The page only ever says which way; where focus lands is the host's.
+    /// </summary>
+    void MoveFocus(bool backward);
 
     /// <summary>
     /// A drop was offered. The paths came from <c>CoreWebView2File.Path</c> in
@@ -219,7 +223,7 @@ public sealed class ComposerMessageRouter
         {
             ComposerMessageKinds.EditorReady => Ready(kind),
             ComposerMessageKinds.DraftChanged => DraftChanged(kind, root),
-            ComposerMessageKinds.FocusLeave => Accept(kind, _sink.MoveFocus),
+            ComposerMessageKinds.FocusLeave => Accept(kind, () => _sink.MoveFocus(IsBackward(root))),
             ComposerMessageKinds.AttachOffered => AttachOffered(kind, root, additionalObjectPaths),
             ComposerMessageKinds.Metrics => Metrics(kind, root),
             _ => Drop(kind, "the kind is not one of the five"),
@@ -340,6 +344,12 @@ public sealed class ComposerMessageRouter
         _sink.RecordMetric(name, value);
         return new ComposerRouteResult(true, kind, string.Empty);
     }
+
+    /// <summary>A <c>focus.leave</c>'s optional direction: <c>"backward"</c>, else forward. Anything else is forward — never a third way.</summary>
+    private static bool IsBackward(JsonElement root) =>
+        root.TryGetProperty("direction", out var direction)
+        && direction.ValueKind == JsonValueKind.String
+        && string.Equals(direction.GetString(), "backward", StringComparison.Ordinal);
 
     private ComposerRouteResult Accept(string kind, Action effect)
     {

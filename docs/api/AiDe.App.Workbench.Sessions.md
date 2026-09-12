@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 60 members, 93% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Sessions: 30 types, 157 members, 71% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Sessions`
 
-**12 public types · 60 public members · 93% documented.**
+**30 public types · 157 public members · 71% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -129,45 +129,163 @@ Appends a mode. Disposing the returned handle removes it again.
 a mode is adding a row" would be to add a permanent row for the proof, which is a placeholder
 wearing a test's clothes.
 
+## `ConsoleSplitRow`
+
+*record* — `ConsoleSurface.cs`
+
+One row of the Console split: a heading per turn, or one event line under it.
+
+## `TurnHeading`
+
+*record* — `ConsoleSurface.cs`
+
+*b5 · 15:02* — a `ListItem` with `HeadingLevel` 4 (SC10).
+
+| Member | Summary |
+|---|---|
+| `string Text` | **(gap)** |
+
+## `Line`
+
+*record* — `ConsoleSurface.cs`
+
+One event line, named by its text.
+
+| Member | Summary |
+|---|---|
+| `string Text` | **(gap)** |
+
 ## `ConsoleSurface`
 
 *class* — `ConsoleSurface.cs`
 
-The Console canvas mode (R16 b1): the merged stream across every lane of one session, with a
-lane rail and tree filtering.
+The Console split (SC1; Ruling 74): the same events the thread folds per turn, unfolded in time
+— a flat list of rows (a heading per turn, then its lines), **a view of the same fold**,
+never a second store (Ruling 74 condition 1: the split's rows equal the folded events, in order).
 
-**Remarks.** **Attribution is on the row, not on the layout.** Every line carries the lane that
-produced it and renders it as a chip beside the text, so a two-lane stream can never present as
-one voice — which is the failure R16 b1's clause names. The rail on the left is the same fact
-summarised: who is talking, and how much.
-
-
-
-
-
-**Filtering is a tree, and it hides rather than drops.** A lane node excludes the whole
-lane; a kind node under it excludes one kind of that lane's traffic. The model keeps every row it
-ever received either way, so a filter can never destroy the history the ordinal oracle reads.
-
-
-
-
-
-**Disposal is announced** (`SessionDisposalSignal`). This surface is
-retained across a canvas mode switch and a tab switch; the ledger is how that claim is checked
-rather than asserted, because `Assert.Same` passes on a disposed instance.
+**Remarks.** **The old merged-stream renderer is gone.** It rendered `ConsoleStreamModel` —
+the run channel with no turn boundary — through a `StackPanel` rebuilt on every change
+(the 40-turn cliff by construction). This is the second `FeedList` consumer: the
+same virtualization, the same keys, the same pin. Opened from a fold's tail the caret is that
+turn's heading; while a turn runs it follows.
 
 | Member | Summary |
 |---|---|
-| `ConsoleSurface(ConsoleStreamModel model)` | **(gap)** |
-| `ConsoleStreamModel Model` | The merged stream this console shows. |
-| `IReadOnlyList<string> RailLanes` | The lane names the rail is showing, in rail order — what a test reads instead of the tree. |
-| `IReadOnlyList<string> RenderedRows` | Every rendered line, as "lane: text" — the rendered attribution, not the model's. |
-| `void Dispose()` | Detaches from the stream. Announced first, so the disposal is counted either way. |
+| `ConsoleSurface()` | **(gap)** |
+| `IReadOnlyList<ConsoleSplitRow> Rows` | The rows as rendered — the identity oracle's left side (M1). |
+| `int? At` | The turn the split is at (the caret's heading), or null when following the end. |
+| `void Show(IReadOnlyList<TurnView> turns, int? at = null)` | Re-derives the rows from the thread's turns — one list, in order. Called by the document on every applied snapshot while the split is open, and once when it opens. |
+| `string Status` | The status word the header's Console toggle announces: *following b5* · *at b2* · *at the end*. |
+| `IReadOnlyList<ConsoleSplitRow> Derive(IReadOnlyList<TurnView> turns)` | The rows a fold yields: for each turn, its heading then its lines — the identity's right side (M1). |
 
-### `ConsoleSurface(ConsoleStreamModel model)`
+### `void Show(IReadOnlyList<TurnView> turns, int? at = null)`
 
-- **`model`** — The merged stream. Shared with the document, never copied.
+Re-derives the rows from the thread's turns — one list, in order. Called by the document on
+every applied snapshot while the split is open, and once when it opens.
+
+- **`turns`** — The fold.
+- **`at`** — The turn to open at (a tail button, *Open the log*), or null to keep the caret.
+
+## `FocusLeave`
+
+*enum* — `FeedKeyDecision.cs`
+
+Which way focus leaves the feed on Ctrl+Home / Ctrl+End (DS-1 P2, P4).
+
+## `FeedKeyDecision`
+
+*record* — `FeedKeyDecision.cs`
+
+The pure half of the feed's keyboard model (SC8; DS-1 P2): what one key press means, decided
+without a window so `K1a` can walk the whole `Key × ModifierKeys × bool` domain.
+
+## `None`
+
+*record* — `FeedKeyDecision.cs`
+
+Not the feed's key: the platform, or an inner control that owns it, handles it.
+
+## `MoveBy`
+
+*record* — `FeedKeyDecision.cs`
+
+Move the caret by  items (PageDown +1, PageUp −1), select, scroll into view, focus the container.
+
+## `MoveTo`
+
+*record* — `FeedKeyDecision.cs`
+
+Move the caret to the first (Home) or last (End) item — owned, index-based; the platform's End lands short (spike Q5c).
+
+## `Scroll`
+
+*record* — `FeedKeyDecision.cs`
+
+Scroll the viewport by  text lines (Down +3, Up −3); the caret stays — a tall turn's middle is reachable by keyboard.
+
+## `Leave`
+
+*record* — `FeedKeyDecision.cs`
+
+Raise a leave request the document routes (Ctrl+End → the editor, Ctrl+Home → the header).
+
+## `FeedList`
+
+*class* — `FeedList.cs`
+
+The virtualized feed base the session thread and the Console split share (DS-1 P1, P2, P7):
+a `ListBox` over a recycling `VirtualizingStackPanel` with pixel
+scrolling, the six owned keys as a pure decision plus an act, the follow rule's structural anchor,
+and containers that carry their own template so the theme's selection band never paints
+the reading caret.
+
+**Remarks.** **The theme never reaches a subclass on its own.** `App.xaml` delivers the whole
+theme by implicit per-type styles, which bind an exact `TargetType`; a `FeedList` would
+fall to Aero2's white ground and black ink. So the ink and the ground are set here by resource
+reference (the `SurfaceChrome` idiom) and the container carries its own template
+(spike Q11–Q13; DC-139).
+
+
+
+
+
+**The feed owns its keys from the container and from any inner control.** The
+platform's PageDown moves by a page (17 items from 0), its End lands on 38 of 40 and its Up from
+the last turn does not move in a variable-height, pixel-virtualized list (spike Q5a, Q5c) — so
+PageDown / PageUp move the caret by one item, Home / End by index, Up / Down scroll three text
+lines, and Ctrl+Home / Ctrl+End raise leaves. A source that owns its keys (an expanded compiled
+scroller, a text box) keeps them (`SourceOwnsItsKeys`); Ctrl+PageUp / PageDown stay
+the pane switch.
+
+
+
+
+
+**The selection is the reading caret, never intent** (a recorded deviation): single
+selection, no selection ground, the 2 px focus ring the one visible state.
+
+| Member | Summary |
+|---|---|
+| `double LineHeight = 13 * 1.5` | The 13 px UI type's line box (DESIGN.md: 13 px, 1.5) — what Up / Down scroll by. |
+| `int ScrollLines = 3` | How many text lines Up / Down scroll the viewport (DS-1 P2). |
+| `FeedList()` | **(gap)** |
+| `event Action<FocusLeave>? FocusLeaveRequested` | Raised on Ctrl+Home / Ctrl+End; the document routes the leave. |
+| `bool SourceOwnsItsKeys(DependencyObject? source)` | Whether the source of a key press owns its keys: a `ScrollViewer` or a `TextBoxBase` in its ancestry inside this list. The list's own scroll viewer is not such a source — it is the feed. |
+| `FeedKeyDecision Decide(Key key, ModifierKeys modifiers, bool sourceOwnsItsKeys)` | The pure decision (K1a): never throws over the whole domain; `None` for keys the feed does not own. |
+| `bool Act(FeedKeyDecision decision)` | The act (K1b). Returns whether the decision was the feed's. |
+| `bool FocusCurrentItem()` | The caret's item, realized and focused on its container — F6 / Tab entry (spike Q5g). |
+| `bool FocusCurrentItemLast()` | Backward entry (Shift+Tab from the composer): the caret's item's last tab stop, or its container when it has none. |
+| `bool FocusItem(int index)` | Selects, scrolls into view, lays out and focuses the CONTAINER at  — never an inner control. |
+| `ScrollViewer? Scroller` | The scroll viewer inside the template, once the template has applied. |
+| `bool IsPinnedAtEnd` | The structural pin (P7): the last item's container is realized and its bottom edge sits within the viewport — read BEFORE a change, never from the offset (the extent is an estimate under variable heights; spike Q4a). |
+| `void ScrollToEndOfFeed()` | Scrolls to the end — called after the layout that added items, only when the feed was pinned before it. |
+| `int RealizedContainers` | How many containers the panel has realized — the 40-turn oracle's number (L2). |
+| `bool IsReady` | **(gap)** |
+| `bool IsObscured` | **(gap)** |
+| `bool TryFocus()` | **(gap)** |
+| `void OnKeyDown(KeyEventArgs e)` | **(gap)** |
+| `IEnumerable<UIElement> TabStops(DependencyObject root)` | The focusable tab stops inside one container, in tree order. |
+| `Style ContainerStyle()` | The container's own template (Q11–Q13; DC-139): a transparent 2 px border that lights `{colors.focus}` on `IsKeyboardFocused` — not `FocusWithin`, so an inner stop never lights two rings — and no selection or hover gr… |
 
 ## `NewSessionOutcome`
 
@@ -370,118 +488,96 @@ disposed anywhere while this ran".
 
 *class* — `SessionDocumentSurface.cs`
 
-One session, as a dock document: the paired-zone preset (composer left, canvas right, splitter
-between) with the canvas showing one or two canvas modes (A4.4, R13 b3, R16).
+One session, as a dock document — **a conversation**: the header, the thread of accepted
+turns above one pinned composer, and the Console split on demand (DESIGN.md SC1–SC10; Ruling 74;
+DS-1).
 
-**Remarks.** **Retain, never rebuild (ADR-0017's invariant, applied to canvas modes).** A mode is
-built at most once and then held. Switching modes, splitting the canvas and unparenting the whole
-document only ever *re-host* those instances — nothing is disposed until the document itself
-is. WPF hides an unparented `HwndHost` child rather than destroying it, which is what makes
-a mode switch a view change and not a session loss.
-
-
-
-
-
-**The proof is not `Assert.Same` alone.** A reference check passes on a disposed
-instance, so it cannot tell "retained" from "retained and killed".
-`ModeSwitchRetainsTheSurfaceAndTheLaneTests` drives a real lane, opens a
-`SessionDisposalLedger` over the exercise, switches mode and tab while events are in
-flight, and asserts three things together: the same instances, a disposal count of zero, and no
-gap in the lane's delivered ordinals — with a companion falsifier that takes the rebuild path and
-shows all three going red.
+**Remarks.** **One store per turn, rendered three ways** (SC1; Ruling 74 condition 1). The thread,
+the jump list, the header's count and spend and the split are views of one read model,
+`ISessionThread` — CV-1's `RunChannelSessionThread` over today's run
+channel, CV-2's envelope fold behind the same seam. Nothing here is a second list.
 
 
 
 
 
-**The composer zone now hosts R15's composer, as F2 said it would.** F2 put the
-staged-draft surface here — a working composer rather than a placeholder — and recorded that the
-rich editor would replace its innards in the composer node. It has:
-`ComposerSurface` is the editor, the host-owned send, and the compiled view the
-operator reads before anything leaves the machine. `PromptDraftViewModel`'s transfer rules
-are unchanged and the standalone draft surface still exists, exactly as Addendum A §10 allows.
+**The paired zone is gone.** The canvas-mode strip, the composer-beside-canvas split
+and the merged-stream Console pane were the shape Ruling 74 retired; the operator's verdict on
+them — *"the ux is still the individual text blocks"* — is the reason this document is a
+feed with the editor as its last region. The view model's mode members survive only because the
+shell still constructs it with the catalog's ids (the Shell lane's file); the E7 retire row
+names them for the conductor.
+
+
+
+
+
+**Four regions, one F6 cycle** (SC8; DS-1 P4): header → thread → composer → the split
+when open. Focus lands in the editor on open unless the operator has already acted (K7); every
+refusal is announced (`THR-0002`), never silent.
 
 | Member | Summary |
 |---|---|
-| `SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null)` | **(gap)** |
+| `double ComposerShare = 0.45` | The most of the document the composer may take — the belt over the editor's floor (DS-1 Q14: both are needed). |
+| `SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)` | **(gap)** |
 | `string SurfaceIdFor(string sessionId)` | The layout surface id a session document docks under. |
 | `string? SessionIdOf(string surfaceId)` | The inverse of `SurfaceIdFor`: the session id a surface id names, or null when it is not one. |
-| `string Kind = "session-document"` | The surface kind `SurfaceContentFactory` builds this for. |
+| `string Kind = "session-document"` | The surface kind `SurfaceContentFactory` builds this for — `session-document`, never `session` (Ruling 18). |
 | `SessionDocumentViewModel Model { get; }` | This document's state. |
 | `string SurfaceId { get; }` | The layout surface id. |
-| `ComposerSurface Composer { get; }` | The composer half of the paired zone. |
-| `IReadOnlyList<string> ModeTabs` | The mode captions currently offered, in catalog order. No placeholder is ever added. |
-| `string? ModeStripTitle` | The pane title the strip shows at ONE mode (MS2), or null when it is showing tabs. |
-| `double RenderedComposerWeight` | The rendered composer share of the paired zone — what the splitter actually shows. |
-| `double RenderedCanvasWeight` | The rendered canvas share of the paired zone. |
-| `double RenderedPrimaryWeight` | The rendered share of the canvas given to the active mode. |
-| `double RenderedSecondaryWeight` | The rendered share of the canvas given to the mode beside it; 0 when not split. |
+| `ComposerSurface Composer { get; }` | The composer — the document's last region. |
+| `ThreadFeed Thread` | The thread — the feed of turns. |
+| `RunChannelSessionThread ReadModel` | The read model the thread renders. CV-1's implementer; a test feeds it directly. |
+| `ConsoleSurface Split` | The Console split, whether or not it is open. |
+| `bool IsSplitOpen` | Whether the Console split is open beside the thread (Ruling 74: on demand). |
+| `string TurnCountCaption` | The header's turn-count button's caption: *5 turns* · *no turns yet*. |
+| `string BudgetState` | The header's budget state (Ruling 78): spend per session, derived. |
+| `string OutsideText` | The one focusable text outside the list: *Restoring …* / *Nothing has run yet.*, or empty when turns exist. |
+| `bool StoppedRowVisible` | Whether the stopped row (THR-0001) is showing. |
 | `bool PermissionBannerVisible` | Whether the permission overlay is showing. |
 | `string PermissionBannerText` | What the permission overlay is saying, or empty when it is not showing. |
-| `ToggleButton SplitControl` | The split control on the mode strip — the operator's way into R16 b2. |
-| `FrameworkElement ContentFor(string modeId)` | The content built for a mode, creating it on first use and holding it after. |
-| `bool HasBuilt(string modeId)` | Whether a mode's content has been built yet. |
+| `Popup JumpList` | The jump list's popup, for a test that opens it. |
+| `ListBox JumpRows` | The jump list's rows. |
+| `ToggleButton ConsoleToggle` | The header's Console toggle. |
+| `bool OperatorActed` | Whether the operator has acted in the document since it opened — the one-shot flag K7 reads. |
 | `void AttachLane(SessionLane lane)` | Holds a lane for the document's lifetime, so nothing else has to remember to. |
-| `Task LastLaunch { get; private set; } = Task.CompletedTask` | The last launch's own task. Completed when nothing has been sent yet. |
+| `Task LastLaunch { get; private set; } = Task.CompletedTask` | The last launch's own task. Completed when nothing has been sent yet. It never faults: a refusal is `LastRunFailure`. |
 | `GovernedRunResult? LastRunResult { get; private set; }` | What the last completed run reported, or null when none has completed. |
 | `string? LastRunFailure { get; private set; }` | Why the last run did not complete, or null. Never a plausible substitute for a result. |
-| `RunEventRelay? LastRelay { get; private set; }` | The relay the last launch is publishing through — the console's side of the seam. |
-| `void Dispose()` | Closes the document: its lanes stop, and every mode it built is released. |
+| `RunEventRelay? LastRelay { get; private set; }` | The relay the last launch is publishing through — the lane's side of the seam. |
+| `Region? CurrentRegion` | The region holding keyboard focus, or null when focus is elsewhere. |
+| `CanvasFocusResult CycleRegion(int delta)` | F6 (+1) / Shift+F6 (−1): header → thread → composer → (split) → header. A refusal is announced, never silent. |
+| `CanvasFocusResult FocusRegion(Region region, string gesture = "direct", Region? from = null)` | Focuses a region's target directly (Ctrl+Home → header, Ctrl+End → composer, the tail → the split). |
+| `void OpenSplit(int? ordinal = null)` | Opens the Console beside the thread — at 's heading, focused, or following the end. |
+| `void CloseSplit()` | Closes the split; the thread keeps its rhythm. |
+| `Size MeasureOverride(Size constraint)` | The belt (DS-1 Q14): the composer never takes more than its share, so the thread's row is guaranteed by arithmetic. |
+| `void Dispose()` | Closes the document: its runs are cancelled, its lanes stop, its composer's browser is released. |
 
-### `SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null)`
+### `SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)`
 
-- **`model`** — The document's state. Console is already its active mode on open.
-- **`store`** — Where mode and splitter positions are persisted, or null to keep none.
+- **`model`** — The document's state.
+- **`store`** — Where the document's envelope is persisted, or null to keep none. Kept for the shell's call; the conversation persists no layout of its own.
+- **`announcer`** — The shell's announcer (one across hosts, ADR-0031). Null — the shell does not pass it yet, a seam request to the Shell lane — builds a document-owned polite live region so SC9 is never silent; the two are never both live.
 
-### `string Kind = "session-document"`
+## `Region`
 
-The surface kind `SurfaceContentFactory` builds this for.
+*enum* — `SessionDocumentSurface.cs`
 
-**Remarks.** **`session-document`, never `session` (Ruling 18).** The factory already carries
-`sessions` — the Loomkeeper watcher pane — and a kind one letter away from it would be
-resolved by whichever row was read first, silently.
+The document's regions, in F6 order: header · thread (or the outside text) · composer · the split when open.
 
-### `IReadOnlyList<string> ModeTabs`
+## `JumpRow`
 
-The mode captions currently offered, in catalog order. No placeholder is ever added.
+*record* — `SessionDocumentSurface.cs`
 
-**Remarks.** Empty when the strip is in its one-mode form (MS2), because there are no tabs then — see
-`ModeStripTitle`. A caption list that reported one tab would be describing a
-control the pane does not render.
+One jump-list row: ordinal · the words · the outcome word — a view of `Turns` (P9); its name is the NVDA-side index.
 
-### `string? ModeStripTitle`
-
-The pane title the strip shows at ONE mode (MS2), or null when it is showing tabs.
-
-**Remarks.** Exposed because the two forms of the strip are a design rule with an oracle, not a rendering
-detail: at one mode the honest form is the title every other pane uses, because a canvas mode
-carries no name, no close control and no drag handle of its own — which is why MS5 says the
-"single-surface stacks keep their tab strip" rule does not reach this strip.
-
-### `FrameworkElement ContentFor(string modeId)`
-
-The content built for a mode, creating it on first use and holding it after.
-
-**Remarks.** Lazy, then retained — the idiom `ShellModeController` uses for the Explorer surface, for
-the same reason: a mode nobody has opened should not cost anything, and re-entering one must
-not rebuild it.
-
-### `Task LastLaunch { get; private set; } = Task.CompletedTask`
-
-The last launch's own task. Completed when nothing has been sent yet.
-
-**Remarks.** It never faults: a run that refuses is a `LastRunFailure`, because a failed
-launch that surfaced only as an unobserved task exception would be a run nobody can see
-did not happen.
-
-### `void Dispose()`
-
-Closes the document: its lanes stop, and every mode it built is released.
-
-**Remarks.** This is the **only** path that disposes anything a session document holds. A mode switch
-and a tab switch reach none of it, which is what `SessionDisposalLedger` is
-pointed at.
+| Member | Summary |
+|---|---|
+| `int Ordinal` | **(gap)** |
+| `string DisplayOrdinal` | **(gap)** |
+| `string Words` | **(gap)** |
+| `string Outcome` | **(gap)** |
+| `string ToString()` | **(gap)** |
 
 ## `SessionLane`
 
@@ -540,3 +636,154 @@ Waits until this lane has delivered at least  events.
 
 **Remarks.** A completion condition, not a speed claim: the bound is there so a stalled pump reports a
 stall instead of hanging the run, exactly as a `WaitForExit` bound does.
+
+## `ThreadDiagnostics`
+
+*class* — `ThreadDiagnostics.cs`
+
+The thread's four records (DS-1 §Telemetry) — `thread.layout`, `thread.announce`,
+`thread.focus`, `thread.action` — and its three stable codes: `THR-0001` the
+read model's apply failed, `THR-0002` a region refused focus, `THR-0003` a version gap.
+Emitted on the normal path (IO1); no text, ever (O11).
+
+**Remarks.** **Writes through `Sink` when a test set one, else the same
+log file the workbench writes.** `WorkbenchDiagnostics.Write` is private and its file is
+the Shell lane's; a seam request asks for it to become internal so these records go through the
+one writer — until then the file path is duplicated here and that is named debt (DM7).
+
+| Member | Summary |
+|---|---|
+| `string ApplyFailed = "THR-0001"` | **(gap)** |
+| `string FocusRefused = "THR-0002"` | **(gap)** |
+| `string VersionGap = "THR-0003"` | **(gap)** |
+| `void Layout(string surface, int turns, int realized, double? composerTop, double? viewport, double layoutMs, bool pinned, bool moved, long version)` | **(gap)** |
+| `void Announce(string surface, int ordinal, string transition, string urgency, long version)` | **(gap)** |
+| `void Focus(string surface, string gesture, string from, string to, bool landed, string? errorCode = null)` | **(gap)** |
+| `void Action(string surface, int ordinal, string action, string? requestId)` | **(gap)** |
+| `void Error(string surface, string code, string exceptionType, string exceptionMessage, long? expected = null, long? received = null)` | **(gap)** |
+
+## `TurnAction`
+
+*record* — `ThreadFeed.cs`
+
+An operator's act on one turn — the thread's one channel for every action (DS-1 §Contracts).
+
+## `ThreadFeed`
+
+*class* — `ThreadFeed.cs`
+
+The session thread: one session's accepted turns, in order, above the composer — each turn's
+words, decoration line, provenance and compiled bytes on demand, and the lane's reply folded
+beneath it — rendered from one read model (SC1; DS-1 P1–P8).
+
+**Remarks.** **Every snapshot reaches the policy in `Version` order; only the render coalesces
+(DS-1 P6, C1).** `Changed` may arrive off the UI thread: the handler enqueues the
+snapshot it was given (never reads `Current` back) and posts one dispatcher operation
+while none is pending. `Apply` drains in order, feeds each to the policy, merges the latest
+into the rows in place (P5), lays out once, and posts a second operation that announces — the
+render pass runs between the two at its higher priority (DC-077).
+
+
+
+
+
+**A throwing apply stops the feed loudly** (`THR-0001`, DC-134): the visible
+stopped row and one assertive announcement, the channel kept alive for a second subscriber.
+
+| Member | Summary |
+|---|---|
+| `int MeasureCharacters = 96` | The prose measure (DESIGN.md: 96ch). |
+| `ThreadFeed(ISessionThread thread, IWorkbenchAnnouncer announcer, string surfaceId = "session-document")` | **(gap)** |
+| `event Action<TurnAction>? TurnActionRequested` | Raised for every act on a turn. `SendAgain` and `UseAsNextDraft` end with `FocusLeaveRequested`(ToEditor). |
+| `event Action? Stopped` | Raised once when the feed stops updating (`THR-0001`); the document shows the stopped row. |
+| `bool IsStopped { get; private set; }` | The feed's own fault state: `ItemStatus` "stopped"; "live" otherwise. |
+| `double MeasureWidth { get; }` | The prose measure in device-independent pixels: 96 × the advance of "0" in the UI type at 13 px. |
+| `Func<bool> ReducedMotion { get; set; } = static ()` | Whether the operator asked for reduced motion — the WPF adapter reads the system setting; a test flips it. |
+| `IReadOnlyList<TurnItem> Rows` | The rows, in ordinal order — a rebuildable projection of the read model's turns. |
+| `int Applies { get; private set; }` | How many times `Apply` ran — the coalescing witness (C1). |
+| `double LastLayoutMs { get; private set; }` | The last apply's layout time — reported, never asserted absolutely (DC-107). |
+| `bool FocusTurn(int ordinal)` | The jump list's Enter and the composer's "b1 is running" link: the turn's CONTAINER, never an action. |
+| `string StoppedSentence = "The thread stopped updating; reopen the session."` | The stopped row's words (SC9): visible outside the scroller and announced once. |
+| `void OnPreviewKeyDown(KeyEventArgs e)` | **(gap)** |
+| `void Dispose()` | **(gap)** |
+| `DataTemplate EventLineTemplate()` | ts (muted) · lane (accent) · message; stderr in danger (DESIGN.md:1112). |
+| `bool IsMotionReduced` | The reduced-motion seam as a bindable property: read once per bind through `ReducedMotion`. |
+
+### `ThreadFeed(ISessionThread thread, IWorkbenchAnnouncer announcer, string surfaceId = "session-document")`
+
+- **`thread`** — The read model.
+- **`announcer`** — The shared announcer (one across hosts, ADR-0031).
+- **`surfaceId`** — The document's surface id, for the records.
+
+## `ThreadText`
+
+*class* — `ThreadText.cs`
+
+A `TextBlock` whose UIA peer is a **Control-view** element (DS-1 U1; SC10):
+the words, the reply, the decoration line and the event lines of a turn must be reachable by an
+AT walking the Control view, and a `TextBlock` inside a `DataTemplate` is a
+content element only by default.
+
+**Remarks.** The reply and the event lines are model- and lane-authored: rendered as `Text`,
+never as inlines or a hyperlink (Addendum D: no link activation from model-authored content;
+DS-1 S1).
+
+| Member | Summary |
+|---|---|
+| `AutomationPeer OnCreateAutomationPeer()` | **(gap)** |
+
+## `TurnItem`
+
+*class* — `TurnItem.cs`
+
+The row the thread's panel binds — one per ordinal, updated **in place** (DS-1 P5; spike
+Q10): a collection `Replace` keeps the container and the focus but drops the selection,
+and the selection is the reading caret.
+
+**Remarks.** **Every per-turn view state lives here, never on the container** (spike Q13): under
+recycling, b3's expanded fold appeared on b38 when its container was reused, and b3 came back
+collapsed. The three disclosure flags are two-way bound to the row, so a container carries no
+state of its own.
+
+| Member | Summary |
+|---|---|
+| `int FoldLines = 4` | How many event lines the fold shows (DESIGN.md: the last four); the split is the unbounded view. |
+| `TurnItem(TurnView view)` | **(gap)** |
+| `event PropertyChangedEventHandler? PropertyChanged` | **(gap)** |
+| `TurnView View` | The fold's projection. Setting it raises every bound facet at once. |
+| `bool IsFoldOpen` | **(gap)** |
+| `bool IsProvenanceOpen` | **(gap)** |
+| `bool IsCompiledOpen` | **(gap)** |
+| `int Ordinal` | **(gap)** |
+| `string DisplayOrdinal` | **(gap)** |
+| `string Words` | **(gap)** |
+| `string Name` | **(gap)** |
+| `string DecorationLine` | **(gap)** |
+| `string HelpText` | **(gap)** |
+| `IReadOnlyList<DecorationRow> Decorations` | **(gap)** |
+| `string Time` | **(gap)** |
+| `TurnState State` | **(gap)** |
+| `string OutcomeWord` | **(gap)** |
+| `string Lane` | **(gap)** |
+| `string Counts` | **(gap)** |
+| `string? Reply` | **(gap)** |
+| `bool HasReply` | **(gap)** |
+| `string SentBytes` | **(gap)** |
+| `string ProvenanceName` | **(gap)** |
+| `string CompiledName` | **(gap)** |
+| `string FoldHeader` | **(gap)** |
+| `bool IsLive` | **(gap)** |
+| `IReadOnlyList<EventLine> FoldedEvents` | The fold's content: the last `FoldLines` lines, bounded, no inner scroller. |
+| `int OtherEvents` | How many lines the fold does not show; 0 when it shows them all. |
+| `bool HasOtherEvents` | **(gap)** |
+| `string TailText` | *the other 136, in the Console* — the tail button's text (the button is collapsed when the fold shows every line: `HasOtherEvents`). |
+| `IReadOnlyList<TurnActionKind> Actions` | The actions this turn offers, Deny first (SC7). A completed or past-failed turn offers none. |
+| `bool HasActions` | **(gap)** |
+| `bool IsLast` | Whether this is the thread's last turn — a failed PAST turn folds like a completed one (SC7). |
+| `bool ShowsReasonBox` | A boxed reason on a failed, stopped or waiting LAST turn; a past failure folds (SC7). |
+
+### `int FoldLines = 4`
+
+How many event lines the fold shows (DESIGN.md: the last four); the split is the unbounded view.
+
+**Remarks.** `simplify:` one constant; the trigger to revisit is a turn whose first four lines are not the ones an operator needs.

@@ -17,6 +17,12 @@
               <Border Grid.ColumnSpan="2" Height="3" VerticalAlignment="Top" CornerRadius="7,7,0,0"
                       Background="{Binding Content.TabColour, FallbackValue={x:Null}, TargetNullValue={x:Null}}" />
               <Border Background="#00FFFFFF" Grid.ColumnSpan="2" />
+              <!--  PS-T3 (review P-2): the selected-INACTIVE tab's 2px text-muted top edge - its
+                    >= 3:1 state indicator (6.48 / 6.39:1 on the strip). The ground shift alone is
+                    1.08:1 and the ink shift 2.09:1, neither of which identifies the state (1.4.11).
+                    Collapsed in every other state; the selected-ACTIVE tab is the accent fill.  -->
+              <Border x:Name="SelectedInactiveEdge" Grid.ColumnSpan="2" Height="2" VerticalAlignment="Top" CornerRadius="7,7,0,0"
+                      Background="{DynamicResource TextMutedBrush}" Visibility="Collapsed" />
               <ContentPresenter x:Name="TabTitle" Content="{Binding Title}" Margin="4,0,4,1" VerticalAlignment="Bottom" TextElement.Foreground="{DynamicResource TextBrush}" />
               <Button Command="{x:Null}" Name="DocumentCloseButton" Width="15" Height="15" Margin="3,0,3,0" HorizontalAlignment="Center" VerticalAlignment="Bottom" ToolTip="Close" Visibility="Hidden" Grid.Column="1">
                 <Button.Style>
@@ -68,6 +74,20 @@
               </Setter.Value>
             </Setter>
           </DataTrigger>
+          <!--  PS-T3: a selected tab in a pane that does NOT hold focus sits on the document's own
+                ground (surface) with the muted top edge - never on a line token as a ground (the
+                theme's SelectedInactive ground is the border token, where the caption measured
+                1.45:1 before INV-0008 and 10.74:1 as a line-token ground after it; this is the
+                pairing the design names: text on surface, 15.0 / 15.3:1). The caption inherits
+                TextBrush from the container; no local ink is set (PS-T1).  -->
+          <MultiDataTrigger>
+            <MultiDataTrigger.Conditions>
+              <Condition Binding="{Binding Path=IsSelected}" Value="True" />
+              <Condition Binding="{Binding Path=IsActive}" Value="False" />
+            </MultiDataTrigger.Conditions>
+            <Setter Property="Panel.Background" TargetName="Header" Value="{DynamicResource SurfaceBrush}" />
+            <Setter Property="UIElement.Visibility" TargetName="SelectedInactiveEdge" Value="Visible" />
+          </MultiDataTrigger>
           <Trigger Property="UIElement.IsMouseOver">
             <Setter Property="UIElement.Visibility" TargetName="DocumentCloseButton">
               <Setter.Value>

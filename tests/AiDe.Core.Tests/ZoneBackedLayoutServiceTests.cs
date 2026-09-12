@@ -280,6 +280,34 @@ public sealed class ZoneBackedLayoutServiceTests
         Assert.Equal(before, svc.Zones.Shape()); // every bystander zone is exactly where it was — no scatter
     }
 
+    // INV-0006's class, SH-1's seam note, measured by SH-2's create-failure control: a reconcile
+    // used to rebuild every stack with ActiveIndex 0, so the tab the user was looking at moved on
+    // the next render. The view's active tab per zone is carried into the model.
+    [Fact]
+    public void ReconcileFromView_KeepsTheViewsActiveTabInEveryZone()
+    {
+        var svc = new ZoneBackedLayoutService(WorkbenchLayout.Default());
+        svc.Apply(new LayoutOperation.ActivateSurface("board"));   // Center's fourth tab is active in the model
+        var tree = svc.Current;
+        var left = tree.AllStacks().Single(s => s.Id == ZonesToTree.LeftStackId);
+        var center = tree.AllStacks().Single(s => s.Id == ZonesToTree.CenterStackId);
+        var bottom = tree.AllStacks().Single(s => s.Id == ZonesToTree.BottomStackId);
+
+        // The view shows Left's third tab and Center's "board"; the tree the adapter reads carries both.
+        var leftView = new StackNode(left.Id, left.Surfaces, activeIndex: 2);
+        var centerView = new StackNode(center.Id, center.Surfaces, activeIndex: center.Surfaces.IndexOf(center.Surfaces.Single(x => x.SurfaceId == "board")));
+        var post = new Layout(
+            new SplitNode("root", Orientation.Vertical,
+                [new SplitNode("cols", Orientation.Horizontal, [leftView, centerView], [0.3, 0.7]), bottom],
+                [0.7, 0.3]),
+            [], ImmutableDictionary<string, StackState>.Empty);
+
+        Assert.True(svc.ReconcileFromView(post));
+
+        Assert.Equal("contexts", ((ZoneStack)svc.Zones.Zone(ZoneId.Left).Content!).Active.SurfaceId);
+        Assert.Equal("board", ((ZoneStack)svc.Zones.Zone(ZoneId.Center).Content!).Active.SurfaceId);
+    }
+
     [Fact]
     public void ReconcileFromView_WhenPositionMappingSucceeds_Applies()
     {
@@ -339,6 +367,88 @@ public sealed class ZoneBackedLayoutServiceTests
         Assert.True(applied);
         Assert.Equal(ZoneId.Bottom, svc.Zones.FindZoneOf("domain"));
         Assert.Equal(ZoneId.Left, svc.Zones.FindZoneOf("explore"));   // bystander untouched
+    }
+
+    /// <summary>
+    /// SH-3: Coding's default before any session opens (Ruling 55d/60) leaves Center with NO model
+    /// surfaces at all — only <see cref="ZonesToTree.WelcomePlaceholder"/>, which is view-only and
+    /// never in the model — so <c>AnchorFor(Center)</c>'s majority-membership test can never match
+    /// it. Center is mandatory, so the one column neither Left nor Right claims IS Center, by
+    /// elimination. Without this, every native drag in a fresh Coding host silently reverted.
+    /// </summary>
+    [Fact]
+    public void ReconcileFromView_WithAModelEmptyCenter_StillAnchorsCenterByElimination()
+    {
+        var sessions = new Surface("sessions", "sessions", "Terminal sessions");
+        var terminal = new Surface("terminal-1", "terminal", "Terminal — pwsh");
+
+        var zones = ImmutableDictionary.CreateRange(new[]
+        {
+            KeyValuePair.Create(ZoneId.Left, new ZoneState(ZoneId.Left, new ZoneStack([sessions]), ZoneState.DefaultExtent, Collapsed: false)),
+            KeyValuePair.Create(ZoneId.Right, new ZoneState(ZoneId.Right, (ZoneContent?)null, ZoneState.DefaultExtent, Collapsed: false)),
+            KeyValuePair.Create(ZoneId.Bottom, new ZoneState(ZoneId.Bottom, new ZoneStack([terminal]), 0.30, Collapsed: false)),
+            KeyValuePair.Create(ZoneId.Center, new ZoneState(ZoneId.Center, (ZoneContent?)null, 1.0, Collapsed: false)),
+        });
+        var svc = new ZoneBackedLayoutService(new WorkbenchLayout(zones, [], Maximized: null));
+
+        // The view: "sessions" dragged out of Left into Bottom, beside "terminal-1". Left's column
+        // is then empty and absent from the rendered tree (the adapter's own fix for that shape);
+        // Center's column holds only the synthetic Welcome placeholder.
+        var centerColumn = new StackNode(ZonesToTree.CenterStackId, [ZonesToTree.WelcomePlaceholder]);
+        var bottomAfter = new StackNode(ZonesToTree.BottomStackId, [terminal, sessions]);
+        var post = new Layout(
+            new SplitNode("root", Orientation.Vertical, [centerColumn, bottomAfter], [0.7, 0.3]),
+            [], ImmutableDictionary<string, StackState>.Empty);
+
+        var applied = svc.ReconcileFromView(post);
+
+        Assert.True(applied);
+        Assert.Equal(ZoneId.Bottom, svc.Zones.FindZoneOf("sessions"));
+        Assert.Null(svc.Zones.Zone(ZoneId.Left).Content);
+    }
+
+    /// <summary>
+    /// The safe half of the elimination fallback above, named in its own comment ("still refuses,
+    /// never guesses, when more than one [candidate] does") and pinned here rather than left
+    /// asserted only in prose: when Center's own anchor search comes back empty AND more than one
+    /// column is left unclaimed by Left/Right, the reconcile refuses — it never guesses which
+    /// leftover column is Center.
+    /// </summary>
+    [Fact]
+    public void ReconcileFromView_WithTwoUnanchorableColumns_RefusesRatherThanGuesses()
+    {
+        var left = new Surface("left-surface", "view", "L");
+        var right = new Surface("right-surface", "inspector", "R");
+        var bottomSurface = new Surface("terminal-1", "terminal", "Terminal");
+
+        var zones = ImmutableDictionary.CreateRange(new[]
+        {
+            KeyValuePair.Create(ZoneId.Left, new ZoneState(ZoneId.Left, new ZoneStack([left]), ZoneState.DefaultExtent, Collapsed: false)),
+            KeyValuePair.Create(ZoneId.Right, new ZoneState(ZoneId.Right, new ZoneStack([right]), ZoneState.DefaultExtent, Collapsed: false)),
+            KeyValuePair.Create(ZoneId.Bottom, new ZoneState(ZoneId.Bottom, new ZoneStack([bottomSurface]), 0.30, Collapsed: false)),
+            KeyValuePair.Create(ZoneId.Center, new ZoneState(ZoneId.Center, (ZoneContent?)null, 1.0, Collapsed: false)),
+        });
+        var svc = new ZoneBackedLayoutService(new WorkbenchLayout(zones, [], Maximized: null));
+        var before = svc.Zones.Shape();
+
+        // A view where NEITHER Left's nor Right's surface appears in either column — two columns,
+        // both holding surfaces this model owns nowhere. Center's search already comes back empty
+        // (Content is null above), so this leaves two unclaimed columns: ambiguous by construction.
+        var col0 = new StackNode("col0", [new Surface("mystery-1", "view", "M1")]);
+        var col1 = new StackNode("col1", [new Surface("mystery-2", "view", "M2")]);
+        var post = new Layout(
+            new SplitNode("root", Orientation.Vertical,
+                [
+                    new SplitNode("cols", Orientation.Horizontal, [col0, col1], [0.5, 0.5]),
+                    new StackNode(ZonesToTree.BottomStackId, [bottomSurface]),
+                ],
+                [0.7, 0.3]),
+            [], ImmutableDictionary<string, StackState>.Empty);
+
+        var applied = svc.ReconcileFromView(post);
+
+        Assert.False(applied);
+        Assert.Equal(before, svc.Zones.Shape());   // untouched — no guess was made
     }
 
     private static Layout DomainDraggedIntoTheBottom(Layout rendered, bool withLeftColumn)

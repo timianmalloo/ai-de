@@ -34,12 +34,10 @@ public sealed class ASendWithNoTaskClassIsRefusedByNameTests
     {
         var draft = new ComposerDraft();
         draft.SwitchTo(ComposerShape.GoalBlock);
-        draft.SetGoalValue(GoalBlockFields.GoalKey, "Rename the helper in @src/Payments/Money.cs.");
+        draft.SetGoalValue(GoalBlockFields.GoalKey, "Rename the helper.");
+        draft.SetFreeFormText("Rename the helper in @src/Payments/Money.cs.\n");
         draft.SetGoalValue(GoalBlockFields.DoneWhenKey, "@src/Payments/Money.cs compiles with the new name.");
         draft.SetGoalValue(GoalBlockFields.NotInScopeKey, "Any file outside @src/Payments/Money.cs.");
-        draft.SetGoalValue(GoalBlockFields.TierKey, "T1");
-        draft.SetGoalValue(GoalBlockFields.FanOutCapKey, "0");
-        draft.SetGoalValue(GoalBlockFields.BudgetKey, "10,1000");
         return draft;
     }
 

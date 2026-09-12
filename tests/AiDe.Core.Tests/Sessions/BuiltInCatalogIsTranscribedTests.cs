@@ -94,6 +94,20 @@ public sealed class BuiltInCatalogIsTranscribedTests
             return;
         }
 
+        if (id == "goal-block")
+        {
+            // Deviation iii (Rulings 56, 63, 72; CV-1): B4's cell still lists tier, fan_out_cap and
+            // budget, which are no longer per-prompt fields — the tier is the compile step's
+            // projection and the cap and budget are session settings. The template declares B4's
+            // column MINUS those three, mechanically; the row is a finding for the spec's owner,
+            // recorded rather than resolved silently.
+            Assert.Equal(
+                AddendumB.FieldNames(AddendumB.Row(id))
+                    .Except(AiDe.Core.Presentation.Composer.ComposerDraft.SessionSuppliedGoalFields, StringComparer.Ordinal),
+                Catalog.Find(id)!.Template!.Fields.Select(f => f.Name));
+            return;
+        }
+
         Assert.Equal(
             AddendumB.FieldNames(AddendumB.Row(id)),
             Catalog.Find(id)!.Template!.Fields.Select(f => f.Name));

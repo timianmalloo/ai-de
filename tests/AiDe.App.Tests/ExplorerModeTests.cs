@@ -6,97 +6,20 @@ using AiDe.Core.Workbench;
 namespace AiDe.App.Tests;
 
 /// <summary>
-/// Phase-1 controls for the Explorer mode (ADR-0017 primary-view-mode; design D1-D5). The mode swap and the reader are
-/// host-side (no WebView2), so they run on a plain STA thread with stub content; the real
+/// Phase-1 controls for the Explorer mode's reader (ADR-0017 primary-view-mode; design D1-D5). The
+/// reader is host-side (no WebView2), so it runs on a plain STA thread with stub content; the real
 /// CanvasSurface graph and the "a live terminal survives" integration form of T1 are a launch smoke
-/// test, not a headless one.
+/// test, not a headless one. The presenter's controls are <c>PerspectiveShellTests</c>.
 /// </summary>
 public sealed class ExplorerModeTests
 {
     private static void OnSta(Action work) =>
         Sta.Run(work, 30);
 
-    // T1 — the retain-not-rebuild control (ADR-0017 primary-view-mode's load-bearing invariant, reference-level). The
-    // workbench object is the SAME instance across an Explorer round-trip: the swap only unparented
-    // it, it was never rebuilt. RED if the swap recreated or disposed the workbench.
-    [Fact]
-    public void ExplorerRoundTrip_KeepsTheSameWorkbenchInstance()
-    {
-        OnSta(() =>
-        {
-            var host = new ContentControl();
-            var workbench = new Border();   // stands in for Shell.Manager
-            var built = 0;
-            var mode = new ShellModeController(host, workbench, () => { built++; return new Grid(); });
-
-            Assert.Same(workbench, host.Content);     // starts on the workbench
-            mode.Set(PerspectiveSet.Explore, "test");
-            Assert.NotSame(workbench, host.Content);  // now the Explorer surface
-            mode.Set(PerspectiveSet.Coding, "test");
-            Assert.Same(workbench, host.Content);     // the SAME workbench instance returns
-            Assert.Equal(1, built);                   // Explorer built once, not per entry
-        });
-    }
-
-    // The Explorer surface is created once and retained across a round-trip (US-E6): re-entering does
-    // not rebuild it, so its graph/reader state survives.
-    [Fact]
-    public void ReenteringExplorer_DoesNotRebuildTheExplorerSurface()
-    {
-        OnSta(() =>
-        {
-            var host = new ContentControl();
-            var built = 0;
-            var mode = new ShellModeController(host, new Border(), () => { built++; return new Grid(); });
-
-            mode.Set(PerspectiveSet.Explore, "test");
-            var first = host.Content;
-            mode.Set(PerspectiveSet.Coding, "test");
-            mode.Set(PerspectiveSet.Explore, "test");
-
-            Assert.Same(first, host.Content);         // the same Explorer instance
-            Assert.Equal(1, built);
-        });
-    }
-
-    // T5, re-scoped by Addendum C (US-C1; ADR-0030 rule 4). The set is three-valued, so "toggle"
-    // became "activate a named perspective": Set raises ModeChanged with the new perspective for a
-    // real switch, and activating the ACTIVE perspective is a no-op — nothing changes, no event is
-    // raised. Was `Toggle_FlipsModeAndRaisesModeChanged` over the two-valued ShellViewMode.
-    [Fact]
-    public void Set_ActivatesANamedPerspective_AndActivatingTheActiveOneIsANoOp()
-    {
-        OnSta(() =>
-        {
-            var host = new ContentControl();
-            var workbench = new Border();
-            var mode = new ShellModeController(host, workbench, () => new Grid());
-            var seen = new List<Perspective>();
-            mode.ModeChanged += (_, m) => seen.Add(m);
-
-            Assert.Same(PerspectiveSet.Coding, mode.Mode);   // the initial perspective (US-C1)
-
-            mode.Set(PerspectiveSet.Coding, "test");         // already active: a no-op
-            Assert.Empty(seen);
-            Assert.Same(workbench, host.Content);
-
-            mode.Set(PerspectiveSet.Explore, "test");
-            Assert.Same(PerspectiveSet.Explore, mode.Mode);
-            Assert.NotSame(workbench, host.Content);
-
-            mode.Set(PerspectiveSet.Explore, "test");        // already active: a no-op
-            Assert.Single(seen);
-
-            mode.Set(PerspectiveSet.Architecture, "test");
-            Assert.Same(PerspectiveSet.Architecture, mode.Mode);
-            Assert.Same(workbench, host.Content);            // a host body: the one workbench today
-
-            mode.Set(PerspectiveSet.Coding, "test");
-            Assert.Equal(
-                new[] { PerspectiveSet.Explore, PerspectiveSet.Architecture, PerspectiveSet.Coding },
-                seen);
-        });
-    }
+    // T1 (the retain-not-rebuild control), US-E6's retained Explore surface and T5's activation
+    // rule live in PerspectiveShellTests now: the presenter holds three bodies, two of them docking
+    // hosts (ADR-0031), and its controls are written against the hosts the shell composes rather
+    // than a Border stand-in (DC-135). This file keeps the reader's own controls.
 
     // T4 — the reader shows an explicit empty state (not a blank) with no selection, and Clear returns
     // to it after a selection.

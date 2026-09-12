@@ -8,11 +8,20 @@ namespace AiDe.Core.Tests;
 /// Launches <c>AiDe.Core.TerminalHost</c> in a console of its own and returns its verdict.
 /// </summary>
 /// <remarks>
-/// <para>ConPTY attaches a child to the pseudo console only when the launching process owns a
-/// <b>real console</b>, and a <c>dotnet test</c> host never does — its stdio is redirected
-/// (<b>DC-014</b>). Any claim about the child round trip therefore has to be made from a process we
-/// start ourselves with <c>CREATE_NEW_CONSOLE</c>, and <c>Process.Start</c> cannot request one, so
-/// this is the one place a test needs interop of its own.</para>
+/// <para>The helper exists so the containment and exit-path claims are made from a process that is
+/// not the test host — an owner that can be killed, that can exit without disposing, whose job can
+/// be watched from outside. It was first written on DC-014's premise that ConPTY needs the launcher
+/// to own a <b>real console</b>; that premise was DC-164's mechanism (the child inherited the host's
+/// redirected standard handles), and the runtime's channel works from a host with no console window
+/// at all. <c>Process.Start</c> cannot set creation flags, so this is the one place a test needs
+/// interop of its own.</para>
+///
+/// <para><b><c>CREATE_NO_WINDOW</c>, never <c>CREATE_NEW_CONSOLE</c> (DC-170).</b> A new console on
+/// a machine whose default terminal is Windows Terminal is a Windows Terminal tab, and its agent
+/// host attaches an agent session — a <c>copilot.exe</c> child and one <c>node.exe</c> MCP server —
+/// to every tab and keeps them after the tab closes. Measured 2026-09-12: two helper launches, two
+/// <c>node.exe</c> born, with or without <c>WT_SESSION</c> in the host; twenty-one tests headless,
+/// none. <c>tools/verify-no-new-console-launches.py</c> keeps it that way.</para>
 ///
 /// <para>Shared rather than duplicated: two suites now need it, and a second hand-rolled copy of
 /// <c>CreateProcessW</c> is the kind of thing that drifts silently.</para>
@@ -21,12 +30,19 @@ namespace AiDe.Core.Tests;
 internal static class TerminalHostLauncher
 {
     /// <summary>The helper executable, built alongside the tests and found relative to them.</summary>
+    /// <remarks>
+    /// <b>The tests' own configuration, never "Release if it exists".</b> The helper is a project
+    /// reference, so the test step builds it in the tests' configuration; an older rule preferred
+    /// a Release helper whenever one was on disk, and on 2026-09-12 a Release helper built before
+    /// DC-170's change sat beside a fresh Debug one — ten tests ran the stale binary and failed on
+    /// an exit code the source no longer had. The helper that matches the assembly running the
+    /// test is the one the test step just built; any other is a different program.
+    /// </remarks>
     internal static string LocateHelper()
     {
         var root = Path.GetFullPath(Path.Combine(
             AppContext.BaseDirectory, "..", "..", "..", "..", "AiDe.Core.TerminalHost", "bin"));
-        var release = Path.Combine(root, "Release", "net10.0", "AiDe.Core.TerminalHost.exe");
-        var configuration = File.Exists(release) ? "Release" : "Debug";
+        var configuration = ConfigurationOf(AppContext.BaseDirectory);
         var candidate = Path.Combine(root, configuration, "net10.0", "AiDe.Core.TerminalHost.exe");
 
         Assert.True(
@@ -37,18 +53,28 @@ internal static class TerminalHostLauncher
         return candidate;
     }
 
+    /// <summary>The build configuration a test assembly's output directory names (<c>bin\Debug\…</c>).</summary>
+    internal static string ConfigurationOf(string baseDirectory)
+    {
+        var parts = baseDirectory.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        var bin = Array.LastIndexOf(parts, "bin");
+        Assert.True(bin >= 0 && bin + 1 < parts.Length,
+            $"the test assembly's directory carries no bin/<configuration> segment: {baseDirectory}");
+        return parts[bin + 1];
+    }
+
     /// <summary>
-    /// Starts the helper with <c>CREATE_NEW_CONSOLE</c> and waits for its verdict.
+    /// Starts the helper in a headless console and waits for its verdict.
     /// </summary>
     /// <remarks>
-    /// <c>Process.Start</c> cannot request a new console, so this is the one place a test needs
+    /// <c>Process.Start</c> cannot set creation flags, so this is the one place a test needs
     /// interop of its own.
     /// </remarks>
     internal static async Task<int> RunInNewConsoleAsync(
         string exe, string report, TimeSpan limit, string? mode = null,
         Func<int, Task>? afterExit = null)
     {
-        const uint CREATE_NEW_CONSOLE = 0x00000010;
+        const uint CREATE_NO_WINDOW = 0x08000000;
         const uint CREATE_UNICODE_ENVIRONMENT = 0x00000400;
 
         var startup = new NativeStartupInfo { cb = Marshal.SizeOf<NativeStartupInfo>() };
@@ -85,7 +111,7 @@ internal static class TerminalHostLauncher
 
             if (!CreateProcessW(
                     null, ref commandLine[0], IntPtr.Zero, IntPtr.Zero, false,
-                    CREATE_NEW_CONSOLE | CREATE_UNICODE_ENVIRONMENT,
+                    CREATE_NO_WINDOW | CREATE_UNICODE_ENVIRONMENT,
                     environment, Path.GetDirectoryName(exe), ref startup, out info))
             {
                 Assert.Fail($"could not start the helper: Win32 error {Marshal.GetLastWin32Error()}");

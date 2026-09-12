@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation.Sessions: 14 types, 84 members, 98% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation.Sessions: 30 types, 128 members, 96% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation.Sessions`
 
-**14 public types · 84 public members · 98% documented.**
+**30 public types · 128 public members · 96% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -75,6 +75,7 @@ screen.
 | `void SetLaneVisible(string laneId, bool visible)` | Includes or excludes a whole lane. |
 | `void SetKindVisible(string laneId, string kind, bool visible)` | Includes or excludes one event kind within one lane. |
 | `IReadOnlyList<long> OrdinalGaps(string laneId)` | Ordinals this lane never delivered, from 1 up to the highest it did — the positive oracle for "no event was lost". |
+| `string TextOf(RunEvent evt)` | What a row shows: the event's own text when it carries one, else its kind. Public so the session thread's fold (CV-1) reads the same definition of a line's text — one derivation, two readers (DM7). |
 
 ### `IReadOnlyList<long> OrdinalGaps(string laneId)`
 
@@ -84,6 +85,18 @@ Ordinals this lane never delivered, from 1 up to the highest it did — the posi
 **Remarks.** Empty is the only passing answer. A console that was rebuilt starts its history at whatever
 arrived after the rebuild, so every ordinal before that reads here as missing — which is the
 difference `Assert.Same` cannot see.
+
+### `string TextOf(RunEvent evt)`
+
+What a row shows: the event's own text when it carries one, else its kind. Public so the
+session thread's fold (CV-1) reads the same definition of a line's text — one derivation,
+two readers (DM7).
+
+**Remarks.** **The two shapes are the mapper's, read rather than guessed.** An `agent.msg` body is
+the lifted `update`, whose text sits at `content.text`; a `permission.request`
+body is the lifted `params`, whose text sits at `title`. Falling back to the kind is
+deliberate: a blank row reads as an event with nothing in it rather than as one this
+projection did not recognise, and the kind is always true.
 
 ## `AgentBackendRow`
 
@@ -321,6 +334,53 @@ The registry the sheet last read, so a re-probe is observable from outside.
 **Remarks.** Exposed because `SignIn`'s whole claim is that health was re-read: an invariant
 only the implementation can see is one only the implementation can be wrong about.
 
+## `RunChannelSessionThread`
+
+*class* — `RunChannelSessionThread.cs`
+
+The session thread folded from today's run channel, in process: a turn joins when the composer's
+send is accepted, its lines arrive from the run's sink, its outcome from the run's result.
+
+**Remarks.** **CV-1's implementer of `ISessionThread`; CV-2's is the envelope fold.**
+This type folds the two stores that exist today — the accepted send and the run channel — and
+nothing durable: a reopened session has no history here (the envelope store, ADR-0034, is CV-2's
+and replaces this with an envelope-backed implementer behind the same seam). What it does
+honour is the read model's delivery contract, proven by
+`TheReadModelPublishesOneSnapshotPerAppliedEventTests`: one raise per applied event after
+catch-up, `Version` incremented by one, the snapshot in the event.
+
+
+
+
+
+**Safe off the UI thread.** A run's sink appends from the host's drain; every mutation
+takes the gate, builds the next immutable snapshot, and raises outside the gate — a subscriber
+that marshals to a dispatcher never holds this lock across the hand-off.
+
+| Member | Summary |
+|---|---|
+| `string ReplyKind = "agent.msg"` | The event kinds whose text is the lane's reply (the mapper's `agent_message_chunk`). |
+| `RunChannelSessionThread(bool caughtUp = true)` | **(gap)** |
+| `RunChannelSessionThread Preloaded(IEnumerable<TurnView> turns)` | A read model pre-loaded with history, caught up from construction — the fixture idiom (DS-1 A1's pre-loaded row). |
+| `ThreadSnapshot Current` | **(gap)** |
+| `event Action<ThreadSnapshot>? Changed` | **(gap)** |
+| `void CatchUp()` | Ends the replay: the next snapshot is the folded history at `Version` 0, caught up. |
+| `int Accept(` | A send the conductor accepted: the next ordinal joins, running. |
+| `void Append(int ordinal, EventLine line, Spend? cost = null)` | One line of the turn's run.  is the event's measured usage, or null when the wire recorded none. |
+| `void Wait(int ordinal, WaitingRequest request)` | The turn is waiting on the operator (a permission or cap request, SC7). |
+| `void Resume(int ordinal)` | The request was answered; the turn runs again. |
+| `void Conclude(int ordinal, TurnState terminal, DateTimeOffset at, int? exitCode = null, int? edits = null, string? reply = null)` | The run ended.  is one of the four terminal states. |
+
+### `RunChannelSessionThread(bool caughtUp = true)`
+
+- **`caughtUp`** — True (the default) for a live session with no history to replay: caught up from construction. False for a read model that will replay first and call `CatchUp` when done.
+
+### `int Accept(`
+
+A send the conductor accepted: the next ordinal joins, running.
+
+**Returns.** The turn's ordinal.
+
 ## `SessionDocumentEnvelope`
 
 *record* — `SessionDocumentStore.cs`
@@ -486,6 +546,132 @@ Clears the request once the operator has answered it.
 **Remarks.** The two ordinals are deliberately **kept**: they are the record of what happened, and a
 control that erases its own evidence when the overlay closes cannot be asked about it after.
 
+## `ISessionThread`
+
+*interface* — `SessionThread.cs`
+
+The session thread's read model — the fold the session document renders and never a second
+store (DS-1 P3; `DESIGN.md` SC1 *derived, never a second store*).
+
+**Remarks.** **The snapshot travels in the event.** `Changed` carries the
+`ThreadSnapshot` it announces; a subscriber never reads `Current` back at
+apply time, because two raises before one apply would read one state and lose a transition
+(the Test Architect's pass-1 Blocker on DS-1).
+
+
+
+
+
+**The catch-up boundary is the read model's.** While a history is being replayed it
+publishes snapshots with `IsCaughtUp` false at any cadence; the first
+caught-up snapshot is the folded history; after it, `Changed` is raised exactly once
+per applied event with `Version` incremented by one, raises
+serialized. `TheReadModelPublishesOneSnapshotPerAppliedEventTests` proves it on the
+run-channel implementer; CV-2's twin proves it on the envelope-backed one.
+
+## `ThreadSnapshot`
+
+*record* — `SessionThread.cs`
+
+The read model's state after one applied event. Version 0 is the folded history at catch-up.
+
+| Member | Summary |
+|---|---|
+| `TurnView? InFlight` | The in-flight turn (Ruling 77: at most one) — derived, never a member. |
+
+## `TurnState`
+
+*enum* — `SessionThread.cs`
+
+The one encoding of a turn's lifecycle (DM7): the state decides which of Outcome / Waiting exists.
+
+## `DecorationRow`
+
+*record* — `SessionThread.cs`
+
+One decoration row of the turn's envelope: `class · tier · lease · shape · template`, each with its source and reason.
+
+## `Spend`
+
+*record* — `SessionThread.cs`
+
+Tokens and requests a run consumed (Ruling 78). Absent usage is a null `Spend`, never zero.
+
+| Member | Summary |
+|---|---|
+| `long Tokens` | Tokens in + out — the one number the header sums. |
+
+## `OutcomeView`
+
+*record* — `SessionThread.cs`
+
+The reply side's outcome line. The word derives from `State` (+ `ExitCode`).
+
+## `EventLine`
+
+*record* — `SessionThread.cs`
+
+One line of a turn's run — not `ConsoleRow`: that row has no timestamp and no origin.
+
+## `TurnActionKind`
+
+*enum* — `SessionThread.cs`
+
+Every act an operator can request on a turn — one channel (DS-1 §Contracts).
+
+## `WaitingRequest`
+
+*record* — `SessionThread.cs`
+
+A permission or cap request the turn is waiting on (SC7). Deny first.
+
+## `TurnView`
+
+*record* — `SessionThread.cs`
+
+One accepted turn of one session, identified by its ordinal — the read model's grain (DS-1 §Data
+model). Every field is a projection of the envelope fold joined to the run channel.
+
+| Member | Summary |
+|---|---|
+| `TurnView(` | **(gap)** |
+| `int Ordinal { get; }` | `b<n>`, dense, 1-based. |
+| `string EnvelopeId { get; }` | The envelope's id — the provenance disclosure's `envelope` row. |
+| `string SourceText { get; }` | What the operator typed, verbatim; rendered as plain text. |
+| `IReadOnlyList<DecorationRow> Decorations { get; }` | `class · tier · lease[] · shape · template`, each with its source and reason. |
+| `TurnState State { get; }` | **(gap)** |
+| `OutcomeView? Outcome { get; }` | Terminal states only. |
+| `WaitingRequest? Waiting { get; }` | Waiting only. |
+| `string? Reply { get; }` | The conductor's report or the lane's summary, plain text. |
+| `IReadOnlyList<EventLine> Events { get; }` | The run's lines, in order. |
+| `string SentBytes { get; }` | Exactly the sent bytes — the compiled prompt disclosure shows this and nothing else. |
+| `DateTimeOffset At { get; }` | Accept time. |
+| `bool IsTerminal(TurnState state)` | Whether  carries an outcome. |
+| `string DisplayOrdinal` | The display ordinal: `b17`. |
+
+## `TurnCopy`
+
+*class* — `SessionThread.cs`
+
+The words every surface derives from a turn — one derivation each (DM7), so the outcome line,
+the jump list, the UIA name and the announcement policy can never disagree on what a turn says.
+
+| Member | Summary |
+|---|---|
+| `int NameWords = 120` | The first this many characters of the words make the item's name (SC10; deviation 3). |
+| `string OutcomeWord(TurnState state, int? exitCode)` | The outcome word (SC7): *answered · completed · running · lane exited 1 · stopped by you · waiting for you · outcome not recorded*. |
+| `string OutcomeWord(TurnView turn)` | The outcome word of a turn. |
+| `string Name(TurnView turn)` | The UIA name: *b2, Refactor the layout store's…* — the ordinal and the first 120 characters, *…* when truncated. |
+| `string DecorationLine(IReadOnlyList<DecorationRow> decorations)` | The decoration line as one string: *class free-form · tier T0 · lease src/** · goal block* — the item's `ItemStatus`. |
+| `string ReasonSentence(TurnView turn)` | The reason sentence a failed, stopped, waiting or not-recorded turn carries as its container's `HelpText` (SC10); empty for a completed or running turn — one content per property. |
+| `IReadOnlyList<string> Counts(TurnView turn)` | The counts with units (TQ2), in order: edits · tokens · duration · events. Edits are named on every write-capable outcome — *edits not recorded* when the run reported none — and omitted on an answered (read-only) turn… |
+| `string EditsText(int? edits)` | *3 edits* · *1 edit* · *0 edits*; *edits not recorded* for null. |
+| `string SpendText(Spend? spend)` | *12,400 tokens*; *tokens not recorded* for absent usage (Ruling 78 condition 1) — never 0. |
+| `string EventsText(int count)` | *142 events* · *1 event*. |
+| `string DurationText(TimeSpan duration)` | *4 min 12 s* · *41 s* · *1 h 02 min*, at one precision. |
+| `string SpokenDuration(TimeSpan duration)` | The spoken form of a duration: *4 minutes 12 seconds* (SC9). |
+| `string SessionSpend(IReadOnlyList<TurnView> turns, long? capTokens)` | The header's budget state (Ruling 78): *12,400 tokens this session · bounded by your subscription* / *38,900 of 40,000 · cap enforced*. |
+
 ## `SessionZonePreset`
 
 *record* — `SessionZonePreset.cs`
@@ -583,3 +769,49 @@ sentence.** RQ5's copy is what an operator reads beside a disabled button: short
 naming the field. An exception message is read by whoever wrote the call that should have
 checked first, and there the useful content is the contract (Ruling 19) rather than the next
 click. Collapsing the two would make one of them worse.
+
+## `Urgency`
+
+*enum* — `ThreadAnnouncementPolicy.cs`
+
+How an announcement is processed by an AT: queued after what is being read, or interrupting it.
+
+## `AnnouncementKind`
+
+*enum* — `ThreadAnnouncementPolicy.cs`
+
+What kind of thing happened — carried for the notification API's truthful kind (DS-1 deviation 7).
+
+## `Announcement`
+
+*record* — `ThreadAnnouncementPolicy.cs`
+
+One thing to say, with how urgently and why.
+
+## `ThreadAnnouncementPolicy`
+
+*class* — `ThreadAnnouncementPolicy.cs`
+
+SC9 as a transition function over consecutive snapshots (DS-1 P6): once per outcome by
+construction, nothing before catch-up, nothing for history, never for event lines, folds or
+scrolls — those produce no transition.
+
+**Remarks.** **One method, the catch-up rule inside it.** A snapshot before catch-up is remembered
+as nothing and emits nothing; the first caught-up snapshot is remembered and not spoken (history
+is not news); every later snapshot is diffed per ordinal against the previous one. The control
+feeds **every** snapshot in `Version` order — the render coalesces, the policy does not
+— so *running → waiting → running* inside one render window yields both sentences.
+
+
+
+
+
+**A version gap is reported, not hidden.** The diff still runs (the net transition is
+announced); `Next` returns the gap through `LastVersionGap` so the
+control can record `THR-0003`. The state the read model hid is not invented.
+
+| Member | Summary |
+|---|---|
+| `(long Expected, long Received)? LastVersionGap { get; private set; }` | The `(expected, received)` versions of the last gap `Next` saw, or null when the last call was contiguous. |
+| `IReadOnlyList<Announcement> Next(ThreadSnapshot snapshot)` | The announcements this snapshot produces against the previous one, in ordinal order. |
+| `string ActionWord(TurnActionKind action)` | The action's button name (SC7/SC10): one vocabulary for the button, the menu and the sentence. |

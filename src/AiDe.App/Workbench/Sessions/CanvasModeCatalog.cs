@@ -89,7 +89,11 @@ public static class CanvasModeCatalog
     /// </remarks>
     public static IReadOnlyList<CanvasMode> BuiltIn { get; } =
     [
-        new(ConsoleModeId, "Console", context => new ConsoleSurface(context.Stream)),
+        // Ruling 74 (CV-1): the Console is the reply side of each turn and the split is the session
+        // document's own, opened on demand from its header — this row is no longer what the
+        // document renders. It stays because `WorkbenchShell` still passes the catalog's ids to the
+        // document's view model (the Shell lane's file); the E7 retire row names it for the conductor.
+        new(ConsoleModeId, "Console", static _ => new ConsoleSurface()),
     ];
 
     /// <summary>Every mode a session document offers: the built-in rows, then any appended.</summary>

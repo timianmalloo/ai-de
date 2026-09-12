@@ -1,0 +1,9 @@
+{"agent": "copilot-atlas-source-safety", "at": 1789241231.5288236, "code": null, "kind": "allowed", "path": "docs/proof/code-atlas-source-safety.md", "session": "atlas-e0-source-safety-gpt55", "wi": ""}
+{"agent": "copilot-atlas-source-safety", "at": 1789241231.5328333, "code": null, "kind": "allowed", "path": "spikes/code-atlas-source-reader/CodeAtlas.SourceReaderProbe.csproj", "session": "atlas-e0-source-safety-gpt55", "wi": ""}
+{"agent": "copilot-atlas-source-safety", "at": 1789241231.5368338, "code": null, "kind": "allowed", "path": "spikes/code-atlas-source-reader/OpenedSourceReader.cs", "session": "atlas-e0-source-safety-gpt55", "wi": ""}
+{"agent": "copilot-atlas-source-safety", "at": 1789241231.540833, "code": null, "kind": "allowed", "path": "spikes/code-atlas-source-reader/Program.cs", "session": "atlas-e0-source-safety-gpt55", "wi": ""}
+{"agent": "copilot-atlas-source-safety", "at": 1789241231.5458338, "code": null, "kind": "allowed", "path": "spikes/code-atlas-source-reader/SourceReaderProbeCases.cs", "session": "atlas-e0-source-safety-gpt55", "wi": ""}
+{"agent": "copilot-atlas-source-safety", "at": 1789241768.0377533, "code": null, "kind": "allowed", "path": "docs/proof/code-atlas-source-safety.md", "session": "atlas-e0-source-safety-gpt55", "wi": ""}
+{"agent": "copilot-atlas-source-safety", "at": 1789241768.0417418, "code": null, "kind": "allowed", "path": "spikes/code-atlas-source-reader/OpenedSourceReader.cs", "session": "atlas-e0-source-safety-gpt55", "wi": ""}
+{"agent": "copilot-atlas-source-safety", "at": 1789241768.0457418, "code": null, "kind": "allowed", "path": "spikes/code-atlas-source-reader/SourceReaderProbeCases.cs", "session": "atlas-e0-source-safety-gpt55", "wi": ""}
+{"agent": "copilot-atlas-source-safety", "at": 1789241786.3343527, "code": null, "kind": "allowed", "path": "docs/proof/code-atlas-source-safety.md", "session": "atlas-e0-source-safety-gpt55", "wi": ""}

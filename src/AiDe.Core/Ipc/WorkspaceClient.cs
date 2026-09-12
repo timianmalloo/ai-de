@@ -146,7 +146,8 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWo
         return QueryAsync<WorkspaceGraph>(
             WorkspaceOperations.Graph,
             new GraphRequest(
-                query.MaxNodes, query.Kinds, query.ScopeId, query.IncludeExternal, query.GroupId),
+                query.MaxNodes, query.Kinds, query.ScopeId, query.IncludeExternal, query.GroupId,
+                query.ExcludeKnowledge),
             cancellationToken);
     }
 

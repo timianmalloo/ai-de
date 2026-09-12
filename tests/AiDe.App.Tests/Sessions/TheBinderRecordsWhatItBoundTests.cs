@@ -64,7 +64,7 @@ public sealed class TheBinderRecordsWhatItBoundTests : IDisposable
         {
             var result = Sta.Run(() =>
             {
-                var shell = new WorkbenchShell(queries: null);
+                using var shell = new WorkbenchShell(queries: null);
                 var window = new Window
                 {
                     Content = shell.Manager,

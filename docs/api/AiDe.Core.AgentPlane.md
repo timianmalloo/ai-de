@@ -1618,6 +1618,14 @@ reason, which the provisioner then reports rather than guessing past.
 **Both streams are read before waiting** — a child that fills the stderr pipe while the
 parent waits on exit deadlocks, which is the classic shape of this bug.
 
+
+
+
+
+**And the reads are bounded too** — the child's exit does not close a pipe another
+process inherited, so a wait on the exit alone is a bound on the wrong thing
+(`ProcessRunnerBoundsTheReadTests`).
+
 | Member | Summary |
 |---|---|
 | `ProcessRunner(TimeSpan? timeout = null)` | **(gap)** |
