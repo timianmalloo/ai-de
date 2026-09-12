@@ -7705,7 +7705,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "17bc4c668d71074b6e4042640ed07d04dc004d87d2c283ee5e8d466507b9ec06"
+      "sourceSha256": "801c652ecb75596e0580c9ec5fc387b930f070f30e958fe7a437c75fe2f4d3c5"
     },
     {
       "id": "design-session-profiler",
@@ -10824,6 +10824,54 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "00d5c8e045dd0eb0fa10474be388365bb2281b1d6e9181734d322302a1b2d716"
+    },
+    {
+      "id": "inv-0011-terminal-hosts-the-sixth-report",
+      "path": "docs/investigations/INV-0011-terminal-hosts-the-sixth-report.md",
+      "title": "Terminal hosts are being created AGAIN — the sixth report: 32 shells held alive by a hung test host, the two defects under it, and what is still unattributed",
+      "type": "investigation",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-addendum-c",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "The operator's sixth report, 2026-09-12 ~19:00Z. Counted first: 32 powershell.exe and 36 conhost.exe born in the previous hour, every one a child of the CV-1 lane's App test host, alive 25 minutes after birth — ours. The host was hung at ~0 CPU, 30 minutes into a suite that takes two, in WorkbenchShell.Git → StreamReader.ReadToEnd after git had exited; the read was unbounded and the WaitForExit(3000) bound sat after it (DC-165). Ending the host released all 32 (the job's kill-on-close held). A second defect was found on the way in: a ConPTY child of a redirected parent inherits the parent's standard handles and writes into its stdout (DC-164) — the mechanism behind CV-1's one flaky probe test and, re-read, behind DC-014's 2026-08-26 instance. Both fixed red→green with E2E proof. The 513 node/conhost pairs under Windows Terminal's agent host are the pre-fix pool of INV-0010, unchanged in count. Still open: which code path started 32 shells inside a hung host — the tests' default sink discarded the events; it now writes a per-run ledger.",
+      "tags": [
+        "terminal",
+        "conpty",
+        "conhost",
+        "straggler",
+        "census",
+        "test-host",
+        "hang",
+        "stdout",
+        "handle-inheritance",
+        "dc-164",
+        "dc-165",
+        "dc-155",
+        "dc-014",
+        "x-2"
+      ],
+      "links": [
+        {
+          "to": "inv-0010-terminal-hosts-the-fifth-report",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0005-terminal-runtime-boundary",
+          "rel": "depends-on"
+        },
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "607c1103e59b4f488185941accda8a5cde79d997c903d86e9d031f302cc8e5f7"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -14871,6 +14919,56 @@ window.DOCS_INDEX = {
       "sourceSha256": "a14650121e843a0780b918ff5400781428d882ebf72d8d5794963cd0354fb3d0"
     },
     {
+      "id": "proof-terminal-hosts-sixth",
+      "path": "docs/proof/terminal-hosts-sixth.md",
+      "title": "Proof Pack - Terminal hosts, the sixth report: INV-0011 (X-2)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-addendum-c",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Evidence for INV-0011. Two classes red→green in Core: a ConPTY child no longer inherits its redirected parent's standard handles (DC-164: token on the host's pipe → on the Output channel only), and a child-process read is bounded by the call, not by the child's exit (DC-165: 7.1 s → 2 s against a 2 s bound). E2E: the session-render probe run with redirected stdout carries 0 shell bytes (was 2). The App test host's shells now end with their owner: a per-run terminal ledger reads 64 starts / 62 stops (was 64 / 14), with the shell disposing its panes and every test disposing its shell. One contrast pairing the census could only see once test-host shells reached readiness (the \"Target session\" face, 1.03:1) is templated on token grounds: 120/120.",
+      "tags": [
+        "terminal",
+        "conpty",
+        "conhost",
+        "test-host",
+        "hang",
+        "stdout",
+        "handle-inheritance",
+        "ledger",
+        "contrast",
+        "dc-164",
+        "dc-165",
+        "dc-014",
+        "dc-155",
+        "proof-pack",
+        "inv-0011",
+        "x-2"
+      ],
+      "links": [
+        {
+          "to": "inv-0011-terminal-hosts-the-sixth-report",
+          "rel": "tested-by"
+        },
+        {
+          "to": "proof-terminal-hosts-fifth",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0005-terminal-runtime-boundary",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "32c4f2d721d8c12405460191909939f10034eaf2c0263470cb29caf5b12abdd3"
+    },
+    {
       "id": "proof-watcher-advisory-evaluator",
       "path": "docs/proof/watcher-advisory-evaluator.md",
       "title": "Proof Pack - Loomkeeper Local Advisory Evaluator & Egress Guard (connective 3)",
@@ -16787,5 +16885,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "748f9d5603e9ebd3c8f26b02249c83a764e351f2ee3438b2b6a2dfd2aa7e8007"
+  "graphSha256": "b2c25ce1ac9ef7914e912a15dbf79b03dbd578e0315493254a0aaf4619a821ad"
 };

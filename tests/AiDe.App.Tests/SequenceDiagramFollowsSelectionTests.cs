@@ -36,7 +36,7 @@ public sealed class SequenceDiagramFollowsSelectionTests
     public void ShowingANode_PopulatesOpenSequenceDiagrams()
         => OnSta(() =>
         {
-            var shell = new WorkbenchShell(new InteractionQueries());
+            using var shell = new WorkbenchShell(new InteractionQueries());
             var surface = new SequenceDiagramSurface();
             Assert.True(surface.IsEmpty);   // starts in the empty state
 
@@ -52,7 +52,7 @@ public sealed class SequenceDiagramFollowsSelectionTests
     public void WithNoWorkspaceOpen_ShowingANodeIsANoOp()
         => OnSta(() =>
         {
-            var shell = new WorkbenchShell(queries: null);   // no workspace
+            using var shell = new WorkbenchShell(queries: null);   // no workspace
             var surface = new SequenceDiagramSurface();
 
             RunSync(shell.ShowNodeInSequenceDiagramsAsync("Shop.Order", new[] { surface }));

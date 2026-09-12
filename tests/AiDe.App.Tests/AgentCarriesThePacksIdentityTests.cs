@@ -90,7 +90,7 @@ public sealed class AgentCarriesThePacksIdentityTests
             TerminalSurface.EnvironmentFor = null;
             try
             {
-                _ = new WorkbenchShell(queries: null);
+                using var shell = new WorkbenchShell(queries: null);
                 return TerminalSurface.EnvironmentFor?.Invoke("agent:claude#a90b5c");
             }
             finally

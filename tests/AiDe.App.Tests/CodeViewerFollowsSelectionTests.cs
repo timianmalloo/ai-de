@@ -27,7 +27,7 @@ public sealed class CodeViewerFollowsSelectionTests
     public void SelectingANode_LoadsItsSourceIntoOpenCodeViewers()
         => OnSta(() =>
         {
-            var shell = new WorkbenchShell(new ContentQueries());
+            using var shell = new WorkbenchShell(new ContentQueries());
             var viewer = new CodeViewerView();
             Assert.True(viewer.IsFallback);   // starts in the "Select a node" empty state
 
@@ -41,7 +41,7 @@ public sealed class CodeViewerFollowsSelectionTests
     public void WithNoWorkspaceOpen_ShowingANodeIsANoOp_NoFakeSource()
         => OnSta(() =>
         {
-            var shell = new WorkbenchShell(queries: null);   // no workspace
+            using var shell = new WorkbenchShell(queries: null);   // no workspace
             var viewer = new CodeViewerView();
 
             RunSync(shell.ShowNodeInCodeViewersAsync("Shop.Order", new[] { viewer }));
