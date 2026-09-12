@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 85 · partially-controlled 65 · uncontrolled 20
+**Status counts:** controlled 86 · partially-controlled 65 · uncontrolled 20
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -7209,5 +7209,29 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   assertions on it are retired with the premise. Gate: `tools/verify-no-new-console-launches.py`
   (every `*.cs` under `src/` and `tests/`, code lines only, token `CREATE_NEW_CONSOLE`, no
   allowlist; `--self-test`), run by `run-verify-gates.py` and in CI.
+- **Status:** `controlled`.
+
+### DC-171 — A test that locates a helper binary by "the newest configuration on disk" runs whichever program was built last in that configuration, not the one built with the test
+
+- **Shape:** a test launches a helper executable found by path. The lookup prefers one
+  configuration (`Release` if it exists, else `Debug`) instead of the configuration the test
+  assembly itself was built in. The test step builds the helper (a project reference) in the
+  tests' configuration; the other configuration's binary stays as it was — an older program with
+  the same name, chosen every time it exists. The test then measures a change in a binary that
+  does not contain it.
+- **Signature:** helper tests failing on an exit code or message the helper's source no longer
+  has (`exit 4: no console window — launch with CREATE_NEW_CONSOLE` after the exit was retired);
+  green in a tree with one configuration, red in a tree with two; a fix that "does not take" only
+  in the primary checkout, where Release builds have happened.
+- **Instance (X-2b's join, 2026-09-12):** ten `Platform=Windows` tests failed on `main` at
+  `e2c3aa7f` against a Release `AiDe.Core.TerminalHost.exe` built at 10:59 (before DC-170's
+  change) while the Debug one built at 13:32 sat beside it; the same tests were green in the
+  conductor tree, which had no Release helper.
+- **Sweep:** `TerminalHostLauncher.LocateHelper` (the instance); `AcpProbeLauncher` and the App's
+  `LocateProbe` resolve relative to the test assembly's own output directory (no configuration
+  preference) — not the class.
+- **Control:** `LocateHelper` reads the configuration from the test assembly's own `bin/<configuration>/`
+  segment and uses only that; `TerminalHostLauncherConfigurationTests` asserts the helper path
+  carries the tests' configuration and not the other, and the segment reader on three shapes.
 - **Status:** `controlled`.
 

@@ -7781,7 +7781,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "eedb1294cb2f3e9cc26099dcaf6d112b5765296c2dcde121213d5868a8839c9c"
+      "sourceSha256": "05add9e9b45de8cb6a9999b8bb00cdeca5f25206234a8897c20d6db338344a9f"
     },
     {
       "id": "design-session-profiler",
@@ -17067,5 +17067,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "3e1fd41c0076db9702ba50013211694da0463bc0bfd429d44c627c928151412e"
+  "graphSha256": "5ec90b88eb28c5c5eddfe3e8850c600a1140a5f38a6a1a6e8e127353821ab81d"
 };
