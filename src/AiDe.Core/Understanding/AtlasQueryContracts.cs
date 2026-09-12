@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 namespace AiDe.Core.Understanding;
 
 /// <summary>Directory enumeration limits. Candidate ceilings are policy defaults, not measured guarantees.</summary>
-public readonly record struct EnumerationLimits
+public sealed class EnumerationLimits
 {
     public EnumerationLimits(int maxEntries, int maxDepth, int maxDescriptors, TimeSpan timeout)
     {
@@ -24,7 +24,7 @@ public readonly record struct EnumerationLimits
 }
 
 /// <summary>Bounded page request for Atlas query ports.</summary>
-public readonly record struct PageRequest
+public sealed class PageRequest
 {
     public const int MaxLimit = 128;
 
@@ -40,14 +40,158 @@ public readonly record struct PageRequest
     public int Limit { get; }
 }
 
-/// <summary>Closed source result set for selection projections.</summary>
-public enum AtlasSourceResult
+/// <summary>Closed source projection states for selection results.</summary>
+public enum SourceProjectionState
 {
-    Verified,
-    Unavailable,
-    Refused,
+    IndexedMatch,
     Changed,
+    Unavailable,
+    Unverifiable,
+    UnsupportedEncoding,
+    TooLargeToVerify,
+    ReadUnstable,
+    Refused,
     Canceled,
+}
+
+/// <summary>Coverage denominator; unknown and withheld carry no numeric fiction.</summary>
+public sealed class SelectionCoverage
+{
+    private SelectionCoverage(AtlasDenominatorState state, double? value, string? reason)
+    {
+        State = AtlasBounds.Defined(state, nameof(state));
+        Value = value;
+        Reason = AtlasIdentityCodec.OptionalToken(reason, nameof(reason));
+        if (state is AtlasDenominatorState.Known && value is not >= 0 or > 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(value), value, "Coverage must be between 0 and 1.");
+        }
+
+        if (state is not AtlasDenominatorState.Known && (value is not null || Reason is null))
+        {
+            throw new ArgumentException("Unknown or withheld coverage requires absence of value and a reason.", nameof(reason));
+        }
+    }
+
+    public AtlasDenominatorState State { get; }
+    public double? Value { get; }
+    public string? Reason { get; }
+    public static SelectionCoverage Known(double value) => new(AtlasDenominatorState.Known, value, null);
+    public static SelectionCoverage Unknown(string reason) => new(AtlasDenominatorState.Unknown, null, reason);
+    public static SelectionCoverage Withheld(string reason) => new(AtlasDenominatorState.Withheld, null, reason);
+}
+
+/// <summary>One addressable declaration in a selection outline.</summary>
+public sealed class OutlineDeclaration
+{
+    public OutlineDeclaration(string observationKey, string displayName, AtlasDeclarationKind kind, AtlasTextSpan span)
+    {
+        ObservationKey = AtlasIdentityCodec.RequiredToken(observationKey, nameof(observationKey));
+        DisplayName = AtlasIdentityCodec.RequiredToken(displayName, nameof(displayName));
+        Kind = AtlasBounds.Defined(kind, nameof(kind));
+        Span = span;
+    }
+
+    public string ObservationKey { get; }
+    public string DisplayName { get; }
+    public AtlasDeclarationKind Kind { get; }
+    public AtlasTextSpan Span { get; }
+}
+
+/// <summary>Structured, addressable outline. Empty outlines are valid.</summary>
+public sealed class SelectionOutline
+{
+    public SelectionOutline(IEnumerable<OutlineDeclaration> declarations) =>
+        Declarations = DirectoryObservation.RequiredItems(declarations, nameof(declarations));
+
+    public ImmutableArray<OutlineDeclaration> Declarations { get; }
+}
+
+/// <summary>Projected source page with UTF-16 page and highlight spans.</summary>
+public sealed class SourceTextPage
+{
+    public SourceTextPage(string text, AtlasTextSpan pageSpan, IEnumerable<AtlasTextSpan> highlights)
+    {
+        Text = AtlasIdentityCodec.ValidUnicode(text, nameof(text));
+        PageSpan = pageSpan;
+        if (Text.Length != pageSpan.Length)
+        {
+            throw new ArgumentException("Text length must equal the page span length.", nameof(text));
+        }
+
+        Highlights = highlights.ToImmutableArray();
+        if (Highlights.Any(highlight => highlight.Start < pageSpan.Start || highlight.End > pageSpan.End))
+        {
+            throw new ArgumentException("Highlights must be contained in the page span.", nameof(highlights));
+        }
+    }
+
+    public string Text { get; }
+    public AtlasTextSpan PageSpan { get; }
+    public ImmutableArray<AtlasTextSpan> Highlights { get; }
+}
+
+/// <summary>Source projection union. Only IndexedMatch may carry source text and highlights.</summary>
+public sealed class SourceProjection
+{
+    private SourceProjection(SourceProjectionState state, string observationKey, AtlasSourceBinding? expectedBinding, string? decoderId, SourceTextPage? page)
+    {
+        State = AtlasBounds.Defined(state, nameof(state));
+        ObservationKey = AtlasIdentityCodec.RequiredToken(observationKey, nameof(observationKey));
+        ExpectedBinding = expectedBinding;
+        DecoderId = AtlasIdentityCodec.OptionalToken(decoderId, nameof(decoderId));
+        Page = page;
+    }
+
+    public SourceProjectionState State { get; }
+    public string ObservationKey { get; }
+    public AtlasSourceBinding? ExpectedBinding { get; }
+    public string? DecoderId { get; }
+    public SourceTextPage? Page { get; }
+
+    public static SourceProjection IndexedMatch(AtlasSourceObservation observation, AtlasSourceBinding expectedBinding, string decoderId, SourceTextPage page)
+    {
+        ArgumentNullException.ThrowIfNull(observation);
+        ArgumentNullException.ThrowIfNull(expectedBinding);
+        ArgumentNullException.ThrowIfNull(page);
+        if (observation.Status is not AtlasSourceObservationStatus.Verified)
+        {
+            throw new ArgumentException("IndexedMatch requires a verified source observation.", nameof(observation));
+        }
+
+        if (!BindingMatches(observation, expectedBinding) || !string.Equals(observation.DecoderId, decoderId, StringComparison.Ordinal))
+        {
+            throw new ArgumentException("IndexedMatch binding and decoder must match the verified source observation.", nameof(expectedBinding));
+        }
+
+        if (page.PageSpan.End > observation.DecodedUtf16Length)
+        {
+            throw new ArgumentException("Page span cannot exceed decoded source length.", nameof(page));
+        }
+
+        return new(SourceProjectionState.IndexedMatch, observation.ObservationKey, expectedBinding, decoderId, page);
+    }
+
+    public static SourceProjection Changed(string observationKey) => NonMatch(SourceProjectionState.Changed, observationKey);
+    public static SourceProjection Unavailable(string observationKey) => NonMatch(SourceProjectionState.Unavailable, observationKey);
+    public static SourceProjection Unavailable(string observationKey, SourceTextPage page) => throw new ArgumentException("Unavailable source projections cannot carry text.", nameof(page));
+    public static SourceProjection Unverifiable(string observationKey) => NonMatch(SourceProjectionState.Unverifiable, observationKey);
+    public static SourceProjection UnsupportedEncoding(string observationKey) => NonMatch(SourceProjectionState.UnsupportedEncoding, observationKey);
+    public static SourceProjection TooLargeToVerify(string observationKey) => NonMatch(SourceProjectionState.TooLargeToVerify, observationKey);
+    public static SourceProjection ReadUnstable(string observationKey) => NonMatch(SourceProjectionState.ReadUnstable, observationKey);
+    public static SourceProjection Refused(string observationKey) => NonMatch(SourceProjectionState.Refused, observationKey);
+    public static SourceProjection Canceled(string observationKey) => NonMatch(SourceProjectionState.Canceled, observationKey);
+
+    private static SourceProjection NonMatch(SourceProjectionState state, string observationKey) =>
+        new(state, observationKey, null, null, null);
+
+    private static bool BindingMatches(AtlasSourceObservation source, AtlasSourceBinding binding) =>
+        string.Equals(binding.ManifestIdentity, source.ManifestToken, StringComparison.Ordinal)
+        && string.Equals(binding.ManifestFileIdentity, source.FileValue, StringComparison.Ordinal)
+        && string.Equals(binding.PolicyIdentity, source.PolicyToken, StringComparison.Ordinal)
+        && string.Equals(binding.RootIdentity, AtlasIdentityCodec.ForNativeObject(source.RootIdentity!), StringComparison.Ordinal)
+        && string.Equals(binding.FileIdentity, AtlasIdentityCodec.ForNativeObject(source.FileIdentity!), StringComparison.Ordinal)
+        && string.Equals(binding.ContentHash, source.CanonicalSha256, StringComparison.Ordinal);
 }
 
 /// <summary>Inventory page returned by query ports.</summary>
@@ -55,9 +199,13 @@ public sealed class InventoryPage
 {
     public InventoryPage(PageRequest request, AtlasBounds bounds, IEnumerable<AtlasFileEntry> files)
     {
-        Request = request;
+        Request = request ?? throw new ArgumentNullException(nameof(request));
         Bounds = bounds ?? throw new ArgumentNullException(nameof(bounds));
         Files = DirectoryObservation.RequiredItems(files, nameof(files));
+        if (Files.Length != Bounds.ReturnedRows)
+        {
+            throw new ArgumentException("File count must match bounds returned rows.", nameof(files));
+        }
     }
 
     public PageRequest Request { get; }
@@ -85,16 +233,16 @@ public sealed class SelectionRequest
 /// <summary>Selection output with coverage, bounds, limitations, source status and Core-issued receipt.</summary>
 public sealed class SelectionProjection
 {
-    public SelectionProjection(string receiptToken, string manifestToken, string fileValue, long generation, string outline, AtlasSourceResult sourceResult, AtlasBounds bounds, double coverage, IEnumerable<string> limitations)
+    public SelectionProjection(string receiptToken, string manifestToken, string fileValue, long generation, SelectionOutline outline, SourceProjection source, AtlasBounds bounds, SelectionCoverage coverage, IEnumerable<string> limitations)
     {
         ReceiptToken = AtlasIdentityCodec.RequiredToken(receiptToken, nameof(receiptToken));
         ManifestToken = AtlasIdentityCodec.RequiredToken(manifestToken, nameof(manifestToken));
         FileValue = AtlasIdentityCodec.RequiredToken(fileValue, nameof(fileValue));
         Generation = AtlasBounds.NonNegative(generation, nameof(generation));
-        Outline = AtlasIdentityCodec.RequiredToken(outline, nameof(outline));
-        SourceResult = AtlasBounds.Defined(sourceResult, nameof(sourceResult));
+        Outline = outline ?? throw new ArgumentNullException(nameof(outline));
+        Source = source ?? throw new ArgumentNullException(nameof(source));
         Bounds = bounds ?? throw new ArgumentNullException(nameof(bounds));
-        Coverage = coverage is >= 0 and <= 1 ? coverage : throw new ArgumentOutOfRangeException(nameof(coverage), coverage, "Coverage must be between 0 and 1.");
+        Coverage = coverage ?? throw new ArgumentNullException(nameof(coverage));
         Limitations = RequiredStrings(limitations, nameof(limitations));
     }
 
@@ -102,10 +250,10 @@ public sealed class SelectionProjection
     public string ManifestToken { get; }
     public string FileValue { get; }
     public long Generation { get; }
-    public string Outline { get; }
-    public AtlasSourceResult SourceResult { get; }
+    public SelectionOutline Outline { get; }
+    public SourceProjection Source { get; }
     public AtlasBounds Bounds { get; }
-    public double Coverage { get; }
+    public SelectionCoverage Coverage { get; }
     public ImmutableArray<string> Limitations { get; }
 
     private static ImmutableArray<string> RequiredStrings(IEnumerable<string> values, string name)

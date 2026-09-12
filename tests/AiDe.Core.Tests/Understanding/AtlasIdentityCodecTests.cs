@@ -54,6 +54,10 @@ public sealed class AtlasIdentityCodecTests
 
         Assert.Equal("profile:unknown", context.ConfigurationOrProfileToken);
         Assert.Null(context.LogicalIdentity);
+
+        var reserved = AtlasCompilationScope.ForFileLimited("workspace", "root", "profile:unknown");
+        Assert.Null(reserved.LogicalIdentity);
+        Assert.Throws<ArgumentException>(() => AtlasCompilationScope.ForFileLimited("workspace", "root", "unknown"));
     }
 
     [Fact]

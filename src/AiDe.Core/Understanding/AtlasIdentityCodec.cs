@@ -13,6 +13,9 @@ public static class AtlasIdentityCodec
     private const string IdentityTag = "atlas-identity/v1";
     private const string FileTag = "atlas-file/v1";
     private const string CompilationScopeTag = "atlas-compilation-scope/v1";
+    private const string NativeObjectTag = "native-object/v1";
+    private const string NativeObjectProvider = "provider:windows-file-id";
+    private const string NativeObjectVersion = "version:1";
     internal const string MissingProjectToken = "project:not-established";
     internal const string MissingTargetFrameworkToken = "tfm:not-established";
     internal const string UnknownProfileToken = "profile:unknown";
@@ -58,6 +61,13 @@ public static class AtlasIdentityCodec
     /// <summary>Builds a domain-tagged file tuple for an observed file.</summary>
     public static string ForFile(string workspace, string root, string relativePath) =>
         EncodeComponents(FileTag, workspace, root, relativePath);
+
+    /// <summary>Builds the opaque binding token for a native object identity in this Windows candidate.</summary>
+    public static string ForNativeObject(AtlasObjectIdentity identity)
+    {
+        ArgumentNullException.ThrowIfNull(identity);
+        return EncodeComponents(NativeObjectTag, NativeObjectProvider, NativeObjectVersion, identity.VolumeSerial, identity.FileIndex);
+    }
 
     /// <summary>
     /// Builds a compilation-scope tuple. File-limited scope uses explicit absence tokens for project
@@ -191,7 +201,7 @@ public sealed class AtlasCompilationScope
         return new(
             AtlasCompilationContextKind.FileLimited,
             key,
-            profileToken is null ? null : key,
+            string.Equals(profile, AtlasIdentityCodec.UnknownProfileToken, StringComparison.Ordinal) ? null : key,
             "not established",
             "not established",
             profile);
