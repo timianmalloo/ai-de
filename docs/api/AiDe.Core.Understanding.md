@@ -10,17 +10,29 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Understanding: 37 types, 186 members, 14% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Understanding: 43 types, 199 members, 14% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Understanding`
 
-**37 public types · 186 public members · 14% documented.**
+**43 public types · 199 public members · 14% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
 > gap rather than given invented text. The extractor is a lexical reader, not a compiler:
 > it does not resolve generics, partial classes across files, or conditional compilation.
+
+## `AtlasDirectoryEnumerator`
+
+*class* — `AtlasDirectoryEnumerator.cs`
+
+Ordinary local Windows metadata only. Detected reparse points are excluded; this is not
+a never-open-outside race guarantee. The trusted composition must supply a live grant check.
+I/O is synchronous: the Task-shaped port does not schedule a worker or make native opens cancelable.
+
+| Member | Summary |
+|---|---|
+| `Task<DirectoryObservation> EnumerateAsync(` | **(gap)** |
 
 ## `AtlasIdentity`
 
@@ -78,6 +90,37 @@ not established; an unknown profile has no logical identity and supports observa
 | `string ConfigurationOrProfileToken { get; }` | **(gap)** |
 | `AtlasCompilationScope ForFileLimited(string workspace, string root, string? profileToken)` | **(gap)** |
 | `AtlasCompilationScope ForSuppliedProjectCompilation(` | **(gap)** |
+
+## `AtlasInventoryMembershipMode`
+
+*enum* — `AtlasInventory.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasInventoryPolicy`
+
+*class* — `AtlasInventory.cs`
+
+Trusted composition supplies membership; this component never discovers Git state or runs hooks.
+
+| Member | Summary |
+|---|---|
+| `AtlasInventoryMembershipMode Mode { get; }` | **(gap)** |
+| `string Reason { get; }` | **(gap)** |
+| `bool IsComplete { get; private init; } = true` | **(gap)** |
+| `AtlasInventoryPolicy NonGit(string reason)` | **(gap)** |
+| `AtlasInventoryPolicy UnavailableMembership(string reason)` | **(gap)** |
+| `AtlasInventoryPolicy KnownMembership(AtlasRootGrant grant, IEnumerable<string> paths, bool complete, string reason)` | Immutable, ordinal path membership bound to the exact issued grant instance. Completeness describes the supplied membership snapshot, not physical coverage. Ancestors of authorized paths are metadata members too. Miss… |
+
+## `AtlasInventory`
+
+*class* — `AtlasInventory.cs`
+
+*No doc comment on this type.* **(gap)**
+
+| Member | Summary |
+|---|---|
+| `Task<AtlasManifest> BuildManifestAsync(` | **(gap)** |
 
 ## `AtlasCompletionState`
 
@@ -505,3 +548,23 @@ the content hash is the canonical `sha256:` plus 64 lowercase hexadecimal charac
 | `int GetHashCode()` | **(gap)** |
 | `bool operator ==(AtlasSourceBinding? left, AtlasSourceBinding? right)` | **(gap)** |
 | `bool operator !=(AtlasSourceBinding? left, AtlasSourceBinding? right)` | **(gap)** |
+
+## `CSharpDeclarationObservationResult`
+
+*class* — `CSharpDeclarationObservation.cs`
+
+*No doc comment on this type.* **(gap)**
+
+| Member | Summary |
+|---|---|
+| `CSharpDeclarationObservationResult(IEnumerable<AtlasDeclaration> declarations, AtlasCompletionState completion, AtlasBounds bounds, IEnumerable<string> limitations)` | **(gap)** |
+| `ImmutableArray<AtlasDeclaration> Declarations { get; }` | **(gap)** |
+| `AtlasCompletionState Completion { get; }` | **(gap)** |
+| `AtlasBounds Bounds { get; }` | **(gap)** |
+| `ImmutableArray<string> Limitations { get; }` | **(gap)** |
+
+## `CSharpDeclarationObservation`
+
+*class* — `CSharpDeclarationObservation.cs`
+
+*No doc comment on this type.* **(gap)**
