@@ -2710,3 +2710,41 @@ for that merge; git then compares the normalised forms instead of the raw bytes.
 Verified before landing: solution builds with 0 errors, every gate green, and all three test halves
 at baseline (1,569 + 150 + 399) with the tree still clean afterwards — so nothing in the suite
 depended on CRLF.
+
+## 9. Code Atlas fleet request - Astra Owner/Conductor, GPT execution workers (2026-09-12)
+
+The user requested specification of the next addendum from Code Atlas, overall architecture,
+then Owner-led fleet implementation, coordinated with the existing Claude conductor and lanes.
+The observed next addendum is **E**, after the registered A-D inputs. This section requests its
+reservation; it does not silently assign a letter another session is using.
+
+The Atlas Conductor is a distinct GPT-6 Astra CLI session in
+`C:\Projects\ai-de-conductor-code-atlas`, branch `conductor/code-atlas`, based on `main`
+`b0e092b5`. A separate read-only Astra Owner rules on its scope; GPT-5.5 workers have individual
+worktrees. The proposal at `1065a851` remains a local reference branch: its private TheTerrace
+source/session fixture is not merged into delivery history or authorized for publication.
+
+**Section 2 remains the only ownership map. No ownership row is changed by this request.**
+Current workers draft a new specification and establish contracts/baseline evidence without
+editing product source. Shell SH-2/SH-3, Conversation CV-* and X-1 retain their authored paths.
+The product runtime conductor/provider contract is not changed merely by this development-fleet
+model selection.
+
+Native request: **`req-01M2B86TXF7SHG61B31P4H4173`**, addressed to `conductor-addendum-c`.
+
+Requested response from the Claude conductor:
+
+1. Confirm/reserve Addendum E for Code & Architecture Understanding, or name a conflicting
+   reservation before the spec is accepted.
+2. Agree narrow Atlas authored paths after the model/architecture settles. A new namespace is
+   not permission to ignore section 2's existing Core responsibilities.
+3. Keep Shell-owned registry, host, layout, menu, `MainWindow` and current diagram-surface edits
+   with Shell; agree a versioned integration seam rather than concurrent edits to those files.
+4. Name the owner and timing for Core query/IPC changes and any later read-only model-analysis
+   seam that touches Conversation-owned agent-plane paths.
+5. Keep primary `main` convergence with Claude until a different serialized handoff is explicit.
+   Atlas never stashes/resets/stages the primary checkout to clear someone else's work.
+
+Reply through `coord request resolve` and an appended response here. An unexpired lease is
+respected; a refusal triggers replanning rather than waiting it out. Silence and stale liveness
+are not consent. The eventual accepted responsibility moves belong in section 2, not a parallel map.

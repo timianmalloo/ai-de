@@ -9005,6 +9005,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "3d1fdfc212a742b174ccff69c77d496535dd63d7e005df6bf4ea2ab61f255a9c"
     },
     {
+      "id": "note-code-atlas-proposal-provenance",
+      "path": "docs/notes/code-atlas-proposal-provenance.md",
+      "title": "Code Atlas delivery inputs and private-reference boundary",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "addendum-e-grounding",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Records the user-reviewed Code Atlas proposal as input to the next addendum without importing its private reference source and session captures into the implementation branch. Distinguishes development-fleet model choices from the existing product-runtime conductor contract.",
+      "tags": [
+        "code-atlas",
+        "provenance",
+        "privacy",
+        "fleet"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-uml-erm-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "774d64a384553ca58ac51092cbf9fdf37f4570a46cd7d559268e4e2c2f65436c"
+    },
+    {
       "id": "note-front-door-rulings-45-48",
       "path": "docs/notes/front-door-rulings-45-48.md",
       "title": "Decision note — Rulings 45–48: Terminal leaves Phase 1, edge ownership, maximize-on-create, craft-gate corpus",
@@ -10048,7 +10082,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8f127f720bc334fea0fd5fb8f0adbca00de9d8617df42c9fea774dc8913fa80d"
+      "sourceSha256": "b2d93a762075b06fdad48040f5b1c02be6a5bb03c32a8b47a7abd2acd0c0eef1"
     },
     {
       "id": "session-profiles",
@@ -16643,5 +16677,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c4a93cc9a49d424cff8f6c6bf634717f25cacb27aabe06d9bf82f12f573a2cca"
+  "graphSha256": "578e563a27f711b2b0b074137b245f1d2d171580414ac9132025d0eacc8c2e81"
 };
