@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 60 members, 93% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Sessions: 25 types, 141 members, 70% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Sessions`
 
-**12 public types · 60 public members · 93% documented.**
+**25 public types · 141 public members · 70% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -168,6 +168,107 @@ rather than asserted, because `Assert.Same` passes on a disposed instance.
 ### `ConsoleSurface(ConsoleStreamModel model)`
 
 - **`model`** — The merged stream. Shared with the document, never copied.
+
+## `FocusLeave`
+
+*enum* — `FeedKeyDecision.cs`
+
+Which way focus leaves the feed on Ctrl+Home / Ctrl+End (DS-1 P2, P4).
+
+## `FeedKeyDecision`
+
+*record* — `FeedKeyDecision.cs`
+
+The pure half of the feed's keyboard model (SC8; DS-1 P2): what one key press means, decided
+without a window so `K1a` can walk the whole `Key × ModifierKeys × bool` domain.
+
+## `None`
+
+*record* — `FeedKeyDecision.cs`
+
+Not the feed's key: the platform, or an inner control that owns it, handles it.
+
+## `MoveBy`
+
+*record* — `FeedKeyDecision.cs`
+
+Move the caret by  items (PageDown +1, PageUp −1), select, scroll into view, focus the container.
+
+## `MoveTo`
+
+*record* — `FeedKeyDecision.cs`
+
+Move the caret to the first (Home) or last (End) item — owned, index-based; the platform's End lands short (spike Q5c).
+
+## `Scroll`
+
+*record* — `FeedKeyDecision.cs`
+
+Scroll the viewport by  text lines (Down +3, Up −3); the caret stays — a tall turn's middle is reachable by keyboard.
+
+## `Leave`
+
+*record* — `FeedKeyDecision.cs`
+
+Raise a leave request the document routes (Ctrl+End → the editor, Ctrl+Home → the header).
+
+## `FeedList`
+
+*class* — `FeedList.cs`
+
+The virtualized feed base the session thread and the Console split share (DS-1 P1, P2, P7):
+a `ListBox` over a recycling `VirtualizingStackPanel` with pixel
+scrolling, the six owned keys as a pure decision plus an act, a structural pin for the follow
+rule, and containers that carry their own template so the theme's selection band never paints
+the reading caret.
+
+**Remarks.** **The theme never reaches a subclass on its own.** `App.xaml` delivers the whole
+theme by implicit per-type styles, which bind an exact `TargetType`; a `FeedList` would
+fall to Aero2's white ground and black ink. So the ink and the ground are set here by resource
+reference (the `SurfaceChrome` idiom) and the container carries its own template
+(spike Q11–Q13; DC-139).
+
+
+
+
+
+**The feed owns its keys from the container and from any inner control.** The
+platform's PageDown moves by a page (17 items from 0), its End lands on 38 of 40 and its Up from
+the last turn does not move in a variable-height, pixel-virtualized list (spike Q5a, Q5c) — so
+PageDown / PageUp move the caret by one item, Home / End by index, Up / Down scroll three text
+lines, and Ctrl+Home / Ctrl+End raise leaves. A source that owns its keys (an expanded compiled
+scroller, a text box) keeps them (`SourceOwnsItsKeys`); Ctrl+PageUp / PageDown stay
+the pane switch.
+
+
+
+
+
+**The selection is the reading caret, never intent** (a recorded deviation): single
+selection, no selection ground, the 2 px focus ring the one visible state.
+
+| Member | Summary |
+|---|---|
+| `double LineHeight = 13 * 1.5` | The 13 px UI type's line box (DESIGN.md: 13 px, 1.5) — what Up / Down scroll by. |
+| `int ScrollLines = 3` | How many text lines Up / Down scroll the viewport (DS-1 P2). |
+| `FeedList()` | **(gap)** |
+| `event Action<FocusLeave>? FocusLeaveRequested` | Raised on Ctrl+Home / Ctrl+End; the document routes the leave. |
+| `bool SourceOwnsItsKeys(DependencyObject? source)` | Whether the source of a key press owns its keys: a `ScrollViewer` or a `TextBoxBase` in its ancestry inside this list. The list's own scroll viewer is not such a source — it is the feed. |
+| `FeedKeyDecision Decide(Key key, ModifierKeys modifiers, bool sourceOwnsItsKeys)` | The pure decision (K1a): never throws over the whole domain; `None` for keys the feed does not own. |
+| `bool Act(FeedKeyDecision decision)` | The act (K1b). Returns whether the decision was the feed's. |
+| `bool FocusCurrentItem()` | The caret's item, realized and focused on its container — F6 / Tab entry (spike Q5g). |
+| `bool FocusCurrentItemLast()` | Backward entry (Shift+Tab from the composer): the caret's item's last tab stop, or its container when it has none. |
+| `bool FocusItem(int index)` | Selects, scrolls into view, lays out and focuses the CONTAINER at  — never an inner control. |
+| `ScrollViewer? Scroller` | The scroll viewer inside the template, once the template has applied. |
+| `bool IsPinnedAtEnd` | The structural pin (P7): the last item's container is realized and its bottom edge sits within the viewport — read BEFORE a change, never from the offset (the extent is an estimate under variable heights; spike Q4a). |
+| `void ScrollToEndOfFeed()` | Scrolls to the end — called after the layout that added items, only when the feed was pinned before it. |
+| `int RealizedContainers` | How many containers the panel has realized — the 40-turn oracle's number (L2). |
+| `bool IsReady` | **(gap)** |
+| `bool IsObscured` | **(gap)** |
+| `bool TryFocus()` | **(gap)** |
+| `void OnKeyDown(KeyEventArgs e)` | **(gap)** |
+| `IEnumerable<UIElement> TabStops(DependencyObject root)` | The focusable tab stops inside one container, in tree order. |
+| `Style ContainerStyle()` | The container's own template (Q11–Q13; DC-139): a transparent 2 px border that lights `{colors.focus}` on `IsKeyboardFocused` — not `FocusWithin`, so an inner stop never lights two rings — and no selection or hover gr… |
 
 ## `NewSessionOutcome`
 
@@ -540,3 +641,156 @@ Waits until this lane has delivered at least  events.
 
 **Remarks.** A completion condition, not a speed claim: the bound is there so a stalled pump reports a
 stall instead of hanging the run, exactly as a `WaitForExit` bound does.
+
+## `ThreadDiagnostics`
+
+*class* — `ThreadDiagnostics.cs`
+
+The thread's four records (DS-1 §Telemetry) — `thread.layout`, `thread.announce`,
+`thread.focus`, `thread.action` — and its three stable codes: `THR-0001` the
+read model's apply failed, `THR-0002` a region refused focus, `THR-0003` a version gap.
+Emitted on the normal path (IO1); no text, ever (O11).
+
+**Remarks.** **Writes through `Sink` when a test set one, else the same
+log file the workbench writes.** `WorkbenchDiagnostics.Write` is private and its file is
+the Shell lane's; a seam request asks for it to become internal so these records go through the
+one writer — until then the file path is duplicated here and that is named debt (DM7).
+
+| Member | Summary |
+|---|---|
+| `string ApplyFailed = "THR-0001"` | **(gap)** |
+| `string FocusRefused = "THR-0002"` | **(gap)** |
+| `string VersionGap = "THR-0003"` | **(gap)** |
+| `void Layout(string surface, int turns, int realized, double? composerTop, double? viewport, double layoutMs, bool pinned, bool moved, long version)` | **(gap)** |
+| `void Announce(string surface, int ordinal, string transition, string urgency, long version)` | **(gap)** |
+| `void Focus(string surface, string gesture, string from, string to, bool landed, string? errorCode = null)` | **(gap)** |
+| `void Action(string surface, int ordinal, string action, string? requestId)` | **(gap)** |
+| `void Error(string surface, string code, string exceptionType, string exceptionMessage, long? expected = null, long? received = null)` | **(gap)** |
+
+## `TurnAction`
+
+*record* — `ThreadFeed.cs`
+
+An operator's act on one turn — the thread's one channel for every action (DS-1 §Contracts).
+
+## `ThreadFeed`
+
+*class* — `ThreadFeed.cs`
+
+The session thread: one session's accepted turns, in order, above the composer — each turn's
+words, decoration line, provenance and compiled bytes on demand, and the lane's reply folded
+beneath it — rendered from one read model (SC1; DS-1 P1–P8).
+
+**Remarks.** **Every snapshot reaches the policy in `Version` order; only the render coalesces
+(DS-1 P6, C1).** `Changed` may arrive off the UI thread: the handler enqueues the
+snapshot it was given (never reads `Current` back) and posts one dispatcher operation
+while none is pending. `Apply` drains in order, feeds each to the policy, merges the latest
+into the rows in place (P5), lays out once, and posts a second operation that announces — the
+render pass runs between the two at its higher priority (DC-077).
+
+
+
+
+
+**A throwing apply stops the feed loudly** (`THR-0001`, DC-134): the visible
+stopped row and one assertive announcement, the channel kept alive for a second subscriber.
+
+| Member | Summary |
+|---|---|
+| `int MeasureCharacters = 96` | The prose measure (DESIGN.md: 96ch). |
+| `ThreadFeed(ISessionThread thread, IWorkbenchAnnouncer announcer, string surfaceId = "session-document")` | **(gap)** |
+| `event Action<TurnAction>? TurnActionRequested` | Raised for every act on a turn. `SendAgain` and `UseAsNextDraft` end with `FocusLeaveRequested`(ToEditor). |
+| `event Action? Stopped` | Raised once when the feed stops updating (`THR-0001`); the document shows the stopped row. |
+| `bool IsStopped { get; private set; }` | The feed's own fault state: `ItemStatus` "stopped"; "live" otherwise. |
+| `double MeasureWidth { get; }` | The prose measure in device-independent pixels: 96 × the advance of "0" in the UI type at 13 px. |
+| `Func<bool> ReducedMotion { get; set; } = static ()` | Whether the operator asked for reduced motion — the WPF adapter reads the system setting; a test flips it. |
+| `IReadOnlyList<TurnItem> Rows` | The rows, in ordinal order — a rebuildable projection of the read model's turns. |
+| `int Applies { get; private set; }` | How many times `Apply` ran — the coalescing witness (C1). |
+| `double LastLayoutMs { get; private set; }` | The last apply's layout time — reported, never asserted absolutely (DC-107). |
+| `bool FocusTurn(int ordinal)` | The jump list's Enter and the composer's "b1 is running" link: the turn's CONTAINER, never an action. |
+| `string StoppedSentence = "The thread stopped updating; reopen the session."` | The stopped row's words (SC9): visible outside the scroller and announced once. |
+| `void OnPreviewKeyDown(KeyEventArgs e)` | **(gap)** |
+| `void Dispose()` | **(gap)** |
+| `DataTemplate EventLineTemplate()` | ts (muted) · lane (accent) · message; stderr in danger (DESIGN.md:1112). |
+| `bool IsMotionReduced` | The reduced-motion seam as a bindable property: read once per bind through `ReducedMotion`. |
+
+### `ThreadFeed(ISessionThread thread, IWorkbenchAnnouncer announcer, string surfaceId = "session-document")`
+
+- **`thread`** — The read model.
+- **`announcer`** — The shared announcer (one across hosts, ADR-0031).
+- **`surfaceId`** — The document's surface id, for the records.
+
+## `ThreadText`
+
+*class* — `ThreadText.cs`
+
+A `TextBlock` whose UIA peer is a **Control-view** element (DS-1 U1; SC10):
+the words, the reply, the decoration line and the event lines of a turn must be reachable by an
+AT walking the Control view, and a `TextBlock` inside a `DataTemplate` is a
+content element only by default.
+
+**Remarks.** The reply and the event lines are model- and lane-authored: rendered as `Text`,
+never as inlines or a hyperlink (Addendum D: no link activation from model-authored content;
+DS-1 S1).
+
+| Member | Summary |
+|---|---|
+| `AutomationPeer OnCreateAutomationPeer()` | **(gap)** |
+
+## `TurnItem`
+
+*class* — `TurnItem.cs`
+
+The row the thread's panel binds — one per ordinal, updated **in place** (DS-1 P5; spike
+Q10): a collection `Replace` keeps the container and the focus but drops the selection,
+and the selection is the reading caret.
+
+**Remarks.** **Every per-turn view state lives here, never on the container** (spike Q13): under
+recycling, b3's expanded fold appeared on b38 when its container was reused, and b3 came back
+collapsed. The three disclosure flags are two-way bound to the row, so a container carries no
+state of its own.
+
+| Member | Summary |
+|---|---|
+| `int FoldLines = 4` | How many event lines the fold shows (DESIGN.md: the last four); the split is the unbounded view. |
+| `TurnItem(TurnView view)` | **(gap)** |
+| `event PropertyChangedEventHandler? PropertyChanged` | **(gap)** |
+| `TurnView View` | The fold's projection. Setting it raises every bound facet at once. |
+| `bool IsFoldOpen` | **(gap)** |
+| `bool IsProvenanceOpen` | **(gap)** |
+| `bool IsCompiledOpen` | **(gap)** |
+| `int Ordinal` | **(gap)** |
+| `string DisplayOrdinal` | **(gap)** |
+| `string Words` | **(gap)** |
+| `string Name` | **(gap)** |
+| `string DecorationLine` | **(gap)** |
+| `string HelpText` | **(gap)** |
+| `IReadOnlyList<DecorationRow> Decorations` | **(gap)** |
+| `string Time` | **(gap)** |
+| `TurnState State` | **(gap)** |
+| `string OutcomeWord` | **(gap)** |
+| `string Lane` | **(gap)** |
+| `string Counts` | **(gap)** |
+| `string? Reply` | **(gap)** |
+| `bool HasReply` | **(gap)** |
+| `string SentBytes` | **(gap)** |
+| `string ProvenanceName` | **(gap)** |
+| `string CompiledName` | **(gap)** |
+| `string FoldHeader` | **(gap)** |
+| `bool IsLive` | **(gap)** |
+| `bool IsRunning` | **(gap)** |
+| `bool HasReason` | **(gap)** |
+| `IReadOnlyList<EventLine> FoldedEvents` | The fold's content: the last `FoldLines` lines, bounded, no inner scroller. |
+| `int OtherEvents` | How many lines the fold does not show; 0 when it shows them all. |
+| `bool HasOtherEvents` | **(gap)** |
+| `string TailText` | *the other 136, in the Console* — the tail button's text. |
+| `IReadOnlyList<TurnActionKind> Actions` | The actions this turn offers, Deny first (SC7). A completed or past-failed turn offers none. |
+| `bool HasActions` | **(gap)** |
+| `bool IsLast` | Whether this is the thread's last turn — a failed PAST turn folds like a completed one (SC7). |
+| `bool ShowsReasonBox` | A boxed reason on a failed, stopped or waiting LAST turn; a past failure folds (SC7). |
+
+### `int FoldLines = 4`
+
+How many event lines the fold shows (DESIGN.md: the last four); the split is the unbounded view.
+
+**Remarks.** `simplify:` one constant; the trigger to revisit is a turn whose first four lines are not the ones an operator needs.
