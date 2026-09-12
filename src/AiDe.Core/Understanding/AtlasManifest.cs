@@ -8,12 +8,12 @@ public enum AtlasDirectoryEntryKind { File, Directory, RejectedLink, Unavailable
 public enum AtlasFileClassification { CSharp, Text, Unknown }
 public enum AtlasFileAvailability { Available, Unavailable, Refused, Unknown }
 public enum AtlasDenominatorState { Known, Unknown, Withheld }
-public enum AtlasSourceObservationStatus { Verified, Refused, Unavailable, Mismatch, Unstable, Canceled }
+public enum AtlasSourceObservationStatus { Verified, IndexedMatch, Changed, Unavailable, Unverifiable, UnsupportedEncoding, TooLargeToVerify, ReadUnstable, Refused, Canceled }
 public enum AtlasDeclarationKind { Type, Method, Constructor, Property, Accessor }
 public enum AtlasDeclarationRole { Ordinary, PartialDefinition, PartialImplementation }
 
 /// <summary>Native filesystem identity: volume serial and file index only.</summary>
-public readonly record struct AtlasObjectIdentity
+public sealed class AtlasObjectIdentity : IEquatable<AtlasObjectIdentity>
 {
     public AtlasObjectIdentity(string volumeSerial, string fileIndex)
     {
@@ -23,6 +23,17 @@ public readonly record struct AtlasObjectIdentity
 
     public string VolumeSerial { get; }
     public string FileIndex { get; }
+
+    public bool Equals(AtlasObjectIdentity? other) =>
+        other is not null
+        && string.Equals(VolumeSerial, other.VolumeSerial, StringComparison.Ordinal)
+        && string.Equals(FileIndex, other.FileIndex, StringComparison.Ordinal);
+
+    public override bool Equals(object? obj) => obj is AtlasObjectIdentity other && Equals(other);
+
+    public override int GetHashCode() => HashCode.Combine(
+        StringComparer.Ordinal.GetHashCode(VolumeSerial),
+        StringComparer.Ordinal.GetHashCode(FileIndex));
 }
 
 /// <summary>UTF-16 span where null means absent; zero length is still a present span.</summary>
@@ -32,10 +43,12 @@ public readonly record struct AtlasTextSpan
     {
         Start = NonNegative(start, nameof(start));
         Length = NonNegative(length, nameof(length));
+        _ = checked(Start + Length);
     }
 
     public int Start { get; }
     public int Length { get; }
+    public int End => Start + Length >= Start ? Start + Length : throw new OverflowException("Span end overflowed.");
 
     private static int NonNegative(int value, string name) =>
         value >= 0 ? value : throw new ArgumentOutOfRangeException(name, value, "Value must be non-negative.");
@@ -62,11 +75,23 @@ public sealed class AtlasBounds
         {
             throw new ArgumentException("Effective limit cannot exceed requested limit.", nameof(effectiveLimit));
         }
+        if (ReturnedRows > EffectiveLimit)
+        {
+            throw new ArgumentException("Returned rows cannot exceed effective limit.", nameof(returnedRows));
+        }
 
         TotalState = Defined(totalState, nameof(totalState));
         TotalCount = totalState is AtlasDenominatorState.Known
             ? NonNegativeRequired(totalCount, nameof(totalCount))
             : totalCount is null ? null : throw new ArgumentException("Unknown or withheld totals must be absent, not zero.", nameof(totalCount));
+        if (TotalCount is { } total && total < ReturnedRows)
+        {
+            throw new ArgumentException("Known total cannot be lower than returned rows.", nameof(totalCount));
+        }
+        if (TotalState is not AtlasDenominatorState.Known && string.IsNullOrWhiteSpace(omissionReason))
+        {
+            throw new ArgumentException("Unknown or withheld totals require an omission reason.", nameof(omissionReason));
+        }
         OmissionReason = AtlasIdentityCodec.OptionalToken(omissionReason, nameof(omissionReason));
         LimitingDimension = AtlasIdentityCodec.OptionalToken(limitingDimension, nameof(limitingDimension));
     }
@@ -229,33 +254,47 @@ public sealed class AtlasSourceObservation
     private static readonly Regex CanonicalSha256Pattern = new("\\Asha256:[0-9a-f]{64}\\z", RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
 
     public AtlasSourceObservation(string observationKey, string manifestToken, string fileValue, string policyToken, AtlasObjectIdentity rootIdentity, AtlasObjectIdentity fileIdentity, string canonicalSha256, long byteLength, string decoderId, int decodedUtf16Length, AtlasSourceObservationStatus status, AtlasBounds bounds)
+        : this(observationKey, manifestToken, fileValue, policyToken, rootIdentity, fileIdentity, canonicalSha256, byteLength, decoderId, decodedUtf16Length, status, bounds, null)
+    {
+    }
+
+    private AtlasSourceObservation(string observationKey, string manifestToken, string fileValue, string policyToken, AtlasObjectIdentity? rootIdentity, AtlasObjectIdentity? fileIdentity, string? canonicalSha256, long? byteLength, string? decoderId, int? decodedUtf16Length, AtlasSourceObservationStatus status, AtlasBounds bounds, string? reason)
     {
         ObservationKey = AtlasIdentityCodec.RequiredToken(observationKey, nameof(observationKey));
         ManifestToken = AtlasIdentityCodec.RequiredToken(manifestToken, nameof(manifestToken));
         FileValue = AtlasIdentityCodec.RequiredToken(fileValue, nameof(fileValue));
         PolicyToken = AtlasIdentityCodec.RequiredToken(policyToken, nameof(policyToken));
-        RootIdentity = rootIdentity;
-        FileIdentity = fileIdentity;
-        CanonicalSha256 = Hash(canonicalSha256, nameof(canonicalSha256));
-        ByteLength = AtlasBounds.NonNegative(byteLength, nameof(byteLength));
-        DecoderId = AtlasIdentityCodec.RequiredToken(decoderId, nameof(decoderId));
-        DecodedUtf16Length = AtlasBounds.NonNegative(decodedUtf16Length, nameof(decodedUtf16Length));
         Status = AtlasBounds.Defined(status, nameof(status));
         Bounds = bounds ?? throw new ArgumentNullException(nameof(bounds));
+        Reason = AtlasIdentityCodec.OptionalToken(reason, nameof(reason));
+        var verified = Status is AtlasSourceObservationStatus.Verified or AtlasSourceObservationStatus.IndexedMatch;
+        RootIdentity = verified ? rootIdentity ?? throw new ArgumentNullException(nameof(rootIdentity)) : rootIdentity;
+        FileIdentity = verified ? fileIdentity ?? throw new ArgumentNullException(nameof(fileIdentity)) : fileIdentity;
+        CanonicalSha256 = verified ? Hash(canonicalSha256!, nameof(canonicalSha256)) : OptionalHash(canonicalSha256, nameof(canonicalSha256));
+        ByteLength = verified ? AtlasBounds.NonNegative(byteLength ?? throw new ArgumentNullException(nameof(byteLength)), nameof(byteLength)) : OptionalNonNegative(byteLength, nameof(byteLength));
+        DecoderId = verified ? AtlasIdentityCodec.RequiredToken(decoderId, nameof(decoderId)) : AtlasIdentityCodec.OptionalToken(decoderId, nameof(decoderId));
+        DecodedUtf16Length = verified ? AtlasBounds.NonNegative(decodedUtf16Length ?? throw new ArgumentNullException(nameof(decodedUtf16Length)), nameof(decodedUtf16Length)) : OptionalNonNegative(decodedUtf16Length, nameof(decodedUtf16Length));
     }
 
     public string ObservationKey { get; }
     public string ManifestToken { get; }
     public string FileValue { get; }
     public string PolicyToken { get; }
-    public AtlasObjectIdentity RootIdentity { get; }
-    public AtlasObjectIdentity FileIdentity { get; }
-    public string CanonicalSha256 { get; }
-    public long ByteLength { get; }
-    public string DecoderId { get; }
-    public int DecodedUtf16Length { get; }
+    public AtlasObjectIdentity? RootIdentity { get; }
+    public AtlasObjectIdentity? FileIdentity { get; }
+    public string? CanonicalSha256 { get; }
+    public long? ByteLength { get; }
+    public string? DecoderId { get; }
+    public int? DecodedUtf16Length { get; }
     public AtlasSourceObservationStatus Status { get; }
     public AtlasBounds Bounds { get; }
+    public string? Reason { get; }
+
+    public static AtlasSourceObservation Verified(string observationKey, string manifestToken, string fileValue, string policyToken, AtlasObjectIdentity rootIdentity, AtlasObjectIdentity fileIdentity, string canonicalSha256, long byteLength, string decoderId, int decodedUtf16Length, AtlasBounds bounds) =>
+        new(observationKey, manifestToken, fileValue, policyToken, rootIdentity, fileIdentity, canonicalSha256, byteLength, decoderId, decodedUtf16Length, AtlasSourceObservationStatus.Verified, bounds, null);
+
+    public static AtlasSourceObservation Unavailable(string observationKey, string manifestToken, string fileValue, string policyToken, AtlasBounds bounds, string reason) =>
+        new(observationKey, manifestToken, fileValue, policyToken, null, null, null, null, null, null, AtlasSourceObservationStatus.Unavailable, bounds, reason);
 
     private static string Hash(string value, string name)
     {
@@ -264,6 +303,15 @@ public sealed class AtlasSourceObservation
             ? checkedValue
             : throw new ArgumentException("Hash must be canonical sha256: plus 64 lowercase hex characters.", name);
     }
+
+    private static string? OptionalHash(string? value, string name) =>
+        value is null ? null : Hash(value, name);
+
+    private static int? OptionalNonNegative(int? value, string name) =>
+        value is null ? null : AtlasBounds.NonNegative(value.Value, name);
+
+    private static long? OptionalNonNegative(long? value, string name) =>
+        value is null ? null : AtlasBounds.NonNegative(value.Value, name);
 }
 
 /// <summary>Declaration metadata. Logical symbol value can be absent when the compiler identity is unavailable.</summary>
@@ -314,6 +362,7 @@ public sealed class AtlasManifest
         Declarations = DirectoryObservation.RequiredItems(declarations, nameof(declarations));
         Completion = AtlasBounds.Defined(completion, nameof(completion));
         Bounds = bounds ?? throw new ArgumentNullException(nameof(bounds));
+        ValidateMembership();
     }
 
     public string Token { get; }
@@ -324,4 +373,33 @@ public sealed class AtlasManifest
     public ImmutableArray<AtlasDeclaration> Declarations { get; }
     public AtlasCompletionState Completion { get; }
     public AtlasBounds Bounds { get; }
+
+    private void ValidateMembership()
+    {
+        var files = Files.ToDictionary(file => file.FileValue, StringComparer.Ordinal);
+        var sources = SourceObservations.ToDictionary(source => source.ObservationKey, StringComparer.Ordinal);
+        if (sources.Values.Any(source => !string.Equals(source.ManifestToken, Token, StringComparison.Ordinal) || !files.ContainsKey(source.FileValue)))
+        {
+            throw new ArgumentException("Source observations must reference this manifest and one of its files.", nameof(SourceObservations));
+        }
+
+        foreach (var declaration in Declarations)
+        {
+            if (!sources.TryGetValue(declaration.SourceObservationKey, out var source) || source.Status is not AtlasSourceObservationStatus.Verified)
+            {
+                throw new ArgumentException("Declarations must reference an existing verified source observation.", nameof(Declarations));
+            }
+
+            var sourceBinding = declaration.SourceBinding;
+            if (!string.Equals(sourceBinding.ManifestIdentity, source.ManifestToken, StringComparison.Ordinal)
+                || !string.Equals(sourceBinding.ManifestFileIdentity, source.FileValue, StringComparison.Ordinal)
+                || !string.Equals(sourceBinding.PolicyIdentity, source.PolicyToken, StringComparison.Ordinal)
+                || !string.Equals(sourceBinding.RootIdentity, AtlasIdentityCodec.ForNativeObject(source.RootIdentity!), StringComparison.Ordinal)
+                || !string.Equals(sourceBinding.FileIdentity, AtlasIdentityCodec.ForNativeObject(source.FileIdentity!), StringComparison.Ordinal)
+                || !string.Equals(sourceBinding.ContentHash, source.CanonicalSha256, StringComparison.Ordinal))
+            {
+                throw new ArgumentException("Declaration source binding must match its verified source observation.", nameof(Declarations));
+            }
+        }
+    }
 }
