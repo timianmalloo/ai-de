@@ -16,30 +16,74 @@ internal sealed record DirectoryEntryObservation(
 internal sealed record DirectoryEnumerationResult(
     DirectoryEnumerationStatus Status,
     IReadOnlyList<DirectoryEntryObservation> Entries,
-    string Detail);
+    string Detail,
+    int PeakHeldHandles = 0);
 
-internal sealed class OpenedDirectoryEnumerator(int maxEntries, int maxDepth, int maxDescriptors)
+internal sealed record RootBinding(ulong VolumeSerialNumber, ulong FileIndex, string FinalPath)
+{
+    public string Identity => $"vol={VolumeSerialNumber:x};idx={FileIndex:x}";
+}
+
+internal sealed class OpenedDirectoryEnumerator(
+    int maxEntries,
+    int maxDepth,
+    int maxDescriptors,
+    Action? afterEntryObserved = null)
 {
     private const uint GenericRead = 0x80000000;
     private const uint FileShareRead = 0x00000001;
     private const uint OpenExisting = 3;
     private const uint FileFlagBackupSemantics = 0x02000000;
+    private const uint FileFlagOpenReparsePoint = 0x00200000;
     private const uint FileNameNormalized = 0x0;
     private const uint VolumeNameNt = 0x2;
 
+    private int _held;
+    private int _peak;
+    private bool _limitReached;
+
     public string LastMutationDetail { get; private set; } = string.Empty;
 
-    public DirectoryEnumerationResult Enumerate(
-        string root, string relativeDirectory, CancellationToken cancellationToken = default)
+    public RootBinding CaptureRootBinding(string root)
     {
+        var rootFull = Path.GetFullPath(root);
+        using var inspected = OpenDirectory(rootFull, followReparse: false);
+        var info = Information(inspected);
+        if (IsReparse(info))
+        {
+            throw new IOException("root is a reparse point");
+        }
+
+        using var held = OpenDirectory(rootFull, followReparse: true);
+        var final = FinalPath(held);
+        var heldInfo = Information(held);
+        return new RootBinding(heldInfo.VolumeSerialNumber, heldInfo.FileIndex, final);
+    }
+
+    public DirectoryEnumerationResult Enumerate(
+        string root,
+        string relativeDirectory,
+        CancellationToken cancellationToken = default) =>
+        Enumerate(root, relativeDirectory, binding: null, cancellationToken);
+
+    public DirectoryEnumerationResult Enumerate(
+        string root,
+        string relativeDirectory,
+        RootBinding? binding,
+        CancellationToken cancellationToken = default)
+    {
+        _held = 0;
+        _peak = 0;
+        _limitReached = false;
+
         if (cancellationToken.IsCancellationRequested)
         {
-            return new DirectoryEnumerationResult(DirectoryEnumerationStatus.Canceled, [], "canceled before open");
+            return Result(DirectoryEnumerationStatus.Canceled, [], "canceled before open");
         }
 
         if (IsRefusedDirectoryId(relativeDirectory))
         {
-            return new DirectoryEnumerationResult(DirectoryEnumerationStatus.Refused, [], "directory id is outside relative local domain");
+            return Result(DirectoryEnumerationStatus.Refused, [], "directory id is outside relative local domain");
         }
 
         try
@@ -48,50 +92,65 @@ internal sealed class OpenedDirectoryEnumerator(int maxEntries, int maxDepth, in
             var target = Path.GetFullPath(Path.Combine(rootFull, relativeDirectory));
             if (!IsUnderOrSame(rootFull, target))
             {
-                return new DirectoryEnumerationResult(DirectoryEnumerationStatus.Refused, [], "relative directory escapes root");
+                return Result(DirectoryEnumerationStatus.Refused, [], "relative directory escapes root");
             }
 
-            using var rootHandle = OpenDirectory(rootFull);
-            var rootInfoBefore = Information(rootHandle);
-            var rootFinal = FinalPath(rootHandle);
-            var relativeParts = RelativeParts(rootFull, target);
-            if (relativeParts.Length > maxDescriptors)
+            using var rootInspection = OpenDirectory(rootFull, followReparse: false);
+            var inspectedRoot = Information(rootInspection);
+            if (IsReparse(inspectedRoot))
             {
-                return new DirectoryEnumerationResult(DirectoryEnumerationStatus.LimitExceeded, [], "descriptor limit reached before opening ancestors");
+                return Result(DirectoryEnumerationStatus.Unverifiable, [], "root is a reparse point");
+            }
+
+            using var rootHandle = OpenHeldDirectory(rootFull, followReparse: true);
+            var rootInfo = Information(rootHandle.Handle);
+            var rootFinal = FinalPath(rootHandle.Handle);
+            if (binding is not null
+                && (binding.VolumeSerialNumber != rootInfo.VolumeSerialNumber
+                    || binding.FileIndex != rootInfo.FileIndex))
+            {
+                return Result(DirectoryEnumerationStatus.Unverifiable, [], "opened root identity differs from authorized binding");
+            }
+
+            if (!InspectRelativeComponents(rootFull, target, out var refusal))
+            {
+                return Result(DirectoryEnumerationStatus.Unverifiable, [], refusal);
+            }
+
+            if (RelativeParts(rootFull, target).Length + 1 > maxDescriptors)
+            {
+                return Result(DirectoryEnumerationStatus.LimitExceeded, [], "descriptor limit reached before opening ancestors");
             }
 
             using var targetHandles = OpenPathDirectories(rootFull, target);
             var entries = new List<DirectoryEntryObservation>();
-            var limited = false;
-            EnumerateDirectory(rootFull, rootFinal, target, depth: 0, entries, ref limited, cancellationToken);
-            var rootInfoAfter = Information(rootHandle);
-            if (!SameIdentity(rootInfoBefore, rootInfoAfter))
-            {
-                return new DirectoryEnumerationResult(DirectoryEnumerationStatus.Unverifiable, entries, "root identity changed during enumeration");
-            }
-
-            return new DirectoryEnumerationResult(
-                limited ? DirectoryEnumerationStatus.LimitExceeded : DirectoryEnumerationStatus.Complete,
-                entries,
-                limited ? "limit reached" : $"root={rootInfoBefore.Identity}");
+            EnumerateDirectory(rootFull, rootFinal, target, depth: 0, entries, cancellationToken);
+            var status = _limitReached ? DirectoryEnumerationStatus.LimitExceeded : DirectoryEnumerationStatus.Complete;
+            return Result(status, entries, _limitReached ? "limit reached" : $"root={rootInfo.Identity}");
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            return new DirectoryEnumerationResult(DirectoryEnumerationStatus.Canceled, [], "canceled during enumeration");
+            return Result(DirectoryEnumerationStatus.Canceled, [], "canceled during enumeration");
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or Win32Exception or ArgumentException or NotSupportedException)
         {
-            return new DirectoryEnumerationResult(DirectoryEnumerationStatus.Unavailable, [], ErrorDetail(ex));
+            return Result(DirectoryEnumerationStatus.Unavailable, [], ErrorDetail(ex));
         }
     }
 
-    public bool RenameRootBlocked(string root) => MoveBlockedWhileHeld(root, root + ".moved", () => OpenDirectory(root));
+    public bool RenameRootBlocked(string root) => MoveBlockedWhileHeld(root, root + ".moved", () => OpenDirectory(root, followReparse: true));
 
     public bool RenameAncestorBlocked(string root, string relativeDirectory)
     {
         var dir = Path.Combine(root, relativeDirectory);
-        return MoveBlockedWhileHeld(dir, dir + ".moved", () => OpenDirectory(dir));
+        return MoveBlockedWhileHeld(dir, dir + ".moved", () => OpenDirectory(dir, followReparse: true));
     }
+
+    private DirectoryEnumerationResult Result(
+        DirectoryEnumerationStatus status,
+        IReadOnlyList<DirectoryEntryObservation> entries,
+        string detail) =>
+        new(status, entries, detail, _peak);
 
     private void EnumerateDirectory(
         string root,
@@ -99,18 +158,17 @@ internal sealed class OpenedDirectoryEnumerator(int maxEntries, int maxDepth, in
         string directory,
         int depth,
         List<DirectoryEntryObservation> entries,
-        ref bool limited,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         if (depth > maxDepth || entries.Count >= maxEntries)
         {
-            limited = true;
+            _limitReached = true;
             return;
         }
 
-        using var directoryHandle = OpenDirectory(directory);
-        var directoryFinal = FinalPath(directoryHandle);
+        using var directoryHandle = OpenHeldDirectory(directory, followReparse: true);
+        var directoryFinal = FinalPath(directoryHandle.Handle);
         if (!IsFinalUnderOrSame(rootFinal, directoryFinal))
         {
             entries.Add(Entry(root, directory, "directory", DirectoryEnumerationStatus.Refused, "final path outside root"));
@@ -122,29 +180,40 @@ internal sealed class OpenedDirectoryEnumerator(int maxEntries, int maxDepth, in
             cancellationToken.ThrowIfCancellationRequested();
             if (entries.Count >= maxEntries)
             {
-                limited = true;
+                _limitReached = true;
                 return;
             }
 
-            var attributes = File.GetAttributes(path);
-            var isDirectory = (attributes & FileAttributes.Directory) != 0;
-            if ((attributes & FileAttributes.ReparsePoint) != 0)
+            using var inspect = OpenDirectory(path, followReparse: false);
+            var info = Information(inspect);
+            var isDirectory = (info.Attributes & (uint)FileAttributes.Directory) != 0;
+            if (IsReparse(info))
             {
                 entries.Add(Entry(root, path, isDirectory ? "directory" : "file", DirectoryEnumerationStatus.Unverifiable, "reparse point unsupported"));
+                afterEntryObserved?.Invoke();
                 continue;
             }
 
             entries.Add(Entry(root, path, isDirectory ? "directory" : "file", DirectoryEnumerationStatus.Complete));
+            afterEntryObserved?.Invoke();
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (isDirectory)
             {
                 if (depth + 1 >= maxDepth)
                 {
-                    limited = true;
+                    _limitReached = true;
                     continue;
                 }
 
-                EnumerateDirectory(root, rootFinal, path, depth + 1, entries, ref limited, cancellationToken);
-                if (limited)
+                if (_held + 1 > maxDescriptors)
+                {
+                    _limitReached = true;
+                    return;
+                }
+
+                EnumerateDirectory(root, rootFinal, path, depth + 1, entries, cancellationToken);
+                if (_limitReached)
                 {
                     return;
                 }
@@ -152,12 +221,22 @@ internal sealed class OpenedDirectoryEnumerator(int maxEntries, int maxDepth, in
         }
     }
 
-    private static string[] RelativeParts(string root, string target)
+    private bool InspectRelativeComponents(string root, string target, out string refusal)
     {
-        var relative = Path.GetRelativePath(root, target);
-        return relative == "."
-            ? []
-            : relative.Split([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar], StringSplitOptions.RemoveEmptyEntries);
+        var current = root;
+        foreach (var part in RelativeParts(root, target))
+        {
+            current = Path.Combine(current, part);
+            using var inspected = OpenDirectory(current, followReparse: false);
+            if (IsReparse(Information(inspected)))
+            {
+                refusal = "path component is a reparse point";
+                return false;
+            }
+        }
+
+        refusal = string.Empty;
+        return true;
     }
 
     private DirectoryHandleSet OpenPathDirectories(string root, string target)
@@ -166,16 +245,16 @@ internal sealed class OpenedDirectoryEnumerator(int maxEntries, int maxDepth, in
         try
         {
             var current = root;
-            var parts = RelativeParts(root, target);
-            foreach (var part in parts)
+            foreach (var part in RelativeParts(root, target))
             {
-                if (set.Count >= maxDescriptors)
+                if (_held + 1 > maxDescriptors)
                 {
+                    _limitReached = true;
                     throw new IOException("descriptor limit reached while opening ancestors");
                 }
 
                 current = Path.Combine(current, part);
-                set.Add(OpenDirectory(current));
+                set.Add(OpenHeldDirectory(current, followReparse: true));
             }
 
             return set;
@@ -185,6 +264,28 @@ internal sealed class OpenedDirectoryEnumerator(int maxEntries, int maxDepth, in
             set.Dispose();
             throw;
         }
+    }
+
+    private CountedHandle OpenHeldDirectory(string path, bool followReparse)
+    {
+        if (_held + 1 > maxDescriptors)
+        {
+            _limitReached = true;
+            throw new IOException("descriptor limit reached");
+        }
+
+        var handle = OpenDirectory(path, followReparse);
+        _held++;
+        _peak = Math.Max(_peak, _held);
+        return new CountedHandle(handle, this);
+    }
+
+    private static string[] RelativeParts(string root, string target)
+    {
+        var relative = Path.GetRelativePath(root, target);
+        return relative == "."
+            ? []
+            : relative.Split([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar], StringSplitOptions.RemoveEmptyEntries);
     }
 
     private static DirectoryEntryObservation Entry(
@@ -201,9 +302,13 @@ internal sealed class OpenedDirectoryEnumerator(int maxEntries, int maxDepth, in
         || relativeDirectory.StartsWith("\\\\", StringComparison.Ordinal)
         || relativeDirectory.StartsWith("\\\\.\\", StringComparison.Ordinal);
 
-    private static SafeFileHandle OpenDirectory(string path)
+    private static bool IsReparse(OpenedObjectInfo info) =>
+        (info.Attributes & (uint)FileAttributes.ReparsePoint) != 0;
+
+    private static SafeFileHandle OpenDirectory(string path, bool followReparse)
     {
-        var handle = CreateFileW(path, GenericRead, FileShareRead, IntPtr.Zero, OpenExisting, FileFlagBackupSemantics, IntPtr.Zero);
+        var flags = FileFlagBackupSemantics | (followReparse ? 0 : FileFlagOpenReparsePoint);
+        var handle = CreateFileW(path, GenericRead, FileShareRead, IntPtr.Zero, OpenExisting, flags, IntPtr.Zero);
         if (handle.IsInvalid)
         {
             throw new Win32Exception(Marshal.GetLastWin32Error(), "CreateFileW directory open failed for " + path);
@@ -249,28 +354,17 @@ internal sealed class OpenedDirectoryEnumerator(int maxEntries, int maxDepth, in
 
     private static bool IsUnderOrSame(string root, string candidate)
     {
-        if (string.Equals(root, candidate, StringComparison.OrdinalIgnoreCase))
-        {
-            return true;
-        }
-
+        if (string.Equals(root, candidate, StringComparison.OrdinalIgnoreCase)) return true;
         var rooted = root.EndsWith(Path.DirectorySeparatorChar) ? root : root + Path.DirectorySeparatorChar;
         return candidate.StartsWith(rooted, StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool IsFinalUnderOrSame(string rootFinal, string candidateFinal)
     {
-        if (string.Equals(rootFinal, candidateFinal, StringComparison.OrdinalIgnoreCase))
-        {
-            return true;
-        }
-
+        if (string.Equals(rootFinal, candidateFinal, StringComparison.OrdinalIgnoreCase)) return true;
         var rooted = rootFinal.EndsWith('\\') ? rootFinal : rootFinal + "\\";
         return candidateFinal.StartsWith(rooted, StringComparison.OrdinalIgnoreCase);
     }
-
-    private static bool SameIdentity(OpenedObjectInfo left, OpenedObjectInfo right) =>
-        left.VolumeSerialNumber == right.VolumeSerialNumber && left.FileIndex == right.FileIndex;
 
     private static bool IsExpectedMutationBlock(Exception ex)
     {
@@ -353,15 +447,21 @@ internal sealed class OpenedDirectoryEnumerator(int maxEntries, int maxDepth, in
 
     private sealed class DirectoryHandleSet : IDisposable
     {
-        private readonly List<SafeFileHandle> _handles = [];
-        public int Count => _handles.Count;
-        public void Add(SafeFileHandle handle) => _handles.Add(handle);
+        private readonly List<CountedHandle> _handles = [];
+        public void Add(CountedHandle handle) => _handles.Add(handle);
         public void Dispose()
         {
-            foreach (var handle in _handles)
-            {
-                handle.Dispose();
-            }
+            foreach (var handle in _handles) handle.Dispose();
+        }
+    }
+
+    private sealed class CountedHandle(SafeFileHandle handle, OpenedDirectoryEnumerator owner) : IDisposable
+    {
+        public SafeFileHandle Handle => handle;
+        public void Dispose()
+        {
+            handle.Dispose();
+            owner._held--;
         }
     }
 }
