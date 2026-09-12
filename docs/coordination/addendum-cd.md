@@ -344,8 +344,9 @@ ratio the parent plan measured for P1; the plan's implement figures were medians
 | SH-2 second host, presenter, slots, rail (opus) | 4,127 | 6,392 | 1.5× | |
 | CV-1 the composer as a conversation (opus) | 4,812 | **13,061** | **2.7×** | two review rounds, 43 proof rows, two merges from `main`; the lease refusals at its join (DC-163) |
 | X-2 INV-0011 (conductor) | — | ≈ 3,300 (Inferred: 18:52Z–19:47Z from the census to the join; no marker was set) | — | unplanned; the sixth report — two classes, a teardown, a contrast defect |
-| SH-3 (sonnet) | 2,945 | running | | |
-| CV-2 (opus) | 4,127 | running (dispatched 19:44Z) | | at the measured ratio: ≈ 9,000–11,000 s |
+| SH-3 (sonnet) | 2,945 | 6,960 (agent wall; audit entry in its Proof Pack) | 2.4× | two reviews, one mid-slice merge from `main` |
+| CV-2 (opus) | 4,127 | **7,064** | 1.7× | four reviews (D&P, Security, TA, Simplifier), one mid-slice merge; below the CV-1 ratio — the store was the first commit and the reviews ran once |
+| X-2b DC-170/171 + the gate runner (conductor) | — | ≈ 2,400 (Inferred: 20:10Z–20:50Z) | — | unplanned; the regrowth path and two join defects |
 
 **Rework at the joins:** register ids collided across branches (allocated at every join since;
 DC-163's lease shape delayed two joins ≈ 50 min); a merge left conflict markers in figure-patched
