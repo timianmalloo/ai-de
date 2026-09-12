@@ -104,4 +104,4 @@ These reds are semantic controls: the final API and behavior could not pass befo
 
 ## Budget ledger
 
-Budget was 25 total wrapper/leaf calls for this investigation. The first pass used 8 calls. This consolidated repair used 7 additional calls through proof update, and the final commit/status verification will use one more. Total expected consumption is 16/25, with 9 remaining.
+Budget was 25 total wrapper/leaf calls for this investigation. The first pass used 8 calls. This consolidated repair used 9 additional wrapper/leaf calls, including one failed default-checkout patch attempt that made no change to this worktree and the final verification readback. Total observed consumption is 17/25, with 8 remaining.
