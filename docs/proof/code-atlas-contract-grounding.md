@@ -121,10 +121,10 @@ The earlier type-level slice and type-only recommendation are not adopted. Owner
 
 | Item | Evidence |
 |---|---|
-| Exact command | `dotnet run --project .agents\artifacts\atlas-contracts-gpt55\roslyn-probe\Probe.csproj --no-restore` after an ignored probe-project restore with `dotnet restore .agents\artifacts\atlas-contracts-gpt55\roslyn-probe\Probe.csproj --ignore-failed-sources --nologo --verbosity:minimal`. |
+| Exact command | `dotnet run --project .agents\artifacts\atlas-contracts-gpt55\roslyn-probe\Probe.csproj --no-restore` after an ignored probe-project restore with `dotnet restore .agents\artifacts\atlas-contracts-gpt55\roslyn-probe\Probe.csproj --ignore-failed-sources --nologo --verbosity:minimal`. `--ignore-failed-sources` does not prove offline execution; cache/network access was not recorded for that prior restore. |
 | Loaded assembly versions | Raw output reported `Microsoft.CodeAnalysis 4.14.0.0` and `Microsoft.CodeAnalysis.CSharp 4.14.0.0`. |
 | Synthetic inputs | Scope `csharp:P1:net10.0`: two syntax trees, `P1/Widget.Part1.cs` and `P1/Widget.Part2.cs`, with `namespace Same; public partial class Widget`, constructors, property `Name`, expression property `Count`, overloads `Save(int)`/`Save(string)`, and partial method declaration/implementation `Hook`. Scope `csharp:P2:net10.0`: `P2/Widget.cs` with the same `Same.Widget`, `Name`, and `Save(int)`. |
-| Observed API behavior | Roslyn documentation IDs are semantic but not scope-qualified: both scopes emitted `T:Same.Widget`, and `Save(int)` doc IDs also compared equal across scopes. Partial type symbol carried two source locations. Constructors, properties, property accessors, overloads and partial methods all had documentation IDs and source spans. Missing type/member declaration IDs resolved to null. |
+| Observed API behavior | Roslyn documentation IDs are semantic but not scope-qualified: both scopes emitted `T:Same.Widget`, and `Save(int)` doc IDs also compared equal across scopes. Partial type symbol carried two source locations. Constructors, properties, property accessors, overloads and partial methods all had documentation IDs and source spans. Lookup of nonexistent type/member documentation IDs resolved to null; this is not evidence that `CreateDeclarationId` returns null for declared symbols. |
 | Falsifying outcome | If documentation IDs were globally unique across projects/scopes, `COLLISION_ACROSS_SCOPES typeDocEqual` and `memberDocEqual` would be `False`; observed `True`, so any member identity design must include a scope/project axis. |
 
 Raw probe output:
@@ -153,6 +153,20 @@ COLLISION_ACROSS_SCOPES|memberDocEqual=True
 MISSING_ID|nullType=True|nullMember=True
 ```
 
+
+Correction probe output for partial spans, declaration syntax references and line movement:
+
+```text
+ASSEMBLY|Microsoft.CodeAnalysis|4.14.0.0
+ASSEMBLY|Microsoft.CodeAnalysis.CSharp|4.14.0.0
+TYPE|csharp:P1:net10.0|Same.Widget|doc=T:Same.Widget|locs=P1/Widget.Part1.cs:2:22-2:28,P1/Widget.Part2.cs:2:22-2:28|declRefs=P1/Widget.Part1.cs:2:1-10:2,P1/Widget.Part2.cs:2:1-6:2
+MEMBER|csharp:P1:net10.0|Method|Same.Widget.Hook()|doc=M:Same.Widget.Hook|locs=P1/Widget.Part1.cs:9:18-9:22|declRefs=P1/Widget.Part1.cs:9:5-9:25
+PARTIAL|csharp:P1:net10.0|Same.Widget.Hook()|role=definition|implementationDoc=M:Same.Widget.Hook|implementationLocs=P1/Widget.Part2.cs:5:18-5:22|implementationRefs=P1/Widget.Part2.cs:5:5-5:27
+SHIFT|typeDocEqual=True|typeSpanBefore=P1/Widget.Part1.cs:2:22-2:28,P1/Widget.Part2.cs:2:22-2:28|typeSpanAfter=P1/Widget.Part1.Shifted.cs:5:22-5:28,P1/Widget.Part2.cs:2:22-2:28
+SHIFT|memberDocEqual=True|memberSpanBefore=P1/Widget.Part1.cs:8:17-8:21|memberSpanAfter=P1/Widget.Part1.Shifted.cs:12:17-12:21
+MISSING_LOOKUP|nullType=True|nullMember=True
+```
+
 ### Existing isolated contract suites
 
 | Item | Evidence |
@@ -167,16 +181,16 @@ MISSING_ID|nullType=True|nullMember=True
 | Observed behavior | Design implication |
 |---|---|
 | Roslyn `DocumentationCommentId` distinguishes overloads (`Save(System.Int32)` vs `Save(System.String)`), constructors (`#ctor` with overload parameters), properties (`P:` IDs), accessors (`get_`/`set_`) and partial methods. | It is usable as one component of member identity. |
-| Roslyn IDs do not include project/scope; same namespace/type/member in two compilations collided. | Member IDs for Atlas must include at least scope/project identity plus documentation ID, and likely source path/span for display/navigation. |
-| Partial type locations are multiple; partial method declaration/implementation collapsed to one symbol with one observed implementation span in this probe. | Source walking must support multiple declaration spans for types and must define how declaration vs implementation spans are represented for partial members. |
-| Missing declaration IDs resolve to null. | Query contracts must return explicit not-found/shortfall results, not fabricate member nodes. |
+| Roslyn IDs do not include project/scope; same namespace/type/member in two compilations collided. A whitespace/line-shift variant kept the same type/member documentation IDs while source spans changed (`Save(int)` moved from line 8 to line 12). | Member IDs for Atlas must include at least scope/project identity plus documentation ID; declaration version/coherence needs source revision or hash plus source-span semantics because IDs are stable across line movement. |
+| Partial type locations are multiple. The first probe only showed `Hook` at `P1/Widget.Part1.cs:9`; the correction probe observed `PartialImplementationPart` separately at `P1/Widget.Part2.cs:5` and recorded both identifier spans and full declaration/body syntax spans. | Source walking must support multiple declaration spans for types and must define identifier-span versus declaration/body-span semantics, including partial definition/implementation pairs. |
+| Lookup of nonexistent declaration IDs resolves to null. | Query contracts must return explicit not-found/shortfall results, not fabricate member nodes. |
 
 
 
 ### Data reviewer correction: evidence IDs are not source versions
 
 - **Reviewer finding:** `NodeContent` resolves the indexed provenance to a workspace path and then reads the current live bytes. The resolved path is fenced to the workspace, but the content bytes are not bound to the source revision or a recorded hash. Scope fencing proves path containment; it does not prove whole-workspace coherence.
-- **Version distinction:** Roslyn documentation IDs identify declarations semantically, not a source version. The existing probe shows overload IDs are distinct (`M:Same.Widget.Save(System.Int32)` vs `M:Same.Widget.Save(System.String)`) and the same method ID collides across two project scopes, requiring scope/project qualification. The same ID would also remain the same under whitespace or line movement while the source span changes, so it cannot stand in for declaration-version identity.
+- **Version distinction:** Roslyn documentation IDs identify declarations semantically, not a source version. The existing probe shows overload IDs are distinct (`M:Same.Widget.Save(System.Int32)` vs `M:Same.Widget.Save(System.String)`) and the same method ID collides across two project scopes, requiring scope/project qualification. The correction probe executed a whitespace/line-shift variant: the same type/member IDs remained equal while source spans changed, so documentation IDs cannot stand in for declaration-version identity.
 - **First-horizon effect:** the native Architecture journey must design/admit a physical-inventory contract that binds selectable files/members to a coherent source version or hash before it can claim actual-source walking. Human acceptance can approve this constraint; it must not be promoted from AI-origin text into implementation without the admitted contract.
 
 ### Updated barrier
