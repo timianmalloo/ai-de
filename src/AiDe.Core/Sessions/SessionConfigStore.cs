@@ -123,6 +123,55 @@ public sealed class SessionConfigStore
         }
     }
 
+    /// <summary>
+    /// The Session aggregate's own delete: removes the session directory, and with it — by
+    /// containment, never by a second delete path — the compile history the composer keeps beside
+    /// <c>session.json</c> (ADR-0034 rule 6; F-12).
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Acquire → delete under the handle → siblings, in that order.</b> The envelope file is
+    /// first opened exclusively, so a composer (or a second AI-DE) that holds it refuses the whole
+    /// delete before anything is removed; it is then deleted under the held handle
+    /// (<see cref="FileOptions.DeleteOnClose"/>) before the recursive delete touches a sibling. The
+    /// other order — acquire, release, recursive delete — reopens the race: a recursive delete on
+    /// Windows removes the siblings and then fails on a locked file, leaving <c>session.json</c>
+    /// gone and <c>envelope-events.jsonl</c> orphaned, the exact orphan the cascade exists to
+    /// prevent (the D&amp;P Architect's finding).</para>
+    /// </remarks>
+    /// <exception cref="PromptCompilation.EnvelopeStoreException">
+    /// <see cref="PromptCompilation.EnvelopeStoreErrorCodes.HeldByAnotherWriter"/> — refused whole, nothing removed.
+    /// </exception>
+    /// <exception cref="IOException">A sibling could not be removed; the envelope file is already gone by then.</exception>
+    public void Delete()
+    {
+        lock (_gate)
+        {
+            var directory = SessionPaths.SessionDirectory(WorkspaceRoot, SessionId);
+            if (!Directory.Exists(directory))
+            {
+                return;
+            }
+
+            var envelopes = Path.Combine(directory, PromptCompilation.EnvelopeStore.FileName);
+            if (File.Exists(envelopes))
+            {
+                try
+                {
+                    using var held = new FileStream(envelopes, FileMode.Open, FileAccess.ReadWrite, FileShare.None, 1, FileOptions.DeleteOnClose);
+                }
+                catch (IOException error)
+                {
+                    throw new PromptCompilation.EnvelopeStoreException(
+                        PromptCompilation.EnvelopeStoreErrorCodes.HeldByAnotherWriter,
+                        $"another AI-DE has this session's compile history open ({envelopes}); the session was not deleted",
+                        error);
+                }
+            }
+
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
     private SessionConfig ReadConfigUnsafe()
     {
         var path = SessionPaths.SessionFile(WorkspaceRoot, SessionId);

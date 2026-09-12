@@ -54,6 +54,23 @@ public static class LeaseDerivation
     private static readonly Regex Mention = new(
         @"@(\S+)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
+    /// <summary>
+    /// Whether the text carries a mention token anywhere — <b>the one shared member</b> the compile
+    /// step's typed boundary scans model output and <c>notes</c> with (Addendum D §A8.3 C-Lease;
+    /// ADR-0033 rule 1). The same <see cref="Regex"/> instance <see cref="Patterns"/> matches, so the
+    /// scan and the derivation cannot drift: a copied pattern would be two definitions of the
+    /// mention grammar, and drift between them is the bypass class. <c>internal</c>, so
+    /// <see cref="LeaseDerivation"/>'s public signatures stay byte-identical (US-D12).
+    /// </summary>
+    internal static bool HasMention(string text)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+        return Mention.IsMatch(text);
+    }
+
+    /// <summary>The one regex, for the test that asserts the validator and <see cref="Patterns"/> share it.</summary>
+    internal static Regex MentionRegex => Mention;
+
     /// <summary>Sentence punctuation a mention picks up by sitting at the end of a clause.</summary>
     private static readonly char[] TrailingPunctuation = [',', ';', ':', '!', '?', ')', ']', '}', '"', '\'', '.'];
 
