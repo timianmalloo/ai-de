@@ -116,3 +116,66 @@ PASS|unc-like relative path is refused|observed
 - ADS behavior did not activate spans, but the accepted contract should refuse `:` stream syntax explicitly before path resolution.
 - The probe establishes Windows/.NET 10 behavior for this host. It does not claim POSIX portability.
 - Telemetry was limited to console proof lines. Production instrumentation still needs OTel-shaped spans, stable result codes and no raw source in telemetry.
+
+## Consolidated repair batch after independent reviews
+
+This section supersedes the earlier 15 passed / 0 failed / 2 NOT_PROVEN run for the repaired probe code. The earlier red/green history remains evidence, not the final oracle.
+
+### Review blockers repaired
+
+| Finding | Repair | Evidence |
+|---|---|---|
+| Earlier ancestor handles leaked if later acquisition failed. | OpenAncestors disposes the acquired set on exception and rethrows. | PASS|partial ancestor failure releases prior handle|observed; the first acquired directory was renamed immediately after failed read without GC/finalizer help. |
+| Mid-read OperationCanceledException escaped the result contract. | Read catches OCE only when the supplied token is canceled and returns Canceled with Text=null. | PASS|canceled after open reports canceled|actual=Canceled;...text=null;detail=canceled during read. |
+| Changed/Unverifiable returned live text. | Only IndexedMatch returns text. Mismatch and missing-hash cases assert Text=null. | hash mismatch, same bytes after file replacement, and missing indexed hash cases all passed with 	ext=null. |
+| ADS was accepted as a non-match rather than refused. | Relative file-id policy now refuses fully qualified paths, UNC/device prefixes and any : stream syntax before resolution. | PASS|ads path is refused exactly with no text|actual=Refused. |
+| Mutation helpers accepted any IO/Unauthorized error. | Helpers now require Win32 low-word 5, 32 or 33, prove no destination collision, and prove move/write succeeds after handle release. | Root, ancestor, file rename/write cases all reported hresult=0x80070020;win32=32 plus after-release success. |
+| Case wording overclaimed span correctness. | Case labels now say bytes/hash/text activation. Source spans remain in the E0 candidate, not in this probe. | Final raw labels:
+ormal indexed bytes/hash returns text; line movement no longer appears as span proof. |
+| Same bytes after object replacement could activate old anchors. | Added IndexedSourceBinding with opened root/file identity plus SHA-256 hash. Same bytes under a new file object returns Changed with no text. | PASS|same bytes after file replacement are Changed with no text|actual=Changed;detail=opened identity differs from indexed binding. |
+| Symlink setup failure was too coarse. | NOT_PROVEN cases now carry exact HResult/message and remain uncounted. | hresult=0x80070522, required privilege not held. |
+
+### Final repair command
+
+dotnet run --project spikes\code-atlas-source-reader\CodeAtlas.SourceReaderProbe.csproj --no-restore
+
+### Final repair raw output
+
+`	ext
+SUMMARY|passed=19|failed=0|not_proven=2|duration_ms=51
+RUNTIME|10.0.11
+OS|Microsoft Windows NT 10.0.26200.0
+PASS|normal indexed bytes/hash returns text|actual=IndexedMatch;expected=IndexedMatch;text=present;detail=IndexedMatch
+PASS|hash mismatch returns Changed with no text|actual=Changed;expected=Changed;text=null;detail=Changed
+PASS|same bytes after file replacement are Changed with no text|actual=Changed;expected=Changed;text=null;detail=opened identity differs from indexed binding
+PASS|missing indexed hash is unverifiable with no text|actual=Unverifiable;expected=Unverifiable;text=null;detail=Unverifiable
+PASS|invalid utf8 is unsupported|actual=UnsupportedEncoding;expected=UnsupportedEncoding;text=null;detail=Unable to translate bytes [FF] at index 5 from specified code page to Unicode.
+PASS|oversize is not prefix verified|actual=TooLargeToVerify;expected=TooLargeToVerify;text=null;detail=2051 bytes exceeds 1024
+PASS|precanceled read reports canceled|actual=Canceled;expected=Canceled;text=null;detail=canceled before open
+PASS|canceled after open reports canceled|actual=Canceled;expected=Canceled;text=null;detail=canceled during read
+PASS|root rename blocked while root handle held|observed;IOException;hresult=0x80070020;win32=32; destination absent before; after-release move succeeded
+PASS|ancestor rename blocked while ancestor handle held|observed;IOException;hresult=0x80070020;win32=32; destination absent before; after-release move succeeded
+PASS|partial ancestor failure releases prior handle|observed
+PASS|file rename blocked while file handle held|observed;IOException;hresult=0x80070020;win32=32; destination absent before; after-release move succeeded
+PASS|file write blocked while file handle held|observed;IOException;hresult=0x80070020;win32=32; after-release write succeeded
+PASS|hardlink count is unverifiable|actual=Unverifiable;expected=Unverifiable;text=null;detail=file has more than one hard link
+NOT_PROVEN|file symlink outside is unverifiable|IOException;hresult=0x80070522;message=A required privilege is not held by the client. : 'C:\Projects\ai-de-atlas-e0-source-safety\spikes\code-atlas-source-reader\bin\Debug\net10.0\probe-runs\249cf101a645475f849930c3f223737b\src\OutsideLink.cs'.
+NOT_PROVEN|directory symlink inside/outside/cycle|IOException;hresult=0x80070522;message=A required privilege is not held by the client. : 'C:\Projects\ai-de-atlas-e0-source-safety\spikes\code-atlas-source-reader\bin\Debug\net10.0\probe-runs\249cf101a645475f849930c3f223737b\inside-link'.
+PASS|junction outside is unverifiable|observed
+PASS|relative escape is refused|observed
+PASS|ads path is refused exactly with no text|actual=Refused;expected=Refused;text=null;detail=file id is outside the relative source-file domain
+PASS|device path is refused|observed
+PASS|unc-like relative path is refused|observed
+`
+
+### Residuals after repair
+
+- File symlink outside root: **NOT_PROVEN** because this host lacks the privilege to create the symlink ( x80070522).
+- Directory symlink inside/outside/cycle: **NOT_PROVEN** for the same setup reason.
+- Program exit success is not full safety acceptance; the raw summary carries
+ot_proven=2 and security review remains required before production reader use.
+- The probe is still synthetic Windows/.NET 10 evidence only. It does not admit product integration or POSIX behavior.
+
+### Budget ledger
+
+Original checkpoint was 30 calls including preflight/clarification. Previously reported consumption was 14/30. This repair segment used 13 harness tool invocations through commit, so reported checkpoint consumption is 27/30, with 3 remaining. If the coordinator counts each parallel view inside the wrapper separately, the checkpoint is effectively exhausted; no further work should be added without Owner renewal.

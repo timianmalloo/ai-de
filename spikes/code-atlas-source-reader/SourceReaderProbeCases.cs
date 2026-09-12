@@ -22,33 +22,46 @@ internal static class SourceReaderProbeCases
             var normalText = "namespace Probe; public class A { public void M() {} }\n";
             File.WriteAllText(normal, normalText, Encoding.UTF8);
             var normalHash = OpenedSourceReader.Hash(File.ReadAllBytes(normal));
-            results.Add(Check("normal indexed hash activates spans", reader.Read(root, "src/A.cs", normalHash).Status == SourceReadStatus.IndexedMatch));
+            var binding = reader.CaptureBinding(root, "src/A.cs");
+            results.Add(CheckRead("normal indexed bytes/hash returns text", reader.Read(root, "src/A.cs", binding), SourceReadStatus.IndexedMatch, textExpected: true));
 
             File.WriteAllText(normal, "\n" + normalText, Encoding.UTF8);
-            results.Add(Check("line movement changes hash and disables spans", reader.Read(root, "src/A.cs", normalHash).Status == SourceReadStatus.Changed));
+            var changed = reader.Read(root, "src/A.cs", normalHash);
+            results.Add(CheckRead("hash mismatch returns Changed with no text", changed, SourceReadStatus.Changed, textExpected: false));
+            File.Delete(normal);
             File.WriteAllText(normal, normalText, Encoding.UTF8);
+            results.Add(CheckRead("same bytes after file replacement are Changed with no text", reader.Read(root, "src/A.cs", binding), SourceReadStatus.Changed, textExpected: false));
+            File.WriteAllText(normal, normalText, Encoding.UTF8);
+
+            var missingHash = reader.Read(root, "src/A.cs", (string?)null);
+            results.Add(CheckRead("missing indexed hash is unverifiable with no text", missingHash, SourceReadStatus.Unverifiable, textExpected: false));
 
             var invalid = Path.Combine(root, "src", "Invalid.cs");
             File.WriteAllBytes(invalid, [0x63, 0x6c, 0x61, 0x73, 0x73, 0xff]);
-            results.Add(Check("invalid utf8 is unsupported", reader.Read(root, "src/Invalid.cs", OpenedSourceReader.Hash(File.ReadAllBytes(invalid))).Status == SourceReadStatus.UnsupportedEncoding));
+            results.Add(CheckRead("invalid utf8 is unsupported", reader.Read(root, "src/Invalid.cs", OpenedSourceReader.Hash(File.ReadAllBytes(invalid))), SourceReadStatus.UnsupportedEncoding, textExpected: false));
 
             var large = Path.Combine(root, "src", "Large.cs");
             File.WriteAllText(large, new string('x', 2048), Encoding.UTF8);
-            results.Add(Check("oversize is not prefix verified", reader.Read(root, "src/Large.cs", null).Status == SourceReadStatus.TooLargeToVerify));
+            results.Add(CheckRead("oversize is not prefix verified", reader.Read(root, "src/Large.cs", (string?)null), SourceReadStatus.TooLargeToVerify, textExpected: false));
 
             using var canceled = new CancellationTokenSource();
             canceled.Cancel();
-            results.Add(Check("precanceled read reports canceled", reader.Read(root, "src/A.cs", null, canceled.Token).Status == SourceReadStatus.Canceled));
+            results.Add(CheckRead("precanceled read reports canceled", reader.Read(root, "src/A.cs", (string?)null, canceled.Token), SourceReadStatus.Canceled, textExpected: false));
+            using var cancelAfterOpen = new CancellationTokenSource();
+            var cancelingReader = new OpenedSourceReader(maxBytes: 1024, afterFileOpened: cancelAfterOpen.Cancel);
+            var canceledAfterOpen = cancelingReader.Read(root, "src/A.cs", normalHash, cancelAfterOpen.Token);
+            results.Add(CheckRead("canceled after open reports canceled", canceledAfterOpen, SourceReadStatus.Canceled, textExpected: false));
 
-            results.Add(Check("root rename blocked while root handle held", reader.RenameRootBlocked(root)));
-            results.Add(Check("ancestor rename blocked while ancestor handle held", reader.RenameAncestorBlocked(root, "src")));
-            results.Add(Check("file rename blocked while file handle held", reader.RenameFileBlocked(normal)));
-            results.Add(Check("file write blocked while file handle held", reader.WriteFileBlocked(normal)));
+            results.Add(Check("root rename blocked while root handle held", reader.RenameRootBlocked(root), reader.LastMutationDetail));
+            results.Add(Check("ancestor rename blocked while ancestor handle held", reader.RenameAncestorBlocked(root, "src"), reader.LastMutationDetail));
+            results.Add(Check("partial ancestor failure releases prior handle", reader.PartialAncestorFailureReleasesPriorHandle(root)));
+            results.Add(Check("file rename blocked while file handle held", reader.RenameFileBlocked(normal), reader.LastMutationDetail));
+            results.Add(Check("file write blocked while file handle held", reader.WriteFileBlocked(normal), reader.LastMutationDetail));
 
             var hard = Path.Combine(root, "src", "Hard.cs");
             if (OpenedSourceReader.CreateHardLink(hard, normal))
             {
-                results.Add(Check("hardlink count is unverifiable", reader.Read(root, "src/Hard.cs", OpenedSourceReader.Hash(normalText)).Status == SourceReadStatus.Unverifiable));
+                results.Add(CheckRead("hardlink count is unverifiable", reader.Read(root, "src/Hard.cs", OpenedSourceReader.Hash(File.ReadAllBytes(hard))), SourceReadStatus.Unverifiable, textExpected: false));
             }
             else
             {
@@ -60,10 +73,12 @@ internal static class SourceReaderProbeCases
             AddFileSymlinkCase(results, reader, root, outside);
             AddDirectorySymlinkCases(results, reader, root, escape, normalText);
             AddJunctionCase(results, reader, root, escape, normalText);
-            results.Add(Check("relative escape is refused", reader.Read(root, "../probe-escape/nope.cs", null).Status == SourceReadStatus.Refused));
-            results.Add(Check("ads path is refused by hash mismatch or unavailable", RefusesOrDoesNotMatch(reader.Read(root, "src/A.cs:stream", null).Status)));
-            results.Add(Check("device path is refused", reader.Read(root, "\\\\.\\NUL", null).Status == SourceReadStatus.Refused));
-            results.Add(Check("unc-like relative path is refused", reader.Read(root, "\\\\server\\share\\x.cs", null).Status == SourceReadStatus.Refused));
+            results.Add(Check("relative escape is refused", reader.Read(root, "../probe-escape/nope.cs", (string?)null).Status == SourceReadStatus.Refused));
+            File.WriteAllText(normal + ":stream", normalText, Encoding.UTF8);
+            var ads = reader.Read(root, "src/A.cs:stream", (string?)null);
+            results.Add(CheckRead("ads path is refused exactly with no text", ads, SourceReadStatus.Refused, textExpected: false));
+            results.Add(Check("device path is refused", reader.Read(root, "\\\\.\\NUL", (string?)null).Status == SourceReadStatus.Refused));
+            results.Add(Check("unc-like relative path is refused", reader.Read(root, "\\server\\share\\x.cs", (string?)null).Status == SourceReadStatus.Refused));
         }
         finally
         {
@@ -85,20 +100,17 @@ internal static class SourceReaderProbeCases
         return string.Join(Environment.NewLine, lines) + Environment.NewLine;
     }
 
-    private static bool RefusesOrDoesNotMatch(SourceReadStatus status) =>
-        status is SourceReadStatus.Refused or SourceReadStatus.Unavailable or SourceReadStatus.Changed or SourceReadStatus.Unverifiable;
-
     private static void AddFileSymlinkCase(List<CaseResult> results, OpenedSourceReader reader, string root, string outside)
     {
         var link = Path.Combine(root, "src", "OutsideLink.cs");
         try
         {
             File.CreateSymbolicLink(link, outside);
-            results.Add(Check("file symlink outside is unverifiable", reader.Read(root, "src/OutsideLink.cs", null).Status == SourceReadStatus.Unverifiable));
+            results.Add(Check("file symlink outside is unverifiable", reader.Read(root, "src/OutsideLink.cs", (string?)null).Status == SourceReadStatus.Unverifiable));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or PlatformNotSupportedException)
         {
-            results.Add(NotProven("file symlink outside is unverifiable", ex.GetType().Name));
+            results.Add(NotProven("file symlink outside is unverifiable", ErrorDetail(ex)));
         }
     }
 
@@ -110,18 +122,18 @@ internal static class SourceReaderProbeCases
             Directory.CreateDirectory(insideTarget);
             File.WriteAllText(Path.Combine(insideTarget, "B.cs"), text, Encoding.UTF8);
             Directory.CreateSymbolicLink(Path.Combine(root, "inside-link"), insideTarget);
-            results.Add(Check("directory symlink inside is unverifiable unless admitted", reader.Read(root, "inside-link/B.cs", null).Status == SourceReadStatus.Unverifiable));
+            results.Add(Check("directory symlink inside is unverifiable unless admitted", reader.Read(root, "inside-link/B.cs", (string?)null).Status == SourceReadStatus.Unverifiable));
 
             File.WriteAllText(Path.Combine(escape, "C.cs"), text, Encoding.UTF8);
             Directory.CreateSymbolicLink(Path.Combine(root, "outside-link"), escape);
-            results.Add(Check("directory symlink outside is unverifiable", reader.Read(root, "outside-link/C.cs", null).Status == SourceReadStatus.Unverifiable));
+            results.Add(Check("directory symlink outside is unverifiable", reader.Read(root, "outside-link/C.cs", (string?)null).Status == SourceReadStatus.Unverifiable));
 
             Directory.CreateSymbolicLink(Path.Combine(root, "cycle"), root);
-            results.Add(Check("directory symlink cycle is unverifiable", reader.Read(root, "cycle/src/A.cs", null).Status == SourceReadStatus.Unverifiable));
+            results.Add(Check("directory symlink cycle is unverifiable", reader.Read(root, "cycle/src/A.cs", (string?)null).Status == SourceReadStatus.Unverifiable));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or PlatformNotSupportedException)
         {
-            results.Add(NotProven("directory symlink inside/outside/cycle", ex.GetType().Name));
+            results.Add(NotProven("directory symlink inside/outside/cycle", ErrorDetail(ex)));
         }
     }
 
@@ -140,18 +152,28 @@ internal static class SourceReaderProbeCases
             });
             process!.WaitForExit(5000);
             results.Add(process.ExitCode == 0
-                ? Check("junction outside is unverifiable", reader.Read(root, "junction-outside/J.cs", null).Status == SourceReadStatus.Unverifiable)
+                ? Check("junction outside is unverifiable", reader.Read(root, "junction-outside/J.cs", (string?)null).Status == SourceReadStatus.Unverifiable)
                 : NotProven("junction outside is unverifiable", "mklink exit " + process.ExitCode));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or PlatformNotSupportedException or InvalidOperationException)
         {
-            results.Add(NotProven("junction outside is unverifiable", ex.GetType().Name));
+            results.Add(NotProven("junction outside is unverifiable", ErrorDetail(ex)));
         }
     }
 
-    private static CaseResult Check(string name, bool passed) => new(passed ? "PASS" : "FAIL", name, passed ? "observed" : "falsified");
+    private static CaseResult Check(string name, bool passed, string detail = "") =>
+        new(passed ? "PASS" : "FAIL", name, (passed ? "observed" : "falsified") + (string.IsNullOrWhiteSpace(detail) ? string.Empty : ";" + detail));
+
+    private static CaseResult CheckRead(string name, SourceReadResult actual, SourceReadStatus expected, bool textExpected)
+    {
+        var textOk = textExpected ? actual.Text is not null : actual.Text is null;
+        var passed = actual.Status == expected && textOk;
+        return new CaseResult(passed ? "PASS" : "FAIL", name, $"actual={actual.Status};expected={expected};text={(actual.Text is null ? "null" : "present")};detail={actual.Detail}");
+    }
 
     private static CaseResult NotProven(string name, string detail) => new("NOT_PROVEN", name, detail);
+
+    private static string ErrorDetail(Exception ex) => $"{ex.GetType().Name};hresult=0x{ex.HResult:X8};message={ex.Message}";
 
     private static void TryDelete(string path)
     {

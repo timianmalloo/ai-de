@@ -19,6 +19,13 @@ internal enum SourceReadStatus
     Canceled,
 }
 
+internal sealed record IndexedSourceBinding(
+    ulong RootVolumeSerialNumber,
+    ulong RootFileIndex,
+    ulong FileVolumeSerialNumber,
+    ulong FileIndex,
+    string Sha256);
+
 internal sealed record SourceReadResult(
     SourceReadStatus Status,
     string? Text,
@@ -42,8 +49,10 @@ internal sealed record OpenedObjectInfo(
     public string Identity => $"vol={VolumeSerialNumber:x};idx={FileIndex:x};links={LinkCount};len={Length}";
 }
 
-internal sealed class OpenedSourceReader(int maxBytes)
+internal sealed class OpenedSourceReader(int maxBytes, Action? afterFileOpened = null)
 {
+    public string LastMutationDetail { get; private set; } = string.Empty;
+
     private const uint FileShareRead = 0x00000001;
     private const uint OpenExisting = 3;
     private const uint FileFlagBackupSemantics = 0x02000000;
@@ -56,6 +65,11 @@ internal sealed class OpenedSourceReader(int maxBytes)
         if (cancellationToken.IsCancellationRequested)
         {
             return new SourceReadResult(SourceReadStatus.Canceled, null, null, "canceled before open");
+        }
+
+        if (IsRefusedFileId(relativePath))
+        {
+            return new SourceReadResult(SourceReadStatus.Refused, null, null, "file id is outside the relative source-file domain");
         }
 
         var rootFull = Path.GetFullPath(root);
@@ -81,6 +95,7 @@ internal sealed class OpenedSourceReader(int maxBytes)
             using var fileHandle = File.OpenHandle(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.SequentialScan);
             var fileBefore = Information(fileHandle);
             var fileFinal = FinalPath(fileHandle);
+            afterFileOpened?.Invoke();
 
             if (!IsFinalUnder(rootFinal, fileFinal))
             {
@@ -121,13 +136,47 @@ internal sealed class OpenedSourceReader(int maxBytes)
                 : string.Equals(hash, indexedHash, StringComparison.OrdinalIgnoreCase)
                     ? SourceReadStatus.IndexedMatch
                     : SourceReadStatus.Changed;
+            var returnedText = status == SourceReadStatus.IndexedMatch ? text : null;
 
-            return new SourceReadResult(status, text, hash, status.ToString(), rootBefore, rootAfter, fileBefore, fileAfter, rootFinal, fileFinal);
+            return new SourceReadResult(status, returnedText, hash, status.ToString(), rootBefore, rootAfter, fileBefore, fileAfter, rootFinal, fileFinal);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return new SourceReadResult(SourceReadStatus.Canceled, null, null, "canceled during read");
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or Win32Exception or ArgumentException or NotSupportedException)
         {
             return new SourceReadResult(SourceReadStatus.Unavailable, null, null, ex.GetType().Name + ": " + ex.Message);
         }
+    }
+
+    public IndexedSourceBinding CaptureBinding(string root, string relativePath)
+    {
+        var result = Read(root, relativePath, indexedHash: null);
+        if (result.RootBefore is null || result.FileBefore is null || result.Sha256 is null)
+        {
+            throw new InvalidOperationException("binding capture needs readable root, file and hash: " + result.Detail);
+        }
+
+        return new IndexedSourceBinding(result.RootBefore.VolumeSerialNumber, result.RootBefore.FileIndex,
+            result.FileBefore.VolumeSerialNumber, result.FileBefore.FileIndex, result.Sha256);
+    }
+
+    public SourceReadResult Read(string root, string relativePath, IndexedSourceBinding binding, CancellationToken cancellationToken = default)
+    {
+        var result = Read(root, relativePath, binding.Sha256, cancellationToken);
+        if (result.Status != SourceReadStatus.IndexedMatch || result.RootBefore is null || result.FileBefore is null)
+        {
+            return result;
+        }
+
+        var sameRoot = result.RootBefore.VolumeSerialNumber == binding.RootVolumeSerialNumber
+            && result.RootBefore.FileIndex == binding.RootFileIndex;
+        var sameFile = result.FileBefore.VolumeSerialNumber == binding.FileVolumeSerialNumber
+            && result.FileBefore.FileIndex == binding.FileIndex;
+        return sameRoot && sameFile
+            ? result
+            : result with { Status = SourceReadStatus.Changed, Text = null, Detail = "opened identity differs from indexed binding" };
     }
 
     public bool RenameRootBlocked(string root) => MoveBlockedWhileHeld(root, root + ".moved", () => OpenDirectory(root));
@@ -140,22 +189,51 @@ internal sealed class OpenedSourceReader(int maxBytes)
 
     public bool RenameFileBlocked(string path) => MoveBlockedWhileHeld(path, path + ".moved", () => File.OpenHandle(path, FileMode.Open, FileAccess.Read, FileShare.Read));
 
-    public bool WriteFileBlocked(string path)
+    public bool PartialAncestorFailureReleasesPriorHandle(string root)
     {
-        using var held = File.OpenHandle(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+        var first = Path.Combine(root, "partial-first");
+        Directory.CreateDirectory(first);
         try
         {
-            using var write = File.Open(path, FileMode.Open, FileAccess.Write, FileShare.ReadWrite | FileShare.Delete);
+            OpenAncestors(root, Path.Combine("partial-first", "missing", "file.cs")).Dispose();
             return false;
         }
-        catch (IOException)
+        catch (Win32Exception)
         {
+            var moved = first + ".moved";
+            Directory.Move(first, moved);
+            Directory.Move(moved, first);
             return true;
         }
-        catch (UnauthorizedAccessException)
+    }
+
+    public bool WriteFileBlocked(string path)
+    {
+        var blockedByExpectedError = false;
+        LastMutationDetail = string.Empty;
+        using (File.OpenHandle(path, FileMode.Open, FileAccess.Read, FileShare.Read))
         {
-            return true;
+            try
+            {
+                using var write = File.Open(path, FileMode.Open, FileAccess.Write, FileShare.ReadWrite | FileShare.Delete);
+                return false;
+            }
+            catch (Exception ex) when (IsExpectedMutationBlock(ex))
+            {
+                blockedByExpectedError = true;
+                LastMutationDetail = ErrorDetail(ex);
+            }
         }
+
+        if (!blockedByExpectedError)
+        {
+            return false;
+        }
+
+        using var afterRelease = File.Open(path, FileMode.Open, FileAccess.Write, FileShare.ReadWrite | FileShare.Delete);
+        afterRelease.WriteByte((byte)' ');
+        LastMutationDetail += "; after-release write succeeded";
+        return true;
     }
 
     public static string Hash(string text) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(text))).ToLowerInvariant();
@@ -164,33 +242,67 @@ internal sealed class OpenedSourceReader(int maxBytes)
 
     public static bool CreateHardLink(string newPath, string existingPath) => CreateHardLinkW(newPath, existingPath, IntPtr.Zero);
 
-    private static bool MoveBlockedWhileHeld(string source, string destination, Func<SafeFileHandle> hold)
+    private bool MoveBlockedWhileHeld(string source, string destination, Func<SafeFileHandle> hold)
     {
-        using var handle = hold();
-        try
+        if (Directory.Exists(destination) || File.Exists(destination))
         {
-            if (Directory.Exists(source))
-            {
-                Directory.Move(source, destination);
-                Directory.Move(destination, source);
-            }
-            else
-            {
-                File.Move(source, destination);
-                File.Move(destination, source);
-            }
+            throw new IOException("destination collision would invalidate the mutation oracle: " + destination);
+        }
 
+        var blockedByExpectedError = false;
+        LastMutationDetail = string.Empty;
+        using (hold())
+        {
+            try
+            {
+                MoveRoundTrip(source, destination);
+                return false;
+            }
+            catch (Exception ex) when (IsExpectedMutationBlock(ex))
+            {
+                blockedByExpectedError = true;
+                LastMutationDetail = ErrorDetail(ex);
+            }
+        }
+
+        if (!blockedByExpectedError)
+        {
             return false;
         }
-        catch (IOException)
+
+        MoveRoundTrip(source, destination);
+        LastMutationDetail += "; destination absent before; after-release move succeeded";
+        return true;
+    }
+
+    private static void MoveRoundTrip(string source, string destination)
+    {
+        if (Directory.Exists(source))
         {
-            return true;
+            Directory.Move(source, destination);
+            Directory.Move(destination, source);
         }
-        catch (UnauthorizedAccessException)
+        else
         {
-            return true;
+            File.Move(source, destination);
+            File.Move(destination, source);
         }
     }
+
+    private static bool IsExpectedMutationBlock(Exception ex)
+    {
+        var code = ex.HResult & 0xFFFF;
+        return ex is IOException or UnauthorizedAccessException && code is 5 or 32 or 33;
+    }
+
+    private static string ErrorDetail(Exception ex) =>
+        $"{ex.GetType().Name};hresult=0x{ex.HResult:X8};win32={ex.HResult & 0xFFFF}";
+
+    private static bool IsRefusedFileId(string relativePath) =>
+        Path.IsPathFullyQualified(relativePath)
+        || relativePath.Contains(':', StringComparison.Ordinal)
+        || relativePath.StartsWith("\\\\", StringComparison.Ordinal)
+        || relativePath.StartsWith("\\.\\", StringComparison.Ordinal);
 
     private static SafeFileHandle OpenDirectory(string path)
     {
@@ -211,7 +323,15 @@ internal sealed class OpenedSourceReader(int maxBytes)
         for (var i = 0; i < parts.Length - 1; i++)
         {
             current = Path.Combine(current, parts[i]);
-            set.Add(OpenDirectory(current));
+            try
+            {
+                set.Add(OpenDirectory(current));
+            }
+            catch
+            {
+                set.Dispose();
+                throw;
+            }
         }
 
         return set;
@@ -242,6 +362,7 @@ internal sealed class OpenedSourceReader(int maxBytes)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var read = RandomAccess.Read(handle, bytes.AsSpan(offset), offset);
+            cancellationToken.ThrowIfCancellationRequested();
             if (read == 0)
             {
                 break;
