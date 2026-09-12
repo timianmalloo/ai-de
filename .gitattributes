@@ -32,6 +32,7 @@ docs/audit/change-log.jsonl merge=coord-register
 docs/health-history.jsonl merge=coord-register
 docs/api/*.md merge=coord-regen
 docs/_site/index.html merge=coord-regen
+docs/_meta.json merge=coord-regen
 .agents/log/*.jsonl merge=coord-register
 .agents/decisions/*.jsonl merge=coord-register
 

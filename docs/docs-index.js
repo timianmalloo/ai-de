@@ -4823,6 +4823,82 @@ window.DOCS_INDEX = {
       "sourceSha256": "298403503f40f940c45953096e643b6c7e4ed02fb37be09cdaf441b107d7a1d1"
     },
     {
+      "id": "note-coordination-plan-artifact-type",
+      "path": "docs/notes/coordination-plan-artifact-type.md",
+      "title": "A coordination plan is graph type `doc` tagged `plan`, in docs/coordination/ — the skill's schema says `type: plan`, which docs-graph.py's TYPES rejects; the headings and columns are what /execute-with-coordination parses, so those stay verbatim",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "The prepare-for-coordination skill's plan schema opens with `type: plan`. docs-graph.py's TYPES list (docs-graph.py:46) has no `plan`, and validate fails frontmatter whose type is unknown (:752). The two existing execution graphs in docs/plans/ use `type: doc`. The plan follows that convention and carries the `plan` tag; every heading and column of the skill's schema is kept verbatim because that, not the type field, is what /execute-with-coordination parses (its SKILL.md names the headings and never the type). Location: docs/coordination/, as the skill and the brief name it — a new directory, one plan.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "docs-graph",
+        "frontmatter",
+        "schema"
+      ],
+      "links": [
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-addendum-c-modes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c584996de25fe0fa4952d7aff3881a5861b9441c1d0619226c9f55f3591a1093"
+    },
+    {
+      "id": "note-coordination-two-lanes-not-three",
+      "path": "docs/notes/coordination-two-lanes-not-three.md",
+      "title": "Two code lanes, not three — the composer's send gate is where Addendum C's read-only turn, its composer-as-conversation and Addendum D's Project() all land, so the Conversation lane owns the send path end to end; and two coordination-layer findings ready to append at the join",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "The brief offered twelve candidate tracks. Classifying the artifacts removed the generated files from contention; the remaining contention is one file, ComposerSendGate.cs, which three candidate tracks would author in one wave. The boundary fix is one Conversation lane (C-0 → C-3 → D-1 → D-2 → D-3's code) beside one Shell lane (C-1a → C-1b → C-2), width 3 with a side slot. The third code lane was GO5-admissible and still refused on the lexicographic objective; the cut is recorded with its re-plan trigger. Two layer findings — a registered derived artifact with no merge attribute, and a per-repository regen marker tracked in one checkout — are written as classes, ready to append when the conductor allocates their ids at the join.",
+      "tags": [
+        "decision-note",
+        "coordination",
+        "addendum-c",
+        "addendum-d",
+        "worktrees",
+        "simplifier",
+        "go5"
+      ],
+      "links": [
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-cd-architecture-p1-inputs",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0033-prompt-compilation-bounded-context",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a2b1b8d45ca915755c86173050f562c39da65cf216870db8858e26c5437fd888"
+    },
+    {
       "id": "note-dc-115-evidence-in-a-lanes-own-checkout",
       "path": "docs/notes/dc-115-evidence-in-a-lanes-own-checkout.md",
       "title": "DC-115 — verifying a lane's evidence in the checkout it committed it in",
@@ -6988,6 +7064,102 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "6549168b93046ac99c21691b61f11f8ca8e7baa58b4cf8ee2e82340e61b34615"
+    },
+    {
+      "id": "coordination-addendum-cd",
+      "path": "docs/coordination/addendum-cd.md",
+      "title": "Coordination plan - Addenda C and D (the perspective shell and the compile step)",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2026-10-11",
+      "reviewSuggested": [],
+      "summary": "Two code lanes (Shell; Conversation), three side tracks (a design slice, the P-D5 wire spike, the census controls), a three-node serial spine (F5 merge, INV-0009 merge, the settings and sentinels commit) and a width cap of 3. Seven candidate tracks struck for not clearing the multiplier. Layer state measured, not assumed; one registry gap repaired.",
+      "tags": [
+        "coordination",
+        "worktrees",
+        "parallelism",
+        "plan",
+        "addendum-c",
+        "addendum-d"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-cd-architecture-p1-inputs",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-addendum-c-modes",
+          "rel": "refines"
+        },
+        {
+          "to": "ui-review-perspective-shell",
+          "rel": "relates-to"
+        },
+        {
+          "to": "ui-review-session-conversation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0031-second-docking-host",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0032-perspective-layout-slots",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0033-prompt-compilation-bounded-context",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0034-envelope-event-store",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0035-compile-session-binding-and-pin",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0036-compile-mode-ladder-deployment-gates",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0037-family-craft-profile-dimension",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-coordination-two-lanes-not-three",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-coordination-plan-artifact-type",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d44de420d4f02f26985ab8320310c2efcea32b10262daae933dc34a36cc6ba12"
     },
     {
       "id": "defect-classes",
@@ -15503,6 +15675,14 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-context-map-join"
     },
     {
+      "id": "surface-coordination-addendum-cd",
+      "path": "docs/coordination/addendum-cd.html",
+      "title": "Coordination plan - Addenda C and D (the perspective shell and the compile step)",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "coordination-addendum-cd"
+    },
+    {
       "id": "surface-mockups-editor-surfaces",
       "path": "docs/mockups/editor-surfaces.html",
       "title": "Editor & content surfaces — mockup",
@@ -15567,5 +15747,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "2ca75ef9dd43a60afbc6fe9eb523ceefbcb08d69eb2fd9042d0988eac239f571"
+  "graphSha256": "4466f1747a32fbfb1ba1b1dc00dd60d19031d3706980ab0e3562afe8173ddf9f"
 };
