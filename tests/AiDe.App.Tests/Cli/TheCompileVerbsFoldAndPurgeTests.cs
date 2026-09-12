@@ -46,7 +46,8 @@ public sealed class TheCompileVerbsFoldAndPurgeTests : IDisposable
         for (var i = 0; i < n; i++)
         {
             var gate = new ComposerSendGate();
-            gate.BindSession(_config.SessionId, CompileModes.MechanicalOnly, store, null);
+            gate.BindSession(_config.SessionId, CompileModes.MechanicalOnly);
+            gate.UseEnvelopeStore(store, null);
             var draft = new ComposerDraft();
             draft.SwitchTo(ComposerShape.GoalBlock);
             draft.SetFreeFormText($"Turn {i}: touch @src/Area{i % 3}/ and explain.\n");

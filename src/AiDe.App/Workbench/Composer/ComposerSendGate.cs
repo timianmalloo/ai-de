@@ -115,8 +115,8 @@ public sealed class ComposerSendGate
     /// <summary>The last envelope this gate opened and did not submit (a stale view abandons it and the next names it in <c>supersedes</c>).</summary>
     private string? _abandoned;
 
-    /// <summary>Binds the session: the id every <c>opened</c> row carries, the compile mode, and the store — or the reason there is none.</summary>
-    public void BindSession(string sessionId, string compileMode, EnvelopeStore? store, string? historyState)
+    /// <summary>Binds the session's identity: the id every <c>opened</c> row carries and the compile mode (the composer's <c>Configure</c>, from the session config).</summary>
+    public void BindSession(string sessionId, string compileMode)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sessionId);
         ArgumentException.ThrowIfNullOrWhiteSpace(compileMode);
@@ -125,9 +125,21 @@ public sealed class ComposerSendGate
         {
             SessionId = sessionId;
             CompileMode = compileMode;
+        }
+    }
+
+    /// <summary>
+    /// Binds the store the session document opened for its lifetime (ADR-0034 rule 2), or null
+    /// with the reason there is none — a locked file, a missing session directory — so Prepare
+    /// degrades with the reason shown, never silently.
+    /// </summary>
+    public void UseEnvelopeStore(EnvelopeStore? store, string? reason)
+    {
+        lock (_gate)
+        {
             Envelopes = store;
             HistoryState = store is null
-                ? historyState ?? "compile history is not recorded"
+                ? reason ?? "compile history is not recorded"
                 : store.BrokenAt is { } n ? $"compile history is broken at line {n}; purge it to start again" : null;
         }
     }

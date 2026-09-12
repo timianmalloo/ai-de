@@ -10,6 +10,9 @@ using AiDe.App.Conductor;
 using AiDe.App.Workbench.Composer;
 using AiDe.Core.AgentPlane;
 using AiDe.Core.Presentation.Sessions;
+using AiDe.Core.PromptCompilation;
+using AiDe.Core.Sessions;
+using AiDe.Core.Watcher;
 using AiDe.Core.Workbench;
 
 namespace AiDe.App.Workbench.Sessions;
@@ -67,6 +70,9 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     private readonly GridSplitter _splitter = new();
     private readonly CancellationTokenSource _closing = new();
     private readonly Dictionary<int, CancellationTokenSource> _runs = [];
+    private readonly Dictionary<int, string> _envelopeByOrdinal = [];
+    private readonly Lock _envelopeGate = new();
+    private readonly EnvelopeStore? _envelopes;
     private bool _operatorActed;
     private bool _placedFocus;
     private bool _disposed;
@@ -108,6 +114,13 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
 
         // One announcer for the page (SC9): the composer's refusals and the thread's outcomes share it.
         Composer = new ComposerSurface($"composer:{model.SessionId}", $"{model.Title} — composer", _announcer);
+
+        // THE STORE'S LIFETIME IS THE DOCUMENT'S (ADR-0034 rule 2): opened FileShare.None here,
+        // released in Dispose. A locked or missing home degrades Prepare with the reason shown and
+        // the document still opens — a corrupt or locked sidecar loses history, not the session.
+        (_envelopes, var historyState) = OpenEnvelopeStore(model.WorkspaceRoot, model.SessionId);
+        Composer.Gate.UseEnvelopeStore(_envelopes, historyState);
+
         Composer.Gate.Sent += Launch;
         Composer.PageReady += PlaceFocusInTheEditor;
         Composer.FocusLeftBackward += OnComposerLeftBackward;
@@ -149,6 +162,33 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
 
     /// <summary>The composer — the document's last region.</summary>
     public ComposerSurface Composer { get; }
+
+    /// <summary>The envelope store this document holds for its lifetime, or null with the reason on <see cref="ComposerSurface.HistoryState"/>.</summary>
+    public EnvelopeStore? Envelopes => _envelopes;
+
+    /// <summary>
+    /// Opens the session's compile history exclusively, or returns why it could not: the Session
+    /// aggregate's directory does not exist (the store never creates it), another AI-DE holds the
+    /// file, or the chain is broken (the store opens and refuses appends). Never throws: the
+    /// document opens either way.
+    /// </summary>
+    private static (EnvelopeStore? Store, string? Reason) OpenEnvelopeStore(string workspaceRoot, string sessionId)
+    {
+        var directory = SessionPaths.SessionDirectory(workspaceRoot, sessionId);
+        if (!Directory.Exists(directory))
+        {
+            return (null, $"no session directory at {directory}; compile history is not recorded");
+        }
+
+        try
+        {
+            return (EnvelopeStore.Open(directory), null);
+        }
+        catch (EnvelopeStoreException error)
+        {
+            return (null, error.Message);
+        }
+    }
 
     /// <summary>The thread — the feed of turns.</summary>
     public ThreadFeed Thread => _feed;
@@ -416,6 +456,13 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
 
         var cancel = CancellationTokenSource.CreateLinkedTokenSource(_closing.Token);
         _runs[ordinal] = cancel;
+        if (Composer.Gate.LastSubmission is { } submission)
+        {
+            lock (_envelopeGate)
+            {
+                _envelopeByOrdinal[ordinal] = submission.EnvelopeId;
+            }
+        }
 
         // Feedback:+Confirmed — the turn now lives in the thread; the composer starts the next one.
         Composer.BeginNextTurn();
@@ -450,13 +497,17 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
 
         try
         {
-            LastRunResult = await GovernedRunHost.RunAsync(request, cancel.Token, sink).ConfigureAwait(false);
+            var result = await GovernedRunHost.RunAsync(request, cancel.Token, sink).ConfigureAwait(false);
+            LastRunResult = result;
             _thread.Conclude(ordinal, request.Goal is null ? TurnState.Answered : TurnState.Completed, DateTimeOffset.Now);
+            RecordConsumed(ordinal, result.RunId, result.EpisodeId, result.Outcome, ConsumedReasons.Completed);
+            StampTaskClassSource(request, result);
         }
         catch (OperationCanceledException) when (cancel.IsCancellationRequested && !_closing.IsCancellationRequested)
         {
             LastRunFailure = "OperationCanceledException: stopped by the operator";
             _thread.Conclude(ordinal, TurnState.Stopped, DateTimeOffset.Now);
+            RecordConsumed(ordinal, Envelope.NotRecorded, null, "Abandoned", ConsumedReasons.StoppedByOperator);
         }
         catch (Exception error) when (error is AgentPlaneException or IOException or OperationCanceledException)
         {
@@ -464,6 +515,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
             // treats as "the run did not complete", and the operator is owed the same sentence.
             LastRunFailure = $"{error.GetType().Name}: {error.Message}";
             _thread.Conclude(ordinal, TurnState.Failed, DateTimeOffset.Now, exitCode: null, edits: null, reply: LastRunFailure);
+            RecordConsumed(ordinal, Envelope.NotRecorded, null, Envelope.NotRecorded, ConsumedReasons.LaneExited(null));
         }
         finally
         {
@@ -473,9 +525,64 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         }
     }
 
-    private static bool IsCompileEvent(RunEvent evt) =>
-        evt.Ext.TryGetPropertyValue("origin", out var origin) && origin is System.Text.Json.Nodes.JsonValue value
-        && value.TryGetValue<string>(out var text) && string.Equals(text, "compile", StringComparison.Ordinal);
+    /// <summary>
+    /// Appends the envelope's <c>consumed</c> row — the pair (outcome, reason) by identity (E6) —
+    /// exactly once per envelope; a refusal (a second row, a closed store) is recorded on the
+    /// composer's history state, never thrown into the run's completion.
+    /// </summary>
+    private void RecordConsumed(int ordinal, string runId, string? episodeId, string outcome, string reason)
+    {
+        // One gate over the ordinal map and the append: the run's continuation and the document's
+        // Dispose race for the same envelope, and exactly one of them writes its consumed row.
+        lock (_envelopeGate)
+        {
+            if (!_envelopeByOrdinal.Remove(ordinal, out var envelopeId) || _envelopes is null)
+            {
+                return;
+            }
+
+            try
+            {
+                _envelopes.Append(new Consumed(envelopeId, runId, episodeId, outcome, reason));
+            }
+            catch (EnvelopeStoreException error)
+            {
+                CompileSignal.Degraded("consumed-not-recorded", error.Code);
+            }
+            catch (ObjectDisposedException)
+            {
+                CompileSignal.Degraded("consumed-not-recorded", "store closed");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Stamps the scored episode's <c>task_class_source</c> — the envelope's own provenance for the
+    /// class it ranked under (ADR-0028's amendment; ADR-0033 rule 4) — on the watcher's cell, through
+    /// the same watcher composition the run host used. A read-only turn opens no episode and is not stamped.
+    /// </summary>
+    private void StampTaskClassSource(GovernedRunRequest request, GovernedRunResult result)
+    {
+        if (!result.Scored || string.IsNullOrWhiteSpace(result.EpisodeId) || Composer.Gate.LastSubmission is not { } submission)
+        {
+            return;
+        }
+
+        try
+        {
+            using var watcher = WatcherHost.Open(request.DataDirectory, Path.Combine(request.DataDirectory, "loomkeeper-coord"));
+            if (!watcher.Store.RecordEpisodeTaskClassSource(result.EpisodeId, submission.TaskClassSource))
+            {
+                CompileSignal.Degraded("task-class-source-not-stamped", "no scored cell for episode " + result.EpisodeId);
+            }
+        }
+        catch (Exception error) when (error is IOException or InvalidOperationException or Microsoft.Data.Sqlite.SqliteException)
+        {
+            CompileSignal.Degraded("task-class-source-not-stamped", error.GetType().Name);
+        }
+    }
+
+    private static bool IsCompileEvent(RunEvent evt) => CompileSignal.IsCompileEvent(evt);
 
     private void OnTurnAction(TurnAction action)
     {
@@ -836,7 +943,8 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         Row("Fan-out ceiling", string.Create(CultureInfo.InvariantCulture, $"{ceilings.FanOutCeiling} sub-agents"), "Most sub-agents any turn may convene. The compiled tier decides how many it uses, up to this.");
         Row("Budget", ceilings.BudgetCap is { } cap ? string.Create(CultureInfo.InvariantCulture, $"{cap.Tokens:N0} tokens per session · cap enforced") : "Bounded by your subscription", "Off: spend stops where your subscription stops. On: you set a number of tokens; a new turn will not start past it without asking; a running turn finishes.");
         Row("Default task class", Composer.Decorations.FirstOrDefault(d => d.Name == "class")?.Value ?? AiDe.Core.Watcher.TaskClasses.FreeForm, "Every new prompt starts with this class. Change it on any prompt from its decoration line; that never changes this default.");
-        Row("Compile mode", AiDe.Core.Sessions.CompileModes.MechanicalOnly, "Mechanical-only: one gesture, you fill the structure.");
+        Row("Compile mode", Composer.Gate.CompileMode, "Mechanical-only: one gesture, you fill the structure.");
+        Row("Compile history", Composer.HistoryState ?? $"recorded in {_envelopes?.Path ?? Envelope.NotRecorded}", "Every send is a row in this session's append-only envelope file; purge it with aide session purge.");
 
         return new Popup
         {
@@ -980,6 +1088,26 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         Composer.PageReady -= PlaceFocusInTheEditor;
         Composer.FocusLeftBackward -= OnComposerLeftBackward;
         _feed.Dispose();
+
+        // A RUN MAY OUTLIVE ITS DOCUMENT — ONE LIFETIME RULE (ADR-0034 rule 7): the store's lifetime
+        // is the document's, so every envelope still in flight is consumed here as "not recorded /
+        // document closed" — never an absent row — before the handle is released; the run's real
+        // outcome stays in the run's own record.
+        List<int> inFlight;
+        lock (_envelopeGate)
+        {
+            inFlight = [.. _envelopeByOrdinal.Keys];
+        }
+
+        foreach (var ordinal in inFlight)
+        {
+            RecordConsumed(ordinal, Envelope.NotRecorded, null, Envelope.NotRecorded, ConsumedReasons.DocumentClosed);
+        }
+
+        lock (_envelopeGate)
+        {
+            _envelopes?.Dispose();
+        }
 
         // The run is bound to the document that started it: closing the pane cancels it rather than
         // leaving an engine process owned by a surface nobody is showing.
