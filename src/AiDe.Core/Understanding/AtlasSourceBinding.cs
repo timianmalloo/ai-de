@@ -1,4 +1,4 @@
-using System.Text;
+using System.Text.RegularExpressions;
 
 namespace AiDe.Core.Understanding;
 
@@ -13,8 +13,16 @@ public enum AtlasSourceBindingMismatch
     Hash,
 }
 
-public readonly record struct AtlasSourceBinding
+/// <summary>
+/// Manifest-bound source observation identity. The five source tokens are opaque ordinal values;
+/// the content hash is the canonical <c>sha256:</c> plus 64 lowercase hexadecimal characters.
+/// </summary>
+public sealed class AtlasSourceBinding : IEquatable<AtlasSourceBinding>
 {
+    private static readonly Regex CanonicalSha256 = new(
+        "^sha256:[0-9a-f]{64}$",
+        RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
+
     private AtlasSourceBinding(
         string manifestIdentity,
         string manifestFileIdentity,
@@ -51,12 +59,12 @@ public readonly record struct AtlasSourceBinding
         string fileIdentity,
         string contentHash) =>
         new(
-            Required(manifestIdentity, nameof(manifestIdentity)),
-            Required(manifestFileIdentity, nameof(manifestFileIdentity)),
-            Required(policyIdentity, nameof(policyIdentity)),
-            Required(rootIdentity, nameof(rootIdentity)),
-            Required(fileIdentity, nameof(fileIdentity)),
-            Required(contentHash, nameof(contentHash)));
+            Opaque(manifestIdentity, nameof(manifestIdentity)),
+            Opaque(manifestFileIdentity, nameof(manifestFileIdentity)),
+            Opaque(policyIdentity, nameof(policyIdentity)),
+            Opaque(rootIdentity, nameof(rootIdentity)),
+            Opaque(fileIdentity, nameof(fileIdentity)),
+            Hash(contentHash, nameof(contentHash)));
 
     public bool Matches(
         string manifestIdentity,
@@ -76,23 +84,78 @@ public readonly record struct AtlasSourceBinding
         string fileIdentity,
         string contentHash)
     {
-        if (!Same(ManifestIdentity, manifestIdentity)) return AtlasSourceBindingMismatch.Manifest;
-        if (!Same(ManifestFileIdentity, manifestFileIdentity)) return AtlasSourceBindingMismatch.ManifestFile;
-        if (!Same(PolicyIdentity, policyIdentity)) return AtlasSourceBindingMismatch.Policy;
-        if (!Same(RootIdentity, rootIdentity)) return AtlasSourceBindingMismatch.Root;
-        if (!Same(FileIdentity, fileIdentity)) return AtlasSourceBindingMismatch.File;
-        return Same(ContentHash, contentHash) ? AtlasSourceBindingMismatch.None : AtlasSourceBindingMismatch.Hash;
+        if (!Same(ManifestIdentity, Opaque(manifestIdentity, nameof(manifestIdentity)))) return AtlasSourceBindingMismatch.Manifest;
+        if (!Same(ManifestFileIdentity, Opaque(manifestFileIdentity, nameof(manifestFileIdentity)))) return AtlasSourceBindingMismatch.ManifestFile;
+        if (!Same(PolicyIdentity, Opaque(policyIdentity, nameof(policyIdentity)))) return AtlasSourceBindingMismatch.Policy;
+        if (!Same(RootIdentity, Opaque(rootIdentity, nameof(rootIdentity)))) return AtlasSourceBindingMismatch.Root;
+        if (!Same(FileIdentity, Opaque(fileIdentity, nameof(fileIdentity)))) return AtlasSourceBindingMismatch.File;
+        return Same(ContentHash, Hash(contentHash, nameof(contentHash))) ? AtlasSourceBindingMismatch.None : AtlasSourceBindingMismatch.Hash;
     }
 
-    private static bool Same(string expected, string actual) =>
-        string.Equals(expected, Required(actual, nameof(actual)), StringComparison.Ordinal);
+    public bool Equals(AtlasSourceBinding? other) =>
+        other is not null
+        && Same(ManifestIdentity, other.ManifestIdentity)
+        && Same(ManifestFileIdentity, other.ManifestFileIdentity)
+        && Same(PolicyIdentity, other.PolicyIdentity)
+        && Same(RootIdentity, other.RootIdentity)
+        && Same(FileIdentity, other.FileIdentity)
+        && Same(ContentHash, other.ContentHash);
 
-    private static string Required(string value, string name)
+    public override bool Equals(object? obj) => obj is AtlasSourceBinding other && Equals(other);
+
+    public override int GetHashCode() =>
+        HashCode.Combine(
+            StringComparer.Ordinal.GetHashCode(ManifestIdentity),
+            StringComparer.Ordinal.GetHashCode(ManifestFileIdentity),
+            StringComparer.Ordinal.GetHashCode(PolicyIdentity),
+            StringComparer.Ordinal.GetHashCode(RootIdentity),
+            StringComparer.Ordinal.GetHashCode(FileIdentity),
+            StringComparer.Ordinal.GetHashCode(ContentHash));
+
+    public static bool operator ==(AtlasSourceBinding? left, AtlasSourceBinding? right) => Equals(left, right);
+
+    public static bool operator !=(AtlasSourceBinding? left, AtlasSourceBinding? right) => !Equals(left, right);
+
+    private static bool Same(string expected, string actual) =>
+        string.Equals(expected, actual, StringComparison.Ordinal);
+
+    private static string Hash(string value, string name)
+    {
+        var checkedValue = Opaque(value, name);
+        return CanonicalSha256.IsMatch(checkedValue)
+            ? checkedValue
+            : throw new ArgumentException("Hash must be canonical sha256: plus 64 lowercase hex characters.", name);
+    }
+
+    private static string Opaque(string value, string name)
     {
         ArgumentNullException.ThrowIfNull(value, name);
-        var normalized = value.Normalize(NormalizationForm.FormC);
-        return string.IsNullOrWhiteSpace(normalized)
+        return string.IsNullOrWhiteSpace(value)
             ? throw new ArgumentException("Value must not be blank.", name)
-            : normalized;
+            : ValidUnicode(value, name);
+    }
+
+    private static string ValidUnicode(string value, string name)
+    {
+        for (var i = 0; i < value.Length; i++)
+        {
+            var current = value[i];
+            if (!char.IsSurrogate(current))
+            {
+                continue;
+            }
+
+            if (char.IsHighSurrogate(current)
+                && i + 1 < value.Length
+                && char.IsLowSurrogate(value[i + 1]))
+            {
+                i++;
+                continue;
+            }
+
+            throw new ArgumentException("Value must contain valid Unicode scalar values.", name);
+        }
+
+        return value;
     }
 }

@@ -1,3 +1,4 @@
+using System.Globalization;
 using AiDe.Core.Understanding;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -45,18 +46,32 @@ public sealed class AtlasIdentityTests
     }
 
     [Fact]
-    public void ForType_DelimiterAndUnicodeComponents_AreUnambiguousAndNormalized()
+    public void ForType_DelimiterBackslashUnicodeAndCultureComponents_AreOrdinalAndUnambiguous()
     {
         var type = CompileType("namespace Demo { public sealed class Widget { } }", "Demo.Widget");
+        var originalCulture = CultureInfo.CurrentCulture;
+        CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("tr-TR");
 
-        var delimiterFirst = AtlasIdentity.ForType("a|b", "c", "net10.0", type);
-        var delimiterSecond = AtlasIdentity.ForType("a", "b|c", "net10.0", type);
-        var composed = AtlasIdentity.ForType("caf\u00e9", "Core", "net10.0", type);
-        var decomposed = AtlasIdentity.ForType("cafe\u0301", "Core", "net10.0", type);
+        try
+        {
+            var delimiterFirst = AtlasIdentity.ForType("a|b", "c", "net10.0", type);
+            var delimiterSecond = AtlasIdentity.ForType("a", "b|c", "net10.0", type);
+            var composed = AtlasIdentity.ForType("caf\u00e9", "Core", "net10.0", type);
+            var decomposed = AtlasIdentity.ForType("cafe\u0301", "Core", "net10.0", type);
+            var nonBmp = AtlasIdentity.ForType("scope-\U0001f9ed", "Core", "net10.0", type);
+            var backslash = AtlasIdentity.ForType(@"scope\..\file", "Core", "net10.0", type);
+            var upper = AtlasIdentity.ForType("FILE", "Core", "net10.0", type);
+            var lower = AtlasIdentity.ForType("file", "Core", "net10.0", type);
 
-        Assert.NotEqual(delimiterFirst, delimiterSecond);
-        Assert.Equal(composed, decomposed);
-        Assert.Equal(composed.GetHashCode(), decomposed.GetHashCode());
+            Assert.NotEqual(delimiterFirst, delimiterSecond);
+            Assert.NotEqual(composed, decomposed);
+            Assert.NotEqual(nonBmp, backslash);
+            Assert.NotEqual(upper, lower);
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+        }
     }
 
     [Theory]
@@ -67,6 +82,72 @@ public sealed class AtlasIdentityTests
         var type = CompileType("namespace Demo { public sealed class Widget { } }", "Demo.Widget");
 
         Assert.Throws<ArgumentException>(() => AtlasIdentity.ForType(scope, "Core", "net10.0", type));
+    }
+
+    [Fact]
+    public void ForType_NullScope_ThrowsArgumentNullException()
+    {
+        var type = CompileType("namespace Demo { public sealed class Widget { } }", "Demo.Widget");
+
+        Assert.Throws<ArgumentNullException>(() => AtlasIdentity.ForType(null!, "Core", "net10.0", type));
+    }
+
+    [Fact]
+    public void ForType_UnpairedSurrogateScope_ThrowsArgumentException()
+    {
+        var type = CompileType("namespace Demo { public sealed class Widget { } }", "Demo.Widget");
+
+        Assert.Throws<ArgumentException>(() => AtlasIdentity.ForType("bad\uD800", "Core", "net10.0", type));
+    }
+
+    [Fact]
+    public void ForMember_SourceLineShift_ProducesSameMethodIdentity()
+    {
+        var first = Method(CompileType(
+            "namespace Demo { public sealed class Widget { public void M(int value) { } } }",
+            "Demo.Widget"), "M", SpecialType.System_Int32);
+        var shifted = Method(CompileType(
+            """
+            namespace Demo
+            {
+                public sealed class Widget
+                {
+                    public void M(int value) { }
+                }
+            }
+            """,
+            "Demo.Widget"), "M", SpecialType.System_Int32);
+
+        Assert.Equal(
+            AtlasIdentity.ForMember("workspace", "Core", "net10.0", first),
+            AtlasIdentity.ForMember("workspace", "Core", "net10.0", shifted));
+    }
+
+    [Fact]
+    public void ForMember_PropertyAndAccessor_AreSupportedSourceMembers()
+    {
+        var type = CompileType("namespace Demo { public sealed class Widget { public int Count { get; set; } } }", "Demo.Widget");
+        var property = type.GetMembers("Count").OfType<IPropertySymbol>().Single();
+
+        var propertyIdentity = AtlasIdentity.ForMember("workspace", "Core", "net10.0", property);
+        var accessorIdentity = AtlasIdentity.ForMember("workspace", "Core", "net10.0", property.GetMethod!);
+
+        Assert.NotEqual(propertyIdentity, accessorIdentity);
+    }
+
+    [Fact]
+    public void ForMember_NamespaceTypeAsMemberMetadataOrUnsupportedMethodKind_ThrowsArgumentException()
+    {
+        var sourceType = CompileType("namespace Demo { public sealed class Widget { public static Widget operator +(Widget left, Widget right) => left; } }", "Demo.Widget");
+        var metadataType = CSharpCompilation.Create("Metadata", references: [MetadataReference.CreateFromFile(typeof(string).Assembly.Location)])
+            .GetSpecialType(SpecialType.System_String);
+        var sourceNamespace = sourceType.ContainingNamespace;
+        var userDefinedOperator = sourceType.GetMembers("op_Addition").OfType<IMethodSymbol>().Single();
+
+        Assert.Throws<ArgumentException>(() => AtlasIdentity.ForMember("workspace", "Core", "net10.0", sourceNamespace));
+        Assert.Throws<ArgumentException>(() => AtlasIdentity.ForMember("workspace", "Core", "net10.0", sourceType));
+        Assert.Throws<ArgumentException>(() => AtlasIdentity.ForType("workspace", "Core", "net10.0", metadataType));
+        Assert.Throws<ArgumentException>(() => AtlasIdentity.ForMember("workspace", "Core", "net10.0", userDefinedOperator));
     }
 
     private static INamedTypeSymbol CompileType(string source, string metadataName)
