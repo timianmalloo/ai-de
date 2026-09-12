@@ -48,6 +48,15 @@ Opened-root anchoring, sharing/lifetime semantics and native execution remain pe
 was pending at that checkpoint; **Owner turns 7/8 now grant the branch-local new-file authoring
 scope in §1.4 and §13.1**. R2 still grants no safety certification or production integration.
 
+**Safety implementation checkpoint, producer evidence pending independent review:** Conductor
+reports `fcbb34749e68546501ea06193d73e61b9d353842` in
+`C:\Projects\ai-de-atlas-e0-source-safety`, with **15 pass, 0 fail, 2 NOT PROVEN**. The producer
+reports that metadata-only directory handles failed real root/ancestor replacement tests and were
+changed to `GENERIC_READ` with share mode `0`. File/directory symlink fixtures remain unproven.
+These are attributed producer observations, **not this author's execution, Security/Test clearance,
+or an adopted safe-reader contract**. Security and Test review precede incorporation. Identity,
+inventory logic and real-compiler candidate authoring continue independently; no reader is recreated.
+
 ## 1. Scope, framing and grounding
 
 ### 1.1 Terminal behavior and explicit exclusions
@@ -108,8 +117,11 @@ waived to produce a document: execution, native proof and independent design adm
 
 Conductor relays explicit Owner admission for **one candidate writer** to author the exact new
 Core/Understanding, dedicated tests, and detached inert App/Workbench/Understanding files in §13.1.
-The candidate worktree is being created from **executor-observed main `b4e61022`**. This is a
-reported base, not this document's independent inspection of that checkout. The writer verifies
+The grant is now reported committed at **`5dd209ec`** in the Conductor tree's authoritative
+section-2 ownership register. Candidate/source trees are reported based on main **`4d396411`**
+(CV1 merged after the earlier observed `b4e61022`). These are attributed Conductor checkpoints,
+not this author's independent inspection of those checkouts. The writer grounds consumed signatures
+against its actual `4d396411` base without changing existing/shared files and verifies
 the named paths are new in its checkout; any collision is reported, not overwritten.
 
 Identity, authorized inventory logic and **real Roslyn declaration collection** may start under
@@ -976,7 +988,7 @@ It deliberately **does not tick executed/independently reviewed items**:
 
 | Remaining join / uncertainty | Smallest resolving action, not broad new research |
 |---|---|
-| Windows handle/link/race/decoder/cancel contract | R2 proposes handle/final-path/file-information APIs, source-only. Join worker `90e3a4be`'s executed opened-root/share/lifetime/status/fixture evidence and check S-SAFE budgets; no inferred safety. |
+| Windows handle/link/race/decoder/cancel contract | R2 was source-only; implementation `fcbb34749e68546501ea06193d73e61b9d353842` now has producer-reported 15 pass/0 fail/2 NOT PROVEN, with file/directory symlinks unresolved. Join independent Security/Test verdicts and exact opened-root/share/lifetime/status evidence before incorporation; no inferred safety. |
 | Real compilation input exposure | Core owner confirms exact loader adapter and project trust policy, including text/hash identity; no declaration parsing fallback. |
 | Bounded writer acquisition/control fairness | Owner/Core admit the narrow real shared-writer change; current synchronous BeginWrite cannot prove the selected timeout. |
 | Shared wire/host and generic-reader safety | SH3 owner serially supplies S-WIRE/S-HOST/S-COMPAT after acknowledgment; run the real native/legacy contract tests. |
