@@ -54,7 +54,7 @@ public sealed class TerminalHostInLifePathTests(ITestOutputHelper output)
             var pid = int.Parse(ownerPid);
 
             // The dispose path holds the session two seconds first; the child-exit path's child
-            // lives seven seconds (DC-156: a child gone in 50 ms is gone before one CIM read).
+            // lives seven seconds (DC-157: a child gone in 50 ms is gone before one CIM read).
             var live = await ConsoleHostCensus.WaitForHeadlessHostAsync(pid, TimeSpan.FromSeconds(5));
             liveCount = live.HeadlessHostsOwnedBy(pid).Count;
             output.WriteLine($"[{mode}] owner {pid} live; headless hosts it owns: {liveCount} {ConsoleHostCensus.Describe(live.HeadlessHostsOwnedBy(pid))}");

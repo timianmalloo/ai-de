@@ -14,14 +14,18 @@ namespace AiDe.App.Workbench.Sessions;
 /// and reflects it. A dialog that decided anything would be a second place a session can be created
 /// wrongly.</para>
 ///
-/// <para><b>Task class carries no pre-filled value</b>, deliberately: pre-filling one is how a
-/// default arrives by another route, and a defaulted class ranks in the wrong cohort (DC-110). The
-/// Create button stays disabled, with its reason beside it, until the operator chooses one.</para>
+/// <para><b>Task class opens on <c>free-form</c></b> (Ruling 72 (b)): the dialog selects the row
+/// the model already holds — it never decides the default itself — and the operator changes it by
+/// choosing another row. Create is enabled from open: the sheet has zero required inputs.</para>
 ///
-/// <para><b>It is a picker now, not a text box (RQ1).</b> The requirement was never the failure; the
-/// control was. A value whose only use is exact equality against a set is entered by choosing from
-/// that set, because a free text box makes a typo indistinguishable from an answer. Nothing is
-/// preselected, so choosing is still an act and the no-default contract is untouched.</para>
+/// <para><b>It is a picker, not a text box (RQ1).</b> A value whose only use is exact equality
+/// against a set is entered by choosing from that set, because a free text box makes a typo
+/// indistinguishable from an answer.</para>
+///
+/// <para><b>The budget is a state with an optional cap</b> (Ruling 72 (a)): <i>bounded by your
+/// subscription</i> until the operator ticks <i>Enforce a cap</i>, and only then do the two number
+/// boxes exist. <b>The fan-out ceiling is prefilled</b> (Ruling 56). <b>There is no tier</b>
+/// (Ruling 63).</para>
 ///
 /// <para><b>Sign in stays on the sheet</b> (R13 b2, Ruling 20): it launches the engine's own login,
 /// re-probes, and re-renders the rows in place — the sheet is never left, and no credential is
@@ -69,16 +73,12 @@ public static class NewSessionSheetDialog
         // worse than a default — it forms a cohort of one, renders Not Comparable, and silently
         // removes the episode from the cohort it belonged to.
         //
-        // NOTHING IS PRESELECTED (SelectedIndex stays -1), so the type-level no-default contract and
-        // the reflective test that pins it both still hold: choosing from a set is not the same as
-        // being given one.
         var taskClass = new ListBox
         {
-            SelectedIndex = -1,
             Padding = new Thickness(2),
             MaxHeight = 190,
         };
-        AutomationProperties.SetName(taskClass, "Task class (required, no default)");
+        AutomationProperties.SetName(taskClass, "Task class");
 
         foreach (var option in sheet.TaskClassOptions)
         {
@@ -105,7 +105,47 @@ public static class NewSessionSheetDialog
             var row = new ListBoxItem { Content = stack, Tag = option.Id };
             AutomationProperties.SetName(row, $"{option.Id}. {option.WhatItIs}");
             taskClass.Items.Add(row);
+
+            // THE MODEL'S VALUE SELECTS THE ROW, never the other way round (Ruling 72): the dialog
+            // reflects the declared default; it does not supply one.
+            if (string.Equals(option.Id, sheet.TaskClass, StringComparison.Ordinal))
+            {
+                taskClass.SelectedItem = row;
+            }
         }
+
+        // Ruling 56 — the fan-out ceiling, prefilled from the ruled default; a number, typed.
+        var ceiling = new TextBox
+        {
+            Text = sheet.FanOutCeiling?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? string.Empty,
+            Padding = new Thickness(8, 6, 8, 6),
+            MinWidth = 80,
+            HorizontalAlignment = HorizontalAlignment.Left,
+        };
+        AutomationProperties.SetName(ceiling, "Fan-out ceiling");
+
+        // Ruling 72 (a) — THE BUDGET IS A STATE. No number is required; the cap is an affordance the
+        // operator opts into, and its two boxes exist only once they have.
+        var budgetState = new TextBlock { TextWrapping = TextWrapping.Wrap };
+        budgetState.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+
+        var enforceCap = new CheckBox { Content = "Enforce a cap", Margin = new Thickness(0, 4, 0, 0) };
+        AutomationProperties.SetName(enforceCap, "Enforce a cap");
+
+        var capRow = new StackPanel
+        {
+            Orientation = System.Windows.Controls.Orientation.Horizontal,
+            Margin = new Thickness(0, 4, 0, 0),
+            Visibility = Visibility.Collapsed,
+        };
+        var requests = new TextBox { Padding = new Thickness(8, 6, 8, 6), MinWidth = 90 };
+        AutomationProperties.SetName(requests, "Cap: requests");
+        var tokens = new TextBox { Padding = new Thickness(8, 6, 8, 6), MinWidth = 120, Margin = new Thickness(8, 0, 0, 0) };
+        AutomationProperties.SetName(tokens, "Cap: tokens");
+        capRow.Children.Add(Label("requests"));
+        capRow.Children.Add(requests);
+        capRow.Children.Add(Label("tokens"));
+        capRow.Children.Add(tokens);
 
         // RQ4 — REQUIRED-AND-UNDEFAULTED IS A VISIBLE STATE, carried by a glyph and a word as well
         // as by colour, and flipping to Answered. Never a bare asterisk.
@@ -139,6 +179,10 @@ public static class NewSessionSheetDialog
         {
             sheet.Name = name.Text;
             sheet.TaskClass = (taskClass.SelectedItem as ListBoxItem)?.Tag as string;
+            sheet.FanOutCeiling = int.TryParse(
+                ceiling.Text, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var parsed)
+                ? parsed
+                : null;
 
             taskClassState.Text = sheet.TaskClassAnswered
                 ? "\u2713 " + TaskClassVocabulary.AnsweredLabel
@@ -147,9 +191,33 @@ public static class NewSessionSheetDialog
                 TextBlock.ForegroundProperty,
                 sheet.TaskClassAnswered ? "VerifiedBrush" : "InferredBrush");
 
+            budgetState.Text = sheet.BudgetDisplay;
+
             create.IsEnabled = sheet.CanCreate;
             blocked.Text = sheet.BlockedReason ?? string.Empty;
             blocked.Visibility = sheet.CanCreate ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        void ApplyCap()
+        {
+            // The cap exists only while the box is ticked AND both numbers parse positive; anything
+            // else is the subscription-bounded state again, said so on the line, never a silent zero.
+            capRow.Visibility = enforceCap.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+
+            if (enforceCap.IsChecked == true
+                && int.TryParse(requests.Text, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var r)
+                && long.TryParse(tokens.Text, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var t)
+                && r > 0
+                && t > 0)
+            {
+                sheet.EnforceCap(new AiDe.Core.AgentPlane.RunBudget(r, t));
+            }
+            else
+            {
+                sheet.ClearCap();
+            }
+
+            Reflect();
         }
 
         void RenderBackends()
@@ -210,6 +278,11 @@ public static class NewSessionSheetDialog
 
         name.TextChanged += (_, _) => Reflect();
         taskClass.SelectionChanged += (_, _) => Reflect();
+        ceiling.TextChanged += (_, _) => Reflect();
+        enforceCap.Checked += (_, _) => ApplyCap();
+        enforceCap.Unchecked += (_, _) => ApplyCap();
+        requests.TextChanged += (_, _) => ApplyCap();
+        tokens.TextChanged += (_, _) => ApplyCap();
         create.Click += (_, _) => onCreate();
 
         var actions = new StackPanel
@@ -239,8 +312,14 @@ public static class NewSessionSheetDialog
         body.Children.Add(taskClassHeading);
         body.Children.Add(Muted(TaskClassVocabulary.Explanation));
         body.Children.Add(taskClass);
-        // Ruling 42: a sentence, never a Lease. There is nothing at sheet time to derive one from,
-        // and a derived "everything" would have travelled out of the sheet into a run.
+        body.Children.Add(Label("Fan-out ceiling"));
+        body.Children.Add(ceiling);
+        body.Children.Add(Label("Budget"));
+        body.Children.Add(budgetState);
+        body.Children.Add(enforceCap);
+        body.Children.Add(capRow);
+        // Rulings 42 and 73: a sentence, never a Lease. A lease is derived per prompt from the
+        // operator's mentions; a prompt that names none runs read-only.
         body.Children.Add(Label("Lease"));
         body.Children.Add(Muted(NewSessionSheetViewModel.LeaseDisplay));
         body.Children.Add(Label("Agent backends"));

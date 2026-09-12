@@ -57,7 +57,7 @@ public sealed class TerminalHostingLedgerTests
     /// </summary>
     /// <remarks>
     /// <para><b>Why a counter and not a process list.</b> The census reads a host under a live App
-    /// as <c>ours-live</c> whether the pane is working or ended (DC-154); the log carried 4,115
+    /// as <c>ours-live</c> whether the pane is working or ended (DC-155); the log carried 4,115
     /// starts and no ends. A ledger that counts both makes "still hosted" a subtraction a gate can
     /// read, from the product's own emissions.</para>
     /// <para><b>Exactly one completion per session.</b> A session whose child exits is then

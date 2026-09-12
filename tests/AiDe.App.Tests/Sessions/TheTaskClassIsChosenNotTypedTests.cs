@@ -3,6 +3,8 @@ using System.Windows.Controls;
 using AiDe.App.Workbench.Sessions;
 using AiDe.Core.AgentPlane;
 using AiDe.Core.Presentation.Sessions;
+using AiDe.Core.Sessions;
+using AiDe.Core.Watcher;
 
 namespace AiDe.App.Tests.Sessions;
 
@@ -52,8 +54,12 @@ public sealed class TheTaskClassIsChosenNotTypedTests : IDisposable
         }
     }
 
+    /// <summary>
+    /// RQ1 still: the class is picked from a set. Ruling 72 (b): the set's <c>free-form</c> row is
+    /// preselected — the operator's declared default, visible as a row, not a hidden value.
+    /// </summary>
     [Fact]
-    public void TheClassIsPickedFromTheOfferedSet_AndNothingIsPreselected() => Sta.Run(() =>
+    public void TheClassIsPickedFromTheOfferedSet_AndFreeFormIsPreselected() => Sta.Run(() =>
     {
         var sheet = Sheet();
         var body = NewSessionSheetDialog.Build(sheet, announce: null, onCreate: () => { });
@@ -61,17 +67,17 @@ public sealed class TheTaskClassIsChosenNotTypedTests : IDisposable
         var picker = Assert.Single(Walk<ListBox>(body));
 
         Assert.Equal(sheet.TaskClassOptions.Count, picker.Items.Count);
-        Assert.Equal(-1, picker.SelectedIndex);
-        Assert.Null(sheet.TaskClass);
-        Assert.False(sheet.CanCreate);
+        Assert.Equal(0, picker.SelectedIndex);
+        Assert.Equal(TaskClasses.FreeForm, ((ListBoxItem)picker.Items[0]).Tag);
+        Assert.Equal(TaskClasses.FreeForm, sheet.TaskClass);
+        Assert.True(sheet.CanCreate);
 
-        // RQ1 — the only TextBox left on the sheet is the session NAME, which is free text because a
-        // name is free text. A cohort key is not.
-        var boxes = Walk<TextBox>(body).ToList();
-        Assert.Single(boxes);
-        Assert.Equal(
-            "Session name",
-            System.Windows.Automation.AutomationProperties.GetName(boxes[0]));
+        // RQ1 — no TextBox on the sheet is the task class: a cohort key is chosen, never typed. The
+        // text boxes that exist are free text (the name) or a number (the fan-out ceiling).
+        var boxes = Walk<TextBox>(body)
+            .Select(System.Windows.Automation.AutomationProperties.GetName)
+            .ToList();
+        Assert.Equal(["Session name", "Fan-out ceiling", "Cap: requests", "Cap: tokens"], boxes);
     });
 
     [Fact]
@@ -94,40 +100,95 @@ public sealed class TheTaskClassIsChosenNotTypedTests : IDisposable
         }
     });
 
+    /// <summary>Create is enabled from open (zero required inputs); choosing another class changes it.</summary>
     [Fact]
-    public void ChoosingOneAnswersTheFieldAndEnablesCreate() => Sta.Run(() =>
+    public void CreateIsEnabledFromOpen_AndChoosingAnotherClassChangesIt() => Sta.Run(() =>
     {
         var sheet = Sheet();
         var body = NewSessionSheetDialog.Build(sheet, announce: null, onCreate: () => { });
         var picker = Assert.Single(Walk<ListBox>(body));
         var create = Walk<Button>(body).Single(b => (string?)b.Content == "Create session");
 
-        Assert.False(create.IsEnabled);
-        Assert.False(sheet.TaskClassAnswered);
+        Assert.True(create.IsEnabled);
+        Assert.True(sheet.TaskClassAnswered);
 
-        picker.SelectedIndex = 1;
+        picker.SelectedIndex = 2;
 
-        Assert.Equal(sheet.TaskClassOptions[1].Id, sheet.TaskClass);
+        Assert.Equal(sheet.TaskClassOptions[2].Id, sheet.TaskClass);
+        Assert.NotEqual(TaskClasses.FreeForm, sheet.TaskClass);
         Assert.True(sheet.TaskClassAnswered);
         Assert.True(create.IsEnabled);
     });
 
+    /// <summary>RQ4 at Ruling 72: the answered state is a glyph and a word from open; never an asterisk, never "no default".</summary>
     [Fact]
-    public void TheRequiredStateIsAGlyphAndAWord_NeverAnAsterisk() => Sta.Run(() =>
+    public void TheAnsweredStateIsAGlyphAndAWordFromOpen_NeverAnAsterisk() => Sta.Run(() =>
     {
         var sheet = Sheet();
         var body = NewSessionSheetDialog.Build(sheet, announce: null, onCreate: () => { });
-        var picker = Assert.Single(Walk<ListBox>(body));
 
-        var unanswered = Walk<TextBlock>(body).Select(t => t.Text).ToList();
-        Assert.Contains(unanswered, line => line.Contains(TaskClassVocabulary.RequiredLabel, StringComparison.Ordinal));
-        Assert.DoesNotContain(unanswered, line => line.Trim() == "*");
+        var lines = Walk<TextBlock>(body).Select(t => t.Text).ToList();
+        Assert.Contains(lines, line => line.Contains(TaskClassVocabulary.AnsweredLabel, StringComparison.Ordinal));
+        Assert.DoesNotContain(lines, line => line.Contains(TaskClassVocabulary.RequiredLabel, StringComparison.Ordinal));
+        Assert.DoesNotContain(lines, line => line.Trim() == "*");
+    });
 
-        picker.SelectedIndex = 0;
+    /// <summary>
+    /// Ruling 72 (a) on the sheet: the budget renders as a state with no numeral, and the cap is an
+    /// affordance the operator opts into — its two number boxes exist only once it is enforced.
+    /// </summary>
+    [Fact]
+    public void TheBudgetIsAStateWithAnOptionalCapAffordance() => Sta.Run(() =>
+    {
+        var sheet = Sheet();
+        var body = NewSessionSheetDialog.Build(sheet, announce: null, onCreate: () => { });
 
-        var answered = Walk<TextBlock>(body).Select(t => t.Text).ToList();
-        Assert.Contains(answered, line => line.Contains(TaskClassVocabulary.AnsweredLabel, StringComparison.Ordinal));
-        Assert.DoesNotContain(answered, line => line.Contains(TaskClassVocabulary.RequiredLabel, StringComparison.Ordinal));
+        var lines = Walk<TextBlock>(body).Select(t => t.Text).ToList();
+        Assert.Contains(RunBudget.SubscriptionBoundedDisplay, lines);
+
+        var enforce = Walk<CheckBox>(body).Single(c => (string?)c.Content == "Enforce a cap");
+        Assert.False(enforce.IsChecked);
+        var requests = Walk<TextBox>(body).Single(t => System.Windows.Automation.AutomationProperties.GetName(t) == "Cap: requests");
+        var tokens = Walk<TextBox>(body).Single(t => System.Windows.Automation.AutomationProperties.GetName(t) == "Cap: tokens");
+        Assert.Equal(Visibility.Collapsed, ((FrameworkElement)LogicalTreeHelper.GetParent(requests)).Visibility);
+
+        enforce.IsChecked = true;
+        Assert.Equal(Visibility.Visible, ((FrameworkElement)LogicalTreeHelper.GetParent(requests)).Visibility);
+        requests.Text = "40";
+        tokens.Text = "90000";
+
+        Assert.Equal(new RunBudget(40, 90_000), sheet.BudgetCap);
+
+        enforce.IsChecked = false;
+        Assert.Null(sheet.BudgetCap);
+
+        // The boxes are built once: re-ticking brings the typed numbers back as the cap.
+        enforce.IsChecked = true;
+        Assert.Equal(new RunBudget(40, 90_000), sheet.BudgetCap);
+    });
+
+    /// <summary>The fan-out ceiling is prefilled from the session default and typed as a number.</summary>
+    [Fact]
+    public void TheFanOutCeilingIsPrefilledAndEditable() => Sta.Run(() =>
+    {
+        var sheet = Sheet();
+        var body = NewSessionSheetDialog.Build(sheet, announce: null, onCreate: () => { });
+
+        var ceiling = Walk<TextBox>(body).Single(t => System.Windows.Automation.AutomationProperties.GetName(t) == "Fan-out ceiling");
+        Assert.Equal(SessionConfig.DefaultFanOutCeiling.ToString(System.Globalization.CultureInfo.InvariantCulture), ceiling.Text);
+
+        ceiling.Text = "3";
+        Assert.Equal(3, sheet.FanOutCeiling);
+
+        var create = Walk<Button>(body).Single(b => (string?)b.Content == "Create session");
+        ceiling.Text = "-1";
+        Assert.False(create.IsEnabled);
+
+        // Unparseable is "not written", said so — never read as a negative bound.
+        ceiling.Text = "abc";
+        Assert.Null(sheet.FanOutCeiling);
+        Assert.False(create.IsEnabled);
+        Assert.Contains("whole number", sheet.BlockedReason!, StringComparison.Ordinal);
     });
 
     [Fact]
@@ -161,11 +222,17 @@ public sealed class TheTaskClassIsChosenNotTypedTests : IDisposable
         var sheet = Sheet();
         var body = NewSessionSheetDialog.Build(sheet, announce: null, onCreate: () => { });
 
+        // The one gap an operator can still open from the sheet: a blank name (the class is
+        // preselected and the picker has no deselect).
+        var name = Walk<TextBox>(body).Single(t => System.Windows.Automation.AutomationProperties.GetName(t) == "Session name");
+        name.Text = string.Empty;
+
         var create = Walk<Button>(body).Single(b => (string?)b.Content == "Create session");
+        Assert.False(create.IsEnabled);
         var row = LogicalTreeHelper.GetParent(LogicalTreeHelper.GetParent(create));
 
         var reason = Walk<TextBlock>(row).SingleOrDefault(
-            t => t.Text == TaskClassVocabulary.ChooseOneToCreate);
+            t => t.Text == sheet.BlockedReason);
 
         // RQ5 — beside the button, naming the field. An inert control never leaves the operator
         // guessing, and a reason 200px away is a reason nobody connects to the button.
@@ -176,22 +243,33 @@ public sealed class TheTaskClassIsChosenNotTypedTests : IDisposable
     });
 
     /// <summary>
-    /// The picker does not become a default by another route.
+    /// The preselected value is a declared default, not a guessed one.
     /// </summary>
     /// <remarks>
-    /// Ruling 19 and <c>AssertNoDefaultFor</c> pin the TYPE; this pins the SHEET. Offering a set and
-    /// preselecting its first row would satisfy every other assertion here and reintroduce exactly
-    /// the defect the no-default rule exists for — a chosen class and a guessed one, indistinguishable
-    /// afterwards.
+    /// Ruling 19's rule was that a chosen class and a guessed one are indistinguishable afterwards;
+    /// Ruling 72 resolves it the other way for the session default — <c>free-form</c> is the
+    /// operator's own stated default, a legitimate cohort key (a session that opens with no task
+    /// in mind), preselected as a visible row the operator can change. What must never happen is a
+    /// value that is not <c>free-form</c> arriving unselected: the preselection is exactly the
+    /// declared constant, and the dialog decides nothing the model does not already say.
     /// </remarks>
     [Fact]
-    public void OfferingASetIsNotTheSameAsSupplyingOne() => Sta.Run(() =>
+    public void ThePreselectedClassIsExactlyTheDeclaredDefault() => Sta.Run(() =>
     {
         var sheet = Sheet();
-        _ = NewSessionSheetDialog.Build(sheet, announce: null, onCreate: () => { });
+        var body = NewSessionSheetDialog.Build(sheet, announce: null, onCreate: () => { });
 
-        Assert.Null(sheet.TaskClass);
-        Assert.False(sheet.TaskClassAnswered);
-        Assert.Equal(TaskClassVocabulary.ChooseOneToCreate, sheet.BlockedReason);
+        Assert.Equal(TaskClasses.FreeForm, sheet.TaskClass);
+        Assert.Equal(TaskClasses.FreeForm, ((ListBoxItem)Assert.Single(Walk<ListBox>(body)).SelectedItem).Tag);
+        Assert.True(sheet.TaskClassAnswered);
+        Assert.Null(sheet.BlockedReason);
+
+        // The falsifier: a dialog that hard-codes row 0 would pass the assertions above. With the
+        // model holding another class before Build, that row — and only that row — is selected.
+        var review = Sheet();
+        review.TaskClass = "review";
+        var reviewBody = NewSessionSheetDialog.Build(review, announce: null, onCreate: () => { });
+        Assert.Equal("review", ((ListBoxItem)Assert.Single(Walk<ListBox>(reviewBody)).SelectedItem).Tag);
+        Assert.Equal("review", review.TaskClass);
     });
 }

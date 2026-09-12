@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Conductor: 6 types, 17 members, 100% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Conductor: 6 types, 18 members, 100% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Conductor`
 
-**6 public types · 17 public members · 100% documented.**
+**6 public types · 18 public members · 100% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -130,6 +130,27 @@ must leave nothing behind.
 
 
 
+**A read-only turn is the same root with the write half left out** (Ruling 73). The
+request carries no lease (`IsReadOnly`), and from that one fact:
+the spawn is authorized read-only (`ReadOnly`: the identity gates
+unchanged, the goal-block precondition waived), **no worktree is cut** — the ACP session is rooted in the
+repository root itself, because the lane cannot write and a throwaway tree would be exactly the
+thing the operator must then clean up (Ruling 73's constraint; ADR-0035 roots the compile session
+the same way, and outside the repository the constitution does not load) — the session is opened
+with `ReadOnlyLaneSession`, no episode is opened and nothing is scored (an episode is
+work judged against a done-condition; a Message has none), no seam monitor runs (there is no
+lease to monitor), and the permission chooser refuses any edit that arrives anyway. The
+composition-root activity is opened once either way, so one send reads one root whichever shape
+the turn takes. **Boundary named:** rooted in the repository, the lane loads the repository's
+own settings and hooks (`settingSources` user · project · local) — repository content runs
+in the lane, the same exposure as opening Claude Code there (ADR-0035 accepts it for the
+compile session on the same grounds). After the turn the tree is measured against its own
+baseline (`TreeDelta`): a changed tree is Ruling 73 condition (2)'s stop.
+
+
+
+
+
 **It hosts no terminal, and the run says so with a number.**
 `TerminalHostingLedger` is opened around the whole run and its count travels on the
 result, so the absence is a measurement rather than a sentence.
@@ -162,6 +183,19 @@ Everything one governed lane needs to run, as the caller states it.
 **Remarks.** **A record rather than a pile of parameters** because the Conductor Surface (deferred by
 Ruling 13) and the headless entry must hand `GovernedRunHost` the *same* thing.
 A second overload is how a second composition root starts.
+
+| Member | Summary |
+|---|---|
+| `bool IsReadOnly` | Whether this turn writes nothing — Ruling 73's read-only turn: a Message, or a goal block whose source text named no write scope. |
+
+### `bool IsReadOnly`
+
+Whether this turn writes nothing — Ruling 73's read-only turn: a Message, or a goal block
+whose source text named no write scope.
+
+**Remarks.** Derived from the lease's absence, never stored beside it (DM7): the same fact picks the
+lane's pin, the spawn's shape and the absent seam monitor, so none can disagree. A lease with
+no goal block is not a third shape — the host refuses it by R2 before any engine starts.
 
 ## `GovernedRunResult`
 

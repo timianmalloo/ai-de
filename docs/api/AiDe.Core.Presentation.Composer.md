@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation.Composer: 30 types, 73 members, 86% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation.Composer: 31 types, 78 members, 87% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation.Composer`
 
-**30 public types · 73 public members · 86% documented.**
+**31 public types · 78 public members · 87% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -257,9 +257,31 @@ order, and nothing reads a clock, a culture or the environment.
 | Member | Summary |
 |---|---|
 | `string AttachmentFenceTag = "aide-attachment"` | The fence info word an attachment block carries, so a reader can see what it is. |
+| `string ReadOnlyScope = "read-only — nothing will be written"` | The lease line's read-only state — Ruling 73's one decoration-line state, in the words the specs fix (Addendum C US-C13 as amended; Addendum D's errata after Ruling 73). |
+| `string GoalBlockNeedsNotInScope = "This prompt is a goal block and needs Not in scope."` | The one content-gap refusal (Ruling 75): tier-blind, and the only sentence a blank line on a goal block can refuse with. A blank Goal or Done when is never refused — it makes a Message. |
+| `bool IsReadOnly(TurnShape shape, IReadOnlyList<string> patterns)` | Ruling 73's access projection: a turn is read-only when it is a Message (whatever it mentions — lease ≠ tier, §A9 R0) or a goal block whose source text derives no write scope (§A9 R1). Only a goal block with a derived… |
+| `string LeaseLine(IReadOnlyList<string>? lease)` | The lease line as the surface shows it: the read-only state for `null`, else the patterns that are (or will be) the lane's lease. The caller passes `null` exactly when `IsReadOnly` says so before Send, and the request… |
 | `CompiledPrompt Compile(ComposerDraft draft, PromptTemplate? template = null)` | Compiles the draft.  is required only for a template draft. |
 | `string RenderGoalBlock(GoalBlock block)` | The goal block as prompt text, in the order §14.3 lists the fields. |
 | `string RenderAttachment(ComposerAttachment attachment)` | One attachment as a visible fenced block whose header names the source and its byte count. |
+
+### `string ReadOnlyScope = "read-only — nothing will be written"`
+
+The lease line's read-only state — Ruling 73's one decoration-line state, in the words the
+specs fix (Addendum C US-C13 as amended; Addendum D's errata after Ruling 73).
+
+**Remarks.** The *value*, without the `Lease:` label: the WPF surface prefixes the label
+(`LeaseLine`); the thread's decoration line (DS-1; CV-1) renders the value as
+its lease segment.
+
+### `bool IsReadOnly(TurnShape shape, IReadOnlyList<string> patterns)`
+
+Ruling 73's access projection: a turn is read-only when it is a Message (whatever it
+mentions — lease ≠ tier, §A9 R0) or a goal block whose source text derives no write scope
+(§A9 R1). Only a goal block with a derived scope is a write.
+
+- **`shape`** — The turn's shape, `TurnShape`.
+- **`patterns`** — `Patterns` over the draft's `SourceText` — the caller derives it from the editor's source text (Ruling 66) so this projection reads what the send will send.
 
 ### `string RenderGoalBlock(GoalBlock block)`
 
@@ -270,6 +292,16 @@ the engine reads use one vocabulary. `fan_out_cap` and `budget` are rendered as 
 they are — declarations — because Ruling 26c holds: Phase 1 validates them and enforces
 neither, and a prompt that reads as though they were enforced would be the first place that
 claim was made.
+
+
+
+
+
+**The subscription-bounded budget renders as its state, not its numerals** (Ruling 72;
+ADR-0033 §3). `SubscriptionBounded` keeps `Validate`
+byte-identical by being a maximal positive value; the render is where that value is read
+back as what it means — a reader of the compiled block sees *bounded by your subscription*,
+never `2147483647` presented as a limit somebody chose.
 
 ### `string RenderAttachment(ComposerAttachment attachment)`
 
@@ -293,6 +325,20 @@ decided.
 *enum* — `ComposerDraft.cs`
 
 The three shapes one composer block can take (R19 bullet 3).
+
+## `TurnShape`
+
+*enum* — `ComposerDraft.cs`
+
+The compiled turn's shape — Ruling 75 and Addendum D §A9's **P**: a goal block exists only
+when Goal and Done when are both non-blank; everything else compiles as a Message.
+
+**Remarks.** **A projection over the draft, never a stored decoration** (ADR-0033). It is distinct from
+`ComposerShape`, which is the *editor's* form: a goal-block form with a blank
+Goal is a Message, and a free-form or template draft is a Message until the compile step reads
+a template's structure (Addendum D's `structure_source: template`, CV-2). The turn's
+*access* — read-only or write — is the second projection, `IsReadOnly`,
+which reads this shape and the derived lease patterns together (Ruling 73).
 
 ## `ComposerAttachment`
 
@@ -326,6 +372,7 @@ written one is overwritten with.
 |---|---|
 | `ComposerShape Shape { get; private set; } = ComposerShape.FreeForm` | The active shape. Free-form is the default, and needs no template anywhere. |
 | `string SourceText` | The editor's own held source text — what the operator typed, and nothing else (Ruling 66). |
+| `TurnShape TurnShape` | The compiled turn's shape (Ruling 75; Addendum D §A9's **P**): a goal block only when the editor is on the goal-block form *and* Goal and Done when are both non-blank. |
 | `string FreeFormText` | The retained free-form text. |
 | `string? TemplateId { get; private set; }` | The template this draft is bound to, when its shape is a template. |
 | `IReadOnlyDictionary<string, string> GoalValues` | The goal-block field values, by wire name. |
@@ -356,6 +403,14 @@ the operator authored, so it is derived from this, never from the compiled promp
 (see the class remarks), but only the *active* shape's content is what the operator is
 currently looking at and editing — a mention left behind in a shape the operator switched away
 from must not silently widen the lane's write scope.
+
+### `TurnShape TurnShape`
+
+The compiled turn's shape (Ruling 75; Addendum D §A9's **P**): a goal block only when the
+editor is on the goal-block form *and* Goal and Done when are both non-blank.
+
+**Remarks.** Blank is whitespace, exactly as `Validate` reads a field — so the
+shape and the validator can never disagree about whether a line was written.
 
 ### `void SwitchTo(ComposerShape shape, string? goalBlockText = null)`
 
@@ -760,10 +815,15 @@ built and refuses rather than returning one that cannot discriminate.
 
 
 
-**Nothing derivable means no lease, and no lease means no run.** The empty case is
-returned as an empty pattern list so the caller constructs `Lease` with it and the
-constructor's own refusal fires. **That exception failing closed is the control**, and
-catching it into a default is how the control is switched off while looking present.
+**Nothing derivable means no lease, and no lease means no write capability**
+(Ruling 73, narrowing the earlier *no lease means no run*). A turn whose source text
+derives nothing runs **read-only** — its lane opened with every write-capable tool
+disallowed, no lease derived and none required — and the send gate decides that shape from
+`Patterns` before ever calling `Derive`. For a write-shaped turn the
+empty case is still returned as an empty pattern list so the caller constructs
+`Lease` with it and the constructor's own refusal fires. **That exception failing
+closed is the control**, and catching it into a default is how the control is switched off
+while looking present.
 
 | Member | Summary |
 |---|---|

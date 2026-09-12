@@ -1917,7 +1917,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Conductor: 6 types, 17 members, 100% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Conductor: 6 types, 18 members, 100% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1930,7 +1930,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "31d74f515e6ba809a0adebb2e294d0cc13e98d05ed7c6909faf07e7b0fa3e2f6"
+      "sourceSha256": "b3a927a45b1c7dee2fb6279c631ffb4affea3685efff9367ed27659c4206638d"
     },
     {
       "id": "api-aide-app-viewmodels",
@@ -1992,7 +1992,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 10 types, 51 members, 89% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 10 types, 52 members, 89% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2005,7 +2005,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "063cf6b17a39e680823bf4ad03f5b9895edbd4ce2600ad48e07989df3fb8c80a"
+      "sourceSha256": "14fb8cc32edd842547e330f71b3991133607c0d53c4f3159f74a91d9994e15fc"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -2030,7 +2030,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "57666f80a09661e4841adc259a56dd16258622e9857db3b96fa6548f9664436e"
+      "sourceSha256": "48aaef86ed379f1b5e455c6038982bf24b5b9641a3872548e9556c504a0e9157"
     },
     {
       "id": "api-aide-core",
@@ -2067,7 +2067,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 57 types, 142 members, 90% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 57 types, 143 members, 90% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2080,7 +2080,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c8b076d0833ebdbf5450cb16fddb83dbc86d79b7e6b51ad066fa14a6bd974c6e"
+      "sourceSha256": "0715ae90de7040d989370389a9e195f2b8a07658d319b9e9e9f382ad1d6266a0"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -2267,7 +2267,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 30 types, 73 members, 86% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 31 types, 78 members, 87% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2280,7 +2280,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "13aa9f499a05c37bac4d93e8d38fb55a2d66dbf3f38b4d0333548b4a92934fb1"
+      "sourceSha256": "bfa1c67b93ec12bfc1c0400ba82e3a38a4f07f8020eea7c6cbc1a719f18b450a"
     },
     {
       "id": "api-aide-core-presentation-sessions",
@@ -2292,7 +2292,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 14 types, 79 members, 98% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 14 types, 84 members, 98% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2305,7 +2305,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d9fc0e91561d4b323f76bb34afbc87d160f734920f9a101e212611c2731a6f45"
+      "sourceSha256": "9c85d9da36cbbddf47b5270022df51c8f875d4c9b245b3d70e70bdcf2ed13d39"
     },
     {
       "id": "api-aide-core-projections",
@@ -2342,7 +2342,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Sessions: 23 types, 65 members, 89% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Sessions: 23 types, 66 members, 89% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2355,7 +2355,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5906674ca753ab8c441e0c428a36646c3cdb47f45cf9b11f78892d14802e6949"
+      "sourceSha256": "52fc790cb23c4a0ffe26f05bd28b9dea548564023c76b1636061384f8515915d"
     },
     {
       "id": "api-aide-core-store",
@@ -5039,7 +5039,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "677336ba1f1b8fff2e7d417ad3ad6678308630d27a45a86cddcd85faa0ee3189"
+      "sourceSha256": "eb392aa7f5b15309836d03bf982cd53380260250580bfdab8cb6dac0dde2147a"
     },
     {
       "id": "note-dc-115-evidence-in-a-lanes-own-checkout",
@@ -5485,6 +5485,52 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "45e6e3b05e8adc435013bf5745ce7f2cbb68c481c7ee8741e4454ed1a207c3e2"
+    },
+    {
+      "id": "note-read-only-lane-runs-in-the-workspace-root",
+      "path": "docs/notes/read-only-lane-runs-in-the-workspace-root.md",
+      "title": "A read-only turn runs in the workspace root, opens no episode and is not scored — Ruling 73's Inferred half decided",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Ruling 73 left one point Inferred — whether a read-only turn runs in the workspace itself or in a throwaway worktree. CV-0 decides: the workspace root, no worktree, no episode, no score. The pin is what makes the tree safe, a throwaway tree is exactly what the operator would have to clean up, the REPL reads the operator's live working state, and a Message has no done-condition to judge.",
+      "tags": [
+        "decision-note",
+        "agent-plane",
+        "acp",
+        "ruling-73",
+        "read-only",
+        "conversation-lane",
+        "cv-0",
+        "security"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0035-compile-session-binding-and-pin",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-read-only-turn",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-lane-pin-ruling-71",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "547599b3a81162c48e18f139d1969e09a99e9810e61d30b9f0b14dd1e0c10957"
     },
     {
       "id": "note-session-design-decoration-line",
@@ -7541,7 +7587,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d44de420d4f02f26985ab8320310c2efcea32b10262daae933dc34a36cc6ba12"
+      "sourceSha256": "ad79ba46b90a355b8092f5599ada91879ae17a01357cf4b4f5b50998cd92ec12"
     },
     {
       "id": "defect-classes",
@@ -7570,7 +7616,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "044e9b9ca965438e730127a554243662d26f004b5e651d9fa590089491a9cb18"
+      "sourceSha256": "cce5c34626fccdba0af363061e40d2c80b20455677e706dde246737601001003"
     },
     {
       "id": "design-session-profiler",
@@ -10637,7 +10683,7 @@ window.DOCS_INDEX = {
       "phase": "conductor-addendum-c",
       "reviewBy": "",
       "reviewSuggested": [],
-      "summary": "The fifth report of \"terminal hosts are not cleaned up\". The population was counted first, twice (06:40Z, 13:39Z), and every host attributed beyond ancestry: 0 product ConPTY hosts alive at either census; 223 of 271 host-like processes are 111 `node.exe higgsfield-mcp/src/server.js` servers and their console hosts under Windows Terminal's own agent (`wta.exe` → `copilot.exe --acp --stdio`), accumulating at ~5/hour since Windows Terminal was restarted yesterday 17:02Z — the same foreign pool the fourth census attributed and left; 15 are Claude Code's own Monitor loops (`until false; do sleep 30; done`) from yesterday evening; 25 `unknown` are Windows Terminal's own tabs, Ollama's launcher, the compiler server's console and those loops. The four exit/containment paths were measured, not reasoned: App window close, owner exit without dispose, owner killed, and tab-close dispose all leave 0 hosts. One in-life path is red: a session whose child exits keeps its `conhost.exe --headless` alive for the App's lifetime (`WatchForExitAsync` completes the session and closes nothing) — one client-less host per ended pane, invisible to a census that labels everything under a live App `ours-live`. Two instrumentation gaps pinned red: no `terminal.stop` activity or log line exists, and the census cannot name a dead-parent host from our runtime. Red tests and self-test rows committed; no fix made.",
+      "summary": "The fifth report of \"terminal hosts are not cleaned up\". The population was counted first, twice (06:40Z, 13:39Z), and every host attributed beyond ancestry: 0 product ConPTY hosts alive at either census; 223 of 271 host-like processes are 111 `node.exe higgsfield-mcp/src/server.js` servers and their console hosts under Windows Terminal's own agent (`wta.exe` → `copilot.exe --acp --stdio`), accumulating at ~5/hour since Windows Terminal was restarted yesterday 17:02Z — the same foreign pool the fourth census attributed and left; 15 are Claude Code's own Monitor loops (`until false; do sleep 30; done`) from yesterday evening; 25 `unknown` are Windows Terminal's own tabs, Ollama's launcher, the compiler server's console and those loops. The four exit/containment paths were measured, not reasoned: App window close, owner exit without dispose, owner killed, and tab-close dispose all leave 0 hosts. One in-life path is red: a session whose child exits keeps its `conhost.exe --headless` alive for the App's lifetime (`WatchForExitAsync` completes the session and closes nothing) — one client-less host per ended pane, invisible to a census that labels everything under a live App `ours-live`. Two instrumentation gaps pinned red: no `terminal.stop` activity or log line exists, and the census cannot name a dead-parent host from our runtime. Red tests and self-test rows committed; no fix made. CORRECTED the same day (slice 0): the 223 are ours by cause and foreign only by parent — a ConPTY shell of ours inheriting WT_SESSION from the Windows Terminal tab the harness runs in makes Windows Terminal's agent host attach an agent session (its MCP servers) to it; measured 4/4 → 0/4 with WT_* stripped.",
       "tags": [
         "terminal",
         "conpty",
@@ -10651,8 +10697,8 @@ window.DOCS_INDEX = {
         "dc-131",
         "dc-123",
         "dc-117",
-        "dc-154",
         "dc-155",
+        "dc-156",
         "windows-terminal",
         "copilot",
         "mcp"
@@ -10688,7 +10734,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "715f090bc78527997e1cb9b03c62ba9bc6d50d93e621d5f9808823b984bdfa5e"
+      "sourceSha256": "94f2cff5dc46df9ca3e47d5eee1e3d054bc13737890210eb72186d9c38b59528"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -14358,6 +14404,75 @@ window.DOCS_INDEX = {
       "sourceSha256": "6c5c67e487b6bb2c9497ce5e10e0191a7c68dc102d699ffb26af00ece93516c1"
     },
     {
+      "id": "proof-read-only-turn",
+      "path": "docs/proof/read-only-turn.md",
+      "title": "Proof Pack — CV-0, the read-only turn: a Message or scopeless goal block runs with every write-capable tool disallowed and no lease (Ruling 73)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Evidence for Ruling 73 on the Conversation lane's first slice: the turn's shape is one projection over the draft (Message | Goal-block; read-only | write), a Message or a scopeless goal block builds a request with no lease and no refusal, the host opens that lane in the workspace root with a thirty-name disallowed set read from the SDK's schema union and the shipped CLI's own tool table and asserted as a set equality on the outgoing session/new frame, the permission chooser allows only reads on a lane with no lease, the tree is measured against its own baseline after the turn, the write-shaped path is unchanged, one send is one root either way, Ruling 75's one refusal sentence and Ruling 72's subscription-bounded render are in place, and the New Session sheet creates on defaults with zero required inputs. The wire observation is the operator's attended run (RUN-PENDING, steps below).",
+      "tags": [
+        "proof-pack",
+        "conversation-lane",
+        "cv-0",
+        "ruling-73",
+        "ruling-75",
+        "ruling-72",
+        "agent-plane",
+        "acp",
+        "composer",
+        "security",
+        "read-only"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-lane-pin-ruling-71",
+          "rel": "refines"
+        },
+        {
+          "to": "note-read-only-lane-runs-in-the-workspace-root",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-lane-pin-spike",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0033-prompt-compilation-bounded-context",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0035-compile-session-binding-and-pin",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6d8859bbc9cc1635e9b7aa19807ae8cb3c0ff07354368f08de9465546d2a1845"
+    },
+    {
       "id": "proof-s2-settings-and-sentinels",
       "path": "docs/proof/s2-settings-and-sentinels.md",
       "title": "Proof Pack — S2: the settings and sentinels commit",
@@ -14477,14 +14592,14 @@ window.DOCS_INDEX = {
     {
       "id": "proof-terminal-hosts-fifth",
       "path": "docs/proof/terminal-hosts-fifth.md",
-      "title": "Proof Pack - Terminal hosts, the fifth report: INV-0010 slices 1-4",
+      "title": "Proof Pack - Terminal hosts, the fifth report: INV-0010 slices 0-4",
       "type": "proof-pack",
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "conductor-addendum-c",
       "reviewBy": "2027-03-12",
       "reviewSuggested": [],
-      "summary": "Evidence for INV-0010's four repair slices: `terminal.stop` on every end-of-life path (runtime activity + workbench line, paired by id with `terminal.start`) and the ledger's completions so `starts − stops` is the number of held hosts; the census attributes an orphaned product host (`ours-orphaned`, by the runtime's own signature), files Windows Terminal and Ollama by executable path, and ends with an ACTION line for the largest foreign root (DC-155); the pty and the job are released when a pane's shell exits (DC-154, measured 1 → 0 with the owner alive); and the five exit paths are read by name in the Windows CI job by a gate with its own self-test. Every red was observed on the un-fixed code before it went green.",
+      "summary": "Evidence for INV-0010's repair slices. Slice 0 (the correction): the \"foreign\" pool was ours by cause — our ConPTY shells inherited WT_SESSION and Windows Terminal's agent attached one MCP server per shell; the runtime now strips WT_* from every ConPTY child (measured 4/4 → 0/4). Then the four: `terminal.stop` on every end-of-life path (runtime activity + workbench line, paired by id with `terminal.start`) and the ledger's completions so `starts − stops` is the number of held hosts; the census attributes an orphaned product host (`ours-orphaned`, by the runtime's own signature), files Windows Terminal and Ollama by executable path, and ends with an ACTION line for the largest foreign root (DC-156); the pty and the job are released when a pane's shell exits (DC-155, measured 1 → 0 with the owner alive); and the five exit paths are read by name in the Windows CI job by a gate with its own self-test. Every red was observed on the un-fixed code before it went green.",
       "tags": [
         "terminal",
         "conpty",
@@ -14495,9 +14610,9 @@ window.DOCS_INDEX = {
         "terminal-stop",
         "ledger",
         "dc-131",
-        "dc-154",
         "dc-155",
         "dc-156",
+        "dc-157",
         "proof-pack",
         "inv-0010"
       ],
@@ -14520,7 +14635,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fa073be02615efb448f9dfc06f51ba975d64dac611d215f5daf1cc4c7e7a3d14"
+      "sourceSha256": "7cf15b6a7b778685bc50df403516bd20b5487270b00a2a54481aa304fa753a61"
     },
     {
       "id": "proof-watcher-advisory-evaluator",
@@ -16439,5 +16554,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d36759fa612f900df0967e3c9f770ff2a9e85f0d5abb08a014ad9c5c82bb2185"
+  "graphSha256": "0c88daa7d4c8e5615e7fa9f65d922fa0703df5de8e43e1e83c1b089cad6cf7a4"
 };

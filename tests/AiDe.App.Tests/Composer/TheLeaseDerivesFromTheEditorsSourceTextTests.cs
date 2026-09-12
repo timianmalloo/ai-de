@@ -26,14 +26,20 @@ namespace AiDe.App.Tests.Composer;
 /// The goal-block heading case and the goal-field control were already green — headings carry no
 /// <c>@</c>, and a goal field's own text was always part of the compiled text — so they are controls,
 /// not regressions, and prove the fix does not over-narrow.</para>
+///
+/// <para><b>Re-homed on the write shape after Ruling 73</b> (CV-0): only a goal block with a derived
+/// scope derives a lease at all — a free-form or template draft is a Message and runs read-only
+/// with no lease (<c>TheReadOnlyTurnNeedsNoLeaseTests</c>). The source-of-derivation control is
+/// therefore proven where a lease exists: the editor's mention sits in a goal-block field, the
+/// mention nobody typed sits in an attachment body beside it.</para>
 /// </remarks>
 public sealed class TheLeaseDerivesFromTheEditorsSourceTextTests
 {
     [Fact]
     public void AnAttachmentBodyMentionDerivesNoPatternButTheEditorTextStillDoes()
     {
-        var draft = new ComposerDraft();
-        draft.SetFreeFormText("Fix the bug in @src/AiDe.App/Foo.cs\n");
+        var draft = CompleteGoalBlockWithNoMentions();
+        draft.SetGoalValue(GoalBlockFields.GoalKey, "Fix the bug in @src/AiDe.App/Foo.cs");
         draft.Add(new ComposerAttachment(
             DisplayPath: "notes.md",
             ResolvedPath: "C:/repo/notes.md",
@@ -48,7 +54,7 @@ public sealed class TheLeaseDerivesFromTheEditorsSourceTextTests
         Assert.NotNull(request);
 
         // What the operator typed is still there...
-        Assert.Contains("src/AiDe.App/Foo.cs", request!.Lease.Exclusive);
+        Assert.Contains("src/AiDe.App/Foo.cs", request!.Lease!.Exclusive);
 
         // ...but the attachment's own body names a file the operator never referenced, and it must
         // never widen the lane's write scope, however it read before this fix.
@@ -56,8 +62,12 @@ public sealed class TheLeaseDerivesFromTheEditorsSourceTextTests
         Assert.Equal(["src/AiDe.App/Foo.cs"], request.Lease.Exclusive);
     }
 
+    /// <summary>
+    /// A template draft is a Message until the compile step reads its structure (CV-2): it runs
+    /// read-only, so a mention in its fixed prose can widen nothing — there is no lease to widen.
+    /// </summary>
     [Fact]
-    public void ATemplateBodyMentionDerivesNoPatternButAFieldValueStillDoes()
+    public void ATemplateBodyMentionCannotWidenALeaseBecauseATemplateSendsReadOnly()
     {
         var template = new PromptTemplate(
             Id: "t1",
@@ -79,14 +89,9 @@ public sealed class TheLeaseDerivesFromTheEditorsSourceTextTests
 
         Assert.Null(refusal);
         Assert.NotNull(request);
-
-        // The field value the operator typed is still there...
-        Assert.Contains("src/AiDe.App/Foo.cs", request!.Lease.Exclusive);
-
-        // ...but the template's own fixed prose is not something the operator wrote, and it must
-        // never widen the lane's write scope, however it read before this fix.
-        Assert.DoesNotContain("docs/plan.md", request.Lease.Exclusive);
-        Assert.Equal(["src/AiDe.App/Foo.cs"], request.Lease.Exclusive);
+        Assert.True(request!.IsReadOnly);
+        Assert.Null(request.Lease);
+        Assert.Contains("docs/plan.md", request.Prompt, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -95,11 +100,13 @@ public sealed class TheLeaseDerivesFromTheEditorsSourceTextTests
         var draft = CompleteGoalBlockWithNoMentions();
 
         // Nothing names a path anywhere in the six fields, so — despite the compiled text carrying
-        // six literal "## <name>" headings — nothing is derivable, and the send refuses closed rather
-        // than deriving a pattern from the rendered structure itself.
-        var error = Assert.Throws<ArgumentException>(
-            () => new ComposerSendGate().Send(Context(), draft, null, out _));
-        Assert.Contains("not a lease", error.Message, StringComparison.Ordinal);
+        // six literal "## <name>" headings — nothing is derivable, and the turn runs read-only
+        // (Ruling 73) rather than deriving a pattern from the rendered structure itself.
+        var request = new ComposerSendGate().Send(Context(), draft, null, out var refusal);
+
+        Assert.Null(refusal);
+        Assert.True(request!.IsReadOnly);
+        Assert.Null(request.Lease);
     }
 
     [Fact]
@@ -111,7 +118,7 @@ public sealed class TheLeaseDerivesFromTheEditorsSourceTextTests
         var request = new ComposerSendGate().Send(Context(), draft, null, out var refusal);
 
         Assert.Null(refusal);
-        Assert.Equal(["src/Payments/Money.cs"], request!.Lease.Exclusive);
+        Assert.Equal(["src/Payments/Money.cs"], request!.Lease!.Exclusive);
     }
 
     private static ComposerDraft CompleteGoalBlockWithNoMentions()
@@ -142,9 +149,17 @@ public sealed class TheLeaseDerivesFromTheEditorsSourceTextTests
             surface.Configure(
                 new SessionConfig("s-0066", "first", "w-1", DateTimeOffset.UnixEpoch, ["claude-code"]),
                 Context(),
-                ComposerFields.FreeForm(),
+                ComposerFields.GoalBlock(),
                 new AttachmentGate(
                     @"C:\repo", new AttachmentFileReader(), new NeverAsked(), "Anthropic (Claude Code)", "max-personal"));
+
+            // A write-shaped turn (Ruling 73): a complete goal block, its mention in the goal field.
+            surface.Draft.SwitchTo(ComposerShape.GoalBlock);
+            surface.Draft.SetGoalValue(GoalBlockFields.DoneWhenKey, "It compiles.");
+            surface.Draft.SetGoalValue(GoalBlockFields.NotInScopeKey, "Nothing else.");
+            surface.Draft.SetGoalValue(GoalBlockFields.TierKey, "T1");
+            surface.Draft.SetGoalValue(GoalBlockFields.FanOutCapKey, "0");
+            surface.Draft.SetGoalValue(GoalBlockFields.BudgetKey, "10,1000");
 
             // An attachment, added directly (no file system involved) so its mention is on the draft
             // exactly as an affirmed attach would leave it.
@@ -156,7 +171,7 @@ public sealed class TheLeaseDerivesFromTheEditorsSourceTextTests
                 IsOutsideWorkspace: false,
                 Sha256: "deadbeef"));
 
-            // A keystroke into the free-form field — the display path's normal trigger.
+            // A keystroke into the goal field — the display path's normal trigger.
             surface.SetFieldText(surface.Fields[0].Id, 1, "Fix the bug in @src/AiDe.App/Foo.cs");
 
             // ONLY THE LEASE LINE, not the whole rendered tree: the compiled-view TextBox is expected
@@ -168,7 +183,7 @@ public sealed class TheLeaseDerivesFromTheEditorsSourceTextTests
             var request = surface.Send();
 
             Assert.NotNull(request);
-            Assert.Equal(["src/AiDe.App/Foo.cs"], request!.Lease.Exclusive);
+            Assert.Equal(["src/AiDe.App/Foo.cs"], request!.Lease!.Exclusive);
 
             // THE SAME PATTERNS THE DISPLAY SHOWED, not merely a non-conflicting set: the whole point
             // of the shared symbol is that the two can never quietly drift apart.
@@ -223,9 +238,16 @@ public sealed class TheLeaseDerivesFromTheEditorsSourceTextTests
             }
         }
 
-        // NAMED, not counted (as C16's guard above): today's two call sites, by file and argument.
+        // NAMED, not counted (as C16's guard above): today's three call sites, by file and argument
+        // — the send gate reads the source text twice, once for the shape (`Patterns`, Ruling 73) and
+        // once for the write-shaped lease (`Derive`), and the display site once.
         Assert.Equal(
-            new[] { ("ComposerSendGate.cs", "draft.SourceText"), ("ComposerSurface.cs", "_draft.SourceText") }
+            new[]
+            {
+                ("ComposerSendGate.cs", "draft.SourceText"),
+                ("ComposerSendGate.cs", "draft.SourceText"),
+                ("ComposerSurface.cs", "_draft.SourceText"),
+            }
                 .OrderBy(s => s.Item1, StringComparer.Ordinal),
             sites.OrderBy(s => s.File, StringComparer.Ordinal).Select(s => (s.File, s.Argument)));
 

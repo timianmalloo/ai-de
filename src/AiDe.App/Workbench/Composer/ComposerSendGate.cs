@@ -109,14 +109,22 @@ public sealed class ComposerSendGate
     /// <summary>
     /// Builds the run request from the rendered view, or refuses and says which field.
     /// </summary>
+    /// <remarks>
+    /// <b>The shape decides the gate, and the shape is one projection</b> (Rulings 73, 75):
+    /// <see cref="ComposerDraft.TurnShape"/> with <see cref="ComposerCompiler.IsReadOnly"/> over the
+    /// source text's patterns (Ruling 66). A Message or a scopeless goal block builds a read-only
+    /// request — no lease derived, none required; only a scoped goal block takes the lease gate
+    /// (Ruling 42, C17), unchanged. The one content-gap refusal is
+    /// <see cref="ComposerCompiler.GoalBlockNeedsNotInScope"/>.
+    /// </remarks>
     /// <param name="context">Host-side sources. Nothing here comes from a page message.</param>
     /// <param name="draft">The draft, for its field values and its shape.</param>
     /// <param name="template">The bound template, for a template draft.</param>
     /// <param name="refusal">Why not, when the result is null.</param>
-    /// <exception cref="ArgumentException">
-    /// Nothing was derivable as a lease, so <see cref="Lease"/> refused to be constructed.
-    /// <b>Deliberately not caught here.</b> A lane with no declared write scope has no seam monitor,
-    /// and catching this into a default lease is a disabled control wearing a shortcut's clothes.
+    /// <exception cref="InvalidOperationException">
+    /// The derived lease of a write-shaped turn covers everything — unreachable by
+    /// <see cref="LeaseDerivation"/>'s own rules and checked anyway. <b>Deliberately not caught
+    /// here.</b> Catching it into a default lease is a disabled control wearing a shortcut's clothes.
     /// </exception>
     public GovernedRunRequest? Send(
         ComposerSendContext context,
@@ -137,10 +145,16 @@ public sealed class ComposerSendGate
                 return null;
             }
 
-            var errors = ComposerFormEngine.Validate(draft, template);
+            var shape = draft.TurnShape;
+
+            var errors = Validate(draft, template, shape);
             if (errors.Count > 0)
             {
-                refusal = new ComposerSendRefusal(errors, "the block has fields that must be filled in");
+                refusal = new ComposerSendRefusal(
+                    errors,
+                    errors.Any(e => e.Field == GoalBlockFields.NotInScopeKey)
+                        ? ComposerCompiler.GoalBlockNeedsNotInScope
+                        : "the block has fields that must be filled in");
                 return null;
             }
 
@@ -150,7 +164,10 @@ public sealed class ComposerSendGate
             var compiled = RenderedView ?? ComposerCompiler.Compile(draft, template);
             RenderedView = compiled;
 
-            if (string.IsNullOrWhiteSpace(compiled.Text))
+            // A goal-block form with no CONTENT line written (Goal, Done when, Not in scope) renders
+            // headings and, at most, a tier or a number; that is an empty prompt, not a Message.
+            if (string.IsNullOrWhiteSpace(compiled.Text)
+                || (draft.Shape == ComposerShape.GoalBlock && !HasContent(draft)))
             {
                 refusal = new ComposerSendRefusal([], "an empty prompt is not a task");
                 return null;
@@ -165,6 +182,10 @@ public sealed class ComposerSendGate
                 return null;
             }
 
+            // THE SHAPE, FROM THE SAME TWO INPUTS THE LEASE LINE SHOWED (Ruling 73; Ruling 66
+            // condition (2)): the turn's shape and the patterns derived from the editor's source text.
+            var readOnly = ComposerCompiler.IsReadOnly(shape, LeaseDerivation.Patterns(draft.SourceText));
+
             request = new GovernedRunRequest(
                 RepositoryRoot: context.RepositoryRoot,
                 DataDirectory: context.DataDirectory,
@@ -173,13 +194,15 @@ public sealed class ComposerSendGate
                 Model: context.Model,
                 AccountLabel: context.AccountLabel,
                 TaskClass: context.TaskClass,
-                Goal: draft.ToGoalBlock(),
 
-                // THE DRAFT'S OWN SOURCE TEXT, NOT THE COMPILED PROMPT (Ruling 66). `compiled.Text`
-                // additionally carries every attachment's file content and, for a template draft, the
-                // template's own fixed prose — neither of which the operator typed, and either of
-                // which would otherwise widen the lane's write scope with a mention nobody wrote.
-                Lease: LeaseDerivation.Derive(draft.SourceText),
+                // A Message carries no goal block (Ruling 75).
+                Goal: shape == TurnShape.GoalBlock ? draft.ToGoalBlock() : null,
+
+                // NO LEASE FOR A READ-ONLY TURN (Ruling 73) — the host reads the absence and pins the
+                // lane. For a write-shaped turn: THE DRAFT'S OWN SOURCE TEXT, NOT THE COMPILED PROMPT
+                // (Ruling 66) — `compiled.Text` also carries attachment bodies and template prose the
+                // operator never typed, either of which would widen the lane's write scope.
+                Lease: readOnly ? null : LeaseDerivation.Derive(draft.SourceText),
                 Prompt: compiled.Text,
                 ProofPackArtifacts: context.ProofPackArtifacts,
                 Providers: context.Providers,
@@ -193,6 +216,33 @@ public sealed class ComposerSendGate
         Sent?.Invoke(request);
         return request;
     }
+
+    /// <summary>
+    /// Every field-level reason this draft cannot be sent, for the shape it compiles to: a Message
+    /// is not validated as a goal block (Ruling 75 — the blanks that make it a Message would be the
+    /// refusals); a template's own required fields hold; a goal block gets the contract's errors
+    /// (Ruling 26b) with the not-in-scope gap re-worded to Ruling 75's sentence on the field.
+    /// </summary>
+    private static IReadOnlyList<ComposerFieldError> Validate(ComposerDraft draft, PromptTemplate? template, TurnShape shape)
+    {
+        if (shape == TurnShape.Message)
+        {
+            return draft.Shape == ComposerShape.Template ? ComposerFormEngine.Validate(draft, template) : [];
+        }
+
+        return
+        [
+            .. ComposerFormEngine.Validate(draft, template)
+                .Select(error => error.Field == GoalBlockFields.NotInScopeKey
+                    ? new ComposerFieldError(error.Field, ComposerCompiler.GoalBlockNeedsNotInScope)
+                    : error),
+        ];
+    }
+
+    /// <summary>Whether a goal-block form has a content line written — Goal, Done when or Not in scope.</summary>
+    private static bool HasContent(ComposerDraft draft) =>
+        new[] { GoalBlockFields.GoalKey, GoalBlockFields.DoneWhenKey, GoalBlockFields.NotInScopeKey }
+            .Any(field => draft.GoalValues.TryGetValue(field, out var value) && !string.IsNullOrWhiteSpace(value));
 }
 
 /// <summary>

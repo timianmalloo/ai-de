@@ -17,8 +17,15 @@ namespace AiDe.App.Conductor;
 /// <param name="Model">The model the lane runs on — a standings cohort axis.</param>
 /// <param name="AccountLabel">The configured account label the work bills against.</param>
 /// <param name="TaskClass">The kind of work. Required: a defaulted class ranks in the wrong cohort.</param>
-/// <param name="Goal">The goal block. No block, no spawn (R2).</param>
-/// <param name="Lease">The lane's exclusive write scope. An edit outside it raises a seam.</param>
+/// <param name="Goal">
+/// The goal block. Required for a write-shaped turn — no block, no spawn (R2); <c>null</c> for a
+/// Message, which carries none (Ruling 75) and runs read-only.
+/// </param>
+/// <param name="Lease">
+/// The lane's exclusive write scope, or <c>null</c> for a <b>read-only turn</b> (Ruling 73) — the
+/// one fact that carries the turn's shape, see <see cref="IsReadOnly"/>. Present, an edit outside
+/// it raises a seam.
+/// </param>
 /// <param name="Prompt">The task, as the engine receives it.</param>
 /// <param name="ProofPackArtifacts">
 /// Repository-relative evidence paths the episode declares at close. Declared, never verified here —
@@ -35,21 +42,36 @@ public sealed record GovernedRunRequest(
     string Model,
     string AccountLabel,
     string TaskClass,
-    GoalBlock Goal,
-    Lease Lease,
+    GoalBlock? Goal,
+    Lease? Lease,
     string Prompt,
     IReadOnlyList<string> ProofPackArtifacts,
     IReadOnlyList<ProviderRow> Providers,
     string CoordCommand = "coord",
-    TimeSpan? PromptTimeout = null);
+    TimeSpan? PromptTimeout = null)
+{
+    /// <summary>
+    /// Whether this turn writes nothing — Ruling 73's read-only turn: a Message, or a goal block
+    /// whose source text named no write scope.
+    /// </summary>
+    /// <remarks>
+    /// Derived from the lease's absence, never stored beside it (DM7): the same fact picks the
+    /// lane's pin, the spawn's shape and the absent seam monitor, so none can disagree. A lease with
+    /// no goal block is not a third shape — the host refuses it by R2 before any engine starts.
+    /// </remarks>
+    public bool IsReadOnly => Lease is null;
+}
 
 /// <summary>What the governed run did, in the terms its exit evidence is written from.</summary>
 /// <param name="RunId">The plane's id for this run.</param>
 /// <param name="SessionId">The watcher session the lane registered as.</param>
 /// <param name="EpisodeId">The episode the goal block opened.</param>
-/// <param name="WorktreePath">The provisioned tree the ACP session was rooted in.</param>
-/// <param name="WorktreeBranch">Its namespaced branch.</param>
-/// <param name="CoordInstalled">Whether <c>coord install</c> succeeded inside the tree.</param>
+/// <param name="WorktreePath">
+/// The tree the ACP session was rooted in: the provisioned worktree for a write-shaped turn, the
+/// repository root itself for a read-only one (Ruling 73 — no worktree is cut).
+/// </param>
+/// <param name="WorktreeBranch">Its namespaced branch; "not recorded" for a read-only turn, which cuts none.</param>
+/// <param name="CoordInstalled">Whether <c>coord install</c> succeeded inside the tree. Always false for a read-only turn.</param>
 /// <param name="ObservedAuthKind">The adapter's own auth kind, or "not recorded".</param>
 /// <param name="ObservedAuthLabel">The adapter's display label, or "not recorded".</param>
 /// <param name="ObservedAuthPlan">The adapter's plan string, or "not recorded".</param>
@@ -63,11 +85,11 @@ public sealed record GovernedRunRequest(
 /// <param name="LatencyP50Ms">p50, or null for "not recorded" — never 0.</param>
 /// <param name="LatencyP95Ms">p95, or null for "not recorded" — never 0.</param>
 /// <param name="LatencyHost">The machine the latency was measured on. A number with no host is not a measurement.</param>
-/// <param name="SeamsRaised">Edits outside the lease.</param>
+/// <param name="SeamsRaised">Edits outside the lease. A read-only turn has no lease and no monitor: 0.</param>
 /// <param name="SeamResolutionRatio">Resolved over raised; 1.0 when none were raised.</param>
-/// <param name="Outcome">What the episode closed with, after any seam override.</param>
+/// <param name="Outcome">What the episode closed with, after any seam override — for a read-only turn, how the prompt ended.</param>
 /// <param name="WorktreeDisposition">What happened to the tree, and why.</param>
-/// <param name="Scored">Whether a scorecard exists for the episode.</param>
+/// <param name="Scored">Whether a scorecard exists for the episode. A read-only turn opens no episode and is never scored.</param>
 /// <param name="ScoreVerdict">The scorer's verdict.</param>
 /// <param name="ScoreHeadline">Its headline.</param>
 /// <param name="TaskClass">The STORED task class — read back, never echoed from the call.</param>
@@ -78,6 +100,11 @@ public sealed record GovernedRunRequest(
 /// <param name="EngineExited">Whether it was really gone at the end.</param>
 /// <param name="EnvironmentFindings">What the environment probe reported. Empty means healthy.</param>
 /// <param name="Diagnostics">Everything that was not protocol.</param>
+/// <param name="ReadOnlyTreeDelta">
+/// A read-only turn's tree check (Ruling 73 condition (2)): how many <c>git status</c> lines differ
+/// between the tree before and after the turn — 0 is the expected reading; <c>null</c> for a
+/// write-shaped turn (its worktree is inspected instead) or when git did not answer.
+/// </param>
 public sealed record GovernedRunResult(
     string RunId,
     string SessionId,
@@ -112,4 +139,5 @@ public sealed record GovernedRunResult(
     int EngineProcessId,
     bool EngineExited,
     IReadOnlyList<string> EnvironmentFindings,
-    IReadOnlyList<string> Diagnostics);
+    IReadOnlyList<string> Diagnostics,
+    int? ReadOnlyTreeDelta = null);

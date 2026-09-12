@@ -94,3 +94,10 @@ hold the two ids after `main`'s DC-147 (INV-0009's classes), so a branch-allocat
 ### DC-152 — see `docs/lessons/defect-classes.md` (allocated at the S2/DS-1 join, 2026-09-12)
 
 ### DC-153 — see `docs/lessons/defect-classes.md` (allocated at the S2/DS-1 join, 2026-09-12)
+
+## 5. What this note does not decide
+
+The CLI home for `aide compile fold` / `aide session purge` (`/design-slice`'s call; the plan
+reserves `src/AiDe.App/Cli/**`); the exact write-tool set for the read-only lane (CV-0 reads it from
+the SDK's tool list); whether a read-only turn runs in the workspace or a throwaway tree (Ruling 73
+leaves it to the architecture; CV-0's constraint is that it cuts nothing the operator must clean up).

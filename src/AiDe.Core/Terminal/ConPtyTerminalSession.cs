@@ -555,7 +555,7 @@ public sealed class ConPtyTerminalSession : ITerminalSession
                 {
                     Complete(new SessionExit(code, Killed: false, DateTimeOffset.UtcNow));
 
-                    // RELEASED WITH THE CHILD, NOT WITH THE OWNER (DC-154). The pseudo console
+                    // RELEASED WITH THE CHILD, NOT WITH THE OWNER (DC-155). The pseudo console
                     // and the job were acquired for this process; its exit made both dead weight,
                     // and until INV-0010 nothing revisited them — one client-less
                     // `conhost.exe --headless` per ended pane for the App's lifetime, measured

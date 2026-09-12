@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T14:56:47Z",
+  "generated": "2026-09-12T15:22:01Z",
   "audit": [
     {
       "actor": null,
@@ -13483,15 +13483,6 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2AZFT741CYQ5H04HMSH9DTJ",
-      "shortname": "investigate-terminal-hosts-5",
-      "datetime": "2026-09-12T14:14:07Z",
-      "session": "stragglers-5",
-      "prompt": "You are the investigation node for the operator's report — the fifth time this population has been reported: \"I am still seeing terminal hosts that are not being cleaned up. /investigate AGAIN.\" Run the /investigate skill (args: Terminal hosts are still not cleaned up — the fifth report; the previous four fixed mechanisms; this one must find why the controls do not hold and what the operator is actually seeing). The conductor is Claude Opus (session conductor-addendum-c). DC-131 is the standing lesson for this exact defect: a defect reported as a POPULATION is closed by fixing a MECHANISM, and the population is never counted. Count first. Attribute every host. Then the mechanism. Worktree C:\\Projects\\ai-de-investigate-terminal-hosts-5, branch investigate/terminal-hosts-5. Never reap anything. Never taskkill anything. Never git worktree prune, git clean, git stash. Produce: (1) the census attributed beyond ancestry, every unknown host classified ours-orphaned / harness / foreign with the rule, and ask the operator what they are looking at; (2) the controls that did not hold, named: (a) terminal.stop does not exist — add it red first; (b) the census cannot see an orphan — extend classification with a creation-time + command-line + ConPTY-signature rule, self-test rows red first; (c) the App's and the probes' exit paths — measure red-first whether closing the App leaves ConPTY hosts alive 5 s later; (d) job-object coverage table; (3) the class generalised, the sweep, a repair plan in one-node T1 slices — stop before the fixes; (4) docs/investigations/INV-<next>.md with frontmatter and typed links, docs-graph derive, audit entry, regenerate-derived, gates, commit with attribution, push -u origin investigate/terminal-hosts-5. Do not merge to main.",
-      "summary": "INV-0010, the fifth report of \"terminal hosts are not cleaned up\". Counted first (DC-131): two censuses (06:40Z, 13:39Z), every `unknown` attributed by creation time + command line + parent-at-creation + the ConPTY signature. Result: 0 product ConPTY hosts alive at either census (and in 9 samples 14:03-14:04Z); 223 of 271 are 111 `node.exe higgsfield-mcp/src/server.js` + 111 conhost under Windows Terminal's own agent (`wta.exe` -> `copilot.exe --acp --stdio`, created 17:02:02Z 09-11), the SAME foreign pool the 4th census attributed (256 then), reset by a WT restart and regrown at ~5/h from the operator's global ~/.copilot/mcp-config.json; 15 are Claude Code Monitor loops (`until false; do sleep 30; done`, 20:57-21:26Z 09-11, still running); the 25 `unknown` = WT's own 7 (name-vs-path miss on IntelligentTerminal), Ollama's cmd wrapper + conhost, VBCSCompiler's conhost, and the loops. Operator question asked in the report (which view, which names, how many, under which app). Exit paths MEASURED with the key shown to see >=1 first: App window close on the real binary (ShellExecute launch, shell alive beside host) 1->0 at +5s; owner exit without dispose 1->0; owner killed (TerminateProcess) 1->0; tab-close DisposeAsync 1->0 at +3s with owner alive. ONE path RED: a session whose child exits keeps its `conhost.exe --headless` alive for the App's lifetime (WatchForExitAsync -> Complete closes nothing) 1->1 at +3s -- DC-154. Instrumentation gap red: no terminal.stop activity or log line (TerminalStopEventTests x2, TerminalSurfaceStopLineTests). Attribution gap red: reap-stragglers.py --self-test rows 5d/5e (`got 'unknown', wanted 'ours-orphaned'` x2). Job-object table: shell in KILL_ON_JOB_CLOSE job, the pty host outside it and following the pty handle; AcpEngineProcess and TerminalHostLauncher contained; daemon detached by design. Class: DC-155 (a symptom owned by someone else is closed by attribution, not by an outcome) + DC-154; DC-131 recurrence 4. Plan: 5 one-node T1 slices -- instrumentation, attribution, the held host, exit paths as a gate, the operator's foreign share. Side finding: launching the App with inherited handles from a null-stdin console kills its terminal shell at once (the TerminalGuiHostTests finding). Nothing reaped or killed; no fix made; stopped at the report.",
-      "kind": "skill",
-      "skill": "investigate",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/investigations/INV-0010-terminal-hosts-the-fifth-report.md",
@@ -13503,6 +13494,32 @@ window.AUDIT_DATA = {
         "tools/reap-stragglers.py",
         "docs/lessons/defect-classes.md"
       ],
+      "datetime": "2026-09-12T14:14:07Z",
+      "done_when": "Attributed census per class with rules; operator question; four controls' findings (a-d) with the exit paths measured; class + sweep + T1 plan; INV-0010 committed and pushed to investigate/terminal-hosts-5, not merged",
+      "duration_seconds": 2117.0,
+      "fan_out": 3,
+      "git": {
+        "branch": "investigate/terminal-hosts-5",
+        "pushed": null,
+        "sha": "8d54aadc0016c343f08f752d6d9927059c8e0718",
+        "short": "8d54aadc0"
+      },
+      "goal": "Find why four terminal-host fixes do not hold and what the operator is seeing: count and attribute the population first, then measure the exit paths, then name the mechanism",
+      "id": "al-01M2AZFT741CYQ5H04HMSH9DTJ",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "You are the investigation node for the operator's report — the fifth time this population has been reported: \"I am still seeing terminal hosts that are not being cleaned up. /investigate AGAIN.\" Run the /investigate skill (args: Terminal hosts are still not cleaned up — the fifth report; the previous four fixed mechanisms; this one must find why the controls do not hold and what the operator is actually seeing). The conductor is Claude Opus (session conductor-addendum-c). DC-131 is the standing lesson for this exact defect: a defect reported as a POPULATION is closed by fixing a MECHANISM, and the population is never counted. Count first. Attribute every host. Then the mechanism. Worktree C:\\Projects\\ai-de-investigate-terminal-hosts-5, branch investigate/terminal-hosts-5. Never reap anything. Never taskkill anything. Never git worktree prune, git clean, git stash. Produce: (1) the census attributed beyond ancestry, every unknown host classified ours-orphaned / harness / foreign with the rule, and ask the operator what they are looking at; (2) the controls that did not hold, named: (a) terminal.stop does not exist — add it red first; (b) the census cannot see an orphan — extend classification with a creation-time + command-line + ConPTY-signature rule, self-test rows red first; (c) the App's and the probes' exit paths — measure red-first whether closing the App leaves ConPTY hosts alive 5 s later; (d) job-object coverage table; (3) the class generalised, the sweep, a repair plan in one-node T1 slices — stop before the fixes; (4) docs/investigations/INV-<next>.md with frontmatter and typed links, docs-graph derive, audit entry, regenerate-derived, gates, commit with attribution, push -u origin investigate/terminal-hosts-5. Do not merge to main.",
+      "session": "stragglers-5",
+      "shortname": "investigate-terminal-hosts-5",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "investigate",
+      "started_at": "2026-09-12T13:38:50Z",
+      "summary": "INV-0010, the fifth report of \"terminal hosts are not cleaned up\". Counted first (DC-131): two censuses (06:40Z, 13:39Z), every `unknown` attributed by creation time + command line + parent-at-creation + the ConPTY signature. Result: 0 product ConPTY hosts alive at either census (and in 9 samples 14:03-14:04Z); 223 of 271 are 111 `node.exe higgsfield-mcp/src/server.js` + 111 conhost under Windows Terminal's own agent (`wta.exe` -> `copilot.exe --acp --stdio`, created 17:02:02Z 09-11), the SAME foreign pool the 4th census attributed (256 then), reset by a WT restart and regrown at ~5/h from the operator's global ~/.copilot/mcp-config.json; 15 are Claude Code Monitor loops (`until false; do sleep 30; done`, 20:57-21:26Z 09-11, still running); the 25 `unknown` = WT's own 7 (name-vs-path miss on IntelligentTerminal), Ollama's cmd wrapper + conhost, VBCSCompiler's conhost, and the loops. Operator question asked in the report (which view, which names, how many, under which app). Exit paths MEASURED with the key shown to see >=1 first: App window close on the real binary (ShellExecute launch, shell alive beside host) 1->0 at +5s; owner exit without dispose 1->0; owner killed (TerminateProcess) 1->0; tab-close DisposeAsync 1->0 at +3s with owner alive. ONE path RED: a session whose child exits keeps its `conhost.exe --headless` alive for the App's lifetime (WatchForExitAsync -> Complete closes nothing) 1->1 at +3s -- DC-154. Instrumentation gap red: no terminal.stop activity or log line (TerminalStopEventTests x2, TerminalSurfaceStopLineTests). Attribution gap red: reap-stragglers.py --self-test rows 5d/5e (`got 'unknown', wanted 'ours-orphaned'` x2). Job-object table: shell in KILL_ON_JOB_CLOSE job, the pty host outside it and following the pty handle; AcpEngineProcess and TerminalHostLauncher contained; daemon detached by design. Class: DC-155 (a symptom owned by someone else is closed by attribution, not by an outcome) + DC-154; DC-131 recurrence 4. Plan: 5 one-node T1 slices -- instrumentation, attribution, the held host, exit paths as a gate, the operator's foreign share. Side finding: launching the App with inherited handles from a null-stdin console kills its terminal shell at once (the TerminalGuiHostTests finding). Nothing reaped or killed; no fix made; stopped at the report.",
       "tags": [
         "terminal",
         "census",
@@ -13510,36 +13527,10 @@ window.AUDIT_DATA = {
         "dc-154",
         "dc-155"
       ],
-      "outcome": "success",
-      "goal": "Find why four terminal-host fixes do not hold and what the operator is seeing: count and attribute the population first, then measure the exit paths, then name the mechanism",
-      "done_when": "Attributed census per class with rules; operator question; four controls' findings (a-d) with the exit paths measured; class + sweep + T1 plan; INV-0010 committed and pushed to investigate/terminal-hosts-5, not merged",
       "tier": "T1",
-      "fan_out": 3,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
-      "started_at": "2026-09-12T13:38:50Z",
-      "duration_seconds": 2117.0,
-      "git": {
-        "sha": "8d54aadc0016c343f08f752d6d9927059c8e0718",
-        "short": "8d54aadc0",
-        "branch": "investigate/terminal-hosts-5",
-        "pushed": null
-      }
+      "tool": null
     },
     {
-      "id": "al-01M2B1XF068Q7KXJ553TC67Q5H",
-      "shortname": "implement-inv-0010-slices-1-4",
-      "datetime": "2026-09-12T14:56:31Z",
-      "session": "hosts-fix",
-      "prompt": "/implement INV-0010 slices 1-4: terminal.stop on every end-of-life path and the ledger's completions; the census attributes an orphaned product host (ours-orphaned) and prints an action line for the largest foreign root; the pty and job close when a pane's shell exits; the exit paths as a slow-ring CI gate. (Dispatched by the conductor, session conductor-addendum-c; the operator approved slices 1-4; slice 5 is theirs. Worktree C:\\Projects\\ai-de-fix-terminal-hosts-5, branch fix/terminal-hosts-5.)",
-      "summary": "INV-0010 slices 1-4 shipped on fix/terminal-hosts-5, every red observed before green. (1) terminal.stop: a runtime activity in ConPtyTerminalSession.Complete (once per session, both end paths; the start-failed catch closes its own pair) tagged session.id/generation/killed/exit_code/end_reason/duration_ms; TerminalHostingLedger.Completions so starts - stops is the number of held hosts; WorkbenchDiagnostics.TerminalStop written by TerminalSurface on child exit (with the code), at the top of Dispose (killed | disposed) and by WorkbenchShell.Dispose for every live pane (owner-closing) - one line per surface, paired with terminal.start by surface id; App tests get a no-op sink default so fixtures stop writing into the operator's log. (2) reap-stragglers.py: ours-orphaned by the runtime's signature (--headless host beside a shell whose -EncodedCommand decodes to $global:__AideNonce, same dead parent, +-2 s); Windows Terminal and Ollama foreign by executable path (one hop, after the worktree rule); a build server's console filed with it; assert_clean reads ours-orphaned; the report ends with an ACTION line for the largest foreign root (live: 291 under wta.exe -> copilot.exe, 145 x node higgsfield-mcp/src/server.js -> ~/.copilot/mcp-config.json); self-test 22/10 -> 43/16, count derived. (3) The held host: WatchForExitAsync -> Complete -> ReleaseHost closes the pty and the job under the state gate; DisposeAsync takes the same handles through the same gate; measured 1 -> 0 at +3 s with the owner alive (was 1 -> 1). (4) tools/verify-terminal-host-exit-paths.py reads the five exit paths by name from the Windows job's .trx (absent is a failure) with a --self-test; one step appended at the end of build.yml's build job. Register: DC-154 controlled, DC-155 controlled, DC-131 recurrence 4 noted, DC-156 new (a positive control satisfied by the defect it guards). Gates: build 0/0 with TreatWarningsAsErrors; verify-test-run App 643/639, Core 2263/2256; every verify-*.py green (stranded-audit reports the conductor's tree, not this one). Proof Pack docs/proof/terminal-hosts-fifth.md.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Terminal/ConPtyTerminalSession.cs",
@@ -13557,6 +13548,31 @@ window.AUDIT_DATA = {
         "tests/AiDe.Core.Tests/AgentPlane/TerminalHostingLedgerTests.cs",
         "tests/AiDe.App.Tests/AssemblyInfo.cs"
       ],
+      "datetime": "2026-09-12T14:56:31Z",
+      "done_when": "the INV's reds are green without weakening (stop events x2, stop line, in-life child-exit 1->0, self-test rows 5d/5e); the four prior exit paths stay green; build 0 warnings; both full suites through verify-test-run; every verify-*.py green; DC-154/DC-155 controlled; Proof Pack committed; branch pushed, main untouched",
+      "duration_seconds": 2054.0,
+      "fan_out": 2,
+      "git": {
+        "branch": "fix/terminal-hosts-5",
+        "pushed": null,
+        "sha": "0ed1fa401947fe6528c2f8ad133f2baadcb20710",
+        "short": "0ed1fa401"
+      },
+      "goal": "INV-0010 slices 1-4 implemented on fix/terminal-hosts-5 and pushed: terminal.stop + ledger completions, ours-orphaned + the action line, the held host released with its child, the exit paths as a CI gate",
+      "id": "al-01M2B1XF068Q7KXJ553TC67Q5H",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "/implement INV-0010 slices 1-4: terminal.stop on every end-of-life path and the ledger's completions; the census attributes an orphaned product host (ours-orphaned) and prints an action line for the largest foreign root; the pty and job close when a pane's shell exits; the exit paths as a slow-ring CI gate. (Dispatched by the conductor, session conductor-addendum-c; the operator approved slices 1-4; slice 5 is theirs. Worktree C:\\Projects\\ai-de-fix-terminal-hosts-5, branch fix/terminal-hosts-5.)",
+      "session": "hosts-fix",
+      "shortname": "implement-inv-0010-slices-1-4",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-12T14:22:17Z",
+      "summary": "INV-0010 slices 1-4 shipped on fix/terminal-hosts-5, every red observed before green. (1) terminal.stop: a runtime activity in ConPtyTerminalSession.Complete (once per session, both end paths; the start-failed catch closes its own pair) tagged session.id/generation/killed/exit_code/end_reason/duration_ms; TerminalHostingLedger.Completions so starts - stops is the number of held hosts; WorkbenchDiagnostics.TerminalStop written by TerminalSurface on child exit (with the code), at the top of Dispose (killed | disposed) and by WorkbenchShell.Dispose for every live pane (owner-closing) - one line per surface, paired with terminal.start by surface id; App tests get a no-op sink default so fixtures stop writing into the operator's log. (2) reap-stragglers.py: ours-orphaned by the runtime's signature (--headless host beside a shell whose -EncodedCommand decodes to $global:__AideNonce, same dead parent, +-2 s); Windows Terminal and Ollama foreign by executable path (one hop, after the worktree rule); a build server's console filed with it; assert_clean reads ours-orphaned; the report ends with an ACTION line for the largest foreign root (live: 291 under wta.exe -> copilot.exe, 145 x node higgsfield-mcp/src/server.js -> ~/.copilot/mcp-config.json); self-test 22/10 -> 43/16, count derived. (3) The held host: WatchForExitAsync -> Complete -> ReleaseHost closes the pty and the job under the state gate; DisposeAsync takes the same handles through the same gate; measured 1 -> 0 at +3 s with the owner alive (was 1 -> 1). (4) tools/verify-terminal-host-exit-paths.py reads the five exit paths by name from the Windows job's .trx (absent is a failure) with a --self-test; one step appended at the end of build.yml's build job. Register: DC-154 controlled, DC-155 controlled, DC-131 recurrence 4 noted, DC-156 new (a positive control satisfied by the defect it guards). Gates: build 0/0 with TreatWarningsAsErrors; verify-test-run App 643/639, Core 2263/2256; every verify-*.py green (stranded-audit reports the conductor's tree, not this one). Proof Pack docs/proof/terminal-hosts-fifth.md.",
       "tags": [
         "inv-0010",
         "terminal",
@@ -13564,24 +13580,68 @@ window.AUDIT_DATA = {
         "dc-155",
         "dc-156"
       ],
-      "outcome": "success",
-      "goal": "INV-0010 slices 1-4 implemented on fix/terminal-hosts-5 and pushed: terminal.stop + ledger completions, ours-orphaned + the action line, the held host released with its child, the exit paths as a CI gate",
-      "done_when": "the INV's reds are green without weakening (stop events x2, stop line, in-life child-exit 1->0, self-test rows 5d/5e); the four prior exit paths stay green; build 0 warnings; both full suites through verify-test-run; every verify-*.py green; DC-154/DC-155 controlled; Proof Pack committed; branch pushed, main untouched",
       "tier": "T1",
-      "fan_out": 2,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "started_at": "2026-09-12T14:22:17Z",
-      "duration_seconds": 2054.0,
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/read-only-turn.md",
+        "docs/notes/read-only-lane-runs-in-the-workspace-root.md",
+        "src/AiDe.App/Conductor/GovernedRunHost.cs",
+        "src/AiDe.App/Conductor/GovernedRunRequest.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSendGate.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs",
+        "src/AiDe.Core/AgentPlane/GoalBlock.cs",
+        "src/AiDe.Core/Presentation/Composer/ComposerCompiler.cs",
+        "src/AiDe.Core/Presentation/Composer/ComposerDraft.cs",
+        "src/AiDe.Core/Presentation/Composer/LeaseDerivation.cs",
+        "src/AiDe.Core/Presentation/Sessions/NewSessionSheetViewModel.cs",
+        "src/AiDe.App/Workbench/Sessions/NewSessionSheetDialog.cs",
+        "src/AiDe.Core/Sessions/SessionConfig.cs",
+        "src/AiDe.Core/Sessions/SessionConfigStore.cs",
+        "tests/AiDe.App.Tests/Composer/TheReadOnlyTurnNeedsNoLeaseTests.cs",
+        "tests/AiDe.Core.Tests/Composer/TheCompiledBlockRendersItsShapeTests.cs",
+        "tests/AiDe.App.Tests/Conductor/TheGovernedLaneHasNoShellTests.cs",
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-12T15:05:51Z",
+      "done_when": "the six reds observed red then green; build TWAE clean; both full suites green and verify-test-run CHECK OK; every tools/verify-*.py OK; Security and Test Architect vetoes cleared; Proof Pack docs/proof/read-only-turn.md with the attended row RUN-PENDING; audit entry; committed and pushed to lane/conversation-cv0; claims released",
+      "duration_seconds": 5344.0,
+      "fan_out": 3,
       "git": {
-        "sha": "0ed1fa401947fe6528c2f8ad133f2baadcb20710",
-        "short": "0ed1fa401",
-        "branch": "fix/terminal-hosts-5",
-        "pushed": null
-      }
+        "branch": "lane/conversation-cv0",
+        "pushed": null,
+        "sha": "8d54aadc0016c343f08f752d6d9927059c8e0718",
+        "short": "8d54aadc0"
+      },
+      "goal": "CV-0: the read-only turn (Ruling 73) — a Message or scopeless goal block runs on a lane with every write-capable tool disallowed and no lease; the lease gate applies to write-shaped turns only; RunBudget.SubscriptionBounded rendered; Ruling 75's one refusal sentence; the New Session sheet at Rulings 72/56/63 (conductor's addition)",
+      "id": "al-01M2B2EHNVA62607PWZMQ0QBDS",
+      "kind": "skill",
+      "main_budget": 4127,
+      "main_calls": 118,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "You are track CV-0 of the Conversation lane in docs/coordination/addendum-cd.md — read your row, the Seams table, the §2 rows (what the Conversation lane owns) and the fan-out contract first. Run the /implement skill (Skill tool: implement, args: CV-0: the read-only turn (Ruling 73) — a Message or no-scope send runs on a lane with every write-capable tool disallowed and no lease; the lease gate applies to write-shaped turns only; RunBudget.SubscriptionBounded rendered; reds first). The conductor is Claude Opus (session conductor-addendum-c). Read CLAUDE.md and AGENTS.md; the pack's rules apply in full (red first; smallest correct; the Security & Identity lens holds the hard veto on the tool set and the lease; the Test Architect's veto; the Spike Protocol — the SDK's tool names are read from the adapter/SDK source, not recalled).\n\nWorktree C:\\Projects\\ai-de-lane-conversation-cv0, branch lane/conversation-cv0, HEAD = main 8d54aadc. Claim what you edit; release at close.\n\nRulings that bind: 73 (a turn that writes nothing needs no lease: Message / no-scope goal block → read-only lane, every write-capable tool disallowed via LaneSessionOptions — the exact set read from the SDK's tool list, cite lines; no lease derived, none required; the lease gate applies only to write-shaped turns, unchanged; decoration line \"read-only — nothing will be written\"), 75 (the only content-gap refusal is \"This prompt is a goal block and needs Not in scope.\"; a blank Goal or Done-when yields a Message), 72 (RunBudget.SubscriptionBounded rendered as a declared subscription-bounded value, never the raw max numbers), 71 (the governed lane's Bash pin stays; the read-only pin is the second use), 66 (lease from ComposerDraft.SourceText only).\n\nBuild: ComposerSendGate.cs, ComposerCompiler.cs + ComposerDraft.cs, ComposerSurface.cs + composer.html/mjs, LeaseDerivation.cs (:25 premise only), GoalBlock.cs (SpawnContract accepts the read-only shape; say how the request carries it), LeaseAndSeams.cs, GovernedRunHost.cs (ReadOnlyLaneSession beside GovernedLaneSession; decide and state whether the read-only lane runs in the workspace root; ADR-0035), GovernedRunRequest.cs; tests incl. AcpLaneClientTests.cs, TheGovernedLaneHasNoShellTests.cs, the composer tests.\n\nReds first: (1) the read-only lane's session/new exact-key-set wire test (set equality); (2) a Message-shaped send derives no lease and is not refused; (3) a scoped goal block still takes the lease gate unchanged (control); a scopeless goal block runs read-only; (4) CompositionRootLedger.Roots unchanged; (5) SubscriptionBounded renders as the declared value; (6) Ruling 75's refusal sentence, and no refusal for a blank Done-when.\n\nAttended (the operator): one real read-only turn in the built app — the frame (lane.session-new), the observed tool-call names, a clean tree after. You do not run it; leave the Proof Pack row RUN-PENDING with the exact steps.\n\nFloors: E7 before coding; seams (\"free-form\" literal census; no Projection.Project(; nothing under the Shell lane's paths; DS-1 names the decoration line CV-1 renders — you define the state); reviews read-only ≤ 3 concurrent, loop cap 2 (Security & Identity hard; Test Architect hard; the Simplifier); gates at close bare, stop on the first red; audit entry; Proof Pack docs/proof/read-only-turn.md; commit; push lane/conversation-cv0; do not merge to main; release claims.\n\nConductor's scope addition (after the six reds are green): bring the New Session sheet to Rulings 72 and 63 — NewSessionSheetViewModel.cs and NewSessionSheetDialog.cs: (1) task class preselected to TaskClasses.FreeForm, never required, changeable; (2) budget is NOT a required numeric field — the state \"bounded by your subscription\" with an optional \"enforce a cap\" affordance (SessionConfig.BudgetCap null = subscription-bounded); (3) the fan-out ceiling prefilled from SessionConfig.FanOutCeiling; (4) no tier on the sheet. Red first (US-C5's falsifiers). Keep the composer's goal-block form as it is beyond the read-only work; if removing TIER / FAN_OUT_CAP / BUDGET from the composer form is bounded, do it; if it pulls in CV-1's form rewrite, leave it and say so. Report the additions separately.",
+      "session": "cv-0",
+      "shortname": "cv-0-read-only-turn",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-12T13:36:47Z",
+      "summary": "CV-0 shipped Ruling 73's read-only turn on lane/conversation-cv0. The turn's shape is one projection over the draft (ComposerDraft.TurnShape: Message | GoalBlock — Goal and Done when both written; ComposerCompiler.IsReadOnly: Message or zero patterns). A Message or a scopeless goal block builds a GovernedRunRequest with Lease = null (IsReadOnly => Lease is null — the shape is the lease's absence, never a claim) and no refusal; a scoped goal block takes the lease gate unchanged (Derive over SourceText, Ruling 66). GovernedRunHost: the read-only branch is inline in RunAsync after Authorize — no worktree (the session is rooted in the repository root; decision note note-read-only-lane-runs-in-the-workspace-root), no episode, no score, no seam monitor; ReadOnlyLaneSession = 30 disallowed tool names read from two sources (the SDK 0.3.257 sdk-tools.d.ts union and the shipped CLI binary's own tool table, which lists PowerShell — a shell the schema does not list), asserted as a set equality on the outgoing session/new frame ({cwd, mcpServers: [], _meta.claudeCode.options.disallowedTools}); SpawnRequest.ReadOnly (bool, built in SpawnRequestFor from the missing lease) waives R2's goal-block precondition only, the identity gates unchanged; Decide on a null lease refuses any pinned tool name and allows only the read kinds; the tree is measured before and after the turn (git status --porcelain + git diff HEAD + untracked hashes) and the delta is ReadOnlyTreeDelta on the result — non-zero says READ-ONLY VIOLATION and Outcome: Blocked. Ruling 75: the one refusal sentence on the not_in_scope field and as the refusal; a blank Goal or Done when is a Message, said on the status line (\"sent as a message — read-only\"). Ruling 72: RunBudget.SubscriptionBoundedDisplay rendered in the compiled block, no numerals. LeaseDerivation's :25 premise narrowed (doc only). Surface lease line: \"Lease: read-only — nothing will be written\" (ReadOnlyScope for CV-1's decoration line). Conductor's addition: the New Session sheet creates on defaults with zero required inputs — free-form preselected and changeable, budget a state with an optional cap (built once, toggled), fan-out ceiling prefilled (int?, unparseable = not written), no tier; SessionConfigStore.Create takes the three settings; the composer's TIER/FAN_OUT_CAP/BUDGET fields left for CV-1 (tier has no derivation rule until CV-2's §A9). Six reds observed on main before the change (recorded verbatim), all green; 2278/2278 Core, 695/695 App, verify-test-run OK, every verify-*.py OK (derived views regenerated at close; verify-stranded-audit reports two OTHER worktrees). Reviews: Security & Identity BLOCK → PASS-WITH-CONDITIONS (PowerShell, Projects, the chooser's kind hole, the tree check, the porcelain false negative all applied; the MCP/connector residual named for CV-3/Owner; the governed lane's [\"Bash\"] shares the PowerShell gap — a finding for the Owner); Test Architect BLOCK → PASS-WITH-CONDITIONS (every finding applied; the attended run is the remaining condition); Simplifier soft BLOCK → applied (−140 lines). Proof Pack docs/proof/read-only-turn.md with the attended row RUN-PENDING (the operator's steps verbatim) and the DC-nnn class appended to the register for the conductor to allocate.",
+      "tags": [
+        "ruling-73",
+        "ruling-75",
+        "ruling-72",
+        "conversation-lane",
+        "cv-0"
+      ],
+      "tier": "T2",
+      "tool": null
     }
   ],
   "changes": [
@@ -17217,6 +17277,33 @@ window.AUDIT_DATA = {
       "summary": "DS-1 /design-slice: docs/design/session-thread-itemscontrol.md (new) — the session thread as a FeedList base (a ListBox over a recycling VirtualizingStackPanel, the six feed keys owned as a pure Decide + an act, a structural pin) with two consumers (the turn feed; the Console split as a flat list of heading and line rows), one INotifyPropertyChanged row per accepted turn carrying its three disclosure flags, the composer pinned beneath (MinHeight 130 on the editor host + the document's MaxHeight belt), a read model that publishes versioned snapshots with a catch-up flag, a one-method transition policy over them with a total transition table, SC9 on NVDA's fetched processing semantics (Status -> All, Assertive -> ImportantMostRecent; Core enums mapped in App), the SC10 UIA contract (List/ListItem, ItemStatus = decoration line, HelpText = the reason sentence, keyed disclosure template, one focusable outside text), the seams (ISessionThread, Announce(Announcement) + raise seam, ComposerSurface.FocusTarget + F6 forward + focus.leave Backward + picker focus echo + editor MinHeight, two WorkbenchCommands, no App.xaml change), the E7 list with a retire row, and 30 red-first oracles with falsifying rows. Spike spikes/session-thread (Q1-Q15, RESULT.md + three raw files) falsified eight platform assumptions: the ListBox's Up/End in a variable-height feed; TabNavigation Local/Continue trap Tab; offset-at-max is not \"followed\" (extent estimate); a collection Replace drops the caret; a roving IsTabStop binding is unnecessary under the default Once; recycling hands one turn's expanded fold to another turn (Q13); the real ComposerSurface in an Auto Grid row lays out the editor at 0 px and the thread at 0 px (Q14); virtualization off is 12.9x on first layout (Q15). Gate: two passes each for Patterns Expert, Simplifier, UX & Accessibility (hard veto CLEARED at pass 2), Test Architect (FAIL both passes: a residual Blocker on the restore/seed lifecycle, resolved by the versioned flagged snapshot — applied post-cap), WPF styling lens (PASS-WITH-CONDITIONS, no escalation; its Blocker measured as Q14). The pass-2 conditions of all lenses are applied in the final revision for the conductor's diff (cap 2 reached; the author cleared nothing). Three decision notes (keys owned by the feed; assertive through one region; the split is a view of the fold). One defect class appended with the id left as DC-nnn (an oracle reads a value clamped at its bound). Findings for owners: DESIGN.md:1092 (the composer row's growth rule), App.xaml (dotted FocusVisualStyle beside the ring), spec/mockup drift (Flow 6, Flow D-1 K2, E2's tab order, the mockup's T badge and skeleton turns), webview2-airspace RESULT over-generalisation, front-door-ruling-49's dangling link, ConsoleSurface/CanvasModeCatalog retirement (CV-1 grep), ConsoleStreamModel as a second store (CV-2). Sub-agent starts are reconstructed from launch order and reported durations; durations and call counts are the harness's.",
       "tags": [],
       "title": "The session thread is a FeedList over versioned catch-up-flagged snapshots: the feed owns its keys, the row owns its view state, the composer declares its floor, the policy announces by transition"
+    },
+    {
+      "id": "cl-01M2B2F0VFD7RE1FPXP4P7FMF9",
+      "datetime": "2026-09-12T15:06:07Z",
+      "session": "cv-0",
+      "kind": "decision",
+      "skill": "implement",
+      "title": "A read-only turn runs in the workspace root, opens no episode and is not scored (Ruling 73's Inferred half decided)",
+      "prompt": null,
+      "summary": "GovernedRunHost's read-only branch opens the ACP session with cwd = the repository root under ReadOnlyLaneSession (30 disallowed tool names read from the SDK schema union and the CLI binary's tool table), cuts no worktree, opens no WatcherHost/episode, runs no LeaseMonitor, and measures the tree before and after (ReadOnlyTreeDelta). Decision note docs/notes/read-only-lane-runs-in-the-workspace-root.md.",
+      "rationale": "Ruling 73's constraint (cut nothing the operator must clean up); the pin makes the tree safe by construction; the REPL reads the live working state; ADR-0035 roots the compile session the same way. A Message has no done-condition to judge, so no episode and no score; the measurement is the run result (frame, events, latencies, the tree delta) and the workbench log.",
+      "artifacts": [
+        "docs/notes/read-only-lane-runs-in-the-workspace-root.md",
+        "src/AiDe.App/Conductor/GovernedRunHost.cs"
+      ],
+      "tags": [
+        "ruling-73",
+        "cv-0"
+      ],
+      "git": {
+        "before": "8d54aadc",
+        "after": "8d54aadc0016c343f08f752d6d9927059c8e0718",
+        "branch": "lane/conversation-cv0",
+        "pushed": null,
+        "commits": []
+      },
+      "audit_ref": "al-01M2B2EHNVA62607PWZMQ0QBDS"
     }
   ]
 };

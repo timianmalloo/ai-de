@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 80 · partially-controlled 59 · uncontrolled 17
+**Status counts:** controlled 81 · partially-controlled 59 · uncontrolled 17
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -43,7 +43,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   memoir is not a control, and the sweep now names the boundary.
 - **DC-131**, whose census control was taken with the right key and still closed the wrong
   question: the column said *foreign*, the operator saw the same screen, and the fifth report came
-  (INV-0010; DC-155 is the half the control lacked).
+  (INV-0010; DC-156 is the half the control lacked).
 
 *All three are CI4: a second occurrence means the control was wrong, not that someone was careless. In the first two the control had been written to fit the instances rather than the class; in the third there was no control at all, because the first occurrence was repaired and never registered — which is the failure this file exists to prevent.*
 
@@ -5737,18 +5737,18 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   are Claude Code's own `Monitor` loops; the 25 `unknown` are Windows Terminal's tabs, Ollama's
   launcher, the compiler server's console and those loops. **The control asked "whose is it?" and
   the operator asked "why is it still there?"** — a correct attribution column closed our side and
-  changed nothing on the screen (DC-155). And the product's own share was unmeasurable from the
+  changed nothing on the screen (DC-156). And the product's own share was unmeasurable from the
   product: 4,115 `terminal.start` lines in a day and no stop event exists, so each report re-ran the
   whole investigation from a process list. Measured on the way, the one product mechanism the four
   fixes never touched: a session whose child exits keeps its `conhost.exe --headless` for the App's
-  lifetime (DC-154) — counted `ours-live` by this census because its parent is a live App.
+  lifetime (DC-155) — counted `ours-live` by this census because its parent is a live App.
   **Control (recurrence 4):** the close of a population report carries (i) an action for the
   largest *foreign* class and the re-count that proves it, (ii) a start/stop pair on the product's
   own emissions so the next report is answered from the log, and (iii) an `ours-orphaned` rule so a
   dead-parent product host cannot hide in `unknown` — the red tests and self-test rows are in
-  INV-0010; all three landed on `fix/terminal-hosts-5` (2026-09-12): the `ACTION:` line (DC-155),
+  INV-0010; all three landed on `fix/terminal-hosts-5` (2026-09-12): the `ACTION:` line (DC-156),
   `terminal.stop` + `TerminalHostingLedger.Completions` (starts − stops), and `ours-orphaned`
-  (self-test 5d/5e green), plus the held host released with its child (DC-154). **And the
+  (self-test 5d/5e green), plus the held host released with its child (DC-155). **And the
   population itself was ours by cause** (slice 0, the same day): our ConPTY shells inherited
   `WT_SESSION` and Windows Terminal's agent attached one MCP server per shell — the fifth census's
   largest class, attributed "foreign" by a correct ancestry column, was a leak of this repository's
@@ -6609,7 +6609,33 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Status:** `partially-controlled` - reported and the branch removes the stale marker; the
   mechanism is unchanged.
 
-### DC-154 — A resource acquired for a child is released with the owner, not with the child
+### DC-154 — A security control written for one shape is applied to every shape, and refuses work it cannot protect
+
+- **Shape:** a control derived for a shape that carries a risk (a lane that can write needs a lease,
+  so the seam monitor can discriminate) is applied by the gate to every instance of the broader type
+  (every send), the shape without the risk included. The refusal is correct by the control's letter
+  and protects nothing; the operator experiences the constitution as "too restrictive in
+  straightforward scenarios" (Ruling 73 (c): *a security control gates only the shape it protects*).
+- **Signature:** a refusal whose remedy names a resource the operation does not use (*"reference the
+  files this run may write"* on a question); a doc line *"no X means no run"* where X matters for a
+  subset; a test asserting the refusal on the shape without the risk; a control whose name says the
+  broader type (*the lane's pin*) rather than the shape (*the lane that can write*).
+- **Instance (2026-09-11, CV-0):** C17's lease gate on every send — `ComposerSendGate.Send` called
+  `LeaseDerivation.Derive` for a free-form Message, `Lease`'s constructor threw
+  (`LeaseAndSeams.cs:47`), and the surface read *"no write scope could be derived… Reference the files
+  or directories this run may write"*. Fixed by projecting the shape first (`ComposerDraft.TurnShape`,
+  `ComposerCompiler.IsReadOnly`), applying the gate to the write shape only, and removing the
+  capability from the read-only shape instead (`GovernedRunHost.ReadOnlyLaneSession`).
+- **Control:** the test pair in `tests/AiDe.App.Tests/Composer/TheReadOnlyTurnNeedsNoLeaseTests.cs` —
+  `AMessageWithNoMentionDerivesNoLeaseAndIsNotRefused` (red on `main`) beside
+  `AGoalBlockWithADerivedScopeStillTakesTheLeaseGateUnchanged` (green throughout): a control that
+  fires on both shapes is the signature. The Security lens's rule on every finding — *name the shape
+  the control protects; a shape without the risk is exempt by construction; a finding that names no
+  shape is returned, not applied* — is prose until the persona audit gains the check (a finding for
+  the pack).
+- **Status:** `controlled` by the pair; the lens rule is `partially-controlled`.
+
+### DC-155 — A resource acquired for a child is released with the owner, not with the child
 
 - **Shape:** an object acquires an OS resource *for* a child (a pseudo console for a shell, a job
   for a process). The child ends; the object records the end as **state** (`Ended`, `Complete`,
@@ -6655,7 +6681,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   firing on a failed and on an unexecuted path); `TerminalHostingLedger.Completions` makes
   *held = starts − stops* a number.
 
-### DC-155 — A symptom owned by someone else is closed by attribution, not by an outcome
+### DC-156 — A symptom owned by someone else is closed by attribution, not by an outcome
 
 - **Shape:** a population report is investigated to DC-131's standard: counted, every member
   attributed, and the largest class turns out to belong to **another application**. The close says
@@ -6712,7 +6738,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   correlation; the post-fix re-count (INV-0010 phase 5: restart Windows Terminal, compare against
   371) is the operator's, and a birth after the fix is a finding.
 
-### DC-156 — A test's positive control is satisfied by the defect the test guards
+### DC-157 — A test's positive control is satisfied by the defect the test guards
 
 - **Shape:** a measured fact has two clauses — *the instrument can see the thing* (≥ 1 while it
   exists) and *the thing is gone afterwards* (0). Written red against the defect, the first clause
@@ -6738,10 +6764,3 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   comment. DC-102's cousin: there the mechanism was never exercised; here the instrument was.
 - **Status:** `controlled` — the fact asserts both clauses and both were observed on the fix
   (`1` live, `0` at +3 s); the helper's comment names the shape.
-
-## 5. What this note does not decide
-
-The CLI home for `aide compile fold` / `aide session purge` (`/design-slice`'s call; the plan
-reserves `src/AiDe.App/Cli/**`); the exact write-tool set for the read-only lane (CV-0 reads it from
-the SDK's tool list); whether a read-only turn runs in the workspace or a throwaway tree (Ruling 73
-leaves it to the architecture; CV-0's constraint is that it cuts nothing the operator must clean up).

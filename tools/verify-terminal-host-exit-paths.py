@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """verify-terminal-host-exit-paths.py — the five terminal-host exit paths are a gate, not a comment.
 
-The control for defect class DC-154 (a resource acquired for a child is released with the owner,
+The control for defect class DC-155 (a resource acquired for a child is released with the owner,
 not with the child) and the fourth control of DC-131 (INV-0010): every path by which a terminal
 session ends is MEASURED to leave no `conhost.exe --headless` behind, and the measurement is read
 here by name so that a regression on any one path fails the build by a count rather than by

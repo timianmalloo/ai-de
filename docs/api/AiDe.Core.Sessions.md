@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Sessions: 23 types, 65 members, 89% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Sessions: 23 types, 66 members, 89% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Sessions`
 
-**23 public types · 65 public members · 89% documented.**
+**23 public types · 66 public members · 89% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -33,7 +33,8 @@ namespace names only this container — never a Watcher/Dispatch/Terminal-intern
 | Member | Summary |
 |---|---|
 | `bool AttachEnabled { get; init; }` | Whether this session may attach files to a composed prompt (Security/Privacy **C21**). **Off by default**, confirmed by the human on 2026-09-10. |
-| `int FanOutCeiling { get; init; } = 2` | The most sub-agents any turn in this session may convene — `fan_out_ceiling` in ADR-0033 §3 / `docs/architecture.md`'s vocabulary (Ruling 56). The eventual `FanOutCap = min(cap(tier), ceiling)` the compile step comput… |
+| `int FanOutCeiling { get; init; } = DefaultFanOutCeiling` | The most sub-agents any turn in this session may convene — `fan_out_ceiling` in ADR-0033 §3 / `docs/architecture.md`'s vocabulary (Ruling 56). The eventual `FanOutCap = min(cap(tier), ceiling)` the compile step comput… |
+| `int DefaultFanOutCeiling = 2` | The ruled per-session default for `FanOutCeiling` — CT19's T1 cap, 2 — named once so the New Session sheet prefills what an unset file reads (derive, don't store; DM7). |
 | `RunBudget? BudgetCap { get; init; }` | An enforced request/token ceiling for this session, or `null` — the session is bounded by the subscription instead (Ruling 72; ADR-0033 §3's `budget_cap`). |
 | `string CompileMode { get; init; } = CompileModes.MechanicalOnly` | How much of the compile step's agentic stage this session admits (ADR-0033 §A10.1; Ruling 68) — one of `CompileModes`. |
 | `string DefaultTaskClass { get; init; } = TaskClasses.FreeForm` | The task class a prompt in this session carries when it declares none of its own (Ruling 70; Ruling 72; ADR-0033 §4) — `default_task_class` in the ADR's vocabulary. |
@@ -78,7 +79,7 @@ enforceable policy**. A deployment that must *prevent* attach needs a
 non-session-overridable layer, which is Phase 2 — named here as the upgrade trigger. Nothing
 may describe this field as restricting or preventing attach for a deployment.
 
-### `int FanOutCeiling { get; init; } = 2`
+### `int FanOutCeiling { get; init; } = DefaultFanOutCeiling`
 
 The most sub-agents any turn in this session may convene — `fan_out_ceiling` in
 ADR-0033 §3 / `docs/architecture.md`'s vocabulary (Ruling 56). The eventual
@@ -229,6 +230,16 @@ plain `System.Text.Json`, tolerant JSONL reads.
 | `SessionConfig SetEnabledBackends(IReadOnlyList<string> enabledBackends, DateTimeOffset now)` | Applies a backend toggle for new runs and emits `session.config`. Never mutates a `SessionConfig` a caller already holds — see the remarks on this type. |
 | `SessionConfig SetAttachEnabled(bool attachEnabled, DateTimeOffset now)` | Applies the attach toggle for new runs and emits `session.config` (C21). |
 | `IReadOnlyList<SessionEvent> ReadEvents()` | Every event this session has ever emitted, in append order. |
+
+### `SessionConfig Create(`
+
+Creates the session: writes `session.json` and emits `session.open`.
+
+- **`fanOutCeiling`** — The session's fan-out ceiling (Ruling 56); `null` writes the ruled default.
+- **`budgetCap`** — An enforced cap, or `null` — bounded by the subscription (Ruling 72).
+- **`defaultTaskClass`** — The session's default task class; `null` writes `free-form` (Ruling 72).
+
+**Remarks.** The sheet's three decisions at create (Rulings 56, 63, 72); absent, the record's own defaults apply.
 
 ### `SessionConfig SetAttachEnabled(bool attachEnabled, DateTimeOffset now)`
 
