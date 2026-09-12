@@ -500,6 +500,16 @@ jobs:
         if: ${{ !cancelled() }}
         run: python tools/verify-mockup-audits.py
 
+      # DC-170: a child launched with CREATE_NEW_CONSOLE is a Windows Terminal tab on a machine whose
+      # default terminal is Windows Terminal, and the tab's agent outlives the test. Code lines only.
+      - name: No new-console launches gate — self-test
+        if: ${{ !cancelled() }}
+        run: python tools/verify-no-new-console-launches.py --self-test
+
+      - name: No test or product code opens a new console
+        if: ${{ !cancelled() }}
+        run: python tools/verify-no-new-console-launches.py
+
   # ---------------------------------------------------------------------------------------------
   # THE PORTABLE 94% OF THE CORE SUITE, ON LINUX AT 1x.
   #

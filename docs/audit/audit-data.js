@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T20:17:14Z",
+  "generated": "2026-09-12T20:29:42Z",
   "audit": [
     {
       "actor": null,
@@ -14320,6 +14320,30 @@ window.AUDIT_DATA = {
       "summary": "Join: SH-3 (9b16a394) merged to main (b55e51ba) clean; DC-169 was self-allocated by the node after its merge collided with DC-164-168 - the sequence is unbroken, the register gate green; floors recounted App 798 / Core 2357 = 2191 + 166.",
       "tags": [],
       "tool": null
+    },
+    {
+      "id": "al-01M2BMZGE3QQKR8A49AZ2E8QZW",
+      "shortname": "investigate-terminal-hosts-sixth-x2b-regrowth",
+      "datetime": "2026-09-12T20:29:41Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "keep going / you end the WT pool",
+      "summary": "INV-0011 s7 (X-2b). The pool was ended on the operator's word (conhost 270->14, node 257->1) and regrew by 25 during one recount, 0 within 10 s of a product terminal.start. Measured: one pseudo console from the test host -> 0 attaches; TerminalHostExitPathTests (two CREATE_NEW_CONSOLE helper launches) -> 2 node.exe born with WT_SESSION set AND unset. CREATE_NEW_CONSOLE on a machine whose default terminal is Windows Terminal is a WT tab, and WT's agent attaches to every tab (DC-170). Launcher now CREATE_NO_WINDOW: 21 helper tests 0 born, whole Platform=Windows half 166/166 0 born; helper exit 4 and four assertions retired with DC-014's premise; tools/verify-no-new-console-launches.py (red 2 findings on the pre-fix tree, --self-test) in CI. Also tools/run-verify-gates.py: one exit status for every gate (DC-113 recurrence 3 - a loop at the SH-3 join pushed before it knew).",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/terminal-hosts-sixth.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Close the regrowth path behind the sixth report with a measured mechanism and a gate, and give the join line one status to chain on",
+      "done_when": "helper suites headless with 0 WT attaches measured; the gate red on the pre-fix tree and green after; run-verify-gates self-tested; register, INV-0011 s7, proof rows 8-9, CI step committed",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      }
     }
   ],
   "changes": [

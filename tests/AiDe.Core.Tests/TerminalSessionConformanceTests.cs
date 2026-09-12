@@ -378,7 +378,6 @@ public sealed class ConPtyTerminalSessionConformanceTests : TerminalSessionConfo
             var exitCode = await TerminalHostLauncher.RunInNewConsoleAsync(helper, report, TimeSpan.FromSeconds(45));
             var detail = File.Exists(report) ? File.ReadAllText(report) : "(no report written)";
 
-            Assert.True(exitCode != 4, $"the helper had no console — the launch flag is wrong.\n{detail}");
             Assert.True(exitCode != 3, $"the session could not start.\n{detail}");
             Assert.True(
                 exitCode == 0,

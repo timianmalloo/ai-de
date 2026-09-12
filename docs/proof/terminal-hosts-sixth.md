@@ -39,6 +39,8 @@ Every row names what was observed, red first, then green. Nothing here is a clai
 | 5 | Core `Platform=Windows` half after the flag | — | 155/155, 47 s |
 | 6 | App suite, conductor tree at `b4e61022` + X-2 | 782/783: `ShellContrastCensusTests.EveryTextPairingInTheComposedShellClearsItsFloor` — pair 34, `TextBlock "terminal-1"` in *Target session*, `#E4E9EF` on `#ECECEC` (no token), **1.03:1** | 783/783 with `ChromeComboBoxTemplate` (face, toggle and popup on token grounds): 120/120 pairings clear |
 | 7 | Per-run terminal ledger (`%TEMP%\aide-tests\terminal-ledger-<pid>.log`, the App tests' default sink) | 64 `terminal.start` / **14** `terminal.stop` — 50 panes ended by nothing but the collector | 64 / **62** — `owner-closing` 48, `killed` 14; residual 2 (§Residuals) |
+| 8 | `TerminalHostExitPathTests` × 2 launches, `node.exe higgsfield` births (`wt-attach-probe.ps1`) | 2 born with `WT_SESSION` set; 2 with it unset (`CREATE_NEW_CONSOLE` → a Windows Terminal tab → an agent attached) | 21 helper-launching tests headless (`CREATE_NO_WINDOW`): 0 born; the whole `Platform=Windows` half, 166/166: 0 born |
+| 9 | `tools/verify-no-new-console-launches.py` | 2 findings on the pre-fix tree (`TerminalHostLauncher.cs:51`, `TerminalHost/Program.cs:50`); `--self-test` OK | OK — no `CREATE_NEW_CONSOLE` launch under `src/` or `tests/` |
 
 Row 6 is DC-164's consequence made visible: before the flag, the test host's shells never
 reached readiness (their OSC 133 bytes went into the host's pipe), so *Target session* never held
@@ -64,5 +66,4 @@ terminal was ready.
   names them for whoever does.
 - The 32 births inside the hung host are unattributed (INV-0011 §6); the ledger now exists so the
   next instance is not.
-- The 513-member pool under Windows Terminal's agent host is released only by ending
-  `copilot.exe[27168]` or restarting Windows Terminal — the operator's call.
+- The 513-member pool was ended on the operator's word (`Stop-Process -Id 27168`, 19:52Z: `conhost` 270 → 14, `node` 257 → 1) and its regrowth path closed (rows 8–9); Windows Terminal re-attaches to the operator's own live tabs only.
