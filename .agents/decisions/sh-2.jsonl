@@ -1,0 +1,4 @@
+{"agent": "claude-sh-2", "at": 1789231596.772878, "code": "COORD-REFUSED", "kind": "refused", "path": "tests/AiDe.App.Tests/Sessions/EveryOpeningCommandPassesThroughTheSeamTests.cs", "session": "sh-2", "wi": "CV-1"}
+{"agent": "claude-sh-2", "at": 1789231603.821575, "code": "COORD-REFUSED", "kind": "refused", "path": "tests/AiDe.App.Tests/Sessions/EveryOpeningCommandPassesThroughTheSeamTests.cs", "session": "sh-2", "wi": "CV-1"}
+{"agent": "claude-sh-2", "at": 1789232049.6625001, "code": "COORD-REFUSED", "kind": "refused", "path": "tests/AiDe.App.Tests/Sessions/ASessionDocumentIsShownWhereTheOperatorIsTests.cs", "session": "sh-2", "wi": "CV-1"}
+{"agent": "claude-sh-2", "at": 1789232049.7226036, "code": "COORD-REFUSED", "kind": "refused", "path": "tests/AiDe.App.Tests/Sessions/EveryOpeningCommandPassesThroughTheSeamTests.cs", "session": "sh-2", "wi": "CV-1"}

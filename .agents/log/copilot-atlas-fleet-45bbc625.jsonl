@@ -1,0 +1,6 @@
+{"agent": "copilot-atlas-conductor", "at": 1789231246.6253405, "kind": "session-start", "path": "-", "seq": 1, "session": "copilot-atlas-fleet-45bbc625", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-conductor-code-atlas"}
+{"agent": "copilot-atlas-conductor", "at": 1789231767.4836133, "kind": "claim", "path": "docs/notes/code-atlas-proposal-provenance.md", "seq": 2, "session": "copilot-atlas-fleet-45bbc625", "ttl": 1200.0, "wi": "atlas-fleet-bootstrap"}
+{"agent": "copilot-atlas-conductor", "at": 1789231767.5502474, "kind": "claim", "path": "docs/plans/code-atlas-fleet.md", "seq": 3, "session": "copilot-atlas-fleet-45bbc625", "ttl": 1200.0, "wi": "atlas-fleet-bootstrap"}
+{"agent": "copilot-atlas-conductor", "at": 1789231767.6426892, "kind": "claim", "path": "docs/collaboration/session-contracts.md", "seq": 4, "session": "copilot-atlas-fleet-45bbc625", "ttl": 300.0, "wi": "atlas-fleet-coordination-request"}
+{"agent": "copilot-atlas-conductor", "at": 1789232042.8539898, "kind": "release", "path": "docs/collaboration/session-contracts.md", "seq": 5, "session": "copilot-atlas-fleet-45bbc625", "wi": "WI-0"}
+{"agent": "copilot-atlas-conductor", "at": 1789232320.900236, "kind": "claim", "path": "docs/notes/atlas-owner", "seq": 6, "session": "copilot-atlas-fleet-45bbc625", "ttl": 1200.0, "wi": "atlas-owner-rulings"}
