@@ -59,7 +59,7 @@ Two red stages were observed:
 | Consolidated review harness against old enumerator | `raw-review-red.txt` | Compile red: missing `CaptureRootBinding`, missing `afterEntryObserved`, and no `PeakHeldHandles`. |
 | Root-binding mutation | `raw-final-red.txt` | `SUMMARY|passed=28|failed=1|not_proven=2`; disabling the root-binding guard made replacement-root enumeration leak entries and fail `root binding guard blocks replacement-root leak`. |
 
-These reds are semantic controls: the final API and behavior could not pass before the repair.
+The unsafe-stub red and root-binding mutation red are semantic controls. The missing-API compile red is retained only as harness-evolution history; it is not semantic safety evidence.
 
 ## Commands
 
@@ -105,4 +105,4 @@ These reds are semantic controls: the final API and behavior could not pass befo
 
 ## Budget ledger
 
-Budget was 25 total wrapper/leaf calls for this investigation. Before this final batch, 17/25 were used. This final batch used 4 wrapper calls through commit. Total observed consumption is 21/25, with 4 remaining.
+Budget was 25 total wrapper/leaf calls for this investigation. Before this cleanup, 22/25 were used. This cleanup uses 3 calls through final status. Total observed consumption is 25/25, with 0 remaining.
