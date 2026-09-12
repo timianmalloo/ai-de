@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T00:18:44Z",
+  "generated": "2026-09-12T00:25:04Z",
   "audit": [
     {
       "actor": null,
@@ -12810,6 +12810,54 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "7d8aa596bfff428648e16f0ae4aa75662f7373f2",
         "short": "7d8aa596b",
+        "branch": "conductor/addendum-c",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M29FV80QV2A5994K7F9S0YB1",
+      "shortname": "Operator: keep going - relax Ruling 51. Continue with best next actions …",
+      "datetime": "2026-09-12T00:21:30Z",
+      "session": "prompt-log",
+      "prompt": "Operator: keep going - relax Ruling 51. Continue with best next actions using the owner-conductor model. Let's get all of this implemented so I can do deeper user testing with a more complete build.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M29G1RTD2XEDPB4BEAKQ32QP",
+      "shortname": "ruling-79-and-s0-lane-pin-on-main",
+      "datetime": "2026-09-12T00:25:04Z",
+      "session": "conductor-addendum-c",
+      "prompt": "Operator: keep going - relax ruling 51; continue with the owner-conductor model; get it all implemented for deeper user testing.",
+      "summary": "Ruling 79: Addendum C/D code from main now; F5's tree frozen at 135e05e1 for its run; the lane-pin commits cherry-picked onto main as S0 (3ab712c6, 57da088d), tests green on main. §2: nine surfaces moved from Core/Design to the Shell and Conversation lanes for the horizon; one prose mention neutralised so the gate reads one owner.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/addendum-c-council-rulings.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Relax Ruling 51 as the operator decided; carry the lane pin onto main; apply the plan's §2 rows",
+      "done_when": "Ruling 79 filed; 246b38a3 and 135e05e1 cherry-picked onto main with AgentPlane 182/182 and Conductor 12/12; §2 rows applied as moves, verify-surface-ownership green",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "7a3f7b698388336ed0802a7a3d9982b6569d5b94",
+        "short": "7a3f7b698",
         "branch": "conductor/addendum-c",
         "pushed": null
       }
