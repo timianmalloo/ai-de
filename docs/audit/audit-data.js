@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T13:31:00Z",
+  "generated": "2026-09-12T14:37:49Z",
   "audit": [
     {
       "actor": null,
@@ -13481,6 +13481,107 @@ window.AUDIT_DATA = {
       ],
       "tier": "T2",
       "tool": null
+    },
+    {
+      "id": "20260912T070146-20736b",
+      "ts": "2026-09-12T07:01:46-07:00",
+      "label": "this is a good list... consider a different pivot",
+      "text": "this is a good list... consider a different pivot\r\n---------------\r\nthe claude code session is focused on the UI refactor and the Session use case\r\ni would like to tighten up the code/architecture use case\r\nthis is the use case that would take a code-centric, architecture-centric view of content in the repo\r\n- it needs an icon on the side bar (like the explore and session icons)\r\n- it needs to show the graph or a tree-explorer (user should be able to pivot between graph and tree-explorer) like a standard solution explorer in VS or VSCode \r\n- it needs to support the following:\r\n  - show public API Surface / Entry points <<<--- the main entry points one would use for a sequence or activity diagram to understand work (combo of static analysis and ai)\r\n  - show domain objects - class diagram with key domain classes ... e.g the Entities or Aggregate Root and Entities (this should be a combo of static analysis and ai)\r\n  - show class diagram <<-- we need to think through how to scale the class diagram\r\n  - Show architecture <<<-- we need to be able to analyze a code base and create a layered architecure diagram, this should be a combination of imperative/static analysis and leveraging the AI model the tool is bound to, to produce the diagram\r\n  - Show azure architecture <<<--- for azure projects where there is one or more bicep files, derive the architecture (combo of static analysis and ai)\r\n  - you think of the other types of operations, take inspiration from reverse-engineering tools, UML tools etc ... and really think about how we can come up with the richest, most immersive way to understand a code base through a combination of static analysis and ai\r\n\r\n-----\r\n\r\nIn a separate work tree start exploring this idea\r\nthen create a proposal (html) and a mockup that we can use as the start to iterate on",
+      "tags": []
+    },
+    {
+      "id": "al-01M2B0V6A0CNR3QB99QXRSKFF5",
+      "shortname": "ui-design-code-atlas",
+      "datetime": "2026-09-12T14:37:48Z",
+      "session": "copilot-code-atlas-45bbc625",
+      "prompt": "this is a good list... consider a different pivot\n---------------\nthe claude code session is focused on the UI refactor and the Session use case\ni would like to tighten up the code/architecture use case\nthis is the use case that would take a code-centric, architecture-centric view of content in the repo\n- it needs an icon on the side bar (like the explore and session icons)\n- it needs to show the graph or a tree-explorer (user should be able to pivot between graph and tree-explorer) like a standard solution explorer in VS or VSCode \n- it needs to support the following:\n  - show public API Surface / Entry points <<<--- the main entry points one would use for a sequence or activity diagram to understand work (combo of static analysis and ai)\n  - show domain objects - class diagram with key domain classes ... e.g the Entities or Aggregate Root and Entities (this should be a combo of static analysis and ai)\n  - show class diagram <<-- we need to think through how to scale the class diagram\n  - Show architecture <<<-- we need to be able to analyze a code base and create a layered architecure diagram, this should be a combination of imperative/static analysis and leveraging the AI model the tool is bound to, to produce the diagram\n  - Show azure architecture <<<--- for azure projects where there is one or more bicep files, derive the architecture (combo of static analysis and ai)\n  - you think of the other types of operations, take inspiration from reverse-engineering tools, UML tools etc ... and really think about how we can come up with the richest, most immersive way to understand a code base through a combination of static analysis and ai\n\n-----\n\nIn a separate work tree start exploring this idea\nthen create a proposal (html) and a mockup that we can use as the start to iterate on",
+      "summary": "Created Code Atlas proposal and self-contained synthetic Architecture mockup: graph/tree, entry points, three traces, domain/classes/layers/Azure/impact, evidence inspector and scoped simulated AI. Source research 22/22 calls; graph proposal review PASS-with-conditions incorporated; independent UX closure PASS for six repaired exact journeys plus hover. Browser evidence saved, no network/model requests. Existing Architecture destination retained. Custom graph persona was read-only, so parent implemented rather than relaunching. Shared defect-register lease refused (SH-1), respected; classes captured in own proof. No native or real-analysis capability claimed; no main merge or push.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proposals/code-atlas/index.html",
+        "docs/proposals/code-atlas/mockup.html",
+        "docs/proof/code-atlas-prototype.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Explore the code/architecture use case in an isolated worktree; produce an HTML proposal and interactive mockup, not product implementation.",
+      "done_when": "Source-grounded proposal and working local mockup are preserved on the proposal branch, with prototype findings dispositioned and no app or Claude-lane changes.",
+      "tier": "T1",
+      "fan_out": 3,
+      "started_at": "2026-09-12T14:01:46Z",
+      "duration_seconds": 2162.0,
+      "git": {
+        "sha": "8d54aadc0016c343f08f752d6d9927059c8e0718",
+        "short": "8d54aadc0",
+        "branch": "proposal/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2B0V6ET1F34DWRT3RSC6V1D",
+      "shortname": "optimize-graph-code-atlas",
+      "datetime": "2026-09-12T14:37:48Z",
+      "session": "copilot-code-atlas-45bbc625",
+      "prompt": "this is a good list... consider a different pivot\n---------------\nthe claude code session is focused on the UI refactor and the Session use case\ni would like to tighten up the code/architecture use case\nthis is the use case that would take a code-centric, architecture-centric view of content in the repo\n- it needs an icon on the side bar (like the explore and session icons)\n- it needs to show the graph or a tree-explorer (user should be able to pivot between graph and tree-explorer) like a standard solution explorer in VS or VSCode \n- it needs to support the following:\n  - show public API Surface / Entry points <<<--- the main entry points one would use for a sequence or activity diagram to understand work (combo of static analysis and ai)\n  - show domain objects - class diagram with key domain classes ... e.g the Entities or Aggregate Root and Entities (this should be a combo of static analysis and ai)\n  - show class diagram <<-- we need to think through how to scale the class diagram\n  - Show architecture <<<-- we need to be able to analyze a code base and create a layered architecure diagram, this should be a combination of imperative/static analysis and leveraging the AI model the tool is bound to, to produce the diagram\n  - Show azure architecture <<<--- for azure projects where there is one or more bicep files, derive the architecture (combo of static analysis and ai)\n  - you think of the other types of operations, take inspiration from reverse-engineering tools, UML tools etc ... and really think about how we can come up with the richest, most immersive way to understand a code base through a combination of static analysis and ai\n\n-----\n\nIn a separate work tree start exploring this idea\nthen create a proposal (html) and a mockup that we can use as the start to iterate on",
+      "summary": "Supporting phase of the Code Atlas proposal. README records the bounded plan and three-layer proposal framing; existing graph query was truncated and source inspection supplied the capability inventory. Canonical specs and DESIGN.md unchanged. Whole-task duration is recorded on ui-design-code-atlas; separate phase duration was not recorded.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proposals/code-atlas/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Ground and shape the isolated Code Atlas proposal; no product implementation.",
+      "done_when": "The proposal records scope, evidence, conceptual model, UX flow, direction and bounded execution shape.",
+      "tier": "T1",
+      "fan_out": 3
+    },
+    {
+      "id": "al-01M2B0V6HKSCRD8SE6Q5Y4HWRD",
+      "shortname": "specify-code-atlas",
+      "datetime": "2026-09-12T14:37:48Z",
+      "session": "copilot-code-atlas-45bbc625",
+      "prompt": "this is a good list... consider a different pivot\n---------------\nthe claude code session is focused on the UI refactor and the Session use case\ni would like to tighten up the code/architecture use case\nthis is the use case that would take a code-centric, architecture-centric view of content in the repo\n- it needs an icon on the side bar (like the explore and session icons)\n- it needs to show the graph or a tree-explorer (user should be able to pivot between graph and tree-explorer) like a standard solution explorer in VS or VSCode \n- it needs to support the following:\n  - show public API Surface / Entry points <<<--- the main entry points one would use for a sequence or activity diagram to understand work (combo of static analysis and ai)\n  - show domain objects - class diagram with key domain classes ... e.g the Entities or Aggregate Root and Entities (this should be a combo of static analysis and ai)\n  - show class diagram <<-- we need to think through how to scale the class diagram\n  - Show architecture <<<-- we need to be able to analyze a code base and create a layered architecure diagram, this should be a combination of imperative/static analysis and leveraging the AI model the tool is bound to, to produce the diagram\n  - Show azure architecture <<<--- for azure projects where there is one or more bicep files, derive the architecture (combo of static analysis and ai)\n  - you think of the other types of operations, take inspiration from reverse-engineering tools, UML tools etc ... and really think about how we can come up with the richest, most immersive way to understand a code base through a combination of static analysis and ai\n\n-----\n\nIn a separate work tree start exploring this idea\nthen create a proposal (html) and a mockup that we can use as the start to iterate on",
+      "summary": "Supporting phase of the Code Atlas proposal. README records the bounded plan and three-layer proposal framing; existing graph query was truncated and source inspection supplied the capability inventory. Canonical specs and DESIGN.md unchanged. Whole-task duration is recorded on ui-design-code-atlas; separate phase duration was not recorded.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proposals/code-atlas/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Ground and shape the isolated Code Atlas proposal; no product implementation.",
+      "done_when": "The proposal records scope, evidence, conceptual model, UX flow, direction and bounded execution shape.",
+      "tier": "T1",
+      "fan_out": 3
+    },
+    {
+      "id": "al-01M2B0V6MCW21MH861SR9PCFFR",
+      "shortname": "graphify-code-atlas",
+      "datetime": "2026-09-12T14:37:49Z",
+      "session": "copilot-code-atlas-45bbc625",
+      "prompt": "this is a good list... consider a different pivot\n---------------\nthe claude code session is focused on the UI refactor and the Session use case\ni would like to tighten up the code/architecture use case\nthis is the use case that would take a code-centric, architecture-centric view of content in the repo\n- it needs an icon on the side bar (like the explore and session icons)\n- it needs to show the graph or a tree-explorer (user should be able to pivot between graph and tree-explorer) like a standard solution explorer in VS or VSCode \n- it needs to support the following:\n  - show public API Surface / Entry points <<<--- the main entry points one would use for a sequence or activity diagram to understand work (combo of static analysis and ai)\n  - show domain objects - class diagram with key domain classes ... e.g the Entities or Aggregate Root and Entities (this should be a combo of static analysis and ai)\n  - show class diagram <<-- we need to think through how to scale the class diagram\n  - Show architecture <<<-- we need to be able to analyze a code base and create a layered architecure diagram, this should be a combination of imperative/static analysis and leveraging the AI model the tool is bound to, to produce the diagram\n  - Show azure architecture <<<--- for azure projects where there is one or more bicep files, derive the architecture (combo of static analysis and ai)\n  - you think of the other types of operations, take inspiration from reverse-engineering tools, UML tools etc ... and really think about how we can come up with the richest, most immersive way to understand a code base through a combination of static analysis and ai\n\n-----\n\nIn a separate work tree start exploring this idea\nthen create a proposal (html) and a mockup that we can use as the start to iterate on",
+      "summary": "Supporting phase of the Code Atlas proposal. README records the bounded plan and three-layer proposal framing; existing graph query was truncated and source inspection supplied the capability inventory. Canonical specs and DESIGN.md unchanged. Whole-task duration is recorded on ui-design-code-atlas; separate phase duration was not recorded.",
+      "kind": "skill",
+      "skill": "graphify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proposals/code-atlas/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Ground and shape the isolated Code Atlas proposal; no product implementation.",
+      "done_when": "The proposal records scope, evidence, conceptual model, UX flow, direction and bounded execution shape.",
+      "tier": "T1",
+      "fan_out": 3
     }
   ],
   "changes": [

@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Code Atlas | AI-DE Architecture workspace proposal</title>
+<style>
+:root {
+  --surface:#12151A; --raised:#1A1F26; --sunken:#0D1014; --border:#2A313B;
+  --text:#E4E9EF; --muted:#98A3B2; --accent:#5B9DD9; --ink:#0D1014;
+  --fact:#5FB98F; --candidate:#D8A650; --danger:#E07A6F; --focus:#8FC0EA;
+  --control:#7C8896; --ui:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+  --mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
+  --small:12px; --body:15px; --heading:22px; --radius:6px;
+}
+body.light {
+  --surface:#F4F6F8; --raised:#FFFFFF; --sunken:#E7EBEF; --border:#C7CFD8;
+  --text:#1A1F26; --muted:#55606E; --accent:#27649A; --ink:#FFFFFF;
+  --fact:#1C724A; --candidate:#7D5900; --danger:#A8372B; --focus:#1B4F7E; --control:#5F6977;
+}
+* { box-sizing:border-box }
+html { scroll-padding-top:80px }
+body { margin:0; background:var(--surface); color:var(--text); font:var(--body)/1.65 var(--ui) }
+a { color:var(--accent); text-underline-offset:3px }
+a:hover { text-decoration-thickness:2px }
+button,input,select { font:inherit }
+button,.button { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:var(--s2) var(--s4); border:1px solid var(--control); border-radius:var(--radius); color:var(--text); background:var(--raised); cursor:pointer; text-decoration:none }
+button:hover,.button:hover { background:var(--sunken) }
+.primary { background:var(--accent); color:var(--ink); font-weight:600; border-color:var(--accent) }
+.primary:hover { background:var(--accent); color:var(--ink); text-decoration:underline }
+:focus-visible { outline:2px solid var(--focus); outline-offset:3px }
+.skip { position:absolute; top:-100px; left:var(--s4); z-index:20; background:var(--raised); padding:var(--s3) }
+.skip:focus { top:var(--s2) }
+header { position:sticky; top:0; z-index:5; min-height:64px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:var(--s3); padding:var(--s3) var(--s5); border-bottom:1px solid var(--border); background:var(--sunken) }
+.brand { display:flex; align-items:center; gap:var(--s3); font-weight:600 }
+.brand svg { width:24px; height:24px; color:var(--accent) }
+.meta { font:var(--small)/1.5 var(--mono); color:var(--muted) }
+.layout { display:grid; grid-template-columns:220px minmax(0,1000px); max-width:1280px; margin:auto }
+nav { align-self:start; position:sticky; top:80px; padding:var(--s5) var(--s4) }
+nav a { display:block; padding:var(--s2) var(--s3); min-height:40px; text-decoration:none; color:var(--muted); font-size:13px }
+nav a:hover,nav a[aria-current] { color:var(--text); background:var(--raised); border-radius:var(--radius) }
+nav .label { font-size:var(--small); color:var(--muted); padding:var(--s2) var(--s3); font-weight:600 }
+main { min-width:0; padding:var(--s6) var(--s5) }
+section { padding:var(--s5) 0 var(--s6); border-bottom:1px solid var(--border) }
+section:first-child { padding-top:var(--s2) }
+h1,h2,h3 { line-height:1.3; margin:0 0 var(--s4); font-weight:600 }
+h1 { font-size:var(--heading); max-width:36ch }
+h2 { font-size:var(--heading) }
+h3 { font-size:18px; margin-top:var(--s5) }
+p { margin:0 0 var(--s4); max-width:86ch }
+li { margin-bottom:var(--s2) }
+ul,ol { padding-left:var(--s5); margin:0 0 var(--s4) }
+code { font:13px/1.5 var(--mono); overflow-wrap:anywhere }
+.eyebrow { color:var(--accent); font-size:var(--small); font-weight:600; margin-bottom:var(--s3) }
+.lead { font-size:18px; color:var(--muted); max-width:68ch }
+.row { display:flex; flex-wrap:wrap; align-items:center; gap:var(--s3) }
+.notice { border:1px solid var(--border); background:var(--raised); padding:var(--s4); border-radius:var(--radius); margin:var(--s5) 0 }
+.notice p:last-child { margin-bottom:0 }
+.fact { color:var(--fact) }
+.candidate { color:var(--candidate) }
+.danger { color:var(--danger) }
+.muted { color:var(--muted) }
+.twocol { display:grid; grid-template-columns:1fr 1fr; gap:var(--s5) }
+.twocol h2 { font-size:18px; margin-top:var(--s5) }
+.diagram { background:var(--sunken); border:1px solid var(--border); border-radius:var(--radius); padding:var(--s5); margin:var(--s5) 0; overflow:auto }
+.pipeline { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--s4) }
+.stage { padding:var(--s4); background:var(--raised); border:1px solid var(--border); border-radius:var(--radius) }
+.stage b { display:block; margin:var(--s2) 0 }
+.stage p { font-size:13px; margin:0 }
+.stage .num { font:var(--small)/1.5 var(--mono); color:var(--accent) }
+.table-wrap { overflow-x:auto; margin:var(--s4) 0; border:1px solid var(--border); border-radius:var(--radius) }
+table { width:100%; border-collapse:collapse; font-size:13px; text-align:left }
+th { background:var(--sunken); color:var(--muted); font-size:var(--small); font-weight:600 }
+th,td { padding:var(--s3); border-bottom:1px solid var(--border); vertical-align:top }
+tr:last-child td { border-bottom:0 }
+td:first-child { font-weight:600 }
+caption { text-align:left; padding:var(--s3); background:var(--raised); font-weight:600 }
+.tag { display:inline-block; font:var(--small)/1.5 var(--mono); color:var(--muted); padding:var(--s1) var(--s2); background:var(--sunken); border:1px solid var(--border); border-radius:4px }
+.filter { display:flex; gap:var(--s3); align-items:center; flex-wrap:wrap; padding:var(--s3) 0 }
+.filter input,.filter select { background:var(--raised); color:var(--text); border:1px solid var(--control); min-height:44px; padding:var(--s2) var(--s3); border-radius:var(--radius); min-width:0; max-width:100% }
+.filter label { font-size:13px }
+details { border-top:1px solid var(--border); padding:var(--s3) 0 }
+summary { cursor:pointer; font-weight:600; min-height:40px; padding:var(--s2) 0 }
+details p { margin:var(--s3) 0 }
+.walk { border-left:1px solid var(--border); padding-left:var(--s5) }
+.walk h3 { margin-top:var(--s4) }
+.callout { font-size:18px; border-left:2px solid var(--control); padding:var(--s3) var(--s4); margin:var(--s5) 0 }
+.source-list li { font-size:13px; overflow-wrap:anywhere }
+.scope-list { display:grid; grid-template-columns:1fr 1fr; gap:var(--s5) }
+.numcell { font-variant-numeric:tabular-nums }
+footer { padding:var(--s6) 0; font-size:13px; color:var(--muted) }
+.print-note { font-size:var(--small); color:var(--muted) }
+@media(max-width:900px) { .layout { grid-template-columns:1fr } nav { position:static; display:flex; flex-wrap:wrap; padding:var(--s3); border-bottom:1px solid var(--border) } nav .label { display:none } main { padding:var(--s5) var(--s4) } .twocol,.scope-list { grid-template-columns:1fr } .pipeline { grid-template-columns:1fr } header { position:static } html { scroll-padding-top:var(--s4) } }
+@media(prefers-reduced-motion:reduce) { * { scroll-behavior:auto!important; transition:none!important } }
+@media print { header,nav,.filter,.row.actions { display:none } .layout { display:block } body { --surface:white; --raised:white; --sunken:#E7EBEF; --text:#1A1F26; --muted:#55606E; --accent:#27649A; --fact:#1C724A; --candidate:#7D5900; --border:#C7CFD8; font-size:12px } section { break-inside:auto } a { color:inherit } main { padding:0 } }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to proposal</a>
+<header>
+  <div class="brand">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2 22 7 12 12 2 7Z M2 12l10 5 10-5 M2 17l10 5 10-5"/></svg>
+    AI-DE <span class="muted">/ Architecture studies</span>
+  </div>
+  <div class="row"><span class="tag">Proposal 01 · 12 Sep 2026</span><button id="theme" type="button" aria-pressed="false">Light theme</button></div>
+</header>
+<div class="layout">
+<nav aria-label="Proposal sections">
+  <div class="label">CODE ATLAS</div>
+  <a href="#thesis" aria-current="location">01 / The proposition</a>
+  <a href="#experience">02 / The workspace</a>
+  <a href="#operations">03 / Operation catalogue</a>
+  <a href="#evidence-model">04 / Static analysis + AI</a>
+  <a href="#scale">05 / Diagrams that scale</a>
+  <a href="#azure">06 / Azure architecture</a>
+  <a href="#foundation">07 / Fit with AI-DE</a>
+  <a href="#delivery">08 / Delivery options</a>
+  <a href="#decisions">09 / Iteration decisions</a>
+  <a href="#sources">10 / Evidence &amp; references</a>
+  <a href="mockup.html">Open interactive mockup ↗</a>
+</nav>
+<main id="main">
+<section id="thesis">
+  <div class="eyebrow">A REPOSITORY IS A SYSTEM, NOT A PILE OF FILES</div>
+  <h1>Find where work enters.<br>Follow what happens.<br>Understand why it is shaped this way.</h1>
+  <p class="lead">Code Atlas is a proposed evolution of AI-DE's <strong>Architecture</strong> perspective:
+  a source-backed workspace for moving from the whole system to one meaningful behavior, without
+  losing your bearings or confusing a model's interpretation with evidence.</p>
+  <div class="row actions"><a class="button primary" href="mockup.html">Explore the interactive mockup</a><a class="button" href="#operations">Browse the operations</a></div>
+  <div class="notice">
+    <p><strong class="candidate">Exploratory, not approved.</strong> This is a proposal and a synthetic
+    interaction prototype, not a product implementation. Claude's UI/session work remains untouched.</p>
+    <p><strong>One Architecture destination, not another app.</strong> The accepted shell already
+    has Coding, Explore and Architecture. We deepen Architecture's contents and use its planned
+    sidebar icon and retained docking host. “Code Atlas” is the study name, not a fourth perspective.</p>
+  </div>
+  <div class="twocol">
+    <div><h2>What the developer should gain</h2><p>Within a few purposeful moves: “These are the ways
+    into this system; this is the domain concept that matters; this is the path this request can
+    take; these dependencies contradict the architecture we intended.”</p></div>
+    <div><h2>What we should not build</h2><p>A repository-sized class diagram, an attractive but
+    unverifiable AI architecture poster, or a chat window that makes the user describe a symbol
+    already selected on screen.</p></div>
+  </div>
+  <p class="callout">The differentiator is not “generate a diagram.” It is <strong>ask a better question
+  of the same evidence, and keep every answer connected to its source.</strong></p>
+</section>
+
+<section id="experience">
+  <div class="eyebrow">ONE SELECTION · MANY USEFUL WAYS TO READ IT</div>
+  <h2>A linked workstation, not a dashboard</h2>
+  <p>Use a familiar solution explorer for orientation and a graph for relationships. Both are
+  projections of the same scoped snapshot. Switching between them preserves selection, filters
+  and history. A question lens changes the analysis, not the repository or the active perspective.</p>
+  <div class="diagram" aria-label="Workspace structure">
+    <div class="pipeline">
+      <div class="stage"><span class="num">ORIENT</span><b>Repository navigator</b><p>Projects → folders →
+      files → symbols. Or a bounded graph overview. Search within scope; distinguish excluded,
+      unindexed and unsupported content.</p></div>
+      <div class="stage"><span class="num">UNDERSTAND</span><b>Question canvas</b><p>Entry points, domain,
+      classes, layers, deployment and impact. Each opens at the right level of detail, never with
+      every node expanded.</p></div>
+      <div class="stage"><span class="num">CHALLENGE</span><b>Evidence inspector</b><p>Source at the input
+      revision, relation type, extractor, coverage, caveats and candidate interpretations.
+      Open the evidence behind an arrow, not only behind a box.</p></div>
+    </div>
+  </div>
+  <p><strong>Chosen UX archetype:</strong> a linked multi-panel workstation, closest to the technical
+  catalogue's G6. Developers read structure and evidence in parallel, then narrow their scope.
+  This is not a sequential form or a chat-first workflow.</p>
+  <div class="walk">
+    <h3>Journey 1 — “What happens when an order is submitted?”</h3>
+    <p><strong>Entry points → POST /orders → Trace behavior.</strong> Inspect the contract and
+    handler, then pivot through candidate sequence, activity branches and data movement.
+    A DI or message-bus dispatch we cannot resolve stays an explicit gap. Ask the bound model
+    to explain that slice, not the entire repository. Open each cited method in source.</p>
+    <h3>Journey 2 — “What is the core domain?”</h3>
+    <p><strong>Domain → Orders candidate boundary → Order.</strong> See identity, invariants,
+    methods that change state and collaborating value objects. Review an AI suggestion that
+    Order is an aggregate root. Accept it as an architectural annotation or reject it.
+    A class called “Entity” or an ORM key is evidence to inspect, not proof of an aggregate.</p>
+    <h3>Journey 3 — “What runs in Azure, and how does this code reach it?”</h3>
+    <p><strong>Azure → deployment root + parameter set → API module.</strong> Expand App Service,
+    identity, secret store and data resources. Switch the relationship legend between deployment
+    dependencies and proposed runtime links. An unresolved module or conditional resource remains
+    visible. Follow a code-to-resource candidate through configuration evidence.</p>
+  </div>
+  <h3>Make investigation feel continuous</h3>
+  <ul>
+    <li><strong>Focus + context:</strong> pin a component, expand one hop, collapse infrastructure
+    noise, keep selected nodes stable. Offer exact scope controls as well as direct manipulation.</li>
+    <li><strong>Trail, not tab archaeology:</strong> back/forward, breadcrumbs, named view bookmarks,
+    and a small set of pinned questions. Restore selection by ID, never by row number.</li>
+    <li><strong>Compare without losing the original:</strong> before/after revision, intended/actual
+    dependency, or static/model interpretation. Always identify both input snapshots.</li>
+    <li><strong>Source is one move away:</strong> source, evidence and the diagram remain synchronized.
+    Keyboard and list-based alternatives provide the same navigation as the canvas.</li>
+    <li><strong>Explain, don't perform analysis theatrically:</strong> show the actual context manifest,
+    processing steps and limitations; never fabricate an AI reasoning transcript.</li>
+  </ul>
+</section>
+
+<section id="operations">
+  <div class="eyebrow">A RICH CATALOGUE, DELIVERED IN VERTICAL SLICES</div>
+  <h2>Start with questions, not diagram names</h2>
+  <p>Each operation has a deterministic foundation, an optional model-assisted interpretation,
+  and a boundary it must disclose. Priorities below are proposed sequencing, not an approved backlog.</p>
+  <div class="filter">
+    <label for="op-search">Find an operation</label><input id="op-search" type="search" placeholder="e.g. domain, Bicep, dependency">
+    <label for="op-stage">Horizon</label><select id="op-stage"><option value="all">All proposed operations</option><option value="first">First slice</option><option value="next">Follow-on</option><option value="later">Explore later</option></select>
+    <output id="op-count" aria-live="polite"></output>
+  </div>
+  <div class="table-wrap" tabindex="0" aria-label="Scrollable operation catalogue">
+  <table id="ops">
+    <caption>Static evidence does the counting; AI proposes meaning</caption>
+    <thead><tr><th scope="col">Operation / question</th><th scope="col">Static foundation</th><th scope="col">Model contribution</th><th scope="col">View and truth boundary</th></tr></thead>
+    <tbody>
+      <tr data-stage="first"><td>Solution + symbol explorer<br><span class="tag">First slice</span></td><td>Project/file hierarchy, symbols, references, artifact kinds, extraction coverage.</td><td>Optional task-oriented grouping and concise component explanations.</td><td>Tree ↔ graph; expose unindexed folders. A filesystem tree and the subset indexed for semantics are not identical.</td></tr>
+      <tr data-stage="first"><td>Public API surface<br><span class="tag">First slice</span></td><td>Public/exported members, routes, RPC/service contracts, SDK entry classes and CLI registrations where the adapter supports them.</td><td>Group contracts by use case; suggest likely external consumers and missing documentation.</td><td>API inventory with visibility, signature, protocol and evidence. “Public” is not the same as “called externally.”</td></tr>
+      <tr data-stage="first"><td>Entry-point discovery<br><span class="tag">First slice</span></td><td>Host startup, HTTP routes, message handlers, scheduled jobs, commands, UI actions and composition roots.</td><td>Rank meaningful starting points; name the business behavior; explain ambiguous framework conventions.</td><td>Grouped launch points → focused graph. Keep unclassified candidates and exclusions visible; no universal “all entry points” claim.</td></tr>
+      <tr data-stage="first"><td>Follow a behavior<br><span class="tag">First slice</span></td><td>Resolved call edges, call sites, method signatures and available branch/async metadata.</td><td>Narrate a possible path; suggest a missing dispatch link for review.</td><td>Sequence / activity / data-flow are separate projections. Lexical call order is not observed runtime order; unresolved steps stay gaps.</td></tr>
+      <tr data-stage="next"><td>Discover the domain<br><span class="tag">Follow-on</span></td><td>Type shape, identity fields, constructors, state-changing methods, ORM mappings, constraints and existing domain docs.</td><td>Propose entities, value objects, aggregate roots, invariants and bounded contexts with supporting and contradicting evidence.</td><td>Candidate domain map → small class model. Transactional invariants establish aggregates, not naming or database relationships alone.</td></tr>
+      <tr data-stage="first"><td>Class model that scales<br><span class="tag">First slice</span></td><td>Types, members, inheritance, implementation and typed associations from supported extractors.</td><td>Suggest a useful cluster or explanation; hide irrelevant boilerplate only through a visible filter.</td><td>Namespace/package overview → selected class neighborhood → members. Do not infer ownership diamonds or multiplicity from a field name.</td></tr>
+      <tr data-stage="next"><td>Layered architecture<br><span class="tag">Follow-on</span></td><td>Project references, imports/calls, process boundaries, manifests and declared dependency rules.</td><td>Propose layer assignment and component responsibilities; identify conflicting evidence.</td><td>Dependency-layer diagram with unknown/unassigned bucket. Keep logical layers separate from runtime containers and physical deployment.</td></tr>
+      <tr data-stage="next"><td>C4 context / container / component<br><span class="tag">Follow-on</span></td><td>Known systems, processes, executables and component dependencies with typed relationships.</td><td>Summarize responsibilities; draft view-specific names and boundary candidates.</td><td>One abstraction level per view. A class is not a C4 container; a Bicep resource is not automatically a C4 container either.</td></tr>
+      <tr data-stage="next"><td>Azure architecture from Bicep<br><span class="tag">Follow-on</span></td><td>Resources, types, API versions, modules, scope, symbols, references, conditions and explicit/implicit deployment dependencies.</td><td>Explain resource intent; propose code/config-to-resource links with cited configuration evidence.</td><td>Declared deployment view; root and parameter context identified. “Declared,” “existing reference” and “unresolved” never imply deployed/healthy.</td></tr>
+      <tr data-stage="next"><td>Data model + data lineage<br><span class="tag">Follow-on</span></td><td>Schema keys/FKs/nullability, ORM mappings and supported read/write/query references.</td><td>Explain data ownership and propose incomplete lineage joins.</td><td>ER vs domain vs lineage are distinct lenses. Crow's-foot cardinality needs schema evidence; sensitive data flow is not proved by a call graph.</td></tr>
+      <tr data-stage="next"><td>Dependency matrix + cycles<br><span class="tag">Follow-on</span></td><td>Directed dependencies, strongly connected components, cross-boundary counts and explicit rule violations.</td><td>Explain likely architectural pressure; suggest a review focus, not an automatic refactor.</td><td>Sortable matrix and selected cycle path. Count a named edge kind over a declared scope; an import is not a runtime call.</td></tr>
+      <tr data-stage="next"><td>Change-impact view<br><span class="tag">Follow-on</span></td><td>Changed symbols, references, API deltas and known test relationships at two named revisions.</td><td>Explain possible blast radius and suggest investigation steps.</td><td>Before/after scoped diff. Reachability is potential impact, not proof that a test will fail or a consumer is broken.</td></tr>
+      <tr data-stage="later"><td>Architecture fitness / drift<br><span class="tag">Explore later</span></td><td>Operator-declared allowed dependencies compared with extracted dependencies.</td><td>Group violations into coherent explanations; propose rules for explicit approval.</td><td>Intended vs actual view with exceptions and expiry. A model must never invent the policy and then certify conformance to it.</td></tr>
+      <tr data-stage="later"><td>Guided code tours<br><span class="tag">Explore later</span></td><td>Pinned source anchors, entry points, view bookmarks, docs and ADR links.</td><td>Draft a source-cited onboarding path; adapt explanation depth to the reader.</td><td>A replayable reading trail, not a monologue. Anchors become stale when the source changes.</td></tr>
+      <tr data-stage="later"><td>Hotspots + test relationships<br><span class="tag">Explore later</span></td><td>Declared complexity measure, churn window and observed test/coverage links if supplied.</td><td>Explain patterns and recommend where to inspect first.</td><td>Metric overlay with denominator and time window. No data ≠ zero risk. This does not introduce the reserved Tests perspective.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p id="no-ops" hidden>No operations match. Clear the search or choose another horizon.</p>
+  <p class="print-note">The mockup samples seven lenses and the entry-point trace pivots. This catalogue
+  is intentionally wider than the prototype and wider than a first implementation.</p>
+</section>
+
+<section id="evidence-model">
+  <div class="eyebrow">MACHINE-EXTRACTED STRUCTURE, HUMAN-REVIEWABLE INTERPRETATION</div>
+  <h2>Use the bound model to explain the graph, not invent it</h2>
+  <p>The deterministic path remains useful with AI disabled. Static tools establish syntax,
+  symbols and bounded relations. The model interprets a selected evidence slice. A validator
+  checks IDs, citations and admissible relationship types before candidates can enter a view.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Evidence kind</th><th scope="col">What the UI may say</th><th scope="col">What it must not imply</th></tr></thead>
+    <tbody>
+      <tr><td>Source-extracted</td><td>“This resource declaration / type / reference appears at this span and revision.”</td><td>That the code executed, that an HTTP endpoint is deployed, or that every dynamic edge is known.</td></tr>
+      <tr><td>Statically inferred</td><td>“This framework binding / association is approximated by this rule.”</td><td>That all static-analysis output is exact. Extraction method and certainty are separate dimensions.</td></tr>
+      <tr><td>AI interpretation</td><td>“Candidate aggregate root, because of these invariants; counterevidence here.”</td><td>“Verified architecture,” invented confidence percentages, or silent promotion into extracted facts.</td></tr>
+      <tr><td>Human-declared / accepted</td><td>“This boundary was declared by the architect” or “candidate accepted as an annotation.”</td><td>Observed runtime truth. Acceptance changes review status, not evidence origin.</td></tr>
+      <tr><td>Runtime-observed, if provided</td><td>“This path occurred in trace X at time Y.”</td><td>Exhaustive behavior, all error paths or current Azure deployment state outside that observation.</td></tr>
+    </tbody>
+  </table></div>
+  <h3>One analysis transaction</h3>
+  <ol>
+    <li><strong>Capture the slice.</strong> Workspace identity, commit + dirty-overlay fingerprint,
+    extractor versions, bounded node/edge IDs, coverage and exact source spans.</li>
+    <li><strong>Preview the context.</strong> Show the connected provider/model, the question, selected
+    files and source excerpts, exclusions and budget. No silently selected alternative provider.
+    The bound execution session is not permission for arbitrary repository egress.</li>
+    <li><strong>Request typed candidates.</strong> Use the existing approved harness/subscription
+    boundary after its read-only analysis contract is established. Do not reuse the prompt-compiler's
+    specialized output schema or bypass its guards. No direct SDK path is proposed.</li>
+    <li><strong>Validate, then review.</strong> Require existing source IDs and spans. Reject fabricated
+    IDs, malformed output and claims with missing evidence. Display supporting and contradicting
+    evidence; accept an annotation, edit it, or dismiss it.</li>
+    <li><strong>Persist reproducibly, if approved.</strong> Store the immutable input identity,
+    output, model/prompt version and reviewer disposition; render derived views from that record.
+    A repeat view reads the saved result. “Analyze again” is explicit and may spend again.</li>
+  </ol>
+  <div class="twocol">
+    <div><h3>Contain nondeterminism</h3><p>Stable node IDs and deterministic layouts do not depend on a
+    model's wording. Rejected candidates cannot add topology. A changed revision marks dependent
+    interpretations stale. Cancellation or quota failure retains the static slice and any prior
+    result with its old snapshot label.</p></div>
+    <div><h3>Protect the boundary</h3><p>Repository comments, docs and model output are untrusted data,
+    not instructions. No tools, shell execution, deployment or mutations from this analysis path.
+    Redact secrets and respect content exclusions before provider egress. Exports are inert,
+    escaped data and preserve provenance.</p></div>
+  </div>
+  <h3>Evaluation before admission</h3>
+  <p>A new model-assisted capability needs its own eval fixture pack, not “the model is connected.”
+  Include tiny hand-labelled systems, incomplete repositories, dynamic dispatch, misleading
+  class names, false aggregate hints, unresolved Bicep modules and malicious source comments.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Check</th><th scope="col">Proposed admission oracle</th></tr></thead>
+    <tbody>
+      <tr><td>Fabricated evidence</td><td>Every non-existent node ID or out-of-snapshot citation is rejected; zero fabricated links are admitted in the fixed negative corpus.</td></tr>
+      <tr><td>Entry-point identification</td><td>Measure precision and recall separately for each supported framework against labelled fixtures; show unclassified results and coverage. Set release thresholds after baseline, not from intuition.</td></tr>
+      <tr><td>Domain and layer suggestions</td><td>Compare with expert-labelled candidates; score justification and contradiction handling, not just label agreement. Abstention must be a valid result.</td></tr>
+      <tr><td>Model drift</td><td>Pin prompt/schema and evaluator versions. Replay the golden corpus on model changes; disable candidate admission on regression, leaving static views intact.</td></tr>
+      <tr><td>Cost and latency</td><td>Record elapsed time, provider-reported usage or “not recorded,” context size, failure code and cache hit. Proposed initial bound: one model call, no automatic retries. Before admission, set independent node, edge, hop, excerpt-byte, token and deadline ceilings, including cumulative expansion; expose the bounded slice, summary and omissions before sending. One call is not a context-size bound.</td></tr>
+      <tr><td>Data minimization</td><td>A forbidden/excluded file never reaches the context manifest; adversarial instructions in a comment cannot cause a tool invocation or expand scope.</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>HAX patterns:</strong> G1/G2 capability and limitation disclosure; G7 opt-in invocation;
+  G8/G9 dismissal and correction; G10 scoped uncertainty; G11 evidence-backed explanations;
+  G17 provider/AI controls. Shape-of-AI: context previews, candidate review and provenance.
+  Cost is “not recorded” when the harness cannot measure it, never a plausible $0.</p>
+</section>
+
+<section id="scale">
+  <div class="eyebrow">THE FULL CLASS DIAGRAM IS A MODEL, NOT A DEFAULT SCREEN</div>
+  <h2>Scale the question before scaling the renderer</h2>
+  <p>Virtualizing cards alone does not make a dense relationship graph comprehensible. Keep the
+  complete model queryable, but render a bounded semantic slice. The repository has already
+  recorded whole-graph overload (DC-035) and unreadable fixed-layout graphs (DC-036).</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Level</th><th scope="col">What is visible</th><th scope="col">How to go deeper</th></tr></thead>
+    <tbody>
+      <tr><td>System</td><td>Projects or declared components; summarized, typed cross-boundary dependencies.</td><td>Choose one scope. High edge density offers a dependency matrix instead of another zoom level.</td></tr>
+      <tr><td>Package / domain candidate</td><td>Collapsed groups with counts, a few boundary-crossing relationships and unassigned nodes.</td><td>Expand a single group. Group membership stays inspectable; AI clustering is labelled.</td></tr>
+      <tr><td>Class neighborhood</td><td>A selected type plus chosen inheritance/association/dependency relations. Members folded.</td><td>Expand one hop, pin a neighbor, hide external libraries or choose a relation kind.</td></tr>
+      <tr><td>Member / behavior</td><td>Selected fields, signatures, contract details and a method's bounded call slice.</td><td>Open source, follow one call, view a branch, return with selection and layout intact.</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Proposed initial design budgets, not measured product limits</h3>
+  <ul>
+    <li>Default class detail: begin with <strong>6–10 visible type cards</strong>, members folded.
+    Separately, propose an initial query ceiling of 24 types / 48 relations. Query capacity is
+    not permission to put every result on screen. Narrow or replace the visible slice as the user
+    explores; validate these budgets at wide and compact widths on real corpora.</li>
+    <li>Each bounded query discloses <strong>shown / eligible / omitted / unknown</strong> separately.
+    Total unknown is not zero. Member omission and edge omission are independent counts.</li>
+    <li>Retain positions by stable ID for <strong>all unchanged visible nodes</strong> across one-node
+    additions/removals and snapshot refresh; retain camera and selection as well. Place new nodes
+    locally. Broad movement requires explicit “Relayout.” Before product admission, test before/after
+    coordinates; a deterministic layout alone does not guarantee this stability.</li>
+    <li>Use hierarchical layout for layers and inheritance, swimlanes for behavior, and a matrix
+    for dense coupling. None of these choices removes the readable-card budget.</li>
+    <li>Preserve edge semantics while bundling: an aggregate edge exposes member edges and their provenance.
+    Mixed evidence does not inherit the strongest confidence.</li>
+    <li>Target p95 selection-to-inspector under 100 ms for a cached slice and filter response under
+    250 ms; measure cold/warm runs on agreed small, medium and large corpora before committing an SLO.</li>
+    <li>Prefer 2D first. A 3D presentation is an optional experiment only if it improves a measured task,
+    with a fully equivalent keyboard/list path.</li>
+  </ul>
+  <h3>Diagram notation has to mean what it says</h3>
+  <p><strong>Sequence:</strong> participants and messages, explicitly “possible static trace” unless
+  sourced from runtime events. <strong>Activity:</strong> branch/merge and fork/join only with evidence
+  for those semantics. <strong>Data flow:</strong> source, transform and sink; a call is not enough.
+  <strong>Class:</strong> association/inheritance with provenance; use a composition diamond only with
+  lifecycle ownership evidence. <strong>ER:</strong> keys, optionality and multiplicity from schema,
+  not generic object references. <strong>C4:</strong> do not mix people, classes, containers and Azure
+  resources at one undifferentiated level.</p>
+</section>
+
+<section id="azure">
+  <div class="eyebrow">WHAT THE REPOSITORY DECLARES, NOT WHAT AZURE IS RUNNING</div>
+  <h2>From Bicep files to an inspectable deployment model</h2>
+  <p>Start with the Bicep declaration graph. A richer cloud architecture explanation is a second,
+  separately labelled layer. No Azure subscription connection, deployment or live resource query
+  is needed for the first slice.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Representation</th><th scope="col">Derivation</th><th scope="col">Important boundary</th></tr></thead>
+    <tbody>
+      <tr><td>Deployment roots and modules</td><td>Entrypoint files, module references, parameter bindings and target scopes.</td><td>Multiple Bicep files are not necessarily one deployment. Choose a root and parameter context; unresolved remote modules stay unresolved.</td></tr>
+      <tr><td>Resources and references</td><td>Resource type/API version, symbolic name, existing declarations, parent/child containment.</td><td>“Existing” refers to a resource outside this deployment declaration; it is not a freshly created resource or verified live resource.</td></tr>
+      <tr><td>Conditional and repeated declarations</td><td>Conditions, loops and symbolic expressions retained with source spans.</td><td>Do not invent environment values or concrete instance counts. Display symbolic/conditional cardinality when parameters are unknown.</td></tr>
+      <tr><td>Deployment dependency</td><td>Explicit dependsOn and language-defined implicit references.</td><td>An ordering constraint is not network connectivity or runtime traffic. Even symbolic references have language-specific dependency rules.</td></tr>
+      <tr><td>Runtime architecture candidate</td><td>App configuration, endpoints, bindings, connection references, SDK use and relevant declarations.</td><td>A model can propose “API uses queue.” More configuration evidence can strengthen an Inferred relationship, but only relevant runtime evidence can establish observed traffic. Human acceptance is still an annotation. Managed identity assignment alone does not establish authorized access.</td></tr>
+      <tr><td>Code-to-resource trace</td><td>Join code/config symbols to declaration symbols through evidence records.</td><td>Equal strings across files are hints, not identity. Surface multiple matches and environment ambiguity.</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Compilation is a later, explicit capability decision.</strong> A declaration-only
+  extractor has different guarantees from the Bicep compiler. If richer semantics need compiler
+  output, pin its version, constrain module restore/network access, preserve source maps, and
+  label missing inputs. Never use AI to silently repair a compiler failure.</p>
+</section>
+
+<section id="foundation">
+  <div class="eyebrow">EXTEND THE DEFERRED USE CASE; DON'T COMPETE WITH THE SHELL REFACTOR</div>
+  <h2>Fit the existing boundaries</h2>
+  <p><strong class="fact">Verified spec intent:</strong> Addendum C A5 already names the solution tree,
+  entry points, data flow, ER and layered/component understanding as deferred capabilities.
+  The current horizon admits existing Architecture surfaces only. This proposal explores the next
+  content layer; it neither changes that horizon nor adds placeholder product commands.</p>
+  <div class="notice"><p><strong class="candidate">One wording question for the next spec:</strong>
+  D-4 says a Bicep resource “appears as a container.” This proposal distinguishes a
+  <em>deployment resource node</em> from a <em>C4 software container</em>. Some resources host
+  software containers; others represent identities, policies or network configuration.
+  Treating every resource as a C4 container would misstate the model. Clarify that admission
+  wording before implementation; the accepted spec is not silently amended here.</p></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Existing boundary</th><th scope="col">How the proposal fits</th><th scope="col">Implementation seam, after approval</th></tr></thead>
+    <tbody>
+      <tr><td>Architecture perspective / host B</td><td>Use the existing planned destination, contextual menu and retained dock host.</td><td>Coordinate surface admission with the Shell lane. Do not edit its rail or registry now.</td></tr>
+      <tr><td>Workspace authority + fact store</td><td>Source evidence remains owned by the Core and its single write pipeline.</td><td>New extractor facts go through versioned scope replacement. No file/store reads from arbitrary UI scripts.</td></tr>
+      <tr><td>Bounded query / projection service</td><td>One snapshot drives tree, graph, inspector and export.</td><td>Agree result bounds, unindexed placeholders, source revisions and selection IDs before new surfaces.</td></tr>
+      <tr><td>Visual host</td><td>Renders inert projection data and retains view-local navigation state.</td><td>Diagram notation, scaling, keyboard equivalents and accessible list/tree stay inside the presentation boundary.</td></tr>
+      <tr><td>Bound provider / agent plane</td><td>Use the selected approved harness only when a bounded read-only analysis contract exists.</td><td>The current compile contract is not a generic diagram AI endpoint. Separate capability design/eval and privacy review are needed.</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Current capability inventory</h3>
+  <p>The accompanying source review separates reusable hooks from proposed behavior. The existence of
+  a query or parser is not evidence that the complete understanding workflow already works.</p>
+  <p class="print-note">Source review at 8d54aadc. These are inspected code contracts, not executed
+  integration results. File locations are reproducible; no existing implementation is credited
+  with a complete proposed workflow merely because a related method exists.</p>
+  <div id="inventory" class="table-wrap"><table>
+    <thead><tr><th scope="col">Area</th><th scope="col">Reusable today, from source review</th><th scope="col">The gap to design honestly</th></tr></thead>
+    <tbody>
+      <tr><td>API / entry discovery</td><td><code>IWorkspaceQueries.cs:22–26,61,84</code>: Find, Describe, NodeContent and Graph. <code>CSharpExtractor.cs:515–576</code>: visibility-marked member strings; <code>TypeScriptExtractor.cs:415–422</code>: exported-declaration metadata.</td><td>No dedicated executable-entry-point contract established. C# members are display strings, capped at 40 per type, not independently addressable method nodes. Framework-specific classification and member identity need design.</td></tr>
+      <tr><td>Behavior trace</td><td><code>IWorkspaceQueries.cs:47</code>: InteractionAsync. <code>CSharpExtractor.cs:364–402</code>: deduplicated calls plus occurrence-preserving calls_at. <code>ProjectionService.cs:941–968</code>: outgoing call-site projection.</td><td>This is source-ordered outgoing calls for a <em>type</em>, not a method activation. Same-type calls and unresolved dynamic targets have exclusions. Branch/loop/exception activity and data-value flow are not established. Method-level tracing is an extension, not a rename.</td></tr>
+      <tr><td>Domain and schema</td><td><code>BoundedContextMap.cs:34–45,68,289–309</code>: declared contexts and validation. <code>EfSchemaExtractor.cs:85–157,193–202</code> and <code>SqlSchemaExtractor.cs:222–227</code>: table/column vocabulary.</td><td>SQL's stated ceiling is table/column names, not complete keys, constraints or types. EF raw SQL and positional hand-edited arguments have limits. Do not synthesize authoritative ER cardinality or aggregate ownership from this vocabulary.</td></tr>
+      <tr><td>Architecture navigation</td><td><code>IWorkspaceQueries.cs:84,94,104</code>: Graph, Paths, Overview. <code>GraphPaths.cs:48–56,97–152</code>: bounded directed paths carrying weakest-edge verification. <code>ContextProjection.cs:10–33,106</code>: context/crossing projections.</td><td>Good navigation substrate; no established automatic layer assignment or valid C4 decomposition. Explicitly separate declared groups and candidate layers.</td></tr>
+      <tr><td>Bicep</td><td><code>BicepExtractor.cs:46–67,140–244</code>: resource/module/parameter declarations, type/version/scope, existing/loop/condition flags and unresolved expressions. <code>BicepConstantFolder.cs:95–102</code>: four bounded functions.</td><td><code>BicepExtractor.cs:292–301</code> recognizes explicit bare-symbol dependsOn lines. Module branch <code>:215–223</code> does not expand a deployment graph. Implicit/parent/property dependencies, remote-module expansion and full compilation are proposed extensions. The Azure mockup deliberately illustrates that future target, not current extractor output.</td></tr>
+      <tr><td>Impact</td><td><code>ProjectionService.cs:417–489</code>: bounded traversal for ImpactAsync.</td><td>It follows <em>outgoing</em> assertions: caller → callee is dependency exploration, not reverse affected-caller blast radius. No test-coverage mapping was established. “Affected tests” needs its own evidence and direction contract.</td></tr>
+      <tr><td>Cross-artifact joins</td><td><code>JoinProjection.cs:72–114,148–191</code>: declared maps_to, separate uses_table and inferred naming/configuration joins.</td><td>Useful for code↔data↔infra context, provided every predicate and confidence survives rendering. A naming match cannot become a declared relationship.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="print-note">Paths above are under <code>src/AiDe.Core/Projections/</code> for queries/projections
+  and <code>src/AiDe.Core/Extraction/</code> for extractors. Test files including
+  <code>CallEdgeTests</code>, <code>InteractionTests</code>, <code>BicepConstantFoldingTests</code>
+  and <code>GraphPathsTests</code> were located; their suites were not run for this proposal.</p>
+  <h3>The surface chain that must agree</h3>
+  <p><code>artifact / revision → extractor assertion → store snapshot → bounded query →
+  diagram/tree projection → inspector → AI context / candidate validation → export</code></p>
+  <p>A feature is incomplete if any arrow drops provenance, omissions, source identity or cancellation.
+  Test a single selected symbol through the whole chain, not only independent DTO round trips.</p>
+</section>
+
+<section id="delivery">
+  <div class="eyebrow">BUILD THE READING LOOP BEFORE THE ENTIRE CATALOGUE</div>
+  <h2>Suggested delivery, subject to approval</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Slice</th><th scope="col">User outcome</th><th scope="col">Exit evidence</th><th scope="col">Coordination boundary</th></tr></thead>
+    <tbody>
+      <tr><td>0 · This study</td><td>Agree the workspace, operations and evidence model using the HTML prototype.</td><td>Requested lenses reachable; graph/tree pivot; wrong-answer and incomplete states visible. Fixture data labelled.</td><td>Only new proposal artifacts, own worktree. No app change.</td></tr>
+      <tr><td>1 · Orient and follow</td><td>Open Architecture, find an entry point, inspect a class and follow a bounded possible call path.</td><td>One supported framework/language fixture end-to-end; graph/tree selection identity; explicit dispatch gaps; source anchor preservation; large-scope bounds.</td><td>After Shell's host/registry seams settle. Negotiate Core query and rendering ownership.</td></tr>
+      <tr><td>2 · Domain and layers</td><td>Get reviewable domain and architecture interpretations from the bound model.</td><td>Independent eval admission, context/egress review, provenance validator, abstention and revision invalidation; static-only path remains useful.</td><td>Dedicated analysis contract, not an edit to the active Conversation compile lane.</td></tr>
+      <tr><td>3 · Azure and data</td><td>Understand one Bicep deployment root and join it to source/config; inspect an evidenced ER model.</td><td>Conditions/loops/existing resources/module failures; distinct edge semantics; ambiguity-aware joins; no live deployment claim.</td><td>Extractor and projection slice; no cloud write authority.</td></tr>
+      <tr><td>4 · Compare and communicate</td><td>Review dependency drift, impact, saved tours and revision comparisons.</td><td>Golden before/after fixture, deterministic export with provenance manifest, stale anchors surfaced.</td><td>Add only after the basic reading loop earns its place.</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Functional acceptance examples for the next spec</h3>
+  <ul>
+    <li><strong>Given</strong> a selected type and scope, <strong>when</strong> I switch graph to tree,
+    <strong>then</strong> the same ID is selected, or an explicit filtered-out explanation appears.</li>
+    <li><strong>Given</strong> unresolved runtime dispatch, <strong>when</strong> I trace an entry point,
+    <strong>then</strong> the missing step is visible and no solid “observed” message is fabricated.</li>
+    <li><strong>Given</strong> 5,000 eligible types, <strong>when</strong> the class view opens,
+    <strong>then</strong> the agreed visible budget is respected and the omitted count is correct.</li>
+    <li><strong>Given</strong> a candidate aggregate accepted by an architect, <strong>when</strong> I
+    inspect or export it, <strong>then</strong> origin remains AI interpretation and review status
+    records the acceptance separately.</li>
+    <li><strong>Given</strong> an unresolved Bicep parameter, <strong>when</strong> the deployment view
+    opens, <strong>then</strong> conditional resources stay conditional rather than disappearing.</li>
+    <li><strong>Given</strong> AI is unavailable, cancelled or over quota, <strong>when</strong> I
+    inspect source or pivot views, <strong>then</strong> deterministic navigation still works.</li>
+  </ul>
+  <h3>Quality obligations, not implied by the mockup</h3>
+  <p>Accessibility: native UIA plus keyboard/canvas parity. Reliability: snapshot consistency and
+  explicit incomplete results. Security/privacy: bounded, consented source egress with no tool authority.
+  Performance: measured on agreed real corpora. Maintainability: one projection/selection contract.
+  Observability: named latency, coverage, result-bound and failure emitters. Release/rollback:
+  newly admitted surfaces and AI analysis independently disableable; no destructive migration assumed.
+  Compatibility: versioned view exports, extractor/model metadata and preserved previous snapshots.</p>
+</section>
+
+<section id="decisions">
+  <div class="eyebrow">THE NEXT ITERATION SHOULD CHANGE THE EXPERIENCE, NOT JUST THE COLORS</div>
+  <h2>Decisions to make from the mockup</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Decision</th><th scope="col">Recommendation for iteration 1</th><th scope="col">Alternative worth comparing</th></tr></thead>
+    <tbody>
+      <tr><td>Landing experience</td><td>Architecture opens a scoped structure overview with entry points prominently reachable.</td><td>Entry-point inventory as the default for unfamiliar repositories.</td></tr>
+      <tr><td>Graph / tree relationship</td><td>A direct pivot of the same selection and scope; source/evidence inspector persists.</td><td>Both visible at once on wide displays; avoid forcing duplicated navigation at small widths.</td></tr>
+      <tr><td>AI initiation</td><td>“Explain selection” / “Suggest domain model,” context preview, explicit send; static first.</td><td>Background suggestions only after measured value, provider consent and predictable cost.</td></tr>
+      <tr><td>First language/framework</td><td>Start with the repository's strongest evidenced extractor and one framework; C# is a candidate, not a claim of universal .NET support.</td><td>A Bicep-first vertical slice if cloud-understanding is the immediate priority.</td></tr>
+      <tr><td>Domain certainty</td><td>Candidate labels plus evidence/counterevidence and separate human declaration.</td><td>Operator supplies a domain model first, and AI-DE only maps code to it.</td></tr>
+      <tr><td>Export</td><td>View specification + snapshot/provenance manifest first; SVG/diagram DSL as derived output later.</td><td>Markdown walkthrough/tour for code reviews before diagram-file interoperability.</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Highest-leverage next decision:</strong> choose one complete reading journey to make
+  excellent. Recommended: <em>entry point → bounded behavior trace → source + domain context</em>.
+  It connects the requested views into a task rather than launching five unrelated diagram tools.</p>
+  <details><summary>Why not an all-in-one automatic reverse-engineering engine?</summary><p>It bundles
+  the hardest language, framework, modeling, graph-layout and trust problems before the first
+  useful workflow exists. A supported slice with visible limits is more useful than an
+  impressive “complete architecture” diagram that cannot justify its arrows.</p></details>
+  <details><summary>Why not reuse Explore for everything?</summary><p>Explore serves broad knowledge
+  navigation; the accepted spec deliberately separates it from code/architecture understanding.
+  Reuse the projection and visualization substrate, not the task identity or a duplicate registry.</p></details>
+  <details><summary>What remains deliberately unproven?</summary><p>Framework-wide entry-point recall,
+  accurate aggregate inference, large-repository layout performance, native UIA/focus behavior,
+  live Azure state, cross-language data lineage and model-quality thresholds. The HTML prototype
+  proves none of these production capabilities. Their admission evidence is specified above.</p></details>
+</section>
+
+<section id="sources">
+  <div class="eyebrow">READING MAP AND CONFIDENCE</div>
+  <h2>What this proposal rests on</h2>
+  <p><strong class="fact">Verified document content:</strong> the cited specs and architecture define the
+  current direction and boundaries. <strong class="candidate">Proposed / inferred:</strong> interaction
+  choices, initial display budgets and delivery order. <strong>Fixture:</strong> every concrete
+  repository diagram in the mockup. None of those categories silently becomes implemented behavior.</p>
+  <h3>Repository sources, snapshot 8d54aadc</h3>
+  <ul class="source-list">
+    <li><a href="../../specs/addendum-c-perspectives.md">Addendum C</a>, A5 lines 295–322:
+    D-0 tree, D-1 entry points, D-2 data flow, D-3 ER and D-4 layers/components are deferred.
+    Lines 100–106 define exactly Coding, Explore, Architecture.</li>
+    <li><a href="../../architecture.md">Architecture</a>, lines 187–226:
+    workspace authority, inert projection host, evidence assertions, bounded queries and provenance.
+    C/D.1–C/D.4, lines 600–735: the retained second host and contextual kind admission.</li>
+    <li><a href="../../specs/uml-erm-surfaces.md">UML / ER surfaces specification</a>:
+    diagram semantics and source-backed rendering; used as a constraint, not proof of implementation.</li>
+    <li><a href="../../../DESIGN.md">AI-DE design language</a>: dark/light semantic tokens,
+    compact workstation, confidence not color alone, absence as a state.</li>
+    <li><a href="../../lessons/defect-classes.md">Defect-class register</a>:
+    DC-035 whole-dataset default; DC-036 layout capacity. These motivate bounded overview and
+    progressive class detail rather than an enlarged transport limit.</li>
+    <li><a href="../../collaboration/session-contracts.md">Session contracts, section 2</a>:
+    Shell and Conversation lane ownership. This proposal is not permission to cross either lane.</li>
+  </ul>
+  <h3>Reverse-engineering references</h3>
+  <div id="external-sources" class="table-wrap"><table>
+    <thead><tr><th scope="col">Primary reference</th><th scope="col">Pattern to borrow</th><th scope="col">Limit of the comparison</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://code.visualstudio.com/docs/editing/editingevolved">VS Code: Code Navigation</a></td><td>Explorer, breadcrumbs, symbol navigation and definition/reference peek that preserve location.</td><td>Language-service dependent. This fetched page was not sufficient evidence for Call Hierarchy specifically; that earlier candidate reference is not treated as verified.</td></tr>
+      <tr><td><a href="https://learn.microsoft.com/en-us/visualstudio/modeling/map-dependencies-across-your-solutions?view=visualstudio">Visual Studio: Code maps</a></td><td>Assembly → namespace → type → member expansion, aggregated relations and external-code boundaries.</td><td>Creation/editing is Enterprise functionality. Microsoft warns that expanding every group can be impractical or exhaust memory.</td></tr>
+      <tr><td><a href="https://www.jetbrains.com/help/idea/class-diagram.html">IntelliJ IDEA: UML class diagrams</a></td><td>Package scope, member-visibility filters, structure mini-view and selected-node paths.</td><td>The cited workflow concerns Java and the Diagrams plugin. Its forward-engineering edits are not part of this read-only exploration design.</td></tr>
+      <tr><td><a href="https://www.ndepend.com/docs/dependency-structure-matrix-dsm">NDepend: Dependency Structure Matrix</a></td><td>Graph/matrix alternatives, direction and coupling weights, explicit direct/indirect dependency and cycles.</td><td>A matrix needs a defined edge meaning and weight; it does not discover business layers or prove runtime impact.</td></tr>
+      <tr><td><a href="https://docs.structurizr.com/dsl">Structurizr: DSL</a></td><td>A model with multiple derived C4 views, rather than unrelated diagrams that drift.</td><td>The DSL is a modeling language, not automatic architecture recovery. C4 abstraction levels still need evidence and review.</td></tr>
+      <tr><td><a href="https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/resource-dependencies">Bicep: resource dependencies</a><br><a href="https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/visual-studio-code">Bicep: VS Code visualizer</a></td><td>Resource declarations and dependencies beside source, with explicit vs implicit dependency semantics.</td><td>These are deployment ordering relations, not retained runtime connectivity. The language's implicit-reference/parent semantics exceed the inspected local extractor.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="print-note">Public primary pages inspected by the bounded research pass on 12 September
+  2026. No product code, protected visual identity, diagrams, icons or screenshots are copied.</p>
+  <h3>Review and reproducibility</h3>
+  <p><a href="README.md">Direction, conceptual model, flows and prototype acceptance contract</a>.
+  <a href="../../proof/code-atlas-prototype.md">Prototype evidence and residual risks</a>.
+  Open these artifacts locally; no backend, build, sign-in or model connection is required.</p>
+  <p>The worktree is intentionally retained for iteration. Merging, implementation, source egress and
+  changes to Claude's active UI/session work require a subsequent decision.</p>
+</section>
+<footer>
+  Code Atlas · proposal 01 · AI-DE Architecture study · 12 September 2026<br>
+  <code>proposal/code-atlas</code> · authored from <code>8d54aadc</code> · no product implementation
+</footer>
+</main>
+</div>
+<script>
+(() => {
+  const theme = document.getElementById('theme');
+  theme.addEventListener('click', () => {
+    const light = document.body.classList.toggle('light');
+    theme.setAttribute('aria-pressed', String(light));
+    theme.textContent = light ? 'Dark theme' : 'Light theme';
+  });
+  const search = document.getElementById('op-search');
+  const stage = document.getElementById('op-stage');
+  const rows = Array.from(document.querySelectorAll('#ops tbody tr'));
+  function filter() {
+    const needle = search.value.trim().toLocaleLowerCase();
+    let count = 0;
+    rows.forEach(row => {
+      row.hidden = !(row.textContent.toLocaleLowerCase().includes(needle) &&
+        (stage.value === 'all' || row.dataset.stage === stage.value));
+      if (!row.hidden) count++;
+    });
+    document.getElementById('op-count').textContent = count + ' of ' + rows.length + ' operations';
+    document.getElementById('no-ops').hidden = count !== 0;
+  }
+  search.addEventListener('input', filter);
+  stage.addEventListener('change', filter);
+  filter();
+  const links = Array.from(document.querySelectorAll('nav a[href^="#"]'));
+  const observer = new IntersectionObserver(entries => {
+    const visible = entries.filter(entry => entry.isIntersecting);
+    if (!visible.length) return;
+    const id = visible[0].target.id;
+    links.forEach(link => {
+      if (link.getAttribute('href') === '#' + id) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+  }, {rootMargin:'-15% 0px -65% 0px'});
+  document.querySelectorAll('main section').forEach(section => observer.observe(section));
+})();
+</script>
+</body>
+</html>

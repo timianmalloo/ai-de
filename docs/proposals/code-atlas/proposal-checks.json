@@ -1,0 +1,83 @@
+{
+  "proposal_contrast": [
+    {
+      "theme": "dark",
+      "pairs": [
+        {
+          "selector": ".primary",
+          "foreground": "rgb(13, 16, 20)",
+          "background": "rgb(91, 157, 217)",
+          "ratio": 6.600712437137574
+        },
+        {
+          "selector": "body",
+          "foreground": "rgb(228, 233, 239)",
+          "background": "rgb(18, 21, 26)",
+          "ratio": 14.984519241327133
+        },
+        {
+          "selector": ".muted",
+          "foreground": "rgb(152, 163, 178)",
+          "background": "rgb(13, 16, 20)",
+          "ratio": 7.4608165276198095
+        },
+        {
+          "selector": ".candidate",
+          "foreground": "rgb(216, 166, 80)",
+          "background": "rgb(26, 31, 38)",
+          "ratio": 7.4848743743851065
+        },
+        {
+          "selector": ".fact",
+          "foreground": "rgb(95, 185, 143)",
+          "background": "rgb(18, 21, 26)",
+          "ratio": 7.686019846654035
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "pairs": [
+        {
+          "selector": ".primary",
+          "foreground": "rgb(255, 255, 255)",
+          "background": "rgb(39, 100, 154)",
+          "ratio": 6.22083180635853
+        },
+        {
+          "selector": "body",
+          "foreground": "rgb(26, 31, 38)",
+          "background": "rgb(244, 246, 248)",
+          "ratio": 15.288516371131225
+        },
+        {
+          "selector": ".muted",
+          "foreground": "rgb(85, 96, 110)",
+          "background": "rgb(231, 235, 239)",
+          "ratio": 5.336327672667242
+        },
+        {
+          "selector": ".candidate",
+          "foreground": "rgb(125, 89, 0)",
+          "background": "rgb(255, 255, 255)",
+          "ratio": 6.361812266308677
+        },
+        {
+          "selector": ".fact",
+          "foreground": "rgb(28, 114, 74)",
+          "background": "rgb(244, 246, 248)",
+          "ratio": 5.452430169362371
+        }
+      ]
+    }
+  ],
+  "heading_order": true,
+  "table_header_scope": true,
+  "responsive_widths": [
+    1440,
+    1024,
+    768,
+    390
+  ],
+  "native_a11y": "not tested; browser proposal only"
+}

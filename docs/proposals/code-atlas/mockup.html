@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Code Atlas | Interactive Architecture study</title>
+<style>
+:root {
+ --surface:#12151A;--raised:#1A1F26;--sunken:#0D1014;--border:#2A313B;
+ --text:#E4E9EF;--muted:#98A3B2;--accent:#5B9DD9;--accent-ink:#0D1014;
+ --fact:#5FB98F;--candidate:#D8A650;--danger:#E07A6F;--focus:#8FC0EA;--control:#7C8896;
+ --ui:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;--mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+ --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;
+ --r:6px;--small:12px;--body:13px;--title:22px;--row:32px;--fast:150ms;
+}
+body.light {
+ --surface:#F4F6F8;--raised:#FFFFFF;--sunken:#E7EBEF;--border:#C7CFD8;--text:#1A1F26;
+ --muted:#55606E;--accent:#27649A;--accent-ink:#FFFFFF;--fact:#1C724A;--candidate:#7D5900;
+ --danger:#A8372B;--focus:#1B4F7E;--control:#5F6977;
+}
+body.hc {
+ --surface:#000000;--raised:#000000;--sunken:#000000;--border:#FFFFFF;--text:#FFFFFF;
+ --muted:#FFFFFF;--accent:#FFFF00;--accent-ink:#000000;--fact:#FFFFFF;--candidate:#FFFF00;
+ --danger:#FFFFFF;--focus:#FFFF00;--control:#FFFFFF;
+}
+body.comfortable{--row:44px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--surface);color:var(--text);font:var(--body)/1.5 var(--ui)}
+button,select,input,textarea{font:inherit}
+button,select,input{min-height:var(--row)}
+button,select{cursor:pointer}
+button,.button{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);padding:var(--s1) var(--s3);background:var(--raised);color:var(--text);border:1px solid var(--control);border-radius:var(--r);text-decoration:none}
+button:hover,.button:hover{background:var(--sunken)}
+button:active{transform:translateY(1px)}
+button[aria-pressed=true],.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.primary:hover{background:var(--accent);color:var(--accent-ink);text-decoration:underline}
+button:disabled{cursor:not-allowed;color:var(--muted);background:var(--surface)}
+button svg{width:18px;height:18px;flex:none}
+a{color:var(--accent);text-underline-offset:3px}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+select,input,textarea{color:var(--text);background:var(--sunken);border:1px solid var(--control);border-radius:var(--r);padding:var(--s1) var(--s2);max-width:100%;min-width:0}
+textarea{width:100%;min-height:90px;padding:var(--s2)}
+.skip{position:absolute;top:-90px;left:var(--s4);z-index:30;background:var(--raised);padding:var(--s3)}
+.skip:focus{top:var(--s2)}
+.review{display:flex;align-items:center;flex-wrap:wrap;gap:var(--s3);padding:var(--s2) var(--s4);border-bottom:1px solid var(--border);background:var(--sunken)}
+.review strong{font-size:var(--small);letter-spacing:.04em}
+.review label{font-size:var(--small);display:inline-flex;align-items:center;gap:var(--s1)}
+.review select{min-height:28px;font-size:var(--small);max-width:155px}
+.review .spacer{flex:1}
+.review .check{white-space:nowrap}
+.review input[type=checkbox]{min-height:24px;width:24px;accent-color:var(--accent)}
+.window{margin:0 auto;max-width:100%;border:1px solid var(--border);overflow:hidden}
+.window.compact{max-width:1100px}.window.narrow{max-width:800px}
+.titlebar{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);padding:var(--s3) var(--s4);background:var(--sunken);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:var(--s3);font-weight:600}
+.brand svg{width:22px;height:22px;color:var(--accent)}
+.mono{font-family:var(--mono);font-size:var(--small);overflow-wrap:anywhere}
+.muted{color:var(--muted)}.fact{color:var(--fact)}.candidate{color:var(--candidate)}.danger{color:var(--danger)}
+.badge{display:inline-flex;align-items:center;gap:var(--s1);padding:var(--s1) var(--s2);border:1px solid var(--border);border-radius:4px;font-size:var(--small)}
+.workspace{display:grid;grid-template-columns:56px 224px minmax(0,1fr) 300px;min-height:750px}
+.rail{display:flex;flex-direction:column;align-items:center;gap:var(--s2);padding:var(--s3) var(--s1);background:var(--sunken);border-right:1px solid var(--border)}
+.rail button{width:44px;height:44px;padding:var(--s2)}
+.rail svg{width:22px;height:22px}
+.rail .separator{height:1px;width:28px;background:var(--border);margin:var(--s2) 0}
+.navigator{padding:var(--s4) var(--s3);border-right:1px solid var(--border);min-width:0}
+.caption{font-size:var(--small);letter-spacing:.04em;color:var(--muted);font-weight:600;margin:var(--s5) 0 var(--s2)}
+.caption:first-child{margin-top:0}
+.navigator label{display:block;color:var(--muted);font-size:var(--small);margin-bottom:var(--s1)}
+.navigator select,.navigator input{width:100%;margin-bottom:var(--s3)}
+.lens-list{display:grid;gap:var(--s1)}
+.lens-list button{justify-content:flex-start;text-align:left;min-height:36px;border-color:transparent;background:transparent}
+.lens-list button:hover{background:var(--raised)}
+.lens-list button[aria-pressed=true]{background:var(--raised);border-color:var(--accent);color:var(--text)}
+.lens-glyph{width:22px;color:var(--muted);font-family:var(--mono)}
+.lens-list button[aria-pressed=true] .lens-glyph{color:var(--accent)}
+.context-note{border-top:1px solid var(--border);padding-top:var(--s3);font-size:var(--small);margin-top:var(--s5);color:var(--muted)}
+.navigator .hint{font-size:var(--small);color:var(--muted);margin:var(--s3) 0}
+.main{min-width:0;display:flex;flex-direction:column}
+.canvas-head{padding:var(--s4);border-bottom:1px solid var(--border)}
+.breadcrumbs{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;color:var(--muted);font-size:var(--small);margin-bottom:var(--s3)}
+.breadcrumbs button{min-height:28px;padding:var(--s1) var(--s2)}
+h1{font-size:var(--title);margin:0;line-height:1.3;font-weight:600}
+h2{font-size:18px;margin:0 0 var(--s3);line-height:1.4}h3{font-size:15px;margin:var(--s4) 0 var(--s2)}
+p{margin:0 0 var(--s3)}
+.head-row,.row{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
+.head-row{justify-content:space-between}
+.subtitle{color:var(--muted);font-size:var(--small);margin:var(--s2) 0 0;max-width:75ch}
+.toolbar{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;padding:var(--s2) var(--s4);border-bottom:1px solid var(--border)}
+.toolbar .spacer{flex:1}
+.toolbar label{font-size:var(--small);color:var(--muted)}
+.segmented{display:inline-flex;gap:var(--s1)}
+.segmented button{min-width:60px}
+.banner{margin:var(--s3) var(--s4) 0;padding:var(--s3);background:var(--raised);border:1px solid var(--control);border-radius:var(--r)}
+.banner .row{justify-content:space-between}
+.banner p{margin:var(--s2) 0 0;font-size:var(--small)}
+.legend{display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap;padding:var(--s2) var(--s4);color:var(--muted);font-size:var(--small)}
+.key{display:inline-flex;align-items:center;gap:var(--s2)}
+.line{width:22px;border-top:2px solid var(--control)}
+.line.dashed{border-top-style:dashed;border-color:var(--candidate)}
+.line.dotted{border-top-style:dotted}
+.canvas{min-height:445px;overflow:auto;position:relative;flex:1;background:var(--sunken);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.graph-svg{display:block;width:820px;min-width:820px;height:auto}
+.node{cursor:pointer;outline:none}
+.node rect{fill:var(--raised);stroke:var(--control);stroke-width:1}
+.node.selected rect{stroke:var(--accent);stroke-width:2}
+.node:focus-visible rect{stroke:var(--focus);stroke-width:3}
+.node text{fill:var(--text);font-family:var(--ui);font-size:13px}
+.node .kind{fill:var(--muted);font-size:11px}
+.node .origin{fill:var(--fact);font-size:11px}
+.node .origin.inferred{fill:var(--candidate)}
+.edge{stroke:var(--control);stroke-width:1.5;fill:none}
+.edge.inferred{stroke:var(--candidate);stroke-dasharray:5 4}
+.edge.realization,.edge.dependency{stroke-dasharray:5 4}
+.edge-label{fill:var(--muted);font-size:11px;font-family:var(--ui)}
+.band{fill:var(--surface);stroke:var(--border);stroke-dasharray:3 4}
+.band-label{fill:var(--muted);font-size:12px;font-family:var(--ui)}
+.gap{fill:var(--sunken);stroke:var(--candidate);stroke-dasharray:4 3}
+.gap-text{fill:var(--candidate);font-size:12px;font-family:var(--ui)}
+.inventory{padding:var(--s4);min-width:0}
+.inventory ul{list-style:none;margin:0;padding-left:var(--s4)}
+.inventory>ul{padding-left:0}
+.inventory details{padding:var(--s1) 0}
+.inventory summary{cursor:pointer;min-height:32px;padding:var(--s1);color:var(--muted)}
+.inventory .tree-row{display:flex;align-items:center;gap:var(--s2);padding:var(--s1);min-width:0}
+.tree-row button{text-align:left;justify-content:flex-start;width:100%;min-height:32px;border-color:transparent;background:transparent;overflow-wrap:anywhere}
+.tree-row button[aria-pressed=true]{border-color:var(--accent);background:var(--raised);color:var(--text)}
+.tree-row small{color:var(--muted)}
+.empty-panel{padding:var(--s6);max-width:640px;margin:auto}
+.empty-panel .large-icon{color:var(--muted);font-size:22px;margin-bottom:var(--s4)}
+.skeleton{padding:var(--s5);display:grid;gap:var(--s5);grid-template-columns:repeat(3,1fr)}
+.skeleton div{height:80px;background:var(--raised);border:1px solid var(--border);border-radius:var(--r)}
+.list-alternative{border-bottom:1px solid var(--border)}
+.list-alternative summary{cursor:pointer;padding:var(--s3) var(--s4);min-height:40px}
+.list-alternative ul{display:flex;flex-wrap:wrap;gap:var(--s2);padding:0 var(--s4) var(--s3);margin:0;list-style:none}
+.list-alternative button{min-height:28px}
+.relation-list{padding:var(--s3) var(--s4);font-size:var(--small)}
+.relation-list button{margin:var(--s1);min-height:28px}
+.footnote{padding:var(--s3) var(--s4);font-size:var(--small);color:var(--muted)}
+.inspector{border-left:1px solid var(--border);min-width:0;background:var(--surface)}
+.inspector-head{padding:var(--s4);border-bottom:1px solid var(--border)}
+.inspector-head h2{overflow-wrap:anywhere}
+.inspector-head .mono{display:block;margin-top:var(--s2)}
+.inspect-tabs{display:flex;gap:var(--s1);padding:var(--s2);border-bottom:1px solid var(--border)}
+.inspect-tabs button{flex:1;padding:var(--s1) var(--s2);font-size:var(--small)}
+.inspect-body{padding:var(--s4);overflow-wrap:anywhere}
+.property{margin-bottom:var(--s4)}
+.property dt{font-size:var(--small);color:var(--muted);margin-bottom:var(--s1)}
+.property dd{margin:0}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--sunken);border:1px solid var(--border);border-radius:var(--r);padding:var(--s3);font:12px/1.7 var(--mono)}
+.evidence-item{padding:var(--s3) 0;border-bottom:1px solid var(--border)}
+.evidence-item:first-child{padding-top:0}
+.evidence-item p{font-size:var(--small);margin-top:var(--s2)}
+.notice{background:var(--raised);padding:var(--s3);border:1px solid var(--control);border-radius:var(--r);margin-bottom:var(--s4)}
+.notice p:last-child{margin:0}
+.inspector button.block{width:100%;margin-top:var(--s2)}
+.statusbar{display:flex;justify-content:space-between;gap:var(--s3);flex-wrap:wrap;padding:var(--s2) var(--s4);font-size:var(--small);color:var(--muted);background:var(--sunken);border-top:1px solid var(--border)}
+.review-result{padding:var(--s3) var(--s4);background:var(--sunken);border-top:1px solid var(--border);font:var(--small)/1.5 var(--mono);white-space:pre-wrap}
+.matrix{border-collapse:collapse;min-width:580px;margin:var(--s4);font-size:var(--small)}
+.matrix th,.matrix td{padding:var(--s3);border:1px solid var(--border);text-align:center}
+.matrix th{color:var(--muted);font-weight:600}.matrix td:first-child{text-align:left}
+.matrix button{min-width:36px}
+.trace-caption{padding:var(--s4);font-size:var(--small);color:var(--muted)}
+dialog{width:min(540px,90vw);background:var(--raised);color:var(--text);border:1px solid var(--control);border-radius:var(--r);padding:var(--s5)}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+.reduced *{transition:none!important;animation:none!important;scroll-behavior:auto!important}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+@media(max-width:1180px){
+ .workspace{grid-template-columns:56px 210px minmax(0,1fr)}
+ .rail{grid-row:1 / 3}.inspector{grid-column:2 / 4;border-left:0;border-top:1px solid var(--border)}
+ .inspector-head{display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap}
+ .inspect-body{max-width:100%;display:block}
+}
+.window.compact .workspace,.window.narrow .workspace{grid-template-columns:56px 200px minmax(0,1fr)}
+.window.compact .rail,.window.narrow .rail{grid-row:1 / 3}
+.window.compact .inspector,.window.narrow .inspector{grid-column:2 / 4;border-left:0;border-top:1px solid var(--border)}
+@media(max-width:800px){
+ .workspace,.window.compact .workspace,.window.narrow .workspace{grid-template-columns:48px minmax(0,1fr)}
+ .rail,.window.compact .rail,.window.narrow .rail{grid-row:1 / 4}
+ .navigator{grid-column:2;border-right:0;border-bottom:1px solid var(--border)}
+ .navigator .lens-list{display:flex;flex-wrap:wrap}.lens-list button{border:1px solid var(--border)}
+ .navigator .context-note,.navigator .hint{display:none}
+ .navigator select,.navigator input{margin-bottom:var(--s2)}
+ .main{grid-column:2}.inspector,.window.compact .inspector,.window.narrow .inspector{grid-column:2}
+ .review{gap:var(--s2)}.review .spacer{display:none}.titlebar{padding:var(--s3)}
+}
+@media print{.review,.rail,.navigator,.toolbar,.inspect-tabs{display:none}.workspace{display:block}.canvas{overflow:visible}.graph-svg{min-width:0}.inspector{border:0}.statusbar{display:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#canvas-title">Skip to Architecture workspace</a>
+<div class="review" aria-label="Prototype review controls">
+ <strong>REVIEW HARNESS</strong>
+ <label>Persona <select id="persona"><option value="developer">Developer</option><option value="architect">Architect</option><option value="platform">Platform engineer</option></select></label>
+ <label>Preview width <select id="viewport"><option value="wide">Wide</option><option value="compact">Compact</option><option value="narrow">Narrow</option></select></label>
+ <label>Theme <select id="theme"><option value="dark">Dark</option><option value="light">Light</option><option value="hc">High contrast preview</option></select></label>
+ <label>Density <select id="density"><option value="compact">Compact</option><option value="comfortable">Comfortable</option></select></label>
+ <label>State <select id="scenario"><option value="ready">Ready</option><option value="empty">No index</option><option value="loading">Indexing</option><option value="error">Extraction failed</option><option value="partial">Partial coverage</option><option value="stale">Source changed</option><option value="overflow">Large names</option><option value="ai-unavailable">AI unavailable</option></select></label>
+ <label class="check"><input id="reduced-motion" type="checkbox">Reduced motion</label>
+ <button id="audit-button" type="button">Audit</button><span class="spacer"></span><a href="index.html">Read proposal ↗</a>
+</div>
+<div id="window" class="window">
+ <header class="titlebar">
+  <div class="brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2 22 7 12 12 2 7Z M2 12l10 5 10-5 M2 17l10 5 10-5"/></svg>AI-DE <span class="muted">/ Northstar Commerce</span></div>
+  <span class="badge candidate">Synthetic fixture · not an analysis of AI-DE</span>
+ </header>
+ <div class="workspace">
+  <nav class="rail" aria-label="Perspectives">
+   <button type="button" data-perspective="new" aria-label="New session preview" title="New session (outside this study)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg></button>
+   <div class="separator"></div>
+   <button type="button" data-perspective="coding" aria-label="Coding perspective preview" title="Coding"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m8 5-6 7 6 7m8-14 6 7-6 7m-3-15-2 18"/></svg></button>
+   <button type="button" data-perspective="explore" aria-label="Explore perspective preview" title="Explore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="7" r="3"/><circle cx="12" cy="19" r="3"/><path d="m8.5 7 6.5-.2m-8 2 4 7m5.5-6.5-3 7"/></svg></button>
+   <button type="button" data-perspective="architecture" aria-label="Architecture perspective" aria-pressed="true" title="Architecture"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2 22 7 12 12 2 7Z M2 12l10 5 10-5 M2 17l10 5 10-5"/></svg></button>
+  </nav>
+  <aside class="navigator" aria-label="Repository scope and question lenses">
+   <div class="caption">REPOSITORY</div>
+   <label for="scope">Scope</label>
+   <select id="scope"><option value="all">Northstar Commerce / all</option><option value="orders">Orders / code</option><option value="azure">Infrastructure / Azure</option></select>
+   <label for="search">Find a symbol or resource</label>
+   <input id="search" type="search" placeholder="Name, path or entry point">
+   <div class="caption">WHAT DO YOU WANT TO UNDERSTAND?</div>
+   <div id="lens" class="lens-list" role="group" aria-label="Question lens">
+    <button type="button" data-lens="structure" aria-pressed="true"><span class="lens-glyph">01</span>Structure</button>
+    <button type="button" data-lens="entry"><span class="lens-glyph">02</span>Entry points</button>
+    <button type="button" data-lens="domain"><span class="lens-glyph">03</span>Domain model</button>
+    <button type="button" data-lens="classes"><span class="lens-glyph">04</span>Class model</button>
+    <button type="button" data-lens="layers"><span class="lens-glyph">05</span>Layered architecture</button>
+    <button type="button" data-lens="azure"><span class="lens-glyph">06</span>Azure architecture</button>
+    <button type="button" data-lens="impact"><span class="lens-glyph">07</span>Change impact</button>
+   </div>
+   <div class="context-note"><strong>One snapshot</strong><br><span id="nav-snapshot" class="mono">demo-a17c9 · fixture v1</span><br>Graph, tree and inspector share identity. AI annotations do not change source evidence.</div>
+   <p class="hint">Start broad. Select an entry point, inspect a relationship, then follow one behavior.</p>
+   <a class="button" href="index.html#operations">Operation catalogue</a>
+  </aside>
+  <main class="main" aria-labelledby="canvas-title">
+   <div class="canvas-head">
+    <div class="breadcrumbs"><button id="back" type="button" aria-label="Back to previous selection" disabled>← Back</button><span>Architecture</span><span aria-hidden="true">/</span><span id="breadcrumb">Northstar Commerce</span></div>
+    <div class="head-row"><h1 id="canvas-title" tabindex="-1">Understand the system</h1><span class="badge" id="snapshot">demo-a17c9</span></div>
+    <p id="subtitle" class="subtitle"></p>
+   </div>
+   <div class="toolbar">
+    <div class="segmented" role="group" aria-label="Navigation representation"><button id="representation-graph" type="button" aria-pressed="true">Graph</button><button id="representation-tree" type="button" aria-pressed="false">Tree</button></div>
+    <span class="spacer"></span>
+    <label id="trace-label" for="trace-mode" hidden>Trace</label>
+    <select id="trace-mode" hidden><option value="inventory">Entry inventory</option><option value="sequence">Possible sequence</option><option value="activity">Activity branches</option><option value="dataflow">Data flow</option></select>
+    <label id="detail-label" for="detail" hidden>Detail</label><select id="detail" hidden><option value="types">Types</option><option value="members">Members</option><option value="packages">Packages</option></select>
+    <label for="zoom">Zoom</label><select id="zoom"><option value="1">100%</option><option value="1.25">125%</option><option value="1.5">150%</option></select>
+    <button id="reveal" type="button">Reveal selection</button>
+    <button id="export" type="button">Export view</button>
+   </div>
+   <div id="banner" class="banner" hidden></div>
+   <div class="legend"><span class="key"><span class="line"></span>Source relation (fixture)</span><span class="key"><span class="line dashed"></span>Interpretation</span><span class="key"><span class="line dotted"></span>Unresolved / gap</span></div>
+   <div id="canvas" class="canvas" tabindex="0" aria-label="Scrollable diagram or solution tree"></div>
+   <details class="list-alternative" id="accessible-list"><summary id="list-summary">Diagram nodes · accessible list</summary><ul id="node-list"></ul></details>
+   <div id="relations" class="relation-list"></div>
+   <div id="coverage" class="footnote"></div>
+  </main>
+  <aside class="inspector" aria-label="Selection inspector">
+   <div class="inspector-head"><div><div class="caption">INSPECT SELECTION</div><h2 id="selection-title">PlaceOrderHandler</h2><span id="selection-kind" class="badge"></span></div><span id="selection-path" class="mono muted"></span></div>
+   <div class="inspect-tabs" role="group" aria-label="Inspector content"><button type="button" data-inspect="evidence" aria-pressed="true">Evidence</button><button type="button" data-inspect="source">Source</button><button type="button" data-inspect="ai">AI interpretation</button></div>
+   <div id="inspector-content" class="inspect-body" tabindex="-1"></div>
+  </aside>
+ </div>
+ <footer class="statusbar"><span id="status" role="status" aria-live="polite">Architecture ready. Synthetic fixture loaded.</span><span>Local prototype · no model requests · no repository writes</span></footer>
+ <pre id="audit-result" class="review-result" hidden></pre>
+</div>
+<dialog id="other-perspective" aria-labelledby="other-title"><h2 id="other-title">Outside this study</h2><p>Coding and Explore belong to the primary session's UI work. This prototype does not replace them or start a session.</p><button id="return-architecture" class="primary" type="button">Return to Architecture</button></dialog>
+<script>
+(() => {
+ const $ = id => document.getElementById(id);
+ const state={lens:'structure',representation:'graph',selectedId:'handler',scope:'all',state:'ready',trace:'inventory',detail:'types',inspector:'evidence',history:[],candidateStatus:'none',candidateText:'',interpretations:{},snapshot:'demo-a17c9',zoom:1,aiPreview:false};
+ const nodes=[
+  {id:'api',name:'POST /orders',kind:'HTTP entry point',project:'Commerce.Api',path:'src/Commerce.Api/OrdersEndpoint.cs',line:18,scope:'orders',origin:'Source-extracted fixture',desc:'Public route into order placement. Public API and meaningful behavior entry point are separate classifications.',members:['+ POST /orders : OrderReceipt'],source:'app.MapPost("/orders", async (PlaceOrder request,\\n    PlaceOrderHandler handler) =>\\n    await handler.Handle(request));'},
+  {id:'handler',name:'PlaceOrderHandler',kind:'Application service',project:'Commerce.Application',path:'src/Commerce.Application/PlaceOrderHandler.cs',line:24,scope:'orders',origin:'Source-extracted fixture',desc:'Coordinates pricing, domain creation and persistence. The diagram is a bounded possible path, not proof of an observed request.',members:['+ Handle(PlaceOrder) : Task<OrderReceipt>','- orders : IOrderRepository'],source:'public async Task<OrderReceipt> Handle(PlaceOrder input)\\n{\\n    var order = Order.Place(input.Lines);\\n    await orders.Save(order);\\n    await events.Publish(new OrderPlaced(order.Id));\\n    return new OrderReceipt(order.Id);\\n}'},
+  {id:'order',name:'Order',kind:'Domain type',project:'Commerce.Domain',path:'src/Commerce.Domain/Order.cs',line:11,scope:'orders',origin:'Source-extracted fixture',desc:'Owns order identity and the rule that submitted orders contain a positive line total. “Aggregate root” remains an interpretation until the domain authority reviews the invariant and transaction boundary.',members:['+ Id : OrderId','+ Place(lines) : Order','+ Submit() : void'],source:'public sealed class Order\\n{\\n    public OrderId Id { get; }\\n    private readonly List<OrderLine> lines;\\n    public void Submit()\\n    {\\n        if (lines.Count == 0) throw new EmptyOrder();\\n        Status = OrderStatus.Submitted;\\n    }\\n}'},
+  {id:'line',name:'OrderLine',kind:'Domain type',project:'Commerce.Domain',path:'src/Commerce.Domain/OrderLine.cs',line:8,scope:'orders',origin:'Source-extracted fixture',desc:'Line identity and quantity are source facts in this fixture. Membership in an aggregate is a reviewable interpretation.',members:['+ ProductId : ProductId','+ Quantity : int','+ Total : Money'],source:'public sealed record OrderLine(\\n    ProductId ProductId, int Quantity, Money Total);'},
+  {id:'money',name:'Money',kind:'Value-type candidate',project:'Commerce.Domain',path:'src/Commerce.Domain/Money.cs',line:5,scope:'orders',origin:'Source-extracted fixture',desc:'Immutable amount and currency. Value-object role is supported by shape but still a domain classification.',members:['+ Amount : decimal','+ Currency : string'],source:'public readonly record struct Money(\\n    decimal Amount, string Currency);'},
+  {id:'repo',name:'IOrderRepository',kind:'Interface',project:'Commerce.Application',path:'src/Commerce.Application/IOrderRepository.cs',line:6,scope:'orders',origin:'Source-extracted fixture',desc:'The handler calls an interface. A possible concrete implementation needs composition evidence; runtime selection is not known from this signature.',members:['+ Save(Order) : Task'],source:'public interface IOrderRepository\\n{\\n    Task Save(Order order);\\n}'},
+  {id:'sql',name:'SqlOrderRepository',kind:'Adapter',project:'Commerce.Infrastructure',path:'src/Commerce.Infrastructure/SqlOrderRepository.cs',line:14,scope:'orders',origin:'Source-extracted fixture',desc:'Implements the repository interface. A connection setting suggests the Azure database; environment-specific resolution remains unknown.',members:['+ Save(Order) : Task','- connection : DbConnection'],source:'public sealed class SqlOrderRepository : IOrderRepository\\n{\\n    public Task Save(Order order) =>\\n        connection.ExecuteAsync(insertOrder, order);\\n}'},
+  {id:'worker',name:'OrderPlacedHandler',kind:'Message entry point',project:'Commerce.Worker',path:'src/Commerce.Worker/OrderPlacedHandler.cs',line:16,scope:'orders',origin:'Statically inferred fixture',desc:'A framework convention suggests a message-consumer entry point. Registration and runtime delivery remain separate evidence.',members:['+ Handle(OrderPlaced) : Task'],source:'public sealed class OrderPlacedHandler\\n    : IMessageHandler<OrderPlaced>\\n{\\n    public Task Handle(OrderPlaced message) =>\\n        shipping.Schedule(message.OrderId);\\n}'},
+  {id:'app',name:'commerce-api',kind:'App Service declaration',project:'infra',path:'infra/modules/api.bicep',line:9,scope:'azure',origin:'Source-extracted fixture',desc:'A resource declaration, not evidence of a running service. The fixture names the selected deployment root and retains parameter-dependent configuration.',members:['Microsoft.Web/sites','existing: false'],source:"resource api 'Microsoft.Web/sites@2023-12-01' = {\\n  name: apiName\\n  location: location\\n  properties: { serverFarmId: plan.id }\\n}"},
+  {id:'db',name:'orders-db',kind:'Azure SQL declaration',project:'infra',path:'infra/modules/data.bicep',line:21,scope:'azure',origin:'Source-extracted fixture',desc:'An SQL resource declared in a module. A code-to-database runtime arrow needs configuration evidence; a Bicep dependency does not prove it.',members:['Microsoft.Sql/servers/databases','parent: sqlServer'],source:"resource orders 'Microsoft.Sql/servers/databases@2023-08-01' = {\\n  parent: sqlServer\\n  name: 'orders'\\n  properties: {}\\n}"},
+  {id:'vault',name:'shared-vault',kind:'Existing resource reference',project:'infra',path:'infra/main.bicep',line:32,scope:'azure',origin:'Source-extracted fixture',desc:'Existing reference: this deployment does not create the vault. Its presence, health and access permissions are not measured.',members:['Microsoft.KeyVault/vaults','existing: true'],source:"resource vault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {\\n  name: sharedVaultName\\n}"},
+  {id:'bus',name:'order-events',kind:'Conditional declaration',project:'infra',path:'infra/modules/messaging.bicep',line:12,scope:'azure',origin:'Source-extracted fixture',desc:'Conditional resource. The parameter enableEvents is unresolved in this fixture; the resource is not silently removed.',members:['Microsoft.ServiceBus/namespaces','if enableEvents (unresolved)'],source:"resource bus 'Microsoft.ServiceBus/namespaces@2024-01-01' = if (enableEvents) {\\n  name: messagingName\\n  location: location\\n}"},
+  {id:'root',name:'main.bicep',kind:'Deployment root',project:'infra',path:'infra/main.bicep',line:1,scope:'azure',origin:'Source-extracted fixture',desc:'Selected deployment root. Parameters are unresolved. A second unrelated Bicep root must not be merged into this deployment implicitly.',members:['targetScope: resourceGroup','parameters: unresolved'],source:"targetScope = 'resourceGroup'\\nparam enableEvents bool\\nmodule data './modules/data.bicep' = { name: 'data' }\\nmodule api './modules/api.bicep' = {\\n  name: 'api'\\n  params: { databaseName: data.outputs.databaseName }\\n}"}
+ ];
+ const edges=[
+  {id:'e1',from:'api',to:'handler',kind:'calls',origin:'source',why:'Endpoint body calls Handle at OrdersEndpoint.cs:20.'},
+  {id:'e2',from:'handler',to:'order',kind:'calls Place',origin:'source',why:'Order.Place is called at PlaceOrderHandler.cs:26.'},
+  {id:'e3',from:'order',to:'line',kind:'has typed member',origin:'source',why:'Private List<OrderLine> field at Order.cs:14. Lifecycle composition is NOT implied.'},
+  {id:'e4',from:'line',to:'money',kind:'typed value',origin:'source',why:'Total is declared as Money at OrderLine.cs:9.'},
+  {id:'e5',from:'handler',to:'repo',kind:'calls Save',origin:'source',why:'The declared dependency is IOrderRepository; concrete dispatch is unresolved.'},
+  {id:'e6',from:'sql',to:'repo',kind:'implements',origin:'source',why:'Explicit interface declaration at SqlOrderRepository.cs:14. Not itself proof of runtime binding.'},
+  {id:'e7',from:'sql',to:'db',kind:'uses database?',origin:'inferred',why:'Candidate join from connection setting. Environment and endpoint identity are unresolved.'},
+  {id:'e8',from:'handler',to:'worker',kind:'message delivery?',origin:'inferred',why:'Event name matches a handler convention; registration and transport are unresolved.'},
+  {id:'e9',from:'root',to:'app',kind:'module declares',origin:'source',why:'Deployment root references api.bicep. Resource is shown through module expansion.'},
+  {id:'e10',from:'root',to:'db',kind:'module declares',origin:'source',why:'Deployment root references data.bicep.'},
+  {id:'e11',from:'app',to:'db',sourceId:'root',kind:'deployment order',origin:'source',why:'Fixture api module consumes data.outputs.databaseName. This is module-level deployment ordering, expanded to resources for this diagram, not runtime traffic.'},
+  {id:'e12',from:'root',to:'vault',sourceId:'vault',kind:'existing reference',origin:'source',why:'Existing declaration at main.bicep:32; not created by this deployment.'},
+  {id:'e13',from:'root',to:'bus',sourceId:'bus',kind:'conditional module',origin:'source',why:'Fixture module has enableEvents condition; actual resource count is unknown.'}
+ ];
+ const lensInfo={
+  structure:['Understand the system','A bounded code-and-infrastructure map. Select a node or an arrow; switch to the solution tree without losing your place.'],
+  entry:['Where work enters','HTTP and message entry points are different contracts. Follow one possible behavior; do not confuse public visibility with actual runtime use.'],
+  domain:['The domain, as a hypothesis','Source-backed classes with reviewable role suggestions. No namespace or ORM key establishes an aggregate boundary.'],
+  classes:['A class model you can read','Start with types, expand members deliberately, or step back to packages. Typed associations are not ownership claims.'],
+  layers:['Responsibilities and dependencies','Proposed logical layers over extracted dependencies. This is not a C4 container or a deployment diagram.'],
+  azure:['What the Bicep root declares','Root: infra/main.bicep · parameters unresolved. Deployment dependencies are not runtime traffic; existing references are not deployed-state observations.'],
+  impact:['What could this change affect?','Potential impact from typed dependencies. A reachable consumer is not proof of a broken test or an observed runtime failure.']
+ };
+ const lensNodes={structure:['api','handler','order','repo','sql','worker','app','db','bus'],entry:['api','handler','order','repo','sql','worker'],domain:['order','line','money','handler'],classes:['handler','order','line','money','repo','sql'],layers:['api','worker','handler','order','repo','sql'],azure:['root','app','db','vault','bus'],impact:['api','handler','order','repo','sql','worker']};
+ const lookup=id=>nodes.find(n=>n.id===id);
+ const interpretationKey=()=>`${state.snapshot}:${state.selectedId}`;
+ function saveInterpretation(status,text=''){state.interpretations[interpretationKey()]={status,text};}
+ const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const sourceText=n=>n.source.replace(/\\n/g,'\n');
+ function say(text){$('status').textContent=text}
+ function eligible(){return nodes.filter(n=>(state.scope==='all'||n.scope===state.scope)&&(!state.search||`${n.name} ${n.path} ${n.kind}`.toLowerCase().includes(state.search)))}
+ function visible(){
+  const all=eligible(),items=state.representation==='tree'?all:all.filter(n=>lensNodes[state.lens].includes(n.id));
+  if(state.representation==='graph'&&state.lens==='entry'&&state.trace==='dataflow'&&state.selectedId!=='worker'&&['api','handler','order','repo'].every(id=>items.some(n=>n.id===id))&&!items.some(n=>n.id==='db'))items.push(lookup('db'));
+  return items;
+ }
+ function displayedEdges(items){const ids=new Set(items.map(n=>n.id));return edges.filter(e=>ids.has(e.from)&&ids.has(e.to))}
+ function select(id,remember=true){
+  if(!lookup(id))return;
+  if(remember&&state.selectedId!==id)state.history.push(state.selectedId);
+  state.selectedId=id;state.edgeId=null;state.aiPreview=false;render();say(`Selected ${lookup(id).name}. ${state.representation==='tree'?'Tree':'Graph'} and inspector share this identity.`);
+ }
+ function changeLens(lens){state.lens=lens;state.edgeId=null;render();say(`${lensInfo[lens][0]}. Selection retained.`)}
+ function nodeSvg(n,x,y,w=180,h=72){
+  const selected=n.id===state.selectedId;
+  const long=state.state==='overflow'&&n.id==='handler';
+  const label=long?'EnterpriseOrderWorkflow…':n.name;
+  let note=state.lens==='domain'&&['order','line','money'].includes(n.id)?({order:'Candidate aggregate root',line:'Candidate entity',money:'Candidate value object'})[n.id]:n.kind;
+  if(state.lens==='layers')note='Layer placement: hypothesis';
+  const inferred=note.includes('Candidate')||state.lens==='layers'||n.origin.startsWith('Statically');
+  const members=state.detail==='members'&&state.lens==='classes';
+  return `<g class="node ${selected?'selected':''}" role="button" tabindex="0" data-node="${n.id}" aria-label="${esc(n.name)}, ${esc(note)}${selected?', selected':''}" aria-pressed="${selected}">
+    <title>${esc(n.name)} — ${esc(n.path)}</title><rect x="${x}" y="${y}" width="${w}" height="${members?118:h}" rx="6"/>
+    <text x="${x+12}" y="${y+22}">${esc(label)}</text><text class="kind" x="${x+12}" y="${y+42}">${esc(note.slice(0,29))}</text>
+    <text class="origin ${inferred?'inferred':''}" x="${x+12}" y="${y+60}">${inferred?'~ Interpretation':'Source fixture'}</text>
+    ${members?n.members.slice(0,2).map((m,i)=>`<text class="kind" x="${x+12}" y="${y+82+i*17}">${esc(m.length>29?m.slice(0,27)+'…':m)}</text>`).join(''):''}
+   </g>`;
+ }
+ function svgStart(label,height=500){return `<svg class="graph-svg" style="width:${820*state.zoom}px" viewBox="0 0 820 ${height}" xmlns="http://www.w3.org/2000/svg" aria-label="${esc(label)}">
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10" fill="none" stroke="var(--control)" stroke-width="1.5"/></marker><marker id="triangle" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto"><path d="M1 1 11 6 1 11Z" fill="var(--sunken)" stroke="var(--control)"/></marker></defs>`}
+ function coordinates(ids){
+  const positions={api:[38,45],handler:[310,45],order:[580,45],repo:[310,205],sql:[38,205],worker:[580,205],app:[38,365],db:[310,365],bus:[580,365],line:[310,205],money:[580,365],root:[310,40],vault:[580,205]};
+  if(state.lens==='domain')return {handler:[40,65],order:[320,65],line:[320,245],money:[580,245]};
+  if(state.lens==='classes')return {handler:[40,45],order:[320,45],line:[600,45],repo:[40,260],sql:[320,260],money:[600,260]};
+  if(state.lens==='layers')return {api:[50,65],worker:[520,65],handler:[50,215],repo:[520,215],order:[285,365],sql:[520,515]};
+  if(state.lens==='azure')return {root:[310,35],app:[40,205],db:[310,365],vault:[580,205],bus:[580,365]};
+  return positions;
+ }
+ function graph(items){
+  if(state.lens==='entry'&&state.trace!=='inventory')return trace(items);
+  if(state.lens==='impact')return impact(items);
+  if(state.lens==='classes'&&state.detail==='packages')return packageView(items);
+  const pos=coordinates(items.map(n=>n.id));let bands='';
+  if(state.lens==='layers')bands=[['Presentation / entry',20,20],['Application / orchestration',20,170],['Domain',20,320],['Infrastructure / adapters',20,470]].map(([label,x,y])=>`<rect class="band" x="${x}" y="${y}" width="780" height="135" rx="6"/><text class="band-label" x="34" y="${y+20}">${label} · proposed grouping</text>`).join('');
+  if(state.lens==='domain')bands='<rect class="band" x="290" y="26" width="500" height="330" rx="6"/><text class="band-label" x="306" y="48">Orders candidate boundary · not a proven transaction boundary</text>';
+  const es=displayedEdges(items);
+  let svg=svgStart(lensInfo[state.lens][0],state.lens==='layers'?635:500)+bands;
+  for(const e of es){
+    const a=pos[e.from],b=pos[e.to];if(!a||!b)continue;
+    const height=state.lens==='classes'&&state.detail==='members'?118:72;
+    let d;
+    if(Math.abs(b[1]-a[1])>100){
+      const down=b[1]>a[1],x1=a[0]+90,x2=b[0]+90,y1=a[1]+(down?height:0),y2=b[1]+(down?0:height),mid=(y1+y2)/2;
+      d=`M${x1} ${y1} C${x1} ${mid},${x2} ${mid},${x2} ${y2}`;
+    }else{
+      const right=b[0]>a[0],x1=a[0]+(right?180:0),x2=b[0]+(right?0:180);
+      d=`M${x1} ${a[1]+height/2} L${x2} ${b[1]+height/2}`;
+    }
+    const realization=state.lens==='classes'&&e.kind==='implements';
+    const dependency=state.lens==='classes'&&e.kind.startsWith('calls');
+    svg+=`<path class="edge ${e.origin==='inferred'?'inferred':''} ${realization?'realization':dependency?'dependency':''}" d="${d}" marker-end="url(#${realization?'triangle':'arrow'})"><title>${esc(e.kind)}: ${esc(e.why)}</title></path>`;
+  }
+  for(const n of items){const p=pos[n.id];if(p)svg+=nodeSvg(n,p[0],p[1]);}
+  if(state.lens==='classes')svg+='<text class="band-label" x="40" y="465">No lifecycle diamonds: these links show types / implementation, not aggregate ownership.</text>';
+  if(state.lens==='azure')svg+='<text class="band-label" x="40" y="478">Solid = declaration/deployment relation. Live resource health: not measured.</text>';
+  return svg+'</svg>';
+ }
+ function packageView(items){
+  const groups=[...new Set(items.map(n=>n.project))];
+  return `<div class="inventory"><h2>Package overview</h2><p class="muted">Select a package to reveal its types. Grouping uses project declarations, not inferred domain boundaries.</p>${groups.map(g=>`<details open><summary>${esc(g)} · ${items.filter(n=>n.project===g).length} fixture types</summary><ul>${items.filter(n=>n.project===g).map(n=>`<li class="tree-row"><button type="button" data-node="${n.id}">${esc(n.name)} <small>${esc(n.kind)}</small></button></li>`).join('')}</ul></details>`).join('')}</div>`;
+ }
+ function tree(items){
+  const projects=[...new Set(items.map(n=>n.project))];
+  return `<div class="inventory"><h2>Solution explorer</h2><p class="muted">Project → file → symbol. Selection is shared with the graph; project grouping is not a domain model.</p><ul>${projects.map(g=>`<li><details open><summary>${esc(g)} <span class="mono">(${items.filter(n=>n.project===g).length})</span></summary><ul>${items.filter(n=>n.project===g).map(n=>`<li><details open><summary>${esc(n.path.split('/').pop())}</summary><ul><li class="tree-row"><button type="button" data-node="${n.id}" aria-pressed="${n.id===state.selectedId}">${esc(state.state==='overflow'&&n.id==='handler'?'EnterpriseOrderWorkflowOrchestrationHandlerWithExplicitRecoveryPolicy':n.name)}</button></li></ul></details></li>`).join('')}</ul></details></li>`).join('')}<li><details><summary>vendor / generated · excluded</summary><p>Excluded from this fixture index. Exclusion is not evidence that the folder is empty.</p></details></li></ul></div>`;
+ }
+ function trace(items){
+  const ids=new Set(items.map(n=>n.id));
+  if(!ids.has('api')&&!ids.has('worker'))return '<div class="empty-panel"><h2>No entry points in this scope</h2><p>Broaden the scope or clear the search to trace the fixture route.</p><button type="button" data-action="clear">Show all fixture entry points</button></div>';
+  if(state.selectedId==='worker')return '<div class="empty-panel"><h2>Message dispatch is unresolved</h2><p>This fixture does not contain a trace for OrderPlacedHandler. Its registration and transport are unknown. No HTTP trace is substituted for it.</p><button type="button" data-action="api-trace">Inspect the POST /orders example instead</button></div>';
+  if(!['api','handler','order','repo'].every(id=>ids.has(id)))return '<div class="empty-panel"><h2>The filter excludes trace context</h2><p>The sample trace needs the Orders endpoint, handler, domain object and repository contract. Selection is retained; clear the search to reveal this bounded context.</p><button type="button" data-action="clear">Clear search and scope</button></div>';
+  if(state.trace==='sequence'){
+    let svg=svgStart('Possible sequence, not a runtime observation',520);
+    const participants=[['api',30],['handler',230],['order',430],['repo',630]];
+    for(const [id,x] of participants){svg+=nodeSvg(lookup(id),x,25,160,72)+`<path class="edge" stroke-dasharray="3 4" d="M${x+80} 103V425"/>`;}
+    const messages=[[110,310,145,'1 · Handle(request)'],[310,510,215,'2 · Order.Place(lines)'],[310,710,285,'3 · Save(order)']];
+    for(const [x1,x2,y,label] of messages)svg+=`<path class="edge" d="M${x1} ${y}H${x2}" marker-end="url(#arrow)"/><text class="edge-label" x="${x1+8}" y="${y-9}">${esc(label)}</text>`;
+    svg+='<rect class="gap" x="220" y="345" width="550" height="75" rx="6"/><text class="gap-text" x="236" y="370">? Concrete repository + message dispatch unresolved</text><text class="band-label" x="236" y="394">No fabricated participant or observed timing fills this gap.</text>';
+    return svg+'</svg><div class="trace-caption">Call-site ordering only. Conditional branches, interleavings and message delivery require additional evidence. This view has no runtime clock.</div>';
+  }
+  if(state.trace==='activity'){
+    let svg=svgStart('Activity branches for the synthetic order submission example',535);
+    svg+=`<circle cx="410" cy="26" r="7" fill="var(--text)"/><path class="edge" d="M410 34V66" marker-end="url(#arrow)"/>
+    <rect x="300" y="68" width="220" height="58" rx="6" fill="var(--raised)" stroke="var(--control)"/><text class="band-label" x="329" y="103">Validate order lines</text>
+    <path class="edge" d="M410 128V165" marker-end="url(#arrow)"/><path d="M410 170 490 220 410 270 330 220Z" fill="var(--raised)" stroke="var(--control)"/><text class="band-label" x="367" y="225">lines empty?</text>
+    <path class="edge" d="M330 220H135V309" marker-end="url(#arrow)"/><text class="edge-label" x="230" y="208">[yes]</text>
+    <path class="edge" d="M490 220H675V309" marker-end="url(#arrow)"/><text class="edge-label" x="550" y="208">[no]</text>
+    <rect x="40" y="312" width="200" height="66" rx="6" fill="var(--raised)" stroke="var(--control)"/><text class="band-label" x="57" y="341">Throw EmptyOrder</text><text class="edge-label" x="57" y="361">Order.cs:17 (fixture)</text>
+    <rect x="570" y="312" width="210" height="66" rx="6" fill="var(--raised)" stroke="var(--control)"/><text class="band-label" x="585" y="341">Set status: Submitted</text><text class="edge-label" x="585" y="361">Order.cs:18 (fixture)</text>
+    <path class="edge" d="M140 380V430M675 380V430"/><circle cx="140" cy="440" r="10" fill="none" stroke="var(--control)"/><circle cx="140" cy="440" r="5" fill="var(--text)"/><circle cx="675" cy="440" r="10" fill="none" stroke="var(--control)"/><circle cx="675" cy="440" r="5" fill="var(--text)"/>
+    <text class="band-label" x="42" y="496">Fixture activity: Order.Submit, not the entire HTTP request or a claim about concurrency.</text>`;
+    return svg+'</svg>';
+  }
+  let svg=svgStart('Data flow with an unresolved boundary',500);
+  svg+=nodeSvg(lookup('api'),40,65)+nodeSvg(lookup('order'),320,65)+nodeSvg(lookup('db'),600,280);
+  svg+='<path class="edge" d="M220 100H316" marker-end="url(#arrow)"/><text class="edge-label" x="230" y="85">PlaceOrder DTO</text><path class="edge inferred" d="M410 138V316H595" marker-end="url(#arrow)"/><text class="edge-label" x="430" y="303">Order → SQL parameters? inferred</text><rect class="gap" x="45" y="300" width="310" height="96" rx="6"/><text class="gap-text" x="61" y="328">? Missing mapping and transaction evidence</text><text class="band-label" x="61" y="351">A call graph alone does not establish</text><text class="band-label" x="61" y="372">field-level lineage or sensitive-data flow.</text>';
+  return svg+'</svg><div class="trace-caption">Proposed data movement. The database joins this trace as an explicit inferred external-to-scope sink, not an extracted call target.</div>';
+ }
+ function impact(items){
+  const group=items.filter(n=>['api','handler','order','repo','sql'].includes(n.id));
+  return `<div class="inventory"><h2>Dependency matrix</h2><p class="muted">Rows depend on columns. A filled cell is a typed source relation, not a predicted test failure.</p></div><table class="matrix"><caption>Selected code relationships · fixture snapshot</caption><thead><tr><th scope="col">Depends on →</th>${group.map(n=>`<th scope="col">${esc(n.name)}</th>`).join('')}</tr></thead><tbody>${group.map(a=>`<tr><th scope="row">${esc(a.name)}</th>${group.map(b=>{const e=edges.find(e=>e.from===a.id&&e.to===b.id&&e.origin==='source');return `<td>${e?`<button type="button" data-edge="${e.id}" aria-label="${esc(a.name+' '+e.kind+' '+b.name)}">1</button>`:'—'}</td>`}).join('')}</tr>`).join('')}</tbody></table><div class="trace-caption">Impact is reachability over selected edge kinds. Missing dynamic calls, reflection and unindexed projects remain outside this matrix. Test coverage: not recorded.</div>`;
+ }
+ function inspectEdge(id){state.edgeId=id;state.inspector='evidence';renderInspector();$('inspector-content').focus();say(`Inspecting ${edges.find(e=>e.id===id).kind}.`)}
+ function renderBanner(items){
+  let body='';
+  const messages={partial:['Partial extraction','Messaging registration and one external module are unresolved. Static code remains available; no completeness claim.','Retry fixture extraction'],stale:['Source changed','Viewing demo-a17c9 while demo-b28d0 is available. Existing evidence is retained with its old revision.','Refresh to fixture revision'],overflow:['Long-name stress case','The selected source identifier is intentionally long. Full identity remains available in the tree and inspector.','Return to normal names'],'ai-unavailable':['Bound model unavailable','Static navigation still works. Interpretation is unavailable; no substitute provider is selected.','Restore simulated availability']};
+  if(messages[state.state]){const [title,text,action]=messages[state.state];body=`<div class="row"><strong class="candidate">${title}</strong><button type="button" data-action="recover">${action}</button></div><p>${text}</p>`;}
+  if(!items.some(n=>n.id===state.selectedId)&&!['empty','loading','error'].includes(state.state)){body+=`<p><strong>Selection retained outside this view:</strong> ${esc(lookup(state.selectedId).name)}. “Reveal selection” clears the filter and opens the full fixture tree.</p>`;}
+  $('banner').hidden=!body;$('banner').innerHTML=body;
+ }
+ function renderInspector(){
+  const n=lookup(state.selectedId);
+  const interpretation=state.interpretations[interpretationKey()];
+  state.candidateStatus=interpretation?.status||'none';state.candidateText=interpretation?.text||'';
+  $('selection-title').textContent=state.state==='overflow'&&n.id==='handler'?'EnterpriseOrderWorkflowOrchestrationHandlerWithExplicitRecoveryPolicy':n.name;
+  $('selection-kind').textContent=n.kind;$('selection-path').textContent=`${n.path}:${n.line} · ${state.snapshot}`;
+  document.querySelectorAll('[data-inspect]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.inspect===state.inspector)));
+  const aiTab=document.querySelector('[data-inspect=ai]');aiTab.disabled=Boolean(state.edgeId);aiTab.title=state.edgeId?'AI interpretation is node-scoped in this prototype. Open the supporting source first.':'Review an interpretation of the selected node.';
+  if(['empty','loading','error'].includes(state.state)){
+    $('inspector-content').innerHTML='<div class="notice"><strong>Inspection unavailable</strong><p>The selected ID is retained for navigation only. No active extraction result is available in this review state.</p></div>';
+    return;
+  }
+  let html='';
+  if(state.inspector==='source'){
+    html=`<div class="notice"><strong>Illustrative source</strong><p>Fictional fixture, not a file read from AI-DE or your workspace.</p></div><pre>${esc(sourceText(n))}</pre><p class="muted">Source anchor: ${esc(n.path)}:${n.line}. Snapshot ${esc(state.snapshot)}.</p><button type="button" class="block" data-action="evidence">Inspect its evidence</button>`;
+  }else if(state.inspector==='ai'){
+    html=aiView(n);
+  }else{
+    const e=state.edgeId&&edges.find(e=>e.id===state.edgeId);
+    if(e){
+      const source=lookup(e.sourceId||e.from);
+      $('selection-title').textContent=`${lookup(e.from).name} → ${lookup(e.to).name}`;
+      $('selection-kind').textContent=e.kind;
+      $('selection-path').textContent=`Supporting excerpt: ${source.path}:${source.line} · ${state.snapshot}`;
+      html=`<div class="notice"><strong>Relationship evidence</strong><p>Node selection remains ${esc(n.name)}. The source action below follows this relationship's supporting excerpt, not that retained selection.</p></div><div class="evidence-item"><strong class="${e.origin==='inferred'?'candidate':'fact'}">${e.origin==='inferred'?'~ Candidate relationship':'Source relationship (fixture)'}</strong><p>${esc(e.why)}</p></div><p class="mono">${esc(source.path)}:${source.line}</p><button type="button" class="block" data-action="relation-source" data-source-id="${source.id}">Open supporting source excerpt</button><button type="button" class="block" data-action="node-evidence">Return to retained node evidence</button>`;
+    }else{
+    html=`<p>${esc(n.desc)}</p><dl><div class="property"><dt>Evidence origin</dt><dd class="${n.origin.startsWith('Statically')?'candidate':'fact'}">${esc(n.origin)}</dd></div><div class="property"><dt>Coverage</dt><dd>Fixture excerpt only. Runtime behavior is not observed.</dd></div><div class="property"><dt>Review status</dt><dd>${state.candidateStatus==='accepted'?'AI annotation accepted; source evidence unchanged.':'No domain/architecture assertion is approved.'}</dd></div></dl>
+    <div class="evidence-item"><strong>What would change this conclusion?</strong><p>Registration/configuration evidence, a domain invariant, a different snapshot or a runtime trace could change the interpretation.</p></div>
+    <button type="button" class="block" data-action="source">Open source excerpt</button><button type="button" class="block" data-action="explain" ${state.state==='ai-unavailable'?'disabled':''}>Explain selection with AI</button>${state.state==='ai-unavailable'?'<p class="muted">AI unavailable; source and graph remain usable.</p>':''}`;
+    if(n.id==='api'||n.id==='handler')html+='<button type="button" class="block" data-action="trace">Trace possible behavior</button>';
+    }
+  }
+  $('inspector-content').innerHTML=html;
+ }
+ function aiView(n){
+  if(state.state==='ai-unavailable')return '<div class="notice"><strong>AI unavailable</strong><p>No provider request will be made. Continue with source evidence, or restore simulated availability in the review harness.</p></div>';
+  const candidate=state.candidateStatus;
+  if(state.aiPreview||candidate==='none')return `<h3>Review the context first</h3><p>This prototype simulates the tool-bound model. No files or source text are transmitted.</p><dl><div class="property"><dt>Provider / model</dt><dd>Fixture simulator · no connected model</dd></div><div class="property"><dt>Question</dt><dd>Explain ${esc(n.name)} and its role in this scope.</dd></div><div class="property"><dt>Context manifest</dt><dd>${esc(n.path)}:${n.line}<br>Selected source excerpt + ${edges.filter(e=>e.from===n.id||e.to===n.id).length} related fixture edges<br>Snapshot ${esc(state.snapshot)}</dd></div><div class="property"><dt>Exclusions</dt><dd>Secrets, excluded files, unrelated scopes. No tools or repository-write permission.</dd></div><div class="property"><dt>Cost</dt><dd>Not recorded. This click performs no real analysis.</dd></div></dl><button type="button" class="primary block" data-action="simulate">Simulate candidate result</button><button type="button" class="block" data-action="evidence">Cancel context preview</button>`;
+  if(candidate==='rejected')return '<div class="notice"><strong>Candidate rejected</strong><p>Removed from the interpretation overlay. Source nodes and relationships are unchanged.</p></div><button type="button" class="block" data-action="preview">Review context again</button>';
+  const text=state.candidateText||`${n.name} may be ${n.id==='order'?'an aggregate root that protects the non-empty order invariant':'part of order placement orchestration'}. This is a proposed role, not an observed behavior.`;
+  return `<div class="notice"><strong class="candidate">~ ${candidate==='accepted'?'Accepted annotation':'AI candidate · simulated'}</strong><p>${candidate==='accepted'?'Acceptance records your interpretation; it does not promote this to source-extracted or runtime-observed evidence.':'The model can be wrong. Review the support and the counterevidence.'}</p></div><p>${esc(text)}</p><div class="evidence-item"><strong>Supporting evidence</strong><p>${esc(n.path)}:${n.line} · source shape in this fixture.</p></div><div class="evidence-item"><strong>Counterevidence / limits</strong><p>A transaction boundary, complete registrations and runtime behavior are not established. Type names alone do not prove the role.</p></div><label for="candidate-edit">Correct the interpretation</label><textarea id="candidate-edit">${esc(text)}</textarea><div class="row"><button type="button" data-action="accept">Accept annotation</button><button type="button" data-action="reject">Reject</button></div><button type="button" class="block" data-action="preview">Inspect context</button>`;
+ }
+ function render(){
+  document.querySelectorAll('[data-lens]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lens===state.lens)));
+  $('representation-graph').setAttribute('aria-pressed',String(state.representation==='graph'));$('representation-tree').setAttribute('aria-pressed',String(state.representation==='tree'));
+  $('canvas-title').textContent=lensInfo[state.lens][0];$('subtitle').textContent=lensInfo[state.lens][1];
+  $('breadcrumb').textContent=state.scope==='all'?'Northstar Commerce':state.scope==='orders'?'Northstar Commerce / Orders':'Northstar Commerce / infra';
+  $('snapshot').textContent=state.snapshot+(state.state==='stale'?' · stale':'');
+  $('nav-snapshot').textContent=`${state.snapshot} · fixture v1`;
+  $('back').disabled=state.history.length===0;
+  $('trace-mode').hidden=$('trace-label').hidden=state.lens!=='entry'||state.representation==='tree';
+  $('detail').hidden=$('detail-label').hidden=state.lens!=='classes'||state.representation==='tree';
+  $('trace-mode').value=state.trace;$('detail').value=state.detail;
+  const items=visible();renderBanner(items);
+  let output='';
+  if(state.state==='empty')output='<div class="empty-panel"><div class="large-icon">⌁</div><h2>Start with an indexed repository</h2><p>There is no semantic index in this review state. A missing index does not mean this repository has no entry points or domain objects.</p><button type="button" class="primary" data-action="recover">Load the sample index</button></div>';
+  else if(state.state==='loading')output='<div class="empty-panel"><h2>Indexing the selected scope</h2><p role="status">Reading declarations. Relations and completeness are not available yet.</p><button type="button" data-action="recover">Finish simulated indexing</button></div><div class="skeleton" aria-hidden="true"><div></div><div></div><div></div></div>';
+  else if(state.state==='error')output='<div class="empty-panel"><h2>Extraction did not finish</h2><p class="danger">EXTRACT_MODULE_UNRESOLVED</p><p>The selected external module could not be read. We will not substitute invented resources or an empty-success diagram.</p><button type="button" class="primary" data-action="recover">Retry sample extraction</button></div>';
+  else if(!items.length)output='<div class="empty-panel"><h2>No matches in this scope</h2><p>This is a filtered result, not evidence that the system has no matching concepts.</p><button type="button" data-action="clear">Clear search and scope</button></div>';
+  else output=state.representation==='tree'?tree(items):graph(items);
+  $('canvas').innerHTML=output;
+  const absent=['empty','loading','error'].includes(state.state);
+  $('export').disabled=absent;$('export').title=absent?'Export is unavailable until an extraction result exists.':'Export this synthetic view and its provenance.';
+  $('accessible-list').hidden=absent;
+  $('node-list').innerHTML=items.map(n=>`<li><button type="button" data-node="${n.id}" aria-pressed="${n.id===state.selectedId}">${esc(n.name)}</button></li>`).join('');
+  $('list-summary').textContent=`${items.length} source/context nodes · accessible selection list`;
+  const es=displayedEdges(items);
+  $('relations').hidden=absent;
+  $('relations').innerHTML=es.length?`<strong>Inspect a relation:</strong> ${es.map(e=>`<button type="button" data-edge="${e.id}" title="${esc(e.why)}">${esc(lookup(e.from).name)} → ${esc(lookup(e.to).name)} <span class="${e.origin==='inferred'?'candidate':'muted'}">${esc(e.kind)}</span></button>`).join('')}`:'No indexed relationships between the visible fixture nodes.';
+  const eligibleIds=new Set(eligible().map(n=>n.id)),inScope=items.filter(n=>eligibleIds.has(n.id)).length,context=items.length-inScope;
+  const drawn=$('canvas').querySelectorAll('g[data-node]').length;
+  $('coverage').textContent=absent?'Counts not available until this extraction state resolves.':`Scope: ${eligibleIds.size} eligible fixture nodes · source/context list: ${inScope} in scope + ${context} contextual · ${eligibleIds.size-inScope} outside this lens · ${es.length} relations in this input slice. ${drawn} selectable symbol/resource nodes drawn (activity actions and package groups are separate). Whole repository totals: not measured.`;
+  renderInspector();
+ }
+ function recover(){
+  if(state.state==='stale')state.snapshot='demo-b28d0';
+  state.state='ready';$('scenario').value='ready';render();say('Review state recovered. Static fixture available.');
+  $('canvas-title').focus();
+ }
+ function preview(){state.aiPreview=true;state.inspector='ai';renderInspector();$('inspector-content').focus();say('AI context preview. No data leaves this page.')}
+ document.addEventListener('click',event=>{
+  const node=event.target.closest('[data-node]');if(node){const id=node.dataset.node;const region=node.closest('#canvas')?'#canvas':'#node-list';select(id);document.querySelector(`${region} [data-node="${id}"]`)?.focus();return}
+  const edge=event.target.closest('[data-edge]');if(edge){inspectEdge(edge.dataset.edge);return}
+  const lens=event.target.closest('[data-lens]');if(lens){changeLens(lens.dataset.lens);return}
+  const tab=event.target.closest('[data-inspect]');if(tab){
+    if(tab.dataset.inspect==='source'&&state.edgeId){const e=edges.find(e=>e.id===state.edgeId);state.inspector='source';select(e.sourceId||e.from);$('inspector-content').focus()}
+    else{state.inspector=tab.dataset.inspect;renderInspector()}
+    return;
+  }
+  const perspective=event.target.closest('[data-perspective]');
+  if(perspective){if(perspective.dataset.perspective==='architecture'){say('Architecture is active.');return}$('other-title').textContent=perspective.dataset.perspective==='new'?'New session is outside this study':`${perspective.dataset.perspective==='coding'?'Coding':'Explore'} is outside this study`;$('other-perspective').showModal();return}
+  const action=event.target.closest('[data-action]')?.dataset.action;
+  if(action==='recover')recover();
+  if(action==='clear'){state.search='';state.scope='all';$('search').value='';$('scope').value='all';render();$('canvas-title').focus();say('Filters cleared.')}
+  if(action==='source'||action==='evidence'){state.aiPreview=false;state.inspector=action;renderInspector();$('inspector-content').focus()}
+  if(action==='relation-source'){state.inspector='source';select(event.target.closest('[data-source-id]').dataset.sourceId);$('inspector-content').focus()}
+  if(action==='node-evidence'){state.edgeId=null;state.inspector='evidence';renderInspector();$('inspector-content').focus()}
+  if(action==='explain'||action==='preview')preview();
+  if(action==='simulate'){state.aiPreview=false;const n=lookup(state.selectedId);saveInterpretation('candidate',`${n.name} may be ${n.id==='order'?'an aggregate root that protects the non-empty order invariant':'part of order placement orchestration'}. This is a proposed role, not an observed behavior.`);renderInspector();$('inspector-content').focus();say('Simulated AI candidate available. Source evidence unchanged.')}
+  if(action==='accept'){saveInterpretation('accepted',$('candidate-edit').value);renderInspector();$('inspector-content').focus();say('Annotation accepted. Origin remains AI interpretation.')}
+  if(action==='reject'){saveInterpretation('rejected');renderInspector();$('inspector-content').focus();say('Candidate rejected; source evidence unchanged.')}
+  if(action==='trace'){state.lens='entry';state.representation='graph';state.trace='sequence';state.scope='all';state.search='';$('scope').value='all';$('search').value='';render();$('canvas-title').focus();say('Possible sequence opened. Runtime behavior is not observed.')}
+  if(action==='api-trace'){state.selectedId='api';render();$('canvas-title').focus();say('Selected the POST /orders sample trace.')}
+ });
+ document.addEventListener('keydown',event=>{if((event.key==='Enter'||event.key===' ')&&event.target.matches('g[data-node]')){event.preventDefault();const id=event.target.dataset.node;select(id);document.querySelector(`g[data-node="${id}"]`)?.focus()}});
+ $('representation-graph').onclick=()=>{state.representation='graph';render();say('Graph view. Selection retained.')};
+ $('representation-tree').onclick=()=>{state.representation='tree';render();say('Solution tree. Selection retained.')};
+ $('scope').onchange=event=>{state.scope=event.target.value;render()};
+ $('search').oninput=event=>{state.search=event.target.value.trim().toLowerCase();render()};
+ $('trace-mode').onchange=event=>{state.trace=event.target.value;render()};
+ $('detail').onchange=event=>{state.detail=event.target.value;render()};
+ $('zoom').onchange=event=>{state.zoom=Number(event.target.value);render();say(`Diagram zoom ${state.zoom*100} percent. Scroll within the canvas to pan.`)};
+ $('scenario').onchange=event=>{state.state=event.target.value;render();say(`Review state: ${state.state}.`)};
+ $('theme').onchange=event=>{document.body.classList.remove('light','hc');if(event.target.value!=='dark')document.body.classList.add(event.target.value);say(`Theme: ${event.target.value}. High contrast is a browser preview, not native proof.`)};
+ $('density').onchange=event=>document.body.classList.toggle('comfortable',event.target.value==='comfortable');
+ $('viewport').onchange=event=>{$('window').className='window'+(event.target.value==='wide'?'':' '+event.target.value)};
+ $('reduced-motion').onchange=event=>document.body.classList.toggle('reduced',event.target.checked);
+ $('persona').onchange=event=>{const config={developer:['entry','orders','api'],architect:['layers','all','handler'],platform:['azure','azure','root']}[event.target.value];state.scope=config[1];state.search='';$('search').value='';$('scope').value=state.scope;state.selectedId=config[2];changeLens(config[0]);say(`Persona default: ${event.target.options[event.target.selectedIndex].text}. No permissions changed.`)};
+ $('back').onclick=()=>{const id=state.history.pop();if(id)select(id,false)};
+ $('reveal').onclick=()=>{state.scope='all';state.search='';$('scope').value='all';$('search').value='';state.representation='tree';render();say('Selection revealed in the full fixture tree.')};
+ $('return-architecture').onclick=()=>$('other-perspective').close();
+ function getAudit(){
+  const style=getComputedStyle(document.body),rgb=s=>s.match(/[\d.]+/g).slice(0,3).map(Number);
+  const convert=color=>{const probe=document.createElement('span');probe.style.color=color;document.body.append(probe);const value=rgb(getComputedStyle(probe).color);probe.remove();return value};
+  const lum=a=>a.map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4}).reduce((sum,v,i)=>sum+v*[.2126,.7152,.0722][i],0);
+  const pairs=[['--text','--surface'],['--muted','--raised'],['--candidate','--raised'],['--fact','--surface'],['--accent-ink','--accent']].map(([fg,bg])=>{const a=lum(convert(style.getPropertyValue(fg))),b=lum(convert(style.getPropertyValue(bg)));return{foreground:fg,background:bg,ratio:Number(((Math.max(a,b)+.05)/(Math.min(a,b)+.05)).toFixed(2)),minimum:4.5}});
+  const small=Array.from(document.querySelectorAll('button,select,input')).filter(el=>el.getClientRects().length&&!el.disabled).map(el=>({label:el.getAttribute('aria-label')||el.textContent.trim()||el.id,width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height})).filter(r=>r.width<24||r.height<24);
+  return {theme:$('theme').value,pairs,undersizedControls:small,scope:'Sample token pairs and visible HTML controls only; not exhaustive WCAG or native UIA proof.'};
+ }
+ $('audit-button').onclick=()=>{const audit=getAudit();$('audit-result').hidden=false;$('audit-result').textContent=JSON.stringify(audit,null,2);say(`Audit: ${audit.pairs.filter(p=>p.ratio<p.minimum).length} sampled contrast failures; ${audit.undersizedControls.length} controls below 24 CSS pixels.`)};
+ $('export').onclick=()=>{
+  const items=visible();const payload={kind:'code-atlas-view',version:1,fixture:true,repository:'Northstar Commerce (fictional)',snapshot:state.snapshot,scope:state.scope,lens:state.lens,representation:state.representation,selectedId:state.selectedId,trace:state.trace,detail:state.detail,reviewState:state.state,listedNodeIds:items.map(n=>n.id),relations:displayedEdges(items),interpretation:{origin:'AI simulation',reviewStatus:state.candidateStatus,text:state.candidateText||null},limitations:['Synthetic fixture only','No runtime observation','No model request','No Azure deployment query']};
+  const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));const link=document.createElement('a');link.href=url;link.download='code-atlas-fixture-view.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);say('Exported fixture view specification with snapshot and provenance.');
+ };
+ window.codeAtlas={getState:()=>JSON.parse(JSON.stringify(state)),getAudit};
+ render();
+})();
+</script>
+</body>
+</html>

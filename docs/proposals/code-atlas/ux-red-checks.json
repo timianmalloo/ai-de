@@ -1,0 +1,7 @@
+{
+  "trace_action_still_tree": true,
+  "relationship_opens_unrelated_handler_source": true,
+  "source_action_focus_fell_to_body": true,
+  "navigator_revision_stale": true,
+  "dialog_missing_name_binding": true
+}

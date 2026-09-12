@@ -1,0 +1,49 @@
+{
+  "tree_trace_action_opens_sequence": true,
+  "both_relationship_source_paths": true,
+  "inspector_focus_and_next_tab": true,
+  "hover": [
+    {
+      "theme": "dark",
+      "fg": "rgb(13, 16, 20)",
+      "bg": "rgb(91, 157, 217)",
+      "ratio": 6.6
+    },
+    {
+      "theme": "light",
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(39, 100, 154)",
+      "ratio": 6.22
+    },
+    {
+      "theme": "hc",
+      "fg": "rgb(0, 0, 0)",
+      "bg": "rgb(255, 255, 0)",
+      "ratio": 19.56
+    }
+  ],
+  "recovery_focus_and_snapshot_labels": {
+    "#nav-snapshot": "demo-b28d0 \u00b7 fixture v1",
+    "#snapshot": "demo-b28d0",
+    "#selection-path": "src/Commerce.Application/PlaceOrderHandler.cs:24 \u00b7 demo-b28d0"
+  },
+  "dialogs": [
+    {
+      "computed_name": "Coding is outside this study",
+      "accessibility_tree": "- dialog \"Coding is outside this study\":\n  - heading \"Coding is outside this study\" [level=2]\n  - paragraph: Coding and Explore belong to the primary session's UI work. This prototype does not replace them or start a session.\n  - button \"Return to Architecture\"",
+      "focus_restored": "coding"
+    },
+    {
+      "computed_name": "Explore is outside this study",
+      "accessibility_tree": "- dialog \"Explore is outside this study\":\n  - heading \"Explore is outside this study\" [level=2]\n  - paragraph: Coding and Explore belong to the primary session's UI work. This prototype does not replace them or start a session.\n  - button \"Return to Architecture\"",
+      "focus_restored": "explore"
+    },
+    {
+      "computed_name": "New session is outside this study",
+      "accessibility_tree": "- dialog \"New session is outside this study\":\n  - heading \"New session is outside this study\" [level=2]\n  - paragraph: Coding and Explore belong to the primary session's UI work. This prototype does not replace them or start a session.\n  - button \"Return to Architecture\"",
+      "focus_restored": "new"
+    }
+  ],
+  "preview_width_not_viewport": true,
+  "page_errors": []
+}

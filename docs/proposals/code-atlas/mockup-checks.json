@@ -1,0 +1,174 @@
+{
+  "selection_pivot_search_reveal_keyboard": true,
+  "seven_lenses": {
+    "structure": {
+      "heading": "Understand the system",
+      "text_length": 421
+    },
+    "entry": {
+      "heading": "Where work enters",
+      "text_length": 270
+    },
+    "domain": {
+      "heading": "The domain, as a hypothesis",
+      "text_length": 252
+    },
+    "classes": {
+      "heading": "A class model you can read",
+      "text_length": 337
+    },
+    "layers": {
+      "heading": "Responsibilities and dependencies",
+      "text_length": 523
+    },
+    "azure": {
+      "heading": "What the Bicep root declares",
+      "text_length": 325
+    },
+    "impact": {
+      "heading": "What could this change affect?",
+      "text_length": 534
+    }
+  },
+  "distinct_trace_projections": true,
+  "unresolved_entry_not_substituted": true,
+  "class_detail_and_zoom": true,
+  "annotation_identity_snapshot_isolation_correction_rejection": true,
+  "hard_states_and_recovery": [
+    "empty",
+    "loading",
+    "error",
+    "partial",
+    "stale",
+    "overflow",
+    "ai-unavailable"
+  ],
+  "persona_defaults": {
+    "developer": "orders",
+    "architect": "all",
+    "platform": "azure"
+  },
+  "azure_existing_reference_source": true,
+  "export_fixture_snapshot_and_provenance": true,
+  "themes_sampled_audit": [
+    {
+      "theme": "dark",
+      "pairs": [
+        {
+          "foreground": "--text",
+          "background": "--surface",
+          "ratio": 14.98,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--muted",
+          "background": "--raised",
+          "ratio": 6.48,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--candidate",
+          "background": "--raised",
+          "ratio": 7.48,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--fact",
+          "background": "--surface",
+          "ratio": 7.69,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--accent-ink",
+          "background": "--accent",
+          "ratio": 6.6,
+          "minimum": 4.5
+        }
+      ],
+      "undersizedControls": [],
+      "scope": "Sample token pairs and visible HTML controls only; not exhaustive WCAG or native UIA proof."
+    },
+    {
+      "theme": "light",
+      "pairs": [
+        {
+          "foreground": "--text",
+          "background": "--surface",
+          "ratio": 15.29,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--muted",
+          "background": "--raised",
+          "ratio": 6.39,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--candidate",
+          "background": "--raised",
+          "ratio": 6.36,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--fact",
+          "background": "--surface",
+          "ratio": 5.45,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--accent-ink",
+          "background": "--accent",
+          "ratio": 6.22,
+          "minimum": 4.5
+        }
+      ],
+      "undersizedControls": [],
+      "scope": "Sample token pairs and visible HTML controls only; not exhaustive WCAG or native UIA proof."
+    },
+    {
+      "theme": "hc",
+      "pairs": [
+        {
+          "foreground": "--text",
+          "background": "--surface",
+          "ratio": 21,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--muted",
+          "background": "--raised",
+          "ratio": 21,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--candidate",
+          "background": "--raised",
+          "ratio": 19.56,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--fact",
+          "background": "--surface",
+          "ratio": 21,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "--accent-ink",
+          "background": "--accent",
+          "ratio": 19.56,
+          "minimum": 4.5
+        }
+      ],
+      "undersizedControls": [],
+      "scope": "Sample token pairs and visible HTML controls only; not exhaustive WCAG or native UIA proof."
+    }
+  ],
+  "responsive_widths": [
+    1440,
+    1024,
+    768
+  ],
+  "outside_study_rail_return": true,
+  "page_errors": [],
+  "remote_requests": []
+}

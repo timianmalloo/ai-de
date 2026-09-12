@@ -9439,6 +9439,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "e7e9efde10072578ca62a776d034b4eedd7f1173516a82aec73bb1e5fe25294c"
     },
     {
+      "id": "proof-code-atlas-prototype",
+      "path": "docs/proof/code-atlas-prototype.md",
+      "title": "Code Atlas proposal - prototype evidence and limits",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "proposal",
+      "reviewBy": "2026-10-12",
+      "reviewSuggested": [],
+      "summary": "Browser-level evidence for the exploratory Code Atlas proposal and synthetic interaction prototype. Separates working local HTML interactions from unimplemented native, extraction and model-analysis capabilities.",
+      "tags": [
+        "code-atlas",
+        "prototype",
+        "browser",
+        "accessibility",
+        "provenance"
+      ],
+      "links": [
+        {
+          "to": "proposal-code-atlas",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0e01813def6aa67e7a1c4ce8db533c1866e464f9acef126ee8ecda11e14407b0"
+    },
+    {
       "id": "proof-pack-phase-1-walking-skeleton",
       "path": "docs/design/phase-1-proof-pack.md",
       "title": "Phase 1 walking skeleton — Proof Pack",
@@ -9467,6 +9498,43 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "53589db37edd1ae7891d2712c10bf66202b5d612e7e29379183b50c60ee823ec"
+    },
+    {
+      "id": "proposal-code-atlas",
+      "path": "docs/proposals/code-atlas/README.md",
+      "title": "Code Atlas - an evidence-first Architecture workspace",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "proposal",
+      "reviewBy": "2026-10-12",
+      "reviewSuggested": [],
+      "summary": "An exploratory proposal and interactive browser mockup for understanding a repository through structure, entry points, domain candidates, class models, layers and Azure infrastructure. Extends the intent of the existing Architecture perspective without changing the active shell/session implementation or promoting AI interpretation to extracted evidence.",
+      "tags": [
+        "proposal",
+        "architecture",
+        "code-understanding",
+        "graph",
+        "reverse-engineering",
+        "ai",
+        "ux"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-uml-erm-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8e1d2d992c76613d80ec4a8c4a1d61041004048a7ef9aac2abf34180678e7c23"
     },
     {
       "id": "release-plan-ai-native-ide",
@@ -16248,6 +16316,21 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     },
     {
+      "id": "surface-proposals-code-atlas-index",
+      "path": "docs/proposals/code-atlas/index.html",
+      "title": "Code Atlas | AI-DE Architecture workspace proposal",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "proposal-code-atlas"
+    },
+    {
+      "id": "surface-proposals-code-atlas-mockup",
+      "path": "docs/proposals/code-atlas/mockup.html",
+      "title": "Code Atlas | Interactive Architecture study",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
       "id": "surface-mockups-context-map-join",
       "path": "docs/mockups/context-map-join.html",
       "title": "Context Map & Join surfaces — Core→Design §4a (mockup)",
@@ -16328,5 +16411,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "7a8dad406ca9edeb20773fd8e7be754d5879becea364af40b464055b0c160ded"
+  "graphSha256": "bdb4c099d2d7a4cea113d12da0ad7c62de20b17a67a85b96da74644982cc3681"
 };
