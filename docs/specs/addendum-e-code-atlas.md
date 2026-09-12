@@ -334,10 +334,10 @@ Every Code Atlas view renders a capability disclosure before or beside the conte
 | Reliability | Fixtures: index→edit-without-reindex, mixed scope A-new/B-old, unsupported file, extraction failure, refresh cancel. | State correctness. | View shows `current`, `live-changed`, `stale`, `mixed`, `partial`, `last-successful`, `unsupported` or `cancelled` as applicable; no stale view shown as coherent. | Store/IPC/native proof path; manifest/coherence oracle. |
 | Security | Fixtures in §A12 boundary table. | Negative-oracle pass/fail. | 100% reject or inert-render as specified. | Security gate before acceptance. |
 | Usability | E-0 real native journey over a selectable workspace. | Completion and recovery steps. | File → type/member → actual source → Back completes by keyboard and pointer; unsupported/unindexed files remain visible within authorized visibility. | Manual + automated UI proof path. |
-| Compatibility | Windows WPF + WebView2 Architecture host. | Runtime/platform proof. | Works in existing Architecture perspective with no Coding/Explore/Composer redesign. | Claude/Core seam acknowledgement and native proof required. |
+| Compatibility | Windows WPF Architecture host; WebView2 only where the phase's accepted design actually uses it. | Runtime/platform proof. | Works in existing Architecture perspective with no Coding/Explore/Composer redesign and without forcing WebView2 into E-0 if the walking skeleton does not need it. | Claude/Core seam acknowledgement and phase-appropriate native proof required. |
 | Maintainability | Contract fixtures for inventory/file-source/member identity. | One owner per contract, one identity rule. | No parsing `has_member`; no path-only snapshot claim; no duplicated graph substrate. | Design review before source admission. |
 | Portability | Windows-first local workspace. | Egress and dependency count. | Deterministic E-0 has no cloud/model dependency; private corpus not exported/persisted without separate authorization. | Privacy/security gate. |
-| Accessibility | Native E-0 UI fixture. | Keyboard/UIA/contrast/list alternative. | WCAG 2.2 AA; all controls named; diagram/source alternatives navigable. | UX/accessibility gate. |
+| Accessibility | Native E-0 UI fixture; later diagram/WebView fixture only for phases that use diagrams/WebView. | Keyboard/UIA/contrast/list alternative. | WCAG 2.2 AA; phase-required controls named; E-0 proves rail/tree/tabs/inspector/source focus and restore; diagram/WebView alternatives are required only when that phase uses them. | UX/accessibility gate. |
 | Observability | Normal-path E-0 runs. | Duration, counts, coherence state, omissions, errors. | Every run emits extraction/read durations, path counts, unsupported counts, hash/coherence state, shortfall and stable error codes; missing values emit `not recorded`. | Instrumentation gate; no invented region/cost terms. |
 
 ### A11. Boundary set
@@ -563,9 +563,9 @@ flowchart TD
 
 ### C2. Medium and platform guidelines
 
-- **Medium:** native Windows desktop shell (WPF) with WebView2-hosted diagram/source surfaces.
-- **Guidelines:** Microsoft Fluent/Windows app design guidance; AI-DE `DESIGN.md` tokens; WPF keyboard/UIA expectations; WebView2 content treated as inert projection documents.
-- **Native acceptance:** a web mockup can guide direction only. Native acceptance requires WPF/WebView2 proof for keyboard focus, UIA names/roles, high-DPI, multi-monitor sizing, reduced motion and theme/high-contrast modes.
+- **Medium:** native Windows desktop shell (WPF). WebView2 is used only for phases whose accepted design needs hosted diagram/source documents; it is not forced into the E-0 walking skeleton.
+- **Guidelines:** Microsoft Fluent/Windows app design guidance; AI-DE `DESIGN.md` tokens; WPF keyboard/UIA expectations; WebView2 content, where used, is treated as inert projection documents.
+- **Native acceptance:** a web mockup can guide direction only. Future implementation exit evidence is phase-appropriate: E-0 proves the real WPF rail, tree, tabs, inspector and source surface; later WebView/diagram phases prove WebView focus and synchronized alternatives only where those surfaces exist.
 
 ### C3. Visual intent and tokens
 
@@ -591,7 +591,7 @@ flowchart TD
 
 - **Motion:** hard cuts for view switches; no graph animation required for comprehension. Reduced motion is identical or simpler.
 - **Copy examples:** "Static reconstruction — not observed runtime order." "Semantic coverage unavailable for this file." "Showing 80 of 312 types; 232 folded by package." "Grant not shown: no supported declaration evidence." "Authority unknown — needs Owner/Conductor/audit source." "Model interpretation rejected: cited source not in context preview."
-- **Accessibility:** WCAG 2.2 AA; keyboard path through rail, tree, tabs, diagram alternative list, inspector and source; visible focus; UIA names for WPF controls; WebView2 diagrams expose accessible titles/descriptions and a synchronized list/table.
+- **Accessibility:** WCAG 2.2 AA; keyboard path through the phase's active controls; visible focus; UIA names/roles/values for WPF controls. E-0 specifically proves rail → tree → tabs → inspector → source focus order and restore. WebView2 diagrams expose accessible titles/descriptions and a synchronized list/table only in phases that actually use WebView/diagrams.
 - **Performance:** tree/list virtualization; bounded diagram rendering; source truncation with continuation; extraction and model calls off UI thread; normal-path telemetry readbacks for the budgets in §A10.
 
 ### C6. AI-UX requirements
@@ -606,10 +606,12 @@ Applicable HAX and Shape-of-AI patterns:
 
 ### C7. UI acceptance criteria
 
-- Every interactive control is reachable by keyboard and has an accessible name.
-- Every diagram has a text/list alternative that exposes the same selectable elements and relationship confidence.
+- For the **phase under review**, every required state for that phase from §C4 is represented in the design and future tests. E-0's required subset is: Solution Explorer default/loading/empty/no-index/stale/error/filtered-zero/unsupported/selected/overflow; Source viewer source-available/source-unavailable/large-truncated/stale/live-changed/active-anchor; Implementation-independent inspector selection/empty/error; model and diagram states remain later-phase requirements.
+- E-0 native proof criteria: the real WPF Architecture rail, Solution tree, view tabs, inspector and source surface have a measured keyboard focus order, restore focus/selection after Back, UIA names/roles/values, theme/high-contrast/reduced-motion behavior, high-DPI behavior and window sizing behavior.
+- WebView focus and synchronized text/list alternatives are required only for phases that actually use WebView/diagram surfaces; E-0 does not fail for omitting WebView if its accepted design uses native WPF source/tree controls.
+- Every interactive control required by the phase is reachable by keyboard and has an accessible name.
+- Every diagram required by the phase has a text/list alternative that exposes the same selectable elements and relationship confidence.
 - Confidence, authority and mapping states are never encoded by color alone.
-- All complete states in §C4 are represented in the design and future tests.
 - The UI can show a full physical inventory and partial semantic extraction at the same time without contradiction.
 - The model interpretation preview must show context and bounds before any model call.
 - High contrast and dark mode meet token-level contrast floors; light mode values are measured before acceptance.
