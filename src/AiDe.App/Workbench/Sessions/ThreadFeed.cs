@@ -863,6 +863,8 @@ public sealed class ThreadFeed : FeedList, IDisposable
         toggle.SetValue(Control.TemplateProperty, HeaderToggleTemplate());
         toggle.SetValue(FrameworkElement.FocusVisualStyleProperty, null);
         toggle.SetValue(AutomationProperties.NameProperty, new TemplateBindingExtension(AutomationProperties.NameProperty));
+        // The stop is the toggle, so the explanation an AT reads at the stop must be on it too.
+        toggle.SetValue(AutomationProperties.HelpTextProperty, new TemplateBindingExtension(AutomationProperties.HelpTextProperty));
         root.AppendChild(toggle);
 
         var content = F(typeof(ContentPresenter), "ExpandSite");

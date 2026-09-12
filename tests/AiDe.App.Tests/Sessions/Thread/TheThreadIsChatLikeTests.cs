@@ -67,15 +67,20 @@ public sealed class TheThreadIsChatLikeTests
     /// <b>L1.</b> <b>Red observed</b>: with <c>ComposerSurface.EditorFloor</c> unset (no MinHeight
     /// on the host) the editor measured 0 px at every count (spike Q14); with the document's belt
     /// removed the thread row measured 0 px at 40 turns (the composer took the whole column); at
-    /// 600 px with the belt as a <c>MaxHeight</c> clamp the send row was arranged 94 px below the
-    /// composer's bottom edge (the WPF lens's arithmetic, reproduced) — the belt now yields to the
-    /// composer's minimum and the send row is the last thing inside it.
+    /// 600 px with the belt passed straight through as the content's constraint (the same clamp a
+    /// <c>MaxHeight</c> is — a DesiredSize is clipped to what it was measured against): <i>1 turns
+    /// at 600 (structure open): the editor ends at 130.0 px but the lines begin at 24.1 px — they
+    /// overlap (composer 270.0 px arranged, 270.0 desired, minimum 414.0, belt 270)</i>; and with
+    /// the old <c>MaxHeight</c> clamp back by mutation: <i>the composer ends at 711.9 px in a 600
+    /// px document</i>. The belt now yields to the composer's minimum.
     /// </summary>
     [Theory]
-    [InlineData(1440, 900 - 28 - 40)]
-    [InlineData(1024, 900 - 28 - 40)]
-    [InlineData(1440, 600)]
-    public void TheEditorsTopEdgeIsEqualAt1_5_40Turns_AndNeitherRegionStarves(double width, double height)
+    [InlineData(1440, 900 - 28 - 40, false)]
+    [InlineData(1024, 900 - 28 - 40, false)]
+    [InlineData(1440, 600, false)]
+    [InlineData(1440, 600, true)]
+    [InlineData(800, 600, true)]
+    public void TheEditorsTopEdgeIsEqualAt1_5_40Turns_AndNeitherRegionStarves(double width, double height, bool structureOpen)
     {
         Sta.Run(() =>
         {
@@ -85,6 +90,7 @@ public sealed class TheThreadIsChatLikeTests
                 var turns = count == 40 ? ThreadFixtures.Forty() : ThreadFixtures.Five().Take(count).ToList();
                 using var document = Document(turns);
                 document.Composer.CompiledPromptOpen = true;   // the 30-line compiled prompt row (Q14)
+                document.Composer.StructureOpen = structureOpen;
 
                 var (top, editor, thread, compiled) = Layout(document, width, height);
                 tops.Add(top);
@@ -92,13 +98,16 @@ public sealed class TheThreadIsChatLikeTests
                 Assert.True(editor >= ComposerSurface.EditorFloor - 0.5, $"{count} turns at {width}×{height}: the editor host is {editor:F1} px; the floor is {ComposerSurface.EditorFloor}");
                 Assert.True(compiled <= ComposerSurface.CompiledPromptMaxHeight + 0.5, $"{count} turns: the compiled prompt is {compiled:F1} px");
 
-                // ≥ 3 turns half-visible at rest: a half-turn is a constant derived from the template's
-                // line heights (words 19.5 + decoration 24 + outcome 24 + margins 20 ≈ 88 px / 2) —
-                // never read back from the control.
+                // ≥ 3 turns half-visible at rest (the structure collapsed), ≥ 2 with it expanded
+                // (DESIGN.md:1084): a half-turn is a constant derived from the template's line heights
+                // (words 19.5 + decoration 24 + outcome 24 + margins 20 ≈ 88 px / 2) — never read back.
                 const double HalfTurn = 44;
-                Assert.True(thread >= 3 * HalfTurn, $"{count} turns at {width}×{height}: the thread row is {thread:F1} px; three half-turns need {3 * HalfTurn}");
+                var halfTurns = structureOpen ? 2 : 3;
+                Assert.True(thread >= halfTurns * HalfTurn, $"{count} turns at {width}×{height} (structure {(structureOpen ? "open" : "collapsed")}): the thread row is {thread:F1} px; {halfTurns} half-turns need {halfTurns * HalfTurn}");
 
-                // The belt, or the composer's own minimum when the belt is smaller (600 px) — never a clip.
+                // The belt, or the composer's own minimum when the belt is smaller — never a clip and
+                // never an overlap: the send row ends inside the composer, the composer inside the
+                // document, and the editor's bottom edge is above the first line beneath it.
                 var belt = Math.Floor(SessionDocumentSurface.ComposerShare * height);
                 var composer = document.Composer;
                 Assert.True(composer.ActualHeight <= Math.Max(belt, composer.MinimumHeight) + 0.5, $"{count} turns at {height}: the composer took {composer.ActualHeight:F1} px; the belt is {belt}, its minimum {composer.MinimumHeight:F1}");
@@ -106,6 +115,13 @@ public sealed class TheThreadIsChatLikeTests
                 var sendBottom = send.TransformToAncestor(composer).Transform(new Point(0, send.ActualHeight)).Y;
                 Assert.True(sendBottom <= composer.ActualHeight + 0.5, $"{count} turns at {height}: the send row's bottom is at {sendBottom:F1} px inside a {composer.ActualHeight:F1} px composer — clipped");
                 Assert.True(composer.ActualHeight + top <= height + 0.5, $"{count} turns at {height}: the composer ends at {composer.ActualHeight + top:F1} px in a {height} px document");
+                var host = ThreadFixtures.Visuals<WebView2>(composer).Single();
+                var editorBottom = host.TransformToAncestor(composer).Transform(new Point(0, host.ActualHeight)).Y;
+                var lines = ThreadFixtures.Visuals<WrapPanel>(composer).Single(p => AutomationProperties.GetName(p) == "This turn");
+                var linesTop = lines.TransformToAncestor(composer).Transform(new Point(0, 0)).Y;
+                var structure = ThreadFixtures.Visuals<Expander>(composer).Single(e => AutomationProperties.GetName(e).StartsWith("Goal,", StringComparison.Ordinal));
+                var structureTop = structure.TransformToAncestor(composer).Transform(new Point(0, 0)).Y;
+                Assert.True(editorBottom <= Math.Min(linesTop, structureTop) + 0.5, $"{count} turns at {height} (structure {(structureOpen ? "open" : "collapsed")}): the editor ends at {editorBottom:F1} px but the lines begin at {Math.Min(linesTop, structureTop):F1} px — they overlap (composer {composer.ActualHeight:F1} px arranged, {composer.DesiredSize.Height:F1} desired, minimum {composer.MinimumHeight:F1}, belt {belt}, thread {thread:F1})");
             }
 
             Assert.Equal(tops[0], tops[1], 0.5);
@@ -179,6 +195,9 @@ public sealed class TheThreadIsChatLikeTests
                 // (DC-107) — and the bound sits in the calibrated gap (< 50, floor 0.1 ms) so a loaded
                 // machine's 1.2–1.7× never trips it while the wrong shape's thousands always do
                 // (the Test Architect's ruling on this row).
+                // perf-budget: the 50 bounds a RATIO of two same-process measurements (p95 at 400 turns
+                // over p95 at 40), never a wall-clock number — a slower runner scales both sides; the
+                // right shape reads 1.2–1.7× on this workstation (Q15), the wrong one ~4,000×.
                 Assert.True(p95[400] / Math.Max(p95[40], 0.1) < 50, $"p95 layout 40:{p95[40]:F2} ms 400:{p95[400]:F2} ms — ratio {p95[400] / Math.Max(p95[40], 0.1):F1}");
 
                 // The record equals the tree (E12): the thread.layout the apply wrote says exactly what
@@ -314,8 +333,9 @@ public sealed class TheThreadIsChatLikeTests
                 Assert.Equal(feed.MeasureWidth, words.MaxWidth, 0.5);
 
                 // THE OUTCOME WORD'S INK IS THE STATE'S (the WPF lens's finding: a Foreground the
-                // template set outranked every style trigger, so "failed" painted in TextBrush).
-                // Red observed: `Expected 0xFFE5484D (DangerBrush) Actual 0xFFE6E6E6 (TextBrush)`.
+                // template set outranked every style trigger, so every outcome word painted in
+                // TextBrush). Red observed by mutation (the Foreground back on the template):
+                // `Expected: #FF5FB98F Actual: #FFE4E9EF` — VerifiedBrush expected, TextBrush painted.
                 var completedWord = ThreadFixtures.Visuals<ThreadText>(container).Single(t => t.Text == "completed");
                 Assert.Equal(ThemeProbe.Token(theme, "VerifiedBrush"), ThemeProbe.Ink(completedWord));
 

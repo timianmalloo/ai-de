@@ -136,7 +136,10 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         AutomationProperties.SetName(_status, "Send status");
 
         // Built after the status line it reports into: a browser that cannot start says so there.
-        _host = new WebSurfaceHost(surfaceId, this, InitialiseAsync, failure => SetStatus("the composer editor could not start: " + failure, Urgency.Assertive));
+        // The recovery is named with the failure: the host's contract is "not retried on the next
+        // attach" (the runtime is picked up when the surface is next constructed), so the operator
+        // is told the one path that exists — a Retry in place is the WebSurfaceHost.Retry() seam.
+        _host = new WebSurfaceHost(surfaceId, this, InitialiseAsync, failure => SetStatus("the composer editor could not start: " + failure + " Close and reopen the session to try again.", Urgency.Assertive));
         _view = _host.View;
 
         // THE EDITOR'S FLOOR (DESIGN.md:1092; DS-1 seam 5, spike Q14): in an Auto row the composer
@@ -167,6 +170,12 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         _sendRow.Children.Add(_attach);
         _sendRow.Children.Add(_status);
 
+        // The tab order is the visual order — Attach · the status (its link) · Send — not the
+        // children order the DockPanel's fill rule dictates (2.4.3).
+        System.Windows.Input.KeyboardNavigation.SetTabIndex(_attach, 1);
+        System.Windows.Input.KeyboardNavigation.SetTabIndex(_status, 2);
+        System.Windows.Input.KeyboardNavigation.SetTabIndex(_send, 3);
+
         // The lines beneath the editor (DESIGN.md: 4 rows at rest, each 24 px): the structure,
         // this turn's decoration line, the settings line, the compiled prompt on demand.
         _structure = BuildStructure();
@@ -182,6 +191,8 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             Content = _compiled,
             Margin = new Thickness(0, 2, 0, 0),
             Style = AiDe.App.Workbench.Sessions.ThreadFeed.DisclosureStyle(),
+            Focusable = false,
+            IsTabStop = false,
         };
         AutomationProperties.SetName(_compiledDisclosure, "Compiled prompt");
         AutomationProperties.SetHelpText(_compiledDisclosure, "exactly the bytes that will be sent; no diff, no comments");
@@ -790,25 +801,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
                 segment.Children.Add(SegmentLabel(row.Name));
             }
 
-            // The tilde and the inferred ink mark a MODEL-derived value (DESIGN.md SC4; §A11's
-            // marks); a mechanical rule's value is text — a false uncertainty mark is a lie (U13).
-            var inferred = string.Equals(row.Source, ModelSource, StringComparison.Ordinal);
-            var value = new TextBlock
-            {
-                Text = inferred ? "~ " + row.Value : row.Value,
-                FontSize = 12,
-                VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(0, 0, 6, 0),
-            };
-            value.SetResourceReference(TextBlock.ForegroundProperty, inferred ? "InferredBrush" : "TextBrush");
-            if (row.Name == "lease")
-            {
-                value.FontFamily = AiDe.App.Workbench.Sessions.ThreadFeed.Mono;
-            }
-
-            AutomationProperties.SetName(value, row.Name + " " + row.Value);
-            AutomationProperties.SetHelpText(value, row.Reason);
-            segment.Children.Add(value);
+            segment.Children.Add(DecorationValue(row));
 
             // The provenance, inline: the current turn is confirmed at Send (SC2), so the source
             // and the reason are beside the value rather than a disclosure away.
@@ -822,6 +815,32 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         // The settings line derives from the decoration line's tier — one projection, two readers (DM7).
         var tier = decorations.First(d => d.Name == "tier").Value;
         _settingsLine.Text = ComposerCompiler.SettingsLine(tier, _draft.Ceilings.FanOutCeiling, _draft.Ceilings.BudgetCap);
+    }
+
+    /// <summary>
+    /// A decoration's value as rendered: the tilde and the inferred ink mark a MODEL-derived value
+    /// (DESIGN.md SC4; §A11's marks) — a mechanical rule's value is text, a false uncertainty mark
+    /// is a lie (U13). Internal so the rule is tested over a row of each source, not read from code.
+    /// </summary>
+    internal static TextBlock DecorationValue(DecorationRow row)
+    {
+        var inferred = string.Equals(row.Source, ModelSource, StringComparison.Ordinal);
+        var value = new TextBlock
+        {
+            Text = inferred ? "~ " + row.Value : row.Value,
+            FontSize = 12,
+            VerticalAlignment = VerticalAlignment.Center,
+            Margin = new Thickness(0, 0, 6, 0),
+        };
+        value.SetResourceReference(TextBlock.ForegroundProperty, inferred ? "InferredBrush" : "TextBrush");
+        if (row.Name == "lease")
+        {
+            value.FontFamily = AiDe.App.Workbench.Sessions.ThreadFeed.Mono;
+        }
+
+        AutomationProperties.SetName(value, row.Name + " " + row.Value);
+        AutomationProperties.SetHelpText(value, row.Reason);
+        return value;
     }
 
     private static TextBlock SegmentLabel(string text, bool strong = false)
@@ -871,6 +890,8 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             IsExpanded = false,
             Content = body,
             Style = AiDe.App.Workbench.Sessions.ThreadFeed.DisclosureStyle(),
+            Focusable = false,
+            IsTabStop = false,
         };
         AutomationProperties.SetName(expander, "Goal, Done when, Not in scope");
         AutomationProperties.SetHelpText(expander, "The structure of this turn. Written here, it makes the turn a goal block; a blank Goal or Done when makes a message.");
@@ -1097,13 +1118,17 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
     /// <summary>
     /// <b>The writer is sized first (DC-137).</b> A DockPanel measures its docked children before the
-    /// fill child, each with infinite extent on the docked axis, so an uncapped compiled prompt would
-    /// take its whole content height and the editor host the remainder. Under a finite constraint the
-    /// compiled prompt's ceiling is set here, before any child is measured: the smaller of its 200 px
-    /// and what the chrome leaves once the editor has its floor — so the editor host is never
-    /// smaller than the compiled view. Under an infinite constraint (an <c>Auto</c> row) the
-    /// composer declares its natural height — the floor is on the host (spike Q14) — and the
-    /// document belts it with <c>MaxHeight</c>.
+    /// fill child, each with what remains of the constraint after the ones before it, so an uncapped
+    /// compiled prompt would take its whole content height and the editor host the remainder. The
+    /// compiled prompt's ceiling is therefore set here, before the content is measured: the smaller
+    /// of its 200 px, what the chrome leaves once the editor has its floor, and half of what the
+    /// chrome leaves (the writer is never smaller than the reader) — never under its own 48 px floor
+    /// when it is open. The document sets <see cref="BeltHeight"/>, never <c>MaxHeight</c>; the
+    /// content is measured within the belt — or within <see cref="MinimumHeight"/> when the belt is
+    /// smaller, because a DesiredSize is clipped to what it was measured against and a belt passed
+    /// straight through would clamp exactly as a <c>MaxHeight</c> did (L1's 600 px rows). Under an
+    /// infinite constraint with no belt the composer declares its natural height — the floor is on
+    /// the host (spike Q14).
     /// </summary>
     protected override Size MeasureOverride(Size constraint)
     {
@@ -1136,7 +1161,11 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
                 CompiledPromptMinHeight,
                 Math.Floor(Math.Min(CompiledPromptMaxHeight, Math.Min(height - chrome - EditorFloor, (height - chrome) / 2))));
 
-        return base.MeasureOverride(new Size(constraint.Width, height));
+        // The content is measured within the belt — or within the composer's own minimum when the
+        // belt is smaller: a DesiredSize is clipped to what it was measured against, so a belt
+        // passed straight through would clamp the composer exactly as a MaxHeight did and the
+        // editor's floor would overlap the lines beneath it (L1's 600 px row, red by mutation).
+        return base.MeasureOverride(new Size(constraint.Width, Math.Max(height, MinimumHeight)));
     }
 
     /// <summary>

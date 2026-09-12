@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation.Sessions: 30 types, 127 members, 96% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation.Sessions: 30 types, 128 members, 96% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation.Sessions`
 
-**30 public types · 127 public members · 96% documented.**
+**30 public types · 128 public members · 96% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -75,6 +75,7 @@ screen.
 | `void SetLaneVisible(string laneId, bool visible)` | Includes or excludes a whole lane. |
 | `void SetKindVisible(string laneId, string kind, bool visible)` | Includes or excludes one event kind within one lane. |
 | `IReadOnlyList<long> OrdinalGaps(string laneId)` | Ordinals this lane never delivered, from 1 up to the highest it did — the positive oracle for "no event was lost". |
+| `string TextOf(RunEvent evt)` | What a row shows: the event's own text when it carries one, else its kind. Public so the session thread's fold (CV-1) reads the same definition of a line's text — one derivation, two readers (DM7). |
 
 ### `IReadOnlyList<long> OrdinalGaps(string laneId)`
 
@@ -84,6 +85,18 @@ Ordinals this lane never delivered, from 1 up to the highest it did — the posi
 **Remarks.** Empty is the only passing answer. A console that was rebuilt starts its history at whatever
 arrived after the rebuild, so every ordinal before that reads here as missing — which is the
 difference `Assert.Same` cannot see.
+
+### `string TextOf(RunEvent evt)`
+
+What a row shows: the event's own text when it carries one, else its kind. Public so the
+session thread's fold (CV-1) reads the same definition of a line's text — one derivation,
+two readers (DM7).
+
+**Remarks.** **The two shapes are the mapper's, read rather than guessed.** An `agent.msg` body is
+the lifted `update`, whose text sits at `content.text`; a `permission.request`
+body is the lifted `params`, whose text sits at `title`. Falling back to the kind is
+deliberate: a blank row reads as an event with nothing in it rather than as one this
+projection did not recognise, and the kind is always true.
 
 ## `AgentBackendRow`
 

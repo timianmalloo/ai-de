@@ -194,7 +194,7 @@ public static class ComposerCompiler
                 "projection",
                 shape == TurnShape.GoalBlock
                     ? "Goal and Done when are both written"
-                    : "a blank Goal or Done when makes a message (Ruling 75)"),
+                    : "a blank Goal or Done when makes a message"),   // Ruling 75 — the id stays here, never on the screen (U11)
         };
 
         if (draft.TemplateId is { } template)

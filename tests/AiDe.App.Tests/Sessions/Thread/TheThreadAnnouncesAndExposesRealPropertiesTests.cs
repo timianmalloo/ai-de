@@ -232,9 +232,13 @@ public sealed class TheThreadAnnouncesAndExposesRealPropertiesTests
                     feed.Dispatcher.Invoke(() => { }, DispatcherPriority.Background);
                 }
 
-                // The open state walks more than the collapsed one (the positive control on the walk itself).
-                Assert.True(counts["b17 failed open @1200"] > counts["b17 failed collapsed @1200"], $"open {counts["b17 failed open @1200"]} ≤ collapsed {counts["b17 failed collapsed @1200"]}");
-                Assert.True(counts["b41 waiting @1200"] > counts["b41 running @1200"], "a waiting turn offers no more targets than a running one");
+                // The open state walks more than the collapsed one, the waiting turn more than the
+                // running one — at both widths (the positive controls on the walk itself).
+                foreach (var width in new[] { 1200.0, 1024.0 })
+                {
+                    Assert.True(counts[$"b17 failed open @{width}"] > counts[$"b17 failed collapsed @{width}"], $"@{width}: open {counts[$"b17 failed open @{width}"]} ≤ collapsed {counts[$"b17 failed collapsed @{width}"]}");
+                    Assert.True(counts[$"b41 waiting @{width}"] > counts[$"b41 running @{width}"], $"@{width}: a waiting turn offers no more targets than a running one");
+                }
 
                 return Task.CompletedTask;
             });

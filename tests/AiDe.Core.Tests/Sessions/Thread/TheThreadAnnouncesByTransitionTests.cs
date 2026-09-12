@@ -183,16 +183,19 @@ public sealed class TheThreadAnnouncesByTransitionTests
     }
 
     /// <summary>
-    /// The D2 property over a seeded walk: for any snapshot sequence <i>S</i> and any subsequence
-    /// <i>S'</i> of it, the emissions of <i>S'</i> are a subsequence of the emissions of <i>S</i>,
-    /// and an ordinal has ≥ 1 emission iff its endpoint tuples differ. The seed is printed on failure.
+    /// The D2 property over a seeded walk, as it holds: for any snapshot sequence <i>S</i> and any
+    /// subsequence <i>S'</i> of it, the ordinals <i>S'</i> announces are a subset of the ordinals
+    /// <i>S</i> announces (a subsequence hides intermediate states, so its per-ordinal transitions
+    /// are the net of the whole's — the design's stronger "subsequence of emissions" claim is false
+    /// by construction for a net transition and is not asserted), and an ordinal has ≥ 1 emission
+    /// iff its endpoint tuples differ. The seed is printed on failure.
     /// </summary>
     [Theory]
     [InlineData(1)]
     [InlineData(7)]
     [InlineData(42)]
     [InlineData(2026)]
-    public void EmissionsOfASubsequenceAreASubsequenceOfTheWholesEmissions(int seed)
+    public void TheOrdinalsASubsequenceAnnouncesAreASubsetOfTheWholes_AndAnOrdinalSpeaksIffItsEndpointsDiffer(int seed)
     {
         var random = new Random(seed);
         var sequence = Walk(random, steps: 60);

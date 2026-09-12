@@ -374,14 +374,14 @@ internal static partial class Program
                 return TheNewDocumentNeverLoaded;
             }
 
-            if (report.InitPushed == 0 || report.Fields != "6")
+            if (report.InitPushed == 0 || report.Fields != "1")
             {
                 Console.Error.WriteLine(
-                    $"the new session's composer loaded but never reached init-pushed with six fields (init-pushed={report.InitPushed}, fields={report.Fields})");
+                    $"the new session's composer loaded but never reached init-pushed with its one message field (CV-1: the structure lines are WPF) (init-pushed={report.InitPushed}, fields={report.Fields})");
                 return TheNewDocumentNeverPushedInit;
             }
 
-            Console.Out.WriteLine("the new session's composer entered the rendered tree, measured itself and mounted six fields");
+            Console.Out.WriteLine("the new session's composer entered the rendered tree, measured itself and mounted its one message field");
             return Ok;
         }
 
@@ -462,13 +462,13 @@ internal static partial class Program
                 return TheReopenedDocumentWasNeverConfigured;
             }
 
-            if (Count(composer.SurfaceId, "init-pushed") == 0 || fields != "6")
+            if (Count(composer.SurfaceId, "init-pushed") == 0 || fields != "1")
             {
-                Console.Error.WriteLine($"the reopened session's composer was configured but never reached init-pushed with six fields (fields={fields})");
+                Console.Error.WriteLine($"the reopened session's composer was configured but never reached init-pushed with its one message field (CV-1: the structure lines are WPF) (fields={fields})");
                 return TheNewDocumentNeverPushedInit;
             }
 
-            Console.Out.WriteLine("the reopened session's composer was configured and mounted six fields");
+            Console.Out.WriteLine("the reopened session's composer was configured and mounted its one message field");
             return Ok;
         }
 
@@ -522,7 +522,7 @@ internal static partial class Program
                 + $"configured={Count(composer.SurfaceId, "configured")} init-pushed={Count(composer.SurfaceId, "init-pushed")} "
                 + $"layout-lines={LayoutLines(composer.SurfaceId)} page fields={fields} host fields={composer.Fields.Count} status='{composer.Status}'");
 
-            if (!live || goneLive || Count(composer.SurfaceId, "configured") == 0 || Count(composer.SurfaceId, "init-pushed") == 0 || fields != "6")
+            if (!live || goneLive || Count(composer.SurfaceId, "configured") == 0 || Count(composer.SurfaceId, "init-pushed") == 0 || fields != "1")
             {
                 Console.Error.WriteLine(
                     $"the restored session document was not revived as a bound document: live={live} gone-live={goneLive} "
@@ -530,7 +530,7 @@ internal static partial class Program
                 return TheRestoredDocumentWasNotRevived;
             }
 
-            Console.Out.WriteLine("the restored session document is live, its composer bound and mounted six fields; the session that is gone kept its island");
+            Console.Out.WriteLine("the restored session document is live, its composer bound and mounted its one message field; the session that is gone kept its island");
             return Ok;
         }
 
@@ -622,7 +622,7 @@ internal static partial class Program
                 + $"outcome='{cancelled.Announcement}'");
 
             if (!string.Equals(boundTo, chosen, StringComparison.OrdinalIgnoreCase)
-                || Count(composer.SurfaceId, "init-pushed") == 0 || fields != "6")
+                || Count(composer.SurfaceId, "init-pushed") == 0 || fields != "1")
             {
                 Console.Error.WriteLine(
                     $"the session created through the chooser was not bound to the chosen workspace: bound to '{boundTo ?? "(nothing)"}', "

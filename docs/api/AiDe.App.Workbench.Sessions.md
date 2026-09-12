@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Sessions: 25 types, 141 members, 70% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Sessions: 30 types, 159 members, 70% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Sessions`
 
-**25 public types · 141 public members · 70% documented.**
+**30 public types · 159 public members · 70% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -129,45 +129,62 @@ Appends a mode. Disposing the returned handle removes it again.
 a mode is adding a row" would be to add a permanent row for the proof, which is a placeholder
 wearing a test's clothes.
 
+## `ConsoleSplitRow`
+
+*record* — `ConsoleSurface.cs`
+
+One row of the Console split: a heading per turn, or one event line under it.
+
+## `TurnHeading`
+
+*record* — `ConsoleSurface.cs`
+
+*b5 · 15:02* — a `ListItem` with `HeadingLevel` 4 (SC10).
+
+| Member | Summary |
+|---|---|
+| `string Text` | **(gap)** |
+
+## `Line`
+
+*record* — `ConsoleSurface.cs`
+
+One event line, named by its text.
+
+| Member | Summary |
+|---|---|
+| `string Text` | **(gap)** |
+
 ## `ConsoleSurface`
 
 *class* — `ConsoleSurface.cs`
 
-The Console canvas mode (R16 b1): the merged stream across every lane of one session, with a
-lane rail and tree filtering.
+The Console split (SC1; Ruling 74): the same events the thread folds per turn, unfolded in time
+— a flat list of rows (a heading per turn, then its lines), **a view of the same fold**,
+never a second store (Ruling 74 condition 1: the split's rows equal the folded events, in order).
 
-**Remarks.** **Attribution is on the row, not on the layout.** Every line carries the lane that
-produced it and renders it as a chip beside the text, so a two-lane stream can never present as
-one voice — which is the failure R16 b1's clause names. The rail on the left is the same fact
-summarised: who is talking, and how much.
-
-
-
-
-
-**Filtering is a tree, and it hides rather than drops.** A lane node excludes the whole
-lane; a kind node under it excludes one kind of that lane's traffic. The model keeps every row it
-ever received either way, so a filter can never destroy the history the ordinal oracle reads.
-
-
-
-
-
-**Disposal is announced** (`SessionDisposalSignal`). This surface is
-retained across a canvas mode switch and a tab switch; the ledger is how that claim is checked
-rather than asserted, because `Assert.Same` passes on a disposed instance.
+**Remarks.** **The old merged-stream renderer is gone.** It rendered `ConsoleStreamModel` —
+the run channel with no turn boundary — through a `StackPanel` rebuilt on every change
+(the 40-turn cliff by construction). This is the second `FeedList` consumer: the
+same virtualization, the same keys, the same pin. Opened from a fold's tail the caret is that
+turn's heading; while a turn runs it follows.
 
 | Member | Summary |
 |---|---|
-| `ConsoleSurface(ConsoleStreamModel model)` | **(gap)** |
-| `ConsoleStreamModel Model` | The merged stream this console shows. |
-| `IReadOnlyList<string> RailLanes` | The lane names the rail is showing, in rail order — what a test reads instead of the tree. |
-| `IReadOnlyList<string> RenderedRows` | Every rendered line, as "lane: text" — the rendered attribution, not the model's. |
-| `void Dispose()` | Detaches from the stream. Announced first, so the disposal is counted either way. |
+| `ConsoleSurface()` | **(gap)** |
+| `IReadOnlyList<ConsoleSplitRow> Rows` | The rows as rendered — the identity oracle's left side (M1). |
+| `int? At` | The turn the split is at (the caret's heading), or null when following the end. |
+| `void Show(IReadOnlyList<TurnView> turns, int? at = null)` | Re-derives the rows from the thread's turns — one list, in order. Called by the document on every applied snapshot while the split is open, and once when it opens. |
+| `string Status` | The status word the header's Console toggle announces: *following b5* · *at b2* · *at the end*. |
+| `IReadOnlyList<ConsoleSplitRow> Derive(IReadOnlyList<TurnView> turns)` | The rows a fold yields: for each turn, its heading then its lines — the identity's right side (M1). |
 
-### `ConsoleSurface(ConsoleStreamModel model)`
+### `void Show(IReadOnlyList<TurnView> turns, int? at = null)`
 
-- **`model`** — The merged stream. Shared with the document, never copied.
+Re-derives the rows from the thread's turns — one list, in order. Called by the document on
+every applied snapshot while the split is open, and once when it opens.
+
+- **`turns`** — The fold.
+- **`at`** — The turn to open at (a tail button, *Open the log*), or null to keep the caret.
 
 ## `FocusLeave`
 
@@ -471,118 +488,96 @@ disposed anywhere while this ran".
 
 *class* — `SessionDocumentSurface.cs`
 
-One session, as a dock document: the paired-zone preset (composer left, canvas right, splitter
-between) with the canvas showing one or two canvas modes (A4.4, R13 b3, R16).
+One session, as a dock document — **a conversation**: the header, the thread of accepted
+turns above one pinned composer, and the Console split on demand (DESIGN.md SC1–SC10; Ruling 74;
+DS-1).
 
-**Remarks.** **Retain, never rebuild (ADR-0017's invariant, applied to canvas modes).** A mode is
-built at most once and then held. Switching modes, splitting the canvas and unparenting the whole
-document only ever *re-host* those instances — nothing is disposed until the document itself
-is. WPF hides an unparented `HwndHost` child rather than destroying it, which is what makes
-a mode switch a view change and not a session loss.
-
-
-
-
-
-**The proof is not `Assert.Same` alone.** A reference check passes on a disposed
-instance, so it cannot tell "retained" from "retained and killed".
-`ModeSwitchRetainsTheSurfaceAndTheLaneTests` drives a real lane, opens a
-`SessionDisposalLedger` over the exercise, switches mode and tab while events are in
-flight, and asserts three things together: the same instances, a disposal count of zero, and no
-gap in the lane's delivered ordinals — with a companion falsifier that takes the rebuild path and
-shows all three going red.
+**Remarks.** **One store per turn, rendered three ways** (SC1; Ruling 74 condition 1). The thread,
+the jump list, the header's count and spend and the split are views of one read model,
+`ISessionThread` — CV-1's `RunChannelSessionThread` over today's run
+channel, CV-2's envelope fold behind the same seam. Nothing here is a second list.
 
 
 
 
 
-**The composer zone now hosts R15's composer, as F2 said it would.** F2 put the
-staged-draft surface here — a working composer rather than a placeholder — and recorded that the
-rich editor would replace its innards in the composer node. It has:
-`ComposerSurface` is the editor, the host-owned send, and the compiled view the
-operator reads before anything leaves the machine. `PromptDraftViewModel`'s transfer rules
-are unchanged and the standalone draft surface still exists, exactly as Addendum A §10 allows.
+**The paired zone is gone.** The canvas-mode strip, the composer-beside-canvas split
+and the merged-stream Console pane were the shape Ruling 74 retired; the operator's verdict on
+them — *"the ux is still the individual text blocks"* — is the reason this document is a
+feed with the editor as its last region. The view model's mode members survive only because the
+shell still constructs it with the catalog's ids (the Shell lane's file); the E7 retire row
+names them for the conductor.
+
+
+
+
+
+**Four regions, one F6 cycle** (SC8; DS-1 P4): header → thread → composer → the split
+when open. Focus lands in the editor on open unless the operator has already acted (K7); every
+refusal is announced (`THR-0002`), never silent.
 
 | Member | Summary |
 |---|---|
-| `SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null)` | **(gap)** |
+| `double ComposerShare = 0.45` | The most of the document the composer may take — the belt over the editor's floor (DS-1 Q14: both are needed). |
+| `SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)` | **(gap)** |
 | `string SurfaceIdFor(string sessionId)` | The layout surface id a session document docks under. |
 | `string? SessionIdOf(string surfaceId)` | The inverse of `SurfaceIdFor`: the session id a surface id names, or null when it is not one. |
-| `string Kind = "session-document"` | The surface kind `SurfaceContentFactory` builds this for. |
+| `string Kind = "session-document"` | The surface kind `SurfaceContentFactory` builds this for — `session-document`, never `session` (Ruling 18). |
 | `SessionDocumentViewModel Model { get; }` | This document's state. |
 | `string SurfaceId { get; }` | The layout surface id. |
-| `ComposerSurface Composer { get; }` | The composer half of the paired zone. |
-| `IReadOnlyList<string> ModeTabs` | The mode captions currently offered, in catalog order. No placeholder is ever added. |
-| `string? ModeStripTitle` | The pane title the strip shows at ONE mode (MS2), or null when it is showing tabs. |
-| `double RenderedComposerWeight` | The rendered composer share of the paired zone — what the splitter actually shows. |
-| `double RenderedCanvasWeight` | The rendered canvas share of the paired zone. |
-| `double RenderedPrimaryWeight` | The rendered share of the canvas given to the active mode. |
-| `double RenderedSecondaryWeight` | The rendered share of the canvas given to the mode beside it; 0 when not split. |
+| `ComposerSurface Composer { get; }` | The composer — the document's last region. |
+| `ThreadFeed Thread` | The thread — the feed of turns. |
+| `RunChannelSessionThread ReadModel` | The read model the thread renders. CV-1's implementer; a test feeds it directly. |
+| `ConsoleSurface Split` | The Console split, whether or not it is open. |
+| `bool IsSplitOpen` | Whether the Console split is open beside the thread (Ruling 74: on demand). |
+| `string TurnCountCaption` | The header's turn-count button's caption: *5 turns* · *no turns yet*. |
+| `string BudgetState` | The header's budget state (Ruling 78): spend per session, derived. |
+| `string OutsideText` | The one focusable text outside the list: *Restoring …* / *Nothing has run yet.*, or empty when turns exist. |
+| `bool StoppedRowVisible` | Whether the stopped row (THR-0001) is showing. |
 | `bool PermissionBannerVisible` | Whether the permission overlay is showing. |
 | `string PermissionBannerText` | What the permission overlay is saying, or empty when it is not showing. |
-| `ToggleButton SplitControl` | The split control on the mode strip — the operator's way into R16 b2. |
-| `FrameworkElement ContentFor(string modeId)` | The content built for a mode, creating it on first use and holding it after. |
-| `bool HasBuilt(string modeId)` | Whether a mode's content has been built yet. |
+| `Popup JumpList` | The jump list's popup, for a test that opens it. |
+| `ListBox JumpRows` | The jump list's rows. |
+| `ToggleButton ConsoleToggle` | The header's Console toggle. |
+| `bool OperatorActed` | Whether the operator has acted in the document since it opened — the one-shot flag K7 reads. |
 | `void AttachLane(SessionLane lane)` | Holds a lane for the document's lifetime, so nothing else has to remember to. |
-| `Task LastLaunch { get; private set; } = Task.CompletedTask` | The last launch's own task. Completed when nothing has been sent yet. |
+| `Task LastLaunch { get; private set; } = Task.CompletedTask` | The last launch's own task. Completed when nothing has been sent yet. It never faults: a refusal is `LastRunFailure`. |
 | `GovernedRunResult? LastRunResult { get; private set; }` | What the last completed run reported, or null when none has completed. |
 | `string? LastRunFailure { get; private set; }` | Why the last run did not complete, or null. Never a plausible substitute for a result. |
-| `RunEventRelay? LastRelay { get; private set; }` | The relay the last launch is publishing through — the console's side of the seam. |
-| `void Dispose()` | Closes the document: its lanes stop, and every mode it built is released. |
+| `RunEventRelay? LastRelay { get; private set; }` | The relay the last launch is publishing through — the lane's side of the seam. |
+| `Region? CurrentRegion` | The region holding keyboard focus, or null when focus is elsewhere. |
+| `CanvasFocusResult CycleRegion(int delta)` | F6 (+1) / Shift+F6 (−1): header → thread → composer → (split) → header. A refusal is announced, never silent. |
+| `CanvasFocusResult FocusRegion(Region region, string gesture = "direct", Region? from = null)` | Focuses a region's target directly (Ctrl+Home → header, Ctrl+End → composer, the tail → the split). |
+| `void OpenSplit(int? ordinal = null)` | Opens the Console beside the thread — at 's heading, focused, or following the end. |
+| `void CloseSplit()` | Closes the split; the thread keeps its rhythm. |
+| `Size MeasureOverride(Size constraint)` | The belt (DS-1 Q14): the composer never takes more than its share, so the thread's row is guaranteed by arithmetic. |
+| `void Dispose()` | Closes the document: its runs are cancelled, its lanes stop, its composer's browser is released. |
 
-### `SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null)`
+### `SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)`
 
-- **`model`** — The document's state. Console is already its active mode on open.
-- **`store`** — Where mode and splitter positions are persisted, or null to keep none.
+- **`model`** — The document's state.
+- **`store`** — Where the document's envelope is persisted, or null to keep none. Kept for the shell's call; the conversation persists no layout of its own.
+- **`announcer`** — The shell's announcer (one across hosts, ADR-0031). Null — the shell does not pass it yet, a seam request to the Shell lane — builds a document-owned polite live region so SC9 is never silent; the two are never both live.
 
-### `string Kind = "session-document"`
+## `Region`
 
-The surface kind `SurfaceContentFactory` builds this for.
+*enum* — `SessionDocumentSurface.cs`
 
-**Remarks.** **`session-document`, never `session` (Ruling 18).** The factory already carries
-`sessions` — the Loomkeeper watcher pane — and a kind one letter away from it would be
-resolved by whichever row was read first, silently.
+The document's regions, in F6 order: header · thread (or the outside text) · composer · the split when open.
 
-### `IReadOnlyList<string> ModeTabs`
+## `JumpRow`
 
-The mode captions currently offered, in catalog order. No placeholder is ever added.
+*record* — `SessionDocumentSurface.cs`
 
-**Remarks.** Empty when the strip is in its one-mode form (MS2), because there are no tabs then — see
-`ModeStripTitle`. A caption list that reported one tab would be describing a
-control the pane does not render.
+One jump-list row: ordinal · the words · the outcome word — a view of `Turns` (P9); its name is the NVDA-side index.
 
-### `string? ModeStripTitle`
-
-The pane title the strip shows at ONE mode (MS2), or null when it is showing tabs.
-
-**Remarks.** Exposed because the two forms of the strip are a design rule with an oracle, not a rendering
-detail: at one mode the honest form is the title every other pane uses, because a canvas mode
-carries no name, no close control and no drag handle of its own — which is why MS5 says the
-"single-surface stacks keep their tab strip" rule does not reach this strip.
-
-### `FrameworkElement ContentFor(string modeId)`
-
-The content built for a mode, creating it on first use and holding it after.
-
-**Remarks.** Lazy, then retained — the idiom `ShellModeController` uses for the Explorer surface, for
-the same reason: a mode nobody has opened should not cost anything, and re-entering one must
-not rebuild it.
-
-### `Task LastLaunch { get; private set; } = Task.CompletedTask`
-
-The last launch's own task. Completed when nothing has been sent yet.
-
-**Remarks.** It never faults: a run that refuses is a `LastRunFailure`, because a failed
-launch that surfaced only as an unobserved task exception would be a run nobody can see
-did not happen.
-
-### `void Dispose()`
-
-Closes the document: its lanes stop, and every mode it built is released.
-
-**Remarks.** This is the **only** path that disposes anything a session document holds. A mode switch
-and a tab switch reach none of it, which is what `SessionDisposalLedger` is
-pointed at.
+| Member | Summary |
+|---|---|
+| `int Ordinal` | **(gap)** |
+| `string DisplayOrdinal` | **(gap)** |
+| `string Words` | **(gap)** |
+| `string Outcome` | **(gap)** |
+| `string ToString()` | **(gap)** |
 
 ## `SessionLane`
 

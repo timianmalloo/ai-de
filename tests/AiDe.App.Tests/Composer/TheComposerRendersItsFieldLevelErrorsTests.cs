@@ -1,5 +1,6 @@
 using System.Text;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
 using AiDe.App.Workbench.Composer;
@@ -129,6 +130,59 @@ public sealed class TheComposerRendersItsFieldLevelErrorsTests
                 // "sent" is a status: queued, never interrupting (SC9).
                 Assert.Equal("sent", announcer.Announcements[^1].Text);
                 Assert.Equal(AiDe.Core.Presentation.Sessions.Urgency.Status, announcer.Announcements[^1].Urgency);
+            }
+            finally
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        });
+    }
+
+    /// <summary>
+    /// SC4 / U13: the tilde and the inferred ink mark a MODEL-derived value only — a rule's value
+    /// is text in the text ink. Over a row of each source, and over the rest-state composer, whose
+    /// tier comes from the rule (no tilde anywhere on it). <b>Red observed by mutation</b> (the
+    /// old rule, <c>row.Name == "tier"</c>): see the Proof Pack's row for the failure text.
+    /// </summary>
+    [Fact]
+    public void TheTildeAndTheInferredInkMarkAModelDerivedValueOnly()
+    {
+        Sta.Run(() =>
+        {
+            var theme = ThemeProbe.AppTheme();
+            Color Ink(TextBlock block)
+            {
+                block.Resources = theme;
+                return ThemeProbe.Ink(block);
+            }
+
+            var rule = ComposerSurface.DecorationValue(new AiDe.Core.Presentation.Sessions.DecorationRow("tier", "T1", "rule", "goal block filled by you, one lease"));
+            Assert.Equal("T1", rule.Text);
+            Assert.Equal(ThemeProbe.Token(theme, "TextBrush"), Ink(rule));
+
+            var model = ComposerSurface.DecorationValue(new AiDe.Core.Presentation.Sessions.DecorationRow("tier", "T1", ComposerSurface.ModelSource, "the model filled Goal and Done when; one lease"));
+            Assert.Equal("~ T1", model.Text);
+            Assert.Equal(ThemeProbe.Token(theme, "InferredBrush"), Ink(model));
+
+            // A derived (mechanical) lease is text too — "derived" is not the model.
+            var lease = ComposerSurface.DecorationValue(new AiDe.Core.Presentation.Sessions.DecorationRow("lease", "src/**", "derived", "from your mention"));
+            Assert.Equal("src/**", lease.Text);
+            Assert.Equal(ThemeProbe.Token(theme, "TextBrush"), Ink(lease));
+
+            // The rest-state composer: every decoration value is text, none wears a tilde.
+            var root = Path.Combine(Path.GetTempPath(), "aide-tilde", Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(root);
+            try
+            {
+                var surface = Build(root, attachEnabled: false);
+                surface.Resources = theme;
+                _ = RenderedText(surface);
+                var line = Logical<WrapPanel>(surface).Single(p => AutomationProperties.GetName(p) == "This turn");
+                var values = Logical<TextBlock>(line).Where(t => AutomationProperties.GetName(t).StartsWith("tier ", StringComparison.Ordinal)).ToList();
+                var tier = Assert.Single(values);
+                Assert.Equal("T0", tier.Text);
+                Assert.DoesNotContain(Logical<TextBlock>(line), t => t.Text.StartsWith("~ ", StringComparison.Ordinal));
+                Assert.Equal(ThemeProbe.Token(theme, "TextBrush"), ThemeProbe.Ink(tier));
             }
             finally
             {
@@ -357,6 +411,22 @@ public sealed class TheComposerRendersItsFieldLevelErrorsTests
         }
 
         return null;
+    }
+
+    private static IEnumerable<T> Logical<T>(DependencyObject node) where T : DependencyObject
+    {
+        foreach (var child in LogicalTreeHelper.GetChildren(node).OfType<DependencyObject>())
+        {
+            if (child is T match)
+            {
+                yield return match;
+            }
+
+            foreach (var inner in Logical<T>(child))
+            {
+                yield return inner;
+            }
+        }
     }
 
     private static string RenderedText(FrameworkElement root)
