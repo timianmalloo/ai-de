@@ -280,6 +280,34 @@ public sealed class ZoneBackedLayoutServiceTests
         Assert.Equal(before, svc.Zones.Shape()); // every bystander zone is exactly where it was — no scatter
     }
 
+    // INV-0006's class, SH-1's seam note, measured by SH-2's create-failure control: a reconcile
+    // used to rebuild every stack with ActiveIndex 0, so the tab the user was looking at moved on
+    // the next render. The view's active tab per zone is carried into the model.
+    [Fact]
+    public void ReconcileFromView_KeepsTheViewsActiveTabInEveryZone()
+    {
+        var svc = new ZoneBackedLayoutService(WorkbenchLayout.Default());
+        svc.Apply(new LayoutOperation.ActivateSurface("board"));   // Center's fourth tab is active in the model
+        var tree = svc.Current;
+        var left = tree.AllStacks().Single(s => s.Id == ZonesToTree.LeftStackId);
+        var center = tree.AllStacks().Single(s => s.Id == ZonesToTree.CenterStackId);
+        var bottom = tree.AllStacks().Single(s => s.Id == ZonesToTree.BottomStackId);
+
+        // The view shows Left's third tab and Center's "board"; the tree the adapter reads carries both.
+        var leftView = new StackNode(left.Id, left.Surfaces, activeIndex: 2);
+        var centerView = new StackNode(center.Id, center.Surfaces, activeIndex: center.Surfaces.IndexOf(center.Surfaces.Single(x => x.SurfaceId == "board")));
+        var post = new Layout(
+            new SplitNode("root", Orientation.Vertical,
+                [new SplitNode("cols", Orientation.Horizontal, [leftView, centerView], [0.3, 0.7]), bottom],
+                [0.7, 0.3]),
+            [], ImmutableDictionary<string, StackState>.Empty);
+
+        Assert.True(svc.ReconcileFromView(post));
+
+        Assert.Equal("contexts", ((ZoneStack)svc.Zones.Zone(ZoneId.Left).Content!).Active.SurfaceId);
+        Assert.Equal("board", ((ZoneStack)svc.Zones.Zone(ZoneId.Center).Content!).Active.SurfaceId);
+    }
+
     [Fact]
     public void ReconcileFromView_WhenPositionMappingSucceeds_Applies()
     {
