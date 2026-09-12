@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T21:03:14Z",
+  "generated": "2026-09-12T21:31:38Z",
   "audit": [
     {
       "actor": null,
@@ -15124,6 +15124,28 @@ window.AUDIT_DATA = {
       "fan_out": 4,
       "started_at": "2026-09-12T20:55:40Z",
       "duration_seconds": 453.0
+    },
+    {
+      "id": "al-01M2BRGXMDZ5XB713SRTYVVBDE",
+      "shortname": "atlas-live-foundation-dispatch",
+      "datetime": "2026-09-12T21:31:37Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "Each sub-agent must have its own worktree and the Conductor still pulls the strings.",
+      "summary": "Createdthree distinctregisteredtreesfrom054b8b56; readonlyAstra commoncontract returned7/10. FrozenData-amendedcontract recordedbeforeFwriterdispatch; GPTfoundationowns8exactfiles18of60, noIO/UI/issueroperation. Enumerationwriterowns4probefiles+proof25calls; parentobserved25PASS0FAIL2NOT_PROVENat57b, finalboundedrepairchecks inprogress. Source/project/private/sharedadaptersnotauthorized; Conductorjoinsonly. No CodeAtlasnativecompletionclaimed.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/live-reader-horizon.md",
+        "docs/coordination/code-atlas.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Build the real detached live-reader horizon through isolated agents and Conductor-controlled gates.",
+      "done_when": "Actual inventory/member/source/Back journey is implemented and independently proven under the admitted limits; this entry records active prerequisite dispatch only.",
+      "tier": "T2",
+      "fan_out": 4
     }
   ],
   "changes": [
@@ -19061,6 +19083,30 @@ window.AUDIT_DATA = {
         "adr-0032"
       ],
       "title": "SH-2: ten decisions below ADR weight for the second host, the presenter/router, the slots and the rail"
+    },
+    {
+      "id": "cl-01M2BRGXHFRYM98A4HCHSJYDPJ",
+      "datetime": "2026-09-12T21:31:37Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Atlas live-reader horizon and one canonical codec",
+      "prompt": "Use fleet sub-agents in separate worktrees, with the Conductor retaining control, and continue Code Atlas implementation.",
+      "summary": "Ownerturn12 admits realdetachedinventory/declaration/source/Back horizon andselects implementedtuplecodeconly. Response-onlycontract7/10 frozen; Dataamendments requireexpectedrootidentity, fullverifiedcompilerbuffer distinctfromUIpage, honestFileLimitedprofile. Eight-filecommonfoundationdispatched18of60aggregate; enum25callinvestigationseparate; actualsharedadapterintegrationremainsunassigned.",
+      "rationale": "Oneidentityauthority, explicitinformationboundaries andrealgeneratedfile/nativeevidence avoidcompetingcodecs, fakeprojectsemantics andwhole-programcoordinationstalls.",
+      "artifacts": [
+        "docs/notes/atlas-owner/live-reader-horizon.md",
+        "docs/coordination/code-atlas.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "054b8b56381e4cf42717c2a8012f2e64a116e10d",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": []
+      }
     }
   ]
 };

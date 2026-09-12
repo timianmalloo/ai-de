@@ -150,3 +150,24 @@ silently traded for deadline, token budget or fan-out.
 | Completed | Remaining | Best next action |
 |---|---|---|
 | Owner corrected the blanket freeze; exact safety writer/files recorded and probe dispatched in its own tree. | E0 design and safety results, candidate implementation/proof, actual shared-integration agreement and native-product acceptance. | Join the safety/design receipts and dispatch the exact additive candidate; pursue shared integration separately without human relay or repeated polling. |
+
+## Active live-reader horizon
+
+The earlier first-unit table above is retained as checkpoint history. The first Core unit is now
+joined with 38 independently executed tests. The active horizon is Owner turn 12,
+`note-atlas-live-reader-horizon`, on baseline `054b8b56`: current main `ca7443e8` plus reviewed
+Atlas commits, reconciled only in the Conductor tree.
+
+| Track | Current state | Bound / dependency |
+|---|---|---|
+| Common contract freeze | Returned after 7/10 calls; Conductor adopted Data amendments | Expected root identity in the grant; one full verified compiler buffer distinct from a UI page; honest FileLimited context |
+| F: common implementation | Single GPT-5.5 writer in `atlas/live-reader-core`; exact eight files in section 2 | 18 calls of the aggregate 60; preserve old symbol Values, freeze immutable producer/query contracts; no I/O or UI |
+| Native enumeration investigation | GPT-5.5 writer in `atlas/live-reader-enumeration` | 25-call separate allowance; 25/0/2 independently observed at the repair checkpoint; final diagnostic/recursive-bound/mutation checks in flight |
+| E/D/S: inventory, declaration and source producers | Not dispatched | F must join first. Enumeration and source incorporation also require their actual bounded proof; declaration work need not wait on unrelated enumeration defects |
+| Q: query/native reader and detached runner | Not dispatched | Joined producer contracts and exact file grants; no direct App filesystem/provider access |
+| Independent native checkpoint | Not dispatched | 15-call allowance after enumeration admission, on an explicitly authorized AI-DE workspace read-only; not registered-host E0 |
+
+Every delegate has its own worktree and branch. The Conductor controls scope, gate release and
+local merges; no worker self-admits. No existing Core/host/IPC adapter or CV2 file is assigned.
+Observed SH3 ancestry is integration evidence, not acknowledgment. Symlinks remain unproven and
+outside the supported input space; no privilege change is permitted to clear that limit.

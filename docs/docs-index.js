@@ -4671,6 +4671,44 @@ window.DOCS_INDEX = {
       "sourceSha256": "e63d9b0e41d6ae58fcb9633d30d4160829e6ef044c5e7dc0930e77c6b323b561"
     },
     {
+      "id": "note-atlas-live-reader-horizon",
+      "path": "docs/notes/atlas-owner/live-reader-horizon.md",
+      "title": "Atlas Owner - one codec and a real detached inventory-to-source journey",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Owner turn 12 selects the implemented tuple codec, admits a real detached reading-loop horizon, and keeps shared adapters/main integration separate from new-file authoring.",
+      "tags": [
+        "code-atlas",
+        "owner",
+        "live-reader",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "note-atlas-candidate-first-unit",
+          "rel": "refines"
+        },
+        {
+          "to": "proof-code-atlas-identity-unit",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-code-atlas-source-safety-join",
+          "rel": "depends-on"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "bc7c853d985ef5e1541770761f8579653a48520834206e6d23a915546624675b"
+    },
+    {
       "id": "note-avalondock-tab-styling",
       "path": "docs/notes/avalondock-tab-styling-decision.md",
       "title": "Decision — AvalonDock document-tab accent & corner styling",
@@ -8196,7 +8234,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "44a0d5bb2cf6761fd86c1dcab982ad163d966660fc5c4f60e130bc58d47616dc"
+      "sourceSha256": "4960dc7fc3503727386710d1e0d5e82506e17e5a7214ff250e13bbe7d4d50d26"
     },
     {
       "id": "coordination-code-atlas-resume",
@@ -11390,7 +11428,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9f6c49804c46e3c7198c5e88615a17a4d352f8c16d23ed5385d0731b9c603cd8"
+      "sourceSha256": "766ddbaa27cf7962bf94a3d9f6d23c23bc16554afe33883210d80a447fd40a5d"
     },
     {
       "id": "session-profiles",
@@ -18503,5 +18541,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "df0988696047e94ccf0ade4b47cb08edfee5fba043ca2b04f9b483de2b98f83f"
+  "graphSha256": "07ce758cce362cad1f45c89ad004bb97c6cd0d30fcb68d6dc4716fd5fdb8c131"
 };

@@ -90,6 +90,8 @@ ownership rows, normative Addendum E acceptance, or permission to integrate into
 |---|---|---|
 | `atlas-e0-source-safety-gpt55` / `atlas/e0-source-safety` | `spikes/code-atlas-source-reader/CodeAtlas.SourceReaderProbe.csproj`; `spikes/code-atlas-source-reader/Program.cs`; `spikes/code-atlas-source-reader/OpenedSourceReader.cs`; `spikes/code-atlas-source-reader/SourceReaderProbeCases.cs`; `docs/proof/code-atlas-source-safety.md` | One bounded synthetic Windows safety batch, 30 calls; no user data or existing product/project edits. |
 | `atlas-e0-candidate-gpt55` / `atlas/e0-candidate` | `src/AiDe.Core/Understanding/AtlasIdentity.cs`; `src/AiDe.Core/Understanding/AtlasSourceBinding.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasIdentityTests.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasSourceBindingTests.cs` | Within the unchanged 60-call candidate ceiling: 25 initial, 12 Owner-admitted correction, then 6 Conductor-allocated boundary-close calls for the executed trailing-LF defect and constructor/partial oracles. Conservative allocated ceiling 43; 17 reserved. Same four files, no reader, persistence, IPC or UI. |
+| `atlas-live-enumeration-gpt55` / `atlas/live-reader-enumeration` | `spikes/code-atlas-directory-enumeration/CodeAtlas.DirectoryEnumerationProbe.csproj`; `spikes/code-atlas-directory-enumeration/Program.cs`; `spikes/code-atlas-directory-enumeration/OpenedDirectoryEnumerator.cs`; `spikes/code-atlas-directory-enumeration/DirectoryEnumerationProbeCases.cs`; `docs/proof/code-atlas-enumeration-safety.md` | Owner turn-12 new horizon: 25 calls for one synthetic safe-enumeration investigation. No private corpus, privilege/configuration changes, shared files or product admission. |
+| `atlas-live-core-gpt55` / `atlas/live-reader-core` | Existing `src/AiDe.Core/Understanding/AtlasIdentity.cs`, `tests/AiDe.Core.Tests/Understanding/AtlasIdentityTests.cs`; new `src/AiDe.Core/Understanding/AtlasIdentityCodec.cs`, `AtlasManifest.cs`, `AtlasQueryContracts.cs`; new `tests/AiDe.Core.Tests/Understanding/AtlasIdentityCodecTests.cs`, `AtlasManifestTests.cs`, `AtlasQueryContractsTests.cs` | Common foundation only, 18 calls from the new aggregate 60-call implementation allowance. Frozen contract below; no filesystem, issuer operation, producer/query implementation, native UI or shared-file edit. |
 
 The first source writer's worktree is `C:\Projects\ai-de-atlas-e0-source-safety`, created from
 executor-observed main `4d396411`. A separate candidate tree
@@ -109,6 +111,15 @@ All existing SH3 IPC/factory/shell/adapter/graph/evidence/layout files and tests
 current writers. No existing extractor, query, wire, store, package, solution, menu or host edit
 is admitted here. Integration remains serialized through the existing Claude/Core/Shell
 authority. The native requests remain open; only their actual recipients can supply agreement.
+
+**Live-reader horizon, Owner turn 12:** the contract author in
+`C:\Projects\ai-de-atlas-live-reader-contracts` has a ten-call, response-only contract-freeze
+assignment; it authors no repository file. The enumeration writer above uses
+`C:\Projects\ai-de-atlas-live-reader-enumeration`. The Core integration tree
+`C:\Projects\ai-de-atlas-live-reader-core` is reserved, not dispatched. All three start at
+`054b8b56`, current main `ca7443e8` reconciled with reviewed Atlas commits in the Conductor
+tree. Exact implementation subsets must be added here after contract freeze; the Owner's
+ceiling manifest in `note-atlas-live-reader-horizon` is not permission to create unused files.
 
 ### Core owns
 
