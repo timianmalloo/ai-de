@@ -137,7 +137,9 @@ public static class PreCompile
     private static JsonObject CeilingsValue(Ceilings ceilings) => new()
     {
         ["fan_out"] = ceilings.FanOutCeiling,
-        ["budget"] = ceilings.BudgetCap is { } cap
+        // THE SENTINEL NEVER REACHES A ROW AS A NUMBER (Ruling 72; the named-member cap): an absent
+        // cap is null on the snapshot, whether the setting was null or the declared maximal value.
+        ["budget"] = ceilings.BudgetCap is { IsSubscriptionBounded: false } cap
             ? new JsonObject { ["requests"] = cap.Requests, ["tokens"] = cap.Tokens }
             : null,
     };

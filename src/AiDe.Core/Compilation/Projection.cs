@@ -21,7 +21,7 @@ namespace AiDe.Core.PromptCompilation;
 /// <param name="Budget">The cap, or <see cref="RunBudget.SubscriptionBounded"/> when the snapshot's budget is null.</param>
 /// <param name="GoalBlock">The six-field block for a goal-block turn; null for a Message (Ruling 75).</param>
 /// <param name="Lease">The derived lease for a write-shaped turn; null for a read-only one (Ruling 73).</param>
-/// <param name="Patterns"><c>LeaseDerivation.Patterns(opened.source_text)</c> — what the write-scope line displays.</param>
+/// <param name="Patterns"><c>LeaseDerivation.Patterns</c> over <c>opened.source_text</c> — what the write-scope line displays.</param>
 /// <param name="TaskClass"><c>Current(task_class).value</c>.</param>
 /// <param name="TaskClassSource"><c>Current(task_class).source</c>: <c>session-default</c> or <c>operator</c>.</param>
 /// <param name="ProjectionSha">sha256 over the canonical rebuildable domain — <c>submitted.projection_sha</c>'s value.</param>
@@ -61,7 +61,7 @@ public sealed record CompiledProjection(
 /// A fourth producer of the sent bytes is the failure this shape exists to make visible.</para>
 ///
 /// <para><b>The lease is derived here, from <c>opened.source_text</c>, and nowhere else in the
-/// product</b> — the one <c>LeaseDerivation.Derive(</c> call (Ruling 66; §A13.3 d′). A stored lease
+/// product</b> — the one <c>LeaseDerivation.Derive</c> call (Ruling 66; §A13.3 d′). A stored lease
 /// would be one quantity with two homes (DM-A).</para>
 ///
 /// <para><b>It never reads a live setting</b> (ADR-0033 rule 3): the ceilings come from the

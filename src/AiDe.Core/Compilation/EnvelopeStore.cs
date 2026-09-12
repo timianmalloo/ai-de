@@ -41,7 +41,7 @@ public sealed class EnvelopeStore : IDisposable
     /// <summary>The sidecar's file name, a sibling of <c>session.json</c>.</summary>
     public const string FileName = "envelope-events.jsonl";
 
-    private static readonly ActivitySource Signal = new("aide.compile");
+    private static readonly ActivitySource Signal = new(CompileSignal.SourceName);
     private static readonly UTF8Encoding Utf8 = new(encoderShouldEmitUTF8Identifier: false);
     private static readonly IReadOnlyList<string> Tiers = ["T0", "T1", "T2"];
     private static readonly IReadOnlyList<string> Sources = [DecorationSources.Mechanical, DecorationSources.Derived, DecorationSources.Operator, DecorationSources.SessionDefault];
