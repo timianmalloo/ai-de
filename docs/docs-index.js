@@ -1967,7 +1967,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 86 types, 348 members, 71% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 91 types, 400 members, 73% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1980,7 +1980,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9e62c746179e13290ab5594e192a1b39d3d168adfb1243140df763e2822f8d67"
+      "sourceSha256": "6afd1cb24b934adc007520e1f20ea17b16fcf24c1659cdb73ea89df3dbcbdb51"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -2467,7 +2467,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Workbench: 70 types, 132 members, 53% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Workbench: 78 types, 147 members, 58% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2480,7 +2480,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "db87d03a74fd34ac159976e40d32d7f7373c56e638e66048a40aefe433278a62"
+      "sourceSha256": "0bd495e9658e911aaa7ad956b7392e9354ae38d6503e6c48fd34c8465dfaa3e9"
     },
     {
       "id": "api-aide-mcp",
@@ -5690,6 +5690,55 @@ window.DOCS_INDEX = {
       "sourceSha256": "1c42ee919c3f5f6b468787a724c94c49ca704a38e971961decc6a82e4ccf73e9"
     },
     {
+      "id": "note-sh2-presenter-router-and-slots",
+      "path": "docs/notes/sh2-presenter-router-and-slots.md",
+      "title": "SH-2 decisions below ADR weight: the router is table-driven from the catalog's Scope, the seam names its host and follows the applied add, host B's interim default is today's default filtered, the switch is two log lines, and the rail is a ListBox that never selects on its own",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Ten choices ADR-0031/0032 left to the implementing slice, made and defended here: the presenter's router reads the catalog row's CommandScope and the kind rows' allow-lists (no switch on an id); DocumentOpening names the host it opens into and follows the applied add (document first); a kind-open asks from the host that raised it and resolves by ADR-0030's order; host B starts from today's default filtered to its admitted kinds until SH-3's Default(perspective); the switch writes a synchronous shell.mode line and an asynchronous shell.mode.shown line; the rail is a ListBox whose selection has one writer; a refused file is preserved every time; a reconcile keeps the view's active tab; focus after a switch is the window's hook; the refusal code lives beside the rule.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "perspective",
+        "docking",
+        "layout-persistence",
+        "rail",
+        "shell-lane"
+      ],
+      "links": [
+        {
+          "to": "adr-0031-second-docking-host",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0032-perspective-layout-slots",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-perspective-shell",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-sh1-scope-and-entry-columns",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5c75c6340e61c95d4953cad3cf8b76b032a410288cf1ba6683cfb75032c0d223"
+    },
+    {
       "id": "note-terminal-customization-persistence",
       "path": "docs/notes/terminal-customization-persistence.md",
       "title": "Decision — terminal customization persistence & busy-close",
@@ -7656,7 +7705,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a0c722137ebf2c65914545557805025491809c004d200a9e157f92d81aedbaf6"
+      "sourceSha256": "17bc4c668d71074b6e4042640ed07d04dc004d87d2c283ee5e8d466507b9ec06"
     },
     {
       "id": "design-session-profiler",
@@ -14535,6 +14584,59 @@ window.DOCS_INDEX = {
       "sourceSha256": "1843a96dda43c5b909fc39d0e7a104cde242e40913c87e05dfd3f991da88330f"
     },
     {
+      "id": "proof-perspective-shell",
+      "path": "docs/proof/perspective-shell.md",
+      "title": "Proof Pack — The second docking host, the PerspectiveShell presenter and router, one layout slot per host, and the rail's three destinations (SH-2, ADR-0031/0032)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "SH-2 of the Shell lane: the DockHost unit composed twice under the PerspectiveShell presenter and router; each host's layout service guarded by its perspective's allow-list at open, restore and reset; one zone-envelope slot per host with drop-with-report, a once-only pre-perspective backup, a refused file always preserved, and a golden rollback round-trip; the rail's three destinations with manual activation and one writer of the selection. The plan's reds observed (compile-red, then eleven mutations); three hard vetoes raised, two cleared in two rounds and the third's post-cap fix applied as prescribed for the conductor to confirm; the DC-135 ratio narrowed from 65:29 to 65:38. Suite counts pasted from the runner at close.",
+      "tags": [
+        "proof-pack",
+        "addendum-c",
+        "perspective",
+        "docking",
+        "layout-persistence",
+        "rail",
+        "shell-lane"
+      ],
+      "links": [
+        {
+          "to": "adr-0031-second-docking-host",
+          "rel": "tested-by"
+        },
+        {
+          "to": "adr-0032-perspective-layout-slots",
+          "rel": "tested-by"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-sh2-presenter-router-and-slots",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-perspective-registry",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3264731c2329c8b67ab28ee9ab8679edfe1f830be131139e431a1fb0e2a09dc1"
+    },
+    {
       "id": "proof-read-only-turn",
       "path": "docs/proof/read-only-turn.md",
       "title": "Proof Pack — CV-0, the read-only turn: a Message or scopeless goal block runs with every write-capable tool disallowed and no lease (Ruling 73)",
@@ -16685,5 +16787,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "21c7f886e48200a11cc9013ae05509ccd9f377dcb1a151bfcf9f296488e43771"
+  "graphSha256": "748f9d5603e9ebd3c8f26b02249c83a764e351f2ee3438b2b6a2dfd2aa7e8007"
 };

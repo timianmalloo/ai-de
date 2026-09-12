@@ -1,5 +1,4 @@
 using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Interop;
 using System.Windows.Media;
 using AiDe.App.ViewModels;
@@ -10,7 +9,7 @@ namespace AiDe.App;
 
 public partial class MainWindow : Window
 {
-    private readonly ShellModeController _mode;
+    private readonly PerspectiveShell _perspectives;
 
     /// <summary>
     /// The provider file, as the last <c>File → New Session</c> read it. <b>The one construction site
@@ -30,38 +29,46 @@ public partial class MainWindow : Window
         DataContext = new MainWindowViewModel();
 
         Shell = new WorkbenchShell(null);
-        WorkbenchHost.Content = Shell.WorkbenchRoot;
 
-        // FACELIFT — the docking host ships AvalonDock's default LIGHT theme (white panes, light
+        // FACELIFT — the docking hosts ship AvalonDock's default LIGHT theme (white panes, light
         // square tabs), which clashed with the dark shell and was the "clunky, square" look. A dark
         // theme is applied HERE — in the Design-owned window, not the Core-owned WorkbenchShell — so
         // the panes and tabs read as part of the app instead of a white rectangle bolted on. Its
         // accents are then pulled from VS blue toward our palette by DockThemeAccents (a value-based
-        // brush override, no template surgery — see the AvalonDock decision note).
-        Shell.Manager.Theme = new AvalonDock.Themes.Vs2013DarkTheme();
-        AiDe.App.Workbench.DockThemeAccents.Retokenise(Shell.Manager);
-        AiDe.App.Workbench.DockRoundedTabs.Apply(Shell.Manager);
+        // brush override, no template surgery — see the AvalonDock decision note). Both hosts, the
+        // same way: host B is the same unit composed twice (ADR-0031).
+        foreach (var host in Shell.Hosts)
+        {
+            host.Manager.Theme = new AvalonDock.Themes.Vs2013DarkTheme();
+            AiDe.App.Workbench.DockThemeAccents.Retokenise(host.Manager);
+            AiDe.App.Workbench.DockRoundedTabs.Apply(host.Manager);
+        }
 
         LiveRegionHost.Content = Shell.LiveRegion;
 
-        // Keyboard commands bind to the window so they work wherever focus is inside it —
-        // a layout command that only fires when a pane happens to be focused is not keyboard
-        // operable in any useful sense.
         // The palette overlays the whole window, above the docking host.
         RootLayer.Children.Add(Shell.Palette.Root);
 
+        // The presenter (ADR-0017 as amended; ADR-0031): the three bodies — host A, host B and the
+        // full-window Explore surface — under the body region, and the router every catalog command
+        // goes through. The shell is held for the window's life, so a switch only unparents the
+        // body showing — the workbench (and a running terminal) survive.
+        _perspectives = new PerspectiveShell(
+            WorkbenchHost,
+            Shell.Hosts,
+            () => new ExplorerSurface(Shell.CreateExplorerGraph(), new NodeReaderView()),
+            Shell.Announcer);
+        Shell.CommandRouter = _perspectives.Execute;
+
+        // Keyboard commands bind to the window so they work wherever focus is inside it —
+        // a layout command that only fires when a pane happens to be focused is not keyboard
+        // operable in any useful sense. Bound AFTER the router is set, so a gesture reaches the
+        // host the presenter resolves.
         Shell.Bind(this);
 
-        // Primary view mode (ADR-0017 primary-view-mode): the Explore rail item toggles the body between the workbench
-        // docking host and the full-window Explorer surface. Shell is held for the window's life, so
-        // the swap only unparents the docking host — the workbench (and a running terminal) survive.
-        _mode = new ShellModeController(
-            WorkbenchHost,
-            Shell.WorkbenchRoot,
-            () => new ExplorerSurface(Shell.CreateExplorerGraph(), new NodeReaderView()));
-        _mode.ModeChanged += (_, perspective) =>
+        _perspectives.Changed += (_, change) =>
         {
-            ReflectMode(perspective);
+            ReflectPerspective(change.To);
 
             // The menu bar and the palette are projections of the active perspective (ADR-0030):
             // one derived model, handed to both, so they cannot disagree (E12).
@@ -71,21 +78,44 @@ public partial class MainWindow : Window
             // retained (US-E6), so without this a surface first created before a workspace opened
             // would keep showing "No workspace is open" on every later entry. No-ops on the very
             // first entry (the canvas is not Ready yet); its own NavigationCompleted does that load.
-            if (perspective == PerspectiveSet.Explore && _mode.ExplorerSurface is ExplorerSurface explorer)
+            if (change.To == PerspectiveSet.Explore && _perspectives.ExplorerSurface is ExplorerSurface explorer)
             {
                 _ = explorer.Graph.RefreshAsync();
             }
         };
-        ReflectMode(PerspectiveSet.Initial);
+        _perspectives.BodyFailed += (_, failure) => Rail.ShowFailure(failure.Perspective, failure.Reason);
+        _perspectives.EntryFocus = EntryFocusFor;
+        ReflectPerspective(PerspectiveSet.Initial);
 
-        // A dock document opens into a body that is on screen (INV-0009, DC-148). Every opening
-        // command in the shell raises this just before it adds the surface; when the Explorer is the
-        // body, the workbench returns — the Explorer surface is retained, exactly as the rail's
-        // toggle leaves it — so the document the command announces is the document the operator
-        // sees. The replay probe wires the same line, and a scan asserts both carry it.
-        // …and only when NO host is on screen — the rule is OnDocumentOpening, one static the
-        // window, the replay probe and the pairing test all call, so the tested rule is the product's.
-        Shell.DocumentOpening += () => OnDocumentOpening(_mode);
+        // The rail's destinations run the perspective's catalog command (AR5: one door — the rail,
+        // the menu, the palette and the gesture cannot drift apart); the presenter's change event
+        // then reflects the selection back, so the rail follows the body and never leads it.
+        Rail.ActivationRequested += (_, perspective) => Shell.Execute(perspective.CommandId);
+
+        // Escape from the Explore surface's root restores the previous perspective (US-C1) — only
+        // there, only when no in-surface control owned it (the palette and the prompt bar consume
+        // theirs first in Shell.Bind's tunnelling handler; the canvas, the reader and any text box
+        // consume theirs on the bubbling route before it reaches the window — a handled key never
+        // arrives here), and never from a host, where Escape keeps its other roles.
+        KeyDown += (_, e) =>
+        {
+            if (e.Key == System.Windows.Input.Key.Escape
+                && _perspectives.ExplorerSurface is ExplorerSurface explore
+                && explore.IsKeyboardFocusWithin
+                && !explore.Graph.IsKeyboardFocusWithin   // inside the canvas the page owns Escape (ADR-0015's trap exit, the search dismiss)
+                && _perspectives.Escape())
+            {
+                e.Handled = true;
+            }
+        };
+
+        // A dock document opens into a body that is on screen (INV-0009, DC-148; ADR-0017 amendment
+        // clause 4, generalised to two hosts). Every opening command in the shell raises this just
+        // before it adds the surface, naming the host it adds into; when that host is not the body
+        // it becomes the body — the other bodies are retained, exactly as the rail leaves them — so
+        // the document the command announces is the document the operator sees. The replay probe
+        // wires the same line, and a scan asserts both carry it.
+        Shell.DocumentOpening += host => _perspectives.OnDocumentOpening(host);
 
         // The most common moment to lose an arrangement is rearranging and immediately closing, so
         // the pending debounced save is flushed on the way out rather than left to a timer.
@@ -112,10 +142,6 @@ public partial class MainWindow : Window
         // sheet and the workspace chooser are both windows, and only a Window can show one.
         Shell.Controller.NewSessionRequested = NewSessionAsync;
 
-        // AR5 — every perspective is a catalog command, so it reaches the menu, the palette and a
-        // bound gesture, and is never reachable only by pressing one 44×44 icon.
-        Shell.Controller.PerspectiveRequested = ActivatePerspective;
-
         // Built from the command catalog, so the menu cannot offer something the product no longer
         // does — and every item shows its chord, which is how the chord becomes discoverable.
         RebuildMenu();
@@ -132,6 +158,7 @@ public partial class MainWindow : Window
     {
         var viewModel = await MainWindowViewModel.OpenDefaultAsync();
         DataContext = viewModel;
+        ReflectPerspective(_perspectives.Active);   // the title names the workspace now open
 
         if (viewModel.Queries is not null)
         {
@@ -193,12 +220,12 @@ public partial class MainWindow : Window
     /// </remarks>
     private void RebuildMenu()
     {
-        var derived = PerspectiveMenu.For(_mode.Mode);
+        var derived = PerspectiveMenu.For(_perspectives.Active);
         Shell.Palette.Close();
         Shell.Palette.Menu = derived;
         MainMenuBuilder.Build(
             MainMenu,
-            Shell.Controller,
+            Shell.Execute,
             derived,
             Close,
             MainMenuBuilder.RecentWorkspaces(ShellStateDirectory),
@@ -474,6 +501,7 @@ public partial class MainWindow : Window
     {
         var viewModel = await MainWindowViewModel.OpenAsync(folder);
         DataContext = viewModel;
+        ReflectPerspective(_perspectives.Active);   // the title names the workspace now open
 
         if (viewModel.Queries is null)
         {
@@ -497,74 +525,24 @@ public partial class MainWindow : Window
 
     internal WorkbenchShell Shell { get; }
 
+    /// <summary>Resets the ACTIVE host's slot (US-C9 scopes the command to it); from Explore the initial host's.</summary>
     private void OnResetLayout(object sender, RoutedEventArgs e)
     {
-        Shell.Controller.Execute("workbench.resetLayout");
-        Shell.Adapter.Render();
+        Shell.Execute("workbench.resetLayout");
+        (_perspectives.ActiveHost ?? Shell.Coding).Adapter.Render();
     }
-
-    /// <summary>
-    /// The rail's Explore item, routed through the catalog command rather than calling the presenter
-    /// directly — one door, so the rail, the menu and the palette cannot drift apart (AR5). A
-    /// DESTINATION, not a toggle (US-C1): the rail's three destinations and its states are the next
-    /// slice's (ADR-0031); until then the way back is Ctrl+1, the View menu or the palette.
-    /// </summary>
-    private void OnToggleExplorer(object sender, RoutedEventArgs e) =>
-        Shell.Controller.Execute(PerspectiveSet.Explore.CommandId);
 
     /// <summary>The rail's one primary action, on the same catalog command as File → New Session.</summary>
     private void OnNewSessionFromRail(object sender, RoutedEventArgs e) =>
-        Shell.Controller.Execute("session.new");
+        Shell.Execute("session.new");
 
-    /// <summary>
-    /// A dock document opens into a body that is on screen (INV-0009, DC-148): from a host
-    /// perspective it opens where the operator is — Architecture's own openers must not switch the
-    /// shell to Coding (the Test Architect's and the UX reviewer's finding); from the one full-window
-    /// body the initial host returns, as before. The routed open by kind (US-C3,
-    /// <see cref="PerspectiveMenu.Resolve"/>) is the next slice's transaction.
-    /// </summary>
-    /// <remarks>
-    /// Static and internal so the pairing test and the replay probe run the product's rule rather
-    /// than a copy of it; the window cannot be constructed headless.
-    /// </remarks>
-    internal static void OnDocumentOpening(ShellModeController mode)
+    /// <summary>The window title (spec §C4): <i>"&lt;workspace&gt; — &lt;Perspective&gt; — AI-DE"</i>, or without the workspace before one opens.</summary>
+    internal static string TitleFor(string? workspaceId, Perspective perspective)
     {
-        ArgumentNullException.ThrowIfNull(mode);
-
-        if (mode.Mode.Body == PerspectiveBody.FullWindow)
-        {
-            mode.Set(PerspectiveSet.Coding, "document-opening");
-        }
-    }
-
-    /// <summary>Makes a perspective the body, and says what is showing — or that it already was (US-C1).</summary>
-    private string ActivatePerspective(Perspective perspective)
-    {
-        // Until the rail carries three destinations (ADR-0031), the way back from Explore is named
-        // in every Explore answer: the rail's one button is a destination, not a toggle. The
-        // keystroke is the row's own string, which the suite asserts equals the binding (US-C10 b3).
-        var wayBack = perspective == PerspectiveSet.Explore ? $" {PerspectiveSet.Coding.Gesture} returns to Coding." : string.Empty;
-
-        if (perspective == _mode.Mode)
-        {
-            // A no-op is still answered: a command that does its work without saying so is
-            // indistinguishable from a dead key (DC-011). Nothing switches and no event fires.
-            return $"{perspective.Title} perspective is already showing.{wayBack}";
-        }
-
-        _mode.Set(perspective, perspective.CommandId);
-
-        if (perspective == PerspectiveSet.Explore)
-        {
-            return $"Explore perspective: graph and reader. The workbench is retained, not closed.{wayBack}";
-        }
-
-        // simplify: one host today (ADR-0030 lands the set; ADR-0031 lands the second host), so a
-        // host perspective other than Coding shows the Coding panes — said plainly rather than
-        // implied. Ceiling: until the second host; trigger: the next slice deletes this branch.
-        return perspective == PerspectiveSet.Coding
-            ? "Coding perspective. The same panes, in the arrangement you left them."
-            : $"{perspective.Title} perspective. Its own host arrives with the next slice; the Coding panes are showing.";
+        ArgumentNullException.ThrowIfNull(perspective);
+        return string.IsNullOrEmpty(workspaceId)
+            ? $"{perspective.Title} — AI-DE"
+            : $"{workspaceId} — {perspective.Title} — AI-DE";
     }
 
     /// <summary>
@@ -584,17 +562,30 @@ public partial class MainWindow : Window
         return said;
     }
 
-    /// <summary>Reflects the active perspective on the Explore rail item — accent bar, pill, icon colour.</summary>
-    private void ReflectMode(Perspective perspective)
+    /// <summary>
+    /// Where focus lands after a switch (spec §C5): Explore — the reader (the first non-canvas
+    /// focusable, so entry never lands inside the ADR-0015 canvas trap; the canvas is reached by
+    /// <c>workbench.focusCanvas</c> or Tab); a host — its active document's content, else the
+    /// body's first focusable.
+    /// </summary>
+    private bool EntryFocusFor(Perspective perspective, FrameworkElement body)
     {
-        var active = perspective == PerspectiveSet.Explore;
-        ExploreAccentBar.Visibility = active ? Visibility.Visible : Visibility.Collapsed;
-        ExploreRailButton.Background = active ? (Brush)FindResource("SurfaceRaisedBrush") : Brushes.Transparent;
-        ExploreRailButton.Foreground = active
-            ? (Brush)FindResource("AccentBrush")
-            : (Brush)FindResource("TextMutedBrush");
-        AutomationProperties.SetName(ExploreRailButton, active ? "Explore perspective (active)" : "Explore perspective");
-        ExploreRailButton.ToolTip = $"Explore perspective — {PerspectiveSet.Explore.Gesture}";   // the row's string, never typed (US-C10 b3)
+        if (perspective == PerspectiveSet.Explore)
+        {
+            return body is ExplorerSurface explorer && explorer.Reader.FocusReader();
+        }
+
+        var host = _perspectives.HostFor(perspective);
+        var active = host?.Adapter.ActiveSurfaceId is { } id ? host.Adapter.ContentFor(id) : null;
+        return active is not null && active.MoveFocus(new System.Windows.Input.TraversalRequest(System.Windows.Input.FocusNavigationDirection.First));
+    }
+
+    /// <summary>Reflects the active perspective on the rail's selection, the window title and the status strip.</summary>
+    private void ReflectPerspective(Perspective perspective)
+    {
+        Rail.Reflect(perspective);
+        Title = TitleFor((DataContext as MainWindowViewModel)?.WorkspaceId, perspective);
+        PerspectiveStatus.Text = $"{perspective.Title} perspective";
     }
 
     // FACELIFT — the window's own chrome, drawn by DWM, not by us. AllowsTransparency stays False

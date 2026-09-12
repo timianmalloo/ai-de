@@ -159,6 +159,11 @@ public sealed class TheWebSurfacesInitialiseOnceAcrossReparentsTests
             "src/AiDe.App/MainWindow.xaml.cs",            // a Window: attached once, Loaded once
             "src/AiDe.App/Workbench/TextPromptDialog.cs", // a Window, likewise
             "src/AiDe.App/Workbench/WebSurfaceHost.cs",   // the guard
+            // The presenter (ADR-0031): each switch hooks the NEW body's first Loaded as the switch's
+            // stop edge (US-C12) and the handler unsubscribes itself on that first fire — so it is
+            // idempotent under re-attach by construction (never runs twice per subscription, never
+            // initialises anything); PerspectiveShellTests.EveryRetainedSwitch_IsShownOnce asserts it.
+            "src/AiDe.App/Workbench/PerspectiveShell.cs",
         ];
         var hook = new System.Text.RegularExpressions.Regex(
             @"\bLoaded\s*\+=|\bLoadedEvent\b|\bLoaded=""", System.Text.RegularExpressions.RegexOptions.CultureInvariant);

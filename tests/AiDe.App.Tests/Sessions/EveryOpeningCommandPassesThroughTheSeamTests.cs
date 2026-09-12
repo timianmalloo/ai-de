@@ -25,21 +25,28 @@ namespace AiDe.App.Tests.Sessions;
 public sealed class EveryOpeningCommandPassesThroughTheSeamTests
 {
     private const string Opening = "new LayoutOperation.AddSurface(";
-    private const string Seam = "OpeningDocument();";
-    private const string Wiring = "DocumentOpening += () => ";
+    private const string Seam = "OpeningDocument(";
+    private const string Wiring = "DocumentOpening += host => ";
     /// <summary>
-    /// The one handler (ADR-0030, SH-1): <c>MainWindow.OnDocumentOpening</c> — a document opens
-    /// where the operator is when a host is on screen; only from a full-window body does the initial
-    /// host return. The rule lives in one static the window, the replay and the pairing test all
-    /// call, so what the test proves is what the product runs; this scan only asserts both wire it.
+    /// The one handler (ADR-0031, SH-2): <c>PerspectiveShell.OnDocumentOpening</c> — the document's
+    /// host becomes the body when it is not, from the full-window body or from the other host; a
+    /// host perspective's own openers never switch it away. The window, the replay and the pairing
+    /// test all wire the presenter's own method, so what the test proves is what the product runs;
+    /// this scan only asserts both wire it.
     /// </summary>
     private const string Handling = "OnDocumentOpening(";
 
     /// <summary>The heads a command body starts at: a controller delegate assignment, or one of the two shared open methods (the derived "New/Show" opener since ADR-0030).</summary>
     private static readonly string[] Heads = ["Requested = ", "private string OpenReferenceDocument(", "private string OpenKind("];
 
+    /// <summary>
+    /// Document first, then the switch (ADR-0031 rule 2; US-C5): after every <c>AddSurface</c> in
+    /// the shell, the seam is raised — gated on the add having been APPLIED — before the render
+    /// that realises the pane, and never before the add. A command whose add is refused therefore
+    /// swaps no body.
+    /// </summary>
     [Fact]
-    public void EveryAddSurfaceInTheShell_IsPrecededByTheSeamWithinItsCommand()
+    public void EveryAddSurfaceInTheShell_IsFollowedByTheSeamOnceApplied_BeforeTheRender()
     {
         var shell = SourceFile("src", "AiDe.App", "Workbench", "WorkbenchShell.cs");
         var openings = Occurrences(shell, Opening);
@@ -50,10 +57,19 @@ public sealed class EveryOpeningCommandPassesThroughTheSeamTests
             var head = Heads.Select(h => shell.LastIndexOf(h, at, StringComparison.Ordinal)).Max();
             Assert.True(head >= 0, $"no command head precedes the AddSurface at offset {at}");
 
-            var body = shell[head..at];
+            Assert.False(
+                shell[head..at].Contains(Seam, StringComparison.Ordinal),
+                $"the opening command at offset {head} raises DocumentOpening BEFORE its add at offset {at} — a refused add would switch the body:\n{shell[head..at]}");
+
+            var seam = shell.IndexOf(Seam, at, StringComparison.Ordinal);
+            var render = shell.IndexOf(".Render();", at, StringComparison.Ordinal);
+            Assert.True(seam >= 0 && render >= 0 && seam < render,
+                $"the opening command at offset {head} adds a surface at offset {at} without raising DocumentOpening between the add and its render:\n{shell[at..Math.Max(at, Math.Min(shell.Length, at + 900))]}");
+
+            var between = shell[at..seam];
             Assert.True(
-                body.Contains(Seam, StringComparison.Ordinal),
-                $"the opening command at offset {head} adds a surface at offset {at} without raising DocumentOpening first:\n{body}");
+                between.Contains("if (result.Applied)", StringComparison.Ordinal) || between.Contains("if (activated.Applied)", StringComparison.Ordinal),
+                $"the seam after the add at offset {at} is not gated on the add having been applied:\n{between}");
         }
     }
 
@@ -142,10 +158,10 @@ public sealed class EveryOpeningCommandPassesThroughTheSeamTests
         {
             Sta.Run(() =>
             {
-                var mode = new ShellModeController(new ContentControl(), new Border(), () => new Grid());
+                var mode = Presenter();
 
-                mode.Set(PerspectiveSet.Explore, "perspective.explore");
-                mode.Set(PerspectiveSet.Coding, "document-opening");
+                mode.Activate(PerspectiveSet.Explore, "perspective.explore");
+                mode.Activate(PerspectiveSet.Coding, "document-opening");
             }, 30);
         }
         finally
@@ -179,9 +195,9 @@ public sealed class EveryOpeningCommandPassesThroughTheSeamTests
         {
             Sta.Run(() =>
             {
-                var mode = new ShellModeController(new ContentControl(), new Border(), () => new Grid());
+                var mode = Presenter();
 
-                mode.Set(PerspectiveSet.Coding, "document-opening");
+                mode.Activate(PerspectiveSet.Coding, "document-opening");
             }, 30);
         }
         finally
@@ -190,6 +206,15 @@ public sealed class EveryOpeningCommandPassesThroughTheSeamTests
         }
 
         Assert.DoesNotContain(lines, l => l.Contains("\"evt\":\"shell.mode\"", StringComparison.Ordinal));
+    }
+
+    /// <summary>The product's presenter over the hosts the shell composes (DC-135), with stub content.</summary>
+    private static PerspectiveShell Presenter()
+    {
+        var announcer = new WorkbenchAnnouncer(new TextBlock());
+        var a = DockHost.Create(PerspectiveSet.Coding, _ => new Border(), announcer, (_, _) => { });
+        var b = DockHost.Create(PerspectiveSet.Architecture, _ => new Border(), announcer, (_, _) => { });
+        return new PerspectiveShell(new ContentControl(), [a, b], () => new Grid(), announcer);
     }
 
     private static List<int> Occurrences(string text, string token)

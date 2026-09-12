@@ -592,12 +592,14 @@ public sealed class PerspectiveMenuTests
     // ── The presenter and the shell together: a document opens where the operator is ─────
 
     // The Test Architect's finding, as a control: with the window's own handler
-    // (MainWindow.OnDocumentOpening — a host on screen → stay; a full-window body → the initial host
-    // returns, INV-0009), Architecture's derived openers leave Architecture active, raise no
-    // ModeChanged and write no shell.mode line — and Explore's still return to Coding. RED before
-    // the guard: every open switched to Coding.
+    // (MainWindow.OnDocumentOpening → the presenter's rule — the document's host becomes the body
+    // only when it is not), Architecture's derived openers open in host B, leave Architecture
+    // active, raise no change and write no shell.mode line; from Explore a kind both hosts admit
+    // opens in the FIRST of the routing order — Architecture (US-C3 b3; ADR-0030) — and that host
+    // becomes the body; and a kind only Coding admits opens in host A and brings it on screen.
+    // RED before the guard: every open switched to Coding.
     [Fact]
-    public void ADerivedOpenerInAHostPerspective_DoesNotSwitchThePerspective_ButFromExploreTheHostReturns()
+    public void ADerivedOpenerInAHostPerspective_DoesNotSwitchThePerspective_AndARoutedOpenLandsWhereItCanOpen()
     {
         var lines = new List<string>();
         var previous = WorkbenchDiagnostics.Sink;
@@ -615,26 +617,62 @@ public sealed class PerspectiveMenuTests
                     Left = -10000, Top = -10000, ShowInTaskbar = false, ShowActivated = false,
                 };
                 var host = (ContentControl)window.Content;
-                var mode = new ShellModeController(host, shell.Manager, () => new Grid());
-                shell.DocumentOpening += () => MainWindow.OnDocumentOpening(mode);   // the product's rule, not a copy
+                var mode = new PerspectiveShell(host, shell.Hosts, () => new Grid(), shell.Announcer);
+                shell.CommandRouter = mode.Execute;
+                shell.DocumentOpening += h => mode.OnDocumentOpening(h);   // the product's rule, not a copy
                 window.Show();
 
                 try
                 {
-                    mode.Set(PerspectiveSet.Architecture, "test");
+                    mode.Activate(PerspectiveSet.Architecture, "test");
                     var switches = 0;
-                    mode.ModeChanged += (_, _) => switches++;
+                    mode.Changed += (_, _) => switches++;
                     var linesBefore = lines.Count(l => l.Contains("\"evt\":\"shell.mode\"", StringComparison.Ordinal));
 
-                    Assert.True(shell.Controller.Execute("surface.new.classdiagram"));
+                    Assert.True(shell.Execute("surface.new.classdiagram"));
                     Assert.Equal("Class diagram opened.", shell.Announcer.Last);
-                    Assert.Same(PerspectiveSet.Architecture, mode.Mode);
+                    Assert.Same(PerspectiveSet.Architecture, mode.Active);
                     Assert.Equal(0, switches);
                     Assert.Equal(linesBefore, lines.Count(l => l.Contains("\"evt\":\"shell.mode\"", StringComparison.Ordinal)));
+                    Assert.Contains(shell.Architecture.Service.Zones.AllSurfaces(), s => s.Kind == "classdiagram");
+                    Assert.DoesNotContain(shell.Coding.Service.Zones.AllSurfaces(), s => s.Kind == "classdiagram");
 
-                    mode.Set(PerspectiveSet.Explore, "test");
-                    Assert.True(shell.Controller.Execute("surface.new.codeviewer"));
-                    Assert.Same(PerspectiveSet.Coding, mode.Mode);   // INV-0009: the document opens into a body on screen
+                    mode.Activate(PerspectiveSet.Explore, "test");
+                    Assert.True(shell.Execute("surface.new.codeviewer"));
+                    Assert.Same(PerspectiveSet.Architecture, mode.Active);   // routed: the reading host wins a shared kind
+                    Assert.Contains(shell.Architecture.Service.Zones.AllSurfaces(), s => s.Kind == "codeviewer");
+
+                    mode.Activate(PerspectiveSet.Explore, "test");
+                    Assert.True(shell.Execute("surface.new.prompt"));
+                    Assert.Same(PerspectiveSet.Coding, mode.Active);         // INV-0009: the document opens into a body on screen
+                    Assert.Contains(shell.Coding.Service.Zones.AllSurfaces(), s => s.Kind == "prompt");
+
+                    // Host → host: from Coding a kind only Architecture admits opens in host B and
+                    // brings host B on screen (US-C3 b3, through the composition root).
+                    Assert.True(shell.Execute("surface.new.sequence"));
+                    Assert.Same(PerspectiveSet.Architecture, mode.Active);
+                    Assert.Contains(shell.Architecture.Service.Zones.AllSurfaces(), s => s.Kind == "sequence");
+                    Assert.DoesNotContain(shell.Coding.Service.Zones.AllSurfaces(), s => s.Kind == "sequence");
+
+                    // Document first, then the switch (ADR-0031 rule 2; US-C5/US-C11's falsifier): with
+                    // host A's layout locked, an entry verb's add is refused, the refusal is announced,
+                    // and the operator stays in Architecture — never switched to an empty Coding.
+                    shell.Coding.Service.IsLocked = true;
+                    var before = shell.Coding.Service.Zones.Shape();
+                    Assert.True(shell.Execute("terminal.new"));
+                    Assert.Same(PerspectiveSet.Architecture, mode.Active);
+                    Assert.Equal(before, shell.Coding.Service.Zones.Shape());
+                    Assert.Contains("locked", shell.Announcer.Last, StringComparison.OrdinalIgnoreCase);
+                    shell.Coding.Service.IsLocked = false;
+
+                    // The same rule on a derived opener's routed add: host B locked, a sequence diagram
+                    // asked for from Coding is refused there, and Coding stays the body.
+                    mode.Activate(PerspectiveSet.Coding, "test");
+                    shell.Architecture.Service.IsLocked = true;
+                    Assert.True(shell.Execute("surface.new.sequence"));
+                    Assert.Same(PerspectiveSet.Coding, mode.Active);
+                    Assert.Contains("locked", shell.Announcer.Last, StringComparison.OrdinalIgnoreCase);
+                    shell.Architecture.Service.IsLocked = false;
                 }
                 finally
                 {
