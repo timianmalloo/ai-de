@@ -59,6 +59,7 @@ Every load-bearing claim is labelled **[Verified]** (opened / fetched / observed
 | K0 verified the current source-only contracts and targeted Core baseline: .NET SDK `10.0.303`, Roslyn `4.14.0`, and 79 targeted Core tests passing. | `proof-code-atlas-contract-grounding` Runtime/package and Commands sections. | [Verified] |
 | K0 found the current Core seams are source/store/IPC/native-source-only for Atlas purposes: `has_member` values are display strings, no independent method/member node identity exists, `Interaction` is type-level, and `NodeContent` for indexed types is not complete physical inventory. | `proof-code-atlas-contract-grounding` Contract table, Barriers and "Conductor disposition". | [Verified] |
 | K0's synthetic Roslyn 4.14 probe found documentation IDs distinguish overloads, constructors, properties and accessors, but collide across project/scope; partial types have multiple source locations; missing declaration IDs resolve to null. | `proof-code-atlas-contract-grounding` §Roslyn synthetic-source probe and §Updated barrier. | [Verified] |
+| Data lens requirements: current `NodeContent` reads live file bytes and lacks indexed/current hash binding; stale-writer fencing is per extraction scope, not whole-workspace coherence; stable logical identities must be distinct from revision-bound declaration/content/span records. | User-provided Data lens findings, 2026-09-12. | [Verified as reviewer requirement; no schema/native approval] |
 
 ## Page one — what Addendum E decides
 
@@ -128,7 +129,10 @@ The model is stated before the UX/UI. It is domain language only; storage shape,
 | Entity | RepositorySnapshot | Identity persists across views for one captured revision. |
 | Entity | Artifact | A repository file or document with path identity. |
 | Entity | CodeElement | A system/component/type/member/source-line identity extracted from an Artifact. |
-| Entity | StructuredMember | An independently addressable type member identity with scope/project, revision, documentation id when present, display signature, overload/partial semantics and source spans. It is not parsed from `has_member`. |
+| Entity | StructuredMember | An independently addressable logical type member identity with scope/project, target framework, symbol kind and documentation id when present. Display signature, revision and source spans are records about the identity, not the identity itself. It is not parsed from `has_member`. |
+| Entity | WorkspaceManifest | The coherence record for an indexed workspace view: scope revisions, content hashes where authorized, extraction status and whether the view is coherent, mixed, partial or last-successful. |
+| Entity | DeclarationRecord | A revision-bound declaration observation for a logical type/member, with source span(s), hash binding and extractor version. |
+| Entity | SourceContentRecord | A revision-bound source content observation for an authorized file, with content hash, read time, cap/shortfall and source of bytes. |
 | Entity | AtlasView | A projection opened by a user with entry style, altitude, lens, selection and history. |
 | Entity | RelationshipClaim | A typed relationship between elements, artifacts, resources or clauses. |
 | Entity | ResourceDeclaration | A named service/resource declaration from supported infrastructure evidence. |
@@ -136,7 +140,8 @@ The model is stated before the UX/UI. It is domain language only; storage shape,
 | Entity | DecisionRecord | An authority-bearing decision or request with scope and supersession. |
 | Entity | InterpretationRun | A bounded model proposal over previewed context. |
 | Value object | SourceAnchor | `path + revision + optional range`. |
-| Value object | ScopeQualifiedSymbolId | `language + project/scope + target framework/revision + symbol kind + semantic id + source-span discriminator where needed`. Roslyn documentation id is only one component because K0 observed cross-scope collisions. |
+| Value object | ScopeQualifiedSymbolId | Stable logical symbol identity: `language + project/scope + target framework + symbol kind + semantic id`. Roslyn documentation id is only one component because K0 observed cross-scope collisions. Revision and spans belong to DeclarationRecord history, not the natural identity. |
+| Value object | FileLogicalId | Stable logical file identity from authorized workspace root and repository-relative path. Revision, content hash and source bytes belong to SourceContentRecord history, not the natural identity. |
 | Value object | ConfidenceLabel | `Verified`, `Inferred`, `Flagged`, `Unsupported`. |
 | Value object | CoverageDisclosure | Complete/partial/unsupported counts and omitted reasons. |
 | Value object | Altitude | `system`, `component`, `type`, `member`, `source`. |
@@ -153,6 +158,9 @@ The model is stated before the UX/UI. It is domain language only; storage shape,
 | **Artifact** | A file's path, revision and hash identity are preserved across tree, source, diagram, breadcrumb and export views. |
 | **CodeElement** | Type/member/source identities are not collapsed into filenames or labels. Partial, generated, nested or unresolved elements carry that status. |
 | **StructuredMember** | A member identity is stable across display changes and distinguishes overloads, constructors, properties/accessors and partial declarations/implementations. `has_member` display text is never parsed as identity. |
+| **WorkspaceManifest** | A workspace view declares its coherence state. Mixed scope revisions, partial extraction, live-byte source reads and last-successful fallback are visible states, never silently described as one coherent snapshot. |
+| **DeclarationRecord** | A moved span or changed file content creates a new revision-bound observation for the same logical symbol; it does not mutate the logical identity. |
+| **SourceContentRecord** | Source shown to the user is either bound to the indexed/current hash state or explicitly labelled live/unknown/stale. Path safety alone is not snapshot consistency. |
 | **AtlasView** | Altitude transitions preserve selection history and never fabricate a lower-altitude representation when evidence is unavailable. |
 | **RelationshipClaim** | Every relationship has a typed predicate, source/provenance, confidence and unknown handling. Runtime order is not inferred from static call order. |
 | **ResourceDeclaration** | Resource roots and aliases are not doubled. Grants, network/config/runtime relationships exist only from supported declaration/evidence kinds; no grant is created by lookup name or comment annotation alone. |
@@ -220,9 +228,9 @@ Every Code Atlas view renders a capability disclosure before or beside the conte
 
 | Capability | Initial status | Admission rule |
 |---|---|---|
-| Physical tracked-file inventory | Design barrier | Requires a new inventory/file-source contract with scope, revision, path identity, supported/unsupported/unindexed status, exclusion reason, source availability, content cap and shortfall. K0's indexed `NodeContent` seam is insufficient because indexed types are not a complete file inventory. |
-| Source view with anchors | Design barrier | Current `NodeContent` is authority-side, path-confined and capped for indexed nodes; it is not a complete file explorer. A file-source contract must serve actual source for addressable files and explicit unavailable/unsupported states for the rest. |
-| C# type/member extraction | Design barrier | Requires a structured member-identity contract with scope/project/revision, spans, overloads, constructors, properties/accessors and partials. Roslyn 4.14 documentation IDs are usable components but not globally unique; `has_member` strings are UML display payloads, never durable member IDs. |
+| Physical tracked-file inventory | Design barrier | Requires a new inventory/file-source contract with authorized visibility, scope, revision/coherence, path identity, supported/unsupported/unindexed status, exclusion reason, source availability, content cap and shortfall. K0's indexed `NodeContent` seam is insufficient because indexed types are not a complete file inventory. |
+| Source view with anchors | Design barrier | Current `NodeContent` is authority-side, path-confined and capped for indexed nodes but reads live bytes and lacks indexed/current hash binding. A file-source contract must serve actual source with hash/coherence state, or explicit live/stale/unavailable/unsupported states. |
+| C# type/member extraction | Design barrier | Requires a structured member-identity contract with stable logical identity separated from revision-bound spans, overloads, constructors, properties/accessors and partials. Roslyn 4.14 documentation IDs are usable components but not globally unique; `has_member` strings are UML display payloads, never durable member IDs. |
 | UML class/member relationships | Partial | Only supported relationship kinds render; unresolved relationships are gaps. |
 | Method sequence/activity | Later-stage only | K0 verifies `Interaction` is type-level and method nodes do not exist. Full method-sequence reconstruction is not part of E-0; it waits for E-1 design/admission after member/method identity exists. |
 | ER/domain view | Partial | Requires schema/conceptual evidence and `spec-uml-erm-surfaces` notation gates. |
@@ -233,14 +241,16 @@ Every Code Atlas view renders a capability disclosure before or beside the conte
 ### A9. User stories and acceptance criteria
 
 **US-E1 — Physical inventory is complete and separate from semantic coverage.**
-- **Given** a repository snapshot with supported tracked-file input, **When** Code Atlas opens the Solution/tree view, **Then** every included path appears exactly once with project/folder/file identity, and every excluded path appears in an exclusion disclosure with reason.
+- **Given** a repository snapshot with supported tracked-file input, **When** Code Atlas opens the Solution/tree view, **Then** every authorized visible included path appears exactly once with project/folder/file identity, and every excluded or policy-hidden category appears in an honest limitation disclosure with reason where policy permits metadata.
 - **Given** a file with no semantic extraction, **When** the user selects it, **Then** the file remains visible and selectable, and the view states "semantic coverage unavailable" without substituting another file or symbol.
 - **Given** a generated, migration, vendored or unsupported file, **When** it is listed, **Then** its category is visible and does not count as hand-authored semantic coverage unless the extractor supports that category.
 - **Given** an unsupported or unindexed file, **When** the user searches or browses the physical inventory, **Then** the file is still addressable as a file record with revision, path, source availability and reason semantic operations are disabled.
+- **Given** a file is indexed and then edited without re-indexing, **When** the source view opens, **Then** it labels the source as live/current/stale/unknown from manifest/hash evidence and never claims snapshot consistency from path safety alone.
 
 **US-E2 — File-first users can climb from file to architecture and return.**
 - **Given** a file selected in the tree, **When** the user selects a type or member outline item, **Then** the active selection becomes that CodeElement and the source anchor, file path and snapshot stay visible.
-- **Given** a C# member with overloads, accessors, constructors or partial declarations, **When** the user selects it, **Then** the selection uses a structured member identity containing scope/project, revision, semantic id when present, source span(s) and display signature; it is not parsed from `has_member`.
+- **Given** a C# member with overloads, accessors, constructors or partial declarations, **When** the user selects it, **Then** the selection includes a structured member identity containing scope/project, target framework, symbol kind and semantic id when present, plus revision-bound source span record(s) and display signature; it is not parsed from `has_member`.
+- **Given** a member's span moves between revisions, **When** Code Atlas compares selections, **Then** the logical member identity is stable and the declaration/source records show old and new spans as history.
 - **Given** a selected member with supported relationship evidence, **When** the user opens sequence/activity, **Then** the member appears as the entry node and every message/decision has a source anchor or an explicit unknown.
 - **Given** the user steps up to component/system and presses Back, **Then** the previous file, symbol, source line, branch and scroll position are restored.
 
@@ -288,6 +298,7 @@ Every Code Atlas view renders a capability disclosure before or beside the conte
 
 **US-E10 — Implementation↔spec views show states, not compliance percent.**
 - **Given** a spec/document clause and source evidence, **When** the correspondence view renders, **Then** it shows document id, status, authority, scope, revision and supersession before mapping state.
+- **Given** a mapping is computed, **When** the correspondence view renders, **Then** it binds source revision, clause revision, governing rule/version, decision references, coverage basis and extractor/model origin to the assessment.
 - **Given** mapping evidence exists, **When** it is assessed, **Then** the state is exactly one of `aligned`, `planned`, `contrary`, `unknown`, `deferred` or `not-assessed`, with reason and source.
 - **Given** missing evidence, **When** the view renders, **Then** missing is `unknown` or `not-assessed`, never proof of absence.
 - **Given** target-state architecture and current code differ, **When** the view renders, **Then** target-state clauses are not shown as failed implementation unless their authority/scope says they apply now.
@@ -297,6 +308,7 @@ Every Code Atlas view renders a capability disclosure before or beside the conte
 - **Given** a decision reference, **When** it appears in Code Atlas, **Then** it shows source type, authorizing actor class, scope, acceptance/supersession status and timestamp.
 - **Given** a timestamped note without authority, **When** it appears, **Then** the timestamp orders it but does not promote it to accepted authority.
 - **Given** AI proposes a decision summary, **When** it is displayed, **Then** it is labelled as a summary/proposal and cannot clear unknown authority.
+- **Given** a human accepts an AI proposal, **When** the result is stored or displayed, **Then** the system records a new annotation/decision record with human authority and preserves the AI origin; it never promotes the AI-origin text into an extracted or observed fact.
 - **Given** contradictory decisions apply, **When** the view renders, **Then** the conflict is surfaced and the user can open each source.
 
 **US-E12 — Privacy, minimization and provenance protect private corpora.**
@@ -339,6 +351,7 @@ Every Code Atlas view renders a capability disclosure before or beside the conte
 | Malformed source or Bicep | Error node with source scope and stable code. |
 | Hostile source/model text | Rendered inert; no tool or navigation authority. |
 | Source changed after snapshot | Stale state; refresh action; source anchors remain tied to old snapshot. |
+| Mixed workspace coherence | Manifest state says `mixed`, `partial` or `last-successful`; no view claims one coherent workspace revision unless the manifest proves it. |
 | Missing source body under policy | No substituted source; state says unavailable. |
 | Inferred relationship | Distinct visual + textual label; inspector explains basis. |
 | Unknown authority | Cannot be cleared by AI; requires human/Owner/Conductor/audit evidence. |
@@ -609,7 +622,7 @@ Only **E-0** is in the first implementation horizon. It must be an integrated de
 
 | Phase | Delivers | Gate |
 |---|---|---|
-| **E-0 Physical Atlas walking skeleton — first horizon only** | Deterministic C# source identity path: physical inventory/file-source contract, structured addressable C# type/member contract, source viewer with real source anchors, selection history and Back. Unsupported/unindexed files remain visible. | First design admits physical inventory and member-ID contracts; permitted pre-design evidence includes one synthetic Roslyn 4.14 documentation-ID/span probe and isolated existing store/IPC suites. Then US-E1/E2/E4/E13 run on an approved real workspace fixture; actual source opens; no semantic completeness, behavior, data, Azure, comparison or AI claim. |
+| **E-0 Physical Atlas walking skeleton — first horizon only** | Deterministic C# source identity path: physical inventory/file-source contract, workspace manifest/coherence state, structured addressable C# type/member contract, source viewer with real source anchors, selection history and Back. Unsupported/unindexed files remain visible within authorized visibility. | First design admits physical inventory, file-source/hash/coherence and member-ID contracts; permitted pre-design evidence includes one synthetic Roslyn 4.14 documentation-ID/span probe and isolated existing store/IPC suites. Red oracles: index→edit-without-reindex, mixed scope A-new/B-old, unsupported file, overload/partial member, moved span. Then US-E1/E2/E4/E13 run on an approved real workspace fixture; actual source opens; no semantic completeness, behavior, data, Azure, comparison or AI claim. |
 | **E-1 Concrete static code views — later admission required** | Broader type/member extraction contract, bounded UML/class, method sequence/activity with confidence/unknowns. | Separate `/design-slice`, contract worker output, exit criteria and Owner admission; US-E5/E6. |
 | **E-2 Domain/ER/layer/Azure views — later admission required** | ER/domain/layer/component/Azure declaration views with resource aliases and typed relationships. | Separate design plus `spec-uml-erm-surfaces` gates; C D-4 amendment enforced; US-E7/E8. |
 | **E-3 Implementation↔spec and decision provenance — later admission required** | Clause authority/status/scope/supersession model and mapping states. | Separate design and Owner admission; US-E10/E11, no percent. |
@@ -627,8 +640,9 @@ Only **E-0** is in the first implementation horizon. It must be an integrated de
 | K0 report has a report-only correction pending. | Use its observed facts and exact citations, not its rejected type-only recommendation, until the corrected report joins. |
 | Current `has_member` and `Interaction` seams cannot satisfy member-level journey. | Design and admit member/method identity and source-span contract before E-0 implementation. |
 | Current `NodeContent` seam cannot satisfy physical inventory. | Design and admit real physical inventory contract before E-0 implementation. |
-| Roslyn documentation IDs are not globally unique. | Member identity must include scope/project and revision, and define span semantics for overloads and partials. |
+| Roslyn documentation IDs are not globally unique. | Member identity must include scope/project and target framework; revision and span semantics for overloads and partials are DeclarationRecord history, not natural identity. |
 | Contract probes may inform design but do not admit code. | Gate acceptance needs probe/store/IPC results for any claimed contract; no product code admission before Core/Claude acknowledgement. |
+| Data lens supplied invariants, not DTO/schema/migration/native approval. | Treat the requirements above as gate inputs; schema and native design still need their own owner approvals. |
 | Physical inventory source of truth needs final policy: `git ls-files`, workspace index, exclusions and generated/vendor categories. | `/design-slice` data contract with fixture and exclusions. |
 | Initial performance budgets are inferred from product intent, not measured in AI-DE. | Measure E-0 fixture runs; revise budgets only with evidence. |
 | Private corpus handling needs formal processing-class policy for model interpretation. | Privacy/Data Governance + Security gate before E-4. |
