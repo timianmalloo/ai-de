@@ -412,6 +412,24 @@ silently missing something.
 Applied BEFORE the cap, like every other filter here. An excluded edge frees its bytes for
 nodes rather than being trimmed after the ranking has already been paid for (DC-035).
 
+**Excluding one declared flag, not an allow-list of "code/data/architecture" kind
+spellings.** An allow-list would restate the extractors' `has_type` vocabulary here and go
+stale the first time a reader emitted a spelling nobody had added to it — the exact DC-033 trap
+this file already names for the Knowledge chip ("the knowledge kinds are `spec` and
+`knowledge-epl-fan-platform`… widening the list only moves the problem to the next
+repository"). `IsKnowledge` is a DECLARED dimension
+the producer already carries for exactly this reason, so excluding by it is safe across
+repositories the way an include-list of kind spellings is not.
+
+
+
+
+
+Every non-knowledge node — code, data and architecture/infrastructure alike — passes this
+filter, which is what makes "exclude knowledge" the same result as "keep code, data and
+architecture" without Core ever learning that three-way taxonomy (a UI-layer concept the
+remarks on `DeclaredByKind` already keep out of Core).
+
 ## `WorkspaceGraph`
 
 *record* — `GraphProjection.cs`

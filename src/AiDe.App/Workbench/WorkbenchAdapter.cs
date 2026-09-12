@@ -793,6 +793,17 @@ public sealed class WorkbenchAdapter
             var weights = new List<double>();
             foreach (var child in container.Children.OfType<ILayoutElement>())
             {
+                // AvalonDock can leave an emptied LayoutDocumentPane in the tree after its last
+                // document is dragged elsewhere — the zone is correctly GONE, not a shape this
+                // adapter cannot read. Without this, dragging the only surface out of a one-surface
+                // zone (SH-3's per-perspective defaults: Architecture's Left/Right, Coding's Left)
+                // made every reconcile "view-unreadable" and silently reverted the drag, whatever it
+                // was — the fail-safe firing on a shape it should recognise, not one it cannot.
+                if (child is LayoutDocumentPane { Children.Count: 0 })
+                {
+                    continue;
+                }
+
                 var node = MapNode(child, known);
                 if (node is null) { return null; }
                 children.Add(node);

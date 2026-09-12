@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Workbench: 78 types, 147 members, 58% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Workbench: 78 types, 148 members, 58% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Workbench`
 
-**78 public types · 147 public members · 58% documented.**
+**78 public types · 148 public members · 58% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -801,10 +801,11 @@ persistence or shell wiring, all of which speak `ILayoutService`.
 The arrangement this host starts from and resets to: the default, holding only admitted
 kinds and at most one of each one-instance kind.
 
-**Remarks.** simplify: today's one `Default` filtered per host; the per-
-perspective defaults of Addendum C §B4 are `WorkbenchLayout.Default(perspective)` (the
-Shell lane's next slice, SH-3), which replaces the filter here with the row's own table.
-Ceiling: the two hosts; trigger: that method landing.
+**Remarks.** SH-3: seeded from THIS host's own §B4 table (`SeedDefault`), not the old combined
+seed filtered down — the source of the "Domain wired to the Evidence list" and "Explore/
+Provenance/Contexts/Joins stacked as sibling tabs" defects a shared, generic seed produced.
+Still run through `Filter`: defensive, and what applies the
+one-instance rule for a caller that mutates the seed before this runs.
 
 ## `ZoneRestoreReport`
 
@@ -901,6 +902,7 @@ unchanged from the tree model (only docked layout changes in ADR-0021).
 | Member | Summary |
 |---|---|
 | `WorkbenchLayout Default()` | The default arrangement: graph document in the Center, a terminal in the Bottom. |
+| `WorkbenchLayout Default(Perspective perspective)` | The per-perspective default (Addendum C §B4; Rulings 54/59/60/61) — each docking host's OWN table, never the combined seed `Default()` filtered down (the trap `ZoneBackedLayoutService` named: filtering one shared seed… |
 | `WorkbenchLayout Empty()` | An empty frame — all four zones present, none with content. Used by the converter as a base. |
 | `ZoneState Zone(ZoneId id)` | **(gap)** |
 | `IEnumerable<Surface> AllSurfaces()` | **(gap)** |
@@ -908,6 +910,19 @@ unchanged from the tree model (only docked layout changes in ADR-0021).
 | `WorkbenchLayout WithZone(ZoneState zone)` | Replaces one zone's state, leaving the other three byte-identical (the containment primitive). |
 | `void AssertInvariant()` | The frame invariant, checked after every operation: the four zones exist, the Center is never collapsed, no surface appears twice, and no stack is empty. |
 | `string Shape()` | Structural signature ignoring extents — the oracle for "which zone holds what, in what order". Two layouts with the same shape are the same arrangement of panes. |
+
+### `WorkbenchLayout Default(Perspective perspective)`
+
+The per-perspective default (Addendum C §B4; Rulings 54/59/60/61) — each docking host's OWN
+table, never the combined seed `Default()` filtered down (the trap
+`ZoneBackedLayoutService` named: filtering one shared seed re-points "Domain" at the
+Evidence list and stacks Explore/Provenance/Contexts/Joins into one Left tab strip).
+
+**Remarks.** Only Coding and Architecture have a docking host (`DockHost`);
+Explore's full-window body has no zone layout and no caller ever asks this for it
+(`DockHost.Create` refuses a non-host perspective first) — so anything other than
+Architecture falls back to Coding's table, which is the only other member of the closed set
+this method is ever actually asked for.
 
 ## `ZoneLayoutResult`
 
