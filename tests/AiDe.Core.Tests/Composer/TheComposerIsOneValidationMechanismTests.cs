@@ -99,6 +99,35 @@ public sealed class TheComposerIsOneValidationMechanismTests
         Assert.Empty(SpawnContract.Validate(block));
     }
 
+    /// <summary>
+    /// The two invalid-value rows the per-prompt form used to carry (a cap of −1, a budget of 0/0)
+    /// moved with the values: they are the SESSION's now, and the contract refuses them at the
+    /// send — the one validation mechanism still names the field (Ruling 26b), the composer never
+    /// invents a second check.
+    /// </summary>
+    [Fact]
+    public void Rulings56_63_72_ASessionCeilingOutOfRangeIsRefusedByTheContractAtTheSend()
+    {
+        var draft = GoalDraft(Block());
+        draft.SetFreeFormText("Rename the helper in @src/Payments/Money.cs.\n");
+        draft.UseSessionSettings(new SessionConfig("s", "n", "w", DateTimeOffset.UnixEpoch, ["claude-code"])
+        {
+            FanOutCeiling = -1,
+            BudgetCap = new RunBudget(0, 0),
+        });
+
+        // ONE MECHANISM: the form engine IS the contract for a goal block — it names the two
+        // session values by their wire names, the same two the contract names, in the same order.
+        var errors = SpawnContract.Validate(draft.ToGoalBlock());
+        Assert.Equal(["fan_out_cap", "budget"], errors.Select(e => e.Field).ToList());
+        Assert.Contains("a negative bound is not one", errors[0].Message, StringComparison.Ordinal);
+        Assert.Contains("a spawn that can do nothing is a typo", errors[1].Message, StringComparison.Ordinal);
+        Assert.Equal(errors.Select(e => (e.Field, e.Message)), ComposerFormEngine.Validate(draft).Select(e => (e.Field, e.Message)));
+
+        // And the -1 was never clamped to a plausible 0 on the way (the mutation: Math.Max(0, ceiling)).
+        Assert.Equal(-1, draft.ToGoalBlock().FanOutCap);
+    }
+
     [Fact]
     public void Ruling26b_TheSpawnContractsOwnFourTestsAreUntouchedAndTheSixNamesStillHold()
     {

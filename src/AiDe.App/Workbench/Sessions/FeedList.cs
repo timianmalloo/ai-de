@@ -332,7 +332,7 @@ public abstract class FeedList : ListBox, ICanvasFocusTarget
         }
     }
 
-    private static DependencyObject? ParentOf(DependencyObject node) =>
+    internal static DependencyObject? ParentOf(DependencyObject node) =>
         node is Visual or System.Windows.Media.Media3D.Visual3D
             ? VisualTreeHelper.GetParent(node) ?? LogicalTreeHelper.GetParent(node)
             : LogicalTreeHelper.GetParent(node);

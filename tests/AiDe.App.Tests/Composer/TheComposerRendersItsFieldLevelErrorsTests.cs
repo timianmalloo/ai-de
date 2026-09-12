@@ -38,9 +38,9 @@ public sealed class TheComposerRendersItsFieldLevelErrorsTests
         ProofPackArtifacts: [],
         Providers: []);
 
-    private static ComposerSurface Build(string root, bool attachEnabled)
+    private static ComposerSurface Build(string root, bool attachEnabled, AiDe.App.Workbench.IWorkbenchAnnouncer? announcer = null)
     {
-        var surface = new ComposerSurface("composer:s-0001", "s-0001 — composer");
+        var surface = new ComposerSurface("composer:s-0001", "s-0001 — composer", announcer);
 
         surface.Configure(
             new SessionConfig("s-0001", "first", "w-1", DateTimeOffset.UnixEpoch, ["claude-code"])
@@ -70,7 +70,8 @@ public sealed class TheComposerRendersItsFieldLevelErrorsTests
 
             try
             {
-                var surface = Build(root, attachEnabled: false);
+                var announcer = new AiDe.App.Workbench.RecordingAnnouncer();
+                var surface = Build(root, attachEnabled: false, announcer);
 
                 // The goal-block form with nothing filled in is an empty prompt (Ruling 75 makes a
                 // blank Goal a Message, and a Message with no words is not a task).
@@ -79,6 +80,13 @@ public sealed class TheComposerRendersItsFieldLevelErrorsTests
                 Assert.Null(surface.Send());
                 Assert.Equal(0, surface.Gate.SendCount);
                 Assert.Equal("an empty prompt is not a task", surface.Status);
+
+                // SPOKEN, NOT ONLY WRITTEN (SC6 / SC9; WCAG 4.1.3): a refusal reaches the announcer
+                // assertively. Red observed: `Assert.Single() Failure: The collection was empty` —
+                // the status line was a TextBlock with a LiveSetting and nothing ever raised the event.
+                var refused = Assert.Single(announcer.Announcements);
+                Assert.Equal("an empty prompt is not a task", refused.Text);
+                Assert.Equal(AiDe.Core.Presentation.Sessions.Urgency.Assertive, refused.Urgency);
 
                 // A goal block that EXISTS (Goal and Done when written) with Not in scope blank:
                 // the one remaining gap blocks, by name, on screen — and nothing else does, because
@@ -117,6 +125,10 @@ public sealed class TheComposerRendersItsFieldLevelErrorsTests
                 Assert.Equal(2, request.Goal.FanOutCap);
                 Assert.True(request.Goal.Budget!.IsSubscriptionBounded);
                 Assert.Equal("sent", surface.Status);
+
+                // "sent" is a status: queued, never interrupting (SC9).
+                Assert.Equal("sent", announcer.Announcements[^1].Text);
+                Assert.Equal(AiDe.Core.Presentation.Sessions.Urgency.Status, announcer.Announcements[^1].Urgency);
             }
             finally
             {

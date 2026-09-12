@@ -62,6 +62,9 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     private readonly WrapPanel _decorationLine;
     private readonly TextBlock _settingsLine;
     private readonly TextBlock _status;
+    private readonly IWorkbenchAnnouncer _announcer;
+    private string _statusText = string.Empty;
+    private double _beltHeight = double.PositiveInfinity;
     private readonly DockPanel _sendRow;
     private readonly StackPanel _lines;
     private readonly Button _send;
@@ -98,7 +101,12 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
     /// <param name="surfaceId">The surface's stable id, as every other surface carries one.</param>
     /// <param name="title">Its accessible name.</param>
-    public ComposerSurface(string surfaceId, string title)
+    /// <param name="announcer">
+    /// Where the status line is spoken (SC6 / SC9: a refusal is announced, never silent). The
+    /// document passes its own so the page has one channel; null builds one over the status line
+    /// itself — WPF raises no <c>LiveRegionChanged</c> on a text change, the app must.
+    /// </param>
+    public ComposerSurface(string surfaceId, string title, IWorkbenchAnnouncer? announcer = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(surfaceId);
 
@@ -113,18 +121,22 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             TextWrapping = TextWrapping.Wrap,
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
             MaxHeight = CompiledPromptMaxHeight,
-            FontFamily = new System.Windows.Media.FontFamily("Cascadia Mono, Consolas, monospace"),
+            FontFamily = AiDe.App.Workbench.Sessions.ThreadFeed.Mono,
             FontSize = 12,
         };
         AutomationProperties.SetName(_compiled, "Compiled prompt — exactly what will be sent");
 
         _status = new TextBlock { TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center, FontSize = 12 };
         _status.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+
+        // ONE CHANNEL. With the document's announcer the status line is a visible mirror and the
+        // document's live region speaks; without one the status line IS the live region (the
+        // announcer sets its LiveSetting and raises the event). Never both.
+        _announcer = announcer ?? new WorkbenchAnnouncer(_status);
         AutomationProperties.SetName(_status, "Send status");
-        AutomationProperties.SetLiveSetting(_status, AutomationLiveSetting.Polite);
 
         // Built after the status line it reports into: a browser that cannot start says so there.
-        _host = new WebSurfaceHost(surfaceId, this, InitialiseAsync, failure => _status.Text = "the composer editor could not start: " + failure);
+        _host = new WebSurfaceHost(surfaceId, this, InitialiseAsync, failure => SetStatus("the composer editor could not start: " + failure, Urgency.Assertive));
         _view = _host.View;
 
         // THE EDITOR'S FLOOR (DESIGN.md:1092; DS-1 seam 5, spike Q14): in an Auto row the composer
@@ -169,6 +181,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             IsExpanded = false,
             Content = _compiled,
             Margin = new Thickness(0, 2, 0, 0),
+            Style = AiDe.App.Workbench.Sessions.ThreadFeed.DisclosureStyle(),
         };
         AutomationProperties.SetName(_compiledDisclosure, "Compiled prompt");
         AutomationProperties.SetHelpText(_compiledDisclosure, "exactly the bytes that will be sent; no diff, no comments");
@@ -203,8 +216,19 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// <summary>The compiled prompt's ceiling when expanded (DESIGN.md:1109 ≤ 200 px, scrolls) — and it never takes the editor's floor (DC-137).</summary>
     public const double CompiledPromptMaxHeight = 200;
 
+    /// <summary>
+    /// The compiled prompt's floor when it is open: three lines of the mono face, so a reader the
+    /// operator asked for is a reader (INV-0007's "the reader gets its share"). Under a constraint
+    /// that cannot hold the floor, the editor's floor and this one both hold and the composer's
+    /// minimum grows — the document's belt yields, the thread gets less; nothing is cut to 2 px.
+    /// </summary>
+    public const double CompiledPromptMinHeight = 48;
+
     /// <summary>A disclosure's header row (DESIGN.md: each line 24 px) — what the compiled prompt costs at rest.</summary>
     private const double DisclosureHeaderHeight = 24;
+
+    /// <summary>The decoration source that earns the tilde and the inferred ink: a value the model proposed (CV-2's compile step). A rule's value is text.</summary>
+    public const string ModelSource = "model";
 
     /// <summary>The editor as a focus region of the document's F6 cycle: SetFocus on the host HWND with a read-back (DS-1 seam 1).</summary>
     public ICanvasFocusTarget FocusTarget { get; }
@@ -248,7 +272,40 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     public ComposerDraft Draft => _draft;
 
     /// <summary>The last thing that happened, in a sentence.</summary>
-    public string Status => _status.Text;
+    public string Status => _statusText;
+
+    /// <summary>
+    /// Raised when the operator activates the in-flight turn's link in a refused-gesture reason
+    /// (Ruling 77; SC8: the ordinal is a link to the turn) — the document focuses that turn's container.
+    /// </summary>
+    public event Action<int>? TurnRequested;
+
+    /// <summary>
+    /// The document's belt (DS-1 Q14): the height this composer may take before the compiled prompt
+    /// yields — a share of the document, set by the document at its measure. The composer's own
+    /// minimum (its lines and the editor's floor) is never cut by it: a belt smaller than the minimum
+    /// leaves the send row on screen and the thread shorter, not the send row clipped.
+    /// </summary>
+    public double BeltHeight
+    {
+        get => _beltHeight;
+        set
+        {
+            if (!(value > 0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(value), value, "the belt is a positive height");
+            }
+
+            if (_beltHeight != value)
+            {
+                _beltHeight = value;
+                InvalidateMeasure();
+            }
+        }
+    }
+
+    /// <summary>The composer's minimum height at its last measure: the lines, the picker, the send row and the editor's floor.</summary>
+    public double MinimumHeight { get; private set; }
 
     /// <summary>The lease line: the read-only state, or the patterns (Ruling 73) — the decoration line's lease segment, prefixed.</summary>
     public string LeaseLine => _leaseLine;
@@ -336,7 +393,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     public void ShowFieldRefusal(string field, string message)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(field);
-        _status.Text = $"{field}: {message}";
+        SetStatus($"{field}: {message}", Urgency.Assertive);
     }
 
     /// <summary>The picker cards currently offered, in catalog order.</summary>
@@ -358,7 +415,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         var entry = _catalog?.Find(templateId);
         if (entry is null || !entry.IsEnabled)
         {
-            _status.Text = $"the template '{templateId}' is not one this catalog can offer";
+            SetStatus($"the template '{templateId}' is not one this catalog can offer", Urgency.Assertive);
             return;
         }
 
@@ -379,28 +436,31 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// <returns>The request that was built, or null when the send was refused.</returns>
     public GovernedRunRequest? Send()
     {
+        // ONE GOVERNED RUN AT A TIME PER SESSION (Ruling 77): a gesture while a turn runs or waits
+        // is refused with the turn named — spoken, never silent (SC6) — before anything else is
+        // read: the operator's gesture is answered by the turn in flight, not by the wiring.
+        if (_inFlight is { } inFlight)
+        {
+            SetRefusedGesture(inFlight);
+            return null;
+        }
+
         if (_context is null)
         {
-            _status.Text = "the composer is not wired to a session yet";
+            SetStatus("the composer is not wired to a session yet", Urgency.Assertive);
             return null;
         }
 
         RenderCompiledView();
 
-        // ONE GOVERNED RUN AT A TIME PER SESSION (Ruling 77): a gesture while a turn runs or waits
-        // is refused with the turn named — announced as a status, never silent (SC6).
-        if (_inFlight is { } inFlight)
-        {
-            _status.Text = RefusedGestureReason(inFlight);
-            return null;
-        }
-
         var request = _gate.Send(_context, _draft, _template, out var refusal);
         if (request is null)
         {
-            _status.Text = refusal is { Errors.Count: > 0 }
-                ? string.Join("  ", refusal.Errors.Select(e => e.Message))
-                : refusal?.Message ?? "the send was refused";
+            SetStatus(
+                refusal is { Errors.Count: > 0 }
+                    ? string.Join("  ", refusal.Errors.Select(e => e.Message))
+                    : refusal?.Message ?? "the send was refused",
+                Urgency.Assertive);
             MarkInvalid(refusal);
             return null;
         }
@@ -410,9 +470,11 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
         // Ruling 75 condition (2): a goal-block form that compiled as a Message is said so, never
         // demoted silently. SC9's spoken announcement is CV-1's; the status line is the floor here.
-        _status.Text = _draft.Shape == ComposerShape.GoalBlock && request.Goal is null
-            ? "sent as a message — read-only"
-            : "sent";
+        SetStatus(
+            _draft.Shape == ComposerShape.GoalBlock && request.Goal is null
+                ? "sent as a message — read-only"
+                : "sent",
+            Urgency.Status);
         _hasSentBefore = true;
         return request;
     }
@@ -509,8 +571,25 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     public event Action? FocusLeftBackward;
 
     /// <summary>The composer's first WPF stop — the Goal line — for a document whose page is not up yet (F6 still has somewhere to land).</summary>
-    public bool FocusFirstLine() =>
-        _structureLines.TryGetValue(ComposerDraft.PerPromptGoalFields[0], out var line) && line.Editor.Focus();
+    public bool FocusFirstLine()
+    {
+        if (_structure.IsExpanded)
+        {
+            return _structureLines.TryGetValue(ComposerDraft.PerPromptGoalFields[0], out var line) && line.Editor.Focus();
+        }
+
+        // Collapsed: the structure's header is the composer's first stop — never a line the
+        // operator cannot see.
+        _structure.ApplyTemplate();
+        return _structure.Template?.FindName("HeaderSite", _structure) is UIElement header && header.Focus();
+    }
+
+    /// <summary>Whether the structure lines are open — collapsed at rest (DESIGN.md:1088).</summary>
+    public bool StructureOpen
+    {
+        get => _structure.IsExpanded;
+        set => _structure.IsExpanded = value;
+    }
 
     /// <summary>Whether Win32 focus is inside the editor's window — the page holds it and WPF's focused element reads null.</summary>
     public bool EditorHasFocus
@@ -535,9 +614,9 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     public void SetInFlight(TurnView? turn)
     {
         _inFlight = turn;
-        if (turn is null && _status.Text.EndsWith("the next turn waits for it.", StringComparison.Ordinal))
+        if (turn is null && _statusText.EndsWith("the next turn waits for it.", StringComparison.Ordinal))
         {
-            _status.Text = string.Empty;
+            SetStatus(string.Empty, Urgency.Status);
         }
     }
 
@@ -545,8 +624,46 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     public static string RefusedGestureReason(TurnView inFlight)
     {
         ArgumentNullException.ThrowIfNull(inFlight);
-        var state = inFlight.State == TurnState.Waiting ? "is waiting for you" : "is running";
-        return $"{inFlight.DisplayOrdinal} {state}; the next turn waits for it.";
+        return $"{inFlight.DisplayOrdinal} {RefusedGestureState(inFlight)}; the next turn waits for it.";
+    }
+
+    private static string RefusedGestureState(TurnView inFlight) =>
+        inFlight.State == TurnState.Waiting ? "is waiting for you" : "is running";
+
+    /// <summary>
+    /// The status line: the sentence on screen and spoken (SC6 — never silent). A refusal, an
+    /// error and a request are assertive (SC9); <i>sent</i> is a status. An empty text clears.
+    /// </summary>
+    private void SetStatus(string text, Urgency urgency)
+    {
+        _statusText = text;
+        if (text.Length == 0)
+        {
+            _status.Inlines.Clear();
+            return;
+        }
+
+        // Spoken first: the announcer that owns the status line writes its Text, and the inlines
+        // below replace it (the two agree — the announcer's text is this text).
+        _announcer.Announce(new Announcement(text, urgency, AnnouncementKind.Other));
+        _status.Inlines.Clear();
+        _status.Inlines.Add(new System.Windows.Documents.Run(text));
+    }
+
+    /// <summary>Ruling 77's refusal with the ordinal as a link to the turn (SC8): <i>b1</i> → the turn's container, never an action.</summary>
+    private void SetRefusedGesture(TurnView inFlight)
+    {
+        SetStatus(RefusedGestureReason(inFlight), Urgency.Assertive);
+
+        var ordinal = inFlight.Ordinal;
+        var link = new System.Windows.Documents.Hyperlink(new System.Windows.Documents.Run(inFlight.DisplayOrdinal));
+        link.SetResourceReference(System.Windows.Documents.TextElement.ForegroundProperty, "AccentBrush");
+        AutomationProperties.SetName(link, $"{inFlight.DisplayOrdinal}, {(inFlight.State == TurnState.Waiting ? "waiting for you" : "running")}");
+        link.Click += (_, _) => TurnRequested?.Invoke(ordinal);
+
+        _status.Inlines.Clear();
+        _status.Inlines.Add(link);
+        _status.Inlines.Add(new System.Windows.Documents.Run($" {RefusedGestureState(inFlight)}; the next turn waits for it."));
     }
 
     /// <summary>
@@ -609,7 +726,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
         if (_attachments is null)
         {
-            _status.Text = "the composer is not wired to a session yet";
+            SetStatus("the composer is not wired to a session yet", Urgency.Assertive);
             return new AttachOutcome([], [], 0);
         }
 
@@ -618,7 +735,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
         if (outcome.Refusals.Count > 0)
         {
-            _status.Text = string.Join("  ", outcome.Refusals);
+            SetStatus(string.Join("  ", outcome.Refusals), Urgency.Assertive);
         }
 
         RenderCompiledView();
@@ -673,17 +790,20 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
                 segment.Children.Add(SegmentLabel(row.Name));
             }
 
+            // The tilde and the inferred ink mark a MODEL-derived value (DESIGN.md SC4; §A11's
+            // marks); a mechanical rule's value is text — a false uncertainty mark is a lie (U13).
+            var inferred = string.Equals(row.Source, ModelSource, StringComparison.Ordinal);
             var value = new TextBlock
             {
-                Text = row.Name == "tier" ? "~ " + row.Value : row.Value,
+                Text = inferred ? "~ " + row.Value : row.Value,
                 FontSize = 12,
                 VerticalAlignment = VerticalAlignment.Center,
                 Margin = new Thickness(0, 0, 6, 0),
             };
-            value.SetResourceReference(TextBlock.ForegroundProperty, row.Name == "tier" ? "InferredBrush" : "TextBrush");
+            value.SetResourceReference(TextBlock.ForegroundProperty, inferred ? "InferredBrush" : "TextBrush");
             if (row.Name == "lease")
             {
-                value.FontFamily = new System.Windows.Media.FontFamily("Cascadia Mono, Consolas, monospace");
+                value.FontFamily = AiDe.App.Workbench.Sessions.ThreadFeed.Mono;
             }
 
             AutomationProperties.SetName(value, row.Name + " " + row.Value);
@@ -692,7 +812,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
             // The provenance, inline: the current turn is confirmed at Send (SC2), so the source
             // and the reason are beside the value rather than a disclosure away.
-            var provenance = new TextBlock { Text = row.Name == "class" ? "session default" : row.Reason, FontSize = 11, VerticalAlignment = VerticalAlignment.Center };
+            var provenance = new TextBlock { Text = row.Name == "class" ? "session default" : row.Reason, FontSize = 12, VerticalAlignment = VerticalAlignment.Center };
             provenance.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
             segment.Children.Add(provenance);
 
@@ -709,7 +829,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         var label = new TextBlock
         {
             Text = text,
-            FontSize = strong ? 12 : 11,
+            FontSize = 12,
             FontWeight = strong ? FontWeights.SemiBold : FontWeights.Normal,
             VerticalAlignment = VerticalAlignment.Center,
             Margin = new Thickness(0, 0, strong ? 12 : 4, 0),
@@ -742,11 +862,15 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             body.Children.Add(line.Root);
         }
 
+        // COLLAPSED AT REST (DESIGN.md:1088: four rows beneath the editor, the structure collapsed;
+        // +3 expanded). It opens when the operator opens it, when a refusal names one of its lines
+        // (the error must be on the screen), and when a draft arrives with structure in it.
         var expander = new Expander
         {
             Header = "Goal · Done when · Not in scope",
-            IsExpanded = true,
+            IsExpanded = false,
             Content = body,
+            Style = AiDe.App.Workbench.Sessions.ThreadFeed.DisclosureStyle(),
         };
         AutomationProperties.SetName(expander, "Goal, Done when, Not in scope");
         AutomationProperties.SetHelpText(expander, "The structure of this turn. Written here, it makes the turn a goal block; a blank Goal or Done when makes a message.");
@@ -765,6 +889,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             if (_structureLines.TryGetValue(error.Field, out var line))
             {
                 line.MarkInvalid(error.Message);
+                _structure.IsExpanded = true;   // the named line is on the screen (Ruling 75), never behind a fold
             }
         }
     }
@@ -982,30 +1107,36 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// </summary>
     protected override Size MeasureOverride(Size constraint)
     {
-        if (!double.IsPositiveInfinity(constraint.Height))
-        {
-            var unbounded = new Size(constraint.Width, double.PositiveInfinity);
-            var inner = new Size(Math.Max(0, constraint.Width - _lines.Margin.Left - _lines.Margin.Right), double.PositiveInfinity);
-            _templatePicker.Measure(unbounded);
-            _sendRow.Measure(unbounded);
-            _structure.Measure(inner);
-            _decorationLine.Measure(inner);
-            _settingsLine.Measure(inner);
+        // The height the composer composes within: the document's belt, or the constraint when it
+        // is tighter. Under it the compiled prompt yields first (DC-137) and the editor keeps its
+        // floor; the composer's own minimum is what it desires when the belt is smaller than it.
+        var height = Math.Min(constraint.Height, _beltHeight);
 
-            // The lines at rest: everything but the compiled prompt's content — its header is one
-            // 24 px row like the others (DESIGN.md: four rows at rest, each 24 px).
-            var linesAtRest = _structure.DesiredSize.Height + _decorationLine.DesiredSize.Height + _settingsLine.DesiredSize.Height
-                + DisclosureHeaderHeight + _compiledDisclosure.Margin.Top + _lines.Margin.Top + _lines.Margin.Bottom;
+        var unbounded = new Size(constraint.Width, double.PositiveInfinity);
+        var inner = new Size(Math.Max(0, constraint.Width - _lines.Margin.Left - _lines.Margin.Right), double.PositiveInfinity);
+        _templatePicker.Measure(unbounded);
+        _sendRow.Measure(unbounded);
+        _structure.Measure(inner);
+        _decorationLine.Measure(inner);
+        _settingsLine.Measure(inner);
 
-            var chrome = _templatePicker.DesiredSize.Height + _sendRow.DesiredSize.Height + linesAtRest;
-            _compiled.MaxHeight = Math.Max(0, Math.Floor(Math.Min(CompiledPromptMaxHeight, constraint.Height - chrome - EditorFloor)));
-        }
-        else
-        {
-            _compiled.MaxHeight = CompiledPromptMaxHeight;
-        }
+        // The lines at rest: everything but the compiled prompt's content — its header is one
+        // 24 px row like the others (DESIGN.md: four rows at rest, each 24 px).
+        var linesAtRest = _structure.DesiredSize.Height + _decorationLine.DesiredSize.Height + _settingsLine.DesiredSize.Height
+            + DisclosureHeaderHeight + _compiledDisclosure.Margin.Top + _lines.Margin.Top + _lines.Margin.Bottom;
 
-        return base.MeasureOverride(constraint);
+        var chrome = _templatePicker.DesiredSize.Height + _sendRow.DesiredSize.Height + linesAtRest;
+        var compiledOpen = _compiledDisclosure.IsExpanded;
+        MinimumHeight = chrome + EditorFloor + (compiledOpen ? CompiledPromptMinHeight : 0);
+        // The reader's box: never over 200, never more than the writer (editor ≥ compiled —
+        // INV-0007), never below the editor's floor's remainder, and never under its own floor.
+        _compiled.MaxHeight = double.IsPositiveInfinity(height)
+            ? CompiledPromptMaxHeight
+            : Math.Max(
+                CompiledPromptMinHeight,
+                Math.Floor(Math.Min(CompiledPromptMaxHeight, Math.Min(height - chrome - EditorFloor, (height - chrome) / 2))));
+
+        return base.MeasureOverride(new Size(constraint.Width, height));
     }
 
     /// <summary>
@@ -1283,9 +1414,9 @@ internal sealed class StructureLine
         _watermark = new TextBlock { Text = "fill in", FontSize = 13, IsHitTestVisible = false, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(4, 0, 0, 0) };
         _watermark.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
 
-        _mark = new TextBlock { FontSize = 11, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 0, 0) };
+        _mark = new TextBlock { FontSize = 12, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 0, 0) };
         _mark.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
-        _why = new TextBlock { FontSize = 11, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 0, 0), Visibility = Visibility.Collapsed };
+        _why = new TextBlock { FontSize = 12, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 0, 0), Visibility = Visibility.Collapsed };
         _why.SetResourceReference(TextBlock.ForegroundProperty, "DangerBrush");
 
         var valueHost = new Grid();

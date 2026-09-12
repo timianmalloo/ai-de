@@ -92,8 +92,6 @@ public sealed class TurnItem : INotifyPropertyChanged
     public string CompiledName => "Compiled prompt of " + _view.DisplayOrdinal;
     public string FoldHeader => TurnCopy.EventsText(_view.Events.Count);
     public bool IsLive => _view.State is TurnState.Running or TurnState.Waiting;
-    public bool IsRunning => _view.State == TurnState.Running;
-    public bool HasReason => HelpText.Length > 0;
 
     /// <summary>The fold's content: the last <see cref="FoldLines"/> lines, bounded, no inner scroller.</summary>
     public IReadOnlyList<EventLine> FoldedEvents =>
@@ -104,7 +102,7 @@ public sealed class TurnItem : INotifyPropertyChanged
 
     public bool HasOtherEvents => OtherEvents > 0;
 
-    /// <summary><i>the other 136, in the Console</i> — the tail button's text.</summary>
+    /// <summary><i>the other 136, in the Console</i> — the tail button's text (the button is collapsed when the fold shows every line: <see cref="HasOtherEvents"/>).</summary>
     public string TailText => string.Create(CultureInfo.InvariantCulture, $"the other {OtherEvents:N0}, in the Console");
 
     /// <summary>The actions this turn offers, Deny first (SC7). A completed or past-failed turn offers none.</summary>

@@ -174,21 +174,67 @@ public sealed class TheThreadAnnouncesAndExposesRealPropertiesTests
                 Assert.Equal("The lane exited 1 after 0 edits. Send the same turn again as a new turn, or open the log.", b17.GetHelpText());
                 Assert.Equal(17, b17.GetPositionInSet());
 
-                // U5: every disclosure named for its turn; every focusable named; every target ≥ 24 px.
-                var container = ThreadFixtures.Container(feed, 16);
-                foreach (var expander in ThreadFixtures.Visuals<Expander>(container))
+                // U5: every disclosure named for its turn; every focusable named; every target ≥ 24 px —
+                // over every fixture state (failed past, completed, running, waiting), both disclosure
+                // states, at 1200 and 1024, with a non-vacuity floor on each census (a census of 0 is
+                // the harness lying, not the surface passing).
+                int Census(int index, string label, bool open)
                 {
-                    var name = AutomationProperties.GetName(expander);
-                    Assert.True(name.EndsWith("of b17", StringComparison.Ordinal) || name.EndsWith("events", StringComparison.Ordinal), $"a disclosure named '{name}'");
-                    Assert.False(expander.Focusable);
+                    feed.FocusItem(index);
+                    feed.Rows[index].IsFoldOpen = open;
+                    feed.Rows[index].IsProvenanceOpen = open;
+                    feed.UpdateLayout();
+                    var container = ThreadFixtures.Container(feed, index);
+                    var ordinal = feed.Rows[index].View.DisplayOrdinal;
+                    foreach (var expander in ThreadFixtures.Visuals<Expander>(container))
+                    {
+                        var name = AutomationProperties.GetName(expander);
+                        Assert.True(name.EndsWith("of " + ordinal, StringComparison.Ordinal) || name.EndsWith("events", StringComparison.Ordinal) || name.EndsWith("event", StringComparison.Ordinal), $"{label}: a disclosure named '{name}'");
+                        Assert.False(expander.Focusable);
+                    }
+
+                    var walked = 0;
+                    foreach (var focusable in ThreadFixtures.Visuals<UIElement>(container).Where(e => e.Focusable && e.IsVisible && KeyboardNavigation.GetIsTabStop(e)))
+                    {
+                        var name = AutomationProperties.GetName(focusable) is { Length: > 0 } n ? n : (focusable as ContentControl)?.Content as string;
+                        Assert.False(string.IsNullOrEmpty(name), $"{label}: a focusable {focusable.GetType().Name} with no name");
+                        Assert.True(focusable.RenderSize.Height >= 24 && focusable.RenderSize.Width >= 24, $"{label}: {name} is {focusable.RenderSize}");
+                        walked++;
+                    }
+
+                    Assert.True(walked > 0, $"{label}: the census walked nothing — the positive control failed");
+                    return walked;
                 }
 
-                foreach (var focusable in ThreadFixtures.Visuals<UIElement>(container).Where(e => e.Focusable && e.IsVisible && KeyboardNavigation.GetIsTabStop(e)))
+                var thread = ReadModel(feed);
+                var running = thread.Accept("Write the proof pack.", ThreadFixtures.Decorations("free-form", "T1", "docs/proof/**", "goal block"), "b", ThreadFixtures.T0);
+                thread.Append(running, ThreadFixtures.Line(1, "claude-code", "b41 line 1"));
+                feed.Dispatcher.Invoke(() => { }, DispatcherPriority.Background);
+                feed.UpdateLayout();
+
+                var counts = new Dictionary<string, int>();
+                foreach (var width in new[] { 1200.0, 1024.0 })
                 {
-                    var name = AutomationProperties.GetName(focusable) is { Length: > 0 } n ? n : (focusable as ContentControl)?.Content as string;
-                    Assert.False(string.IsNullOrEmpty(name), $"a focusable {focusable.GetType().Name} with no name");
-                    Assert.True(focusable.RenderSize.Height >= 24 && focusable.RenderSize.Width >= 24, $"{name} is {focusable.RenderSize}");
+                    window.Width = width;
+                    window.UpdateLayout();
+                    counts[$"b17 failed collapsed @{width}"] = Census(16, "b17 failed, collapsed", open: false);
+                    counts[$"b17 failed open @{width}"] = Census(16, "b17 failed, open", open: true);
+                    counts[$"b40 completed open @{width}"] = Census(39, "b40 completed, open", open: true);
+                    counts[$"b41 running @{width}"] = Census(40, "b41 running", open: true);
+                    Assert.Contains(ThreadFixtures.Visuals<Button>(ThreadFixtures.Container(feed, 40)), b => b.Content is "Stop this turn");
+
+                    thread.Wait(running, new WaitingRequest("req-u5", "permission", "claude-code asks to write outside the declared scope.", [TurnActionKind.Deny, TurnActionKind.AllowOnce]));
+                    feed.Dispatcher.Invoke(() => { }, DispatcherPriority.Background);
+                    counts[$"b41 waiting @{width}"] = Census(40, "b41 waiting", open: true);
+                    Assert.Contains(ThreadFixtures.Visuals<Button>(ThreadFixtures.Container(feed, 40)), b => b.Content is "Deny");
+                    Assert.Contains(ThreadFixtures.Visuals<Button>(ThreadFixtures.Container(feed, 40)), b => b.Content is "Allow once");
+                    thread.Resume(running);
+                    feed.Dispatcher.Invoke(() => { }, DispatcherPriority.Background);
                 }
+
+                // The open state walks more than the collapsed one (the positive control on the walk itself).
+                Assert.True(counts["b17 failed open @1200"] > counts["b17 failed collapsed @1200"], $"open {counts["b17 failed open @1200"]} ≤ collapsed {counts["b17 failed collapsed @1200"]}");
+                Assert.True(counts["b41 waiting @1200"] > counts["b41 running @1200"], "a waiting turn offers no more targets than a running one");
 
                 return Task.CompletedTask;
             });
@@ -220,19 +266,42 @@ public sealed class TheThreadAnnouncesAndExposesRealPropertiesTests
     /// <summary>
     /// <b>C1.</b> 500 snapshots raised off the UI thread, alternating running ↔ waiting with fresh
     /// request ids: exactly 500 announcements in order (the policy never coalesces), far fewer
-    /// applies than raises (the render does), the caret and a focused fold survive, and the
-    /// announcer is called after the render.
+    /// applies than raises (the render does), the caret and a focused fold survive, every
+    /// announcement is made with the feed's arrange valid (after the render, never before), and a
+    /// version the read model skipped is a <c>THR-0003</c> record with the expected and received
+    /// versions — the state it hid is never invented.
     /// </summary>
     [Fact]
     public void SnapshotsRaisedOffThread_AreAppliedInVersionOrder_TheRenderCoalesces_ThePolicyDoesNot_AndTheCaretSurvives()
     {
+        var lines = new List<string>();
+        var previous = WorkbenchDiagnostics.Sink;
+        WorkbenchDiagnostics.Sink = lines.Add;
+        try
+        {
+            SnapshotsRaisedOffThread(lines);
+        }
+        finally
+        {
+            WorkbenchDiagnostics.Sink = previous;
+        }
+    }
+
+    private static void SnapshotsRaisedOffThread(List<string> lines)
+    {
+        var announcer = new ArrangeCheckingAnnouncer();
         Sta.Pump(
-            create: () => ThreadFixtures.Feed(ThreadFixtures.Five().Append(ThreadFixtures.Running(6, 1)).ToList()).Feed,
+            create: () =>
+            {
+                var thread = RunChannelSessionThread.Preloaded(ThreadFixtures.Five().Append(ThreadFixtures.Running(6, 1)).ToList());
+                var feed = new ThreadFeed(thread, announcer, "test");
+                announcer.Feed = feed;
+                return feed;
+            },
             configure: window => { window.Width = 900; window.Height = 600; },
             body: async (window, feed) =>
             {
                 var thread = ReadModel(feed);
-                var announcer = Announcer(feed);
                 feed.FocusItem(5);
                 var header = ThreadFixtures.HeaderToggle(ThreadFixtures.Fold(ThreadFixtures.Container(feed, 5)));
                 Assert.True(header.Focus());
@@ -257,10 +326,27 @@ public sealed class TheThreadAnnouncesAndExposesRealPropertiesTests
                 Assert.All(announcer.Announcements.Where((_, i) => i % 2 == 0), a => Assert.Equal(Urgency.Assertive, a.Urgency));
                 Assert.True(feed.Applies - appliesBefore < 500, $"the render ran {feed.Applies - appliesBefore} times for 500 raises");
 
+                // After the render: at every Announce the feed's arrange was valid — the render pass
+                // ran first, and a focus move the operator made is spoken before the status (DC-077).
+                Assert.Equal(500, announcer.ArrangeValidAtAnnounce.Count);
+                Assert.All(announcer.ArrangeValidAtAnnounce, valid => Assert.True(valid, "announced before the render"));
+                Assert.Equal(500, lines.Count(l => l.Contains("\"evt\":\"thread.announce\"", StringComparison.Ordinal)));
+
                 Assert.Equal(5, feed.SelectedIndex);
                 Assert.Same(header, Keyboard.FocusedElement);
                 Assert.Same(feed.Rows[5], ThreadFixtures.Container(feed, 5).DataContext);
                 Assert.Equal(TurnState.Running, feed.Rows[5].View.State);
+
+                // A version gap: a snapshot five versions ahead of the last applied one is applied
+                // (its net transition announced) and recorded as THR-0003 with (expected, received).
+                var current = thread.Current;
+                var skipped = new ThreadSnapshot(current.Turns, current.Version + 5, true);
+                typeof(ThreadFeed).GetMethod("OnChanged", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.Invoke(feed, [skipped]);
+                await PumpAsync(window);
+                var gap = Assert.Single(lines, l => l.Contains("\"error_code\":\"THR-0003\"", StringComparison.Ordinal));
+                Assert.Contains($"\"expected\":{current.Version + 1}", gap, StringComparison.Ordinal);
+                Assert.Contains($"\"received\":{current.Version + 5}", gap, StringComparison.Ordinal);
+                Assert.False(feed.IsStopped);
 
                 // Dispose between a raise and the pump: Apply runs on nothing.
                 thread.Append(6, ThreadFixtures.Line(9, "claude-code", "late"));
@@ -268,6 +354,30 @@ public sealed class TheThreadAnnouncesAndExposesRealPropertiesTests
                 await PumpAsync(window);
                 Assert.Equal(500, announcer.Announcements.Count);
             });
+    }
+
+    /// <summary>An announcer that records, at each call, whether the feed's arrange was valid — the "after the render" oracle.</summary>
+    private sealed class ArrangeCheckingAnnouncer : IWorkbenchAnnouncer
+    {
+        private readonly List<Announcement> _announcements = [];
+
+        public ThreadFeed? Feed { get; set; }
+
+        public List<bool> ArrangeValidAtAnnounce { get; } = [];
+
+        public IReadOnlyList<Announcement> Announcements => _announcements;
+
+        public string Last => _announcements.Count == 0 ? string.Empty : _announcements[^1].Text;
+
+        public void Announce(string message) => Announce(new Announcement(message, Urgency.Status, AnnouncementKind.Other));
+
+        public void Announce(Announcement announcement)
+        {
+            _announcements.Add(announcement);
+            ArrangeValidAtAnnounce.Add(Feed?.IsArrangeValid ?? false);
+        }
+
+        public void Clear() => _announcements.Clear();
     }
 
     /// <summary><b>C2.</b> A throwing apply logs THR-0001, shows the row outside the scroller, announces once (assertive), and the channel survives for a second subscriber.</summary>
@@ -297,6 +407,8 @@ public sealed class TheThreadAnnouncesAndExposesRealPropertiesTests
 
                     Assert.True(document.Thread.IsStopped);
                     Assert.True(document.StoppedRowVisible);
+                    Assert.Equal("stopped", AutomationProperties.GetItemStatus(document.Thread));
+                    Assert.Equal("stopped", UIElementAutomationPeer.CreatePeerForElement(document.Thread).GetItemStatus());
                     Assert.Contains(lines, l => l.Contains("\"error_code\":\"THR-0001\"", StringComparison.Ordinal));
                     var stopped = Assert.Single(announcer.Announcements);
                     Assert.Equal(ThreadFeed.StoppedSentence, stopped.Text);

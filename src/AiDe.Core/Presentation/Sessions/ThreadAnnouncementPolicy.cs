@@ -149,11 +149,15 @@ public sealed class ThreadAnnouncementPolicy
 
     private static Announcement Accepted(TurnView now, string label)
     {
+        // SC9: the shape, the tier AND the class are spoken at the send — each only when the
+        // decoration line carries it (a row that is absent is not invented as a word).
         var shape = now.Decorations.FirstOrDefault(d => d.Name == "shape")?.Value ?? "message";
         var tier = now.Decorations.FirstOrDefault(d => d.Name == "tier")?.Value;
-        var text = tier is null
-            ? $"Turn {now.DisplayOrdinal} accepted as a {shape}."
-            : $"Turn {now.DisplayOrdinal} accepted as a {shape}, tier {tier}.";
+        var cls = now.Decorations.FirstOrDefault(d => d.Name == "class")?.Value;
+        var text = $"Turn {now.DisplayOrdinal} accepted as a {shape}"
+            + (tier is null ? string.Empty : $", tier {tier}")
+            + (cls is null ? string.Empty : $", class {cls}")
+            + ".";
         return new Announcement(text, Urgency.Status, AnnouncementKind.ItemAdded, now.Ordinal, label);
     }
 

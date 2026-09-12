@@ -52,6 +52,9 @@ public sealed class TheTierIsTheMechanicalRulesProjectionTests
         Assert.Equal(3, ComposerCompiler.EffectiveFanOut("T2", 3));
         Assert.Equal(0, ComposerCompiler.EffectiveFanOut("T2", 0));
         Assert.Equal(0, ComposerCompiler.EffectiveFanOut("T0", 3));
+
+        // A negative ceiling is carried, never clamped: the contract refuses it at the send.
+        Assert.Equal(-1, ComposerCompiler.EffectiveFanOut("T2", -1));
     }
 
     /// <summary>Ruling 72 condition (1): the absent cap reads as a state; the numerals int.MaxValue / long.MaxValue never appear.</summary>

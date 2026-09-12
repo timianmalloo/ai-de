@@ -81,7 +81,8 @@ internal static class ThreadFixtures
             var ordinal = i + 1;
             turns.Add(ordinal == 17
                 ? Turn(17, template.SourceText, template.Decorations, TurnState.Failed,
-                    new OutcomeView("claude-code", 1, 0, null, TimeSpan.FromSeconds(37), 12), null, Lines(17, 12))
+                    new OutcomeView("claude-code", 1, 0, null, TimeSpan.FromSeconds(37), 12), null,
+                    [.. Lines(17, 11), Line(12, "claude-code", "b17 line 12: exit 1 — the lease refused docs/audit/", "stderr")])
                 : Turn(ordinal, template.SourceText, template.Decorations, template.State, template.Outcome, template.Reply, template.Events, at: T0.AddMinutes(7 * i)));
         }
 

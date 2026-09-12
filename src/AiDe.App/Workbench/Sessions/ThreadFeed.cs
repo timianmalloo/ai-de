@@ -400,11 +400,9 @@ public sealed class ThreadFeed : FeedList, IDisposable
 
         if (kind is TurnActionKind.SendAgain or TurnActionKind.UseAsNextDraft)
         {
-            RaiseLeave(FocusLeave.ToEditor);
+            Act(new FeedKeyDecision.Leave(FocusLeave.ToEditor));
         }
     }
-
-    private void RaiseLeave(FocusLeave to) => Act(new FeedKeyDecision.Leave(to));
 
     public void Dispose()
     {
@@ -421,7 +419,18 @@ public sealed class ThreadFeed : FeedList, IDisposable
     // ── the template (DESIGN.md §The turn; DS-1 §The control's shape) ──
 
     private const string DisclosureStyleKey = "FeedDisclosure";
-    private static readonly FontFamily Mono = new("Cascadia Mono, Consolas, monospace");
+    /// <summary>The one monospace stack the thread, the split, the document and the composer share.</summary>
+    internal static readonly FontFamily Mono = new("Cascadia Mono, Consolas, monospace");
+
+    // One frozen instance for every ring: the storyboard animates a clone (a frozen Freezable is
+    // cloned on animation), so sharing is safe — and Freeze() says so rather than relying on it.
+    private static readonly RotateTransform RingTransform = Frozen(new RotateTransform(0));
+
+    private static RotateTransform Frozen(RotateTransform transform)
+    {
+        transform.Freeze();
+        return transform;
+    }
 
     private static double AdvanceOfZero(FontFamily family)
     {
@@ -442,12 +451,21 @@ public sealed class ThreadFeed : FeedList, IDisposable
     private static FrameworkElementFactory F(Type type, string? name = null) =>
         name is null ? new FrameworkElementFactory(type) : new FrameworkElementFactory(type, name);
 
-    private static FrameworkElementFactory Text(string bindingPath, double size = 13, string brush = "TextBrush", bool mono = false, bool wrap = false)
+    /// <param name="brush">
+    /// The ink, set on the template — or null when a Style owns it: a value the template sets
+    /// outranks a Style trigger (DP precedence: template 4, style trigger 6), so an element whose
+    /// ink changes with its state must leave it to the style's base setter and triggers.
+    /// </param>
+    private static FrameworkElementFactory Text(string bindingPath, double size = 13, string? brush = "TextBrush", bool mono = false, bool wrap = false)
     {
         var text = F(typeof(ThreadText));
         text.SetBinding(TextBlock.TextProperty, new Binding(bindingPath));
         text.SetValue(TextBlock.FontSizeProperty, size);
-        text.SetResourceReference(TextBlock.ForegroundProperty, brush);
+        if (brush is not null)
+        {
+            text.SetResourceReference(TextBlock.ForegroundProperty, brush);
+        }
+
         text.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
         if (mono)
         {
@@ -668,7 +686,7 @@ public sealed class ThreadFeed : FeedList, IDisposable
         ring.SetValue(Shape.StrokeThicknessProperty, 2.0);
         ring.SetValue(Shape.StrokeDashArrayProperty, new DoubleCollection([3, 2]));
         ring.SetValue(UIElement.RenderTransformOriginProperty, new Point(0.5, 0.5));
-        ring.SetValue(UIElement.RenderTransformProperty, new RotateTransform(0));
+        ring.SetValue(UIElement.RenderTransformProperty, RingTransform);
         ring.SetValue(FrameworkElement.StyleProperty, RingStyle());
         glyph.AppendChild(ring);
 
@@ -679,7 +697,7 @@ public sealed class ThreadFeed : FeedList, IDisposable
         glyph.AppendChild(mark);
         line.AppendChild(glyph);
 
-        var word = Text(nameof(TurnItem.OutcomeWord), 12, "TextBrush");
+        var word = Text(nameof(TurnItem.OutcomeWord), 12, brush: null);
         word.SetValue(TextBlock.FontWeightProperty, FontWeights.SemiBold);
         word.SetValue(FrameworkElement.StyleProperty, OutcomeWordStyle());
         word.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, 10, 0));
@@ -747,8 +765,9 @@ public sealed class ThreadFeed : FeedList, IDisposable
         lane.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, 8, 0));
         row.AppendChild(lane);
 
-        var message = Text(nameof(EventLine.Text), 12, "TextBrush", wrap: true);
+        var message = Text(nameof(EventLine.Text), 12, brush: null, wrap: true);
         var style = new Style(typeof(ThreadText));
+        style.Setters.Add(new Setter(TextBlock.ForegroundProperty, new DynamicResourceExtension("TextBrush")));
         var stderr = new DataTrigger { Binding = new Binding(nameof(EventLine.Kind)), Value = "stderr" };
         stderr.Setters.Add(new Setter(TextBlock.ForegroundProperty, new DynamicResourceExtension("DangerBrush")));
         style.Triggers.Add(stderr);
@@ -825,8 +844,12 @@ public sealed class ThreadFeed : FeedList, IDisposable
         return expander;
     }
 
-    /// <summary>The keyed <c>FeedDisclosure</c> style: an explicit template whose header toggle draws the 2 px focus ring (DS-1 P8).</summary>
-    private static Style DisclosureStyle()
+    /// <summary>
+    /// The keyed <c>FeedDisclosure</c> style: an explicit template whose header toggle draws the
+    /// 2 px focus ring (DS-1 P8). Internal so the composer's two disclosures wear the same ring
+    /// rather than the platform's dotted adorner (DESIGN.md:124 — one focus ring on the page).
+    /// </summary>
+    internal static Style DisclosureStyle()
     {
         var root = F(typeof(StackPanel));
 
@@ -904,7 +927,10 @@ public sealed class ThreadFeed : FeedList, IDisposable
 
     private static Style OutcomeWordStyle()
     {
+        // The base ink is the style's setter, the states its triggers — never on the template
+        // (the template's value would outrank every trigger and the five colours would never paint).
         var style = new Style(typeof(ThreadText));
+        style.Setters.Add(new Setter(TextBlock.ForegroundProperty, new DynamicResourceExtension("TextBrush")));
         void Colour(TurnState state, string brush)
         {
             var trigger = new DataTrigger { Binding = new Binding(nameof(TurnItem.State)), Value = state };
@@ -916,7 +942,6 @@ public sealed class ThreadFeed : FeedList, IDisposable
         Colour(TurnState.Answered, "VerifiedBrush");
         Colour(TurnState.Failed, "DangerBrush");
         Colour(TurnState.Waiting, "InferredBrush");
-        Colour(TurnState.Running, "TextBrush");
         Colour(TurnState.Stopped, "TextMutedBrush");
         Colour(TurnState.NotRecorded, "TextMutedBrush");
         return style;
@@ -996,17 +1021,9 @@ public sealed class ThreadFeed : FeedList, IDisposable
     /// <summary>The reduced-motion seam as a bindable property: read once per bind through <see cref="ReducedMotion"/>.</summary>
     public bool IsMotionReduced => ReducedMotion();
 
-    private static Binding Visible(string path) => new(path) { Converter = BooleanToVisibility.Instance };
+    private static readonly BooleanToVisibilityConverter BooleanToVisibility = new();
 
-    private sealed class BooleanToVisibility : IValueConverter
-    {
-        public static readonly BooleanToVisibility Instance = new();
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
-            value is true ? Visibility.Visible : Visibility.Collapsed;
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotSupportedException();
-    }
+    private static Binding Visible(string path) => new(path) { Converter = BooleanToVisibility };
 
     private sealed class ActionWordConverter : IValueConverter
     {

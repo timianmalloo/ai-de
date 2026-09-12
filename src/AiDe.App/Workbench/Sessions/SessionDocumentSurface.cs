@@ -106,10 +106,12 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         _feed.TurnActionRequested += OnTurnAction;
         _feed.Stopped += ShowStoppedRow;
 
-        Composer = new ComposerSurface($"composer:{model.SessionId}", $"{model.Title} — composer");
+        // One announcer for the page (SC9): the composer's refusals and the thread's outcomes share it.
+        Composer = new ComposerSurface($"composer:{model.SessionId}", $"{model.Title} — composer", _announcer);
         Composer.Gate.Sent += Launch;
         Composer.PageReady += PlaceFocusInTheEditor;
         Composer.FocusLeftBackward += OnComposerLeftBackward;
+        Composer.TurnRequested += ordinal => _feed.FocusTurn(ordinal);
 
         _outsideText = BuildOutsideText();
         _stoppedRow = BuildStoppedRow();
@@ -314,10 +316,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         return false;
     }
 
-    private static DependencyObject? ParentOf(DependencyObject node) =>
-        node is Visual or System.Windows.Media.Media3D.Visual3D
-            ? VisualTreeHelper.GetParent(node) ?? LogicalTreeHelper.GetParent(node)
-            : LogicalTreeHelper.GetParent(node);
+    private static DependencyObject? ParentOf(DependencyObject node) => FeedList.ParentOf(node);
 
     private void OnPreviewMouseDown(object sender, MouseButtonEventArgs e) => _operatorActed = true;
 
@@ -424,11 +423,14 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         LastLaunch = RunOneAsync(request, relay, ordinal, cancel);
     }
 
-    private async Task RunOneAsync(GovernedRunRequest request, RunEventRelay relay, int ordinal, CancellationTokenSource cancel)
-    {
-        var lane = request.EngineId;
-
-        void Sink(ObservedRunEvent observed)
+    /// <summary>
+    /// The run's sink — what <see cref="GovernedRunHost.RunAsync"/> is handed on a send: every
+    /// observed event reaches the lane (the relay) and the turn's fold (the read model) from ONE
+    /// call, so the two can never disagree. Internal so a test can hand the product's own sink to a
+    /// hand-wired lane and prove the relay → fold leg (DC-135: construct what the product constructs).
+    /// </summary>
+    internal Action<ObservedRunEvent> RunSink(string lane, RunEventRelay relay, int ordinal) =>
+        observed =>
         {
             relay.Publish(observed);
 
@@ -440,11 +442,15 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
                 ordinal,
                 new EventLine(evt.Ts, lane, evt.Kind, ConsoleStreamModel.TextOf(evt), IsCompileEvent(evt) ? "compile" : "run"),
                 cost);
-        }
+        };
+
+    private async Task RunOneAsync(GovernedRunRequest request, RunEventRelay relay, int ordinal, CancellationTokenSource cancel)
+    {
+        var sink = RunSink(request.EngineId, relay, ordinal);
 
         try
         {
-            LastRunResult = await GovernedRunHost.RunAsync(request, cancel.Token, Sink).ConfigureAwait(false);
+            LastRunResult = await GovernedRunHost.RunAsync(request, cancel.Token, sink).ConfigureAwait(false);
             _thread.Conclude(ordinal, request.Goal is null ? TurnState.Answered : TurnState.Completed, DateTimeOffset.Now);
         }
         catch (OperationCanceledException) when (cancel.IsCancellationRequested && !_closing.IsCancellationRequested)
@@ -668,9 +674,11 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     /// <summary>The belt (DS-1 Q14): the composer never takes more than its share, so the thread's row is guaranteed by arithmetic.</summary>
     protected override Size MeasureOverride(Size constraint)
     {
+        // The belt (DS-1 Q14): the composer's share of the document — a constraint it composes
+        // within, never a clamp that cuts its send row (the composer's minimum wins over the belt).
         if (!double.IsPositiveInfinity(constraint.Height))
         {
-            Composer.MaxHeight = Math.Floor(ComposerShare * constraint.Height);
+            Composer.BeltHeight = Math.Max(1, Math.Floor(ComposerShare * constraint.Height));
         }
 
         return base.MeasureOverride(constraint);
@@ -743,6 +751,16 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
             {
                 jumpPopup.IsOpen = false;
                 _feed.FocusTurn(row.Ordinal);
+                e.Handled = true;
+            }
+
+            // The popup is its own HWND, outside the document's tree: Escape is handled HERE, not
+            // in the document's PreviewKeyDown (which never sees the popup's keys). Focus returns
+            // to the button — the exit is the entry, reversed (2.1.1).
+            if (e.Key == Key.Escape)
+            {
+                jumpPopup.IsOpen = false;
+                jump.Focus();
                 e.Handled = true;
             }
         };
@@ -838,7 +856,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
 
         var ordinal = new FrameworkElementFactory(typeof(TextBlock));
         ordinal.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding(nameof(JumpRow.DisplayOrdinal)));
-        ordinal.SetValue(TextBlock.FontFamilyProperty, new FontFamily("Cascadia Mono, Consolas, monospace"));
+        ordinal.SetValue(TextBlock.FontFamilyProperty, ThreadFeed.Mono);
         ordinal.SetValue(FrameworkElement.WidthProperty, 44.0);
         ordinal.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
         ordinal.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
@@ -883,7 +901,8 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
             VerticalAlignment = VerticalAlignment.Top,
         };
         text.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
-        AutomationProperties.SetName(text, "Conversation");
+        // No Name override: the sentence IS the name (4.1.2) — an AT landing here hears the empty
+        // state, not a label that duplicates the feed's.
         AutomationProperties.SetHelpText(text, "The first action is the editor below.");
         return text;
     }

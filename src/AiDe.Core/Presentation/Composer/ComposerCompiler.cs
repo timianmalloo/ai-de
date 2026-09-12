@@ -130,8 +130,13 @@ public static class ComposerCompiler
         _ => throw new ArgumentOutOfRangeException(nameof(tier), tier, "the tier is one of T0, T1, T2"),
     };
 
-    /// <summary>Effective fan-out = <c>min(cap(tier), ceiling)</c> (Ruling 64) — a projection, never stored, never raised from a prompt.</summary>
-    public static int EffectiveFanOut(string tier, int ceiling) => Math.Min(CapOf(tier), Math.Max(0, ceiling));
+    /// <summary>
+    /// Effective fan-out = <c>min(cap(tier), ceiling)</c> (Ruling 64) — a projection, never stored,
+    /// never raised from a prompt. A negative ceiling is NOT clamped to 0: it is a broken session
+    /// setting, and the contract refuses the block at the send naming <c>fan_out_cap</c> — a silent
+    /// 0 would be a plausible wrong number (IO7).
+    /// </summary>
+    public static int EffectiveFanOut(string tier, int ceiling) => Math.Min(CapOf(tier), ceiling);
 
     /// <summary>
     /// The composer's settings line (<c>DESIGN.md</c> copy): <i>fan-out cap 2 (ceiling 3) · budget:

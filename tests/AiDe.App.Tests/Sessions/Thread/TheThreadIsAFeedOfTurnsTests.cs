@@ -358,7 +358,11 @@ public sealed class TheThreadIsAFeedOfTurnsTests
             });
     }
 
-    /// <summary><b>K9.</b> The jump list is a view of Turns; type-ahead on the display ordinal; Enter focuses the turn's CONTAINER; the button is enabled at 0 turns and says so.</summary>
+    /// <summary>
+    /// <b>K9.</b> The jump list is a view of Turns; type-ahead on the display ordinal (typing
+    /// <c>17</c> never selects b17 — the negative row); Escape closes it and returns focus to the
+    /// button; Enter focuses the turn's CONTAINER; the button is enabled at 0 turns and says so.
+    /// </summary>
     [Fact]
     public void TheJumpList_TypesAheadOnTheDisplayOrdinal_EnterFocusesTheContainer()
     {
@@ -392,13 +396,30 @@ public sealed class TheThreadIsAFeedOfTurnsTests
                 document.UpdateLayout();
                 Assert.Equal(39, document.JumpRows.SelectedIndex);
 
-                // Type-ahead on the DISPLAY ordinal: "b17" selects b17 (typing "17" would select b1).
+                // The negative row: typing "17" (no prefix) is not a display ordinal — b17 is NOT selected.
                 var list = document.JumpRows;
-                foreach (var ch in "b17")
+                void Type(string text)
                 {
-                    list.RaiseEvent(new TextCompositionEventArgs(InputManager.Current.PrimaryKeyboardDevice, new TextComposition(InputManager.Current, list, ch.ToString())) { RoutedEvent = UIElement.TextInputEvent });
+                    foreach (var ch in text)
+                    {
+                        list.RaiseEvent(new TextCompositionEventArgs(InputManager.Current.PrimaryKeyboardDevice, new TextComposition(InputManager.Current, list, ch.ToString())) { RoutedEvent = UIElement.TextInputEvent });
+                    }
                 }
 
+                Type("17");
+                Assert.NotEqual(16, list.SelectedIndex);
+
+                // Escape closes the list and returns focus to the button — the exit is the entry, reversed.
+                var jumpButton = ThreadFixtures.Visuals<Button>(document).Single(b => AutomationProperties.GetName(b).EndsWith("jump to a turn", StringComparison.Ordinal));
+                list.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(list)!, 0, Key.Escape) { RoutedEvent = UIElement.PreviewKeyDownEvent });
+                Assert.False(document.JumpList.IsOpen);
+                Assert.Same(jumpButton, Keyboard.FocusedElement);
+
+                document.JumpList.IsOpen = true;
+                document.UpdateLayout();
+
+                // Type-ahead on the DISPLAY ordinal: "b17" selects b17.
+                Type("b17");
                 Assert.Equal(16, list.SelectedIndex);
 
                 // Enter focuses the turn's container, never an action.
@@ -413,6 +434,59 @@ public sealed class TheThreadIsAFeedOfTurnsTests
                 var empty = new SessionDocumentSurface(new SessionDocumentViewModel("20260912T140000Z-e", "e", Path.GetTempPath(), ["console"]), null, new RecordingAnnouncer());
                 Assert.Equal("no turns yet", empty.TurnCountCaption);
                 empty.Dispose();
+                return Task.CompletedTask;
+            });
+    }
+
+    /// <summary>
+    /// <b>K9's twin (SC8; Ruling 77).</b> The refused gesture's reason names the turn as a LINK:
+    /// activating <i>b1, running</i> focuses b1's container — never an action on it — and the
+    /// refusal was spoken assertively through the document's one announcer.
+    /// </summary>
+    [Fact]
+    public void TheRunningLinkInTheRefusal_FocusesTheContainer_NeverAnAction()
+    {
+        Sta.Pump(
+            create: () =>
+            {
+                var document = new SessionDocumentSurface(new SessionDocumentViewModel("20260912T140000Z-link", "link", Path.GetTempPath(), ["console"]), null, new RecordingAnnouncer());
+                var running = ThreadFixtures.Running(1, 3);
+                var o = document.ReadModel.Accept(running.SourceText, running.Decorations, running.SentBytes, running.At);
+                foreach (var line in running.Events)
+                {
+                    document.ReadModel.Append(o, line);
+                }
+
+                return document;
+            },
+            configure: window => { window.Width = 1200; window.Height = 800; },
+            body: (window, document) =>
+            {
+                document.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, () => { });
+                var announcer = (RecordingAnnouncer)typeof(SessionDocumentSurface).GetField("_announcer", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.GetValue(document)!;
+                var before = announcer.Announcements.Count;
+
+                Assert.Null(document.Composer.Send());
+                Assert.Equal("b1 is running; the next turn waits for it.", document.Composer.Status);
+
+                // Spoken, assertively, through the document's announcer — never a silent status line.
+                var spoken = announcer.Announcements[^1];
+                Assert.Equal(before + 1, announcer.Announcements.Count);
+                Assert.Equal("b1 is running; the next turn waits for it.", spoken.Text);
+                Assert.Equal(Urgency.Assertive, spoken.Urgency);
+
+                // The ordinal is a link named for the turn; activating it lands on the CONTAINER.
+                var status = ThreadFixtures.Visuals<TextBlock>(document.Composer).Single(t => AutomationProperties.GetName(t) == "Send status");
+                var link = Assert.Single(status.Inlines.OfType<System.Windows.Documents.Hyperlink>());
+                Assert.Equal("b1, running", AutomationProperties.GetName(link));
+                link.RaiseEvent(new RoutedEventArgs(System.Windows.Documents.Hyperlink.ClickEvent));
+                document.UpdateLayout();
+
+                var focused = Keyboard.FocusedElement as ListBoxItem;
+                Assert.NotNull(focused);
+                Assert.Same(document.Thread.Rows[0], focused!.DataContext);
+                Assert.Equal(0, document.Thread.SelectedIndex);
+                Assert.DoesNotContain(ThreadFixtures.Visuals<Button>(focused), b => b.IsKeyboardFocused);
                 return Task.CompletedTask;
             });
     }

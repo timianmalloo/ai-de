@@ -88,11 +88,14 @@ public sealed class TheWriterKeepsItsRoomTests
                 // NON-VACUITY: the compiled text really is the ~30 lines the operator had, and the
                 // box was laid out at a real height — a 0px reader would make "writer >= reader" free.
                 Assert.True(surface.CompiledView.Count(c => c == '\n') >= 28, "the compiled view is not the ~30 lines the operator had");
-                // At 485 px with a four-line refusal the chrome leaves the compiled prompt almost
-                // nothing — the editor's floor wins (DC-137); the reader still has a real box when
-                // the status does not wrap.
-                Assert.True(statusWraps || compiled.ActualHeight >= 24, $"the compiled box was laid out at {compiled.ActualHeight:F0}px");
+                // THE READER GETS ITS SHARE: the compiled prompt the operator opened is never cut
+                // below its three-line floor, whatever the chrome wraps to — at 485 px with a
+                // four-line refusal the composer's minimum simply exceeds the constraint (the
+                // document's belt yields; here the fixed arrange records the overflow).
+                // Red observed: `the compiled box was laid out at 2px` (12 px provenance, no floor).
+                Assert.True(compiled.ActualHeight >= ComposerSurface.CompiledPromptMinHeight - 0.5, $"the compiled box was laid out at {compiled.ActualHeight:F0}px; its floor is {ComposerSurface.CompiledPromptMinHeight}px");
                 Assert.Equal(height, surface.ActualHeight, 0.5);
+                Assert.True(surface.MinimumHeight >= ComposerSurface.EditorFloor + ComposerSurface.CompiledPromptMinHeight, $"the composer's minimum reads {surface.MinimumHeight:F0}px");
 
                 // THE FLOOR AND THE CEILING (DESIGN.md:1092, :1109; DC-137): the editor host keeps
                 // its 130 px whatever the chrome wraps to, the compiled prompt never exceeds 200 px,

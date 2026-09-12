@@ -59,7 +59,7 @@ public sealed class TheThreadAnnouncesByTransitionTests
         var running = history.Append(Turn(6, TurnState.Running)).ToArray();
         var accepted = policy.Next(Snapshot(1, true, running));
         Assert.Single(accepted);
-        Assert.Equal("Turn b6 accepted as a goal block, tier T1.", accepted[0].Text);
+        Assert.Equal("Turn b6 accepted as a goal block, tier T1, class free-form.", accepted[0].Text);
         Assert.Equal(Urgency.Status, accepted[0].Urgency);
         Assert.Equal(AnnouncementKind.ItemAdded, accepted[0].Kind);
 

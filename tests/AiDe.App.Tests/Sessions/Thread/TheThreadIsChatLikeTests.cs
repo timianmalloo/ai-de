@@ -66,12 +66,16 @@ public sealed class TheThreadIsChatLikeTests
     /// <summary>
     /// <b>L1.</b> <b>Red observed</b>: with <c>ComposerSurface.EditorFloor</c> unset (no MinHeight
     /// on the host) the editor measured 0 px at every count (spike Q14); with the document's belt
-    /// removed the thread row measured 0 px at 40 turns (the composer took the whole column).
+    /// removed the thread row measured 0 px at 40 turns (the composer took the whole column); at
+    /// 600 px with the belt as a <c>MaxHeight</c> clamp the send row was arranged 94 px below the
+    /// composer's bottom edge (the WPF lens's arithmetic, reproduced) — the belt now yields to the
+    /// composer's minimum and the send row is the last thing inside it.
     /// </summary>
     [Theory]
-    [InlineData(1440)]
-    [InlineData(1024)]
-    public void TheEditorsTopEdgeIsEqualAt1_5_40Turns_AndNeitherRegionStarves(double width)
+    [InlineData(1440, 900 - 28 - 40)]
+    [InlineData(1024, 900 - 28 - 40)]
+    [InlineData(1440, 600)]
+    public void TheEditorsTopEdgeIsEqualAt1_5_40Turns_AndNeitherRegionStarves(double width, double height)
     {
         Sta.Run(() =>
         {
@@ -82,18 +86,26 @@ public sealed class TheThreadIsChatLikeTests
                 using var document = Document(turns);
                 document.Composer.CompiledPromptOpen = true;   // the 30-line compiled prompt row (Q14)
 
-                var (top, editor, thread, compiled) = Layout(document, width);
+                var (top, editor, thread, compiled) = Layout(document, width, height);
                 tops.Add(top);
 
-                Assert.True(editor >= ComposerSurface.EditorFloor - 0.5, $"{count} turns at {width}: the editor host is {editor:F1} px; the floor is {ComposerSurface.EditorFloor}");
+                Assert.True(editor >= ComposerSurface.EditorFloor - 0.5, $"{count} turns at {width}×{height}: the editor host is {editor:F1} px; the floor is {ComposerSurface.EditorFloor}");
                 Assert.True(compiled <= ComposerSurface.CompiledPromptMaxHeight + 0.5, $"{count} turns: the compiled prompt is {compiled:F1} px");
 
                 // ≥ 3 turns half-visible at rest: a half-turn is a constant derived from the template's
                 // line heights (words 19.5 + decoration 24 + outcome 24 + margins 20 ≈ 88 px / 2) —
                 // never read back from the control.
                 const double HalfTurn = 44;
-                Assert.True(thread >= 3 * HalfTurn, $"{count} turns at {width}: the thread row is {thread:F1} px; three half-turns need {3 * HalfTurn}");
-                Assert.True(document.Composer.ActualHeight <= Math.Floor(SessionDocumentSurface.ComposerShare * Height) + 0.5, $"{count} turns: the composer took {document.Composer.ActualHeight:F1} px; the belt is {SessionDocumentSurface.ComposerShare:P0}");
+                Assert.True(thread >= 3 * HalfTurn, $"{count} turns at {width}×{height}: the thread row is {thread:F1} px; three half-turns need {3 * HalfTurn}");
+
+                // The belt, or the composer's own minimum when the belt is smaller (600 px) — never a clip.
+                var belt = Math.Floor(SessionDocumentSurface.ComposerShare * height);
+                var composer = document.Composer;
+                Assert.True(composer.ActualHeight <= Math.Max(belt, composer.MinimumHeight) + 0.5, $"{count} turns at {height}: the composer took {composer.ActualHeight:F1} px; the belt is {belt}, its minimum {composer.MinimumHeight:F1}");
+                var send = ThreadFixtures.Visuals<Button>(composer).Single(b => b.Content is "Send");
+                var sendBottom = send.TransformToAncestor(composer).Transform(new Point(0, send.ActualHeight)).Y;
+                Assert.True(sendBottom <= composer.ActualHeight + 0.5, $"{count} turns at {height}: the send row's bottom is at {sendBottom:F1} px inside a {composer.ActualHeight:F1} px composer — clipped");
+                Assert.True(composer.ActualHeight + top <= height + 0.5, $"{count} turns at {height}: the composer ends at {composer.ActualHeight + top:F1} px in a {height} px document");
             }
 
             Assert.Equal(tops[0], tops[1], 0.5);
@@ -116,6 +128,7 @@ public sealed class TheThreadIsChatLikeTests
             try
             {
                 var realized = new Dictionary<int, int>();
+                var realizedAfterApply = new Dictionary<int, int>();
                 var p95 = new Dictionary<int, double>();
 
                 foreach (var count in new[] { 40, 400 })
@@ -123,7 +136,7 @@ public sealed class TheThreadIsChatLikeTests
                     var turns = count == 40
                         ? ThreadFixtures.Forty()
                         : Enumerable.Range(0, 10).SelectMany(r => ThreadFixtures.Forty().Select(t => ThreadFixtures.Turn(t.Ordinal + 40 * r, t.SourceText, t.Decorations, t.State, t.Outcome, t.Reply, t.Events))).ToList();
-                    var (feed, _, _) = ThreadFixtures.Feed(turns);
+                    var (feed, thread, _) = ThreadFixtures.Feed(turns);
                     var window = new Window { Width = Width, Height = Height, Left = -10000, Top = -10000, ShowInTaskbar = false, ShowActivated = false, Content = feed };
                     window.Show();
                     try
@@ -131,6 +144,13 @@ public sealed class TheThreadIsChatLikeTests
                         feed.ScrollIntoView(feed.Items[^1]);
                         window.UpdateLayout();
                         realized[count] = feed.RealizedContainers;
+
+                        // One applied event after the scroll: the record it writes and the tree it
+                        // leaves are read at the same instant (E12's falsifier: record ≠ tree).
+                        thread.Append(turns[^1].Ordinal, ThreadFixtures.Line(1, "claude-code", "late"));
+                        window.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, () => { });
+                        window.UpdateLayout();
+                        realizedAfterApply[count] = feed.RealizedContainers;
 
                         var samples = new List<double>();
                         for (var i = 0; i < 12; i++)
@@ -155,13 +175,18 @@ public sealed class TheThreadIsChatLikeTests
                 Assert.True(Math.Abs(realized[400] - realized[40]) <= 2, $"realized 40:{realized[40]} 400:{realized[400]} — the count tracks the item count, not the viewport");
 
                 // The p95 ratio is calibrated by Q15: the wrong shape measured 12.9× on the first layout
-                // and ~4,000× on re-layout; the right shape 1.2–1.7×. A ratio, never an absolute (DC-107).
-                Assert.True(p95[400] / Math.Max(p95[40], 0.01) < 5, $"p95 layout 40:{p95[40]:F2} ms 400:{p95[400]:F2} ms — ratio {p95[400] / Math.Max(p95[40], 0.01):F1}");
+                // and ~4,000× on re-layout; the right shape 1.2–1.7×. A ratio, never an absolute
+                // (DC-107) — and the bound sits in the calibrated gap (< 50, floor 0.1 ms) so a loaded
+                // machine's 1.2–1.7× never trips it while the wrong shape's thousands always do
+                // (the Test Architect's ruling on this row).
+                Assert.True(p95[400] / Math.Max(p95[40], 0.1) < 50, $"p95 layout 40:{p95[40]:F2} ms 400:{p95[400]:F2} ms — ratio {p95[400] / Math.Max(p95[40], 0.1):F1}");
 
-                // The record equals the tree (E12): the last thread.layout for the 400 run says what the tree said.
+                // The record equals the tree (E12): the thread.layout the apply wrote says exactly what
+                // the tree held when it was written — an equation, not a bound.
                 var record = lines.Where(l => l.Contains("\"evt\":\"thread.layout\"", StringComparison.Ordinal) && l.Contains("\"turns\":400", StringComparison.Ordinal)).Last();
                 using var json = JsonDocument.Parse(record);
-                Assert.True(json.RootElement.GetProperty("realized").GetInt32() < 400);
+                Assert.Equal(realizedAfterApply[400], json.RootElement.GetProperty("realized").GetInt32());
+                Assert.True(realizedAfterApply[400] < 400, $"after the apply, 400 turns realized {realizedAfterApply[400]} containers");
             }
             finally
             {
@@ -287,6 +312,27 @@ public sealed class TheThreadIsChatLikeTests
                 var words = ThreadFixtures.Visuals<ThreadText>(container).First(t => t.Text.StartsWith("Refactor the layout", StringComparison.Ordinal));
                 Assert.Equal(ThemeProbe.Token(theme, "TextBrush"), ThemeProbe.Ink(words));
                 Assert.Equal(feed.MeasureWidth, words.MaxWidth, 0.5);
+
+                // THE OUTCOME WORD'S INK IS THE STATE'S (the WPF lens's finding: a Foreground the
+                // template set outranked every style trigger, so "failed" painted in TextBrush).
+                // Red observed: `Expected 0xFFE5484D (DangerBrush) Actual 0xFFE6E6E6 (TextBrush)`.
+                var completedWord = ThreadFixtures.Visuals<ThreadText>(container).Single(t => t.Text == "completed");
+                Assert.Equal(ThemeProbe.Token(theme, "VerifiedBrush"), ThemeProbe.Ink(completedWord));
+
+                feed.FocusItem(16);   // b17, failed
+                feed.Rows[16].IsFoldOpen = true;
+                feed.UpdateLayout();
+                var failed = ThreadFixtures.Container(feed, 16);
+                var failedWord = ThreadFixtures.Visuals<ThreadText>(failed).Single(t => t.Text == "lane exited 1");
+                Assert.Equal(ThemeProbe.Token(theme, "DangerBrush"), ThemeProbe.Ink(failedWord));
+                var stderr = ThreadFixtures.Visuals<ThreadText>(failed).Single(t => t.Text.StartsWith("b17 line 12: exit 1", StringComparison.Ordinal));
+                Assert.Equal(ThemeProbe.Token(theme, "DangerBrush"), ThemeProbe.Ink(stderr));
+                var stdout = ThreadFixtures.Visuals<ThreadText>(failed).First(t => t.Text.StartsWith("b17 line 11", StringComparison.Ordinal));
+                Assert.Equal(ThemeProbe.Token(theme, "TextBrush"), ThemeProbe.Ink(stdout));
+                feed.Rows[16].IsFoldOpen = false;
+                feed.FocusItem(1);
+                feed.UpdateLayout();
+                container = ThreadFixtures.Container(feed, 1);
 
                 var expected = 96 * new FormattedText("0", CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
                     new Typeface(feed.FontFamily, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal), 13, Brushes.Black, 1.0).WidthIncludingTrailingWhitespace;

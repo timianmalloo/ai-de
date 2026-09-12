@@ -158,7 +158,7 @@ public sealed class ConsoleSurface : FeedList
         text.SetBinding(TextBlock.TextProperty, new Binding(nameof(ConsoleSplitRow.TurnHeading.Text)));
         text.SetValue(TextBlock.FontSizeProperty, 12.0);
         text.SetValue(TextBlock.FontWeightProperty, FontWeights.SemiBold);
-        text.SetValue(TextBlock.FontFamilyProperty, new System.Windows.Media.FontFamily("Cascadia Mono, Consolas, monospace"));
+        text.SetValue(TextBlock.FontFamilyProperty, ThreadFeed.Mono);
         text.SetResourceReference(TextBlock.ForegroundProperty, "AccentBrush");
         text.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 10, 0, 2));
         text.SetValue(FrameworkElement.MinHeightProperty, 24.0);

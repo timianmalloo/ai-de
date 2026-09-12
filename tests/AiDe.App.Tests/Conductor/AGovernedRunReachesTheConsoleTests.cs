@@ -145,8 +145,13 @@ public sealed class AGovernedRunReachesTheConsoleTests
                     var seams = new LeaseMonitor(new Lease(["src/**"]), root);
                     var reported = new List<string>();
 
+                    // The drain is handed the DOCUMENT'S sink — the one RunOneAsync hands RunAsync —
+                    // so the relay → fold leg is the product's, not a hand-wired copy of it.
+                    var ordinal = document.ReadModel.Accept("wired by hand", [], "b", DateTimeOffset.Now);
+                    var sink = document.RunSink("claude-code", relay, ordinal);
+
                     var drain = GovernedRunHost.DrainAsync(
-                        source.Queue, prompt.Task, seams, reported.Add, relay.Publish, CancellationToken.None);
+                        source.Queue, prompt.Task, seams, reported.Add, sink, CancellationToken.None);
 
                     source.Say("reading the payments aggregate");
                     source.Say("thinking");
@@ -181,6 +186,21 @@ public sealed class AGovernedRunReachesTheConsoleTests
                     // wired by hand here reaches the model, not the fold.
                     Assert.Equal(Frames, document.Model.Console.Rows.Count);
                     Assert.All(document.Model.Console.Rows, row => Assert.Equal("claude-code", row.LaneName));
+
+                    // THE FOLD HOLDS THE SAME EVENTS (Ruling 74 condition 1): the turn's lines are the
+                    // frames, in order, with the console model's text — and the rendered fold shows
+                    // its last four. Red observed with `relay.Publish` in the sink's place: `Expected 5 Actual 0`.
+                    var turn = document.ReadModel.Current.Turns.Single(t => t.Ordinal == ordinal);
+                    Assert.Equal(Frames, turn.Events.Count);
+                    Assert.Equal(document.Model.Console.Rows.Select(r => r.Text).ToList(), turn.Events.Select(e => e.Text).ToList());
+                    Assert.All(turn.Events, e => Assert.Equal("claude-code", e.Lane));
+
+                    await document.Dispatcher.InvokeAsync(() => { }, System.Windows.Threading.DispatcherPriority.Background);
+                    document.UpdateLayout();
+                    var row = document.Thread.Rows.Single(r => r.Ordinal == ordinal);
+                    Assert.Equal(Frames, row.View.Events.Count);
+                    Assert.Equal(AiDe.App.Workbench.Sessions.TurnItem.FoldLines, row.FoldedEvents.Count);
+                    Assert.Equal(turn.Events[^1].Text, row.FoldedEvents[^1].Text);
                 });
         }
         finally

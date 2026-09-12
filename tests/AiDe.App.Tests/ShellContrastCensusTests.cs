@@ -54,7 +54,7 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
         // empty state above the editor.
         foreach (var (anchor, site) in new (string, Func<Site, bool>)[]
                  {
-                     ("the structure line 'Goal'", s => s.Text == "Goal"),
+                     ("the structure disclosure 'Goal · Done when · Not in scope' (collapsed at rest, DESIGN.md:1088)", s => s.Text.StartsWith("Goal · Done when", StringComparison.Ordinal)),
                      ("the decoration line 'This turn'", s => s.Text == "This turn"),
                      ("the budget state 'bounded by your subscription' (the census truncates a site's text)", s => s.Text.Contains("bounded by your", StringComparison.Ordinal)),
                      ("the compiled prompt disclosure", s => s.Text.StartsWith("Compiled prompt", StringComparison.Ordinal)),
