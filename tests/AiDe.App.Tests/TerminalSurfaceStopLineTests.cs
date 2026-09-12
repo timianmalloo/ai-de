@@ -25,7 +25,10 @@ namespace AiDe.App.Tests;
 /// with every pane still open (<c>owner-closing</c>, one line per live terminal). A pane whose
 /// shell exited and is then closed writes ONE stop, or <i>starts − stops</i> undercounts.</para>
 ///
-/// <para><b>Red first</b>: each fact failed until the pane wrote its line.</para>
+/// <para><b>Red first</b>: each fact failed until the pane wrote its line. Every assertion is
+/// keyed by the fact's own surface id: the sink is process-wide, and other tests' fixture shells
+/// end on their own schedule (measured: a <c>terminal-1</c> child-exited line landed inside a
+/// fact and tripped an unkeyed <c>Assert.Single</c>).</para>
 /// </remarks>
 public sealed class TerminalSurfaceStopLineTests
 {
@@ -54,7 +57,7 @@ public sealed class TerminalSurfaceStopLineTests
         Assert.Single(records, r => Evt(r) == "terminal.start" && Surface(r) == surfaceId);
 
         // THE OTHER HALF. Same surface id, so a reader can pair the two and a census can subtract.
-        var stop = Assert.Single(records, r => Evt(r) == "terminal.stop");
+        var stop = Assert.Single(records, r => Evt(r) == "terminal.stop" && Surface(r) == surfaceId);
         Assert.Equal(surfaceId, Surface(stop));
 
         // A live shell closed by its tab is a kill — ours, not the child's — and it has no exit
@@ -115,7 +118,8 @@ public sealed class TerminalSurfaceStopLineTests
 
                 var deadline = DateTimeOffset.UtcNow + TimeSpan.FromSeconds(30);
                 while (DateTimeOffset.UtcNow < deadline
-                       && !capture.Lines.Any(l => l.Contains("\"evt\":\"terminal.stop\"", StringComparison.Ordinal)))
+                       && !capture.Lines.Any(l => l.Contains("\"evt\":\"terminal.stop\"", StringComparison.Ordinal)
+                                                  && l.Contains(surfaceId, StringComparison.Ordinal)))
                 {
                     Thread.Sleep(100);
                 }
@@ -138,7 +142,7 @@ public sealed class TerminalSurfaceStopLineTests
 
         var records = lines.Select(l => JsonDocument.Parse(l).RootElement).ToList();
 
-        var stop = Assert.Single(records, r => Evt(r) == "terminal.stop");
+        var stop = Assert.Single(records, r => Evt(r) == "terminal.stop" && Surface(r) == surfaceId);
         Assert.Equal(surfaceId, Surface(stop));
         Assert.Equal("child-exited", Str(stop, "reason"));
         Assert.Equal(4, stop.GetProperty("exitCode").GetInt32());
@@ -191,7 +195,7 @@ public sealed class TerminalSurfaceStopLineTests
         Assert.Equal(2, starts.Count);
         Assert.Single(starts, r => r.GetProperty("failure").ValueKind != JsonValueKind.Null);
 
-        var stop = Assert.Single(records, r => Evt(r) == "terminal.stop");
+        var stop = Assert.Single(records, r => Evt(r) == "terminal.stop" && Surface(r) == surfaceId);
         Assert.Equal(surfaceId, Surface(stop));
         Assert.Equal("disposed", Str(stop, "reason"));
         Assert.Equal(JsonValueKind.Null, stop.GetProperty("session").ValueKind);
@@ -230,8 +234,10 @@ public sealed class TerminalSurfaceStopLineTests
             return (capture.Lines, ids);
         }, 60);
 
+        // Only THIS shell's panes: the sink is process-wide, and a fixture shell from an earlier
+        // test class may write its own child-exited line while this fact runs.
         var records = lines.Select(l => JsonDocument.Parse(l).RootElement).ToList();
-        var stops = records.Where(r => Evt(r) == "terminal.stop").ToList();
+        var stops = records.Where(r => Evt(r) == "terminal.stop" && Surface(r) is { } id && terminalIds.Contains(id)).ToList();
 
         foreach (var id in terminalIds)
         {

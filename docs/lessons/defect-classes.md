@@ -43,7 +43,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   memoir is not a control, and the sweep now names the boundary.
 - **DC-131**, whose census control was taken with the right key and still closed the wrong
   question: the column said *foreign*, the operator saw the same screen, and the fifth report came
-  (INV-0010; DC-156 is the half the control lacked).
+  (INV-0010; DC-155 is the half the control lacked).
 
 *All three are CI4: a second occurrence means the control was wrong, not that someone was careless. In the first two the control had been written to fit the instances rather than the class; in the third there was no control at all, because the first occurrence was repaired and never registered — which is the failure this file exists to prevent.*
 
@@ -5737,18 +5737,18 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   are Claude Code's own `Monitor` loops; the 25 `unknown` are Windows Terminal's tabs, Ollama's
   launcher, the compiler server's console and those loops. **The control asked "whose is it?" and
   the operator asked "why is it still there?"** — a correct attribution column closed our side and
-  changed nothing on the screen (DC-156). And the product's own share was unmeasurable from the
+  changed nothing on the screen (DC-155). And the product's own share was unmeasurable from the
   product: 4,115 `terminal.start` lines in a day and no stop event exists, so each report re-ran the
   whole investigation from a process list. Measured on the way, the one product mechanism the four
   fixes never touched: a session whose child exits keeps its `conhost.exe --headless` for the App's
-  lifetime (DC-155) — counted `ours-live` by this census because its parent is a live App.
+  lifetime (DC-156) — counted `ours-live` by this census because its parent is a live App.
   **Control (recurrence 4):** the close of a population report carries (i) an action for the
   largest *foreign* class and the re-count that proves it, (ii) a start/stop pair on the product's
   own emissions so the next report is answered from the log, and (iii) an `ours-orphaned` rule so a
   dead-parent product host cannot hide in `unknown` — the red tests and self-test rows are in
-  INV-0010; all three landed on `fix/terminal-hosts-5` (2026-09-12): the `ACTION:` line (DC-156),
+  INV-0010; all three landed on `fix/terminal-hosts-5` (2026-09-12): the `ACTION:` line (DC-155),
   `terminal.stop` + `TerminalHostingLedger.Completions` (starts − stops), and `ours-orphaned`
-  (self-test 5d/5e green), plus the held host released with its child (DC-155). **And the
+  (self-test 5d/5e green), plus the held host released with its child (DC-156). **And the
   population itself was ours by cause** (slice 0, the same day): our ConPTY shells inherited
   `WT_SESSION` and Windows Terminal's agent attached one MCP server per shell — the fifth census's
   largest class, attributed "foreign" by a correct ancestry column, was a leak of this repository's
@@ -6635,53 +6635,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   the pack).
 - **Status:** `controlled` by the pair; the lens rule is `partially-controlled`.
 
-### DC-155 — A resource acquired for a child is released with the owner, not with the child
-
-- **Shape:** an object acquires an OS resource *for* a child (a pseudo console for a shell, a job
-  for a process). The child ends; the object records the end as **state** (`Ended`, `Complete`,
-  an exit code) and touches no **handle**. The resource then lives as long as the *owner* — the
-  App, the test host — and nothing in the owner's life ever revisits it, because "the session
-  ended" reads as "the session is finished with".
-- **Signature:** an `Ended`/`Completed` state that still owns OS objects; a `Complete`/`OnEnded`
-  path with no `Close*`/`Dispose`; a count of hosts equal to *panes* rather than to *live
-  children*; a resource whose release is only ever measured on the owner's exit path.
-- **Why it survives:** every exit-path test measures the owner ending (window close, process exit,
-  kill, dispose) — INV-0010 measured four of them clean. The in-life path is not an "exit" and is
-  never on the list; and a census attributes a host under a live owner as *live* because the key
-  (parent pid, worktree path) cannot distinguish a held host from a working one.
-- **Instance (INV-0010, 2026-09-12):** `ConPtyTerminalSession.WatchForExitAsync` → `Complete(exit)`
-  marks the session `Ended` and closes neither the pseudo console nor the job; `TerminalSurface.PumpAsync`
-  returns and keeps the dead session. Measured with the owner alive: `cmd.exe /c exit 0` → 1
-  `conhost.exe --headless` before, **1 three seconds after the exit** (`TerminalHostInLifePathTests
-  .ASessionWhoseChildExited_ReleasesItsHeadlessHostWhileTheOwnerLives`, red). Tab-close dispose on
-  the same runtime measured 1 → 0.
-- **Sweep:** `AcpEngineProcess` closes its job with the process (ruled out by reading);
-  `ShellBootstrap` holds no handle (ruled out); `WebSurfaceHost` (a WebView2 browser process per
-  surface) **not yet swept** — next step.
-- **Control:** the red in-life test above (observed failing on the un-fixed code: `1 headless
-  console host(s) still owned by the live owner 3s after 'child-exit-then-hold'`); once `terminal.stop`
-  lands, `TerminalHostingLedger.Completions` makes *held = starts − stops* a number a gate can read.
-- **Fix (2026-09-12, `fix/terminal-hosts-5`):** `ConPtyTerminalSession.WatchForExitAsync` →
-  `Complete(exit)` → `ReleaseHost()`: the pseudo console and the job are taken out of their fields
-  under the state gate and closed the moment the child's exit is seen; `DisposeAsync` takes the same
-  handles through the same gate and finds zero. Measured with the owner alive: 1 headless host while
-  the child (`cmd.exe /c "ping -n 8 … & exit 3"`) ran, **0 three seconds after its exit**, exit code
-  3 — the child's own. Paths 1–4 re-measured 0. The read loop now ends on the child's exit too (the
-  host's departure is its EOF), so the pump thread is released with the child as well.
-- **Sweep (this fix):** `AcpEngineProcess` — same shape (the job outlives the engine's own exit
-  until the lane's `Dispose`), bounded by the run rather than the App and the job's close *is* the
-  tree's reaping, no change; `WebSurfaceHost` — the browser process is the resource and its exit
-  releases it, but nothing handles `CoreWebView2.ProcessFailed`, so a browser that dies leaves a
-  blank pane with no line (a failure mode, not this class — next step); `WorktreeProvisioner`,
-  `WorkbenchShell.cs:2638` — `using` + `WaitForExit`, released with the child; `ShellBootstrap` —
-  no handle held.
-- **Status:** `controlled` — `TerminalHostInLifePathTests.ASessionWhoseChildExited_…` green on the
-  fix (observed red on the un-fixed code, 1 → 1); the five exit paths are read by name in CI
-  (`tools/verify-terminal-host-exit-paths.py`, appended to the Windows job, its own `--self-test`
-  firing on a failed and on an unexecuted path); `TerminalHostingLedger.Completions` makes
-  *held = starts − stops* a number.
-
-### DC-156 — A symptom owned by someone else is closed by attribution, not by an outcome
+### DC-155 — A symptom owned by someone else is closed by attribution, not by an outcome
 
 - **Shape:** a population report is investigated to DC-131's standard: counted, every member
   attributed, and the largest class turns out to belong to **another application**. The close says
@@ -6737,6 +6691,58 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   (`EnvironmentBlockTests`, `TerminalChildEnvironmentTests`); the census carries the cause and the
   correlation; the post-fix re-count (INV-0010 phase 5: restart Windows Terminal, compare against
   371) is the operator's, and a birth after the fix is a finding.
+
+### DC-156 — A resource acquired for a child is released with the owner, not with the child
+
+- **Shape:** an object acquires an OS resource *for* a child (a pseudo console for a shell, a job
+  for a process). The child ends; the object records the end as **state** (`Ended`, `Complete`,
+  an exit code) and touches no **handle**. The resource then lives as long as the *owner* — the
+  App, the test host — and nothing in the owner's life ever revisits it, because "the session
+  ended" reads as "the session is finished with".
+- **Signature:** an `Ended`/`Completed` state that still owns OS objects; a `Complete`/`OnEnded`
+  path with no `Close*`/`Dispose`; a count of hosts equal to *panes* rather than to *live
+  children*; a resource whose release is only ever measured on the owner's exit path.
+- **Why it survives:** every exit-path test measures the owner ending (window close, process exit,
+  kill, dispose) — INV-0010 measured four of them clean. The in-life path is not an "exit" and is
+  never on the list; and a census attributes a host under a live owner as *live* because the key
+  (parent pid, worktree path) cannot distinguish a held host from a working one.
+- **Instance (INV-0010, 2026-09-12):** `ConPtyTerminalSession.WatchForExitAsync` → `Complete(exit)`
+  marks the session `Ended` and closes neither the pseudo console nor the job; `TerminalSurface.PumpAsync`
+  returns and keeps the dead session. Measured with the owner alive: `cmd.exe /c exit 0` → 1
+  `conhost.exe --headless` before, **1 three seconds after the exit** (`TerminalHostInLifePathTests
+  .ASessionWhoseChildExited_ReleasesItsHeadlessHostWhileTheOwnerLives`, red). Tab-close dispose on
+  the same runtime measured 1 → 0.
+- **Sweep:** `AcpEngineProcess` closes its job with the process (ruled out by reading);
+  `ShellBootstrap` holds no handle (ruled out); `WebSurfaceHost` (a WebView2 browser process per
+  surface) **not yet swept** — next step.
+- **Control:** the red in-life test above (observed failing on the un-fixed code: `1 headless
+  console host(s) still owned by the live owner 3s after 'child-exit-then-hold'`); once `terminal.stop`
+  lands, `TerminalHostingLedger.Completions` makes *held = starts − stops* a number a gate can read.
+- **Fix (2026-09-12, `fix/terminal-hosts-5`):** `ConPtyTerminalSession.WatchForExitAsync` →
+  `Complete(exit)` → `ReleaseHost()`: the pseudo console and the job are taken out of their fields
+  under the state gate and closed the moment the child's exit is seen; `DisposeAsync` takes the same
+  handles through the same gate and finds zero. Measured with the owner alive: 1 headless host while
+  the child (`cmd.exe /c "ping -n 8 … & exit 3"`) ran, **0 three seconds after its exit**, exit code
+  3 — the child's own. Paths 1–4 re-measured 0. The read loop now ends on the child's exit too (the
+  host's departure is its EOF), so the pump thread is released with the child as well — and it
+  drains to EOF unconditionally, because `ClosePseudoConsole` waits for the host and the host
+  waits for its pipe (the SRE lens's finding: a loop that stopped at completion could wedge the
+  closer with the host alive after `terminal.stop`). **Decided, not assumed:** closing the job at
+  the child's exit ends anything the shell left running inside it (a `Start-Process`, a background
+  server) at the shell's exit rather than at the tab's close — the containment ADR-0005 states,
+  now applied at the child's end; INV-0010's "the job, which is then empty" was a belief.
+- **Sweep (this fix):** `AcpEngineProcess` — same shape (the job outlives the engine's own exit
+  until the lane's `Dispose`), bounded by the run rather than the App and the job's close *is* the
+  tree's reaping, no change; `WebSurfaceHost` — the browser process is the resource and its exit
+  releases it, but nothing handles `CoreWebView2.ProcessFailed`, so a browser that dies leaves a
+  blank pane with no line (a failure mode, not this class — next step); `WorktreeProvisioner`,
+  `WorkbenchShell.cs:2638` — `using` + `WaitForExit`, released with the child; `ShellBootstrap` —
+  no handle held.
+- **Status:** `controlled` — `TerminalHostInLifePathTests.ASessionWhoseChildExited_…` green on the
+  fix (observed red on the un-fixed code, 1 → 1); the five exit paths are read by name in CI
+  (`tools/verify-terminal-host-exit-paths.py`, appended to the Windows job, its own `--self-test`
+  firing on a failed and on an unexecuted path); `TerminalHostingLedger.Completions` makes
+  *held = starts − stops* a number.
 
 ### DC-157 — A test's positive control is satisfied by the defect the test guards
 

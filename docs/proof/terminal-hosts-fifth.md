@@ -5,7 +5,7 @@ type: proof-pack
 status: accepted
 owner: "@timianmalloo"
 phase: "conductor-addendum-c"
-tags: [terminal, conpty, conhost, straggler, census, reap-stragglers, terminal-stop, ledger, dc-131, dc-155, dc-156, dc-157, proof-pack, inv-0010]
+tags: [terminal, conpty, conhost, straggler, census, reap-stragglers, terminal-stop, ledger, dc-131, dc-156, dc-155, dc-157, proof-pack, inv-0010]
 links:
   - { to: inv-0010-terminal-hosts-the-fifth-report, rel: tested-by }
   - { to: defect-classes, rel: relates-to }
@@ -21,8 +21,8 @@ summary: >-
   activity + workbench line, paired by id with `terminal.start`) and the ledger's completions so
   `starts − stops` is the number of held hosts; the census attributes an orphaned product host
   (`ours-orphaned`, by the runtime's own signature), files Windows Terminal and Ollama by executable
-  path, and ends with an ACTION line for the largest foreign root (DC-156); the pty and the job are
-  released when a pane's shell exits (DC-155, measured 1 → 0 with the owner alive); and the five exit
+  path, and ends with an ACTION line for the largest foreign root (DC-155); the pty and the job are
+  released when a pane's shell exits (DC-156, measured 1 → 0 with the owner alive); and the five exit
   paths are read by name in the Windows CI job by a gate with its own self-test. Every red was
   observed on the un-fixed code before it went green.
 ---
@@ -44,7 +44,9 @@ summary: >-
 
 **Census after slice 0's fix, 14:58Z (read-only):** `ACTION: 371 under wta.exe[14152] -> copilot.exe[27168] (185 x node.exe higgsfield-mcp/src/server.js): CAUSED BY THIS REPOSITORY, foreign only by parent: … Restart Windows Terminal, then re-count with this tool: a birth AFTER the fix is a spawn path that still inherits WT_*.` / `54 of 371 dated members born within 10s of one of our 5218 terminal.start lines (workbench log: the App's sessions; test-run sessions are not in it)`. The pool grew 291 → 371 during this session's own pre-fix test runs — the correlation's shape, live. Slice 5 is now: restart Windows Terminal with the fix running; compare the next census against 371.
 
-**Corrections made:** `docs/investigations/INV-0010…md` (a *Correction* section, H1's verdict, phase 0 and phase 5 rows); DC-156 (instance 2 = the misattribution; the control = the cause-vs-parent rule); DC-131 recurrence 4.
+**Corrections made:** `docs/investigations/INV-0010…md` (a *Correction* section, H1's verdict, phase 0 and phase 5 rows); DC-155 (instance 2 = the misattribution; the control = the cause-vs-parent rule); DC-131 recurrence 4.
+
+**Concurrent lanes during the measurements.** CV-1 (`lane/conversation-cv1`) and SH-1 (`lane/shell-sh1`) were live on this machine and their `dotnet test` runs spawn ConPTY shells legitimately; the conductor's App and Claude Code sessions run inside Windows Terminal tabs. Each probe counted only `node.exe higgsfield` / `copilot.exe` rows **created after the probe's own spawn time** inside its 30–40 s window, so a lane's earlier shells are outside the window by construction; a lane's shell born *inside* a window would read as a birth in **both** arms, and the B arms (scrub) read 0 every time — the A/B difference (4 vs 0, twice) is therefore not the lanes'. The census figures (291 → 371 between 14:41Z and 14:58Z) include the lanes' pre-fix births as well as this session's own full-suite runs (App 643 + Core 2263 tests before the fix); their shells are attributed `ours-live` by ancestry to their worktree paths while they run, and the hosts they left under `wta.exe` are indistinguishable from ours by ancestry — only the birth correlation (App sessions only) separates them, which is the control's stated limit.
 
 - **Investigation:** `docs/investigations/INV-0010-terminal-hosts-the-fifth-report.md` (the census, the four controls' findings, the plan). Slice 5 (the operator's global Copilot MCP config) is the operator's and is not here.
 - **Branch:** `fix/terminal-hosts-5` from `investigate/terminal-hosts-5` (= `main` `8d54aadc` + INV-0010); session `hosts-fix`.
@@ -80,7 +82,7 @@ summary: >-
 | 10 | Windows Terminal (itself, its OpenConsole, its tab shells) and Ollama's `cmd.exe /C` wrapper (+ its conhost) are `foreign` by executable path; a run of ours from a WT tab is still `ours-live`; a token-less shell two hops under WT stays `unknown` (the rule is one hop, pinned) | rows 5f, 5g | `got 'unknown', wanted 'foreign'` × 5; the run of ours red too until the fixture's root was pid 0 | green; live census: `unknown` 25 → **17** (the harness's own loops), `foreign` gains WT ×7, Ollama ×2 | one-hop path rule, worktree rule first; widening to the chain reddens the two-hop row | Verified |
 | 11 | a build server's console host is filed with its server | row 5h | `got 'unknown', wanted 'build-server'` | green; live: `build-server 2` (server + console) | — | Verified |
 | 12 | `assert_clean` fires on an orphaned session of ours | row 5i | `got 0, wanted 1` | green | the CI shape-gate reads `ours-orphaned` | Verified |
-| 13 | **DC-156's control:** the report ends with an ACTION line naming the largest foreign root, the process the pool hangs from, the workload and the operator's action | row 5j (5 assertions) + a no-foreign → `None` | `the report carries an action line: got False` × 5 | green; live: `ACTION: 291 under wta.exe[14152] -> copilot.exe[27168] (145 x node.exe higgsfield-mcp/src/server.js): not AiDe's -- the Copilot agent spawns this MCP server per use and never reaps it. Scope or remove the server in ~/.copilot/mcp-config.json (or file the lifecycle defect with Copilot CLI / Windows Terminal), restart Windows Terminal, then re-count with this tool.` | grouped by root pid; via = the majority ancestor, not the first enumerated | Verified |
+| 13 | **DC-155's control:** the report ends with an ACTION line naming the largest foreign root, the process the pool hangs from, the workload and the operator's action | row 5j (5 assertions) + a no-foreign → `None` | `the report carries an action line: got False` × 5 | green; live: `ACTION: 291 under wta.exe[14152] -> copilot.exe[27168] (145 x node.exe higgsfield-mcp/src/server.js): not AiDe's -- the Copilot agent spawns this MCP server per use and never reaps it. Scope or remove the server in ~/.copilot/mcp-config.json (or file the lifecycle defect with Copilot CLI / Windows Terminal), restart Windows Terminal, then re-count with this tool.` | grouped by root pid; via = the majority ancestor, not the first enumerated | Verified |
 | 14 | the five exit paths are a CI gate that can fail | `tools/verify-terminal-host-exit-paths.py --self-test` | n/a (new gate) — the self-test fires on: no results, a `Failed` path, an unexecuted path, and a later-sorting `Passed` that would hide an earlier `Failed` (worst outcome wins) | `self-test OK`; live over this run's `.trx`: see the gate table | reads the `.trx` the Windows job already wrote; absent is a failure | Verified |
 | 15 | the four prior exit paths still hold | `TerminalHostExitPathTests` ×2 (`exit-undisposed`, `kill-self`), `TerminalHostInLifePathTests.ADisposedSession…`, `AppWindowCloseLeavesNoTerminalHostTests` | green before (INV-0010) | green after | ≥ 1 live then 0 at +5 s / +3 s | Verified |
 
@@ -111,7 +113,7 @@ summary: >-
 | gate | result |
 |---|---|
 | `dotnet build AiDe.sln -p:TreatWarningsAsErrors=true` (Core, App, both test projects, the helper) | 0 warnings, 0 errors |
-| `python tools/verify-test-run.py` (both full projects, CHECK only) | OK — App 643 executed (baseline 639), Core 2263 (baseline 2256), both Completed |
+| `python tools/verify-test-run.py` (both full projects, CHECK only) | pre-merge: App 643 (baseline 639), Core 2263 (2256); post-merge with main's floors (App 695, Core 2278): OK — App 701 (≥ 695), Core 2288 (≥ 2278), both Completed (one isolation flake in the new stop-line fact on the first post-merge run — another test's fixture shell wrote `child-exited` into the process-wide sink; every assertion is now keyed by the fact's surface id) |
 | `python tools/verify-terminal-host-exit-paths.py --self-test` / live | self-test OK / OK — 5 exit paths executed and passed, read from this run's `.trx` |
 | `python tools/reap-stragglers.py --self-test` | 43 assertions over 16 tables, all passing |
 | `python tools/verify-defect-register.py` | OK — 156 classes; counts 80 · 59 · 17 |
@@ -120,9 +122,10 @@ summary: >-
 
 ## Register
 
-- **DC-155** `uncontrolled` → `controlled` (fix + sweep + the CI gate).
-- **DC-156** `uncontrolled` → `controlled` (the ACTION line + the stop/ledger invariant; the re-count is the operator's).
-- **DC-131** recurrence 4: the three controls are landed (noted in the entry).
+- **Ids:** `main` allocated DC-154 to CV-0's class while this branch was open; INV-0010's classes were re-issued on the merge as **DC-155** (a symptom owned by someone else is closed by attribution — the number the INV branch already gave it, so the two branches do not allocate independently), **DC-156** (a resource acquired for a child is released with the owner) and **DC-157** (new); every citation in this tree follows, and `verify-id-allocators.py` is green across 32 branches. The conductor's note proposed the reverse order; the allocator gate decided.
+- **DC-156** `uncontrolled` → `controlled` (fix + sweep + the CI gate).
+- **DC-155** `uncontrolled` → `controlled` (instance 2 = the misattribution; the cause removed, the ACTION line names it, the birth correlation reported; the re-count is the operator's).
+- **DC-131** recurrence 4: the three controls are landed, and the population was ours by cause (noted in the entry).
 - **DC-157** (new, `controlled`): a test's positive control satisfied by the defect the test guards — the `cmd.exe /c exit 0` fixture; the helper's child now outlives one instrument read.
 
 ## Residual risk & next steps
@@ -132,8 +135,10 @@ summary: >-
 - `ConPtyTerminalSession.StartAsync`'s start-failed stop covers the catch around `StartAttachedProcess`/`AssignProcessToJob`; a `CreatePipe`/`CreatePseudoConsole` failure (before the try) still opens `terminal.start` without a stop — a next step, not observed on any machine.
 - Slice 0's measurement is n=4 per arm on one machine, one Windows Terminal build (IntelligentTerminal 0.2.2395.0); the post-fix census over a day is the confirming measurement (phase 5).
 - `AcpEngineProcess` starts engines with the inherited environment; an engine is not a ConPTY child and the probe did not cover it — if an engine tree ever births MCP servers under `wta.exe`, extend the scrub there.
-- `WebSurfaceHost` handles no `CoreWebView2.ProcessFailed`: a browser that dies leaves a blank pane and no line (not DC-155 — a failure mode; next step).
-- The register's tail carries a stray `## 5. What this note does not decide` section after DC-157 (DC-136's shape, reported by INV-0010) — another track's paste, not touched here.
+- `WebSurfaceHost` handles no `CoreWebView2.ProcessFailed`: a browser that dies leaves a blank pane and no line (not DC-156 — a failure mode; next step).
+- The register's stray `## 5. What this note does not decide` section (reported by INV-0010) was removed on `main` by CV-0's join; the merge keeps it removed.
+- The read loop drains to EOF unconditionally (the SRE lens's A2): a big-output child (a full-screen TUI's last frame) is not in any fact — the confirming test (a child that writes > 8 KiB then exits; host count 0 and the watcher's task complete within 5 s) is a next step.
+- `TerminalSurface.Dispose` writes `child-exited` with the code when the shell already exited but the pump's dispatcher-posted continuation has not yet run (the SRE lens's A4) — the count was never at risk, the reason was; not separately tested (the ordering is not controllable from a test).
 - App tests no longer write into the operator's workbench log (a module initializer installs a no-op sink; one test that reset the sink to `null` now restores the previous). The App launched by `AppWindowCloseLeavesNoTerminalHostTests` still writes its own `app.start`/`terminal.start`/`terminal.stop` — it is the real binary and has no cross-process seam.
 - Slice 5 is the operator's: scope or remove `higgsfield` in `~/.copilot/mcp-config.json`, restart Windows Terminal, re-count against **291**.
 

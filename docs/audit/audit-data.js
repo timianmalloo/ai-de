@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T15:22:01Z",
+  "generated": "2026-09-12T15:30:53Z",
   "audit": [
     {
       "actor": null,
@@ -13642,6 +13642,88 @@ window.AUDIT_DATA = {
       ],
       "tier": "T2",
       "tool": null
+    },
+    {
+      "id": "al-01M2B3F6HHA652K5MCZBAC28QX",
+      "shortname": "implement-inv-0010-slice-0-correction",
+      "datetime": "2026-09-12T15:23:41Z",
+      "session": "hosts-fix",
+      "prompt": "Conductor correction to INV-0010's attribution, applied as SLICE 0 before slices 1-4: the 223 \"foreign\" processes are caused by us — every process we spawn inherits WT_SESSION/WT_PROFILE_ID from the Windows Terminal tab the harness runs in, and Windows Terminal's agent host attaches an agent session (its MCP servers) per shell. The terminal runtime scrubs every WT_* variable from the child environment of every ConPTY spawn (product and the test helper), red first, plus a manual A/B measurement in the Proof Pack; correct INV-0010 §census, DC-155's entry (cause-vs-parent rule) and the reaper's action line. Then: main allocated DC-154 to CV-0's class — re-issue INV-0010's classes as DC-155/156/157 on the merge; note which measurements ran while CV-1 and SH-1 were live.",
+      "summary": "Slice 0 landed first: ConPtyInterop.BuildEnvironmentBlock strips every WT_* variable from every ConPTY child (builds the block whenever the parent carries one; the rest passes through); TerminalHostLauncher hands the helper the same block. Red first at two levels: EnvironmentBlockTests (Assert.NotNull failed — no block was built) and TerminalChildEnvironmentTests via the helper's env-scrub mode (three WT_ lines arrived through a real pseudo console), both green after. Measured on this machine: 4 product-shaped ConPTY sessions with WT_* inherited -> 4 node higgsfield-mcp births in 40 s; the same 4 without -> 0; 4 hidden plain shells with WT_* -> 0 (the trigger is a ConPTY session carrying WT_SESSION); after the fix, helpers that still inherit WT_* -> 0 (the child is the trigger). INV-0010 gained a Correction section (H1: foreign by parent, ours by cause; phase 0/5 rows); the register's attribution class gained instance 2 (the misattribution) and the cause-vs-parent control; the reaper's ACTION line names the cause and the WT_SESSION mechanism (never the operator's MCP config) and reports the birth correlation with our terminal.start lines (not recorded when the log is unreadable) — self-test 5j corrected, 5k births_near, 5l pid reuse; 51 assertions / 17 tables. Reviews: Test Architect (veto held, then cleared: runtime start-failed stop fact, a deterministic exit-4 child with E12 runtime<->workbench agreement, a start-failed pane -> disposed fact, mutation-observed reds), SRE lens (the read loop drains to EOF so ClosePseudoConsole cannot wedge; tokens captured before dispose; Dispose after an unrecorded exit writes child-exited; pid-reuse guard in ancestry; the job-close-at-child-exit semantic named as a decision). Merge of origin/main: DC-154 stays CV-0's; INV-0010's classes re-issued as DC-155 (resource released with the owner), DC-156 (closed by attribution) and DC-157 (positive control satisfied by the defect); every citation in this tree follows; the stale investigate/terminal-hosts-5 branch still carries the old ids and trips verify-id-allocators cross-branch until retired. CV-1 and SH-1 were live during the measurements; the Proof Pack states how the A/B windows exclude their shells.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Terminal/ConPtyInterop.cs",
+        "tests/AiDe.Core.Tests/Terminal/EnvironmentBlockTests.cs",
+        "tests/AiDe.Core.Tests/TerminalChildEnvironmentTests.cs",
+        "tests/AiDe.Core.Tests/TerminalHostLauncher.cs",
+        "tests/AiDe.Core.TerminalHost/Program.cs",
+        "tools/reap-stragglers.py",
+        "docs/investigations/INV-0010-terminal-hosts-the-fifth-report.md",
+        "docs/lessons/defect-classes.md",
+        "docs/proof/terminal-hosts-fifth.md"
+      ],
+      "tags": [
+        "inv-0010",
+        "terminal",
+        "wt-session",
+        "dc-155",
+        "dc-156",
+        "dc-157"
+      ],
+      "outcome": "success",
+      "goal": "Slice 0: no ConPTY child of ours carries WT_*; the census names the cause; INV-0010/DC-156 corrected; classes re-issued on the merge of main",
+      "done_when": "EnvironmentBlockTests + TerminalChildEnvironmentTests red then green; A/B births measured 4/4 -> 0/4 and recorded; the ACTION line names WT_SESSION and not the operator's config (self-test red then green); INV and register corrected; DC-155/156/157 re-issued with every citation updated; verify-id-allocators run before the commit; both suites green post-merge; pushed",
+      "tier": "T1",
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "63624f0b11c244c21e851227fa176a4a89cd2655",
+        "short": "63624f0b1",
+        "branch": "fix/terminal-hosts-5",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2B3WBGTXVVM8H3P6NCDSX6S",
+      "shortname": "implement-inv-0010-close",
+      "datetime": "2026-09-12T15:30:52Z",
+      "session": "hosts-fix",
+      "prompt": "Close of the INV-0010 implement run: the id re-issue's final order, the post-merge gates, the push.",
+      "summary": "Final numbering after the merge of main (DC-154 = CV-0's): DC-155 = a symptom owned by someone else is closed by attribution (the number investigate/terminal-hosts-5 already gave it, so the branches do not allocate independently), DC-156 = a resource acquired for a child is released with the owner, DC-157 = a test's positive control satisfied by the defect it guards; verify-id-allocators green across 32 branches. Post-merge gates: build 0 warnings with TreatWarningsAsErrors; verify-test-run App 701 (>= 695), Core 2288 (>= 2278), both Completed; verify-terminal-host-exit-paths OK over the run's trx; every ring-0 gate green; regenerate-derived green. Pushed fix/terminal-hosts-5; main untouched.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [
+        "inv-0010",
+        "dc-155",
+        "dc-156",
+        "dc-157"
+      ],
+      "outcome": "success",
+      "goal": "Branch fix/terminal-hosts-5 complete and pushed with every gate green",
+      "done_when": "gates green, derived views current, pushed",
+      "tier": "T1",
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "63624f0b11c244c21e851227fa176a4a89cd2655",
+        "short": "63624f0b1",
+        "branch": "fix/terminal-hosts-5",
+        "pushed": null
+      }
     }
   ],
   "changes": [

@@ -47,7 +47,7 @@ ways, each now a rule here:
     the program a `cmd.exe /C` wrapper runs. A process's own executable path -- and its
     direct parent's -- is a structural fact; the whole chain's argv is still a rumour.
   * The largest class was `foreign` twice running and the close said "reported only"; the
-    pool regrew and the operator reported it a fifth time (DC-156). The report now ends
+    pool regrew and the operator reported it a fifth time (DC-155). The report now ends
     with the ONE ACTION that shrinks the largest foreign root, and asks for the re-count.
     And the pool was OURS BY CAUSE, foreign only by parent: a ConPTY shell of ours that
     inherited WT_SESSION from the Windows Terminal tab this harness runs in is treated by
@@ -516,7 +516,7 @@ def our_terminal_starts():
 def births_near(members, starts, window=BIRTH_WINDOW_SECONDS):
     """How many members were born within `window` seconds AFTER one of `starts`.
 
-    The cause-vs-parent rule (DC-156): a process whose parent is another application's and whose
+    The cause-vs-parent rule (DC-155): a process whose parent is another application's and whose
     birth follows one of OUR terminal starts is ours by cause. Members with no creation time are
     not counted either way -- an honest denominator is the count of those that have one.
     """
@@ -547,7 +547,7 @@ def leaf_of(proc):
 
 
 def foreign_action(procs, buckets):
-    """DC-156's control: the one action that shrinks the largest foreign root, or None.
+    """DC-155's control: the one action that shrinks the largest foreign root, or None.
 
     A census whose largest class is `foreign` and whose close says "reported only" leaves the
     operator's screen exactly as it was; the same pool was attributed twice and reported a
@@ -840,7 +840,7 @@ def self_test():
            classify(apart, apart[130], {wt})[0], UNKNOWN)
     expect("the lone shell is still ours by its script", classify(apart, apart[131], {wt})[0], OURS_ORPHANED)
 
-    # 5j. DC-156's CONTROL: the report names the ONE ACTION that shrinks the largest foreign
+    # 5j. DC-155's CONTROL: the report names the ONE ACTION that shrinks the largest foreign
     #     root. A close that says "foreign -- reported only" left the same pool for a fifth
     #     report. Three MCP servers and their hosts under wta -> copilot, one PresentMon: the
     #     line must name wta, copilot and the config file, and count the pool, not PresentMon.
@@ -872,7 +872,7 @@ def self_test():
            "born within" in action or "not recorded" in action, True)
     expect("no foreign rows, no action line", foreign_action(procs, {}), None)
 
-    # 5k. THE CAUSE-VS-PARENT RULE (DC-156): births beside our terminal.start lines are counted,
+    # 5k. THE CAUSE-VS-PARENT RULE (DC-155): births beside our terminal.start lines are counted,
     #     births elsewhere are not, and a member with no creation time is left out of both.
     from datetime import timedelta, timezone
     t0 = datetime(2026, 9, 12, 13, 39, 5, tzinfo=timezone.utc)
@@ -947,7 +947,7 @@ def self_test():
     print("  assert_clean in BOTH directions, plus the pre-existing-process exclusion.")
     print("  INV-0010: an orphaned session of ours is named by the runtime's signature; Windows")
     print("    Terminal and Ollama are foreign by executable path; the largest foreign root")
-    print("    gets an ACTION line, not a label (DC-156).")
+    print("    gets an ACTION line, not a label (DC-155).")
     return 0
 
 

@@ -7616,7 +7616,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "cce5c34626fccdba0af363061e40d2c80b20455677e706dde246737601001003"
+      "sourceSha256": "3fe6ff9d8faf6eb8c54e44d05a581f2cff6f1e1276acbb9a70bb36da62d7448c"
     },
     {
       "id": "design-session-profiler",
@@ -10697,8 +10697,8 @@ window.DOCS_INDEX = {
         "dc-131",
         "dc-123",
         "dc-117",
-        "dc-155",
         "dc-156",
+        "dc-155",
         "windows-terminal",
         "copilot",
         "mcp"
@@ -10734,7 +10734,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "94f2cff5dc46df9ca3e47d5eee1e3d054bc13737890210eb72186d9c38b59528"
+      "sourceSha256": "00d5c8e045dd0eb0fa10474be388365bb2281b1d6e9181734d322302a1b2d716"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -14599,7 +14599,7 @@ window.DOCS_INDEX = {
       "phase": "conductor-addendum-c",
       "reviewBy": "2027-03-12",
       "reviewSuggested": [],
-      "summary": "Evidence for INV-0010's repair slices. Slice 0 (the correction): the \"foreign\" pool was ours by cause — our ConPTY shells inherited WT_SESSION and Windows Terminal's agent attached one MCP server per shell; the runtime now strips WT_* from every ConPTY child (measured 4/4 → 0/4). Then the four: `terminal.stop` on every end-of-life path (runtime activity + workbench line, paired by id with `terminal.start`) and the ledger's completions so `starts − stops` is the number of held hosts; the census attributes an orphaned product host (`ours-orphaned`, by the runtime's own signature), files Windows Terminal and Ollama by executable path, and ends with an ACTION line for the largest foreign root (DC-156); the pty and the job are released when a pane's shell exits (DC-155, measured 1 → 0 with the owner alive); and the five exit paths are read by name in the Windows CI job by a gate with its own self-test. Every red was observed on the un-fixed code before it went green.",
+      "summary": "Evidence for INV-0010's repair slices. Slice 0 (the correction): the \"foreign\" pool was ours by cause — our ConPTY shells inherited WT_SESSION and Windows Terminal's agent attached one MCP server per shell; the runtime now strips WT_* from every ConPTY child (measured 4/4 → 0/4). Then the four: `terminal.stop` on every end-of-life path (runtime activity + workbench line, paired by id with `terminal.start`) and the ledger's completions so `starts − stops` is the number of held hosts; the census attributes an orphaned product host (`ours-orphaned`, by the runtime's own signature), files Windows Terminal and Ollama by executable path, and ends with an ACTION line for the largest foreign root (DC-155); the pty and the job are released when a pane's shell exits (DC-156, measured 1 → 0 with the owner alive); and the five exit paths are read by name in the Windows CI job by a gate with its own self-test. Every red was observed on the un-fixed code before it went green.",
       "tags": [
         "terminal",
         "conpty",
@@ -14610,8 +14610,8 @@ window.DOCS_INDEX = {
         "terminal-stop",
         "ledger",
         "dc-131",
-        "dc-155",
         "dc-156",
+        "dc-155",
         "dc-157",
         "proof-pack",
         "inv-0010"
@@ -14635,7 +14635,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7cf15b6a7b778685bc50df403516bd20b5487270b00a2a54481aa304fa753a61"
+      "sourceSha256": "a14650121e843a0780b918ff5400781428d882ebf72d8d5794963cd0354fb3d0"
     },
     {
       "id": "proof-watcher-advisory-evaluator",
@@ -16554,5 +16554,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "0c88daa7d4c8e5615e7fa9f65d922fa0703df5de8e43e1e83c1b089cad6cf7a4"
+  "graphSha256": "0bb4d2109d1413ac2a8cb367a752a570ae15ddb49b3c0668aebcd1e453fbc321"
 };

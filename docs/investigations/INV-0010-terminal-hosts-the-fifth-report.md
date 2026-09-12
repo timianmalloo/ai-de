@@ -5,7 +5,7 @@ type: investigation
 status: accepted
 owner: "@timianmalloo"
 phase: "conductor-addendum-c"
-tags: [terminal, conpty, conhost, straggler, census, reap-stragglers, job-object, observability, terminal-stop, dc-131, dc-123, dc-117, dc-155, dc-156, windows-terminal, copilot, mcp]
+tags: [terminal, conpty, conhost, straggler, census, reap-stragglers, job-object, observability, terminal-stop, dc-131, dc-123, dc-117, dc-156, dc-155, windows-terminal, copilot, mcp]
 links:
   - { to: defect-classes, rel: relates-to }
   - { to: adr-0005-terminal-runtime-boundary, rel: depends-on }
@@ -102,7 +102,7 @@ through unchanged (INV-0001). `TerminalHostLauncher` hands the helper the same b
 (the block builder) and `TerminalChildEnvironmentTests` (the helper's `env-scrub` mode: a real
 pseudo console runs `cmd.exe /c set`; three `WT_` lines arrived on the un-fixed runtime, none
 after). The census's action line now names the cause and the mechanism, and reports the birth
-correlation with our own `terminal.start` lines (DC-156's corrected control). The pool that
+correlation with our own `terminal.start` lines (DC-155's corrected control). The pool that
 exists — 371 host-like processes under `wta.exe` at 14:58Z, 185 servers — was born before the
 fix and does not shrink on its own: restart Windows Terminal, then re-count; **a birth after the
 fix is a spawn path that still inherits `WT_*`**.
@@ -305,9 +305,9 @@ live App under a worktree path.
 
 ## Generalization — the failure class
 
-**Two classes, registered as DC-155 and DC-156; DC-131 gains recurrence 4.**
+**Two classes, registered as DC-156 and DC-155; DC-131 gains recurrence 4.**
 
-**DC-155 — A resource acquired for a child is released with the owner, not with the child.** The
+**DC-156 — A resource acquired for a child is released with the owner, not with the child.** The
 pty host is created for the shell; the shell's exit completes the session's *state* and touches no
 *handle*; the host lives as long as the App. Signature: an `Ended` state that still owns OS
 objects; a `Complete`/`OnEnded` path with no `Close*`; a host count equal to panes rather than to
@@ -316,7 +316,7 @@ path, sibling ruled out by reading `:133–160`); `ShellBootstrap` (no handle he
 `WebSurfaceHost`/WebView2 (owns a browser process per surface — *not swept*, next step). Control:
 the red in-life test; a `TerminalHostingLedger.Completions` counter once fix 2 lands.
 
-**DC-156 — A symptom owned by someone else is closed by attribution, not by an outcome.** The
+**DC-155 — A symptom owned by someone else is closed by attribution, not by an outcome.** The
 fourth census attributed the population correctly to Windows Terminal's agent and stopped at
 "foreign — reported only"; the population regrew and the operator reported it a fifth time.
 Signature: the largest class in a census is `foreign`; the close carries no action for it; the same
@@ -361,7 +361,7 @@ their own, and this investigation did not end them.
   `-NoExit` PowerShell keeps its shell alive and is path 5 only when the shell ends).
 - The measurements are one machine, one OS build (Windows 11 26200). Older builds' `ClosePseudoConsole`
   behaviour is documented differently; path 4 should be re-measured on a CI runner image.
-- `WebSurfaceHost` (WebView2 browser processes per surface) was not swept for DC-155.
+- `WebSurfaceHost` (WebView2 browser processes per surface) was not swept for DC-156.
 - The `PROC_THREAD_ATTRIBUTE_JOB_LIST` assign-window gap remains written and unmeasured.
 - Test runs write into the operator's workbench log without a `Sink` (fixture ids `terminal-1`,
   `terminal#…`, `session-terminal:…deadbeef`) — phase 1 covers it; until then the operator's log is
