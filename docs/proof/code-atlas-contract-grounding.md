@@ -171,6 +171,14 @@ MISSING_ID|nullType=True|nullMember=True
 | Partial type locations are multiple; partial method declaration/implementation collapsed to one symbol with one observed implementation span in this probe. | Source walking must support multiple declaration spans for types and must define how declaration vs implementation spans are represented for partial members. |
 | Missing declaration IDs resolve to null. | Query contracts must return explicit not-found/shortfall results, not fabricate member nodes. |
 
+
+
+### Data reviewer correction: evidence IDs are not source versions
+
+- **Reviewer finding:** `NodeContent` resolves the indexed provenance to a workspace path and then reads the current live bytes. The resolved path is fenced to the workspace, but the content bytes are not bound to the source revision or a recorded hash. Scope fencing proves path containment; it does not prove whole-workspace coherence.
+- **Version distinction:** Roslyn documentation IDs identify declarations semantically, not a source version. The existing probe shows overload IDs are distinct (`M:Same.Widget.Save(System.Int32)` vs `M:Same.Widget.Save(System.String)`) and the same method ID collides across two project scopes, requiring scope/project qualification. The same ID would also remain the same under whitespace or line movement while the source span changes, so it cannot stand in for declaration-version identity.
+- **First-horizon effect:** the native Architecture journey must design/admit a physical-inventory contract that binds selectable files/members to a coherent source version or hash before it can claim actual-source walking. Human acceptance can approve this constraint; it must not be promoted from AI-origin text into implementation without the admitted contract.
+
 ### Updated barrier
 
 Physical-inventory and member-ID contracts remain first-order barriers. The new probe strengthens, not relaxes, the prior correction: addressable members are feasible with Roslyn 4.14 evidence, but only if the identity design includes scope/project qualification and explicit source-span semantics. A type-only `NodeContent` journey remains insufficient for Owner's native Architecture requirement.
