@@ -79,6 +79,34 @@ with no owner; nothing can fail a section that has quietly stopped covering its 
 Ownership means: **you edit it, the other session proposes changes to it.** It does not mean the
 other session may not read it — reading is how contracts stay honest.
 
+### Atlas branch-local authoring exception, 2026-09-12
+
+**Authority:** the user's explicit continuation instruction and the separate Astra Owner's
+turn-7/turn-8 rulings, recorded in `note-atlas-isolated-authoring`. This is a grant to author
+specified new files on Atlas branches, **not Claude's acknowledgment**, a transfer of the existing
+ownership rows, normative Addendum E acceptance, or permission to integrate into main.
+
+| Writer / branch | Exact new authored files | Limit |
+|---|---|---|
+| `atlas-e0-source-safety-gpt55` / `atlas/e0-source-safety` | `spikes/code-atlas-source-reader/CodeAtlas.SourceReaderProbe.csproj`; `spikes/code-atlas-source-reader/Program.cs`; `spikes/code-atlas-source-reader/OpenedSourceReader.cs`; `spikes/code-atlas-source-reader/SourceReaderProbeCases.cs`; `docs/proof/code-atlas-source-safety.md` | One bounded synthetic Windows safety batch, 30 calls; no user data or existing product/project edits. |
+
+The first source writer's worktree is `C:\Projects\ai-de-atlas-e0-source-safety`, created from
+executor-observed main `4d396411`. A separate candidate tree
+`C:\Projects\ai-de-atlas-e0-candidate`, branch `atlas/e0-candidate`, is reserved; its exact new
+Core/App/test file list must be recorded here before its one writer is dispatched.
+
+The Owner permits that candidate's new files only under `Core/Understanding`, its dedicated
+Core tests, `App/Workbench/Understanding`, and its dedicated App tests. Detached presentation
+must consume supplied projections; it cannot read repositories/stores/providers. If existing
+project constraints require a shared-file change, the approved fallback is new standalone
+`spikes/code-atlas-e0-candidate` files, named here first. Neither an empty path nor an expired
+lease grants a wider exception.
+
+All existing SH3 IPC/factory/shell/adapter/graph/evidence/layout files and tests stay with their
+current writers. No existing extractor, query, wire, store, package, solution, menu or host edit
+is admitted here. Integration remains serialized through the existing Claude/Core/Shell
+authority. The native requests remain open; only their actual recipients can supply agreement.
+
 ### Core owns
 
 | Path | Why |

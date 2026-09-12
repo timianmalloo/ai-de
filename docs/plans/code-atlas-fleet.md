@@ -171,3 +171,35 @@ Known repairs were bounded by named findings: candidate security/oracle/phase cr
 evidence attribution, privacy/operational admission fields, and whole-versus-E0 scoping. Their
 records preserve the corrections; no aggregate rework count is invented. Required implementation
 floors remain blocked rather than removed.
+
+## User-directed continuation, 2026-09-12
+
+The user corrected the documentation-only stop: **the Owner and Conductor must resolve the
+coordination problem and continue implementation**. The preceding checkpoint remains an accurate
+historical record, not the current work's terminal condition.
+
+The Conductor has requested a scoped Owner ruling separating isolated foundation authoring from
+shared-file integration. The new native handoff is `req-01M2BGHNCM6WRD4ZZMBBFEEB4K`; neither it
+nor the earlier request is described as acknowledged. SH3's observed live deltas include existing
+IPC, factory, shell, adapter, graph/evidence and layout files. Those concrete collisions remain
+serialized; they are not a reason to leave unrelated prerequisite work idle.
+
+| Node | Capability | Current contract | Exit / dependency |
+|---|---|---|---|
+| R1 Owner boundary resolution | Independent review / decision | Existing Astra Owner, 8 calls, no children | Explicit authoring versus integration ruling; never inferred from silence |
+| R2 Source-safety preflight | Reasoning | Existing GPT-5.5 contracts worker, 12 read-only calls, no children | One implementable Windows opened-object mechanism and named race/hash/decoder falsifiers |
+| R3 E0 detailed design | Reasoning | Existing Astra architecture author, 20 calls, one isolated new architecture-design document | Concrete E0 contracts, budgets and proof matrix; source-safety seam remains pending R2 |
+| R4 Safety implementation | Reasoning + deterministic mechanics | Not dispatched until R1 authorizes its exact isolated paths | Executed synthetic safety proof; requires R1 and R2 |
+| R5 E0 product authoring | Reasoning + deterministic mechanics | Dedicated GPT writer under the resolved boundary | TDD and native proof through the agreed seams; requires R1, R3 and R4 |
+| R6 Shared integration | Deterministic mechanics + independent review | Existing Claude/Shell authority retained | Serialized handoff, integrated proof and Owner horizon closure |
+
+R1, R2 and R3 share no authored output and run independently. R2 owns native API research; R3 must
+not duplicate it or invent its answer. No timeout or expired lease opens R4, R5 or R6. Conversely,
+an integration dependency must not be promoted into a blanket ban on independent work: the Owner
+must rule on the actual path and effect.
+
+Active width is three against the four-seat cap. Transient failures are reported before a bounded
+retry; joins require all applicable hard floors. The finite variant is the number of outstanding
+R1/R2/R3 receipts, then the admitted implementation/proof worklist. Cost/span are not yet measured;
+there is no claimed numerical speedup. The next checkpoint is implementation admission, not
+another request for the human to relay a message.

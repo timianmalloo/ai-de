@@ -15,7 +15,13 @@ summary: >-
   Records the real cross-conductor delivery blocker, source ownership requests and safe resume
   sequence. It is a request ledger, not a second ownership register or permission to dispatch code.
 ---
-# Code Atlas: delivery is externally blocked
+# Code Atlas: isolated authoring active; shared integration remains gated
+
+The user explicitly directed the Owner and Conductor to resolve the earlier stop and continue.
+`note-atlas-isolated-authoring` supersedes the blanket source freeze. The sole section-2 register
+records exact branch-local authoring grants; existing Core/Shell ownership is unchanged. The safety
+probe is dispatched from current main `4d396411`, and E0 detailed design proceeds independently.
+The earlier documentation-only checkpoint below is retained as history, not the current exit condition.
 
 ## Actual blocker and channel
 
@@ -27,9 +33,10 @@ Full native request ID: **`req-01M2B86TXF7SHG61B31P4H4173`**, addressed to
 message into the other harness. The shared `.agents/requests.jsonl` is visible from all
 worktrees, but visibility is not a delivery acknowledgment.
 
-The request remained open at the most recent recorded checkpoint. A one-time human relay was
-requested because no acknowledged cross-harness delivery had occurred; the user was unavailable.
-Do not infer approval or attempt to resume the Claude process in a second concurrent session.
+The request remained open at the most recent recorded checkpoint. The narrowed follow-up
+`req-01M2BGHNCM6WRD4ZZMBBFEEB4K` names the actual shared-file handoff. A prior one-time human relay
+request did not establish delivery. The Owner now directs an executable isolated fallback, not
+another relay request or repeated polling. Do not infer approval or resume Claude in a second session.
 
 ## Required acknowledgers
 
@@ -84,6 +91,9 @@ established merge mechanisms; regenerating is not a reason to edit another sessi
   None was satisfied by document review.
 
 ## Resume sequence
+
+This sequence applies to shared-file integration and native-product closure. Independently granted
+new-file authoring does not wait for step 1; it follows the active plan and its safety/design joins.
 
 1. Have the intended counterpart read the full request and this ledger; obtain actual resolution
    and section-2 responsibility updates. Re-check that E is still the right addendum letter.

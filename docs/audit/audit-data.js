@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T19:06:34Z",
+  "generated": "2026-09-12T19:23:28Z",
   "audit": [
     {
       "actor": null,
@@ -14473,6 +14473,76 @@ window.AUDIT_DATA = {
       "main_budget": 20,
       "main_over_budget": false,
       "fan_out": 0
+    },
+    {
+      "id": "al-01M2BGE5VCTVK3AYH6GJRCWZW1",
+      "shortname": "keep going why are you stopping here the owner and conductor need to res…",
+      "datetime": "2026-09-12T19:10:19Z",
+      "session": "prompt-log",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2BH2ATFDE1VY6RJ7FHPCE39",
+      "shortname": "atlas-resolve-authoring-boundary",
+      "datetime": "2026-09-12T19:21:19Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Owner turns7/8 supersede blanket source freeze: explicit new-file branch-local authoring and detached inert presentation allowed, existing Core/Shell ownership and integration gate retained. Exact safety files/writer recorded in sole section2 before dispatch; native safety probe now executing in dedicated tree from observed main4d396411. E0 detailed design and narrow independent security scope review are active. Narrowed request req-01M2BGHNCM6WRD4ZZMBBFEEB4K is attempted delivery, not agreement. This reaches the authoring-admission checkpoint; main 40-call estimate covers resumption through this record, not later implementation/proof joins. No source safety/product/native acceptance asserted.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/isolated-authoring.md",
+        "docs/collaboration/session-contracts.md",
+        "docs/plans/code-atlas-fleet.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Resolve the delivery boundary through the Owner and Conductor, then execute the admitted Code Atlas work.",
+      "done_when": "The agreed implementation is integrated and its native journey demonstrated; this partial checkpoint records authoring admission, not full delivery.",
+      "tier": "T2",
+      "main_calls": 39,
+      "main_budget": 40,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-12T19:10:19Z",
+      "duration_seconds": 660.0
+    },
+    {
+      "id": "al-01M2BH67QY4NYSHYT5JVGFRC5N",
+      "shortname": "atlas-isolated-authoring-dispatch",
+      "datetime": "2026-09-12T19:23:27Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Implementation-admission checkpoint recorded and active plan corrected. Both new source/candidate trees observed at main4d396411. Source-safety GPT writer assigned exact four probe files plus proof, with30call total checkpoint including prior preflight. Candidate exact file manifest awaits E0 design receipt; safety code not yet accepted. Existing SH3 integration retained. Initial register eligibility command correctly refused because identity was missing; rerun with explicit identity actually checked and granted the lease. No false pass. This20call join-phase budget is separate from the completed authoring-admission checkpoint; programme remains active.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/code-atlas.md",
+        "docs/notes/atlas-owner/isolated-authoring.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Execute and independently verify the Owner-admitted isolated E0 foundation without touching Claude shared files.",
+      "done_when": "The safety and candidate checkpoints return observed evidence, exact-file deltas are admitted, and the next shared-integration decision is presented to the Owner.",
+      "tier": "T2",
+      "main_calls": 8,
+      "main_budget": 20,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-12T19:21:20Z",
+      "duration_seconds": 127.0
     }
   ],
   "changes": [
@@ -18332,6 +18402,30 @@ window.AUDIT_DATA = {
           "b8bc351e docs(atlas): align proposal with integrated candidate a50329b2",
           "f34b617e docs(atlas): propose whole-system architecture and isolated decisions"
         ]
+      }
+    },
+    {
+      "id": "cl-01M2BH67MVAWGQBFGS76CE6ETD",
+      "datetime": "2026-09-12T19:23:27Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "decision",
+      "skill": "execute-with-coordination",
+      "title": "Atlas: isolate additive authoring from shared integration acknowledgment",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Owner turns7/8 supersede the all-source freeze. Exact branch-local new-file grants are recorded in sole section2; source safety is dispatched, candidate design active, existing SH3/Core/Shell files and main integration unchanged. DC-154 operational recurrence captured with honest partially-controlled scope.",
+      "rationale": "A gate protects only the operations that carry its risk. Explicit Owner authority admits reversible isolated work without pretending an unanswered pull log is acknowledgment.",
+      "artifacts": [
+        "docs/notes/atlas-owner/isolated-authoring.md",
+        "docs/collaboration/session-contracts.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "cd2e6e9e7defc8415159f6e861a5aa39843c13be",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": []
       }
     }
   ]

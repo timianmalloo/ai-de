@@ -12,17 +12,19 @@ links:
   - { to: note-atlas-lane-admission, rel: depends-on }
 review-by: 2026-12-12
 summary: >-
-  Proposed, not dispatched: one coherent Atlas implementation writer, the existing Shell owner
-  for integration, and an independent proof lane. Actual code ownership, registration, source-reader
-  spike and Owner design/dispatch admission remain prerequisites.
+  Branch-local safety authoring is admitted and active under an explicit Owner exception.
+  One additive candidate writer follows the exact E0 design; shared Shell integration and
+  normative registration remain separately gated.
 ---
 
-# Code Atlas coordination - PROPOSED / NOT DISPATCHED
+# Code Atlas coordination - isolated authoring active, integration not admitted
 
 **Current delivery blocker:** `req-01M2B86TXF7SHG61B31P4H4173` is still open.
-The native request is a shared pull log, not delivery into Claude's conversation. User relay was
-unavailable. This document assigns no authority by itself. The sole accepted ownership map remains
-`docs/collaboration/session-contracts.md` section 2.
+The native request is a shared pull log, not delivery into Claude's conversation. It blocks
+agreement on shared integration, **not the independently admitted authoring below**. The user's
+continuation instruction led to `note-atlas-isolated-authoring`; the sole section-2 register now
+records that branch-local exception and exact safety writer/files. Existing ownership rows remain.
+The new narrowed request is `req-01M2BGHNCM6WRD4ZZMBBFEEB4K`. Neither request is acknowledged.
 
 **Horizon:** E-0, the Owner's first physical inventory/type/member/source native journey.
 E-1 through E-4 are roadmap constraints, not work released by this plan.
@@ -36,8 +38,8 @@ headings/columns below retain the skill's machine-readable schema.
 | `coord doctor` in conductor tree | 11 classified patterns; merge drivers effective | Installed per clone; every linked worktree inherits. No reinstall from a worker tree. |
 | Shared regeneration marker | 6 owed entries at grounding | Not cleared with `coord regen`: its primary-owned marker must not be deleted as a worker side effect. |
 | `pack-doctor` | Coordination PASS; graph has known dangling F5 proof link | Installation state and content readiness are separate. The F5 branch remains frozen. |
-| Main at latest observed checkpoint | `b4e61022`, SH-2 merged | Reconcile actual host/interfaces against then-current main after acknowledgment; prior source tests are not current-host proof. |
-| Atlas code permission | BLOCKED | Registration/Core/Shell acknowledgment and Owner design/dispatch gate not complete. |
+| Main at worker creation | `4d396411`, CV-1 merged after SH-2 | Both new worker trees resolve to this revision; reconcile again at shared integration. |
+| Atlas code permission | New-file branch-local authoring admitted | Exact exception in section 2; existing shared files and main integration still excluded. |
 | Candidate E | Content gates clear with downstream conditions | Candidate/draft only, not normative registration or implementation proof. |
 | Architecture | PROPOSED; independent content reviews, Owner choices and final scoping conditions recorded | No source, migration, native or provider admission. |
 
@@ -54,13 +56,15 @@ headings/columns below retain the skill's machine-readable schema.
 
 ## Tracks
 
-All `owns` entries below mean **proposed responsibility awaiting section-2 acceptance**, not a grant.
+Only the exact source-safety files/writer currently recorded in the section-2 exception are dispatched.
+The candidate's exact file manifest must be added there before dispatch. Other `owns` entries below
+remain proposed integration responsibilities, not a grant.
 Budgets are Inferred planning circuit breakers. A firing cap reports a finding; it never drops a gate.
 
 | track | owns (authored) | depends on | tier | fan-out cap | budget | exit evidence | harness |
 |---|---|---|---|---|---|---|---|
-| E0-SAFETY | A new agreed `spikes/code-atlas-source-reader/` and its proof only | Core/Claude acknowledgment; explicit probe admission | T2 | 0 | 30 calls, one bounded native handle/race batch | Windows opened-object/root/link/replacement/hash/decoder semantics observed; refusal/race falsifiers; no userdata or shared-store mutation | GPT-5.5 general-purpose, own worktree; read/write capability observed on prior report worker, new probe permission still required |
-| E0-BUILD | Accepted new `Core/Understanding` + `App/Workbench/Understanding` source/tests and specifically delegated existing Core extractor/query/wire files; exact list in architecture section 14 | Content gates; Owner choices; E0-SAFETY; accepted ownership and design-slice | T2 | 0 | 60 calls per verifiable vertical checkpoint; replan at model/native seams | Real authorized inventory, scoped symbols/spans, source binding, store/wire/native content/history; targeted red/green; safe corpus and real-workspace read-only proof; no type-only substitution | GPT-5.5 writer, own worktree; Conductor selects appropriate GPT model at phase boundaries |
+| E0-SAFETY | Four exact new probe project/source files and `docs/proof/code-atlas-source-safety.md`, listed in section 2 | Explicit Owner probe admission, now recorded | T2 | 0 | 30 calls including preflight/clarification, one bounded native handle/race batch | Windows opened-object/root/link/replacement/hash/decoder semantics observed; refusal/race falsifiers; no userdata or shared-store mutation | Existing GPT-5.5 writer, new `atlas/e0-source-safety` tree at `4d396411`; dispatched |
+| E0-BUILD | Exact new `Core/Understanding` and detached `App/Workbench/Understanding` source/tests, named by E0 design and recorded in section 2 before dispatch | Owner new-file grant; E0 design; safety receipt before reader incorporation | T2 | 0 | 60 calls to one reviewed candidate checkpoint; no reset on a seam | Generated real files and compiler symbols, bounded inventory/identity/binding/history tests, inert supplied-projection controls; no fake host proof | One GPT-5.5 writer in reserved `atlas/e0-candidate` tree at `4d396411`; existing-file fallback uses a separately named standalone candidate |
 | SH-INTEGRATION | Existing factory/menu/host/layout files retained by Claude/Shell | Stable E0-BUILD seam and accepted integration request | T2 | per current Claude plan | Set by owning conductor, not invented here | Registry/routing/layout/native-host path reaches the real new content; current SH2 behavior remains intact | Existing acknowledged Claude/Shell lane, its own worktree |
 | E0-PROOF | New agreed proof/tests/probe artifacts, not product source | Joined E0-BUILD + SH-INTEGRATION revision | T2 | 0 | 30 calls, one bounded evidence pass plus named repairs | Actual Architecture entry -> file -> member -> source -> Back with UIA/focus/theme/DPI/bounds/stale/unknown states; independent source/wire/store consistency proof | GPT-5.5 proof worker, separate pinned worktree; relevant independent specialist reviewers |
 
@@ -73,7 +77,7 @@ It does not manufacture concurrent code lanes where dependencies fail the indepe
 
 | item | why it cannot be parallel | who owns it |
 |---|---|---|
-| Register E and exact section-2 responsibilities | No code authority exists before acknowledgment | Claude primary conductor + Core/Shell counterparts; Astra Owner for Atlas scope |
+| Register E and agree shared integration | Normative registration and existing-file/main authority are not supplied by the branch-local exception | Claude primary conductor + Core/Shell counterparts; Astra Owner for Atlas scope |
 | Source identity/manifest/policy contract | Every downstream projection and source read depends on it | Accepted E0 design owner, Data/Security/Test gates |
 | Windows source-reader safety choice | Unsafe opened-object/hash policy invalidates the source contract | Native/Security/Core design gate |
 | Public wire/capability contract | UI and daemon must agree on bindings, bounds and refusal | Core/daemon owner |
@@ -108,6 +112,11 @@ No guard may require removal of another lane's authorized behavior.
 
 ## Order of operations
 
+**Active exception:** source-safety implementation and isolated E0 design/additive candidate proceed
+now under the exact section-2 grant. The sequence below governs production integration and native
+acceptance; step 1 is not a predecessor of every independent authoring node. No existing SH3 file,
+project/package file, live data or shared store is touched by the admitted candidate.
+
 | # | action | cost | why now |
 |---|---|---|---|
 | 1 | Obtain actual resolution of full native request ID and section-2 updates | External acknowledgment; not an estimated timer | Code permission cannot be inferred. |
@@ -135,4 +144,4 @@ silently traded for deadline, token budget or fan-out.
 
 | Completed | Remaining | Best next action |
 |---|---|---|
-| Proposed plan and exact acknowledgment/resume conditions; no source dispatch. | Actual Core/Claude acknowledgment, current-main reconciliation, E0 design/safety/budget gates, all product implementation and runtime proof. | Have the counterpart acknowledge the native request and update the sole ownership register; otherwise keep delivery blocked. |
+| Owner corrected the blanket freeze; exact safety writer/files recorded and probe dispatched in its own tree. | E0 design and safety results, candidate implementation/proof, actual shared-integration agreement and native-product acceptance. | Join the safety/design receipts and dispatch the exact additive candidate; pursue shared integration separately without human relay or repeated polling. |

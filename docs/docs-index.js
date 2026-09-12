@@ -4574,6 +4574,44 @@ window.DOCS_INDEX = {
       "sourceSha256": "7ea5df0924025831925b7064e9769adbb912fc28e69dc6a09ed91540e8cfdd8a"
     },
     {
+      "id": "note-atlas-isolated-authoring",
+      "path": "docs/notes/atlas-owner/isolated-authoring.md",
+      "title": "Atlas Owner - separate isolated authoring from integration acknowledgment",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "User-directed continuation supersedes the blanket all-source freeze with explicit branch-local new-file authoring, while retaining existing owners and serial integration.",
+      "tags": [
+        "code-atlas",
+        "owner",
+        "coordination",
+        "scope-control"
+      ],
+      "links": [
+        {
+          "to": "note-atlas-lane-admission",
+          "rel": "refines"
+        },
+        {
+          "to": "note-atlas-draft-content-while-blocked",
+          "rel": "refines"
+        },
+        {
+          "to": "coordination-code-atlas",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e63d9b0e41d6ae58fcb9633d30d4160829e6ef044c5e7dc0930e77c6b323b561"
+    },
+    {
       "id": "note-avalondock-tab-styling",
       "path": "docs/notes/avalondock-tab-styling-decision.md",
       "title": "Decision — AvalonDock document-tab accent & corner styling",
@@ -7948,7 +7986,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2026-12-12",
       "reviewSuggested": [],
-      "summary": "Proposed, not dispatched: one coherent Atlas implementation writer, the existing Shell owner for integration, and an independent proof lane. Actual code ownership, registration, source-reader spike and Owner design/dispatch admission remain prerequisites.",
+      "summary": "Branch-local safety authoring is admitted and active under an explicit Owner exception. One additive candidate writer follows the exact E0 design; shared Shell integration and normative registration remain separately gated.",
       "tags": [
         "code-atlas",
         "coordination",
@@ -7974,7 +8012,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2657c1bebb12765754af92247d50d2d8f46d92fbe6d435a486360b11512556c0"
+      "sourceSha256": "79e3418ead1b0f294f59e69316fbc8eb8ffd2a4a0ce320a88510e843feb7e54a"
     },
     {
       "id": "coordination-code-atlas-resume",
@@ -8008,7 +8046,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4453fb66bb4c047e0f77bec705775ddffe5efe2d5aae4847a91c99712ecfcec0"
+      "sourceSha256": "eb504a798237a885d42cec1b53ee00370856dcb540229d81e33ee769bf3c9d59"
     },
     {
       "id": "defect-classes",
@@ -8037,7 +8075,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7491bf038c9e0ac9cb3f7f7fa7614489387e656f17e1bd23b8487ecd59f98476"
+      "sourceSha256": "159a61207a66d7521f13d5ed37c360a58fb7e774852318321b8535d67a4ea268"
     },
     {
       "id": "design-session-profiler",
@@ -10187,7 +10225,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  F0 --> O0\n  F0 --> S0\n  F0 --> K0\n  O0 --> S1\n  S0 --> S1\n  K0 --> S1\n  S1 --> A0\n  A0 --> A1\n  A1 --> C0\n  ACK[External ownership acknowledgment] --> C0\n  C0 --> DI[Dn / In: not dispatched]\n  DI --> JN[Jn: not executed]"
         }
       ],
-      "sourceSha256": "9be4c7b6057e6bae4849937acadd6a656c0f238fe535d3d4b3442e5fb7b91cca"
+      "sourceSha256": "fcebfef6bdcb192429b6849ebbcb46ecb35d2e9cfc5ba3b6e8b8c3e8ed9895dd"
     },
     {
       "id": "plan-conductor-front-door",
@@ -11168,7 +11206,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b2d93a762075b06fdad48040f5b1c02be6a5bb03c32a8b47a7abd2acd0c0eef1"
+      "sourceSha256": "e4bf7aba52facc3e25218426ad4988fb880bfcbceae2febbe5ffc4d204d7bf97"
     },
     {
       "id": "session-profiles",
@@ -17793,7 +17831,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-coordination-code-atlas",
       "path": "docs/coordination/code-atlas.html",
-      "title": "Code Atlas coordination — proposed, not dispatched",
+      "title": "Code Atlas coordination - isolated authoring active",
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "coordination-code-atlas"
@@ -17879,5 +17917,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "f67cfa8ea95567c511501af287ccfd0ccb4453fcd9762a5e0110bb8301a7baae"
+  "graphSha256": "149a0c8c97ff2c10a387fc8bda3c52c64d4a4c5c50b3261794d8d58146d9ea59"
 };

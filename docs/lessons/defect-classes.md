@@ -6643,6 +6643,24 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   the pack).
 - **Status:** `controlled` by the pair; the lens rule is `partially-controlled`.
 
+- **Recurrence (2026-09-12, Atlas coordination):** an acknowledgment protecting existing
+  Core/Shell files and main integration was made a predecessor of all Atlas investigation,
+  design and source authoring. The user had to correct the documentation-only stop. The Owner
+  narrowed the control: an explicit branch-local grant admits exact new files and synthetic
+  safety work while shared integration remains gated. This is **scope/control over-serialization**,
+  not permission inferred from silence or a relaxation of source-safety proof.
+  **Class / sweep / derive / prevent:** the fleet plan, coordination plan and resume ledger all
+  carried the same overly broad edge; the active plan now separates authoring, reader safety,
+  shared wiring and integration. Writer authority is derived from the one section-2 exception,
+  with exact files and one writer, rather than copied into a second ownership map. The Owner/
+  Conductor dispatch review must name the risk and actual consuming nodes for each gate.
+  `docs/notes/atlas-owner/isolated-authoring.md` records the correction and its authority;
+  `docs/plans/code-atlas-fleet.md` records the independent safety/design nodes. The preceding
+  whole-program stop is the observed counterexample; source-probe dispatch is the observed
+  changed decision, not proof of safe source reading. Existing CV-0 tests do **not** automate this
+  operational case; it remains partially controlled by the scoped review rule, with executable
+  safety/candidate evidence still required.
+
 ### DC-155 — A symptom owned by someone else is closed by attribution, not by an outcome
 
 - **Shape:** a population report is investigated to DC-131's standard: counted, every member
