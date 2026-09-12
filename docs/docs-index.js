@@ -7616,7 +7616,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3fe6ff9d8faf6eb8c54e44d05a581f2cff6f1e1276acbb9a70bb36da62d7448c"
+      "sourceSha256": "53266dda45f604f8bdab02d81d293620d32e9d3f1f69a6c632654e27061316a0"
     },
     {
       "id": "design-session-profiler",
@@ -14139,6 +14139,48 @@ window.DOCS_INDEX = {
       "sourceSha256": "70be47bec3d22b82a75fcceb9b51b67671c6eb0175f97f7d178ca72999c2ab77"
     },
     {
+      "id": "proof-census-controls",
+      "path": "docs/proof/census-controls.md",
+      "title": "Proof Pack - The census controls (INV-0008 phase 6, DC-147's control, the four legacy mockups)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "X-1's three deliverables under `docs/coordination/addendum-cd.md`: INV-0008 phase 6's census reach (a disabled checkbox and a disabled submenu command forced on the real composed shell, 0 below floor; hover/pressed and a never-instantiated RadioButton named as genuine residuals, not faked); DC-147's control (`tools/verify-mockup-audits.py`, a headless browser sweep, red first, wired into CI); the four legacy mockups' `h_theme` ReferenceError fixed. One new finding (DC-158) surfaced by the reach and routed to the Shell lane, not fixed here (App.xaml is outside this track's owned paths).",
+      "tags": [
+        "proof-pack",
+        "ui",
+        "contrast",
+        "wcag",
+        "census",
+        "mockups",
+        "dc-147",
+        "dc-158"
+      ],
+      "links": [
+        {
+          "to": "inv-0008-contrast-floor-passes-while-the-shell-fails",
+          "rel": "tested-by"
+        },
+        {
+          "to": "proof-contrast-census",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "13fc54d2fe56c28d2451951ad21c914d5d8ac25af99ff2cc0e8dd01236d571c3"
+    },
+    {
       "id": "proof-composer-entry-areas",
       "path": "docs/proof/composer-entry-areas.md",
       "title": "Proof Pack — the composer's entry areas keep their room, and the page survives a render (INV-0007, phases 1–4)",
@@ -16554,5 +16596,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "0bb4d2109d1413ac2a8cb367a752a570ae15ddb49b3c0668aebcd1e453fbc321"
+  "graphSha256": "a05f9d3874d23b5e3be121c6409c7f80bcacb769995d945f9e900c3ee25de013"
 };
