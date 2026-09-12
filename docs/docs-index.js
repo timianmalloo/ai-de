@@ -5037,6 +5037,114 @@ window.DOCS_INDEX = {
       "sourceSha256": "bdf356fe8e627146ca59bca7a953e7b5e5b854ce088b34e89a758ff0707086e5"
     },
     {
+      "id": "note-design-slice-thread-assertive-through-one-region",
+      "path": "docs/notes/design-slice-thread-assertive-through-one-region.md",
+      "title": "Assertive announcements go through the one shared announcer as notification urgency (ImportantMostRecent; statuses queued with All), not a second live region — until an attended NVDA run says otherwise",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "Addendum C/D · Conversation lane · DS-1 → CV-1",
+      "reviewBy": "2026-12-11",
+      "reviewSuggested": [],
+      "summary": "SC9 needs a lane error, a refusal and a permission request to be assertive. WorkbenchAnnouncer has one polite live region and one notification call today; the design adds an Announcement record whose Assertive urgency maps to RaiseNotificationEvent(kind, ImportantMostRecent) and whose Status maps to (kind, All) — NVDA cancels speech only for MostRecent / ImportantMostRecent (fetched source), so the first draft's ImportantAll was inverted — with a per-turn activity id, over the same region; a second assertive TextBlock in the shell is the upgrade if NVDA does not hear it. The kinds are a Core enum mapped in App (Core has no WPF); the activity id is one constant. Blast radius: WorkbenchAnnouncer's signature (additive), CV-1's A2 and the attended A6 row.",
+      "tags": [
+        "decision-note",
+        "accessibility",
+        "announcements",
+        "wpf",
+        "uia",
+        "session",
+        "thread",
+        "sc9",
+        "simplify"
+      ],
+      "links": [
+        {
+          "to": "design-session-thread-itemscontrol",
+          "rel": "relates-to"
+        },
+        {
+          "to": "ui-review-session-conversation",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "dbb9ad913c6d82729843ac3bcc3705980fe6d5bf9959673c8e226a5a1e94fc5c"
+    },
+    {
+      "id": "note-design-slice-thread-keys-owned-by-the-feed",
+      "path": "docs/notes/design-slice-thread-keys-owned-by-the-feed.md",
+      "title": "The thread feed owns its navigation keys on the ListBox's default tab scope — the platform's Up/End and Local tab navigation were measured wrong for a variable-height virtualized feed",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "Addendum C/D · Conversation lane · DS-1 → CV-1",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Measured in spikes/session-thread: a ListBox's own Up from the last turn does not move, its End lands on the penultimate turn, its PageDown moves by a page, and TabNavigation Local/Continue trap Tab at the fold's header while the default, Once, walks the caret's turn and leaves. So ThreadFeed owns PageDown/PageUp/Home/End by index from the container AND from any inner control, scrolls three text lines on Up/Down, keeps the ListBox defaults (Once, Contained), makes each Expander non-focusable (one stop per fold) and never relies on the platform's geometry navigation. Blast radius: CV-1's ThreadFeed and its K1–K6 oracles.",
+      "tags": [
+        "decision-note",
+        "wpf",
+        "keyboard",
+        "session",
+        "thread",
+        "feed",
+        "virtualization",
+        "spike",
+        "sc8"
+      ],
+      "links": [
+        {
+          "to": "design-session-thread-itemscontrol",
+          "rel": "relates-to"
+        },
+        {
+          "to": "ui-review-session-conversation",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d33c2a900f8f7ac5cc47fbecbca9ea7eab2471825e362df9b0b4f800a0c6be58"
+    },
+    {
+      "id": "note-design-slice-thread-split-is-a-view-of-the-fold",
+      "path": "docs/notes/design-slice-thread-split-is-a-view-of-the-fold.md",
+      "title": "The Console split renders the thread's fold, not ConsoleStreamModel — Ruling 74's equality oracle is an identity over one list, never an equation between two stores",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "Addendum C/D · Conversation lane · DS-1 → CV-1 / CV-2",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "The on-demand Console split (Ruling 74) is a FeedList over a flat list of rows derived from ISessionThread.Turns — a heading row per turn plus that turn's event lines, in order, each a ListItem — so \"the split's rows equal the folded events of every turn, in order\" (Ruling 74 condition 1) is an identity by construction and the test M1 is a guard against a second source creeping in. Blast radius: CV-1 (the view), the fate of the existing ConsoleSurface in the session document (a finding for the conductor), CV-2's join.",
+      "tags": [
+        "decision-note",
+        "session",
+        "thread",
+        "console",
+        "split",
+        "derive-dont-store",
+        "ruling-74",
+        "dm7"
+      ],
+      "links": [
+        {
+          "to": "design-session-thread-itemscontrol",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-session-design-thread-not-panes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5e5bff60adaec37785cdb98839d05d517b48f8a1677a75745e7c83f7a64069ec"
+    },
+    {
       "id": "note-front-door-council-rulings",
       "path": "docs/notes/front-door-council-rulings.md",
       "title": "Decision note — Rulings 19–25, resolving the front-door council vetoes",
@@ -5994,6 +6102,92 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "4fc0b16537275ee9743dcadefb508ce94a027e92d70521b041d15616aa6cdeb4"
+    },
+    {
+      "id": "design-session-thread-itemscontrol",
+      "path": "docs/design/session-thread-itemscontrol.md",
+      "title": "The session thread — a virtualized WPF feed of turns with the pinned editor, the folded reply, the keyboard model (SC8), the announcement policy (SC9) and the UIA contract (SC10)",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "Addendum C/D · Conversation lane · DS-1 (design) → CV-1 (implement)",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "The detailed design for the thread control the session document renders (D2's ranked item 1): a FeedList base (a ListBox over a recycling VirtualizingStackPanel, owned keys, a structural pin) with two consumers — the turn feed and the Console split — one INotifyPropertyChanged row per accepted turn carrying its disclosure state (recycling leaks it otherwise, measured), the composer pinned beneath with an editor floor and a document cap (an Auto row alone starves the thread to 0 px, measured), a read model that publishes versioned snapshots with a catch-up flag, a transition-based announcement policy on NVDA's real processing semantics, real UIA names, positions and HelpText, and 30 red-first oracles CV-1 lands with their falsifying rows. Two adversarial passes each for five lenses; the UX & Accessibility hard veto cleared at pass 2 by that lens; the pass-2 conditions of every lens are applied here for the conductor's diff (the loop cap is 2).",
+      "tags": [
+        "design",
+        "wpf",
+        "session",
+        "thread",
+        "conversation",
+        "feed",
+        "keyboard",
+        "announcements",
+        "uia",
+        "accessibility",
+        "virtualization",
+        "addendum-c",
+        "addendum-d",
+        "sc8",
+        "sc9",
+        "sc10"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "implements"
+        },
+        {
+          "to": "mockup-session-conversation",
+          "rel": "refines"
+        },
+        {
+          "to": "ui-review-session-conversation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0031-second-docking-host",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0033-prompt-compilation-bounded-context",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0034-envelope-event-store",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-session-design-thread-not-panes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-design-slice-thread-keys-owned-by-the-feed",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-design-slice-thread-assertive-through-one-region",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-design-slice-thread-split-is-a-view-of-the-fold",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "bff6ed68e53be263572cf07f041994a6a783d6a94f2d117846a92534c5650778"
     },
     {
       "id": "design-watcher-advisory-evaluator",
@@ -7338,7 +7532,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "51e0afd7897d055326600158efd85f9c0d9d77313d4d4e3fc82e430ffcaa3fe1"
+      "sourceSha256": "3df38eabfa6a4f1eda8807f3ccea9dc42c838a1386d03a80bc070b29fee98aa4"
     },
     {
       "id": "design-session-profiler",
@@ -15950,5 +16144,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "66a0a76c4513eb6edb5466b6a3b467cd90aed8bf894e736959c771afa4c9b950"
+  "graphSha256": "250df64e27c4e721df7fdda7bbace8f41d9d361883b915ca450c4d8a7e5ea7c9"
 };

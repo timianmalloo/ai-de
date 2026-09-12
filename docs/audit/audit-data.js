@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T00:26:05Z",
+  "generated": "2026-09-12T02:11:53Z",
   "audit": [
     {
       "actor": null,
@@ -13105,6 +13105,198 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M29P4SR9M19M5YA94HDR82R6",
+      "shortname": "design-slice-session-thread",
+      "datetime": "2026-09-12T02:11:34Z",
+      "session": "ds-1",
+      "prompt": "You are side track DS-1 of the coordination plan docs/coordination/addendum-cd.md (read your row, the Seams table and the fan-out contract). Run the /design-slice skill (Skill tool: design-slice, args: the session thread ItemsControl — the WPF control that renders the conversation's turns (SC8 keyboard model, SC9 announcement policy, SC10 ARIA), virtualized, with the pinned editor and the folded reply side; names the red-first oracles CV-1 lands). The conductor is Claude Opus (session conductor-addendum-c). Read CLAUDE.md and AGENTS.md; the pack's rules apply (name the patterns; Patterns Expert vs Simplifier adversarial review; the UX & Accessibility hard veto; the Spike Protocol for any WPF/AvalonDock behaviour you would otherwise assert — a spike under spikes/ is allowed and disposed or committed per repo policy). Use python, not python3; PYTHONIOENCODING=utf-8.\n\nYour worktree — the only tree you write to: C:\\Projects\\ai-de-side-design-slice-thread, branch side/design-slice-thread, HEAD = main 4a3e34ae. Writes under docs/ only (docs/design/session-thread-itemscontrol.md, docs/notes/design-slice-*.md, audit/change-log, derived) plus an optional spike under spikes/. No src/, no tests/, no DESIGN.md, no mockups.\n\nInputs (all on main): docs/reviews/ui-session-conversation.md (D2's review; §7 ranked plan item 1 is you); DESIGN.md:974-1125 (SC1–SC10); docs/mockups/session-conversation.html (the 43 states; stampFocusOrder :881); the specs' Part B (Addendum C US-C13 and §B5 Flow 6 + errata; Addendum D Part B; Rulings 74, 75, 77, 78 as applied); the architecture (ADR-0031, ADR-0033, ADR-0034; docs/notes/addendum-cd-architecture-p1-inputs.md §1–2; the INV-0009 note for the binder's shape); the existing WPF surfaces to compose with, not fork (SessionDocumentSurface.cs, ConsoleSurface.cs, Composer/ComposerSurface.cs, WorkbenchAnnouncer.cs, WpfHostFocusScope.cs, SurfaceChrome.cs) — read-only.\n\nWhat the design doc must settle (each with the pattern named and the rejected alternative): 1. The control (ItemsControl + VirtualizingStackPanel recycling; 40 turns without a layout cliff — state the measure; the item template; the pinned editor outside the scroll viewer; the follow-only-while-pinned rule; the jump list). 2. SC8 — the keyboard model in WPF terms. 3. SC9 — the announcement policy (once-only status via WorkbenchAnnouncer; assertive errors; what is never announced; LiveSetting; the announcement-vs-focus race). 4. SC10 — UIA properties. 5. The seams (what the thread consumes — the envelope fold, its interface; what it raises; the two-gesture Prepare as it appears in the thread). 6. The red-first oracles CV-1 lands, by name (keyboard-model tests — headless where possible, UIA where not; the announcement-policy test; ARIA/UIA property tests; the 40-turn layout measure; the editor-top-edge oracle; the fold/split equality — Ruling 74 condition 1). 7. Spike (bounded) under spikes/session-thread/ for any WPF claim not already proven in this repo; record Verified/Inferred honestly. No model calls.\n\nReview (read-only sub-agents, ≤ 3 concurrent; loop variant = unresolved Blockers, floor 0, cap 2): Patterns Expert vs the Simplifier (adversarial), UX & Accessibility (hard veto), Test Architect (every oracle has a falsifying input), the WPF styling lens (wpf-styling-expert).\n\nClose (DC-082 order): frontmatter (id design-session-thread-itemscontrol; links implements the spec, refines mockup-session-conversation, relates-to the review and ADR-0031/0033), docs-graph.py derive; audit entry (--shortname design-slice-session-thread --session ds-1 --skill design-slice --kind skill --tier T2 --fan-out 3 --git + signals) and a change-log entry; regenerate-derived.py (ends green); gates bare, stop-on-first-red (verify-no-conflict-markers · verify-derived-views · verify-ruling-citations · verify-audit-log · verify-stranded-audit · verify-id-allocators); commit with the attribution lines; then git push -u origin side/design-slice-thread. Do not merge to main.\n\nFails if: any write under src/ tests/ DESIGN.md docs/mockups/ docs/specs/ docs/adr/; a pattern asserted without its name; a WPF behaviour asserted without a spike or a citation to a measured run; an oracle without a falsifying input; git stash; a rebase; a push to main; DC-120.\n\nReport back (compact): the control's shape in five lines; the keyboard model and announcement policy in a table each; the seams; the named oracles CV-1 lands; spike findings (Verified/Inferred); vetoes raised/cleared; gate table; commit shas and the pushed sha.",
+      "summary": "DS-1 /design-slice: docs/design/session-thread-itemscontrol.md (new) — the session thread as a FeedList base (a ListBox over a recycling VirtualizingStackPanel, the six feed keys owned as a pure Decide + an act, a structural pin) with two consumers (the turn feed; the Console split as a flat list of heading and line rows), one INotifyPropertyChanged row per accepted turn carrying its three disclosure flags, the composer pinned beneath (MinHeight 130 on the editor host + the document's MaxHeight belt), a read model that publishes versioned snapshots with a catch-up flag, a one-method transition policy over them with a total transition table, SC9 on NVDA's fetched processing semantics (Status -> All, Assertive -> ImportantMostRecent; Core enums mapped in App), the SC10 UIA contract (List/ListItem, ItemStatus = decoration line, HelpText = the reason sentence, keyed disclosure template, one focusable outside text), the seams (ISessionThread, Announce(Announcement) + raise seam, ComposerSurface.FocusTarget + F6 forward + focus.leave Backward + picker focus echo + editor MinHeight, two WorkbenchCommands, no App.xaml change), the E7 list with a retire row, and 30 red-first oracles with falsifying rows. Spike spikes/session-thread (Q1-Q15, RESULT.md + three raw files) falsified eight platform assumptions: the ListBox's Up/End in a variable-height feed; TabNavigation Local/Continue trap Tab; offset-at-max is not \"followed\" (extent estimate); a collection Replace drops the caret; a roving IsTabStop binding is unnecessary under the default Once; recycling hands one turn's expanded fold to another turn (Q13); the real ComposerSurface in an Auto Grid row lays out the editor at 0 px and the thread at 0 px (Q14); virtualization off is 12.9x on first layout (Q15). Gate: two passes each for Patterns Expert, Simplifier, UX & Accessibility (hard veto CLEARED at pass 2), Test Architect (FAIL both passes: a residual Blocker on the restore/seed lifecycle, resolved by the versioned flagged snapshot — applied post-cap), WPF styling lens (PASS-WITH-CONDITIONS, no escalation; its Blocker measured as Q14). The pass-2 conditions of all lenses are applied in the final revision for the conductor's diff (cap 2 reached; the author cleared nothing). Three decision notes (keys owned by the feed; assertive through one region; the split is a view of the fold). One defect class appended with the id left as DC-nnn (an oracle reads a value clamped at its bound). Findings for owners: DESIGN.md:1092 (the composer row's growth rule), App.xaml (dotted FocusVisualStyle beside the ring), spec/mockup drift (Flow 6, Flow D-1 K2, E2's tab order, the mockup's T badge and skeleton turns), webview2-airspace RESULT over-generalisation, front-door-ruling-49's dangling link, ConsoleSurface/CanvasModeCatalog retirement (CV-1 grep), ConsoleStreamModel as a second store (CV-2). Sub-agent starts are reconstructed from launch order and reported durations; durations and call counts are the harness's.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "claude-ds-1",
+      "artifacts": [
+        "docs/design/session-thread-itemscontrol.md",
+        "spikes/session-thread/RESULT.md",
+        "docs/notes/design-slice-thread-keys-owned-by-the-feed.md",
+        "docs/notes/design-slice-thread-assertive-through-one-region.md",
+        "docs/notes/design-slice-thread-split-is-a-view-of-the-fold.md"
+      ],
+      "tags": [
+        "addendum-c",
+        "addendum-d",
+        "conversation-lane",
+        "ds-1",
+        "wpf",
+        "accessibility"
+      ],
+      "outcome": "success",
+      "goal": "Settle the session thread control's design (shape, SC8, SC9, SC10, seams, red-first oracles) so CV-1 writes reds first and never asserts a WPF behaviour from memory",
+      "done_when": "docs/design/session-thread-itemscontrol.md committed with frontmatter and derived index; every pattern named with its rejected alternative; every WPF claim cites the spike; every oracle has a falsifying input; the Patterns Expert/Simplifier and UX & Accessibility gates recorded and cleared by someone other than the author; audit + change-log entries; gates green; pushed to side/design-slice-thread",
+      "tier": "T2",
+      "main_calls": 95,
+      "main_budget": 120,
+      "main_over_budget": false,
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-12T00:28:26Z",
+      "duration_seconds": 6188.0,
+      "agent_runs": [
+        {
+          "agent": "explore-specs",
+          "started_at": "2026-09-12T00:29:00Z",
+          "ended_at": "2026-09-12T00:34:02Z",
+          "duration_seconds": 302.0,
+          "calls": 33,
+          "budget_calls": 60,
+          "over_budget": false
+        },
+        {
+          "agent": "explore-adrs",
+          "started_at": "2026-09-12T00:29:10Z",
+          "ended_at": "2026-09-12T00:35:03Z",
+          "duration_seconds": 353.0,
+          "calls": 62,
+          "budget_calls": 60,
+          "over_budget": true
+        },
+        {
+          "agent": "explore-surfaces",
+          "started_at": "2026-09-12T00:29:48Z",
+          "ended_at": "2026-09-12T00:34:08Z",
+          "duration_seconds": 260.0,
+          "calls": 52,
+          "budget_calls": 60,
+          "over_budget": false
+        },
+        {
+          "agent": "patterns-expert-p1",
+          "started_at": "2026-09-12T00:44:55Z",
+          "ended_at": "2026-09-12T00:54:13Z",
+          "duration_seconds": 558.0,
+          "calls": 11,
+          "budget_calls": 60,
+          "over_budget": false
+        },
+        {
+          "agent": "the-simplifier-p1",
+          "started_at": "2026-09-12T00:46:21Z",
+          "ended_at": "2026-09-12T00:54:32Z",
+          "duration_seconds": 491.0,
+          "calls": 19,
+          "budget_calls": 60,
+          "over_budget": false
+        },
+        {
+          "agent": "ux-accessibility-p1",
+          "started_at": "2026-09-12T00:42:23Z",
+          "ended_at": "2026-09-12T00:54:53Z",
+          "duration_seconds": 750.0,
+          "calls": 16,
+          "budget_calls": 60,
+          "over_budget": false
+        },
+        {
+          "agent": "ux-accessibility-p2",
+          "started_at": "2026-09-12T01:12:51Z",
+          "ended_at": "2026-09-12T01:22:34Z",
+          "duration_seconds": 583.0,
+          "calls": 4,
+          "budget_calls": 60,
+          "over_budget": false
+        },
+        {
+          "agent": "test-architect-p1",
+          "started_at": "2026-09-12T01:13:14Z",
+          "ended_at": "2026-09-12T01:23:01Z",
+          "duration_seconds": 587.0,
+          "calls": 13,
+          "budget_calls": 60,
+          "over_budget": false
+        },
+        {
+          "agent": "wpf-styling-expert",
+          "started_at": "2026-09-12T01:10:49Z",
+          "ended_at": "2026-09-12T01:23:31Z",
+          "duration_seconds": 762.0,
+          "calls": 42,
+          "budget_calls": 60,
+          "over_budget": false
+        },
+        {
+          "agent": "patterns-expert-p2",
+          "started_at": "2026-09-12T01:41:42Z",
+          "ended_at": "2026-09-12T01:48:58Z",
+          "duration_seconds": 436.0,
+          "calls": 6,
+          "budget_calls": 60,
+          "over_budget": false
+        },
+        {
+          "agent": "the-simplifier-p2",
+          "started_at": "2026-09-12T01:40:56Z",
+          "ended_at": "2026-09-12T01:49:18Z",
+          "duration_seconds": 502.0,
+          "calls": 6,
+          "budget_calls": 60,
+          "over_budget": false
+        },
+        {
+          "agent": "test-architect-p2",
+          "started_at": "2026-09-12T01:40:23Z",
+          "ended_at": "2026-09-12T01:49:38Z",
+          "duration_seconds": 555.0,
+          "calls": 9,
+          "budget_calls": 60,
+          "over_budget": false
+        }
+      ],
+      "parallelism": {
+        "agent_seconds": 6139.0,
+        "span_seconds": 2430.0,
+        "speedup": 2.53,
+        "peak_concurrency": 3
+      },
+      "persona_yield": [
+        {
+          "persona": "patterns-expert",
+          "raised": 24,
+          "accepted": 24
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 37,
+          "accepted": 35
+        },
+        {
+          "persona": "ux-accessibility",
+          "raised": 42,
+          "accepted": 42
+        },
+        {
+          "persona": "test-architect",
+          "raised": 38,
+          "accepted": 38
+        },
+        {
+          "persona": "wpf-styling-expert",
+          "raised": 12,
+          "accepted": 12
+        }
+      ],
+      "git": {
+        "sha": "4a3e34ae921be0a83a2e9ecff0cc59ad9aebc47e",
+        "short": "4a3e34ae9",
+        "branch": "side/design-slice-thread",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -16684,6 +16876,30 @@ window.AUDIT_DATA = {
         ]
       },
       "audit_ref": "al-01M29CTB14PVJBWCJ912EJBMC9"
+    },
+    {
+      "id": "cl-01M29P56ARA4RV5J00F6AARY0T",
+      "datetime": "2026-09-12T02:11:47Z",
+      "session": "ds-1",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "The session thread is a FeedList over versioned catch-up-flagged snapshots: the feed owns its keys, the row owns its view state, the composer declares its floor, the policy announces by transition",
+      "prompt": "You are side track DS-1 of the coordination plan docs/coordination/addendum-cd.md (read your row, the Seams table and the fan-out contract). Run the /design-slice skill (Skill tool: design-slice, args: the session thread ItemsControl — the WPF control that renders the conversation's turns (SC8 keyboard model, SC9 announcement policy, SC10 ARIA), virtualized, with the pinned editor and the folded reply side; names the red-first oracles CV-1 lands). The conductor is Claude Opus (session conductor-addendum-c). Read CLAUDE.md and AGENTS.md; the pack's rules apply (name the patterns; Patterns Expert vs Simplifier adversarial review; the UX & Accessibility hard veto; the Spike Protocol for any WPF/AvalonDock behaviour you would otherwise assert — a spike under spikes/ is allowed and disposed or committed per repo policy). Use python, not python3; PYTHONIOENCODING=utf-8.\n\nYour worktree — the only tree you write to: C:\\Projects\\ai-de-side-design-slice-thread, branch side/design-slice-thread, HEAD = main 4a3e34ae. Writes under docs/ only (docs/design/session-thread-itemscontrol.md, docs/notes/design-slice-*.md, audit/change-log, derived) plus an optional spike under spikes/. No src/, no tests/, no DESIGN.md, no mockups.\n\nInputs (all on main): docs/reviews/ui-session-conversation.md (D2's review; §7 ranked plan item 1 is you); DESIGN.md:974-1125 (SC1–SC10); docs/mockups/session-conversation.html (the 43 states; stampFocusOrder :881); the specs' Part B (Addendum C US-C13 and §B5 Flow 6 + errata; Addendum D Part B; Rulings 74, 75, 77, 78 as applied); the architecture (ADR-0031, ADR-0033, ADR-0034; docs/notes/addendum-cd-architecture-p1-inputs.md §1–2; the INV-0009 note for the binder's shape); the existing WPF surfaces to compose with, not fork (SessionDocumentSurface.cs, ConsoleSurface.cs, Composer/ComposerSurface.cs, WorkbenchAnnouncer.cs, WpfHostFocusScope.cs, SurfaceChrome.cs) — read-only.\n\nWhat the design doc must settle (each with the pattern named and the rejected alternative): 1. The control (ItemsControl + VirtualizingStackPanel recycling; 40 turns without a layout cliff — state the measure; the item template; the pinned editor outside the scroll viewer; the follow-only-while-pinned rule; the jump list). 2. SC8 — the keyboard model in WPF terms. 3. SC9 — the announcement policy (once-only status via WorkbenchAnnouncer; assertive errors; what is never announced; LiveSetting; the announcement-vs-focus race). 4. SC10 — UIA properties. 5. The seams (what the thread consumes — the envelope fold, its interface; what it raises; the two-gesture Prepare as it appears in the thread). 6. The red-first oracles CV-1 lands, by name (keyboard-model tests — headless where possible, UIA where not; the announcement-policy test; ARIA/UIA property tests; the 40-turn layout measure; the editor-top-edge oracle; the fold/split equality — Ruling 74 condition 1). 7. Spike (bounded) under spikes/session-thread/ for any WPF claim not already proven in this repo; record Verified/Inferred honestly. No model calls.\n\nReview (read-only sub-agents, ≤ 3 concurrent; loop variant = unresolved Blockers, floor 0, cap 2): Patterns Expert vs the Simplifier (adversarial), UX & Accessibility (hard veto), Test Architect (every oracle has a falsifying input), the WPF styling lens (wpf-styling-expert).\n\nClose (DC-082 order): frontmatter (id design-session-thread-itemscontrol; links implements the spec, refines mockup-session-conversation, relates-to the review and ADR-0031/0033), docs-graph.py derive; audit entry (--shortname design-slice-session-thread --session ds-1 --skill design-slice --kind skill --tier T2 --fan-out 3 --git + signals) and a change-log entry; regenerate-derived.py (ends green); gates bare, stop-on-first-red (verify-no-conflict-markers · verify-derived-views · verify-ruling-citations · verify-audit-log · verify-stranded-audit · verify-id-allocators); commit with the attribution lines; then git push -u origin side/design-slice-thread. Do not merge to main.\n\nFails if: any write under src/ tests/ DESIGN.md docs/mockups/ docs/specs/ docs/adr/; a pattern asserted without its name; a WPF behaviour asserted without a spike or a citation to a measured run; an oracle without a falsifying input; git stash; a rebase; a push to main; DC-120.\n\nReport back (compact): the control's shape in five lines; the keyboard model and announcement policy in a table each; the seams; the named oracles CV-1 lands; spike findings (Verified/Inferred); vetoes raised/cleared; gate table; commit shas and the pushed sha.",
+      "summary": "DS-1 /design-slice: docs/design/session-thread-itemscontrol.md (new) — the session thread as a FeedList base (a ListBox over a recycling VirtualizingStackPanel, the six feed keys owned as a pure Decide + an act, a structural pin) with two consumers (the turn feed; the Console split as a flat list of heading and line rows), one INotifyPropertyChanged row per accepted turn carrying its three disclosure flags, the composer pinned beneath (MinHeight 130 on the editor host + the document's MaxHeight belt), a read model that publishes versioned snapshots with a catch-up flag, a one-method transition policy over them with a total transition table, SC9 on NVDA's fetched processing semantics (Status -> All, Assertive -> ImportantMostRecent; Core enums mapped in App), the SC10 UIA contract (List/ListItem, ItemStatus = decoration line, HelpText = the reason sentence, keyed disclosure template, one focusable outside text), the seams (ISessionThread, Announce(Announcement) + raise seam, ComposerSurface.FocusTarget + F6 forward + focus.leave Backward + picker focus echo + editor MinHeight, two WorkbenchCommands, no App.xaml change), the E7 list with a retire row, and 30 red-first oracles with falsifying rows. Spike spikes/session-thread (Q1-Q15, RESULT.md + three raw files) falsified eight platform assumptions: the ListBox's Up/End in a variable-height feed; TabNavigation Local/Continue trap Tab; offset-at-max is not \"followed\" (extent estimate); a collection Replace drops the caret; a roving IsTabStop binding is unnecessary under the default Once; recycling hands one turn's expanded fold to another turn (Q13); the real ComposerSurface in an Auto Grid row lays out the editor at 0 px and the thread at 0 px (Q14); virtualization off is 12.9x on first layout (Q15). Gate: two passes each for Patterns Expert, Simplifier, UX & Accessibility (hard veto CLEARED at pass 2), Test Architect (FAIL both passes: a residual Blocker on the restore/seed lifecycle, resolved by the versioned flagged snapshot — applied post-cap), WPF styling lens (PASS-WITH-CONDITIONS, no escalation; its Blocker measured as Q14). The pass-2 conditions of all lenses are applied in the final revision for the conductor's diff (cap 2 reached; the author cleared nothing). Three decision notes (keys owned by the feed; assertive through one region; the split is a view of the fold). One defect class appended with the id left as DC-nnn (an oracle reads a value clamped at its bound). Findings for owners: DESIGN.md:1092 (the composer row's growth rule), App.xaml (dotted FocusVisualStyle beside the ring), spec/mockup drift (Flow 6, Flow D-1 K2, E2's tab order, the mockup's T badge and skeleton turns), webview2-airspace RESULT over-generalisation, front-door-ruling-49's dangling link, ConsoleSurface/CanvasModeCatalog retirement (CV-1 grep), ConsoleStreamModel as a second store (CV-2). Sub-agent starts are reconstructed from launch order and reported durations; durations and call counts are the harness's.",
+      "rationale": "Eight WPF assumptions the first draft would have asserted from memory were measured false in spikes/session-thread (the ListBox's own Up/End, Local/Continue tab navigation, offset-at-max as 'followed', collection Replace dropping the caret, roving IsTabStop, recycling leaking IsExpanded, the Auto row starving the editor and the thread to 0 px, the cost of virtualization off); three lenses' pass-2 verdicts converged on the read model's catch-up boundary and snapshot delivery, resolved by ThreadSnapshot(Turns, Version, IsCaughtUp) in the event; NVDA's fetched processing semantics inverted the first draft's assertive mapping; AiDe.Core is net10.0 so the announcement kinds are Core enums mapped in App.",
+      "artifacts": [
+        "docs/design/session-thread-itemscontrol.md",
+        "spikes/session-thread/RESULT.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "4a3e34ae921be0a83a2e9ecff0cc59ad9aebc47e",
+        "after": "4a3e34ae921be0a83a2e9ecff0cc59ad9aebc47e",
+        "branch": "side/design-slice-thread",
+        "pushed": null,
+        "commits": []
+      },
+      "audit_ref": "al-01M29P4SR9M19M5YA94HDR82R6"
     }
   ]
 };

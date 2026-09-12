@@ -6353,3 +6353,29 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   craft gate's green never stands alone over a strip that never measured.
 - **Status:** `partially-controlled` — the instance is fixed and the class swept by this run's headless
   sweep; the gate is prose until the sweep is a script in CI.
+
+### DC-nnn — An oracle reads a value clamped at its bound as the behaviour under test
+- **Shape:** a test asserts "the offset is at its maximum" (or any value equal to a bound it is
+  clamped to) as proof that the behaviour under test moved it there. When the bound itself moves —
+  a virtualized panel's extent is an *estimate* that shrinks and grows as containers of different
+  heights are realized; a scrollable height, a page count, a capacity — the value reads as "at the
+  bound" whether the behaviour ran or not. The assertion cannot fail, so it proves nothing, and it
+  passes on the first run, which is when it is believed.
+- **Signature:** an assertion of the form `Assert.Equal(bound, value)` or `value >= bound - ε`
+  where `bound` is read from the same object after the operation; a "follow" / "auto-scroll" /
+  "fills to capacity" test with no independent witness (the last item realized and in view; a
+  count that does not derive from the bound); a pass on a shape the author expected to fail.
+- **Instance (DS-1, 2026-09-11):** `spikes/session-thread/RESULT.md` Q4a — the follow-rule leg read
+  `offset_after_append == scrollable_after_append` and reported `followed_by_itself=True`; the
+  extent had moved 5528.8 → 5495.6 across the append, so the offset was clamped, not followed. The
+  design records the leg as *not evidence* and the CV-1 oracle L3 asserts the independent witness
+  (the last container realized and in view), never the offset alone.
+- **Sweep:** `tests/AiDe.App.Tests` has no scroll-offset assertion today (`ScrollToEnd`,
+  `VerticalOffset` appear only in `ClassDiagramSurface.cs` and `CommandPalette.cs` in `src/`); the
+  class is registered before its first product instance.
+- **Control:** the design's test plan names the witness for every follow/pin assertion (L3); the
+  Test Architect's review checks that no `thread.*` oracle compares a value to a bound read from the
+  same object. **Proposed:** a `verify-perf-assertions.py`-style lint for `Assert.Equal(x.ScrollableHeight, x.VerticalOffset)`
+  shapes when a second instance appears.
+- **Status:** `registered` — no product instance yet; the control is the design's oracle wording and
+  the review checklist item.
