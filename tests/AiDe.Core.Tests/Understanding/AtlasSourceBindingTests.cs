@@ -33,6 +33,18 @@ public sealed class AtlasSourceBindingTests
             "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
     }
 
+    [Fact]
+    public void CompareTo_HashWithTrailingLineFeed_ThrowsArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() => Binding.CompareTo(
+            manifestIdentity: "manifest:42",
+            manifestFileIdentity: "manifest-file:src/A.cs",
+            policyIdentity: "policy:indexed-local-single-link",
+            rootIdentity: "root:volume-1/file-10",
+            fileIdentity: "file:volume-1/file-20",
+            contentHash: "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n"));
+    }
+
     [Theory]
     [InlineData("manifest:other", "manifest-file:src/A.cs", "policy:indexed-local-single-link", "root:volume-1/file-10", "file:volume-1/file-20", "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", AtlasSourceBindingMismatch.Manifest)]
     [InlineData("manifest:42", "manifest-file:src/B.cs", "policy:indexed-local-single-link", "root:volume-1/file-10", "file:volume-1/file-20", "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", AtlasSourceBindingMismatch.ManifestFile)]
@@ -110,6 +122,9 @@ public sealed class AtlasSourceBindingTests
     [InlineData("sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")]
     [InlineData("sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaag")]
     [InlineData("sha256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")]
+    [InlineData("sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n")]
+    [InlineData("sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\r\n")]
+    [InlineData("\nsha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")]
     [InlineData("")]
     [InlineData("  ")]
     public void Create_NonCanonicalSha256_ThrowsArgumentException(string contentHash)

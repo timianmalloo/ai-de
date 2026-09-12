@@ -136,6 +136,48 @@ public sealed class AtlasIdentityTests
     }
 
     [Fact]
+    public void ForMember_StaticAndInstanceConstructors_AreSupportedAndDistinct()
+    {
+        var type = CompileType("namespace Demo { public sealed class Widget { static Widget() { } public Widget() { } } }", "Demo.Widget");
+        var staticConstructor = type.StaticConstructors.Single();
+        var instanceConstructor = type.Constructors.Single(c => !c.IsStatic && c.Parameters.Length == 0);
+
+        var staticIdentity = AtlasIdentity.ForMember("workspace", "Core", "net10.0", staticConstructor);
+        var instanceIdentity = AtlasIdentity.ForMember("workspace", "Core", "net10.0", instanceConstructor);
+
+        Assert.NotEqual(staticIdentity, instanceIdentity);
+    }
+
+    [Fact]
+    public void ForMember_PartialMethodDefinitionAndImplementationParts_ShareLogicalIdentity()
+    {
+        var type = CompileType(
+            """
+            namespace Demo
+            {
+                public sealed partial class Widget
+                {
+                    public partial void M();
+                }
+
+                public sealed partial class Widget
+                {
+                    public partial void M() { }
+                }
+            }
+            """,
+            "Demo.Widget");
+        var method = type.GetMembers("M").OfType<IMethodSymbol>().Single();
+
+        var definition = method.PartialDefinitionPart ?? method;
+        var implementation = method.PartialImplementationPart ?? method;
+
+        Assert.Equal(
+            AtlasIdentity.ForMember("workspace", "Core", "net10.0", definition),
+            AtlasIdentity.ForMember("workspace", "Core", "net10.0", implementation));
+    }
+
+    [Fact]
     public void ForMember_NamespaceTypeAsMemberMetadataOrUnsupportedMethodKind_ThrowsArgumentException()
     {
         var sourceType = CompileType("namespace Demo { public sealed class Widget { public static Widget operator +(Widget left, Widget right) => left; } }", "Demo.Widget");
