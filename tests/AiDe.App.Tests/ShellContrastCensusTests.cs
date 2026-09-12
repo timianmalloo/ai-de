@@ -49,9 +49,21 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
         // DC-016: a walk that measured nothing passes every floor. The named sites are the ones the
         // operator photographed; if the walk cannot find them it is not walking the product.
         Assert.True(wpf.Count > 0, "the census walked the composed shell and found no text at all");
-        Assert.Contains(wpf, s => s.Text.StartsWith("Compiled view", StringComparison.Ordinal));
-        Assert.Contains(wpf, s => s.Text.StartsWith("Lease:", StringComparison.Ordinal));
-        Assert.Contains(wpf, s => s.Element.Contains("Compiled prompt", StringComparison.Ordinal));
+        // The conversation composer's sites (CV-1; DESIGN.md SC1–SC6): the structure line, the
+        // decoration line, the settings line, the compiled prompt's disclosure, and the thread's
+        // empty state above the editor.
+        foreach (var (anchor, site) in new (string, Func<Site, bool>)[]
+                 {
+                     ("the structure line 'Goal'", s => s.Text == "Goal"),
+                     ("the decoration line 'This turn'", s => s.Text == "This turn"),
+                     ("the budget state 'bounded by your subscription' (the census truncates a site's text)", s => s.Text.Contains("bounded by your", StringComparison.Ordinal)),
+                     ("the compiled prompt disclosure", s => s.Text.StartsWith("Compiled prompt", StringComparison.Ordinal)),
+                     ("the thread's empty state", s => s.Text.StartsWith("Nothing has run yet.", StringComparison.Ordinal)),
+                 })
+        {
+            Assert.True(wpf.Any(site), $"the census did not walk {anchor}; the sites it saw: {string.Join(" | ", wpf.Select(s => s.Text).Distinct().Take(80))}");
+        }
+
         Assert.Contains(wpf, s => s.Surface.StartsWith("tab:", StringComparison.Ordinal));
         Assert.Contains(wpf, s => s.Text == "File" && s.Element.Contains("AccessText", StringComparison.Ordinal));
 

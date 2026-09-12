@@ -123,7 +123,7 @@ public sealed class AGovernedRunReachesTheConsoleTests
     /// frame makes the ending deterministic rather than timed.</para>
     /// </remarks>
     [Fact]
-    public void TheSinkReceivesExactlyTheEventsTheRunCountedAndTheConsoleShowsThem()
+    public void TheSinkReceivesExactlyTheEventsTheRunCountedAndTheModelHoldsThem()
     {
         var root = Path.Combine(Path.GetTempPath(), "aide-console-seam", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(root);
@@ -174,12 +174,13 @@ public sealed class AGovernedRunReachesTheConsoleTests
                     Assert.Equal((long)Frames, feed.Delivered);
                     Assert.Equal((long)Frames, document.Model.Dispatched);
 
-                    // And it reached the SURFACE, not merely the model.
-                    var console = (ConsoleSurface)document.ContentFor(CanvasModeCatalog.ConsoleModeId);
-                    Assert.Equal(Frames, console.RenderedRows.Count);
-                    Assert.All(
-                        console.RenderedRows,
-                        row => Assert.StartsWith("claude-code:", row, StringComparison.Ordinal));
+                    // And every dispatched row carries its lane: attribution is on the row, never
+                    // guessed at render time. The rendered surface for a run's events is the thread
+                    // (Ruling 74) — fed by the document's own sink on a real send, which
+                    // `ASendLaunchesAGovernedRunTests` proves through the composition root; a lane
+                    // wired by hand here reaches the model, not the fold.
+                    Assert.Equal(Frames, document.Model.Console.Rows.Count);
+                    Assert.All(document.Model.Console.Rows, row => Assert.Equal("claude-code", row.LaneName));
                 });
         }
         finally

@@ -16,8 +16,8 @@ namespace AiDe.Core.Presentation.Sessions;
 /// publishes snapshots with <see cref="ThreadSnapshot.IsCaughtUp"/> false at any cadence; the first
 /// caught-up snapshot is the folded history; after it, <see cref="Changed"/> is raised exactly once
 /// per applied event with <see cref="ThreadSnapshot.Version"/> incremented by one, raises
-/// serialized. <c>M4</c> proves it on the run-channel implementer; <c>R1</c> (CV-2) on the
-/// envelope-backed one.</para>
+/// serialized. <c>TheReadModelPublishesOneSnapshotPerAppliedEventTests</c> proves it on the
+/// run-channel implementer; CV-2's twin proves it on the envelope-backed one.</para>
 /// </remarks>
 public interface ISessionThread
 {

@@ -150,13 +150,13 @@ public sealed class ComposerDraft
     /// snapshot): the fan-out ceiling and the budget cap. Set by the shell from the session's
     /// config; an unbound draft carries the config's own defaults.
     /// </summary>
-    public SessionCeilings Ceilings { get; private set; } = SessionCeilings.Default;
+    public Ceilings Ceilings { get; private set; } = Composer.Ceilings.Default;
 
     /// <summary>Binds the session's ceilings (Ruling 56: one home, never a per-prompt override).</summary>
     public void UseSessionSettings(SessionConfig config)
     {
         ArgumentNullException.ThrowIfNull(config);
-        Ceilings = new SessionCeilings(config.FanOutCeiling, config.BudgetCap);
+        Ceilings = new Ceilings(config.FanOutCeiling, config.BudgetCap);
     }
 
     /// <summary>The template this draft is bound to, when its shape is a template.</summary>
@@ -265,7 +265,7 @@ public sealed class ComposerDraft
     /// </remarks>
     public GoalBlock ToGoalBlock()
     {
-        var tier = ComposerCompiler.Tier(TurnShape, LeaseDerivation.Patterns(SourceText)).Tier;
+        var tier = ComposerCompiler.Tier(TurnShape, LeaseDerivation.Patterns(this.SourceText)).Tier;
 
         return new GoalBlock(
             Text(GoalBlockFields.GoalKey),
@@ -287,8 +287,8 @@ public sealed class ComposerDraft
 /// The session's two ceilings as the compiled block reads them (Ruling 56): the fan-out ceiling and
 /// the budget cap, <c>null</c> for <i>bounded by the subscription</i> (Ruling 72).
 /// </summary>
-public sealed record SessionCeilings(int FanOutCeiling, RunBudget? BudgetCap)
+public sealed record Ceilings(int FanOutCeiling, RunBudget? BudgetCap)
 {
     /// <summary>What an unbound draft carries: the config's own defaults, never a compile-time invention.</summary>
-    public static readonly SessionCeilings Default = new(SessionConfig.DefaultFanOutCeiling, null);
+    public static readonly Ceilings Default = new(SessionConfig.DefaultFanOutCeiling, null);
 }

@@ -1,5 +1,6 @@
 using System.Text;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
 using AiDe.App.Workbench.Composer;
@@ -29,9 +30,12 @@ namespace AiDe.App.Tests.Composer;
 ///
 /// <para><b>Re-homed on the write shape after Ruling 73</b> (CV-0): only a goal block with a derived
 /// scope derives a lease at all — a free-form or template draft is a Message and runs read-only
-/// with no lease (<c>TheReadOnlyTurnNeedsNoLeaseTests</c>). The source-of-derivation control is
-/// therefore proven where a lease exists: the editor's mention sits in a goal-block field, the
-/// mention nobody typed sits in an attachment body beside it.</para>
+/// with no lease (<c>TheReadOnlyTurnNeedsNoLeaseTests</c>). <b>And on the one editor after CV-1</b>:
+/// the source text is the message the operator typed (Ruling 66; DESIGN.md SC1), so a mention in
+/// the message derives its pattern and a mention in a structure line (Goal · Done when · Not in
+/// scope) derives nothing — the structure is a decoration of the turn, never a second source of
+/// write scope. The source-of-derivation control is therefore proven where a lease exists: the
+/// editor's mention sits in the message, the mention nobody typed sits in an attachment body beside it.</para>
 /// </remarks>
 public sealed class TheLeaseDerivesFromTheEditorsSourceTextTests
 {
@@ -39,7 +43,7 @@ public sealed class TheLeaseDerivesFromTheEditorsSourceTextTests
     public void AnAttachmentBodyMentionDerivesNoPatternButTheEditorTextStillDoes()
     {
         var draft = CompleteGoalBlockWithNoMentions();
-        draft.SetGoalValue(GoalBlockFields.GoalKey, "Fix the bug in @src/AiDe.App/Foo.cs");
+        draft.SetFreeFormText("Fix the bug in @src/AiDe.App/Foo.cs\n");
         draft.Add(new ComposerAttachment(
             DisplayPath: "notes.md",
             ResolvedPath: "C:/repo/notes.md",
@@ -109,16 +113,26 @@ public sealed class TheLeaseDerivesFromTheEditorsSourceTextTests
         Assert.Null(request.Lease);
     }
 
+    /// <summary>The message is the source text: the same mention in the message derives; in a structure line it does not (Ruling 66; CV-1).</summary>
     [Fact]
-    public void TheSameMentionTypedInTheGoalFieldStillDerivesItsPattern()
+    public void TheSameMentionTypedInTheMessageDerivesItsPattern_AndInAStructureLineItDoesNot()
     {
-        var draft = CompleteGoalBlockWithNoMentions();
-        draft.SetGoalValue(GoalBlockFields.GoalKey, "Rename the helper in @src/Payments/Money.cs.");
+        var inMessage = CompleteGoalBlockWithNoMentions();
+        inMessage.SetFreeFormText("Rename the helper in @src/Payments/Money.cs.\n");
 
-        var request = new ComposerSendGate().Send(Context(), draft, null, out var refusal);
+        var request = new ComposerSendGate().Send(Context(), inMessage, null, out var refusal);
 
         Assert.Null(refusal);
         Assert.Equal(["src/Payments/Money.cs"], request!.Lease!.Exclusive);
+
+        var inGoal = CompleteGoalBlockWithNoMentions();
+        inGoal.SetGoalValue(GoalBlockFields.GoalKey, "Rename the helper in @src/Payments/Money.cs.");
+
+        var readOnly = new ComposerSendGate().Send(Context(), inGoal, null, out var refused);
+
+        Assert.Null(refused);
+        Assert.True(readOnly!.IsReadOnly);
+        Assert.Null(readOnly.Lease);
     }
 
     private static ComposerDraft CompleteGoalBlockWithNoMentions()
@@ -128,9 +142,7 @@ public sealed class TheLeaseDerivesFromTheEditorsSourceTextTests
         draft.SetGoalValue(GoalBlockFields.GoalKey, "Rename the helper.");
         draft.SetGoalValue(GoalBlockFields.DoneWhenKey, "It compiles under the new name.");
         draft.SetGoalValue(GoalBlockFields.NotInScopeKey, "Nothing else changes.");
-        draft.SetGoalValue(GoalBlockFields.TierKey, "T1");
-        draft.SetGoalValue(GoalBlockFields.FanOutCapKey, "0");
-        draft.SetGoalValue(GoalBlockFields.BudgetKey, "10,1000");
+        draft.SetFreeFormText("Rename the helper.\n");
         return draft;
     }
 
@@ -153,13 +165,11 @@ public sealed class TheLeaseDerivesFromTheEditorsSourceTextTests
                 new AttachmentGate(
                     @"C:\repo", new AttachmentFileReader(), new NeverAsked(), "Anthropic (Claude Code)", "max-personal"));
 
-            // A write-shaped turn (Ruling 73): a complete goal block, its mention in the goal field.
+            // A write-shaped turn (Ruling 73): a complete goal block, its mention in the message.
             surface.Draft.SwitchTo(ComposerShape.GoalBlock);
+            surface.Draft.SetGoalValue(GoalBlockFields.GoalKey, "Rename the helper.");
             surface.Draft.SetGoalValue(GoalBlockFields.DoneWhenKey, "It compiles.");
             surface.Draft.SetGoalValue(GoalBlockFields.NotInScopeKey, "Nothing else.");
-            surface.Draft.SetGoalValue(GoalBlockFields.TierKey, "T1");
-            surface.Draft.SetGoalValue(GoalBlockFields.FanOutCapKey, "0");
-            surface.Draft.SetGoalValue(GoalBlockFields.BudgetKey, "10,1000");
 
             // An attachment, added directly (no file system involved) so its mention is on the draft
             // exactly as an affirmed attach would leave it.
@@ -171,7 +181,7 @@ public sealed class TheLeaseDerivesFromTheEditorsSourceTextTests
                 IsOutsideWorkspace: false,
                 Sha256: "deadbeef"));
 
-            // A keystroke into the goal field — the display path's normal trigger.
+            // A keystroke into the message — the display path's normal trigger.
             surface.SetFieldText(surface.Fields[0].Id, 1, "Fix the bug in @src/AiDe.App/Foo.cs");
 
             // ONLY THE LEASE LINE, not the whole rendered tree: the compiled-view TextBox is expected
@@ -238,12 +248,16 @@ public sealed class TheLeaseDerivesFromTheEditorsSourceTextTests
             }
         }
 
-        // NAMED, not counted (as C16's guard above): today's three call sites, by file and argument
-        // — the send gate reads the source text twice, once for the shape (`Patterns`, Ruling 73) and
-        // once for the write-shaped lease (`Derive`), and the display site once.
+        // NAMED, not counted (as C16's guard above): today's call sites, by file and argument — the
+        // send gate reads the source text twice, once for the shape (`Patterns`, Ruling 73) and once
+        // for the write-shaped lease (`Derive`); the compiler's tier projection and decoration rows
+        // (CV-1: §A9's L is the same count), the draft's own block (the tier it carries), and the
+        // display site — every one the editor's source-text symbol.
         Assert.Equal(
             new[]
             {
+                ("ComposerCompiler.cs", "draft.SourceText"),
+                ("ComposerDraft.cs", "this.SourceText"),
                 ("ComposerSendGate.cs", "draft.SourceText"),
                 ("ComposerSendGate.cs", "draft.SourceText"),
                 ("ComposerSurface.cs", "_draft.SourceText"),
@@ -265,11 +279,45 @@ public sealed class TheLeaseDerivesFromTheEditorsSourceTextTests
     /// the same subtree twice once the template has applied — so every distinct line is deduplicated
     /// rather than asserted unique.
     /// </summary>
-    private static string LeaseLine(FrameworkElement root) =>
-        RenderedText(root)
-            .Split('\n', StringSplitOptions.RemoveEmptyEntries)
-            .Distinct(StringComparer.Ordinal)
-            .Single(line => line.StartsWith("Lease: ", StringComparison.Ordinal));
+    private static string LeaseLine(FrameworkElement root)
+    {
+        root.Measure(new Size(1200, 900));
+        root.Arrange(new Rect(0, 0, 1200, 900));
+        root.UpdateLayout();
+
+        // The decoration line's lease segment (SC2; CV-1): the value TextBlock is named "lease <value>",
+        // so the rendered value is read from the element that shows it, never from the property.
+        // The walk visits the same subtree twice (the visual tree and a ContentControl's logical
+        // content), so the element is deduplicated by reference rather than asserted unique.
+        var segment = Descendants(root)
+            .OfType<TextBlock>()
+            .Where(block => AutomationProperties.GetName(block).StartsWith("lease ", StringComparison.Ordinal))
+            .Distinct()
+            .Single();
+        return "Lease: " + segment.Text.Replace(" · ", ", ", StringComparison.Ordinal);
+    }
+
+    private static IEnumerable<DependencyObject> Descendants(DependencyObject node)
+    {
+        for (var i = 0; i < VisualTreeHelper.GetChildrenCount(node); i++)
+        {
+            var child = VisualTreeHelper.GetChild(node, i);
+            yield return child;
+            foreach (var inner in Descendants(child))
+            {
+                yield return inner;
+            }
+        }
+
+        if (node is ContentControl { Content: DependencyObject content })
+        {
+            yield return content;
+            foreach (var inner in Descendants(content))
+            {
+                yield return inner;
+            }
+        }
+    }
 
     private static string RenderedText(FrameworkElement root)
     {

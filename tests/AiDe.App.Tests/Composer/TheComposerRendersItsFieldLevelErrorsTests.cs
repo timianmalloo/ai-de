@@ -54,6 +54,12 @@ public sealed class TheComposerRendersItsFieldLevelErrorsTests
         return surface;
     }
 
+    /// <summary>
+    /// <b>Red observed before the change</b> (recorded in <c>docs/proof/composer-as-conversation.md</c>):
+    /// the old form rendered six field names and the contract refused four of them (tier, fan-out
+    /// cap, budget, not-in-scope). Now the three content lines are on screen, the session supplies
+    /// the other three, and the one refusal is Ruling 75's sentence on the named line.
+    /// </summary>
     [Fact]
     public void ARequiredFieldGapBlocksSendWithAFieldLevelErrorThatIsOnTheScreen()
     {
@@ -67,15 +73,17 @@ public sealed class TheComposerRendersItsFieldLevelErrorsTests
                 var surface = Build(root, attachEnabled: false);
 
                 // The goal-block form with nothing filled in is an empty prompt (Ruling 75 makes a
-                // blank Goal a Message, and a Message of six empty headings is not a task).
+                // blank Goal a Message, and a Message with no words is not a task).
                 surface.Draft.SwitchTo(ComposerShape.GoalBlock);
 
                 Assert.Null(surface.Send());
                 Assert.Equal(0, surface.Gate.SendCount);
                 Assert.Equal("an empty prompt is not a task", surface.Status);
 
-                // A goal block that EXISTS (Goal and Done when written) with the other four blank:
-                // every remaining field blocks, by name, on screen.
+                // A goal block that EXISTS (Goal and Done when written) with Not in scope blank:
+                // the one remaining gap blocks, by name, on screen — and nothing else does, because
+                // tier, fan-out cap and budget are the session's (Rulings 56, 63, 72).
+                surface.SetFieldText(surface.Fields[0].Id, 1, "Rename the helper in @src/Payments/Money.cs.");
                 surface.Draft.SetGoalValue(GoalBlockFields.GoalKey, "Rename the helper.");
                 surface.Draft.SetGoalValue(GoalBlockFields.DoneWhenKey, "It compiles.");
 
@@ -84,23 +92,70 @@ public sealed class TheComposerRendersItsFieldLevelErrorsTests
 
                 var rendered = RenderedText(surface);
 
-                foreach (var field in GoalBlockFields.All)
-                {
-                    Assert.Contains(field, rendered, StringComparison.Ordinal);
-                }
+                // THREE CONTENT LINES ON SCREEN — never a tier, cap or budget box.
+                Assert.Contains("Goal", rendered, StringComparison.Ordinal);
+                Assert.Contains("Done when", rendered, StringComparison.Ordinal);
+                Assert.Contains("Not in scope", rendered, StringComparison.Ordinal);
+                Assert.Equal(ComposerDraft.PerPromptGoalFields.Order(StringComparer.Ordinal), surface.StructureMarks.Keys.Order(StringComparer.Ordinal));
 
-                // The not-in-scope gap is Ruling 75's one sentence, on screen verbatim...
+                // The not-in-scope gap is Ruling 75's one sentence, on screen verbatim, and the line
+                // is marked invalid (SC10: the mark is the line's ItemStatus, the reason its HelpText).
                 Assert.Contains(ComposerCompiler.GoalBlockNeedsNotInScope, rendered, StringComparison.Ordinal);
+                Assert.Equal("! invalid", surface.StructureMarks[GoalBlockFields.NotInScopeKey]);
+                Assert.Equal("\u2713 edited", surface.StructureMarks[GoalBlockFields.GoalKey]);
 
-                // ...and every other gap is the CONTRACT'S OWN message, not a paraphrase the surface
-                // invented — the same sentence the spawn contract would refuse with.
+                // And the contract agrees it is the ONE gap: the session's three values are complete.
                 var contractErrors = SpawnContract.Validate(surface.Draft.ToGoalBlock());
-                foreach (var error in contractErrors.Where(e => e.Field != GoalBlockFields.NotInScopeKey))
-                {
-                    Assert.Contains(error.Message, rendered, StringComparison.Ordinal);
-                }
+                var error = Assert.Single(contractErrors);
+                Assert.Equal(GoalBlockFields.NotInScopeKey, error.Field);
 
-                Assert.Equal(4, contractErrors.Count);
+                // Filling it sends, with nothing typed for tier, fan-out cap or budget.
+                surface.Draft.SetGoalValue(GoalBlockFields.NotInScopeKey, "Nothing else.");
+                var request = surface.Send();
+                Assert.NotNull(request);
+                Assert.Equal("T1", request!.Goal!.Tier);
+                Assert.Equal(2, request.Goal.FanOutCap);
+                Assert.True(request.Goal.Budget!.IsSubscriptionBounded);
+                Assert.Equal("sent", surface.Status);
+            }
+            finally
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        });
+    }
+
+    /// <summary>
+    /// Ruling 72 condition (1) on the rendered surface: the settings line reads the budget as a state
+    /// — <i>bounded by your subscription</i> — and no numeral stands in for the absent cap anywhere
+    /// the composer renders.
+    /// </summary>
+    [Fact]
+    public void TheSettingsLineRendersBoundedByYourSubscriptionWithNoNumeral()
+    {
+        Sta.Run(() =>
+        {
+            var root = Path.Combine(Path.GetTempPath(), "aide-render", Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(root);
+
+            try
+            {
+                var surface = Build(root, attachEnabled: false);
+                surface.Draft.SwitchTo(ComposerShape.GoalBlock);
+
+                var rendered = RenderedText(surface);
+
+                Assert.Contains("budget: bounded by your subscription", rendered, StringComparison.Ordinal);
+                Assert.Contains("T0 \u2014 the ceiling of 2 does not apply to this turn", rendered, StringComparison.Ordinal);
+                Assert.DoesNotContain(int.MaxValue.ToString(System.Globalization.CultureInfo.InvariantCulture), rendered, StringComparison.Ordinal);
+                Assert.DoesNotContain(long.MaxValue.ToString(System.Globalization.CultureInfo.InvariantCulture), rendered, StringComparison.Ordinal);
+
+                // The decoration line in SC2's grammar: This turn · class · tier · lease · shape.
+                Assert.Contains("This turn", rendered, StringComparison.Ordinal);
+                Assert.Equal(["class", "tier", "lease", "shape"], surface.Decorations.Select(d => d.Name));
+                Assert.Equal("implement", surface.Decorations[0].Value);
+                Assert.Equal("session-default", surface.Decorations[0].Source);
+                Assert.Equal("message", surface.Decorations[3].Value);
             }
             finally
             {
@@ -159,7 +214,7 @@ public sealed class TheComposerRendersItsFieldLevelErrorsTests
                 for (var i = 1; i <= 50; i++)
                 {
                     surface.SetFieldText(surface.Fields[0].Id, i, $"line {i} about @src/Payments");
-                    surface.MoveFocus();
+                    surface.MoveFocus(backward: false);
                 }
 
                 surface.Draft.SwitchTo(ComposerShape.FreeForm);

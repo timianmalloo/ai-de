@@ -8,10 +8,10 @@ namespace AiDe.Core.Presentation.Sessions;
 /// <para><b>CV-1's implementer of <see cref="ISessionThread"/>; CV-2's is the envelope fold.</b>
 /// This type folds the two stores that exist today — the accepted send and the run channel — and
 /// nothing durable: a reopened session has no history here (the envelope store, ADR-0034, is CV-2's
-/// and replaces this with <c>SessionThreadProjection</c> behind the same seam). What it does
-/// honour is the read model's delivery contract, proven by <c>M4</c>: one raise per applied event
-/// after catch-up, <see cref="ThreadSnapshot.Version"/> incremented by one, the snapshot in the
-/// event.</para>
+/// and replaces this with an envelope-backed implementer behind the same seam). What it does
+/// honour is the read model's delivery contract, proven by
+/// <c>TheReadModelPublishesOneSnapshotPerAppliedEventTests</c>: one raise per applied event after
+/// catch-up, <see cref="ThreadSnapshot.Version"/> incremented by one, the snapshot in the event.</para>
 ///
 /// <para><b>Safe off the UI thread.</b> A run's sink appends from the host's drain; every mutation
 /// takes the gate, builds the next immutable snapshot, and raises outside the gate — a subscriber

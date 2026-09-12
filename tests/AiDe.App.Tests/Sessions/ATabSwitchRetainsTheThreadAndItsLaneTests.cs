@@ -1,45 +1,32 @@
 using System.Windows.Controls;
+using AiDe.App.Workbench;
 using AiDe.App.Workbench.Sessions;
 using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Tests.Sessions;
 
 /// <summary>
-/// ADR-0017's retain-never-rebuild invariant, applied to canvas modes (R16 b2) — with an oracle
-/// that can detect disposal.
+/// ADR-0017's retain-never-rebuild invariant, applied to the session thread (Ruling 74 retired the
+/// canvas modes; the tab switch remains) — with an oracle that can detect disposal.
 /// </summary>
 /// <remarks>
-/// <para><b><c>Assert.Same</c> passes on a disposed instance.</b> ADR-0017's own comment claims a
-/// reference check goes red if the subject was "recreated <i>or disposed</i>"; that is false for the
-/// disposed half, and the ADR is <c>status: proposed</c> about the shell body swap rather than about
-/// canvas modes. The mechanism transfers, the proof does not — so this test asserts three things
-/// together, and ships a falsifier that shows all three going red on the rebuild path.</para>
+/// <para><b><c>Assert.Same</c> passes on a disposed instance.</b> A reference check cannot tell
+/// "retained" from "retained and killed", so this test asserts three things together and ships a
+/// falsifier that shows all three going red on the rebuild path.</para>
 ///
 /// <para><b>What is exercised.</b> A <b>real lane</b> (<see cref="RealLane"/>: the production
 /// <c>AcpPeer</c>, <c>AcpRunEventMapper</c> and <c>AcpEventQueue</c> over a stream the test writes
-/// into) delivers events while the document does a <b>mode switch</b> and a <b>tab switch</b>. The
-/// tab switch is modelled the way the docking host does one: the document is unparented from its
-/// host and re-parented, which is a view change and must not be a session loss.</para>
+/// into) delivers events while the document does a <b>tab switch</b> — unparented from its host
+/// and re-parented, as the docking host does when another document tab is selected — which is a
+/// view change and must not be a session loss.</para>
 ///
-/// <para><b>The three assertions.</b> <c>Assert.Same</c> on the console surface <i>and</i> on the
+/// <para><b>The three assertions.</b> <c>Assert.Same</c> on the thread feed <i>and</i> on the
 /// lane; <see cref="SessionDisposalLedger"/> total of zero; and no gap in the lane's delivered
-/// ordinals. The third is the one only a live lane can pose: a rebuilt console starts its history
+/// ordinals. The third is the one only a live lane can pose: a rebuilt feed starts its history
 /// wherever it was built, so every ordinal before that is missing.</para>
 /// </remarks>
-/// <remarks>
-/// <b>Registers the Terminal row Ruling 45 cut from <c>BuiltIn</c>.</b> The mechanism under test
-/// here needs a SECOND canvas mode to exist at all; which modes the product ships is a different
-/// question, and Ruling 45 answered it by cutting a row whose content Phase 1 cannot bind. Every
-/// assertion below is unchanged — the proof survives the cut rather than being weakened by it, which
-/// is also Ruling 22's clause re-proven against a test-registered mode.
-/// </remarks>
-[Collection(CanvasModes.Name)]
-public sealed class ModeSwitchRetainsTheSurfaceAndTheLaneTests : IDisposable
+public sealed class ATabSwitchRetainsTheThreadAndItsLaneTests
 {
-    private readonly TerminalModeForTests _terminal = new();
-
-    public void Dispose() => _terminal.Dispose();
-
     /// <summary>Events delivered before the switches, so the rebuild has real history to lose.</summary>
     private const int Settled = 3;
 
@@ -59,11 +46,11 @@ public sealed class ModeSwitchRetainsTheSurfaceAndTheLaneTests : IDisposable
         int Rows);
 
     [Fact]
-    public void AModeSwitchAndATabSwitchRetainTheConsoleAndItsLane()
+    public void ATabSwitchRetainsTheThreadAndItsLane()
     {
         var observed = Drive(rebuild: false);
 
-        // 1. The same console surface, and the same lane.
+        // 1. The same thread feed, and the same lane.
         Assert.Same(observed.ConsoleBefore, observed.ConsoleAfter);
         Assert.Same(observed.LaneBefore, observed.LaneAfter);
 
@@ -129,7 +116,7 @@ public sealed class ModeSwitchRetainsTheSurfaceAndTheLaneTests : IDisposable
                     marshal: work => document.Dispatcher.Invoke(work));
                 document.AttachLane(feed);
 
-                var consoleBefore = document.ContentFor(CanvasModeCatalog.ConsoleModeId);
+                var consoleBefore = document.Thread;
 
                 // Settle first, so the rebuild has history to lose. Without this the falsifier could
                 // pass for the wrong reason — a rebuild that happened before anything arrived loses
@@ -157,9 +144,6 @@ public sealed class ModeSwitchRetainsTheSurfaceAndTheLaneTests : IDisposable
                 var currentFeed = feed;
                 var consoleAfter = consoleBefore;
 
-                // THE MODE SWITCH — Console to Terminal and back, with real content on both sides.
-                model.SetActiveMode(CanvasModeCatalog.TerminalModeId);
-
                 if (rebuild)
                 {
                     // The rebuild path: the switch throws away what it was showing and builds it
@@ -168,7 +152,7 @@ public sealed class ModeSwitchRetainsTheSurfaceAndTheLaneTests : IDisposable
                     currentFeed.Dispose();
 
                     activeModel = NewModel();
-                    consoleAfter = new ConsoleSurface(activeModel.Console);
+                    consoleAfter = new ThreadFeed(new RunChannelSessionThread(), new RecordingAnnouncer());
                     currentFeed = new SessionLane(
                         "lane-1", "claude-code", lane.Events, activeModel,
                         marshal: work => document.Dispatcher.Invoke(work));
@@ -178,8 +162,6 @@ public sealed class ModeSwitchRetainsTheSurfaceAndTheLaneTests : IDisposable
                 // does when another document tab is selected.
                 host.Content = null;
                 host.Content = document;
-
-                model.SetActiveMode(CanvasModeCatalog.ConsoleModeId);
 
                 await producer;
 
@@ -200,7 +182,7 @@ public sealed class ModeSwitchRetainsTheSurfaceAndTheLaneTests : IDisposable
 
                 observed = new Observed(
                     consoleBefore,
-                    rebuild ? consoleAfter : document.ContentFor(CanvasModeCatalog.ConsoleModeId),
+                    rebuild ? consoleAfter : document.Thread,
                     feed,
                     currentFeed,
                     ledger.Total,

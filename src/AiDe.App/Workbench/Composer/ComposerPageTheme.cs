@@ -39,6 +39,14 @@ public static class ComposerPageTheme
         ("--border", "BorderBrush"),
         ("--danger", "DangerBrush"),
         ("--focus", "FocusBrush"),
+
+        // The roles the conversation composer adds (CV-1; DS-1 seams): the tier's derived ink and
+        // the outcome word's verified ink, pushed so the page draws the compile line (CV-2) with the
+        // shell's tokens. The third, `--border-strong` ← `BorderStrongBrush`, waits on the Shell lane
+        // (App.xaml / DESIGN.md have no such token yet): a role whose token does not exist would make
+        // the page draw a fallback the shell never drew — so it is requested, not added.
+        ("--inferred", "InferredBrush"),
+        ("--verified", "VerifiedBrush"),
     ];
 
     /// <summary>The running application's theme, or an empty set when there is no application (a bare test host).</summary>

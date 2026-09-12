@@ -32,9 +32,12 @@
   .field > label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted, #98A3B2); }
   .field .hint { font-size: 11px; color: var(--text-muted, #98A3B2); }
   .field .required { color: var(--danger, #E07A6F); }
-  .editor { border: 1px solid var(--border, #2A313B); border-radius: 4px; background: var(--surface-sunken, #0D1014); }
-  .editor .cm-editor { font: 13px/1.5 "Cascadia Mono", Consolas, ui-monospace, monospace; }
+  .editor { border: 1px solid var(--border, #2A313B); border-radius: 4px; background: var(--surface-sunken, #0D1014); position: relative; min-height: 110px; }
+  .editor .cm-editor { font: 13px/1.5 "Cascadia Mono", Consolas, ui-monospace, monospace; min-height: 110px; }
   .editor .cm-focused { outline: 2px solid var(--focus, #8FC0EA); }
+  /* The placeholder (DESIGN.md copy) is drawn, never typed into the document: an empty editor's value stays empty. */
+  .editor.empty::before { content: attr(data-ph); position: absolute; left: 6px; top: 4px; font: 13px/1.5 "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif; color: var(--text-muted, #98A3B2); pointer-events: none; }
+
   input, select { background: var(--surface-sunken, #0D1014); color: var(--text, #E4E9EF); border: 1px solid var(--border, #2A313B); border-radius: 4px; padding: 4px 6px; font: inherit; }
   input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--focus, #8FC0EA); outline-offset: 1px; }
   .list-row { display: flex; gap: 6px; }
@@ -47,6 +50,7 @@
 </style>
 
 <div id="fields"></div>
+<span id="editor-help" hidden></span>
 <div id="drop-hint"></div>
 <pre id="error" hidden></pre>
 

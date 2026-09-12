@@ -91,6 +91,23 @@ public sealed class ComposerSendGate
     /// <summary>The compiled text of the last rendered view — what the operator read.</summary>
     public CompiledPrompt? RenderedView { get; private set; }
 
+    /// <summary>How many blocks this gate has started, across the session: the conversation's send count.</summary>
+    public long BlocksSent { get; private set; }
+
+    /// <summary>
+    /// The block was accepted and the composer starts the next one (SC1: the session is a
+    /// conversation of n turns through one composer). <see cref="SendCount"/> is per block — one
+    /// block, one send — so it returns to zero; <see cref="BlocksSent"/> keeps counting.
+    /// </summary>
+    public void NextBlock()
+    {
+        lock (_gate)
+        {
+            SendCount = 0;
+            RenderedView = null;
+        }
+    }
+
     /// <summary>
     /// Renders the compiled view. Everything after this point is byte-for-byte what gets sent.
     /// </summary>
@@ -164,10 +181,10 @@ public sealed class ComposerSendGate
             var compiled = RenderedView ?? ComposerCompiler.Compile(draft, template);
             RenderedView = compiled;
 
-            // A goal-block form with no CONTENT line written (Goal, Done when, Not in scope) renders
-            // headings and, at most, a tier or a number; that is an empty prompt, not a Message.
-            if (string.IsNullOrWhiteSpace(compiled.Text)
-                || (draft.Shape == ComposerShape.GoalBlock && !HasContent(draft)))
+            // Nothing typed: the message is blank and no goal block exists, so the compiled bytes are
+            // empty — an empty prompt is not a task (Ruling 75 makes a blank Goal a Message; a Message
+            // with no words is nothing).
+            if (string.IsNullOrWhiteSpace(compiled.Text))
             {
                 refusal = new ComposerSendRefusal([], "an empty prompt is not a task");
                 return null;
@@ -210,6 +227,7 @@ public sealed class ComposerSendGate
                 PromptTimeout: context.PromptTimeout);
 
             SendCount++;
+            BlocksSent++;
             refusal = null;
         }
 
@@ -239,10 +257,6 @@ public sealed class ComposerSendGate
         ];
     }
 
-    /// <summary>Whether a goal-block form has a content line written — Goal, Done when or Not in scope.</summary>
-    private static bool HasContent(ComposerDraft draft) =>
-        new[] { GoalBlockFields.GoalKey, GoalBlockFields.DoneWhenKey, GoalBlockFields.NotInScopeKey }
-            .Any(field => draft.GoalValues.TryGetValue(field, out var value) && !string.IsNullOrWhiteSpace(value));
 }
 
 /// <summary>

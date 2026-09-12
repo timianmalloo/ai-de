@@ -101,9 +101,27 @@ public sealed class ASendLaunchesAGovernedRunTests
                 var request = document.Composer.Send();
 
                 Assert.NotNull(request);
-                Assert.Equal(1, document.Composer.Gate.SendCount);
+
+                // The block was accepted, so the gate is on the NEXT block (SC1: one composer, n
+                // turns): the per-block count is back at zero and the session's count is one.
+                Assert.Equal(0, document.Composer.Gate.SendCount);
+                Assert.Equal(1, document.Composer.Gate.BlocksSent);
 
                 Assert.Equal(1, RootsWithin(ledger, 1, Bound));
+
+                // AND THE TURN REACHED THE SURFACE through the same root (E11): b1 joined the thread
+                // when the send was accepted, and the refused run's outcome is on its row — never a
+                // plausible "completed".
+                Assert.True(document.LastLaunch.Wait(Bound), "the refused run did not conclude");
+                document.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, () => { });
+
+                var turn = Assert.Single(document.ReadModel.Current.Turns);
+                Assert.Equal(1, turn.Ordinal);
+                Assert.Equal("wire the seam in @src/AiDe.App/Conductor\n", turn.SourceText);
+                Assert.Equal(request!.Prompt, turn.SentBytes);
+                Assert.Equal(TurnState.Failed, turn.State);
+                Assert.Equal("failed", document.Thread.Rows[0].OutcomeWord);
+                Assert.Equal("1 turn", document.TurnCountCaption);
             }
             finally
             {

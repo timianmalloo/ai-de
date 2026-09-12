@@ -10,9 +10,9 @@ namespace AiDe.App.Workbench.Sessions;
 
 /// <summary>
 /// The virtualized feed base the session thread and the Console split share (DS-1 P1, P2, P7):
-/// a <see cref="ListBox"/> over a recycling <see cref="VirtualizingStackPanel"/> with pixel
-/// scrolling, the six owned keys as a pure decision plus an act, a structural pin for the follow
-/// rule, and containers that carry their own template so the theme's selection band never paints
+/// a <c>ListBox</c> over a recycling <c>VirtualizingStackPanel</c> with pixel
+/// scrolling, the six owned keys as a pure decision plus an act, the follow rule's structural anchor,
+/// and containers that carry their own template so the theme's selection band never paints
 /// the reading caret.
 /// </summary>
 /// <remarks>
@@ -83,20 +83,21 @@ public abstract class FeedList : ListBox, ICanvasFocusTarget
     /// </summary>
     public bool SourceOwnsItsKeys(DependencyObject? source)
     {
-        for (var node = source; node is not null && !ReferenceEquals(node, this); node = ParentOf(node))
+        var owns = false;
+        for (var node = source; node is not null; node = ParentOf(node))
         {
-            if (node is ScrollViewer viewer && !ReferenceEquals(viewer, Scroller))
+            if (ReferenceEquals(node, this))
             {
-                return true;
+                return owns;   // the walk reached the list: the answer is whether an owner sat inside it
             }
 
-            if (node is TextBoxBase)
+            if ((node is ScrollViewer viewer && !ReferenceEquals(viewer, Scroller)) || node is TextBoxBase)
             {
-                return true;
+                owns = true;
             }
         }
 
-        return false;
+        return false;   // not inside this list at all
     }
 
     /// <summary>The pure decision (K1a): never throws over the whole domain; <c>None</c> for keys the feed does not own.</summary>
@@ -299,7 +300,12 @@ public abstract class FeedList : ListBox, ICanvasFocusTarget
         base.OnKeyDown(e);
     }
 
-    /// <summary>Focus landing on the list itself (Tab under Once with an unrealized caret) is re-routed to the caret's container.</summary>
+    /// <summary>
+    /// Focus landing on the list itself (Tab under Once with an unrealized caret) is re-routed to
+    /// the caret's container. Entry from the header by Tab is the document's to route (P4: it calls
+    /// <see cref="FocusCurrentItem"/> before the platform picks a realized container); a click on a
+    /// turn is that turn's, never re-routed.
+    /// </summary>
     private void OnGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
     {
         if (ReferenceEquals(e.NewFocus, this))

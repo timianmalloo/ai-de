@@ -9,6 +9,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Markup;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
@@ -984,6 +985,11 @@ public sealed class ThreadFeed : FeedList, IDisposable
         spin.EnterActions.Add(begin);
         spin.ExitActions.Add(new StopStoryboard { BeginStoryboardName = "Spin" });
         style.Triggers.Add(spin);
+
+        // A StopStoryboard resolves its name in the STYLE's name scope; XAML registers x:Name there,
+        // code must — without it the first outcome threw "'Spin' name cannot be found" inside Apply
+        // and the feed stopped (THR-0001), caught by A4 before it reached an operator.
+        ((INameScope)style).RegisterName("Spin", begin);
         return style;
     }
 
