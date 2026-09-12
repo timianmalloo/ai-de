@@ -30,12 +30,19 @@ namespace AiDe.Core.Tests;
 internal static class TerminalHostLauncher
 {
     /// <summary>The helper executable, built alongside the tests and found relative to them.</summary>
+    /// <remarks>
+    /// <b>The tests' own configuration, never "Release if it exists".</b> The helper is a project
+    /// reference, so the test step builds it in the tests' configuration; an older rule preferred
+    /// a Release helper whenever one was on disk, and on 2026-09-12 a Release helper built before
+    /// DC-170's change sat beside a fresh Debug one — ten tests ran the stale binary and failed on
+    /// an exit code the source no longer had. The helper that matches the assembly running the
+    /// test is the one the test step just built; any other is a different program.
+    /// </remarks>
     internal static string LocateHelper()
     {
         var root = Path.GetFullPath(Path.Combine(
             AppContext.BaseDirectory, "..", "..", "..", "..", "AiDe.Core.TerminalHost", "bin"));
-        var release = Path.Combine(root, "Release", "net10.0", "AiDe.Core.TerminalHost.exe");
-        var configuration = File.Exists(release) ? "Release" : "Debug";
+        var configuration = ConfigurationOf(AppContext.BaseDirectory);
         var candidate = Path.Combine(root, configuration, "net10.0", "AiDe.Core.TerminalHost.exe");
 
         Assert.True(
@@ -44,6 +51,16 @@ internal static class TerminalHostLauncher
             + "Build the solution rather than the test project alone.");
 
         return candidate;
+    }
+
+    /// <summary>The build configuration a test assembly's output directory names (<c>bin\Debug\…</c>).</summary>
+    internal static string ConfigurationOf(string baseDirectory)
+    {
+        var parts = baseDirectory.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        var bin = Array.LastIndexOf(parts, "bin");
+        Assert.True(bin >= 0 && bin + 1 < parts.Length,
+            $"the test assembly's directory carries no bin/<configuration> segment: {baseDirectory}");
+        return parts[bin + 1];
     }
 
     /// <summary>
