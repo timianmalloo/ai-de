@@ -1,6 +1,10 @@
 using System.Windows.Automation;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
+using System.Windows.Input;
+using System.Windows.Threading;
 using AiDe.App.Workbench.Understanding;
 using AiDe.Core.Understanding;
 
@@ -46,7 +50,7 @@ public sealed class AtlasReaderViewTests
             queries.Inventory = request => Task.FromResult(new InventoryPage(request, new AtlasBounds(request.Limit, request.Limit, 1, 100, null, AtlasDenominatorState.Unknown, "bounded walk", "page"), [File("src\\A.cs", "file:a")]));
             var partial = new AtlasReaderView(queries, "manifest:1");
             await partial.LoadAsync();
-            Assert.True(partial.CanLoadMore);
+            Assert.False(partial.CanLoadMore);
             Assert.Contains("total not recorded", partial.BoundsText);
             Assert.Contains("src", partial.FileRoots[0].Name);
         });
@@ -92,7 +96,8 @@ public sealed class AtlasReaderViewTests
 
             Assert.Equal("", view.SourceText);
             Assert.Empty(view.CurrentHighlights);
-            Assert.Contains("Project/TFM context not established", view.SourceStatusText);
+            Assert.Contains("verification budget", view.SourceStatusText);
+            Assert.DoesNotContain("Project/TFM", view.SourceStatusText);
         });
     }
 
@@ -170,6 +175,294 @@ public sealed class AtlasReaderViewTests
         });
     }
 
+    [Fact]
+    public void NativeReader_NestedFile_RealizedContainerSelectsSourceAndExposesRoles()
+    {
+        var queries = new FakeAtlasQueries
+        {
+            Inventory = request => Task.FromResult(new InventoryPage(request, BoundsKnown(2, 3),
+            [
+                new AtlasFileEntry("directory:src", "src", ".", AtlasDirectoryEntryKind.Directory,
+                    AtlasFileClassification.Unknown, null, AtlasFileAvailability.Available, null),
+                File("src\\A.cs", "file:a"),
+            ])),
+            Select = request => Task.FromResult(Indexed(request.FileValue, "class A {}", [])),
+        };
+        Shown(queries, async (window, view) =>
+        {
+            await view.LoadAsync();
+            window.UpdateLayout();
+            Assert.Single(view.FilesControl.Items);
+            var directory = Assert.IsType<TreeViewItem>(view.FilesControl.ItemContainerGenerator.ContainerFromIndex(0));
+            Assert.False(((AtlasFileNode)directory.Header).IsFile);
+            directory.IsExpanded = true;
+            window.UpdateLayout();
+            var child = Assert.IsType<TreeViewItem>(directory.ItemContainerGenerator.ContainerFromIndex(0));
+            var peer = UIElementAutomationPeer.CreatePeerForElement(child)!;
+            Assert.Equal(AutomationControlType.TreeItem, peer.GetAutomationControlType());
+            Assert.Contains("src\\A.cs", peer.GetName());
+            ((ISelectionItemProvider)peer.GetPattern(PatternInterface.SelectionItem)!).Select();
+            await Drain();
+            Assert.Equal("class A {}", view.SourceText);
+            window.UpdateLayout();
+            var member = Assert.IsType<ListBoxItem>(view.OutlineControl.ItemContainerGenerator.ContainerFromIndex(0));
+            var memberPeer = UIElementAutomationPeer.CreatePeerForElement(member)!;
+            Assert.Equal(AutomationControlType.ListItem, memberPeer.GetAutomationControlType());
+            Assert.Contains("A.M()", memberPeer.GetName());
+            Assert.True(VirtualizingPanel.GetIsVirtualizing(view.FilesControl));
+            Assert.Equal(13, view.SourceControl.FontSize);
+        });
+    }
+
+    [Fact]
+    public void NativeReader_Pagination_UsesReturnedOffsetAndDeduplicatesRepeatedRows()
+    {
+        var calls = 0;
+        var queries = new FakeAtlasQueries
+        {
+            Inventory = request => Task.FromResult(++calls == 1
+                ? new InventoryPage(request, BoundsKnown(1, 3), [File("src\\A.cs", "file:a")])
+                : new InventoryPage(new PageRequest(2, request.Limit), BoundsKnown(1, 3), [File("src\\A.cs", "file:a")])),
+        };
+        Shown(queries, async (window, view) =>
+        {
+            await view.LoadAsync();
+            view.LoadMoreButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            await Drain();
+            Assert.False(view.CanLoadMore);
+            Assert.Equal(2, calls);
+            var directory = Assert.IsType<TreeViewItem>(view.FilesControl.ItemContainerGenerator.ContainerFromIndex(0));
+            directory.IsExpanded = true;
+            window.UpdateLayout();
+            Assert.Single(directory.Items);
+        });
+    }
+
+    [Theory]
+    [InlineData(AtlasDenominatorState.Unknown)]
+    [InlineData(AtlasDenominatorState.Withheld)]
+    public void NativeReader_UnspecifiedContinuation_ShowsLimitationWithoutAction(AtlasDenominatorState total)
+    {
+        var queries = new FakeAtlasQueries
+        {
+            Inventory = request => Task.FromResult(new InventoryPage(request,
+                new AtlasBounds(request.Limit, request.Limit, 1, 100, null, total, "bounded walk", "page"),
+                [File("A.cs", "file:a")])),
+        };
+        Shown(queries, async (_, view) =>
+        {
+            await view.LoadAsync();
+            Assert.False(view.CanLoadMore);
+            Assert.Contains("continuation not supplied", view.BoundsText);
+        });
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void NativeReader_StaleFaultOrCancel_CannotChangeCurrentSurface(bool canceled)
+    {
+        var late = new TaskCompletionSource<SelectionProjection>();
+        var queries = new FakeAtlasQueries { Select = _ => Task.FromResult(Indexed("file:a", "old text", [])) };
+        Shown(queries, async (_, view) =>
+        {
+            await view.SelectFileAsync(Node("a"));
+            queries.Select = _ => late.Task;
+            var pending = view.SelectFileAsync(Node("b"));
+            Assert.Equal("", view.SourceText);
+            Assert.Empty(view.CurrentHighlights);
+            queries.Select = _ => Task.FromResult(Indexed("file:c", "current text", []));
+            await view.SelectFileAsync(Node("c"));
+            view.SourceControl.TextArea.Focus();
+            var focus = Keyboard.FocusedElement;
+            var status = view.StatusText;
+            if (canceled) late.SetCanceled(); else late.SetException(new InvalidOperationException("stale failure"));
+            await pending;
+            Assert.Equal("current text", view.SourceText);
+            Assert.Equal(status, view.StatusText);
+            Assert.Same(focus, Keyboard.FocusedElement);
+        });
+    }
+
+    [Fact]
+    public void NativeReader_SynchronousQueryThrow_IsObservedByNativeSelectionEvent()
+    {
+        var queries = new FakeAtlasQueries
+        {
+            Inventory = request => Task.FromResult(new InventoryPage(request, BoundsKnown(1, 1), [File("A.cs", "file:a")])),
+            Select = _ => throw new InvalidOperationException("private query detail"),
+        };
+        Shown(queries, async (window, view) =>
+        {
+            await view.LoadAsync();
+            window.UpdateLayout();
+            var item = Assert.IsType<TreeViewItem>(view.FilesControl.ItemContainerGenerator.ContainerFromIndex(0));
+            item.IsSelected = true;
+            await Drain();
+            Assert.Contains("ATLAS-READER-SELECTION", view.StatusText);
+            Assert.DoesNotContain("private query detail", view.StatusText);
+            Assert.Equal("", view.SourceText);
+            Assert.False(view.CanGoBack);
+        });
+    }
+
+    [Fact]
+    public void NativeReader_StaleBack_DoesNotStealFocusOrConsumeHistory()
+    {
+        var restore = new TaskCompletionSource<SelectionProjection>();
+        var queries = new FakeAtlasQueries
+        {
+            Select = request => Task.FromResult(Indexed(request.FileValue, request.FileValue, [])),
+            Restore = (_, _) => restore.Task,
+        };
+        Shown(queries, async (_, view) =>
+        {
+            await view.SelectFileAsync(Node("a"));
+            await view.SelectFileAsync(Node("b"));
+            var pending = view.GoBackAsync();
+            await view.SelectFileAsync(Node("c"));
+            view.SourceControl.TextArea.Focus();
+            var focus = Keyboard.FocusedElement;
+            restore.SetResult(Indexed("file:a", "stale restored body", []));
+            await pending;
+            Assert.Equal("file:c", view.SourceText);
+            Assert.Same(focus, Keyboard.FocusedElement);
+            Assert.True(view.CanGoBack);
+        });
+    }
+
+    [Fact]
+    public void NativeReader_SupersededTransition_PreservesLastAcceptedReceipt()
+    {
+        var pending = new TaskCompletionSource<SelectionProjection>();
+        var restored = "";
+        var queries = new FakeAtlasQueries
+        {
+            Select = request => Task.FromResult(Indexed(request.FileValue, request.FileValue, [])),
+            Restore = (receipt, _) =>
+            {
+                restored = receipt;
+                return Task.FromResult(Indexed("file:a", "restored A", []));
+            },
+        };
+        Shown(queries, async (_, view) =>
+        {
+            await view.SelectFileAsync(Node("a"));
+            queries.Select = _ => pending.Task;
+            var b = view.SelectFileAsync(Node("b"));
+            queries.Select = _ => Task.FromResult(Indexed("file:c", "accepted C", []));
+            await view.SelectFileAsync(Node("c"));
+            pending.SetResult(Indexed("file:b", "stale B", []));
+            await b;
+            await view.GoBackAsync();
+            Assert.Equal("receipt:file:a", restored);
+            Assert.Equal("restored A", view.SourceText);
+        });
+    }
+
+    [Fact]
+    public void NativeReader_FailedTransition_DoesNotPushReceipt()
+    {
+        var queries = new FakeAtlasQueries { Select = request => Task.FromResult(Indexed(request.FileValue, "body", [])) };
+        Shown(queries, async (_, view) =>
+        {
+            await view.SelectFileAsync(Node("a"));
+            queries.Select = _ => Task.FromException<SelectionProjection>(new InvalidOperationException());
+            await view.SelectFileAsync(Node("b"));
+            Assert.False(view.CanGoBack);
+            Assert.Equal("", view.SourceText);
+        });
+    }
+
+    [Fact]
+    public void NativeReader_BackHistory_IsBoundedAtFiftyReceipts()
+    {
+        var restores = 0;
+        var queries = new FakeAtlasQueries
+        {
+            Select = request => Task.FromResult(Indexed(request.FileValue, "body", [])),
+            Restore = (receipt, _) =>
+            {
+                restores++;
+                return Task.FromResult(Indexed(receipt["receipt:".Length..], "restored", []));
+            },
+        };
+        Shown(queries, async (_, view) =>
+        {
+            for (var i = 0; i < 55; i++) await view.SelectFileAsync(Node(i.ToString()));
+            for (var i = 0; i < 50; i++) await view.GoBackAsync();
+            Assert.False(view.CanGoBack);
+            await view.GoBackAsync();
+            Assert.Equal(50, restores);
+            Assert.Contains("evicted", view.StatusText);
+        });
+    }
+
+    [Fact]
+    public void NativeReader_Unloaded_CancelsAndIgnoresOutstandingSelection()
+    {
+        var late = new TaskCompletionSource<SelectionProjection>();
+        var queries = new FakeAtlasQueries { Select = _ => late.Task };
+        Shown(queries, async (window, view) =>
+        {
+            var pending = view.SelectFileAsync(Node("a"));
+            window.Content = null;
+            await Drain();
+            Assert.True(queries.LastSelectionToken.IsCancellationRequested);
+            late.SetResult(Indexed("file:a", "late body", []));
+            await pending;
+            Assert.Equal("", view.SourceText);
+        });
+    }
+
+    [Fact]
+    public void NativeReader_KeyboardMemberThenBack_RestoresSourceSelectionScrollAndFocus()
+    {
+        var text = string.Join("\n", Enumerable.Range(0, 250).Select(i => $"line {i}"));
+        var queries = new FakeAtlasQueries
+        {
+            Select = request => Task.FromResult(Indexed(request.FileValue, text, [])),
+            Restore = (_, _) => Task.FromResult(Indexed("file:a", text, [])),
+        };
+        Shown(queries, async (window, view) =>
+        {
+            await view.SelectFileAsync(Node("a"));
+            window.UpdateLayout();
+            view.SourceControl.Select(15, 4);
+            view.SourceControl.ScrollToVerticalOffset(200);
+            view.OutlineControl.SelectedIndex = 0;
+            view.OutlineControl.Focus();
+            await Drain();
+            var scroll = view.SourceControl.VerticalOffset;
+            view.OutlineControl.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice,
+                PresentationSource.FromVisual(view.OutlineControl), 0, Key.Enter) { RoutedEvent = Keyboard.KeyDownEvent });
+            await Drain();
+            Assert.True(view.CanGoBack);
+            view.BackButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            await Drain();
+            Assert.Equal(15, view.SourceControl.SelectionStart);
+            Assert.Equal(4, view.SourceControl.SelectionLength);
+            Assert.Equal(scroll, view.SourceControl.VerticalOffset);
+            Assert.Equal(0, view.OutlineControl.SelectedIndex);
+            Assert.True(view.OutlineControl.IsKeyboardFocusWithin);
+        });
+    }
+
+    private static AtlasFileNode Node(string name) => AtlasFileNode.File(name + ".cs", File(name + ".cs", "file:" + name));
+
+    private static void Shown(FakeAtlasQueries queries, Func<Window, AtlasReaderView, Task> body) =>
+        Sta.Pump(() => new AtlasReaderView(queries, "manifest:1"), body,
+            configure: window =>
+            {
+                window.Width = 1100;
+                window.Height = 700;
+                window.Left = 30;
+                window.Top = 30;
+                window.ShowActivated = true;
+            }, timeoutSeconds: 30);
+
+    private static async Task Drain() => await Dispatcher.Yield(DispatcherPriority.Background);
+
     private static Task StaAsync(Func<Task> body)
     {
         Sta.Pump(() => new Border(), async (_, _) => await body(), timeoutSeconds: 30);
@@ -237,6 +530,7 @@ public sealed class AtlasReaderViewTests
 
     private sealed class FakeAtlasQueries : IAtlasQueries
     {
+        public CancellationToken LastSelectionToken { get; private set; }
         public Func<PageRequest, Task<InventoryPage>> Inventory { get; set; } =
             request => Task.FromResult(new InventoryPage(request, BoundsUnknown(0, "not loaded"), []));
 
@@ -249,8 +543,11 @@ public sealed class AtlasReaderViewTests
         public Task<InventoryPage> InventoryAsync(PageRequest request, CancellationToken cancellationToken) =>
             Inventory(request);
 
-        public Task<SelectionProjection> SelectAsync(SelectionRequest request, CancellationToken cancellationToken) =>
-            Select(request);
+        public Task<SelectionProjection> SelectAsync(SelectionRequest request, CancellationToken cancellationToken)
+        {
+            LastSelectionToken = cancellationToken;
+            return Select(request);
+        }
 
         public Task<SelectionProjection> RestoreAsync(string issuedReceiptToken, long requestSequence, CancellationToken cancellationToken) =>
             Restore(issuedReceiptToken, requestSequence);

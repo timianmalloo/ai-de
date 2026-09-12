@@ -1,7 +1,9 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using AiDe.Core.Understanding;
@@ -20,7 +22,7 @@ public sealed class AtlasReaderView : UserControl
     private readonly string _manifestToken;
     private readonly ObservableCollection<AtlasFileNode> _roots = [];
     private readonly ObservableCollection<OutlineRow> _outlineRows = [];
-    private readonly Stack<BackFrame> _back = new();
+    private readonly List<BackFrame> _back = [];
     private readonly TreeView _files = new();
     private readonly ListBox _outline = new();
     private readonly TextEditor _source = new();
@@ -30,7 +32,12 @@ public sealed class AtlasReaderView : UserControl
     private readonly TextBlock _bounds = new() { TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _sourceStatus = new() { TextWrapping = TextWrapping.Wrap };
     private CancellationTokenSource? _requestBudget;
-    private SelectionProjection? _current;
+    private string? _receiptToken;
+    private string? _currentFile;
+    private BackFrame? _pendingPrevious;
+    private bool _historyEvicted;
+    private bool _restoringControls;
+    private bool _unloaded;
     private int _loadedRows;
     private long _requestSequence;
 
@@ -66,13 +73,26 @@ public sealed class AtlasReaderView : UserControl
         _loadMore.Visibility = Visibility.Collapsed;
         _loadedRows = 0;
         _roots.Clear();
+        _back.Clear();
+        _historyEvicted = false;
+        _backButton.IsEnabled = false;
+        ClearPresentation();
+        _pendingPrevious = null;
+        _status.Text = "Loading repository files…";
+        _bounds.Text = "Totals not recorded yet.";
         await LoadPageAsync(sequence, 0, token).ConfigureAwait(true);
     }
 
     public Task LoadMoreAsync(CancellationToken cancellationToken = default)
     {
+        if (!CanLoadMore)
+        {
+            return Task.CompletedTask;
+        }
+
         var (sequence, token) = BeginRequest(cancellationToken);
         _status.Text = "Loading more repository files…";
+        _loadMore.IsEnabled = false;
         return LoadPageAsync(sequence, _loadedRows, token);
     }
 
@@ -84,43 +104,50 @@ public sealed class AtlasReaderView : UserControl
             return;
         }
 
-        PushCurrentFrame();
+        var previous = CaptureFrame();
         var (sequence, token) = BeginRequest(cancellationToken);
+        ClearPresentation();
         _status.Text = "Loading selection…";
-        _outlineRows.Clear();
         await ApplySelectionAsync(
             sequence,
-            _queries.SelectAsync(new SelectionRequest(_manifestToken, file.FileValue!, null, sequence), token),
-            token).ConfigureAwait(true);
+            () => _queries.SelectAsync(new SelectionRequest(_manifestToken, file.FileValue!, null, sequence), token),
+            token, previous).ConfigureAwait(true);
     }
 
     public async Task SelectDeclarationAsync(OutlineRow declaration, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(declaration);
-        PushCurrentFrame();
+        var previous = CaptureFrame();
         var (sequence, token) = BeginRequest(cancellationToken);
+        ClearPresentation();
         _status.Text = "Loading declaration…";
         await ApplySelectionAsync(
             sequence,
-            _queries.SelectAsync(new SelectionRequest(_manifestToken, declaration.FileValue, declaration.ObservationKey, sequence), token),
-            token).ConfigureAwait(true);
+            () => _queries.SelectAsync(new SelectionRequest(_manifestToken, declaration.FileValue, declaration.ObservationKey, sequence), token),
+            token, previous).ConfigureAwait(true);
     }
 
     public async Task GoBackAsync(CancellationToken cancellationToken = default)
     {
         if (_back.Count == 0)
         {
-            _status.Text = "Back unavailable: no prior Atlas receipt.";
+            _status.Text = _historyEvicted
+                ? "Back unavailable: older receipts were evicted (50-frame limit)."
+                : "Back unavailable: no prior Atlas receipt.";
             _backButton.IsEnabled = false;
             return;
         }
 
-        var frame = _back.Pop();
+        var frame = _back[^1];
         var (sequence, token) = BeginRequest(cancellationToken);
+        ClearPresentation();
         _status.Text = "Restoring prior Atlas receipt…";
-        _backButton.IsEnabled = _back.Count > 0;
-        await ApplySelectionAsync(sequence, _queries.RestoreAsync(frame.ReceiptToken, sequence, token), token).ConfigureAwait(true);
-        RestoreFocus(frame);
+        if (await ApplySelectionAsync(sequence, () => _queries.RestoreAsync(frame.ReceiptToken, sequence, token), token, null).ConfigureAwait(true))
+        {
+            _back.RemoveAt(_back.Count - 1);
+            _backButton.IsEnabled = _back.Count > 0;
+            RestoreViewState(frame);
+        }
     }
 
     private void BuildChrome()
@@ -142,6 +169,15 @@ public sealed class AtlasReaderView : UserControl
         AutomationProperties.SetName(_sourceStatus, "Atlas source state");
 
         _files.ItemsSource = _roots;
+        var label = new FrameworkElementFactory(typeof(TextBlock));
+        label.SetBinding(TextBlock.TextProperty, new Binding(nameof(AtlasFileNode.Name)));
+        _files.ItemTemplate = new HierarchicalDataTemplate(typeof(AtlasFileNode))
+        {
+            ItemsSource = new Binding(nameof(AtlasFileNode.Children)),
+            VisualTree = label,
+        };
+        _files.ItemContainerStyle = ItemStyle(typeof(TreeViewItem), nameof(AtlasFileNode.AccessibleName));
+        _outline.ItemContainerStyle = ItemStyle(typeof(ListBoxItem), nameof(OutlineRow.AccessibleName));
         _outline.ItemsSource = _outlineRows;
         _files.Focusable = true;
         _outline.Focusable = true;
@@ -149,36 +185,55 @@ public sealed class AtlasReaderView : UserControl
         _source.IsReadOnly = true;
         _source.ShowLineNumbers = true;
         _source.FontFamily = new FontFamily("Cascadia Mono, Consolas, monospace");
-        _source.FontSize = 12.5;
+        _source.FontSize = 13;
         _source.WordWrap = false;
         _source.SetResourceReference(BackgroundProperty, "SurfaceSunkenBrush");
         _source.SetResourceReference(ForegroundProperty, "TextBrush");
         VirtualizingStackPanel.SetIsVirtualizing(_files, true);
         VirtualizingStackPanel.SetIsVirtualizing(_outline, true);
+        VirtualizingPanel.SetVirtualizationMode(_files, VirtualizationMode.Recycling);
+        VirtualizingPanel.SetVirtualizationMode(_outline, VirtualizationMode.Recycling);
+        ScrollViewer.SetCanContentScroll(_files, true);
+        ScrollViewer.SetCanContentScroll(_outline, true);
+        _files.SetResourceReference(BackgroundProperty, "SurfaceBrush");
+        _files.SetResourceReference(ForegroundProperty, "TextBrush");
+        _outline.SetResourceReference(BackgroundProperty, "SurfaceBrush");
+        _outline.SetResourceReference(ForegroundProperty, "TextBrush");
+        KeyboardNavigation.SetTabNavigation(_files, KeyboardNavigationMode.Continue);
+        KeyboardNavigation.SetTabNavigation(_outline, KeyboardNavigationMode.Continue);
 
-        _backButton.Click += (_, _) => _ = GoBackAsync();
-        _loadMore.Click += (_, _) => _ = LoadMoreAsync();
-        _files.SelectedItemChanged += (_, e) =>
+        _backButton.Click += async (_, _) => await GoBackAsync();
+        _loadMore.Click += async (_, _) => await LoadMoreAsync();
+        _files.SelectedItemChanged += async (_, e) =>
         {
-            if (e.NewValue is AtlasFileNode { IsFile: true } file)
+            if (!_restoringControls && e.NewValue is AtlasFileNode { IsFile: true } file)
             {
-                _ = SelectFileAsync(file);
+                await SelectFileAsync(file);
             }
         };
-        _outline.MouseDoubleClick += (_, _) =>
+        _outline.MouseDoubleClick += async (_, _) =>
         {
             if (_outline.SelectedItem is OutlineRow row)
             {
-                _ = SelectDeclarationAsync(row);
+                await SelectDeclarationAsync(row);
             }
         };
-        _outline.KeyDown += (_, e) =>
+        _outline.KeyDown += async (_, e) =>
         {
             if (e.Key is Key.Enter && _outline.SelectedItem is OutlineRow row)
             {
                 e.Handled = true;
-                _ = SelectDeclarationAsync(row);
+                await SelectDeclarationAsync(row);
             }
+        };
+        Loaded += (_, _) => _unloaded = false;
+        Unloaded += (_, _) =>
+        {
+            _unloaded = true;
+            ++_requestSequence;
+            _requestBudget?.Cancel();
+            _requestBudget?.Dispose();
+            _requestBudget = null;
         };
 
         var toolbar = new DockPanel { LastChildFill = true, Margin = new Thickness(8, 8, 8, 4) };
@@ -214,6 +269,7 @@ public sealed class AtlasReaderView : UserControl
 
     private async Task LoadPageAsync(long sequence, int offset, CancellationToken token)
     {
+        var started = Stopwatch.GetTimestamp();
         try
         {
             var page = await _queries.InventoryAsync(new PageRequest(offset, PageSize), token).ConfigureAwait(true);
@@ -222,41 +278,57 @@ public sealed class AtlasReaderView : UserControl
                 return;
             }
 
+            token.ThrowIfCancellationRequested();
             foreach (var file in page.Files)
             {
                 AddFile(file);
             }
 
-            _loadedRows += page.Files.Length;
+            _loadedRows = checked(page.Request.Offset + page.Files.Length);
             _status.Text = page.Files.Length == 0 && offset == 0
                 ? "No visible files in this scope."
                 : $"Showing {_loadedRows} Atlas file rows.";
-            _bounds.Text = BoundsTextFor(page.Bounds);
-            _loadMore.Visibility = MoreAvailable(page.Bounds) ? Visibility.Visible : Visibility.Collapsed;
-            _loadMore.IsEnabled = MoreAvailable(page.Bounds);
+            _bounds.Text = BoundsTextFor(page.Bounds) + (page.Bounds.TotalState is AtlasDenominatorState.Known
+                ? "" : " Further pages unavailable: continuation not supplied.");
+            _loadMore.Visibility = MoreAvailable(page) ? Visibility.Visible : Visibility.Collapsed;
+            _loadMore.IsEnabled = MoreAvailable(page);
         }
-        catch (OperationCanceledException) when (IsCurrent(sequence))
+        catch (OperationCanceledException)
         {
-            _status.Text = "Atlas inventory request canceled.";
+            if (IsCurrent(sequence))
+            {
+                _status.Text = "ATLAS-READER-CANCELED: inventory request canceled.";
+                _loadMore.Visibility = Visibility.Collapsed;
+            }
         }
-        catch (Exception ex) when (IsCurrent(sequence) && ex is not OutOfMemoryException)
+        catch (Exception ex) when (ex is not OutOfMemoryException)
         {
-            _status.Text = "Atlas inventory failed: " + ex.Message;
-            _loadMore.Visibility = Visibility.Collapsed;
+            Trace.TraceError("code=ATLAS-READER-INVENTORY sequence={0} exception.type={1}", sequence, ex.GetType().FullName);
+            if (IsCurrent(sequence))
+            {
+                _status.Text = "ATLAS-READER-INVENTORY: inventory unavailable.";
+                _loadMore.Visibility = Visibility.Collapsed;
+            }
+        }
+        finally
+        {
+            Trace.TraceInformation("operation=atlas.inventory sequence={0} duration_ms={1} current={2}",
+                sequence, Stopwatch.GetElapsedTime(started).TotalMilliseconds, IsCurrent(sequence));
         }
     }
 
-    private async Task ApplySelectionAsync(long sequence, Task<SelectionProjection> pending, CancellationToken token)
+    private async Task<bool> ApplySelectionAsync(long sequence, Func<Task<SelectionProjection>> query, CancellationToken token, BackFrame? previous)
     {
+        var started = Stopwatch.GetTimestamp();
         try
         {
-            var selection = await pending.ConfigureAwait(true);
+            var selection = await query().ConfigureAwait(true);
             if (!IsCurrent(sequence))
             {
-                return;
+                return false;
             }
 
-            _current = selection;
+            token.ThrowIfCancellationRequested();
             _outlineRows.Clear();
             foreach (var row in selection.Outline.Declarations.Select(d => new OutlineRow(selection.FileValue, d)))
             {
@@ -264,18 +336,49 @@ public sealed class AtlasReaderView : UserControl
             }
 
             ApplySource(selection);
+            _receiptToken = selection.ReceiptToken;
+            _currentFile = selection.FileValue;
+            _pendingPrevious = null;
+            if (previous is not null)
+            {
+                if (_back.Count == 50)
+                {
+                    _back.RemoveAt(0);
+                    _historyEvicted = true;
+                }
+
+                _back.Add(previous);
+            }
+
             _status.Text = SelectionStatus(selection);
             _bounds.Text = BoundsTextFor(selection.Bounds) + " " + CoverageText(selection.Coverage);
             _backButton.IsEnabled = _back.Count > 0;
+            return true;
         }
-        catch (OperationCanceledException) when (IsCurrent(sequence))
+        catch (OperationCanceledException)
         {
-            ClearSource(SourceProjectionState.Canceled, "Atlas selection request canceled.");
+            if (IsCurrent(sequence))
+            {
+                ClearSource(SourceProjectionState.Canceled, "ATLAS-READER-CANCELED: selection request canceled.");
+                _status.Text = _sourceStatus.Text;
+            }
         }
-        catch (Exception ex) when (IsCurrent(sequence) && ex is not OutOfMemoryException)
+        catch (Exception ex) when (ex is not OutOfMemoryException)
         {
-            ClearSource(SourceProjectionState.Unavailable, "Atlas selection failed: " + ex.Message);
+            Trace.TraceError("code=ATLAS-READER-SELECTION sequence={0} exception.type={1}", sequence, ex.GetType().FullName);
+            if (IsCurrent(sequence))
+            {
+                ClearSource(SourceProjectionState.Unavailable, "ATLAS-READER-SELECTION: selection unavailable.");
+                _status.Text = _sourceStatus.Text;
+            }
         }
+        finally
+        {
+            Trace.TraceInformation("operation=atlas.selection sequence={0} duration_ms={1} current={2}",
+                sequence, Stopwatch.GetElapsedTime(started).TotalMilliseconds, IsCurrent(sequence));
+        }
+
+        return false;
     }
 
     private void ApplySource(SelectionProjection selection)
@@ -316,14 +419,16 @@ public sealed class AtlasReaderView : UserControl
         }
 
         var level = _roots;
-        AtlasFileNode? current = null;
         for (var i = 0; i < parts.Length; i++)
         {
             var last = i == parts.Length - 1;
-            current = level.FirstOrDefault(node => string.Equals(node.Name, parts[i], StringComparison.Ordinal) && node.IsFile == last);
+            var path = string.Join("\\", parts.Take(i + 1));
+            var isFile = last && entry.Kind is AtlasDirectoryEntryKind.File;
+            var current = level.FirstOrDefault(node => string.Equals(node.RelativePath, path, StringComparison.Ordinal)
+                && (!isFile || string.Equals(node.FileValue, entry.FileValue, StringComparison.Ordinal)));
             if (current is null)
             {
-                current = last ? AtlasFileNode.File(parts[i], entry) : AtlasFileNode.Folder(parts[i], entry.RelativePath);
+                current = last ? AtlasFileNode.File(parts[i], entry) : AtlasFileNode.Folder(parts[i], path);
                 level.Add(current);
             }
 
@@ -339,37 +444,120 @@ public sealed class AtlasReaderView : UserControl
         return (++_requestSequence, _requestBudget.Token);
     }
 
-    private bool IsCurrent(long sequence) => sequence == _requestSequence;
+    private bool IsCurrent(long sequence) => sequence == _requestSequence && !_unloaded;
 
-    private void PushCurrentFrame()
+    private void ClearPresentation()
     {
-        if (_current is null)
-        {
-            return;
-        }
-
-        _back.Push(new BackFrame(_current.ReceiptToken, FocusName()));
-        _backButton.IsEnabled = true;
+        _pendingPrevious = CaptureFrame();
+        _receiptToken = null;
+        _currentFile = null;
+        _outlineRows.Clear();
+        ClearSource(SourceProjectionState.Unavailable, "Source cleared while the requested selection loads.");
+        _bounds.Text = "Selection bounds not recorded yet.";
     }
 
-    private string FocusName() =>
-        Keyboard.FocusedElement is DependencyObject focused
-            ? AutomationProperties.GetName(focused)
-            : "";
+    private BackFrame? CaptureFrame() => _receiptToken is null ? _pendingPrevious : new(
+        _receiptToken, _currentFile!,
+        (_outline.SelectedItem as OutlineRow)?.ObservationKey,
+        _outline.IsKeyboardFocusWithin ? "outline" : _source.IsKeyboardFocusWithin ? "source" : "files",
+        _source.SelectionStart, _source.SelectionLength, _source.VerticalOffset, _source.HorizontalOffset,
+        FindVisual<ScrollViewer>(_outline)?.VerticalOffset ?? 0,
+        FindVisual<ScrollViewer>(_files)?.VerticalOffset ?? 0);
 
-    private void RestoreFocus(BackFrame frame)
+    private void RestoreViewState(BackFrame frame)
     {
-        if (string.Equals(frame.FocusName, AutomationProperties.GetName(_outline), StringComparison.Ordinal))
+        _restoringControls = true;
+        try
         {
-            _outline.Focus();
+            SelectFileContainer(_files, frame.FileValue);
+            _outline.SelectedItem = _outlineRows.FirstOrDefault(row => row.ObservationKey == frame.ObservationKey);
+            UpdateLayout();
+            FindVisual<ScrollViewer>(_outline)?.ScrollToVerticalOffset(frame.OutlineOffset);
+            FindVisual<ScrollViewer>(_files)?.ScrollToVerticalOffset(frame.FilesOffset);
+            _source.Select(Math.Min(frame.SelectionStart, _source.Text.Length),
+                Math.Min(frame.SelectionLength, Math.Max(0, _source.Text.Length - frame.SelectionStart)));
+            _source.ScrollToVerticalOffset(frame.VerticalOffset);
+            _source.ScrollToHorizontalOffset(frame.HorizontalOffset);
+            if (frame.FocusName == "outline")
+            {
+                if (_outline.SelectedItem is { } row &&
+                    _outline.ItemContainerGenerator.ContainerFromItem(row) is ListBoxItem item)
+                    item.Focus();
+                else
+                    _outline.Focus();
+            }
+            else if (frame.FocusName == "source")
+                _source.TextArea.Focus();
+            else if (SelectedFileContainer(_files) is { } file)
+                file.Focus();
+            else
+                _files.Focus();
         }
-        else if (string.Equals(frame.FocusName, AutomationProperties.GetName(_source), StringComparison.Ordinal))
+        finally
         {
-            _source.Focus();
+            _restoringControls = false;
         }
-        else
+    }
+
+    private static Style ItemStyle(Type type, string nameProperty)
+    {
+        var style = new Style(type);
+        style.Setters.Add(new Setter(AutomationProperties.NameProperty, new Binding(nameProperty)));
+        style.Setters.Add(new Setter(ToolTipProperty, new Binding(nameProperty)));
+        style.Setters.Add(new Setter(VirtualizingPanel.IsVirtualizingProperty, true));
+        style.Setters.Add(new Setter(VirtualizingPanel.VirtualizationModeProperty, VirtualizationMode.Recycling));
+        style.Setters.Add(new Setter(ForegroundProperty, new DynamicResourceExtension("TextBrush")));
+        var focus = new Trigger { Property = IsKeyboardFocusWithinProperty, Value = true };
+        focus.Setters.Add(new Setter(BorderBrushProperty, SystemColors.HighlightBrush));
+        focus.Setters.Add(new Setter(BorderThicknessProperty, new Thickness(2)));
+        style.Triggers.Add(focus);
+        return style;
+    }
+
+    private static T? FindVisual<T>(DependencyObject parent) where T : DependencyObject
+    {
+        for (var i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
         {
-            _files.Focus();
+            var child = VisualTreeHelper.GetChild(parent, i);
+            if (child is T match) return match;
+            if (FindVisual<T>(child) is { } nested) return nested;
+        }
+
+        return null;
+    }
+
+    private static TreeViewItem? SelectedFileContainer(ItemsControl parent)
+    {
+        foreach (var row in parent.Items)
+        {
+            if (parent.ItemContainerGenerator.ContainerFromItem(row) is not TreeViewItem item) continue;
+            if (item.IsSelected) return item;
+            if (SelectedFileContainer(item) is { } child) return child;
+        }
+
+        return null;
+    }
+
+    private static bool ContainsFile(AtlasFileNode node, string fileValue) =>
+        node.FileValue == fileValue || node.Children.Any(child => ContainsFile(child, fileValue));
+
+    private static void SelectFileContainer(ItemsControl parent, string fileValue)
+    {
+        foreach (AtlasFileNode node in parent.Items)
+        {
+            if (!ContainsFile(node, fileValue)) continue;
+            parent.UpdateLayout();
+            if (parent.ItemContainerGenerator.ContainerFromItem(node) is not TreeViewItem item) return;
+            if (node.FileValue == fileValue)
+            {
+                item.IsSelected = true;
+                return;
+            }
+
+            item.IsExpanded = true;
+            item.UpdateLayout();
+            SelectFileContainer(item, fileValue);
+            return;
         }
     }
 
@@ -382,10 +570,9 @@ public sealed class AtlasReaderView : UserControl
             _ => throw new ArgumentOutOfRangeException(nameof(bounds), bounds.TotalState, "Unsupported denominator state."),
         };
 
-    private static bool MoreAvailable(AtlasBounds bounds) =>
-        bounds.TotalState is AtlasDenominatorState.Known
-            ? bounds.ReturnedRows > 0 && bounds.ReturnedRows < bounds.TotalCount
-            : !string.IsNullOrWhiteSpace(bounds.LimitingDimension);
+    private static bool MoreAvailable(InventoryPage page) =>
+        page.Bounds.TotalState is AtlasDenominatorState.Known && page.Files.Length > 0
+        && (long)page.Request.Offset + page.Files.Length < page.Bounds.TotalCount;
 
     private static string CoverageText(SelectionCoverage coverage) =>
         coverage.State switch
@@ -411,7 +598,7 @@ public sealed class AtlasReaderView : UserControl
             SourceProjectionState.Unavailable => "Source unavailable; previous text and highlights cleared.",
             SourceProjectionState.Unverifiable => "Source unverifiable; previous text and highlights cleared.",
             SourceProjectionState.UnsupportedEncoding => "Unsupported encoding; previous text and highlights cleared.",
-            SourceProjectionState.TooLargeToVerify => "Project/TFM context not established.",
+            SourceProjectionState.TooLargeToVerify => "Source exceeds the verification budget; previous text and highlights cleared.",
             SourceProjectionState.ReadUnstable => "Source read unstable; previous text and highlights cleared.",
             SourceProjectionState.Refused => "Source refused; previous text and highlights cleared.",
             SourceProjectionState.Canceled => "Source request canceled; previous text and highlights cleared.",
@@ -429,7 +616,7 @@ public sealed class AtlasReaderView : UserControl
         SourceProjectionState.Unavailable => "Source unavailable.",
         SourceProjectionState.Unverifiable => "Source unverifiable.",
         SourceProjectionState.UnsupportedEncoding => "Source unsupported.",
-        SourceProjectionState.TooLargeToVerify => "Source file-limited.",
+        SourceProjectionState.TooLargeToVerify => "Source exceeds verification budget.",
         SourceProjectionState.ReadUnstable => "Source unstable.",
         SourceProjectionState.Refused => "Source refused.",
         SourceProjectionState.Canceled => "Source canceled.",
@@ -439,7 +626,9 @@ public sealed class AtlasReaderView : UserControl
     private static string Required(string value, string name) =>
         string.IsNullOrWhiteSpace(value) ? throw new ArgumentException("Value must not be blank.", name) : value;
 
-    private sealed record BackFrame(string ReceiptToken, string FocusName);
+    private sealed record BackFrame(string ReceiptToken, string FileValue, string? ObservationKey, string FocusName,
+        int SelectionStart, int SelectionLength, double VerticalOffset, double HorizontalOffset,
+        double OutlineOffset, double FilesOffset);
 }
 
 public sealed class AtlasFileNode
@@ -469,7 +658,9 @@ public sealed class AtlasFileNode
     {
         var limitation = string.IsNullOrWhiteSpace(entry.Reason) ? "" : "; " + entry.Reason;
         var details = $"{entry.Kind}; {entry.Classification}; {entry.Availability}{limitation}";
-        return new(name, entry.RelativePath, entry.FileValue, true, details);
+        return new(name, entry.RelativePath.Replace('/', '\\'),
+            entry.Kind is AtlasDirectoryEntryKind.File ? entry.FileValue : null,
+            entry.Kind is AtlasDirectoryEntryKind.File, details);
     }
 }
 
