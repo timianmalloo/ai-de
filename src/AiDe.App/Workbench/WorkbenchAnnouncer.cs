@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
+using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Workbench;
 
@@ -12,6 +13,12 @@ public interface IWorkbenchAnnouncer
     string Last { get; }
 
     void Announce(string message);
+
+    /// <summary>
+    /// Announces with an urgency and a kind (SC9; DS-1 P6): a status is queued after what is being
+    /// read, an assertive announcement interrupts it. <c>Announce(string)</c> is the status form.
+    /// </summary>
+    void Announce(Announcement announcement);
 
     /// <summary>
     /// Empties the status line.
@@ -57,6 +64,21 @@ public sealed class WorkbenchAnnouncer : IWorkbenchAnnouncer
 
     public string Last { get; private set; } = string.Empty;
 
+    /// <summary>
+    /// The raise seam (DS-1 A2): what the last notification was raised with —
+    /// <c>(kind, processing, activityId)</c> — so a test can hold the announcer to the mapping it
+    /// claims rather than trusting the call was made. Null until the first announcement.
+    /// </summary>
+    public (AutomationNotificationKind Kind, AutomationNotificationProcessing Processing, string ActivityId)? LastRaise { get; private set; }
+
+    /// <inheritdoc/>
+    public void Announce(Announcement announcement)
+    {
+        ArgumentNullException.ThrowIfNull(announcement);
+        var (kind, processing) = NotificationMapping.For(announcement.Urgency, announcement.Kind);
+        Announce(announcement.Text, kind, processing, NotificationMapping.ThreadActivityId);
+    }
+
     public void Clear()
     {
         if (!_liveRegion.Dispatcher.CheckAccess())
@@ -71,7 +93,10 @@ public sealed class WorkbenchAnnouncer : IWorkbenchAnnouncer
         _liveRegion.Text = string.Empty;
     }
 
-    public void Announce(string message)
+    public void Announce(string message) =>
+        Announce(message, AutomationNotificationKind.ActionCompleted, AutomationNotificationProcessing.MostRecent, "aide.workbench.layout");
+
+    private void Announce(string message, AutomationNotificationKind kind, AutomationNotificationProcessing processing, string activityId)
     {
         if (string.IsNullOrWhiteSpace(message))
         {
@@ -84,7 +109,7 @@ public sealed class WorkbenchAnnouncer : IWorkbenchAnnouncer
         // exactly the point it was trying to tell the user something.
         if (!_liveRegion.Dispatcher.CheckAccess())
         {
-            _liveRegion.Dispatcher.InvokeAsync(() => Announce(message));
+            _liveRegion.Dispatcher.InvokeAsync(() => Announce(message, kind, processing, activityId));
             return;
         }
 
@@ -108,11 +133,8 @@ public sealed class WorkbenchAnnouncer : IWorkbenchAnnouncer
 
         try
         {
-            peer.RaiseNotificationEvent(
-                AutomationNotificationKind.ActionCompleted,
-                AutomationNotificationProcessing.MostRecent,
-                message,
-                activityId: "aide.workbench.layout");
+            LastRaise = (kind, processing, activityId);
+            peer.RaiseNotificationEvent(kind, processing, message, activityId);
         }
         catch (PlatformNotSupportedException)
         {
@@ -172,5 +194,65 @@ public sealed class RecordingAnnouncer : IWorkbenchAnnouncer
         {
             _messages.Add(message);
         }
+    }
+
+    /// <summary>Every typed announcement, in order — the urgency and kind a test reads beside the text.</summary>
+    public IReadOnlyList<Announcement> Announcements
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return [.. _announcements];
+            }
+        }
+    }
+
+    private readonly List<Announcement> _announcements = [];
+
+    /// <inheritdoc/>
+    public void Announce(Announcement announcement)
+    {
+        ArgumentNullException.ThrowIfNull(announcement);
+
+        lock (_gate)
+        {
+            _announcements.Add(announcement);
+        }
+
+        Announce(announcement.Text);
+    }
+}
+
+/// <summary>
+/// The pure mapping from an announcement's urgency and kind to the UIA notification API's two
+/// enums (DS-1 A2) — on NVDA's real processing semantics: <c>event_UIA_notification</c> cancels
+/// speech only for <c>MostRecent</c> / <c>ImportantMostRecent</c>, so a status is <c>All</c>
+/// (queued) and an assertive announcement <c>ImportantMostRecent</c> (interrupts).
+/// </summary>
+public static class NotificationMapping
+{
+    /// <summary>The activity id every thread announcement is raised under.</summary>
+    public const string ThreadActivityId = "aide.session.thread";
+
+    public static (AutomationNotificationKind Kind, AutomationNotificationProcessing Processing) For(Urgency urgency, AnnouncementKind kind)
+    {
+        var processing = urgency switch
+        {
+            Urgency.Status => AutomationNotificationProcessing.All,
+            Urgency.Assertive => AutomationNotificationProcessing.ImportantMostRecent,
+            _ => throw new ArgumentOutOfRangeException(nameof(urgency), urgency, "unknown urgency"),
+        };
+
+        var notification = kind switch
+        {
+            AnnouncementKind.ItemAdded => AutomationNotificationKind.ItemAdded,
+            AnnouncementKind.Completed => AutomationNotificationKind.ActionCompleted,
+            AnnouncementKind.Aborted => AutomationNotificationKind.ActionAborted,
+            AnnouncementKind.Other => AutomationNotificationKind.Other,
+            _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "unknown announcement kind"),
+        };
+
+        return (notification, processing);
     }
 }

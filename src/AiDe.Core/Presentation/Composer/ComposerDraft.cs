@@ -1,4 +1,5 @@
 using AiDe.Core.AgentPlane;
+using AiDe.Core.Sessions;
 
 namespace AiDe.Core.Presentation.Composer;
 
@@ -101,9 +102,11 @@ public sealed class ComposerDraft
     /// </remarks>
     public string SourceText => Shape switch
     {
-        ComposerShape.FreeForm => _freeForm,
-        ComposerShape.GoalBlock => string.Join(
-            '\n', GoalBlockFields.All.Select(name => _goalValues.TryGetValue(name, out var value) ? value : string.Empty)),
+        // ONE EDITOR (DESIGN.md SC1; Ruling 66): the message is the editor's text in both the
+        // free-form and the goal-block form. The goal-block form adds three structure lines
+        // beneath the editor (Goal · Done when · Not in scope), which are decorations of the turn,
+        // never a second source of mentions.
+        ComposerShape.FreeForm or ComposerShape.GoalBlock => _freeForm,
         ComposerShape.Template => string.Join('\n', _templateValues.Values.SelectMany(values => values)),
         _ => throw new ArgumentOutOfRangeException(nameof(Shape), Shape, "unknown composer shape"),
     };
@@ -121,8 +124,40 @@ public sealed class ComposerDraft
             ? TurnShape.GoalBlock
             : TurnShape.Message;
 
-    /// <summary>The retained free-form text.</summary>
+    /// <summary>The retained free-form text — the message, in every form but a template's.</summary>
     public string FreeFormText => _freeForm;
+
+    /// <summary>
+    /// The three goal-block fields the session and the compile step supply — never the operator,
+    /// per prompt (Rulings 56, 63, 72): the tier is the compile step's projection
+    /// (<see cref="ComposerCompiler.Tier"/>), the cap and the budget are the session's
+    /// (<see cref="Ceilings"/>).
+    /// </summary>
+    public static IReadOnlyList<string> SessionSuppliedGoalFields { get; } =
+        [GoalBlockFields.TierKey, GoalBlockFields.FanOutCapKey, GoalBlockFields.BudgetKey];
+
+    /// <summary>The goal-block fields a prompt carries: the three content lines.</summary>
+    /// <remarks>
+    /// Derived by subtraction from <see cref="GoalBlockFields.All"/> rather than typed out, so a
+    /// seventh contract field would appear here rather than silently miss the form, and so the
+    /// contract's own list stays the one home of the wire names (DM7).
+    /// </remarks>
+    public static IReadOnlyList<string> PerPromptGoalFields { get; } =
+        [.. GoalBlockFields.All.Except(SessionSuppliedGoalFields, StringComparer.Ordinal)];
+
+    /// <summary>
+    /// The session's ceilings the compiled block reads (Ruling 56; ADR-0033 §3's <c>ceilings</c>
+    /// snapshot): the fan-out ceiling and the budget cap. Set by the shell from the session's
+    /// config; an unbound draft carries the config's own defaults.
+    /// </summary>
+    public SessionCeilings Ceilings { get; private set; } = SessionCeilings.Default;
+
+    /// <summary>Binds the session's ceilings (Ruling 56: one home, never a per-prompt override).</summary>
+    public void UseSessionSettings(SessionConfig config)
+    {
+        ArgumentNullException.ThrowIfNull(config);
+        Ceilings = new SessionCeilings(config.FanOutCeiling, config.BudgetCap);
+    }
 
     /// <summary>The template this draft is bound to, when its shape is a template.</summary>
     public string? TemplateId { get; private set; }
@@ -154,6 +189,17 @@ public sealed class ComposerDraft
         {
             throw new ArgumentOutOfRangeException(
                 nameof(fieldName), fieldName, "the goal block names no such field");
+        }
+
+        // THE CONTROL FOR "A PER-PROMPT TIER, CAP OR BUDGET FIELD" (DESIGN.md's anti-goal; the
+        // plan's fail condition): a form that tried to write one here fails loudly rather than
+        // rendering a box the rulings retired.
+        if (SessionSuppliedGoalFields.Contains(fieldName, StringComparer.Ordinal))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(fieldName), fieldName,
+                "not a per-prompt field: the tier is the compile step's projection and the fan-out cap "
+                + "and budget are session settings (Rulings 56, 63, 72)");
         }
 
         _goalValues[fieldName] = value;
@@ -207,18 +253,27 @@ public sealed class ComposerDraft
     /// The goal block this draft declares, as a value the one validation mechanism can read.
     /// </summary>
     /// <remarks>
-    /// Nullable throughout, exactly as <see cref="GoalBlock"/> is: a blank field must be expressible
-    /// so the form engine can name it, rather than being defaulted into something that validates.
+    /// <para>The three content lines are nullable, exactly as <see cref="GoalBlock"/> is: a blank
+    /// field must be expressible so the form engine can name it, rather than being defaulted into
+    /// something that validates.</para>
+    ///
+    /// <para><b>The other three are supplied, never typed (Rulings 56, 63, 72).</b> The tier is
+    /// <see cref="ComposerCompiler.Tier"/>'s projection over the same two inputs the shape and the
+    /// lease read (Addendum D §A9); the cap is <c>min(cap(tier), ceiling)</c> (Ruling 64); the budget
+    /// is the session's cap or <see cref="RunBudget.SubscriptionBounded"/>. So a send with nothing
+    /// typed for them is complete, and <see cref="SpawnContract.Validate"/> stays byte-identical.</para>
     /// </remarks>
     public GoalBlock ToGoalBlock()
     {
+        var tier = ComposerCompiler.Tier(TurnShape, LeaseDerivation.Patterns(SourceText)).Tier;
+
         return new GoalBlock(
             Text(GoalBlockFields.GoalKey),
             Text(GoalBlockFields.DoneWhenKey),
             Text(GoalBlockFields.NotInScopeKey),
-            Text(GoalBlockFields.TierKey),
-            int.TryParse(Text(GoalBlockFields.FanOutCapKey), out var cap) ? cap : null,
-            ParseBudget(Text(GoalBlockFields.BudgetKey)));
+            tier,
+            ComposerCompiler.EffectiveFanOut(tier, Ceilings.FanOutCeiling),
+            Ceilings.BudgetCap ?? RunBudget.SubscriptionBounded);
 
         string? Text(string field) => Written(field) ? _goalValues[field] : null;
     }
@@ -226,27 +281,14 @@ public sealed class ComposerDraft
     /// <summary>Whether a goal-block field holds anything but whitespace — the validator's own reading of "written".</summary>
     private bool Written(string field) =>
         _goalValues.TryGetValue(field, out var value) && !string.IsNullOrWhiteSpace(value);
+}
 
-    /// <summary>
-    /// Reads a budget written as <c>requests,tokens</c> — the two native number inputs, joined.
-    /// </summary>
-    /// <remarks>
-    /// A pair that does not parse becomes <c>null</c> rather than a zero budget, because a zero
-    /// budget is a spawn that can never do anything and the validator has a better message for the
-    /// missing case than for the impossible one.
-    /// </remarks>
-    private static RunBudget? ParseBudget(string? raw)
-    {
-        if (raw is null)
-        {
-            return null;
-        }
-
-        var parts = raw.Split(',', StringSplitOptions.TrimEntries);
-        return parts.Length == 2
-            && int.TryParse(parts[0], out var requests)
-            && long.TryParse(parts[1], out var tokens)
-                ? new RunBudget(requests, tokens)
-                : null;
-    }
+/// <summary>
+/// The session's two ceilings as the compiled block reads them (Ruling 56): the fan-out ceiling and
+/// the budget cap, <c>null</c> for <i>bounded by the subscription</i> (Ruling 72).
+/// </summary>
+public sealed record SessionCeilings(int FanOutCeiling, RunBudget? BudgetCap)
+{
+    /// <summary>What an unbound draft carries: the config's own defaults, never a compile-time invention.</summary>
+    public static readonly SessionCeilings Default = new(SessionConfig.DefaultFanOutCeiling, null);
 }

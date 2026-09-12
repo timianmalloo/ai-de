@@ -81,6 +81,125 @@ public static class ComposerCompiler
     public static string LeaseLine(IReadOnlyList<string>? lease) =>
         lease is null ? "Lease: " + ReadOnlyScope : "Lease: " + string.Join(", ", lease);
 
+    /// <summary>The lease segment's empty state on the decoration line (SC2's words).</summary>
+    public const string LeaseNoneYet = "none yet — mention the files this run may write as @path";
+
+    /// <summary>
+    /// Addendum D §A9's mechanical tier rule — a deterministic, <b>total</b> function of two inputs:
+    /// <b>P</b>, whether a goal block exists (<see cref="ComposerDraft.TurnShape"/>), and <b>L</b>,
+    /// the count of distinct lease patterns the source text derives. Nothing else.
+    /// </summary>
+    /// <remarks>
+    /// <para>R0: no goal block → T0. R1: a goal block with no write scope → T1 (it runs read-only,
+    /// Ruling 73). R2: one lease → T1. R3: two or more → T2. R4, the operator override, is Prepare's
+    /// (CV-2) and is not here. The same two inputs <see cref="IsReadOnly"/> reads, so the shape,
+    /// the access and the tier can never disagree about whether a goal block exists.</para>
+    ///
+    /// <para><b>The rationale names who filled the structure.</b> <c>simplify:</c> until the
+    /// compile step writes <c>derived</c> rows (CV-2), every structure line is the operator's, so the
+    /// rationale reads <i>filled by you</i>; the upgrade trigger is a <c>derived</c> or
+    /// <c>template</c> row in the envelope fold, at which point <paramref name="structureSource"/>
+    /// is read from it.</para>
+    /// </remarks>
+    /// <param name="shape">The turn's shape — P.</param>
+    /// <param name="patterns"><see cref="LeaseDerivation.Patterns"/> over the source text — L is its count.</param>
+    /// <param name="structureSource">Who filled Goal and Done when: <c>you</c>, <c>the model</c> or <c>the template</c>.</param>
+    public static TierProjection Tier(TurnShape shape, IReadOnlyList<string> patterns, string structureSource = "you")
+    {
+        ArgumentNullException.ThrowIfNull(patterns);
+
+        if (shape == TurnShape.Message)
+        {
+            return new TierProjection("T0", "no goal block", "R0");
+        }
+
+        return patterns.Count switch
+        {
+            0 => new TierProjection("T1", $"goal block filled by {structureSource}, no write scope", "R1"),
+            1 => new TierProjection("T1", $"goal block filled by {structureSource}, one lease", "R2"),
+            var n => new TierProjection("T2", string.Create(System.Globalization.CultureInfo.InvariantCulture, $"goal block filled by {structureSource}, {n} leases"), "R3"),
+        };
+    }
+
+    /// <summary>The cap function (CT19; GO7): <c>cap(T0) = 0</c>, <c>cap(T1) = 2</c>, <c>cap(T2) = 4</c>.</summary>
+    public static int CapOf(string tier) => tier switch
+    {
+        "T0" => 0,
+        "T1" => 2,
+        "T2" => 4,
+        _ => throw new ArgumentOutOfRangeException(nameof(tier), tier, "the tier is one of T0, T1, T2"),
+    };
+
+    /// <summary>Effective fan-out = <c>min(cap(tier), ceiling)</c> (Ruling 64) — a projection, never stored, never raised from a prompt.</summary>
+    public static int EffectiveFanOut(string tier, int ceiling) => Math.Min(CapOf(tier), Math.Max(0, ceiling));
+
+    /// <summary>
+    /// The composer's settings line (<c>DESIGN.md</c> copy): <i>fan-out cap 2 (ceiling 3) · budget:
+    /// bounded by your subscription · from session settings</i>; at T0, <i>T0 — the ceiling of 3
+    /// does not apply to this turn</i>. Never a numeral for an absent cap (Ruling 72).
+    /// </summary>
+    public static string SettingsLine(string tier, int ceiling, RunBudget? budgetCap)
+    {
+        var culture = System.Globalization.CultureInfo.InvariantCulture;
+        var fanOut = tier == "T0"
+            ? string.Create(culture, $"T0 — the ceiling of {ceiling} does not apply to this turn")
+            : string.Create(culture, $"fan-out cap {EffectiveFanOut(tier, ceiling)} (ceiling {ceiling})");
+        var budget = budgetCap is null || budgetCap.IsSubscriptionBounded
+            ? "budget: bounded by your subscription"
+            : string.Create(culture, $"budget: {budgetCap.Tokens:N0} tokens, {budgetCap.Requests:N0} requests · cap enforced");
+        return fanOut + " · " + budget + " · from session settings";
+    }
+
+    /// <summary>
+    /// The current turn's decoration rows in SC2's one grammar — <c>class · tier · lease · shape
+    /// [· template]</c>, each with its source and reason — read from the same two inputs the shape,
+    /// the access and the tier read, so the line the operator confirms at Send is the line the
+    /// thread will show for the turn.
+    /// </summary>
+    /// <param name="draft">The draft.</param>
+    /// <param name="taskClass">The prompt's class — the session's default until a prompt chooses one (Ruling 70).</param>
+    public static IReadOnlyList<Sessions.DecorationRow> Decorations(ComposerDraft draft, string taskClass)
+    {
+        ArgumentNullException.ThrowIfNull(draft);
+        ArgumentException.ThrowIfNullOrWhiteSpace(taskClass);
+
+        var shape = draft.TurnShape;
+        var patterns = LeaseDerivation.Patterns(draft.SourceText);
+        var tier = Tier(shape, patterns);
+        var readOnly = IsReadOnly(shape, patterns);
+
+        var rows = new List<Sessions.DecorationRow>
+        {
+            new("class", taskClass, "session-default",
+                string.Equals(taskClass, Watcher.TaskClasses.FreeForm, StringComparison.Ordinal)
+                    ? "no class ranks this turn"
+                    : "the session's default task class"),
+            new("tier", tier.Tier, "rule", tier.Rationale),
+            new("lease",
+                readOnly ? ReadOnlyScope : string.Join(" · ", patterns),
+                "derived",
+                patterns.Count switch
+                {
+                    0 => LeaseNoneYet,
+                    1 => "from your mention",
+                    _ => "from your mentions",
+                }),
+            new("shape",
+                shape == TurnShape.GoalBlock ? "goal block" : "message",
+                "projection",
+                shape == TurnShape.GoalBlock
+                    ? "Goal and Done when are both written"
+                    : "a blank Goal or Done when makes a message (Ruling 75)"),
+        };
+
+        if (draft.TemplateId is { } template)
+        {
+            rows.Add(new("template", template, "operator", "picked from the template control"));
+        }
+
+        return rows;
+    }
+
     /// <summary>Compiles the draft. <paramref name="template"/> is required only for a template draft.</summary>
     public static CompiledPrompt Compile(ComposerDraft draft, PromptTemplate? template = null)
     {
@@ -89,7 +208,14 @@ public static class ComposerCompiler
         var body = draft.Shape switch
         {
             ComposerShape.FreeForm => draft.FreeFormText,
-            ComposerShape.GoalBlock => RenderGoalBlock(draft.ToGoalBlock()),
+
+            // A goal-block form compiles as its shape says (Ruling 75): a goal block renders the
+            // six sections and then the message; a blank Goal or Done when makes a Message, whose
+            // bytes are the message alone — exactly the free-form form's, so a demotion never
+            // changes what the lane receives except by the block's absence.
+            ComposerShape.GoalBlock => draft.TurnShape == TurnShape.GoalBlock
+                ? RenderGoalBlock(draft.ToGoalBlock()) + RenderMessage(draft.FreeFormText)
+                : draft.FreeFormText,
             ComposerShape.Template => RenderTemplate(draft, template),
             _ => throw new ArgumentOutOfRangeException(nameof(draft), draft.Shape, "unknown composer shape"),
         };
@@ -158,6 +284,12 @@ public static class ComposerCompiler
         }
     }
 
+    /// <summary>The message section under a goal block: the operator's words, verbatim, under the one heading that is not a §14.3 field.</summary>
+    public const string MessageKey = "message";
+
+    private static string RenderMessage(string message) =>
+        string.IsNullOrWhiteSpace(message) ? string.Empty : "## " + MessageKey + "\n\n" + message + "\n";
+
     private static string RenderTemplate(ComposerDraft draft, PromptTemplate? template)
     {
         if (template is null)
@@ -217,3 +349,9 @@ public static class ComposerCompiler
         return longest;
     }
 }
+
+/// <summary>The §A9 rule's answer: the tier, why, and which row decided it.</summary>
+/// <param name="Tier">One of T0, T1, T2.</param>
+/// <param name="Rationale">The sentence the decoration line's provenance shows (<i>goal block filled by you, one lease</i>).</param>
+/// <param name="Rule">The row: R0 · R1 · R2 · R3.</param>
+public sealed record TierProjection(string Tier, string Rationale, string Rule);
