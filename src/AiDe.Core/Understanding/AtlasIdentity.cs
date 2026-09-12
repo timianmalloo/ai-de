@@ -59,6 +59,7 @@ public sealed class AtlasIdentity : IEquatable<AtlasIdentity>
         string targetFramework,
         ISymbol symbol)
     {
+        symbol = CanonicalSymbol(symbol);
         var assemblyName = symbol.ContainingAssembly?.Identity.Name;
         if (string.IsNullOrWhiteSpace(assemblyName))
         {
@@ -83,6 +84,11 @@ public sealed class AtlasIdentity : IEquatable<AtlasIdentity>
             declarationId));
     }
 
+    private static ISymbol CanonicalSymbol(ISymbol symbol) =>
+        symbol is IMethodSymbol { PartialImplementationPart: not null } definition
+            ? definition.PartialImplementationPart
+            : symbol;
+
     private static void EnsureSupportedMember(ISymbol member)
     {
         if (member is IPropertySymbol)
@@ -95,7 +101,7 @@ public sealed class AtlasIdentity : IEquatable<AtlasIdentity>
             throw new ArgumentException("Only source methods and properties are supported.", nameof(member));
         }
 
-        if (method.MethodKind is not (MethodKind.Ordinary or MethodKind.Constructor or MethodKind.PropertyGet or MethodKind.PropertySet))
+        if (method.MethodKind is not (MethodKind.Ordinary or MethodKind.Constructor or MethodKind.StaticConstructor or MethodKind.PropertyGet or MethodKind.PropertySet))
         {
             throw new ArgumentException("Unsupported method kind.", nameof(member));
         }

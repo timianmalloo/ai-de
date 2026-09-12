@@ -20,7 +20,7 @@ public enum AtlasSourceBindingMismatch
 public sealed class AtlasSourceBinding : IEquatable<AtlasSourceBinding>
 {
     private static readonly Regex CanonicalSha256 = new(
-        "^sha256:[0-9a-f]{64}$",
+        "\\Asha256:[0-9a-f]{64}\\z",
         RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
 
     private AtlasSourceBinding(
