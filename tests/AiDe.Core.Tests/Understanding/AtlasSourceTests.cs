@@ -12,6 +12,205 @@ namespace AiDe.Core.Tests.Understanding;
 [Trait("Platform", "Windows")]
 public sealed class AtlasSourceTests
 {
+    [Fact]
+    public void ObserveApprovedRootIdentity_ApprovedOrdinaryRoot_ReturnsIdentityWithoutSourceReads()
+    {
+        using var fixture = new Fixture("source must not be read");
+        var expected = Identity(fixture.Root);
+        var approvals = 0;
+        var reader = new AtlasSource(fixture.Clock, (_, _, _, _) => throw new Xunit.Sdk.XunitException("Root observation read source bytes."));
+
+        var result = reader.ObserveApprovedRootIdentity(fixture.Root, () => { approvals++; return true; }, default);
+
+        Assert.Equal(AtlasCompletionState.Complete, result.Completion);
+        Assert.Equal(expected, result.Identity);
+        Assert.Null(result.Reason);
+        Assert.InRange(approvals, 3, 4);
+        fixture.ProveReleased();
+    }
+
+    [Theory]
+    [InlineData("denied")]
+    [InlineData("expired")]
+    public void ObserveApprovedRootIdentity_DeniedOrExpiredApproval_RefusesBeforeNativeObservation(string scenario)
+    {
+        using var fixture = new Fixture("source");
+        var approved = scenario == "expired";
+        var expires = fixture.Clock.GetUtcNow().AddHours(scenario == "expired" ? -1 : 1);
+        var calls = 0;
+        var reader = new AtlasSource(fixture.Clock);
+
+        var result = reader.ObserveApprovedRootIdentity(Path.Combine(fixture.Root, "missing"),
+            () => { calls++; return approved && expires > fixture.Clock.GetUtcNow(); }, default);
+
+        AssertRootFailure(result, AtlasCompletionState.Refused, "atlas.root.refused");
+        Assert.Equal(1, calls);
+    }
+
+    [Theory]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    public void ObserveApprovedRootIdentity_ApprovalRevokedDuringObservation_RefusesAndReleases(int revokedAt)
+    {
+        using var fixture = new Fixture("source");
+        var calls = 0;
+        var reader = new AtlasSource(fixture.Clock);
+
+        var result = reader.ObserveApprovedRootIdentity(fixture.Root, () => ++calls < revokedAt, default);
+
+        AssertRootFailure(result, AtlasCompletionState.Refused, "atlas.root.refused");
+        Assert.Equal(revokedAt, calls);
+        fixture.ProveReleased();
+    }
+
+    [Fact]
+    public void ObserveApprovedRootIdentity_PreCanceled_DoesNotInvokeApproval()
+    {
+        using var fixture = new Fixture("source");
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+        var reader = new AtlasSource(fixture.Clock);
+
+        var result = reader.ObserveApprovedRootIdentity(fixture.Root,
+            () => throw new Xunit.Sdk.XunitException("Pre-canceled observation invoked approval."), cancellation.Token);
+
+        AssertRootFailure(result, AtlasCompletionState.Canceled, "atlas.root.canceled");
+    }
+
+    [Theory]
+    [InlineData(2)]
+    [InlineData(3)]
+    public void ObserveApprovedRootIdentity_CanceledDuringObservation_ClearsIdentityAndReleases(int canceledAt)
+    {
+        using var fixture = new Fixture("source");
+        using var cancellation = new CancellationTokenSource();
+        var calls = 0;
+        var reader = new AtlasSource(fixture.Clock);
+
+        var result = reader.ObserveApprovedRootIdentity(fixture.Root, () =>
+        {
+            if (++calls == canceledAt)
+            {
+                cancellation.Cancel();
+            }
+            return true;
+        }, cancellation.Token);
+
+        AssertRootFailure(result, AtlasCompletionState.Canceled, "atlas.root.canceled");
+        Assert.Equal(canceledAt, calls);
+        fixture.ProveReleased();
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("relative-root")]
+    [InlineData("C:relative")]
+    [InlineData("\\\\server\\share\\root")]
+    [InlineData("\\\\?\\C:\\root")]
+    [InlineData("\\\\.\\NUL")]
+    [InlineData("C:\\root:stream")]
+    [InlineData("C:\\root\\..\\escape")]
+    [InlineData("C:\\CON")]
+    [InlineData("C:\\COM\u00b9")]
+    [InlineData("C:\\root*")]
+    public void ObserveApprovedRootIdentity_OutsideRootDomain_Refuses(string? root)
+    {
+        var reader = new AtlasSource();
+
+        var result = reader.ObserveApprovedRootIdentity(root!, () => true, default);
+
+        AssertRootFailure(result, AtlasCompletionState.Refused, "atlas.root.refused");
+    }
+
+    [Theory]
+    [InlineData("direct")]
+    [InlineData("ancestor")]
+    [InlineData("nested-ancestor")]
+    public void ObserveApprovedRootIdentity_DetectedRootOrAncestorReparse_IsIndeterminate(string scenario)
+    {
+        using var fixture = new Fixture("source");
+        var nested = Path.Combine(fixture.Root, "sub", "nested");
+        Directory.CreateDirectory(nested);
+        fixture.MakeLink(scenario == "nested-ancestor" ? "ancestor" : "root");
+        var approved = scenario == "direct" ? fixture.Root : scenario == "ancestor" ? Path.Combine(fixture.Root, "sub") : nested;
+        var reader = new AtlasSource(fixture.Clock);
+
+        var result = reader.ObserveApprovedRootIdentity(approved, () => true, default);
+
+        AssertRootFailure(result, AtlasCompletionState.Partial, "atlas.root.unverifiable");
+    }
+
+    [Fact]
+    public void ObserveApprovedRootIdentity_MissingRoot_IsIndeterminateWithoutPrivatePath()
+    {
+        using var fixture = new Fixture("source");
+        var reader = new AtlasSource(fixture.Clock);
+
+        var result = reader.ObserveApprovedRootIdentity(Path.Combine(fixture.Root, "missing"), () => true, default);
+
+        AssertRootFailure(result, AtlasCompletionState.Partial, "atlas.root.unavailable");
+    }
+
+    [Fact]
+    public void ObserveApprovedRootIdentity_OrdinaryFileIsNotRoot_IsIndeterminate()
+    {
+        using var fixture = new Fixture("source");
+        var reader = new AtlasSource(fixture.Clock);
+
+        var result = reader.ObserveApprovedRootIdentity(fixture.FilePath, () => true, default);
+
+        AssertRootFailure(result, AtlasCompletionState.Partial, "atlas.root.unverifiable");
+    }
+
+    [Fact]
+    public void ObserveApprovedRootIdentity_ExclusiveNativeAccessUnavailable_TypedRefusal()
+    {
+        using var fixture = new Fixture("source");
+        using var competing = CreateFileW(fixture.Root, 0x80000000, 0, IntPtr.Zero, 3, 0x02000000, IntPtr.Zero);
+        Assert.False(competing.IsInvalid, new Win32Exception(Marshal.GetLastWin32Error()).Message);
+        var reader = new AtlasSource(fixture.Clock);
+
+        var result = reader.ObserveApprovedRootIdentity(fixture.Root, () => true, default);
+
+        AssertRootFailure(result, AtlasCompletionState.Refused, "atlas.root.refused");
+    }
+
+    [Fact]
+    public void ObserveApprovedRootIdentity_HeldRootDuringApproval_BlocksRenameThenReleases()
+    {
+        using var fixture = new Fixture("source");
+        var visits = 0;
+        var heldGateObserved = false;
+        var reader = new AtlasSource(fixture.Clock);
+
+        var result = reader.ObserveApprovedRootIdentity(fixture.Root, () =>
+        {
+            if (++visits == 3)
+            {
+                heldGateObserved = true;
+                var blocked = Assert.Throws<IOException>(() => Directory.Move(fixture.Root, fixture.Root + "-held"));
+                Assert.Contains(blocked.HResult & 0xFFFF, new[] { 5, 32, 33 });
+            }
+            return true;
+        }, default);
+
+        Assert.True(heldGateObserved);
+        Assert.Equal(AtlasCompletionState.Complete, result.Completion);
+        Assert.Equal(fixture.Grant.ExpectedNativeRootIdentity, result.Identity);
+        fixture.ProveReleased();
+    }
+
+    private static void AssertRootFailure(
+        (AtlasCompletionState Completion, AtlasObjectIdentity? Identity, string? Reason) result,
+        AtlasCompletionState expected, string reason)
+    {
+        Assert.Equal(expected, result.Completion);
+        Assert.Null(result.Identity);
+        Assert.Equal(reason, result.Reason);
+    }
+
     [Theory]
     [InlineData("utf-8")]
     [InlineData("utf-8-bom")]
