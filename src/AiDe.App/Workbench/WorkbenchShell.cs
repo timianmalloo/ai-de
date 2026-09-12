@@ -2896,6 +2896,23 @@ public sealed class WorkbenchShell : IDisposable
 
     public void Dispose()
     {
+        // The window is closing. No terminal surface is disposed here — the process exit ends every
+        // shell, and INV-0010 measured that path leaving nothing behind — but each live pane writes
+        // its `terminal.stop` now, so the log pairs every start with an end and a census can read
+        // "still hosted" as a subtraction instead of a process list.
+        try
+        {
+            foreach (var terminal in TerminalSurfaces().ToList())
+            {
+                terminal.RecordOwnerClosing();
+            }
+        }
+        catch (InvalidOperationException)
+        {
+            // Diagnostics are best-effort and never break the workbench: a docking tree that is
+            // already tearing down must not take the layout's flush below with it.
+        }
+
         Persistence?.Dispose();
 
         // The ONE place a session document is disposed. A mode switch, a tab switch and a re-render

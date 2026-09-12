@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 81 types, 337 members, 71% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 81 types, 338 members, 71% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**81 public types · 337 public members · 71% documented.**
+**81 public types · 338 public members · 71% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1989,6 +1989,7 @@ path swallows its own failure.
 | `void LayoutMutation(` | Records a layout mutation and the resulting stack/surface topology. |
 | `void LayoutReconcile(` | Records a reconcile of the **view** back into the model — the fold-in that follows a native tab drag — with the zone assignment before and after it. |
 | `void TerminalStart(` | Records the decision a terminal launch made, and how it ended. |
+| `void TerminalStop(` | Records that a terminal pane ended — the other half of `TerminalStart`, keyed by the same surface id so the two lines pair and a census can subtract. |
 | `void Crash(string origin, Exception exception)` | Records an unhandled exception, with the context that says which gesture produced it. |
 | `void McpConfig(string outcome, string? path, string? detail)` | Records what contributing to `.mcp.json` did, and the detail that must not be announced. |
 | `void LaneSessionNew(string runId, string laneId, string sessionId, JsonObject? parameters)` | Records the `session/new` a governed lane was opened with — the params object the client sent, `_meta` included — keyed by run, lane and the ACP session id it came back with. |
@@ -2056,6 +2057,28 @@ the code is correct for the values it was written against.
 
 
 Terminal BYTES are never recorded (spec privacy). This is the launch decision only.
+
+### `void TerminalStop(`
+
+Records that a terminal pane ended — the other half of `TerminalStart`, keyed by
+the same surface id so the two lines pair and a census can subtract.
+
+**Remarks.** **Why this exists (INV-0010).** The operator's log carried 4,115 `terminal.start`
+lines for one day and no end of any kind, so a leaked host — a start with no end — was exactly
+the shape the log could not show, and every "terminal hosts are not cleaned up" report
+restarted from a process list. Written once per pane, on the normal path, at the top of the
+end path (the attempt, not the success).
+
+
+
+
+is one of `child-exited` (the shell ended itself;
+is its code), `killed` (the pane was closed over a live
+shell, which the runtime terminated), `disposed` (the pane was closed with no live
+session — a start that failed), or `owner-closing` (the window is closing with the
+pane open; the process exit ends the shell). A value this writer does not know is
+`null`, never 0 (DC-137): a killed shell has no exit code, and a pane with no session
+has no session id.
 
 ### `void Crash(string origin, Exception exception)`
 

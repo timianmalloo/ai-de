@@ -28,10 +28,10 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 78 · partially-controlled 59 · uncontrolled 17
+**Status counts:** controlled 81 · partially-controlled 59 · uncontrolled 17
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
-**Recurrences since last review:** 6.
+**Recurrences since last review:** 7.
 - **DC-008**, whose first control was scoped to one test project when the cause was not project-specific.
 - **DC-001**, whose first control checked links between files and so could not see three classes cited by ID with no entry in this register.
 - **DC-013**, which recurred the same day it was first caused, because the first occurrence was repaired without being registered at all.
@@ -41,6 +41,9 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 - **DC-019**, whose "generalisation to apply elsewhere" was prose: the lease was proven to bound a
   lane's file writes and the lane's *tools* crossed the same boundary unbounded (Ruling 71) — a
   memoir is not a control, and the sweep now names the boundary.
+- **DC-131**, whose census control was taken with the right key and still closed the wrong
+  question: the column said *foreign*, the operator saw the same screen, and the fifth report came
+  (INV-0010; DC-155 is the half the control lacked).
 
 *All three are CI4: a second occurrence means the control was wrong, not that someone was careless. In the first two the control had been written to fit the instances rather than the class; in the third there was no control at all, because the first occurrence was repaired and never registered — which is the failure this file exists to prevent.*
 
@@ -5725,6 +5728,31 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   `inherited`, `page-css`, `token`) — found 14 below floor the floor could not see and split them
   by owner: 13 to the fix's own leaf style, 1 to the composer page's CSS. Same rule, same answer:
   **the close of a count is a count.** After the fix, the census is 180 / 0 and it is the control.
+- **Recurrence 4 (2026-09-12, the FIFTH report — INV-0010).** The census existed, its key was
+  right, and the population was reported again. Counted first this time, twice, every `unknown`
+  attributed by creation time + command line + parent-at-creation + the ConPTY signature: **0
+  product hosts** at either census; **223 of 271** are 111 `node.exe higgsfield-mcp` servers and
+  their console hosts under Windows Terminal's own agent — the *same* foreign pool recurrence 2/3
+  attributed (256 then), reset by a Windows Terminal restart at 17:02Z and regrown at ~5/hour; 15
+  are Claude Code's own `Monitor` loops; the 25 `unknown` are Windows Terminal's tabs, Ollama's
+  launcher, the compiler server's console and those loops. **The control asked "whose is it?" and
+  the operator asked "why is it still there?"** — a correct attribution column closed our side and
+  changed nothing on the screen (DC-155). And the product's own share was unmeasurable from the
+  product: 4,115 `terminal.start` lines in a day and no stop event exists, so each report re-ran the
+  whole investigation from a process list. Measured on the way, the one product mechanism the four
+  fixes never touched: a session whose child exits keeps its `conhost.exe --headless` for the App's
+  lifetime (DC-156) — counted `ours-live` by this census because its parent is a live App.
+  **Control (recurrence 4):** the close of a population report carries (i) an action for the
+  largest *foreign* class and the re-count that proves it, (ii) a start/stop pair on the product's
+  own emissions so the next report is answered from the log, and (iii) an `ours-orphaned` rule so a
+  dead-parent product host cannot hide in `unknown` — the red tests and self-test rows are in
+  INV-0010; all three landed on `fix/terminal-hosts-5` (2026-09-12): the `ACTION:` line (DC-155),
+  `terminal.stop` + `TerminalHostingLedger.Completions` (starts − stops), and `ours-orphaned`
+  (self-test 5d/5e green), plus the held host released with its child (DC-156). **And the
+  population itself was ours by cause** (slice 0, the same day): our ConPTY shells inherited
+  `WT_SESSION` and Windows Terminal's agent attached one MCP server per shell — the fifth census's
+  largest class, attributed "foreign" by a correct ancestry column, was a leak of this repository's
+  making. Measured 4/4 → 0/4; the runtime now strips `WT_*`.
 - **Status:** `controlled` — the boundary gate is wired and red-first on both clauses, and the
   census shape is written into the close. The general discipline is only as strong as the reviewer
   who asks *"what is the denominator?"* — and, after recurrence 2, *"what is the key, and can it
@@ -6606,3 +6634,139 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   shape is returned, not applied* — is prose until the persona audit gains the check (a finding for
   the pack).
 - **Status:** `controlled` by the pair; the lens rule is `partially-controlled`.
+
+### DC-155 — A symptom owned by someone else is closed by attribution, not by an outcome
+
+- **Shape:** a population report is investigated to DC-131's standard: counted, every member
+  attributed, and the largest class turns out to belong to **another application**. The close says
+  *"foreign — reported only, never removed"* and stops. The population regrows (it was never
+  touched), the operator's screen is unchanged, and the next report arrives with the same count —
+  read as a recurrence of *our* defect, which re-runs the whole investigation.
+- **Signature:** the largest class in a census is `foreign`; the close carries no action for it;
+  the same foreign root (`wta.exe` → `copilot.exe --acp --stdio` → `node higgsfield-mcp`) appears
+  in two consecutive censuses with a reset between them; the operator's report count keeps rising
+  while "zero of these are ours" keeps being true.
+- **Why it survives:** DC-131's control demands an attribution column and gets one. Attribution is
+  a *finding*; the operator's symptom is an *outcome*. Nothing in the standard asks the closer to
+  hand the operator the one action that shrinks the foreign share, or to re-count after it — so a
+  correct census closes the investigation and leaves the screen.
+- **Instance (INV-0010, 2026-09-12 — the fifth report):** recurrence 2/3 of DC-131 found 256 MCP
+  servers under Windows Terminal's agent and filed them `foreign`. Windows Terminal was restarted;
+  by the fifth report the pool was 111 (+111 console hosts) and growing ~5/hour. The source is the
+  operator's **global** `~/.copilot/mcp-config.json` (`higgsfield`, the pack's own reference
+  generation backend), spawned per use by the `wta.exe` host and never reaped — a Copilot CLI /
+  Windows Terminal lifecycle defect, triggered by a configuration we recommended.
+- **Control:** `reap-stragglers.py`'s report names, for the largest foreign root, **the action that
+  shrinks it** (scope or remove the global MCP server; restart the host; file the lifecycle defect
+  upstream) and the close of any population report includes a **post-action re-count**. Red first:
+  the report on a fixture with a dominant foreign root must carry an action line. INV-0010 phase 2
+  and phase 5.
+- **Instance 2 (2026-09-12, the correction — the misattribution itself):** the first fix of this
+  entry, hours earlier, printed an action line that sent the operator to *their* MCP config:
+  *"not AiDe's -- the Copilot agent spawns this MCP server per use … scope or remove the server in
+  ~/.copilot/mcp-config.json"*. The parent was right and the **cause was ours**: a ConPTY shell of
+  ours inheriting `WT_SESSION` from the Windows Terminal tab the harness runs in makes Windows
+  Terminal's agent host attach an agent session (its MCP servers) to it. The conductor's hourly
+  correlation of `terminal.start` against node births put the pool on our test runs; measured here
+  4/4 → 0/4 with `WT_*` stripped. **A cause attributed by ancestry alone is a label, and the label
+  pointed at the wrong owner twice** — "foreign, reported only" and then "foreign, here is your
+  action". INV-0010 slice 0.
+- **Fix (2026-09-12, `fix/terminal-hosts-5`, corrected the same day):** the cause is removed
+  (`ConPtyInterop.BuildEnvironmentBlock` strips `WT_*` from every ConPTY child); `reap-stragglers.py`
+  `report()` ends with an `ACTION:` line for the largest foreign root that names **the cause and the
+  mechanism** — *"CAUSED BY THIS REPOSITORY, foreign only by parent: a ConPTY shell of ours that
+  inherited WT_SESSION … Restart Windows Terminal, then re-count: a birth AFTER the fix is a spawn
+  path that still inherits WT_*"* — and, on a second line, **the birth correlation**: how many of
+  the pool were born within 10 s of one of our own `terminal.start` lines (the workbench log; *not
+  recorded* when the log cannot be read, never 0). Live at 14:58Z: 371 under `wta.exe`, 185
+  servers, *54 of 371 dated members born within 10 s of one of our 5,218 terminal.start lines
+  (App sessions; test-run sessions are not in the log)*.
+- **Control (corrected):** the **cause-vs-parent rule** — a census reports, for the largest foreign
+  class, the birth correlation with the product's own start events and not only the ancestry, and
+  its action line names the mechanism. Self-test rows 5j (the line names the cause and the
+  `WT_SESSION` mechanism and does **not** name the operator's MCP config — observed red on the
+  first fix's text) and 5k (`births_near`: 2 of 4 dated births follow a start; a member with no
+  creation time is in neither count).
+- **Status:** `controlled` — the cause is removed and proven red-first at two levels
+  (`EnvironmentBlockTests`, `TerminalChildEnvironmentTests`); the census carries the cause and the
+  correlation; the post-fix re-count (INV-0010 phase 5: restart Windows Terminal, compare against
+  371) is the operator's, and a birth after the fix is a finding.
+
+### DC-156 — A resource acquired for a child is released with the owner, not with the child
+
+- **Shape:** an object acquires an OS resource *for* a child (a pseudo console for a shell, a job
+  for a process). The child ends; the object records the end as **state** (`Ended`, `Complete`,
+  an exit code) and touches no **handle**. The resource then lives as long as the *owner* — the
+  App, the test host — and nothing in the owner's life ever revisits it, because "the session
+  ended" reads as "the session is finished with".
+- **Signature:** an `Ended`/`Completed` state that still owns OS objects; a `Complete`/`OnEnded`
+  path with no `Close*`/`Dispose`; a count of hosts equal to *panes* rather than to *live
+  children*; a resource whose release is only ever measured on the owner's exit path.
+- **Why it survives:** every exit-path test measures the owner ending (window close, process exit,
+  kill, dispose) — INV-0010 measured four of them clean. The in-life path is not an "exit" and is
+  never on the list; and a census attributes a host under a live owner as *live* because the key
+  (parent pid, worktree path) cannot distinguish a held host from a working one.
+- **Instance (INV-0010, 2026-09-12):** `ConPtyTerminalSession.WatchForExitAsync` → `Complete(exit)`
+  marks the session `Ended` and closes neither the pseudo console nor the job; `TerminalSurface.PumpAsync`
+  returns and keeps the dead session. Measured with the owner alive: `cmd.exe /c exit 0` → 1
+  `conhost.exe --headless` before, **1 three seconds after the exit** (`TerminalHostInLifePathTests
+  .ASessionWhoseChildExited_ReleasesItsHeadlessHostWhileTheOwnerLives`, red). Tab-close dispose on
+  the same runtime measured 1 → 0.
+- **Sweep:** `AcpEngineProcess` closes its job with the process (ruled out by reading);
+  `ShellBootstrap` holds no handle (ruled out); `WebSurfaceHost` (a WebView2 browser process per
+  surface) **not yet swept** — next step.
+- **Control:** the red in-life test above (observed failing on the un-fixed code: `1 headless
+  console host(s) still owned by the live owner 3s after 'child-exit-then-hold'`); once `terminal.stop`
+  lands, `TerminalHostingLedger.Completions` makes *held = starts − stops* a number a gate can read.
+- **Fix (2026-09-12, `fix/terminal-hosts-5`):** `ConPtyTerminalSession.WatchForExitAsync` →
+  `Complete(exit)` → `ReleaseHost()`: the pseudo console and the job are taken out of their fields
+  under the state gate and closed the moment the child's exit is seen; `DisposeAsync` takes the same
+  handles through the same gate and finds zero. Measured with the owner alive: 1 headless host while
+  the child (`cmd.exe /c "ping -n 8 … & exit 3"`) ran, **0 three seconds after its exit**, exit code
+  3 — the child's own. Paths 1–4 re-measured 0. The read loop now ends on the child's exit too (the
+  host's departure is its EOF), so the pump thread is released with the child as well — and it
+  drains to EOF unconditionally, because `ClosePseudoConsole` waits for the host and the host
+  waits for its pipe (the SRE lens's finding: a loop that stopped at completion could wedge the
+  closer with the host alive after `terminal.stop`). **Decided, not assumed:** closing the job at
+  the child's exit ends anything the shell left running inside it (a `Start-Process`, a background
+  server) at the shell's exit rather than at the tab's close — the containment ADR-0005 states,
+  now applied at the child's end; INV-0010's "the job, which is then empty" was a belief.
+- **Sweep (this fix):** `AcpEngineProcess` — same shape (the job outlives the engine's own exit
+  until the lane's `Dispose`), bounded by the run rather than the App and the job's close *is* the
+  tree's reaping, no change; `WebSurfaceHost` — the browser process is the resource and its exit
+  releases it, but nothing handles `CoreWebView2.ProcessFailed`, so a browser that dies leaves a
+  blank pane with no line (a failure mode, not this class — next step); `WorktreeProvisioner`,
+  `WorkbenchShell.cs:2638` — `using` + `WaitForExit`, released with the child; `ShellBootstrap` —
+  no handle held.
+- **Status:** `controlled` — `TerminalHostInLifePathTests.ASessionWhoseChildExited_…` green on the
+  fix (observed red on the un-fixed code, 1 → 1); the five exit paths are read by name in CI
+  (`tools/verify-terminal-host-exit-paths.py`, appended to the Windows job, its own `--self-test`
+  firing on a failed and on an unexecuted path); `TerminalHostingLedger.Completions` makes
+  *held = starts − stops* a number.
+
+### DC-157 — A test's positive control is satisfied by the defect the test guards
+
+- **Shape:** a measured fact has two clauses — *the instrument can see the thing* (≥ 1 while it
+  exists) and *the thing is gone afterwards* (0). Written red against the defect, the first clause
+  passes because the defect **holds the thing still**: the leaked host is there to be counted for
+  as long as anyone likes. The fix releases it within milliseconds, the instrument's one read takes
+  a second, and the fact goes red on its *positive* clause — reading as "the fix broke the
+  instrument" when the instrument never saw a live child at all.
+- **Signature:** a red-first test whose ≥ 1 / non-zero pre-condition was only ever observed on
+  un-fixed code; a fixture whose transient is shorter than one instrument read (`cmd.exe /c exit 0`
+  under a CIM census); a fix that turns a fact's second clause green and its first clause red.
+- **Why it survives:** the positive clause is the DC-131 recurrence-2 control (*"can the key ever
+  return non-zero?"*) and it *did* return non-zero — for the wrong reason. Nobody re-asks the
+  question on the fixed code, because the fixed code is where the second clause is being watched.
+- **Instance (2026-09-12, INV-0010 phase 3):** `TerminalHostInLifePathTests
+  .ASessionWhoseChildExited_ReleasesItsHeadlessHostWhileTheOwnerLives` — red as `1 → 1` on the
+  un-fixed runtime; on the fixed runtime `liveCount` read 0 (*"the helper's session should have
+  owned a conhost.exe --headless while it started; saw 0"*). The helper's child became
+  `cmd.exe /c "ping -n 8 127.0.0.1 >nul & exit 3"`: seven seconds alive, then its own exit — and the
+  fact reads `1 → 0`, code 3.
+- **Control:** the positive clause stays in the fact and is **observed on the fixed code** before
+  the red is called green (the Proof Pack's red/green row carries both counts); a fixture whose
+  transient an instrument must catch outlives one instrument read by design, and says so in a
+  comment. DC-102's cousin: there the mechanism was never exercised; here the instrument was.
+- **Status:** `controlled` — the fact asserts both clauses and both were observed on the fix
+  (`1` live, `0` at +3 s); the helper's comment names the shape.

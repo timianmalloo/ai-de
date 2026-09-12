@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.AgentPlane: 57 types, 141 members, 90% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.AgentPlane: 57 types, 143 members, 90% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.AgentPlane`
 
-**57 public types · 141 public members · 90% documented.**
+**57 public types · 143 public members · 90% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1578,7 +1578,9 @@ while this ran".
 |---|---|
 | `string TerminalActivitySource = "aide.terminal.runtime"` | The activity source `ConPtyTerminalSession` publishes on. Observed, not assumed. |
 | `string TerminalStartActivity = "terminal.start"` | The activity name it opens for one construction. |
+| `string TerminalStopActivity = "terminal.stop"` | The activity name it opens once per session when the session ends — by its child's exit, by disposal, or by a construction that failed after the start was counted (INV-0010). |
 | `long Constructions` | How many terminal hosts were constructed since this ledger opened. |
+| `long Completions` | How many sessions ended since this ledger opened. `Constructions − Completions` is the number of hosts the runtime still holds — the census-time invariant INV-0010 could not check. |
 | `TerminalHostingLedger Open()` | Opens a ledger. Counting starts here and stops at `Dispose`. |
 | `void Dispose()` | **(gap)** |
 
