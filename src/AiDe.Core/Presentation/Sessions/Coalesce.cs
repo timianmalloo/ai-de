@@ -23,10 +23,6 @@ public static class Coalesce
     /// <summary>The mapper's <c>agent_thought_chunk</c> (Ruling 82, CV-5.3): reasoning, folded per thought — its own run, never merged with prose.</summary>
     public const string ThoughtKind = "agent.thought";
 
-    /// <summary>Whether a kind arrives in wire chunks and folds to one row per run.</summary>
-    public static bool Folds(string kind) =>
-        string.Equals(kind, MessageKind, StringComparison.Ordinal) || string.Equals(kind, ThoughtKind, StringComparison.Ordinal);
-
     /// <summary>The rows of a turn's events, in order. Pure: the same events give the same rows.</summary>
     /// <remarks>
     /// A run is a maximal stretch of one folding kind from ONE lane — a row carries one lane, so a
@@ -39,49 +35,32 @@ public static class Coalesce
         ArgumentNullException.ThrowIfNull(events);
 
         var rows = new List<TurnRow>(events.Count);
-        var text = new System.Text.StringBuilder();
-        EventLine? first = null;
-        var chunks = 0;
-
-        foreach (var line in events)
+        for (var start = 0; start < events.Count;)
         {
-            if (first is not null && Continues(first, line))
+            var first = events[start];
+            var end = start + 1;
+            if (Folds(first.Kind))
             {
-                text.Append(line.Text);
-                chunks++;
-                continue;
+                while (end < events.Count && Continues(first, events[end]))
+                {
+                    end++;
+                }
             }
 
-            Close();
-            if (Folds(line.Kind))
-            {
-                first = line;
-                text.Append(line.Text);
-                chunks = 1;
-            }
-            else
-            {
-                rows.Add(new TurnRow(line.At, line.Lane, line.Kind, line.Text, null));
-            }
+            var text = end - start == 1 ? first.Text : string.Concat(events.Skip(start).Take(end - start).Select(e => e.Text));
+            rows.Add(new TurnRow(first.At, first.Lane, first.Kind, text, Folds(first.Kind) ? end - start : null));
+            start = end;
         }
 
-        Close();
         return rows;
-
-        void Close()
-        {
-            if (first is not null)
-            {
-                rows.Add(new TurnRow(first.At, first.Lane, first.Kind, text.ToString(), chunks));
-                first = null;
-                text.Clear();
-                chunks = 0;
-            }
-        }
     }
 
+    /// <summary>Whether a kind arrives in wire chunks and folds to one row per run.</summary>
+    private static bool Folds(string kind) =>
+        string.Equals(kind, MessageKind, StringComparison.Ordinal) || string.Equals(kind, ThoughtKind, StringComparison.Ordinal);
+
+    /// <summary>The same folding kind from the same lane continues the run (<paramref name="run"/>'s kind folds by construction).</summary>
     private static bool Continues(EventLine run, EventLine line) =>
-        Folds(line.Kind)
-        && string.Equals(line.Kind, run.Kind, StringComparison.Ordinal)
+        string.Equals(line.Kind, run.Kind, StringComparison.Ordinal)
         && string.Equals(line.Lane, run.Lane, StringComparison.Ordinal);
 }

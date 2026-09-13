@@ -7261,6 +7261,16 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   is the gate that fires on the class. Named for the ADRs as a finding: an ADR that names a
   namespace checks the referenced libraries' exported simple names in the sibling namespaces
   before naming it.
+- **Recurrence 2 (CV-5.2, 2026-09-13) — the test side of the class.** A new test folder
+  `tests/AiDe.Core.Tests/Presentation/Sessions/` (the oracle's path) given the namespace
+  `AiDe.Core.Tests.Presentation.Sessions` shadowed `AiDe.Core.Presentation` for every file under
+  `AiDe.Core.Tests` that names `Presentation.EvidenceRow` / `Presentation.CanvasNode` unqualified
+  (`FieldsSurviveTheClientBoundaryTests.cs:80,155`, CS0234) — the same shape with the *test*
+  assembly's root as the shadowing side. The build caught it (the gate holds); the fix is the
+  namespace the sibling thread tests already use (`AiDe.Core.Tests.Sessions.Thread`) with the
+  folder kept as the oracle spells it. **Named for test authors:** a test folder's namespace
+  must not repeat a segment of the assembly-under-test's namespace one level below the test
+  root.
 - **Status:** `controlled`.
 
 ### DC-173 — A named-call-site census that scans whole files counts a token spelled in prose as a call site
@@ -7388,5 +7398,59 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   dry-run frames before it ships — `assert-spike.py --self-test` now includes `frames/dry-run/`
   as a third fixture that must not go red on (c). Named here for the next harness author: when
   you record a residue as expected, your oracle must expect it.
+- **Status:** `controlled`.
+
+### DC-nnn (CV-5 a) — A re-pointed identity oracle is green at both the old grain and the new one when its fixture has no case the two grains render differently
+
+- **Shape:** an identity oracle (`rows == f(source)`) is re-pointed from one derivation to another
+  (`events` → `Coalesce(events)`) and re-written against a fixture whose every run has length one
+  — so `f_old(source) == f_new(source)` on that fixture, the "red-first" run is green against the
+  old code, and the re-pointing is a rename that proves nothing. The identity is honest; the
+  fixture is the tautology.
+- **Signature:** a re-pointed test that goes green on its first run; a fixture built for the old
+  grain (one event per line, the answer as a field beside the events); an oracle whose expected
+  side and actual side both read the new function; a proof-pack row that says *"red: n-a — the
+  identity holds"*.
+- **Instance (CV-5.2, 2026-09-13):** DS-1's M1 re-pointed to Ruling 81's `heading +
+  Coalesce(turn.Events)`. The `ThreadFixtures` answers were a `reply` field and the working lines
+  were `agent.msg` one per event: the fold would have folded runs of the working lines (the wrong
+  thing) or, once the lines were tool rows, nothing — either way no red distinguished
+  `ConsoleSurface.Derive` per event from `Derive` per row. The fixture was rebuilt at the event
+  level with each answer arriving in three `agent.msg` chunks (`ThreadFixtures.Reply`), and the
+  red then read *b2's answer as three split rows*.
+- **Sweep:** the other identity oracles over the same fixtures — the jump list and the header
+  count (`Turns.Count`) are grain-independent by construction; DS-1's `L4` (10,001 split rows)
+  was re-based on tool rows so its count stays the row count it claims.
+- **Control:** `TheThreadIsOneListTests.TheSplitsRows_EqualHeadingPlusCoalesceOfEveryTurn` carries
+  `Assert.True(Σ Events.Count > Σ Rows.Count, "no turn in the fixture folds; the identity would
+  hold at either grain")` — the test refuses a fixture on which it cannot fail. Named for the next
+  re-pointing: a re-pointed oracle asserts, in itself, that its fixture distinguishes the old
+  derivation from the new.
+- **Status:** `controlled`.
+
+### DC-nnn (CV-5 b) — Two conversions of one instant on one surface: a timestamp bound through a StringFormat renders the stamp's own clock beside a sibling that converts to local, and every test machine agrees with itself
+
+- **Shape:** a `DateTimeOffset` stamped in UTC at receipt is rendered through a `Binding {
+  StringFormat = "HH:mm:ss" }` (the offset's own clock) on one row, while the heading above it
+  and the turn's time call `ToLocalTime()` — one surface, two conversions, an hour apart wherever
+  the operator is not at UTC. No test sees it: a test that compares the rendered text to
+  `ToLocalTime()` is vacuous on a UTC runner, and a test that compares it to the stamp is wrong on
+  a non-UTC one; each machine agrees with itself.
+- **Signature:** `StringFormat` on a `DateTimeOffset` binding beside a `.ToLocalTime()` elsewhere
+  on the same surface; a heading and its rows one hour apart in a screenshot; a CI runner at UTC.
+- **Instance (CV-5.2, 2026-09-13):** `ThreadFeed.EventLineTemplate` rendered `EventLine.At`
+  (`AcpPeer` stamps `GetUtcNow()`) through a StringFormat while `ConsoleSurface.Derive`'s heading
+  and `TurnItem.Time` rendered local. Found when C4's expectation, written as
+  `at.ToLocalTime()`, read `Not found: "09:29:56"` against a rendered `"16:29:56"` on a UTC−7
+  machine. One converter (`ThreadFeed.LocalClock`) now serves both templates.
+- **Sweep:** `grep -rn 'StringFormat = "HH' src/AiDe.App` — the two sites above were the only
+  ones; the header and the jump list already converted.
+- **Control:** C4's E12 block renders the same event through the split row and the thread's fold
+  line and asserts both equal `at.ToLocalTime()` — and the fixture instant carries a **+05:00
+  offset**, so a rendering from the stamp's own clock (`16:29:56`) differs from local on every
+  machine not at +05:00, a UTC runner included (the Test Architect's condition: the first draft
+  used a UTC instant, which a UTC runner could not distinguish). Observed red by reverting the
+  converter to a `StringFormat`. Named for the next clock: a clock oracle's fixture instant
+  carries an offset no runner sits at.
 - **Status:** `controlled`.
 

@@ -46,14 +46,8 @@ internal static class ThreadFixtures
         new(T0.AddSeconds(seconds), lane, kind, text, "run");
 
     /// <summary>The lane's answer as the wire chunks it: <paramref name="text"/> cut into <paramref name="chunks"/> <c>agent.msg</c> lines at one second.</summary>
-    public static IEnumerable<EventLine> Reply(int seconds, string lane, string text, int chunks = 3)
-    {
-        var size = Math.Max(1, (int)Math.Ceiling(text.Length / (double)chunks));
-        for (var at = 0; at < text.Length; at += size)
-        {
-            yield return Line(seconds, lane, text[at..Math.Min(text.Length, at + size)]);
-        }
-    }
+    public static IEnumerable<EventLine> Reply(int seconds, string lane, string text, int chunks = 3) =>
+        text.Chunk(Math.Max(1, (text.Length + chunks - 1) / chunks)).Select(c => Line(seconds, lane, new string(c)));
 
     /// <summary>The five review turns, b1 answered by the conductor, b2–b5 completed by claude-code; each answer arrives chunked.</summary>
     public static List<TurnView> Five()

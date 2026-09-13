@@ -91,7 +91,6 @@ public sealed class TurnItem : INotifyPropertyChanged
     /// prose · reasoning · tool call+result · outcome, in event order (Ruling 82).
     /// </summary>
     public IReadOnlyList<TurnRow> Prose => [.. _view.Rows.Where(r => string.Equals(r.Kind, Coalesce.MessageKind, StringComparison.Ordinal))];
-    public bool HasProse => _view.Rows.Any(r => string.Equals(r.Kind, Coalesce.MessageKind, StringComparison.Ordinal));
     public string SentBytes => _view.SentBytes;
     public string ProvenanceName => "Provenance of " + _view.DisplayOrdinal;
     public string CompiledName => "Compiled prompt of " + _view.DisplayOrdinal;

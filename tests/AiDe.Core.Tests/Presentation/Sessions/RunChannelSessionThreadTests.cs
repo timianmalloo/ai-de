@@ -1,4 +1,3 @@
-using System.Reflection;
 using AiDe.Core.Presentation.Sessions;
 
 // The folder is Presentation/Sessions (the oracle's path); the namespace is the thread tests' (DC-172).
@@ -43,17 +42,10 @@ public sealed class RunChannelSessionThreadTests
         Assert.Equal(["merges are missing from the tracker and", "read docs/tracker.md", "three of them are yours."], turn.Rows.Select(r => r.Text));
         Assert.Equal([3, null, 2], turn.Rows.Select(r => r.Chunks));
 
-        // A second store of the text fails: no Reply on the view, no accumulator in the fold, no
-        // reply handed in at Conclude — the text lives in Events and nowhere else.
+        // A second store of the text fails: the view carries no Reply — the text lives in Events
+        // and is read through Rows (every snapshot's Rows == Coalesce(Events), below). The
+        // accumulator's absence is proven by behaviour, not by scanning private structure (D1).
         Assert.Null(typeof(TurnView).GetProperty("Reply"));
-        Assert.DoesNotContain(
-            typeof(RunChannelSessionThread).GetNestedTypes(BindingFlags.NonPublic | BindingFlags.Public)
-                .SelectMany(t => t.GetMembers(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)),
-            m => m is PropertyInfo { PropertyType: var pt } && pt == typeof(System.Text.StringBuilder)
-                 || m is FieldInfo { FieldType: var ft } && ft == typeof(System.Text.StringBuilder));
-        Assert.DoesNotContain(
-            typeof(RunChannelSessionThread).GetMethod(nameof(RunChannelSessionThread.Conclude))!.GetParameters(),
-            p => string.Equals(p.Name, "reply", StringComparison.Ordinal));
     }
 
     /// <summary>Every published snapshot's rows are the fold of its own events — a chunk arriving re-folds the live message in place.</summary>

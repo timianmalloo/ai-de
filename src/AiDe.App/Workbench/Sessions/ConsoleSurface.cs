@@ -22,13 +22,16 @@ public abstract record ConsoleSplitRow(int Ordinal)
     {
         public string Text => Row.Text;
 
-        /// <summary><i>message</i> · <i>thought</i> · else the kind verbatim (DESIGN.md SC1 as amended; the mockup's <c>crow</c>).</summary>
-        public string KindWord => Row.Kind switch
-        {
-            Coalesce.MessageKind => "message",
-            Coalesce.ThoughtKind => "thought",
-            var kind => kind,
-        };
+        /// <summary>
+        /// <i>message</i>, else the kind verbatim (DESIGN.md SC1 as amended; the mockup's <c>crow</c>).
+        /// The <i>thought</i> word and its dim ink land with the <c>agent.thought</c> mapper row
+        /// (Ruling 82 condition 1: no frame is captured yet) — CV-5.3, where they can be rendered
+        /// from a real chunk rather than a guessed one.
+        /// </summary>
+        public string KindWord => Row.Kind == Coalesce.MessageKind ? "message" : Row.Kind;
+
+        /// <summary>The row's status for assistive tech — <i>claude-code · message</i>: the attribution and the kind, never the count (SC9).</summary>
+        public string Status => Row.Lane + " · " + KindWord;
 
         /// <summary><i>3 chunks</i> · <i>1 chunk</i>; empty for a kind that is one row per event — rendered from the fold, never asserted (Ruling 81 condition 3).</summary>
         public string ChunksText => Row.Chunks switch
@@ -39,8 +42,6 @@ public abstract record ConsoleSplitRow(int Ordinal)
         };
 
         public bool HasChunks => Row.Chunks is not null;
-
-        public bool IsThought => string.Equals(Row.Kind, Coalesce.ThoughtKind, StringComparison.Ordinal);
     }
 }
 
@@ -191,62 +192,38 @@ public sealed class ConsoleSurface : FeedList
 
     /// <summary>
     /// <c>hh:mm:ss · lane · message · the joined text · n chunks</c> (DESIGN.md SC1 as amended by
-    /// Ruling 81): the thread's event-line grammar plus the kind word and the chunk count; a thought
-    /// row dim; stderr in danger. The count is a rendered detail — the row's name is its text alone.
+    /// Ruling 81): the thread's event-line grammar (its segments, its stderr ink, its clock) plus
+    /// the kind word and, docked right, the chunk count; the text fills and wraps between them.
+    /// The count is a rendered detail — the row's name is its text alone.
     /// </summary>
     private static DataTemplate LineTemplate()
     {
-        var row = new FrameworkElementFactory(typeof(StackPanel));
-        row.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
+        var row = new FrameworkElementFactory(typeof(DockPanel));
         row.SetValue(FrameworkElement.MinHeightProperty, 20.0);
 
-        var time = Mono("Row." + nameof(TurnRow.At), "TextMutedBrush");
-        time.SetBinding(TextBlock.TextProperty, new Binding("Row." + nameof(TurnRow.At)) { Converter = ThreadFeed.LocalClock });
-        row.AppendChild(time);
-        row.AppendChild(Mono("Row." + nameof(TurnRow.Lane), "AccentBrush"));
-        row.AppendChild(Mono(nameof(ConsoleSplitRow.Line.KindWord), "TextMutedBrush"));
+        row.AppendChild(ThreadFeed.Clock("Row." + nameof(TurnRow.At)));
+        row.AppendChild(ThreadFeed.Segment(ThreadFeed.Text("Row." + nameof(TurnRow.Lane), 12, "AccentBrush", mono: true)));
+        row.AppendChild(ThreadFeed.Segment(ThreadFeed.Text(nameof(ConsoleSplitRow.Line.KindWord), 12, "TextMutedBrush", mono: true)));
 
-        var message = new FrameworkElementFactory(typeof(ThreadText));
-        message.SetBinding(TextBlock.TextProperty, new Binding(nameof(ConsoleSplitRow.Line.Text)));
-        message.SetValue(TextBlock.FontSizeProperty, 12.0);
-        message.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap);
-        message.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
-        message.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, 8, 0));
-        var ink = new Style(typeof(ThreadText));
-        ink.Setters.Add(new Setter(TextBlock.ForegroundProperty, new DynamicResourceExtension("TextBrush")));
-        var stderr = new DataTrigger { Binding = new Binding("Row." + nameof(TurnRow.Kind)), Value = "stderr" };
-        stderr.Setters.Add(new Setter(TextBlock.ForegroundProperty, new DynamicResourceExtension("DangerBrush")));
-        ink.Triggers.Add(stderr);
-        var thought = new DataTrigger { Binding = new Binding(nameof(ConsoleSplitRow.Line.IsThought)), Value = true };
-        thought.Setters.Add(new Setter(TextBlock.ForegroundProperty, new DynamicResourceExtension("TextMutedBrush")));
-        ink.Triggers.Add(thought);
-        message.SetValue(FrameworkElement.StyleProperty, ink);
-        row.AppendChild(message);
-
-        var chunks = Mono(nameof(ConsoleSplitRow.Line.ChunksText), "TextMutedBrush");
-        chunks.SetBinding(UIElement.VisibilityProperty, new Binding(nameof(ConsoleSplitRow.Line.HasChunks)) { Converter = new BooleanToVisibilityConverter() });
+        var chunks = ThreadFeed.Segment(ThreadFeed.Text(nameof(ConsoleSplitRow.Line.ChunksText), 12, "TextMutedBrush", mono: true), Dock.Right);
+        chunks.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Top);
+        chunks.SetValue(FrameworkElement.MinHeightProperty, 20.0);
+        chunks.SetBinding(UIElement.VisibilityProperty, ThreadFeed.Visible(nameof(ConsoleSplitRow.Line.HasChunks)));
         row.AppendChild(chunks);
+
+        var message = ThreadFeed.Text(nameof(ConsoleSplitRow.Line.Text), 12, brush: null, wrap: true);
+        message.SetValue(FrameworkElement.StyleProperty, ThreadFeed.StderrInk("Row." + nameof(TurnRow.Kind)));
+        row.AppendChild(message);
 
         return new DataTemplate(typeof(ConsoleSplitRow.Line)) { VisualTree = row };
     }
 
-    /// <summary>One 12 px mono segment of the row, bound by path, 8 px after it.</summary>
-    private static FrameworkElementFactory Mono(string path, string brush)
-    {
-        var text = new FrameworkElementFactory(typeof(ThreadText));
-        text.SetBinding(TextBlock.TextProperty, new Binding(path));
-        text.SetValue(TextBlock.FontSizeProperty, 12.0);
-        text.SetValue(TextBlock.FontFamilyProperty, ThreadFeed.Mono);
-        text.SetResourceReference(TextBlock.ForegroundProperty, brush);
-        text.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, 8, 0));
-        text.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
-        return text;
-    }
-
+    /// <summary>Named by its text; its status the lane and the kind word (a heading has none) — the thread's container pattern.</summary>
     private static Style RowContainerStyle()
     {
         var style = new Style(typeof(ListBoxItem), ContainerStyle());
         style.Setters.Add(new Setter(AutomationProperties.NameProperty, new Binding("Text")));
+        style.Setters.Add(new Setter(AutomationProperties.ItemStatusProperty, new Binding(nameof(ConsoleSplitRow.Line.Status))));
         style.Setters.Add(new Setter(PaddingProperty, new Thickness(10, 0, 10, 0)));
         return style;
     }

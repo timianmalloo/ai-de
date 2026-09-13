@@ -122,6 +122,30 @@ public sealed class CoalesceTests
     }
 
     /// <summary>
+    /// The vocabulary join, through the real mapper: an <c>agent_message_chunk</c> frame maps to the
+    /// kind the fold folds, and two of them — their text read as the Console reads it — are one row.
+    /// A renamed constant on either side leaves every other oracle green while production folds
+    /// nothing; this is the one that goes red.
+    /// </summary>
+    [Fact]
+    public void TheMappersMessageChunk_IsTheKindTheFoldFolds()
+    {
+        var mapper = new AiDe.Core.AgentPlane.AcpRunEventMapper("run-1", "claude-code");
+        var first = mapper.Map("""{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"s","update":{"sessionUpdate":"agent_message_chunk","content":{"type":"text","text":"mer"}}}}""", T0);
+        var second = mapper.Map("""{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"s","update":{"sessionUpdate":"agent_message_chunk","content":{"type":"text","text":"ges are"}}}}""", T0.AddSeconds(1));
+
+        Assert.Equal(Coalesce.MessageKind, first.Kind);
+        var rows = Coalesce.Rows([
+            new EventLine(first.Ts, "claude-code", first.Kind, ConsoleStreamModel.TextOf(first), "run"),
+            new EventLine(second.Ts, "claude-code", second.Kind, ConsoleStreamModel.TextOf(second), "run"),
+        ]);
+
+        var row = Assert.Single(rows);
+        Assert.Equal("merges are", row.Text);
+        Assert.Equal(2, row.Chunks);
+    }
+
+    /// <summary>
     /// D2, over generated interleavings (seeded — D0): the row count is the number of runs, a run
     /// being a maximal stretch of one foldable kind from one lane, or one event of any other kind;
     /// each row's text is its events' text joined; no text is lost or invented; every row's
@@ -162,14 +186,14 @@ public sealed class CoalesceTests
         }
     }
 
-    /// <summary>The oracle's own definition of a run, written independently of the fold: a change of kind or lane, or any non-folding kind, starts one.</summary>
+    /// <summary>The oracle's own definition of a run, written independently of the fold — its own foldable set spelled out, not the fold's predicate: a change of kind or lane, or any non-folding kind, starts one.</summary>
     private static int Runs(IReadOnlyList<EventLine> events)
     {
         var runs = 0;
         for (var i = 0; i < events.Count; i++)
         {
             var continues = i > 0
-                && Coalesce.Folds(events[i].Kind)
+                && events[i].Kind is "agent.msg" or "agent.thought"
                 && events[i].Kind == events[i - 1].Kind
                 && events[i].Lane == events[i - 1].Lane;
             if (!continues)
