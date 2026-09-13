@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T20:14:08Z",
+  "generated": "2026-09-13T20:31:07Z",
   "audit": [
     {
       "actor": null,
@@ -14903,6 +14903,30 @@ window.AUDIT_DATA = {
         "short": "0e5b9bce8",
         "branch": "lane/conversation-cv3",
         "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2E7ET1AGSMQ3XJFCP0W42MD",
+      "shortname": "join-cv3",
+      "datetime": "2026-09-13T20:31:06Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "keep going (the join of CV-3 after Security's loop 2)",
+      "summary": "Join: CV-3 (9f3ef860) merged to main clean after the Security lens's loop 2 cleared the veto CLEAR-WITH-CONDITIONS (C1: the spike's (c) asserts zero MCP messages under strictMcpConfig and the proof artifact is written only after the oracle passes; C2: the spike's child env mirrors StartInfoFor - both harness-only, before run 3). settingSources: [] (Security's minimum-privilege suggestion) NOT adopted: the accepted spec (page one #4, A12.3, :462, :621) makes the constitution reach the compiler by harness load; the repository settings.json env surface is a finding for the Owner. DC-184..186 self-allocated by the node, sequence unbroken; CE- family to 0023. Recount App 882 / Core 2559 = 2389 + 170. agentic-advisory stays unreachable (CE-0016) until run 3.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/compile-call.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land CV-3 on main with the veto's disposition recorded, the floors recounted, and a Release build",
+      "done_when": "main pushed green through run-verify-gates; Release built; C1/C2 queued for the conductor before run 3",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
       }
     }
   ],
