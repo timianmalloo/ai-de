@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.AgentPlane: 57 types, 143 members, 90% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.AgentPlane: 58 types, 151 members, 91% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.AgentPlane`
 
-**57 public types · 143 public members · 90% documented.**
+**58 public types · 151 public members · 91% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -74,6 +74,9 @@ disposal is the only reaping there is.
 | `TextWriter Input` | The child's stdin — the peer's output, and the protocol channel. |
 | `IReadOnlyList<string> EnvironmentFindings { get; }` | What the environment inspection found. Empty means healthy, not unmeasured. |
 | `AcpEngineProcess Start(` | Starts the engine. |
+| `string ClaudeCodeExecutableVariable = "CLAUDE_CODE_EXECUTABLE"` | The environment variable that would swap the CLI binary the adapter launches (`pathToClaudeCodeExecutable: process.env.CLAUDE_CODE_EXECUTABLE ?? claudeCliPath()`, adapter 0.75.1 `acp-agent.js`). |
+| `IReadOnlyList<string> StrippedEnvironmentVariables = [ClaudeCodeExecutableVariable, "NODE_OPTIONS", "NODE_PATH"]` | Every environment variable that would swap or inject code upstream of the pin's enforcement point — the class, not the instance (the Security & Identity Architect's finding at CV-3's gate): `CLAUDE_CODE_EXECUTABLE` sw… |
+| `string MaxOutputTokensVariable = "CLAUDE_CODE_MAX_OUTPUT_TOKENS"` | The CLI's own output-token cap per turn — read by the CLI from its environment (claude.exe 2.1.257's `max_output_tokens` path). The compile child carries it at ADR-0035's cost-model bound so a runaway (PD-5 run 2: fak… |
 | `Task WaitForExitAsync(CancellationToken cancellationToken = default)` | Waits for the child to end on its own. |
 | `void Dispose()` | Ends the lane's engine, whole tree, and waits until it is actually gone. |
 
@@ -174,6 +177,27 @@ place the host says otherwise (Ruling 71; `docs/notes/lane-pin-spike.md`).
 (`:6007-6008`), and nothing else — the whole `_meta.claudeCode.options` object is
 spread into the SDK's options (`:5964`), so a wider record would be a wider reach. An
 absent record and an empty one both send the frame every prior run sent.
+
+| Member | Summary |
+|---|---|
+| `string EveryMcpServerTool = "mcp__*"` | The CLI's glob for every MCP server's tools — `mcp__*`. Read in the CLI binary's own deny parser (claude.exe 2.1.257: a parsed `serverName` of `*` with no tool name sets the all-servers flag its `isServerLevelDisallow… |
+| `IReadOnlyList<string> DeniedToolNames =` | Every tool that writes the tree or a durable file, executes code, a shell or a process, delegates to an agent, sends a local file anywhere, or cannot be read — Ruling 73's set, **one constant** (ADR-0035 rule 2: hand-… |
+| `LaneSessionOptions Compile = new(Tools: [], DisallowedTools: [.. DeniedToolNames, EveryMcpServerTool], StrictMcpConfig: true)` | The compile session's pin (ADR-0035 rule 2; Addendum D §A13.4 C1): `tools: []` as the primary pin (every built-in tool off — the SDK's `[]` = disable all, `sdk.d.ts:1497-1505`), and `disallowedTools` naming every deni… |
+| `LaneSessionOptions CompileOn(string model)` | The compile pin bound to the session's model — `Compile` with `model` from the binding, never from a page or the model's own text. |
+
+### `IReadOnlyList<string> DeniedToolNames =`
+
+Every tool that writes the tree or a durable file, executes code, a shell or a process,
+delegates to an agent, sends a local file anywhere, or cannot be read — Ruling 73's set,
+**one constant** (ADR-0035 rule 2: hand-listing the names twice rots on the next SDK tool).
+
+**Remarks.** **Read, not recalled.** Two sources, both installed under
+`spikes/acp-subscription-lane/node_modules/`: the SDK's schema union
+(`@anthropic-ai/claude-agent-sdk` 0.3.257 `sdk-tools.d.ts:11-56`) and the shipped
+CLI's own tool-name table (`claude-agent-sdk-win32-x64/claude.exe`, 183 names).
+Every name in either is classified in `docs/proof/read-only-turn.md`; asserted as a
+set equality against a literal in `TheGovernedLaneHasNoShellTests`; an SDK or adapter
+bump re-reads both sources.
 
 ## `AcpLaneClient`
 
@@ -754,6 +778,13 @@ Everything a spawn attempt states about itself.
 An authorized spawn: a resolved binding, an observed subscription, and — for a write, always;
 for a read-only turn, when the turn had one — the goal block.
 
+## `BoundIdentity`
+
+*record* — `GoalBlock.cs`
+
+An authorized identity with no goal block: the resolved binding and the observed subscription —
+what `AuthorizeBinding` returns to a compile call (ADR-0035 rule 1).
+
 ## `SpawnContract`
 
 *class* — `GoalBlock.cs`
@@ -765,6 +796,7 @@ the observed-auth gate.
 |---|---|
 | `IReadOnlyList<GoalBlockError> Validate(GoalBlock? block)` | Every reason this goal block is not one, each naming its own field. Empty means valid. |
 | `Spawn Authorize(SpawnRequest request, ProviderRegistry registry)` | Decides whether this spawn may proceed, and returns what it is bound to. |
+| `BoundIdentity AuthorizeBinding(` | The **identity half** of `Authorize` — the terms-of-service refusal, the binding, the observed-subscription gate and the label match — with no goal-block precondition (ADR-0035 rule 1). |
 
 ### `IReadOnlyList<GoalBlockError> Validate(GoalBlock? block)`
 
@@ -824,6 +856,29 @@ enforced only where it was declared. Where it was not, the check is the auth *ki
 alone, which is "not recorded" rather than a guessed mapping (IO12). What the declared form
 buys is real: an operator with two subscription logins who switches the local CLI between them
 gets a refusal instead of a lane that bills and ranks against the wrong account.
+
+### `BoundIdentity AuthorizeBinding(`
+
+The **identity half** of `Authorize` — the terms-of-service refusal, the
+binding, the observed-subscription gate and the label match — with no goal-block
+precondition (ADR-0035 rule 1).
+
+**Throws `AgentPlaneException`.** `DirectApiRefusedByToS`, `ObservedAuthNotRecorded`, `ObservedAuthNotSubscription`, `ObservedAuthAccountMismatch`, or any refusal `Bind` raises.
+
+**Remarks.** **For the compile call, which exists to fill the goal block** (§A9 R0/R1). A compile
+cannot take `Authorize` as written: it refuses a block missing `goal` /
+`done_when`, and the placeholder block an implementer would reach for is a spoofed
+precondition on the auth gate. So the identity gate is one function both entry points call —
+the same `AP-0009`–`AP-0013` refusals, by construction rather than by copy — and a
+compile can never bill an API key while a subscription is configured.
+
+
+
+
+
+**`Authorize`'s order is unchanged** (US-D12): it still checks the terms
+first, the goal block second and the binding last; this method is the terms check plus the
+binding, and nothing in between.
 
 ## `LaneIdentity`
 

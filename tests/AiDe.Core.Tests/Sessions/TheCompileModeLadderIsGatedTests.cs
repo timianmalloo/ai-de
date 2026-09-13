@@ -67,7 +67,7 @@ public sealed class TheCompileModeLadderIsGatedTests : IDisposable
         {
             ["mode"] = mode,
             ["at"] = "2026-09-13T18:58:48Z",
-            ["sent_meta_triple"] = sentMeta ?? new LaneSessionOptions(Tools: [], DisallowedTools: [.. LaneSessionOptions.DeniedToolNames, LaneSessionOptions.EveryMcpServerTool], StrictMcpConfig: true, Model: "claude-opus-5[1m]").ToMeta(),
+            ["sent_meta_triple"] = sentMeta ?? (LaneSessionOptions.Compile with { Model = "claude-opus-5[1m]" }).ToMeta(),
             ["prompt_1"] = new JsonObject { ["text"] = "read", ["result"] = promptAnswered ? new JsonObject { ["stopReason"] = "end_turn" } : null },
             ["pin_triple"] = new JsonObject
             {

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T19:23:56Z",
+  "generated": "2026-09-13T20:06:09Z",
   "audit": [
     {
       "actor": null,
@@ -14841,6 +14841,68 @@ window.AUDIT_DATA = {
         "verification_path": true,
         "verification_executed": true,
         "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M2E60Y2BWVXV4VYTEAF8GTTK",
+      "shortname": "cv-3-compile-call",
+      "datetime": "2026-09-13T20:06:03Z",
+      "session": "cv-3",
+      "prompt": "CV-3: the compile call, the pin, gate 1 and the eval harness — Addendum D slice D-2 (ADR-0035 compile-session binding and pin; ADR-0036 the compile-mode ladder and its deployment gates; Rulings 64-68); the pin closes the MCP exposure PD-5 measured; reds first per the plan row",
+      "summary": "CV-3 (Addendum D slice D-2) on lane/conversation-cv3, merged with origin/main 06791208. Shipped: LaneSessionOptions.Compile / CompileOn(model) — tools: [], the 30 denied names + mcp__*, strictMcpConfig: true (admitted by PD-5 run 2's measurement: the repository's .mcp.json server spawned as the operator at session/new under tools: [] + mcp__*), model from the binding — asserted as an exact key set on the wire in Core and through the host; the engine's child never inherits CLAUDE_CODE_EXECUTABLE / NODE_OPTIONS / NODE_PATH (removals reported) and the compile child carries CLAUDE_CODE_MAX_OUTPUT_TOKENS=4096; SpawnContract.AuthorizeBinding (the identity half; Authorize unchanged in order; the same AP-0009..13 from both entry points; R0 not refused); CompileCallHost opening compile-call.compose (Roots == 0; a run after it reads 1), the pin verified per call against ~/.aide/proof/compile-pin-spike.json (adapter file and vendored CLI rehashed; pin_verify_ms), one linked deadline over Start → close (silent at initialize → timed_out naming the step; a late answer discarded and counted from the plane's post-deadline queue; a reply past 16,384 chars cut as malformed naming the bound; the engine disposed before the receipt), the receipt with the wire's text/usage/model_observed/latency/counts; gate 1 as CompileModeGate (CE-0016 missing, CE-0017 triple mismatch, CE-0018 frame log unverifiable, CE-0019 recount ≠ 0, CE-0022 run not ended, CE-0023 pin identity mismatch; agentic CE-0020 naming Gate 2; SetCompileMode through the gate); Prepare under an agentic rung (PrepareAsync: open lines only, the typed boundary the only reader, the called row with tool_calls/permission_requests → suspect, derived rows with call_seq, reuse after a success with a reused receipt, no reuse after a failure, the skipped call, Cancel, stale, keep/edit as operator rows, Ruling 75 fired on the projected block); CompileLine's strings and the STA walk of the four states; the harness (score.py: num/den only, the split witness, dedup by originating call, degraded over every model call, --self-test red-first; derive-fixtures.py: --affirm on tracked paths). PD-5 run 2 under the widened pin RUN-RECORDED as ABORTED: a toolless session emitted <invoke name=\"Read\"> XML as text in an unbounded loop (5,843 chunks, ~20k output tokens) until the node killed the harness — the consented ~12k exceeded; the harness now bounds each prompt (60 s / 2,000 chunks) and assert-spike refuses a run that did not end; run 3 is an attended row needing the operator's consent. Reviews: Security & Identity BLOCK → its six clear-whens applied except the model_observed drift trigger (CV-4) and usage on timeout (usage_update carries context size) — the veto is the conductor's to clear (loop 2); AI Systems Engineer and Test Architect PASS-WITH-CONDITIONS, conditions applied or recorded; the Simplifier not convened (the budget cap fired). Gates: 4 builds 0/0 with warnings as errors; App 876 / Core 2,532 before the round, the affected suites re-run green after; verify-test-run + run-verify-gates re-run at close (see the Proof Pack's gate record). Proof Pack docs/proof/compile-call.md; three defect classes DC-184/185/186 (placeholders). The stop budget (6,000 s) fired during the review round — reported, not a termination argument.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/compile-call.md",
+        "docs/proof/compile-pin-spike.md",
+        "src/AiDe.App/Conductor/CompileCallHost.cs",
+        "src/AiDe.Core/AgentPlane/AcpLaneClient.cs",
+        "src/AiDe.Core/AgentPlane/AcpEngineProcess.cs",
+        "src/AiDe.Core/AgentPlane/GoalBlock.cs",
+        "src/AiDe.Core/Compilation/CompilePin.cs",
+        "src/AiDe.Core/Sessions/CompileModeGate.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSendGate.cs",
+        "tools/compile-eval/score.py",
+        "tools/compile-eval/derive-fixtures.py",
+        "spikes/compile-session-pin-wire/frames/2026-09-13T18-58-48-954Z/summary.json"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "the compile call real behind its gates: CompileCallHost, the pin incl. mcp__*, AuthorizeBinding, gate 1, the eval harness, Prepare's compile line; PD-5's second run with the widened pin",
+      "done_when": "the plan row's reds observed red then green; build + tests + verify gates green; Proof Pack docs/proof/compile-call.md; audit entry; pushed to lane/conversation-cv3; Release rebuilt",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-13T18:45:14Z",
+      "duration_seconds": 4849.0,
+      "persona_yield": [
+        {
+          "persona": "security-identity-architect",
+          "raised": 12,
+          "accepted": 10
+        },
+        {
+          "persona": "ai-systems-engineer",
+          "raised": 17,
+          "accepted": 12
+        },
+        {
+          "persona": "test-architect",
+          "raised": 11,
+          "accepted": 10
+        }
+      ],
+      "git": {
+        "sha": "0e5b9bce8e2e1f51cf2d5f01e0590dd7fb63a3f6",
+        "short": "0e5b9bce8",
+        "branch": "lane/conversation-cv3",
+        "pushed": null
       }
     }
   ],

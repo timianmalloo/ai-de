@@ -1942,7 +1942,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Conductor: 11 types, 26 members, 100% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Conductor: 11 types, 28 members, 100% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1955,7 +1955,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c21d902536cdcca238f606c417224037247c42e7f0e24f860649c0d616f2e0f6"
+      "sourceSha256": "b8fe07c91d9f96707e800c0bbcb9b1d8f85ecd162e98466ebdb15f963a8a9cb3"
     },
     {
       "id": "api-aide-app-viewmodels",
@@ -2042,7 +2042,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 30 types, 161 members, 71% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 30 types, 164 members, 72% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2055,7 +2055,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "93c9891a2d6df3636dba60283ef59523678ee4902658962958c5bc5ebfc7b85a"
+      "sourceSha256": "507a84c67cd1d8c9749f9397098edffbbb3a5f9ecfc81b472e2a698a8b45a5e7"
     },
     {
       "id": "api-aide-core",
@@ -2092,7 +2092,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 58 types, 148 members, 91% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 58 types, 151 members, 91% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2105,7 +2105,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9b633861b7eb090d091081121be12b652345af6193d684187c32742004707610"
+      "sourceSha256": "9dc681651c4c83a4bd4df9e7b8c02049eebf465ec7b0e406f54a004f70032d9f"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -2317,7 +2317,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 30 types, 128 members, 96% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 32 types, 130 members, 96% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2330,7 +2330,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2941d5bc4583dc34d6551b4517cb831fb739d68ac37ab269fac59a32d50de4f7"
+      "sourceSha256": "3d252594268527329455893ac862fbd276e0dc6387739cb5f7be7a81ea53fabb"
     },
     {
       "id": "api-aide-core-projections",
@@ -2367,7 +2367,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.PromptCompilation: 46 types, 162 members, 81% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.PromptCompilation: 46 types, 164 members, 81% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2380,7 +2380,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1bc51b425cfee55a1d75480fc84878a2150f158fa38bb52ee22a1e1dba1273ca"
+      "sourceSha256": "6e8cf80b49ffa025ac66f277082fb4c9f8558ac58d976d9a36702170f5eda81f"
     },
     {
       "id": "api-aide-core-sessions",
@@ -7923,7 +7923,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "88cd47c6e2c328ed84f634d003df3d10ce1626329d7157529321e9971e92ded5"
+      "sourceSha256": "c0f5c3a32f518797641dc0b448b196c38eb76c79d2fb154a29eb1cd2d0b59d2d"
     },
     {
       "id": "design-session-profiler",
@@ -14707,7 +14707,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6300eddfda23f529f940f1d2b2c9e66f089ffdd66e39fbfc214d823e78708eae"
+      "sourceSha256": "69e0f6d0893fae033569e20886eb957a682eb0a5259f820e98b547b45965f2f1"
     },
     {
       "id": "proof-compile-pin-spike",
@@ -14760,7 +14760,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "deb49dd7db69ec0c890582adc3b0818d00e84a196e4f0608671a8bae76e82a70"
+      "sourceSha256": "d3761941b526fbd288f4345edb4c18256cb4faf4be73d08a3417b96ceb1de416"
     },
     {
       "id": "proof-composer-as-conversation",
@@ -14908,6 +14908,66 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "5ceb5507a5710e579bc6160c03077fb806b8cd01f8cc25aa3adf1bde84b80807"
+    },
+    {
+      "id": "proof-console-coalesce",
+      "path": "docs/proof/console-coalesce.md",
+      "title": "Proof Pack — CV-5.2, Coalesce: the Console's row grain is the message, never the wire chunk; one fold read by the thread's reply side and the split; Reply retired (Ruling 81)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [],
+      "summary": "Evidence for CV-5.2 on the Conversation lane: one pure fold, Coalesce.Rows(turn.Events), folds consecutive agent.msg (and agent.thought) chunks from one lane into one TurnRow carrying the first chunk's timestamp, the lane, the joined text and the chunk count, breaking at any other kind or lane; TurnView.Rows is that fold and TurnView.Reply, the StringBuilder second store and Conclude(reply:) are gone; the Console split derives heading + Coalesce of every turn and renders the operator's three-row message as one row reading \"16:29:56 · claude-code · message · merges are missing from the tracker and · 3 chunks\"; C1–C4 went red → green (the theory seeded, the reflection asserts red on the Reply property), the refused run's sentence is a stderr line of the run, every clock on the surface is the operator's local time, and C5 is RUN-PENDING on SH-4.2's console-document row (Ruling 89; seam request req-01M2E1HEMCMHRW1AX4SY8RJFQ7).",
+      "tags": [
+        "proof-pack",
+        "conversation-lane",
+        "cv-5",
+        "cv-5-2",
+        "coalesce",
+        "console-split",
+        "session-thread",
+        "ruling-74",
+        "ruling-81",
+        "ruling-82",
+        "ruling-89",
+        "dm7",
+        "sc1",
+        "sc9"
+      ],
+      "links": [
+        {
+          "to": "design-session-thread-itemscontrol",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        },
+        {
+          "to": "ui-review-operator-findings-2026-09-13",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-composer-as-conversation",
+          "rel": "refines"
+        },
+        {
+          "to": "mockup-session-conversation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fe0c49120083960bb378c6e57f4a592d8e06bb1ecd420a5c47736572a35bae22"
     },
     {
       "id": "proof-contrast-census",
@@ -17554,5 +17614,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "daa251a3f469a11f90bd1aee5469844a92fcaa9f0a6127ec642453c2da09d07d"
+  "graphSha256": "b057e632ded158c0709ab1b89c09775ce752552e27a58991b8f999342c5efc28"
 };

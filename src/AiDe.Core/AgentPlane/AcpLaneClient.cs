@@ -85,23 +85,28 @@ public sealed record AcpClientCapabilities(bool ReadTextFile, bool WriteTextFile
 /// Tool names removed from the model's context even where the settings would allow them;
 /// <c>null</c> sends none. The governed lane sends <c>["Bash"]</c>.
 /// </param>
-/// <param name="StrictMcpConfig">
-/// <c>strictMcpConfig: true</c> — the SDK uses only the servers the frame's <c>mcpServers</c> names
-/// and ignores the repository's <c>.mcp.json</c>, user settings and plugins (<c>sdk.d.ts:2110</c>,
-/// forwarded as <c>--strict-mcp-config</c>). <b>Admitted by measurement</b> (ADR-0035 rule 2):
-/// PD-5's second run showed the CLI spawning the fixture repository's <c>.mcp.json</c> server as
-/// the operator at <c>session/new</c>, before any prompt, with <c>tools: []</c> and <c>mcp__*</c>
-/// on the frame — <c>mcp__*</c> denies at the name; this closes the spawn (the Security &amp;
-/// Identity Architect's blocker at CV-3's gate). <c>null</c> sends nothing; a lane keeps its servers.
-/// </param>
-/// <param name="Model">
-/// The model the session runs on, host-authored from the binding (<c>providers.json</c>): without
-/// it the CLI's own resolution — user settings, the repository's <c>settings.json</c>,
-/// <c>ANTHROPIC_MODEL</c> — picks what bills, and a third of <c>AuthorizeBinding</c>'s triple is a
-/// label. <c>null</c> sends nothing (today's lanes).
-/// </param>
-public sealed record LaneSessionOptions(IReadOnlyList<string>? Tools = null, IReadOnlyList<string>? DisallowedTools = null, bool? StrictMcpConfig = null, string? Model = null)
+public sealed record LaneSessionOptions(IReadOnlyList<string>? Tools = null, IReadOnlyList<string>? DisallowedTools = null)
 {
+    /// <summary>
+    /// <c>strictMcpConfig: true</c> — the SDK uses only the servers the frame's <c>mcpServers</c>
+    /// names and ignores the repository's <c>.mcp.json</c>, user settings and plugins
+    /// (<c>sdk.d.ts:2110</c>, forwarded as <c>--strict-mcp-config</c>). <b>Admitted by
+    /// measurement</b> (ADR-0035 rule 2): PD-5's second run showed the CLI spawning the fixture
+    /// repository's <c>.mcp.json</c> server as the operator at <c>session/new</c>, before any prompt,
+    /// with <c>tools: []</c> and <c>mcp__*</c> on the frame — <c>mcp__*</c> denies at the name; this
+    /// closes the spawn (the Security &amp; Identity Architect's blocker at CV-3's gate). <c>null</c>
+    /// sends nothing; a lane keeps its servers.
+    /// </summary>
+    public bool? StrictMcpConfig { get; init; }
+
+    /// <summary>
+    /// The model the session runs on, host-authored from the binding (<c>providers.json</c>):
+    /// without it the CLI's own resolution — user settings, the repository's <c>settings.json</c>,
+    /// <c>ANTHROPIC_MODEL</c> — picks what bills, and a third of <c>AuthorizeBinding</c>'s triple is a
+    /// label. <c>null</c> sends nothing (today's lanes).
+    /// </summary>
+    public string? Model { get; init; }
+
     /// <summary>
     /// The CLI's glob for every MCP server's tools — <c>mcp__*</c>. Read in the CLI binary's own
     /// deny parser (claude.exe 2.1.257: a parsed <c>serverName</c> of <c>*</c> with no tool name
@@ -150,7 +155,7 @@ public sealed record LaneSessionOptions(IReadOnlyList<string>? Tools = null, IRe
     /// and <c>mcpServers: []</c> leave a repository <c>.mcp.json</c> server's tools reachable — the
     /// CLI loads the file at <c>session/new</c> and offers its tools to the model (finding 1).
     /// </summary>
-    public static readonly LaneSessionOptions Compile = new(Tools: [], DisallowedTools: [.. DeniedToolNames, EveryMcpServerTool], StrictMcpConfig: true);
+    public static readonly LaneSessionOptions Compile = new(Tools: [], DisallowedTools: [.. DeniedToolNames, EveryMcpServerTool]) { StrictMcpConfig = true };
 
     /// <summary>The compile pin bound to the session's model — <see cref="Compile"/> with <c>model</c> from the binding, never from a page or the model's own text.</summary>
     public static LaneSessionOptions CompileOn(string model)
