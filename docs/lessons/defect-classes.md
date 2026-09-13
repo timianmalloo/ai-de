@@ -4531,8 +4531,11 @@ for both or split.*
   `FAIL rc=1 tools/verify-stranded-audit.py`, and the line went on to `git commit … && git push`
   because nothing chained on the count. Recurrence 2's control — "`&&`-chain every gate" — cannot
   reach a loop: a loop has no single status to chain on, and the conductor wrote one by hand at a
-  join for the third time. The red was transient (a peer tree's uncommitted log; green on re-run)
-  and `main`'s content was verified, but the shape pushed before it knew. **Control:**
+  join for the third time. The red was real and mis-read twice: `verify-stranded-audit` flags the
+  primary's *own* just-appended join entry — uncommitted audit lines — so a gate set run between
+  the append and the commit is red by construction, and "transient" was the wrong word for a
+  sequencing defect. The join order is now merge → recount → audit append → regenerate →
+  **commit** → `run-verify-gates.py` on the committed state → push only if green. **Control:**
   `tools/run-verify-gates.py` runs every `tools/verify-*.py` and exits 1 on any failure
   (`--self-test` proves a red gate is reported red), so the only join line is
   `python tools/run-verify-gates.py && git commit …` and no loop is written at a join again.
