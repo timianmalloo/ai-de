@@ -1841,18 +1841,19 @@ latest scored episode* (Coding's derived group keeps *New Search · New Code vie
 §B4 gains a third default table — **Coordination (host C; Inferred, D3 keeps the Owner's arrangement):
 Left = Terminal sessions (`sessions`) · Center = Ledger · Leaderboard · Message board (three tabs,
 Ledger first) · Right = empty · Bottom = empty, collapsed · Daydreams admitted, not in the default**;
-ADR-0030 gains the row, ADR-0031 a third composition, ADR-0032 a third slot file
-(`<layout>.coordination.zones.json`) and its test 1 extends to the five kinds dropped from a pre-C
-Coding envelope, **reported naming Coordination** (`note-adr-0030-0032-amendment-coordination`).
+the ADR amendments (a row, a third composition, a third slot file, the tests each extends) are
+`note-adr-0030-0032-amendment-coordination`, cited, not restated.
 **Ruling 83** — §B4's Coding table is **re-cut**: **Left = session documents (`session-document`; the
 zone rule is Left; empty until one opens) · Center = the empty state · Bottom = Terminal — pwsh ·
 Right = empty**; a **newly created** session opens in the Left zone **docked, `Maximized == null`**
 (Ruling 47's *maximize-on-create* superseded; `workbench.maximizePane`, Ctrl+K Z, stays the on-demand
 whole tree; `NewSessionPlacement` retires); reopen unchanged; US-C6's caption falsifiers stand;
-**Coding's Left `DefaultExtent` is 1.3 of the Center** *(Inferred; `session-conversation.html`
-measures the thread's 96ch measure inside it at 1440 × 900 — Ruling 83 condition 1)*; §C4's Center
-empty copy gains a second state — *"The session is docked at the left."* + **Maximize the session**
-(Ctrl+K, Z) + *"Code viewers, prompt drafts and search open here."* — and **never reads *No session
-open* while a session is open at Left** (condition 2). The design rows are `DESIGN.md` *Errata after
+Coding's Left extent is the design language's value (one owner: `DESIGN.md` *Errata after Rulings
+83–84*, Inferred until measured on the composed tree — Ruling 83 condition 1); §C4's Center empty
+copy gains a second state — *"The session is docked at the left."* + *"Code viewers, prompt drafts
+and search open here, from the View menu."*, no first action (focus is in the editor at Left) — and
+**never reads *No session open* while a session is open at Left** (condition 2); a session document
+saved in the Center is restored where it was saved (the zone rule governs opening, not restore —
+Inferred from "reopen is unchanged"). The design rows are `DESIGN.md` *Errata after
 Rulings 83–84*; the mockup is `perspective-shell.html`. Verified by re-read of Rulings 83–84 and
 `ZoneLayout.cs:193-206`, `Perspectives.cs:51-60`, `SurfaceContentFactory.cs:223-248`.

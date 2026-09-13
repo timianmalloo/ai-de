@@ -79,11 +79,11 @@ code{font-family:var(--font-mono);font-size:var(--t-sm)}
 .menubar .mi{height:20px;padding:0 var(--s4);border:0;border-radius:var(--r-sm);background:transparent;color:var(--text);font:inherit;font-size:var(--t-sm);cursor:pointer}
 .menubar .mi:hover{background:var(--surface-raised)}
 .menubar .ttl{margin-left:auto;color:var(--text-muted)}
-.shellbody{display:grid;grid-template-columns:48px 1fr;min-height:0}
+.shellbody{display:grid;grid-template-columns:56px 1fr;min-height:0}
 .rail{display:flex;flex-direction:column;align-items:center;gap:var(--s3);padding:var(--s4) 0;background:var(--surface-sunken);border-right:1px solid var(--border)}
-.rail .primary{width:32px;height:32px;border:0;border-radius:var(--r-md);background:var(--accent);color:var(--accent-contrast);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.rail .primary{width:44px;height:44px;flex:none;border:0;border-radius:var(--r-md);background:var(--accent);color:var(--accent-contrast);display:flex;align-items:center;justify-content:center;cursor:pointer}
 .rail .div{width:24px;height:1px;background:var(--border);margin:var(--s2) 0}
-.rail .item{width:40px;height:36px;border:0;border-radius:var(--r-lg);background:transparent;color:var(--text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
+.rail .item{width:44px;height:44px;flex:none;border:0;border-radius:var(--r-md);background:transparent;color:var(--text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
 .rail .item:hover{background:var(--surface-raised);color:var(--text)}
 .rail .item[aria-selected="true"]{background:var(--surface-raised);color:var(--accent)}
 .rail .item[aria-selected="true"]::before{content:"";position:absolute;left:-4px;top:8px;bottom:8px;width:3px;border-radius:2px;background:var(--accent)}
@@ -96,8 +96,6 @@ body[data-layout="left-term"] .bodywrap,body[data-layout="left-term-center"] .bo
 body[data-layout="left-term-center"] .zone-left{grid-row:1/3}
 body[data-layout="left-term-center"] .zone-bottom{grid-column:2}
 body[data-layout="left-term-center"] .zone-rail{display:none}
-body[data-layout="max"] .bodywrap{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
-body[data-layout="max"] .zone-center,body[data-layout="max"] .zone-bottom,body[data-layout="max"] .zone-rail{display:none}
 body[data-layout="left"] .zone-bottom{display:none}
 body[data-layout="left-term"] .zone-rail{display:none}
 .zone-bottom,.zone-rail{grid-column:1/-1}
@@ -119,7 +117,6 @@ body[data-layout="left-term"] .zone-rail{display:none}
 
 /* ---- THE SESSION DOCUMENT: header · thread · composer ---------------------- */
 .sdoc{display:grid;grid-template-rows:auto minmax(0,1fr) auto;grid-template-columns:minmax(0,1fr);min-height:0;min-width:0;position:relative}
-.sdoc.split{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
 .sesshead{grid-column:1/-1;display:flex;align-items:center;gap:var(--s4);min-height:28px;padding:var(--s1) var(--s5) 1px;border-bottom:1px solid var(--border);font-size:var(--t-sm);min-width:0;position:relative}
 .sesshead .nm{font-weight:600;color:var(--text);white-space:nowrap}
 .sesshead .sp{margin-left:auto}
@@ -199,16 +196,16 @@ body[data-layout="left-term"] .zone-rail{display:none}
 .prose code{background:var(--surface-sunken);padding:0 var(--s2);border-radius:var(--r-sm)}
 .prose table{border-collapse:collapse;font-size:var(--t-sm);margin:var(--s2) 0 var(--s3)}
 .prose th,.prose td{text-align:left;padding:var(--s1) var(--s4);border-bottom:1px solid var(--border);vertical-align:top} .prose th{color:var(--text-muted);font-weight:600}
-.prose .inert{text-decoration:underline dotted;text-underline-offset:2px} /* a link is its text, its URL in the description; never a control (DESIGN.md: no link activation from model-authored content) */
+.prose .inert{font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text-muted);overflow-wrap:anywhere} /* a link is its text with the URL visible beside it in muted mono; never a control (DESIGN.md: no link activation from model-authored content) */
 .think{display:flex;align-items:center;gap:var(--s3);min-height:24px;font-size:var(--t-sm);color:var(--text-muted)}
 .lnk.dim{color:var(--text-muted)}
 .thought{margin:0 0 var(--s2) var(--s6);padding:var(--s1) 0;font-size:var(--t-sm);color:var(--text-muted);max-width:96ch;white-space:pre-wrap;overflow-wrap:anywhere}
 .tool{display:flex;align-items:center;flex-wrap:wrap;gap:var(--s3);min-height:24px;font-size:var(--t-sm);min-width:0;color:var(--text-muted)}
+.tool .kg{color:var(--text-muted);flex:none}
 .tool .ttl{font-family:var(--font-mono);color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60ch}
 .tool .stt{font-weight:600;display:inline-flex;align-items:center;gap:var(--s2)} .tool .stt.done{color:var(--verified)} .tool .stt.fail{color:var(--danger)} .tool .stt.pend{color:var(--text-muted);font-weight:400} .tool .stt.run{color:var(--text)}
 .detail{margin:0 0 var(--s2) var(--s6);padding:var(--s3) var(--s5);border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface-sunken);font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text);white-space:pre-wrap;overflow-wrap:anywhere;max-height:200px;overflow:auto}
 .detail .k{color:var(--text-muted)}
-.tgroup .items{margin:0 0 var(--s2) var(--s6)}
 .evlist{margin-top:var(--s2)}
 .evline{display:flex;align-items:baseline;gap:var(--s5);padding:var(--s1) 0;font-size:var(--t-sm);min-width:0}
 .evline .ts{font-family:var(--font-mono);font-variant-numeric:tabular-nums;color:var(--text-muted);flex:none}
@@ -344,7 +341,7 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
 .swatch{display:inline-block;width:12px;height:12px;border-radius:2px;border:1px solid var(--border);vertical-align:-2px;margin-right:var(--s3)}
 </style>
 </head>
-<body data-state="prepared" data-turns="5" data-persona="operator" data-motion="full" data-layout="left" data-tools="inline">
+<body data-state="prepared" data-turns="5" data-persona="operator" data-motion="full" data-layout="left">
 
 <div class="harness" role="region" aria-label="Review harness">
   <strong>Harness</strong>
@@ -411,9 +408,7 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
   <label>Turns
     <select id="h-turns"><option value="1">1</option><option value="5" selected>5</option><option value="40">40</option></select></label>
   <label>Layout
-    <select id="h-layout"><option value="left">docked Left, Bottom collapsed (the operator's layout)</option><option value="left-term">docked Left + one terminal across the width (the startup default)</option><option value="left-term-center">docked Left, full height; the terminal under the Center only (D3's proposal)</option><option value="max">maximized (Ctrl+K, Z)</option></select></label>
-  <label>Tool runs
-    <select id="h-tools"><option value="inline">inline (Ruling 82's letter)</option><option value="grouped">runs of ≥ 4 grouped on completed turns (D3's density rule)</option></select></label>
+    <select id="h-layout"><option value="left">docked Left, Bottom collapsed (the operator's screenshots)</option><option value="left-term">docked Left + one terminal across the width (Ruling 83's text as written)</option><option value="left-term-center">docked Left, full height; the terminal under the Center only (D3's proposal to the conductor)</option></select></label>
   <label>Theme
     <select id="h-theme"><option value="dark">dark</option><option value="light">light</option><option value="hc">high-contrast (stand-ins)</option></select></label>
   <label>Viewport
@@ -439,7 +434,7 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
         <button class="item" role="tab" aria-selected="false" tabindex="-1" aria-label="Explore perspective, Ctrl+2"><svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></button>
         <button class="item" role="tab" aria-selected="false" tabindex="-1" aria-label="Architecture perspective, Ctrl+3"><svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="8.5" y="14" width="7" height="7" rx="1.5"/><path d="M6.5 10v2.5h11V10M12 12.5V14"/></svg></button>
         <!-- Coordination (Ruling 84): host C, Ctrl+4; the five Loomkeeper kinds live there, Coding admits none of them -->
-        <button class="item" role="tab" aria-selected="false" tabindex="-1" aria-label="Coordination perspective, Ctrl+4"><svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M7.8 7.8L10.5 15.6M16.2 7.8l-2.7 7.8M8.5 6h7"/></svg></button>
+        <button class="item" role="tab" aria-selected="false" tabindex="-1" aria-label="Coordination perspective, Ctrl+4"><svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="4" r="2.2" fill="currentColor" stroke="none"/><circle cx="5.1" cy="16" r="2.2" fill="currentColor" stroke="none"/><circle cx="18.9" cy="16" r="2.2" fill="currentColor" stroke="none"/></svg></button>
       </div>
     </nav>
     <div class="main">
@@ -614,28 +609,28 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
             </section>
 
             <!-- THE CONSOLE SPLIT: Ruling 21's split, on demand. The same events the thread folds per turn, unfolded in time. -->
-            <section class="console region" aria-label="Console: every wire frame, one row per message" data-show="split">
-              <div class="modestrip"><span class="modetitle">Console</span><span class="sp"></span><span class="follow" id="follow"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>following b5</span></div>
-              <div class="consolebody" id="consolebody" tabindex="0" role="region" aria-label="Merged stream, every turn in time order, one row per message"></div>
-            </section>
           </div>
         </section>
 
         <!-- THE CENTER ZONE: empty. Its copy never reads "No session open" while one is open at Left (Ruling 83, condition 2). -->
         <section class="pane unfocused zone-center" aria-label="Center zone">
-          <div class="tabstrip" role="tablist"></div>
-          <div class="panebody">
+          <div class="tabstrip" role="tablist" id="center-tabs"></div>
+          <div class="panebody" style="display:flex;flex-direction:column;min-height:0">
             <div class="wayfinder" id="center-empty">
               <svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h10M4 19h7"/></svg>
               <h3>The session is docked at the left.</h3>
-              <button class="cta">Maximize the session <span class="kbd">Ctrl+K, Z</span></button>
-              <p>Code viewers, prompt drafts and search open here.</p>
+              <p>Code viewers, prompt drafts and search open here, from the View menu.</p>
             </div>
+            <!-- THE CONSOLE SPLIT's home with the session at Left (Inferred; a question for the conductor): a Console document in the Center, never inside the 673px Left pane -->
+            <section class="console region" id="center-console" aria-label="Console: every wire frame, one row per message" hidden style="border-left:0;flex:1;min-height:0">
+              <div class="modestrip"><span class="modetitle">Console</span><span class="sp"></span><span class="follow" id="follow"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>following b5</span></div>
+              <div class="consolebody" id="consolebody" tabindex="0" role="region" aria-label="Merged stream, every turn in time order, one row per message"><div role="list" id="consolelist"></div></div>
+            </section>
           </div>
         </section>
 
         <!-- THE BOTTOM ZONE: collapsed in the operator's layout; one terminal (0.30) in the startup default -->
-        <div class="zone-rail" aria-label="Bottom zone, collapsed"><span>Bottom</span><span class="mono">1</span><button class="lnk">Expand</button></div>
+        <div class="zone-rail" role="region" aria-label="Bottom zone, collapsed"><span>Bottom</span><span class="mono">1</span><button class="lnk">Expand</button></div>
         <section class="pane unfocused zone-bottom" aria-label="Bottom zone">
           <div class="tabstrip" role="tablist"><button class="tab" role="tab" aria-selected="true"><span class="lbl">Terminal &mdash; pwsh</span></button></div>
           <div class="panebody" style="padding:var(--s4) var(--s5)"><pre class="term"><span class="p">PS C:\projects\commerce&gt;</span> git status --short
@@ -665,7 +660,7 @@ var root=document.documentElement, body=document.body;
 function bind(id,target,attr){ var el=document.getElementById(id); el.addEventListener('change',function(){ target.dataset[attr]=el.value; render(); }); }
 bind('h-theme',root,'theme'); bind('h-vp',root,'vp');
 bind('h-state',body,'state'); bind('h-turns',body,'turns'); bind('h-persona',body,'persona'); bind('h-motion',body,'motion');
-bind('h-layout',body,'layout'); bind('h-tools',body,'tools');
+bind('h-layout',body,'layout');
 
 /* ---- the event model: one turn's events as the mapper emits them (AcpRunEventMapper's v1 kinds + acp.*), chunked as the wire chunks them ---- */
 /* kinds: run.accepted / run.completed (the conductor's lines) · agent.thought · agent.msg · tool.call {id,title,kind,input} · tool.result {id,status,out} · permission.request · lane.stderr · acp.* */
@@ -955,7 +950,7 @@ var LEGEND={
 };
 
 /* ---- rendering ---------------------------------------------------------------------- */
-function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
 function shown(el){ if(el.offsetParent===null) return false; var d=el.closest('details:not([open])'); if(d){ var sm=el.closest('summary'); if(!sm||!d.contains(sm)||sm.parentElement!==d) return false; } return true; }
 /* ---- Coalesce(turn.Events): ONE pure function, two readers (Ruling 81) ---------------------------------
    Consecutive agent.msg (or agent.thought) chunks fold into one row carrying the first chunk's timestamp, the lane,
@@ -971,37 +966,28 @@ function coalesce(evs){
   return rows;
 }
 function isConversation(k){ return k==='agent.msg'||k==='agent.thought'||k==='tool.call'||k==='tool.result'; }
-function secs(a,b){ var p=function(s){var q=s.split(':');return (+q[0])*3600+(+q[1])*60+(+q[2]||0);}; return Math.max(0,p(b)-p(a)); }
 /* the thread's items over the fold: prose · reasoning · tool call (+ its results by id) · everything else counts into "N events" */
-function items(rows){
+function items(rows, live){
   var out=[], i;
   for (i=0;i<rows.length;i++){
     var r=rows[i];
     if (r.k==='agent.msg') out.push({kind:'prose',text:r.text,chunks:r.chunks});
-    else if (r.k==='agent.thought'){ var next=rows[i+1]; out.push({kind:'think',text:r.text,chunks:r.chunks,dur:next?secs(r.t,next.t):null}); }
+    else if (r.k==='agent.thought') out.push({kind:'think',text:r.text,chunks:r.chunks});
     else if (r.k==='tool.call'){
       var res=rows.filter(function(x){ return x.k==='tool.result' && x.id===r.id; });
-      var st = res.length ? res[res.length-1].status : 'running';
-      out.push({kind:'tool',id:r.id,tkind:r.kind,title:r.title,input:r.input,status:st,out:res.map(function(x){return x.out;}).join('\n')});
+      var st = res.length ? res[res.length-1].status : (live ? 'running' : 'interrupted');
+      out.push({kind:'tool',id:r.id,tkind:r.kind,title:r.title,input:r.input,status:st,out:res.map(function(x){return x.out;}).join('\n')||(st==='interrupted'?'(no result: the lane ended before the tool answered)':'')});
     }
     else if (r.k==='tool.result') { /* attached to its call above */ }
     else out.push({kind:'ev',row:r});
   }
   return out;
 }
-/* D3's density rule (Inferred, measured here): on a completed turn a run of >= 4 consecutive tool items is one group line */
-function grouped(list, completed){
-  if (body.dataset.tools!=='grouped' || !completed) return list;
-  var out=[], run=[];
-  function flush(){ if (run.length>=4) out.push({kind:'group',tools:run}); else run.forEach(function(x){ out.push(x); }); run=[]; }
-  list.forEach(function(it){ if (it.kind==='tool') run.push(it); else { flush(); out.push(it); } });
-  flush(); return out;
-}
 /* the markdown subset the reply renders: headings · paragraphs · lists · code · tables · emphasis · inert links (no link activation) */
 function inline(s){
   s=esc(s);
   s=s.replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/\*([^*]+)\*/g,'<i>$1</i>');
-  s=s.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<span class="inert" title="$2" aria-description="link, not activated: $2">$1</span>');
+  s=s.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'$1 <span class="inert">($2)</span>'); /* a link is its text with its URL beside it, visible to everyone; never a control */
   return s;
 }
 function md(text){
@@ -1017,25 +1003,23 @@ function md(text){
   }
   return out.join('');
 }
-var TOOLGLYPH={read:'<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h11l5 5v11H4zM15 4v5h5"/></svg>', edit:'<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16zM13 7l4 4"/></svg>', execute:'<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7l5 5-5 5M12 19h8"/></svg>', search:'<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM16 16l4.5 4.5"/></svg>'};
-var STATUS={completed:['done','done'],failed:['fail','failed'],running:['run','running'],pending:['pend','pending']};
+/* one neutral marker for every tool item (the CLI's bullet); the kind is read from the title's verb, never from a per-kind icon */
+var TOOLMARK='<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5"/></svg>';
+var STATUS={completed:['done','done'],failed:['fail','failed'],running:['run','running'],interrupted:['pend','interrupted']};
 function toolLine(it,n,j,open){
-  var s=STATUS[it.status]||STATUS.pending, id='dt-'+n+'-'+j;
-  return '<div class="tool"><span aria-hidden="true">'+(TOOLGLYPH[it.tkind]||TOOLGLYPH.execute)+'</span><span class="ttl">'+esc(it.title)+'</span>'
+  var s=STATUS[it.status]||STATUS.interrupted, id='dt-'+n+'-'+j;
+  return '<div class="tool"><span aria-hidden="true">'+TOOLMARK+'</span><span class="kg">'+esc(it.tkind||'tool')+'</span><span class="ttl">'+esc(it.title)+'</span>'
     + '<span class="stt '+s[0]+'">'+(it.status==='running'?'<span class="ring" aria-hidden="true"></span>':'')+s[1]+'</span>'
     + '<button class="lnk dim" aria-expanded="'+(open?'true':'false')+'" aria-controls="'+id+'" aria-label="Detail of '+esc(it.title)+'" data-toggle="'+id+'"><svg class="ico sm car" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>detail</button></div>'
-    + '<div class="detail" id="'+id+'"'+(open?'':' hidden')+'><span class="k">input</span>\n'+esc(it.input||'')+(it.out?'\n<span class="k">result</span>\n'+esc(it.out):'')+'</div>';
+    + '<div class="detail" id="'+id+'" tabindex="0" role="region" aria-label="Detail of '+esc(it.title)+', input and result"'+(open?'':' hidden')+'><span class="k">input</span>\n'+esc(it.input||'')+(it.out?'\n<span class="k">result</span>\n'+esc(it.out):'')+'</div>';
 }
 function itemsHtml(list,n,open){
   open=open||{};
   return '<div class="items">'+list.map(function(it,j){
     if (it.kind==='prose') return '<div class="prose">'+md(it.text)+'</div>';
     if (it.kind==='think'){ var id='th-'+n+'-'+j, isOpen=!!open.think && j===list.findIndex(function(x){return x.kind==='think';});
-      return '<div class="think"><span aria-hidden="true"><svg class="ico sm" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></span><button class="lnk dim" aria-expanded="'+(isOpen?'true':'false')+'" aria-controls="'+id+'" data-toggle="'+id+'">Thinking'+(it.dur!==null?' &middot; '+it.dur+' s':'')+'</button></div><div class="thought" id="'+id+'" aria-live="off"'+(isOpen?'':' hidden')+'>'+esc(it.text)+'</div>'; }
+      return '<div class="think"><span aria-hidden="true"><svg class="ico sm" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></span><button class="lnk dim" aria-expanded="'+(isOpen?'true':'false')+'" aria-controls="'+id+'" data-toggle="'+id+'">Thinking</button></div><div class="thought" id="'+id+'" aria-live="off"'+(isOpen?'':' hidden')+'>'+esc(it.text)+'</div>'; }
     if (it.kind==='tool') return toolLine(it,n,j,open.detail===it.id);
-    if (it.kind==='group'){ var id2='tg-'+n+'-'+j, c={edit:0,read:0,execute:0,search:0}; it.tools.forEach(function(t){ c[t.tkind]=(c[t.tkind]||0)+1; });
-      var parts=Object.keys(c).filter(function(k){return c[k];}).map(function(k){ return c[k]+' '+k+(c[k]===1?'':'s'); }).join(' &middot; ');
-      return '<div class="tool tgroup"><span aria-hidden="true">'+TOOLGLYPH.execute+'</span><span class="ttl" style="font-family:var(--font-ui)">'+it.tools.length+' tool calls</span><span class="stt pend">'+parts+'</span><button class="lnk dim" aria-expanded="false" aria-controls="'+id2+'" data-toggle="'+id2+'"><svg class="ico sm car" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>show</button></div><div class="tgroup" id="'+id2+'" hidden><div class="items">'+it.tools.map(function(t,k){ return toolLine(t,n,j+'-'+k,false); }).join('')+'</div></div>'; }
     return '';
   }).join('')+'</div>';
 }
@@ -1044,7 +1028,7 @@ function evLine(r){ return '<div class="evline"><span class="ts">'+r.t+'</span><
 function crow(r,cur){
   var dim = r.k==='agent.thought', kindWord = r.k==='agent.msg'?'message':r.k==='agent.thought'?'thought':r.k;
   var text = r.k==='tool.call' ? esc(r.title)+' · '+(r.kind||'') : r.k==='tool.result' ? esc(r.out||'')+' · '+(r.status||'') : r.k.indexOf('acp.')===0 ? '' : esc(r.text);
-  return '<div class="crow'+(dim?' dim':'')+(cur?' cur':'')+'"><span class="ts">'+r.t+'</span><span class="lane">'+r.l+'</span><span class="kind">'+kindWord+'</span><span class="msg'+(r.k==='lane.stderr'?' err':'')+'">'+text+'</span>'+(r.chunks?'<span class="n">'+r.chunks+' chunk'+(r.chunks===1?'':'s')+'</span>':'')+'</div>';
+  return '<div class="crow'+(dim?' dim':'')+(cur?' cur':'')+'" role="listitem"><span class="ts">'+r.t+'</span><span class="lane">'+r.l+'</span><span class="kind">'+kindWord+'</span><span class="msg'+(r.k==='lane.stderr'?' err':'')+'">'+text+'</span>'+(r.chunks?'<span class="n">'+r.chunks+' chunk'+(r.chunks===1?'':'s')+'</span>':'')+'</div>';
 }
 function glyphFor(st){ return {ok:'<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>', err:'<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>', run:'<span class="ring" aria-hidden="true"></span>', wait:'<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>', stop:'<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg>'}[st]; }
 function turnHtml(t, n, total, variant, folded, open){
@@ -1060,17 +1044,18 @@ function turnHtml(t, n, total, variant, folded, open){
     + envRows(t,n).map(function(r){ return '<div><span class="k">'+r[0]+'</span><span class="v'+(r[0]==='lease'||r[0]==='envelope'?' mono':'')+'">'+r[1]+'</span><span>'+r[2]+' · '+r[3]+'</span></div>'; }).join('')
     + '<div><span class="k"></span><button class="lnk" aria-label="Use b'+n+' as the next draft">Use as the next draft</button></div>'
     + '</div>';
-  var cpl = '<div class="cpl" id="cpl-'+n+'" hidden><pre>'+esc(t.compiled)+'</pre></div>';
+  var cpl = '<div class="cpl" id="cpl-'+n+'" hidden><pre tabindex="0" role="region" aria-label="Compiled prompt of b'+n+'">'+esc(t.compiled)+'</pre></div>';
   var o = variant ? variant : t.outcome;
   /* the reply side is the conversation (Ruling 82): Coalesce(events) rendered as items in event order, then the outcome line —
      whose "N events" folds ONLY the non-conversation rows (acp.*, the conductor's lines, stderr): Ruling 74's one fold, re-pointed */
   var evs = variant ? variant.ev : (t.ev||[]), rows = coalesce(evs), completed = !variant || !(variant.st==='run'||variant.st==='wait');
-  var list = grouped(items(rows), completed), other = rows.filter(function(r){ return !isConversation(r.k); });
+  var list = items(rows, !!(variant&&variant.live)), other = rows.filter(function(r){ return !isConversation(r.k); });
   var outcome = '<div class="outcome"><span class="st '+o.st+'">'+glyphFor(o.st)+o.word+'</span><span class="lane">'+o.lane+'</span>'
     + o.parts.map(function(p){return '<span class="n">'+p+'</span>';}).join('')
     + (other.length ? '<details class="ev"><summary><svg class="ico sm car" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>'+other.length+' event'+(other.length===1?'':'s')+'</summary><div class="evlist">'+other.map(evLine).join('')+'<div class="evline"><span class="ts">&hellip;</span><span class="msg"><button class="lnk" aria-label="Open the Console at b'+n+'" data-console="'+n+'">every frame, in the Console</button></span></div></div></details>' : '')
     + '</div>';
-  var conversation = folded ? '' : itemsHtml(list.filter(function(it){ return it.kind!=='ev'; }), n, open);
+  /* a failed PAST turn renders its conversation like any other; only its actions fold (SC7) */
+  var conversation = itemsHtml(list.filter(function(it){ return it.kind!=='ev'; }), n, open);
   var after = variant
     ? (variant.box ? '<div class="rbox'+(variant.boxkind?' '+variant.boxkind:'')+'" role="alert">'+variant.box+'</div>' : '')
       + (variant.acts ? '<div class="acts">'+variant.acts.map(function(a){return '<button class="btn"'+(a==='Stop this turn'&&variant.stopdesc?' title="'+variant.stopdesc+'" aria-description="'+variant.stopdesc+'"':'')+'>'+a+'</button>';}).join('')+'</div>' : '')
@@ -1105,12 +1090,12 @@ function renderThread(sc){
   var jl=document.getElementById('jumplist');
   jl.innerHTML=list.map(function(t,i){ var o=(i===n-1&&last)?last:t.outcome; return '<div class="jrow'+(i===n-1?' kbd':'')+'" role="option" aria-selected="'+(i===n-1?'true':'false')+'"><span class="o">b'+(i+1)+'</span><span class="w">'+t.src.replace(/<[^>]+>/g,'')+'</span><span class="st '+o.st+'">'+o.word+'</span></div>'; }).join('');
   /* the Console split: Coalesce(events) of every turn, in order, with a heading per turn (Rulings 74, 81); following the running turn or the turn the operator opened */
-  var c=document.getElementById('consolebody'), all=[], focus = consoleFocus || (last ? n : null); foldRows=0;
+  var c=document.getElementById('consolelist'), cb=document.getElementById('consolebody'), all=[], focus = consoleFocus || (last ? n : null); foldRows=0;
   list.forEach(function(t,j){ var evs=(j===n-1&&last)?last.ev:(t.ev||[]), rows=coalesce(evs); foldRows+=rows.length; all.push('<div class="evhead'+((j+1)===focus?' cur':'')+'" id="ev-b'+(j+1)+'" role="heading" aria-level="4">b'+(j+1)+' · '+t.when+'</div>'); rows.forEach(function(r){ all.push(crow(r,(j+1)===focus)); }); });
   c.innerHTML=all.join('');
   document.getElementById('follow').innerHTML='<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>'+(last&&last.st==='run'?'following b'+n:(focus?'at b'+focus:'at the end'));
   var th=document.getElementById('thread'); th.scrollTop=th.scrollHeight;
-  if (focus){ var eh=document.getElementById('ev-b'+focus); if (eh) c.scrollTop=eh.offsetTop-c.offsetTop; } else c.scrollTop=c.scrollHeight;
+  if (focus){ var eh=document.getElementById('ev-b'+focus); if (eh) cb.scrollTop=eh.offsetTop-cb.offsetTop; } else cb.scrollTop=cb.scrollHeight;
 }
 function lineHtml(k,v,mark,opts){
   opts=opts||{};
@@ -1173,19 +1158,17 @@ function stampFocusOrder(){ /* keyboard persona: the tab order is read from the 
     i++; var r=el.getBoundingClientRect(), f=document.createElement('span'); f.className='fo'; f.textContent=i; f.setAttribute('aria-hidden','true');
     f.style.left=(r.left-win.left-8)+'px'; f.style.top=(r.top-win.top-8)+'px'; document.getElementById('win').appendChild(f);
   });
-  var first=document.querySelector('#turns .turn'); if (first){ var r=first.getBoundingClientRect(), f=document.createElement('span'); f.className='fo'; f.textContent='T'; f.title='the feed: one stop; PageDown / PageUp move between turns'; f.style.left=(r.left-win.left-8)+'px'; f.style.top=(r.top-win.top+4)+'px'; document.getElementById('win').appendChild(f); }
+  var first=document.querySelector('#turns .turn'); if (first){ var r=first.getBoundingClientRect(), f=document.createElement('span'); f.className='fo'; f.textContent='T'; f.title='the feed: PageDown / PageUp move between turns; Tab walks the current turn\u2019s stops (Inferred for WPF: TabNavigation=Once); on a running, waiting, failed or stopped last turn the entry stop is its first action, and Shift+Tab from the editor lands there'; f.style.left=(r.left-win.left-8)+'px'; f.style.top=(r.top-win.top+4)+'px'; document.getElementById('win').appendChild(f); }
 }
 function render(){
   var st=body.dataset.state, sc=SCEN[st];
   if (st!=='split') consoleFocus=null;
   setShow(st);
-  document.getElementById('sdoc').classList.toggle('split', st==='split');
   /* the layout axis (Ruling 83): docked at Left, or maximized on demand (Ctrl+K, Z) */
-  var lay=body.dataset.layout, tw=document.getElementById('title-where'), mb=document.getElementById('maxbtn');
-  tw.innerHTML = lay==='max' ? 'session <b>payments extraction</b> maximized' : 'session <b>payments extraction</b> docked at Left';
-  mb.setAttribute('aria-label', lay==='max' ? 'Restore the layout, show the other panes again, Ctrl+K Z' : 'Maximize the session, Ctrl+K Z');
-  mb.setAttribute('title', lay==='max' ? 'Restore layout (Ctrl+K, Z)' : 'Maximize the session (Ctrl+K, Z)');
-  document.getElementById('zone-left').setAttribute('aria-label', lay==='max' ? 'Left zone, maximized' : 'Left zone');
+  /* the split's home with the session at Left: the Center zone (a Console document beside the session), never inside the 673px Left pane */
+  var cz=document.getElementById('center-console'), ce=document.getElementById('center-empty'), ctab=document.getElementById('center-tabs');
+  cz.hidden = st!=='split'; ce.hidden = st==='split'; ctab.innerHTML = st==='split' ? '<button class="tab" role="tab" aria-selected="true"><span class="lbl">Console &mdash; payments extraction</span></button>' : '';
+  document.querySelector('.zone-center').classList.toggle('unfocused', st!=='split');
   document.getElementById('split-toggle').setAttribute('aria-pressed', st==='split'?'true':'false');
   document.getElementById('settings-link').setAttribute('aria-expanded', (st==='settings'||st==='settings-cap')?'true':'false');
   document.getElementById('jump-toggle').setAttribute('aria-expanded', st==='jump'?'true':'false');
@@ -1243,7 +1226,7 @@ function render(){
   else if (st==='empty') { L.push(['on open','focus lands in the editor (Message, edit text, multi-line; description: Ctrl+Enter prepares; when prepared, the same key sends. Type @ to mention a file or folder. F6 moves to the thread; Ctrl+Home reaches the header)']); L.push(['thread (feed, 0 items)','Conversation: Nothing has run yet.']); L.push(['on create (status, one sentence)','Session payments extraction opened in the Left zone; the composer is bound. (never “maximized” — Ruling 83)']); }
   else if (st==='first') { L.push(['on accept (status)','Turn b1 accepted as a goal block, tier T1, 1 lane.']); L.push(['(nothing while streaming)','prose, thinking and tool items are not announced (SC9 as amended); the outcome will be']); L.push(['on an ignored Ctrl+Enter (status)','b1 is running; the next turn waits for it. (the ordinal is a link that focuses the turn’s first action)']); }
   else if (st==='long') { L.push(['thread (feed, 40 items)','list “Conversation”, 40 items; PageDown / PageUp move between turns; inside a turn Tab reaches provenance, compiled prompt, each Thinking disclosure, each tool item’s detail (or its group), events, the actions']); }
-  else if (st==='conversation') { L.push(['turn b5 (a list item)','“b5, Write this session’s proof pack under @docs/proof/…”; ItemStatus: class free-form, tier T1, lease docs/proof/**, goal block']); L.push(['Thinking (a disclosure button, expanded)','“Thinking, 2 seconds”, expanded — its text is read only on demand (object navigation); never announced (aria-live off)']); L.push(['tool item','“Detail of Write docs/proof/pp-0142.md”, expanded; the line reads: edit glyph (hidden), Write docs/proof/pp-0142.md, done']); L.push(['prose','rendered markdown: heading “Open”, a numbered list of 2; the link is text with description “link, not activated: docs/reviews/ui-perspective-shell.md”']); L.push(['outcome (status, once, when it completed)','Turn b5 completed: 1 edit, 4,100 tokens, 1 minute 2 seconds.']); }
+  else if (st==='conversation') { L.push(['turn b5 (a list item)','“b5, Write this session’s proof pack under @docs/proof/…”; ItemStatus: class free-form, tier T1, lease docs/proof/**, goal block']); L.push(['Thinking (a disclosure button, expanded)','“Thinking”, expanded — its text is read only on demand (browse / object navigation); never announced (no live ancestor)']); L.push(['tool item','the line reads: edit, Write docs/proof/pp-0142.md, done; then “Detail of Write docs/proof/pp-0142.md”, expanded; the detail is a region (a keyboard-scrollable stop) named the same']); L.push(['prose','rendered markdown: heading “Open”, a numbered list of 2; a link is its text followed by its URL in parentheses — text, no control']); L.push(['a running / waiting / failed last turn','its entry stop is its first action (Stop this turn · Deny …); Shift+Tab from the editor lands on it (SC8 as amended)']); L.push(['outcome (status, once, when it completed)','Turn b5 completed: 1 edit, 4,100 tokens, 1 minute 2 seconds.']); }
   else if (st==='preparing') { L.push(['on the gesture (status)','Preparing on '+MODEL+', up to 60 seconds. Cancel is on the compile line.']); L.push(['on a second Ctrl+Enter (status)','Preparing, press again when prepared.']); }
   else if (st==='cancelled') { L.push(['on cancel (status)','Cancelled: the draft was edited. Nothing was applied. Ctrl+Enter prepares again.']); }
   else if (st==='reused') { L.push(['on prepared (status)','Prepared again: unchanged inputs, reused, no new request. Ctrl+Enter sends.']); }
@@ -1393,17 +1376,13 @@ function audit(){
   var edges=Object.keys(lefts).length;
   var lastBad=!!document.querySelector('#turns .turn:last-child .st.err, #turns .turn:last-child .st.wait, #turns .turn:last-child .st.run, #turns .turn:last-child .st.stop');
   function countVisible(){ var v=0, tr=th.getBoundingClientRect(); document.querySelectorAll('#turns .turn').forEach(function(a){ var r=a.getBoundingClientRect(); var ov=Math.min(r.bottom,tr.bottom)-Math.max(r.top,tr.top); if (ov>0 && ov>=Math.min(r.height,tr.height)*0.5) v++; }); return v; }
-  /* density, measured twice: tool runs inline (Ruling 82's letter) and grouped (D3's rule), the current mode restored */
-  var modeKeep=body.dataset.tools, vis={};
-  ['inline','grouped'].forEach(function(m){ body.dataset.tools=m; renderThread(Object.assign({},sc,{turns:keep})); fitEditor(); vis[m]=countVisible(); });
-  body.dataset.tools=modeKeep; renderThread(Object.assign({},sc,{turns:keep})); fitEditor();
-  var visible=vis[modeKeep], arts=document.querySelectorAll('#turns .turn');
+  var visible=countVisible(), arts=document.querySelectorAll('#turns .turn');
   /* the identity (Rulings 74 and 81): the split's rows are the fold's rows, plus one heading per turn */
   var crows=document.querySelectorAll('#consolebody .crow').length, cheads=document.querySelectorAll('#consolebody .evhead').length, nTurnsNow=arts.length;
   var identity = crows===foldRows && cheads===nTurnsNow;
   /* reasoning is never announced: every thought body is aria-live="off" and no think line sits in a live region */
   var thoughtsLive=document.querySelectorAll('#turns .thought:not([aria-live="off"])').length + document.querySelectorAll('#turns [aria-live="polite"] .think, #turns [aria-live="assertive"] .think').length;
-  /* Ruling 83 condition 1: the Left zone at extent 1.25 fits the 96ch measure */
+  /* Ruling 83 condition 1: the Left zone at extent 1.3 fits the 96ch measure */
   var p96=document.createElement('span'); p96.style.cssText='position:absolute;visibility:hidden;white-space:nowrap;font:13px/1.5 var(--font-ui)'; p96.textContent=new Array(97).join('0'); document.body.appendChild(p96); var w96=p96.getBoundingClientRect().width; p96.remove();
   var srcEl=document.querySelector('#turns .src'), srcW=srcEl?Math.round(srcEl.getBoundingClientRect().width):null;
   var open=document.getElementById('structure').open;
@@ -1426,9 +1405,9 @@ function audit(){
     ['The thread scrolls under the composer at 40 turns','yes',scroll40?'yes':'no',scroll40],
     ['Console rows are Coalesce(events) of every turn, in order (Rulings 74, 81)','rows = the fold’s rows; headings = turns',crows+' rows vs '+foldRows+' fold rows · '+cheads+' headings vs '+nTurnsNow+' turns',identity],
     ['Reasoning items announced (SC9 as amended)','0 — every thought body aria-live="off"; no think line in a live region',thoughtsLive+'',thoughtsLive===0],
-    ['The Left zone fits the 96ch measure (Ruling 83, condition 1)', body.dataset.layout==='max'?'n/a (maximized)':st==='split'?'n/a (the split narrows the thread on demand)':'the words’ rendered width ≥ 96ch at 13px (the zone at extent 1.3, Inferred)', srcEl?(srcW+'px vs 96ch = '+Math.round(w96)+'px'):'n/a (no turn)', !srcEl || body.dataset.layout==='max' || st==='split' || srcW>=Math.round(w96)-1],
+    ['The Left zone fits the 96ch measure (Ruling 83, condition 1)', 'the words’ rendered width ≥ 96ch at 13px (the zone at extent 1.3, Inferred)', srcEl?(srcW+'px vs 96ch = '+Math.round(w96)+'px'):'n/a (no turn)', !srcEl || srcW>=Math.round(w96)-1],
     ['One left edge for every turn’s text, reply and outcome','1 distinct x',edges+' distinct',edges<=1],
-    ['Turns at least half visible at this viewport', arts.length<3?'n/a (fewer than 3 turns)':'≥ 3 at rest; ≥ 2 with the structure expanded, a refusal shown, or a last turn that failed, waits or runs; ≥ 1 with the split or what-was-read open — read with tool runs inline AND grouped', arts.length<3?visible+' of '+arts.length:'inline '+vis.inline+' · grouped '+vis.grouped+' of '+arts.length+' (this mode: '+visible+'; need ≥ '+need+(root.dataset.vp==='narrow'?'; at 1024 reported, not counted: the contract is 1440 × 900':'')+')', root.dataset.vp==='narrow'||arts.length<3||visible>=need],
+    ['Turns at least half visible at this viewport', arts.length<3?'n/a (fewer than 3 turns)':'≥ 3 at rest; ≥ 2 with the structure expanded, a refusal shown, or a last turn that failed, waits or runs; ≥ 1 with the split or what-was-read open', arts.length<3?visible+' of '+arts.length:visible+' of '+arts.length+' (need ≥ '+need+(root.dataset.vp==='narrow'?'; at 1024 reported, not counted: the contract is 1440 × 900':'')+')', root.dataset.vp==='narrow'||arts.length<3||visible>=need],
     ['Boxes around turns (border, ground or shadow)','0',boxes+'',boxes===0],
     ['Bordered text fields other than the editor','0',fields+'',fields===0],
     ['Per-prompt tier / cap / budget fields','0',tierFields+'',tierFields===0],
@@ -1445,7 +1424,7 @@ function audit(){
 }
 /* review convenience: #state=gaps&turns=40&theme=light&vp=narrow&persona=keyboard&motion=reduce presets the harness */
 (function(){ var q={}; location.hash.replace(/^#/,'').split('&').forEach(function(kv){ var p=kv.split('='); if(p[0]) q[p[0]]=decodeURIComponent(p[1]||''); });
-  var map={state:['h-state',body,'state'],turns:['h-turns',body,'turns'],theme:['h-theme',root,'theme'],vp:['h-vp',root,'vp'],persona:['h-persona',body,'persona'],motion:['h-motion',body,'motion'],layout:['h-layout',body,'layout'],tools:['h-tools',body,'tools']};
+  var map={state:['h-state',body,'state'],turns:['h-turns',body,'turns'],theme:['h-theme',root,'theme'],vp:['h-vp',root,'vp'],persona:['h-persona',body,'persona'],motion:['h-motion',body,'motion'],layout:['h-layout',body,'layout']};
   Object.keys(map).forEach(function(k){ if(q[k]!==undefined){ var m=map[k], sel=document.getElementById(m[0]); if([].some.call(sel.options,function(o){return o.value===q[k];})){ sel.value=q[k]; m[1].dataset[m[2]]=q[k]; } } });
 })();
 render(); window.addEventListener('resize',function(){ audit(); stampFocusOrder(); });
