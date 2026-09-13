@@ -612,3 +612,15 @@
 {"agent": "copilot-atlas-conductor", "at": 1789317988.8262963, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Watcher/TaskClassSourceCohortColumnTests.cs", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
 {"agent": "copilot-atlas-conductor", "at": 1789317988.8308206, "code": null, "kind": "allowed", "path": "tools/expected-test-counts.json", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
 {"agent": "copilot-atlas-conductor", "at": 1789317988.8358202, "code": null, "kind": "allowed", "path": "tools/verify-id-allocators.py", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789319426.4609866, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789319426.4669862, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789319426.4719863, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789319426.477048, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789319426.4820476, "code": null, "kind": "allowed", "path": "docs/audit/change-log.jsonl", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789319426.4880476, "code": null, "kind": "allowed", "path": "docs/collaboration/session-contracts.md", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789319426.4930472, "code": null, "kind": "allowed", "path": "docs/design/code-atlas-shared-host-admission.html", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789319426.4990475, "code": null, "kind": "allowed", "path": "docs/design/code-atlas-shared-host-admission.md", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789319426.505053, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789319426.5100532, "code": null, "kind": "allowed", "path": "docs/notes/atlas-owner/live-reader-horizon.md", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789319426.5155556, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789319426.520561, "code": null, "kind": "allowed", "path": "site/index.html", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}

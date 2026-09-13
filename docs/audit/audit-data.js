@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T17:33:42Z",
+  "generated": "2026-09-13T17:44:29Z",
   "audit": [
     {
       "actor": null,
@@ -14322,63 +14322,54 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2BMZGE3QQKR8A49AZ2E8QZW",
-      "shortname": "investigate-terminal-hosts-sixth-x2b-regrowth",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/terminal-hosts-sixth.md"
+      ],
       "datetime": "2026-09-12T20:29:41Z",
-      "session": "claude-conductor-addendum-c",
-      "prompt": "keep going / you end the WT pool",
-      "summary": "INV-0011 s7 (X-2b). The pool was ended on the operator's word (conhost 270->14, node 257->1) and regrew by 25 during one recount, 0 within 10 s of a product terminal.start. Measured: one pseudo console from the test host -> 0 attaches; TerminalHostExitPathTests (two CREATE_NEW_CONSOLE helper launches) -> 2 node.exe born with WT_SESSION set AND unset. CREATE_NEW_CONSOLE on a machine whose default terminal is Windows Terminal is a WT tab, and WT's agent attaches to every tab (DC-170). Launcher now CREATE_NO_WINDOW: 21 helper tests 0 born, whole Platform=Windows half 166/166 0 born; helper exit 4 and four assertions retired with DC-014's premise; tools/verify-no-new-console-launches.py (red 2 findings on the pre-fix tree, --self-test) in CI. Also tools/run-verify-gates.py: one exit status for every gate (DC-113 recurrence 3 - a loop at the SH-3 join pushed before it knew).",
-      "kind": "skill",
-      "skill": "investigate",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/terminal-hosts-sixth.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Close the regrowth path behind the sixth report with a measured mechanism and a gate, and give the join line one status to chain on",
       "done_when": "helper suites headless with 0 WT attaches measured; the gate red on the pre-fix tree and green after; run-verify-gates self-tested; register, INV-0011 s7, proof rows 8-9, CI step committed",
+      "goal": "Close the regrowth path behind the sixth report with a measured mechanism and a gate, and give the join line one status to chain on",
+      "id": "al-01M2BMZGE3QQKR8A49AZ2E8QZW",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going / you end the WT pool",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "investigate-terminal-hosts-sixth-x2b-regrowth",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
-      }
+        "verification_path": true
+      },
+      "skill": "investigate",
+      "summary": "INV-0011 s7 (X-2b). The pool was ended on the operator's word (conhost 270->14, node 257->1) and regrew by 25 during one recount, 0 within 10 s of a product terminal.start. Measured: one pseudo console from the test host -> 0 attaches; TerminalHostExitPathTests (two CREATE_NEW_CONSOLE helper launches) -> 2 node.exe born with WT_SESSION set AND unset. CREATE_NEW_CONSOLE on a machine whose default terminal is Windows Terminal is a WT tab, and WT's agent attaches to every tab (DC-170). Launcher now CREATE_NO_WINDOW: 21 helper tests 0 born, whole Platform=Windows half 166/166 0 born; helper exit 4 and four assertions retired with DC-014's premise; tools/verify-no-new-console-launches.py (red 2 findings on the pre-fix tree, --self-test) in CI. Also tools/run-verify-gates.py: one exit status for every gate (DC-113 recurrence 3 - a loop at the SH-3 join pushed before it knew).",
+      "tags": [],
+      "tool": null
     },
     {
-      "id": "al-01M2BNV598W2APV6Y4BRPYQ5CF",
-      "shortname": "join-x2b-dc171",
-      "datetime": "2026-09-12T20:44:47Z",
-      "session": "claude-conductor-addendum-c",
-      "prompt": "keep going (X-2b and DC-171 landed)",
-      "summary": "Join: X-2b (d9a8e90f) and the DC-171 fix (f65c48f2) merged to main; the first recount on e2c3aa7f failed 10 helper tests against a stale Release helper (DC-171), fixed and recounted: App 798 / Core 2361 = 2191 + 170; 0 WT agent attaches born during the whole recount (was 25 at the SH-3 join).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/terminal-hosts-sixth.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Land the regrowth fix and the gate runner on main with green floors and a Release build",
+      "datetime": "2026-09-12T20:44:47Z",
       "done_when": "main pushed green; 0 attaches measured over a whole recount; Release built",
+      "goal": "Land the regrowth fix and the gate runner on main with green floors and a Release build",
+      "id": "al-01M2BNV598W2APV6Y4BRPYQ5CF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (X-2b and DC-171 landed)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-x2b-dc171",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
-      }
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Join: X-2b (d9a8e90f) and the DC-171 fix (f65c48f2) merged to main; the first recount on e2c3aa7f failed 10 helper tests against a stale Release helper (DC-171), fixed and recounted: App 798 / Core 2361 = 2191 + 170; 0 WT agent attaches born during the whole recount (was 25 at the SH-3 join).",
+      "tags": [],
+      "tool": null
     },
     {
-      "id": "al-01M2BT3TRC7RR7F6GGZ6GPF2HD",
-      "shortname": "cv-2-mechanical-compile",
-      "datetime": "2026-09-12T21:59:26Z",
-      "session": "cv-2",
-      "prompt": "You are track CV-2 of the Conversation lane in docs/coordination/addendum-cd.md — read your row (line 134) in full, the Seams table (your guard is on line 174), the §2 rows and the fan-out contract first. Run the /implement skill (Skill tool: implement, args: CV-2: the mechanical compile, the envelope store, Prepare's states and purge — Addendum D slice D-1 with D-0 folded (ADR-0033 the Prompt Compilation bounded context, ADR-0034 the envelope event store); reds first per the plan row). The conductor is Claude Opus (session conductor-addendum-c). Read C:\\projects\\ai-de\\CLAUDE.md and AGENTS.md; the pack's rules apply in full (red first; smallest correct; the data model is the highest-priority decision — the Data & Persistence Architect's hard veto on the store; the Security lens's hard veto on the new surface; the Test Architect's veto on the censuses; DC-135 — construct what the product constructs). Use python, not python3; $env:PYTHONIOENCODING='utf-8'; $env:MSBUILDDISABLENODEREUSE='1' before any dotnet.\n\nWhy this slice matters to the operator, in their words: \"shouldn't tier be decided by the compilation of the prompt? a key aspect and benefit of being able to type a prompt and then post process it would be to decorate it with things like tier\" and \"post compile should be like a 'prepare' where the operator may override … rich envelope … template is a guide vs a constraint.\" CV-1 built the conversation and left Prepare's regions with a fake deriver behind a seam. You make the compile real on the mechanical rung: the operator types, the mechanical pre-compile decorates (tier by A9's rule, cap, lease, shape, class), Prepare shows the decorations as editable derived lines with provenance, Submit projects the envelope into the same GovernedRunRequest bytes the sender produces today, and every event is a row in an append-only envelope store the operator can purge. The operator is waiting for this build before their next manual test — the attended rows in your Proof Pack are what they will run.\n\nYour worktree — the only tree you write to: C:\\Projects\\ai-de-lane-conversation-cv2, branch lane/conversation-cv2, HEAD = main 5ce4b08e. Leases (DC-163): claim a shared file for the minutes of the edit with the default TTL and release immediately after; never claim docs/lessons/defect-classes.md or any register-class artifact — append your classes with placeholder ids (DC-nnn (CV-2 a) …) and the conductor allocates at the join. Never taskkill by image name; never reap-stragglers.py --reap; never verify-test-run.py --update — SH-3 is live. Every WorkbenchShell a test composes is using var.\n\nWhat you build (your §2 paths; the spec is docs/specs/addendum-d-compile-step.md A6, A8, A9, A11, A12, A13, A15, A21, A22; the ADRs docs/adr/0033-*.md, 0034-*.md; the architecture note docs/notes/addendum-cd-architecture-p1-inputs.md): the envelope store is the lane's first commit (src/AiDe.Core/Compilation/EnvelopeStore.cs): compiled-envelope/1, one file per session, append + reader only (the reflection test proves no other public member), prev_sha chain, FileShare.None, opened on document open and disposed on close (SessionDocumentSurface.cs), containment cascade on Session delete, aide session purge deletes the file only (src/AiDe.App/Cli/**). The five event records as append-only facts; Fold, Current, Confirmed, EffectiveMode as projections; the craft profile a Type-2 dimension read but not populated. PreCompile — the mechanical rung: A9's tier rule, cap, the lease from LeaseDerivation with the shared HasMention regex, shape and class (ComposerSendContext.TaskClass from default_task_class, free-form by default, changeable per prompt — Ruling 70). Projection.Project — the ONE producer of the sent bytes: ComposerSendGate.Send and the render site ComposerCompiler both call it; GovernedRunRequest byte-identical for the same text; projection_sha a domain fact. CompileContract, CompileOutputValidator, CompilePromptAssembler + embedded resources — shipped inert with their validators red-first over A17's fixtures. Prepare's states in the composer: each decoration an editable derived line with provenance, the override an operator row, the compiled disclosure rendering Current, Ruling 75's one refusal, Ruling 77's states. The watcher store gains task_class_source (expand-only, ADR-0028 amendment) and Leaderboard.cs reads it; the compile.* run-event vocabulary. aide compile fold recomputes the projection from real rows (P-D2).\n\nReds first: P-D1's fourteen tier inputs · the Projection.Project( named-call-site census (root src/, recursive, allowlist exactly Presentation/Composer/ComposerCompiler.cs, Workbench/Composer/ComposerSendGate.cs, Cli/CompileFold.cs) · the LeaseDerivation.Derive(/Patterns( named-site census with the source_text argument · the RunBudget named-member cap · ADR-0034's tests 1–3, 5, 6 · the HasMention shared-regex test · the projection_sha domain test · GovernedRunRequest byte-identical · US-D12 signature stability · the E7 consistency test across surfaces.\n\nFloors: E7 before coding, written in the Proof Pack; seams (nothing under the Shell lane's paths; DESIGN.md is not yours; the ACP adapter's session/new options are CV-3's; ConductorEntry.cs unchanged); reviews read-only ≤ 3 concurrent, loop cap 2 — Data & Persistence (hard), Security (hard), Test Architect (hard), the Simplifier; gates at close bare, stop on the first red; audit entry; Proof Pack docs/proof/mechanical-compile.md; commit in sensible units (the store first); push to origin lane/conversation-cv2; do not merge to main; merge origin/main into your branch before your close if it moved — never rebase; rebuild Release at the end and report its ProductVersion.\n\nFails if: a second producer of the sent bytes; a store with an update or delete member; prompt text in a telemetry line; a model call; a per-prompt tier/fan-out/budget field; a red made green by weakening; a write outside the Conversation lane's §2 paths, to DESIGN.md or to the register with an allocated id; verify-test-run.py --update; git stash; a rebase; a push to main; a taskkill/reap; DC-120.",
-      "summary": "Shipped on lane/conversation-cv2 (7 commits, merged with main ca7443e8): AiDe.Core/Compilation (namespace PromptCompilation — AiDe.Core.Compilation collides with Roslyn's Compilation type), EnvelopeStore (Append + reader by reflection, FileShare.None, prev_sha chain, the schema-agnostic walk, the append-failed latch), Envelope/Fold/Current/Confirmed/EffectiveMode, PreCompile, Projection.Project (RenderView and Send through one function; GovernedRunRequest byte-identical — three literal goldens green on the pre-change gate f3e394dc and after), CompileContract/Validator/Assembler inert, EnvelopePurge + SessionConfigStore.Delete (probe -> tombstone -> delete), SessionDocumentSurface store lifetime + consumed + PurgeCompileHistory (the eraser beside the writer, the Security Blocker's fix) + the class-provenance stamp captured at launch, ComposerSurface tier/class controls, task_class_source v7 (the plan said v6; the store was at v6) with the leaderboard reader, aide compile fold / session purge (CliEntry; the App.OnStartup dispatch a seam request). Reds -> green: 30 fourteen-input cases, 5 censuses (code lines only, by path and count), ADR-0034 1-3/5/6, projection_sha (12-member isolation), the E7 chain test. Reviews: D&P PASS, Security PASS-WITH-CONDITIONS (C-1: a privileged-host run of the file-symlink fixture), Test Architect PASS-WITH-CONDITIONS (met by the close's rebuild), Simplifier's first Major fixed and second overridden in writing, -96 lines applied. Gates: builds 0/0; verify-test-run OK App 820 / Core 2495 + 1 skipped; run-verify-gates 34/35 — verify-id-allocators red-by-seam (the CE- family entry is the conductor's, tools/ is not the lane's). Proof Pack docs/proof/mechanical-compile.md; five register classes with placeholder ids (CV-2 a-e); seam requests: the App.OnStartup dispatch, the EmbeddedResource glob, the CE- FAMILIES entry; three attended rows RUN-PENDING.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/mechanical-compile.md",
@@ -14388,141 +14379,199 @@ window.AUDIT_DATA = {
         "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs",
         "docs/lessons/defect-classes.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "CV-2: the mechanical compile rung — the append-only envelope store (ADR-0034), the five event records, the fold's projections, PreCompile, Projection.Project as the one producer of the sent bytes (ADR-0033), Prepare's editable tier/class lines with provenance, purge (in-document and CLI), the task_class_source cohort column, the compile contract shipped inert; reds first per the plan row",
+      "datetime": "2026-09-12T21:59:26Z",
       "done_when": "the plan row's reds observed red then green (the fourteen tier inputs; the Projection.Project(, LeaseDerivation and RunBudget censuses; ADR-0034 tests 1-3, 5, 6; HasMention; projection_sha; GovernedRunRequest byte-identical to literal goldens observed on the pre-change gate; US-D12; the E7 chain test); both builds and both suites green through verify-test-run.py; three hard-veto reviews and the Simplifier cleared or overridden in writing; docs/proof/mechanical-compile.md with the attended rows; commits pushed to lane/conversation-cv2; the Release ProductVersion reported",
-      "tier": "T2",
-      "main_calls": 330,
-      "main_budget": 6000,
-      "main_over_budget": false,
-      "fan_out": 3,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "started_at": "2026-09-12T20:01:42Z",
       "duration_seconds": 7064.0,
+      "fan_out": 3,
       "git": {
-        "sha": "d995505e9a7cbf93eb4996bf80c82f5de2b64f33",
-        "short": "d995505e9",
         "branch": "lane/conversation-cv2",
-        "pushed": null
-      }
+        "pushed": null,
+        "sha": "d995505e9a7cbf93eb4996bf80c82f5de2b64f33",
+        "short": "d995505e9"
+      },
+      "goal": "CV-2: the mechanical compile rung — the append-only envelope store (ADR-0034), the five event records, the fold's projections, PreCompile, Projection.Project as the one producer of the sent bytes (ADR-0033), Prepare's editable tier/class lines with provenance, purge (in-document and CLI), the task_class_source cohort column, the compile contract shipped inert; reds first per the plan row",
+      "id": "al-01M2BT3TRC7RR7F6GGZ6GPF2HD",
+      "kind": "skill",
+      "main_budget": 6000,
+      "main_calls": 330,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "You are track CV-2 of the Conversation lane in docs/coordination/addendum-cd.md — read your row (line 134) in full, the Seams table (your guard is on line 174), the §2 rows and the fan-out contract first. Run the /implement skill (Skill tool: implement, args: CV-2: the mechanical compile, the envelope store, Prepare's states and purge — Addendum D slice D-1 with D-0 folded (ADR-0033 the Prompt Compilation bounded context, ADR-0034 the envelope event store); reds first per the plan row). The conductor is Claude Opus (session conductor-addendum-c). Read C:\\projects\\ai-de\\CLAUDE.md and AGENTS.md; the pack's rules apply in full (red first; smallest correct; the data model is the highest-priority decision — the Data & Persistence Architect's hard veto on the store; the Security lens's hard veto on the new surface; the Test Architect's veto on the censuses; DC-135 — construct what the product constructs). Use python, not python3; $env:PYTHONIOENCODING='utf-8'; $env:MSBUILDDISABLENODEREUSE='1' before any dotnet.\n\nWhy this slice matters to the operator, in their words: \"shouldn't tier be decided by the compilation of the prompt? a key aspect and benefit of being able to type a prompt and then post process it would be to decorate it with things like tier\" and \"post compile should be like a 'prepare' where the operator may override … rich envelope … template is a guide vs a constraint.\" CV-1 built the conversation and left Prepare's regions with a fake deriver behind a seam. You make the compile real on the mechanical rung: the operator types, the mechanical pre-compile decorates (tier by A9's rule, cap, lease, shape, class), Prepare shows the decorations as editable derived lines with provenance, Submit projects the envelope into the same GovernedRunRequest bytes the sender produces today, and every event is a row in an append-only envelope store the operator can purge. The operator is waiting for this build before their next manual test — the attended rows in your Proof Pack are what they will run.\n\nYour worktree — the only tree you write to: C:\\Projects\\ai-de-lane-conversation-cv2, branch lane/conversation-cv2, HEAD = main 5ce4b08e. Leases (DC-163): claim a shared file for the minutes of the edit with the default TTL and release immediately after; never claim docs/lessons/defect-classes.md or any register-class artifact — append your classes with placeholder ids (DC-nnn (CV-2 a) …) and the conductor allocates at the join. Never taskkill by image name; never reap-stragglers.py --reap; never verify-test-run.py --update — SH-3 is live. Every WorkbenchShell a test composes is using var.\n\nWhat you build (your §2 paths; the spec is docs/specs/addendum-d-compile-step.md A6, A8, A9, A11, A12, A13, A15, A21, A22; the ADRs docs/adr/0033-*.md, 0034-*.md; the architecture note docs/notes/addendum-cd-architecture-p1-inputs.md): the envelope store is the lane's first commit (src/AiDe.Core/Compilation/EnvelopeStore.cs): compiled-envelope/1, one file per session, append + reader only (the reflection test proves no other public member), prev_sha chain, FileShare.None, opened on document open and disposed on close (SessionDocumentSurface.cs), containment cascade on Session delete, aide session purge deletes the file only (src/AiDe.App/Cli/**). The five event records as append-only facts; Fold, Current, Confirmed, EffectiveMode as projections; the craft profile a Type-2 dimension read but not populated. PreCompile — the mechanical rung: A9's tier rule, cap, the lease from LeaseDerivation with the shared HasMention regex, shape and class (ComposerSendContext.TaskClass from default_task_class, free-form by default, changeable per prompt — Ruling 70). Projection.Project — the ONE producer of the sent bytes: ComposerSendGate.Send and the render site ComposerCompiler both call it; GovernedRunRequest byte-identical for the same text; projection_sha a domain fact. CompileContract, CompileOutputValidator, CompilePromptAssembler + embedded resources — shipped inert with their validators red-first over A17's fixtures. Prepare's states in the composer: each decoration an editable derived line with provenance, the override an operator row, the compiled disclosure rendering Current, Ruling 75's one refusal, Ruling 77's states. The watcher store gains task_class_source (expand-only, ADR-0028 amendment) and Leaderboard.cs reads it; the compile.* run-event vocabulary. aide compile fold recomputes the projection from real rows (P-D2).\n\nReds first: P-D1's fourteen tier inputs · the Projection.Project( named-call-site census (root src/, recursive, allowlist exactly Presentation/Composer/ComposerCompiler.cs, Workbench/Composer/ComposerSendGate.cs, Cli/CompileFold.cs) · the LeaseDerivation.Derive(/Patterns( named-site census with the source_text argument · the RunBudget named-member cap · ADR-0034's tests 1–3, 5, 6 · the HasMention shared-regex test · the projection_sha domain test · GovernedRunRequest byte-identical · US-D12 signature stability · the E7 consistency test across surfaces.\n\nFloors: E7 before coding, written in the Proof Pack; seams (nothing under the Shell lane's paths; DESIGN.md is not yours; the ACP adapter's session/new options are CV-3's; ConductorEntry.cs unchanged); reviews read-only ≤ 3 concurrent, loop cap 2 — Data & Persistence (hard), Security (hard), Test Architect (hard), the Simplifier; gates at close bare, stop on the first red; audit entry; Proof Pack docs/proof/mechanical-compile.md; commit in sensible units (the store first); push to origin lane/conversation-cv2; do not merge to main; merge origin/main into your branch before your close if it moved — never rebase; rebuild Release at the end and report its ProductVersion.\n\nFails if: a second producer of the sent bytes; a store with an update or delete member; prompt text in a telemetry line; a model call; a per-prompt tier/fan-out/budget field; a red made green by weakening; a write outside the Conversation lane's §2 paths, to DESIGN.md or to the register with an allocated id; verify-test-run.py --update; git stash; a rebase; a push to main; a taskkill/reap; DC-120.",
+      "session": "cv-2",
+      "shortname": "cv-2-mechanical-compile",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-12T20:01:42Z",
+      "summary": "Shipped on lane/conversation-cv2 (7 commits, merged with main ca7443e8): AiDe.Core/Compilation (namespace PromptCompilation — AiDe.Core.Compilation collides with Roslyn's Compilation type), EnvelopeStore (Append + reader by reflection, FileShare.None, prev_sha chain, the schema-agnostic walk, the append-failed latch), Envelope/Fold/Current/Confirmed/EffectiveMode, PreCompile, Projection.Project (RenderView and Send through one function; GovernedRunRequest byte-identical — three literal goldens green on the pre-change gate f3e394dc and after), CompileContract/Validator/Assembler inert, EnvelopePurge + SessionConfigStore.Delete (probe -> tombstone -> delete), SessionDocumentSurface store lifetime + consumed + PurgeCompileHistory (the eraser beside the writer, the Security Blocker's fix) + the class-provenance stamp captured at launch, ComposerSurface tier/class controls, task_class_source v7 (the plan said v6; the store was at v6) with the leaderboard reader, aide compile fold / session purge (CliEntry; the App.OnStartup dispatch a seam request). Reds -> green: 30 fourteen-input cases, 5 censuses (code lines only, by path and count), ADR-0034 1-3/5/6, projection_sha (12-member isolation), the E7 chain test. Reviews: D&P PASS, Security PASS-WITH-CONDITIONS (C-1: a privileged-host run of the file-symlink fixture), Test Architect PASS-WITH-CONDITIONS (met by the close's rebuild), Simplifier's first Major fixed and second overridden in writing, -96 lines applied. Gates: builds 0/0; verify-test-run OK App 820 / Core 2495 + 1 skipped; run-verify-gates 34/35 — verify-id-allocators red-by-seam (the CE- family entry is the conductor's, tools/ is not the lane's). Proof Pack docs/proof/mechanical-compile.md; five register classes with placeholder ids (CV-2 a-e); seam requests: the App.OnStartup dispatch, the EmbeddedResource glob, the CE- FAMILIES entry; three attended rows RUN-PENDING.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2BTXKN7AJVGEDND9GYN30HY",
-      "shortname": "join-cv2",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/mechanical-compile.md"
+      ],
       "datetime": "2026-09-12T22:13:30Z",
-      "session": "claude-conductor-addendum-c",
+      "done_when": "main pushed green through run-verify-gates; Release built at the new sha; the three attended steps handed to the operator",
+      "goal": "Land CV-2 on main with its seams closed, the floors recounted, and a Release build the operator can run A-1..A-3 on",
+      "id": "al-01M2BTXKN7AJVGEDND9GYN30HY",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "keep going (the join of CV-2 - the build the operator waits for)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-cv2",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
       "summary": "Join: CV-2 (4b48ae20) merged to main (68dfe554) clean; DC-172..176 allocated; the two seams the slice requested applied at the join: the CE- family declared in verify-id-allocators.py (9 families, 15 CE ids, no holes) and the App.OnStartup dispatch for Cli.CliEntry (smoke: the Release exe runs  /  headless and exits 64 with usage on bad args, no window). Recount App 820 / Core 2495 = 2325 + 170; 0 WT attaches over three suite runs.",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-13T16:38:09Z",
+      "id": "al-01M2DT497G6755SMJYE5QJBC00",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "i went through the app / screen shots with titles indicating my findings here: C:\\Users\\malla\\Downloads\\ui findings 9-13-am / /ui-design elevate based on my feedback in a different sub agent / keep going on all other next steps",
+      "session": "prompt-log",
+      "shortname": "i went through the app / screen shots with titles indicating my findings…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/compile-pin-spike.md",
+        "spikes/compile-session-pin-wire/run-spike.js",
+        "spikes/compile-session-pin-wire/assert-spike.py",
+        "spikes/compile-session-pin-wire/setup-fixture.js"
+      ],
+      "datetime": "2026-09-13T17:29:27Z",
+      "done_when": "run-spike.js --dry-run succeeds against the real installed adapter with the exact ADR-0035 _meta triple on the wire; assert-spike.py --self-test is red on frames/self-test-red and green on frames/self-test-green; docs/proof/compile-pin-spike.md documents the fixture, the harness, the assertions, the operator's exact next steps, and every Verified finding; run-verify-gates.py is green apart from the two dotnet-test-run gates this Node/Python/docs-only diff cannot affect.",
+      "duration_seconds": 1375.0,
+      "fan_out": 1,
+      "git": {
+        "branch": "side/pd5-compile-pin-spike",
+        "pushed": null,
+        "sha": "4b8d379c054a73f0585cb0d875645a274fd42d91",
+        "short": "4b8d379c0"
+      },
+      "goal": "Build and verify PD-5's prep half: the fixture, harness and assertions for the compile-session pin wire spike (ADR-0035/0036 Gate 1; Ruling 68), everything up to the model call — never a session/prompt from this node.",
+      "id": "al-01M2DX26KXEVF8SJFWJHKSF5WC",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "PD-5 side track (prep half): build spikes/compile-session-pin-wire/ (fixture, harness, assertions, artifact shell) per docs/coordination/addendum-cd.md row PD-5, ADR-0035/0036, Ruling 68 — verify up to the model call; the operator sends the two prompts.",
+      "session": "pd-5",
+      "shortname": "pd-5-prep-compile-pin-spike",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-13T17:06:32Z",
+      "summary": "Built fixture-template/ (permissive .claude/settings.json, .mcp.json + a self-tested stdio MCP server, distinctive src/x.cs) and setup-fixture.js (regenerates a real git repo + bare remote.git per run). Built run-spike.js: drives the installed adapter 0.75.1 directly, sends the exact ADR-0035 _meta triple (tools: [], disallowedTools = ReadOnlyLaneSession's 26 names verbatim, mcpServers: []), records every frame, redacts email-shaped substrings found live in _auth/status_update, never sends session/prompt under --dry-run. Ran the dry run against the real adapter: initialize + session/new succeeded, the wire frame matches ADR-0035 exactly (frames/dry-run/, committed, redacted). Two source+wire findings recorded in the artifact: (1) the fixture's committed defaultMode: bypassPermissions is stripped by the SDK's filterEscalatingDefaultMode before the adapter resolves a mode (currentModeId read back as default) — the fixture's real permissiveness is its permissions.allow list, not defaultMode; (2) the CLI binary the adapter actually launches is the SDK's vendored claude-agent-sdk-win32-x64/claude.exe (2.1.257), not the machine's global claude (2.1.268) — a different binary and sha, both recorded. A third finding, and a bug this node found and fixed in its own harness: session/new alone spawns the fixture's MCP server (Verified — tools/list observed with no prompt sent), which left a stale mcp-calls.jsonl corrupting the before/after fixture-state comparison until run-spike.js was fixed to clear it on both sides. Built assert-spike.py (seven assertions a-g over one frames/ directory) with --self-test red on a planted frames/self-test-red (tool_call + permission + dirty tree + non-empty mcp log) and green on frames/self-test-green — both committed. docs/proof/compile-pin-spike.md documents all of the above plus the exact operator steps for the attended run (RUN-PENDING: the two prompts, the tool_call/permission recount, the fixture and remote diff). regenerate-derived.py and run-verify-gates.py both green (33/35; the two skipped gates require a live dotnet test run this Node/Python/docs-only diff never touches and this fresh worktree has never produced).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/compile-pin-spike.md",
+        "spikes/compile-session-pin-wire/run-spike.js",
+        "spikes/compile-session-pin-wire/assert-spike.py",
+        "spikes/compile-session-pin-wire/setup-fixture.js"
+      ],
+      "datetime": "2026-09-13T17:33:30Z",
+      "done_when": "This entry's text reads clean (no mojibake) when read back from docs/audit/audit-log.jsonl.",
+      "fan_out": 1,
+      "git": {
+        "branch": "side/pd5-compile-pin-spike",
+        "pushed": true,
+        "sha": "943220fb7698fd9ba62df95d06163ef03bbcc69d",
+        "short": "943220fb7"
+      },
+      "goal": "Correct al-01M2DX26KXEVF8SJFWJHKSF5WC: its em-dashes were mangled into mojibake by a Git-Bash-to-Windows-Python argv encoding round-trip. This entry restates the same work in ASCII-safe / file-based text; the append-only log keeps the original.",
+      "id": "al-01M2DX9KZ9556Y9S7WJX0Q6P1Q",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "PD-5 side track (prep half): build spikes/compile-session-pin-wire/ (fixture, harness, assertions, artifact shell) per docs/coordination/addendum-cd.md row PD-5, ADR-0035/0036, Ruling 68 - verify up to the model call; the operator sends the two prompts.",
+      "session": "pd-5",
+      "shortname": "pd-5-prep-compile-pin-spike-correction",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "summary": "Correction of al-01M2DX26KXEVF8SJFWJHKSF5WC: that entry's em-dashes were mangled into mojibake\nby a Git-Bash-to-Windows-Python argv encoding round-trip (a real, generalizable defect, named here\nrather than silently re-filed - candidate DC for a future /dream pass: non-ASCII CLI arguments\npassed from Git Bash to a native Windows exe get corrupted via an ANSI-codepage round-trip; the\nfix used here is file-based input (--prompt-file/--summary-file) plus ASCII-only text elsewhere).\nThe prep-half work itself is unchanged from the original entry: built fixture-template/ (permissive\n.claude/settings.json, .mcp.json + a self-tested stdio MCP server, distinctive src/x.cs) and\nsetup-fixture.js (regenerates a real git repo + bare remote.git per run). Built run-spike.js: drives\nthe installed adapter 0.75.1 directly, sends the exact ADR-0035 _meta triple (tools: [],\ndisallowedTools = ReadOnlyLaneSession's 26 names verbatim, mcpServers: []), records every frame,\nredacts email-shaped substrings found live in _auth/status_update, never sends session/prompt under\n--dry-run. Ran the dry run against the real adapter: initialize + session/new succeeded, the wire\nframe matches ADR-0035 exactly (frames/dry-run/, committed, redacted). Two source+wire findings\nrecorded in the artifact: (1) the fixture's committed defaultMode: bypassPermissions is stripped by\nthe SDK's filterEscalatingDefaultMode before the adapter resolves a mode (currentModeId read back\nas default) - the fixture's real permissiveness is its permissions.allow list, not defaultMode;\n(2) the CLI binary the adapter actually launches is the SDK's vendored\nclaude-agent-sdk-win32-x64/claude.exe (2.1.257), not the machine's global claude (2.1.268) - a\ndifferent binary and sha, both recorded. A third finding, and a bug this node found and fixed in\nits own harness: session/new alone spawns the fixture's MCP server (Verified - tools/list observed\nwith no prompt sent), which left a stale mcp-calls.jsonl corrupting the before/after fixture-state\ncomparison until run-spike.js was fixed to clear it on both sides. Built assert-spike.py (seven\nassertions a-g over one frames/ directory) with --self-test red on a planted frames/self-test-red\n(tool_call + permission + dirty tree + non-empty mcp log) and green on frames/self-test-green -\nboth committed. docs/proof/compile-pin-spike.md documents all of the above plus the exact operator\nsteps for the attended run (RUN-PENDING: the two prompts, the tool_call/permission recount, the\nfixture and remote diff). regenerate-derived.py and run-verify-gates.py both green (33/35; the two\nskipped gates require a live dotnet test run this Node/Python/docs-only diff never touches and this\nfresh worktree has never produced).",
+      "supersedes": "al-01M2DX26KXEVF8SJFWJHKSF5WC",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-13T16:52:02Z",
+      "done_when": "the round-trip test red then green; the sweep applied; DC-177 registered; committed on the conductor branch",
+      "goal": "Land Ruling 87 before Rulings 81/82 so the conversation slice starts from readable text",
+      "id": "al-01M2DTXP2QFXJMH7M6WBAG56BC",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going on all other next steps (Ruling 87 first: the engine's streams are UTF-8)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "x-4-ruling-87-utf8-streams",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "summary": "Ruling 87 landed as side track X-4: AcpEngineProcess sets UTF-8 (no BOM) on all three redirected streams; ProcessRunner (git) on both - the sweep. Red-first: the ACP probe's --echo-utf8 writes the bytes of '- SS compile' past the console layer; the reader produced 'GCo ..o compile' (CP437) before the change, the string after. 50 ACP tests + 23 runner tests green. DC-177 registered (a redirected child's stream read with the platform default encoding).",
+      "tags": [],
+      "tier": "T0",
+      "tool": null
+    },
+    {
+      "id": "al-01M2DXXPV6WKFCVWDN5ZW4335Q",
+      "shortname": "join-pd5-prep-x4",
+      "datetime": "2026-09-13T17:44:28Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "prep PD-5 (the join of the prep half and Ruling 87)",
+      "summary": "Join: PD-5 prep (f26d4fc1: the pin-spike harness, fixture, 7 assertions self-tested red/green, the artifact shell, a dry run whose session/new carried the pin triple) and X-4 (62ad027a: Ruling 87 UTF-8 streams, DC-177) merged to main; two derived-figure conflicts in site/*.html taken ours and regenerated. Recount App 820 / Core 2496 = 2326 + 170; 0 WT attaches. PD-5 findings relayed: the adapter launches the SDK's vendored claude.exe 2.1.257 (not the global 2.1.268) - ADR-0035's CLI pin must name that binary; session/new alone spawns the repository's .mcp.json server.",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/mechanical-compile.md"
+        "docs/proof/compile-pin-spike.md"
       ],
       "tags": [],
       "outcome": "success",
-      "goal": "Land CV-2 on main with its seams closed, the floors recounted, and a Release build the operator can run A-1..A-3 on",
-      "done_when": "main pushed green through run-verify-gates; Release built at the new sha; the three attended steps handed to the operator",
+      "goal": "Put the spike harness on main so the operator can run PD-5's attended half, with Ruling 87 in the same build",
+      "done_when": "main pushed green through run-verify-gates; the three operator commands verified present on main",
       "signals": {
         "verification_path": true,
         "verification_executed": true,
         "acceptance_met": true
-      }
-    },
-    {
-      "id": "al-01M2DT497G6755SMJYE5QJBC00",
-      "shortname": "i went through the app / screen shots with titles indicating my findings…",
-      "datetime": "2026-09-13T16:38:09Z",
-      "session": "prompt-log",
-      "prompt": "i went through the app / screen shots with titles indicating my findings here: C:\\Users\\malla\\Downloads\\ui findings 9-13-am / /ui-design elevate based on my feedback in a different sub agent / keep going on all other next steps",
-      "summary": "prompt logged for reuse",
-      "kind": "prompt",
-      "skill": null,
-      "tool": null,
-      "actor": null,
-      "artifacts": [],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-01M2DX26KXEVF8SJFWJHKSF5WC",
-      "shortname": "pd-5-prep-compile-pin-spike",
-      "datetime": "2026-09-13T17:29:27Z",
-      "session": "pd-5",
-      "prompt": "PD-5 side track (prep half): build spikes/compile-session-pin-wire/ (fixture, harness, assertions, artifact shell) per docs/coordination/addendum-cd.md row PD-5, ADR-0035/0036, Ruling 68 — verify up to the model call; the operator sends the two prompts.",
-      "summary": "Built fixture-template/ (permissive .claude/settings.json, .mcp.json + a self-tested stdio MCP server, distinctive src/x.cs) and setup-fixture.js (regenerates a real git repo + bare remote.git per run). Built run-spike.js: drives the installed adapter 0.75.1 directly, sends the exact ADR-0035 _meta triple (tools: [], disallowedTools = ReadOnlyLaneSession's 26 names verbatim, mcpServers: []), records every frame, redacts email-shaped substrings found live in _auth/status_update, never sends session/prompt under --dry-run. Ran the dry run against the real adapter: initialize + session/new succeeded, the wire frame matches ADR-0035 exactly (frames/dry-run/, committed, redacted). Two source+wire findings recorded in the artifact: (1) the fixture's committed defaultMode: bypassPermissions is stripped by the SDK's filterEscalatingDefaultMode before the adapter resolves a mode (currentModeId read back as default) — the fixture's real permissiveness is its permissions.allow list, not defaultMode; (2) the CLI binary the adapter actually launches is the SDK's vendored claude-agent-sdk-win32-x64/claude.exe (2.1.257), not the machine's global claude (2.1.268) — a different binary and sha, both recorded. A third finding, and a bug this node found and fixed in its own harness: session/new alone spawns the fixture's MCP server (Verified — tools/list observed with no prompt sent), which left a stale mcp-calls.jsonl corrupting the before/after fixture-state comparison until run-spike.js was fixed to clear it on both sides. Built assert-spike.py (seven assertions a-g over one frames/ directory) with --self-test red on a planted frames/self-test-red (tool_call + permission + dirty tree + non-empty mcp log) and green on frames/self-test-green — both committed. docs/proof/compile-pin-spike.md documents all of the above plus the exact operator steps for the attended run (RUN-PENDING: the two prompts, the tool_call/permission recount, the fixture and remote diff). regenerate-derived.py and run-verify-gates.py both green (33/35; the two skipped gates require a live dotnet test run this Node/Python/docs-only diff never touches and this fresh worktree has never produced).",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/compile-pin-spike.md",
-        "spikes/compile-session-pin-wire/run-spike.js",
-        "spikes/compile-session-pin-wire/assert-spike.py",
-        "spikes/compile-session-pin-wire/setup-fixture.js"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Build and verify PD-5's prep half: the fixture, harness and assertions for the compile-session pin wire spike (ADR-0035/0036 Gate 1; Ruling 68), everything up to the model call — never a session/prompt from this node.",
-      "done_when": "run-spike.js --dry-run succeeds against the real installed adapter with the exact ADR-0035 _meta triple on the wire; assert-spike.py --self-test is red on frames/self-test-red and green on frames/self-test-green; docs/proof/compile-pin-spike.md documents the fixture, the harness, the assertions, the operator's exact next steps, and every Verified finding; run-verify-gates.py is green apart from the two dotnet-test-run gates this Node/Python/docs-only diff cannot affect.",
-      "tier": "T1",
-      "fan_out": 1,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
-      "started_at": "2026-09-13T17:06:32Z",
-      "duration_seconds": 1375.0,
-      "git": {
-        "sha": "4b8d379c054a73f0585cb0d875645a274fd42d91",
-        "short": "4b8d379c0",
-        "branch": "side/pd5-compile-pin-spike",
-        "pushed": null
-      }
-    },
-    {
-      "id": "al-01M2DX9KZ9556Y9S7WJX0Q6P1Q",
-      "shortname": "pd-5-prep-compile-pin-spike-correction",
-      "datetime": "2026-09-13T17:33:30Z",
-      "session": "pd-5",
-      "prompt": "PD-5 side track (prep half): build spikes/compile-session-pin-wire/ (fixture, harness, assertions, artifact shell) per docs/coordination/addendum-cd.md row PD-5, ADR-0035/0036, Ruling 68 - verify up to the model call; the operator sends the two prompts.",
-      "summary": "Correction of al-01M2DX26KXEVF8SJFWJHKSF5WC: that entry's em-dashes were mangled into mojibake\nby a Git-Bash-to-Windows-Python argv encoding round-trip (a real, generalizable defect, named here\nrather than silently re-filed - candidate DC for a future /dream pass: non-ASCII CLI arguments\npassed from Git Bash to a native Windows exe get corrupted via an ANSI-codepage round-trip; the\nfix used here is file-based input (--prompt-file/--summary-file) plus ASCII-only text elsewhere).\nThe prep-half work itself is unchanged from the original entry: built fixture-template/ (permissive\n.claude/settings.json, .mcp.json + a self-tested stdio MCP server, distinctive src/x.cs) and\nsetup-fixture.js (regenerates a real git repo + bare remote.git per run). Built run-spike.js: drives\nthe installed adapter 0.75.1 directly, sends the exact ADR-0035 _meta triple (tools: [],\ndisallowedTools = ReadOnlyLaneSession's 26 names verbatim, mcpServers: []), records every frame,\nredacts email-shaped substrings found live in _auth/status_update, never sends session/prompt under\n--dry-run. Ran the dry run against the real adapter: initialize + session/new succeeded, the wire\nframe matches ADR-0035 exactly (frames/dry-run/, committed, redacted). Two source+wire findings\nrecorded in the artifact: (1) the fixture's committed defaultMode: bypassPermissions is stripped by\nthe SDK's filterEscalatingDefaultMode before the adapter resolves a mode (currentModeId read back\nas default) - the fixture's real permissiveness is its permissions.allow list, not defaultMode;\n(2) the CLI binary the adapter actually launches is the SDK's vendored\nclaude-agent-sdk-win32-x64/claude.exe (2.1.257), not the machine's global claude (2.1.268) - a\ndifferent binary and sha, both recorded. A third finding, and a bug this node found and fixed in\nits own harness: session/new alone spawns the fixture's MCP server (Verified - tools/list observed\nwith no prompt sent), which left a stale mcp-calls.jsonl corrupting the before/after fixture-state\ncomparison until run-spike.js was fixed to clear it on both sides. Built assert-spike.py (seven\nassertions a-g over one frames/ directory) with --self-test red on a planted frames/self-test-red\n(tool_call + permission + dirty tree + non-empty mcp log) and green on frames/self-test-green -\nboth committed. docs/proof/compile-pin-spike.md documents all of the above plus the exact operator\nsteps for the attended run (RUN-PENDING: the two prompts, the tool_call/permission recount, the\nfixture and remote diff). regenerate-derived.py and run-verify-gates.py both green (33/35; the two\nskipped gates require a live dotnet test run this Node/Python/docs-only diff never touches and this\nfresh worktree has never produced).",
-      "kind": "manual",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/compile-pin-spike.md",
-        "spikes/compile-session-pin-wire/run-spike.js",
-        "spikes/compile-session-pin-wire/assert-spike.py",
-        "spikes/compile-session-pin-wire/setup-fixture.js"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Correct al-01M2DX26KXEVF8SJFWJHKSF5WC: its em-dashes were mangled into mojibake by a Git-Bash-to-Windows-Python argv encoding round-trip. This entry restates the same work in ASCII-safe / file-based text; the append-only log keeps the original.",
-      "done_when": "This entry's text reads clean (no mojibake) when read back from docs/audit/audit-log.jsonl.",
-      "tier": "T1",
-      "fan_out": 1,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
-      "supersedes": "al-01M2DX26KXEVF8SJFWJHKSF5WC",
-      "git": {
-        "sha": "943220fb7698fd9ba62df95d06163ef03bbcc69d",
-        "short": "943220fb7",
-        "branch": "side/pd5-compile-pin-spike",
-        "pushed": true
       }
     }
   ],
