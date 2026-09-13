@@ -73,6 +73,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     private readonly IWorkbenchAnnouncer _announcer;
     private string _statusText = string.Empty;
     private double _beltHeight = double.PositiveInfinity;
+    private double _editorRestHeight = double.PositiveInfinity;
     private readonly DockPanel _sendRow;
     private readonly StackPanel _lines;
     private readonly Button _send;
@@ -268,6 +269,9 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// <summary>The editor host's floor (DESIGN.md:1092 ≥ 130 px) — what the composer declares under an infinite constraint (spike Q14).</summary>
     public const double EditorFloor = 130;
 
+    /// <summary>The editor's rest height once the thread has turns (Ruling 80; DESIGN.md errata "Chat-like — editor height"): it scrolls only past this.</summary>
+    public const double EditorRest = 280;
+
     /// <summary>The compiled prompt's ceiling when expanded (DESIGN.md:1109 ≤ 200 px, scrolls) — and it never takes the editor's floor (DC-137).</summary>
     public const double CompiledPromptMaxHeight = 200;
 
@@ -347,9 +351,11 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
     /// <summary>
     /// The document's belt (DS-1 Q14): the height this composer may take before the compiled prompt
-    /// yields — a share of the document, set by the document at its measure. The composer's own
-    /// minimum (its lines and the editor's floor) is never cut by it: a belt smaller than the minimum
-    /// leaves the send row on screen and the thread shorter, not the send row clipped.
+    /// yields — set by the document at its measure, its value <b>derived from the thread's need</b>
+    /// (Ruling 80: the body less the empty caption at 0 turns, less the thread's minimum with turns;
+    /// never a constant share). The composer's own minimum (its lines and the editor's floor) is
+    /// never cut by it: a belt smaller than the minimum leaves the send row on screen and the thread
+    /// shorter, not the send row clipped.
     /// </summary>
     public double BeltHeight
     {
@@ -364,6 +370,31 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             if (_beltHeight != value)
             {
                 _beltHeight = value;
+                InvalidateMeasure();
+            }
+        }
+    }
+
+    /// <summary>
+    /// The height the editor rests at when the belt allows (Ruling 80): <see cref="EditorRest"/>
+    /// once the thread has turns — it scrolls only past that; unbounded, so the editor fills the
+    /// belt, at 0 turns or with no document above it. Set by the document at its measure beside
+    /// <see cref="BeltHeight"/>. The floor is never this: <see cref="EditorFloor"/> is what the
+    /// editor keeps when the belt cannot give the rest.
+    /// </summary>
+    public double EditorRestHeight
+    {
+        get => _editorRestHeight;
+        set
+        {
+            if (!(value > 0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(value), value, "the rest is a positive height");
+            }
+
+            if (_editorRestHeight != value)
+            {
+                _editorRestHeight = value;
                 InvalidateMeasure();
             }
         }
@@ -1293,6 +1324,14 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
     private void PushInit()
     {
+        _view.CoreWebView2?.PostWebMessageAsJson(InitPayloadJson());
+        _inputSinceInit = false;
+        WorkbenchDiagnostics.WebSurfaceHandshake(SurfaceId, "init-pushed", _navigations, _inputs, _router.Dropped, $"fields {_fields.Count}");
+    }
+
+    /// <summary>The <c>host.init</c> envelope as the page receives it — the one builder the push serialises (a test reads it without a browser).</summary>
+    internal string InitPayloadJson()
+    {
         var payload = new
         {
             v = ComposerMessageRouter.ProtocolVersion,
@@ -1327,11 +1366,15 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             // The shell's tokens as CSS custom properties, so the page draws with the one palette
             // (INV-0008, Fix C). Additive: a page that ignores it renders its fallbacks.
             theme = ComposerPageTheme.Current(),
+
+            // THE ONE FLOOR (Ruling 80; DM-A): the page reads --editor-floor from this push and
+            // keeps the same constant's declared value as its stylesheet fallback — it carries no
+            // floor of its own (composer.html once said 110 while the host said 130, and the page
+            // scrolled at the floor before a character was typed).
+            editorFloor = EditorFloor,
         };
 
-        _view.CoreWebView2?.PostWebMessageAsJson(JsonSerializer.Serialize(payload));
-        _inputSinceInit = false;
-        WorkbenchDiagnostics.WebSurfaceHandshake(SurfaceId, "init-pushed", _navigations, _inputs, _router.Dropped, $"fields {_fields.Count}");
+        return JsonSerializer.Serialize(payload);
     }
 
     /// <summary>What the draft currently holds for one field — the inverse of <see cref="SetFieldText"/>.</summary>
@@ -1420,7 +1463,10 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// smaller, because a DesiredSize is clipped to what it was measured against and a belt passed
     /// straight through would clamp exactly as a <c>MaxHeight</c> did (L1's 600 px rows). Under an
     /// infinite constraint with no belt the composer declares its natural height — the floor is on
-    /// the host (spike Q14).
+    /// the host (spike Q14). <b>The editor's height is derived, never its own desire (Ruling 80):</b>
+    /// a WebView2 desires nothing of its own, so the host is given the belt's remainder after the
+    /// chrome and the reader — capped at <see cref="EditorRestHeight"/>, floored by the host's
+    /// <c>MinHeight</c> — and the composer desires exactly the belt while the belt can hold it.
     /// </summary>
     protected override Size MeasureOverride(Size constraint)
     {
@@ -1452,6 +1498,25 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             : Math.Max(
                 CompiledPromptMinHeight,
                 Math.Floor(Math.Min(CompiledPromptMaxHeight, Math.Min(height - chrome - EditorFloor, (height - chrome) / 2))));
+
+        // THE EDITOR'S REST (Ruling 80). Under a finite belt the host's height is the belt's
+        // remainder after the picker, the send row and the lines with the reader inside its ceiling
+        // — capped at the rest the document asked for (EditorRest with turns; unbounded at 0 turns,
+        // so the editor fills the belt), never under the floor (the host's MinHeight holds it there).
+        // Under an infinite constraint with no belt the host declares only its floor (spike Q14).
+        // Red observed without this: the DockPanel desired chrome + 130 whatever the belt, so the
+        // editor sat at 130 under 429 px of empty thread (the operator's screenshot 1).
+        if (double.IsPositiveInfinity(height))
+        {
+            _view.Height = double.NaN;
+        }
+        else
+        {
+            _lines.Measure(unbounded);
+            var chromeWithReader = _templatePicker.DesiredSize.Height + _sendRow.DesiredSize.Height + _lines.DesiredSize.Height;
+            var room = Math.Max(height, MinimumHeight) - chromeWithReader;
+            _view.Height = Math.Max(EditorFloor, Math.Min(_editorRestHeight, room));
+        }
 
         // The content is measured within the belt — or within the composer's own minimum when the
         // belt is smaller: a DesiredSize is clipped to what it was measured against, so a belt

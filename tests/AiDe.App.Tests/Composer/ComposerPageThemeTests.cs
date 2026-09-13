@@ -18,6 +18,7 @@ namespace AiDe.App.Tests.Composer;
 public sealed class ComposerPageThemeTests
 {
     private static readonly Regex Hex6 = new("^#[0-9A-F]{6}$", RegexOptions.Compiled);
+    private static readonly Regex Length = new(@"^\d+(?:\.\d+)?(?:px|rem|em|%)$", RegexOptions.Compiled);
 
     [Fact]
     public void EveryRoleResolvesFromTheTokenDictionary_ToASixDigitHex()
@@ -126,6 +127,14 @@ public sealed class ComposerPageThemeTests
 
             foreach (Match m in ColourUse.Matches(css))
             {
+                // A custom property whose fallback is a length is not a colour: the editor's floor
+                // (--editor-floor, Ruling 80) is pushed beside the theme and held to the host's
+                // constant by Sessions/TheWriterKeepsItsRoomTests.OneFloorConstant_ReadByHostAndPage.
+                if (m.Groups[1].Success && m.Groups[2].Success && Length.IsMatch(m.Groups[2].Value.Trim()))
+                {
+                    continue;
+                }
+
                 uses++;
                 if (m.Groups[1].Success)
                 {

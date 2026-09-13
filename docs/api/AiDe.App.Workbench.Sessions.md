@@ -580,7 +580,7 @@ refusal is announced (`THR-0002`), never silent.
 
 | Member | Summary |
 |---|---|
-| `double ComposerShare = 0.45` | The most of the document the composer may take — the belt over the editor's floor (DS-1 Q14: both are needed). |
+| `double ThreadMinimum = 44` | The least the thread keeps once it has turns — half a turn (the words line and its decoration; DS-1 L1's 88 px turn ÷ 2) — the belt's constant under a short window (Ruling 80: the composer's belt is body − this). At 0… |
 | `SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)` | **(gap)** |
 | `string SurfaceIdFor(string sessionId)` | The layout surface id a session document docks under. |
 | `string? SessionIdOf(string surfaceId)` | The inverse of `SurfaceIdFor`: the session id a surface id names, or null when it is not one. |
@@ -616,7 +616,7 @@ refusal is announced (`THR-0002`), never silent.
 | `string PurgeCompileHistory()` | Purges this session's compile history from the document that holds it — releases the handle, resolves the plan (the identity: name · id · workspace · file · count · newest), asks, deletes the one file, and reopens the… |
 | `void OpenSplit(int? ordinal = null)` | Opens the Console beside the thread — at 's heading, focused, or following the end. |
 | `void CloseSplit()` | Closes the split; the thread keeps its rhythm. |
-| `Size MeasureOverride(Size constraint)` | The belt (DS-1 Q14): the composer never takes more than its share, so the thread's row is guaranteed by arithmetic. |
+| `Size MeasureOverride(Size constraint)` | The belt (DS-1 Q14), its value derived from the thread's need (Ruling 80): at 0 turns the thread is its two-line caption and the composer takes the rest of the body — the editor fills, no scrollbar before the operator… |
 | `void Dispose()` | Closes the document: its runs are cancelled, its lanes stop, its composer's browser is released. |
 
 ### `SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)`
