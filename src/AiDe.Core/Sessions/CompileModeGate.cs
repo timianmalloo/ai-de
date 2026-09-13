@@ -1,0 +1,133 @@
+using AiDe.Core.PromptCompilation;
+
+namespace AiDe.Core.Sessions;
+
+/// <summary>Why a compile mode is not selectable: a stable code and the reason in voice.</summary>
+public sealed record CompileModeRefusal(string Code, string Reason);
+
+/// <summary>
+/// Which of the three compile modes this machine may select right now, and why not for the rest —
+/// the settings model's reading of the deployment gates (ADR-0036 rule 1; US-D11).
+/// </summary>
+/// <param name="Refusals">One entry per mode that is not selectable.</param>
+/// <param name="Recount">The recount over the frame log, when one could be read.</param>
+/// <param name="ArtifactPath">Where the gate-1 artifact was looked for.</param>
+public sealed record CompileModeAvailability(
+    IReadOnlyDictionary<string, CompileModeRefusal> Refusals,
+    FrameRecount? Recount,
+    string ArtifactPath)
+{
+    /// <summary>Whether <paramref name="mode"/> may be selected. An unknown word is never selectable.</summary>
+    public bool IsSelectable(string mode) =>
+        CompileModeGate.Modes.Contains(mode, StringComparer.Ordinal) && !Refusals.ContainsKey(mode);
+
+    /// <summary>The refusal for <paramref name="mode"/>, or null when it is selectable.</summary>
+    public CompileModeRefusal? RefusalFor(string mode) => Refusals.TryGetValue(mode, out var refusal) ? refusal : null;
+}
+
+/// <summary>
+/// The compile-mode ladder as deployment gates the product evaluates (ADR-0036 rule 1; Ruling 68):
+/// <c>mechanical-only</c> always; <c>agentic-advisory</c> only when the pin-spike artifact exists,
+/// its recorded triple equals the <b>installed</b> triple, and a recount of tool-call frames over
+/// the frame log it names reads zero; <c>agentic</c> only after Gate 2's admission report — whose
+/// reader is CV-4's — so it is refused here naming Gate 2.
+/// </summary>
+/// <remarks>
+/// <para><b>Presence alone is spoofable (Ruling 68), so nothing here trusts a field the artifact
+/// wrote about itself.</b> The triple is recomputed from the install root's bytes and compared;
+/// the frame log's sha is recomputed and compared; the count is recounted. What this does not
+/// close, recorded: an artifact <i>and</i> frame log fabricated together by the machine's own user
+/// (ADR-0036 accepts it for the operator's own machine — the recount raises the forgery's cost from
+/// one field to a consistent frame log).</para>
+///
+/// <para><b>Evaluated at every read, stored nowhere</b> — a demotion is computed, never remembered
+/// (the drift detector's watermark is Gate 2's, CV-4).</para>
+/// </remarks>
+public static class CompileModeGate
+{
+    /// <summary>The three modes, in ladder order.</summary>
+    public static readonly IReadOnlyList<string> Modes = [CompileModes.MechanicalOnly, CompileModes.AgenticAdvisory, CompileModes.Agentic];
+
+    /// <summary>Evaluates the gates against the artifacts under <see cref="CompilePinArtifact.DefaultDirectory"/>.</summary>
+    public static CompileModeAvailability Evaluate(string adapterInstallRoot) =>
+        Evaluate(adapterInstallRoot, CompilePinArtifact.DefaultDirectory);
+
+    /// <summary>Evaluates the gates against the artifacts under <paramref name="proofDirectory"/>.</summary>
+    public static CompileModeAvailability Evaluate(string adapterInstallRoot, string proofDirectory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(adapterInstallRoot);
+        ArgumentException.ThrowIfNullOrWhiteSpace(proofDirectory);
+
+        var artifactPath = Path.Combine(proofDirectory, CompilePinArtifact.FileName);
+        var refusals = new Dictionary<string, CompileModeRefusal>(StringComparer.Ordinal);
+        FrameRecount? recount = null;
+
+        var gateOne = GateOne(adapterInstallRoot, artifactPath, out recount);
+        if (gateOne is { } refused)
+        {
+            refusals[CompileModes.AgenticAdvisory] = refused;
+            refusals[CompileModes.Agentic] = refused;
+        }
+        else
+        {
+            // Gate 2 (ADR-0036): the admission report over 50 scored + 50 holdout envelopes, its
+            // floors recomputed by the reader — CV-4's. Until that reader exists and admits,
+            // `agentic` is refused by name, never assumed.
+            refusals[CompileModes.Agentic] = new CompileModeRefusal(
+                EnvelopeStoreErrorCodes.AdmissionReportOutstanding,
+                "Gate 2 is outstanding: no admission report (compile-eval-admission.json) over 50 scored and 50 holdout envelopes has been read; agentic-advisory builds that corpus");
+        }
+
+        return new CompileModeAvailability(refusals, recount, artifactPath);
+    }
+
+    /// <summary>Gate 1: the pin artifact, a staleness gate. Null when it admits.</summary>
+    private static CompileModeRefusal? GateOne(string adapterInstallRoot, string artifactPath, out FrameRecount? recount)
+    {
+        recount = null;
+
+        var artifact = CompilePinArtifact.Read(artifactPath, out var problem);
+        if (artifact is null)
+        {
+            return new CompileModeRefusal(
+                EnvelopeStoreErrorCodes.PinArtifactMissing,
+                $"the compile-pin-spike artifact was not found at {artifactPath}" + (problem is null ? string.Empty : $" ({problem})")
+                + "; run spikes/compile-session-pin-wire/Run-PinSpike.ps1 (PD-5) — a failed spike is a hard stop, never a fallback (Ruling 68)");
+        }
+
+        var installed = CompilePin.Installed(adapterInstallRoot);
+        if (CompilePin.Mismatch(installed, artifact.Triple) is { } mismatch)
+        {
+            return new CompileModeRefusal(
+                EnvelopeStoreErrorCodes.PinTripleMismatch,
+                $"the compile-pin-spike artifact was recorded against another adapter/SDK/CLI build than the one installed under {adapterInstallRoot}: {mismatch}; re-run PD-5 on this build");
+        }
+
+        var frameLogPath = Path.Combine(Path.GetDirectoryName(artifactPath)!, CompilePinArtifact.FrameLogFileName);
+        if (artifact.FrameLogSha256 is null || !File.Exists(frameLogPath))
+        {
+            return new CompileModeRefusal(
+                EnvelopeStoreErrorCodes.PinFrameLogUnverifiable,
+                $"the compile-pin-spike artifact's tool_call count cannot be recounted: {(artifact.FrameLogSha256 is null ? "the artifact names no frame log" : $"the frame log {frameLogPath} is missing")}; the count is never trusted as written");
+        }
+
+        var bytes = File.ReadAllBytes(frameLogPath);
+        var sha = Convert.ToHexStringLower(System.Security.Cryptography.SHA256.HashData(bytes));
+        if (!string.Equals(sha, artifact.FrameLogSha256, StringComparison.Ordinal))
+        {
+            return new CompileModeRefusal(
+                EnvelopeStoreErrorCodes.PinFrameLogUnverifiable,
+                $"the frame log {frameLogPath} does not hash to the sha the compile-pin-spike artifact recorded; the recount would be over other frames");
+        }
+
+        recount = CompilePin.Recount(bytes);
+        if (recount.ToolCalls != 0)
+        {
+            return new CompileModeRefusal(
+                EnvelopeStoreErrorCodes.PinRecountNotZero,
+                $"the recount over the compile-pin-spike frame log reads {recount.ToolCalls} tool_call frame(s) ({string.Join(", ", recount.ToolNames)}) where the artifact claims {artifact.RecordedToolCalls?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? Envelope.NotRecorded}; the pin did not hold");
+        }
+
+        return null;
+    }
+}
