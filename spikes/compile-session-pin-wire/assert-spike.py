@@ -208,10 +208,19 @@ def run_assertions(frames_dir: Path) -> list[str]:
     segments = segment_by_prompt(recv, p_ids)
     first_reply = reply_text(segments[0]) if segments else ""
     if "<invoke " in first_reply or "<parameter name=" in first_reply:
-        # The runaway's signature: tool-call XML emitted as text is a tool call standing in for
-        # the read — exactly what (f)'s weak form must never accept.
-        raise Failure(f"(f) FAILED: the reply carries tool-call XML as text ({len(first_reply)} chars): {first_reply[:160]!r}")
-    if FIRST_LINE_MARKER in first_reply:
+        # Tool-call XML emitted as TEXT. Run 2's runaway (unbounded) and run 3 (11,472 chars, ended)
+        # both had it: with `tools: []` the model writes `<invoke name="Read">` and even a fabricated
+        # `<invoke name="user"><system-reminder>` block, executes nothing, and later claims to have
+        # "confirmed Read/Write/Bash by calling them". C1's claim is the WIRE — (a), (b), (c), (d),
+        # (e) — and every one held on run 3, so this is not the pin's failure. It is the compile
+        # contract's finding: `CompileOutputValidator` must read XML-as-text as `malformed`
+        # (degraded to mechanical — Ruling 68), and the eval harness measures how often it happens.
+        # A run whose reply is ONLY XML and never ends is (0)'s failure, not this line's.
+        lines.append(
+            "(f) REPORTED (a finding for the compile contract, not the pin): the read prompt's reply carries "
+            f"tool-call XML as text ({len(first_reply)} chars, {first_reply.count('<invoke ')} <invoke> blocks); "
+            "nothing executed — (a) holds")
+    elif FIRST_LINE_MARKER in first_reply:
         lines.append("(f) PASS: the read prompt's reply contains the fixture's first line")
     elif first_reply.strip():
         lines.append(

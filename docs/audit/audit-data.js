@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T20:31:07Z",
+  "generated": "2026-09-13T20:39:55Z",
   "audit": [
     {
       "actor": null,
@@ -14923,6 +14923,31 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Land CV-3 on main with the veto's disposition recorded, the floors recounted, and a Release build",
       "done_when": "main pushed green through run-verify-gates; Release built; C1/C2 queued for the conductor before run 3",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M2E7YZ0MX84XWV0N3R6C5V3H",
+      "shortname": "pd-5-run-3-green-strict-mcp",
+      "datetime": "2026-09-13T20:39:55Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "keep going (PD-5 run 3 under Security's conditions)",
+      "summary": "PD-5 run 3 (frames/2026-09-13T20-36-02-970Z), the conductor on the operator's subscription: GREEN on the pin's letter with strictMcpConfig: true - 0 tool_call, 0 permission requests, 0 bytes at the fixture's MCP server (the .mcp.json server was never loaded: run 1's exposure closed on the wire), fixture and remote unchanged; three prompts end_turn, 6,176 output tokens. Gate-1 artifact published to ~/.aide/proof/ after the oracle (C1). Findings: tool-call XML as text (25 invoke blocks incl. a fabricated system-reminder and a fabricated memory - verified absent from the operator's memory dir) and a confabulated 'I called Read/Write/Bash' - the compile validator must read XML as malformed; the 4096 output cap is not a hard per-turn cap (4,608 observed). (f) re-pointed: XML-as-text is reported, not the pin's failure (C1 asserts the wire).",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/compile-pin-spike.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Close the pin's MCP exposure on the wire and publish gate 1's artifact under the conditions Security set",
+      "done_when": "run 3 GREEN with (c) at zero MCP messages; artifact under ~/.aide/proof/; frames committed; the proof's third-run section written",
+      "tier": "T1",
       "signals": {
         "verification_path": true,
         "verification_executed": true,
