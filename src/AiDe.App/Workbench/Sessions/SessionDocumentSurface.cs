@@ -203,8 +203,16 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     /// <summary>The read model the thread renders. CV-1's implementer; a test feeds it directly.</summary>
     public RunChannelSessionThread ReadModel => _thread;
 
-    /// <summary>The Console split, whether or not it is open.</summary>
+    /// <summary>The Console split, whether or not it is open — and the console document's one instance when the shell hosts it (Ruling 89).</summary>
     public ConsoleSurface Split => _split;
+
+    /// <summary>
+    /// The shell's verb (Ruling 89; SH-4.2's seam): when set, the header's Console toggle and a
+    /// turn's <i>Open the log</i> open or focus the session's Console as a document in the Center
+    /// zone through it — with the turn ordinal to land on, or null — instead of opening the split
+    /// beside the thread. Unset (a document composed without a shell), the split opens here.
+    /// </summary>
+    public Action<int?>? ConsoleRequested { get; set; }
 
     /// <summary>Whether the Console split is open beside the thread (Ruling 74: on demand).</summary>
     public bool IsSplitOpen => _splitColumn.Width.Value > 0;
@@ -787,9 +795,15 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
 
     // ── the split (Ruling 74) ──
 
-    /// <summary>Opens the Console beside the thread — at <paramref name="ordinal"/>'s heading, focused, or following the end.</summary>
+    /// <summary>Opens the Console — as the shell's Center document when <see cref="ConsoleRequested"/> is wired, else beside the thread — at <paramref name="ordinal"/>'s heading, focused, or following the end.</summary>
     public void OpenSplit(int? ordinal = null)
     {
+        if (ConsoleRequested is { } hosted)
+        {
+            hosted(ordinal);
+            return;
+        }
+
         _splitColumn.Width = new GridLength(1, GridUnitType.Star);
         _splitterColumn.Width = new GridLength(SplitterThickness);
         _splitter.Visibility = Visibility.Visible;
@@ -960,7 +974,9 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         AutomationProperties.SetName(console, "Console: show the merged stream beside the thread");
         console.Click += (_, _) =>
         {
-            if (IsSplitOpen)
+            // Hosted (Ruling 89), the toggle opens or focuses the console document — a second press
+            // focuses, never closes; the tab's own close is the way back, and the shell reflects it here.
+            if (IsSplitOpen && ConsoleRequested is null)
             {
                 CloseSplit();
             }

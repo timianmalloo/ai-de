@@ -285,12 +285,13 @@ public partial class MainWindow : Window
                         created.Config.SessionId, created.Config.Name, created.Config.WorkspaceId));
 
                 var opened = Shell.OpenSessionDocument(created.Config);
-                // Both halves, in the order the operator experiences them: the document opens and
-                // its composer is bound, then the pane takes the tree (Ruling 47). One sentence,
-                // because a live region read three times in a row is three interruptions.
-                Shell.Announcer.Announce(GiveTheNewSessionTheWholeTree(
-                    created.Config.SessionId,
-                    opened + " " + BindComposer(created.Config, created.RoutableBackends, created.TaskClass)));
+                // Both halves, in the order the operator experiences them: the document opens —
+                // docked in Coding's Left zone by the kind's zone rule (Ruling 83; Ruling 47's
+                // maximize-on-create is superseded by the operator's own gesture) — and its
+                // composer is bound. One sentence, because a live region read twice in a row is
+                // two interruptions.
+                Shell.Announcer.Announce(
+                    opened + " " + BindComposer(created.Config, created.RoutableBackends, created.TaskClass));
                 RebuildMenu();
             });
 
@@ -543,23 +544,6 @@ public partial class MainWindow : Window
         return string.IsNullOrEmpty(workspaceId)
             ? $"{perspective.Title} — AI-DE"
             : $"{workspaceId} — {perspective.Title} — AI-DE";
-    }
-
-    /// <summary>
-    /// Hands a newly created session's document the whole tree (Ruling 47), and re-renders.
-    /// </summary>
-    /// <remarks>
-    /// The decision itself lives on <see cref="Workbench.Sessions.NewSessionPlacement"/>, which a
-    /// test can reach; this is the window's half — the projection has to be re-rendered after the
-    /// layout changes, and only the window holds the adapter. Reopening a session does not call it.
-    /// </remarks>
-    private string GiveTheNewSessionTheWholeTree(string sessionId, string announcement)
-    {
-        var said = Workbench.Sessions.NewSessionPlacement.GiveItTheWholeTree(
-            Shell.Service, sessionId, announcement);
-
-        Shell.Adapter.Render();
-        return said;
     }
 
     /// <summary>

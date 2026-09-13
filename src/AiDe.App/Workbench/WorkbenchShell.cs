@@ -78,6 +78,11 @@ public sealed class WorkbenchShell : IDisposable
     private readonly Dictionary<string, Sessions.SessionDocumentSurface> _sessionDocuments =
         new(StringComparer.Ordinal);
 
+    // The open console documents (Ruling 89), keyed by their surface id (`console:<sessionId>`):
+    // each hosts its session document's own split in the Center and follows the thread until it
+    // closes — with its tab, or with its session (the adapter's SurfaceClosed). One per session.
+    private readonly Dictionary<string, Sessions.ConsoleDocumentHost> _consoles = new(StringComparer.Ordinal);
+
     // The per-workspace Loomkeeper host: it owns the observation store AND runs the ingest (the
     // coordination-contract log pump, in-process, so liveness is exact). Null until a workspace with a
     // data directory is attached; reset on each attach. The panes then show "not available".
@@ -146,7 +151,8 @@ public sealed class WorkbenchShell : IDisposable
             queries is not null ? SearchWorkspaceAsync : null,
             watcher.Daydreams,
             TerminalNameFor,
-            SessionDocumentFor);
+            SessionDocumentFor,
+            consoleFor: ConsoleFor);
 
         // The environment contract does not depend on a workspace, so it must not be gated behind
         // one. It was assigned ONLY in AttachWorkspace, which both call sites skip when the daemon
@@ -173,9 +179,9 @@ public sealed class WorkbenchShell : IDisposable
         // arrive AFTER the window exists: the shell is built synchronously and shown immediately;
         // reaching a daemon may take a cold start, and a window that appears only once a process
         // has launched looks like a failure to launch.
-        Coding = DockHost.Create(PerspectiveSet.Coding, surface => _factory.Create(surface), Announcer, ExpandZone);
-        Architecture = DockHost.Create(PerspectiveSet.Architecture, surface => _factory.Create(surface), Announcer, ExpandZone);
-        Coordination = DockHost.Create(PerspectiveSet.Coordination, surface => _factory.Create(surface), Announcer, ExpandZone);
+        Coding = DockHost.Create(PerspectiveSet.Coding, surface => ContentFor(PerspectiveSet.Coding, surface), Announcer, ExpandZone);
+        Architecture = DockHost.Create(PerspectiveSet.Architecture, surface => ContentFor(PerspectiveSet.Architecture, surface), Announcer, ExpandZone);
+        Coordination = DockHost.Create(PerspectiveSet.Coordination, surface => ContentFor(PerspectiveSet.Coordination, surface), Announcer, ExpandZone);
         Hosts = [Coding, Architecture, Coordination];
 
         foreach (var host in Hosts)
@@ -211,6 +217,12 @@ public sealed class WorkbenchShell : IDisposable
             // when it admits the kind, else the open is routed (ADR-0030 Resolve; US-C3). A kind
             // added as a row is openable with no edit here.
             host.Controller.OpenSurfaceRequested = (kind, showExisting) => OpenKind(dragged, kind, showExisting);
+
+            // Ruling 89: a console document closes with its session, and a closed console — by
+            // its tab, by its session, by a whole-arrangement restore — releases the split it hosted
+            // and unchecks the header's toggle. One funnel (the adapter's SurfaceClosed), so no
+            // close path is a special case.
+            host.Adapter.SurfaceClosed += (id, _) => OnSurfaceClosed(dragged, id);
         }
 
         Palette = new CommandPalette(Execute, Announcer);
@@ -531,7 +543,29 @@ public sealed class WorkbenchShell : IDisposable
         foreach (var host in Hosts)
         {
             host.Controller.SessionRegionCycle = Cycle;
+            host.Controller.SessionConsoleRequested = focused =>
+                SessionDocumentOf(focused) is { } document
+                    ? OpenSessionConsole(document, ordinal: null)
+                    : "No session document is focused.";
         }
+    }
+
+    /// <summary>The live session document a focused surface names — the document itself, or its console (Ruling 89) — or null.</summary>
+    private Sessions.SessionDocumentSurface? SessionDocumentOf(string? surfaceId)
+    {
+        if (surfaceId is null)
+        {
+            return null;
+        }
+
+        if (_sessionDocuments.TryGetValue(surfaceId, out var document))
+        {
+            return document;
+        }
+
+        return Sessions.ConsoleDocumentHost.SessionIdOf(surfaceId) is { } sessionId
+            ? _sessionDocuments.GetValueOrDefault(Sessions.SessionDocumentSurface.SurfaceIdFor(sessionId))
+            : null;
     }
 
     /// <summary>Walks up from a focused element to the surface it belongs to.</summary>
@@ -662,7 +696,8 @@ public sealed class WorkbenchShell : IDisposable
             SearchWorkspaceAsync,
             watcher.Daydreams,
             TerminalNameFor,
-            SessionDocumentFor);
+            SessionDocumentFor,
+            consoleFor: ConsoleFor);
 
         // Panes realized at construction were built against a factory with no queries and render
         // "not available". Mark every workspace-dependent kind to rebuild on the next Render so they
@@ -1770,16 +1805,24 @@ public sealed class WorkbenchShell : IDisposable
     {
         ReconcileViewIntoModel(host);
 
+        // The kind's zone rule (Rulings 83/89; the row's Zone column) places a session document at
+        // Left and a console document in the Center, whatever is focused — the placement policy is
+        // for the reference kinds that follow the graph. Never a restore's concern: a saved
+        // arrangement is restored where it was saved.
+        var zoneRule = SurfaceContentFactory.Kinds.FirstOrDefault(k => string.Equals(k.Kind, surface.Kind, StringComparison.Ordinal))?.Zone;
+
         var placement = intoStackId is not null
             ? new DocumentPlacement(intoStackId, null)
-            : DocumentPlacementPolicy.Decide(host.Service.Current, host.Adapter.ActiveSurfaceId);
+            : zoneRule is { } zone
+                ? new DocumentPlacement(ZonesToTree.StackIdOf(zone), null)
+                : DocumentPlacementPolicy.Decide(host.Service.Current, host.Adapter.ActiveSurfaceId);
         if (placement is null) { return noPaneMessage; }
 
         LayoutResult result;
         string mode;
         if (placement.TabIntoStackId is { } tabStackId)
         {
-            mode = "tab";
+            mode = zoneRule is null ? "tab" : "zone-rule";
             result = host.Service.Apply(new LayoutOperation.AddSurface(tabStackId, surface));
         }
         else
@@ -1867,7 +1910,7 @@ public sealed class WorkbenchShell : IDisposable
 
         if (!applied)
         {
-            Announcer.Announce(RefusedReconcileAnnouncement(before));
+            Announcer.Announce(RefusedReconcileAnnouncement());
         }
     }
 
@@ -1878,23 +1921,14 @@ public sealed class WorkbenchShell : IDisposable
     /// <para>A refused reconcile means the model is untouched and the next render will put the panes
     /// back where they were — the user's drag is going to be undone. That was silent: no message, no
     /// log, no visible difference from a drag that simply did not take.</para>
-    /// <para>The collapsed-zone case is named because it is <b>measured</b>, not guessed: a collapsed
-    /// tool zone that still holds panes is not rendered, so it is absent from the view the reconcile
-    /// reads, the surface-set guard sees surfaces go missing and refuses the whole reconcile — and the
-    /// same drag succeeds once the zone is expanded (ZoneBackedLayoutServiceTests). Where no collapsed
-    /// zone is holding panes, the cause is not known here and the sentence says only what is true.</para>
+    /// <para>This used to name a collapsed zone still holding panes as the cause — measured at the
+    /// time, and true then: the mapping pre-seeded such a zone empty and the surface-set guard
+    /// refused. F-1 (Rulings 83/88) made the reconcile keep what a collapsed zone holds, so that
+    /// cause is gone; what remains — a frame the mapping cannot place without guessing, or a view
+    /// that lost a surface — is not told apart here, and the sentence says only what is true.</para>
     /// </remarks>
-    private static string RefusedReconcileAnnouncement(WorkbenchLayout before)
-    {
-        var holdingCollapsed = Enum.GetValues<ZoneId>()
-            .Where(z => before.Zone(z).Collapsed && !before.Zone(z).IsEmpty)
-            .ToList();
-
-        return holdingCollapsed.Count > 0
-            ? "That pane move could not be applied — a collapsed panel still holds panes. "
-              + "Expand it and move the pane again."
-            : "That pane move could not be applied, so the panes will return to where they were.";
-    }
+    private static string RefusedReconcileAnnouncement() =>
+        "That pane move could not be applied, so the panes will return to where they were.";
 
     /// <summary>Which surfaces changed zone across a reconcile — the half that says what it DID.</summary>
     private static IReadOnlyList<string> SurfacesThatChangedZone(WorkbenchLayout before, WorkbenchLayout after)
@@ -1959,20 +1993,12 @@ public sealed class WorkbenchShell : IDisposable
     // rail hides itself.
     private void ExpandZone(DockHost host, ZoneId zone)
     {
-        var stackId = zone switch
-        {
-            ZoneId.Left => ZonesToTree.LeftStackId,
-            ZoneId.Right => ZonesToTree.RightStackId,
-            ZoneId.Bottom => ZonesToTree.BottomStackId,
-            _ => (string?)null,
-        };
-
-        if (stackId is null)
+        if (zone == ZoneId.Center)
         {
             return;
         }
 
-        host.Service.Apply(new LayoutOperation.SetStackState(stackId, StackState.Docked));
+        host.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.StackIdOf(zone), StackState.Docked));
         host.Adapter.Render();
     }
 
@@ -3097,6 +3123,12 @@ public sealed class WorkbenchShell : IDisposable
         }
 
         _sessionDocuments.Clear();
+        foreach (var console in _consoles.Values)
+        {
+            console.Dispose();
+        }
+
+        _consoles.Clear();
         _watcherPump?.Cancel();
         _watcherPump?.Dispose();
         _watcherHost?.Dispose();
@@ -3131,13 +3163,25 @@ public sealed class WorkbenchShell : IDisposable
 
         var surfaceId = RegisterSessionDocument(config);
 
-        // A session document is Coding's kind (ADR-0030): it opens in host A, and the seam brings
-        // host A's body on screen if another body is showing (US-C5, document first).
-        return OpenReferenceDocument(
-            ResolveHost(Coding, Sessions.SessionDocumentSurface.Kind),
+        // A session document is Coding's kind (ADR-0030): it opens in host A — in the Left zone by
+        // the row's zone rule (Ruling 83), docked — and the seam brings host A's body on screen if
+        // another body is showing (US-C5, document first).
+        var host = ResolveHost(Coding, Sessions.SessionDocumentSurface.Kind);
+        var said = OpenReferenceDocument(
+            host,
             new Surface(surfaceId, Sessions.SessionDocumentSurface.Kind, config.Name),
             $"Session “{config.Name}” opened.",
             "There is no pane to open a session document in.");
+
+        // Opening a session focuses it — you open it to type in it (the terminal openers' rule;
+        // DESIGN.md: "the first action is the editor at Left, where focus lands"). The view's
+        // active content would otherwise stay on the Center's placeholder, the pre-render active.
+        if (host.Service.Zones.FindZoneOf(surfaceId) is not null)
+        {
+            host.Adapter.ActivateInView(surfaceId);
+        }
+
+        return said;
     }
 
     /// <summary>
@@ -3233,6 +3277,10 @@ public sealed class WorkbenchShell : IDisposable
             // one key is the shape that lets them stop agreeing (DM7).
             _sessionDocuments[document.SurfaceId] = document;
 
+            // Ruling 89: the header's Console toggle and a turn's "Open the log" open the session's
+            // Console as a document in the Center through the shell, never beside the thread.
+            document.ConsoleRequested = ordinal => Announcer.Announce(OpenSessionConsole(document, ordinal));
+
             // A surface the saved arrangement restored BEFORE this session was reopened holds the
             // factory's "No session is open" island, and the reconcile reuses a pane's content
             // unless something names it for rebuild (DC-029). Nothing did, so the reopen activated
@@ -3244,6 +3292,146 @@ public sealed class WorkbenchShell : IDisposable
         }
 
         return surfaceId;
+    }
+
+    /// <summary>
+    /// A host's pane content: the Center's empty copy for the projection's placeholder — derived
+    /// from THIS host's zones and the live session registry at every render (Ruling 83 condition 2;
+    /// <see cref="CenterEmptyState"/>) — else the factory's surface.
+    /// </summary>
+    private FrameworkElement ContentFor(Perspective row, Surface surface)
+    {
+        if (!string.Equals(surface.SurfaceId, ZonesToTree.WelcomePlaceholder.SurfaceId, StringComparison.Ordinal))
+        {
+            return _factory.Create(surface);
+        }
+
+        var host = Hosts.First(h => h.Row == row);
+        var copy = CenterEmptyState.CopyFor(row, host.Service.Zones, _sessionDocuments.ContainsKey);
+        return SurfaceChrome.WrapAsIsland(CenterEmptyState.Build(copy, () => Execute("session.new")));
+    }
+
+    /// <summary>
+    /// The console document's content for a <c>console</c> surface (the factory's resolver): the
+    /// session document's own split, hosted; null when no live session is behind the surface.
+    /// </summary>
+    private FrameworkElement? ConsoleFor(Surface surface)
+    {
+        if (Sessions.ConsoleDocumentHost.SessionIdOf(surface.SurfaceId) is not { } sessionId
+            || !_sessionDocuments.TryGetValue(Sessions.SessionDocumentSurface.SurfaceIdFor(sessionId), out var document))
+        {
+            return null;
+        }
+
+        if (_consoles.TryGetValue(surface.SurfaceId, out var open))
+        {
+            return open;
+        }
+
+        var host = new Sessions.ConsoleDocumentHost(document, at: null);
+        _consoles[surface.SurfaceId] = host;
+        return host;
+    }
+
+    /// <summary>
+    /// Opens the session's Console as a document in the Center zone, or focuses the one already
+    /// open (Ruling 89): identity <c>console:&lt;sessionId&gt;</c>, caption <i>Console — &lt;session&gt;</i>,
+    /// one per session, never inside the Left stack — a sibling tab when the session is itself in
+    /// the Center. Returns what to announce.
+    /// </summary>
+    /// <param name="document">The session whose Console opens.</param>
+    /// <param name="ordinal">A turn to land the caret on (<i>Open the log</i>), or null to keep it.</param>
+    private string OpenSessionConsole(Sessions.SessionDocumentSurface document, int? ordinal)
+    {
+        var host = HostOf(document.SurfaceId) ?? Coding;
+        ReconcileViewIntoModel(host);
+
+        var sessionId = Sessions.SessionDocumentSurface.SessionIdOf(document.SurfaceId) ?? document.SurfaceId;
+        var consoleId = Sessions.ConsoleDocumentHost.SurfaceIdFor(sessionId);
+
+        if (host.Service.Zones.FindZoneOf(consoleId) is { } holder)
+        {
+            return ShowOpenConsole(host, consoleId, holder, ordinal);
+        }
+
+        var result = host.Service.Apply(new LayoutOperation.AddSurface(
+            ZonesToTree.StackIdOf(ZoneId.Center),
+            new Surface(consoleId, Sessions.ConsoleDocumentHost.Kind, Sessions.ConsoleDocumentHost.CaptionFor(document.Model.Title))));
+        if (result.Applied)
+        {
+            OpeningDocument(host);   // document first, then the switch (US-C5)
+        }
+
+        WorkbenchDiagnostics.LayoutMutation("open-console", "zone-rule", consoleId, host.Adapter.ActiveSurfaceId, host.Service.Current);
+        host.Adapter.Render();
+
+        return result.Applied ? FocusConsole(host, consoleId, ordinal, "Console open") : result.Announcement;
+    }
+
+    /// <summary>A second toggle focuses the one open console (one per session); a collapsed zone holding it is expanded first.</summary>
+    private string ShowOpenConsole(DockHost host, string consoleId, ZoneId holder, int? ordinal)
+    {
+        if (host.Service.Zones.Zone(holder).Collapsed)
+        {
+            ExpandZone(host, holder);
+        }
+
+        var activated = host.Service.Apply(new LayoutOperation.ActivateSurface(consoleId));
+        if (activated.Applied)
+        {
+            OpeningDocument(host);   // showing is opening from the operator's side
+        }
+
+        host.Adapter.Render();
+        return FocusConsole(host, consoleId, ordinal, "Console shown");
+    }
+
+    /// <summary>Focuses the rendered console — at <paramref name="ordinal"/>'s heading when given — and checks the header's toggle; the sentence carries the split's status.</summary>
+    private string FocusConsole(DockHost host, string consoleId, int? ordinal, string said)
+    {
+        host.Adapter.ActivateInView(consoleId);
+        if (!_consoles.TryGetValue(consoleId, out var console))
+        {
+            return said + ".";
+        }
+
+        if (ordinal is not null)
+        {
+            console.ShowAt(ordinal);
+        }
+
+        console.Split.FocusCurrentItem();
+        if (SessionDocumentOf(consoleId) is { } document)
+        {
+            document.ConsoleToggle.IsChecked = true;
+        }
+
+        return said + ", " + console.Split.Status + ".";
+    }
+
+    /// <summary>
+    /// After a render closed a surface (the adapter's funnel): a session document leaving takes its
+    /// console with it; a console leaving releases the split it hosted and unchecks the toggle.
+    /// </summary>
+    private void OnSurfaceClosed(DockHost host, string surfaceId)
+    {
+        if (_consoles.Remove(surfaceId, out var console))
+        {
+            console.Dispose();
+            if (SessionDocumentOf(surfaceId) is { } owner)
+            {
+                owner.ConsoleToggle.IsChecked = false;
+            }
+
+            return;
+        }
+
+        if (Sessions.SessionDocumentSurface.SessionIdOf(surfaceId) is { } sessionId
+            && host.Service.Zones.FindZoneOf(Sessions.ConsoleDocumentHost.SurfaceIdFor(sessionId)) is not null)
+        {
+            host.Service.Apply(new LayoutOperation.CloseSurface(Sessions.ConsoleDocumentHost.SurfaceIdFor(sessionId)));
+            host.Adapter.Render();
+        }
     }
 
     /// <summary>

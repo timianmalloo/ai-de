@@ -126,9 +126,10 @@ public sealed class PerspectiveShell
     /// <summary>
     /// The surface a switch to <paramref name="host"/>'s perspective lands focus on (spec §C5): the
     /// active tab of the row's <see cref="Perspective.Landing"/> zone when the row names one and the
-    /// arrangement has that zone open with content; else the body's active surface as the view
-    /// reports it. The window's <see cref="EntryFocus"/> reads this, then moves focus into that
-    /// surface's content.
+    /// arrangement has that zone open with content; else the Center's active tab — the document
+    /// region, and for an empty Center its empty copy (the placeholder the shell renders, Ruling 83
+    /// condition 2); else the body's active surface as the view reports it. The window's
+    /// <see cref="EntryFocus"/> reads this, then moves focus into that surface's content.
     /// </summary>
     public static string? LandingSurfaceFor(DockHost host)
     {
@@ -141,6 +142,11 @@ public sealed class PerspectiveShell
             {
                 return landing.SurfaceId;
             }
+
+            // The landing zone is empty or collapsed: the Center's active tab is a chosen landing
+            // where the view's "active" is whichever pane realized last (DC-194).
+            var center = host.Service.Zones.Zone(ZoneId.Center);
+            return center.IsEmpty ? ZonesToTree.WelcomePlaceholder.SurfaceId : FirstActive(center.Content)?.SurfaceId ?? host.Adapter.ActiveSurfaceId;
         }
 
         return host.Adapter.ActiveSurfaceId;

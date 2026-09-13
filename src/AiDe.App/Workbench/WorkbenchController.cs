@@ -101,6 +101,15 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     /// </remarks>
     public Func<string?, int, CanvasFocusResult>? SessionRegionCycle { get; set; }
 
+    /// <summary>
+    /// The shell's <c>session.console</c> (Ruling 89): given the focused surface id, opens or
+    /// focuses that session's Console document in the Center and returns what to announce; the
+    /// shell resolves the session from the focused surface (a session document, or its console).
+    /// A delegate for the same reason as <see cref="SessionRegionCycle"/>: the documents are the
+    /// shell's registry, not the controller's.
+    /// </summary>
+    public Func<string?, string>? SessionConsoleRequested { get; set; }
+
     /// <summary>Runs a catalog command by id. Returns false when the id is unknown.</summary>
     public bool Execute(string commandId)
     {
@@ -175,6 +184,12 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
 
             case "session.cycleRegionBack":
                 return CycleSessionRegion(-1);
+
+            case "session.console":
+                announcer.Announce(SessionConsoleRequested is null
+                    ? "No session document is focused."
+                    : SessionConsoleRequested(FocusedSurfaceId));
+                return true;
 
             case "workbench.dispatchPrompt":
                 return OpenPromptBar();

@@ -210,12 +210,23 @@ public sealed class WorkbenchAdapter
         }
     }
 
+    /// <summary>
+    /// Raised after a render for each surface the model no longer holds — a tab the operator closed,
+    /// a document a command closed, every pre-render surface after a whole-arrangement replacement
+    /// — with the content that rendered it (already disposed when it was disposable). The one funnel
+    /// every close passes through: AvalonDock's own close, the keyboard's, the shell's all end in a
+    /// render, which is why the shell listens here for a session document leaving (its console
+    /// closes with it, Ruling 89) rather than at each caller.
+    /// </summary>
+    public event Action<string, FrameworkElement?>? SurfaceClosed;
+
     public void Render()
     {
         // Preserve which surface is active across the layout swap. Replacing Manager.Layout wholesale
         // otherwise drops AvalonDock's active-content tracking, so focus snaps to the first document
         // (the Explorer) — the "opening/closing a pane stole focus to explore" reports (#3-focus, #11).
         var preActive = ActiveSurfaceId;
+        var closed = new List<(string Id, FrameworkElement? Content)>();
 
         // Reconcile, do not rebuild (DC-029). Reuse the content element already realized for each
         // surface that still exists, so a mutation to ONE pane (opening a terminal, splitting,
@@ -236,7 +247,13 @@ public sealed class WorkbenchAdapter
                     continue;
                 }
 
-                if (keep.Contains(id) && !_pendingRebuild.Contains(id))
+                // The Center's placeholder is REBUILT on every render: its content is the empty copy
+                // the shell derives from the model — "No session open" / "The session is docked at
+                // the left" — and a reused element would keep the sentence of the render before
+                // (Ruling 83 condition 2). It holds no resource and no operator state.
+                var placeholder = string.Equals(id, ZonesToTree.WelcomePlaceholder.SurfaceId, StringComparison.Ordinal);
+
+                if (keep.Contains(id) && !_pendingRebuild.Contains(id) && !placeholder)
                 {
                     if (!reuse.ContainsKey(id))
                     {
@@ -246,14 +263,22 @@ public sealed class WorkbenchAdapter
                         reuse[id] = fe;
                     }
                 }
-                else if (fe is IDisposable disposable)
+                else
                 {
-                    // A surface that was closed - or one explicitly marked for rebuild (a workspace-
-                    // dependent read pane after the workspace attached) - is ended NOW rather than at a
-                    // finalizer, so a closed terminal's process stops deterministically. A rebuilt pane
-                    // that owns no resource (the watcher read surfaces) simply drops here and BuildPane
-                    // reconstructs it against the new content factory.
-                    disposable.Dispose();
+                    if (fe is IDisposable disposable)
+                    {
+                        // A surface that was closed - or one explicitly marked for rebuild (a workspace-
+                        // dependent read pane after the workspace attached) - is ended NOW rather than at a
+                        // finalizer, so a closed terminal's process stops deterministically. A rebuilt pane
+                        // that owns no resource (the watcher read surfaces) simply drops here and BuildPane
+                        // reconstructs it against the new content factory.
+                        disposable.Dispose();
+                    }
+
+                    if (!keep.Contains(id) && !placeholder)
+                    {
+                        closed.Add((id, fe));
+                    }
                 }
             }
         }
@@ -277,6 +302,13 @@ public sealed class WorkbenchAdapter
         {
             _rendering = false;
             _lastSeenArrangement = ViewArrangementSignature() ?? string.Empty;
+        }
+
+        // After the render has settled, so a handler that closes a dependent surface and renders
+        // again nests a whole render rather than re-entering this one.
+        foreach (var (id, content) in closed)
+        {
+            SurfaceClosed?.Invoke(id, content);
         }
     }
 
@@ -811,6 +843,14 @@ public sealed class WorkbenchAdapter
             .SelectMany(s => s.Surfaces)
             .ToDictionary(s => s.SurfaceId, StringComparer.Ordinal);
 
+        // The Center's placeholder is a document in the VIEW for as long as the last render left it
+        // there, whatever the model's Center holds now: a drag into the empty Center reconciles the
+        // model (no re-render — the view already shows the drop), so the projection stops carrying
+        // the placeholder while the view still does. Always readable, never counted (F-1; O-2's
+        // second half was "view-unreadable" without this — a silent revert).
+        var placeholder = ZonesToTree.WelcomePlaceholder.SurfaceId;
+        known.TryAdd(placeholder, ZonesToTree.WelcomePlaceholder);
+
         var mapped = MapNode(root.RootPanel, known);
         if (mapped is null) { return null; }
 
@@ -818,8 +858,8 @@ public sealed class WorkbenchAdapter
 
         // The strong guard: a reconcile that lost, duplicated or invented a surface is a corrupt
         // reconcile, and rendering it would drop a pane. Compare the surface SET, and refuse if it moved.
-        var before = known.Keys.ToHashSet(StringComparer.Ordinal);
-        var after = reconciled.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.SurfaceId).ToList();
+        var before = known.Keys.Where(id => id != placeholder).ToHashSet(StringComparer.Ordinal);
+        var after = reconciled.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.SurfaceId).Where(id => id != placeholder).ToList();
         if (after.Count != before.Count || !after.ToHashSet(StringComparer.Ordinal).SetEquals(before))
         {
             return null;
