@@ -19,7 +19,7 @@ public sealed class AtlasReaderView : UserControl
 {
     public const int PageSize = 64;
     private readonly IAtlasQueries _queries;
-    private readonly string _manifestToken;
+    private string _manifestToken;
     private readonly ObservableCollection<AtlasFileNode> _roots = [];
     private readonly ObservableCollection<OutlineRow> _outlineRows = [];
     private readonly List<BackFrame> _back = [];
@@ -39,6 +39,7 @@ public sealed class AtlasReaderView : UserControl
     private bool _restoringControls;
     private bool _unloaded;
     private int _loadedRows;
+    private int? _nextOffset;
     private long _requestSequence;
 
     public AtlasReaderView(IAtlasQueries queries, string manifestToken)
@@ -72,6 +73,7 @@ public sealed class AtlasReaderView : UserControl
         _bounds.Text = "Totals not recorded yet.";
         _loadMore.Visibility = Visibility.Collapsed;
         _loadedRows = 0;
+        _nextOffset = null;
         _roots.Clear();
         _back.Clear();
         _historyEvicted = false;
@@ -85,7 +87,7 @@ public sealed class AtlasReaderView : UserControl
 
     public Task LoadMoreAsync(CancellationToken cancellationToken = default)
     {
-        if (!CanLoadMore)
+        if (!CanLoadMore || _nextOffset is not { } offset)
         {
             return Task.CompletedTask;
         }
@@ -93,7 +95,7 @@ public sealed class AtlasReaderView : UserControl
         var (sequence, token) = BeginRequest(cancellationToken);
         _status.Text = "Loading more repository files…";
         _loadMore.IsEnabled = false;
-        return LoadPageAsync(sequence, _loadedRows, token);
+        return LoadPageAsync(sequence, offset, token);
     }
 
     public async Task SelectFileAsync(AtlasFileNode file, CancellationToken cancellationToken = default)
@@ -285,13 +287,14 @@ public sealed class AtlasReaderView : UserControl
             }
 
             _loadedRows = checked(page.Request.Offset + page.Files.Length);
+            _nextOffset = page.NextOffset;
             _status.Text = page.Files.Length == 0 && offset == 0
                 ? "No visible files in this scope."
                 : $"Showing {_loadedRows} Atlas file rows.";
-            _bounds.Text = BoundsTextFor(page.Bounds) + (page.Bounds.TotalState is AtlasDenominatorState.Known
-                ? "" : " Further pages unavailable: continuation not supplied.");
-            _loadMore.Visibility = MoreAvailable(page) ? Visibility.Visible : Visibility.Collapsed;
-            _loadMore.IsEnabled = MoreAvailable(page);
+            _bounds.Text = BoundsTextFor(page.Bounds) + (page.NextOffset is null
+                ? " No further retained page; this does not establish scope completeness." : "");
+            _loadMore.Visibility = page.NextOffset.HasValue ? Visibility.Visible : Visibility.Collapsed;
+            _loadMore.IsEnabled = page.NextOffset.HasValue;
         }
         catch (OperationCanceledException)
         {
@@ -336,6 +339,15 @@ public sealed class AtlasReaderView : UserControl
             }
 
             ApplySource(selection);
+            _status.Text = SelectionStatus(selection);
+            _bounds.Text = BoundsTextFor(selection.Bounds) + " " + CoverageText(selection.Coverage);
+            if (!IsCurrent(sequence) || token.IsCancellationRequested
+                || selection.Source.State is not SourceProjectionState.IndexedMatch || selection.Source.Page is null)
+            {
+                return false;
+            }
+
+            _manifestToken = selection.ManifestToken;
             _receiptToken = selection.ReceiptToken;
             _currentFile = selection.FileValue;
             _pendingPrevious = null;
@@ -350,8 +362,6 @@ public sealed class AtlasReaderView : UserControl
                 _back.Add(previous);
             }
 
-            _status.Text = SelectionStatus(selection);
-            _bounds.Text = BoundsTextFor(selection.Bounds) + " " + CoverageText(selection.Coverage);
             _backButton.IsEnabled = _back.Count > 0;
             return true;
         }
@@ -569,10 +579,6 @@ public sealed class AtlasReaderView : UserControl
             AtlasDenominatorState.Withheld => $"Returned {bounds.ReturnedRows} rows; total withheld ({bounds.OmissionReason}); limit {bounds.EffectiveLimit}/{bounds.RequestedLimit}; bytes {bounds.ReturnedBytes}.",
             _ => throw new ArgumentOutOfRangeException(nameof(bounds), bounds.TotalState, "Unsupported denominator state."),
         };
-
-    private static bool MoreAvailable(InventoryPage page) =>
-        page.Bounds.TotalState is AtlasDenominatorState.Known && page.Files.Length > 0
-        && (long)page.Request.Offset + page.Files.Length < page.Bounds.TotalCount;
 
     private static string CoverageText(SelectionCoverage coverage) =>
         coverage.State switch
