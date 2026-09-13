@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Nodes;
@@ -242,6 +243,101 @@ public sealed class TheCompileModeLadderIsGatedTests : IDisposable
     }
 
     /// <summary>
+    /// <c>SetCompileMode</c> defaults its trigger to <c>operator</c> (the settings sheet is the only
+    /// caller today) and emits <c>compile.mode.changed{from, to, trigger}</c> exactly once for a real
+    /// transition — never when the mode does not actually change (setting the same mode twice).
+    /// </summary>
+    [Fact]
+    public void SetCompileModeDefaultsToOperatorAndEmitsOnlyOnARealTransition()
+    {
+        WriteArtifact(frameLog: CleanFrames);
+        var store = new SessionConfigStore(_root, SessionId.New());
+        store.Create("s", "w", ["claude-code"], DateTimeOffset.UtcNow);
+
+        using var capture = ModeChangedCapture.Open();
+
+        store.SetCompileMode(CompileModes.AgenticAdvisory, Evaluate(), DateTimeOffset.UtcNow);
+        var first = Assert.Single(capture.Activities);
+        Assert.Equal(CompileModes.MechanicalOnly, first.GetTagItem("from"));
+        Assert.Equal(CompileModes.AgenticAdvisory, first.GetTagItem("to"));
+        Assert.Equal(CompileModeChangeTriggers.Operator, first.GetTagItem("trigger"));
+
+        // Same mode again: no real transition, so no second event.
+        store.SetCompileMode(CompileModes.AgenticAdvisory, Evaluate(), DateTimeOffset.UtcNow);
+        Assert.Single(capture.Activities);
+    }
+
+    /// <summary>An explicit trigger (the gate/ring/drift path) is carried onto the emitted event, not silently rewritten to <c>operator</c>.</summary>
+    [Fact]
+    public void SetCompileModeCarriesAnExplicitTrigger()
+    {
+        WriteArtifact(frameLog: CleanFrames);
+        var store = new SessionConfigStore(_root, SessionId.New());
+        store.Create("s", "w", ["claude-code"], DateTimeOffset.UtcNow);
+
+        using var capture = ModeChangedCapture.Open();
+
+        store.SetCompileMode(CompileModes.AgenticAdvisory, Evaluate(), DateTimeOffset.UtcNow, CompileModeChangeTriggers.Ring);
+
+        var activity = Assert.Single(capture.Activities);
+        Assert.Equal(CompileModeChangeTriggers.Ring, activity.GetTagItem("trigger"));
+    }
+
+    /// <summary>A trigger outside the closed four-word vocabulary is a programming error, not a domain refusal.</summary>
+    [Fact]
+    public void SetCompileModeRejectsAnUnknownTrigger()
+    {
+        WriteArtifact(frameLog: CleanFrames);
+        var store = new SessionConfigStore(_root, SessionId.New());
+        store.Create("s", "w", ["claude-code"], DateTimeOffset.UtcNow);
+
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () => store.SetCompileMode(CompileModes.AgenticAdvisory, Evaluate(), DateTimeOffset.UtcNow, "operator-ish"));
+    }
+
+    /// <summary>Listens for <c>compile.mode.changed</c> activities on the compile signal source.</summary>
+    private sealed class ModeChangedCapture : IDisposable
+    {
+        private readonly ActivityListener _listener;
+        private readonly List<Activity> _activities = [];
+
+        private ModeChangedCapture()
+        {
+            _listener = new ActivityListener
+            {
+                ShouldListenTo = source => source.Name == CompileSignal.SourceName,
+                Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
+                ActivityStarted = activity =>
+                {
+                    if (activity.OperationName == CompileEventKinds.ModeChanged)
+                    {
+                        lock (_activities)
+                        {
+                            _activities.Add(activity);
+                        }
+                    }
+                },
+            };
+            ActivitySource.AddActivityListener(_listener);
+        }
+
+        public IReadOnlyList<Activity> Activities
+        {
+            get
+            {
+                lock (_activities)
+                {
+                    return [.. _activities];
+                }
+            }
+        }
+
+        public static ModeChangedCapture Open() => new();
+
+        public void Dispose() => _listener.Dispose();
+    }
+
+    /// <summary>
     /// The installed triple is read from the install root's own bytes: a one-byte change to
     /// <c>acp-agent.js</c> changes the adapter sha and nothing else; a missing CLI reads
     /// <i>not recorded</i>, never a plausible sha.
@@ -277,5 +373,24 @@ public sealed class TheCompileModeLadderIsGatedTests : IDisposable
         Assert.Equal(["mcp__pd5-fixture__write_note"], recount.ToolNames);
         Assert.Equal(4, recount.Frames);
         Assert.Equal(1, recount.Torn);
+    }
+
+    /// <summary>
+    /// The canonicalisation fixture (CV-4's red): the pin's sha is <b>raw file bytes, SHA-256, lowercase
+    /// hex</b> — nothing else. <c>tools/compile-eval/ring.py</c>'s <c>--self-test</c> hashes the same
+    /// bytes with Python's <c>hashlib.sha256(...).hexdigest()</c> and asserts the same constant, so a
+    /// canonicalisation drift between the two languages (a BOM, a trailing newline, upper-casing) is
+    /// caught on both sides rather than only where it happens to be exercised. The pack half (a
+    /// craft-profile sha fixture) is a finding for <c>ai-forward</c>, recorded, not built here.
+    /// </summary>
+    [Fact]
+    public void TheCanonicalisationFixtureMatchesRingPysHash()
+    {
+        var fixturePath = Path.Combine(_root, "canonicalisation-fixture.bin");
+        File.WriteAllBytes(fixturePath, "the compile pin canonicalisation fixture (CV-4)\n"u8.ToArray());
+
+        var sha = CompilePin.Sha256(fixturePath);
+
+        Assert.Equal("59ca002ce13e199384243973f49f5cf3fb0d39c759f98fcbf79579f1e63c5488", sha);
     }
 }

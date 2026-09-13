@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T21:03:07Z",
+  "generated": "2026-09-13T21:52:03Z",
   "audit": [
     {
       "actor": null,
@@ -15038,6 +15038,38 @@ window.AUDIT_DATA = {
         "verification_path": true,
         "verification_executed": true,
         "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M2EC2VXM0AW7ASW809YB6RAB",
+      "shortname": "cv-4-admission-code",
+      "datetime": "2026-09-13T21:51:57Z",
+      "session": "cv-4",
+      "prompt": "CV-4: admission's code -- gate 2's reader (recompute every floor from num/den, never trust a verdict), tools/compile-eval/ring.py, the drift watermark readmitted_at, compile.mode.changed{from,to,trigger} (Addendum D slice D-3's code only; A14.4 admission, ADR-0036 gates 2/3; Ruling 68); the gate itself is a calendar event, not this track.",
+      "summary": "CV-4: admission's code. CompileAdmissionGate (new, Core/Sessions) reads compile-eval-admission.json from the machine-level ~/.aide/proof/ directory and recomputes five ADR-0036 Gate 2 floors from the report's own numerator/denominator pairs (split witness: holdout>=50, disjoint, ordered; schema_fail<=2%; applied_denied=0; tool_calls=0; degraded<=5%, Ruling 76) - a verdict-shaped key (verdict/met/passed/admitted/selectable) is never read, at any nesting, proven by planted-verdict tests in both directions. Wired into CompileModeGate's Gate 2 branch, replacing CV-3's always-refuse placeholder; the no-report case still refuses CE-0020 unchanged (US-D11 b2 stays green). Six new CE- codes (CE-0024..CE-0029), contiguous. tools/compile-eval/ring.py (new, stdlib, imports score.py rather than reimplementing) re-scores on a change of the (adapter sha, CLI sha, craft-profile sha) triple or on a model_observed != model_configured mismatch (CV-3's residual, independent of the triple), demotes agentic to agentic-advisory on a regression with compile.mode.changed{trigger: ring|drift}, never re-demotes on unchanged evidence (no flapping), and sets the drift watermark readmitted_at on a later passing re-score. compile.mode.changed joins the compile.* vocabulary (CompileEventKinds.ModeChanged, CompileModeChangeTriggers, CompileSignal.ModeChanged); SessionConfigStore.SetCompileMode gains a trigger parameter (default operator) and emits the event only on a real transition. A canonicalisation fixture (one fixed byte string, one SHA-256 hex constant) is asserted identical by CompilePin.Sha256 (C#) and ring.py's self-test (Python). Gates: dotnet build Core+App 0/0 warnings/errors; AiDe.Core.Tests 2615 passed (+1 pre-existing skip); AiDe.App.Tests 895 passed (matches the recorded floor, no App-layer test added); ring.py --self-test 8/8; score.py --self-test unchanged 3/3; verify-id-allocators CE family at 29 contiguous; run-verify-gates green after regenerate-derived. Two AI Systems Engineer / Test Architect reviews (read-only, fan-out 2) both PASS. Findings recorded as placeholders (conductor allocates): the ring's triple (adapter/CLI/profile sha) differs from ADR-0036 Gate 3's literal triple (contract_version/prompt_sha/profile.sha) - built to the plan row's explicit triple, discrepancy recorded, full prompt-version A6 ring left as a future track; the audit start marker was not set at grounding this run, so duration_seconds understates true elapsed time. Not touched (named, out of file-ownership): the settings-row UI control (SessionDocumentSurface.cs, a future slice), writing outcome:\"suspect\" into the called row on a model mismatch (ComposerSendGate.cs, outside CV-4's lifetime hand-off), the build.yml CI step for ring.py --self-test (a seam request). The gate itself is not this track: 50 scored + 50 holdout real envelopes accrue through operator use over weeks; a calendar event, not a session.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/compile-admission-code.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Gate 2's reader recomputing every A14.4 floor from num/den (never a verdict); ring.py's A6 re-score/demote/re-admit on a triple change or a model-mismatch drift; the compile.mode.changed{from,to,trigger} vocabulary and the readmitted_at watermark -- Addendum D slice D-3's code only",
+      "done_when": "CompileAdmissionGate wired into CompileModeGate's Gate 2 branch and covered by reds incl. a planted-verdict refusal and a sub-50 holdout refusal; ring.py --self-test green incl. demote/no-flap/readmit and the drift trigger on an unchanged triple; the canonicalisation fixture matches in both languages; CE- family contiguous; both test projects green at their recorded floors; two read-only reviews (AI Systems Engineer, Test Architect) pass; Proof Pack written; pushed to lane/conversation-cv4",
+      "tier": "T1",
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "1c29b5d5ad1364c8bc608cc9311535d2e2018ec5",
+        "short": "1c29b5d5a",
+        "branch": "lane/conversation-cv4",
+        "pushed": null
       }
     }
   ],

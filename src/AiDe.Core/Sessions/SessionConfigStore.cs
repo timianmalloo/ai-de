@@ -117,22 +117,36 @@ public sealed class SessionConfigStore
     /// <summary>
     /// Selects the session's <c>compile_mode</c> for new envelopes, <b>through the gate</b>
     /// (ADR-0036 rule 1): a rung the evaluated <paramref name="availability"/> does not admit is
-    /// refused with the gate's own code and the file is not touched. Emits <c>session.config</c>.
+    /// refused with the gate's own code and the file is not touched. Emits <c>session.config</c>,
+    /// and — when the mode actually changes — <c>compile.mode.changed{from, to, trigger}</c>
+    /// (CV-4; ADR-0036's transition history).
     /// </summary>
+    /// <param name="trigger">
+    /// Why the mode is changing — one of <see cref="PromptCompilation.CompileModeChangeTriggers.All"/>.
+    /// Defaults to <see cref="PromptCompilation.CompileModeChangeTriggers.Operator"/> (the settings
+    /// sheet is the only caller today); the gate/ring/drift triggers are for an automated demotion
+    /// or re-admission to name its own cause.
+    /// </param>
     /// <exception cref="PromptCompilation.EnvelopeStoreException">
     /// <see cref="PromptCompilation.EnvelopeStoreErrorCodes.CompileModeUnknown"/> for a word outside
-    /// the ladder; otherwise the refusal the gate computed (<c>CE-0016</c>–<c>CE-0020</c>).
+    /// the ladder; otherwise the refusal the gate computed (<c>CE-0016</c>–<c>CE-0029</c>).
     /// </exception>
-    public SessionConfig SetCompileMode(string compileMode, CompileModeAvailability availability, DateTimeOffset now)
+    public SessionConfig SetCompileMode(string compileMode, CompileModeAvailability availability, DateTimeOffset now, string trigger = PromptCompilation.CompileModeChangeTriggers.Operator)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(compileMode);
         ArgumentNullException.ThrowIfNull(availability);
+        ArgumentException.ThrowIfNullOrWhiteSpace(trigger);
 
         if (!CompileModeGate.Modes.Contains(compileMode, StringComparer.Ordinal))
         {
             throw new PromptCompilation.EnvelopeStoreException(
                 PromptCompilation.EnvelopeStoreErrorCodes.CompileModeUnknown,
                 $"'{compileMode}' is not a compile mode; the ladder is {string.Join(" → ", CompileModeGate.Modes)}");
+        }
+
+        if (!PromptCompilation.CompileModeChangeTriggers.All.Contains(trigger, StringComparer.Ordinal))
+        {
+            throw new ArgumentOutOfRangeException(nameof(trigger), trigger, $"the trigger vocabulary is {string.Join(", ", PromptCompilation.CompileModeChangeTriggers.All)}");
         }
 
         if (availability.RefusalFor(compileMode) is { } refusal)
@@ -142,9 +156,15 @@ public sealed class SessionConfigStore
 
         lock (_gate)
         {
-            var updated = ReadConfigUnsafe() with { CompileMode = compileMode };
+            var previous = ReadConfigUnsafe();
+            var updated = previous with { CompileMode = compileMode };
             WriteConfigUnsafe(updated);
             AppendEventUnsafe(SessionEventKinds.Config, updated, now);
+            if (!string.Equals(previous.CompileMode, compileMode, StringComparison.Ordinal))
+            {
+                PromptCompilation.CompileSignal.ModeChanged(previous.CompileMode, compileMode, trigger);
+            }
+
             return updated;
         }
     }

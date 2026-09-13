@@ -2367,7 +2367,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.PromptCompilation: 46 types, 164 members, 81% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.PromptCompilation: 47 types, 177 members, 82% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2380,7 +2380,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6e8cf80b49ffa025ac66f277082fb4c9f8558ac58d976d9a36702170f5eda81f"
+      "sourceSha256": "57f65d0cefb79e90e3639d8c9e5b6749c176110e8829041e6d1da41f96250636"
     },
     {
       "id": "api-aide-core-sessions",
@@ -2392,7 +2392,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Sessions: 26 types, 73 members, 90% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Sessions: 27 types, 80 members, 91% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2405,7 +2405,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "57901c7ec3b6089b51e72b9e36020fe1bc4d2207d83b9eb83ddc8f34abff58b5"
+      "sourceSha256": "45bd38ff2bbc8a1e58bfe87adb53f3d4126c856892bc00eea98344a50523c4ac"
     },
     {
       "id": "api-aide-core-store",
@@ -14646,6 +14646,58 @@ window.DOCS_INDEX = {
       "sourceSha256": "a92734fa7845b6e7ad4a33a691fe588436959f29a8ab7340d01343356a9def94"
     },
     {
+      "id": "proof-compile-admission-code",
+      "path": "docs/proof/compile-admission-code.md",
+      "title": "Proof Pack — CV-4, admission's code: Gate 2's reader recomputing every floor from num/den, ring.py's A6 re-score/demote/re-admit, the drift watermark readmitted_at, and compile.mode.changed{from,to,trigger}",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-d",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [],
+      "summary": "Evidence for CV-4 on the Conversation lane (Addendum D slice D-3, code only): `CompileAdmissionGate` reads `compile-eval-admission.json` and recomputes five floors from the report's own numerator/denominator pairs — the split witness (holdout of 50, disjoint, ordered), `schema_fail`, the `applied_denied`/`tool_calls` invariants, and Ruling 76's degraded-rate floor — never a stored verdict, wired into `CompileModeGate`'s Gate 2 branch in place of CV-3's placeholder refusal. `tools/compile-eval/ring.py` re-scores on a triple change or a `model_observed`/`model_configured` mismatch (CV-3's residual), demotes with `trigger: ring|drift`, and sets the drift watermark `readmitted_at` on a later passing re-score. `compile.mode.changed{from,to,trigger}` joins the `compile.*` vocabulary and `SetCompileMode` emits it on every real transition. A canonicalisation fixture asserts the same SHA-256-over-raw-bytes constant from both the C# and the Python side.",
+      "tags": [
+        "proof-pack",
+        "conversation-lane",
+        "cv-4",
+        "addendum-d",
+        "compile",
+        "gate-2",
+        "gate-3",
+        "eval-harness",
+        "drift",
+        "adr-0036"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0036-compile-mode-ladder-deployment-gates",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-compile-call",
+          "rel": "refines"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "feb6946bcd2afa29d7b674e9d44e0b059d4487cd001e3cc836ba818f1f4fbcce"
+    },
+    {
       "id": "proof-compile-call",
       "path": "docs/proof/compile-call.md",
       "title": "Proof Pack — CV-3, the compile call: the pin widened to mcp__*, CompileCallHost apart from the run root under one linked deadline, AuthorizeBinding, gate 1 read from the machine-level artifact, Prepare under an agentic rung, the eval harness — and PD-5's second run, which ran away and was stopped",
@@ -17678,5 +17730,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "802009db0aedf24e9b4b660a4d7e4045d26d987aabfff495e2ea9ae9f4838e03"
+  "graphSha256": "e68d45032b9d3911c744647605650d8817ba535f494e03c6706bc4ff3cb3e509"
 };

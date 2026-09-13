@@ -71,6 +71,24 @@ public static class EnvelopeStoreErrorCodes
 
     /// <summary>Gate 1: the artifact's <c>sent_meta_triple</c> is not the pin this build sends — a pin change re-runs PD-5 by construction.</summary>
     public const string PinIdentityMismatch = "CE-0023";
+
+    /// <summary>Gate 2: the admission report exists but is not readable as the <c>compile-eval-admission/1</c> contract (bad JSON, wrong contract string, or a required shape missing) — CV-4's reader.</summary>
+    public const string AdmissionReportUnreadable = "CE-0024";
+
+    /// <summary>Gate 2: the split witness fails — fewer than 50 holdout envelopes, an id shared with the sample, or the holdout preceding the sample. The holdout is judged, never the sample.</summary>
+    public const string AdmissionSplitInvalid = "CE-0025";
+
+    /// <summary>Gate 2: the recomputed <c>schema_fail</c> rate over the holdout exceeds the fixed floor (2 %, §A14.4).</summary>
+    public const string AdmissionFloorSchemaFail = "CE-0026";
+
+    /// <summary>Gate 2: the recomputed <c>applied_denied</c> invariant is non-zero over every <c>called</c> row (§A14.4; unfiltered by <c>EffectiveMode</c>).</summary>
+    public const string AdmissionFloorAppliedDenied = "CE-0027";
+
+    /// <summary>Gate 2: the recomputed <c>tool_calls</c> invariant is non-zero over every <c>called</c> row (§A14.4; unfiltered by <c>EffectiveMode</c>).</summary>
+    public const string AdmissionFloorToolCalls = "CE-0028";
+
+    /// <summary>Gate 2: the recomputed degraded rate over every model call exceeds Ruling 76's floor (X = 5 %).</summary>
+    public const string AdmissionFloorDegraded = "CE-0029";
 }
 
 /// <summary>A refusal by the envelope store, with its stable code (<see cref="EnvelopeStoreErrorCodes"/>).</summary>
