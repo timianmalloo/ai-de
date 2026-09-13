@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Text.Json.Nodes;
 using AiDe.App.Conductor;
 using AiDe.Core.AgentPlane;
 using AiDe.Core.Presentation.Composer;
@@ -94,6 +96,9 @@ public sealed class ComposerSendGate
     /// <summary>The compiled text of the last rendered view — what the operator read.</summary>
     public CompiledPrompt? RenderedView { get; private set; }
 
+    /// <summary>The projection the last <see cref="RenderView"/> computed — the facts the compile prompt states, read here rather than projected again (one producer, ADR-0033 rule 2).</summary>
+    public CompiledProjection? LastProjection { get; private set; }
+
     /// <summary>How many blocks this gate has started, across the session: the conversation's send count.</summary>
     public long BlocksSent { get; private set; }
 
@@ -114,6 +119,42 @@ public sealed class ComposerSendGate
 
     /// <summary>The last envelope this gate opened and did not submit (a stale view abandons it and the next names it in <c>supersedes</c>).</summary>
     private string? _abandoned;
+
+    /// <summary>The compile call — <see cref="CompileCallHost.CompileAsync(CompileRequest, CancellationToken)"/> in the product; a fake in a headless test. Never a second producer of the sent bytes: it yields raw text the typed boundary reads.</summary>
+    public Func<CompileRequest, CancellationToken, Task<CompileResult>> Compiler { get; set; } = (request, ct) => CompileCallHost.CompileAsync(request, ct);
+
+    /// <summary>The composer's Prepare state (§A11): <c>draft</c> · <c>preparing</c> · <c>prepared</c> · <c>stale</c>.</summary>
+    public PrepareState State { get; private set; } = PrepareState.Draft;
+
+    /// <summary>The compile line's string for the prepared envelope, or null when the line is absent (E5).</summary>
+    public string? CompileLineText { get; private set; }
+
+    /// <summary>The <c>called.outcome</c> of the prepared envelope's last call, or null when no call was made.</summary>
+    public string? LastCallOutcome { get; private set; }
+
+    /// <summary>The prepared envelope's id, or null.</summary>
+    public string? PreparedEnvelopeId => _prepared?.EnvelopeId;
+
+    /// <summary>The lines the model proposed on the prepared envelope, by name — what Prepare shows with the <i>derived</i> mark.</summary>
+    public IReadOnlyDictionary<string, string> DerivedLines => _prepared?.Derived ?? new Dictionary<string, string>(StringComparer.Ordinal);
+
+    /// <summary>How many times the compiler was called — the observable US-D5's reuse and no-reuse rows rest on.</summary>
+    public int CompilerCalls { get; private set; }
+
+    /// <summary>Whether the session's rung calls the model at all.</summary>
+    public bool IsAgenticRung => CompileMode is CompileModes.AgenticAdvisory or CompileModes.Agentic;
+
+    private Prepared? _prepared;
+    private CancellationTokenSource? _preparing;
+
+    /// <summary>The last succeeded call by <c>inputs_sha</c>: the stored derived decorations a re-prepare with unchanged inputs reuses (§A8.4) — after a failed call, nothing is stored here.</summary>
+    private readonly Dictionary<string, Prepared> _lastSuccess = new(StringComparer.Ordinal);
+
+    /// <summary>A prepared envelope: its rows (stamped or pending), the source text it was opened on, its inputs sha and the derived lines.</summary>
+    private sealed record Prepared(string EnvelopeId, List<EnvelopeEvent> Rows, string SourceText, string InputsSha, Dictionary<string, string> Derived, int? CalledSeq)
+    {
+        public Envelope Fold(bool recorded) => recorded ? Envelope.Fold(Rows)[0] : Envelope.Pending(Rows);
+    }
 
     /// <summary>Binds the session's identity: the id every <c>opened</c> row carries, the compile mode, the engine and the default class (the composer's <c>Configure</c>, from the session config and the binding).</summary>
     public void BindSession(string sessionId, string compileMode, string engineId, string defaultTaskClass)
@@ -176,9 +217,11 @@ public sealed class ComposerSendGate
         ArgumentNullException.ThrowIfNull(draft);
 
         // THE ONE PRODUCER (ADR-0033 rule 2): the view is the projection's own render over the live
-        // pre-compile — the same function Send projects the persisted envelope through. Not a
+        // pre-compile — or, once a turn is prepared and the draft unchanged, over the prepared fold
+        // (the model's kept lines included) — the same function Send projects through. Not a
         // second compile that Send then checks for agreement.
-        RenderedView = Projection.Project(PreCompile.Live(Input(draft, template)), draft, template).Compiled!;
+        LastProjection = Projection.Project(FreshlyPrepared(draft) is { } prepared ? prepared.Fold(IsRecorded) : PreCompile.Live(Input(draft, template)), draft, template);
+        RenderedView = LastProjection.Compiled!;
         return RenderedView;
     }
 
@@ -230,6 +273,23 @@ public sealed class ComposerSendGate
                 return null;
             }
 
+            // A gesture during `preparing` is ignored with its reason — no Send-now (Ruling 77).
+            if (State == PrepareState.Preparing)
+            {
+                refusal = new ComposerSendRefusal([], PreparingReason);
+                return null;
+            }
+
+            // Under an agentic rung the first gesture prepares and the second confirms: a send with
+            // nothing prepared, or prepared on other bytes, is refused here and the surface prepares.
+            var prepared = FreshlyPrepared(draft);
+            if (IsAgenticRung && prepared is null)
+            {
+                refusal = new ComposerSendRefusal([], _prepared is null ? NotPreparedReason : StaleReason);
+                State = _prepared is null ? PrepareState.Draft : PrepareState.Stale;
+                return null;
+            }
+
             var shape = draft.TurnShape;
 
             var errors = Validate(draft, template, shape);
@@ -259,11 +319,23 @@ public sealed class ComposerSendGate
 
             // THE ENVELOPE IS OPENED BY THE SEND GESTURE (§A10.1; ADR-0033 rule 2): the mechanical
             // pre-compile's rows — opened, the snapshots, the refs, the operator's lines and override —
-            // then ONE projection over the fold produces everything the request carries.
-            _stamped.Clear();
-            var envelopeId = EnvelopeIds.New();
-            var rows = PreCompile.Open(Input(draft, template) with { EngineId = context.EngineId, DefaultTaskClass = context.TaskClass }, envelopeId, _abandoned);
-            var envelope = TryAppend(rows) ? Envelope.Fold(_stamped)[0] : Envelope.Pending(rows);
+            // then ONE projection over the fold produces everything the request carries. Under an
+            // agentic rung the envelope was opened by the preparing gesture and carries the model's
+            // rows; this gesture confirms it.
+            string envelopeId;
+            Envelope envelope;
+            if (prepared is not null)
+            {
+                envelopeId = prepared.EnvelopeId;
+                envelope = prepared.Fold(IsRecorded);
+            }
+            else
+            {
+                _stamped.Clear();
+                envelopeId = EnvelopeIds.New();
+                var rows = PreCompile.Open(Input(draft, template) with { EngineId = context.EngineId, DefaultTaskClass = context.TaskClass }, envelopeId, _abandoned);
+                envelope = TryAppend(rows) ? Envelope.Fold(_stamped)[0] : Envelope.Pending(rows);
+            }
 
             var projection = Projection.Project(envelope, draft, template);
 
@@ -310,6 +382,10 @@ public sealed class ComposerSendGate
             TryAppend([new Submitted(envelopeId, Accepted: true, Refusal: null, TextSha256: projection.TextSha256!, ProjectionSha: projection.ProjectionSha, ProjectorVersion: Projection.Version)]);
             LastSubmission = new SubmittedEnvelope(envelopeId, projection.ProjectionSha, projection.TaskClassSource, Envelopes is not null && HistoryState is null);
             _abandoned = null;
+            _prepared = null;
+            State = PrepareState.Draft;
+            CompileLineText = null;
+            LastCallOutcome = null;
 
             SendCount++;
             BlocksSent++;
@@ -319,6 +395,304 @@ public sealed class ComposerSendGate
         Sent?.Invoke(request);
         return request;
     }
+
+    /// <summary>The reason a Send gesture during <c>preparing</c> is ignored (Ruling 77).</summary>
+    public const string PreparingReason = "Preparing… — press again when prepared";
+
+    /// <summary>The reason an agentic rung's first gesture prepares rather than sends.</summary>
+    public const string NotPreparedReason = "press again to prepare it";
+
+    /// <summary>The reason a Send on other bytes than the prepared ones is refused (US-D4).</summary>
+    public const string StaleReason = "your draft changed since it was prepared — press again to prepare it";
+
+    /// <summary>Whether the envelope rows reach the store.</summary>
+    private bool IsRecorded => Envelopes is { BrokenAt: null } && HistoryState is null;
+
+    /// <summary>The prepared envelope when the draft's source text is still the bytes it was opened on; null otherwise (stale, or nothing prepared).</summary>
+    private Prepared? FreshlyPrepared(ComposerDraft draft) =>
+        _prepared is { } prepared && string.Equals(prepared.SourceText, draft.SourceText, StringComparison.Ordinal) ? prepared : null;
+
+    /// <summary>
+    /// The preparing gesture under an agentic rung (§A10.1, §A11): opens the envelope, asks the
+    /// bound model for the open structure lines through <see cref="Compiler"/> — one call, one
+    /// <c>called</c> row, the model's lines as <c>derived</c> rows through the typed boundary — and
+    /// enters <c>prepared(outcome)</c>. Every non-success is a visible mechanical envelope (§A10.2);
+    /// the run still proceeds on the next gesture.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The call is skipped when nothing is open</b> (every structure line already supplied
+    /// by the operator or a template): no <c>called</c> row, zero requests, the compile line says who
+    /// supplied it. <b>A re-prepare with an unchanged <c>inputs_sha</c> after a success reuses</b> the
+    /// stored derived decorations with a <c>reused</c> receipt and zero requests; after a failed or
+    /// degraded call, it calls again (§A8.4).</para>
+    ///
+    /// <para><b>One compile in flight per draft:</b> a second gesture during <c>preparing</c> is
+    /// refused by <see cref="Send"/>; <see cref="CancelPrepare"/> cancels the call and the envelope
+    /// reads <c>cancelled</c>.</para>
+    /// </remarks>
+    public async Task<PrepareResult> PrepareAsync(ComposerSendContext context, ComposerDraft draft, PromptTemplate? template, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(draft);
+
+        var stageClock = Stopwatch.StartNew();
+        Envelope envelope;
+        List<EnvelopeEvent> rows;
+        string envelopeId;
+        CancellationTokenSource preparing;
+        CompiledProjection projection;
+
+        lock (_gate)
+        {
+            if (State == PrepareState.Preparing)
+            {
+                return new PrepareResult(false, PreparingReason);
+            }
+
+            var errors = Validate(draft, template, draft.TurnShape);
+            if (errors.Count > 0)
+            {
+                return new PrepareResult(false, errors.Any(e => e.Field == GoalBlockFields.NotInScopeKey) ? ComposerCompiler.GoalBlockNeedsNotInScope : "the block has fields that must be filled in", errors);
+            }
+
+            if (string.IsNullOrWhiteSpace(RenderView(draft, template).Text) && string.IsNullOrWhiteSpace(draft.SourceText))
+            {
+                return new PrepareResult(false, "an empty prompt is not a task");
+            }
+
+            // A prepared-but-unsent envelope on other bytes is abandoned; the new one names it.
+            if (_prepared is { } stale && !string.Equals(stale.SourceText, draft.SourceText, StringComparison.Ordinal))
+            {
+                TryAppend([new Submitted(stale.EnvelopeId, Accepted: false, Refusal: "stale", TextSha256: EnvelopeHash.Sha256Hex(stale.SourceText), ProjectionSha: string.Empty, ProjectorVersion: Projection.Version)]);
+                _abandoned = stale.EnvelopeId;
+            }
+
+            _stamped.Clear();
+            envelopeId = EnvelopeIds.New();
+            rows = [.. PreCompile.Open(Input(draft, template) with { EngineId = context.EngineId, DefaultTaskClass = context.TaskClass }, envelopeId, _abandoned)];
+            var recorded = TryAppend(rows);
+            if (recorded)
+            {
+                rows = [.. _stamped];
+            }
+
+            envelope = recorded ? Envelope.Fold(rows)[0] : Envelope.Pending(rows);
+            _prepared = new Prepared(envelopeId, rows, draft.SourceText, string.Empty, new Dictionary<string, string>(StringComparer.Ordinal), null);
+            _abandoned = null;
+
+            // The facts the prompt states come from the one producer's own render over the envelope
+            // just opened — RenderView projects the fresh prepared fold — never a second projection.
+            RenderView(draft, template);
+            projection = LastProjection!;
+            preparing = _preparing = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            State = PrepareState.Preparing;
+            CompileLineText = null;
+            LastCallOutcome = null;
+        }
+
+        // THE OPEN LINES: the structure lines Confirmed() reads as blank — the only ones the model is asked for.
+        var openLines = DecorationNames.StructureLines.Where(name => string.IsNullOrWhiteSpace(envelope.Confirmed(name)?.ValueAsString)).ToList();
+        var structureSource = openLines.Count == 0 ? projection.StructureSource : string.Empty;
+
+        if (openLines.Count == 0)
+        {
+            // Nothing to ask: the call is skipped, no `called` row, the line names who supplied the structure.
+            lock (_gate)
+            {
+                State = PrepareState.Prepared;
+                CompileLineText = CompileLine.For(envelope, structureSource);
+                _preparing = null;
+            }
+
+            CompileSignal.Stage("compile", stageClock.ElapsedMilliseconds, "skipped");
+            return new PrepareResult(true, CompileLineText ?? string.Empty);
+        }
+
+        var facts = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["shape"] = projection.Shape,
+            ["tier"] = projection.Tier + " — " + projection.Rationale,
+            ["lease_patterns"] = projection.Patterns.Count == 0 ? "(none)" : string.Join(", ", projection.Patterns),
+            ["task_class"] = projection.TaskClass,
+            ["template"] = envelope.Current(DecorationNames.TemplateApplied)?.Value?.ToJsonString() ?? "null",
+            ["profile"] = envelope.Current(DecorationNames.FamilyProfile)?.Value?.ToJsonString() ?? "null",
+        };
+        var inputsSha = CompilePromptAssembler.InputsSha(draft.SourceText, facts, openLines, envelope.Current(DecorationNames.FamilyProfile)?.Value, []);
+        var prompt = CompilePromptAssembler.Assemble(new CompilePromptInputs(draft.SourceText, facts, openLines, null, [], []));
+
+        // REUSE after a success with the same inputs: zero requests, a `reused` receipt, the derived rows copied.
+        Prepared? reusable;
+        lock (_gate)
+        {
+            reusable = _lastSuccess.TryGetValue(inputsSha, out var last) ? last : null;
+        }
+
+        if (reusable is not null)
+        {
+            var reusedCall = new Called(envelopeId, context.EngineId, context.Model, Envelope.NotRecorded, null, new RunEventCost(0, 0, 0, 0),
+                CallOutcomes.Reused, $"reused_from:{reusable.EnvelopeId}#{reusable.CalledSeq}", inputsSha, CompilePromptAssembler.PromptSha, CompileContract.Version, 0, 0, DroppedCounts.None);
+            var copied = reusable.Derived.Select(d => new Decorated(envelopeId, d.Key, JsonValue.Create(d.Value), DecorationSources.Derived) { CallSeq = null }).ToList();
+            return Complete(reusedCall, copied, reusable.Derived, stageClock, structureSource, projection, draft, template);
+        }
+
+        var request = new CompileRequest(context.RepositoryRoot, context.AdapterInstallRoot, context.EngineId, context.Model, context.AccountLabel, context.Providers, prompt,
+            (envelope.Opened?.Constants ?? PreCompile.ConstantsFor(PreCompile.ProjectorVersion)).BoundMs);
+
+        CompileResult result;
+        try
+        {
+            CompilerCalls++;
+            result = await Compiler(request, preparing.Token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            result = new CompileResult(CompileCallOutcomes.Cancelled, "cancelled — draft edited", null, null, Envelope.NotRecorded, null, 0, 0, null, false, 0, Envelope.NotRecorded, null, []);
+        }
+
+        // THE TYPED BOUNDARY IS THE ONLY READER OF THE MODEL'S TEXT (ADR-0035 rule 5); a non-zero
+        // tool_calls or permission_requests marks the compile suspect whatever the boundary made of it.
+        var derived = new List<Decorated>();
+        var derivedLines = new Dictionary<string, string>(StringComparer.Ordinal);
+        string outcome;
+        string? reason;
+        var dropped = DroppedCounts.None;
+        if (result.Outcome == CompileCallOutcomes.Answered)
+        {
+            var validated = CompileOutputValidator.Validate(result.RawText ?? string.Empty, draft.SourceText, openLines);
+            dropped = validated.Dropped;
+            outcome = validated.Outcome;
+            reason = validated.Reason;
+            foreach (var proposal in validated.Applied)
+            {
+                derived.Add(new Decorated(envelopeId, proposal.Name, JsonValue.Create(proposal.Value), DecorationSources.Derived) { Confidence = proposal.Confidence, GroundedIn = proposal.GroundedIn });
+                derivedLines[proposal.Name] = proposal.Value;
+            }
+
+            if (result.ToolCalls > 0 || result.PermissionRequests > 0)
+            {
+                outcome = CallOutcomes.Suspect;
+                reason = $"the model made {result.ToolCalls} tool call(s) and {result.PermissionRequests} permission request(s) — read the lines before you send";
+            }
+        }
+        else
+        {
+            outcome = result.Outcome;
+            reason = result.Reason;
+        }
+
+        var called = new Called(envelopeId, context.EngineId, context.Model, result.ModelObserved, result.LatencyMs, result.Cost, outcome, reason,
+            inputsSha, CompilePromptAssembler.PromptSha, CompileContract.Version, result.PermissionRequests, result.ToolCalls, dropped);
+        return Complete(called, derived, derivedLines, stageClock, structureSource, projection, draft, template);
+    }
+
+    /// <summary>Appends the receipt and the derived rows, records the stage, enters <c>prepared(outcome)</c>.</summary>
+    private PrepareResult Complete(Called called, List<Decorated> derived, Dictionary<string, string> derivedLines, Stopwatch stageClock, string structureSource, CompiledProjection projection, ComposerDraft draft, PromptTemplate? template)
+    {
+        lock (_gate)
+        {
+            if (_prepared is not { } prepared || prepared.EnvelopeId != called.EnvelopeId)
+            {
+                // The envelope was abandoned while the call ran (a stale re-prepare): its receipt is not appended to another envelope's rows.
+                return new PrepareResult(false, StaleReason);
+            }
+
+            var appended = new List<EnvelopeEvent> { called };
+            if (IsRecorded)
+            {
+                var stampedCall = TryAppendOne(called);
+                var callSeq = stampedCall?.Seq;
+                appended = stampedCall is null ? appended : [stampedCall];
+                foreach (var row in derived)
+                {
+                    var stamped = TryAppendOne(row with { CallSeq = callSeq });
+                    appended.Add(stamped ?? row with { CallSeq = callSeq });
+                }
+            }
+            else
+            {
+                appended.AddRange(derived);
+            }
+
+            prepared.Rows.AddRange(appended);
+            var fold = prepared.Fold(IsRecorded);
+            var calledSeq = fold.LastCall?.Seq;
+            _prepared = prepared with { Derived = derivedLines, InputsSha = called.InputsSha, CalledSeq = calledSeq };
+            if (called.Outcome is CallOutcomes.Succeeded or CallOutcomes.SucceededNoStructure)
+            {
+                _lastSuccess[called.InputsSha] = _prepared;
+            }
+
+            State = PrepareState.Prepared;
+            LastCallOutcome = called.Outcome;
+            CompileLineText = CompileLine.For(fold, structureSource, 0, projection.Rationale);
+            _preparing = null;
+        }
+
+        CompileSignal.Stage("compile", stageClock.ElapsedMilliseconds, called.Outcome);
+        if (!CallOutcomes.Agentic.Contains(called.Outcome, StringComparer.Ordinal))
+        {
+            CompileSignal.Degraded(called.Outcome, called.Reason ?? called.Outcome);
+        }
+
+        RenderView(draft, template);
+        return new PrepareResult(true, CompileLineText ?? string.Empty);
+    }
+
+    /// <summary>Cancels the compile in flight — an edit during <c>preparing</c>, or the Cancel control (Ruling 77).</summary>
+    public void CancelPrepare()
+    {
+        lock (_gate)
+        {
+            _preparing?.Cancel();
+        }
+    }
+
+    /// <summary>The operator keeps a derived line verbatim: an <c>operator</c> row with the same value — under <c>agentic-advisory</c> the act that lets it project (§A11).</summary>
+    public bool KeepLine(string name) =>
+        _prepared?.Derived.TryGetValue(name, out var value) == true && EditLine(name, value);
+
+    /// <summary>The operator edits a structure line on the prepared envelope: an <c>operator</c> row; the derived row stays in the fold.</summary>
+    public bool EditLine(string name, string value)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        lock (_gate)
+        {
+            if (_prepared is not { } prepared || State != PrepareState.Prepared)
+            {
+                return false;
+            }
+
+            var row = new Decorated(prepared.EnvelopeId, name, string.IsNullOrWhiteSpace(value) ? null : JsonValue.Create(value), DecorationSources.Operator);
+            prepared.Rows.Add(IsRecorded ? TryAppendOne(row) ?? row : row);
+
+            // The view the operator read no longer shows this line: the next render (the surface's,
+            // or Send's own) projects the fold with the operator's row in it — one producer, re-run.
+            RenderedView = null;
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// The draft changed after Prepare — or changed back: <c>prepared</c> ↔ <c>stale</c> on whether
+    /// the draft's source text is still the bytes the envelope was opened on (§A11's <c>stale</c>;
+    /// the next gesture re-prepares).
+    /// </summary>
+    public void RefreshState(ComposerDraft draft)
+    {
+        ArgumentNullException.ThrowIfNull(draft);
+        lock (_gate)
+        {
+            if (_prepared is null || State is PrepareState.Preparing or PrepareState.Draft)
+            {
+                return;
+            }
+
+            State = FreshlyPrepared(draft) is null ? PrepareState.Stale : PrepareState.Prepared;
+        }
+    }
+
+    /// <summary>Appends one row, returning the stamped row, or null when history degraded (the reason on <see cref="HistoryState"/>).</summary>
+    private EnvelopeEvent? TryAppendOne(EnvelopeEvent row) => TryAppend([row]) ? _stamped[^1] : null;
 
     /// <summary>The rows the last <see cref="TryAppend"/> stamped — the persisted envelope's own events, folded without re-reading the store.</summary>
     private readonly List<EnvelopeEvent> _stamped = [];
@@ -394,6 +768,18 @@ public sealed record SubmittedEnvelope(
     string ProjectionSha,
     string TaskClassSource,
     bool Recorded);
+
+/// <summary>The four composer states of Prepare (§A11).</summary>
+public enum PrepareState
+{
+    Draft,
+    Preparing,
+    Prepared,
+    Stale,
+}
+
+/// <summary>What a preparing gesture yielded: entered <c>prepared</c> with the compile line, or refused with the reason.</summary>
+public sealed record PrepareResult(bool Prepared, string Message, IReadOnlyList<ComposerFieldError>? Errors = null);
 
 /// <summary>
 /// The send accelerator, as a decision separate from the control that raises it.

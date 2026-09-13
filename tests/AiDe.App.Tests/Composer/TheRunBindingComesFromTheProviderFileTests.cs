@@ -232,6 +232,13 @@ public sealed class TheRunBindingComesFromTheProviderFileTests
         Assert.Equal(1, Occurrences(host, "new ProviderRegistry("));
         Assert.Contains("new ProviderRegistry(request.Providers)", host, StringComparison.Ordinal);
 
+        // The compile host is the same edge's second far end (ADR-0035: ComposerSendContext →
+        // CompileRequest → CompileCallHost) and rebuilds its registry from the rows that travelled
+        // on its request, with the same one admissible argument.
+        var compileHost = SourceFile("src", "AiDe.App", "Conductor", "CompileCallHost.cs");
+        Assert.Equal(1, Occurrences(compileHost, "new ProviderRegistry("));
+        Assert.Contains("new ProviderRegistry(request.Providers)", compileHost, StringComparison.Ordinal);
+
         // And nowhere else in the SHELL constructs any of them — in either spelling, qualified or
         // not — and nowhere else configures a composer.
         //
@@ -247,7 +254,8 @@ public sealed class TheRunBindingComesFromTheProviderFileTests
             if (path.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}", StringComparison.Ordinal)
                 || path.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}", StringComparison.Ordinal)
                 || path.EndsWith("SessionComposerBinder.cs", StringComparison.Ordinal)
-                || path.EndsWith("GovernedRunHost.cs", StringComparison.Ordinal))
+                || path.EndsWith("GovernedRunHost.cs", StringComparison.Ordinal)
+                || path.EndsWith("CompileCallHost.cs", StringComparison.Ordinal))
             {
                 continue;
             }
