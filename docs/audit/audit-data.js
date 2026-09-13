@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T17:29:33Z",
+  "generated": "2026-09-13T17:33:42Z",
   "audit": [
     {
       "actor": null,
@@ -14486,6 +14486,43 @@ window.AUDIT_DATA = {
         "short": "4b8d379c0",
         "branch": "side/pd5-compile-pin-spike",
         "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2DX9KZ9556Y9S7WJX0Q6P1Q",
+      "shortname": "pd-5-prep-compile-pin-spike-correction",
+      "datetime": "2026-09-13T17:33:30Z",
+      "session": "pd-5",
+      "prompt": "PD-5 side track (prep half): build spikes/compile-session-pin-wire/ (fixture, harness, assertions, artifact shell) per docs/coordination/addendum-cd.md row PD-5, ADR-0035/0036, Ruling 68 - verify up to the model call; the operator sends the two prompts.",
+      "summary": "Correction of al-01M2DX26KXEVF8SJFWJHKSF5WC: that entry's em-dashes were mangled into mojibake\nby a Git-Bash-to-Windows-Python argv encoding round-trip (a real, generalizable defect, named here\nrather than silently re-filed - candidate DC for a future /dream pass: non-ASCII CLI arguments\npassed from Git Bash to a native Windows exe get corrupted via an ANSI-codepage round-trip; the\nfix used here is file-based input (--prompt-file/--summary-file) plus ASCII-only text elsewhere).\nThe prep-half work itself is unchanged from the original entry: built fixture-template/ (permissive\n.claude/settings.json, .mcp.json + a self-tested stdio MCP server, distinctive src/x.cs) and\nsetup-fixture.js (regenerates a real git repo + bare remote.git per run). Built run-spike.js: drives\nthe installed adapter 0.75.1 directly, sends the exact ADR-0035 _meta triple (tools: [],\ndisallowedTools = ReadOnlyLaneSession's 26 names verbatim, mcpServers: []), records every frame,\nredacts email-shaped substrings found live in _auth/status_update, never sends session/prompt under\n--dry-run. Ran the dry run against the real adapter: initialize + session/new succeeded, the wire\nframe matches ADR-0035 exactly (frames/dry-run/, committed, redacted). Two source+wire findings\nrecorded in the artifact: (1) the fixture's committed defaultMode: bypassPermissions is stripped by\nthe SDK's filterEscalatingDefaultMode before the adapter resolves a mode (currentModeId read back\nas default) - the fixture's real permissiveness is its permissions.allow list, not defaultMode;\n(2) the CLI binary the adapter actually launches is the SDK's vendored\nclaude-agent-sdk-win32-x64/claude.exe (2.1.257), not the machine's global claude (2.1.268) - a\ndifferent binary and sha, both recorded. A third finding, and a bug this node found and fixed in\nits own harness: session/new alone spawns the fixture's MCP server (Verified - tools/list observed\nwith no prompt sent), which left a stale mcp-calls.jsonl corrupting the before/after fixture-state\ncomparison until run-spike.js was fixed to clear it on both sides. Built assert-spike.py (seven\nassertions a-g over one frames/ directory) with --self-test red on a planted frames/self-test-red\n(tool_call + permission + dirty tree + non-empty mcp log) and green on frames/self-test-green -\nboth committed. docs/proof/compile-pin-spike.md documents all of the above plus the exact operator\nsteps for the attended run (RUN-PENDING: the two prompts, the tool_call/permission recount, the\nfixture and remote diff). regenerate-derived.py and run-verify-gates.py both green (33/35; the two\nskipped gates require a live dotnet test run this Node/Python/docs-only diff never touches and this\nfresh worktree has never produced).",
+      "kind": "manual",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/compile-pin-spike.md",
+        "spikes/compile-session-pin-wire/run-spike.js",
+        "spikes/compile-session-pin-wire/assert-spike.py",
+        "spikes/compile-session-pin-wire/setup-fixture.js"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Correct al-01M2DX26KXEVF8SJFWJHKSF5WC: its em-dashes were mangled into mojibake by a Git-Bash-to-Windows-Python argv encoding round-trip. This entry restates the same work in ASCII-safe / file-based text; the append-only log keeps the original.",
+      "done_when": "This entry's text reads clean (no mojibake) when read back from docs/audit/audit-log.jsonl.",
+      "tier": "T1",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "supersedes": "al-01M2DX26KXEVF8SJFWJHKSF5WC",
+      "git": {
+        "sha": "943220fb7698fd9ba62df95d06163ef03bbcc69d",
+        "short": "943220fb7",
+        "branch": "side/pd5-compile-pin-spike",
+        "pushed": true
       }
     }
   ],
