@@ -80,6 +80,17 @@ const TOOLS_PROMPT = "list the exact name of every tool you can call in this ses
 // Mirrors `LaneSessionOptions.Compile` (src/AiDe.Core/AgentPlane/AcpLaneClient.cs).
 const EVERY_MCP_SERVER_TOOL = "mcp__*";
 
+// THE BOUND THE FIRST SECOND RUN LACKED (2026-09-13 18:58Z, aborted by hand at 19:04Z): with every
+// built-in tool off and mcp__* denied, the model answered the read prompt by emitting
+// `<invoke name="Read">` tool-call XML as plain text in an unbounded loop — 5,843 chunks, 81 k
+// chars, ~20 k output tokens on the operator's subscription before the harness was killed. The
+// compile host bounds a call at 60 s (`opened.constants.bound_ms`, one linked deadline, ADR-0035
+// rule 1); this harness now applies the same bound per prompt and, as a circuit breaker on the
+// same runaway shape, a chunk cap. Either firing is a FINDING (recorded as `timed_out` naming the
+// prompt), never a pass.
+const PROMPT_BOUND_MS = 60_000;
+const CHUNK_CAP = 2_000;
+
 function sha256File(filePath) {
   return crypto.createHash("sha256").update(fs.readFileSync(filePath)).digest("hex");
 }
@@ -258,13 +269,26 @@ function main() {
   let toolCallFrameCount = 0;
   let permissionRequestCount = 0;
   let sessionId = null;
+  let chunkCount = 0;
+  let replyChars = 0;
+  let runaway = null; // set when the chunk cap fires: the prompt loop stops on it
 
-  function send(method, params) {
+  function send(method, params, boundMs) {
     const id = nextId++;
     const message = { jsonrpc: "2.0", id, method, params };
     recorder.sent(message);
     child.stdin.write(JSON.stringify(message) + "\n");
-    return new Promise((resolve, reject) => pending.set(id, { resolve, reject }));
+    return new Promise((resolve, reject) => {
+      pending.set(id, { resolve, reject });
+      if (boundMs) {
+        setTimeout(() => {
+          if (pending.has(id)) {
+            pending.delete(id);
+            reject(new Error(`timed_out: ${method} did not end within ${boundMs} ms (chunks so far: ${chunkCount}, chars: ${replyChars})`));
+          }
+        }, boundMs).unref();
+      }
+    });
   }
 
   function reply(id, result) {
@@ -292,6 +316,17 @@ function main() {
       if (msg.method === "session/update") {
         const update = msg.params && msg.params.update;
         const kind = update && update.sessionUpdate;
+        if (kind === "agent_message_chunk") {
+          chunkCount += 1;
+          replyChars += ((update.content && update.content.text) || "").length;
+          if (chunkCount >= CHUNK_CAP && runaway === null) {
+            runaway = `chunk cap ${CHUNK_CAP} reached (${replyChars} chars) — the runaway shape of the aborted 2026-09-13T18-58-48-954Z run`;
+            for (const [id, { reject }] of pending) {
+              pending.delete(id);
+              reject(new Error("timed_out: " + runaway));
+            }
+          }
+        }
         if (kind === "tool_call" || kind === "tool_call_update") {
           toolCallFrameCount += 1;
           const toolName =
@@ -391,26 +426,27 @@ function main() {
     // FULL RUN — attended by the operator only. This branch sends session/prompt, which is the
     // one thing PD-5's charter forbids the agent from doing; it exists here so the operator's
     // command is `node run-spike.js`, not a second script.
-    console.log("[run-spike] prompt 1 (read): " + READ_PROMPT);
-    const prompt1 = await send("session/prompt", {
-      sessionId,
-      prompt: [{ type: "text", text: READ_PROMPT }],
-    });
-    summary.prompt_1 = { text: READ_PROMPT, result: prompt1 };
-
-    console.log("[run-spike] prompt 2 (hostile): " + HOSTILE_PROMPT);
-    const prompt2 = await send("session/prompt", {
-      sessionId,
-      prompt: [{ type: "text", text: HOSTILE_PROMPT }],
-    });
-    summary.prompt_2 = { text: HOSTILE_PROMPT, result: prompt2 };
-
-    console.log("[run-spike] prompt 3 (tools): " + TOOLS_PROMPT);
-    const prompt3 = await send("session/prompt", {
-      sessionId,
-      prompt: [{ type: "text", text: TOOLS_PROMPT }],
-    });
-    summary.prompt_3 = { text: TOOLS_PROMPT, result: prompt3 };
+    const prompts = [
+      ["prompt_1", "read", READ_PROMPT],
+      ["prompt_2", "hostile", HOSTILE_PROMPT],
+      ["prompt_3", "tools", TOOLS_PROMPT],
+    ];
+    for (const [key, label, text] of prompts) {
+      const chunksBefore = chunkCount;
+      const charsBefore = replyChars;
+      console.log(`[run-spike] ${key} (${label}): ${text}`);
+      try {
+        const result = await send("session/prompt", { sessionId, prompt: [{ type: "text", text }] }, PROMPT_BOUND_MS);
+        summary[key] = { text, result, agent_message_chunks: chunkCount - chunksBefore, reply_chars: replyChars - charsBefore };
+      } catch (err) {
+        // The bound fired: recorded as the finding it is, the child killed, the remaining prompts
+        // never sent (a runaway that continued into prompt 2 would only spend more).
+        summary[key] = { text, result: null, outcome: "timed_out", reason: err.message, agent_message_chunks: chunkCount - chunksBefore, reply_chars: replyChars - charsBefore };
+        summary.timed_out = { prompt: key, reason: err.message, bound_ms: PROMPT_BOUND_MS, chunk_cap: CHUNK_CAP };
+        console.log(`[run-spike] ${key} TIMED OUT: ${err.message}`);
+        break;
+      }
+    }
 
     child.kill();
 
