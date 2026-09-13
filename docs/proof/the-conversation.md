@@ -117,7 +117,7 @@ local part — zero hits.
 - **Residual risk:** none for the shape; the product's lane does not yet request the display
   (above).
 
-### Claim 2 (DC-nnn (CV-5-3 a)): a whitespace-only chunk is its whitespace, never the kind; an absent text field still reads as the kind
+### Claim 2 (DC-187 (CV-5-3 a)): a whitespace-only chunk is its whitespace, never the kind; an absent text field still reads as the kind
 - **Evidence:** `tests/AiDe.Core.Tests/Presentation/Sessions/CoalesceTests.cs` —
   `AWhitespaceOnlyChunk_IsItsWhitespace_NeverTheKind` (a `"\n\n"` thought chunk through the real
   mapper is `"\n\n"`, an empty message chunk is `""`, a `usage_update` with no text is still its
@@ -369,7 +369,7 @@ compute reader (`ConversationRow.*`, the templates). The Console reads the rows 
 - **The lane does not request the thinking display** — until `AcpLaneClient` (CV-3) sends
   `thinking.display: "summarized"`, no `agent_thought_chunk` reaches the product and the thread
   shows no Thinking line. Routed to the conductor; the spike's PROVENANCE records the cause.
-- **`TextBlock.Text` is empty for inline-built prose** (DC-nnn (CV-5-3 b)): the Shell contrast
+- **`TextBlock.Text` is empty for inline-built prose** (DC-188 (CV-5-3 b)): the Shell contrast
   census labels sites by `Text`; it does not walk a thread with turns today, so nothing is
   measured wrongly, but its reach to the conversation is a routed finding for the census's owner.
 - **The thinking idiom's name:** every reasoning disclosure is named *Thinking* (the design's
@@ -393,7 +393,7 @@ compute reader (`ConversationRow.*`, the templates). The Console reads the rows 
 
 ## Defect classes registered (CI1)
 
-- **DC-nnn (CV-5-3 a)** — a wire-text reader's blank-means-absent fallback turns a whitespace
+- **DC-187 (CV-5-3 a)** — a wire-text reader's blank-means-absent fallback turns a whitespace
   chunk into the literal kind; control: `CoalesceTests.AWhitespaceOnlyChunk_IsItsWhitespace_NeverTheKind`.
-- **DC-nnn (CV-5-3 b)** — a rendered-text oracle over `TextBlock.Text` passes vacuously on
+- **DC-188 (CV-5-3 b)** — a rendered-text oracle over `TextBlock.Text` passes vacuously on
   inline-built prose; control: `ThreadFeedTests.Plain` + T1's positive control.

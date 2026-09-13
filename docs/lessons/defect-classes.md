@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 101 · partially-controlled 65 · uncontrolled 20
+**Status counts:** controlled 103 · partially-controlled 65 · uncontrolled 20
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -7559,7 +7559,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   owner (CV-5 / the conductor).
 - **Status:** `controlled` (this instance); `open` (the sibling).
 
-### DC-nnn (CV-5-3 a) — A wire-text reader's blank-means-absent fallback turns a whitespace chunk of a streamed message into the literal kind
+### DC-187 — A wire-text reader's blank-means-absent fallback turns a whitespace chunk of a streamed message into the literal kind
 
 - **Filed by:** CV-5-3 a (placeholder — the conductor allocates the final number/status).
 - **Shape:** a reader that answers *"what does this event say?"* treats a present-but-whitespace
@@ -7584,7 +7584,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   text is whatever the wire sent, and a reader may fall back only on absence.*
 - **Status:** `controlled`.
 
-### DC-nnn (CV-5-3 b) — A rendered-text oracle reads `TextBlock.Text`, which is empty for content built from inlines, so it passes vacuously on the very prose it is meant to falsify
+### DC-188 — A rendered-text oracle reads `TextBlock.Text`, which is empty for content built from inlines, so it passes vacuously on the very prose it is meant to falsify
 
 - **Filed by:** CV-5-3 b (placeholder — the conductor allocates the final number/status).
 - **Shape:** a WPF `TextBlock` whose content was built by adding `Run`s to `Inlines` (bold, mono,

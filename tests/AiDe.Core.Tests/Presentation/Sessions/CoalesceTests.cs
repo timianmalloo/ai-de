@@ -146,7 +146,7 @@ public sealed class CoalesceTests
     }
 
     /// <summary>
-    /// <b>DC-nnn (CV-5-3 a).</b> A wire chunk whose text is only whitespace — the corpus has one,
+    /// <b>DC-187 (CV-5-3 a).</b> A wire chunk whose text is only whitespace — the corpus has one,
     /// <c>thought.jsonl:27</c>, the <c>"\n\n"</c> between two paragraphs of a thought — is that
     /// whitespace, never the kind: with the reader's blank-means-absent fallback the fold joined the
     /// literal word <c>agent.thought</c> into the reasoning (and would join <c>agent.msg</c> into the

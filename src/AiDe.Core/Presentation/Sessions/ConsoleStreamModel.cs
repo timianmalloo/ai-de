@@ -264,7 +264,7 @@ public sealed class ConsoleStreamModel
     /// this projection did not recognise, and the kind is always true. <b>A text field that IS
     /// present is the text, whitespace included</b>: a wire chunk of two newlines is the paragraph
     /// break between two chunks of one thought (<c>frames/thought.jsonl:27</c>), and a blank-means-absent
-    /// reading folded the literal kind into the reasoning (DC-nnn (CV-5-3 a)).
+    /// reading folded the literal kind into the reasoning (DC-187 (CV-5-3 a)).
     /// </remarks>
     public static string TextOf(RunEvent evt) =>
         Text(evt.Body)
