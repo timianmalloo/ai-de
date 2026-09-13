@@ -607,3 +607,163 @@ substitution or new correlation protocol are permitted in this experiment. A har
 violation established on the existing production path is escalated to the human. If the
 abort/reconnect candidate fails required semantics, return the counterexample. Only the next
 Owner ruling may freeze the production lease/transport contract or admit shared adapters.
+
+## IPC comparison return and qualification, Owner turn 36
+
+The first spike `97ff2c3` used 16/16 leaves. Conductor independently repeated 62 assertions with
+one failed baseline case and exit one. MarkerA was accepted, but the baseline stalled/broke its
+pipe before attributing B's response. Late-A-as-B and exact partial bytes remain NOT_PROVEN.
+Candidate isolation, deadline, expiry/revocation, instance-local cleanup and capacity/frame
+boundaries produced usable but limited evidence. An exception is not the human-escalation trigger.
+
+The candidate also handshook fresh for every operation. Distributed Systems blocks production
+selection of that policy: disconnect revokes a connection-scoped lease, so clean Inventory/
+Select/Member/Back cannot retain its manifest/receipt authority across those per-call connections.
+Stateless marker success is not a walking-reader proof. The parent also found baseline markers
+were emitted only after additional waits; instrumentation must distinguish each stage.
+
+Owner grants twelve further leaves, total 28, and four new DS/Test review calls. First three
+are diagnostic, then a Conductor readback gate. Remaining work keeps one healthy connection,
+handshake and scope across stateful synthetic operations; only an abandoned possibly incomplete
+exchange becomes terminal. Fresh scope rejects old manifests/receipts. Pre-write cancellation
+and completed-A cancellation must not destroy a healthy scope or B. No production code,
+correlation protocol, authority redesign or live data is permitted. The next receipt must
+support one decision, not automatically reopen an endless repair loop.
+
+## Qualified transport direction and final adapter contract, Owner turn 37
+
+Stateful qualification `c78874bd` used the 28-call writer allowance. Conductor independently
+ran the explicit candidate-only mode: 79 assertions, zero failures, baseline excluded.
+Clean Inventory/Select/Member/Back retained one handshake/scope; clean cancellations preserved
+it, dirty abandonment became terminal, and fresh scope rejected old tokens. Capacity/frame/
+cleanup observations remain scoped to the synthetic host. The baseline failure and partial-byte/
+native-root NOT_PROVEN evidence remain, not reclassified as passing.
+
+Owner opened the qualification and critical attempt/server code, then selected the production
+contract direction, not the synthetic implementation: connection-scoped reader session, clean
+reuse, terminal dirty/unknown outcome, fresh visible admission/inventory after abandonment.
+Existing Q's bounded receipt retention/successor semantics remain; the synthetic one-shot Back
+policy is not normative. Abandonment or revocation winning publication ordering forbids success.
+One frame reader, independent server bounds/cleanup and complete serialized-response limits
+remain mandatory; 8 MiB verification stays inside Core.
+
+One separate Astra integrator receives **eight leaves in the existing packet pair** to finish
+exact authority/membership, operation/version/payload mappings, async dispatch/connection-ended
+cleanup, host loading/replacement/disposal and implementation file/test/owner/budget assignments.
+Unchanged perspective/docking/generic adapter/menu consumers stay excluded unless demonstrated
+necessary. Conductor readback against Security/Data/DS/Test conditions is followed immediately
+by Owner's bounded branch-local adapter-authoring decision. No broad council, polling, relay or
+product source authoring is admitted by the packet checkpoint itself.
+
+## Binding packet erratum and conditional authoring, Owner turn 38
+
+Final packet `2af3777b` returned after eight leaves, but targeted readback found concrete
+regressions: missing tree Kind/parent/reason and detailed bounds on the render wire,
+inconsistent C# accessibility, an unexecuted inert Git-copy mechanism that refused linked
+worktrees/nested roots, and an unadmitted 512 KiB outline ceiling.
+
+Owner grants four same-packet correction leaves. Wire keeps essential Kind, scope-bound
+ParentToken, safe reason and complete requested/effective/returned-content-byte/denominator/
+omission bounds. Public Core composition uses public parameters/opaque lifetime while internals
+stay private; the loading-host constructor must have consistent accessibility. Required repository
+forms include ordinary clones, linked-worktree gitfiles and nested approved roots. Repository/
+admin discovery is distinct from source authorization; inert-copy is not the default.
+
+Physical metadata visibility is not filtered by semantic indexing. Policy-required withholding
+remains; metadata visibility and content eligibility are distinct. Preserve the 8 MiB input
+boundary; outline budget/cancellation/unsupported states cannot downgrade independently verified
+source. Source positions/lengths are UTF-16 units, item limits are rows, display remains scalar-safe
+128 KiB UTF-8 and the complete serialized frame is bounded.
+
+With these corrections and targeted predicates cleared, Owner conditionally admits branch-local
+Track C's 20-file/48-leaf ceiling and Track S's eight-file/32-leaf ceiling. C first spends eight
+of its calls on compiling the corrected DTO/public façade and semantic-red/golden directory/
+parent/reason/bounds/unit/local-remote round trips. Shell starts from that committed seam.
+Membership remains gated by narrow Security disposition; only a specific needed mechanism
+may receive up to ten additional membership-source/test leaves on owned synthetic required
+repository forms. No existing generic-client cancellation rewrite, policy database, main push/
+merge, normative E or programme closure follows. The exit remains the real Architecture-host
+journey and replacement/revocation/cancellation/disposal proof.
+
+## Core execution reroute and mapping clarification, Owner turn 40
+
+The Conductor selected a review-oriented C# persona for the first implementation checkpoint.
+It spent eight leaves (one skill, two bookkeeping and five shells, plus two wrappers recorded
+separately) and authored nothing. Missing shell `rg` and an oversized read were also reported.
+This was a routing error, not a reviewer's failure to perform its advisory role. The clean
+tree and report remain preserved; there is no compile/semantic-red/golden receipt to accept.
+
+Owner reassigns the same Core ceiling to a general-purpose Astra execution worker in a new
+verified tree. Eight are spent; the next eight are released within the unchanged 48, and
+32 remain unreleased. The exact checkpoint subset and non-overlap must be recorded before edits.
+
+Projection dimensions and requested limits come from explicit phase/request context. Preserve
+native count/state facts; derive output values only from demonstrated projection inputs.
+Unknown/Withheld retain null values and safe state-based explanations; absent producer detail
+is “not recorded.” Known omission dimensions map explicitly; an unestablished dimension stays
+null with a safe omission reason, narrowly superseding mandatory pairing. Content-byte
+semantics remain distinct from retention/serialized size, with producer consistency asserted.
+An accessibility compile fixture proves only its boundary; no callable success/no-op façade
+or production composition claim may replace the unfinished runtime. Git and Shell gates remain.
+
+## Partial Core implementation and semantic closure, Owner turn 41
+
+Execution produced `280d9f94` in three released files. Conductor independently executed
+299/299 Understanding cases but held the seam: public reader ports, Selection/source-bound
+mapping, native IndexedMatch golden and façade compile boundary were incomplete.
+Three direct calls against the built assembly accepted invalid inputs: source length zero,
+a highlight on only the low surrogate, and an empty inventory page with NextOffset zero.
+The native inventory golden also silently replaced nonzero producer content bytes with zero.
+Malformed-input tests were not relabelled as observed pre-fix implementation reds.
+
+Owner releases twelve more calls within 48, reaching at most 28 spent with 20 unreleased.
+Same four-file seam only. The new tests must fail on these actual invalid acceptances and
+producer inconsistency. Request context establishes continuation progress. Source/outline
+units and states remain separate. Handles use the packet's valid-Unicode, ordinal 256 UTF-8
+byte limit rather than an accidental 128-ASCII restriction. Safe reason messages may contain
+spaces; absent detail and redacted detail remain distinguishable without echoing unreviewed
+paths/tokens/stderr. Complete public ports and native-to-render-to-wire selection evidence,
+and compile the public boundary from a non-friend consumer. No callable success stub or
+premature Shell freeze is admitted.
+
+## Compiled seam close and production continuation, Owner turn 42
+
+Core `1c5e31af` completed public ports, native/Selection/source-bound mappings, and the
+non-friend consumer compilation fixture. Conductor independently observed 323/323 tests,
+read nine plus three actual semantic-red failures, and repeated the prior three invalid-input
+probes. They now reject for their intended invariants. The façade signature fixture remains
+compile-only, not runtime registration.
+
+Test cleared the compiled seam conditionally. C# review found a smaller standalone-source
+validator inconsistency: a valid empty source page could still advertise NextOffset zero.
+Request-bound Selection separately rejects nonprogress, so no Shell-path failure is claimed.
+Owner releases the remaining twenty C calls within 48, reserving the first five for red/fix/
+green of this case, preserving valid empty source with no continuation. Only after that reviewed
+commit is joined does Shell's 32-call tranche begin against the actual ports and C's actual
+factory/view-model handoff. Membership NQ1/NQ2 and runtime acceptance remain separately gated.
+
+## NQ and Shell repair toward the real handoff, Owner turn 43
+
+Owner read the native notification and Shell lifetime code and authorized two bounded repair
+passes, not candidate acceptance. Core remains 34/48 regular calls, fourteen available.
+NQ receives twelve new special leaves after ten spent: first three for diagnostics and an
+unchanged-semantics reproduction, then Conductor review before the remaining nine. Shell
+receives twelve new leaves after 32 spent for the four SRE source findings, each with
+semantic red, repair and recovery/cleanup proof. Eight targeted review leaves are separate.
+
+The first NQ receipt must identify changed pin/role, capture stage, native completion/error/
+byte result and bounded notification actions/names. The causal classification is unknown
+until that evidence exists. Overflow/error remains fail-closed; relevant namespaces and the
+hostile-fsmonitor/packed-ref ABA oracles must not be suppressed for green.
+
+Shell must recover after a throw-once factory/lease/reader boundary, continue invalidation
+after a throwing callback while owning/reporting faults, drain and dispose lifetime
+primitives exactly once, and clear host-owned view/registration/activation after a load
+failure that occurred after reader assignment. Catching an exception does not surrender
+resource or reservation ownership.
+
+The same two registered writers and exact source ceilings remain. Membership qualification
+precedes the actual committed Core facade/issuer/client/ViewModel handoff; that precedes
+MainWindow attachment and awaited final close. The target is still an actual daemon-backed
+Architecture file/member/source/Back journey with replacement/revocation/shutdown evidence.
+No main/push authority, no successful runtime stub, no reset of prior budget misses.

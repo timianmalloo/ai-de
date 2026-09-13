@@ -100,6 +100,7 @@ ownership rows, normative Addendum E acceptance, or permission to integrate into
 | `atlas-live-continuation-gpt55` / `atlas/live-reader-continuation` | `src/AiDe.Core/Understanding/AtlasQueryContracts.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasQueryContractsTests.cs` | Owner turn-20 exact F continuation seam: eight new leaf calls for optional validated InventoryPage.NextOffset only. Pin/verify this contract before Q/N edits; no other F shape or producer/UI implementation. |
 | `atlas-shared-host-astra` / `atlas/shared-host-compatibility` | New `docs/design/code-atlas-shared-host-admission.md` and `.html`; merge/regeneration results only for reconciliation with an executor-observed main pin | Owner turn 32: 12 leaves for compatibility build, exact adapter/owner/test manifest, production authority/membership proposal and one supported counterpart handoff. No authored existing Core/Shell/Conversation adapter edits, primary changes, main merge or push. Packet is not production-design acceptance. |
 | `atlas-ipc-contract-astra` / `atlas/ipc-contract` | `spikes/code-atlas-ipc-contract/CodeAtlas.IpcContractProbe.csproj`; `Program.cs`; `IpcCancellationCases.cs`; `AtlasTransportCandidate.cs`; `docs/proof/code-atlas-ipc-contract.md` | Owner turn 35: 16 leaves for a synthetic IPC cancellation/async-contract comparison, plus four independent DS/Test review calls. Baseline `16ea6f734206126bf9d73646ccb8f9d7d20ced94`, explicit SHA/readback. No existing Core/Shell edits, live daemon, user data or shared adapters. |
+| `atlas-final-adapter-contract-astra` / `atlas/final-adapter-contract` | Existing `docs/design/code-atlas-shared-host-admission.md` and `.html` only | Owner turn 37: eight leaves for the final dispatch-ready authority/membership/wire/async/host contract and exact implementation assignments. Separate verified worktree; no product source authoring. |
 | `atlas-live-runner-astra` / `atlas/live-reader-runner` | `spikes/code-atlas-reader-candidate/CodeAtlas.ReaderCandidate.csproj`; `spikes/code-atlas-reader-candidate/Program.cs` | Original 12 leaves ended with two CS7036 peer-constructor errors and no synthetic execution. Owner turn 23 prospectively adds eight leaves, same writer/files, ending at actual shown synthetic journey/capture/negative proof, not build alone. No existing App startup/host/IPC/project edits, private corpus, inspected-project execution or main integration. Independent live-root proof retains its separate 15-call allowance. |
 
 The first source writer's worktree is `C:\Projects\ai-de-atlas-e0-source-safety`, created from
@@ -238,6 +239,177 @@ Server-derived peer/workspace/epoch, native-root/policy currentness, expiry and 
 required. The next bounded IPC spike tests abort/reconnect first without selecting it for
 production. A demonstrated hard-floor violation in the existing production path must be
 preserved and escalated to the human, not traded away by the spike grant.
+
+Owner turn 36 grants **12 additional IPC-spike leaves**, 28 writer leaves total, plus four
+new targeted DS/Test review calls. Same five files/owner/tree, no production edits. First
+three calls: claim, discriminating baseline instrumentation and execution; Conductor reads
+the receipt before releasing the remaining nine. Preserve the parent-appended proof evidence,
+correct owned proof metadata, and do not require corruption as the only successful diagnosis.
+The candidate must preserve clean connection/scope/manifest/receipt continuity and abandon only
+possibly incomplete exchanges; fresh scope explicitly rejects old receipts. Actual existing-path
+wrong-response delivery stops dependent work for human escalation.
+
+Owner turn 37 freezes only the transport direction: healthy connection/scope reuse, terminal
+dirty/unknown exchanges, explicit fresh admission/inventory, existing Q receipt semantics.
+The final eight-call packet checkpoint must end in exact implementation files/owners/budgets/
+falsifiers, followed immediately by Owner's branch-local authoring decision. It may not become
+another broad survey. No adapter or main-integration permission follows until that decision.
+
+Owner turn 38 grants four additional leaves to the same final-packet writer for the exact
+projection/accessibility/repository-form/limit erratum. It conditionally extends branch-local
+authoring to corrected §8's Track C 20-file ceiling (48 leaves) and Track S eight-file ceiling
+(32), preserving canonical Core/Shell ownership and excluding main integration. Actual writers,
+immutable bases and exact files must be recorded here before source edits. C's first eight
+calls compile the corrected DTO/public-façade seam and prove golden/semantic-red parity; Shell
+waits for that committed contract. Membership remains under narrow Security qualification,
+with at most ten additional C membership-source/test leaves if the required mechanism needs
+proof. No hidden worktree/nested-root exclusion, semantic-index visibility filter, new 512 KiB
+outline ceiling, proof authority or public/internal signature contradiction is admitted.
+
+### Atlas production Track C assignment, Owner turn 38
+
+Writer `atlas-production-core-exec-astra`, branch `atlas/production-core-execution`, receives the following
+exact branch-local ceiling under Owner turn 38 and corrected packet `8c320ff4`.
+The prior `atlas-production-core-astra` review-role dispatch used eight leaves and authored
+nothing at `921adf40b8e610339888fe62e79cd3f63c0117be`; that clean tree/report are retained.
+Owner turn 40 reassigns the same ceiling to a general-purpose execution agent in a new tree,
+releasing the next eight of the unchanged 48, with 32 later calls still unreleased.
+Execution tree `C:\Projects\ai-de-atlas-production-core-execution` is clean and its HEAD was
+verified at `921adf40b8e610339888fe62e79cd3f63c0117be`. The former registration was ended.
+Harness qualification is the general-purpose execution role with writable patch/shell tools,
+previously observed producing the native reader, runner and IPC spike in this same fleet;
+the C# review persona remains an advisory lens, not this writer.
+Canonical Core ownership is unchanged. The newly released eight leaves are restricted to the
+DTO/projection/public-composition contract checkpoint; no Git implementation is cleared until
+NQ1/NQ2. Shell has no writer release until the compiled/golden seam is committed and reviewed.
+Existing counterpart requests remain non-consent; this is the explicit Owner exception.
+
+| Existing/new | Exact authored path |
+|---|---|
+| Existing | `src/AiDe.Core/WorkspaceCore.cs` |
+| Existing | `src/AiDe.Core/Understanding/AtlasQueryService.cs` |
+| New | `src/AiDe.Core/Understanding/AtlasWorkspaceReadPolicy.cs` |
+| New | `src/AiDe.Core/Understanding/AtlasReadScopeIssuer.cs` |
+| New | `src/AiDe.Core/Understanding/AtlasGitMembership.cs` |
+| New | `src/AiDe.Core/Understanding/AtlasReadBudget.cs` |
+| New | `src/AiDe.Core/Understanding/AtlasReaderContracts.cs` |
+| New | `src/AiDe.Core/Understanding/AtlasReaderProjection.cs` |
+| Existing | `src/AiDe.Core/Ipc/DaemonEndpoint.cs` |
+| Existing | `src/AiDe.Core/Ipc/IpcServer.cs` |
+| Existing | `src/AiDe.Core/Ipc/WorkspaceClient.cs` |
+| New | `src/AiDe.Core/Ipc/AtlasWorkspaceOperations.cs` |
+| New | `src/AiDe.Core/Ipc/AtlasRemoteReader.cs` |
+| Existing | `src/AiDe.Daemon/Program.cs` |
+| Existing | `src/AiDe.App/ViewModels/MainWindowViewModel.cs` |
+| New | `tests/AiDe.Core.Tests/Understanding/AtlasProductionAdmissionTests.cs` |
+| New | `tests/AiDe.Core.Tests/Understanding/AtlasGitMembershipTests.cs` |
+| New | `tests/AiDe.Core.Tests/Understanding/AtlasReaderWireTests.cs` |
+| New | `tests/AiDe.Core.Tests/Understanding/AtlasIpcAdmissionTests.cs` |
+| New | `tests/AiDe.Core.Tests/Understanding/AtlasReadBudgetTests.cs` |
+
+This is a ceiling, not a command to create unused files. Preserve all unlisted existing
+identity/F/E/D/S, generic IPC client/contract/framing, capability registry, database, perspective,
+menu, docking, generic adapter and style files. Each actual edit requires its short lease.
+The Conductor records and verifies the immutable starting SHA before dispatch.
+
+Actual next-eight subset: `AtlasReaderContracts.cs`, `AtlasReaderProjection.cs`,
+`AtlasWorkspaceOperations.cs` only for an honest public façade boundary, and
+`AtlasReaderWireTests.cs`. No existing production source or membership/authority implementation
+is released in this checkpoint. A compile-only accessibility fixture is explicitly not runtime
+composition. The recorded Q and N predecessor handoffs remain with the Track C/S successors,
+conditional on their source checkpoints and preservation of the accepted behavior.
+
+Owner turn 40 mapping constraint: operation/phase and request supply primary dimension and
+requested limits. Preserve actual native counts/state; derive output facts only from observed
+projection inputs. Unknown/Withheld retain null values and safe state-based explanations;
+unrecorded producer detail is “not recorded,” not an invented cause. Map known omission
+dimensions explicitly; when unestablished, null is permitted with a safe omission reason,
+superseding mandatory reason/dimension pairing. Inventory content bytes are zero; source
+content bytes derive from returned UTF-8 text with producer consistency asserted. No runtime
+no-op/success façade is admitted; an accessibility compile fixture proves only that boundary.
+
+Owner turn 41 releases the next 12 C leaves, same four-file seam, within the unchanged 48.
+Sixteen are charged; this tranche may reach 28, with 20 still unreleased. Preserve partial
+`280d9f94`. Required semantic reds include zero source length, split-surrogate highlights,
+empty/nonprogressing continuation against request context and inconsistent native content
+bytes. Inventory requires native and rendered bytes both zero; selection reconciles actual
+UTF-8 source bytes before splitting source/outline. Handles preserve valid Unicode/ordinal
+values up to 256 UTF-8 bytes. Reasons have separate safe-message handling, not token syntax.
+Complete public ports, Selection/source-bound/native goldens and the non-friend consumer
+accessibility compile boundary before Shell; no filesystem/Git/issuer/transport wiring.
+
+Owner turn 42 releases C's remaining 20 leaves within 48, reserving the first five for the
+standalone empty-source continuation inconsistency. Observe red for empty IndexedMatch with
+NextOffset zero, reject it in serialization/deserialization, preserve empty source with null
+continuation, rerun and commit without changing ports. Conductor reviews/joins before releasing
+Shell's existing 32-call tranche. NQ1/NQ2 still gate membership; the separately allowed at-most-ten
+qualification calls may address only those predicates. Other granted Core/Shell seams need not
+wait, but no unqualified Git-dependent admission or production success stub is allowed.
+
+After independently executing 326/326 and inspecting the final empty-page red/green,
+Conductor joined the seam as `366167052537c35171f40c6da66c982f8f5d93e5`.
+C's remaining 15 regular calls are released; 33/48 are charged. The same C writer also receives
+the already authorized **at-most-ten separately counted NQ1/NQ2 qualification calls**, only in
+`AtlasGitMembership.cs` and `AtlasGitMembershipTests.cs`, on owned synthetic required repository
+forms. Candidate helper/tests may be authored for qualification, but Git-dependent production
+admission waits for narrow Security readback. This is not an increase to general C work.
+S proceeds concurrently on the compiled ports; its real-window handoff waits for C's actual
+committed factory/view-model surface.
+
+### Atlas production Track S assignment, Owner turns 38/42
+
+Writer `atlas-production-shell-astra`, branch `atlas/production-shell`, receives only the
+following eight-file branch-local ceiling, 32 leaves, after Conductor's corrected Core seam join
+`366167052537c35171f40c6da66c982f8f5d93e5`. Canonical Shell/Core/native ownership remains;
+the explicit Owner exception and predecessor N handoff at `a8897914` authorize this branch work,
+not the open counterpart requests. Main integration is still ungranted.
+
+| Existing/new | Exact authored path |
+|---|---|
+| Existing | `src/AiDe.App/Workbench/SurfaceContentFactory.cs` |
+| Existing | `src/AiDe.App/Workbench/WorkbenchShell.cs` |
+| Existing | `src/AiDe.App/MainWindow.xaml.cs` |
+| New | `src/AiDe.App/Workbench/Understanding/AtlasLoadingHost.cs` |
+| New | `src/AiDe.App/Workbench/Understanding/AtlasWorkspaceOwner.cs` |
+| Existing | `src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs` |
+| Existing | `tests/AiDe.App.Tests/Workbench/Understanding/AtlasReaderViewTests.cs` |
+| New | `tests/AiDe.App.Tests/Workbench/Understanding/AtlasSharedHostAdmissionTests.cs` |
+
+Track S tree `C:\Projects\ai-de-atlas-production-shell` was created clean and HEAD verified at
+`366167052537c35171f40c6da66c982f8f5d93e5` before dispatch.
+MainWindow integration consumes only C's
+actual committed factory/view-model handoff, not guessed signatures; owner/loading/view work
+may proceed against the compiled public ports. Preserve the old proof constructor, selection/
+Back/currentness semantics, independent source/outline states and awaited lifetime ownership.
+Do not change unchanged perspective, menu consumers, generic docking/adapter, style, projects,
+Core contracts or any unlisted file. A needed seam returns to Conductor.
+
+### Atlas production repair continuation, Owner turn 43
+
+The same C and S writers retain their exact twenty/eight-file ceilings and existing trees.
+This is a prospective branch-local repair grant, not canonical ownership transfer or
+permission to integrate into primary/main. Conductor independently repeated the final
+membership candidate's three failures; no membership consumer is admitted.
+
+- C regular accounting is **34/48**, fourteen remaining. NQ special accounting is **10/22**:
+  twelve new leaves, with only the first three released initially. In
+  `AtlasGitMembership.cs` and `AtlasGitMembershipTests.cs`, those three add qualification-only
+  changed-pin/role, capture-stage, completion/error/byte-result and bounded action/name
+  diagnostics, then reproduce without changing invalidation semantics. Conductor must read
+  the diagnostic receipt before releasing the remaining nine. Repair only the demonstrated
+  cause; preserve hostile-fsmonitor, packed-ref ABA, relevant namespaces and fail-closed
+  overflow/error behavior. Regular non-Git work remains allowed, without fake admission.
+- S accounting is **32/44**, twelve new leaves for the four SRE lifetime findings in the
+  existing owner/loading-host/test scope. Observe semantic reds for transition recovery,
+  throwing clear callbacks, drained/idempotent final primitive disposal, and cleanup after
+  post-assignment load failure. Catching an exception does not release resource ownership.
+  MainWindow wiring still requires the actual committed/reviewed C handoff.
+- Eight separate targeted review leaves cover NQ Security/Test and Shell SRE/Test. Parent
+  readbacks and replays are separate costs, not hidden inside the worker budgets.
+- Maximum two writers, total width four. The order remains qualified membership, real
+  Core facade/issuer/client/ViewModel handoff, exact Shell consumption and real-window
+  lifecycle, then actual daemon-backed journey proof. Exhaustion returns remaining work
+  and its estimate to Owner; it does not reset a budget or manufacture completion.
 
 ### Core owns
 

@@ -7,8 +7,7 @@ owner: '@timianmalloo'
 phase: investigate
 tags: [code-atlas, ipc, cancellation, synthetic]
 links:
-  - rel: documents
-    to: design-code-atlas-shared-host-admission
+  - { to: design-code-atlas-shared-host-admission, rel: documents }
 review-by: 2026-09-20
 summary: Stateful synthetic IPC qualification preserves healthy connection scope and abandons dirty exchanges. The existing baseline still fails without wrong-response attribution; no production admission or root enforcement is claimed.
 ---
@@ -144,6 +143,27 @@ or evaluate an inspected repository. There are no adapters, real source roots, d
 connections, policy databases, conversation sessions, or user payloads.
 
 Only synthetic marker payloads and uniquely owned current-user local pipes are used.
+
+**Conductor qualification readback:** revision `c78874bd` was independently executed with
+`--candidate-qualification`: 79 assertions, zero failed cases, exit zero, and explicit
+`baselineIncluded=false`. Log SHA-256:
+`34035435438370DBF86D4E406CDCA8B3212E3B947C34D497553217404EC9018E`.
+The independent run and its automatic Markdown append were confined to the session evidence
+directory, `files/atlas-ipc-qualified-independent`; no worker-tree file was changed by that run.
+The earlier full independent run and its appended failed-baseline transcript remain preserved.
+
+Conductor inspected the critical server and client code after DS/Test's limited review:
+the EOF-only monitor is canceled and awaited before response publication, before the main
+frame-reader resumes; a received byte or EOF revokes rather than becoming a second framed
+reader. The client serializes exchanges, marks attempt completion under its cancellation lock,
+and disposes the cancellation registration before releasing exchange ownership.
+
+The candidate's synthetic one-shot Back receipt is **not** production policy. Accepted Q keeps
+bounded, scope-bound receipts and can return a successor on restore. The experiment qualifies
+ownership/continuity and dirty-scope replacement, not that literal synthetic receipt lifecycle.
+Baseline wrong-response attribution, exact partial-byte behavior and native-root enforcement
+remain NOT_PROVEN. Owner turn 37 selects only the transport direction; product adapters still
+require the dispatch contract and separate authoring grant.
 The candidate uses the real public framing and pipe factory. Its asynchronous queue,
 one-operation connection lifetime, and synthetic root label are experimental. In particular,
 the label is **not a native-root enforcement implementation**.

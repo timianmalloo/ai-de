@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Understanding: 46 types, 204 members, 16% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Understanding: 72 types, 222 members, 16% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Understanding`
 
-**46 public types · 204 public members · 16% documented.**
+**72 public types · 222 public members · 16% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -550,6 +550,184 @@ selection; consumers must subsequently adopt the manifest token of an accepted s
 | `IAtlasQueries Queries { get; }` | **(gap)** |
 | `string InitialManifestToken { get; }` | **(gap)** |
 | `void Dispose()` | **(gap)** |
+
+## `AtlasBoundsDimension`
+
+*enum* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasOutlineState`
+
+*enum* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasCapabilitiesRequestDto`
+
+*record* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasCapabilitiesDto`
+
+*record* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasAdmitRequestDto`
+
+*record* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasAdmitDto`
+
+*record* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasInventoryRequestDto`
+
+*record* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasSelectRequestDto`
+
+*record* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasRestoreRequestDto`
+
+*record* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasReleaseRequestDto`
+
+*record* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasReleasedDto`
+
+*record* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasInventoryPageDto`
+
+*record* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasFileDto`
+
+*record* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasSelectionDto`
+
+*record* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasSourceDto`
+
+*record* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasOutlineRowDto`
+
+*record* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasSpanDto`
+
+*record* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasCountDto`
+
+*record* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasCoverageDto`
+
+*record* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasBoundsDto`
+
+*record* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasReaderPhaseContext`
+
+*record* — `AtlasReaderContracts.cs`
+
+Explicit request/phase units; these are not fields on native AtlasBounds.
+
+## `AtlasSelectionPhaseContext`
+
+*record* — `AtlasReaderContracts.cs`
+
+Verified phase facts supplied by Core, not inferred from native declaration bounds.
+
+## `IAtlasReaderQueries`
+
+*interface* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `IAtlasReaderLease`
+
+*interface* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `IAtlasWorkspaceReader`
+
+*interface* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasReaderProjection`
+
+*class* — `AtlasReaderProjection.cs`
+
+Pure native-to-render projections and request-bound reader wire boundaries.
+This is not an admission, token-store, transport-registration or root-I/O implementation.
+
+| Member | Summary |
+|---|---|
+| `int MaxFrameBodyBytes = 1024 * 1024` | **(gap)** |
+| `int FramePrefixBytes = sizeof(int)` | **(gap)** |
+| `int MaxPageTextUtf8Bytes = 128 * 1024` | **(gap)** |
+| `int MaxSourceInputBytes = 8 * 1024 * 1024` | **(gap)** |
+| `AtlasFileDto File(` | **(gap)** |
+| `AtlasBoundsDto Bounds(` | Projects native row bounds only; source-range bounds require their own measured inputs. Unknown native omission dimensions remain absent rather than guessing a category. Standalone metadata producers must report zero … |
+| `AtlasInventoryPageDto Inventory(` | **(gap)** |
+| `AtlasSourceDto Source(` | The binding callback must be the owning Core table's opaque-token issuer. |
+| `byte[] SerializeInventory(AtlasInventoryPageDto value)` | Structural-only encoding. Use the request overload at publication. |
+| `AtlasInventoryPageDto DeserializeInventory(ReadOnlyMemory<byte> body)` | Structural-only decoding; it does not establish request identity or progress. |
+| `byte[] SerializeInventory(AtlasInventoryPageDto value, AtlasInventoryRequestDto request)` | **(gap)** |
+| `AtlasInventoryPageDto DeserializeInventory(ReadOnlyMemory<byte> body, AtlasInventoryRequestDto request)` | **(gap)** |
+| `AtlasSelectionDto Selection(` | **(gap)** |
+| `byte[] SerializeSelection(AtlasSelectionDto value, AtlasSelectRequestDto request)` | **(gap)** |
+| `AtlasSelectionDto DeserializeSelection(ReadOnlyMemory<byte> body, AtlasSelectRequestDto request)` | **(gap)** |
+| `byte[] SerializeSource(AtlasSourceDto value)` | Structural-only source encoding; selection publication additionally requires request bounds. |
+| `AtlasSourceDto DeserializeSource(ReadOnlyMemory<byte> body)` | **(gap)** |
+| `AtlasSelectRequestDto DeserializeSelect(ReadOnlyMemory<byte> body)` | **(gap)** |
 
 ## `AtlasSourceBindingMismatch`
 

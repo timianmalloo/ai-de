@@ -5651,6 +5651,24 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Confidence:** i  - **Source:** fleet (drm-0009/p6)
 
 ### PACK-Q-AN-ADAPTER-WR - PACK-Q · An adapter written to a contract's *documented* shape, never to a *recorded* one
+- **Recurrence (2026-09-13, Atlas production boundary):** proposed render adapters dropped
+  native entry kind/parent/reasons and bounds, then accepted zero source lengths,
+  split-surrogate highlights, nonprogressing continuation and inconsistent native content
+  bytes. **Class/sweep:** compare Inventory, Selection, Source and Outline native producers,
+  public DTOs, codec validators and consumer request context, not only DTO round trips.
+  **Derive/prevent:** one explicit native projection with dimension/request inputs and
+  producer-consistency assertions; `AtlasReaderWireTests` retains native goldens,
+  invalid-input semantic reds and a non-friend accessibility fixture. The final empty-source
+  continuation serializer/decoder correction is `8d091e51`; independent 326-case receipt
+  is named in `proof-code-atlas-production-adapters`. This controls the tested shapes,
+  not the unimplemented runtime facade or daemon-to-window journey.
+- **Metadata recurrence (same checkpoint):** IPC proof links used a valid-YAML multiline
+  mapping outside the installed graph parser's supported subset. `docs-graph.py derive`
+  reported `unparseable line 10`; its zero exit did not clear that finding.
+  **Class/sweep:** among `docs/proof/code-atlas*.md`, only the IPC proof used a
+  `- rel:` block. **Derive/prevent:** use the repository's inline typed-link shape and
+  inspect the graph findings after derivation. The warning was observed before correction;
+  the unrelated ruling-49 dangling link is retained as separate debt.
 - **Further Atlas oracle corrections:** a cached item peer was treated as the current selection;
   a legacy array signature was assumed to exclude null; then a manual provider was queried
   without its published-root connection. Exact WPF v10.0.11 source and actual own-HWND MTA

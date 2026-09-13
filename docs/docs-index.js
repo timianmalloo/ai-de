@@ -2695,7 +2695,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Understanding: 46 types, 204 members, 16% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Understanding: 72 types, 222 members, 16% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2708,7 +2708,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3a0a5fc398f4a321b7a23b7103ab479bf368946888ca7d5b915a96b126dac9ab"
+      "sourceSha256": "eec1396d66cd4012f2395ca5ae3f7b62a8f4a6aa205397ceaf21c00362133d05"
     },
     {
       "id": "api-aide-core-upgrade",
@@ -4781,7 +4781,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7d1e4197cb498f4db264245972a31782ca2979f7a9c732cd035b4bbac24dc7d7"
+      "sourceSha256": "6f325ef1b307d593afddf6644bf96f521fc047ee5c3a1270435167eac1f85e95"
     },
     {
       "id": "note-atlas-reader-native-direction",
@@ -6571,14 +6571,14 @@ window.DOCS_INDEX = {
     {
       "id": "design-code-atlas-shared-host-admission",
       "path": "docs/design/code-atlas-shared-host-admission.md",
-      "title": "Code Atlas — shared-host admission checkpoint",
+      "title": "Code Atlas — frozen walking-host implementation contract",
       "type": "design",
-      "status": "proposed",
+      "status": "dispatch-ready",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-09-19",
       "reviewSuggested": [],
-      "summary": "Current-main compatibility evidence and method-level Architecture host admission seams, with production authority gaps explicit.",
+      "summary": "Owner-38 corrected dispatch packet: physical-first inventory, lossless render bounds, public composition, required repository forms, persistent transport and conditionally admitted implementation tracks.",
       "tags": [
         "code-atlas",
         "shared-host",
@@ -6604,7 +6604,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3f76b3ec9b80665ff77f1644f126862b4089c395b14d5feeb679ad1856e9dabd"
+      "sourceSha256": "17fee86bc1c68aaad0c3b82587737198dd6cbca6126612467171a4b08bfe4237"
     },
     {
       "id": "design-knowledge-explorer-mode",
@@ -8355,7 +8355,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2026-12-12",
       "reviewSuggested": [],
-      "summary": "Reviewed inventory, declarations, bound source, query and native-view components are joined on the isolated Conductor branch. The detached runner and independent real-root journey are active next; shared Shell integration and normative registration remain separately gated.",
+      "summary": "The detached reader and compiled Core render seam are joined on the isolated Conductor branch. Production membership qualification and Shell lifetime repairs remain open; the actual Core factory and real-window integration are not yet implemented.",
       "tags": [
         "code-atlas",
         "coordination",
@@ -8381,7 +8381,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d47e014f1edb0f7d37133b580677d3bb8dca49e5631ea257b1f310b9ccc85b06"
+      "sourceSha256": "9bf5c66e428f6d90cd6822754342d3c0bd205fc854ffb15ce144f66d654f1fdb"
     },
     {
       "id": "coordination-code-atlas-resume",
@@ -8444,7 +8444,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "00a7945a7d399c00757610a5cd46d55d7f7ed3d42ff4b12fc87e64ae70bd75c2"
+      "sourceSha256": "0c49b7688b9781f1c0a9862103aed45455a6f996339ada9e6aa0d882b032f565"
     },
     {
       "id": "design-session-profiler",
@@ -10987,6 +10987,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "ffd8c6ef083b86d964831eb493694e9aba70e94deab8c6ff2dedd5769b97fb0b"
     },
     {
+      "id": "proof-code-atlas-production-adapters",
+      "path": "docs/proof/code-atlas-production-adapters.md",
+      "title": "Code Atlas production adapters - evidence and open gates",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-13",
+      "reviewSuggested": [],
+      "summary": "The compiled public render seam is joined. Membership qualification and Shell lifetime findings remain open. Component, compile-only and detached proofs are not proof of the real daemon-to-MainWindow journey.",
+      "tags": [
+        "code-atlas",
+        "proof",
+        "ipc",
+        "native",
+        "lifecycle"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-e-code-atlas",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "depends-on"
+        },
+        {
+          "to": "coordination-code-atlas",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "30d55fd7ca78f865fd55904caa9da3e5f1ff360db6ea44d68ed982fe590ea9e8"
+    },
+    {
       "id": "proof-pack-phase-1-walking-skeleton",
       "path": "docs/design/phase-1-proof-pack.md",
       "title": "Phase 1 walking skeleton — Proof Pack",
@@ -11609,7 +11644,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "38fa676db88fe716511b344e5e195d39fdfbe55947b3f0f4fae60eb5cc233e59"
+      "sourceSha256": "9beb1628a3ff0c731cf1a7955ab2f0d3e87b246c78765f5877907c557f74a40b"
     },
     {
       "id": "session-profiles",
@@ -15937,6 +15972,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "3ed0c4e060c9c69047f02130189c7f3ac643b38e1ef0bd4cd64ce9844770d844"
     },
     {
+      "id": "proof-code-atlas-ipc-contract",
+      "path": "docs/proof/code-atlas-ipc-contract.md",
+      "title": "Code Atlas IPC cancellation contract experiment",
+      "type": "proof-pack",
+      "status": "review",
+      "owner": "@timianmalloo",
+      "phase": "investigate",
+      "reviewBy": "2026-09-20",
+      "reviewSuggested": [],
+      "summary": "Stateful synthetic IPC qualification preserves healthy connection scope and abandons dirty exchanges. The existing baseline still fails without wrong-response attribution; no production admission or root enforcement is claimed.",
+      "tags": [
+        "code-atlas",
+        "ipc",
+        "cancellation",
+        "synthetic"
+      ],
+      "links": [
+        {
+          "to": "design-code-atlas-shared-host-admission",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a4b3ff00457666fcfcd385427d060875a33ae24217a74071d32943ed3f8602db"
+    },
+    {
       "id": "proof-code-atlas-live-reader-candidate",
       "path": "docs/proof/code-atlas-live-reader-candidate.md",
       "title": "Code Atlas live-reader candidate - staged execution evidence",
@@ -18702,7 +18763,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-design-code-atlas-shared-host-admission",
       "path": "docs/design/code-atlas-shared-host-admission.html",
-      "title": "Code Atlas — shared-host admission checkpoint",
+      "title": "Code Atlas — frozen walking-host implementation contract",
       "kind": "design-preview",
       "description": "Inspect a rendered design or design-language preview.",
       "artifactId": "design-code-atlas-shared-host-admission"
@@ -18904,5 +18965,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "1489a898b6b3cf7ff36c12c809a1887a076e00342b1eaf86a0cacdfdb49a3009"
+  "graphSha256": "8dddcaf4e7527345d638157f20173ffaa6f89776b44f78e31cbfb3c96e620d9b"
 };

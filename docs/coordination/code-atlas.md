@@ -12,18 +12,19 @@ links:
   - { to: note-atlas-lane-admission, rel: depends-on }
 review-by: 2026-12-12
 summary: >-
-  Reviewed inventory, declarations, bound source, query and native-view components are joined
-  on the isolated Conductor branch. The detached runner and independent real-root journey are
-  active next; shared Shell integration and normative registration remain separately gated.
+  The detached reader and compiled Core render seam are joined on the isolated Conductor
+  branch. Production membership qualification and Shell lifetime repairs remain open;
+  the actual Core factory and real-window integration are not yet implemented.
 ---
 
 # Code Atlas coordination - isolated authoring active, integration not admitted
 
-**Current execution checkpoint:** the detached reader is accepted within scope. Compatibility
-commit `be3ace85` combines observed main `6d3e281a` and accepted Atlas `1e688ace`; the packet
-maps actual host/transport contracts and remaining production admission decisions. No existing
-adapter was authored. Security/Data review and the next Owner decision remain open. The historical tables below
-explain prior allocations; the **Active live-reader horizon** section is the current work plan.
+**Current execution checkpoint:** Conductor `36616705` includes the accepted detached reader,
+main compatibility and corrected public Core render seam. Core membership candidate `d8d83de`
+is blocked by three executed qualification failures. Shell candidate `dade5c77` passes its
+component tests but has four source-reviewed lifetime findings and no real-window handoff.
+Neither candidate is joined. The **Production convergence checkpoint** below is current;
+earlier allocations and decisions are retained as history.
 
 **Current delivery blocker:** `req-01M2B86TXF7SHG61B31P4H4173` is still open.
 The native request is a shared pull log, not delivery into Claude's conversation. It blocks
@@ -182,7 +183,9 @@ leaves did not include the additional Conductor readback/replay/join calls. The 
 must not be interpreted as an all-inclusive orchestration cost.
 
 Compatibility/admission preparation used 24 worker leaves plus separately recorded Conductor
-mechanics. The next adapter scope has not yet been admitted. The earlier N -> runner -> independent nodes had real data and
+mechanics. At that historical checkpoint the next adapter scope had not yet been admitted.
+Owner turns 38-42 subsequently admitted the exact Core/Shell branch-local manifests in
+`session-contracts` section 2. The earlier N -> runner -> independent nodes had real data and
 gate dependency, so widening cannot shorten that chain. Conductor documentation can proceed
 while the runner authors its two files. The existing width-four/no-worker-fan-out contract
 stands. Failure drains a named finding list; a fired budget returns to Owner, never silently
@@ -204,6 +207,49 @@ Primary was observed at `6d3e281a` after CV-2 landed. Both native counterpart re
 open. This does not broaden the Atlas baseline or grant existing host/IPC/main integration.
 
 Every delegate has its own worktree and branch. The Conductor controls scope, gate release and
-local merges; no worker self-admits. No existing Core/host/IPC adapter or CV2 file is assigned.
+local merges; no worker self-admits. At the historical detached checkpoint no existing
+Core/host/IPC adapter or CV2 file was assigned; the later exact exceptions are in section 2.
 Observed SH3 ancestry is integration evidence, not acknowledgment. Symlinks remain unproven and
 outside the supported input space; no privilege change is permitted to clear that limit.
+
+## Production convergence checkpoint
+
+**Goal:** resolve production admission and lifetime blockers, commit the real Core-to-Shell
+handoff, and prove the next integrated journey. **Not in scope:** primary/main changes,
+publishing private proposal history, or releasing later diagram/AI stages. T2; total width
+four, at most two code writers. Conductor's resumed checkpoint budget is 60 calls, not an
+erasure of prior orchestration cost. No measured total runtime estimate is available.
+
+| Node | Capability | Input and exit condition | Dependency and current state |
+|---|---|---|---|
+| NQ diagnosis/repair | Reasoning | Actual failing native notification, then required clone/linked/nested and hostile/ABA controls pass without weakening confinement | Owner 43: special 10/22, first three new diagnostic leaves released; parent receipt before nine repair leaves. Regular Core remains 34/48 |
+| Shell lifetime repair | Reasoning | Factory/dispose/clear/load fault oracles, subsequent recovery and idempotent final drain/disposal | Owner 43: 32/44, twelve new repair leaves released. Semantic red still required for four source findings |
+| Membership gate | Independent review | Narrow Security/Test acceptance of qualified native/admin/currentness evidence | Depends on NQ repair, not Shell repair |
+| Production Core handoff | Reasoning | Actual committed issuer, async transport, remote reader and factory/view-model surface; no callable success stub | Git-dependent admission waits for membership gate |
+| Real-window integration | Reasoning | MainWindow attach/replacement/awaited close consumes the committed Core surface | Depends on Core handoff and repaired Shell owner |
+| Integrated proof | Independent review | Real Architecture opener to inventory/file/member/source/Back, replacement/revocation/cancellation/disposal | Depends on joined production source; component and detached proofs do not satisfy it |
+| Record/join | Deterministic mechanics | Scoped commits, audit then derived regeneration, exact evidence and remaining boundaries recorded | Conductor owns this; no primary merge or push |
+
+The two repairs are independent: different authored files and worktrees, neither changes the
+other's contract, and neither owns a shared exclusive resource. Both gates must succeed before
+their descendants are admitted. A failed repair does not cancel the other. Reuse retained
+agents; no duplicate exploration or autonomous fan-out. No automatic retry after a semantic
+failure; an infrastructure timeout needs an identified transient cause before one retry.
+
+The longest chain is NQ -> membership gate -> Core -> real window -> integrated proof.
+In a **unit-node model only**, the six implementation/review nodes have work T1=6 and span
+T-infinity=5; two-way scheduling has an upper bound of 5.5 units and cannot beat five units.
+This is not a latency measurement. Parallel Shell repair can overlap only the independent
+membership work; more workers cannot remove the Core handoff dependency.
+
+The repair worklist is finite: three observed NQ failures and four Shell source findings.
+Each pass must resolve a named item or return new discriminating evidence; after two passes
+without reduction the Owner must change the plan, not repeat the same work with a larger cap.
+Budgets and source ceilings remain prospectively controlled by the Owner.
+
+Evidence and the distinction between executed results and source-reviewed risks are recorded
+in `docs/proof/code-atlas-production-adapters.md`.
+
+Owner turn 43 separately allocates eight review leaves: NQ Security/Test and Shell SRE/Test.
+Conductor readbacks/replays remain separate. The diagnostic tranche is a decision boundary:
+the changed pin/stage/native result must be read before a cause-specific NQ repair is released.

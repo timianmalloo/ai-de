@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T17:09:50Z",
+  "generated": "2026-09-13T22:47:16Z",
   "audit": [
     {
       "actor": null,
@@ -15452,6 +15452,70 @@ window.AUDIT_DATA = {
       "done_when": "Owner authority decision and bounded experiment are explicit; production lease and adapters remain gated on executed transport evidence.",
       "tier": "T2",
       "fan_out": 4
+    },
+    {
+      "id": "al-01M2EF5VTB8E50FMJG6A3TCQKH",
+      "shortname": "atlas-production-repair-dispatch",
+      "datetime": "2026-09-13T22:46:01Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Resumed production convergence. Independently reproduced membership14/17 with the same three native-namespace-notification failures. Consumed SRE four source-level Shell lifetime findings. Owner43 authorized same-tree three-leaf diagnostics before nine NQ repair leaves, twelve Shell repair leaves, eight separate reviews; dispatched both retained writers. Core actual runtime factory and MainWindow remain absent. Recorded partial proof and refreshed stale coordination/liveness. No candidate join, primary change or push.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md",
+        "docs/coordination/code-atlas.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Continue Code Atlas production integration with Owner-resolved blockers.",
+      "done_when": "Membership and Shell lifetime blockers resolved, actual Core-to-Shell handoff committed, next integration gate supported by concrete evidence.",
+      "tier": "T2",
+      "main_calls": 38,
+      "main_budget": 60,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-13T22:33:08Z",
+      "duration_seconds": 773.0,
+      "git": {
+        "sha": "366167052537c35171f40c6da66c982f8f5d93e5",
+        "short": "366167052",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2EF83JETJA83CHYM1A9RQV1",
+      "shortname": "atlas-production-record-metadata",
+      "datetime": "2026-09-13T22:47:15Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Recorded Core adapter failure-class controls and corrected the touched IPC proof typed-link mapping after observing the graph parser warning. Swept Atlas proof mappings; one affected file. Preserve unrelated ruling-49 dangling link. Repair workers continue; no product candidate joined.",
+      "kind": "command",
+      "skill": null,
+      "tool": "docs-graph",
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md",
+        "docs/proof/code-atlas-ipc-contract.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Persist accurate production convergence evidence and supported graph metadata.",
+      "done_when": "Records preserve partial state and the corrected IPC link appears in derived graph without its prior parser warning.",
+      "tier": "T0",
+      "fan_out": 0,
+      "started_at": "2026-09-13T22:47:15Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "366167052537c35171f40c6da66c982f8f5d93e5",
+        "short": "366167052",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
     }
   ],
   "changes": [
