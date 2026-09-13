@@ -216,3 +216,5 @@ The landing gap: a `shell.mode.landed` line (surface id, zone, whether the entry
 | `tools/run-verify-gates.py` | **35 of 35** green (`verify-terminal-host-exit-paths`, `verify-fixture-derivation`, `verify-defect-register`, `verify-derived-views`, `verify-site-figures` included) |
 | `tools/regenerate-derived.py` (after the audit entry `al-01M2EDC3SXV2T2XFW9RKFDQV0V`) | every derived view current |
 | Audit entry | `al-01M2EDC3SXV2T2XFW9RKFDQV0V` — session `sh-4`, T2, fan-out 3, `duration_seconds` 5843 measured from the start marker, signals verification_path · verification_executed · acceptance_met = true |
+
+`origin/main` moved twice more while closing (CV-4 + X-5 at `355ab766`; CV-5.4 + `conductor-join.py` at `db2c43e0`); each was merged (`f1252e63`, `8037064d` — the three `site/*.html` figures resolved by regeneration) and the close re-run green: App **910** ≥ 895 then **928** ≥ 913, Core **2620** ≥ 2620 both times, 35/35 gates, all six projects 0 warnings. Release build at the pushed HEAD: `ProductVersion 1.0.0+8037064d546fba8c6def99796a742de46cef0016` (0 warnings, 0 errors).
