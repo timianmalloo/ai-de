@@ -9,6 +9,42 @@ namespace AiDe.Core.Tests.Understanding;
 
 public sealed class AtlasReaderWireTests
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Owner42StandaloneEmptyIndexedSourceCannotContinue(bool deserialize)
+    {
+        var source = new AtlasSourceDto(SourceProjectionState.IndexedMatch, "observation", "binding",
+            "utf8", string.Empty, new AtlasSpanDto(0, 0), [], 0, null);
+        if (deserialize)
+        {
+            const string json = """
+                {"state":"IndexedMatch","observationToken":"observation","bindingToken":"binding",
+                "decoderId":"utf8","text":"","pageSpan":{"start":0,"length":0},
+                "highlights":[],"nextOffset":0,"reason":null}
+                """;
+            Assert.Throws<JsonException>(() => AtlasReaderProjection.DeserializeSource(Encoding.UTF8.GetBytes(json)));
+        }
+        else
+        {
+            Assert.Throws<JsonException>(() => AtlasReaderProjection.SerializeSource(source));
+        }
+    }
+
+    [Fact]
+    public void Owner42StandaloneEmptyIndexedSourceWithoutContinuationRoundTrips()
+    {
+        var source = new AtlasSourceDto(SourceProjectionState.IndexedMatch, "observation", "binding",
+            "utf8", string.Empty, new AtlasSpanDto(0, 0), [], null, null);
+        var body = AtlasReaderProjection.SerializeSource(source);
+        var remote = AtlasReaderProjection.DeserializeSource(body);
+        Assert.Equal(string.Empty, remote.Text);
+        Assert.Equal(new AtlasSpanDto(0, 0), remote.PageSpan);
+        Assert.Null(remote.NextOffset);
+        Assert.Empty(remote.Highlights);
+        Assert.Equal(body, AtlasReaderProjection.SerializeSource(remote));
+    }
+
     [Fact]
     public void Owner41RejectsZeroSourceLength()
     {

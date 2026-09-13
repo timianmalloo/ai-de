@@ -454,8 +454,9 @@ public static class AtlasReaderProjection
         Require(span.Start >= 0 && span.Length == value.Text.Length
             && (long)span.Start + span.Length <= int.MaxValue, "Page span must describe UTF-16 text.");
         Require(ContentBytes(value.Text) <= MaxPageTextUtf8Bytes, "Source display budget exceeded.");
-        Require(value.NextOffset is null || value.NextOffset == span.Start + span.Length,
-            "Source continuation must follow the page.");
+        Require(value.NextOffset is null || (span.Length > 0 && value.NextOffset > span.Start
+            && value.NextOffset == span.Start + span.Length),
+            "Source continuation must advance past nonempty content by the exact page length.");
         foreach (var highlight in value.Highlights)
         {
             Require(highlight is not null && highlight.Start >= span.Start && highlight.Length >= 0
