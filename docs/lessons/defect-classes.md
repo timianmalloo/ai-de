@@ -7516,7 +7516,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   repeated by every reader as a fact.
 - **Instance:** PD-5's Proof Pack and `run-spike.js` cite "26 names" for
   `ReadOnlyLaneSession`'s denied-tool set; the literal has 30 (counted red-first by
-  `TheCompileSessionIsPinnedTests.TheRecordHasExactlyFourMembersAndTheCompilePinIsANamedStatic`).
+  `TheCompileSessionIsPinnedTests.TheRecordHasExactlyFiveMembersAndTheCompilePinIsANamedStatic`).
 - **Control (this instance):** the test asserts the count from the literal
   (`LaneSessionOptions.DeniedToolNames.Count`); the citing documents are corrected in CV-3's Proof
   Pack, never silently.

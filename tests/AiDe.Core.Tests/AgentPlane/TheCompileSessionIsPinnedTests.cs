@@ -80,18 +80,22 @@ public sealed class TheCompileSessionIsPinnedTests
     }
 
     /// <summary>
-    /// The typed argument has exactly four members, each admitted by a named finding — the two
+    /// The typed argument has exactly five members, each admitted by a named finding — the two
     /// the adapter spreads as tools (Ruling 71), <c>strictMcpConfig</c> (PD-5 run 2: the
     /// repository's <c>.mcp.json</c> server spawned as the operator under <c>tools: []</c> +
-    /// <c>mcp__*</c>) and <c>model</c> (the binding's third element, otherwise the CLI's own
-    /// resolution picks what bills) — and a fifth is a wider reach. The compile pin is the named
-    /// static, not an ad-hoc list; a lane's record sends nothing new.
+    /// <c>mcp__*</c>), <c>model</c> (the binding's third element, otherwise the CLI's own
+    /// resolution picks what bills) and <c>thinking.display</c> (CV-5.3, Ruling 82: recent models
+    /// default to <c>"omitted"</c> and the adapter forwards no thought chunk — the thread's
+    /// Thinking line needs the lane to ask) — and a sixth is a wider reach. The compile pin is the
+    /// named static, not an ad-hoc list, and it does not ask for thinking (its pin identity,
+    /// <c>CE-0023</c>, is unchanged); a lane's record sends nothing new.
     /// </summary>
     [Fact]
-    public void TheRecordHasExactlyFourMembersAndTheCompilePinIsANamedStatic()
+    public void TheRecordHasExactlyFiveMembersAndTheCompilePinIsANamedStatic()
     {
         var members = typeof(LaneSessionOptions).GetProperties().Select(p => p.Name).Order(StringComparer.Ordinal).ToList();
-        Assert.Equal(["DisallowedTools", "Model", "StrictMcpConfig", "Tools"], members);
+        Assert.Equal(["DisallowedTools", "Model", "StrictMcpConfig", "ThinkingDisplay", "Tools"], members);
+        Assert.Null(LaneSessionOptions.Compile.ThinkingDisplay);
 
         Assert.Null(new LaneSessionOptions(DisallowedTools: ["Bash"]).StrictMcpConfig);
         Assert.Null(new LaneSessionOptions(DisallowedTools: ["Bash"]).Model);

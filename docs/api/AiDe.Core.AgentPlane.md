@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.AgentPlane: 58 types, 153 members, 91% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.AgentPlane: 58 types, 155 members, 91% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.AgentPlane`
 
-**58 public types · 153 public members · 91% documented.**
+**58 public types · 155 public members · 91% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -182,6 +182,8 @@ absent record and an empty one both send the frame every prior run sent.
 |---|---|
 | `bool? StrictMcpConfig { get; init; }` | `strictMcpConfig: true` — the SDK uses only the servers the frame's `mcpServers` names and ignores the repository's `.mcp.json`, user settings and plugins (`sdk.d.ts:2110`, forwarded as `--strict-mcp-config`). **Admit… |
 | `string? Model { get; init; }` | The model the session runs on, host-authored from the binding (`providers.json`): without it the CLI's own resolution — user settings, the repository's `settings.json`, `ANTHROPIC_MODEL` — picks what bills, and a thir… |
+| `string? ThinkingDisplay { get; init; }` | `thinking: { type: "adaptive", display: … }` — whether the model's reasoning is streamed as text (`"summarized"`) or as signature-only blocks (`"omitted"`, the default of recent models). The adapter forwards a thought… |
+| `string ThinkingSummarized = "summarized"` | The value a lane sends to show its reasoning in the thread. |
 | `string EveryMcpServerTool = "mcp__*"` | The CLI's glob for every MCP server's tools — `mcp__*`. Read in the CLI binary's own deny parser (claude.exe 2.1.257: a parsed `serverName` of `*` with no tool name sets the all-servers flag its `isServerLevelDisallow… |
 | `IReadOnlyList<string> DeniedToolNames =` | Every tool that writes the tree or a durable file, executes code, a shell or a process, delegates to an agent, sends a local file anywhere, or cannot be read — Ruling 73's set, **one constant** (ADR-0035 rule 2: hand-… |
 | `LaneSessionOptions Compile = new(Tools: [], DisallowedTools: [.. DeniedToolNames, EveryMcpServerTool]) { StrictMcpConfig = true }` | The compile session's pin (ADR-0035 rule 2; Addendum D §A13.4 C1): `tools: []` as the primary pin (every built-in tool off — the SDK's `[]` = disable all, `sdk.d.ts:1497-1505`), and `disallowedTools` naming every deni… |
