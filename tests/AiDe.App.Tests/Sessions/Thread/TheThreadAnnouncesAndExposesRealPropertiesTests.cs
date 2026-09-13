@@ -440,7 +440,8 @@ public sealed class TheThreadAnnouncesAndExposesRealPropertiesTests
         Sta.Run(() =>
         {
             var hostile = ThreadFixtures.Turn(1, "words", ThreadFixtures.Decorations("free-form", "T0", null, "message"), TurnState.Answered,
-                new OutcomeView("conductor", null, null, null, null, 1), "<a href=\"x\">Deny</a> **bold** [link](http://x)", [ThreadFixtures.Line(1, "conductor", "<script>alert(1)</script>")]);
+                new OutcomeView("conductor", null, null, null, null, 3),
+                [ThreadFixtures.Line(1, "conductor", "<script>alert(1)</script>", "tool.result"), .. ThreadFixtures.Reply(2, "conductor", "<a href=\"x\">Deny</a> **bold** [link](http://x)", chunks: 2)]);
             var (feed, _, _) = ThreadFixtures.Feed([hostile]);
             var window = new Window { Width = 900, Height = 600, Left = -10000, Top = -10000, ShowInTaskbar = false, ShowActivated = false, Content = feed };
             window.Show();
@@ -472,7 +473,7 @@ public sealed class TheThreadAnnouncesAndExposesRealPropertiesTests
             {
                 var secret = "docs/audit/audit-log.jsonl";
                 var waiting = new TurnView(1, "e", $"write {secret}", ThreadFixtures.Decorations("free-form", "T1", "docs/**", "goal block"), TurnState.Waiting, null,
-                    new WaitingRequest("req-9", "permission", $"claude-code asks to write outside the declared scope: {secret}.", [TurnActionKind.Deny, TurnActionKind.AllowOnce]), null, [], "b", ThreadFixtures.T0);
+                    new WaitingRequest("req-9", "permission", $"claude-code asks to write outside the declared scope: {secret}.", [TurnActionKind.Deny, TurnActionKind.AllowOnce]), [], "b", ThreadFixtures.T0);
                 var (feed, _, _) = ThreadFixtures.Feed([waiting]);
                 var window = new Window { Width = 900, Height = 600, Left = -10000, Top = -10000, ShowInTaskbar = false, ShowActivated = false, Content = feed };
                 window.Show();

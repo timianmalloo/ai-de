@@ -39,7 +39,7 @@ public sealed class TheThreadIsChatLikeTests
 
             if (turn.Outcome is { } outcome)
             {
-                document.ReadModel.Conclude(ordinal, turn.State, turn.At + (outcome.Duration ?? TimeSpan.Zero), outcome.ExitCode, outcome.Edits, turn.Reply);
+                document.ReadModel.Conclude(ordinal, turn.State, turn.At + (outcome.Duration ?? TimeSpan.Zero), outcome.ExitCode, outcome.Edits);
             }
         }
 
@@ -151,7 +151,7 @@ public sealed class TheThreadIsChatLikeTests
                 {
                     var turns = count == 40
                         ? ThreadFixtures.Forty()
-                        : Enumerable.Range(0, 10).SelectMany(r => ThreadFixtures.Forty().Select(t => ThreadFixtures.Turn(t.Ordinal + 40 * r, t.SourceText, t.Decorations, t.State, t.Outcome, t.Reply, t.Events))).ToList();
+                        : Enumerable.Range(0, 10).SelectMany(r => ThreadFixtures.Forty().Select(t => ThreadFixtures.Turn(t.Ordinal + 40 * r, t.SourceText, t.Decorations, t.State, t.Outcome, t.Events))).ToList();
                     var (feed, thread, _) = ThreadFixtures.Feed(turns);
                     var window = new Window { Width = Width, Height = Height, Left = -10000, Top = -10000, ShowInTaskbar = false, ShowActivated = false, Content = feed };
                     window.Show();
@@ -280,7 +280,7 @@ public sealed class TheThreadIsChatLikeTests
 
                 // The split over ten thousand rows realizes a viewport, not the list.
                 var big = ThreadFixtures.Turn(7, "big", ThreadFixtures.Decorations("free-form", "T0", null, "message"), TurnState.Completed,
-                    new OutcomeView("claude-code", null, 0, null, null, 10_000), null, ThreadFixtures.Lines(7, 10_000));
+                    new OutcomeView("claude-code", null, 0, null, null, 10_000), ThreadFixtures.Lines(7, 10_000));
                 var split = new ConsoleSurface();
                 window.Content = split;
                 split.Show([big]);

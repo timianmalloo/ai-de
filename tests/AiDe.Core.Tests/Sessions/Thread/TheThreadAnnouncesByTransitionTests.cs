@@ -26,7 +26,7 @@ public sealed class TheThreadAnnouncesByTransitionTests
             state,
             terminal ? new OutcomeView("claude-code", exitCode, 1, spend, TimeSpan.FromSeconds(252), 12) : null,
             state == TurnState.Waiting ? new WaitingRequest(requestId ?? "r1", "permission", "claude-code asks to write outside the declared scope.", [TurnActionKind.Deny, TurnActionKind.AllowOnce]) : null,
-            null, [], "bytes", T0);
+            [], "bytes", T0);
     }
 
     private static ThreadSnapshot Snapshot(long version, bool caughtUp, params TurnView[] turns) => new(turns, version, caughtUp);

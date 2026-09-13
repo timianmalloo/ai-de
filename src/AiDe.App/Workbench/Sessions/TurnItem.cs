@@ -85,8 +85,13 @@ public sealed class TurnItem : INotifyPropertyChanged
     public string Counts => _view.Outcome is null
         ? TurnCopy.EventsText(_view.Events.Count)
         : string.Join(" · ", TurnCopy.Counts(_view));
-    public string? Reply => _view.Reply;
-    public bool HasReply => !string.IsNullOrEmpty(_view.Reply);
+    /// <summary>
+    /// The reply side's prose: the <c>agent.msg</c> rows of <c>Coalesce(Events)</c>, each one
+    /// message (Ruling 81). Rendered as text for now; CV-5.3 renders the whole fold as items —
+    /// prose · reasoning · tool call+result · outcome, in event order (Ruling 82).
+    /// </summary>
+    public IReadOnlyList<TurnRow> Prose => [.. _view.Rows.Where(r => string.Equals(r.Kind, Coalesce.MessageKind, StringComparison.Ordinal))];
+    public bool HasProse => _view.Rows.Any(r => string.Equals(r.Kind, Coalesce.MessageKind, StringComparison.Ordinal));
     public string SentBytes => _view.SentBytes;
     public string ProvenanceName => "Provenance of " + _view.DisplayOrdinal;
     public string CompiledName => "Compiled prompt of " + _view.DisplayOrdinal;

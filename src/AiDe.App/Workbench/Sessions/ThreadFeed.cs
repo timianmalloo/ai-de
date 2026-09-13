@@ -538,12 +538,14 @@ public sealed class ThreadFeed : FeedList, IDisposable
         replySide.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 8, 0, 0));
         replySide.AppendChild(OutcomeLine());
 
-        var reply = Text(nameof(TurnItem.Reply), 13, "TextBrush", wrap: true);
-        reply.SetValue(FrameworkElement.MaxWidthProperty, MeasureWidth);
-        reply.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
-        reply.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 4, 0, 0));
-        reply.SetBinding(UIElement.VisibilityProperty, Visible(nameof(TurnItem.HasReply)));
-        replySide.AppendChild(reply);
+        // The prose: one wrapped text per message row of the fold (Ruling 81) — never a blob.
+        var prose = F(typeof(ItemsControl));
+        prose.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(TurnItem.Prose)));
+        prose.SetValue(ItemsControl.ItemTemplateProperty, ProseRowTemplate());
+        prose.SetValue(KeyboardNavigation.IsTabStopProperty, false);
+        prose.SetValue(UIElement.FocusableProperty, false);
+        prose.SetBinding(UIElement.VisibilityProperty, Visible(nameof(TurnItem.HasProse)));
+        replySide.AppendChild(prose);
 
         replySide.AppendChild(ReasonBox());
         replySide.AppendChild(ActionRow());
@@ -743,6 +745,16 @@ public sealed class ThreadFeed : FeedList, IDisposable
         tail.AddHandler(ButtonBase.ClickEvent, new RoutedEventHandler(OnTailClick));
         panel.AppendChild(tail);
         return panel;
+    }
+
+    /// <summary>One message of the reply side: its joined text, 13 px, wrapping at the 96ch measure (DESIGN.md:1111 as amended by Ruling 81).</summary>
+    private DataTemplate ProseRowTemplate()
+    {
+        var text = Text(nameof(TurnRow.Text), 13, "TextBrush", wrap: true);
+        text.SetValue(FrameworkElement.MaxWidthProperty, MeasureWidth);
+        text.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+        text.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 4, 0, 0));
+        return new DataTemplate(typeof(TurnRow)) { VisualTree = text };
     }
 
     /// <summary>ts (muted) · lane (accent) · message; stderr in danger (DESIGN.md:1112).</summary>

@@ -111,7 +111,6 @@ public sealed record TurnView
         TurnState state,
         OutcomeView? outcome,
         WaitingRequest? waiting,
-        string? reply,
         IReadOnlyList<EventLine> events,
         string sentBytes,
         DateTimeOffset at)
@@ -143,8 +142,8 @@ public sealed record TurnView
         State = state;
         Outcome = outcome;
         Waiting = waiting;
-        Reply = reply;
         Events = events;
+        Rows = Coalesce.Rows(events);
         SentBytes = sentBytes;
         At = at;
     }
@@ -169,11 +168,15 @@ public sealed record TurnView
     /// <summary>Waiting only.</summary>
     public WaitingRequest? Waiting { get; }
 
-    /// <summary>The conductor's report or the lane's summary, plain text.</summary>
-    public string? Reply { get; }
-
-    /// <summary>The run's lines, in order.</summary>
+    /// <summary>The run's lines, in order — the wire grain, untouched (the mapper drops nothing; <i>Open the log</i> reaches them).</summary>
     public IReadOnlyList<EventLine> Events { get; }
+
+    /// <summary>
+    /// <c>Coalesce(Events)</c> — the message grain (Ruling 81), derived once per snapshot from
+    /// <see cref="Events"/> and never written by anything else: the one fold the thread's reply
+    /// side renders and the Console split unfolds (DM7: one derivation, two readers).
+    /// </summary>
+    public IReadOnlyList<TurnRow> Rows { get; }
 
     /// <summary>Exactly the sent bytes — the compiled prompt disclosure shows this and nothing else.</summary>
     public string SentBytes { get; }
