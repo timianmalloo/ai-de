@@ -1220,6 +1220,18 @@ for both or split.*
 
 ### DC-029 — A full-tree re-render rebuilds live children from a factory instead of reconciling by key
 
+- **Recurrence (2026-09-13, Atlas accepted member):** normal member acceptance cleared/rebuilt
+  outline rows without rebinding the selected observation, so the next Back frame captured
+  null. **Class/sweep:** both native outline clears were traced; only Back restored a key,
+  too late for the already-lost selection. **Derive/prevent:** rebind the requested key only
+  when present in the accepted current projection for the same file; never use a first-row
+  fallback. `NativeReader_AcceptedMemberActivation_RetainsSelectedOutlineKeyAfterAwait` and
+  `NativeReader_AcceptedMemberThenDifferentFileBack_RestoresSelectedOutlineRowWithoutManualReselect`
+  fail before repair; stale/non-match/missing-key guards remain. N `a8897914` passed 45/45
+  independently, and the unchanged actual composed Back oracle changed from failure to pass.
+  `investigation-code-atlas-outline-selection` preserves the separate cached/unconnected UIA
+  test-subject mistakes and their public-client correction rather than attributing them to
+  product behavior.
 - **Signature:** a UI/layout adapter renders by discarding the whole realized tree and rebuilding it
   from the model on every mutation, invoking a content factory for **every** child — including
   children that did not change. Where a child owns live state (a process, a session, a socket, a
@@ -5639,6 +5651,12 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Confidence:** i  - **Source:** fleet (drm-0009/p6)
 
 ### PACK-Q-AN-ADAPTER-WR - PACK-Q · An adapter written to a contract's *documented* shape, never to a *recorded* one
+- **Further Atlas oracle corrections:** a cached item peer was treated as the current selection;
+  a legacy array signature was assumed to exclude null; then a manual provider was queried
+  without its published-root connection. Exact WPF v10.0.11 source and actual own-HWND MTA
+  client observations distinguished all three. The native product hash stayed unchanged
+  through those corrections. The current-client test retains independent key/container and
+  selected-element/name/container-identity assertions; it does not manipulate private caches.
 - **Recurrence (2026-09-13, Atlas proof runner):** two automation-item peer constructions used
   an unchecked one-argument shape. **Class/sweep:** the build found both calls at Program.cs
   lines 185 and 240, CS7036; actual WPF requires the item and owning selector peer.

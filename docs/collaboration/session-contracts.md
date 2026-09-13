@@ -98,6 +98,7 @@ ownership rows, normative Addendum E acceptance, or permission to integrate into
 | `atlas-live-native-repair-astra` / `atlas/live-reader-native-repair` | `src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs`; `tests/AiDe.App.Tests/Workbench/Understanding/AtlasReaderViewTests.cs` | After the turn-18 repair and turn-20 seam, Owner turn 24 grants eight new leaves for accepted-member selection loss exposed by actual composition. Same owner/tree/two files; shown UIA regression red before current-only stable-key rebind, no first-row fallback. No filesystem/provider/issuer, host/theme/layout/project/F-contract changes. Prior allocations and overruns remain recorded. |
 | `atlas-live-query-astra` / `atlas/live-reader-query` | `src/AiDe.Core/Understanding/AtlasQueryService.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasQueryServiceTests.cs` | Owner turn-17 Q allowance: 36 leaf calls. First four are read-only contract readback against actual cleared S API. In-memory query/receipt and narrow trusted composition only; no store, IPC, host, UI, project or frozen producer edits. |
 | `atlas-live-continuation-gpt55` / `atlas/live-reader-continuation` | `src/AiDe.Core/Understanding/AtlasQueryContracts.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasQueryContractsTests.cs` | Owner turn-20 exact F continuation seam: eight new leaf calls for optional validated InventoryPage.NextOffset only. Pin/verify this contract before Q/N edits; no other F shape or producer/UI implementation. |
+| `atlas-shared-host-astra` / `atlas/shared-host-compatibility` | New `docs/design/code-atlas-shared-host-admission.md` and `.html`; merge/regeneration results only for reconciliation with an executor-observed main pin | Owner turn 32: 12 leaves for compatibility build, exact adapter/owner/test manifest, production authority/membership proposal and one supported counterpart handoff. No authored existing Core/Shell/Conversation adapter edits, primary changes, main merge or push. Packet is not production-design acceptance. |
 | `atlas-live-runner-astra` / `atlas/live-reader-runner` | `spikes/code-atlas-reader-candidate/CodeAtlas.ReaderCandidate.csproj`; `spikes/code-atlas-reader-candidate/Program.cs` | Original 12 leaves ended with two CS7036 peer-constructor errors and no synthetic execution. Owner turn 23 prospectively adds eight leaves, same writer/files, ending at actual shown synthetic journey/capture/negative proof, not build alone. No existing App startup/host/IPC/project edits, private corpus, inspected-project execution or main integration. Independent live-root proof retains its separate 15-call allowance. |
 
 The first source writer's worktree is `C:\Projects\ai-de-atlas-e0-source-safety`, created from
@@ -175,6 +176,51 @@ regression, then six runner leaves after reviewed N incorporation. The runner ce
 (19 reported spent, seven remaining), not a reset; its independent fifteen-call real-root proof
 allowance is unchanged. The investigation is `investigation-code-atlas-outline-selection`.
 The runner never patches product code or weakens the selected-row expectation.
+
+Owner turn 25 adds **six prospective N leaves**, same owner and two files, after the preceding
+eight ended at 44/45 passing. Two diagnostic leaves must distinguish realized-container
+selection from framework UIA peer state before repair is released. Claim setup, if a separate
+leaf is needed, is charged within the same six and reduces the repair/close remainder; it is
+not hidden or added to the total. Both selection assertions stay. No private-cache
+manipulation, forced refresh, manual reselection or arbitrary sleep to obtain green is admitted.
+The Conductor reads the diagnostic receipt before releasing any repair.
+
+Owner turn 28 permits **four new N leaves** for a test-only close, after Test's explicit
+current-selection-oracle approval. Freeze the product-file hash. Query the control's public
+selection provider for the current selected item instead of treating cached child-peer
+identity as current selection. Keep observation-key, realized-container and SelectionItem
+assertions; remove only unnecessary provisional dispatcher diagnostics. No cache invalidation,
+forced refresh or reselection. Read back the unchanged product file, run all 45 cases, and
+commit/release only on the stated conditions. Original red02 covers the product defect, not
+the newly changed provider acquisition; external-client UIA proof is not claimed.
+
+Owner turn 29 grants **four further N test-only leaves** for the established empty-selection
+boundary: WPF v10.0.11 returns null before any selection. Accept null-or-empty only there;
+post-acceptance non-null/single/matching/selected provider and realized key/container checks
+remain strict. Product SHA-256 stays
+`8B76E2BD85BF44651D5CC6D4F4F528A29585034C675EB12554735F7FDE243980`.
+Claim first, run all 45, retain failed-precondition evidence, then commit/release on success.
+
+Owner turn 30 permits **six N test-only leaves** to replace the unconnected manual-provider
+oracle with a public UI Automation client query on a non-UI MTA thread. Capture only the owned
+window HWND, verify its process/window identity, search only beneath it, and require current
+selection/name/container runtime identity plus SelectionItem state. Keep UI-thread key and
+realized-container assertions, finite deadlines, cleanup and the frozen product hash. No
+DesktopRoot/global search, listeners, project/dependency/shared-harness edits or cache forcing.
+API absence is NOT_PROVEN, never a successful fallback. Original manual null-operand evidence
+must be named; this grant is not real-repository or full-assistive-technology acceptance.
+
+Owner turn 31 extends independent proof from 15 to **21 leaves**, solely for an isolated-parent
+semantic-red run, independent byte/decoder/UTF-16 and different-file checks, owned PNG inspection,
+post-run cleanliness/fixture disposition and a persistent receipt. No source edits or unnecessary
+real-root rerun. The first independent real-root run passed its runner checks, but the red recipe
+shared a synthetic parent and hit the refusal guard; that is not semantic-red proof. Retain it.
+
+Owner turn 32 accepts only the proved detached reader against its pinned scope and keeps the
+programme open. The next worker gets its own compatibility tree and the exact two packet files
+above. It must separate transport delivery, recipient acknowledgment and actual agreement.
+If acknowledgment is absent after one supported attempt, return the packet to Owner for a
+bounded branch-local adapter decision; do not require human relay or repeatedly poll the log.
 
 ### Core owns
 

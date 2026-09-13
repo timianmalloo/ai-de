@@ -2,9 +2,9 @@
 id: proof-code-atlas-live-reader-candidate
 title: "Code Atlas live-reader candidate - staged execution evidence"
 type: proof-pack
-status: draft
+status: accepted
 owner: "@timianmalloo"
-phase: "atlas-live-reader-composition"
+phase: "atlas-live-reader-independent-proof"
 tags: [code-atlas, proof-pack, live-reader, worktrees]
 links:
   - { to: note-atlas-live-reader-horizon, rel: depends-on }
@@ -13,9 +13,9 @@ links:
   - { to: coordination-code-atlas, rel: relates-to }
 review-by: 2026-12-12
 summary: >-
-  Records reviewed and joined inventory, declarations, source, queries and native fixture
-  evidence. Actual detached composition and independent real-workspace proof remain pending;
-  component green results are not promoted to a completed native journey.
+  Records the independently exercised detached file/member/source/Back journey on an explicitly
+  approved clean AiDe.Core scope. Includes source-byte/span checks, owned-window capture and
+  semantic-red evidence. This is not main-host, full-solution, diagram or AI-feature acceptance.
 ---
 
 # Current evidence boundary
@@ -30,9 +30,9 @@ summary: >-
 | S source node | Cleared and joined | Candidate `97a23b06`, Conductor `720c847f`; 165 source-branch tests and 197 combined tests independently passed |
 | Root bootstrap | Cleared and joined | `99d46eed` joined `41dc0501`; metadata-only, Complete alone supplies root identity; combined 225/225 |
 | Q query service and continuation | Cleared and joined | `a06f31ab`/`e98b196e` joined `39dff3b7`/`bcbe8a47`; 272/272 independently executed Understanding cases |
-| N native view and manifest seam | Cleared and joined | `e661f291`/`7b5b6ff1` joined `65874e8b`/`051b519b`; 38/38 independently executed shown-window fixtures |
-| Actual detached composition | Failed required synthetic row | Runner builds; actual Q/view synthetic run 37 PASS / 1 FAIL / 7 NOT_PROVEN; accepted-member selection repair assigned, no lowered oracle |
-| Independent detached native journey | Not executed | No tree/member/source/Back or real-workspace acceptance claim yet |
+| N native view and selection repair | Cleared and joined | Final `a8897914` joined `6583298e`; 45/45 independently executed, including own-HWND MTA UIA-client selection |
+| Actual detached composition | Synthetic passed; joined | Runner `a0ffcee3` joined `cc67f7c6`; unchanged composed journey 45 PASS / 0 FAIL / 0 NOT_PROVEN; intended source mutation fails |
+| Independent detached native journey | Scoped proof complete | Real-root 23 PASS; six synthetic-only N/A; independent bytes/spans, image, intended red and clean-after receipt complete |
 
 ## F common foundation
 
@@ -251,3 +251,133 @@ Test's veto on weakening the expectation, and Owner turn 24's phased repair appr
 native owner receives eight new leaves in its existing two files. The runner's ceiling becomes
 26 (19 reported spent) and its continuation waits for the reviewed native fix. The original
 failed receipt is retained; independent real-root proof remains open.
+
+## Repaired composition and joined baseline
+
+The native product fix remained SHA-256
+`8B76E2BD85BF44651D5CC6D4F4F528A29585034C675EB12554735F7FDE243980`
+through the separate test-oracle corrections. N final `a8897914` passed 45/45 in its tree and
+in the Conductor's independent replay. The actual MTA UIA client observed its owned window,
+zero-to-one selection, matching name and selection-container runtime IDs, and selected state.
+The original UIA provider-null/cache diagnostics are retained, not mislabelled product defects.
+
+Runner `a0ffcee3` then passed **45 required synthetic checks**, including the unchanged Back
+focus/selection predicate, changed/unavailable source clearing, cancellation and pass-through.
+Its source-fault run exits one specifically at `ASSERT-rendered-source`. The cancellation
+oracle asserts the actual typed inventory contract: no files or continuation, unknown/absent
+total, `atlas.query.canceled`, and no retained source/highlights. Test read that correction and
+released the independent real-root phase.
+
+Conductor joined runner `cc67f7c6`, built it with zero warnings/errors, and executed **272/272**
+Core Understanding and **45/45** native tests with zero skips. This is the joined reader
+implementation, not a merge into main. Primary later advanced to `6d3e281a` with CV-2;
+the reader still declares its older baseline honestly. Both counterpart requests remain open.
+
+### Independent-run boundary and recipe correction
+
+The independent actor's first 15 leaves ran the authorized real-root journey successfully:
+23 PASS, no FAIL or NOT_PROVEN, six synthetic-only checks N/A. External byte/UTF-16 and image/
+post-clean checks were not yet complete. Its attempted semantic red hit
+`SYNTHETIC-SCOPE-MUST-BE-NEW` because the Conductor recipe put green and red outputs beneath
+one parent. That is a setup refusal, not the intended mutation failure.
+
+Owner turn 31 extends this actor to 21 leaves for exactly those remaining checks and receipt.
+The corrected command uses a genuinely new parent:
+`<evidence-base>\semantic-red-isolated-20260913\evidence`.
+The original collision evidence is retained; nothing is deleted to make the retry pass.
+Synthetic runs must each have their own parent because the runner derives `synthetic-scope`
+from that parent. This is the documented invocation boundary, not a source-code repair.
+
+## Final independent scoped proof
+
+Independent Test Architect `0c88d95c-b31d-4a0f-81a8-12208d822e80` completed the approved
+read-only run and external checks. The Conductor read the final and machine receipts and
+verified the copied capture's SHA-256. The real scope was **only `src/AiDe.Core`** in the
+clean proof worktree at `bcbe8a47859984c1e93074efc65116908ebb7936`.
+Reader implementation was `a0ffcee313e6c5a7a8910f151537786188ad996e`,
+joined in the Conductor as `cc67f7c6`. Input revision and reader revision are distinct.
+
+| Claim | Executed evidence / source | Oracle and red | Confidence / limit |
+|---|---|---|---|
+| The actual native reading path runs through Q, not supplied graph fixtures | Real summary: 23 PASS, zero FAIL/NOT_PROVEN; five requests, four selection/restore results and one inventory result; order select/file, select/member, select/different-file, restore | Missing composition, window/control, source, identity or Back evidence fails a required row; original Back row failed before N repair | Verified for this detached scope |
+| Displayed source matches the approved bytes and UTF-16 ranges | Independent .NET byte/decoder/substring checks against selected files; hashes and spans below; no producer helper reused | Isolated source fault exits one at `ASSERT-rendered-source`; the earlier parent-collision failure is not counted | Verified for observed pages; FileLimited, not full-solution semantics |
+| Back retains the original observation and binding | Returned file, manifest, byte hash, observation key, page span/hash equal the accepted member; issued receipt used; no fresh select | Original composed `back-focus` failed; repaired unchanged predicate passes | Verified for the observed path |
+| Selection and focus agree with the source anchor | Restored `ListBoxItem` focus, outline key, source selection `31:5`, scroll `0`; native 45-test set independently observes current UIA client selection | Empty/wrong/missing/stale selection and wrong container/key fail named checks | Same-process, owned-window UIA client; not full assistive-technology conformance |
+| Real input stayed read-only | After-run HEAD remains the approved `bcbe8a47`; tracked/untracked status entries `0` | Any status drift or revision mismatch fails the input boundary | Verified after this run |
+| Failure cases clear source honestly | Independent synthetic 45 PASS; changed, unavailable, canceled, approval and membership cases are separate | Intended source-red failure retained; unknown totals are not fabricated zeros | Six synthetic-only real-mode rows stay N/A, never counted as real-root passes |
+| The rendered surface contains the journey | Independent visual inspection of the committed capture below: selected file, selected `Start` method, source and highlighted name | Blank/missing panes or mismatched visible state would fail the observation | Visible viewport only; offscreen source, theme/DPI breadth and full WCAG unproved |
+
+### Independently checked files and ranges
+
+| Step | Relative file | Byte SHA-256 | Page / highlight |
+|---|---|---|---|
+| File | `AgentPlane/AcpEngineProcess.cs` | `90f332d6caf1463324481f62b8fc710a909c05b08f7ae4a131aa4c2d2ca08bb8` | UTF-8; initial page `0..11896` |
+| Member | Same file, `AcpEngineProcess.Start` | Same original byte hash | UTF-16 `5534..8874` (3340 units); highlight `5565:5`, text `Start` |
+| Different file | `AgentPlane/AcpJson.cs` | `ca3cd90369c39764768de9c426ea52c11e804e3d296ba420ffb65ab702691991` | UTF-8; page `0..903` |
+| Back | Original `AcpEngineProcess.cs` observation | Same original byte hash | Same member page/highlight; page text SHA-256 `f209fcdf927b16cfd015368c5e65e0298926fe09f70cdafcad90a9ab4af50436` |
+
+The issued member receipt was `atlas-receipt:a4d258da73e649e6ba8049ce107e7375`.
+Restore used it and returned the original observation/manifest. A returned successor receipt
+is not falsely described as an unchanged receipt token.
+
+### Owned-window capture
+
+![Detached Atlas reader: AgentPlane file tree, AcpEngineProcess.Start outline selection, and the matching highlighted source page.](assets/code-atlas-live-reader/journey-rendered.png)
+
+This is a **rendered capture of the proof-owned window**, not a desktop screenshot.
+Size: `1100 x 760`. SHA-256:
+`caa6be91c75994416bfdfc47a28d2867c5ea76a31b8d1134c4733e570d469ab8`.
+The visible source pane ends at the viewport; the capture does not prove offscreen content.
+
+### Approval, binary pins and retained raw evidence
+
+The external approval record's exact SHA-256 was
+`2bcd31c78396b7bec129f2b64e1e3e12ad63de67e3c61f7c0447788f2f570880`.
+Its session was `atlas-live-proof-gpt55`, policy `atlas-proof-readonly/v1`, decision
+`atlas-owner-turn21-clean-core`, and expiry `2026-09-13T04:00:00Z`.
+Independent freshness was checked at `2026-09-13T02:30:31.9678783Z`.
+This historical approval must not be reused after expiry.
+
+Verified executable SHA-256:
+`ee33bc2a8137ba7b2d792f1ba7c5da30bb2307307eb285b1b3822cd04d103c7f`.
+Runner DLL SHA-256:
+`eb284d16cd3ae35cfb74718da8e845e6c2e2389056d6bf6280c76a7bed596438`.
+
+Raw independent receipts are retained in this session's
+`files/atlas-independent-proof/independent-final-receipt.json` and
+`independent-machine-receipt.json`; real `summary.json`/`events.jsonl` and capture are under
+`real`. The intended red is under
+`semantic-red-isolated-20260913T023031990/evidence`. The colliding first red and synthetic
+fixture directories remain as evidence; they were not deleted to manufacture success.
+This committed section and PNG preserve the scoped result beyond those local run directories.
+
+GATE independent-detached-reader · 2026-09-13 · independent Test Architect + Conductor readback ·
+exit criteria met: real composition, independent byte/UTF-16/different-file checks, original
+binding/receipt Back, visual inspection, intended red, fresh approval and clean-after state ·
+verdict: PASS for the declared scope · vetoes: none.
+
+## Reproducing the synthetic proof
+
+From this branch, use a fresh **parent** for every run:
+
+```powershell
+$green = Join-Path $env:TEMP ("atlas-reader-green-" + [Guid]::NewGuid().ToString("N"))
+dotnet run --project spikes\code-atlas-reader-candidate\CodeAtlas.ReaderCandidate.csproj -- --prove --output (Join-Path $green "evidence")
+
+$red = Join-Path $env:TEMP ("atlas-reader-red-" + [Guid]::NewGuid().ToString("N"))
+dotnet run --project spikes\code-atlas-reader-candidate\CodeAtlas.ReaderCandidate.csproj -- --prove --oracle-fault source --output (Join-Path $red "evidence")
+```
+
+Green must report all required checks passed. Red must fail specifically at
+`ASSERT-rendered-source`; a build error or setup refusal proves nothing about that oracle.
+These commands exercise a bounded detached proof harness, not the registered application's
+sidebar or an interactive full Code Atlas workspace.
+
+For a real scope, the runner requires `--approved` plus the root, external approval record and
+digest, independently supplied decision/grant/workspace/root/policy/session/expiry fields, and
+the expected commit. The exact historical command is retained in the independent receipt.
+A new scope or expired approval requires a new recorded decision; a root string is not authority.
+
+**Not accepted by this proof:** shared sidebar/host/IPC integration, normative Addendum E,
+graph/tree pivot, class/sequence/domain/layered/Azure views, AI interpretation, full project
+evaluation, broad platform/accessibility/performance coverage, or current main `6d3e281a`.

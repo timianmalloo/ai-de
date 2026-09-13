@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T01:17:27Z",
+  "generated": "2026-09-13T02:43:34Z",
   "audit": [
     {
       "actor": null,
@@ -15294,6 +15294,32 @@ window.AUDIT_DATA = {
       "fan_out": 4,
       "started_at": "2026-09-13T01:12:38Z",
       "duration_seconds": 288.0
+    },
+    {
+      "id": "al-01M2CAC34VFP027485YZSGZ4QP",
+      "shortname": "atlas-detached-reader-horizon-accepted",
+      "datetime": "2026-09-13T02:43:34Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Owner32 accepts ONLY detached readera0ff/cc67 against authorizedbcbe AiDe.Core scope. Parentjoinedbuild0/Core272/Native45; independentreal23PASS sixNA, synthetic45PASS, isolatedsourcefaultASSERT-rendered-source; externalbytes/UTF16/differentfile/PNG/clean-after completed. OwnedPNGhashretainedinrepo. RootAcpEngineProcess.Start5534..8874 highlight5565:5 andBack originalbindingproved. N27additionalrepairleaves,runner26/26; independentreports3evidence+1bookkeepingafter15,counted19/21. OriginalrecipeparentcollisionandUIAoracleerrorsretained. Main6d3e281a+counterpartrequestsOPEN; programmeNOTcomplete. Owneradmits12leaf Astra currentmain/sharedhostpacket next. Durationcoversproof-documentationclose marker,notwholeprogramme.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-live-reader-candidate.md",
+        "docs/investigations/code-atlas-outline-selection.md",
+        "docs/coordination/code-atlas.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Deliver and independently prove the admitted detached reading horizon while keeping the full Code Atlas programme and shared-host authority honest.",
+      "done_when": "Owner inspects scoped evidence and accepts the detached horizon; persistent proof/capture and explicit next checkpoint retain unfinished programme obligations.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-13T02:34:32Z",
+      "duration_seconds": 542.0
     }
   ],
   "changes": [

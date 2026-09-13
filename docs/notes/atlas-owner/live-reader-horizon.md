@@ -502,3 +502,30 @@ After that join, six additional runner leaves complete remaining proof and freez
 The runner ceiling is now 26, with 19 reported spent and seven remaining. No source/binding/
 grant change or real-root access is admitted. Causality stays provisional until controlled
 red/green; the DC-029-related instance is not called confirmed before then.
+
+## Detached horizon acceptance and next checkpoint, Owner turn 32
+
+The native correction and actual composed runner are joined. Independent proof read the
+approved AiDe.Core bytes, checked UTF-16 ranges/hashes and different-file identity, inspected
+the owned-window PNG, obtained the intended isolated semantic red, and confirmed clean input.
+The detailed evidence is `proof-code-atlas-live-reader-candidate`.
+
+Owner opened both independent receipts, the final proof section and the image. It accepts
+**only** the detached reader at `a0ffcee3` / Conductor `cc67f7c6` against input `bcbe8a47`.
+That is inspected-evidence acceptance, not an Owner claim to have rerun the tests. Six real-mode
+checks remain N/A. FileLimited semantics, ordinary-local/reparse exclusions, visible-viewport
+scope, broader accessibility/DPI/performance and full-solution obligations remain explicit.
+Back used the original issued receipt/binding and returned a successor receipt.
+
+The programme stays open. **Next: current-main compatibility and concrete shared-host admission**,
+not later diagrams or AI. One separate Astra worker receives **12 new leaves** to reconcile
+executor-observed main in its own branch, build the reviewed Atlas code, name exact adapter
+files/owners/minimal changes/tests, specify production workspace/grant and Git-membership
+composition without proof-only approvals, and make one supported counterpart handoff attempt.
+
+No existing adapter authoring or primary changes are permitted in that checkpoint. The packet
+must cover Architecture admission, factory/menu/host wiring and necessary query/IPC seams.
+If acknowledgment remains absent, the worker returns the concrete packet to Owner for a bounded
+branch-local adapter-authoring decision. No human relay requirement or repeated pull-log polling.
+Sidebar, graph/tree pivot, class/sequence/domain, layered/Azure, comparison/decision lineage and
+governed AI remain unfinished. Addendum E remains candidate and its architecture proposed.

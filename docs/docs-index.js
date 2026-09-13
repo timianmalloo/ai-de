@@ -4731,7 +4731,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c60d5db8fc767f0c917b2153cb3940a84aa4bfa5181fa45649ae4cd4ae042bda"
+      "sourceSha256": "4a2600e9785f4cb918d78f0c85ffb96fb2ac5da9a45e6b847ab8fe6c3ef291bd"
     },
     {
       "id": "note-atlas-reader-native-direction",
@@ -8293,7 +8293,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5809bd6b12f08bf8239c08845db8b535a9d0615cc45808232f9b4b1083da36a2"
+      "sourceSha256": "1bf3ef1c04ce9f069eeeede4a07536268366542a80014c77960e94f7ef3de024"
     },
     {
       "id": "coordination-code-atlas-resume",
@@ -8356,7 +8356,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6985cbf17f37a8c2647b5c14b728d761d25de8977a64472129afbbed06a9db4d"
+      "sourceSha256": "0f587d17d550e1a8989c1e15df6246262095594426cf514402d2f685b6903d26"
     },
     {
       "id": "design-session-profiler",
@@ -8745,12 +8745,12 @@ window.DOCS_INDEX = {
       "path": "docs/investigations/code-atlas-outline-selection.md",
       "title": "Atlas outline selection - composed journey exposes state lost before Back",
       "type": "doc",
-      "status": "draft",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "atlas-live-reader-composition",
       "reviewBy": "2026-12-13",
       "reviewSuggested": [],
-      "summary": "The actual synthetic Q/native journey restores its receipt, source and focus but loses the accepted member's outline selection before leaving that member. Records the observed failure, competing explanations and gated native repair; causal red/green confirmation is pending.",
+      "summary": "The composed journey exposed outline selection lost before Back. A current-key native rebind resolves it, demonstrated by semantic regressions and the unchanged runner oracle. Separate WPF peer/null/connection mistakes in the test are preserved with their client-path correction.",
       "tags": [
         "code-atlas",
         "investigation",
@@ -8772,7 +8772,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "01e58e83847fd91a583a024852c71c7238f920c9dbe9cae124e945b044c548ff"
+      "sourceSha256": "fc22d9922a978a85be89a719bf0744ec7ee06914fbacfdefe7b512d4c791a2cc"
     },
     {
       "id": "lens-code-doc-join",
@@ -11521,7 +11521,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a5bd900aff796390526244aaf978372ce4a3cc57c40d471abd0f4295bb3bf1e0"
+      "sourceSha256": "5981279624ceec4fb1cecb7868e0eb1990eddfdb369f611b781f61b14fc5536a"
     },
     {
       "id": "session-profiles",
@@ -15853,12 +15853,12 @@ window.DOCS_INDEX = {
       "path": "docs/proof/code-atlas-live-reader-candidate.md",
       "title": "Code Atlas live-reader candidate - staged execution evidence",
       "type": "proof-pack",
-      "status": "draft",
+      "status": "accepted",
       "owner": "@timianmalloo",
-      "phase": "atlas-live-reader-composition",
+      "phase": "atlas-live-reader-independent-proof",
       "reviewBy": "2026-12-12",
       "reviewSuggested": [],
-      "summary": "Records reviewed and joined inventory, declarations, source, queries and native fixture evidence. Actual detached composition and independent real-workspace proof remain pending; component green results are not promoted to a completed native journey.",
+      "summary": "Records the independently exercised detached file/member/source/Back journey on an explicitly approved clean AiDe.Core scope. Includes source-byte/span checks, owned-window capture and semantic-red evidence. This is not main-host, full-solution, diagram or AI-feature acceptance.",
       "tags": [
         "code-atlas",
         "proof-pack",
@@ -15884,7 +15884,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5d2b89edbd39bdfe06aaacab7d5659e6fd874b358717882abea38a0bd2d72752"
+      "sourceSha256": "84ad56de048062d5cd3d56210742599450718f6ac4cecf93a40996f1d12aca4a"
     },
     {
       "id": "proof-code-atlas-source-safety",
@@ -18742,5 +18742,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "21c2dbf00f935941ff76909cde02041db287ad097e86360cf0a8432226d09d31"
+  "graphSha256": "56f94a4bebf3271be8aa76f090ec756d8a515f5b46f769de14aac01d8f88ab7f"
 };
