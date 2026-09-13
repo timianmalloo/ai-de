@@ -10,17 +10,65 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Sessions: 23 types, 67 members, 89% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Sessions: 26 types, 73 members, 90% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Sessions`
 
-**23 public types · 67 public members · 89% documented.**
+**26 public types · 73 public members · 90% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
 > gap rather than given invented text. The extractor is a lexical reader, not a compiler:
 > it does not resolve generics, partial classes across files, or conditional compilation.
+
+## `CompileModeRefusal`
+
+*record* — `CompileModeGate.cs`
+
+Why a compile mode is not selectable: a stable code and the reason in voice.
+
+## `CompileModeAvailability`
+
+*record* — `CompileModeGate.cs`
+
+Which of the three compile modes this machine may select right now, and why not for the rest —
+the settings model's reading of the deployment gates (ADR-0036 rule 1; US-D11).
+
+| Member | Summary |
+|---|---|
+| `bool IsSelectable(string mode)` | Whether  may be selected. An unknown word is never selectable. |
+| `CompileModeRefusal? RefusalFor(string mode)` | The refusal for , or null when it is selectable. |
+
+## `CompileModeGate`
+
+*class* — `CompileModeGate.cs`
+
+The compile-mode ladder as deployment gates the product evaluates (ADR-0036 rule 1; Ruling 68):
+`mechanical-only` always; `agentic-advisory` only when the pin-spike artifact exists,
+its recorded triple equals the **installed** triple, and a recount of tool-call frames over
+the frame log it names reads zero; `agentic` only after Gate 2's admission report — whose
+reader is CV-4's — so it is refused here naming Gate 2.
+
+**Remarks.** **Presence alone is spoofable (Ruling 68), so nothing here trusts a field the artifact
+wrote about itself.** The triple is recomputed from the install root's bytes and compared;
+the frame log's sha is recomputed and compared; the count is recounted. What this does not
+close, recorded: an artifact *and* frame log fabricated together by the machine's own user
+(ADR-0036 accepts it for the operator's own machine — the recount raises the forgery's cost from
+one field to a consistent frame log).
+
+
+
+
+
+**Evaluated at every read, stored nowhere** — a demotion is computed, never remembered
+(the drift detector's watermark is Gate 2's, CV-4).
+
+| Member | Summary |
+|---|---|
+| `IReadOnlyList<string> Modes = [CompileModes.MechanicalOnly, CompileModes.AgenticAdvisory, CompileModes.Agentic]` | The three modes, in ladder order. |
+| `CompileModeAvailability Evaluate(string adapterInstallRoot)` | Evaluates the gates against the artifacts under `DefaultDirectory`. |
+| `CompileModeAvailability Evaluate(string adapterInstallRoot, string proofDirectory)` | Evaluates the gates against the artifacts under . |
 
 ## `SessionConfig`
 
@@ -229,6 +277,7 @@ plain `System.Text.Json`, tolerant JSONL reads.
 | `SessionConfig Load()` | The current, live config — what a NEW run would pick up. |
 | `SessionConfig SetEnabledBackends(IReadOnlyList<string> enabledBackends, DateTimeOffset now)` | Applies a backend toggle for new runs and emits `session.config`. Never mutates a `SessionConfig` a caller already holds — see the remarks on this type. |
 | `SessionConfig SetAttachEnabled(bool attachEnabled, DateTimeOffset now)` | Applies the attach toggle for new runs and emits `session.config` (C21). |
+| `SessionConfig SetCompileMode(string compileMode, CompileModeAvailability availability, DateTimeOffset now)` | Selects the session's `compile_mode` for new envelopes, **through the gate** (ADR-0036 rule 1): a rung the evaluated  does not admit is refused with the gate's own code and the file is not touched. Emits `session.conf… |
 | `IReadOnlyList<SessionEvent> ReadEvents()` | Every event this session has ever emitted, in append order. |
 | `void Delete()` | The Session aggregate's own delete: removes the session directory, and with it — by containment, never by a second delete path — the compile history the composer keeps beside `session.json` (ADR-0034 rule 6; F-12). |
 
@@ -258,6 +307,14 @@ existing event kind, by the same read-modify-write under the same lock.
 writes it and none may be added — the page may be *told* the state so it can render a
 disabled affordance; it may never *report* it. The asymmetry is deliberate: the composer
 may not carry a dial that loosens governance, and this one only restricts.
+
+### `SessionConfig SetCompileMode(string compileMode, CompileModeAvailability availability, DateTimeOffset now)`
+
+Selects the session's `compile_mode` for new envelopes, **through the gate**
+(ADR-0036 rule 1): a rung the evaluated  does not admit is
+refused with the gate's own code and the file is not touched. Emits `session.config`.
+
+**Throws `EnvelopeStoreException`.** `CompileModeUnknown` for a word outside the ladder; otherwise the refusal the gate computed (`CE-0016`–`CE-0020`).
 
 ### `void Delete()`
 

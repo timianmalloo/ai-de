@@ -10,17 +10,46 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation.Sessions: 30 types, 128 members, 96% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation.Sessions: 49 types, 143 members, 96% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation.Sessions`
 
-**30 public types · 128 public members · 96% documented.**
+**49 public types · 143 public members · 96% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
 > gap rather than given invented text. The extractor is a lexical reader, not a compiler:
 > it does not resolve generics, partial classes across files, or conditional compilation.
+
+## `TurnRow`
+
+*record* — `Coalesce.cs`
+
+One row of a turn's conversation at the message grain (Ruling 81): a message or a thought folded
+from its wire chunks, or one event of any other kind.
+
+## `Coalesce`
+
+*class* — `Coalesce.cs`
+
+`Coalesce(turn.Events)` — the ONE pure fold from a turn's event lines to its rows, read by
+the thread's reply side and by the Console split (Ruling 81; DM7: one derivation, two readers).
+
+| Member | Summary |
+|---|---|
+| `string MessageKind = "agent.msg"` | The mapper's `agent_message_chunk`: assistant prose, folded per message. |
+| `string ThoughtKind = "agent.thought"` | The mapper's `agent_thought_chunk` (Ruling 82, CV-5.3): reasoning, folded per thought — its own run, never merged with prose. |
+| `IReadOnlyList<TurnRow> Rows(IReadOnlyList<EventLine> events)` | The rows of a turn's events, in order. Pure: the same events give the same rows. |
+
+### `IReadOnlyList<TurnRow> Rows(IReadOnlyList<EventLine> events)`
+
+The rows of a turn's events, in order. Pure: the same events give the same rows.
+
+**Remarks.** A run is a maximal stretch of one folding kind from ONE lane — a row carries one lane, so a
+second lane's chunk starts a new row rather than being attributed to the first (R16 b1:
+attribution is a property of the row, never a guess). Any non-folding event, and any change
+of kind, ends the run (Ruling 81 condition 2: the boundary is the interleaving).
 
 ## `ConsoleRow`
 
@@ -95,8 +124,76 @@ two readers (DM7).
 **Remarks.** **The two shapes are the mapper's, read rather than guessed.** An `agent.msg` body is
 the lifted `update`, whose text sits at `content.text`; a `permission.request`
 body is the lifted `params`, whose text sits at `title`. Falling back to the kind is
-deliberate: a blank row reads as an event with nothing in it rather than as one this
-projection did not recognise, and the kind is always true.
+deliberate: a row with no text field reads as an event with nothing in it rather than as one
+this projection did not recognise, and the kind is always true. **A text field that IS
+present is the text, whitespace included**: a wire chunk of two newlines is the paragraph
+break between two chunks of one thought (`frames/thought.jsonl:27`), and a blank-means-absent
+reading folded the literal kind into the reasoning (DC-187 (CV-5-3 a)).
+
+## `ToolStatus`
+
+*enum* — `ConversationItems.cs`
+
+The status word of a tool item (DESIGN.md, the tool item row): *running · done · failed · interrupted*.
+
+## `ConversationItem`
+
+*record* — `ConversationItems.cs`
+
+One item of a turn's conversation (Ruling 82), in event order: prose, reasoning, a tool call with
+its results, or an event — a non-conversation row (`acp.*`, the conductor's lines,
+stderr, a result whose call is not in this turn) that counts into *N events* and is never
+dropped.
+
+## `Prose`
+
+*record* — `ConversationItems.cs`
+
+An `agent.msg` row: the lane's prose, rendered as the markdown subset with no link activation.
+
+## `Reasoning`
+
+*record* — `ConversationItems.cs`
+
+An `agent.thought` row: reasoning — collapsed, muted, plain text, never announced (SC9).
+
+## `Tool`
+
+*record* — `ConversationItems.cs`
+
+A `tool.call` row with its `tool.result` rows attached by id: *kind · title ·
+status*, the detail on demand. The facets are the fold over what the call and each result
+stated (`ToolFacts`): the last stated value wins, the outputs join.
+
+| Member | Summary |
+|---|---|
+| `ToolStatus Status` | The last result's status: `completed` → done, `failed` → failed, else running on a live turn and interrupted otherwise. |
+| `string Kind` | The last stated kind, as a word; empty when no frame stated one. |
+| `string Title` | The last stated title, else the call row's text. |
+| `string Input` | The last stated input; empty when none. |
+| `string Output` | The results' outputs joined; empty when none. |
+
+## `Event`
+
+*record* — `ConversationItems.cs`
+
+A non-conversation row: folded into *N events*, rendered as an event line, never as an item.
+
+## `ConversationItems`
+
+*class* — `ConversationItems.cs`
+
+The ONE projection from `Coalesce(turn.Events)` to the conversation's items (Ruling 82) —
+pure, read by the thread's reply side; the Console split reads the rows beneath it (DM7: one
+derivation, two readers). There is no grouping rule: each `tool.call` is one item (the
+review's §7, the Simplifier's veto on D3's run-of-four grouping).
+
+| Member | Summary |
+|---|---|
+| `string CallKind = "tool.call"` | The mapper's `tool_call`. |
+| `string ResultKind = "tool.result"` | The mapper's `tool_call_update`. |
+| `IReadOnlyList<ConversationItem> Of(IReadOnlyList<TurnRow> rows, bool live)` | The items of a turn's rows, in the rows' order. : the turn is running or waiting, so a call with no terminal status is *running*, not *interrupted*. |
+| `string StatusWord(ToolStatus status)` | The status word: *running · done · failed · interrupted* — the member's name, lower-cased (the goldens pin the four words). |
 
 ## `AgentBackendRow`
 
@@ -334,6 +431,78 @@ The registry the sheet last read, so a re-probe is observable from outside.
 **Remarks.** Exposed because `SignIn`'s whole claim is that health was re-read: an invariant
 only the implementation can see is one only the implementation can be wrong about.
 
+## `ProseInlineKind`
+
+*enum* — `ProseMarkdown.cs`
+
+One inline span of the prose: plain, code, bold, italic, or a link — which is its text followed by its URL, never a control.
+
+## `ProseInline`
+
+*record* — `ProseMarkdown.cs`
+
+A span of inline text;  is set for a link only.
+
+## `ProseBlock`
+
+*record* — `ProseMarkdown.cs`
+
+One block of the prose (Ruling 82's markdown subset, CV-5.3's design-slice answer).
+
+## `Heading`
+
+*record* — `ProseMarkdown.cs`
+
+`#` · `##` · `###` — one size, the weight carries the level.
+
+## `Paragraph`
+
+*record* — `ProseMarkdown.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `ListBlock`
+
+*record* — `ProseMarkdown.cs`
+
+`- ` / `* ` items, or `1. ` items when .
+
+## `Code`
+
+*record* — `ProseMarkdown.cs`
+
+A fenced block, verbatim, the fence's language tag dropped.
+
+## `Table`
+
+*record* — `ProseMarkdown.cs`
+
+A pipe table: the header row, then the body rows (the `|---|` separator is structure, never a row).
+
+## `ProseMarkdown`
+
+*class* — `ProseMarkdown.cs`
+
+The markdown subset the reply renders — headings, paragraphs, lists, fenced code, pipe tables;
+inline code, bold, italic and inert links — parsed once here, pure, so the goldens are text in
+and blocks out, and the WPF renderer maps blocks to elements and nothing else. Anything outside
+the subset stays literal text: the reader sees the source, never a dropped line (Ruling 82: the
+operator's screenshot showed the source because nothing rendered it; a subset that silently ate
+what it did not understand would be the opposite defect). Fenced code is in the subset for the
+same reason: without the fence rule the other rules corrupt code — a `# comment` becomes a
+heading, `- x` a bullet, `| a |` a table.
+
+**Remarks.** `simplify:` a hand-built subset (five block kinds, four inline kinds; no nested lists,
+block quotes, images or HTML) over native WPF inlines rather than a new dependency — ceiling:
+this subset, no sixth block kind; upgrade trigger: ADR-0025's Markdig.Wpf landing for the code
+viewer, at which point this parser is deleted and `ProseMarkdownTests`' goldens become the
+replacement's acceptance, so the thread and the viewer never render markdown two ways.
+
+| Member | Summary |
+|---|---|
+| `IReadOnlyList<ProseBlock> Parse(string text)` | The blocks of , in order. Empty text yields no blocks. |
+| `IReadOnlyList<ProseInline> Inlines(string line)` | The inline spans of one line: the pattern's matches with the plain text between them. |
+
 ## `RunChannelSessionThread`
 
 *class* — `RunChannelSessionThread.cs`
@@ -359,7 +528,6 @@ that marshals to a dispatcher never holds this lock across the hand-off.
 
 | Member | Summary |
 |---|---|
-| `string ReplyKind = "agent.msg"` | The event kinds whose text is the lane's reply (the mapper's `agent_message_chunk`). |
 | `RunChannelSessionThread(bool caughtUp = true)` | **(gap)** |
 | `RunChannelSessionThread Preloaded(IEnumerable<TurnView> turns)` | A read model pre-loaded with history, caught up from construction — the fixture idiom (DS-1 A1's pre-loaded row). |
 | `ThreadSnapshot Current` | **(gap)** |
@@ -369,7 +537,7 @@ that marshals to a dispatcher never holds this lock across the hand-off.
 | `void Append(int ordinal, EventLine line, Spend? cost = null)` | One line of the turn's run.  is the event's measured usage, or null when the wire recorded none. |
 | `void Wait(int ordinal, WaitingRequest request)` | The turn is waiting on the operator (a permission or cap request, SC7). |
 | `void Resume(int ordinal)` | The request was answered; the turn runs again. |
-| `void Conclude(int ordinal, TurnState terminal, DateTimeOffset at, int? exitCode = null, int? edits = null, string? reply = null)` | The run ended.  is one of the four terminal states. |
+| `void Conclude(int ordinal, TurnState terminal, DateTimeOffset at, int? exitCode = null, int? edits = null)` | The run ended.  is one of the four terminal states. What the run said arrived as its events (Ruling 81: the fold is `Coalesce(Events)`); a conclusion carries no text of its own — a reason is appended as a line before … |
 
 ### `RunChannelSessionThread(bool caughtUp = true)`
 
@@ -642,8 +810,9 @@ model). Every field is a projection of the envelope fold joined to the run chann
 | `TurnState State { get; }` | **(gap)** |
 | `OutcomeView? Outcome { get; }` | Terminal states only. |
 | `WaitingRequest? Waiting { get; }` | Waiting only. |
-| `string? Reply { get; }` | The conductor's report or the lane's summary, plain text. |
-| `IReadOnlyList<EventLine> Events { get; }` | The run's lines, in order. |
+| `IReadOnlyList<EventLine> Events { get; }` | The run's lines, in order — the wire grain, untouched (the mapper drops nothing; *Open the log* reaches them). |
+| `IReadOnlyList<TurnRow> Rows { get; }` | `Coalesce(Events)` — the message grain (Ruling 81), derived once per snapshot from `Events` and never written by anything else: the one fold the thread's reply side renders and the Console split unfolds (DM7: one deri… |
+| `IReadOnlyList<ConversationItem> Items { get; }` | The conversation over `Rows` (Ruling 82): prose · reasoning · tool call+result · event, in event order — derived once per snapshot beside `Rows`, never stored. The thread's reply side renders the items and folds the e… |
 | `string SentBytes { get; }` | Exactly the sent bytes — the compiled prompt disclosure shows this and nothing else. |
 | `DateTimeOffset At { get; }` | Accept time. |
 | `bool IsTerminal(TurnState state)` | Whether  carries an outcome. |
@@ -815,3 +984,20 @@ control can record `THR-0003`. The state the read model hid is not invented.
 | `(long Expected, long Received)? LastVersionGap { get; private set; }` | The `(expected, received)` versions of the last gap `Next` saw, or null when the last call was contiguous. |
 | `IReadOnlyList<Announcement> Next(ThreadSnapshot snapshot)` | The announcements this snapshot produces against the previous one, in ordinal order. |
 | `string ActionWord(TurnActionKind action)` | The action's button name (SC7/SC10): one vocabulary for the button, the menu and the sentence. |
+
+## `ToolFacts`
+
+*record* — `ToolFacts.cs`
+
+What one `tool.call` / `tool.result` frame **states** about a tool call — read once
+from the wire at the one writer of a turn's lines (Ruling 82: each `tool.call` with its
+`tool.result`s, attached by id, is one item). Every field but the id is null when the frame
+did not carry it — *not stated*, never a default — because the adapter spreads one call
+over several updates: the call arrives as `title: "Terminal"`, `status: "pending"`,
+the real title and the input on a later `tool_call_update`, the status and the output on
+the last (`frames/read.jsonl:9–14`). The fold over the call and its results is
+`ConversationItems`'s.
+
+| Member | Summary |
+|---|---|
+| `ToolFacts? Of(RunEvent evt)` | The facts a mapped event states, or null when it is not a tool frame (no `toolCallId`). |

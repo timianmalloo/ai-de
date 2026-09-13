@@ -42,12 +42,13 @@ public static class ComposerPageTheme
 
         // The roles the conversation composer adds (CV-1; DS-1 seams): the tier's derived ink and
         // the outcome word's verified ink, pushed so the page draws the compile line (CV-2) with the
-        // shell's tokens. The third, `--border-strong` ← `BorderStrongBrush`, is declared in
-        // DESIGN.md (PS-C4, with SH-2) and waits on the brush in App.xaml (Design-owned): a role
-        // whose token does not exist would make the page draw a fallback the shell never drew — so
-        // the role lands with its brush, and the pinned count moves to 14 with it.
+        // shell's tokens.
         ("--inferred", "InferredBrush"),
         ("--verified", "VerifiedBrush"),
+
+        // The editor's boundary (PS-C4, DESIGN.md `colors.border-strong`): landed once the brush
+        // existed in App.xaml (the Shell lane's seam request, CV-1/CV-2). Fourteenth pinned role.
+        ("--border-strong", "BorderStrongBrush"),
     ];
 
     /// <summary>The running application's theme, or an empty set when there is no application (a bare test host).</summary>

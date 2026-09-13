@@ -156,6 +156,12 @@ public sealed record SpawnRequest(
 public sealed record Spawn(GoalBlock? Goal, LaneBinding Binding, ObservedAuthStatus ObservedAuth);
 
 /// <summary>
+/// An authorized identity with no goal block: the resolved binding and the observed subscription —
+/// what <see cref="SpawnContract.AuthorizeBinding"/> returns to a compile call (ADR-0035 rule 1).
+/// </summary>
+public sealed record BoundIdentity(LaneBinding Binding, ObservedAuthStatus ObservedAuth);
+
+/// <summary>
 /// The spawn precondition — spec R2 ("no block, no spawn"), §4.2's terms-of-service prohibition, and
 /// the observed-auth gate.
 /// </summary>
@@ -249,7 +255,59 @@ public static class SpawnContract
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(registry);
 
-        if (string.Equals(request.EngineId, ProviderRegistry.DirectApiEngineId, StringComparison.Ordinal)
+        RefuseDirectApiUnderASubscription(request.EngineId, registry);
+
+        if (!request.ReadOnly)
+        {
+            RequireGoalBlock(request.Goal);
+        }
+
+        var bound = BindObserved(request.EngineId, request.Model, request.AccountLabel, request.ObservedAuth, registry);
+
+        return new Spawn(request.Goal, bound.Binding, bound.ObservedAuth);
+    }
+
+    /// <summary>
+    /// The <b>identity half</b> of <see cref="Authorize"/> — the terms-of-service refusal, the
+    /// binding, the observed-subscription gate and the label match — with no goal-block
+    /// precondition (ADR-0035 rule 1).
+    /// </summary>
+    /// <remarks>
+    /// <para><b>For the compile call, which exists to fill the goal block</b> (§A9 R0/R1). A compile
+    /// cannot take <see cref="Authorize"/> as written: it refuses a block missing <c>goal</c> /
+    /// <c>done_when</c>, and the placeholder block an implementer would reach for is a spoofed
+    /// precondition on the auth gate. So the identity gate is one function both entry points call —
+    /// the same <c>AP-0009</c>–<c>AP-0013</c> refusals, by construction rather than by copy — and a
+    /// compile can never bill an API key while a subscription is configured.</para>
+    ///
+    /// <para><b><see cref="Authorize"/>'s order is unchanged</b> (US-D12): it still checks the terms
+    /// first, the goal block second and the binding last; this method is the terms check plus the
+    /// binding, and nothing in between.</para>
+    /// </remarks>
+    /// <exception cref="AgentPlaneException">
+    /// <see cref="AgentPlaneErrorCodes.DirectApiRefusedByToS"/>,
+    /// <see cref="AgentPlaneErrorCodes.ObservedAuthNotRecorded"/>,
+    /// <see cref="AgentPlaneErrorCodes.ObservedAuthNotSubscription"/>,
+    /// <see cref="AgentPlaneErrorCodes.ObservedAuthAccountMismatch"/>, or any refusal
+    /// <see cref="ProviderRegistry.Bind"/> raises.
+    /// </exception>
+    public static BoundIdentity AuthorizeBinding(
+        string engineId, string model, string accountLabel, ObservedAuthStatus? observed, ProviderRegistry registry)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(engineId);
+        ArgumentNullException.ThrowIfNull(registry);
+
+        RefuseDirectApiUnderASubscription(engineId, registry);
+        return BindObserved(engineId, model, accountLabel, observed, registry);
+    }
+
+    /// <summary>
+    /// §4.2's terms-of-service prohibition, checked <i>first</i> from both entry points so it cannot
+    /// be masked by another error.
+    /// </summary>
+    private static void RefuseDirectApiUnderASubscription(string engineId, ProviderRegistry registry)
+    {
+        if (string.Equals(engineId, ProviderRegistry.DirectApiEngineId, StringComparison.Ordinal)
             && registry.HasSubscriptionAccount(ProviderRegistry.AnthropicProviderId))
         {
             throw new AgentPlaneException(
@@ -259,22 +317,22 @@ public static class SpawnContract
                 + "Anthropic-bound request must originate inside a Claude Code process. Spawn the "
                 + "'claude-code' engine instead; there is no direct-api entry while the subscription stands");
         }
+    }
 
-        if (!request.ReadOnly)
-        {
-            RequireGoalBlock(request.Goal);
-        }
-
-        var binding = registry.Bind(request.EngineId, request.Model, request.AccountLabel);
+    /// <summary>The binding and the observed-auth gate — the tail both entry points share.</summary>
+    private static BoundIdentity BindObserved(
+        string engineId, string model, string accountLabel, ObservedAuthStatus? observedAuth, ProviderRegistry registry)
+    {
+        var binding = registry.Bind(engineId, model, accountLabel);
 
         if (binding.Provider.Auth != ProviderAuth.Subscription)
         {
             // An API-key provider has nothing for the observed-subscription gate to check. It is
             // disabled by default and reaches here only where an operator turned it on deliberately.
-            return new Spawn(request.Goal, binding, request.ObservedAuth ?? new ObservedAuthStatus("apiKey", null, null));
+            return new BoundIdentity(binding, observedAuth ?? new ObservedAuthStatus("apiKey", null, null));
         }
 
-        if (request.ObservedAuth is not { } observed)
+        if (observedAuth is not { } observed)
         {
             throw new AgentPlaneException(
                 AgentPlaneErrorCodes.ObservedAuthNotRecorded,
@@ -302,7 +360,7 @@ public static class SpawnContract
                 + "different account than the lane was bound to, and the work would bill and rank against that one");
         }
 
-        return new Spawn(request.Goal, binding, observed);
+        return new BoundIdentity(binding, observed);
     }
 
     /// <summary>Throws a single refusal naming every field the block is missing.</summary>

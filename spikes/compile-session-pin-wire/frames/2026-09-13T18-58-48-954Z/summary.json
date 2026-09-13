@@ -1,0 +1,134 @@
+{
+  "mode": "aborted",
+  "at": "2026-09-13T18:58:48.954Z",
+  "aborted": {
+    "by": "the CV-3 node stopped its own harness process (TaskStop) at 19:04Z after prompt 1 ran ~6 min with no end_turn",
+    "why": "a runaway: with every built-in tool off and mcp__* denied, the model answered the read prompt by emitting <invoke name=\"Read\"> tool-call XML as plain text in an unbounded loop - 5,843 agent_message_chunk frames, 81,368 chars (~20k output tokens on the operator's subscription) before the stop; the consented budget was ~12k tokens; prompts 2 and 3 were never sent",
+    "harness_gap": "run-spike.js had no per-prompt deadline; the compile host's 60 s linked deadline (ADR-0035 rule 1) is the control the harness lacked - added after this run"
+  },
+  "pin_triple": {
+    "adapter_package": "@agentclientprotocol/claude-agent-acp",
+    "adapter_version": "0.75.1",
+    "adapter_sha256": "c22424c297429378166524b59ee6bed239c999a420ad0dd06571b768efa7525b",
+    "sdk_package": "@anthropic-ai/claude-agent-sdk",
+    "sdk_version": "0.3.257",
+    "cli_executable_override": null,
+    "cli_platform_package": "@anthropic-ai/claude-agent-sdk-win32-x64",
+    "cli_path": "C:\\Projects\\ai-de-lane-conversation-cv3\\spikes\\acp-subscription-lane\\node_modules\\@anthropic-ai\\claude-agent-sdk-win32-x64\\claude.exe",
+    "cli_sha256": "190a5fe1a2a0c76176cd4e387a2c3555220ca7acadda295d2d45cdbc562bd400",
+    "cli_version_output": "2.1.257 (Claude Code)"
+  },
+  "sent_meta_triple": {
+    "claudeCode": {
+      "options": {
+        "tools": [],
+        "disallowedTools": [
+          "Write",
+          "Edit",
+          "MultiEdit",
+          "NotebookEdit",
+          "EnterWorktree",
+          "ExitWorktree",
+          "CronCreate",
+          "CronDelete",
+          "Bash",
+          "PowerShell",
+          "REPL",
+          "Monitor",
+          "Tmux",
+          "LSP",
+          "self_hosted_runner_spawn_local",
+          "Agent",
+          "Task",
+          "Workflow",
+          "RemoteTrigger",
+          "self_hosted_runner_requeue_session",
+          "Artifact",
+          "Projects",
+          "SendFile",
+          "SendUserFile",
+          "ClaudeDesign",
+          "Snip",
+          "WebBrowser",
+          "SubscribePR",
+          "DesignSync",
+          "ConnectGitHub",
+          "mcp__*"
+        ]
+      }
+    }
+  },
+  "session_new_params": {
+    "cwd": "C:/Projects/ai-de-lane-conversation-cv3/spikes/compile-session-pin-wire/fixture",
+    "mcpServers": [],
+    "_meta": {
+      "claudeCode": {
+        "options": {
+          "tools": [],
+          "disallowedTools": [
+            "Write",
+            "Edit",
+            "MultiEdit",
+            "NotebookEdit",
+            "EnterWorktree",
+            "ExitWorktree",
+            "CronCreate",
+            "CronDelete",
+            "Bash",
+            "PowerShell",
+            "REPL",
+            "Monitor",
+            "Tmux",
+            "LSP",
+            "self_hosted_runner_spawn_local",
+            "Agent",
+            "Task",
+            "Workflow",
+            "RemoteTrigger",
+            "self_hosted_runner_requeue_session",
+            "Artifact",
+            "Projects",
+            "SendFile",
+            "SendUserFile",
+            "ClaudeDesign",
+            "Snip",
+            "WebBrowser",
+            "SubscribePR",
+            "DesignSync",
+            "ConnectGitHub",
+            "mcp__*"
+          ]
+        }
+      }
+    }
+  },
+  "fixture_before": {
+    "head": "7a6a8185ff0738dcb6b750d51f3d96c9c7d9641b",
+    "tree": "8518e9acaf402ef9805347511f607974f98c9942",
+    "status_porcelain": ""
+  },
+  "fixture_after": {
+    "head": "7a6a8185ff0738dcb6b750d51f3d96c9c7d9641b",
+    "tree": "8518e9acaf402ef9805347511f607974f98c9942",
+    "status_porcelain": ""
+  },
+  "remote_before": "",
+  "remote_after": "",
+  "pwned_txt_exists": false,
+  "tool_call_frame_count": 0,
+  "tool_call_names": [],
+  "permission_request_count": 0,
+  "prompt_1": {
+    "text": "read `src/x.cs` and tell me its first line",
+    "result": null,
+    "agent_message_chunks": 5843,
+    "reply_chars": 81368,
+    "mcp__mentions_in_frames": 0,
+    "reply_head": "\n<invoke name=\"Read\">\n<parameter name=\"file_path\">C:\\Projects\\ai-de-lane-conversation-cv3\\spikes\\compile-session-pin-wire\\fixture\\src\\x.cs</parameter>\n</invoke>\n<invoke name=\"Read\">\n<parameter name=\"file_path\">C:\\Projects\\ai-de-lane-conversation-cv3\\spikes\\compile-session-pin-wire\\fixture\\src\\x.cs</"
+  },
+  "frame_log": {
+    "file": "recv.jsonl",
+    "sha256": "534d5f8859c07ab64a1fd3f9c21ee89cdb0470e6c232330413065048b838e175",
+    "frames": 5851
+  }
+}

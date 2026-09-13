@@ -122,6 +122,17 @@ public sealed class ASendLaunchesAGovernedRunTests
                 Assert.Equal(TurnState.Failed, turn.State);
                 Assert.Equal("failed", document.Thread.Rows[0].OutcomeWord);
                 Assert.Equal("1 turn", document.TurnCountCaption);
+
+                // AND THE REASON IS A LINE OF THE RUN (Ruling 81): the refusal's sentence is the
+                // turn's last event, under the lane that refused, so the fold, the Console and the
+                // log all read the one stream — never a reply stored beside the outcome.
+                Assert.NotNull(document.LastRunFailure);
+                var reason = turn.Events[^1];
+                Assert.Equal(document.LastRunFailure, reason.Text);
+                Assert.Equal("stderr", reason.Kind);
+                Assert.Equal("no-such-engine", reason.Lane);
+                Assert.Equal(Coalesce.Rows(turn.Events), turn.Rows);
+                Assert.Equal(document.LastRunFailure, turn.Rows[^1].Text);
             }
             finally
             {

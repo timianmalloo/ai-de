@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 93 · partially-controlled 65 · uncontrolled 20
+**Status counts:** controlled 103 · partially-controlled 65 · uncontrolled 20
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -7261,6 +7261,16 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   is the gate that fires on the class. Named for the ADRs as a finding: an ADR that names a
   namespace checks the referenced libraries' exported simple names in the sibling namespaces
   before naming it.
+- **Recurrence 2 (CV-5.2, 2026-09-13) — the test side of the class.** A new test folder
+  `tests/AiDe.Core.Tests/Presentation/Sessions/` (the oracle's path) given the namespace
+  `AiDe.Core.Tests.Presentation.Sessions` shadowed `AiDe.Core.Presentation` for every file under
+  `AiDe.Core.Tests` that names `Presentation.EvidenceRow` / `Presentation.CanvasNode` unqualified
+  (`FieldsSurviveTheClientBoundaryTests.cs:80,155`, CS0234) — the same shape with the *test*
+  assembly's root as the shadowing side. The build caught it (the gate holds); the fix is the
+  namespace the sibling thread tests already use (`AiDe.Core.Tests.Sessions.Thread`) with the
+  folder kept as the oracle spells it. **Named for test authors:** a test folder's namespace
+  must not repeat a segment of the assembly-under-test's namespace one level below the test
+  root.
 - **Status:** `controlled`.
 
 ### DC-173 — A named-call-site census that scans whole files counts a token spelled in prose as a call site
@@ -7390,3 +7400,211 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   you record a residue as expected, your oracle must expect it.
 - **Status:** `controlled`.
 
+### DC-179 — A fixture-sized constructor default reaches the one real production call site because the real caller passes none
+
+- **Filed by:** X-3 a (placeholder — the conductor allocates the final number/status).
+- **Shape:** an optional parameter's default value is chosen for a headless/fixture call site
+  (`"rev-1"`, `"fixture"`), and the ONE real production caller omits the argument — so the fixture
+  literal is what a live session actually attaches. A downstream formatter that assumes the value
+  is an opaque id (and prefixes its own label onto it) then produces a self-referential string
+  when the fixture literal happens to already contain that label's word.
+- **Instance:** `WorkbenchShell.AttachWorkspace(… artifactRevision = "rev-1")`; `MainWindow.xaml.cs`
+  passes none, so every session's evidence status rendered `rev rev-1`
+  (`EvidencePaneViewModel.cs:172`) — Ruling 85 (`docs/notes/addendum-c-council-rulings.md`).
+- **Control (this instance):** the default is now `null`, resolved at the one real call site to the
+  workspace's observed `git rev-parse --short HEAD` or the literal `"not recorded"` — never a value
+  that merely looks measured (`WorkbenchShell.ResolveGitFacts`, `GitFacts.Head`).
+- **Sweep (not run this slice):** other optional parameters on a shell/session constructor whose
+  default reads as a real value rather than an obvious placeholder — the conductor's to schedule.
+- **Status:** `controlled`.
+
+### DC-180 — A status announcement's only clearing path is a manual command, so a success path that announces nothing leaves an old refusal on screen indefinitely
+
+- **Filed by:** X-3 a (placeholder — the conductor allocates the final number/status).
+- **Shape:** a status/live-region announcer has a `Clear()` but only one caller (an explicit
+  "clear status" command). Every OTHER code path either announces a new message (which happens to
+  overwrite the old one) or announces nothing at all on success — so a refusal shown once persists
+  until the operator happens to trigger a path that announces, which for a mouse-only sequence of
+  successful actions may never happen.
+- **Instance:** `WorkbenchShell`'s pane-move refusal (`RefusedReconcileAnnouncement`,
+  `ReconcileViewIntoModel`) — a native drag's success path calls no `Announcer.Announce`, so the
+  refusal from an earlier collapsed-zone drag stayed on screen for the rest of a session (Ruling 86).
+- **Control (this instance):** the announcer itself owns a bounded dwell (`WorkbenchAnnouncer`,
+  10s default) that self-clears when nothing supersedes it, in addition to the existing
+  overwrite-on-next-announcement and the manual `Clear()` path — three ways to the same end rather
+  than a call site added to every silent success path.
+- **Sweep (not run this slice):** other `IWorkbenchAnnouncer` implementers/hosts outside the
+  workbench shell (if any) for the same one-caller-`Clear()` shape.
+- **Status:** `controlled`.
+
+### DC-181 — A same-assembly diagnostics helper duplicates a sibling's sink/file-path logic because the sibling's writer defaults to `private`
+
+- **Filed by:** X-3 a (placeholder — the conductor allocates the final number/status).
+- **Shape:** two telemetry/diagnostics types in the same assembly each need "write this JSON line to
+  the shared sink-or-log-file" — the second one cannot call the first's writer because it is
+  `private`, so it grows its own copy of the sink check, the directory, the file name pattern and
+  the lock, rather than the access modifier being the one-line fix.
+- **Instance:** `ThreadDiagnostics` duplicated `WorkbenchDiagnostics.Write`'s sink/file-path body in
+  full (DM7, named debt) until `Write` was made `internal` and `ThreadDiagnostics` was rewritten to
+  call it directly.
+- **Control (this instance):** `WorkbenchDiagnostics.Write` is `internal`;
+  `ThreadDiagnosticsHasOneWriterTests` asserts the modifier and that `ThreadDiagnostics` carries no
+  private `Write`/lock of its own.
+- **Sweep (not run this slice):** any other `*Diagnostics` type in `src/AiDe.App` for the same
+  shape — the conductor's to schedule.
+- **Status:** `controlled`.
+
+### DC-182 — A re-pointed identity oracle is green at both the old grain and the new one when its fixture has no case the two grains render differently
+
+- **Shape:** an identity oracle (`rows == f(source)`) is re-pointed from one derivation to another
+  (`events` → `Coalesce(events)`) and re-written against a fixture whose every run has length one
+  — so `f_old(source) == f_new(source)` on that fixture, the "red-first" run is green against the
+  old code, and the re-pointing is a rename that proves nothing. The identity is honest; the
+  fixture is the tautology.
+- **Signature:** a re-pointed test that goes green on its first run; a fixture built for the old
+  grain (one event per line, the answer as a field beside the events); an oracle whose expected
+  side and actual side both read the new function; a proof-pack row that says *"red: n-a — the
+  identity holds"*.
+- **Instance (CV-5.2, 2026-09-13):** DS-1's M1 re-pointed to Ruling 81's `heading +
+  Coalesce(turn.Events)`. The `ThreadFixtures` answers were a `reply` field and the working lines
+  were `agent.msg` one per event: the fold would have folded runs of the working lines (the wrong
+  thing) or, once the lines were tool rows, nothing — either way no red distinguished
+  `ConsoleSurface.Derive` per event from `Derive` per row. The fixture was rebuilt at the event
+  level with each answer arriving in three `agent.msg` chunks (`ThreadFixtures.Reply`), and the
+  red then read *b2's answer as three split rows*.
+- **Sweep:** the other identity oracles over the same fixtures — the jump list and the header
+  count (`Turns.Count`) are grain-independent by construction; DS-1's `L4` (10,001 split rows)
+  was re-based on tool rows so its count stays the row count it claims.
+- **Control:** `TheThreadIsOneListTests.TheSplitsRows_EqualHeadingPlusCoalesceOfEveryTurn` carries
+  `Assert.True(Σ Events.Count > Σ Rows.Count, "no turn in the fixture folds; the identity would
+  hold at either grain")` — the test refuses a fixture on which it cannot fail. Named for the next
+  re-pointing: a re-pointed oracle asserts, in itself, that its fixture distinguishes the old
+  derivation from the new.
+- **Status:** `controlled`.
+
+### DC-183 — Two conversions of one instant on one surface: a timestamp bound through a StringFormat renders the stamp's own clock beside a sibling that converts to local, and every test machine agrees with itself
+
+- **Shape:** a `DateTimeOffset` stamped in UTC at receipt is rendered through a `Binding {
+  StringFormat = "HH:mm:ss" }` (the offset's own clock) on one row, while the heading above it
+  and the turn's time call `ToLocalTime()` — one surface, two conversions, an hour apart wherever
+  the operator is not at UTC. No test sees it: a test that compares the rendered text to
+  `ToLocalTime()` is vacuous on a UTC runner, and a test that compares it to the stamp is wrong on
+  a non-UTC one; each machine agrees with itself.
+- **Signature:** `StringFormat` on a `DateTimeOffset` binding beside a `.ToLocalTime()` elsewhere
+  on the same surface; a heading and its rows one hour apart in a screenshot; a CI runner at UTC.
+- **Instance (CV-5.2, 2026-09-13):** `ThreadFeed.EventLineTemplate` rendered `EventLine.At`
+  (`AcpPeer` stamps `GetUtcNow()`) through a StringFormat while `ConsoleSurface.Derive`'s heading
+  and `TurnItem.Time` rendered local. Found when C4's expectation, written as
+  `at.ToLocalTime()`, read `Not found: "09:29:56"` against a rendered `"16:29:56"` on a UTC−7
+  machine. One converter (`ThreadFeed.LocalClock`) now serves both templates.
+- **Sweep:** `grep -rn 'StringFormat = "HH' src/AiDe.App` — the two sites above were the only
+  ones; the header and the jump list already converted.
+- **Control:** C4's E12 block renders the same event through the split row and the thread's fold
+  line and asserts both equal `at.ToLocalTime()` — and the fixture instant carries a **+05:00
+  offset**, so a rendering from the stamp's own clock (`16:29:56`) differs from local on every
+  machine not at +05:00, a UTC runner included (the Test Architect's condition: the first draft
+  used a UTC instant, which a UTC runner could not distinguish). Observed red by reverting the
+  converter to a `StringFormat`. Named for the next clock: a clock oracle's fixture instant
+  carries an offset no runner sits at.
+- **Status:** `controlled`.
+
+### DC-184 — A count cited in a Proof Pack or a comment is a memoir; only the literal's own count is a record
+
+- **Filed by:** CV-3 a (placeholder — the conductor allocates the final number/status).
+- **Shape:** a document (a Proof Pack, a harness comment) states the size of a set that lives as a
+  literal elsewhere ("26 names"); the literal is edited, or was never counted, and the number is
+  repeated by every reader as a fact.
+- **Instance:** PD-5's Proof Pack and `run-spike.js` cite "26 names" for
+  `ReadOnlyLaneSession`'s denied-tool set; the literal has 30 (counted red-first by
+  `TheCompileSessionIsPinnedTests.TheRecordHasExactlyFourMembersAndTheCompilePinIsANamedStatic`).
+- **Control (this instance):** the test asserts the count from the literal
+  (`LaneSessionOptions.DeniedToolNames.Count`); the citing documents are corrected in CV-3's Proof
+  Pack, never silently.
+- **Sweep (not run this slice):** `docs/proof/read-only-turn.md`'s table for the same count — the
+  conductor's to schedule.
+- **Status:** `controlled`.
+
+### DC-185 — An oracle over what did not happen passes a run that never ended
+
+- **Filed by:** CV-3 b (placeholder — the conductor allocates the final number/status).
+- **Shape:** a spike or gate asserts only negatives (zero tool calls, nothing written, nothing
+  pushed) and has no clause requiring the run to have completed; an aborted, timed-out or runaway
+  run satisfies every letter and reads green — while costing the most.
+- **Instance:** PD-5 run 2 (`frames/2026-09-13T18-58-48-954Z`): a toolless session emitted fake
+  tool-call XML as text in an unbounded loop (5,843 chunks, ~20k output tokens) until killed by
+  hand; `assert-spike.py`'s seven letters all held and (f)'s weak form accepted the XML as "a
+  statement".
+- **Control (this instance):** `assert-spike.py (0)` refuses `mode ∉ {full, dry-run}` and any
+  `timed_out`; `(f)` fails on `<invoke ` in the reply; `run-spike.js` bounds each prompt (60 s,
+  2,000 chunks) and records a firing bound as `timed_out`; `CompileModeGate` refuses an artifact
+  whose run did not end (`CE-0022`); `CompileCallHost` cuts a reply past `OutputCharBound` as
+  `malformed` naming the bound.
+- **Sweep (not run this slice):** other negative-only oracles (`verify-*` scripts asserting "no X"
+  over a log that may be truncated) — the conductor's to schedule.
+- **Status:** `controlled`.
+
+### DC-186 — A poll-after-event drain waits on an empty queue when the producer publishes the terminal event before resolving the request
+
+- **Filed by:** CV-3 c (placeholder — the conductor allocates the final number/status).
+- **Shape:** a consumer loop reads an event, then checks `request.IsCompleted`, then waits for the
+  next event; the producer publishes the request's result frame as an event *before* it resolves the
+  request (Ruling 11's ordinal), so the check runs false on the last event and the loop waits
+  forever on a queue that will never fill.
+- **Instance:** `CompileCallHost.DrainAsync`'s first shape — green alone, timed out at the deadline
+  when the class ran together (`APromptThatOutlastsTheBound…`, `AnAnsweredCompile…`).
+- **Control (this instance):** the drain races `WaitToReadAsync` against the prompt task and sweeps
+  the queue once the prompt completes. **Sibling named:** `GovernedRunHost.DrainAsync` has the same
+  shape (`prompt.IsCompleted && queue.Reader.Count == 0` after each event); the real adapter usually
+  sends later frames, but nothing guarantees one after the result — a finding for the run root's
+  owner (CV-5 / the conductor).
+- **Status:** `controlled` (this instance); `open` (the sibling).
+
+### DC-187 — A wire-text reader's blank-means-absent fallback turns a whitespace chunk of a streamed message into the literal kind
+
+- **Filed by:** CV-5-3 a (placeholder — the conductor allocates the final number/status).
+- **Shape:** a reader that answers *"what does this event say?"* treats a present-but-whitespace
+  text field as absent (`!string.IsNullOrWhiteSpace(text)`) and falls back to something that is
+  "always true" — the event's kind. That is right for a row with no text and wrong for a *chunk*
+  of a stream: a paragraph break arrives as its own `"\n\n"` chunk, the reader returns the kind,
+  and the fold joins the word `agent.thought` (or `agent.msg`) into the middle of the prose. No
+  authored fixture hits it — an author writes chunks with words in them.
+- **Signature:** `IsNullOrWhiteSpace` guarding a fallback on wire text; a chunked kind whose
+  chunks may be whitespace (paragraph breaks, indentation); a joined text containing a kind
+  string; a fixture corpus with no whitespace-only chunk.
+- **Instance (CV-5.3, 2026-09-13):** `ConsoleStreamModel.TextOf` on the first real
+  `agent_thought_chunk` capture — `frames/thought.jsonl:27` is `"\n\n"`; M1 read
+  `Expected: "\n\n" · Actual: "agent.thought"`. The fix: a present string field is the text,
+  whitespace included; only an absent field falls back to the kind.
+- **Sweep:** `grep -rn "IsNullOrWhiteSpace" src/AiDe.Core/Presentation src/AiDe.App/Workbench/Sessions`
+  — `TextOf`'s inner `Text()` was the one reader of wire text; the composer's readers guard
+  operator input, not chunks.
+- **Control:** `CoalesceTests.AWhitespaceOnlyChunk_IsItsWhitespace_NeverTheKind` (the blank chunk
+  through the real mapper is `"\n\n"`, an empty chunk is `""`, an absent field is still the kind
+  — the positive control) and M1 over the captured frame. Named for the next reader: *a chunk's
+  text is whatever the wire sent, and a reader may fall back only on absence.*
+- **Status:** `controlled`.
+
+### DC-188 — A rendered-text oracle reads `TextBlock.Text`, which is empty for content built from inlines, so it passes vacuously on the very prose it is meant to falsify
+
+- **Filed by:** CV-5-3 b (placeholder — the conductor allocates the final number/status).
+- **Shape:** a WPF `TextBlock` whose content was built by adding `Run`s to `Inlines` (bold, mono,
+  a link's URL run) reports `Text == ""` — Verified by probe on this build — while its automation
+  peer's name (`GetPlainText`) and a `TextRange` over its content carry the words. An oracle that
+  walks the visual tree asserting *no TextBlock's `Text` contains `##`* therefore passes on the
+  un-rendered markdown source too, once the prose moves to inlines: DC-016's class (a control that
+  cannot fire) at the property level. Any census that labels sites by `Text` sees the prose as
+  empty for the same reason.
+- **Signature:** `Assert.DoesNotContain(…, t => t.Text.Contains(…))` over a rendered surface that
+  uses `Inlines`; a walk whose site labels come out empty; a "no markup rendered" falsifier with no
+  positive control beside it.
+- **Instance (CV-5.3, 2026-09-13):** T1's first draft read `Text`; the first green run listed
+  eight empty `ThreadText`s where the heading, the table cells and the list items stood. The
+  harness now reads the plain text (`new TextRange(ContentStart, ContentEnd).Text`) and T1 carries
+  a positive control (*the walk sees "Red first"*). The Shell contrast census labels sites by
+  `Text` — a routed finding for its owner (it does not walk a thread with turns today).
+- **Sweep:** `grep -rn "\.Text\.\(Contains\|StartsWith\|Equals\)" tests/AiDe.App.Tests/Sessions`
+  — the other readers bind `Text`-set blocks (words, titles, event lines), where `Text` is true.
+- **Control:** `ThreadFeedTests.Plain` (the one reader) and T1's positive control; T7 reads the
+  peer's name. Named for the next inline renderer: *a rendered-text falsifier reads what the AT
+  reads, and proves it can see the text before it proves the text is absent.*
+- **Status:** `controlled`.

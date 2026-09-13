@@ -81,9 +81,10 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     /// <param name="model">The document's state.</param>
     /// <param name="store">Where the document's envelope is persisted, or null to keep none. Kept for the shell's call; the conversation persists no layout of its own.</param>
     /// <param name="announcer">
-    /// The shell's announcer (one across hosts, ADR-0031). Null — the shell does not pass it yet,
-    /// a seam request to the Shell lane — builds a document-owned polite live region so SC9 is
-    /// never silent; the two are never both live.
+    /// The shell's announcer (one across hosts, ADR-0031; landed at the shell's construction site,
+    /// <c>WorkbenchShell.RegisterSessionDocument</c>). Null — a document built directly, as every
+    /// headless test here still does — builds a document-owned polite live region so SC9 is never
+    /// silent; the two are never both live.
     /// </param>
     public SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)
     {
@@ -485,12 +486,13 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
             relay.Publish(observed);
 
             // The fold reads the same event the lane dispatches — one definition of a line's text
-            // (the console model's), one origin rule (the read model's).
+            // (the console model's), one origin rule (the read model's), one reading of a tool
+            // frame's facts (Ruling 82: the call and its results are one item, joined by id).
             var evt = observed.Event;
             var cost = evt.Cost is { } c ? new Spend(c.TokensIn, c.CacheRead, c.TokensOut, c.Requests) : null;
             _thread.Append(
                 ordinal,
-                new EventLine(evt.Ts, lane, evt.Kind, ConsoleStreamModel.TextOf(evt), IsCompileEvent(evt) ? "compile" : "run"),
+                new EventLine(evt.Ts, lane, evt.Kind, ConsoleStreamModel.TextOf(evt), IsCompileEvent(evt) ? "compile" : "run", ToolFacts.Of(evt)),
                 cost);
         };
 
@@ -517,7 +519,11 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
             // Reported, never thrown away. These are the three refusals ConductorEntry already
             // treats as "the run did not complete", and the operator is owed the same sentence.
             LastRunFailure = $"{error.GetType().Name}: {error.Message}";
-            _thread.Conclude(ordinal, TurnState.Failed, DateTimeOffset.Now, exitCode: null, edits: null, reply: LastRunFailure);
+
+            // The sentence is a line of the run, under the lane that refused, in the one stream the
+            // fold and the Console both read (Ruling 81) — never a text stored beside the outcome.
+            _thread.Append(ordinal, new EventLine(DateTimeOffset.Now, request.EngineId, "stderr", LastRunFailure, "run"));
+            _thread.Conclude(ordinal, TurnState.Failed, DateTimeOffset.Now, exitCode: null, edits: null);
             RecordConsumed(ordinal, Envelope.NotRecorded, null, Envelope.NotRecorded, ConsumedReasons.LaneExited(null));
         }
         finally

@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Composer: 12 types, 87 members, 92% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Composer: 14 types, 111 members, 94% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Composer`
 
-**12 public types · 87 public members · 92% documented.**
+**14 public types · 111 public members · 94% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -147,12 +147,21 @@ not two runs.
 | `event Action<GovernedRunRequest>? Sent` | Raised with the request a send produced, once per send, **after the gate's lock is released**. |
 | `long SendCount { get; private set; }` | How many runs this block has started. The observable US-ED5/ED6/ED7 rest on. |
 | `CompiledPrompt? RenderedView { get; private set; }` | The compiled text of the last rendered view — what the operator read. |
+| `CompiledProjection? LastProjection { get; private set; }` | The projection the last `RenderView` computed — the facts the compile prompt states, read here rather than projected again (one producer, ADR-0033 rule 2). |
 | `long BlocksSent { get; private set; }` | How many blocks this gate has started, across the session: the conversation's send count. |
 | `SubmittedEnvelope? LastSubmission { get; private set; }` | The envelope the last send submitted — its id, the two witnesses and the class's provenance; null before the first send. |
 | `string SessionId { get; private set; } = Envelope.NotRecorded` | The session's id, bound once by the composer; `NotRecorded` until then. |
 | `string CompileMode { get; private set; } = CompileModes.MechanicalOnly` | The session's `compile_mode` — mechanical-only in this slice (S2's sentinel; the agentic rungs are CV-3's). |
 | `EnvelopeStore? Envelopes { get; private set; }` | The store this gate appends the envelope to, or null — the fold is then in memory and nothing is recorded (the reason is on `HistoryState`). |
 | `string? HistoryState { get; private set; }` | Why compile history is not being recorded, or null when it is — shown in Prepare (ADR-0034 rules 2–3), never silent. |
+| `Func<CompileRequest, CancellationToken, Task<CompileResult>> Compiler { get; set; } = (request, ct)` | The compile call — `CompileAsync(CompileRequest, CancellationToken)` in the product; a fake in a headless test. Never a second producer of the sent bytes: it yields raw text the typed boundary reads. |
+| `PrepareState State { get; private set; } = PrepareState.Draft` | The composer's Prepare state (§A11): `draft` · `preparing` · `prepared` · `stale`. |
+| `string? CompileLineText { get; private set; }` | The compile line's string for the prepared envelope, or null when the line is absent (E5). |
+| `string? LastCallOutcome { get; private set; }` | The `called.outcome` of the prepared envelope's last call, or null when no call was made. |
+| `string? PreparedEnvelopeId` | The prepared envelope's id, or null. |
+| `IReadOnlyDictionary<string, string> DerivedLines` | The lines the model proposed on the prepared envelope, by name — what Prepare shows with the *derived* mark. |
+| `int CompilerCalls { get; private set; }` | How many times the compiler was called — the observable US-D5's reuse and no-reuse rows rest on. |
+| `bool IsAgenticRung` | Whether the session's rung calls the model at all. |
 | `void BindSession(string sessionId, string compileMode, string engineId, string defaultTaskClass)` | Binds the session's identity: the id every `opened` row carries, the compile mode, the engine and the default class (the composer's `Configure`, from the session config and the binding). |
 | `void UseEnvelopeStore(EnvelopeStore? store, string? reason)` | Binds the store the session document opened for its lifetime (ADR-0034 rule 2), or null with the reason there is none — a locked file, a missing session directory — so Prepare degrades with the reason shown, never sil… |
 | `void NextBlock()` | The block was accepted and the composer starts the next one (SC1: the session is a conversation of n turns through one composer). `SendCount` is per block — one block, one send — so it returns to zero; `BlocksSent` ke… |
@@ -160,6 +169,14 @@ not two runs.
 | `string EngineId { get; private set; } = Envelope.NotRecorded` | The engine every `opened` row names, and whose provider is the family; `NotRecorded` until bound. |
 | `string DefaultTaskClass { get; private set; } = AiDe.Core.Watcher.TaskClasses.FreeForm` | The session's `default_task_class` (Ruling 72) — `FreeForm` until bound, the vocabulary's one home. |
 | `GovernedRunRequest? Send(` | Builds the run request from the rendered view, or refuses and says which field. |
+| `string PreparingReason = "Preparing… — press again when prepared"` | The reason a Send gesture during `preparing` is ignored (Ruling 77). |
+| `string NotPreparedReason = "press again to prepare it"` | The reason an agentic rung's first gesture prepares rather than sends. |
+| `string StaleReason = "your draft changed since it was prepared — press again to prepare it"` | The reason a Send on other bytes than the prepared ones is refused (US-D4). |
+| `Task<PrepareResult> PrepareAsync(ComposerSendContext context, ComposerDraft draft, PromptTemplate? template, CancellationToken cancellationToken = default)` | The preparing gesture under an agentic rung (§A10.1, §A11): opens the envelope, asks the bound model for the open structure lines through `Compiler` — one call, one `called` row, the model's lines as `derived` rows th… |
+| `void CancelPrepare()` | Cancels the compile in flight — an edit during `preparing`, or the Cancel control (Ruling 77). |
+| `bool KeepLine(string name)` | The operator keeps a derived line verbatim: an `operator` row with the same value — under `agentic-advisory` the act that lets it project (§A11). |
+| `bool EditLine(string name, string value)` | The operator edits a structure line on the prepared envelope: an `operator` row; the derived row stays in the fold. |
+| `void RefreshState(ComposerDraft draft)` | The draft changed after Prepare — or changed back: `prepared` ↔ `stale` on whether the draft's source text is still the bytes the envelope was opened on (§A11's `stale`; the next gesture re-prepares). |
 
 ### `event Action<GovernedRunRequest>? Sent`
 
@@ -205,11 +222,45 @@ request — no lease derived, none required; only a scoped goal block takes the 
 (Ruling 42, C17), unchanged. The one content-gap refusal is
 `GoalBlockNeedsNotInScope`.
 
+### `Task<PrepareResult> PrepareAsync(ComposerSendContext context, ComposerDraft draft, PromptTemplate? template, CancellationToken cancellationToken = default)`
+
+The preparing gesture under an agentic rung (§A10.1, §A11): opens the envelope, asks the
+bound model for the open structure lines through `Compiler` — one call, one
+`called` row, the model's lines as `derived` rows through the typed boundary — and
+enters `prepared(outcome)`. Every non-success is a visible mechanical envelope (§A10.2);
+the run still proceeds on the next gesture.
+
+**Remarks.** **The call is skipped when nothing is open** (every structure line already supplied
+by the operator or a template): no `called` row, zero requests, the compile line says who
+supplied it. **A re-prepare with an unchanged `inputs_sha` after a success reuses** the
+stored derived decorations with a `reused` receipt and zero requests; after a failed or
+degraded call, it calls again (§A8.4).
+
+
+
+
+
+**One compile in flight per draft:** a second gesture during `preparing` is
+refused by `Send`; `CancelPrepare` cancels the call and the envelope
+reads `cancelled`.
+
 ## `SubmittedEnvelope`
 
 *record* — `ComposerSendGate.cs`
 
 What one send submitted — the envelope by id, the rebuild's oracle and the class's provenance (ADR-0034 rule 7 reads the id at `consumed`; the document captures the provenance with the ordinal at launch).
+
+## `PrepareState`
+
+*enum* — `ComposerSendGate.cs`
+
+The four composer states of Prepare (§A11).
+
+## `PrepareResult`
+
+*record* — `ComposerSendGate.cs`
+
+What a preparing gesture yielded: entered `prepared` with the compile line, or refused with the reason.
 
 ## `ComposerAccelerator`
 
@@ -320,6 +371,13 @@ claim, and paste is handled inside the page by the editor that received it.
 | `IReadOnlyList<TemplatePickerRow> TemplateCards` | The picker cards currently offered, in catalog order. |
 | `void ChooseTemplate(string templateId)` | Binds the draft to a catalog template and re-mints the form (R15's validated form). |
 | `GovernedRunRequest? Send()` | The send gesture, host-owned. The button calls it; so does the accelerator handler. |
+| `string? CompileLine` | The compile line's text as rendered, or null when the line is absent. |
+| `Task? Preparing { get; private set; }` | The preparing gesture in flight, or the last one — what a test drains and what the document may await. |
+| `void KeepStructureLine(string field)` | The operator keeps a derived line through its own control (the test's route to the same click). |
+| `PrepareState PrepareState` | The Prepare state, as the gate holds it. |
+| `bool PrepareAgainVisible` | Whether the *Prepare again* control is on the screen. |
+| `bool CancelVisible` | Whether the *Cancel* control is on the screen. |
+| `Task PrepareTurnAsync()` | The preparing gesture: the envelope opened, the model called for the open lines, Prepare entered with the compile line and its next-action control — every state with a reason string in voice (§A11; US-D5). |
 | `bool OnAcceleratorKey(uint virtualKey, bool controlHeld, bool isKeyDown)` | Handles a WebView2 accelerator. Ctrl-Enter is the send, and it is marked handled so the page never sees it either (Security C11). |
 | `void MarkReady()` | **(gap)** |
 | `void SetFieldText(string fieldId, long revision, string text)` | **(gap)** |

@@ -294,6 +294,7 @@ public sealed class PerspectiveMenuTests
             ["Coding perspective", "Explore perspective", "Architecture perspective", "Coordination perspective",
              "Next tab in pane", "Previous tab in pane", "Move tab left/right",
              "Clear the status message",
+             "Cycle session region", "Cycle session region backward",
              "New search", "New code viewer", "Show diagnostics"],
             Titles(coding, "_View"));
         Assert.Equal(["Dispatch prompt to terminal…", "New prompt draft"], Titles(coding, "_Prompt"));

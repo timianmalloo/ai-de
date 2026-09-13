@@ -88,13 +88,90 @@ public sealed record AcpClientCapabilities(bool ReadTextFile, bool WriteTextFile
 public sealed record LaneSessionOptions(IReadOnlyList<string>? Tools = null, IReadOnlyList<string>? DisallowedTools = null)
 {
     /// <summary>
+    /// <c>strictMcpConfig: true</c> — the SDK uses only the servers the frame's <c>mcpServers</c>
+    /// names and ignores the repository's <c>.mcp.json</c>, user settings and plugins
+    /// (<c>sdk.d.ts:2110</c>, forwarded as <c>--strict-mcp-config</c>). <b>Admitted by
+    /// measurement</b> (ADR-0035 rule 2): PD-5's second run showed the CLI spawning the fixture
+    /// repository's <c>.mcp.json</c> server as the operator at <c>session/new</c>, before any prompt,
+    /// with <c>tools: []</c> and <c>mcp__*</c> on the frame — <c>mcp__*</c> denies at the name; this
+    /// closes the spawn (the Security &amp; Identity Architect's blocker at CV-3's gate). <c>null</c>
+    /// sends nothing; a lane keeps its servers.
+    /// </summary>
+    public bool? StrictMcpConfig { get; init; }
+
+    /// <summary>
+    /// The model the session runs on, host-authored from the binding (<c>providers.json</c>):
+    /// without it the CLI's own resolution — user settings, the repository's <c>settings.json</c>,
+    /// <c>ANTHROPIC_MODEL</c> — picks what bills, and a third of <c>AuthorizeBinding</c>'s triple is a
+    /// label. <c>null</c> sends nothing (today's lanes).
+    /// </summary>
+    public string? Model { get; init; }
+
+    /// <summary>
+    /// The CLI's glob for every MCP server's tools — <c>mcp__*</c>. Read in the CLI binary's own
+    /// deny parser (claude.exe 2.1.257: a parsed <c>serverName</c> of <c>*</c> with no tool name
+    /// sets the all-servers flag its <c>isServerLevelDisallowed</c> reads), and its effect measured
+    /// on the wire by PD-5's second run (docs/proof/compile-pin-spike.md).
+    /// </summary>
+    public const string EveryMcpServerTool = "mcp__*";
+
+    /// <summary>
+    /// Every tool that writes the tree or a durable file, executes code, a shell or a process,
+    /// delegates to an agent, sends a local file anywhere, or cannot be read — Ruling 73's set,
+    /// <b>one constant</b> (ADR-0035 rule 2: hand-listing the names twice rots on the next SDK tool).
+    /// </summary>
+    /// <remarks>
+    /// <b>Read, not recalled.</b> Two sources, both installed under
+    /// <c>spikes/acp-subscription-lane/node_modules/</c>: the SDK's schema union
+    /// (<c>@anthropic-ai/claude-agent-sdk</c> 0.3.257 <c>sdk-tools.d.ts:11-56</c>) and the shipped
+    /// CLI's own tool-name table (<c>claude-agent-sdk-win32-x64/claude.exe</c>, 183 names).
+    /// Every name in either is classified in <c>docs/proof/read-only-turn.md</c>; asserted as a
+    /// set equality against a literal in <c>TheGovernedLaneHasNoShellTests</c>; an SDK or adapter
+    /// bump re-reads both sources.
+    /// </remarks>
+    public static readonly IReadOnlyList<string> DeniedToolNames =
+    [
+        // The tree and durable files.
+        "Write", "Edit", "MultiEdit", "NotebookEdit", "EnterWorktree", "ExitWorktree", "CronCreate", "CronDelete",
+
+        // Code, shells and processes.
+        "Bash", "PowerShell", "REPL", "Monitor", "Tmux", "LSP", "self_hosted_runner_spawn_local",
+
+        // Delegation to another agent, local or remote.
+        "Agent", "Task", "Workflow", "RemoteTrigger", "self_hosted_runner_requeue_session",
+
+        // A local file sent or saved by a side door, or a consequential remote write.
+        "Artifact", "Projects", "SendFile", "SendUserFile",
+
+        // Opaque — fail-closed.
+        "ClaudeDesign", "Snip", "WebBrowser", "SubscribePR", "DesignSync", "ConnectGitHub",
+    ];
+
+    /// <summary>
+    /// The compile session's pin (ADR-0035 rule 2; Addendum D §A13.4 C1): <c>tools: []</c> as the
+    /// primary pin (every built-in tool off — the SDK's <c>[]</c> = disable all,
+    /// <c>sdk.d.ts:1497-1505</c>), and <c>disallowedTools</c> naming every denied tool as braces
+    /// <b>plus <see cref="EveryMcpServerTool"/></b>: PD-5's first run measured that <c>tools: []</c>
+    /// and <c>mcpServers: []</c> leave a repository <c>.mcp.json</c> server's tools reachable — the
+    /// CLI loads the file at <c>session/new</c> and offers its tools to the model (finding 1).
+    /// </summary>
+    public static readonly LaneSessionOptions Compile = new(Tools: [], DisallowedTools: [.. DeniedToolNames, EveryMcpServerTool]) { StrictMcpConfig = true };
+
+    /// <summary>The compile pin bound to the session's model — <see cref="Compile"/> with <c>model</c> from the binding, never from a page or the model's own text.</summary>
+    public static LaneSessionOptions CompileOn(string model)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(model);
+        return Compile with { Model = model };
+    }
+
+    /// <summary>
     /// The <c>_meta</c> object for <c>session/new</c>, or <c>null</c> when there is nothing to say —
     /// so an absent record and an empty one both leave the frame exactly as it was.
     /// </summary>
     /// <exception cref="ArgumentException">A blank tool name: it looks like a pin and pins nothing.</exception>
     internal JsonObject? ToMeta()
     {
-        if (Tools is null && DisallowedTools is null)
+        if (Tools is null && DisallowedTools is null && StrictMcpConfig is null && Model is null)
         {
             return null;
         }
@@ -109,6 +186,17 @@ public sealed record LaneSessionOptions(IReadOnlyList<string>? Tools = null, IRe
         if (DisallowedTools is not null)
         {
             options["disallowedTools"] = Names(DisallowedTools);
+        }
+
+        if (StrictMcpConfig is { } strict)
+        {
+            options["strictMcpConfig"] = strict;
+        }
+
+        if (Model is not null)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(Model);
+            options["model"] = Model;
         }
 
         return new JsonObject { ["claudeCode"] = new JsonObject { ["options"] = options } };

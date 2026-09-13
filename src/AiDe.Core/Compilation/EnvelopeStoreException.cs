@@ -47,6 +47,30 @@ public static class EnvelopeStoreErrorCodes
 
     /// <summary>A fold is incomplete for projection: no <c>opened</c> row, or no well-formed <c>ceilings</c> row.</summary>
     public const string ProjectionIncomplete = "CE-0015";
+
+    /// <summary>Gate 1: the compile-pin-spike artifact is absent (or unreadable) — no agentic rung is selectable (ADR-0036; US-D11 b1).</summary>
+    public const string PinArtifactMissing = "CE-0016";
+
+    /// <summary>Gate 1: the artifact's recorded adapter/SDK/CLI triple is not the installed one — an adapter bump under a stale artifact.</summary>
+    public const string PinTripleMismatch = "CE-0017";
+
+    /// <summary>Gate 1: the artifact names no frame log, or the frame log is missing or does not hash to the recorded sha — the count cannot be recounted.</summary>
+    public const string PinFrameLogUnverifiable = "CE-0018";
+
+    /// <summary>Gate 1: the recount over the frame log is not zero — the pin did not hold on the recorded run.</summary>
+    public const string PinRecountNotZero = "CE-0019";
+
+    /// <summary>Gate 2: no admission report has been read — <c>agentic</c> is refused by name until CV-4's reader admits it.</summary>
+    public const string AdmissionReportOutstanding = "CE-0020";
+
+    /// <summary>A <c>compile_mode</c> word outside the three the ladder names.</summary>
+    public const string CompileModeUnknown = "CE-0021";
+
+    /// <summary>Gate 1: the artifact records a run that did not end (<c>mode</c> not <c>full</c>, or a prompt with no result) — an aborted or timed-out spike admits nothing.</summary>
+    public const string PinRunNotEnded = "CE-0022";
+
+    /// <summary>Gate 1: the artifact's <c>sent_meta_triple</c> is not the pin this build sends — a pin change re-runs PD-5 by construction.</summary>
+    public const string PinIdentityMismatch = "CE-0023";
 }
 
 /// <summary>A refusal by the envelope store, with its stable code (<see cref="EnvelopeStoreErrorCodes"/>).</summary>

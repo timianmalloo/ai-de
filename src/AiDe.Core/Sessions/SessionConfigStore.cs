@@ -114,6 +114,41 @@ public sealed class SessionConfigStore
         }
     }
 
+    /// <summary>
+    /// Selects the session's <c>compile_mode</c> for new envelopes, <b>through the gate</b>
+    /// (ADR-0036 rule 1): a rung the evaluated <paramref name="availability"/> does not admit is
+    /// refused with the gate's own code and the file is not touched. Emits <c>session.config</c>.
+    /// </summary>
+    /// <exception cref="PromptCompilation.EnvelopeStoreException">
+    /// <see cref="PromptCompilation.EnvelopeStoreErrorCodes.CompileModeUnknown"/> for a word outside
+    /// the ladder; otherwise the refusal the gate computed (<c>CE-0016</c>–<c>CE-0020</c>).
+    /// </exception>
+    public SessionConfig SetCompileMode(string compileMode, CompileModeAvailability availability, DateTimeOffset now)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(compileMode);
+        ArgumentNullException.ThrowIfNull(availability);
+
+        if (!CompileModeGate.Modes.Contains(compileMode, StringComparer.Ordinal))
+        {
+            throw new PromptCompilation.EnvelopeStoreException(
+                PromptCompilation.EnvelopeStoreErrorCodes.CompileModeUnknown,
+                $"'{compileMode}' is not a compile mode; the ladder is {string.Join(" → ", CompileModeGate.Modes)}");
+        }
+
+        if (availability.RefusalFor(compileMode) is { } refusal)
+        {
+            throw new PromptCompilation.EnvelopeStoreException(refusal.Code, refusal.Reason);
+        }
+
+        lock (_gate)
+        {
+            var updated = ReadConfigUnsafe() with { CompileMode = compileMode };
+            WriteConfigUnsafe(updated);
+            AppendEventUnsafe(SessionEventKinds.Config, updated, now);
+            return updated;
+        }
+    }
+
     /// <summary>Every event this session has ever emitted, in append order.</summary>
     public IReadOnlyList<SessionEvent> ReadEvents()
     {
@@ -234,6 +269,9 @@ public sealed class SessionConfigStore
         {
             ["enabledBackends"] = new JsonArray([.. config.EnabledBackends.Select(b => JsonValue.Create(b))]),
             ["attachEnabled"] = config.AttachEnabled,
+            // The compile mode joins the same line (ADR-0036): its presence in a `session.config`
+            // event is what distinguishes an operator's selection from the shipped default.
+            ["compileMode"] = config.CompileMode,
         };
         var line = JsonSerializer.Serialize(new SessionEvent(nextSeq, now, kind, body));
 

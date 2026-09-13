@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 92 types, 406 members, 73% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 92 types, 407 members, 73% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**92 public types · 406 public members · 73% documented.**
+**92 public types · 407 public members · 73% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -2062,7 +2062,7 @@ the one place AI-DE is deliberately ahead of the category rather than matching i
 
 | Member | Summary |
 |---|---|
-| `WorkbenchAnnouncer(TextBlock liveRegion)` | **(gap)** |
+| `WorkbenchAnnouncer(TextBlock liveRegion) : this(liveRegion, DefaultDwell)` | **(gap)** |
 | `string Last { get; private set; } = string.Empty` | **(gap)** |
 | `(AutomationNotificationKind Kind, AutomationNotificationProcessing Processing, string ActivityId)? LastRaise { get; private set; }` | The raise seam (DS-1 A2): what the last notification was raised with — `(kind, processing, activityId)` — so a test can hold the announcer to the mapping it claims rather than trusting the call was made. Null until th… |
 | `void Announce(Announcement announcement)` | **(gap)** |
@@ -2120,6 +2120,7 @@ is indistinguishable from a broken key.
 | `Func<Perspective, string>? PerspectiveRequested { get; set; }` | Swaps the shell's primary view mode and returns what to announce. Null in the product: the presenter's router (`PerspectiveShell.Execute`) answers every perspective command before a host controller sees it, so this is… |
 | `event Action? WorkspaceDataChanged` | Raised after a command that CHANGED what the store holds has finished. |
 | `CanvasFocusRouter? CanvasFocus { get; set; }` | Routes focus across the canvas boundary. Set when a graph canvas surface attaches. |
+| `Func<string?, int, CanvasFocusResult>? SessionRegionCycle { get; set; }` | Cycles the focused session document's regions — the registry rows `session.cycleRegion` (F6) / `session.cycleRegionBack` (Shift+F6) that DC-068 named as a seam request; the document's own `PreviewKeyDown` handler stay… |
 | `bool Execute(string commandId)` | Runs a catalog command by id. Returns false when the id is unknown. |
 | `bool Move(string surfaceId, DropTarget target)` | Applies a move produced either by a keyboard destination choice or by a drop. |
 | `DropTarget? HoveredTarget { get; private set; }` | The destination the in-flight drag currently points at, or null for none. |
@@ -2195,6 +2196,18 @@ command stays in the catalog and stays keyboard-reachable; with no canvas it ref
 so, which is the same path a canvas that has not created its handle yet takes. Hiding the
 command instead would make "the graph cannot be focused" indistinguishable from "the graph
 does not exist", and a user who pressed the chord would get silence (**DC-011**).
+
+### `Func<string?, int, CanvasFocusResult>? SessionRegionCycle { get; set; }`
+
+Cycles the focused session document's regions — the registry rows `session.cycleRegion`
+(F6) / `session.cycleRegionBack` (Shift+F6) that DC-068 named as a seam request; the
+document's own `PreviewKeyDown` handler stays the fallback when nothing routes here
+(DS-1 P4), so this exists for the palette and the menu, not to replace the key.
+
+**Remarks.** Keyed by `FocusedSurfaceId` (never a fixed document) so the command reaches
+whichever session document has focus. Set by the shell per host, the same shape as
+`CanvasFocus`: null until a session document exists is a working state, not a
+gap, and the command reports why rather than doing nothing (DC-011).
 
 ### `event Action<bool>? DragStateChanged`
 

@@ -199,8 +199,11 @@ public sealed class AGovernedRunReachesTheConsoleTests
                     document.UpdateLayout();
                     var row = document.Thread.Rows.Single(r => r.Ordinal == ordinal);
                     Assert.Equal(Frames, row.View.Events.Count);
-                    Assert.Equal(AiDe.App.Workbench.Sessions.TurnItem.FoldLines, row.FoldedEvents.Count);
-                    Assert.Equal(turn.Events[^1].Text, row.FoldedEvents[^1].Text);
+
+                    // Ruling 82: the four message chunks are two prose items around the permission
+                    // request, which is the one row the fold holds.
+                    Assert.Equal(["permission.request"], row.FoldedEvents.Select(r => r.Kind));
+                    Assert.Equal(["reading the payments aggregatethinking", "writingdone"], row.Conversation.Select(r => r.Text));
                 });
         }
         finally

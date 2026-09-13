@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Sessions: 30 types, 161 members, 71% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Sessions: 32 types, 184 members, 72% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Sessions`
 
-**30 public types · 161 public members · 71% documented.**
+**32 public types · 184 public members · 72% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -149,19 +149,26 @@ One row of the Console split: a heading per turn, or one event line under it.
 
 *record* — `ConsoleSurface.cs`
 
-One event line, named by its text.
+One row of the turn's fold (Ruling 81: a message, a thought, or one event of any other kind), named by its text.
 
 | Member | Summary |
 |---|---|
 | `string Text` | **(gap)** |
+| `string KindWord` | *message* · *thought* (dim, by the shared ink style), else the kind verbatim (DESIGN.md SC1 as amended; the mockup's `crow`). |
+| `string Status` | The row's status for assistive tech — *claude-code · message*: the attribution and the kind, never the count (SC9). |
+| `string ChunksText` | *3 chunks* · *1 chunk*; empty for a kind that is one row per event — rendered from the fold, never asserted (Ruling 81 condition 3). |
+| `bool HasChunks` | **(gap)** |
 
 ## `ConsoleSurface`
 
 *class* — `ConsoleSurface.cs`
 
-The Console split (SC1; Ruling 74): the same events the thread folds per turn, unfolded in time
-— a flat list of rows (a heading per turn, then its lines), **a view of the same fold**,
-never a second store (Ruling 74 condition 1: the split's rows equal the folded events, in order).
+The Console split (SC1; Rulings 74 and 81): the same fold the thread renders per turn, unfolded
+in time — a flat list of rows (a heading per turn, then `Coalesce(turn.Events)`), **a view
+of the same fold**, never a second store (Ruling 74 condition 1 as amended: the split's rows
+equal `Coalesce(turn.Events)` of every turn, in order, and the thread's reply side renders
+the same output). The grain is the message, never the wire chunk — the operator's *"console
+output is too fine grained"*; a row reads `hh:mm:ss · lane · message · the joined text · n chunks`.
 
 **Remarks.** **The old merged-stream renderer is gone.** It rendered `ConsoleStreamModel` —
 the run channel with no turn boundary — through a `StackPanel` rebuilt on every change
@@ -176,7 +183,7 @@ turn's heading; while a turn runs it follows.
 | `int? At` | The turn the split is at (the caret's heading), or null when following the end. |
 | `void Show(IReadOnlyList<TurnView> turns, int? at = null)` | Re-derives the rows from the thread's turns — one list, in order. Called by the document on every applied snapshot while the split is open, and once when it opens. |
 | `string Status` | The status word the header's Console toggle announces: *following b5* · *at b2* · *at the end*. |
-| `IReadOnlyList<ConsoleSplitRow> Derive(IReadOnlyList<TurnView> turns)` | The rows a fold yields: for each turn, its heading then its lines — the identity's right side (M1). |
+| `IReadOnlyList<ConsoleSplitRow> Derive(IReadOnlyList<TurnView> turns)` | The rows a fold yields: for each turn, its heading then `Coalesce(turn.Events)` — the identity's right side (M1, Ruling 81). |
 
 ### `void Show(IReadOnlyList<TurnView> turns, int? at = null)`
 
@@ -185,6 +192,38 @@ every applied snapshot while the split is open, and once when it opens.
 
 - **`turns`** — The fold.
 - **`at`** — The turn to open at (a tail button, *Open the log*), or null to keep the caret.
+
+## `ConversationRow`
+
+*class* — `ConversationRow.cs`
+
+One item of a turn's conversation as the reply side binds it (Ruling 82) — a prose, reasoning
+or tool item of `Items`, updated **in place** when the next snapshot
+re-derives the item at its position (DS-1 Q10 restated for items: a status change never
+re-templates, so focus inside a detail survives every snapshot), with the one per-item view
+state — the disclosure's open flag — living here, never on a container (spike Q13).
+
+**Remarks.** Every facet is one derivation of `Item` (DM7); the template binds flat paths and
+re-reads them all on the empty-name raise. An event item never becomes a row: the fold renders
+those as event lines (`FoldedEvents`).
+
+| Member | Summary |
+|---|---|
+| `ConversationRow(ConversationItem item)` | **(gap)** |
+| `event PropertyChangedEventHandler? PropertyChanged` | **(gap)** |
+| `ConversationItem Item` | The projection this row renders. Setting it raises every bound facet at once. |
+| `bool IsOpen` | The reasoning or detail disclosure's state — the row's, so a recycled container never carries another turn's (Q13). |
+| `bool IsReasoning` | **(gap)** |
+| `bool IsTool` | **(gap)** |
+| `string Text` | The prose's markdown source, or the thought's plain text. |
+| `string Kind` | The tool's kind as a word (*read · edit · execute · search*); empty when the wire stated none. |
+| `string Title` | **(gap)** |
+| `ToolStatus Status` | **(gap)** |
+| `string StatusWord` | *running · done · failed · interrupted*. |
+| `bool IsRunning` | **(gap)** |
+| `string DetailName` | *Detail of Read x* — the disclosure's name (A11-6: the title verbatim). |
+| `string DetailRegionName` | *Detail of Read x, input and result* — the opened region's name. |
+| `string Detail` | The detail's text: `input`, the input, then `result`, the output — the mockup's pre; an interrupted call says no result came. |
 
 ## `FocusLeave`
 
@@ -274,7 +313,8 @@ selection, no selection ground, the 2 px focus ring the one visible state.
 | `FeedKeyDecision Decide(Key key, ModifierKeys modifiers, bool sourceOwnsItsKeys)` | The pure decision (K1a): never throws over the whole domain; `None` for keys the feed does not own. |
 | `bool Act(FeedKeyDecision decision)` | The act (K1b). Returns whether the decision was the feed's. |
 | `bool FocusCurrentItem()` | The caret's item, realized and focused on its container — F6 / Tab entry (spike Q5g). |
-| `bool FocusCurrentItemLast()` | Backward entry (Shift+Tab from the composer): the caret's item's last tab stop, or its container when it has none. |
+| `bool FocusCurrentItemLast()` | Backward entry (Shift+Tab from the composer): the item's `EntryStop` when it has one, else the caret's item's last tab stop, or its container when it has none. |
+| `UIElement? EntryStop(ListBoxItem container)` | An item's entry stop when one outranks DOM order (the thread's first action on a live or failed last turn, SC8 as amended); null for DOM order. |
 | `bool FocusItem(int index)` | Selects, scrolls into view, lays out and focuses the CONTAINER at  — never an inner control. |
 | `ScrollViewer? Scroller` | The scroll viewer inside the template, once the template has applied. |
 | `bool IsPinnedAtEnd` | The structural pin (P7): the last item's container is realized and its bottom edge sits within the viewport — read BEFORE a change, never from the offset (the extent is an estimate under variable heights; spike Q4a). |
@@ -390,6 +430,28 @@ handled here.
 | Member | Summary |
 |---|---|
 | `bool Show(NewSessionSheetViewModel sheet, Window? owner, Action<string>? announce = null)` | Shows the sheet modally. Returns whether the operator pressed Create. |
+
+## `ProseView`
+
+*class* — `ProseView.cs`
+
+The lane's prose as the markdown subset renders it (Ruling 82; `DESIGN.md` the reply row as
+amended): headings at one size with the weight carrying the level, paragraphs, lists, fenced
+code in mono on the sunken ground, tables by hairline — never a box — and a link as its text
+followed by its URL in muted mono: **text, never a control** (no `Hyperlink`, no
+Invoke pattern; DS-1 S1). `Text` in, `ThreadText` blocks out; rebuilt
+when the text changes, which a streaming message does per chunk.
+
+**Remarks.** **Reuse-in-codebase, answered:** the composer's page carries CodeMirror's markdown
+*language* (an editor's highlighter) and the docs site renders in a browser — neither is a
+WPF renderer, and Markdig is not an installed dependency (ladder L1: native before a new
+package). The parser is Core's `ProseMarkdown`, golden-tested; this maps blocks to
+elements and nothing else.
+
+| Member | Summary |
+|---|---|
+| `DependencyProperty TextProperty = DependencyProperty.Register(` | **(gap)** |
+| `string Text` | The markdown source. |
 
 ## `RecentSessionEntry`
 
@@ -561,7 +623,7 @@ refusal is announced (`THR-0002`), never silent.
 
 - **`model`** — The document's state.
 - **`store`** — Where the document's envelope is persisted, or null to keep none. Kept for the shell's call; the conversation persists no layout of its own.
-- **`announcer`** — The shell's announcer (one across hosts, ADR-0031). Null — the shell does not pass it yet, a seam request to the Shell lane — builds a document-owned polite live region so SC9 is never silent; the two are never both live.
+- **`announcer`** — The shell's announcer (one across hosts, ADR-0031; landed at the shell's construction site, `WorkbenchShell.RegisterSessionDocument`). Null — a document built directly, as every headless test here still does — builds a document-owned polite live region so SC9 is never silent; the two are never both live.
 
 ### `string PurgeCompileHistory()`
 
@@ -659,10 +721,10 @@ The thread's four records (DS-1 §Telemetry) — `thread.layout`, `thread.announ
 read model's apply failed, `THR-0002` a region refused focus, `THR-0003` a version gap.
 Emitted on the normal path (IO1); no text, ever (O11).
 
-**Remarks.** **Writes through `Sink` when a test set one, else the same
-log file the workbench writes.** `WorkbenchDiagnostics.Write` is private and its file is
-the Shell lane's; a seam request asks for it to become internal so these records go through the
-one writer — until then the file path is duplicated here and that is named debt (DM7).
+**Remarks.** **One writer.** `Write` is `internal` — these records go
+through it rather than a second copy of the sink check and the log file path (DM7's seam
+request, landed): `ThreadDiagnostics` composes its own event shape and hands the object
+straight to the Shell lane's one writer.
 
 | Member | Summary |
 |---|---|
@@ -718,8 +780,10 @@ stopped row and one assertive announcement, the channel kept alive for a second 
 | `bool FocusTurn(int ordinal)` | The jump list's Enter and the composer's "b1 is running" link: the turn's CONTAINER, never an action. |
 | `string StoppedSentence = "The thread stopped updating; reopen the session."` | The stopped row's words (SC9): visible outside the scroller and announced once. |
 | `void OnPreviewKeyDown(KeyEventArgs e)` | **(gap)** |
+| `UIElement? EntryStop(ListBoxItem container)` | The turn's first action button when it offers one (SC8 as amended: on a running, waiting, failed or stopped last turn the entry stop is its first action) — the Shift+Tab-from-the-editor landing; Tab from the container… |
 | `void Dispose()` | **(gap)** |
-| `DataTemplate EventLineTemplate()` | ts (muted) · lane (accent) · message; stderr in danger (DESIGN.md:1112). |
+| `string ThinkingWord = "Thinking"` | The copy of the reasoning item's line (DESIGN.md, copy added by the errata). |
+| `DataTemplate EventLineTemplate()` | ts (muted) · lane (accent) · message; stderr in danger (DESIGN.md:1112). Binds the row grammar's names — an `EventLine` or a `TurnRow` alike. |
 | `bool IsMotionReduced` | The reduced-motion seam as a bindable property: read once per bind through `ReducedMotion`. |
 
 ### `ThreadFeed(ISessionThread thread, IWorkbenchAnnouncer announcer, string surfaceId = "session-document")`
@@ -779,15 +843,14 @@ state of its own.
 | `string OutcomeWord` | **(gap)** |
 | `string Lane` | **(gap)** |
 | `string Counts` | **(gap)** |
-| `string? Reply` | **(gap)** |
-| `bool HasReply` | **(gap)** |
+| `IReadOnlyList<ConversationRow> Conversation` | The reply side's conversation (Ruling 82): the prose, reasoning and tool items of `Items`, in event order, as rows updated in place — the same collection instance across snapshots, so the panel keeps its containers. |
 | `string SentBytes` | **(gap)** |
 | `string ProvenanceName` | **(gap)** |
 | `string CompiledName` | **(gap)** |
-| `string FoldHeader` | **(gap)** |
+| `string FoldHeader` | *N events* — the non-conversation rows only (SC7 as amended: `acp.*`, the conductor's lines, stderr, a result with no call). |
 | `bool IsLive` | **(gap)** |
-| `IReadOnlyList<EventLine> FoldedEvents` | The fold's content: the last `FoldLines` lines, bounded, no inner scroller. |
-| `int OtherEvents` | How many lines the fold does not show; 0 when it shows them all. |
+| `IReadOnlyList<TurnRow> FoldedEvents` | The fold's content: the last `FoldLines` non-conversation rows, bounded, no inner scroller. |
+| `int OtherEvents` | How many non-conversation rows the fold does not show; 0 when it shows them all. |
 | `bool HasOtherEvents` | **(gap)** |
 | `string TailText` | *the other 136, in the Console* — the tail button's text (the button is collapsed when the fold shows every line: `HasOtherEvents`). |
 | `IReadOnlyList<TurnActionKind> Actions` | The actions this turn offers, Deny first (SC7). A completed or past-failed turn offers none. |

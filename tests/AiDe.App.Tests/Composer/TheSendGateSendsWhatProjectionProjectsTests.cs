@@ -382,8 +382,14 @@ public sealed class TheSendGateSendsWhatProjectionProjectsTests
                 .Order(StringComparer.Ordinal)
                 .ToList();
 
+        // AuthorizeBinding is ADR-0035 rule 1's factored identity half (CV-3) — an addition; the two
+        // signatures US-D12 names, Validate and Authorize, are unchanged from main 5c132902.
         Assert.Equal(
-            ["IReadOnlyList<GoalBlockError> Validate(GoalBlock block)", "Spawn Authorize(SpawnRequest request, ProviderRegistry registry)"],
+            [
+                "BoundIdentity AuthorizeBinding(String engineId, String model, String accountLabel, ObservedAuthStatus observed, ProviderRegistry registry)",
+                "IReadOnlyList<GoalBlockError> Validate(GoalBlock block)",
+                "Spawn Authorize(SpawnRequest request, ProviderRegistry registry)",
+            ],
             Signatures(typeof(SpawnContract)));
         Assert.Equal(
             ["IReadOnlyList<String> Patterns(String compiledText)", "Lease Derive(String compiledText)"],

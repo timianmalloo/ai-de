@@ -1942,7 +1942,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Conductor: 6 types, 18 members, 100% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Conductor: 11 types, 28 members, 100% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1955,7 +1955,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b3a927a45b1c7dee2fb6279c631ffb4affea3685efff9367ed27659c4206638d"
+      "sourceSha256": "b8fe07c91d9f96707e800c0bbcb9b1d8f85ecd162e98466ebdb15f963a8a9cb3"
     },
     {
       "id": "api-aide-app-viewmodels",
@@ -1992,7 +1992,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 92 types, 406 members, 73% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 92 types, 407 members, 73% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2005,7 +2005,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b6bfc74b11522f2c3fc0ad04ba079ff821d77ac5a82418bc479b8b68fdb0920b"
+      "sourceSha256": "211834312b078566ebcc42882b1f386ff1c3809cb227e6ebdf7ab68c8f0d15cd"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -2017,7 +2017,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 12 types, 87 members, 92% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 14 types, 111 members, 94% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2030,7 +2030,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8222690372cc6917d8c815bfa2d59bf463e9ad8099fce4d8dcbe30b32ca30ea5"
+      "sourceSha256": "626da9d13d6bdb93f6e9dd26a856d412707fde8a144019417918b5baf5573d75"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -2042,7 +2042,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 30 types, 161 members, 71% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 32 types, 184 members, 72% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2055,7 +2055,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "63f300dfe7cc4e0c07e228b0454d65c6ec15fdb3f07229af4ca71fde047f89ea"
+      "sourceSha256": "4afd6dceeabe435863d7a323909222a0b4f749e5427e38a4b1646689cb9e7826"
     },
     {
       "id": "api-aide-core",
@@ -2092,7 +2092,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 57 types, 143 members, 90% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 58 types, 153 members, 91% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2105,7 +2105,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8a4373ddba2f1581c28c2182b0029d8aa08367809a9f4ed729ac22127581bca8"
+      "sourceSha256": "6ffdaa69cc0754dd2cf49adc86d41239aebffd3eb06e1ed2b33f1b06ef43b7ad"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -2317,7 +2317,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 30 types, 128 members, 96% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 49 types, 143 members, 96% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2330,7 +2330,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2941d5bc4583dc34d6551b4517cb831fb739d68ac37ab269fac59a32d50de4f7"
+      "sourceSha256": "016ef6d898e82c78d3ba12642dbaf0c59c4fdcf54089bc903aaeded2d3ae5af6"
     },
     {
       "id": "api-aide-core-projections",
@@ -2367,7 +2367,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.PromptCompilation: 40 types, 137 members, 77% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.PromptCompilation: 46 types, 164 members, 81% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2380,7 +2380,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f4af529230dacad9b4214d5daaa31fb5a08e1d3fae92a18ad9f811bf0600912c"
+      "sourceSha256": "6e8cf80b49ffa025ac66f277082fb4c9f8558ac58d976d9a36702170f5eda81f"
     },
     {
       "id": "api-aide-core-sessions",
@@ -2392,7 +2392,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Sessions: 23 types, 67 members, 89% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Sessions: 26 types, 73 members, 90% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2405,7 +2405,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b90bfa5a9d67e88f522ea0bf08dd371116440d9eae7cf6280300c49444517e1e"
+      "sourceSha256": "57901c7ec3b6089b51e72b9e36020fe1bc4d2207d83b9eb83ddc8f34abff58b5"
     },
     {
       "id": "api-aide-core-store",
@@ -7923,7 +7923,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c105615774d426634776320b616ead1391a51a8256ecb5b28e70b153000c64c1"
+      "sourceSha256": "15c7c4ef3861a711a92d9fa324fa99889dea5fbd10e9b117c9d467f33deaf391"
     },
     {
       "id": "design-session-profiler",
@@ -9073,7 +9073,7 @@ window.DOCS_INDEX = {
     {
       "id": "note-addendum-c-council-rulings",
       "path": "docs/notes/addendum-c-council-rulings.md",
-      "title": "Decision note — Rulings 50–87: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
+      "title": "Decision note — Rulings 50–89: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
       "type": "doc",
       "status": "accepted",
       "owner": "@timianmalloo",
@@ -9136,7 +9136,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "85f0ad17027bc18cafb148d224c82c27dd0a6a40a7fb4f333e1f67ddbd2971ef"
+      "sourceSha256": "afa95f1f468c747e700675ae1a49f5a2b4d8e8478c8cb2942f66903018348156"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -14646,6 +14646,70 @@ window.DOCS_INDEX = {
       "sourceSha256": "a92734fa7845b6e7ad4a33a691fe588436959f29a8ab7340d01343356a9def94"
     },
     {
+      "id": "proof-compile-call",
+      "path": "docs/proof/compile-call.md",
+      "title": "Proof Pack — CV-3, the compile call: the pin widened to mcp__*, CompileCallHost apart from the run root under one linked deadline, AuthorizeBinding, gate 1 read from the machine-level artifact, Prepare under an agentic rung, the eval harness — and PD-5's second run, which ran away and was stopped",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-d",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [],
+      "summary": "Evidence for CV-3 on the Conversation lane (Addendum D slice D-2): the compile pin as one named static (tools: [], the 30 denied names, mcp__*) asserted as an exact key set on the wire; CLAUDE_CODE_EXECUTABLE never reaching the engine's child; SpawnContract.AuthorizeBinding as the identity half both entry points call; CompileCallHost opening compile-call.compose (Roots == 0) with the pin verified per call against the machine-level artifact and one linked deadline that names its step; gate 1 as CompileModeGate (missing / triple mismatch / frame log unverifiable / recount ≠ 0 / Gate 2 outstanding, each a stable code); Prepare's four states and the compile line's strings over a fake compiler; the eval harness with its report-contract self-tests. PD-5's second run under the widened pin is RUN-RECORDED as aborted: a toolless session answered the read prompt with tool-call XML as text in an unbounded loop (~20k output tokens) until the harness was killed — the finding the compile host's deadline exists for, and a re-run the operator must consent to.",
+      "tags": [
+        "proof-pack",
+        "conversation-lane",
+        "cv-3",
+        "addendum-d",
+        "compile",
+        "pin",
+        "acp",
+        "gate-1",
+        "eval-harness",
+        "prepare",
+        "adr-0035",
+        "adr-0036",
+        "pd-5",
+        "security"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0035-compile-session-binding-and-pin",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0036-compile-mode-ladder-deployment-gates",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-mechanical-compile",
+          "rel": "refines"
+        },
+        {
+          "to": "proof-compile-pin-spike",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "69e0f6d0893fae033569e20886eb957a682eb0a5259f820e98b547b45965f2f1"
+    },
+    {
       "id": "proof-compile-pin-spike",
       "path": "docs/proof/compile-pin-spike.md",
       "title": "Proof Pack — PD-5: the compile-session pin wire spike (ADR-0035/0036 Gate 1; Ruling 68)",
@@ -14696,7 +14760,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e198cdab9599d7d60c8ffab42cdf3eb1f01f8dc08c19db178210104049a101a9"
+      "sourceSha256": "bf0223c21b61f34c174ac9da5b73530474d5a1e0b8031263be5d15b6f9625d0f"
     },
     {
       "id": "proof-composer-as-conversation",
@@ -14844,6 +14908,66 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "5ceb5507a5710e579bc6160c03077fb806b8cd01f8cc25aa3adf1bde84b80807"
+    },
+    {
+      "id": "proof-console-coalesce",
+      "path": "docs/proof/console-coalesce.md",
+      "title": "Proof Pack — CV-5.2, Coalesce: the Console's row grain is the message, never the wire chunk; one fold read by the thread's reply side and the split; Reply retired (Ruling 81)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [],
+      "summary": "Evidence for CV-5.2 on the Conversation lane: one pure fold, Coalesce.Rows(turn.Events), folds consecutive agent.msg (and agent.thought) chunks from one lane into one TurnRow carrying the first chunk's timestamp, the lane, the joined text and the chunk count, breaking at any other kind or lane; TurnView.Rows is that fold and TurnView.Reply, the StringBuilder second store and Conclude(reply:) are gone; the Console split derives heading + Coalesce of every turn and renders the operator's three-row message as one row reading \"16:29:56 · claude-code · message · merges are missing from the tracker and · 3 chunks\"; C1–C4 went red → green (the theory seeded, the reflection asserts red on the Reply property), the refused run's sentence is a stderr line of the run, every clock on the surface is the operator's local time, and C5 is RUN-PENDING on SH-4.2's console-document row (Ruling 89; seam request req-01M2E1HEMCMHRW1AX4SY8RJFQ7).",
+      "tags": [
+        "proof-pack",
+        "conversation-lane",
+        "cv-5",
+        "cv-5-2",
+        "coalesce",
+        "console-split",
+        "session-thread",
+        "ruling-74",
+        "ruling-81",
+        "ruling-82",
+        "ruling-89",
+        "dm7",
+        "sc1",
+        "sc9"
+      ],
+      "links": [
+        {
+          "to": "design-session-thread-itemscontrol",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        },
+        {
+          "to": "ui-review-operator-findings-2026-09-13",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-composer-as-conversation",
+          "rel": "refines"
+        },
+        {
+          "to": "mockup-session-conversation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fe0c49120083960bb378c6e57f4a592d8e06bb1ecd420a5c47736572a35bae22"
     },
     {
       "id": "proof-contrast-census",
@@ -15397,6 +15521,55 @@ window.DOCS_INDEX = {
       "sourceSha256": "16a8f3ec7058860d25ab4444fc5877c2ba0322800d08b1af2d90da34b45c9c44"
     },
     {
+      "id": "proof-shell-seams-x3",
+      "path": "docs/proof/shell-seams-x3.md",
+      "title": "Proof Pack — X-3, the Shell-lane seam requests (CV-1/CV-2) and two status-bar defects",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-cd",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [],
+      "summary": "Evidence for X-3 (Shell lane, conductor `conductor/addendum-c`): the six CV-1/CV-2 seam requests (the shared Announcer into the session document; the F6/Shift+F6 registry rows; WebSurfaceHost.Retry(); WorkbenchDiagnostics as the one writer; BorderStrongBrush and its page role; the Compilation/Resources EmbeddedResource glob) and two operator-reported status-bar defects (the doubled \"rev rev-1\" label, resolved per Ruling 85 as an observed-HEAD attach rather than a fixture literal; a pane-move refusal that never cleared, resolved per Ruling 86 as a bounded self-clearing dwell on the announcer) — each red-first, with the reds named and the gate table at close.",
+      "tags": [
+        "proof-pack",
+        "shell-lane",
+        "x-3",
+        "addendum-c",
+        "addendum-d",
+        "seam-request",
+        "announcer",
+        "workbench",
+        "composer",
+        "ruling-85",
+        "ruling-86"
+      ],
+      "links": [
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-composer-as-conversation",
+          "rel": "refines"
+        },
+        {
+          "to": "proof-mechanical-compile",
+          "rel": "refines"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9686ac77dc370d55411c09c532dd3251e82152fad6d6fab06b99dcddf3f331cb"
+    },
+    {
       "id": "proof-terminal-cursor-render-crash",
       "path": "docs/proof/terminal-cursor-render-crash.md",
       "title": "Proof Pack - Terminal cursor render crash fix (DC-061)",
@@ -15523,6 +15696,70 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "e86758a2394dc823c88a985417bdad57f0cb1221620620c3172042cb3e03a430"
+    },
+    {
+      "id": "proof-the-conversation",
+      "path": "docs/proof/the-conversation.md",
+      "title": "Proof Pack — CV-5.3, the conversation: the thread renders prose · reasoning · tool call+result · outcome in event order over Coalesce; agent_thought_chunk becomes a mapper row (Ruling 82)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [],
+      "summary": "Evidence for CV-5.3 on the Conversation lane: the spike captured a real agent_thought_chunk frame (19 chunks, content.text — the shape is Verified, not Inferred; the adapter forwards a thought only under thinking.display \"summarized\"); the mapper row agent.thought landed with M1 red first and the corpus round-trip over 156 frames; ToolFacts carries what a tool frame states; ConversationItems is the one pure projection over Coalesce rows (a call and its results by id are one item, a result with no call an event row, acp.* events, order preserved — I1's seven goldens plus the two captured runs); ProseMarkdown is the golden-tested subset; the thread's reply side renders the items then the outcome line whose fold holds only the non-conversation rows, the reasoning item collapsed · muted · never announced, the tool item kind · title · status with its detail on demand, interrupted on a stopped turn, in-place updates with focus kept, and the entry stop on a live or failed last turn (T1–T9 red → green). Two classes registered as placeholders (CV-5-3 a, b). A1 is RUN-PENDING with steps.",
+      "tags": [
+        "proof-pack",
+        "conversation-lane",
+        "cv-5",
+        "cv-5-3",
+        "ruling-82",
+        "ruling-81",
+        "ruling-87",
+        "agent-thought",
+        "markdown-subset",
+        "session-thread",
+        "tool-item",
+        "reasoning-item",
+        "sc7",
+        "sc8",
+        "sc9",
+        "sc10",
+        "dm7",
+        "spike"
+      ],
+      "links": [
+        {
+          "to": "proof-console-coalesce",
+          "rel": "refines"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        },
+        {
+          "to": "ui-review-operator-findings-2026-09-13",
+          "rel": "implements"
+        },
+        {
+          "to": "design-session-thread-itemscontrol",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "mockup-session-conversation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "305365f383e220a689a6a688c2d326ef35a65d0b087a5e355256d9440d86569f"
     },
     {
       "id": "proof-watcher-advisory-evaluator",
@@ -17441,5 +17678,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c0fe283726f89a4c747c19989cf02e65010ea0ed39e28a93176b12cfa614892f"
+  "graphSha256": "802009db0aedf24e9b4b660a4d7e4045d26d987aabfff495e2ea9ae9f4838e03"
 };

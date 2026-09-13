@@ -19,9 +19,6 @@ namespace AiDe.Core.Presentation.Sessions;
 /// </remarks>
 public sealed class RunChannelSessionThread : ISessionThread
 {
-    /// <summary>The event kinds whose text is the lane's reply (the mapper's <c>agent_message_chunk</c>).</summary>
-    public const string ReplyKind = "agent.msg";
-
     private readonly Lock _gate = new();
     private readonly List<Turn> _turns = [];
     private bool _caughtUp;
@@ -128,11 +125,6 @@ public sealed class RunChannelSessionThread : ISessionThread
                     ? new Spend(so.In + cost.In, so.Cached + cost.Cached, so.Out + cost.Out, so.Requests + cost.Requests)
                     : cost;
             }
-
-            if (string.Equals(line.Kind, ReplyKind, StringComparison.Ordinal))
-            {
-                turn.Reply.Append(line.Text);
-            }
         }
 
         Publish();
@@ -168,8 +160,12 @@ public sealed class RunChannelSessionThread : ISessionThread
         Publish();
     }
 
-    /// <summary>The run ended. <paramref name="terminal"/> is one of the four terminal states.</summary>
-    public void Conclude(int ordinal, TurnState terminal, DateTimeOffset at, int? exitCode = null, int? edits = null, string? reply = null)
+    /// <summary>
+    /// The run ended. <paramref name="terminal"/> is one of the four terminal states. What the run
+    /// said arrived as its events (Ruling 81: the fold is <c>Coalesce(Events)</c>); a conclusion
+    /// carries no text of its own — a reason is appended as a line before it, never stored beside it.
+    /// </summary>
+    public void Conclude(int ordinal, TurnState terminal, DateTimeOffset at, int? exitCode = null, int? edits = null)
     {
         if (!TurnView.IsTerminal(terminal))
         {
@@ -185,10 +181,6 @@ public sealed class RunChannelSessionThread : ISessionThread
             turn.ExitCode = exitCode;
             turn.Edits = edits;
             turn.ConcludedAt = at;
-            if (reply is not null)
-            {
-                turn.Reply.Clear().Append(reply);
-            }
         }
 
         Publish();
@@ -239,7 +231,6 @@ public sealed class RunChannelSessionThread : ISessionThread
         public TurnState State { get; set; }
         public WaitingRequest? Waiting { get; set; }
         public List<EventLine> Events { get; } = [];
-        public System.Text.StringBuilder Reply { get; } = new();
         public string? Lane { get; set; }
         public Spend? Spend { get; set; }
         public int? ExitCode { get; set; }
@@ -265,11 +256,6 @@ public sealed class RunChannelSessionThread : ISessionThread
                 ConcludedAt = view.Outcome?.Duration is { } d ? view.At + d : null,
             };
             turn.Events.AddRange(view.Events);
-            if (view.Reply is not null)
-            {
-                turn.Reply.Append(view.Reply);
-            }
-
             return turn;
         }
 
@@ -289,7 +275,6 @@ public sealed class RunChannelSessionThread : ISessionThread
                     Events.Count)
                 : null,
             State == TurnState.Waiting ? Waiting : null,
-            Reply.Length == 0 ? null : Reply.ToString(),
             [.. Events],
             SentBytes,
             At);

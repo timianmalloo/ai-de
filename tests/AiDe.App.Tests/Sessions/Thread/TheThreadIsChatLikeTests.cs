@@ -39,7 +39,7 @@ public sealed class TheThreadIsChatLikeTests
 
             if (turn.Outcome is { } outcome)
             {
-                document.ReadModel.Conclude(ordinal, turn.State, turn.At + (outcome.Duration ?? TimeSpan.Zero), outcome.ExitCode, outcome.Edits, turn.Reply);
+                document.ReadModel.Conclude(ordinal, turn.State, turn.At + (outcome.Duration ?? TimeSpan.Zero), outcome.ExitCode, outcome.Edits);
             }
         }
 
@@ -151,7 +151,7 @@ public sealed class TheThreadIsChatLikeTests
                 {
                     var turns = count == 40
                         ? ThreadFixtures.Forty()
-                        : Enumerable.Range(0, 10).SelectMany(r => ThreadFixtures.Forty().Select(t => ThreadFixtures.Turn(t.Ordinal + 40 * r, t.SourceText, t.Decorations, t.State, t.Outcome, t.Reply, t.Events))).ToList();
+                        : Enumerable.Range(0, 10).SelectMany(r => ThreadFixtures.Forty().Select(t => ThreadFixtures.Turn(t.Ordinal + 40 * r, t.SourceText, t.Decorations, t.State, t.Outcome, t.Events))).ToList();
                     var (feed, thread, _) = ThreadFixtures.Feed(turns);
                     var window = new Window { Width = Width, Height = Height, Left = -10000, Top = -10000, ShowInTaskbar = false, ShowActivated = false, Content = feed };
                     window.Show();
@@ -254,7 +254,7 @@ public sealed class TheThreadIsChatLikeTests
             });
     }
 
-    /// <summary><b>L4.</b> A running turn shows its last four lines; the fold is bounded; the split virtualizes 10,000 rows.</summary>
+    /// <summary><b>L4.</b> A running turn renders its tool items live and its fold shows the last four non-conversation lines (Ruling 82); the fold is bounded; the split virtualizes 10,000 rows.</summary>
     [Fact]
     public void ARunningTurnShowsItsLastFourLines_TheFoldIsBounded_AndTheSplitVirtualizes()
     {
@@ -269,18 +269,22 @@ public sealed class TheThreadIsChatLikeTests
             {
                 var row = feed.Rows[5];
                 Assert.True(row.IsFoldOpen, "the running turn's lines are live, not folded");
+                // 140 working lines: the 28 tool.call lines (every fifth, line 140 among them) are
+                // items; the 112 tool.result lines with no call fold, the last four shown.
                 Assert.Equal(TurnItem.FoldLines, row.FoldedEvents.Count);
-                Assert.Equal("b6 line 140: read docs/proof/pp-0141.md", row.FoldedEvents[^1].Text);
-                Assert.Equal(136, row.OtherEvents);
-                Assert.Equal("the other 136, in the Console", row.TailText);
+                Assert.Equal("b6 line 139: read docs/proof/pp-0141.md", row.FoldedEvents[^1].Text);
+                Assert.Equal(108, row.OtherEvents);
+                Assert.Equal("the other 108, in the Console", row.TailText);
+                Assert.Equal(28, row.Conversation.Count);
+                Assert.All(row.Conversation, r => Assert.Equal("running", r.StatusWord));
 
                 var container = ThreadFixtures.Container(feed, 5);
                 var rendered = ThreadFixtures.Visuals<ThreadText>(container).Count(t => t.Text.StartsWith("b6 line", StringComparison.Ordinal));
-                Assert.Equal(TurnItem.FoldLines, rendered);
+                Assert.Equal(TurnItem.FoldLines + 28, rendered);
 
                 // The split over ten thousand rows realizes a viewport, not the list.
                 var big = ThreadFixtures.Turn(7, "big", ThreadFixtures.Decorations("free-form", "T0", null, "message"), TurnState.Completed,
-                    new OutcomeView("claude-code", null, 0, null, null, 10_000), null, ThreadFixtures.Lines(7, 10_000));
+                    new OutcomeView("claude-code", null, 0, null, null, 10_000), ThreadFixtures.Lines(7, 10_000));
                 var split = new ConsoleSurface();
                 window.Content = split;
                 split.Show([big]);
@@ -358,9 +362,12 @@ public sealed class TheThreadIsChatLikeTests
                     new Typeface(feed.FontFamily, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal), 13, Brushes.Black, 1.0).WidthIncludingTrailingWhitespace;
                 Assert.Equal(expected, feed.MeasureWidth, 1.0);
 
-                // ≤ 3 controls on a completed turn (provenance · compiled prompt · the fold), no reason box.
+                // ≤ 3 controls on a completed turn beside its items (provenance · compiled prompt · the
+                // fold) plus exactly one disclosure per reasoning or tool item (Ruling 82), no reason box.
                 var controls = ThreadFixtures.Visuals<System.Windows.Controls.Primitives.ButtonBase>(container).Count(b => b.IsVisible);
-                Assert.True(controls <= 3, $"a completed turn shows {controls} controls");
+                var items = feed.Rows[1].Conversation.Count(r => r.IsTool || r.IsReasoning);
+                Assert.True(items > 0, "the positive control: b2 has tool items");
+                Assert.Equal(3 + items, controls);
                 Assert.DoesNotContain(ThreadFixtures.Visuals<Border>(container), b => b.IsVisible && b.BorderThickness.Left == 1 && b.CornerRadius.TopLeft == 4);
 
                 // The container's ring on focus, the fold header's ring on its focus — one ring each.

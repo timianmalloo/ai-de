@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.PromptCompilation: 40 types, 137 members, 77% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.PromptCompilation: 46 types, 164 members, 81% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.PromptCompilation`
 
-**40 public types · 137 public members · 77% documented.**
+**46 public types · 164 public members · 81% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -38,9 +38,19 @@ byte). They are string constants — the ladder's lower rung (host-compiled byte
 pipeline) and the shape a `const` keeps deterministic; ADR-0033's "embedded resources" named
 the property (host-embedded, never read from disk), which a constant satisfies. `simplify:`
 ceiling — a template over ~200 lines, or a second family's profile shipped as text, moves the
-texts to `Compilation/Resources/` under an `EmbeddedResource` glob (a csproj edit the
-conductor owns; the seam request is filed); `PromptSha` is
-unchanged as long as the bytes are.
+texts to `Compilation/Resources/` under an `EmbeddedResource` glob;
+`PromptSha` is unchanged as long as the bytes are.
+
+
+
+
+
+**X-3 (the Shell-lane seam slice): the glob landed, the move did not.** The csproj now
+carries `<EmbeddedResource Include="Compilation\Resources\*" />`, so a future profile
+dropped there needs no build-file edit. `HostHeader` and `Template` are
+~15 lines together today — under this remark's own ceiling and under the item's 20-line floor —
+and no file exists yet under `Compilation/Resources/`, so moving them now would be motion
+with no ceiling crossed. Left as this constant pair; move when either trigger fires.
 
 | Member | Summary |
 |---|---|
@@ -52,6 +62,33 @@ unchanged as long as the bytes are.
 | `string HostHeader =` | The fixed host header — **the prompt's first bytes, always**: a prompt whose first bytes are `/…` is executed by the CLI as a local command (adapter 0.75.1 `acp-agent.js:6035`), so the compile prompt never begins with… |
 | `string Template =` | The `compile-prompt/1` template — the blocks in order, each named; `{{…}}` slots the assembler fills. |
 | `ReadOnlySpan<byte> TemplateBytes` | The header's and the template's bytes, as hashed and as sent. |
+
+## `CompileLine`
+
+*class* — `CompileLine.cs`
+
+The compile line's strings (spec Addendum D §A10.2's table, §A11, E4/E5): one per
+`called.outcome`, the tenth for a reuse, and the skipped call's — a function of the fold,
+read by Prepare and the STA state test alike, stored nowhere.
+
+**Remarks.** **Absent under `mechanical-only` with nothing supplied** (E5): `mode: mechanical-only`
+is provenance on `opened`, never a compile-line string; the line exists only when a call
+was made, reused, or skipped because the structure was already supplied.
+
+| Member | Summary |
+|---|---|
+| `string? For(Envelope envelope, string structureSource = "", int historyTurns = 0, string tierRationale = "")` | The line for a fold: null when absent. |
+| `string ForOutcome(string outcome, string? reason, string modelObserved, int toolCalls, int permissionRequests, string family, int historyTurns, string tierRationale)` | The string for one outcome — the table, parameterised on `reason` (§A11's STA test walks it). |
+| `IReadOnlyList<string> Outcomes =` | Every outcome the table names, in §A10.2 order — the STA test's rows. |
+
+### `string? For(Envelope envelope, string structureSource = "", int historyTurns = 0, string tierRationale = "")`
+
+The line for a fold: null when absent.
+
+- **`envelope`** — The fold.
+- **`structureSource`** — Who filled the structure when the call was skipped: `operator` · `template`; empty when no line is supplied.
+- **`historyTurns`** — How many prior turns the compile read (the history window's ids).
+- **`tierRationale`** — The projection's rationale for a succeeded line.
 
 ## `DerivedDecoration`
 
@@ -98,6 +135,61 @@ Validates one raw model output against the open lines and the source text it mus
 - **`rawText`** — The model's text, verbatim.
 - **`sourceText`** — The `opened.source_text` spans resolve into (UTF-16 indices).
 - **`openLines`** — The structure lines the prompt named as open — a proposal for any other line is dropped.
+
+## `InstalledPinTriple`
+
+*record* — `CompilePin.cs`
+
+The pin triple as **installed** on this machine (ADR-0035 rule 2): the adapter's version
+and `dist/acp-agent.js` sha, the SDK's version, and the sha of the CLI binary the SDK
+vendors — the binary that enforces the pin. Every sha is over raw bytes; an element that cannot
+be read is `NotRecorded`, never a plausible value.
+
+## `RecordedPinTriple`
+
+*record* — `CompilePin.cs`
+
+What the recorded artifact says the triple was when the spike ran.
+
+## `FrameRecount`
+
+*record* — `CompilePin.cs`
+
+A recount of `tool_call` / `tool_call_update` frames over a frame log — computed, never read from the artifact.
+
+## `CompilePinArtifact`
+
+*record* — `CompilePin.cs`
+
+The gate-1 artifact as read: `compile-pin-spike.json`'s recorded triple and the frame log
+it names (ADR-0036 Gate 1).
+
+| Member | Summary |
+|---|---|
+| `string FileName = "compile-pin-spike.json"` | The artifact's file name — the same name the Proof Pack's citation copy carries under `docs/proof/`. |
+| `string FrameLogFileName = "compile-pin-spike.frames.jsonl"` | The frame log's file name, beside the artifact (ADR-0036: machine-level, never a checkout's). |
+| `string DefaultDirectory` | Where the product reads the gate artifacts: `~/.aide/proof/`, beside `~/.aide/providers.json` — the pin is about *this machine's* installed adapter, SDK and CLI, not about which workspace is open (ADR-0036's path-reso… |
+| `CompilePinArtifact? Read(string path, out string? problem)` | Reads the artifact, or null when the file is absent. A malformed file reads as absent with its reason in . |
+
+## `CompilePin`
+
+*class* — `CompilePin.cs`
+
+The pin as a check: the installed triple from the adapter install root, the recount over a
+frame log, and the comparison with the recorded artifact — one reader for the settings model
+(Gate 1) and the compile host (verified per call, ADR-0035 rule 1).
+
+| Member | Summary |
+|---|---|
+| `string AdapterPackage = "@agentclientprotocol/claude-agent-acp"` | The adapter package whose entry module the catalog names. |
+| `string SdkPackage = "@anthropic-ai/claude-agent-sdk"` | The SDK package the adapter runs on. |
+| `string AdapterAgentFile = "acp-agent.js"` | The adapter file whose sha is pinned — the file that forwards `tools` and launches the CLI. |
+| `string CliPlatformPackage { get; } = "claude-agent-sdk-" + Platform() + "-" + Arch()` | The platform package the SDK vendors its CLI in — `@anthropic-ai/claude-agent-sdk-<platform>-<arch>` (PD-5's second finding: not the machine's global `claude`). |
+| `string CliFileName { get; } = OperatingSystem.IsWindows() ? "claude.exe" : "claude"` | The CLI binary's file name on this platform. |
+| `InstalledPinTriple Installed(string adapterInstallRoot)` | Reads the installed triple from the adapter install root's own bytes. |
+| `string? Mismatch(InstalledPinTriple installed, RecordedPinTriple recorded)` | Compares the installed triple with the recorded one: null when every element matches, else the elements that differ, named — the reason the settings model and the compile host show. |
+| `FrameRecount Recount(ReadOnlySpan<byte> frameLog)` | Recounts tool-call frames over a frame log's raw bytes (LLM-free; ADR-0036 Gate 1). |
+| `string Sha256(string path)` | sha256 over the file's raw bytes, lowercase hex; `NotRecorded` when the file cannot be read. |
 
 ## `ConstitutionRef`
 
@@ -150,6 +242,7 @@ stage rows arrive with the agentic rung.
 | Member | Summary |
 |---|---|
 | `string Degraded = "compile.degraded"` | `compile.degraded{reason, error_code}`. |
+| `string Stage = "compile.stage"` | `compile.stage{stage, duration_ms, outcome}` — one per stage (§A10.3). |
 | `string Origin = "compile"` | The `Ext.origin` value every compile event carries — origin is never inferred from `RunId` / `AgentId` (a type pun). |
 
 ## `CompileSignal`
@@ -164,6 +257,7 @@ with its first emitter (CV-3) — the mechanical rung records no stage.
 | Member | Summary |
 |---|---|
 | `string SourceName = "aide.compile"` | The activity source every compile-step span is published on. Observed by `CompileSignalTests`. |
+| `void Stage(string stage, long durationMs, string outcome)` | Records one stage's timing and outcome: `compile.stage{stage, duration_ms, outcome}`; a stage that did not run is never recorded as 0. |
 | `void Degraded(string reason, string errorCode)` | Records a degraded state: `compile.degraded{reason, error_code}`. |
 | `bool IsCompileEvent(RunEvent evt)` | Whether a Console-stream event came from the compile step — by `Ext.origin`, never by its ids. |
 
@@ -369,7 +463,7 @@ What the typed boundary dropped from one model output, by reason (§A8.3).
 *record* — `EnvelopeEvents.cs`
 
 One invocation of the bound model by the compile stage — the grain at which cost exists (§A6).
-Written by the agentic rung (CV-3); this slice reads and folds it and writes none.
+Written by the agentic rung (`ComposerSendGate.PrepareAsync` from a `CompileResult`).
 
 | Member | Summary |
 |---|---|
@@ -391,7 +485,8 @@ The `called.outcome` vocabulary (§A10.2).
 | `string TimedOut = "timed_out"` | **(gap)** |
 | `string Malformed = "malformed"` | **(gap)** |
 | `string Cancelled = "cancelled"` | **(gap)** |
-| `IReadOnlyList<string> Agentic = [Succeeded, SucceededNoStructure, Suspect]` | The outcomes `EffectiveMode` counts as agentic. |
+| `string Reused = "reused"` | A re-prepare with an unchanged `inputs_sha` after a success reused the stored derived decorations and made no request — a `called` row with a known-zero cost and `reason` naming `reused_from` (ADR-0035 rule 1: C3/C10'… |
+| `IReadOnlyList<string> Agentic = [Succeeded, SucceededNoStructure, Suspect, Reused]` | The outcomes `EffectiveMode` counts as agentic. |
 
 ## `Submitted`
 
@@ -570,6 +665,14 @@ Stable error codes for the envelope store and the projections over it (the `CE-`
 | `string AppendFailed = "CE-0013"` | The append's write failed after a good open (disk full, an IO error) — the send proceeds degraded. |
 | `string PurgeRefused = "CE-0014"` | A purge was refused before any file was touched: a traversal, a non-segment id, a junction. |
 | `string ProjectionIncomplete = "CE-0015"` | A fold is incomplete for projection: no `opened` row, or no well-formed `ceilings` row. |
+| `string PinArtifactMissing = "CE-0016"` | Gate 1: the compile-pin-spike artifact is absent (or unreadable) — no agentic rung is selectable (ADR-0036; US-D11 b1). |
+| `string PinTripleMismatch = "CE-0017"` | Gate 1: the artifact's recorded adapter/SDK/CLI triple is not the installed one — an adapter bump under a stale artifact. |
+| `string PinFrameLogUnverifiable = "CE-0018"` | Gate 1: the artifact names no frame log, or the frame log is missing or does not hash to the recorded sha — the count cannot be recounted. |
+| `string PinRecountNotZero = "CE-0019"` | Gate 1: the recount over the frame log is not zero — the pin did not hold on the recorded run. |
+| `string AdmissionReportOutstanding = "CE-0020"` | Gate 2: no admission report has been read — `agentic` is refused by name until CV-4's reader admits it. |
+| `string CompileModeUnknown = "CE-0021"` | A `compile_mode` word outside the three the ladder names. |
+| `string PinRunNotEnded = "CE-0022"` | Gate 1: the artifact records a run that did not end (`mode` not `full`, or a prompt with no result) — an aborted or timed-out spike admits nothing. |
+| `string PinIdentityMismatch = "CE-0023"` | Gate 1: the artifact's `sent_meta_triple` is not the pin this build sends — a pin change re-runs PD-5 by construction. |
 
 ## `EnvelopeStoreException`
 
