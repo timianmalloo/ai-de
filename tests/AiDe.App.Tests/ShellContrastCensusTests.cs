@@ -283,12 +283,19 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
         public int AppStartCount { get; init; }
         public string? FocusSentinel { get; init; }
         public IReadOnlyDictionary<string, string>? PageThemeAfterMalformedPush { get; init; }
+
+        /// <summary>The composer page's scroll state at 0 turns beside the host's height (Ruling 80), or null when the page was not read.</summary>
+        public IReadOnlyDictionary<string, double>? ComposerPageScroll { get; init; }
+
+        /// <summary>The same reading after forty lines were typed into the message editor, or null.</summary>
+        public IReadOnlyDictionary<string, double>? ComposerPageScrollAfterTyping { get; init; }
     }
 
     private sealed record ProbeReport(
         string Commit, List<Site> Sites, List<Omission> Omissions, List<string> Log,
         Dictionary<string, string>? ShellTheme, Dictionary<string, string>? PageTheme, string? AppStart,
-        int AppStartCount, string? FocusSentinel, Dictionary<string, string>? PageThemeAfterMalformedPush);
+        int AppStartCount, string? FocusSentinel, Dictionary<string, string>? PageThemeAfterMalformedPush,
+        Dictionary<string, double>? ComposerPageScroll, Dictionary<string, double>? ComposerPageScrollAfterTyping);
 
     private static readonly Dictionary<string, string> Empty = new(StringComparer.Ordinal);
 
@@ -334,6 +341,8 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
                 AppStartCount = parsed.AppStartCount,
                 FocusSentinel = parsed.FocusSentinel,
                 PageThemeAfterMalformedPush = parsed.PageThemeAfterMalformedPush,
+                ComposerPageScroll = parsed.ComposerPageScroll,
+                ComposerPageScrollAfterTyping = parsed.ComposerPageScrollAfterTyping,
             };
         }
         finally

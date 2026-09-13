@@ -24,27 +24,7 @@ public sealed class TheThreadIsChatLikeTests
     private const double Width = 1440;
     private const double Height = 900 - 28 - 40;   // the shell's title strip and tab strip above the document
 
-    private static SessionDocumentSurface Document(IEnumerable<TurnView> turns)
-    {
-        var model = new SessionDocumentViewModel("20260912T140000Z-thread", "payments extraction", Path.GetTempPath(), ["console"]);
-        var document = new SessionDocumentSurface(model, null, new RecordingAnnouncer());
-        var ordinal = 0;
-        foreach (var turn in turns)
-        {
-            ordinal = document.ReadModel.Accept(turn.SourceText, turn.Decorations, turn.SentBytes, turn.At);
-            foreach (var line in turn.Events)
-            {
-                document.ReadModel.Append(ordinal, line);
-            }
-
-            if (turn.Outcome is { } outcome)
-            {
-                document.ReadModel.Conclude(ordinal, turn.State, turn.At + (outcome.Duration ?? TimeSpan.Zero), outcome.ExitCode, outcome.Edits);
-            }
-        }
-
-        return document;
-    }
+    private static SessionDocumentSurface Document(IEnumerable<TurnView> turns) => ThreadFixtures.Document(turns);
 
     private static (double ComposerTop, double EditorHeight, double ThreadHeight, double CompiledHeight) Layout(SessionDocumentSurface document, double width = Width, double height = Height)
     {
@@ -72,7 +52,12 @@ public sealed class TheThreadIsChatLikeTests
     /// at 600 (structure open): the editor ends at 130.0 px but the lines begin at 24.1 px — they
     /// overlap (composer 270.0 px arranged, 270.0 desired, minimum 414.0, belt 270)</i>; and with
     /// the old <c>MaxHeight</c> clamp back by mutation: <i>the composer ends at 711.9 px in a 600
-    /// px document</i>. The belt now yields to the composer's minimum.
+    /// px document</i>. The belt now yields to the composer's minimum. <b>Ruling 80</b> re-pointed
+    /// the belt's value from a constant share to the thread's need (the writer-room oracles in
+    /// <c>Sessions/TheWriterKeepsItsRoomTests</c> prove the value); this fact keeps the mechanism's
+    /// invariants — the editor's equal top edge, its floor and its rest as a ceiling with turns,
+    /// the thread's named minimum (Ruling 88 moved the density thresholds to per-viewport measured
+    /// rows: L6), the composer inside the belt or its minimum, nothing clipped or overlapped.
     /// </summary>
     [Theory]
     [InlineData(1440, 900 - 28 - 40, false)]
@@ -96,20 +81,19 @@ public sealed class TheThreadIsChatLikeTests
                 tops.Add(top);
 
                 Assert.True(editor >= ComposerSurface.EditorFloor - 0.5, $"{count} turns at {width}×{height}: the editor host is {editor:F1} px; the floor is {ComposerSurface.EditorFloor}");
+                Assert.True(editor <= ComposerSurface.EditorRest + 0.5, $"{count} turns at {width}×{height}: the editor host is {editor:F1} px; with turns it rests at {ComposerSurface.EditorRest} and scrolls past it (Ruling 80)");
                 Assert.True(compiled <= ComposerSurface.CompiledPromptMaxHeight + 0.5, $"{count} turns: the compiled prompt is {compiled:F1} px");
 
-                // ≥ 3 turns half-visible at rest (the structure collapsed), ≥ 2 with it expanded
-                // (DESIGN.md:1084): a half-turn is a constant derived from the template's line heights
-                // (words 19.5 + decoration 24 + outcome 24 + margins 20 ≈ 88 px / 2) — never read back.
-                const double HalfTurn = 44;
-                var halfTurns = structureOpen ? 2 : 3;
-                Assert.True(thread >= halfTurns * HalfTurn, $"{count} turns at {width}×{height} (structure {(structureOpen ? "open" : "collapsed")}): the thread row is {thread:F1} px; {halfTurns} half-turns need {halfTurns * HalfTurn}");
+                // The thread keeps the belt's named minimum whenever the composer's own minimum
+                // leaves it (Ruling 80); how many turns that shows at a viewport is L6's measured row.
+                Assert.True(thread >= SessionDocumentSurface.ThreadMinimum - 0.5, $"{count} turns at {width}×{height} (structure {(structureOpen ? "open" : "collapsed")}): the thread row is {thread:F1} px; its minimum is {SessionDocumentSurface.ThreadMinimum}");
 
-                // The belt, or the composer's own minimum when the belt is smaller — never a clip and
-                // never an overlap: the send row ends inside the composer, the composer inside the
-                // document, and the editor's bottom edge is above the first line beneath it.
-                var belt = Math.Floor(SessionDocumentSurface.ComposerShare * height);
+                // The belt (its value derived by the document), or the composer's own minimum when
+                // the belt is smaller — never a clip and never an overlap: the send row ends inside
+                // the composer, the composer inside the document, and the editor's bottom edge is
+                // above the first line beneath it.
                 var composer = document.Composer;
+                var belt = composer.BeltHeight;
                 Assert.True(composer.ActualHeight <= Math.Max(belt, composer.MinimumHeight) + 0.5, $"{count} turns at {height}: the composer took {composer.ActualHeight:F1} px; the belt is {belt}, its minimum {composer.MinimumHeight:F1}");
                 var send = ThreadFixtures.Visuals<Button>(composer).Single(b => b.Content is "Send");
                 var sendBottom = send.TransformToAncestor(composer).Transform(new Point(0, send.ActualHeight)).Y;

@@ -104,6 +104,17 @@ internal static class ShellContrastCensus
 
         /// <summary>What the page's root carried after <c>applyTheme</c> was handed malformed entries — must equal <see cref="PageTheme"/>.</summary>
         public Dictionary<string, string>? PageThemeAfterMalformedPush { get; init; }
+
+        /// <summary>
+        /// The composer page's scroll state as the shell opened it (Ruling 80: no scrollbar before
+        /// the operator types): the document's and the message editor's scroll and client heights in
+        /// CSS pixels, the host's arranged height in DIPs, and the thread's turn count — or null
+        /// when the page could not be read (an omission names why).
+        /// </summary>
+        public Dictionary<string, double>? ComposerPageScroll { get; init; }
+
+        /// <summary>The same reading after forty lines were typed into the message editor (Ruling 80: the editor scrolls, never the page), or null.</summary>
+        public Dictionary<string, double>? ComposerPageScrollAfterTyping { get; init; }
     }
 
     private static Site Row(
@@ -318,6 +329,8 @@ internal static class ShellContrastCensus
         return new Report(commit, sites, omissions, log, shellTheme, pageTheme.Applied)
         {
             PageThemeAfterMalformedPush = pageTheme.AfterMalformed,
+            ComposerPageScroll = pageTheme.Scroll,
+            ComposerPageScrollAfterTyping = pageTheme.ScrollAfterTyping,
         };
     }
 
@@ -598,12 +611,14 @@ internal static class ShellContrastCensus
 
     // ────────────────────────────────────────────────────────────────── the pages ──
 
-    private static async Task<(Dictionary<string, string> Applied, Dictionary<string, string>? AfterMalformed)> WebViewsAsync(
+    private static async Task<(Dictionary<string, string> Applied, Dictionary<string, string>? AfterMalformed, Dictionary<string, double>? Scroll, Dictionary<string, double>? ScrollAfterTyping)> WebViewsAsync(
         Window window, AiDe.App.Workbench.Sessions.SessionDocumentSurface document,
         List<Site> sites, List<Omission> omissions, List<string> log)
     {
         var pageTheme = new Dictionary<string, string>(StringComparer.Ordinal);
         Dictionary<string, string>? afterMalformed = null;
+        Dictionary<string, double>? scroll = null;
+        Dictionary<string, double>? scrollAfterTyping = null;
         var composer = document.Composer;
         var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(30);
 
@@ -698,6 +713,16 @@ internal static class ShellContrastCensus
                     // AFTER the push's footprint has been recorded, so the two readings are compared.
                     await view.CoreWebView2.ExecuteScriptAsync(MalformedThemeScript);
                     afterMalformed = await RootCustomPropertiesAsync(view);
+
+                    // The page's scroll state at 0 turns (Ruling 80): read from the live page — the
+                    // headless oracles cannot see a browser's scrollbar — beside the host's arranged
+                    // height so the two can be compared. Then forty lines are typed into the message
+                    // editor through the page's own hook and the state is read again: the editor's
+                    // scroller must overflow, the page must not.
+                    scroll = await ScrollStateAsync(view, document);
+                    await view.CoreWebView2.ExecuteScriptAsync(TypeFortyLinesScript);
+                    window.UpdateLayout();
+                    scrollAfterTyping = await ScrollStateAsync(view, document);
                 }
                 catch (Exception ex)
                 {
@@ -708,8 +733,43 @@ internal static class ShellContrastCensus
             }
         }
 
-        return (pageTheme, afterMalformed);
+        return (pageTheme, afterMalformed, scroll, scrollAfterTyping);
     }
+
+    /// <summary>One reading of the page's scroll state beside the host's geometry (DIPs) and the thread's count.</summary>
+    private static async Task<Dictionary<string, double>?> ScrollStateAsync(WebView2 view, AiDe.App.Workbench.Sessions.SessionDocumentSurface document)
+    {
+        var raw = await view.CoreWebView2.ExecuteScriptAsync(ScrollStateScript);
+        var inline = JsonSerializer.Deserialize<string>(raw);
+        var scroll = string.IsNullOrEmpty(inline) ? null : JsonSerializer.Deserialize<Dictionary<string, double>>(inline);
+        if (scroll is not null)
+        {
+            scroll["hostHeight"] = view.ActualHeight;
+            scroll["documentHeight"] = document.ActualHeight;
+            scroll["composerHeight"] = document.Composer.ActualHeight;
+            scroll["belt"] = document.Composer.BeltHeight;
+            scroll["minimum"] = document.Composer.MinimumHeight;
+            scroll["turns"] = document.ReadModel.Current.Turns.Count;
+        }
+
+        return scroll;
+    }
+
+    /// <summary>Forty lines into the message editor, through the page's own editor (the hook the page exposes beside <c>__composerApplyTheme</c>).</summary>
+    private const string TypeFortyLinesScript = """
+        window.__composerInsertText(Array.from({ length: 40 }, (_, i) => 'line ' + (i + 1)).join('\n'))
+        """;
+
+    /// <summary>The document's and the message editor's scroll/client heights, CSS px — a scrollbar is scrollHeight over clientHeight.</summary>
+    private const string ScrollStateScript = """
+        (() => {
+          const d = document.documentElement;
+          const cm = document.querySelector('.field.grows .cm-scroller');
+          const o = { documentScrollHeight: d.scrollHeight, documentClientHeight: d.clientHeight,
+                      editorScrollHeight: cm ? cm.scrollHeight : -1, editorClientHeight: cm ? cm.clientHeight : -1 };
+          return JSON.stringify(o);
+        })()
+        """;
 
     private static async Task<Dictionary<string, string>> RootCustomPropertiesAsync(WebView2 view)
     {

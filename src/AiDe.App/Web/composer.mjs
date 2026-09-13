@@ -210,6 +210,9 @@ function render(fields) {
     // four native types is a defect, not a preference.
     if (field.widget === "mentions" || field.widget === "long-text") {
       host.className = "editor";
+      // A long-text field takes what the host gives the page (Ruling 80: the editor fills at 0
+      // turns, rests at 280 with turns) and scrolls inside it; a single-line mentions field is its line.
+      if (field.widget === "long-text") block.classList.add("grows");
       state.editors.set(field.id, fieldEditor(field, host));
     } else {
       nativeField(field, host);
@@ -243,6 +246,16 @@ function applyTheme(theme) {
   }
 }
 
+/**
+ * The one editor floor (Ruling 80): the host's constant, pushed on host.init, applied as the
+ * --editor-floor the stylesheet reads. Anything but a positive finite number leaves the
+ * stylesheet's fallback — the same constant's declared value — in force; nothing is invented here.
+ */
+function applyEditorFloor(px) {
+  if (typeof px !== "number" || !Number.isFinite(px) || px <= 0) return;
+  document.documentElement.style.setProperty("--editor-floor", `${px}px`);
+}
+
 function onHostMessage(event) {
   const message = event.data;
   if (!message || message.v !== PROTOCOL_VERSION) return;
@@ -259,6 +272,7 @@ function onHostMessage(event) {
     state.editorHelp = typeof message.editorHelp === "string" ? message.editorHelp : "";
     document.getElementById("editor-help").textContent = state.editorHelp;
     applyTheme(message.theme);
+    applyEditorFloor(message.editorFloor);
     document.getElementById("drop-hint").textContent = state.attachEnabled
       ? "Drop a file here to attach it."
       : "Attaching files is off for this session.";
@@ -320,6 +334,14 @@ try {
   window.__composerError = "";
   window.__composerToFence = toFence;
   window.__composerApplyTheme = applyTheme;
+  // The census's second hook (Ruling 80, live): text into the first editor through the editor's own
+  // dispatch, so the reading after it is of the page the operator types into, not of a DOM edit.
+  window.__composerInsertText = (text) => {
+    const view = state.editors.values().next().value;
+    if (!view || typeof text !== "string") return false;
+    view.dispatch({ changes: { from: view.state.doc.length, insert: text } });
+    return true;
+  };
 
   // The host-minted instance, handed to the document before any script ran. Never generated here: a
   // page that could mint its own identity could address a surface it is not.

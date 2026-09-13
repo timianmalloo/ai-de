@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 103 · partially-controlled 65 · uncontrolled 22
+**Status counts:** controlled 106 · partially-controlled 65 · uncontrolled 22
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -7646,3 +7646,68 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   to its first line.
 - **Status:** `uncontrolled` — recorded; the hook is a pack proposal.
 
+### DC-191 — A ceiling mistaken for a height: a belt the composer composes within was assumed to make its fill child grow, but a fill child desires only its own minimum
+
+- **Filed by:** CV-5-4 a (placeholder — the conductor allocates the final number/status).
+- **Shape:** a layout mechanism that sets a *maximum* (DS-1 Q14's belt: `Composer.BeltHeight`, the
+  height the composer may take) is read as if it produced a *height*. It cannot: a `DockPanel`'s
+  fill child is measured with the remainder but desires only what it declares, and an `HwndHost`
+  (the WebView2 editor) declares nothing beyond its `MinHeight` — so the composer desired chrome +
+  130 under any belt and the editor sat at its floor with 429 px of empty thread above it (the
+  operator's screenshot 1). Every oracle asserted `editor >= floor` and was green; none asserted
+  the editor *equals* the height the mechanism intended.
+- **Signature:** a `Max`/ceiling/share property beside a child whose desired size is content-free
+  (`HwndHost`, an empty `ContentPresenter`, a `WebView2`); tests that assert `>= floor` on a
+  quantity the design states as a value (280, "fills the body").
+- **Instance (CV-5.4, 2026-09-13):** `ComposerShare = 0.45` → `BeltHeight`, the editor 130 at
+  every turn count and window. The composer now sizes the host (`_view.Height`) from the belt's
+  remainder, capped at the rest the document derives (`EditorRestHeight`), floored by `MinHeight`.
+- **Sweep:** `grep -rn "MaxHeight =\|BeltHeight\|Share" src/AiDe.App/Workbench` — the compiled
+  prompt's `MaxHeight` (DC-137) is a ceiling on a content-sized reader, which is the correct use.
+- **Control:** `Sessions/TheWriterKeepsItsRoomTests.AtZeroTurns_TheEditorFillsTheBody_WithNoScrollbar`
+  (the editor equals `body − header − caption − chrome`) and
+  `AtOneAndFortyTurns_TheEditorRestsAt280_WithEqualTopEdge` (280 ± 0.01). Named for the next
+  belt: *a ceiling proves nothing about a height; assert the value the design states.*
+- **Status:** `controlled`.
+
+### DC-192 — A fill computed on the wrong box: one child filled 100 % of the page while a sibling sat below it, so the page overflowed by the sibling's height at exactly the floor
+
+- **Filed by:** CV-5-4 b (placeholder — the conductor allocates the final number/status).
+- **Shape:** "the page fills its host" was expressed as `min-height: max(100%, floor)` on
+  `#fields`, the box that holds the editor — but the body also holds `#drop-hint` beneath it, so
+  the page's content was 100 % + 29 px, and it scrolled by exactly the drop hint at the host's
+  floor. Every headless oracle was green (they measure the WPF host, not the page) and the static
+  CSS read was green (the rule existed); only the live read of the real page (`scrollHeight` vs
+  `clientHeight`) failed: 159 in 130.
+- **Signature:** a percentage or `100%` height on an element that is not the page's sole flex
+  child; a "no scrollbar" claim proven by a CSS grep; a `<div>` appended after the filling one.
+- **Instance (CV-5.4, 2026-09-13):** the first green of every headless oracle was followed by the
+  census fact's first run: *the composer page scrolls at 0 turns: 159 px of content in a 130 px
+  page*. The body is now the column (`#fields` flex 1 / min-height 0, `#drop-hint` flex none) and
+  the floor is the body's own minimum.
+- **Sweep:** `grep -n "100%" src/AiDe.App/Web/*.html` — `html, body { height: 100% }` only.
+- **Control:** `Sessions/TheWriterKeepsItsRoomTests.TheComposedShellsPageDoesNotScrollBeforeTheOperatorTypes`
+  over the contrast census's live scroll read (`documentScrollHeight <= documentClientHeight`,
+  the editor's scroller the same). Named for the next page: *a fill is proven on the page, in a
+  browser, never on the box that was meant to fill.*
+- **Status:** `controlled`.
+
+### DC-193 — `IsVisible` is false for every element of a detached WPF tree, so a headless predicate that filters on it measures nothing and the assertion behind it passes or reads zero vacuously
+
+- **Filed by:** CV-5-4 c (placeholder — the conductor allocates the final number/status).
+- **Shape:** `UIElement.IsVisible` is true only under a `PresentationSource`; a document measured
+  and arranged detached (the fast ring's idiom: `Measure` · `Arrange` · `UpdateLayout`, no window)
+  reports `IsVisible == false` on every element, so `Where(e => e.IsVisible && …)` yields nothing —
+  a scroller census finds no scroller, a reader read as `IsVisible ? ActualHeight : 0` reads 0 —
+  and the surrounding assertion is DC-016's shape at the predicate level.
+- **Signature:** `IsVisible` in a test that never shows a window; a `? ActualHeight : 0` that
+  reads 0 for a box that was laid out.
+- **Instance (CV-5.4, 2026-09-13):** R3's first red read *Expected: 48 Actual: 0* for a compiled
+  box that was arranged at 16 px — the `IsVisible` guard, not the layout; R1's scroller clause
+  would have been vacuous for the same reason. Both now read `ActualHeight > 0` / `IsArrangeValid`.
+- **Sweep:** `grep -rn "IsVisible" tests/AiDe.App.Tests/Sessions tests/AiDe.App.Tests/Composer` —
+  the remaining uses sit in shown-window probes (the census, the shell tests), where it is true.
+- **Control:** the writer-room oracles' non-vacuity floors (`compiled >= CompiledPromptMinHeight`,
+  `realized > 0`, `CaptionDesired > 0`). Named for the next headless oracle: *a detached tree is
+  never visible; ask the layout, not the visibility.*
+- **Status:** `controlled`.

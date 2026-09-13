@@ -120,6 +120,34 @@ internal static class ThreadFixtures
         return (new ThreadFeed(thread, announcer, "test"), thread, announcer);
     }
 
+    /// <summary>
+    /// A session document whose read model has run <paramref name="turns"/> — fed through the
+    /// document's own <see cref="SessionDocumentSurface.ReadModel"/> (Accept · Append · Conclude),
+    /// so the thread, the header's count and the composer's belt all read the same snapshot
+    /// (L1's helper, shared with the writer-room oracles of Ruling 80).
+    /// </summary>
+    public static SessionDocumentSurface Document(IEnumerable<TurnView> turns)
+    {
+        var model = new SessionDocumentViewModel("20260912T140000Z-thread", "payments extraction", Path.GetTempPath(), ["console"]);
+        var document = new SessionDocumentSurface(model, null, new RecordingAnnouncer());
+        var ordinal = 0;
+        foreach (var turn in turns)
+        {
+            ordinal = document.ReadModel.Accept(turn.SourceText, turn.Decorations, turn.SentBytes, turn.At);
+            foreach (var line in turn.Events)
+            {
+                document.ReadModel.Append(ordinal, line);
+            }
+
+            if (turn.Outcome is { } outcome)
+            {
+                document.ReadModel.Conclude(ordinal, turn.State, turn.At + (outcome.Duration ?? TimeSpan.Zero), outcome.ExitCode, outcome.Edits);
+            }
+        }
+
+        return document;
+    }
+
     /// <summary>The visual descendants of a type.</summary>
     public static IEnumerable<T> Visuals<T>(DependencyObject root) where T : DependencyObject
     {

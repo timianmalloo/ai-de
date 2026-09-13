@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Composer: 14 types, 111 members, 94% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Composer: 14 types, 113 members, 94% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Composer`
 
-**14 public types · 111 public members · 94% documented.**
+**14 public types · 113 public members · 94% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -339,6 +339,7 @@ claim, and paste is handled inside the page by the editor that received it.
 |---|---|
 | `ComposerSurface(string surfaceId, string title, IWorkbenchAnnouncer? announcer = null)` | **(gap)** |
 | `double EditorFloor = 130` | The editor host's floor (DESIGN.md:1092 ≥ 130 px) — what the composer declares under an infinite constraint (spike Q14). |
+| `double EditorRest = 280` | The editor's rest height once the thread has turns (Ruling 80; DESIGN.md errata "Chat-like — editor height"): it scrolls only past this. |
 | `double CompiledPromptMaxHeight = 200` | The compiled prompt's ceiling when expanded (DESIGN.md:1109 ≤ 200 px, scrolls) — and it never takes the editor's floor (DC-137). |
 | `double CompiledPromptMinHeight = 48` | The compiled prompt's floor when it is open: three lines of the mono face, so a reader the operator asked for is a reader (INV-0007's "the reader gets its share"). Under a constraint that cannot hold the floor, the ed… |
 | `string ModelSource = "model"` | The decoration source that earns the tilde and the inferred ink: a value the model proposed (CV-2's compile step). A rule's value is text. |
@@ -358,7 +359,8 @@ claim, and paste is handled inside the page by the editor that received it.
 | `ComposerDraft Draft` | The draft this surface composes. |
 | `string Status` | The last thing that happened, in a sentence. |
 | `event Action<int>? TurnRequested` | Raised when the operator activates the in-flight turn's link in a refused-gesture reason (Ruling 77; SC8: the ordinal is a link to the turn) — the document focuses that turn's container. |
-| `double BeltHeight` | The document's belt (DS-1 Q14): the height this composer may take before the compiled prompt yields — a share of the document, set by the document at its measure. The composer's own minimum (its lines and the editor's… |
+| `double BeltHeight` | The document's belt (DS-1 Q14): the height this composer may take before the compiled prompt yields — set by the document at its measure, its value **derived from the thread's need** (Ruling 80: the body less the empt… |
+| `double EditorRestHeight` | The height the editor rests at when the belt allows (Ruling 80): `EditorRest` once the thread has turns — it scrolls only past that; unbounded, so the editor fills the belt, at 0 turns or with no document above it. Se… |
 | `double MinimumHeight { get; private set; }` | The composer's minimum height at its last measure: the lines, the picker, the send row and the editor's floor. |
 | `string LeaseLine` | The lease line: the read-only state, or the patterns (Ruling 73) — the decoration line's lease segment, prefixed. |
 | `bool IsConfigured` | Whether `Configure` has run — a bound composer is not bound again (INV-0009 Phase 2). |
