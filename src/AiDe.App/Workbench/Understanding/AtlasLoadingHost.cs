@@ -36,10 +36,10 @@ internal sealed class AtlasLoadingHost : ContentControl
         var generation = _generation;
         var owner = _owner!;
         var workspace = owner.Generation;
-        _activation = CancellationTokenSource.CreateLinkedTokenSource(owner.Token);
-        var token = _activation.Token;
         try
         {
+            _activation = CancellationTokenSource.CreateLinkedTokenSource(owner.Token);
+            var token = _activation.Token;
             _registration = owner.Register(Deactivate);
             ShowStatus("Loading Code Atlas.");
             var lease = await owner.AdmitAsync(token).ConfigureAwait(true);
@@ -51,26 +51,48 @@ internal sealed class AtlasLoadingHost : ContentControl
         }
         catch (OperationCanceledException)
         {
-            if (generation == _generation) ShowStatus("ATLAS-HOST-CANCELED: activation canceled.");
+            if (generation == _generation)
+            {
+                Deactivate();
+                ShowStatus("ATLAS-HOST-CANCELED: activation canceled.");
+            }
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
             Trace.TraceError("code=ATLAS-HOST-UNAVAILABLE exception.type={0}", ex.GetType().FullName);
-            if (generation == _generation) ShowStatus("ATLAS-HOST-UNAVAILABLE: admission unavailable.");
+            if (generation == _generation)
+            {
+                Deactivate();
+                ShowStatus("ATLAS-HOST-UNAVAILABLE: admission unavailable.");
+            }
         }
     }
 
     internal void Deactivate()
     {
         ++_generation;
-        _activation?.Cancel();
-        _activation?.Dispose();
+        var activation = _activation;
+        var registration = _registration;
+        var view = ReaderView;
         _activation = null;
-        _registration?.Dispose();
         _registration = null;
-        ReaderView?.Deactivate();
         ReaderView = null;
-        ShowStatus("ATLAS-HOST-INACTIVE: source cleared.");
+        try { activation?.Cancel(); }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            Trace.TraceError("code=ATLAS-HOST-INVALIDATE phase=activation exception.type={0}", ex.GetType().FullName);
+        }
+        finally
+        {
+            activation?.Dispose();
+            registration?.Dispose();
+            try { view?.Deactivate(); }
+            catch (Exception ex) when (ex is not OutOfMemoryException)
+            {
+                Trace.TraceError("code=ATLAS-HOST-INVALIDATE phase=reader-view exception.type={0}", ex.GetType().FullName);
+            }
+            finally { ShowStatus("ATLAS-HOST-INACTIVE: source cleared."); }
+        }
     }
 
     private void ShowStatus(string text)
