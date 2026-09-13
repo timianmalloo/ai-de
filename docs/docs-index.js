@@ -2236,6 +2236,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "484f9dcade5299debf584a0abb8fbbc852f3d0ad377ce31dc7e47bc17d94821e"
     },
     {
+      "id": "api-aide-app-workbench-understanding",
+      "path": "docs/api/AiDe.App.Workbench.Understanding.md",
+      "title": "API: AiDe.App.Workbench.Understanding",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.App.Workbench.Understanding: 3 types, 41 members, 2% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "531dbe2bb206ec4681f9ad9af3db438b7e8bab1f4de9544f3a576400be59bf03"
+    },
+    {
       "id": "api-aide-core",
       "path": "docs/api/AiDe.Core.md",
       "title": "API: AiDe.Core",
@@ -2620,7 +2645,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Understanding: 43 types, 199 members, 14% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Understanding: 46 types, 204 members, 16% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2633,7 +2658,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "94f9f85d18c90615c05d6f9a89026c07e9701e7a1603328ab580d9b854f6b63d"
+      "sourceSha256": "3a0a5fc398f4a321b7a23b7103ab479bf368946888ca7d5b915a96b126dac9ab"
     },
     {
       "id": "api-aide-core-upgrade",
@@ -4706,7 +4731,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "726eff7991b60c1ab92431f5a81ea062875f17e7caa709c64debc9fce3db2d15"
+      "sourceSha256": "41c1d1c43bfd2d3aca052265ea4f65a1e5a323453928a6e7d5b5bed3a110eed9"
     },
     {
       "id": "note-atlas-reader-native-direction",
@@ -4740,7 +4765,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "83c57ba43bd9ab3a371d3564ede7f4f0ee4980ec48ed57edeeba8bd3ad1b95f1"
+      "sourceSha256": "2f1c0a17970e8ad6c1a555ee5ea52bcae8c73356fd27f6ffe7a89efb794abd7c"
     },
     {
       "id": "note-avalondock-tab-styling",
@@ -8242,12 +8267,12 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2026-12-12",
       "reviewSuggested": [],
-      "summary": "Branch-local safety authoring is admitted and active under an explicit Owner exception. One additive candidate writer follows the exact E0 design; shared Shell integration and normative registration remain separately gated.",
+      "summary": "Reviewed inventory, declarations, bound source, query and native-view components are joined on the isolated Conductor branch. The detached runner and independent real-root journey are active next; shared Shell integration and normative registration remain separately gated.",
       "tags": [
         "code-atlas",
         "coordination",
         "worktrees",
-        "blocked"
+        "active"
       ],
       "links": [
         {
@@ -8268,7 +8293,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4960dc7fc3503727386710d1e0d5e82506e17e5a7214ff250e13bbe7d4d50d26"
+      "sourceSha256": "0e5c532b17ea5e728d62d31ce9611cfa152faab3f466167987414714dd1c1917"
     },
     {
       "id": "coordination-code-atlas-resume",
@@ -11462,7 +11487,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "58befd9902649e59361b9ec6555a9cbe0a1377ecd6e26c4e70c50b563bb219f7"
+      "sourceSha256": "9b0bb3963fb0f8fc98294f2f176aa94aa2df9bd150fb46025d43032ac2a5578d"
     },
     {
       "id": "session-profiles",
@@ -15796,10 +15821,10 @@ window.DOCS_INDEX = {
       "type": "proof-pack",
       "status": "draft",
       "owner": "@timianmalloo",
-      "phase": "atlas-live-reader-producers",
+      "phase": "atlas-live-reader-composition",
       "reviewBy": "2026-12-12",
       "reviewSuggested": [],
-      "summary": "Records the cleared common foundation and separate producer dispatch. This ledger does not claim a completed native reader: inventory, declarations, source/query/native assembly and independent real-workspace proof are recorded by stage as their evidence arrives.",
+      "summary": "Records reviewed and joined inventory, declarations, source, queries and native fixture evidence. Actual detached composition and independent real-workspace proof remain pending; component green results are not promoted to a completed native journey.",
       "tags": [
         "code-atlas",
         "proof-pack",
@@ -15825,7 +15850,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f3cd99d2b13b9df0924bfc7c543665cf0ef7a69e904482351aa965963f3031bb"
+      "sourceSha256": "526ae7fe1eef5c3c8e2e6d74c71ede3155ddc9f4e9cf47865559c96470aa7183"
     },
     {
       "id": "proof-code-atlas-source-safety",
@@ -18683,5 +18708,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "85879d099ee171d14180e7c2931c56e2529812aa4e2ea4f9f45cd6251304ce7c"
+  "graphSha256": "54d456b330b718f03a70077070cfe0f093892c297c3d5e0642005d6d35f03917"
 };

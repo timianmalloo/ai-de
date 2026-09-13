@@ -86,3 +86,23 @@ Injected query fixtures exercise hard states, late results, UIA and focus, but a
 evidence. The separate runner/producer/source/query join must later exercise the authorized real
 AI-DE root read-only. Native accessibility cannot be cleared by the HTML mockup or a static scan.
 The Conductor obtains independent UX/platform review and records remaining theme/DPI/signing limits.
+
+## N proposal and mandatory rendered repair
+
+Proposal `e0fdb531` returned two files and seven fixture tests without semantic red. The
+Conductor/UX gate found that model children were not bound into a native hierarchical template,
+directory rows became files, pagination could offer a non-existent next page, TooLarge was
+mislabelled FileLimited, stale faults/focus were not inert, and tests hosted a Border rather than
+the view. The earlier brief PASS is not code acceptance.
+
+The replacement writer must first observe failures in a shown STA Window hosting
+`AtlasReaderView`: realize/expand nested containers, reach a file by keyboard, leave directories
+non-activating, inspect actual automation peers, and restore accepted Back selection/focus/scroll.
+The view must observe event tasks and cancel on unload. History is 50 receipt/view-state frames,
+never full source bodies. Keep each source outcome distinct and align source font size with the
+existing token scale.
+
+Known-total pagination uses returned offset plus rows. With unknown/withheld totals and no
+explicit continuation in the frozen query contract, do not turn a generic limiting reason into
+a promise of more data; show the limitation and withhold that action. Any needed contract
+extension returns to the Conductor as an exact Q/N seam, not a private UI inference.

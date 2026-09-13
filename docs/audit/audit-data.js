@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-12T23:09:52Z",
+  "generated": "2026-09-13T00:45:35Z",
   "audit": [
     {
       "actor": null,
@@ -15243,6 +15243,31 @@ window.AUDIT_DATA = {
       "done_when": "Directionandcontractgatesareexplicit,twowritersexecutetheirgrants,andlaternativeproofisnotconfusedwithinjectedfixtures.",
       "tier": "T2",
       "fan_out": 4
+    },
+    {
+      "id": "al-01M2C3M1XJGS4E7PRGW36GH335",
+      "shortname": "atlas-query-native-seam-join",
+      "datetime": "2026-09-13T00:45:35Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Joined F/Q/N continuation and manifest seams at bcbe8a47. Parent independently observed 272 Core and 38 shown native fixture cases, zero skips, and inspected full Q seam test delta after reviewer truncation. Security/Test/UX conditional component gates clear; actual native composition remains pending. Q10/12 new leaves, N10/10; F accounting ambiguity/overrun and extra parent validation overhead retained. Owner21 permits bounded runner --prove; runner12 and independent15 remain allocated. Timing marker covers this documentation continuation from 00:44Z, not preceding seam work.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-live-reader-candidate.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md",
+        "docs/coordination/code-atlas.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Continue Owner-governed detached file/member/source/Back delivery without crossing Claude shared-file authority.",
+      "done_when": "Actual Q/native journey observed against an authorized clean AI-DE scope, evidence persisted and Owner reviews the detached horizon.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-13T00:44:04Z",
+      "duration_seconds": 91.0
     }
   ],
   "changes": [

@@ -4,7 +4,7 @@ title: "Code Atlas live-reader candidate - staged execution evidence"
 type: proof-pack
 status: draft
 owner: "@timianmalloo"
-phase: "atlas-live-reader-producers"
+phase: "atlas-live-reader-composition"
 tags: [code-atlas, proof-pack, live-reader, worktrees]
 links:
   - { to: note-atlas-live-reader-horizon, rel: depends-on }
@@ -13,9 +13,9 @@ links:
   - { to: coordination-code-atlas, rel: relates-to }
 review-by: 2026-12-12
 summary: >-
-  Records the cleared common foundation and separate producer dispatch. This ledger does not
-  claim a completed native reader: inventory, declarations, source/query/native assembly and
-  independent real-workspace proof are recorded by stage as their evidence arrives.
+  Records reviewed and joined inventory, declarations, source, queries and native fixture
+  evidence. Actual detached composition and independent real-workspace proof remain pending;
+  component green results are not promoted to a completed native journey.
 ---
 
 # Current evidence boundary
@@ -27,7 +27,11 @@ summary: >-
 | F common foundation | Cleared and joined | Final worker `07d877ce`, Conductor pin `02695471`; 63 independently executed passing tests |
 | E inventory producer | Repaired and joined | Candidate `c7f6caf9`, Conductor `d947fcee`; 95 producer tests and 110 combined F/E/D tests independently passed |
 | D declaration producer | Repaired and joined | Candidate `0c426cd1`, Conductor `7584c0ae`; 78 independently executed passing tests |
-| Source/query/native assembly | Not dispatched | Depends on producer join and its next explicit allocation |
+| S source node | Cleared and joined | Candidate `97a23b06`, Conductor `720c847f`; 165 source-branch tests and 197 combined tests independently passed |
+| Root bootstrap | Cleared and joined | `99d46eed` joined `41dc0501`; metadata-only, Complete alone supplies root identity; combined 225/225 |
+| Q query service and continuation | Cleared and joined | `a06f31ab`/`e98b196e` joined `39dff3b7`/`bcbe8a47`; 272/272 independently executed Understanding cases |
+| N native view and manifest seam | Cleared and joined | `e661f291`/`7b5b6ff1` joined `65874e8b`/`051b519b`; 38/38 independently executed shown-window fixtures |
+| Actual detached composition | Active | Runner two-file contract/design checkpoint; no live-runner proof yet |
 | Independent detached native journey | Not executed | No tree/member/source/Back or real-workspace acceptance claim yet |
 
 ## F common foundation
@@ -103,6 +107,33 @@ declarations/ranges from complete hash-bound inputs. Fake graph fixtures, displa
 identity, fabricated project/TFM context, unbound source rereads and a supplied DTO collection
 presented as a live native journey are not accepted substitutes.
 
+## S bounded source node
+
+S consumed the cleared F/D contracts and the explicit decoder bootstrap seam rather than adding
+a second decoder. Candidate `97a23b06` changed only `AtlasSource.cs` and its dedicated tests.
+The Conductor independently ran 165/165 in the source tree, read the exact mutant TRXs, and
+joined the source commit as `720c847f`. The combined F/E/D/S run executed **197 tests, all passed**.
+
+The directory-lease mutant produced one semantic failure when a mutation was no longer blocked.
+The identity-sharing mutant produced four semantic failures: root/file replacements incorrectly
+returned IndexedMatch instead of Changed. Final evidence is in
+`TestResults/atlas-source-proof/atlas-source-final-20260912.trx`;
+mutants are `atlas-source-mutant-directory-lease-20260912.trx` and
+`atlas-source-mutant-identity-sharing-20260912.trx`. Compressed handoff wording caused an initial
+filename ambiguity; direct reads of these exact files corrected it. No missing-artifact claim
+survives that readback.
+
+Security and Test cleared limited Core source-node incorporation: current grant/membership/
+classification, expected manifest/root/file/hash binding, same-handle bounded bytes, strict decoder
+reuse, request-local disposal, textless non-match projections, and bounded scalar-safe pages.
+ReadUnstable coverage includes an explicitly injected early-EOF case, not a claimed native race.
+No real workspace, UI/IPC/raw-grant exposure or broad symlink/race-free claim is inferred.
+
+The author spent 37 leaf calls against 30, including eight author-run validations. Those are not
+independent review; the separate reviewer/parent evidence above still ran. Q now consumes the
+actual S API. Native proposal `e0fdb531` remains held for its separately authorized rendered
+interaction repair; its seven fixture tests do not close the native journey.
+
 ## E inventory producer
 
 The initial proposal `e54f21e1` passed 73 tests but was held on actual native/resource/policy
@@ -165,3 +196,38 @@ Data reviewer `91c51d36-21fc-4c00-8cf4-57fa50a1cb00` cleared the D data-contract
 Commits joined as `0711be09` and `7584c0ae`. The repair was reported as 12/20 leaf calls.
 No files outside the two-file grant changed. This proves a non-I/O declaration producer over
 supplied bound inputs, not a project loader, filesystem authority, source reader, UI or E0 delivery.
+
+## Q/N continuation and manifest seam
+
+Q publishes a new immutable manifest after a new source observation. N must use that returned
+token for subsequent member/file requests, and must not adopt tokens from stale, canceled,
+non-match or faulted requests. Back retains the original issued receipt/binding. Inventory
+continuation is a separate contract: Q supplies `NextOffset` only for further retained ordered
+rows. A null continuation does not turn an unknown global denominator into complete coverage.
+
+| Claim | Evidence and oracle | Red observed | Confidence / residual |
+|---|---|---|---|
+| Q preserves ordered retained paging, unknown/withheld totals and zero content bytes | Eleven new cases in `AtlasQueryServiceTests.cs:432-589`; old code lost continuation, changed the denominator, charged metadata as source bytes and reused offsets after rowset changes | `atlas-q-continuation-red-8e5a63af57274c3fa8c3a05811757101.trx`: 43 total, 32 passed, 11 failed | Verified component behavior; not a live native proof |
+| Q file/member/different-file selection keeps immutable manifest identity and stable inventory | `Select_FileMemberDifferentFile_ChangesManifestIdentityWithoutChangingInventoryContinuation` asserts changed file token, same member token, original inventory row objects and refusal of the stale initial token | Included in Q continuation red | Verified Core fixture journey |
+| N advances authority only for accepted current projections and consumes explicit continuation | `NativeReader_AcceptedFileMemberFileAndBack_AdvanceOnlyReturnedManifestTokens`, non-match/stale/restore and continuation cases | `atlas-native-seam-turn20-red-01.trx`: 38 total, 18 passed, 20 failed, no timeouts | Verified shown native fixtures; queries are fixtures here |
+| Joined components preserve prior regressions | Conductor `files/atlas-query-native-joined/core.trx`: 272/272; `native.trx`: 38/38; zero skips at `bcbe8a47` | Earlier stage and seam falsifiers above | Verified joined component run, not real Q/native composition |
+
+Q raw evidence remains in `C:\Projects\ai-de-atlas-live-reader-query\TestResults\atlas-query`.
+Its final targeted run is `atlas-q-continuation-final-605103b098fd415cadfac97ecfe632a2.trx`;
+combined is `atlas-q-continuation-understanding-58365e35aa5d4f349d91e5e7bdc86fa0.trx`.
+N raw evidence remains in the native-repair tree's `TestResults/atlas-native-repair-astra`;
+final is `atlas-native-seam-turn20-green-01.trx`.
+
+GATE Q-continuation · 2026-09-13 · Security/Test + Conductor · exit criteria met:
+targeted authorization/binding/redaction review, eleven semantic falsifiers, full test-diff
+readback and 272/272 independent execution · verdict: PASS for component seam · vetoes: none.
+The Test review's display-truncated diff was read in full by the Conductor; the limitation was
+not silently treated as a completed review.
+
+GATE N-continuation · 2026-09-13 · UX + Conductor · exit criteria met: accepted-only token,
+receipt/history and authoritative continuation shown-window cases, twenty semantic failures
+and 38/38 independent execution · verdict: PASS for fixture-native seam · vetoes: none.
+
+No full WCAG, high-contrast, multi-DPI, performance, real-repository or shared-host claim follows.
+The next proof must attach the actual query service to the actual shown native view. Owner
+turn 21 permits only the runner's bounded `--prove` mode and proof-owned rendered capture.

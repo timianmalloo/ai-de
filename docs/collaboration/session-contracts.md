@@ -95,7 +95,10 @@ ownership rows, normative Addendum E acceptance, or permission to integrate into
 | `atlas-live-inventory-repair-astra` / `atlas/live-reader-inventory-repair` | `src/AiDe.Core/Understanding/AtlasInventory.cs`; `src/AiDe.Core/Understanding/AtlasDirectoryEnumerator.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasInventoryTests.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasDirectoryEnumeratorTests.cs` | Owner turn-14 repair used 30 leaf calls and retained 92/95 passing proposal. After bounded diagnosis, Owner turn 16 admits six more leaf calls for held GenericRead and test-owned junction cleanup only. Frozen F read-only; no source-content reader, query/native assembly or shared adapters. |
 | `atlas-live-declarations-gpt55` / `atlas/live-reader-declarations` | `src/AiDe.Core/Understanding/CSharpDeclarationObservation.cs`; `tests/AiDe.Core.Tests/Understanding/CSharpDeclarationObservationTests.cs` | Owner turn-14 D repair: 20 additional leaf calls after Conductor mini-contract readback. Prior 37/24 leaf overrun retained. No filesystem, project evaluation, source reader, query/native assembly or frozen-F edits. |
 | `atlas-live-source-astra` / `atlas/live-reader-source` | `src/AiDe.Core/Understanding/AtlasSource.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasSourceTests.cs` | Owner turn-15 S allowance: 30 new writer leaf calls, eight targeted validation leaf calls separately. First three writer calls establish and return the minimum contract before implementation. No grant issuer, query/native UI, store, IPC, real-user workspace or frozen F/D edits. |
-| `atlas-live-native-gpt55` / `atlas/live-reader-native` | `src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs`; `tests/AiDe.App.Tests/Workbench/Understanding/AtlasReaderViewTests.cs` | Owner turn-17 native-view allowance: 20 leaf calls. Injected IAtlasQueries only; fixtures/native unit evidence are not live-reader proof. No filesystem/provider/root issuance, existing host/theme/layout/project/IPC changes or extra files. |
+| `atlas-live-native-repair-astra` / `atlas/live-reader-native-repair` | `src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs`; `tests/AiDe.App.Tests/Workbench/Understanding/AtlasReaderViewTests.cs` | Owner turn-18 replacement: one 24-leaf Astra repair plus eight independent validation calls. Preserve `e0fdb531` and 29/20 overrun. Real shown-window semantic tests, 50-frame receipt/view-state history; no filesystem/provider/issuer, host/theme/layout/project/F-contract changes. |
+| `atlas-live-query-astra` / `atlas/live-reader-query` | `src/AiDe.Core/Understanding/AtlasQueryService.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasQueryServiceTests.cs` | Owner turn-17 Q allowance: 36 leaf calls. First four are read-only contract readback against actual cleared S API. In-memory query/receipt and narrow trusted composition only; no store, IPC, host, UI, project or frozen producer edits. |
+| `atlas-live-continuation-gpt55` / `atlas/live-reader-continuation` | `src/AiDe.Core/Understanding/AtlasQueryContracts.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasQueryContractsTests.cs` | Owner turn-20 exact F continuation seam: eight new leaf calls for optional validated InventoryPage.NextOffset only. Pin/verify this contract before Q/N edits; no other F shape or producer/UI implementation. |
+| `atlas-live-runner-astra` / `atlas/live-reader-runner` | `spikes/code-atlas-reader-candidate/CodeAtlas.ReaderCandidate.csproj`; `spikes/code-atlas-reader-candidate/Program.cs` | Previously funded 12-leaf detached composition allowance, dispatched only after reviewed Q/N joins. Actual approved-root Q composition and native reader; no existing App startup/host/IPC/project edits, private corpus, inspected-project execution or main integration. Independent live-root proof retains its separate 15-call allowance. |
 
 The first source writer's worktree is `C:\Projects\ai-de-atlas-e0-source-safety`, created from
 executor-observed main `4d396411`. A separate candidate tree
@@ -148,6 +151,24 @@ Native view tree: `C:\Projects\ai-de-atlas-live-reader-native`, pin `bf57b0ee`, 
 separate read-only native-review tree at the same pin. The direction is
 `note-atlas-reader-native-direction`. Q/runner work remains undispatched until S's actual
 receipt; exact files and integrator will be recorded here before that release.
+
+N's replacement tree is `C:\Projects\ai-de-atlas-live-reader-native-repair`, based on preserved
+proposal `e0fdb531`; previous-writer handoff was received, leases checked free and no active old
+native registration remained. Q's tree is `C:\Projects\ai-de-atlas-live-reader-query`, pin
+`b381eeae`, containing the independently cleared S code. Q and N are the only writers.
+The Conductor retains both gates and all joins.
+
+The S owner has one exact metadata-only `ObserveApprovedRootIdentity` bootstrap amendment in its
+existing two files. Owner turn 19 corrects its allowance to **five leaf calls charged to Q**:
+Q's eight contract reads plus five bootstrap calls leave 23 of its unchanged 36 for implementation.
+Complete alone may return native identity; Partial/Refused/Canceled never supplies usable identity.
+No source content, grant issuance or frozen F/D edit is added.
+
+The cross-owner continuation seam has a dedicated F writer in
+`C:\Projects\ai-de-atlas-live-reader-continuation`, base `41dc0501`. After its pin, the existing
+Q owner receives 12 new leaf calls on its two files and the existing N Astra owner receives ten
+on its two files. They may then work concurrently, never on the same authored file. Six targeted
+independent validation calls are separately allocated; existing budgets/overruns remain recorded.
 
 ### Core owns
 

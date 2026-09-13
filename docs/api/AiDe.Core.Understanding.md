@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Understanding: 43 types, 199 members, 14% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Understanding: 46 types, 204 members, 16% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Understanding`
 
-**43 public types · 199 public members · 14% documented.**
+**46 public types · 204 public members · 16% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -465,14 +465,15 @@ Source projection union. Only IndexedMatch may carry source text and highlights.
 
 *class* — `AtlasQueryContracts.cs`
 
-Inventory page returned by query ports.
+Inventory page returned by query ports. A null next offset means no further retained page is declared; unknown or withheld totals remain unknown.
 
 | Member | Summary |
 |---|---|
-| `InventoryPage(PageRequest request, AtlasBounds bounds, IEnumerable<AtlasFileEntry> files)` | **(gap)** |
+| `InventoryPage(PageRequest request, AtlasBounds bounds, IEnumerable<AtlasFileEntry> files, int? nextOffset = null)` | **(gap)** |
 | `PageRequest Request { get; }` | **(gap)** |
 | `AtlasBounds Bounds { get; }` | **(gap)** |
 | `ImmutableArray<AtlasFileEntry> Files { get; }` | **(gap)** |
+| `int? NextOffset { get; }` | Next retained inventory offset, or null when this page declares no further retained page. Unknown and withheld totals stay non-numeric. |
 
 ## `SelectionRequest`
 
@@ -518,6 +519,37 @@ Port for directory enumeration under a pre-issued root grant.
 *interface* — `AtlasQueryContracts.cs`
 
 Read-only Atlas query port. Implementations revalidate receipts and never trust caller bindings.
+
+## `RecordedRootApproval`
+
+*record* — `AtlasQueryService.cs`
+
+Recorded approval data, not authority. The trusted verifier must authenticate every field.
+
+## `AtlasProofComposition`
+
+*class* — `AtlasQueryService.cs`
+
+Trusted, single-root proof composition. The verifier authenticates the recorded decision, exact root,
+workspace, policy, session and expiry; a caller-supplied path or a callback returning true is not a
+substitute for that authentication. Membership is supplied by the trusted runner, never discovered here.
+
+| Member | Summary |
+|---|---|
+| `Task<AtlasProofHandle> CreateForApprovedRootAsync(RecordedRootApproval approval,` | **(gap)** |
+
+## `AtlasProofHandle`
+
+*class* — `AtlasQueryService.cs`
+
+Owns the detached query lifetime without exposing grants. InitialManifestToken bootstraps the first
+selection; consumers must subsequently adopt the manifest token of an accepted selection generation.
+
+| Member | Summary |
+|---|---|
+| `IAtlasQueries Queries { get; }` | **(gap)** |
+| `string InitialManifestToken { get; }` | **(gap)** |
+| `void Dispose()` | **(gap)** |
 
 ## `AtlasSourceBindingMismatch`
 

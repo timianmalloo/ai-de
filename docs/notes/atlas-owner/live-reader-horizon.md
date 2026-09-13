@@ -349,3 +349,106 @@ observation; no ad-hoc file reader or old-selection recapture. If S lacks that e
 exact amendment by its owner is allowed up to four calls charged to Q after Conductor seam
 readback. The actual detached file -> member -> source -> Back journey remains the horizon exit,
 with source/span/decoder/focus/cancel/changed-history evidence and targeted Security/Test clearance.
+
+## Root-observation bootstrap allowance
+
+Q's actual source-contract readback identified one metadata-only root bootstrap seam.
+`ObserveApprovedRootIdentity` reuses S's ordinary-local/ancestor/held-object checks and trusted
+current-approval callback. It observes native identity; it neither issues a grant nor reads source
+content. Only Complete carries identity; Partial, Refused and Canceled carry no usable identity.
+
+Owner turn 19 corrected the pre-execution allowance from four to five leaf calls, charged inside
+Q's unchanged 36-call allowance: eight Q contract reads plus five bootstrap calls leave 23 for
+query implementation. The extra call preserves claim, test/stub, semantic-red, implementation
+and verify/commit/release steps. No F/D edit or retrospective overrun approval is implied.
+
+## Native repair and source accounting correction
+
+Owner turn 18 reassigns N to an execution-capable Astra writer for **24 new leaf calls on the
+same two files**, with **eight independent validation calls** separately. The initial 29/20
+expenditure and absent semantic red remain recorded. The old writer handed off before the
+replacement tree was created.
+
+The Conductor's consolidated N contract requires a rendered hierarchical child template,
+correct directory/file identity and deduplication, pagination based on returned offset/rows and
+honest continuation, distinct TooLarge versus FileLimited copy, observed async failures and inert
+stale responses, cancellation on unload, and accepted-only Back selection/focus/scroll restoration.
+History is bounded to 50 receipt/view-state frames with no stored source bodies. Tests must host
+the actual view in a shown STA Window and prove realized hierarchy/keyboard/UIA behavior.
+No new theme, HTML mockup, host or shared-contract edits are allowed.
+
+S's author reported 29 writer plus eight author-run validation calls: this is **37 author leaf
+calls against 30**, not independent validation. Independent Security/Test and Conductor execution
+still ran; the corrected exact TRX paths established 165/165 and two semantic mutant failures.
+S was joined at `720c847f`; combined F/E/D/S execution reported **197/197**. That clears the
+limited Core source node, not live-workspace/native delivery.
+
+Q may now consume the actual S API independently of N's repair. Its first readback must settle
+trusted root approval/observed identity, policy-bound membership input, new observation versus
+old binding validation, bounded manifests/receipts, and the outward redacted projections before
+implementation. Source, producer and raw grant objects do not become UI payloads.
+
+## Exact F -> Q/N composition seam
+
+Owner turn 20 authorizes one sequential-then-parallel batch: **F eight leaf calls**, then
+**Q twelve and N ten**, followed by six targeted independent validation calls. Each writer has
+its own tree and exact section-2 file grant.
+
+`InventoryPage` gains optional nullable `NextOffset`, preserving existing callers. Non-null
+requires a nonempty page and checked advancement equal to `request.Offset + returned rows`;
+non-progress, overflow and contradiction with known total are rejected. Q supplies it only when
+more retained, ordered visible rows actually remain. Null means no further retained page, not
+complete global coverage. A changed row set or policy must refuse/restart, not apply an old
+offset silently. Unknown/Withheld global denominator state remains unchanged.
+
+N consumes only this continuation signal. It adopts a returned manifest token only after a
+current, successfully accepted IndexedMatch projection, including accepted Back restoration.
+Stale/canceled/refused/failed results cannot advance manifest or history authority.
+
+Q inventory `ReturnedBytes` is zero for source/content payload. Its conservative retention
+charges remain retention accounting, never a measurement of returned inventory content.
+
+The required proof crosses the seam: file -> member -> different file after new manifest tokens,
+stale/failure token rejection, unknown-global-total pagination through the retained end, invalid
+continuations and byte-unit semantics. Then proceed to the already funded runner; no unit-only
+handoff completes the live-reader horizon.
+
+### Turn-20 returns and independent observations
+
+F continuation `c104695a` was joined at `f8a6df06`. The F receipt's 17 top-level calls and
+"wrapper leaves 7" are not a coherent eight-leaf accounting result; the reported overrun remains
+a finding. Q returned `e98b196e` after ten of twelve newly allocated leaves: eleven semantic
+failures preceded 43/43 Q and 272/272 Understanding results. The Conductor independently ran
+272/272 with zero skips and read the implementation delta: stable retained order, explicit
+continuation, preserved denominator, and zero content bytes.
+
+N returned `7b5b6ff1` after ten of ten newly allocated leaves. The Conductor independently
+observed 38/38 shown-window fixture cases and read the accepted-only manifest-token and
+authoritative-continuation delta. Twenty semantic failures against the preceding behavior are
+retained. These are component/seam observations; neither substitutes for actual Q/native
+composition or the authorized live-root journey.
+
+The runner tree is `C:\Projects\ai-de-atlas-live-reader-runner`; its two-file writer grant is
+recorded in section 2. It must receive the reviewed Q/N joined pin before implementation.
+Its twelve-leaf allowance and the independent fifteen-call proof allowance are unchanged.
+
+### Runner proof mode, Owner turn 21
+
+The Owner permits a bounded `--prove` mode in the existing runner `Program.cs`. It drives the
+actual rendered tree, member, different-file and Back actions, records observed identities,
+manifest transitions, source correspondence and focus, and captures only its proof-owned window.
+Rendered-content captures must be labelled as such, not called desktop screenshots. Missing
+UIA, capture or required journey evidence is NOT_PROVEN, never a successful fallback.
+
+Proof-only startup must be established and observed: loading resources alone is not evidence
+that inherited App startup, MainWindow, terminals or unrelated workspace attachment did not run.
+The exact approved scope/session/policy/expiry and revocation must be checked before real-root
+execution. Git remains a bounded membership-only process. The approved AI-DE scope is read-only;
+mutation checks use separately owned synthetic fixtures.
+
+Author proof and the subsequent independent run remain distinct. Twelve runner leaves and
+fifteen independent-proof calls remain the limits; no host/IPC/main grant follows. The
+Conductor's joined `bcbe8a47` contains reviewed Q/N seams: 272/272 Core Understanding and
+38/38 native fixture cases independently executed, zero skips. The Test review's truncated
+Q test-diff read was completed directly by the Conductor; all eleven new cases were inspected.
+Security, Test and UX cleared only the targeted component/seam claims. Real composition is next.
