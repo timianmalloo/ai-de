@@ -3,3 +3,7 @@
 {"agent": "copilot-atlas-ipc-contract", "at": 1789320303.6338642, "code": null, "kind": "allowed", "path": "spikes/code-atlas-ipc-contract/CodeAtlas.IpcContractProbe.csproj", "session": "atlas-ipc-contract-astra", "wi": ""}
 {"agent": "copilot-atlas-ipc-contract", "at": 1789320303.6418636, "code": null, "kind": "allowed", "path": "spikes/code-atlas-ipc-contract/IpcCancellationCases.cs", "session": "atlas-ipc-contract-astra", "wi": ""}
 {"agent": "copilot-atlas-ipc-contract", "at": 1789320303.6478639, "code": null, "kind": "allowed", "path": "spikes/code-atlas-ipc-contract/Program.cs", "session": "atlas-ipc-contract-astra", "wi": ""}
+{"agent": "copilot-atlas-ipc-contract", "at": 1789322299.0380335, "code": null, "kind": "allowed", "path": "docs/proof/code-atlas-ipc-contract.md", "session": "atlas-ipc-contract-astra", "wi": ""}
+{"agent": "copilot-atlas-ipc-contract", "at": 1789322299.044033, "code": null, "kind": "allowed", "path": "spikes/code-atlas-ipc-contract/AtlasTransportCandidate.cs", "session": "atlas-ipc-contract-astra", "wi": ""}
+{"agent": "copilot-atlas-ipc-contract", "at": 1789322299.050032, "code": null, "kind": "allowed", "path": "spikes/code-atlas-ipc-contract/IpcCancellationCases.cs", "session": "atlas-ipc-contract-astra", "wi": ""}
+{"agent": "copilot-atlas-ipc-contract", "at": 1789322299.055032, "code": null, "kind": "allowed", "path": "spikes/code-atlas-ipc-contract/Program.cs", "session": "atlas-ipc-contract-astra", "wi": ""}
