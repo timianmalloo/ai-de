@@ -541,7 +541,7 @@ than a contract one writer owns.
 
 
 
-**Recognition is a table, not a handler per kind.** Four wire shapes have a Phase-1
+**Recognition is a table, not a handler per kind.** Five wire shapes have a Phase-1
 producer and are projected onto v1 kinds; everything else is namespaced `acp.*` and carried
 whole under `Ext`. Adding a kind is adding a row, and an adapter release that invents one
 needs no change at all — §7.2's "consumers ignore unknown kinds", implemented rather than
@@ -554,7 +554,7 @@ restated.
 **Nothing is dropped, ever.** A recognized frame's payload moves to `body` and the
 remaining envelope stays in `Ext`; an unrecognized frame goes to `Ext` entire. Either
 way every field of the original frame is present exactly once, which is what the captured-corpus
-round-trip proves over all 88 frames.
+round-trip proves over every frame in the corpus (enumerated from disk, never counted here — DC-184).
 
 
 
