@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T16:46:25Z",
+  "generated": "2026-09-13T17:09:50Z",
   "audit": [
     {
       "actor": null,
@@ -15430,6 +15430,28 @@ window.AUDIT_DATA = {
       "done_when": "Reviewed compatibility history and conductor decisions coexist, derived views are regenerated, code matches tested inputs and production admission stays explicit.",
       "tier": "T2",
       "fan_out": 4
+    },
+    {
+      "id": "al-01M2DVY854QS9HRRWMFGB2VC8N",
+      "shortname": "atlas-workspace-authority-and-ipc-spike",
+      "datetime": "2026-09-13T17:09:49Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Owner workspace-readinheritance decisionrecorded afterexistingNodeContentwhole-pathtrace andupdatedSecurity/Datajudgments. DSsource-supportedcancellationhazard remainsunexecuted, no productionrepairclaimed. Exact5files/16leafAstraIPCspike+4reviewregistered, immutable16eabaseverified, noexistingadapter/liveRootedits. Designqualificationstillpartial; correlation/abortlifetimechoiceawaitsexperiment.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/code-atlas-shared-host-admission.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Qualify legitimate production Atlas authority and transport without coupling the independent Code use case to Conversation or guessing cancellation semantics.",
+      "done_when": "Owner authority decision and bounded experiment are explicit; production lease and adapters remain gated on executed transport evidence.",
+      "tier": "T2",
+      "fan_out": 4
     }
   ],
   "changes": [
@@ -19410,6 +19432,29 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "8450ce062397e0cee09380b374783be4f86464d5",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2DVY81G8YAPRM80NYMR6JNR",
+      "datetime": "2026-09-13T17:09:49Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Atlas source admission inherits workspace authority, not Conversation lifetime",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Owner34-35 chooses workspace/peer-scoped Atlas source admission over existing workspace-read basis; no mandatoryConversationSession/newapprovalforalreadypermittedcontent/proofJSON/policyDB. Strongernative-root/policy-generation/expiry/revoke restrictions remain. Productioncancellationlifetime withheldpending16leafsyntheticIPCcomparison+4review.",
+      "rationale": "ExistingproductionNodeContentroute providesworkspace-confinedsourceaccess independentofConversation; Atlasnamespaceabsenceprovesunwiredportnotabsenceofreadbasis. ActualIPCcancel/reusehazard mustbeexecutedbeforechoosingadapterpolicy.",
+      "artifacts": [
+        "docs/design/code-atlas-shared-host-admission.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "16ea6f734206126bf9d73646ccb8f9d7d20ced94",
+        "after": "16ea6f734206126bf9d73646ccb8f9d7d20ced94",
         "branch": "conductor/code-atlas",
         "pushed": null,
         "commits": []

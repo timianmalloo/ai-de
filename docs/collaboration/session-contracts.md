@@ -99,6 +99,7 @@ ownership rows, normative Addendum E acceptance, or permission to integrate into
 | `atlas-live-query-astra` / `atlas/live-reader-query` | `src/AiDe.Core/Understanding/AtlasQueryService.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasQueryServiceTests.cs` | Owner turn-17 Q allowance: 36 leaf calls. First four are read-only contract readback against actual cleared S API. In-memory query/receipt and narrow trusted composition only; no store, IPC, host, UI, project or frozen producer edits. |
 | `atlas-live-continuation-gpt55` / `atlas/live-reader-continuation` | `src/AiDe.Core/Understanding/AtlasQueryContracts.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasQueryContractsTests.cs` | Owner turn-20 exact F continuation seam: eight new leaf calls for optional validated InventoryPage.NextOffset only. Pin/verify this contract before Q/N edits; no other F shape or producer/UI implementation. |
 | `atlas-shared-host-astra` / `atlas/shared-host-compatibility` | New `docs/design/code-atlas-shared-host-admission.md` and `.html`; merge/regeneration results only for reconciliation with an executor-observed main pin | Owner turn 32: 12 leaves for compatibility build, exact adapter/owner/test manifest, production authority/membership proposal and one supported counterpart handoff. No authored existing Core/Shell/Conversation adapter edits, primary changes, main merge or push. Packet is not production-design acceptance. |
+| `atlas-ipc-contract-astra` / `atlas/ipc-contract` | `spikes/code-atlas-ipc-contract/CodeAtlas.IpcContractProbe.csproj`; `Program.cs`; `IpcCancellationCases.cs`; `AtlasTransportCandidate.cs`; `docs/proof/code-atlas-ipc-contract.md` | Owner turn 35: 16 leaves for a synthetic IPC cancellation/async-contract comparison, plus four independent DS/Test review calls. Baseline `16ea6f734206126bf9d73646ccb8f9d7d20ced94`, explicit SHA/readback. No existing Core/Shell edits, live daemon, user data or shared adapters. |
 | `atlas-live-runner-astra` / `atlas/live-reader-runner` | `spikes/code-atlas-reader-candidate/CodeAtlas.ReaderCandidate.csproj`; `spikes/code-atlas-reader-candidate/Program.cs` | Original 12 leaves ended with two CS7036 peer-constructor errors and no synthetic execution. Owner turn 23 prospectively adds eight leaves, same writer/files, ending at actual shown synthetic journey/capture/negative proof, not build alone. No existing App startup/host/IPC/project edits, private corpus, inspected-project execution or main integration. Independent live-root proof retains its separate 15-call allowance. |
 
 The first source writer's worktree is `C:\Projects\ai-de-atlas-e0-source-safety`, created from
@@ -229,6 +230,14 @@ missing contract is a gap plus proposed seam, not a guessed signature. Conductor
 staged paths, conflicts and merge parents before commit. No second handoff or polling; preserve
 request `req-01M2CAXKH01J8SMQV1HBCCAN08` as OPEN. Existing adapter and primary/main authority
 remain ungranted. New worktree bases must be immutable SHAs with immediate HEAD readback.
+
+Owner turns 34-35 remove the proposed Conversation/DocumentSession dependency. Atlas inherits
+existing workspace-read authority with a separately enforced workspace/connection-scoped lease;
+it does not gain broader roots/content, another policy database or proof-JSON authorization.
+Server-derived peer/workspace/epoch, native-root/policy currentness, expiry and revocation remain
+required. The next bounded IPC spike tests abort/reconnect first without selecting it for
+production. A demonstrated hard-floor violation in the existing production path must be
+preserved and escalated to the human, not traded away by the spike grant.
 
 ### Core owns
 

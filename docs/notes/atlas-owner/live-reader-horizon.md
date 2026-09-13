@@ -578,3 +578,32 @@ bounded file read -> `CoreNodeContentSource`. Absence of Atlas-specific names th
 mean absence of an existing workspace source-read basis. Security/Data are reviewing the least
 additional lease and the independent Code/Architecture context; Atlas `SessionToken` must not be
 silently reinterpreted as Conversation/DocumentSession.
+
+## Production basis and IPC experiment, Owner turns 34-35
+
+Owner opened the existing NodeContent source-reading route and capability registry, then chose
+workspace/peer-scoped Atlas reading, independent of Conversation lifetime. Atlas inherits roots
+and content already permitted by the workspace policy and adds explicit admission, native-root
+binding, policy generation, expiry and revocation. App receives opaque handles. This does not
+assert that the existing capability record already implements expiry or all Atlas safeguards.
+
+The focused Distributed Systems source review found a cancellation hazard hypothesis:
+the client releases its serial exchange gate after cancellation without closing the pipe, while
+responses lack a request identifier. The server dispatch is synchronous and cannot currently
+observe request cancellation during a handler. These are source observations, not an executed
+cancel-A/consume-A-as-B result. Frame, connection and per-query bounds are different limits and
+must not be conflated; the 8 MiB source-verification buffer must never be sent as a wire page.
+
+Owner admits one separate Astra synthetic spike: **16 author leaves plus four independent
+DS/Test review calls**, exact five files in section 2, based on immutable `16ea6f73`.
+Characterize cancellation before/during/after write/read/completion and explicitly observe
+late-response identity. Trial an isolated Atlas connection with terminal abandonment and fresh
+handshake; canceling completed A must not kill B. Measure genuinely awaited server work, its
+independent deadline, connection-ended cleanup, reconnect pressure, Q bounds and serialized
+128 KiB page-plus-metadata size against the 1 MiB frame.
+
+No existing Core/Shell edits, live daemon, user data, sync-over-async bridge, token-none
+substitution or new correlation protocol are permitted in this experiment. A hard-floor
+violation established on the existing production path is escalated to the human. If the
+abort/reconnect candidate fails required semantics, return the counterexample. Only the next
+Owner ruling may freeze the production lease/transport contract or admit shared adapters.

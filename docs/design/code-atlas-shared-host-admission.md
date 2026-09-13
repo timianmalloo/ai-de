@@ -17,6 +17,9 @@ links:
 # Shared-host admission checkpoint
 
 **PROPOSED; incomplete admission evidence, not production-design approval.**
+The local compatibility merge is now committed at `be3ace85` and joined as `16ea6f73`.
+The precommit record below is historical. Owner turns 34-35 supersede its proposed
+Conversation-session dependency; see **Superseding authority and transport decisions** below.
 The full-content HTML companion is `code-atlas-shared-host-admission.html`.
 Coordination authority is [session-contracts.md §2](../collaboration/session-contracts.md).
 Conductor owns the final join, gates and audit publication. This delegate does not admit adapters.
@@ -302,3 +305,40 @@ The next step is legitimate Architecture-host admission, not a distraction into 
 | Completed | Remaining | Best next action |
 |---|---|---|
 | Observed parents; resolved merge; runner build; 272 Core and 45 native tests; production transport and host method trace; delivered request receipt | New source-authority/membership/awaitable-IPC decisions and their tests; external dangling link; precommit review and local commit | Conductor reviews exact staged paths/tree/parents, then Owner decides the smallest admitted adapter scope |
+
+## Superseding authority and transport decisions
+
+**Owner turns 34-35:** Atlas inherits the existing approved workspace-read basis, with
+additional workspace/connection-scoped Atlas admission. It does **not** require a Conversation/
+DocumentSession, another human approval for already-permitted content, another policy database,
+or proof-JSON authority. Broader roots/content still require their applicable approval.
+
+The Conductor opened the existing production route beyond the Atlas-specific token scan:
+`WorkspaceOperations.NodeContent` -> `ProjectionService.NodeContent` -> stored declaring
+assertion/scope location -> `ResolveWithinWorkspace` -> bounded source read, consumed through
+`CoreNodeContentSource` and `IWorkspaceQueries`. Security and Data revised their earlier
+interpretation in light of that path. Zero Atlas references meant an unwired new port, not
+absence of an existing source-read basis.
+
+Core derives peer/workspace/epoch from the authenticated connection and restricts the Atlas
+lease to its permitted root/content. Native-root binding, policy generation, expiry, revocation
+and connection/workspace termination remain explicit strengthening requirements. App receives
+opaque handles. An Atlas lifetime token is not a Coding conversation aggregate.
+
+The focused Distributed Systems review identifies a **source-supported, not yet executed**
+cancel/reuse hazard: `IpcClient.ExchangeAsync` can release its serial gate after a canceled
+read without closing the pipe; `IpcResponse` has no request identifier. A late A response may
+then be consumed as B. The server currently handles requests synchronously and does not observe
+wire cancellation while a handler runs. A Task-returning client is not async server dispatch.
+
+Owner admits a 16-leaf synthetic IPC comparison, with four independent DS/Test review calls,
+in `atlas/ipc-contract` at verified `16ea6f73`. It tests isolated connection abort/fresh handshake
+first, without selecting that policy for production. It must observe before/partial/after
+write/read/completion cancellation, late-response identity, stale cancellation ownership,
+awaited server execution, bounded server work, cleanup/revocation, reconnect pressure and
+serialized page-plus-metadata limits. No existing Core/Shell edits, live daemon, user data,
+sync-over-async bridge, token-none substitution or new correlation protocol are admitted.
+
+Only the next Owner ruling may freeze production lease/cancellation semantics or grant adapter
+files. The recorded counterpart requests remain non-consent. An executed hard-floor violation
+in the existing production path is escalated to the human; the spike may not trade it away.
