@@ -6,11 +6,12 @@
 - Branch: conductor/code-atlas
 - Status: active implementation under explicit Owner branch-local grant; integration remains separate
 - Updated: 2026-09-13
-- Doing: Conductor 36616705 includes the accepted detached reader, main compatibility and
+- Doing: Conductor 9e75ed5a includes the accepted detached reader, main compatibility and
   corrected compiled Core render seam. Production Core candidate d8d83de is blocked by three
   native membership qualification failures; Shell dade5c77 has a passing component milestone
-  but four source-reviewed lifetime findings. Neither is joined. Owner is resolving the next
-  bounded repair allocations. Actual Core factory/MainWindow handoff remains unimplemented.
+  but four source-reviewed lifetime findings. Neither is joined. Owner 43 released the
+  first three NQ diagnostic calls and twelve Shell repair calls; both writers are active.
+  Actual Core factory/MainWindow handoff remains unimplemented.
   Owner and Conductor retain scope, assignments, gates and joins. Exact branch-local existing
   adapter exceptions are recorded in section 2; open counterpart requests are not consent.
 - Resume artifacts: docs/coordination/code-atlas.md,
@@ -25,7 +26,7 @@
   work from your observed active SH3 IPC/factory/shell/graph/layout edits.
 - Tracked exchange: section 9 in this conductor branch's docs/collaboration/session-contracts.md.
   Ownership remains exclusively section 2; this file does not assign paths.
-- Waiting on: Owner repair decisions and actual Core-to-Shell runtime handoff. Claude/Core
+- Waiting on: Core diagnostic receipt, Shell repair evidence and actual Core-to-Shell runtime handoff. Claude/Core
   acknowledgment of Addendum E and eventual main integration remains separate. The native
   request is a pull log, not message injection; no human relay or polling is required.
   The sole section-2 register and docs/notes/atlas-owner/live-reader-horizon.md carry the exact

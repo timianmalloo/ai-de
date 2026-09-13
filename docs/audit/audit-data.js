@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T22:37:09Z",
+  "generated": "2026-09-13T22:47:58Z",
   "audit": [
     {
       "actor": null,
@@ -15265,6 +15265,30 @@ window.AUDIT_DATA = {
       "summary": "Join: CV-5.4 (cb78dbb5) merged to main; the register's tail conflict was first committed WITH markers because the marker gate's red was hidden by a tail -1 (DC-113 recurrence 4, DC-136's shape) - caught by re-running the gate bare before the push, resolved, the merge amended (never pushed red). DC-191..193 allocated. Recount App 913 / Core 2620 = 2450 + 170. The editor fills the body at 0 turns (476.5 px measured at 673x748), rests at 280 with turns; L6 measured: 1 turn at both 1440x900 and 2560x1600 (Ruling 88's >= 2 was the mockup's number - a finding for the Owner).",
       "tags": [],
       "tool": null
+    },
+    {
+      "id": "al-01M2EF9D2NEFCXXK556NSQ60HK",
+      "shortname": "join-sh4-1",
+      "datetime": "2026-09-13T22:47:57Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "keep going (the join of the resolved merge)",
+      "summary": "Join: SH-4.1 (0a7c9795) merged to main clean - Coordination is the fourth Perspective (host C, Ctrl+4, its own slot file, IconCoordination, the five Loomkeeper kinds re-homed, the pre-C restore's drop-with-report naming Coordination), plus two defects the slice found and fixed (the view's active content after a body is reparented, DC-194; the census walking before realization, DC-195). DC-194..196 (SH-4.1) and DC-197..201 (D3) allocated into the register from their proof and review. The first join through conductor-join.py.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/coordination-perspective.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land SH-4.1 on main with the floors recounted and a Release build the operator can press Ctrl+4 on",
+      "done_when": "main pushed green through run-verify-gates; Release built",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      }
     }
   ],
   "changes": [

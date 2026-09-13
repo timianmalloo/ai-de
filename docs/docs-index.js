@@ -7970,7 +7970,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "244888046ec4a13947275da59beb62c6efdc203a826f2fe2de52545fbd34bd1c"
+      "sourceSha256": "3183b5047795a4ba9a7b4f95c432daca04d378347a08c3a557e220a97171ac70"
     },
     {
       "id": "design-session-profiler",
@@ -10600,7 +10600,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0a2e39a7358622d388638ef1112f3ba791068ebb428ab591012653bb75fc31ac"
+      "sourceSha256": "c888dddbb05320cce285a0f4a0bf04808503f3e60f2f58844775a413af28b736"
     },
     {
       "id": "ui-review-perspective-shell",
@@ -14806,7 +14806,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "69e0f6d0893fae033569e20886eb957a682eb0a5259f820e98b547b45965f2f1"
+      "sourceSha256": "b0d50d5f958fca2a5cece643e32222b938aa1ddfad0775b8a5b9ba9d9e96840c"
     },
     {
       "id": "proof-compile-pin-spike",
@@ -15165,7 +15165,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "26a7266af8c84647bc3c075ea17af4b79e47fdc785619de74d35e7e3d27d12f4"
+      "sourceSha256": "f370c61b726501bbff187f6d01803e50ca1f215cb4b946154666792a43b11e7e"
     },
     {
       "id": "proof-editor-rest",
@@ -17889,5 +17889,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "8665981f5e8e365a177a97d1a6b2e08a7663ab43eca1e299e8da584e852f85ec"
+  "graphSha256": "cc966a1f803da8bb52695485e1e428ae2f491793c230591ae4e3ff2552844e49"
 };
