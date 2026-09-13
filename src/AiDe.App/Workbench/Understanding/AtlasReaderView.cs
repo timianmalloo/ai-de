@@ -126,7 +126,7 @@ public sealed class AtlasReaderView : UserControl
         await ApplySelectionAsync(
             sequence,
             () => _queries.SelectAsync(new SelectionRequest(_manifestToken, declaration.FileValue, declaration.ObservationKey, sequence), token),
-            token, previous).ConfigureAwait(true);
+            token, previous, declaration.FileValue, declaration.ObservationKey).ConfigureAwait(true);
     }
 
     public async Task GoBackAsync(CancellationToken cancellationToken = default)
@@ -144,7 +144,9 @@ public sealed class AtlasReaderView : UserControl
         var (sequence, token) = BeginRequest(cancellationToken);
         ClearPresentation();
         _status.Text = "Restoring prior Atlas receipt…";
-        if (await ApplySelectionAsync(sequence, () => _queries.RestoreAsync(frame.ReceiptToken, sequence, token), token, null).ConfigureAwait(true))
+        if (await ApplySelectionAsync(sequence, () => _queries.RestoreAsync(frame.ReceiptToken, sequence, token),
+                token, null, frame.FileValue, frame.ObservationKey).ConfigureAwait(true)
+            && IsCurrent(sequence) && !token.IsCancellationRequested)
         {
             _back.RemoveAt(_back.Count - 1);
             _backButton.IsEnabled = _back.Count > 0;
@@ -320,7 +322,8 @@ public sealed class AtlasReaderView : UserControl
         }
     }
 
-    private async Task<bool> ApplySelectionAsync(long sequence, Func<Task<SelectionProjection>> query, CancellationToken token, BackFrame? previous)
+    private async Task<bool> ApplySelectionAsync(long sequence, Func<Task<SelectionProjection>> query,
+        CancellationToken token, BackFrame? previous, string? selectedFileValue = null, string? selectedObservationKey = null)
     {
         var started = Stopwatch.GetTimestamp();
         try
@@ -332,6 +335,17 @@ public sealed class AtlasReaderView : UserControl
             }
 
             token.ThrowIfCancellationRequested();
+            if (selection.Source.State is SourceProjectionState.IndexedMatch
+                && ((selectedFileValue is not null && selection.FileValue != selectedFileValue)
+                    || (selectedObservationKey is not null
+                        && !selection.Outline.Declarations.Any(row => row.ObservationKey == selectedObservationKey))))
+            {
+                ClearSource(SourceProjectionState.Unavailable,
+                    "ATLAS-READER-OUTLINE: requested selection unavailable in the returned outline.");
+                _status.Text = _sourceStatus.Text;
+                return false;
+            }
+
             _outlineRows.Clear();
             foreach (var row in selection.Outline.Declarations.Select(d => new OutlineRow(selection.FileValue, d)))
             {
@@ -343,6 +357,17 @@ public sealed class AtlasReaderView : UserControl
             _bounds.Text = BoundsTextFor(selection.Bounds) + " " + CoverageText(selection.Coverage);
             if (!IsCurrent(sequence) || token.IsCancellationRequested
                 || selection.Source.State is not SourceProjectionState.IndexedMatch || selection.Source.Page is null)
+            {
+                return false;
+            }
+
+            if (selectedObservationKey is not null)
+            {
+                _outline.SelectedItem = _outlineRows.FirstOrDefault(row =>
+                    row.FileValue == selectedFileValue && row.ObservationKey == selectedObservationKey);
+            }
+
+            if (!IsCurrent(sequence) || token.IsCancellationRequested)
             {
                 return false;
             }
@@ -480,7 +505,6 @@ public sealed class AtlasReaderView : UserControl
         try
         {
             SelectFileContainer(_files, frame.FileValue);
-            _outline.SelectedItem = _outlineRows.FirstOrDefault(row => row.ObservationKey == frame.ObservationKey);
             UpdateLayout();
             FindVisual<ScrollViewer>(_outline)?.ScrollToVerticalOffset(frame.OutlineOffset);
             FindVisual<ScrollViewer>(_files)?.ScrollToVerticalOffset(frame.FilesOffset);
