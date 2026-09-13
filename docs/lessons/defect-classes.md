@@ -7366,7 +7366,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   redirect and no encoding is the shape to refuse at review — named here for the next reader.
 - **Status:** `controlled`.
 
-### DC-178 — A fixture-sized constructor default reaches the one real production call site because the real caller passes none
+### DC-179 — A fixture-sized constructor default reaches the one real production call site because the real caller passes none
 
 - **Filed by:** X-3 a (placeholder — the conductor allocates the final number/status).
 - **Shape:** an optional parameter's default value is chosen for a headless/fixture call site
@@ -7384,7 +7384,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   default reads as a real value rather than an obvious placeholder — the conductor's to schedule.
 - **Status:** `controlled`.
 
-### DC-179 — A status announcement's only clearing path is a manual command, so a success path that announces nothing leaves an old refusal on screen indefinitely
+### DC-180 — A status announcement's only clearing path is a manual command, so a success path that announces nothing leaves an old refusal on screen indefinitely
 
 - **Filed by:** X-3 a (placeholder — the conductor allocates the final number/status).
 - **Shape:** a status/live-region announcer has a `Clear()` but only one caller (an explicit
@@ -7403,7 +7403,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   workbench shell (if any) for the same one-caller-`Clear()` shape.
 - **Status:** `controlled`.
 
-### DC-180 — A same-assembly diagnostics helper duplicates a sibling's sink/file-path logic because the sibling's writer defaults to `private`
+### DC-181 — A same-assembly diagnostics helper duplicates a sibling's sink/file-path logic because the sibling's writer defaults to `private`
 
 - **Filed by:** X-3 a (placeholder — the conductor allocates the final number/status).
 - **Shape:** two telemetry/diagnostics types in the same assembly each need "write this JSON line to

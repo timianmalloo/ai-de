@@ -78,11 +78,11 @@ summary: >-
 
 ## New defect classes (placeholders — conductor allocates)
 
-- **DC-178** — a fixture-sized constructor default reaches the one real production call site
+- **DC-179** — a fixture-sized constructor default reaches the one real production call site
   because the real caller passes none (Ruling 85's shape).
-- **DC-179** — a status announcement's only clearing path is a manual command, so a silent
+- **DC-180** — a status announcement's only clearing path is a manual command, so a silent
   success path leaves an old refusal on screen indefinitely (Ruling 86's shape).
-- **DC-180** — a same-assembly diagnostics helper duplicates a sibling's sink/file-path logic
+- **DC-181** — a same-assembly diagnostics helper duplicates a sibling's sink/file-path logic
   because the sibling's writer defaults to `private` (DM7's generalisation).
 
 Full text: `docs/lessons/defect-classes.md` (appended, not claimed, per the brief's lease rule).
