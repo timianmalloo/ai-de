@@ -125,6 +125,44 @@ public sealed class PerspectiveShellTests
         }, 30);
     }
 
+    // Spec §C5 / DESIGN.md's landing row (Ruling 84): a switch to Coordination lands on the Left
+    // zone's active tab (Terminal sessions — the master list), to Architecture on the Center's
+    // (Graph); a row with no landing zone (Coding) lands on the body's active surface as the view
+    // reports it; a landing zone the arrangement has emptied falls back the same way. Stated on the
+    // row because the view's own "active" after a body is first parented is whichever pane control
+    // realized last — measured in the census as Provenance (the Right) for Architecture and the
+    // Center's tab for Coordination, neither of them the design's landing.
+    [Fact]
+    public void TheLanding_IsTheRowsZonesActiveTab_LeftForCoordination_CenterForArchitecture_ElseTheViewsActive()
+    {
+        Sta.Run(() =>
+        {
+            var f = Build();
+            f.A.Adapter.Render();
+            f.B.Adapter.Render();
+            f.C.Adapter.Render();
+
+            Assert.Equal("graph", PerspectiveShell.LandingSurfaceFor(f.B));
+            Assert.Equal("sessions", PerspectiveShell.LandingSurfaceFor(f.C));
+            Assert.Equal(f.A.Adapter.ActiveSurfaceId, PerspectiveShell.LandingSurfaceFor(f.A));
+
+            Assert.Equal(ZoneId.Left, f.C.Row.Landing);
+            Assert.Equal(ZoneId.Center, f.B.Row.Landing);
+            Assert.Null(f.A.Row.Landing);
+
+            // The landing follows the zone's ACTIVE tab, not its first: activate the second Center
+            // tab in Architecture and the landing moves with it.
+            Assert.True(f.B.Service.Apply(new LayoutOperation.ActivateSurface("domain")).Applied);
+            Assert.Equal("domain", PerspectiveShell.LandingSurfaceFor(f.B));
+
+            // A collapsed landing zone falls back to the view's active surface.
+            Assert.True(f.C.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
+            f.C.Adapter.Render();
+            Assert.Equal(f.C.Adapter.ActiveSurfaceId, PerspectiveShell.LandingSurfaceFor(f.C));
+            return 0;
+        }, 30);
+    }
+
     // ADR-0032 test 4's second clause / US-C9 — switching perspective never resets the other
     // host's arrangement: each host's shape is byte-identical after A → B → Explore → A → B.
     [Fact]

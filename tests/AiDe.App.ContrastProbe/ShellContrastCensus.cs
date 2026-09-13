@@ -188,6 +188,9 @@ internal static class ShellContrastCensus
             host.Adapter.Render();
             log.Add($"switch to {row.Title}: {shell.Execute(row.CommandId)}");
             await Settle(window);
+            // Recorded, never asserted (the review's attended rows): what the switch said, and which
+            // surface the body reports active once it has settled — the landing the entry focus reads.
+            log.Add($"{row.Id}: announced '{shell.LiveRegion.Text}'; active after switch = {host.Adapter.ActiveSurfaceId ?? "(none)"}; focused = {System.Windows.Input.Keyboard.FocusedElement?.GetType().Name ?? "(none)"}");
 
             foreach (var surface in host.Service.Current.AllStacks().SelectMany(s => s.Surfaces).ToList())
             {

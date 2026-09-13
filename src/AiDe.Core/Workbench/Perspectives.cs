@@ -21,13 +21,23 @@ public enum PerspectiveBody
 /// <param name="Body">Whether the body is a docking host or one full-window surface.</param>
 /// <param name="CommandId">The catalog command that activates it — derived into <see cref="WorkbenchCommandCatalog.All"/> from this row.</param>
 /// <param name="Description">What the perspective is for, as the palette's hint says it.</param>
+/// <param name="Landing">
+/// Where focus lands after a switch to this perspective (spec §C5; DESIGN.md's landing row): the
+/// zone whose active tab takes focus — Architecture lands on its Center (Graph), Coordination on
+/// its Left (Terminal sessions, the master list). Null for a body with another rule — Coding's
+/// active document, Explore's reader. A zone the arrangement has emptied or collapsed falls back to
+/// the body's active surface. Stated on the row because the view's own notion of "active" after a
+/// body is first parented is whichever pane control realized last (measured, SH-4.1), which is not
+/// a landing anyone chose.
+/// </param>
 public sealed record Perspective(
     string Id,
     string Title,
     int Order,
     PerspectiveBody Body,
     string CommandId,
-    string Description)
+    string Description,
+    ZoneId? Landing = null)
 {
     /// <summary>The bound single-stroke gesture, spelled from the row (US-C10; <c>Ctrl+</c> the rail digit).</summary>
     public string Gesture => $"Ctrl+{Order}";
@@ -59,7 +69,8 @@ public static class PerspectiveSet
 
     public static Perspective Architecture { get; } = new(
         "architecture", "Architecture", 3, PerspectiveBody.DockHost, "perspective.architecture",
-        "Code and architecture understanding: the evidence, class, sequence, context and join views.");
+        "Code and architecture understanding: the evidence, class, sequence, context and join views.",
+        Landing: ZoneId.Center);
 
     /// <summary>
     /// Host C (Ruling 84; the operator's UC5 — observe the fleet): the Loomkeeper watcher's bench.
@@ -68,7 +79,8 @@ public static class PerspectiveSet
     /// </summary>
     public static Perspective Coordination { get; } = new(
         "coordination", "Coordination", 4, PerspectiveBody.DockHost, "perspective.coordination",
-        "Fleet observation: the Loomkeeper watcher's terminal sessions, ledger, leaderboard, message board and daydreams. Read in parallel; no composer on this bench.");
+        "Fleet observation: the Loomkeeper watcher's terminal sessions, ledger, leaderboard, message board and daydreams. Read in parallel; no composer on this bench.",
+        Landing: ZoneId.Left);
 
     /// <summary>The rows, in rail order: Coding · Explore · Architecture · Coordination.</summary>
     public static IReadOnlyList<Perspective> All { get; } = [Coding, Explore, Architecture, Coordination];

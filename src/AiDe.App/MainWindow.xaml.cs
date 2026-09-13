@@ -565,8 +565,9 @@ public partial class MainWindow : Window
     /// <summary>
     /// Where focus lands after a switch (spec §C5): Explore — the reader (the first non-canvas
     /// focusable, so entry never lands inside the ADR-0015 canvas trap; the canvas is reached by
-    /// <c>workbench.focusCanvas</c> or Tab); a host — its active document's content, else the
-    /// body's first focusable.
+    /// <c>workbench.focusCanvas</c> or Tab); a host — the row's landing zone's active tab
+    /// (Architecture: the Center's, Coordination: the Left's — <see cref="PerspectiveShell.LandingSurfaceFor"/>),
+    /// else its active document's content, else the body's first focusable.
     /// </summary>
     private bool EntryFocusFor(Perspective perspective, FrameworkElement body)
     {
@@ -576,7 +577,13 @@ public partial class MainWindow : Window
         }
 
         var host = _perspectives.HostFor(perspective);
-        var active = host?.Adapter.ActiveSurfaceId is { } id ? host.Adapter.ContentFor(id) : null;
+        var landing = host is null ? null : PerspectiveShell.LandingSurfaceFor(host);
+        var active = landing is { } id ? host!.Adapter.ContentFor(id) : null;
+        if (active is not null && landing is not null)
+        {
+            host!.Adapter.ActivateInView(landing);   // the view's notion of active follows the landing, so the next switch back returns here
+        }
+
         return active is not null && active.MoveFocus(new System.Windows.Input.TraversalRequest(System.Windows.Input.FocusNavigationDirection.First));
     }
 
