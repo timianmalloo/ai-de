@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
+    <StartupObject>CodeAtlas.ReaderCandidate.Program</StartupObject>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AiDe.Core\AiDe.Core.csproj" />
+    <ProjectReference Include="..\..\src\AiDe.App\AiDe.App.csproj" />
+    <EmbeddedResource Include="..\..\src\AiDe.App\App.xaml" LogicalName="Proof.AppResources.xaml" />
+  </ItemGroup>
+</Project>
