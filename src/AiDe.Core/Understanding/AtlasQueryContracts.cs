@@ -194,10 +194,10 @@ public sealed class SourceProjection
         && string.Equals(binding.ContentHash, source.CanonicalSha256, StringComparison.Ordinal);
 }
 
-/// <summary>Inventory page returned by query ports.</summary>
+/// <summary>Inventory page returned by query ports. A null next offset means no further retained page is declared; unknown or withheld totals remain unknown.</summary>
 public sealed class InventoryPage
 {
-    public InventoryPage(PageRequest request, AtlasBounds bounds, IEnumerable<AtlasFileEntry> files)
+    public InventoryPage(PageRequest request, AtlasBounds bounds, IEnumerable<AtlasFileEntry> files, int? nextOffset = null)
     {
         Request = request ?? throw new ArgumentNullException(nameof(request));
         Bounds = bounds ?? throw new ArgumentNullException(nameof(bounds));
@@ -206,11 +206,56 @@ public sealed class InventoryPage
         {
             throw new ArgumentException("File count must match bounds returned rows.", nameof(files));
         }
+
+        NextOffset = ValidNextOffset(Request, Bounds, Files, nextOffset);
     }
 
     public PageRequest Request { get; }
     public AtlasBounds Bounds { get; }
     public ImmutableArray<AtlasFileEntry> Files { get; }
+
+    /// <summary>Next retained inventory offset, or null when this page declares no further retained page. Unknown and withheld totals stay non-numeric.</summary>
+    public int? NextOffset { get; }
+
+    private static int? ValidNextOffset(PageRequest request, AtlasBounds bounds, ImmutableArray<AtlasFileEntry> files, int? nextOffset)
+    {
+        if (nextOffset is null)
+        {
+            return null;
+        }
+
+        if (nextOffset.Value < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(nextOffset), nextOffset, "Next offset must be non-negative.");
+        }
+
+        if (files.Length is 0)
+        {
+            throw new ArgumentException("Next offset requires at least one returned file.", nameof(nextOffset));
+        }
+
+        int expected;
+        try
+        {
+            expected = checked(request.Offset + files.Length);
+        }
+        catch (OverflowException)
+        {
+            throw new ArgumentOutOfRangeException(nameof(nextOffset), nextOffset, "Next offset exceeds the maximum supported offset.");
+        }
+
+        if (nextOffset.Value != expected)
+        {
+            throw new ArgumentException("Next offset must equal request offset plus returned file count.", nameof(nextOffset));
+        }
+
+        if (bounds.TotalCount is { } total && expected >= total)
+        {
+            throw new ArgumentException("Next offset cannot declare a page at or beyond the known total.", nameof(nextOffset));
+        }
+
+        return nextOffset;
+    }
 }
 
 /// <summary>Selection input. It names manifest/file/declaration observations and cannot issue grant authority.</summary>

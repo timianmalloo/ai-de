@@ -25,12 +25,60 @@ public sealed class AtlasQueryContractsTests
     [Fact]
     public void Create_InventoryPage_FilesMustMatchBoundsReturnedRows()
     {
-        var file = new AtlasFileEntry("file:value", "src/A.cs", "src", AtlasDirectoryEntryKind.File, AtlasFileClassification.CSharp, null, AtlasFileAvailability.Available, null);
+        var file = File("file:value");
         var request = new PageRequest(0, 10);
 
         Assert.Throws<ArgumentException>(() => new InventoryPage(request, new AtlasBounds(10, 10, 2, 20, 2, AtlasDenominatorState.Known, null, null), [file]));
         var empty = new InventoryPage(request, new AtlasBounds(10, 10, 0, 0, 0, AtlasDenominatorState.Known, null, null), []);
         Assert.Empty(empty.Files);
+        Assert.Null(empty.NextOffset);
+    }
+
+    [Fact]
+    public void Create_InventoryPage_AcceptsKnownMiddleContinuationAndKnownEndWithoutContinuation()
+    {
+        var middle = new InventoryPage(new PageRequest(10, 10), Bounds(10, 10, 2, 13, AtlasDenominatorState.Known), [File("file:1"), File("file:2")], nextOffset: 12);
+        var end = new InventoryPage(new PageRequest(10, 10), Bounds(10, 10, 2, 12, AtlasDenominatorState.Known), [File("file:1"), File("file:2")]);
+
+        Assert.Equal(12, middle.NextOffset);
+        Assert.Null(end.NextOffset);
+        Assert.Equal(AtlasDenominatorState.Known, middle.Bounds.TotalState);
+        Assert.Equal(13, middle.Bounds.TotalCount);
+    }
+
+    [Fact]
+    public void Create_InventoryPage_AcceptsUnknownAndWithheldContinuationWithoutInventingKnownTotal()
+    {
+        var unknown = new InventoryPage(new PageRequest(5, 10), Bounds(10, 10, 2, null, AtlasDenominatorState.Unknown), [File("file:1"), File("file:2")], nextOffset: 7);
+        var withheld = new InventoryPage(new PageRequest(5, 10), Bounds(10, 10, 2, null, AtlasDenominatorState.Withheld), [File("file:1"), File("file:2")], nextOffset: 7);
+
+        Assert.Equal(7, unknown.NextOffset);
+        Assert.Equal(7, withheld.NextOffset);
+        Assert.Null(unknown.Bounds.TotalCount);
+        Assert.Null(withheld.Bounds.TotalCount);
+        Assert.Equal(AtlasDenominatorState.Unknown, unknown.Bounds.TotalState);
+        Assert.Equal(AtlasDenominatorState.Withheld, withheld.Bounds.TotalState);
+    }
+
+    [Fact]
+    public void Create_InventoryPage_RejectsInvalidContinuationOffsets()
+    {
+        Assert.Throws<ArgumentException>(() => new InventoryPage(new PageRequest(0, 10), Bounds(10, 10, 0, null, AtlasDenominatorState.Unknown), [], nextOffset: 0));
+        Assert.Throws<ArgumentException>(() => new InventoryPage(new PageRequest(0, 10), Bounds(10, 10, 1, null, AtlasDenominatorState.Unknown), [File("file:1")], nextOffset: 2));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new InventoryPage(new PageRequest(0, 10), Bounds(10, 10, 1, null, AtlasDenominatorState.Unknown), [File("file:1")], nextOffset: -1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new InventoryPage(new PageRequest(int.MaxValue, 1), Bounds(1, 1, 1, null, AtlasDenominatorState.Unknown), [File("file:1")], nextOffset: int.MaxValue));
+        Assert.Throws<ArgumentException>(() => new InventoryPage(new PageRequest(10, 10), Bounds(10, 10, 2, 12, AtlasDenominatorState.Known), [File("file:1"), File("file:2")], nextOffset: 12));
+        Assert.Throws<ArgumentException>(() => new InventoryPage(new PageRequest(10, 10), Bounds(10, 10, 2, 11, AtlasDenominatorState.Known), [File("file:1"), File("file:2")], nextOffset: 12));
+    }
+
+    [Fact]
+    public void Create_InventoryPage_NextOffsetIsImmutableOptionalProperty()
+    {
+        var page = new InventoryPage(new PageRequest(0, 10), Bounds(10, 10, 1, null, AtlasDenominatorState.Unknown), [File("file:1")], nextOffset: 1);
+        var property = typeof(InventoryPage).GetProperty(nameof(InventoryPage.NextOffset))!;
+
+        Assert.Equal(1, page.NextOffset);
+        Assert.False(property.CanWrite);
     }
 
     [Fact]
@@ -92,6 +140,9 @@ public sealed class AtlasQueryContractsTests
 
     private static AtlasObjectIdentity Identity() => new("volume:1", "file:2");
     private static string NativeToken(AtlasObjectIdentity identity) => AtlasIdentityCodec.ForNativeObject(identity);
+    private static AtlasFileEntry File(string value) => new(value, "src/A.cs", "src", AtlasDirectoryEntryKind.File, AtlasFileClassification.CSharp, null, AtlasFileAvailability.Available, null);
+    private static AtlasBounds Bounds(int requestedLimit, int effectiveLimit, int returnedRows, long? totalCount, AtlasDenominatorState state) =>
+        new(requestedLimit, effectiveLimit, returnedRows, 10, totalCount, state, state is AtlasDenominatorState.Known ? null : "not-counted", "entries");
     private static AtlasBounds BoundsUnknown() => new(128, 64, 1, 10, null, AtlasDenominatorState.Unknown, "not-counted", "entries");
     private static AtlasBounds BoundsKnown(long total) => new(128, 64, 1, 10, total, AtlasDenominatorState.Known, null, null);
 }
