@@ -24,6 +24,18 @@ public static class Program
             return await HostEngine().ConfigureAwait(false);
         }
 
+        if (args.Contains("--echo-utf8"))
+        {
+            // One line of UTF-8 BYTES, written past the console layer — what a Node adapter writes.
+            // The reader on the other side decodes them with whatever encoding the engine process
+            // gave its stream (Ruling 87): a single-byte code page renders `—` as `â€"` and `§` as `Â§`.
+            var bytes = System.Text.Encoding.UTF8.GetBytes("— § compile" + (char)10);
+            using var stdout = Console.OpenStandardOutput();
+            stdout.Write(bytes, 0, bytes.Length);
+            stdout.Flush();
+            return 0;
+        }
+
         if (args.Contains("--hang"))
         {
             if (args.Contains("--spawn-child"))
