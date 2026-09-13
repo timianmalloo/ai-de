@@ -16,7 +16,7 @@ public sealed class TheReadModelPublishesOneSnapshotPerAppliedEventTests
     private static IReadOnlyList<DecorationRow> Decorations =>
         [new("class", "free-form", "session-default", ""), new("tier", "T1", "rule", ""), new("lease", "src/**", "derived", ""), new("shape", "goal block", "projection", "")];
 
-    private static EventLine Line(int i) => new(T0.AddSeconds(i), "claude-code", i % 3 == 0 ? RunChannelSessionThread.ReplyKind : "tool.call", $"line {i}", "run");
+    private static EventLine Line(int i) => new(T0.AddSeconds(i), "claude-code", i % 3 == 0 ? Coalesce.MessageKind : "tool.call", $"line {i}", "run");
 
     [Fact]
     public void ApplyingNEventsAfterCatchUpRaisesExactlyNTimes_AndTheKthSnapshotIsTheFold()
@@ -53,7 +53,10 @@ public sealed class TheReadModelPublishesOneSnapshotPerAppliedEventTests
         Assert.Equal(10, last.Outcome!.EventCount);
         Assert.Equal(new Spend(100, 10, 20, 1), last.Outcome.Spend);
         Assert.Equal(TimeSpan.FromSeconds(30), last.Outcome.Duration);
-        Assert.Equal("line 3line 6line 9", last.Reply);
+        // The fold: every agent.msg line here is its own run (a tool.call sits between each pair), so
+        // the rows are the events one to one, the message rows carrying their text and a count of 1.
+        Assert.Equal(Coalesce.Rows(last.Events), last.Rows);
+        Assert.Equal(["line 3", "line 6", "line 9"], last.Rows.Where(r => r.Kind == Coalesce.MessageKind).Select(r => r.Text));
         Assert.Same(raised[^1], thread.Current);
     }
 
@@ -89,7 +92,7 @@ public sealed class TheReadModelPublishesOneSnapshotPerAppliedEventTests
         var turns = Enumerable.Range(1, 5).Select(i => new TurnView(
             i, $"env-{i}", $"words {i}", Decorations, TurnState.Completed,
             new OutcomeView("claude-code", null, 1, new Spend(1000, 0, 240, 1), TimeSpan.FromSeconds(60), 3),
-            null, "done", [], "bytes", T0.AddMinutes(i))).ToList();
+            null, [], "bytes", T0.AddMinutes(i))).ToList();
 
         var thread = RunChannelSessionThread.Preloaded(turns);
 
@@ -121,19 +124,19 @@ public sealed class TheReadModelPublishesOneSnapshotPerAppliedEventTests
     [Fact]
     public void TheInvariantsHold_WaitingIffWaitingState_OutcomeIffTerminal()
     {
-        Assert.Throws<ArgumentException>(() => new TurnView(1, "e", "s", [], TurnState.Waiting, null, null, null, [], "b", T0));
-        Assert.Throws<ArgumentException>(() => new TurnView(1, "e", "s", [], TurnState.Running, new OutcomeView("l", null, null, null, null, 0), null, null, [], "b", T0));
-        Assert.Throws<ArgumentException>(() => new TurnView(1, "e", "s", [], TurnState.Completed, null, null, null, [], "b", T0));
-        Assert.Throws<ArgumentException>(() => new TurnView(1, "e", "s", [], TurnState.NotRecorded, new OutcomeView("l", null, null, null, null, 0), null, null, [], "b", T0));
+        Assert.Throws<ArgumentException>(() => new TurnView(1, "e", "s", [], TurnState.Waiting, null, null, [], "b", T0));
+        Assert.Throws<ArgumentException>(() => new TurnView(1, "e", "s", [], TurnState.Running, new OutcomeView("l", null, null, null, null, 0), null, [], "b", T0));
+        Assert.Throws<ArgumentException>(() => new TurnView(1, "e", "s", [], TurnState.Completed, null, null, [], "b", T0));
+        Assert.Throws<ArgumentException>(() => new TurnView(1, "e", "s", [], TurnState.NotRecorded, new OutcomeView("l", null, null, null, null, 0), null, [], "b", T0));
     }
 
     /// <summary>M2: absent usage reads <i>not recorded</i>, never 0; the header sums what was measured and names what was not.</summary>
     [Fact]
     public void AbsentUsageReadsNotRecordedNeverZero_AndTheHeaderSpendIsTheSum()
     {
-        var measured = new TurnView(1, "e", "s", Decorations, TurnState.Completed, new OutcomeView("claude-code", null, 3, new Spend(10_000, 1_840, 2_400, 3), TimeSpan.FromSeconds(252), 142), null, null, [], "b", T0);
-        var unmeasured = new TurnView(2, "e", "s", Decorations, TurnState.Completed, new OutcomeView("claude-code", null, null, null, null, 4), null, null, [], "b", T0);
-        var notRecorded = new TurnView(3, "e", "s", Decorations, TurnState.NotRecorded, null, null, null, [], "b", T0);
+        var measured = new TurnView(1, "e", "s", Decorations, TurnState.Completed, new OutcomeView("claude-code", null, 3, new Spend(10_000, 1_840, 2_400, 3), TimeSpan.FromSeconds(252), 142), null, [], "b", T0);
+        var unmeasured = new TurnView(2, "e", "s", Decorations, TurnState.Completed, new OutcomeView("claude-code", null, null, null, null, 4), null, [], "b", T0);
+        var notRecorded = new TurnView(3, "e", "s", Decorations, TurnState.NotRecorded, null, null, [], "b", T0);
 
         Assert.Equal("tokens not recorded", TurnCopy.SpendText(null));
         Assert.DoesNotContain("0 tokens", string.Join(" ", TurnCopy.Counts(unmeasured)), StringComparison.Ordinal);
@@ -152,14 +155,14 @@ public sealed class TheReadModelPublishesOneSnapshotPerAppliedEventTests
     public void TheNameIsTheOrdinalAndTheFirst120CharactersWithAnEllipsisWhenTruncated()
     {
         var words = string.Join(" ", Enumerable.Range(0, 40).Select(i => "word" + i));
-        var turn = new TurnView(17, "e", words, Decorations, TurnState.Failed, new OutcomeView("claude-code", 1, 0, null, null, 12), null, null, [], "b", T0);
+        var turn = new TurnView(17, "e", words, Decorations, TurnState.Failed, new OutcomeView("claude-code", 1, 0, null, null, 12), null, [], "b", T0);
 
         var name = TurnCopy.Name(turn);
 
         Assert.StartsWith("b17, ", name, StringComparison.Ordinal);
         Assert.EndsWith("…", name, StringComparison.Ordinal);
         Assert.True(name.Length <= "b17, ".Length + TurnCopy.NameWords + 1);
-        Assert.Equal("b2, short", TurnCopy.Name(new TurnView(2, "e", "short", Decorations, TurnState.Running, null, null, null, [], "b", T0)));
+        Assert.Equal("b2, short", TurnCopy.Name(new TurnView(2, "e", "short", Decorations, TurnState.Running, null, null, [], "b", T0)));
         Assert.Equal("lane exited 1", TurnCopy.OutcomeWord(turn));
         Assert.Equal("The lane exited 1 after 0 edits. Send the same turn again as a new turn, or open the log.", TurnCopy.ReasonSentence(turn));
         Assert.Equal("class free-form · tier T1 · lease src/** · goal block", TurnCopy.DecorationLine(Decorations));

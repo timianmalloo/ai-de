@@ -10,17 +10,46 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation.Sessions: 30 types, 128 members, 96% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation.Sessions: 32 types, 130 members, 96% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation.Sessions`
 
-**30 public types · 128 public members · 96% documented.**
+**32 public types · 130 public members · 96% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
 > gap rather than given invented text. The extractor is a lexical reader, not a compiler:
 > it does not resolve generics, partial classes across files, or conditional compilation.
+
+## `TurnRow`
+
+*record* — `Coalesce.cs`
+
+One row of a turn's conversation at the message grain (Ruling 81): a message or a thought folded
+from its wire chunks, or one event of any other kind.
+
+## `Coalesce`
+
+*class* — `Coalesce.cs`
+
+`Coalesce(turn.Events)` — the ONE pure fold from a turn's event lines to its rows, read by
+the thread's reply side and by the Console split (Ruling 81; DM7: one derivation, two readers).
+
+| Member | Summary |
+|---|---|
+| `string MessageKind = "agent.msg"` | The mapper's `agent_message_chunk`: assistant prose, folded per message. |
+| `string ThoughtKind = "agent.thought"` | The mapper's `agent_thought_chunk` (Ruling 82, CV-5.3): reasoning, folded per thought — its own run, never merged with prose. |
+| `IReadOnlyList<TurnRow> Rows(IReadOnlyList<EventLine> events)` | The rows of a turn's events, in order. Pure: the same events give the same rows. |
+
+### `IReadOnlyList<TurnRow> Rows(IReadOnlyList<EventLine> events)`
+
+The rows of a turn's events, in order. Pure: the same events give the same rows.
+
+**Remarks.** A run is a maximal stretch of one folding kind from ONE lane — a row carries one lane, so a
+second lane's chunk starts a new row rather than being attributed to the first (R16 b1:
+attribution is a property of the row, never a guess). Any non-folding event, and any change
+of kind, ends the run (Ruling 81 condition 2: the boundary is the interleaving).
 
 ## `ConsoleRow`
 
@@ -359,7 +388,6 @@ that marshals to a dispatcher never holds this lock across the hand-off.
 
 | Member | Summary |
 |---|---|
-| `string ReplyKind = "agent.msg"` | The event kinds whose text is the lane's reply (the mapper's `agent_message_chunk`). |
 | `RunChannelSessionThread(bool caughtUp = true)` | **(gap)** |
 | `RunChannelSessionThread Preloaded(IEnumerable<TurnView> turns)` | A read model pre-loaded with history, caught up from construction — the fixture idiom (DS-1 A1's pre-loaded row). |
 | `ThreadSnapshot Current` | **(gap)** |
@@ -369,7 +397,7 @@ that marshals to a dispatcher never holds this lock across the hand-off.
 | `void Append(int ordinal, EventLine line, Spend? cost = null)` | One line of the turn's run.  is the event's measured usage, or null when the wire recorded none. |
 | `void Wait(int ordinal, WaitingRequest request)` | The turn is waiting on the operator (a permission or cap request, SC7). |
 | `void Resume(int ordinal)` | The request was answered; the turn runs again. |
-| `void Conclude(int ordinal, TurnState terminal, DateTimeOffset at, int? exitCode = null, int? edits = null, string? reply = null)` | The run ended.  is one of the four terminal states. |
+| `void Conclude(int ordinal, TurnState terminal, DateTimeOffset at, int? exitCode = null, int? edits = null)` | The run ended.  is one of the four terminal states. What the run said arrived as its events (Ruling 81: the fold is `Coalesce(Events)`); a conclusion carries no text of its own — a reason is appended as a line before … |
 
 ### `RunChannelSessionThread(bool caughtUp = true)`
 
@@ -642,8 +670,8 @@ model). Every field is a projection of the envelope fold joined to the run chann
 | `TurnState State { get; }` | **(gap)** |
 | `OutcomeView? Outcome { get; }` | Terminal states only. |
 | `WaitingRequest? Waiting { get; }` | Waiting only. |
-| `string? Reply { get; }` | The conductor's report or the lane's summary, plain text. |
-| `IReadOnlyList<EventLine> Events { get; }` | The run's lines, in order. |
+| `IReadOnlyList<EventLine> Events { get; }` | The run's lines, in order — the wire grain, untouched (the mapper drops nothing; *Open the log* reaches them). |
+| `IReadOnlyList<TurnRow> Rows { get; }` | `Coalesce(Events)` — the message grain (Ruling 81), derived once per snapshot from `Events` and never written by anything else: the one fold the thread's reply side renders and the Console split unfolds (DM7: one deri… |
 | `string SentBytes { get; }` | Exactly the sent bytes — the compiled prompt disclosure shows this and nothing else. |
 | `DateTimeOffset At { get; }` | Accept time. |
 | `bool IsTerminal(TurnState state)` | Whether  carries an outcome. |

@@ -26,10 +26,35 @@ public sealed class TheThreadAnnouncesByTransitionTests
             state,
             terminal ? new OutcomeView("claude-code", exitCode, 1, spend, TimeSpan.FromSeconds(252), 12) : null,
             state == TurnState.Waiting ? new WaitingRequest(requestId ?? "r1", "permission", "claude-code asks to write outside the declared scope.", [TurnActionKind.Deny, TurnActionKind.AllowOnce]) : null,
-            null, [], "bytes", T0);
+            [], "bytes", T0);
     }
 
     private static ThreadSnapshot Snapshot(long version, bool caughtUp, params TurnView[] turns) => new(turns, version, caughtUp);
+
+    private static TurnView Running(int ordinal, params EventLine[] events) =>
+        new(ordinal, $"env-{ordinal}", $"words of b{ordinal}",
+            [new("class", "free-form", "session-default", ""), new("tier", "T1", "rule", ""), new("shape", "goal block", "projection", "")],
+            TurnState.Running, null, null, events, "bytes", T0);
+
+    private static EventLine Line(int second, string kind, string text) => new(T0.AddSeconds(second), "claude-code", kind, text, "run");
+
+    /// <summary>SC9 (Ruling 81): a chunk arriving, a message folding, a tool call between messages — none is a transition; the policy reads the state, never the rows.</summary>
+    [Fact]
+    public void ChunksArrivingAndFolding_AreNeverAnnounced()
+    {
+        var policy = new ThreadAnnouncementPolicy();
+        Assert.Empty(policy.Next(Snapshot(0, true, Turn(1, TurnState.Completed))));
+        var accepted = policy.Next(Snapshot(1, true, Turn(1, TurnState.Completed), Running(2)));
+        Assert.NotEmpty(accepted);
+
+        var announced = 0;
+        announced += policy.Next(Snapshot(2, true, Turn(1, TurnState.Completed), Running(2, Line(0, Coalesce.MessageKind, "mer")))).Count;
+        announced += policy.Next(Snapshot(3, true, Turn(1, TurnState.Completed), Running(2, Line(0, Coalesce.MessageKind, "mer"), Line(0, Coalesce.MessageKind, "ges are")))).Count;
+        announced += policy.Next(Snapshot(4, true, Turn(1, TurnState.Completed), Running(2, Line(0, Coalesce.MessageKind, "mer"), Line(0, Coalesce.MessageKind, "ges are"), Line(1, "tool.call", "read docs/tracker.md")))).Count;
+        announced += policy.Next(Snapshot(5, true, Turn(1, TurnState.Completed), Running(2, Line(0, Coalesce.MessageKind, "mer"), Line(0, Coalesce.MessageKind, "ges are"), Line(1, "tool.call", "read docs/tracker.md"), Line(2, Coalesce.MessageKind, "three")))).Count;
+
+        Assert.Equal(0, announced);
+    }
 
     [Fact]
     public void FortyReplayedSnapshotsAndTheFirstCaughtUpOneEmitNothing()

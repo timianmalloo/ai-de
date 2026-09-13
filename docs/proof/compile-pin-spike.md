@@ -326,7 +326,7 @@ strings in 81k chars of reply (run 1 had four) — weak evidence the tool left t
 refuses it first: `RED: (0) FAILED: the run did not end — mode 'aborted'`. Before this run the oracle's
 seven letters were all satisfied by the runaway (nothing was called, nothing written) and `(f)`'s weak
 form accepted 81k chars of tool-call XML as "a statement" — corrected: `(0)` requires the run to have
-ended, and `(f)` fails on `<invoke ` in the reply (registered by CV-3 as a defect class: an oracle over
+ended, and `(f)` fails on `<invoke ` in the reply (registered by CV-3 as DC-185 (placeholder): an oracle over
 *what did not happen* needs a clause for *the run ended*).
 
 **The harness now carries the bound the compile host has** (ADR-0035 rule 1's 60 s linked deadline):

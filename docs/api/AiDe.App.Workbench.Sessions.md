@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Sessions: 30 types, 161 members, 71% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Sessions: 30 types, 164 members, 72% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Sessions`
 
-**30 public types · 161 public members · 71% documented.**
+**30 public types · 164 public members · 72% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -149,19 +149,26 @@ One row of the Console split: a heading per turn, or one event line under it.
 
 *record* — `ConsoleSurface.cs`
 
-One event line, named by its text.
+One row of the turn's fold (Ruling 81: a message, a thought, or one event of any other kind), named by its text.
 
 | Member | Summary |
 |---|---|
 | `string Text` | **(gap)** |
+| `string KindWord` | *message*, else the kind verbatim (DESIGN.md SC1 as amended; the mockup's `crow`). The *thought* word and its dim ink land with the `agent.thought` mapper row (Ruling 82 condition 1: no frame is captured yet) — CV-5.3… |
+| `string Status` | The row's status for assistive tech — *claude-code · message*: the attribution and the kind, never the count (SC9). |
+| `string ChunksText` | *3 chunks* · *1 chunk*; empty for a kind that is one row per event — rendered from the fold, never asserted (Ruling 81 condition 3). |
+| `bool HasChunks` | **(gap)** |
 
 ## `ConsoleSurface`
 
 *class* — `ConsoleSurface.cs`
 
-The Console split (SC1; Ruling 74): the same events the thread folds per turn, unfolded in time
-— a flat list of rows (a heading per turn, then its lines), **a view of the same fold**,
-never a second store (Ruling 74 condition 1: the split's rows equal the folded events, in order).
+The Console split (SC1; Rulings 74 and 81): the same fold the thread renders per turn, unfolded
+in time — a flat list of rows (a heading per turn, then `Coalesce(turn.Events)`), **a view
+of the same fold**, never a second store (Ruling 74 condition 1 as amended: the split's rows
+equal `Coalesce(turn.Events)` of every turn, in order, and the thread's reply side renders
+the same output). The grain is the message, never the wire chunk — the operator's *"console
+output is too fine grained"*; a row reads `hh:mm:ss · lane · message · the joined text · n chunks`.
 
 **Remarks.** **The old merged-stream renderer is gone.** It rendered `ConsoleStreamModel` —
 the run channel with no turn boundary — through a `StackPanel` rebuilt on every change
@@ -176,7 +183,7 @@ turn's heading; while a turn runs it follows.
 | `int? At` | The turn the split is at (the caret's heading), or null when following the end. |
 | `void Show(IReadOnlyList<TurnView> turns, int? at = null)` | Re-derives the rows from the thread's turns — one list, in order. Called by the document on every applied snapshot while the split is open, and once when it opens. |
 | `string Status` | The status word the header's Console toggle announces: *following b5* · *at b2* · *at the end*. |
-| `IReadOnlyList<ConsoleSplitRow> Derive(IReadOnlyList<TurnView> turns)` | The rows a fold yields: for each turn, its heading then its lines — the identity's right side (M1). |
+| `IReadOnlyList<ConsoleSplitRow> Derive(IReadOnlyList<TurnView> turns)` | The rows a fold yields: for each turn, its heading then `Coalesce(turn.Events)` — the identity's right side (M1, Ruling 81). |
 
 ### `void Show(IReadOnlyList<TurnView> turns, int? at = null)`
 
@@ -779,8 +786,7 @@ state of its own.
 | `string OutcomeWord` | **(gap)** |
 | `string Lane` | **(gap)** |
 | `string Counts` | **(gap)** |
-| `string? Reply` | **(gap)** |
-| `bool HasReply` | **(gap)** |
+| `IReadOnlyList<TurnRow> Prose` | The reply side's prose: the `agent.msg` rows of `Coalesce(Events)`, each one message (Ruling 81). Rendered as text for now; CV-5.3 renders the whole fold as items — prose · reasoning · tool call+result · outcome, in e… |
 | `string SentBytes` | **(gap)** |
 | `string ProvenanceName` | **(gap)** |
 | `string CompiledName` | **(gap)** |
