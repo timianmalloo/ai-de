@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T17:55:38Z",
+  "generated": "2026-09-13T18:04:47Z",
   "audit": [
     {
       "actor": null,
@@ -14598,6 +14598,54 @@ window.AUDIT_DATA = {
         "verification_path": true,
         "verification_executed": true,
         "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M2DZ2PY1S62G3CWEJNYR8WCY",
+      "shortname": "x-3-shell-seams",
+      "datetime": "2026-09-13T18:04:41Z",
+      "session": "x-3",
+      "prompt": "X-3: the Shell-lane seam requests from CV-1/CV-2 (the shell's Announcer into the session document; session.cycleRegion / cycleRegionBack command rows; WebSurfaceHost.Retry(); WorkbenchDiagnostics one writer; BorderStrongBrush; the EmbeddedResource glob) and two status-bar defects (the doubled \"rev rev-1\" label; a pane-move refusal that never clears)",
+      "summary": "Landed six CV-1/CV-2 Shell-lane seam requests (shared Announcer into SessionDocumentSurface; session.cycleRegion/cycleRegionBack registry rows routed to CycleRegion; WebSurfaceHost.Retry() wired to the composer's editorerror Retry button; WorkbenchDiagnostics.Write made internal with ThreadDiagnostics calling it directly; BorderStrongBrush + border-strong page role, 14 roles; the Compilation/Resources EmbeddedResource glob) and two status-bar defects per Owner Rulings 85/86 (observed-HEAD or not-recorded revision attach instead of the rev-1 fixture; a bounded 10s self-clearing dwell on WorkbenchAnnouncer). Every item red-first with a named test. Proof Pack docs/proof/shell-seams-x3.md. Defect classes DC-179..181 registered. Full test suites green (2497 Core, 840 App); run-verify-gates all-clear.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Claude Code",
+      "actor": "claude-x-3",
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/Workbench/WorkbenchController.cs",
+        "src/AiDe.App/Workbench/WorkbenchAnnouncer.cs",
+        "src/AiDe.App/Workbench/WorkbenchDiagnostics.cs",
+        "src/AiDe.App/Workbench/WebSurfaceHost.cs",
+        "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs",
+        "src/AiDe.App/Workbench/Sessions/ThreadDiagnostics.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerPageTheme.cs",
+        "src/AiDe.App/App.xaml",
+        "src/AiDe.Core/AiDe.Core.csproj",
+        "src/AiDe.Core/Compilation/CompileContract.cs",
+        "src/AiDe.Core/Workbench/WorkbenchCommands.cs",
+        "docs/proof/shell-seams-x3.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Close the six CV-1/CV-2 Shell-lane seam requests and the two operator-reported status-bar defects (Rulings 85/86), red-first, without touching DESIGN.md or docs/mockups/**.",
+      "done_when": "All six seam items and both status-bar items show a named red test that failed before the fix and passes after; dotnet build Core+App+both test projects with -p:TreatWarningsAsErrors=true is clean; both full test suites pass; python tools/run-verify-gates.py is all-clear; docs/proof/shell-seams-x3.md is committed; the branch is pushed.",
+      "tier": "T1",
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-13T17:36:31Z",
+      "duration_seconds": 1690.0,
+      "git": {
+        "sha": "942844657f8d5a03578a9f84d20f263616c3e75e",
+        "short": "942844657",
+        "branch": "side/x3-shell-seams",
+        "pushed": null
       }
     }
   ],
