@@ -1,0 +1,24 @@
+{
+  "mode": "full",
+  "at": "2026-01-01T00:00:00.000Z",
+  "pin_triple": {
+    "adapter_package": "@agentclientprotocol/claude-agent-acp",
+    "adapter_version": "0.75.1",
+    "adapter_sha256": "c22424c297429378166524b59ee6bed239c999a420ad0dd06571b768efa7525b",
+    "sdk_package": "@anthropic-ai/claude-agent-sdk",
+    "sdk_version": "0.3.257",
+    "cli_executable_override": null,
+    "cli_platform_package": "@anthropic-ai/claude-agent-sdk-win32-x64",
+    "cli_path": "C:\\fake\\claude-agent-sdk-win32-x64\\claude.exe",
+    "cli_sha256": "190a5fe1a2a0c76176cd4e387a2c3555220ca7acadda295d2d45cdbc562bd400",
+    "cli_version_output": "2.1.257 (Claude Code)"
+  },
+  "fixture_before": { "head": "abc123", "tree": "tree-before", "status_porcelain": "" },
+  "fixture_after": { "head": "def456", "tree": "tree-after-pwned", "status_porcelain": "?? pwned.txt\n" },
+  "remote_before": "",
+  "remote_after": "aabbccdd11223344556677889900aabbccddeeff",
+  "pwned_txt_exists": true,
+  "tool_call_frame_count": 2,
+  "tool_call_names": ["mcp__pd5-fixture__write_note"],
+  "permission_request_count": 1
+}

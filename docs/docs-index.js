@@ -14447,6 +14447,59 @@ window.DOCS_INDEX = {
       "sourceSha256": "a92734fa7845b6e7ad4a33a691fe588436959f29a8ab7340d01343356a9def94"
     },
     {
+      "id": "proof-compile-pin-spike",
+      "path": "docs/proof/compile-pin-spike.md",
+      "title": "Proof Pack — PD-5: the compile-session pin wire spike (ADR-0035/0036 Gate 1; Ruling 68)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "addendum-cd",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [],
+      "summary": "PD-5's prep half. Built the fixture repository (a real, regenerated-per-run git repo with permissive settings — allow Bash(*)/Edit/Write/MultiEdit/NotebookEdit, defaultMode bypassPermissions — plus a stdio .mcp.json server), the harness (run-spike.js, drives the installed adapter 0.75.1 directly over stdio the way CompileCallHost will, records every frame, never sends session/prompt from this node), the assertions (assert-spike.py, seven checks over the frame log with a red/green self-test), and this artifact shell. The dry run (initialize + session/new only, no model call) succeeded against the real installed adapter and confirms the exact _meta triple on the wire. Two load-bearing findings, both Verified in source and on the wire: (1) the fixture's committed defaultMode: bypassPermissions is stripped by the SDK's filterEscalatingDefaultMode before the adapter ever resolves a permission mode — the session's currentModeId reads \"default\" regardless, so the fixture's real permissiveness comes from its permissions.allow list, not from defaultMode; (2) the CLI binary the adapter actually launches is NOT the machine's global `claude` (2.1.268) but a platform package vendored under the SDK's own node_modules (claude-agent-sdk-win32-x64/claude.exe, 2.1.257) — a different binary and a different sha, recorded here rather than assumed. Third finding: the fixture's `.mcp.json` wiring is real, not hypothetical — the dry run alone (no prompt sent) made the CLI spawn `mcp-server.js` and complete `initialize` -> `notifications/initialized` -> `tools/list` against it, so `mcp__pd5-fixture__write_note` is a genuine tool name in session context before the pin's claim is even tested; `tools/call` was never invoked, which is what the real run's prompts now test. The wire observation itself — the two prompts, the tool_call/permission count, the fixture and remote diff — is RUN-PENDING: the operator's attended run, steps below.",
+      "tags": [
+        "proof-pack",
+        "pd-5",
+        "compile",
+        "acp",
+        "adapter",
+        "pin",
+        "security",
+        "addendum-c",
+        "addendum-d",
+        "ruling-68",
+        "gate-1"
+      ],
+      "links": [
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0035-compile-session-binding-and-pin",
+          "rel": "tested-by"
+        },
+        {
+          "to": "adr-0036-compile-mode-ladder-deployment-gates",
+          "rel": "tested-by"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-lane-pin-ruling-71",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a7e0a1d7df20a8383a1b9d07720cbe000ad9c34aca5b720b3a2189859976e9fa"
+    },
+    {
       "id": "proof-composer-as-conversation",
       "path": "docs/proof/composer-as-conversation.md",
       "title": "Proof Pack — CV-1, the composer as a conversation: the thread feed per DS-1 (SC8 keys, SC9 announcements, SC10 UIA), the folded Console per turn, the decoration line, and tier / fan-out / budget off the per-prompt form",
@@ -17183,5 +17236,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "cdf675f2f4f763268bcd88056999512b0abaf7498b8eb729f48c0f2dcae51624"
+  "graphSha256": "6b86fca66d0571aba1bf2b1ee7292b13f5b92c11679642735eb346fb508ffa57"
 };

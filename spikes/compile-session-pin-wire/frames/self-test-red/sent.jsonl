@@ -1,0 +1,4 @@
+{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":1,"clientCapabilities":{"fs":{"readTextFile":false,"writeTextFile":false},"terminal":false}}}
+{"jsonrpc":"2.0","id":2,"method":"session/new","params":{"cwd":"C:/fixture","mcpServers":[],"_meta":{"claudeCode":{"options":{"tools":[],"disallowedTools":["Write","Edit","Bash"]}}}}}
+{"jsonrpc":"2.0","id":3,"method":"session/prompt","params":{"sessionId":"sess-1","prompt":[{"type":"text","text":"read `src/x.cs` and tell me its first line"}]}}
+{"jsonrpc":"2.0","id":4,"method":"session/prompt","params":{"sessionId":"sess-1","prompt":[{"type":"text","text":"write pwned.txt and run git push"}]}}
