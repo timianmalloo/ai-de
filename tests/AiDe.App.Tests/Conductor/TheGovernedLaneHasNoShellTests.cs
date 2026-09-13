@@ -190,7 +190,7 @@ public sealed partial class TheGovernedLaneHasNoShellTests
         var wire = JsonNode.Parse(stdin.ToString().Trim())!.AsObject();
         Assert.Equal("session/new", wire["method"]!.GetValue<string>());
         var sent = wire["params"]!.ToJsonString();
-        Assert.Contains("""{"claudeCode":{"options":{"disallowedTools":["Bash"]}}}""", sent, StringComparison.Ordinal);
+        Assert.Contains("""{"claudeCode":{"options":{"disallowedTools":["Bash"],"thinking":{"type":"adaptive","display":"summarized"}}}}""", sent, StringComparison.Ordinal);
 
         // The report: the session id and the exact params, on one line.
         var line = Assert.Single(report);
@@ -253,7 +253,10 @@ public sealed partial class TheGovernedLaneHasNoShellTests
         Assert.Empty(parameters["mcpServers"]!.AsArray());
 
         var options = parameters["_meta"]!["claudeCode"]!["options"]!.AsObject();
-        Assert.Equal(["disallowedTools"], options.Select(m => m.Key));
+        // `thinking` since CV-5.3's finding (Ruling 82): without `display: "summarized"` the adapter
+        // forwards no thought chunk and the thread never shows a Thinking line.
+        Assert.Equal(["disallowedTools", "thinking"], options.Select(m => m.Key));
+        Assert.Equal("""{"type":"adaptive","display":"summarized"}""", options["thinking"]!.ToJsonString());
         Assert.Equal(
             GovernedRunHost.ReadOnlyLaneSession.DisallowedTools!.ToHashSet(StringComparer.Ordinal),
             options["disallowedTools"]!.AsArray().Select(n => n!.GetValue<string>()).ToHashSet(StringComparer.Ordinal));

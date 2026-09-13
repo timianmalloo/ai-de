@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T21:03:07Z",
+  "generated": "2026-09-13T21:09:09Z",
   "audit": [
     {
       "actor": null,
@@ -15034,6 +15034,31 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Land CV-5.3 on main with the floors recounted and a Release build",
       "done_when": "main pushed green through run-verify-gates; Release built; the thinking.display requirement queued",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M2E9MEP7HE0597E5C0XD581J",
+      "shortname": "x-5-thinking-display",
+      "datetime": "2026-09-13T21:09:08Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "keep going (CV-5.3's routed finding: the lane must ask for summarized thinking)",
+      "summary": "X-5: LaneSessionOptions.ThinkingDisplay (the SDK's ThinkingAdaptive display, sdk.d.ts:8448-8451; the adapter drops empty-text thoughts, acp-agent.js:7742) - the governed and read-only lanes ask for 'summarized' so Ruling 82's Thinking line can appear; the compile session does not ask (CE-0023 unchanged). Red-first: four new tests (the shape, the absence, the compile's silence, the two values) plus the three wire-shape controls that went red on the fifth member and were re-pointed with the finding named.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/the-conversation.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Make the thread's Thinking line reachable from a lane",
+      "done_when": "the option on the record and on both product lanes, the wire controls green with the member admitted by name",
+      "tier": "T0",
       "signals": {
         "verification_path": true,
         "verification_executed": true,

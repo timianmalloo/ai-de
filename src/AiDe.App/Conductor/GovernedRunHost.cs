@@ -62,7 +62,7 @@ public static class GovernedRunHost
     /// tools, and with no pin the lane holds <c>Bash</c> under whatever the user's, the repository's
     /// and the local settings allow. The pin is one value on one site, tested on the outgoing frame.
     /// </summary>
-    internal static readonly LaneSessionOptions GovernedLaneSession = new(DisallowedTools: ["Bash"]);
+    internal static readonly LaneSessionOptions GovernedLaneSession = new(DisallowedTools: ["Bash"]) { ThinkingDisplay = LaneSessionOptions.ThinkingSummarized };
 
     /// <summary>
     /// What a read-only turn's model may hold: everything the adapter's preset allows <b>except
@@ -95,7 +95,7 @@ public static class GovernedRunHost
     /// on the wire, a widening of Ruling 71's two-member record that is the conductor's to rule on
     /// (CV-3's settings belt; P-D5's check: no <c>mcp__</c> name in the observed tool list).</para>
     /// </remarks>
-    internal static readonly LaneSessionOptions ReadOnlyLaneSession = new(DisallowedTools: LaneSessionOptions.DeniedToolNames);
+    internal static readonly LaneSessionOptions ReadOnlyLaneSession = new(DisallowedTools: LaneSessionOptions.DeniedToolNames) { ThinkingDisplay = LaneSessionOptions.ThinkingSummarized };
 
     /// <summary>
     /// Stage-0 triage for a read-only turn: no plan, no council, no seam to steward. Not
