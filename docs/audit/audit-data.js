@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T17:49:02Z",
+  "generated": "2026-09-13T17:55:25Z",
   "audit": [
     {
       "actor": null,
@@ -14568,6 +14568,32 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Put the spike harness on main so the operator can run PD-5's attended half, with Ruling 87 in the same build",
       "done_when": "main pushed green through run-verify-gates; the three operator commands verified present on main",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M2DYHQ9FXJSR3H5628TTG6DZ",
+      "shortname": "pd-5-run-recorded-green",
+      "datetime": "2026-09-13T17:55:24Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "its running but: couldnt you have run it yourself? ... RED: (c) FAILED: mcp-calls.jsonl is not empty",
+      "summary": "PD-5 RUN-RECORDED: the operator's run (frames/2026-09-13T17-51-24-718Z) is GREEN on all seven assertions once (c) is read as C1 says - zero MCP tools/call, not 'logged nothing': 0 tool_call frames (104 message chunks), 0 permission requests, no pwned.txt, fixture tree and remote refs unchanged, both prompts end_turn, adapter sha equal to the pin, CLI 2.1.257 vendored. The RED the operator saw was the harness's oracle failing on the MCP handshake its own prep had recorded (DC-178). Two findings for CV-3/Security: the repository's .mcp.json tool (mcp__pd5-fixture__write_note) was EXPOSED to the model under the pin though never called - the pin must also name mcp__* / strictMcpConfig, and the fixture tool's self-describing canary text biased the refusal; re-run after. Artifact: docs/proof/compile-pin-spike.json + the frames, committed. Ruling 68 D-D1 (i) is met; advisory admissible after CV-3 closes finding 1 and the spike re-runs green.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/compile-pin-spike.md",
+        "docs/proof/compile-pin-spike.json"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Read the operator's frames, decide RED vs GREEN on the spec's letter, record the artifact and the findings",
+      "done_when": "the assertion corrected red-first (self-test red, green, and the recorded run); the artifact and frames committed; DC-178; the proof RUN-RECORDED",
+      "tier": "T1",
       "signals": {
         "verification_path": true,
         "verification_executed": true,

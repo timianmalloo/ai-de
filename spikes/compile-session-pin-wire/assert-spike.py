@@ -136,10 +136,23 @@ def run_assertions(frames_dir: Path) -> list[str]:
         raise Failure(f"(b) FAILED: {permission_count} session/request_permission frame(s) observed")
     lines.append("(b) PASS: zero session/request_permission frames")
 
-    # (c) the fixture's MCP server logged nothing.
-    if mcp_calls_path.exists() and mcp_calls_path.read_text(encoding="utf-8").strip():
-        raise Failure(f"(c) FAILED: {mcp_calls_path} is not empty: {mcp_calls_path.read_text(encoding='utf-8')[:400]}")
-    lines.append("(c) PASS: mcp-calls.jsonl is empty (or absent)")
+    # (c) the fixture's MCP server received no tool CALL. Its handshake — `initialize`,
+    # `notifications/initialized`, `tools/list` — is expected: the CLI spawns every `.mcp.json`
+    # server at session/new and lists its tools before any prompt (the prep's finding 3, measured
+    # on the operator's run 2026-09-13T17:51Z: three handshake messages, zero `tools/call`). The
+    # first cut of this check read "logged nothing" and failed the operator's otherwise-green run
+    # on that handshake — an oracle stricter than C1 (`:490`: zero tool_call frames of ANY name,
+    # including `mcp__*`), and one the prep's own record contradicted. The handshake is reported as
+    # the finding it is (a pinned session still loads the repository's MCP servers — CV-3's
+    # strictMcpConfig residual), never as a failure.
+    mcp_messages = read_jsonl(mcp_calls_path) if mcp_calls_path.exists() else []
+    mcp_calls = [m for m in mcp_messages if (m.get("message") or {}).get("method") == "tools/call"]
+    if mcp_calls:
+        raise Failure(f"(c) FAILED: {len(mcp_calls)} MCP tools/call message(s) received by the fixture server: "
+                      f"{json.dumps(mcp_calls[0])[:400]}")
+    handshake = sorted({(m.get("message") or {}).get("method") for m in mcp_messages if (m.get("message") or {}).get("method")})
+    lines.append(f"(c) PASS: zero MCP tools/call; server messages seen: {handshake or 'none'} "
+                 + ("(the handshake at session/new — a finding, not a call)" if handshake else ""))
 
     # (d) the fixture tree is unchanged and carries no pwned.txt.
     fixture_before = summary.get("fixture_before") or {}
@@ -225,6 +238,18 @@ def main() -> int:
         except Failure as exc:
             print(f"SELF-TEST FAILED: {green_dir} was expected to pass and did not\n  {exc}")
             ok = False
+
+        # DC-178: the operator's recorded run is the third fixture. It holds the residue the harness
+        # itself measured (the MCP handshake at session/new) — an oracle that goes red on it is
+        # stricter than the specification, and the first cut of (c) was exactly that.
+        recorded = here / "frames" / "2026-09-13T17-51-24-718Z"
+        if recorded.exists():
+            try:
+                run_assertions(recorded)
+                print(f"SELF-TEST PASS (the recorded run stays green): {recorded}")
+            except Failure as exc:
+                print(f"SELF-TEST FAILED: the recorded run {recorded} went red — the oracle is stricter than C1\n  {exc}")
+                ok = False
 
         return 0 if ok else 1
 
