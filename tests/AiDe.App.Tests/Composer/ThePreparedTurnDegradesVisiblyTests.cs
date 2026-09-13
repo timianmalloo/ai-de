@@ -271,6 +271,34 @@ public sealed class ThePreparedTurnDegradesVisiblyTests
         Assert.Equal(new GoalBlock("Rename the helper.", "It compiles.", "Nothing else changes.", "T1", 2, RunBudget.SubscriptionBounded), request!.Goal);
     }
 
+    /// <summary>
+    /// Ruling 75 under a derived shape (the AI Systems Engineer's finding): the model proposed goal
+    /// and done_when only; kept under advisory (or confirmed under agentic) the projected block has a
+    /// blank Not in scope — refused at Send by the one sentence, SendCount 0, never sent to be refused
+    /// downstream of the human gate.
+    /// </summary>
+    [Theory]
+    [InlineData(CompileModes.AgenticAdvisory, true)]
+    [InlineData(CompileModes.Agentic, false)]
+    public async Task ADerivedBlockWithNoNotInScopeIsRefusedAtSendByTheOneSentence(string mode, bool keep)
+    {
+        const string twoLines = """{"contract":"compile-output/1","decorations":[{"name":"goal","value":"Rename the helper.","confidence":0.8,"grounded_in":[{"input":"source_text","span":[0,6]}]},{"name":"done_when","value":"It compiles.","confidence":0.7,"grounded_in":[{"input":"source_text","span":[0,6]}]}]}""";
+        var gate = Gate(mode, Returning(Answered(twoLines)));
+        var draft = FreeForm("Rename the helper.\n");
+
+        await gate.PrepareAsync(Context(), draft, null);
+        if (keep)
+        {
+            Assert.True(gate.KeepLine(GoalBlockFields.GoalKey));
+            Assert.True(gate.KeepLine(GoalBlockFields.DoneWhenKey));
+        }
+
+        Assert.Null(gate.Send(Context(), draft, null, out var refusal));
+        Assert.Equal(ComposerCompiler.GoalBlockNeedsNotInScope, refusal!.Message);
+        Assert.Equal(GoalBlockFields.NotInScopeKey, Assert.Single(refusal.Errors).Field);
+        Assert.Equal(0, gate.SendCount);
+    }
+
     // ── stale: other bytes at Send are refused, never sent with a lease from other text ──
 
     [Fact]

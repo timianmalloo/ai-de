@@ -65,6 +65,12 @@ public static class EnvelopeStoreErrorCodes
 
     /// <summary>A <c>compile_mode</c> word outside the three the ladder names.</summary>
     public const string CompileModeUnknown = "CE-0021";
+
+    /// <summary>Gate 1: the artifact records a run that did not end (<c>mode</c> not <c>full</c>, or a prompt with no result) — an aborted or timed-out spike admits nothing.</summary>
+    public const string PinRunNotEnded = "CE-0022";
+
+    /// <summary>Gate 1: the artifact's <c>sent_meta_triple</c> is not the pin this build sends — a pin change re-runs PD-5 by construction.</summary>
+    public const string PinIdentityMismatch = "CE-0023";
 }
 
 /// <summary>A refusal by the envelope store, with its stable code (<see cref="EnvelopeStoreErrorCodes"/>).</summary>

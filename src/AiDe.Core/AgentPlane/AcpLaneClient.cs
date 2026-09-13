@@ -85,7 +85,22 @@ public sealed record AcpClientCapabilities(bool ReadTextFile, bool WriteTextFile
 /// Tool names removed from the model's context even where the settings would allow them;
 /// <c>null</c> sends none. The governed lane sends <c>["Bash"]</c>.
 /// </param>
-public sealed record LaneSessionOptions(IReadOnlyList<string>? Tools = null, IReadOnlyList<string>? DisallowedTools = null)
+/// <param name="StrictMcpConfig">
+/// <c>strictMcpConfig: true</c> — the SDK uses only the servers the frame's <c>mcpServers</c> names
+/// and ignores the repository's <c>.mcp.json</c>, user settings and plugins (<c>sdk.d.ts:2110</c>,
+/// forwarded as <c>--strict-mcp-config</c>). <b>Admitted by measurement</b> (ADR-0035 rule 2):
+/// PD-5's second run showed the CLI spawning the fixture repository's <c>.mcp.json</c> server as
+/// the operator at <c>session/new</c>, before any prompt, with <c>tools: []</c> and <c>mcp__*</c>
+/// on the frame — <c>mcp__*</c> denies at the name; this closes the spawn (the Security &amp;
+/// Identity Architect's blocker at CV-3's gate). <c>null</c> sends nothing; a lane keeps its servers.
+/// </param>
+/// <param name="Model">
+/// The model the session runs on, host-authored from the binding (<c>providers.json</c>): without
+/// it the CLI's own resolution — user settings, the repository's <c>settings.json</c>,
+/// <c>ANTHROPIC_MODEL</c> — picks what bills, and a third of <c>AuthorizeBinding</c>'s triple is a
+/// label. <c>null</c> sends nothing (today's lanes).
+/// </param>
+public sealed record LaneSessionOptions(IReadOnlyList<string>? Tools = null, IReadOnlyList<string>? DisallowedTools = null, bool? StrictMcpConfig = null, string? Model = null)
 {
     /// <summary>
     /// The CLI's glob for every MCP server's tools — <c>mcp__*</c>. Read in the CLI binary's own
@@ -135,7 +150,14 @@ public sealed record LaneSessionOptions(IReadOnlyList<string>? Tools = null, IRe
     /// and <c>mcpServers: []</c> leave a repository <c>.mcp.json</c> server's tools reachable — the
     /// CLI loads the file at <c>session/new</c> and offers its tools to the model (finding 1).
     /// </summary>
-    public static readonly LaneSessionOptions Compile = new(Tools: [], DisallowedTools: [.. DeniedToolNames, EveryMcpServerTool]);
+    public static readonly LaneSessionOptions Compile = new(Tools: [], DisallowedTools: [.. DeniedToolNames, EveryMcpServerTool], StrictMcpConfig: true);
+
+    /// <summary>The compile pin bound to the session's model — <see cref="Compile"/> with <c>model</c> from the binding, never from a page or the model's own text.</summary>
+    public static LaneSessionOptions CompileOn(string model)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(model);
+        return Compile with { Model = model };
+    }
 
     /// <summary>
     /// The <c>_meta</c> object for <c>session/new</c>, or <c>null</c> when there is nothing to say —
@@ -144,7 +166,7 @@ public sealed record LaneSessionOptions(IReadOnlyList<string>? Tools = null, IRe
     /// <exception cref="ArgumentException">A blank tool name: it looks like a pin and pins nothing.</exception>
     internal JsonObject? ToMeta()
     {
-        if (Tools is null && DisallowedTools is null)
+        if (Tools is null && DisallowedTools is null && StrictMcpConfig is null && Model is null)
         {
             return null;
         }
@@ -159,6 +181,17 @@ public sealed record LaneSessionOptions(IReadOnlyList<string>? Tools = null, IRe
         if (DisallowedTools is not null)
         {
             options["disallowedTools"] = Names(DisallowedTools);
+        }
+
+        if (StrictMcpConfig is { } strict)
+        {
+            options["strictMcpConfig"] = strict;
+        }
+
+        if (Model is not null)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(Model);
+            options["model"] = Model;
         }
 
         return new JsonObject { ["claudeCode"] = new JsonObject { ["options"] = options } };

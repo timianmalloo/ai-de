@@ -31,7 +31,7 @@ public sealed class TheCompileCallIsNotARunRootTests : IDisposable
     // ------------------------------------------------------------------ the censuses (ADR-0035 rule 3)
 
     /// <summary>
-    /// The eleven names a compile host must never reference, enumerated <b>once</b>, run over the
+    /// The twelve names a compile host must never reference, enumerated <b>once</b>, run over the
     /// whole file set <c>src/AiDe.App/Conductor/Compile*.cs</c>, the set asserted non-empty before
     /// counting: a compile host that could authorise with a placeholder block or open a lane's tool
     /// set is an ungoverned lane in the primary checkout wearing the compile's name.
@@ -147,10 +147,14 @@ public sealed class TheCompileCallIsNotARunRootTests : IDisposable
         Assert.Equal(_pin.RepositoryRoot, parameters["cwd"]!.GetValue<string>());
         Assert.Empty(parameters["mcpServers"]!.AsArray());
         var options = parameters["_meta"]!["claudeCode"]!["options"]!.AsObject();
-        Assert.Equal(["tools", "disallowedTools"], options.Select(m => m.Key));
+        Assert.Equal(["tools", "disallowedTools", "strictMcpConfig", "model"], options.Select(m => m.Key));
         Assert.Empty(options["tools"]!.AsArray());
         var disallowed = options["disallowedTools"]!.AsArray().Select(n => n!.GetValue<string>()).ToHashSet(StringComparer.Ordinal);
         Assert.Equal(LaneSessionOptions.DeniedToolNames.Append("mcp__*").ToHashSet(StringComparer.Ordinal), disallowed);
+        Assert.True(options["strictMcpConfig"]!.GetValue<bool>());
+        // The binding's model, host-authored — never the CLI's own resolution (a repository settings.json could pick what bills).
+        Assert.Equal("claude-sonnet-5", options["model"]!.GetValue<string>());
+        Assert.Equal("4096", CompileCallHost.CompileChildEnvironment[AcpEngineProcess.MaxOutputTokensVariable]);
 
         Assert.Equal(parameters.ToJsonString(), result.SessionNewParameters?.ToJsonString());
         Assert.Contains(result.Diagnostics, line => line.Contains("session/new params", StringComparison.Ordinal) && line.Contains("mcp__*", StringComparison.Ordinal));
@@ -237,8 +241,10 @@ public sealed class TheCompileCallIsNotARunRootTests : IDisposable
             (_, _, _) => { started = true; return ScriptedEngine.Answering(); },
             CancellationToken.None);
 
-        // The catalog refuses direct-api before the terms can: `unavailable`, and nothing started.
+        // The catalog refuses direct-api before the terms can: `unavailable` with the catalog's own
+        // code, and nothing started. AP-0009 itself is proven through AuthorizeBinding in Core.
         Assert.Equal(CompileCallOutcomes.Unavailable, result.Outcome);
+        Assert.StartsWith(AgentPlaneErrorCodes.UnknownEngine, result.Reason, StringComparison.Ordinal);
         Assert.False(started);
     }
 
@@ -276,24 +282,27 @@ public sealed class TheCompileCallIsNotARunRootTests : IDisposable
 
     /// <summary>
     /// One linked deadline, not three: a peer silent at <c>initialize</c> degrades at the injected
-    /// bound with <c>reason</c> naming <c>initialize</c>, the engine disposed, no <c>session/new</c>
-    /// — and it returns in well under the peer's own 60 s request timeout.
+    /// bound with <c>reason</c> naming <c>initialize</c>, the engine disposed, no <c>session/new</c>.
     /// </summary>
+    /// <remarks>
+    /// <b>The outcome is the oracle, not a stopwatch</b> (DC-107: a measured duration against a
+    /// constant depends on the machine). Had the peer's own 60 s request timeout fired instead of the
+    /// linked bound, the host would read <c>unavailable</c> with <c>AP-0015</c> — a different outcome
+    /// — which is exactly what the mutation "no <c>CancelAfter</c>" produced (after a minute).
+    /// </remarks>
     [Fact]
     public async Task APeerSilentAtInitializeTimesOutAtTheLinkedBoundNamingTheStep()
     {
         var engine = ScriptedEngine.Silent();
-        var clock = Stopwatch.StartNew();
 
         var result = await CompileCallHost.CompileAsync(_pin.Request(boundMs: 150), Using(engine), CancellationToken.None);
 
-        clock.Stop();
         Assert.Equal(CompileCallOutcomes.TimedOut, result.Outcome);
         Assert.Equal("compile bound 150 ms exceeded at initialize", result.Reason);
         Assert.True(engine.Disposed);
         Assert.Null(result.SessionNewParameters);
         Assert.False(result.LateAnswer);
-        Assert.True(clock.ElapsedMilliseconds < 10_000, $"took {clock.ElapsedMilliseconds} ms");
+        Assert.DoesNotContain(result.Diagnostics, line => line.Contains(AgentPlaneErrorCodes.EngineRequestTimedOut, StringComparison.Ordinal));
     }
 
     /// <summary>
@@ -306,14 +315,34 @@ public sealed class TheCompileCallIsNotARunRootTests : IDisposable
     {
         var engine = ScriptedEngine.Answering(answerPromptOnDispose: true);
 
-        var result = await CompileCallHost.CompileAsync(_pin.Request(boundMs: 300), Using(engine), CancellationToken.None);
+        var result = await CompileCallHost.CompileAsync(_pin.Request(boundMs: 2_000), Using(engine), CancellationToken.None);
 
         Assert.Equal(CompileCallOutcomes.TimedOut, result.Outcome);
-        Assert.Equal("compile bound 300 ms exceeded at prompt", result.Reason);
+        Assert.Equal("compile bound 2000 ms exceeded at prompt", result.Reason);
         Assert.Null(result.RawText);
         Assert.True(engine.Disposed);
         Assert.True(result.LateAnswer, string.Join(" / ", result.Diagnostics));
         Assert.NotNull(result.SessionNewParameters);
+    }
+
+    /// <summary>
+    /// PD-5 run 2's shape, deterministically: a reply that outruns <see cref="CompileCallHost.OutputCharBound"/>
+    /// is cut — <c>malformed</c> naming the bound (a loop, not a schema failure), the engine disposed,
+    /// no raw text returned — long before the wall-clock deadline.
+    /// </summary>
+    [Fact]
+    public async Task AReplyThatOutrunsTheOutputBoundIsCutAsMalformedNamingTheBound()
+    {
+        var chunk = new string('x', 4_096);
+        var frames = Enumerable.Range(0, 6).Select(_ => "{\"jsonrpc\":\"2.0\",\"method\":\"session/update\",\"params\":{\"sessionId\":\"s-c\",\"update\":{\"sessionUpdate\":\"agent_message_chunk\",\"content\":{\"type\":\"text\",\"text\":\"" + chunk + "\"}}}}").ToList();
+        var engine = ScriptedEngine.Answering(beforeAnswer: frames, answerPrompt: false);
+
+        var result = await CompileCallHost.CompileAsync(_pin.Request(boundMs: 60_000), Using(engine), CancellationToken.None);
+
+        Assert.Equal(CallOutcomes.Malformed, result.Outcome);
+        Assert.StartsWith("output bound exceeded at", result.Reason, StringComparison.Ordinal);
+        Assert.Null(result.RawText);
+        Assert.True(engine.Disposed);
     }
 
     /// <summary>The caller's cancellation (an edit during <c>preparing</c>) is <c>cancelled</c>, not <c>timed_out</c>, and the engine is disposed.</summary>
@@ -337,8 +366,12 @@ public sealed class TheCompileCallIsNotARunRootTests : IDisposable
     public async Task BothHostsAuthorizeTheBindingBeforeTheyOpenASession()
     {
         var host = File.ReadAllText(Path.Combine(RepoRoot().FullName, "src", "AiDe.App", "Conductor", "GovernedRunHost.cs"));
-        Assert.True(host.IndexOf("SpawnContract.Authorize(", StringComparison.Ordinal) < host.IndexOf("OpenReadOnlySessionAsync(client", StringComparison.Ordinal));
-        Assert.True(host.IndexOf("SpawnContract.Authorize(", StringComparison.Ordinal) < host.IndexOf("OpenSessionAsync(client, worktree", StringComparison.Ordinal));
+        var authorize = host.IndexOf("SpawnContract.Authorize(", StringComparison.Ordinal);
+        var readOnly = host.IndexOf("OpenReadOnlySessionAsync(client", StringComparison.Ordinal);
+        var governed = host.IndexOf("OpenSessionAsync(client, worktree", StringComparison.Ordinal);
+        Assert.True(authorize >= 0 && readOnly >= 0 && governed >= 0, "a token is absent — IndexOf's -1 would make the order vacuous");
+        Assert.True(authorize < readOnly);
+        Assert.True(authorize < governed);
 
         var engine = ScriptedEngine.Answering(authKind: "apiKey");
         await CompileCallHost.CompileAsync(_pin.Request(boundMs: 10_000), Using(engine), CancellationToken.None);
@@ -470,7 +503,8 @@ public sealed class TheCompileCallIsNotARunRootTests : IDisposable
         public static ScriptedEngine Silent() => new("account", [], CorpusPromptResult, false, false, silent: true);
 
         private const string CorpusPromptResult =
-            """{"stopReason":"end_turn","usage":{"inputTokens":2,"outputTokens":469,"cachedReadTokens":4870,"cachedWriteTokens":0,"totalTokens":5341},"_meta":{"quota":{"model_usage":[{"model":"claude-haiku-4-5-20251001","token_count":{"outputTokens":15}},{"model":"claude-opus-5[1m]","token_count":{"outputTokens":469}}]}}}""";
+            // The answering model FIRST (opus 469, then haiku 15): the max-output rule is exercised, not "last entry".
+            """{"stopReason":"end_turn","usage":{"inputTokens":2,"outputTokens":469,"cachedReadTokens":4870,"cachedWriteTokens":0,"totalTokens":5341},"_meta":{"quota":{"model_usage":[{"model":"claude-opus-5[1m]","token_count":{"outputTokens":469}},{"model":"claude-haiku-4-5-20251001","token_count":{"outputTokens":15}}]}}}""";
 
         public List<JsonObject> Sent => _stdin.Frames;
 

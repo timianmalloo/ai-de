@@ -254,8 +254,7 @@ public sealed class TheRunBindingComesFromTheProviderFileTests
             if (path.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}", StringComparison.Ordinal)
                 || path.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}", StringComparison.Ordinal)
                 || path.EndsWith("SessionComposerBinder.cs", StringComparison.Ordinal)
-                || path.EndsWith("GovernedRunHost.cs", StringComparison.Ordinal)
-                || path.EndsWith("CompileCallHost.cs", StringComparison.Ordinal))
+                || path.EndsWith("GovernedRunHost.cs", StringComparison.Ordinal))
             {
                 continue;
             }
@@ -272,7 +271,7 @@ public sealed class TheRunBindingComesFromTheProviderFileTests
             Assert.DoesNotContain("composer.Configure(", text, StringComparison.Ordinal);
             Assert.DoesNotContain("Composer.Configure(", text, StringComparison.Ordinal);
 
-            if (!path.EndsWith("MainWindow.xaml.cs", StringComparison.Ordinal))
+            if (!path.EndsWith("MainWindow.xaml.cs", StringComparison.Ordinal) && !path.EndsWith("CompileCallHost.cs", StringComparison.Ordinal))
             {
                 Assert.DoesNotContain("new ProviderRegistry(", text, StringComparison.Ordinal);
                 Assert.DoesNotContain(".ProviderRegistry(", text, StringComparison.Ordinal);

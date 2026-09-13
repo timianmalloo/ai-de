@@ -101,7 +101,8 @@ public sealed class AcpEngineProcess : IDisposable
         EngineLaunch launch,
         string workingDirectory,
         Action<string>? diagnostics = null,
-        Func<IReadOnlyList<string>>? inspectEnvironment = null)
+        Func<IReadOnlyList<string>>? inspectEnvironment = null,
+        IReadOnlyDictionary<string, string>? environment = null)
     {
         ArgumentNullException.ThrowIfNull(launch);
         ArgumentException.ThrowIfNullOrWhiteSpace(workingDirectory);
@@ -113,7 +114,7 @@ public sealed class AcpEngineProcess : IDisposable
             report("environment: " + finding);
         }
 
-        var info = StartInfoFor(launch, workingDirectory);
+        var info = StartInfoFor(launch, workingDirectory, environment, report);
 
         // Created BEFORE the child, so the only gap is between Process.Start returning and the
         // assign below. That gap is accepted and UNMEASURED, and it is the same one
@@ -178,10 +179,33 @@ public sealed class AcpEngineProcess : IDisposable
     public const string ClaudeCodeExecutableVariable = "CLAUDE_CODE_EXECUTABLE";
 
     /// <summary>
+    /// Every environment variable that would swap or inject code upstream of the pin's enforcement
+    /// point — the class, not the instance (the Security &amp; Identity Architect's finding at CV-3's
+    /// gate): <c>CLAUDE_CODE_EXECUTABLE</c> swaps the CLI binary; <c>NODE_OPTIONS</c>
+    /// (<c>--require</c>) and <c>NODE_PATH</c> load unpinned code into the <c>node</c> adapter
+    /// process before it spawns the CLI, where the recorded <c>session/new</c> would still show the
+    /// pin. Removed from the child, one list, one test per name.
+    /// </summary>
+    public static readonly IReadOnlyList<string> StrippedEnvironmentVariables = [ClaudeCodeExecutableVariable, "NODE_OPTIONS", "NODE_PATH"];
+
+    /// <summary>
+    /// The CLI's own output-token cap per turn — read by the CLI from its environment
+    /// (claude.exe 2.1.257's <c>max_output_tokens</c> path). The compile child carries it at
+    /// ADR-0035's cost-model bound so a runaway (PD-5 run 2: fake tool XML in a loop, ~20k tokens
+    /// in six minutes) stops at the CLI, with the linked deadline as the backstop. <b>Inferred</b>
+    /// until run 3 measures the stop.
+    /// </summary>
+    public const string MaxOutputTokensVariable = "CLAUDE_CODE_MAX_OUTPUT_TOKENS";
+
+    /// <summary>
     /// The start info for the engine: the streams, the arguments, and the environment the child
     /// inherits. Factored so what the child is given can be asserted without starting one.
     /// </summary>
-    internal static ProcessStartInfo StartInfoFor(EngineLaunch launch, string workingDirectory)
+    /// <param name="launch">What to run.</param>
+    /// <param name="workingDirectory">Where.</param>
+    /// <param name="environment">Variables the host sets on the child (a compile's output cap); never one of the stripped names.</param>
+    /// <param name="report">Where a removed variable is named — "removed, not refused" stands; unreported does not.</param>
+    internal static ProcessStartInfo StartInfoFor(EngineLaunch launch, string workingDirectory, IReadOnlyDictionary<string, string>? environment = null, Action<string>? report = null)
     {
         ArgumentNullException.ThrowIfNull(launch);
 
@@ -209,12 +233,29 @@ public sealed class AcpEngineProcess : IDisposable
             info.ArgumentList.Add(argument);
         }
 
-        // ADR-0035 rule 2: the pin is enforced by the CLI binary the SDK vendors, and this
-        // variable would make the adapter launch another one (`pathToClaudeCodeExecutable:
-        // process.env.CLAUDE_CODE_EXECUTABLE ?? claudeCliPath()`). The child never inherits it —
-        // for a compile and for every lane, since both rely on the same CLI-enforced pin. Removed,
-        // not refused: the operator's shell is theirs; the engine's child is ours.
-        info.Environment.Remove(ClaudeCodeExecutableVariable);
+        // ADR-0035 rule 2: the pin is enforced by the CLI binary the SDK vendors, and these
+        // variables would make the adapter launch another one (`pathToClaudeCodeExecutable:
+        // process.env.CLAUDE_CODE_EXECUTABLE ?? claudeCliPath()`) or load unpinned code into the
+        // adapter before it does. The child never inherits them — for a compile and for every lane,
+        // since both rely on the same CLI-enforced pin. Removed and REPORTED, not refused: the
+        // operator's shell is theirs; the engine's child is ours; the receipt says they disagreed.
+        foreach (var name in StrippedEnvironmentVariables)
+        {
+            if (info.Environment.Remove(name))
+            {
+                report?.Invoke($"env: {name} was set and removed from the engine's child (the pin is the CLI the SDK vendors)");
+            }
+        }
+
+        foreach (var (name, value) in environment ?? new Dictionary<string, string>())
+        {
+            if (StrippedEnvironmentVariables.Contains(name, StringComparer.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException($"'{name}' is a stripped variable and cannot be set on the engine's child", nameof(environment));
+            }
+
+            info.Environment[name] = value;
+        }
 
         return info;
     }

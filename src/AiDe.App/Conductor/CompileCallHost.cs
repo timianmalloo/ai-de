@@ -135,6 +135,22 @@ public static class CompileCallHost
     /// <summary>How long the peer loop may take to end after the engine is disposed — a reaped child closes its stdout at once.</summary>
     private static readonly TimeSpan PumpDrainGrace = TimeSpan.FromSeconds(5);
 
+    /// <summary>
+    /// The output-token cap the compile child carries (ADR-0035's cost model: output ≤ 4k). The
+    /// CLI reads it from its environment; whether it stops with a named <c>stopReason</c> is
+    /// <b>Inferred until PD-5's run 3 measures it</b>; the linked deadline and
+    /// <see cref="OutputCharBound"/> are the deterministic backstops.
+    /// </summary>
+    public const int MaxOutputTokens = 4096;
+
+    /// <summary>
+    /// The drained reply's byte bound — deterministic, in the host, independent of the CLI:
+    /// a reply past it is cancelled and reads <c>malformed</c> with the reason naming the bound, so
+    /// the eval's <c>degraded_by_reason</c> separates a loop from a schema failure (the AI Systems
+    /// Engineer's condition). 16k chars ≈ 4k tokens of JSON.
+    /// </summary>
+    public const int OutputCharBound = 16_384;
+
     /// <summary>Runs one compile call against the real engine.</summary>
     public static Task<CompileResult> CompileAsync(CompileRequest request, CancellationToken cancellationToken = default)
         => CompileAsync(request, StartEngine, cancellationToken);
@@ -279,14 +295,27 @@ public static class CompileCallHost
 
                 Report($"binding: {identity.Binding.EngineId} {identity.Binding.Model} on {identity.Binding.Account.Label} ({identity.ObservedAuth.Kind})");
 
-                // THE PIN ON THE WIRE — the named static, never an ad-hoc list (ADR-0035 rule 2).
-                var session = await client.NewSessionAsync(request.RepositoryRoot, LaneSessionOptions.Compile, bound.Token).ConfigureAwait(false);
+                // THE PIN ON THE WIRE — the named static bound to the session's model, never an ad-hoc
+                // list (ADR-0035 rule 2): tools: [], the denied names + mcp__*, strictMcpConfig, model.
+                var pin = LaneSessionOptions.CompileOn(identity.Binding.Model);
+                var session = await client.NewSessionAsync(request.RepositoryRoot, pin, bound.Token).ConfigureAwait(false);
                 var sent = client.SessionNewParameters;
                 Report($"acp session {session} opened with session/new params {sent?.ToJsonString() ?? Envelope.NotRecorded}");
 
                 var promptClock = Stopwatch.StartNew();
                 prompt = client.PromptAsync(session, request.Prompt, bound.Token);
                 var drained = await DrainAsync(peer.Events, prompt, bound.Token).ConfigureAwait(false);
+
+                if (drained.OverBound)
+                {
+                    // THE REPLY OUTRAN THE BOUND: PD-5 run 2's shape. Cancel the call — the engine is
+                    // disposed in the finally — and read `malformed` naming the bound, not a schema failure.
+                    Report($"reply bound: {OutputCharBound} chars exceeded ({drained.Text.Length} drained); the call is cut");
+                    bound.Cancel();
+                    ended = Result(CallOutcomes.Malformed, $"output bound exceeded at {drained.Text.Length} chars", pid, pinVerifyMs: pinVerifyMs,
+                        toolCalls: drained.ToolCalls, observedAuthKind: observedKind, sessionNew: sent);
+                    return ended;
+                }
 
                 JsonObject answer;
                 try
@@ -364,9 +393,15 @@ public static class CompileCallHost
         }
     }
 
-    /// <summary>The product's engine: <see cref="AcpEngineProcess"/> rooted at the repository.</summary>
+    /// <summary>The product's engine: <see cref="AcpEngineProcess"/> rooted at the repository, its child carrying the output cap.</summary>
     private static ICompileEngine StartEngine(EngineLaunch launch, string repositoryRoot, Action<string> report)
-        => new RealEngine(AcpEngineProcess.Start(launch, repositoryRoot, report));
+        => new RealEngine(AcpEngineProcess.Start(launch, repositoryRoot, report, environment: CompileChildEnvironment));
+
+    /// <summary>What the compile child is given beyond the operator's environment: the output-token cap.</summary>
+    internal static readonly IReadOnlyDictionary<string, string> CompileChildEnvironment = new Dictionary<string, string>(StringComparer.Ordinal)
+    {
+        [AcpEngineProcess.MaxOutputTokensVariable] = MaxOutputTokens.ToString(System.Globalization.CultureInfo.InvariantCulture),
+    };
 
     private sealed class RealEngine(AcpEngineProcess process) : ICompileEngine
     {
@@ -381,8 +416,8 @@ public static class CompileCallHost
         public void Dispose() => process.Dispose();
     }
 
-    /// <summary>What the drain observed: the reply's text, chunk by chunk, and every tool-call frame of any name.</summary>
-    internal sealed record Drained(string Text, int ToolCalls);
+    /// <summary>What the drain observed: the reply's text, chunk by chunk, every tool-call frame of any name, and whether the text outran <see cref="OutputCharBound"/>.</summary>
+    internal sealed record Drained(string Text, int ToolCalls, bool OverBound);
 
     /// <summary>
     /// Drains the plane's queue until the prompt has answered and nothing is left: the text chunks
@@ -397,6 +432,7 @@ public static class CompileCallHost
         var text = new StringBuilder();
         var toolCalls = 0;
 
+        var overBound = false;
         void Observe(ObservedRunEvent run)
         {
             switch (run.Event.Kind)
@@ -405,6 +441,7 @@ public static class CompileCallHost
                     if (run.Event.Body["content"] is JsonObject content && Text(content["text"]) is { } chunk)
                     {
                         text.Append(chunk);
+                        overBound |= text.Length > OutputCharBound;
                     }
 
                     break;
@@ -425,7 +462,7 @@ public static class CompileCallHost
                 Observe(run);
             }
 
-            if (prompt.IsCompleted)
+            if (prompt.IsCompleted || overBound)
             {
                 break;
             }
@@ -448,7 +485,7 @@ public static class CompileCallHost
             }
         }
 
-        return new Drained(text.ToString(), toolCalls);
+        return new Drained(text.ToString(), toolCalls, overBound);
     }
 
     /// <summary>Waits briefly for the adapter's <c>_auth/status_update</c> — never past the linked deadline — and answers null if it never arrives.</summary>
@@ -516,8 +553,12 @@ public static class CompileCallHost
             return null;
         }
 
-        static long Number(JsonNode? node) => node is JsonValue v && v.TryGetValue<long>(out var n) ? n : 0;
-        return new RunEventCost(Number(usage["inputTokens"]), Number(usage["outputTokens"]), Number(usage["cachedReadTokens"]), Requests: 1);
+        // Every sub-field the wire states, or none: a usage object missing a field reads null as a
+        // whole rather than a plausible zero inside a recorded cost (IO12).
+        static long? Number(JsonNode? node) => node is JsonValue v && v.TryGetValue<long>(out var n) ? n : null;
+        return Number(usage["inputTokens"]) is { } tokensIn && Number(usage["outputTokens"]) is { } tokensOut && Number(usage["cachedReadTokens"]) is { } cacheRead
+            ? new RunEventCost(tokensIn, tokensOut, cacheRead, Requests: 1)
+            : null;
     }
 
     /// <summary>

@@ -63,9 +63,10 @@ public sealed class TheCompileSessionIsPinnedTests
         var claudeCode = meta["claudeCode"]!.AsObject();
         Assert.Equal(["options"], claudeCode.Select(m => m.Key));
         var options = claudeCode["options"]!.AsObject();
-        Assert.Equal(["tools", "disallowedTools"], options.Select(m => m.Key));
+        Assert.Equal(["tools", "disallowedTools", "strictMcpConfig"], options.Select(m => m.Key));
 
         Assert.Empty(options["tools"]!.AsArray());
+        Assert.True(options["strictMcpConfig"]!.GetValue<bool>());
 
         var disallowed = options["disallowedTools"]!.AsArray().Select(n => n!.GetValue<string>()).ToList();
         Assert.Equal(disallowed.Count, disallowed.Distinct(StringComparer.Ordinal).Count());
@@ -79,16 +80,24 @@ public sealed class TheCompileSessionIsPinnedTests
     }
 
     /// <summary>
-    /// The typed argument has exactly the two members the adapter spreads — a third member is a
-    /// wider reach (ADR-0035 rule 2: the <c>settings</c> belt is admitted only by PD-5's
-    /// measurement, never by default), and the compile pin is the named static, not an ad-hoc list.
+    /// The typed argument has exactly four members, each admitted by a named finding — the two
+    /// the adapter spreads as tools (Ruling 71), <c>strictMcpConfig</c> (PD-5 run 2: the
+    /// repository's <c>.mcp.json</c> server spawned as the operator under <c>tools: []</c> +
+    /// <c>mcp__*</c>) and <c>model</c> (the binding's third element, otherwise the CLI's own
+    /// resolution picks what bills) — and a fifth is a wider reach. The compile pin is the named
+    /// static, not an ad-hoc list; a lane's record sends nothing new.
     /// </summary>
     [Fact]
-    public void TheRecordHasExactlyTwoMembersAndTheCompilePinIsANamedStatic()
+    public void TheRecordHasExactlyFourMembersAndTheCompilePinIsANamedStatic()
     {
         var members = typeof(LaneSessionOptions).GetProperties().Select(p => p.Name).Order(StringComparer.Ordinal).ToList();
-        Assert.Equal(["DisallowedTools", "Tools"], members);
+        Assert.Equal(["DisallowedTools", "Model", "StrictMcpConfig", "Tools"], members);
 
+        Assert.Null(new LaneSessionOptions(DisallowedTools: ["Bash"]).StrictMcpConfig);
+        Assert.Null(new LaneSessionOptions(DisallowedTools: ["Bash"]).Model);
+        Assert.True(LaneSessionOptions.Compile.StrictMcpConfig);
+        Assert.Null(LaneSessionOptions.Compile.Model);
+        Assert.Equal("claude-sonnet-5", LaneSessionOptions.CompileOn("claude-sonnet-5").Model);
         Assert.NotNull(LaneSessionOptions.Compile.Tools);
         Assert.Empty(LaneSessionOptions.Compile.Tools!);
         Assert.Equal("mcp__*", LaneSessionOptions.EveryMcpServerTool);
@@ -104,21 +113,37 @@ public sealed class TheCompileSessionIsPinnedTests
     /// <c>pathToClaudeCodeExecutable: process.env.CLAUDE_CODE_EXECUTABLE ?? claudeCliPath()</c>).
     /// The engine's child never inherits it — every lane's and every compile's.
     /// </summary>
-    [Fact]
-    public void TheChildEnvironmentNeverCarriesClaudeCodeExecutable()
+    [Theory]
+    [InlineData("CLAUDE_CODE_EXECUTABLE")]
+    [InlineData("NODE_OPTIONS")]
+    [InlineData("NODE_PATH")]
+    public void TheChildEnvironmentNeverCarriesAnInjectingVariableAndItsRemovalIsReported(string name)
     {
-        var previous = Environment.GetEnvironmentVariable(AcpEngineProcess.ClaudeCodeExecutableVariable);
-        Environment.SetEnvironmentVariable(AcpEngineProcess.ClaudeCodeExecutableVariable, @"C:\somewhere\else\claude.exe");
+        Assert.Contains(name, AcpEngineProcess.StrippedEnvironmentVariables);
+        var previous = Environment.GetEnvironmentVariable(name);
+        Environment.SetEnvironmentVariable(name, name == "CLAUDE_CODE_EXECUTABLE" ? @"C:\somewhere\else\claude.exe" : "--require evil.js");
+        var report = new List<string>();
         try
         {
-            var info = AcpEngineProcess.StartInfoFor(new EngineLaunch("node", ["x.js"]), Path.GetTempPath());
+            var info = AcpEngineProcess.StartInfoFor(new EngineLaunch("node", ["x.js"]), Path.GetTempPath(), report: report.Add);
 
-            Assert.False(info.Environment.ContainsKey(AcpEngineProcess.ClaudeCodeExecutableVariable));
+            Assert.False(info.Environment.ContainsKey(name));
             Assert.True(info.Environment.ContainsKey("PATH") || info.Environment.ContainsKey("Path"));
+            Assert.Contains(report, line => line.Contains(name, StringComparison.Ordinal) && line.Contains("removed", StringComparison.Ordinal));
         }
         finally
         {
-            Environment.SetEnvironmentVariable(AcpEngineProcess.ClaudeCodeExecutableVariable, previous);
+            Environment.SetEnvironmentVariable(name, previous);
         }
+    }
+
+    /// <summary>A host-set variable reaches the child; a stripped name can never be set through the same door.</summary>
+    [Fact]
+    public void AHostSetVariableReachesTheChildAndAStrippedNameCannotBeSet()
+    {
+        var info = AcpEngineProcess.StartInfoFor(new EngineLaunch("node", ["x.js"]), Path.GetTempPath(), new Dictionary<string, string> { [AcpEngineProcess.MaxOutputTokensVariable] = "4096" });
+        Assert.Equal("4096", info.Environment[AcpEngineProcess.MaxOutputTokensVariable]);
+
+        Assert.Throws<ArgumentException>(() => AcpEngineProcess.StartInfoFor(new EngineLaunch("node", ["x.js"]), Path.GetTempPath(), new Dictionary<string, string> { ["NODE_OPTIONS"] = "x" }));
     }
 }

@@ -375,11 +375,16 @@ function main() {
     });
     console.log(`[run-spike] initialize -> protocolVersion ${initResult.protocolVersion}`);
 
+    // strictMcpConfig (sdk.d.ts:2110, forwarded as --strict-mcp-config): admitted by run 2's
+    // measurement — the CLI spawned the fixture's .mcp.json server as the operator at session/new
+    // with tools: [] and mcp__* on the frame; mcp__* denies at the name, this closes the spawn.
+    // Run 3's (c) reads `mcp-calls.jsonl` EMPTY under it. Mirrors LaneSessionOptions.Compile.
     const sessionMeta = {
       claudeCode: {
         options: {
           tools: [],
           disallowedTools: [...READ_ONLY_LANE_SESSION_DISALLOWED_TOOLS, EVERY_MCP_SERVER_TOOL],
+          strictMcpConfig: true,
         },
       },
     };

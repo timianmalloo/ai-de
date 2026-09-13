@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Nodes;
+using AiDe.Core.AgentPlane;
 using AiDe.Core.PromptCompilation;
 using AiDe.Core.Sessions;
 
@@ -54,7 +55,7 @@ public sealed class TheCompileModeLadderIsGatedTests : IDisposable
     private static string Sha(string path) => Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(path)));
 
     /// <summary>An artifact recording the fixture install's own triple and the frame log it names.</summary>
-    private void WriteArtifact(string? adapterSha = null, string? cliSha = null, string? frameLogSha = null, bool withFrameLog = true, string frameLog = "")
+    private void WriteArtifact(string? adapterSha = null, string? cliSha = null, string? frameLogSha = null, bool withFrameLog = true, string frameLog = "", string mode = "full", bool promptAnswered = true, JsonObject? sentMeta = null)
     {
         var installed = CompilePin.Installed(_install);
         if (withFrameLog)
@@ -64,8 +65,10 @@ public sealed class TheCompileModeLadderIsGatedTests : IDisposable
 
         var artifact = new JsonObject
         {
-            ["mode"] = "full",
+            ["mode"] = mode,
             ["at"] = "2026-09-13T18:58:48Z",
+            ["sent_meta_triple"] = sentMeta ?? new LaneSessionOptions(Tools: [], DisallowedTools: [.. LaneSessionOptions.DeniedToolNames, LaneSessionOptions.EveryMcpServerTool], StrictMcpConfig: true, Model: "claude-opus-5[1m]").ToMeta(),
+            ["prompt_1"] = new JsonObject { ["text"] = "read", ["result"] = promptAnswered ? new JsonObject { ["stopReason"] = "end_turn" } : null },
             ["pin_triple"] = new JsonObject
             {
                 ["adapter_package"] = "@agentclientprotocol/claude-agent-acp",
@@ -155,6 +158,32 @@ public sealed class TheCompileModeLadderIsGatedTests : IDisposable
         Assert.Equal(EnvelopeStoreErrorCodes.PinFrameLogUnverifiable, refusal.Code);
     }
 
+    /// <summary>PD-5 run 2's shape: an aborted artifact (a zero count, a valid frame log) admits nothing; nor does a full run with a prompt that never answered.</summary>
+    [Theory]
+    [InlineData("aborted", true)]
+    [InlineData("full", false)]
+    public void ARunThatDidNotEndRefusesBothRungs(string mode, bool promptAnswered)
+    {
+        WriteArtifact(frameLog: CleanFrames, mode: mode, promptAnswered: promptAnswered);
+
+        var refusal = Evaluate().RefusalFor(CompileModes.AgenticAdvisory)!;
+
+        Assert.Equal(EnvelopeStoreErrorCodes.PinRunNotEnded, refusal.Code);
+        Assert.Equal(EnvelopeStoreErrorCodes.PinRunNotEnded, Evaluate().RefusalFor(CompileModes.Agentic)!.Code);
+    }
+
+    /// <summary>An artifact that measured another pin than this build sends — run 1's 30-name pin without <c>mcp__*</c> or <c>strictMcpConfig</c> — refuses; the per-session model is not part of the identity.</summary>
+    [Fact]
+    public void AnArtifactThatMeasuredAnotherPinRefusesBothRungs()
+    {
+        WriteArtifact(frameLog: CleanFrames, sentMeta: new LaneSessionOptions(Tools: [], DisallowedTools: LaneSessionOptions.DeniedToolNames).ToMeta());
+
+        var refusal = Evaluate().RefusalFor(CompileModes.AgenticAdvisory)!;
+
+        Assert.Equal(EnvelopeStoreErrorCodes.PinIdentityMismatch, refusal.Code);
+        Assert.Contains("mcp__*", refusal.Reason, StringComparison.Ordinal);
+    }
+
     /// <summary>A recount ≠ 0 — a <c>tool_call</c> frame in the log the artifact claims was clean — refuses both rungs, naming the count.</summary>
     [Fact]
     public void ARecountThatIsNotZeroRefusesBothRungs()
@@ -225,6 +254,7 @@ public sealed class TheCompileModeLadderIsGatedTests : IDisposable
         var after = CompilePin.Installed(_install);
 
         Assert.NotEqual(before.AdapterSha256, after.AdapterSha256);
+        Assert.Equal(Sha(Path.Combine(_install, "node_modules", "@agentclientprotocol", "claude-agent-acp", "dist", "acp-agent.js")), after.AdapterSha256);
         Assert.Equal(before.CliSha256, after.CliSha256);
         Assert.Equal("0.75.1", after.AdapterVersion);
         Assert.Equal("0.3.257", after.SdkVersion);

@@ -92,8 +92,18 @@ def confirmed(env: dict, name: str) -> dict | None:
     return rows[-1] if rows else None
 
 
-def gate_tuple(call: dict) -> tuple:
-    return (call.get("contract_version"), call.get("prompt_sha"), call.get("profile_sha"), call.get("model_configured"))
+def gate_tuple(call: dict, env: dict | None = None) -> tuple:
+    """(contract_version, prompt_sha, profile.sha, model_configured) — the profile sha lives on the envelope's family_profile row, not the called row."""
+    profile = (current(env, "family_profile") or {}).get("value") if env else None
+    profile_sha = profile.get("sha") if isinstance(profile, dict) else None
+    return (call.get("contract_version"), call.get("prompt_sha"), profile_sha, call.get("model_configured"))
+
+
+def parse_tuple(parts: list[str] | None) -> tuple | None:
+    """The CLI's spelling of an absent element — null / none / - / '' — reads as None, so a real row's (…, None, …) can match."""
+    if parts is None:
+        return None
+    return tuple(None if p.strip().lower() in ("null", "none", "-", "") else p for p in parts)
 
 
 # ----------------------------------------------------------------------------- labels
@@ -171,8 +181,8 @@ def score(events_paths: list[Path], installed_tuple: tuple | None = None, prefix
     tuple_source = "installed"
     if installed_tuple is None:
         tuple_source = "latest called row (no installed tuple given — Inferred)"
-        installed_tuple = gate_tuple(treatment[-1]["called"][-1]) if treatment else (None, None, None, None)
-    under_tuple = [e for e in treatment if gate_tuple(e["called"][-1]) == installed_tuple]
+        installed_tuple = gate_tuple(treatment[-1]["called"][-1], treatment[-1]) if treatment else (None, None, None, None)
+    under_tuple = [e for e in treatment if gate_tuple(e["called"][-1], e) == installed_tuple]
     other_tuple = len(treatment) - len(under_tuple)
 
     # The invariants are computed over EVERY called row, unfiltered by EffectiveMode (Ruling 68).
@@ -184,6 +194,11 @@ def score(events_paths: list[Path], installed_tuple: tuple | None = None, prefix
                 applied_denied += 1
     tool_calls_total = sum(int(c.get("tool_calls") or 0) for c in every_called)
     permission_total = sum(int(c.get("permission_requests") or 0) for c in every_called)
+    # THE DEGRADED-RATE FLOOR'S DOMAIN IS EVERY called ROW (Ruling 76; ADR-0036) — a model that times
+    # out a third of its calls before the holdout must not read 0/50. `reused` rows are not a model
+    # call and are excluded from the denominator (stated; the reader sees both counts).
+    model_calls = [c for c in every_called if c.get("outcome") != "reused"]
+    degraded_every = sum(1 for c in model_calls if c.get("outcome") in DEGRADED_OUTCOMES)
 
     # THE SPLIT WITNESS: the first N under the tuple are the sample, the next N the holdout.
     sample = under_tuple[:N_SAMPLE]
@@ -199,11 +214,14 @@ def score(events_paths: list[Path], installed_tuple: tuple | None = None, prefix
 
     # LABELS DE-DUPLICATED BY THE ORIGINATING called ROW: a reused envelope's lines count once.
     seen_calls: set[tuple[str, int]] = set()
+    holdout_ids = {e["id"] for e in holdout}
     labelled: list[dict] = []
     reused_skipped = 0
     for e in holdout:
         origin = originating_call(e, envelopes)
-        if origin in seen_calls:
+        # A reused envelope whose originating call lies OUTSIDE the holdout (in the sample) would carry a
+        # sample-window output into the holdout's labels: excluded and counted, like a duplicate.
+        if origin in seen_calls or (origin is not None and origin[0] != e["id"] and origin[0] not in holdout_ids):
             reused_skipped += 1
             continue
         if origin is not None:
@@ -245,8 +263,12 @@ def score(events_paths: list[Path], installed_tuple: tuple | None = None, prefix
                 confidence_buckets[bucket]["n"] += 1
                 if line_label(e, d.get("name"))[0] in ("edited", "emptied"):
                     confidence_buckets[bucket]["overridden"] += 1
-        # shape flip: a goal block proposed on a prompt sent as a Message (goal or done_when emptied), or kept
-        if derived_any and any(d.get("name") in ("goal", "done_when") and d.get("source") == "derived" for d in e["decorations"]):
+        # shape flip (§A14.3): a goal BLOCK proposed (derived goal AND done_when) on a prompt the operator
+        # had not shaped (no operator goal before the call) — then kept, or sent as a Message.
+        call_seq = e["called"][-1]["seq"]
+        operator_goal_before = any(d.get("name") == "goal" and d.get("source") == "operator" and d["seq"] < call_seq and d.get("value") for d in e["decorations"])
+        derived_names = {d.get("name") for d in e["decorations"] if d.get("source") == "derived"}
+        if derived_any and not operator_goal_before and {"goal", "done_when"} <= derived_names:
             shape_flip_total += 1
             if confirmed(e, "goal") and confirmed(e, "done_when"):
                 shape_flip_kept += 1
@@ -254,7 +276,10 @@ def score(events_paths: list[Path], installed_tuple: tuple | None = None, prefix
     calls_holdout = [e["called"][-1] for e in holdout]
     non_reused = [c for c in calls_holdout if c.get("outcome") != "reused"]
     schema_fail = sum(1 for c in calls_holdout if c.get("outcome") == "malformed")
-    degraded = sum(1 for c in calls_holdout if c.get("outcome") in DEGRADED_OUTCOMES)
+    degraded_holdout = sum(1 for c in calls_holdout if c.get("outcome") in DEGRADED_OUTCOMES)
+    by_outcome: dict[str, int] = defaultdict(int)
+    for c in calls_holdout:
+        by_outcome[str(c.get("outcome"))] += 1
     by_reason: dict[str, int] = defaultdict(int)
     for c in calls_holdout:
         if c.get("outcome") not in AGENTIC_OUTCOMES:
@@ -285,7 +310,7 @@ def score(events_paths: list[Path], installed_tuple: tuple | None = None, prefix
         "treatment": {"n": len(treatment), "under_tuple": len(under_tuple), "other_tuple_excluded": other_tuple},
         "control": {"n": len(control)},
         "sample": witness(sample),
-        "holdout": witness(holdout),
+        "holdout": {**witness(holdout), "by_outcome": dict(by_outcome)},
         "labels_deduplicated": {"envelopes_labelled": len(labelled), "reused_skipped": reused_skipped},
         "prefix_measured": prefix_measured,
         "invariants": {
@@ -302,7 +327,8 @@ def score(events_paths: list[Path], installed_tuple: tuple | None = None, prefix
             "shape_flip_kept": ratio(shape_flip_kept, shape_flip_total),
             "span_resolution": ratio(spans_resolving, spans_total),
             "schema_fail": ratio(schema_fail, len(calls_holdout)),
-            "degraded": ratio(degraded, len(calls_holdout)),
+            "degraded": ratio(degraded_every, len(model_calls)),
+            "degraded_holdout": ratio(degraded_holdout, len(calls_holdout)),
             "degraded_by_reason": dict(by_reason),
             "dropped_by_reason": dict(dropped),
             "calibration_by_confidence": {k: ratio(v["overridden"], v["n"]) for k, v in sorted(confidence_buckets.items())},
@@ -416,6 +442,15 @@ def self_test() -> int:
         if report["invariants"]["tool_calls"]["denominator"] != 120:
             print("SELF-TEST FAILED: the invariants must run over EVERY called row (120)")
             return 1
+        # The degraded floor's domain: every model call (120 rows, 12 reused → 108), not the holdout's 50.
+        if report["metrics"]["degraded"]["denominator"] != 108:
+            print(f"SELF-TEST FAILED: degraded must be over every model call (108), got {report['metrics']['degraded']}")
+            return 1
+        # --tuple with the CLI's null spelling matches real rows whose profile sha is absent.
+        tupled = score([events], parse_tuple(["compile-prompt/1", "p" * 64, "null", "claude-sonnet-5"]))
+        if tupled["treatment"]["under_tuple"] != 120:
+            print(f"SELF-TEST FAILED: --tuple with a null profile sha matched {tupled['treatment']['under_tuple']} of 120")
+            return 1
         acc = report["metrics"]["acceptance"]
         if acc["denominator"] != 3 * 45:
             print(f"SELF-TEST FAILED: acceptance denominator {acc['denominator']} != 3 × 45")
@@ -458,7 +493,7 @@ def main(argv: list[str]) -> int:
     for s in args.sources:
         p = Path(s)
         paths.append(p / "envelope-events.jsonl" if p.is_dir() else p)
-    report = score(paths, tuple(args.tuple) if args.tuple else None, args.prefix_measured)
+    report = score(paths, parse_tuple(args.tuple), args.prefix_measured)
     problems = check_contract(report)
     text = json.dumps(report, indent=2)
     if args.out:
@@ -474,4 +509,10 @@ def main(argv: list[str]) -> int:
 
 
 if __name__ == "__main__":
+    # A Windows console defaults to cp1252 and the report's own prose carries `→` and `—`.
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8")
+        except (AttributeError, ValueError):
+            pass
     sys.exit(main(sys.argv[1:]))

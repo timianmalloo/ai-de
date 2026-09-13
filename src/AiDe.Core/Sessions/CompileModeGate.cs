@@ -81,6 +81,23 @@ public static class CompileModeGate
         return new CompileModeAvailability(refusals, recount, artifactPath);
     }
 
+    /// <summary>The pin's identity: the sent <c>_meta</c> as canonical JSON with the per-session <c>model</c> removed.</summary>
+    private static string? PinIdentity(System.Text.Json.Nodes.JsonObject? meta)
+    {
+        if (meta is null)
+        {
+            return null;
+        }
+
+        var clone = meta.DeepClone().AsObject();
+        if (clone["claudeCode"]?["options"] is System.Text.Json.Nodes.JsonObject options)
+        {
+            options.Remove("model");
+        }
+
+        return clone.ToJsonString();
+    }
+
     /// <summary>Gate 1: the pin artifact, a staleness gate. Null when it admits.</summary>
     private static CompileModeRefusal? GateOne(string adapterInstallRoot, string artifactPath, out FrameRecount? recount)
     {
@@ -93,6 +110,27 @@ public static class CompileModeGate
                 EnvelopeStoreErrorCodes.PinArtifactMissing,
                 $"the compile-pin-spike artifact was not found at {artifactPath}" + (problem is null ? string.Empty : $" ({problem})")
                 + "; run spikes/compile-session-pin-wire/Run-PinSpike.ps1 (PD-5) — a failed spike is a hard stop, never a fallback (Ruling 68)");
+        }
+
+        // THE RUN ENDED (PD-5's second run: an aborted summary with a zero count and a valid frame
+        // log would otherwise admit): only a full run with every prompt answered is a measurement.
+        if (!string.Equals(artifact.Mode, "full", StringComparison.Ordinal) || artifact.PromptsUnanswered > 0)
+        {
+            return new CompileModeRefusal(
+                EnvelopeStoreErrorCodes.PinRunNotEnded,
+                $"the compile-pin-spike artifact records a run that did not end (mode {artifact.Mode ?? Envelope.NotRecorded}, {artifact.PromptsUnanswered} prompt(s) without a result); an aborted or timed-out spike admits nothing — re-run PD-5 to completion");
+        }
+
+        // THE PIN THAT WAS MEASURED IS THE PIN THIS BUILD SENDS: a pin widened since the run (a new
+        // denied name, strictMcpConfig) re-runs PD-5 by construction. The model is per session and
+        // is not part of the pin's identity.
+        var expected = PinIdentity(AgentPlane.LaneSessionOptions.Compile.ToMeta());
+        var recorded = PinIdentity(artifact.SentMeta);
+        if (!string.Equals(expected, recorded, StringComparison.Ordinal))
+        {
+            return new CompileModeRefusal(
+                EnvelopeStoreErrorCodes.PinIdentityMismatch,
+                $"the compile-pin-spike artifact measured another pin than this build sends: recorded {recorded ?? Envelope.NotRecorded}; this build sends {expected}; re-run PD-5 under the current pin");
         }
 
         var installed = CompilePin.Installed(adapterInstallRoot);

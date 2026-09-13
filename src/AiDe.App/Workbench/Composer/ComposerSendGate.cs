@@ -170,6 +170,10 @@ public sealed class ComposerSendGate
             CompileMode = compileMode;
             EngineId = engineId;
             DefaultTaskClass = defaultTaskClass;
+
+            // A re-bound session (another model) never reuses lines the previous binding derived:
+            // the corpus would attribute one model's output to another's tuple.
+            _lastSuccess.Clear();
         }
     }
 
@@ -338,6 +342,22 @@ public sealed class ComposerSendGate
             }
 
             var projection = Projection.Project(envelope, draft, template);
+
+            // RULING 75 UNDER A DERIVED SHAPE: the draft's own validation ran over the draft's lines;
+            // the projected block may have been filled by the model (kept, or confirmed under agentic)
+            // with Not in scope still blank — the one content-gap refusal fires here, on the block that
+            // would be sent, never downstream of the human gate (the AI Systems Engineer's finding).
+            if (projection.GoalBlock is { } projectedBlock)
+            {
+                var gaps = SpawnContract.Validate(projectedBlock).Where(e => e.Field == GoalBlockFields.NotInScopeKey).ToList();
+                if (gaps.Count > 0)
+                {
+                    refusal = new ComposerSendRefusal(
+                        [new ComposerFieldError(GoalBlockFields.NotInScopeKey, ComposerCompiler.GoalBlockNeedsNotInScope)],
+                        ComposerCompiler.GoalBlockNeedsNotInScope);
+                    return null;
+                }
+            }
 
             // C15's window has two ends, and the envelope is its third witness: the rendered view
             // and the projection's render are the same bytes, or the send is refused — never sent

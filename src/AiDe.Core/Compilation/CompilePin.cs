@@ -37,7 +37,10 @@ public sealed record FrameRecount(int Frames, int ToolCalls, IReadOnlyList<strin
 /// <param name="Triple">The recorded triple.</param>
 /// <param name="FrameLogSha256">The sha the artifact claims for its frame log, or null when it names none.</param>
 /// <param name="RecordedToolCalls">The count the artifact claims — reported beside the recount, never trusted.</param>
-public sealed record CompilePinArtifact(string Path, RecordedPinTriple Triple, string? FrameLogSha256, int? RecordedToolCalls)
+/// <param name="Mode">The run's <c>mode</c> — <c>full</c> is the only admitting value.</param>
+/// <param name="PromptsUnanswered">How many <c>prompt_N</c> entries carry no result — a prompt the run never finished.</param>
+/// <param name="SentMeta">The <c>_meta</c> the run sent on <c>session/new</c>, as recorded, or null.</param>
+public sealed record CompilePinArtifact(string Path, RecordedPinTriple Triple, string? FrameLogSha256, int? RecordedToolCalls, string? Mode, int PromptsUnanswered, JsonObject? SentMeta)
 {
     /// <summary>The artifact's file name — the same name the Proof Pack's citation copy carries under <c>docs/proof/</c>.</summary>
     public const string FileName = "compile-pin-spike.json";
@@ -82,11 +85,17 @@ public sealed record CompilePinArtifact(string Path, RecordedPinTriple Triple, s
 
         static string Text(JsonNode? node) => node is JsonValue v && v.TryGetValue<string>(out var s) && !string.IsNullOrWhiteSpace(s) ? s : Envelope.NotRecorded;
 
+        var unanswered = root.Where(m => m.Key.StartsWith("prompt_", StringComparison.Ordinal))
+            .Count(m => m.Value is not JsonObject prompt || prompt["result"] is null);
+
         return new CompilePinArtifact(
             path,
             new RecordedPinTriple(Text(triple["adapter_version"]), Text(triple["adapter_sha256"]), Text(triple["sdk_version"]), Text(triple["cli_sha256"])),
             root["frame_log"] is JsonObject log && log["sha256"] is JsonValue sha && sha.TryGetValue<string>(out var text) ? text : null,
-            root["tool_call_frame_count"] is JsonValue count && count.TryGetValue<int>(out var n) ? n : null);
+            root["tool_call_frame_count"] is JsonValue count && count.TryGetValue<int>(out var n) ? n : null,
+            root["mode"] is JsonValue mode && mode.TryGetValue<string>(out var modeText) ? modeText : null,
+            unanswered,
+            root["sent_meta_triple"] as JsonObject);
     }
 }
 
