@@ -21,6 +21,8 @@ summary: >-
   template: none | <id>@<version> — because Free-form is now the default task class (Ruling 72) and
   shape names Message | Goal-block (Addendum A R15 b2); and Ruling 74's condition 3 records the Score
   outline as superseded by the jump list, not silently dropped. The HTML stays byte-frozen.
+review-suggested:
+  - { by: mockup-session-conversation, on: 2026-09-13, reason: "D3 /ui-design elevate: the conversation rendered from Coalesce (Rulings 80-82, 87), the session docked at Left; the thread contract's density at 1440x900 is an open question for the Owner" }
 ---
 
 # Spec erratum — Addendum B `:181` / `:186`: the template control, and the Score outline's fate (E1; Ruling 74 condition 3)

@@ -227,3 +227,17 @@
 {"agent": "claude-conductor", "at": 1789322128.722271, "code": null, "kind": "allowed", "path": "spikes/compile-session-pin-wire/frames/2026-09-13T17-51-24-718Z/recv.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789322128.7282984, "code": null, "kind": "allowed", "path": "spikes/compile-session-pin-wire/frames/2026-09-13T17-51-24-718Z/sent.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789322128.7332976, "code": null, "kind": "allowed", "path": "spikes/compile-session-pin-wire/frames/2026-09-13T17-51-24-718Z/summary.json", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789322141.3361964, "code": null, "kind": "allowed", "path": ".agents/decisions/claude-conductor-addendum-c.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789322141.3432333, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789322141.3508554, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789322141.3570862, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789323491.1654074, "code": null, "kind": "allowed", "path": ".agents/decisions/atlas-ipc-contract-astra.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789323491.1704063, "code": null, "kind": "allowed", "path": ".agents/decisions/claude-conductor-addendum-c.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789323491.1764073, "code": null, "kind": "allowed", "path": ".agents/decisions/d3-findings.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789323491.181412, "code": null, "kind": "allowed", "path": ".agents/log/atlas-ipc-contract-astra.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789323491.1864119, "code": null, "kind": "allowed", "path": ".agents/log/copilot-atlas-fleet-45bbc625.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789323491.191411, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789323491.1964605, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789323491.2021322, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789323800.3037698, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789323800.3097658, "code": null, "kind": "allowed", "path": "docs/notes/addendum-c-council-rulings.md", "session": "claude-conductor-addendum-c", "wi": ""}

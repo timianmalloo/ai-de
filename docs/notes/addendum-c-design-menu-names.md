@@ -12,7 +12,8 @@ links:
   - { to: ui-review-perspective-shell, rel: relates-to }
   - { to: mockup-perspective-shell, rel: relates-to }
 review-by: 2027-03-11
-review-suggested: []
+review-suggested:
+  - { by: mockup-perspective-shell, on: 2026-09-13, reason: "D3 /ui-design elevate: Coordination as host C (Ruling 84), Coding re-cut (Ruling 83); the body-hiding gating selector fixed" }
 summary: >-
   Spec §R row 5 handed D1 the top-level menu names (DESIGN.md said File · Edit · View · Graph ·
   Model · Agents · Window · Help; the code says File · Edit · View · Window · Terminal · Help). D1
