@@ -433,3 +433,7 @@
 {"agent": "copilot-atlas-conductor", "at": 1789322921.7111683, "kind": "release", "path": "spikes/code-atlas-ipc-contract/IpcCancellationCases.cs", "seq": 433, "session": "copilot-atlas-fleet-45bbc625", "wi": "WI-0"}
 {"agent": "copilot-atlas-conductor", "at": 1789322921.7696211, "kind": "release", "path": "spikes/code-atlas-ipc-contract/AtlasTransportCandidate.cs", "seq": 434, "session": "copilot-atlas-fleet-45bbc625", "wi": "WI-0"}
 {"agent": "copilot-atlas-conductor", "at": 1789322921.8221297, "kind": "release", "path": "docs/proof/code-atlas-ipc-contract.md", "seq": 435, "session": "copilot-atlas-fleet-45bbc625", "wi": "WI-0"}
+{"agent": "copilot-atlas-conductor", "at": 1789326767.4999123, "kind": "claim", "path": "docs/design/code-atlas-shared-host-admission.md", "seq": 436, "session": "copilot-atlas-fleet-45bbc625", "ttl": 300.0, "wi": "code-atlas-production"}
+{"agent": "copilot-atlas-conductor", "at": 1789326767.5594468, "kind": "claim", "path": "docs/design/code-atlas-shared-host-admission.html", "seq": 437, "session": "copilot-atlas-fleet-45bbc625", "ttl": 300.0, "wi": "code-atlas-production"}
+{"agent": "copilot-atlas-conductor", "at": 1789326767.676995, "kind": "release", "path": "docs/design/code-atlas-shared-host-admission.md", "seq": 438, "session": "copilot-atlas-fleet-45bbc625", "wi": "WI-0"}
+{"agent": "copilot-atlas-conductor", "at": 1789326767.7306037, "kind": "release", "path": "docs/design/code-atlas-shared-host-admission.html", "seq": 439, "session": "copilot-atlas-fleet-45bbc625", "wi": "WI-0"}

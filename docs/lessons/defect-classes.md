@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 96 · partially-controlled 65 · uncontrolled 20
+**Status counts:** controlled 98 · partially-controlled 65 · uncontrolled 20
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -7454,7 +7454,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   shape — the conductor's to schedule.
 - **Status:** `controlled`.
 
-### DC-nnn (CV-5 a) — A re-pointed identity oracle is green at both the old grain and the new one when its fixture has no case the two grains render differently
+### DC-182 — A re-pointed identity oracle is green at both the old grain and the new one when its fixture has no case the two grains render differently
 
 - **Shape:** an identity oracle (`rows == f(source)`) is re-pointed from one derivation to another
   (`events` → `Coalesce(events)`) and re-written against a fixture whose every run has length one
@@ -7482,7 +7482,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   derivation from the new.
 - **Status:** `controlled`.
 
-### DC-nnn (CV-5 b) — Two conversions of one instant on one surface: a timestamp bound through a StringFormat renders the stamp's own clock beside a sibling that converts to local, and every test machine agrees with itself
+### DC-183 — Two conversions of one instant on one surface: a timestamp bound through a StringFormat renders the stamp's own clock beside a sibling that converts to local, and every test machine agrees with itself
 
 - **Shape:** a `DateTimeOffset` stamped in UTC at receipt is rendered through a `Binding {
   StringFormat = "HH:mm:ss" }` (the offset's own clock) on one row, while the heading above it

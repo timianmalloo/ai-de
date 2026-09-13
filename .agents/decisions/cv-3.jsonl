@@ -1,0 +1,14 @@
+{"agent": "claude-cv-3", "at": 1789326262.6546855, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Compilation/CompilePin.cs", "session": "cv-3", "wi": ""}
+{"agent": "claude-cv-3", "at": 1789326262.660685, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Compilation/EnvelopeStoreException.cs", "session": "cv-3", "wi": ""}
+{"agent": "claude-cv-3", "at": 1789326262.6662092, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Sessions/CompileModeGate.cs", "session": "cv-3", "wi": ""}
+{"agent": "claude-cv-3", "at": 1789326262.6722105, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Sessions/SessionConfigStore.cs", "session": "cv-3", "wi": ""}
+{"agent": "claude-cv-3", "at": 1789326262.6786056, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Sessions/TheCompileModeLadderIsGatedTests.cs", "session": "cv-3", "wi": ""}
+{"agent": "claude-cv-3", "at": 1789326502.5028572, "code": null, "kind": "allowed", "path": "spikes/compile-session-pin-wire/assert-spike.py", "session": "cv-3", "wi": ""}
+{"agent": "claude-cv-3", "at": 1789326502.507861, "code": null, "kind": "allowed", "path": "spikes/compile-session-pin-wire/frames/2026-09-13T18-58-48-954Z/PROVENANCE.md", "session": "cv-3", "wi": ""}
+{"agent": "claude-cv-3", "at": 1789326502.5138612, "code": null, "kind": "allowed", "path": "spikes/compile-session-pin-wire/frames/2026-09-13T18-58-48-954Z/mcp-calls.jsonl", "session": "cv-3", "wi": ""}
+{"agent": "claude-cv-3", "at": 1789326502.519364, "code": null, "kind": "allowed", "path": "spikes/compile-session-pin-wire/frames/2026-09-13T18-58-48-954Z/recv.jsonl", "session": "cv-3", "wi": ""}
+{"agent": "claude-cv-3", "at": 1789326502.5254407, "code": null, "kind": "allowed", "path": "spikes/compile-session-pin-wire/frames/2026-09-13T18-58-48-954Z/sent.jsonl", "session": "cv-3", "wi": ""}
+{"agent": "claude-cv-3", "at": 1789326502.5304396, "code": null, "kind": "allowed", "path": "spikes/compile-session-pin-wire/frames/2026-09-13T18-58-48-954Z/summary.json", "session": "cv-3", "wi": ""}
+{"agent": "claude-cv-3", "at": 1789326502.5364442, "code": null, "kind": "allowed", "path": "spikes/compile-session-pin-wire/run-spike.js", "session": "cv-3", "wi": ""}
+{"agent": "claude-cv-3", "at": 1789327329.0449927, "code": null, "kind": "allowed", "path": "src/AiDe.App/Conductor/CompileCallHost.cs", "session": "cv-3", "wi": ""}
+{"agent": "claude-cv-3", "at": 1789327329.0519934, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Conductor/TheCompileCallIsNotARunRootTests.cs", "session": "cv-3", "wi": ""}

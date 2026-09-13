@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T19:13:22Z",
+  "generated": "2026-09-13T19:23:56Z",
   "audit": [
     {
       "actor": null,
@@ -14817,6 +14817,30 @@ window.AUDIT_DATA = {
         "short": "46d02d8b5",
         "branch": "lane/conversation-cv5",
         "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2E3KT4SQ5XCC22FENZNPBR6",
+      "shortname": "join-cv5-2",
+      "datetime": "2026-09-13T19:23:55Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "keep going (the join of CV-5.2)",
+      "summary": "Join: CV-5.2 (64d478a7) merged to main clean; DC-182/183 allocated; recount App 847 / Core 2517 = 2347 + 170. The Console now reads one row per message with n chunks; TurnView carries Coalesce rows, Reply retired; C5 (the Console document in the Center) is RUN-PENDING on SH-4.2's seam req-01M2E1HEMCMHRW1AX4SY8RJFQ7.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/console-coalesce.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land CV-5.2 on main with the floors recounted and a Release build; free the Conversation lane for CV-5.3",
+      "done_when": "main pushed green through run-verify-gates; Release built",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
       }
     }
   ],
