@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T18:32:02Z",
+  "generated": "2026-09-13T18:42:13Z",
   "audit": [
     {
       "actor": null,
@@ -14744,6 +14744,30 @@ window.AUDIT_DATA = {
       ],
       "tier": "T2",
       "tool": null
+    },
+    {
+      "id": "al-01M2E17D8BMEY4GD4A6QT4X126",
+      "shortname": "join-x3",
+      "datetime": "2026-09-13T18:42:12Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "keep going (the join of X-3)",
+      "summary": "Join: X-3 (938f7431) merged to main (e0f1b8d4) clean: the Shell-lane seam requests from CV-1/CV-2 landed (the shell's Announcer into the document, F6 registry rows with the refusal announced, WebSurfaceHost.Retry and the composer's Retry button, one diagnostics writer, BorderStrongBrush + the 14th page role, the resource glob) and Rulings 85/86 (rev = observed HEAD or not recorded; a refusal clears after a 10 s dwell). DC-179..181 self-allocated by the node, sequence unbroken. Recount App 844 / Core 2496 = 2326 + 170; 0 WT attaches.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/shell-seams-x3.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land X-3 on main with the floors recounted and a Release build",
+      "done_when": "main pushed green through run-verify-gates; Release built",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      }
     }
   ],
   "changes": [
