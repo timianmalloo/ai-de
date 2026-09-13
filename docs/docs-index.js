@@ -2092,7 +2092,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 58 types, 151 members, 91% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 58 types, 153 members, 91% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2105,7 +2105,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9dc681651c4c83a4bd4df9e7b8c02049eebf465ec7b0e406f54a004f70032d9f"
+      "sourceSha256": "c4370837af21ac681efdb2e7385438fe2f2b9b20828e7927f10a0edd6aee0863"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -17614,5 +17614,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "b057e632ded158c0709ab1b89c09775ce752552e27a58991b8f999342c5efc28"
+  "graphSha256": "8ef68e61fd4267a26d737b366246e47fc8ee97ab4699fce1cfce31760a9c7e99"
 };
