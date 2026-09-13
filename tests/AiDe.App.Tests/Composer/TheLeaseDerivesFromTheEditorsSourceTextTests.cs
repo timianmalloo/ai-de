@@ -201,72 +201,11 @@ public sealed class TheLeaseDerivesFromTheEditorsSourceTextTests
         });
     }
 
-    /// <summary>
-    /// The source-scan guard the register entry names: every <see cref="LeaseDerivation"/> call site
-    /// in <c>src/</c> passes the editor's source-text symbol, never the compiled prompt.
-    /// </summary>
-    /// <remarks>
-    /// <para><b>Root:</b> <c>src/</c>, every <c>*.cs</c> file. <b>Recursion:</b> all subdirectories,
-    /// skipping generated <c>bin/</c> and <c>obj/</c> trees (the same skip every sibling source-scan
-    /// guard in this suite uses). <b>Token set:</b> the two public entry points,
-    /// <c>LeaseDerivation.Derive(</c> and <c>LeaseDerivation.Patterns(</c> — <see cref="LeaseDerivation"/>
-    /// declares no other public member that takes a string (see
-    /// <c>NoOperatorTypedLeaseEditorExistsAnywhereInTheComposer</c>), so these two calls are the
-    /// derivation's only inputs anywhere in the product. <b>Allowlist:</b> none — a third call site
-    /// would need this test updated by name, exactly as <c>C16_ExactlyTwoSitesInTheProductConstructAGovernedRunRequest</c>
-    /// above is updated by name for its own edge.</para>
-    ///
-    /// <para><b>The oracle.</b> The argument text between the matching parentheses, trimmed, must end
-    /// in <c>.SourceText</c> — <see cref="ComposerDraft.SourceText"/> is the one place in the product
-    /// that holds the operator's own typed content and nothing else (never an attachment body, never
-    /// a template's fixed prose, never the rendered goal-block heading text).</para>
-    /// </remarks>
-    [Fact]
-    public void EveryLeaseDerivationCallSiteInSrcPassesTheSourceTextSymbol()
-    {
-        var sites = new List<(string File, string Argument)>();
-
-        foreach (var file in Directory.EnumerateFiles(
-                     Path.Combine(RepoRoot(), "src"), "*.cs", SearchOption.AllDirectories))
-        {
-            if (file.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}", StringComparison.Ordinal)
-                || file.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}", StringComparison.Ordinal))
-            {
-                continue;
-            }
-
-            var text = File.ReadAllText(file);
-            foreach (var token in new[] { "LeaseDerivation.Derive(", "LeaseDerivation.Patterns(" })
-            {
-                for (var i = 0; (i = text.IndexOf(token, i, StringComparison.Ordinal)) >= 0; i += token.Length)
-                {
-                    var argStart = i + token.Length;
-                    var argEnd = text.IndexOf(')', argStart);
-                    Assert.True(argEnd > 0, $"{Path.GetFileName(file)}: unterminated {token} call");
-                    sites.Add((Path.GetFileName(file), text[argStart..argEnd].Trim()));
-                }
-            }
-        }
-
-        // NAMED, not counted (as C16's guard above): today's call sites, by file and argument — the
-        // send gate reads the source text twice, once for the shape (`Patterns`, Ruling 73) and once
-        // for the write-shaped lease (`Derive`); the compiler's tier projection and decoration rows
-        // (CV-1: §A9's L is the same count), the draft's own block (the tier it carries), and the
-        // display site — every one the editor's source-text symbol.
-        Assert.Equal(
-            new[]
-            {
-                ("ComposerCompiler.cs", "draft.SourceText"),
-                ("ComposerDraft.cs", "this.SourceText"),
-                ("ComposerSendGate.cs", "draft.SourceText"),
-                ("ComposerSendGate.cs", "draft.SourceText"),
-                ("ComposerSurface.cs", "_draft.SourceText"),
-            }
-                .OrderBy(s => s.Item1, StringComparer.Ordinal),
-            sites.OrderBy(s => s.File, StringComparer.Ordinal).Select(s => (s.File, s.Argument)));
-
-        Assert.All(sites, s => Assert.EndsWith(".SourceText", s.Argument, StringComparison.Ordinal));
-    }
+    // The source-scan guard over every `LeaseDerivation` call site (root `src/`, recursive, tokens
+    // `LeaseDerivation.Derive(` / `LeaseDerivation.Patterns(`, allowlist by (file, argument)) lives in
+    // `TheSendGateSendsWhatProjectionProjectsTests.EveryLeaseDerivationCallSiteIsNamedAndPassesTheSourceTextSymbol`
+    // since CV-2 moved the one `Derive(` call into `Projection.Project` (ADR-0033 rule 2) — one census,
+    // one definition of the allowlist.
 
     private sealed class NeverAsked : IAttachmentAffirmation
     {

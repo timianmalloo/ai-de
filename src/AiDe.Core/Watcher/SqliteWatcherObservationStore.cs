@@ -14,7 +14,7 @@ namespace AiDe.Core.Watcher;
 /// </summary>
 public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, IDisposable
 {
-    private const int SchemaVersion = 6;
+    private const int SchemaVersion = 7;
 
     private readonly SqliteConnection _connection;
     private readonly object _gate = new();
@@ -812,17 +812,50 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         }
     }
 
+    public bool RecordEpisodeTaskClassSource(string episodeId, string source)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(episodeId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(source);
+        lock (_gate)
+        {
+            // An UPDATE, not an upsert, exactly as `mode`: a provenance without a scorecard would be a
+            // cohort label on a cell that does not exist. RecordScorecard's column list omits
+            // `task_class_source`, so a re-score preserves whatever was stamped. IDEMPOTENT, never a
+            // silent rewrite: a same-value re-stamp succeeds, a different value is refused (false) —
+            // the caller says so (`compile.degraded{task-class-source-restamped}`) rather than
+            // overwriting provenance (DM-F).
+            using var command = _connection.CreateCommand();
+            command.CommandText = "UPDATE scored_episode_cell SET task_class_source = $source WHERE episode_id = $id AND (task_class_source IS NULL OR task_class_source = $source);";
+            command.Parameters.AddWithValue("$source", source);
+            command.Parameters.AddWithValue("$id", episodeId);
+            return command.ExecuteNonQuery() == 1;
+        }
+    }
+
+    public string? FindEpisodeTaskClassSource(string episodeId)
+    {
+        lock (_gate)
+        {
+            using var command = _connection.CreateCommand();
+            command.CommandText = "SELECT task_class_source FROM scored_episode_cell WHERE episode_id = $id;";
+            command.Parameters.AddWithValue("$id", episodeId);
+            var value = command.ExecuteScalar();
+            return value is null or DBNull ? null : (string)value;
+        }
+    }
+
     private const string ScoredEpisodeSelect =
         """
         SELECT episode_id, harness, model, operator_id, task_class, schema_version,
-               verdict, headline, coverage_observed, coverage_required, evaluated_at, workspace
+               verdict, headline, coverage_observed, coverage_required, evaluated_at, workspace,
+               task_class_source
         FROM scored_episode_cell
         """;
 
     private IReadOnlyList<ScoredEpisode> ReadScoredEpisodes(SqliteCommand command)
     {
         var rows = new List<(string Id, string? Harness, string? Model, string Op, string Task, string Schema,
-            WeaveVerdict Verdict, string Headline, EvidenceCoverage? Coverage, DateTimeOffset At, string? Workspace)>();
+            WeaveVerdict Verdict, string Headline, EvidenceCoverage? Coverage, DateTimeOffset At, string? Workspace, string? TaskClassSource)>();
 
         using (var reader = command.ExecuteReader())
         {
@@ -845,7 +878,10 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
                     // NULL for a row written before segmentation existed. Read back as an absent
                     // workspace, never as a path - a backfill here would be a guess (DM: a backfill
                     // never guesses), and the row is excluded from cells rather than mis-compared.
-                    reader.IsDBNull(11) ? null : reader.GetString(11)));
+                    reader.IsDBNull(11) ? null : reader.GetString(11),
+
+                    // NULL for a row written before v7, or never stamped: "not recorded", never a guess.
+                    reader.IsDBNull(12) ? null : reader.GetString(12)));
             }
         }
 
@@ -857,7 +893,10 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
             var card = new Scorecard(row.Id, row.Schema, row.Verdict, assessments, floors, row.Coverage, row.Headline, row.At);
             result.Add(new ScoredEpisode(
                 row.Id, row.Harness, row.Model, row.Op,
-                new ScoreSegment(WorkspaceKey.From(row.Workspace), row.Task, row.Schema), card));
+                new ScoreSegment(WorkspaceKey.From(row.Workspace), row.Task, row.Schema), card)
+            {
+                TaskClassSource = row.TaskClassSource,
+            });
         }
 
         return result;
@@ -1138,6 +1177,14 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         // SchemaVersion) and a comparison never crosses it; a fourth axis here would split the same
         // work into two cells, which is exactly what R4 forbids. It is an attribute OF the cell.
         (6, "", ("scored_episode_cell", "mode", "TEXT NULL")),
+
+        // v7: the scored cell gains the PROVENANCE of its task class - session-default (the session's
+        // declared default, Ruling 72) or operator (chosen for that prompt, Ruling 70). Expand-only
+        // and nullable, following v4 and v6 exactly: a row written before this column existed
+        // reads NULL, "not recorded", never backfilled. Like mode it is an attribute OF the cell,
+        // never a partition axis (ADR-0028's amendment): a defaulted free-form and a chosen free-form
+        // rank in one cell, and the board can tell them apart.
+        (7, "", ("scored_episode_cell", "task_class_source", "TEXT NULL")),
     ];
 
     private const string SchemaSql =
@@ -1251,10 +1298,18 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
             workspace         TEXT    NULL,
             -- The LANE MODE this episode came through: 'governed' (an ACP lane) or 'observed' (a CLI
             -- lane). NULL for a row written before v6, meaning "not recorded" - never backfilled.
-            -- A cohort attribute, deliberately absent from ScoreSegment. Declared LAST for the same
-            -- reason workspace is: a fresh database and one migrated by ALTER TABLE ADD COLUMN must
+            -- A cohort attribute, deliberately absent from ScoreSegment. Declared after workspace for
+            -- the same reason: a fresh database and one migrated by ALTER TABLE ADD COLUMN must
             -- produce the same sqlite_master text.
-            mode              TEXT    NULL
+            mode              TEXT    NULL,
+            -- The PROVENANCE of the task class (v7): 'session-default' or 'operator'. NULL for a
+            -- row written before v7 or never stamped - "not recorded", never backfilled. A cohort
+            -- attribute beside mode, never inside ScoreSegment. A COPY, deliberately: the source of
+            -- truth is the envelope's Current(task_class).source, joined on consumed.episode_id; the
+            -- envelope is purgeable work data and scores are not, so after a purge this column is the
+            -- provenance's only home (ADR-0033 rule 4, the Simplifier's finding under the D&P condition).
+            -- Rebuildable by that join while the envelope exists. Declared LAST, as above.
+            task_class_source TEXT    NULL
         );
         CREATE INDEX ix_scored_episode_task ON scored_episode_cell (task_class, schema_version);
 

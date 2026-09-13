@@ -110,6 +110,20 @@ public interface IWatcherObservationStore
     string? FindEpisodeMode(string episodeId);
 
     /// <summary>
+    /// Stamps a scored episode's <c>task_class_source</c> — <c>session-default</c> or
+    /// <c>operator</c> (Ruling 70; ADR-0033 rule 4; ADR-0028's amendment): the provenance of the
+    /// class the episode ranks under, so the board can tell a chosen <c>free-form</c> from a
+    /// defaulted one. A cohort <b>attribute</b> beside <see cref="ScoreSegment"/>, never inside it —
+    /// the <c>mode</c> column's own pattern. An UPDATE over an already-scored cell: nothing to label
+    /// without one.
+    /// </summary>
+    /// <returns><c>true</c> when a scored cell was stamped (or already carried this value); <c>false</c> when there was none to stamp, or it carries a different value — provenance is never silently rewritten.</returns>
+    bool RecordEpisodeTaskClassSource(string episodeId, string source);
+
+    /// <summary>The class provenance recorded for an episode, or <c>null</c> meaning <b>not recorded</b> — what every row written before the column existed reads.</summary>
+    string? FindEpisodeTaskClassSource(string episodeId);
+
+    /// <summary>
     /// Appends an operator's dispute of a scored episode (US-16 / rule 12). Append-only: raising a
     /// dispute never overwrites the Scorecard. A duplicate dispute id is ignored idempotently.
     /// </summary>
@@ -495,6 +509,36 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
         lock (_gate)
         {
             return _modes.TryGetValue(episodeId, out var mode) ? mode : null;
+        }
+    }
+
+    public bool RecordEpisodeTaskClassSource(string episodeId, string source)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(episodeId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(source);
+        lock (_gate)
+        {
+            if (!_scored.ContainsKey(episodeId))
+            {
+                return false;
+            }
+
+            // Idempotent, never a silent rewrite (the SQL store's own rule); the record IS the store.
+            if (_scored[episodeId].TaskClassSource is { } existing && !string.Equals(existing, source, StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            _scored[episodeId] = _scored[episodeId] with { TaskClassSource = source };
+            return true;
+        }
+    }
+
+    public string? FindEpisodeTaskClassSource(string episodeId)
+    {
+        lock (_gate)
+        {
+            return _scored.TryGetValue(episodeId, out var scored) ? scored.TaskClassSource : null;
         }
     }
 

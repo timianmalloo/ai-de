@@ -2111,6 +2111,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "8a9145020ebc341504a12748381e4109c1c26e0409e90dc75aa4fe9626f3d265"
     },
     {
+      "id": "api-aide-app-cli",
+      "path": "docs/api/AiDe.App.Cli.md",
+      "title": "API: AiDe.App.Cli",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.App.Cli: 3 types, 4 members, 71% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c4e8552dd7606ae57023da924abdeee93002c81938b627b412ef8eab2a7472f8"
+    },
+    {
       "id": "api-aide-app-conductor",
       "path": "docs/api/AiDe.App.Conductor.md",
       "title": "API: AiDe.App.Conductor",
@@ -2195,7 +2220,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 11 types, 74 members, 91% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 12 types, 87 members, 92% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2208,7 +2233,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "dac4ff6f0a1ee277659df214edf84e00d55875b20bc1fd4c51ab4f656eedec5a"
+      "sourceSha256": "8222690372cc6917d8c815bfa2d59bf463e9ad8099fce4d8dcbe30b32ca30ea5"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -2220,7 +2245,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 30 types, 157 members, 71% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 30 types, 161 members, 71% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2233,7 +2258,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "484f9dcade5299debf584a0abb8fbbc852f3d0ad377ce31dc7e47bc17d94821e"
+      "sourceSha256": "63f300dfe7cc4e0c07e228b0454d65c6ec15fdb3f07229af4ca71fde047f89ea"
     },
     {
       "id": "api-aide-app-workbench-understanding",
@@ -2495,7 +2520,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 33 types, 90 members, 89% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Composer: 33 types, 97 members, 89% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2508,7 +2533,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "96096eac595c44a39a8b27a3e208dd0f0aa0449addc289baedf2720898fe807e"
+      "sourceSha256": "08a3a453f3662513d5f7ca2cef9f6007e5864f4a5f95ca73b43e8f4d32709d1d"
     },
     {
       "id": "api-aide-core-presentation-sessions",
@@ -2561,16 +2586,16 @@ window.DOCS_INDEX = {
       "sourceSha256": "b3bd7d072b23497d38f1a5fb961a00ba10c2879cc5b8d5b8af7af70ac88454e5"
     },
     {
-      "id": "api-aide-core-sessions",
-      "path": "docs/api/AiDe.Core.Sessions.md",
-      "title": "API: AiDe.Core.Sessions",
+      "id": "api-aide-core-promptcompilation",
+      "path": "docs/api/AiDe.Core.PromptCompilation.md",
+      "title": "API: AiDe.Core.PromptCompilation",
       "type": "api",
       "status": "current",
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Sessions: 23 types, 66 members, 89% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.PromptCompilation: 40 types, 137 members, 77% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2583,7 +2608,32 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "52fc790cb23c4a0ffe26f05bd28b9dea548564023c76b1636061384f8515915d"
+      "sourceSha256": "f4af529230dacad9b4214d5daaa31fb5a08e1d3fae92a18ad9f811bf0600912c"
+    },
+    {
+      "id": "api-aide-core-sessions",
+      "path": "docs/api/AiDe.Core.Sessions.md",
+      "title": "API: AiDe.Core.Sessions",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Sessions: 23 types, 67 members, 89% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b90bfa5a9d67e88f522ea0bf08dd371116440d9eae7cf6280300c49444517e1e"
     },
     {
       "id": "api-aide-core-store",
@@ -2695,7 +2745,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Watcher: 163 types, 319 members, 65% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Watcher: 164 types, 328 members, 64% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2708,7 +2758,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1d44dfaeb02210548ad6906930f9f648f5f139e92b84728a72ea8e12755084e5"
+      "sourceSha256": "8dc56c2797c82a02c13f8a1fc9cf1797fbb8f064242339e10d973ad859b917c6"
     },
     {
       "id": "api-aide-core-workbench",
@@ -6519,6 +6569,44 @@ window.DOCS_INDEX = {
       "sourceSha256": "97d517658252e65e6cf51a7392d73986c9eb96aa4d78d91569aaeeead093e21e"
     },
     {
+      "id": "design-code-atlas-shared-host-admission",
+      "path": "docs/design/code-atlas-shared-host-admission.md",
+      "title": "Code Atlas — shared-host admission checkpoint",
+      "type": "design",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-09-19",
+      "reviewSuggested": [],
+      "summary": "Current-main compatibility evidence and method-level Architecture host admission seams, with production authority gaps explicit.",
+      "tags": [
+        "code-atlas",
+        "shared-host",
+        "admission",
+        "proposed"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-e-code-atlas",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-code-atlas-live-reader-candidate",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-atlas-live-reader-horizon",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "10289e7da28ebd9b8532a92d45c8384e08f1a38a23e3f25ecf6e1654337cb2c8"
+    },
+    {
       "id": "design-knowledge-explorer-mode",
       "path": "docs/design/knowledge-explorer-mode.md",
       "title": "Knowledge Explorer mode — component design (Phase 1 walking skeleton)",
@@ -8356,7 +8444,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fa6882663e6c4dfe6bb3abcc358a8ff898eeedc8c437e2f937b7733df87377df"
+      "sourceSha256": "00a7945a7d399c00757610a5cd46d55d7f7ed3d42ff4b12fc87e64ae70bd75c2"
     },
     {
       "id": "design-session-profiler",
@@ -16290,6 +16378,72 @@ window.DOCS_INDEX = {
       "sourceSha256": "6c5c67e487b6bb2c9497ce5e10e0191a7c68dc102d699ffb26af00ece93516c1"
     },
     {
+      "id": "proof-mechanical-compile",
+      "path": "docs/proof/mechanical-compile.md",
+      "title": "Proof Pack — CV-2, the mechanical compile: the append-only envelope store, the five event records, the fold and its projections, PreCompile, Projection.Project as the one producer of the sent bytes, Prepare's editable derived lines, purge, and the compile contract shipped inert",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-d",
+      "reviewBy": "2027-03-12",
+      "reviewSuggested": [],
+      "summary": "Evidence for CV-2 on the Conversation lane (Addendum D slice D-1 with D-0 folded): the append-only, exclusively written, sha-chained envelope store with its eraser beside it; the five event records and the fold's projections; PreCompile on the mechanical rung; Projection.Project as the one producer of the sent bytes (GovernedRunRequest byte-identical to three literal goldens observed on the pre-change gate); the fourteen tier inputs; the censuses (five source scans, code lines only, named by path and count); Prepare's tier and class controls with provenance; the task_class_source cohort column (v7) and its leaderboard reader; the compile contract shipped inert; three hard-veto reviews and the Simplifier cleared or overridden in writing; the three attended rows RUN-PENDING with their steps.",
+      "tags": [
+        "proof-pack",
+        "conversation-lane",
+        "cv-2",
+        "addendum-d",
+        "compile",
+        "envelope-store",
+        "projection",
+        "prepare",
+        "purge",
+        "adr-0033",
+        "adr-0034",
+        "dm-data-modelling"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0033-prompt-compilation-bounded-context",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0034-envelope-event-store",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-composer-as-conversation",
+          "rel": "refines"
+        },
+        {
+          "to": "note-addendum-cd-architecture-p1-inputs",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0028-mode-cohort-not-partition",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0037-family-craft-profile-dimension",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0ce1c999eb408c194202fc11bc9cf17ed3b17d62b6ed956d5df84281d38085b0"
+    },
+    {
       "id": "proof-perspective-content",
       "path": "docs/proof/perspective-content.md",
       "title": "Proof Pack: SH-3 — perspective content",
@@ -18546,6 +18700,14 @@ window.DOCS_INDEX = {
       "description": "Open the generated documentation bundle."
     },
     {
+      "id": "surface-design-code-atlas-shared-host-admission",
+      "path": "docs/design/code-atlas-shared-host-admission.html",
+      "title": "Code Atlas — shared-host admission checkpoint",
+      "kind": "design-preview",
+      "description": "Inspect a rendered design or design-language preview.",
+      "artifactId": "design-code-atlas-shared-host-admission"
+    },
+    {
       "id": "surface-mockups-activity-rail",
       "path": "docs/mockups/activity-rail.html",
       "title": "Activity rail — elevate mockup",
@@ -18742,5 +18904,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "b6194dcfb93e3ffdc0cc8629198c5419c93b89255beda2adb6316c90950498be"
+  "graphSha256": "aa4e68c6841b04b8581d7194e64bab69919b828cd47e68a76e88d28a1e2e0c48"
 };

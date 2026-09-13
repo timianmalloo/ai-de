@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Code Atlas — shared-host admission checkpoint</title></head>
+<body>
+<main>
+<h1>Code Atlas — shared-host admission checkpoint</h1>
+<p><strong>PROPOSED; incomplete admission evidence, not production-design approval.</strong></p>
+<p>The complete canonical checkpoint text follows. It preserves the source document's evidence and unresolved gates without a new UI direction.</p>
+<pre id="canonical-content">---
+id: design-code-atlas-shared-host-admission
+title: "Code Atlas — shared-host admission checkpoint"
+summary: "Current-main compatibility evidence and method-level Architecture host admission seams, with production authority gaps explicit."
+type: design
+status: proposed
+owner: "@timianmalloo"
+tags: [code-atlas, shared-host, admission, proposed]
+review-by: 2026-09-19
+links:
+  - { to: spec-addendum-e-code-atlas, rel: refines }
+  - { to: architecture-code-atlas-proposed, rel: depends-on }
+  - { to: proof-code-atlas-live-reader-candidate, rel: depends-on }
+  - { to: note-atlas-live-reader-horizon, rel: depends-on }
+---
+
+# Shared-host admission checkpoint
+
+**PROPOSED; incomplete admission evidence, not production-design approval.**
+The full-content HTML companion is `code-atlas-shared-host-admission.html`.
+Coordination authority is [session-contracts.md §2](../collaboration/session-contracts.md).
+Conductor owns the final join, gates and audit publication. This delegate does not admit adapters.
+
+## Goal and boundary
+
+Goal: reconcile accepted detached Atlas with observed current main, measure compatibility,
+and identify the next Architecture-host seams for Owner and the existing owners.
+Done when: pins, build/test evidence, an exact change manifest, sourced production authority
+and membership proposal, and one supported handoff receipt exist.
+Not in scope: adapter implementation, main integration, another policy/store, model calls,
+inspected-project execution, new diagrams, or palette/mockup redesign.
+Tier T2; fan-out 0; checkpoint budget 12 leaf calls including two skill loads.
+The budget is a reporting boundary, not evidence that all admission criteria passed.
+Owner turn 33 released 12 further leaves to the same delegate and two authored files,
+24 total, with final commit/readback calls reserved. No second handoff is permitted.
+This continuation ends at PRECOMMIT for Conductor's staged-set review, not at a local commit.
+
+## Pins and observed reconciliation
+
+On this checkpoint, local `main`, `origin/main` and compatibility HEAD were all
+`6d3e281a049b8baf3696a90b341d3468635ef2f1`.
+Branch: `atlas/shared-host-compatibility`.
+Tree: `C:\Projects\ai-de-atlas-shared-host-compatibility`.
+No fetch or remote freshness claim is made.
+
+The registered tree actually started at main, not at the supplied accepted-proof pin.
+`git merge-base --is-ancestor a0ffcee3 HEAD` returned 1; the Atlas spec was absent.
+Merging observed main was therefore a no-op. The delegate then merged accepted proof
+`1e688ace` with `--no-commit --no-ff`, preserving both lines rather than replacing main.
+Owner turn 32 accepts detached reader `a0ffcee3`, join `cc67f7c6`, proof `1e688ace`;
+it does not accept integrated E-0, normative Addendum E, or the full programme.
+
+The merge is resolved but uncommitted, pending Conductor's final-set review.
+All four documentation conflicts were resolved: main's DC-172–176 were retained against
+the empty incoming conflict side; the three site pages differed only in derived figure
+values within each conflict. Authored surrounding content was preserved and figures regenerated.
+`tools\regenerate-derived.py` passed its conflict, derived-view, figure, register, audit and
+registry checks. The unmerged set was empty. No authored existing adapter change was made.
+No compatibility commit or test run at a nonexistent commit is claimed.
+
+Correction provenance: Conductor identified its initial `--base HEAD` resolution in the
+primary checkout as the cause of the starting pin. Recovery preserved both parents.
+This packet does not change the coordination tool or assign that error to the delegate.
+
+## Executed compatibility evidence
+
+All commands ran in the compatibility tree. No adapter source was authored.
+
+| Command / evidence | Observed result | Scope |
+|---|---|---|
+| `dotnet build spikes\code-atlas-reader-candidate\CodeAtlas.ReaderCandidate.csproj --nologo -v:q` | Build succeeded; 0 warnings, 0 errors; 6.16 seconds reported | Runner and its referenced build graph |
+| `dotnet test tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj --filter FullyQualifiedName~Understanding` | TRX: total/executed/passed 272; failed/error/notExecuted 0 | Core Understanding selection |
+| `dotnet test tests\AiDe.App.Tests\AiDe.App.Tests.csproj --filter FullyQualifiedName~AtlasReaderViewTests` | TRX: total/executed/passed 45; failed/error/notExecuted 0 | Native reader selection |
+
+Local outputs: `artifacts\atlas-shared-host\build.log`, `core.log`, `app.log`,
+`core.trx`, `app.trx`. These are local run evidence, not a newly accepted Proof Pack.
+The counters were parsed from TRX, not inferred from process exit.
+Conductor independently read the build output and actual TRX counters. Owner turn 33 ruled
+on Conductor-reported results after opening §2; Owner did not independently read those outputs.
+Relevant code/build inputs have not changed
+since that run; no redundant tests were run during the documentation continuation.
+The continuation captured 899 tracked source/test/spike/build-input file hashes in
+`artifacts\atlas-shared-host\tested-inputs-continuation.json`, SHA-256
+`9f277e1cb7b250d884b1f37879f8db7d82352fb7414765e128340617db2451ed`.
+This is a post-run identity manifest, not an invented pre-run snapshot. The recorded
+no-code-edit history and final byte comparison connect it to the observed test run.
+The staged tree before these corrections was `c5c0134c31d9338bf54cdae41e5fd48237f7b49d`.
+The final reviewed tree, exact staged paths and both full parent SHAs are separate precommit
+evidence emitted after regeneration; changing documentation does not re-date the tests.
+No red-first experiment or shared-host render was run here. This is not whole-app,
+Architecture reachability, production authority, or security certification.
+
+## Existing-file / owner / minimum-delta / oracle manifest
+
+Ownership below is the current §2 lane assignment, not historical blanket ownership.
+Every delta is a proposal; none is authorized by this packet.
+
+| Existing file | Owning party | Existing method contract → minimum proposed delta | Negative/runtime proof required |
+|---|---|---|---|
+| `src\AiDe.Core\Workbench\Perspectives.cs` | Shell lane | `PerspectiveSet.Architecture` at :58–60 already declares `architecture`, `DockHost`, `perspective.architecture`; reuse unchanged, no fourth perspective or rail registry | Architecture rail/command reaches its existing host; disallowed host rejects the new kind |
+| `src\AiDe.App\Workbench\SurfaceContentFactory.cs` | Shell lane | `Kinds` :128 and `Create(Surface)` :287–307 locate a kind, call `row.Build`, name it for accessibility and wrap non-windowed content. Add one Architecture-only native Atlas row and append the admitted query/lifetime dependency; no positional reordering | Missing admission gives an explicit unavailable surface; wrapped content retains accessible title and native reader behavior |
+| `src\AiDe.App\Workbench\PerspectiveMenu.cs` | Shell lane | `For(Perspective)` :68–69 delegates to `For(perspective,kinds,catalog)` :75–97, which filters derived entries by the same perspective column. Reuse unchanged; derive the Atlas entry from the kind row | Menu/palette and host admission agree for Architecture, Coding and Explore |
+| `src\AiDe.App\Workbench\MainMenuBuilder.cs`, `CommandPalette.cs` | Shell lane | Consumers of the kind/catalog join per §2. No authored delta proposed unless the new-row runtime test proves necessary; their internal methods are not claimed verified here | Existing entry path invokes the same row-derived opener; no second hard-coded Atlas list |
+| `src\AiDe.App\Workbench\WorkbenchShell.cs` | Shell lane | Constructor :176–178 creates Coding and Architecture using `surface =&gt; _factory.Create(surface)`. `AttachWorkspace(IWorkspaceQueries,string?,IWorkspaceCommands?,string,string,string?)` :591–631 replaces the factory and invalidates `WorkspaceDependentPaneKinds` in both hosts. Add Atlas to that set and carry/revoke the workspace-bound production lease at factory replacement | Open before workspace, attach, switch root and late response cannot retain another workspace's source |
+| `src\AiDe.App\Workbench\DockHost.cs` | Shell lane | `Create(Perspective,Func&lt;Surface,FrameworkElement&gt;,IWorkbenchAnnouncer,Action&lt;DockHost,ZoneId&gt;)` :54–85 rejects a non-docking row and creates service/adapter/controller. `AdmissionFor(Perspective)` :92–99 derives kind rules; `Dispose()` :102 only disposes persistence. Reuse admission; do not assume it owns query resources | Coding/Explore reject unauthorized placement; host disposal alone must not be mistaken for lease disposal |
+| `src\AiDe.App\Workbench\WorkbenchShell.cs` | Shell lane | `AttachPersistence(string)` :544–557 uses `KnownKinds` and one `LayoutPersistence` per host; `Dispose()` :3001–3042 disposes terminals, host persistence, session documents and watcher resources, not Atlas. Add explicit Atlas lease termination on workspace replacement and shell disposal; keep receipts ephemeral, never restore an old permission from layout | Layout can restore the kind, but fresh admission is required before loading; shutdown/replacement drains or cancels bounded source work |
+| `src\AiDe.App\Workbench\WorkbenchAdapter.cs` | Core, not Shell | `Invalidate(IEnumerable&lt;string&gt;)` :140 and rebuilding :199–205 call the factory and dispose only direct old `IDisposable` content. No adapter edit proposed: shell owns the lease independently of the visual wrapper | Hide/reparent/unload is not authorization expiry; replacement and final owner close release the lease even through `SurfaceChrome` |
+| `src\AiDe.App\ViewModels\MainWindowViewModel.cs` | Core | `OpenDefaultAsync` :222–223 reads `AIDE_WORKSPACE_ROOT`; `OpenAsync(string?,CancellationToken)` :234–264 checks a directory, connects the daemon, and exposes client queries/commands. Append the admitted Atlas client seam only after the Core authority decision. Its display `WorkspaceId` receives the folder name at :259–260; do not borrow it as the daemon's security identity | Folder-name collisions, absent root, failed connection and wrong workspace cannot issue source admission |
+| `src\AiDe.App\MainWindow.xaml.cs` | Shell lane for this horizon, §2:316 | `AttachWorkspace(MainWindowViewModel)` :181–185 forwards queries, data directory, commands and root. Extend that existing handoff only if needed for the typed Atlas client; no rail or palette redesign | Real window → existing Architecture → derived entry → reader proves reachability and no-workspace failure |
+| `src\AiDe.App\Workbench\Understanding\AtlasReaderView.cs` | Atlas branch-local native-reader scope; existing adapters remain with their owners | Consume the existing reader, not a substitute or mockup | Existing `tests\AiDe.App.Tests\Workbench\Understanding\AtlasReaderViewTests.cs` plus host-level open/close/restore/late-completion proof |
+| `src\AiDe.Core\WorkspaceCore.cs` | Core | `Open(string workspaceId,string rootPath,string dataDirectory,IExtractor?)` :75–115 stores `WorkspaceId` and `RootPath` and constructs projections/dispatch. Reuse that daemon-owned scope; opening the store is not a session/policy/root-reading grant | Revoked/expired/wrong-session/wrong-root/stale-policy requests fail closed before source access |
+| `src\AiDe.Core\Understanding\AtlasQueryContracts.cs` | Atlas branch-local query-contract scope | Preserve the existing port unless an independently reviewed production seam requires an additive contract | Inventory/select/receipt restore reject stale bindings and surface bounds |
+| `src\AiDe.Core\Understanding\AtlasSourceBinding.cs` | Atlas branch-local source-binding scope | Preserve manifest/file/policy/root/file/hash binding, not a second identity scheme | Change each binding independently; stale data must clear rather than remain plausible |
+| `src\AiDe.Core\Ipc\WorkspaceClient.cs` | Core | Implements `IWorkspaceQueries`, `IWorkspaceCommands`, `IWorkspaceDispatch`, `IAsyncDisposable` at :39, not `IAtlasQueries`. `ConnectAsync(string,TimeSpan,CancellationToken)` :61–79 connects and cleans up failures; `DisposeAsync()` :269 closes the IPC client. Add a separate read-only Atlas client surface, not source reads disguised as commands | Cancellation, disconnect, stale epoch and malformed response remain typed failures; no silent reconnect/retry across admission |
+| `src\AiDe.Core\Ipc\WorkspaceOperations.cs`, `DaemonEndpoint.cs` | Core | `WorkspaceOperations.Register(DaemonEndpoint,ProjectionService)` :175 registers existing projections; `DaemonEndpoint.Register(string,Func&lt;IpcRequest,IpcPeer,IpcResponse&gt;)` :42 is synchronous and `Invoke` :88 validates before dispatch. No existing Atlas wire contract. An awaitable/cancelable Atlas operation path is a required new reviewed seam, not a blocking callback | No `.Result`/sync-over-async bridge; per-request cancellation, payload/response bounds, authority checks and connection close are tested |
+| `src\AiDe.Daemon\Program.cs` | Core | :177–184 opens `WorkspaceCore`, constructs `DaemonEndpoint(workspaceId,new CapabilityRegistry(),_ =&gt; core.Store.CoreEpoch)` and registers daemon/workspace operations. Compose production admission, trusted membership and the Atlas service here, only after their contracts are admitted | Daemon shutdown/disconnect/revocation ends appropriate scope; malformed membership never turns into complete empty success |
+
+Verified code anchors: `SurfaceContentFactory.cs:19–45` has optional composition arguments;
+`:102–110` declares `SurfaceKind` with `Build`, `Perspectives`, `Instances`, `Entry`, `Windowed`.
+Its comments `:90–94` require a non-empty explicit perspective allow-list.
+`AtlasQueryContracts.cs:318–322` defines `IAtlasQueries.InventoryAsync(PageRequest, CancellationToken)`,
+`SelectAsync(SelectionRequest, CancellationToken)`, and
+`RestoreAsync(string issuedReceiptToken, long requestSequence, CancellationToken)`.
+`AtlasReaderView.cs:45` accepts `(IAtlasQueries queries, string manifestToken)`;
+`:69` exposes `LoadAsync`. This is an actual native consumer, not yet a shared-host integration.
+Its `Loaded`/`Unloaded` handlers at :233–240 clear the unloaded flag or advance sequence,
+cancel and dispose the request budget; `IsCurrent(long)` :482 rejects late/unloaded results.
+The reader does not thereby own the backing service. Factory construction is synchronous:
+negotiate the admitted query scope and initial manifest asynchronously before loading the
+reader, expose loading/unavailable states, then call `LoadAsync`; never block `Create` with
+`.Result`. Preserve the existing native styling and controls.
+
+**Smallest proposed composition:** use the existing Architecture host and row-derived menu;
+carry a separate read-only Atlas port through the real daemon/client/view-model handoff;
+keep one bounded production scope lease per attached workspace in the shell, independent
+of visual reparenting. Closing/hiding the reader cancels that reader's requests; replacing
+the workspace or closing its owner terminates the scope. Retention while hidden is deliberate
+and requires a measured resource ceiling before admission. Do not modify `DockHost`,
+`PerspectiveSet`, the generic controller, Conversation adapters or `WorkbenchAdapter` merely
+to route one additional kind. If a later contract requires such an edit, it needs its owner's
+specific approval, not this path inventory.
+
+## Production authority and membership: blockers, not guessed contracts
+
+**Verified transport authority, insufficient source authority:** `CapabilityRegistry.cs:6–12`
+binds token, connection, process, workspace, epoch and issuance time. `Issue(IpcPeer,string,long)`
+at :60 mints it; `Validate(string?,IpcPeer,string,long)` at :88–148 checks live token,
+connection, process, workspace and current epoch. `Revoke(string)` :152 removes one token;
+`RevokeConnection(string)` :161 removes connection tokens. There is no root, document-session,
+policy revision or expiry field in this record, and validation does not perform those checks.
+Do not call this a session/policy/root grant or equate epoch with policy revision.
+
+`DaemonEndpoint.OpenWorkspace(IpcRequest,IpcPeer)` :53–84 checks workspace and issues the
+capability with the current store epoch. `Invoke` :88–133 separately validates the capability
+and the request's epoch before dispatch. `ShellBootstrap.ConnectOrLaunchAsync(string,string,
+CancellationToken,string?)` :50 and `IpcPipeName.ForWorkspace(workspacePath)` :57 establish
+the existing production daemon route. Root-open and client transport success alone cannot
+authorize Atlas source reads.
+
+**Bounded absence evidence:** recursive source scans covered 307 C# files under `src`,
+excluding `bin`, `obj` and `Understanding`. The literal token set
+`AtlasRootGrant|RecordedRootApproval|IAtlasQueries|AtlasProofComposition` matched zero lines;
+the membership set `ls-files|GetTrackedFiles|TrackedFiles|git.*membership|membership.*git`
+also matched zero. No additional allowlist was used. This proves absence of those references
+in that corpus, not that every conceivable policy mechanism in the repository is absent.
+Together with the opened production entry/composition methods, it establishes that the
+accepted Atlas contract is not wired into this production route.
+
+**Proposed seam, not an existing API:** Core owns a typed `AtlasProductionAdmission`
+exchange and a revocable runtime scope lease. Before coding, Core plus the session-policy
+owner must decide the authenticated issuer and map the real document-session identity,
+policy revision, approved root and expiry into that exchange. Existing session settings are
+Conversation-owned (§2:325); transport `IpcPeer` is not a substitute for that identity.
+If no existing approved-root policy covers source reads, Owner must explicitly admit the
+missing decision surface; a generated factory cannot grant itself authority. The lease
+borrows daemon workspace/root identity, preserves the accepted tuple codec, and is checked
+on inventory/select/restore and invalidated on scope or policy change. It is ephemeral,
+not a second policy database. No `callback =&gt; true`, proof-only approval factory,
+external JSON approval or `RecordedRootApproval` may substitute for it.
+
+`spikes\code-atlas-reader-candidate\Program.cs:134–146` obtains `Membership(...)`,
+passes paths/completeness/reason to `AtlasProofComposition.CreateForApprovedRootAsync`,
+constructs `AtlasReaderView`, and calls `LoadAsync`.
+This establishes the **proof composition**, not production authority.
+Its lines `158–162` render membership-unavailable status.
+`AtlasQueryService.cs:11–24` explicitly declares `RecordedRootApproval` and the
+proof factory accepting `Func&lt;RecordedRootApproval,bool&gt;` plus membership data.
+`AtlasProofHandle.Dispose()` :37 owns the query service. This seam must not be renamed
+“production” while retaining caller-supplied authority.
+
+**Proposed trusted membership seam:** a daemon-owned, admitted-root-only Git snapshot
+operation, separated from query projection. There is no production producer in the bounded
+scan above. Reuse the proof's verified mechanisms, not its authorization:
+`Program.cs:660–687` checks a pinned Git version, expected HEAD, clean status,
+NUL-terminated strict UTF-8 `ls-files --cached -z` output, child-path validity and
+case-insensitive uniqueness. Failure returns null membership, `Complete=false`, a reason.
+`:690–725` sets an explicit executable/working directory, disables shell execution,
+clears `GIT_*`, blocks hooks/helper/network-related settings, uses argument lists and a
+10-second budget, and bounds stdout to 2 MiB and stderr to 16 KiB. These are proof bounds,
+not accepted production limits. The production contract must additionally prove consistency
+across HEAD/index changes during capture and process termination/drain on cancellation.
+No inspected-project execution, recursive submodule work or untrusted executable selection.
+
+Proposed minimum model: borrow existing workspace, repository, root and session identities;
+use the accepted length-prefixed UTF-8/Base64 tuple codec, not the superseded JSON/hash-ID
+proposal. Manifest and receipt state are bounded and ephemeral; introduce no second policy
+or durable store. A production composition must supply membership for the approved root
+and pinned repository state with explicit completeness. Unknown membership must remain
+unknown, never become an empty complete inventory. Confirm limits, cancellation, changed
+HEAD/index behavior and safe Git execution from the actual trusted producer before authoring.
+
+## End-to-end reach and required measurements
+
+Required trace: existing authority/store → identity and binding model → inventory/source
+service → query projection (and wire only if needed) → client port → native reader →
+host routing, restoration and selection compute readers. Source/file content never grants
+authority. Transport currentness is traced above. The source-read policy issuer and its currentness
+reader are not implemented on the opened production path; the proposed admission exchange
+is a required decision, not evidence that this gap has disappeared.
+
+Required invariants: explicit unavailable/error/unknown bounds; cancel and stale-completion
+suppression; revocation/expiry checked on normal requests and restore; receipt replay bounded
+to the current scope; deterministic selection; disposal releases handles and subscriptions;
+no inspected-project execution; redaction of root paths, source text, credentials and tokens
+from diagnostic output. Cross-surface tests must use one seeded scope and compare factory
+admission, host state, reader selection and current authority, not isolated expectations.
+
+Operator questions and proposed sources, **not observed production telemetry**:
+request latency and volume from bounded query completion events; failure/cancel/currentness
+reason from stable outcomes; visited/skipped/truncated counts from inventory bounds;
+active handles/receipts and close completion from the owning lifetime.
+No raw path or token metric labels. Missing measurement is “not recorded,” never zero.
+No provider calls are admitted, so model spend is not part of this checkpoint.
+
+## Proposed test manifest for the next admitted slice
+
+These are proposed tests, not files added or tests run here. Keep the existing
+`tests\AiDe.Core.Tests\Understanding\AtlasQueryServiceTests.cs` and
+`tests\AiDe.App.Tests\Workbench\Understanding\AtlasReaderViewTests.cs` as regression controls.
+No existing green test is relabeled as production-host proof.
+
+| Proposed file / owner to admit | Failing input / runtime oracle |
+|---|---|
+| `tests\AiDe.Core.Tests\Understanding\AtlasProductionAdmissionTests.cs` — Core with Conversation review of document-session policy | A valid IPC capability with no source-read grant still refuses; vary root, document session, policy revision, expiry, epoch and revocation independently; zero source opens on each refusal |
+| `tests\AiDe.Core.Tests\Understanding\AtlasGitMembershipTests.cs` — Core | Wrong executable, unsafe environment/path, invalid UTF-8/NUL framing, duplicate paths, output overflow, timeout, canceled process, dirty or changing HEAD/index: bounded typed unavailable, never complete empty success; prove process/stream cleanup |
+| `tests\AiDe.Core.Tests\Understanding\AtlasIpcAdmissionTests.cs` — Core | Real client/server boundary: malformed/oversize request and response, wrong connection/process/workspace/epoch, disconnect/cancel and restore after revocation; no blocked synchronous server or silent identity retry |
+| `tests\AiDe.App.Tests\Workbench\Understanding\AtlasSharedHostAdmissionTests.cs` — Shell and Atlas-native owner | Real window/composition root: Architecture rail → derived opener → native reader; no-workspace loading/error; Coding/Explore refusal; same-scope selection; layout restore requires fresh admission; switch/close/unload/late completion proves cleared source and bounded resources |
+
+One seeded scope must agree across admission, membership, manifest, wire, reader and restored
+selection. Independent Security/Test review must demand red-first or fault-injection evidence
+for these controls. Pure pattern scans and the present 317 selected green tests are insufficient.
+
+## Handoff, acceptance and remaining full-design checklist
+
+Existing requests remain open unless their supported request records prove otherwise:
+`req-01M2B86TXF7SHG61B31P4H4173`, `req-01M2BGHNCM6WRD4ZZMBBFEEB4K`.
+Recipient: `conductor-addendum-c`. The one supported `coord request add` attempt completed
+and returned `{"id":"req-01M2CAXKH01J8SMQV1HBCCAN08","status":"open"}`.
+The native record is the delivery receipt; its local captured output is
+`artifacts\atlas-shared-host\handoff-receipt.txt`. It names the tree, parents, selected test
+results, concrete host files and source-authority/membership question. Conductor read the
+native OPEN record; Owner preserved the non-consent boundary. No second attempt or polling occurred.
+Delivery is not read acknowledgment; acknowledgment is not scope agreement. Counterpart
+acknowledgment and adapter permission remain unverified. Return the corrected packet and
+precommit tree to Owner; no human relay is required.
+
+## Graph findings and record correction
+
+Direct `docs-graph.py derive` classified both prior findings:
+
+1. **Packet-owned:** this Markdown lacked required frontmatter `summary`. The current
+   correction added it. The final direct `docs-graph.py derive` returned only the
+   ruling-49 finding below; the packet's missing-summary finding is resolved.
+2. **Outside this scope:** `docs/notes/front-door-ruling-49.md` links to missing
+   `proof-conductor-front-door`. Leave that existing artifact unchanged and report the
+   dangling link to Conductor; do not invent its target or edit another owner's note.
+
+The initial `artifacts\atlas-shared-host\regenerate.log` is historical evidence of two
+findings, not the corrected state. The final-seal receipts are
+`artifacts\atlas-shared-host\regenerate-final-precommit.log` and
+`artifacts\atlas-shared-host\derive-final-precommit.log`.
+
+The initial packet also described already-resolved conflicts and an already-completed
+handoff in the future tense. This continuation corrects those stale records explicitly
+(REC-A shape). Controls here are source-state readback, full Markdown/HTML content parity
+and the graph's observed missing-summary finding. Register/audit publication belongs to
+Conductor; this delegate has no grant to edit the shared register for the correction.
+
+Unmet: Owner/Core/Conversation admission of the new source-read authority decision and typed
+lease; production membership snapshot atomicity, limits and cleanup proof; the new awaitable
+Atlas IPC path, including method-level transport cancellation integration before coding;
+actual Architecture sidebar/menu/render and resource-lifetime proof; failure-mode dispositions;
+security/privacy/data/async and independent Test Architect gates; performance measurements;
+Conductor precommit review and final local compatibility commit; counterpart agreement.
+The existing transport and host method trace narrows these decisions; it does not clear them.
+No production design-completion claim is made.
+
+Full Code Atlas remains unfinished: sidebar, graph/file-tree pivot, public-API/domain/class/
+sequence/layered/Azure views, comparison/decision lineage and governed AI.
+The next step is legitimate Architecture-host admission, not a distraction into later views.
+
+| Completed | Remaining | Best next action |
+|---|---|---|
+| Observed parents; resolved merge; runner build; 272 Core and 45 native tests; production transport and host method trace; delivered request receipt | New source-authority/membership/awaitable-IPC decisions and their tests; external dangling link; precommit review and local commit | Conductor reviews exact staged paths/tree/parents, then Owner decides the smallest admitted adapter scope |
+</pre>
+</main>
+</body>
+</html>

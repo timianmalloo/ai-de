@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using AiDe.App.Conductor;
 using AiDe.Core.AgentPlane;
 using AiDe.Core.Presentation.Composer;
+using AiDe.Core.PromptCompilation;
 using AiDe.Core.Presentation.Sessions;
 using AiDe.Core.Sessions;
 using AiDe.Core.Workbench;
@@ -61,6 +62,9 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     private readonly Dictionary<string, StructureLine> _structureLines = new(StringComparer.Ordinal);
     private readonly WrapPanel _decorationLine;
     private readonly TextBlock _settingsLine;
+    private readonly ComboBox _tierControl;
+    private readonly ComboBox _classControl;
+    private bool _renderingControls;
     private readonly TextBlock _status;
     private readonly IWorkbenchAnnouncer _announcer;
     private string _statusText = string.Empty;
@@ -181,6 +185,8 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         _structure = BuildStructure();
         _decorationLine = new WrapPanel { MinHeight = 24, Margin = new Thickness(0, 2, 0, 2) };
         AutomationProperties.SetName(_decorationLine, "This turn");
+        _tierControl = BuildTierControl();
+        _classControl = BuildClassControl();
         _settingsLine = new TextBlock { FontSize = 12, MinHeight = 24, VerticalAlignment = VerticalAlignment.Center, TextWrapping = TextWrapping.Wrap };
         _settingsLine.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
         AutomationProperties.SetName(_settingsLine, "Settings");
@@ -254,8 +260,18 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         set => _compiledDisclosure.IsExpanded = value;
     }
 
-    /// <summary>The decoration rows this turn carries — the same projection the thread will show for it (SC2).</summary>
-    public IReadOnlyList<DecorationRow> Decorations => ComposerCompiler.Decorations(_draft, _taskClass);
+    /// <summary>The decoration rows this turn carries — the same projection the thread will show for it and the send gate will put on the wire (SC2; ADR-0033 rule 2).</summary>
+    public IReadOnlyList<DecorationRow> Decorations =>
+        ComposerCompiler.Decorations(_draft, _taskClass, _template, _context?.EngineId, _gate.SessionId, _gate.CompileMode);
+
+    /// <summary>The tier control on the decoration line (E2): <i>rule</i>, T0, T1, T2 — an override is an <c>operator</c> row at Send (§A11).</summary>
+    public ComboBox TierControl => _tierControl;
+
+    /// <summary>The class control on the decoration line: the session's default or a class for this prompt (Ruling 70).</summary>
+    public ComboBox ClassControl => _classControl;
+
+    /// <summary>Why compile history is not being recorded, or null when it is — the reason Prepare shows (ADR-0034 rules 2–3).</summary>
+    public string? HistoryState => _gate.HistoryState;
 
     /// <summary>The settings line as rendered: <i>fan-out cap 2 (ceiling 3) · budget: bounded by your subscription · from session settings</i>.</summary>
     public string SettingsLine => _settingsLine.Text;
@@ -373,6 +389,10 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         // and the class every prompt starts with — never a per-prompt field.
         _draft.UseSessionSettings(config);
         _taskClass = string.IsNullOrWhiteSpace(context.TaskClass) ? config.DefaultTaskClass : context.TaskClass;
+
+        // THE ENVELOPE'S IDENTITY (ADR-0034 rule 1): every opened row names this session; the
+        // compile mode is a provenance fact on it (E5) — mechanical-only until the ladder admits more.
+        _gate.BindSession(config.SessionId, config.CompileMode, context.EngineId, _taskClass);
 
         _fields.Clear();
         _fields.AddRange(fields);
@@ -757,7 +777,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     public System.Text.Json.Nodes.JsonObject CommittedRecord() =>
         ComposerSendRecord.Committed(
             _attachEnabled,
-            _gate.RenderedView ?? ComposerCompiler.Compile(_draft, _template),
+            _gate.RenderedView ?? _gate.RenderView(_draft, _template),
             _blockedByAttachSetting);
 
     private void RenderCompiledView()
@@ -801,20 +821,125 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
                 segment.Children.Add(SegmentLabel(row.Name));
             }
 
-            segment.Children.Add(DecorationValue(row));
+            // THE EDITABLE DERIVED LINES (Prepare, §A11): the tier and the class carry a control
+            // beside the value — each override is an operator row at Send; the value shown stays the
+            // projection's, so what the control says and what the wire carries are one function's output.
+            if (row.Name == "tier")
+            {
+                // The VALUE stays text (the rule's answer, or the override — never a tilde, U13); the
+                // control beside it reads `rule` until the operator chooses.
+                segment.Children.Add(DecorationValue(row));
+                SyncControl(_tierControl, _draft.TierOverride ?? RuleChoice);
+                segment.Children.Add(_tierControl);
+            }
+            else if (row.Name == "class")
+            {
+                // The control's selected item IS the class shown: the session's default, or this prompt's choice.
+                SyncControl(_classControl, _draft.TaskClassChoice ?? _taskClass);
+                segment.Children.Add(_classControl);
+            }
+            else
+            {
+                segment.Children.Add(DecorationValue(row));
+            }
 
             // The provenance, inline: the current turn is confirmed at Send (SC2), so the source
             // and the reason are beside the value rather than a disclosure away.
-            var provenance = new TextBlock { Text = row.Name == "class" ? "session default" : row.Reason, FontSize = 12, VerticalAlignment = VerticalAlignment.Center };
+            var provenance = new TextBlock
+            {
+                Text = row.Name == "class" ? (row.Source == DecorationSources.Operator ? "chosen for this prompt" : "session default") : row.Reason,
+                FontSize = 12,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
             provenance.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
             segment.Children.Add(provenance);
 
             _decorationLine.Children.Add(segment);
         }
 
-        // The settings line derives from the decoration line's tier — one projection, two readers (DM7).
+        // The settings line derives from the decoration line's tier — one projection, two readers
+        // (DM7) — and carries the one reason compile history is not being recorded, when there is one
+        // (ADR-0034 rules 2–3: a locked or broken file degrades Prepare visibly, never silently).
         var tier = decorations.First(d => d.Name == "tier").Value;
-        _settingsLine.Text = ComposerCompiler.SettingsLine(tier, _draft.Ceilings.FanOutCeiling, _draft.Ceilings.BudgetCap);
+        var settings = ComposerCompiler.SettingsLine(tier, _draft.Ceilings.FanOutCeiling, _draft.Ceilings.BudgetCap);
+        _settingsLine.Text = _gate.HistoryState is { } history ? settings + " · compile history: " + history : settings;
+    }
+
+    /// <summary>The tier control's first choice: the rule's own value stands.</summary>
+    public const string RuleChoice = "rule";
+
+    private ComboBox BuildTierControl()
+    {
+        var control = new ComboBox { FontSize = 12, MinWidth = 64, Margin = new Thickness(0, 0, 6, 0), VerticalAlignment = VerticalAlignment.Center };
+        control.ItemsSource = new[] { RuleChoice, "T0", "T1", "T2" };
+        AutomationProperties.SetName(control, "Tier override");
+        AutomationProperties.SetHelpText(control, "The rule's tier stands unless you choose one here; a choice is recorded on this turn as yours.");
+        control.SelectionChanged += (_, _) =>
+        {
+            if (_renderingControls || control.SelectedItem is not string choice)
+            {
+                return;
+            }
+
+            _draft.OverrideTier(choice == RuleChoice ? null : choice);
+            RenderCompiledView();
+        };
+        return control;
+    }
+
+    private ComboBox BuildClassControl()
+    {
+        var control = new ComboBox { FontSize = 12, MinWidth = 96, Margin = new Thickness(0, 0, 6, 0), VerticalAlignment = VerticalAlignment.Center, IsEditable = false };
+        AutomationProperties.SetName(control, "Task class");
+        AutomationProperties.SetHelpText(control, "The class this prompt is scored against. The session's default unless you choose one for this prompt; that never changes the default.");
+        control.SelectionChanged += (_, _) =>
+        {
+            if (_renderingControls || control.SelectedItem is not string choice)
+            {
+                return;
+            }
+
+            _draft.ChooseTaskClass(string.Equals(choice, _taskClass, StringComparison.Ordinal) ? null : choice);
+            RenderCompiledView();
+        };
+        return control;
+    }
+
+    /// <summary>Shows the draft's current choice on a control without re-entering its handler; the class control offers the session's default first, then the vocabulary.</summary>
+    private void SyncControl(ComboBox control, string selected)
+    {
+        _renderingControls = true;
+        try
+        {
+            if (ReferenceEquals(control, _classControl))
+            {
+                var offered = new List<string> { _taskClass };
+                offered.AddRange(AiDe.Core.Presentation.Sessions.TaskClassVocabulary.Offered.Select(o => o.Id).Where(id => !string.Equals(id, _taskClass, StringComparison.Ordinal)));
+                if (!offered.Contains(selected, StringComparer.Ordinal))
+                {
+                    offered.Add(selected);
+                }
+
+                if (control.ItemsSource is not IReadOnlyList<string> current || !current.SequenceEqual(offered, StringComparer.Ordinal))
+                {
+                    control.ItemsSource = offered;
+                }
+            }
+
+            if (!Equals(control.SelectedItem, selected))
+            {
+                control.SelectedItem = selected;
+            }
+
+            if (control.Parent is Panel parent)
+            {
+                parent.Children.Remove(control);
+            }
+        }
+        finally
+        {
+            _renderingControls = false;
+        }
     }
 
     /// <summary>

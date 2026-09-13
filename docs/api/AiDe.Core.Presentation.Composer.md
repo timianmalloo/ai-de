@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation.Composer: 33 types, 90 members, 89% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation.Composer: 33 types, 97 members, 89% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation.Composer`
 
-**33 public types · 90 public members · 89% documented.**
+**33 public types · 97 public members · 89% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -263,11 +263,14 @@ order, and nothing reads a clock, a culture or the environment.
 | `string LeaseLine(IReadOnlyList<string>? lease)` | The lease line as the surface shows it: the read-only state for `null`, else the patterns that are (or will be) the lane's lease. The caller passes `null` exactly when `IsReadOnly` says so before Send, and the request… |
 | `string LeaseNoneYet = "none yet — mention the files this run may write as @path"` | The lease segment's empty state on the decoration line (SC2's words). |
 | `TierProjection Tier(TurnShape shape, IReadOnlyList<string> patterns, string structureSource = "you")` | Addendum D §A9's mechanical tier rule — a deterministic, **total** function of two inputs: **P**, whether a goal block exists (`TurnShape`), and **L**, the count of distinct lease patterns the source text derives. Not… |
+| `bool IsTier(string? tier)` | The three tiers a turn may carry — an override outside them is refused (§A9 R4's falsifier: `T9`). |
 | `int CapOf(string tier)` | The cap function (CT19; GO7): `cap(T0) = 0`, `cap(T1) = 2`, `cap(T2) = 4`. |
 | `int EffectiveFanOut(string tier, int ceiling)` | Effective fan-out = `min(cap(tier), ceiling)` (Ruling 64) — a projection, never stored, never raised from a prompt. A negative ceiling is NOT clamped to 0: it is a broken session setting, and the contract refuses the … |
 | `string SettingsLine(string tier, int ceiling, RunBudget? budgetCap)` | The composer's settings line (`DESIGN.md` copy): *fan-out cap 2 (ceiling 3) · budget: bounded by your subscription · from session settings*; at T0, *T0 — the ceiling of 3 does not apply to this turn*. Never a numeral … |
-| `IReadOnlyList<Sessions.DecorationRow> Decorations(ComposerDraft draft, string taskClass)` | The current turn's decoration rows in SC2's one grammar — `class · tier · lease · shape [· template]`, each with its source and reason — read from the same two inputs the shape, the access and the tier read, so the li… |
+| `IReadOnlyList<Sessions.DecorationRow> Decorations(` | The current turn's decoration rows in SC2's one grammar — `class · tier · lease · shape [· template]`, each with its source and reason — **read from `Project` over the live pre-compile** (ADR-0033 rule 2: the render s… |
+| `IReadOnlyList<Sessions.DecorationRow> Decorations(PromptCompilation.CompiledProjection projection, ComposerDraft draft)` | The decoration rows of one projection — the one row builder the live line and a persisted envelope share (DM7). |
 | `CompiledPrompt Compile(ComposerDraft draft, PromptTemplate? template = null)` | Compiles the draft.  is required only for a template draft. |
+| `CompiledPrompt Compile(ComposerDraft draft, PromptTemplate? template, GoalBlock? block)` | Compiles the draft around a projected block: `Project` renders the sent bytes through this overload with *its* block, so the tier in the block is the tier the projection computed (an override included) — one producer … |
 | `string RenderGoalBlock(GoalBlock block)` | The goal block as prompt text, in the order §14.3 lists the fields. |
 | `string MessageKey = "message"` | The message section under a goal block: the operator's words, verbatim, under the one heading that is not a §14.3 field. |
 | `string RenderAttachment(ComposerAttachment attachment)` | One attachment as a visible fenced block whose header names the source and its byte count. |
@@ -309,21 +312,31 @@ the access and the tier can never disagree about whether a goal block exists.
 
 
 
-**The rationale names who filled the structure.** `simplify:` until the
-compile step writes `derived` rows (CV-2), every structure line is the operator's, so the
-rationale reads *filled by you*; the upgrade trigger is a `derived` or
-`template` row in the envelope fold, at which point
-is read from it.
+**The rationale names who filled the structure** —
+is read from the fold by `Projection.Project` (`operator` · `template` · the
+model), which is the one caller that passes anything but the default.
 
-### `IReadOnlyList<Sessions.DecorationRow> Decorations(ComposerDraft draft, string taskClass)`
+### `IReadOnlyList<Sessions.DecorationRow> Decorations(`
 
 The current turn's decoration rows in SC2's one grammar — `class · tier · lease · shape
-[· template]`, each with its source and reason — read from the same two inputs the shape,
-the access and the tier read, so the line the operator confirms at Send is the line the
-thread will show for the turn.
+[· template]`, each with its source and reason — **read from `Project`
+over the live pre-compile** (ADR-0033 rule 2: the render site calls `Project()`), so the
+line the operator confirms at Send is the projection the send gate puts on the wire.
 
 - **`draft`** — The draft.
-- **`taskClass`** — The prompt's class — the session's default until a prompt chooses one (Ruling 70).
+- **`taskClass`** — The session's default class — the prompt's own choice on the draft supersedes it (Ruling 70).
+- **`template`** — The bound template, for a template draft.
+- **`engineId`** — The bound engine, or null before the composer is bound.
+- **`sessionId`** — The session, or null before the composer is bound.
+- **`compileMode`** — The session's compile mode.
+
+### `CompiledPrompt Compile(ComposerDraft draft, PromptTemplate? template, GoalBlock? block)`
+
+Compiles the draft around a projected block: `Project`
+renders the sent bytes through this overload with *its* block, so the tier in the block
+is the tier the projection computed (an override included) — one producer of the bytes.
+
+- **`block`** — The six-field block for a goal-block turn, or null for a Message (Ruling 75).
 
 ### `string RenderGoalBlock(GoalBlock block)`
 
@@ -427,6 +440,10 @@ written one is overwritten with.
 | `Ceilings Ceilings { get; private set; } = Composer.Ceilings.Default` | The session's ceilings the compiled block reads (Ruling 56; ADR-0033 §3's `ceilings` snapshot): the fan-out ceiling and the budget cap. Set by the shell from the session's config; an unbound draft carries the config's… |
 | `void UseSessionSettings(SessionConfig config)` | Binds the session's ceilings (Ruling 56: one home, never a per-prompt override). |
 | `string? TemplateId { get; private set; }` | The template this draft is bound to, when its shape is a template. |
+| `string? TierOverride { get; private set; }` | The operator's tier override for this prompt (Addendum D §A9 R4; §A11: the tier is the one decoration Prepare may override), or null — the rule's value stands. The only stored tier: it becomes a `tier` row with `sourc… |
+| `string? TaskClassChoice { get; private set; }` | The task class this prompt chose (Ruling 70: changeable per prompt; the session's default is untouched), or null — the session's default applies with `source: session-default`. |
+| `void OverrideTier(string? tier)` | Overrides the tier (T0 / T1 / T2), or clears the override with null. Anything else is refused and the prior value stands (§A9 input 14). |
+| `void ChooseTaskClass(string? taskClass)` | Chooses this prompt's task class, or returns to the session's default with null or blank. |
 | `IReadOnlyDictionary<string, string> GoalValues` | The goal-block field values, by wire name. |
 | `IReadOnlyDictionary<string, IReadOnlyList<string>> TemplateValues` | The template field values, by field name. |
 | `IReadOnlyList<ComposerAttachment> Attachments` | Everything attached to this send, in the order it was affirmed. |
@@ -471,6 +488,12 @@ The goal-block fields a prompt carries: the three content lines.
 **Remarks.** Derived by subtraction from `All` rather than typed out, so a
 seventh contract field would appear here rather than silently miss the form, and so the
 contract's own list stays the one home of the wire names (DM7).
+
+### `void OverrideTier(string? tier)`
+
+Overrides the tier (T0 / T1 / T2), or clears the override with null. Anything else is refused and the prior value stands (§A9 input 14).
+
+**Throws `ArgumentOutOfRangeException`.** The value is not one of the three tiers.
 
 ### `void SwitchTo(ComposerShape shape, string? goalBlockText = null)`
 

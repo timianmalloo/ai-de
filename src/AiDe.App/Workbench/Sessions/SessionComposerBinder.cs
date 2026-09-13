@@ -125,7 +125,7 @@ internal static class SessionComposerBinder
                 EngineId: binding.EngineId,
                 Model: binding.Model,
                 AccountLabel: binding.Account.Label,
-                TaskClass: taskClass,
+                TaskClass: taskClass ?? config.DefaultTaskClass,   // the session's default_task_class (Ruling 72; ADR-0033 rule 4) — never null, never a second literal
                 ProofPackArtifacts: [],
                 Providers: providers.Registry.Rows),
             ComposerFields.GoalBlock(),

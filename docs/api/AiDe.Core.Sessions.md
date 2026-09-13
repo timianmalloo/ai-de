@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Sessions: 23 types, 66 members, 89% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Sessions: 23 types, 67 members, 89% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Sessions`
 
-**23 public types · 66 public members · 89% documented.**
+**23 public types · 67 public members · 89% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -230,6 +230,7 @@ plain `System.Text.Json`, tolerant JSONL reads.
 | `SessionConfig SetEnabledBackends(IReadOnlyList<string> enabledBackends, DateTimeOffset now)` | Applies a backend toggle for new runs and emits `session.config`. Never mutates a `SessionConfig` a caller already holds — see the remarks on this type. |
 | `SessionConfig SetAttachEnabled(bool attachEnabled, DateTimeOffset now)` | Applies the attach toggle for new runs and emits `session.config` (C21). |
 | `IReadOnlyList<SessionEvent> ReadEvents()` | Every event this session has ever emitted, in append order. |
+| `void Delete()` | The Session aggregate's own delete: removes the session directory, and with it — by containment, never by a second delete path — the compile history the composer keeps beside `session.json` (ADR-0034 rule 6; F-12). |
 
 ### `SessionConfig Create(`
 
@@ -257,6 +258,28 @@ existing event kind, by the same read-modify-write under the same lock.
 writes it and none may be added — the page may be *told* the state so it can render a
 disabled affordance; it may never *report* it. The asymmetry is deliberate: the composer
 may not carry a dial that loosens governance, and this one only restricts.
+
+### `void Delete()`
+
+The Session aggregate's own delete: removes the session directory, and with it — by
+containment, never by a second delete path — the compile history the composer keeps beside
+`session.json` (ADR-0034 rule 6; F-12).
+
+**Throws `EnvelopeStoreException`.** `HeldByAnotherWriter` — refused whole, nothing removed.
+
+**Throws `IOException`.** A sibling could not be removed; the envelope file is already gone by then.
+
+**Remarks.** **Probe → move to a tombstone → delete the envelope file → delete the rest.** The
+envelope file is first opened exclusively as a probe, so a composer (or a second AI-DE) that
+holds it refuses the whole delete by name before anything is removed. The directory is then
+moved to a tombstone: a directory move fails on Windows while any file inside is open, so it
+is the directory-level lock the design lacked — a writer that opened in the window after the
+probe refuses the delete whole, and once moved no writer can open at the session's path
+(`EnvelopeStore.Open` refuses `NoSessionDirectory`). Then the envelope file, then
+the siblings. The naive order — acquire, release, recursive delete — reopens the race: a
+recursive delete on Windows removes the siblings and then fails on a locked file, leaving
+`session.json` gone and `envelope-events.jsonl` orphaned, the exact orphan the
+cascade exists to prevent (the D&P Architect's finding, twice).
 
 ## `SessionId`
 

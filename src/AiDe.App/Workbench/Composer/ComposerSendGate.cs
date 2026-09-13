@@ -1,6 +1,7 @@
 using AiDe.App.Conductor;
 using AiDe.Core.AgentPlane;
 using AiDe.Core.Presentation.Composer;
+using AiDe.Core.PromptCompilation;
 using AiDe.Core.Sessions;
 
 namespace AiDe.App.Workbench.Composer;
@@ -16,9 +17,11 @@ namespace AiDe.App.Workbench.Composer;
 /// <param name="Model">The model, a standings cohort axis.</param>
 /// <param name="AccountLabel">The configured account the work bills against.</param>
 /// <param name="TaskClass">
-/// The session's task class, or null when none is on record — a reopened or restored session binds
-/// without one (INV-0009 Phase 2). Never defaulted: a defaulted class ranks in the wrong cohort, so
-/// <see cref="ComposerSendGate.Send"/> refuses by name until one is chosen (Ruling 70).
+/// The session's <c>default_task_class</c> (Ruling 72; ADR-0033 rule 4) — populated from the
+/// session config by the binder, never a second literal, never null: a reopened or restored
+/// session binds with the config's own default (<c>free-form</c> unless the operator chose one).
+/// Its one compute reader is the pre-compile, which writes the <c>task_class</c> decoration with
+/// <c>source: session-default</c> from it; a prompt's own choice supersedes it on that prompt only.
 /// </param>
 /// <param name="ProofPackArtifacts">Evidence paths the episode declares at close.</param>
 /// <param name="Providers">The provider rows, parsed from configuration by the caller.</param>
@@ -31,7 +34,7 @@ public sealed record ComposerSendContext(
     string EngineId,
     string Model,
     string AccountLabel,
-    string? TaskClass,
+    string TaskClass,
     IReadOnlyList<string> ProofPackArtifacts,
     IReadOnlyList<ProviderRow> Providers,
     string CoordCommand = "coord",
@@ -94,6 +97,57 @@ public sealed class ComposerSendGate
     /// <summary>How many blocks this gate has started, across the session: the conversation's send count.</summary>
     public long BlocksSent { get; private set; }
 
+    /// <summary>The envelope the last send submitted — its id, the two witnesses and the class's provenance; null before the first send.</summary>
+    public SubmittedEnvelope? LastSubmission { get; private set; }
+
+    /// <summary>The session's id, bound once by the composer; <see cref="Envelope.NotRecorded"/> until then.</summary>
+    public string SessionId { get; private set; } = Envelope.NotRecorded;
+
+    /// <summary>The session's <c>compile_mode</c> — mechanical-only in this slice (S2's sentinel; the agentic rungs are CV-3's).</summary>
+    public string CompileMode { get; private set; } = CompileModes.MechanicalOnly;
+
+    /// <summary>The store this gate appends the envelope to, or null — the fold is then in memory and nothing is recorded (the reason is on <see cref="HistoryState"/>).</summary>
+    public EnvelopeStore? Envelopes { get; private set; }
+
+    /// <summary>Why compile history is not being recorded, or null when it is — shown in Prepare (ADR-0034 rules 2–3), never silent.</summary>
+    public string? HistoryState { get; private set; }
+
+    /// <summary>The last envelope this gate opened and did not submit (a stale view abandons it and the next names it in <c>supersedes</c>).</summary>
+    private string? _abandoned;
+
+    /// <summary>Binds the session's identity: the id every <c>opened</c> row carries, the compile mode, the engine and the default class (the composer's <c>Configure</c>, from the session config and the binding).</summary>
+    public void BindSession(string sessionId, string compileMode, string engineId, string defaultTaskClass)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(sessionId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(compileMode);
+        ArgumentException.ThrowIfNullOrWhiteSpace(engineId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(defaultTaskClass);
+
+        lock (_gate)
+        {
+            SessionId = sessionId;
+            CompileMode = compileMode;
+            EngineId = engineId;
+            DefaultTaskClass = defaultTaskClass;
+        }
+    }
+
+    /// <summary>
+    /// Binds the store the session document opened for its lifetime (ADR-0034 rule 2), or null
+    /// with the reason there is none — a locked file, a missing session directory — so Prepare
+    /// degrades with the reason shown, never silently.
+    /// </summary>
+    public void UseEnvelopeStore(EnvelopeStore? store, string? reason)
+    {
+        lock (_gate)
+        {
+            Envelopes = store;
+            HistoryState = store is null
+                ? reason ?? "compile history is not recorded"
+                : store.BrokenAt is { } n ? $"compile history is broken at line {n}; purge it to start again" : null;
+        }
+    }
+
     /// <summary>
     /// The block was accepted and the composer starts the next one (SC1: the session is a
     /// conversation of n turns through one composer). <see cref="SendCount"/> is per block — one
@@ -105,6 +159,7 @@ public sealed class ComposerSendGate
         {
             SendCount = 0;
             RenderedView = null;
+            _stamped.Clear();
         }
     }
 
@@ -119,9 +174,22 @@ public sealed class ComposerSendGate
     public CompiledPrompt RenderView(ComposerDraft draft, PromptTemplate? template = null)
     {
         ArgumentNullException.ThrowIfNull(draft);
-        RenderedView = ComposerCompiler.Compile(draft, template);
+
+        // THE ONE PRODUCER (ADR-0033 rule 2): the view is the projection's own render over the live
+        // pre-compile — the same function Send projects the persisted envelope through. Not a
+        // second compile that Send then checks for agreement.
+        RenderedView = Projection.Project(PreCompile.Live(Input(draft, template)), draft, template).Compiled!;
         return RenderedView;
     }
+
+    /// <summary>The engine every <c>opened</c> row names, and whose provider is the family; <see cref="Envelope.NotRecorded"/> until bound.</summary>
+    public string EngineId { get; private set; } = Envelope.NotRecorded;
+
+    /// <summary>The session's <c>default_task_class</c> (Ruling 72) — <see cref="AiDe.Core.Watcher.TaskClasses.FreeForm"/> until bound, the vocabulary's one home.</summary>
+    public string DefaultTaskClass { get; private set; } = AiDe.Core.Watcher.TaskClasses.FreeForm;
+
+    private PreCompileInput Input(ComposerDraft draft, PromptTemplate? template) =>
+        new(draft, template, SessionId, EngineId, CompileMode, DefaultTaskClass);
 
     /// <summary>
     /// Builds the run request from the rendered view, or refuses and says which field.
@@ -178,8 +246,7 @@ public sealed class ComposerSendGate
             // THE VIEW IS THE SOURCE OF THE TEXT. Not the draft, and not a second compile: the bytes
             // sent are the bytes rendered, and re-compiling here would be a second chance for them to
             // differ.
-            var compiled = RenderedView ?? ComposerCompiler.Compile(draft, template);
-            RenderedView = compiled;
+            var compiled = RenderedView ?? RenderView(draft, template);
 
             // Nothing typed: the message is blank and no goal block exists, so the compiled bytes are
             // empty — an empty prompt is not a task (Ruling 75 makes a blank Goal a Message; a Message
@@ -190,19 +257,30 @@ public sealed class ComposerSendGate
                 return null;
             }
 
-            // NOT DEFAULTED. A session bound on reopen has no task class on record (the sheet's
-            // choice belongs to the run it was made for), and a class invented here would rank the
-            // episode in a cohort nobody chose (DC-110).
-            if (string.IsNullOrWhiteSpace(context.TaskClass))
+            // THE ENVELOPE IS OPENED BY THE SEND GESTURE (§A10.1; ADR-0033 rule 2): the mechanical
+            // pre-compile's rows — opened, the snapshots, the refs, the operator's lines and override —
+            // then ONE projection over the fold produces everything the request carries.
+            _stamped.Clear();
+            var envelopeId = EnvelopeIds.New();
+            var rows = PreCompile.Open(Input(draft, template) with { EngineId = context.EngineId, DefaultTaskClass = context.TaskClass }, envelopeId, _abandoned);
+            var envelope = TryAppend(rows) ? Envelope.Fold(_stamped)[0] : Envelope.Pending(rows);
+
+            var projection = Projection.Project(envelope, draft, template);
+
+            // C15's window has two ends, and the envelope is its third witness: the rendered view
+            // and the projection's render are the same bytes, or the send is refused — never sent
+            // with a lease from other bytes than the ones the operator read (US-D4).
+            if (!string.Equals(projection.Prompt, compiled.Text, StringComparison.Ordinal))
             {
-                refusal = new ComposerSendRefusal([], "choose a task class for this prompt — this session has none on record");
+                TryAppend([new Submitted(envelopeId, Accepted: false, Refusal: "stale", TextSha256: EnvelopeHash.Sha256Hex(compiled.Text), ProjectionSha: projection.ProjectionSha, ProjectorVersion: Projection.Version)]);
+                _abandoned = envelopeId;
+                refusal = new ComposerSendRefusal([], "your draft changed since it was prepared — press again to prepare it");
                 return null;
             }
 
-            // THE SHAPE, FROM THE SAME TWO INPUTS THE LEASE LINE SHOWED (Ruling 73; Ruling 66
-            // condition (2)): the turn's shape and the patterns derived from the editor's source text.
-            var readOnly = ComposerCompiler.IsReadOnly(shape, LeaseDerivation.Patterns(draft.SourceText));
-
+            // THE ANTI-CORRUPTION LAYER to the agent plane's Published Language (ADR-0033): the
+            // projection maps onto Goal, Lease, Prompt and TaskClass; every other field is the host's
+            // context (Security C16) — a hostile draft changes none of them.
             request = new GovernedRunRequest(
                 RepositoryRoot: context.RepositoryRoot,
                 DataDirectory: context.DataDirectory,
@@ -210,21 +288,28 @@ public sealed class ComposerSendGate
                 EngineId: context.EngineId,
                 Model: context.Model,
                 AccountLabel: context.AccountLabel,
-                TaskClass: context.TaskClass,
+                TaskClass: projection.TaskClass,
 
                 // A Message carries no goal block (Ruling 75).
-                Goal: shape == TurnShape.GoalBlock ? draft.ToGoalBlock() : null,
+                Goal: projection.GoalBlock,
 
                 // NO LEASE FOR A READ-ONLY TURN (Ruling 73) — the host reads the absence and pins the
-                // lane. For a write-shaped turn: THE DRAFT'S OWN SOURCE TEXT, NOT THE COMPILED PROMPT
-                // (Ruling 66) — `compiled.Text` also carries attachment bodies and template prose the
-                // operator never typed, either of which would widen the lane's write scope.
-                Lease: readOnly ? null : LeaseDerivation.Derive(draft.SourceText),
+                // lane. For a write-shaped turn: derived by Project() from the envelope's own SOURCE
+                // TEXT (Ruling 66), never from the compiled prompt's attachment bodies or template prose.
+                Lease: projection.Lease,
+
+                // THE VIEW'S OWN STRING — byte-equal to the projection's render (checked above), and
+                // the same instance the operator read, so C15's "same bytes" witness is reference
+                // identity, not a re-compile that happened to agree.
                 Prompt: compiled.Text,
                 ProofPackArtifacts: context.ProofPackArtifacts,
                 Providers: context.Providers,
                 CoordCommand: context.CoordCommand,
                 PromptTimeout: context.PromptTimeout);
+
+            TryAppend([new Submitted(envelopeId, Accepted: true, Refusal: null, TextSha256: projection.TextSha256!, ProjectionSha: projection.ProjectionSha, ProjectorVersion: Projection.Version)]);
+            LastSubmission = new SubmittedEnvelope(envelopeId, projection.ProjectionSha, projection.TaskClassSource, Envelopes is not null && HistoryState is null);
+            _abandoned = null;
 
             SendCount++;
             BlocksSent++;
@@ -233,6 +318,46 @@ public sealed class ComposerSendGate
 
         Sent?.Invoke(request);
         return request;
+    }
+
+    /// <summary>The rows the last <see cref="TryAppend"/> stamped — the persisted envelope's own events, folded without re-reading the store.</summary>
+    private readonly List<EnvelopeEvent> _stamped = [];
+
+    /// <summary>
+    /// Appends rows to the store; false when there is no store, history is already degraded, or an
+    /// append failed — the send then proceeds on the in-memory fold and the reason is shown
+    /// (ADR-0034 rule 3: <c>compile.degraded{reason: store-append-failed}</c>; the store's one
+    /// otherwise-silent path, named). A store closed under this send (the document purging or
+    /// closing) degrades the same way.
+    /// </summary>
+    private bool TryAppend(IReadOnlyList<EnvelopeEvent> rows)
+    {
+        if (Envelopes is not { BrokenAt: null } store || HistoryState is not null)
+        {
+            return false;
+        }
+
+        try
+        {
+            foreach (var row in rows)
+            {
+                _stamped.Add(store.Append(row));
+            }
+
+            return true;
+        }
+        catch (EnvelopeStoreException error)
+        {
+            HistoryState = $"compile history not recorded — {error.Message}";
+            CompileSignal.Degraded("store-append-failed", error.Code);
+            return false;
+        }
+        catch (ObjectDisposedException)
+        {
+            HistoryState = "compile history not recorded — the store was closed during this send";
+            CompileSignal.Degraded("store-append-failed", "store closed");
+            return false;
+        }
     }
 
     /// <summary>
@@ -258,6 +383,17 @@ public sealed class ComposerSendGate
     }
 
 }
+
+/// <summary>What one send submitted — the envelope by id, the rebuild's oracle and the class's provenance (ADR-0034 rule 7 reads the id at <c>consumed</c>; the document captures the provenance with the ordinal at launch).</summary>
+/// <param name="EnvelopeId">The envelope.</param>
+/// <param name="ProjectionSha">The rebuild's oracle — what the <c>submitted</c> row recorded.</param>
+/// <param name="TaskClassSource"><c>session-default</c> or <c>operator</c> — the cohort attribute the leaderboard stamps (ADR-0028 amendment).</param>
+/// <param name="Recorded">Whether the rows reached the store; false when history is not recorded (the reason is on the gate).</param>
+public sealed record SubmittedEnvelope(
+    string EnvelopeId,
+    string ProjectionSha,
+    string TaskClassSource,
+    bool Recorded);
 
 /// <summary>
 /// The send accelerator, as a decision separate from the control that raises it.

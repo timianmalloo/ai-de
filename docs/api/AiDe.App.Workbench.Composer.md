@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Composer: 11 types, 74 members, 91% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Composer: 12 types, 87 members, 92% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Composer`
 
-**11 public types · 74 public members · 91% documented.**
+**12 public types · 87 public members · 92% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -148,8 +148,17 @@ not two runs.
 | `long SendCount { get; private set; }` | How many runs this block has started. The observable US-ED5/ED6/ED7 rest on. |
 | `CompiledPrompt? RenderedView { get; private set; }` | The compiled text of the last rendered view — what the operator read. |
 | `long BlocksSent { get; private set; }` | How many blocks this gate has started, across the session: the conversation's send count. |
+| `SubmittedEnvelope? LastSubmission { get; private set; }` | The envelope the last send submitted — its id, the two witnesses and the class's provenance; null before the first send. |
+| `string SessionId { get; private set; } = Envelope.NotRecorded` | The session's id, bound once by the composer; `NotRecorded` until then. |
+| `string CompileMode { get; private set; } = CompileModes.MechanicalOnly` | The session's `compile_mode` — mechanical-only in this slice (S2's sentinel; the agentic rungs are CV-3's). |
+| `EnvelopeStore? Envelopes { get; private set; }` | The store this gate appends the envelope to, or null — the fold is then in memory and nothing is recorded (the reason is on `HistoryState`). |
+| `string? HistoryState { get; private set; }` | Why compile history is not being recorded, or null when it is — shown in Prepare (ADR-0034 rules 2–3), never silent. |
+| `void BindSession(string sessionId, string compileMode, string engineId, string defaultTaskClass)` | Binds the session's identity: the id every `opened` row carries, the compile mode, the engine and the default class (the composer's `Configure`, from the session config and the binding). |
+| `void UseEnvelopeStore(EnvelopeStore? store, string? reason)` | Binds the store the session document opened for its lifetime (ADR-0034 rule 2), or null with the reason there is none — a locked file, a missing session directory — so Prepare degrades with the reason shown, never sil… |
 | `void NextBlock()` | The block was accepted and the composer starts the next one (SC1: the session is a conversation of n turns through one composer). `SendCount` is per block — one block, one send — so it returns to zero; `BlocksSent` ke… |
 | `CompiledPrompt RenderView(ComposerDraft draft, PromptTemplate? template = null)` | Renders the compiled view. Everything after this point is byte-for-byte what gets sent. |
+| `string EngineId { get; private set; } = Envelope.NotRecorded` | The engine every `opened` row names, and whose provider is the family; `NotRecorded` until bound. |
+| `string DefaultTaskClass { get; private set; } = AiDe.Core.Watcher.TaskClasses.FreeForm` | The session's `default_task_class` (Ruling 72) — `FreeForm` until bound, the vocabulary's one home. |
 | `GovernedRunRequest? Send(` | Builds the run request from the rendered view, or refuses and says which field. |
 
 ### `event Action<GovernedRunRequest>? Sent`
@@ -195,6 +204,12 @@ source text's patterns (Ruling 66). A Message or a scopeless goal block builds a
 request — no lease derived, none required; only a scoped goal block takes the lease gate
 (Ruling 42, C17), unchanged. The one content-gap refusal is
 `GoalBlockNeedsNotInScope`.
+
+## `SubmittedEnvelope`
+
+*record* — `ComposerSendGate.cs`
+
+What one send submitted — the envelope by id, the rebuild's oracle and the class's provenance (ADR-0034 rule 7 reads the id at `consumed`; the document captures the provenance with the ordinal at launch).
 
 ## `ComposerAccelerator`
 
@@ -279,7 +294,10 @@ claim, and paste is handled inside the page by the editor that received it.
 | `ICanvasFocusTarget FocusTarget { get; }` | The editor as a focus region of the document's F6 cycle: SetFocus on the host HWND with a read-back (DS-1 seam 1). |
 | `event Action? PageReady` | Raised once per page mount — after `MarkReady`; the document places focus in the editor on it (K7). |
 | `bool CompiledPromptOpen` | Whether the compiled prompt disclosure is open — collapsed at rest (Ruling 57). |
-| `IReadOnlyList<DecorationRow> Decorations` | The decoration rows this turn carries — the same projection the thread will show for it (SC2). |
+| `IReadOnlyList<DecorationRow> Decorations` | The decoration rows this turn carries — the same projection the thread will show for it and the send gate will put on the wire (SC2; ADR-0033 rule 2). |
+| `ComboBox TierControl` | The tier control on the decoration line (E2): *rule*, T0, T1, T2 — an override is an `operator` row at Send (§A11). |
+| `ComboBox ClassControl` | The class control on the decoration line: the session's default or a class for this prompt (Ruling 70). |
+| `string? HistoryState` | Why compile history is not being recorded, or null when it is — the reason Prepare shows (ADR-0034 rules 2–3). |
 | `string SettingsLine` | The settings line as rendered: *fan-out cap 2 (ceiling 3) · budget: bounded by your subscription · from session settings*. |
 | `IReadOnlyDictionary<string, string> StructureMarks` | The structure lines' marks by wire name (*— fill in* · *edited*), for a test that reads the marks. |
 | `string SurfaceId { get; }` | The surface's stable id. |
@@ -319,6 +337,7 @@ claim, and paste is handled inside the page by the editor that received it.
 | `Dictionary<string, long> Metrics { get; } = new(StringComparer.Ordinal)` | Diagnostic counters the page moved. Nothing outside diagnostics is reachable. |
 | `AttachOutcome Attach(IReadOnlyList<string> filePaths)` | Offers files to the draft through the attach gate. |
 | `System.Text.Json.Nodes.JsonObject CommittedRecord()` | The committed-channel record for this send: counts, and one boolean. |
+| `string RuleChoice = "rule"` | The tier control's first choice: the rule's own value stands. |
 | `void Dispose()` | Releases the hosted browser control. |
 | `Size MeasureOverride(Size constraint)` | **The writer is sized first (DC-137).** A DockPanel measures its docked children before the fill child, each with what remains of the constraint after the ones before it, so an uncapped compiled prompt would take its … |
 
