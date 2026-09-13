@@ -518,7 +518,11 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
             // Reported, never thrown away. These are the three refusals ConductorEntry already
             // treats as "the run did not complete", and the operator is owed the same sentence.
             LastRunFailure = $"{error.GetType().Name}: {error.Message}";
-            _thread.Conclude(ordinal, TurnState.Failed, DateTimeOffset.Now, exitCode: null, edits: null, reply: LastRunFailure);
+
+            // The sentence is a line of the run, under the lane that refused, in the one stream the
+            // fold and the Console both read (Ruling 81) — never a text stored beside the outcome.
+            _thread.Append(ordinal, new EventLine(DateTimeOffset.Now, request.EngineId, "stderr", LastRunFailure, "run"));
+            _thread.Conclude(ordinal, TurnState.Failed, DateTimeOffset.Now, exitCode: null, edits: null);
             RecordConsumed(ordinal, Envelope.NotRecorded, null, Envelope.NotRecorded, ConsumedReasons.LaneExited(null));
         }
         finally

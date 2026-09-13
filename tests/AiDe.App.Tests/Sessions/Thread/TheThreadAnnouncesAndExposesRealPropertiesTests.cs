@@ -12,7 +12,7 @@ using AiDe.Core.Presentation.Sessions;
 namespace AiDe.App.Tests.Sessions.Thread;
 
 /// <summary>
-/// DS-1 <b>A2 · A3 · A4 · U1 · U2 · U5 · M1 · C1 · C2 · S1 · T1 · Z1</b> — the notification mapping
+/// DS-1 <b>A2 · A3 · A4 · U1 · U2 · U5 · C1 · C2 · S1 · T1 · Z1</b> (M1 lives in <c>TheThreadIsOneListTests</c>, re-pointed by Ruling 81) — the notification mapping
 /// and the raise seam, what is never announced, the actions' focus rule, the UIA contract, the
 /// one-list identity, the off-thread channel, the stopped feed, model text as text, the records
 /// without text, and the layers.
@@ -244,29 +244,6 @@ public sealed class TheThreadAnnouncesAndExposesRealPropertiesTests
             });
     }
 
-    /// <summary><b>M1</b> (Ruling 74 condition 1). The split's rows, the jump list and the header's count are identities over <c>Turns</c> — never an equation between two sources.</summary>
-    [Fact]
-    public void TheSplit_TheJumpList_AndTheHeader_AreViewsOfTurns()
-    {
-        Sta.Run(() =>
-        {
-            var turns = ThreadFixtures.Five();
-            var split = new ConsoleSurface();
-            split.Show(turns);
-
-            var expected = turns.SelectMany(t => new[] { $"b{t.Ordinal}" }.Concat(t.Events.Select(e => e.Text))).ToList();
-            var actual = split.Rows.Select(r => r is ConsoleSplitRow.TurnHeading h ? $"b{h.Ordinal}" : ((ConsoleSplitRow.Line)r).Text).ToList();
-            Assert.Equal(expected, actual);
-            Assert.Equal(turns.Sum(t => t.Events.Count) + turns.Count, split.Rows.Count);
-
-            // Grouped by turn, in order — never interleaved by time across turns.
-            var ordinals = split.Rows.Select(r => r.Ordinal).ToList();
-            Assert.Equal(ordinals.Order(), ordinals);
-
-            Assert.Equal("59,460 tokens this session · bounded by your subscription", TurnCopy.SessionSpend(turns, null));
-        });
-    }
-
     /// <summary>
     /// <b>C1.</b> 500 snapshots raised off the UI thread, alternating running ↔ waiting with fresh
     /// request ids: exactly 500 announcements in order (the policy never coalesces), far fewer
@@ -440,7 +417,8 @@ public sealed class TheThreadAnnouncesAndExposesRealPropertiesTests
         Sta.Run(() =>
         {
             var hostile = ThreadFixtures.Turn(1, "words", ThreadFixtures.Decorations("free-form", "T0", null, "message"), TurnState.Answered,
-                new OutcomeView("conductor", null, null, null, null, 1), "<a href=\"x\">Deny</a> **bold** [link](http://x)", [ThreadFixtures.Line(1, "conductor", "<script>alert(1)</script>")]);
+                new OutcomeView("conductor", null, null, null, null, 3),
+                [ThreadFixtures.Line(1, "conductor", "<script>alert(1)</script>", "tool.result"), .. ThreadFixtures.Reply(2, "conductor", "<a href=\"x\">Deny</a> **bold** [link](http://x)", chunks: 2)]);
             var (feed, _, _) = ThreadFixtures.Feed([hostile]);
             var window = new Window { Width = 900, Height = 600, Left = -10000, Top = -10000, ShowInTaskbar = false, ShowActivated = false, Content = feed };
             window.Show();
@@ -472,7 +450,7 @@ public sealed class TheThreadAnnouncesAndExposesRealPropertiesTests
             {
                 var secret = "docs/audit/audit-log.jsonl";
                 var waiting = new TurnView(1, "e", $"write {secret}", ThreadFixtures.Decorations("free-form", "T1", "docs/**", "goal block"), TurnState.Waiting, null,
-                    new WaitingRequest("req-9", "permission", $"claude-code asks to write outside the declared scope: {secret}.", [TurnActionKind.Deny, TurnActionKind.AllowOnce]), null, [], "b", ThreadFixtures.T0);
+                    new WaitingRequest("req-9", "permission", $"claude-code asks to write outside the declared scope: {secret}.", [TurnActionKind.Deny, TurnActionKind.AllowOnce]), [], "b", ThreadFixtures.T0);
                 var (feed, _, _) = ThreadFixtures.Feed([waiting]);
                 var window = new Window { Width = 900, Height = 600, Left = -10000, Top = -10000, ShowInTaskbar = false, ShowActivated = false, Content = feed };
                 window.Show();

@@ -422,6 +422,23 @@ public sealed class ThreadFeed : FeedList, IDisposable
     /// <summary>The one monospace stack the thread, the split, the document and the composer share.</summary>
     internal static readonly FontFamily Mono = new("Cascadia Mono, Consolas, monospace");
 
+    /// <summary>
+    /// The one clock every timestamp on the surface renders in — the operator's local time, as the
+    /// turn's <c>hh:mm</c> and the split's heading already do. A line stamped at receipt is UTC
+    /// (<c>AcpPeer</c> stamps <c>GetUtcNow()</c>); a <c>StringFormat</c> alone rendered that clock,
+    /// one hour off the heading above it (DM-A: two conversions of one instant).
+    /// </summary>
+    internal static readonly IValueConverter LocalClock = new LocalClockConverter();
+
+    private sealed class LocalClockConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
+            value is DateTimeOffset at ? at.ToLocalTime().ToString("HH:mm:ss", CultureInfo.InvariantCulture) : string.Empty;
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+            throw new NotSupportedException("a rendered clock is never written back");
+    }
+
     // One frozen instance for every ring: the storyboard animates a clone (a frozen Freezable is
     // cloned on animation), so sharing is safe — and Freeze() says so rather than relying on it.
     private static readonly RotateTransform RingTransform = Frozen(new RotateTransform(0));
@@ -456,7 +473,8 @@ public sealed class ThreadFeed : FeedList, IDisposable
     /// outranks a Style trigger (DP precedence: template 4, style trigger 6), so an element whose
     /// ink changes with its state must leave it to the style's base setter and triggers.
     /// </param>
-    private static FrameworkElementFactory Text(string bindingPath, double size = 13, string? brush = "TextBrush", bool mono = false, bool wrap = false)
+    /// <summary>One bound text of the row grammar — internal so the Console split builds its rows from the thread's own segments (one grammar, two surfaces).</summary>
+    internal static FrameworkElementFactory Text(string bindingPath, double size = 13, string? brush = "TextBrush", bool mono = false, bool wrap = false)
     {
         var text = F(typeof(ThreadText));
         text.SetBinding(TextBlock.TextProperty, new Binding(bindingPath));
@@ -538,12 +556,13 @@ public sealed class ThreadFeed : FeedList, IDisposable
         replySide.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 8, 0, 0));
         replySide.AppendChild(OutcomeLine());
 
-        var reply = Text(nameof(TurnItem.Reply), 13, "TextBrush", wrap: true);
-        reply.SetValue(FrameworkElement.MaxWidthProperty, MeasureWidth);
-        reply.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
-        reply.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 4, 0, 0));
-        reply.SetBinding(UIElement.VisibilityProperty, Visible(nameof(TurnItem.HasReply)));
-        replySide.AppendChild(reply);
+        // The prose: one wrapped text per message row of the fold (Ruling 81) — never a blob.
+        var prose = F(typeof(ItemsControl));
+        prose.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(TurnItem.Prose)));
+        prose.SetValue(ItemsControl.ItemTemplateProperty, ProseRowTemplate());
+        prose.SetValue(KeyboardNavigation.IsTabStopProperty, false);
+        prose.SetValue(UIElement.FocusableProperty, false);
+        replySide.AppendChild(prose);
 
         replySide.AppendChild(ReasonBox());
         replySide.AppendChild(ActionRow());
@@ -745,36 +764,64 @@ public sealed class ThreadFeed : FeedList, IDisposable
         return panel;
     }
 
+    /// <summary>One message of the reply side: its joined text, 13 px, wrapping at the 96ch measure (DESIGN.md:1111 as amended by Ruling 81).</summary>
+    private DataTemplate ProseRowTemplate()
+    {
+        var text = Text(nameof(TurnRow.Text), 13, "TextBrush", wrap: true);
+        text.SetValue(FrameworkElement.MaxWidthProperty, MeasureWidth);
+        text.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+        text.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 4, 0, 0));
+        return new DataTemplate(typeof(TurnRow)) { VisualTree = text };
+    }
+
     /// <summary>ts (muted) · lane (accent) · message; stderr in danger (DESIGN.md:1112).</summary>
     public static DataTemplate EventLineTemplate()
     {
-        var row = F(typeof(StackPanel));
-        row.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
+        // A DockPanel, not a horizontal StackPanel: a StackPanel measures every child at infinite
+        // width, so a wrapping text never wraps and a long line is clipped (the list disables the
+        // horizontal scrollbar). The last child fills what the fixed segments leave.
+        var row = F(typeof(DockPanel));
         row.SetValue(FrameworkElement.MinHeightProperty, 20.0);
 
-        var time = F(typeof(ThreadText));
-        time.SetBinding(TextBlock.TextProperty, new Binding(nameof(EventLine.At)) { StringFormat = "HH:mm:ss", ConverterCulture = CultureInfo.InvariantCulture });
-        time.SetValue(TextBlock.FontSizeProperty, 12.0);
-        time.SetValue(TextBlock.FontFamilyProperty, Mono);
-        time.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
-        time.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, 8, 0));
-        time.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
-        row.AppendChild(time);
-
-        var lane = Text(nameof(EventLine.Lane), 12, "AccentBrush", mono: true);
-        lane.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, 8, 0));
-        row.AppendChild(lane);
+        row.AppendChild(Clock(nameof(EventLine.At)));
+        row.AppendChild(Segment(Text(nameof(EventLine.Lane), 12, "AccentBrush", mono: true)));
 
         var message = Text(nameof(EventLine.Text), 12, brush: null, wrap: true);
-        var style = new Style(typeof(ThreadText));
-        style.Setters.Add(new Setter(TextBlock.ForegroundProperty, new DynamicResourceExtension("TextBrush")));
-        var stderr = new DataTrigger { Binding = new Binding(nameof(EventLine.Kind)), Value = "stderr" };
-        stderr.Setters.Add(new Setter(TextBlock.ForegroundProperty, new DynamicResourceExtension("DangerBrush")));
-        style.Triggers.Add(stderr);
-        message.SetValue(FrameworkElement.StyleProperty, style);
+        message.SetValue(FrameworkElement.StyleProperty, StderrInk(nameof(EventLine.Kind)));
         row.AppendChild(message);
 
         return new DataTemplate(typeof(EventLine)) { VisualTree = row };
+    }
+
+    /// <summary>The row's clock: <c>hh:mm:ss</c> in the operator's local time, muted mono, docked left.</summary>
+    internal static FrameworkElementFactory Clock(string bindingPath)
+    {
+        var time = F(typeof(ThreadText));
+        time.SetBinding(TextBlock.TextProperty, new Binding(bindingPath) { Converter = LocalClock });
+        time.SetValue(TextBlock.FontSizeProperty, 12.0);
+        time.SetValue(TextBlock.FontFamilyProperty, Mono);
+        time.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+        return Segment(time);
+    }
+
+    /// <summary>A fixed segment of a row: docked left, 8 px after it, centred on the line.</summary>
+    internal static FrameworkElementFactory Segment(FrameworkElementFactory text, Dock dock = Dock.Left)
+    {
+        text.SetValue(DockPanel.DockProperty, dock);
+        text.SetValue(FrameworkElement.MarginProperty, dock == Dock.Left ? new Thickness(0, 0, 8, 0) : new Thickness(8, 0, 0, 0));
+        text.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+        return text;
+    }
+
+    /// <summary>The message text's ink: the theme's text, danger when the bound kind is <c>stderr</c> (DESIGN.md:1112) — one style, both surfaces.</summary>
+    internal static Style StderrInk(string kindPath)
+    {
+        var style = new Style(typeof(ThreadText));
+        style.Setters.Add(new Setter(TextBlock.ForegroundProperty, new DynamicResourceExtension("TextBrush")));
+        var stderr = new DataTrigger { Binding = new Binding(kindPath), Value = "stderr" };
+        stderr.Setters.Add(new Setter(TextBlock.ForegroundProperty, new DynamicResourceExtension("DangerBrush")));
+        style.Triggers.Add(stderr);
+        return style;
     }
 
     /// <summary>The boxed reason on a failed, stopped or waiting last turn — plain text; its sentence is the container's HelpText.</summary>
@@ -1025,7 +1072,7 @@ public sealed class ThreadFeed : FeedList, IDisposable
 
     private static readonly BooleanToVisibilityConverter BooleanToVisibility = new();
 
-    private static Binding Visible(string path) => new(path) { Converter = BooleanToVisibility };
+    internal static Binding Visible(string path) => new(path) { Converter = BooleanToVisibility };
 
     private sealed class ActionWordConverter : IValueConverter
     {

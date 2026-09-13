@@ -373,7 +373,7 @@ public sealed class TheThreadIsAFeedOfTurnsTests
                 foreach (var turn in ThreadFixtures.Forty())
                 {
                     var o = document.ReadModel.Accept(turn.SourceText, turn.Decorations, turn.SentBytes, turn.At);
-                    document.ReadModel.Conclude(o, turn.State, turn.At.AddSeconds(30), turn.Outcome?.ExitCode, turn.Outcome?.Edits, turn.Reply);
+                    document.ReadModel.Conclude(o, turn.State, turn.At.AddSeconds(30), turn.Outcome?.ExitCode, turn.Outcome?.Edits);
                 }
 
                 return document;
@@ -507,7 +507,7 @@ public sealed class TheThreadIsAFeedOfTurnsTests
                         document.ReadModel.Append(o, line);
                     }
 
-                    document.ReadModel.Conclude(o, turn.State, turn.At.AddSeconds(30), turn.Outcome?.ExitCode, turn.Outcome?.Edits, turn.Reply);
+                    document.ReadModel.Conclude(o, turn.State, turn.At.AddSeconds(30), turn.Outcome?.ExitCode, turn.Outcome?.Edits);
                 }
 
                 return document;
