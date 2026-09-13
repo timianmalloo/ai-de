@@ -360,6 +360,7 @@ public sealed class WorkbenchShell : IDisposable
 
         RenderAll();
         TrackFocusedPane();
+        WireSessionRegionCycle();
         PersistOnEveryChange();
     }
 
@@ -490,6 +491,39 @@ public sealed class WorkbenchShell : IDisposable
         }
     }
 
+    /// <summary>
+    /// Wires each host's controller to reach a session document by whichever surface has focus
+    /// (<c>session.cycleRegion</c>/<c>session.cycleRegionBack</c>, DC-068's seam request). One
+    /// lookup against <see cref="_sessionDocuments"/> — the shell's own registry — rather than a
+    /// second index the two could disagree about.
+    /// </summary>
+    /// <remarks>
+    /// This refusal is announced HERE, not left to the caller: <see cref="Sessions.SessionDocumentSurface.CycleRegion"/>
+    /// already speaks its own refusal through the same shared announcer, so a caller that announced
+    /// every non-<c>Entered</c> result unconditionally would speak that one twice. This closure's
+    /// own synthetic refusal — no surface resolves to an open document — has no other speaker, so
+    /// it must announce itself or it is silent (DC-011; found in review).
+    /// </remarks>
+    private void WireSessionRegionCycle()
+    {
+        CanvasFocusResult Cycle(string? surfaceId, int delta)
+        {
+            if (surfaceId is not null && _sessionDocuments.TryGetValue(surfaceId, out var document))
+            {
+                return document.CycleRegion(delta);
+            }
+
+            const string message = "No session document is focused.";
+            Announcer.Announce(message);
+            return new CanvasFocusResult(CanvasFocusOutcome.Refused, message);
+        }
+
+        foreach (var host in Hosts)
+        {
+            host.Controller.SessionRegionCycle = Cycle;
+        }
+    }
+
     /// <summary>Walks up from a focused element to the surface it belongs to.</summary>
     internal static string? FindSurfaceId(DependencyObject element)
     {
@@ -593,12 +627,19 @@ public sealed class WorkbenchShell : IDisposable
         string? dataDirectory,
         IWorkspaceCommands? commands = null,
         string scopeId = "fixture",
-        string artifactRevision = "rev-1",
+        string? artifactRevision = null,
         string? workspaceRoot = null)
     {
         ArgumentNullException.ThrowIfNull(queries);
 
         _queries = queries;
+
+        // Ruling 85: the fixture literal "rev-1" left the product path. A caller with no revision of
+        // its own (every real caller — MainWindow.xaml.cs passes none) gets the workspace's observed
+        // HEAD, or the honest "not recorded" when git cannot answer — never a value that looks
+        // measured and is not (DC-110's shape). A caller that DOES pass one (every test here) is
+        // unaffected.
+        artifactRevision ??= ResolveGitFacts(workspaceRoot ?? string.Empty).Head ?? RevisionNotRecorded;
 
         // Wire the Loomkeeper watcher for THIS workspace's data directory (the real runtime path - the
         // constructor was built with a null workspace). Without this the read surfaces would be inert:
@@ -2594,8 +2635,14 @@ public sealed class WorkbenchShell : IDisposable
     /// from working (see <c>WorkspaceKey</c>). A non-git folder is NOT this case: it is its own
     /// workspace, and resolves true.
     /// </param>
+    /// <param name="Head">
+    /// The short commit id <c>git rev-parse --short HEAD</c> reports, or null when git cannot answer
+    /// (no repository, no commit yet, or git itself is unavailable) — never a guessed or fixture
+    /// value (Ruling 85). This is what a caller with no revision of its own attaches to a workspace.
+    /// </param>
     internal sealed record GitFacts(
-        string RepoPath, string RepoDisplay, string WorktreePath, string Branch, bool RepoResolved = true)
+        string RepoPath, string RepoDisplay, string WorktreePath, string Branch, bool RepoResolved = true,
+        string? Head = null)
     {
         /// <summary>
         /// What the branch reads as when it could not be determined.
@@ -2637,6 +2684,9 @@ public sealed class WorkbenchShell : IDisposable
     /// </remarks>
     private readonly Dictionary<string, AiDe.Core.Terminal.AgentReadinessProfile> _harnessBySurface = new(StringComparer.Ordinal);
 
+    /// <summary>What an attached workspace's revision reads when git could not resolve one (Ruling 85) — never a guessed value.</summary>
+    internal const string RevisionNotRecorded = "not recorded";
+
     /// <summary>
     /// Resolves the repository, worktree and branch for <paramref name="root"/>, once.
     /// </summary>
@@ -2662,6 +2712,7 @@ public sealed class WorkbenchShell : IDisposable
         var toplevel = Git(root, "rev-parse", "--show-toplevel");
         var worktree = toplevel ?? fallbackPath;
         var branch = Git(root, "rev-parse", "--abbrev-ref", "HEAD") ?? GitFacts.BranchUnknown;
+        var head = Git(root, "rev-parse", "--short", "HEAD");
 
         // The repository is the common dir's PARENT: from a linked worktree --git-common-dir is the
         // primary .git (absolute); from the primary checkout it is a relative ".git". Its parent is
@@ -2701,7 +2752,7 @@ public sealed class WorkbenchShell : IDisposable
         var repoDisplay = Path.GetFileName(repo.TrimEnd('\\', '/'));
         if (string.IsNullOrEmpty(repoDisplay)) { repoDisplay = display; }
 
-        return new GitFacts(Canonical(repo), repoDisplay, Canonical(worktree), branch, resolved);
+        return new GitFacts(Canonical(repo), repoDisplay, Canonical(worktree), branch, resolved, head);
     }
 
     /// <summary>One spelling per directory, so two sessions in one repository group together.</summary>
@@ -3162,7 +3213,10 @@ public sealed class WorkbenchShell : IDisposable
                 model.Restore(saved);
             }
 
-            var document = new Sessions.SessionDocumentSurface(model, store);
+            // One announcer across hosts (ADR-0031; CV-1/CV-2's seam request): the document no
+            // longer builds its own polite live region once this is wired, so its refusals and
+            // outcomes reach the same strip every other layout announcement does.
+            var document = new Sessions.SessionDocumentSurface(model, store, Announcer);
 
             // Keyed by the document's OWN id rather than by the one computed above: the surface and
             // the dictionary must agree about which pane holds this session, and two derivations of

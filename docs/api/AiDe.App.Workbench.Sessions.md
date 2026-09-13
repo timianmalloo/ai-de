@@ -561,7 +561,7 @@ refusal is announced (`THR-0002`), never silent.
 
 - **`model`** — The document's state.
 - **`store`** — Where the document's envelope is persisted, or null to keep none. Kept for the shell's call; the conversation persists no layout of its own.
-- **`announcer`** — The shell's announcer (one across hosts, ADR-0031). Null — the shell does not pass it yet, a seam request to the Shell lane — builds a document-owned polite live region so SC9 is never silent; the two are never both live.
+- **`announcer`** — The shell's announcer (one across hosts, ADR-0031; landed at the shell's construction site, `WorkbenchShell.RegisterSessionDocument`). Null — a document built directly, as every headless test here still does — builds a document-owned polite live region so SC9 is never silent; the two are never both live.
 
 ### `string PurgeCompileHistory()`
 
@@ -659,10 +659,10 @@ The thread's four records (DS-1 §Telemetry) — `thread.layout`, `thread.announ
 read model's apply failed, `THR-0002` a region refused focus, `THR-0003` a version gap.
 Emitted on the normal path (IO1); no text, ever (O11).
 
-**Remarks.** **Writes through `Sink` when a test set one, else the same
-log file the workbench writes.** `WorkbenchDiagnostics.Write` is private and its file is
-the Shell lane's; a seam request asks for it to become internal so these records go through the
-one writer — until then the file path is duplicated here and that is named debt (DM7).
+**Remarks.** **One writer.** `Write` is `internal` — these records go
+through it rather than a second copy of the sink check and the log file path (DM7's seam
+request, landed): `ThreadDiagnostics` composes its own event shape and hands the object
+straight to the Shell lane's one writer.
 
 | Member | Summary |
 |---|---|

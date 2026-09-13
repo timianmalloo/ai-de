@@ -1992,7 +1992,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 92 types, 406 members, 73% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 92 types, 407 members, 73% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2005,7 +2005,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b6bfc74b11522f2c3fc0ad04ba079ff821d77ac5a82418bc479b8b68fdb0920b"
+      "sourceSha256": "211834312b078566ebcc42882b1f386ff1c3809cb227e6ebdf7ab68c8f0d15cd"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -2055,7 +2055,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "63f300dfe7cc4e0c07e228b0454d65c6ec15fdb3f07229af4ca71fde047f89ea"
+      "sourceSha256": "93c9891a2d6df3636dba60283ef59523678ee4902658962958c5bc5ebfc7b85a"
     },
     {
       "id": "api-aide-core",
@@ -2380,7 +2380,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f4af529230dacad9b4214d5daaa31fb5a08e1d3fae92a18ad9f811bf0600912c"
+      "sourceSha256": "e18a5cd24e71ca57c7f09aa8038069da75eee38277295210806ec0daae305ec2"
     },
     {
       "id": "api-aide-core-sessions",
@@ -7923,7 +7923,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c105615774d426634776320b616ead1391a51a8256ecb5b28e70b153000c64c1"
+      "sourceSha256": "88cd47c6e2c328ed84f634d003df3d10ce1626329d7157529321e9971e92ded5"
     },
     {
       "id": "design-session-profiler",
@@ -9136,7 +9136,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1a2d2dfc520b4c12207f60aa49d963e41fb5e0e6b1a00d411e684b6427eca8fb"
+      "sourceSha256": "afa95f1f468c747e700675ae1a49f5a2b4d8e8478c8cb2942f66903018348156"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -15397,6 +15397,55 @@ window.DOCS_INDEX = {
       "sourceSha256": "16a8f3ec7058860d25ab4444fc5877c2ba0322800d08b1af2d90da34b45c9c44"
     },
     {
+      "id": "proof-shell-seams-x3",
+      "path": "docs/proof/shell-seams-x3.md",
+      "title": "Proof Pack — X-3, the Shell-lane seam requests (CV-1/CV-2) and two status-bar defects",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-cd",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [],
+      "summary": "Evidence for X-3 (Shell lane, conductor `conductor/addendum-c`): the six CV-1/CV-2 seam requests (the shared Announcer into the session document; the F6/Shift+F6 registry rows; WebSurfaceHost.Retry(); WorkbenchDiagnostics as the one writer; BorderStrongBrush and its page role; the Compilation/Resources EmbeddedResource glob) and two operator-reported status-bar defects (the doubled \"rev rev-1\" label, resolved per Ruling 85 as an observed-HEAD attach rather than a fixture literal; a pane-move refusal that never cleared, resolved per Ruling 86 as a bounded self-clearing dwell on the announcer) — each red-first, with the reds named and the gate table at close.",
+      "tags": [
+        "proof-pack",
+        "shell-lane",
+        "x-3",
+        "addendum-c",
+        "addendum-d",
+        "seam-request",
+        "announcer",
+        "workbench",
+        "composer",
+        "ruling-85",
+        "ruling-86"
+      ],
+      "links": [
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-composer-as-conversation",
+          "rel": "refines"
+        },
+        {
+          "to": "proof-mechanical-compile",
+          "rel": "refines"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9686ac77dc370d55411c09c532dd3251e82152fad6d6fab06b99dcddf3f331cb"
+    },
+    {
       "id": "proof-terminal-cursor-render-crash",
       "path": "docs/proof/terminal-cursor-render-crash.md",
       "title": "Proof Pack - Terminal cursor render crash fix (DC-061)",
@@ -17441,5 +17490,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "3d1ffa092ce16dc181bbfa6aa06515073a03a178ae79c177a7faf6c5d824d517"
+  "graphSha256": "72ac2e86aa323723e22b13d51e820c3e8165e22dcc1501b652c8f03f6e13c175"
 };

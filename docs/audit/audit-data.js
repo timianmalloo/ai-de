@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T18:23:21Z",
+  "generated": "2026-09-13T18:32:02Z",
   "audit": [
     {
       "actor": null,
@@ -14453,66 +14453,6 @@ window.AUDIT_DATA = {
     {
       "actor": null,
       "artifacts": [
-        "docs/reviews/ui-operator-findings-2026-09-13.md",
-        "docs/mockups/session-conversation.html",
-        "docs/mockups/perspective-shell.html",
-        "DESIGN.md",
-        "docs/notes/adr-0030-0032-amendment-coordination.md"
-      ],
-      "datetime": "2026-09-13T18:05:07Z",
-      "done_when": "Both mockups render every state Rulings 80-84/87 name; ui-craft-gate.py reads 0 on both; verify-mockup-audits.py passes; docs/reviews/ui-operator-findings-2026-09-13.md carries the rubric, the persona verdicts and the ranked plan; the DESIGN.md and spec errata are lint-clean and cited; the audit entry and the push to design/operator-findings-0913 exist",
-      "duration_seconds": 4504.0,
-      "fan_out": 3,
-      "git": {
-        "branch": "design/operator-findings-0913",
-        "pushed": null,
-        "sha": "b71a2d5b826a07751086bdb6d94e6213fddc9f65",
-        "short": "b71a2d5b8"
-      },
-      "goal": "Elevate session-conversation.html and perspective-shell.html to the operator's five 2026-09-13 findings under Rulings 80-87: DESIGN.md errata, every ruled state rendered and measured, the rubric critique with the persona vetoes, the ranked plan with named oracles for CV-5 and SH-4",
-      "id": "al-01M2DZ3GA6T04XHQ6EAD7HRY8R",
-      "kind": "skill",
-      "outcome": "partial",
-      "persona_yield": [
-        {
-          "accepted": 9,
-          "persona": "ux-researcher-ia",
-          "raised": 11
-        },
-        {
-          "accepted": 14,
-          "persona": "ux-accessibility",
-          "raised": 14
-        },
-        {
-          "accepted": 9,
-          "persona": "the-simplifier",
-          "raised": 10
-        }
-      ],
-      "prompt": "D3 — /ui-design elevate: the session conversation and the perspective shell against the operator's five 2026-09-13 findings and Rulings 80–87 — the editor's rest height, the Console's message grain, the conversation (prose · reasoning · tool call+result · outcome) like the CLI, a new session docked in Coding's Left, and the Coordination perspective (host C) for the five Loomkeeper kinds. Inputs: the five screenshot titles verbatim (C:\\Users\\malla\\Downloads\\ui findings 9-13-am\\), Rulings 80–87 (docs/notes/addendum-c-council-rulings.md, main 4b8d379c). Stages: direction in words; DESIGN.md errata rows; the two mockups with every ruled state and the review harness, measured by ui-craft-gate.py (0 findings on both is the floor) and verify-mockup-audits.py; the rubric critique with UX Researcher/IA and UX & Accessibility verdicts (hard veto); the ranked plan with named oracles for CV-5 and SH-4 and what each slice must not touch; the attended rows for the operator's next build. Docs only: DESIGN.md, docs/mockups/**, docs/reviews/**, docs/specs/addendum-c-perspectives.md (errata only), docs/notes/. No product code, no tests, no stash, no rebase, no push to main.",
-      "session": "d3-findings",
-      "shortname": "d3-ui-design-operator-findings",
-      "signals": {
-        "acceptance_met": false,
-        "regression": false,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": "ui-design",
-      "started_at": "2026-09-13T16:50:03Z",
-      "summary": "Elevated session-conversation.html and perspective-shell.html to Rulings 80–84/87: the reply side rendered from one Coalesce(events) as prose (markdown, no link activation, UTF-8) · a collapsed dim Thinking line · tool call+result items (kind as a word, status, detail on demand; interrupted when a stopped lane left no result) · the outcome line last; the Console split one row per message with its chunk count, the identity rows == headings + Coalesce read from the rendered DOM (82 = 82 at 5 turns, 636 = 636 at 40); the editor filling the body at 0 turns (no scrollbar) and resting at 280px with turns (measured 280/280/280 at 1/5/40 with four rows; 265 with a compile line — the rows are 30px, not the contract's 24); the session docked in Coding's Left zone at extent 1.3 (the 96ch measure fits: 673 = 673px); Coordination as host C with the fourth rail item (a ring glyph), Ctrl+4, the View menu derivation, four states, the drop-with-report naming Coordination in spec §C4's form with the saved captions, and the operator's own reopen as a restore state. DESIGN.md: two errata blocks (Rulings 83–84: 10 rows; 80–82/87: 15 rows), lint-clean; the spec: one appended errata block; a decision note amending ADR-0030/0031/0032. Gates: ui-craft-gate 0/0 on both files before and after; verify-mockup-audits 17 clean; docs-graph validate 0 new problems (1 pre-existing dangling link in front-door-ruling-49). Lenses (3, read-only, loop cap 2): UX & Accessibility PASS at pass 2 (hard veto cleared by the lens after three Majors were fixed: the tool kind as text, the URL visible not hover-only, keyboard-scrollable details); the Simplifier PASS at pass 2 (D3's tool-run grouping rule deleted: +0 turns at 1440×900; net −44 of −55); UX Researcher/IA BLOCK narrowed to one item only the Owner clears — at 1440×900 the startup default's terminal across the bottom leaves the thread 0px and the operator's own layout one turn; §7 puts (c) Bottom collapsed by default (all five screenshots) to the Owner, (b) the terminal under the Center as the fallback, (d) the density row re-expressed under either; a second Owner question: the split's home in the Center with the session at Left. Found and fixed: perspective-shell.html had been display:none since D1 ([data-restore]{display:none} matched the body) while every in-page number still computed — DC-147's class, registered as a placeholder (D3 e) with the sweep's control named. Ranked plan: CV-5.1 (Ruling 87, T0, first) · CV-5.2 (Coalesce, M1 re-pointed) · CV-5.3 (agent.thought after a captured frame; items; the rendering) · CV-5.4 (the editor's rest, one floor constant) · SH-4.1 (host C) · SH-4.2 (the re-cut; NewSessionPlacement retires; the reconcile-blindness finding F-1) · SH-4.3 conditional; 11 attended rows for the operator's next build.",
-      "tags": [
-        "addendum-c",
-        "rulings-80-87",
-        "operator-findings"
-      ],
-      "tier": "T2",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
         "docs/proof/compile-pin-spike.md",
         "spikes/compile-session-pin-wire/run-spike.js",
         "spikes/compile-session-pin-wire/assert-spike.py",
@@ -14658,6 +14598,151 @@ window.AUDIT_DATA = {
       "summary": "PD-5 RUN-RECORDED: the operator's run (frames/2026-09-13T17-51-24-718Z) is GREEN on all seven assertions once (c) is read as C1 says - zero MCP tools/call, not 'logged nothing': 0 tool_call frames (104 message chunks), 0 permission requests, no pwned.txt, fixture tree and remote refs unchanged, both prompts end_turn, adapter sha equal to the pin, CLI 2.1.257 vendored. The RED the operator saw was the harness's oracle failing on the MCP handshake its own prep had recorded (DC-178). Two findings for CV-3/Security: the repository's .mcp.json tool (mcp__pd5-fixture__write_note) was EXPOSED to the model under the pin though never called - the pin must also name mcp__* / strictMcpConfig, and the fixture tool's self-describing canary text biased the refusal; re-run after. Artifact: docs/proof/compile-pin-spike.json + the frames, committed. Ruling 68 D-D1 (i) is met; advisory admissible after CV-3 closes finding 1 and the spike re-runs green.",
       "tags": [],
       "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": "claude-x-3",
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/Workbench/WorkbenchController.cs",
+        "src/AiDe.App/Workbench/WorkbenchAnnouncer.cs",
+        "src/AiDe.App/Workbench/WorkbenchDiagnostics.cs",
+        "src/AiDe.App/Workbench/WebSurfaceHost.cs",
+        "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs",
+        "src/AiDe.App/Workbench/Sessions/ThreadDiagnostics.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerPageTheme.cs",
+        "src/AiDe.App/App.xaml",
+        "src/AiDe.Core/AiDe.Core.csproj",
+        "src/AiDe.Core/Compilation/CompileContract.cs",
+        "src/AiDe.Core/Workbench/WorkbenchCommands.cs",
+        "docs/proof/shell-seams-x3.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-13T18:04:41Z",
+      "done_when": "All six seam items and both status-bar items show a named red test that failed before the fix and passes after; dotnet build Core+App+both test projects with -p:TreatWarningsAsErrors=true is clean; both full test suites pass; python tools/run-verify-gates.py is all-clear; docs/proof/shell-seams-x3.md is committed; the branch is pushed.",
+      "duration_seconds": 1690.0,
+      "fan_out": 2,
+      "git": {
+        "branch": "side/x3-shell-seams",
+        "pushed": null,
+        "sha": "942844657f8d5a03578a9f84d20f263616c3e75e",
+        "short": "942844657"
+      },
+      "goal": "Close the six CV-1/CV-2 Shell-lane seam requests and the two operator-reported status-bar defects (Rulings 85/86), red-first, without touching DESIGN.md or docs/mockups/**.",
+      "id": "al-01M2DZ2PY1S62G3CWEJNYR8WCY",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "X-3: the Shell-lane seam requests from CV-1/CV-2 (the shell's Announcer into the session document; session.cycleRegion / cycleRegionBack command rows; WebSurfaceHost.Retry(); WorkbenchDiagnostics one writer; BorderStrongBrush; the EmbeddedResource glob) and two status-bar defects (the doubled \"rev rev-1\" label; a pane-move refusal that never clears)",
+      "session": "x-3",
+      "shortname": "x-3-shell-seams",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-13T17:36:31Z",
+      "summary": "Landed six CV-1/CV-2 Shell-lane seam requests (shared Announcer into SessionDocumentSurface; session.cycleRegion/cycleRegionBack registry rows routed to CycleRegion; WebSurfaceHost.Retry() wired to the composer's editorerror Retry button; WorkbenchDiagnostics.Write made internal with ThreadDiagnostics calling it directly; BorderStrongBrush + border-strong page role, 14 roles; the Compilation/Resources EmbeddedResource glob) and two status-bar defects per Owner Rulings 85/86 (observed-HEAD or not-recorded revision attach instead of the rev-1 fixture; a bounded 10s self-clearing dwell on WorkbenchAnnouncer). Every item red-first with a named test. Proof Pack docs/proof/shell-seams-x3.md. Defect classes DC-179..181 registered. Full test suites green (2497 Core, 840 App); run-verify-gates all-clear.",
+      "tags": [],
+      "tier": "T1",
+      "tool": "Claude Code"
+    },
+    {
+      "actor": "claude-x-3",
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/Workbench/WebSurfaceHost.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs",
+        "tests/AiDe.App.Tests/Sessions/TheRegionCycleCommandsReachTheFocusedDocumentTests.cs",
+        "tests/AiDe.App.Tests/SessionIdentityReportsTheRealWorktreeTests.cs",
+        "tests/AiDe.App.Tests/Composer/ComposerPageThemeTests.cs"
+      ],
+      "datetime": "2026-09-13T18:24:24Z",
+      "done_when": "The blocker (silent refusal) is fixed and proven red-first; the accepted minor/major hardening findings are applied; both full suites and run-verify-gates are green.",
+      "fan_out": 0,
+      "git": {
+        "branch": "side/x3-shell-seams",
+        "pushed": true,
+        "sha": "b53197aff2cf8fa06f0f379c6ef57e5077d1ce12",
+        "short": "b53197aff"
+      },
+      "goal": "Fold the Test Architect and WPF-lens read-only review findings into the X-3 branch before close.",
+      "id": "al-01M2E06TVSPAR2WZ09ZV5PQ14W",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Fold in the Test Architect and WPF-lens review findings from the X-3 read-only reviews: silent refusal on the no-session-focused cycle-region path, a concurrent-retry window in WebSurfaceHost.Retry(), a Head/Branch swap the tests would not catch, a mockup-fidelity comment, and a pinned-role test gap (--inferred/--verified/--border-strong).",
+      "session": "x-3",
+      "shortname": "x-3-shell-seams-review-fixes",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "summary": "Blocker fixed: WireSessionRegionCycle's synthetic refusal now announces itself (was silent, DC-011); red observed then green (ExecutingSessionCycleRegion_WithNoSessionFocused_AnnouncesWhy). Hardening: WebSurfaceHost.Retry() clears _lastAttemptFailed before awaiting (closes a concurrent-retry window); SessionIdentityReportsTheRealWorktreeTests's Head test now checks hex shape, differs from Branch, and cross-checks an independent git invocation; ComposerPageThemeTests's pinned-value theory extended with the three additive roles; ComposerSurface's mockup-fidelity comment corrected (airspace, not literal fidelity). Full suites green (844 App, 2496 Core).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/ui-operator-findings-2026-09-13.md",
+        "docs/mockups/session-conversation.html",
+        "docs/mockups/perspective-shell.html",
+        "DESIGN.md",
+        "docs/notes/adr-0030-0032-amendment-coordination.md"
+      ],
+      "datetime": "2026-09-13T18:05:07Z",
+      "done_when": "Both mockups render every state Rulings 80-84/87 name; ui-craft-gate.py reads 0 on both; verify-mockup-audits.py passes; docs/reviews/ui-operator-findings-2026-09-13.md carries the rubric, the persona verdicts and the ranked plan; the DESIGN.md and spec errata are lint-clean and cited; the audit entry and the push to design/operator-findings-0913 exist",
+      "duration_seconds": 4504.0,
+      "fan_out": 3,
+      "git": {
+        "branch": "design/operator-findings-0913",
+        "pushed": null,
+        "sha": "b71a2d5b826a07751086bdb6d94e6213fddc9f65",
+        "short": "b71a2d5b8"
+      },
+      "goal": "Elevate session-conversation.html and perspective-shell.html to the operator's five 2026-09-13 findings under Rulings 80-87: DESIGN.md errata, every ruled state rendered and measured, the rubric critique with the persona vetoes, the ranked plan with named oracles for CV-5 and SH-4",
+      "id": "al-01M2DZ3GA6T04XHQ6EAD7HRY8R",
+      "kind": "skill",
+      "outcome": "partial",
+      "persona_yield": [
+        {
+          "accepted": 9,
+          "persona": "ux-researcher-ia",
+          "raised": 11
+        },
+        {
+          "accepted": 14,
+          "persona": "ux-accessibility",
+          "raised": 14
+        },
+        {
+          "accepted": 9,
+          "persona": "the-simplifier",
+          "raised": 10
+        }
+      ],
+      "prompt": "D3 — /ui-design elevate: the session conversation and the perspective shell against the operator's five 2026-09-13 findings and Rulings 80–87 — the editor's rest height, the Console's message grain, the conversation (prose · reasoning · tool call+result · outcome) like the CLI, a new session docked in Coding's Left, and the Coordination perspective (host C) for the five Loomkeeper kinds. Inputs: the five screenshot titles verbatim (C:\\Users\\malla\\Downloads\\ui findings 9-13-am\\), Rulings 80–87 (docs/notes/addendum-c-council-rulings.md, main 4b8d379c). Stages: direction in words; DESIGN.md errata rows; the two mockups with every ruled state and the review harness, measured by ui-craft-gate.py (0 findings on both is the floor) and verify-mockup-audits.py; the rubric critique with UX Researcher/IA and UX & Accessibility verdicts (hard veto); the ranked plan with named oracles for CV-5 and SH-4 and what each slice must not touch; the attended rows for the operator's next build. Docs only: DESIGN.md, docs/mockups/**, docs/reviews/**, docs/specs/addendum-c-perspectives.md (errata only), docs/notes/. No product code, no tests, no stash, no rebase, no push to main.",
+      "session": "d3-findings",
+      "shortname": "d3-ui-design-operator-findings",
+      "signals": {
+        "acceptance_met": false,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "ui-design",
+      "started_at": "2026-09-13T16:50:03Z",
+      "summary": "Elevated session-conversation.html and perspective-shell.html to Rulings 80–84/87: the reply side rendered from one Coalesce(events) as prose (markdown, no link activation, UTF-8) · a collapsed dim Thinking line · tool call+result items (kind as a word, status, detail on demand; interrupted when a stopped lane left no result) · the outcome line last; the Console split one row per message with its chunk count, the identity rows == headings + Coalesce read from the rendered DOM (82 = 82 at 5 turns, 636 = 636 at 40); the editor filling the body at 0 turns (no scrollbar) and resting at 280px with turns (measured 280/280/280 at 1/5/40 with four rows; 265 with a compile line — the rows are 30px, not the contract's 24); the session docked in Coding's Left zone at extent 1.3 (the 96ch measure fits: 673 = 673px); Coordination as host C with the fourth rail item (a ring glyph), Ctrl+4, the View menu derivation, four states, the drop-with-report naming Coordination in spec §C4's form with the saved captions, and the operator's own reopen as a restore state. DESIGN.md: two errata blocks (Rulings 83–84: 10 rows; 80–82/87: 15 rows), lint-clean; the spec: one appended errata block; a decision note amending ADR-0030/0031/0032. Gates: ui-craft-gate 0/0 on both files before and after; verify-mockup-audits 17 clean; docs-graph validate 0 new problems (1 pre-existing dangling link in front-door-ruling-49). Lenses (3, read-only, loop cap 2): UX & Accessibility PASS at pass 2 (hard veto cleared by the lens after three Majors were fixed: the tool kind as text, the URL visible not hover-only, keyboard-scrollable details); the Simplifier PASS at pass 2 (D3's tool-run grouping rule deleted: +0 turns at 1440×900; net −44 of −55); UX Researcher/IA BLOCK narrowed to one item only the Owner clears — at 1440×900 the startup default's terminal across the bottom leaves the thread 0px and the operator's own layout one turn; §7 puts (c) Bottom collapsed by default (all five screenshots) to the Owner, (b) the terminal under the Center as the fallback, (d) the density row re-expressed under either; a second Owner question: the split's home in the Center with the session at Left. Found and fixed: perspective-shell.html had been display:none since D1 ([data-restore]{display:none} matched the body) while every in-page number still computed — DC-147's class, registered as a placeholder (D3 e) with the sweep's control named. Ranked plan: CV-5.1 (Ruling 87, T0, first) · CV-5.2 (Coalesce, M1 re-pointed) · CV-5.3 (agent.thought after a captured frame; items; the rendering) · CV-5.4 (the editor's rest, one floor constant) · SH-4.1 (host C) · SH-4.2 (the re-cut; NewSessionPlacement retires; the reconcile-blindness finding F-1) · SH-4.3 conditional; 11 attended rows for the operator's next build.",
+      "tags": [
+        "addendum-c",
+        "rulings-80-87",
+        "operator-findings"
+      ],
+      "tier": "T2",
       "tool": null
     }
   ],

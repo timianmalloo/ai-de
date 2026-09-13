@@ -81,9 +81,10 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     /// <param name="model">The document's state.</param>
     /// <param name="store">Where the document's envelope is persisted, or null to keep none. Kept for the shell's call; the conversation persists no layout of its own.</param>
     /// <param name="announcer">
-    /// The shell's announcer (one across hosts, ADR-0031). Null — the shell does not pass it yet,
-    /// a seam request to the Shell lane — builds a document-owned polite live region so SC9 is
-    /// never silent; the two are never both live.
+    /// The shell's announcer (one across hosts, ADR-0031; landed at the shell's construction site,
+    /// <c>WorkbenchShell.RegisterSessionDocument</c>). Null — a document built directly, as every
+    /// headless test here still does — builds a document-owned polite live region so SC9 is never
+    /// silent; the two are never both live.
     /// </param>
     public SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)
     {

@@ -36,6 +36,16 @@
       would be a second construction path, and the one that never proves the loader works.
     -->
     <EmbeddedResource Include="Sessions\BuiltIn\*.template.md" />
+
+    <!--
+      CV-2's seam request (ADR-0033's "embedded resources" reserved this path): landed so a future
+      compile-prompt/1 profile (the host header, the template, a second family's profile) has
+      somewhere to drop as a real file the moment it needs one, with no csproj edit at that point.
+      Matches nothing today — CompileContract.cs's HostHeader + Template are ~15 lines together,
+      under the file's own `simplify:` ceiling (a template over ~200 lines, or a second family's
+      profile) — so the move itself is not made this slice; see CompileContract.cs's remarks.
+    -->
+    <EmbeddedResource Include="Compilation\Resources\*" />
   </ItemGroup>
 
   <ItemGroup>

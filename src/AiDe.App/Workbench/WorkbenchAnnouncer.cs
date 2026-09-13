@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Workbench;
@@ -63,13 +64,38 @@ public interface IWorkbenchAnnouncer
 /// </remarks>
 public sealed class WorkbenchAnnouncer : IWorkbenchAnnouncer
 {
-    private readonly TextBlock _liveRegion;
+    /// <summary>
+    /// How long a status dwells before it clears itself (Ruling 86): a refused pane move that
+    /// outlived six minutes and every screenshot of the session, because nothing else happened to
+    /// supersede it. Inferred first value — the design names none yet.
+    /// </summary>
+    internal static readonly TimeSpan DefaultDwell = TimeSpan.FromSeconds(10);
 
-    public WorkbenchAnnouncer(TextBlock liveRegion)
+    private readonly TextBlock _liveRegion;
+    private readonly DispatcherTimer _dwellTimer;
+
+    public WorkbenchAnnouncer(TextBlock liveRegion) : this(liveRegion, DefaultDwell)
+    {
+    }
+
+    /// <param name="dwell">Test seam: the production default is <see cref="DefaultDwell"/>; a test names a short dwell rather than sleeping ten real seconds.</param>
+    internal WorkbenchAnnouncer(TextBlock liveRegion, TimeSpan dwell)
     {
         _liveRegion = liveRegion;
         AutomationProperties.SetLiveSetting(_liveRegion, AutomationLiveSetting.Polite);
         AutomationProperties.SetName(_liveRegion, "Workbench status");
+
+        // Cleared by the next announcement (overwrites `Last`/the strip directly), by the next
+        // applied layout operation (which announces, including a refusal — ApplyAndAnnounce), or by
+        // this dwell — three ways to the same end, so a status never again outlives every action the
+        // operator takes after it. The timer never truncates the spoken announcement: it only empties
+        // the VISIBLE strip after the fact, the same effect `Clear()` already had one caller for.
+        _dwellTimer = new DispatcherTimer(DispatcherPriority.Background, _liveRegion.Dispatcher) { Interval = dwell };
+        _dwellTimer.Tick += (_, _) =>
+        {
+            _dwellTimer.Stop();
+            Clear();
+        };
     }
 
     public string Last { get; private set; } = string.Empty;
@@ -99,6 +125,7 @@ public sealed class WorkbenchAnnouncer : IWorkbenchAnnouncer
 
         // `Last` is emptied too: it is what a test reads back, and a cleared line that still reports
         // its old text is a surface disagreeing with itself.
+        _dwellTimer.Stop();
         Last = string.Empty;
         _liveRegion.Text = string.Empty;
     }
@@ -128,6 +155,11 @@ public sealed class WorkbenchAnnouncer : IWorkbenchAnnouncer
         // The visible strip is one line with an ellipsis (it must never grow and eat the window); the
         // full announcement — which can be a long re-index disclosure list — stays available on hover.
         _liveRegion.ToolTip = message.Length > 80 ? message : null;
+
+        // Restarted, not merely started: a later announcement (including a refusal) gets its own
+        // full dwell rather than inheriting whatever was left of the previous one's countdown.
+        _dwellTimer.Stop();
+        _dwellTimer.Start();
 
         var peer = UIElementAutomationPeer.FromElement(_liveRegion)
             ?? UIElementAutomationPeer.CreatePeerForElement(_liveRegion);

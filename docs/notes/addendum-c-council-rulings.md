@@ -1430,7 +1430,6 @@ The operator's five findings, verbatim (the screenshot titles): *"need to fix te
 **CONDITIONS:** The dwell never truncates the spoken announcement; `Status cleared.` behaviour unchanged.
 
 **RECORD AS:** Ruling 86 — status announcements clear on supersession or after a bounded dwell; the log is the record; Shell lane, T0.
-
 ---
 
 ## Ruling 87 — mojibake on the reply: the engine process's streams are UTF-8; fix first, red-first
