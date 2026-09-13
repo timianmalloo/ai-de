@@ -31,7 +31,8 @@ summary: >-
 # Proof Pack: CV-5.2 — `Coalesce`, the Console's message grain
 
 - **Change:** `lane/conversation-cv5` from `main` `38afb30b` (Ruling 89 merged before the first
-  commit; no rebase). Commits `5f4db11b` (Core: `Coalesce`, `TurnView.Rows`, `Reply` retired; the
+  commit; no rebase); `origin/main` `77c0e778` (X-3 joined) merged before close — one conflict,
+  the register's tail (DC-179–181 beside this slice's two placeholders), resolved by keeping both. Commits `5f4db11b` (Core: `Coalesce`, `TurnView.Rows`, `Reply` retired; the
   App adapted; fixtures at the event level), `ce4b7d54` (the split over the fold; the row
   template; one local clock) and the review commit (the three reviews applied: the row wraps, the
   reply side's oracle, the mapper join, the +05:00 clock oracle, the shrinks). **Core:** `Presentation/Sessions/Coalesce.cs` (new: `TurnRow`,
@@ -386,11 +387,13 @@ F6–F8: no regression; no tells; the 20 px rhythm holds.
 
 | Gate | Result |
 |---|---|
-| `dotnet build` Core / App / Core.Tests / App.Tests `-p:TreatWarningsAsErrors=true` | 0 warnings, 0 errors (all four) |
-| `AiDe.Core.Tests` full (`--logger trx`) | 2515 passed · 1 skipped · 0 failed · 1 m 53 s |
-| `AiDe.App.Tests` full (`--logger trx`) | see the closing report (filled at close) |
-| `python tools/run-verify-gates.py` | see the closing report |
+| `dotnet build` Core / App / Core.Tests / App.Tests `-p:TreatWarningsAsErrors=true` | 0 warnings, 0 errors (all four), before and after the `origin/main` merge (`77c0e778`, X-3 joined) |
+| `AiDe.Core.Tests` full (`--logger trx`, `artifacts/test-results/AiDe.Core.Tests.trx`) | before the reviews: 2515 passed · 1 skipped · 0 failed · 1 m 53 s; **after the merge: 2517 passed · 1 not executed (the pre-existing symlink skip) · 0 failed** — floor 2496 |
+| `AiDe.App.Tests` full (`--logger trx`, `artifacts/test-results/AiDe.App.Tests.trx`) | before the reviews: 821 passed · 0 failed · 2 m 31 s; **after the merge: 847 passed · 0 failed** — floor 844 (X-3's) |
+| `python tools/verify-test-run.py` (no `--update`) | OK — 3364 executed across 2 projects, every project met its baseline |
+| `python tools/run-verify-gates.py` | see the closing report (run after the audit entry and the derived views) |
 | `regenerate-derived.py` after the audit entry | see the closing report |
+| Release build `ProductVersion` | see the closing report |
 
 ## Deviations and findings (not scope)
 

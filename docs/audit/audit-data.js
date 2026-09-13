@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T18:42:13Z",
+  "generated": "2026-09-13T19:13:22Z",
   "audit": [
     {
       "actor": null,
@@ -14767,6 +14767,56 @@ window.AUDIT_DATA = {
         "verification_path": true,
         "verification_executed": true,
         "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M2E300B91XTVSKHRAQ2N36MM",
+      "shortname": "cv-5-2-coalesce",
+      "datetime": "2026-09-13T19:13:06Z",
+      "session": "cv-5",
+      "prompt": "You are track CV-5.2 of the Conversation lane — Ruling 81: the Console's row grain is the message, never the wire chunk; one pure `Coalesce(turn.Events)` read by both the thread's reply side and the Console split (Ruling 74 condition 1 re-pointed). Run the `/implement` skill (args: `CV-5.2: Coalesce — consecutive agent.msg chunks fold to one row per message (first timestamp, lane, joined text, chunk count), broken by any other kind; agent.thought folds separately; tool/permission/acp rows one per event; the thread's TurnView carries the fold, not a Reply blob; the split renders n chunks (Ruling 81; DESIGN.md errata after Rulings 80-82)`). Tier T2, fan-out cap 3 (reviews read-only). The conductor is Claude Opus (session `conductor-addendum-c`). The pack applies in full (red first; smallest correct; DM7 derive-don't-store — one derivation, two readers; the Test Architect's veto; DC-135).\n\nThe operator's words: \"console output is too fine grained\" — their Console showed `16:29:56 claude-code  mer` / `ges are` / `missing from the tracker and` … one timestamped row per streaming chunk. The ruling: Ruling 81 (also 82 — CV-5.3 builds the items over your Coalesce, so agent.thought must fold as its own run even though no mapper row exists yet; and 74 for the identity you re-point). The design: DESIGN.md §\"Errata after Rulings 80–82 and 87\", the mockup docs/mockups/session-conversation.html split state, the review docs/reviews/ui-operator-findings-2026-09-13.md §7 CV-5.2 row. The code: RunChannelSessionThread.cs (Append concatenates agent.msg into Reply — the second grain), ConsoleStreamModel.cs (TextOf — one derivation, two readers), ConsoleSurface.cs (Derive emits one Line per EventLine), SessionDocumentSurface.cs, the thread tests.\n\nOracles (D3's, verbatim; each red before its green): C1 Presentation/Sessions/CoalesceTests.ConsecutiveMessageChunks_FoldToOneRow_WithFirstTimestampLaneJoinedTextAndChunkCount — pure; 3 agent.msg chunks → 1 row, Chunks == 3, At = the first's; a tool.call between chunks → 2 rows (condition 2); agent.thought folds separately; tool.*, permission.request, acp.* one row each; empty → empty; a [Theory] over generated interleavings: rows.Count == runs(events). C2 Sessions/TheThreadIsOneListTests.TheSplitsRows_EqualHeadingPlusCoalesceOfEveryTurn (DS-1's M1, re-pointed) — red today. C3 Presentation/Sessions/RunChannelSessionThreadTests.TheTurnView_CarriesTheFold_NotAReplyBlob — TurnView.Rows == Coalesce(Events); Reply retired; a second store of the text fails. C4 the split's row renders `n chunks` from Row.Chunks (rendered, never asserted). C5 Sessions/ConsoleSplitPlacementTests.WithTheSessionAtLeft_TheSplitOpensInTheCenterZone_AsAConsoleDocument — wait for the Owner's Ruling 89. Keep green: the 88-frame mapper round-trip, ShellContrastCensusTests, DS-1's 30 oracles (re-point M1 only), ThreadAnnouncementPolicy tests.\n\nFloors: E7 in the Proof Pack; reviews (read-only, ≤ 3, loop cap 2): Test Architect (hard), the Simplifier, UX & Accessibility; gates at close: dotnet build Core + App + both test projects -p:TreatWarningsAsErrors=true; both full test projects (--logger trx); python tools/run-verify-gates.py; regenerate-derived.py after the audit entry. Audit entry, Proof Pack docs/proof/console-coalesce.md, commits, push to lane/conversation-cv5 (never main; merge origin/main before close if it moved — never rebase). Rebuild Release at the end and report the ProductVersion.\n\nMid-task from the conductor: Ruling 89 is filed (main 38afb30b) — the split is a `console` document in the Center zone, one per session, closing with the session; lane by seam: the surface's content is yours; a factory row / zone rule is SH-4.2's — write a seam request and make C5 RUN-PENDING rather than touching the shell.",
+      "summary": "Coalesce.Rows (Core, pure; TurnRow with first timestamp, lane, joined text, int? chunks; a run = one folding kind from one lane, broken by any other kind/lane) read by TurnView.Rows, TurnItem.Prose and ConsoleSurface.Derive; TurnView.Reply, the StringBuilder and Conclude(reply:) gone; a refused run's sentence is a stderr line; the split row reads hh:mm:ss · lane · message · text · n chunks (DockPanel, wraps; ItemStatus lane · kind); one local clock on every timestamp; fixtures at the event level. C1-C4 red->green, C5 RUN-PENDING (Ruling 89 -> SH-4.2 seam request). Reviews: Test Architect veto cleared (Proof Pack, +05:00 clock oracle, reply-side oracle, mapper join), Simplifier applied (-40 lines), UX F1 wrap fixed red-first. Gates: builds 0/0; Core 2517/0, App 847/0 post-merge; verify-test-run OK. Register: DC-nnn (CV-5 a), DC-nnn (CV-5 b), DC-172 recurrence 2. Proof Pack docs/proof/console-coalesce.md.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/console-coalesce.md",
+        "src/AiDe.Core/Presentation/Sessions/Coalesce.cs",
+        "src/AiDe.Core/Presentation/Sessions/SessionThread.cs",
+        "src/AiDe.Core/Presentation/Sessions/RunChannelSessionThread.cs",
+        "src/AiDe.App/Workbench/Sessions/ConsoleSurface.cs",
+        "src/AiDe.App/Workbench/Sessions/ThreadFeed.cs",
+        "src/AiDe.App/Workbench/Sessions/TurnItem.cs",
+        "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs",
+        "tests/AiDe.Core.Tests/Presentation/Sessions/CoalesceTests.cs",
+        "tests/AiDe.Core.Tests/Presentation/Sessions/RunChannelSessionThreadTests.cs",
+        "tests/AiDe.App.Tests/Sessions/Thread/TheThreadIsOneListTests.cs",
+        "tests/AiDe.App.Tests/Sessions/Thread/ThreadFixtures.cs",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "cv-5.2",
+        "ruling-81",
+        "conversation-lane"
+      ],
+      "outcome": "success",
+      "goal": "Ruling 81 landed on the Conversation lane: one pure Coalesce(turn.Events) in Core read by the thread's reply side (TurnView.Rows) and the Console split; Reply (the StringBuilder second store) retired; the split renders one row per message with n chunks.",
+      "done_when": "C1-C4 red then green (CoalesceTests incl. the seeded theory; TheThreadIsOneListTests M1 re-pointed and the rendered chunk count; RunChannelSessionThreadTests no reply blob); C5 RUN-PENDING on SH-4.2's console-document row (Ruling 89, seam req-01M2E1HEMCMHRW1AX4SY8RJFQ7); the 88-frame round-trip, the census, DS-1's oracles and the announcement policy green; builds warnings-as-errors; both suites via verify-test-run; the three read-only reviews cleared; Proof Pack docs/proof/console-coalesce.md; pushed to lane/conversation-cv5; Release ProductVersion reported.",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-13T18:21:52Z",
+      "duration_seconds": 3074.0,
+      "git": {
+        "sha": "46d02d8b5a694c4ad13658a4cd39d6e5ea614cb2",
+        "short": "46d02d8b5",
+        "branch": "lane/conversation-cv5",
+        "pushed": null
       }
     }
   ],
