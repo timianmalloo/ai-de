@@ -44,6 +44,8 @@ public sealed class SurfaceContentFactory(
     // supplies its own so the pair is testable without a docking host.
     EvidenceSelectionSource? evidenceSelection = null)
 {
+    internal Understanding.AtlasWorkspaceOwner? AtlasOwner { get; init; }
+
     /// <summary>The one selection channel this factory's Evidence pair shares (lazily created).</summary>
     private EvidenceSelectionSource Selection => evidenceSelection ??= new EvidenceSelectionSource();
 
@@ -127,6 +129,11 @@ public sealed class SurfaceContentFactory(
     /// </remarks>
     public static IReadOnlyList<SurfaceKind> Kinds { get; } =
     [
+        new("code-atlas", "Code Atlas",
+            "Read the admitted workspace's file inventory, member outline and verified source.",
+            static (factory, _) => new Understanding.AtlasLoadingHost(factory.AtlasOwner),
+            Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View")),
+
         // ── Architecture: the reading host (UC3) ──────────────────────────────────────────────
 
         new("canvas", "Graph",
