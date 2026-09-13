@@ -63,3 +63,36 @@ public sealed record AtlasBoundsDto(
 /// <summary>Explicit request/phase units; these are not fields on native AtlasBounds.</summary>
 public sealed record AtlasReaderPhaseContext(
     AtlasBoundsDimension Dimension, int RequestedLimit, int EffectiveLimit);
+
+/// <summary>Verified phase facts supplied by Core, not inferred from native declaration bounds.</summary>
+public sealed record AtlasSelectionPhaseContext(
+    string NativeManifestToken, string NativeFileValue, long CoreEpoch, string ObservationToken,
+    string? ReceiptToken, AtlasCountDto SourceTotal, int? SourceNextOffset,
+    string? SourceOmissionReason, AtlasBoundsDimension? SourceOmissionDimension,
+    AtlasOutlineState OutlineState, string? OutlineReason, int? OutlineNextOffset);
+
+public interface IAtlasReaderQueries
+{
+    ValueTask<AtlasInventoryPageDto> InventoryAsync(
+        AtlasInventoryRequestDto request, CancellationToken cancellationToken);
+    ValueTask<AtlasSelectionDto> SelectAsync(
+        AtlasSelectRequestDto request, CancellationToken cancellationToken);
+    ValueTask<AtlasSelectionDto> RestoreAsync(
+        AtlasRestoreRequestDto request, CancellationToken cancellationToken);
+}
+
+public interface IAtlasReaderLease : IAsyncDisposable
+{
+    string ScopeToken { get; }
+    string InitialManifestToken { get; }
+    long CoreEpoch { get; }
+    DateTimeOffset ExpiresAt { get; }
+    IAtlasReaderQueries Queries { get; }
+    CancellationToken Invalidated { get; }
+    bool IsTerminal { get; }
+}
+
+public interface IAtlasWorkspaceReader : IAsyncDisposable
+{
+    ValueTask<IAtlasReaderLease> AdmitAsync(CancellationToken cancellationToken);
+}
