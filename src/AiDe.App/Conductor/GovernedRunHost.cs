@@ -71,9 +71,9 @@ public static class GovernedRunHost
     /// second use of Ruling 71's typed argument.
     /// </summary>
     /// <remarks>
-    /// <para><b>Read, not recalled.</b> Two sources, both installed under
-    /// <c>spikes/acp-subscription-lane/node_modules/</c> and read at the cited lines: the SDK's schema
-    /// union (<c>@anthropic-ai/claude-agent-sdk</c> 0.3.257 <c>sdk-tools.d.ts:11-56</c>) and the
+    /// <para><b>The names are <see cref="LaneSessionOptions.DeniedToolNames"/> — one constant</b>
+    /// (ADR-0035 rule 2), read from two sources, not recalled: the SDK's schema union
+    /// (<c>@anthropic-ai/claude-agent-sdk</c> 0.3.257 <c>sdk-tools.d.ts:11-56</c>) and the
     /// shipped CLI's own tool-name table (<c>claude-agent-sdk-win32-x64/claude.exe</c>, the
     /// <c>Amo</c> array, 183 names — the schema is a subset of the pool, and <c>PowerShell</c> is a
     /// shell the schema does not list). Every name in either is classified in
@@ -81,7 +81,9 @@ public static class GovernedRunHost
     /// <c>--disallowedTools</c> (<c>sdk.mjs:100</c>); the adapter spreads it after its own
     /// (<c>acp-agent.js:6007</c>). Asserted as a set equality against a literal
     /// (<c>TheGovernedLaneHasNoShellTests</c>); an SDK or adapter bump re-reads both sources — the
-    /// trigger P-D5 carries for the compile pin.</para>
+    /// trigger P-D5 carries for the compile pin. The compile session adds <c>mcp__*</c>
+    /// (<see cref="LaneSessionOptions.Compile"/>); this lane does not yet — PD-5's finding 1 is
+    /// measured for the compile, and widening the read-only lane is its own attended run.</para>
     ///
     /// <para><b>A name in the CLI's table with no readable tool object is pinned, not cut:</b>
     /// <c>PowerShell</c> is the proof that such a name becomes a live tool by a remote flag with no
@@ -93,23 +95,7 @@ public static class GovernedRunHost
     /// on the wire, a widening of Ruling 71's two-member record that is the conductor's to rule on
     /// (CV-3's settings belt; P-D5's check: no <c>mcp__</c> name in the observed tool list).</para>
     /// </remarks>
-    internal static readonly LaneSessionOptions ReadOnlyLaneSession = new(DisallowedTools:
-    [
-        // The tree and durable files.
-        "Write", "Edit", "MultiEdit", "NotebookEdit", "EnterWorktree", "ExitWorktree", "CronCreate", "CronDelete",
-
-        // Code, shells and processes.
-        "Bash", "PowerShell", "REPL", "Monitor", "Tmux", "LSP", "self_hosted_runner_spawn_local",
-
-        // Delegation to another agent, local or remote.
-        "Agent", "Task", "Workflow", "RemoteTrigger", "self_hosted_runner_requeue_session",
-
-        // A local file sent or saved by a side door, or a consequential remote write.
-        "Artifact", "Projects", "SendFile", "SendUserFile",
-
-        // Opaque — fail-closed.
-        "ClaudeDesign", "Snip", "WebBrowser", "SubscribePR", "DesignSync", "ConnectGitHub",
-    ]);
+    internal static readonly LaneSessionOptions ReadOnlyLaneSession = new(DisallowedTools: LaneSessionOptions.DeniedToolNames);
 
     /// <summary>
     /// Stage-0 triage for a read-only turn: no plan, no council, no seam to steward. Not

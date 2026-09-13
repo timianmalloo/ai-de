@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -192,6 +193,22 @@ def run_assertions(frames_dir: Path) -> list[str]:
         )
     else:
         raise Failure("(f) FAILED: the read prompt produced no reply text and no tool call")
+
+    # (h) REPORTED, never asserted: whether any `mcp__` tool name reached the model's own account
+    # of its tools. The first run's finding 1 — `mcp__pd5-fixture__write_note` offered though never
+    # called — was visible only because the read prompt's reply happened to name it; the second
+    # run's third prompt asks the model to enumerate its tools so the exposure is a direct
+    # observable. A `mcp__` name here is a finding row for the Proof Pack (the widened pin did not
+    # close the exposure); "none" is the reading that closes it. Neither is a PASS/FAIL of C1,
+    # whose letter is (a).
+    all_replies = " ".join(reply_text(seg) for seg in segments)
+    exposed = sorted(set(re.findall(r"mcp__[A-Za-z0-9_\-]+", all_replies)))
+    if len(segments) >= 3:
+        last_reply = reply_text(segments[-1]).strip()
+        lines.append(f"(h) REPORTED: mcp__ names in the model's replies: {exposed or 'none'}; "
+                     f"tools prompt reply: {last_reply[:200]!r}")
+    else:
+        lines.append(f"(h) REPORTED: mcp__ names in the model's replies: {exposed or 'none'} (no tools prompt in this run)")
 
     # (g) the recorded adapter sha matches the pin, and the CLI triple was recorded (not "not
     # recorded" — a missing CLI sha/version is a gap, never a pass by omission).

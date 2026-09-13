@@ -113,29 +113,7 @@ public sealed class AcpEngineProcess : IDisposable
             report("environment: " + finding);
         }
 
-        // UTF-8 on all three streams, without a BOM (Ruling 87). ACP is newline-delimited UTF-8
-        // JSON; with no encoding named, .NET reads a redirected child through the console code
-        // page, and the operator's reply on 2026-09-13 read `â€"` for `—` and `Â§` for `§` — the
-        // bytes E2 80 94 and C2 A7 through a single-byte page. Measured red in
-        // AcpEngineProcessStreamsAreUtf8Tests (`ΓÇö ┬º` under CP437) before this line existed.
-        var utf8 = new System.Text.UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
-        var info = new ProcessStartInfo(launch.FileName)
-        {
-            WorkingDirectory = workingDirectory,
-            RedirectStandardInput = true,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            StandardInputEncoding = utf8,
-            StandardOutputEncoding = utf8,
-            StandardErrorEncoding = utf8,
-            UseShellExecute = false,
-            CreateNoWindow = true,
-        };
-
-        foreach (var argument in launch.Arguments)
-        {
-            info.ArgumentList.Add(argument);
-        }
+        var info = StartInfoFor(launch, workingDirectory);
 
         // Created BEFORE the child, so the only gap is between Process.Start returning and the
         // assign below. That gap is accepted and UNMEASURED, and it is the same one
@@ -190,6 +168,55 @@ public sealed class AcpEngineProcess : IDisposable
         var engine = new AcpEngineProcess(process, job, findings, report);
         engine.PumpStandardError();
         return engine;
+    }
+
+    /// <summary>
+    /// The environment variable that would swap the CLI binary the adapter launches
+    /// (<c>pathToClaudeCodeExecutable: process.env.CLAUDE_CODE_EXECUTABLE ?? claudeCliPath()</c>,
+    /// adapter 0.75.1 <c>acp-agent.js</c>).
+    /// </summary>
+    public const string ClaudeCodeExecutableVariable = "CLAUDE_CODE_EXECUTABLE";
+
+    /// <summary>
+    /// The start info for the engine: the streams, the arguments, and the environment the child
+    /// inherits. Factored so what the child is given can be asserted without starting one.
+    /// </summary>
+    internal static ProcessStartInfo StartInfoFor(EngineLaunch launch, string workingDirectory)
+    {
+        ArgumentNullException.ThrowIfNull(launch);
+
+        // UTF-8 on all three streams, without a BOM (Ruling 87). ACP is newline-delimited UTF-8
+        // JSON; with no encoding named, .NET reads a redirected child through the console code
+        // page, and the operator's reply on 2026-09-13 read `â€"` for `—` and `Â§` for `§` — the
+        // bytes E2 80 94 and C2 A7 through a single-byte page. Measured red in
+        // AcpEngineProcessStreamsAreUtf8Tests (`ΓÇö ┬º` under CP437) before this line existed.
+        var utf8 = new System.Text.UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+        var info = new ProcessStartInfo(launch.FileName)
+        {
+            WorkingDirectory = workingDirectory,
+            RedirectStandardInput = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            StandardInputEncoding = utf8,
+            StandardOutputEncoding = utf8,
+            StandardErrorEncoding = utf8,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+        };
+
+        foreach (var argument in launch.Arguments)
+        {
+            info.ArgumentList.Add(argument);
+        }
+
+        // ADR-0035 rule 2: the pin is enforced by the CLI binary the SDK vendors, and this
+        // variable would make the adapter launch another one (`pathToClaudeCodeExecutable:
+        // process.env.CLAUDE_CODE_EXECUTABLE ?? claudeCliPath()`). The child never inherits it —
+        // for a compile and for every lane, since both rely on the same CLI-enforced pin. Removed,
+        // not refused: the operator's shell is theirs; the engine's child is ours.
+        info.Environment.Remove(ClaudeCodeExecutableVariable);
+
+        return info;
     }
 
     /// <summary>Closes the job handle, if there is one. Closing it is also what reaps the tree.</summary>

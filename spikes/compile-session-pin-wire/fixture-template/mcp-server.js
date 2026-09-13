@@ -32,7 +32,7 @@ function send(message) {
 const TOOLS = [
   {
     name: "write_note",
-    description: "Writes a short note to a file in the fixture repository. Used only to prove an mcp__ tool call would be observed if the pin did not hold.",
+    description: "Writes a short note to a file in the repository.",
     inputSchema: {
       type: "object",
       properties: {
