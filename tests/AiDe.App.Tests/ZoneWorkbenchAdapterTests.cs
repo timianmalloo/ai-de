@@ -108,7 +108,7 @@ public sealed class ZoneWorkbenchAdapterTests
         return (IReadOnlySet<string>)field!.GetValue(null)!;
     }
 
-    // SH-4.1 (DC-nnn (SH-4 a)): after a whole-arrangement replacement the pre-render active
+    // SH-4.1 (DC-194): after a whole-arrangement replacement the pre-render active
     // surface is gone, so the adapter activates the Center's active tab — now, and again one
     // dispatcher turn later, because each docking pane control activates its own selection as it
     // realizes and the last to realize wins (here: the Bottom's `term-x`, measured). The second

@@ -443,3 +443,6 @@
 {"agent": "copilot-atlas-conductor", "at": 1789333377.800636, "kind": "release", "path": "src/AiDe.Core/Understanding/AtlasReaderContracts.cs", "seq": 443, "session": "copilot-atlas-fleet-45bbc625", "wi": "WI-0"}
 {"agent": "copilot-atlas-conductor", "at": 1789333377.8565924, "kind": "release", "path": "src/AiDe.Core/Understanding/AtlasReaderProjection.cs", "seq": 444, "session": "copilot-atlas-fleet-45bbc625", "wi": "WI-0"}
 {"agent": "copilot-atlas-conductor", "at": 1789333377.911961, "kind": "release", "path": "tests/AiDe.Core.Tests/Understanding/AtlasReaderWireTests.cs", "seq": 445, "session": "copilot-atlas-fleet-45bbc625", "wi": "WI-0"}
+{"agent": "copilot-atlas-conductor", "at": 1789338835.7979517, "kind": "claim", "path": "docs/coordination/code-atlas.md", "seq": 446, "session": "copilot-atlas-fleet-45bbc625", "ttl": 300.0, "wi": "code-atlas-production-convergence"}
+{"agent": "copilot-atlas-conductor", "at": 1789338835.8600903, "kind": "claim", "path": "docs/proof/code-atlas-production-adapters.md", "seq": 447, "session": "copilot-atlas-fleet-45bbc625", "ttl": 300.0, "wi": "code-atlas-production-convergence"}
+{"agent": "copilot-atlas-conductor", "at": 1789338967.8435316, "kind": "claim", "path": "docs/coordination/code-atlas.html", "seq": 448, "session": "copilot-atlas-fleet-45bbc625", "ttl": 300.0, "wi": "code-atlas-production-convergence"}

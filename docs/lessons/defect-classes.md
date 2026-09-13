@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 106 · partially-controlled 65 · uncontrolled 22
+**Status counts:** controlled 111 · partially-controlled 66 · uncontrolled 24
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -7723,3 +7723,50 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   `realized > 0`, `CaptionDesired > 0`). Named for the next headless oracle: *a detached tree is
   never visible; ask the layout, not the visibility.*
 - **Status:** `controlled`.
+
+### DC-194 — A docking view's active content after a body is (re)parented is whichever pane control realized last, and the arrangement's zone occupancy decides that order
+
+- **Shape, instance, controls and sweep (SH-4.1, 2026-09-13; `docs/proof/coordination-perspective.md`):** *a docking view's active content after a body is (re)parented is whichever pane control realized last, and the arrangement's zone occupancy decides that order*: each `LayoutDocumentPaneControl` activates its selected content from its own `SelectionChanged` as its template applies (traced: `LayoutDocumentPaneControl.OnSelectionChanged → LayoutContent.set_IsActive`), so a model-stated activation placed at the body's Loaded edge — the adapter's `RestoreActive`, the presenter's entry focus — is overridden by the last pane to load, and which pane that is changes when a zone empties (Ruling 84 emptied Coding's Left; the Bottom terminal then beat the Center's restored session document). **Controls (this slice):** `WorkbenchAdapter.RestoreActive` states the Center's active tab again at `DispatcherPriority.Loaded` when the pre-render surface is gone; `PerspectiveShell.Activate` defers the entry focus one dispatcher turn past the body's Loaded; `Perspective.Landing` makes the landing data. **Oracles:** `ASessionDocumentIsShownWhereTheOperatorIsTests.ARestoredSessionDocumentIsRevivedAndBoundAtWorkspaceOpen` (red with the Left empty and the old code — the replay probe), `PerspectiveShellTests.TheLanding_…` (red before the column), the census log's *active after switch* rows (recorded). **Sweep:** every other `IsActive = true` in `WorkbenchAdapter` (`ActivateInView`) is called on an already-realized tree — not this shape; SH-4.2's re-cut re-orders realization again and inherits the controls.
+- **Status:** `controlled` — the adapter re-states the active content at Loaded priority and the presenter defers the landing one dispatcher turn; the oracles are named above.
+
+### DC-195 — A census that walks a freshly parented body before its pane controls have realized measures the first pane and reports green over the rest
+
+- **Shape, instance and control (SH-4.1, 2026-09-13; DC-135's sibling):** *a census that walks a freshly parented body before its pane controls have realized measures the first pane and reports green over the rest* (DC-135 recurrence 3's sibling — the population shrank and nothing failed): switching the presenter and walking immediately measured only each host's Left pane (Center and Right tabs +0 sites) and left the rebuilt menu bar unmeasured (+0 per menu; the reach test's *"never rendered a command"*). **Control:** `ShellContrastCensus.Settle` (UpdateLayout · a Background-priority turn · UpdateLayout) before each walk, and `ShellContrastCensusTests` anchors named sites in host B's and host C's bodies (*tab: Ledger*, *Ledger*, *Message board*, *Terminal sessions*, *Coordination perspective*, *tab: Domain*) so a walk that shrinks fails; the site count 138 → 170 is on the log.
+- **Status:** `controlled` — `ShellContrastCensus.Settle` before each walk; anchored sites in hosts B and C; 138 → 170 sites on the log.
+
+### DC-196 — One user-facing sentence with two definitions across a design artifact and its review's oracle
+
+- **Shape (SH-4.1's finding, 2026-09-13):** *one user-facing sentence with two definitions across a design artifact and its review's oracle* (`DESIGN.md` *"Coordination opens with them (Ctrl+4)…"* vs the review's *"They live in Coordination (Ctrl+4)"*): the implementer must choose, and either choice leaves one artifact stale. A candidate control: the review's oracle strings quoted from `DESIGN.md`'s *Copy added by this section* row, checked by `verify-cited-controls.py`'s string half — the conductor's call.
+- **Instance:** `DESIGN.md` *"Coordination opens with them (Ctrl+4)…"* vs the review's oracle *"They live in Coordination (Ctrl+4)"* — the oracle's form landed; `DESIGN.md`'s row is stale until D3's errata is reconciled (SH-4.2 carries the reconciliation as a seam item).
+- **Control (candidate, the conductor's call at converge):** the review's oracle strings quoted from `DESIGN.md`'s *Copy added by this section* row, checked by `verify-cited-controls.py`'s string half.
+- **Status:** `uncontrolled` — recorded; the reconciliation is queued for SH-4.2.
+
+### DC-197 — A layout reconcile that reads only rendered zones refuses every operation while a stack is maximized
+
+- **Shape, instance and control (D3, 2026-09-13; `docs/reviews/ui-operator-findings-2026-09-13.md` §Register):** *a layout reconcile that reads only rendered zones refuses every operation while a stack is maximized*: the cause is the view the reconcile reads, not the operation; Ruling 83 removes the trigger; the control is F-1's oracle. (Ruling 83's filing note.)
+- **Status:** `controlled` — Ruling 88 promoted it into SH-4.2 as a red-first oracle (`ReconcileTests.ADragWhileAZoneIsCollapsedHoldingPanes_IsApplied`); Ruling 83 removed the trigger (maximize-on-create)
+
+
+### DC-198 — A projection's two readers use two grains of one stream
+
+- **Shape, instance and control (D3, 2026-09-13; `docs/reviews/ui-operator-findings-2026-09-13.md` §Register):** *a projection's two readers use two grains of one stream* (the thread's `Reply` blob vs the Console's per-chunk rows): the control is the identity oracle C2 — the split's rows equal `Coalesce` of every turn, and the thread renders the same fold. (Ruling 81.)
+- **Status:** `controlled` — CV-5.2's `Coalesce` is the one grain both readers use (Ruling 81; C2/C3 red-first)
+
+
+### DC-199 — A design contract states a row height the craft floor cannot produce
+
+- **Shape, instance and control (D3, 2026-09-13; `docs/reviews/ui-operator-findings-2026-09-13.md` §Register):** *a design contract that states a row height the craft floor cannot produce* (24px rows beside a hairline need a 3px inset → 30px): the control is the mockup's rendered-geometry row, which reads the truth; the contract must cite a rendered number, never a CSS constant. (A-9.)
+- **Status:** `uncontrolled` — recorded (D3's A-9: amend the contract row or remove the hairline); should-fix-next
+
+
+### DC-200 — A harness gating selector matches the element carrying the harness state, hiding the whole page while every number still computes
+
+- **Shape, instance and control (D3, 2026-09-13; `docs/reviews/ui-operator-findings-2026-09-13.md` §Register):** *a harness gating selector that matches the element carrying the harness state* (`[data-restore]{display:none}` on a `<body data-restore=…>`): the page is `display:none`, computed-style measurements still report, and a headless sweep that reads only the verdict strip passes — DC-147's class with a blind spot the strip cannot see. Control: `verify-mockup-audits.py` asserts a non-zero rect on the page's root frame, and every gating selector is scoped to the frame (`.window [data-…]`). (A-12.)
+- **Status:** `partially-controlled` — the selector is scoped to `.window` (D3); the tool half — `verify-mockup-audits.py` asserting a non-zero page box (A-12) — is queued
+
+
+### DC-201 — A generated accessible name is built from unescaped text
+
+- **Shape, instance and control (D3, 2026-09-13; `docs/reviews/ui-operator-findings-2026-09-13.md` §Register):** *a generated accessible name built from unescaped text* (`esc()` escaped `&` and `<` but not `"`; six `aria-label="Detail of Grep "…"` names truncated at the quote): the control is an attribute-escaping helper used for every generated attribute, and the sweep's dangling-reference walk extended to names that end at a quote. (The UX & Accessibility lens's finding.)
+- **Status:** `controlled` — `esc()` escapes `"` (D3's A11-6); the in-page audit's dangling-ARIA check catches the shape
+
