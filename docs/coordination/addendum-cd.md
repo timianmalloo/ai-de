@@ -347,6 +347,25 @@ ratio the parent plan measured for P1; the plan's implement figures were medians
 | SH-3 (sonnet) | 2,945 | 6,960 (agent wall; audit entry in its Proof Pack) | 2.4× | two reviews, one mid-slice merge from `main` |
 | CV-2 (opus) | 4,127 | **7,064** | 1.7× | four reviews (D&P, Security, TA, Simplifier), one mid-slice merge; below the CV-1 ratio — the store was the first commit and the reviews ran once |
 | X-2b DC-170/171 + the gate runner (conductor) | — | ≈ 2,400 (Inferred: 20:10Z–20:50Z) | — | unplanned; the regrowth path and two join defects |
+| PD-5 prep (sonnet) + three attended runs | 1,500 + 30 min attended | 1,375 + runs of 2 (operator), 6 (aborted), 5 min (conductor) | 0.9× | the pin held on the wire; strictMcpConfig admitted by run 2's measurement; run 3 GREEN |
+| X-3 Shell-lane seams + Rulings 85/86 (sonnet) | — | 1,690 (+ a review-fix entry without a marker) | — | unplanned; eight seam items, two status-bar defects |
+| D3 `/ui-design` elevate (opus, docs) | — | 4,504 | — | unplanned: the operator's five findings → Rulings 80–89, 26 errata rows, the ranked plan for CV-5/SH-4 |
+| CV-5.2 Coalesce (opus) | — | 3,074 | — | from D3's plan |
+| CV-3 compile call · pin · gate 1 · harness (opus) | 4,127 | 4,849 (+ the stop cap fired during review) | 1.2× | the Security veto cleared in the conductor's loop 2; the spike's run 2 runaway |
+| CV-5.3 the conversation (opus) | — | 5,021 | — | a real thought frame captured; the markdown subset by hand |
+| CV-4 admission's code (sonnet) | 2,945 | not recorded (marker set after grounding — DC-190) | — | edits first landed in the primary by mistake, rescued |
+| CV-5.4 the editor's rest (opus) | — | 3,147 | — | L6 measured 1 turn at both viewports (Ruling 88's ≥ 2 was the mockup's) |
+| SH-4.1 Coordination (opus) | — | 5,843 | — | two defects found and fixed on the way (DC-194/195); the census reaches hosts B and C |
+| X-4 Ruling 87 · X-5 thinking display · the join script (conductor) | — | ≈ 1,800 (Inferred) | — | unplanned T0s |
+| SH-4.2 Coding re-cut, left dock, reconcile, console zone rule (opus) | — | running | — | the last slice |
+
+**Joins (13 to date, each a whole-suite recount + both halves):** every join recounted; the join
+became a script at the 12th (`tools/conductor-join.py`, DC-113 rec. 4) after four hand-typed lines
+had hidden a red — one of them sealed a merge with conflict markers that a bare re-run caught before
+the push. 0 WT agent attaches born across every recount since DC-170. Worktrees: 12 merged trees
+removed one by one after `rev-list --count main..<branch> == 0` and a clean status — the cleanup's own
+report had labelled the frozen F5 tree (21 unique commits) *"merged"* (DC-142 rec. 2), so `--remove`
+was never run.
 
 **Rework at the joins:** register ids collided across branches (allocated at every join since;
 DC-163's lease shape delayed two joins ≈ 50 min); a merge left conflict markers in figure-patched
