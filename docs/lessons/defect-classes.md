@@ -4511,7 +4511,7 @@ for both or split.*
   discarded by a pipe. In each the mechanism reports success, and the absence has no signature. That
   meta-shape is the thing to look for, and it is why each was found by *measuring the control itself*
   rather than by trusting its green.
-- **Status:** `partially-controlled` — the gate runner (`tools/run-verify-gates.py`, recurrence 3) gives the join line one status to chain on; recorded, with the exposure scoped to interactive and agent sessions
+- **Status:** `partially-controlled` — the join is a script (`tools/conductor-join.py`, recurrence 4) and the gate runner (`tools/run-verify-gates.py`, recurrence 3) gives any other line one status to chain on; the exposure remains every other shell line an agent types
 
 ---
 
@@ -4541,6 +4541,18 @@ for both or split.*
   `python tools/run-verify-gates.py && git commit …` and no loop is written at a join again.
   Status moves to `partially-controlled`: the runner exists; the resolution path's own use of it
   is the conductor's habit until the join is a script.
+
+- **Recurrence 4 (conductor-addendum-c, 2026-09-13, the CV-5.4 join) — the join becomes a script:**
+  the register's tail conflicted; the resolver's assertion failed silently inside a heredoc, the
+  conflict-marker gate was run through `| tail -1`, its remedy text was read as a pass, and
+  `git commit --no-edit` sealed a merge carrying `<<<<<<<` (DC-136's shape). Caught before the push
+  only because the gate was re-run bare on a hunch, then the merge amended. Four recurrences, one
+  cause: a hand-typed line at the join whose status belonged to a formatter. **Control:**
+  `tools/conductor-join.py` — merge → markers → register → recount → audit → regenerate → commit →
+  the gate runner → push → Release, each a subprocess gated by its own return code, no pipes, a
+  conflict stopping the script with the file list. The join line is now `python
+  tools/conductor-join.py <branch> …` and nothing else. Status moves to `controlled` for the join;
+  the class stays live for every other shell line an agent types.
 
 ### DC-114 — A fix to the deployment mechanism cannot deploy itself: correct, tested, green, and unreachable
 
