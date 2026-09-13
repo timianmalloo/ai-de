@@ -4,13 +4,15 @@ using System.Windows.Controls;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Threading;
 using AiDe.App.Workbench.Understanding;
 using AiDe.Core.Understanding;
+using Xunit.Abstractions;
 
 namespace AiDe.App.Tests;
 
-public sealed class AtlasReaderViewTests
+public sealed class AtlasReaderViewTests(ITestOutputHelper output)
 {
     [Fact]
     public void NativeControlsExposeNamesFocusReadOnlyAndResourceBindings()
@@ -638,6 +640,280 @@ public sealed class AtlasReaderViewTests
             Assert.False(view.CanLoadMore);
             Assert.Contains("No further retained page", view.BoundsText);
         });
+    }
+
+    [Fact]
+    public void NativeReader_AcceptedMemberActivation_RetainsSelectedOutlineKeyAfterAwait()
+    {
+        var accepted = new TaskCompletionSource<SelectionProjection>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var queries = MemberActivationQueries(accepted.Task);
+        Shown(queries, async (window, view) =>
+        {
+            await view.LoadAsync();
+            SelectRenderedFile(window, view, 0);
+            await Drain();
+            var handle = new WindowInteropHelper(window).Handle;
+            var processId = Environment.ProcessId;
+            await AssertOwnedWindowSelectionAsync(window, handle, processId, null);
+            ActivateRenderedMember(window, view);
+            accepted.SetResult(Indexed("file:a", "accepted member body", []));
+            await Drain();
+
+            Assert.Equal("accepted member body", view.SourceText);
+            var selected = Assert.IsType<OutlineRow>(view.OutlineControl.SelectedItem);
+            Assert.Equal("decl:file:a", selected.ObservationKey);
+            window.UpdateLayout();
+            var item = Assert.IsType<ListBoxItem>(view.OutlineControl.ItemContainerGenerator.ContainerFromIndex(0));
+            var receipt = $"phase=accepted-member-await; selectedKey={selected.ObservationKey}; realizedContentKey={(item.Content as OutlineRow)?.ObservationKey}; " +
+                $"selectedIsContent={ReferenceEquals(selected, item.Content)}; selectedIsDataContext={ReferenceEquals(selected, item.DataContext)}; " +
+                $"containerSelected={item.IsSelected}";
+            output.WriteLine(receipt);
+
+            Assert.Same(selected, item.Content);
+            Assert.True(item.IsSelected, "Realized ListBoxItem.IsSelected must be true. " + receipt);
+            await AssertOwnedWindowSelectionAsync(window, handle, processId, selected.AccessibleName);
+        });
+    }
+
+    [Fact]
+    public void NativeReader_AcceptedMemberThenDifferentFileBack_RestoresSelectedOutlineRowWithoutManualReselect()
+    {
+        var accepted = new TaskCompletionSource<SelectionProjection>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var queries = MemberActivationQueries(accepted.Task);
+        queries.Restore = (_, _) => Task.FromResult(Indexed("file:a", "accepted member body", []));
+        Shown(queries, async (window, view) =>
+        {
+            await view.LoadAsync();
+            SelectRenderedFile(window, view, 0);
+            await Drain();
+            ActivateRenderedMember(window, view);
+            accepted.SetResult(Indexed("file:a", "accepted member body", []));
+            await Drain();
+
+            Assert.Equal("decl:file:a", Assert.IsType<OutlineRow>(view.OutlineControl.SelectedItem).ObservationKey);
+            var isolatedPeer = UIElementAutomationPeer.CreatePeerForElement(view.OutlineControl)!;
+            var isolatedPattern = isolatedPeer.GetPattern(PatternInterface.Selection) as ISelectionProvider;
+            var manual = isolatedPattern?.GetSelection();
+            output.WriteLine($"phase=isolated-Back-window/manual-operands; patternPresent={isolatedPattern is not null}; " +
+                $"slotCount={manual?.Length.ToString() ?? "<null>"}; " +
+                $"firstSlotIsNull={(manual is { Length: > 0 } ? (manual[0] is null).ToString() : "<no-slot>")}; " +
+                $"patternIdentifierIsNull={SelectionItemPatternIdentifiers.Pattern is null}");
+            view.SourceControl.Select(14, 1);
+            view.SourceControl.ScrollToVerticalOffset(0);
+            SelectRenderedFile(window, view, 1);
+            await Drain();
+            Assert.Equal("body for file:b", view.SourceText);
+            view.BackButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            await Drain();
+
+            Assert.Equal("accepted member body", view.SourceText);
+            Assert.Equal("decl:file:a", Assert.IsType<OutlineRow>(view.OutlineControl.SelectedItem).ObservationKey);
+            Assert.Equal(14, view.SourceControl.SelectionStart);
+            Assert.Equal(1, view.SourceControl.SelectionLength);
+            Assert.Equal(0, view.SourceControl.VerticalOffset);
+            Assert.True(view.OutlineControl.IsKeyboardFocusWithin);
+        });
+    }
+
+    [Theory]
+    [InlineData("missing-key")]
+    [InlineData("wrong-file")]
+    [InlineData("nonmatch")]
+    public void NativeReader_UnmatchedMemberReply_DoesNotAcquireSelectionHistoryOrFocus(string reply)
+    {
+        var pending = new TaskCompletionSource<SelectionProjection>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var queries = MemberActivationQueries(pending.Task);
+        Shown(queries, async (window, view) =>
+        {
+            await view.LoadAsync();
+            SelectRenderedFile(window, view, 0);
+            await Drain();
+            ActivateRenderedMember(window, view);
+            view.SourceControl.TextArea.Focus();
+            var focus = Keyboard.FocusedElement;
+            var projection = reply == "nonmatch"
+                ? Selection("file:a", SourceProjection.Refused("source:a"), "refused", "manifest:rejected")
+                : Indexed(reply == "wrong-file" ? "file:b" : "file:a", "unaccepted body", [], "manifest:rejected");
+            pending.SetResult(new SelectionProjection(projection.ReceiptToken, projection.ManifestToken,
+                projection.FileValue, projection.Generation,
+                new SelectionOutline([new OutlineDeclaration(reply == "missing-key" ? "decl:other" : "decl:file:a",
+                    "A.M()", AtlasDeclarationKind.Method, new AtlasTextSpan(7, 5))]),
+                projection.Source, projection.Bounds, projection.Coverage, projection.Limitations));
+            await Drain();
+
+            Assert.Null(view.OutlineControl.SelectedItem);
+            Assert.False(view.CanGoBack);
+            Assert.Same(focus, Keyboard.FocusedElement);
+            Assert.Equal("", view.SourceText);
+            queries.Select = request => request.ManifestToken == "manifest:1"
+                ? Task.FromResult(Indexed(request.FileValue, "authority preserved", []))
+                : Task.FromException<SelectionProjection>(new InvalidOperationException("rejected reply acquired authority"));
+            SelectRenderedFile(window, view, 1);
+            await Drain();
+            Assert.Equal("authority preserved", view.SourceText);
+        });
+    }
+
+    [Fact]
+    public void NativeReader_StaleMemberReply_CannotRebindCurrentOutline()
+    {
+        var pending = new TaskCompletionSource<SelectionProjection>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var queries = MemberActivationQueries(pending.Task);
+        Shown(queries, async (window, view) =>
+        {
+            await view.LoadAsync();
+            SelectRenderedFile(window, view, 0);
+            await Drain();
+            ActivateRenderedMember(window, view);
+            SelectRenderedFile(window, view, 1);
+            await Drain();
+            view.SourceControl.TextArea.Focus();
+            var focus = Keyboard.FocusedElement;
+            var back = view.CanGoBack;
+            pending.SetResult(Indexed("file:a", "stale member", [], "manifest:stale"));
+            await Drain();
+
+            Assert.Null(view.OutlineControl.SelectedItem);
+            Assert.Equal("body for file:b", view.SourceText);
+            Assert.Equal(back, view.CanGoBack);
+            Assert.Same(focus, Keyboard.FocusedElement);
+        });
+    }
+
+    [Fact]
+    public void NativeReader_BackMissingMemberKey_DoesNotConsumeReceiptOrRestoreFocus()
+    {
+        var queries = MemberActivationQueries(Task.FromResult(Indexed("file:a", "accepted member body", [])));
+        var restored = new List<string>();
+        Shown(queries, async (window, view) =>
+        {
+            await view.LoadAsync();
+            SelectRenderedFile(window, view, 0);
+            await Drain();
+            ActivateRenderedMember(window, view);
+            await Drain();
+            Assert.Equal("decl:file:a", Assert.IsType<OutlineRow>(view.OutlineControl.SelectedItem).ObservationKey);
+            SelectRenderedFile(window, view, 1);
+            await Drain();
+            queries.Restore = (receipt, _) =>
+            {
+                restored.Add(receipt);
+                var projection = Indexed("file:a", "unmatched restore", [], "manifest:unmatched");
+                return Task.FromResult(new SelectionProjection(projection.ReceiptToken, projection.ManifestToken,
+                    projection.FileValue, projection.Generation, new SelectionOutline([]), projection.Source,
+                    projection.Bounds, projection.Coverage, projection.Limitations));
+            };
+            view.SourceControl.TextArea.Focus();
+            var focus = Keyboard.FocusedElement;
+            view.BackButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            await Drain();
+            view.BackButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            await Drain();
+
+            Assert.Equal(["receipt:file:a", "receipt:file:a"], restored);
+            Assert.Null(view.OutlineControl.SelectedItem);
+            Assert.Equal("", view.SourceText);
+            Assert.Same(focus, Keyboard.FocusedElement);
+        });
+    }
+
+    private async Task AssertOwnedWindowSelectionAsync(Window window, nint handle, int processId, string? expectedName)
+    {
+        var pending = Task.Run(() =>
+        {
+            Assert.Equal(ApartmentState.MTA, Thread.CurrentThread.GetApartmentState());
+            var root = AutomationElement.FromHandle(handle);
+            Assert.Equal(processId, root.Current.ProcessId);
+            Assert.Equal(handle, new nint(root.Current.NativeWindowHandle));
+            output.WriteLine($"phase=own-window-client; apartment=MTA; processId={root.Current.ProcessId}; hwnd={root.Current.NativeWindowHandle}");
+            var outline = root.FindFirst(TreeScope.Descendants, new AndCondition(
+                new PropertyCondition(AutomationElement.NameProperty, "Atlas member outline"),
+                new PropertyCondition(AutomationElement.ControlTypeProperty, System.Windows.Automation.ControlType.List)));
+            Assert.NotNull(outline);
+            Assert.True(outline.TryGetCurrentPattern(SelectionPattern.Pattern, out var selectionObject),
+                "The owned window's outline must publish SelectionPattern.");
+            var selection = Assert.IsType<SelectionPattern>(selectionObject).Current.GetSelection();
+            output.WriteLine($"phase={(expectedName is null ? "before-activation" : "accepted-member")}; clientSelectionCount={selection.Length}");
+            if (expectedName is null)
+            {
+                Assert.Empty(selection);
+                return;
+            }
+
+            var selected = Assert.Single(selection);
+            Assert.True(selected.TryGetCurrentPattern(SelectionItemPattern.Pattern, out var itemObject),
+                "The current selected outline element must publish SelectionItemPattern.");
+            var item = Assert.IsType<SelectionItemPattern>(itemObject).Current;
+            var container = item.SelectionContainer;
+            Assert.NotNull(container);
+            var outlineId = outline.GetRuntimeId();
+            var containerId = container.GetRuntimeId();
+            output.WriteLine($"phase=current-client-element; name={selected.Current.Name}; isSelected={item.IsSelected}; " +
+                $"selectionContainer={container.Current.Name}; outlineRuntimeId={string.Join(",", outlineId)}; " +
+                $"containerRuntimeId={string.Join(",", containerId)}");
+            Assert.Equal(expectedName, selected.Current.Name);
+            Assert.True(item.IsSelected, "The UI Automation client's current selected item must be selected.");
+            Assert.Equal(outlineId, containerId);
+        });
+
+        try
+        {
+            await pending.WaitAsync(TimeSpan.FromSeconds(10));
+        }
+        catch (TimeoutException)
+        {
+            window.Close();
+            try
+            {
+                await pending.WaitAsync(TimeSpan.FromSeconds(2));
+            }
+            catch (TimeoutException)
+            {
+                _ = pending.ContinueWith(task => { _ = task.Exception; }, CancellationToken.None,
+                    TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
+                throw new Xunit.Sdk.XunitException("NOT_PROVEN: owned-window UIA timed out; worker did not stop within two seconds of closing its window.");
+            }
+            catch (Exception ex) when (ex is not OutOfMemoryException)
+            {
+                throw new Xunit.Sdk.XunitException($"NOT_PROVEN: owned-window UIA timed out; worker ended after window close with {ex.GetType().Name}.");
+            }
+
+            throw new Xunit.Sdk.XunitException("NOT_PROVEN: owned-window UIA exceeded ten seconds; worker stopped after closing its window.");
+        }
+        catch (Exception ex) when (ex is ElementNotAvailableException or System.Runtime.InteropServices.COMException or InvalidOperationException)
+        {
+            throw new Xunit.Sdk.XunitException($"NOT_PROVEN: owned-window UIA client unavailable: {ex.GetType().Name}: {ex.Message}");
+        }
+    }
+
+    private static FakeAtlasQueries MemberActivationQueries(Task<SelectionProjection> member) => new()
+    {
+        Inventory = request => Task.FromResult(new InventoryPage(request, BoundsKnown(2, 2),
+            [File("A.cs", "file:a"), File("B.cs", "file:b")])),
+        Select = request => request.DeclarationObservationKey is null
+            ? Task.FromResult(Indexed(request.FileValue, "body for " + request.FileValue, []))
+            : member,
+    };
+
+    private static void SelectRenderedFile(Window window, AtlasReaderView view, int index)
+    {
+        window.UpdateLayout();
+        var item = Assert.IsType<TreeViewItem>(view.FilesControl.ItemContainerGenerator.ContainerFromIndex(index));
+        var peer = UIElementAutomationPeer.CreatePeerForElement(item)!;
+        ((ISelectionItemProvider)peer.GetPattern(PatternInterface.SelectionItem)!).Select();
+    }
+
+    private static void ActivateRenderedMember(Window window, AtlasReaderView view)
+    {
+        window.UpdateLayout();
+        Assert.IsType<ListBoxItem>(view.OutlineControl.ItemContainerGenerator.ContainerFromIndex(0));
+        var peer = UIElementAutomationPeer.CreatePeerForElement(view.OutlineControl)!;
+        var provider = Assert.IsAssignableFrom<ISelectionItemProvider>(
+            Assert.Single(peer.GetChildren()).GetPattern(PatternInterface.SelectionItem));
+        provider.Select();
+        view.OutlineControl.Focus();
+        view.OutlineControl.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice,
+            PresentationSource.FromVisual(view.OutlineControl), 0, Key.Enter) { RoutedEvent = Keyboard.KeyDownEvent });
     }
 
     private static AtlasFileNode Node(string name) => AtlasFileNode.File(name + ".cs", File(name + ".cs", "file:" + name));
