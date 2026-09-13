@@ -107,7 +107,7 @@ public sealed class WorkbenchShell : IDisposable
     /// content is a pure function of the queries belong here.</para>
     /// </remarks>
     private static readonly HashSet<string> WorkspaceDependentPaneKinds =
-        new(StringComparer.Ordinal) { "sessions", "board", "leaderboard", "ledger", "view", "inspector" };
+        new(StringComparer.Ordinal) { "sessions", "board", "leaderboard", "ledger", "view", "inspector", "code-atlas" };
 
     /// <summary>The last observed watcher-store fingerprint; the loop only re-renders the panes when it changes (conn-9).</summary>
     private string? _watcherFingerprint;
@@ -3197,4 +3197,3 @@ public sealed class WorkbenchShell : IDisposable
         _sessionDocuments
             .GetValueOrDefault(Sessions.SessionDocumentSurface.SurfaceIdFor(sessionId))?.Composer;
 }
-

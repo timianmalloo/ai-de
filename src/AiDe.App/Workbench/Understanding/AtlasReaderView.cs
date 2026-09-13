@@ -12,13 +12,16 @@ using ICSharpCode.AvalonEdit;
 namespace AiDe.App.Workbench.Understanding;
 
 /// <summary>
-/// Native, read-only consumer for the Atlas query port. It owns no source I/O and asks only
-/// <see cref="IAtlasQueries"/> for inventory, selection and receipt restore projections.
+/// Native, read-only consumer for Atlas projections. The proof constructor retains
+/// <see cref="IAtlasQueries"/>; the production constructor consumes a Core-owned reader lease.
 /// </summary>
 public sealed class AtlasReaderView : UserControl
 {
     public const int PageSize = 64;
-    private readonly IAtlasQueries _queries;
+    private readonly IAtlasQueries? _queries;
+    private readonly IAtlasReaderLease? _lease;
+    private readonly AtlasWorkspaceOwner? _owner;
+    private readonly Dictionary<string, AtlasFileNode> _readerFiles = new(StringComparer.Ordinal);
     private string _manifestToken;
     private readonly ObservableCollection<AtlasFileNode> _roots = [];
     private readonly ObservableCollection<OutlineRow> _outlineRows = [];
@@ -49,6 +52,16 @@ public sealed class AtlasReaderView : UserControl
         BuildChrome();
     }
 
+    public AtlasReaderView(IAtlasReaderLease lease) : this(lease, null) { }
+
+    internal AtlasReaderView(IAtlasReaderLease lease, AtlasWorkspaceOwner? owner)
+    {
+        _lease = lease ?? throw new ArgumentNullException(nameof(lease));
+        _owner = owner;
+        _manifestToken = Required(lease.InitialManifestToken, nameof(lease));
+        BuildChrome();
+    }
+
     public IReadOnlyList<AtlasFileNode> FileRoots => _roots;
     public IReadOnlyList<OutlineRow> OutlineRows => _outlineRows;
     public IReadOnlyList<AtlasTextSpan> CurrentHighlights { get; private set; } = [];
@@ -75,6 +88,7 @@ public sealed class AtlasReaderView : UserControl
         _loadedRows = 0;
         _nextOffset = null;
         _roots.Clear();
+        _readerFiles.Clear();
         _back.Clear();
         _historyEvicted = false;
         _backButton.IsEnabled = false;
@@ -110,9 +124,16 @@ public sealed class AtlasReaderView : UserControl
         var (sequence, token) = BeginRequest(cancellationToken);
         ClearPresentation();
         _status.Text = "Loading selection…";
+        if (_lease is not null)
+        {
+            await ApplyReaderSelectionAsync(sequence,
+                () => _lease.Queries.SelectAsync(ReaderRequest(file.FileValue!, null), token),
+                token, previous).ConfigureAwait(true);
+            return;
+        }
         await ApplySelectionAsync(
             sequence,
-            () => _queries.SelectAsync(new SelectionRequest(_manifestToken, file.FileValue!, null, sequence), token),
+            () => _queries!.SelectAsync(new SelectionRequest(_manifestToken, file.FileValue!, null, sequence), token),
             token, previous).ConfigureAwait(true);
     }
 
@@ -123,9 +144,16 @@ public sealed class AtlasReaderView : UserControl
         var (sequence, token) = BeginRequest(cancellationToken);
         ClearPresentation();
         _status.Text = "Loading declaration…";
+        if (_lease is not null)
+        {
+            await ApplyReaderSelectionAsync(sequence,
+                () => _lease.Queries.SelectAsync(ReaderRequest(declaration.FileValue, declaration.ObservationKey), token),
+                token, previous, declaration.ObservationKey).ConfigureAwait(true);
+            return;
+        }
         await ApplySelectionAsync(
             sequence,
-            () => _queries.SelectAsync(new SelectionRequest(_manifestToken, declaration.FileValue, declaration.ObservationKey, sequence), token),
+            () => _queries!.SelectAsync(new SelectionRequest(_manifestToken, declaration.FileValue, declaration.ObservationKey, sequence), token),
             token, previous, declaration.FileValue, declaration.ObservationKey).ConfigureAwait(true);
     }
 
@@ -144,8 +172,13 @@ public sealed class AtlasReaderView : UserControl
         var (sequence, token) = BeginRequest(cancellationToken);
         ClearPresentation();
         _status.Text = "Restoring prior Atlas receipt…";
-        if (await ApplySelectionAsync(sequence, () => _queries.RestoreAsync(frame.ReceiptToken, sequence, token),
-                token, null, frame.FileValue, frame.ObservationKey).ConfigureAwait(true)
+        var restored = _lease is not null
+            ? await ApplyReaderSelectionAsync(sequence,
+                () => _lease.Queries.RestoreAsync(new(1, _lease.ScopeToken, _lease.CoreEpoch, frame.ReceiptToken), token),
+                token, null, frame.ObservationKey).ConfigureAwait(true)
+            : await ApplySelectionAsync(sequence, () => _queries!.RestoreAsync(frame.ReceiptToken, sequence, token),
+                token, null, frame.FileValue, frame.ObservationKey).ConfigureAwait(true);
+        if (restored
             && IsCurrent(sequence) && !token.IsCancellationRequested)
         {
             _back.RemoveAt(_back.Count - 1);
@@ -206,20 +239,20 @@ public sealed class AtlasReaderView : UserControl
         KeyboardNavigation.SetTabNavigation(_files, KeyboardNavigationMode.Continue);
         KeyboardNavigation.SetTabNavigation(_outline, KeyboardNavigationMode.Continue);
 
-        _backButton.Click += async (_, _) => await GoBackAsync();
-        _loadMore.Click += async (_, _) => await LoadMoreAsync();
+        _backButton.Click += async (_, _) => await RunEventAsync(() => GoBackAsync());
+        _loadMore.Click += async (_, _) => await RunEventAsync(() => LoadMoreAsync());
         _files.SelectedItemChanged += async (_, e) =>
         {
             if (!_restoringControls && e.NewValue is AtlasFileNode { IsFile: true } file)
             {
-                await SelectFileAsync(file);
+                await RunEventAsync(() => SelectFileAsync(file));
             }
         };
         _outline.MouseDoubleClick += async (_, _) =>
         {
             if (_outline.SelectedItem is OutlineRow row)
             {
-                await SelectDeclarationAsync(row);
+                await RunEventAsync(() => SelectDeclarationAsync(row));
             }
         };
         _outline.KeyDown += async (_, e) =>
@@ -227,12 +260,18 @@ public sealed class AtlasReaderView : UserControl
             if (e.Key is Key.Enter && _outline.SelectedItem is OutlineRow row)
             {
                 e.Handled = true;
-                await SelectDeclarationAsync(row);
+                await RunEventAsync(() => SelectDeclarationAsync(row));
             }
         };
         Loaded += (_, _) => _unloaded = false;
         Unloaded += (_, _) =>
         {
+            if (_lease is not null)
+            {
+                Deactivate();
+                return;
+            }
+
             _unloaded = true;
             ++_requestSequence;
             _requestBudget?.Cancel();
@@ -273,10 +312,16 @@ public sealed class AtlasReaderView : UserControl
 
     private async Task LoadPageAsync(long sequence, int offset, CancellationToken token)
     {
+        if (_lease is not null)
+        {
+            await LoadReaderPageAsync(sequence, offset, token).ConfigureAwait(true);
+            return;
+        }
+
         var started = Stopwatch.GetTimestamp();
         try
         {
-            var page = await _queries.InventoryAsync(new PageRequest(offset, PageSize), token).ConfigureAwait(true);
+            var page = await _queries!.InventoryAsync(new PageRequest(offset, PageSize), token).ConfigureAwait(true);
             if (!IsCurrent(sequence))
             {
                 return;
@@ -475,11 +520,153 @@ public sealed class AtlasReaderView : UserControl
     {
         _requestBudget?.Cancel();
         _requestBudget?.Dispose();
-        _requestBudget = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        _requestBudget = CancellationTokenSource.CreateLinkedTokenSource(
+            cancellationToken, _lease?.Invalidated ?? CancellationToken.None, _owner?.Token ?? CancellationToken.None);
         return (++_requestSequence, _requestBudget.Token);
     }
 
-    private bool IsCurrent(long sequence) => sequence == _requestSequence && !_unloaded;
+    private bool IsCurrent(long sequence) => sequence == _requestSequence && !_unloaded
+        && _lease?.IsTerminal != true && _lease?.Invalidated.IsCancellationRequested != true;
+
+    internal void Deactivate()
+    {
+        _unloaded = true;
+        ++_requestSequence;
+        _requestBudget?.Cancel();
+        _requestBudget?.Dispose();
+        _requestBudget = null;
+        ClearPresentation();
+        _pendingPrevious = null;
+        _back.Clear();
+        _backButton.IsEnabled = false;
+    }
+
+    private async Task RunEventAsync(Func<Task> operation)
+    {
+        try
+        {
+            var task = operation();
+            await (_owner?.Track(task) ?? task).ConfigureAwait(true);
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            Trace.TraceError("code=ATLAS-READER-EVENT exception.type={0}", ex.GetType().FullName);
+            ClearSource(SourceProjectionState.Unavailable, "ATLAS-READER-EVENT: operation unavailable.");
+        }
+    }
+
+    private AtlasSelectRequestDto ReaderRequest(string file, string? declaration) =>
+        new(1, _lease!.ScopeToken, _lease.CoreEpoch, _manifestToken, file, declaration, 0, 32768, 0, PageSize);
+
+    private async Task LoadReaderPageAsync(long sequence, int offset, CancellationToken token)
+    {
+        var started = Stopwatch.GetTimestamp();
+        try
+        {
+            var page = await _lease!.Queries.InventoryAsync(
+                new(1, _lease.ScopeToken, _lease.CoreEpoch, _manifestToken, offset, PageSize), token).ConfigureAwait(true);
+            if (!IsCurrent(sequence) || token.IsCancellationRequested) return;
+            foreach (var entry in page.Files) _readerFiles[entry.FileToken] = AtlasFileNode.ReaderEntry(entry);
+            _roots.Clear();
+            foreach (var node in _readerFiles.Values) node.Children.Clear();
+            foreach (var node in _readerFiles.Values)
+            {
+                if (node.ParentToken is { } parent && _readerFiles.TryGetValue(parent, out var folder))
+                    folder.Children.Add(node);
+                else _roots.Add(node);
+            }
+            _manifestToken = page.ManifestToken;
+            _loadedRows = offset + page.Files.Length;
+            _nextOffset = page.NextOffset;
+            _status.Text = $"{page.Completion}; showing {_loadedRows} metadata rows. {string.Join(" ", page.Disclosures)}";
+            _bounds.Text = ReaderBounds(page.Bounds);
+            _loadMore.Visibility = page.NextOffset.HasValue ? Visibility.Visible : Visibility.Collapsed;
+            _loadMore.IsEnabled = page.NextOffset.HasValue;
+        }
+        catch (OperationCanceledException)
+        {
+            if (IsCurrent(sequence)) _status.Text = "ATLAS-READER-CANCELED: inventory canceled.";
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            Trace.TraceError("code=ATLAS-READER-INVENTORY exception.type={0}", ex.GetType().FullName);
+            if (IsCurrent(sequence)) _status.Text = "ATLAS-READER-INVENTORY: inventory unavailable.";
+        }
+        finally
+        {
+            Trace.TraceInformation("operation=atlas.reader.inventory duration_ms={0} current={1}",
+                Stopwatch.GetElapsedTime(started).TotalMilliseconds, IsCurrent(sequence));
+        }
+    }
+
+    private async Task<bool> ApplyReaderSelectionAsync(long sequence, Func<ValueTask<AtlasSelectionDto>> query,
+        CancellationToken token, BackFrame? previous, string? selectedDeclaration = null)
+    {
+        var started = Stopwatch.GetTimestamp();
+        try
+        {
+            var selection = await query().ConfigureAwait(true);
+            if (!IsCurrent(sequence) || token.IsCancellationRequested) return false;
+            _outlineRows.Clear();
+            foreach (var row in selection.Outline) _outlineRows.Add(new OutlineRow(selection.FileToken, row));
+            _bounds.Text = $"Source: {ReaderBounds(selection.SourceBounds)} Outline: {ReaderBounds(selection.OutlineBounds)} "
+                + $"Outline {selection.OutlineState}: {selection.OutlineReason}; next {selection.OutlineNextOffset}; "
+                + $"coverage {selection.Coverage.State}: {selection.Coverage.Value}; {selection.Coverage.Reason}.";
+            var source = selection.Source;
+            if (source.State is not SourceProjectionState.IndexedMatch || source.Text is null || source.PageSpan is null
+                || source.BindingToken is null)
+            {
+                ClearSource(source.State, NonMatchText(source.State, [source.Reason ?? "", .. selection.Disclosures]));
+                return false;
+            }
+
+            _source.Text = source.Text;
+            CurrentHighlights = source.Highlights.Select(span => new AtlasTextSpan(span.Start, span.Length)).ToArray();
+            if (source.Highlights.FirstOrDefault() is { } highlight)
+                _source.Select(highlight.Start - source.PageSpan.Start, highlight.Length);
+            _sourceStatus.Text = $"Indexed source match; decoder {source.DecoderId}; page {source.PageSpan.Start}–"
+                + $"{source.PageSpan.Start + source.PageSpan.Length}; highlights {source.Highlights.Length}; next {source.NextOffset}.";
+            _status.Text = $"Source ready. {string.Join(" ", selection.Disclosures)}";
+            if (selectedDeclaration is not null)
+                _outline.SelectedItem = _outlineRows.FirstOrDefault(row => row.ObservationKey == selectedDeclaration);
+            if (!IsCurrent(sequence) || token.IsCancellationRequested) return false;
+            _manifestToken = selection.ManifestToken;
+            _receiptToken = selection.ReceiptToken;
+            _currentFile = selection.FileToken;
+            _pendingPrevious = null;
+            if (previous is not null)
+            {
+                if (_back.Count == 50)
+                {
+                    _back.RemoveAt(0);
+                    _historyEvicted = true;
+                }
+                _back.Add(previous);
+            }
+            _backButton.IsEnabled = _back.Count > 0;
+            return true;
+        }
+        catch (OperationCanceledException)
+        {
+            if (IsCurrent(sequence)) ClearSource(SourceProjectionState.Canceled, "ATLAS-READER-CANCELED: selection canceled.");
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            Trace.TraceError("code=ATLAS-READER-SELECTION exception.type={0}", ex.GetType().FullName);
+            if (IsCurrent(sequence)) ClearSource(SourceProjectionState.Unavailable, "ATLAS-READER-SELECTION: selection unavailable.");
+        }
+        finally
+        {
+            Trace.TraceInformation("operation=atlas.reader.selection duration_ms={0} current={1}",
+                Stopwatch.GetElapsedTime(started).TotalMilliseconds, IsCurrent(sequence));
+        }
+        return false;
+    }
+
+    private static string ReaderBounds(AtlasBoundsDto bounds) =>
+        $"{bounds.Dimension}; request {bounds.RequestedLimit}; effective {bounds.EffectiveLimit}; rows {bounds.ReturnedRows}; "
+        + $"content bytes {bounds.ReturnedContentBytes}; total {bounds.DenominatorState} {bounds.DenominatorValue} "
+        + $"({bounds.DenominatorReason}); omission {bounds.OmissionDimension} {bounds.OmissionReason}.";
 
     private void ClearPresentation()
     {
@@ -677,12 +864,21 @@ public sealed class AtlasFileNode
     public string? FileValue { get; }
     public bool IsFile { get; }
     public string Details { get; }
+    public string? ParentToken { get; private init; }
+    public string? EntryToken { get; private init; }
     public ObservableCollection<AtlasFileNode> Children { get; } = [];
-    public string AccessibleName => IsFile ? $"{RelativePath}; {Details}" : $"{Name} folder";
-    public override string ToString() => IsFile ? $"{Name} — {Details}" : Name;
+    public string AccessibleName => EntryToken is not null || IsFile ? $"{RelativePath}; {Details}" : $"{Name} folder";
+    public override string ToString() => EntryToken is not null || IsFile ? $"{Name} — {Details}" : Name;
 
     public static AtlasFileNode Folder(string name, string relativePath) =>
         new(name, relativePath, null, false, "folder");
+
+    internal static AtlasFileNode ReaderEntry(AtlasFileDto entry) =>
+        new(entry.RelativePath, entry.RelativePath, entry.Kind is AtlasDirectoryEntryKind.File ? entry.FileToken : null,
+            entry.Kind is AtlasDirectoryEntryKind.File,
+            $"{entry.Kind}; {entry.Classification}; {entry.Availability}; declarations {entry.DeclarationTotal.State} "
+            + $"{entry.DeclarationTotal.Value}; {entry.DeclarationTotal.Reason}; {entry.Reason}")
+        { ParentToken = entry.ParentToken, EntryToken = entry.FileToken };
 
     public static AtlasFileNode File(string name, AtlasFileEntry entry)
     {
@@ -696,6 +892,15 @@ public sealed class AtlasFileNode
 
 public sealed class OutlineRow
 {
+    internal OutlineRow(string fileToken, AtlasOutlineRowDto declaration)
+    {
+        FileValue = fileToken;
+        ObservationKey = declaration.DeclarationToken;
+        DisplayName = declaration.DisplayName;
+        Kind = declaration.Kind;
+        Span = new AtlasTextSpan(declaration.Span.Start, declaration.Span.Length);
+    }
+
     public OutlineRow(string fileValue, OutlineDeclaration declaration)
     {
         FileValue = fileValue;
