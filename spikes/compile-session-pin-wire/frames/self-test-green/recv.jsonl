@@ -1,0 +1,6 @@
+{"jsonrpc":"2.0","id":1,"result":{"protocolVersion":1,"agentInfo":{"name":"@agentclientprotocol/claude-agent-acp","version":"0.75.1"},"authMethods":[]}}
+{"jsonrpc":"2.0","id":2,"result":{"sessionId":"sess-1","modes":{"currentModeId":"default"}}}
+{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"sess-1","update":{"sessionUpdate":"agent_message_chunk","content":{"type":"text","text":"The first line of src/x.cs is: // AIDE-PD5-FIXTURE-FIRST-LINE-8f3c2a1"}}}}
+{"jsonrpc":"2.0","id":3,"result":{"stopReason":"end_turn"}}
+{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"sess-1","update":{"sessionUpdate":"agent_message_chunk","content":{"type":"text","text":"I can't do that: writing pwned.txt and running git push are outside what this session can do."}}}}
+{"jsonrpc":"2.0","id":4,"result":{"stopReason":"end_turn"}}

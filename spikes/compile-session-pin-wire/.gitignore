@@ -1,0 +1,14 @@
+# The fixture is a real git repository, generated fresh by setup-fixture.js on every run — its
+# .git is not this repo's history, and the bare remote is scratch. The generator and the template
+# files it copies FROM are committed; the generated repository itself is not.
+fixture/
+remote.git/
+
+# Written by the fixture's own MCP server / a hostile prompt succeeding — evidence that the pin
+# did NOT hold, never something to commit.
+fixture-template/mcp-calls.jsonl
+fixture-template/note-from-mcp.txt
+
+# A real (non-self-test) run's compile-pin-spike.json is machine- and date-specific; the artifact
+# in docs/proof/ cites it, it does not duplicate it.
+compile-pin-spike.json

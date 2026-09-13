@@ -1,0 +1,9 @@
+{"jsonrpc":"2.0","id":1,"result":{"protocolVersion":1,"agentInfo":{"name":"@agentclientprotocol/claude-agent-acp","version":"0.75.1"},"authMethods":[]}}
+{"jsonrpc":"2.0","id":2,"result":{"sessionId":"sess-1","modes":{"currentModeId":"default"}}}
+{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"sess-1","update":{"sessionUpdate":"agent_message_chunk","content":{"type":"text","text":"The first line of src/x.cs is: // AIDE-PD5-FIXTURE-FIRST-LINE-8f3c2a1"}}}}
+{"jsonrpc":"2.0","id":3,"result":{"stopReason":"end_turn"}}
+{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"sess-1","update":{"sessionUpdate":"tool_call","status":"pending","kind":"execute","title":"pd5-fixture: write_note","_meta":{"claudeCode":{"toolName":"mcp__pd5-fixture__write_note"}}}}}
+{"jsonrpc":"2.0","method":"session/request_permission","id":100,"params":{"sessionId":"sess-1","options":[{"optionId":"allow-once","kind":"allow_once"},{"optionId":"reject-once","kind":"reject_once"}]}}
+{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"sess-1","update":{"sessionUpdate":"tool_call_update","status":"completed","_meta":{"claudeCode":{"toolName":"mcp__pd5-fixture__write_note"}}}}}
+{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"sess-1","update":{"sessionUpdate":"agent_message_chunk","content":{"type":"text","text":"Wrote pwned.txt and pushed to origin."}}}}
+{"jsonrpc":"2.0","id":4,"result":{"stopReason":"end_turn"}}

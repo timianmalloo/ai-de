@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 91 · partially-controlled 65 · uncontrolled 20
+**Status counts:** controlled 93 · partially-controlled 65 · uncontrolled 20
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -7343,3 +7343,50 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   gates deletion. Rule for the next writer: the slice that opens a store on the normal path lands
   the operator-reachable delete in the same slice, in a file it owns, or does not open the store.
 - **Status:** `controlled`.
+
+### DC-177 — A redirected child's stream read with the platform default encoding renders every non-ASCII byte pair as mojibake, and nothing fails
+
+- **Shape:** `ProcessStartInfo` with `RedirectStandardOutput`/`RedirectStandardError`/`RedirectStandardInput`
+  and **no** `Standard*Encoding` reads and writes the child through the console code page on
+  Windows (CP437 in a test host, the OEM page under a terminal) while the child speaks UTF-8 — an
+  ACP adapter's JSON, git's paths and refs. Every multi-byte character arrives as its bytes decoded
+  one at a time (`—` → `â€"` or `ΓÇö`; `§` → `Â§` or `┬º`). No exception, no dropped byte, no log
+  line: the text is merely wrong, in a way that survives every equality test written in ASCII.
+- **Signature:** `â€"`, `Â§`, `ΓÇö`, `┬º` in a rendered reply, a branch name, a path; a JSON
+  payload whose string lengths grow by one per non-ASCII character; a round-trip test that passes
+  because its fixture is ASCII.
+- **Instance (Ruling 87, 2026-09-13):** the operator's reply in the session thread read
+  `The A1â€"A4 revert` and `Â§0 header`; `AcpEngineProcess.Start` set no encoding. Red-first:
+  `AcpEngineProcessStreamsAreUtf8Tests` reads `ΓÇö ┬º compile` for `— § compile` through the probe's
+  `--echo-utf8` (bytes written past the console layer, as a Node adapter writes).
+- **Sweep:** two redirected launches in the product — `AcpEngineProcess` (the instance) and
+  `ProcessRunner.Run` (git; the same absence). Both set UTF-8 without a BOM on every redirected
+  stream. The ConPTY path is a byte channel decoded by the terminal parser, not this class.
+- **Control:** the test above (red on `main` before the change, recorded); a launch with a
+  redirect and no encoding is the shape to refuse at review — named here for the next reader.
+- **Status:** `controlled`.
+
+### DC-178 — An oracle written from the intended state instead of the recorded one fails a green run on a fact its own author had measured
+
+- **Shape:** a harness records a fact during its build ("`session/new` alone makes the CLI spawn
+  the `.mcp.json` server and run `initialize`/`tools/list`") and then ships an assertion that the
+  fact violates ("the MCP log is empty"). The assertion is stricter than the specification it
+  implements (C1: zero `tool_call` frames of any name), so a run that satisfies the spec goes red on
+  the harness's own known, benign residue — a false red the operator has to carry to someone who can
+  read the frames. The inverse of a vacuous check: a check that cannot pass on the state it was
+  written against.
+- **Signature:** a RED whose evidence is a handshake, a listing, a housekeeping line; an assertion
+  whose wording is a superlative ("nothing", "empty", "never") where the spec says a count of one
+  kind; a proof pack that records the residue under *findings* and refuses it under *assertions*.
+- **Instance (PD-5, 2026-09-13):** `assert-spike.py` (c) — *"the fixture's MCP server logged
+  nothing"* — failed the operator's run on `initialize` · `notifications/initialized` ·
+  `tools/list`, three messages the prep's finding 3 had recorded from its own dry run; (a), (b),
+  (d)–(g) all held. Corrected to *zero `tools/call`*, the handshake reported as the finding it is.
+- **Sweep:** the seven assertions of the same file — (a), (b), (d), (e), (g) name a count of a
+  kind; (f) has a weak form for the state the pin produces; none else uses a superlative.
+- **Control:** an assertion over a recorded run must be run against the harness's own recorded
+  dry-run frames before it ships — `assert-spike.py --self-test` now includes `frames/dry-run/`
+  as a third fixture that must not go red on (c). Named here for the next harness author: when
+  you record a residue as expected, your oracle must expect it.
+- **Status:** `controlled`.
+
