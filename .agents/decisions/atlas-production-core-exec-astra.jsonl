@@ -6,3 +6,5 @@
 {"agent": "copilot-atlas-core-execution", "at": 1789331324.949685, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasReaderWireTests.cs", "session": "atlas-production-core-exec-astra", "wi": ""}
 {"agent": "copilot-atlas-core-execution", "at": 1789333126.5211797, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Understanding/AtlasReaderProjection.cs", "session": "atlas-production-core-exec-astra", "wi": ""}
 {"agent": "copilot-atlas-core-execution", "at": 1789333126.5276814, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasReaderWireTests.cs", "session": "atlas-production-core-exec-astra", "wi": ""}
+{"agent": "copilot-atlas-core-execution", "at": 1789336417.5402493, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Understanding/AtlasGitMembership.cs", "session": "atlas-production-core-exec-astra", "wi": ""}
+{"agent": "copilot-atlas-core-execution", "at": 1789336417.5462496, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasGitMembershipTests.cs", "session": "atlas-production-core-exec-astra", "wi": ""}

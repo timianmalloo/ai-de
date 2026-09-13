@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 103 · partially-controlled 65 · uncontrolled 20
+**Status counts:** controlled 103 · partially-controlled 65 · uncontrolled 22
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -7608,3 +7608,41 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   peer's name. Named for the next inline renderer: *a rendered-text falsifier reads what the AT
   reads, and proves it can see the text before it proves the text is absent.*
 - **Status:** `controlled`.
+
+### DC-189 — A plan row's restatement of a control's trigger drifts from the ADR that defines it, and the node builds the row
+
+- **Shape:** an ADR defines a gate's trigger as one tuple (ADR-0036 gate 3: `(contract_version,
+  prompt_sha, profile.sha)` with a golden-set A/B at k ≥ 3); the coordination plan's row restates it
+  as another (`(adapter sha, CLI sha, craft-profile sha)`); the node — told the row is the authority
+  — builds the row's tuple, literally, and records the discrepancy in a docstring. Two definitions of
+  one trigger now exist, and the one in code is not the one the ADR's reader expects.
+- **Signature:** a docstring that says "the plan row and the ADR disagree"; a ring that re-scores on
+  a change the ADR does not name and misses one it does.
+- **Instance (CV-4, 2026-09-13):** `tools/compile-eval/ring.py` re-scores on the pin-identity triple;
+  ADR-0036's gate 3 names the prompt-version triple. Recorded by the node, allocated at the join.
+- **Sweep:** the plan's CV-3 and CV-4 rows; the ADR; Ruling 68's text — three places the trigger is
+  spelled.
+- **Control:** the ADR is amended to fold the pin-identity re-score into gate 3 explicitly (the two
+  tuples are both triggers: a pin change and a prompt-version change each re-score), or a future track
+  builds the prompt-version ring against the ADR's literal triple — the conductor decides at the
+  converge; until then the docstring names both. A plan row that restates an ADR's tuple must quote
+  it, never paraphrase it (a prepare-for-coordination rule for the pack).
+- **Status:** `uncontrolled` — recorded; the amendment or the second ring is queued.
+
+### DC-190 — A skill run whose start marker was not set at grounding reports a duration measured from the wrong instant, or none
+
+- **Shape:** the audit marker (`audit-log.py start --session <id>`) is the instrument for
+  `duration_seconds`; a node that reads plans and specs before setting its environment has done
+  substantive work before the marker exists, and its closing entry's duration understates the run —
+  or, honestly, reads *not recorded*.
+- **Signature:** a `duration_seconds` far below the agent-wall duration the harness reports; a
+  Proof Pack that says "the marker was set after grounding".
+- **Instance (CV-4, 2026-09-13):** the node grounded on the plan and the spec first; its entry's
+  duration is not from true grounding, reported as not recorded (IO: degrade to absent).
+- **Sweep:** every node brief puts the `start` line after the worktree instructions, which read
+  after the plan-row instruction — the brief's own order invites this.
+- **Control:** a harness-level `SessionStart` hook that calls `audit-log.py start` unconditionally
+  (a pack change, queued for `/updatepack`); until then the brief template moves the `start` line
+  to its first line.
+- **Status:** `uncontrolled` — recorded; the hook is a pack proposal.
+

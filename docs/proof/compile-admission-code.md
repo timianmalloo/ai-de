@@ -159,7 +159,7 @@ redundancy (DC-127's shape: an eval's floor is never satisfiable by one side alo
 
 ## Findings (recorded; the conductor allocates ids — placeholders)
 
-1. **DC-nnn (CV-4 a) — the ring's triggering triple, as named in the plan row, is not ADR-0036 Gate
+1. **DC-189 — the ring's triggering triple, as named in the plan row, is not ADR-0036 Gate
    3's triple.** The plan row and this track's own brief name `(adapter sha, CLI sha, craft-profile
    sha)`; ADR-0036's Gate 3 section names `(contract_version, prompt_sha, profile.sha)` with a heavier
    mechanism (golden-set A/B, k ≥ 3 paired-median samples). `ring.py` is built to the former, literally,
@@ -167,7 +167,7 @@ redundancy (DC-127's shape: an eval's floor is never satisfiable by one side alo
    a future track builds the prompt-version ring against the ADR's literal triple, or the ADR is amended
    to fold the pin-identity re-score into Gate 3 explicitly. Sweep: `note-addendum-c-council-rulings.md`
    and the ADR itself are the two places this ambiguity could be tightened.
-2. **DC-nnn (CV-4 b) — the audit start marker was not set at grounding this run.** `audit-log.py start
+2. **DC-190 — the audit start marker was not set at grounding this run.** `audit-log.py start
    --session cv-4` was not run before the first tool call (this session began by reading the
    coordination plan and spec files before setting up its own environment). `duration_seconds` on this
    entry is therefore not measured from true grounding — reported as not recorded rather than a
