@@ -38,8 +38,12 @@ internal sealed class AtlasWorkspaceOwner : IDisposable, IAsyncDisposable
         return new ViewRegistration(this, clear);
     }
 
-    internal Task<IAtlasReaderLease> AdmitAsync(CancellationToken cancellationToken) =>
-        Track(AdmitCoreAsync(Generation, cancellationToken));
+    internal Task<IAtlasReaderLease> AdmitAsync(CancellationToken cancellationToken)
+    {
+        _dispatcher.VerifyAccess();
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        return Track(AdmitCoreAsync(Generation, cancellationToken));
+    }
 
     internal Task Track(Task operation)
     {
@@ -81,19 +85,29 @@ internal sealed class AtlasWorkspaceOwner : IDisposable, IAsyncDisposable
             if (generation != Generation || linked.IsCancellationRequested || candidate.IsTerminal
                 || candidate.Invalidated.IsCancellationRequested)
             {
+                // Retain ownership if release fails; the next transition must retry this lease.
+                _lease = candidate;
                 await candidate.DisposeAsync().ConfigureAwait(true);
+                _lease = null;
                 throw new OperationCanceledException(linked.Token);
             }
 
             _lease = candidate;
             _invalidation = candidate.Invalidated.Register(() =>
             {
-                var publication = _dispatcher.InvokeAsync(() =>
+                try
                 {
-                    if (generation == Generation && ReferenceEquals(_lease, candidate))
-                        InvalidateViews();
-                }).Task;
-                _ = Track(publication);
+                    var publication = _dispatcher.InvokeAsync(() =>
+                    {
+                        if (generation == Generation && ReferenceEquals(_lease, candidate))
+                            InvalidateViews();
+                    }).Task;
+                    _ = Track(ContainPublicationAsync(publication));
+                }
+                catch (Exception ex) when (ex is not OutOfMemoryException)
+                {
+                    ReportFailure("ATLAS-HOST-INVALIDATE", "dispatch", ex);
+                }
             });
             return candidate;
         }
@@ -108,13 +122,38 @@ internal sealed class AtlasWorkspaceOwner : IDisposable, IAsyncDisposable
     private void InvalidateViews()
     {
         ++Generation;
-        _lifetime.Cancel();
-        foreach (var clear in _views.ToArray()) clear();
+        try { _lifetime.Cancel(); }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            ReportFailure("ATLAS-HOST-INVALIDATE", "cancellation", ex);
+        }
+        foreach (var clear in _views.ToArray())
+        {
+            try { clear(); }
+            catch (Exception ex) when (ex is not OutOfMemoryException)
+            {
+                ReportFailure("ATLAS-HOST-INVALIDATE", "view", ex);
+            }
+        }
+    }
+
+    private static async Task ContainPublicationAsync(Task publication)
+    {
+        try { await publication.ConfigureAwait(true); }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            ReportFailure("ATLAS-HOST-INVALIDATE", "publication", ex);
+        }
     }
 
     private async Task ReplaceAsync(Task previous, Func<IAtlasWorkspaceReader>? factory, long generation)
     {
-        await previous.ConfigureAwait(true);
+        try { await previous.ConfigureAwait(true); }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            ReportFailure("ATLAS-HOST-TRANSITION", "previous", ex);
+        }
+        _invalidation.Dispose();
         Task[] pending;
         lock (_operations) pending = _operations.ToArray();
         try { await Task.WhenAll(pending).ConfigureAwait(true); }
@@ -123,24 +162,31 @@ internal sealed class AtlasWorkspaceOwner : IDisposable, IAsyncDisposable
             Trace.TraceInformation("code=ATLAS-HOST-DRAIN exception.type={0}", ex.GetType().FullName);
         }
 
-        _invalidation.Dispose();
-        var lease = _lease;
-        var reader = _reader;
-        _lease = null;
-        _reader = null;
+        var phase = "lease";
         try
         {
-            if (lease is not null) await lease.DisposeAsync().ConfigureAwait(true);
+            if (_lease is not null)
+            {
+                await _lease.DisposeAsync().ConfigureAwait(true);
+                _lease = null;
+            }
+            phase = "reader";
+            if (_reader is not null)
+            {
+                await _reader.DisposeAsync().ConfigureAwait(true);
+                _reader = null;
+            }
+            if (generation != Generation || _disposed) return;
+            _lifetime.Dispose();
+            _lifetime = new CancellationTokenSource();
+            phase = "factory";
+            _reader = factory?.Invoke();
         }
-        finally
+        catch (Exception ex) when (ex is not OutOfMemoryException)
         {
-            if (reader is not null) await reader.DisposeAsync().ConfigureAwait(true);
+            ReportFailure("ATLAS-HOST-TRANSITION", phase, ex);
+            throw;
         }
-
-        if (generation != Generation || _disposed) return;
-        _lifetime.Dispose();
-        _lifetime = new CancellationTokenSource();
-        _reader = factory?.Invoke();
     }
 
     /// <summary>Compatibility close cancels synchronously; callers await DisposeAsync to drain.</summary>
@@ -156,8 +202,22 @@ internal sealed class AtlasWorkspaceOwner : IDisposable, IAsyncDisposable
     {
         _dispatcher.VerifyAccess();
         Dispose();
-        return new ValueTask(_close ??= ReplaceAsync(_transition, null, Generation));
+        if (_close is null || _close.IsFaulted || _close.IsCanceled)
+            _close = CloseAsync();
+        return new ValueTask(_close);
     }
+
+    private async Task CloseAsync()
+    {
+        await ReplaceAsync(_transition, null, Generation).ConfigureAwait(true);
+        _lifetime.Dispose();
+        _admission.Dispose();
+        _views.Clear();
+        Trace.TraceInformation("operation=atlas.close primitives.disposed=true");
+    }
+
+    private static void ReportFailure(string code, string phase, Exception exception) =>
+        Trace.TraceError("code={0} phase={1} exception.type={2}", code, phase, exception.GetType().FullName);
 
     private sealed class ViewRegistration(AtlasWorkspaceOwner owner, Action clear) : IDisposable
     {
