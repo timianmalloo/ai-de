@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T16:47:06Z",
+  "generated": "2026-09-13T16:52:03Z",
   "audit": [
     {
       "actor": null,
@@ -14449,6 +14449,31 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M2DTXP2QFXJMH7M6WBAG56BC",
+      "shortname": "x-4-ruling-87-utf8-streams",
+      "datetime": "2026-09-13T16:52:02Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "keep going on all other next steps (Ruling 87 first: the engine's streams are UTF-8)",
+      "summary": "Ruling 87 landed as side track X-4: AcpEngineProcess sets UTF-8 (no BOM) on all three redirected streams; ProcessRunner (git) on both - the sweep. Red-first: the ACP probe's --echo-utf8 writes the bytes of '- SS compile' past the console layer; the reader produced 'GCo ..o compile' (CP437) before the change, the string after. 50 ACP tests + 23 runner tests green. DC-177 registered (a redirected child's stream read with the platform default encoding).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land Ruling 87 before Rulings 81/82 so the conversation slice starts from readable text",
+      "done_when": "the round-trip test red then green; the sweep applied; DC-177 registered; committed on the conductor branch",
+      "tier": "T0",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      }
     }
   ],
   "changes": [
