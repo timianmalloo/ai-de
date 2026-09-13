@@ -111,6 +111,12 @@ internal sealed class WebSurfaceHost : IDisposable
             return;
         }
 
+        // Cleared before the await, not after: a second Retry() call arriving while this one is
+        // still in flight would otherwise still read the old failure and start a CONCURRENT second
+        // attempt — closing that window here rather than trusting every caller's own choreography
+        // to serialize it (found in review).
+        _lastAttemptFailed = false;
+
         // Re-opens the once-guard for exactly one more attempt: OnAttachedAsync's short-circuit
         // exists to decline a RE-ATTACH, not a requested retry, so the retry has to look like the
         // first attempt to the same guard.

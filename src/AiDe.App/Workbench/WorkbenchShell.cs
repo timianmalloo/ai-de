@@ -497,12 +497,26 @@ public sealed class WorkbenchShell : IDisposable
     /// lookup against <see cref="_sessionDocuments"/> — the shell's own registry — rather than a
     /// second index the two could disagree about.
     /// </summary>
+    /// <remarks>
+    /// This refusal is announced HERE, not left to the caller: <see cref="Sessions.SessionDocumentSurface.CycleRegion"/>
+    /// already speaks its own refusal through the same shared announcer, so a caller that announced
+    /// every non-<c>Entered</c> result unconditionally would speak that one twice. This closure's
+    /// own synthetic refusal — no surface resolves to an open document — has no other speaker, so
+    /// it must announce itself or it is silent (DC-011; found in review).
+    /// </remarks>
     private void WireSessionRegionCycle()
     {
-        CanvasFocusResult Cycle(string? surfaceId, int delta) =>
-            surfaceId is not null && _sessionDocuments.TryGetValue(surfaceId, out var document)
-                ? document.CycleRegion(delta)
-                : new CanvasFocusResult(CanvasFocusOutcome.Refused, "No session document is focused.");
+        CanvasFocusResult Cycle(string? surfaceId, int delta)
+        {
+            if (surfaceId is not null && _sessionDocuments.TryGetValue(surfaceId, out var document))
+            {
+                return document.CycleRegion(delta);
+            }
+
+            const string message = "No session document is focused.";
+            Announcer.Announce(message);
+            return new CanvasFocusResult(CanvasFocusOutcome.Refused, message);
+        }
 
         foreach (var host in Hosts)
         {

@@ -163,9 +163,12 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         _attach.Click += (_, _) => OfferAttachment(PickFiles());
         ApplyAttachAffordance();
 
-        // The mockup's editorerror Retry (session-conversation.html): shown only once the host
-        // reports init-failed, so it is a real recovery affordance rather than a decoration nobody
-        // needs the rest of the time.
+        // The mockup's editorerror Retry (session-conversation.html), placed in the send row
+        // rather than replacing the editor the way the mockup draws it: the editor is a windowed
+        // WebView2, and an overlay drawn where the mockup puts the error box would be an airspace
+        // hazard the moment a retry succeeds and the browser paints there again (ADR-0015).
+        // Shown only once the host reports init-failed, so it is a real recovery affordance rather
+        // than a decoration nobody needs the rest of the time.
         _retry = new Button { Content = "Retry", Padding = new Thickness(10, 4, 10, 4), MinHeight = 24, MinWidth = 24, Margin = new Thickness(0, 0, 8, 0), Visibility = Visibility.Collapsed };
         _retry.Click += async (_, _) => await RetryEditorAsync();
 

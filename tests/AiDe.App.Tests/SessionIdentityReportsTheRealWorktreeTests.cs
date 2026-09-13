@@ -61,7 +61,12 @@ public sealed class SessionIdentityReportsTheRealWorktreeTests
         }
     }
 
-    /// <summary>Ruling 85: the observed commit, not a fixture literal a revision label would double.</summary>
+    /// <summary>
+    /// Ruling 85: the observed commit, not a fixture literal a revision label would double.
+    /// Shape- and cross-checked, not merely non-empty (found in review: a non-empty/not-"rev-1"
+    /// check alone would not catch <c>Head</c> and <c>Branch</c> swapping which <c>git rev-parse</c>
+    /// call they read from — a branch name is also non-empty and also never equals "rev-1").
+    /// </summary>
     [Fact]
     public void AGitWorktree_ReportsItsObservedHead_NotAFixtureLiteral()
     {
@@ -69,6 +74,29 @@ public sealed class SessionIdentityReportsTheRealWorktreeTests
 
         Assert.False(string.IsNullOrWhiteSpace(facts.Head));
         Assert.NotEqual("rev-1", facts.Head);
+
+        // A short commit hash's own shape — lowercase hex only — which a Head/Branch swap would
+        // violate immediately against this worktree's branch (which contains "/"); also asserted
+        // to differ from Branch directly.
+        Assert.Matches("^[0-9a-f]{4,40}$", facts.Head!);
+        Assert.NotEqual(facts.Branch, facts.Head);
+
+        // Independently observed, not read back through the method under test: the same git
+        // primitive, invoked directly here rather than via ResolveGitFacts, must agree.
+        Assert.Equal(RunGitShortHead(Directory.GetCurrentDirectory()), facts.Head);
+    }
+
+    private static string RunGitShortHead(string workingDirectory)
+    {
+        using var process = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("git", "rev-parse --short HEAD")
+        {
+            WorkingDirectory = workingDirectory,
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+        })!;
+        var output = process.StandardOutput.ReadToEnd();
+        process.WaitForExit();
+        return output.Trim();
     }
 
     /// <summary>No commit to observe: null, never a guessed or fixture value (Ruling 85).</summary>

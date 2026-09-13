@@ -58,6 +58,13 @@ public sealed class ComposerPageThemeTests
     [InlineData("--border", "BorderBrush")]
     [InlineData("--danger", "DangerBrush")]
     [InlineData("--focus", "FocusBrush")]
+    // CV-1/X-3's three additive rows, pinned the same way: a role whose mapping drifted (e.g.
+    // --border-strong pointed back at BorderBrush) would still clear every contrast floor, so only
+    // this literal-table check catches it (found in review: these three were the gap in this
+    // theory the addition itself would have repeated rather than closed).
+    [InlineData("--inferred", "InferredBrush")]
+    [InlineData("--verified", "VerifiedBrush")]
+    [InlineData("--border-strong", "BorderStrongBrush")]
     public void ARoleCarriesItsTokensValue_NotAValueOfItsOwn(string property, string token)
     {
         Sta.Run(() =>

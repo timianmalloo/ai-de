@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T18:04:47Z",
+  "generated": "2026-09-13T18:25:48Z",
   "audit": [
     {
       "actor": null,
@@ -14646,6 +14646,43 @@ window.AUDIT_DATA = {
         "short": "942844657",
         "branch": "side/x3-shell-seams",
         "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2E06TVSPAR2WZ09ZV5PQ14W",
+      "shortname": "x-3-shell-seams-review-fixes",
+      "datetime": "2026-09-13T18:24:24Z",
+      "session": "x-3",
+      "prompt": "Fold in the Test Architect and WPF-lens review findings from the X-3 read-only reviews: silent refusal on the no-session-focused cycle-region path, a concurrent-retry window in WebSurfaceHost.Retry(), a Head/Branch swap the tests would not catch, a mockup-fidelity comment, and a pinned-role test gap (--inferred/--verified/--border-strong).",
+      "summary": "Blocker fixed: WireSessionRegionCycle's synthetic refusal now announces itself (was silent, DC-011); red observed then green (ExecutingSessionCycleRegion_WithNoSessionFocused_AnnouncesWhy). Hardening: WebSurfaceHost.Retry() clears _lastAttemptFailed before awaiting (closes a concurrent-retry window); SessionIdentityReportsTheRealWorktreeTests's Head test now checks hex shape, differs from Branch, and cross-checks an independent git invocation; ComposerPageThemeTests's pinned-value theory extended with the three additive roles; ComposerSurface's mockup-fidelity comment corrected (airspace, not literal fidelity). Full suites green (844 App, 2496 Core).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "claude-x-3",
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/Workbench/WebSurfaceHost.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs",
+        "tests/AiDe.App.Tests/Sessions/TheRegionCycleCommandsReachTheFocusedDocumentTests.cs",
+        "tests/AiDe.App.Tests/SessionIdentityReportsTheRealWorktreeTests.cs",
+        "tests/AiDe.App.Tests/Composer/ComposerPageThemeTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Fold the Test Architect and WPF-lens read-only review findings into the X-3 branch before close.",
+      "done_when": "The blocker (silent refusal) is fixed and proven red-first; the accepted minor/major hardening findings are applied; both full suites and run-verify-gates are green.",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "b53197aff2cf8fa06f0f379c6ef57e5077d1ce12",
+        "short": "b53197aff",
+        "branch": "side/x3-shell-seams",
+        "pushed": true
       }
     }
   ],

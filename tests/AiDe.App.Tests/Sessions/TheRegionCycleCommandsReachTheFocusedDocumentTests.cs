@@ -143,4 +143,27 @@ public sealed class TheRegionCycleCommandsReachTheFocusedDocumentTests : IDispos
 
         Assert.True(handled);
     }
+
+    /// <summary>
+    /// The same case, but through the real wiring (<c>WorkbenchShell.WireSessionRegionCycle</c>),
+    /// asserting the refusal reaches the shell's own announcer rather than only that the command
+    /// returned true. Red before the fix: the wiring's synthetic "no session document" refusal was
+    /// constructed and handed back to <c>WorkbenchController.CycleSessionRegion</c>, which discards
+    /// the result on the theory that <see cref="SessionDocumentSurface"/> always speaks its own
+    /// refusal — true for a refusal <see cref="SessionDocumentSurface.CycleRegion"/> produces, false
+    /// for this one, which no code ever announced (a silent refusal, DC-011/SC 4.1.3 — found in
+    /// review).
+    /// </summary>
+    [Fact]
+    public void ExecutingSessionCycleRegion_WithNoSessionFocused_AnnouncesWhy()
+    {
+        var last = Sta.Run(() =>
+        {
+            using var shell = new WorkbenchShell(queries: null);
+            Assert.True(shell.Execute("session.cycleRegion"));
+            return shell.Announcer.Last;
+        }, 60);
+
+        Assert.Equal("No session document is focused.", last);
+    }
 }
