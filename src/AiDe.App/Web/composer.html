@@ -26,14 +26,28 @@
   */
   :root { color-scheme: dark; }
   html, body { margin: 0; height: 100%; background: var(--surface, #12151A); color: var(--text, #E4E9EF); }
-  body { font: 13px/1.5 "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif; }
-  #fields { display: flex; flex-direction: column; gap: 10px; padding: 10px; }
+  /*
+    THE PAGE FILLS THE HOST (Ruling 80). The host sizes this page — it fills the document at 0 turns,
+    rests at 280px with turns, and gives way to 130px under a short window — and the page lays out
+    to exactly that: the body is a column (the fields, then the drop hint), a long-text field takes
+    what its label and the hint leave, and CodeMirror scrolls inside it; a typed draft grows the
+    editor's scroller, never the page. So the page never scrolls before the operator types past the
+    editor. The ONE floor is the host's, ComposerSurface.EditorFloor, pushed on host.init as
+    --editor-floor and read here as the body's minimum; the fallback beside it is that constant's
+    declared value, for the frame before the push — never a second definition (the page once said
+    110px while the host said 130, and it scrolled at the floor with nothing typed: screenshot 1).
+  */
+  body { font: 13px/1.5 "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif; display: flex; flex-direction: column; box-sizing: border-box; min-height: var(--editor-floor, 130px); }
+  #fields { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 10px; padding: 10px; box-sizing: border-box; }
   .field { display: flex; flex-direction: column; gap: 4px; }
+  .field.grows { flex: 1 1 0; min-height: 0; }
+  .field.grows .editor { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+  .field.grows .cm-editor { flex: 1 1 auto; min-height: 0; }
   .field > label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted, #98A3B2); }
   .field .hint { font-size: 11px; color: var(--text-muted, #98A3B2); }
   .field .required { color: var(--danger, #E07A6F); }
-  .editor { border: 1px solid var(--border, #2A313B); border-radius: 4px; background: var(--surface-sunken, #0D1014); position: relative; min-height: 110px; }
-  .editor .cm-editor { font: 13px/1.5 "Cascadia Mono", Consolas, ui-monospace, monospace; min-height: 110px; }
+  .editor { border: 1px solid var(--border, #2A313B); border-radius: 4px; background: var(--surface-sunken, #0D1014); position: relative; }
+  .editor .cm-editor { font: 13px/1.5 "Cascadia Mono", Consolas, ui-monospace, monospace; }
   .editor .cm-focused { outline: 2px solid var(--focus, #8FC0EA); }
   /* The placeholder (DESIGN.md copy) is drawn, never typed into the document: an empty editor's value stays empty. */
   .editor.empty::before { content: attr(data-ph); position: absolute; left: 6px; top: 4px; font: 13px/1.5 "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif; color: var(--text-muted, #98A3B2); pointer-events: none; }
@@ -46,7 +60,7 @@
   button:disabled { color: var(--text-disabled, #7C8896); cursor: default; }
   .cm-mention-chip { background: var(--accent, #5B9DD9); border-radius: 4px; padding: 0 4px; color: var(--accent-contrast, #0D1014); }
   #error { padding: 12px; color: var(--danger, #E07A6F); white-space: pre-wrap; font: 12px/1.5 "Cascadia Mono", Consolas, monospace; }
-  #drop-hint { padding: 6px 10px; color: var(--text-muted, #98A3B2); font-size: 11px; border-top: 1px solid var(--border, #2A313B); }
+  #drop-hint { flex: none; padding: 6px 10px; color: var(--text-muted, #98A3B2); font-size: 11px; border-top: 1px solid var(--border, #2A313B); }
 </style>
 
 <div id="fields"></div>

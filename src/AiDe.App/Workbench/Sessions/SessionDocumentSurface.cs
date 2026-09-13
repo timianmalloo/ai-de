@@ -41,8 +41,12 @@ namespace AiDe.App.Workbench.Sessions;
 /// </remarks>
 public sealed class SessionDocumentSurface : ContentControl, IDisposable
 {
-    /// <summary>The most of the document the composer may take — the belt over the editor's floor (DS-1 Q14: both are needed).</summary>
-    public const double ComposerShare = 0.45;
+    /// <summary>
+    /// The least the thread keeps once it has turns — half a turn (the words line and its
+    /// decoration; DS-1 L1's 88 px turn ÷ 2) — the belt's constant under a short window (Ruling 80:
+    /// the composer's belt is body − this). At 0 turns the caption is the thread and needs no minimum.
+    /// </summary>
+    public const double ThreadMinimum = 44;
 
     private const double SplitterThickness = 6;
 
@@ -67,6 +71,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     private readonly TextBlock _permissionText = new();
     private readonly ColumnDefinition _splitColumn = new() { Width = new GridLength(0) };
     private readonly ColumnDefinition _splitterColumn = new() { Width = new GridLength(0) };
+    private readonly Border _composerHost = new() { BorderThickness = new Thickness(0, 1, 0, 0), SnapsToDevicePixels = true };
     private readonly GridSplitter _splitter = new();
     private readonly CancellationTokenSource _closing = new();
     private readonly Dictionary<int, CancellationTokenSource> _runs = [];
@@ -846,11 +851,11 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         Grid.SetRow(_stoppedRow, 1);
         column.Children.Add(_stoppedRow);
 
-        var composerHost = new Border { BorderThickness = new Thickness(0, 1, 0, 0), SnapsToDevicePixels = true, Child = Composer };
-        composerHost.SetResourceReference(Border.BorderBrushProperty, "BorderBrush");
-        AutomationProperties.SetName(composerHost, "Composer: the next turn");
-        Grid.SetRow(composerHost, 2);
-        column.Children.Add(composerHost);
+        _composerHost.Child = Composer;
+        _composerHost.SetResourceReference(Border.BorderBrushProperty, "BorderBrush");
+        AutomationProperties.SetName(_composerHost, "Composer: the next turn");
+        Grid.SetRow(_composerHost, 2);
+        column.Children.Add(_composerHost);
 
         Grid.SetColumn(column, 0);
         body.Children.Add(column);
@@ -880,14 +885,50 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         return root;
     }
 
-    /// <summary>The belt (DS-1 Q14): the composer never takes more than its share, so the thread's row is guaranteed by arithmetic.</summary>
+    /// <summary>
+    /// The belt (DS-1 Q14), its value derived from the thread's need (Ruling 80): at 0 turns the
+    /// thread is its two-line caption and the composer takes the rest of the body — the editor
+    /// fills, no scrollbar before the operator types; with turns the composer may take the body
+    /// less <see cref="ThreadMinimum"/> and the editor rests at <see cref="ComposerSurface.EditorRest"/>
+    /// inside it, the thread taking the remainder. A constraint the composer composes within, never
+    /// a clamp that cuts its send row (the composer's minimum wins over the belt). Red observed with
+    /// a constant 45 % share in its place: 130 px of editor under 429 px of empty thread.
+    /// </summary>
     protected override Size MeasureOverride(Size constraint)
     {
-        // The belt (DS-1 Q14): the composer's share of the document — a constraint it composes
-        // within, never a clamp that cuts its send row (the composer's minimum wins over the belt).
         if (!double.IsPositiveInfinity(constraint.Height))
         {
-            Composer.BeltHeight = Math.Max(1, Math.Floor(ComposerShare * constraint.Height));
+            // The rows above and beside the thread, measured at this width so the body is read from
+            // the same parts the grid will arrange — never from the previous pass.
+            var atWidth = new Size(constraint.Width, double.PositiveInfinity);
+            _header.Measure(atWidth);
+            _permissionBanner.Measure(atWidth);
+            _stoppedRow.Measure(atWidth);
+            var body = constraint.Height
+                - _header.DesiredSize.Height
+                - _permissionBanner.DesiredSize.Height
+                - _stoppedRow.DesiredSize.Height
+                - _composerHost.BorderThickness.Top;
+
+            // The thread's need: the caption at 0 turns (wrapped at the column the split leaves it —
+            // the same star split the body grid resolves), the belt's constant with turns.
+            var turns = _thread.Current.Turns.Count;
+            double thread;
+            if (turns == 0)
+            {
+                var column = _splitColumn.Width.IsStar
+                    ? (constraint.Width - _splitterColumn.Width.Value) / (1 + _splitColumn.Width.Value)
+                    : constraint.Width;
+                _outsideText.Measure(new Size(Math.Max(0, column), double.PositiveInfinity));
+                thread = _outsideText.DesiredSize.Height;
+            }
+            else
+            {
+                thread = ThreadMinimum;
+            }
+
+            Composer.EditorRestHeight = turns == 0 ? double.PositiveInfinity : ComposerSurface.EditorRest;
+            Composer.BeltHeight = Math.Max(1, body - thread);
         }
 
         return base.MeasureOverride(constraint);
