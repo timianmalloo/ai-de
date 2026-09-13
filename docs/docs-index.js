@@ -14760,7 +14760,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d3761941b526fbd288f4345edb4c18256cb4faf4be73d08a3417b96ceb1de416"
+      "sourceSha256": "bf0223c21b61f34c174ac9da5b73530474d5a1e0b8031263be5d15b6f9625d0f"
     },
     {
       "id": "proof-composer-as-conversation",
@@ -17614,5 +17614,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "8ef68e61fd4267a26d737b366246e47fc8ee97ab4699fce1cfce31760a9c7e99"
+  "graphSha256": "3dec2558ecefedc90c3811e2024f18bae535b8805ee723bcece005220a088ae4"
 };
