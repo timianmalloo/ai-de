@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T23:05:26Z",
+  "generated": "2026-09-13T23:06:57Z",
   "audit": [
     {
       "actor": null,
@@ -15547,6 +15547,38 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "639be9d389747904b61d6298cc65f96ba6075ade",
         "short": "639be9d38",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2EGC5251PV6B5DQS6DBXPKC",
+      "shortname": "atlas-register-heading-correction",
+      "datetime": "2026-09-13T23:06:56Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Corrected two Conductor-authored class headings to existing parser grammar. Tool originallycounted176; nowbothDC177/DC178discovered and178classes/countsverified. Initial readback command misused array-notmatch as scalar; corrected by explicitly materializing one string before predicates. Malformed-uncited-heading detector limitation recorded. Recording repair adds to checkpointoverrun, manualleaf82/72. No product/admission change.",
+      "kind": "command",
+      "skill": null,
+      "tool": "verify-defect-register",
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Correct the two malformed evidence-register headings created in this checkpoint.",
+      "done_when": "The existing register tool discovers both new IDs and reports178classes with matching counts.",
+      "tier": "T0",
+      "main_calls": 82,
+      "main_budget": 72,
+      "main_over_budget": true,
+      "fan_out": 0,
+      "started_at": "2026-09-13T23:06:12Z",
+      "duration_seconds": 44.0,
+      "git": {
+        "sha": "5cfc28b48cec62e354de9c9eb963f767e486896f",
+        "short": "5cfc28b48",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

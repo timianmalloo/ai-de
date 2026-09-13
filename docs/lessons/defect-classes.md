@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 91 · partially-controlled 65 · uncontrolled 20
+**Status counts:** controlled 93 · partially-controlled 65 · uncontrolled 20
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -5669,6 +5669,13 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   `- rel:` block. **Derive/prevent:** use the repository's inline typed-link shape and
   inspect the graph findings after derivation. The warning was observed before correction;
   the unrelated ruling-49 dangling link is retained as separate debt.
+- **Register-format correction (same checkpoint):** the Conductor then used ASCII hyphens
+  in two new class headings instead of the register parser's exact em-dash delimiter
+  (`tools/verify-defect-register.py:39`). The tool reported 176 classes despite two new
+  entries. **Sweep/derive/control:** both authored headings were corrected to the existing
+  grammar; require the read-back inventory to include both new ids, not merely an exit zero.
+  The 176-versus-178 mismatch was observed before correction. Uncited malformed headings
+  are still not rejected by the existing gate; that detector limitation is explicit debt.
 - **Further Atlas oracle corrections:** a cached item peer was treated as the current selection;
   a legacy array signature was assumed to exclude null; then a manual provider was queried
   without its published-root connection. Exact WPF v10.0.11 source and actual own-HWND MTA
@@ -7480,7 +7487,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   the operator-reachable delete in the same slice, in a file it owns, or does not open the store.
 - **Status:** `controlled`.
 
-### DC-177 - Failure cleanup drops ownership before cleanup succeeds
+### DC-177 — Failure cleanup drops ownership before cleanup succeeds
 
 - **Signature:** an asynchronous owner clears its lease/reader before awaited disposal,
   chains later transitions onto a faulted task, or destroys cancellation/admission primitives
@@ -7505,7 +7512,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   composition and noncooperative production dependencies remain unproved.
 - **Status:** `controlled`.
 
-### DC-178 - A textual patch targets a delimiter rather than its enclosing syntax
+### DC-178 — A textual patch targets a delimiter rather than its enclosing syntax
 
 - **Signature:** a new member is placed between an existing `try` and `catch` because the
   edit matches a nearby closing brace instead of the full enclosing member.
