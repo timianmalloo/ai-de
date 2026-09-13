@@ -2017,7 +2017,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 14 types, 111 members, 94% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 14 types, 113 members, 94% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2030,7 +2030,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "626da9d13d6bdb93f6e9dd26a856d412707fde8a144019417918b5baf5573d75"
+      "sourceSha256": "450cf88618b8e75fdd12ce1379466184490fa93bc9327886c01a494e8efac700"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -2055,7 +2055,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4afd6dceeabe435863d7a323909222a0b4f749e5427e38a4b1646689cb9e7826"
+      "sourceSha256": "b3818991eea0ccbe9562e68b595d1a838f7fed5da3a260f178cfd783b47651e8"
     },
     {
       "id": "api-aide-core",
@@ -7923,7 +7923,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "94003dc9016cf182aa82685fcb68cc4f13d8d4c1bcdbf274e180634f196ef6ca"
+      "sourceSha256": "387e4623643ef6aecc2eba65b221206ad1a5275716cd1b47934fe0757f24f061"
     },
     {
       "id": "design-session-profiler",
@@ -15065,6 +15065,62 @@ window.DOCS_INDEX = {
       "sourceSha256": "99ca61fd41fa74746074c9eb696ad9ff72a83110c4276fb05b30f974ad4d19d6"
     },
     {
+      "id": "proof-editor-rest",
+      "path": "docs/proof/editor-rest.md",
+      "title": "Proof Pack — CV-5.4, the editor's rest: it fills the body at 0 turns with no scrollbar, rests at 280 px with turns, keeps its 130 px floor under a short window; ComposerShare retired; one floor constant read by the host and the page (Ruling 80)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [],
+      "summary": "Evidence for CV-5.4 on the Conversation lane: the composer's belt (DS-1 Q14) keeps its mechanism and loses its constant — SessionDocumentSurface derives its value from the thread's turn count (body − the empty caption at 0 turns; body − ThreadMinimum with turns) and tells the composer the editor's rest (unbounded at 0 turns, EditorRest 280 with turns); the composer sizes the WebView2 host from the belt's remainder, floored at EditorFloor 130 — so a WebView2 that desires nothing no longer pins the editor at its floor. R1–R5 and L6 red → green with the numbers recorded; the page fills its host as a column and reads the one floor the host pushes (--editor-floor), with a live census read of the real page (no scrollbar at 0 turns; the root carries 130px). L6's measured density is 1 turn at both viewports — a finding for the Owner (Ruling 88 condition 3). ComposerShare has no references. A2 is RUN-PENDING with steps.",
+      "tags": [
+        "proof-pack",
+        "conversation-lane",
+        "cv-5",
+        "cv-5-4",
+        "ruling-80",
+        "ruling-88",
+        "ruling-83",
+        "editor-rest",
+        "editor-floor",
+        "composer-belt",
+        "session-document",
+        "composer-page",
+        "dm-a",
+        "ds-1-q14"
+      ],
+      "links": [
+        {
+          "to": "proof-the-conversation",
+          "rel": "refines"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        },
+        {
+          "to": "ui-review-operator-findings-2026-09-13",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "mockup-session-conversation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9a358b808be4dff94ca1fbe52a8cf94ef5b223dc1c7816067f6bff7ebd4909ca"
+    },
+    {
       "id": "proof-front-door-provider-config",
       "path": "docs/proof/front-door-provider-config.md",
       "title": "Proof Pack — node F6, provider configuration and the composer handshake",
@@ -17730,5 +17786,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "66402e36fb4452f6f4509743585dd3120fbeb655bb883771e660951ff8976fef"
+  "graphSha256": "204cdc2130d33c68fd1041edf42d1b22b8e405c4dfb0f994757571f722d74098"
 };

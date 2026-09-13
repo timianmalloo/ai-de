@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T22:12:36Z",
+  "generated": "2026-09-13T22:22:57Z",
   "audit": [
     {
       "actor": null,
@@ -15098,22 +15098,113 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2ED8N1F9R1BQA883YPD7M2M",
-      "shortname": "join-cv4-x5",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/compile-admission-code.md"
+      ],
       "datetime": "2026-09-13T22:12:36Z",
-      "session": "claude-conductor-addendum-c",
+      "done_when": "main pushed green through run-verify-gates; Release built",
+      "goal": "Land CV-4 and X-5 on main with the floors recounted and a Release build",
+      "id": "al-01M2ED8N1F9R1BQA883YPD7M2M",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "keep going (the join of CV-4 and X-5)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-cv4-x5",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
       "summary": "Join: CV-4 (4241bfb2: CompileAdmissionGate recomputing every A14.4 floor from num/den, CE-0024..0029, ring.py with drift demotion and readmitted_at, compile.mode.changed) and X-5 (da2badf4: the lanes ask for summarized thinking) merged to main; one derived-figure conflict taken ours and regenerated; DC-189/190 written into the register from CV-4's proof (the node left them as prose). Recount App 895 / Core 2620 = 2450 + 170. The compile-mode ladder's code is complete: mechanical-only default, advisory admissible (gate 1 open), agentic behind gate 2's recomputed floors over 50+50 real envelopes.",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/editor-rest.md",
+        "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs",
+        "src/AiDe.App/Web/composer.html",
+        "src/AiDe.App/Web/composer.mjs",
+        "tests/AiDe.App.Tests/Sessions/TheWriterKeepsItsRoomTests.cs",
+        "tests/AiDe.App.Tests/Sessions/Thread/TheThreadIsChatLikeTests.cs",
+        "tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs",
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-13T22:02:51Z",
+      "done_when": "R1–R5 red → green; L6 measured at 1440×900 and 2560×1600 and reported; the two reviews' conditions applied; build ×4 warnings-as-errors, both full test projects, run-verify-gates, verify-ui-craft-floor green; Proof Pack docs/proof/editor-rest.md; audit entry; lane/conversation-cv5-4 pushed; Release ProductVersion reported",
+      "duration_seconds": 3147.0,
+      "fan_out": 2,
+      "git": {
+        "branch": "lane/conversation-cv5-4",
+        "pushed": null,
+        "sha": "5c0710a67d67a0f88b33adfca5dedc1b9a33efdf",
+        "short": "5c0710a67"
+      },
+      "goal": "Ruling 80: the editor's rest height is derived from the thread's turn count — fills the body at 0 turns with no scrollbar, rests at 280 px with turns, 130 stays the floor; ComposerShare retired; one floor constant read by the host and pushed to the page",
+      "id": "al-01M2ECPT56TVX0NT3042TNTBCS",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "CV-5.4: the editor's rest — fills the body at 0 turns with no scrollbar, rests at 280 px with turns, floor 130 under a short window; ComposerShare retired; one floor constant host and page (Ruling 80; DESIGN.md errata after Rulings 80-82; Ruling 88's per-viewport turn thresholds). Track CV-5.4 of the Conversation lane under conductor-addendum-c: run /implement, tier T1, fan-out cap 2 (reviews read-only). The operator's words: \"need to fix text input area... should be a larger window size so that the default isnt scrolling\". Oracles (D3's, verbatim): R1 Sessions/TheWriterKeepsItsRoomTests.AtZeroTurns_TheEditorFillsTheBody_WithNoScrollbar; R2 AtOneAndFortyTurns_TheEditorRestsAt280_WithEqualTopEdge; R3 UnderAShortWindow_TheEditorGivesWayToItsFloor_NeverBelow130; R4 OneFloorConstant_ReadByHostAndPage; R5 an architecture Fact: ComposerShare has no references; L6 AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280 (measure and report; if it cannot hold, a finding for the Owner — do not shrink the editor); A2 attended RUN-PENDING. Floors: E7 in the Proof Pack; reviews Test Architect + UX & Accessibility; gates dotnet build ×4 with TreatWarningsAsErrors, both full test projects, run-verify-gates, verify-ui-craft-floor, regenerate-derived after the audit entry; Proof Pack docs/proof/editor-rest.md; push lane/conversation-cv5-4; never merge to main, never rebase, never --update, never stash; Rebuild Release and report the ProductVersion.",
+      "session": "cv-5-4",
+      "shortname": "cv-5-4-editor-rest",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-13T21:10:24Z",
+      "summary": "Ruling 80 landed on lane/conversation-cv5-4 (commit 5c0710a6 from main 1c29b5d5). SessionDocumentSurface.MeasureOverride derives the composer's belt from the thread's turn count (body − the empty caption at 0 turns; body − ThreadMinimum 44 with turns) and the editor's rest (unbounded at 0 turns; EditorRest 280 with turns); ComposerSurface sizes the WebView2 host from the belt's remainder, floored by EditorFloor 130 — the belt mechanism (DS-1 Q14) kept, its constant share retired (ComposerShare deleted, no reference survives). The page (composer.html/.mjs) is a column that fills the host, its editor scrolling only past what it was given, and reads the one floor the host pushes on host.init as --editor-floor (the 110 px second definition gone). Red → green with the numbers recorded: R1 0 turns editor 130 → 476.5 (the caption row 429.0 → 82.6), R2 1/40 turns 130 → 280.0 with equal top edges, R3 three regimes (720 gives way 155.1; 640/600 at the floor 130.1; 560 the minimum wins, thread 15.3), R4 the page read 110 → var(--editor-floor, 130px) + editorFloor on the wire + the live root carries 130px, R5 the member and every reference gone, L6 measured 1 half-visible turn at 1440×900 and at 2560×1600 (Ruling 88's ≥ 2 was the mockup's number: the fixture's 77-call turn is 1,994 px — a finding for the Owner, the editor not shrunk). The contrast census now reads the live page: no scrollbar at 0 turns (130 == 130; first run red at 159 in 130 — the drop hint overflowed a fill computed on the wrong box), and after forty typed lines the editor scrolls (736 in 59) while the page does not (mutation red observed with the .cm-editor flex link deleted: 767 in 130). Reviews: Test Architect BLOCK on the runtime 0 → 1 transition — the fact written red-first was green on its first run (476.5 → 280.0 with UpdateLayout only; the header's re-render propagates the re-measure), the Blocker Inferred and disproved, the fact kept as the guard; its Major (text past the rest) became the census typing read; minors applied (the infinite-constraint reset fact, the 600 row, L6's viewport pins, the vacuous WPF clause deleted). UX & Accessibility PASS-with-conditions: seam request to the Shell lane for DESIGN.md:747's \"(5 lines, 130px)\" (the floor delivers ~2 lines under the label and the drop hint) and for naming EditorRest/ThreadMinimum; three pre-existing Conversation-lane findings routed (focus lands on the body after the first Send; no line wrapping in the editor; a document shorter than the composer's minimum hides the send row). Three classes as placeholders (CV-5-4 a: a ceiling mistaken for a height; b: a fill computed on the wrong box; c: IsVisible false in a detached tree). App 909 → 916 tests, Core 2591; gates in the Proof Pack docs/proof/editor-rest.md. A2 is RUN-PENDING with steps.",
+      "tags": [
+        "conversation-lane",
+        "cv-5-4",
+        "ruling-80",
+        "ruling-88"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/editor-rest.md"
+      ],
+      "datetime": "2026-09-13T22:10:15Z",
+      "id": "al-01M2ED4BDSK8BVWA5M8QHFJ91C",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "correction: the App test count in al-01M2ECPT56TVX0NT3042TNTBCS's summary",
+      "session": "cv-5-4",
+      "shortname": "cv-5-4-editor-rest-count",
+      "skill": null,
+      "summary": "The App suite executed 913 tests under tools/verify-test-run.py (baseline 895; +18 this track), not the 916 the superseded entry's summary estimated before the trx run; Core 2591. The trx under artifacts/test-results is the record (DC-184).",
+      "supersedes": "al-01M2ECPT56TVX0NT3042TNTBCS",
+      "tags": [
+        "cv-5-4"
+      ],
+      "tool": null
+    },
+    {
+      "id": "al-01M2EDVK6D79K5VWVJPDCMJEWP",
+      "shortname": "join-cv5-4",
+      "datetime": "2026-09-13T22:22:56Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "keep going (the join of CV-5.4)",
+      "summary": "Join: CV-5.4 (cb78dbb5) merged to main; the register's tail conflict was first committed WITH markers because the marker gate's red was hidden by a tail -1 (DC-113 recurrence 4, DC-136's shape) - caught by re-running the gate bare before the push, resolved, the merge amended (never pushed red). DC-191..193 allocated. Recount App 913 / Core 2620 = 2450 + 170. The editor fills the body at 0 turns (476.5 px measured at 673x748), rests at 280 with turns; L6 measured: 1 turn at both 1440x900 and 2560x1600 (Ruling 88's >= 2 was the mockup's number - a finding for the Owner).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/compile-admission-code.md"
+        "docs/proof/editor-rest.md"
       ],
       "tags": [],
       "outcome": "success",
-      "goal": "Land CV-4 and X-5 on main with the floors recounted and a Release build",
+      "goal": "Land CV-5.4 on main with the floors recounted and a Release build",
       "done_when": "main pushed green through run-verify-gates; Release built",
       "signals": {
         "verification_path": true,
