@@ -389,3 +389,15 @@
 {"agent": "claude-conductor", "at": 1789337674.7603476, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/Thread/TheThreadIsChatLikeTests.cs", "session": "claude-conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789337674.7663524, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/Thread/ThreadFixtures.cs", "session": "claude-conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789337674.7723522, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/ShellContrastCensusTests.cs", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789338180.6527984, "code": null, "kind": "allowed", "path": ".agents/decisions/sh-4.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789338180.6587977, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789338180.6651788, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789338180.6711776, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789338180.677184, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789338180.6827116, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789338180.6887186, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789338180.6937215, "code": null, "kind": "allowed", "path": "site/index.html", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789338180.7002406, "code": null, "kind": "allowed", "path": "site/model.html", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789338180.7062402, "code": null, "kind": "allowed", "path": "tools/expected-test-counts.json", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789338326.4405544, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789338326.4475615, "code": null, "kind": "allowed", "path": "tools/conductor-join.py", "session": "claude-conductor-addendum-c", "wi": ""}
