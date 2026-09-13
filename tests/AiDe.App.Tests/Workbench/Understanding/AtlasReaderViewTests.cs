@@ -63,7 +63,7 @@ public sealed class AtlasReaderViewTests
         {
             var queries = new FakeAtlasQueries
             {
-                Inventory = request => Task.FromResult(new InventoryPage(request, BoundsKnown(1, 3), [File("src\\LongFileNameThatMustRemainInspectable.cs", "file:a")])),
+                Inventory = request => Task.FromResult(new InventoryPage(request, BoundsKnown(1, 3), [File("src\\LongFileNameThatMustRemainInspectable.cs", "file:a")], nextOffset: 1)),
             };
             var view = new AtlasReaderView(queries, "manifest:1");
 
@@ -185,7 +185,7 @@ public sealed class AtlasReaderViewTests
                 new AtlasFileEntry("directory:src", "src", ".", AtlasDirectoryEntryKind.Directory,
                     AtlasFileClassification.Unknown, null, AtlasFileAvailability.Available, null),
                 File("src\\A.cs", "file:a"),
-            ])),
+            ], nextOffset: 2)),
             Select = request => Task.FromResult(Indexed(request.FileValue, "class A {}", [])),
         };
         Shown(queries, async (window, view) =>
@@ -221,7 +221,7 @@ public sealed class AtlasReaderViewTests
         var queries = new FakeAtlasQueries
         {
             Inventory = request => Task.FromResult(++calls == 1
-                ? new InventoryPage(request, BoundsKnown(1, 3), [File("src\\A.cs", "file:a")])
+                ? new InventoryPage(request, BoundsKnown(1, 3), [File("src\\A.cs", "file:a")], nextOffset: 1)
                 : new InventoryPage(new PageRequest(2, request.Limit), BoundsKnown(1, 3), [File("src\\A.cs", "file:a")])),
         };
         Shown(queries, async (window, view) =>
@@ -253,7 +253,7 @@ public sealed class AtlasReaderViewTests
         {
             await view.LoadAsync();
             Assert.False(view.CanLoadMore);
-            Assert.Contains("continuation not supplied", view.BoundsText);
+            Assert.Contains("No further retained page", view.BoundsText);
         });
     }
 
@@ -448,6 +448,198 @@ public sealed class AtlasReaderViewTests
         });
     }
 
+    [Fact]
+    public void NativeReader_AcceptedFileMemberFileAndBack_AdvanceOnlyReturnedManifestTokens()
+    {
+        var inputs = new List<string>();
+        var expected = "manifest:1";
+        var queries = new FakeAtlasQueries
+        {
+            Inventory = request => Task.FromResult(new InventoryPage(request, BoundsKnown(2, 2),
+                [File("A.cs", "file:a"), File("B.cs", "file:b")])),
+        };
+        queries.Select = request =>
+        {
+            inputs.Add(request.ManifestToken);
+            if (request.ManifestToken != expected)
+                throw new InvalidOperationException("Fixture refuses stale manifest authority.");
+            expected = "manifest:" + (inputs.Count + 1);
+            return Task.FromResult(Indexed(request.FileValue, "accepted " + inputs.Count, [], expected));
+        };
+        queries.Restore = (_, _) =>
+        {
+            expected = "manifest:restored";
+            return Task.FromResult(Indexed("file:a", "restored", [], expected));
+        };
+        Shown(queries, async (window, view) =>
+        {
+            await view.LoadAsync();
+            window.UpdateLayout();
+            var a = Assert.IsType<TreeViewItem>(view.FilesControl.ItemContainerGenerator.ContainerFromIndex(0));
+            a.IsSelected = true;
+            await Drain();
+            Assert.Equal("accepted 1", view.SourceText);
+            view.OutlineControl.SelectedIndex = 0;
+            view.OutlineControl.Focus();
+            view.OutlineControl.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice,
+                PresentationSource.FromVisual(view.OutlineControl), 0, Key.Enter) { RoutedEvent = Keyboard.KeyDownEvent });
+            await Drain();
+            Assert.Equal("accepted 2", view.SourceText);
+            var b = Assert.IsType<TreeViewItem>(view.FilesControl.ItemContainerGenerator.ContainerFromIndex(1));
+            b.IsSelected = true;
+            await Drain();
+            Assert.Equal("accepted 3", view.SourceText);
+            view.BackButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            await Drain();
+            Assert.Equal("restored", view.SourceText);
+            b.IsSelected = true;
+            await Drain();
+            Assert.Equal("accepted 4", view.SourceText);
+            Assert.Equal(["manifest:1", "manifest:2", "manifest:3", "manifest:restored"], inputs);
+        });
+    }
+
+    [Theory]
+    [InlineData(SourceProjectionState.Refused)]
+    [InlineData(SourceProjectionState.Unavailable)]
+    [InlineData(SourceProjectionState.Canceled)]
+    [InlineData(SourceProjectionState.Changed)]
+    [InlineData(SourceProjectionState.Unverifiable)]
+    [InlineData(SourceProjectionState.UnsupportedEncoding)]
+    [InlineData(SourceProjectionState.TooLargeToVerify)]
+    [InlineData(SourceProjectionState.ReadUnstable)]
+    public void NativeReader_NonMatch_DoesNotAdvanceManifestOrHistory(SourceProjectionState state)
+    {
+        var queries = new FakeAtlasQueries { Select = _ => Task.FromResult(Indexed("file:a", "accepted", [], "manifest:accepted")) };
+        Shown(queries, async (_, view) =>
+        {
+            await view.SelectFileAsync(Node("a"));
+            queries.Select = _ => Task.FromResult(Selection("file:b", Projection(state, "source:b"), "not accepted", "manifest:rejected"));
+            await view.SelectFileAsync(Node("b"));
+            Assert.False(view.CanGoBack);
+            Assert.Equal("", view.SourceText);
+            queries.Select = request => request.ManifestToken == "manifest:accepted"
+                ? Task.FromResult(Indexed("file:c", "accepted C", [], "manifest:c"))
+                : Task.FromException<SelectionProjection>(new InvalidOperationException("wrong manifest"));
+            await view.SelectFileAsync(Node("c"));
+            Assert.Equal("accepted C", view.SourceText);
+        });
+    }
+
+    [Theory]
+    [InlineData("late")]
+    [InlineData("fault")]
+    [InlineData("cancel")]
+    public void NativeReader_SupersededOrFailedRequest_CannotAdvanceManifest(string completion)
+    {
+        var late = new TaskCompletionSource<SelectionProjection>();
+        var queries = new FakeAtlasQueries { Select = _ => Task.FromResult(Indexed("file:a", "A", [], "manifest:a")) };
+        Shown(queries, async (_, view) =>
+        {
+            await view.SelectFileAsync(Node("a"));
+            queries.Select = _ => late.Task;
+            var pending = view.SelectFileAsync(Node("b"));
+            if (completion == "late")
+            {
+                queries.Select = request => request.ManifestToken == "manifest:a"
+                    ? Task.FromResult(Indexed("file:c", "C", [], "manifest:c"))
+                    : Task.FromException<SelectionProjection>(new InvalidOperationException("wrong manifest"));
+                await view.SelectFileAsync(Node("c"));
+                Assert.Equal("C", view.SourceText);
+                late.SetResult(Indexed("file:b", "stale B", [], "manifest:stale"));
+            }
+            else if (completion == "fault")
+                late.SetException(new InvalidOperationException("fixture failure"));
+            else
+                late.SetCanceled();
+            await pending;
+            var expected = completion == "late" ? "manifest:c" : "manifest:a";
+            queries.Select = request => request.ManifestToken == expected
+                ? Task.FromResult(Indexed("file:d", "accepted D", [], "manifest:d"))
+                : Task.FromException<SelectionProjection>(new InvalidOperationException("wrong manifest"));
+            await view.SelectFileAsync(Node("d"));
+            Assert.Equal("accepted D", view.SourceText);
+        });
+    }
+
+    [Fact]
+    public void NativeReader_UnavailableRestore_KeepsReceiptAndManifestAuthority()
+    {
+        var restores = new List<string>();
+        var queries = new FakeAtlasQueries { Select = request => Task.FromResult(Indexed(request.FileValue, "body", [], "manifest:accepted")) };
+        Shown(queries, async (_, view) =>
+        {
+            await view.SelectFileAsync(Node("a"));
+            await view.SelectFileAsync(Node("b"));
+            queries.Restore = (receipt, _) =>
+            {
+                restores.Add(receipt);
+                return Task.FromResult(Selection("file:a", SourceProjection.Unavailable("source:a"), "receipt unavailable", "manifest:bad"));
+            };
+            await view.GoBackAsync();
+            await view.GoBackAsync();
+            Assert.Equal(["receipt:file:a", "receipt:file:a"], restores);
+            queries.Select = request => request.ManifestToken == "manifest:accepted"
+                ? Task.FromResult(Indexed("file:c", "C", [], "manifest:c"))
+                : Task.FromException<SelectionProjection>(new InvalidOperationException("wrong manifest"));
+            await view.SelectFileAsync(Node("c"));
+            Assert.Equal("C", view.SourceText);
+        });
+    }
+
+    [Theory]
+    [InlineData(AtlasDenominatorState.Unknown)]
+    [InlineData(AtlasDenominatorState.Withheld)]
+    public void NativeReader_ExplicitContinuation_IsOnlyNextRequestOffset(AtlasDenominatorState state)
+    {
+        var offsets = new List<int>();
+        var queries = new FakeAtlasQueries
+        {
+            Inventory = request =>
+            {
+                offsets.Add(request.Offset);
+                var pageOffset = offsets.Count == 1 ? 4 : request.Offset;
+                int? next = offsets.Count < 3 ? pageOffset + 1 : null;
+                return Task.FromResult(new InventoryPage(new PageRequest(pageOffset, request.Limit),
+                    new AtlasBounds(request.Limit, request.Limit, 1, 100, null, state, "bounded walk", "page"),
+                    [File("File" + offsets.Count + ".cs", "file:" + offsets.Count)], next));
+            },
+        };
+        Shown(queries, async (_, view) =>
+        {
+            await view.LoadAsync();
+            Assert.True(view.CanLoadMore);
+            view.LoadMoreButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            await Drain();
+            Assert.True(view.CanLoadMore);
+            view.LoadMoreButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            await Drain();
+            Assert.False(view.CanLoadMore);
+            Assert.Equal([0, 5, 6], offsets);
+            Assert.Contains(state == AtlasDenominatorState.Unknown ? "total not recorded" : "total withheld", view.BoundsText);
+            Assert.Contains("No further retained page", view.BoundsText);
+        });
+    }
+
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(1, 1)]
+    [InlineData(1, 3)]
+    public void NativeReader_NullContinuation_NeverInfersAnotherPage(int rows, long total)
+    {
+        var queries = new FakeAtlasQueries
+        {
+            Inventory = request => Task.FromResult(new InventoryPage(request, BoundsKnown(rows, total),
+                rows == 0 ? [] : [File("A.cs", "file:a")])),
+        };
+        Shown(queries, async (_, view) =>
+        {
+            await view.LoadAsync();
+            Assert.False(view.CanLoadMore);
+            Assert.Contains("No further retained page", view.BoundsText);
+        });
+    }
+
     private static AtlasFileNode Node(string name) => AtlasFileNode.File(name + ".cs", File(name + ".cs", "file:" + name));
 
     private static void Shown(FakeAtlasQueries queries, Func<Window, AtlasReaderView, Task> body) =>
@@ -494,23 +686,23 @@ public sealed class AtlasReaderViewTests
         _ => throw new ArgumentOutOfRangeException(nameof(state), state, null),
     };
 
-    private static SelectionProjection Indexed(string fileValue, string text, IReadOnlyList<AtlasTextSpan> highlights)
+    private static SelectionProjection Indexed(string fileValue, string text, IReadOnlyList<AtlasTextSpan> highlights, string manifestToken = "manifest:1")
     {
         var root = new AtlasObjectIdentity("root", "1");
         var file = new AtlasObjectIdentity("file", "1");
         var hash = "sha256:" + new string('a', 64);
-        var observation = AtlasSourceObservation.Verified("source:a", "manifest:1", fileValue, "policy:1", root, file, hash, text.Length, "utf-8", text.Length, BoundsKnown(1, 1));
-        var binding = AtlasSourceBinding.Create("manifest:1", fileValue, "policy:1", AtlasIdentityCodec.ForNativeObject(root), AtlasIdentityCodec.ForNativeObject(file), hash);
+        var observation = AtlasSourceObservation.Verified("source:a", manifestToken, fileValue, "policy:1", root, file, hash, text.Length, "utf-8", text.Length, BoundsKnown(1, 1));
+        var binding = AtlasSourceBinding.Create(manifestToken, fileValue, "policy:1", AtlasIdentityCodec.ForNativeObject(root), AtlasIdentityCodec.ForNativeObject(file), hash);
         return Selection(
             fileValue,
             SourceProjection.IndexedMatch(observation, binding, "utf-8", new SourceTextPage(text, new AtlasTextSpan(0, text.Length), highlights)),
-            "Project/TFM context not established");
+            "Project/TFM context not established", manifestToken);
     }
 
-    private static SelectionProjection Selection(string fileValue, SourceProjection source, string limitation) =>
+    private static SelectionProjection Selection(string fileValue, SourceProjection source, string limitation, string manifestToken = "manifest:1") =>
         new(
             "receipt:" + fileValue,
-            "manifest:1",
+            manifestToken,
             fileValue,
             1,
             new SelectionOutline([new OutlineDeclaration("decl:" + fileValue, "A.M()", AtlasDeclarationKind.Method, new AtlasTextSpan(7, 5))]),
