@@ -129,14 +129,37 @@ public sealed class ZoneBackedLayoutService : ILayoutService
     }
 
     /// <summary>
-    /// Maps a fixed-frame tree back to zones by POSITION, using the current occupancy to disambiguate
-    /// which columns are present. Returns null for any shape that is not the expected frame — the caller
-    /// then falls back to kind-based conversion. This is what makes a native tab drag between zones
-    /// follow the drop instead of snapping back to the surface's kind-zone.
+    /// Maps a fixed-frame tree back to zones — by the view's pane IDENTITY where it survives, by
+    /// content majority where it does not, by position for a column the drag split off — using the
+    /// current model to keep what the view cannot show. Returns null for any shape that is not the
+    /// expected frame — the caller then falls back to kind-based conversion. This is what makes a
+    /// native tab drag between zones follow the drop instead of snapping back to the surface's kind-zone.
     /// </summary>
+    /// <remarks>
+    /// <para><b>The model's zones, not only the rendered ones (F-1; Rulings 83/88).</b> A collapsed
+    /// tool zone that still holds panes is not in the view — by design, it is a rail. The mapping
+    /// used to pre-seed Left, Center and Right as EMPTY and fill them from the view's columns, so a
+    /// collapsed-holding side zone came out empty, the surface-set guard saw its panes go missing
+    /// and refused the whole drag — <i>"a collapsed panel still holds panes"</i> — for as long as
+    /// the zone stayed collapsed; maximize-on-create collapsed two of them, so every drag after a
+    /// New Session reverted (the operator's finding 4). A zone the view cannot show keeps what the
+    /// model holds; a column the operator dropped on its side joins it and expands it. The guard is
+    /// unchanged: a surface the view lost is still a refusal.</para>
+    /// <para><b>Identity first.</b> The adapter names each rendered pane with its zone's stack id and
+    /// reads that name back (<c>ILayoutPaneSerializable.Id</c>), so a pane that survived the drag says
+    /// which zone it is. Content majority — the anchor rule before this — mis-anchored a tie: a Left
+    /// of one surface and a Center of two after one moved into the Left both counted one in the
+    /// Left's column, the Center won the tie by rule, and the drag moved the SESSION to the Center
+    /// (DC-063's bystander class). Majority remains the fallback for a tree with no pane names.</para>
+    /// <para><b>The placeholder is the Center.</b> The view's Center pane shows
+    /// <see cref="ZonesToTree.WelcomePlaceholder"/> while the model's Center is empty, and a document
+    /// dropped INTO that pane sits beside it. The placeholder is view-only: it identifies the Center's
+    /// column and is filtered out of every assignment, never entering the model.</para>
+    /// </remarks>
     internal static WorkbenchLayout? TryMapByPosition(Layout tree, WorkbenchLayout current)
     {
         bool Rendered(ZoneId z) => !current.Zone(z).Collapsed && !current.Zone(z).IsEmpty;
+        static bool IsPlaceholder(Surface s) => string.Equals(s.SurfaceId, ZonesToTree.WelcomePlaceholder.SurfaceId, StringComparison.Ordinal);
 
         // Split the root into the columns row and (optionally) the bottom zone.
         LayoutNode columns = tree.Root;
@@ -149,86 +172,103 @@ public sealed class ZoneBackedLayoutService : ILayoutService
         }
 
         // The columns row holds the side and center zones. A native drag can INSERT a column (a new
-        // side pane) or REORDER them, so the column's zone is identified by its CONTENT — which zone's
-        // surfaces it already holds — never by its raw index. Index-based mapping ("first is Left, last
-        // is Right") scatters a real zone the moment a dragged pane reads first or last: the reported
-        // bug where a pane dropped near the right landed in the Left zone and pushed the explorers into
-        // the Center (smoke 9-1 #10).
+        // side pane) or REORDER them, so a column's zone is never its raw index: index-based mapping
+        // ("first is Left, last is Right") scatters a real zone the moment a dragged pane reads first
+        // or last (smoke 9-1 #10).
         var colChildren = columns is SplitNode { Orientation: Orientation.Horizontal } split
             ? split.Children.ToList()
             : [columns];
 
-        // Each side/center zone's ANCHOR is the column holding the most of that zone's prior surfaces —
-        // the column that IS that zone. A column that is nobody's anchor is a dragged pane (it split off,
-        // or arrived new), placed by its position relative to the Center anchor. Anchoring by majority —
-        // not by "a surface once lived here" — is what lets a pane dragged OUT of the Center into its own
-        // column stay where it was dropped instead of snapping back to the Center.
-        int? AnchorFor(ZoneId z)
+        var anchorZone = new Dictionary<int, ZoneId>();
+        var claimed = new HashSet<ZoneId>();
+
+        void Claim(int column, ZoneId zone)
         {
-            var owned = current.Zone(z).Surfaces().Select(s => s.SurfaceId).ToHashSet(StringComparer.Ordinal);
+            anchorZone[column] = zone;
+            claimed.Add(zone);
+        }
+
+        // 1. Identity: a column holding a pane the adapter named for a zone IS that zone; a column
+        //    holding the Center's placeholder is the Center.
+        for (var i = 0; i < colChildren.Count; i++)
+        {
+            var named = StackIdsUnder(colChildren[i]).Select(ZonesToTree.ZoneOfStackId).FirstOrDefault(z => z is not null && z != ZoneId.Bottom);
+            if (named is { } byName && !claimed.Contains(byName))
+            {
+                Claim(i, byName);
+            }
+            else if (!claimed.Contains(ZoneId.Center) && SurfacesUnder(colChildren[i]).Any(IsPlaceholder))
+            {
+                Claim(i, ZoneId.Center);
+            }
+        }
+
+        // 2. Majority, for a zone no pane names (a tree with no pane names, or a pane AvalonDock
+        //    re-created): the unclaimed column holding the largest SHARE of the zone's prior
+        //    surfaces — a share, not a count, so a small zone is not out-voted by a large one that
+        //    lost a tab into it. Greedy over every (zone, column) pair by descending share.
+        var candidates = new List<(double Share, ZoneId Zone, int Column)>();
+        foreach (var zone in new[] { ZoneId.Left, ZoneId.Center, ZoneId.Right })
+        {
+            if (claimed.Contains(zone))
+            {
+                continue;
+            }
+
+            var owned = current.Zone(zone).Surfaces().Select(s => s.SurfaceId).ToHashSet(StringComparer.Ordinal);
             if (owned.Count == 0)
             {
-                return null;
+                continue;
             }
 
-            var best = -1;
-            var bestCount = 0;
             for (var i = 0; i < colChildren.Count; i++)
             {
-                var count = SurfacesUnder(colChildren[i]).Count(s => owned.Contains(s.SurfaceId));
-                if (count > bestCount)
+                if (anchorZone.ContainsKey(i))
                 {
-                    bestCount = count;
-                    best = i;
+                    continue;
+                }
+
+                var count = SurfacesUnder(colChildren[i]).Count(s => owned.Contains(s.SurfaceId));
+                if (count > 0)
+                {
+                    candidates.Add(((double)count / owned.Count, zone, i));
                 }
             }
-
-            return best >= 0 ? best : null;
         }
 
-        var leftAnchor = AnchorFor(ZoneId.Left);
-        var rightAnchor = AnchorFor(ZoneId.Right);
-        var centerAnchor = AnchorFor(ZoneId.Center);
-
-        if (centerAnchor is null)
+        foreach (var (_, zone, column) in candidates.OrderByDescending(c => c.Share).ThenBy(c => c.Column))
         {
-            // Center owns no surfaces of its own to anchor by — the Coding default before any
-            // session opens (Ruling 55d/60: "No session open", the empty state) — so the VIEW's
-            // Center column holds only the synthetic ZonesToTree.WelcomePlaceholder, which the
-            // MODEL never carries and majority-membership can never match. Center is mandatory and
-            // every OTHER column is claimed by Left or Right, so the one column neither claims IS
-            // Center by elimination — never a guess among several: still refuse when that leaves
-            // more than one candidate.
-            var unclaimed = Enumerable.Range(0, colChildren.Count)
-                .Where(i => i != leftAnchor && i != rightAnchor)
-                .ToList();
-            centerAnchor = unclaimed.Count == 1 ? unclaimed[0] : null;
+            if (!claimed.Contains(zone) && !anchorZone.ContainsKey(column))
+            {
+                Claim(column, zone);
+            }
         }
 
-        if (centerAnchor is not { } centerIndex)
+        // 3. The Center is mandatory. Unnamed and owning nothing to anchor by — the Coding default
+        //    before any session opens (Ruling 55d/60) — the one column no side zone claims IS the
+        //    Center, by elimination; still refuse when that leaves more than one candidate, never
+        //    guess. Every column claimed by a side zone and no Center column: the Center is empty.
+        var unclaimed = Enumerable.Range(0, colChildren.Count).Where(i => !anchorZone.ContainsKey(i)).ToList();
+        if (!claimed.Contains(ZoneId.Center))
         {
-            return null; // no column carries the Center's content — not our frame; let the caller revert
+            if (unclaimed.Count == 1)
+            {
+                Claim(unclaimed[0], ZoneId.Center);
+                unclaimed.Clear();
+            }
+            else if (unclaimed.Count > 1)
+            {
+                return null; // no column carries the Center's content — not our frame; let the caller revert
+            }
         }
 
-        var anchorZone = new Dictionary<int, ZoneId>();
-        if (leftAnchor is { } li)
+        var centerIndex = anchorZone.Where(kv => kv.Value == ZoneId.Center).Select(kv => kv.Key).DefaultIfEmpty(-1).First();
+        if (centerIndex < 0 && unclaimed.Count > 0)
         {
-            anchorZone[li] = ZoneId.Left;
+            return null; // a split-off column with no Center to be beside — ambiguous; revert
         }
 
-        if (rightAnchor is { } ri)
-        {
-            anchorZone[ri] = ZoneId.Right;
-        }
-
-        anchorZone[centerIndex] = ZoneId.Center; // the Center anchor wins any tie with a side
-
-        var assigned = new Dictionary<ZoneId, IReadOnlyList<Surface>>
-        {
-            [ZoneId.Left] = new List<Surface>(),
-            [ZoneId.Center] = new List<Surface>(),
-            [ZoneId.Right] = new List<Surface>(),
-        };
+        var assigned = new Dictionary<ZoneId, List<Surface>>();
 
         // The view's ACTIVE surface per zone, so the model catches up to the tab the user is looking
         // at rather than resetting every reconciled stack to its first tab (INV-0006's class: a
@@ -244,8 +284,13 @@ public sealed class ZoneBackedLayoutService : ILayoutService
                 // a drop to the right lands in the Right zone even when it was empty, a drop to the left
                 // lands in Left — never merged into the Center or swapped to the wrong side.
                 : i < centerIndex ? ZoneId.Left : ZoneId.Right;
-            ((List<Surface>)assigned[target]).AddRange(SurfacesUnder(colChildren[i]));
-            if (!activeIn.ContainsKey(target) && ActiveUnder(colChildren[i]) is { } active)
+            if (!assigned.TryGetValue(target, out var list))
+            {
+                assigned[target] = list = [];
+            }
+
+            list.AddRange(SurfacesUnder(colChildren[i]).Where(s => !IsPlaceholder(s)));
+            if (!activeIn.ContainsKey(target) && ActiveUnder(colChildren[i]) is { } active && !string.Equals(active, ZonesToTree.WelcomePlaceholder.SurfaceId, StringComparison.Ordinal))
             {
                 activeIn[target] = active;
             }
@@ -253,47 +298,47 @@ public sealed class ZoneBackedLayoutService : ILayoutService
 
         if (bottom is not null)
         {
-            assigned[ZoneId.Bottom] = SurfacesUnder(bottom);
+            assigned[ZoneId.Bottom] = [.. SurfacesUnder(bottom)];
             if (ActiveUnder(bottom) is { } activeBottom)
             {
                 activeIn[ZoneId.Bottom] = activeBottom;
             }
         }
 
-        // Build the result from the current model (so extents / collapsed tool zones are preserved),
-        // replacing the content of each rendered zone with its position-mapped surfaces.
+        // Build the result from the current model (so extents are preserved), replacing each zone's
+        // content with what the view assigned it. A zone the view could not show — collapsed, still
+        // holding — keeps the model's content; a rendered zone the view no longer shows is empty.
         var result = current;
         foreach (var id in Enum.GetValues<ZoneId>())
         {
-            if (!assigned.TryGetValue(id, out var surfaces))
+            var zone = result.Zone(id);
+            var hidden = zone.Collapsed && !zone.IsEmpty;
+            var arrived = assigned.TryGetValue(id, out var surfaces) ? surfaces : [];
+
+            if (hidden && arrived.Count == 0)
             {
-                // Reached ONLY for the Bottom zone, and only when it was not rendered — Left, Center
-                // and Right are pre-seeded above, so they never take this branch.
-                //
-                // DC-122: this comment used to promise "a collapsed/empty zone that was not rendered
-                // keeps its current content", which is behaviour the code does not have for the three
-                // side/center zones. A COLLAPSED, NON-EMPTY tool zone is not in the view at all, so it
-                // is assigned an empty surface list, the surface-set guard below sees the loss and
-                // refuses the whole reconcile — every native drag silently reverts for as long as that
-                // zone stays collapsed (measured: ZoneBackedLayoutServiceTests, and announced by the
-                // shell since INV-0006 F3). The refusal is the fail-safe; the comment was the defect.
-                continue;
+                continue; // the rail keeps its panes
             }
 
-            var welcomeOnly = surfaces.Count == 1 && surfaces[0].SurfaceId == ZonesToTree.WelcomePlaceholder.SurfaceId;
+            if (id == ZoneId.Bottom && bottom is null && !hidden)
+            {
+                continue; // an empty Bottom that was not rendered has nothing to catch up to
+            }
+
+            var tabs = hidden
+                ? [.. zone.Surfaces(), .. arrived]   // a drop on a rail's side joins it — and shows it
+                : arrived;
             var activeIndex = activeIn.TryGetValue(id, out var activeId)
-                ? Math.Max(0, surfaces.ToList().FindIndex(s => string.Equals(s.SurfaceId, activeId, StringComparison.Ordinal)))
+                ? Math.Max(0, tabs.FindIndex(s => string.Equals(s.SurfaceId, activeId, StringComparison.Ordinal)))
                 : 0;
-            ZoneContent? content = surfaces.Count == 0 || welcomeOnly
-                ? null
-                : new ZoneStack([.. surfaces], activeIndex);
-            result = result.WithZone(result.Zone(id) with { Content = content });
+            ZoneContent? content = tabs.Count == 0 ? null : new ZoneStack([.. tabs], activeIndex);
+            result = result.WithZone(zone with { Content = content, Collapsed = zone.Collapsed && !hidden });
         }
 
         // The strong guard: a reconcile that lost, duplicated or invented a surface is corrupt — refuse
         // and let the caller fall back rather than render a dropped pane.
-        var before = current.AllSurfaces().Select(s => s.SurfaceId).Where(id => id != ZonesToTree.WelcomePlaceholder.SurfaceId).ToHashSet(StringComparer.Ordinal);
-        var after = result.AllSurfaces().Select(s => s.SurfaceId).Where(id => id != ZonesToTree.WelcomePlaceholder.SurfaceId).ToList();
+        var before = current.AllSurfaces().Select(s => s.SurfaceId).ToHashSet(StringComparer.Ordinal);
+        var after = result.AllSurfaces().Select(s => s.SurfaceId).ToList();
         if (after.Count != before.Count || !after.ToHashSet(StringComparer.Ordinal).SetEquals(before))
         {
             return null;
@@ -302,6 +347,14 @@ public sealed class ZoneBackedLayoutService : ILayoutService
         result.AssertInvariant();
         return result;
     }
+
+    /// <summary>Every stack id under <paramref name="node"/> — the pane names the adapter wrote at render.</summary>
+    private static IEnumerable<string> StackIdsUnder(LayoutNode node) => node switch
+    {
+        StackNode s => [s.Id],
+        SplitNode p => p.Children.SelectMany(StackIdsUnder),
+        _ => [],
+    };
 
     /// <summary>The active surface of the first stack under <paramref name="node"/> — the tab the view shows — or null.</summary>
     private static string? ActiveUnder(LayoutNode node) => node switch

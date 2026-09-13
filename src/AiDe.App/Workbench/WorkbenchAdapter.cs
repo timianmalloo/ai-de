@@ -881,7 +881,15 @@ public sealed class WorkbenchAdapter
 
             if (surfaces.Count == 0) { return null; }
             var active = Math.Clamp(docPane.SelectedContentIndex, 0, surfaces.Count - 1);
-            return new StackNode(NewNodeId("stack"), [.. surfaces], active);
+
+            // The pane's IDENTITY, where it survived the gesture: BuildPane names every rendered pane
+            // with its zone's stack id, and AvalonDock moves DOCUMENTS between panes — a pane that is
+            // still here is the zone it was rendered as, whatever it now holds. A pane AvalonDock
+            // created for a split-off column carries no name and is minted fresh, so the mapping falls
+            // back to content and position for it (ZoneBackedLayoutService.TryMapByPosition; F-1).
+            var paneId = ((ILayoutPaneSerializable)docPane).Id;
+            var stackId = paneId is { Length: > 0 } && ZonesToTree.ZoneOfStackId(paneId) is not null ? paneId : NewNodeId("stack");
+            return new StackNode(stackId, [.. surfaces], active);
         }
 
         // Anchorable panes and anything else this workbench does not produce — fail safe.
@@ -910,6 +918,12 @@ public sealed class WorkbenchAdapter
     private LayoutDocumentPane BuildPane(StackNode stack, IReadOnlyDictionary<string, FrameworkElement> reuse)
     {
         var pane = new LayoutDocumentPane();
+
+        // Named for the zone it renders (the projection's deterministic stack ids), so the reconcile
+        // can read a surviving pane's zone back by identity rather than guess it from its contents
+        // (MapNode above). AvalonDock's own serializer is the only other reader of this id.
+        ((ILayoutPaneSerializable)pane).Id = stack.Id;
+
         foreach (var surface in stack.Surfaces)
         {
             var content = reuse.TryGetValue(surface.SurfaceId, out var kept)
