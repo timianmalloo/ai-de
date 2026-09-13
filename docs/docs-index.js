@@ -1942,7 +1942,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Conductor: 6 types, 18 members, 100% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Conductor: 11 types, 26 members, 100% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1955,7 +1955,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b3a927a45b1c7dee2fb6279c631ffb4affea3685efff9367ed27659c4206638d"
+      "sourceSha256": "c21d902536cdcca238f606c417224037247c42e7f0e24f860649c0d616f2e0f6"
     },
     {
       "id": "api-aide-app-viewmodels",
@@ -2017,7 +2017,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 12 types, 87 members, 92% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 14 types, 111 members, 94% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2030,7 +2030,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8222690372cc6917d8c815bfa2d59bf463e9ad8099fce4d8dcbe30b32ca30ea5"
+      "sourceSha256": "626da9d13d6bdb93f6e9dd26a856d412707fde8a144019417918b5baf5573d75"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -2092,7 +2092,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 57 types, 143 members, 90% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 58 types, 148 members, 91% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2105,7 +2105,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8a4373ddba2f1581c28c2182b0029d8aa08367809a9f4ed729ac22127581bca8"
+      "sourceSha256": "9b633861b7eb090d091081121be12b652345af6193d684187c32742004707610"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -2367,7 +2367,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.PromptCompilation: 40 types, 137 members, 77% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.PromptCompilation: 46 types, 162 members, 81% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2380,7 +2380,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e18a5cd24e71ca57c7f09aa8038069da75eee38277295210806ec0daae305ec2"
+      "sourceSha256": "1bc51b425cfee55a1d75480fc84878a2150f158fa38bb52ee22a1e1dba1273ca"
     },
     {
       "id": "api-aide-core-sessions",
@@ -2392,7 +2392,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Sessions: 23 types, 67 members, 89% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Sessions: 26 types, 73 members, 90% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2405,7 +2405,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b90bfa5a9d67e88f522ea0bf08dd371116440d9eae7cf6280300c49444517e1e"
+      "sourceSha256": "57901c7ec3b6089b51e72b9e36020fe1bc4d2207d83b9eb83ddc8f34abff58b5"
     },
     {
       "id": "api-aide-core-store",
@@ -14646,6 +14646,70 @@ window.DOCS_INDEX = {
       "sourceSha256": "a92734fa7845b6e7ad4a33a691fe588436959f29a8ab7340d01343356a9def94"
     },
     {
+      "id": "proof-compile-call",
+      "path": "docs/proof/compile-call.md",
+      "title": "Proof Pack — CV-3, the compile call: the pin widened to mcp__*, CompileCallHost apart from the run root under one linked deadline, AuthorizeBinding, gate 1 read from the machine-level artifact, Prepare under an agentic rung, the eval harness — and PD-5's second run, which ran away and was stopped",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-d",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [],
+      "summary": "Evidence for CV-3 on the Conversation lane (Addendum D slice D-2): the compile pin as one named static (tools: [], the 30 denied names, mcp__*) asserted as an exact key set on the wire; CLAUDE_CODE_EXECUTABLE never reaching the engine's child; SpawnContract.AuthorizeBinding as the identity half both entry points call; CompileCallHost opening compile-call.compose (Roots == 0) with the pin verified per call against the machine-level artifact and one linked deadline that names its step; gate 1 as CompileModeGate (missing / triple mismatch / frame log unverifiable / recount ≠ 0 / Gate 2 outstanding, each a stable code); Prepare's four states and the compile line's strings over a fake compiler; the eval harness with its report-contract self-tests. PD-5's second run under the widened pin is RUN-RECORDED as aborted: a toolless session answered the read prompt with tool-call XML as text in an unbounded loop (~20k output tokens) until the harness was killed — the finding the compile host's deadline exists for, and a re-run the operator must consent to.",
+      "tags": [
+        "proof-pack",
+        "conversation-lane",
+        "cv-3",
+        "addendum-d",
+        "compile",
+        "pin",
+        "acp",
+        "gate-1",
+        "eval-harness",
+        "prepare",
+        "adr-0035",
+        "adr-0036",
+        "pd-5",
+        "security"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0035-compile-session-binding-and-pin",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0036-compile-mode-ladder-deployment-gates",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-mechanical-compile",
+          "rel": "refines"
+        },
+        {
+          "to": "proof-compile-pin-spike",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6300eddfda23f529f940f1d2b2c9e66f089ffdd66e39fbfc214d823e78708eae"
+    },
+    {
       "id": "proof-compile-pin-spike",
       "path": "docs/proof/compile-pin-spike.md",
       "title": "Proof Pack — PD-5: the compile-session pin wire spike (ADR-0035/0036 Gate 1; Ruling 68)",
@@ -14696,7 +14760,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e198cdab9599d7d60c8ffab42cdf3eb1f01f8dc08c19db178210104049a101a9"
+      "sourceSha256": "deb49dd7db69ec0c890582adc3b0818d00e84a196e4f0608671a8bae76e82a70"
     },
     {
       "id": "proof-composer-as-conversation",
@@ -17490,5 +17554,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "72ac2e86aa323723e22b13d51e820c3e8165e22dcc1501b652c8f03f6e13c175"
+  "graphSha256": "daa251a3f469a11f90bd1aee5469844a92fcaa9f0a6127ec642453c2da09d07d"
 };
