@@ -2,7 +2,9 @@ using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using AiDe.Core.Understanding;
+using Xunit.Abstractions;
 
 namespace AiDe.Core.Tests.Understanding;
 
@@ -11,8 +13,15 @@ public sealed class AtlasGitMembershipTests : IDisposable
     private const string Git = @"C:\Program Files\Git\cmd\git.exe";
     private const string Version = "git version 2.55.0.windows.2";
     private readonly string _root = Path.Combine(AppContext.BaseDirectory, ".artifacts", "membership-fixtures", Guid.NewGuid().ToString("N"));
+    private readonly List<AtlasMembershipDiagnostic> _diagnostics = [];
+    private readonly ITestOutputHelper _output;
+    private int _diagnosticsDropped;
 
-    public AtlasGitMembershipTests() => Directory.CreateDirectory(_root);
+    public AtlasGitMembershipTests(ITestOutputHelper output)
+    {
+        _output = output;
+        Directory.CreateDirectory(_root);
+    }
 
     [Theory]
     [InlineData("clone", false)]
@@ -155,6 +164,75 @@ public sealed class AtlasGitMembershipTests : IDisposable
         }
         Assert.True(captures >= 1);
         Assert.True(snapshot.Elapsed >= TimeSpan.Zero);
+        Assert.Equal(0, AtlasGitMembership.NativeWatchIssuer.LiveThreads);
+        Assert.Equal(0, AtlasGitMembership.NativeWatchIssuer.LiveLeases);
+    }
+
+    [Fact]
+    public async Task CapturesShareOneBoundedIssuerAndLastLeaseDrainsIt()
+    {
+        var firstRepository = await Clone("-first");
+        var secondRepository = await Clone("-second");
+        await using var first = await Capture(firstRepository);
+        AssertCandidate(first);
+        await using var second = await Capture(secondRepository);
+        AssertCandidate(second);
+        Assert.Equal(1, AtlasGitMembership.NativeWatchIssuer.LiveThreads);
+        Assert.Equal(2, AtlasGitMembership.NativeWatchIssuer.LiveLeases);
+        var issuers = _diagnostics.Where(record => record.Stage == "source-root-pinned")
+            .Select(record => record.Ownership.IssuingNativeThreadId).Distinct().ToArray();
+        Assert.Single(issuers);
+        await first.DisposeAsync();
+        Assert.Equal(1, AtlasGitMembership.NativeWatchIssuer.LiveThreads);
+        Assert.Equal(1, AtlasGitMembership.NativeWatchIssuer.LiveLeases);
+        Assert.True(second.IsCurrent());
+        await second.DisposeAsync();
+        Assert.Equal(0, AtlasGitMembership.NativeWatchIssuer.LiveThreads);
+        Assert.Equal(0, AtlasGitMembership.NativeWatchIssuer.LiveLeases);
+        Assert.Equal(1, AtlasGitMembership.NativeWatchIssuer.PeakThreads);
+    }
+
+    [Fact]
+    public void CancellationDuringNativeCreationDrainsTheUnpublishedWatch()
+    {
+        var directory = Path.Combine(_root, "canceled-native-creation");
+        Directory.CreateDirectory(directory);
+        using var lease = AtlasGitMembership.NativeWatchIssuer.Acquire();
+        using var cancellation = new CancellationTokenSource();
+        AtlasGitMembership.NativePin? created = null;
+        Assert.ThrowsAny<OperationCanceledException>(() => lease.Owner.Invoke(() =>
+        {
+            created = new AtlasGitMembership.NativePin(directory, trackChanges: true)
+            {
+                DiagnosticForQualification = RecordDiagnostic,
+            };
+            created.DiagnosticRoles.Add("cancellation-during-creation-control");
+            cancellation.Cancel();
+            return created;
+        }, cancellation.Token));
+        Assert.NotNull(created);
+        Assert.Equal("native-association-changed", created.CurrentnessFailure);
+        var disposed = _diagnostics.Last(record => record.Stage == "explicit-dispose-after");
+        Assert.True(disposed.Ownership.NativeHandleClosed);
+        Assert.False(disposed.Ownership.OverlappedOwned);
+        Assert.Equal(1, disposed.Ownership.ExplicitCancelCalls);
+        Directory.Move(directory, directory + "-released");
+        lease.Dispose();
+        Assert.Equal(0, AtlasGitMembership.NativeWatchIssuer.LiveThreads);
+        Assert.Equal(0, AtlasGitMembership.NativeWatchIssuer.LiveLeases);
+    }
+
+    [Fact]
+    public async Task PreCanceledCaptureCreatesNoIssuerOrNativeWork()
+    {
+        var repository = await Clone();
+        using var canceled = new CancellationTokenSource();
+        canceled.Cancel();
+        await using var snapshot = await NewMembership().CaptureForQualificationAsync(repository, Identity(repository), canceled.Token);
+        Assert.Equal(AtlasMembershipCaptureState.Canceled, snapshot.State);
+        Assert.Equal(0, snapshot.Invocations);
+        Assert.Equal(0, AtlasGitMembership.NativeWatchIssuer.LiveThreads);
+        Assert.Equal(0, AtlasGitMembership.NativeWatchIssuer.LiveLeases);
     }
 
     [Theory]
@@ -189,7 +267,150 @@ public sealed class AtlasGitMembershipTests : IDisposable
         }
     }
 
-    private AtlasGitMembership NewMembership() => new(Git, Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(Git))), Version);
+    [Fact]
+    public async Task DiagnosticFailureIsExplicitAndCannotPreventCleanupOrCreateSuccess()
+    {
+        var repository = await Clone();
+        var member = NewMembership();
+        member.DiagnosticForQualification = _ => throw new InvalidOperationException("qualification sink failure");
+        await using var snapshot = await member.CaptureForQualificationAsync(repository, Identity(repository), CancellationToken.None);
+        Assert.NotEqual(AtlasMembershipCaptureState.CandidateComplete, snapshot.State);
+        Assert.Equal("qualification-diagnostic-loss", snapshot.Reason);
+        Assert.Null(snapshot.MembershipTotal);
+        Directory.Move(repository, repository + "-released");
+    }
+
+    [Fact]
+    public async Task IssuingThreadExitAbortsWatchWhileHandleAndOverlappedRemainOwned()
+    {
+        var ready = new TaskCompletionSource<AtlasGitMembership.NativePin>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var issuer = new Thread(() =>
+        {
+            try
+            {
+                var pin = new AtlasGitMembership.NativePin(_root, trackChanges: true)
+                {
+                    DiagnosticForQualification = RecordDiagnostic,
+                };
+                pin.DiagnosticRoles.Add("exiting-issuer-control");
+                ready.SetResult(pin);
+            }
+            catch (Exception exception)
+            {
+                ready.TrySetException(exception);
+            }
+        }) { IsBackground = true, Name = "Atlas qualification exiting issuer" };
+        issuer.Start();
+        var owned = await ready.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        try
+        {
+            Assert.True(issuer.Join(TimeSpan.FromSeconds(2)));
+            await Command(_root, "--version");
+            var observation = owned.ObserveForQualification("control-exited-issuer-after-git-version")!;
+            RecordDiagnostic(observation);
+            Assert.True(observation.EventSignaled);
+            Assert.False(observation.CompletionSucceeded);
+            Assert.Equal(995, observation.NativeError);
+            Assert.Equal(0u, observation.NativeBytes);
+            Assert.Empty(observation.Notifications);
+            Assert.False(observation.Ownership.IssuerAlive);
+            Assert.True(observation.Ownership.IssuerJoinCompleted);
+            Assert.False(observation.Ownership.NativeHandleClosed);
+            Assert.True(observation.Ownership.OverlappedOwned);
+            Assert.Equal(0, observation.Ownership.DisposeCalls);
+            Assert.Equal(0, observation.Ownership.ExplicitCancelCalls);
+        }
+        finally
+        {
+            owned.Dispose();
+            Assert.True(issuer.Join(TimeSpan.FromSeconds(2)));
+        }
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task LiveIssuerSurvivesProcessBoundaryAndDistinguishesMutationFromExplicitCancel(bool mutate)
+    {
+        using var release = new ManualResetEventSlim(false);
+        var ready = new TaskCompletionSource<AtlasGitMembership.NativePin>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var issuer = new Thread(() =>
+        {
+            try
+            {
+                var pin = new AtlasGitMembership.NativePin(_root, trackChanges: true)
+                {
+                    DiagnosticForQualification = RecordDiagnostic,
+                };
+                pin.DiagnosticRoles.Add(mutate ? "live-issuer-mutation-control" : "live-issuer-cancel-control");
+                ready.SetResult(pin);
+                release.Wait(TimeSpan.FromSeconds(10));
+            }
+            catch (Exception exception)
+            {
+                ready.TrySetException(exception);
+            }
+        }) { IsBackground = true, Name = "Atlas qualification retained issuer" };
+        issuer.Start();
+        AtlasGitMembership.NativePin? owned = null;
+        try
+        {
+            owned = await ready.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            await Command(_root, "--version");
+            var pending = owned.ObserveForQualification("control-live-issuer-after-git-version")!;
+            RecordDiagnostic(pending);
+            Assert.False(pending.EventSignaled);
+            Assert.False(pending.CompletionSucceeded);
+            Assert.Equal(996, pending.NativeError);
+            Assert.True(pending.Ownership.IssuerAlive);
+            Assert.False(pending.Ownership.IssuerJoinCompleted);
+            Assert.Equal(0, pending.Ownership.ExplicitCancelCalls);
+            Assert.Null(owned.CurrentnessFailure);
+            if (mutate)
+            {
+                File.WriteAllText(Path.Combine(_root, "namespace-control.txt"), "real namespace mutation");
+                var changed = owned.ObserveForQualification("control-live-issuer-after-mutation")!;
+                RecordDiagnostic(changed);
+                Assert.True(changed.CompletionSucceeded);
+                Assert.Equal(0, changed.NativeError);
+                Assert.True(changed.NativeBytes > 0);
+                Assert.Contains(changed.Notifications, notification => notification.Action == 1 && notification.Name == "namespace-control.txt");
+                Assert.True(changed.Ownership.IssuerAlive);
+                Assert.Equal(0, changed.Ownership.ExplicitCancelCalls);
+            }
+            owned.Dispose();
+            var disposed = _diagnostics.Last(observation => observation.Stage == "explicit-dispose-after");
+            Assert.True(disposed.Ownership.Disposed);
+            Assert.True(disposed.Ownership.NativeHandleClosed);
+            Assert.False(disposed.Ownership.OverlappedOwned);
+            Assert.Equal(mutate ? 0 : 1, disposed.Ownership.ExplicitCancelCalls);
+            if (!mutate)
+            {
+                Assert.Equal(995, disposed.NativeError);
+                Assert.True(disposed.Ownership.IssuerAlive);
+                Assert.True(disposed.Ownership.CancelSucceeded);
+            }
+        }
+        finally
+        {
+            owned?.Dispose();
+            release.Set();
+            Assert.True(issuer.Join(TimeSpan.FromSeconds(2)));
+        }
+    }
+
+    private void RecordDiagnostic(AtlasMembershipDiagnostic diagnostic)
+    {
+        if (_diagnostics.Count < 256)
+            _diagnostics.Add(diagnostic);
+        else
+            _diagnosticsDropped++;
+    }
+
+    private AtlasGitMembership NewMembership() => new(Git, Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(Git))), Version)
+    {
+        DiagnosticForQualification = RecordDiagnostic,
+    };
     private static AtlasObjectIdentity Identity(string root) =>
         new AtlasDirectoryEnumerator().ObserveExpectedNativeRootIdentityForTest(root);
     private ValueTask<AtlasMembershipSnapshot> Capture(string root) =>
@@ -197,9 +418,9 @@ public sealed class AtlasGitMembershipTests : IDisposable
     private static void AssertCandidate(AtlasMembershipSnapshot snapshot) =>
         Assert.True(snapshot.State == AtlasMembershipCaptureState.CandidateComplete, $"{snapshot.State}: {snapshot.Reason}; invocations={snapshot.Invocations}");
 
-    private async Task<string> Clone()
+    private async Task<string> Clone(string suffix = "")
     {
-        var seed = Path.Combine(_root, "seed");
+        var seed = Path.Combine(_root, "seed" + suffix);
         Directory.CreateDirectory(seed);
         await Command(seed, "-c", "init.templateDir=", "init", "--quiet", "--initial-branch=main");
         Directory.CreateDirectory(Path.Combine(seed, "src"));
@@ -207,7 +428,7 @@ public sealed class AtlasGitMembershipTests : IDisposable
         File.WriteAllText(Path.Combine(seed, "outside.txt"), "outside nested root", Encoding.UTF8);
         await Command(seed, "add", "--", "src/a.cs", "outside.txt");
         await Command(seed, "commit", "--quiet", "-m", "fixture");
-        var clone = Path.Combine(_root, "clone");
+        var clone = Path.Combine(_root, "clone" + suffix);
         await Command(_root, "clone", "--quiet", "--local", "--no-hardlinks", seed, clone);
         File.WriteAllText(Path.Combine(clone, "untracked.txt"), "physical inventory only", Encoding.UTF8);
         return clone;
@@ -256,6 +477,20 @@ public sealed class AtlasGitMembershipTests : IDisposable
 
     public void Dispose()
     {
+        if (_diagnostics.Count > 0)
+        {
+            var destination = Environment.GetEnvironmentVariable("ATLAS_MEMBERSHIP_DIAGNOSTICS")
+                ?? Path.Combine(AppContext.BaseDirectory, ".artifacts", "membership-diagnostics");
+            Directory.CreateDirectory(destination);
+            var path = Path.Combine(destination, Path.GetFileName(_root) + ".json");
+            File.WriteAllText(path, JsonSerializer.Serialize(new
+            {
+                Fixture = _root,
+                Dropped = _diagnosticsDropped,
+                Signals = _diagnostics,
+            }));
+            _output.WriteLine($"NQ_DIAGNOSTIC {path} signals={_diagnostics.Count} dropped={_diagnosticsDropped}");
+        }
         foreach (var file in Directory.EnumerateFiles(_root, "*", SearchOption.AllDirectories))
         {
             File.SetAttributes(file, File.GetAttributes(file) & ~FileAttributes.ReadOnly);

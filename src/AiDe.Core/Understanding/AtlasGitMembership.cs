@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
@@ -13,6 +14,17 @@ namespace AiDe.Core.Understanding;
 internal enum AtlasMembershipCaptureState { CandidateComplete, Refused, Unavailable, Unstable, BudgetExceeded, Canceled }
 internal enum AtlasMembershipEntryKind { RegularFile, Symlink, Gitlink }
 internal sealed record AtlasMembershipEntry(string RelativePath, AtlasMembershipEntryKind Kind);
+internal sealed record AtlasMembershipNotification(uint Action, string Name, bool NameTruncated);
+internal sealed record AtlasMembershipDiagnostic(
+    string Stage, string PinRole, string PinPath, bool EventSignaled, bool CompletionSucceeded,
+    int NativeError, uint NativeBytes, AtlasMembershipNotification[] Notifications,
+    bool Truncated, string? DecodeFailure, string RawPrefixHex, AtlasMembershipWatchOwnership Ownership);
+internal sealed record AtlasMembershipWatchOwnership(
+    long WatchId, uint IssuingNativeThreadId, int IssuingManagedThreadId, bool IssuerAlive,
+    bool IssuerJoinCompleted, bool IssuerThreadPool, uint ObservingNativeThreadId,
+    long DirectoryHandle, long OverlappedAddress, long EventHandle, bool NativeHandleClosed,
+    bool OverlappedOwned, bool Disposed, int DisposeCalls, int ExplicitCancelCalls,
+    bool? CancelSucceeded, int? CancelError);
 
 /// <summary>
 /// Qualification-only capture. No issuer, scope grant, content permission or production registration
@@ -35,25 +47,28 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
     private static readonly string[] MembershipArguments = ["ls-files", "--cached", "--stage", "-z", "--full-name", "--sparse"];
 
     internal Action<int>? ProcessStartedForQualification { get; set; }
+    // Explicit qualification sink only. Paths and notification names never enter the ordinary metrics/reasons.
+    internal Action<AtlasMembershipDiagnostic>? DiagnosticForQualification { get; set; }
 
     internal async ValueTask<AtlasMembershipSnapshot> CaptureForQualificationAsync(
         string sourceRoot, AtlasObjectIdentity expectedRootIdentity, CancellationToken cancellationToken)
     {
         var timer = Stopwatch.StartNew();
-        var pins = new PinSet();
         var invocations = 0;
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         deadline.CancelAfter(TimeSpan.FromSeconds(30));
+        var pins = new PinSet(DiagnosticForQualification, deadline.Token);
         try
         {
             deadline.Token.ThrowIfCancellationRequested();
             Require(OperatingSystem.IsWindows(), AtlasMembershipCaptureState.Refused, "windows-native-evidence-required");
             sourceRoot = OrdinaryPath(sourceRoot);
-            var root = pins.Add(sourceRoot, trackChanges: true);
+            var root = pins.Add(sourceRoot, trackChanges: true, role: "source-root");
+            Observe("source-root-pinned");
             Require(root.Identity.Equals(expectedRootIdentity), AtlasMembershipCaptureState.Refused, "source-root-identity-mismatch");
             pins.AddAncestors(sourceRoot);
             executable = OrdinaryPath(executable);
-            var executablePin = pins.Add(executable, trackChanges: true);
+            var executablePin = pins.Add(executable, trackChanges: true, role: "approved-executable");
             pins.AddAncestors(executable);
             Require(string.Equals(executablePin.Digest(long.MaxValue, deadline.Token), expectedSha256, StringComparison.OrdinalIgnoreCase),
                 AtlasMembershipCaptureState.Refused, "approved-executable-digest-mismatch");
@@ -63,33 +78,34 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
                 AtlasMembershipCaptureState.Refused, "approved-executable-version-mismatch");
             var discovery = await Invoke(DiscoveryArguments, 16 * 1024);
             var association = ParseDiscovery(discovery, sourceRoot);
-            pins.Add(association.Repository, trackChanges: true);
-            pins.Add(association.GitDirectory, trackChanges: true);
-            pins.Add(association.CommonDirectory, trackChanges: true);
+            pins.Add(association.Repository, trackChanges: true, role: "repository");
+            pins.Add(association.GitDirectory, trackChanges: true, role: "worktree-admin");
+            pins.Add(association.CommonDirectory, trackChanges: true, role: "common-admin");
             pins.AddAncestors(association.GitDirectory);
             pins.AddAncestors(association.CommonDirectory);
             for (var directory = sourceRoot; ; directory = Path.GetDirectoryName(directory)!)
             {
-                pins.Add(directory, trackChanges: true);
+                pins.Add(directory, trackChanges: true, role: "discovery-ancestor");
                 if (string.Equals(directory, association.Repository, StringComparison.OrdinalIgnoreCase))
                 {
                     break;
                 }
             }
 
-            pins.AddIfPresent(Path.Combine(association.Repository, ".git"));
-            pins.AddIfPresent(Path.Combine(association.GitDirectory, "commondir"));
-            pins.AddIfPresent(Path.Combine(association.GitDirectory, "config.worktree"));
-            pins.AddIfPresent(Path.Combine(association.CommonDirectory, "config"));
-            pins.Add(Path.Combine(association.GitDirectory, "HEAD"), trackChanges: true);
-            var index = pins.Add(association.Index, trackChanges: true);
+            pins.AddIfPresent(Path.Combine(association.Repository, ".git"), "git-selector");
+            pins.AddIfPresent(Path.Combine(association.GitDirectory, "commondir"), "commondir-selector");
+            pins.AddIfPresent(Path.Combine(association.GitDirectory, "config.worktree"), "worktree-config");
+            pins.AddIfPresent(Path.Combine(association.CommonDirectory, "config"), "common-config");
+            pins.Add(Path.Combine(association.GitDirectory, "HEAD"), trackChanges: true, role: "worktree-HEAD");
+            var index = pins.Add(association.Index, trackChanges: true, role: "worktree-index");
             var indexDigest = index.Digest(MaxIndexBytes, deadline.Token);
-            pins.AddIfPresent(Path.Combine(association.CommonDirectory, "packed-refs"));
-            pins.AddTreeIfPresent(Path.Combine(association.CommonDirectory, "refs"));
+            pins.AddIfPresent(Path.Combine(association.CommonDirectory, "packed-refs"), "packed-refs");
+            pins.AddTreeIfPresent(Path.Combine(association.CommonDirectory, "refs"), "common-refs");
             if (!string.Equals(association.GitDirectory, association.CommonDirectory, StringComparison.OrdinalIgnoreCase))
             {
-                pins.AddTreeIfPresent(Path.Combine(association.GitDirectory, "refs"));
+                pins.AddTreeIfPresent(Path.Combine(association.GitDirectory, "refs"), "worktree-refs");
             }
+            Observe("administrative-pins-held");
 
             var head = await Invoke(HeadArguments, 4096);
             ValidateHead(head);
@@ -108,11 +124,25 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
             async Task<byte[]> Invoke(string[] arguments, int maximumBytes)
             {
                 Require(++invocations <= 6, AtlasMembershipCaptureState.BudgetExceeded, "git-invocation-budget");
-                return await RunAsync(sourceRoot, arguments, maximumBytes, deadline.Token).ConfigureAwait(false);
+                var stage = invocations switch
+                {
+                    1 => "git-version",
+                    2 => "git-discovery",
+                    3 => "git-head",
+                    4 => "git-membership",
+                    5 => "git-discovery-recheck",
+                    6 => "git-head-recheck",
+                    _ => "git-invocation",
+                };
+                Observe("before-" + stage);
+                var result = await RunAsync(sourceRoot, arguments, maximumBytes, deadline.Token).ConfigureAwait(false);
+                Observe("after-" + stage);
+                return result;
             }
         }
         catch (CaptureFailure failure)
         {
+            Observe("capture-refused-" + failure.Code);
             pins.Dispose();
             return Finish(failure.State, failure.Code, [], null, null, null, null);
         }
@@ -136,8 +166,10 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
             Captures.Add(1, new KeyValuePair<string, object?>("state", state.ToString()));
             Duration.Record(timer.Elapsed.TotalMilliseconds);
             return new AtlasMembershipSnapshot(state, reason, entries, association, head, indexDigest,
-                invocations, timer.Elapsed, retained);
+                invocations, timer.Elapsed, retained, DiagnosticForQualification);
         }
+
+        void Observe(string stage) => pins.ObserveForQualification(stage, DiagnosticForQualification);
     }
 
     private async Task<byte[]> RunAsync(string directory, string[] arguments, int maximumBytes, CancellationToken cancellationToken)
@@ -345,22 +377,29 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
 
     internal sealed record Association(string Repository, string GitDirectory, string CommonDirectory, string Index);
 
-    internal sealed class PinSet : IDisposable
+    internal sealed class PinSet(
+        Action<AtlasMembershipDiagnostic>? lifecycleSink = null, CancellationToken cancellationToken = default) : IDisposable
     {
         private readonly Dictionary<string, NativePin> _pins = new(StringComparer.OrdinalIgnoreCase);
         private bool _disposed;
+        private bool _diagnosticLoss;
+        private NativeWatchIssuer.Lease? _issuerLease;
 
-        internal NativePin Add(string path, bool trackChanges)
+        internal NativePin Add(string path, bool trackChanges, string role = "ancestor")
         {
             path = OrdinaryPath(path);
             if (_pins.TryGetValue(path, out var existing))
             {
                 existing.TrackChanges |= trackChanges;
+                existing.DiagnosticRoles.Add(role);
                 return existing;
             }
 
             Require(_pins.Count < MaxNativeHandles / 2, AtlasMembershipCaptureState.BudgetExceeded, "native-handle-budget");
-            var pin = new NativePin(path, trackChanges);
+            _issuerLease ??= NativeWatchIssuer.Acquire();
+            var pin = new NativePin(path, trackChanges, _issuerLease.Owner, cancellationToken);
+            pin.DiagnosticForQualification = lifecycleSink;
+            pin.DiagnosticRoles.Add(role);
             _pins.Add(path, pin);
             return pin;
         }
@@ -373,35 +412,55 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
             }
         }
 
-        internal void AddIfPresent(string path)
+        internal void AddIfPresent(string path, string role = "admin-entry")
         {
             if (File.Exists(path) || Directory.Exists(path))
             {
-                Add(path, trackChanges: true);
+                Add(path, trackChanges: true, role);
             }
         }
 
-        internal void AddTreeIfPresent(string path)
+        internal void AddTreeIfPresent(string path, string role = "ref-storage")
         {
             if (!Directory.Exists(path))
             {
                 return;
             }
 
-            Add(path, trackChanges: true);
+            Add(path, trackChanges: true, role);
             foreach (var entry in Directory.EnumerateFileSystemEntries(path))
             {
-                var pin = Add(entry, trackChanges: true);
+                var pin = Add(entry, trackChanges: true, role);
                 if (pin.IsDirectory)
                 {
-                    AddTreeIfPresent(entry);
+                    AddTreeIfPresent(entry, role);
                 }
             }
         }
 
         internal string? CurrentnessFailure => _disposed ? "snapshot-disposed"
+            : _diagnosticLoss || _pins.Values.Any(pin => pin.DiagnosticLoss) ? "qualification-diagnostic-loss"
             : _pins.Values.Select(pin => pin.CurrentnessFailure).FirstOrDefault(failure => failure is not null);
         internal bool IsCurrent() => CurrentnessFailure is null;
+
+        internal void ObserveForQualification(string stage, Action<AtlasMembershipDiagnostic>? sink)
+        {
+            if (sink is null || _disposed)
+                return;
+            foreach (var pin in _pins.Values)
+            {
+                try
+                {
+                    var diagnostic = pin.ObserveForQualification(stage);
+                    if (diagnostic is not null)
+                        sink(diagnostic);
+                }
+                catch (Exception)
+                {
+                    _diagnosticLoss = true;
+                }
+            }
+        }
 
         public void Dispose()
         {
@@ -411,6 +470,123 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
                 pin.Dispose();
             }
             _pins.Clear();
+            _issuerLease?.Dispose();
+            _issuerLease = null;
+        }
+    }
+
+    /// <summary>
+    /// Bounded producer-consumer: one shared issuing thread and a bounded command queue.
+    /// A pin set's lease ends only after its watches have canceled and drained. The last lease
+    /// completes the queue and joins the issuer, so no pending watch loses its issuing thread.
+    /// </summary>
+    internal sealed class NativeWatchIssuer
+    {
+        private static readonly object Gate = new();
+        private static NativeWatchIssuer? _shared;
+        private static int _liveThreads;
+        private static int _peakThreads;
+        private readonly BlockingCollection<Action> _commands = new(MaxNativeHandles / 2);
+        private readonly Thread _thread;
+        private int _references;
+        private bool _stopping;
+
+        private NativeWatchIssuer()
+        {
+            _thread = new Thread(Run) { IsBackground = true, Name = "Atlas native watch issuer" };
+            _thread.Start();
+        }
+
+        internal static int LiveThreads => Volatile.Read(ref _liveThreads);
+        internal static int PeakThreads => Volatile.Read(ref _peakThreads);
+        internal static int LiveLeases
+        {
+            get
+            {
+                lock (Gate)
+                    return _shared?._references ?? 0;
+            }
+        }
+
+        internal static Lease Acquire()
+        {
+            lock (Gate)
+            {
+                var owner = _shared ??= new NativeWatchIssuer();
+                Require(!owner._stopping, AtlasMembershipCaptureState.Unavailable, "native-issuer-shutdown-pending");
+                owner._references++;
+                return new Lease(owner);
+            }
+        }
+
+        internal T Invoke<T>(Func<T> create, CancellationToken cancellationToken) where T : IDisposable
+        {
+            var completion = new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);
+            _commands.Add(() =>
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    completion.TrySetCanceled(cancellationToken);
+                    return;
+                }
+                try
+                {
+                    var result = create();
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        result.Dispose();
+                        completion.TrySetCanceled(cancellationToken);
+                    }
+                    else
+                    {
+                        completion.TrySetResult(result);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    completion.TrySetException(exception);
+                }
+            }, cancellationToken);
+            // Once queued, acknowledge creation/cancellation before releasing the owner's lease.
+            return completion.Task.GetAwaiter().GetResult();
+        }
+
+        private void Run()
+        {
+            var live = Interlocked.Increment(ref _liveThreads);
+            if (live > Volatile.Read(ref _peakThreads))
+                Interlocked.Exchange(ref _peakThreads, live);
+            try
+            {
+                foreach (var command in _commands.GetConsumingEnumerable())
+                    command();
+            }
+            finally
+            {
+                Interlocked.Decrement(ref _liveThreads);
+            }
+        }
+
+        private void Release()
+        {
+            lock (Gate)
+            {
+                if (--_references != 0)
+                    return;
+                _stopping = true;
+                _commands.CompleteAdding();
+                if (!_thread.Join(TimeSpan.FromSeconds(2)))
+                    throw new IOException("Native issuing thread did not drain; ownership remains retained.");
+                _commands.Dispose();
+                _shared = null;
+            }
+        }
+
+        internal sealed class Lease(NativeWatchIssuer owner) : IDisposable
+        {
+            private NativeWatchIssuer? _owner = owner;
+            internal NativeWatchIssuer Owner => _owner ?? throw new ObjectDisposedException(nameof(Lease));
+            public void Dispose() => Interlocked.Exchange(ref _owner, null)?.Release();
         }
     }
 
@@ -424,8 +600,13 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
         private readonly SafeFileHandle _handle;
         private readonly string _path;
         private readonly byte[] _changeRecord;
+        private readonly NativeWatchIssuer? _watchIssuer;
+        private readonly CancellationToken _captureCancellation;
         private NativeDirectoryChange? _directoryChange;
         private bool _trackChanges;
+        internal SortedSet<string> DiagnosticRoles { get; } = new(StringComparer.Ordinal);
+        internal Action<AtlasMembershipDiagnostic>? DiagnosticForQualification { get; set; }
+        internal bool DiagnosticLoss { get; private set; }
         internal bool TrackChanges
         {
             get => _trackChanges;
@@ -433,7 +614,9 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
             {
                 if (value && IsDirectory && _directoryChange is null)
                 {
-                    _directoryChange = new NativeDirectoryChange(_path);
+                    _directoryChange = _watchIssuer is null
+                        ? new NativeDirectoryChange(_path)
+                        : _watchIssuer.Invoke(() => new NativeDirectoryChange(_path), _captureCancellation);
                 }
                 _trackChanges = value;
             }
@@ -441,9 +624,12 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
         internal AtlasObjectIdentity Identity { get; }
         internal bool IsDirectory { get; }
 
-        internal NativePin(string path, bool trackChanges)
+        internal NativePin(string path, bool trackChanges, NativeWatchIssuer? watchIssuer = null,
+            CancellationToken captureCancellation = default)
         {
             _path = path;
+            _watchIssuer = watchIssuer;
+            _captureCancellation = captureCancellation;
             _handle = CreateFileW(path, 0x80000000, 1, IntPtr.Zero, 3, 0x02000000 | 0x00200000, IntPtr.Zero);
             if (_handle.IsInvalid)
             {
@@ -484,12 +670,18 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
                         return "native-change-record-changed";
                     return null;
                 }
-                catch (Exception exception) when (exception is IOException or Win32Exception or CaptureFailure or ObjectDisposedException)
+
+                        catch (Exception exception) when (exception is IOException or Win32Exception or CaptureFailure or ObjectDisposedException)
                 {
                     return "native-currentness-unavailable";
                 }
             }
         }
+
+        internal AtlasMembershipDiagnostic? ObserveForQualification(string stage) =>
+            _directoryChange is not null
+                ? _directoryChange.ObserveForQualification(stage, string.Join(",", DiagnosticRoles), _path)
+                : null;
 
         internal string Digest(long maximumBytes, CancellationToken cancellationToken)
         {
@@ -555,8 +747,31 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
 
         public void Dispose()
         {
-            _directoryChange?.Dispose();
-            _handle.Dispose();
+            try
+            {
+                EmitDisposalDiagnostic("explicit-dispose-before");
+                _directoryChange?.Dispose();
+            }
+            finally
+            {
+                EmitDisposalDiagnostic("explicit-dispose-after");
+                _handle.Dispose();
+            }
+        }
+
+        private void EmitDisposalDiagnostic(string stage)
+        {
+            if (DiagnosticForQualification is not { } sink)
+                return;
+            try
+            {
+                if (ObserveForQualification(stage) is { } diagnostic)
+                    sink(diagnostic);
+            }
+            catch (Exception)
+            {
+                DiagnosticLoss = true;
+            }
         }
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
@@ -587,15 +802,30 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
     {
         private readonly SafeFileHandle _handle;
         private readonly EventWaitHandle _completed = new(false, EventResetMode.ManualReset);
+        private static long _nextWatchId;
+        private readonly long _watchId = Interlocked.Increment(ref _nextWatchId);
+        private readonly Thread _issuer = Thread.CurrentThread;
+        private readonly uint _issuingNativeThreadId = GetCurrentThreadId();
+        private readonly int _issuingManagedThreadId = Environment.CurrentManagedThreadId;
+        private readonly bool _issuingThreadPool = Thread.CurrentThread.IsThreadPoolThread;
+        private readonly long _directoryHandleValue;
+        private readonly long _eventHandleValue;
         private IntPtr _buffer;
         private IntPtr _overlapped;
         private bool _pending;
         private bool _disposed;
+        private int _disposeCalls;
+        private int _explicitCancelCalls;
+        private bool? _cancelSucceeded;
+        private int? _cancelError;
+        private AtlasMembershipDiagnostic? _lastDiagnostic;
         internal bool Changed => _disposed || _completed.WaitOne(0);
 
         internal NativeDirectoryChange(string path)
         {
             _handle = OpenDirectory(path, 1, 1, IntPtr.Zero, 3, 0x40000000 | 0x02000000 | 0x00200000, IntPtr.Zero);
+            _directoryHandleValue = _handle.DangerousGetHandle().ToInt64();
+            _eventHandleValue = _completed.SafeWaitHandle.DangerousGetHandle().ToInt64();
             try
             {
                 if (_handle.IsInvalid)
@@ -610,26 +840,110 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
                     throw new Win32Exception(Marshal.GetLastWin32Error());
                 _pending = true;
             }
-            catch
-            {
-                Dispose();
-                throw;
+                catch
+                {
+                    Dispose();
+                    throw;
+                }
             }
-        }
 
-        public void Dispose()
-        {
-            if (_disposed)
-                return;
-            if (_pending)
+            internal AtlasMembershipDiagnostic ObserveForQualification(string stage, string role, string path)
             {
-                if (!_completed.WaitOne(0))
-                    _ = CancelIoEx(_handle, _overlapped);
-                if (!_completed.WaitOne(TimeSpan.FromSeconds(2)))
-                    throw new IOException("Native notification cancellation did not complete; its buffers remain owned.");
-                _ = GetOverlappedResult(_handle, _overlapped, out _, false);
+                if (_disposed)
+                {
+                    return (_lastDiagnostic ?? throw new InvalidOperationException("No completion was recorded before disposal."))
+                        with { Stage = stage, PinRole = role, PinPath = path, Ownership = CurrentOwnership() };
+                }
+                var succeeded = GetOverlappedResult(_handle, _overlapped, out var nativeBytes, false);
+                var error = succeeded ? 0 : Marshal.GetLastWin32Error();
+                var notifications = new List<AtlasMembershipNotification>();
+                var truncated = false;
+                string? decodeFailure = null;
+                var rawPrefix = "";
+                if (succeeded && nativeBytes is > 0 and <= 4096)
+                {
+                    var buffer = new byte[(int)nativeBytes];
+                    Marshal.Copy(_buffer, buffer, 0, buffer.Length);
+                    rawPrefix = Convert.ToHexString(buffer.AsSpan(0, Math.Min(64, buffer.Length)));
+                    var offset = 0;
+                    while (offset < buffer.Length && notifications.Count < 8)
+                    {
+                        if (buffer.Length - offset < 12)
+                        {
+                            decodeFailure = "short-notification-header";
+                            break;
+                        }
+                        var next = BinaryPrimitives.ReadUInt32LittleEndian(buffer.AsSpan(offset));
+                        var action = BinaryPrimitives.ReadUInt32LittleEndian(buffer.AsSpan(offset + 4));
+                        var nameBytes = BinaryPrimitives.ReadUInt32LittleEndian(buffer.AsSpan(offset + 8));
+                        if ((nameBytes & 1) != 0 || nameBytes > buffer.Length - offset - 12)
+                        {
+                            decodeFailure = "invalid-notification-name-length";
+                            break;
+                        }
+                        string name;
+                        try
+                        {
+                            name = new UnicodeEncoding(false, false, true).GetString(buffer, offset + 12, (int)nameBytes);
+                        }
+                        catch (DecoderFallbackException)
+                        {
+                            decodeFailure = "invalid-notification-unicode";
+                            break;
+                        }
+                        var nameTruncated = name.Length > 256;
+                        if (nameTruncated)
+                        {
+                            var end = char.IsHighSurrogate(name[255]) && char.IsLowSurrogate(name[256]) ? 255 : 256;
+                            name = name[..end];
+                            truncated = true;
+                        }
+                        notifications.Add(new AtlasMembershipNotification(action, name, nameTruncated));
+                        if (next == 0)
+                        {
+                            offset = buffer.Length;
+                            break;
+                        }
+                        if ((next & 3) != 0 || next < 12 + nameBytes || next > buffer.Length - offset)
+                        {
+                            decodeFailure = "invalid-notification-offset";
+                            break;
+                        }
+                        offset += (int)next;
+                    }
+                    truncated |= offset < buffer.Length && notifications.Count == 8;
+                }
+                else if (succeeded)
+                {
+                    decodeFailure = nativeBytes == 0 ? "zero-byte-completion" : "native-byte-count-exceeds-buffer";
+                }
+                var diagnostic = new AtlasMembershipDiagnostic(stage, role, path, _completed.WaitOne(0),
+                    succeeded, error, nativeBytes, notifications.ToArray(), truncated, decodeFailure, rawPrefix, CurrentOwnership());
+                _lastDiagnostic = diagnostic;
+                return diagnostic;
             }
-            _disposed = true;
+
+            public void Dispose()
+            {
+                Interlocked.Increment(ref _disposeCalls);
+                if (_disposed)
+                    return;
+                if (_pending)
+                {
+                    if (!_completed.WaitOne(0))
+                    {
+                        Interlocked.Increment(ref _explicitCancelCalls);
+                        var canceled = CancelIoEx(_handle, _overlapped);
+                        _cancelSucceeded = canceled;
+                        _cancelError = canceled ? 0 : Marshal.GetLastWin32Error();
+                    }
+                    if (!_completed.WaitOne(TimeSpan.FromSeconds(2)))
+                        throw new IOException("Native notification cancellation did not complete; its buffers remain owned.");
+                    _ = GetOverlappedResult(_handle, _overlapped, out _, false);
+                }
+                if (_lastDiagnostic is { } previous)
+                    _ = ObserveForQualification("native-disposal-completion", previous.PinRole, previous.PinPath);
+                _disposed = true;
             _handle.Dispose();
             _completed.Dispose();
             if (_overlapped != IntPtr.Zero)
@@ -637,6 +951,12 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
             if (_buffer != IntPtr.Zero)
                 Marshal.FreeHGlobal(_buffer);
         }
+
+        private AtlasMembershipWatchOwnership CurrentOwnership() => new(
+            _watchId, _issuingNativeThreadId, _issuingManagedThreadId, _issuer.IsAlive, _issuer.Join(0),
+            _issuingThreadPool, GetCurrentThreadId(), _directoryHandleValue, _overlapped.ToInt64(),
+            _eventHandleValue, _handle.IsClosed, !_disposed && _overlapped != IntPtr.Zero, _disposed,
+            Volatile.Read(ref _disposeCalls), Volatile.Read(ref _explicitCancelCalls), _cancelSucceeded, _cancelError);
 
         [StructLayout(LayoutKind.Sequential)]
         private struct OverlappedRecord
@@ -646,6 +966,8 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
             public IntPtr Event;
         }
 
+        [DllImport("kernel32.dll")]
+        private static extern uint GetCurrentThreadId();
         [DllImport("kernel32.dll", EntryPoint = "CreateFileW", SetLastError = true, CharSet = CharSet.Unicode)]
         private static extern SafeFileHandle OpenDirectory(string name, uint access, uint sharing, IntPtr security, uint disposition, uint flags, IntPtr template);
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -661,7 +983,8 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
 internal sealed class AtlasMembershipSnapshot(
     AtlasMembershipCaptureState state, string? reason, AtlasMembershipEntry[] entries,
     AtlasGitMembership.Association? association, string? head, string? indexDigest,
-    int invocations, TimeSpan elapsed, AtlasGitMembership.PinSet? pins) : IAsyncDisposable
+    int invocations, TimeSpan elapsed, AtlasGitMembership.PinSet? pins,
+    Action<AtlasMembershipDiagnostic>? diagnostics = null) : IAsyncDisposable
 {
     internal AtlasMembershipCaptureState State { get; } = state;
     internal string? Reason { get; } = reason;
@@ -672,7 +995,11 @@ internal sealed class AtlasMembershipSnapshot(
     internal int Invocations { get; } = invocations;
     internal TimeSpan Elapsed { get; } = elapsed;
     internal long? MembershipTotal => State is AtlasMembershipCaptureState.CandidateComplete ? Entries.Count : null;
-    internal bool IsCurrent() => State is AtlasMembershipCaptureState.CandidateComplete && pins is not null && pins.IsCurrent();
+    internal bool IsCurrent()
+    {
+        pins?.ObserveForQualification("snapshot-currentness", diagnostics);
+        return State is AtlasMembershipCaptureState.CandidateComplete && pins is not null && pins.IsCurrent();
+    }
 
     public ValueTask DisposeAsync()
     {
