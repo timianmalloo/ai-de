@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 98 · partially-controlled 65 · uncontrolled 20
+**Status counts:** controlled 101 · partially-controlled 65 · uncontrolled 20
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -7508,3 +7508,53 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   carries an offset no runner sits at.
 - **Status:** `controlled`.
 
+### DC-184 — A count cited in a Proof Pack or a comment is a memoir; only the literal's own count is a record
+
+- **Filed by:** CV-3 a (placeholder — the conductor allocates the final number/status).
+- **Shape:** a document (a Proof Pack, a harness comment) states the size of a set that lives as a
+  literal elsewhere ("26 names"); the literal is edited, or was never counted, and the number is
+  repeated by every reader as a fact.
+- **Instance:** PD-5's Proof Pack and `run-spike.js` cite "26 names" for
+  `ReadOnlyLaneSession`'s denied-tool set; the literal has 30 (counted red-first by
+  `TheCompileSessionIsPinnedTests.TheRecordHasExactlyFourMembersAndTheCompilePinIsANamedStatic`).
+- **Control (this instance):** the test asserts the count from the literal
+  (`LaneSessionOptions.DeniedToolNames.Count`); the citing documents are corrected in CV-3's Proof
+  Pack, never silently.
+- **Sweep (not run this slice):** `docs/proof/read-only-turn.md`'s table for the same count — the
+  conductor's to schedule.
+- **Status:** `controlled`.
+
+### DC-185 — An oracle over what did not happen passes a run that never ended
+
+- **Filed by:** CV-3 b (placeholder — the conductor allocates the final number/status).
+- **Shape:** a spike or gate asserts only negatives (zero tool calls, nothing written, nothing
+  pushed) and has no clause requiring the run to have completed; an aborted, timed-out or runaway
+  run satisfies every letter and reads green — while costing the most.
+- **Instance:** PD-5 run 2 (`frames/2026-09-13T18-58-48-954Z`): a toolless session emitted fake
+  tool-call XML as text in an unbounded loop (5,843 chunks, ~20k output tokens) until killed by
+  hand; `assert-spike.py`'s seven letters all held and (f)'s weak form accepted the XML as "a
+  statement".
+- **Control (this instance):** `assert-spike.py (0)` refuses `mode ∉ {full, dry-run}` and any
+  `timed_out`; `(f)` fails on `<invoke ` in the reply; `run-spike.js` bounds each prompt (60 s,
+  2,000 chunks) and records a firing bound as `timed_out`; `CompileModeGate` refuses an artifact
+  whose run did not end (`CE-0022`); `CompileCallHost` cuts a reply past `OutputCharBound` as
+  `malformed` naming the bound.
+- **Sweep (not run this slice):** other negative-only oracles (`verify-*` scripts asserting "no X"
+  over a log that may be truncated) — the conductor's to schedule.
+- **Status:** `controlled`.
+
+### DC-186 — A poll-after-event drain waits on an empty queue when the producer publishes the terminal event before resolving the request
+
+- **Filed by:** CV-3 c (placeholder — the conductor allocates the final number/status).
+- **Shape:** a consumer loop reads an event, then checks `request.IsCompleted`, then waits for the
+  next event; the producer publishes the request's result frame as an event *before* it resolves the
+  request (Ruling 11's ordinal), so the check runs false on the last event and the loop waits
+  forever on a queue that will never fill.
+- **Instance:** `CompileCallHost.DrainAsync`'s first shape — green alone, timed out at the deadline
+  when the class ran together (`APromptThatOutlastsTheBound…`, `AnAnsweredCompile…`).
+- **Control (this instance):** the drain races `WaitToReadAsync` against the prompt task and sweeps
+  the queue once the prompt completes. **Sibling named:** `GovernedRunHost.DrainAsync` has the same
+  shape (`prompt.IsCompleted && queue.Reader.Count == 0` after each event); the real adapter usually
+  sends later frames, but nothing guarantees one after the result — a finding for the run root's
+  owner (CV-5 / the conductor).
+- **Status:** `controlled` (this instance); `open` (the sibling).

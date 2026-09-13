@@ -26,6 +26,9 @@ public static class CompileEventKinds
     /// <summary><c>compile.degraded{reason, error_code}</c>.</summary>
     public const string Degraded = "compile.degraded";
 
+    /// <summary><c>compile.stage{stage, duration_ms, outcome}</c> — one per stage (§A10.3).</summary>
+    public const string Stage = "compile.stage";
+
     /// <summary>The <c>Ext.origin</c> value every compile event carries — origin is never inferred from <c>RunId</c> / <c>AgentId</c> (a type pun).</summary>
     public const string Origin = "compile";
 }
@@ -42,6 +45,15 @@ public static class CompileSignal
     public const string SourceName = "aide.compile";
 
     private static readonly ActivitySource Source = new(SourceName);
+
+    /// <summary>Records one stage's timing and outcome: <c>compile.stage{stage, duration_ms, outcome}</c>; a stage that did not run is never recorded as 0.</summary>
+    public static void Stage(string stage, long durationMs, string outcome)
+    {
+        using var activity = Source.StartActivity(CompileEventKinds.Stage);
+        activity?.SetTag("stage", stage);
+        activity?.SetTag("duration_ms", durationMs);
+        activity?.SetTag("outcome", outcome);
+    }
 
     /// <summary>Records a degraded state: <c>compile.degraded{reason, error_code}</c>.</summary>
     public static void Degraded(string reason, string errorCode)

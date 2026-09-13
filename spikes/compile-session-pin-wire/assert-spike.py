@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -125,6 +126,18 @@ def run_assertions(frames_dir: Path) -> list[str]:
         raise Failure(f"missing required file: {summary_path}")
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
 
+    # (0) the run ENDED. An aborted or timed-out run (the 2026-09-13T18-58-48-954Z runaway: 5,843
+    # chunks of `<invoke name="Read">` XML as plain text, stopped by hand) can satisfy every
+    # letter below — zero tool_call frames, nothing written, nothing pushed — and is still not a
+    # green: its prompts never ended, its later prompts were never sent, and its frame log must
+    # never become the gate artifact. Refused by mode, first.
+    if summary.get("mode") not in ("full", "dry-run"):
+        raise Failure(f"(0) FAILED: the run did not end — mode {summary.get('mode')!r}: "
+                      f"{json.dumps(summary.get('aborted') or summary.get('timed_out'))[:400]}")
+    if summary.get("timed_out"):
+        raise Failure(f"(0) FAILED: a prompt hit the bound: {json.dumps(summary['timed_out'])[:400]}")
+    lines.append(f"(0) PASS: the run ended (mode {summary.get('mode')})")
+
     # (a) zero tool_call / tool_call_update frames of ANY name.
     tool_names, permission_count = find_tool_calls_and_permissions(recv)
     if tool_names:
@@ -183,6 +196,10 @@ def run_assertions(frames_dir: Path) -> list[str]:
         raise Failure("(f) FAILED: no session/prompt found in sent.jsonl")
     segments = segment_by_prompt(recv, p_ids)
     first_reply = reply_text(segments[0]) if segments else ""
+    if "<invoke " in first_reply or "<parameter name=" in first_reply:
+        # The runaway's signature: tool-call XML emitted as text is a tool call standing in for
+        # the read — exactly what (f)'s weak form must never accept.
+        raise Failure(f"(f) FAILED: the reply carries tool-call XML as text ({len(first_reply)} chars): {first_reply[:160]!r}")
     if FIRST_LINE_MARKER in first_reply:
         lines.append("(f) PASS: the read prompt's reply contains the fixture's first line")
     elif first_reply.strip():
@@ -192,6 +209,22 @@ def run_assertions(frames_dir: Path) -> list[str]:
         )
     else:
         raise Failure("(f) FAILED: the read prompt produced no reply text and no tool call")
+
+    # (h) REPORTED, never asserted: whether any `mcp__` tool name reached the model's own account
+    # of its tools. The first run's finding 1 — `mcp__pd5-fixture__write_note` offered though never
+    # called — was visible only because the read prompt's reply happened to name it; the second
+    # run's third prompt asks the model to enumerate its tools so the exposure is a direct
+    # observable. A `mcp__` name here is a finding row for the Proof Pack (the widened pin did not
+    # close the exposure); "none" is the reading that closes it. Neither is a PASS/FAIL of C1,
+    # whose letter is (a).
+    all_replies = " ".join(reply_text(seg) for seg in segments)
+    exposed = sorted(set(re.findall(r"mcp__[A-Za-z0-9_\-]+", all_replies)))
+    if len(segments) >= 3:
+        last_reply = reply_text(segments[-1]).strip()
+        lines.append(f"(h) REPORTED: mcp__ names in the model's replies: {exposed or 'none'}; "
+                     f"tools prompt reply: {last_reply[:200]!r}")
+    else:
+        lines.append(f"(h) REPORTED: mcp__ names in the model's replies: {exposed or 'none'} (no tools prompt in this run)")
 
     # (g) the recorded adapter sha matches the pin, and the CLI triple was recorded (not "not
     # recorded" — a missing CLI sha/version is a gap, never a pass by omission).

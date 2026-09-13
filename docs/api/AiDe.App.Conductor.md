@@ -10,17 +10,109 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Conductor: 6 types, 18 members, 100% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Conductor: 11 types, 28 members, 100% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Conductor`
 
-**6 public types · 18 public members · 100% documented.**
+**11 public types · 28 public members · 100% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
 > gap rather than given invented text. The extractor is a lexical reader, not a compiler:
 > it does not resolve generics, partial classes across files, or conditional compilation.
+
+## `CompileRequest`
+
+*record* — `CompileCallHost.cs`
+
+What one compile call needs — host-side sources only; nothing here comes from a page or from the model.
+
+## `CompileCallOutcomes`
+
+*class* — `CompileCallHost.cs`
+
+How a compile call ended at the host — before the typed boundary reads any text.
+
+| Member | Summary |
+|---|---|
+| `string Answered = "answered"` | The prompt ended and the raw text is on the result; the validator decides `succeeded` / `malformed` / `suspect`. |
+| `string Unavailable = CallOutcomes.Unavailable` | No binding, no launch, an unverified pin, or an engine that did not start (`called.outcome: unavailable`). |
+| `string Refused = CallOutcomes.Refused` | The identity gate refused (`AP-0009`–`AP-0013`, or `Bind`'s own) — the same refusal a lane gets. |
+| `string TimedOut = CallOutcomes.TimedOut` | The linked deadline fired; `Reason` names the step. |
+| `string Cancelled = CallOutcomes.Cancelled` | The caller cancelled (an edit during `preparing`). |
+
+## `CompileResult`
+
+*record* — `CompileCallHost.cs`
+
+What one compile call produced — the receipt the `called` row is written from (§A10.3; ADR-0035 rule 1).
+
+## `CompileCallHost`
+
+*class* — `CompileCallHost.cs`
+
+The compile call's composition — the second, smaller composition of the agent plane's pieces,
+and **not a run's composition root** (ADR-0035 rules 1 and 3).
+
+**Remarks.** **Order:** pin verified → `ResolveLaunch` → `Start` at the repository root →
+peer + client (a reject-by-kind chooser that counts) → `initialize` → observed auth →
+`AuthorizeBinding` → `session/new` with
+`Compile` → the prompt → drain (counting `tool_call`) →
+close. It never provisions a worktree, opens an episode, constructs a run request,
+runs a seam monitor or scores — the negative-reference census over `Conductor/Compile*.cs`
+holds the names out (`TheCompileCallIsNotARunRootTests`).
+
+
+
+
+
+**One linked deadline over the whole call** (ADR-0035 rule 1): `initialize`,
+`session/new` and the prompt run under the same remaining budget, and a step that outlasts
+it yields `timed_out` with the step named — the peer's own 60 s request and 15-minute prompt
+timeouts would otherwise let a wedged adapter sit past the bound with no degraded state. PD-5's
+second run is the measurement this exists for: a toolless session answered the read prompt with
+tool-call XML as text in an unbounded loop, ~20k output tokens in six minutes, until it was
+killed by hand. On `timed_out` and `cancelled` the engine is disposed — its tree
+reaped — before the receipt is returned.
+
+
+
+
+
+**Distinguished in the root ledger by construction:** it opens
+`compile-call.compose` on the same activity source, so `Roots`
+reads 0 for a compile. No sibling ledger is written (ADR-0035 rule 3): the durable receipt is
+the `called` row, and the span is the in-process count.
+
+
+
+
+
+Patterns: Facade over the handshake (the run root's twin — the duplication is recorded,
+the fold deferred: ADR-0035 follow-ups); least-privilege capability restriction (no tool
+surface); Receipt Ledger (the `called` row). `[CapabilityTier(T3)]`'s reader is
+`TheCompileCallIsNotARunRootTests` — every carrier of the attribute opens a `*.compose`
+receipt.
+
+| Member | Summary |
+|---|---|
+| `string ComposeActivity = "compile-call.compose"` | The activity this host opens for one composition — never `GovernedRunComposeActivity`. |
+| `int MaxOutputTokens = 4096` | The output-token cap the compile child carries (ADR-0035's cost model: output ≤ 4k). The CLI reads it from its environment; whether it stops with a named `stopReason` is **Inferred until PD-5's run 3 measures it**; th… |
+| `int OutputCharBound = 16_384` | The drained reply's byte bound — deterministic, in the host, independent of the CLI: a reply past it is cancelled and reads `malformed` with the reason naming the bound, so the eval's `degraded_by_reason` separates a … |
+| `Task<CompileResult> CompileAsync(CompileRequest request, CancellationToken cancellationToken = default)` | Runs one compile call against the real engine. |
+
+## `CapabilityTierAttribute`
+
+*class* — `CompileCallHost.cs`
+
+LOA C1: the capability tier a type composes at — **with a reader**: a test enumerates every
+carrier and asserts each opens a `*.compose` receipt, so the attribute is a control, not
+prose in attribute syntax (ADR-0035 LOA mapping; the Tech Lead's condition).
+
+| Member | Summary |
+|---|---|
+| `string Tier { get; } = tier` | T0 · T1 · T2 · T3. |
 
 ## `CompositionRootLedger`
 
