@@ -9,9 +9,9 @@ namespace AiDe.Core.Tests.AgentPlane;
 /// </summary>
 /// <remarks>
 /// <para><b>Why the corpus is the oracle.</b> A wire-contract test whose author also wrote the
-/// input proves only that the author was self-consistent. The corpus is 88 frames captured
-/// verbatim from a live <c>claude-code</c> ACP session before any parse or re-serialization —
-/// plus the 68 of the 2026-09-13 thought capture (<c>thought.jsonl</c>, CV-5.3)
+/// input proves only that the author was self-consistent. The corpus is every frame captured
+/// verbatim from live <c>claude-code</c> ACP sessions before any parse or re-serialization (the
+/// two Phase-1 probes and CV-5.3's thought capture; the files are enumerated, never counted here — DC-184)
 /// (<c>frames/PROVENANCE.md</c>), so a mapping assumption that the adapter does not share fails
 /// here rather than in a governed run.</para>
 ///
@@ -331,6 +331,7 @@ public sealed class AcpRunEventMapperTests
         }
 
         Assert.True(seen > 0, "the corpus no longer contains an agent_thought_chunk frame — the row's shape would be Inferred again");
+        Assert.Equal(19, seen);   // the capture's count, asserted from the file so the Proof Pack's number is a record, not a memoir (DC-184)
         Assert.StartsWith("This is a straightforward logic puzzle", joined.ToString(), StringComparison.Ordinal);
     }
 

@@ -22,7 +22,7 @@ namespace AiDe.Core.AgentPlane;
 /// <para><b>Nothing is dropped, ever.</b> A recognized frame's payload moves to <c>body</c> and the
 /// remaining envelope stays in <c>Ext</c>; an unrecognized frame goes to <c>Ext</c> entire. Either
 /// way every field of the original frame is present exactly once, which is what the captured-corpus
-/// round-trip proves over every frame in the corpus (88 at Phase 1; 156 with the thought capture).</para>
+/// round-trip proves over every frame in the corpus (enumerated from disk, never counted here — DC-184).</para>
 ///
 /// <para><b>Identity, ordering and time come from the plane.</b> ACP frames carry no run id, no
 /// sequence and no timestamp. <c>Seq</c> is assigned here and <c>Ts</c> is stamped at receipt —
