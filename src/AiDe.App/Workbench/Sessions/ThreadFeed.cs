@@ -422,6 +422,23 @@ public sealed class ThreadFeed : FeedList, IDisposable
     /// <summary>The one monospace stack the thread, the split, the document and the composer share.</summary>
     internal static readonly FontFamily Mono = new("Cascadia Mono, Consolas, monospace");
 
+    /// <summary>
+    /// The one clock every timestamp on the surface renders in — the operator's local time, as the
+    /// turn's <c>hh:mm</c> and the split's heading already do. A line stamped at receipt is UTC
+    /// (<c>AcpPeer</c> stamps <c>GetUtcNow()</c>); a <c>StringFormat</c> alone rendered that clock,
+    /// one hour off the heading above it (DM-A: two conversions of one instant).
+    /// </summary>
+    internal static readonly IValueConverter LocalClock = new LocalClockConverter();
+
+    private sealed class LocalClockConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
+            value is DateTimeOffset at ? at.ToLocalTime().ToString("HH:mm:ss", CultureInfo.InvariantCulture) : string.Empty;
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+            throw new NotSupportedException("a rendered clock is never written back");
+    }
+
     // One frozen instance for every ring: the storyboard animates a clone (a frozen Freezable is
     // cloned on animation), so sharing is safe — and Freeze() says so rather than relying on it.
     private static readonly RotateTransform RingTransform = Frozen(new RotateTransform(0));
@@ -765,7 +782,7 @@ public sealed class ThreadFeed : FeedList, IDisposable
         row.SetValue(FrameworkElement.MinHeightProperty, 20.0);
 
         var time = F(typeof(ThreadText));
-        time.SetBinding(TextBlock.TextProperty, new Binding(nameof(EventLine.At)) { StringFormat = "HH:mm:ss", ConverterCulture = CultureInfo.InvariantCulture });
+        time.SetBinding(TextBlock.TextProperty, new Binding(nameof(EventLine.At)) { Converter = LocalClock });
         time.SetValue(TextBlock.FontSizeProperty, 12.0);
         time.SetValue(TextBlock.FontFamilyProperty, Mono);
         time.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");

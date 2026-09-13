@@ -17,17 +17,40 @@ public abstract record ConsoleSplitRow(int Ordinal)
         public string Text => string.Create(CultureInfo.InvariantCulture, $"b{Ordinal} · {Time}");
     }
 
-    /// <summary>One event line, named by its text.</summary>
-    public sealed record Line(int Ordinal, EventLine Event) : ConsoleSplitRow(Ordinal)
+    /// <summary>One row of the turn's fold (Ruling 81: a message, a thought, or one event of any other kind), named by its text.</summary>
+    public sealed record Line(int Ordinal, TurnRow Row) : ConsoleSplitRow(Ordinal)
     {
-        public string Text => Event.Text;
+        public string Text => Row.Text;
+
+        /// <summary><i>message</i> · <i>thought</i> · else the kind verbatim (DESIGN.md SC1 as amended; the mockup's <c>crow</c>).</summary>
+        public string KindWord => Row.Kind switch
+        {
+            Coalesce.MessageKind => "message",
+            Coalesce.ThoughtKind => "thought",
+            var kind => kind,
+        };
+
+        /// <summary><i>3 chunks</i> · <i>1 chunk</i>; empty for a kind that is one row per event — rendered from the fold, never asserted (Ruling 81 condition 3).</summary>
+        public string ChunksText => Row.Chunks switch
+        {
+            null => string.Empty,
+            1 => "1 chunk",
+            var n => string.Create(CultureInfo.InvariantCulture, $"{n} chunks"),
+        };
+
+        public bool HasChunks => Row.Chunks is not null;
+
+        public bool IsThought => string.Equals(Row.Kind, Coalesce.ThoughtKind, StringComparison.Ordinal);
     }
 }
 
 /// <summary>
-/// The Console split (SC1; Ruling 74): the same events the thread folds per turn, unfolded in time
-/// — a flat list of rows (a heading per turn, then its lines), <b>a view of the same fold</b>,
-/// never a second store (Ruling 74 condition 1: the split's rows equal the folded events, in order).
+/// The Console split (SC1; Rulings 74 and 81): the same fold the thread renders per turn, unfolded
+/// in time — a flat list of rows (a heading per turn, then <c>Coalesce(turn.Events)</c>), <b>a view
+/// of the same fold</b>, never a second store (Ruling 74 condition 1 as amended: the split's rows
+/// equal <c>Coalesce(turn.Events)</c> of every turn, in order, and the thread's reply side renders
+/// the same output). The grain is the message, never the wire chunk — the operator's <i>"console
+/// output is too fine grained"</i>; a row reads <c>hh:mm:ss · lane · message · the joined text · n chunks</c>.
 /// </summary>
 /// <remarks>
 /// <para><b>The old merged-stream renderer is gone.</b> It rendered <c>ConsoleStreamModel</c> —
@@ -121,7 +144,7 @@ public sealed class ConsoleSurface : FeedList
     /// <summary>The status word the header's Console toggle announces: <i>following b5</i> · <i>at b2</i> · <i>at the end</i>.</summary>
     public string Status => AutomationProperties.GetItemStatus(this);
 
-    /// <summary>The rows a fold yields: for each turn, its heading then its lines — the identity's right side (M1).</summary>
+    /// <summary>The rows a fold yields: for each turn, its heading then <c>Coalesce(turn.Events)</c> — the identity's right side (M1, Ruling 81).</summary>
     public static IReadOnlyList<ConsoleSplitRow> Derive(IReadOnlyList<TurnView> turns)
     {
         ArgumentNullException.ThrowIfNull(turns);
@@ -130,9 +153,9 @@ public sealed class ConsoleSurface : FeedList
         foreach (var turn in turns)
         {
             rows.Add(new ConsoleSplitRow.TurnHeading(turn.Ordinal, turn.At.ToLocalTime().ToString("HH:mm", CultureInfo.InvariantCulture)));
-            foreach (var line in turn.Events)
+            foreach (var row in turn.Rows)
             {
-                rows.Add(new ConsoleSplitRow.Line(turn.Ordinal, line));
+                rows.Add(new ConsoleSplitRow.Line(turn.Ordinal, row));
             }
         }
 
@@ -166,13 +189,58 @@ public sealed class ConsoleSurface : FeedList
         return new DataTemplate(typeof(ConsoleSplitRow.TurnHeading)) { VisualTree = text };
     }
 
-    /// <summary>The line row binds the event through its <c>Event</c> facet with the thread's one event-line template.</summary>
+    /// <summary>
+    /// <c>hh:mm:ss · lane · message · the joined text · n chunks</c> (DESIGN.md SC1 as amended by
+    /// Ruling 81): the thread's event-line grammar plus the kind word and the chunk count; a thought
+    /// row dim; stderr in danger. The count is a rendered detail — the row's name is its text alone.
+    /// </summary>
     private static DataTemplate LineTemplate()
     {
-        var host = new FrameworkElementFactory(typeof(ContentPresenter));
-        host.SetBinding(ContentPresenter.ContentProperty, new Binding(nameof(ConsoleSplitRow.Line.Event)));
-        host.SetValue(ContentPresenter.ContentTemplateProperty, ThreadFeed.EventLineTemplate());
-        return new DataTemplate(typeof(ConsoleSplitRow.Line)) { VisualTree = host };
+        var row = new FrameworkElementFactory(typeof(StackPanel));
+        row.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
+        row.SetValue(FrameworkElement.MinHeightProperty, 20.0);
+
+        var time = Mono("Row." + nameof(TurnRow.At), "TextMutedBrush");
+        time.SetBinding(TextBlock.TextProperty, new Binding("Row." + nameof(TurnRow.At)) { Converter = ThreadFeed.LocalClock });
+        row.AppendChild(time);
+        row.AppendChild(Mono("Row." + nameof(TurnRow.Lane), "AccentBrush"));
+        row.AppendChild(Mono(nameof(ConsoleSplitRow.Line.KindWord), "TextMutedBrush"));
+
+        var message = new FrameworkElementFactory(typeof(ThreadText));
+        message.SetBinding(TextBlock.TextProperty, new Binding(nameof(ConsoleSplitRow.Line.Text)));
+        message.SetValue(TextBlock.FontSizeProperty, 12.0);
+        message.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap);
+        message.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+        message.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, 8, 0));
+        var ink = new Style(typeof(ThreadText));
+        ink.Setters.Add(new Setter(TextBlock.ForegroundProperty, new DynamicResourceExtension("TextBrush")));
+        var stderr = new DataTrigger { Binding = new Binding("Row." + nameof(TurnRow.Kind)), Value = "stderr" };
+        stderr.Setters.Add(new Setter(TextBlock.ForegroundProperty, new DynamicResourceExtension("DangerBrush")));
+        ink.Triggers.Add(stderr);
+        var thought = new DataTrigger { Binding = new Binding(nameof(ConsoleSplitRow.Line.IsThought)), Value = true };
+        thought.Setters.Add(new Setter(TextBlock.ForegroundProperty, new DynamicResourceExtension("TextMutedBrush")));
+        ink.Triggers.Add(thought);
+        message.SetValue(FrameworkElement.StyleProperty, ink);
+        row.AppendChild(message);
+
+        var chunks = Mono(nameof(ConsoleSplitRow.Line.ChunksText), "TextMutedBrush");
+        chunks.SetBinding(UIElement.VisibilityProperty, new Binding(nameof(ConsoleSplitRow.Line.HasChunks)) { Converter = new BooleanToVisibilityConverter() });
+        row.AppendChild(chunks);
+
+        return new DataTemplate(typeof(ConsoleSplitRow.Line)) { VisualTree = row };
+    }
+
+    /// <summary>One 12 px mono segment of the row, bound by path, 8 px after it.</summary>
+    private static FrameworkElementFactory Mono(string path, string brush)
+    {
+        var text = new FrameworkElementFactory(typeof(ThreadText));
+        text.SetBinding(TextBlock.TextProperty, new Binding(path));
+        text.SetValue(TextBlock.FontSizeProperty, 12.0);
+        text.SetValue(TextBlock.FontFamilyProperty, ThreadFeed.Mono);
+        text.SetResourceReference(TextBlock.ForegroundProperty, brush);
+        text.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, 8, 0));
+        text.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+        return text;
     }
 
     private static Style RowContainerStyle()

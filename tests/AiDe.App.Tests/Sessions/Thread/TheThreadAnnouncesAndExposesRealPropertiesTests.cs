@@ -12,7 +12,7 @@ using AiDe.Core.Presentation.Sessions;
 namespace AiDe.App.Tests.Sessions.Thread;
 
 /// <summary>
-/// DS-1 <b>A2 · A3 · A4 · U1 · U2 · U5 · M1 · C1 · C2 · S1 · T1 · Z1</b> — the notification mapping
+/// DS-1 <b>A2 · A3 · A4 · U1 · U2 · U5 · C1 · C2 · S1 · T1 · Z1</b> (M1 lives in <c>TheThreadIsOneListTests</c>, re-pointed by Ruling 81) — the notification mapping
 /// and the raise seam, what is never announced, the actions' focus rule, the UIA contract, the
 /// one-list identity, the off-thread channel, the stopped feed, model text as text, the records
 /// without text, and the layers.
@@ -242,29 +242,6 @@ public sealed class TheThreadAnnouncesAndExposesRealPropertiesTests
 
                 return Task.CompletedTask;
             });
-    }
-
-    /// <summary><b>M1</b> (Ruling 74 condition 1). The split's rows, the jump list and the header's count are identities over <c>Turns</c> — never an equation between two sources.</summary>
-    [Fact]
-    public void TheSplit_TheJumpList_AndTheHeader_AreViewsOfTurns()
-    {
-        Sta.Run(() =>
-        {
-            var turns = ThreadFixtures.Five();
-            var split = new ConsoleSurface();
-            split.Show(turns);
-
-            var expected = turns.SelectMany(t => new[] { $"b{t.Ordinal}" }.Concat(t.Events.Select(e => e.Text))).ToList();
-            var actual = split.Rows.Select(r => r is ConsoleSplitRow.TurnHeading h ? $"b{h.Ordinal}" : ((ConsoleSplitRow.Line)r).Text).ToList();
-            Assert.Equal(expected, actual);
-            Assert.Equal(turns.Sum(t => t.Events.Count) + turns.Count, split.Rows.Count);
-
-            // Grouped by turn, in order — never interleaved by time across turns.
-            var ordinals = split.Rows.Select(r => r.Ordinal).ToList();
-            Assert.Equal(ordinals.Order(), ordinals);
-
-            Assert.Equal("59,460 tokens this session · bounded by your subscription", TurnCopy.SessionSpend(turns, null));
-        });
     }
 
     /// <summary>
