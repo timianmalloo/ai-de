@@ -1,0 +1,210 @@
+---
+id: coordination-code-atlas
+title: "Coordination plan - Code Atlas first delivery horizon"
+type: doc
+status: proposed
+owner: "@timianmalloo"
+tags: [code-atlas, coordination, worktrees, active]
+links:
+  - { to: spec-addendum-e-code-atlas, rel: implements }
+  - { to: architecture-code-atlas-proposed, rel: depends-on }
+  - { to: coordination-code-atlas-resume, rel: depends-on }
+  - { to: note-atlas-lane-admission, rel: depends-on }
+review-by: 2026-12-12
+summary: >-
+  Reviewed inventory, declarations, bound source, query and native-view components are joined
+  on the isolated Conductor branch. The detached runner and independent real-root journey are
+  active next; shared Shell integration and normative registration remain separately gated.
+---
+
+# Code Atlas coordination - isolated authoring active, integration not admitted
+
+**Current execution checkpoint:** Owner turn 32 accepts the independently proved detached
+reader at `cc67f7c6`, not integrated E0 or the programme. Current-main reconciliation and a
+concrete shared-host admission packet are next, with one separately registered Astra worker
+and twelve new leaves. The historical tables below
+explain prior allocations; the **Active live-reader horizon** section is the current work plan.
+
+**Current delivery blocker:** `req-01M2B86TXF7SHG61B31P4H4173` is still open.
+The native request is a shared pull log, not delivery into Claude's conversation. It blocks
+agreement on shared integration, **not the independently admitted authoring below**. The user's
+continuation instruction led to `note-atlas-isolated-authoring`; the sole section-2 register now
+records that branch-local exception and exact safety writer/files. Existing ownership rows remain.
+The new narrowed request is `req-01M2BGHNCM6WRD4ZZMBBFEEB4K`. Neither request is acknowledged.
+
+**Horizon:** E-0, the Owner's first physical inventory/type/member/source native journey.
+E-1 through E-4 are roadmap constraints, not work released by this plan.
+Metadata uses `type: doc` because the installed graph registry rejects `plan`; the execution-plan
+headings/columns below retain the skill's machine-readable schema.
+
+## Layer state
+
+| check | result | meaning |
+|---|---|---|
+| `coord doctor` in conductor tree | 11 classified patterns; merge drivers effective | Installed per clone; every linked worktree inherits. No reinstall from a worker tree. |
+| Shared regeneration marker | 6 owed entries at grounding | Not cleared with `coord regen`: its primary-owned marker must not be deleted as a worker side effect. |
+| `pack-doctor` | Coordination PASS; graph has known dangling F5 proof link | Installation state and content readiness are separate. The F5 branch remains frozen. |
+| Main at worker creation | `4d396411`, CV-1 merged after SH-2 | Both new worker trees resolve to this revision; reconcile again at shared integration. |
+| Atlas code permission | New-file branch-local authoring admitted | Exact exception in section 2; existing shared files and main integration still excluded. |
+| Candidate E | Content gates clear with downstream conditions | Candidate/draft only, not normative registration or implementation proof. |
+| Architecture | PROPOSED; independent content reviews, Owner choices and final scoping conditions recorded | No source, migration, native or provider admission. |
+
+## Artifact classes
+
+| path / pattern | class | mechanism | coordination needed |
+|---|---|---|---|
+| Agreed product source/test files | authored | One registered writer per file | Yes; exact Core/Shell carve-outs required. |
+| New Atlas spec/architecture/ADRs/design/proof | authored | Isolated branch, named scope and lease | Yes for authorship; no overlap with C/D documents. |
+| `docs/audit/*.jsonl`, coordination logs | register | Existing append-only writers; content union at join | No content-writer lease choreography; never hand-merge away another entry. |
+| `docs/docs-index.js`, audit view, API/doc bundle | derived | Existing generators, in dependency order | No manual merge; Conductor regenerates after audit at join. |
+| `site/*.html` | authored with derived figure regions | Existing figure updater only | Never classify the whole page derived or overwrite another author's prose. |
+| Private proposal branch / TheTerrace | reference only | Read-only; safe summaries only | No import into delivery history or publication. |
+
+## Tracks
+
+The exact source-safety files and the first four-file identity/binding unit are recorded in the
+section-2 exception. The safety checkpoint is joined with bounded evidence; the first candidate
+writer is dispatched. Other `owns` entries below remain proposed integration responsibilities,
+not a grant.
+Budgets are Inferred planning circuit breakers. A firing cap reports a finding; it never drops a gate.
+
+| track | owns (authored) | depends on | tier | fan-out cap | budget | exit evidence | harness |
+|---|---|---|---|---|---|---|---|
+| E0-SAFETY | Four exact new probe project/source files and `docs/proof/code-atlas-source-safety.md`, listed in section 2 | Explicit Owner probe admission, now recorded | T2 | 0 | 30 calls including preflight/clarification, one bounded native handle/race batch | Windows opened-object/root/link/replacement/hash/decoder semantics observed; refusal/race falsifiers; no userdata or shared-store mutation | Existing GPT-5.5 writer, new `atlas/e0-source-safety` tree at `4d396411`; dispatched |
+| E0-BUILD first unit | Exact `AtlasIdentity.cs`, `AtlasSourceBinding.cs` and their two Core test files recorded in section 2 | Owner turn-9 unit grant; narrow unit model/oracle gates; not the complete E0 document | T2 | 0 | 25 calls within the existing 60-call candidate budget, including at most five unit-design calls | Compiled revision-independent scoped identity, unambiguous encoding, manifest/root/file/hash binding mismatch oracles and observed red/green; no I/O or UI claim | Single GPT-5.5 writer `f4db534a-6b1c-4a34-9f1b-24cde7be2b6f` in `atlas/e0-candidate` at `4d396411`; subsequent inventory/reader/native work requires the next exact assignment |
+| SH-INTEGRATION | Existing factory/menu/host/layout files retained by Claude/Shell | Stable E0-BUILD seam and accepted integration request | T2 | per current Claude plan | Set by owning conductor, not invented here | Registry/routing/layout/native-host path reaches the real new content; current SH2 behavior remains intact | Existing acknowledged Claude/Shell lane, its own worktree |
+| E0-PROOF | New agreed proof/tests/probe artifacts, not product source | Joined E0-BUILD + SH-INTEGRATION revision | T2 | 0 | 30 calls, one bounded evidence pass plus named repairs | Actual Architecture entry -> file -> member -> source -> Back with UIA/focus/theme/DPI/bounds/stale/unknown states; independent source/wire/store consistency proof | GPT-5.5 proof worker, separate pinned worktree; relevant independent specialist reviewers |
+
+One coherent implementation writer is deliberate: splitting inventory/model/source/selection across
+several new writers would create serial schema and adapter seams while paying parallel context cost.
+The fleet still separates Owner, Conductor, author, Shell integrator and verification authority.
+It does not manufacture concurrent code lanes where dependencies fail the independence test.
+
+## Serial spine
+
+| item | why it cannot be parallel | who owns it |
+|---|---|---|
+| Register E and agree shared integration | Normative registration and existing-file/main authority are not supplied by the branch-local exception | Claude primary conductor + Core/Shell counterparts; Astra Owner for Atlas scope |
+| Source identity/manifest/policy contract | Every downstream projection and source read depends on it | Accepted E0 design owner, Data/Security/Test gates |
+| Windows source-reader safety choice | Unsafe opened-object/hash policy invalidates the source contract | Native/Security/Core design gate |
+| Public wire/capability contract | UI and daemon must agree on bindings, bounds and refusal | Core/daemon owner |
+| Shell integration | Existing active files have one owner | Claude/Shell |
+| Main convergence | Shared index/HEAD cannot have two integrators | One explicitly agreed integrator; currently Claude |
+| Horizon closure | Author reports are evidence, not acceptance | Separate Owner after required independent gates |
+
+## Seams
+
+| from -> to | the request | resolved by |
+|---|---|---|
+| Atlas -> Core | Accept exact inventory/member/source/query/wire source/test carve-out from architecture section 14 | Core authority routed by Claude conductor |
+| Atlas -> Shell | Consume stable native content/selection/query seam; Shell owns registry/menu/host changes | Shell owner, not lease expiration |
+| Core producer -> native consumer | Versioned manifest/scope/identity/hash/span/coverage/bounds survive every projection/wire hop | Single E0-BUILD author until contract stable; independent tests |
+| Atlas -> Conversation, later | Dedicated read-only analysis contract; never compiler-envelope/direct-provider shortcut | Conversation owner only at E-4 admission |
+| Workers -> Conductor | Commit/report/proof receipt with exact scope, tests, residuals and no self-acceptance | Conductor joins; Owner adjudicates |
+
+Shared-surface guards are jointly scoped: Atlas prohibits its interpretation path from invoking
+compile/run APIs, not those APIs everywhere in shared files. Shell retains its legitimate catalog/
+layout operations. Any new scan guard must state root, recursion, tokens and named allowlist.
+No guard may require removal of another lane's authorized behavior.
+
+## Struck tracks
+
+| track | why it was not worth its multiplier |
+|---|---|
+| Separate file/type/member implementers before contracts | Splits one identity and source-binding invariant; every change becomes a seam request. |
+| Independent second graph service/store | Duplicates authority, history and privacy state without measured need. |
+| Parallel E1/E2/E3/E4 feature lanes now | Owner has not admitted them; E0 identity/source foundation and stage-specific proofs are prerequisites. |
+| Atlas edits to shared Shell files in parallel | Existing ownership and main-integration race, not useful parallelism. |
+| More workers to overcome missing acknowledgment | Width cannot supply authority or make an unreceived request an agreement. |
+
+## Order of operations
+
+**Active exception:** source-safety implementation and isolated E0 design/additive candidate proceed
+now under the exact section-2 grant. The sequence below governs production integration and native
+acceptance; step 1 is not a predecessor of every independent authoring node. No existing SH3 file,
+project/package file, live data or shared store is touched by the admitted candidate.
+
+The Owner's `note-atlas-candidate-first-unit` also removes the complete E0 design document as a
+predecessor of its already specified deterministic identity/binding unit. The remaining detailed
+design is input to subsequent work, not an excuse to idle this source writer.
+
+| # | action | cost | why now |
+|---|---|---|---|
+| 1 | Obtain actual resolution of full native request ID and section-2 updates | External acknowledgment; not an estimated timer | Code permission cannot be inferred. |
+| 2 | Reconcile current main, registration, content decisions and exact source/test seams | Bounded read/rebase/design checkpoint | Main has advanced since original source evidence. |
+| 3 | Admit E0 design-slice, safety spike and numeric resource budgets | Owner + triggered independent gates | Queue, source, memory, storage and telemetry floors precede code. |
+| 4 | Execute E0-SAFETY, then one E0-BUILD writer under TDD | Track budgets above; estimates, not measured speedup | Source safety and one identity contract constrain all consumers. |
+| 5 | Join owning Shell integration serially | Owning conductor's agreed budget | Real native entry path closes here, not in a fake factory. |
+| 6 | Execute E0-PROOF and independent gates; repair named findings | Bounded proof loop | Code/demo/test evidence must describe the same revision. |
+| 7 | Regenerate after audit, read back state and seek Owner horizon closure | Deterministic mechanics | No false completed/private-published/clean-state claim. |
+| 8 | Only then ask Owner to admit the next vertical stage | New phase decision | Architecture completeness does not admit every implementation phase. |
+
+## Harness and fan-out contract
+
+Width <=4 across active author/review/decision seats. No autonomous child fan-out by a worker.
+Each worktree is separately registered, with its own branch/index; each shell call sets cwd/identity.
+Current worker writes and commit-floor checks were observed. `coord doctor`'s older per-harness
+edit-boundary qualification is historical and is not promoted to a fresh current-version proof.
+No automatic fallback from an enforced boundary to a merely observed one is allowed.
+
+Transient failures are reported and retried only with a named transient cause and bounded backoff;
+accepted observations/side effects are not blindly repeated. Join requires all affected hard floors.
+One failed track blocks its descendants, not unrelated admitted work. Review repairs drain a finite
+named finding list, at most two passes before explicit escalation. No source/authority floor is
+silently traded for deadline, token budget or fan-out.
+
+| Completed | Remaining | Best next action |
+|---|---|---|
+| Owner corrected the blanket freeze; exact safety writer/files recorded and probe dispatched in its own tree. | E0 design and safety results, candidate implementation/proof, actual shared-integration agreement and native-product acceptance. | Join the safety/design receipts and dispatch the exact additive candidate; pursue shared integration separately without human relay or repeated polling. |
+
+## Active live-reader horizon
+
+The earlier first-unit table above is retained as checkpoint history. The first Core unit is now
+joined with 38 independently executed tests. The active horizon is Owner turn 12,
+`note-atlas-live-reader-horizon`, on baseline `054b8b56`: current main `ca7443e8` plus reviewed
+Atlas commits, reconciled only in the Conductor tree.
+
+| Track | Capability | Current state | Bound / dependency |
+|---|---|---|---|
+| Common contract and F | Reasoning, then independent review | Codec/validated foundation joined; continuation joined `f8a6df06` | One identity authority, full compiler buffer distinct from source page; unknown coverage remains absent |
+| Native enumeration investigation | Independent review | Joined `8450ce06`; 29 PASS / 2 NOT_PROVEN | Ordinary-local/reparse exclusion only; symlink privilege not changed |
+| E/D/S producers | Reasoning, then independent review | Repaired, reviewed and joined; latest root bootstrap `41dc0501` | Actual inventory, Roslyn observations and bound source; FileLimited is not a project-compilation claim |
+| Q/N composition seams | Reasoning, then independent review | Final N `a8897914` joined `6583298e`; independently 272 Core / 45 native cases | Original selection loss fixed; separate peer-oracle corrections use own-HWND MTA client. No query/source/grant change |
+| Detached runner | Reasoning | `a0ffcee3` joined `cc67f7c6`; actual synthetic 45 PASS, intended source mutation fails | 26/26 author leaves; two files frozen; author evidence remains distinct |
+| Independent native checkpoint | Independent review | Complete: real-root 23 PASS, six N/A; independent bytes/spans/image/intended-red/clean-after receipt | 15 initial leaves plus three evidence leaves and one bookkeeping leaf reported afterward; conservatively 19/21, not 18 by excluding bookkeeping |
+| Record and Owner close | Deterministic mechanics, then independent review | Owner turn 32 accepts only the detached horizon | Evidence and capture persist with pins; no shared-host or complete Code Atlas acceptance |
+| Current-main shared-host admission | Reasoning and deterministic mechanics | Separately registered Astra compatibility worker next | Twelve new leaves; exact adapter/owner/test/production-authority packet, compatibility build and one counterpart attempt; no existing adapter edits |
+
+Q's turn-20 correction returned after 10/12 newly funded leaves; N after 10/10. F's receipt
+reported 17 top-level calls and seven wrapper leaves against eight allocated leaves; that
+ambiguity/overrun remains recorded, not relabelled a budget success. The six specialist review
+leaves did not include the additional Conductor readback/replay/join calls. The earlier total
+must not be interpreted as an all-inclusive orchestration cost.
+
+The next compatibility/admission node has an **Inferred** ceiling of twelve leaves,
+excluding separately recorded Conductor review/join/documentation mechanics; this is not a
+duration estimate. The earlier N -> runner -> independent nodes had real data and
+gate dependency, so widening cannot shorten that chain. Conductor documentation can proceed
+while the runner authors its two files. The existing width-four/no-worker-fan-out contract
+stands. Failure drains a named finding list; a fired budget returns to Owner, never silently
+widens or skips proof.
+
+### Recorded rework and scope boundary
+
+N's selection correction used 8/8 leaves, then 6/6 for discriminating diagnostics, 4/4 for the
+current-provider test, 4/4 for its null-before-selection boundary, and 5/6 for the actual
+owned-window MTA client. The product bytes stayed frozen through the test-only corrections.
+The shared STA helper, private caches and product expectations were not changed to obtain green.
+The source contracts and failed probes remain in the investigation.
+
+Runner used 26/26 leaves. Independent proof used its first 15 and received six more because the
+Conductor's output recipe shared a synthetic parent and final source/image/cleanliness checks
+were unfinished. Its refusal is retained, never called the intended mutation red.
+
+Primary was observed at `6d3e281a` after CV-2 landed. Both native counterpart requests are still
+open. This does not broaden the Atlas baseline or grant existing host/IPC/main integration.
+
+Every delegate has its own worktree and branch. The Conductor controls scope, gate release and
+local merges; no worker self-admits. No existing Core/host/IPC adapter or CV2 file is assigned.
+Observed SH3 ancestry is integration evidence, not acknowledgment. Symlinks remain unproven and
+outside the supported input space; no privilege change is permitted to clear that limit.

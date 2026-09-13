@@ -52,6 +52,17 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 ## Project classes
 
 ### DC-001 — A cited artifact is authored in a session and never actually committed
+- **Recurrence (2026-09-13, Atlas generated API):** regeneration created a new native namespace
+  reference while the explicit staging list named only existing files. Commit `01c00bea` carried
+  derived references but not `docs/api/AiDe.App.Workbench.Understanding.md`; post-commit status
+  exposed the untracked file and `ae24ce7e` added it without rewriting history.
+  **Class/sweep:** a working-tree derivation can cite an uncommitted output; `git ls-files
+  --others --exclude-standard -- docs/api` found no remaining siblings after repair.
+  **Derive/prevent:** keep the existing generator as producer and check committed membership,
+  not merely on-disk existence. `git cat-file -e <revision>:docs/api/AiDe.App.Workbench.Understanding.md`
+  failed with 128 at `01c00bea` and passed at `ae24ce7e`. This is an executed release check,
+  not a claim that a new general CI guard was installed; working-tree freshness alone remains
+  insufficient for new output files.
 - **Signature:** something is referenced as authoritative — by a typed link, a change-log row, or an
   **identifier cited in prose** — and the thing it names is not in the repository. Often an ignore
   rule written for build output swallowing a docs path (`[Rr]elease/` ate `docs/release/`); sometimes
@@ -505,6 +516,29 @@ for both or split.*
 - **Status:** `controlled`
 
 ### DC-015 — A success check coarser than the claim it is standing in for
+- **Recurrence (2026-09-12, Atlas joins and evidence lookup):** a fresh-tree `dotnet test
+  --no-restore` returned zero with no TRX because test assets were absent; ignored-artifact glob
+  misses were separately called missing proof although direct XML reads found the files.
+  **Sweep/control:** the Conductor read actual result-file existence and executed counts, restored
+  missing assets, and required 38/63/78/95/110/112-case receipts at the relevant joins. Reviewer
+  absence claims were corrected by direct absolute-path reads, not another glob. The same
+  state-not-status control applied to junction teardown: recursive delete threw after removing
+  the junction, so failure did not mean unchanged state. The controlled unlink-first fixture
+  preserved its target. Evidence: `investigation-code-atlas-native-repair-controls`,
+  `proof-code-atlas-identity-unit`, and `proof-code-atlas-live-reader-candidate`. A passing
+  process or a tool's empty search result is never substituted for its intended observation.
+- **Recurrence (2026-09-12, Atlas native probe):** a hash-match case was labelled as span
+  activation although the result carried no range; rename/write cases accepted any I/O exception
+  as a sharing block; an ADS case accepted any nonmatch. Independent review found all three.
+  The repaired probe names byte/hash behavior, asserts exact no-text refusal states, creates a
+  real ADS, and checks sharing error codes plus successful identical mutations after release.
+  **Sweep:** the probe's case labels, mutation helpers, ADS helper and proof pointers were checked;
+  `raw-green.txt` was also found to be the historical 15-case run, not the final 19-case result.
+  **Derive/control:** the final proof uses the named case outcomes rather than exit status or
+  historical labels; `proof-code-atlas-source-safety-join` records independent pinned and joined
+  19/0/2 runs. Exit 0 still includes two NOT_PROVEN cases and is explicitly not admission. The
+  earlier metadata-only handle variant was observed red by the worker; not every historical
+  mutation was independently rerun, and no editor-range proof is claimed.
 - **Signature:** a verification passes, and it would also have passed had the specific thing it
   exists to prove never happened. The check is real, the green is real, and it is answering a
   broader question than the one being asked — "did *something* succeed" in place of "did *this*
@@ -647,6 +681,29 @@ for both or split.*
 - **Status:** `partially-controlled`
 
 ### DC-019 — A trust boundary assumed safe because an adjacent control was proven
+- **Recurrence (2026-09-12, Atlas native repair):** a reviewed `GENERIC_READ` held-object
+  sharing control was changed to metadata-only `FILE_READ_ATTRIBUTES` as a smaller access
+  request, without proving that the sharing exclusion survived. The metadata call still
+  worked while the mutation assertion failed. **Class/sweep:** one E native open helper
+  governed the affected handles; its metadata capability was being mistaken for exclusion.
+  **Derive/control:** the Conductor changed only the desired-access mask in a synthetic CLR
+  10 fixture: attributes-only allowed write and rename while held; GenericRead blocked both
+  with `0x80070020`, and both succeeded after disposal. The Core regression
+  `EnumerateAsync_InspectedMetadata_BlocksReplacementAndWriteUntilReleased` retained those
+  assertions; the approved repair reached 95/95 and the combined producers 110/110.
+  `investigation-code-atlas-native-repair-controls` preserves the competing teardown diagnosis
+  and limits. This is bounded sharing evidence, not a claim of universal race-free opens or
+  support for ACLs that permit metadata but not GenericRead.
+- **Recurrence (2026-09-12, Atlas source binding):** matching bytes were initially treated as
+  sufficient old-anchor evidence while opened-object identity was not an expected input;
+  Changed/Unverifiable results also carried live text. Hash integrity did not establish object
+  identity or permission to show changed content under an old selection. **Sweep:** binding,
+  status-to-text release, ADS aliases, hard links and reparse cases were reviewed together.
+  **Derive/control:** the indexed binding overload compares expected root/file identities and hash;
+  only IndexedMatch releases text, and relative ADS syntax is refused before resolution.
+  The same-byte file-replacement, missing/mismatched hash and real ADS cases were independently
+  replayed in `proof-code-atlas-source-safety-join`. The hash-only helper is not old-anchor
+  authority; unexecuted symlink cases remain outside the proved boundary, not covered by adjacency.
 - **Signature:** a control is designed, measured and shown to work against one mechanism, and the
   boundary it sits on is thereafter treated as closed. A *different* mechanism crossing the same
   boundary is never probed, because the proven control is remembered as protecting the boundary
@@ -1163,6 +1220,18 @@ for both or split.*
 
 ### DC-029 — A full-tree re-render rebuilds live children from a factory instead of reconciling by key
 
+- **Recurrence (2026-09-13, Atlas accepted member):** normal member acceptance cleared/rebuilt
+  outline rows without rebinding the selected observation, so the next Back frame captured
+  null. **Class/sweep:** both native outline clears were traced; only Back restored a key,
+  too late for the already-lost selection. **Derive/prevent:** rebind the requested key only
+  when present in the accepted current projection for the same file; never use a first-row
+  fallback. `NativeReader_AcceptedMemberActivation_RetainsSelectedOutlineKeyAfterAwait` and
+  `NativeReader_AcceptedMemberThenDifferentFileBack_RestoresSelectedOutlineRowWithoutManualReselect`
+  fail before repair; stale/non-match/missing-key guards remain. N `a8897914` passed 45/45
+  independently, and the unchanged actual composed Back oracle changed from failure to pass.
+  `investigation-code-atlas-outline-selection` preserves the separate cached/unconnected UIA
+  test-subject mistakes and their public-client correction rather than attributing them to
+  product behavior.
 - **Signature:** a UI/layout adapter renders by discarding the whole realized tree and rebuilding it
   from the model on every mutation, invoking a content factory for **every** child — including
   children that did not change. Where a child owns live state (a process, a session, a socket, a
@@ -5582,6 +5651,20 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Confidence:** i  - **Source:** fleet (drm-0009/p6)
 
 ### PACK-Q-AN-ADAPTER-WR - PACK-Q · An adapter written to a contract's *documented* shape, never to a *recorded* one
+- **Further Atlas oracle corrections:** a cached item peer was treated as the current selection;
+  a legacy array signature was assumed to exclude null; then a manual provider was queried
+  without its published-root connection. Exact WPF v10.0.11 source and actual own-HWND MTA
+  client observations distinguished all three. The native product hash stayed unchanged
+  through those corrections. The current-client test retains independent key/container and
+  selected-element/name/container-identity assertions; it does not manipulate private caches.
+- **Recurrence (2026-09-13, Atlas proof runner):** two automation-item peer constructions used
+  an unchecked one-argument shape. **Class/sweep:** the build found both calls at Program.cs
+  lines 185 and 240, CS7036; actual WPF requires the item and owning selector peer.
+  **Derive/prevent:** reuse the framework-created peer or its established item/selector
+  relationship. The runner build is the executed red control for signature mismatch; the
+  subsequent shown-window UIA oracle must also establish that the peer belongs to the realized
+  item. Compile success alone cannot establish that relationship. Original evidence remains
+  in the runner tree's `artifacts/atlas-reader-author/final-build.log`.
 - **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)
 - **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
 - **Confidence:** i  - **Source:** fleet (drm-0009/p4)
@@ -6679,6 +6762,24 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   the pack).
 - **Status:** `controlled` by the pair; the lens rule is `partially-controlled`.
 
+- **Recurrence (2026-09-12, Atlas coordination):** an acknowledgment protecting existing
+  Core/Shell files and main integration was made a predecessor of all Atlas investigation,
+  design and source authoring. The user had to correct the documentation-only stop. The Owner
+  narrowed the control: an explicit branch-local grant admits exact new files and synthetic
+  safety work while shared integration remains gated. This is **scope/control over-serialization**,
+  not permission inferred from silence or a relaxation of source-safety proof.
+  **Class / sweep / derive / prevent:** the fleet plan, coordination plan and resume ledger all
+  carried the same overly broad edge; the active plan now separates authoring, reader safety,
+  shared wiring and integration. Writer authority is derived from the one section-2 exception,
+  with exact files and one writer, rather than copied into a second ownership map. The Owner/
+  Conductor dispatch review must name the risk and actual consuming nodes for each gate.
+  `docs/notes/atlas-owner/isolated-authoring.md` records the correction and its authority;
+  `docs/plans/code-atlas-fleet.md` records the independent safety/design nodes. The preceding
+  whole-program stop is the observed counterexample; source-probe dispatch is the observed
+  changed decision, not proof of safe source reading. Existing CV-0 tests do **not** automate this
+  operational case; it remains partially controlled by the scoped review rule, with executable
+  safety/candidate evidence still required.
+
 ### DC-155 — A symptom owned by someone else is closed by attribution, not by an outcome
 
 - **Shape:** a population report is investigated to DC-131's standard: counted, every member
@@ -6750,6 +6851,17 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 
 ### DC-156 — A resource acquired for a child is released with the owner, not with the child
 
+- **Related recurrence (2026-09-12, Atlas partial acquisition):** `OpenAncestors` acquired a set
+  of native directory handles for one read, but a later acquisition failure abandoned the earlier
+  handles to SafeHandle finalization. The failed read had ended; its share-denying resources had
+  not. **Sweep:** root, ancestor-set and final-file acquisition/cancellation paths were reviewed;
+  cancellation after open also escaped the intended typed result. **Derive/control:** the
+  ancestor-set builder disposes partial acquisition before rethrowing; using scopes own successful
+  acquisition; requested cancellation returns Canceled with no text. The probe's
+  `PartialAncestorFailureReleasesPriorHandle` immediately renames the earlier directory without
+  GC, and the cancellation-after-open case checks the typed result. Independent C# review and
+  the 19/0/2 replay are recorded in `proof-code-atlas-source-safety-join`; no separate
+  mutation-after-cancel oracle or blocking-syscall interruption claim is made.
 - **Shape:** an object acquires an OS resource *for* a child (a pseudo console for a shell, a job
   for a process). The child ends; the object records the end as **state** (`Ended`, `Complete`,
   an exit code) and touches no **handle**. The resource then lives as long as the *owner* — the

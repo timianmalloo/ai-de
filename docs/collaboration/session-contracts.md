@@ -79,6 +79,149 @@ with no owner; nothing can fail a section that has quietly stopped covering its 
 Ownership means: **you edit it, the other session proposes changes to it.** It does not mean the
 other session may not read it — reading is how contracts stay honest.
 
+### Atlas branch-local authoring exception, 2026-09-12
+
+**Authority:** the user's explicit continuation instruction and the separate Astra Owner's
+turn-7/turn-8 rulings, recorded in `note-atlas-isolated-authoring`. This is a grant to author
+specified new files on Atlas branches, **not Claude's acknowledgment**, a transfer of the existing
+ownership rows, normative Addendum E acceptance, or permission to integrate into main.
+
+| Writer / branch | Exact new authored files | Limit |
+|---|---|---|
+| `atlas-e0-source-safety-gpt55` / `atlas/e0-source-safety` | `spikes/code-atlas-source-reader/CodeAtlas.SourceReaderProbe.csproj`; `spikes/code-atlas-source-reader/Program.cs`; `spikes/code-atlas-source-reader/OpenedSourceReader.cs`; `spikes/code-atlas-source-reader/SourceReaderProbeCases.cs`; `docs/proof/code-atlas-source-safety.md` | One bounded synthetic Windows safety batch, 30 calls; no user data or existing product/project edits. |
+| `atlas-e0-candidate-gpt55` / `atlas/e0-candidate` | `src/AiDe.Core/Understanding/AtlasIdentity.cs`; `src/AiDe.Core/Understanding/AtlasSourceBinding.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasIdentityTests.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasSourceBindingTests.cs` | Within the unchanged 60-call candidate ceiling: 25 initial, 12 Owner-admitted correction, then 6 Conductor-allocated boundary-close calls for the executed trailing-LF defect and constructor/partial oracles. Conservative allocated ceiling 43; 17 reserved. Same four files, no reader, persistence, IPC or UI. |
+| `atlas-live-enumeration-gpt55` / `atlas/live-reader-enumeration` | `spikes/code-atlas-directory-enumeration/CodeAtlas.DirectoryEnumerationProbe.csproj`; `spikes/code-atlas-directory-enumeration/Program.cs`; `spikes/code-atlas-directory-enumeration/OpenedDirectoryEnumerator.cs`; `spikes/code-atlas-directory-enumeration/DirectoryEnumerationProbeCases.cs`; `docs/proof/code-atlas-enumeration-safety.md` | Owner turn-12 new horizon: 25 calls for one synthetic safe-enumeration investigation. No private corpus, privilege/configuration changes, shared files or product admission. |
+| `atlas-live-core-gpt55` / `atlas/live-reader-core` | Existing `src/AiDe.Core/Understanding/AtlasIdentity.cs`, `tests/AiDe.Core.Tests/Understanding/AtlasIdentityTests.cs`; new `src/AiDe.Core/Understanding/AtlasIdentityCodec.cs`, `AtlasManifest.cs`, `AtlasQueryContracts.cs`; new `tests/AiDe.Core.Tests/Understanding/AtlasIdentityCodecTests.cs`, `AtlasManifestTests.cs`, `AtlasQueryContractsTests.cs` | F proposal used 32 against 18 planned calls. Owner turn 13 admits one 16-call same-eight-file correction after Conductor contract readback. New cumulative F/E/D ceiling 96; no filesystem, issuer operation, producer/query implementation, native UI or shared-file edit in F. |
+| `atlas-live-inventory-repair-astra` / `atlas/live-reader-inventory-repair` | `src/AiDe.Core/Understanding/AtlasInventory.cs`; `src/AiDe.Core/Understanding/AtlasDirectoryEnumerator.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasInventoryTests.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasDirectoryEnumeratorTests.cs` | Owner turn-14 repair used 30 leaf calls and retained 92/95 passing proposal. After bounded diagnosis, Owner turn 16 admits six more leaf calls for held GenericRead and test-owned junction cleanup only. Frozen F read-only; no source-content reader, query/native assembly or shared adapters. |
+| `atlas-live-declarations-gpt55` / `atlas/live-reader-declarations` | `src/AiDe.Core/Understanding/CSharpDeclarationObservation.cs`; `tests/AiDe.Core.Tests/Understanding/CSharpDeclarationObservationTests.cs` | Owner turn-14 D repair: 20 additional leaf calls after Conductor mini-contract readback. Prior 37/24 leaf overrun retained. No filesystem, project evaluation, source reader, query/native assembly or frozen-F edits. |
+| `atlas-live-source-astra` / `atlas/live-reader-source` | `src/AiDe.Core/Understanding/AtlasSource.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasSourceTests.cs` | Owner turn-15 S allowance: 30 new writer leaf calls, eight targeted validation leaf calls separately. First three writer calls establish and return the minimum contract before implementation. No grant issuer, query/native UI, store, IPC, real-user workspace or frozen F/D edits. |
+| `atlas-live-native-repair-astra` / `atlas/live-reader-native-repair` | `src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs`; `tests/AiDe.App.Tests/Workbench/Understanding/AtlasReaderViewTests.cs` | After the turn-18 repair and turn-20 seam, Owner turn 24 grants eight new leaves for accepted-member selection loss exposed by actual composition. Same owner/tree/two files; shown UIA regression red before current-only stable-key rebind, no first-row fallback. No filesystem/provider/issuer, host/theme/layout/project/F-contract changes. Prior allocations and overruns remain recorded. |
+| `atlas-live-query-astra` / `atlas/live-reader-query` | `src/AiDe.Core/Understanding/AtlasQueryService.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasQueryServiceTests.cs` | Owner turn-17 Q allowance: 36 leaf calls. First four are read-only contract readback against actual cleared S API. In-memory query/receipt and narrow trusted composition only; no store, IPC, host, UI, project or frozen producer edits. |
+| `atlas-live-continuation-gpt55` / `atlas/live-reader-continuation` | `src/AiDe.Core/Understanding/AtlasQueryContracts.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasQueryContractsTests.cs` | Owner turn-20 exact F continuation seam: eight new leaf calls for optional validated InventoryPage.NextOffset only. Pin/verify this contract before Q/N edits; no other F shape or producer/UI implementation. |
+| `atlas-shared-host-astra` / `atlas/shared-host-compatibility` | New `docs/design/code-atlas-shared-host-admission.md` and `.html`; merge/regeneration results only for reconciliation with an executor-observed main pin | Owner turn 32: 12 leaves for compatibility build, exact adapter/owner/test manifest, production authority/membership proposal and one supported counterpart handoff. No authored existing Core/Shell/Conversation adapter edits, primary changes, main merge or push. Packet is not production-design acceptance. |
+| `atlas-live-runner-astra` / `atlas/live-reader-runner` | `spikes/code-atlas-reader-candidate/CodeAtlas.ReaderCandidate.csproj`; `spikes/code-atlas-reader-candidate/Program.cs` | Original 12 leaves ended with two CS7036 peer-constructor errors and no synthetic execution. Owner turn 23 prospectively adds eight leaves, same writer/files, ending at actual shown synthetic journey/capture/negative proof, not build alone. No existing App startup/host/IPC/project edits, private corpus, inspected-project execution or main integration. Independent live-root proof retains its separate 15-call allowance. |
+
+The first source writer's worktree is `C:\Projects\ai-de-atlas-e0-source-safety`, created from
+executor-observed main `4d396411`. A separate candidate tree
+`C:\Projects\ai-de-atlas-e0-candidate`, branch `atlas/e0-candidate`, has the exact first-unit file
+grant above under the Owner's turn-9 ruling (`note-atlas-candidate-first-unit`). All four files
+were observed absent in both that tree and current main before dispatch. Additional Core/App/test
+files still require their own exact record here; this first-unit grant does not implicitly admit them.
+
+The Owner permits that candidate's new files only under `Core/Understanding`, its dedicated
+Core tests, `App/Workbench/Understanding`, and its dedicated App tests. Detached presentation
+must consume supplied projections; it cannot read repositories/stores/providers. If existing
+project constraints require a shared-file change, the approved fallback is new standalone
+`spikes/code-atlas-e0-candidate` files, named here first. Neither an empty path nor an expired
+lease grants a wider exception.
+
+All existing SH3 IPC/factory/shell/adapter/graph/evidence/layout files and tests stay with their
+current writers. No existing extractor, query, wire, store, package, solution, menu or host edit
+is admitted here. Integration remains serialized through the existing Claude/Core/Shell
+authority. The native requests remain open; only their actual recipients can supply agreement.
+
+**Live-reader horizon, Owner turn 12:** the contract author in
+`C:\Projects\ai-de-atlas-live-reader-contracts` has a ten-call, response-only contract-freeze
+assignment; it authors no repository file. The enumeration writer above uses
+`C:\Projects\ai-de-atlas-live-reader-enumeration`. The Core integration tree
+`C:\Projects\ai-de-atlas-live-reader-core` is reserved, not dispatched. All three start at
+`054b8b56`, current main `ca7443e8` reconciled with reviewed Atlas commits in the Conductor
+tree. Exact implementation subsets must be added here after contract freeze; the Owner's
+ceiling manifest in `note-atlas-live-reader-horizon` is not permission to create unused files.
+
+**Producer pin:** F is cleared and joined at `02695471264cfe0ae29f9a5a2784070cdc0f11b4`;
+candidate and Conductor runs each executed 63 passing tests. F's writer explicitly released its
+leases before the Conductor join; no TTL wait or self-integration was used. E's tree is
+`C:\Projects\ai-de-atlas-live-reader-inventory`; D's is
+`C:\Projects\ai-de-atlas-live-reader-declarations`. Both resolve to that same pin, and their
+six new files were observed absent before dispatch. E and D cannot alter common contracts;
+required amendments return to the Conductor as seam requests.
+
+E's replacement tree is `C:\Projects\ai-de-atlas-live-reader-inventory-repair`, based on
+the preserved E proposal `e54f21e1`. The old E tree remains intact and is no longer a writer.
+An old-session registration cleanup discrepancy was detected by state readback and returned
+to that writer; released edit leases, not a claimed command invocation, were checked before
+replacement assignment.
+
+S's independent tree is `C:\Projects\ai-de-atlas-live-reader-source`, pinned to
+`7584c0ae` (cleared F and D plus source-probe evidence). E completion is not its prerequisite.
+E and S are the only implementation writers; D is frozen and joined. The Conductor reads S's
+input/result/lifetime/falsifier contract before releasing source implementation.
+
+Native view tree: `C:\Projects\ai-de-atlas-live-reader-native`, pin `bf57b0ee`, with a
+separate read-only native-review tree at the same pin. The direction is
+`note-atlas-reader-native-direction`. Q/runner work remains undispatched until S's actual
+receipt; exact files and integrator will be recorded here before that release.
+
+N's replacement tree is `C:\Projects\ai-de-atlas-live-reader-native-repair`, based on preserved
+proposal `e0fdb531`; previous-writer handoff was received, leases checked free and no active old
+native registration remained. Q's tree is `C:\Projects\ai-de-atlas-live-reader-query`, pin
+`b381eeae`, containing the independently cleared S code. Q and N are the only writers.
+The Conductor retains both gates and all joins.
+
+The S owner has one exact metadata-only `ObserveApprovedRootIdentity` bootstrap amendment in its
+existing two files. Owner turn 19 corrects its allowance to **five leaf calls charged to Q**:
+Q's eight contract reads plus five bootstrap calls leave 23 of its unchanged 36 for implementation.
+Complete alone may return native identity; Partial/Refused/Canceled never supplies usable identity.
+No source content, grant issuance or frozen F/D edit is added.
+
+The cross-owner continuation seam has a dedicated F writer in
+`C:\Projects\ai-de-atlas-live-reader-continuation`, base `41dc0501`. After its pin, the existing
+Q owner receives 12 new leaf calls on its two files and the existing N Astra owner receives ten
+on its two files. They may then work concurrently, never on the same authored file. Six targeted
+independent validation calls are separately allocated; existing budgets/overruns remain recorded.
+
+Owner turn 24 adds eight leaves to the existing N owner for the exact accepted-member selection
+regression, then six runner leaves after reviewed N incorporation. The runner ceiling is 26
+(19 reported spent, seven remaining), not a reset; its independent fifteen-call real-root proof
+allowance is unchanged. The investigation is `investigation-code-atlas-outline-selection`.
+The runner never patches product code or weakens the selected-row expectation.
+
+Owner turn 25 adds **six prospective N leaves**, same owner and two files, after the preceding
+eight ended at 44/45 passing. Two diagnostic leaves must distinguish realized-container
+selection from framework UIA peer state before repair is released. Claim setup, if a separate
+leaf is needed, is charged within the same six and reduces the repair/close remainder; it is
+not hidden or added to the total. Both selection assertions stay. No private-cache
+manipulation, forced refresh, manual reselection or arbitrary sleep to obtain green is admitted.
+The Conductor reads the diagnostic receipt before releasing any repair.
+
+Owner turn 28 permits **four new N leaves** for a test-only close, after Test's explicit
+current-selection-oracle approval. Freeze the product-file hash. Query the control's public
+selection provider for the current selected item instead of treating cached child-peer
+identity as current selection. Keep observation-key, realized-container and SelectionItem
+assertions; remove only unnecessary provisional dispatcher diagnostics. No cache invalidation,
+forced refresh or reselection. Read back the unchanged product file, run all 45 cases, and
+commit/release only on the stated conditions. Original red02 covers the product defect, not
+the newly changed provider acquisition; external-client UIA proof is not claimed.
+
+Owner turn 29 grants **four further N test-only leaves** for the established empty-selection
+boundary: WPF v10.0.11 returns null before any selection. Accept null-or-empty only there;
+post-acceptance non-null/single/matching/selected provider and realized key/container checks
+remain strict. Product SHA-256 stays
+`8B76E2BD85BF44651D5CC6D4F4F528A29585034C675EB12554735F7FDE243980`.
+Claim first, run all 45, retain failed-precondition evidence, then commit/release on success.
+
+Owner turn 30 permits **six N test-only leaves** to replace the unconnected manual-provider
+oracle with a public UI Automation client query on a non-UI MTA thread. Capture only the owned
+window HWND, verify its process/window identity, search only beneath it, and require current
+selection/name/container runtime identity plus SelectionItem state. Keep UI-thread key and
+realized-container assertions, finite deadlines, cleanup and the frozen product hash. No
+DesktopRoot/global search, listeners, project/dependency/shared-harness edits or cache forcing.
+API absence is NOT_PROVEN, never a successful fallback. Original manual null-operand evidence
+must be named; this grant is not real-repository or full-assistive-technology acceptance.
+
+Owner turn 31 extends independent proof from 15 to **21 leaves**, solely for an isolated-parent
+semantic-red run, independent byte/decoder/UTF-16 and different-file checks, owned PNG inspection,
+post-run cleanliness/fixture disposition and a persistent receipt. No source edits or unnecessary
+real-root rerun. The first independent real-root run passed its runner checks, but the red recipe
+shared a synthetic parent and hit the refusal guard; that is not semantic-red proof. Retain it.
+
+Owner turn 32 accepts only the proved detached reader against its pinned scope and keeps the
+programme open. The next worker gets its own compatibility tree and the exact two packet files
+above. It must separate transport delivery, recipient acknowledgment and actual agreement.
+If acknowledgment is absent after one supported attempt, return the packet to Owner for a
+bounded branch-local adapter decision; do not require human relay or repeatedly poll the log.
+
 ### Core owns
 
 | Path | Why |
@@ -2710,3 +2853,41 @@ for that merge; git then compares the normalised forms instead of the raw bytes.
 Verified before landing: solution builds with 0 errors, every gate green, and all three test halves
 at baseline (1,569 + 150 + 399) with the tree still clean afterwards — so nothing in the suite
 depended on CRLF.
+
+## 9. Code Atlas fleet request - Astra Owner/Conductor, GPT execution workers (2026-09-12)
+
+The user requested specification of the next addendum from Code Atlas, overall architecture,
+then Owner-led fleet implementation, coordinated with the existing Claude conductor and lanes.
+The observed next addendum is **E**, after the registered A-D inputs. This section requests its
+reservation; it does not silently assign a letter another session is using.
+
+The Atlas Conductor is a distinct GPT-6 Astra CLI session in
+`C:\Projects\ai-de-conductor-code-atlas`, branch `conductor/code-atlas`, based on `main`
+`b0e092b5`. A separate read-only Astra Owner rules on its scope; GPT-5.5 workers have individual
+worktrees. The proposal at `1065a851` remains a local reference branch: its private TheTerrace
+source/session fixture is not merged into delivery history or authorized for publication.
+
+**Section 2 remains the only ownership map. No ownership row is changed by this request.**
+Current workers draft a new specification and establish contracts/baseline evidence without
+editing product source. Shell SH-2/SH-3, Conversation CV-* and X-1 retain their authored paths.
+The product runtime conductor/provider contract is not changed merely by this development-fleet
+model selection.
+
+Native request: **`req-01M2B86TXF7SHG61B31P4H4173`**, addressed to `conductor-addendum-c`.
+
+Requested response from the Claude conductor:
+
+1. Confirm/reserve Addendum E for Code & Architecture Understanding, or name a conflicting
+   reservation before the spec is accepted.
+2. Agree narrow Atlas authored paths after the model/architecture settles. A new namespace is
+   not permission to ignore section 2's existing Core responsibilities.
+3. Keep Shell-owned registry, host, layout, menu, `MainWindow` and current diagram-surface edits
+   with Shell; agree a versioned integration seam rather than concurrent edits to those files.
+4. Name the owner and timing for Core query/IPC changes and any later read-only model-analysis
+   seam that touches Conversation-owned agent-plane paths.
+5. Keep primary `main` convergence with Claude until a different serialized handoff is explicit.
+   Atlas never stashes/resets/stages the primary checkout to clear someone else's work.
+
+Reply through `coord request resolve` and an appended response here. An unexpired lease is
+respected; a refusal triggers replanning rather than waiting it out. Silence and stale liveness
+are not consent. The eventual accepted responsibility moves belong in section 2, not a parallel map.

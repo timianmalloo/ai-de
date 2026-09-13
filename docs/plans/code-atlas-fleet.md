@@ -1,0 +1,205 @@
+---
+id: plan-code-atlas-fleet
+title: "Code Atlas - Owner-led fleet execution checkpoints"
+type: doc
+status: draft
+owner: "@timianmalloo"
+phase: "specification and architecture"
+tags: [code-atlas, fleet, gpt, coordination, worktrees]
+links:
+  - { to: note-code-atlas-proposal-provenance, rel: depends-on }
+  - { to: spec-addendum-c-perspectives, rel: refines }
+  - { to: architecture, rel: relates-to }
+review-by: 2026-12-12
+summary: >-
+  Bounds the user-requested Astra Owner/Conductor and GPT execution fleet. Specification and
+  contract grounding are isolated now; implementation is admitted only after the model,
+  architecture, vetoes and cross-Claude ownership/integration seams are established.
+---
+
+# Code Atlas fleet: checkpoint plan
+
+Graph metadata uses the installed registry's `doc` type: its validator rejects `plan`, despite
+the reusable planning template suggesting it. The post-write inventory caught that mismatch.
+The content remains a plan; no unsupported metadata tag is silently accepted.
+
+## Goal and termination
+
+**Goal:** specify the next Code Atlas addendum, define the overall architecture and implement
+the Owner-admitted vertical slices through the AI-Forward gates.
+**Done when:** every admitted slice has its stated end-to-end exit evidence and Owner closure;
+unbuilt phases and external seam blockers are explicit, never described as completed.
+**Not in scope:** modifying TheTerrace, publishing private reference material, replacing the
+product runtime conductor by implication, or racing Claude's primary-checkout integrations.
+**Tier:** T2. **Concurrent worker cap:** 4 (including decision/review seats).
+**Main-line budget:** 50 coordination calls to the first delivery checkpoint, a planning estimate.
+
+## Roles and models
+
+| Role | Model | Mechanism | Authority |
+|---|---|---|---|
+| Owner | GPT-6 Astra | Separate `owner` agent, read-only tools, own worktree | Rules on scope/trade-offs; never authors code or clears non-delegable hard-floor trips |
+| Conductor | GPT-6 Astra | Current CLI main thread, dedicated conductor worktree | Sequences gates, records rulings, dispatches/join workers; does not replace Owner decisions |
+| Execution workers | GPT-5.5 where appropriate | Writable general-purpose agents in individually registered worktrees | Author assigned artifacts/code only; no self-acceptance or cross-lane edits |
+| Specialist reviewers | Appropriate GPT model | Read-only persona seat, separated from author | Applicable veto/review scope, not automatic feature expansion |
+
+The user explicitly selected this GPT development fleet. A custom persona's tool restrictions
+are checked before dispatch: a read-only reviewer is not sent an implementation assignment.
+Each writer receives exact cwd, identity, owned files, input contracts, budget and exit predicate.
+
+## Execution graph
+
+| Node | Capability | Inputs | Exit condition | Real dependency |
+|---|---|---|---|---|
+| F0 Ground and isolate | Deterministic mechanics | Current main, proposal provenance, registers | Distinct trees/identities; current lane state and next addendum checked | none |
+| O0 Owner framing | Independent decision | User intent, C/D limits, current ownership | Recorded scoped rulings, or named evidence blocker | F0 |
+| S0 Draft specification | Reasoning | Proposal plus governing specs | Full draft Functional/UX/UI layers and unresolved questions | F0; acceptance depends on O0 |
+| K0 Contract grounding | Reasoning + deterministic mechanics | Current code/manifests/tests | Cited internal contracts and executed minimal baseline/spikes | F0 |
+| S1 Specification gate | Independent review | S0, O0, K0 | Scope/model/UX/UI and verifiability gates cleared | S0, O0, K0 |
+| A0 PROPOSED whole architecture | Reasoning | Pinned candidate spec, contract evidence, Owner draft-content exception | Complete proposed contexts, storage, composition, versioned seams, failure modes and phases; no acceptance claim | O0, K0, candidate S0 |
+| A1 Architecture content gate | Independent review | Corrected spec content and proposed architecture/ADRs/spikes | Security, data, distributed/async, AI, test and other triggered content vetoes resolved | A0, S1 |
+| C0 Coordination admission | Reasoning + deterministic mechanics | Architecture, Claude acknowledgment | Canonical section-2 responsibilities and machine-readable track plan | A1; external seam agreement |
+| Dn / In Vertical slices | Reasoning + deterministic mechanics | Admitted contracts and exact ownership | Design-slice -> red/green -> native/E2E proof -> independent review | C0; actual per-slice data edges |
+| Jn Join and close | Deterministic mechanics + Owner decision | Worker commits/proofs | Integrated slice evidence, clean state, recorded residuals and Owner sign-off | In |
+
+S0 and K0 are independent at draft time: one develops requirements, the other establishes
+implementation evidence. Neither chooses an incompatible production signature. They join before
+the spec gate. Architecture cannot be accepted over undecided requirements. Under the Owner's
+subsequent documentation-only exception, a PROPOSED architecture draft may proceed against a
+pinned candidate while known spec-content corrections are reviewed; A1 still depends on S1.
+Implementation never runs ahead of unsettled shared interfaces or external acknowledgment.
+
+**Replan trigger observed:** the native request is a pull log, not cross-harness delivery, and the
+user was unavailable to relay it. `note-atlas-draft-content-while-blocked` permits isolated
+draft-content completion, not source dispatch. The programme remains delivery-blocked.
+
+No runtime-cost forecast is represented as a measurement. Prior prototype work is not a useful
+duration baseline for a new native/code-analysis capability. Work/span will be costed at the
+architecture-to-coordination checkpoint, once the vertical slices and actual seams are known.
+
+## Current dispatch
+
+| Worker | Worktree / branch | Bounded output |
+|---|---|---|
+| Owner | `ai-de-owner-code-atlas` / `owner/code-atlas` | Initial scoped rulings; 8 calls; read-only |
+| Spec | `ai-de-atlas-specification` / `atlas/specification` | New draft addendum only; 30 calls; no product edits |
+| Contracts | `ai-de-atlas-contracts-spike` / `atlas/contracts-spike` | Current contract/baseline proof only; 25 calls; product source unchanged |
+| Conductor | `ai-de-conductor-code-atlas` / `conductor/code-atlas` | Provenance, rulings, coordination and joined artifacts |
+
+## Artifact classes and integration
+
+The installed registry declares `docs/audit/*.jsonl` and coordination JSONL logs append-only
+registers; derived documentation/index surfaces regenerate rather than merge. Authored files
+require a single agreed owner. Inherited merge drivers were observed effective by `coord doctor`.
+The doctor reports a shared regeneration-owed marker; this tree does not clear a primary-owned
+marker as a side effect. No reinstall/classification reset is run from a linked worktree.
+
+Main integration remains with the Claude conductor until explicitly agreed. Atlas does not
+stash, reset or stage the primary checkout. Shared machine-local coordination records may appear
+there by design. Existing Shell/Conversation/X1 files remain with their section-2 owners.
+
+## Fan-out and loop contract
+
+- Width <=4; no shared authored output between active workers.
+- Transient tool/provider failure: report the failure with its evidence. No silent retry of
+  side effects or unbounded relaunch. A retry needs an identified transient cause and bounded backoff.
+- Each worker stops at its artifact/claim list, not after “more useful research.”
+- Join requires all hard floors for the affected slice. A partial worker result is recorded;
+  independent admitted work may continue, but the failed dependent edge stays blocked.
+- Review loops drain a named finite blocker list; at most two passes per gate before escalation
+  of the remaining blocker to its authority. A cap is an estimate/control finding, not acceptance.
+- Replan only at Owner scope, contract, architecture or ownership checkpoints. Do not invent
+  new product goals during implementation.
+
+## Floor nodes
+
+Conceptual model and invariants first; typed provenance/snapshot/identity contracts; source
+minimization and no implicit model egress; capability/eval admission; failure-mode and telemetry
+questions; Testing Strategy trigger union and red-first oracles; E7 full surface reach; native
+rendering and cross-surface identity proofs; independent vetoes; durable audit and proof capture.
+
+`docs/coordination/code-atlas.md` is now the execution driver's PROPOSED canonical track plan.
+It does not assign ownership or admit implementation.
+
+## Actual checkpoint and cost ledger
+
+| Planned node | Actual outcome at documentation checkpoint |
+|---|---|
+| F0 / O0 | Separate trees and scoped Owner decisions recorded. No change to Claude's integration authority. |
+| S0 / K0 / S1 | Candidate E content reviewed; bounded Core/Store/IPC and synthetic compiler evidence joined, with overclaims corrected. |
+| A0 / A1 | Whole proposed architecture and five proposed ADRs authored and reviewed. Owner choices and final E0-versus-whole conditions recorded. |
+| C0 | Proposed plan exists; admission is blocked by the unresolved native request. |
+| Dn / In / Jn | No product implementation, native acceptance or main integration executed. |
+
+The ten planned nodes remain ten logical checkpoints. The external decision edge, not another
+worker, prevents delivery. Specification and contract grounding ran independently and joined before
+content acceptance. Documentation closure uses deterministic generation/check/commit mechanics,
+not another model fan-out.
+
+```mermaid
+flowchart LR
+  F0 --> O0
+  F0 --> S0
+  F0 --> K0
+  O0 --> S1
+  S0 --> S1
+  K0 --> S1
+  S1 --> A0
+  A0 --> A1
+  A1 --> C0
+  ACK[External ownership acknowledgment] --> C0
+  C0 --> DI[Dn / In: not dispatched]
+  DI --> JN[Jn: not executed]
+```
+
+The diagram shows the final acceptance dependencies, not a claim that proposed architecture
+drafting waited for the last specification-content receipt. The documentation-only exception above
+allowed that draft overlap; it did not bypass the acceptance join.
+
+**Cost confidence:** total work `T1`, span `Tinf`, exact per-phase calls/tokens, actual peak
+concurrency and total rework passes were not recorded as a complete measurement. No speedup is
+claimed. The bound `Tp <= (T1 - Tinf) / p + Tinf` cannot be evaluated numerically from partial
+receipts. Initial 50-call and per-worker limits are planning estimates, not measurements of actual
+cost. The documentation-close pass declares no additional agents.
+
+**Recorded process gap:** the native audit selfcheck found no missing goal/tier fields or declared
+fan-out overruns in the fourteen existing Conductor entries, but all fourteen lacked main-line
+actual/budget fields. Historical values are not backfilled from guesses. This is incomplete cost
+instrumentation, not proof that the initial estimate held.
+
+Known repairs were bounded by named findings: candidate security/oracle/phase criteria, compiler
+evidence attribution, privacy/operational admission fields, and whole-versus-E0 scoping. Their
+records preserve the corrections; no aggregate rework count is invented. Required implementation
+floors remain blocked rather than removed.
+
+## User-directed continuation, 2026-09-12
+
+The user corrected the documentation-only stop: **the Owner and Conductor must resolve the
+coordination problem and continue implementation**. The preceding checkpoint remains an accurate
+historical record, not the current work's terminal condition.
+
+The Conductor has requested a scoped Owner ruling separating isolated foundation authoring from
+shared-file integration. The new native handoff is `req-01M2BGHNCM6WRD4ZZMBBFEEB4K`; neither it
+nor the earlier request is described as acknowledged. SH3's observed live deltas include existing
+IPC, factory, shell, adapter, graph/evidence and layout files. Those concrete collisions remain
+serialized; they are not a reason to leave unrelated prerequisite work idle.
+
+| Node | Capability | Current contract | Exit / dependency |
+|---|---|---|---|
+| R1 Owner boundary resolution | Independent review / decision | Existing Astra Owner, 8 calls, no children | Explicit authoring versus integration ruling; never inferred from silence |
+| R2 Source-safety preflight | Reasoning | Existing GPT-5.5 contracts worker, 12 read-only calls, no children | One implementable Windows opened-object mechanism and named race/hash/decoder falsifiers |
+| R3 E0 detailed design | Reasoning | Existing Astra architecture author, 20 calls, one isolated new architecture-design document | Concrete E0 contracts, budgets and proof matrix; source-safety seam remains pending R2 |
+| R4 Safety implementation | Reasoning + deterministic mechanics | Not dispatched until R1 authorizes its exact isolated paths | Executed synthetic safety proof; requires R1 and R2 |
+| R5 E0 product authoring | Reasoning + deterministic mechanics | Dedicated GPT writer under the resolved boundary | TDD and native proof through the agreed seams; requires R1, R3 and R4 |
+| R6 Shared integration | Deterministic mechanics + independent review | Existing Claude/Shell authority retained | Serialized handoff, integrated proof and Owner horizon closure |
+
+R1, R2 and R3 share no authored output and run independently. R2 owns native API research; R3 must
+not duplicate it or invent its answer. No timeout or expired lease opens R4, R5 or R6. Conversely,
+an integration dependency must not be promoted into a blanket ban on independent work: the Owner
+must rule on the actual path and effect.
+
+Active width is three against the four-seat cap. Transient failures are reported before a bounded
+retry; joins require all applicable hard floors. The finite variant is the number of outstanding
+R1/R2/R3 receipts, then the admitted implementation/proof worklist. Cost/span are not yet measured;
+there is no claimed numerical speedup. The next checkpoint is implementation admission, not
+another request for the human to relay a message.
