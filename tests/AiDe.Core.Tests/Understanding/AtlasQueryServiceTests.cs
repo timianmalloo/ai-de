@@ -429,6 +429,165 @@ public sealed class AtlasQueryServiceTests
         Assert.Empty(result.Outline.Declarations);
     }
 
+    [Fact]
+    public async Task Inventory_UnknownTotalContinuation_VisitsAllRetainedRowsThenEndsWithoutInventingCompleteness()
+    {
+        using var fixture = new Fixture();
+        File.WriteAllText(Path.Combine(fixture.Root, "B.cs"), "class B {}");
+        File.WriteAllText(Path.Combine(fixture.Root, "C.cs"), "class C {}");
+        using var handle = await fixture.Open(complete: false, members: ["Widget.cs", "B.cs", "C.cs"]);
+        var retained = await handle.Queries.InventoryAsync(new(0, 128), default);
+        var visited = new List<string>();
+        var next = (int?)0;
+
+        for (var remaining = retained.Files.Length; next is not null; remaining--)
+        {
+            Assert.True(remaining > 0, "Continuation must consume the finite retained population.");
+            var page = await handle.Queries.InventoryAsync(new(next.Value, 1), default);
+            Assert.Single(page.Files);
+            Assert.Equal(AtlasDenominatorState.Unknown, page.Bounds.TotalState);
+            Assert.Null(page.Bounds.TotalCount);
+            visited.Add(page.Files[0].FileValue);
+            next = page.NextOffset;
+            Assert.Equal(remaining > 1 ? visited.Count : (int?)null, next);
+        }
+
+        Assert.Equal(3, visited.Count);
+        Assert.Equal(retained.Files.Select(file => file.FileValue), visited);
+        Assert.Equal(visited.Count, visited.Distinct(StringComparer.Ordinal).Count());
+    }
+
+    [Fact]
+    public async Task Inventory_KnownFinalPage_DeclaresContinuationOnlyBeforeRetainedEnd()
+    {
+        using var fixture = new Fixture();
+        File.WriteAllText(Path.Combine(fixture.Root, "B.cs"), "class B {}");
+        using var handle = await fixture.Open(members: ["Widget.cs", "B.cs"]);
+        var first = await handle.Queries.InventoryAsync(new(0, 1), default);
+        Assert.Equal(1, first.NextOffset);
+
+        var final = await handle.Queries.InventoryAsync(new(first.NextOffset!.Value, 1), default);
+        var beyond = await handle.Queries.InventoryAsync(new(2, 1), default);
+
+        Assert.Single(final.Files);
+        Assert.Equal(2, final.Bounds.TotalCount);
+        Assert.Null(final.NextOffset);
+        Assert.Empty(beyond.Files);
+        Assert.Null(beyond.NextOffset);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Inventory_CanceledOrRevokedContinuation_ReturnsNeitherRowsNorNextOffset(bool revoke)
+    {
+        using var fixture = new Fixture();
+        File.WriteAllText(Path.Combine(fixture.Root, "B.cs"), "class B {}");
+        using var handle = await fixture.Open(complete: false, members: ["Widget.cs", "B.cs"]);
+        var first = await handle.Queries.InventoryAsync(new(0, 1), default);
+        Assert.Equal(1, first.NextOffset);
+        using var cancellation = new CancellationTokenSource();
+        if (revoke) fixture.Policy = "new-policy-requires-new-composition";
+        else cancellation.Cancel();
+
+        var refused = await handle.Queries.InventoryAsync(new(first.NextOffset!.Value, 1), cancellation.Token);
+
+        Assert.Empty(refused.Files);
+        Assert.Null(refused.NextOffset);
+        Assert.Null(refused.Bounds.TotalCount);
+        Assert.NotNull(refused.Bounds.OmissionReason);
+        Assert.Equal(0, refused.Bounds.ReturnedBytes);
+    }
+
+    [Fact]
+    public async Task Inventory_MetadataRows_ReportZeroContentBytesWithoutDisablingRetentionCharges()
+    {
+        using var fixture = new Fixture();
+        using var handle = await fixture.Open();
+
+        var page = await handle.Queries.InventoryAsync(new(0, 128), default);
+
+        Assert.NotEmpty(page.Files);
+        Assert.Equal(0, page.Bounds.ReturnedBytes);
+        Assert.True(((AtlasQueryService)handle.Queries).Retained.ManifestBytes > 0);
+    }
+
+    [Theory]
+    [InlineData(AtlasDenominatorState.Known)]
+    [InlineData(AtlasDenominatorState.Unknown)]
+    [InlineData(AtlasDenominatorState.Withheld)]
+    public async Task ProjectInventory_GlobalDenominator_PreservesStateAndValueIndependentlyOfRetainedEnd(AtlasDenominatorState state)
+    {
+        using var fixture = new Fixture();
+        File.WriteAllText(Path.Combine(fixture.Root, "B.cs"), "class B {}");
+        using var handle = await fixture.Open(members: ["Widget.cs", "B.cs"]);
+        var rows = (await handle.Queries.InventoryAsync(new(0, 128), default)).Files;
+        long? globalTotal = state is AtlasDenominatorState.Known ? 9 : null;
+        var scope = new AtlasBounds(128, 128, rows.Length, 0, globalTotal, state, "bounded synthetic population", "scope");
+
+        var first = AtlasQueryService.ProjectInventory(new(0, 1), rows, rows, scope);
+        var final = AtlasQueryService.ProjectInventory(new(1, 1), rows, rows, scope);
+
+        Assert.Equal(state, first.Bounds.TotalState);
+        Assert.Equal(globalTotal, first.Bounds.TotalCount);
+        Assert.Equal(state, final.Bounds.TotalState);
+        Assert.Equal(globalTotal, final.Bounds.TotalCount);
+        Assert.Equal(1, first.NextOffset);
+        Assert.Null(final.NextOffset);
+        Assert.Equal(0, final.Bounds.ReturnedBytes);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ProjectInventory_ChangedRowsetOrOrder_RequiresRestartInsteadOfReusingOffset(bool reorder)
+    {
+        using var fixture = new Fixture();
+        File.WriteAllText(Path.Combine(fixture.Root, "B.cs"), "class B {}");
+        using var handle = await fixture.Open(members: ["Widget.cs", "B.cs"]);
+        var original = await handle.Queries.InventoryAsync(new(0, 128), default);
+        var changed = reorder ? original.Files.Reverse().ToImmutableArray() : original.Files.RemoveAt(0);
+
+        var result = AtlasQueryService.ProjectInventory(new(1, 1), original.Files, changed, original.Bounds);
+
+        Assert.Empty(result.Files);
+        Assert.Null(result.NextOffset);
+        Assert.Null(result.Bounds.TotalCount);
+        Assert.Equal("atlas.query.inventory-restart", result.Bounds.OmissionReason);
+    }
+
+    [Fact]
+    public async Task Select_FileMemberDifferentFile_ChangesManifestIdentityWithoutChangingInventoryContinuation()
+    {
+        using var fixture = new Fixture();
+        File.WriteAllText(Path.Combine(fixture.Root, "B.cs"), "class B {}");
+        using var handle = await fixture.Open(complete: false, members: ["Widget.cs", "B.cs"]);
+        var inventory = await handle.Queries.InventoryAsync(new(0, 128), default);
+        var firstPage = await handle.Queries.InventoryAsync(new(0, 1), default);
+        var file = await fixture.Select(handle, 1);
+        var declaration = file.Outline.Declarations.First();
+        var member = await handle.Queries.SelectAsync(new(file.ManifestToken, file.FileValue, declaration.ObservationKey, 2), default);
+        var different = await handle.Queries.SelectAsync(new(member.ManifestToken,
+            inventory.Files.Single(row => row.RelativePath == "B.cs").FileValue, null, 3), default);
+
+        Assert.NotEqual(handle.InitialManifestToken, file.ManifestToken);
+        Assert.Equal(file.ManifestToken, member.ManifestToken);
+        Assert.NotEqual(member.ManifestToken, different.ManifestToken);
+        Assert.Equal(different.ManifestToken, different.Source.ExpectedBinding!.ManifestIdentity);
+        Assert.Equal(1, firstPage.NextOffset);
+        var continuation = await handle.Queries.InventoryAsync(new(firstPage.NextOffset!.Value, 1), default);
+        Assert.Equal(inventory.Files[1].FileValue, Assert.Single(continuation.Files).FileValue);
+        Assert.Null(continuation.NextOffset);
+        Assert.Equal(AtlasDenominatorState.Unknown, continuation.Bounds.TotalState);
+        Assert.Null(continuation.Bounds.TotalCount);
+        var current = await handle.Queries.InventoryAsync(new(0, 128), default);
+        Assert.Equal(inventory.Files.Length, current.Files.Length);
+        for (var index = 0; index < inventory.Files.Length; index++)
+            Assert.Same(inventory.Files[index], current.Files[index]);
+        var staleInitial = await fixture.Select(handle, 4);
+        AssertCleared(staleInitial, SourceProjectionState.Refused);
+    }
+
     // Synthetic, worktree-local fixtures; no repository policy is inferred from this explicit approval.
     private sealed class Fixture : IDisposable
     {
