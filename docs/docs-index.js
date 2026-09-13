@@ -7923,7 +7923,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "68ab4ae77cf5048586ac65627eb884caa2f6fdf98977fc650a48cb879152791c"
+      "sourceSha256": "c105615774d426634776320b616ead1391a51a8256ecb5b28e70b153000c64c1"
     },
     {
       "id": "design-session-profiler",
@@ -8871,7 +8871,7 @@ window.DOCS_INDEX = {
           "reason": "D3 /ui-design elevate: Coordination as host C (Ruling 84), Coding re-cut (Ruling 83); the body-hiding gating selector fixed"
         }
       ],
-      "summary": "The session document as a conversation, elevated on 2026-09-13 to Rulings 80–83 and 87: docked in Coding's Left zone (extent 1.3, measured against the 96ch measure), the editor filling the body at 0 turns and resting at 280px with turns, each turn's reply side rendered from Coalesce(events) as prose (rendered markdown, no link activation) · a collapsed dim Thinking line · tool call+result items · the outcome line last, the Console split one row per message with its chunk count — an identity the page measures on itself. Harness axes: State, Turns, Layout (4), Tool runs (2), Theme, Viewport (incl. short and the operator's 2560 × 1600), Persona, Motion.",
+      "summary": "The session document as a conversation, elevated on 2026-09-13 to Rulings 80–83 and 87: docked in Coding's Left zone (extent 1.3, measured against the 96ch measure), the editor filling the body at 0 turns and resting at 280px with turns, each turn's reply side rendered from Coalesce(events) as prose (rendered markdown, no link activation) · a collapsed dim Thinking line · tool call+result items · the outcome line last, the Console split one row per message with its chunk count — an identity the page measures on itself. Harness axes: State, Turns, Layout (3: the operator's screenshots, Ruling 83's text as written, D3's proposal), Theme, Viewport (incl. short and the operator's 2560 × 1600), Persona, Motion.",
       "tags": [
         "ui-design",
         "mockup",
@@ -8925,7 +8925,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2b7d1f1274dd31f99ccf6edc557d34429e9593e7bcb560f477405f1ba4610b25"
+      "sourceSha256": "13e75e09e9ad0aeef3afdf679f6bdbab0224bff42ad9e377dad115d364263371"
     },
     {
       "id": "mockup-session-front-door",
@@ -10553,7 +10553,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9aa7af2ad54708ea44a3c1fbad69fdef268cdb194c94784c976ebd8b45b661f9"
+      "sourceSha256": "0a2e39a7358622d388638ef1112f3ba791068ebb428ab591012653bb75fc31ac"
     },
     {
       "id": "ui-review-perspective-shell",
@@ -14646,6 +14646,59 @@ window.DOCS_INDEX = {
       "sourceSha256": "a92734fa7845b6e7ad4a33a691fe588436959f29a8ab7340d01343356a9def94"
     },
     {
+      "id": "proof-compile-pin-spike",
+      "path": "docs/proof/compile-pin-spike.md",
+      "title": "Proof Pack — PD-5: the compile-session pin wire spike (ADR-0035/0036 Gate 1; Ruling 68)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-cd",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [],
+      "summary": "PD-5's prep half. Built the fixture repository (a real, regenerated-per-run git repo with permissive settings — allow Bash(*)/Edit/Write/MultiEdit/NotebookEdit, defaultMode bypassPermissions — plus a stdio .mcp.json server), the harness (run-spike.js, drives the installed adapter 0.75.1 directly over stdio the way CompileCallHost will, records every frame, never sends session/prompt from this node), the assertions (assert-spike.py, seven checks over the frame log with a red/green self-test), and this artifact shell. The dry run (initialize + session/new only, no model call) succeeded against the real installed adapter and confirms the exact _meta triple on the wire. Two load-bearing findings, both Verified in source and on the wire: (1) the fixture's committed defaultMode: bypassPermissions is stripped by the SDK's filterEscalatingDefaultMode before the adapter ever resolves a permission mode — the session's currentModeId reads \"default\" regardless, so the fixture's real permissiveness comes from its permissions.allow list, not from defaultMode; (2) the CLI binary the adapter actually launches is NOT the machine's global `claude` (2.1.268) but a platform package vendored under the SDK's own node_modules (claude-agent-sdk-win32-x64/claude.exe, 2.1.257) — a different binary and a different sha, recorded here rather than assumed. Third finding: the fixture's `.mcp.json` wiring is real, not hypothetical — the dry run alone (no prompt sent) made the CLI spawn `mcp-server.js` and complete `initialize` -> `notifications/initialized` -> `tools/list` against it, so `mcp__pd5-fixture__write_note` is a genuine tool name in session context before the pin's claim is even tested; `tools/call` was never invoked, which is what the real run's prompts now test. The wire observation itself — the two prompts, the tool_call/permission count, the fixture and remote diff — was run by the operator on 2026-09-13 17:51Z: GREEN on all seven, with two findings (the repository's MCP tool was exposed to the model though never called; the harness's (c) oracle was stricter than C1 and corrected).",
+      "tags": [
+        "proof-pack",
+        "pd-5",
+        "compile",
+        "acp",
+        "adapter",
+        "pin",
+        "security",
+        "addendum-c",
+        "addendum-d",
+        "ruling-68",
+        "gate-1"
+      ],
+      "links": [
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0035-compile-session-binding-and-pin",
+          "rel": "tested-by"
+        },
+        {
+          "to": "adr-0036-compile-mode-ladder-deployment-gates",
+          "rel": "tested-by"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-lane-pin-ruling-71",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e198cdab9599d7d60c8ffab42cdf3eb1f01f8dc08c19db178210104049a101a9"
+    },
+    {
       "id": "proof-composer-as-conversation",
       "path": "docs/proof/composer-as-conversation.md",
       "title": "Proof Pack — CV-1, the composer as a conversation: the thread feed per DS-1 (SC8 keys, SC9 announcements, SC10 UIA), the folded Console per turn, the decoration line, and tier / fan-out / budget off the per-prompt form",
@@ -17388,5 +17441,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "7b27c580eb698cf78baaa84feb2990c64d281d4f191cece90a26c78891fe15f2"
+  "graphSha256": "c0fe283726f89a4c747c19989cf02e65010ea0ed39e28a93176b12cfa614892f"
 };
