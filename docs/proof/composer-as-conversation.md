@@ -17,7 +17,8 @@ links:
   - { to: adr-0034-envelope-event-store, rel: relates-to }
   - { to: defect-classes, rel: relates-to }
 review-by: 2027-03-12
-review-suggested: []
+review-suggested:
+  - { by: mockup-session-conversation, on: 2026-09-13, reason: "D3 /ui-design elevate: the conversation rendered from Coalesce (Rulings 80-82, 87), the session docked at Left; the thread contract's density at 1440x900 is an open question for the Owner" }
 summary: >-
   Evidence for CV-1 on the Conversation lane: the session document is a feed of turns above one
   pinned composer (DS-1's FeedList / ThreadFeed over a recycling VirtualizingStackPanel), the

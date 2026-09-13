@@ -12,7 +12,8 @@ links:
   - { to: mockup-perspective-shell, rel: relates-to }
   - { to: ui-review-operator-feedback, rel: refines }
 review-by: 2027-03-11
-review-suggested: []
+review-suggested:
+  - { by: mockup-perspective-shell, on: 2026-09-13, reason: "D3 /ui-design elevate: Coordination as host C (Ruling 84), Coding re-cut (Ruling 83); the body-hiding gating selector fixed" }
 summary: >-
   Records why DESIGN.md's archetype header now reads PerspectiveShell with Arch:HubAndSpoke and
   Depth:SoftShadow (the old Arch:Desktop was not a grammar value; Flat lagged the facelift), why
