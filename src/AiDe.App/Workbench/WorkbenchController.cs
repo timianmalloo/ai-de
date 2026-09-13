@@ -87,6 +87,20 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     /// </remarks>
     public CanvasFocusRouter? CanvasFocus { get; set; }
 
+    /// <summary>
+    /// Cycles the focused session document's regions — the registry rows <c>session.cycleRegion</c>
+    /// (F6) / <c>session.cycleRegionBack</c> (Shift+F6) that DC-068 named as a seam request; the
+    /// document's own <c>PreviewKeyDown</c> handler stays the fallback when nothing routes here
+    /// (DS-1 P4), so this exists for the palette and the menu, not to replace the key.
+    /// </summary>
+    /// <remarks>
+    /// Keyed by <see cref="FocusedSurfaceId"/> (never a fixed document) so the command reaches
+    /// whichever session document has focus. Set by the shell per host, the same shape as
+    /// <see cref="CanvasFocus"/>: null until a session document exists is a working state, not a
+    /// gap, and the command reports why rather than doing nothing (DC-011).
+    /// </remarks>
+    public Func<string?, int, CanvasFocusResult>? SessionRegionCycle { get; set; }
+
     /// <summary>Runs a catalog command by id. Returns false when the id is unknown.</summary>
     public bool Execute(string commandId)
     {
@@ -155,6 +169,12 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
 
             case "workbench.focusCanvas":
                 return FocusCanvas();
+
+            case "session.cycleRegion":
+                return CycleSessionRegion(+1);
+
+            case "session.cycleRegionBack":
+                return CycleSessionRegion(-1);
 
             case "workbench.dispatchPrompt":
                 return OpenPromptBar();
@@ -643,6 +663,20 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
         }
 
         announcer.Announce(CanvasFocus.Enter().Announcement);
+        return true;
+    }
+
+    private bool CycleSessionRegion(int delta)
+    {
+        if (SessionRegionCycle is null)
+        {
+            announcer.Announce("No session document is focused.");
+            return true;
+        }
+
+        // The outcome is not re-announced here: SessionDocumentSurface.FocusRegion shares the
+        // shell's one announcer (ADR-0031) and already speaks a landed move or a refusal.
+        SessionRegionCycle(FocusedSurfaceId, delta);
         return true;
     }
 

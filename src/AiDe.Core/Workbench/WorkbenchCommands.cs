@@ -242,6 +242,21 @@ public static class WorkbenchCommandCatalog
             "Empties the status line. What it said is still available under Diagnostics.",
             Menu: "_View", Scope: CommandScope.Global),
 
+        // The registry leg of DC-068's seam request (DS-1 P4, SC8): the session document's own
+        // header → thread → composer → split cycle, reachable from the palette and the menu, not
+        // only from F6 landing inside the document itself — which stays the fallback so a document
+        // with no capture surface still has the key (DC-072). Not a layout operation, so it carries
+        // no OperationKind: nothing here mutates the zone tree.
+        new("session.cycleRegion", "Cycle session region", "F6",
+            string.Empty,
+            "Moves focus to the open session's next region: header, thread, composer, then the Console when it is open.",
+            Menu: "_View", Scope: CommandScope.Admits("session-document")),
+
+        new("session.cycleRegionBack", "Cycle session region backward", "Shift+F6",
+            string.Empty,
+            "Moves focus to the open session's previous region.",
+            Menu: "_View", Scope: CommandScope.Admits("session-document")),
+
         // ── Window: the arrangement (a host only) ─────────────────────────────────────────────
 
         new("workbench.floatPane", "Float pane", "Ctrl+K, F",

@@ -130,6 +130,84 @@ public sealed class TheWebSurfacesInitialiseOnceAcrossReparentsTests
         });
     }
 
+    /// <summary>
+    /// <b>A retry the operator asks for is not a re-attach</b> (the composer's mockup <c>Retry</c> in
+    /// the <c>editorerror</c> send-row state). After <c>init-failed</c>, <see cref="WebSurfaceHost.Retry"/>
+    /// runs initialisation a second time; a second failure is reported again, not swallowed as a
+    /// duplicate.
+    /// </summary>
+    [Fact]
+    public void RetryAfterAFailedStartRunsInitialisationAgain()
+    {
+        Sta.Run(() =>
+        {
+            var lines = new List<string>();
+            var previous = WorkbenchDiagnostics.Sink;
+            WorkbenchDiagnostics.Sink = lines.Add;
+
+            try
+            {
+                var owner = new ContentControl();
+                var initialised = 0;
+                var failures = new List<string>();
+                var runtimeShouldFail = true;
+                using var host = new WebSurfaceHost(
+                    "broken:retry", owner,
+                    initialise: () => { initialised++; return Task.CompletedTask; },
+                    failed: failures.Add,
+                    ensure: _ => runtimeShouldFail
+                        ? throw new InvalidOperationException("no WebView2 runtime here")
+                        : Task.CompletedTask);
+
+                owner.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent));
+
+                Assert.Equal(1, host.InitialisationsStarted);
+                Assert.Equal(["no WebView2 runtime here"], failures);
+
+                // A re-attach after the failure is still declined — the contract Retry must not weaken.
+                owner.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent));
+                Assert.Equal(1, host.InitialisationsStarted);
+                Assert.Single(failures);
+
+                runtimeShouldFail = false;
+                host.Retry().GetAwaiter().GetResult();
+
+                Assert.Equal(2, host.InitialisationsStarted);
+                Assert.Equal(1, initialised);
+                Assert.Single(failures);   // the second attempt succeeded; no second failure
+            }
+            finally
+            {
+                WorkbenchDiagnostics.Sink = previous;
+            }
+        });
+    }
+
+    /// <summary>A retry with nothing to retry (no attempt yet, or the last one succeeded) is a no-op.</summary>
+    [Fact]
+    public void RetryWithNoFailedAttempt_DoesNothing()
+    {
+        Sta.Run(() =>
+        {
+            var owner = new ContentControl();
+            var initialised = 0;
+            using var host = new WebSurfaceHost(
+                "clean:retry", owner,
+                initialise: () => { initialised++; return Task.CompletedTask; },
+                failed: _ => { },
+                ensure: _ => Task.CompletedTask);
+
+            owner.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent));
+            Assert.Equal(1, host.InitialisationsStarted);
+            Assert.Equal(1, initialised);
+
+            host.Retry().GetAwaiter().GetResult();
+
+            Assert.Equal(1, host.InitialisationsStarted);
+            Assert.Equal(1, initialised);
+        });
+    }
+
     [Fact]
     public void TheComposerInitialisesItsBrowserOnceAcrossReparents() =>
         Drive(() => new ComposerSurface("composer:once", "once — composer"), surface => surface.InitialisationsStarted, "composer:once");

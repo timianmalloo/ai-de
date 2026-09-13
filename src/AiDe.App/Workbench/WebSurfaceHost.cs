@@ -27,6 +27,7 @@ internal sealed class WebSurfaceHost : IDisposable
     private readonly Func<WebView2, Task> _ensure;
     private bool _initialised;
     private bool _disposed;
+    private bool _lastAttemptFailed;
 
     /// <param name="surfaceId">The owning surface's id, carried on every diagnostic line.</param>
     /// <param name="owner">The element the docking host attaches and re-attaches.</param>
@@ -84,15 +85,43 @@ internal sealed class WebSurfaceHost : IDisposable
             }
 
             await _initialise();
+            _lastAttemptFailed = false;
         }
         catch (Exception error) when (error is not OutOfMemoryException)
         {
             // A missing or broken WebView2 runtime must not take the shell down: a web surface is
             // one pane. The surface says so in its own words; the log carries the exception.
+            _lastAttemptFailed = true;
             WorkbenchDiagnostics.WebSurfaceHandshake(
                 _surfaceId, "init-failed", detail: error.Message, errorCode: "WEB.INIT_THREW", exceptionType: error.GetType().FullName);
             _failed(error.Message);
         }
+    }
+
+    /// <summary>
+    /// Re-runs initialisation once after an <c>init-failed</c> — a retry the operator asks for,
+    /// distinct from the next re-attach (which stays declined; a re-attach is not a request). A
+    /// no-op when nothing failed or the host is disposed, so a caller need not track the state
+    /// itself before offering the button.
+    /// </summary>
+    public async Task Retry()
+    {
+        if (_disposed || !_lastAttemptFailed)
+        {
+            return;
+        }
+
+        // Cleared before the await, not after: a second Retry() call arriving while this one is
+        // still in flight would otherwise still read the old failure and start a CONCURRENT second
+        // attempt — closing that window here rather than trusting every caller's own choreography
+        // to serialize it (found in review).
+        _lastAttemptFailed = false;
+
+        // Re-opens the once-guard for exactly one more attempt: OnAttachedAsync's short-circuit
+        // exists to decline a RE-ATTACH, not a requested retry, so the retry has to look like the
+        // first attempt to the same guard.
+        _initialised = false;
+        await OnAttachedAsync();
     }
 
     /// <summary>

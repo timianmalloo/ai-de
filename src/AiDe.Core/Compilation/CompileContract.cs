@@ -16,9 +16,15 @@ namespace AiDe.Core.PromptCompilation;
 /// pipeline) and the shape a <c>const</c> keeps deterministic; ADR-0033's "embedded resources" named
 /// the property (host-embedded, never read from disk), which a constant satisfies. <c>simplify:</c>
 /// ceiling — a template over ~200 lines, or a second family's profile shipped as text, moves the
-/// texts to <c>Compilation/Resources/</c> under an <c>EmbeddedResource</c> glob (a csproj edit the
-/// conductor owns; the seam request is filed); <see cref="CompilePromptAssembler.PromptSha"/> is
-/// unchanged as long as the bytes are.</para>
+/// texts to <c>Compilation/Resources/</c> under an <c>EmbeddedResource</c> glob;
+/// <see cref="CompilePromptAssembler.PromptSha"/> is unchanged as long as the bytes are.</para>
+///
+/// <para><b>X-3 (the Shell-lane seam slice): the glob landed, the move did not.</b> The csproj now
+/// carries <c>&lt;EmbeddedResource Include="Compilation\Resources\*" /&gt;</c>, so a future profile
+/// dropped there needs no build-file edit. <see cref="HostHeader"/> and <see cref="Template"/> are
+/// ~15 lines together today — under this remark's own ceiling and under the item's 20-line floor —
+/// and no file exists yet under <c>Compilation/Resources/</c>, so moving them now would be motion
+/// with no ceiling crossed. Left as this constant pair; move when either trigger fires.</para>
 /// </remarks>
 public static class CompileContract
 {

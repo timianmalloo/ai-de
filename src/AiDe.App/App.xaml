@@ -17,6 +17,15 @@
         <SolidColorBrush x:Key="SurfaceRaisedBrush" Color="#1A1F26" />
         <SolidColorBrush x:Key="SurfaceSunkenBrush" Color="#0D1014" />
         <SolidColorBrush x:Key="BorderBrush" Color="#2A313B" />
+
+        <!--
+          PS-C4 / DESIGN.md `colors.border-strong` (#7C8896): the boundary of a control at REST —
+          input, numeric field, button, select — a 3:1 pairing on every control ground.
+          `BorderBrush` above covers separators only (CD16); a control boundary is never that token.
+          Landed with ComposerPageTheme's border strong role (CV-1/CV-2's seam request), the
+          fourteenth pinned role.
+        -->
+        <SolidColorBrush x:Key="BorderStrongBrush" Color="#7C8896" />
         <SolidColorBrush x:Key="TextBrush" Color="#E4E9EF" />
 
         <!--

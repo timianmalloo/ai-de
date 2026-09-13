@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 93 · partially-controlled 65 · uncontrolled 20
+**Status counts:** controlled 96 · partially-controlled 65 · uncontrolled 20
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -7398,6 +7398,60 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   dry-run frames before it ships — `assert-spike.py --self-test` now includes `frames/dry-run/`
   as a third fixture that must not go red on (c). Named here for the next harness author: when
   you record a residue as expected, your oracle must expect it.
+- **Status:** `controlled`.
+
+### DC-179 — A fixture-sized constructor default reaches the one real production call site because the real caller passes none
+
+- **Filed by:** X-3 a (placeholder — the conductor allocates the final number/status).
+- **Shape:** an optional parameter's default value is chosen for a headless/fixture call site
+  (`"rev-1"`, `"fixture"`), and the ONE real production caller omits the argument — so the fixture
+  literal is what a live session actually attaches. A downstream formatter that assumes the value
+  is an opaque id (and prefixes its own label onto it) then produces a self-referential string
+  when the fixture literal happens to already contain that label's word.
+- **Instance:** `WorkbenchShell.AttachWorkspace(… artifactRevision = "rev-1")`; `MainWindow.xaml.cs`
+  passes none, so every session's evidence status rendered `rev rev-1`
+  (`EvidencePaneViewModel.cs:172`) — Ruling 85 (`docs/notes/addendum-c-council-rulings.md`).
+- **Control (this instance):** the default is now `null`, resolved at the one real call site to the
+  workspace's observed `git rev-parse --short HEAD` or the literal `"not recorded"` — never a value
+  that merely looks measured (`WorkbenchShell.ResolveGitFacts`, `GitFacts.Head`).
+- **Sweep (not run this slice):** other optional parameters on a shell/session constructor whose
+  default reads as a real value rather than an obvious placeholder — the conductor's to schedule.
+- **Status:** `controlled`.
+
+### DC-180 — A status announcement's only clearing path is a manual command, so a success path that announces nothing leaves an old refusal on screen indefinitely
+
+- **Filed by:** X-3 a (placeholder — the conductor allocates the final number/status).
+- **Shape:** a status/live-region announcer has a `Clear()` but only one caller (an explicit
+  "clear status" command). Every OTHER code path either announces a new message (which happens to
+  overwrite the old one) or announces nothing at all on success — so a refusal shown once persists
+  until the operator happens to trigger a path that announces, which for a mouse-only sequence of
+  successful actions may never happen.
+- **Instance:** `WorkbenchShell`'s pane-move refusal (`RefusedReconcileAnnouncement`,
+  `ReconcileViewIntoModel`) — a native drag's success path calls no `Announcer.Announce`, so the
+  refusal from an earlier collapsed-zone drag stayed on screen for the rest of a session (Ruling 86).
+- **Control (this instance):** the announcer itself owns a bounded dwell (`WorkbenchAnnouncer`,
+  10s default) that self-clears when nothing supersedes it, in addition to the existing
+  overwrite-on-next-announcement and the manual `Clear()` path — three ways to the same end rather
+  than a call site added to every silent success path.
+- **Sweep (not run this slice):** other `IWorkbenchAnnouncer` implementers/hosts outside the
+  workbench shell (if any) for the same one-caller-`Clear()` shape.
+- **Status:** `controlled`.
+
+### DC-181 — A same-assembly diagnostics helper duplicates a sibling's sink/file-path logic because the sibling's writer defaults to `private`
+
+- **Filed by:** X-3 a (placeholder — the conductor allocates the final number/status).
+- **Shape:** two telemetry/diagnostics types in the same assembly each need "write this JSON line to
+  the shared sink-or-log-file" — the second one cannot call the first's writer because it is
+  `private`, so it grows its own copy of the sink check, the directory, the file name pattern and
+  the lock, rather than the access modifier being the one-line fix.
+- **Instance:** `ThreadDiagnostics` duplicated `WorkbenchDiagnostics.Write`'s sink/file-path body in
+  full (DM7, named debt) until `Write` was made `internal` and `ThreadDiagnostics` was rewritten to
+  call it directly.
+- **Control (this instance):** `WorkbenchDiagnostics.Write` is `internal`;
+  `ThreadDiagnosticsHasOneWriterTests` asserts the modifier and that `ThreadDiagnostics` carries no
+  private `Write`/lock of its own.
+- **Sweep (not run this slice):** any other `*Diagnostics` type in `src/AiDe.App` for the same
+  shape — the conductor's to schedule.
 - **Status:** `controlled`.
 
 ### DC-nnn (CV-5 a) — A re-pointed identity oracle is green at both the old grain and the new one when its fixture has no case the two grains render differently
