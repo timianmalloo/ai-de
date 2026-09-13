@@ -227,10 +227,11 @@ public sealed class PerspectiveShell
 
             // The announcement was queued before this; focus lands in the new body only now that it
             // has a tree to land in (spec §C5: never on the rail, never lost to the window) — and
-            // one dispatcher turn later than this edge: WPF broadcasts Loaded parent-first, and the
-            // docking pane controls select and activate their own content on THEIR Loaded, so a
-            // landing placed here directly was overridden by the last pane to load (measured,
-            // SH-4.1: Provenance for Architecture, the Center's last tab for Coordination). A switch
+            // one dispatcher turn later than this edge. Measured (SH-4.1, the census window): a
+            // landing placed here directly was overridden by the docking pane controls' own
+            // activation of their selected content as they realize, the last one winning
+            // (Provenance for Architecture, the Center's last tab for Coordination); one placed at
+            // Loaded priority from here runs after every pending realization and holds. A switch
             // superseded in between places nothing.
             body.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () =>
             {

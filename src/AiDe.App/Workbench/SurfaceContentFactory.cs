@@ -598,7 +598,11 @@ public sealed class SurfaceContentFactory(
         // stale/ended terminals that otherwise bury the ones collaborating now (UX-SESSIONS-GRAVEYARD).
         var (live, inactive) = SessionRowPresenter.Partition(pane.Rows);
 
-        var stack = new StackPanel { Margin = new Thickness(12) };
+        // The pane itself is a focus target (Focusable, named by Create): it is Coordination's
+        // landing (the row's Left zone — Ruling 84, spec §C5), and in its empty and not-available
+        // states nothing inside it is focusable, so a landing with no target fell through to an
+        // arbitrary tab header (the UX & Accessibility lens's finding, SH-4.1).
+        var stack = new StackPanel { Margin = new Thickness(12), Focusable = true };
 
         if (pane.Rows.Count == 0)
         {
@@ -608,8 +612,10 @@ public sealed class SurfaceContentFactory(
             {
                 var hint = new TextBlock
                 {
+                    // "File menu": the agent session verbs live there (New Claude Code session, New
+                    // GitHub Copilot session — §B3); there is no Terminal menu in any perspective.
                     Text = "No sessions yet. Open a Claude Code or GitHub Copilot session from the "
-                        + "Terminal menu, and it appears here — live, with its harness and activity.",
+                        + "File menu, and it appears here — live, with its harness and activity.",
                     TextWrapping = TextWrapping.Wrap,
                 };
                 hint.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
@@ -824,7 +830,9 @@ public sealed class SurfaceContentFactory(
             };
             empty.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
 
-            var host = new Grid { MinHeight = 120 };
+            // A focus target in the empty state, named with the status, so a landing on this pane
+            // (Coordination's Center tabs) reads its state on arrival rather than falling through.
+            var host = new Grid { MinHeight = 120, Focusable = true };
             host.Children.Add(empty);
             AutomationProperties.SetName(host, $"{surface.Title} — {statusMessage}");
             return host;

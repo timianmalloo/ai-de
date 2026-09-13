@@ -144,6 +144,7 @@ public sealed class PerspectiveShellTests
 
             Assert.Equal("graph", PerspectiveShell.LandingSurfaceFor(f.B));
             Assert.Equal("sessions", PerspectiveShell.LandingSurfaceFor(f.C));
+            Assert.NotNull(f.A.Adapter.ActiveSurfaceId);                                    // DC-016: the fallback compares against a value
             Assert.Equal(f.A.Adapter.ActiveSurfaceId, PerspectiveShell.LandingSurfaceFor(f.A));
 
             Assert.Equal(ZoneId.Left, f.C.Row.Landing);
@@ -155,12 +156,68 @@ public sealed class PerspectiveShellTests
             Assert.True(f.B.Service.Apply(new LayoutOperation.ActivateSurface("domain")).Applied);
             Assert.Equal("domain", PerspectiveShell.LandingSurfaceFor(f.B));
 
-            // A collapsed landing zone falls back to the view's active surface.
+            // A collapsed landing zone falls back to the view's active surface — the ledger the
+            // operator activated, literally, never the collapsed Left's tab (the guard's falsifier).
+            Assert.True(f.C.Service.Apply(new LayoutOperation.ActivateSurface("ledger")).Applied);
+            f.C.Adapter.Render();
+            f.C.Adapter.ActivateInView("ledger");
+            Assert.Equal("ledger", f.C.Adapter.ActiveSurfaceId);
             Assert.True(f.C.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
             f.C.Adapter.Render();
-            Assert.Equal(f.C.Adapter.ActiveSurfaceId, PerspectiveShell.LandingSurfaceFor(f.C));
+            Assert.Equal("ledger", PerspectiveShell.LandingSurfaceFor(f.C));
             return 0;
         }, 30);
+    }
+
+    // The UX & Accessibility lens's finding (SH-4.1): the landing surface must carry a focus target
+    // in its first-run state — host C with no watcher store, every pane in its not-available state —
+    // or the deferred entry focus falls through to an arbitrary tab header. Through the product's
+    // factory (no queries, no watcher) and the product's host, as the shell composes it (DC-135).
+    [Fact]
+    public void TheLandingSurface_HasAFocusTarget_InHostCsFirstRunState()
+    {
+        Sta.Run(() =>
+        {
+            var factory = new SurfaceContentFactory(null);
+            var host = DockHost.Create(PerspectiveSet.Coordination, factory.Create, new RecordingAnnouncer(), (_, _) => { });
+            host.Adapter.Render();
+
+            var landing = PerspectiveShell.LandingSurfaceFor(host);
+            Assert.Equal("sessions", landing);
+            var content = host.Adapter.ContentFor(landing!);
+            Assert.NotNull(content);
+            Assert.True(HasFocusTarget(content!), "the Terminal sessions pane has nothing focusable in its not-available state — the landing falls through");
+
+            // And every Center tab, whose empty host is the ListPane's Grid.
+            foreach (var surface in host.Service.Zones.Zone(ZoneId.Center).Surfaces())
+            {
+                var pane = host.Adapter.ContentFor(surface.SurfaceId);
+                Assert.True(pane is not null && HasFocusTarget(pane), $"'{surface.SurfaceId}' has no focus target in its not-available state");
+            }
+
+            return 0;
+        }, 30);
+
+        static bool HasFocusTarget(DependencyObject element)
+        {
+            if (element is UIElement { Focusable: true, IsEnabled: true })
+            {
+                return true;
+            }
+
+            var count = System.Windows.Media.VisualTreeHelper.GetChildrenCount(element);
+            for (var i = 0; i < count; i++)
+            {
+                if (HasFocusTarget(System.Windows.Media.VisualTreeHelper.GetChild(element, i)))
+                {
+                    return true;
+                }
+            }
+
+            return element is ContentControl { Content: DependencyObject inner } && HasFocusTarget(inner)
+                || element is System.Windows.Controls.Decorator { Child: DependencyObject child } && HasFocusTarget(child)
+                || element is Panel panel && panel.Children.OfType<DependencyObject>().Any(HasFocusTarget);
+        }
     }
 
     // ADR-0032 test 4's second clause / US-C9 — switching perspective never resets the other
@@ -308,6 +365,8 @@ public sealed class PerspectiveShellTests
 
             Assert.Same(PerspectiveSet.Explore, f.Shell.Active);
             Assert.Contains("needs a docking host", f.Said.Last, StringComparison.Ordinal);
+            // Every host perspective, derived, in rail order (Ruling 84 added the third).
+            Assert.EndsWith("Switch to Coding, Architecture or Coordination first.", f.Said.Last, StringComparison.Ordinal);
             var refused = ModeLines(lines).Single(e => e.GetProperty("outcome").GetString() == "refused");
             Assert.Equal(PerspectiveShell.NoHostCode, refused.GetProperty("error_code").GetString());
             return 0;

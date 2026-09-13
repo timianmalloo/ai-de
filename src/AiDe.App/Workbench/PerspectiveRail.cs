@@ -289,7 +289,7 @@ public sealed class PerspectiveRailItem : ListBoxItem
     public static readonly DependencyProperty HasFailureProperty = DependencyProperty.Register(
         nameof(HasFailure), typeof(bool), typeof(PerspectiveRailItem), new PropertyMetadata(false));
 
-    /// <summary>The glyph, resolved from the icon registry by the row's title (<c>IconCoding</c>, <c>IconExplore</c>, <c>IconArchitecture</c> — PS-R4).</summary>
+    /// <summary>The glyph, resolved from the icon registry by the row's title (<c>IconCoding</c>, <c>IconExplore</c>, <c>IconArchitecture</c>, <c>IconCoordination</c> — PS-R4).</summary>
     public static readonly DependencyProperty GlyphProperty = DependencyProperty.Register(
         nameof(Glyph), typeof(Geometry), typeof(PerspectiveRailItem), new PropertyMetadata(null));
 
@@ -336,6 +336,9 @@ public sealed class PerspectiveRailItem : ListBoxItem
         Row = row;
         AutomationProperties.SetName(this, $"{row.Title} perspective");
         ToolTip = TooltipFor(row);
+        // The bound gesture reaches assistive technology as the accelerator, not only through the
+        // tooltip's HelpText (the UX & Accessibility lens, SH-4.1).
+        AutomationProperties.SetAcceleratorKey(this, row.Gesture);
         // A resource REFERENCE, resolved when the item enters the tree: it walks the window's
         // dictionary (where IconCoding/IconArchitecture live this horizon) and the application's
         // (IconExplore). Application.TryFindResource never searches a Window's resources — the WPF

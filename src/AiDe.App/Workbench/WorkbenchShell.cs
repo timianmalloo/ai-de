@@ -575,7 +575,7 @@ public sealed class WorkbenchShell : IDisposable
     private IEnumerable<(DockHost Host, Surface Surface)> AllHostSurfaces() =>
         Hosts.SelectMany(h => h.Service.Current.AllStacks().SelectMany(st => st.Surfaces).Select(s => (h, s)));
 
-    /// <summary>The rendered content of every surface (of <paramref name="kind"/>, when given) of type <typeparamref name="T"/>, across both hosts.</summary>
+    /// <summary>The rendered content of every surface (of <paramref name="kind"/>, when given) of type <typeparamref name="T"/>, across every host.</summary>
     private IEnumerable<T> SurfaceContents<T>(string? kind = null) where T : class =>
         AllHostSurfaces()
             .Where(x => kind is null || string.Equals(x.Surface.Kind, kind, StringComparison.Ordinal))

@@ -70,7 +70,9 @@ public sealed class ZoneLayoutSlotsTests : IDisposable
         var layout = host.Zones;
 
         Assert.Equal(["sessions"], Ids(layout, ZoneId.Left));
+        // fixture-derivation: ok — §B4's third table names the exact tabs and their order (Ledger first); deriving them from the rows would make the oracle the default under test
         Assert.Equal(["ledger", "leaderboard", "board"], Ids(layout, ZoneId.Center));
+        // fixture-derivation: ok — the same table, by kind
         Assert.Equal(["ledger", "leaderboard", "board"], layout.Zone(ZoneId.Center).Surfaces().Select(s => s.Kind));
         Assert.Equal(0, Assert.IsType<ZoneStack>(layout.Zone(ZoneId.Center).Content).ActiveIndex);   // Ledger first
         Assert.Null(layout.Zone(ZoneId.Right).Content);
@@ -112,6 +114,7 @@ public sealed class ZoneLayoutSlotsTests : IDisposable
         Assert.True(again.LastRestoreAppliedASavedArrangement);
         Assert.Empty(again.LastRestoreDropped);
         Assert.False(result.WasDefaulted);
+        // fixture-derivation: ok — the round-trip's exact tab order is the claim (the saved arrangement comes back as saved)
         Assert.Equal(["ledger", "leaderboard", "board", "dd-1"], Ids(reopened.Zones, ZoneId.Center));
         Assert.Equal(["sessions"], Ids(reopened.Zones, ZoneId.Left));
         Assert.True(reopened.Zones.Zone(ZoneId.Bottom).Collapsed);
@@ -146,6 +149,7 @@ public sealed class ZoneLayoutSlotsTests : IDisposable
         var dropped = persistence.LastRestoreDropped;
         Assert.Equal(11, dropped.Count);
         Assert.Equal(
+            // fixture-derivation: ok — ADR-0032 test 1 names the exact dropped set; deriving it from the rows would make the oracle the filter under test
             ["board", "canvas", "classdiagram", "contexts", "inspector", "joins", "leaderboard", "ledger", "sessions", "view", "view"],
             dropped.Select(d => d.Surface.Kind).OrderBy(k => k, StringComparer.Ordinal));
         Assert.All(dropped, d => Assert.Equal(DropReason.KindNotAdmitted, d.Reason));
@@ -157,14 +161,12 @@ public sealed class ZoneLayoutSlotsTests : IDisposable
         // through the same channel that reports a dropped surface today (spec §C4's form).
         var said = result.Announcement;
         Assert.StartsWith("11 panes from your saved layout aren't available in Coding — ", said, StringComparison.Ordinal);
-        Assert.Contains("Sessions (terminal sessions)", said, StringComparison.Ordinal);   // the saved caption, then the kind's title
-        Assert.Contains("Board (message board)", said, StringComparison.Ordinal);
-        Assert.Contains("Leaderboard", said, StringComparison.Ordinal);
-        Assert.Contains("Ledger", said, StringComparison.Ordinal);
+        Assert.Contains("7 live in Architecture (Ctrl+3): ", said, StringComparison.Ordinal);
+        Assert.Contains("4 live in Coordination (Ctrl+4): Sessions (terminal sessions), Board (message board), Leaderboard, Ledger", said, StringComparison.Ordinal);   // once each, under their perspective; the saved caption, then the kind's title
         Assert.Contains("Class diagram", said, StringComparison.Ordinal);
         Assert.Contains("Domain (evidence)", said, StringComparison.Ordinal);
-        Assert.Contains("live in Coordination (Ctrl+4)", said, StringComparison.Ordinal);
-        Assert.Contains("live in Architecture (Ctrl+3)", said, StringComparison.Ordinal);
+        Assert.EndsWith(". Open each from that perspective's View menu.", said, StringComparison.Ordinal);
+        Assert.Equal(1, said.Split("Ledger").Length - 1);                                   // each pane listed once
         Assert.Contains(result.MissingSurfaces, m => m.StartsWith("Graph", StringComparison.Ordinal));
         Assert.Contains(result.MissingSurfaces, m => m.StartsWith("Ledger", StringComparison.Ordinal));
     }

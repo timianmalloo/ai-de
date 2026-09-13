@@ -190,7 +190,9 @@ internal static class ShellContrastCensus
             await Settle(window);
             // Recorded, never asserted (the review's attended rows): what the switch said, and which
             // surface the body reports active once it has settled — the landing the entry focus reads.
-            log.Add($"{row.Id}: announced '{shell.LiveRegion.Text}'; active after switch = {host.Adapter.ActiveSurfaceId ?? "(none)"}; focused = {System.Windows.Input.Keyboard.FocusedElement?.GetType().Name ?? "(none)"}");
+            var activeAfterSwitch = host.Adapter.ActiveSurfaceId;
+            var landingZone = activeAfterSwitch is null ? null : host.Service.Zones.FindZoneOf(activeAfterSwitch);
+            log.Add($"{row.Id}: announced '{shell.LiveRegion.Text}'; active after switch = {activeAfterSwitch ?? "(none)"}; zone = {landingZone?.ToString() ?? "(none)"}; focused = {System.Windows.Input.Keyboard.FocusedElement?.GetType().Name ?? "(none)"}");
 
             foreach (var surface in host.Service.Current.AllStacks().SelectMany(s => s.Surfaces).ToList())
             {
@@ -362,13 +364,15 @@ internal static class ShellContrastCensus
 
     /// <summary>
     /// Lets a body that has just been parented settle: the docking manager builds its pane controls
-    /// in the layout pass, and the tab strips select their content at Loaded priority — a walk
-    /// before that measures the Left pane and misses every Center and Right tab (measured, SH-4.1).
+    /// in the layout pass and the tab strips select their content from their own realization — a
+    /// walk before that measures the Left pane and misses every Center and Right tab (measured,
+    /// SH-4.1). ContextIdle drains every Loaded- and Background-priority op the shell and AvalonDock
+    /// enqueue on the way, the shell's deferred activations included.
     /// </summary>
     private static async Task Settle(Window window)
     {
         window.UpdateLayout();
-        await window.Dispatcher.InvokeAsync(() => { }, System.Windows.Threading.DispatcherPriority.Background);
+        await window.Dispatcher.InvokeAsync(() => { }, System.Windows.Threading.DispatcherPriority.ContextIdle);
         window.UpdateLayout();
     }
 

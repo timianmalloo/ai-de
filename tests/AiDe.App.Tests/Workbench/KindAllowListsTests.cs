@@ -13,6 +13,7 @@ namespace AiDe.App.Tests.Perspectives;
 /// </summary>
 public sealed class KindAllowListsTests
 {
+    // fixture-derivation: ok — Ruling 84 names these five as THE set; deriving them from the rows would make the oracle the column under test
     private static readonly string[] Loomkeeper = ["sessions", "board", "leaderboard", "ledger", "daydreams"];
 
     [Fact]

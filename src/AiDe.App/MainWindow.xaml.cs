@@ -35,8 +35,8 @@ public partial class MainWindow : Window
         // theme is applied HERE — in the Design-owned window, not the Core-owned WorkbenchShell — so
         // the panes and tabs read as part of the app instead of a white rectangle bolted on. Its
         // accents are then pulled from VS blue toward our palette by DockThemeAccents (a value-based
-        // brush override, no template surgery — see the AvalonDock decision note). Both hosts, the
-        // same way: host B is the same unit composed twice (ADR-0031).
+        // brush override, no template surgery — see the AvalonDock decision note). Every host, the
+        // same way: hosts B and C are the same unit composed again (ADR-0031; Ruling 84).
         foreach (var host in Shell.Hosts)
         {
             host.Manager.Theme = new AvalonDock.Themes.Vs2013DarkTheme();

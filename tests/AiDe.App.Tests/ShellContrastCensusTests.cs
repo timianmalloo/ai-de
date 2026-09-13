@@ -78,6 +78,14 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
         Assert.Contains(wpf, s => s.Surface.StartsWith("tab:", StringComparison.Ordinal));
         Assert.Contains(wpf, s => s.Text == "File" && s.Element.Contains("AccessText", StringComparison.Ordinal));
 
+        // The landing, in the shown window (Ruling 84; spec §C5; the row's Landing zone): after the
+        // switch has settled, Coordination's body reports its Left zone's tab active and
+        // Architecture's its Center's — measured before the deferred entry focus as Provenance
+        // (the Right) and the Center's last-added tab (the last pane control to realize).
+        Assert.Contains(census.Log, l => l.StartsWith("coordination: ", StringComparison.Ordinal) && l.Contains("active after switch = sessions; zone = Left;", StringComparison.Ordinal));
+        Assert.Contains(census.Log, l => l.StartsWith("architecture: ", StringComparison.Ordinal) && l.Contains("; zone = Center;", StringComparison.Ordinal));
+        Assert.Contains(census.Log, l => l.StartsWith("coordination: announced 'Coordination perspective — ", StringComparison.Ordinal));
+
         var failing = wpf.Where(s => !s.Clears).OrderBy(s => s.Ratio).ToList();
 
         Assert.True(failing.Count == 0,

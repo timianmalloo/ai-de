@@ -108,6 +108,76 @@ public sealed class ZoneWorkbenchAdapterTests
         return (IReadOnlySet<string>)field!.GetValue(null)!;
     }
 
+    // SH-4.1 (DC-nnn (SH-4 a)): after a whole-arrangement replacement the pre-render active
+    // surface is gone, so the adapter activates the Center's active tab — now, and again one
+    // dispatcher turn later, because each docking pane control activates its own selection as it
+    // realizes and the last to realize wins (here: the Bottom's `term-x`, measured). The second
+    // activation reads the model at that moment: a Center tab the operator activated in between is
+    // what gets activated. RED with the deferred turn activating the tab it captured at render
+    // time (`doc-b`), and RED without the deferred turn at all (`term-x`).
+    [Fact]
+    public void AfterAWholeArrangementReplacement_TheCentersActiveTabIsActive_AndAnActivationInBetweenIsKept()
+    {
+        var (afterRender, afterOperator, afterTurn) = WithZoneWorkbench((adapter, service) =>
+        {
+            var replacement = WorkbenchLayout.Empty()
+                .WithZone(new ZoneState(ZoneId.Center, new ZoneStack(
+                [
+                    new Surface("doc-a", "codeviewer", "A"),
+                    new Surface("doc-b", "codeviewer", "B"),
+                    new Surface("doc-c", "codeviewer", "C"),
+                ], activeIndex: 1), 1.0, Collapsed: false))
+                .WithZone(new ZoneState(ZoneId.Bottom, new ZoneStack([new Surface("term-x", "diagnostics", "Bottom")]), 0.3, Collapsed: false));
+
+            service.RestoreZones(replacement);   // every pre-render surface is gone
+            adapter.Render();
+            var afterRender = adapter.ActiveSurfaceId;
+
+            // The operator activates another tab before the deferred turn runs — in the model and
+            // in the SAME rendered tree (no re-render, so the deferred turn's tree guard does not
+            // absorb it; only the model guard can).
+            Assert.True(service.Apply(new LayoutOperation.ActivateSurface("doc-c")).Applied);
+            adapter.ActivateInView("doc-c");
+            var afterOperator = adapter.ActiveSurfaceId;
+
+            System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.ContextIdle);
+            return (afterRender, afterOperator, adapter.ActiveSurfaceId);
+        });
+
+        // One comparison so a failure shows all three readings at once.
+        Assert.Equal("render=doc-b operator=doc-c turn=doc-c", $"render={afterRender} operator={afterOperator} turn={afterTurn}");
+    }
+
+    // The kept branch of the same class (the WPF lens's finding, measured in the census window:
+    // a Center document active before a plain re-render, the Bottom terminal active after it
+    // settled): the pre-render surface still the active tab of its stack is asserted again at the
+    // deferred turn, so a rename's or an attach's re-render never moves the operator's focus.
+    [Fact]
+    public void APlainReRender_KeepsTheActiveCenterDocumentActive_AfterThePaneControlsRealize()
+    {
+        var (before, immediate, settled) = WithZoneWorkbench((adapter, service) =>
+        {
+            var arrangement = WorkbenchLayout.Empty()
+                .WithZone(new ZoneState(ZoneId.Center, new ZoneStack(
+                [
+                    new Surface("doc-a", "codeviewer", "A"),
+                    new Surface("doc-b", "codeviewer", "B"),
+                ], activeIndex: 1), 1.0, Collapsed: false))
+                .WithZone(new ZoneState(ZoneId.Bottom, new ZoneStack([new Surface("term-x", "diagnostics", "Bottom")]), 0.3, Collapsed: false));
+            service.RestoreZones(arrangement);
+            adapter.Render();
+            System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.ContextIdle);
+            var before = adapter.ActiveSurfaceId;
+
+            adapter.Render();   // a plain re-render: the model is unchanged, doc-b is still its stack's active tab
+            var immediate = adapter.ActiveSurfaceId;
+            System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.ContextIdle);
+            return (before, immediate, adapter.ActiveSurfaceId);
+        });
+
+        Assert.Equal("before=doc-b immediate=doc-b settled=doc-b", $"before={before} immediate={immediate} settled={settled}");
+    }
+
     private static T WithZoneWorkbench<T>(Func<WorkbenchAdapter, ZoneBackedLayoutService, T> assert) =>
         OnStaThread(() =>
         {

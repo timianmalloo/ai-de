@@ -293,7 +293,7 @@ public sealed class WorkbenchShellTests
     [Fact]
     public void AShowEntryOpensTheKindOnce_ThenFocusesIt_AndANewEntryAddsEveryTime()
     {
-        var (daydreams, tabIndex, activeBeforeShow, activeAfterShow, viewers, said) = WithShell((shell, _) =>
+        var (daydreams, tabIndex, activeBeforeShow, activeAfterShow, viewers, said, siblingKind) = WithShell((shell, _) =>
         {
             // Daydreams tabs into an occupied stack of host C (the placement policy's last rule —
             // any stack; measured: the Left, beside Terminal sessions), so it is NOT the first tab
@@ -325,12 +325,13 @@ public sealed class WorkbenchShellTests
             Assert.True(shell.Controller.Execute("surface.new.codeviewer"));
             var viewerCount = shell.Service.Current.AllStacks().SelectMany(st => st.Surfaces).Count(s => s.Kind == "codeviewer");
 
-            return (count, daydreamsTab, before, after, viewerCount, shell.Announcer.Last);
+            return (count, daydreamsTab, before, after, viewerCount, shell.Announcer.Last, sibling.Kind);
         });
 
         Assert.Equal(1, daydreams);
         Assert.True(tabIndex > 0);
-        Assert.NotEqual("daydreams", activeBeforeShow);
+        Assert.Equal(siblingKind, activeBeforeShow);
+        Assert.NotEqual("daydreams", siblingKind);
         Assert.Equal("daydreams", activeAfterShow);
         Assert.Equal(2, viewers);
         Assert.Equal("Code viewer opened.", said);
