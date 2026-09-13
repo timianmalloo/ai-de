@@ -13,7 +13,7 @@ namespace AiDe.Core.AgentPlane;
 /// failure of this node — the envelope would then be a shape two writers agree on by luck rather
 /// than a contract one writer owns.</para>
 ///
-/// <para><b>Recognition is a table, not a handler per kind.</b> Four wire shapes have a Phase-1
+/// <para><b>Recognition is a table, not a handler per kind.</b> Five wire shapes have a Phase-1
 /// producer and are projected onto v1 kinds; everything else is namespaced <c>acp.*</c> and carried
 /// whole under <c>Ext</c>. Adding a kind is adding a row, and an adapter release that invents one
 /// needs no change at all — §7.2's "consumers ignore unknown kinds", implemented rather than
@@ -22,7 +22,7 @@ namespace AiDe.Core.AgentPlane;
 /// <para><b>Nothing is dropped, ever.</b> A recognized frame's payload moves to <c>body</c> and the
 /// remaining envelope stays in <c>Ext</c>; an unrecognized frame goes to <c>Ext</c> entire. Either
 /// way every field of the original frame is present exactly once, which is what the captured-corpus
-/// round-trip proves over all 88 frames.</para>
+/// round-trip proves over every frame in the corpus (enumerated from disk, never counted here — DC-184).</para>
 ///
 /// <para><b>Identity, ordering and time come from the plane.</b> ACP frames carry no run id, no
 /// sequence and no timestamp. <c>Seq</c> is assigned here and <c>Ts</c> is stamped at receipt —
@@ -35,6 +35,7 @@ public sealed class AcpRunEventMapper
     private static readonly Dictionary<string, string> RecognizedSessionUpdates = new(StringComparer.Ordinal)
     {
         ["agent_message_chunk"] = "agent.msg",
+        ["agent_thought_chunk"] = "agent.thought",   // Ruling 82; the shape Verified from frames/thought.jsonl (CV-5.3)
         ["tool_call"] = "tool.call",
         ["tool_call_update"] = "tool.result",
     };

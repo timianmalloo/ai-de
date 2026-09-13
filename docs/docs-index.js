@@ -2042,7 +2042,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 30 types, 164 members, 72% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 32 types, 184 members, 72% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2055,7 +2055,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "507a84c67cd1d8c9749f9397098edffbbb3a5f9ecfc81b472e2a698a8b45a5e7"
+      "sourceSha256": "4afd6dceeabe435863d7a323909222a0b4f749e5427e38a4b1646689cb9e7826"
     },
     {
       "id": "api-aide-core",
@@ -2105,7 +2105,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c4370837af21ac681efdb2e7385438fe2f2b9b20828e7927f10a0edd6aee0863"
+      "sourceSha256": "6ffdaa69cc0754dd2cf49adc86d41239aebffd3eb06e1ed2b33f1b06ef43b7ad"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -2317,7 +2317,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 32 types, 130 members, 96% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 49 types, 143 members, 96% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2330,7 +2330,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3d252594268527329455893ac862fbd276e0dc6387739cb5f7be7a81ea53fabb"
+      "sourceSha256": "acfecc0255eaeb77a1e4a0739f31430a9a1a6b448d646cfb9bbaee956b1558c6"
     },
     {
       "id": "api-aide-core-projections",
@@ -7923,7 +7923,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c0f5c3a32f518797641dc0b448b196c38eb76c79d2fb154a29eb1cd2d0b59d2d"
+      "sourceSha256": "34b4791b0c53560c465398b05076693c8ef5625fe2f91608067ffd29aa1e1b6e"
     },
     {
       "id": "design-session-profiler",
@@ -15698,6 +15698,70 @@ window.DOCS_INDEX = {
       "sourceSha256": "e86758a2394dc823c88a985417bdad57f0cb1221620620c3172042cb3e03a430"
     },
     {
+      "id": "proof-the-conversation",
+      "path": "docs/proof/the-conversation.md",
+      "title": "Proof Pack — CV-5.3, the conversation: the thread renders prose · reasoning · tool call+result · outcome in event order over Coalesce; agent_thought_chunk becomes a mapper row (Ruling 82)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [],
+      "summary": "Evidence for CV-5.3 on the Conversation lane: the spike captured a real agent_thought_chunk frame (19 chunks, content.text — the shape is Verified, not Inferred; the adapter forwards a thought only under thinking.display \"summarized\"); the mapper row agent.thought landed with M1 red first and the corpus round-trip over 156 frames; ToolFacts carries what a tool frame states; ConversationItems is the one pure projection over Coalesce rows (a call and its results by id are one item, a result with no call an event row, acp.* events, order preserved — I1's seven goldens plus the two captured runs); ProseMarkdown is the golden-tested subset; the thread's reply side renders the items then the outcome line whose fold holds only the non-conversation rows, the reasoning item collapsed · muted · never announced, the tool item kind · title · status with its detail on demand, interrupted on a stopped turn, in-place updates with focus kept, and the entry stop on a live or failed last turn (T1–T9 red → green). Two classes registered as placeholders (CV-5-3 a, b). A1 is RUN-PENDING with steps.",
+      "tags": [
+        "proof-pack",
+        "conversation-lane",
+        "cv-5",
+        "cv-5-3",
+        "ruling-82",
+        "ruling-81",
+        "ruling-87",
+        "agent-thought",
+        "markdown-subset",
+        "session-thread",
+        "tool-item",
+        "reasoning-item",
+        "sc7",
+        "sc8",
+        "sc9",
+        "sc10",
+        "dm7",
+        "spike"
+      ],
+      "links": [
+        {
+          "to": "proof-console-coalesce",
+          "rel": "refines"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        },
+        {
+          "to": "ui-review-operator-findings-2026-09-13",
+          "rel": "implements"
+        },
+        {
+          "to": "design-session-thread-itemscontrol",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "mockup-session-conversation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d203c07b9a50617e1550b260bff44c6362a2e91d15e83fb8fe4dd244a93dfe92"
+    },
+    {
       "id": "proof-watcher-advisory-evaluator",
       "path": "docs/proof/watcher-advisory-evaluator.md",
       "title": "Proof Pack - Loomkeeper Local Advisory Evaluator & Egress Guard (connective 3)",
@@ -17614,5 +17678,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "3dec2558ecefedc90c3811e2024f18bae535b8805ee723bcece005220a088ae4"
+  "graphSha256": "4808047fc64a81ef312ae3790addf38b748dc7ee618da852439777e8b3ae1422"
 };

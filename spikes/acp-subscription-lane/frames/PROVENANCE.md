@@ -44,6 +44,8 @@ itself.
 | `read.sent.jsonl` | sent (probe stdin to adapter) | 3 | `probe-read.js` |
 | `write.jsonl` | received (adapter stdout) | 59 | `probe-write.js` |
 | `write.sent.jsonl` | sent (probe stdin to adapter) | 4 | `probe-write.js` |
+| `thought.jsonl` | received (adapter stdout) | 65 | `probe-thought.js` (2026-09-13) |
+| `thought.sent.jsonl` | sent (probe stdin to adapter) | 3 | `probe-thought.js` (2026-09-13) |
 
 Every line in every file parses as a standalone JSON object (verified with `JSON.parse` per
 line, zero failures). Received frames are the raw line exactly as read from the child process's
@@ -101,7 +103,8 @@ Actually observed in this capture:
 - `session/update` discriminators seen: `available_commands_update`, `usage_update`,
   `tool_call`, `tool_call_update`, `agent_message_chunk`. **Not observed:**
   `user_message_chunk`, `agent_thought_chunk` — neither probe's prompt triggered them in this
-  run.
+  run. (`agent_thought_chunk` was captured on 2026-09-13 by a third probe — the section at the
+  end of this file; `user_message_chunk` remains unobserved.)
 - Top-level methods seen: `_auth/status_update`, `session/update`,
   `session/request_permission` (write probe only).
 - `usage_update` is delivered as a `session/update` frame (`params.update.sessionUpdate ==
@@ -116,3 +119,42 @@ Actually observed in this capture:
 This corpus is a test oracle for a wire contract — the point being that assertions about frame
 shape are proven against what the adapter actually sent, not against events the wire-contract's
 own author wrote.
+
+## The `agent_thought_chunk` capture (2026-09-13, CV-5.3; Ruling 82 condition 1)
+
+**A real `agent_thought_chunk` frame now exists in the corpus** — `thought.jsonl`, 65 received
+lines, of which **19 are `agent_thought_chunk`** (272 characters of thought text joined),
+35 `agent_message_chunk`, 3 `usage_update`, 2 `available_commands_update`, 3 `_auth/status_update`,
+and the three responses (`initialize`, `session/new`, `session/prompt`). Captured verbatim by
+`probe-thought.js` the same way as the two probes above, with the redaction below applied before
+the line reached disk.
+
+- Adapter `@agentclientprotocol/claude-agent-acp` **0.75.1** (`agentInfo.version` in the
+  `initialize` result; installed under `spikes/acp-subscription-lane/node_modules/`, not committed).
+  Node `v24.18.0`. Claude Max subscription, `authMethods: []`.
+- The session was pinned **read-only** exactly as `docs/proof/compile-pin-spike.json` records
+  (`_meta.claudeCode.options.tools: []` plus the disallowed list), and asked for the thinking
+  display through the same options: **`thinking: { type: "adaptive", display: "summarized" }`**.
+  The adapter's own source says why this is needed (`acp-agent.js`, case `"thinking_delta"`):
+  *recent models default `thinking.display` to "omitted", which streams signature-only thinking
+  blocks whose text is empty* — and the adapter forwards a thought chunk only when its text is
+  non-empty. **Without the display request there is no thought text on the wire at all.**
+  (A product finding, not a corpus fact: the lane must send the same option for reasoning to
+  appear in the thread — routed to the conductor for `AcpLaneClient`, CV-3's file.)
+- The prompt was a small reasoning puzzle (the three mislabelled boxes), one model call, one run;
+  the model recorded in the prompt result's `_meta.quota.model_usage` was `claude-haiku-4-5-20251001`
+  with `reasoningOutputTokens: 0` — the summarized display, which is what the CLI renders.
+- `session/prompt` result: `stopReason: "end_turn"`, 448 output tokens.
+
+**The shape, Verified from the frame** (the same as `agent_message_chunk`; the review's §9 residual
+"text in `body`, or in `content[]` like a message" is answered — it is `content.text`):
+
+```
+{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"…","update":{
+  "sessionUpdate":"agent_thought_chunk","content":{"type":"text","text":"This"},"messageId":"msg_…"}}}
+```
+
+Redaction on this capture: the email rule above (`redacted@example.invalid`, the
+`compile-session-pin-wire` spike's regex) and the home-directory rule above (both spellings,
+derived from `os.homedir()` at capture time); swept after the run for `Users` in any path and for
+the account's local part — zero hits in both files. Every line re-verified as standalone JSON.

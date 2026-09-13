@@ -78,7 +78,8 @@ public sealed record OutcomeView(string Lane, int? ExitCode, int? Edits, Spend? 
 /// <param name="Kind">The event kind, verbatim.</param>
 /// <param name="Text">What to show — plain text, never markup.</param>
 /// <param name="Origin"><c>run</c>, or <c>compile</c> for a <c>compile.*</c> event shown under its envelope's turn.</param>
-public sealed record EventLine(DateTimeOffset At, string Lane, string Kind, string Text, string Origin);
+/// <param name="Tool">What a <c>tool.call</c> / <c>tool.result</c> frame stated (Ruling 82); null for every other kind.</param>
+public sealed record EventLine(DateTimeOffset At, string Lane, string Kind, string Text, string Origin, ToolFacts? Tool = null);
 
 /// <summary>Every act an operator can request on a turn — one channel (DS-1 §Contracts).</summary>
 public enum TurnActionKind
@@ -144,6 +145,7 @@ public sealed record TurnView
         Waiting = waiting;
         Events = events;
         Rows = Coalesce.Rows(events);
+        Items = ConversationItems.Of(Rows, live: state is TurnState.Running or TurnState.Waiting);
         SentBytes = sentBytes;
         At = at;
     }
@@ -177,6 +179,13 @@ public sealed record TurnView
     /// side renders and the Console split unfolds (DM7: one derivation, two readers).
     /// </summary>
     public IReadOnlyList<TurnRow> Rows { get; }
+
+    /// <summary>
+    /// The conversation over <see cref="Rows"/> (Ruling 82): prose · reasoning · tool call+result ·
+    /// event, in event order — derived once per snapshot beside <see cref="Rows"/>, never stored.
+    /// The thread's reply side renders the items and folds the events; the outcome line is last.
+    /// </summary>
+    public IReadOnlyList<ConversationItem> Items { get; }
 
     /// <summary>Exactly the sent bytes — the compiled prompt disclosure shows this and nothing else.</summary>
     public string SentBytes { get; }

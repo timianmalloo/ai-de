@@ -173,10 +173,10 @@ public sealed class TheThreadIsOneListTests
     }
 
     /// <summary>
-    /// The thread's half of Ruling 81: the reply side renders the same <c>Coalesce</c> output —
-    /// one text per message row, in order, and nothing for a tool row. Two message runs around a
-    /// tool call are two texts (a fold that rendered only the first run, or the tool row as prose,
-    /// fails here).
+    /// The thread's half of Ruling 81, as Ruling 82 re-points it: the reply side renders the same
+    /// <c>Coalesce</c> output as items — one prose item per message row, in order, and the tool row
+    /// as a tool item between them, never as prose. Two message runs around a tool call are two
+    /// prose items (a fold that rendered only the first run, or the tool row as prose, fails here).
     /// </summary>
     [Fact]
     public void TheReplySide_RendersEachMessageRowAsText_InOrder_AndNoToolText()
@@ -197,11 +197,15 @@ public sealed class TheThreadIsOneListTests
             try
             {
                 var container = ThreadFixtures.Container(feed, 0);
-                var prose = ThreadFixtures.Visuals<ItemsControl>(container).Single(c => c.ItemsSource is IReadOnlyList<TurnRow>);
+                var conversation = ThreadFixtures.Visuals<ItemsControl>(container).Single(c => c.ItemsSource is IReadOnlyList<ConversationRow>);
+                var rows = conversation.Items.Cast<ConversationRow>().ToList();
 
-                Assert.Equal(["Reading the tracker.", "Three merges are missing."], prose.Items.Cast<TurnRow>().Select(r => r.Text));
-                Assert.Equal(["Reading the tracker.", "Three merges are missing."], ThreadFixtures.Visuals<ThreadText>(prose).Select(t => t.Text));
-                Assert.Equal(feed.Rows[0].View.Rows.Where(r => r.Kind == Coalesce.MessageKind), prose.Items.Cast<TurnRow>());
+                Assert.Equal(["Reading the tracker.", "read docs/tracker.md", "Three merges are missing."], rows.Select(r => r.IsTool ? r.Title : r.Text));
+                Assert.Equal([true, false, true], rows.Select(r => r.Item is ConversationItem.Prose));
+                Assert.Equal(
+                    ["Reading the tracker.", "Three merges are missing."],
+                    ThreadFixtures.Visuals<ProseView>(conversation).Select(p => string.Concat(ThreadFixtures.Visuals<ThreadText>(p).Select(t => new System.Windows.Documents.TextRange(t.ContentStart, t.ContentEnd).Text))));
+                Assert.Equal(feed.Rows[0].View.Items.Where(i => i is not ConversationItem.Event), rows.Select(r => r.Item));
             }
             finally
             {

@@ -9,8 +9,9 @@ namespace AiDe.Core.Tests.AgentPlane;
 /// </summary>
 /// <remarks>
 /// <para><b>Why the corpus is the oracle.</b> A wire-contract test whose author also wrote the
-/// input proves only that the author was self-consistent. The corpus is 88 frames captured
-/// verbatim from a live <c>claude-code</c> ACP session before any parse or re-serialization
+/// input proves only that the author was self-consistent. The corpus is every frame captured
+/// verbatim from live <c>claude-code</c> ACP sessions before any parse or re-serialization (the
+/// two Phase-1 probes and CV-5.3's thought capture; the files are enumerated, never counted here — DC-184)
 /// (<c>frames/PROVENANCE.md</c>), so a mapping assumption that the adapter does not share fails
 /// here rather than in a governed run.</para>
 ///
@@ -292,7 +293,50 @@ public sealed class AcpRunEventMapperTests
     }
 
     /// <summary>
-    /// The four wire shapes that <i>do</i> have a Phase-1 producer are projected onto v1 kinds, with
+    /// <b>M1 (CV-5.3, Ruling 82).</b> A real <c>agent_thought_chunk</c> frame — captured into the
+    /// corpus by <c>probe-thought.js</c> on 2026-09-13, never authored — maps to <c>agent.thought</c>
+    /// with its text in <c>body.content.text</c>, exactly where an <c>agent_message_chunk</c>'s
+    /// text sits (the shape the review's §9 left Inferred, now Verified from the frame); the
+    /// console model's one text reader yields that text, and the joined thought is the puzzle's
+    /// reasoning, not the answer.
+    /// </summary>
+    /// <remarks>
+    /// <b>Red observed</b> before the row: <c>Expected: agent.thought · Actual:
+    /// acp.session.update.agent_thought_chunk</c>, with an empty body.
+    /// </remarks>
+    [Fact]
+    public void AnAgentThoughtChunk_MapsToAgentThought_WithItsTextInBody()
+    {
+        var mapper = new AcpRunEventMapper(RunId, AgentId);
+        var joined = new System.Text.StringBuilder();
+        var seen = 0;
+
+        foreach (var frame in Read("thought.jsonl"))
+        {
+            var node = JsonNode.Parse(frame.Raw)!.AsObject();
+            if (node["params"]?["update"]?["sessionUpdate"]?.GetValue<string>() != "agent_thought_chunk")
+            {
+                continue;
+            }
+
+            seen++;
+            var mapped = mapper.Map(frame.Raw, ReceivedAt);
+
+            Assert.Equal("agent.thought", mapped.Kind);
+            var text = node["params"]!["update"]!["content"]!["text"]!.GetValue<string>();
+            Assert.Equal(text, mapped.Body["content"]!["text"]!.GetValue<string>());
+            Assert.Equal(text, AiDe.Core.Presentation.Sessions.ConsoleStreamModel.TextOf(mapped));
+            Assert.Null(mapped.Ext["params"]?["update"]);   // lifted, not copied
+            joined.Append(text);
+        }
+
+        Assert.True(seen > 0, "the corpus no longer contains an agent_thought_chunk frame — the row's shape would be Inferred again");
+        Assert.Equal(19, seen);   // the capture's count, asserted from the file so the Proof Pack's number is a record, not a memoir (DC-184)
+        Assert.StartsWith("This is a straightforward logic puzzle", joined.ToString(), StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// The five wire shapes that <i>do</i> have a Phase-1 producer are projected onto v1 kinds, with
     /// the recognized payload in <c>body</c>.
     /// </summary>
     [Fact]
@@ -314,6 +358,7 @@ public sealed class AcpRunEventMapperTests
         }
 
         Assert.True(counts.GetValueOrDefault("agent.msg") > 0, "no agent.msg produced");
+        Assert.True(counts.GetValueOrDefault("agent.thought") > 0, "no agent.thought produced");
         Assert.True(counts.GetValueOrDefault("tool.call") > 0, "no tool.call produced");
         Assert.True(counts.GetValueOrDefault("tool.result") > 0, "no tool.result produced");
         Assert.True(counts.GetValueOrDefault("permission.request") > 0, "no permission.request produced");

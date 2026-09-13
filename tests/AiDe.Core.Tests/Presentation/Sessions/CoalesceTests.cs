@@ -146,6 +146,35 @@ public sealed class CoalesceTests
     }
 
     /// <summary>
+    /// <b>DC-nnn (CV-5-3 a).</b> A wire chunk whose text is only whitespace — the corpus has one,
+    /// <c>thought.jsonl:27</c>, the <c>"\n\n"</c> between two paragraphs of a thought — is that
+    /// whitespace, never the kind: with the reader's blank-means-absent fallback the fold joined the
+    /// literal word <c>agent.thought</c> into the reasoning (and would join <c>agent.msg</c> into the
+    /// prose on the same chunk boundary). Absent text still reads as the kind, so a frame with nothing
+    /// in it is not blank — the positive control beside the fix.
+    /// </summary>
+    /// <remarks><b>Red observed</b>: <c>Expected: "\n\n" · Actual: "agent.thought"</c> (M1 failed on the same chunk).</remarks>
+    [Fact]
+    public void AWhitespaceOnlyChunk_IsItsWhitespace_NeverTheKind()
+    {
+        var mapper = new AiDe.Core.AgentPlane.AcpRunEventMapper("run-1", "claude-code");
+        var blank = mapper.Map("""{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"s","update":{"sessionUpdate":"agent_thought_chunk","content":{"type":"text","text":"\n\n"}}}}""", T0);
+        var empty = mapper.Map("""{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"s","update":{"sessionUpdate":"agent_message_chunk","content":{"type":"text","text":""}}}}""", T0);
+        var absent = mapper.Map("""{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"s","update":{"sessionUpdate":"usage_update","used":1,"size":2}}}""", T0);
+
+        Assert.Equal("\n\n", ConsoleStreamModel.TextOf(blank));
+        Assert.Equal(string.Empty, ConsoleStreamModel.TextOf(empty));
+        Assert.Equal("acp.session.update.usage_update", ConsoleStreamModel.TextOf(absent));
+
+        var thought = Coalesce.Rows([
+            new EventLine(T0, "claude-code", Coalesce.ThoughtKind, "one.", "run"),
+            new EventLine(T0, "claude-code", Coalesce.ThoughtKind, ConsoleStreamModel.TextOf(blank), "run"),
+            new EventLine(T0, "claude-code", Coalesce.ThoughtKind, "two.", "run"),
+        ]);
+        Assert.Equal("one.\n\ntwo.", Assert.Single(thought).Text);
+    }
+
+    /// <summary>
     /// D2, over generated interleavings (seeded — D0): the row count is the number of runs, a run
     /// being a maximal stretch of one foldable kind from one lane, or one event of any other kind;
     /// each row's text is its events' text joined; no text is lost or invented; every row's

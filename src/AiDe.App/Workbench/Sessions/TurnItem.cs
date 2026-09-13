@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using AiDe.Core.Presentation.Sessions;
@@ -21,6 +22,8 @@ public sealed class TurnItem : INotifyPropertyChanged
     /// <remarks><c>simplify:</c> one constant; the trigger to revisit is a turn whose first four lines are not the ones an operator needs.</remarks>
     public const int FoldLines = 4;
 
+    private readonly ObservableCollection<ConversationRow> _conversation = [];
+    private IReadOnlyList<TurnRow> _eventRows = [];
     private TurnView _view;
     private bool _isFoldOpen;
     private bool _isProvenanceOpen;
@@ -30,6 +33,7 @@ public sealed class TurnItem : INotifyPropertyChanged
     {
         ArgumentNullException.ThrowIfNull(view);
         _view = view;
+        MergeConversation();
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -47,8 +51,42 @@ public sealed class TurnItem : INotifyPropertyChanged
             }
 
             _view = value;
+            MergeConversation();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
         }
+    }
+
+    /// <summary>
+    /// The positional merge of the conversation (the thread's P5, one level down): the row at each
+    /// index takes the re-derived item — in place, so a status change never re-templates and focus
+    /// inside a detail survives (T8) — and a new item appends. The items are append-only by
+    /// construction (the stream is), so the collection never shrinks.
+    /// </summary>
+    private void MergeConversation()
+    {
+        var index = 0;
+        var events = new List<TurnRow>();
+        foreach (var item in _view.Items)
+        {
+            if (item is ConversationItem.Event evt)
+            {
+                events.Add(evt.Row);   // an event row is the fold's, never an item of the conversation
+                continue;
+            }
+
+            if (index < _conversation.Count)
+            {
+                _conversation[index].Item = item;
+            }
+            else
+            {
+                _conversation.Add(new ConversationRow(item));
+            }
+
+            index++;
+        }
+
+        _eventRows = events;
     }
 
     public bool IsFoldOpen
@@ -86,23 +124,34 @@ public sealed class TurnItem : INotifyPropertyChanged
         ? TurnCopy.EventsText(_view.Events.Count)
         : string.Join(" · ", TurnCopy.Counts(_view));
     /// <summary>
-    /// The reply side's prose: the <c>agent.msg</c> rows of <c>Coalesce(Events)</c>, each one
-    /// message (Ruling 81). Rendered as text for now; CV-5.3 renders the whole fold as items —
-    /// prose · reasoning · tool call+result · outcome, in event order (Ruling 82).
+    /// The reply side's conversation (Ruling 82): the prose, reasoning and tool items of
+    /// <see cref="TurnView.Items"/>, in event order, as rows updated in place — the same
+    /// collection instance across snapshots, so the panel keeps its containers.
     /// </summary>
-    public IReadOnlyList<TurnRow> Prose => [.. _view.Rows.Where(r => string.Equals(r.Kind, Coalesce.MessageKind, StringComparison.Ordinal))];
+    public IReadOnlyList<ConversationRow> Conversation => _conversation;
     public string SentBytes => _view.SentBytes;
     public string ProvenanceName => "Provenance of " + _view.DisplayOrdinal;
     public string CompiledName => "Compiled prompt of " + _view.DisplayOrdinal;
-    public string FoldHeader => TurnCopy.EventsText(_view.Events.Count);
+
+    /// <summary><i>N events</i> — the non-conversation rows only (SC7 as amended: <c>acp.*</c>, the conductor's lines, stderr, a result with no call).</summary>
+    public string FoldHeader => TurnCopy.EventsText(EventRows.Count);
     public bool IsLive => _view.State is TurnState.Running or TurnState.Waiting;
 
-    /// <summary>The fold's content: the last <see cref="FoldLines"/> lines, bounded, no inner scroller.</summary>
-    public IReadOnlyList<EventLine> FoldedEvents =>
-        _view.Events.Count <= FoldLines ? _view.Events : [.. _view.Events.Skip(_view.Events.Count - FoldLines)];
+    /// <summary>The fold's rows: every event item's row, in order — collected once per merge.</summary>
+    private IReadOnlyList<TurnRow> EventRows => _eventRows;
 
-    /// <summary>How many lines the fold does not show; 0 when it shows them all.</summary>
-    public int OtherEvents => Math.Max(0, _view.Events.Count - FoldLines);
+    /// <summary>The fold's content: the last <see cref="FoldLines"/> non-conversation rows, bounded, no inner scroller.</summary>
+    public IReadOnlyList<TurnRow> FoldedEvents
+    {
+        get
+        {
+            var rows = EventRows;
+            return rows.Count <= FoldLines ? rows : [.. rows.Skip(rows.Count - FoldLines)];
+        }
+    }
+
+    /// <summary>How many non-conversation rows the fold does not show; 0 when it shows them all.</summary>
+    public int OtherEvents => Math.Max(0, EventRows.Count - FoldLines);
 
     public bool HasOtherEvents => OtherEvents > 0;
 

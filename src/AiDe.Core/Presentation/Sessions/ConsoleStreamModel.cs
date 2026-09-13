@@ -260,8 +260,11 @@ public sealed class ConsoleStreamModel
     /// <b>The two shapes are the mapper's, read rather than guessed.</b> An <c>agent.msg</c> body is
     /// the lifted <c>update</c>, whose text sits at <c>content.text</c>; a <c>permission.request</c>
     /// body is the lifted <c>params</c>, whose text sits at <c>title</c>. Falling back to the kind is
-    /// deliberate: a blank row reads as an event with nothing in it rather than as one this
-    /// projection did not recognise, and the kind is always true.
+    /// deliberate: a row with no text field reads as an event with nothing in it rather than as one
+    /// this projection did not recognise, and the kind is always true. <b>A text field that IS
+    /// present is the text, whitespace included</b>: a wire chunk of two newlines is the paragraph
+    /// break between two chunks of one thought (<c>frames/thought.jsonl:27</c>), and a blank-means-absent
+    /// reading folded the literal kind into the reasoning (DC-nnn (CV-5-3 a)).
     /// </remarks>
     public static string TextOf(RunEvent evt) =>
         Text(evt.Body)
@@ -273,7 +276,7 @@ public sealed class ConsoleStreamModel
         foreach (var field in (string[])["text", "message", "title"])
         {
             if (body.TryGetPropertyValue(field, out var node) && node is JsonValue value
-                && value.TryGetValue<string>(out var text) && !string.IsNullOrWhiteSpace(text))
+                && value.TryGetValue<string>(out var text))
             {
                 return text;
             }

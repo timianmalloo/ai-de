@@ -9,7 +9,8 @@ namespace AiDe.Core.Presentation.Sessions;
 /// <param name="Kind">The event kind, verbatim — <c>agent.msg</c>, <c>agent.thought</c>, <c>tool.call</c> …</param>
 /// <param name="Text">The chunks' text joined in order; an unfolded event's own text.</param>
 /// <param name="Chunks">How many wire chunks fold into this row; null for a kind that is one row per event.</param>
-public sealed record TurnRow(DateTimeOffset At, string Lane, string Kind, string Text, int? Chunks);
+/// <param name="Tool">The tool frame's stated facts, carried from the one event of a <c>tool.call</c> / <c>tool.result</c> row; null otherwise.</param>
+public sealed record TurnRow(DateTimeOffset At, string Lane, string Kind, string Text, int? Chunks, ToolFacts? Tool = null);
 
 /// <summary>
 /// <c>Coalesce(turn.Events)</c> — the ONE pure fold from a turn's event lines to its rows, read by
@@ -38,8 +39,9 @@ public static class Coalesce
         for (var start = 0; start < events.Count;)
         {
             var first = events[start];
+            var folds = Folds(first.Kind);
             var end = start + 1;
-            if (Folds(first.Kind))
+            if (folds)
             {
                 while (end < events.Count && Continues(first, events[end]))
                 {
@@ -48,7 +50,7 @@ public static class Coalesce
             }
 
             var text = end - start == 1 ? first.Text : string.Concat(events.Skip(start).Take(end - start).Select(e => e.Text));
-            rows.Add(new TurnRow(first.At, first.Lane, first.Kind, text, Folds(first.Kind) ? end - start : null));
+            rows.Add(new TurnRow(first.At, first.Lane, first.Kind, text, folds ? end - start : null, folds ? null : first.Tool));
             start = end;
         }
 
