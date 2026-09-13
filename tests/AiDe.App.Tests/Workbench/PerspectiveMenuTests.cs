@@ -292,6 +292,7 @@ public sealed class PerspectiveMenuTests
             ["Coding perspective", "Explore perspective", "Architecture perspective",
              "Next tab in pane", "Previous tab in pane", "Move tab left/right",
              "Raise score dispute on the latest scored episode", "Clear the status message",
+             "Cycle session region", "Cycle session region backward",
              "Show terminal sessions", "Show message board", "Show leaderboard", "Show ledger", "Show daydreams",
              "New search", "New code viewer", "Show diagnostics"],
             Titles(coding, "_View"));

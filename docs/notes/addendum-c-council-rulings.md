@@ -1308,3 +1308,43 @@ the run is *not recorded*. (3) The F5 tree's `git merge main` happens only after
 **RECORD AS:** Ruling 79 — Ruling 51 relaxed: Addendum C/D code from `main` now; F5's tree frozen at
 `135e05e1` for its run; the lane-pin commits cherry-picked onto `main` as S0; the F5 merge moves to
 converge.
+
+---
+
+<!--
+X-3 (Shell lane, side/x3-shell-seams): Rulings 85 and 86 relayed by the conductor
+(conductor/addendum-c) and carried here verbatim so citations in this branch's own files
+(docs/lessons/defect-classes.md, docs/proof/shell-seams-x3.md) resolve to a real definition
+(verify-ruling-citations.py). Other numbered rulings from that same filing round exist on that branch too, addressed to
+other lanes; they are not reproduced here and are not relied on by this slice.
+-->
+
+## Ruling 85 — `rev rev-1`: the product attaches a fixture revision; the status prints a recorded revision or nothing
+
+**RULING:** The artifact revision the shell attaches is the workspace's **observed HEAD** (`GitFacts`, `WorkbenchShell.cs:2662-2664`) or *not recorded*; `"rev-1"` leaves the product path (`AttachWorkspace(… artifactRevision = "rev-1")`, `WorkbenchShell.cs:596`; `MainWindow.xaml.cs:183-185` passes none). The pane status prints `rev <value>` only for a recorded value, never a placeholder.
+
+**BECAUSE:** `EvidencePaneViewModel.cs:172-173` formats `rev {SourceRevision}`, and `SourceRevision` is the attached revision — so the label doubles a value that already carries the prefix, and the value is a fixture default naming a revision of nothing (DC-110's shape: a door default read as a measurement). Not recorded: which surface hosted this status in a Coding layout that admits no `view` — the slice names the writer.
+
+**CONFIDENCE:** Verified for the format and the default; the host surface not recorded.
+
+**SCOPE EFFECT:** T0. **Lane: Shell** (`WorkbenchShell.cs`, `MainWindow.xaml.cs`; `EvidencePaneViewModel.cs` added to the Shell lane's §2 rows by the conductor).
+
+**CONDITIONS:** Red-first: attaching with no revision renders *rev not recorded*; tests pass a revision explicitly.
+
+**RECORD AS:** Ruling 85 — `rev rev-1` is a fixture default in the product path; attach the observed HEAD or *not recorded*; Shell lane, T0.
+
+---
+
+## Ruling 86 — a refusal status dwells until superseded or for a bounded time; it is not the record
+
+**RULING:** A status announcement (the refusal form included) is **cleared** by the next announcement, by the next applied layout operation, or after a bounded dwell the design sets (Inferred first value: 10 s; a refusal may dwell longer than a confirmation). The live region already spoke it (SC 4.1.3 at speak-time); the record is `WorkbenchDiagnostics.LayoutMutation`, not the strip.
+
+**BECAUSE:** `IWorkbenchAnnouncer.Clear`'s own remark: *"A status message has no natural end — it sits there until something else happens"* (`WorkbenchAnnouncer.cs:37-38`); its only caller is `workbench.clearStatus` (`WorkbenchController.cs:107-120`). Nothing else happened after the operator's refused drag, so the sentence outlived every screenshot.
+
+**CONFIDENCE:** Verified for the mechanism; the screenshots as described.
+
+**SCOPE EFFECT:** T0; no new control, no setting. **Lane: Shell** (`WorkbenchAnnouncer.cs`, the status strip).
+
+**CONDITIONS:** The dwell never truncates the spoken announcement; `Status cleared.` behaviour unchanged.
+
+**RECORD AS:** Ruling 86 — status announcements clear on supersession or after a bounded dwell; the log is the record; Shell lane, T0.

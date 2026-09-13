@@ -73,6 +73,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     private readonly StackPanel _lines;
     private readonly Button _send;
     private readonly Button _attach;
+    private readonly Button _retry;
     private readonly ComboBox _templatePicker;
     private string _taskClass = AiDe.Core.Watcher.TaskClasses.FreeForm;
     private string _leaseLine = ComposerCompiler.LeaseLine(null);
@@ -140,10 +141,11 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         AutomationProperties.SetName(_status, "Send status");
 
         // Built after the status line it reports into: a browser that cannot start says so there.
-        // The recovery is named with the failure: the host's contract is "not retried on the next
-        // attach" (the runtime is picked up when the surface is next constructed), so the operator
-        // is told the one path that exists — a Retry in place is the WebSurfaceHost.Retry() seam.
-        _host = new WebSurfaceHost(surfaceId, this, InitialiseAsync, failure => SetStatus("the composer editor could not start: " + failure + " Close and reopen the session to try again.", Urgency.Assertive));
+        // The host's own contract is "not retried on the next attach" (the runtime is picked up when
+        // the surface is next constructed) — Retry is the operator's recourse in the meantime. A
+        // named method, not an inline lambda, so a test can drive the failure directly rather than
+        // needing a real broken WebView2 runtime.
+        _host = new WebSurfaceHost(surfaceId, this, InitialiseAsync, OnHostInitFailed);
         _view = _host.View;
 
         // THE EDITOR'S FLOOR (DESIGN.md:1092; DS-1 seam 5, spike Q14): in an Auto row the composer
@@ -161,6 +163,12 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         _attach.Click += (_, _) => OfferAttachment(PickFiles());
         ApplyAttachAffordance();
 
+        // The mockup's editorerror Retry (session-conversation.html): shown only once the host
+        // reports init-failed, so it is a real recovery affordance rather than a decoration nobody
+        // needs the rest of the time.
+        _retry = new Button { Content = "Retry", Padding = new Thickness(10, 4, 10, 4), MinHeight = 24, MinWidth = 24, Margin = new Thickness(0, 0, 8, 0), Visibility = Visibility.Collapsed };
+        _retry.Click += async (_, _) => await RetryEditorAsync();
+
         _templatePicker = BuildTemplatePicker();
         DockPanel.SetDock(_templatePicker, Dock.Top);
 
@@ -172,13 +180,15 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         DockPanel.SetDock(_attach, Dock.Left);
         _sendRow.Children.Add(_send);
         _sendRow.Children.Add(_attach);
+        _sendRow.Children.Add(_retry);
         _sendRow.Children.Add(_status);
 
-        // The tab order is the visual order — Attach · the status (its link) · Send — not the
-        // children order the DockPanel's fill rule dictates (2.4.3).
+        // The tab order is the visual order — Attach · Retry (when shown) · the status (its link) ·
+        // Send — not the children order the DockPanel's fill rule dictates (2.4.3).
         System.Windows.Input.KeyboardNavigation.SetTabIndex(_attach, 1);
-        System.Windows.Input.KeyboardNavigation.SetTabIndex(_status, 2);
-        System.Windows.Input.KeyboardNavigation.SetTabIndex(_send, 3);
+        System.Windows.Input.KeyboardNavigation.SetTabIndex(_retry, 2);
+        System.Windows.Input.KeyboardNavigation.SetTabIndex(_status, 3);
+        System.Windows.Input.KeyboardNavigation.SetTabIndex(_send, 4);
 
         // The lines beneath the editor (DESIGN.md: 4 rows at rest, each 24 px): the structure,
         // this turn's decoration line, the settings line, the compiled prompt on demand.
@@ -1209,6 +1219,26 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         ComposerFieldWidget.Budget => "budget",
         _ => "text",
     };
+
+    /// <summary>The host's <c>init-failed</c> callback: names the cause and shows Retry (the mockup's <c>editorerror</c> state).</summary>
+    private void OnHostInitFailed(string failure)
+    {
+        SetStatus("the composer editor could not start: " + failure, Urgency.Assertive);
+        _retry.Visibility = Visibility.Visible;
+    }
+
+    /// <summary>
+    /// Runs the failed initialisation again (<see cref="WebSurfaceHost.Retry"/>) — the mockup's
+    /// <c>editorerror</c> Retry. A second failure re-shows this same button and status; a success
+    /// hides the button, and <see cref="PageReady"/> moves focus into the editor exactly as a first
+    /// successful load does (unchanged path, no second wiring to keep in step).
+    /// </summary>
+    private async Task RetryEditorAsync()
+    {
+        _retry.Visibility = Visibility.Collapsed;
+        SetStatus(string.Empty, Urgency.Status);
+        await _host.Retry();
+    }
 
     /// <summary>
     /// Configures the started browser and navigates it. Runs once per surface — the host guards

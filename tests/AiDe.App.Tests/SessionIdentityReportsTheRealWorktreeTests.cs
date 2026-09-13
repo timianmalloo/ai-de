@@ -61,6 +61,34 @@ public sealed class SessionIdentityReportsTheRealWorktreeTests
         }
     }
 
+    /// <summary>Ruling 85: the observed commit, not a fixture literal a revision label would double.</summary>
+    [Fact]
+    public void AGitWorktree_ReportsItsObservedHead_NotAFixtureLiteral()
+    {
+        var facts = WorkbenchShell.ResolveGitFacts(Directory.GetCurrentDirectory());
+
+        Assert.False(string.IsNullOrWhiteSpace(facts.Head));
+        Assert.NotEqual("rev-1", facts.Head);
+    }
+
+    /// <summary>No commit to observe: null, never a guessed or fixture value (Ruling 85).</summary>
+    [Fact]
+    public void ANonRepository_ReportsNoHead_NeverAGuess()
+    {
+        var temp = Path.Combine(Path.GetTempPath(), "aide-not-a-repo-head-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(temp);
+        try
+        {
+            var facts = WorkbenchShell.ResolveGitFacts(temp);
+
+            Assert.Null(facts.Head);
+        }
+        finally
+        {
+            try { Directory.Delete(temp, recursive: true); } catch { /* best effort */ }
+        }
+    }
+
     [Fact]
     public void AMissingDirectory_DoesNotThrow_AndReportsUnknown()
     {

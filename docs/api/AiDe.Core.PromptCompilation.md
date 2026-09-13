@@ -38,9 +38,19 @@ byte). They are string constants — the ladder's lower rung (host-compiled byte
 pipeline) and the shape a `const` keeps deterministic; ADR-0033's "embedded resources" named
 the property (host-embedded, never read from disk), which a constant satisfies. `simplify:`
 ceiling — a template over ~200 lines, or a second family's profile shipped as text, moves the
-texts to `Compilation/Resources/` under an `EmbeddedResource` glob (a csproj edit the
-conductor owns; the seam request is filed); `PromptSha` is
-unchanged as long as the bytes are.
+texts to `Compilation/Resources/` under an `EmbeddedResource` glob;
+`PromptSha` is unchanged as long as the bytes are.
+
+
+
+
+
+**X-3 (the Shell-lane seam slice): the glob landed, the move did not.** The csproj now
+carries `<EmbeddedResource Include="Compilation\Resources\*" />`, so a future profile
+dropped there needs no build-file edit. `HostHeader` and `Template` are
+~15 lines together today — under this remark's own ceiling and under the item's 20-line floor —
+and no file exists yet under `Compilation/Resources/`, so moving them now would be motion
+with no ceiling crossed. Left as this constant pair; move when either trigger fires.
 
 | Member | Summary |
 |---|---|

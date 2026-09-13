@@ -75,9 +75,10 @@ public sealed class ComposerPageThemeTests
     [Fact]
     public void TheRoleTableHasExactlyThePinnedRoles()
     {
-        // INV-0008's eleven, plus CV-1's two (`--inferred`, `--verified`; DS-1 seams). `--border-strong`
-        // joins when the Shell lane declares `BorderStrongBrush`.
-        Assert.Equal(13, ComposerPageTheme.Roles.Count);
+        // INV-0008's eleven, plus CV-1's two (`--inferred`, `--verified`; DS-1 seams), plus
+        // `--border-strong` ← `BorderStrongBrush` (PS-C4; CV-1/CV-2's seam request, landed with the
+        // brush in App.xaml).
+        Assert.Equal(14, ComposerPageTheme.Roles.Count);
     }
 
     /// <summary>

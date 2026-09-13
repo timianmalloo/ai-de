@@ -528,7 +528,13 @@ public static class WorkbenchDiagnostics
         });
     }
 
-    private static void Write(object record)
+    /// <summary>
+    /// The one writer every workbench record goes through — the sink when a test set one, else the
+    /// shared log file (DM7: <c>ThreadDiagnostics</c> used to duplicate this path rather than call
+    /// it). Internal, not private, so a same-assembly diagnostics type shares the one writer instead
+    /// of a second copy of the sink check and the file path.
+    /// </summary>
+    internal static void Write(object record)
     {
         string line;
         try { line = JsonSerializer.Serialize(record); }
