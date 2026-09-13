@@ -7831,7 +7831,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5c2115887f57a6796f33bb18d4cd2ba70606b283f298eba92bb2ea2d1d7f923b"
+      "sourceSha256": "c105615774d426634776320b616ead1391a51a8256ecb5b28e70b153000c64c1"
     },
     {
       "id": "design-session-profiler",
@@ -14451,12 +14451,12 @@ window.DOCS_INDEX = {
       "path": "docs/proof/compile-pin-spike.md",
       "title": "Proof Pack — PD-5: the compile-session pin wire spike (ADR-0035/0036 Gate 1; Ruling 68)",
       "type": "proof-pack",
-      "status": "draft",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "addendum-cd",
       "reviewBy": "2027-03-13",
       "reviewSuggested": [],
-      "summary": "PD-5's prep half. Built the fixture repository (a real, regenerated-per-run git repo with permissive settings — allow Bash(*)/Edit/Write/MultiEdit/NotebookEdit, defaultMode bypassPermissions — plus a stdio .mcp.json server), the harness (run-spike.js, drives the installed adapter 0.75.1 directly over stdio the way CompileCallHost will, records every frame, never sends session/prompt from this node), the assertions (assert-spike.py, seven checks over the frame log with a red/green self-test), and this artifact shell. The dry run (initialize + session/new only, no model call) succeeded against the real installed adapter and confirms the exact _meta triple on the wire. Two load-bearing findings, both Verified in source and on the wire: (1) the fixture's committed defaultMode: bypassPermissions is stripped by the SDK's filterEscalatingDefaultMode before the adapter ever resolves a permission mode — the session's currentModeId reads \"default\" regardless, so the fixture's real permissiveness comes from its permissions.allow list, not from defaultMode; (2) the CLI binary the adapter actually launches is NOT the machine's global `claude` (2.1.268) but a platform package vendored under the SDK's own node_modules (claude-agent-sdk-win32-x64/claude.exe, 2.1.257) — a different binary and a different sha, recorded here rather than assumed. Third finding: the fixture's `.mcp.json` wiring is real, not hypothetical — the dry run alone (no prompt sent) made the CLI spawn `mcp-server.js` and complete `initialize` -> `notifications/initialized` -> `tools/list` against it, so `mcp__pd5-fixture__write_note` is a genuine tool name in session context before the pin's claim is even tested; `tools/call` was never invoked, which is what the real run's prompts now test. The wire observation itself — the two prompts, the tool_call/permission count, the fixture and remote diff — is RUN-PENDING: the operator's attended run, steps below.",
+      "summary": "PD-5's prep half. Built the fixture repository (a real, regenerated-per-run git repo with permissive settings — allow Bash(*)/Edit/Write/MultiEdit/NotebookEdit, defaultMode bypassPermissions — plus a stdio .mcp.json server), the harness (run-spike.js, drives the installed adapter 0.75.1 directly over stdio the way CompileCallHost will, records every frame, never sends session/prompt from this node), the assertions (assert-spike.py, seven checks over the frame log with a red/green self-test), and this artifact shell. The dry run (initialize + session/new only, no model call) succeeded against the real installed adapter and confirms the exact _meta triple on the wire. Two load-bearing findings, both Verified in source and on the wire: (1) the fixture's committed defaultMode: bypassPermissions is stripped by the SDK's filterEscalatingDefaultMode before the adapter ever resolves a permission mode — the session's currentModeId reads \"default\" regardless, so the fixture's real permissiveness comes from its permissions.allow list, not from defaultMode; (2) the CLI binary the adapter actually launches is NOT the machine's global `claude` (2.1.268) but a platform package vendored under the SDK's own node_modules (claude-agent-sdk-win32-x64/claude.exe, 2.1.257) — a different binary and a different sha, recorded here rather than assumed. Third finding: the fixture's `.mcp.json` wiring is real, not hypothetical — the dry run alone (no prompt sent) made the CLI spawn `mcp-server.js` and complete `initialize` -> `notifications/initialized` -> `tools/list` against it, so `mcp__pd5-fixture__write_note` is a genuine tool name in session context before the pin's claim is even tested; `tools/call` was never invoked, which is what the real run's prompts now test. The wire observation itself — the two prompts, the tool_call/permission count, the fixture and remote diff — was run by the operator on 2026-09-13 17:51Z: GREEN on all seven, with two findings (the repository's MCP tool was exposed to the model though never called; the harness's (c) oracle was stricter than C1 and corrected).",
       "tags": [
         "proof-pack",
         "pd-5",
@@ -14497,7 +14497,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a7e0a1d7df20a8383a1b9d07720cbe000ad9c34aca5b720b3a2189859976e9fa"
+      "sourceSha256": "e198cdab9599d7d60c8ffab42cdf3eb1f01f8dc08c19db178210104049a101a9"
     },
     {
       "id": "proof-composer-as-conversation",
@@ -17236,5 +17236,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ec01a6327d1591cf11f594b4a5ba8ddbe8b8b2408e858a0b4b73bb673f584266"
+  "graphSha256": "6b8bab93395afa0fdaad50375e57e115bc73e6e5dfc1ffb3c6a30ae79aa829d4"
 };

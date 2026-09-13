@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 95 · partially-controlled 65 · uncontrolled 20
+**Status counts:** controlled 96 · partially-controlled 65 · uncontrolled 20
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -7364,6 +7364,30 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   stream. The ConPTY path is a byte channel decoded by the terminal parser, not this class.
 - **Control:** the test above (red on `main` before the change, recorded); a launch with a
   redirect and no encoding is the shape to refuse at review — named here for the next reader.
+- **Status:** `controlled`.
+
+### DC-178 — An oracle written from the intended state instead of the recorded one fails a green run on a fact its own author had measured
+
+- **Shape:** a harness records a fact during its build ("`session/new` alone makes the CLI spawn
+  the `.mcp.json` server and run `initialize`/`tools/list`") and then ships an assertion that the
+  fact violates ("the MCP log is empty"). The assertion is stricter than the specification it
+  implements (C1: zero `tool_call` frames of any name), so a run that satisfies the spec goes red on
+  the harness's own known, benign residue — a false red the operator has to carry to someone who can
+  read the frames. The inverse of a vacuous check: a check that cannot pass on the state it was
+  written against.
+- **Signature:** a RED whose evidence is a handshake, a listing, a housekeeping line; an assertion
+  whose wording is a superlative ("nothing", "empty", "never") where the spec says a count of one
+  kind; a proof pack that records the residue under *findings* and refuses it under *assertions*.
+- **Instance (PD-5, 2026-09-13):** `assert-spike.py` (c) — *"the fixture's MCP server logged
+  nothing"* — failed the operator's run on `initialize` · `notifications/initialized` ·
+  `tools/list`, three messages the prep's finding 3 had recorded from its own dry run; (a), (b),
+  (d)–(g) all held. Corrected to *zero `tools/call`*, the handshake reported as the finding it is.
+- **Sweep:** the seven assertions of the same file — (a), (b), (d), (e), (g) name a count of a
+  kind; (f) has a weak form for the state the pin produces; none else uses a superlative.
+- **Control:** an assertion over a recorded run must be run against the harness's own recorded
+  dry-run frames before it ships — `assert-spike.py --self-test` now includes `frames/dry-run/`
+  as a third fixture that must not go red on (c). Named here for the next harness author: when
+  you record a residue as expected, your oracle must expect it.
 - **Status:** `controlled`.
 
 ### DC-179 — A fixture-sized constructor default reaches the one real production call site because the real caller passes none
