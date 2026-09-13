@@ -31,7 +31,7 @@ summary: >-
 | Root bootstrap | Cleared and joined | `99d46eed` joined `41dc0501`; metadata-only, Complete alone supplies root identity; combined 225/225 |
 | Q query service and continuation | Cleared and joined | `a06f31ab`/`e98b196e` joined `39dff3b7`/`bcbe8a47`; 272/272 independently executed Understanding cases |
 | N native view and manifest seam | Cleared and joined | `e661f291`/`7b5b6ff1` joined `65874e8b`/`051b519b`; 38/38 independently executed shown-window fixtures |
-| Actual detached composition | Active | Runner two-file contract/design checkpoint; no live-runner proof yet |
+| Actual detached composition | Failed required synthetic row | Runner builds; actual Q/view synthetic run 37 PASS / 1 FAIL / 7 NOT_PROVEN; accepted-member selection repair assigned, no lowered oracle |
 | Independent detached native journey | Not executed | No tree/member/source/Back or real-workspace acceptance claim yet |
 
 ## F common foundation
@@ -231,3 +231,23 @@ and 38/38 independent execution · verdict: PASS for fixture-native seam · veto
 No full WCAG, high-contrast, multi-DPI, performance, real-repository or shared-host claim follows.
 The next proof must attach the actual query service to the actual shown native view. Owner
 turn 21 permits only the runner's bounded `--prove` mode and proof-owned rendered capture.
+
+## First actual composition run: partial, with a required failure
+
+The runner author used actual Q composition and the shown native view. The Conductor read
+`artifacts/atlas-reader-author/turn23-observed/evidence/summary.json` and relevant event rows
+in the runner tree: **37 PASS, 1 FAIL, 7 NOT_PROVEN**. `back-focus` fails because the selected
+member observation is null. It was already null in the recorded pre-different-file state.
+Receipt, source observation/binding/manifest, cursor selection and focus/scroll checks pass.
+The owned-window rendered capture exists; it is not a desktop screenshot.
+
+The author also executed `--prove --oracle-fault source`, exiting one at the intended
+`ASSERT-rendered-source`. This is source-oracle mutation evidence, not complete runner proof.
+The seven subsequent checks were not reached, and no success-shaped total substitutes for them.
+No real AI-DE root was read.
+
+`investigation-code-atlas-outline-selection` records the source path, competing explanations,
+Test's veto on weakening the expectation, and Owner turn 24's phased repair approval. The
+native owner receives eight new leaves in its existing two files. The runner's ceiling becomes
+26 (19 reported spent) and its continuation waits for the reviewed native fix. The original
+failed receipt is retained; independent real-root proof remains open.

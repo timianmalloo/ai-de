@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T00:45:35Z",
+  "generated": "2026-09-13T01:17:27Z",
   "audit": [
     {
       "actor": null,
@@ -15268,6 +15268,32 @@ window.AUDIT_DATA = {
       "fan_out": 4,
       "started_at": "2026-09-13T00:44:04Z",
       "duration_seconds": 91.0
+    },
+    {
+      "id": "al-01M2C5ECFQ6CF1ENBP2PDXE5B2",
+      "shortname": "investigate-atlas-outline-selection",
+      "datetime": "2026-09-13T01:17:26Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Actual synthetic Q/native composition:37PASS1FAIL7NOTPROVEN; selected outline row already null after accepted member, so Back captures null while original receipt/source/focus/cursor restore. Parent read runtime events and native clear/rebuild/CaptureFrame path. Causal mechanism remains provisional pending controlled red/green. Test blocks lowered oracle; Owner24 explicitly authorizes same-owner8leaf N repair then6new runner leaves, preserving19spent/26ceiling and independent15. No realroot read. Earlier runner constructor errors and generated-untracked API omission captured as class recurrences.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/code-atlas-outline-selection.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md",
+        "docs/proof/code-atlas-live-reader-candidate.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Diagnose composed accepted-member selection loss and secure a bounded, failing-first native repair without weakening the journey.",
+      "done_when": "Runtime failure, competing causes, source path, narrow repair and delegated Owner approval recorded; native acceptance remains blocked until controlled proof.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-13T01:12:38Z",
+      "duration_seconds": 288.0
     }
   ],
   "changes": [

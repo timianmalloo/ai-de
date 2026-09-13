@@ -21,7 +21,9 @@ summary: >-
 
 **Current execution checkpoint:** `bcbe8a47` joins the reviewed F/Q/N continuation and manifest
 seams. Independent runs executed 272 Core Understanding and 38 shown native-fixture cases.
-The actual Q/native live-root composition is not yet proven. The historical tables below
+The actual synthetic composition then exposed lost accepted-member outline selection
+(37 PASS / 1 FAIL / 7 NOT_PROVEN); Owner turn 24 assigns its native correction without
+weakening the runner oracle. The real-root composition is not yet proven. The historical tables below
 explain prior allocations; the **Active live-reader horizon** section is the current work plan.
 
 **Current delivery blocker:** `req-01M2B86TXF7SHG61B31P4H4173` is still open.
@@ -168,8 +170,8 @@ Atlas commits, reconciled only in the Conductor tree.
 | Common contract and F | Reasoning, then independent review | Codec/validated foundation joined; continuation joined `f8a6df06` | One identity authority, full compiler buffer distinct from source page; unknown coverage remains absent |
 | Native enumeration investigation | Independent review | Joined `8450ce06`; 29 PASS / 2 NOT_PROVEN | Ordinary-local/reparse exclusion only; symlink privilege not changed |
 | E/D/S producers | Reasoning, then independent review | Repaired, reviewed and joined; latest root bootstrap `41dc0501` | Actual inventory, Roslyn observations and bound source; FileLimited is not a project-compilation claim |
-| Q/N composition seams | Reasoning, then independent review | Joined `bcbe8a47`; independently 272 Core / 38 native fixture cases | Explicit retained continuation; accepted-only manifest authority; inventory content bytes zero |
-| Detached runner | Reasoning | Astra writer in `atlas/live-reader-runner`, pinned `bcbe8a47`; first three calls establish contract | Twelve total author leaves, exact two spike files; actual Q/view, bounded Git membership, proof-only startup; synthetic proof first |
+| Q/N composition seams | Reasoning, then independent review | Joined `bcbe8a47`; independently 272 Core / 38 native fixture cases; accepted-member selection correction active in N's own tree | Owner turn 24: eight new leaves, same two files, shown semantic red/green; no query/source/grant changes |
+| Detached runner | Reasoning | Astra writer in `atlas/live-reader-runner`, based on `bcbe8a47`; builds and fails the selected-row oracle honestly | Ceiling 26 after Owner turns 23/24, 19 reported spent; seven remain after reviewed N join; exact two files; real-root access still gated |
 | Independent native checkpoint | Independent review | Clean registered `atlas/live-reader-proof` at `bcbe8a47`; awaiting runner and gates | Fifteen calls; only its `src/AiDe.Core` scope read-only; actual shown tree/member/source/different-file/Back, identity/focus/capture evidence |
 | Record and Owner close | Deterministic mechanics, then independent review | Pending real-run evidence | Regenerate after audit; Owner assesses only the detached horizon, not shared-host or complete Code Atlas acceptance |
 
@@ -179,8 +181,9 @@ ambiguity/overrun remains recorded, not relabelled a budget success. The six spe
 leaves did not include the additional Conductor readback/replay/join calls. The earlier total
 must not be interpreted as an all-inclusive orchestration cost.
 
-The remaining runner -> independent proof chain has an **Inferred** work/span ceiling of
-27 allocated leaf calls (12 + 15), not a duration estimate. These nodes have a real data and
+The corrected N -> runner -> independent proof chain has an **Inferred** remaining work/span
+ceiling of 30 allocated leaf calls (8 + 7 + 15), excluding separately recorded review/join
+overhead; this is not a duration estimate. These nodes have a real data and
 gate dependency, so widening cannot shorten that chain. Conductor documentation can proceed
 while the runner authors its two files. The existing width-four/no-worker-fan-out contract
 stands. Failure drains a named finding list; a fired budget returns to Owner, never silently

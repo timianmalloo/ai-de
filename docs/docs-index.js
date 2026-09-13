@@ -4731,7 +4731,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "41c1d1c43bfd2d3aca052265ea4f65a1e5a323453928a6e7d5b5bed3a110eed9"
+      "sourceSha256": "c60d5db8fc767f0c917b2153cb3940a84aa4bfa5181fa45649ae4cd4ae042bda"
     },
     {
       "id": "note-atlas-reader-native-direction",
@@ -8293,7 +8293,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0e5c532b17ea5e728d62d31ce9611cfa152faab3f466167987414714dd1c1917"
+      "sourceSha256": "5809bd6b12f08bf8239c08845db8b535a9d0615cc45808232f9b4b1083da36a2"
     },
     {
       "id": "coordination-code-atlas-resume",
@@ -8356,7 +8356,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "dc23216c503eaef60dec5f376010170a6b00bb2092fb65f6dd68461370d29b75"
+      "sourceSha256": "6985cbf17f37a8c2647b5c14b728d761d25de8977a64472129afbbed06a9db4d"
     },
     {
       "id": "design-session-profiler",
@@ -8739,6 +8739,40 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "9639568f02c25923e0a708cf46869fa2d1a2a68b844949f035afa761f5f79498"
+    },
+    {
+      "id": "investigation-code-atlas-outline-selection",
+      "path": "docs/investigations/code-atlas-outline-selection.md",
+      "title": "Atlas outline selection - composed journey exposes state lost before Back",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "atlas-live-reader-composition",
+      "reviewBy": "2026-12-13",
+      "reviewSuggested": [],
+      "summary": "The actual synthetic Q/native journey restores its receipt, source and focus but loses the accepted member's outline selection before leaving that member. Records the observed failure, competing explanations and gated native repair; causal red/green confirmation is pending.",
+      "tags": [
+        "code-atlas",
+        "investigation",
+        "native",
+        "selection"
+      ],
+      "links": [
+        {
+          "to": "note-atlas-live-reader-horizon",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-code-atlas-live-reader-candidate",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "01e58e83847fd91a583a024852c71c7238f920c9dbe9cae124e945b044c548ff"
     },
     {
       "id": "lens-code-doc-join",
@@ -11487,7 +11521,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9b0bb3963fb0f8fc98294f2f176aa94aa2df9bd150fb46025d43032ac2a5578d"
+      "sourceSha256": "a5bd900aff796390526244aaf978372ce4a3cc57c40d471abd0f4295bb3bf1e0"
     },
     {
       "id": "session-profiles",
@@ -15850,7 +15884,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "526ae7fe1eef5c3c8e2e6d74c71ede3155ddc9f4e9cf47865559c96470aa7183"
+      "sourceSha256": "5d2b89edbd39bdfe06aaacab7d5659e6fd874b358717882abea38a0bd2d72752"
     },
     {
       "id": "proof-code-atlas-source-safety",
@@ -18708,5 +18742,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "54d456b330b718f03a70077070cfe0f093892c297c3d5e0642005d6d35f03917"
+  "graphSha256": "21c2dbf00f935941ff76909cde02041db287ad097e86360cf0a8432226d09d31"
 };

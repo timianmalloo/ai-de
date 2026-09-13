@@ -52,6 +52,17 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 ## Project classes
 
 ### DC-001 — A cited artifact is authored in a session and never actually committed
+- **Recurrence (2026-09-13, Atlas generated API):** regeneration created a new native namespace
+  reference while the explicit staging list named only existing files. Commit `01c00bea` carried
+  derived references but not `docs/api/AiDe.App.Workbench.Understanding.md`; post-commit status
+  exposed the untracked file and `ae24ce7e` added it without rewriting history.
+  **Class/sweep:** a working-tree derivation can cite an uncommitted output; `git ls-files
+  --others --exclude-standard -- docs/api` found no remaining siblings after repair.
+  **Derive/prevent:** keep the existing generator as producer and check committed membership,
+  not merely on-disk existence. `git cat-file -e <revision>:docs/api/AiDe.App.Workbench.Understanding.md`
+  failed with 128 at `01c00bea` and passed at `ae24ce7e`. This is an executed release check,
+  not a claim that a new general CI guard was installed; working-tree freshness alone remains
+  insufficient for new output files.
 - **Signature:** something is referenced as authoritative — by a typed link, a change-log row, or an
   **identifier cited in prose** — and the thing it names is not in the repository. Often an ignore
   rule written for build output swallowing a docs path (`[Rr]elease/` ate `docs/release/`); sometimes
@@ -5628,6 +5639,14 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Confidence:** i  - **Source:** fleet (drm-0009/p6)
 
 ### PACK-Q-AN-ADAPTER-WR - PACK-Q · An adapter written to a contract's *documented* shape, never to a *recorded* one
+- **Recurrence (2026-09-13, Atlas proof runner):** two automation-item peer constructions used
+  an unchecked one-argument shape. **Class/sweep:** the build found both calls at Program.cs
+  lines 185 and 240, CS7036; actual WPF requires the item and owning selector peer.
+  **Derive/prevent:** reuse the framework-created peer or its established item/selector
+  relationship. The runner build is the executed red control for signature mismatch; the
+  subsequent shown-window UIA oracle must also establish that the peer belongs to the realized
+  item. Compile success alone cannot establish that relationship. Original evidence remains
+  in the runner tree's `artifacts/atlas-reader-author/final-build.log`.
 - **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)
 - **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
 - **Confidence:** i  - **Source:** fleet (drm-0009/p4)

@@ -452,3 +452,53 @@ Conductor's joined `bcbe8a47` contains reviewed Q/N seams: 272/272 Core Understa
 38/38 native fixture cases independently executed, zero skips. The Test review's truncated
 Q test-diff read was completed directly by the Conductor; all eleven new cases were inspected.
 Security, Test and UX cleared only the targeted component/seam claims. Real composition is next.
+
+### Runner recovery and prospective repair, Owner turns 22-23
+
+The first runner checkpoint spent three leaves without establishing readable API contracts:
+two skill loads and one oversized 202.7 KB output. Two bounded recovery reads established Q
+and native signatures. One support read established outline Enter activation and the inline
+semantic brushes in App.xaml. Owner turn 22 retained the original scope/budget.
+
+The two-file proposal then reached exactly twelve leaves (two skill loads, eight shells, two
+patches) with a failed build: CS7036 at Program.cs lines 185 and 240. The author used a
+single-argument `ListBoxItemAutomationPeer` constructor instead of the required item/selector
+relationship. The Conductor read `artifacts/atlas-reader-author/final-build.log`; no synthetic
+execution, capture, negative proof or real-root access had occurred.
+
+Owner turn 23 prospectively adds **eight leaves**, for twenty authorized runner leaves total.
+The exit is actual shown synthetic file/member/different-file/Back proof, capture and intended
+semantic negative failures. Correct peer acquisition must use the realized item and owning
+selector, or the framework-created peer; compiling a substitute is insufficient. Only concrete
+runner defects may be repaired in the same two files. Product Q/N/S defects return to their
+owners, never disappear through changed expectations.
+
+The plain proof Application derives named brush values from embedded existing App.xaml using
+XML extraction, never Application XAML instantiation, general XamlReader loading or new theme
+values. The preimplementation Security/Test gates clear only this bounded design; actual
+approval/Git/UI-proof source inspection and execution still precede real-root admission.
+
+The independent scope is explicitly `src\AiDe.Core` in the clean, registered
+`C:\Projects\ai-de-atlas-live-reader-proof` at `bcbe8a47859984c1e93074efc65116908ebb7936`.
+The Conductor issued a separate schema-version-1 approval record for `atlas-live-proof-gpt55`,
+policy `atlas-proof-readonly/v1`, expiring `2026-09-13T04:00:00Z`. Its SHA-256 is
+`2bcd31c78396b7bec129f2b64e1e3e12ad63de67e3c61f7c0447788f2f570880`.
+The independently supplied expected values and digest, not a caller-provided root alone,
+constrain the proof callback. Real-root execution is not yet released by this record: the
+remaining code/proof gates must clear first. The separate fifteen-call proof allowance stands.
+
+### Actual composition exposes lost member selection, Owner turn 24
+
+The runner builds, and its actual synthetic run records 37 PASS, one FAIL and seven NOT_PROVEN.
+The failing Back row was already unselected before leaving the accepted member. Source,
+manifest, receipt and focus/cursor/scroll checks pass. The source fault-injection run fails
+at its intended source-correspondence assertion. These are author runtime observations, not
+independent real-root proof.
+
+The Conductor's narrow investigation is `investigation-code-atlas-outline-selection`; Test
+blocks lowering the selected-member expectation. Owner grants eight new leaves to the existing
+N owner/two files for shown semantic red, accepted-current-only key rebind, green and review.
+After that join, six additional runner leaves complete remaining proof and freeze the proposal.
+The runner ceiling is now 26, with 19 reported spent and seven remaining. No source/binding/
+grant change or real-root access is admitted. Causality stays provisional until controlled
+red/green; the DC-029-related instance is not called confirmed before then.
