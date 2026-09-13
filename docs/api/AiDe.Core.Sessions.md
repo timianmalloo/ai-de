@@ -10,17 +10,64 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Sessions: 26 types, 73 members, 90% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Sessions: 27 types, 80 members, 91% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Sessions`
 
-**26 public types · 73 public members · 90% documented.**
+**27 public types · 80 public members · 91% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
 > gap rather than given invented text. The extractor is a lexical reader, not a compiler:
 > it does not resolve generics, partial classes across files, or conditional compilation.
+
+## `CompileAdmissionGate`
+
+*class* — `CompileAdmissionGate.cs`
+
+Gate 2 (ADR-0036): reads `compile-eval-admission.json` — `tools/compile-eval/score.py`'s
+report over 50 scored + 50 holdout real envelopes — and recomputes every floor from the report's
+own `numerator`/`denominator` pairs. `agentic` is refused unless every floor holds.
+
+**Remarks.** **A verdict field is never read, even if present.** The report contract
+(`score.py`'s `check_contract`) already refuses to let one be written, but this reader
+does not rely on that upstream promise: it never inspects a `met` / `verdict` / `passed`
+/ `admitted` / `selectable` key at all — the admit/refuse decision is arithmetic over
+`numerator` and `denominator`, nothing else (DM7: derive, don't store — a verdict is
+never stored, and this reader never trusts one that was).
+
+
+
+
+
+**The floor set this reader evaluates** (the plan row's naming of "every A14.4 floor"
+for this reader — the fuller metric set (acceptance, missed, emptied, span resolution,
+shape-flip) is §A14.4's quality bar for the harness, not a selectability gate here — YAGNI/
+smallest-correct per the Solution-Selection Ladder, recorded as a scope decision, not an
+omission): the split witness (the holdout is 50, disjoint from the sample, and does not precede
+it — "the holdout of 50 judged, never the sample"), `schema_fail ≤ 2 %` over the holdout,
+`applied_denied = 0` and `tool_calls = 0` as invariants over every `called` row,
+and the degraded-rate floor at Ruling 76's `X = 5 %` over every model call.
+
+
+
+
+
+**A metric this reader cannot verify is never assumed to pass.** A missing or
+non-numeric numerator/denominator, or a zero denominator where a rate is asked for, refuses —
+an unmeasurable floor is not a met floor (IO: "degrades to not recorded, never a plausible
+number" read as a gate: it degrades to refused, never to admitted).
+
+| Member | Summary |
+|---|---|
+| `string FileName = "compile-eval-admission.json"` | The artifact's file name, machine-level beside `CompilePinArtifact` (ADR-0036's path-resolution rule). |
+| `string Contract = "compile-eval-admission/1"` | The contract `score.py` writes. |
+| `int RequiredHoldout = 50` | The holdout's required size — N is revised only upward (ADR-0036). |
+| `double SchemaFailFloor = 0.02` | §A14.4's `schema_fail` floor. |
+| `double DegradedFloor = 0.05` | Ruling 76's degraded-rate floor (the stricter reading; X's one home is this table, never `opened.constants`). |
+| `CompileModeRefusal? Evaluate(string proofDirectory)` | Evaluates Gate 2 against `<proofDirectory>/compile-eval-admission.json`. Null admits; otherwise the refusal, with a stable `CE-` code. |
+| `CompileModeRefusal? EvaluateReport(string reportPath)` | Evaluates Gate 2 against the report at  directly (tests; a fixed report path). |
 
 ## `CompileModeRefusal`
 
@@ -277,7 +324,7 @@ plain `System.Text.Json`, tolerant JSONL reads.
 | `SessionConfig Load()` | The current, live config — what a NEW run would pick up. |
 | `SessionConfig SetEnabledBackends(IReadOnlyList<string> enabledBackends, DateTimeOffset now)` | Applies a backend toggle for new runs and emits `session.config`. Never mutates a `SessionConfig` a caller already holds — see the remarks on this type. |
 | `SessionConfig SetAttachEnabled(bool attachEnabled, DateTimeOffset now)` | Applies the attach toggle for new runs and emits `session.config` (C21). |
-| `SessionConfig SetCompileMode(string compileMode, CompileModeAvailability availability, DateTimeOffset now)` | Selects the session's `compile_mode` for new envelopes, **through the gate** (ADR-0036 rule 1): a rung the evaluated  does not admit is refused with the gate's own code and the file is not touched. Emits `session.conf… |
+| `SessionConfig SetCompileMode(string compileMode, CompileModeAvailability availability, DateTimeOffset now, string trigger = PromptCompilation.CompileModeChangeTriggers.Operator)` | Selects the session's `compile_mode` for new envelopes, **through the gate** (ADR-0036 rule 1): a rung the evaluated  does not admit is refused with the gate's own code and the file is not touched. Emits `session.conf… |
 | `IReadOnlyList<SessionEvent> ReadEvents()` | Every event this session has ever emitted, in append order. |
 | `void Delete()` | The Session aggregate's own delete: removes the session directory, and with it — by containment, never by a second delete path — the compile history the composer keeps beside `session.json` (ADR-0034 rule 6; F-12). |
 
@@ -308,13 +355,17 @@ writes it and none may be added — the page may be *told* the state so it can r
 disabled affordance; it may never *report* it. The asymmetry is deliberate: the composer
 may not carry a dial that loosens governance, and this one only restricts.
 
-### `SessionConfig SetCompileMode(string compileMode, CompileModeAvailability availability, DateTimeOffset now)`
+### `SessionConfig SetCompileMode(string compileMode, CompileModeAvailability availability, DateTimeOffset now, string trigger = PromptCompilation.CompileModeChangeTriggers.Operator)`
 
 Selects the session's `compile_mode` for new envelopes, **through the gate**
 (ADR-0036 rule 1): a rung the evaluated  does not admit is
-refused with the gate's own code and the file is not touched. Emits `session.config`.
+refused with the gate's own code and the file is not touched. Emits `session.config`,
+and — when the mode actually changes — `compile.mode.changed{from, to, trigger}`
+(CV-4; ADR-0036's transition history).
 
-**Throws `EnvelopeStoreException`.** `CompileModeUnknown` for a word outside the ladder; otherwise the refusal the gate computed (`CE-0016`–`CE-0020`).
+- **`trigger`** — Why the mode is changing — one of `All`. Defaults to `Operator` (the settings sheet is the only caller today); the gate/ring/drift triggers are for an automated demotion or re-admission to name its own cause.
+
+**Throws `EnvelopeStoreException`.** `CompileModeUnknown` for a word outside the ladder; otherwise the refusal the gate computed (`CE-0016`–`CE-0029`).
 
 ### `void Delete()`
 

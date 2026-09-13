@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.PromptCompilation: 46 types, 164 members, 81% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.PromptCompilation: 47 types, 177 members, 82% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.PromptCompilation`
 
-**46 public types · 164 public members · 81% documented.**
+**47 public types · 177 public members · 82% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -243,7 +243,24 @@ stage rows arrive with the agentic rung.
 |---|---|
 | `string Degraded = "compile.degraded"` | `compile.degraded{reason, error_code}`. |
 | `string Stage = "compile.stage"` | `compile.stage{stage, duration_ms, outcome}` — one per stage (§A10.3). |
+| `string ModeChanged = "compile.mode.changed"` | `compile.mode.changed{from, to, trigger}` — the compile-mode ladder's transition history (ADR-0036: "the transition history is the `compile.mode.changed` event — a separate mode-ledger file would be a second home for … |
 | `string Origin = "compile"` | The `Ext.origin` value every compile event carries — origin is never inferred from `RunId` / `AgentId` (a type pun). |
+
+## `CompileModeChangeTriggers`
+
+*class* — `CompileSignal.cs`
+
+The closed vocabulary a `compile.mode.changed` event's `trigger` carries (ADR-0036;
+CV-4) — unlike `Kind`'s open vocabulary, this set is fixed: a
+mode transition always has exactly one of these four causes.
+
+| Member | Summary |
+|---|---|
+| `string Operator = "operator"` | The operator chose a mode in the settings sheet. |
+| `string Gate = "gate"` | The settings model's own gate re-evaluation forced the change — a rung the ladder no longer admits at read time. |
+| `string Ring = "ring"` | The A6 ring (`tools/compile-eval/ring.py`) re-scored after the (adapter, CLI, profile) triple changed and the recomputed floors moved. |
+| `string Drift = "drift"` | The drift detector's own signal — a `model_observed` ≠ `model_configured` mismatch, independent of a triple change (CV-3's residual). |
+| `IReadOnlyList<string> All = [Operator, Gate, Ring, Drift]` | Every trigger word, in no particular order — the closed set `SetCompileMode` validates against. |
 
 ## `CompileSignal`
 
@@ -259,6 +276,7 @@ with its first emitter (CV-3) — the mechanical rung records no stage.
 | `string SourceName = "aide.compile"` | The activity source every compile-step span is published on. Observed by `CompileSignalTests`. |
 | `void Stage(string stage, long durationMs, string outcome)` | Records one stage's timing and outcome: `compile.stage{stage, duration_ms, outcome}`; a stage that did not run is never recorded as 0. |
 | `void Degraded(string reason, string errorCode)` | Records a degraded state: `compile.degraded{reason, error_code}`. |
+| `void ModeChanged(string from, string to, string trigger)` | Records a compile-mode transition: `compile.mode.changed{from, to, trigger}` (ADR-0036; CV-4).  is one of `All`. |
 | `bool IsCompileEvent(RunEvent evt)` | Whether a Console-stream event came from the compile step — by `Ext.origin`, never by its ids. |
 
 ## `Envelope`
@@ -673,6 +691,12 @@ Stable error codes for the envelope store and the projections over it (the `CE-`
 | `string CompileModeUnknown = "CE-0021"` | A `compile_mode` word outside the three the ladder names. |
 | `string PinRunNotEnded = "CE-0022"` | Gate 1: the artifact records a run that did not end (`mode` not `full`, or a prompt with no result) — an aborted or timed-out spike admits nothing. |
 | `string PinIdentityMismatch = "CE-0023"` | Gate 1: the artifact's `sent_meta_triple` is not the pin this build sends — a pin change re-runs PD-5 by construction. |
+| `string AdmissionReportUnreadable = "CE-0024"` | Gate 2: the admission report exists but is not readable as the `compile-eval-admission/1` contract (bad JSON, wrong contract string, or a required shape missing) — CV-4's reader. |
+| `string AdmissionSplitInvalid = "CE-0025"` | Gate 2: the split witness fails — fewer than 50 holdout envelopes, an id shared with the sample, or the holdout preceding the sample. The holdout is judged, never the sample. |
+| `string AdmissionFloorSchemaFail = "CE-0026"` | Gate 2: the recomputed `schema_fail` rate over the holdout exceeds the fixed floor (2 %, §A14.4). |
+| `string AdmissionFloorAppliedDenied = "CE-0027"` | Gate 2: the recomputed `applied_denied` invariant is non-zero over every `called` row (§A14.4; unfiltered by `EffectiveMode`). |
+| `string AdmissionFloorToolCalls = "CE-0028"` | Gate 2: the recomputed `tool_calls` invariant is non-zero over every `called` row (§A14.4; unfiltered by `EffectiveMode`). |
+| `string AdmissionFloorDegraded = "CE-0029"` | Gate 2: the recomputed degraded rate over every model call exceeds Ruling 76's floor (X = 5 %). |
 
 ## `EnvelopeStoreException`
 
