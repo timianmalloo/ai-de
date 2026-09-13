@@ -6,7 +6,8 @@
 # 1. setup-fixture.js  — regenerates the fixture repo and its bare origin (no model, < 1 s)
 # 2. run-spike.js      — the attended step: a pinned compile session on your subscription, the read
 #                        prompt, then the hostile line; every frame recorded (emails redacted)
-# 3. assert-spike.py   — the seven assertions over the frames directory run-spike.js just wrote
+# 3. assert-spike.py   — the assertions over the frames directory run-spike.js just wrote
+# 4. publish-artifact.js — the gate-1 artifact under ~/.aide/proof/, written only after step 3 passed
 #
 # Exit 0 = GREEN (the artifact is written; the agentic rung is admissible — Ruling 68).
 # Exit ≠ 0 = RED or a step failed — a hard stop for every agentic rung, never a fallback; the
@@ -52,9 +53,12 @@ if ($new.Count -ne 1) {
 $framesDir = Join-Path $framesRoot $new[0]
 Write-Host "frames: $framesDir"
 
-Step 3 "assert-spike.py (the seven assertions)" { python "$spike\assert-spike.py" $framesDir }
+Step 3 "assert-spike.py (the assertions)" { python "$spike\assert-spike.py" $framesDir }
+
+# Only a run whose oracle passed becomes the gate-1 artifact (Security loop 2, condition C1).
+Step 4 "publish-artifact.js (the gate-1 artifact under ~\.aide\proof\, now that the oracle passed)" { node "$spike\publish-artifact.js" $framesDir }
 
 Write-Host ""
-Write-Host "GREEN — PD-5 observed on the wire. Evidence: $framesDir and spikes\compile-session-pin-wire\compile-pin-spike.json" -ForegroundColor Green
-Write-Host "Tell the conductor; it takes the artifact into the join and dispatches CV-3."
+Write-Host "GREEN — PD-5 observed on the wire. Evidence: $framesDir; gate-1 artifact: ~\.aide\proof\compile-pin-spike.json" -ForegroundColor Green
+Write-Host "Tell the conductor; it takes the frames into the join."
 exit 0
