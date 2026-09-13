@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Code Atlas — frozen walking-host implementation contract</title><style>pre{white-space:pre-wrap;overflow-wrap:anywhere}</style></head>
-<body><main><h1>Code Atlas — frozen walking-host implementation contract</h1><p>Dispatch-ready design. Parent-held gates and the Owner authoring decision remain open. <a href="code-atlas-shared-host-admission.md">Canonical Markdown</a>.</p>
+<body><main><h1>Code Atlas — frozen walking-host implementation contract</h1><p>Owner-38 corrected dispatch packet. Conditional authoring is recorded; targeted Security/Test/C# readback and narrow membership qualification remain open. <a href="code-atlas-shared-host-admission.md">Canonical Markdown</a>.</p>
 <pre id="canonical-content">---
 id: design-code-atlas-shared-host-admission
 title: "Code Atlas — frozen walking-host implementation contract"
-summary: "Owner-37 dispatch packet: scoped production authority, explicit read-only wire projection, persistent transport, Architecture hosting, bounded implementation tracks and falsifying oracles."
+summary: "Owner-38 corrected dispatch packet: physical-first inventory, lossless render bounds, public composition, required repository forms, persistent transport and conditionally admitted implementation tracks."
 type: design
 status: dispatch-ready
 owner: "@timianmalloo"
@@ -22,12 +22,15 @@ links:
 
 ## 1. Status, authority and the terminal condition
 
-**DISPATCH-READY DESIGN; NOT AN IMPLEMENTATION GRANT OR A SELF-CLEARED GATE.**
+**DISPATCH-READY DESIGN; OWNER-38 CONDITIONAL AUTHORING GRANT, NOT A SELF-CLEARED GATE.**
 Sections 1–12 are the controlling implementation packet. Everything under
 **Historical checkpoint** is preserved evidence, not an alternative contract.
 Owner turns 34–35 replace the Conversation/DocumentSession approval hypothesis.
 Owner turn 37 replaces both the unresolved-transport hypothesis and per-operation
-reconnection. An implementation may not revive either historical proposal.
+reconnection. Owner turn 38 corrects the lossy wire, accessibility, repository-form,
+physical-inventory and outline-limit defects in packet `2af3777b`. That packet remains
+in Git history; its defective clauses are replaced here, not relabeled as previously correct.
+An implementation may not revive any superseded proposal.
 
 Goal: the first scoped walking-host slice, through the real window and existing
 Architecture host, using the admitted native reader and bound source.
@@ -39,11 +42,12 @@ policy storage, new dependencies, main integration, counterpart polling or appro
 
 Authority order:
 
-1. Owner 34–37, recorded before dispatch in
+1. Owner 34–38, recorded before dispatch in
    `docs\notes\atlas-owner\live-reader-horizon.md` in the Conductor tree.
 2. **Only** `docs\collaboration\session-contracts.md` §2 assigns file ownership.
    The same Conductor tree carries the latest uncommitted ruling and packet grant.
-3. This packet fixes proposed branch-local implementation boundaries, not ownership.
+3. Owner 38 conditionally admits Track C's 20-file/48-leaf and Track S's eight-file/32-leaf
+   ceilings after the targeted predicates below clear. This does not transfer ownership.
    The three open counterpart requests are still **OPEN, NOT CONSENT**.
 
 The frozen source base is `2632e5dcd070882eb83a777cc5289e10855707f4`.
@@ -63,8 +67,9 @@ None of the proposed limits or signatures below are reported as executed product
 
 The bounded context is **workspace code understanding**, not conversation content.
 A *read scope* is a short-lived, connection-bound authority aggregate. Its invariant is:
-only the currently admitted peer can read the currently permitted indexed files beneath
-the same native root while the epoch, policy generation and lease remain current.
+only the currently admitted peer can observe policy-permitted physical inventory beneath
+the same native root, and read content eligible under the existing NodeContent basis,
+while the epoch, policy generation and lease remain current.
 A *manifest* is an immutable observation generation inside that scope. File/declaration
 handles and receipts identify observations; they are not grants. A receipt references
 Q's bounded history; Restore returns the successor that Q actually produces.
@@ -86,14 +91,17 @@ alone nor `RecordedRootApproval` alone is a new source grant.
 ```text
 Daemon Program: WorkspaceCore.Open(workspaceId, rootPath, dataDirectory)
   → existing DaemonEndpoint / CapabilityRegistry / workspace registrations
-  → AtlasWorkspaceOperations.Register(endpoint, issuer, globalBudget)
+  → public AtlasWorkspaceOperations.Register(endpoint, core, workspaceId, rootPath,
+      dataDirectory, approvedGitExecutablePath, approvedGitSha256, approvedGitVersion)
+  → opaque IAsyncDisposable lifetime; Core privately composes issuer, policy and global budget
 Atlas admit request on its own handshaken connection
   → endpoint validates existing capability + actual peer + workspace + current epoch
   → AtlasReadScopeIssuer.AdmitAsync(peer, capabilityToken, expectedEpoch, cancellation)
-  → WorkspaceCore.CaptureAtlasIndexedReadSet() under an epoch-consistent Core snapshot
+  → WorkspaceCore.CaptureAtlasIndexedReadSet() captures content-eligibility evidence only
   → AtlasWorkspaceReadPolicy captures native root + in-memory policy generation
-  → AtlasGitMembership captures bounded, stable tracked membership
-  → intersect permitted indexed paths with that membership
+  → AtlasGitMembership discovers repository/admin metadata and captures stable membership
+  → existing physical enumerator retains folders/files/refused entries under metadata policy
+  → membership/semantic evidence annotates observations; neither filters physical visibility
   → AtlasQueryService.CreateForReadScopeAsync(grant, membership, cancellation)
   → scope registry owns Q, manifest handles, receipts and native resources
 Every operation / publication
@@ -125,7 +133,7 @@ internal sealed record AtlasIssuedScope(
     string ScopeToken, string InitialManifestToken, long CoreEpoch, DateTimeOffset ExpiresAt);
 internal sealed record AtlasIndexedReadSet(
     long CoreEpoch, ImmutableArray&lt;string&gt; PermittedRelativePaths);
-// Add to WorkspaceCore; implementation uses the same indexed-source eligibility as NodeContent.
+// Add to WorkspaceCore; content eligibility only, NEVER a physical-inventory filter.
 internal AtlasIndexedReadSet CaptureAtlasIndexedReadSet();
 // Add to AtlasQueryService; this is NOT an overload accepting RecordedRootApproval.
 internal static ValueTask&lt;AtlasScopedQueryHandle&gt; CreateForReadScopeAsync(
@@ -140,12 +148,21 @@ existing `IAtlasQueries` implementation, initial manifest and awaited shutdown.
 `RequireCurrent` never returns an inactive scope and never opens source on refusal.
 
 `AtlasWorkspaceReadPolicy` is a NEW **in-memory** adapter over the existing workspace
-permission, not a new approval service. It starts in indexed-only mode for this slice;
-changing its root or allowed-read set increments its generation and revokes its scopes.
+permission, not a new approval service. Its two decisions are distinct:
+
+| Decision | Existing eligibility mapping / required production behavior |
+|---|---|
+| Physical metadata visibility | Native enumeration under the approved source root, constrained by the existing read policy. Semantic-index absence and Git-untracked status do not hide an entry. Retain directories, refused/unavailable entries and safe reasons where policy permits their metadata; policy-withheld names/parents remain withheld with an explicit unknown/withheld bound. |
+| Source content eligibility | Reuse the exact declaring-source resolution and bounded/confined read checks of `WorkspaceOperations.NodeContent` → `ProjectionService.NodeContent` for the current workspace. `CaptureAtlasIndexedReadSet` records paths that satisfy that existing basis at the captured epoch; it is evidence for content admission, not permission merely because a path occurs in an index. Selection revalidates the same basis and native binding before opening content. |
+| No affirmative existing content basis | Do not authorize additional indexed or unindexed source by silence. Preserve permitted metadata and return a typed content refusal/unavailable reason. An unindexed file is neither hidden from physical inventory nor automatically granted content access. Any separately existing eligible path must pass the same NodeContent mapping, demonstrated by a parity fixture, before being admitted. |
+
+Changing the root, metadata policy or content eligibility increments the policy generation
+and revokes its scopes.
 Reindex/epoch change, native-root replacement, capability revocation, expiry, connection
 end and daemon shutdown also invalidate scopes. Check these at admission, before each
 read and at response publication. Membership is checked again for each selected handle.
-Broader filesystem content requires the applicable approval and is not implemented here.
+Additional content access beyond that existing basis requires the applicable approval and
+is not implemented here. Physical metadata visibility does not itself grant content access.
 
 The semantic workspace index, Git's index and Q's source observation are different things.
 Membership permission does not prove bytes equal an old semantic index. `IndexedMatch`
@@ -160,60 +177,83 @@ registries are bounded ephemeral resources. Revocation is monotonic within a sco
 ## 3. Trusted Git membership: exact first-slice boundary
 
 `AtlasGitMembership.CaptureAsync(AtlasReadScopeGrant, CancellationToken)` is NEW DESIGN
-and returns `AtlasMembershipSnapshot`. Grain: one snapshot is one native-root identity,
-HEAD object ID, index-byte hash and permitted tracked path set observed together.
-The capture is read-only with respect to the user's repository.
+and returns `AtlasMembershipSnapshot`. Grain: one snapshot is one native source-root
+identity, discovered repository/worktree/admin association, HEAD observation and index
+generation observed consistently. Membership annotates physical inventory; it does not
+replace it or authorize content. The capture is read-only with respect to the repository.
 
-To avoid executing repository configuration, the Git process does **not** operate on
-the repository's live administrative directory:
+**Required forms are ordinary clones, linked-worktree `.git` files and nested approved
+source roots.** Repository/admin discovery is separate from source-root authority.
+A parent repository or external linked-worktree admin directory can supply bounded metadata;
+its discovery never widens the approved source root. The copied-index/inert-directory
+default from `2af3777b` is withdrawn as unqualified, not shipped as a safety mechanism.
 
-1. Pin native root and `.git` directory identity using Core's native confinement rules.
-   This slice supports a normal in-root `.git` directory and an ordinary index.
-   Linked-worktree gitfiles, split/sparse indexes, alternate object stores and unsupported
-   administrative forms return `MembershipUnavailable`, not an empty complete set.
-2. Open HEAD, index and (for symbolic HEAD) its existing loose ref with handles denying
-   write/delete sharing. Support detached HEAD or a bounded `refs/heads/...` loose ref.
-   Packed-only refs, a symbolic-ref chain, an existing index lock or inability to hold
-   these handles yields a retryable typed unavailable result. This explicit restriction
-   avoids pretending two unrelated reads form an atomic Git transaction.
-3. Once all handles are held, re-read them and verify path-to-native-object association.
-   Resolve the pinned HEAD from these bytes, hash the pinned index, then copy the
-   bounded bytes. Keep the handles until this capture completes. Root, HEAD and index
-   stamps must still agree before admitting the result and at publication.
-   File-content changes are checked independently by E/S on every source read.
-4. Create an access-restricted, per-capture scratch child of the **Core data directory**,
-   outside the source root. It contains only a minimal inert Git directory, copied index,
-   detached HEAD, empty objects/refs directories and no config, hooks or alternates.
-   No system temporary directory is used. Core owns and removes this scratch on every exit.
-5. Invoke only a Core-approved absolute Git executable, with its expected digest/version
-   from host configuration. Missing approval is `MembershipUnavailable`; never search the
-   workspace or ambient PATH and never auto-download. Use `ProcessStartInfo.ArgumentList`,
-   no shell. Command: `git --no-pager --no-optional-locks --git-dir=&lt;inert-dir&gt;
-   --work-tree=&lt;admitted-root&gt; -c core.fsmonitor=false -c core.untrackedCache=false
-   ls-files --cached --stage -z`. This command has no checkout, diff, status, filters,
-   submodule recursion, credential helper, hooks or network operation.
-6. Supply an allowlisted environment only: OS-required process variables plus the trusted
-   executable/system directories, `GIT_CONFIG_NOSYSTEM=1`, `GIT_CONFIG_GLOBAL=NUL`,
+Use the established bounded approved-Git execution approach, with the following contract:
+
+1. Pin the approved native source-root handle/identity first. Use the approved Git
+   executable to resolve repository top level, worktree Git directory, common directory
+   and index path. Let Git resolve `.git` files and ref/index formats; do not build a
+   general Git parser. Validate bounded discovery results and their native associations.
+   A nested source root remains the authorization boundary even when the repo is above it.
+2. Invoke only a Core-approved absolute executable with configured expected digest/version.
+   Never use workspace/ambient PATH, a shell, auto-download or repository commands.
+   Use `ProcessStartInfo.ArgumentList`. Fixed read-only command allowlist: `rev-parse`
+   for discovery/HEAD, and `ls-files --cached --stage -z` for tracked membership.
+   Discovery uses absolute path output from the approved Git version. Membership paths
+   are repo-relative, explicitly rebased to the approved root; outside-root records never
+   become source handles or visible names. No `status`, `diff`, checkout, fetch, submodule
+   execution, filter, hook or helper command is added.
+3. Supply an allowlisted environment only: OS-required variables plus trusted executable/
+   system directories, `GIT_CONFIG_NOSYSTEM=1`, `GIT_CONFIG_GLOBAL=NUL`,
    `GIT_CONFIG_SYSTEM=NUL`, `GIT_TERMINAL_PROMPT=0`, `GIT_OPTIONAL_LOCKS=0`,
    `GIT_NO_REPLACE_OBJECTS=1`, `GIT_ATTR_NOSYSTEM=1`, `GIT_PAGER=`, `PAGER=`.
-   Do not inherit Git configuration injection, tracing, SSH, proxy, helper or loader
-   override variables. The no-repository-config claim depends on the inert directory.
-7. Decode complete NUL-delimited records with strict UTF-8. Validate mode/object ID/stage
-   and the path independently. Admit only unique stage-0 regular-file entries.
-   Symlinks and mode-160000 gitlinks are excluded with typed disclosures; do not descend
-   into submodules. Reject absolute/traversal/invalid-Unicode paths and duplicates.
-   Intersect with `AtlasIndexedReadSet`; do not expose excluded file names as a side channel.
-8. Require clean process exit, complete framing and unchanged capture stamps. On timeout,
-   cancellation, limit overflow or malformed output, publish **no membership success**.
-   Kill only the owned process tree if cancellation does not stop it; await its exit and
-   both redirected stream readers before removing scratch and releasing reservations.
+   Remove inherited Git config injection, tracing, SSH, proxy, helper and loader overrides.
+   Explicit command configuration disables `core.fsmonitor`, `core.untrackedCache`,
+   `submodule.recurse`, `maintenance.auto` and `gc.auto`; clears `credential.helper`;
+   sets `protocol.allow=never`; and disables optional locks/pagers.
+   The fixed commands must not invoke repository-configured hooks/helpers/fsmonitor or
+   network. Repository configuration can still be read: do **not** call this an inert
+   configuration sandbox. Prove its no-execution predicate with hostile-config fixtures.
+4. Capture HEAD/index/root consistently, including the linked worktree's own HEAD/index
+   and shared ref storage where applicable. Use bounded native administrative handles
+   denying write/delete sharing for the state used by the observation; Git owns ref and
+   index decoding. Record native identities, HEAD result and a streamed index digest.
+   Recheck discovery association, held-file identities and stamps before accepting
+   capture and before publication. A before/after hash alone does not exclude ABA races.
+   A changing ref/index/root, held-handle failure or incomplete snapshot yields a typed
+   unstable/unavailable observation, not complete-empty membership or source permission.
+   Loose/packed refs and linked/nested forms are not categorically rejected.
+5. Decode complete NUL-delimited membership with strict UTF-8 and mode/object ID/stage
+   validation. Accept only unique stage-0 regular-file membership; malformed records,
+   duplicate entries and invalid/traversal paths fail the capture. Symlink/gitlink records
+   carry safe refusal/disclosure metadata where policy permits, never a submodule descent.
+   The physical enumerator independently retains folders and files, including untracked,
+   refused and unavailable entries. Semantic-index evidence never filters that enumeration.
+6. Require clean process exit, complete framing and consistent native capture. On timeout,
+   cancellation, limit overflow or malformed output, publish no membership success.
+   Missing/unstable membership has an explicit unknown/withheld bound; do not relabel it
+   a complete physical-inventory denominator. Source selection still requires its own
+   content-eligibility and currentness checks.
+7. Kill only the owned process tree if cancellation does not stop it; await process exit
+   and both bounded stream readers, release native handles, then release reservations.
+   No copied-index scratch is required by this design. Any qualification fixture stays
+   inside the granted worktree/Core fixture data directory and is cleaned by its owner.
 
-NEW limits: HEAD/ref bytes 4 KiB each; copied index 8 MiB; Git stdout 4 MiB; stderr
-16 KiB; 25,000 records; 4,096 UTF-8 bytes per relative path; one Git process per capture,
-at most two daemon-wide; five seconds execution plus two seconds cleanup.
-Admission's total deadline is 30 seconds. No automatic retry loop: a concurrent repository
-change yields a visible retry action, whose next capture is a new observation.
-Empty **complete** membership is allowed only when every validation above succeeds.
+NEW limits: discovery output 16 KiB total; HEAD result 4 KiB; streamed index 8 MiB;
+Git stdout 4 MiB; stderr 16 KiB; 25,000 records; 4,096 UTF-8 bytes per relative path.
+Each capture runs one process at a time, at most six fixed invocations, five seconds per
+invocation within the 30-second total admission deadline; at most two Git processes
+daemon-wide; cleanup two seconds. Budget overflow is a disclosed incomplete observation,
+not a hidden repository-form exclusion. There is no automatic retry loop.
+
+**Narrow membership Security qualification remains OPEN:** NQ1 proves the fixed command/
+environment combination cannot execute hostile hooks/helpers/fsmonitor or network on
+the approved Git version; NQ2 proves native snapshot ownership across loose/packed refs,
+linked-worktree admin associations and nested roots, including root/index/ref replacement.
+These are specific execution/currentness threats, not authority to invent a Git parser.
+Owner permits at most ten additional membership-source/test leaves only if a needed
+mechanism requires this qualification; the parent must allocate that bounded work.
+All three required repository forms must pass before the membership gate clears.
 
 ## 4. Versioned read-only wire and constructor-safe projection
 
@@ -250,18 +290,25 @@ Use `System.Text.Json` already used by IPC; add no serializer package.
 | `AtlasAdmitRequestDto` | `int Version, long ExpectedCoreEpoch` |
 | `AtlasAdmitDto` | `int Version, string ScopeToken, string InitialManifestToken, long CoreEpoch, DateTimeOffset ExpiresAt` |
 | `AtlasInventoryRequestDto` | `int Version, string ScopeToken, long ExpectedCoreEpoch, string ManifestToken, int Offset, int Limit` |
-| `AtlasSelectRequestDto` | `int Version, string ScopeToken, long ExpectedCoreEpoch, string ManifestToken, string FileToken, string? DeclarationToken, int SourceOffset, int SourceLimit, int OutlineOffset, int OutlineLimit` |
+| `AtlasSelectRequestDto` | `int Version, string ScopeToken, long ExpectedCoreEpoch, string ManifestToken, string FileToken, string? DeclarationToken, int SourceOffset, int SourceLength, int OutlineOffset, int OutlineLimit` |
 | `AtlasRestoreRequestDto` | `int Version, string ScopeToken, long ExpectedCoreEpoch, string ReceiptToken` |
 | `AtlasReleaseRequestDto` | `int Version, string ScopeToken, long ExpectedCoreEpoch` |
 | `AtlasReleasedDto` | `int Version, bool Released` |
-| `AtlasInventoryPageDto` | `int Version, string ScopeToken, long CoreEpoch, string ManifestToken, AtlasCompletionState Completion, AtlasFileDto[] Files, AtlasCountDto Total, int? NextOffset, string[] Disclosures` |
-| `AtlasFileDto` | `string FileToken, string RelativePath, AtlasFileClassification Classification, AtlasFileAvailability Availability, AtlasCountDto DeclarationTotal` |
-| `AtlasSelectionDto` | `int Version, string ScopeToken, long CoreEpoch, string ManifestToken, string FileToken, string? DeclarationToken, string? ReceiptToken, AtlasSourceDto Source, AtlasOutlineRowDto[] Outline, AtlasCountDto OutlineTotal, int? OutlineNextOffset, AtlasCoverageDto Coverage, string[] Disclosures` |
+| `AtlasInventoryPageDto` | `int Version, string ScopeToken, long CoreEpoch, string ManifestToken, AtlasCompletionState Completion, AtlasFileDto[] Files, AtlasBoundsDto Bounds, int? NextOffset, string[] Disclosures` |
+| `AtlasFileDto` | `string FileToken, AtlasDirectoryEntryKind Kind, string? ParentToken, string RelativePath, AtlasFileClassification Classification, AtlasFileAvailability Availability, AtlasCountDto DeclarationTotal, string? Reason` |
+| `AtlasSelectionDto` | `int Version, string ScopeToken, long CoreEpoch, string ManifestToken, string FileToken, string? DeclarationToken, string? ReceiptToken, AtlasSourceDto Source, AtlasBoundsDto SourceBounds, AtlasOutlineState OutlineState, string? OutlineReason, AtlasOutlineRowDto[] Outline, AtlasBoundsDto OutlineBounds, int? OutlineNextOffset, AtlasCoverageDto Coverage, string[] Disclosures` |
 | `AtlasSourceDto` | `SourceProjectionState State, string ObservationToken, string? BindingToken, string? DecoderId, string? Text, AtlasSpanDto? PageSpan, AtlasSpanDto[] Highlights, int? NextOffset, string? Reason` |
 | `AtlasOutlineRowDto` | `string DeclarationToken, string DisplayName, AtlasDeclarationKind Kind, AtlasSpanDto Span` |
 | `AtlasSpanDto` | `int Start, int Length` |
 | `AtlasCountDto` | `AtlasDenominatorState State, long? Value, string? Reason` |
 | `AtlasCoverageDto` | `AtlasDenominatorState State, double? Value, string? Reason` |
+| `AtlasBoundsDto` | `AtlasBoundsDimension Dimension, int RequestedLimit, int EffectiveLimit, int ReturnedRows, long ReturnedContentBytes, AtlasDenominatorState DenominatorState, long? DenominatorValue, string? DenominatorReason, string? OmissionReason, AtlasBoundsDimension? OmissionDimension` |
+
+NEW public enums, in the same `AtlasReaderContracts.cs` file:
+`AtlasBoundsDimension { InventoryRows, OutlineRows, SourceUtf16CodeUnits, SourceUtf8ContentBytes, SerializedMetadataBytes, Policy }`;
+`AtlasOutlineState { Available, Canceled, BudgetExceeded, Unsupported, Unavailable, Refused }`.
+`AtlasConnectionEndReason` used by the public endpoint hook is also public in that file.
+All public ports, DTOs and DTO field types are public across Core/Daemon/App.
 
 Envelope failures use existing IPC failure framing, with NEW stable Atlas error codes:
 `Atlas.UnsupportedVersion`, `Atlas.Malformed`, `Atlas.AdmissionRefused`,
@@ -277,10 +324,41 @@ Field constraints:
 - Handles are nonempty opaque strings, at most 256 UTF-8 bytes. Validate lookup plus
   scope/manifest ownership; lexical validity alone confers nothing. No raw grant,
   native identity, absolute path, `ExpectedBinding`, approval record or compiler object is sent.
-- Offset ≥ 0, Limit 1–128; apply existing `PageRequest` validation. Count Known requires
+- `AtlasFileDto` represents a physical inventory entry, not only a selectable source file.
+  Preserve the existing `AtlasDirectoryEntryKind` one-for-one, including `Directory`,
+  `RejectedLink` and `Unavailable`. Its historically named FileToken is an opaque entry
+  handle; Select accepts only a permitted file-kind handle. ParentToken aliases its parent
+  in the same scope/manifest handle table, never the native parent identity. Null means
+  the admitted scope root, not a missing parent silently reconstructed from a path.
+  Withhold a child row if policy forbids revealing its necessary parent association.
+  Reason preserves the safe refusal/unavailable explanation without raw native details.
+- Inventory/outline Offset ≥ 0 and Limit 1–128 **rows**; apply existing `PageRequest`
+  only to those item pages. SourceOffset and SourceLength are **UTF-16 code units**:
+  offset ≥ 0, length &gt; 0, checked offset-plus-length arithmetic. Do not apply the 128-row
+  limit to source characters and do not allocate the requested source length unchecked.
+  Clamp the effective source window to the verified extent and scalar-safe display-byte
+  cap, carrying those effective bounds explicitly. Count Known requires
   nonnegative Value and no Reason. Unknown/Withheld requires null Value and a nonempty
   safe Reason. Coverage Known is finite 0–1; Unknown/Withheld has no numerical value.
   Null never becomes zero. Unknown totals never imply “all loaded.”
+- Inventory Bounds has Dimension `InventoryRows`; Selection has separate SourceBounds
+  (`SourceUtf16CodeUnits`) and OutlineBounds (`OutlineRows`). RequestedLimit preserves
+  the caller's row limit or SourceLength; EffectiveLimit is the applied limit in that same
+  dimension, nonnegative and no greater than requested. ReturnedRows counts actual
+  inventory/outline entries, including directories and refused metadata rows; it is zero
+  for SourceBounds. ReturnedContentBytes counts only unescaped UTF-8 **source content**:
+  inventory metadata and outline metadata return **0 content bytes**, even when their JSON
+  occupies a large frame. SourceBounds reports the actual returned Text byte count.
+  Serialized-body/metadata metrics remain separate, never substituted for content bytes.
+- Each bounds denominator uses its declared dimension. Known requires a nonnegative
+  DenominatorValue and null DenominatorReason; Unknown/Withheld requires a null value
+  and nonempty safe reason. OmissionReason and OmissionDimension are both present when
+  data is omitted and both null otherwise. For example a UTF-8 display cut uses
+  `SourceUtf8ContentBytes`, a row-page cut uses its row dimension, policy withholding
+  uses `Policy`, and a metadata-size cut uses `SerializedMetadataBytes`.
+  A refused/canceled phase may have EffectiveLimit zero; it retains the original request.
+  Inventory total and outline total are derived from their bounds denominators, not
+  separately stored copies. Truncation never erases the omitted dimension or unknown state.
 - `NextOffset` is explicit, strictly advances when present, and comes from the server's
   accepted continuation. The reader never computes it from visible child count.
   Inventory offsets count admitted entries, not UI folders. Source offsets/spans count
@@ -301,14 +379,29 @@ Field constraints:
   `TooLargeToVerify`, `ReadUnstable`, `Refused`, `Canceled`.
   Only `IndexedMatch` may carry Text/PageSpan/Highlights/BindingToken. All other states
   clear previous source and highlights and carry a safe Reason. They are not empty matches.
+- OutlineState/OutlineReason are independent of Source.State. An outline-only timeout,
+  cancellation, budget failure or unsupported syntax changes only the outline state/bounds;
+  already verified source may remain `IndexedMatch`. An abandoned whole operation or revoked
+  lease still forbids successful publication under §5; this separation does not bypass it.
+  The input boundary remains the admitted **8 MiB** source-verification input, including
+  for outline work. There is no new smaller outline-input ceiling.
 
 **Constructor mapping is explicit, not reflection over native models.**
-`AtlasWireProjection` maps native file identity through the scope's handle table;
-native outline ObservationKey through a declaration handle; native page Text/PageSpan/
-Highlights by validated scalar copying; native denominator/coverage state by the unions
-above; native `SourceProjection.State` one-for-one. A BindingToken refers to a Core-owned
+`AtlasWireProjection` maps native entry identity and parent identity through the same
+scope's opaque handle table, preserving Kind and safe Reason. Native outline ObservationKey
+maps to a declaration handle; native page Text/PageSpan/Highlights use validated scalar
+copying; source state maps one-for-one. Request limits plus native effective limits,
+returned rows/content bytes, denominator state/value/reason and omission reason/dimension
+map field-for-field into AtlasBoundsDto. Never derive content bytes from serialized DTO size,
+or reconstruct a missing parent from RelativePath. A BindingToken refers to a Core-owned
 verified binding. `AtlasSourceBinding`, `SourceProjection.IndexedMatch` and their private
 or invariant-rich construction paths are **not** deserialized in App.
+
+Local/native → shared render projection → wire DTO → remote validation → reader all use
+these same fields. The local bridge must not pass richer directory/bounds data that the
+remote route drops. Golden fixtures contain a folder and child, a refused entry with
+reason, policy withholding, Unknown/Withheld denominators, omitted dimensions and an
+inventory with nonzero metadata/frame bytes but **zero ReturnedContentBytes**.
 
 The new render port is shared by the local proof bridge and the remote client:
 
@@ -366,13 +459,27 @@ public ValueTask ConnectionEndedAsync(
 // IpcServer: the production accept loop must await this connection task and retain ownership.
 private Task HandleConnectionAsync(
     Stream pipe, IpcPeer peer, CancellationToken connectionCancellation);
-// AtlasWorkspaceOperations
-internal static void Register(
-    DaemonEndpoint endpoint, AtlasReadScopeIssuer issuer, AtlasReadBudget globalBudget);
+// AtlasWorkspaceOperations.cs: the ONE public production-composition facade.
+public static class AtlasWorkspaceOperations
+{
+    public static IAsyncDisposable Register(
+        DaemonEndpoint endpoint, WorkspaceCore workspace, string workspaceId,
+        string sourceRootPath, string dataDirectory, string approvedGitExecutablePath,
+        string approvedGitSha256, string approvedGitVersion);
+}
 ```
 
 `AtlasConnectionEndReason` is NEW: `Released`, `Disconnected`, `Abandoned`,
 `ProtocolViolation`, `Revoked`, `Expired`, `Shutdown`.
+Its declaration is public in the already-listed `AtlasReaderContracts.cs`. The facade's
+parameters are all public Core/BCL types; no signature exposes an internal issuer,
+grant, policy or budget. It validates configuration/root association, privately constructs
+those objects inside Core, registers handlers and returns only their opaque awaited lifetime.
+Daemon uses `await using IAsyncDisposable atlasLifetime = AtlasWorkspaceOperations.Register(...)`
+with the same workspace/root/data arguments already used for WorkspaceCore.Open and the
+approved executable configuration. It disposes this lifetime before disposing WorkspaceCore.
+App consumes only the public reader ports/DTOs. No `InternalsVisibleTo`, new facade file,
+project edit or direct Daemon construction of internal Core objects is permitted.
 Registration rejects duplicate sync/async names. `InvokeAsync` uses the same validation
 as existing `Invoke`; it awaits async delegates, or invokes an existing sync delegate
 directly and returns its result. Existing sync Register/Invoke and wire operations keep
@@ -456,7 +563,7 @@ The following are NEW, explicit admission ceilings, not spike measurements:
 | Active source verification | Daemon-wide at most 4 × 8 MiB native buffers | Byte reservations before allocation; never wire or cache those buffers |
 | Owned byte buffers | Daemon-wide 64 MiB total | Includes verification, Git captures, stream/framing/serialization buffers; reserve actual requested sizes; refuse before exceeding |
 | Retained projected data/handles | Daemon-wide 16 MiB charged encoded payload/key sizes; per scope ≤ 25,000 file handles | No uncharged source-page cache; Q receipt cap is additionally retained; evicted receipt → ReceiptUnavailable |
-| Compiler work | Daemon-wide one active parse; ≤ 512 KiB decoded UTF-8 input for the host outline projection | Larger outline is Unverifiable with an outline-budget disclosure, not a false empty outline; source verification retains its independent 8 MiB bound |
+| Compiler work | Daemon-wide one active parse; retain the admitted 8 MiB source input boundary | Cancellation/deadline/budget/unsupported outcomes affect OutlineState and OutlineBounds only; independently verified source remains IndexedMatch where applicable |
 | Scope lifetime | Absolute five minutes; no silent renewal | Expiry terminates scope; visible readmission needed |
 | Server deadlines | Admit 30 s; inventory/select/restore 10 s; release 2 s; cleanup 2 s | Independent clocks; clean deadline only after owned work drained |
 | Client pending | Per workspace Atlas owner 16 waiting exchanges | Further requests fail Busy; UI coalesces superseded navigation, never queues unbounded work |
@@ -487,7 +594,7 @@ NEW Shell seams:
 ```csharp
 public sealed class AtlasLoadingHost : UserControl
 {
-    public AtlasLoadingHost(AtlasWorkspaceOwner owner);
+    internal AtlasLoadingHost(AtlasWorkspaceOwner owner);
     public Task ActivateAsync(CancellationToken cancellationToken);
     public ValueTask DeactivateAsync();
 }
@@ -511,6 +618,10 @@ public ValueTask DisposeAsync();
 
 Parameter names in the NEW async attach are design names; the existing six-argument
 `AttachWorkspace` shape is anchored below, not silently asserted identical to these names.
+The loading-host constructor is internal because AtlasWorkspaceOwner is internal; both
+are used within the App assembly. Public Core contracts contain no internal parameter or
+return types. Compile the Core facade from Daemon and the reader seam from App at C's
+first checkpoint, rather than waiting for the host implementation to reveal accessibility errors.
 Use the existing `DESIGN.md` and native `AtlasReaderView`; do not introduce a mockup,
 color system or replacement reader. The retained proof constructor uses the local
 render projection, so its old callers and tests remain meaningful.
@@ -555,9 +666,10 @@ Lifecycle ownership is explicit:
 ## 8. Exact file manifest and cohesive dispatch tracks
 
 **Ownership labels below come from the sole §2 lanes and the retained branch-local
-Atlas exception. They are not a second ownership register.** Existing-file edits require
-the Owner's next explicit branch-local grant or the existing owner's execution.
-Core, Shell and Atlas-native counterpart requests are not acknowledgments.
+Atlas exception. They are not a second ownership register.** Owner 38 conditionally
+admits these exact branch-local ceilings after targeted readback clears; the parent records
+actual writers, immutable bases and exact paths in sole §2 before source edits.
+Core, Shell and Atlas-native counterpart requests remain requests, not acknowledgments.
 
 Prefix `E` means existing at the pinned base; `N` means NEW DESIGN file.
 Paths are exact. The implementation grant must name this list; a writer encountering
@@ -565,30 +677,36 @@ another required file reports that seam instead of silently editing it.
 
 ### Track C — Core-owned authority, membership, transport and render projection
 
-One code writer, **48 leaf calls maximum**, no nested writers. Entry: Owner grant plus
-parent Security/Data/DS/Test readback. Exit: wire fixture frozen, negative controls red then
-green, real client/server persistent journey and bounded cleanup proven.
+One code writer, **48 leaf calls maximum**, no nested writers. Entry: the recorded
+Owner-38 conditional grant and parent targeted Security/Test/C# predicates cleared, with
+the membership-specific Security gate retained. The **first eight calls within the 48**
+compile the DTO/public-facade seam across Core/Daemon/App and prove semantic-red/golden
+directory/parent/reason/bounds/units/local-remote round trips, then commit that seam.
+Shell starts only from it. Exit: negative controls red then green, real client/server
+persistent journey and bounded cleanup proven. A needed narrow membership qualification
+may receive up to ten additional owned source/test leaves only by explicit parent allocation;
+it does not expand the 20-file ceiling or reopen architecture.
 
 | Status | Exact file | Delta |
 |---|---|---|
-| E | `src\AiDe.Core\WorkspaceCore.cs` | Indexed-source eligibility snapshot; no new storage |
+| E | `src\AiDe.Core\WorkspaceCore.cs` | Existing NodeContent content-eligibility snapshot only; never filter physical metadata; no new storage |
 | E | `src\AiDe.Core\Understanding\AtlasQueryService.cs` | Internal production-grant composition; bounded projection/window access; retain proof composition and Q receipts |
-| N | `src\AiDe.Core\Understanding\AtlasWorkspaceReadPolicy.cs` | Typed indexed-only read policy and native-root/currentness adapter |
+| N | `src\AiDe.Core\Understanding\AtlasWorkspaceReadPolicy.cs` | Separate physical-metadata policy and existing-basis content eligibility; native-root/currentness adapter |
 | N | `src\AiDe.Core\Understanding\AtlasReadScopeIssuer.cs` | Scope/grant/connection lifetime and publication gate |
-| N | `src\AiDe.Core\Understanding\AtlasGitMembership.cs` | Restricted stable membership capture and owned process/scratch cleanup |
+| N | `src\AiDe.Core\Understanding\AtlasGitMembership.cs` | Required clone/linked/nested discovery distinct from source authority; stable membership and owned process cleanup |
 | N | `src\AiDe.Core\Understanding\AtlasReadBudget.cs` | Shared scheduler, byte accounting and draining ownership |
-| N | `src\AiDe.Core\Understanding\AtlasReaderContracts.cs` | Exact render DTOs, ports and safe enum/null validation |
+| N | `src\AiDe.Core\Understanding\AtlasReaderContracts.cs` | Public render DTOs/ports/enums; lossless kind/parent/reason/bounds and explicit units |
 | N | `src\AiDe.Core\Understanding\AtlasReaderProjection.cs` | Explicit native-to-render mapping, local bridge, wire projection; no native model deserialization |
 | E | `src\AiDe.Core\Ipc\DaemonEndpoint.cs` | Additive async dispatch and connection-ended hooks; preserve sync behavior |
 | E | `src\AiDe.Core\Ipc\IpcServer.cs` | Awaited connection dispatch, single reader/monitor ownership, final serialized-body cap |
 | E | `src\AiDe.Core\Ipc\WorkspaceClient.cs` | Add `CreateAtlasReader`, preserving existing query/command client |
-| N | `src\AiDe.Core\Ipc\AtlasWorkspaceOperations.cs` | Six exact operations and capability discovery |
+| N | `src\AiDe.Core\Ipc\AtlasWorkspaceOperations.cs` | One public registration/lifetime facade, six exact operations and capability discovery |
 | N | `src\AiDe.Core\Ipc\AtlasRemoteReader.cs` | Isolated persistent pipe, attempt ownership, read-only lease, terminal abandonment |
-| E | `src\AiDe.Daemon\Program.cs` | Compose issuer/budget/registration; await supervised shutdown |
+| E | `src\AiDe.Daemon\Program.cs` | Call public facade using public parameter types; await opaque lifetime before Core shutdown |
 | E | `src\AiDe.App\ViewModels\MainWindowViewModel.cs` | Core-owned typed reader property and existing open/dispose handoff |
 | N | `tests\AiDe.Core.Tests\Understanding\AtlasProductionAdmissionTests.cs` | Authority, indexed-read boundary, epoch/policy/root/revocation publication |
 | N | `tests\AiDe.Core.Tests\Understanding\AtlasGitMembershipTests.cs` | Native/Git consistency, hostile config, framing and cleanup |
-| N | `tests\AiDe.Core.Tests\Understanding\AtlasReaderWireTests.cs` | Constructor/DTO contracts, all states, escape-size and continuation |
+| N | `tests\AiDe.Core.Tests\Understanding\AtlasReaderWireTests.cs` | Golden/red constructor/DTO/local-remote parity; kind/parent/reason/bounds/units, outline independence, escape-size/continuation |
 | N | `tests\AiDe.Core.Tests\Understanding\AtlasIpcAdmissionTests.cs` | Real pipes, stateful persistence, cancellation and async/sync dispatch |
 | N | `tests\AiDe.Core.Tests\Understanding\AtlasReadBudgetTests.cs` | Multiple scopes, capacity, fairness, accounting and drain ownership |
 
@@ -600,9 +718,9 @@ are explicit shared integration surfaces, not grounds to refactor unrelated oper
 
 ### Track S — Shell-owned host lifecycle plus explicitly granted Atlas-native bridge
 
-One code writer, **32 leaf calls maximum**, no nested writers. Entry: Core DTO/port seam
-and golden wire fixture committed on Track C, plus explicit permission for the existing
-native-reader file. Exit: the actual MainWindow journey and replacement/close oracles pass.
+One code writer, **32 leaf calls maximum**, no nested writers. Entry: C's first-eight-call
+DTO/public-facade/golden checkpoint committed, and the parent records its writer/native-file
+assignment under Owner 38. Exit: actual MainWindow journey and replacement/close oracles pass.
 
 | Status / lane | Exact file | Delta |
 |---|---|---|
@@ -622,8 +740,10 @@ counterexample for a narrow grant; do not invent a second opener registry.
 
 ### Dependencies, budgets and shared-surface rules
 
-Graph: **parent readback → Owner grant → C contract checkpoint → {C implementation,
+Graph: **parent targeted Security/Test/C# readback of this erratum → implementation
+dispatch under recorded Owner 38 → C first-eight-call committed seam → {C implementation,
 S implementation} → integration proof → independent gate disposition**.
+NQ1/NQ2 are the narrow membership Security gate within C, not another architecture checkpoint.
 No S writer changes C DTOs. C does not change S files; S receives the typed view-model
 reader property through the frozen seam. Both agree on `code-atlas`, version 1, opaque
 handles, single owner and terminal failures. Their fail-clauses are jointly satisfiable:
@@ -659,9 +779,12 @@ not substitutes for the new composition path.
 | Claim / test home | Red input or fault that must fail | Required happy/adversarial evidence |
 |---|---|---|
 | Admission / `AtlasProductionAdmissionTests` | Replace currentness with true; use wrong peer, display folder ID, old epoch/policy/root or revoked lease | Zero source opens and no successful publication; an inherited permitted indexed file succeeds |
-| Membership / `AtlasGitMembershipTests` | Swap index/ref/root during capture; malicious repository config starts a marker helper; invalid UTF-8/NUL/duplicate records; over-limit output | Inert invocation runs no helper/hook/network; native stamps hold; typed unavailable not complete-empty; owned process/readers/scratch disappear |
-| Projection / `AtlasReaderWireTests` | Serialize rich Core model directly; omit required value; change enum to integer; null Unknown value becomes zero | Round-trip all DTO constructors; enumerate all nine states; no native grants/identity/buffer fields; explicit Unknown and Withheld remain nonnumeric |
-| Pagination / same | Use UI child count for continuation, omit successor receipt, split surrogate pair, invent a denominator | Multi-page inventory/source/outline agrees with server NextOffset; UTF-16 span/highlights align; Back adopts Q's successor |
+| Membership / `AtlasGitMembershipTests` | Swap index/ref/root during capture; hostile config starts a helper/hook/fsmonitor/network marker; invalid UTF-8/NUL/duplicates; over-limit output | Ordinary clone, linked-worktree gitfile and nested approved root all succeed on valid fixtures; no executable side effects; outside-root metadata grants no source; NQ1/NQ2 hold; owned process/readers/handles drain |
+| Physical visibility / same + admission | Delete a semantic-index row or mark a physical file Git-untracked; grant content merely because its metadata is visible | Folder/file/refused metadata remains policy-correct; no semantic-index inventory filter; content eligibility matches the actual NodeContent basis independently |
+| Projection / `AtlasReaderWireTests` | Drop Kind, ParentToken, Reason or one bounds field; serialize raw native parent identity; substitute frame bytes for content bytes; Unknown becomes zero | Local/native→wire→client golden directory/child/refused/withheld fixture preserves every field, all nine source states, unknown totals and zero content bytes for metadata-only responses |
+| Public composition / same + C compile checkpoint | Make the public facade accept an internal issuer or give the public loading-host constructor an internal parameter; deserialize invariant-rich Core models directly | Core/Daemon/App compilation and public-facade fixture pass without InternalsVisibleTo; loading-host constructor is internal; DTO constructors round-trip without forging native evidence |
+| Pagination / same | Apply PageRequest's 128-row limit to SourceLength; use UI child count for continuation; split surrogate pair; omit bounds dimension or successor receipt | Source request greater than 128 UTF-16 units succeeds within scalar-safe 128 KiB UTF-8/frame bounds; inventory/outline limits remain 1–128 rows; NextOffset/omission/denominator fields agree; Back adopts Q's successor |
+| Outline independence / same + query regression | Reject input above the withdrawn smaller outline ceiling; convert outline-only cancellation/budget/unsupported into source failure | Valid input above that old ceiling through the admitted 8 MiB boundary remains eligible; phase-only outline failure preserves independently verified IndexedMatch source and correct source/outline bounds; whole-operation abandonment still forbids publication |
 | Framing / same + IPC | Send escaped control-character text plus maximum metadata; exceed entire body by one byte | Real serialization ≤ 1 MiB body with four-byte prefix outside it; over-limit safe error, no partial success |
 | Async compatibility / `AtlasIpcAdmissionTests` | Return an unawaited handler task; block the server; allow two concurrent reads | Task barrier proves server awaits; monitor drained before write; old sync op still behaves identically |
 | Cancellation / same | Cancel before write, during write/read, after completed A while B runs, and before UI publication | Before-write and completed-A cancellation preserve healthy B; dirty attempt is terminal; no late-A accepted as B on new path |
@@ -671,13 +794,21 @@ not substitutes for the new composition path.
 | Host lifecycle / `AtlasSharedHostAdmissionTests` | Remove the factory row; dispose only SurfaceChrome/DockHost; call sync-only final Dispose; keep old generation callback | Real Architecture opener exists; missing workspace is explicit; root replacement and final close drain; reparent retains healthy scope |
 | Native parity / `AtlasReaderViewTests` | Drop one source state/coverage/disclosure when switching to the new port | Existing proof constructor and remote fixture render the same bounds, source text, span, outline and Back result |
 
+The golden red control changes one field or semantic mapping at a time. A text-presence
+check is not the oracle: construct directory/refused/unknown fixtures, cross the real
+serializer/client projection, and compare the rendered local and remote values. Prove that
+each deliberate field loss, raw parent identity, unit mix-up or metadata-as-content byte
+mutation fails before accepting the committed seam.
+
 The decisive test uses the **actual MainWindow composition**, not a hand-built reader:
 create an isolated approved fixture workspace and real daemon/pipe; open workspace through
 the actual view-model handoff; activate the existing Architecture rail/command; invoke the
 derived Code Atlas opener; await the loading host; inventory → file → member → Back.
 Assert one healthy connection, exact bound source/hash-derived observation and UTF-16
-highlight, matching manifest/receipt across server/client/view, correct NextOffset/unknown
-totals, focus/accessible title, then switch workspace and close through the real owner.
+highlight, matching manifest/receipt across server/client/view, preserved directory kind/
+parent/reason and requested/effective/returned/omitted bounds, correct NextOffset/unknown
+totals, zero inventory content bytes, focus/accessible title, then switch workspace and
+close through the real owner.
 Coding/Explore must not admit the row. Restore the kind from layout and prove fresh admission.
 An injected RootChanged/cancel/revoke must clear rendered source, not merely return an error.
 
@@ -699,7 +830,7 @@ There is no AI tier in this deterministic slice.
 | Spoofing / elevation: foreign handle, folder display ID, proof approval | Actual peer/capability/workspace/epoch + Core-issued scope; lookup and publication currentness; zero source reads on refusal |
 | Tampering: native-root/path swap, index/ref race, wire mutation | Pinned native identities, restricted stable capture, existing E/S hash/decoder/span binding, strict DTO validation |
 | Repudiation: unclear authority or outcome | Structured admission/terminal/publication events with safe reason codes and epoch; no self-reported success as evidence |
-| Information disclosure: unindexed/out-of-root content or hidden totals | Indexed-read intersection; native confinement; Unknown/Withheld carried intact; no raw authority/native metadata on wire |
+| Information disclosure: unauthorized/out-of-root content or hidden totals | Separate metadata visibility and NodeContent-equivalent content eligibility; native confinement; Unknown/Withheld and full bounds carried intact; no raw authority/native parent identity on wire |
 | Denial of service: repeated scopes, parser/Git/output/escape pressure | Global reservations and queues, input/serialization caps, independent deadlines and awaited drain; Busy is visible |
 | Lifetime confusion: old cancellation or late view update | Attempt ownership, terminal dirty connection, workspace/view-generation publication gate |
 
@@ -707,9 +838,10 @@ Conditional work-data privacy applies if source contains personal or customer in
 read only already permitted workspace content, for local code understanding, on the local
 IPC route. No model call, telemetry upload or other third-party egress. Do not log source,
 absolute/relative file paths, capability/scope/receipt tokens, Git stderr or raw identities.
-Clear source views on invalidation and remove scratch/buffers on owner disposal.
+Clear source views on invalidation and release owned process/handle/buffer resources on disposal.
 No persistent source cache is added; existing index retention is unchanged.
-The purpose does not expand to conversation/document-session access.
+The purpose does not expand to conversation/document-session access. Administrative Git
+metadata discovery outside a nested/linked source root is not permission to read source there.
 
 Normal-path instrumentation, using the repository's existing .NET telemetry facilities:
 
@@ -739,24 +871,25 @@ and authority leakage); cleanup delegated to visual wrappers (wrong owner).
 A new typed render port is necessary because the existing native `IndexedMatch` constructor
 requires verified native evidence. It is smaller and safer than forging that evidence on
 the client or replacing the native reader. Existing source/identity/Q algorithms are reused.
-Restricted Git administrative support is explicit; widening it is not silently part of this slice.
+Ordinary, linked-worktree and nested-root repository forms are required in this slice;
+their narrow execution/currentness qualification is not an optional widening of scope.
 
 Parent's **targeted** remaining `/design-slice` readback, not a new survey:
 
 | Gate | Exact predicate / unresolved evidence |
 |---|---|
-| Security / Data | Core issuer inherits only indexed workspace reads; native-root and inert Git boundary are enforceable; no policy DB or approval laundering |
+| Security / Data | Physical metadata is not semantic-index filtered; content eligibility matches NodeContent without extra implicit grants; native-root and required-form bounded Git execution/currentness pass NQ1/NQ2; no policy DB or approval laundering |
 | Distributed Systems | One reader, persistent scope, publication linearization, terminal dirty attempts, awaited end hook, global rather than instance-only limits |
-| Test / C# / native UI | New typed projection compiles without fake native reconstruction; real composition and red controls cover the promised route; awaited Shell close is reachable |
-| Owner authoring | Explicit branch-local permission for the existing Core/Shell/native files in §8, 48/32 writer budgets, exclusions and no main integration |
+| Test / C# / native UI | Public facade/ports compile across assemblies with opaque lifetime; Kind/ParentToken/reason/full bounds survive semantic-red/golden parity; source UTF-16 and row limits stay distinct; outline failure does not downgrade verified source; awaited Shell close is reachable |
+| Owner authoring | Owner 38 conditionally admits §8's exact 20/8-file, 48/32-leaf tracks; C first eight compile/prove/commit the seam; Shell then starts; parent records actual writers/bases and membership qualification allocation; no main integration |
 
-These are **OPEN for parent disposition**, not PASS records. The packet does not claim
-independent reviewers have inspected its final text. The only unresolved decision needed
-to start is Owner's bounded authoring grant after that readback; counterpart silence does
-not settle it. Exact production Git configuration availability, native filesystem races,
-Roslyn transient heap and cancellation/drain timings remain **unexecuted acceptance
-evidence**, with named tests and safe refusal paths above, not invitations to another broad phase.
-An unsupported Git form refuses membership; it does not require authoring a general Git adapter.
+These predicates are **OPEN for parent targeted disposition**, not self-issued PASS records.
+Owner 38's conditional grant is recorded; another Owner architecture checkpoint is not
+required. Once the erratum's Security/Test/C# predicates clear, dispatch C immediately under
+that grant, with NQ1/NQ2 retained as the narrow membership gate. Counterpart silence remains
+non-consent. Approved Git configuration, native filesystem races, Roslyn transient heap and
+cancellation/drain timings remain unexecuted acceptance evidence with the named oracles,
+not invitations to a broader phase or blanket refusal of a required repository form.
 
 ## 12. Freeze and evidence custody
 
@@ -766,22 +899,35 @@ HTML decoding must equal Markdown byte-for-byte after UTF-8 decoding. No hidden 
 contract, generated interface, stylesheet or dependency is introduced.
 Parent owns the full docs graph/audit regeneration and final Proof Pack capture.
 
-Authoring allowance: eight leaf calls, including claims, instruction reads, patching,
-serialization verification, commit and release. The first grounding command exceeded the
+Original authoring allowance: eight leaf calls, including claims, instruction reads, patching,
+serialization verification, commit and release, committed at `2af3777b9fb50c15c2be980e142cc4cff76af36e`.
+Owner 38 adds **four correction leaves, twelve cumulative**, same packet pair and no
+implementation edits. The original first grounding command exceeded the
 15 KiB output cap and its body was suppressed; later reads were bounded and no contract
 claim relies on that suppressed body. This is a recorded authoring-process deviation, not
 positive evidence. No product code, test, project, shared registry or main branch was edited.
 
-The closing commit and clean-state readback identify the immutable packet. The next action
-is **Conductor targeted readback followed immediately by Owner's branch-local AUTHORING
-decision**, not another inventory, counterpart request or implementation by this integrator.
+Correction class → sweep → derive → prevent: a render projection dropped native structure/
+bounds; cross-assembly signatures exposed internal types; safety defaults silently narrowed
+required scope and confused source/outline units. The sweep covers active §§1–12, both
+local/remote mapping paths, the same 28-file manifest and all corresponding test oracles.
+Derive both render routes from one lossless projection; keep internal authority behind one
+public facade; preserve physical metadata independently from content permission.
+Prevent with C's first-eight-call compile plus field-by-field semantic-red/golden tests and
+NQ1/NQ2 required-form qualification. Those controls are **specified, not yet executed**.
+Parent owns durable defect-register/audit capture outside this integrator's two-file allowance.
+
+The closing commit and clean-state readback identify the corrected immutable packet.
+The next action is **Conductor targeted Security/Test/C# readback, then immediate
+implementation dispatch under Owner 38**, not another architecture checkpoint, counterpart
+request or implementation by this integrator.
 
 ---
 
 # Historical checkpoint — superseded proposals and retained evidence
 
 **Everything below is historical.** Its precommit, Conversation/DocumentSession,
-unselected-transport and future-spike wording is superseded by §§1–12 and Owner 34–37.
+unselected-transport and future-spike wording is superseded by §§1–12 and Owner 34–38.
 It is retained to preserve the original evidence, source anchors, pins and corrections.
 It grants no authority and must not be used as the implementation checklist.
 
