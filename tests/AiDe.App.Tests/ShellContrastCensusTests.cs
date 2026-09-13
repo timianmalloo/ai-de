@@ -59,6 +59,17 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
                      ("the budget state 'bounded by your subscription' (the census truncates a site's text)", s => s.Text.Contains("bounded by your", StringComparison.Ordinal)),
                      ("the compiled prompt disclosure", s => s.Text.StartsWith("Compiled prompt", StringComparison.Ordinal)),
                      ("the thread's empty state", s => s.Text.StartsWith("Nothing has run yet.", StringComparison.Ordinal)),
+                     // Host C's surfaces (Ruling 84; DC-135 recurrence 3's control): the Loomkeeper
+                     // kinds are composed in Coordination now, so the census switches the presenter
+                     // there and walks its body — a walk that stays on host A measures none of them
+                     // and reads 0 failing over a smaller population.
+                     ("the Ledger tab in Coordination's Center", s => s.Surface == "tab: Ledger"),
+                     ("the Ledger pane's status text", s => s.Surface == "Ledger"),
+                     ("the Message board pane's status text", s => s.Surface == "Message board"),
+                     ("the Terminal sessions pane's status text", s => s.Surface == "Terminal sessions"),
+                     ("the status strip while Coordination is the body", s => s.Text == "Coordination perspective"),
+                     // Host B's, for the same reason (the seam request X-1 never took).
+                     ("the Domain tab in Architecture's Center", s => s.Surface == "tab: Domain"),
                  })
         {
             Assert.True(wpf.Any(site), $"the census did not walk {anchor}; the sites it saw: {string.Join(" | ", wpf.Select(s => s.Text).Distinct().Take(80))}");
