@@ -9073,7 +9073,7 @@ window.DOCS_INDEX = {
     {
       "id": "note-addendum-c-council-rulings",
       "path": "docs/notes/addendum-c-council-rulings.md",
-      "title": "Decision note — Rulings 50–87: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
+      "title": "Decision note — Rulings 50–89: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
       "type": "doc",
       "status": "accepted",
       "owner": "@timianmalloo",
@@ -9136,7 +9136,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "85f0ad17027bc18cafb148d224c82c27dd0a6a40a7fb4f333e1f67ddbd2971ef"
+      "sourceSha256": "1a2d2dfc520b4c12207f60aa49d963e41fb5e0e6b1a00d411e684b6427eca8fb"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -17441,5 +17441,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c0fe283726f89a4c747c19989cf02e65010ea0ed39e28a93176b12cfa614892f"
+  "graphSha256": "3d1ffa092ce16dc181bbfa6aa06515073a03a178ae79c177a7faf6c5d824d517"
 };

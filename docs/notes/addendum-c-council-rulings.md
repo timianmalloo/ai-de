@@ -1,6 +1,6 @@
 ---
 id: note-addendum-c-council-rulings
-title: "Decision note — Rulings 50–87: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
+title: "Decision note — Rulings 50–89: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
 type: doc
 status: accepted
 owner: "@timianmalloo"
@@ -1454,3 +1454,45 @@ The operator's five findings, verbatim (the screenshot titles): *"need to fix te
 - **Not ruled:** which `agent.thought` rendering the CLI's collapsed-thinking idiom maps to — D1's, within Ruling 82's bounds.
 - **Finding for the conductor:** `composer.html:35-36` (110 px) vs `ComposerSurface.EditorFloor` (130 px) — one floor, two definitions; folds into Ruling 80's slice.
 - **Finding for the Shell lane:** the reconcile refuses every drag while a stack is maximized (Ruling 83 BECAUSE); Ruling 83 removes the trigger, not the blindness.
+
+---
+
+# Rulings 88–89 — D3's two open questions (2026-09-13)
+
+Issued by the **Owner** (`fable`) on D3's review (`docs/reviews/ui-operator-findings-2026-09-13.md` §7–§8) at `main` `560ea825`. Evidence opened: review §2c/§3a/§7/§8, Rulings 74/83/84, `DESIGN.md:1107`, `ZoneLayout.cs:193-208`, `WorkbenchShell.cs:1826-1846`, `ZoneBackedLayoutService.cs:137-139`, `session-conversation.html:1168`. One fact the question did not carry changes Ruling 88's conditions: option (c) is, byte for byte, the zone shape the reconcile refuses.
+
+---
+
+## Ruling 88 — Coding's default Bottom is collapsed (the operator's `Bottom (1)`); the terminal is on demand; the "≥ 3 turns" row becomes a per-viewport measured threshold
+
+**RULING:** Operator's evidence: all five screenshots (09:27–09:33) show *Bottom (1)* collapsed. **(c) adopted**: `CodingDefault` Bottom = one terminal, `Collapsed: true`. (b) not adopted — SH-4.3 struck; (a) stays deleted. Ruling 83's re-cut *"Left = session documents (empty until one opens) · Center = empty state · Bottom = one terminal"* becomes *"… · Bottom = one terminal, collapsed"*. `DESIGN.md:1107` *"≥ 3 at rest"* becomes: *"at 1440 × 900 (session at Left, Bottom collapsed, editor at 280): ≥ 1 at rest; at 2560 × 1600: ≥ 2; the row prints the viewport and threshold it applied"*; the ≥ 2/≥ 1 sub-cases hold at ≥ 1. D3's *"previous turn's outcome line pinned"* is cut — a new mechanism measured at +0 turns.
+
+**BECAUSE:** Ruling 83's logic (the gesture is the decision) and §2c (120 px collapsed, 0 px with the terminal across). (b) is geometry for a terminal the operator does not keep open. But (c) is the shape the reconcile refuses: `WorkbenchShell.cs:1830-1834` *"a collapsed tool zone that still holds panes is not rendered … the surface-set guard … refuses the whole reconcile"*; `ZoneBackedLayoutService.cs:139` `Rendered(z) => !Collapsed && !IsEmpty`. The default would refuse every drag — finding 4 by another route.
+
+**CONFIDENCE:** Verified (refusal path, `CodingDefault :193-208`); the turn counts are mockup measurements — Inferred until the WPF tree measures them.
+
+**SCOPE EFFECT:** F-1 promoted from finding into SH-4.2: `ReconcileTests.ADragWhileAZoneIsCollapsedHoldingPanes_IsApplied`, red-first. L1 → `CodingDefault_IsLeftEmpty_CenterEmpty_BottomOneTerminalCollapsed`; new L6 `AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280` (the IA lens's clear condition). Mockup Layout axis keeps *bottom-collapsed* only. A-9 (30 vs 24 px) stays should-fix-next. **Lane: Shell (SH-4.2)**; CV-5.4's R-oracles read the row's values.
+
+**CONDITIONS:** (1) O-2 passes with the default Bottom collapsed-holding. (2) The terminal is one gesture away. (3) The row's numbers are replaced by measured ones at the join.
+
+**RECORD AS:** Ruling 88 — Coding's default Bottom is collapsed (one terminal, on demand); Ruling 83's re-cut amended; (b) struck; DESIGN.md "≥ 3 turns" row becomes a per-viewport measured threshold; F-1 promoted into SH-4.2; Shell lane.
+
+---
+
+## Ruling 89 — the Console split with the session at Left is a `Console — <session>` document in the Center zone; one per session; it closes with the session
+
+**RULING:** The split is a **document** — kind `console`, identity `console:<sessionId>`, caption *Console — <session>* — opened on demand into the **Center** zone, never inside the Left pane. One per session: a second toggle focuses it. It closes when its session document closes. It is not re-homed when the session moves; if the session is itself in the Center, the Console opens as a sibling tab in that stack. Opening it while the session is maximized restores the tree (Inferred; D1 draws it).
+
+**BECAUSE:** Ruling 74: *"the Console split is an on-demand view of the same stream opened at a turn"* — a view of a document's fold is a document, not a tool pane; a tool zone would outlive its session. The Left pane at 673 px yields a 224 px Console (IA-6, Verified CSS). D3 rendered this home (`session-conversation.html:1168`); the IA lens met it pending my word. The Left pane's geometry is untouched, so `DESIGN.md:1107` *"≥ 1 with the Console split"* holds at 1440 × 900 under Ruling 88.
+
+**CONFIDENCE:** Verified for Ruling 74's text and the mockup; WPF close/move behaviour Inferred until C5.
+
+**SCOPE EFFECT:** C5 asserts: opens in Center as a `console` document; `console:<id>` count ≤ 1; the Left stack never contains it; closing the session closes it. Rulings 21/74 extended, not amended. Lane by seam: the surface's content is CV-5.2 (Conversation); the kind's zone rule/factory row, if one is required, is SH-4.2's (Shell) — CV-5.2's must-not-touch stands.
+
+**CONDITIONS:** No second store — the document reads the thread's `Coalesce` rows (Ruling 81). The Center's empty copy yields to the Console tab while open.
+
+**RECORD AS:** Ruling 89 — the Console split is a `Console — <session>` document in the Center zone, one per session, closing with the session; Rulings 21/74 extended; C5's assertions fixed; content CV-5.2, zone rule SH-4.2.
+
+---
+
+**Filing note (Rulings 88–89).** The IA lens's Blocker (IA-1) clears on Ruling 88; its stated condition ("must measure ≥ 1 turn with the editor at 280") is L6.
