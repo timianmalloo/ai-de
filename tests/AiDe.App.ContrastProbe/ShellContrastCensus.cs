@@ -175,6 +175,47 @@ internal static class ShellContrastCensus
 
         shell.Adapter.Render();
 
+        // 2b. The kinds host A refuses are composed in the host that admits them (ADR-0030 Resolve;
+        //     DC-135 recurrence 3's seam request): each is added to its own host, the presenter is
+        //     switched to that host's perspective so its body is the one on screen, every surface
+        //     is activated and walked — the rail's destination for that perspective is then in its
+        //     SELECTED state, measured beside the others' rest state — and the presenter returns to
+        //     Coding before the session document opens there. A kind no host admits is logged.
+        foreach (var row in PerspectiveSet.All.Where(p => p.Body == PerspectiveBody.DockHost && p != PerspectiveSet.Coding))
+        {
+            var host = shell.Hosts.Single(h => h.Row == row);
+            var already = host.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.Kind)
+                .ToHashSet(StringComparer.Ordinal);
+
+            foreach (var kind in SurfaceContentFactory.Kinds)
+            {
+                if (already.Contains(kind.Kind) || !kind.Perspectives.Contains(row) || kind.Perspectives.Contains(PerspectiveSet.Coding)) continue;
+
+                var result = host.Service.Apply(new LayoutOperation.AddSurface(
+                    ZonesToTree.CenterStackId, new Surface($"census:{row.Id}:{kind.Kind}", kind.Kind, $"Census {kind.Kind}")));
+                log.Add($"add {kind.Kind} to {row.Title}: {(result.Applied ? "applied" : result.Announcement)}");
+            }
+
+            host.Adapter.Render();
+            log.Add($"switch to {row.Title}: {shell.Execute(row.CommandId)}");
+            await Settle(window);
+            // Recorded, never asserted (the review's attended rows): what the switch said, and which
+            // surface the body reports active once it has settled — the landing the entry focus reads.
+            var activeAfterSwitch = host.Adapter.ActiveSurfaceId;
+            var landingZone = activeAfterSwitch is null ? null : host.Service.Zones.FindZoneOf(activeAfterSwitch);
+            log.Add($"{row.Id}: announced '{shell.LiveRegion.Text}'; active after switch = {activeAfterSwitch ?? "(none)"}; zone = {landingZone?.ToString() ?? "(none)"}; focused = {System.Windows.Input.Keyboard.FocusedElement?.GetType().Name ?? "(none)"}");
+
+            foreach (var surface in host.Service.Current.AllStacks().SelectMany(s => s.Surfaces).ToList())
+            {
+                host.Adapter.ActivateInView(surface.SurfaceId);
+                await Settle(window);
+                Pass($"{row.Id}: activate {surface.SurfaceId} ({surface.Kind})");
+            }
+        }
+
+        log.Add($"switch to {PerspectiveSet.Coding.Title}: {shell.Execute(PerspectiveSet.Coding.CommandId)}");
+        await Settle(window);
+
         // 3. The session document, with every registered canvas mode shown in turn.
         var session = new AiDe.Core.Sessions.SessionConfig(
             "20260911T000000Z-census", "Census session", workspace, DateTimeOffset.UtcNow, ["claude-code"]);
@@ -332,6 +373,20 @@ internal static class ShellContrastCensus
             ComposerPageScroll = pageTheme.Scroll,
             ComposerPageScrollAfterTyping = pageTheme.ScrollAfterTyping,
         };
+    }
+
+    /// <summary>
+    /// Lets a body that has just been parented settle: the docking manager builds its pane controls
+    /// in the layout pass and the tab strips select their content from their own realization — a
+    /// walk before that measures the Left pane and misses every Center and Right tab (measured,
+    /// SH-4.1). ContextIdle drains every Loaded- and Background-priority op the shell and AvalonDock
+    /// enqueue on the way, the shell's deferred activations included.
+    /// </summary>
+    private static async Task Settle(Window window)
+    {
+        window.UpdateLayout();
+        await window.Dispatcher.InvokeAsync(() => { }, System.Windows.Threading.DispatcherPriority.ContextIdle);
+        window.UpdateLayout();
     }
 
     // ─────────────────────────────────────────────────────────────────── the walker ──

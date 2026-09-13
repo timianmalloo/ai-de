@@ -214,7 +214,8 @@ public sealed class EveryOpeningCommandPassesThroughTheSeamTests
         var announcer = new WorkbenchAnnouncer(new TextBlock());
         var a = DockHost.Create(PerspectiveSet.Coding, _ => new Border(), announcer, (_, _) => { });
         var b = DockHost.Create(PerspectiveSet.Architecture, _ => new Border(), announcer, (_, _) => { });
-        return new PerspectiveShell(new ContentControl(), [a, b], () => new Grid(), announcer);
+        var c = DockHost.Create(PerspectiveSet.Coordination, _ => new Border(), announcer, (_, _) => { });
+        return new PerspectiveShell(new ContentControl(), [a, b, c], () => new Grid(), announcer);
     }
 
     private static List<int> Occurrences(string text, string token)

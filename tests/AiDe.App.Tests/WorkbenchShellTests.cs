@@ -43,20 +43,28 @@ public sealed class WorkbenchShellTests
     // perspective admits (ADR-0030) — the Coding kinds in host A, the reading kinds in host B — and
     // neither host holds a kind of the other's.
     [Fact]
-    public void Shell_ComposesTheWorkbenchWithEverySurfaceFromTheDefaultLayout_AcrossBothHosts()
+    public void Shell_ComposesTheWorkbenchWithEverySurfaceFromTheDefaultLayout_AcrossAllHosts()
     {
-        var (coding, architecture) = WithShell((shell, _) => (
+        var (coding, architecture, coordination) = WithShell((shell, _) => (
             shell.Coding.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.Title).ToList(),
-            shell.Architecture.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.Title).ToList()));
+            shell.Architecture.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.Title).ToList(),
+            shell.Coordination.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.Title).ToList()));
 
         Assert.Contains("Terminal — pwsh", coding);
-        Assert.Contains("Terminal sessions", coding);   // Ruling 62: the Coding default's caption
+        Assert.DoesNotContain("Terminal sessions", coding);   // Ruling 84: the Loomkeeper kinds left Coding
         Assert.DoesNotContain("Graph", coding);
 
         Assert.Contains("Graph", architecture);
         Assert.Contains("Provenance", architecture);
         Assert.Contains("Contexts", architecture);
         Assert.DoesNotContain("Terminal — pwsh", architecture);
+
+        Assert.Contains("Terminal sessions", coordination);   // Ruling 62's caption, on its new bench
+        Assert.Contains("Ledger", coordination);
+        Assert.Contains("Leaderboard", coordination);
+        Assert.Contains("Message board", coordination);
+        Assert.DoesNotContain("Terminal — pwsh", coordination);
+        Assert.DoesNotContain("Graph", coordination);
     }
 
     // The whole point of composing in one place: keyboard, view and model must share ONE service, or
@@ -152,7 +160,7 @@ public sealed class WorkbenchShellTests
                 }
             }
 
-            Walk(shell.Manager.Layout);
+            Walk(shell.Coordination.Manager.Layout);   // Ruling 84: the sessions pane is host C's
             return doc?.ContentId;
         });
 
@@ -278,55 +286,61 @@ public sealed class WorkbenchShellTests
 
     // ADR-0030 rule 3, through the real shell (E11): a derived "Show <Title>" entry focuses the one
     // open surface of its kind, else opens it; a "New <Title>" entry adds every time. `daydreams` is
-    // in no default layout (Ruling 60), so the first Show opens it and the second finds it. RED
-    // before the seams were wired: the controller announced "not available in this build" and
-    // the tree held no daydreams surface.
+    // in no default layout (Ruling 60; Ruling 84 keeps it out of Coordination's), so the first Show
+    // opens it — in host C, routed from host A's controller (US-C3) — and the second finds it. RED
+    // before the seams were wired: the controller announced "not available in this build" and the
+    // tree held no daydreams surface.
     [Fact]
     public void AShowEntryOpensTheKindOnce_ThenFocusesIt_AndANewEntryAddsEveryTime()
     {
-        var (daydreams, tabIndex, activeBeforeShow, activeAfterShow, viewers, said) = WithShell((shell, _) =>
+        var (daydreams, tabIndex, activeBeforeShow, activeAfterShow, viewers, said, siblingKind) = WithShell((shell, _) =>
         {
-            // A code viewer first, so that daydreams is NOT the first tab of its stack: the shell
-            // reconciles the view into the model before a Show, and a reconcile that lands on tab 0
-            // would hand a mutated Show its answer for free (measured — the Test Architect's finding
-            // that the "focuses it" half had no failing input).
-            Assert.True(shell.Controller.Execute("surface.new.codeviewer"));
+            // Daydreams tabs into an occupied stack of host C (the placement policy's last rule —
+            // any stack; measured: the Left, beside Terminal sessions), so it is NOT the first tab
+            // of its stack: the shell reconciles the view into the model before a Show, and a
+            // reconcile that lands on tab 0 would hand a mutated Show its answer for free (measured
+            // — the Test Architect's finding that the "focuses it" half had no failing input).
+            var host = shell.Coordination;
             Assert.True(shell.Controller.Execute("surface.show.daydreams"));
-            var home = shell.Service.Current.AllStacks().First(st => st.Surfaces.Any(s => s.Kind == "daydreams"));
+            Assert.DoesNotContain(shell.Service.Current.AllStacks().SelectMany(st => st.Surfaces), s => s.Kind == "daydreams");   // never in Coding
+            var home = host.Service.Current.AllStacks().First(st => st.Surfaces.Any(s => s.Kind == "daydreams"));
             var daydreamsTab = home.Surfaces.ToList().FindIndex(s => s.Kind == "daydreams");
-            Assert.True(home.Surfaces.Count > 1 && daydreamsTab > 0, "daydreams did not land beside the code viewer as a later tab — this test would prove nothing (DC-016)");
-            Assert.Equal(1, shell.Service.Current.AllStacks().SelectMany(st => st.Surfaces).Count(s => s.Kind == "daydreams"));
+            Assert.True(home.Surfaces.Count > 1 && daydreamsTab > 0, "daydreams did not land in an occupied stack as a later tab — this test would prove nothing (DC-016)");
+            Assert.Equal(1, host.Service.Current.AllStacks().SelectMany(st => st.Surfaces).Count(s => s.Kind == "daydreams"));
 
-            // Make the viewer the active tab, in the model and in the view.
-            var viewer = home.Surfaces.First(s => s.Kind == "codeviewer");
-            Assert.True(shell.Service.Apply(new LayoutOperation.ActivateSurface(viewer.SurfaceId)).Applied);
-            shell.Adapter.Render();
-            AvalonDock.Layout.Extensions.Descendents(shell.Manager.Layout).OfType<AvalonDock.Layout.LayoutDocument>()
-                .First(d => d.ContentId == viewer.SurfaceId).IsSelected = true;
-            var before = ActiveKindOf(shell, "daydreams");
+            // Make a sibling the active tab, in the model and in the view.
+            var sibling = home.Surfaces.First(s => s.Kind != "daydreams");
+            Assert.True(host.Service.Apply(new LayoutOperation.ActivateSurface(sibling.SurfaceId)).Applied);
+            host.Adapter.Render();
+            AvalonDock.Layout.Extensions.Descendents(host.Manager.Layout).OfType<AvalonDock.Layout.LayoutDocument>()
+                .First(d => d.ContentId == sibling.SurfaceId).IsSelected = true;
+            var before = ActiveKindOf(host, "daydreams");
 
             Assert.True(shell.Controller.Execute("surface.show.daydreams"));
-            var count = shell.Service.Current.AllStacks().SelectMany(st => st.Surfaces).Count(s => s.Kind == "daydreams");
-            var after = ActiveKindOf(shell, "daydreams");
+            var count = host.Service.Current.AllStacks().SelectMany(st => st.Surfaces).Count(s => s.Kind == "daydreams");
+            var after = ActiveKindOf(host, "daydreams");
 
+            // A "New" entry adds every time — in host A, a Coding kind.
+            Assert.True(shell.Controller.Execute("surface.new.codeviewer"));
             Assert.True(shell.Controller.Execute("surface.new.codeviewer"));
             var viewerCount = shell.Service.Current.AllStacks().SelectMany(st => st.Surfaces).Count(s => s.Kind == "codeviewer");
 
-            return (count, daydreamsTab, before, after, viewerCount, shell.Announcer.Last);
+            return (count, daydreamsTab, before, after, viewerCount, shell.Announcer.Last, sibling.Kind);
         });
 
         Assert.Equal(1, daydreams);
         Assert.True(tabIndex > 0);
-        Assert.Equal("codeviewer", activeBeforeShow);
+        Assert.Equal(siblingKind, activeBeforeShow);
+        Assert.NotEqual("daydreams", siblingKind);
         Assert.Equal("daydreams", activeAfterShow);
         Assert.Equal(2, viewers);
         Assert.Equal("Code viewer opened.", said);
     }
 
-    /// <summary>The kind of the active tab in the stack that holds a surface of <paramref name="kind"/>.</summary>
-    private static string ActiveKindOf(WorkbenchShell shell, string kind)
+    /// <summary>The kind of the active tab in the stack that holds a surface of <paramref name="kind"/>, in <paramref name="host"/>.</summary>
+    private static string ActiveKindOf(DockHost host, string kind)
     {
-        var stack = shell.Service.Current.AllStacks().First(st => st.Surfaces.Any(s => s.Kind == kind));
+        var stack = host.Service.Current.AllStacks().First(st => st.Surfaces.Any(s => s.Kind == kind));
         return stack.Surfaces[stack.ActiveIndex].Kind;
     }
 
@@ -358,9 +372,9 @@ public sealed class WorkbenchShellTests
             var status = WithShell((shell, _) =>
             {
                 shell.AttachWorkspace(new BareQueries(), dataDir);
-                shell.Adapter.Render();
+                shell.Coordination.Adapter.Render();
 
-                var content = shell.Adapter.ContentFor("sessions");
+                var content = shell.Coordination.Adapter.ContentFor("sessions");   // Ruling 84: host C's pane
                 var unwrapped = content is System.Windows.Controls.Border { Child: FrameworkElement inner } ? inner : content;
                 var stack = Assert.IsType<StackPanel>(unwrapped);
                 return stack.Children.OfType<TextBlock>().Last().Text;

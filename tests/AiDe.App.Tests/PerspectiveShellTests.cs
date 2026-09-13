@@ -7,10 +7,11 @@ using AiDe.Core.Workbench;
 namespace AiDe.App.Tests;
 
 /// <summary>
-/// The presenter and router over three bodies (ADR-0031 falsifying tests 1, 3 and 4's shell half;
-/// ADR-0017 as amended; US-C1, US-C2, US-C7, US-C12). Hosts are composed the way the shell composes
-/// them — <see cref="DockHost.Create"/> over a stub content factory — never a <c>Border</c> stand-in
-/// for a host (DC-135); the Explore body is a plain element, as the presenter never looks inside it.
+/// The presenter and router over four bodies (ADR-0031 falsifying tests 1, 3 and 4's shell half,
+/// as amended by Ruling 84 — host C; ADR-0017 as amended; US-C1, US-C2, US-C7, US-C12). Hosts are
+/// composed the way the shell composes them — <see cref="DockHost.Create"/> over a stub content
+/// factory — never a <c>Border</c> stand-in for a host (DC-135); the Explore body is a plain
+/// element, as the presenter never looks inside it.
 /// </summary>
 public sealed class PerspectiveShellTests
 {
@@ -25,17 +26,22 @@ public sealed class PerspectiveShellTests
         public void Clear() => All.Add(string.Empty);
     }
 
-    private sealed record Fixture(PerspectiveShell Shell, ContentControl Body, DockHost A, DockHost B, RecordingAnnouncer Said, Func<int> ExplorerBuilds);
+    private sealed record Fixture(PerspectiveShell Shell, ContentControl Body, DockHost A, DockHost B, DockHost C, RecordingAnnouncer Said, Func<int> ExplorerBuilds, Func<int> ContentBuilds);
+
+    private static Perspective Coordination => PerspectiveSet.All.Single(p => p.Id == "coordination");
 
     private static Fixture Build(Func<UIElement>? explorer = null, IWorkbenchAnnouncer? hostAnnouncer = null)
     {
         var said = new RecordingAnnouncer();
-        var a = DockHost.Create(PerspectiveSet.Coding, _ => new Border(), hostAnnouncer ?? said, (_, _) => { });
-        var b = DockHost.Create(PerspectiveSet.Architecture, _ => new Border(), hostAnnouncer ?? said, (_, _) => { });
+        var contentBuilds = 0;
+        FrameworkElement Content(Surface _) { contentBuilds++; return new Border(); }
+        var a = DockHost.Create(PerspectiveSet.Coding, Content, hostAnnouncer ?? said, (_, _) => { });
+        var b = DockHost.Create(PerspectiveSet.Architecture, Content, hostAnnouncer ?? said, (_, _) => { });
+        var c = DockHost.Create(Coordination, Content, hostAnnouncer ?? said, (_, _) => { });
         var body = new ContentControl();
         var builds = 0;
-        var shell = new PerspectiveShell(body, [a, b], () => { builds++; return explorer?.Invoke() ?? new Grid(); }, said);
-        return new Fixture(shell, body, a, b, said, () => builds);
+        var shell = new PerspectiveShell(body, [a, b, c], () => { builds++; return explorer?.Invoke() ?? new Grid(); }, said);
+        return new Fixture(shell, body, a, b, c, said, () => builds, () => contentBuilds);
     }
 
     private static List<JsonElement> ModeLines(List<string> lines, string evt = "shell.mode") =>
@@ -52,42 +58,166 @@ public sealed class PerspectiveShellTests
         finally { WorkbenchDiagnostics.Sink = previous; }
     }
 
-    // ADR-0031 test 1 / US-C2 — identity, three bodies: cycling Coding → Architecture → Explore →
-    // Coding → Architecture shows reference-identical objects, the Explore factory runs once, and
-    // each host's body is ITS OWN root, never the other's. RED if a switch rebuilt or swapped a body.
+    // ADR-0031 test 1 / US-C2 as amended by Ruling 84 — identity over FOUR bodies: cycling
+    // Coding → Architecture → Coordination → Explore → Coding → Coordination → Architecture →
+    // Explore → Coordination shows reference-identical objects for every body; the Explore factory
+    // runs once; no host's content factory runs for a switch (a switch only unparents — a rebuilt
+    // pane would run it again); host C's body is ITS OWN root, and its announcement counts ITS
+    // default's panes. RED before host C existed: no fourth body to compose.
     [Fact]
-    public void CyclingAllThreeBodies_ShowsTheSameInstances_AndBuildsExploreOnce()
+    public void CyclingFourBodies_ReturnsTheSameInstances_AndInvokesNoFactoryTwice()
     {
         Sta.Run(() =>
         {
             var f = Build();
-            Assert.Same(f.A.Root, f.Body.Content);                     // starts on host A (US-C1)
+            var coordination = Coordination;
+            Assert.Same(f.A.Root, f.Body.Content);
+
+            // Render every host once, as the shell does at construction, so the content factory has
+            // run for each pane exactly once before the cycle begins.
+            f.A.Adapter.Render();
+            f.B.Adapter.Render();
+            f.C.Adapter.Render();
+            var builtBefore = f.ContentBuilds();
+            Assert.True(builtBefore > 0, "the stub content factory never ran — the fixture rendered nothing (DC-016)");
+
+            var announced = f.Shell.Activate(coordination, "test");
+            Assert.Same(f.C.Root, f.Body.Content);
+            Assert.NotSame(f.A.Root, f.C.Root);
+            Assert.NotSame(f.B.Root, f.C.Root);
+            Assert.Equal("Coordination perspective — 4 panes.", announced);
 
             f.Shell.Activate(PerspectiveSet.Architecture, "test");
             Assert.Same(f.B.Root, f.Body.Content);
-            Assert.NotSame(f.A.Root, f.B.Root);
 
             f.Shell.Activate(PerspectiveSet.Explore, "test");
             var explore = f.Body.Content;
             Assert.NotSame(f.A.Root, explore);
             Assert.NotSame(f.B.Root, explore);
+            Assert.NotSame(f.C.Root, explore);
             Assert.IsNotType<DockPanel>(explore);                       // US-C7: no ZoneRails around Explore
 
             f.Shell.Activate(PerspectiveSet.Coding, "test");
             Assert.Same(f.A.Root, f.Body.Content);
 
+            f.Shell.Activate(coordination, "test");
+            Assert.Same(f.C.Root, f.Body.Content);            // the same host C instance returns
+
             f.Shell.Activate(PerspectiveSet.Architecture, "test");
             Assert.Same(f.B.Root, f.Body.Content);
 
             f.Shell.Activate(PerspectiveSet.Explore, "test");
-            Assert.Same(explore, f.Body.Content);                       // the same Explore instance
-            Assert.Equal(1, f.ExplorerBuilds());
+            Assert.Same(explore, f.Body.Content);
 
-            // The host services are two objects, and a change to one never reaches the other.
-            Assert.NotSame(f.A.Service, f.B.Service);
-            Assert.NotSame(f.A.Controller, f.B.Controller);
+            f.Shell.Activate(coordination, "test");
+            Assert.Same(f.C.Root, f.Body.Content);
+            Assert.Same(f.C, f.Shell.ActiveHost);
+            Assert.Same(f.C, f.Shell.HostFor(coordination));
+
+            Assert.Equal(1, f.ExplorerBuilds());
+            Assert.Equal(builtBefore, f.ContentBuilds());      // no factory invoked twice for a switch
+
+            // Three host services, three controllers — no two the same object.
+            Assert.Equal(3, new[] { f.A.Service, f.B.Service, f.C.Service }.Distinct().Count());
+            Assert.Equal(3, new[] { f.A.Controller, f.B.Controller, f.C.Controller }.Distinct().Count());
+            Assert.Equal(coordination, f.C.Row);
             return 0;
         }, 30);
+    }
+
+    // Spec §C5 / DESIGN.md's landing row (Ruling 84): a switch to Coordination lands on the Left
+    // zone's active tab (Terminal sessions — the master list), to Architecture on the Center's
+    // (Graph); a row with no landing zone (Coding) lands on the body's active surface as the view
+    // reports it; a landing zone the arrangement has emptied falls back the same way. Stated on the
+    // row because the view's own "active" after a body is first parented is whichever pane control
+    // realized last — measured in the census as Provenance (the Right) for Architecture and the
+    // Center's tab for Coordination, neither of them the design's landing.
+    [Fact]
+    public void TheLanding_IsTheRowsZonesActiveTab_LeftForCoordination_CenterForArchitecture_ElseTheViewsActive()
+    {
+        Sta.Run(() =>
+        {
+            var f = Build();
+            f.A.Adapter.Render();
+            f.B.Adapter.Render();
+            f.C.Adapter.Render();
+
+            Assert.Equal("graph", PerspectiveShell.LandingSurfaceFor(f.B));
+            Assert.Equal("sessions", PerspectiveShell.LandingSurfaceFor(f.C));
+            Assert.NotNull(f.A.Adapter.ActiveSurfaceId);                                    // DC-016: the fallback compares against a value
+            Assert.Equal(f.A.Adapter.ActiveSurfaceId, PerspectiveShell.LandingSurfaceFor(f.A));
+
+            Assert.Equal(ZoneId.Left, f.C.Row.Landing);
+            Assert.Equal(ZoneId.Center, f.B.Row.Landing);
+            Assert.Null(f.A.Row.Landing);
+
+            // The landing follows the zone's ACTIVE tab, not its first: activate the second Center
+            // tab in Architecture and the landing moves with it.
+            Assert.True(f.B.Service.Apply(new LayoutOperation.ActivateSurface("domain")).Applied);
+            Assert.Equal("domain", PerspectiveShell.LandingSurfaceFor(f.B));
+
+            // A collapsed landing zone falls back to the view's active surface — the ledger the
+            // operator activated, literally, never the collapsed Left's tab (the guard's falsifier).
+            Assert.True(f.C.Service.Apply(new LayoutOperation.ActivateSurface("ledger")).Applied);
+            f.C.Adapter.Render();
+            f.C.Adapter.ActivateInView("ledger");
+            Assert.Equal("ledger", f.C.Adapter.ActiveSurfaceId);
+            Assert.True(f.C.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
+            f.C.Adapter.Render();
+            Assert.Equal("ledger", PerspectiveShell.LandingSurfaceFor(f.C));
+            return 0;
+        }, 30);
+    }
+
+    // The UX & Accessibility lens's finding (SH-4.1): the landing surface must carry a focus target
+    // in its first-run state — host C with no watcher store, every pane in its not-available state —
+    // or the deferred entry focus falls through to an arbitrary tab header. Through the product's
+    // factory (no queries, no watcher) and the product's host, as the shell composes it (DC-135).
+    [Fact]
+    public void TheLandingSurface_HasAFocusTarget_InHostCsFirstRunState()
+    {
+        Sta.Run(() =>
+        {
+            var factory = new SurfaceContentFactory(null);
+            var host = DockHost.Create(PerspectiveSet.Coordination, factory.Create, new RecordingAnnouncer(), (_, _) => { });
+            host.Adapter.Render();
+
+            var landing = PerspectiveShell.LandingSurfaceFor(host);
+            Assert.Equal("sessions", landing);
+            var content = host.Adapter.ContentFor(landing!);
+            Assert.NotNull(content);
+            Assert.True(HasFocusTarget(content!), "the Terminal sessions pane has nothing focusable in its not-available state — the landing falls through");
+
+            // And every Center tab, whose empty host is the ListPane's Grid.
+            foreach (var surface in host.Service.Zones.Zone(ZoneId.Center).Surfaces())
+            {
+                var pane = host.Adapter.ContentFor(surface.SurfaceId);
+                Assert.True(pane is not null && HasFocusTarget(pane), $"'{surface.SurfaceId}' has no focus target in its not-available state");
+            }
+
+            return 0;
+        }, 30);
+
+        static bool HasFocusTarget(DependencyObject element)
+        {
+            if (element is UIElement { Focusable: true, IsEnabled: true })
+            {
+                return true;
+            }
+
+            var count = System.Windows.Media.VisualTreeHelper.GetChildrenCount(element);
+            for (var i = 0; i < count; i++)
+            {
+                if (HasFocusTarget(System.Windows.Media.VisualTreeHelper.GetChild(element, i)))
+                {
+                    return true;
+                }
+            }
+
+            return element is ContentControl { Content: DependencyObject inner } && HasFocusTarget(inner)
+                || element is System.Windows.Controls.Decorator { Child: DependencyObject child } && HasFocusTarget(child)
+                || element is Panel panel && panel.Children.OfType<DependencyObject>().Any(HasFocusTarget);
+        }
     }
 
     // ADR-0032 test 4's second clause / US-C9 — switching perspective never resets the other
@@ -181,14 +311,17 @@ public sealed class PerspectiveShellTests
         {
             var saidA = new RecordingAnnouncer();
             var saidB = new RecordingAnnouncer();
+            var saidC = new RecordingAnnouncer();
             var a = DockHost.Create(PerspectiveSet.Coding, _ => new Border(), saidA, (_, _) => { });
             var b = DockHost.Create(PerspectiveSet.Architecture, _ => new Border(), saidB, (_, _) => { });
+            var c = DockHost.Create(PerspectiveSet.Coordination, _ => new Border(), saidC, (_, _) => { });
             var opened = new List<(string Host, string Kind)>();
             a.Controller.OpenSurfaceRequested = (kind, _) => { opened.Add(("A", kind)); return "opened"; };
             b.Controller.OpenSurfaceRequested = (kind, _) => { opened.Add(("B", kind)); return "opened"; };
+            c.Controller.OpenSurfaceRequested = (kind, _) => { opened.Add(("C", kind)); return "opened"; };
             var terminals = 0;
             a.Controller.NewTerminalRequested = () => { terminals++; return "Terminal opened."; };
-            var shell = new PerspectiveShell(new ContentControl(), [a, b], () => new Grid(), new RecordingAnnouncer());
+            var shell = new PerspectiveShell(new ContentControl(), [a, b, c], () => new Grid(), new RecordingAnnouncer());
 
             shell.Activate(PerspectiveSet.Architecture, "test");
             Assert.True(shell.Execute("workbench.moveSurface"));
@@ -206,6 +339,10 @@ public sealed class PerspectiveShellTests
             Assert.Equal(("A", "codeviewer"), opened[^1]);
             Assert.True(shell.Execute("surface.new.classdiagram"));                   // Coding does not admit it: routed to B
             Assert.Equal(("B", "classdiagram"), opened[^1]);
+            Assert.True(shell.Execute("surface.show.ledger"));                        // a Loomkeeper kind (Ruling 84): routed to C
+            Assert.Equal(("C", "ledger"), opened[^1]);
+            Assert.True(shell.Execute("watcher.raiseDispute"));                       // Admits("leaderboard"): host C's controller
+            Assert.NotEmpty(saidC.All);
             Assert.True(shell.Execute("workbench.moveSurface"));
             Assert.Contains("Move pane", saidA.Last, StringComparison.Ordinal);      // host A's controller now
 
@@ -228,6 +365,8 @@ public sealed class PerspectiveShellTests
 
             Assert.Same(PerspectiveSet.Explore, f.Shell.Active);
             Assert.Contains("needs a docking host", f.Said.Last, StringComparison.Ordinal);
+            // Every host perspective, derived, in rail order (Ruling 84 added the third).
+            Assert.EndsWith("Switch to Coding, Architecture or Coordination first.", f.Said.Last, StringComparison.Ordinal);
             var refused = ModeLines(lines).Single(e => e.GetProperty("outcome").GetString() == "refused");
             Assert.Equal(PerspectiveShell.NoHostCode, refused.GetProperty("error_code").GetString());
             return 0;

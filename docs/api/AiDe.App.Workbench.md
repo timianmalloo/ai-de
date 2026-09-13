@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 92 types, 407 members, 73% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 92 types, 409 members, 73% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**92 public types · 407 public members · 73% documented.**
+**92 public types · 409 public members · 73% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -858,7 +858,7 @@ One destination on the rail: its row, its constant accessible name (*"<Title> pe
 |---|---|
 | `DependencyProperty FailureProperty = DependencyProperty.Register(` | The body-failure reason while the destination is in its error state; null otherwise. |
 | `DependencyProperty HasFailureProperty = DependencyProperty.Register(` | True while `Failure` is set — what the item style's error trigger reads. |
-| `DependencyProperty GlyphProperty = DependencyProperty.Register(` | The glyph, resolved from the icon registry by the row's title (`IconCoding`, `IconExplore`, `IconArchitecture` — PS-R4). |
+| `DependencyProperty GlyphProperty = DependencyProperty.Register(` | The glyph, resolved from the icon registry by the row's title (`IconCoding`, `IconExplore`, `IconArchitecture`, `IconCoordination` — PS-R4). |
 | `PerspectiveRailItem()` | **(gap)** |
 | `Perspective? Row { get; private set; }` | **(gap)** |
 | `string? Failure` | **(gap)** |
@@ -883,8 +883,8 @@ A body that could not be built: which perspective, and why (Addendum C §A9 Reli
 *class* — `PerspectiveShell.cs`
 
 The shell-level presenter and command router (ADR-0017 as amended; ADR-0031 rule 2): owns the
-active `Perspective`, the three bodies — host A, host B and the full-window Explore
-surface — the one *previous-perspective* slot (US-C1), and the body-content swap that
+active `Perspective`, the four bodies — host A, host B, host C and the full-window
+Explore surface — the one *previous-perspective* slot (US-C1), and the body-content swap that
 realises a switch. Every catalog command enters through `Execute`, which resolves
 the host a body-conditional command reaches and delegates to that host's
 `WorkbenchController`.
@@ -932,6 +932,7 @@ that changes nothing writes nothing.
 | `event EventHandler<PerspectiveChange>? Changed` | Raised after the active perspective changes. Never for a no-op, never for a failed switch. |
 | `event EventHandler<PerspectiveBodyFailure>? BodyFailed` | Raised when a switch could not build its body; the active perspective is unchanged. |
 | `Func<Perspective, FrameworkElement, bool>? EntryFocus { get; set; }` | Where focus lands after a switch, once the new body has had its first layout pass (spec §C5: Coding — the active document; Explore — the reader, never the canvas trap; Architecture — the Center's active tab). Set by t… |
+| `string? LandingSurfaceFor(DockHost host)` | The surface a switch to 's perspective lands focus on (spec §C5): the active tab of the row's `Landing` zone when the row names one and the arrangement has that zone open with content; else the body's active surface a… |
 | `string Activate(Perspective perspective, string trigger)` | Makes  the active one and returns what to announce. Activating the active perspective is a no-op that emits nothing (US-C1); a body that fails to build leaves the active perspective, the focus and the other bodies as … |
 | `bool Escape()` | Escape from the Explore surface's root restores the previous perspective (US-C1). Returns false — and does nothing — from a host, where Escape keeps its other roles. |
 | `void OnDocumentOpening(Perspective host)` | The shell's `DocumentOpening` seam (ADR-0017 amendment clause 4, generalised): a dock document is about to open in 's body; if that body is not on screen, it becomes the body — document first, then the switch, as one … |
@@ -940,7 +941,7 @@ that changes nothing writes nothing.
 ### `PerspectiveShell(`
 
 - **`body`** — The region the docking host occupies; its content is the active perspective's projection.
-- **`hosts`** — One `DockHost` per host-bodied perspective (ADR-0031: host A and host B).
+- **`hosts`** — One `DockHost` per host-bodied perspective (ADR-0031: host A and host B; Ruling 84: host C).
 - **`explorerFactory`** — Builds the full-window Explore surface, once, on first entry.
 - **`announcer`** — The one live region every switch, refusal and failure is announced through.
 
@@ -2535,7 +2536,7 @@ of it. A capability nobody can open is not delivered.
 
 
 **Two hosts, one of each shared thing (ADR-0031).** Host A (`Coding`) is
-today's instances, unchanged in mechanism; host B (`Architecture`) is the same
+today's instances, unchanged in mechanism; host B (`Architecture`) and host C (`Coordination`, Ruling 84) are the same
 `DockHost` unit composed a second time. Each host owns its service, manager, adapter,
 controller, rails and persistence slot; the shell owns both units and every workspace-level
 member — the factory, the session documents, the watcher, dispatch, the canvas binding. A pane
@@ -2557,7 +2558,8 @@ one layout while the view rendered another.
 | `WorkbenchShell(IWorkspaceQueries? queries, string? workspaceDataDirectory = null)` | **(gap)** |
 | `DockHost Coding { get; }` | Host A — Coding: today's instances, unchanged in mechanism (ADR-0031). |
 | `DockHost Architecture { get; }` | Host B — Architecture: the same unit composed a second time, over its own allow-list and slot. |
-| `IReadOnlyList<DockHost> Hosts { get; }` | Both hosts, in rail order. |
+| `DockHost Coordination { get; }` | Host C — Coordination (Ruling 84): the same unit composed a third time, over the Loomkeeper kinds' allow-list and its own slot. |
+| `IReadOnlyList<DockHost> Hosts { get; }` | Every host, in rail order. |
 | `Func<string, bool>? CommandRouter { get; set; }` | Where a catalog command goes. Set by the window to the presenter's router (`Execute`), which resolves the host a body-conditional command reaches; unset — a headless shell, the replay — every command reaches host A's … |
 | `bool Execute(string commandId)` | Runs a catalog command through `CommandRouter`, or host A's controller when none is set. |
 | `ILayoutService Service` | Host A's layout service (the one-host shell's member, kept for its callers). |

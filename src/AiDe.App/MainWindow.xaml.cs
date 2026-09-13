@@ -35,8 +35,8 @@ public partial class MainWindow : Window
         // theme is applied HERE — in the Design-owned window, not the Core-owned WorkbenchShell — so
         // the panes and tabs read as part of the app instead of a white rectangle bolted on. Its
         // accents are then pulled from VS blue toward our palette by DockThemeAccents (a value-based
-        // brush override, no template surgery — see the AvalonDock decision note). Both hosts, the
-        // same way: host B is the same unit composed twice (ADR-0031).
+        // brush override, no template surgery — see the AvalonDock decision note). Every host, the
+        // same way: hosts B and C are the same unit composed again (ADR-0031; Ruling 84).
         foreach (var host in Shell.Hosts)
         {
             host.Manager.Theme = new AvalonDock.Themes.Vs2013DarkTheme();
@@ -565,8 +565,9 @@ public partial class MainWindow : Window
     /// <summary>
     /// Where focus lands after a switch (spec §C5): Explore — the reader (the first non-canvas
     /// focusable, so entry never lands inside the ADR-0015 canvas trap; the canvas is reached by
-    /// <c>workbench.focusCanvas</c> or Tab); a host — its active document's content, else the
-    /// body's first focusable.
+    /// <c>workbench.focusCanvas</c> or Tab); a host — the row's landing zone's active tab
+    /// (Architecture: the Center's, Coordination: the Left's — <see cref="PerspectiveShell.LandingSurfaceFor"/>),
+    /// else its active document's content, else the body's first focusable.
     /// </summary>
     private bool EntryFocusFor(Perspective perspective, FrameworkElement body)
     {
@@ -576,7 +577,13 @@ public partial class MainWindow : Window
         }
 
         var host = _perspectives.HostFor(perspective);
-        var active = host?.Adapter.ActiveSurfaceId is { } id ? host.Adapter.ContentFor(id) : null;
+        var landing = host is null ? null : PerspectiveShell.LandingSurfaceFor(host);
+        var active = landing is { } id ? host!.Adapter.ContentFor(id) : null;
+        if (active is not null && landing is not null)
+        {
+            host!.Adapter.ActivateInView(landing);   // the view's notion of active follows the landing, so the next switch back returns here
+        }
+
         return active is not null && active.MoveFocus(new System.Windows.Input.TraversalRequest(System.Windows.Input.FocusNavigationDirection.First));
     }
 

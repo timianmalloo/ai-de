@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Workbench: 78 types, 148 members, 58% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Workbench: 78 types, 149 members, 58% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Workbench`
 
-**78 public types · 148 public members · 58% documented.**
+**78 public types · 149 public members · 58% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -588,24 +588,27 @@ command from it.
 
 *class* — `Perspectives.cs`
 
-The closed Perspective set (ADR-0030): three rows in routing order, and the order a kind-open the
-active perspective does not admit is routed in. Pure data; constructible in any test.
+The closed Perspective set (ADR-0030, amended by Ruling 84): four rows in rail order, and the
+order a kind-open the active perspective does not admit is routed in. Pure data; constructible
+in any test.
 
 **Remarks.** **Why a static row set and not an enum.** An enum in the App beside the presenter was the
-shape before this (`ShellViewMode`, two values). The three perspective commands must be
-catalog rows in Core, derived from the set — or the catalog carries a hand-listed copy that a
-fourth perspective would silently miss. Rows in Core let the catalog, the rail, the menu radio,
-the palette and the routed open all read ONE definition. **Tests** is a reserved name with no
-row (Ruling 54): adding it is adding a row here, and every derived surface follows.
+shape before this (`ShellViewMode`, two values). The perspective commands must be catalog
+rows in Core, derived from the set — or the catalog carries a hand-listed copy that a new
+perspective would silently miss. Rows in Core let the catalog, the rail, the menu radio, the
+palette and the routed open all read ONE definition — Ruling 84's fourth row (Coordination) was
+exactly that: one row here, and every derived surface followed. **Tests** is a reserved name
+with no row (Ruling 54): adding it is adding a row here, and every derived surface follows.
 
 | Member | Summary |
 |---|---|
 | `Perspective Coding { get; } = new(` | **(gap)** |
 | `Perspective Explore { get; } = new(` | **(gap)** |
 | `Perspective Architecture { get; } = new(` | **(gap)** |
-| `IReadOnlyList<Perspective> All { get; } = [Coding, Explore, Architecture]` | The rows, in rail order: Coding · Explore · Architecture. |
+| `Perspective Coordination { get; } = new(` | Host C (Ruling 84; the operator's UC5 — observe the fleet): the Loomkeeper watcher's bench. A docking host like Coding and Architecture, never a full-window composite (ADR-0031's rejected alternative); the five Loomke… |
+| `IReadOnlyList<Perspective> All { get; } = [Coding, Explore, Architecture, Coordination]` | The rows, in rail order: Coding · Explore · Architecture · Coordination. |
 | `Perspective Initial` | The perspective the shell starts in (US-C1). |
-| `IReadOnlyList<Perspective> RoutingOrder { get; } = [Architecture, Coding]` | Where a kind-open the active perspective does not admit is routed (US-C3): the first of these that admits the kind. Architecture before Coding because the requester is always a reading surface, so the reading host win… |
+| `IReadOnlyList<Perspective> RoutingOrder { get; } = [Architecture, Coding, Coordination]` | Where a kind-open the active perspective does not admit is routed (US-C3): the first of these that admits the kind. Architecture before Coding because the requester is always a reading surface, so the reading host win… |
 | `Perspective? ByCommandId(string commandId)` | The row whose command has this id, or null — the one lookup the controller needs. |
 
 ## `KindRule`
@@ -902,7 +905,7 @@ unchanged from the tree model (only docked layout changes in ADR-0021).
 | Member | Summary |
 |---|---|
 | `WorkbenchLayout Default()` | The default arrangement: graph document in the Center, a terminal in the Bottom. |
-| `WorkbenchLayout Default(Perspective perspective)` | The per-perspective default (Addendum C §B4; Rulings 54/59/60/61) — each docking host's OWN table, never the combined seed `Default()` filtered down (the trap `ZoneBackedLayoutService` named: filtering one shared seed… |
+| `WorkbenchLayout Default(Perspective perspective)` | The per-perspective default (Addendum C §B4; Rulings 54/59/60/61/84) — each docking host's OWN table, never the combined seed `Default()` filtered down (the trap `ZoneBackedLayoutService` named: filtering one shared s… |
 | `WorkbenchLayout Empty()` | An empty frame — all four zones present, none with content. Used by the converter as a base. |
 | `ZoneState Zone(ZoneId id)` | **(gap)** |
 | `IEnumerable<Surface> AllSurfaces()` | **(gap)** |
@@ -913,16 +916,16 @@ unchanged from the tree model (only docked layout changes in ADR-0021).
 
 ### `WorkbenchLayout Default(Perspective perspective)`
 
-The per-perspective default (Addendum C §B4; Rulings 54/59/60/61) — each docking host's OWN
+The per-perspective default (Addendum C §B4; Rulings 54/59/60/61/84) — each docking host's OWN
 table, never the combined seed `Default()` filtered down (the trap
 `ZoneBackedLayoutService` named: filtering one shared seed re-points "Domain" at the
 Evidence list and stacks Explore/Provenance/Contexts/Joins into one Left tab strip).
 
-**Remarks.** Only Coding and Architecture have a docking host (`DockHost`);
+**Remarks.** Coding, Architecture and Coordination have a docking host (`DockHost`);
 Explore's full-window body has no zone layout and no caller ever asks this for it
 (`DockHost.Create` refuses a non-host perspective first) — so anything other than
-Architecture falls back to Coding's table, which is the only other member of the closed set
-this method is ever actually asked for.
+Architecture or Coordination falls back to Coding's table, which is the only other member of
+the closed set this method is ever actually asked for.
 
 ## `ZoneLayoutResult`
 

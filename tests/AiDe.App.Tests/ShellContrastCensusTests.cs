@@ -59,6 +59,17 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
                      ("the budget state 'bounded by your subscription' (the census truncates a site's text)", s => s.Text.Contains("bounded by your", StringComparison.Ordinal)),
                      ("the compiled prompt disclosure", s => s.Text.StartsWith("Compiled prompt", StringComparison.Ordinal)),
                      ("the thread's empty state", s => s.Text.StartsWith("Nothing has run yet.", StringComparison.Ordinal)),
+                     // Host C's surfaces (Ruling 84; DC-135 recurrence 3's control): the Loomkeeper
+                     // kinds are composed in Coordination now, so the census switches the presenter
+                     // there and walks its body — a walk that stays on host A measures none of them
+                     // and reads 0 failing over a smaller population.
+                     ("the Ledger tab in Coordination's Center", s => s.Surface == "tab: Ledger"),
+                     ("the Ledger pane's status text", s => s.Surface == "Ledger"),
+                     ("the Message board pane's status text", s => s.Surface == "Message board"),
+                     ("the Terminal sessions pane's status text", s => s.Surface == "Terminal sessions"),
+                     ("the status strip while Coordination is the body", s => s.Text == "Coordination perspective"),
+                     // Host B's, for the same reason (the seam request X-1 never took).
+                     ("the Domain tab in Architecture's Center", s => s.Surface == "tab: Domain"),
                  })
         {
             Assert.True(wpf.Any(site), $"the census did not walk {anchor}; the sites it saw: {string.Join(" | ", wpf.Select(s => s.Text).Distinct().Take(80))}");
@@ -66,6 +77,14 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
 
         Assert.Contains(wpf, s => s.Surface.StartsWith("tab:", StringComparison.Ordinal));
         Assert.Contains(wpf, s => s.Text == "File" && s.Element.Contains("AccessText", StringComparison.Ordinal));
+
+        // The landing, in the shown window (Ruling 84; spec §C5; the row's Landing zone): after the
+        // switch has settled, Coordination's body reports its Left zone's tab active and
+        // Architecture's its Center's — measured before the deferred entry focus as Provenance
+        // (the Right) and the Center's last-added tab (the last pane control to realize).
+        Assert.Contains(census.Log, l => l.StartsWith("coordination: ", StringComparison.Ordinal) && l.Contains("active after switch = sessions; zone = Left;", StringComparison.Ordinal));
+        Assert.Contains(census.Log, l => l.StartsWith("architecture: ", StringComparison.Ordinal) && l.Contains("; zone = Center;", StringComparison.Ordinal));
+        Assert.Contains(census.Log, l => l.StartsWith("coordination: announced 'Coordination perspective — ", StringComparison.Ordinal));
 
         var failing = wpf.Where(s => !s.Clears).OrderBy(s => s.Ratio).ToList();
 

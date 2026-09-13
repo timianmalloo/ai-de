@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T22:25:40Z",
+  "generated": "2026-09-13T22:37:09Z",
   "audit": [
     {
       "actor": null,
@@ -15043,6 +15043,60 @@ window.AUDIT_DATA = {
     {
       "actor": null,
       "artifacts": [
+        "docs/proof/coordination-perspective.md",
+        "docs/notes/sh4-coordination-landing-and-drop-sentence.md",
+        "src/AiDe.Core/Workbench/Perspectives.cs",
+        "src/AiDe.Core/Workbench/ZoneLayout.cs",
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/Workbench/WorkbenchAdapter.cs",
+        "src/AiDe.App/Workbench/PerspectiveShell.cs",
+        "src/AiDe.App/Workbench/LayoutPersistence.cs",
+        "src/AiDe.App/MainWindow.xaml",
+        "src/AiDe.App/MainWindow.xaml.cs",
+        "src/AiDe.App/Workbench/PerspectiveRail.cs",
+        "tests/AiDe.App.Tests/Workbench/KindAllowListsTests.cs",
+        "tests/AiDe.App.Tests/Workbench/ZoneLayoutSlotsTests.cs",
+        "tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs"
+      ],
+      "datetime": "2026-09-13T22:14:29Z",
+      "done_when": "P1-P7 red then green; the existing suites green with the census walking host C; the gates green; the Proof Pack docs/proof/coordination-perspective.md, the audit entry and the push landed; Release rebuilt",
+      "duration_seconds": 5843.0,
+      "fan_out": 3,
+      "git": {
+        "branch": "lane/shell-sh4",
+        "pushed": null,
+        "sha": "2ec0e4707b2021f3d286554e1cc3c549c9284cdb",
+        "short": "2ec0e4707"
+      },
+      "goal": "Land Ruling 84: Coordination as the fourth Perspective (host C, Ctrl+4, its own slot file and default, the rail entry IconCoordination, the five Loomkeeper kinds admitted by Coordination only, the derived View menu, the pre-C restore's drop-with-report naming Coordination) on lane/shell-sh4",
+      "id": "al-01M2EDC3SXV2T2XFW9RKFDQV0V",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "You are track SH-4.1 of the Shell lane — Ruling 84: Coordination is a fourth Perspective (host C, Ctrl+4, its own layout slot, the rail entry, the allow-list column) and the five Loomkeeper kinds (sessions · board · leaderboard · ledger · daydreams) move to it as a set; Coding admits none of them. Run the /implement skill (args: SH-4.1: the Coordination perspective — host C, Ctrl+4, the rail entry IconCoordination, the third layout slot file and its default, the allow-list column, the derived View menu, the pre-C restore's drop-with-report naming Coordination (Ruling 84; ADR-0030/31/32 as amended by docs/notes/adr-0030-0032-amendment-coordination.md)). Tier T2, fan-out cap 3 (reviews read-only). The conductor is Claude Opus (session conductor-addendum-c). The pack applies in full (red first; smallest correct; DC-135 — construct what the product constructs; the Test Architect's veto; UX & Accessibility on the rail and announcements; the WPF lens on the icon and host C).\n\nThe operator's words (the decision): \"the ledger-leaderboard-sessions-board views should be tied to a different left bar icon - coordination.\" The ruling: docs/notes/addendum-c-council-rulings.md Ruling 84 (and 83 for what Coding's Left becomes — SH-4.2's slice). The design: DESIGN.md §\"Errata after Rulings 83–84\"; the mockup docs/mockups/perspective-shell.html; the review docs/reviews/ui-operator-findings-2026-09-13.md §7 SH-4.1 row (the oracles P1–P7 and the attended rows P-1, P-4, the announcement \"Coordination perspective — 4 panes\" and the landing on the Left zone's active tab); Addendum C's appended errata block; docs/notes/adr-0030-0032-amendment-coordination.md.\n\nWorktree C:\\Projects\\ai-de-lane-shell-sh4, branch lane/shell-sh4, HEAD = main 560ea825. Leases (DC-163) for shared files; never claim the defect register — placeholders DC-nnn (SH-4 a); the conductor allocates (next free DC-182). Never taskkill, never reap-stragglers --reap, never verify-test-run.py --update. X-3 live on WorkbenchShell.cs/WorkbenchAnnouncer.cs/App.xaml/WebSurfaceHost.cs/WorkbenchDiagnostics.cs/WorkbenchCommands.cs/MainMenuBuilder.cs/CommandPalette.cs; CV-5 live on the session document, composer, thread, ConsoleSurface.\n\nFloors: E7 before coding in the Proof Pack; reviews read-only ≤ 3 (Test Architect hard on P2/P3/P6 mutation-shape; UX & Accessibility hard on the rail item and host C's empty states; the WPF lens on the glyph and host C); gates at close (dotnet build Core + App + both test projects -p:TreatWarningsAsErrors=true; both full test projects --logger trx; python tools/run-verify-gates.py; regenerate-derived.py after the audit entry); audit entry; Proof Pack docs/proof/coordination-perspective.md; commits with the attribution trailer; git push -u origin lane/shell-sh4; never merge to main; merge origin/main before close if it moved — never rebase; release claims; rebuild Release and report the ProductVersion.\n\nFails if: a schema field instead of a third slot file; a fifth kind left admitted by Coding; a full-window composite for Coordination; a write to CV-5's or X-3's files beyond the derived-menu contribution, or to DESIGN.md/docs/mockups; the Coding re-cut (SH-4.2); a red made green by weakening; verify-test-run.py --update; git stash; a rebase; a push to main.",
+      "session": "sh-4",
+      "shortname": "sh-4-1-coordination-perspective",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-13T20:37:06Z",
+      "summary": "SH-4.1 landed Ruling 84 on lane/shell-sh4: Coordination is the fourth Perspective — the registry row (\"coordination\", \"Coordination\", 4, DockHost, \"perspective.coordination\"), Ctrl+4 from Order, host C by DockHost.Create in WorkbenchShell (Hosts = A · B · C), the third slot file <layout>.coordination.zones.json by SlotPathFor, CoordinationDefault (Left = Terminal sessions · Center = Ledger · Leaderboard · Message board · Right empty · Bottom collapsed; Daydreams via the View menu), the five Loomkeeper kinds admitted by Coordination only (Coding admits none; CodingDefault's Left is empty as Ruling 84 forces — the Bottom and Center stay SH-4.2's), the derived View menu by construction, IconCoordination (a ring with three beads) beside IconCoding in MainWindow.xaml, the pre-C restore's drop-with-report naming Coordination and its gesture (\"They live in Coordination (Ctrl+4); open them from its View menu.\"; a mixed restore lists each pane once under its perspective). P1–P7 red → green with the red runs recorded; the census walks host B's and host C's bodies (138 → 170 sites, 0 below floor) and asserts the landing per host. Two defects found and fixed on the way, one class (placeholder SH-4 a): a docking view's active content after a body is (re)parented is the last-realized pane's — the adapter now asserts the model's active surface now and again at Loaded priority (both RestoreActive branches and ActivateInView; measured in the census window and the session-render replay, mutant-red headless), and the switch's landing is stated on the row (Perspective.Landing: Coordination → Left, Architecture → Center) and applied one dispatcher turn after the body's Loaded. Reviews: Test Architect veto cleared (findings 1–4, 7 applied); UX & Accessibility hard veto cleared, soft held then applied (the Sessions pane's copy and focus target, the once-listed mixed sentence, the beads, AcceleratorKey); WPF lens no escalation (its Major measured, confirmed and fixed). Proof Pack docs/proof/coordination-perspective.md; decision note docs/notes/sh4-coordination-landing-and-drop-sentence.md. Attended rows for the conductor: P-1 (UIA walk), P-4 (private_bytes_delta for host C), the announcement and landing under NVDA, the pre-C report on the operator's file, host C's empty states. Findings for D3/the conductor: two definitions of the drop sentence (DESIGN.md vs the P6 oracle); Daydreams' zone unspecified (lands beside Terminal sessions); the live region's channel truncates long reports (X-3's seam); SH-4.2 inherits the Coding landing rule and a Coding drag row.",
+      "tags": [
+        "addendum-c",
+        "shell-lane",
+        "sh-4",
+        "ruling-84",
+        "coordination"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
         "docs/proof/compile-admission-code.md"
       ],
       "datetime": "2026-09-13T21:51:57Z",
@@ -15189,28 +15243,28 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2EDVK6D79K5VWVJPDCMJEWP",
-      "shortname": "join-cv5-4",
-      "datetime": "2026-09-13T22:22:56Z",
-      "session": "claude-conductor-addendum-c",
-      "prompt": "keep going (the join of CV-5.4)",
-      "summary": "Join: CV-5.4 (cb78dbb5) merged to main; the register's tail conflict was first committed WITH markers because the marker gate's red was hidden by a tail -1 (DC-113 recurrence 4, DC-136's shape) - caught by re-running the gate bare before the push, resolved, the merge amended (never pushed red). DC-191..193 allocated. Recount App 913 / Core 2620 = 2450 + 170. The editor fills the body at 0 turns (476.5 px measured at 673x748), rests at 280 with turns; L6 measured: 1 turn at both 1440x900 and 2560x1600 (Ruling 88's >= 2 was the mockup's number - a finding for the Owner).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/editor-rest.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Land CV-5.4 on main with the floors recounted and a Release build",
+      "datetime": "2026-09-13T22:22:56Z",
       "done_when": "main pushed green through run-verify-gates; Release built",
+      "goal": "Land CV-5.4 on main with the floors recounted and a Release build",
+      "id": "al-01M2EDVK6D79K5VWVJPDCMJEWP",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (the join of CV-5.4)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-cv5-4",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
-      }
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Join: CV-5.4 (cb78dbb5) merged to main; the register's tail conflict was first committed WITH markers because the marker gate's red was hidden by a tail -1 (DC-113 recurrence 4, DC-136's shape) - caught by re-running the gate bare before the push, resolved, the merge amended (never pushed red). DC-191..193 allocated. Recount App 913 / Core 2620 = 2450 + 170. The editor fills the body at 0 turns (476.5 px measured at 673x748), rests at 280 with turns; L6 measured: 1 turn at both 1440x900 and 2560x1600 (Ruling 88's >= 2 was the mockup's number - a finding for the Owner).",
+      "tags": [],
+      "tool": null
     }
   ],
   "changes": [

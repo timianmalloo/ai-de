@@ -90,8 +90,8 @@ public sealed class SurfaceContentFactory(
     /// <b>The allow-list column (Ruling 52c; ADR-0030 rule 2).</b> The perspectives that admit this
     /// kind into their body — an explicit, non-empty set on every row, no default: an empty set
     /// fails the build test, so an unreachable kind cannot be created by omission (US-C3 b5). The
-    /// membership is §A7's table as ruled (Rulings 59–61). Explore admits no docked kind — its body
-    /// is not a host — so no row names it.
+    /// membership is §A7's table as ruled (Rulings 59–61, 84). Explore admits no docked kind — its
+    /// body is not a host — so no row names it.
     /// </param>
     /// <param name="Instances">One or many per host — "Show" or "New" (§A7).</param>
     /// <param name="Entry">Derived opener, or the catalog entry verb that is this kind's only door.</param>
@@ -122,8 +122,8 @@ public sealed class SurfaceContentFactory(
     ///
     /// <para><b>Row order is menu order.</b> The derived "New/Show" entries of a perspective's View
     /// menu follow this list (Addendum C §B3's expected table), so the Architecture kinds come
-    /// first in their menu's order, then Coding's, with the one shared kind (<c>codeviewer</c>) where
-    /// both tables put it — last.</para>
+    /// first in their menu's order, then Coordination's five, then Coding's, with the one shared
+    /// kind (<c>codeviewer</c>) where both tables put it — last.</para>
     /// </remarks>
     public static IReadOnlyList<SurfaceKind> Kinds { get; } =
     [
@@ -217,35 +217,43 @@ public sealed class SurfaceContentFactory(
             Perspectives: [PerspectiveSet.Coding], Instances.Many, new SurfaceEntry.Verb("terminal.new"),
             Windowed: true),
 
-        // The Loomkeeper kinds, homed in Coding (Ruling 60): they observe the terminal side of UC1.
+        // ── Coordination: the fleet bench (UC5; Ruling 84) ────────────────────────────────────
+
+        // The five Loomkeeper kinds, homed in Coordination AS A SET (Ruling 84; Ruling 60's own
+        // condition — "re-home the five as a set, in one ruling, if the operator names a fleet/
+        // observation use case"). Coding admits none of them: the operator's screenshots showed the
+        // four read as one tab strip beside a session, and their words were "a different left bar
+        // icon — coordination". Row order is the Coordination View group's order.
         // "Terminal sessions", not "Sessions" — a session DOCUMENT is the product's object, and a
         // watcher pane one word away from it was resolved by the reader, not the caption (§R row 17).
         new("sessions", "Terminal sessions",
             "The Loomkeeper watcher's live and inactive terminal sessions, with their harness and state.",
             static (f, s) => f.Sessions(s),
-            Perspectives: [PerspectiveSet.Coding], Instances.One, new SurfaceEntry.Derived("_View")),
+            Perspectives: [PerspectiveSet.Coordination], Instances.One, new SurfaceEntry.Derived("_View")),
 
         new("board", "Message board",
             "The Loomkeeper message board: what the observed sessions have said to each other.",
             static (f, s) => f.Board(s),
-            Perspectives: [PerspectiveSet.Coding], Instances.One, new SurfaceEntry.Derived("_View")),
+            Perspectives: [PerspectiveSet.Coordination], Instances.One, new SurfaceEntry.Derived("_View")),
 
         new("leaderboard", "Leaderboard",
             "The Loomkeeper scoring leaderboard over the observed sessions' episodes.",
             static (f, s) => f.Leaderboard(s),
-            Perspectives: [PerspectiveSet.Coding], Instances.One, new SurfaceEntry.Derived("_View")),
+            Perspectives: [PerspectiveSet.Coordination], Instances.One, new SurfaceEntry.Derived("_View")),
 
         new("ledger", "Ledger",
             "The append-only episode ledger: every scored episode with its evidence.",
             static (f, s) => f.Ledger(s),
-            Perspectives: [PerspectiveSet.Coding], Instances.One, new SurfaceEntry.Derived("_View")),
+            Perspectives: [PerspectiveSet.Coordination], Instances.One, new SurfaceEntry.Derived("_View")),
 
         // Reachable from nowhere before the derived menu (no command, no default slot — Ruling 60);
-        // its entry now exists by construction.
+        // its entry exists by construction. Admitted by Coordination, not in its default (§B4).
         new("daydreams", "Daydreams",
             "Observed patterns and candidate lessons the watcher has noticed across episodes.",
             static (f, s) => f.Daydreams(s),
-            Perspectives: [PerspectiveSet.Coding], Instances.One, new SurfaceEntry.Derived("_View")),
+            Perspectives: [PerspectiveSet.Coordination], Instances.One, new SurfaceEntry.Derived("_View")),
+
+        // ── Coding, continued ─────────────────────────────────────────────────────────────────
 
         // Under the Prompt menu, beside "Dispatch prompt…" (§B3 rule 3's one exception besides terminal).
         new("prompt", "Prompt draft",
@@ -590,7 +598,11 @@ public sealed class SurfaceContentFactory(
         // stale/ended terminals that otherwise bury the ones collaborating now (UX-SESSIONS-GRAVEYARD).
         var (live, inactive) = SessionRowPresenter.Partition(pane.Rows);
 
-        var stack = new StackPanel { Margin = new Thickness(12) };
+        // The pane itself is a focus target (Focusable, named by Create): it is Coordination's
+        // landing (the row's Left zone — Ruling 84, spec §C5), and in its empty and not-available
+        // states nothing inside it is focusable, so a landing with no target fell through to an
+        // arbitrary tab header (the UX & Accessibility lens's finding, SH-4.1).
+        var stack = new StackPanel { Margin = new Thickness(12), Focusable = true };
 
         if (pane.Rows.Count == 0)
         {
@@ -600,8 +612,10 @@ public sealed class SurfaceContentFactory(
             {
                 var hint = new TextBlock
                 {
+                    // "File menu": the agent session verbs live there (New Claude Code session, New
+                    // GitHub Copilot session — §B3); there is no Terminal menu in any perspective.
                     Text = "No sessions yet. Open a Claude Code or GitHub Copilot session from the "
-                        + "Terminal menu, and it appears here — live, with its harness and activity.",
+                        + "File menu, and it appears here — live, with its harness and activity.",
                     TextWrapping = TextWrapping.Wrap,
                 };
                 hint.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
@@ -816,7 +830,9 @@ public sealed class SurfaceContentFactory(
             };
             empty.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
 
-            var host = new Grid { MinHeight = 120 };
+            // A focus target in the empty state, named with the status, so a landing on this pane
+            // (Coordination's Center tabs) reads its state on arrival rather than falling through.
+            var host = new Grid { MinHeight = 120, Focusable = true };
             host.Children.Add(empty);
             AutomationProperties.SetName(host, $"{surface.Title} — {statusMessage}");
             return host;

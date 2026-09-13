@@ -263,14 +263,17 @@ public sealed class SurfaceContentTests
     [Fact]
     public void TheSessionsSurface_IsInTheDefaultLayout()
     {
-        // Ruling 60/§B4: "Terminal sessions" is the ONE Loomkeeper kind Coding's default carries —
-        // the watcher's live list, alone in the Left zone.
-        Assert.Contains(WorkbenchLayout.Default(PerspectiveSet.Coding).AllSurfaces(),
+        // Ruling 84/§B4 (re-homing Ruling 60's placement): "Terminal sessions" is Coordination's
+        // Left zone — the master list the switch lands on — and no Loomkeeper kind is in Coding's
+        // default any more (Coding admits none).
+        Assert.Contains(WorkbenchLayout.Default(PerspectiveSet.Coordination).AllSurfaces(),
             s => s.Kind == "sessions");
+        Assert.DoesNotContain(WorkbenchLayout.Default(PerspectiveSet.Coding).AllSurfaces(),
+            s => s.Kind is "sessions" or "board" or "leaderboard" or "ledger" or "daydreams");
     }
 
     [Fact]
-    public void TheBoardSurface_ShowsAPost_AndIsReachableFromCodingsMenu()
+    public void TheBoardSurface_ShowsAPost_AndIsReachableFromCoordinationsMenu()
     {
         // The Message Board surface (US-4) renders honestly and synchronously - one post reaches the
         // ListBox, and the status is not a Loading message (the load is a local fold).
@@ -289,9 +292,10 @@ public sealed class SurfaceContentTests
 
         Assert.Equal(1, view.ItemCount);
         Assert.DoesNotContain("Loading", view.StatusText, StringComparison.OrdinalIgnoreCase);
-        AssertReachableFromItsPerspectiveMenu("board", PerspectiveSet.Coding);
+        AssertReachableFromItsPerspectiveMenu("board", PerspectiveSet.Coordination);
 
-        // §B4: admitted, not in Coding's default (only "sessions" is) — reachable from the View menu.
+        // §B4 as amended (Ruling 84): a Coordination Center tab; never in Coding's default.
+        Assert.Contains(WorkbenchLayout.Default(PerspectiveSet.Coordination).AllSurfaces(), s => s.Kind == "board");
         Assert.DoesNotContain(WorkbenchLayout.Default(PerspectiveSet.Coding).AllSurfaces(), s => s.Kind == "board");
     }
 
@@ -311,7 +315,7 @@ public sealed class SurfaceContentTests
     }
 
     [Fact]
-    public void TheLeaderboardSurface_ShowsACell_AndIsReachableFromCodingsMenu()
+    public void TheLeaderboardSurface_ShowsACell_AndIsReachableFromCoordinationsMenu()
     {
         // The Leaderboard surface (US-14) renders honestly and synchronously - a comparable cohort
         // reaches the ListBox as at least one cell, and the status is not a Loading message.
@@ -335,12 +339,13 @@ public sealed class SurfaceContentTests
 
         Assert.True(view.ItemCount >= 1);
         Assert.DoesNotContain("Loading", view.StatusText, StringComparison.OrdinalIgnoreCase);
-        AssertReachableFromItsPerspectiveMenu("leaderboard", PerspectiveSet.Coding);
+        AssertReachableFromItsPerspectiveMenu("leaderboard", PerspectiveSet.Coordination);
+        Assert.Contains(WorkbenchLayout.Default(PerspectiveSet.Coordination).AllSurfaces(), s => s.Kind == "leaderboard");
         Assert.DoesNotContain(WorkbenchLayout.Default(PerspectiveSet.Coding).AllSurfaces(), s => s.Kind == "leaderboard");
     }
 
     [Fact]
-    public void TheLedgerSurface_ShowsAnEpisode_AndIsReachableFromCodingsMenu()
+    public void TheLedgerSurface_ShowsAnEpisode_AndIsReachableFromCoordinationsMenu()
     {
         // The Ledger (US: "the ledger viewable too") renders honestly and synchronously — one recorded
         // work episode reaches the ListBox as a row, and the status is not a Loading message (the load
@@ -364,7 +369,8 @@ public sealed class SurfaceContentTests
 
         Assert.Equal(1, view.ItemCount);
         Assert.DoesNotContain("Loading", view.StatusText, StringComparison.OrdinalIgnoreCase);
-        AssertReachableFromItsPerspectiveMenu("ledger", PerspectiveSet.Coding);
+        AssertReachableFromItsPerspectiveMenu("ledger", PerspectiveSet.Coordination);
+        Assert.Contains(WorkbenchLayout.Default(PerspectiveSet.Coordination).AllSurfaces(), s => s.Kind == "ledger");
         Assert.DoesNotContain(WorkbenchLayout.Default(PerspectiveSet.Coding).AllSurfaces(), s => s.Kind == "ledger");
     }
 

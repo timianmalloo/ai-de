@@ -279,18 +279,35 @@ public sealed class LayoutPersistence : IDisposable
 
         var list = string.Join(", ", report.Dropped.Select(Caption));
         var head = report.Dropped.Count == 1
-            ? $"1 pane from your saved layout isn't available in {Perspective.Title} — {list}."
-            : $"{report.Dropped.Count} panes from your saved layout aren't available in {Perspective.Title} — {list}.";
+            ? $"1 pane from your saved layout isn't available in {Perspective.Title}"
+            : $"{report.Dropped.Count} panes from your saved layout aren't available in {Perspective.Title}";
 
-        var admitting = report.Dropped
+        // Where the dropped panes live, by the perspective that admits them, with its bound gesture
+        // (DESIGN.md's drop-with-report form after Ruling 84: a pre-C Coding envelope names
+        // Coordination for the Loomkeeper kinds, Architecture for the graph kinds). One admitting
+        // perspective is the common case and reads as spec §C4's sentence — the list, then where
+        // they live; two or more list each pane ONCE under its perspective, gesture first, so the
+        // operator learns which gesture reaches which pane without hearing every caption twice
+        // (the UX & Accessibility lens's finding: the live region speaks the whole sentence and
+        // the strip shows its head). A drop no perspective admits (a duplicate one-instance kind)
+        // is in the flat list and in no group.
+        var groups = report.Dropped
             .Where(d => d.AdmittedBy is not null)
-            .Select(d => d.AdmittedBy!.Title)
-            .Distinct(StringComparer.Ordinal)
+            .GroupBy(d => d.AdmittedBy!)
             .ToList();
 
-        return admitting.Count == 0
-            ? head
-            : $"{head} {string.Join(" and ", admitting)} admits them; open them from its View menu.";
+        static string Home(Perspective perspective) => $"{perspective.Title} ({perspective.Gesture})";
+
+        return groups.Count switch
+        {
+            0 => $"{head} — {list}.",
+            1 when groups[0].Count() == 1 => $"{head} — {list}. It lives in {Home(groups[0].Key)}; open it from its View menu.",
+            1 => $"{head} — {list}. They live in {Home(groups[0].Key)}; open them from its View menu.",
+            _ => $"{head} — "
+                + string.Join("; ", groups.Select(g => $"{g.Count()} {(g.Count() == 1 ? "lives" : "live")} in {Home(g.Key)}: {string.Join(", ", g.Select(Caption))}"))
+                + (report.Dropped.Count > groups.Sum(g => g.Count()) ? $"; also {string.Join(", ", report.Dropped.Where(d => d.AdmittedBy is null).Select(Caption))}" : string.Empty)
+                + ". Open each from that perspective's View menu.",
+        };
     }
 
     public void Dispose()

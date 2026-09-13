@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
 using AiDe.Core.Dispatch;
 using AiDe.Core.Workbench;
 using AvalonDock;
@@ -381,7 +382,18 @@ public sealed class WorkbenchAdapter
 
     // Re-activates the surface that was active before the layout was replaced, so focus stays where
     // the user had it rather than snapping to the first document. A surface that no longer exists
-    // (it was the one just closed) is ignored — RestoreSelection already surfaces the surviving tab.
+    // — the one just closed, or every pre-render surface after a whole-arrangement restore or reset
+    // — hands the activation to the Center's active tab, the document region the operator works
+    // from; RestoreSelection has already surfaced every stack's surviving tab.
+    //
+    // Either way the activation is ASSERTED, not merely set (see AssertActive): left to AvalonDock,
+    // which content ends up active after `Manager.Layout` is replaced depends on the ORDER its pane
+    // controls realize — each LayoutDocumentPaneControl marks its selected content active from its
+    // own SelectionChanged as its template applies, so the last pane to realize wins, and which
+    // pane that is changes with the arrangement's zone occupancy. Measured (SH-4.1,
+    // docs/proof/coordination-perspective.md): in a Coding host whose Left zone is empty the Bottom
+    // terminal realizes last, and it beat both a restored session document (this method's gone
+    // branch) and a Center document that was active before a plain re-render (the kept branch).
     private void RestoreActive(string? surfaceId)
     {
         if (surfaceId is null || Manager.Layout is not { } root)
@@ -389,17 +401,59 @@ public sealed class WorkbenchAdapter
             return;
         }
 
-        // Only re-focus the pre-render surface when the MODEL still considers it the active tab of its
-        // stack. When the model changed the active tab (the user activated another surface), that
-        // change wins — RestoreSelection has already applied it — and re-activating the stale one here
-        // would clobber it back (the "activate did nothing" desync).
         var stack = _service.Current.FindStackOf(surfaceId);
-        if (stack is null || stack.Surfaces.Count == 0
-            || !string.Equals(stack.Active.SurfaceId, surfaceId, StringComparison.Ordinal))
+        if (stack is null)
         {
+            // Gone from the model: the Center's active tab, read from the MODEL at each assertion so
+            // a Center tab the operator activated in between is what gets activated, never a stale
+            // one. (A surface in another zone activated within that one dispatcher turn is the
+            // accepted window: the view cannot tell that activation from the realization steal this
+            // exists to undo, and the model records active tabs per stack, not the focused stack.)
+            AssertActive(root, () => CenterStack() is { Surfaces.Count: > 0 } center ? center.Active.SurfaceId : null);
             return;
         }
 
+        // Only re-focus the pre-render surface when the MODEL still considers it the active tab of its
+        // stack. When the model changed the active tab (the user activated another surface), that
+        // change wins — RestoreSelection has already applied it — and re-activating the stale one here
+        // would clobber it back (the "activate did nothing" desync). The same rule is re-read at the
+        // deferred assertion.
+        AssertActive(root, () =>
+            _service.Current.FindStackOf(surfaceId) is { Surfaces.Count: > 0 } now
+            && string.Equals(now.Active.SurfaceId, surfaceId, StringComparison.Ordinal)
+                ? surfaceId
+                : null);
+    }
+
+    private StackNode? CenterStack() =>
+        _service.Current.AllStacks().FirstOrDefault(st => string.Equals(st.Id, ZonesToTree.CenterStackId, StringComparison.Ordinal));
+
+    /// <summary>
+    /// Activates the surface <paramref name="intended"/> names — now, and again one dispatcher turn
+    /// later at <see cref="DispatcherPriority.Loaded"/>, which runs after the layout pass that
+    /// realizes the pane controls (each of which activates its own selection as it realizes, the
+    /// last one winning). <paramref name="intended"/> is re-evaluated at the deferred turn so the
+    /// model's answer at that moment is what is asserted; null means nothing to assert. A tree
+    /// replaced by a later render is left to that render's own assertion.
+    /// </summary>
+    private void AssertActive(LayoutRoot root, Func<string?> intended)
+    {
+        if (intended() is { } now)
+        {
+            Activate(root, now);
+        }
+
+        Manager.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () =>
+        {
+            if (ReferenceEquals(Manager.Layout, root) && intended() is { } later)
+            {
+                Activate(root, later);
+            }
+        });
+    }
+
+    private static void Activate(LayoutRoot root, string surfaceId)
+    {
         var doc = root.Descendents().OfType<LayoutDocument>()
             .FirstOrDefault(d => string.Equals(d.ContentId, surfaceId, StringComparison.Ordinal));
         if (doc is not null)
@@ -413,6 +467,8 @@ public sealed class WorkbenchAdapter
     /// interact with immediately (a terminal/agent session: you open it to type in it). This overrides
     /// the focus-preservation in <see cref="Render"/> for the deliberate open case, so focus lands on
     /// the new session rather than staying on — or snapping to — some other pane (smoke 9-2 #2).
+    /// Asserted (see <see cref="AssertActive"/>): the call usually follows a <see cref="Render"/> whose
+    /// pane controls have not realized yet, and the last of them to realize would otherwise win.
     /// </summary>
     internal void ActivateInView(string surfaceId)
     {
@@ -421,12 +477,7 @@ public sealed class WorkbenchAdapter
             return;
         }
 
-        var doc = root.Descendents().OfType<LayoutDocument>()
-            .FirstOrDefault(d => string.Equals(d.ContentId, surfaceId, StringComparison.Ordinal));
-        if (doc is not null)
-        {
-            doc.IsActive = true;
-        }
+        AssertActive(root, () => _service.Current.FindStackOf(surfaceId) is not null ? surfaceId : null);
     }
     /// <remarks>
     /// Without this, AvalonDock reports each tab's **.NET type name** — `AvalonDock.Layout.LayoutDocument`

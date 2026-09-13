@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using AiDe.Core.Workbench;
 
 namespace AiDe.App.Workbench;
@@ -14,8 +15,8 @@ public sealed record PerspectiveBodyFailure(Perspective Perspective, string Reas
 
 /// <summary>
 /// The shell-level presenter and command router (ADR-0017 as amended; ADR-0031 rule 2): owns the
-/// active <see cref="Perspective"/>, the three bodies — host A, host B and the full-window Explore
-/// surface — the one <i>previous-perspective</i> slot (US-C1), and the body-content swap that
+/// active <see cref="Perspective"/>, the four bodies — host A, host B, host C and the full-window
+/// Explore surface — the one <i>previous-perspective</i> slot (US-C1), and the body-content swap that
 /// realises a switch. Every catalog command enters through <see cref="Execute"/>, which resolves
 /// the host a body-conditional command reaches and delegates to that host's
 /// <see cref="WorkbenchController"/>.
@@ -63,7 +64,7 @@ public sealed class PerspectiveShell
     private (FrameworkElement Body, RoutedEventHandler Handler)? _pendingShown;
 
     /// <param name="body">The region the docking host occupies; its content is the active perspective's projection.</param>
-    /// <param name="hosts">One <see cref="DockHost"/> per host-bodied perspective (ADR-0031: host A and host B).</param>
+    /// <param name="hosts">One <see cref="DockHost"/> per host-bodied perspective (ADR-0031: host A and host B; Ruling 84: host C).</param>
     /// <param name="explorerFactory">Builds the full-window Explore surface, once, on first entry.</param>
     /// <param name="announcer">The one live region every switch, refusal and failure is announced through.</param>
     public PerspectiveShell(
@@ -121,6 +122,36 @@ public sealed class PerspectiveShell
     /// when it placed focus. Unset, focus goes to the body's first focusable.
     /// </summary>
     public Func<Perspective, FrameworkElement, bool>? EntryFocus { get; set; }
+
+    /// <summary>
+    /// The surface a switch to <paramref name="host"/>'s perspective lands focus on (spec §C5): the
+    /// active tab of the row's <see cref="Perspective.Landing"/> zone when the row names one and the
+    /// arrangement has that zone open with content; else the body's active surface as the view
+    /// reports it. The window's <see cref="EntryFocus"/> reads this, then moves focus into that
+    /// surface's content.
+    /// </summary>
+    public static string? LandingSurfaceFor(DockHost host)
+    {
+        ArgumentNullException.ThrowIfNull(host);
+
+        if (host.Row.Landing is { } zoneId)
+        {
+            var zone = host.Service.Zones.Zone(zoneId);
+            if (!zone.Collapsed && FirstActive(zone.Content) is { } landing)
+            {
+                return landing.SurfaceId;
+            }
+        }
+
+        return host.Adapter.ActiveSurfaceId;
+
+        static Surface? FirstActive(ZoneContent? content) => content switch
+        {
+            ZoneStack stack when stack.Tabs.Count > 0 => stack.Active,
+            ZoneSplit split => split.Children.Select(FirstActive).FirstOrDefault(s => s is not null),
+            _ => null,
+        };
+    }
 
     /// <summary>
     /// Makes <paramref name="perspective"/> the active one and returns what to announce. Activating
@@ -195,11 +226,25 @@ public sealed class PerspectiveShell
             WorkbenchDiagnostics.ShellModeShown(perspective, trigger, Stopwatch.GetElapsedTime(started).TotalMilliseconds);
 
             // The announcement was queued before this; focus lands in the new body only now that it
-            // has a tree to land in (spec §C5: never on the rail, never lost to the window).
-            if (EntryFocus?.Invoke(perspective, body) != true)
+            // has a tree to land in (spec §C5: never on the rail, never lost to the window) — and
+            // one dispatcher turn later than this edge. Measured (SH-4.1, the census window): a
+            // landing placed here directly was overridden by the docking pane controls' own
+            // activation of their selected content as they realize, the last one winning
+            // (Provenance for Architecture, the Center's last tab for Coordination); one placed at
+            // Loaded priority from here runs after every pending realization and holds. A switch
+            // superseded in between places nothing.
+            body.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () =>
             {
-                body.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
-            }
+                if (!ReferenceEquals(_body.Content, body))
+                {
+                    return;
+                }
+
+                if (EntryFocus?.Invoke(perspective, body) != true)
+                {
+                    body.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
+                }
+            });
         };
         body.Loaded += shown;
         _pendingShown = (body, shown);
@@ -286,7 +331,9 @@ public sealed class PerspectiveShell
     private bool RefuseWithoutHost(WorkbenchCommand row)
     {
         WorkbenchDiagnostics.ShellMode(Active, Active, row.Id, firstEntry: false, outcome: "refused", errorCode: NoHostCode);
-        _announcer.Announce($"{row.Title} needs a docking host; {Active.Title} has none. Switch to Coding or Architecture first.");
+        var hosts = PerspectiveSet.All.Where(p => p.Body == PerspectiveBody.DockHost).Select(p => p.Title).ToList();
+        var named = hosts.Count > 1 ? $"{string.Join(", ", hosts[..^1])} or {hosts[^1]}" : hosts[0];
+        _announcer.Announce($"{row.Title} needs a docking host; {Active.Title} has none. Switch to {named} first.");
         return true;
     }
 

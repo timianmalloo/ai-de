@@ -67,41 +67,10 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         Assert.Throws<ArgumentException>(() => LayoutPersistence.SlotPathFor(LayoutPath, PerspectiveSet.Explore));
     }
 
-    // Test 1 — a pre-C file restores into Coding with exactly its admitted surfaces; canvas, both
-    // views, inspector, contexts, joins and the class diagram are dropped, each reported by caption
-    // and kind, naming Architecture as the perspective that admits them; the event carries the
-    // dropped count and kinds (US-C12 b3). A classdiagram or a view surviving, a crash, or a
-    // silent reset fails.
-    [Fact]
-    public void APreAddendumCFile_RestoresIntoCoding_DroppingWhatCodingDoesNotAdmit_WithAReport()
-    {
-        WritePreAddendumCFile();
-        var host = Host(PerspectiveSet.Coding);
-        using var persistence = PersistenceFor(host);
-
-        var result = persistence.Restore();
-
-        var kinds = host.Zones.AllSurfaces().Select(s => s.Kind).ToHashSet(StringComparer.Ordinal);
-        // fixture-derivation: ok — ADR-0032 test 1 names the exact surviving set; deriving it from the rows would make the oracle the filter under test
-        Assert.Equal(["board", "leaderboard", "ledger", "sessions", "terminal"], kinds.OrderBy(k => k, StringComparer.Ordinal));
-        Assert.True(persistence.LastRestoreAppliedASavedArrangement);
-        Assert.False(result.WasDefaulted);
-
-        var dropped = persistence.LastRestoreDropped;
-        Assert.Equal(7, dropped.Count);
-        Assert.Equal(
-            ["canvas", "classdiagram", "contexts", "inspector", "joins", "view", "view"],
-            dropped.Select(d => d.Surface.Kind).OrderBy(k => k, StringComparer.Ordinal));
-        Assert.All(dropped, d => Assert.Same(PerspectiveSet.Architecture, d.AdmittedBy));
-
-        // Reported by caption AND kind, naming the admitting perspective — through the same
-        // channel that reports a dropped surface today.
-        Assert.Contains("7 panes from your saved layout aren't available in Coding", result.Announcement, StringComparison.Ordinal);
-        Assert.Contains("Class diagram", result.Announcement, StringComparison.Ordinal);
-        Assert.Contains("Domain (evidence)", result.Announcement, StringComparison.Ordinal);
-        Assert.Contains("Architecture", result.Announcement, StringComparison.Ordinal);
-        Assert.Contains(result.MissingSurfaces, m => m.StartsWith("Graph", StringComparison.Ordinal));
-    }
+    // Test 1 — the pre-C file's restore into Coding — lives in ZoneLayoutSlotsTests
+    // (RestoringAPreCCodingEnvelope_DropsTheFiveLoomkeeperKinds_AndReportsNamingCoordination) since
+    // Ruling 84 extended it: the four Loomkeeper kinds the fixture carries are dropped beside the
+    // seven Architecture kinds, reported naming Coordination.
 
     // Test 2 — an envelope whose every surface is inadmissible restores the Coding default and says so.
     [Fact]
@@ -416,12 +385,14 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
     {
         Assert.Empty(Host(PerspectiveSet.Architecture).DefaultDropped);
         Assert.Empty(Host(PerspectiveSet.Coding).DefaultDropped);
+        Assert.Empty(Host(PerspectiveSet.Coordination).DefaultDropped);   // Ruling 84: host C seeds from its own table too
     }
 
     public static IEnumerable<object[]> HostPerspectives()
     {
         yield return [PerspectiveSet.Coding];
         yield return [PerspectiveSet.Architecture];
+        yield return [PerspectiveSet.Coordination];
     }
 
     // The one-instance invariant SH-2 named: WorkbenchLayout.Default(perspective) must place only
@@ -448,8 +419,9 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
     }
 
     // ADR-0032 test 1's last clause / US-C12 b3 — the event carries the dropped count and kinds,
-    // per host, through the real shell's workspace-open restore: Coding drops seven from the pre-C
-    // file; Architecture keeps current (no file); and the seed's own drop is on record.
+    // per host, through the real shell's workspace-open restore: Coding drops eleven from the pre-C
+    // file (seven Architecture kinds and, since Ruling 84, the four Loomkeeper kinds); Architecture
+    // and Coordination keep current (no file); and the seed's own drop is on record.
     [Fact]
     public void TheWorkspaceOpenRestore_WritesOneRestoreEventPerHost_WithTheDroppedCountAndKinds()
     {
@@ -475,13 +447,19 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
             .ToList();
 
         var coding = Assert.Single(restores, e => e.GetProperty("perspective").GetString() == "coding" && e.GetProperty("placement").GetString() == "restore-zones");
-        Assert.Equal(7, coding.GetProperty("dropped_count").GetInt32());
-        Assert.Contains("classdiagram", coding.GetProperty("dropped_kinds").EnumerateArray().Select(k => k.GetString()));
-        Assert.Contains("canvas", coding.GetProperty("dropped_kinds").EnumerateArray().Select(k => k.GetString()));
+        Assert.Equal(11, coding.GetProperty("dropped_count").GetInt32());
+        var droppedKinds = coding.GetProperty("dropped_kinds").EnumerateArray().Select(k => k.GetString()).ToList();
+        Assert.Contains("classdiagram", droppedKinds);
+        Assert.Contains("canvas", droppedKinds);
+        Assert.Contains("sessions", droppedKinds);      // Ruling 84: the Loomkeeper kinds leave Coding
+        Assert.Contains("ledger", droppedKinds);
         Assert.Equal(LayoutErrorCodes.PartialRestore, coding.GetProperty("error_code").GetString());   // a drop is a partial restore
 
         var architecture = Assert.Single(restores, e => e.GetProperty("perspective").GetString() == "architecture" && e.GetProperty("placement").GetString() == "keep-current");
         Assert.Equal(0, architecture.GetProperty("dropped_count").GetInt32());
+
+        var coordination = Assert.Single(restores, e => e.GetProperty("perspective").GetString() == "coordination" && e.GetProperty("placement").GetString() == "keep-current");
+        Assert.Equal(0, coordination.GetProperty("dropped_count").GetInt32());
 
         // SH-3: each host seeds from its OWN §B4 table (ZoneLayout.cs), so construction drops
         // nothing for either host and no "default-filtered" event is logged at all — unlike the

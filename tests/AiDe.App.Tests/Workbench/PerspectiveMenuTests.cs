@@ -162,7 +162,7 @@ public sealed class PerspectiveMenuTests
     // US-C10 b1, the window half: Bind installs the bindings at the host the window passes, one per
     // gesture, routed to the perspective's own command id.
     [Fact]
-    public void Bind_InstallsSixPerspectiveKeyBindings_AtWindowScope() => OnSta(() =>
+    public void Bind_InstallsEightPerspectiveKeyBindings_AtWindowScope() => OnSta(() =>
     {
         var host = new Grid();
         new WorkbenchController(new ZoneBackedLayoutService(), new RecordingAnnouncer()).Bind(host);
@@ -172,7 +172,8 @@ public sealed class PerspectiveMenuTests
             .Select(b => (Id: ((RoutedUICommand)b.Command).Name, b.Key, b.Modifiers))
             .ToList();
 
-        Assert.Equal(6, perspectiveBindings.Count);
+        Assert.Equal(2 * PerspectiveSet.All.Count, perspectiveBindings.Count);   // the number row and the keypad, per row
+        Assert.Equal(8, perspectiveBindings.Count);
         foreach (var perspective in PerspectiveSet.All)
         {
             Assert.Contains((perspective.CommandId, Key.D0 + perspective.Order, ModifierKeys.Control), perspectiveBindings);
@@ -203,9 +204,10 @@ public sealed class PerspectiveMenuTests
         Assert.DoesNotContain(SurfaceContentFactory.Kinds, k => k.Perspectives.Contains(PerspectiveSet.Explore));
     }
 
-    // §A7's table as ruled (Rulings 59–61): the kind × perspective matrix and the Instances column,
-    // literally. A row moved between perspectives fails here, by design — Ruling 60's condition is
-    // that the Loomkeeper kinds move as a set, in one ruling.
+    // §A7's table as ruled (Rulings 59–61, amended by Ruling 84's fifth column): the kind ×
+    // perspective matrix and the Instances column, literally. A row moved between perspectives
+    // fails here, by design — Ruling 60's condition was that the Loomkeeper kinds move as a set, in
+    // one ruling, and Ruling 84 is that ruling: all five to Coordination, none left in Coding.
     [Fact]
     public void TheAllowListsEqualTheSpecsTable()
     {
@@ -214,11 +216,11 @@ public sealed class PerspectiveMenuTests
             ("session-document", ["coding"], SurfaceContentFactory.Instances.Many),
             ("terminal",         ["coding"], SurfaceContentFactory.Instances.Many),
             ("prompt",           ["coding"], SurfaceContentFactory.Instances.Many),
-            ("sessions",         ["coding"], SurfaceContentFactory.Instances.One),
-            ("board",            ["coding"], SurfaceContentFactory.Instances.One),
-            ("leaderboard",      ["coding"], SurfaceContentFactory.Instances.One),
-            ("ledger",           ["coding"], SurfaceContentFactory.Instances.One),
-            ("daydreams",        ["coding"], SurfaceContentFactory.Instances.One),
+            ("sessions",         ["coordination"], SurfaceContentFactory.Instances.One),
+            ("board",            ["coordination"], SurfaceContentFactory.Instances.One),
+            ("leaderboard",      ["coordination"], SurfaceContentFactory.Instances.One),
+            ("ledger",           ["coordination"], SurfaceContentFactory.Instances.One),
+            ("daydreams",        ["coordination"], SurfaceContentFactory.Instances.One),
             ("search",           ["coding"], SurfaceContentFactory.Instances.Many),
             ("codeviewer",       ["architecture", "coding"], SurfaceContentFactory.Instances.Many),
             ("diagnostics",      ["coding"], SurfaceContentFactory.Instances.One),
@@ -289,11 +291,10 @@ public sealed class PerspectiveMenuTests
              "Re-index everything (ignore the cache)", "Re-index this workspace"],
             Titles(coding, "_File"));
         Assert.Equal(
-            ["Coding perspective", "Explore perspective", "Architecture perspective",
+            ["Coding perspective", "Explore perspective", "Architecture perspective", "Coordination perspective",
              "Next tab in pane", "Previous tab in pane", "Move tab left/right",
-             "Raise score dispute on the latest scored episode", "Clear the status message",
+             "Clear the status message",
              "Cycle session region", "Cycle session region backward",
-             "Show terminal sessions", "Show message board", "Show leaderboard", "Show ledger", "Show daydreams",
              "New search", "New code viewer", "Show diagnostics"],
             Titles(coding, "_View"));
         Assert.Equal(["Dispatch prompt to terminal…", "New prompt draft"], Titles(coding, "_Prompt"));
@@ -308,7 +309,7 @@ public sealed class PerspectiveMenuTests
         Assert.Equal(["_File", "_View", "_Help"], Headers(explore));
         Assert.Equal(Titles(coding, "_File"), Titles(explore, "_File"));
         Assert.Equal(
-            ["Coding perspective", "Explore perspective", "Architecture perspective", "Clear the status message"],
+            ["Coding perspective", "Explore perspective", "Architecture perspective", "Coordination perspective", "Clear the status message"],
             Titles(explore, "_View"));
 
         // Architecture: all but Prompt; the reading kinds' derived rows in §B3's order.
@@ -316,7 +317,7 @@ public sealed class PerspectiveMenuTests
         Assert.Equal(["_File", "_Edit", "_View", "_Window", "_Help"], Headers(architecture));
         Assert.Equal(Titles(coding, "_File"), Titles(architecture, "_File"));
         Assert.Equal(
-            ["Coding perspective", "Explore perspective", "Architecture perspective",
+            ["Coding perspective", "Explore perspective", "Architecture perspective", "Coordination perspective",
              "Next tab in pane", "Previous tab in pane", "Move tab left/right",
              "Focus graph canvas", "Clear the status message",
              "Show graph", "Show evidence", "Show provenance", "New class diagram", "New sequence diagram",
@@ -324,6 +325,21 @@ public sealed class PerspectiveMenuTests
             Titles(architecture, "_View"));
         Assert.Equal(Titles(coding, "_Edit"), Titles(architecture, "_Edit"));
         Assert.Equal(Titles(coding, "_Window"), Titles(architecture, "_Window"));
+
+        // Coordination (Ruling 84; §B3 as amended): File · Edit · View · Window · Help — a host
+        // without Prompt; the ledger verb, then the five Loomkeeper Show entries in row order.
+        var (coordination, _) = Render(PerspectiveSet.Coordination);
+        Assert.Equal(["_File", "_Edit", "_View", "_Window", "_Help"], Headers(coordination));
+        Assert.Equal(Titles(coding, "_File"), Titles(coordination, "_File"));
+        Assert.Equal(
+            ["Coding perspective", "Explore perspective", "Architecture perspective", "Coordination perspective",
+             "Next tab in pane", "Previous tab in pane", "Move tab left/right",
+             "Raise score dispute on the latest scored episode", "Clear the status message",
+             "Show terminal sessions", "Show message board", "Show leaderboard", "Show ledger", "Show daydreams"],
+            Titles(coordination, "_View"));
+        Assert.Equal(Titles(coding, "_Edit"), Titles(coordination, "_Edit"));
+        Assert.Equal(Titles(coding, "_Window"), Titles(coordination, "_Window"));
+        Assert.Equal(["Diagnostics report"], Titles(coordination, "_Help"));
     });
 
     // PS-M1 / US-C1 b3: the perspective entries are a radio group with the active one checked and
@@ -395,12 +411,13 @@ public sealed class PerspectiveMenuTests
     [Fact]
     public void ThePerspectiveItemsShowTheirBoundGesture_AndDerivedOpenersShowNone() => OnSta(() =>
     {
-        var (menu, _) = Render(PerspectiveSet.Coding);
+        var (menu, _) = Render(PerspectiveSet.Coordination);   // the host whose View lists a derived Show (Ruling 84)
         var items = Items(menu).ToList();
 
         Assert.Equal("Ctrl+1", items.Single(i => Equals(i.Header, "Coding perspective")).InputGestureText);
         Assert.Equal("Ctrl+2", items.Single(i => Equals(i.Header, "Explore perspective")).InputGestureText);
         Assert.Equal("Ctrl+3", items.Single(i => Equals(i.Header, "Architecture perspective")).InputGestureText);
+        Assert.Equal("Ctrl+4", items.Single(i => Equals(i.Header, "Coordination perspective")).InputGestureText);
         Assert.Equal("Ctrl+N", items.Single(i => Equals(i.Header, "New session…")).InputGestureText);
         Assert.Equal(string.Empty, items.Single(i => Equals(i.Header, "Show daydreams")).InputGestureText);
         Assert.Equal(string.Empty, items.Single(i => Equals(i.Header, "New terminal")).InputGestureText);   // Ctrl+K, T: announced, unbound
@@ -443,6 +460,7 @@ public sealed class PerspectiveMenuTests
 
         try
         {
+            palette.Menu = PerspectiveMenu.For(PerspectiveSet.Coordination);   // the host whose View lists a derived Show (Ruling 84)
             palette.Open();
             palette.SearchBox.Text = "daydreams";
             palette.HandleKey(Key.Down);   // wraps onto the one row, announcing it
@@ -508,9 +526,13 @@ public sealed class PerspectiveMenuTests
     [InlineData("sequence", "explore", "architecture")]
     [InlineData("terminal", "architecture", "coding")]
     [InlineData("terminal", "explore", "coding")]
-    [InlineData("daydreams", "architecture", "coding")]
+    [InlineData("daydreams", "architecture", "coordination")]   // Ruling 84: a Loomkeeper kind lands in Coordination
+    [InlineData("ledger", "coding", "coordination")]
+    [InlineData("sessions", "explore", "coordination")]
+    [InlineData("terminal", "coordination", "coding")]
+    [InlineData("canvas", "coordination", "architecture")]
     [InlineData("canvas", "coding", "architecture")]
-    public void Resolve_RoutesAnInadmissibleKindOpen_ArchitectureThenCoding(string kind, string active, string expected)
+    public void Resolve_RoutesAnInadmissibleKindOpen_ArchitectureThenCodingThenCoordination(string kind, string active, string expected)
     {
         var resolved = PerspectiveMenu.Resolve(kind, ById(active));
 
