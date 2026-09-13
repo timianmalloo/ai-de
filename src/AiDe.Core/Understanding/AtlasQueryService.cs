@@ -56,6 +56,7 @@ internal sealed class AtlasQueryService : IAtlasQueries, IDisposable
     private readonly Func<bool> isCurrent;
     private readonly AtlasSource source;
     private readonly AtlasQueryLimits limits;
+    private readonly ImmutableArray<AtlasFileEntry> inventoryFiles;
     private readonly SemaphoreSlim slots = new(MaxActive);
     private readonly CancellationTokenSource shutdown = new();
     private readonly Dictionary<string, CachedManifest> manifests = new(StringComparer.Ordinal);
@@ -79,6 +80,7 @@ internal sealed class AtlasQueryService : IAtlasQueries, IDisposable
         this.isCurrent = isCurrent;
         this.source = source;
         this.limits = limits;
+        inventoryFiles = initial.Value.Files;
         currentToken = initial.Value.Token;
         manifests.Add(currentToken, initial);
         manifestOrder.AddLast(currentToken);
@@ -165,18 +167,29 @@ internal sealed class AtlasQueryService : IAtlasQueries, IDisposable
             {
                 if (disposed || linked.IsCancellationRequested) return EmptyInventory(request, Code.Canceled);
                 var manifest = manifests[currentToken].Value;
-                var files = manifest.Files.Skip(request.Offset).Take(request.Limit).ToImmutableArray();
-                var known = manifest.Bounds.TotalState is AtlasDenominatorState.Known;
-                var omitted = request.Offset + (long)files.Length < manifest.Files.Length;
-                var bounds = new AtlasBounds(request.Limit, request.Limit, files.Length, files.Sum(ChargeFile),
-                    known ? manifest.Files.Length : null, known ? AtlasDenominatorState.Known : AtlasDenominatorState.Unknown,
-                    !known ? manifest.Bounds.OmissionReason ?? Code.Membership : omitted ? Code.Page : null,
-                    !known ? manifest.Bounds.LimitingDimension ?? "membership" : omitted ? "page" : null);
-                return new(request, bounds, files);
+                return ProjectInventory(request, inventoryFiles, manifest.Files, manifest.Bounds);
             }
         }
         catch (OperationCanceledException) { return EmptyInventory(request, Code.Canceled); }
         finally { Release(acquired); Record("inventory", started); }
+    }
+
+    internal static InventoryPage ProjectInventory(PageRequest request, ImmutableArray<AtlasFileEntry> originalRows,
+        ImmutableArray<AtlasFileEntry> currentRows, AtlasBounds inventoryBounds)
+    {
+        // An offset belongs to this retained ordered snapshot, never to a replacement rowset.
+        if (!originalRows.SequenceEqual(currentRows))
+            return EmptyInventory(request, Code.InventoryRestart,
+                inventoryBounds.TotalState is AtlasDenominatorState.Withheld ? AtlasDenominatorState.Withheld : AtlasDenominatorState.Unknown);
+        var files = currentRows.Skip(request.Offset).Take(request.Limit).ToImmutableArray();
+        var known = inventoryBounds.TotalState is AtlasDenominatorState.Known;
+        var omitted = request.Offset + (long)files.Length < currentRows.Length;
+        // ReturnedBytes measures content payload; metadata retention charges are a different quantity.
+        var bounds = new AtlasBounds(request.Limit, request.Limit, files.Length, 0,
+            inventoryBounds.TotalCount, inventoryBounds.TotalState,
+            inventoryBounds.OmissionReason ?? (!known ? Code.Membership : omitted ? Code.Page : null),
+            inventoryBounds.LimitingDimension ?? (!known ? "membership" : omitted ? "page" : null));
+        return new(request, bounds, files, omitted ? checked(request.Offset + files.Length) : null);
     }
 
     public Task<SelectionProjection> SelectAsync(SelectionRequest request, CancellationToken cancellationToken)
@@ -445,8 +458,9 @@ internal sealed class AtlasQueryService : IAtlasQueries, IDisposable
             SelectionCoverage.Withheld(reason), [reason]);
     }
 
-    private static InventoryPage EmptyInventory(PageRequest request, string reason) =>
-        new(request, new AtlasBounds(request.Limit, request.Limit, 0, 0, null, AtlasDenominatorState.Unknown, reason, "query"), []);
+    private static InventoryPage EmptyInventory(PageRequest request, string reason,
+        AtlasDenominatorState totalState = AtlasDenominatorState.Unknown) =>
+        new(request, new AtlasBounds(request.Limit, request.Limit, 0, 0, null, totalState, reason, "query"), []);
 
     private static SourceProjection NonMatch(SourceProjectionState state) => state switch
     {
@@ -505,6 +519,7 @@ internal sealed class AtlasQueryService : IAtlasQueries, IDisposable
         internal const string Capacity = "atlas.query.capacity";
         internal const string Retention = "atlas.query.retention";
         internal const string Page = "atlas.query.page";
+        internal const string InventoryRestart = "atlas.query.inventory-restart";
     }
     private sealed record CachedManifest(AtlasManifest Value, long Bytes, AtlasBounds? DeclarationBounds, ImmutableArray<string> Limitations);
     private sealed record Receipt(string Token, string ManifestToken, string FileValue, string? DeclarationKey,
