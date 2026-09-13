@@ -1992,7 +1992,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 92 types, 407 members, 73% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 92 types, 409 members, 73% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2005,7 +2005,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "211834312b078566ebcc42882b1f386ff1c3809cb227e6ebdf7ab68c8f0d15cd"
+      "sourceSha256": "eee6dd82da4de579593ec40aa2f57cc66cea87c7e9bee367a6086dc8fcba457d"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -2517,7 +2517,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Workbench: 78 types, 148 members, 58% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Workbench: 78 types, 149 members, 58% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2530,7 +2530,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8fb20ea8b0e1bf8870e1b0695b41c85bbae6f3ae5214bb49bf1c94f58dc57742"
+      "sourceSha256": "ebdc7d9ec1d3233f36cdd84b8c3a4fdca401419e9dde46c4408aebc5b0439a8e"
     },
     {
       "id": "api-aide-mcp",
@@ -5949,6 +5949,53 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "5c75c6340e61c95d4953cad3cf8b76b032a410288cf1ba6683cfb75032c0d223"
+    },
+    {
+      "id": "note-sh4-coordination-landing-and-drop-sentence",
+      "path": "docs/notes/sh4-coordination-landing-and-drop-sentence.md",
+      "title": "The switch's landing is a column on the Perspective row, and the drop-with-report sentence names each admitting perspective with its gesture — two calls made while landing Ruling 84",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "Addendum C · Shell lane SH-4.1 (2026-09-13)",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [],
+      "summary": "Two calls below ADR weight, made by SH-4.1 while landing Ruling 84: (1) the zone a switch lands focus on is stated on the Perspective row (Architecture: Center; Coordination: Left; Coding: null) because the view's own \"active\" after a body is parented is the last pane control to realize — measured, not designed; (2) the drop-with-report sentence names each admitting perspective with its bound gesture (\"They live in Coordination (Ctrl+4); open them from its View menu.\"), choosing the review's oracle over DESIGN.md's \"Coordination opens with them\", which asserts the default's contents. Blast radius: every switch's landing; every partial restore's copy.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "perspective",
+        "coordination",
+        "landing",
+        "focus",
+        "drop-with-report",
+        "ruling-84",
+        "sh-4"
+      ],
+      "links": [
+        {
+          "to": "proof-coordination-perspective",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-adr-0030-0032-amendment-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "ui-review-operator-findings-2026-09-13",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2e2f720f124fdfa534aed8105e8fb7042afc89798bf89094d07cbddb0891e4c5"
     },
     {
       "id": "note-terminal-customization-persistence",
@@ -15013,6 +15060,62 @@ window.DOCS_INDEX = {
       "sourceSha256": "99ca61fd41fa74746074c9eb696ad9ff72a83110c4276fb05b30f974ad4d19d6"
     },
     {
+      "id": "proof-coordination-perspective",
+      "path": "docs/proof/coordination-perspective.md",
+      "title": "Proof Pack: SH-4.1 — the Coordination perspective (host C)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [],
+      "summary": "Ruling 84 landed: Coordination is the fourth Perspective (host C, Ctrl+4, its own slot file and default, the rail glyph IconCoordination), the five Loomkeeper kinds are admitted by it alone and Coding admits none, the pre-Addendum-C Coding envelope drops them with a report naming Coordination and its gesture. P1–P7 each seen red before green; the census walks host C.",
+      "tags": [
+        "proof-pack",
+        "addendum-c",
+        "shell-lane",
+        "sh-4",
+        "coordination",
+        "ruling-84"
+      ],
+      "links": [
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        },
+        {
+          "to": "note-adr-0030-0032-amendment-coordination",
+          "rel": "implements"
+        },
+        {
+          "to": "ui-review-operator-findings-2026-09-13",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0031-second-docking-host",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0032-perspective-layout-slots",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "037acdf337d238a21c17b5ed3d0e24c3fa9779e695af7641b4ad1a7deadefd84"
+    },
+    {
       "id": "proof-front-door-provider-config",
       "path": "docs/proof/front-door-provider-config.md",
       "title": "Proof Pack — node F6, provider configuration and the composer handshake",
@@ -17678,5 +17781,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "802009db0aedf24e9b4b660a4d7e4045d26d987aabfff495e2ea9ae9f4838e03"
+  "graphSha256": "f72e898d609a80187caf834e0d75685875cad552ed9f80756a001c771896a4a8"
 };

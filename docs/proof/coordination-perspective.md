@@ -2,7 +2,7 @@
 id: proof-coordination-perspective
 title: "Proof Pack: SH-4.1 — the Coordination perspective (host C)"
 type: proof-pack
-status: draft
+status: accepted
 owner: "@timianmalloo"
 phase: "addendum-c"
 tags: [proof-pack, addendum-c, shell-lane, sh-4, coordination, ruling-84]
@@ -185,7 +185,7 @@ summary: >-
 | **The pre-C restore's report** | 1. With the operator's 2026-09-13 `layout.zones.json` (Ledger · Leaderboard · Sessions · Board in Coding's Center), open the workspace. 2. Read the status strip: *"4 panes from your saved layout aren't available in Coding — Ledger, Leaderboard, Sessions (terminal sessions), Board (message board). They live in Coordination (Ctrl+4); open them from its View menu."* 3. Ctrl+4 shows the four; the Coding slot's `.pre-perspectives.bak` exists after the first save. | the strip's text, the `.bak` |
 | **Host C's empty states** | With no watcher store: *Terminal sessions* — *"Session observation is not available — no watcher…"*; *Ledger* — *"Work-episode observation is not available."*; *Leaderboard*/*Message board* — their *not available* copy. (The `state.not-declared` copy D3 designed — *"No episodes scored yet."* etc. — is the product's **with** a store and no episodes; this slice adds no copy: the empty states are the surfaces' own, untouched.) | screenshots of the four panes |
 
-## Defect classes registered (CI1) — placeholders, never the register itself (the conductor allocates; next free DC-182)
+## Defect classes registered (CI1) — placeholders, never the register itself (the conductor allocates; `origin/main` at the merge ends at DC-188, so the next free number follows it)
 
 - **DC-nnn (SH-4 a)** — *a docking view's active content after a body is (re)parented is whichever pane control realized last, and the arrangement's zone occupancy decides that order*: each `LayoutDocumentPaneControl` activates its selected content from its own `SelectionChanged` as its template applies (traced: `LayoutDocumentPaneControl.OnSelectionChanged → LayoutContent.set_IsActive`), so a model-stated activation placed at the body's Loaded edge — the adapter's `RestoreActive`, the presenter's entry focus — is overridden by the last pane to load, and which pane that is changes when a zone empties (Ruling 84 emptied Coding's Left; the Bottom terminal then beat the Center's restored session document). **Controls (this slice):** `WorkbenchAdapter.RestoreActive` states the Center's active tab again at `DispatcherPriority.Loaded` when the pre-render surface is gone; `PerspectiveShell.Activate` defers the entry focus one dispatcher turn past the body's Loaded; `Perspective.Landing` makes the landing data. **Oracles:** `ASessionDocumentIsShownWhereTheOperatorIsTests.ARestoredSessionDocumentIsRevivedAndBoundAtWorkspaceOpen` (red with the Left empty and the old code — the replay probe), `PerspectiveShellTests.TheLanding_…` (red before the column), the census log's *active after switch* rows (recorded). **Sweep:** every other `IsActive = true` in `WorkbenchAdapter` (`ActivateInView`) is called on an already-realized tree — not this shape; SH-4.2's re-cut re-orders realization again and inherits the controls.
 - **DC-nnn (SH-4 b)** — *a census that walks a freshly parented body before its pane controls have realized measures the first pane and reports green over the rest* (DC-135 recurrence 3's sibling — the population shrank and nothing failed): switching the presenter and walking immediately measured only each host's Left pane (Center and Right tabs +0 sites) and left the rebuilt menu bar unmeasured (+0 per menu; the reach test's *"never rendered a command"*). **Control:** `ShellContrastCensus.Settle` (UpdateLayout · a Background-priority turn · UpdateLayout) before each walk, and `ShellContrastCensusTests` anchors named sites in host B's and host C's bodies (*tab: Ledger*, *Ledger*, *Message board*, *Terminal sessions*, *Coordination perspective*, *tab: Domain*) so a walk that shrinks fails; the site count 138 → 170 is on the log.
@@ -204,3 +204,15 @@ summary: >-
 | `private_bytes_delta` for host C | **attended** (P-4) — no in-product emission; ADR-0031 measured host B by hand | not recorded |
 
 The landing gap: a `shell.mode.landed` line (surface id, zone, whether the entry focus placed it) would close it on the normal path — one call in `EntryFocusFor`; not added here because `WorkbenchDiagnostics.cs` is X-3's live file. Named for the conductor.
+
+## Gates at close (after the `origin/main` merge at `2ec0e470` — CV-5.3's join, floors 895 / 2591)
+
+| Gate | Result |
+|---|---|
+| `dotnet build -p:TreatWarningsAsErrors=true` — Core, App, Core.Tests, App.Tests, ComposerProbe, ContrastProbe | all six succeeded, 0 warnings, 0 errors |
+| `tools/verify-test-run.py --only AiDe.App.Tests` (`--logger trx` under `artifacts/test-results`) | **910** executed ≥ 895, Completed (835 ≥ 820 before the merge) |
+| `tools/verify-test-run.py --only AiDe.Core.Tests` | **2591** executed ≥ 2591, Completed (2496 ≥ 2496 before the merge; 1 skipped, pre-existing) |
+| `ShellContrastCensusTests` (the real app booted out of process) | 7/7; 170 sites, 0 below floor; host B and host C anchored |
+| `tools/run-verify-gates.py` | **35 of 35** green (`verify-terminal-host-exit-paths`, `verify-fixture-derivation`, `verify-defect-register`, `verify-derived-views`, `verify-site-figures` included) |
+| `tools/regenerate-derived.py` (after the audit entry `al-01M2EDC3SXV2T2XFW9RKFDQV0V`) | every derived view current |
+| Audit entry | `al-01M2EDC3SXV2T2XFW9RKFDQV0V` — session `sh-4`, T2, fan-out 3, `duration_seconds` 5843 measured from the start marker, signals verification_path · verification_executed · acceptance_met = true |
