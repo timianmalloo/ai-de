@@ -232,6 +232,13 @@ public sealed class TheRunBindingComesFromTheProviderFileTests
         Assert.Equal(1, Occurrences(host, "new ProviderRegistry("));
         Assert.Contains("new ProviderRegistry(request.Providers)", host, StringComparison.Ordinal);
 
+        // The compile host is the same edge's second far end (ADR-0035: ComposerSendContext →
+        // CompileRequest → CompileCallHost) and rebuilds its registry from the rows that travelled
+        // on its request, with the same one admissible argument.
+        var compileHost = SourceFile("src", "AiDe.App", "Conductor", "CompileCallHost.cs");
+        Assert.Equal(1, Occurrences(compileHost, "new ProviderRegistry("));
+        Assert.Contains("new ProviderRegistry(request.Providers)", compileHost, StringComparison.Ordinal);
+
         // And nowhere else in the SHELL constructs any of them — in either spelling, qualified or
         // not — and nowhere else configures a composer.
         //
@@ -264,7 +271,7 @@ public sealed class TheRunBindingComesFromTheProviderFileTests
             Assert.DoesNotContain("composer.Configure(", text, StringComparison.Ordinal);
             Assert.DoesNotContain("Composer.Configure(", text, StringComparison.Ordinal);
 
-            if (!path.EndsWith("MainWindow.xaml.cs", StringComparison.Ordinal))
+            if (!path.EndsWith("MainWindow.xaml.cs", StringComparison.Ordinal) && !path.EndsWith("CompileCallHost.cs", StringComparison.Ordinal))
             {
                 Assert.DoesNotContain("new ProviderRegistry(", text, StringComparison.Ordinal);
                 Assert.DoesNotContain(".ProviderRegistry(", text, StringComparison.Ordinal);

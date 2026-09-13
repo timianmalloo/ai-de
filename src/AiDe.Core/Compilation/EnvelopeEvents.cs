@@ -160,7 +160,7 @@ public sealed record DroppedCounts(int UnknownName, int AlreadySupplied, int Ung
 
 /// <summary>
 /// One invocation of the bound model by the compile stage — the grain at which cost exists (§A6).
-/// Written by the agentic rung (CV-3); this slice reads and folds it and writes none.
+/// Written by the agentic rung (<c>ComposerSendGate.PrepareAsync</c> from a <c>CompileResult</c>).
 /// </summary>
 public sealed record Called(
     string EnvelopeId,
@@ -193,8 +193,16 @@ public static class CallOutcomes
     public const string Malformed = "malformed";
     public const string Cancelled = "cancelled";
 
+    /// <summary>
+    /// A re-prepare with an unchanged <c>inputs_sha</c> after a success reused the stored derived
+    /// decorations and made no request — a <c>called</c> row with a known-zero cost and
+    /// <c>reason</c> naming <c>reused_from</c> (ADR-0035 rule 1: C3/C10's receipt exists for every
+    /// envelope, and the eval de-duplicates by the originating call).
+    /// </summary>
+    public const string Reused = "reused";
+
     /// <summary>The outcomes <see cref="Envelope.EffectiveMode"/> counts as agentic.</summary>
-    public static readonly IReadOnlyList<string> Agentic = [Succeeded, SucceededNoStructure, Suspect];
+    public static readonly IReadOnlyList<string> Agentic = [Succeeded, SucceededNoStructure, Suspect, Reused];
 }
 
 /// <summary>

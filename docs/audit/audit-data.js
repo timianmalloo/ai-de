@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T19:23:56Z",
+  "generated": "2026-09-13T20:40:05Z",
   "audit": [
     {
       "actor": null,
@@ -14837,6 +14837,117 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Land CV-5.2 on main with the floors recounted and a Release build; free the Conversation lane for CV-5.3",
       "done_when": "main pushed green through run-verify-gates; Release built",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M2E60Y2BWVXV4VYTEAF8GTTK",
+      "shortname": "cv-3-compile-call",
+      "datetime": "2026-09-13T20:06:03Z",
+      "session": "cv-3",
+      "prompt": "CV-3: the compile call, the pin, gate 1 and the eval harness — Addendum D slice D-2 (ADR-0035 compile-session binding and pin; ADR-0036 the compile-mode ladder and its deployment gates; Rulings 64-68); the pin closes the MCP exposure PD-5 measured; reds first per the plan row",
+      "summary": "CV-3 (Addendum D slice D-2) on lane/conversation-cv3, merged with origin/main 06791208. Shipped: LaneSessionOptions.Compile / CompileOn(model) — tools: [], the 30 denied names + mcp__*, strictMcpConfig: true (admitted by PD-5 run 2's measurement: the repository's .mcp.json server spawned as the operator at session/new under tools: [] + mcp__*), model from the binding — asserted as an exact key set on the wire in Core and through the host; the engine's child never inherits CLAUDE_CODE_EXECUTABLE / NODE_OPTIONS / NODE_PATH (removals reported) and the compile child carries CLAUDE_CODE_MAX_OUTPUT_TOKENS=4096; SpawnContract.AuthorizeBinding (the identity half; Authorize unchanged in order; the same AP-0009..13 from both entry points; R0 not refused); CompileCallHost opening compile-call.compose (Roots == 0; a run after it reads 1), the pin verified per call against ~/.aide/proof/compile-pin-spike.json (adapter file and vendored CLI rehashed; pin_verify_ms), one linked deadline over Start → close (silent at initialize → timed_out naming the step; a late answer discarded and counted from the plane's post-deadline queue; a reply past 16,384 chars cut as malformed naming the bound; the engine disposed before the receipt), the receipt with the wire's text/usage/model_observed/latency/counts; gate 1 as CompileModeGate (CE-0016 missing, CE-0017 triple mismatch, CE-0018 frame log unverifiable, CE-0019 recount ≠ 0, CE-0022 run not ended, CE-0023 pin identity mismatch; agentic CE-0020 naming Gate 2; SetCompileMode through the gate); Prepare under an agentic rung (PrepareAsync: open lines only, the typed boundary the only reader, the called row with tool_calls/permission_requests → suspect, derived rows with call_seq, reuse after a success with a reused receipt, no reuse after a failure, the skipped call, Cancel, stale, keep/edit as operator rows, Ruling 75 fired on the projected block); CompileLine's strings and the STA walk of the four states; the harness (score.py: num/den only, the split witness, dedup by originating call, degraded over every model call, --self-test red-first; derive-fixtures.py: --affirm on tracked paths). PD-5 run 2 under the widened pin RUN-RECORDED as ABORTED: a toolless session emitted <invoke name=\"Read\"> XML as text in an unbounded loop (5,843 chunks, ~20k output tokens) until the node killed the harness — the consented ~12k exceeded; the harness now bounds each prompt (60 s / 2,000 chunks) and assert-spike refuses a run that did not end; run 3 is an attended row needing the operator's consent. Reviews: Security & Identity BLOCK → its six clear-whens applied except the model_observed drift trigger (CV-4) and usage on timeout (usage_update carries context size) — the veto is the conductor's to clear (loop 2); AI Systems Engineer and Test Architect PASS-WITH-CONDITIONS, conditions applied or recorded; the Simplifier not convened (the budget cap fired). Gates: 4 builds 0/0 with warnings as errors; App 876 / Core 2,532 before the round, the affected suites re-run green after; verify-test-run + run-verify-gates re-run at close (see the Proof Pack's gate record). Proof Pack docs/proof/compile-call.md; three defect classes DC-184/185/186 (placeholders). The stop budget (6,000 s) fired during the review round — reported, not a termination argument.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/compile-call.md",
+        "docs/proof/compile-pin-spike.md",
+        "src/AiDe.App/Conductor/CompileCallHost.cs",
+        "src/AiDe.Core/AgentPlane/AcpLaneClient.cs",
+        "src/AiDe.Core/AgentPlane/AcpEngineProcess.cs",
+        "src/AiDe.Core/AgentPlane/GoalBlock.cs",
+        "src/AiDe.Core/Compilation/CompilePin.cs",
+        "src/AiDe.Core/Sessions/CompileModeGate.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSendGate.cs",
+        "tools/compile-eval/score.py",
+        "tools/compile-eval/derive-fixtures.py",
+        "spikes/compile-session-pin-wire/frames/2026-09-13T18-58-48-954Z/summary.json"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "the compile call real behind its gates: CompileCallHost, the pin incl. mcp__*, AuthorizeBinding, gate 1, the eval harness, Prepare's compile line; PD-5's second run with the widened pin",
+      "done_when": "the plan row's reds observed red then green; build + tests + verify gates green; Proof Pack docs/proof/compile-call.md; audit entry; pushed to lane/conversation-cv3; Release rebuilt",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-13T18:45:14Z",
+      "duration_seconds": 4849.0,
+      "persona_yield": [
+        {
+          "persona": "security-identity-architect",
+          "raised": 12,
+          "accepted": 10
+        },
+        {
+          "persona": "ai-systems-engineer",
+          "raised": 17,
+          "accepted": 12
+        },
+        {
+          "persona": "test-architect",
+          "raised": 11,
+          "accepted": 10
+        }
+      ],
+      "git": {
+        "sha": "0e5b9bce8e2e1f51cf2d5f01e0590dd7fb63a3f6",
+        "short": "0e5b9bce8",
+        "branch": "lane/conversation-cv3",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2E7ET1AGSMQ3XJFCP0W42MD",
+      "shortname": "join-cv3",
+      "datetime": "2026-09-13T20:31:06Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "keep going (the join of CV-3 after Security's loop 2)",
+      "summary": "Join: CV-3 (9f3ef860) merged to main clean after the Security lens's loop 2 cleared the veto CLEAR-WITH-CONDITIONS (C1: the spike's (c) asserts zero MCP messages under strictMcpConfig and the proof artifact is written only after the oracle passes; C2: the spike's child env mirrors StartInfoFor - both harness-only, before run 3). settingSources: [] (Security's minimum-privilege suggestion) NOT adopted: the accepted spec (page one #4, A12.3, :462, :621) makes the constitution reach the compiler by harness load; the repository settings.json env surface is a finding for the Owner. DC-184..186 self-allocated by the node, sequence unbroken; CE- family to 0023. Recount App 882 / Core 2559 = 2389 + 170. agentic-advisory stays unreachable (CE-0016) until run 3.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/compile-call.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land CV-3 on main with the veto's disposition recorded, the floors recounted, and a Release build",
+      "done_when": "main pushed green through run-verify-gates; Release built; C1/C2 queued for the conductor before run 3",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M2E7YZ0MX84XWV0N3R6C5V3H",
+      "shortname": "pd-5-run-3-green-strict-mcp",
+      "datetime": "2026-09-13T20:39:55Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "keep going (PD-5 run 3 under Security's conditions)",
+      "summary": "PD-5 run 3 (frames/2026-09-13T20-36-02-970Z), the conductor on the operator's subscription: GREEN on the pin's letter with strictMcpConfig: true - 0 tool_call, 0 permission requests, 0 bytes at the fixture's MCP server (the .mcp.json server was never loaded: run 1's exposure closed on the wire), fixture and remote unchanged; three prompts end_turn, 6,176 output tokens. Gate-1 artifact published to ~/.aide/proof/ after the oracle (C1). Findings: tool-call XML as text (25 invoke blocks incl. a fabricated system-reminder and a fabricated memory - verified absent from the operator's memory dir) and a confabulated 'I called Read/Write/Bash' - the compile validator must read XML as malformed; the 4096 output cap is not a hard per-turn cap (4,608 observed). (f) re-pointed: XML-as-text is reported, not the pin's failure (C1 asserts the wire).",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/compile-pin-spike.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Close the pin's MCP exposure on the wire and publish gate 1's artifact under the conditions Security set",
+      "done_when": "run 3 GREEN with (c) at zero MCP messages; artifact under ~/.aide/proof/; frames committed; the proof's third-run section written",
+      "tier": "T1",
       "signals": {
         "verification_path": true,
         "verification_executed": true,

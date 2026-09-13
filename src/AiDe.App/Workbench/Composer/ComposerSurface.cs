@@ -62,6 +62,10 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     private readonly Dictionary<string, StructureLine> _structureLines = new(StringComparer.Ordinal);
     private readonly WrapPanel _decorationLine;
     private readonly TextBlock _settingsLine;
+    private readonly DockPanel _compileRow;
+    private readonly TextBlock _compileLine;
+    private readonly Button _prepareAgain;
+    private readonly Button _cancelPrepare;
     private readonly ComboBox _tierControl;
     private readonly ComboBox _classControl;
     private bool _renderingControls;
@@ -216,9 +220,30 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         AutomationProperties.SetName(_compiledDisclosure, "Compiled prompt");
         AutomationProperties.SetHelpText(_compiledDisclosure, "exactly the bytes that will be sent; no diff, no comments");
 
+        // THE COMPILE LINE (§A10.2, §A11): absent under mechanical-only with nothing supplied (E5);
+        // under an agentic rung it carries the `called` outcome's string in voice with its next-action
+        // control — Cancel while preparing, Prepare again when the last call did not succeed or the
+        // draft went stale.
+        _compileLine = new TextBlock { FontSize = 12, VerticalAlignment = VerticalAlignment.Center, TextWrapping = TextWrapping.Wrap };
+        _compileLine.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+        AutomationProperties.SetName(_compileLine, "Compile");
+        _prepareAgain = new Button { Content = "Prepare again", Padding = new Thickness(8, 2, 8, 2), MinHeight = 24, Margin = new Thickness(8, 0, 0, 0), Visibility = Visibility.Collapsed };
+        AutomationProperties.SetHelpText(_prepareAgain, "Ask the model again for the open structure lines.");
+        _prepareAgain.Click += (_, _) => Preparing = PrepareTurnAsync();
+        _cancelPrepare = new Button { Content = "Cancel", Padding = new Thickness(8, 2, 8, 2), MinHeight = 24, Margin = new Thickness(8, 0, 0, 0), Visibility = Visibility.Collapsed };
+        AutomationProperties.SetHelpText(_cancelPrepare, "Cancel — send without the model's lines.");
+        _cancelPrepare.Click += (_, _) => _gate.CancelPrepare();
+        _compileRow = new DockPanel { MinHeight = 24, LastChildFill = true, Visibility = Visibility.Collapsed };
+        DockPanel.SetDock(_cancelPrepare, Dock.Right);
+        DockPanel.SetDock(_prepareAgain, Dock.Right);
+        _compileRow.Children.Add(_cancelPrepare);
+        _compileRow.Children.Add(_prepareAgain);
+        _compileRow.Children.Add(_compileLine);
+
         _lines = new StackPanel { Margin = new Thickness(12, 6, 12, 0) };
         _lines.Children.Add(_structure);
         _lines.Children.Add(_decorationLine);
+        _lines.Children.Add(_compileRow);
         _lines.Children.Add(_settingsLine);
         _lines.Children.Add(_compiledDisclosure);
         DockPanel.SetDock(_lines, Dock.Bottom);
@@ -497,6 +522,21 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
         RenderCompiledView();
 
+        // UNDER AN AGENTIC RUNG A PROMPT COSTS TWO GESTURES (Ruling 67; §A10.1): the first prepares —
+        // opens the envelope, calls the bound model, enters Prepare — the second confirms. A gesture
+        // while preparing is ignored with its reason (Ruling 77: no Send-now).
+        if (_gate.IsAgenticRung && _gate.State != PrepareState.Prepared)
+        {
+            if (_gate.State == PrepareState.Preparing)
+            {
+                SetStatus(ComposerSendGate.PreparingReason, Urgency.Status);
+                return null;
+            }
+
+            Preparing = PrepareTurnAsync();
+            return null;
+        }
+
         var request = _gate.Send(_context, _draft, _template, out var refusal);
         if (request is null)
         {
@@ -521,6 +561,84 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             Urgency.Status);
         _hasSentBefore = true;
         return request;
+    }
+
+    /// <summary>The compile line's text as rendered, or null when the line is absent.</summary>
+    public string? CompileLine => _compileRow.Visibility == Visibility.Visible ? _compileLine.Text : null;
+
+    /// <summary>The preparing gesture in flight, or the last one — what a test drains and what the document may await.</summary>
+    public Task? Preparing { get; private set; }
+
+    /// <summary>The operator keeps a derived line through its own control (the test's route to the same click).</summary>
+    public void KeepStructureLine(string field)
+    {
+        if (_structureLines.TryGetValue(field, out var line))
+        {
+            line.Keep();
+        }
+    }
+
+    /// <summary>The Prepare state, as the gate holds it.</summary>
+    public PrepareState PrepareState => _gate.State;
+
+    /// <summary>Whether the <i>Prepare again</i> control is on the screen.</summary>
+    public bool PrepareAgainVisible => _prepareAgain.Visibility == Visibility.Visible;
+
+    /// <summary>Whether the <i>Cancel</i> control is on the screen.</summary>
+    public bool CancelVisible => _cancelPrepare.Visibility == Visibility.Visible;
+
+    /// <summary>
+    /// The preparing gesture: the envelope opened, the model called for the open lines, Prepare
+    /// entered with the compile line and its next-action control — every state with a reason string
+    /// in voice (§A11; US-D5).
+    /// </summary>
+    public async Task PrepareTurnAsync()
+    {
+        if (_context is null)
+        {
+            SetStatus("the composer is not wired to a session yet", Urgency.Assertive);
+            return;
+        }
+
+        ShowCompileLine("Preparing…", preparing: true);
+        SetStatus("Preparing… — the model is reading your draft", Urgency.Status);
+
+        var result = await _gate.PrepareAsync(_context, _draft, _template);
+
+        if (!result.Prepared)
+        {
+            ShowCompileLine(result.Message, preparing: false, degraded: true);
+            SetStatus(result.Message, Urgency.Assertive);
+            MarkInvalid(result.Errors is { Count: > 0 } errors ? new ComposerSendRefusal(errors, result.Message) : null);
+            return;
+        }
+
+        // THE MODEL'S LINES, MARKED derived — and under agentic-advisory a keep is the act that lets
+        // one project (§A11): the line's own control, never a page message.
+        foreach (var (field, line) in _structureLines)
+        {
+            if (_gate.DerivedLines.TryGetValue(field, out var proposed))
+            {
+                line.ShowDerived(proposed, _gate.LastCallOutcome == CallOutcomes.Suspect);
+            }
+        }
+
+        var degraded = _gate.LastCallOutcome is { } outcome && !CallOutcomes.Agentic.Contains(outcome, StringComparer.Ordinal);
+        ShowCompileLine(_gate.CompileLineText ?? string.Empty, preparing: false, degraded: degraded);
+        RenderCompiledView();
+        SetStatus(
+            degraded ? "prepared — " + (_gate.CompileLineText ?? string.Empty) + " — press again to send" : "prepared — press again to send",
+            Urgency.Status);
+    }
+
+    /// <summary>Shows the compile line with the control its state needs: Cancel while preparing, Prepare again when degraded or stale.</summary>
+    private void ShowCompileLine(string text, bool preparing, bool degraded = false)
+    {
+        _compileRow.Visibility = Visibility.Visible;
+        _compileLine.Text = text;
+        _cancelPrepare.Visibility = preparing ? Visibility.Visible : Visibility.Collapsed;
+        _prepareAgain.Visibility = !preparing && (degraded || _gate.State == PrepareState.Stale) ? Visibility.Visible : Visibility.Collapsed;
+        AutomationProperties.SetItemStatus(_compileLine, _gate.State.ToString().ToLowerInvariant());
     }
 
     /// <summary>
@@ -718,6 +836,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     public void BeginNextTurn()
     {
         _gate.NextBlock();
+        _compileRow.Visibility = Visibility.Collapsed;
         _draft.SetFreeFormText(string.Empty);
         foreach (var field in ComposerDraft.PerPromptGoalFields)
         {
@@ -795,6 +914,15 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
     private void RenderCompiledView()
     {
+        // STALE (§A11): the draft changed after Prepare — the live projections show, the compile
+        // line carries the mark, the next gesture re-prepares; a draft edited back is fresh again.
+        var before = _gate.State;
+        _gate.RefreshState(_draft);
+        if (_gate.State != before && _gate.State is PrepareState.Stale or PrepareState.Prepared)
+        {
+            ShowCompileLine(_gate.State == PrepareState.Stale ? "stale — your draft changed since it was prepared; press again to prepare it" : _gate.CompileLineText ?? string.Empty, preparing: false, degraded: _gate.State == PrepareState.Stale);
+        }
+
         var compiled = _gate.RenderView(_draft, _template);
         _compiled.Text = compiled.Text;
 
@@ -1013,6 +1141,12 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             var line = new StructureLine(field, StructureDeriver.Fake(field), text =>
             {
                 _draft.SetGoalValue(field, text);
+                // On a prepared envelope the edit is an `operator` row — the derived row stays in the fold (§A11).
+                _gate.EditLine(field, text);
+                RenderCompiledView();
+            }, () =>
+            {
+                _gate.KeepLine(field);
                 RenderCompiledView();
             });
             _structureLines[field] = line;
@@ -1571,11 +1705,18 @@ internal sealed class StructureLine
     private readonly TextBlock _mark;
     private readonly TextBlock _why;
     private readonly TextBlock _watermark;
+    private readonly Button _keep;
+    private readonly Action? _onKeep;
     private string? _invalid;
+    private string? _derived;
+    private bool _suspect;
+    private bool _kept;
+    private bool _showing;
 
-    public StructureLine(string field, string derived, Action<string> onChanged)
+    public StructureLine(string field, string derived, Action<string> onChanged, Action? onKeep = null)
     {
         Field = field;
+        _onKeep = onKeep;
         var label = new TextBlock { Text = LabelOf(field), FontSize = 12, Width = 96, VerticalAlignment = VerticalAlignment.Center };
         label.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
 
@@ -1593,10 +1734,21 @@ internal sealed class StructureLine
         AutomationProperties.SetName(_value, LabelOf(field));
         _value.TextChanged += (_, _) =>
         {
+            if (_showing)
+            {
+                return;
+            }
+
             _invalid = null;
+            _kept = false;
             onChanged(_value.Text);
             RenderMark();
         };
+
+        _keep = new Button { Content = "keep", Padding = new Thickness(6, 0, 6, 0), MinHeight = 22, Margin = new Thickness(6, 0, 0, 0), Visibility = Visibility.Collapsed };
+        AutomationProperties.SetName(_keep, "Keep " + LabelOf(field));
+        AutomationProperties.SetHelpText(_keep, "Keep the model's line as written.");
+        _keep.Click += (_, _) => Keep();
 
         _watermark = new TextBlock { Text = "fill in", FontSize = 13, IsHitTestVisible = false, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(4, 0, 0, 0) };
         _watermark.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
@@ -1613,9 +1765,11 @@ internal sealed class StructureLine
         Root = new DockPanel { MinHeight = 28, LastChildFill = true };
         DockPanel.SetDock(label, Dock.Left);
         DockPanel.SetDock(_why, Dock.Right);
+        DockPanel.SetDock(_keep, Dock.Right);
         DockPanel.SetDock(_mark, Dock.Right);
         Root.Children.Add(label);
         Root.Children.Add(_why);
+        Root.Children.Add(_keep);
         Root.Children.Add(_mark);
         Root.Children.Add(valueHost);
 
@@ -1640,12 +1794,54 @@ internal sealed class StructureLine
     public void Reset()
     {
         _invalid = null;
+        _derived = null;
+        _kept = false;
+        _suspect = false;
         _value.Text = string.Empty;
+        RenderMark();
     }
 
-    /// <summary>Shows the draft's value when it differs — the draft → line direction.</summary>
+    /// <summary>The keep control's act: an operator row with the derived value, the mark <i>kept</i>.</summary>
+    public void Keep()
+    {
+        if (_derived is null)
+        {
+            return;
+        }
+
+        _kept = true;
+        _onKeep?.Invoke();
+        RenderMark();
+    }
+
+    /// <summary>Shows the model's proposal with the <i>derived</i> mark (and <i>suspect</i> when the compile acted) — never an edit, never an operator row.</summary>
+    public void ShowDerived(string value, bool suspect)
+    {
+        _showing = true;
+        try
+        {
+            _derived = value;
+            _suspect = suspect;
+            _kept = false;
+            _invalid = null;
+            _value.Text = value;
+        }
+        finally
+        {
+            _showing = false;
+        }
+
+        RenderMark();
+    }
+
+    /// <summary>Shows the draft's value when it differs — the draft → line direction. A derived proposal on show with no draft value behind it stands (the draft holds the operator's lines, not the model's).</summary>
     public void Sync(string draftValue)
     {
+        if (draftValue.Length == 0 && _derived is not null && string.Equals(_value.Text, _derived, StringComparison.Ordinal))
+        {
+            return;
+        }
+
         if (!string.Equals(_value.Text, draftValue, StringComparison.Ordinal))
         {
             _value.Text = draftValue;
@@ -1666,12 +1862,16 @@ internal sealed class StructureLine
         }
         else
         {
-            _mark.Text = empty ? "— fill in" : "✓ edited";
+            _mark.Text = empty ? "— fill in"
+                : _kept ? "✓ kept"
+                : _derived is not null && string.Equals(_value.Text, _derived, StringComparison.Ordinal) ? (_suspect ? "? derived · suspect" : "? derived")
+                : "✓ edited";
             _why.Visibility = Visibility.Collapsed;
             AutomationProperties.SetHelpText(_value, string.Empty);
         }
 
-        AutomationProperties.SetItemStatus(_value, _mark.Text.TrimStart('—', '✓', '!', ' '));
+        _keep.Visibility = _mark.Text.StartsWith("? derived", StringComparison.Ordinal) ? Visibility.Visible : Visibility.Collapsed;
+        AutomationProperties.SetItemStatus(_value, _mark.Text.TrimStart('—', '✓', '!', '?', ' '));
     }
 
     private static string LabelOf(string field) => field switch

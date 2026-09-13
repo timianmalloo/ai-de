@@ -247,7 +247,12 @@ public static class ComposerCompiler
 
         var body = draft.Shape switch
         {
-            ComposerShape.FreeForm => draft.FreeFormText,
+            // A free-form draft whose fold confirmed a structure — the model's lines kept, under an
+            // agentic rung — renders the block it projected; with none, the text alone (byte-identical
+            // to before the compile step existed).
+            ComposerShape.FreeForm => block is not null
+                ? RenderGoalBlock(block) + RenderMessage(draft.FreeFormText)
+                : draft.FreeFormText,
 
             // A goal-block form compiles as its shape says (Ruling 75): a goal block renders the
             // six sections and then the message; a blank Goal or Done when makes a Message, whose

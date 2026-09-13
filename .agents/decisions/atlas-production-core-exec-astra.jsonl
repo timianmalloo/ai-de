@@ -1,0 +1,6 @@
+{"agent": "copilot-atlas-core-execution", "at": 1789328786.2711158, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Understanding/AtlasReaderContracts.cs", "session": "atlas-production-core-exec-astra", "wi": ""}
+{"agent": "copilot-atlas-core-execution", "at": 1789328786.2771242, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Understanding/AtlasReaderProjection.cs", "session": "atlas-production-core-exec-astra", "wi": ""}
+{"agent": "copilot-atlas-core-execution", "at": 1789328786.2831264, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasReaderWireTests.cs", "session": "atlas-production-core-exec-astra", "wi": ""}
+{"agent": "copilot-atlas-core-execution", "at": 1789331324.9356859, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Understanding/AtlasReaderContracts.cs", "session": "atlas-production-core-exec-astra", "wi": ""}
+{"agent": "copilot-atlas-core-execution", "at": 1789331324.9426844, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Understanding/AtlasReaderProjection.cs", "session": "atlas-production-core-exec-astra", "wi": ""}
+{"agent": "copilot-atlas-core-execution", "at": 1789331324.949685, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasReaderWireTests.cs", "session": "atlas-production-core-exec-astra", "wi": ""}
