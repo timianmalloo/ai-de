@@ -7,3 +7,8 @@
 {"agent": "copilot-atlas-inventory", "at": 1789250900.6327932, "kind": "release", "path": "src/AiDe.Core/Understanding/AtlasInventory.cs", "seq": 7, "session": "atlas-live-inventory-gpt55", "wi": "WI-0"}
 {"agent": "copilot-atlas-inventory", "at": 1789250900.684148, "kind": "release", "path": "tests/AiDe.Core.Tests/Understanding/AtlasDirectoryEnumeratorTests.cs", "seq": 8, "session": "atlas-live-inventory-gpt55", "wi": "WI-0"}
 {"agent": "copilot-atlas-inventory", "at": 1789250900.742718, "kind": "release", "path": "tests/AiDe.Core.Tests/Understanding/AtlasInventoryTests.cs", "seq": 9, "session": "atlas-live-inventory-gpt55", "wi": "WI-0"}
+{"agent": "copilot-atlas-inventory", "at": 1789251811.628602, "kind": "release", "path": "src/AiDe.Core/Understanding/AtlasDirectoryEnumerator.cs", "seq": 10, "session": "atlas-live-inventory-gpt55", "wi": "WI-0"}
+{"agent": "copilot-atlas-inventory", "at": 1789251811.6811218, "kind": "release", "path": "src/AiDe.Core/Understanding/AtlasInventory.cs", "seq": 11, "session": "atlas-live-inventory-gpt55", "wi": "WI-0"}
+{"agent": "copilot-atlas-inventory", "at": 1789251811.734119, "kind": "release", "path": "tests/AiDe.Core.Tests/Understanding/AtlasDirectoryEnumeratorTests.cs", "seq": 12, "session": "atlas-live-inventory-gpt55", "wi": "WI-0"}
+{"agent": "copilot-atlas-inventory", "at": 1789251811.7866375, "kind": "release", "path": "tests/AiDe.Core.Tests/Understanding/AtlasInventoryTests.cs", "seq": 13, "session": "atlas-live-inventory-gpt55", "wi": "WI-0"}
+{"agent": "copilot-atlas-inventory", "at": 1789252067.380207, "kind": "session-end", "path": "-", "seq": 14, "session": "atlas-live-inventory-gpt55", "wi": "WI-0", "worktree": "C:/Projects/ai-de-atlas-live-reader-inventory"}

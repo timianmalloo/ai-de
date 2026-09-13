@@ -1,6 +1,6 @@
 ---
 id: note-addendum-c-council-rulings
-title: "Decision note — Rulings 50–79: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
+title: "Decision note — Rulings 50–87: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
 type: doc
 status: accepted
 owner: "@timianmalloo"
@@ -1311,13 +1311,95 @@ converge.
 
 ---
 
-<!--
-X-3 (Shell lane, side/x3-shell-seams): Rulings 85 and 86 relayed by the conductor
-(conductor/addendum-c) and carried here verbatim so citations in this branch's own files
-(docs/lessons/defect-classes.md, docs/proof/shell-seams-x3.md) resolve to a real definition
-(verify-ruling-citations.py). Other numbered rulings from that same filing round exist on that branch too, addressed to
-other lanes; they are not reproduced here and are not relied on by this slice.
--->
+# Rulings 80–87 — the operator's first manual test after CV-2 (2026-09-13)
+
+## Provenance
+
+Issued by the **Owner** (`fable`) on the operator's five screenshot titles (`C:\Users\malla\Downloads\ui findings 9-13-am\`, described by the conductor — **not opened by the Owner**) and two of the conductor's own findings, at `main` `6d3e281a`. The operator's words are the decision; each ruling says how it lands. Sequencing: **87** (T0, first) → **84** (frees Coding's Left) → **83** → **81** → **82** → **80**; **85/86** any time. Not verified by the Owner: which surface hosted the `rev rev-1` status in the operator's layout; the runtime code page the ACP reader used.
+
+The operator's five findings, verbatim (the screenshot titles): *"need to fix text input area... should be a larger window size so that the default isnt scrolling"* · *"console output is too fine grained"* · *"the output should show the conversation and reasoning - just like in CLI - seems like it shows results and tool calls instead"* · *"new sessions should default into the left dock"* · *"the ledger-leaderboard-sessions-board views should be tied to a different left bar icon - coordination"*.
+
+---
+
+## Ruling 80 — the editor's rest height is derived from the thread's need: it fills the body at 0 turns and rests at 280 px once the thread has turns; `ComposerShare` is retired
+
+**RULING:** Operator: *"should be a larger window size so that the default isn't scrolling."* The composer's share of the session document is **computed, not a constant**. With **0 turns** the thread is its two-line empty caption (`DESIGN.md:1144`) and the editor takes the rest of the body — no scrollbar before typing. With **≥ 1 turn** the editor's **rest height is 280 px**; it scrolls only past that; the thread takes the remainder; the 130 px floor remains the floor under a small window.
+
+**BECAUSE:** Today `SessionDocumentSurface.ComposerShare = 0.45` (`:45`) sets `Composer.BeltHeight` (`:884`) regardless of what the thread holds, so an empty thread keeps ~55 % and the editor sits at `EditorFloor = 130` (`ComposerSurface.cs:231`). `DESIGN.md:1087` (*"the editor's top edge equal at 1, 5 and 40 turns"*) says nothing about 0 turns; `:1097` (*"≥ 130px, ≤ 280px then scrolls"*) named 280 as a ceiling reached only by growth — it becomes the rest size. Finding, not scope: `composer.html:35-36` says `min-height: 110px` while the host says 130 — two definitions of one floor (DM-A).
+
+**CONFIDENCE:** Verified (the constants, the belt, the DESIGN rows); the screenshots as described.
+
+**SCOPE EFFECT:** Amends `DESIGN.md:747` (*"≥ 45 % of the zone height"*) and `:1097`; retires `ComposerShare`; keeps CV-1's belt mechanism (DS-1 Q14) with a derived value. **Lane: Conversation** (`SessionDocumentSurface.cs`, `ComposerSurface.cs`, `composer.html`); the two `DESIGN.md` rows by seam request to the Shell lane.
+
+**CONDITIONS:** Red-first at the startup size: 0 turns → no vertical scrollbar, editor height = body − chrome − caption; 1 and 40 turns → equal top edge, editor 280. One floor constant, read by both the host and the page.
+
+**RECORD AS:** Ruling 80 — the editor fills the body at 0 turns and rests at 280 px with turns; `ComposerShare` retired, `DESIGN.md:747/:1097` amended; Conversation lane.
+
+---
+
+## Ruling 81 — the Console's row grain is the message, never the wire chunk; Ruling 74 condition 1 re-pointed to one `Coalesce` both views read
+
+**RULING:** Operator: *"console output is too fine grained."* One pure function, `Coalesce(turn.Events)`, folds consecutive `agent.msg` chunks (and `agent.thought`, Ruling 82) into **one row per message**, breaking at any other kind; a coalesced row carries the first chunk's timestamp, the lane, the joined text and *n chunks*. `tool.call`, `tool.result`, `permission.request` and `acp.*` rows stay one per event. **Ruling 74 condition 1 is amended:** *"the split's rows equal the folded events of every turn, in order"* → *"the split's rows equal `Coalesce(turn.Events)` of every turn, in order, and the thread's reply side renders the same `Coalesce` output."*
+
+**BECAUSE:** `ConsoleSurface.Derive` emits one `Line` per `EventLine` (`ConsoleSurface.cs:125-140`) while `RunChannelSessionThread.Append` already concatenates `agent.msg` into `Reply` (`:132-135`): the two views of one stream use two grains today. `ConsoleStreamModel.TextOf` states the rule — *one derivation, two readers* (`:254-258`, DM7). The raw chunks stay in the run channel: the mapper's *"nothing is dropped, ever"* (`AcpRunEventMapper.cs:22-25`) is untouched; *Open the log* reaches them.
+
+**CONFIDENCE:** Verified.
+
+**SCOPE EFFECT:** Ruling 74's identity oracle (M1) re-pointed, not dropped; SC1 stands (*"a view of the same stream … never a second store"*). **Lane: Conversation** (`ConsoleSurface.cs`, `RunChannelSessionThread.cs`, `SessionDocumentSurface.cs`).
+
+**CONDITIONS:** (1) M1 red-first: `Rows == heading + Coalesce(events)`. (2) A message interrupted by a tool call is two rows — the boundary is the interleaving. (3) The chunk count is rendered, never asserted.
+
+**RECORD AS:** Ruling 81 — Console rows are messages, not chunks; Ruling 74 condition 1 re-pointed to `Coalesce(turn.Events)`, one function read by thread and split; Conversation lane.
+
+---
+
+## Ruling 82 — "the conversation" is the reply side's items in event order: prose, reasoning, tool call+result, outcome; `agent_thought_chunk` becomes a mapper row; Ruling 74's one-fold rule holds and today's thread violates it
+
+**RULING:** Operator: *"the output should show the conversation and reasoning — just like in CLI — seems like it shows results and tool calls instead."* In ACP vocabulary the conversation per turn is, **interleaved in event order**: (1) assistant prose — `agent_message_chunk` → `agent.msg`, coalesced (Ruling 81), rendered as markdown, no link activation (`DESIGN.md:1116` stands); (2) reasoning — `agent_thought_chunk`, **today unrecognised** (falls to `acp.session.update.agent_thought_chunk` with an empty body, `AcpRunEventMapper.cs:35-40, :97`) → a new row `agent.thought`, coalesced, rendered dim and collapsible, never announced; (3) each `tool.call` with its `tool.result` as one inline item (title · status · detail on demand); (4) the outcome line. `acp.*` frames (`usage_update`, `available_commands_update`, `acp.result`) are **not** conversation — they are Console evidence; usage feeds Spend (Ruling 78).
+
+**BECAUSE:** The thread renders `Reply` as one plain-text blob plus *N events* collapsed (`RunChannelSessionThread.cs:276-295`; `DESIGN.md:1116-1117`) — two projections of the same events, which is exactly *"results and tool calls instead"*. Ruling 74's rule — one fold, rendered in the thread and unfolded in the Console — **holds**; the thread simply does not render the fold. The corpus has **no** thought chunk (`spikes/acp-subscription-lane/frames/PROVENANCE.md:101-104`), so the `agent.thought` row's shape is Inferred from the schema until a frame is captured.
+
+**CONFIDENCE:** Verified for the mapper and the thread; Inferred for the thought frame's shape.
+
+**SCOPE EFFECT:** Amends `DESIGN.md:1116-1117` (the reply side is the conversation; only non-conversation kinds fold). Adds one mapper row — *"adding a kind is adding a row"* — with the 88-frame round-trip kept green. **Lane: Conversation** (mapper row as its AgentPlane seam).
+
+**CONDITIONS:** (1) Capture a real `agent_thought_chunk` frame before the row lands (Spike Protocol). (2) Reasoning text is never spoken (SC9). (3) Ruling 87 lands first.
+
+**RECORD AS:** Ruling 82 — the conversation = prose · reasoning · tool call+result · outcome in event order; `agent.thought` mapper row; thread renders the fold inline, `acp.*` stays Console evidence; Conversation lane.
+
+---
+
+## Ruling 83 — a new session lands docked in Coding's Left zone; Ruling 47's maximize-on-create is superseded by the operator's own gesture
+
+**RULING:** Operator: *"new sessions should default into the left dock."* In Coding a **newly created** session document opens in the **Left** zone, **docked, not maximized**; reopen is unchanged. **Ruling 47's *"ratify maximize-on-create"* is superseded** — the operator's later gesture (moving the maximized document, refused) is the decision. `workbench.maximizePane` (Ctrl+K, Z) remains the on-demand whole-tree.
+
+**BECAUSE:** Ruling 47 filed the operator's earlier *"full window view"*; their newer words and act overrule it. `NewSessionPlacement.GiveItTheWholeTree` (`:57-58`) collapses every sibling zone, and the refusal they hit — `RefusedReconcileAnnouncement` (`WorkbenchShell.cs:1836-1846`) — fires precisely because *"a collapsed tool zone that still holds panes is not rendered, so it is absent from the view the reconcile reads"*: maximize-on-create made every subsequent drag refuse. Ruling 60's frozen default (*"Left = Terminal sessions, Bottom = one terminal, Center = empty state"*) is re-cut with Ruling 84: **Left = session documents (empty until one opens) · Center = empty state · Bottom = one terminal**; US-C6's caption falsifiers stand.
+
+**CONFIDENCE:** Verified (placement, the refusal path, `ZoneLayout.CodingDefault :193-206`); the screenshots as described.
+
+**SCOPE EFFECT:** Ruling 47 condition 1's oracle re-pointed: create → Left, `Maximized == null`; reopen unchanged. The `session-document` zone rule and `CodingDefault` change; `NewSessionPlacement` retires. Finding, not scope: the reconcile's blindness under a maximized stack stays a Shell-lane defect class. **Lane: Shell** (`ZoneLayout.cs`, `SurfaceContentFactory.cs`, `MainWindow.xaml.cs:287-294`; `NewSessionPlacement.cs` by seam with Conversation).
+
+**CONDITIONS:** (1) Coding's Left `DefaultExtent` fits the thread's 96ch measure (`DESIGN.md:1066`) at the startup size — measured. (2) Center's empty copy never reads *"No session open"* while one is open at Left.
+
+**RECORD AS:** Ruling 83 — a new session docks in Coding's Left zone, not maximized; Ruling 47 superseded, its oracle re-pointed; Coding default re-cut with Ruling 84; Shell lane.
+
+---
+
+## Ruling 84 — Coordination is a fourth Perspective (a docking host); the five Loomkeeper kinds move to it as a set; Coding stops admitting them
+
+**RULING:** Operator: *"the ledger-leaderboard-sessions-board views should be tied to a different left bar icon — coordination."* **Coordination is a fourth Perspective**, not a full-window surface: row `("coordination", "Coordination", 4, DockHost, "perspective.coordination")`, Ctrl+4, a rail icon D1 names, host C via `DockHost.Create`, slot file `<layout>.coordination.zones.json`, a derived menu by construction. Allow-list: `sessions`, `board`, `leaderboard`, `ledger`, `daydreams` — **as a set**; **Coding admits none of them.** Default (Inferred; D1 may re-arrange with the operator): Left = Terminal sessions · Center = Ledger · Leaderboard · Message board · Right empty · Bottom collapsed · Daydreams via menu.
+
+**BECAUSE:** Ruling 60's CONDITIONS said exactly this: *"Re-home the five as a set, in one ruling, if the operator names a fleet/observation use case (a UC5)."* The five are dock panes (`SurfaceContentFactory.cs:223-248`); a full-window composite would re-implement the zone layer for one body (ADR-0031's rejected alternative). ADR-0032 rule 1: *"A new host perspective is a new file, never a schema field"*; rule 2's drop-with-report on the pre-C Coding envelope is what removes the operator's centre tabs — reported, naming Coordination. AR3 is met: the item has content. Daydreams is the Owner's extension of the operator's four (same watcher; Ruling 60 binds the set).
+
+**CONFIDENCE:** Verified; the default arrangement Inferred.
+
+**SCOPE EFFECT:** Amends Ruling 50's closed set and Addendum C page one, §A7 (a fifth column), US-C1 (*"exactly three"* → four), §B4, §A7 *"Excluded by intent"*; ADR-0030 (+1 row), ADR-0031 (a third composition), ADR-0032 (a third file). Ruling 60 superseded for placement; Ruling 62's caption unchanged; Tests still reserved. **Lane: Shell — new slice SH-4.**
+
+**CONDITIONS:** US-C2 identity over four bodies; P-4's `private_bytes_delta` measured for host C; ADR-0032 test 1 extended with the five kinds dropped from Coding.
+
+**RECORD AS:** Ruling 84 — Coordination is a fourth perspective (host C, Ctrl+4, own slot); the five Loomkeeper kinds re-homed as a set, Coding stops admitting them; Ruling 50/60, C page one/§A7/US-C1/§B4, ADR-0030/31/32 amended; Shell lane SH-4.
+
+---
 
 ## Ruling 85 — `rev rev-1`: the product attaches a fixture revision; the status prints a recorded revision or nothing
 
@@ -1348,3 +1430,26 @@ other lanes; they are not reproduced here and are not relied on by this slice.
 **CONDITIONS:** The dwell never truncates the spoken announcement; `Status cleared.` behaviour unchanged.
 
 **RECORD AS:** Ruling 86 — status announcements clear on supersession or after a bounded dwell; the log is the record; Shell lane, T0.
+---
+
+## Ruling 87 — mojibake on the reply: the engine process's streams are UTF-8; fix first, red-first
+
+**RULING:** `AcpEngineProcess` sets `StandardInputEncoding`, `StandardOutputEncoding` and `StandardErrorEncoding` to UTF-8 (no BOM) at start; a red-first test round-trips a frame carrying `—` and `§` through the reader.
+
+**BECAUSE:** `â€"` and `Â§` are the UTF-8 bytes of `—` (E2 80 94) and `§` (C2 A7) decoded as a single-byte code page. `ProcessStartInfo` at `AcpEngineProcess.cs:116-124` redirects all three streams and sets **no encoding** (Verified absent); `Output => _process.StandardOutput` (`:76`) reads with the platform default — the console code page on Windows (**Inferred**: not run by the Owner; the symptom matches exactly). ACP is newline-delimited UTF-8 JSON. A defect, not a floor trip: no byte is lost, and nothing durable holds replies (`RunChannelSessionThread` — *"nothing durable"*), so there is nothing to migrate.
+
+**CONFIDENCE:** Verified for the absence; Inferred for the runtime code page.
+
+**SCOPE EFFECT:** T0, lands before Rulings 81/82. **Lane: Conversation** (`AcpEngineProcess.cs` is its file).
+
+**CONDITIONS:** The test fails on `main` before the change (record the red run). Register the class: *a redirected child stream read with the platform default encoding*.
+
+**RECORD AS:** Ruling 87 — engine process streams are UTF-8, red-first with `—`/`§`; class registered; Conversation lane, T0.
+
+---
+
+## Filing note (Rulings 80–87)
+
+- **Not ruled:** which `agent.thought` rendering the CLI's collapsed-thinking idiom maps to — D1's, within Ruling 82's bounds.
+- **Finding for the conductor:** `composer.html:35-36` (110 px) vs `ComposerSurface.EditorFloor` (130 px) — one floor, two definitions; folds into Ruling 80's slice.
+- **Finding for the Shell lane:** the reconcile refuses every drag while a stack is maximized (Ruling 83 BECAUSE); Ruling 83 removes the trigger, not the blindness.

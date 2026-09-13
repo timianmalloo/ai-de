@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 94 · partially-controlled 65 · uncontrolled 20
+**Status counts:** controlled 95 · partially-controlled 65 · uncontrolled 20
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -4531,8 +4531,11 @@ for both or split.*
   `FAIL rc=1 tools/verify-stranded-audit.py`, and the line went on to `git commit … && git push`
   because nothing chained on the count. Recurrence 2's control — "`&&`-chain every gate" — cannot
   reach a loop: a loop has no single status to chain on, and the conductor wrote one by hand at a
-  join for the third time. The red was transient (a peer tree's uncommitted log; green on re-run)
-  and `main`'s content was verified, but the shape pushed before it knew. **Control:**
+  join for the third time. The red was real and mis-read twice: `verify-stranded-audit` flags the
+  primary's *own* just-appended join entry — uncommitted audit lines — so a gate set run between
+  the append and the commit is red by construction, and "transient" was the wrong word for a
+  sequencing defect. The join order is now merge → recount → audit append → regenerate →
+  **commit** → `run-verify-gates.py` on the committed state → push only if green. **Control:**
   `tools/run-verify-gates.py` runs every `tools/verify-*.py` and exits 1 on any failure
   (`--self-test` proves a red gate is reported red), so the only join line is
   `python tools/run-verify-gates.py && git commit …` and no loop is written at a join again.
@@ -7339,6 +7342,28 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   the CLI verb stays as the headless path and its dispatch stays a seam request that no longer
   gates deletion. Rule for the next writer: the slice that opens a store on the normal path lands
   the operator-reachable delete in the same slice, in a file it owns, or does not open the store.
+- **Status:** `controlled`.
+
+### DC-177 — A redirected child's stream read with the platform default encoding renders every non-ASCII byte pair as mojibake, and nothing fails
+
+- **Shape:** `ProcessStartInfo` with `RedirectStandardOutput`/`RedirectStandardError`/`RedirectStandardInput`
+  and **no** `Standard*Encoding` reads and writes the child through the console code page on
+  Windows (CP437 in a test host, the OEM page under a terminal) while the child speaks UTF-8 — an
+  ACP adapter's JSON, git's paths and refs. Every multi-byte character arrives as its bytes decoded
+  one at a time (`—` → `â€"` or `ΓÇö`; `§` → `Â§` or `┬º`). No exception, no dropped byte, no log
+  line: the text is merely wrong, in a way that survives every equality test written in ASCII.
+- **Signature:** `â€"`, `Â§`, `ΓÇö`, `┬º` in a rendered reply, a branch name, a path; a JSON
+  payload whose string lengths grow by one per non-ASCII character; a round-trip test that passes
+  because its fixture is ASCII.
+- **Instance (Ruling 87, 2026-09-13):** the operator's reply in the session thread read
+  `The A1â€"A4 revert` and `Â§0 header`; `AcpEngineProcess.Start` set no encoding. Red-first:
+  `AcpEngineProcessStreamsAreUtf8Tests` reads `ΓÇö ┬º compile` for `— § compile` through the probe's
+  `--echo-utf8` (bytes written past the console layer, as a Node adapter writes).
+- **Sweep:** two redirected launches in the product — `AcpEngineProcess` (the instance) and
+  `ProcessRunner.Run` (git; the same absence). Both set UTF-8 without a BOM on every redirected
+  stream. The ConPTY path is a byte channel decoded by the terminal parser, not this class.
+- **Control:** the test above (red on `main` before the change, recorded); a launch with a
+  redirect and no encoding is the shape to refuse at review — named here for the next reader.
 - **Status:** `controlled`.
 
 ### DC-178 — A fixture-sized constructor default reaches the one real production call site because the real caller passes none

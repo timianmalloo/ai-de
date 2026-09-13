@@ -46,11 +46,16 @@ public sealed class ProcessRunner : IProcessRunner
         ArgumentException.ThrowIfNullOrWhiteSpace(fileName);
         ArgumentNullException.ThrowIfNull(arguments);
 
+        // UTF-8 on both streams (Ruling 87's class, DC-177): git writes paths and refs as UTF-8, and
+        // a reader left on the console code page turns a non-ASCII branch or path into mojibake.
+        var utf8 = new System.Text.UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
         var info = new ProcessStartInfo(fileName)
         {
             WorkingDirectory = workingDirectory,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
+            StandardOutputEncoding = utf8,
+            StandardErrorEncoding = utf8,
             UseShellExecute = false,
             CreateNoWindow = true,
         };

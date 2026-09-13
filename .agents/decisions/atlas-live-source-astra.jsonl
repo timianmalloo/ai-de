@@ -1,0 +1,4 @@
+{"agent": "copilot-atlas-source", "at": 1789254717.3797994, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Understanding/AtlasSource.cs", "session": "atlas-live-source-astra", "wi": ""}
+{"agent": "copilot-atlas-source", "at": 1789254717.384799, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasSourceTests.cs", "session": "atlas-live-source-astra", "wi": ""}
+{"agent": "copilot-atlas-source", "at": 1789256978.1079094, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Understanding/AtlasSource.cs", "session": "atlas-live-source-astra", "wi": ""}
+{"agent": "copilot-atlas-source", "at": 1789256978.1139085, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasSourceTests.cs", "session": "atlas-live-source-astra", "wi": ""}

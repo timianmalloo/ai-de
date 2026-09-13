@@ -5,13 +5,17 @@
 - Worktree: C:\Projects\ai-de-conductor-code-atlas
 - Branch: conductor/code-atlas
 - Status: active implementation under explicit Owner branch-local grant; integration remains separate
-- Updated: 2026-09-12
-- Doing: executing the admitted Windows source-safety probe and finishing the E0 candidate design.
-  Separate Astra Owner; GPT-5.5 specification/contracts workers and reviewers; Astra architecture
-  author. Every worker has its own worktree. Probe writer is in ai-de-atlas-e0-source-safety;
-  the candidate tree is ai-de-atlas-e0-candidate. Both were created at observed main 4d396411.
-- Resume artifacts: docs/coordination/code-atlas-resume.md and
-  docs/proof/code-atlas-documentation-checkpoint.md in the conductor worktree.
+- Updated: 2026-09-13
+- Doing: Owner accepted the detached reader's actual file/member/source/different-file/Back
+  journey on the clean AiDe.Core proof scope. Code/proof/capture checkpoint is 1e688ace;
+  272 Core and 45 native cases, real-root 23 PASS plus independent byte/span/image checks.
+  The programme is not complete. A separate Astra worker in ai-de-atlas-shared-host-compatibility
+  is reconciling current main and preparing the exact Architecture host admission packet.
+  Owner and Conductor retain scope, assignments, gates and joins. No existing host/IPC adapter
+  authoring is admitted yet; both native counterpart requests remain open.
+- Resume artifacts: docs/coordination/code-atlas.md,
+  docs/notes/atlas-owner/live-reader-horizon.md and
+  docs/proof/code-atlas-live-reader-candidate.md in the conductor worktree.
 - Worktrees: retained and resumed for the implementation programme; cleanup remains report-only.
 - To claude-conductor: primary main integration remains yours pending agreement. No product
   writes cross SH2/CV1/X1 ownership. New spec is draft only; current contract worker leaves
