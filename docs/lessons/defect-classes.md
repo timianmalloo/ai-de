@@ -6633,6 +6633,15 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 
 ### DC-150 — A shell's location and the runtime's current directory are two states, and a relative path is resolved against the one the operator is not looking at
 
+- **Recurrence (2026-09-13, Atlas compatibility base):** the Conductor passed `--base HEAD`
+  from its worktree to `coord worktree new`; the tool resolved that symbolic ref in the
+  primary checkout. The new tree started at `6d3e281a`, not intended `1e688ace`.
+  **Class/sweep:** caller-relative state crossed a tool-owned repository context; the worker's
+  immediate HEAD/spec/ancestry checks exposed it and recovered by merging the accepted Atlas
+  line into current main. No data was discarded. **Derive/prevent:** pass the explicit immutable
+  SHA obtained from the intended tree and compare the created tree's `rev-parse HEAD` against
+  it before dispatch. A successful creation message is not a base assertion. The existing
+  observed mismatch is the red condition; future creation recipes must fail on that mismatch.
 - **Shape:** an agent works in a worktree with `Set-Location <worktree>` and then calls a runtime
   file API with a *relative* path — `[System.IO.File]::ReadAllLines('docs/lessons/defect-classes.md')`.
   PowerShell's location is a PowerShell state; .NET's `[Environment]::CurrentDirectory` is the

@@ -19,10 +19,10 @@ summary: >-
 
 # Code Atlas coordination - isolated authoring active, integration not admitted
 
-**Current execution checkpoint:** Owner turn 32 accepts the independently proved detached
-reader at `cc67f7c6`, not integrated E0 or the programme. Current-main reconciliation and a
-concrete shared-host admission packet are next, with one separately registered Astra worker
-and twelve new leaves. The historical tables below
+**Current execution checkpoint:** the detached reader is accepted within scope. Compatibility
+commit `be3ace85` combines observed main `6d3e281a` and accepted Atlas `1e688ace`; the packet
+maps actual host/transport contracts and remaining production admission decisions. No existing
+adapter was authored. Security/Data review and the next Owner decision remain open. The historical tables below
 explain prior allocations; the **Active live-reader horizon** section is the current work plan.
 
 **Current delivery blocker:** `req-01M2B86TXF7SHG61B31P4H4173` is still open.
@@ -173,7 +173,7 @@ Atlas commits, reconciled only in the Conductor tree.
 | Detached runner | Reasoning | `a0ffcee3` joined `cc67f7c6`; actual synthetic 45 PASS, intended source mutation fails | 26/26 author leaves; two files frozen; author evidence remains distinct |
 | Independent native checkpoint | Independent review | Complete: real-root 23 PASS, six N/A; independent bytes/spans/image/intended-red/clean-after receipt | 15 initial leaves plus three evidence leaves and one bookkeeping leaf reported afterward; conservatively 19/21, not 18 by excluding bookkeeping |
 | Record and Owner close | Deterministic mechanics, then independent review | Owner turn 32 accepts only the detached horizon | Evidence and capture persist with pins; no shared-host or complete Code Atlas acceptance |
-| Current-main shared-host admission | Reasoning and deterministic mechanics | Separately registered Astra compatibility worker next | Twelve new leaves; exact adapter/owner/test/production-authority packet, compatibility build and one counterpart attempt; no existing adapter edits |
+| Current-main shared-host admission | Reasoning and deterministic mechanics | Local compatibility sealed `be3ace85`; packet prepared; 272 Core / 45 native compatible on unchanged inputs | Worker 24/24; one request `req-01M2CAXKH01J8SMQV1HBCCAN08` OPEN. Production lease/membership/async-IPC decisions require review; no existing adapters authored |
 
 Q's turn-20 correction returned after 10/12 newly funded leaves; N after 10/10. F's receipt
 reported 17 top-level calls and seven wrapper leaves against eight allocated leaves; that
@@ -181,9 +181,8 @@ ambiguity/overrun remains recorded, not relabelled a budget success. The six spe
 leaves did not include the additional Conductor readback/replay/join calls. The earlier total
 must not be interpreted as an all-inclusive orchestration cost.
 
-The next compatibility/admission node has an **Inferred** ceiling of twelve leaves,
-excluding separately recorded Conductor review/join/documentation mechanics; this is not a
-duration estimate. The earlier N -> runner -> independent nodes had real data and
+Compatibility/admission preparation used 24 worker leaves plus separately recorded Conductor
+mechanics. The next adapter scope has not yet been admitted. The earlier N -> runner -> independent nodes had real data and
 gate dependency, so widening cannot shorten that chain. Conductor documentation can proceed
 while the runner authors its two files. The existing width-four/no-worker-fan-out contract
 stands. Failure drains a named finding list; a fired budget returns to Owner, never silently

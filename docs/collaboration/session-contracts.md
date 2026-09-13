@@ -222,6 +222,14 @@ above. It must separate transport delivery, recipient acknowledgment and actual 
 If acknowledgment is absent after one supported attempt, return the packet to Owner for a
 bounded branch-local adapter decision; do not require human relay or repeatedly poll the log.
 
+Owner turn 33 adds **12 prospective leaves** to the same shared-host worker, 24 total, for
+contract completion and the local compatibility merge. First four: exact production authority/
+currentness, trusted membership and factory-to-host/query/IPC/disposal grounding. A demonstrated
+missing contract is a gap plus proposed seam, not a guessed signature. Conductor reviews final
+staged paths, conflicts and merge parents before commit. No second handoff or polling; preserve
+request `req-01M2CAXKH01J8SMQV1HBCCAN08` as OPEN. Existing adapter and primary/main authority
+remain ungranted. New worktree bases must be immutable SHAs with immediate HEAD readback.
+
 ### Core owns
 
 | Path | Why |

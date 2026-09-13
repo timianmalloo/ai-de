@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T02:43:34Z",
+  "generated": "2026-09-13T16:43:57Z",
   "audit": [
     {
       "actor": null,
@@ -15320,6 +15320,28 @@ window.AUDIT_DATA = {
       "fan_out": 4,
       "started_at": "2026-09-13T02:34:32Z",
       "duration_seconds": 542.0
+    },
+    {
+      "id": "al-01M2DTEVGX06VN19RH27ZJJBY6",
+      "shortname": "atlas-shared-host-compatibility-sealed",
+      "datetime": "2026-09-13T16:43:56Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Compatibility sealed locally be3ace85 exacttreeecdedfcc parents6d3e281a+1e688ace. Worker24/24; Conductorreviewed93paths/no-U/parents and272Core45Native receipts tiedto899unchangedpostruninputs. InheritedEOFblankbyteidenticalaccepted; notrewritten. Packetmethod/owner/testmanifest+onehandoffOPEN, noexistingadapterauthored. Wrong --baseHEAD toolcontext capturedDC150; futureimmutableSHA+readback. Productionauthority/membership/asyncIPC gates remain; directexistingNodeContentreadertrace prevents conflating Atlasreferenceabsence withnoexistingworkspace-readbasis or mandatoryConversationSession. Partialdesign/contract-grounding only, notimplementationclearance; durationnotrecordedforthiswholecheckpoint.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/code-atlas.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Reconcile accepted Atlas with observed current main and identify exact legitimate shared-host production seams.",
+      "done_when": "Compatibility commit and sourced admission packet are preserved for Owner and hard-gate decisions without existing-adapter authoring or inferred counterpart agreement.",
+      "tier": "T2",
+      "fan_out": 4
     }
   ],
   "changes": [

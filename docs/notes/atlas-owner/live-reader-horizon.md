@@ -529,3 +529,52 @@ If acknowledgment remains absent, the worker returns the concrete packet to Owne
 branch-local adapter-authoring decision. No human relay requirement or repeated pull-log polling.
 Sidebar, graph/tree pivot, class/sequence/domain, layered/Azure, comparison/decision lineage and
 governed AI remain unfinished. Addendum E remains candidate and its architecture proposed.
+
+## Compatibility packet completion, Owner turn 33
+
+The first twelve calls produced the packet pair and one supported request,
+`req-01M2CAXKH01J8SMQV1HBCCAN08`, still OPEN. The merged working state built successfully and
+executed 272 Core / 45 native tests. Production authority/membership signatures and the complete
+host method trace were still unestablished, and no compatibility commit had been made.
+
+The Conductor supplied `--base HEAD` to a tool that resolves Git references in the primary
+checkout. The tree therefore started at main `6d3e281a`, not the intended caller `1e688ace`.
+The worker measured that state and merged the accepted Atlas commit into it; no work was lost.
+The correction is explicit immutable base SHAs and immediate target HEAD comparison, never
+assuming the caller's symbolic HEAD survives the tool's working-directory choice.
+
+Owner adds twelve prospective calls, total 24, for the same two packet files: first four for
+targeted production/host contract grounding, then accurate packet, classified graph findings,
+legitimate regeneration and compatibility commit. Missing APIs must be demonstrated and proposed
+separately. No redundant test run is required if relevant inputs are proven unchanged. The
+Conductor checks final staged paths, no unresolved conflicts and intended parents before commit.
+No existing adapter edits, second handoff/polling, primary changes or consent inferred from silence.
+
+### Sealed compatibility result
+
+The worker used 24/24 leaves. The Conductor inspected the final 93-path set, empty conflict/
+unstaged sets and parents, then sealed local compatibility commit
+`be3ace852652557160228154716a7d499bd8bf76`, tree
+`ecdedfccc456eef33494666e4cb767ce2eb80182`, parents
+`6d3e281a049b8baf3696a90b341d3468635ef2f1` and
+`1e688ace6a9740ece7350f148f0e918d1ad6a6e1`.
+The 899-input identity manifest is explicitly post-run; no pre-run measurement was invented.
+The 272 Core / 45 native results apply to the unchanged merged code/build inputs.
+
+An EOF blank-line warning in `CSharpDeclarationObservation.cs` was observed by `diff --check`.
+The Conductor compared its staged blob with the accepted Atlas parent: both were
+`370a8be050370094a8103c05029d76107119903c`. It retained that inherited source rather than
+authoring an out-of-scope formatting change to silence the warning. The merge commit records it.
+
+The packet's verification attributions were corrected before sealing: the Conductor read the
+build/TRXs and request record; the Owner ruled on supplied results. The missing packet summary
+was fixed. The remaining graph finding is another owner's ruling-49 link to
+`proof-conductor-front-door`; it was not suppressed or repaired here.
+
+Production decisions remain open. The packet identifies source-scope lease/membership and
+awaitable IPC gaps. A subsequent Conductor reader trace also opened the existing production
+`NodeContent` route: IPC capability-gated query -> stored declaration/scope -> workspace-confined
+bounded file read -> `CoreNodeContentSource`. Absence of Atlas-specific names therefore does not
+mean absence of an existing workspace source-read basis. Security/Data are reviewing the least
+additional lease and the independent Code/Architecture context; Atlas `SessionToken` must not be
+silently reinterpreted as Conversation/DocumentSession.
