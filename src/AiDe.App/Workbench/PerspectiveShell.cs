@@ -14,8 +14,8 @@ public sealed record PerspectiveBodyFailure(Perspective Perspective, string Reas
 
 /// <summary>
 /// The shell-level presenter and command router (ADR-0017 as amended; ADR-0031 rule 2): owns the
-/// active <see cref="Perspective"/>, the three bodies — host A, host B and the full-window Explore
-/// surface — the one <i>previous-perspective</i> slot (US-C1), and the body-content swap that
+/// active <see cref="Perspective"/>, the four bodies — host A, host B, host C and the full-window
+/// Explore surface — the one <i>previous-perspective</i> slot (US-C1), and the body-content swap that
 /// realises a switch. Every catalog command enters through <see cref="Execute"/>, which resolves
 /// the host a body-conditional command reaches and delegates to that host's
 /// <see cref="WorkbenchController"/>.
@@ -63,7 +63,7 @@ public sealed class PerspectiveShell
     private (FrameworkElement Body, RoutedEventHandler Handler)? _pendingShown;
 
     /// <param name="body">The region the docking host occupies; its content is the active perspective's projection.</param>
-    /// <param name="hosts">One <see cref="DockHost"/> per host-bodied perspective (ADR-0031: host A and host B).</param>
+    /// <param name="hosts">One <see cref="DockHost"/> per host-bodied perspective (ADR-0031: host A and host B; Ruling 84: host C).</param>
     /// <param name="explorerFactory">Builds the full-window Explore surface, once, on first entry.</param>
     /// <param name="announcer">The one live region every switch, refusal and failure is announced through.</param>
     public PerspectiveShell(
@@ -286,7 +286,9 @@ public sealed class PerspectiveShell
     private bool RefuseWithoutHost(WorkbenchCommand row)
     {
         WorkbenchDiagnostics.ShellMode(Active, Active, row.Id, firstEntry: false, outcome: "refused", errorCode: NoHostCode);
-        _announcer.Announce($"{row.Title} needs a docking host; {Active.Title} has none. Switch to Coding or Architecture first.");
+        var hosts = PerspectiveSet.All.Where(p => p.Body == PerspectiveBody.DockHost).Select(p => p.Title).ToList();
+        var named = hosts.Count > 1 ? $"{string.Join(", ", hosts[..^1])} or {hosts[^1]}" : hosts[0];
+        _announcer.Announce($"{row.Title} needs a docking host; {Active.Title} has none. Switch to {named} first.");
         return true;
     }
 

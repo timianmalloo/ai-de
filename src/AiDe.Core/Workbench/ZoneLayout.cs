@@ -163,41 +163,53 @@ public sealed record WorkbenchLayout(
     }
 
     /// <summary>
-    /// The per-perspective default (Addendum C §B4; Rulings 54/59/60/61) — each docking host's OWN
+    /// The per-perspective default (Addendum C §B4; Rulings 54/59/60/61/84) — each docking host's OWN
     /// table, never the combined seed <see cref="Default()"/> filtered down (the trap
     /// <c>ZoneBackedLayoutService</c> named: filtering one shared seed re-points "Domain" at the
     /// Evidence list and stacks Explore/Provenance/Contexts/Joins into one Left tab strip).
     /// </summary>
     /// <remarks>
-    /// Only Coding and Architecture have a docking host (<see cref="PerspectiveBody.DockHost"/>);
+    /// Coding, Architecture and Coordination have a docking host (<see cref="PerspectiveBody.DockHost"/>);
     /// Explore's full-window body has no zone layout and no caller ever asks this for it
     /// (<c>DockHost.Create</c> refuses a non-host perspective first) — so anything other than
-    /// Architecture falls back to Coding's table, which is the only other member of the closed set
-    /// this method is ever actually asked for.
+    /// Architecture or Coordination falls back to Coding's table, which is the only other member of
+    /// the closed set this method is ever actually asked for.
     /// </remarks>
     public static WorkbenchLayout Default(Perspective perspective)
     {
         ArgumentNullException.ThrowIfNull(perspective);
 
-        return string.Equals(perspective.Id, "architecture", StringComparison.Ordinal)
-            ? ArchitectureDefault()
-            : CodingDefault();
+        return perspective.Id switch
+        {
+            "architecture" => ArchitectureDefault(),
+            "coordination" => CoordinationDefault(),
+            _ => CodingDefault(),
+        };
     }
 
     /// <summary>
-    /// Coding's default (Ruling 60; US-C6): the session's own empty state in the Center — never a
-    /// fleet-view tab strip beside a session (Ruling 55d) — the watcher's live Terminal sessions list
-    /// alone in the Left, one terminal in the Bottom. No Explore/Domain/Provenance/Graph/Contexts/
-    /// Joins caption anywhere in this host (US-C6's falsifier).
+    /// Coding's default (Ruling 60 as re-cut by Rulings 83–84; US-C6): the session's own empty state
+    /// in the Center — never a fleet-view tab strip beside a session (Ruling 55d) — the Left empty
+    /// (Ruling 84 moved Terminal sessions to Coordination; Ruling 83 makes the Left the session
+    /// document's zone, empty until one opens — an empty <see cref="ZoneStack"/> is not
+    /// constructible, so the zone's content is null and it renders as its collapsed rail), one
+    /// terminal in the Bottom. No Loomkeeper caption and no Explore/Domain/Provenance/Graph/
+    /// Contexts/Joins caption anywhere in this host (US-C6's falsifier).
     /// </summary>
+    /// <remarks>
+    /// The Bottom and the Center are as Ruling 60 left them; whether the Bottom starts collapsed is
+    /// the Owner's open question (SH-4.2, the review's density question). Only the Left changed
+    /// here, because Ruling 84 forces it: a default that seeds a kind its own host refuses is a
+    /// drop at construction, which <c>TheArchitectureAndCodingDefaults_SeedCleanly_WithNoDrops</c>
+    /// pins as a defect.
+    /// </remarks>
     private static WorkbenchLayout CodingDefault()
     {
-        var left = new ZoneStack([new Surface("sessions", "sessions", "Terminal sessions")]);
         var bottom = new ZoneStack([new Surface("terminal-1", "terminal", "Terminal — pwsh")]);
 
         var zones = ImmutableDictionary.CreateRange(new[]
         {
-            KeyValuePair.Create(ZoneId.Left, new ZoneState(ZoneId.Left, left, ZoneState.DefaultExtent, Collapsed: false)),
+            KeyValuePair.Create(ZoneId.Left, new ZoneState(ZoneId.Left, Content: null, ZoneState.DefaultExtent, Collapsed: false)),
             KeyValuePair.Create(ZoneId.Right, new ZoneState(ZoneId.Right, Content: null, ZoneState.DefaultExtent, Collapsed: false)),
             KeyValuePair.Create(ZoneId.Bottom, new ZoneState(ZoneId.Bottom, bottom, 0.30, Collapsed: false)),
             // The Center holds no surface: the session's own empty state answers "No session open",
@@ -238,6 +250,35 @@ public sealed record WorkbenchLayout(
             KeyValuePair.Create(ZoneId.Left, new ZoneState(ZoneId.Left, left, ZoneState.DefaultExtent, Collapsed: false)),
             KeyValuePair.Create(ZoneId.Right, new ZoneState(ZoneId.Right, right, ZoneState.DefaultExtent, Collapsed: false)),
             // (empty, collapsed) per §B4: Diagnostics is a Show entry, not a default.
+            KeyValuePair.Create(ZoneId.Bottom, new ZoneState(ZoneId.Bottom, Content: null, ZoneState.DefaultExtent, Collapsed: true)),
+            KeyValuePair.Create(ZoneId.Center, new ZoneState(ZoneId.Center, center, Extent: 1.0, Collapsed: false)),
+        });
+
+        return new WorkbenchLayout(zones, [], Maximized: null);
+    }
+
+    /// <summary>
+    /// Coordination's default (Ruling 84; §B4's third table — the Owner's arrangement, Inferred until
+    /// the operator runs it): the watcher's Terminal sessions list alone in the Left (the master list;
+    /// the switch lands here), Ledger · Leaderboard · Message board as three Center tabs — Ledger
+    /// first, its rows are the widest — the Right empty, the Bottom empty and collapsed. Daydreams is
+    /// admitted and reachable from the View menu, not in the default. Nothing on this bench takes
+    /// typed input: no terminal, no session document, no prompt draft (none is admitted).
+    /// </summary>
+    private static WorkbenchLayout CoordinationDefault()
+    {
+        var left = new ZoneStack([new Surface("sessions", "sessions", "Terminal sessions")]);
+        var center = new ZoneStack(
+        [
+            new Surface("ledger", "ledger", "Ledger"),
+            new Surface("leaderboard", "leaderboard", "Leaderboard"),
+            new Surface("board", "board", "Message board"),
+        ]);
+
+        var zones = ImmutableDictionary.CreateRange(new[]
+        {
+            KeyValuePair.Create(ZoneId.Left, new ZoneState(ZoneId.Left, left, ZoneState.DefaultExtent, Collapsed: false)),
+            KeyValuePair.Create(ZoneId.Right, new ZoneState(ZoneId.Right, Content: null, ZoneState.DefaultExtent, Collapsed: false)),
             KeyValuePair.Create(ZoneId.Bottom, new ZoneState(ZoneId.Bottom, Content: null, ZoneState.DefaultExtent, Collapsed: true)),
             KeyValuePair.Create(ZoneId.Center, new ZoneState(ZoneId.Center, center, Extent: 1.0, Collapsed: false)),
         });

@@ -144,6 +144,73 @@ public sealed class MainMenuTests
         }
     });
 
+    // ADR-0030 test 3 as amended by Ruling 84 — the mutation test, through the REAL builder: the
+    // Loomkeeper entries are in Coordination's View menu and nowhere else. Coordination's View lists
+    // the five Show entries in the kind rows' order and the ledger verb (`watcher.raiseDispute`,
+    // scoped `Admits("leaderboard")`, so it follows the leaderboard by construction); Coding's View
+    // lists none of the six and keeps its own derived group; Coordination has no Prompt menu (a host
+    // without the composer — spec §B3 rule 3). Then the mutation: a test-time kind row admitted only
+    // by Coordination is rendered in Coordination's menu and in no other, with no edit to the
+    // builder. RED before the allow-lists moved: Coding's View listed all six, Coordination's none.
+    [Fact]
+    public void CoordinationsViewMenu_ListsTheFiveShowEntriesAndTheDisputeVerb_AndCodingsListsNeither() => OnSta(() =>
+    {
+        var coordination = PerspectiveSet.All.Single(p => p.Id == "coordination");
+        string[] loomkeeper = ["Show terminal sessions", "Show message board", "Show leaderboard", "Show ledger", "Show daydreams"];
+        const string dispute = "Raise score dispute on the latest scored episode";
+
+        var (menu, _) = Build(coordination);
+        var headers = menu.Items.OfType<MenuItem>().Select(m => m.Header?.ToString()).ToList();
+        Assert.Equal(["_File", "_Edit", "_View", "_Window", "_Help"], headers);
+
+        var view = ViewTitles(menu);
+        Assert.Equal(loomkeeper, view.Where(loomkeeper.Contains).ToList());          // all five, in row order
+        Assert.Contains(dispute, view);
+        Assert.True(view.IndexOf(dispute) < view.IndexOf(loomkeeper[0]), "the catalog verb precedes the derived group (PS-M2)");
+
+        var (coding, _) = Build(PerspectiveSet.Coding);
+        var codingView = ViewTitles(coding);
+        Assert.DoesNotContain(codingView, loomkeeper.Contains);
+        Assert.DoesNotContain(dispute, codingView);
+        Assert.Equal(["New search", "New code viewer", "Show diagnostics"], codingView.Where(t => t.StartsWith("New ", StringComparison.Ordinal) || t.StartsWith("Show ", StringComparison.Ordinal)).ToList());
+
+        foreach (var other in new[] { PerspectiveSet.Explore, PerspectiveSet.Architecture })
+        {
+            var (menuOfOther, _) = Build(other);
+            Assert.DoesNotContain(ViewTitles(menuOfOther), loomkeeper.Contains);
+            Assert.DoesNotContain(dispute, ViewTitles(menuOfOther));
+        }
+
+        // The mutation: one appended row, admitted by Coordination only.
+        var mutant = new SurfaceContentFactory.SurfaceKind(
+            "fleet-mutant", "Fleet mutant", "A test-time kind admitted by Coordination alone.",
+            static (_, _) => new System.Windows.Controls.Border(),
+            Perspectives: [coordination], SurfaceContentFactory.Instances.One, new SurfaceContentFactory.SurfaceEntry.Derived("_View"));
+        var kinds = SurfaceContentFactory.Kinds.Append(mutant).ToList();
+
+        foreach (var perspective in PerspectiveSet.All)
+        {
+            var announcer = new RecordingAnnouncer();
+            var controller = new WorkbenchController(new ZoneBackedLayoutService(), announcer);
+            var rendered = new Menu();
+            MainMenuBuilder.Build(rendered, controller, PerspectiveMenu.For(perspective, kinds, WorkbenchCommandCatalog.All));
+            var titles = ViewTitles(rendered);
+
+            if (perspective == coordination)
+            {
+                Assert.Contains("Show fleet mutant", titles);
+            }
+            else
+            {
+                Assert.DoesNotContain("Show fleet mutant", titles);
+            }
+        }
+
+        static List<string> ViewTitles(Menu m) =>
+            m.Items.OfType<MenuItem>().First(top => Equals(top.Header, "_View")).Items.OfType<MenuItem>()
+                .Select(i => i.Header?.ToString() ?? string.Empty).ToList();
+    });
+
     [Fact]
     public void RecentWorkspacesArePersistedNewestFirst_AndDeduplicated()
     {

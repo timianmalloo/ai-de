@@ -282,15 +282,26 @@ public sealed class LayoutPersistence : IDisposable
             ? $"1 pane from your saved layout isn't available in {Perspective.Title} — {list}."
             : $"{report.Dropped.Count} panes from your saved layout aren't available in {Perspective.Title} — {list}.";
 
-        var admitting = report.Dropped
+        // Where the dropped panes live, by the perspective that admits them, with its bound gesture
+        // (DESIGN.md's drop-with-report form after Ruling 84: a pre-C Coding envelope names
+        // Coordination for the Loomkeeper kinds, Architecture for the graph kinds). One admitting
+        // perspective is the common case and reads as one sentence; two or more name their panes
+        // each, so the operator learns which gesture reaches which pane. A drop no perspective
+        // admits (a duplicate one-instance kind) is in the list above and in no group.
+        var groups = report.Dropped
             .Where(d => d.AdmittedBy is not null)
-            .Select(d => d.AdmittedBy!.Title)
-            .Distinct(StringComparer.Ordinal)
+            .GroupBy(d => d.AdmittedBy!)
             .ToList();
 
-        return admitting.Count == 0
-            ? head
-            : $"{head} {string.Join(" and ", admitting)} admits them; open them from its View menu.";
+        static string Home(Perspective perspective) => $"{perspective.Title} ({perspective.Gesture})";
+
+        return groups.Count switch
+        {
+            0 => head,
+            1 when groups[0].Count() == 1 => $"{head} It lives in {Home(groups[0].Key)}; open it from its View menu.",
+            1 => $"{head} They live in {Home(groups[0].Key)}; open them from its View menu.",
+            _ => $"{head} {string.Join("; ", groups.Select(g => $"{string.Join(", ", g.Select(Caption))} live in {Home(g.Key)}"))}. Open them from the View menu there.",
+        };
     }
 
     public void Dispose()

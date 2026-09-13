@@ -50,11 +50,12 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
 
         // NON-VACUITY: the replay reached the operator's arrangement (the probe exits 33 otherwise),
         // the prior document rendered unconfigured as the log shows, and the new one loaded.
-        // The operator's pre-perspective file drops its six Architecture surfaces into the report
-        // when read into the Coding slot (ADR-0032 rule 2): graph, domain, explore, provenance,
-        // contexts, joins — and the count is on the line, not inferred from the shape.
+        // The operator's pre-perspective file drops its six Architecture surfaces — graph, domain,
+        // explore, provenance, contexts, joins — and, since Ruling 84, its four Loomkeeper surfaces
+        // — sessions, ledger, leaderboard, board — into the report when read into the Coding slot
+        // (ADR-0032 rule 2); the count is on the line, not inferred from the shape.
         Assert.Contains("restore (22:33:53Z replay): applied-saved=True", stdout, StringComparison.Ordinal);
-        Assert.Contains(" dropped=6 zones=", Line(stdout, "restore (22:33:53Z replay):"), StringComparison.Ordinal);
+        Assert.Contains(" dropped=10 zones=", Line(stdout, "restore (22:33:53Z replay):"), StringComparison.Ordinal);
         Assert.Contains("prior document (22:33:28Z replay): announced=", stdout, StringComparison.Ordinal);
         Assert.Contains(" configured=0 init-pushed=0 layout-lines=1 status='repositoryRoot:", stdout, StringComparison.Ordinal);
         AssertShown(stdout, "after New Session:");

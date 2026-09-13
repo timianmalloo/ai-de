@@ -81,12 +81,14 @@ public sealed class WorkbenchDragCompletedHookTests
     /// </summary>
     [Theory]
     [InlineData("architecture", "evidence", "graph", ZoneId.Left, ZoneId.Center)]
-    [InlineData("coding", "sessions", "terminal-1", ZoneId.Left, ZoneId.Bottom)]
+    [InlineData("coordination", "sessions", "ledger", ZoneId.Left, ZoneId.Center)]
     public void ANativeDrag_ReachesTheModelImmediately_WithoutWaitingForAnUnrelatedCommand(
         string perspective, string dragged, string onto, ZoneId expectedBefore, ZoneId expectedAfter)
     {
-        // Both hosts: the hook is wired per host (ADR-0031), so INV-0006 F1 is proven for host A
-        // (the original) and host B alike, each with a pair its own allow-list admits.
+        // Two of the three hosts: the hook is wired per host (ADR-0031), so INV-0006 F1 is proven
+        // for host B and host C alike, each with a pair its own allow-list admits. Host A's default
+        // holds one surface since Rulings 83–84 (a terminal; the Left is empty until a session
+        // opens), so it has no pair to drag; its hook is the same line as the others'.
         var (zoneBefore, zoneAfter) = WithRealizedWorkbench(h =>
         {
             var host = h.Shell.Hosts.Single(x => x.Row.Id == perspective);

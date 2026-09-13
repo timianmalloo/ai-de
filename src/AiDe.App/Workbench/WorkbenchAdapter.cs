@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
 using AiDe.Core.Dispatch;
 using AiDe.Core.Workbench;
 using AvalonDock;
@@ -381,7 +382,9 @@ public sealed class WorkbenchAdapter
 
     // Re-activates the surface that was active before the layout was replaced, so focus stays where
     // the user had it rather than snapping to the first document. A surface that no longer exists
-    // (it was the one just closed) is ignored — RestoreSelection already surfaces the surviving tab.
+    // — the one just closed, or every pre-render surface after a whole-arrangement restore or reset
+    // — hands the activation to the Center's active tab, the document region the operator works
+    // from; RestoreSelection has already surfaced every stack's surviving tab.
     private void RestoreActive(string? surfaceId)
     {
         if (surfaceId is null || Manager.Layout is not { } root)
@@ -389,17 +392,60 @@ public sealed class WorkbenchAdapter
             return;
         }
 
+        var stack = _service.Current.FindStackOf(surfaceId);
+        if (stack is null)
+        {
+            // The pre-render surface is gone from the model — a whole-arrangement restore or reset,
+            // or the active pane closed. Left to AvalonDock, which content ends up active depends
+            // on the ORDER its pane controls realize: each LayoutDocumentPaneControl marks its
+            // selected content active from its own SelectionChanged as its template applies, so
+            // the last pane to realize wins. Measured (SH-4.1, docs/proof/coordination-perspective.md):
+            // a workspace-open restore into a Coding host whose Left zone is empty left the Bottom
+            // terminal active over the Center's restored session document, where the same restore
+            // with an occupied Left had left the document active. The model's own answer is the
+            // Center's active tab — the document region the operator works from — so it is stated
+            // now, and stated AGAIN once the pane controls have realized (Loaded priority runs
+            // after the layout pass that realizes them), still guarded by the model so a surface
+            // the operator activated in between is never clobbered.
+            var center = _service.Current.AllStacks()
+                .FirstOrDefault(st => string.Equals(st.Id, ZonesToTree.CenterStackId, StringComparison.Ordinal));
+            if (center is { Surfaces.Count: > 0 })
+            {
+                var intended = center.Active.SurfaceId;
+                Activate(root, intended);
+                Manager.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () =>
+                {
+                    if (!ReferenceEquals(Manager.Layout, root))
+                    {
+                        return;   // a later render replaced the tree; its own RestoreActive decided
+                    }
+
+                    var now = _service.Current.AllStacks()
+                        .FirstOrDefault(st => string.Equals(st.Id, ZonesToTree.CenterStackId, StringComparison.Ordinal));
+                    if (now is { Surfaces.Count: > 0 } && string.Equals(now.Active.SurfaceId, intended, StringComparison.Ordinal))
+                    {
+                        Activate(root, intended);
+                    }
+                });
+            }
+
+            return;
+        }
+
         // Only re-focus the pre-render surface when the MODEL still considers it the active tab of its
         // stack. When the model changed the active tab (the user activated another surface), that
         // change wins — RestoreSelection has already applied it — and re-activating the stale one here
         // would clobber it back (the "activate did nothing" desync).
-        var stack = _service.Current.FindStackOf(surfaceId);
-        if (stack is null || stack.Surfaces.Count == 0
-            || !string.Equals(stack.Active.SurfaceId, surfaceId, StringComparison.Ordinal))
+        if (stack.Surfaces.Count == 0 || !string.Equals(stack.Active.SurfaceId, surfaceId, StringComparison.Ordinal))
         {
             return;
         }
 
+        Activate(root, surfaceId);
+    }
+
+    private static void Activate(LayoutRoot root, string surfaceId)
+    {
         var doc = root.Descendents().OfType<LayoutDocument>()
             .FirstOrDefault(d => string.Equals(d.ContentId, surfaceId, StringComparison.Ordinal));
         if (doc is not null)

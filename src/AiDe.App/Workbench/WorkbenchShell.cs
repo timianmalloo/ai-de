@@ -29,7 +29,7 @@ namespace AiDe.App.Workbench;
 /// of it. A capability nobody can open is not delivered.</para>
 ///
 /// <para><b>Two hosts, one of each shared thing (ADR-0031).</b> Host A (<see cref="Coding"/>) is
-/// today's instances, unchanged in mechanism; host B (<see cref="Architecture"/>) is the same
+/// today's instances, unchanged in mechanism; host B (<see cref="Architecture"/>) and host C (<see cref="Coordination"/>, Ruling 84) are the same
 /// <see cref="DockHost"/> unit composed a second time. Each host owns its service, manager, adapter,
 /// controller, rails and persistence slot; the shell owns both units and every workspace-level
 /// member — the factory, the session documents, the watcher, dispatch, the canvas binding. A pane
@@ -175,7 +175,8 @@ public sealed class WorkbenchShell : IDisposable
         // has launched looks like a failure to launch.
         Coding = DockHost.Create(PerspectiveSet.Coding, surface => _factory.Create(surface), Announcer, ExpandZone);
         Architecture = DockHost.Create(PerspectiveSet.Architecture, surface => _factory.Create(surface), Announcer, ExpandZone);
-        Hosts = [Coding, Architecture];
+        Coordination = DockHost.Create(PerspectiveSet.Coordination, surface => _factory.Create(surface), Announcer, ExpandZone);
+        Hosts = [Coding, Architecture, Coordination];
 
         foreach (var host in Hosts)
         {
@@ -369,7 +370,10 @@ public sealed class WorkbenchShell : IDisposable
     /// <summary>Host B — Architecture: the same unit composed a second time, over its own allow-list and slot.</summary>
     public DockHost Architecture { get; }
 
-    /// <summary>Both hosts, in rail order.</summary>
+    /// <summary>Host C — Coordination (Ruling 84): the same unit composed a third time, over the Loomkeeper kinds' allow-list and its own slot.</summary>
+    public DockHost Coordination { get; }
+
+    /// <summary>Every host, in rail order.</summary>
     public IReadOnlyList<DockHost> Hosts { get; }
 
     /// <summary>The host whose model holds <paramref name="surfaceId"/>, or null when no host does.</summary>
@@ -425,9 +429,15 @@ public sealed class WorkbenchShell : IDisposable
         Controller.Bind(host, Execute);
         host.PreviewKeyDown += (_, e) =>
         {
-            if (Architecture.Controller.HandleResizeKey(e.Key))
+            // Host A's controller handles its own resize session inside Bind; every other host's
+            // controller is asked here, so a keyboard resize begun in host B or C receives its keys.
+            foreach (var other in Hosts.Where(h => !ReferenceEquals(h, Coding)))
             {
-                e.Handled = true;
+                if (other.Controller.HandleResizeKey(e.Key))
+                {
+                    e.Handled = true;
+                    return;
+                }
             }
         };
 
