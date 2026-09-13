@@ -191,7 +191,7 @@ public sealed class TheThreadAnnouncesAndExposesRealPropertiesTests
                         var name = AutomationProperties.GetName(expander);
                         Assert.True(
                             name.EndsWith("of " + ordinal, StringComparison.Ordinal) || name.EndsWith("events", StringComparison.Ordinal) || name.EndsWith("event", StringComparison.Ordinal)
-                            || name == ThreadFeed.ThinkingWord || name.StartsWith("Detail of ", StringComparison.Ordinal),   // the conversation's items (Ruling 82; DESIGN.md's copy)
+                            || name == ThreadFeed.ThinkingWord || (name.StartsWith("Detail of ", StringComparison.Ordinal) && name.Length > "Detail of ".Length),   // the conversation's items (Ruling 82; DESIGN.md's copy)
                             $"{label}: a disclosure named '{name}'");
                         Assert.False(expander.Focusable);
                     }

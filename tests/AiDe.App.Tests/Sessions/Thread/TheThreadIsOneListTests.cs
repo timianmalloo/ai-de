@@ -201,7 +201,7 @@ public sealed class TheThreadIsOneListTests
                 var rows = conversation.Items.Cast<ConversationRow>().ToList();
 
                 Assert.Equal(["Reading the tracker.", "read docs/tracker.md", "Three merges are missing."], rows.Select(r => r.IsTool ? r.Title : r.Text));
-                Assert.Equal([true, false, true], rows.Select(r => r.IsProse));
+                Assert.Equal([true, false, true], rows.Select(r => r.Item is ConversationItem.Prose));
                 Assert.Equal(
                     ["Reading the tracker.", "Three merges are missing."],
                     ThreadFixtures.Visuals<ProseView>(conversation).Select(p => string.Concat(ThreadFixtures.Visuals<ThreadText>(p).Select(t => new System.Windows.Documents.TextRange(t.ContentStart, t.ContentEnd).Text))));

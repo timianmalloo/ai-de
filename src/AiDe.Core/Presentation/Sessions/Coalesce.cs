@@ -39,8 +39,9 @@ public static class Coalesce
         for (var start = 0; start < events.Count;)
         {
             var first = events[start];
+            var folds = Folds(first.Kind);
             var end = start + 1;
-            if (Folds(first.Kind))
+            if (folds)
             {
                 while (end < events.Count && Continues(first, events[end]))
                 {
@@ -49,7 +50,7 @@ public static class Coalesce
             }
 
             var text = end - start == 1 ? first.Text : string.Concat(events.Skip(start).Take(end - start).Select(e => e.Text));
-            rows.Add(new TurnRow(first.At, first.Lane, first.Kind, text, Folds(first.Kind) ? end - start : null, Folds(first.Kind) ? null : first.Tool));
+            rows.Add(new TurnRow(first.At, first.Lane, first.Kind, text, folds ? end - start : null, folds ? null : first.Tool));
             start = end;
         }
 

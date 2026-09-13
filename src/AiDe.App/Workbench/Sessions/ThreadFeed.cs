@@ -624,7 +624,7 @@ public sealed class ThreadFeed : FeedList, IDisposable
         var bytes = Text(nameof(TurnItem.SentBytes), 12, "TextBrush", mono: true, wrap: true);
         bytes.SetValue(FrameworkElement.MarginProperty, new Thickness(8, 6, 8, 6));
         scroller.AppendChild(bytes);
-        compiled.AppendChild(scroller);
+        compiled.AppendChild(FocusRing(scroller));
         line.AppendChild(compiled);
 
         var time = Text(nameof(TurnItem.Time), 12, "TextMutedBrush", mono: true);
@@ -872,7 +872,7 @@ public sealed class ThreadFeed : FeedList, IDisposable
         item.SetValue(KeyboardNavigation.IsTabStopProperty, false);
         item.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
         item.SetBinding(HeaderedContentControl.HeaderProperty, new Binding("."));
-        item.SetValue(HeaderedContentControl.HeaderTemplateProperty, ToolLineTemplate());
+        item.SetValue(HeaderedContentControl.HeaderTemplateProperty, ToolLineTemplate(MeasureWidth));
         item.AddHandler(Expander.ExpandedEvent, new RoutedEventHandler(ResetCompiledScroll));
 
         var region = F(typeof(ScrollViewer));
@@ -889,13 +889,36 @@ public sealed class ThreadFeed : FeedList, IDisposable
         var pre = Text(nameof(ConversationRow.Detail), 12, "TextBrush", mono: true, wrap: true);
         pre.SetValue(FrameworkElement.MarginProperty, new Thickness(8, 6, 8, 6));
         region.AppendChild(pre);
-        item.AppendChild(region);
+        item.AppendChild(FocusRing(region));
 
         return new DataTemplate(typeof(ConversationRow)) { VisualTree = item };
     }
 
-    /// <summary>The tool item's line: marker · kind · title · status.</summary>
-    private static DataTemplate ToolLineTemplate()
+    /// <summary>
+    /// A keyboard-scrollable region's focus ring (2.4.7): a 2 px border that lights
+    /// <c>{colors.focus}</c> while focus is within — the container's ring idiom, since a
+    /// <see cref="ScrollViewer"/>'s default template draws no border and the platform's dotted
+    /// adorner is black on the sunken ground (the UX &amp; Accessibility lens's F2).
+    /// </summary>
+    private static FrameworkElementFactory FocusRing(FrameworkElementFactory scroller)
+    {
+        var ring = F(typeof(Border));
+        ring.SetValue(Border.BorderThicknessProperty, new Thickness(2));
+        ring.SetValue(Border.CornerRadiusProperty, new CornerRadius(4));
+        ring.SetValue(Border.SnapsToDevicePixelsProperty, true);
+        ring.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+        var style = new Style(typeof(Border));
+        style.Setters.Add(new Setter(Border.BorderBrushProperty, Brushes.Transparent));
+        var focused = new Trigger { Property = UIElement.IsKeyboardFocusWithinProperty, Value = true };
+        focused.Setters.Add(new Setter(Border.BorderBrushProperty, new DynamicResourceExtension("FocusBrush")));
+        style.Triggers.Add(focused);
+        ring.SetValue(FrameworkElement.StyleProperty, style);
+        ring.AppendChild(scroller);
+        return ring;
+    }
+
+    /// <summary>The tool item's line: marker · kind · title · status. The title trims at half the measure so the status and the toggle stay in view (2.4.11); its full text stays its name.</summary>
+    private static DataTemplate ToolLineTemplate(double measure)
     {
         var line = F(typeof(StackPanel));
         line.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
@@ -913,10 +936,17 @@ public sealed class ThreadFeed : FeedList, IDisposable
 
         var kind = Text(nameof(ConversationRow.Kind), 12, "TextMutedBrush");
         kind.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, 8, 0));
+        var kindStyle = new Style(typeof(ThreadText));
+        var noKind = new DataTrigger { Binding = new Binding(nameof(ConversationRow.Kind)), Value = string.Empty };
+        noKind.Setters.Add(new Setter(UIElement.VisibilityProperty, Visibility.Collapsed));
+        kindStyle.Triggers.Add(noKind);
+        kind.SetValue(FrameworkElement.StyleProperty, kindStyle);
         line.AppendChild(kind);
 
         var title = Text(nameof(ConversationRow.Title), 13, "TextBrush", mono: true);
         title.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, 10, 0));
+        title.SetValue(FrameworkElement.MaxWidthProperty, measure / 2);
+        title.SetValue(TextBlock.TextTrimmingProperty, TextTrimming.CharacterEllipsis);
         line.AppendChild(title);
 
         var ring = F(typeof(Ellipse));

@@ -366,8 +366,8 @@ public sealed class TheThreadIsChatLikeTests
                 // fold) plus exactly one disclosure per reasoning or tool item (Ruling 82), no reason box.
                 var controls = ThreadFixtures.Visuals<System.Windows.Controls.Primitives.ButtonBase>(container).Count(b => b.IsVisible);
                 var items = feed.Rows[1].Conversation.Count(r => r.IsTool || r.IsReasoning);
-                Assert.True(controls <= 3 + items, $"a completed turn shows {controls} controls for {items} items");
                 Assert.True(items > 0, "the positive control: b2 has tool items");
+                Assert.Equal(3 + items, controls);
                 Assert.DoesNotContain(ThreadFixtures.Visuals<Border>(container), b => b.IsVisible && b.BorderThickness.Left == 1 && b.CornerRadius.TopLeft == 4);
 
                 // The container's ring on focus, the fold header's ring on its focus — one ring each.

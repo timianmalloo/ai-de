@@ -307,7 +307,6 @@ public abstract class FeedList : ListBox, ICanvasFocusTarget
 
         base.OnKeyDown(e);
     }
-
     /// <summary>
     /// Focus landing on the list itself (Tab under Once with an unrealized caret) is re-routed to
     /// the caret's container. Entry from the header by Tab is the document's to route (P4: it calls

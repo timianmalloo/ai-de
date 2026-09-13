@@ -71,6 +71,10 @@ public sealed class ConversationItemsTests
             "b6-running", true,
             ["Reasoning", "Tool(done)", "Tool(running)"]
         },
+        {
+            "b7-parallel", false,
+            ["Tool(failed)", "Tool(done)"]
+        },
     };
 
     private static IReadOnlyList<EventLine> Events(string turn) => turn switch
@@ -155,6 +159,15 @@ public sealed class ConversationItemsTests
             new EventLine(T0.AddSeconds(12), "claude-code", "stderr", "b17 line 12: exit 1 — the lease refused docs/audit/", "run"),
             Cond(12, "run.completed", "lane exited 1"),
         ],
+        "b7-parallel" =>
+        [
+            // Two calls open at once, the results interleaved: by id, never by position — the one
+            // input on which the two attachments differ while both ids are known.
+            Call(1, "claude-code", "a", "read", "Read a.cs", "file_path: a.cs"),
+            Call(2, "claude-code", "b", "read", "Read b.cs", "file_path: b.cs"),
+            Result(3, "claude-code", "b", "completed", "b: 12 lines"),
+            Result(4, "claude-code", "a", "failed", "a: not found"),
+        ],
         "b6-running" =>
         [
             .. Thought(2, "claude-code", "Read the proof pack before the change."),
@@ -185,13 +198,16 @@ public sealed class ConversationItemsTests
 
         Assert.Equal(golden, items.Select(Golden).ToArray());
 
-        // Every row appears exactly once: as an item's row, or attached to the tool item it belongs to.
+        // Every row appears exactly once: as an item's row, or attached to the tool item it belongs to
+        // (a partition of the rows — ordered by the rows' own order, since a parallel call's results
+        // legitimately interleave with the next call's row).
         var covered = items.SelectMany(i => i is ConversationItem.Tool t ? t.Results.Prepend(t.Row) : new[] { i.Row }).ToList();
-        Assert.Equal(rows, covered);
+        Assert.Equal(rows.Count, covered.Count);
+        Assert.Equal(rows, covered.OrderBy(r => rows.ToList().IndexOf(r)));
+        Assert.Equal(items.Select(i => i.Row), items.Select(i => i.Row).OrderBy(r => rows.ToList().IndexOf(r)));   // the items keep the rows' order
 
-        // Order preserved: an item's row index is ascending.
-        var indexes = items.Select(i => rows.ToList().IndexOf(i.Row)).ToList();
-        Assert.Equal(indexes.OrderBy(i => i), indexes);
+        // Each tool item holds exactly the results that carry its id.
+        Assert.All(items.OfType<ConversationItem.Tool>(), t => Assert.All(t.Results, r => Assert.Equal(t.Row.Tool!.CallId, r.Tool!.CallId)));
 
         // acp.* rows are events, never items; every event row is a non-conversation kind.
         Assert.All(items.OfType<ConversationItem.Event>(), e => Assert.NotEqual(Coalesce.MessageKind, e.Row.Kind));

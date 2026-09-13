@@ -43,22 +43,41 @@ public sealed class ProseView : StackPanel
 
     private static UIElement Element(ProseBlock block) => block switch
     {
-        ProseBlock.Heading h => Line(h.Inlines, 13, h.Level switch { 1 => FontWeights.Bold, 2 => FontWeights.SemiBold, _ => FontWeights.Medium }, new Thickness(0, 8, 0, 2)),
-        ProseBlock.Paragraph p => Line(p.Inlines, 13, FontWeights.Normal, new Thickness(0, 4, 0, 0)),
+        ProseBlock.Heading h => Heading(h),
+        ProseBlock.Paragraph p => Line(p.Inlines, FontWeights.Normal, new Thickness(0, 4, 0, 0)),
         ProseBlock.ListBlock l => List(l),
         ProseBlock.Code c => Code(c.Text),
         ProseBlock.Table t => Table(t),
         _ => throw new ArgumentOutOfRangeException(nameof(block), block, "a block outside the subset"),
     };
 
-    private static ThreadText Line(IReadOnlyList<ProseInline> inlines, double size, FontWeight weight, Thickness margin)
+    /// <summary>The prose size (DESIGN.md: 13 px, 1.5) — one size for every block, headings included.</summary>
+    private const double Size = 13;
+
+    /// <summary>
+    /// A heading at the one size in the one token weight (<c>{typography.weight-medium}</c>); its
+    /// level reaches an AT as <c>HeadingLevel</c> (1.3.1), never as a size or an off-token weight.
+    /// </summary>
+    private static ThreadText Heading(ProseBlock.Heading heading)
     {
-        var text = new ThreadText { FontSize = size, FontWeight = weight, Margin = margin, TextWrapping = TextWrapping.Wrap, LineHeight = size * 1.5 };
+        var text = Line(heading.Inlines, FontWeights.SemiBold, new Thickness(0, 8, 0, 2));
+        System.Windows.Automation.AutomationProperties.SetHeadingLevel(text, heading.Level switch
+        {
+            1 => System.Windows.Automation.AutomationHeadingLevel.Level1,
+            2 => System.Windows.Automation.AutomationHeadingLevel.Level2,
+            _ => System.Windows.Automation.AutomationHeadingLevel.Level3,
+        });
+        return text;
+    }
+
+    private static ThreadText Line(IReadOnlyList<ProseInline> inlines, FontWeight weight, Thickness margin)
+    {
+        var text = new ThreadText { FontSize = Size, FontWeight = weight, Margin = margin, TextWrapping = TextWrapping.Wrap, LineHeight = Size * 1.5 };
         text.SetResourceReference(TextBlock.ForegroundProperty, "TextBrush");
         foreach (var span in inlines)
         {
             text.Inlines.Add(Run(span));
-            if (span.Kind == ProseInlineKind.Link)
+            if (span.Kind == ProseInlineKind.Link && span.Url != span.Text)
             {
                 // The URL beside its text, visible to everyone — never hover-only, never a control (A11-2).
                 var url = new Run(" (" + span.Url + ")") { FontFamily = ThreadFeed.Mono, FontSize = 12 };
@@ -84,11 +103,11 @@ public sealed class ProseView : StackPanel
         for (var i = 0; i < list.Items.Count; i++)
         {
             var row = new DockPanel();
-            var marker = new ThreadText { Text = list.Ordered ? (i + 1).ToString(System.Globalization.CultureInfo.InvariantCulture) + "." : "•", FontSize = 13, MinWidth = 20, LineHeight = 13 * 1.5 };
+            var marker = new ThreadText { Text = list.Ordered ? (i + 1).ToString(System.Globalization.CultureInfo.InvariantCulture) + "." : "•", FontSize = Size, MinWidth = 20, LineHeight = Size * 1.5 };
             marker.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
             DockPanel.SetDock(marker, Dock.Left);
             row.Children.Add(marker);
-            row.Children.Add(Line(list.Items[i], 13, FontWeights.Normal, new Thickness(0)));
+            row.Children.Add(Line(list.Items[i], FontWeights.Normal, new Thickness(0)));
             panel.Children.Add(row);
         }
 
@@ -110,7 +129,8 @@ public sealed class ProseView : StackPanel
         var columns = Math.Max(table.Header.Count, table.Rows.Count == 0 ? 0 : table.Rows.Max(r => r.Count));
         for (var c = 0; c < columns; c++)
         {
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = c == columns - 1 ? new GridLength(1, GridUnitType.Star) : GridLength.Auto });
+            // Star, every column: a table never exceeds the measure, and a long cell wraps rather than pushing its neighbours out of view (1.4.10).
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
         }
 
         var rows = table.Rows.Prepend(table.Header).ToList();
@@ -122,7 +142,7 @@ public sealed class ProseView : StackPanel
                 // A hairline under every row (DX13: a table by hairline, never a box); the header's weight carries its role.
                 var cell = new Border { Padding = new Thickness(c == 0 ? 0 : 10, 3, 10, 3), BorderThickness = new Thickness(0, 0, 0, 1) };
                 cell.SetResourceReference(Border.BorderBrushProperty, "BorderBrush");
-                cell.Child = Line(rows[r][c], 13, r == 0 ? FontWeights.SemiBold : FontWeights.Normal, new Thickness(0));
+                cell.Child = Line(rows[r][c], r == 0 ? FontWeights.SemiBold : FontWeights.Normal, new Thickness(0));
                 Grid.SetRow(cell, r);
                 Grid.SetColumn(cell, c);
                 grid.Children.Add(cell);

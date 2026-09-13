@@ -51,7 +51,7 @@ public sealed class ThreadFeedTests
     private static EventLine Cond(int s, string kind, string text) => ThreadFixtures.Line(s, "conductor", text, kind);
 
     private const string Screenshot3Prose =
-        "## Gaps I noticed\n\nTwo stores — see §4 and [the review](docs/reviews/r.md).\n\n| What | Result |\n|---|---|\n| Red first | `Failed` on the old order |\n| Green | **14 passed** |\n\n- `LayoutStore` — tree schema\n- `ZoneLayoutStore`\n\n```csharp\nvar x = 1;\n```";
+        "## Gaps I noticed\n\nTwo stores — see §4 and [the review](docs/reviews/r.md).\n\n| What | Result |\n|---|---|\n| Red first | `Failed` on the old order |\n| Green | **14 passed** |\n\n- `LayoutStore` — tree schema\n- `ZoneLayoutStore`\n\n1. the density question\n2. the split's home\n\n```csharp\nvar x = 1;\n```";
 
     /// <summary>A completed turn shaped like the operator's screenshot-3 turn: thought · two tool items · the prose · acp rows · the conductor's lines.</summary>
     private static TurnView Completed(int ordinal) =>
@@ -135,6 +135,9 @@ public sealed class ThreadFeedTests
                 Assert.True(Top(thinking, container) < Top(title, container), "the thought precedes the tool item");
                 Assert.True(Top(title, container) < Top(heading, container), "the tool item precedes the prose");
                 Assert.True(Top(heading, container) < Top(outcome, container), "the outcome line is last");
+                var items = Texts(container).Where(t => t.DataContext is ConversationRow || IsInside(t, ThreadFixtures.Visuals<ProseView>(container).First())).ToList();
+                Assert.True(items.Count > 6, "the positive control: the walk sees the items' texts");
+                Assert.All(items, t => Assert.True(Top(t, container) < Top(outcome, container), $"'{Plain(t)}' renders below the outcome line"));
 
                 // Falsifier 4: N events counting a conversation row — 3 non-conversation rows (accepted · usage · completed).
                 var fold = ThreadFixtures.Fold(container);
@@ -147,7 +150,7 @@ public sealed class ThreadFeedTests
             });
     }
 
-    /// <summary><b>T2.</b> Forty thought chunks announce nothing; the disclosure is collapsed; its ink is muted; no live setting.</summary>
+    /// <summary><b>T2.</b> Forty thought chunks announce nothing (the positive control is A3's outcome announcement in <c>TheThreadAnnouncesAndExposesRealPropertiesTests</c>: the same announcer speaks once when the turn concludes); the disclosure is collapsed; its ink is muted; no live setting.</summary>
     [Fact]
     public void TheReasoningItem_IsCollapsedByDefault_MutedAndNeverAnnounced()
     {
@@ -182,6 +185,7 @@ public sealed class ThreadFeedTests
                 Assert.Equal(AutomationLiveSetting.Off, AutomationProperties.GetLiveSetting(thought));
                 await PumpAsync(window);
                 Assert.Empty(announcer.Announcements);
+                Assert.Empty(announcer.Messages);
             });
     }
 
@@ -203,17 +207,21 @@ public sealed class ThreadFeedTests
                 Assert.Null(peer.GetPattern(PatternInterface.Invoke));
                 Assert.True(peer.IsControlElement());
 
-                // Headings: one size, the weight carries the level.
+                // Headings: one size, the token weight; the level is programmatic (1.3.1).
                 var heading = Word(container, "Gaps I noticed");
                 Assert.Equal(13.0, heading.FontSize);
-                Assert.NotEqual(FontWeights.Normal, heading.FontWeight);
+                Assert.Equal(FontWeights.SemiBold, heading.FontWeight);
+                Assert.Equal(AutomationHeadingLevel.Level2, UIElementAutomationPeer.CreatePeerForElement(heading).GetHeadingLevel());
+                Assert.Equal(AutomationHeadingLevel.None, UIElementAutomationPeer.CreatePeerForElement(Word(container, "Red first")).GetHeadingLevel());
 
                 // A table: cells as text, no box.
                 Word(container, "Red first");
                 Assert.Contains(Texts(container).SelectMany(t => t.Inlines.OfType<Run>()), r => r.Text == "14 passed" && r.FontWeight != FontWeights.Normal);
 
-                // A list: the marker beside the item; code: mono on the sunken ground.
+                // A list: the marker beside the item (bulleted and numbered); code: mono on the sunken ground.
                 Assert.Contains(Texts(container), t => Plain(t) == "•");
+                Assert.Contains(Texts(container), t => Plain(t) == "2.");
+                Word(container, "the split's home");
                 var code = Word(container, "var x = 1;");
                 Assert.Equal(ThreadFeed.Mono, code.FontFamily);
                 Assert.Contains(Texts(container).SelectMany(t => t.Inlines.OfType<Run>()), r => r.Text == "LayoutStore" && r.FontFamily == ThreadFeed.Mono);
@@ -254,6 +262,18 @@ public sealed class ThreadFeedTests
                 var region = ThreadFixtures.Visuals<ScrollViewer>(container).Single(s => AutomationProperties.GetName(s).StartsWith("Detail of Read LayoutStore.cs", StringComparison.Ordinal));
                 Assert.True(region.Focusable && KeyboardNavigation.GetIsTabStop(region));
                 Assert.True(region.MaxHeight <= 200);
+
+                // The focus ring (2.4.7): the region's border lights {colors.focus} while it holds focus — and the compiled prompt's scroller wears the same ring.
+                var ring = (Border)VisualTreeHelper.GetParent(region);
+                Assert.Equal(Colors.Transparent, ((SolidColorBrush)ring.BorderBrush).Color);
+                Assert.True(region.Focus());
+                Assert.Equal(Token(window, "FocusBrush"), ((SolidColorBrush)ring.BorderBrush).Color);
+                feed.Rows[0].IsCompiledOpen = true;
+                feed.UpdateLayout();
+                var compiled = ThreadFixtures.Visuals<ScrollViewer>(container).Single(s => AutomationProperties.GetName(s) == "Compiled prompt of b1");
+                Assert.True(compiled.Focus());
+                Assert.Equal(Token(window, "FocusBrush"), ((SolidColorBrush)((Border)VisualTreeHelper.GetParent(compiled)).BorderBrush).Color);
+                Assert.Equal(Colors.Transparent, ((SolidColorBrush)ring.BorderBrush).Color);
                 return Task.CompletedTask;
             });
     }
@@ -275,7 +295,7 @@ public sealed class ThreadFeedTests
                 var word = Word(container, "interrupted");
                 Assert.Equal(Token(window, "TextMutedBrush"), ThemeProbe.Ink(word));
                 Assert.DoesNotContain(Texts(container), t => Plain(t) == "running");
-                Assert.DoesNotContain(ThreadFixtures.Visuals<Ellipse>(container), e => e.IsVisible && e.ActualWidth > 0);
+                Assert.DoesNotContain(ThreadFixtures.Visuals<Ellipse>(container), e => e.IsVisible);
                 Word(container, "done");   // the answered call keeps its own status
                 return Task.CompletedTask;
             });
@@ -345,6 +365,8 @@ public sealed class ThreadFeedTests
 
                 var container = ThreadFixtures.Container(feed, 5);
                 Word(container, "running");
+                var ring = Assert.Single(ThreadFixtures.Visuals<Ellipse>(container), e => e.IsVisible && e.DataContext is ConversationRow);   // the ring while running (the positive control for T5)
+                Assert.Equal(10, ring.ActualWidth);
                 var detail = Disclosure(container, "Detail of dotnet test");
                 detail.IsExpanded = true;
                 feed.UpdateLayout();
@@ -359,11 +381,25 @@ public sealed class ThreadFeedTests
                 Assert.True(detail.IsExpanded, "the disclosure's state survived the update");
                 Word(ThreadFixtures.Container(feed, 5), "done");
                 Assert.DoesNotContain(Texts(ThreadFixtures.Container(feed, 5)), t => t.DataContext is ConversationRow && Plain(t) == "running");   // the turn still runs; the item does not
+                Assert.DoesNotContain(ThreadFixtures.Visuals<Ellipse>(container), e => e.IsVisible && e.DataContext is ConversationRow);
                 Assert.EndsWith("Passed! 14 passed", Plain(Texts(container).Single(t => Plain(t).StartsWith("input", StringComparison.Ordinal))), StringComparison.Ordinal);
+
+                // Two calls open at once, their results interleaved (the wire's parallel shape): each
+                // item takes its own result by id, in place, focus still on the first detail's region.
+                thread.Append(6, Call(3, "a", "read", "Read a.cs", "file_path: a.cs"));
+                thread.Append(6, Call(4, "b", "read", "Read b.cs", "file_path: b.cs"));
+                await PumpAsync(window);
+                Assert.Equal(2, feed.Rows[5].Conversation.Count(r => r.StatusWord == "running"));
+                thread.Append(6, Result(5, "b", "completed", "b: 12 lines"));
+                thread.Append(6, Result(6, "a", "failed", "a: not found"));
+                await PumpAsync(window);
+                var rows = feed.Rows[5].Conversation.Where(r => r.IsTool).Select(r => (r.Title, r.StatusWord, r.Detail)).ToList();
+                Assert.Equal([("dotnet test", "done", "input\ncommand: dotnet test\nresult\nPassed! 14 passed"), ("Read a.cs", "failed", "input\nfile_path: a.cs\nresult\na: not found"), ("Read b.cs", "done", "input\nfile_path: b.cs\nresult\nb: 12 lines")], rows);
+                Assert.Same(region, Keyboard.FocusedElement);
             });
     }
 
-    /// <summary><b>T9 (SC8 as amended).</b> On a running last turn the entry stop is <i>Stop this turn</i>, and Shift+Tab from the editor lands there.</summary>
+    /// <summary><b>T9 (SC8 as amended).</b> On a running last turn the entry stop is <i>Stop this turn</i>, and Shift+Tab from the editor lands there — through <c>FocusCurrentItemLast</c>, the API the document's composer-leave handler calls (<c>SessionDocumentSurface.OnComposerLeftBackward</c>), as K5 proves it.</summary>
     [Fact]
     public void OnARunningLastTurn_TheEntryStopIsStop_AndShiftTabFromTheEditorLandsThere()
     {
@@ -418,6 +454,123 @@ public sealed class ThreadFeedTests
                 }
 
                 Assert.Equal(["Provenance of b6", "Compiled prompt of b6", "Thinking", "Detail of Read docs/proof/pp-0141.md", "0 events"], names);
+            });
+    }
+
+    /// <summary><b>T10 (A11-3).</b> An opened detail is a keyboard-scrollable region: PageDown inside it scrolls it and never jumps turns — and the compiled prompt's scroller behaves the same.</summary>
+    /// <remarks>
+    /// The first draft read <c>Expected: 0 · Actual: 1</c> and was taken for a product defect; it was
+    /// the harness's own precondition — the feed's caret starts on the LAST turn, and focusing a
+    /// region inside b1 does not move it. The oracle now places the caret first and reads it back
+    /// (DC-016's class: establish the state you assert on). The platform's <c>ScrollViewer</c>
+    /// handles the page keys itself; the feed's <c>SourceOwnsItsKeys</c> keeps them there.
+    /// </remarks>
+    [Fact]
+    public void PageDownInsideAnOpenDetail_ScrollsTheRegion_NeverJumpsTurns()
+    {
+        var output = string.Join('\n', Enumerable.Range(1, 60).Select(i => $"line {i} of the tool's output"));
+        var turn = ThreadFixtures.Turn(1, "Read the file.", ThreadFixtures.Decorations("free-form", "T0", null, "message"), TurnState.Completed,
+            new OutcomeView(Lane, null, 0, null, TimeSpan.FromSeconds(3), 0),
+            [Call(1, "t1", "read", "Read big.cs", "file_path: big.cs"), Result(2, "t1", "completed", output)]);
+
+        Sta.Pump(
+            create: () => FeedOf(turn, Completed(2)).Feed,
+            configure: Themed,
+            body: (window, feed) =>
+            {
+                Assert.True(feed.FocusItem(0));   // the caret on b1 — the precondition the oracle reads back
+                var container = ThreadFixtures.Container(feed, 0);
+                Disclosure(container, "Detail of Read big.cs").IsExpanded = true;
+                feed.UpdateLayout();
+                var region = ThreadFixtures.Visuals<ScrollViewer>(container).Single(s => AutomationProperties.GetName(s).StartsWith("Detail of Read big.cs", StringComparison.Ordinal));
+                Assert.True(region.ScrollableHeight > 0, "the positive control: the output overflows the 200px region");
+                Assert.True(region.Focus());
+                Assert.Equal(0, feed.SelectedIndex);
+
+                region.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(region)!, 0, Key.PageDown) { RoutedEvent = Keyboard.KeyDownEvent });
+                feed.UpdateLayout();
+
+                Assert.True(region.VerticalOffset > 0, "PageDown scrolled the region");
+                Assert.Equal(0, feed.SelectedIndex);
+                Assert.Same(region, Keyboard.FocusedElement);
+
+                // The compiled prompt's scroller: the same rule, the same red before the fix.
+                Assert.True(feed.FocusItem(1));
+                feed.Rows[1].IsCompiledOpen = true;
+                feed.UpdateLayout();
+                var compiled = ThreadFixtures.Visuals<ScrollViewer>(ThreadFixtures.Container(feed, 1)).Single(s => AutomationProperties.GetName(s) == "Compiled prompt of b2");
+                Assert.True(compiled.Focus());
+                Assert.Equal(1, feed.SelectedIndex);
+                compiled.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(compiled)!, 0, Key.PageDown) { RoutedEvent = Keyboard.KeyDownEvent });
+                feed.UpdateLayout();
+                Assert.Equal(1, feed.SelectedIndex);
+                Assert.Same(compiled, Keyboard.FocusedElement);
+                return Task.CompletedTask;
+            });
+    }
+
+    /// <summary><b>T11 (U10).</b> Under reduced motion the running item's ring is visible and static; under motion it is the one moving element.</summary>
+    [Fact]
+    public void UnderReducedMotion_TheRunningRingIsStatic_AndUnderMotionItTurns()
+    {
+        static TurnView RunningWithACall() =>
+            ThreadFixtures.Turn(1, "Run the tests.", ThreadFixtures.Decorations("free-form", "T1", "src/**", "goal block"), TurnState.Running, null,
+                [Call(1, "t1", "execute", "dotnet test", "command: dotnet test")]);
+
+        foreach (var reduced in new[] { true, false })
+        {
+            var angle = 0.0;
+            Sta.Pump(
+                create: () =>
+                {
+                    var (feed, _, _) = FeedOf(RunningWithACall());
+                    feed.ReducedMotion = () => reduced;
+                    return feed;
+                },
+                configure: Themed,
+                body: async (window, feed) =>
+                {
+                    var container = ThreadFixtures.Container(feed, 0);
+                    var ring = Assert.Single(ThreadFixtures.Visuals<Ellipse>(container), e => e.IsVisible && e.DataContext is ConversationRow);
+                    await Task.Delay(400);
+                    await PumpAsync(window);
+                    angle = ((RotateTransform)ring.RenderTransform).Angle;
+                });
+
+            if (reduced)
+            {
+                Assert.Equal(0.0, angle);
+            }
+            else
+            {
+                Assert.NotEqual(0.0, angle);
+            }
+        }
+    }
+
+    /// <summary><b>T12 (2.4.11).</b> A long tool title trims: the status word and the detail toggle stay inside the turn; the full title stays the item's name.</summary>
+    [Fact]
+    public void ALongToolTitle_Trims_AndTheDetailToggleStaysInView()
+    {
+        var title = string.Concat(Enumerable.Repeat("dotnet test tests/AiDe.App.Tests --filter FullyQualifiedName~", 6));
+        var turn = ThreadFixtures.Turn(1, "Run it.", ThreadFixtures.Decorations("free-form", "T0", null, "message"), TurnState.Completed,
+            new OutcomeView(Lane, null, 0, null, TimeSpan.FromSeconds(3), 0),
+            [Call(1, "t1", "execute", title, "command: " + title), Result(2, "t1", "completed", "ok")]);
+
+        Sta.Pump(
+            create: () => FeedOf(turn).Feed,
+            configure: Themed,
+            body: (window, feed) =>
+            {
+                var container = ThreadFixtures.Container(feed, 0);
+                var toggle = ThreadFixtures.Visuals<ToggleButton>(container).Single(b => AutomationProperties.GetName(b) == "Detail of " + title);
+                var right = toggle.TransformToAncestor(container).Transform(new Point(toggle.ActualWidth, 0)).X;
+                Assert.True(right <= container.ActualWidth, $"the detail toggle's right edge {right} is past the turn's {container.ActualWidth}");
+                Word(container, "done");
+                var rendered = Texts(container).Single(t => t.DataContext is ConversationRow && Plain(t) == title);
+                Assert.Equal(TextTrimming.CharacterEllipsis, rendered.TextTrimming);
+                Assert.True(rendered.ActualWidth <= feed.MeasureWidth / 2 + 1);
+                return Task.CompletedTask;
             });
     }
 

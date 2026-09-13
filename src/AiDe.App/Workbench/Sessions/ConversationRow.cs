@@ -63,7 +63,6 @@ public sealed class ConversationRow : INotifyPropertyChanged
 
     // ── the facets the template binds ──
 
-    public bool IsProse => _item is ConversationItem.Prose;
     public bool IsReasoning => _item is ConversationItem.Reasoning;
     public bool IsTool => _item is ConversationItem.Tool;
 
@@ -98,10 +97,12 @@ public sealed class ConversationRow : INotifyPropertyChanged
                 return string.Empty;
             }
 
+            var input = tool.Input.Length > 0 ? tool.Input : "(no input)";
             var result = tool.Output.Length > 0 ? tool.Output
                 : tool.Status == ToolStatus.Interrupted ? "(no result: the lane ended before the tool answered)"
-                : string.Empty;
-            return "input\n" + tool.Input + (result.Length > 0 ? "\nresult\n" + result : string.Empty);
+                : tool.Status == ToolStatus.Running ? string.Empty
+                : "(no output)";
+            return "input\n" + input + (result.Length > 0 ? "\nresult\n" + result : string.Empty);
         }
     }
 }

@@ -1,4 +1,3 @@
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using AiDe.Core.AgentPlane;
 
@@ -27,7 +26,7 @@ public sealed record ToolFacts(string CallId, string? Kind, string? Title, strin
     {
         ArgumentNullException.ThrowIfNull(evt);
 
-        if (evt.Kind is not ("tool.call" or "tool.result") || Text(evt.Body["toolCallId"]) is not { } id)
+        if (evt.Kind is not (ConversationItems.CallKind or ConversationItems.ResultKind) || Text(evt.Body["toolCallId"]) is not { } id)
         {
             return null;
         }
@@ -44,31 +43,16 @@ public sealed record ToolFacts(string CallId, string? Kind, string? Title, strin
     private static string? Text(JsonNode? node) =>
         node is JsonValue value && value.TryGetValue<string>(out var text) ? text : null;
 
-    /// <summary><c>command: git status --short</c> — one line per field; a non-string value as its JSON; null when the frame states no input.</summary>
-    private static string? InputOf(JsonNode? node)
-    {
-        if (node is not JsonObject input || input.Count == 0)
-        {
-            return node is JsonValue ? Text(node) : null;
-        }
+    /// <summary><c>command: git status --short</c> — one line per field (the mockup's input shape); a non-string value as its JSON; null when the frame states no input (<c>rawInput</c> is an object in every frame of the corpus).</summary>
+    private static string? InputOf(JsonNode? node) =>
+        node is JsonObject { Count: > 0 } input
+            ? string.Join('\n', input.Select(pair => pair.Key + ": " + (Text(pair.Value) ?? pair.Value?.ToJsonString() ?? "null")))
+            : null;
 
-        return string.Join('\n', input.Select(pair =>
-            pair.Key + ": " + (Text(pair.Value) ?? pair.Value?.ToJsonString(new JsonSerializerOptions { WriteIndented = false }) ?? "null")));
-    }
-
-    /// <summary>The text of every <c>content[]</c> block that carries one (<c>{type: "content", content: {type: "text", text}}</c>), joined; null when none does.</summary>
+    /// <summary>The text of every <c>content[]</c> block that carries one (<c>{type: "content", content: {type: "text", text}}</c> — the corpus's one shape), joined; null when none does.</summary>
     private static string? ContentText(JsonNode? node)
     {
-        if (node is not JsonArray blocks)
-        {
-            return null;
-        }
-
-        var texts = blocks
-            .Select(block => Text(block?["content"]?["text"]) ?? Text(block?["text"]))
-            .Where(text => text is not null)
-            .ToList();
-
-        return texts.Count == 0 ? null : string.Join('\n', texts);
+        var texts = (node as JsonArray)?.Select(block => Text(block?["content"]?["text"])).Where(text => text is not null).ToList();
+        return texts is { Count: > 0 } ? string.Join('\n', texts) : null;
     }
 }

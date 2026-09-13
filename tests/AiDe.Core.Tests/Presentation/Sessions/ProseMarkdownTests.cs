@@ -100,27 +100,101 @@ public sealed class ProseMarkdownTests
         Assert.Equal([T("three four")], Assert.IsType<ProseBlock.Paragraph>(blocks[1]).Inlines);
     }
 
-    /// <summary>The joined text of every block equals the source's words: no character of the lane's answer is dropped by the subset (a property over the goldens' inputs).</summary>
+    /// <summary>A table's separator row is structure in every spelling — never a body row.</summary>
     [Theory]
-    [InlineData("## H\n\npara — §1\n\n- a\n- b")]
     [InlineData("| a | b |\n|---|---|\n| 1 | 2 |")]
-    [InlineData("x [t](u) y")]
-    public void NothingOfTheSourceIsLost(string text)
+    [InlineData("| a | b |\n| --- | --- |\n| 1 | 2 |")]
+    [InlineData("| a | b |\n|:---:|---:|\n| 1 | 2 |")]
+    public void ATableSeparator_IsStructure_InEverySpelling(string text)
     {
-        var rendered = string.Concat(ProseMarkdown.Parse(text).SelectMany(Texts));
-        foreach (var word in text.Split([' ', '\n', '|', '-', '#', '[', ']', '(', ')'], StringSplitOptions.RemoveEmptyEntries))
+        var table = Assert.IsType<ProseBlock.Table>(Assert.Single(ProseMarkdown.Parse(text)));
+        Assert.Equal([[T("a")], [T("b")]], table.Header);
+        Assert.Equal([[[T("1")], [T("2")]]], table.Rows);
+    }
+
+    /// <summary>
+    /// D2, over generated documents (seeded — D0): a document assembled from the subset's grammar
+    /// parses to exactly the blocks it was assembled from, and the plain text of every block is the
+    /// text it was given — nothing of the lane's answer is dropped, re-ordered or invented, over
+    /// 200 documents per seed of 1–8 blocks each. A parser that drops a list item, a table row or a
+    /// code line, or that swallows a heading into the paragraph before it, fails here.
+    /// </summary>
+    [Theory]
+    [InlineData(1)]
+    [InlineData(7)]
+    [InlineData(42)]
+    [InlineData(1981)]
+    public void OverGeneratedDocuments_TheBlocksAndTheirTextRoundTrip(int seed)
+    {
+        var random = new Random(seed);
+        string[] words = ["alpha", "beta", "gamma", "delta", "§4", "—", "x1", "store", "layout", "refused"];
+        string Words(int n) => string.Join(' ', Enumerable.Range(0, n).Select(_ => words[random.Next(words.Length)]));
+
+        for (var document = 0; document < 200; document++)
         {
-            Assert.Contains(word, rendered, StringComparison.Ordinal);
+            var source = new List<string>();
+            var expected = new List<(string Kind, IReadOnlyList<string> Texts)>();
+            var blocks = random.Next(1, 9);
+            for (var b = 0; b < blocks; b++)
+            {
+                switch (random.Next(5))
+                {
+                    case 0:
+                        var level = random.Next(1, 4);
+                        var heading = Words(random.Next(1, 5));
+                        source.Add(new string('#', level) + " " + heading);
+                        expected.Add(("Heading" + level, [heading]));
+                        break;
+                    case 1:
+                        var lines = Enumerable.Range(0, random.Next(1, 4)).Select(_ => Words(random.Next(1, 7))).ToList();
+                        source.Add(string.Join('\n', lines));
+                        expected.Add(("Paragraph", [string.Join(' ', lines)]));
+                        break;
+                    case 2:
+                        var ordered = random.Next(2) == 0;
+                        var items = Enumerable.Range(0, random.Next(1, 5)).Select(_ => Words(random.Next(1, 5))).ToList();
+                        source.Add(string.Join('\n', items.Select((item, i) => (ordered ? (i + 1) + ". " : "- ") + item)));
+                        expected.Add((ordered ? "Ordered" : "Bulleted", items));
+                        break;
+                    case 3:
+                        var code = Enumerable.Range(0, random.Next(1, 4)).Select(_ => "# " + Words(random.Next(1, 4))).ToList();
+                        source.Add("```\n" + string.Join('\n', code) + "\n```");
+                        expected.Add(("Code", [string.Join('\n', code)]));
+                        break;
+                    default:
+                        var columns = random.Next(1, 4);
+                        var rows = random.Next(1, 4);
+                        var cells = Enumerable.Range(0, rows + 1).Select(_ => Enumerable.Range(0, columns).Select(_ => Words(random.Next(1, 3))).ToList()).ToList();
+                        source.Add(string.Join('\n', [$"| {string.Join(" | ", cells[0])} |", "|" + string.Concat(Enumerable.Repeat("---|", columns)), .. cells.Skip(1).Select(r => $"| {string.Join(" | ", r)} |")]));
+                        expected.Add(("Table", [.. cells.SelectMany(r => r)]));
+                        break;
+                }
+            }
+
+            var parsed = ProseMarkdown.Parse(string.Join("\n\n", source));
+            static string Flat(string kind, IEnumerable<string> texts) => kind + ": " + string.Join(" | ", texts);
+            Assert.Equal(expected.Select(e => Flat(e.Kind, e.Texts)), parsed.Select(block => Flat(Kind(block), Texts(block))));
         }
     }
 
+    private static string Kind(ProseBlock block) => block switch
+    {
+        ProseBlock.Heading h => "Heading" + h.Level,
+        ProseBlock.Paragraph => "Paragraph",
+        ProseBlock.ListBlock l => l.Ordered ? "Ordered" : "Bulleted",
+        ProseBlock.Code => "Code",
+        ProseBlock.Table => "Table",
+        _ => throw new ArgumentOutOfRangeException(nameof(block)),
+    };
+
+    /// <summary>The plain text of a block: one string per heading / paragraph / list item / table cell, the code verbatim.</summary>
     private static IEnumerable<string> Texts(ProseBlock block) => block switch
     {
-        ProseBlock.Heading h => h.Inlines.Select(i => i.Text + (i.Url ?? string.Empty)),
-        ProseBlock.Paragraph p => p.Inlines.Select(i => i.Text + (i.Url ?? string.Empty)),
-        ProseBlock.ListBlock l => l.Items.SelectMany(i => i).Select(i => i.Text),
+        ProseBlock.Heading h => [string.Concat(h.Inlines.Select(i => i.Text))],
+        ProseBlock.Paragraph p => [string.Concat(p.Inlines.Select(i => i.Text))],
+        ProseBlock.ListBlock l => l.Items.Select(item => string.Concat(item.Select(i => i.Text))),
         ProseBlock.Code c => [c.Text],
-        ProseBlock.Table t => t.Header.Concat(t.Rows.SelectMany(r => r)).SelectMany(c => c).Select(i => i.Text),
+        ProseBlock.Table t => t.Header.Concat(t.Rows.SelectMany(r => r)).Select(cell => string.Concat(cell.Select(i => i.Text))),
         _ => [],
     };
 }

@@ -39,8 +39,17 @@ public abstract record ProseBlock
 /// and blocks out, and the WPF renderer maps blocks to elements and nothing else. Anything outside
 /// the subset stays literal text: the reader sees the source, never a dropped line (Ruling 82: the
 /// operator's screenshot showed the source because nothing rendered it; a subset that silently ate
-/// what it did not understand would be the opposite defect).
+/// what it did not understand would be the opposite defect). Fenced code is in the subset for the
+/// same reason: without the fence rule the other rules corrupt code — a <c># comment</c> becomes a
+/// heading, <c>- x</c> a bullet, <c>| a |</c> a table.
 /// </summary>
+/// <remarks>
+/// <c>simplify:</c> a hand-built subset (five block kinds, four inline kinds; no nested lists,
+/// block quotes, images or HTML) over native WPF inlines rather than a new dependency — ceiling:
+/// this subset, no sixth block kind; upgrade trigger: ADR-0025's Markdig.Wpf landing for the code
+/// viewer, at which point this parser is deleted and <c>ProseMarkdownTests</c>' goldens become the
+/// replacement's acceptance, so the thread and the viewer never render markdown two ways.
+/// </remarks>
 public static partial class ProseMarkdown
 {
     [GeneratedRegex(@"`([^`]+)`|\*\*([^*]+)\*\*|\*([^*\s][^*]*)\*|\[([^\]]+)\]\(([^)\s]+)\)")]

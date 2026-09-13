@@ -23,6 +23,7 @@ public sealed class TurnItem : INotifyPropertyChanged
     public const int FoldLines = 4;
 
     private readonly ObservableCollection<ConversationRow> _conversation = [];
+    private IReadOnlyList<TurnRow> _eventRows = [];
     private TurnView _view;
     private bool _isFoldOpen;
     private bool _isProvenanceOpen;
@@ -64,11 +65,13 @@ public sealed class TurnItem : INotifyPropertyChanged
     private void MergeConversation()
     {
         var index = 0;
+        var events = new List<TurnRow>();
         foreach (var item in _view.Items)
         {
-            if (item is ConversationItem.Event)
+            if (item is ConversationItem.Event evt)
             {
-                continue;   // an event row is the fold's, never an item of the conversation
+                events.Add(evt.Row);   // an event row is the fold's, never an item of the conversation
+                continue;
             }
 
             if (index < _conversation.Count)
@@ -82,6 +85,8 @@ public sealed class TurnItem : INotifyPropertyChanged
 
             index++;
         }
+
+        _eventRows = events;
     }
 
     public bool IsFoldOpen
@@ -132,8 +137,8 @@ public sealed class TurnItem : INotifyPropertyChanged
     public string FoldHeader => TurnCopy.EventsText(EventRows.Count);
     public bool IsLive => _view.State is TurnState.Running or TurnState.Waiting;
 
-    /// <summary>The fold's rows: every event item's row, in order.</summary>
-    private IReadOnlyList<TurnRow> EventRows => [.. _view.Items.OfType<ConversationItem.Event>().Select(e => e.Row)];
+    /// <summary>The fold's rows: every event item's row, in order — collected once per merge.</summary>
+    private IReadOnlyList<TurnRow> EventRows => _eventRows;
 
     /// <summary>The fold's content: the last <see cref="FoldLines"/> non-conversation rows, bounded, no inner scroller.</summary>
     public IReadOnlyList<TurnRow> FoldedEvents

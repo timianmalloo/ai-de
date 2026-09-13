@@ -7508,3 +7508,53 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   carries an offset no runner sits at.
 - **Status:** `controlled`.
 
+
+### DC-nnn (CV-5-3 a) — A wire-text reader's blank-means-absent fallback turns a whitespace chunk of a streamed message into the literal kind
+
+- **Filed by:** CV-5-3 a (placeholder — the conductor allocates the final number/status).
+- **Shape:** a reader that answers *"what does this event say?"* treats a present-but-whitespace
+  text field as absent (`!string.IsNullOrWhiteSpace(text)`) and falls back to something that is
+  "always true" — the event's kind. That is right for a row with no text and wrong for a *chunk*
+  of a stream: a paragraph break arrives as its own `"\n\n"` chunk, the reader returns the kind,
+  and the fold joins the word `agent.thought` (or `agent.msg`) into the middle of the prose. No
+  authored fixture hits it — an author writes chunks with words in them.
+- **Signature:** `IsNullOrWhiteSpace` guarding a fallback on wire text; a chunked kind whose
+  chunks may be whitespace (paragraph breaks, indentation); a joined text containing a kind
+  string; a fixture corpus with no whitespace-only chunk.
+- **Instance (CV-5.3, 2026-09-13):** `ConsoleStreamModel.TextOf` on the first real
+  `agent_thought_chunk` capture — `frames/thought.jsonl:27` is `"\n\n"`; M1 read
+  `Expected: "\n\n" · Actual: "agent.thought"`. The fix: a present string field is the text,
+  whitespace included; only an absent field falls back to the kind.
+- **Sweep:** `grep -rn "IsNullOrWhiteSpace" src/AiDe.Core/Presentation src/AiDe.App/Workbench/Sessions`
+  — `TextOf`'s inner `Text()` was the one reader of wire text; the composer's readers guard
+  operator input, not chunks.
+- **Control:** `CoalesceTests.AWhitespaceOnlyChunk_IsItsWhitespace_NeverTheKind` (the blank chunk
+  through the real mapper is `"\n\n"`, an empty chunk is `""`, an absent field is still the kind
+  — the positive control) and M1 over the captured frame. Named for the next reader: *a chunk's
+  text is whatever the wire sent, and a reader may fall back only on absence.*
+- **Status:** `controlled`.
+
+### DC-nnn (CV-5-3 b) — A rendered-text oracle reads `TextBlock.Text`, which is empty for content built from inlines, so it passes vacuously on the very prose it is meant to falsify
+
+- **Filed by:** CV-5-3 b (placeholder — the conductor allocates the final number/status).
+- **Shape:** a WPF `TextBlock` whose content was built by adding `Run`s to `Inlines` (bold, mono,
+  a link's URL run) reports `Text == ""` — Verified by probe on this build — while its automation
+  peer's name (`GetPlainText`) and a `TextRange` over its content carry the words. An oracle that
+  walks the visual tree asserting *no TextBlock's `Text` contains `##`* therefore passes on the
+  un-rendered markdown source too, once the prose moves to inlines: DC-016's class (a control that
+  cannot fire) at the property level. Any census that labels sites by `Text` sees the prose as
+  empty for the same reason.
+- **Signature:** `Assert.DoesNotContain(…, t => t.Text.Contains(…))` over a rendered surface that
+  uses `Inlines`; a walk whose site labels come out empty; a "no markup rendered" falsifier with no
+  positive control beside it.
+- **Instance (CV-5.3, 2026-09-13):** T1's first draft read `Text`; the first green run listed
+  eight empty `ThreadText`s where the heading, the table cells and the list items stood. The
+  harness now reads the plain text (`new TextRange(ContentStart, ContentEnd).Text`) and T1 carries
+  a positive control (*the walk sees "Red first"*). The Shell contrast census labels sites by
+  `Text` — a routed finding for its owner (it does not walk a thread with turns today).
+- **Sweep:** `grep -rn "\.Text\.\(Contains\|StartsWith\|Equals\)" tests/AiDe.App.Tests/Sessions`
+  — the other readers bind `Text`-set blocks (words, titles, event lines), where `Text` is true.
+- **Control:** `ThreadFeedTests.Plain` (the one reader) and T1's positive control; T7 reads the
+  peer's name. Named for the next inline renderer: *a rendered-text falsifier reads what the AT
+  reads, and proves it can see the text before it proves the text is absent.*
+- **Status:** `controlled`.

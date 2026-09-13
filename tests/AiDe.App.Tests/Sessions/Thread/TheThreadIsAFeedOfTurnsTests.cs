@@ -126,18 +126,13 @@ public sealed class TheThreadIsAFeedOfTurnsTests
                 var scroller = ThreadFixtures.Visuals<ScrollViewer>(feed).First();
                 var headerOn2 = ThreadFixtures.HeaderToggle(ThreadFixtures.Fold((ListBoxItem)feed.ItemContainerGenerator.ContainerFromIndex(1)!));
                 Assert.True(headerOn2.Focus());
+                // Settled: the bring-into-view's scroll and the pixel-virtualized panel's re-anchoring
+                // both complete at Background before the offset is read (the Test Architect's 7a).
+                feed.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, () => { });
                 feed.UpdateLayout();
                 var before = scroller.VerticalOffset;
                 Press(headerOn2, Key.Down);
-                feed.UpdateLayout();
-                Assert.Equal(1, feed.SelectedIndex);
-                var first = scroller.VerticalOffset - before;
-                Assert.True(first > 0 && first <= 3 * FeedList.LineHeight + 1, $"the first Down scrolled {first}px");
-
-                // The second press, from a settled viewport, is exactly three lines: the first
-                // absorbs the pixel-virtualized panel's re-anchoring after the focus's bring-into-view.
-                before = scroller.VerticalOffset;
-                Press(headerOn2, Key.Down);
+                feed.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, () => { });
                 feed.UpdateLayout();
                 Assert.Equal(1, feed.SelectedIndex);
                 Assert.Equal(before + 3 * FeedList.LineHeight, scroller.VerticalOffset, 1.0);

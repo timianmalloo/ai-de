@@ -31,15 +31,38 @@ public abstract record ConversationItem(TurnRow Row)
     /// <summary>An <c>agent.thought</c> row: reasoning — collapsed, muted, plain text, never announced (SC9).</summary>
     public sealed record Reasoning(TurnRow Row) : ConversationItem(Row);
 
-    /// <summary>A <c>tool.call</c> row with its <c>tool.result</c> rows attached by id: <i>kind · title · status</i>, the detail on demand.</summary>
+    /// <summary>
+    /// A <c>tool.call</c> row with its <c>tool.result</c> rows attached by id: <i>kind · title ·
+    /// status</i>, the detail on demand. The facets are the fold over what the call and each result
+    /// stated (<see cref="ToolFacts"/>): the last stated value wins, the outputs join.
+    /// </summary>
     /// <param name="Row">The call.</param>
     /// <param name="Results">Its results, in event order — empty when none arrived.</param>
-    /// <param name="Status">The fold of the stated statuses against whether the turn is live.</param>
-    /// <param name="Kind">The last stated kind, as a word; empty when no frame stated one.</param>
-    /// <param name="Title">The last stated title, else the call row's text.</param>
-    /// <param name="Input">The last stated input; empty when none.</param>
-    /// <param name="Output">The results' outputs joined; empty when none.</param>
-    public sealed record Tool(TurnRow Row, IReadOnlyList<TurnRow> Results, ToolStatus Status, string Kind, string Title, string Input, string Output) : ConversationItem(Row);
+    /// <param name="Live">Whether the turn is running or waiting: a call with no terminal status is then <i>running</i>, else <i>interrupted</i>.</param>
+    public sealed record Tool(TurnRow Row, IReadOnlyList<TurnRow> Results, bool Live) : ConversationItem(Row)
+    {
+        private IEnumerable<ToolFacts> Frames => Results.Select(r => r.Tool).Prepend(Row.Tool).Where(f => f is not null)!;
+
+        /// <summary>The last result's status: <c>completed</c> → done, <c>failed</c> → failed, else running on a live turn and interrupted otherwise.</summary>
+        public ToolStatus Status => Frames.Select(f => f.Status).LastOrDefault(s => s is not null) switch
+        {
+            "completed" => ToolStatus.Done,
+            "failed" => ToolStatus.Failed,
+            _ => Live ? ToolStatus.Running : ToolStatus.Interrupted,
+        };
+
+        /// <summary>The last stated kind, as a word; empty when no frame stated one.</summary>
+        public string Kind => Frames.Select(f => f.Kind).LastOrDefault(k => k is not null) ?? string.Empty;
+
+        /// <summary>The last stated title, else the call row's text.</summary>
+        public string Title => Frames.Select(f => f.Title).LastOrDefault(t => t is not null) ?? Row.Text;
+
+        /// <summary>The last stated input; empty when none.</summary>
+        public string Input => Frames.Select(f => f.Input).LastOrDefault(i => i is not null) ?? string.Empty;
+
+        /// <summary>The results' outputs joined; empty when none.</summary>
+        public string Output => string.Join('\n', Results.Select(r => r.Tool?.Output).Where(o => o is not null));
+    }
 
     /// <summary>A non-conversation row: folded into <i>N events</i>, rendered as an event line, never as an item.</summary>
     public sealed record Event(TurnRow Row) : ConversationItem(Row);
@@ -82,10 +105,10 @@ public static class ConversationItems
                     var results = new List<TurnRow>();
                     if (row.Tool is { } call)
                     {
-                        calls[call.CallId] = results;
+                        calls[call.CallId] = results;   // the item's list, filled as its results arrive below
                     }
 
-                    items.Add(new ConversationItem.Tool(row, results, ToolStatus.Interrupted, string.Empty, row.Text, string.Empty, string.Empty));
+                    items.Add(new ConversationItem.Tool(row, results, live));
                     break;
                 case ResultKind when row.Tool is { } result && calls.TryGetValue(result.CallId, out var attached):
                     attached.Add(row);
@@ -96,52 +119,9 @@ public static class ConversationItems
             }
         }
 
-        // The fold over each call and its results, once every result is attached.
-        for (var i = 0; i < items.Count; i++)
-        {
-            if (items[i] is ConversationItem.Tool tool)
-            {
-                items[i] = Fold(tool, live);
-            }
-        }
-
         return items;
     }
 
-    /// <summary>The status word: <i>running · done · failed · interrupted</i>.</summary>
-    public static string StatusWord(ToolStatus status) => status switch
-    {
-        ToolStatus.Running => "running",
-        ToolStatus.Done => "done",
-        ToolStatus.Failed => "failed",
-        ToolStatus.Interrupted => "interrupted",
-        _ => throw new ArgumentOutOfRangeException(nameof(status), status, "unknown tool status"),
-    };
-
-    private static ConversationItem.Tool Fold(ConversationItem.Tool tool, bool live)
-    {
-        var frames = new List<ToolFacts>();
-        if (tool.Row.Tool is { } call)
-        {
-            frames.Add(call);
-        }
-
-        frames.AddRange(tool.Results.Select(r => r.Tool).Where(f => f is not null)!);
-
-        var status = frames.Select(f => f.Status).LastOrDefault(s => s is not null) switch
-        {
-            "completed" => ToolStatus.Done,
-            "failed" => ToolStatus.Failed,
-            _ => live ? ToolStatus.Running : ToolStatus.Interrupted,
-        };
-
-        return tool with
-        {
-            Status = status,
-            Kind = frames.Select(f => f.Kind).LastOrDefault(k => k is not null) ?? string.Empty,
-            Title = frames.Select(f => f.Title).LastOrDefault(t => t is not null) ?? tool.Row.Text,
-            Input = frames.Select(f => f.Input).LastOrDefault(i => i is not null) ?? string.Empty,
-            Output = string.Join('\n', tool.Results.Select(r => r.Tool?.Output).Where(o => o is not null)),
-        };
-    }
+    /// <summary>The status word: <i>running · done · failed · interrupted</i> — the member's name, lower-cased (the goldens pin the four words).</summary>
+    public static string StatusWord(ToolStatus status) => status.ToString().ToLowerInvariant();
 }
