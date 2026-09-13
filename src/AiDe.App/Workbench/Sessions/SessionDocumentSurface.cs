@@ -486,12 +486,13 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
             relay.Publish(observed);
 
             // The fold reads the same event the lane dispatches — one definition of a line's text
-            // (the console model's), one origin rule (the read model's).
+            // (the console model's), one origin rule (the read model's), one reading of a tool
+            // frame's facts (Ruling 82: the call and its results are one item, joined by id).
             var evt = observed.Event;
             var cost = evt.Cost is { } c ? new Spend(c.TokensIn, c.CacheRead, c.TokensOut, c.Requests) : null;
             _thread.Append(
                 ordinal,
-                new EventLine(evt.Ts, lane, evt.Kind, ConsoleStreamModel.TextOf(evt), IsCompileEvent(evt) ? "compile" : "run"),
+                new EventLine(evt.Ts, lane, evt.Kind, ConsoleStreamModel.TextOf(evt), IsCompileEvent(evt) ? "compile" : "run", ToolFacts.Of(evt)),
                 cost);
         };
 

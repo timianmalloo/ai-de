@@ -22,13 +22,8 @@ public abstract record ConsoleSplitRow(int Ordinal)
     {
         public string Text => Row.Text;
 
-        /// <summary>
-        /// <i>message</i>, else the kind verbatim (DESIGN.md SC1 as amended; the mockup's <c>crow</c>).
-        /// The <i>thought</i> word and its dim ink land with the <c>agent.thought</c> mapper row
-        /// (Ruling 82 condition 1: no frame is captured yet) — CV-5.3, where they can be rendered
-        /// from a real chunk rather than a guessed one.
-        /// </summary>
-        public string KindWord => Row.Kind == Coalesce.MessageKind ? "message" : Row.Kind;
+        /// <summary><i>message</i> · <i>thought</i> (dim, by the shared ink style), else the kind verbatim (DESIGN.md SC1 as amended; the mockup's <c>crow</c>).</summary>
+        public string KindWord => Row.Kind == Coalesce.MessageKind ? "message" : Row.Kind == Coalesce.ThoughtKind ? "thought" : Row.Kind;
 
         /// <summary>The row's status for assistive tech — <i>claude-code · message</i>: the attribution and the kind, never the count (SC9).</summary>
         public string Status => Row.Lane + " · " + KindWord;

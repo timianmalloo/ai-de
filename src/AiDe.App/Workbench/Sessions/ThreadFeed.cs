@@ -71,6 +71,7 @@ public sealed class ThreadFeed : FeedList, IDisposable
         MeasureWidth = MeasureCharacters * AdvanceOfZero(FontFamily);
 
         Resources[DisclosureStyleKey] = DisclosureStyle();
+        Resources[ToolDisclosureStyleKey] = ToolDisclosureStyle();
         ItemTemplate = TurnTemplate();
         ItemContainerStyle = TurnContainerStyle();
         ItemsSource = _items;
@@ -306,6 +307,17 @@ public sealed class ThreadFeed : FeedList, IDisposable
         base.OnPreviewKeyDown(e);
     }
 
+    /// <summary>
+    /// The turn's first action button when it offers one (SC8 as amended: on a running, waiting,
+    /// failed or stopped last turn the entry stop is its first action) — the Shift+Tab-from-the-editor
+    /// landing; Tab from the container lands there too because the actions carry <c>TabIndex</c> 0
+    /// inside the container's local tab scope. Null otherwise, so DOM order applies.
+    /// </summary>
+    protected override UIElement? EntryStop(ListBoxItem container) =>
+        container.DataContext is TurnItem { HasActions: true }
+            ? TabStops(container).OfType<Button>().FirstOrDefault(b => b.Tag is TurnActionKind)
+            : null;
+
     private static void CloseDisclosureHoldingFocus()
     {
         if (Keyboard.FocusedElement is not DependencyObject focused)
@@ -459,6 +471,9 @@ public sealed class ThreadFeed : FeedList, IDisposable
     private Style TurnContainerStyle()
     {
         var style = new Style(typeof(ListBoxItem), ContainerStyle());
+        // A local tab scope per turn: the actions' TabIndex 0 (SC8 as amended) ranks them first
+        // inside their own turn and never ahead of another turn's stops.
+        style.Setters.Add(new Setter(KeyboardNavigation.TabNavigationProperty, KeyboardNavigationMode.Local));
         style.Setters.Add(new Setter(AutomationProperties.NameProperty, new Binding(nameof(TurnItem.Name))));
         style.Setters.Add(new Setter(AutomationProperties.ItemStatusProperty, new Binding(nameof(TurnItem.DecorationLine))));
         style.Setters.Add(new Setter(AutomationProperties.HelpTextProperty, new Binding(nameof(TurnItem.HelpText))));
@@ -551,19 +566,19 @@ public sealed class ThreadFeed : FeedList, IDisposable
 
         body.AppendChild(DecorationLine());
 
-        // The reply side: outcome line · reply · the fold's content · the reason · the actions.
+        // The reply side (Ruling 82): the conversation's items in event order, THEN the outcome line
+        // (whose fold holds only the non-conversation rows), the reason, the actions.
         var replySide = F(typeof(StackPanel));
         replySide.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 8, 0, 0));
+
+        var conversation = F(typeof(ItemsControl));
+        conversation.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(TurnItem.Conversation)));
+        conversation.SetValue(ItemsControl.ItemTemplateSelectorProperty, new ConversationTemplates(ProseItemTemplate(), ReasoningItemTemplate(), ToolItemTemplate()));
+        conversation.SetValue(KeyboardNavigation.IsTabStopProperty, false);
+        conversation.SetValue(UIElement.FocusableProperty, false);
+        replySide.AppendChild(conversation);
+
         replySide.AppendChild(OutcomeLine());
-
-        // The prose: one wrapped text per message row of the fold (Ruling 81) — never a blob.
-        var prose = F(typeof(ItemsControl));
-        prose.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(TurnItem.Prose)));
-        prose.SetValue(ItemsControl.ItemTemplateProperty, ProseRowTemplate());
-        prose.SetValue(KeyboardNavigation.IsTabStopProperty, false);
-        prose.SetValue(UIElement.FocusableProperty, false);
-        replySide.AppendChild(prose);
-
         replySide.AppendChild(ReasonBox());
         replySide.AppendChild(ActionRow());
         body.AppendChild(replySide);
@@ -706,7 +721,7 @@ public sealed class ThreadFeed : FeedList, IDisposable
         ring.SetValue(Shape.StrokeDashArrayProperty, new DoubleCollection([3, 2]));
         ring.SetValue(UIElement.RenderTransformOriginProperty, new Point(0.5, 0.5));
         ring.SetValue(UIElement.RenderTransformProperty, RingTransform);
-        ring.SetValue(FrameworkElement.StyleProperty, RingStyle());
+        ring.SetValue(FrameworkElement.StyleProperty, RingStyle(nameof(TurnItem.State), TurnState.Running));
         glyph.AppendChild(ring);
 
         var mark = F(typeof(Path));
@@ -764,17 +779,236 @@ public sealed class ThreadFeed : FeedList, IDisposable
         return panel;
     }
 
-    /// <summary>One message of the reply side: its joined text, 13 px, wrapping at the 96ch measure (DESIGN.md:1111 as amended by Ruling 81).</summary>
-    private DataTemplate ProseRowTemplate()
+    // ── the conversation's items (Ruling 82; DESIGN.md the reply row and the events row as amended) ──
+
+    /// <summary>One template per item kind, chosen by the row's facets — prose, reasoning, tool.</summary>
+    private sealed class ConversationTemplates(DataTemplate prose, DataTemplate reasoning, DataTemplate tool) : DataTemplateSelector
     {
-        var text = Text(nameof(TurnRow.Text), 13, "TextBrush", wrap: true);
-        text.SetValue(FrameworkElement.MaxWidthProperty, MeasureWidth);
-        text.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
-        text.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 4, 0, 0));
-        return new DataTemplate(typeof(TurnRow)) { VisualTree = text };
+        public override DataTemplate? SelectTemplate(object item, DependencyObject container) => item switch
+        {
+            ConversationRow { IsReasoning: true } => reasoning,
+            ConversationRow { IsTool: true } => tool,
+            ConversationRow => prose,
+            _ => null,
+        };
     }
 
-    /// <summary>ts (muted) · lane (accent) · message; stderr in danger (DESIGN.md:1112).</summary>
+    /// <summary>Prose: the markdown subset rendered by <see cref="ProseView"/>, wrapping at the 96ch measure; no link activation.</summary>
+    private DataTemplate ProseItemTemplate()
+    {
+        var prose = F(typeof(ProseView));
+        prose.SetBinding(ProseView.TextProperty, new Binding(nameof(ConversationRow.Text)));
+        prose.SetValue(FrameworkElement.MaxWidthProperty, MeasureWidth);
+        prose.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+        prose.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 2, 0, 2));
+        return new DataTemplate(typeof(ConversationRow)) { VisualTree = prose };
+    }
+
+    /// <summary>
+    /// Reasoning: the CLI's collapsed-thinking idiom — a three-dot glyph beside one disclosure
+    /// <i>Thinking</i> in muted ink, collapsed by default, its state on the row; opened, the joined
+    /// thought as 12 px muted plain text at the measure. Never announced: no live setting, and the
+    /// policy diffs states, never rows (SC9).
+    /// </summary>
+    private DataTemplate ReasoningItemTemplate()
+    {
+        var line = F(typeof(DockPanel));
+        line.SetValue(FrameworkElement.MinHeightProperty, 24.0);
+        line.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+
+        var dots = F(typeof(Path));
+        dots.SetValue(Path.DataProperty, Geometry.Parse("M 1,4 A 1.5,1.5 0 1 0 4,4 A 1.5,1.5 0 1 0 1,4 M 7,4 A 1.5,1.5 0 1 0 10,4 A 1.5,1.5 0 1 0 7,4 M 13,4 A 1.5,1.5 0 1 0 16,4 A 1.5,1.5 0 1 0 13,4"));
+        dots.SetResourceReference(Shape.FillProperty, "TextMutedBrush");
+        dots.SetValue(FrameworkElement.WidthProperty, 16.0);
+        dots.SetValue(FrameworkElement.HeightProperty, 8.0);
+        dots.SetValue(Shape.StretchProperty, Stretch.Uniform);
+        dots.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Top);
+        dots.SetValue(FrameworkElement.MarginProperty, new Thickness(2, 8, 8, 0));
+        dots.SetValue(UIElement.IsHitTestVisibleProperty, false);
+        dots.SetValue(DockPanel.DockProperty, Dock.Left);
+        line.AppendChild(dots);
+
+        var disclosure = Disclosure(ThinkingWord, null, nameof(ConversationRow.IsOpen));
+        disclosure.SetValue(AutomationProperties.NameProperty, ThinkingWord);
+        disclosure.SetValue(HeaderedContentControl.HeaderTemplateProperty, MutedHeaderTemplate());
+        var thought = Text(nameof(ConversationRow.Text), 12, "TextMutedBrush", wrap: true);
+        thought.SetValue(FrameworkElement.MaxWidthProperty, MeasureWidth);
+        thought.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+        thought.SetValue(FrameworkElement.MarginProperty, new Thickness(8, 2, 0, 6));
+        disclosure.AppendChild(thought);
+        line.AppendChild(disclosure);
+
+        return new DataTemplate(typeof(ConversationRow)) { VisualTree = line };
+    }
+
+    /// <summary>The copy of the reasoning item's line (DESIGN.md, copy added by the errata).</summary>
+    public const string ThinkingWord = "Thinking";
+
+    /// <summary>A disclosure header in muted ink (the reasoning item's <i>Thinking</i>), outranking the toggle's accent by a local value on the text.</summary>
+    private static DataTemplate MutedHeaderTemplate()
+    {
+        var text = F(typeof(ThreadText));
+        text.SetBinding(TextBlock.TextProperty, new Binding("."));
+        text.SetValue(TextBlock.FontSizeProperty, 12.0);
+        text.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+        text.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+        return new DataTemplate(typeof(string)) { VisualTree = text };
+    }
+
+    /// <summary>
+    /// A tool item: one 24 px line — a neutral marker · the kind as a muted word (1.1.1) · the title
+    /// in mono · the status word (the ring while running; <c>{colors.verified}</c> done,
+    /// <c>{colors.danger}</c> failed, muted <i>interrupted</i>) · <i>detail ▸</i> — whose disclosure
+    /// opens the input and the result as 12 px mono on the sunken ground, ≤ 200 px then scrolling,
+    /// a named, focusable region (A11-3) inside the disclosure's subtree so Escape closes it (K8).
+    /// </summary>
+    private DataTemplate ToolItemTemplate()
+    {
+        var item = F(typeof(Expander));
+        item.SetValue(FrameworkElement.StyleProperty, new DynamicResourceExtension(ToolDisclosureStyleKey));
+        item.SetBinding(AutomationProperties.NameProperty, new Binding(nameof(ConversationRow.DetailName)));
+        item.SetBinding(Expander.IsExpandedProperty, new Binding(nameof(ConversationRow.IsOpen)) { Mode = BindingMode.TwoWay });
+        item.SetValue(UIElement.FocusableProperty, false);
+        item.SetValue(KeyboardNavigation.IsTabStopProperty, false);
+        item.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+        item.SetBinding(HeaderedContentControl.HeaderProperty, new Binding("."));
+        item.SetValue(HeaderedContentControl.HeaderTemplateProperty, ToolLineTemplate());
+        item.AddHandler(Expander.ExpandedEvent, new RoutedEventHandler(ResetCompiledScroll));
+
+        var region = F(typeof(ScrollViewer));
+        region.SetValue(FrameworkElement.MaxHeightProperty, 200.0);
+        region.SetValue(FrameworkElement.MaxWidthProperty, MeasureWidth);
+        region.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+        region.SetValue(ScrollViewer.VerticalScrollBarVisibilityProperty, ScrollBarVisibility.Auto);
+        region.SetValue(ScrollViewer.HorizontalScrollBarVisibilityProperty, ScrollBarVisibility.Disabled);
+        region.SetValue(UIElement.FocusableProperty, true);
+        region.SetBinding(KeyboardNavigation.IsTabStopProperty, new Binding(nameof(ConversationRow.IsOpen)));
+        region.SetBinding(AutomationProperties.NameProperty, new Binding(nameof(ConversationRow.DetailRegionName)));
+        region.SetResourceReference(Control.BackgroundProperty, "SurfaceSunkenBrush");
+        region.SetValue(FrameworkElement.MarginProperty, new Thickness(24, 2, 0, 6));
+        var pre = Text(nameof(ConversationRow.Detail), 12, "TextBrush", mono: true, wrap: true);
+        pre.SetValue(FrameworkElement.MarginProperty, new Thickness(8, 6, 8, 6));
+        region.AppendChild(pre);
+        item.AppendChild(region);
+
+        return new DataTemplate(typeof(ConversationRow)) { VisualTree = item };
+    }
+
+    /// <summary>The tool item's line: marker · kind · title · status.</summary>
+    private static DataTemplate ToolLineTemplate()
+    {
+        var line = F(typeof(StackPanel));
+        line.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
+        line.SetValue(FrameworkElement.MinHeightProperty, 24.0);
+
+        var marker = F(typeof(Path));
+        marker.SetValue(Path.DataProperty, new EllipseGeometry(new Point(3, 3), 3, 3));
+        marker.SetValue(FrameworkElement.WidthProperty, 6.0);
+        marker.SetValue(FrameworkElement.HeightProperty, 6.0);
+        marker.SetResourceReference(Shape.FillProperty, "TextMutedBrush");
+        marker.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+        marker.SetValue(FrameworkElement.MarginProperty, new Thickness(7, 0, 11, 0));
+        marker.SetValue(UIElement.IsHitTestVisibleProperty, false);
+        line.AppendChild(marker);
+
+        var kind = Text(nameof(ConversationRow.Kind), 12, "TextMutedBrush");
+        kind.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, 8, 0));
+        line.AppendChild(kind);
+
+        var title = Text(nameof(ConversationRow.Title), 13, "TextBrush", mono: true);
+        title.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, 10, 0));
+        line.AppendChild(title);
+
+        var ring = F(typeof(Ellipse));
+        ring.SetValue(FrameworkElement.WidthProperty, 10.0);
+        ring.SetValue(FrameworkElement.HeightProperty, 10.0);
+        ring.SetValue(Shape.StrokeThicknessProperty, 2.0);
+        ring.SetValue(Shape.StrokeDashArrayProperty, new DoubleCollection([3, 2]));
+        ring.SetValue(UIElement.RenderTransformOriginProperty, new Point(0.5, 0.5));
+        ring.SetValue(UIElement.RenderTransformProperty, RingTransform);
+        ring.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+        ring.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, 4, 0));
+        ring.SetValue(UIElement.IsHitTestVisibleProperty, false);
+        ring.SetValue(FrameworkElement.StyleProperty, RingStyle(nameof(ConversationRow.IsRunning), true));
+        line.AppendChild(ring);
+
+        var status = Text(nameof(ConversationRow.StatusWord), 12, brush: null);
+        status.SetValue(FrameworkElement.StyleProperty, ToolStatusStyle());
+        status.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, 10, 0));
+        line.AppendChild(status);
+
+        return new DataTemplate(typeof(ConversationRow)) { VisualTree = line };
+    }
+
+    /// <summary>The status word's ink by status (the base is the style's setter, never the template's: DP precedence).</summary>
+    private static Style ToolStatusStyle()
+    {
+        var style = new Style(typeof(ThreadText));
+        style.Setters.Add(new Setter(TextBlock.ForegroundProperty, new DynamicResourceExtension("TextBrush")));
+        void Colour(ToolStatus status, string brush)
+        {
+            var trigger = new DataTrigger { Binding = new Binding(nameof(ConversationRow.Status)), Value = status };
+            trigger.Setters.Add(new Setter(TextBlock.ForegroundProperty, new DynamicResourceExtension(brush)));
+            style.Triggers.Add(trigger);
+        }
+
+        Colour(ToolStatus.Done, "VerifiedBrush");
+        Colour(ToolStatus.Failed, "DangerBrush");
+        Colour(ToolStatus.Interrupted, "TextMutedBrush");
+        return style;
+    }
+
+    private const string ToolDisclosureStyleKey = "ToolDisclosure";
+
+    /// <summary>
+    /// The tool item's disclosure template: the header content (the line) and the <i>detail</i>
+    /// toggle share one row; the expanded region spans the row beneath at full width — inside the
+    /// Expander's subtree, so the K8 Escape rule and the ExpandCollapse pattern hold as for every
+    /// other disclosure.
+    /// </summary>
+    internal static Style ToolDisclosureStyle()
+    {
+        var root = F(typeof(StackPanel));
+
+        var line = F(typeof(StackPanel));
+        line.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
+        var header = F(typeof(ContentPresenter));
+        header.SetValue(ContentPresenter.ContentProperty, new TemplateBindingExtension(HeaderedContentControl.HeaderProperty));
+        header.SetValue(ContentPresenter.ContentTemplateProperty, new TemplateBindingExtension(HeaderedContentControl.HeaderTemplateProperty));
+        header.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+        line.AppendChild(header);
+
+        var toggle = F(typeof(ToggleButton), "HeaderSite");
+        toggle.SetValue(ToggleButton.IsCheckedProperty, new TemplateBindingExtension(Expander.IsExpandedProperty));
+        toggle.SetValue(ContentControl.ContentProperty, "detail");
+        toggle.SetValue(FrameworkElement.MinHeightProperty, 24.0);
+        toggle.SetValue(FrameworkElement.MinWidthProperty, 24.0);
+        toggle.SetValue(Control.PaddingProperty, new Thickness(2, 0, 4, 0));
+        toggle.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+        toggle.SetValue(Control.TemplateProperty, HeaderToggleTemplate());
+        toggle.SetValue(FrameworkElement.FocusVisualStyleProperty, null);
+        toggle.SetValue(AutomationProperties.NameProperty, new TemplateBindingExtension(AutomationProperties.NameProperty));
+        line.AppendChild(toggle);
+        root.AppendChild(line);
+
+        var content = F(typeof(ContentPresenter), "ExpandSite");
+        content.SetValue(ContentPresenter.ContentProperty, new TemplateBindingExtension(ContentControl.ContentProperty));
+        content.SetValue(UIElement.VisibilityProperty, Visibility.Collapsed);
+        root.AppendChild(content);
+
+        var template = new ControlTemplate(typeof(Expander)) { VisualTree = root };
+        var expanded = new Trigger { Property = Expander.IsExpandedProperty, Value = true };
+        expanded.Setters.Add(new Setter(UIElement.VisibilityProperty, Visibility.Visible, "ExpandSite"));
+        template.Triggers.Add(expanded);
+
+        var style = new Style(typeof(Expander));
+        style.Setters.Add(new Setter(Control.TemplateProperty, template));
+        style.Setters.Add(new Setter(Control.BackgroundProperty, Brushes.Transparent));
+        style.Setters.Add(new Setter(Control.BorderThicknessProperty, new Thickness(0)));
+        return style;
+    }
+
+    /// <summary>ts (muted) · lane (accent) · message; stderr in danger (DESIGN.md:1112). Binds the row grammar's names — an <see cref="EventLine"/> or a <see cref="TurnRow"/> alike.</summary>
     public static DataTemplate EventLineTemplate()
     {
         // A DockPanel, not a horizontal StackPanel: a StackPanel measures every child at infinite
@@ -821,6 +1055,11 @@ public sealed class ThreadFeed : FeedList, IDisposable
         var stderr = new DataTrigger { Binding = new Binding(kindPath), Value = "stderr" };
         stderr.Setters.Add(new Setter(TextBlock.ForegroundProperty, new DynamicResourceExtension("DangerBrush")));
         style.Triggers.Add(stderr);
+
+        // A thought row is dim (Ruling 82; the split's row as amended) — the same style, both surfaces.
+        var thought = new DataTrigger { Binding = new Binding(kindPath), Value = Coalesce.ThoughtKind };
+        thought.Setters.Add(new Setter(TextBlock.ForegroundProperty, new DynamicResourceExtension("TextMutedBrush")));
+        style.Triggers.Add(thought);
         return style;
     }
 
@@ -860,6 +1099,7 @@ public sealed class ThreadFeed : FeedList, IDisposable
         button.SetValue(Control.PaddingProperty, new Thickness(10, 3, 10, 3));
         button.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, 8, 4));
         button.SetValue(Button.IsDefaultProperty, false);
+        button.SetValue(KeyboardNavigation.TabIndexProperty, 0);   // the entry stop (SC8 as amended)
         button.SetBinding(AutomationProperties.HelpTextProperty, new Binding(".") { Converter = ActionHelpConverter.Instance });
         button.AddHandler(ButtonBase.ClickEvent, new RoutedEventHandler(OnActionClick));
         actions.SetValue(ItemsControl.ItemTemplateProperty, new DataTemplate(typeof(TurnActionKind)) { VisualTree = button });
@@ -870,7 +1110,7 @@ public sealed class ThreadFeed : FeedList, IDisposable
     /// A disclosure = an <see cref="Expander"/> (native ExpandCollapse), not focusable itself, its
     /// state two-way on the row, its header the one stop (P8; spike Q11, Q13).
     /// </summary>
-    private static FrameworkElementFactory Disclosure(string? header, string nameBinding, string openBinding, string? headerBinding = null)
+    private static FrameworkElementFactory Disclosure(string? header, string? nameBinding, string openBinding, string? headerBinding = null)
     {
         var expander = F(typeof(Expander));
         expander.SetValue(FrameworkElement.StyleProperty, new DynamicResourceExtension(DisclosureStyleKey));
@@ -883,7 +1123,11 @@ public sealed class ThreadFeed : FeedList, IDisposable
             expander.SetBinding(HeaderedContentControl.HeaderProperty, new Binding(headerBinding));
         }
 
-        expander.SetBinding(AutomationProperties.NameProperty, new Binding(nameBinding));
+        if (nameBinding is not null)
+        {
+            expander.SetBinding(AutomationProperties.NameProperty, new Binding(nameBinding));
+        }
+
         expander.SetBinding(Expander.IsExpandedProperty, new Binding(openBinding) { Mode = BindingMode.TwoWay });
         expander.SetValue(UIElement.FocusableProperty, false);
         expander.SetValue(KeyboardNavigation.IsTabStopProperty, false);
@@ -903,6 +1147,7 @@ public sealed class ThreadFeed : FeedList, IDisposable
         var toggle = F(typeof(ToggleButton), "HeaderSite");
         toggle.SetValue(ToggleButton.IsCheckedProperty, new TemplateBindingExtension(Expander.IsExpandedProperty));
         toggle.SetValue(ContentControl.ContentProperty, new TemplateBindingExtension(HeaderedContentControl.HeaderProperty));
+        toggle.SetValue(ContentControl.ContentTemplateProperty, new TemplateBindingExtension(HeaderedContentControl.HeaderTemplateProperty));
         toggle.SetValue(FrameworkElement.MinHeightProperty, 24.0);
         toggle.SetValue(FrameworkElement.MinWidthProperty, 24.0);
         toggle.SetValue(Control.PaddingProperty, new Thickness(2, 0, 4, 0));
@@ -1035,19 +1280,23 @@ public sealed class ThreadFeed : FeedList, IDisposable
         return style;
     }
 
-    /// <summary>The running ring: visible while running, spinning unless motion is reduced (the seam), stopped on rebind (ExitActions).</summary>
-    private Style RingStyle()
+    /// <summary>
+    /// A running ring: visible while the bound <paramref name="path"/> equals <paramref name="runningValue"/>
+    /// (the turn's state, or a tool item's <c>IsRunning</c>), spinning unless motion is reduced (the
+    /// seam), stopped on rebind (ExitActions) — the one moving element on the surface.
+    /// </summary>
+    private static Style RingStyle(string path, object runningValue)
     {
         var style = new Style(typeof(Ellipse));
         style.Setters.Add(new Setter(UIElement.VisibilityProperty, Visibility.Collapsed));
         style.Setters.Add(new Setter(Shape.StrokeProperty, new DynamicResourceExtension("TextBrush")));
 
-        var running = new DataTrigger { Binding = new Binding(nameof(TurnItem.State)), Value = TurnState.Running };
+        var running = new DataTrigger { Binding = new Binding(path), Value = runningValue };
         running.Setters.Add(new Setter(UIElement.VisibilityProperty, Visibility.Visible));
         style.Triggers.Add(running);
 
         var spin = new MultiDataTrigger();
-        spin.Conditions.Add(new System.Windows.Condition(new Binding(nameof(TurnItem.State)), TurnState.Running));
+        spin.Conditions.Add(new System.Windows.Condition(new Binding(path), runningValue));
         spin.Conditions.Add(new System.Windows.Condition(
             new Binding(nameof(IsMotionReduced)) { RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor, typeof(ThreadFeed), 1) },
             false));

@@ -189,7 +189,10 @@ public sealed class TheThreadAnnouncesAndExposesRealPropertiesTests
                     foreach (var expander in ThreadFixtures.Visuals<Expander>(container))
                     {
                         var name = AutomationProperties.GetName(expander);
-                        Assert.True(name.EndsWith("of " + ordinal, StringComparison.Ordinal) || name.EndsWith("events", StringComparison.Ordinal) || name.EndsWith("event", StringComparison.Ordinal), $"{label}: a disclosure named '{name}'");
+                        Assert.True(
+                            name.EndsWith("of " + ordinal, StringComparison.Ordinal) || name.EndsWith("events", StringComparison.Ordinal) || name.EndsWith("event", StringComparison.Ordinal)
+                            || name == ThreadFeed.ThinkingWord || name.StartsWith("Detail of ", StringComparison.Ordinal),   // the conversation's items (Ruling 82; DESIGN.md's copy)
+                            $"{label}: a disclosure named '{name}'");
                         Assert.False(expander.Focusable);
                     }
 
@@ -410,7 +413,7 @@ public sealed class TheThreadAnnouncesAndExposesRealPropertiesTests
             });
     }
 
-    /// <summary><b>S1.</b> A reply carrying markup renders as those characters; no Invoke-capable element is inside the reply.</summary>
+    /// <summary><b>S1.</b> A reply carrying markup renders as those characters — HTML is outside the markdown subset and stays literal; the subset's bold is a weight and its link is text followed by its URL (Ruling 82) — and no Invoke-capable element is inside the reply.</summary>
     [Fact]
     public void AReplyWithMarkup_RendersAsCharacters_NoHyperlink()
     {
@@ -425,9 +428,11 @@ public sealed class TheThreadAnnouncesAndExposesRealPropertiesTests
             try
             {
                 var container = ThreadFixtures.Container(feed, 0);
-                var reply = ThreadFixtures.Visuals<ThreadText>(container).Single(t => t.Text.Contains("Deny", StringComparison.Ordinal));
-                Assert.Equal("<a href=\"x\">Deny</a> **bold** [link](http://x)", reply.Text);
+                static string Plain(TextBlock t) => new System.Windows.Documents.TextRange(t.ContentStart, t.ContentEnd).Text;
+                var reply = ThreadFixtures.Visuals<ThreadText>(container).Single(t => Plain(t).Contains("Deny", StringComparison.Ordinal));
+                Assert.Equal("<a href=\"x\">Deny</a> bold link (http://x)", Plain(reply));
                 Assert.Empty(reply.Inlines.OfType<System.Windows.Documents.Hyperlink>());
+                Assert.Null(UIElementAutomationPeer.CreatePeerForElement(reply).GetPattern(PatternInterface.Invoke));
                 Assert.DoesNotContain(ThreadFixtures.Visuals<ButtonBase>(container), b => b.Content is "Deny");
             }
             finally

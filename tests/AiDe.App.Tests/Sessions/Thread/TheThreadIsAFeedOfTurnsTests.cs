@@ -120,11 +120,23 @@ public sealed class TheThreadIsAFeedOfTurnsTests
                 Assert.Equal(1, feed.SelectedIndex);
                 Assert.Same(feed.ItemContainerGenerator.ContainerFromIndex(1), Keyboard.FocusedElement);
 
-                // Down from a fold header is a scroll of three lines, not a move.
+                // Down from a fold header is a scroll of three lines, not a move. The offset is read
+                // AFTER the header takes focus: focusing it brings it into view, and b2's fold sits
+                // below twenty-seven tool items since Ruling 82.
                 var scroller = ThreadFixtures.Visuals<ScrollViewer>(feed).First();
-                var before = scroller.VerticalOffset;
                 var headerOn2 = ThreadFixtures.HeaderToggle(ThreadFixtures.Fold((ListBoxItem)feed.ItemContainerGenerator.ContainerFromIndex(1)!));
                 Assert.True(headerOn2.Focus());
+                feed.UpdateLayout();
+                var before = scroller.VerticalOffset;
+                Press(headerOn2, Key.Down);
+                feed.UpdateLayout();
+                Assert.Equal(1, feed.SelectedIndex);
+                var first = scroller.VerticalOffset - before;
+                Assert.True(first > 0 && first <= 3 * FeedList.LineHeight + 1, $"the first Down scrolled {first}px");
+
+                // The second press, from a settled viewport, is exactly three lines: the first
+                // absorbs the pixel-virtualized panel's re-anchoring after the focus's bring-into-view.
+                before = scroller.VerticalOffset;
                 Press(headerOn2, Key.Down);
                 feed.UpdateLayout();
                 Assert.Equal(1, feed.SelectedIndex);
@@ -191,12 +203,13 @@ public sealed class TheThreadIsAFeedOfTurnsTests
                     stops.Add(AutomationProperties.GetName(focused!));
                 }
 
-                Assert.Equal(["Provenance of b1", "Compiled prompt of b1", "3 events"], stops);
+                // b1's three events are accepted · the answer · completed; the answer is conversation, so the fold holds 2 (Ruling 82).
+                Assert.Equal(["Provenance of b1", "Compiled prompt of b1", "2 events"], stops);
                 Assert.Same(composer, Keyboard.FocusedElement);
 
                 // Shift+Tab from the composer's stand-in lands on the caret's last stop.
                 Assert.True(feed.FocusCurrentItemLast());
-                Assert.Equal("3 events", AutomationProperties.GetName((DependencyObject)Keyboard.FocusedElement));
+                Assert.Equal("2 events", AutomationProperties.GetName((DependencyObject)Keyboard.FocusedElement));
 
                 // With provenance open, "Use as the next draft" is one more stop; with the compiled
                 // prompt open, its scroller is a named stop and PageDown scrolls it.
@@ -217,7 +230,7 @@ public sealed class TheThreadIsAFeedOfTurnsTests
                     names.Add(AutomationProperties.GetName(focused) is { Length: > 0 } n ? n : (focused as ContentControl)?.Content as string ?? focused.GetType().Name);
                 }
 
-                Assert.Equal(["Provenance of b1", "Use as the next draft", "Compiled prompt of b1", "Compiled prompt of b1", "3 events"], names);
+                Assert.Equal(["Provenance of b1", "Use as the next draft", "Compiled prompt of b1", "Compiled prompt of b1", "2 events"], names);
                 return Task.CompletedTask;
             });
     }
@@ -521,7 +534,8 @@ public sealed class TheThreadIsAFeedOfTurnsTests
                 feed.UpdateLayout();
                 var container = ThreadFixtures.Container(feed, 1);
                 var tail = ThreadFixtures.Visuals<Button>(container).First(b => b.Content is string s && s.StartsWith("the other", StringComparison.Ordinal));
-                Assert.Equal("the other 138, in the Console", tail.Content);
+                // b2's 139 working lines: 27 tool.call lines are items (Ruling 82); the 112 tool.result lines with no call fold, four shown.
+                Assert.Equal("the other 108, in the Console", tail.Content);
 
                 var announcer = (RecordingAnnouncer)typeof(SessionDocumentSurface).GetField("_announcer", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.GetValue(document)!;
                 tail.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));

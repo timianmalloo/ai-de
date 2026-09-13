@@ -189,7 +189,7 @@ public abstract class FeedList : ListBox, ICanvasFocusTarget
         return FocusItem(SelectedIndex < 0 ? Items.Count - 1 : SelectedIndex);
     }
 
-    /// <summary>Backward entry (Shift+Tab from the composer): the caret's item's last tab stop, or its container when it has none.</summary>
+    /// <summary>Backward entry (Shift+Tab from the composer): the item's <see cref="EntryStop"/> when it has one, else the caret's item's last tab stop, or its container when it has none.</summary>
     public bool FocusCurrentItemLast()
     {
         if (!FocusCurrentItem())
@@ -202,9 +202,17 @@ public abstract class FeedList : ListBox, ICanvasFocusTarget
             return false;
         }
 
+        if (EntryStop(container) is { } entry)
+        {
+            return entry.Focus();
+        }
+
         var stops = TabStops(container).ToList();
         return stops.Count == 0 || stops[^1].Focus();
     }
+
+    /// <summary>An item's entry stop when one outranks DOM order (the thread's first action on a live or failed last turn, SC8 as amended); null for DOM order.</summary>
+    protected virtual UIElement? EntryStop(ListBoxItem container) => null;
 
     /// <summary>Selects, scrolls into view, lays out and focuses the CONTAINER at <paramref name="index"/> — never an inner control.</summary>
     public bool FocusItem(int index)
