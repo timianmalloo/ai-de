@@ -767,3 +767,47 @@ precedes the actual committed Core facade/issuer/client/ViewModel handoff; that 
 MainWindow attachment and awaited final close. The target is still an actual daemon-backed
 Architecture file/member/source/Back journey with replacement/revocation/shutdown evidence.
 No main/push authority, no successful runtime stub, no reset of prior budget misses.
+
+## Structural diagnostic correction, Owner turn 44
+
+The first three NQ diagnostic leaves inserted methods between existing `try` and `catch`
+blocks in two places. Compilation failed; no pin/event receipt was produced. Conductor
+opened the affected source and compiler messages rather than interpreting this as a native
+namespace result. Owner authorizes two of the nine held leaves solely to move those methods
+to class-member scope, compile and rerun diagnostics with unchanged invalidation semantics.
+NQ may reach 15/22; seven remain held for receipt-based repair. No regular-C borrowing or
+main-line accounting reset is authorized. Preserve the original compiler transcript.
+
+## Bounded Conductor join checkpoint, Owner turn 45
+
+The resumed sixty-call main-line estimate was insufficient for the diagnostic compiler
+correction, cross-turn readbacks and durable records. Owner prospectively adds twelve
+leaves, cumulative ceiling 72 rather than a reset: six for Shell evidence/conditional
+join, three for NQ disposition and three for audit/regeneration/readback. Worker budgets
+and the four remaining NQ review leaves are unchanged.
+
+Conductor resolved the Test review's truncated-source limitation by opening the exact
+repair tests. Their assertions retain old resource ownership after failure, prove recovery
+and disposal-attempt counts, continue callback clearing, hold primitives until outstanding
+work drains, and clear host activation/registration before retry. Parent read all eleven
+semantic-red messages. Inventory exceptions were already contained by the reader; the
+newly reproduced failure is host admission cleanup racing semaphore disposal, not a newly
+proved inventory exception path.
+
+SRE and Test clear the bounded component repair with explicit conditions. Shell commits
+`dade5c77` and `8e691c6a` were joined as `17edadec` and `639be9d3`; the Conductor build/test
+receipt records 90/90, independently of the author's 90/90 and the earlier parent repeat.
+Failed cleanup retains ownership for a later awaited `DisposeAsync` retry. A permanently
+noncooperative Core implementation remains outside this component proof. Core membership
+and the actual factory/MainWindow handoff are still absent from the accepted runtime.
+
+### Checkpoint budget finding
+
+A manual leaf-call recount (excluding parallel-wrapper calls) reached 75 before the final
+recording actions, above the prospectively extended 72. The separate JSON receipts behind
+the diagnostic TRX and the record/readback steps exceeded the estimate; this is an overrun,
+not a successful budget result. It is not the harness's measured model-request count.
+The closing audit includes the final recording calls. No further implementation or causal
+repair is silently released by that overrun: seven NQ calls remain held for Owner disposition.
+Future receipt handoffs must include the compact raw diagnostic values and exact artifact
+paths together, and reserve recording calls before spending the investigation allocation.

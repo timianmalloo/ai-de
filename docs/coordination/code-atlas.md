@@ -19,11 +19,11 @@ summary: >-
 
 # Code Atlas coordination - isolated authoring active, integration not admitted
 
-**Current execution checkpoint:** Conductor `36616705` includes the accepted detached reader,
-main compatibility and corrected public Core render seam. Core membership candidate `d8d83de`
-is blocked by three executed qualification failures. Shell candidate `dade5c77` passes its
-component tests but has four source-reviewed lifetime findings and no real-window handoff.
-Neither candidate is joined. The **Production convergence checkpoint** below is current;
+**Current execution checkpoint:** Conductor `639be9d3` includes the accepted detached reader,
+main compatibility, public Core render seam and reviewed Shell component/lifetime repair.
+Core membership `d8d83de` remains blocked; diagnostics distinguish native notification abort
+995 from namespace mutation but do not yet establish its cause. The actual Core factory
+and real-window handoff remain absent. The **Production convergence checkpoint** below is current;
 earlier allocations and decisions are retained as history.
 
 **Current delivery blocker:** `req-01M2B86TXF7SHG61B31P4H4173` is still open.
@@ -222,8 +222,8 @@ erasure of prior orchestration cost. No measured total runtime estimate is avail
 
 | Node | Capability | Input and exit condition | Dependency and current state |
 |---|---|---|---|
-| NQ diagnosis/repair | Reasoning | Actual failing native notification, then required clone/linked/nested and hostile/ABA controls pass without weakening confinement | Owner 43: special 10/22, first three new diagnostic leaves released; parent receipt before nine repair leaves. Regular Core remains 34/48 |
-| Shell lifetime repair | Reasoning | Factory/dispose/clear/load fault oracles, subsequent recovery and idempotent final drain/disposal | Owner 43: 32/44, twelve new repair leaves released. Semantic red still required for four source findings |
+| NQ diagnosis/repair | Reasoning | Actual abort cause, then required clone/linked/nested and hostile/ABA controls pass without weakening confinement | Special 15/22 after structural diagnostic correction; seven held. Parent read error-995 receipts; cause unverified. Regular Core remains 34/48 |
+| Shell lifetime repair | Reasoning | Factory/dispose/clear/admission fault oracles, recovery and idempotent final drain/disposal | Complete at component level: 44/44; eleven semantic reds, parent 90/90 before and after join; SRE/Test conditions retained |
 | Membership gate | Independent review | Narrow Security/Test acceptance of qualified native/admin/currentness evidence | Depends on NQ repair, not Shell repair |
 | Production Core handoff | Reasoning | Actual committed issuer, async transport, remote reader and factory/view-model surface; no callable success stub | Git-dependent admission waits for membership gate |
 | Real-window integration | Reasoning | MainWindow attach/replacement/awaited close consumes the committed Core surface | Depends on Core handoff and repaired Shell owner |
@@ -253,3 +253,9 @@ in `docs/proof/code-atlas-production-adapters.md`.
 Owner turn 43 separately allocates eight review leaves: NQ Security/Test and Shell SRE/Test.
 Conductor readbacks/replays remain separate. The diagnostic tranche is a decision boundary:
 the changed pin/stage/native result must be read before a cause-specific NQ repair is released.
+
+Owner turn 45 prospectively extends the resumed main-line checkpoint from sixty to seventy-two
+leaves, without resetting cost: six Shell readback/join, three NQ disposition, three records.
+The Shell test-source limitation and local join are resolved. Four review leaves remain for
+NQ. The native abort receipt has been read; cause-specific release is with Owner, not silently
+inferred from a diagnostic success. The programme and implementation/verification tasks stay open.

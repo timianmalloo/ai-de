@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Understanding: 3 types, 41 members, 2% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Understanding: 3 types, 44 members, 2% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Understanding`
 
-**3 public types · 41 public members · 2% documented.**
+**3 public types · 44 public members · 2% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -26,13 +26,14 @@ summary: >-
 
 *class* — `AtlasReaderView.cs`
 
-Native, read-only consumer for the Atlas query port. It owns no source I/O and asks only
-`IAtlasQueries` for inventory, selection and receipt restore projections.
+Native, read-only consumer for Atlas projections. The proof constructor retains
+`IAtlasQueries`; the production constructor consumes a Core-owned reader lease.
 
 | Member | Summary |
 |---|---|
 | `int PageSize = 64` | **(gap)** |
 | `AtlasReaderView(IAtlasQueries queries, string manifestToken)` | **(gap)** |
+| `AtlasReaderView(IAtlasReaderLease lease) : this(lease, null) { }` | **(gap)** |
 | `IReadOnlyList<AtlasFileNode> FileRoots` | **(gap)** |
 | `IReadOnlyList<OutlineRow> OutlineRows` | **(gap)** |
 | `IReadOnlyList<AtlasTextSpan> CurrentHighlights { get; private set; } = []` | **(gap)** |
@@ -68,6 +69,8 @@ Native, read-only consumer for the Atlas query port. It owns no source I/O and a
 | `string? FileValue { get; }` | **(gap)** |
 | `bool IsFile { get; }` | **(gap)** |
 | `string Details { get; }` | **(gap)** |
+| `string? ParentToken { get; private init; }` | **(gap)** |
+| `string? EntryToken { get; private init; }` | **(gap)** |
 | `ObservableCollection<AtlasFileNode> Children { get; } = []` | **(gap)** |
 | `string AccessibleName` | **(gap)** |
 | `string ToString()` | **(gap)** |

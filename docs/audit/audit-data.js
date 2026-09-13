@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T22:47:16Z",
+  "generated": "2026-09-13T23:05:26Z",
   "audit": [
     {
       "actor": null,
@@ -15513,6 +15513,40 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "366167052537c35171f40c6da66c982f8f5d93e5",
         "short": "366167052",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2EG9C2RD14VH1RAV4MDEPPA",
+      "shortname": "atlas-shell-join-native-abort-receipt",
+      "datetime": "2026-09-13T23:05:25Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Joined cleared Shell component and lifetime repair as639be9d3 after source/oracle checks, independent90/90 before/after join, eleven semantic reds. Registered DC-177 cleanup ownership and DC-178 malformed structural edits. Corrected NQ diagnostics compile but still14/17: source-root watch completes false/error995/zero bytes firstaftergitversion, unlike real ABA event. Cause unverified; seven NQ leaves held for Owner. No Core runtime factory or MainWindow handoff. Manual mainline leaf recount77 exceeds extended72; record overrun, not budget success. No primary changes/push.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Continue Code Atlas production integration with Owner-resolved blockers.",
+      "done_when": "Membership and Shell lifetime blockers resolved, actual Core-to-Shell handoff committed, next integration gate supported by concrete evidence.",
+      "tier": "T2",
+      "main_calls": 77,
+      "main_budget": 72,
+      "main_over_budget": true,
+      "fan_out": 4,
+      "started_at": "2026-09-13T22:56:43Z",
+      "duration_seconds": 522.0,
+      "git": {
+        "sha": "639be9d389747904b61d6298cc65f96ba6075ade",
+        "short": "639be9d38",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

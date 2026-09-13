@@ -411,6 +411,22 @@ membership candidate's three failures; no membership consumer is admitted.
   lifecycle, then actual daemon-backed journey proof. Exhaustion returns remaining work
   and its estimate to Owner; it does not reset a budget or manufacture completion.
 
+Owner turn 44 reallocates two of the nine held NQ leaves to correcting the diagnostic
+patch's two misplaced methods, compiling, and rerunning the unchanged diagnostic cases.
+The first three diagnostic leaves produced compiler errors, not native event evidence.
+NQ may reach **15/22**; seven remain held until Conductor reads the actual receipt.
+No invalidation-semantic change, regular-C borrowing or new source permission is granted.
+The broken-build transcript remains evidence of the structural patch-placement failure.
+
+Owner turn 45 prospectively extends the resumed Conductor checkpoint from sixty to
+seventy-two leaves: six Shell evidence/join, three NQ disposition, three record/regeneration.
+Author budgets do not change. Shell used 12/12 repair leaves, cumulative **44/44**, and
+returned `8e691c6a`. Targeted SRE/Test gates cleared the component repair; Conductor read
+the previously truncated test-source portion, read eleven semantic-red messages, and
+independently observed 90/90 both before and after joining as `639be9d3`. S's remaining
+MainWindow work stays unreleased until the committed C factory exists. Four NQ review
+leaves remain; neither failed membership source nor diagnostic-only source was joined.
+
 ### Core owns
 
 | Path | Why |

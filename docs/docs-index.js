@@ -2270,7 +2270,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Understanding: 3 types, 41 members, 2% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Understanding: 3 types, 44 members, 2% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2283,7 +2283,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "531dbe2bb206ec4681f9ad9af3db438b7e8bab1f4de9544f3a576400be59bf03"
+      "sourceSha256": "e8de6a230118cc58c066fa5d83eeea3e9b03cd35f4be76e74c858493886139c8"
     },
     {
       "id": "api-aide-core",
@@ -4781,7 +4781,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6f325ef1b307d593afddf6644bf96f521fc047ee5c3a1270435167eac1f85e95"
+      "sourceSha256": "5ad4d295cd308c7b1e855f5c7b9f551200a360c0eb54ab4e56848f0fddbe8a45"
     },
     {
       "id": "note-atlas-reader-native-direction",
@@ -8381,7 +8381,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9bf5c66e428f6d90cd6822754342d3c0bd205fc854ffb15ce144f66d654f1fdb"
+      "sourceSha256": "60caf2c7eab90acb422f2bd031782927b10a4d376cd99ec26f7ec9824ddc453f"
     },
     {
       "id": "coordination-code-atlas-resume",
@@ -8444,7 +8444,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0c49b7688b9781f1c0a9862103aed45455a6f996339ada9e6aa0d882b032f565"
+      "sourceSha256": "a4aaae3374ef2f78d28f492f42d1f37d09f19b6306b3bd4c1d449e9fe7d88cdf"
     },
     {
       "id": "design-session-profiler",
@@ -10996,7 +10996,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2026-12-13",
       "reviewSuggested": [],
-      "summary": "The compiled public render seam is joined. Membership qualification and Shell lifetime findings remain open. Component, compile-only and detached proofs are not proof of the real daemon-to-MainWindow journey.",
+      "summary": "The compiled public render seam and reviewed Shell lifetime component are joined. Membership qualification remains blocked by native notification aborts. Component, compile-only and detached proofs are not proof of the real daemon-to-MainWindow journey.",
       "tags": [
         "code-atlas",
         "proof",
@@ -11019,7 +11019,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "30d55fd7ca78f865fd55904caa9da3e5f1ff360db6ea44d68ed982fe590ea9e8"
+      "sourceSha256": "87f88f5bfee3ad086e2d97a5df9f6f64be14a441214fd34414691a8929a02aff"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -11644,7 +11644,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9beb1628a3ff0c731cf1a7955ab2f0d3e87b246c78765f5877907c557f74a40b"
+      "sourceSha256": "9a582d8dee4a638a450ab986d0f6647aead3335fe76ad55a9afc2af2bb25db4b"
     },
     {
       "id": "session-profiles",
@@ -18965,5 +18965,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "8dddcaf4e7527345d638157f20173ffaa6f89776b44f78e31cbfb3c96e620d9b"
+  "graphSha256": "e202a3cddf651b9fbb2a59a8647e92bda4a225d4bf70ea04856c70b16830a86e"
 };

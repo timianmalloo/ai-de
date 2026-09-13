@@ -11,9 +11,9 @@ links:
   - { to: coordination-code-atlas, rel: relates-to }
 review-by: 2026-12-13
 summary: >-
-  The compiled public render seam is joined. Membership qualification and Shell lifetime
-  findings remain open. Component, compile-only and detached proofs are not proof of the
-  real daemon-to-MainWindow journey.
+  The compiled public render seam and reviewed Shell lifetime component are joined.
+  Membership qualification remains blocked by native notification aborts. Component,
+  compile-only and detached proofs are not proof of the real daemon-to-MainWindow journey.
 ---
 
 # Production adapter checkpoint
@@ -26,10 +26,11 @@ delivery record.
 
 | Surface | Pin | Observed outcome | Boundary |
 |---|---|---|---|
-| Joined Conductor | `366167052537c35171f40c6da66c982f8f5d93e5` | Corrected compiled Core render seam joined | No runtime issuer/factory or actual MainWindow integration |
+| Joined Conductor | `639be9d389747904b61d6298cc65f96ba6075ade` | Core render seam and reviewed Shell component joined; integrated 90/90 Shell cases | No runtime issuer/factory or actual MainWindow integration |
 | Core seam author | `8d091e5197db70093909149a8a8e97eb3116c604` | 326/326 independently repeated; 54 reader tests | Compile-only facade fixture is not operational registration |
 | Core membership candidate | `d8d83de8034570365ab9c6665f118a4dcb2aa256` | Author 340/343 total; Conductor independently repeated 14/17 membership, the same three failures | Blocked; not joined, wired or approved for production |
-| Shell component candidate | `dade5c779012ba9e4c1a8934004d05376a3b4732` | 78/78 independently repeated as 63 native/host plus 15 `SurfaceContentTests` | Four SRE source findings remain; not joined |
+| Original Shell milestone | `dade5c779012ba9e4c1a8934004d05376a3b4732` | 78/78 initially; four lifecycle findings required repair | Historical result, not accepted without its repair |
+| Shell lifetime repair | `8e691c6a48a197ece45290a44b8ccd488022d440` | Author 90/90; parent 90/90 before and after join; eleven semantic reds retained | Joined as `639be9d3`, after SRE/Test component gates; no real-window claim |
 
 ## Claim and oracle ledger
 
@@ -37,19 +38,19 @@ delivery record.
 |---|---|---|---|
 | Public render DTOs reject the observed invalid source and continuation cases | `AtlasReaderWireTests.cs`; independent `atlas-core-final-seam/core-seam-final.trx`, 326 passed | Parent invalid-input probes rejected for their intended invariant; author semantic reds retained for zero source length, split-surrogate highlight, nonprogress and producer byte inconsistency; final serializer/decoder empty-source red then green | Verified for the executed cases; not transport or runtime admission |
 | Non-friend assemblies can consume the public render ports | Non-friend compilation fixture in `AtlasReaderWireTests.cs` | Public port/DTO compilation succeeds; deliberate hidden Core type use produces CS0122 | Verified accessibility boundary only; static-abstract facade signature fixture is not a production factory |
-| Current membership candidate is not ready | `.artifacts/atlas-reader/nq-understanding.trx`, 343 total, 340 passed, three failed | `NativePinsExcludeRootIndexAndLooseRefReplacementAndReleaseOnDispose`; clone/unpacked and nested/unpacked required-form cases fail `native-namespace-notification`, invocation count six | Verified failure. Triggering native pin/event/result was not recorded, so product versus fixture/notification cause is Flagged |
+| Current membership candidate is not ready | `.artifacts/atlas-reader/nq-understanding.trx`, then diagnostic TRX/JSON below | Replacement, clone/unpacked and nested/unpacked cases fail; source-root notifications complete with native error 995, zero bytes and no actions | Verified abort receipt. The mechanism causing the abort remains Inferred |
 | Some membership defenses execute | Same final TRX: hostile-fsmonitor and packed-ref namespace ABA cases pass | Unguarded hostile fixture must create its marker; guarded capture must not. Packed-ref insertion/deletion must invalidate even when final bytes agree | Verified named cases only; does not clear NQ1/NQ2 overall |
-| Shell component behavior passes its current tests | `AtlasSharedHostAdmissionTests.cs`, native tests and existing `SurfaceContentTests`; independent receipts below | Author two semantic-red and two mutation-red cases retained in worker artifacts | Verified tested component behavior; missing fault cases and real-window integration remain |
+| Repaired Shell lifetime behavior satisfies the bounded fault oracles | `AtlasSharedHostAdmissionTests.cs:16-227`, native tests and `SurfaceContentTests`; parent joined receipt below | Eleven repair semantic reds, then recovery/disposal/diagnostic assertions pass; original two semantic and two mutation reds also retained | Verified named component behavior; real-window integration remains |
 
 Source paths for Core above are under `src/AiDe.Core/Understanding` and
 `tests/AiDe.Core.Tests/Understanding`. Shell tests are under
 `tests/AiDe.App.Tests/Workbench/Understanding`; factory tests retain their existing path.
 
-## Shell lifetime review: findings awaiting executed counterexamples
+## Shell lifetime review and executed repair
 
-SRE review of frozen `dade5c77` identifies the following source mechanisms. These are
-source-reviewed findings, not yet independently executed causal proofs. No implementation
-or green test below is invented.
+The initial SRE review of frozen `dade5c77` identified the following source mechanisms.
+The fourth was subsequently qualified by execution: inventory exceptions were already
+contained by the reader. The real reproduced new defect was host admission cleanup.
 
 | Finding | Source mechanism | Required falsifying test |
 |---|---|---|
@@ -58,8 +59,21 @@ or green test below is invented.
 | Final lifetime primitives are not disposed | Disposed-path early return precedes lifetime CTS disposal; admission semaphore has no disposal path | Await final drain and disposal, observe both primitives released, and repeat `DisposeAsync` without a second release |
 | Post-assignment load failure leaves stale host state | `AtlasLoadingHost` assigns `ReaderView` before awaited load; error path changes text without clearing activation/registration/view | Fail load after assignment, observe unavailable with null view and released host-owned state, then activate successfully |
 
-The first two are SRE advisory blockers escalated to the Owner. The real MainWindow/Core
-handoff is independently missing, even if all four component findings are corrected.
+The first two were SRE advisory blockers escalated to Owner. The repaired component now
+retains lease/reader ownership when disposal fails, retries cleanup on a later transition,
+isolates failing clear callbacks, observes publication faults, and drains operations and
+active admission before disposing lifetime primitives exactly once.
+
+Conductor opened the exact tests after the Test review's source output was truncated.
+Assertions check retained owner identity, disposal-attempt counts, the second clear callback,
+pending close before drain, idempotent close, primitive disposal, activation/registration
+clearing and successful later admission. The ten initial red messages and the separate
+admission red were read directly. The latter expected cancellation but got
+`ObjectDisposedException` from the semaphore: it is not evidence of a new inventory failure.
+
+GATE Shell component lifetime - SRE/Test - verdict PASS with conditions: the caller awaits
+`DisposeAsync`; failed cleanup retains ownership for retry; real Core factory and MainWindow
+composition remain unproved. Parent integrated run: 90 executed, 90 passed, zero skipped.
 
 Owner turn 43 authorizes the same writers to execute a three-leaf diagnostic checkpoint
 before nine further NQ repair leaves, and twelve Shell repair leaves. Eight targeted review
@@ -74,7 +88,7 @@ leaves are separate. This is permission to produce evidence, not acceptance of e
 | Core issuer, global admission limits and lease lifetime | Not implemented/proved in this checkpoint |
 | Async endpoint/server, isolated persistent remote reader | Synthetic contract direction qualified separately; production path not implemented/proved here |
 | Render projection/wire/client types | Compiled seam joined; production transport composition still open |
-| Architecture opener/native component | Component candidate only |
+| Architecture opener/native component | Reviewed component joined; actual MainWindow owner/factory attachment absent |
 | Actual MainWindow attach/replacement/final close | Not implemented; requires committed Core factory/view-model handoff |
 | Real product file -> member -> source -> Back and revocation | Not proved; detached real-source proof does not substitute |
 
@@ -87,6 +101,8 @@ Conductor session evidence is retained under the session-state `files` directory
 - `atlas-shell-independent/factory-existing.trx`
 - `atlas-membership-independent/nq-independent.trx` (17 executed, 14 passed, three failed;
   test command exit 1; the source HEAD remained `d8d83de`)
+- `atlas-shell-repair-independent/shell-repair-independent.trx` (90/90 before join)
+- `atlas-shell-joined/shell-joined.trx` (90/90 after joining the exact scoped Shell commits)
 
 Membership author receipts are retained in the Core execution worktree:
 `.artifacts/atlas-reader/nq-first.trx`, `nq-second.trx`, and `nq-understanding.trx`.
@@ -96,6 +112,8 @@ the final three-error result and not discarded to improve the record.
 
 Shell author receipts remain in its worktree under `artifacts/atlas-shell`:
 `atlas-shell-red.trx`, `atlas-shell-mutants.trx`, and `atlas-shell-final.trx`.
+Repair receipts add `atlas-shell-repair-red.trx`, `atlas-shell-repair-admission-red.trx`
+and `atlas-shell-repair-final.trx`.
 These machine-local raw receipts are retained but are not claimed to be committed.
 The committed summary names their exact checks and limitations. Both source worktrees
 must be kept while they hold unjoined code and evidence.
@@ -104,11 +122,38 @@ must be kept while they hold unjoined code and evidence.
 
 The qualification helper emits `atlas.membership.captures` and
 `atlas.membership.duration`; its cancellation test observes an emitted capture.
-The causing pin and native notification result are currently not recorded, preventing a
-causal answer for the three failures. Diagnostic work must close that specific gap without
-publishing source paths or changing a failure into complete empty membership.
+Qualification-only diagnostics now supply the previously missing pin, stage and native
+completion result. They do not change the invalidation predicate or publish user paths on
+the normal product path.
 
 Production questions remain open: which admission failed, which scope was revoked, how long
 an operation took, whether a dirty transport was replaced, and whether final cleanup drained
 all operations. Synthetic measurements and component logs cannot answer those questions for
 the still-unimplemented production path.
+
+## Native abort diagnostic receipt, not cause acceptance
+
+The first diagnostic patch misplaced two methods inside `try`/`catch` boundaries and did
+not compile. `.artifacts/atlas-reader/nq-owner43-diagnostic.log` is retained. Owner turn 44
+reallocated two reserved leaves to placement correction and a diagnostic rerun. Compilation
+then succeeded and the same three failures reproduced, 14/17, in
+`nq-owner44-diagnostic.trx`. The two-file diagnostic diff remains uncommitted and unjoined.
+
+Conductor read that TRX and the four corresponding JSON receipts under
+`.artifacts/atlas-reader/nq-owner44-diagnostics`:
+
+| Case / JSON stem | First recorded completion | Result |
+|---|---|---|
+| Clone / `4db5840d5cf24871b3467874d115dd19` | `after-git-version`, source-root `clone` | Signaled; completion false, native error 995, zero bytes, no notifications |
+| Nested / `3ea147a057c240f18bd5eab42f227f05` | `after-git-version`, source-root `clone\src` | Same abort result |
+| Replacement / `c38f337f838e4f5ebe8ec6ed49d46aac` | `after-git-version`, source-root `clone` | Same abort result |
+| Packed-ref ABA / `92b158c133324b8d82bf5bcc3fc4e28c` | `snapshot-currentness` | Completion true, error zero, 52 bytes, action 1 for `.git\refs\heads\main` |
+
+The three failure receipts each have thirteen signals and zero dropped records. Their
+first abort remains visible through final refusal. ABA also records matching admin/ref
+notifications of 42, 32 and 20 bytes. This distinguishes an aborted watch from a demonstrated
+Git namespace mutation. It does **not** establish why the watch aborted.
+
+NQ is 15/22; seven leaves remain held pending Owner's cause-specific disposition. Regular
+Core remains 34/48. No error/overflow is ignored, no namespace is suppressed, and no
+Git-dependent production consumer has been admitted.
