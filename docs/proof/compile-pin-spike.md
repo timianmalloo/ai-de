@@ -209,7 +209,21 @@ fixtures):
 }
 ```
 
-## Operator's steps (verbatim, PowerShell, from `C:\projects\ai-de` after the `side/pd5-compile-pin-spike` branch is joined)
+## Operator's step — one command (on `main` since `f1b5268f`)
+
+From a PowerShell prompt in `C:\projects\ai-de`:
+
+```powershell
+pwsh -File spikes\compile-session-pin-wire\Run-PinSpike.ps1
+```
+
+`Run-PinSpike.ps1` runs the three steps below in order and stops on the first red: the fixture, the
+attended run (watch the frames), the seven assertions over the frames directory the run just wrote.
+Exit 0 prints **GREEN**; anything else is the finding. `-DryRun` runs steps 1–2 to `session/new`
+only (no prompt, no tokens) — verified 2026-09-13 from the primary: adapter 0.75.1, the vendored CLI
+2.1.257, a session id returned, the pin triple on the wire.
+
+## The three steps it runs (verbatim, PowerShell, from `C:\projects\ai-de`)
 
 ```powershell
 node spikes/compile-session-pin-wire/setup-fixture.js
