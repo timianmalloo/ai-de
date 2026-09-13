@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T16:47:06Z",
+  "generated": "2026-09-13T17:29:33Z",
   "audit": [
     {
       "actor": null,
@@ -14449,6 +14449,44 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M2DX26KXEVF8SJFWJHKSF5WC",
+      "shortname": "pd-5-prep-compile-pin-spike",
+      "datetime": "2026-09-13T17:29:27Z",
+      "session": "pd-5",
+      "prompt": "PD-5 side track (prep half): build spikes/compile-session-pin-wire/ (fixture, harness, assertions, artifact shell) per docs/coordination/addendum-cd.md row PD-5, ADR-0035/0036, Ruling 68 — verify up to the model call; the operator sends the two prompts.",
+      "summary": "Built fixture-template/ (permissive .claude/settings.json, .mcp.json + a self-tested stdio MCP server, distinctive src/x.cs) and setup-fixture.js (regenerates a real git repo + bare remote.git per run). Built run-spike.js: drives the installed adapter 0.75.1 directly, sends the exact ADR-0035 _meta triple (tools: [], disallowedTools = ReadOnlyLaneSession's 26 names verbatim, mcpServers: []), records every frame, redacts email-shaped substrings found live in _auth/status_update, never sends session/prompt under --dry-run. Ran the dry run against the real adapter: initialize + session/new succeeded, the wire frame matches ADR-0035 exactly (frames/dry-run/, committed, redacted). Two source+wire findings recorded in the artifact: (1) the fixture's committed defaultMode: bypassPermissions is stripped by the SDK's filterEscalatingDefaultMode before the adapter resolves a mode (currentModeId read back as default) — the fixture's real permissiveness is its permissions.allow list, not defaultMode; (2) the CLI binary the adapter actually launches is the SDK's vendored claude-agent-sdk-win32-x64/claude.exe (2.1.257), not the machine's global claude (2.1.268) — a different binary and sha, both recorded. A third finding, and a bug this node found and fixed in its own harness: session/new alone spawns the fixture's MCP server (Verified — tools/list observed with no prompt sent), which left a stale mcp-calls.jsonl corrupting the before/after fixture-state comparison until run-spike.js was fixed to clear it on both sides. Built assert-spike.py (seven assertions a-g over one frames/ directory) with --self-test red on a planted frames/self-test-red (tool_call + permission + dirty tree + non-empty mcp log) and green on frames/self-test-green — both committed. docs/proof/compile-pin-spike.md documents all of the above plus the exact operator steps for the attended run (RUN-PENDING: the two prompts, the tool_call/permission recount, the fixture and remote diff). regenerate-derived.py and run-verify-gates.py both green (33/35; the two skipped gates require a live dotnet test run this Node/Python/docs-only diff never touches and this fresh worktree has never produced).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/compile-pin-spike.md",
+        "spikes/compile-session-pin-wire/run-spike.js",
+        "spikes/compile-session-pin-wire/assert-spike.py",
+        "spikes/compile-session-pin-wire/setup-fixture.js"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Build and verify PD-5's prep half: the fixture, harness and assertions for the compile-session pin wire spike (ADR-0035/0036 Gate 1; Ruling 68), everything up to the model call — never a session/prompt from this node.",
+      "done_when": "run-spike.js --dry-run succeeds against the real installed adapter with the exact ADR-0035 _meta triple on the wire; assert-spike.py --self-test is red on frames/self-test-red and green on frames/self-test-green; docs/proof/compile-pin-spike.md documents the fixture, the harness, the assertions, the operator's exact next steps, and every Verified finding; run-verify-gates.py is green apart from the two dotnet-test-run gates this Node/Python/docs-only diff cannot affect.",
+      "tier": "T1",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-13T17:06:32Z",
+      "duration_seconds": 1375.0,
+      "git": {
+        "sha": "4b8d379c054a73f0585cb0d875645a274fd42d91",
+        "short": "4b8d379c0",
+        "branch": "side/pd5-compile-pin-spike",
+        "pushed": null
+      }
     }
   ],
   "changes": [

@@ -1,0 +1,1 @@
+{"at":"2026-01-01T00:00:01.000Z","direction":"recv","message":{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"write_note","arguments":{"text":"pwned"}}}}
