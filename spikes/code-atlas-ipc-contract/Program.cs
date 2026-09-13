@@ -8,14 +8,14 @@ namespace CodeAtlas.IpcContractProbe;
 
 internal static class Program
 {
-    private static async Task<int> Main()
+    private static async Task<int> Main(string[] args)
     {
         using var activity = new Activity("atlas.ipc.synthetic-comparison").Start();
         using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(90));
         var failures = 0;
         var cases = new (string Name, Func<CancellationToken, Task> Run)[]
         {
-            ("candidate-cancellation", IpcCancellationCases.Candidate_Abandonment_FreshHandshakeAsync),
+            ("candidate-stateful-session", IpcCancellationCases.Candidate_StatefulSession_QualifyAsync),
             ("baseline-cancellation", IpcCancellationCases.Baseline_CancelAcceptedA_ObserveBAsync),
             ("native-write", IpcCancellationCases.Native_PossiblePartialWrite_ObserveBytesAsync),
             ("native-read", IpcCancellationCases.Native_PartialHandshake_AbortAsync),
@@ -23,6 +23,12 @@ internal static class Program
             ("queue-bounds", IpcCancellationCases.Queue_FourActiveSixteenPending_RejectAsync),
             ("frame-bounds", FramesAsync)
         };
+        var diagnosticOnly = args.Length == 1 && args[0] == "--baseline-diagnostic";
+        var candidateQualification = args.Length == 1 && args[0] == "--candidate-qualification";
+        if (diagnosticOnly) cases = cases.Where(item => item.Name == "baseline-cancellation").ToArray();
+        if (candidateQualification) cases = cases.Where(item => item.Name != "baseline-cancellation").ToArray();
+        Probe.Emit("run.mode", new { diagnosticOnly, candidateQualification,
+            baselineIncluded = !candidateQualification, cases = cases.Select(item => item.Name).ToArray() });
         foreach (var item in cases)
         {
             try
@@ -42,10 +48,12 @@ internal static class Program
             clientPipes = AtlasTransportCandidate.ClientPipes,
             registrations = AtlasTransportCandidate.Registrations });
         await File.AppendAllTextAsync("docs\\proof\\code-atlas-ipc-contract.md",
-            "\n## Final bounded execution transcript\n\n```jsonl\n" +
+            (candidateQualification ? "\n## Stateful candidate qualification transcript\n\n```jsonl\n" :
+                diagnosticOnly ? "\n## Baseline diagnostic execution transcript\n\n```jsonl\n" :
+                "\n## Final bounded execution transcript\n\n```jsonl\n") +
             string.Join('\n', Probe.Transcript) + "\n```\n\n" +
             $"Observed assertions: {Probe.Assertions}; failed cases: {failures}; " +
-            $"marker-attributed baseline hazard: {Probe.BaselineHazard}. " +
+            $"marker-attributed baseline hazard in this run: {(candidateQualification ? "NOT_RUN" : Probe.BaselineHazard.ToString())}. " +
             "A failed case remains a failure; later independent cases do not clear it.\n", deadline.Token);
         return failures == 0 ? 0 : 1;
     }

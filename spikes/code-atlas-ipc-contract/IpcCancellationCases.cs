@@ -2,79 +2,157 @@ using System.Buffers.Binary;
 using System.IO.Pipes;
 using System.Text.Json;
 using AiDe.Core.Ipc;
+using AtlasSession = CodeAtlas.IpcContractProbe.AtlasTransportCandidate.AtlasSession;
 
 namespace CodeAtlas.IpcContractProbe;
 
 internal static class IpcCancellationCases
 {
-    internal static async Task Candidate_Abandonment_FreshHandshakeAsync(CancellationToken token)
+    internal static async Task Candidate_StatefulSession_QualifyAsync(CancellationToken token)
     {
         await using var host = new AtlasTransportCandidate(token);
-        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
-        var a = host.Plan("MarkerA", ignoreCancellation: true);
-        var callA = AtlasTransportCandidate.CallAsync(host.PipeName, "MarkerA", cancellation.Token);
-        await a.Started.Task.WaitAsync(token);
-        cancellation.Cancel();
-        await Probe.CancelledAsync(callA);
-        await Probe.UntilAsync(() => host.Revoked == 1, token);
-        Probe.Require(host.Queue.Active == 1, "client close is not immediate server termination");
-        var b = await AtlasTransportCandidate.CallAsync(host.PipeName, "MarkerB", token);
-        Probe.Require(Probe.Marker(b) == "MarkerB", "fresh connection B never consumes A");
-        a.Release.TrySetResult();
-        await a.Completion.Task.WaitAsync(token);
-        await Probe.UntilAsync(() => host.Dropped == 1 && host.Queue.Active == 0, token);
-        Probe.Emit("candidate.abort-reconnect", new { accepted = "MarkerA", returnedToB = Probe.Marker(b),
-            host.Handshakes, host.Dropped, serverContinuedAfterClientClose = true });
+        await using var session = await AtlasSession.ConnectAsync(host.PipeName, token);
+        var inventory = await InvokeAsync(session, "inventory", null, token);
+        var manifest = Field(inventory, "manifest");
+        var scope = Field(inventory, "scope");
+        Probe.Require(Field(inventory, "root") == "synthetic-native-root" &&
+            inventory.Payload?.GetProperty("epoch").GetInt64() == 1 &&
+            inventory.Payload?.GetProperty("policyGeneration").GetInt32() == 7,
+            "inventory exposes server-derived synthetic scope metadata, not root enforcement");
+        var selection = await InvokeAsync(session, "select", new { manifest, member = "alpha" }, token);
+        var receipt = Field(selection, "receipt");
+        var member = await InvokeAsync(session, "member", new { receipt }, token);
+        Probe.Require(Field(member, "member") == "alpha" &&
+            Field(member, "content") == "Synthetic alpha member body.", "receipt alone resolves server-owned alpha content");
+        var back = await InvokeAsync(session, "back", new { receipt }, token);
+        Probe.Require(Field(back, "manifest") == manifest && Field(back, "scope") == scope &&
+            back.Payload?.GetProperty("selected").ValueKind == JsonValueKind.Null,
+            "Back restores the same owned inventory and clears selection");
+        Probe.Require((await InvokeAsync(session, "member", new { receipt }, token)).ErrorCode == "SPIKE.RECEIPT",
+            "Back invalidates the old selected-member receipt");
+        Probe.Require(host.Handshakes == 1 && !session.IsTerminal, "healthy navigation retains one connection and handshake");
+        Probe.Emit("stateful.navigation", new { path = "Inventory>Select>Member>Back",
+            handshakes = host.Handshakes, sameManifest = true, sameScope = true,
+            selectedContent = Field(member, "content"), oldReceiptAfterBack = "SPIKE.RECEIPT" });
 
-        using var completedCancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
-        var completed = await AtlasTransportCandidate.CallAsync(host.PipeName, "CompletedA", completedCancellation.Token);
-        var next = host.Plan("CompletedB");
-        var callB = AtlasTransportCandidate.CallAsync(host.PipeName, "CompletedB", token);
-        await next.Started.Task.WaitAsync(token);
-        completedCancellation.Cancel();
-        next.Release.TrySetResult();
-        var nextResponse = await callB;
-        Probe.Require(Probe.Marker(completed) == "CompletedA" && Probe.Marker(nextResponse) == "CompletedB",
-            "completed A cancellation cannot close B's operation-owned pipe");
-        Probe.Require(AtlasTransportCandidate.Registrations == 0, "cancellation registrations ended");
-        Probe.Emit("candidate.after-complete", new { a = Probe.Marker(completed), b = Probe.Marker(nextResponse),
-            registrations = AtlasTransportCandidate.Registrations });
-
-        var handshakes = host.Handshakes;
+        receipt = Field(await InvokeAsync(session, "select", new { manifest, member = "alpha" }, token), "receipt");
+        var acceptedBefore = host.RequestsAccepted;
         using var before = CancellationTokenSource.CreateLinkedTokenSource(token);
         before.Cancel();
-        await Probe.CancelledAsync(AtlasTransportCandidate.CallAsync(host.PipeName, "NeverWritten", before.Token));
-        Probe.Require(host.Handshakes == handshakes, "prewrite cancellation creates no handshake");
-        Probe.Emit("candidate.before-write", new { newHandshakes = host.Handshakes - handshakes });
+        await Probe.CancelledAsync(InvokeAsync(session, "inventory", null, before.Token));
+        Probe.Require(host.RequestsAccepted == acceptedBefore && !session.IsTerminal, "prewrite cancellation preserves healthy scope");
+
+        var admitted = host.Plan("AdmissionA");
+        var admittedCall = InvokeAsync(session, "member", new { receipt }, token, admitted.Marker);
+        await admitted.Started.Task.WaitAsync(token);
+        using var queuedCancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
+        var queued = InvokeAsync(session, "inventory", null, queuedCancellation.Token);
+        queuedCancellation.Cancel();
+        await Probe.CancelledAsync(queued);
+        Probe.Require(host.RequestsAccepted == acceptedBefore + 1 && !session.IsTerminal,
+            "pre-admission cancellation never writes or abandons the admitted operation");
+        admitted.Release.TrySetResult();
+        Probe.Require(Field(await admittedCall, "content") == "Synthetic alpha member body.", "admitted operation survived queued cancellation");
+        Probe.Require(Field(await InvokeAsync(session, "inventory", null, token), "manifest") == manifest,
+            "inventory survives both clean cancellation boundaries");
+        Probe.Emit("stateful.clean-cancellation", new { prewritePreserved = true, preAdmissionPreserved = true,
+            handshakes = host.Handshakes, sameManifest = true });
+
+        using var completedCancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
+        var completed = await InvokeAsync(session, "member", new { receipt }, completedCancellation.Token);
+        var next = host.Plan("HealthyB");
+        var callB = InvokeAsync(session, "member", new { receipt }, token, next.Marker);
+        await next.Started.Task.WaitAsync(token);
+        completedCancellation.Cancel();
+        Probe.Require(!session.IsTerminal, "completed A registration cannot abandon in-flight B on same connection");
+        next.Release.TrySetResult();
+        var nextResponse = await callB;
+        Probe.Require(Field(completed, "content") == Field(nextResponse, "content") &&
+            Field(nextResponse, "member") == "alpha", "completed cancellation retains server-owned selection");
+        Probe.Require(AtlasTransportCandidate.Registrations == 0, "cancellation registrations ended");
+        Probe.Require(host.Handshakes == 1, "all healthy operations shared the original handshake");
+        Probe.Emit("stateful.after-complete", new { member = Field(nextResponse, "member"),
+            handshakes = host.Handshakes, registrations = AtlasTransportCandidate.Registrations });
+
+        using var dirtyCancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
+        var dirty = host.Plan("DirtyA", ignoreCancellation: true);
+        var dirtyCall = InvokeAsync(session, "member", new { receipt }, dirtyCancellation.Token, dirty.Marker);
+        await dirty.Started.Task.WaitAsync(token);
+        dirtyCancellation.Cancel();
+        await Probe.CancelledAsync(dirtyCall);
+        await Probe.UntilAsync(() => host.Revoked == 1, token);
+        Probe.Require(session.IsTerminal && host.Queue.Active == 1, "dirty session terminal while independently bounded work continues");
+        var terminalRefused = false;
+        try { await InvokeAsync(session, "inventory", null, token); }
+        catch (InvalidOperationException exception) when (exception.Message == "SPIKE.TERMINAL") { terminalRefused = true; }
+        Probe.Require(terminalRefused, "abandoned connection cannot be reused");
+
+        await using var fresh = await AtlasSession.ConnectAsync(host.PipeName, token);
+        var freshInventory = await InvokeAsync(fresh, "inventory", null, token);
+        var freshManifest = Field(freshInventory, "manifest");
+        Probe.Require(freshManifest != manifest && Field(freshInventory, "scope") != scope,
+            "reconnect derives a new scope and server-owned manifest");
+        var freshSelection = await InvokeAsync(fresh, "select", new { manifest = freshManifest, member = "beta" }, token);
+        var freshReceipt = Field(freshSelection, "receipt");
+        var staleManifest = await InvokeAsync(fresh, "select", new { manifest, member = "alpha" }, token);
+        var staleReceipt = await InvokeAsync(fresh, "member", new { receipt }, token);
+        Probe.Require(staleManifest.ErrorCode == "SPIKE.MANIFEST" && staleReceipt.ErrorCode == "SPIKE.RECEIPT",
+            "fresh scope explicitly rejects both old manifest and old receipt");
+        var freshMember = await InvokeAsync(fresh, "member", new { receipt = freshReceipt }, token);
+        Probe.Require(Field(freshMember, "member") == "beta" && Field(freshMember, "content") == "Synthetic beta member body.",
+            "fresh owned receipt resolves beta; old-token refusals do not damage it");
+        dirty.Release.TrySetResult();
+        await dirty.Completion.Task.WaitAsync(token);
+        await Probe.UntilAsync(() => host.Dropped == 1 && host.Queue.Active == 0, token);
+        Probe.Emit("stateful.dirty-reconnect", new { terminalRefused, newScope = true, newManifest = true,
+            oldManifestRefusal = staleManifest.ErrorCode, oldReceiptRefusal = staleReceipt.ErrorCode,
+            newMemberContent = Field(freshMember, "content"), host.Handshakes, host.Dropped,
+            serverContinuedAfterClientClose = true });
 
         var bounded = host.Plan("Deadline");
-        var deadlineResponse = await AtlasTransportCandidate.CallAsync(host.PipeName, bounded.Marker, token);
+        var deadlineResponse = await InvokeAsync(fresh, "member", new { receipt = freshReceipt }, token, bounded.Marker);
         Probe.Require(deadlineResponse.ErrorCode == "SPIKE.DEADLINE", "server deadline independent of caller wait");
-        Probe.Emit("candidate.deadline", new { deadlineResponse.ErrorCode, callerCancelled = token.IsCancellationRequested });
+        Probe.Require(!fresh.IsTerminal && Field(await InvokeAsync(fresh, "member", new { receipt = freshReceipt }, token), "member") == "beta",
+            "clean deadline response preserves the session and owned receipt");
+        Probe.Emit("stateful.deadline", new { deadlineResponse.ErrorCode, callerCancelled = token.IsCancellationRequested,
+            healthyScopePreserved = true });
 
-        host.LeaseLifetime = TimeSpan.FromMilliseconds(30);
+        host.LeaseLifetime = TimeSpan.FromMilliseconds(200);
+        await using var expirySession = await AtlasSession.ConnectAsync(host.PipeName, token);
         var expired = host.Plan("Expired", ignoreCancellation: true);
-        var expiryCall = AtlasTransportCandidate.CallAsync(host.PipeName, expired.Marker, token);
+        var expiryCall = InvokeAsync(expirySession, "inventory", null, token, expired.Marker);
         await expired.Started.Task.WaitAsync(token);
         using (var elapsed = CancellationTokenSource.CreateLinkedTokenSource(token))
         {
-            elapsed.CancelAfter(TimeSpan.FromMilliseconds(60));
+            elapsed.CancelAfter(TimeSpan.FromMilliseconds(250));
             try { await Task.Delay(Timeout.InfiniteTimeSpan, elapsed.Token); }
             catch (OperationCanceledException) when (!token.IsCancellationRequested) { }
         }
         expired.Release.TrySetResult();
         Probe.Require((await expiryCall).ErrorCode == "SPIKE.CLOSED", "expired lease suppresses late publication");
+        Probe.Require(expirySession.IsTerminal, "expiry invalidates the client session");
         host.LeaseLifetime = TimeSpan.FromSeconds(5);
+        await using var revokedSession = await AtlasSession.ConnectAsync(host.PipeName, token);
         var revoked = host.Plan("Revoked", ignoreCancellation: true);
-        var revokedCall = AtlasTransportCandidate.CallAsync(host.PipeName, revoked.Marker, token);
+        var revokedCall = InvokeAsync(revokedSession, "inventory", null, token, revoked.Marker);
         await revoked.Started.Task.WaitAsync(token);
         host.RevokePolicy();
         revoked.Release.TrySetResult();
         Probe.Require((await revokedCall).ErrorCode == "SPIKE.CLOSED", "revoked policy suppresses late publication");
-        Probe.Emit("candidate.lease", new { expiryRefused = true, policyRevocationRefused = true,
+        Probe.Require(revokedSession.IsTerminal, "revocation invalidates client session");
+        Probe.Emit("stateful.lease", new { expiryRefused = true, policyRevocationRefused = true,
             authority = "OS-derived peer; server workspace/epoch; synthetic native-root label",
             rootFilesystemEnforcement = "NOT_PROVEN" });
     }
+
+    private static Task<IpcResponse> InvokeAsync(
+        AtlasSession session, string operation, object? payload, CancellationToken token, string? commandId = null) =>
+        session.InvokeAsync(operation, commandId ?? Guid.NewGuid().ToString("N"),
+            payload is null ? null : JsonSerializer.SerializeToElement(payload), token);
+
+    private static string Field(IpcResponse response, string name) =>
+        response.Payload?.GetProperty(name).GetString() ??
+        throw new InvalidDataException($"SPIKE.EXPECTED_FIELD: {name}, error={response.ErrorCode}");
 
     internal static async Task Baseline_CancelAcceptedA_ObserveBAsync(CancellationToken token)
     {
@@ -89,8 +167,12 @@ internal static class IpcCancellationCases
         {
             if (request.CommandId == "MarkerA")
             {
+                var gateClock = System.Diagnostics.Stopwatch.StartNew();
                 acceptedA.TrySetResult();
-                if (!releaseA.Wait(TimeSpan.FromSeconds(3), stop.Token))
+                var released = releaseA.Wait(TimeSpan.FromSeconds(3), stop.Token);
+                Probe.Emit("baseline.server-A-gate", new { released, elapsedMs = gateClock.ElapsedMilliseconds,
+                    replyMarker = released ? "MarkerA" : null, errorCode = released ? null : "SPIKE.GATE" });
+                if (!released)
                     return IpcResponse.Error("SPIKE.GATE", "baseline A gate expired");
             }
             if (request.CommandId == "AfterB")
@@ -99,15 +181,24 @@ internal static class IpcCancellationCases
                 if (!releaseAfter.Wait(TimeSpan.FromSeconds(3), stop.Token))
                     return IpcResponse.Error("SPIKE.GATE", "baseline B gate expired");
             }
-            if (request.CommandId == "MarkerB") acceptedB.TrySetResult();
+            if (request.CommandId == "MarkerB")
+            {
+                Probe.Emit("baseline.server-B-accepted", new { marker = request.CommandId,
+                    observation = "server decoded complete B frame and dispatched it" });
+                acceptedB.TrySetResult();
+            }
             return Probe.Reply(request.CommandId);
         });
         var pipe = Probe.PipeName();
         var server = new IpcServer(pipe, endpoint,
             new IpcServerOptions(MaxConnections: 8, StartupGrace: TimeSpan.FromSeconds(20)));
         var running = server.RunAsync(stop.Token);
+        Exception? baselineFailure = null;
+        var stage = "connect";
         try
         {
+            try
+            {
             await using (var client = await IpcClient.ConnectAsync(pipe, TimeSpan.FromSeconds(2), token))
             {
                 Probe.Emit("baseline.checkpoint", new { stage = "connected-before-handshake" });
@@ -124,21 +215,52 @@ internal static class IpcCancellationCases
                 var callA = client.InvokeAsync("marker", "MarkerA", Probe.Workspace, 1, null, cancellation.Token);
                 await acceptedA.Task.WaitAsync(token);
                 Probe.Emit("baseline.checkpoint", new { stage = "MarkerA-accepted" });
+                stage = "Cancel";
+                Probe.Emit("baseline.checkpoint", new { stage = "before-Cancel" });
                 cancellation.Cancel();
+                Probe.Emit("baseline.checkpoint", new { stage = "after-Cancel" });
+                stage = "CancelledAsync";
+                Probe.Emit("baseline.checkpoint", new { stage = "before-CancelledAsync-wait" });
                 await Probe.CancelledAsync(callA);
+                Probe.Emit("baseline.checkpoint", new { stage = "after-CancelledAsync-wait" });
+                stage = "B-invoke";
+                Probe.Emit("baseline.checkpoint", new { stage = "before-B-invoke" });
                 var callB = client.InvokeAsync("marker", "MarkerB", Probe.Workspace, 1, null, token);
+                Probe.Emit("baseline.checkpoint", new { stage = "after-B-invoke", exchangeCompleted = callB.IsCompleted,
+                    clientWriteCompletion = "NOT_OBSERVABLE through public InvokeAsync; server-B-accepted is write evidence" });
+                stage = "A-release";
+                Probe.Emit("baseline.checkpoint", new { stage = "before-A-release" });
                 releaseA.Set();
+                Probe.Emit("baseline.checkpoint", new { stage = "after-A-release" });
+                stage = "B-response";
+                Probe.Emit("baseline.checkpoint", new { stage = "before-B-response-wait" });
                 var responseB = await callB;
-                await acceptedB.Task.WaitAsync(token);
-                Probe.BaselineHazard = Probe.Marker(responseB) == "MarkerA";
-                Probe.Require(Probe.BaselineHazard, "baseline reproduces MarkerA consumed as B");
-                Probe.Emit("HUMAN_ESCALATION.BASELINE_LATE_A_AS_B", new
+                var actualMarker = Probe.Marker(responseB);
+                Probe.BaselineHazard = actualMarker == "MarkerA";
+                Probe.Emit("baseline.B-response-observed", new { requestedB = "MarkerB",
+                    actualMarker, responseB.Ok, responseB.ErrorCode, lateAConsumedAsB = Probe.BaselineHazard });
+                if (Probe.BaselineHazard) Probe.Emit("HUMAN_ESCALATION.BASELINE_LATE_A_AS_B", new
                 {
                     aAcceptedBeforeCancellation = true, requestedB = "MarkerB",
-                    returnedToB = Probe.Marker(responseB), beforeWriteControl = Probe.Marker(control),
+                    returnedToB = actualMarker, beforeWriteControl = Probe.Marker(control),
                     productionRepair = false
                 });
+                Probe.Require(actualMarker is "MarkerA" or "MarkerB", "baseline response is attributable; corruption is not required");
+                stage = "server-B-accept";
+                Probe.Emit("baseline.checkpoint", new { stage = "before-server-B-accept-wait" });
+                await acceptedB.Task.WaitAsync(token);
+                Probe.Emit("baseline.checkpoint", new { stage = "after-server-B-accept-wait" });
             }
+            }
+            catch (Exception exception)
+            {
+                baselineFailure = exception;
+                Probe.Emit("baseline.primary-case-failed", new { stage, type = exception.GetType().Name,
+                    exception.Message, acceptedB = acceptedB.Task.IsCompletedSuccessfully });
+                releaseA.Set();
+            }
+            Probe.Emit("baseline.independent-control", new { stage = "starting-after-completed-control",
+                primaryCaseFailed = baselineFailure is not null });
             await using (var clean = await IpcClient.ConnectAsync(pipe, TimeSpan.FromSeconds(2), token))
             {
                 Probe.Require((await clean.OpenWorkspaceAsync(Probe.Workspace, 1, token)).Ok, "fresh baseline handshake");
@@ -152,6 +274,8 @@ internal static class IpcCancellationCases
                 Probe.Require(Probe.Marker(a) == "AfterA" && Probe.Marker(result) == "AfterB", "baseline postexchange control");
                 Probe.Emit("baseline.after-complete", new { a = Probe.Marker(a), b = Probe.Marker(result) });
             }
+            if (baselineFailure is not null)
+                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(baselineFailure).Throw();
         }
         finally
         {
