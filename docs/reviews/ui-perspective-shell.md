@@ -19,7 +19,8 @@ links:
   - { to: note-addendum-c-design-tier-decoration, rel: relates-to }
   - { to: note-addendum-c-current-state-inventory, rel: relates-to }
 review-by: 2026-12-11
-review-suggested: []
+review-suggested:
+  - { by: mockup-perspective-shell, on: 2026-09-13, reason: "D3 /ui-design elevate: Coordination as host C (Ruling 84), Coding re-cut (Ruling 83); the body-hiding gating selector fixed" }
 summary: >-
   Elevate-mode review of the AI-DE workbench redesigned as three perspectives, with the composer as
   a conversation and the session settings in the New Session sheet. The token system gained an

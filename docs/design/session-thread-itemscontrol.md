@@ -33,6 +33,8 @@ summary: >-
   adversarial passes each for five lenses; the UX & Accessibility hard veto cleared at pass 2 by
   that lens; the pass-2 conditions of every lens are applied here for the conductor's diff (the
   loop cap is 2).
+review-suggested:
+  - { by: mockup-session-conversation, on: 2026-09-13, reason: "D3 /ui-design elevate: the conversation rendered from Coalesce (Rulings 80-82, 87), the session docked at Left; the thread contract's density at 1440x900 is an open question for the Owner" }
 ---
 
 # Design: the session thread (`ThreadFeed`)

@@ -23,8 +23,10 @@ summary: >-
   0 turns and resting at 280px with turns, each turn's reply side rendered from Coalesce(events) as
   prose (rendered markdown, no link activation) · a collapsed dim Thinking line · tool call+result
   items · the outcome line last, the Console split one row per message with its chunk count — an
-  identity the page measures on itself. Harness axes: State, Turns, Layout (4), Tool runs (2),
+  identity the page measures on itself. Harness axes: State, Turns, Layout (3: the operator's screenshots, Ruling 83's text as written, D3's proposal),
   Theme, Viewport (incl. short and the operator's 2560 × 1600), Persona, Motion.
+review-suggested:
+  - { by: mockup-perspective-shell, on: 2026-09-13, reason: "D3 /ui-design elevate: Coordination as host C (Ruling 84), Coding re-cut (Ruling 83); the body-hiding gating selector fixed" }
 ---
 
 # Session conversation
@@ -43,7 +45,7 @@ dangling ARIA references walked over the rendered DOM, and misses against DESIGN
 contract as amended by Rulings 80–83, read from the layout on every change; the "chat-like" table
 prints the threshold each row applied. The editor's top edge and height are read at 1, 5 and 40 turns
 and at 0 turns inside one pass; the Console split's row count is read against `Coalesce(events)`;
-the density row is read twice (tool runs inline and grouped). Headless (Edge) the strip reads
+the density row is read per layout. Headless (Edge) the strip reads
 0 contrast fails · 0 targets under 24px · 0 dangling references in every state D3 measured; the
 chat-like misses it reports are the density findings `ui-operator-findings-2026-09-13.md` §2c
 carries as numbers (one turn at 1440 × 900; none with the startup terminal across the bottom).
@@ -54,5 +56,5 @@ Direction evidence only (UI-T4): the thread is WPF, the editor a WebView2 page; 
 F6, the feed's PageDown / PageUp, the UIA list exposure and the DPI rows are the runtime Proof
 Pack's, measured at the slice. The tier's derivation and the compile's eval are Addendum D's; the
 design shows their results. The `agent.thought` row's shape is Inferred until a frame is captured
-(Ruling 82 condition 1); the grouping of tool runs on completed turns is D3's density rule, not
-Ruling 82's text, and is a harness axis so its cost and gain are measured, not argued.
+(Ruling 82 condition 1); the density at 1440 × 900 (one turn in the operator's layout; none with the
+startup terminal across the bottom) is measured here and put to the Owner in the review's §7, not argued.

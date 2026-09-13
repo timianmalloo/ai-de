@@ -15,7 +15,8 @@ links:
   - { to: ui-review-operator-findings-2026-09-13, rel: relates-to }
   - { to: mockup-perspective-shell, rel: relates-to }
 review-by: 2027-03-13
-review-suggested: []
+review-suggested:
+  - { by: mockup-perspective-shell, on: 2026-09-13, reason: "D3 /ui-design elevate: Coordination as host C (Ruling 84), Coding re-cut (Ruling 83); the body-hiding gating selector fixed" }
 summary: >-
   Ruling 84 makes Coordination a fourth Perspective (host C, Ctrl+4) and re-homes the five
   Loomkeeper kinds to it as a set; Ruling 83 docks a new session in Coding's Left zone and re-cuts

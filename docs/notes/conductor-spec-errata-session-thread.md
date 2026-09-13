@@ -21,6 +21,8 @@ summary: >-
   thread with the lane's reply folded beneath the turn that caused it, and the Console split is an
   on-demand view of the same stream opened at a turn. Ruling 21's split and Ruling 45's Console-only
   strip stand. The HTML stays byte-frozen; this note is the correction.
+review-suggested:
+  - { by: mockup-session-conversation, on: 2026-09-13, reason: "D3 /ui-design elevate: the conversation rendered from Coalesce (Rulings 80-82, 87), the session docked at Left; the thread contract's density at 1440x900 is an open question for the Owner" }
 ---
 
 # Spec erratum — Addendum A §A2 / §A6 / R16: the session document is a thread; the Console split is on demand (Ruling 74)

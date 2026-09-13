@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T16:47:06Z",
+  "generated": "2026-09-13T18:05:41Z",
   "audit": [
     {
       "actor": null,
@@ -14449,6 +14449,66 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M2DZ3GA6T04XHQ6EAD7HRY8R",
+      "shortname": "d3-ui-design-operator-findings",
+      "datetime": "2026-09-13T18:05:07Z",
+      "session": "d3-findings",
+      "prompt": "D3 — /ui-design elevate: the session conversation and the perspective shell against the operator's five 2026-09-13 findings and Rulings 80–87 — the editor's rest height, the Console's message grain, the conversation (prose · reasoning · tool call+result · outcome) like the CLI, a new session docked in Coding's Left, and the Coordination perspective (host C) for the five Loomkeeper kinds. Inputs: the five screenshot titles verbatim (C:\\Users\\malla\\Downloads\\ui findings 9-13-am\\), Rulings 80–87 (docs/notes/addendum-c-council-rulings.md, main 4b8d379c). Stages: direction in words; DESIGN.md errata rows; the two mockups with every ruled state and the review harness, measured by ui-craft-gate.py (0 findings on both is the floor) and verify-mockup-audits.py; the rubric critique with UX Researcher/IA and UX & Accessibility verdicts (hard veto); the ranked plan with named oracles for CV-5 and SH-4 and what each slice must not touch; the attended rows for the operator's next build. Docs only: DESIGN.md, docs/mockups/**, docs/reviews/**, docs/specs/addendum-c-perspectives.md (errata only), docs/notes/. No product code, no tests, no stash, no rebase, no push to main.",
+      "summary": "Elevated session-conversation.html and perspective-shell.html to Rulings 80–84/87: the reply side rendered from one Coalesce(events) as prose (markdown, no link activation, UTF-8) · a collapsed dim Thinking line · tool call+result items (kind as a word, status, detail on demand; interrupted when a stopped lane left no result) · the outcome line last; the Console split one row per message with its chunk count, the identity rows == headings + Coalesce read from the rendered DOM (82 = 82 at 5 turns, 636 = 636 at 40); the editor filling the body at 0 turns (no scrollbar) and resting at 280px with turns (measured 280/280/280 at 1/5/40 with four rows; 265 with a compile line — the rows are 30px, not the contract's 24); the session docked in Coding's Left zone at extent 1.3 (the 96ch measure fits: 673 = 673px); Coordination as host C with the fourth rail item (a ring glyph), Ctrl+4, the View menu derivation, four states, the drop-with-report naming Coordination in spec §C4's form with the saved captions, and the operator's own reopen as a restore state. DESIGN.md: two errata blocks (Rulings 83–84: 10 rows; 80–82/87: 15 rows), lint-clean; the spec: one appended errata block; a decision note amending ADR-0030/0031/0032. Gates: ui-craft-gate 0/0 on both files before and after; verify-mockup-audits 17 clean; docs-graph validate 0 new problems (1 pre-existing dangling link in front-door-ruling-49). Lenses (3, read-only, loop cap 2): UX & Accessibility PASS at pass 2 (hard veto cleared by the lens after three Majors were fixed: the tool kind as text, the URL visible not hover-only, keyboard-scrollable details); the Simplifier PASS at pass 2 (D3's tool-run grouping rule deleted: +0 turns at 1440×900; net −44 of −55); UX Researcher/IA BLOCK narrowed to one item only the Owner clears — at 1440×900 the startup default's terminal across the bottom leaves the thread 0px and the operator's own layout one turn; §7 puts (c) Bottom collapsed by default (all five screenshots) to the Owner, (b) the terminal under the Center as the fallback, (d) the density row re-expressed under either; a second Owner question: the split's home in the Center with the session at Left. Found and fixed: perspective-shell.html had been display:none since D1 ([data-restore]{display:none} matched the body) while every in-page number still computed — DC-147's class, registered as a placeholder (D3 e) with the sweep's control named. Ranked plan: CV-5.1 (Ruling 87, T0, first) · CV-5.2 (Coalesce, M1 re-pointed) · CV-5.3 (agent.thought after a captured frame; items; the rendering) · CV-5.4 (the editor's rest, one floor constant) · SH-4.1 (host C) · SH-4.2 (the re-cut; NewSessionPlacement retires; the reconcile-blindness finding F-1) · SH-4.3 conditional; 11 attended rows for the operator's next build.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/ui-operator-findings-2026-09-13.md",
+        "docs/mockups/session-conversation.html",
+        "docs/mockups/perspective-shell.html",
+        "DESIGN.md",
+        "docs/notes/adr-0030-0032-amendment-coordination.md"
+      ],
+      "tags": [
+        "addendum-c",
+        "rulings-80-87",
+        "operator-findings"
+      ],
+      "outcome": "partial",
+      "goal": "Elevate session-conversation.html and perspective-shell.html to the operator's five 2026-09-13 findings under Rulings 80-87: DESIGN.md errata, every ruled state rendered and measured, the rubric critique with the persona vetoes, the ranked plan with named oracles for CV-5 and SH-4",
+      "done_when": "Both mockups render every state Rulings 80-84/87 name; ui-craft-gate.py reads 0 on both; verify-mockup-audits.py passes; docs/reviews/ui-operator-findings-2026-09-13.md carries the rubric, the persona verdicts and the ranked plan; the DESIGN.md and spec errata are lint-clean and cited; the audit entry and the push to design/operator-findings-0913 exist",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false,
+        "regression": false
+      },
+      "started_at": "2026-09-13T16:50:03Z",
+      "duration_seconds": 4504.0,
+      "persona_yield": [
+        {
+          "persona": "ux-researcher-ia",
+          "raised": 11,
+          "accepted": 9
+        },
+        {
+          "persona": "ux-accessibility",
+          "raised": 14,
+          "accepted": 14
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 10,
+          "accepted": 9
+        }
+      ],
+      "git": {
+        "sha": "b71a2d5b826a07751086bdb6d94e6213fddc9f65",
+        "short": "b71a2d5b8",
+        "branch": "design/operator-findings-0913",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -18169,6 +18229,38 @@ window.AUDIT_DATA = {
         "commits": []
       },
       "audit_ref": "al-01M2BBK33XE20A69BHZ9F3XJ55"
+    },
+    {
+      "id": "cl-01M2DZ46Z1X43CV79JQN2C9JG8",
+      "datetime": "2026-09-13T18:05:30Z",
+      "session": "d3-findings",
+      "kind": "design",
+      "skill": "ui-design",
+      "title": "D3: the conversation's item grammar, the reasoning line, the split's Center home, Coding's Center copy, Coordination's glyph — Rulings 80–84/87 rendered",
+      "prompt": "D3 — /ui-design elevate: the session conversation and the perspective shell against the operator's five 2026-09-13 findings and Rulings 80–87 — the editor's rest height, the Console's message grain, the conversation (prose · reasoning · tool call+result · outcome) like the CLI, a new session docked in Coding's Left, and the Coordination perspective (host C) for the five Loomkeeper kinds. Inputs: the five screenshot titles verbatim (C:\\Users\\malla\\Downloads\\ui findings 9-13-am\\), Rulings 80–87 (docs/notes/addendum-c-council-rulings.md, main 4b8d379c). Stages: direction in words; DESIGN.md errata rows; the two mockups with every ruled state and the review harness, measured by ui-craft-gate.py (0 findings on both is the floor) and verify-mockup-audits.py; the rubric critique with UX Researcher/IA and UX & Accessibility verdicts (hard veto); the ranked plan with named oracles for CV-5 and SH-4 and what each slice must not touch; the attended rows for the operator's next build. Docs only: DESIGN.md, docs/mockups/**, docs/reviews/**, docs/specs/addendum-c-perspectives.md (errata only), docs/notes/. No product code, no tests, no stash, no rebase, no push to main.",
+      "summary": "The reply side renders Coalesce(events) as prose · a collapsed dim Thinking line (the CLI's idiom; never announced; no duration) · tool call+result items (a decorative marker, the kind as a word, the mono title, the status word incl. interrupted, one detail disclosure as a keyboard-scrollable region) · the outcome line last; links are text with the URL visible; the Console split at Left opens in the Center zone (Inferred, for the Owner); the Center's copy while a session is open at Left has no first action; IconCoordination is a ring with three nodes; D3's tool-run grouping rule was deleted at the Simplifier's veto (+0 turns at 1440x900); the startup default's density (thread 0px at 1440x900) goes to the Owner with the five screenshots.",
+      "rationale": "Rulings 80-87 (the Owner, 2026-09-13) and the two lenses' pass-2 verdicts; measured on the rendered mockups (headless Edge), not asserted.",
+      "artifacts": [
+        "DESIGN.md",
+        "docs/mockups/session-conversation.html",
+        "docs/mockups/perspective-shell.html",
+        "docs/reviews/ui-operator-findings-2026-09-13.md"
+      ],
+      "tags": [
+        "addendum-c",
+        "rulings-80-87"
+      ],
+      "git": {
+        "before": "4b8d379c",
+        "after": "b71a2d5b826a07751086bdb6d94e6213fddc9f65",
+        "branch": "design/operator-findings-0913",
+        "pushed": null,
+        "commits": [
+          "b71a2d5b design(D3): pass-1 applications â€” the density rule deleted, the split's Center home, interrupted tool status, kind as text, URL-as-text links, keyboard-scrollable details, the Coordination glyph, the operator's-layout restore state, the shell mockup's body-hiding selector scoped (a pre-existing DC-147-class defect), the review draft",
+          "ee1a124a design(D3): DESIGN.md errata for Rulings 80â€“84/87, the two mockups elevated (the conversation, Coalesce identity, the editor's rest, Coding re-cut, Coordination host C), the spec errata block, the ADR amendment note"
+        ]
+      },
+      "audit_ref": "al-01M2DZ3GA6T04XHQ6EAD7HRY8R"
     }
   ]
 };

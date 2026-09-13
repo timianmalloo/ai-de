@@ -3802,7 +3802,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "next-delivery (after F5 merges — Ruling 51)",
       "reviewBy": "2027-03-11",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "mockup-perspective-shell",
+          "on": "2026-09-13",
+          "reason": "D3 /ui-design elevate: Coordination as host C (Ruling 84), Coding re-cut (Ruling 83); the body-hiding gating selector fixed"
+        }
+      ],
       "summary": "Spec §R row 5 handed D1 the top-level menu names (DESIGN.md said File · Edit · View · Graph · Model · Agents · Window · Help; the code says File · Edit · View · Window · Terminal · Help). D1 keeps five of the code's six and renames Terminal to Prompt, because with the terminal verbs moved to File as entry verbs the menu holds only prompt verbs; the derivation rule places every allow-list entry under View, so a Model or Graph menu would need a second placement rule. Ctrl+1/2/3 are confirmed against a fetched Windows precedent (Outlook switches its top-level views with Ctrl+1…Ctrl+8).",
       "tags": [
         "decision-note",
@@ -3831,7 +3837,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "21bdd8e99b31336d09477cb77198931da1fdb9688d0aa91b250ad66df1b9d294"
+      "sourceSha256": "e8ca1605b7fae28b0de41fc417d4ee9c578809258fc950a2e93f64096b268608"
     },
     {
       "id": "note-addendum-c-design-signature",
@@ -3842,7 +3848,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "next-delivery (after F5 merges — Ruling 51)",
       "reviewBy": "2027-03-11",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "mockup-perspective-shell",
+          "on": "2026-09-13",
+          "reason": "D3 /ui-design elevate: Coordination as host C (Ruling 84), Coding re-cut (Ruling 83); the body-hiding gating selector fixed"
+        }
+      ],
       "summary": "Records why DESIGN.md's archetype header now reads PerspectiveShell with Arch:HubAndSpoke and Depth:SoftShadow (the old Arch:Desktop was not a grammar value; Flat lagged the facelift), why accent-contrast is kept under its name with an explicit role (a rename to text-on-accent was made and reverted the same day when main merged the code's AccentContrastBrush), why the light theme is declared as flat light-* keys under colors:, why syntax-comment moved from #5A6472 to #808C9A, and why border-strong exists. Each carries the alternative it rejected and the check that would show it wrong.",
       "tags": [
         "decision-note",
@@ -3872,7 +3884,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7af7c2b99b9ec0da1bd1306ff9138873baa4e99ba27de1bbd60a7c86eaf8b300"
+      "sourceSha256": "51bacfe3b287e9c9909d1b7fc82a8930d700cfff57e1a531881db2cd9a7b4429"
     },
     {
       "id": "note-addendum-c-design-tier-decoration",
@@ -4241,6 +4253,68 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "68055e831d79120304b524fccc1c4b855458fb4f4004917e6a0736d7c0ae40bf"
+    },
+    {
+      "id": "note-adr-0030-0032-amendment-coordination",
+      "path": "docs/notes/adr-0030-0032-amendment-coordination.md",
+      "title": "ADR-0030/0031/0032 amended by Ruling 84 — a fourth perspective row, a third host composition, a third slot file; and Ruling 83's re-cut of Coding's default and the session document's zone",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "Addendum C · Shell lane SH-4 (design node D3, 2026-09-13)",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [
+        {
+          "by": "mockup-perspective-shell",
+          "on": "2026-09-13",
+          "reason": "D3 /ui-design elevate: Coordination as host C (Ruling 84), Coding re-cut (Ruling 83); the body-hiding gating selector fixed"
+        }
+      ],
+      "summary": "Ruling 84 makes Coordination a fourth Perspective (host C, Ctrl+4) and re-homes the five Loomkeeper kinds to it as a set; Ruling 83 docks a new session in Coding's Left zone and re-cuts Coding's default. Neither ADR is rewritten: this note records, per ADR, the one row, composition or file each gains, the test each extends, and what stays as decided — the amendment the ADRs' own rules anticipated (\"a new host perspective is a new file, never a schema field\").",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "perspective",
+        "coordination",
+        "docking",
+        "layout",
+        "persistence",
+        "adr-amendment",
+        "ruling-83",
+        "ruling-84"
+      ],
+      "links": [
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0031-second-docking-host",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0032-perspective-layout-slots",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "ui-review-operator-findings-2026-09-13",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-perspective-shell",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7ff101db077715dbcb51e5d28a8852aa2d43a72fef028b183a7c892638a712b6"
     },
     {
       "id": "note-ai-native-ide-architecture-review-depth",
@@ -4818,7 +4892,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "next-delivery (after F5 merges — Ruling 51)",
       "reviewBy": "2027-03-11",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "mockup-session-conversation",
+          "on": "2026-09-13",
+          "reason": "D3 /ui-design elevate: the conversation rendered from Coalesce (Rulings 80-82, 87), the session docked at Left; the thread contract's density at 1440x900 is an open question for the Owner"
+        }
+      ],
       "summary": "Addendum A's Phase-1 default draws the session document as a composer pane beside an output canvas (§A2 line 104, §A6 line 159, the §A6.1 note at line 185, R16 at lines 238-242). Ruling 74 amends that default: the session document is a Layout:StreamingThread — the turns live in the thread with the lane's reply folded beneath the turn that caused it, and the Console split is an on-demand view of the same stream opened at a turn. Ruling 21's split and Ruling 45's Console-only strip stand. The HTML stays byte-frozen; this note is the correction.",
       "tags": [
         "conductor",
@@ -4859,7 +4939,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "26fd2fa4163f3828f984ea6e958c79b47e629081073f82b6591c0d52e7a139b5"
+      "sourceSha256": "aa41e5c1999b1e0c0d1dada655f020b5175dc8979ce9b634536a3a1bfdc8ddcc"
     },
     {
       "id": "note-conductor-spec-errata-template-control",
@@ -4870,7 +4950,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "next-delivery (after F5 merges — Ruling 51)",
       "reviewBy": "2027-03-11",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "mockup-session-conversation",
+          "on": "2026-09-13",
+          "reason": "D3 /ui-design elevate: the conversation rendered from Coalesce (Rulings 80-82, 87), the session docked at Left; the thread contract's density at 1440x900 is an open question for the Owner"
+        }
+      ],
       "summary": "Addendum B names the composer header's control a \"Shape control: Free-form | Template picker\" (line 181) and gives each block a \"shape badge (free-form or template id@version)\" in the Score outline (line 186). Erratum E1 of the D2/A1 batch renames it the template control — template: none | <id>@<version> — because Free-form is now the default task class (Ruling 72) and shape names Message | Goal-block (Addendum A R15 b2); and Ruling 74's condition 3 records the Score outline as superseded by the jump list, not silently dropped. The HTML stays byte-frozen.",
       "tags": [
         "conductor",
@@ -4912,7 +4998,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "828f0a90685dedc7c4e8b208960300392aee8f1c6e5492743d3fe5f97d6c2b05"
+      "sourceSha256": "f62ac9b079039d244bbca9852f5606cfc3bed10c061ee5234805312f23161dab"
     },
     {
       "id": "note-conductor-subscription-use-authorised",
@@ -6411,7 +6497,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "Addendum C/D · Conversation lane · DS-1 (design) → CV-1 (implement)",
       "reviewBy": "2027-03-11",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "mockup-session-conversation",
+          "on": "2026-09-13",
+          "reason": "D3 /ui-design elevate: the conversation rendered from Coalesce (Rulings 80-82, 87), the session docked at Left; the thread contract's density at 1440x900 is an open question for the Owner"
+        }
+      ],
       "summary": "The detailed design for the thread control the session document renders (D2's ranked item 1): a FeedList base (a ListBox over a recycling VirtualizingStackPanel, owned keys, a structural pin) with two consumers — the turn feed and the Console split — one INotifyPropertyChanged row per accepted turn carrying its disclosure state (recycling leaks it otherwise, measured), the composer pinned beneath with an editor floor and a document cap (an Auto row alone starves the thread to 0 px, measured), a read model that publishes versioned snapshots with a catch-up flag, a transition-based announcement policy on NVDA's real processing semantics, real UIA names, positions and HelpText, and 30 red-first oracles CV-1 lands with their falsifying rows. Two adversarial passes each for five lenses; the UX & Accessibility hard veto cleared at pass 2 by that lens; the pass-2 conditions of every lens are applied here for the conductor's diff (the loop cap is 2).",
       "tags": [
         "design",
@@ -6486,7 +6578,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ca0aa0bbbf43f386581d571509013caec57de397f209abd8f0eec4f48121a227"
+      "sourceSha256": "910ca00625a52fa49f3333a77f8303b0672468c81c8f7402da71727e20d8aded"
     },
     {
       "id": "design-watcher-advisory-evaluator",
@@ -8704,14 +8796,14 @@ window.DOCS_INDEX = {
     {
       "id": "mockup-perspective-shell",
       "path": "docs/mockups/perspective-shell.md",
-      "title": "Perspective shell — Coding · Explore · Architecture (Addendum C elevate mockup)",
+      "title": "Perspective shell — Coding · Explore · Architecture · Coordination (Addendum C elevate mockup, Rulings 83–84)",
       "type": "doc",
       "status": "draft",
       "owner": "@timianmalloo",
-      "phase": "next-delivery (after F5 merges — Ruling 51)",
-      "reviewBy": "2026-12-11",
+      "phase": "Addendum C · Shell lane SH-4 (design node D3, 2026-09-13)",
+      "reviewBy": "2026-12-13",
       "reviewSuggested": [],
-      "summary": "A self-contained, dependency-free mockup of the shell as three perspectives: the rail (New session + Coding · Explore · Architecture as a radio group; Tests reserved and absent), the menu bar derived per perspective, the Coding and Architecture default layouts with their empty states, Explore full-window and unchanged, the switch in its retained / opening / error states, the drop-with-report status, the dock tab strip in all four states, and a live contrast audit over every ink/ground pairing including the accent-as-ground family the runtime census found failing.",
+      "summary": "A self-contained, dependency-free mockup of the shell as four perspectives: the rail (New session + Coding · Explore · Architecture · Coordination as a manual-activation tab list; Tests reserved and absent), the menu bar derived per perspective, Coding's default re-cut by Ruling 83 (the session docked at Left, the Center's two empty copies, one terminal), the Coordination host of Ruling 84 (Terminal sessions at Left; Ledger · Leaderboard · Message board tabs; four states), Explore full-window and unchanged, Architecture as before, the switch in its retained / opening / error states, the drop-with-report status including the five Loomkeeper kinds dropped from Coding naming Coordination, and a live contrast audit over every ink/ground pairing.",
       "tags": [
         "ui-design",
         "mockup",
@@ -8726,6 +8818,14 @@ window.DOCS_INDEX = {
         {
           "to": "ui-review-perspective-shell",
           "rel": "documents"
+        },
+        {
+          "to": "ui-review-operator-findings-2026-09-13",
+          "rel": "documents"
+        },
+        {
+          "to": "note-adr-0030-0032-amendment-coordination",
+          "rel": "relates-to"
         },
         {
           "to": "spec-addendum-c-perspectives",
@@ -8753,19 +8853,25 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a5c1329af98ccc6e2327a22470bf746e1140f62ab478f626a413d0cf749c213d"
+      "sourceSha256": "c444da9eae7373a3a41ed6dba9e15fb3047499e0ea878d4efc64902938f933ee"
     },
     {
       "id": "mockup-session-conversation",
       "path": "docs/mockups/session-conversation.md",
-      "title": "Session conversation — n turns, one editor, the Console as the reply side (Addendum C/D elevate mockup)",
+      "title": "Session conversation — n turns, one editor, the conversation as prose · reasoning · tool call+result · outcome; the Console one row per message (Addendum C/D elevate mockup, Rulings 80–83/87)",
       "type": "doc",
       "status": "draft",
       "owner": "@timianmalloo",
-      "phase": "next-delivery (after F5 merges — Ruling 51)",
-      "reviewBy": "2026-12-11",
-      "reviewSuggested": [],
-      "summary": "The session document as a conversation: a thread of turns above one pinned editor, the session taking the whole tree in the Coding perspective (Ruling 47, no graph), each turn rendered from its envelope (the decoration line, provenance on demand, the sent bytes on demand) with the lane's reply folded beneath it. Forty-three harness states over DESIGN.md SC1–SC10, a 1 / 5 / 40 turn-count axis, and a \"chat-like\" contract the page measures on itself.",
+      "phase": "Addendum C/D · Conversation lane CV-5 (design node D3, 2026-09-13)",
+      "reviewBy": "2026-12-13",
+      "reviewSuggested": [
+        {
+          "by": "mockup-perspective-shell",
+          "on": "2026-09-13",
+          "reason": "D3 /ui-design elevate: Coordination as host C (Ruling 84), Coding re-cut (Ruling 83); the body-hiding gating selector fixed"
+        }
+      ],
+      "summary": "The session document as a conversation, elevated on 2026-09-13 to Rulings 80–83 and 87: docked in Coding's Left zone (extent 1.3, measured against the 96ch measure), the editor filling the body at 0 turns and resting at 280px with turns, each turn's reply side rendered from Coalesce(events) as prose (rendered markdown, no link activation) · a collapsed dim Thinking line · tool call+result items · the outcome line last, the Console split one row per message with its chunk count — an identity the page measures on itself. Harness axes: State, Turns, Layout (4), Tool runs (2), Theme, Viewport (incl. short and the operator's 2560 × 1600), Persona, Motion.",
       "tags": [
         "ui-design",
         "mockup",
@@ -8787,6 +8893,10 @@ window.DOCS_INDEX = {
         },
         {
           "to": "ui-review-session-conversation",
+          "rel": "documents"
+        },
+        {
+          "to": "ui-review-operator-findings-2026-09-13",
           "rel": "documents"
         },
         {
@@ -8815,7 +8925,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "acc979c2676b3dafe4b3d0cd550909e253c02b7fcd49197a2f3a595ac7822e53"
+      "sourceSha256": "2b7d1f1274dd31f99ccf6edc557d34429e9593e7bcb560f477405f1ba4610b25"
     },
     {
       "id": "mockup-session-front-door",
@@ -10363,6 +10473,89 @@ window.DOCS_INDEX = {
       "sourceSha256": "7e3ec2b817fddafb398006e9682f60792f2f55f886b323c284be36d0d708a4b8"
     },
     {
+      "id": "ui-review-operator-findings-2026-09-13",
+      "path": "docs/reviews/ui-operator-findings-2026-09-13.md",
+      "title": "UI review — the operator's first manual test of the CV-2 build (2026-09-13): the editor's rest, the Console's grain, the conversation, the left dock, the Coordination perspective",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "Addendum C/D · Conversation lane CV-5 · Shell lane SH-4 (design node D3)",
+      "reviewBy": "2026-12-13",
+      "reviewSuggested": [
+        {
+          "by": "mockup-session-conversation",
+          "on": "2026-09-13",
+          "reason": "D3 /ui-design elevate: the conversation rendered from Coalesce (Rulings 80-82, 87), the session docked at Left; the thread contract's density at 1440x900 is an open question for the Owner"
+        },
+        {
+          "by": "mockup-perspective-shell",
+          "on": "2026-09-13",
+          "reason": "D3 /ui-design elevate: Coordination as host C (Ruling 84), Coding re-cut (Ruling 83); the body-hiding gating selector fixed"
+        }
+      ],
+      "summary": "Elevate-mode review of the session conversation and the perspective shell against the operator's five 2026-09-13 findings and the Owner's Rulings 80–87. The thread now renders the fold it holds — prose, a collapsed Thinking line, tool call+result items, the outcome last — from the same Coalesce the Console split reads (an identity the mockup measures on itself); the editor fills the body at 0 turns and rests at 280px; a new session docks in Coding's Left zone at an extent the mockup measures against the 96ch measure; Coordination is host C with the five Loomkeeper kinds. The craft gate reads 0 on both mockups; the measured conflict is density at 1440 × 900 (one turn visible; zero with the startup terminal), which the ranked plan puts to the conductor with numbers. The plan names CV-5 and SH-4's slices with red-first oracles in DS-1's style.",
+      "tags": [
+        "ui-review",
+        "ux",
+        "accessibility",
+        "session",
+        "conversation",
+        "console",
+        "editor",
+        "perspective",
+        "coordination",
+        "docking",
+        "addendum-c",
+        "addendum-d",
+        "rulings-80-87",
+        "operator-findings"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "mockup-session-conversation",
+          "rel": "documents"
+        },
+        {
+          "to": "mockup-perspective-shell",
+          "rel": "documents"
+        },
+        {
+          "to": "ui-review-session-conversation",
+          "rel": "refines"
+        },
+        {
+          "to": "ui-review-perspective-shell",
+          "rel": "refines"
+        },
+        {
+          "to": "design-session-thread-itemscontrol",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-adr-0030-0032-amendment-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0031-second-docking-host",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0032-perspective-layout-slots",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9aa7af2ad54708ea44a3c1fbad69fdef268cdb194c94784c976ebd8b45b661f9"
+    },
+    {
       "id": "ui-review-perspective-shell",
       "path": "docs/reviews/ui-perspective-shell.md",
       "title": "UI review — the perspective shell (Coding · Explore · Architecture), the conversation composer and the New Session sheet",
@@ -10371,7 +10564,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "next-delivery (after F5 merges — Ruling 51)",
       "reviewBy": "2026-12-11",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "mockup-perspective-shell",
+          "on": "2026-09-13",
+          "reason": "D3 /ui-design elevate: Coordination as host C (Ruling 84), Coding re-cut (Ruling 83); the body-hiding gating selector fixed"
+        }
+      ],
       "summary": "Elevate-mode review of the AI-DE workbench redesigned as three perspectives, with the composer as a conversation and the session settings in the New Session sheet. The token system gained an explicit role for the on-accent ink (accent-contrast, the code's AccentContrastBrush), a control boundary token (border-strong), light values for every role and a re-toned comment colour, and an ink-by-ground matrix replaced a one-ground table that had drifted. Three mockups measure 0 craft findings each (corpus 104 to 98); three adversaries ran a bounded three-pass loop recorded here; the highest-leverage change for the slice is now landed on main (INV-0008's container-pairs / leaf-inherits rule, the census at 180 pairings / 0 below floor), so the ranked plan's first item is the composer's remaining tokens and the tab and menu states the design adds.",
       "tags": [
         "ui-review",
@@ -10430,7 +10629,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "526d0d28b986e75dcf1ea39ed457d0ab5950b46f8f90e523fc09cf8e121ba37d"
+      "sourceSha256": "29fcbceb16c90e3335e671cfc0393748f79d192e832193eee0513442b354cf51"
     },
     {
       "id": "ui-review-session-conversation",
@@ -14455,7 +14654,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "addendum-c",
       "reviewBy": "2027-03-12",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "mockup-session-conversation",
+          "on": "2026-09-13",
+          "reason": "D3 /ui-design elevate: the conversation rendered from Coalesce (Rulings 80-82, 87), the session docked at Left; the thread contract's density at 1440x900 is an open question for the Owner"
+        }
+      ],
       "summary": "Evidence for CV-1 on the Conversation lane: the session document is a feed of turns above one pinned composer (DS-1's FeedList / ThreadFeed over a recycling VirtualizingStackPanel), the editor's top edge is equal at 1 / 5 / 40 turns with the editor never below its 130 px floor and the thread never starved (both mechanisms measured: the floor on the host, the belt on the document), the SC8 keyboard model is a pure decision plus an act with the six owned keys, the SC9 policy announces each transition once and never a line, the SC10 properties are real over the UIA peers, the folded Console per turn and the on-demand split are one list (Ruling 74 condition 1), tier / fan-out / budget left the per-prompt form (the tier is §A9's projection on the compiler, the cap and budget the session's), the eight named reds and DS-1's headless oracles went red → green, and the attended rows (P-11/12/13, A6) are RUN-PENDING with their steps.",
       "tags": [
         "proof-pack",
@@ -14513,7 +14718,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "cefbdeaad3f27d4af8aa4c955b6c7688d6837c5755b98e34fdde96ca5818434d"
+      "sourceSha256": "b629c18cfb8ef2d80a5c62cbeb57c195d5ca24a1713503c9c66bf40bc74bcfa4"
     },
     {
       "id": "proof-composer-entry-areas",
@@ -16253,7 +16458,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  A[Session document open: one editor, structure collapsed, compiled collapsed] -->|type prose| B{Draft settles: objective derivable?}\n  A -->|template control: pick a template — B:181 as amended, E1| T[Template fields render as the derived structure, prefilled from the text where possible]\n  T --> E\n  B -->|no| C[Structure stays one collapsed line; a T2 send will mark Goal and Done when]\n  C -->|type more| B\n  C --> E\n  B -->|yes| D[Derived structure expands beneath the editor: Goal · Done when · Not in scope, marked derived]\n  D -->|edit a line inline| D\n  D --> E{@path mention present?}\n  E -->|no| F[Write-scope line: elicitation text; Send → refusal names @path and offers the picker — Ruling 42 intact]\n  F -->|add a mention| E\n  E -->|yes| G[Write-scope line: 'src/…/** — from your mention']\n  G -->|open Compiled disclosure| H[Exactly the outgoing text; no diff, no summary; editor does not shrink]\n  H --> G\n  G -->|Send Ctrl+Enter| I{T2 and a content field empty?}\n  I -->|yes| J[Inline marks on every gap at once; one-line reason each; nothing sent]\n  J -->|fix| D\n  I -->|no| K[Sent: compiled prompt carries the session's tier · fan-out · budget in the CT19 block]\n  K --> K2[Reply streams in the Console canvas; the block joins the Score outline]\n  K2 -->|conductor answers with a drafted template — S-8| K3[Next message's draft: the reply's text with its derived structure inline]\n  K3 --> D\n  K2 -->|operator writes the next message| A\n  A -->|session settings on the header| L[Edit fan-out ceiling / budget for the session; tier is compiled, not set here]\n  L -->|re-validate the current draft| B"
         }
       ],
-      "sourceSha256": "cefaa39e610b09f0cfe518d9c2e92f980aa41e7706cdeb56077316ba74eca384"
+      "sourceSha256": "2cb89ddd9033acac94b4834567b775a11e776d172544bcc4baeba64eda7b9bf9"
     },
     {
       "id": "spec-addendum-d-compile-step",
@@ -17065,7 +17270,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-mockups-perspective-shell",
       "path": "docs/mockups/perspective-shell.html",
-      "title": "AI-DE perspective shell: Coding · Explore · Architecture",
+      "title": "AI-DE perspective shell: Coding · Explore · Architecture · Coordination",
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "mockup-perspective-shell"
@@ -17183,5 +17388,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "cdf675f2f4f763268bcd88056999512b0abaf7498b8eb729f48c0f2dcae51624"
+  "graphSha256": "7b27c580eb698cf78baaa84feb2990c64d281d4f191cece90a26c78891fe15f2"
 };
