@@ -1821,3 +1821,38 @@ control (`template: none | <id>@<version>`; §B2 `:971`/`:977`, S-9, Flow 6, US-
 · *class* reserved in the glossary. **E7** — US-C12's switch event gains `outcome` and `error_code`; P-7
 is re-targeted from the terminal HWND to the WebView2 pages (§A8 US-C10, §A10, §A13, Flow 5, §Flagged).
 Verified by re-read; `verify-ruling-citations.py` green.
+
+**Errata after Rulings 83–84 (2026-09-13, `note-addendum-c-council-rulings` Rulings 80–87; applied by
+node D3, `ui-operator-findings-2026-09-13`, as an appended block — never a rewrite):** **Ruling 84** —
+**Coordination is a fourth Perspective** (a docking host, host C): page one's *Use case → perspective*
+table gains **UC5 — observe the fleet → Coordination**; §A7's allow-list table gains a fifth column
+**Coordination (UC5)** in which `sessions`, `board`, `leaderboard`, `ledger` and `daydreams` read
+**admits** — as a set — and in which every other row reads "—"; those five rows' **Coding column
+becomes "—"** (Coding admits none of them), and §A7's *Excluded by intent* paragraph gains *"Coding
+admits no Loomkeeper kind: the fleet is Coordination's bench (Ruling 84; Ruling 60's CONDITION met by
+the operator's UC5)"*; US-C1's *"exactly three perspectives in the order Coding · Explore ·
+Architecture"* reads **"exactly four … · Coordination"** with `("coordination", "Coordination", 4,
+DockHost, "perspective.coordination")`, gesture **Ctrl+4**, and its falsifier *"a fourth entry"*
+becomes *"a fifth entry"*; US-C2's identity cycle covers **four bodies** (host C included; P-4's
+`private_bytes_delta` measured for host C); §B3's menu table gains Coordination: **File · Edit · View ·
+Window · Help** (a host without Prompt), its derived View group *Show Terminal sessions · Show Message
+board · Show Leaderboard · Show Ledger · Show Daydreams* and the ledger verb *Raise dispute on the
+latest scored episode* (Coding's derived group keeps *New Search · New Code viewer · Show Diagnostics*);
+§B4 gains a third default table — **Coordination (host C; Inferred, D3 keeps the Owner's arrangement):
+Left = Terminal sessions (`sessions`) · Center = Ledger · Leaderboard · Message board (three tabs,
+Ledger first) · Right = empty · Bottom = empty, collapsed · Daydreams admitted, not in the default**;
+ADR-0030 gains the row, ADR-0031 a third composition, ADR-0032 a third slot file
+(`<layout>.coordination.zones.json`) and its test 1 extends to the five kinds dropped from a pre-C
+Coding envelope, **reported naming Coordination** (`note-adr-0030-0032-amendment-coordination`).
+**Ruling 83** — §B4's Coding table is **re-cut**: **Left = session documents (`session-document`; the
+zone rule is Left; empty until one opens) · Center = the empty state · Bottom = Terminal — pwsh ·
+Right = empty**; a **newly created** session opens in the Left zone **docked, `Maximized == null`**
+(Ruling 47's *maximize-on-create* superseded; `workbench.maximizePane`, Ctrl+K Z, stays the on-demand
+whole tree; `NewSessionPlacement` retires); reopen unchanged; US-C6's caption falsifiers stand;
+**Coding's Left `DefaultExtent` is 1.3 of the Center** *(Inferred; `session-conversation.html`
+measures the thread's 96ch measure inside it at 1440 × 900 — Ruling 83 condition 1)*; §C4's Center
+empty copy gains a second state — *"The session is docked at the left."* + **Maximize the session**
+(Ctrl+K, Z) + *"Code viewers, prompt drafts and search open here."* — and **never reads *No session
+open* while a session is open at Left** (condition 2). The design rows are `DESIGN.md` *Errata after
+Rulings 83–84*; the mockup is `perspective-shell.html`. Verified by re-read of Rulings 83–84 and
+`ZoneLayout.cs:193-206`, `Perspectives.cs:51-60`, `SurfaceContentFactory.cs:223-248`.

@@ -69,10 +69,12 @@ code{font-family:var(--font-mono);font-size:var(--t-sm)}
 .srlog ol{margin:0;padding-left:var(--s7);font-size:var(--t-sm);color:var(--text)}
 .srlog .who{font-family:var(--font-mono);color:var(--text-muted)}
 
-/* ---- THE WINDOW at startup size: the session takes the whole tree (Ruling 47) ---- */
+/* ---- THE WINDOW at startup size: the session docked in Coding's Left zone (Ruling 83); Ctrl+K, Z maximizes on demand ---- */
 .frame{margin:var(--s6);overflow:auto}
 .win{width:1440px;height:900px;display:grid;grid-template-rows:28px 1fr;padding:var(--s2) 0;outline:1px solid var(--border);border-radius:var(--r-island);background:var(--surface);position:relative}
 [data-vp="narrow"] .win{width:1024px}
+[data-vp="short"] .win{height:640px}
+[data-vp="operator"] .win{width:2560px;height:1600px}
 .menubar{display:flex;align-items:center;gap:var(--s1);padding:var(--s2) var(--s4);border-bottom:1px solid var(--border);background:var(--surface);font-size:var(--t-sm)}
 .menubar .mi{height:20px;padding:0 var(--s4);border:0;border-radius:var(--r-sm);background:transparent;color:var(--text);font:inherit;font-size:var(--t-sm);cursor:pointer}
 .menubar .mi:hover{background:var(--surface-raised)}
@@ -88,9 +90,26 @@ code{font-family:var(--font-mono);font-size:var(--t-sm)}
 .main{display:grid;grid-template-rows:28px 1fr;min-height:0;min-width:0}
 .titlestrip{display:flex;align-items:center;gap:var(--s3);padding:var(--s2) var(--s5);border-bottom:1px solid var(--border);font-size:var(--t-sm);color:var(--text-muted)}
 .titlestrip b{color:var(--text);font-weight:600}
-.bodywrap{padding:var(--s4);min-height:0;min-width:0;display:grid}
-/* the maximized Center stack: one pane fills the tree; siblings are minimized and remembered */
+/* THE CODING BODY (Ruling 83's re-cut): Left = the session document (extent 1.3 of the Center, Inferred; measured below against the 96ch measure) · Center = the empty state · Bottom = collapsed, or one terminal at 0.30 */
+.bodywrap{padding:var(--s4);min-height:0;min-width:0;display:grid;gap:var(--s4);grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto}
+body[data-layout="left-term"] .bodywrap,body[data-layout="left-term-center"] .bodywrap{grid-template-rows:minmax(0,7fr) minmax(0,3fr)}
+body[data-layout="left-term-center"] .zone-left{grid-row:1/3}
+body[data-layout="left-term-center"] .zone-bottom{grid-column:2}
+body[data-layout="left-term-center"] .zone-rail{display:none}
+body[data-layout="max"] .bodywrap{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+body[data-layout="max"] .zone-center,body[data-layout="max"] .zone-bottom,body[data-layout="max"] .zone-rail{display:none}
+body[data-layout="left"] .zone-bottom{display:none}
+body[data-layout="left-term"] .zone-rail{display:none}
+.zone-bottom,.zone-rail{grid-column:1/-1}
 .pane{display:grid;grid-template-rows:28px 1fr;min-height:0;min-width:0;padding:var(--s1) 0;background:var(--surface-raised);border-radius:var(--r-island);outline:1px solid var(--accent)}
+.pane.unfocused{outline-color:var(--border)}
+.pane .panebody{min-height:0;min-width:0;overflow:auto;padding:var(--s4) var(--s5)}
+.zone-rail{display:flex;align-items:center;gap:var(--s4);min-height:28px;padding:var(--s2) var(--s5);background:var(--surface-raised);border-radius:var(--r-md);color:var(--text-muted);font-size:var(--t-sm)}
+.zone-rail .lnk{min-height:24px}
+.term{font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text);background:var(--surface-sunken);padding:var(--s4) var(--s5);border-radius:var(--r-sm);white-space:pre;overflow:auto;height:100%;margin:0}
+.term .p{color:var(--accent)}
+.cta{display:inline-flex;align-items:center;gap:var(--s4);height:28px;padding:0 var(--s6);border:1px solid var(--accent);border-radius:var(--r-md);background:var(--accent);color:var(--accent-contrast);font:inherit;font-weight:600;cursor:pointer}
+.cta .kbd{font-family:var(--font-mono);font-size:var(--t-xs);font-weight:400}
 .tabstrip{display:flex;align-items:flex-end;gap:var(--s1);height:28px;padding:var(--s2) var(--s4) 0;border-bottom:1px solid var(--border)}
 .tab{display:inline-flex;align-items:center;gap:var(--s3);height:24px;padding:0 var(--s4);border:1px solid transparent;border-bottom:0;border-radius:var(--r-sm) var(--r-sm) 0 0;background:var(--surface);color:var(--text);font:inherit;font-size:var(--t-sm);cursor:pointer}
 .tab[aria-selected="true"]{background:var(--accent);color:var(--accent-contrast)}
@@ -171,7 +190,25 @@ code{font-family:var(--font-mono);font-size:var(--t-sm)}
 .st.ok{color:var(--verified)} .st.err{color:var(--danger)} .st.run{color:var(--text)} .st.wait{color:var(--inferred)} .st.stop{color:var(--text-muted)}
 .outcome .n{font-family:var(--font-mono);font-variant-numeric:tabular-nums;color:var(--text)}
 .outcome .lane{font-family:var(--font-mono);color:var(--accent)}
-.reply{margin-top:var(--s2);font-size:var(--t-md);color:var(--text);max-width:96ch;overflow-wrap:anywhere}
+/* THE CONVERSATION (Ruling 82): the fold's items inline, in event order — prose · reasoning · tool call+result · outcome */
+.items{display:flex;flex-direction:column;gap:var(--s1);min-width:0}
+.prose{font-size:var(--t-md);color:var(--text);max-width:96ch;overflow-wrap:anywhere;line-height:1.5;padding:var(--s1) 0}
+.prose p{margin:0 0 var(--s3)} .prose > :last-child{margin-bottom:0}
+.prose h2,.prose h3{margin:var(--s4) 0 var(--s2);font-size:var(--t-md);font-weight:600;color:var(--text)}
+.prose ul,.prose ol{margin:0 0 var(--s3);padding-left:var(--s7)} .prose li{margin:0}
+.prose code{background:var(--surface-sunken);padding:0 var(--s2);border-radius:var(--r-sm)}
+.prose table{border-collapse:collapse;font-size:var(--t-sm);margin:var(--s2) 0 var(--s3)}
+.prose th,.prose td{text-align:left;padding:var(--s1) var(--s4);border-bottom:1px solid var(--border);vertical-align:top} .prose th{color:var(--text-muted);font-weight:600}
+.prose .inert{text-decoration:underline dotted;text-underline-offset:2px} /* a link is its text, its URL in the description; never a control (DESIGN.md: no link activation from model-authored content) */
+.think{display:flex;align-items:center;gap:var(--s3);min-height:24px;font-size:var(--t-sm);color:var(--text-muted)}
+.lnk.dim{color:var(--text-muted)}
+.thought{margin:0 0 var(--s2) var(--s6);padding:var(--s1) 0;font-size:var(--t-sm);color:var(--text-muted);max-width:96ch;white-space:pre-wrap;overflow-wrap:anywhere}
+.tool{display:flex;align-items:center;flex-wrap:wrap;gap:var(--s3);min-height:24px;font-size:var(--t-sm);min-width:0;color:var(--text-muted)}
+.tool .ttl{font-family:var(--font-mono);color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60ch}
+.tool .stt{font-weight:600;display:inline-flex;align-items:center;gap:var(--s2)} .tool .stt.done{color:var(--verified)} .tool .stt.fail{color:var(--danger)} .tool .stt.pend{color:var(--text-muted);font-weight:400} .tool .stt.run{color:var(--text)}
+.detail{margin:0 0 var(--s2) var(--s6);padding:var(--s3) var(--s5);border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface-sunken);font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text);white-space:pre-wrap;overflow-wrap:anywhere;max-height:200px;overflow:auto}
+.detail .k{color:var(--text-muted)}
+.tgroup .items{margin:0 0 var(--s2) var(--s6)}
 .evlist{margin-top:var(--s2)}
 .evline{display:flex;align-items:baseline;gap:var(--s5);padding:var(--s1) 0;font-size:var(--t-sm);min-width:0}
 .evline .ts{font-family:var(--font-mono);font-variant-numeric:tabular-nums;color:var(--text-muted);flex:none}
@@ -199,9 +236,16 @@ details.ev[open] summary .car{transform:rotate(90deg)}
 .skelturn:first-child{border-top:0}
 .follow{display:inline-flex;align-items:center;gap:var(--s2);color:var(--text-muted)}
 
-/* THE COMPOSER: the current turn, pinned; its top edge is independent of the turn count */
+/* THE COMPOSER: the current turn, pinned. The editor's rest height is derived from the thread's need (Ruling 80):
+   0 turns — the thread is its caption and the editor takes the rest of the body (.sdoc.fill); ≥ 1 turn — 280px at rest,
+   scrolling only past it; 130px is the floor under a small window (one constant: ComposerSurface.EditorFloor, pushed to the page). */
+.sdoc.fill{grid-template-rows:auto auto minmax(0,1fr)}
+.sdoc.fill .thread{overflow:visible;padding-bottom:var(--s4)}
+.sdoc.fill .wayfinder{min-height:0;height:auto;padding:var(--s6) var(--s6) var(--s4)}
+.sdoc.fill .composer{min-height:0}
+.sdoc.fill .editor{flex:1 1 auto;height:auto;min-height:130px}
 .composer{grid-column:1;display:flex;flex-direction:column;min-width:0;padding:var(--s5) var(--s6) var(--s6);border-top:1px solid var(--border);position:relative}
-.editor{min-height:130px;max-height:280px;padding:var(--s4) var(--s5);border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--surface-sunken);color:var(--text);font-size:var(--t-md);line-height:1.65;overflow:auto;position:relative}
+.editor{height:280px;min-height:130px;flex:none;padding:var(--s4) var(--s5);border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--surface-sunken);color:var(--text);font-size:var(--t-md);line-height:1.65;overflow:auto;position:relative}
 .editor:focus,.editor:focus-within{border-color:var(--accent)}
 .editor.empty::after{content:attr(data-ph);color:var(--text-muted)}
 .editor.ro{color:var(--text-muted)}
@@ -273,6 +317,16 @@ details[open] > summary .car{transform:rotate(90deg)}
 .consolebody .evline.cur{background:var(--surface);border-radius:var(--r-sm);padding:var(--s1) var(--s2)}
 .consolebody .evhead{font-family:var(--font-mono);color:var(--text-muted);padding:var(--s3) 0 var(--s1);border-top:1px solid var(--border);margin-top:var(--s2)}
 .consolebody .evhead:first-child{border-top:0;margin-top:0}
+/* the Console's row grain is the message, never the wire chunk (Ruling 81): ts · lane · kind · the joined text · n chunks */
+.crow{display:flex;align-items:baseline;gap:var(--s4);padding:var(--s1) 0;font-size:var(--t-sm);min-width:0}
+.crow .ts{font-family:var(--font-mono);font-variant-numeric:tabular-nums;color:var(--text-muted);flex:none}
+.crow .lane{font-family:var(--font-mono);color:var(--accent);flex:none}
+.crow .kind{font-family:var(--font-mono);color:var(--text-muted);flex:none}
+.crow .msg{color:var(--text);min-width:0;overflow-wrap:anywhere;flex:1}
+.crow .msg.err{color:var(--danger)}
+.crow.dim .msg{color:var(--text-muted)}
+.crow .n{margin-left:auto;font-family:var(--font-mono);font-variant-numeric:tabular-nums;color:var(--text-muted);flex:none;white-space:nowrap}
+.consolebody .crow.cur{background:var(--surface);border-radius:var(--r-sm);padding:var(--s1) var(--s2)}
 
 /* keyboard persona: focus order stamped from DOM order at render, and the regions F6 cycles */
 .fo{position:absolute;z-index:40;width:18px;height:18px;border-radius:50%;background:var(--focus);color:var(--accent-contrast);font-size:var(--t-xs);font-weight:600;display:inline-flex;align-items:center;justify-content:center;font-family:var(--font-mono);pointer-events:none}
@@ -290,15 +344,17 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
 .swatch{display:inline-block;width:12px;height:12px;border-radius:2px;border:1px solid var(--border);vertical-align:-2px;margin-right:var(--s3)}
 </style>
 </head>
-<body data-state="prepared" data-turns="5" data-persona="operator" data-motion="full">
+<body data-state="prepared" data-turns="5" data-persona="operator" data-motion="full" data-layout="left" data-tools="inline">
 
 <div class="harness" role="region" aria-label="Review harness">
   <strong>Harness</strong>
   <label>State
     <select id="h-state">
-      <optgroup label="The session">
-        <option value="empty">empty session: no turns yet</option>
-        <option value="first">first turn: b1 sent, running</option>
+      <optgroup label="The session (Rulings 80–83)">
+        <option value="empty">empty: 0 turns, the editor fills the body (Ruling 80)</option>
+        <option value="first">first turn: b1 sent, running; the editor rests at 280 (Ruling 80)</option>
+        <option value="long">long: 40 turns, docked at Left (Rulings 80, 83)</option>
+        <option value="conversation">the conversation: b5 as prose · thinking · tool call+result · prose · outcome (Ruling 82)</option>
         <option value="loading">loading: session restoring</option>
         <option value="jump">jump to a turn: the outline open (40 turns)</option>
       </optgroup>
@@ -345,7 +401,7 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
       <optgroup label="Chrome and failure">
         <option value="settings">session settings opened from the header</option>
         <option value="settings-cap">session settings with a cap enforced</option>
-        <option value="split">Console split open beside the thread</option>
+        <option value="split">Console split open beside the thread: message rows, n chunks (Ruling 81)</option>
         <option value="attaching">attaching: drop target over the editor</option>
         <option value="attachoff">attaching is off for this session</option>
         <option value="editorerror">editor error</option>
@@ -354,10 +410,14 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
     </select></label>
   <label>Turns
     <select id="h-turns"><option value="1">1</option><option value="5" selected>5</option><option value="40">40</option></select></label>
+  <label>Layout
+    <select id="h-layout"><option value="left">docked Left, Bottom collapsed (the operator's layout)</option><option value="left-term">docked Left + one terminal across the width (the startup default)</option><option value="left-term-center">docked Left, full height; the terminal under the Center only (D3's proposal)</option><option value="max">maximized (Ctrl+K, Z)</option></select></label>
+  <label>Tool runs
+    <select id="h-tools"><option value="inline">inline (Ruling 82's letter)</option><option value="grouped">runs of ≥ 4 grouped on completed turns (D3's density rule)</option></select></label>
   <label>Theme
     <select id="h-theme"><option value="dark">dark</option><option value="light">light</option><option value="hc">high-contrast (stand-ins)</option></select></label>
   <label>Viewport
-    <select id="h-vp"><option value="desk">desktop 1440</option><option value="narrow">narrow 1024</option></select></label>
+    <select id="h-vp"><option value="desk">desktop 1440 × 900</option><option value="narrow">narrow 1024</option><option value="short">short 1440 × 640 (the editor's floor)</option><option value="operator">the operator's 2560 × 1600 (the screenshots)</option></select></label>
   <label>Persona
     <select id="h-persona"><option value="operator">Operator</option><option value="keyboard">Keyboard-only (focus order, F6 regions)</option><option value="screenreader">Screen reader (live region)</option></select></label>
   <label>Motion
@@ -378,17 +438,19 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
         <button class="item" role="tab" aria-selected="true" tabindex="0" aria-label="Coding perspective, Ctrl+1"><svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg></button>
         <button class="item" role="tab" aria-selected="false" tabindex="-1" aria-label="Explore perspective, Ctrl+2"><svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></button>
         <button class="item" role="tab" aria-selected="false" tabindex="-1" aria-label="Architecture perspective, Ctrl+3"><svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="8.5" y="14" width="7" height="7" rx="1.5"/><path d="M6.5 10v2.5h11V10M12 12.5V14"/></svg></button>
+        <!-- Coordination (Ruling 84): host C, Ctrl+4; the five Loomkeeper kinds live there, Coding admits none of them -->
+        <button class="item" role="tab" aria-selected="false" tabindex="-1" aria-label="Coordination perspective, Ctrl+4"><svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M7.8 7.8L10.5 15.6M16.2 7.8l-2.7 7.8M8.5 6h7"/></svg></button>
       </div>
     </nav>
     <div class="main">
-      <div class="titlestrip"><span>workspace</span><b>commerce</b><span>&middot;</span><span>Coding</span><span>&middot;</span><span>session <b>payments extraction</b> maximized</span><span class="sp"></span></div>
+      <div class="titlestrip"><span>workspace</span><b>commerce</b><span>&middot;</span><span>Coding</span><span>&middot;</span><span id="title-where">session <b>payments extraction</b> docked at Left</span><span class="sp"></span></div>
       <div class="bodywrap">
-        <!-- THE MAXIMIZED CENTER STACK: no Terminal sessions pane, no bottom terminal, no graph. Siblings are minimized and remembered. -->
-        <section class="pane" aria-label="Center zone, maximized">
+        <!-- THE LEFT ZONE (Ruling 83): the session document, docked, not maximized. The Center is the empty state; the Bottom is collapsed here (the operator's layout) or one terminal (the startup default). -->
+        <section class="pane zone-left" aria-label="Left zone" id="zone-left">
           <div class="tabstrip" role="tablist">
             <button class="tab" role="tab" aria-selected="true"><span class="lbl">payments extraction</span></button>
             <span class="sp"></span>
-            <button class="iconbtn q" aria-label="Restore the layout, show the other panes again, Ctrl+K Z" title="Restore layout (Ctrl+K, Z)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+            <button class="iconbtn q" id="maxbtn" aria-label="Maximize the session, Ctrl+K Z" title="Maximize the session (Ctrl+K, Z)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
           </div>
 
           <div class="sdoc" id="sdoc">
@@ -552,11 +614,33 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
             </section>
 
             <!-- THE CONSOLE SPLIT: Ruling 21's split, on demand. The same events the thread folds per turn, unfolded in time. -->
-            <section class="console region" aria-label="Console: the merged stream" data-show="split">
+            <section class="console region" aria-label="Console: every wire frame, one row per message" data-show="split">
               <div class="modestrip"><span class="modetitle">Console</span><span class="sp"></span><span class="follow" id="follow"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>following b5</span></div>
-              <div class="consolebody" id="consolebody" tabindex="0" role="region" aria-label="Merged stream, every turn in time order"></div>
+              <div class="consolebody" id="consolebody" tabindex="0" role="region" aria-label="Merged stream, every turn in time order, one row per message"></div>
             </section>
           </div>
+        </section>
+
+        <!-- THE CENTER ZONE: empty. Its copy never reads "No session open" while one is open at Left (Ruling 83, condition 2). -->
+        <section class="pane unfocused zone-center" aria-label="Center zone">
+          <div class="tabstrip" role="tablist"></div>
+          <div class="panebody">
+            <div class="wayfinder" id="center-empty">
+              <svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h10M4 19h7"/></svg>
+              <h3>The session is docked at the left.</h3>
+              <button class="cta">Maximize the session <span class="kbd">Ctrl+K, Z</span></button>
+              <p>Code viewers, prompt drafts and search open here.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- THE BOTTOM ZONE: collapsed in the operator's layout; one terminal (0.30) in the startup default -->
+        <div class="zone-rail" aria-label="Bottom zone, collapsed"><span>Bottom</span><span class="mono">1</span><button class="lnk">Expand</button></div>
+        <section class="pane unfocused zone-bottom" aria-label="Bottom zone">
+          <div class="tabstrip" role="tablist"><button class="tab" role="tab" aria-selected="true"><span class="lbl">Terminal &mdash; pwsh</span></button></div>
+          <div class="panebody" style="padding:var(--s4) var(--s5)"><pre class="term"><span class="p">PS C:\projects\commerce&gt;</span> git status --short
+ M src/AiDe.Core/Workbench/LayoutStore.cs
+<span class="p">PS C:\projects\commerce&gt;</span> &#9608;</pre></div>
         </section>
       </div>
     </div>
@@ -568,7 +652,7 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
 <!-- ==================================================================== -->
 <div class="secwrap">
   <h3 class="sech">&ldquo;Chat-like&rdquo;, measured on this page</h3>
-  <p class="help">The operator&rsquo;s word is a feeling; the contract is a set of numbers read from the rendered layout on every change, at the shell&rsquo;s startup size (1440 &times; 900) with the session maximized. Rhythm: the editor&rsquo;s top edge is read at 1, 5 and 40 turns in one pass and must not move. Alignment: every turn&rsquo;s text, reply and outcome share one left edge. Density: how many turns the tree shows, against a threshold the row prints. The absence of form chrome: no bordered field other than the editor, no box around a turn, no per-prompt settings field.</p>
+  <p class="help">The operator&rsquo;s word is a feeling; the contract is a set of numbers read from the rendered layout on every change, at the shell&rsquo;s startup size (1440 &times; 900) with the session <b>docked in Coding&rsquo;s Left zone</b> (Ruling 83). Rhythm: the editor&rsquo;s top edge is read at 1, 5 and 40 turns in one pass and must not move; at 0 turns the editor fills the body with no scrollbar (Ruling 80). Identity: the Console split&rsquo;s rows equal <code>Coalesce(events)</code> of every turn, the same fold the thread renders (Rulings 81, 82). Alignment: every turn&rsquo;s text, reply and outcome share one left edge. Density: how many turns the tree shows, against a threshold the row prints, measured with tool runs inline and grouped. The absence of form chrome: no bordered field other than the editor, no box around a turn, no per-prompt settings field.</p>
   <table class="ctab"><thead><tr><th>Property</th><th>Contract</th><th>Measured</th><th>Verdict</th></tr></thead><tbody id="dtbody"></tbody></table>
 
   <h3 class="sech" style="margin-top:var(--s7)">Computed contrast: every pairing the thread and the composer render</h3>
@@ -581,6 +665,21 @@ var root=document.documentElement, body=document.body;
 function bind(id,target,attr){ var el=document.getElementById(id); el.addEventListener('change',function(){ target.dataset[attr]=el.value; render(); }); }
 bind('h-theme',root,'theme'); bind('h-vp',root,'vp');
 bind('h-state',body,'state'); bind('h-turns',body,'turns'); bind('h-persona',body,'persona'); bind('h-motion',body,'motion');
+bind('h-layout',body,'layout'); bind('h-tools',body,'tools');
+
+/* ---- the event model: one turn's events as the mapper emits them (AcpRunEventMapper's v1 kinds + acp.*), chunked as the wire chunks them ---- */
+/* kinds: run.accepted / run.completed (the conductor's lines) · agent.thought · agent.msg · tool.call {id,title,kind,input} · tool.result {id,status,out} · permission.request · lane.stderr · acp.* */
+var EM='—', SECT='§'; /* the two code points Ruling 87 round-trips: rendered as themselves, never as mojibake */
+function ts(base,plus){ var p=base.split(':'), s=(+p[0])*3600+(+p[1])*60+(+p[2]||0)+plus; return ('0'+Math.floor(s/3600)%24).slice(-2)+':'+('0'+Math.floor(s%3600/60)).slice(-2)+':'+('0'+s%60).slice(-2); }
+function chunked(text,size){ var out=[], i=0; while(i<text.length){ var j=Math.min(text.length,i+size); if(j<text.length){ var sp=text.lastIndexOf(' ',j); if(sp>i+2) j=sp+1; } out.push(text.slice(i,j)); i=j; } return out; }
+/* a message or thought is written once here and split into wire chunks below, so the Console's "n chunks" is rendered from the fold, never typed */
+function msg(t,l,text){ return {t:t,l:l,k:'agent.msg',x:text,chunk:true}; }
+function thought(t,l,text){ return {t:t,l:l,k:'agent.thought',x:text,chunk:true}; }
+function call(t,l,id,kind,title,input){ return {t:t,l:l,k:'tool.call',id:id,kind:kind,title:title,input:input}; }
+function result(t,l,id,status,out){ return {t:t,l:l,k:'tool.result',id:id,status:status,out:out}; }
+function acp(t,l,name){ return {t:t,l:l,k:'acp.session.update.'+name,x:''}; }
+function cond(t,kind,text){ return {t:t,l:'conductor',k:kind,x:text}; }
+function expand(evs){ var out=[]; evs.forEach(function(e){ if(e.chunk){ chunked(e.x,14).forEach(function(c){ out.push({t:e.t,l:e.l,k:e.k,x:c}); }); } else out.push(e); }); return out; }
 
 /* ---- fixtures: five turns of one session, as diverse as a session is ------------------- */
 /* Each turn is ONE store, the envelope's fold: `env` = decoration rows (name · value · source · how). The decoration line,
@@ -602,54 +701,143 @@ function envRows(t,n){
 var TURNS=[
  { cls:'review', clsOp:true, tier:'T0', tierProv:'rule R0: no goal block', lease:null, shape:'message', when:'14:01',
    src:'Map the layout stores in this workspace and name the invariant each one protects.',
-   outcome:{st:'ok',word:'answered',lane:'conductor',parts:['0 lanes','1,860 tokens','6 s'],events:3},
-   reply:'Two stores. <code>LayoutStore</code> (tree schema, v4, a migration chain) and <code>ZoneLayoutStore</code> (zone schema, v1, discards on any mismatch). The invariant the first protects is &ldquo;a saved layout is never partially applied&rdquo;; the second has none yet.',
-   ev:[['14:01:12','conductor','Block b1 accepted, tier T0, 0 lanes'],['14:01:13','conductor','report: 2 stores found under src/AiDe.Core/Workbench/'],['14:01:18','conductor','answered (1,860 tokens)']],
+   outcome:{st:'ok',word:'answered',lane:'conductor',parts:['0 lanes','1,860 tokens','6 s']},
+   ev:expand([cond('14:01:12','run.accepted','Block b1 accepted, tier T0, 0 lanes'),
+     thought('14:01:13','conductor','The workspace has two layout stores; I should name each one’s invariant from its migration code rather than its comments.'),
+     call('14:01:14','conductor','b1t1','search','Grep "class .*LayoutStore"','pattern: class .*LayoutStore\npath: src/AiDe.Core/Workbench/'),
+     result('14:01:14','conductor','b1t1','completed','2 matches: LayoutStore.cs:18, ZoneLayoutStore.cs:14'),
+     msg('14:01:15','conductor','Two stores.\n\n- `LayoutStore` '+EM+' tree schema, v4, a migration chain. The invariant it protects: **a saved layout is never partially applied** ('+SECT+'4 of the layout notes).\n- `ZoneLayoutStore` '+EM+' zone schema, v1, discards on any mismatch. No invariant yet.'),
+     acp('14:01:18','conductor','usage_update'),
+     cond('14:01:18','run.completed','answered (1,860 tokens)')]),
    compiled:'task_class: review\nshape: message\ntier: T0\nbudget: subscription\nmessage: |\n  Map the layout stores in this workspace and name the invariant each one protects.\n' },
  { cls:'extraction', clsOp:true, tier:'T1', tierProv:'rule R2: goal block filled by the model, one lease; confirmed at send', lease:['src/AiDe.Core/Workbench/**'], shape:'goal block', when:'14:02', model:true, ctok:'1,980',
    src:'Refactor the layout store’s migration chain so a newer schema is refused with a report; touch only <span class="mention">@src/AiDe.Core/Workbench/</span>.',
-   outcome:{st:'ok',word:'completed',lane:'claude-code',parts:['1 lane','3 edits','12,400 tokens','4 min 12 s'],events:142},
-   reply:'Done. <code>LayoutStore.Load</code> now refuses an envelope whose schema is newer than 4 and reports it on the status strip; the v5 file is left untouched. 14 tests green, 1 added (<code>ANewerSchemaIsRefusedWithAReport</code>).',
-   ev:[['14:02:03','conductor','Block b2 accepted, tier T1, 1 lane, lease <code>src/AiDe.Core/Workbench/**</code>'],['14:02:04','claude-code','read <code>LayoutStore.cs</code> (412 lines)'],['14:02:09','claude-code','edit <code>LayoutStore.cs</code>, 1 hunk: refuse schema &gt; 4 with a report'],['14:03:41','claude-code','test: 14 passed, 0 failed, 3.8 s'],['14:06:15','conductor','completed: 3 edits, 12,400 tokens']],
+   outcome:{st:'ok',word:'completed',lane:'claude-code',parts:['1 lane','3 edits','12,400 tokens','4 min 12 s']},
+   ev:expand([cond('14:02:03','run.accepted','Block b2 accepted, tier T1, 1 lane, lease src/AiDe.Core/Workbench/**'),
+     thought('14:02:04','claude-code','The migration chain steps forward one version at a time. A newer schema must be refused before any step runs, and the refusal has to reach the status strip through the existing report path rather than an exception.'),
+     call('14:02:07','claude-code','b2t1','read','Read LayoutStore.cs','file_path: src/AiDe.Core/Workbench/LayoutStore.cs'),
+     result('14:02:07','claude-code','b2t1','completed','412 lines'),
+     call('14:02:08','claude-code','b2t2','search','Grep "Migrations.Step"','pattern: Migrations\\.Step\npath: src/AiDe.Core/Workbench/'),
+     result('14:02:08','claude-code','b2t2','completed','3 matches'),
+     call('14:02:09','claude-code','b2t3','read','Read Migrations.cs','file_path: src/AiDe.Core/Workbench/Migrations.cs'),
+     result('14:02:09','claude-code','b2t3','completed','96 lines'),
+     call('14:02:10','claude-code','b2t4','read','Read LayoutStoreTests.cs','file_path: tests/AiDe.App.Tests/LayoutStoreTests.cs'),
+     result('14:02:10','claude-code','b2t4','completed','188 lines'),
+     call('14:02:11','claude-code','b2t5','search','Grep "ReportRefusal"','pattern: ReportRefusal\npath: src/'),
+     result('14:02:11','claude-code','b2t5','completed','1 match: WorkbenchShell.cs:1839'),
+     msg('14:02:14','claude-code','`Load` steps the chain before it compares versions, so a v5 file is migrated as far as the chain knows and then fails on the unknown step. I’ll compare first and refuse through `ReportRefusal`, then add the red test before the change.'),
+     call('14:02:20','claude-code','b2t6','edit','Edit LayoutStoreTests.cs','file_path: tests/AiDe.App.Tests/LayoutStoreTests.cs\n+ ANewerSchemaIsRefusedWithAReport'),
+     result('14:02:20','claude-code','b2t6','completed','1 hunk, 14 lines'),
+     call('14:02:31','claude-code','b2t7','execute','dotnet test tests/AiDe.App.Tests --filter LayoutStore','command: dotnet test tests/AiDe.App.Tests --filter LayoutStore'),
+     result('14:02:58','claude-code','b2t7','failed','Failed! 13 passed, 1 failed (ANewerSchemaIsRefusedWithAReport: expected a report, got InvalidOperationException)'),
+     call('14:03:05','claude-code','b2t8','edit','Edit LayoutStore.cs','file_path: src/AiDe.Core/Workbench/LayoutStore.cs\n- migrate then compare\n+ compare, refuse > 4 with a report, then migrate'),
+     result('14:03:05','claude-code','b2t8','completed','1 hunk, 9 lines'),
+     call('14:03:12','claude-code','b2t9','execute','dotnet test tests/AiDe.App.Tests --filter LayoutStore','command: dotnet test tests/AiDe.App.Tests --filter LayoutStore'),
+     result('14:03:41','claude-code','b2t9','completed','Passed! 14 passed, 0 failed, 3.8 s'),
+     msg('14:03:44','claude-code','Done. `LayoutStore.Load` now refuses an envelope whose schema is newer than 4 and reports it on the status strip; the v5 file is left untouched.\n\n| What | Result |\n|---|---|\n| Red first | `ANewerSchemaIsRefusedWithAReport` failed on the old order |\n| Green | 14 passed, 0 failed, 3.8 s |\n| Untouched | the v5 file '+EM+' compared, never migrated |'),
+     acp('14:06:14','claude-code','usage_update'),
+     acp('14:06:14','claude-code','usage_update'),
+     acp('14:06:15','claude-code','result'),
+     cond('14:06:15','run.completed','completed: 3 edits, 12,400 tokens')]),
    compiled:'task_class: extraction\nshape: goal-block\ntier: T1\nfan_out: 2\nbudget: subscription\ngoal: Refuse a newer layout schema with a report instead of a silent reset\ndone_when: a v6 envelope is refused, reported on the status strip, and the v5 file is untouched\nnot_in_scope: the envelope’s contents; anything outside src/AiDe.Core/Workbench/\nlease: src/AiDe.Core/Workbench/**\nmessage: |\n  Refactor the layout store’s migration chain so a newer schema is refused with a report;\n  touch only @src/AiDe.Core/Workbench/.\n' },
  { cls:'defect', clsOp:true, tier:'T1', tierProv:'rule R2: goal block filled by the model, one lease; confirmed at send', lease:['tests/AiDe.App.Tests/**'], shape:'goal block', when:'14:31', model:true, ctok:'2,210',
    src:'<code>ContrastFloorTests</code> is green on the same commit where the shell shows 2.37:1. Find why; touch only <span class="mention">@tests/AiDe.App.Tests/</span>.',
-   outcome:{st:'ok',word:'completed',lane:'claude-code',parts:['1 lane','1 edit','9,900 tokens','3 min 05 s'],events:96},
-   reply:'Root cause: the theory exercises <code>ThemeBrushes</code>, which the product does not construct; the shell reads the implicit <code>TextBlock</code> style. Registered as DC-135; the census now walks the composed tree instead.',
-   ev:[['14:31:02','conductor','Block b3 accepted, tier T1, 1 lane, lease <code>tests/AiDe.App.Tests/**</code>'],['14:31:05','claude-code','read <code>ContrastFloorTests.cs</code> (188 lines)'],['14:32:40','claude-code','edit <code>ShellContrastCensusTests.cs</code>, 1 hunk'],['14:34:07','conductor','completed: 1 edit, 9,900 tokens']],
+   outcome:{st:'ok',word:'completed',lane:'claude-code',parts:['1 lane','1 edit','9,900 tokens','3 min 05 s']},
+   ev:expand([cond('14:31:02','run.accepted','Block b3 accepted, tier T1, 1 lane, lease tests/AiDe.App.Tests/**'),
+     thought('14:31:03','claude-code','A green theory beside a failing shell means the theory measures something the shell does not construct. Find what the theory instantiates.'),
+     call('14:31:05','claude-code','b3t1','read','Read ContrastFloorTests.cs','file_path: tests/AiDe.App.Tests/ContrastFloorTests.cs'),
+     result('14:31:05','claude-code','b3t1','completed','188 lines'),
+     call('14:31:20','claude-code','b3t2','search','Grep "ThemeBrushes"','pattern: ThemeBrushes\npath: src/'),
+     result('14:31:20','claude-code','b3t2','completed','0 matches under src/ '+EM+' the type is constructed only by the test'),
+     msg('14:31:40','claude-code','Root cause: the theory exercises `ThemeBrushes`, which the product does not construct; the shell reads the implicit `TextBlock` style. Registering it as **DC-135** and pointing the census at the composed tree.'),
+     call('14:32:40','claude-code','b3t3','edit','Edit ShellContrastCensusTests.cs','file_path: tests/AiDe.App.Tests/ShellContrastCensusTests.cs'),
+     result('14:32:40','claude-code','b3t3','completed','1 hunk, 22 lines'),
+     msg('14:34:05','claude-code','The census now walks the composed tree instead; it fails on `c9fb2a94` with 2.37:1 on the selected tab '+EM+' the shell’s number, reproduced.'),
+     acp('14:34:07','claude-code','usage_update'),
+     cond('14:34:07','run.completed','completed: 1 edit, 9,900 tokens')]),
    compiled:'task_class: defect\nshape: goal-block\ntier: T1\nfan_out: 2\nbudget: subscription\ngoal: Find why the contrast theory is green while the shell fails\ndone_when: the cause is named and a test that fails on the shell’s tree exists\nnot_in_scope: the fix itself; anything outside tests/AiDe.App.Tests/\nlease: tests/AiDe.App.Tests/**\nmessage: |\n  ContrastFloorTests is green on the same commit where the shell shows 2.37:1. Find why;\n  touch only @tests/AiDe.App.Tests/.\n' },
  { cls:'ui-feedback', clsOp:true, tier:'T2', tierProv:'operator (rule said T1): two seams, the tab strip and the menu, coordinate', tierOp:true, lease:['src/AiDe.App/Workbench/**'], shape:'goal block', tmpl:'change-order v2', when:'15:04', model:true, ctok:'2,640',
    src:'Apply the contrast fix to the dock tab strip and the three menu brushes under <span class="mention">@src/AiDe.App/Workbench/</span>; the census stays at 180 of 180.',
-   outcome:{st:'ok',word:'completed',lane:'claude-code',parts:['2 lanes','5 edits','31,200 tokens','11 min 40 s'],events:388},
-   reply:'Both seams landed: the selected-inactive tab pairs <code>text</code> on <code>surface</code> with the 2px muted edge; the menu brushes read <code>surface-raised</code>, <code>float-chrome</code> and <code>border</code>. Census 180 of 180, 0 below floor.',
-   ev:[['15:04:10','conductor','Block b4 accepted, tier T2 (operator; rule said T1), 2 lanes'],['15:04:12','claude-code','read <code>DockRoundedTabs.xaml</code> (240 lines)'],['15:09:52','claude-code','edit <code>App.xaml</code>, 3 hunks: menu brushes onto tokens'],['15:15:50','conductor','completed: 5 edits, 31,200 tokens']],
+   outcome:{st:'ok',word:'completed',lane:'claude-code',parts:['2 lanes','5 edits','31,200 tokens','11 min 40 s']},
+   ev:expand([cond('15:04:10','run.accepted','Block b4 accepted, tier T2 (operator; rule said T1), 2 lanes'),
+     thought('15:04:11','claude-code','Two seams: the tab strip template and the three menu brushes. Read both before either edit so the census stays at 180 of 180.'),
+     call('15:04:12','claude-code','b4t1','read','Read DockRoundedTabs.xaml','file_path: src/AiDe.App/Workbench/DockRoundedTabs.xaml'),
+     result('15:04:12','claude-code','b4t1','completed','240 lines'),
+     call('15:04:15','claude-code','b4t2','read','Read App.xaml','file_path: src/AiDe.App/App.xaml'),
+     result('15:04:15','claude-code','b4t2','completed','704 lines'),
+     call('15:04:19','claude-code','b4t3','search','Grep "MenuHoverBrush"','pattern: MenuHoverBrush\npath: src/AiDe.App/'),
+     result('15:04:19','claude-code','b4t3','completed','4 matches'),
+     call('15:04:22','claude-code','b4t4','read','Read ShellContrastCensusTests.cs','file_path: tests/AiDe.App.Tests/ShellContrastCensusTests.cs'),
+     result('15:04:22','claude-code','b4t4','completed','212 lines'),
+     call('15:04:30','claude-code','b4t5','search','Grep "SelectedInactive"','pattern: SelectedInactive\npath: src/AiDe.App/Workbench/'),
+     result('15:04:30','claude-code','b4t5','completed','2 matches'),
+     call('15:04:33','claude-code','b4t6','read','Read ZoneRails.cs','file_path: src/AiDe.App/Workbench/ZoneRails.cs'),
+     result('15:04:33','claude-code','b4t6','completed','160 lines'),
+     call('15:04:40','claude-code','b4t7','execute','dotnet test tests/AiDe.App.Tests --filter ShellContrastCensus','command: dotnet test tests/AiDe.App.Tests --filter ShellContrastCensus'),
+     result('15:05:20','claude-code','b4t7','failed','Failed! 166 of 180 pairings clear; 14 below floor (the accent-as-ground family)'),
+     call('15:05:31','claude-code','b4t8','edit','Edit DockRoundedTabs.xaml','file_path: src/AiDe.App/Workbench/DockRoundedTabs.xaml\n+ selected-inactive: TextBrush on SurfaceBrush, 2px TextMutedBrush top edge'),
+     result('15:05:31','claude-code','b4t8','completed','2 hunks'),
+     msg('15:06:00','claude-code','The tab strip seam is in: the selected-inactive tab pairs `text` on `surface` with the 2px muted edge. Now the three menu brushes.'),
+     call('15:09:52','claude-code','b4t9','edit','Edit App.xaml','file_path: src/AiDe.App/App.xaml\n3 hunks: menu brushes onto tokens'),
+     result('15:09:52','claude-code','b4t9','completed','3 hunks'),
+     call('15:10:04','claude-code','b4t10','execute','dotnet test tests/AiDe.App.Tests --filter ShellContrastCensus','command: dotnet test tests/AiDe.App.Tests --filter ShellContrastCensus'),
+     result('15:10:41','claude-code','b4t10','completed','Passed! 180 of 180 clear, 0 below floor'),
+     msg('15:15:48','claude-code','Both seams landed: the menu brushes read `surface-raised`, `float-chrome` and `border`. **Census 180 of 180, 0 below floor** in both themes.'),
+     acp('15:15:49','claude-code','usage_update'),
+     acp('15:15:50','claude-code','result'),
+     cond('15:15:50','run.completed','completed: 5 edits, 31,200 tokens')]),
    compiled:'task_class: ui-feedback\nshape: goal-block\ntemplate: change-order v2\ntier: T2\nfan_out: 3\nbudget: subscription\nlease: src/AiDe.App/Workbench/**\nwhat_changed: the dock tab strip and the three menu brushes take token pairings\namended_done_when: the census reads 180 of 180 with 0 below floor in both themes\nnot_in_scope: the composer page; the high-contrast dictionary\nmessage: |\n  Apply the contrast fix to the dock tab strip and the three menu brushes under\n  @src/AiDe.App/Workbench/; the census stays at 180 of 180.\n' },
  { cls:'free-form', clsOp:false, tier:'T1', tierProv:'rule R2: goal block filled by you, one lease; confirmed at send', lease:['docs/proof/**'], shape:'goal block', when:'15:22', model:true, ctok:'1,120',
    src:'Write this session’s proof pack under <span class="mention">@docs/proof/</span>: what changed, what is still open, and the sha each claim cites.',
-   outcome:{st:'ok',word:'completed',lane:'claude-code',parts:['1 lane','1 edit','4,100 tokens','1 min 02 s'],events:51},
-   reply:'Wrote <code>docs/proof/pp-0142.md</code>: three changes with their shas, two open items (the high-contrast dictionary; the menu keyboard indicator), every figure taken from the census run at <code>c9fb2a94</code>.',
-   ev:[['15:22:30','conductor','Block b5 accepted, tier T1, 1 lane, lease <code>docs/proof/**</code>'],['15:22:31','claude-code','read <code>docs/proof/pp-0141.md</code> (96 lines)'],['15:23:12','claude-code','write <code>docs/proof/pp-0142.md</code> (74 lines)'],['15:23:32','conductor','completed: 1 edit, 4,100 tokens']],
+   outcome:{st:'ok',word:'completed',lane:'claude-code',parts:['1 lane','1 edit','4,100 tokens','1 min 02 s']},
+   ev:expand([cond('15:22:30','run.accepted','Block b5 accepted, tier T1, 1 lane, lease docs/proof/**'),
+     thought('15:22:31','claude-code','The previous proof pack is the template. Every claim needs the sha it was measured at; the two open items stay open, named.'),
+     call('15:22:33','claude-code','b5t1','read','Read docs/proof/pp-0141.md','file_path: docs/proof/pp-0141.md'),
+     result('15:22:33','claude-code','b5t1','completed','96 lines'),
+     msg('15:22:40','claude-code','Three changes landed this session; I’ll cite each at the census run’s sha and keep the two open items as open.'),
+     call('15:23:12','claude-code','b5t2','edit','Write docs/proof/pp-0142.md','file_path: docs/proof/pp-0142.md'),
+     result('15:23:12','claude-code','b5t2','completed','74 lines written'),
+     msg('15:23:30','claude-code','Wrote `docs/proof/pp-0142.md` '+EM+' three changes with their shas, two open items, every figure taken from the census run at `c9fb2a94`.\n\n## Open\n\n1. The high-contrast dictionary ('+SECT+'3 of the proof pack).\n2. The menu keyboard indicator '+EM+' see [`ui-perspective-shell.md`](docs/reviews/ui-perspective-shell.md).'),
+     acp('15:23:31','claude-code','usage_update'),
+     cond('15:23:32','run.completed','completed: 1 edit, 4,100 tokens')]),
    compiled:'task_class: free-form\nshape: goal-block\ntier: T1\nfan_out: 2\nbudget: subscription\ngoal: A proof pack for this session with a sha on every claim\ndone_when: docs/proof/pp-0142.md exists and names what changed and what is open\nnot_in_scope: anything outside docs/proof/\nlease: docs/proof/**\nmessage: |\n  Write this session’s proof pack under @docs/proof/: what changed, what is still open,\n  and the sha each claim cites.\n' }
 ];
 /* the last turn's reply-side variants (a goal block is answered by a lane); a refusal BEFORE start is composer-side (see SCEN.quota) */
+var B5_HEAD=[cond('15:22:30','run.accepted','Block b5 accepted, tier T1, 1 lane, lease docs/proof/**'),
+  thought('15:22:31','claude-code','The previous proof pack is the template. Every claim needs the sha it was measured at.'),
+  call('15:22:33','claude-code','b5t1','read','Read docs/proof/pp-0141.md','file_path: docs/proof/pp-0141.md'),
+  result('15:22:33','claude-code','b5t1','completed','96 lines')];
 var LAST_VARIANTS={
-  running:{st:'run',word:'running',lane:'claude-code',parts:['41 s elapsed','38 events'],live:true,
-    ev:[['15:22:30','conductor','Block b5 accepted, tier T1, 1 lane, lease <code>docs/proof/**</code>'],['15:22:31','claude-code','read <code>docs/proof/pp-0141.md</code> (96 lines)'],['15:22:58','claude-code','read <code>docs/audit/audit-log.jsonl</code> (last 40 entries)'],['15:23:09','claude-code','write <code>docs/proof/pp-0142.md</code> (in progress)']],
+  running:{st:'run',word:'running',lane:'claude-code',parts:['41 s elapsed'],live:true,
+    ev:expand(B5_HEAD.concat([
+      msg('15:22:40','claude-code','Three changes landed this session; I’ll cite each at the census run’s sha.'),
+      call('15:22:58','claude-code','b5t2','read','Read docs/audit/audit-log.jsonl','file_path: docs/audit/audit-log.jsonl (last 40 entries)'),
+      result('15:22:58','claude-code','b5t2','completed','40 entries'),
+      call('15:23:09','claude-code','b5t3','edit','Write docs/proof/pp-0142.md','file_path: docs/proof/pp-0142.md')])),
     acts:['Stop this turn'], reason:'b5 is running; the next turn waits for it.', stopdesc:'Stop ends the lane cleanly; edits made so far stay on disk and are listed on the turn.'},
-  laneerror:{st:'err',word:'lane exited 1',lane:'claude-code',parts:['37 s','12 events','0 edits'],
-    ev:[['15:22:30','conductor','Block b5 accepted, tier T1, 1 lane, lease <code>docs/proof/**</code>'],['15:22:31','claude-code','read <code>docs/proof/pp-0141.md</code> (96 lines)'],['15:23:05','claude-code','<span class="err">stderr: fatal: not a git repository (or any of the parent directories): .git</span>'],['15:23:07','conductor','<span class="err">lane exited 1 before any edit; the lease was never used</span>']],
-    box:'<b>The lane exited 1 before any edit.</b> Its last four lines are above; nothing under <code>docs/proof/</code> changed. Send the same turn again as b6 (it prepares again: one request), or open the full log first.',
+  laneerror:{st:'err',word:'lane exited 1',lane:'claude-code',parts:['37 s','0 edits'],
+    ev:expand(B5_HEAD.concat([
+      {t:'15:23:05',l:'claude-code',k:'lane.stderr',x:'stderr: fatal: not a git repository (or any of the parent directories): .git'},
+      cond('15:23:07','run.failed','lane exited 1 before any edit; the lease was never used')])),
+    box:'<b>The lane exited 1 before any edit.</b> Its last lines are above; nothing under <code>docs/proof/</code> changed. Send the same turn again as b6 (it prepares again: one request), or open the full log first.',
     acts:['Send again as a new turn','Open the log']},
-  stopped:{st:'stop',word:'stopped by you',lane:'claude-code',parts:['52 s','1 edit so far','3,900 tokens','44 events'],
-    ev:[['15:22:30','conductor','Block b5 accepted, tier T1, 1 lane, lease <code>docs/proof/**</code>'],['15:22:31','claude-code','read <code>docs/proof/pp-0141.md</code> (96 lines)'],['15:23:12','claude-code','write <code>docs/proof/pp-0142.md</code> (74 lines, partial)'],['15:23:22','conductor','stopped by the operator; the lane ended cleanly']],
+  stopped:{st:'stop',word:'stopped by you',lane:'claude-code',parts:['52 s','1 edit so far','3,900 tokens'],
+    ev:expand(B5_HEAD.concat([
+      call('15:23:12','claude-code','b5t2','edit','Write docs/proof/pp-0142.md','file_path: docs/proof/pp-0142.md'),
+      result('15:23:22','claude-code','b5t2','failed','74 lines, partial (stopped)'),
+      cond('15:23:22','run.stopped','stopped by the operator; the lane ended cleanly')])),
     boxkind:'stop', box:'<b>Stopped at 15:23:22 after 1 edit</b> (<code>docs/proof/pp-0142.md</code>, partial, 3,900 tokens). The file stays as the lane left it. Send the same turn again as b6 (it prepares again), or open the log.',
     acts:['Send again as a new turn','Open the log']},
-  permission:{st:'wait',word:'waiting for you',lane:'claude-code',parts:['2 min 14 s','27 events'],live:true,
-    ev:[['15:22:30','conductor','Block b5 accepted, tier T1, 1 lane, lease <code>docs/proof/**</code>'],['15:23:12','claude-code','write <code>docs/proof/pp-0142.md</code> (74 lines)'],['15:24:40','claude-code','asks to write outside the declared scope: <code>docs/audit/audit-log.jsonl</code>'],['15:24:40','conductor','waiting for the operator (the lane is paused)']],
+  permission:{st:'wait',word:'waiting for you',lane:'claude-code',parts:['2 min 14 s'],live:true,
+    ev:expand(B5_HEAD.concat([
+      call('15:23:12','claude-code','b5t2','edit','Write docs/proof/pp-0142.md','file_path: docs/proof/pp-0142.md'),
+      result('15:23:12','claude-code','b5t2','completed','74 lines written'),
+      {t:'15:24:40',l:'claude-code',k:'permission.request',x:'asks to write outside the declared scope: docs/audit/audit-log.jsonl'},
+      cond('15:24:40','run.waiting','waiting for the operator (the lane is paused)')])),
     boxkind:'wait', box:'<b>claude-code asks to write outside the declared scope:</b> <code>docs/audit/audit-log.jsonl</code>. The lease is <code>docs/proof/**</code>. Allow once lets this one write through; Deny keeps the lease and the lane continues without it.',
     acts:['Deny','Allow once'], reason:'b5 is waiting for you; the next turn waits for it.'},
-  capask:{st:'wait',word:'waiting for you',lane:'conductor',parts:['3 s','2 events'],live:true,
-    ev:[['15:22:30','conductor','Block b5 accepted, tier T1, 1 lane, lease <code>docs/proof/**</code>'],['15:22:31','conductor','spend has reached the cap you set: 40,120 of 40,000 tokens; the lane is not started']],
+  capask:{st:'wait',word:'waiting for you',lane:'conductor',parts:['3 s'],live:true,
+    ev:expand([cond('15:22:30','run.accepted','Block b5 accepted, tier T1, 1 lane, lease docs/proof/**'),cond('15:22:31','run.waiting','spend has reached the cap you set: 40,120 of 40,000 tokens; the lane is not started')]),
     boxkind:'wait', box:'<b>Spend has reached the cap you set</b> (40,120 of 40,000 tokens this session): allow this turn, raise the cap, or stop. Nothing has run.',
     acts:['Allow this turn','Open session settings','Stop this turn'], reason:'b5 is waiting for you; the next turn waits for it.'}
 };
@@ -671,6 +859,8 @@ var MECHANICAL=degraded('needs-login. Sign in with <code>claude</code> and mark 
 var SCEN={
   empty:      Object.assign({},EMPTYISH,{turns:0}),
   first:      Object.assign({},EMPTYISH,{turns:1,last:'running'}),
+  long:       Object.assign({},PREPARED,{turns:40}),
+  conversation:Object.assign({},EMPTYISH,{turns:5,open:{think:true,detail:'b5t2'}}),
   loading:    Object.assign({},EMPTYISH,{send:['Prepare',false,'Editor starting…']}),
   whatread:   PREPARED,
   tiermenu:   Object.assign({},PREPARED,{cls:['defect','chosen for this prompt'],tier:['c','T2','operator (rule said T1)']}),
@@ -718,8 +908,10 @@ var CAP={T0:0,T1:2,T2:4}, CEIL=3;
 /* one line per state: the rule it exercises and the string it proves */
 var LEGEND={
   prepared:'<b>SC1, SC2, SC4–SC6.</b> A thread of turns above one pinned editor; each turn is the operator&rsquo;s words, a decoration line in one grammar, and the lane&rsquo;s reply folded beneath it. The current turn carries the same line with two controls (class, tier) and their provenance inline; the compile line says who compiled it, what it read and why the tier moved. Ctrl+Enter prepared this turn; the same key sends it (the confirmation).',
-  empty:'<b>SC1.</b> No turns: one sentence, the editor focused. The class already reads <i>free-form &middot; session default</i> (Ruling 72); the tier T0 because nothing yields a goal block; the button says Prepare.',
-  first:'<b>SC7, SC9.</b> b1 running: outcome line with elapsed time and event count, the last four lines following, Stop as the one control. Send waits with its reason (Inferred: one run at a time; a finding for the spec).',
+  empty:'<b>SC1, Ruling 80.</b> No turns: the thread is its two-line caption and <b>the editor takes the rest of the body</b> &mdash; no scrollbar before the operator types (the operator&rsquo;s finding 1; screenshot 1 showed a 130px editor with a scrollbar under an empty thread). The class already reads <i>free-form &middot; session default</i> (Ruling 72); the tier T0 because nothing yields a goal block; the button says Prepare. The session is docked in Coding&rsquo;s Left zone (Ruling 83); the Center says <i>The session is docked at the left.</i>',
+  first:'<b>SC7, SC9, Rulings 80 and 82.</b> b1 running: the conversation renders live &mdash; the thinking line, the tool items with the last one <i>running</i>, the prose so far &mdash; and the outcome line closes the reply side with elapsed time and Stop as the one control. <b>The editor now rests at 280px</b> (Ruling 80). Send waits with its reason (Ruling 77).',
+  long:'<b>Rulings 80 and 83 at 40 turns.</b> The session docked at Left (extent 1.3, Inferred), forty turns with their conversations inline, the editor&rsquo;s top edge where it was at 1 and 5, the thread scrolling under it. The density row prints both readings: tool runs inline (Ruling 82&rsquo;s letter) and grouped (D3&rsquo;s rule) &mdash; switch <i>Tool runs</i> to compare.',
+  conversation:'<b>Ruling 82: the conversation.</b> b5&rsquo;s reply side is the fold rendered in event order &mdash; <i>Thinking &middot; 2 s</i> (opened here; dim, collapsed by default, never announced), a tool item with its <i>detail</i> open (the input and the result), the prose <b>rendered as markdown</b> with no link activation (the inert link is its text, the URL in its description), a second tool item, the closing prose with <code>&mdash;</code> and <code>&sect;</code> rendered as themselves (Ruling 87), then the outcome line with <i>N events</i> folding only the non-conversation rows (<code>acp.*</code>, the conductor&rsquo;s lines). Compare screenshot 3: one plain-text blob of markdown source, tool calls only in the fold.',
   loading:'<b>State: loading.</b> Skeleton turns in the thread&rsquo;s shape, a text skeleton in the editor, Send disabled with the reason.',
   editorerror:'<b>State: error.</b> The page could not start; the thread stays readable; Retry is the recovery.',
   jump:'<b>SC8 at 40 turns.</b> The turn count is the outline: ordinal &middot; the words &middot; the outcome word, a listbox with type-ahead on the ordinal; Enter focuses that turn in the feed. Addendum B&rsquo;s Score outline as an on-demand view, symmetric with the Console split.',
@@ -756,7 +948,7 @@ var LEGEND={
   permission:'<b>SC7: <i>waiting for you</i>.</b> The permission request in the turn that raised it, with Allow once and Deny; the next turn waits.',
   capask:'<b>SC7 with a cap enforced (Rulings 72 and 78).</b> Measured spend has reached the cap the operator set, so the conductor asks in-thread before starting the lane — allow this turn, raise the cap, or stop; the cap never refuses, never predicts a turn\u2019s spend, and never stops a running turn (its outcome line reports the overrun).',
   settings:'<b>PS-S1–PS-S4 after Ruling 72.</b> The ceiling; the budget as a state (<i>bounded by your subscription</i>) with the cap as a deliberate act; the default class; the compile mode; the backends. No tier anywhere.',
-  split:'<b>SC1, Ruling 21.</b> The Console split: the same events the thread folds, unfolded in time, following the running turn; the thread keeps its rhythm.',
+  split:'<b>SC1, Rulings 21, 74 and 81.</b> The Console split: <code>Coalesce(events)</code> of every turn in time order &mdash; <b>one row per message</b> with its chunk count rendered from the fold (screenshot 2 showed one row per wire chunk: <i>mer</i> &middot; <i>ges are</i> &middot; <i>missing from the tracker and</i>), thought rows dim, tool / permission / <code>acp.*</code> rows one per event; a message a tool call interrupts is two rows. The identity row below reads the split&rsquo;s row count against the fold&rsquo;s. Following the running turn; the thread keeps its rhythm.',
   attaching:'<b>PS-C (attaching).</b> A drop target over the editor says what a drop does; the editor keeps its size and its text.',
   attachoff:'<b>PS-C (attaching off).</b> One line beneath the editor, muted ink on the island.',
   overflow:'<b>Overflow.</b> Forty turns; a long draft with four mentions (three leases, T2 derived) rendered in full on the decoration line, never truncated; long reply lines wrapping at a readable measure; the editor scrolls within its maximum height.'
@@ -765,9 +957,97 @@ var LEGEND={
 /* ---- rendering ---------------------------------------------------------------------- */
 function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
 function shown(el){ if(el.offsetParent===null) return false; var d=el.closest('details:not([open])'); if(d){ var sm=el.closest('summary'); if(!sm||!d.contains(sm)||sm.parentElement!==d) return false; } return true; }
-function evLine(e){ return '<div class="evline"><span class="ts">'+e[0]+'</span><span class="lane">'+e[1]+'</span><span class="msg">'+e[2]+'</span></div>'; }
+/* ---- Coalesce(turn.Events): ONE pure function, two readers (Ruling 81) ---------------------------------
+   Consecutive agent.msg (or agent.thought) chunks fold into one row carrying the first chunk's timestamp, the lane,
+   the joined text and the chunk count; any other kind breaks the run and stays one row per event. The thread's
+   reply side and the Console split both render this output; the audit reads the identity from the rendered DOM. */
+function coalesce(evs){
+  var rows=[];
+  evs.forEach(function(e){
+    var last=rows[rows.length-1], foldable = e.k==='agent.msg'||e.k==='agent.thought';
+    if (foldable && last && last.k===e.k){ last.text+=e.x; last.chunks++; }
+    else rows.push({t:e.t,l:e.l,k:e.k,text:e.x||'',chunks:foldable?1:0,id:e.id,kind:e.kind,title:e.title,input:e.input,status:e.status,out:e.out});
+  });
+  return rows;
+}
+function isConversation(k){ return k==='agent.msg'||k==='agent.thought'||k==='tool.call'||k==='tool.result'; }
+function secs(a,b){ var p=function(s){var q=s.split(':');return (+q[0])*3600+(+q[1])*60+(+q[2]||0);}; return Math.max(0,p(b)-p(a)); }
+/* the thread's items over the fold: prose · reasoning · tool call (+ its results by id) · everything else counts into "N events" */
+function items(rows){
+  var out=[], i;
+  for (i=0;i<rows.length;i++){
+    var r=rows[i];
+    if (r.k==='agent.msg') out.push({kind:'prose',text:r.text,chunks:r.chunks});
+    else if (r.k==='agent.thought'){ var next=rows[i+1]; out.push({kind:'think',text:r.text,chunks:r.chunks,dur:next?secs(r.t,next.t):null}); }
+    else if (r.k==='tool.call'){
+      var res=rows.filter(function(x){ return x.k==='tool.result' && x.id===r.id; });
+      var st = res.length ? res[res.length-1].status : 'running';
+      out.push({kind:'tool',id:r.id,tkind:r.kind,title:r.title,input:r.input,status:st,out:res.map(function(x){return x.out;}).join('\n')});
+    }
+    else if (r.k==='tool.result') { /* attached to its call above */ }
+    else out.push({kind:'ev',row:r});
+  }
+  return out;
+}
+/* D3's density rule (Inferred, measured here): on a completed turn a run of >= 4 consecutive tool items is one group line */
+function grouped(list, completed){
+  if (body.dataset.tools!=='grouped' || !completed) return list;
+  var out=[], run=[];
+  function flush(){ if (run.length>=4) out.push({kind:'group',tools:run}); else run.forEach(function(x){ out.push(x); }); run=[]; }
+  list.forEach(function(it){ if (it.kind==='tool') run.push(it); else { flush(); out.push(it); } });
+  flush(); return out;
+}
+/* the markdown subset the reply renders: headings · paragraphs · lists · code · tables · emphasis · inert links (no link activation) */
+function inline(s){
+  s=esc(s);
+  s=s.replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/\*([^*]+)\*/g,'<i>$1</i>');
+  s=s.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<span class="inert" title="$2" aria-description="link, not activated: $2">$1</span>');
+  return s;
+}
+function md(text){
+  var lines=text.split('\n'), out=[], i=0;
+  while (i<lines.length){
+    var L=lines[i];
+    if (/^#{1,3} /.test(L)){ out.push('<h3>'+inline(L.replace(/^#+ /,''))+'</h3>'); i++; }
+    else if (/^\|/.test(L)){ var rowsT=[]; while(i<lines.length && /^\|/.test(lines[i])){ rowsT.push(lines[i]); i++; } var cells=function(r){ return r.replace(/^\||\|$/g,'').split('|').map(function(c){return c.trim();}); }; var h=cells(rowsT[0]), bodyRows=rowsT.slice(2); out.push('<table><thead><tr>'+h.map(function(c){return '<th>'+inline(c)+'</th>';}).join('')+'</tr></thead><tbody>'+bodyRows.map(function(r){ return '<tr>'+cells(r).map(function(c){return '<td>'+inline(c)+'</td>';}).join('')+'</tr>'; }).join('')+'</tbody></table>'); }
+    else if (/^[-*] /.test(L)){ var li=[]; while(i<lines.length && /^[-*] /.test(lines[i])){ li.push('<li>'+inline(lines[i].slice(2))+'</li>'); i++; } out.push('<ul>'+li.join('')+'</ul>'); }
+    else if (/^\d+\. /.test(L)){ var ol=[]; while(i<lines.length && /^\d+\. /.test(lines[i])){ ol.push('<li>'+inline(lines[i].replace(/^\d+\. /,''))+'</li>'); i++; } out.push('<ol>'+ol.join('')+'</ol>'); }
+    else if (L.trim()===''){ i++; }
+    else { var p=[]; while(i<lines.length && lines[i].trim()!=='' && !/^(#{1,3} |\||[-*] |\d+\. )/.test(lines[i])){ p.push(inline(lines[i])); i++; } out.push('<p>'+p.join(' ')+'</p>'); }
+  }
+  return out.join('');
+}
+var TOOLGLYPH={read:'<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h11l5 5v11H4zM15 4v5h5"/></svg>', edit:'<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16zM13 7l4 4"/></svg>', execute:'<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7l5 5-5 5M12 19h8"/></svg>', search:'<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM16 16l4.5 4.5"/></svg>'};
+var STATUS={completed:['done','done'],failed:['fail','failed'],running:['run','running'],pending:['pend','pending']};
+function toolLine(it,n,j,open){
+  var s=STATUS[it.status]||STATUS.pending, id='dt-'+n+'-'+j;
+  return '<div class="tool"><span aria-hidden="true">'+(TOOLGLYPH[it.tkind]||TOOLGLYPH.execute)+'</span><span class="ttl">'+esc(it.title)+'</span>'
+    + '<span class="stt '+s[0]+'">'+(it.status==='running'?'<span class="ring" aria-hidden="true"></span>':'')+s[1]+'</span>'
+    + '<button class="lnk dim" aria-expanded="'+(open?'true':'false')+'" aria-controls="'+id+'" aria-label="Detail of '+esc(it.title)+'" data-toggle="'+id+'"><svg class="ico sm car" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>detail</button></div>'
+    + '<div class="detail" id="'+id+'"'+(open?'':' hidden')+'><span class="k">input</span>\n'+esc(it.input||'')+(it.out?'\n<span class="k">result</span>\n'+esc(it.out):'')+'</div>';
+}
+function itemsHtml(list,n,open){
+  open=open||{};
+  return '<div class="items">'+list.map(function(it,j){
+    if (it.kind==='prose') return '<div class="prose">'+md(it.text)+'</div>';
+    if (it.kind==='think'){ var id='th-'+n+'-'+j, isOpen=!!open.think && j===list.findIndex(function(x){return x.kind==='think';});
+      return '<div class="think"><span aria-hidden="true"><svg class="ico sm" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></span><button class="lnk dim" aria-expanded="'+(isOpen?'true':'false')+'" aria-controls="'+id+'" data-toggle="'+id+'">Thinking'+(it.dur!==null?' &middot; '+it.dur+' s':'')+'</button></div><div class="thought" id="'+id+'" aria-live="off"'+(isOpen?'':' hidden')+'>'+esc(it.text)+'</div>'; }
+    if (it.kind==='tool') return toolLine(it,n,j,open.detail===it.id);
+    if (it.kind==='group'){ var id2='tg-'+n+'-'+j, c={edit:0,read:0,execute:0,search:0}; it.tools.forEach(function(t){ c[t.tkind]=(c[t.tkind]||0)+1; });
+      var parts=Object.keys(c).filter(function(k){return c[k];}).map(function(k){ return c[k]+' '+k+(c[k]===1?'':'s'); }).join(' &middot; ');
+      return '<div class="tool tgroup"><span aria-hidden="true">'+TOOLGLYPH.execute+'</span><span class="ttl" style="font-family:var(--font-ui)">'+it.tools.length+' tool calls</span><span class="stt pend">'+parts+'</span><button class="lnk dim" aria-expanded="false" aria-controls="'+id2+'" data-toggle="'+id2+'"><svg class="ico sm car" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>show</button></div><div class="tgroup" id="'+id2+'" hidden><div class="items">'+it.tools.map(function(t,k){ return toolLine(t,n,j+'-'+k,false); }).join('')+'</div></div>'; }
+    return '';
+  }).join('')+'</div>';
+}
+function evLine(r){ return '<div class="evline"><span class="ts">'+r.t+'</span><span class="lane">'+r.l+'</span><span class="msg'+(r.k==='lane.stderr'?' err':'')+'">'+(r.k.indexOf('acp.')===0?r.k:esc(r.text))+'</span></div>'; }
+/* the Console split's row: ts · lane · kind · the joined text · n chunks (Ruling 81) */
+function crow(r,cur){
+  var dim = r.k==='agent.thought', kindWord = r.k==='agent.msg'?'message':r.k==='agent.thought'?'thought':r.k;
+  var text = r.k==='tool.call' ? esc(r.title)+' · '+(r.kind||'') : r.k==='tool.result' ? esc(r.out||'')+' · '+(r.status||'') : r.k.indexOf('acp.')===0 ? '' : esc(r.text);
+  return '<div class="crow'+(dim?' dim':'')+(cur?' cur':'')+'"><span class="ts">'+r.t+'</span><span class="lane">'+r.l+'</span><span class="kind">'+kindWord+'</span><span class="msg'+(r.k==='lane.stderr'?' err':'')+'">'+text+'</span>'+(r.chunks?'<span class="n">'+r.chunks+' chunk'+(r.chunks===1?'':'s')+'</span>':'')+'</div>';
+}
 function glyphFor(st){ return {ok:'<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>', err:'<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>', run:'<span class="ring" aria-hidden="true"></span>', wait:'<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>', stop:'<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg>'}[st]; }
-function turnHtml(t, n, total, variant, folded){
+function turnHtml(t, n, total, variant, folded, open){
   var deco = '<span class="seg"><span class="p">class</span><span class="v">'+t.cls+'</span></span>'
     + '<span class="seg"><span class="tv">'+t.tier+'</span></span>'
     + (t.lease ? '<span class="seg"><span class="p">lease</span><span class="lease" aria-describedby="lease-all-'+n+'">'+t.lease[0]+(t.lease.length>1?' +'+(t.lease.length-1)+' more':'')+'</span><span id="lease-all-'+n+'" hidden>'+t.lease.join(', ')+'</span></span>' : '')
@@ -782,20 +1062,24 @@ function turnHtml(t, n, total, variant, folded){
     + '</div>';
   var cpl = '<div class="cpl" id="cpl-'+n+'" hidden><pre>'+esc(t.compiled)+'</pre></div>';
   var o = variant ? variant : t.outcome;
+  /* the reply side is the conversation (Ruling 82): Coalesce(events) rendered as items in event order, then the outcome line —
+     whose "N events" folds ONLY the non-conversation rows (acp.*, the conductor's lines, stderr): Ruling 74's one fold, re-pointed */
+  var evs = variant ? variant.ev : (t.ev||[]), rows = coalesce(evs), completed = !variant || !(variant.st==='run'||variant.st==='wait');
+  var list = grouped(items(rows), completed), other = rows.filter(function(r){ return !isConversation(r.k); });
   var outcome = '<div class="outcome"><span class="st '+o.st+'">'+glyphFor(o.st)+o.word+'</span><span class="lane">'+o.lane+'</span>'
     + o.parts.map(function(p){return '<span class="n">'+p+'</span>';}).join('')
-    + (o.events ? '<details class="ev"><summary><svg class="ico sm car" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>'+o.events+' events</summary><div class="evlist">'+(t.ev||[]).map(evLine).join('')+(o.events>(t.ev||[]).length?'<div class="evline"><span class="ts">…</span><span class="msg"><button class="lnk" aria-label="Open the Console at b'+n+'" data-console="'+n+'">the other '+(o.events-(t.ev||[]).length)+', in the Console</button></span></div>':'')+'</div></details>' : '')
+    + (other.length ? '<details class="ev"><summary><svg class="ico sm car" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>'+other.length+' event'+(other.length===1?'':'s')+'</summary><div class="evlist">'+other.map(evLine).join('')+'<div class="evline"><span class="ts">&hellip;</span><span class="msg"><button class="lnk" aria-label="Open the Console at b'+n+'" data-console="'+n+'">every frame, in the Console</button></span></div></div></details>' : '')
     + '</div>';
-  var replyBody = variant
-    ? '<div class="evlist"'+(variant.live?' aria-live="off"':'')+'>'+variant.ev.map(evLine).join('')+'</div>'
-      + (variant.box ? '<div class="rbox'+(variant.boxkind?' '+variant.boxkind:'')+'" role="alert">'+variant.box+'</div>' : '')
+  var conversation = folded ? '' : itemsHtml(list.filter(function(it){ return it.kind!=='ev'; }), n, open);
+  var after = variant
+    ? (variant.box ? '<div class="rbox'+(variant.boxkind?' '+variant.boxkind:'')+'" role="alert">'+variant.box+'</div>' : '')
       + (variant.acts ? '<div class="acts">'+variant.acts.map(function(a){return '<button class="btn"'+(a==='Stop this turn'&&variant.stopdesc?' title="'+variant.stopdesc+'" aria-description="'+variant.stopdesc+'"':'')+'>'+a+'</button>';}).join('')+'</div>' : '')
-    : (folded ? '' : '<div class="reply">'+t.reply+'</div>');
+    : '';
   return '<article class="turn" id="turn-'+n+'" tabindex="0" aria-posinset="'+n+'" aria-setsize="'+total+'" aria-labelledby="gut-'+n+' src-'+n+'" aria-describedby="deco-'+n+'">'
     + '<span class="gut" id="gut-'+n+'">b'+n+'</span>'
     + '<div><div class="src" id="src-'+n+'">'+t.src+'</div><div class="deco" id="deco-'+n+'">'+deco+'</div></div>'
     + prov + cpl
-    + '<div class="rside">'+outcome+replyBody+'</div>'
+    + '<div class="rside"'+(variant&&variant.live?' aria-live="off"':'')+'>'+conversation+outcome+after+'</div>'
     + '</article>';
 }
 function timeFor(i){ var m=9*60+12+i*7; return ('0'+Math.floor(m/60)).slice(-2)+':'+('0'+(m%60)).slice(-2); }
@@ -803,24 +1087,26 @@ var consoleFocus=null;
 function turnList(n){ /* the fixtures for a thread of n turns; at 40, b17 is a failed PAST turn, folded */
   var list=[];
   if (n===1) list.push(TURNS[4]);
-  else for (var i=0;i<n;i++){ var t=Object.assign({},TURNS[i%5]); if (n===40) t.when=timeFor(i); if (n===40 && i===16){ t.outcome={st:'err',word:'lane exited 1',lane:'claude-code',parts:['37 s','12 events','0 edits'],events:12}; t.ev=LAST_VARIANTS.laneerror.ev; t.folded=true; } list.push(t); }
+  else for (var i=0;i<n;i++){ var t=Object.assign({},TURNS[i%5]); if (n===40) t.when=timeFor(i); if (n===40 && i===16){ t.outcome={st:'err',word:'lane exited 1',lane:'claude-code',parts:['37 s','0 edits']}; t.ev=LAST_VARIANTS.laneerror.ev; t.folded=true; } list.push(t); }
   return list;
 }
+var foldRows=0; /* the fold's row count over every turn, for the identity row: Console rows == headings + Coalesce(events) */
 function renderThread(sc){
   var host=document.getElementById('turns'), n = sc.turns!==undefined ? sc.turns : +body.dataset.turns;
   var last = sc.last ? LAST_VARIANTS[sc.last] : null, list=turnList(n), out=[];
-  list.forEach(function(t,i){ out.push(turnHtml(t,i+1,n,(i===n-1)?last:null,t.folded)); });
+  list.forEach(function(t,i){ out.push(turnHtml(t,i+1,n,(i===n-1)?last:null,t.folded,(i===n-1)?sc.open:null)); });
   host.innerHTML=out.join('');
   document.getElementById('turncount').textContent = n===0 ? 'no turns yet' : n+' turn'+(n===1?'':'s');
+  document.getElementById('sdoc').classList.toggle('fill', n===0);
   document.getElementById('thread').setAttribute('aria-busy', ((last&&last.st==='run')||body.dataset.state==='loading') ? 'true' : 'false');
   host.querySelectorAll('[data-toggle]').forEach(function(b){ b.addEventListener('click',function(){ var el=document.getElementById(b.dataset.toggle); var open=el.hidden; el.hidden=!open; b.setAttribute('aria-expanded',open?'true':'false'); audit(); }); });
   host.querySelectorAll('[data-console]').forEach(function(b){ b.addEventListener('click',function(){ consoleFocus=+b.dataset.console; body.dataset.state='split'; document.getElementById('h-state').value='split'; render(); }); });
   /* the jump list: ordinal · the words · the outcome word */
   var jl=document.getElementById('jumplist');
   jl.innerHTML=list.map(function(t,i){ var o=(i===n-1&&last)?last:t.outcome; return '<div class="jrow'+(i===n-1?' kbd':'')+'" role="option" aria-selected="'+(i===n-1?'true':'false')+'"><span class="o">b'+(i+1)+'</span><span class="w">'+t.src.replace(/<[^>]+>/g,'')+'</span><span class="st '+o.st+'">'+o.word+'</span></div>'; }).join('');
-  /* the Console split: the same events, unfolded in time, with a heading per turn; following the running turn or the turn the operator opened */
-  var c=document.getElementById('consolebody'), all=[], focus = consoleFocus || (last ? n : null);
-  list.forEach(function(t,j){ var evs=(j===n-1&&last)?last.ev:(t.ev||[]); all.push('<div class="evhead'+((j+1)===focus?' cur':'')+'" id="ev-b'+(j+1)+'" role="heading" aria-level="4">b'+(j+1)+' · '+t.when+'</div>'); evs.forEach(function(e){ all.push('<div class="evline'+((j+1)===focus?' cur':'')+'"><span class="ts">'+e[0]+'</span><span class="lane">'+e[1]+'</span><span class="msg">'+e[2]+'</span></div>'); }); });
+  /* the Console split: Coalesce(events) of every turn, in order, with a heading per turn (Rulings 74, 81); following the running turn or the turn the operator opened */
+  var c=document.getElementById('consolebody'), all=[], focus = consoleFocus || (last ? n : null); foldRows=0;
+  list.forEach(function(t,j){ var evs=(j===n-1&&last)?last.ev:(t.ev||[]), rows=coalesce(evs); foldRows+=rows.length; all.push('<div class="evhead'+((j+1)===focus?' cur':'')+'" id="ev-b'+(j+1)+'" role="heading" aria-level="4">b'+(j+1)+' · '+t.when+'</div>'); rows.forEach(function(r){ all.push(crow(r,(j+1)===focus)); }); });
   c.innerHTML=all.join('');
   document.getElementById('follow').innerHTML='<svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>'+(last&&last.st==='run'?'following b'+n:(focus?'at b'+focus:'at the end'));
   var th=document.getElementById('thread'); th.scrollTop=th.scrollHeight;
@@ -846,8 +1132,8 @@ function renderStructure(sc){
   var b=document.getElementById('structure-body'), s=document.getElementById('structure'), ttl=document.getElementById('structure-title');
   var mode=sc.lines;
   ttl.innerHTML = mode==='none' ? 'Goal &middot; Done when &middot; Not in scope &mdash; appear when you prepare' : mode==='pending' ? 'Goal &middot; Done when &middot; Not in scope &mdash; appear when you prepare (Ctrl+Enter)' : (sc.tmpl ? 'What changed &middot; Amended done-when &middot; Not in scope' : 'Goal &middot; Done when &middot; Not in scope');
-  if (mode==='none'||mode==='pending'){ s.open=false; b.innerHTML=''; return; }
-  s.open=!sc.collapsed;
+  if (mode==='none'||mode==='pending'){ setOpen(s,false); b.innerHTML=''; return; }
+  setOpen(s,!sc.collapsed);
   if (mode==='skel'){ b.innerHTML='<div class="line" style="flex-direction:column;align-items:stretch;padding:var(--s2)"><div class="skel" style="width:70%;margin:var(--s2) 0"></div><span class="help" style="margin:0">Deriving from your text on the bound model… (the editor stays yours)</span></div>'; return; }
   var rows='';
   if (mode==='fill'){ rows=lineHtml('Goal','','fill')+lineHtml('Done when','','fill')+lineHtml('Not in scope','','fill'); }
@@ -894,6 +1180,12 @@ function render(){
   if (st!=='split') consoleFocus=null;
   setShow(st);
   document.getElementById('sdoc').classList.toggle('split', st==='split');
+  /* the layout axis (Ruling 83): docked at Left, or maximized on demand (Ctrl+K, Z) */
+  var lay=body.dataset.layout, tw=document.getElementById('title-where'), mb=document.getElementById('maxbtn');
+  tw.innerHTML = lay==='max' ? 'session <b>payments extraction</b> maximized' : 'session <b>payments extraction</b> docked at Left';
+  mb.setAttribute('aria-label', lay==='max' ? 'Restore the layout, show the other panes again, Ctrl+K Z' : 'Maximize the session, Ctrl+K Z');
+  mb.setAttribute('title', lay==='max' ? 'Restore layout (Ctrl+K, Z)' : 'Maximize the session (Ctrl+K, Z)');
+  document.getElementById('zone-left').setAttribute('aria-label', lay==='max' ? 'Left zone, maximized' : 'Left zone');
   document.getElementById('split-toggle').setAttribute('aria-pressed', st==='split'?'true':'false');
   document.getElementById('settings-link').setAttribute('aria-expanded', (st==='settings'||st==='settings-cap')?'true':'false');
   document.getElementById('jump-toggle').setAttribute('aria-expanded', st==='jump'?'true':'false');
@@ -942,14 +1234,16 @@ function render(){
   var r=document.getElementById('reason'); r.hidden=!reasonText; document.getElementById('reason-text').innerHTML=reasonText; r.className='reason'+((st==='gaps'||st==='noscope'||st==='forced'||st==='quota'||st==='template'||st==='suspect')?' err':'');
   var rb=document.getElementById('reason-busy'); rb.hidden=!sc.busy; document.getElementById('reason-busy-text').textContent=sc.busy||'';
   /* thread */
-  renderThread(sc);
+  renderThread(sc); fitEditor();
   /* legend + screen reader trace */
   document.getElementById('legend').innerHTML=LEGEND[st]||'';
   var L=[];
   if (st==='prepared'||st==='settings'||st==='split'||st==='attaching'||st==='attachoff'||st==='jump') { L.push(['on prepared (status)','Prepared: T1 derived — '+RATIONALE+'. Compiled on '+MODEL+', read 5 turns. Ctrl+Enter sends.']); L.push(['decoration line','This turn: class free-form, session default (menu button); tier T1 derived (menu button), description: '+RATIONALE+'; lease src/AiDe.Core/Workbench/** from your mention; goal block']); L.push(['each derived line','name "Goal" / "Done when" / "Not in scope"; ItemStatus: derived / edited; restore follows an edited line']); }
   if (st==='jump') L.push(['jump list','listbox "Jump to a turn", 40 options: "b17, ContrastFloorTests is green…, lane exited 1"; type an ordinal to move; Enter focuses the turn in the feed']);
-  else if (st==='empty') { L.push(['on open','focus lands in the editor (Message, edit text, multi-line; description: Ctrl+Enter prepares; when prepared, the same key sends. Type @ to mention a file or folder. F6 moves to the thread; Ctrl+Home reaches the header)']); L.push(['thread (feed, 0 items)','Conversation: Nothing has run yet.']); }
-  else if (st==='first') { L.push(['on accept (status)','Turn b1 accepted as a goal block, tier T1, 1 lane.']); L.push(['(nothing while streaming)','event lines are not announced; the outcome will be']); L.push(['on an ignored Ctrl+Enter (status)','b1 is running; the next turn waits for it. (the ordinal is a link that focuses the turn’s first action)']); }
+  else if (st==='empty') { L.push(['on open','focus lands in the editor (Message, edit text, multi-line; description: Ctrl+Enter prepares; when prepared, the same key sends. Type @ to mention a file or folder. F6 moves to the thread; Ctrl+Home reaches the header)']); L.push(['thread (feed, 0 items)','Conversation: Nothing has run yet.']); L.push(['on create (status, one sentence)','Session payments extraction opened in the Left zone; the composer is bound. (never “maximized” — Ruling 83)']); }
+  else if (st==='first') { L.push(['on accept (status)','Turn b1 accepted as a goal block, tier T1, 1 lane.']); L.push(['(nothing while streaming)','prose, thinking and tool items are not announced (SC9 as amended); the outcome will be']); L.push(['on an ignored Ctrl+Enter (status)','b1 is running; the next turn waits for it. (the ordinal is a link that focuses the turn’s first action)']); }
+  else if (st==='long') { L.push(['thread (feed, 40 items)','list “Conversation”, 40 items; PageDown / PageUp move between turns; inside a turn Tab reaches provenance, compiled prompt, each Thinking disclosure, each tool item’s detail (or its group), events, the actions']); }
+  else if (st==='conversation') { L.push(['turn b5 (a list item)','“b5, Write this session’s proof pack under @docs/proof/…”; ItemStatus: class free-form, tier T1, lease docs/proof/**, goal block']); L.push(['Thinking (a disclosure button, expanded)','“Thinking, 2 seconds”, expanded — its text is read only on demand (object navigation); never announced (aria-live off)']); L.push(['tool item','“Detail of Write docs/proof/pp-0142.md”, expanded; the line reads: edit glyph (hidden), Write docs/proof/pp-0142.md, done']); L.push(['prose','rendered markdown: heading “Open”, a numbered list of 2; the link is text with description “link, not activated: docs/reviews/ui-perspective-shell.md”']); L.push(['outcome (status, once, when it completed)','Turn b5 completed: 1 edit, 4,100 tokens, 1 minute 2 seconds.']); }
   else if (st==='preparing') { L.push(['on the gesture (status)','Preparing on '+MODEL+', up to 60 seconds. Cancel is on the compile line.']); L.push(['on a second Ctrl+Enter (status)','Preparing, press again when prepared.']); }
   else if (st==='cancelled') { L.push(['on cancel (status)','Cancelled: the draft was edited. Nothing was applied. Ctrl+Enter prepares again.']); }
   else if (st==='reused') { L.push(['on prepared (status)','Prepared again: unchanged inputs, reused, no new request. Ctrl+Enter sends.']); }
@@ -987,6 +1281,15 @@ function render(){
   stampFocusOrder();
 }
 
+/* the host's belt under a small window (Ruling 80's floor): the editor rests at 280 and gives way down to 130 so the thread keeps ≥ 120px */
+function fitEditor(){
+  var sd=document.getElementById('sdoc'), ed=document.getElementById('editor'), th=document.getElementById('thread');
+  ed.style.height='';
+  if (sd.classList.contains('fill') || ed.offsetParent===null) return;
+  var room=th.clientHeight, need=120;
+  if (room<need) ed.style.height=Math.max(130, 280-(need-room))+'px';
+}
+
 /* ---- contrast + "chat-like" audit (computed, never claimed) --------------- */
 function srgb(c){ c/=255; return c<=0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055,2.4); }
 function lum(rgb){ return 0.2126*srgb(rgb[0])+0.7152*srgb(rgb[1])+0.0722*srgb(rgb[2]); }
@@ -1009,7 +1312,17 @@ var PAIRS=[
   ['Outcome: stopped (muted) on the island',               'text','--text-muted',    '--surface-raised'],
   ['Lane name (accent) on the island',                     'text','--accent',        '--surface-raised'],
   ['Event timestamp on the island',                        'text','--text-muted',    '--surface-raised'],
-  ['Reply text on the island',                             'text','--text',          '--surface-raised'],
+  ['Reply prose (rendered markdown) on the island',        'text','--text',          '--surface-raised'],
+  ['Thinking line and its opened text (muted) on the island','text','--text-muted',  '--surface-raised'],
+  ['Tool item title (mono) on the island',                 'text','--text',          '--surface-raised'],
+  ['Tool status: done (verified) on the island',           'text','--verified',      '--surface-raised'],
+  ['Tool status: failed (danger) on the island',           'text','--danger',        '--surface-raised'],
+  ['Tool detail (mono) on the sunken block',               'text','--text',          '--surface-sunken'],
+  ['Tool detail key (muted) on the sunken block',          'text','--text-muted',    '--surface-sunken'],
+  ['Prose inline code on the sunken chip',                 'text','--text',          '--surface-sunken'],
+  ['Console row kind (muted) on the island',               'text','--text-muted',    '--surface-raised'],
+  ['Center empty-state sentence (muted) on the island',    'text','--text-muted',    '--surface-raised'],
+  ['Terminal text on the sunken ground',                   'text','--text',          '--surface-sunken'],
   ['Provenance / compiled-prompt link on the island',      'text','--accent',        '--surface-raised'],
   ['Refusal box border (danger) on the island',            'ui',  '--danger',        '--surface-raised'],
   ['Waiting box border (inferred) on the island',          'ui',  '--inferred',      '--surface-raised'],
@@ -1065,15 +1378,34 @@ function audit(){
   headEl.childNodes.forEach(function(n){ if(n.nodeType===1&&n.offsetParent!==null&&!n.hidden&&getComputedStyle(n).position!=='absolute') headContent=Math.max(headContent,n.getBoundingClientRect().height); });
   var th=document.getElementById('thread'), comp=document.getElementById('composer'), ed=document.getElementById('editor');
   var thR=th.getBoundingClientRect(), compR=comp.getBoundingClientRect(), edR=ed.offsetParent===null?null:ed.getBoundingClientRect();
-  /* the editor's top edge, read at 1 / 5 / 40 turns IN ONE PASS, then the state's own count restored */
-  var tops={}, scroll40=false, keep=sc.turns!==undefined?sc.turns:+body.dataset.turns;
-  [1,5,40].forEach(function(k){ renderThread(Object.assign({},sc,{turns:k})); tops[k]=Math.round(comp.getBoundingClientRect().top); if(k===40) scroll40 = th.scrollHeight>th.clientHeight+1; });
-  renderThread(Object.assign({},sc,{turns:keep}));
+  /* the editor's top edge, read at 1 / 5 / 40 turns IN ONE PASS (Ruling 80: equal), then 0 turns (Ruling 80: the editor fills the body, no scrollbar), then the state's own count restored */
+  var tops={}, scroll40=false, keep=sc.turns!==undefined?sc.turns:+body.dataset.turns, edH={}, edOpen={}, fill0={}, struct=document.getElementById('structure'), wasOpen=struct.open;
+  /* "at rest" is the structure collapsed (the contract's 4 rows); the expanded reading is reported beside it — the thread gives way first, then the editor down to its floor (the belt) */
+  [1,5,40].forEach(function(k){ renderThread(Object.assign({},sc,{turns:k})); setOpen(struct,false); fitEditor(); tops[k]=Math.round(comp.getBoundingClientRect().top); edH[k]=Math.round(ed.getBoundingClientRect().height); setOpen(struct,wasOpen); fitEditor(); edOpen[k]=Math.round(ed.getBoundingClientRect().height); if(k===40) scroll40 = th.scrollHeight>th.clientHeight+1; });
+  renderThread(Object.assign({},sc,{turns:0,last:null})); setOpen(struct,false); fitEditor();
+  var sd=document.getElementById('sdoc');
+  fill0={ edScroll: ed.scrollHeight>ed.clientHeight+1, sdocScroll: sd.scrollHeight>sd.clientHeight+1, edH: Math.round(ed.getBoundingClientRect().height), band: Math.round(comp.getBoundingClientRect().top-th.getBoundingClientRect().bottom) };
+  setOpen(struct,wasOpen); renderThread(Object.assign({},sc,{turns:keep})); fitEditor();
+  var geom={sdoc:Math.round(sd.clientHeight), comp:Math.round(comp.getBoundingClientRect().height), thread:Math.round(th.clientHeight), ed:Math.round(ed.getBoundingClientRect().height)};
   var topStable = tops[1]===tops[5] && tops[5]===tops[40];
-  var lefts={}; document.querySelectorAll('#turns .src, #turns .reply, #turns .outcome').forEach(function(el){ if(el.offsetParent===null) return; lefts[Math.round(el.getBoundingClientRect().left)]=1; });
+  var short = root.dataset.vp==='short';
+  var lefts={}; document.querySelectorAll('#turns .src, #turns .items, #turns .outcome').forEach(function(el){ if(el.offsetParent===null) return; lefts[Math.round(el.getBoundingClientRect().left)]=1; });
   var edges=Object.keys(lefts).length;
   var lastBad=!!document.querySelector('#turns .turn:last-child .st.err, #turns .turn:last-child .st.wait, #turns .turn:last-child .st.run, #turns .turn:last-child .st.stop');
-  var visible=0, arts=document.querySelectorAll('#turns .turn'); arts.forEach(function(a){ var r=a.getBoundingClientRect(); var ov=Math.min(r.bottom,thR.bottom)-Math.max(r.top,thR.top); if (ov>0 && ov>=Math.min(r.height,thR.height)*0.5) visible++; });
+  function countVisible(){ var v=0, tr=th.getBoundingClientRect(); document.querySelectorAll('#turns .turn').forEach(function(a){ var r=a.getBoundingClientRect(); var ov=Math.min(r.bottom,tr.bottom)-Math.max(r.top,tr.top); if (ov>0 && ov>=Math.min(r.height,tr.height)*0.5) v++; }); return v; }
+  /* density, measured twice: tool runs inline (Ruling 82's letter) and grouped (D3's rule), the current mode restored */
+  var modeKeep=body.dataset.tools, vis={};
+  ['inline','grouped'].forEach(function(m){ body.dataset.tools=m; renderThread(Object.assign({},sc,{turns:keep})); fitEditor(); vis[m]=countVisible(); });
+  body.dataset.tools=modeKeep; renderThread(Object.assign({},sc,{turns:keep})); fitEditor();
+  var visible=vis[modeKeep], arts=document.querySelectorAll('#turns .turn');
+  /* the identity (Rulings 74 and 81): the split's rows are the fold's rows, plus one heading per turn */
+  var crows=document.querySelectorAll('#consolebody .crow').length, cheads=document.querySelectorAll('#consolebody .evhead').length, nTurnsNow=arts.length;
+  var identity = crows===foldRows && cheads===nTurnsNow;
+  /* reasoning is never announced: every thought body is aria-live="off" and no think line sits in a live region */
+  var thoughtsLive=document.querySelectorAll('#turns .thought:not([aria-live="off"])').length + document.querySelectorAll('#turns [aria-live="polite"] .think, #turns [aria-live="assertive"] .think').length;
+  /* Ruling 83 condition 1: the Left zone at extent 1.25 fits the 96ch measure */
+  var p96=document.createElement('span'); p96.style.cssText='position:absolute;visibility:hidden;white-space:nowrap;font:13px/1.5 var(--font-ui)'; p96.textContent=new Array(97).join('0'); document.body.appendChild(p96); var w96=p96.getBoundingClientRect().width; p96.remove();
+  var srcEl=document.querySelector('#turns .src'), srcW=srcEl?Math.round(srcEl.getBoundingClientRect().width):null;
   var open=document.getElementById('structure').open;
   var refusalShown=!!document.querySelector('#composer .refusal:not([hidden])');
   var need = (st==='split'||st==='whatread') ? 1 : (open||lastBad||refusalShown) ? 2 : 3;
@@ -1083,21 +1415,28 @@ function audit(){
   var expect = (open?4:1) + 3 + (document.getElementById('cline').hidden?0:1);
   var sizes={}; document.querySelectorAll('#turns *, #composer *').forEach(function(el){ if(!shown(el)) return; var direct=false; for (var c=el.firstChild;c;c=c.nextSibling){ if(c.nodeType===3&&c.textContent.trim()){ direct=true; break; } } if(!direct) return; var fs=getComputedStyle(el).fontSize; if(!sizes[fs]) sizes[fs]=el.tagName.toLowerCase()+(el.className&&typeof el.className==='string'?'.'+el.className.split(' ')[0]:''); });
   var nsizes=Object.keys(sizes).length;
-  var btnDone=0, btnBad=0; arts.forEach(function(a){ var c=0; a.querySelectorAll('button, summary').forEach(function(b){ if(shown(b)) c++; }); if (a.querySelector('.st.ok')) btnDone=Math.max(btnDone,c); else btnBad=Math.max(btnBad,c); });
+  var btnDone=0, btnBad=0, itemBtnMax=0; arts.forEach(function(a){ var c=0; a.querySelectorAll('button, summary').forEach(function(b){ if(shown(b) && !b.closest('.items')) c++; }); if (a.querySelector('.st.ok')) btnDone=Math.max(btnDone,c); else btnBad=Math.max(btnBad,c); var ic=0, its=0; a.querySelectorAll('.items > .think, .items > .tool').forEach(function(it){ if(shown(it)){ its++; it.querySelectorAll('button').forEach(function(b){ if(shown(b)) ic++; }); } }); if (its) itemBtnMax=Math.max(itemBtnMax, ic/its); });
   var tierFields=document.querySelectorAll('#sdoc input[aria-label*="ier" i], #sdoc input[aria-label*="udget" i], #composer select').length;
   var D=[
     ['Chrome above the thread','one row: 28px, and its content fits it',Math.round(head)+'px (content '+Math.round(headContent)+'px)',Math.round(head)<=28&&headContent<=head],
-    ['The editor’s top edge is independent of the turn count','equal at 1 / 5 / 40 turns, read in one pass',tops[1]+' / '+tops[5]+' / '+tops[40]+'px',topStable],
+    ['The editor’s top edge is independent of the turn count (Ruling 80)','equal at 1 / 5 / 40 turns, read in one pass',tops[1]+' / '+tops[5]+' / '+tops[40]+'px',topStable],
+    ['The editor rests at 280px once the thread has turns (Ruling 80)','280px at 1 / 5 / 40 turns at 1440 × 900 with the structure collapsed; ≥ 130px under a short window (the belt: the thread keeps ≥ 120px, then the editor gives way to its floor)',edH[1]+' / '+edH[5]+' / '+edH[40]+'px at rest'+(wasOpen?' · '+edOpen[1]+' / '+edOpen[5]+' / '+edOpen[40]+'px with the structure open (the belt)':'')+(short?' · short window':''), short ? (edH[1]>=130&&edH[5]>=130&&edH[40]>=130) : (edH[1]===280&&edH[5]===280&&edH[40]===280)],
+    ['At 0 turns the editor fills the body (Ruling 80)','no vertical scrollbar in the editor or the document; no empty band between the caption and the composer',fill0.edH+'px tall · editor scrollbar '+(fill0.edScroll?'yes':'no')+' · document scrollbar '+(fill0.sdocScroll?'yes':'no')+' · band '+fill0.band+'px', !fill0.edScroll && !fill0.sdocScroll && fill0.band<=8],
+    ['Geometry in this state (reported, not counted)','document · composer · thread · editor heights',geom.sdoc+' · '+geom.comp+' · '+geom.thread+' · '+geom.ed+'px',true],
     ['The thread scrolls under the composer at 40 turns','yes',scroll40?'yes':'no',scroll40],
+    ['Console rows are Coalesce(events) of every turn, in order (Rulings 74, 81)','rows = the fold’s rows; headings = turns',crows+' rows vs '+foldRows+' fold rows · '+cheads+' headings vs '+nTurnsNow+' turns',identity],
+    ['Reasoning items announced (SC9 as amended)','0 — every thought body aria-live="off"; no think line in a live region',thoughtsLive+'',thoughtsLive===0],
+    ['The Left zone fits the 96ch measure (Ruling 83, condition 1)', body.dataset.layout==='max'?'n/a (maximized)':st==='split'?'n/a (the split narrows the thread on demand)':'the words’ rendered width ≥ 96ch at 13px (the zone at extent 1.3, Inferred)', srcEl?(srcW+'px vs 96ch = '+Math.round(w96)+'px'):'n/a (no turn)', !srcEl || body.dataset.layout==='max' || st==='split' || srcW>=Math.round(w96)-1],
     ['One left edge for every turn’s text, reply and outcome','1 distinct x',edges+' distinct',edges<=1],
-    ['Turns at least half visible at this viewport', arts.length<3?'n/a (fewer than 3 turns)':'≥ 3 at rest; ≥ 2 with the structure expanded, a refusal shown, or a last turn that failed, waits or runs; ≥ 1 with the split or what-was-read open', arts.length<3?visible+' of '+arts.length:visible+' of '+arts.length+' (need ≥ '+need+(root.dataset.vp==='narrow'?'; at 1024 reported, not counted: the contract is 1440 × 900':'')+')', root.dataset.vp==='narrow'||arts.length<3||visible>=need],
+    ['Turns at least half visible at this viewport', arts.length<3?'n/a (fewer than 3 turns)':'≥ 3 at rest; ≥ 2 with the structure expanded, a refusal shown, or a last turn that failed, waits or runs; ≥ 1 with the split or what-was-read open — read with tool runs inline AND grouped', arts.length<3?visible+' of '+arts.length:'inline '+vis.inline+' · grouped '+vis.grouped+' of '+arts.length+' (this mode: '+visible+'; need ≥ '+need+(root.dataset.vp==='narrow'?'; at 1024 reported, not counted: the contract is 1440 × 900':'')+')', root.dataset.vp==='narrow'||arts.length<3||visible>=need],
     ['Boxes around turns (border, ground or shadow)','0',boxes+'',boxes===0],
     ['Bordered text fields other than the editor','0',fields+'',fields===0],
     ['Per-prompt tier / cap / budget fields','0',tierFields+'',tierFields===0],
     ['Rows beneath the editor (this state)','4 at rest (structure · this turn · settings · compiled), +1 with a compile line, +3 with the structure open',rows_+' ('+(open?'expanded':'collapsed')+(document.getElementById('cline').hidden?'':', compile line')+')',rows_<=expect],
-    ['Controls visible per turn at rest','completed ≤ 3 (provenance, compiled prompt, events); failed, stopped, waiting or running ≤ 6 (the same, plus up to 3 recovery actions)','completed '+btnDone+', other '+btnBad,btnDone<=3&&btnBad<=6],
+    ['Controls visible per turn at rest, outside the conversation’s items','completed ≤ 3 (provenance, compiled prompt, events); failed, stopped, waiting or running ≤ 6 (the same, plus up to 3 recovery actions)','completed '+btnDone+', other '+btnBad,btnDone<=3&&btnBad<=6],
+    ['Disclosures per conversation item (a Thinking line, a tool item, a group)','exactly 1 each — detail on demand, never a control per field',itemBtnMax?itemBtnMax.toFixed(2):'n/a',itemBtnMax<=1],
     ['Type sizes in the thread and composer','≤ 3 (13 · 12 · 11)',nsizes+' ('+Object.keys(sizes).map(function(k){return k+' '+sizes[k];}).join(', ')+')',nsizes<=3],
-    ['Editor height (a regression guard on the CSS floor)','≥ 130px, ≤ 280px',edR?Math.round(edR.height)+'px':'n/a (state without an editor)',edR?(edR.height>=130&&edR.height<=280):true]
+    ['Editor height in this state (the floor is a regression guard)','≥ 130px always; 280px at rest with turns; fills the body at 0 turns',edR?Math.round(edR.height)+'px':'n/a (state without an editor)',edR?(edR.height>=130):true]
   ];
   var dfail=0; document.getElementById('dtbody').innerHTML=D.map(function(d){ if(!d[3]) dfail++; return '<tr><td>'+d[0]+'</td><td>'+d[1]+'</td><td class="n">'+d[2]+'</td><td class="'+(d[3]?'pass':'fail')+'">'+(d[3]?'MET':'NOT MET')+'</td></tr>'; }).join('');
   var dangling=0; document.querySelectorAll('#sdoc [aria-describedby], #sdoc [aria-labelledby], #sdoc [aria-errormessage], #sdoc [aria-controls], #sdoc [aria-activedescendant]').forEach(function(el){ if(el.offsetParent===null&&el.id!=='editor') return; ['aria-describedby','aria-labelledby','aria-errormessage','aria-controls','aria-activedescendant'].forEach(function(a){ var v=el.getAttribute(a); if(!v) return; v.split(/\s+/).forEach(function(id){ if(id&&!document.getElementById(id)) dangling++; }); }); });
@@ -1106,11 +1445,14 @@ function audit(){
 }
 /* review convenience: #state=gaps&turns=40&theme=light&vp=narrow&persona=keyboard&motion=reduce presets the harness */
 (function(){ var q={}; location.hash.replace(/^#/,'').split('&').forEach(function(kv){ var p=kv.split('='); if(p[0]) q[p[0]]=decodeURIComponent(p[1]||''); });
-  var map={state:['h-state',body,'state'],turns:['h-turns',body,'turns'],theme:['h-theme',root,'theme'],vp:['h-vp',root,'vp'],persona:['h-persona',body,'persona'],motion:['h-motion',body,'motion']};
+  var map={state:['h-state',body,'state'],turns:['h-turns',body,'turns'],theme:['h-theme',root,'theme'],vp:['h-vp',root,'vp'],persona:['h-persona',body,'persona'],motion:['h-motion',body,'motion'],layout:['h-layout',body,'layout'],tools:['h-tools',body,'tools']};
   Object.keys(map).forEach(function(k){ if(q[k]!==undefined){ var m=map[k], sel=document.getElementById(m[0]); if([].some.call(sel.options,function(o){return o.value===q[k];})){ sel.value=q[k]; m[1].dataset[m[2]]=q[k]; } } });
 })();
 render(); window.addEventListener('resize',function(){ audit(); stampFocusOrder(); });
-document.getElementById('compiled').addEventListener('toggle',audit); document.getElementById('structure').addEventListener('toggle',audit);
+/* a programmatic open/close inside the audit queues one toggle event; it is swallowed so the audit never re-enters itself */
+var programmaticToggles=0; function setOpen(d,v){ if(d.open!==v){ programmaticToggles++; d.open=v; } }
+function onToggle(){ if(programmaticToggles>0){ programmaticToggles--; return; } audit(); }
+document.getElementById('compiled').addEventListener('toggle',onToggle); document.getElementById('structure').addEventListener('toggle',onToggle);
 </script>
 </body>
 </html>

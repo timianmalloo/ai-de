@@ -2,7 +2,7 @@
 <html lang="en" data-theme="dark" data-vp="desk">
 <head>
 <meta charset="utf-8">
-<title>AI-DE perspective shell: Coding · Explore · Architecture</title>
+<title>AI-DE perspective shell: Coding · Explore · Architecture · Coordination</title>
 <style>
 /* ===========================================================================
    Tokens mirrored from DESIGN.md (dark, light, high-contrast). No raw colour
@@ -153,11 +153,26 @@ body[data-perm="pending"] .perm{display:block}
 /* ---- BODIES ---------------------------------------------------------------- */
 .bodywrap{position:relative;min-height:0;min-width:0}
 .persp{display:none;min-height:0;height:100%}
-body[data-shown="coding"] #p-coding,body[data-shown="explore"] #p-explore,body[data-shown="arch"] #p-arch{display:grid}
+body[data-shown="coding"] #p-coding,body[data-shown="explore"] #p-explore,body[data-shown="arch"] #p-arch,body[data-shown="coord"] #p-coord{display:grid}
 .host{gap:var(--s4);background:var(--surface);padding:var(--s4);min-height:560px}
-#p-coding{grid-template-columns:248px 1fr;grid-template-rows:1fr 190px}
+/* Coding re-cut (Ruling 83): Left = the session document at extent 1.3 (Inferred; the session mockup measures it against 96ch) · Center = the empty state · Bottom = one terminal */
+#p-coding{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);grid-template-rows:1fr 190px}
+body[data-state="empty"] #p-coding{grid-template-columns:28px minmax(0,1fr)}
 #p-arch{grid-template-columns:248px 1fr 300px;grid-template-rows:1fr 26px}
 [data-vp="narrow"] #p-arch{grid-template-columns:200px 1fr 240px}
+/* Coordination (Ruling 84): host C — Left = Terminal sessions · Center = Ledger · Leaderboard · Message board · Right empty · Bottom collapsed */
+#p-coord{grid-template-columns:288px 1fr;grid-template-rows:1fr 26px}
+[data-vp="narrow"] #p-coord{grid-template-columns:232px 1fr}
+.zrail{display:flex;align-items:center;justify-content:center;background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--r-md);color:var(--text-muted);font-size:var(--t-sm);writing-mode:vertical-rl;padding:var(--s4) 0}
+.ledger .lrow{min-height:26px;font-variant-numeric:tabular-nums}
+.ledger .st{flex:none;color:var(--text-muted);width:5.5ch}
+.ledger .when{flex:none;font-family:var(--font-mono);color:var(--text-muted)}
+.board .post{padding:var(--s3) 0;border-bottom:1px solid var(--border);font-size:var(--t-sm)}
+.board .post .who{font-family:var(--font-mono);color:var(--accent)} .board .post .when{font-family:var(--font-mono);color:var(--text-muted);margin-left:var(--s4)}
+.board .post p{margin:var(--s1) 0 0;color:var(--text)}
+.ctab2{width:100%;border-collapse:collapse;font-size:var(--t-sm)}
+.ctab2 th,.ctab2 td{text-align:left;padding:var(--s2) var(--s4);border-bottom:1px solid var(--border)} .ctab2 th{color:var(--text-muted);font-weight:600;letter-spacing:.04em}
+.ctab2 td.n,.ctab2 th.n{text-align:right;font-family:var(--font-mono);font-variant-numeric:tabular-nums}
 .pane{display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--r-island);overflow:hidden;box-shadow:var(--e-rest)}
 .pane.focused{border-color:var(--accent)}
 .zone-bottom{grid-column:1 / -1}
@@ -267,7 +282,7 @@ body[data-state="overflow"] .fx[data-show~="overflow"],body[data-state="error"] 
 body[data-state="default"] .fg[data-show~="default"],body[data-state="overflow"] .fg[data-show~="overflow"]{display:grid}
 [data-restore]{display:none}
 body[data-restore="dropped"] [data-restore~="dropped"],body[data-restore="alldropped"] [data-restore~="alldropped"],body[data-restore="none"] [data-restore~="none"],
-body[data-restore="newer"] [data-restore~="newer"],body[data-restore="duplicate"] [data-restore~="duplicate"]{display:flex}
+body[data-restore="newer"] [data-restore~="newer"],body[data-restore="duplicate"] [data-restore~="duplicate"],body[data-restore="loom"] [data-restore~="loom"]{display:flex}
 [data-sw]{display:none}
 body[data-switch="opening"] [data-sw~="opening"],body[data-switch="error"] [data-sw~="error"],body[data-switch="retained"] [data-sw~="retained"],body[data-switch="ignored"] [data-sw~="ignored"]{display:flex}
 [data-routed]{display:none}
@@ -289,15 +304,15 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
 <div class="harness" role="region" aria-label="Review harness">
   <strong>Harness</strong>
   <label>Perspective
-    <select id="h-persp"><option value="coding">Coding</option><option value="explore">Explore</option><option value="arch">Architecture</option></select></label>
+    <select id="h-persp"><option value="coding">Coding (re-cut: session docked Left — Ruling 83)</option><option value="explore">Explore</option><option value="arch">Architecture</option><option value="coord">Coordination (host C — Ruling 84)</option></select></label>
   <label>Trigger
-    <select id="h-trigger"><option value="rail">rail item</option><option value="gesture">bound gesture (Ctrl+1/2/3)</option><option value="menu">View menu</option><option value="routed">routed kind-open from Explore ("View source" → Architecture)</option><option value="escape">Escape from Explore's root</option></select></label>
+    <select id="h-trigger"><option value="rail">rail item</option><option value="gesture">bound gesture (Ctrl+1/2/3/4)</option><option value="menu">View menu</option><option value="routed">routed kind-open from Explore ("View source" → Architecture)</option><option value="escape">Escape from Explore's root</option></select></label>
   <label>Switch
     <select id="h-switch"><option value="retained">retained (body swap)</option><option value="opening">opening (first entry)</option><option value="ignored">ignored (a build is running)</option><option value="error">error (body failed to build)</option></select></label>
   <label>State
     <select id="h-state"><option value="default">default</option><option value="empty">empty / first-run</option><option value="loading">loading</option><option value="overflow">overflow / degraded</option><option value="error">error</option></select></label>
   <label>Restore
-    <select id="h-restore"><option value="none">clean</option><option value="dropped">3 panes dropped, reported</option><option value="alldropped">every pane dropped</option><option value="duplicate">a one-instance kind twice</option><option value="newer">newer schema refused</option></select></label>
+    <select id="h-restore"><option value="none">clean</option><option value="dropped">3 panes dropped, reported</option><option value="loom">the five Loomkeeper kinds dropped from a pre-C Coding layout, reported — they live in Coordination (Ruling 84)</option><option value="alldropped">every pane dropped</option><option value="duplicate">a one-instance kind twice</option><option value="newer">newer schema refused</option></select></label>
   <label>Permission
     <select id="h-perm"><option value="none">none</option><option value="pending">request arrives while away</option></select></label>
   <label>Menu
@@ -350,17 +365,22 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
         <div class="row" role="menuitemradio" id="mv-coding">Coding<span class="kbd">Ctrl+1</span></div>
         <div class="row" role="menuitemradio" id="mv-explore">Explore<span class="kbd">Ctrl+2</span></div>
         <div class="row" role="menuitemradio" id="mv-arch">Architecture<span class="kbd">Ctrl+3</span></div>
+        <div class="row" role="menuitemradio" id="mv-coord">Coordination<span class="kbd">Ctrl+4</span></div>
         <div class="sep"></div>
+        <!-- Coding admits none of the five Loomkeeper kinds (Ruling 84): its derived group keeps the three it still admits -->
         <div id="mv-coding-entries">
           <div class="grp">Coding surfaces</div>
+          <div class="row" role="menuitem">New Search</div>
+          <div class="row" role="menuitem">New Code viewer</div>
+          <div class="row" role="menuitem">Show Diagnostics</div>
+        </div>
+        <div id="mv-coord-entries">
+          <div class="grp">Coordination surfaces</div>
           <div class="row" role="menuitem">Show Terminal sessions</div>
           <div class="row" role="menuitem">Show Message board</div>
           <div class="row" role="menuitem">Show Leaderboard</div>
           <div class="row" role="menuitem">Show Ledger</div>
           <div class="row" role="menuitem">Show Daydreams</div>
-          <div class="row" role="menuitem">New Search</div>
-          <div class="row" role="menuitem">New Code viewer</div>
-          <div class="row" role="menuitem">Show Diagnostics</div>
           <div class="sep"></div>
           <div class="row" role="menuitem">Raise dispute on the latest scored episode</div>
         </div>
@@ -437,6 +457,12 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
           <span class="ring" aria-hidden="true"></span><span class="badge" aria-hidden="true">!</span>
           <span class="tip" id="tip-arch">Architecture<span class="kbd">Ctrl+3</span></span>
         </button>
+        <!-- Coordination (Ruling 84): host C, Ctrl+4. IconCoordination: three nodes joined by two strokes — the fleet as a graph of sessions. -->
+        <button class="item" role="tab" aria-selected="false" tabindex="-1" id="r-coord" aria-label="Coordination perspective">
+          <svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M7.8 7.8L10.5 15.6M16.2 7.8l-2.7 7.8M8.5 6h7"/></svg>
+          <span class="ring" aria-hidden="true"></span><span class="badge" aria-hidden="true">!</span>
+          <span class="tip" id="tip-coord">Coordination<span class="kbd">Ctrl+4</span></span>
+        </button>
       </div>
       <!-- "Tests" is a reserved name with no item: AR3, a rail item is present only if it does something. Nothing is rendered for it. -->
     </nav>
@@ -451,32 +477,35 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
       <div class="bodywrap">
         <!-- ================= CODING: host A ================= -->
         <div class="persp host" id="p-coding" aria-label="Coding perspective body">
-          <section class="pane" aria-label="Left zone">
-            <div class="tabstrip" role="tablist"><button class="tab" role="tab" aria-selected="true" id="t-sessions"><span class="lbl">Terminal sessions</span><span class="cl" aria-hidden="true"><svg class="ico sm" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17"/></svg></span></button><span class="fo" style="position:relative;left:6px;top:-2px">3</span></div>
+          <!-- LEFT (Ruling 83): the session document, docked, not maximized. Empty until one opens: the zone is its collapsed rail. -->
+          <div class="zrail fx" data-show="empty" aria-label="Left zone, empty">Left</div>
+          <section class="pane focused fx" aria-label="Left zone" data-show="default overflow loading error">
+            <div class="tabstrip" role="tablist">
+              <button class="tab" role="tab" aria-selected="true" id="t-session"><span class="lbl">payments extraction</span><span class="cl" aria-hidden="true"><svg class="ico sm" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17"/></svg></span></button>
+              <button class="tab" role="tab" aria-selected="false" data-show="overflow" style="display:inline-flex"><span class="lbl">contrast census follow-up</span></button>
+              <span class="fo" style="position:relative;left:6px;top:-2px">3</span>
+              <span class="sp"></span>
+              <button class="linkbtn" aria-label="Maximize the session, Ctrl+K Z" title="Maximize the session (Ctrl+K, Z)">Maximize</button>
+            </div>
             <div class="panebody">
-              <div class="list" data-show="default overflow error">
-                <div class="lrow" aria-selected="true"><span class="live">●</span><span class="nm">claude-code · feature/addendum-c</span><span class="sp"></span><span class="id">14:02</span></div>
-                <div class="lrow"><span class="live">●</span><span class="nm">copilot · fix/composer-entry-areas</span><span class="sp"></span><span class="id">13:41</span></div>
-                <div class="lrow"><span class="idle">○</span><span class="nm">claude-code · investigate/contrast-census (ended)</span><span class="sp"></span><span class="id">11:57</span></div>
-                <div class="lrow" data-show="overflow"><span class="idle">○</span><span class="nm">codex · chore/regenerate-derived-views-after-the-addendum-c-merge-and-commit-contract-logs (ended)</span><span class="sp"></span><span class="id">09:12</span></div>
+              <div data-show="loading"><p class="help">Restoring <b>payments extraction</b>…</p><div class="skel" style="width:58%"></div><div class="skel" style="width:81%"></div><div class="skel" style="width:37%"></div><div class="skel" style="width:64%;height:96px"></div></div>
+              <div data-show="error"><div class="errbox" role="alert"><h4>This session couldn't be restored</h4><p>The session file at <code>.ai-de/sessions/payments-extraction.yaml</code> is from a newer schema (v6; this build reads v5). Nothing was changed on disk.</p><button class="btn">Open the file</button> <button class="btn">Close this tab</button></div></div>
+              <div data-show="default overflow">
+                <div class="hd">The thread &middot; 5 turns</div>
+                <div class="evline"><span class="ts">b4</span><span>Apply the contrast fix to the dock tab strip and the three menu brushes under <span class="mention">@src/AiDe.App/Workbench/</span>&hellip;</span></div>
+                <div class="evline"><span class="ts">b5</span><span>Write this session&rsquo;s proof pack under <span class="mention">@docs/proof/</span>: what changed, what is still open, and the sha each claim cites.</span></div>
+                <p class="help" style="margin:var(--s4) 0 var(--s5)">The thread, the conversation and the composer&rsquo;s states are in <code>session-conversation.html</code>; this is where the document lands (Ruling 83).</p>
+                <div class="editor land" id="land-coding" tabindex="0" role="textbox" aria-multiline="true" aria-label="Message">Now make <code>ZoneLayoutStore</code> protect the same invariant: refuse a newer zone schema with a report; touch only <span class="mention">@src/AiDe.Core/Workbench/</span>.</div>
               </div>
-              <div data-show="loading"><div class="skel" style="width:70%"></div><div class="skel" style="width:52%"></div><div class="skel" style="width:64%"></div></div>
-              <div data-show="empty"><div class="wayfinder" style="min-height:160px">
-                <svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5a1.5 1.5 0 0 1 1.5-1.5h15A1.5 1.5 0 0 1 21 5v14a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19zM7 9l3 3-3 3M13 15h4"/></svg>
-                <h3>No terminal sessions yet</h3>
-                <p>Open a Claude Code or GitHub Copilot terminal session from the File menu, and it appears here.</p>
-              </div></div>
             </div>
           </section>
 
-          <section class="pane focused" aria-label="Center zone">
+          <!-- CENTER: the empty state. Its copy never reads "No session open" while one is open at Left (Ruling 83, condition 2). -->
+          <section class="pane" aria-label="Center zone">
             <div class="tabstrip" role="tablist">
-              <button class="tab" role="tab" aria-selected="true" data-show="default overflow error loading" style="display:inline-flex"><span class="lbl">payments extraction</span><span class="cl" aria-hidden="true"><svg class="ico sm" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17"/></svg></span></button>
-              <button class="tab" role="tab" aria-selected="false" data-show="default overflow" style="display:inline-flex"><span class="lbl">Router.cs</span></button>
-              <button class="tab" role="tab" aria-selected="false" data-show="overflow" style="display:inline-flex"><span class="lbl">migration chain</span></button>
+              <button class="tab" role="tab" aria-selected="true" data-show="overflow" style="display:inline-flex"><span class="lbl">Router.cs</span><span class="cl" aria-hidden="true"><svg class="ico sm" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17"/></svg></span></button>
               <button class="tab" role="tab" aria-selected="false" data-show="overflow" style="display:inline-flex"><span class="lbl">payments-aggregate-extraction-roundtrip-with-inferred-edges.golden.json</span></button>
               <button class="tab" role="tab" aria-selected="false" data-show="overflow" style="display:inline-flex"><span class="lbl">Search</span></button>
-              <button class="tab" role="tab" aria-selected="false" data-show="overflow" style="display:inline-flex"><span class="lbl">Ledger</span></button>
               <span class="sp"></span>
               <span class="chip" data-show="overflow" style="display:inline-flex">+3 more</span>
             </div>
@@ -487,22 +516,17 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
                 <button class="cta">New session <span class="kbd">Ctrl+N</span></button>
                 <p>Or open a recent one from File → Recent sessions.</p>
               </div></div>
-              <div data-show="loading"><p class="help">Restoring <b>payments extraction</b>…</p><div class="skel" style="width:58%"></div><div class="skel" style="width:81%"></div><div class="skel" style="width:37%"></div><div class="skel" style="width:64%;height:96px"></div></div>
-              <div data-show="error"><div class="errbox" role="alert"><h4>This session couldn't be restored</h4><p>The session file at <code>.ai-de/sessions/payments-extraction.yaml</code> is from a newer schema (v6; this build reads v5). Nothing was changed on disk.</p><button class="btn">Open the file</button> <button class="btn">Close this tab</button></div></div>
-              <div class="sdoc fg" data-show="default overflow">
-                <div>
-                  <div class="hd">Composer · Free-form</div>
-                  <div class="editor land" id="land-coding" tabindex="0" role="textbox" aria-multiline="true" aria-label="Message">Refactor the layout store's migration chain so a newer schema is refused with a report; touch only <span class="mention">@src/AiDe.Core/Workbench/</span>.</div>
-                  <p class="help" style="margin:var(--s4) 0 0">The composer's lines and its full state set are in <code>conversation-composer.html</code>; this is where the document lands.</p>
-                </div>
-                <div>
-                  <div class="hd">Console</div>
-                  <div class="evline"><span class="ts">14:02:03</span><span class="lane">conductor</span><span>Block b2 accepted, tier T1, 1 lane</span></div>
-                  <div class="evline"><span class="ts">14:02:04</span><span class="lane">claude-code</span><span>read <code>src/AiDe.Core/Workbench/LayoutStore.cs</code> (412 lines)</span></div>
-                  <div class="evline"><span class="ts">14:02:09</span><span class="lane">claude-code</span><span>edit <code>LayoutStore.cs</code>, 1 hunk</span></div>
-                  <div class="evline"><span class="ts">14:02:11</span><span class="lane">conductor</span><span>permission requested: write outside the declared scope</span></div>
-                </div>
-              </div>
+              <div data-show="default loading error"><div class="wayfinder">
+                <svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h10M4 19h7"/></svg>
+                <h3>The session is docked at the left.</h3>
+                <button class="cta">Maximize the session <span class="kbd">Ctrl+K, Z</span></button>
+                <p>Code viewers, prompt drafts and search open here.</p>
+              </div></div>
+              <div data-show="overflow"><pre class="term" style="height:auto"><span class="c">// Router.cs — a code viewer opened by the operator (Coding admits codeviewer · prompt · search · diagnostics in the Center)</span>
+public sealed class Router
+{
+    public Route Resolve(Uri uri) =&gt; _table.Match(uri) ?? Route.NotFound;
+}</pre></div>
             </div>
           </section>
 
@@ -619,6 +643,61 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
             <span>Bottom</span><span class="chip count">0</span><button>Expand</button>
           </div>
         </div>
+
+        <!-- ================= COORDINATION: host C (Ruling 84) ================= -->
+        <div class="persp host" id="p-coord" aria-label="Coordination perspective body">
+          <section class="pane" aria-label="Left zone">
+            <div class="tabstrip" role="tablist"><button class="tab land" id="land-coord" role="tab" aria-selected="true"><span class="lbl">Terminal sessions</span></button></div>
+            <div class="panebody">
+              <div class="list" data-show="default overflow error">
+                <div class="lrow" aria-selected="true"><span class="live">●</span><span class="nm">claude-code · feature/addendum-c</span><span class="sp"></span><span class="id">14:02</span></div>
+                <div class="lrow"><span class="live">●</span><span class="nm">copilot · fix/composer-entry-areas</span><span class="sp"></span><span class="id">13:41</span></div>
+                <div class="lrow"><span class="idle">○</span><span class="nm">claude-code · investigate/contrast-census (ended)</span><span class="sp"></span><span class="id">11:57</span></div>
+                <div class="lrow" data-show="overflow"><span class="idle">○</span><span class="nm">codex · chore/regenerate-derived-views-after-the-addendum-c-merge-and-commit-contract-logs (ended)</span><span class="sp"></span><span class="id">09:12</span></div>
+              </div>
+              <div data-show="loading"><div class="skel" style="width:70%"></div><div class="skel" style="width:52%"></div><div class="skel" style="width:64%"></div></div>
+              <div data-show="empty"><div class="wayfinder" style="min-height:160px">
+                <svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5a1.5 1.5 0 0 1 1.5-1.5h15A1.5 1.5 0 0 1 21 5v14a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19zM7 9l3 3-3 3M13 15h4"/></svg>
+                <h3>No terminal sessions yet</h3>
+                <p>Open a Claude Code or GitHub Copilot terminal session from the File menu, and it appears here.</p>
+              </div></div>
+            </div>
+          </section>
+
+          <section class="pane focused" aria-label="Center zone">
+            <div class="tabstrip" role="tablist">
+              <button class="tab" role="tab" aria-selected="true"><span class="lbl">Ledger</span><span class="cl" aria-hidden="true"><svg class="ico sm" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17"/></svg></span></button>
+              <button class="tab" role="tab" aria-selected="false"><span class="lbl">Leaderboard</span></button>
+              <button class="tab" role="tab" aria-selected="false"><span class="lbl">Message board</span></button>
+              <span class="sp"></span>
+              <span class="chip warn" data-show="overflow" style="display:inline-flex">&ge; <span class="mono">1,668</span>&nbsp;episodes (capped)</span>
+            </div>
+            <div class="panebody">
+              <div data-show="empty"><div class="wayfinder">
+                <svg class="ico lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5zM8 9h8M8 13h8M8 17h5"/></svg>
+                <h3>No episodes scored yet.</h3>
+                <p>The ledger fills as observed sessions close episodes.</p>
+              </div></div>
+              <div data-show="loading"><p class="help">Reading the ledger&hellip;</p><div class="skel" style="width:78%"></div><div class="skel" style="width:60%"></div><div class="skel" style="width:70%"></div><div class="skel" style="width:66%"></div></div>
+              <div data-show="error"><div class="errbox" role="alert"><h4>The ledger couldn't be read.</h4><p>The watcher's store at <code>.ai-de/loomkeeper/ledger.jsonl</code> answered with a parse error at line 1,204. The rows before it are listed; nothing was changed on disk.</p><button class="btn">Open the file</button> <button class="btn">Try again</button></div></div>
+              <div class="list ledger" data-show="default overflow error">
+                <div class="lrow"><span class="st">Closed</span><span class="when">Sep 7 11:14</span><span class="nm">Land register-union merge and the goal-state/fan-out CI gate in TheTerrace</span></div>
+                <div class="lrow"><span class="st">Closed</span><span class="when">Sep 6 16:56</span><span class="nm">Land A1 and A2 through protected PRs.</span></div>
+                <div class="lrow"><span class="st">Closed</span><span class="when">Sep 6 14:30</span><span class="nm">Land A1 and A2 without unrelated work.</span></div>
+                <div class="lrow"><span class="st">Closed</span><span class="when">Sep 6 13:00</span><span class="nm">Keep A1 implementation bounded to the approved five increments.</span></div>
+                <div class="lrow"><span class="st">Closed</span><span class="when">Sep 6 13:00</span><span class="nm">Implement the model-free A1 supervisor from the approved design.</span></div>
+                <div class="lrow"><span class="st">Closed</span><span class="when">Sep 6 12:04</span><span class="nm">Keep the A1 detailed-design next step bounded.</span></div>
+                <div class="lrow"><span class="st">Closed</span><span class="when">Sep 6 08:56</span><span class="nm">Define enforcement authority, state, host contracts and a continuous improvement loop.</span></div>
+                <div class="lrow"><span class="st">Open</span><span class="when">Sep 5 21:43</span><span class="nm">Measure architecture-task bottlenecks, delegation, model choices and scope drift.</span></div>
+                <div class="lrow" data-show="overflow"><span class="st">Closed</span><span class="when">Sep 5 19:41</span><span class="nm">Deliver the seven-club architecture and correct delivery-size accounting without runtime work, and keep the reconciliation ledger honest about what was not measured</span></div>
+              </div>
+            </div>
+          </section>
+
+          <div class="collapsed" aria-label="Bottom zone, collapsed">
+            <span>Bottom</span><span class="chip count">0</span><button>Expand</button>
+          </div>
+        </div>
       </div>
 
       <!-- STATUS STRIP: the message is the live region (not the chip, not Dismiss); it wraps and is focusable -->
@@ -626,6 +705,7 @@ h3.sech{font-size:var(--t-2xl);font-weight:600;margin:0 0 var(--s4);color:var(--
         <span class="fx" data-sw="retained" style="gap:var(--s4);align-items:flex-start;min-width:0">
           <span class="fx" data-restore="none" style="gap:var(--s4);align-items:flex-start;min-width:0"><span class="chip ok"><span class="dot"></span>daemon</span><span class="msg" role="status" aria-live="polite" id="status-msg" tabindex="0">Coding perspective</span></span>
           <span class="fx" data-restore="dropped" style="gap:var(--s4);align-items:flex-start;min-width:0"><span class="chip count">3 panes</span><span class="msg" role="status" aria-live="polite" tabindex="0">3 panes from your saved layout aren't available in Coding — Domain (class diagram), Graph, Contexts. Architecture opens with Graph, Domain, Contexts and Joins; open anything else from its View menu.</span></span>
+          <span class="fx" data-restore="loom" style="gap:var(--s4);align-items:flex-start;min-width:0"><span class="chip count">5 panes</span><span class="msg" role="status" aria-live="polite" tabindex="0">5 panes from your saved layout aren't available in Coding — Terminal sessions, Message board, Leaderboard, Ledger, Daydreams. They live in Coordination (Ctrl+4); open them from its View menu.</span></span>
           <span class="fx" data-restore="alldropped" style="gap:var(--s4);align-items:flex-start;min-width:0"><span class="chip count">default</span><span class="msg" role="status" aria-live="polite" tabindex="0">Your saved layout had no panes Coding can show, so Coding opened with its default layout.</span></span>
           <span class="fx" data-restore="duplicate" style="gap:var(--s4);align-items:flex-start;min-width:0"><span class="chip count">1 pane</span><span class="msg" role="status" aria-live="polite" tabindex="0">Diagnostics appeared twice in your saved layout; the first copy was kept and the second dropped.</span></span>
           <span class="fx" data-restore="newer" style="gap:var(--s4);align-items:flex-start;min-width:0"><span class="chip bad"><span class="dot"></span>not applied</span><span class="msg" role="status" aria-live="polite" tabindex="0">Your saved layout is from a newer version (schema v6; this build reads v5) and was not applied. Coding opened with its default layout; your layout file was kept.</span></span>
@@ -660,11 +740,13 @@ bind('h-theme',root,'theme'); bind('h-vp',root,'vp');
 bind('h-persp',body,'persp'); bind('h-trigger',body,'trigger'); bind('h-switch',body,'switch'); bind('h-state',body,'state'); bind('h-restore',body,'restore');
 bind('h-perm',body,'perm'); bind('h-menu',body,'menu'); bind('h-persona',body,'persona'); bind('h-motion',body,'motion');
 
-var NAMES={coding:'Coding',explore:'Explore',arch:'Architecture'};
-var GEST={coding:'Ctrl+1',explore:'Ctrl+2',arch:'Ctrl+3'};
-var MENUS={coding:['file','edit','view','window','prompt','help'], explore:['file','view','help'], arch:['file','edit','view','window','help']};
+var NAMES={coding:'Coding',explore:'Explore',arch:'Architecture',coord:'Coordination'};
+var GEST={coding:'Ctrl+1',explore:'Ctrl+2',arch:'Ctrl+3',coord:'Ctrl+4'};
+var MENUS={coding:['file','edit','view','window','prompt','help'], explore:['file','view','help'], arch:['file','edit','view','window','help'], coord:['file','edit','view','window','help']};
+var PANES={coding:null,explore:null,arch:' — 4 panes',coord:' — 4 panes'};
 var LEGEND={
-  coding:'<b>Coding (host A), the 80% case.</b> Center belongs to the session document; Left is <b>Terminal sessions</b> (the qualifier Addendum A §A3 requires, Ruling 62); Bottom is one terminal; Right is empty. No Explore pane, no Domain, no Provenance, no Graph: the clutter the operator named is gone by construction, not by hiding. The Center empty state is the <code>state.not-declared</code> shape: one glyph, one true sentence, one first action.',
+  coding:'<b>Coding (host A), the 80% case, re-cut by Ruling 83.</b> <b>Left is the session document</b> &mdash; a new session opens there docked, never maximized (the operator&rsquo;s finding 4: their drag of the maximized document toward the left dock was refused); the zone is empty until one opens. Center is the empty state, whose copy never says <i>No session open</i> while one is open at Left (condition 2): <i>The session is docked at the left.</i> with Maximize (Ctrl+K, Z) as the first action. Bottom is one terminal; Right is empty. <b>None of the five Loomkeeper kinds is admitted here</b> (Ruling 84): Terminal sessions, Message board, Leaderboard, Ledger and Daydreams live in Coordination, and a pre-C layout carrying them is dropped with a report that names it (Restore &rarr; <i>the five Loomkeeper kinds</i>). The Left extent 1.3 is Inferred; <code>session-conversation.html</code> measures it against the 96ch measure.',
+  coord:'<b>Coordination (host C), the fleet bench (Ruling 84).</b> The operator&rsquo;s finding 5: <i>the ledger-leaderboard-sessions-board views should be tied to a different left bar icon &mdash; coordination</i>. A fourth perspective, not a full-window composite: Left is <b>Terminal sessions</b> (the master list; the switch lands on its tab); Center is <b>Ledger &middot; Leaderboard &middot; Message board</b> as three tabs, Ledger first because its rows are the widest (screenshots 1 and 4 show the operator reading exactly these as one tab strip); Right is empty; Bottom collapsed; Daydreams from the View menu. Nothing on this bench takes typed input &mdash; the composer stays in Coding, so there is no Prompt menu. The rail glyph is <code>IconCoordination</code>: three nodes joined, the fleet as a graph of sessions. Default arrangement Inferred (the Owner&rsquo;s), kept by D3; the operator&rsquo;s next build is the evidence.',
   explore:'<b>Explore: the full-window ExplorerSurface, unchanged</b> (Ruling 52d). Not a host, so no Edit, Window or Prompt menu and no zone rails; Reset layout is absent. Focus lands on the search box on entry, never inside the canvas; Escape from the surface root returns to the previous perspective. "View source" on a type node is a routed kind-open to Architecture; "Reveal in graph" acts here.',
   arch:'<b>Architecture (host B): existing surfaces only</b> A keyboard-highlighted menu row draws the focus ring inset (see File → New terminal); the lifted hover ground is a pointer courtesy and never the indicator. (Rulings 54, 59, 61). Center: Graph · Domain · Contexts · Joins as tabs, one accent-filled (the focused stack); a selected tab in an unfocused stack carries a 2px muted top edge as its state indicator. Left: Evidence, the master. Right: Provenance, the detail, which renders the selected row rather than a second copy of the list. Bottom collapsed. The graph is kind-filtered to code · data · architecture; a bounded render says <b>showing 40 of 212</b>.'
 };
@@ -679,7 +761,7 @@ function render(){
   document.title='commerce \u2014 '+NAMES[shown]+' \u2014 AI-DE';
   document.getElementById('reset-layout').hidden = shown==='explore';
   /* rail: exactly one selected; opening / error on the target only when it is not the shown one */
-  ['coding','explore','arch'].forEach(function(p){
+  ['coding','explore','arch','coord'].forEach(function(p){
     var el=document.getElementById('r-'+p);
     el.setAttribute('aria-selected', p===shown ? 'true':'false'); el.setAttribute('tabindex', p===shown ? '0':'-1');
     el.classList.toggle('opening', (sw==='opening'||sw==='ignored') && p===target && p!==shown);
@@ -699,10 +781,11 @@ function render(){
   document.getElementById('status-error').textContent= trig==='routed'
     ? "Couldn't open Code viewer \u2014 Architecture failed to open: the graph service did not answer in 10 s."
     : "Couldn't open "+NAMES[target]+" \u2014 the graph service did not answer in 10 s. Activate to try again.";
-  document.getElementById('status-msg').textContent= body.dataset.routedopen==='yes' ? 'Opened Code viewer in Architecture' : NAMES[shown]+' perspective'+(shown==='arch'?' \u2014 4 panes':'');
+  document.getElementById('status-msg').textContent= body.dataset.routedopen==='yes' ? 'Opened Code viewer in Architecture' : NAMES[shown]+' perspective'+(PANES[shown]||'');
   /* menu bar: derived. A menu is present only when it has an item. */
   ['file','edit','view','window','prompt','help'].forEach(function(m){ document.getElementById('m-'+m).hidden = MENUS[shown].indexOf(m)<0; });
   document.getElementById('mv-coding-entries').hidden = shown!=='coding';
+  document.getElementById('mv-coord-entries').hidden = shown!=='coord';
   document.getElementById('mv-arch-entries').hidden = shown!=='arch';
   document.getElementById('mv-explore-entries').hidden = shown!=='explore';
   document.getElementById('mv-host-entries').hidden = shown==='explore';
@@ -724,9 +807,10 @@ function render(){
   var L=[];
   if (sw==='retained'){
     if (body.dataset.routedopen==='yes') L.push(['UIA notification (before focus)','Opened Code viewer in Architecture']);
-    else L.push(['UIA notification (before focus)', NAMES[shown]+' perspective'+(shown==='arch'?' \u2014 4 panes':'')]);
-    L.push(['focus', body.dataset.routedopen==='yes' ? 'the opened Code viewer tab in the Center stack' : shown==='coding' ? (body.dataset.state==='empty' ? 'the Center empty state\u2019s first action (New session)' : 'the active session document\u2019s editor') : shown==='explore' ? 'the search box (the first non-canvas focusable)' : 'the Center\u2019s active tab (Graph)']);
+    else L.push(['UIA notification (before focus)', NAMES[shown]+' perspective'+(PANES[shown]||'')]);
+    L.push(['focus', body.dataset.routedopen==='yes' ? 'the opened Code viewer tab in the Center stack' : shown==='coding' ? (body.dataset.state==='empty' ? 'the Center empty state\u2019s first action (New session)' : 'the active session document\u2019s editor, in the Left zone (Ruling 83)') : shown==='explore' ? 'the search box (the first non-canvas focusable)' : shown==='coord' ? 'the Left zone\u2019s active tab (Terminal sessions) \u2014 a reading host lands on its master list' : 'the Center\u2019s active tab (Graph)']);
     if (body.dataset.restore==='dropped') L.push(['live region', "3 panes from your saved layout aren't available in Coding \u2014 Domain (class diagram), Graph, Contexts. Architecture opens with Graph, Domain, Contexts and Joins; open anything else from its View menu."]);
+    if (body.dataset.restore==='loom') L.push(['live region', "5 panes from your saved layout aren't available in Coding \u2014 Terminal sessions, Message board, Leaderboard, Ledger, Daydreams. They live in Coordination (Ctrl+4); open them from its View menu."]);
     if (body.dataset.restore==='alldropped') L.push(['live region', 'Your saved layout had no panes Coding can show, so Coding opened with its default layout.']);
     if (body.dataset.restore==='duplicate') L.push(['live region', 'Diagnostics appeared twice in your saved layout; the first copy was kept and the second dropped.']);
     if (body.dataset.restore==='newer') L.push(['live region', 'Your saved layout is from a newer version and was not applied. Coding opened with its default layout; your layout file was kept.']);
