@@ -254,10 +254,15 @@ function main() {
     cwd: LANE_SPIKE_DIR,
     stdio: ["pipe", "pipe", "pipe"],
     env: (() => {
-      // ADR-0035 rule 2: the compile-shaped session strips CLAUDE_CODE_EXECUTABLE from the
-      // child's environment so the pinned, vendored CLI binary is what actually launches.
+      // Mirrors AcpEngineProcess.CompileChildEnvironment (Security loop 2, condition C2): the
+      // three names a compile child must not inherit — CLAUDE_CODE_EXECUTABLE swaps the CLI
+      // binary, NODE_OPTIONS/NODE_PATH load unpinned code into the node adapter — and the output
+      // cap the product sets, so the spike measures the child the product actually launches.
       const env = { ...process.env };
-      delete env.CLAUDE_CODE_EXECUTABLE;
+      for (const name of Object.keys(env)) {
+        if (["CLAUDE_CODE_EXECUTABLE", "NODE_OPTIONS", "NODE_PATH"].includes(name.toUpperCase())) delete env[name];
+      }
+      env.CLAUDE_CODE_MAX_OUTPUT_TOKENS = "4096";
       return env;
     })(),
   });
@@ -491,15 +496,11 @@ function main() {
     // (ADR-0036's "no JSON twin is committed" rule, applied here too).
     fs.writeFileSync(path.join(SPIKE_DIR, "compile-pin-spike.json"), JSON.stringify(summary, null, 2));
 
-    // ADR-0036's path-resolution rule: the product reads the gate artifact at the MACHINE level,
-    // `~/.aide/proof/`, beside `~/.aide/providers.json` — the pin is about this machine's installed
-    // adapter, SDK and CLI, not about which workspace is open. The frame log rides beside it so
-    // the recount never depends on a checkout. (`docs/proof/` holds the Proof Pack's citation copy.)
-    const proofDir = path.join(require("os").homedir(), ".aide", "proof");
-    fs.mkdirSync(proofDir, { recursive: true });
-    fs.writeFileSync(path.join(proofDir, "compile-pin-spike.json"), JSON.stringify(summary, null, 2));
-    fs.copyFileSync(recorder.recvPath, path.join(proofDir, "compile-pin-spike.frames.jsonl"));
-    console.log(`[run-spike] gate-1 artifact written: ${path.join(proofDir, "compile-pin-spike.json")} (+ compile-pin-spike.frames.jsonl)`);
+    // The gate-1 artifact under `~/.aide/proof/` is NOT written here (Security loop 2, condition
+    // C1): a run whose oracle then goes RED would leave an admitting artifact in place, and the
+    // gate reads the artifact, never the oracle's exit. `publish-artifact.js <frames-dir>` writes
+    // it, and Run-PinSpike.ps1 calls it only after assert-spike.py exits 0.
+    console.log(`[run-spike] gate-1 artifact NOT written yet: run assert-spike.py, then publish-artifact.js ${framesDir}`);
 
     console.log(`[run-spike] full run complete. tool_call_frame_count=${toolCallFrameCount} ` +
       `permission_request_count=${permissionRequestCount} pwned.txt=${pwnedExists}`);
