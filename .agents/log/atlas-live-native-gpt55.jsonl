@@ -1,0 +1,6 @@
+{"agent": "copilot-atlas-native", "at": 1789254144.7999613, "kind": "session-start", "path": "-", "seq": 1, "session": "atlas-live-native-gpt55", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-atlas-live-reader-native"}
+{"agent": "copilot-atlas-native", "at": 1789254818.5660427, "kind": "release", "path": "src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs", "seq": 2, "session": "atlas-live-native-gpt55", "wi": "WI-0"}
+{"agent": "copilot-atlas-native", "at": 1789254818.6172805, "kind": "release", "path": "tests/AiDe.App.Tests/Workbench/Understanding/AtlasReaderViewTests.cs", "seq": 3, "session": "atlas-live-native-gpt55", "wi": "WI-0"}
+{"agent": "copilot-atlas-native", "at": 1789255365.0877967, "kind": "release", "path": "src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs", "seq": 4, "session": "atlas-live-native-gpt55", "wi": "WI-0"}
+{"agent": "copilot-atlas-native", "at": 1789255365.1388054, "kind": "release", "path": "tests/AiDe.App.Tests/Workbench/Understanding/AtlasReaderViewTests.cs", "seq": 5, "session": "atlas-live-native-gpt55", "wi": "WI-0"}
+{"agent": "copilot-atlas-native", "at": 1789255365.1899476, "kind": "session-end", "path": "-", "seq": 6, "session": "atlas-live-native-gpt55", "wi": "WI-0", "worktree": "C:/Projects/ai-de"}

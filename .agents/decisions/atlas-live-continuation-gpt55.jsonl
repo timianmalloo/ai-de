@@ -1,0 +1,2 @@
+{"agent": "copilot-atlas-continuation", "at": 1789258872.8478305, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Understanding/AtlasQueryContracts.cs", "session": "atlas-live-continuation-gpt55", "wi": ""}
+{"agent": "copilot-atlas-continuation", "at": 1789258872.8548386, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasQueryContractsTests.cs", "session": "atlas-live-continuation-gpt55", "wi": ""}

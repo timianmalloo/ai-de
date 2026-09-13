@@ -1,0 +1,9 @@
+{"agent": "copilot-atlas-source", "at": 1789252656.8658295, "kind": "session-start", "path": "-", "seq": 1, "session": "atlas-live-source-astra", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-atlas-live-reader-source"}
+{"agent": "copilot-atlas-source", "at": 1789253951.2190435, "kind": "claim", "path": "src/AiDe.Core/Understanding/AtlasSource.cs", "seq": 2, "session": "atlas-live-source-astra", "ttl": 3600.0, "wi": "atlas-source"}
+{"agent": "copilot-atlas-source", "at": 1789253951.2775707, "kind": "claim", "path": "tests/AiDe.Core.Tests/Understanding/AtlasSourceTests.cs", "seq": 3, "session": "atlas-live-source-astra", "ttl": 3600.0, "wi": "atlas-source"}
+{"agent": "copilot-atlas-source", "at": 1789254717.4661198, "kind": "release", "path": "src/AiDe.Core/Understanding/AtlasSource.cs", "seq": 4, "session": "atlas-live-source-astra", "wi": "WI-0"}
+{"agent": "copilot-atlas-source", "at": 1789254717.5171356, "kind": "release", "path": "tests/AiDe.Core.Tests/Understanding/AtlasSourceTests.cs", "seq": 5, "session": "atlas-live-source-astra", "wi": "WI-0"}
+{"agent": "copilot-atlas-source", "at": 1789256799.5456276, "kind": "claim", "path": "src/AiDe.Core/Understanding/AtlasSource.cs", "seq": 6, "session": "atlas-live-source-astra", "ttl": 3600.0, "wi": "atlas-approved-root-bootstrap"}
+{"agent": "copilot-atlas-source", "at": 1789256799.5991693, "kind": "claim", "path": "tests/AiDe.Core.Tests/Understanding/AtlasSourceTests.cs", "seq": 7, "session": "atlas-live-source-astra", "ttl": 3600.0, "wi": "atlas-approved-root-bootstrap"}
+{"agent": "copilot-atlas-source", "at": 1789256978.2695389, "kind": "release", "path": "src/AiDe.Core/Understanding/AtlasSource.cs", "seq": 8, "session": "atlas-live-source-astra", "wi": "WI-0"}
+{"agent": "copilot-atlas-source", "at": 1789256978.3216643, "kind": "release", "path": "tests/AiDe.Core.Tests/Understanding/AtlasSourceTests.cs", "seq": 9, "session": "atlas-live-source-astra", "wi": "WI-0"}

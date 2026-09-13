@@ -1,0 +1,2 @@
+{"agent": "copilot-atlas-conductor", "at": 1789263093.163057, "kind": "session-start", "path": "-", "seq": 1, "session": "atlas-wpf-peer-contract-gpt55", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-atlas-wpf-peer-contract"}
+{"agent": "copilot-atlas-conductor-close", "at": 1789267579.919756, "kind": "session-end", "path": "-", "seq": 2, "session": "atlas-wpf-peer-contract-gpt55", "wi": "WI-0", "worktree": "C:/Projects/ai-de-atlas-wpf-peer-contract"}
