@@ -1,0 +1,5 @@
+{"agent": "claude-conductor", "at": 1789333762.1306157, "kind": "session-start", "path": "-", "seq": 1, "session": "cv-5-4", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-lane-conversation-cv5-4"}
+{"agent": "claude-cv-5-4", "at": 1789335558.363405, "kind": "claim", "path": "tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs", "seq": 2, "session": "cv-5-4", "ttl": 300.0, "wi": "CV-5-4"}
+{"agent": "claude-cv-5-4", "at": 1789335558.4428363, "kind": "claim", "path": "tests/AiDe.App.Tests/ShellContrastCensusTests.cs", "seq": 3, "session": "cv-5-4", "ttl": 300.0, "wi": "CV-5-4"}
+{"agent": "claude-cv-5-4", "at": 1789336902.205202, "kind": "release", "path": "tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs", "seq": 4, "session": "cv-5-4", "wi": "CV-5-4"}
+{"agent": "claude-cv-5-4", "at": 1789336902.2920125, "kind": "release", "path": "tests/AiDe.App.Tests/ShellContrastCensusTests.cs", "seq": 5, "session": "cv-5-4", "wi": "CV-5-4"}

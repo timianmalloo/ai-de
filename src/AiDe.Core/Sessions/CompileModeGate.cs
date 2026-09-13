@@ -71,11 +71,12 @@ public static class CompileModeGate
         else
         {
             // Gate 2 (ADR-0036): the admission report over 50 scored + 50 holdout envelopes, its
-            // floors recomputed by the reader — CV-4's. Until that reader exists and admits,
-            // `agentic` is refused by name, never assumed.
-            refusals[CompileModes.Agentic] = new CompileModeRefusal(
-                EnvelopeStoreErrorCodes.AdmissionReportOutstanding,
-                "Gate 2 is outstanding: no admission report (compile-eval-admission.json) over 50 scored and 50 holdout envelopes has been read; agentic-advisory builds that corpus");
+            // floors recomputed from the report's own numerator/denominator pairs — never a
+            // verdict field. `agentic` is refused by name until CompileAdmissionGate admits it.
+            if (CompileAdmissionGate.Evaluate(proofDirectory) is { } gateTwoRefusal)
+            {
+                refusals[CompileModes.Agentic] = gateTwoRefusal;
+            }
         }
 
         return new CompileModeAvailability(refusals, recount, artifactPath);

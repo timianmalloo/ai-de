@@ -2092,7 +2092,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 58 types, 153 members, 91% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 58 types, 155 members, 91% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2105,7 +2105,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6ffdaa69cc0754dd2cf49adc86d41239aebffd3eb06e1ed2b33f1b06ef43b7ad"
+      "sourceSha256": "c810b55db14487f5dea8384e98f2bd4b6e485ba0716404d47ffca546bad68923"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -2367,7 +2367,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.PromptCompilation: 46 types, 164 members, 81% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.PromptCompilation: 47 types, 177 members, 82% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2380,7 +2380,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6e8cf80b49ffa025ac66f277082fb4c9f8558ac58d976d9a36702170f5eda81f"
+      "sourceSha256": "57f65d0cefb79e90e3639d8c9e5b6749c176110e8829041e6d1da41f96250636"
     },
     {
       "id": "api-aide-core-sessions",
@@ -2392,7 +2392,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Sessions: 26 types, 73 members, 90% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Sessions: 27 types, 80 members, 91% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2405,7 +2405,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "57901c7ec3b6089b51e72b9e36020fe1bc4d2207d83b9eb83ddc8f34abff58b5"
+      "sourceSha256": "45bd38ff2bbc8a1e58bfe87adb53f3d4126c856892bc00eea98344a50523c4ac"
     },
     {
       "id": "api-aide-core-store",
@@ -7970,7 +7970,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "15c7c4ef3861a711a92d9fa324fa99889dea5fbd10e9b117c9d467f33deaf391"
+      "sourceSha256": "94003dc9016cf182aa82685fcb68cc4f13d8d4c1bcdbf274e180634f196ef6ca"
     },
     {
       "id": "design-session-profiler",
@@ -14693,6 +14693,58 @@ window.DOCS_INDEX = {
       "sourceSha256": "a92734fa7845b6e7ad4a33a691fe588436959f29a8ab7340d01343356a9def94"
     },
     {
+      "id": "proof-compile-admission-code",
+      "path": "docs/proof/compile-admission-code.md",
+      "title": "Proof Pack — CV-4, admission's code: Gate 2's reader recomputing every floor from num/den, ring.py's A6 re-score/demote/re-admit, the drift watermark readmitted_at, and compile.mode.changed{from,to,trigger}",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-d",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [],
+      "summary": "Evidence for CV-4 on the Conversation lane (Addendum D slice D-3, code only): `CompileAdmissionGate` reads `compile-eval-admission.json` and recomputes five floors from the report's own numerator/denominator pairs — the split witness (holdout of 50, disjoint, ordered), `schema_fail`, the `applied_denied`/`tool_calls` invariants, and Ruling 76's degraded-rate floor — never a stored verdict, wired into `CompileModeGate`'s Gate 2 branch in place of CV-3's placeholder refusal. `tools/compile-eval/ring.py` re-scores on a triple change or a `model_observed`/`model_configured` mismatch (CV-3's residual), demotes with `trigger: ring|drift`, and sets the drift watermark `readmitted_at` on a later passing re-score. `compile.mode.changed{from,to,trigger}` joins the `compile.*` vocabulary and `SetCompileMode` emits it on every real transition. A canonicalisation fixture asserts the same SHA-256-over-raw-bytes constant from both the C# and the Python side.",
+      "tags": [
+        "proof-pack",
+        "conversation-lane",
+        "cv-4",
+        "addendum-d",
+        "compile",
+        "gate-2",
+        "gate-3",
+        "eval-harness",
+        "drift",
+        "adr-0036"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-d-compile-step",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0036-compile-mode-ladder-deployment-gates",
+          "rel": "implements"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-compile-call",
+          "rel": "refines"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "31c91f1a685655add15887b1ccfcd01799bcec3b118e1904971ac3eea38b1a17"
+    },
+    {
       "id": "proof-compile-call",
       "path": "docs/proof/compile-call.md",
       "title": "Proof Pack — CV-3, the compile call: the pin widened to mcp__*, CompileCallHost apart from the run root under one linked deadline, AuthorizeBinding, gate 1 read from the machine-level artifact, Prepare under an agentic rung, the eval harness — and PD-5's second run, which ran away and was stopped",
@@ -17781,5 +17833,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "f72e898d609a80187caf834e0d75685875cad552ed9f80756a001c771896a4a8"
+  "graphSha256": "e4f2419e9d774f0b0c570fdba97c1edb05a20d2761a95ee91580e804fff5f4b7"
 };

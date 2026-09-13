@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T22:16:48Z",
+  "generated": "2026-09-13T22:19:45Z",
   "audit": [
     {
       "actor": null,
@@ -14746,39 +14746,30 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2E17D8BMEY4GD4A6QT4X126",
-      "shortname": "join-x3",
-      "datetime": "2026-09-13T18:42:12Z",
-      "session": "claude-conductor-addendum-c",
-      "prompt": "keep going (the join of X-3)",
-      "summary": "Join: X-3 (938f7431) merged to main (e0f1b8d4) clean: the Shell-lane seam requests from CV-1/CV-2 landed (the shell's Announcer into the document, F6 registry rows with the refusal announced, WebSurfaceHost.Retry and the composer's Retry button, one diagnostics writer, BorderStrongBrush + the 14th page role, the resource glob) and Rulings 85/86 (rev = observed HEAD or not recorded; a refusal clears after a 10 s dwell). DC-179..181 self-allocated by the node, sequence unbroken. Recount App 844 / Core 2496 = 2326 + 170; 0 WT attaches.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/shell-seams-x3.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Land X-3 on main with the floors recounted and a Release build",
+      "datetime": "2026-09-13T18:42:12Z",
       "done_when": "main pushed green through run-verify-gates; Release built",
+      "goal": "Land X-3 on main with the floors recounted and a Release build",
+      "id": "al-01M2E17D8BMEY4GD4A6QT4X126",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (the join of X-3)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-x3",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
-      }
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Join: X-3 (938f7431) merged to main (e0f1b8d4) clean: the Shell-lane seam requests from CV-1/CV-2 landed (the shell's Announcer into the document, F6 registry rows with the refusal announced, WebSurfaceHost.Retry and the composer's Retry button, one diagnostics writer, BorderStrongBrush + the 14th page role, the resource glob) and Rulings 85/86 (rev = observed HEAD or not recorded; a refusal clears after a 10 s dwell). DC-179..181 self-allocated by the node, sequence unbroken. Recount App 844 / Core 2496 = 2326 + 170; 0 WT attaches.",
+      "tags": [],
+      "tool": null
     },
     {
-      "id": "al-01M2E300B91XTVSKHRAQ2N36MM",
-      "shortname": "cv-5-2-coalesce",
-      "datetime": "2026-09-13T19:13:06Z",
-      "session": "cv-5",
-      "prompt": "You are track CV-5.2 of the Conversation lane — Ruling 81: the Console's row grain is the message, never the wire chunk; one pure `Coalesce(turn.Events)` read by both the thread's reply side and the Console split (Ruling 74 condition 1 re-pointed). Run the `/implement` skill (args: `CV-5.2: Coalesce — consecutive agent.msg chunks fold to one row per message (first timestamp, lane, joined text, chunk count), broken by any other kind; agent.thought folds separately; tool/permission/acp rows one per event; the thread's TurnView carries the fold, not a Reply blob; the split renders n chunks (Ruling 81; DESIGN.md errata after Rulings 80-82)`). Tier T2, fan-out cap 3 (reviews read-only). The conductor is Claude Opus (session `conductor-addendum-c`). The pack applies in full (red first; smallest correct; DM7 derive-don't-store — one derivation, two readers; the Test Architect's veto; DC-135).\n\nThe operator's words: \"console output is too fine grained\" — their Console showed `16:29:56 claude-code  mer` / `ges are` / `missing from the tracker and` … one timestamped row per streaming chunk. The ruling: Ruling 81 (also 82 — CV-5.3 builds the items over your Coalesce, so agent.thought must fold as its own run even though no mapper row exists yet; and 74 for the identity you re-point). The design: DESIGN.md §\"Errata after Rulings 80–82 and 87\", the mockup docs/mockups/session-conversation.html split state, the review docs/reviews/ui-operator-findings-2026-09-13.md §7 CV-5.2 row. The code: RunChannelSessionThread.cs (Append concatenates agent.msg into Reply — the second grain), ConsoleStreamModel.cs (TextOf — one derivation, two readers), ConsoleSurface.cs (Derive emits one Line per EventLine), SessionDocumentSurface.cs, the thread tests.\n\nOracles (D3's, verbatim; each red before its green): C1 Presentation/Sessions/CoalesceTests.ConsecutiveMessageChunks_FoldToOneRow_WithFirstTimestampLaneJoinedTextAndChunkCount — pure; 3 agent.msg chunks → 1 row, Chunks == 3, At = the first's; a tool.call between chunks → 2 rows (condition 2); agent.thought folds separately; tool.*, permission.request, acp.* one row each; empty → empty; a [Theory] over generated interleavings: rows.Count == runs(events). C2 Sessions/TheThreadIsOneListTests.TheSplitsRows_EqualHeadingPlusCoalesceOfEveryTurn (DS-1's M1, re-pointed) — red today. C3 Presentation/Sessions/RunChannelSessionThreadTests.TheTurnView_CarriesTheFold_NotAReplyBlob — TurnView.Rows == Coalesce(Events); Reply retired; a second store of the text fails. C4 the split's row renders `n chunks` from Row.Chunks (rendered, never asserted). C5 Sessions/ConsoleSplitPlacementTests.WithTheSessionAtLeft_TheSplitOpensInTheCenterZone_AsAConsoleDocument — wait for the Owner's Ruling 89. Keep green: the 88-frame mapper round-trip, ShellContrastCensusTests, DS-1's 30 oracles (re-point M1 only), ThreadAnnouncementPolicy tests.\n\nFloors: E7 in the Proof Pack; reviews (read-only, ≤ 3, loop cap 2): Test Architect (hard), the Simplifier, UX & Accessibility; gates at close: dotnet build Core + App + both test projects -p:TreatWarningsAsErrors=true; both full test projects (--logger trx); python tools/run-verify-gates.py; regenerate-derived.py after the audit entry. Audit entry, Proof Pack docs/proof/console-coalesce.md, commits, push to lane/conversation-cv5 (never main; merge origin/main before close if it moved — never rebase). Rebuild Release at the end and report the ProductVersion.\n\nMid-task from the conductor: Ruling 89 is filed (main 38afb30b) — the split is a `console` document in the Center zone, one per session, closing with the session; lane by seam: the surface's content is yours; a factory row / zone rule is SH-4.2's — write a seam request and make C5 RUN-PENDING rather than touching the shell.",
-      "summary": "Coalesce.Rows (Core, pure; TurnRow with first timestamp, lane, joined text, int? chunks; a run = one folding kind from one lane, broken by any other kind/lane) read by TurnView.Rows, TurnItem.Prose and ConsoleSurface.Derive; TurnView.Reply, the StringBuilder and Conclude(reply:) gone; a refused run's sentence is a stderr line; the split row reads hh:mm:ss · lane · message · text · n chunks (DockPanel, wraps; ItemStatus lane · kind); one local clock on every timestamp; fixtures at the event level. C1-C4 red->green, C5 RUN-PENDING (Ruling 89 -> SH-4.2 seam request). Reviews: Test Architect veto cleared (Proof Pack, +05:00 clock oracle, reply-side oracle, mapper join), Simplifier applied (-40 lines), UX F1 wrap fixed red-first. Gates: builds 0/0; Core 2517/0, App 847/0 post-merge; verify-test-run OK. Register: DC-nnn (CV-5 a), DC-nnn (CV-5 b), DC-172 recurrence 2. Proof Pack docs/proof/console-coalesce.md.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/console-coalesce.md",
@@ -14795,64 +14786,64 @@ window.AUDIT_DATA = {
         "tests/AiDe.App.Tests/Sessions/Thread/ThreadFixtures.cs",
         "docs/lessons/defect-classes.md"
       ],
+      "datetime": "2026-09-13T19:13:06Z",
+      "done_when": "C1-C4 red then green (CoalesceTests incl. the seeded theory; TheThreadIsOneListTests M1 re-pointed and the rendered chunk count; RunChannelSessionThreadTests no reply blob); C5 RUN-PENDING on SH-4.2's console-document row (Ruling 89, seam req-01M2E1HEMCMHRW1AX4SY8RJFQ7); the 88-frame round-trip, the census, DS-1's oracles and the announcement policy green; builds warnings-as-errors; both suites via verify-test-run; the three read-only reviews cleared; Proof Pack docs/proof/console-coalesce.md; pushed to lane/conversation-cv5; Release ProductVersion reported.",
+      "duration_seconds": 3074.0,
+      "fan_out": 3,
+      "git": {
+        "branch": "lane/conversation-cv5",
+        "pushed": null,
+        "sha": "46d02d8b5a694c4ad13658a4cd39d6e5ea614cb2",
+        "short": "46d02d8b5"
+      },
+      "goal": "Ruling 81 landed on the Conversation lane: one pure Coalesce(turn.Events) in Core read by the thread's reply side (TurnView.Rows) and the Console split; Reply (the StringBuilder second store) retired; the split renders one row per message with n chunks.",
+      "id": "al-01M2E300B91XTVSKHRAQ2N36MM",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "You are track CV-5.2 of the Conversation lane — Ruling 81: the Console's row grain is the message, never the wire chunk; one pure `Coalesce(turn.Events)` read by both the thread's reply side and the Console split (Ruling 74 condition 1 re-pointed). Run the `/implement` skill (args: `CV-5.2: Coalesce — consecutive agent.msg chunks fold to one row per message (first timestamp, lane, joined text, chunk count), broken by any other kind; agent.thought folds separately; tool/permission/acp rows one per event; the thread's TurnView carries the fold, not a Reply blob; the split renders n chunks (Ruling 81; DESIGN.md errata after Rulings 80-82)`). Tier T2, fan-out cap 3 (reviews read-only). The conductor is Claude Opus (session `conductor-addendum-c`). The pack applies in full (red first; smallest correct; DM7 derive-don't-store — one derivation, two readers; the Test Architect's veto; DC-135).\n\nThe operator's words: \"console output is too fine grained\" — their Console showed `16:29:56 claude-code  mer` / `ges are` / `missing from the tracker and` … one timestamped row per streaming chunk. The ruling: Ruling 81 (also 82 — CV-5.3 builds the items over your Coalesce, so agent.thought must fold as its own run even though no mapper row exists yet; and 74 for the identity you re-point). The design: DESIGN.md §\"Errata after Rulings 80–82 and 87\", the mockup docs/mockups/session-conversation.html split state, the review docs/reviews/ui-operator-findings-2026-09-13.md §7 CV-5.2 row. The code: RunChannelSessionThread.cs (Append concatenates agent.msg into Reply — the second grain), ConsoleStreamModel.cs (TextOf — one derivation, two readers), ConsoleSurface.cs (Derive emits one Line per EventLine), SessionDocumentSurface.cs, the thread tests.\n\nOracles (D3's, verbatim; each red before its green): C1 Presentation/Sessions/CoalesceTests.ConsecutiveMessageChunks_FoldToOneRow_WithFirstTimestampLaneJoinedTextAndChunkCount — pure; 3 agent.msg chunks → 1 row, Chunks == 3, At = the first's; a tool.call between chunks → 2 rows (condition 2); agent.thought folds separately; tool.*, permission.request, acp.* one row each; empty → empty; a [Theory] over generated interleavings: rows.Count == runs(events). C2 Sessions/TheThreadIsOneListTests.TheSplitsRows_EqualHeadingPlusCoalesceOfEveryTurn (DS-1's M1, re-pointed) — red today. C3 Presentation/Sessions/RunChannelSessionThreadTests.TheTurnView_CarriesTheFold_NotAReplyBlob — TurnView.Rows == Coalesce(Events); Reply retired; a second store of the text fails. C4 the split's row renders `n chunks` from Row.Chunks (rendered, never asserted). C5 Sessions/ConsoleSplitPlacementTests.WithTheSessionAtLeft_TheSplitOpensInTheCenterZone_AsAConsoleDocument — wait for the Owner's Ruling 89. Keep green: the 88-frame mapper round-trip, ShellContrastCensusTests, DS-1's 30 oracles (re-point M1 only), ThreadAnnouncementPolicy tests.\n\nFloors: E7 in the Proof Pack; reviews (read-only, ≤ 3, loop cap 2): Test Architect (hard), the Simplifier, UX & Accessibility; gates at close: dotnet build Core + App + both test projects -p:TreatWarningsAsErrors=true; both full test projects (--logger trx); python tools/run-verify-gates.py; regenerate-derived.py after the audit entry. Audit entry, Proof Pack docs/proof/console-coalesce.md, commits, push to lane/conversation-cv5 (never main; merge origin/main before close if it moved — never rebase). Rebuild Release at the end and report the ProductVersion.\n\nMid-task from the conductor: Ruling 89 is filed (main 38afb30b) — the split is a `console` document in the Center zone, one per session, closing with the session; lane by seam: the surface's content is yours; a factory row / zone rule is SH-4.2's — write a seam request and make C5 RUN-PENDING rather than touching the shell.",
+      "session": "cv-5",
+      "shortname": "cv-5-2-coalesce",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-13T18:21:52Z",
+      "summary": "Coalesce.Rows (Core, pure; TurnRow with first timestamp, lane, joined text, int? chunks; a run = one folding kind from one lane, broken by any other kind/lane) read by TurnView.Rows, TurnItem.Prose and ConsoleSurface.Derive; TurnView.Reply, the StringBuilder and Conclude(reply:) gone; a refused run's sentence is a stderr line; the split row reads hh:mm:ss · lane · message · text · n chunks (DockPanel, wraps; ItemStatus lane · kind); one local clock on every timestamp; fixtures at the event level. C1-C4 red->green, C5 RUN-PENDING (Ruling 89 -> SH-4.2 seam request). Reviews: Test Architect veto cleared (Proof Pack, +05:00 clock oracle, reply-side oracle, mapper join), Simplifier applied (-40 lines), UX F1 wrap fixed red-first. Gates: builds 0/0; Core 2517/0, App 847/0 post-merge; verify-test-run OK. Register: DC-nnn (CV-5 a), DC-nnn (CV-5 b), DC-172 recurrence 2. Proof Pack docs/proof/console-coalesce.md.",
       "tags": [
         "cv-5.2",
         "ruling-81",
         "conversation-lane"
       ],
-      "outcome": "success",
-      "goal": "Ruling 81 landed on the Conversation lane: one pure Coalesce(turn.Events) in Core read by the thread's reply side (TurnView.Rows) and the Console split; Reply (the StringBuilder second store) retired; the split renders one row per message with n chunks.",
-      "done_when": "C1-C4 red then green (CoalesceTests incl. the seeded theory; TheThreadIsOneListTests M1 re-pointed and the rendered chunk count; RunChannelSessionThreadTests no reply blob); C5 RUN-PENDING on SH-4.2's console-document row (Ruling 89, seam req-01M2E1HEMCMHRW1AX4SY8RJFQ7); the 88-frame round-trip, the census, DS-1's oracles and the announcement policy green; builds warnings-as-errors; both suites via verify-test-run; the three read-only reviews cleared; Proof Pack docs/proof/console-coalesce.md; pushed to lane/conversation-cv5; Release ProductVersion reported.",
       "tier": "T2",
-      "fan_out": 3,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "started_at": "2026-09-13T18:21:52Z",
-      "duration_seconds": 3074.0,
-      "git": {
-        "sha": "46d02d8b5a694c4ad13658a4cd39d6e5ea614cb2",
-        "short": "46d02d8b5",
-        "branch": "lane/conversation-cv5",
-        "pushed": null
-      }
+      "tool": null
     },
     {
-      "id": "al-01M2E3KT4SQ5XCC22FENZNPBR6",
-      "shortname": "join-cv5-2",
-      "datetime": "2026-09-13T19:23:55Z",
-      "session": "claude-conductor-addendum-c",
-      "prompt": "keep going (the join of CV-5.2)",
-      "summary": "Join: CV-5.2 (64d478a7) merged to main clean; DC-182/183 allocated; recount App 847 / Core 2517 = 2347 + 170. The Console now reads one row per message with n chunks; TurnView carries Coalesce rows, Reply retired; C5 (the Console document in the Center) is RUN-PENDING on SH-4.2's seam req-01M2E1HEMCMHRW1AX4SY8RJFQ7.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/console-coalesce.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Land CV-5.2 on main with the floors recounted and a Release build; free the Conversation lane for CV-5.3",
+      "datetime": "2026-09-13T19:23:55Z",
       "done_when": "main pushed green through run-verify-gates; Release built",
+      "goal": "Land CV-5.2 on main with the floors recounted and a Release build; free the Conversation lane for CV-5.3",
+      "id": "al-01M2E3KT4SQ5XCC22FENZNPBR6",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (the join of CV-5.2)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-cv5-2",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
-      }
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Join: CV-5.2 (64d478a7) merged to main clean; DC-182/183 allocated; recount App 847 / Core 2517 = 2347 + 170. The Console now reads one row per message with n chunks; TurnView carries Coalesce rows, Reply retired; C5 (the Console document in the Center) is RUN-PENDING on SH-4.2's seam req-01M2E1HEMCMHRW1AX4SY8RJFQ7.",
+      "tags": [],
+      "tool": null
     },
     {
-      "id": "al-01M2E60Y2BWVXV4VYTEAF8GTTK",
-      "shortname": "cv-3-compile-call",
-      "datetime": "2026-09-13T20:06:03Z",
-      "session": "cv-3",
-      "prompt": "CV-3: the compile call, the pin, gate 1 and the eval harness — Addendum D slice D-2 (ADR-0035 compile-session binding and pin; ADR-0036 the compile-mode ladder and its deployment gates; Rulings 64-68); the pin closes the MCP exposure PD-5 measured; reds first per the plan row",
-      "summary": "CV-3 (Addendum D slice D-2) on lane/conversation-cv3, merged with origin/main 06791208. Shipped: LaneSessionOptions.Compile / CompileOn(model) — tools: [], the 30 denied names + mcp__*, strictMcpConfig: true (admitted by PD-5 run 2's measurement: the repository's .mcp.json server spawned as the operator at session/new under tools: [] + mcp__*), model from the binding — asserted as an exact key set on the wire in Core and through the host; the engine's child never inherits CLAUDE_CODE_EXECUTABLE / NODE_OPTIONS / NODE_PATH (removals reported) and the compile child carries CLAUDE_CODE_MAX_OUTPUT_TOKENS=4096; SpawnContract.AuthorizeBinding (the identity half; Authorize unchanged in order; the same AP-0009..13 from both entry points; R0 not refused); CompileCallHost opening compile-call.compose (Roots == 0; a run after it reads 1), the pin verified per call against ~/.aide/proof/compile-pin-spike.json (adapter file and vendored CLI rehashed; pin_verify_ms), one linked deadline over Start → close (silent at initialize → timed_out naming the step; a late answer discarded and counted from the plane's post-deadline queue; a reply past 16,384 chars cut as malformed naming the bound; the engine disposed before the receipt), the receipt with the wire's text/usage/model_observed/latency/counts; gate 1 as CompileModeGate (CE-0016 missing, CE-0017 triple mismatch, CE-0018 frame log unverifiable, CE-0019 recount ≠ 0, CE-0022 run not ended, CE-0023 pin identity mismatch; agentic CE-0020 naming Gate 2; SetCompileMode through the gate); Prepare under an agentic rung (PrepareAsync: open lines only, the typed boundary the only reader, the called row with tool_calls/permission_requests → suspect, derived rows with call_seq, reuse after a success with a reused receipt, no reuse after a failure, the skipped call, Cancel, stale, keep/edit as operator rows, Ruling 75 fired on the projected block); CompileLine's strings and the STA walk of the four states; the harness (score.py: num/den only, the split witness, dedup by originating call, degraded over every model call, --self-test red-first; derive-fixtures.py: --affirm on tracked paths). PD-5 run 2 under the widened pin RUN-RECORDED as ABORTED: a toolless session emitted <invoke name=\"Read\"> XML as text in an unbounded loop (5,843 chunks, ~20k output tokens) until the node killed the harness — the consented ~12k exceeded; the harness now bounds each prompt (60 s / 2,000 chunks) and assert-spike refuses a run that did not end; run 3 is an attended row needing the operator's consent. Reviews: Security & Identity BLOCK → its six clear-whens applied except the model_observed drift trigger (CV-4) and usage on timeout (usage_update carries context size) — the veto is the conductor's to clear (loop 2); AI Systems Engineer and Test Architect PASS-WITH-CONDITIONS, conditions applied or recorded; the Simplifier not convened (the budget cap fired). Gates: 4 builds 0/0 with warnings as errors; App 876 / Core 2,532 before the round, the affected suites re-run green after; verify-test-run + run-verify-gates re-run at close (see the Proof Pack's gate record). Proof Pack docs/proof/compile-call.md; three defect classes DC-184/185/186 (placeholders). The stop budget (6,000 s) fired during the review round — reported, not a termination argument.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/compile-call.md",
@@ -14868,102 +14859,102 @@ window.AUDIT_DATA = {
         "tools/compile-eval/derive-fixtures.py",
         "spikes/compile-session-pin-wire/frames/2026-09-13T18-58-48-954Z/summary.json"
       ],
-      "tags": [],
-      "outcome": "partial",
-      "goal": "the compile call real behind its gates: CompileCallHost, the pin incl. mcp__*, AuthorizeBinding, gate 1, the eval harness, Prepare's compile line; PD-5's second run with the widened pin",
+      "datetime": "2026-09-13T20:06:03Z",
       "done_when": "the plan row's reds observed red then green; build + tests + verify gates green; Proof Pack docs/proof/compile-call.md; audit entry; pushed to lane/conversation-cv3; Release rebuilt",
-      "tier": "T2",
-      "fan_out": 3,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": false,
-        "acceptance_met": false
-      },
-      "started_at": "2026-09-13T18:45:14Z",
       "duration_seconds": 4849.0,
+      "fan_out": 3,
+      "git": {
+        "branch": "lane/conversation-cv3",
+        "pushed": null,
+        "sha": "0e5b9bce8e2e1f51cf2d5f01e0590dd7fb63a3f6",
+        "short": "0e5b9bce8"
+      },
+      "goal": "the compile call real behind its gates: CompileCallHost, the pin incl. mcp__*, AuthorizeBinding, gate 1, the eval harness, Prepare's compile line; PD-5's second run with the widened pin",
+      "id": "al-01M2E60Y2BWVXV4VYTEAF8GTTK",
+      "kind": "skill",
+      "outcome": "partial",
       "persona_yield": [
         {
+          "accepted": 10,
           "persona": "security-identity-architect",
-          "raised": 12,
-          "accepted": 10
+          "raised": 12
         },
         {
+          "accepted": 12,
           "persona": "ai-systems-engineer",
-          "raised": 17,
-          "accepted": 12
+          "raised": 17
         },
         {
+          "accepted": 10,
           "persona": "test-architect",
-          "raised": 11,
-          "accepted": 10
+          "raised": 11
         }
       ],
-      "git": {
-        "sha": "0e5b9bce8e2e1f51cf2d5f01e0590dd7fb63a3f6",
-        "short": "0e5b9bce8",
-        "branch": "lane/conversation-cv3",
-        "pushed": null
-      }
+      "prompt": "CV-3: the compile call, the pin, gate 1 and the eval harness — Addendum D slice D-2 (ADR-0035 compile-session binding and pin; ADR-0036 the compile-mode ladder and its deployment gates; Rulings 64-68); the pin closes the MCP exposure PD-5 measured; reds first per the plan row",
+      "session": "cv-3",
+      "shortname": "cv-3-compile-call",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-13T18:45:14Z",
+      "summary": "CV-3 (Addendum D slice D-2) on lane/conversation-cv3, merged with origin/main 06791208. Shipped: LaneSessionOptions.Compile / CompileOn(model) — tools: [], the 30 denied names + mcp__*, strictMcpConfig: true (admitted by PD-5 run 2's measurement: the repository's .mcp.json server spawned as the operator at session/new under tools: [] + mcp__*), model from the binding — asserted as an exact key set on the wire in Core and through the host; the engine's child never inherits CLAUDE_CODE_EXECUTABLE / NODE_OPTIONS / NODE_PATH (removals reported) and the compile child carries CLAUDE_CODE_MAX_OUTPUT_TOKENS=4096; SpawnContract.AuthorizeBinding (the identity half; Authorize unchanged in order; the same AP-0009..13 from both entry points; R0 not refused); CompileCallHost opening compile-call.compose (Roots == 0; a run after it reads 1), the pin verified per call against ~/.aide/proof/compile-pin-spike.json (adapter file and vendored CLI rehashed; pin_verify_ms), one linked deadline over Start → close (silent at initialize → timed_out naming the step; a late answer discarded and counted from the plane's post-deadline queue; a reply past 16,384 chars cut as malformed naming the bound; the engine disposed before the receipt), the receipt with the wire's text/usage/model_observed/latency/counts; gate 1 as CompileModeGate (CE-0016 missing, CE-0017 triple mismatch, CE-0018 frame log unverifiable, CE-0019 recount ≠ 0, CE-0022 run not ended, CE-0023 pin identity mismatch; agentic CE-0020 naming Gate 2; SetCompileMode through the gate); Prepare under an agentic rung (PrepareAsync: open lines only, the typed boundary the only reader, the called row with tool_calls/permission_requests → suspect, derived rows with call_seq, reuse after a success with a reused receipt, no reuse after a failure, the skipped call, Cancel, stale, keep/edit as operator rows, Ruling 75 fired on the projected block); CompileLine's strings and the STA walk of the four states; the harness (score.py: num/den only, the split witness, dedup by originating call, degraded over every model call, --self-test red-first; derive-fixtures.py: --affirm on tracked paths). PD-5 run 2 under the widened pin RUN-RECORDED as ABORTED: a toolless session emitted <invoke name=\"Read\"> XML as text in an unbounded loop (5,843 chunks, ~20k output tokens) until the node killed the harness — the consented ~12k exceeded; the harness now bounds each prompt (60 s / 2,000 chunks) and assert-spike refuses a run that did not end; run 3 is an attended row needing the operator's consent. Reviews: Security & Identity BLOCK → its six clear-whens applied except the model_observed drift trigger (CV-4) and usage on timeout (usage_update carries context size) — the veto is the conductor's to clear (loop 2); AI Systems Engineer and Test Architect PASS-WITH-CONDITIONS, conditions applied or recorded; the Simplifier not convened (the budget cap fired). Gates: 4 builds 0/0 with warnings as errors; App 876 / Core 2,532 before the round, the affected suites re-run green after; verify-test-run + run-verify-gates re-run at close (see the Proof Pack's gate record). Proof Pack docs/proof/compile-call.md; three defect classes DC-184/185/186 (placeholders). The stop budget (6,000 s) fired during the review round — reported, not a termination argument.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2E7ET1AGSMQ3XJFCP0W42MD",
-      "shortname": "join-cv3",
-      "datetime": "2026-09-13T20:31:06Z",
-      "session": "claude-conductor-addendum-c",
-      "prompt": "keep going (the join of CV-3 after Security's loop 2)",
-      "summary": "Join: CV-3 (9f3ef860) merged to main clean after the Security lens's loop 2 cleared the veto CLEAR-WITH-CONDITIONS (C1: the spike's (c) asserts zero MCP messages under strictMcpConfig and the proof artifact is written only after the oracle passes; C2: the spike's child env mirrors StartInfoFor - both harness-only, before run 3). settingSources: [] (Security's minimum-privilege suggestion) NOT adopted: the accepted spec (page one #4, A12.3, :462, :621) makes the constitution reach the compiler by harness load; the repository settings.json env surface is a finding for the Owner. DC-184..186 self-allocated by the node, sequence unbroken; CE- family to 0023. Recount App 882 / Core 2559 = 2389 + 170. agentic-advisory stays unreachable (CE-0016) until run 3.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/compile-call.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Land CV-3 on main with the veto's disposition recorded, the floors recounted, and a Release build",
+      "datetime": "2026-09-13T20:31:06Z",
       "done_when": "main pushed green through run-verify-gates; Release built; C1/C2 queued for the conductor before run 3",
+      "goal": "Land CV-3 on main with the veto's disposition recorded, the floors recounted, and a Release build",
+      "id": "al-01M2E7ET1AGSMQ3XJFCP0W42MD",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (the join of CV-3 after Security's loop 2)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-cv3",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
-      }
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Join: CV-3 (9f3ef860) merged to main clean after the Security lens's loop 2 cleared the veto CLEAR-WITH-CONDITIONS (C1: the spike's (c) asserts zero MCP messages under strictMcpConfig and the proof artifact is written only after the oracle passes; C2: the spike's child env mirrors StartInfoFor - both harness-only, before run 3). settingSources: [] (Security's minimum-privilege suggestion) NOT adopted: the accepted spec (page one #4, A12.3, :462, :621) makes the constitution reach the compiler by harness load; the repository settings.json env surface is a finding for the Owner. DC-184..186 self-allocated by the node, sequence unbroken; CE- family to 0023. Recount App 882 / Core 2559 = 2389 + 170. agentic-advisory stays unreachable (CE-0016) until run 3.",
+      "tags": [],
+      "tool": null
     },
     {
-      "id": "al-01M2E7YZ0MX84XWV0N3R6C5V3H",
-      "shortname": "pd-5-run-3-green-strict-mcp",
-      "datetime": "2026-09-13T20:39:55Z",
-      "session": "claude-conductor-addendum-c",
-      "prompt": "keep going (PD-5 run 3 under Security's conditions)",
-      "summary": "PD-5 run 3 (frames/2026-09-13T20-36-02-970Z), the conductor on the operator's subscription: GREEN on the pin's letter with strictMcpConfig: true - 0 tool_call, 0 permission requests, 0 bytes at the fixture's MCP server (the .mcp.json server was never loaded: run 1's exposure closed on the wire), fixture and remote unchanged; three prompts end_turn, 6,176 output tokens. Gate-1 artifact published to ~/.aide/proof/ after the oracle (C1). Findings: tool-call XML as text (25 invoke blocks incl. a fabricated system-reminder and a fabricated memory - verified absent from the operator's memory dir) and a confabulated 'I called Read/Write/Bash' - the compile validator must read XML as malformed; the 4096 output cap is not a hard per-turn cap (4,608 observed). (f) re-pointed: XML-as-text is reported, not the pin's failure (C1 asserts the wire).",
-      "kind": "skill",
-      "skill": "investigate",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/compile-pin-spike.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Close the pin's MCP exposure on the wire and publish gate 1's artifact under the conditions Security set",
+      "datetime": "2026-09-13T20:39:55Z",
       "done_when": "run 3 GREEN with (c) at zero MCP messages; artifact under ~/.aide/proof/; frames committed; the proof's third-run section written",
-      "tier": "T1",
+      "goal": "Close the pin's MCP exposure on the wire and publish gate 1's artifact under the conditions Security set",
+      "id": "al-01M2E7YZ0MX84XWV0N3R6C5V3H",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (PD-5 run 3 under Security's conditions)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "pd-5-run-3-green-strict-mcp",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
-      }
+        "verification_path": true
+      },
+      "skill": "investigate",
+      "summary": "PD-5 run 3 (frames/2026-09-13T20-36-02-970Z), the conductor on the operator's subscription: GREEN on the pin's letter with strictMcpConfig: true - 0 tool_call, 0 permission requests, 0 bytes at the fixture's MCP server (the .mcp.json server was never loaded: run 1's exposure closed on the wire), fixture and remote unchanged; three prompts end_turn, 6,176 output tokens. Gate-1 artifact published to ~/.aide/proof/ after the oracle (C1). Findings: tool-call XML as text (25 invoke blocks incl. a fabricated system-reminder and a fabricated memory - verified absent from the operator's memory dir) and a confabulated 'I called Read/Write/Bash' - the compile validator must read XML as malformed; the 4096 output cap is not a hard per-turn cap (4,608 observed). (f) re-pointed: XML-as-text is reported, not the pin's failure (C1 asserts the wire).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2E8K6HNC6NB43EXJS27PHRS",
-      "shortname": "cv-5-3-the-conversation",
-      "datetime": "2026-09-13T20:50:58Z",
-      "session": "cv-5-3",
-      "prompt": "You are track **CV-5.3** of the Conversation lane — **Ruling 82: the thread renders the conversation** — prose · reasoning · tool call+result · outcome, interleaved in event order, over the `Coalesce` rows CV-5.2 landed; `agent_thought_chunk` becomes a mapper row. Run the **`/implement`** skill (Skill tool: `implement`, args: `CV-5.3: the conversation — the agent.thought mapper row (spike-first: capture a real agent_thought_chunk frame), the items projection over Coalesce (prose · reasoning · tool call+result · outcome in event order), the thread's reply side rendering the items with the outcome line last, reasoning collapsed/muted/never announced, prose as the markdown subset with no link activation, tool items with kind·title·status and detail on demand, interrupted on a stopped turn (Ruling 82; DESIGN.md errata after Rulings 80-82)`). Tier T2, fan-out cap 3 (reviews read-only). The conductor is Claude Opus (session `conductor-addendum-c`). Read `C:\\projects\\ai-de\\CLAUDE.md` and `AGENTS.md`; the pack applies in full (red first; smallest correct; the UX & Accessibility hard veto on the rendered thread; the Test Architect's veto; SC9 — reasoning is never spoken; DC-135). Use `python`, not `python3`; `$env:PYTHONIOENCODING='utf-8'`; `$env:MSBUILDDISABLENODEREUSE='1'` before any `dotnet`.\n\n**The operator's words (the decision):** *\"the output should show the conversation and reasoning - just like in CLI - seems like it shows results and tool calls instead.\"* Their screenshot showed the thread rendering the final markdown as raw text (`## Gaps I noticed`, `| What | Result |`, `|---|---|`) and the Console as chunks. **The rulings:** `docs/notes/addendum-c-council-rulings.md` **Ruling 82** (read whole; the Owner's filing note leaves the thinking idiom's rendering to the design — read D3's answer), 81 (the fold you render), 87 (UTF-8 — landed). **The design:** `DESIGN.md` §\"Errata after Rulings 80–82 and 87\" (line ~1208: the reply = the conversation over `Coalesce`; events → tool/reasoning items (+ *interrupted*); SC7; SC8 as amended — the entry stop is the first action on a live/failed last turn, Shift+Tab path, scrollable regions, in-place update; SC9; the new chat-like rows; motion; copy), the mockup `docs/mockups/session-conversation.html` states *conversation* (Thinking + detail open, rendered markdown, `—`/`§` intact) and the stopped/failed turns with *interrupted* tool items, the review `docs/reviews/ui-operator-findings-2026-09-13.md` §7 CV-5.3 row (your oracles, verbatim below) and §3 (the CLI idiom named from use: streamed prose, collapsed *thinking*, tool calls with title/status and a disclosure for input/result, then the result). **The code:** `src/AiDe.Core/Presentation/Sessions/Coalesce.cs` (`TurnRow(At, Lane, Kind, Text, Chunks)`, `Coalesce.Rows`; `MessageKind`, `ThoughtKind` already named), `RunChannelSessionThread.cs` (`TurnView.Rows`), `src/AiDe.App/Workbench/Sessions/ThreadFeed*.cs`/`TurnItem` (the reply side; `ThreadFeed.Text/Clock/Segment/StderrInk/Visible` — the shared row grammar), `ConsoleSurface.cs` (the split — leave its grain), `src/AiDe.Core/AgentPlane/AcpRunEventMapper.cs` (`RecognizedSessionUpdates`: adding a kind is adding a row; the 88-frame round-trip in `AcpRunEventMapperTests` over `spikes/acp-subscription-lane/frames/`), `ThreadAnnouncementPolicy`.\n\n## Your worktree — the only tree you write to\n`C:\\Projects\\ai-de-lane-conversation-cv5-3`, branch `lane/conversation-cv5-3`, HEAD = `main` `06791208` (CV-5.2 joined). From inside it:\n```\n$env:AGENT_SESSION='cv-5-3'; $env:AGENT_NAME='claude-cv-5-3'; $env:PYTHONIOENCODING='utf-8'; $env:MSBUILDDISABLENODEREUSE='1'\npython docs/ai-forward-pack/scripts/audit-log.py start --session cv-5-3\n```\nLeases (DC-163): claim a shared file for the minutes of the edit, default TTL (`coord-core.py claim --path <file> --wi CV-5-3`), release right after; never claim the defect register — placeholders `DC-nnn (CV-5-3 a)`; the conductor allocates (next free is DC-184; other nodes may take some). Never `taskkill`, never `reap-stragglers.py --reap`, never `verify-test-run.py --update`. Every `WorkbenchShell` a test composes is `using var`. Live beside you: **CV-3** (`lane/conversation-cv3`) on `AcpLaneClient.cs`, `AcpEngineProcess.cs`, `Conductor/CompileCallHost.cs`, `GoalBlock.cs`, `Sessions/**` settings, `tools/compile-eval/**` — **`AcpRunEventMapper.cs` is yours, not CV-3's** (its row is the seam; tell the conductor if CV-3 touches it); **SH-4.1** (`lane/shell-sh4`) on the perspectives, allow-lists, `ZoneLayout`, `SurfaceContentFactory`, `MainWindow.xaml` — not yours.\n\n## Spike first (Ruling 82 condition 1 — the row's shape is Inferred until a frame exists)\nCapture a real `agent_thought_chunk` frame into `spikes/acp-subscription-lane/frames/` with a probe like `probe-read.js` (the installed adapter under that spike's `node_modules/`; a prompt that provokes extended thinking — e.g. a small reasoning puzzle; a pinned read-only session is fine: `_meta.claudeCode.options: { tools: [], disallowedTools: [...] }` as `docs/proof/compile-pin-spike.json` records). **You may make this one model call** on the operator's subscription (the conductor carries the operator's consent for evidence-producing runs); record the frames with the same email redaction `spikes/compile-session-pin-wire/run-spike.js` applies (copy its `redact`); one run. If no thought chunk arrives (the model may not emit one), record that as the finding, try one different prompt, and if still none, land the mapper row on the schema's documented shape labelled Inferred with the attempt recorded — do not fabricate a frame.\n\n## Oracles (D3's, verbatim; each red before its green, the red run in the Proof Pack)\n- **M1** `AgentPlane/AcpRunEventMapperTests.AnAgentThoughtChunk_MapsToAgentThought_WithItsTextInBody` — red today (falls to `acp.session.update.agent_thought_chunk`, empty body); the round-trip becomes 89 frames and stays green.\n- **I1** `Presentation/Sessions/ConversationItemsTests.ItemsOverTheFold_AreProseReasoningToolAndOutcome_InEventOrder` — pure over `Coalesce` rows: a `tool.call` + its `tool.result`s by id → one item with the last result's status; a result with no call → an event row, never dropped; `acp.*` → counted into *N events*, never an item; order preserved; a `[Theory]` over the five turns' goldens + `b17`.\n- **T1** `Sessions/ThreadFeedTests.TheReplySide_RendersItemsThenTheOutcomeLine_AndFoldsOnlyNonConversationRows` — headless WPF; falsifiers: a `TextBlock` whose text contains `##` or `|---|`; the outcome line before the items; a tool item absent; *N events* counting a conversation row.\n- **T2** `…TheReasoningItem_IsCollapsedByDefault_MutedAndNeverAnnounced` — `RecordingAnnouncer` records 0 across a 40-chunk thought stream; the disclosure's `ExpandCollapsePattern` is `Collapsed`; ink `TextMutedBrush`; no `LiveSetting` on it.\n- **T3** `…ProseRendersTheMarkdownSubset_WithNoLinkActivation` — `[t](url)` yields text with no `Hyperlink` and no `InvokePattern`; headings, lists, code, tables as goldens (the subset is your design-slice question — name it in the Proof Pack; the markdown renderer is a reuse-in-codebase question first: check what the composer's web page and `docs/_site` already render with before adding anything; a WPF `FlowDocument`/`TextBlock` subset built by hand is acceptable if ≤ 200 lines and golden-tested).\n- **T4** `…AToolItem_ShowsKindTitleStatus_AndItsDetailOnDemand` — `Read x` · `done`; a failed result → `failed` in `DangerBrush`; the detail pre carries input then result.\n- **T5** `…AToolCallWithNoResultOnANonLiveTurn_ReadsInterrupted_NeverRunning` — a stopped turn whose last event is a `tool.call`: the item's status word is *interrupted*, static, muted; a ring or *running* fails.\n- **T6** `…AFailedPastTurn_RendersItsConversation_AndFoldsOnlyItsActions` — `b17` at 40 turns: its Thinking and tool items present; no action buttons.\n- **T7** `…TheToolKindIsAWord_AndTheLinkIsTextWithItsUrl` — the kind reaches UIA as text (1.1.1); `[t](url)` renders *t (url)* with no `Hyperlink`.\n- **T8** `…AStatusChange_UpdatesTheItemInPlace_FocusSurvives` — focus on a running item's detail; the result arrives; `Keyboard.FocusedElement` unchanged (DS-1 Q10 for items).\n- **T9** `…OnARunningLastTurn_TheEntryStopIsStop_AndShiftTabFromTheEditorLandsThere` (SC8 as amended).\n- **A1 (attended, RUN-PENDING with steps):** the operator's screenshot-3 turn re-sent on the new build renders no markdown source.\n- Keep green: DS-1's oracles, CV-5.2's C1–C4, `ShellContrastCensusTests` (your new rows walked; 0 below floor — the census's reach to the split is a routed finding, not yours), `ThreadAnnouncementPolicy` (SC9: once per outcome; reasoning rows never).\n\n## Floors\n- E7 in the Proof Pack: mapper row → `Coalesce` (thought runs already fold) → `ConversationItems` (Core, pure) → `TurnView` → `TurnItem`'s reply side (items, the outcome line last, the fold of non-conversation rows) → the reasoning disclosure → the tool item + detail → the markdown subset → UIA names/patterns → announcements → tests + the spike's frame.\n- Reviews (read-only, ≤ 3, loop cap 2): **UX & Accessibility (hard)** on the rendered reply (the kind as text, no hover-only URL, keyboard-scrollable detail, the reasoning item's silence, contrast of the muted ink); **Test Architect (hard)** on I1's theory and T1's falsifiers; the Simplifier on the items projection (no second store; no grouping rule — D3 deleted it at the Simplifier's veto).\n- Gates at close: `dotnet build` Core + App + both test projects `-p:TreatWarningsAsErrors=true`; both full test projects (`--logger trx`; > 10 min is a hang — `dotnet-stack report -p <testhost pid>`); `python tools/run-verify-gates.py`; `regenerate-derived.py` after the audit entry.\n- Audit entry (`--shortname cv-5-3-the-conversation --session cv-5-3 --skill implement --kind skill --tier T2 --fan-out 3 --git …` + `--goal` + `--done-when` + `--artifact docs/proof/the-conversation.md` + signals), Proof Pack `docs/proof/the-conversation.md`, commits in sensible units (the spike's frame and the mapper row first) with the Co-Authored-By / Claude-Session trailers, then `git push -u origin lane/conversation-cv5-3`. Do not merge to `main`; merge `origin/main` before close if it moved — never rebase. Release claims. **Rebuild Release** at the end and report the ProductVersion.\n\n## Fails if (stop and report)\nA fabricated thought frame; reasoning text announced; a `Hyperlink` in prose; a second store of the reply; a grouping rule over tool items; a write to `ConsoleSurface`'s grain, to SH-4's files, to CV-3's files (other than the mapper row), or to `DESIGN.md`/`docs/mockups/**`; a red made green by weakening; `verify-test-run.py --update`; `git stash`; a rebase; a push to `main`.\n\n## Report back (compact)\nThe spike's outcome (a thought frame captured, its shape; or the two attempts and the Inferred shape); M1, I1, T1–T9 red → green (names, before/after); the markdown subset chosen and why; what the operator's screenshot-3 turn renders now (a description); reviews raised/cleared; gate table; new classes (placeholders); commit shas, the pushed sha, the Release ProductVersion; A1's steps.",
-      "summary": "CV-5.3 (Ruling 82): the thread renders the conversation. Spike: probe-thought.js captured a real agent_thought_chunk (19 chunks; shape update.content.text, Verified; the adapter forwards a thought only under thinking.display \"summarized\" — a finding routed to the conductor for AcpLaneClient/CV-3). Mapper row agent.thought (M1 red first; the corpus round-trip over 6 files / 156 frames). Found by the frame: TextOf's blank-means-absent fallback folded the literal kind into a \"\\n\\n\" chunk — fixed red-first (DC-nnn (CV-5-3 a)). Core: ToolFacts (what a tool frame states, read once at the sink), EventLine.Tool / TurnRow.Tool; ConversationItems — the one pure projection over Coalesce rows (a call and its results by id are one item with the last result's status; a result with no call an event row; acp.* events; order kept; no grouping rule); TurnView.Items; ProseMarkdown — the subset (ATX headings 1–3, paragraphs, bullets, numbered lists, fenced code, pipe tables; code/bold/italic/inert links) with a seeded D2 property; a simplify: marker naming ADR-0025's Markdig.Wpf as the upgrade trigger. App: ConversationRow (in-place rows; the disclosure state on the row), ProseView (blocks → ThreadText inlines; HeadingLevel; a link is text + URL, never a Hyperlink), the reasoning item (Thinking, collapsed, muted, never announced), the tool item (kind as a word · title trimmed at half the measure · status word with the ring · detail as a named keyboard-scrollable region with a focus ring), the outcome line last with the fold over non-conversation rows only, interrupted on a non-live turn, the entry stop on a live/failed last turn (TabIndex 0 in a local scope; FocusCurrentItemLast), the Console's thought row. Oracles I1 (8 goldens incl. b7-parallel + 4 facts incl. the two captured runs), the markdown goldens, T1–T12 and the split's thought row red → green; the moved DS-1/CV-5.2 oracles re-pointed with Ruling 82 named. Reviews: UX & Accessibility PASS-with-conditions (F1/F2/F3/F5/F6 applied + minors), Test Architect PASS-with-conditions (all five applied; 7c recorded), Simplifier PASS-with-conditions (the marker; −40 of −55 applied, two declined with reasons). TextBlock.Text is empty for inline-built content (Verified by probe): the harness reads the plain text (DC-nnn (CV-5-3 b)). Proof Pack docs/proof/the-conversation.md; A1 RUN-PENDING with steps.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/the-conversation.md",
@@ -14991,65 +14982,65 @@ window.AUDIT_DATA = {
         "tests/AiDe.App.Tests/Sessions/ThreadFeedTests.cs",
         "docs/lessons/defect-classes.md"
       ],
+      "datetime": "2026-09-13T20:50:58Z",
+      "done_when": "The spike's real agent_thought_chunk frame in the corpus; M1, I1 (goldens + the two captured runs), the markdown goldens + the D2 property, T1–T12 and the split's thought row red then green; DS-1's, CV-5.2's C1–C4, the census and the announcement policy green; builds warnings-as-errors; both suites via verify-test-run (App 895 / Core 2591 on the merged tree); run-verify-gates green; the three read-only reviews cleared (UX & Accessibility hard, Test Architect hard, the Simplifier); Proof Pack docs/proof/the-conversation.md; two classes as placeholders; pushed to lane/conversation-cv5-3; Release ProductVersion reported; A1 RUN-PENDING with steps.",
+      "duration_seconds": 5021.0,
+      "fan_out": 3,
+      "git": {
+        "branch": "lane/conversation-cv5-3",
+        "pushed": null,
+        "sha": "7fecb32c688b9ec549308b4693f974be8b665511",
+        "short": "7fecb32c6"
+      },
+      "goal": "Ruling 82 landed on the Conversation lane: the thread's reply side renders the conversation — prose (the markdown subset, no link activation) · reasoning (collapsed, muted, never announced) · tool call+result (kind · title · status · detail on demand; interrupted on a non-live turn) · the outcome line last with the fold over non-conversation rows — as one pure ConversationItems projection over Coalesce rows; agent_thought_chunk is a mapper row whose shape is Verified from a captured frame.",
+      "id": "al-01M2E8K6HNC6NB43EXJS27PHRS",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "You are track **CV-5.3** of the Conversation lane — **Ruling 82: the thread renders the conversation** — prose · reasoning · tool call+result · outcome, interleaved in event order, over the `Coalesce` rows CV-5.2 landed; `agent_thought_chunk` becomes a mapper row. Run the **`/implement`** skill (Skill tool: `implement`, args: `CV-5.3: the conversation — the agent.thought mapper row (spike-first: capture a real agent_thought_chunk frame), the items projection over Coalesce (prose · reasoning · tool call+result · outcome in event order), the thread's reply side rendering the items with the outcome line last, reasoning collapsed/muted/never announced, prose as the markdown subset with no link activation, tool items with kind·title·status and detail on demand, interrupted on a stopped turn (Ruling 82; DESIGN.md errata after Rulings 80-82)`). Tier T2, fan-out cap 3 (reviews read-only). The conductor is Claude Opus (session `conductor-addendum-c`). Read `C:\\projects\\ai-de\\CLAUDE.md` and `AGENTS.md`; the pack applies in full (red first; smallest correct; the UX & Accessibility hard veto on the rendered thread; the Test Architect's veto; SC9 — reasoning is never spoken; DC-135). Use `python`, not `python3`; `$env:PYTHONIOENCODING='utf-8'`; `$env:MSBUILDDISABLENODEREUSE='1'` before any `dotnet`.\n\n**The operator's words (the decision):** *\"the output should show the conversation and reasoning - just like in CLI - seems like it shows results and tool calls instead.\"* Their screenshot showed the thread rendering the final markdown as raw text (`## Gaps I noticed`, `| What | Result |`, `|---|---|`) and the Console as chunks. **The rulings:** `docs/notes/addendum-c-council-rulings.md` **Ruling 82** (read whole; the Owner's filing note leaves the thinking idiom's rendering to the design — read D3's answer), 81 (the fold you render), 87 (UTF-8 — landed). **The design:** `DESIGN.md` §\"Errata after Rulings 80–82 and 87\" (line ~1208: the reply = the conversation over `Coalesce`; events → tool/reasoning items (+ *interrupted*); SC7; SC8 as amended — the entry stop is the first action on a live/failed last turn, Shift+Tab path, scrollable regions, in-place update; SC9; the new chat-like rows; motion; copy), the mockup `docs/mockups/session-conversation.html` states *conversation* (Thinking + detail open, rendered markdown, `—`/`§` intact) and the stopped/failed turns with *interrupted* tool items, the review `docs/reviews/ui-operator-findings-2026-09-13.md` §7 CV-5.3 row (your oracles, verbatim below) and §3 (the CLI idiom named from use: streamed prose, collapsed *thinking*, tool calls with title/status and a disclosure for input/result, then the result). **The code:** `src/AiDe.Core/Presentation/Sessions/Coalesce.cs` (`TurnRow(At, Lane, Kind, Text, Chunks)`, `Coalesce.Rows`; `MessageKind`, `ThoughtKind` already named), `RunChannelSessionThread.cs` (`TurnView.Rows`), `src/AiDe.App/Workbench/Sessions/ThreadFeed*.cs`/`TurnItem` (the reply side; `ThreadFeed.Text/Clock/Segment/StderrInk/Visible` — the shared row grammar), `ConsoleSurface.cs` (the split — leave its grain), `src/AiDe.Core/AgentPlane/AcpRunEventMapper.cs` (`RecognizedSessionUpdates`: adding a kind is adding a row; the 88-frame round-trip in `AcpRunEventMapperTests` over `spikes/acp-subscription-lane/frames/`), `ThreadAnnouncementPolicy`.\n\n## Your worktree — the only tree you write to\n`C:\\Projects\\ai-de-lane-conversation-cv5-3`, branch `lane/conversation-cv5-3`, HEAD = `main` `06791208` (CV-5.2 joined). From inside it:\n```\n$env:AGENT_SESSION='cv-5-3'; $env:AGENT_NAME='claude-cv-5-3'; $env:PYTHONIOENCODING='utf-8'; $env:MSBUILDDISABLENODEREUSE='1'\npython docs/ai-forward-pack/scripts/audit-log.py start --session cv-5-3\n```\nLeases (DC-163): claim a shared file for the minutes of the edit, default TTL (`coord-core.py claim --path <file> --wi CV-5-3`), release right after; never claim the defect register — placeholders `DC-nnn (CV-5-3 a)`; the conductor allocates (next free is DC-184; other nodes may take some). Never `taskkill`, never `reap-stragglers.py --reap`, never `verify-test-run.py --update`. Every `WorkbenchShell` a test composes is `using var`. Live beside you: **CV-3** (`lane/conversation-cv3`) on `AcpLaneClient.cs`, `AcpEngineProcess.cs`, `Conductor/CompileCallHost.cs`, `GoalBlock.cs`, `Sessions/**` settings, `tools/compile-eval/**` — **`AcpRunEventMapper.cs` is yours, not CV-3's** (its row is the seam; tell the conductor if CV-3 touches it); **SH-4.1** (`lane/shell-sh4`) on the perspectives, allow-lists, `ZoneLayout`, `SurfaceContentFactory`, `MainWindow.xaml` — not yours.\n\n## Spike first (Ruling 82 condition 1 — the row's shape is Inferred until a frame exists)\nCapture a real `agent_thought_chunk` frame into `spikes/acp-subscription-lane/frames/` with a probe like `probe-read.js` (the installed adapter under that spike's `node_modules/`; a prompt that provokes extended thinking — e.g. a small reasoning puzzle; a pinned read-only session is fine: `_meta.claudeCode.options: { tools: [], disallowedTools: [...] }` as `docs/proof/compile-pin-spike.json` records). **You may make this one model call** on the operator's subscription (the conductor carries the operator's consent for evidence-producing runs); record the frames with the same email redaction `spikes/compile-session-pin-wire/run-spike.js` applies (copy its `redact`); one run. If no thought chunk arrives (the model may not emit one), record that as the finding, try one different prompt, and if still none, land the mapper row on the schema's documented shape labelled Inferred with the attempt recorded — do not fabricate a frame.\n\n## Oracles (D3's, verbatim; each red before its green, the red run in the Proof Pack)\n- **M1** `AgentPlane/AcpRunEventMapperTests.AnAgentThoughtChunk_MapsToAgentThought_WithItsTextInBody` — red today (falls to `acp.session.update.agent_thought_chunk`, empty body); the round-trip becomes 89 frames and stays green.\n- **I1** `Presentation/Sessions/ConversationItemsTests.ItemsOverTheFold_AreProseReasoningToolAndOutcome_InEventOrder` — pure over `Coalesce` rows: a `tool.call` + its `tool.result`s by id → one item with the last result's status; a result with no call → an event row, never dropped; `acp.*` → counted into *N events*, never an item; order preserved; a `[Theory]` over the five turns' goldens + `b17`.\n- **T1** `Sessions/ThreadFeedTests.TheReplySide_RendersItemsThenTheOutcomeLine_AndFoldsOnlyNonConversationRows` — headless WPF; falsifiers: a `TextBlock` whose text contains `##` or `|---|`; the outcome line before the items; a tool item absent; *N events* counting a conversation row.\n- **T2** `…TheReasoningItem_IsCollapsedByDefault_MutedAndNeverAnnounced` — `RecordingAnnouncer` records 0 across a 40-chunk thought stream; the disclosure's `ExpandCollapsePattern` is `Collapsed`; ink `TextMutedBrush`; no `LiveSetting` on it.\n- **T3** `…ProseRendersTheMarkdownSubset_WithNoLinkActivation` — `[t](url)` yields text with no `Hyperlink` and no `InvokePattern`; headings, lists, code, tables as goldens (the subset is your design-slice question — name it in the Proof Pack; the markdown renderer is a reuse-in-codebase question first: check what the composer's web page and `docs/_site` already render with before adding anything; a WPF `FlowDocument`/`TextBlock` subset built by hand is acceptable if ≤ 200 lines and golden-tested).\n- **T4** `…AToolItem_ShowsKindTitleStatus_AndItsDetailOnDemand` — `Read x` · `done`; a failed result → `failed` in `DangerBrush`; the detail pre carries input then result.\n- **T5** `…AToolCallWithNoResultOnANonLiveTurn_ReadsInterrupted_NeverRunning` — a stopped turn whose last event is a `tool.call`: the item's status word is *interrupted*, static, muted; a ring or *running* fails.\n- **T6** `…AFailedPastTurn_RendersItsConversation_AndFoldsOnlyItsActions` — `b17` at 40 turns: its Thinking and tool items present; no action buttons.\n- **T7** `…TheToolKindIsAWord_AndTheLinkIsTextWithItsUrl` — the kind reaches UIA as text (1.1.1); `[t](url)` renders *t (url)* with no `Hyperlink`.\n- **T8** `…AStatusChange_UpdatesTheItemInPlace_FocusSurvives` — focus on a running item's detail; the result arrives; `Keyboard.FocusedElement` unchanged (DS-1 Q10 for items).\n- **T9** `…OnARunningLastTurn_TheEntryStopIsStop_AndShiftTabFromTheEditorLandsThere` (SC8 as amended).\n- **A1 (attended, RUN-PENDING with steps):** the operator's screenshot-3 turn re-sent on the new build renders no markdown source.\n- Keep green: DS-1's oracles, CV-5.2's C1–C4, `ShellContrastCensusTests` (your new rows walked; 0 below floor — the census's reach to the split is a routed finding, not yours), `ThreadAnnouncementPolicy` (SC9: once per outcome; reasoning rows never).\n\n## Floors\n- E7 in the Proof Pack: mapper row → `Coalesce` (thought runs already fold) → `ConversationItems` (Core, pure) → `TurnView` → `TurnItem`'s reply side (items, the outcome line last, the fold of non-conversation rows) → the reasoning disclosure → the tool item + detail → the markdown subset → UIA names/patterns → announcements → tests + the spike's frame.\n- Reviews (read-only, ≤ 3, loop cap 2): **UX & Accessibility (hard)** on the rendered reply (the kind as text, no hover-only URL, keyboard-scrollable detail, the reasoning item's silence, contrast of the muted ink); **Test Architect (hard)** on I1's theory and T1's falsifiers; the Simplifier on the items projection (no second store; no grouping rule — D3 deleted it at the Simplifier's veto).\n- Gates at close: `dotnet build` Core + App + both test projects `-p:TreatWarningsAsErrors=true`; both full test projects (`--logger trx`; > 10 min is a hang — `dotnet-stack report -p <testhost pid>`); `python tools/run-verify-gates.py`; `regenerate-derived.py` after the audit entry.\n- Audit entry (`--shortname cv-5-3-the-conversation --session cv-5-3 --skill implement --kind skill --tier T2 --fan-out 3 --git …` + `--goal` + `--done-when` + `--artifact docs/proof/the-conversation.md` + signals), Proof Pack `docs/proof/the-conversation.md`, commits in sensible units (the spike's frame and the mapper row first) with the Co-Authored-By / Claude-Session trailers, then `git push -u origin lane/conversation-cv5-3`. Do not merge to `main`; merge `origin/main` before close if it moved — never rebase. Release claims. **Rebuild Release** at the end and report the ProductVersion.\n\n## Fails if (stop and report)\nA fabricated thought frame; reasoning text announced; a `Hyperlink` in prose; a second store of the reply; a grouping rule over tool items; a write to `ConsoleSurface`'s grain, to SH-4's files, to CV-3's files (other than the mapper row), or to `DESIGN.md`/`docs/mockups/**`; a red made green by weakening; `verify-test-run.py --update`; `git stash`; a rebase; a push to `main`.\n\n## Report back (compact)\nThe spike's outcome (a thought frame captured, its shape; or the two attempts and the Inferred shape); M1, I1, T1–T9 red → green (names, before/after); the markdown subset chosen and why; what the operator's screenshot-3 turn renders now (a description); reviews raised/cleared; gate table; new classes (placeholders); commit shas, the pushed sha, the Release ProductVersion; A1's steps.",
+      "session": "cv-5-3",
+      "shortname": "cv-5-3-the-conversation",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-13T19:27:17Z",
+      "summary": "CV-5.3 (Ruling 82): the thread renders the conversation. Spike: probe-thought.js captured a real agent_thought_chunk (19 chunks; shape update.content.text, Verified; the adapter forwards a thought only under thinking.display \"summarized\" — a finding routed to the conductor for AcpLaneClient/CV-3). Mapper row agent.thought (M1 red first; the corpus round-trip over 6 files / 156 frames). Found by the frame: TextOf's blank-means-absent fallback folded the literal kind into a \"\\n\\n\" chunk — fixed red-first (DC-nnn (CV-5-3 a)). Core: ToolFacts (what a tool frame states, read once at the sink), EventLine.Tool / TurnRow.Tool; ConversationItems — the one pure projection over Coalesce rows (a call and its results by id are one item with the last result's status; a result with no call an event row; acp.* events; order kept; no grouping rule); TurnView.Items; ProseMarkdown — the subset (ATX headings 1–3, paragraphs, bullets, numbered lists, fenced code, pipe tables; code/bold/italic/inert links) with a seeded D2 property; a simplify: marker naming ADR-0025's Markdig.Wpf as the upgrade trigger. App: ConversationRow (in-place rows; the disclosure state on the row), ProseView (blocks → ThreadText inlines; HeadingLevel; a link is text + URL, never a Hyperlink), the reasoning item (Thinking, collapsed, muted, never announced), the tool item (kind as a word · title trimmed at half the measure · status word with the ring · detail as a named keyboard-scrollable region with a focus ring), the outcome line last with the fold over non-conversation rows only, interrupted on a non-live turn, the entry stop on a live/failed last turn (TabIndex 0 in a local scope; FocusCurrentItemLast), the Console's thought row. Oracles I1 (8 goldens incl. b7-parallel + 4 facts incl. the two captured runs), the markdown goldens, T1–T12 and the split's thought row red → green; the moved DS-1/CV-5.2 oracles re-pointed with Ruling 82 named. Reviews: UX & Accessibility PASS-with-conditions (F1/F2/F3/F5/F6 applied + minors), Test Architect PASS-with-conditions (all five applied; 7c recorded), Simplifier PASS-with-conditions (the marker; −40 of −55 applied, two declined with reasons). TextBlock.Text is empty for inline-built content (Verified by probe): the harness reads the plain text (DC-nnn (CV-5-3 b)). Proof Pack docs/proof/the-conversation.md; A1 RUN-PENDING with steps.",
       "tags": [
         "cv-5.3",
         "ruling-82",
         "conversation-lane",
         "spike"
       ],
-      "outcome": "success",
-      "goal": "Ruling 82 landed on the Conversation lane: the thread's reply side renders the conversation — prose (the markdown subset, no link activation) · reasoning (collapsed, muted, never announced) · tool call+result (kind · title · status · detail on demand; interrupted on a non-live turn) · the outcome line last with the fold over non-conversation rows — as one pure ConversationItems projection over Coalesce rows; agent_thought_chunk is a mapper row whose shape is Verified from a captured frame.",
-      "done_when": "The spike's real agent_thought_chunk frame in the corpus; M1, I1 (goldens + the two captured runs), the markdown goldens + the D2 property, T1–T12 and the split's thought row red then green; DS-1's, CV-5.2's C1–C4, the census and the announcement policy green; builds warnings-as-errors; both suites via verify-test-run (App 895 / Core 2591 on the merged tree); run-verify-gates green; the three read-only reviews cleared (UX & Accessibility hard, Test Architect hard, the Simplifier); Proof Pack docs/proof/the-conversation.md; two classes as placeholders; pushed to lane/conversation-cv5-3; Release ProductVersion reported; A1 RUN-PENDING with steps.",
       "tier": "T2",
-      "fan_out": 3,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "started_at": "2026-09-13T19:27:17Z",
-      "duration_seconds": 5021.0,
-      "git": {
-        "sha": "7fecb32c688b9ec549308b4693f974be8b665511",
-        "short": "7fecb32c6",
-        "branch": "lane/conversation-cv5-3",
-        "pushed": null
-      }
+      "tool": null
     },
     {
-      "id": "al-01M2E99D6Q9ADQG8CB018PZXWP",
-      "shortname": "join-cv5-3",
-      "datetime": "2026-09-13T21:03:06Z",
-      "session": "claude-conductor-addendum-c",
-      "prompt": "keep going (the join of CV-5.3)",
-      "summary": "Join: CV-5.3 (c1895ed3) merged to main clean; DC-187/188 allocated; recount App 895 / Core 2591 = 2421 + 170. The thread now renders the conversation: a captured agent_thought_chunk frame (19 frames) gives the agent.thought row; items over Coalesce (prose as the markdown subset with no Hyperlink, reasoning collapsed and never announced, tool call+result with detail, interrupted on a stopped turn, the outcome line last). Routed: the lane must send thinking.display summarized or no reasoning reaches the product (X-5, the conductor).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/the-conversation.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Land CV-5.3 on main with the floors recounted and a Release build",
+      "datetime": "2026-09-13T21:03:06Z",
       "done_when": "main pushed green through run-verify-gates; Release built; the thinking.display requirement queued",
+      "goal": "Land CV-5.3 on main with the floors recounted and a Release build",
+      "id": "al-01M2E99D6Q9ADQG8CB018PZXWP",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (the join of CV-5.3)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-cv5-3",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
-      }
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Join: CV-5.3 (c1895ed3) merged to main clean; DC-187/188 allocated; recount App 895 / Core 2591 = 2421 + 170. The thread now renders the conversation: a captured agent_thought_chunk frame (19 frames) gives the agent.thought row; items over Coalesce (prose as the markdown subset with no Hyperlink, reasoning collapsed and never announced, tool call+result with detail, interrupted on a stopped turn, the outcome line last). Routed: the lane must send thinking.display summarized or no reasoning reaches the product (X-5, the conductor).",
+      "tags": [],
+      "tool": null
     },
     {
-      "id": "al-01M2EDC3SXV2T2XFW9RKFDQV0V",
-      "shortname": "sh-4-1-coordination-perspective",
-      "datetime": "2026-09-13T22:14:29Z",
-      "session": "sh-4",
-      "prompt": "You are track SH-4.1 of the Shell lane — Ruling 84: Coordination is a fourth Perspective (host C, Ctrl+4, its own layout slot, the rail entry, the allow-list column) and the five Loomkeeper kinds (sessions · board · leaderboard · ledger · daydreams) move to it as a set; Coding admits none of them. Run the /implement skill (args: SH-4.1: the Coordination perspective — host C, Ctrl+4, the rail entry IconCoordination, the third layout slot file and its default, the allow-list column, the derived View menu, the pre-C restore's drop-with-report naming Coordination (Ruling 84; ADR-0030/31/32 as amended by docs/notes/adr-0030-0032-amendment-coordination.md)). Tier T2, fan-out cap 3 (reviews read-only). The conductor is Claude Opus (session conductor-addendum-c). The pack applies in full (red first; smallest correct; DC-135 — construct what the product constructs; the Test Architect's veto; UX & Accessibility on the rail and announcements; the WPF lens on the icon and host C).\n\nThe operator's words (the decision): \"the ledger-leaderboard-sessions-board views should be tied to a different left bar icon - coordination.\" The ruling: docs/notes/addendum-c-council-rulings.md Ruling 84 (and 83 for what Coding's Left becomes — SH-4.2's slice). The design: DESIGN.md §\"Errata after Rulings 83–84\"; the mockup docs/mockups/perspective-shell.html; the review docs/reviews/ui-operator-findings-2026-09-13.md §7 SH-4.1 row (the oracles P1–P7 and the attended rows P-1, P-4, the announcement \"Coordination perspective — 4 panes\" and the landing on the Left zone's active tab); Addendum C's appended errata block; docs/notes/adr-0030-0032-amendment-coordination.md.\n\nWorktree C:\\Projects\\ai-de-lane-shell-sh4, branch lane/shell-sh4, HEAD = main 560ea825. Leases (DC-163) for shared files; never claim the defect register — placeholders DC-nnn (SH-4 a); the conductor allocates (next free DC-182). Never taskkill, never reap-stragglers --reap, never verify-test-run.py --update. X-3 live on WorkbenchShell.cs/WorkbenchAnnouncer.cs/App.xaml/WebSurfaceHost.cs/WorkbenchDiagnostics.cs/WorkbenchCommands.cs/MainMenuBuilder.cs/CommandPalette.cs; CV-5 live on the session document, composer, thread, ConsoleSurface.\n\nFloors: E7 before coding in the Proof Pack; reviews read-only ≤ 3 (Test Architect hard on P2/P3/P6 mutation-shape; UX & Accessibility hard on the rail item and host C's empty states; the WPF lens on the glyph and host C); gates at close (dotnet build Core + App + both test projects -p:TreatWarningsAsErrors=true; both full test projects --logger trx; python tools/run-verify-gates.py; regenerate-derived.py after the audit entry); audit entry; Proof Pack docs/proof/coordination-perspective.md; commits with the attribution trailer; git push -u origin lane/shell-sh4; never merge to main; merge origin/main before close if it moved — never rebase; release claims; rebuild Release and report the ProductVersion.\n\nFails if: a schema field instead of a third slot file; a fifth kind left admitted by Coding; a full-window composite for Coordination; a write to CV-5's or X-3's files beyond the derived-menu contribution, or to DESIGN.md/docs/mockups; the Coding re-cut (SH-4.2); a red made green by weakening; verify-test-run.py --update; git stash; a rebase; a push to main.",
-      "summary": "SH-4.1 landed Ruling 84 on lane/shell-sh4: Coordination is the fourth Perspective — the registry row (\"coordination\", \"Coordination\", 4, DockHost, \"perspective.coordination\"), Ctrl+4 from Order, host C by DockHost.Create in WorkbenchShell (Hosts = A · B · C), the third slot file <layout>.coordination.zones.json by SlotPathFor, CoordinationDefault (Left = Terminal sessions · Center = Ledger · Leaderboard · Message board · Right empty · Bottom collapsed; Daydreams via the View menu), the five Loomkeeper kinds admitted by Coordination only (Coding admits none; CodingDefault's Left is empty as Ruling 84 forces — the Bottom and Center stay SH-4.2's), the derived View menu by construction, IconCoordination (a ring with three beads) beside IconCoding in MainWindow.xaml, the pre-C restore's drop-with-report naming Coordination and its gesture (\"They live in Coordination (Ctrl+4); open them from its View menu.\"; a mixed restore lists each pane once under its perspective). P1–P7 red → green with the red runs recorded; the census walks host B's and host C's bodies (138 → 170 sites, 0 below floor) and asserts the landing per host. Two defects found and fixed on the way, one class (placeholder SH-4 a): a docking view's active content after a body is (re)parented is the last-realized pane's — the adapter now asserts the model's active surface now and again at Loaded priority (both RestoreActive branches and ActivateInView; measured in the census window and the session-render replay, mutant-red headless), and the switch's landing is stated on the row (Perspective.Landing: Coordination → Left, Architecture → Center) and applied one dispatcher turn after the body's Loaded. Reviews: Test Architect veto cleared (findings 1–4, 7 applied); UX & Accessibility hard veto cleared, soft held then applied (the Sessions pane's copy and focus target, the once-listed mixed sentence, the beads, AcceleratorKey); WPF lens no escalation (its Major measured, confirmed and fixed). Proof Pack docs/proof/coordination-perspective.md; decision note docs/notes/sh4-coordination-landing-and-drop-sentence.md. Attended rows for the conductor: P-1 (UIA walk), P-4 (private_bytes_delta for host C), the announcement and landing under NVDA, the pre-C report on the operator's file, host C's empty states. Findings for D3/the conductor: two definitions of the drop sentence (DESIGN.md vs the P6 oracle); Daydreams' zone unspecified (lands beside Terminal sessions); the live region's channel truncates long reports (X-3's seam); SH-4.2 inherits the Coding landing rule and a Coding drag row.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/coordination-perspective.md",
@@ -15068,6 +15059,31 @@ window.AUDIT_DATA = {
         "tests/AiDe.App.Tests/Workbench/ZoneLayoutSlotsTests.cs",
         "tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs"
       ],
+      "datetime": "2026-09-13T22:14:29Z",
+      "done_when": "P1-P7 red then green; the existing suites green with the census walking host C; the gates green; the Proof Pack docs/proof/coordination-perspective.md, the audit entry and the push landed; Release rebuilt",
+      "duration_seconds": 5843.0,
+      "fan_out": 3,
+      "git": {
+        "branch": "lane/shell-sh4",
+        "pushed": null,
+        "sha": "2ec0e4707b2021f3d286554e1cc3c549c9284cdb",
+        "short": "2ec0e4707"
+      },
+      "goal": "Land Ruling 84: Coordination as the fourth Perspective (host C, Ctrl+4, its own slot file and default, the rail entry IconCoordination, the five Loomkeeper kinds admitted by Coordination only, the derived View menu, the pre-C restore's drop-with-report naming Coordination) on lane/shell-sh4",
+      "id": "al-01M2EDC3SXV2T2XFW9RKFDQV0V",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "You are track SH-4.1 of the Shell lane — Ruling 84: Coordination is a fourth Perspective (host C, Ctrl+4, its own layout slot, the rail entry, the allow-list column) and the five Loomkeeper kinds (sessions · board · leaderboard · ledger · daydreams) move to it as a set; Coding admits none of them. Run the /implement skill (args: SH-4.1: the Coordination perspective — host C, Ctrl+4, the rail entry IconCoordination, the third layout slot file and its default, the allow-list column, the derived View menu, the pre-C restore's drop-with-report naming Coordination (Ruling 84; ADR-0030/31/32 as amended by docs/notes/adr-0030-0032-amendment-coordination.md)). Tier T2, fan-out cap 3 (reviews read-only). The conductor is Claude Opus (session conductor-addendum-c). The pack applies in full (red first; smallest correct; DC-135 — construct what the product constructs; the Test Architect's veto; UX & Accessibility on the rail and announcements; the WPF lens on the icon and host C).\n\nThe operator's words (the decision): \"the ledger-leaderboard-sessions-board views should be tied to a different left bar icon - coordination.\" The ruling: docs/notes/addendum-c-council-rulings.md Ruling 84 (and 83 for what Coding's Left becomes — SH-4.2's slice). The design: DESIGN.md §\"Errata after Rulings 83–84\"; the mockup docs/mockups/perspective-shell.html; the review docs/reviews/ui-operator-findings-2026-09-13.md §7 SH-4.1 row (the oracles P1–P7 and the attended rows P-1, P-4, the announcement \"Coordination perspective — 4 panes\" and the landing on the Left zone's active tab); Addendum C's appended errata block; docs/notes/adr-0030-0032-amendment-coordination.md.\n\nWorktree C:\\Projects\\ai-de-lane-shell-sh4, branch lane/shell-sh4, HEAD = main 560ea825. Leases (DC-163) for shared files; never claim the defect register — placeholders DC-nnn (SH-4 a); the conductor allocates (next free DC-182). Never taskkill, never reap-stragglers --reap, never verify-test-run.py --update. X-3 live on WorkbenchShell.cs/WorkbenchAnnouncer.cs/App.xaml/WebSurfaceHost.cs/WorkbenchDiagnostics.cs/WorkbenchCommands.cs/MainMenuBuilder.cs/CommandPalette.cs; CV-5 live on the session document, composer, thread, ConsoleSurface.\n\nFloors: E7 before coding in the Proof Pack; reviews read-only ≤ 3 (Test Architect hard on P2/P3/P6 mutation-shape; UX & Accessibility hard on the rail item and host C's empty states; the WPF lens on the glyph and host C); gates at close (dotnet build Core + App + both test projects -p:TreatWarningsAsErrors=true; both full test projects --logger trx; python tools/run-verify-gates.py; regenerate-derived.py after the audit entry); audit entry; Proof Pack docs/proof/coordination-perspective.md; commits with the attribution trailer; git push -u origin lane/shell-sh4; never merge to main; merge origin/main before close if it moved — never rebase; release claims; rebuild Release and report the ProductVersion.\n\nFails if: a schema field instead of a third slot file; a fifth kind left admitted by Coding; a full-window composite for Coordination; a write to CV-5's or X-3's files beyond the derived-menu contribution, or to DESIGN.md/docs/mockups; the Coding re-cut (SH-4.2); a red made green by weakening; verify-test-run.py --update; git stash; a rebase; a push to main.",
+      "session": "sh-4",
+      "shortname": "sh-4-1-coordination-perspective",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-13T20:37:06Z",
+      "summary": "SH-4.1 landed Ruling 84 on lane/shell-sh4: Coordination is the fourth Perspective — the registry row (\"coordination\", \"Coordination\", 4, DockHost, \"perspective.coordination\"), Ctrl+4 from Order, host C by DockHost.Create in WorkbenchShell (Hosts = A · B · C), the third slot file <layout>.coordination.zones.json by SlotPathFor, CoordinationDefault (Left = Terminal sessions · Center = Ledger · Leaderboard · Message board · Right empty · Bottom collapsed; Daydreams via the View menu), the five Loomkeeper kinds admitted by Coordination only (Coding admits none; CodingDefault's Left is empty as Ruling 84 forces — the Bottom and Center stay SH-4.2's), the derived View menu by construction, IconCoordination (a ring with three beads) beside IconCoding in MainWindow.xaml, the pre-C restore's drop-with-report naming Coordination and its gesture (\"They live in Coordination (Ctrl+4); open them from its View menu.\"; a mixed restore lists each pane once under its perspective). P1–P7 red → green with the red runs recorded; the census walks host B's and host C's bodies (138 → 170 sites, 0 below floor) and asserts the landing per host. Two defects found and fixed on the way, one class (placeholder SH-4 a): a docking view's active content after a body is (re)parented is the last-realized pane's — the adapter now asserts the model's active surface now and again at Loaded priority (both RestoreActive branches and ActivateInView; measured in the census window and the session-render replay, mutant-red headless), and the switch's landing is stated on the row (Perspective.Landing: Coordination → Left, Architecture → Center) and applied one dispatcher turn after the body's Loaded. Reviews: Test Architect veto cleared (findings 1–4, 7 applied); UX & Accessibility hard veto cleared, soft held then applied (the Sessions pane's copy and focus target, the once-listed mixed sentence, the beads, AcceleratorKey); WPF lens no escalation (its Major measured, confirmed and fixed). Proof Pack docs/proof/coordination-perspective.md; decision note docs/notes/sh4-coordination-landing-and-drop-sentence.md. Attended rows for the conductor: P-1 (UIA walk), P-4 (private_bytes_delta for host C), the announcement and landing under NVDA, the pre-C report on the operator's file, host C's empty states. Findings for D3/the conductor: two definitions of the drop sentence (DESIGN.md vs the P6 oracle); Daydreams' zone unspecified (lands beside Terminal sessions); the live region's channel truncates long reports (X-3's seam); SH-4.2 inherits the Coding landing rule and a Coding drag row.",
       "tags": [
         "addendum-c",
         "shell-lane",
@@ -15075,24 +15091,89 @@ window.AUDIT_DATA = {
         "ruling-84",
         "coordination"
       ],
-      "outcome": "success",
-      "goal": "Land Ruling 84: Coordination as the fourth Perspective (host C, Ctrl+4, its own slot file and default, the rail entry IconCoordination, the five Loomkeeper kinds admitted by Coordination only, the derived View menu, the pre-C restore's drop-with-report naming Coordination) on lane/shell-sh4",
-      "done_when": "P1-P7 red then green; the existing suites green with the census walking host C; the gates green; the Proof Pack docs/proof/coordination-perspective.md, the audit entry and the push landed; Release rebuilt",
       "tier": "T2",
-      "fan_out": 3,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "started_at": "2026-09-13T20:37:06Z",
-      "duration_seconds": 5843.0,
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/compile-admission-code.md"
+      ],
+      "datetime": "2026-09-13T21:51:57Z",
+      "done_when": "CompileAdmissionGate wired into CompileModeGate's Gate 2 branch and covered by reds incl. a planted-verdict refusal and a sub-50 holdout refusal; ring.py --self-test green incl. demote/no-flap/readmit and the drift trigger on an unchanged triple; the canonicalisation fixture matches in both languages; CE- family contiguous; both test projects green at their recorded floors; two read-only reviews (AI Systems Engineer, Test Architect) pass; Proof Pack written; pushed to lane/conversation-cv4",
+      "fan_out": 2,
       "git": {
-        "sha": "2ec0e4707b2021f3d286554e1cc3c549c9284cdb",
-        "short": "2ec0e4707",
-        "branch": "lane/shell-sh4",
-        "pushed": null
-      }
+        "branch": "lane/conversation-cv4",
+        "pushed": null,
+        "sha": "1c29b5d5ad1364c8bc608cc9311535d2e2018ec5",
+        "short": "1c29b5d5a"
+      },
+      "goal": "Gate 2's reader recomputing every A14.4 floor from num/den (never a verdict); ring.py's A6 re-score/demote/re-admit on a triple change or a model-mismatch drift; the compile.mode.changed{from,to,trigger} vocabulary and the readmitted_at watermark -- Addendum D slice D-3's code only",
+      "id": "al-01M2EC2VXM0AW7ASW809YB6RAB",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "CV-4: admission's code -- gate 2's reader (recompute every floor from num/den, never trust a verdict), tools/compile-eval/ring.py, the drift watermark readmitted_at, compile.mode.changed{from,to,trigger} (Addendum D slice D-3's code only; A14.4 admission, ADR-0036 gates 2/3; Ruling 68); the gate itself is a calendar event, not this track.",
+      "session": "cv-4",
+      "shortname": "cv-4-admission-code",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "summary": "CV-4: admission's code. CompileAdmissionGate (new, Core/Sessions) reads compile-eval-admission.json from the machine-level ~/.aide/proof/ directory and recomputes five ADR-0036 Gate 2 floors from the report's own numerator/denominator pairs (split witness: holdout>=50, disjoint, ordered; schema_fail<=2%; applied_denied=0; tool_calls=0; degraded<=5%, Ruling 76) - a verdict-shaped key (verdict/met/passed/admitted/selectable) is never read, at any nesting, proven by planted-verdict tests in both directions. Wired into CompileModeGate's Gate 2 branch, replacing CV-3's always-refuse placeholder; the no-report case still refuses CE-0020 unchanged (US-D11 b2 stays green). Six new CE- codes (CE-0024..CE-0029), contiguous. tools/compile-eval/ring.py (new, stdlib, imports score.py rather than reimplementing) re-scores on a change of the (adapter sha, CLI sha, craft-profile sha) triple or on a model_observed != model_configured mismatch (CV-3's residual, independent of the triple), demotes agentic to agentic-advisory on a regression with compile.mode.changed{trigger: ring|drift}, never re-demotes on unchanged evidence (no flapping), and sets the drift watermark readmitted_at on a later passing re-score. compile.mode.changed joins the compile.* vocabulary (CompileEventKinds.ModeChanged, CompileModeChangeTriggers, CompileSignal.ModeChanged); SessionConfigStore.SetCompileMode gains a trigger parameter (default operator) and emits the event only on a real transition. A canonicalisation fixture (one fixed byte string, one SHA-256 hex constant) is asserted identical by CompilePin.Sha256 (C#) and ring.py's self-test (Python). Gates: dotnet build Core+App 0/0 warnings/errors; AiDe.Core.Tests 2615 passed (+1 pre-existing skip); AiDe.App.Tests 895 passed (matches the recorded floor, no App-layer test added); ring.py --self-test 8/8; score.py --self-test unchanged 3/3; verify-id-allocators CE family at 29 contiguous; run-verify-gates green after regenerate-derived. Two AI Systems Engineer / Test Architect reviews (read-only, fan-out 2) both PASS. Findings recorded as placeholders (conductor allocates): the ring's triple (adapter/CLI/profile sha) differs from ADR-0036 Gate 3's literal triple (contract_version/prompt_sha/profile.sha) - built to the plan row's explicit triple, discrepancy recorded, full prompt-version A6 ring left as a future track; the audit start marker was not set at grounding this run, so duration_seconds understates true elapsed time. Not touched (named, out of file-ownership): the settings-row UI control (SessionDocumentSurface.cs, a future slice), writing outcome:\"suspect\" into the called row on a model mismatch (ComposerSendGate.cs, outside CV-4's lifetime hand-off), the build.yml CI step for ring.py --self-test (a seam request). The gate itself is not this track: 50 scored + 50 holdout real envelopes accrue through operator use over weeks; a calendar event, not a session.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/the-conversation.md"
+      ],
+      "datetime": "2026-09-13T21:09:08Z",
+      "done_when": "the option on the record and on both product lanes, the wire controls green with the member admitted by name",
+      "goal": "Make the thread's Thinking line reachable from a lane",
+      "id": "al-01M2E9MEP7HE0597E5C0XD581J",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (CV-5.3's routed finding: the lane must ask for summarized thinking)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "x-5-thinking-display",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "summary": "X-5: LaneSessionOptions.ThinkingDisplay (the SDK's ThinkingAdaptive display, sdk.d.ts:8448-8451; the adapter drops empty-text thoughts, acp-agent.js:7742) - the governed and read-only lanes ask for 'summarized' so Ruling 82's Thinking line can appear; the compile session does not ask (CE-0023 unchanged). Red-first: four new tests (the shape, the absence, the compile's silence, the two values) plus the three wire-shape controls that went red on the fifth member and were re-pointed with the finding named.",
+      "tags": [],
+      "tier": "T0",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/compile-admission-code.md"
+      ],
+      "datetime": "2026-09-13T22:12:36Z",
+      "done_when": "main pushed green through run-verify-gates; Release built",
+      "goal": "Land CV-4 and X-5 on main with the floors recounted and a Release build",
+      "id": "al-01M2ED8N1F9R1BQA883YPD7M2M",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (the join of CV-4 and X-5)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-cv4-x5",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Join: CV-4 (4241bfb2: CompileAdmissionGate recomputing every A14.4 floor from num/den, CE-0024..0029, ring.py with drift demotion and readmitted_at, compile.mode.changed) and X-5 (da2badf4: the lanes ask for summarized thinking) merged to main; one derived-figure conflict taken ours and regenerated; DC-189/190 written into the register from CV-4's proof (the node left them as prose). Recount App 895 / Core 2620 = 2450 + 170. The compile-mode ladder's code is complete: mechanical-only default, advisory admissible (gate 1 open), agentic behind gate 2's recomputed floors over 50+50 real envelopes.",
+      "tags": [],
+      "tool": null
     }
   ],
   "changes": [

@@ -29,8 +29,39 @@ public static class CompileEventKinds
     /// <summary><c>compile.stage{stage, duration_ms, outcome}</c> — one per stage (§A10.3).</summary>
     public const string Stage = "compile.stage";
 
+    /// <summary>
+    /// <c>compile.mode.changed{from, to, trigger}</c> — the compile-mode ladder's transition
+    /// history (ADR-0036: "the transition history is the <c>compile.mode.changed</c> event — a
+    /// separate mode-ledger file would be a second home for a watermark the report already
+    /// carries"). CV-4's event.
+    /// </summary>
+    public const string ModeChanged = "compile.mode.changed";
+
     /// <summary>The <c>Ext.origin</c> value every compile event carries — origin is never inferred from <c>RunId</c> / <c>AgentId</c> (a type pun).</summary>
     public const string Origin = "compile";
+}
+
+/// <summary>
+/// The closed vocabulary a <c>compile.mode.changed</c> event's <c>trigger</c> carries (ADR-0036;
+/// CV-4) — unlike <see cref="AgentPlane.RunEvent.Kind"/>'s open vocabulary, this set is fixed: a
+/// mode transition always has exactly one of these four causes.
+/// </summary>
+public static class CompileModeChangeTriggers
+{
+    /// <summary>The operator chose a mode in the settings sheet.</summary>
+    public const string Operator = "operator";
+
+    /// <summary>The settings model's own gate re-evaluation forced the change — a rung the ladder no longer admits at read time.</summary>
+    public const string Gate = "gate";
+
+    /// <summary>The A6 ring (<c>tools/compile-eval/ring.py</c>) re-scored after the (adapter, CLI, profile) triple changed and the recomputed floors moved.</summary>
+    public const string Ring = "ring";
+
+    /// <summary>The drift detector's own signal — a <c>model_observed</c> ≠ <c>model_configured</c> mismatch, independent of a triple change (CV-3's residual).</summary>
+    public const string Drift = "drift";
+
+    /// <summary>Every trigger word, in no particular order — the closed set <see cref="Sessions.SessionConfigStore.SetCompileMode"/> validates against.</summary>
+    public static readonly IReadOnlyList<string> All = [Operator, Gate, Ring, Drift];
 }
 
 /// <summary>
@@ -61,6 +92,18 @@ public static class CompileSignal
         using var activity = Source.StartActivity(CompileEventKinds.Degraded);
         activity?.SetTag("reason", reason);
         activity?.SetTag("error_code", errorCode);
+    }
+
+    /// <summary>
+    /// Records a compile-mode transition: <c>compile.mode.changed{from, to, trigger}</c>
+    /// (ADR-0036; CV-4). <paramref name="trigger"/> is one of <see cref="CompileModeChangeTriggers.All"/>.
+    /// </summary>
+    public static void ModeChanged(string from, string to, string trigger)
+    {
+        using var activity = Source.StartActivity(CompileEventKinds.ModeChanged);
+        activity?.SetTag("from", from);
+        activity?.SetTag("to", to);
+        activity?.SetTag("trigger", trigger);
     }
 
     /// <summary>Whether a Console-stream event came from the compile step — by <c>Ext.origin</c>, never by its ids.</summary>

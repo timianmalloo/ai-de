@@ -108,6 +108,19 @@ public sealed record LaneSessionOptions(IReadOnlyList<string>? Tools = null, IRe
     public string? Model { get; init; }
 
     /// <summary>
+    /// <c>thinking: { type: "adaptive", display: … }</c> — whether the model's reasoning is streamed
+    /// as text (<c>"summarized"</c>) or as signature-only blocks (<c>"omitted"</c>, the default of
+    /// recent models). The adapter forwards a thought chunk only when its text is non-empty
+    /// (<c>acp-agent.js:7742-7745</c>), so a lane that does not ask never yields an
+    /// <c>agent.thought</c> row (Ruling 82). <c>null</c> sends nothing. The SDK's two values only
+    /// (<c>sdk.d.ts:8448-8451</c>).
+    /// </summary>
+    public string? ThinkingDisplay { get; init; }
+
+    /// <summary>The value a lane sends to show its reasoning in the thread.</summary>
+    public const string ThinkingSummarized = "summarized";
+
+    /// <summary>
     /// The CLI's glob for every MCP server's tools — <c>mcp__*</c>. Read in the CLI binary's own
     /// deny parser (claude.exe 2.1.257: a parsed <c>serverName</c> of <c>*</c> with no tool name
     /// sets the all-servers flag its <c>isServerLevelDisallowed</c> reads), and its effect measured
@@ -171,7 +184,7 @@ public sealed record LaneSessionOptions(IReadOnlyList<string>? Tools = null, IRe
     /// <exception cref="ArgumentException">A blank tool name: it looks like a pin and pins nothing.</exception>
     internal JsonObject? ToMeta()
     {
-        if (Tools is null && DisallowedTools is null && StrictMcpConfig is null && Model is null)
+        if (Tools is null && DisallowedTools is null && StrictMcpConfig is null && Model is null && ThinkingDisplay is null)
         {
             return null;
         }
@@ -197,6 +210,16 @@ public sealed record LaneSessionOptions(IReadOnlyList<string>? Tools = null, IRe
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(Model);
             options["model"] = Model;
+        }
+
+        if (ThinkingDisplay is not null)
+        {
+            if (ThinkingDisplay is not (ThinkingSummarized or "omitted"))
+            {
+                throw new ArgumentException($"thinking.display must be \"summarized\" or \"omitted\" (the SDK's ThinkingAdaptive), not '{ThinkingDisplay}'.");
+            }
+
+            options["thinking"] = new JsonObject { ["type"] = "adaptive", ["display"] = ThinkingDisplay };
         }
 
         return new JsonObject { ["claudeCode"] = new JsonObject { ["options"] = options } };

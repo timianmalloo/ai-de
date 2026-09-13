@@ -1,0 +1,9 @@
+{"agent": "claude-cv-5-4", "at": 1789337418.9898527, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "cv-5-4", "wi": ""}
+{"agent": "claude-cv-5-4", "at": 1789337418.996461, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "cv-5-4", "wi": ""}
+{"agent": "claude-cv-5-4", "at": 1789337419.0024605, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "cv-5-4", "wi": ""}
+{"agent": "claude-cv-5-4", "at": 1789337419.008968, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "cv-5-4", "wi": ""}
+{"agent": "claude-cv-5-4", "at": 1789337419.014968, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "cv-5-4", "wi": ""}
+{"agent": "claude-cv-5-4", "at": 1789337419.0224702, "code": null, "kind": "allowed", "path": "docs/proof/editor-rest.md", "session": "cv-5-4", "wi": ""}
+{"agent": "claude-cv-5-4", "at": 1789337419.0304785, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "cv-5-4", "wi": ""}
+{"agent": "claude-cv-5-4", "at": 1789337419.037479, "code": null, "kind": "allowed", "path": "site/index.html", "session": "cv-5-4", "wi": ""}
+{"agent": "claude-cv-5-4", "at": 1789337419.0439885, "code": null, "kind": "allowed", "path": "site/model.html", "session": "cv-5-4", "wi": ""}
