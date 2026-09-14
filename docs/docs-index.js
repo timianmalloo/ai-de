@@ -11103,6 +11103,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "ffd8c6ef083b86d964831eb493694e9aba70e94deab8c6ff2dedd5769b97fb0b"
     },
     {
+      "id": "proof-code-atlas-e1-qualification",
+      "path": "docs/proof/code-atlas-e1-qualification.md",
+      "title": "Code Atlas E1 qualification: evidence and unresolved gates",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-09-21",
+      "reviewSuggested": [],
+      "summary": "Held test-only E1 qualification, not product acceptance. Records the actual sixteen-test candidate and parent replay, missing integration boundaries, independent oracle/cleanup findings and unavailable historical red receipts.",
+      "tags": [
+        "code-atlas",
+        "e1",
+        "qualification",
+        "tests",
+        "evidence"
+      ],
+      "links": [
+        {
+          "to": "design-code-atlas-e1-static-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-e-code-atlas",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-code-atlas-real-daemon-mainwindow",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9fba59f254ecf3b90ee2e3aebe7cac58a91332195ed4696db36cfbb7b6539d7d"
+    },
+    {
       "id": "proof-code-atlas-production-adapters",
       "path": "docs/proof/code-atlas-production-adapters.md",
       "title": "Code Atlas production adapters - evidence and open gates",
@@ -19125,5 +19160,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "fce67b68d898470042b02649cdb94ca44e7afd838acb58e00776eb983e49024a"
+  "graphSha256": "7b5536220ccfc7f00027c769f9ba42898107c508126a575760939f0eb33ad41c"
 };
