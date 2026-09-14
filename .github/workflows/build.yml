@@ -477,6 +477,29 @@ jobs:
         if: ${{ !cancelled() }}
         run: python tools/verify-front-door-exit-evidence.py --self-test
 
+      # The record landed 2026-09-14 on the operator's word (Ruling 103). The nine-clause oracle above
+      # stays byte-identical to its commit (its clause 0 demands it) and keeps proving it can fail; the
+      # BARE reading is this sibling, which accepts a frameless record on the operator's word only and
+      # reports each clause MET / NOT MET from the untouched oracle's findings.
+      - name: Front-door exit evidence (F5) — attended reading
+        if: ${{ !cancelled() }}
+        run: python tools/verify-front-door-exit-attended.py
+
+      - name: Front-door exit evidence (F5) — attended reading self-test
+        if: ${{ !cancelled() }}
+        run: python tools/verify-front-door-exit-attended.py --self-test
+
+      # DC-211: a text-mode subprocess that lets the locale decode the child read its own committed
+      # bytes as changed (cp1252 against UTF-8). Every such statement under tools/ and spikes/ states
+      # its encoding, or this is red.
+      - name: Subprocess encoding gate
+        if: ${{ !cancelled() }}
+        run: python tools/verify-subprocess-utf8.py
+
+      - name: Subprocess encoding gate — self-test
+        if: ${{ !cancelled() }}
+        run: python tools/verify-subprocess-utf8.py --self-test
+
       - name: Containment-comparison gate — self-test
         if: ${{ !cancelled() }}
         run: python tools/verify-containment-comparisons.py --self-test
