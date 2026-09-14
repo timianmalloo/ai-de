@@ -105,7 +105,12 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
             frame.Settle();
             Assert.DoesNotContain(shell.Coding.Service.Zones.AllSurfaces(), s => s.Kind == "console");
             Assert.Equal("Console closed.", shell.LiveRegion.Text);
-            Assert.Same(document.ConsoleToggle, System.Windows.Input.Keyboard.FocusedElement);
+            // The document's own focus scope, not the process-wide keyboard device: in a full run
+            // another class's window can hold the keyboard between two Settle()s, and the oracle
+            // then reads null for a focus the document did give (order-dependent red at the F5
+            // join, 2026-09-14; green alone — DC-008's shape). What the ruling promises is that the
+            // document returned focus to its toggle; that is the scope's fact.
+            Assert.Same(document.ConsoleToggle, System.Windows.Input.FocusManager.GetFocusedElement(FocusScopeOf(document)));
             Assert.NotNull(frame.CenterEmpty());
 
             // Open again: the same split instance, hosted anew; then it closes with its session.
@@ -241,4 +246,8 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
         Assert.False(DockHost.AdmissionFor(PerspectiveSet.Architecture).Admits("console"));
         Assert.False(DockHost.AdmissionFor(PerspectiveSet.Coordination).Admits("console"));
     }
+
+    private static System.Windows.DependencyObject FocusScopeOf(System.Windows.DependencyObject element)
+        => System.Windows.Input.FocusManager.GetFocusScope(element);
+
 }
