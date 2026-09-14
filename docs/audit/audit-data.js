@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T19:24:03Z",
+  "generated": "2026-09-14T20:10:52Z",
   "audit": [
     {
       "actor": null,
@@ -16403,6 +16403,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "dd84702b71d0a32ebe860f211b0a05b946726ccf",
         "short": "dd84702b7",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GRPF6QKQY0RPXATEPRCRHC",
+      "shortname": "atlas-e0-bounded-acceptance-e1-design",
+      "datetime": "2026-09-14T20:10:51Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep working and provide periodic todo refreshes showing in-flight and remaining work",
+      "summary": "Owner63acceptedboundedrealdaemonE0normalCenterreading forobservedfixture/viewport afteractualPNG/geometry/lifecyclereadback. Approvedcapturecopiedwithverified0A55507A...hash anddurableproofdoccreated. Parentseparatereplay1PASS; current-Conductorproofjoin/replaypendinghardcoded-root/startup-parityfollowup. Fourproofleaves47to51dispatched; footernotaccepted. E1staticclass/memberDESIGNONLY12leavesdispatchedseparatetree8b9232d5,oneMD,4reviewsreserved. E1sequence/activityexplicit;E2domain/ER/layer/Azure,E3correspondence,E4AIunfinished. No mainpush/normativeE/programmeclaim.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-real-daemon-mainwindow.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Preserve bounded E0 evidence and begin the next explicitly admitted static-view design.",
+      "done_when": "Accepted E0 scope/limits and capture are durable; footer/current-root follow-up and E1 design have exact bounded owners.",
+      "tier": "T2",
+      "main_calls": 395,
+      "main_budget": 400,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T20:10:51Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "8b9232d5c0f7bebcaada0cdc01e7eff193e98bb3",
+        "short": "8b9232d5c",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

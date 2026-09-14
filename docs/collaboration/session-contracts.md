@@ -806,6 +806,36 @@ geometry, and rerun the real daemon/window/source/member/Back/replacement/releas
 and own-HWND capture path. No source, layout state, font/window-size or query-result
 substitution is permitted. Default readable-source acceptance still requires the new pixels.
 
+Owner turn 63 accepts the bounded E0 native reading/default-readability horizon for the
+observed fixture and viewport. Parent may join only proof commits `2ab95e2b` and `6bb7646d`,
+replay current code, write `docs/proof/code-atlas-real-daemon-mainwindow.md`, and copy the
+approved owned capture to
+`docs/proof/assets/code-atlas-mainwindow/normal-default-member.png`, verifying hashes.
+Public same-live-scope idle, held late-publication race in this window run, distinct command
+method, broader accessibility/viewport coverage and the footer remain outside acceptance.
+
+The same proof writer receives four startup/footer follow-up leaves, **47/51**, in its
+sole test file. Exercise legitimate VM initialization/refresh, never assign a convenient
+status string. Current-tree replay must not silently launch binaries from an old hard-coded
+proof tree. Any product-status discrepancy after normal initialization is a new finding;
+no product-status edit is authorized.
+
+E-1 Concrete static code views is the next admitted functional phase. A separate design
+writer receives twelve leaves only for `docs/design/code-atlas-e1-static-views.md`, with
+four targeted independent review leaves. Return the precise producer/query/wire/class/
+member/source path, supported relations/profile limits, negative oracles, exact manifest
+and bounded first implementation tranche. Reuse E0 identities, evidence and Architecture
+host. Method sequence/activity stays explicit in E1; domain/ER/layer/Azure is E2,
+correspondence E3 and AI E4. No E1 source implementation, normative E/main/push or programme
+completion grant follows. Mainline ceiling remains 400.
+
+E1 design assignment: session `atlas-e1-static-design`, branch `atlas/e1-static-design`,
+worktree `C:\Projects\ai-de-atlas-e1-static-design`, exact clean base
+`8b9232d5c0f7bebcaada0cdc01e7eff193e98bb3`, verified by Conductor. Sole authored path:
+`docs/design/code-atlas-e1-static-views.md`. Twelve author leaves include grounding,
+design and receipt; no product code or shared artifact editing is granted. Parent owns
+audit/change/index integration. Four targeted review leaves remain separate.
+
 ### Core owns
 
 | Path | Why |

@@ -11099,6 +11099,46 @@ window.DOCS_INDEX = {
       "sourceSha256": "dd7d01b150c80593f1ddadf0a008eceea6c9d63415717fd75ba0d7f254be5e42"
     },
     {
+      "id": "proof-code-atlas-real-daemon-mainwindow",
+      "path": "docs/proof/code-atlas-real-daemon-mainwindow.md",
+      "title": "Code Atlas E0 - real daemon, native window and readable default",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-14",
+      "reviewSuggested": [],
+      "summary": "Owner 63 accepts the bounded E0 real-daemon/native-window reading horizon for the observed owned fixture and viewport. Source, member, Back, healthy release, replacement and readable normal Center pixels were observed; broader coverage and the synthetic workspace-footer discrepancy remain explicitly outside acceptance.",
+      "tags": [
+        "code-atlas",
+        "proof",
+        "e0",
+        "native",
+        "daemon",
+        "readability"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-e-code-atlas",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-code-atlas-production-adapters",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-atlas-live-reader-horizon",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c807d6eb94eff8c44b14cf9a5d7473bc8e2252a45226d37786bb762597dab15e"
+    },
+    {
       "id": "proof-pack-phase-1-walking-skeleton",
       "path": "docs/design/phase-1-proof-pack.md",
       "title": "Phase 1 walking skeleton — Proof Pack",
@@ -11721,7 +11761,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d5ab124057c52df6fd05c50c5f20cb2f9fd2ed140cd8496373c36930ccf11064"
+      "sourceSha256": "9a2b3bb90a5e0ca688b4ae944d2b15a7e0c3074c185dc0d17d02ade96486f75e"
     },
     {
       "id": "session-profiles",
@@ -19042,5 +19082,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "6ce883c4a5346181a413f063cabe8fdc853276f97fcf7020376c8fa6f6cd8157"
+  "graphSha256": "2939fc0e834ecf2fb42a1b49b29fcfea87987955d6326b1f979d6b0bc2eb92e3"
 };
