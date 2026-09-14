@@ -14,6 +14,7 @@ public sealed class AtlasGitMembershipTests : IDisposable
     private const string Version = "git version 2.55.0.windows.2";
     private readonly string _root = Path.Combine(AppContext.BaseDirectory, ".artifacts", "membership-fixtures", Guid.NewGuid().ToString("N"));
     private readonly List<AtlasMembershipDiagnostic> _diagnostics = [];
+    private readonly List<object> _cleanupObservations = [];
     private readonly ITestOutputHelper _output;
     private int _diagnosticsDropped;
 
@@ -200,6 +201,7 @@ public sealed class AtlasGitMembershipTests : IDisposable
         using var lease = AtlasGitMembership.NativeWatchIssuer.Acquire();
         using var cancellation = new CancellationTokenSource();
         AtlasGitMembership.NativePin? created = null;
+        var retained = new List<IDisposable>();
         Assert.ThrowsAny<OperationCanceledException>(() => lease.Owner.Invoke(() =>
         {
             created = new AtlasGitMembership.NativePin(directory, trackChanges: true)
@@ -209,7 +211,8 @@ public sealed class AtlasGitMembershipTests : IDisposable
             created.DiagnosticRoles.Add("cancellation-during-creation-control");
             cancellation.Cancel();
             return created;
-        }, cancellation.Token));
+        }, cancellation.Token, retained.Add));
+        Assert.Empty(retained);
         Assert.NotNull(created);
         Assert.Equal("native-association-changed", created.CurrentnessFailure);
         var disposed = _diagnostics.Last(record => record.Stage == "explicit-dispose-after");
@@ -266,6 +269,177 @@ public sealed class AtlasGitMembershipTests : IDisposable
                 Assert.Throws<AtlasGitMembership.CaptureFailure>(() => AtlasGitMembership.DecodeMembership(body, _root, _root)).State);
         }
     }
+
+    [Fact]
+    public async Task RetainedPinTimeoutStillReleasesIndependentPins()
+    {
+        var repository = await Clone();
+        var plan = new AtlasCleanupFaultPlan();
+        var member = NewMembership();
+        member.CleanupFaultsForQualification = plan;
+        await using var snapshot = await member.CaptureForQualificationAsync(repository, Identity(repository), CancellationToken.None);
+        AssertCandidate(snapshot);
+        plan.PinPath = Path.Combine(snapshot.Association!.CommonDirectory, "refs", "heads");
+        plan.PinTimeout = 1;
+        try
+        {
+            await Assert.ThrowsAnyAsync<IOException>(async () => await snapshot.DisposeAsync());
+            RecordCleanup("pin-timeout");
+            Assert.False(snapshot.IsCurrent());
+            using (File.Open(snapshot.Association.Index, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
+            {
+            }
+            Assert.Equal(1, AtlasGitMembership.LiveWatchBuffersForQualification);
+            Assert.Equal(1, AtlasGitMembership.NativeWatchIssuer.LiveLeases);
+            Assert.Equal(1, AtlasGitMembership.CleanupChargesForQualification.RetainedOwners);
+            await using var blocked = await Capture(repository);
+            Assert.NotEqual(AtlasMembershipCaptureState.CandidateComplete, blocked.State);
+            Assert.Equal(0, blocked.Invocations);
+        }
+        finally
+        {
+            await snapshot.DisposeAsync();
+        }
+        RecordCleanup("pin-retry-complete");
+        Assert.Equal(0, AtlasGitMembership.LiveWatchBuffersForQualification);
+        Assert.Equal(0, AtlasGitMembership.NativeWatchIssuer.LiveLeases);
+        Assert.Equal(0, AtlasGitMembership.CleanupChargesForQualification.ChargedOwners);
+    }
+
+    [Fact]
+    public async Task CanceledCreationCleanupTimeoutRetainsItsIssuerCharge()
+    {
+        var repository = await Clone();
+        using var cancellation = new CancellationTokenSource();
+        var plan = new AtlasCleanupFaultPlan
+        {
+            CanceledCreationTimeout = 1,
+            AfterNativeCreation = cancellation.Cancel,
+        };
+        var member = NewMembership();
+        member.CleanupFaultsForQualification = plan;
+        try
+        {
+            await using var snapshot = await member.CaptureForQualificationAsync(repository, Identity(repository), cancellation.Token);
+            RecordCleanup("canceled-creation-timeout");
+            Assert.NotEqual(AtlasMembershipCaptureState.CandidateComplete, snapshot.State);
+            Assert.Equal(1, AtlasGitMembership.LiveWatchBuffersForQualification);
+            Assert.Equal(1, AtlasGitMembership.NativeWatchIssuer.LiveLeases);
+            Assert.Equal(1, AtlasGitMembership.CleanupChargesForQualification.RetainedCreations);
+            await using var blocked = await Capture(repository);
+            Assert.NotEqual(AtlasMembershipCaptureState.CandidateComplete, blocked.State);
+            Assert.Equal(0, blocked.Invocations);
+        }
+        finally
+        {
+            AtlasGitMembership.RetryRetainedCleanup();
+        }
+        RecordCleanup("canceled-creation-retry-complete");
+        Assert.Equal(0, AtlasGitMembership.CleanupChargesForQualification.ChargedOwners);
+        Assert.Equal(0, AtlasGitMembership.LiveWatchBuffersForQualification);
+    }
+
+    [Fact]
+    public async Task FinalIssuerDrainTimeoutDoesNotReclaimTheLease()
+    {
+        var repository = await Clone();
+        var plan = new AtlasCleanupFaultPlan();
+        var member = NewMembership();
+        member.CleanupFaultsForQualification = plan;
+        await using var snapshot = await member.CaptureForQualificationAsync(repository, Identity(repository), CancellationToken.None);
+        AssertCandidate(snapshot);
+        plan.IssuerDrainTimeout = 1;
+        await Assert.ThrowsAnyAsync<IOException>(async () => await snapshot.DisposeAsync());
+        RecordCleanup("issuer-drain-timeout");
+        Assert.False(snapshot.IsCurrent());
+        Assert.Equal(0, AtlasGitMembership.LiveWatchBuffersForQualification);
+        Assert.Equal(1, AtlasGitMembership.NativeWatchIssuer.LiveLeases);
+        Assert.Equal(1, AtlasGitMembership.CleanupChargesForQualification.RetainedOwners);
+        await using var blocked = await Capture(repository);
+        Assert.NotEqual(AtlasMembershipCaptureState.CandidateComplete, blocked.State);
+        Assert.Equal(0, blocked.Invocations);
+        await snapshot.DisposeAsync();
+        RecordCleanup("issuer-drain-retry-complete");
+        Assert.Equal(0, AtlasGitMembership.NativeWatchIssuer.LiveLeases);
+        Assert.Equal(0, AtlasGitMembership.NativeWatchIssuer.LiveThreads);
+        Assert.Equal(0, AtlasGitMembership.CleanupChargesForQualification.ChargedOwners);
+    }
+
+    [Fact]
+    public void RetainedOwnerAndPendingPinSurviveCallerLossUntilExplicitRetry()
+    {
+        var directory = Path.Combine(_root, "retained-owner-control");
+        Directory.CreateDirectory(directory);
+        var (owner, pin) = AbandonRetainedOwner(directory);
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
+        Assert.True(owner.IsAlive);
+        Assert.True(pin.IsAlive);
+        RecordCleanup("abandoned-owner-retained");
+        var retained = AtlasGitMembership.CleanupChargesForQualification;
+        Assert.Equal(1, retained.ChargedOwners);
+        Assert.Equal(1, retained.RetainedOwners);
+        Assert.Equal(1, retained.RetainedPins);
+        Assert.Equal(1, retained.WatchBuffers);
+        Assert.Equal(1, retained.IssuerLeases);
+        var cleared = AtlasGitMembership.RetryRetainedCleanup();
+        RecordCleanup("abandoned-owner-retry-complete");
+        Assert.Equal(0, cleared.ChargedOwners);
+        Assert.Equal(0, cleared.WatchBuffers);
+        Assert.Equal(0, cleared.IssuerLeases);
+        Assert.Equal(0, cleared.IssuerThreads);
+        Directory.Move(directory, directory + "-released");
+        Assert.Equal(cleared, AtlasGitMembership.RetryRetainedCleanup());
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+    private (WeakReference Owner, WeakReference Pin) AbandonRetainedOwner(string directory)
+    {
+        var faults = new AtlasCleanupFaultPlan { PinPath = directory, PinTimeout = 1 };
+        var owner = new AtlasGitMembership.PinSet(RecordDiagnostic, cleanupFaults: faults);
+        var pin = owner.Add(directory, trackChanges: true);
+        Assert.Throws<AtlasRetainedCleanupException>(owner.Dispose);
+        return (new WeakReference(owner), new WeakReference(pin));
+    }
+
+    [Fact]
+    public void CleanupReservationsAreBoundedBeforeNativeResourcesExist()
+    {
+        var owners = new List<AtlasGitMembership.PinSet>();
+        var capacity = AtlasGitMembership.CleanupChargesForQualification.Capacity;
+        try
+        {
+            for (var index = 0; index < capacity; index++)
+            {
+                var owner = new AtlasGitMembership.PinSet();
+                owner.ReserveOwner();
+                owners.Add(owner);
+            }
+            using var extra = new AtlasGitMembership.PinSet();
+            var failure = Assert.Throws<AtlasGitMembership.CaptureFailure>(extra.ReserveOwner);
+            Assert.Equal(AtlasMembershipCaptureState.BudgetExceeded, failure.State);
+            Assert.Equal(capacity, AtlasGitMembership.CleanupChargesForQualification.ChargedOwners);
+            Assert.Equal(0, AtlasGitMembership.LiveWatchBuffersForQualification);
+            Assert.Equal(0, AtlasGitMembership.NativeWatchIssuer.LiveThreads);
+        }
+        finally
+        {
+            foreach (var owner in owners)
+                owner.Dispose();
+        }
+        Assert.Equal(0, AtlasGitMembership.CleanupChargesForQualification.ChargedOwners);
+    }
+
+    private void RecordCleanup(string stage) => _cleanupObservations.Add(new
+    {
+        Stage = stage,
+        WatchBuffers = AtlasGitMembership.LiveWatchBuffersForQualification,
+        IssuerLeases = AtlasGitMembership.NativeWatchIssuer.LiveLeases,
+        IssuerThreads = AtlasGitMembership.NativeWatchIssuer.LiveThreads,
+        Charges = AtlasGitMembership.CleanupChargesForQualification,
+        Injection = "labelled qualification completion timeout, not a stalled-kernel claim",
+    });
 
     [Fact]
     public async Task DiagnosticFailureIsExplicitAndCannotPreventCleanupOrCreateSuccess()
@@ -477,7 +651,7 @@ public sealed class AtlasGitMembershipTests : IDisposable
 
     public void Dispose()
     {
-        if (_diagnostics.Count > 0)
+        if (_diagnostics.Count > 0 || _cleanupObservations.Count > 0)
         {
             var destination = Environment.GetEnvironmentVariable("ATLAS_MEMBERSHIP_DIAGNOSTICS")
                 ?? Path.Combine(AppContext.BaseDirectory, ".artifacts", "membership-diagnostics");
@@ -488,6 +662,7 @@ public sealed class AtlasGitMembershipTests : IDisposable
                 Fixture = _root,
                 Dropped = _diagnosticsDropped,
                 Signals = _diagnostics,
+                Cleanup = _cleanupObservations,
             }));
             _output.WriteLine($"NQ_DIAGNOSTIC {path} signals={_diagnostics.Count} dropped={_diagnosticsDropped}");
         }
