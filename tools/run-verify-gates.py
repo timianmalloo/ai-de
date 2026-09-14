@@ -37,6 +37,11 @@ TOOLS = ROOT / "tools"
 BUDGET_SECONDS = 300
 EXTRA_ARGS = {
     "verify-test-run.py": ["--no-run"],
+    # F5's oracle reads the exit-evidence record the operator's File -> New Session gesture writes
+    # (Ruling 49; Ruling 91 merged the branch before that gesture). Until the record exists the
+    # bare run is a finding, not a red: CI wires only the self-test, and so does this runner. The
+    # day the record lands, remove this line and the oracle runs bare here too.
+    "verify-front-door-exit-evidence.py": ["--self-test"],
 }
 
 

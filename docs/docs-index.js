@@ -2330,7 +2330,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "016ef6d898e82c78d3ba12642dbaf0c59c4fdcf54089bc903aaeded2d3ae5af6"
+      "sourceSha256": "f9e108623745e8f886986a9f76f0a123760407f8335b07787254299d563b13fd"
     },
     {
       "id": "api-aide-core-projections",
@@ -2392,7 +2392,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Sessions: 27 types, 80 members, 91% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Sessions: 28 types, 82 members, 91% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2405,7 +2405,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "45bd38ff2bbc8a1e58bfe87adb53f3d4126c856892bc00eea98344a50523c4ac"
+      "sourceSha256": "7ddfa5fbb93e0921537cf74c48107b0172213bf9223d4eccaa64c92d220b2dff"
     },
     {
       "id": "api-aide-core-store",
@@ -5507,7 +5507,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1189c6d0a922b4586547644625f2277f3acdfc8dbccde49992848654f7c3da6e"
+      "sourceSha256": "60a6f680a12e324d9681aa3c3e6347f661fde4955c6e9efa1390eb4cb5c2aa53"
     },
     {
       "id": "note-front-door-ruling-36",
@@ -15194,6 +15194,53 @@ window.DOCS_INDEX = {
       "sourceSha256": "5ceb5507a5710e579bc6160c03077fb806b8cd01f8cc25aa3adf1bde84b80807"
     },
     {
+      "id": "proof-conductor-front-door",
+      "path": "docs/proof/conductor-front-door.md",
+      "title": "Proof Pack — Conductor front door, Phase 1 (F0–F5)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Exit evidence for the Phase-1 front-door slice: a session created from File → New Session with a machine-checkable origin, a prompt composed in the rich composer, a governed run launched through the one composition root and streamed in Console mode, scored into a comparable cell, with zero terminal hosting asserted as a counter that is shown going to one. Nine clauses, each against an oracle committed before the run, with the two qualifications the slice carries rather than discovers.",
+      "tags": [
+        "conductor",
+        "front-door",
+        "session",
+        "composer",
+        "template",
+        "proof-pack",
+        "phase-1",
+        "exit-evidence",
+        "f5"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "tested-by"
+        },
+        {
+          "to": "note-front-door-residuals",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0029-latency-slo-recorded-not-asserted",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-conductor-agent-plane",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2423d3d093e52c4684039f4df826e22087662428fa24121d61f00cd196ad048d"
+    },
+    {
       "id": "proof-console-coalesce",
       "path": "docs/proof/console-coalesce.md",
       "title": "Proof Pack — CV-5.2, Coalesce: the Console's row grain is the message, never the wire chunk; one fold read by the thread's reply side and the split; Reply retired (Ruling 81)",
@@ -18074,5 +18121,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "582e55c1a405a9f2625b3271f904305fcf4f9fb947f64f4484e81306bbdfd30f"
+  "graphSha256": "173974c4e627a42372691d5d17915170eec416c73a6c6d4c1a9bd41537014513"
 };

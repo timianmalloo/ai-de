@@ -1,0 +1,11 @@
+{
+  "agent": "copilot-atlas-core-runtime",
+  "session": "atlas-production-core-runtime-astra",
+  "worktree": "C:\\Projects\\ai-de-atlas-production-core-runtime",
+  "branch": "atlas/production-core-runtime",
+  "status": "author-complete",
+  "work": "Committed runtime b1c6f74a0c5b0c7775420ac63ad814aa05c9bc0c; actual daemon/native-Q proof and factory/viewmodel handoff available",
+  "waiting_on": "Independent Security/Distributed Systems/Test review, then separately funded Shell/MainWindow integration proof",
+  "baseline": "1e96dd8e8ae06a42759ff14779eb95296edf0248",
+  "coordination_note": "Only the six explicitly authorized pre-existing regen-owed paths are excepted; no marker changes."
+}

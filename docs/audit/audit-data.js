@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T01:41:45Z",
+  "generated": "2026-09-14T13:31:13Z",
   "audit": [
     {
       "actor": null,
@@ -15443,24 +15443,52 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2ES7KN6V0BSF2DTVE0C3XRE",
-      "shortname": "join-profile-and-converge-close",
-      "datetime": "2026-09-14T01:41:44Z",
-      "session": "claude-conductor-addendum-c",
-      "prompt": "keep going (the join of the resolved merge)",
-      "summary": "The programme's last join: the session profile sp-0002 (docs/profiles/addendum-cd.md: 14 findings, 10 fixes with controls; est. $2,198 for the programme, 86% in sub-agents the pack's profiler could not see; joins+recounts 44.8% of the main line; DC-113's shape 168/102 on the main line), DC-206..208 allocated, the ledger's ratio corrected to 1.75x, conductor-join.py now sets its own marker/tier/fan-out/recount_seconds (F-22), the attended rows for the operator in one note, the liveness at converge. recount_seconds=0 (docs_only=True).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/profiles/addendum-cd.md",
         "docs/notes/attended-rows-for-the-operator.md"
       ],
+      "datetime": "2026-09-14T01:41:44Z",
+      "done_when": "main pushed green; the profile indexed; the operator's list on main",
+      "duration_seconds": 0.0,
+      "fan_out": 0,
+      "goal": "Close the Addenda C/D programme on main with its profile, its open list for the operator, and the join script measuring itself",
+      "id": "al-01M2ES7KN6V0BSF2DTVE0C3XRE",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (the join of the resolved merge)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-profile-and-converge-close",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-14T01:41:44Z",
+      "summary": "The programme's last join: the session profile sp-0002 (docs/profiles/addendum-cd.md: 14 findings, 10 fixes with controls; est. $2,198 for the programme, 86% in sub-agents the pack's profiler could not see; joins+recounts 44.8% of the main line; DC-113's shape 168/102 on the main line), DC-206..208 allocated, the ledger's ratio corrected to 1.75x, conductor-join.py now sets its own marker/tier/fan-out/recount_seconds (F-22), the attended rows for the operator in one note, the liveness at converge. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "id": "al-01M2G1TNB2JTEZ262Q6TX6NEF2",
+      "shortname": "join-f5-exit-evidence",
+      "datetime": "2026-09-14T13:31:12Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "keep going (the join of the resolved merge)",
+      "summary": "Join: feature/exit-evidence (135e05e1, 21 commits) merged to main under Ruling 91 (the operator: merge F5 and proceed) - ten conflicts: derived figures taken ours; the four lane-pin files taken from main (the cherry-picks had evolved through CV-3/X-5; the lane.session-new frame record is on main); SessionConfigStore.Create and the sheet's Create merged by hand to carry the sheet's three decisions AND F5's origin (SessionOrigins.MainMenuNewSession); the register's header from main. F5's nine-clause oracle runs in self-test form in the runner until the gesture's record exists (clauses 2/3/5/6/9 RUN-PENDING). X-6 rides on this join: the composer's caret on the theme's ink (DC-209) and the Compiled prompt disclosure measured on screen. recount_seconds=452 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/conductor-front-door.md"
+      ],
       "tags": [],
       "outcome": "success",
-      "goal": "Close the Addenda C/D programme on main with its profile, its open list for the operator, and the join script measuring itself",
-      "done_when": "main pushed green; the profile indexed; the operator's list on main",
+      "goal": "Land F5 on main so the front-door gesture is performed on the current build",
+      "done_when": "main pushed green through the runner (F5's oracle self-test only); Release built; the recount green",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -15468,8 +15496,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-09-14T01:41:44Z",
-      "duration_seconds": 0.0
+      "started_at": "2026-09-14T13:23:39Z",
+      "duration_seconds": 453.0
     }
   ],
   "changes": [
