@@ -1,6 +1,8 @@
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.ComponentModel;
+using System.Diagnostics;
 using AiDe.App.ViewModels;
 using AiDe.App.Workbench;
 using AiDe.Core.Workbench;
@@ -10,6 +12,17 @@ namespace AiDe.App;
 public partial class MainWindow : Window
 {
     private readonly PerspectiveShell _perspectives;
+    private readonly Func<Task<MainWindowViewModel>> _startupWorkspace;
+    private readonly string _shellStateDirectory;
+    private readonly HashSet<Task> _workspaceOperations = [];
+    private long _workspaceGeneration;
+    private bool _startupStarted;
+    private bool _closeRequested;
+    private bool _closeInProgress;
+    private bool _closeAllowed;
+
+    internal Task WorkspaceReady { get; private set; } = Task.CompletedTask;
+    internal Task CloseOperation { get; private set; } = Task.CompletedTask;
 
     /// <summary>
     /// The provider file, as the last <c>File → New Session</c> read it. <b>The one construction site
@@ -18,8 +31,19 @@ public partial class MainWindow : Window
     /// </summary>
     private AiDe.Core.AgentPlane.ProviderConfiguration? _providers;
 
-    public MainWindow()
+    public MainWindow() : this(
+        () => MainWindowViewModel.OpenDefaultAsync(),
+        System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AiDe"))
     {
+    }
+
+    internal MainWindow(Func<Task<MainWindowViewModel>> startupWorkspace, string shellStateDirectory,
+        ResourceDictionary? resources = null)
+    {
+        _startupWorkspace = startupWorkspace ?? throw new ArgumentNullException(nameof(startupWorkspace));
+        ArgumentException.ThrowIfNullOrWhiteSpace(shellStateDirectory);
+        _shellStateDirectory = shellStateDirectory;
+        if (resources is not null) Resources.MergedDictionaries.Add(resources);
         InitializeComponent();
 
         // Composition root. The window is built and shown immediately over the first-run state, and
@@ -119,7 +143,7 @@ public partial class MainWindow : Window
 
         // The most common moment to lose an arrangement is rearranging and immediately closing, so
         // the pending debounced save is flushed on the way out rather than left to a timer.
-        Closed += (_, _) => Shell.Dispose();
+        Closing += OnWindowClosing;
 
         // The shell names its binary the moment it has a size and a DPI to report (INV-0008, Fix D):
         // one app.start line on the normal path, so a UI report can be attributed to `1.0.0+<sha>`
@@ -132,7 +156,13 @@ public partial class MainWindow : Window
             ActualHeight,
             WindowState.ToString());
 
-        Loaded += async (_, _) => await OpenWorkspaceAsync();
+        Loaded += async (_, _) =>
+        {
+            if (_startupStarted) return;
+            _startupStarted = true;
+            try { await OpenWorkspaceAsync(); }
+            catch (Exception ex) when (ex is not OutOfMemoryException) { ReportWorkspaceFailure(ex); }
+        };
 
         // The folder picker lives here because only a Window can show one; the controller holds the
         // command and knows nothing about dialogs.
@@ -156,14 +186,91 @@ public partial class MainWindow : Window
     /// </remarks>
     private async Task OpenWorkspaceAsync()
     {
-        var viewModel = await MainWindowViewModel.OpenDefaultAsync();
-        DataContext = viewModel;
-        ReflectPerspective(_perspectives.Active);   // the title names the workspace now open
-
-        if (viewModel.Queries is not null)
+        await RunWorkspaceOperationAsync(async generation =>
         {
-            AttachWorkspace(viewModel);
+            var viewModel = await _startupWorkspace().ConfigureAwait(true);
+            await PublishWorkspaceAsync(viewModel, generation).ConfigureAwait(true);
+            return viewModel.StatusMessage;
+        }).ConfigureAwait(true);
+    }
+
+    internal Task ApplyWorkspaceAsync(MainWindowViewModel workspace) =>
+        RunWorkspaceOperationAsync(async generation =>
+        {
+            if (!await PublishWorkspaceAsync(workspace, generation).ConfigureAwait(true))
+                throw new OperationCanceledException("ATLAS-WINDOW-SUPERSEDED");
+            return workspace.StatusMessage;
+        });
+
+    private async Task<bool> PublishWorkspaceAsync(MainWindowViewModel workspace, long generation)
+    {
+        if (_closeRequested || generation != _workspaceGeneration) return false;
+        await Shell.AttachAtlasWorkspaceAsync(workspace.AtlasReaderFactory).ConfigureAwait(true);
+        if (_closeRequested || generation != _workspaceGeneration) return false;
+        DataContext = workspace;
+        ReflectPerspective(_perspectives.Active);
+        if (workspace.Queries is not null) AttachWorkspace(workspace);
+        foreach (var host in Shell.Hosts) host.Adapter.Render();
+        return true;
+    }
+
+    private Task<string> RunWorkspaceOperationAsync(Func<long, Task<string>> operation)
+    {
+        if (_closeRequested) throw new InvalidOperationException("ATLAS-WINDOW-CLOSING");
+        var pending = operation(++_workspaceGeneration);
+        _workspaceOperations.Add(pending);
+        var observed = ObserveWorkspaceOperationAsync(pending);
+        WorkspaceReady = observed;
+        return observed;
+    }
+
+    private async Task<string> ObserveWorkspaceOperationAsync(Task<string> operation)
+    {
+        try { return await operation.ConfigureAwait(true); }
+        finally { _workspaceOperations.Remove(operation); }
+    }
+
+    private string ReportWorkspaceFailure(Exception exception)
+    {
+        Trace.TraceError("code=ATLAS-WINDOW-WORKSPACE exception.type={0}", exception.GetType().FullName);
+        const string message = "ATLAS-WINDOW-WORKSPACE: workspace attachment failed; retry opening the workspace.";
+        Shell.Announcer.Announce(message);
+        return message;
+    }
+
+    private async void OnWindowClosing(object? sender, CancelEventArgs args)
+    {
+        if (_closeAllowed) return;
+        args.Cancel = true;
+        if (_closeInProgress) return;
+        _closeInProgress = true;
+        _closeRequested = true;
+        ++_workspaceGeneration;
+        try
+        {
+            CloseOperation = CloseWorkspaceAsync();
+            await CloseOperation.ConfigureAwait(true);
+            _closeAllowed = true;
+            await Dispatcher.InvokeAsync(Close);
         }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            _closeAllowed = false;
+            Trace.TraceError("code=ATLAS-WINDOW-CLOSE exception.type={0}", ex.GetType().FullName);
+            Shell.Announcer.Announce("ATLAS-WINDOW-CLOSE: cleanup failed; close again to retry. Ownership retained.");
+        }
+        finally { _closeInProgress = false; }
+    }
+
+    private async Task CloseWorkspaceAsync()
+    {
+        Shell.CancelAtlasOperations();
+        try { await Task.WhenAll(_workspaceOperations.ToArray()).ConfigureAwait(true); }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            Trace.TraceError("code=ATLAS-WINDOW-DRAIN exception.type={0}", ex.GetType().FullName);
+        }
+        await Shell.DisposeAsync().ConfigureAwait(true);
     }
 
     /// <summary>
@@ -205,8 +312,7 @@ public partial class MainWindow : Window
     }
 
     /// <summary>Where this installation keeps state that is not any one workspace's.</summary>
-    private static string ShellStateDirectory => System.IO.Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AiDe");
+    private string ShellStateDirectory => _shellStateDirectory;
 
     /// <summary>
     /// Renders the menu bar for the active perspective — including the recent lists — and hands the
@@ -456,8 +562,12 @@ public partial class MainWindow : Window
     /// </summary>
     private async Task<string?> OpenWorkspaceOrSayWhyAsync(string folder)
     {
-        var said = await OpenWorkspaceAtAsync(folder);
-        return (DataContext as MainWindowViewModel)?.Queries is null ? said : null;
+        try
+        {
+            var said = await OpenWorkspaceAtAsync(folder);
+            return (DataContext as MainWindowViewModel)?.Queries is null ? said : null;
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException) { return ReportWorkspaceFailure(ex); }
     }
 
     /// <summary>Shows the workspace chooser that interposes when no workspace is open (R13 b1).</summary>
@@ -472,8 +582,11 @@ public partial class MainWindow : Window
         return dialog.ShowDialog(this) == true ? dialog.FolderName : null;
     }
 
-    private async Task OpenAndAnnounceAsync(string path) =>
-        Shell.Announcer.Announce(await OpenWorkspaceAtAsync(path));
+    private async Task OpenAndAnnounceAsync(string path)
+    {
+        try { Shell.Announcer.Announce(await OpenWorkspaceAtAsync(path)); }
+        catch (Exception ex) when (ex is not OutOfMemoryException) { ReportWorkspaceFailure(ex); }
+    }
 
     /// <summary>Shows a folder picker and opens the chosen repository as a workspace.</summary>
     /// <remarks>
@@ -493,22 +606,21 @@ public partial class MainWindow : Window
             return "No workspace was opened.";
         }
 
-        return await OpenWorkspaceAtAsync(dialog.FolderName);
+        try { return await OpenWorkspaceAtAsync(dialog.FolderName); }
+        catch (Exception ex) when (ex is not OutOfMemoryException) { return ReportWorkspaceFailure(ex); }
     }
 
     /// <summary>Opens a specific folder as a workspace and reports the outcome.</summary>
-    private async Task<string> OpenWorkspaceAtAsync(string folder)
+    private async Task<string> OpenWorkspaceAtAsync(string folder) => await RunWorkspaceOperationAsync(async generation =>
     {
         var viewModel = await MainWindowViewModel.OpenAsync(folder);
-        DataContext = viewModel;
-        ReflectPerspective(_perspectives.Active);   // the title names the workspace now open
+        if (!await PublishWorkspaceAsync(viewModel, generation).ConfigureAwait(true))
+            throw new OperationCanceledException("ATLAS-WINDOW-SUPERSEDED");
 
         if (viewModel.Queries is null)
         {
             return viewModel.StatusMessage;
         }
-
-        AttachWorkspace(viewModel);
 
         Shell.Adapter.Render();
         Shell.BindCanvas();
@@ -521,7 +633,7 @@ public partial class MainWindow : Window
 
         return $"Workspace open: {System.IO.Path.GetFileName(folder.TrimEnd((char)92))}. " +
                "Use File → Index C# projects in this workspace to index it.";
-    }
+    });
 
     internal WorkbenchShell Shell { get; }
 
