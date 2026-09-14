@@ -1,3 +1,5 @@
 {"agent": "sessions-r94-r98-r99-r102", "at": 1789403299.7138462, "kind": "session-start", "path": "-", "seq": 1, "session": "sessions-r94-r98-r99-r102", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-lane-sessions-r94-r98-r99-r102"}
 {"agent": "claude-lane-sessions", "at": 1789403532.5367756, "kind": "session-start", "path": "-", "seq": 2, "session": "sessions-r94-r98-r99-r102", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-lane-sessions-r94-r98-r99-r102"}
 {"agent": "claude-lane-sessions", "at": 1789406907.7490323, "kind": "claim", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 3, "session": "sessions-r94-r98-r99-r102", "ttl": 300.0, "wi": "sessions-r94-r98-r99-r102"}
+{"agent": "claude-lane-sessions", "at": 1789407939.7885907, "kind": "release", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 4, "session": "sessions-r94-r98-r99-r102", "wi": "sessions-r94-r98-r99-r102"}
+{"agent": "claude-lane-sessions", "at": 1789407997.6550238, "kind": "session-end", "path": "-", "seq": 5, "session": "sessions-r94-r98-r99-r102", "wi": "WI-0", "worktree": "C:/Projects/ai-de-lane-sessions-r94-r98-r99-r102"}
