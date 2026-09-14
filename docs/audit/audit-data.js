@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T16:58:26Z",
+  "generated": "2026-09-14T17:03:14Z",
   "audit": [
     {
       "actor": null,
@@ -15714,6 +15714,32 @@ window.AUDIT_DATA = {
         "acceptance_met": true
       },
       "started_at": "2026-09-14T16:58:24Z",
+      "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2GDYX3KR6BD84NZ332KWK9B",
+      "shortname": "join-rulings-92-104-f5-closed-2",
+      "datetime": "2026-09-14T17:03:14Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "the join of the resolved merge into main",
+      "summary": "The same join's second run: the first stopped at step 8 because verify-project-coverage found the two new gates (verify-front-door-exit-attended, verify-subprocess-utf8) in no workflow; four build.yml steps wired (5f160d27); this run completes the join - gates, push, build. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "the join of conductor/addendum-c complete on main with 38 gates green",
+      "done_when": "38/38 gates; pushed; the Release built",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-14T17:03:13Z",
       "duration_seconds": 1.0
     }
   ],

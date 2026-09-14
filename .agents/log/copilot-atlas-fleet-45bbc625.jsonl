@@ -594,3 +594,6 @@
 {"agent": "copilot-atlas-conductor", "at": 1789403596.6427188, "kind": "release", "path": "docs/proof/code-atlas-production-adapters.md", "seq": 594, "session": "copilot-atlas-fleet-45bbc625", "wi": "WI-0"}
 {"agent": "copilot-atlas-conductor", "at": 1789403596.6991744, "kind": "release", "path": "docs/coordination/code-atlas.md", "seq": 595, "session": "copilot-atlas-fleet-45bbc625", "wi": "WI-0"}
 {"agent": "copilot-atlas-conductor", "at": 1789403596.7587035, "kind": "release", "path": "docs/coordination/code-atlas.html", "seq": 596, "session": "copilot-atlas-fleet-45bbc625", "wi": "WI-0"}
+{"agent": "copilot-atlas-conductor", "at": 1789405364.2261238, "kind": "claim", "path": "docs/collaboration/session-contracts.md", "seq": 597, "session": "copilot-atlas-fleet-45bbc625", "ttl": 300.0, "wi": "atlas-real-window-execution"}
+{"agent": "copilot-atlas-conductor", "at": 1789405364.2903383, "kind": "claim", "path": "docs/notes/atlas-owner/live-reader-horizon.md", "seq": 598, "session": "copilot-atlas-fleet-45bbc625", "ttl": 300.0, "wi": "atlas-real-window-execution"}
+{"agent": "copilot-atlas-conductor", "at": 1789405364.3737955, "kind": "claim", "path": "docs/proof/code-atlas-production-adapters.md", "seq": 599, "session": "copilot-atlas-fleet-45bbc625", "ttl": 300.0, "wi": "atlas-real-window-execution"}
