@@ -889,3 +889,23 @@ outstanding record and qualification-join mechanics, eighteen for cleanup eviden
 conditional join and runtime-estimate disposition. The next outcome is that disposition
 and an actionable runtime funding request, not programme closure. No primary/push authority
 or full factory/MainWindow tranche is inferred.
+
+## Cleanup disposition and grounded-estimate completion, Owner turn 49
+
+Cleanup candidate `7d78e773` used eight of ten cleanup leaves. The subsequent estimate used
+four leaves, but its fourth read failed from PowerShell argument binding. Its 35-60-leaf
+runtime estimate is explicitly provisional: exact manifest reconciliation, full dispatch/
+client bodies and ViewModel disposal ownership were not all established.
+
+Owner reallocates the two saved cleanup leaves to completing those specific read-only gaps,
+keeping C at a maximum of 48 regular leaves (46 charged). NQ remains 29/30. There is no
+runtime authoring grant or implicit funding from an unverified estimate.
+
+Test cleared the retained-cleanup oracles after reading all three semantic reds, source
+assertions and final receipts. Conductor independently built/replayed 355/355. Security
+cleared the strong ledger/issuer ordering condition with a native-source readback condition.
+Conductor then opened `NativePin` constructor handling and native notification disposal:
+failed unpublished cleanup is retained, the safe data handle closes in `finally`, and
+notification timeout throws before buffers/OVERLAPPED are freed. The required readback is
+complete for this candidate. Actual stalled-kernel behavior, runtime content policy, real
+factory/MainWindow composition and production diagnostic confinement are not claimed.

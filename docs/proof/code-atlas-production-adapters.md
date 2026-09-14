@@ -234,3 +234,45 @@ targeted review leaves are separate. The next implementation must prove safe-oth
 strong bounded retention of pending native work and reservations, admission debt accounting,
 and idempotent recovery after completion, including canceled creation and final issuer drain.
 Injected timeout evidence must remain labelled as injection rather than a stalled-kernel run.
+
+## Retained-cleanup candidate and gate
+
+Candidate `7d78e773b2e5b7cc5eec2716a30c0fc9c6773128` introduces a bounded strong cleanup
+ledger, retains failed pin and unpublished-creation ownership, attempts safe peers, and
+keeps the issuer lease charged if final drain fails. The writer used eight regular cleanup
+leaves. Three isolated semantic reds preceded the fix:
+
+| Retained author TRX under `.artifacts/atlas-reader` | Actual pre-fix failure |
+|---|---|
+| `owner48-red-RetainedPinTimeoutStillReleasesIndependentPins.trx` | Independent `.git\index` remains locked |
+| `owner48-red-CanceledCreationCleanupTimeoutRetainsItsIssuerCharge.trx` | Expected one issuer lease, observed zero |
+| `owner48-red-FinalIssuerDrainTimeoutDoesNotReclaimTheLease.trx` | Expected one retained lease, observed zero |
+
+Author `owner48-final.trx` is 355/355. Conductor read those three red messages directly,
+then independently built/replayed 355/355 in
+`files/atlas-cleanup-independent/cleanup-independent.trx`. New source assertions cover
+safe-peer release, one retained owner/buffer/issuer lease after pin or creation failure,
+no new Git invocation while debt remains, final-drain debt even when live-thread count is
+zero, explicit retry to zero, strong ownership after caller loss, and capacity reservation
+before native work. These are labelled timeout injections, not a hung-kernel experiment.
+
+GATE retained-cleanup Test - PASS for the fault, charge, GC and retry oracles.
+GATE retained-cleanup Security - PASS with native readback and production-boundary conditions.
+Conductor completed the missing native ranges: `NativePin` retains failed unpublished cleanup
+and closes its independent data handle; `NativeDirectoryChange.Dispose` does not reach the
+buffer-free operations when completion times out. This satisfies the stated source readback
+condition, not broader Windows fault coverage.
+
+The joined helper remains a qualification mechanism until actual runtime admission is
+implemented and reviewed. Qualification diagnostics must not reach production logs/errors.
+The existing content-eligibility basis, peer/epoch/root binding, global runtime limits,
+async endpoint/server, isolated client and real Core-to-Shell factory are still required.
+
+### Runtime funding is not yet ready
+
+The provisional sequence is admission composition, awaited server/facade, isolated remote
+reader, actual factory/ViewModel handoff, then daemon/native integration proof. The writer
+estimated 35-60 author/verification leaves, excluding independent reviews, but explicitly
+flagged missing method-body and disposal grounding. Owner turn 49 releases the two unused
+regular calls to finish those reads and the exact twenty-file reconciliation. No runtime
+code may be authored from that provisional estimate.

@@ -471,6 +471,20 @@ Conductor's prospective cumulative ceiling is **126**, including six reserved re
 mechanics calls and eighteen cleanup/review/runtime-estimate-disposition calls; prior
 wrappers and overruns are retained, never reset.
 
+Owner turn 49 reallocates C's two unused cleanup leaves to the specific failed runtime
+grounding, without increasing 48: regular use is **46/48**, with two read-only leaves now
+released. No source authoring is allowed in that completion. Reconcile the twenty exact
+paths, read the missing dispatch/client/ViewModel disposal bodies, and return an inspected
+pin, executable commit sequence, tests, risks and bounded estimate with exclusions.
+The provisional 35-60-leaf estimate is not yet funding-ready.
+
+Cleanup candidate `7d78e773` used eight cleanup leaves and passes the targeted Test gate.
+Security conditionally clears the retained-owner paths. Conductor filled the review's
+missing native constructor/disposal ranges and independently replayed 355/355. Timeout
+throws before live buffer freeing; unpublished constructor cleanup retains its owner.
+The candidate may join under Owner 48's conditional gate, without admitting the unbuilt
+runtime factory or real-window integration.
+
 ### Core owns
 
 | Path | Why |
