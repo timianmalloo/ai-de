@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 117 · partially-controlled 66 · uncontrolled 28
+**Status counts:** controlled 120 · partially-controlled 67 · uncontrolled 33
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -7942,3 +7942,84 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   why. Red first: 2 findings on `tools/compile-eval/derive-fixtures.py` after the sweep's sed missed
   a file, then green.
 - **Status:** `controlled`.
+
+### DC-212 — A template's header toggle bound one-way to the state it is meant to drive: the click moves the chevron and nothing else, and every oracle sets the state through the property
+
+- **Shape:** an `Expander` template whose `HeaderSite` toggle carries `IsChecked = TemplateBinding(IsExpanded)` — a `TemplateBinding` is one-way — so a click flips `IsChecked`, the chevron trigger on `IsChecked` rotates, and `IsExpanded` (which the `ExpandSite` trigger reads) never changes. Every test that opens the disclosure through `IsExpanded = true` or the peer's `Expand()` passes; the operator's click does nothing but turn an arrow.
+- **Signature:** *"it is expanded but shows nothing"* — a rotated chevron over no content; `composer.layout` rows with `compiled: {height: null}` at every input count (the box never arranged); `SetValue(IsCheckedProperty, new TemplateBindingExtension(...))` on a template's toggle beside two triggers keyed to two different properties.
+- **Instance (the operator, 2026-09-14):** *"the compiled prompt thing … is expanded but shows no compiled prompt i expected it there"* — measured at their belt: `IsChecked` True, `IsExpanded` False, `ActualHeight` 0.00, `Text.Length` 69 (Ruling 96, `docs/proof/composer-compiled-prompt-and-console-rows.md`). Both disclosure templates (`ThreadFeed.DisclosureStyle`, `ToolDisclosureStyle`) had it, so every *Thinking*, *detail*, *N events* and provenance disclosure of the thread was click-dead too — unreported because a collapsed chevron looks intentional.
+- **Sweep:** `grep -rn "TemplateBindingExtension(Expander.IsExpandedProperty)" src/` — two sites, both fixed (two-way `Binding` with `RelativeSource TemplatedParent`).
+- **Control:** the Ruling 96 tests open the disclosure through the toggle's own `IToggleProvider.Toggle()` — the operator's gesture, not the property — and assert the content's `ActualHeight ≥ CompiledPromptMinHeight` and `Text == RenderView(draft).Text`. Any new disclosure template inherits the rule: an oracle over a disclosure drives the toggle, never the property.
+- **Status:** `controlled`.
+
+### DC-213 — A floor kept as an addend in the parent's arithmetic and never set on the element it floors: the parent reserves the room, the child desires its content
+
+- **Shape:** a `XMinHeight` constant appears in a parent's `MinimumHeight` / `MaxHeight` sums and in no child's `MinHeight`. The parent's belt grows by the floor; the child measures to its content and lays out under it; the "floor" holds only on fixtures whose content already exceeds it.
+- **Signature:** a one-line draft renders its reader at 29.89 px under a 48 px "floor"; the writer-room tests were green because their fixture was a ~30-line compiled view.
+- **Instance (2026-09-14, Ruling 96):** `CompiledPromptMinHeight` summed into `MinimumHeight` at `ComposerSurface.cs:1493`, absent from `_compiled.MinHeight`.
+- **Sweep:** the composer's other floors (`EditorFloor` is set on the host's `MinHeight` — correct); the thread's rows have no floors of this kind.
+- **Control:** `_compiled.MinHeight = CompiledPromptMinHeight`; the Ruling 96 tests measure the one-line draft. The rule for the next floor: a floor is set on the element, and the parent's sums *read* it.
+- **Status:** `controlled`.
+
+### DC-214 — A contextual menu on a browser-hosted surface is raised only by the pointer, so the surface's keyboard grammar has no entry to it
+
+- **Shape:** a WebView2 canvas whose page posts `node.activate`, `focus.leave` and (now) a `contextmenu` message on right-click; the keyboard grammar (Tab, Enter, `/`, Backspace, 2/3) never posts the menu request, so a keyboard user has no route to *View source*.
+- **Signature:** the menu is reachable by mouse only; a UIA walk finds no menu affordance on the canvas; Shift+F10 / the Menu key do nothing on the focused node.
+- **Instance (2026-09-14, Ruling 93):** Explore's new node menu (`docs/proof/explore-view-source.md` F-2).
+- **Sweep:** the composer page (CodeMirror) has no contextual menu; the Architecture canvas has the same page and the same gap.
+- **Control (owed to the Explore lane's next slice):** the page's key handler posts the same `contextmenu` message on Shift+F10 and the Menu key for the focused node; a rendered test drives it and observes the menu.
+- **Status:** `uncontrolled` — registered 2026-09-14 from the lane's finding.
+
+### DC-215 — A wire enum that travels by name is additive at the writer and fail-closed at an older reader, and the reader's "unknown → None" branch cannot see a value that never deserialised
+
+- **Shape:** `NodeContentKind` serialises by name (`JsonStringEnumConverter`); a new member (`Html`) is harmless for a new reader, but an older client's converter throws on the unknown name before any "unknown degrades to None" code runs — the daemon/client version skew case, invisible to a same-build test.
+- **Signature:** a `JsonException` naming the enum on the client side after a daemon upgrade; a fallback branch that is dead for the one input it was written for.
+- **Instance (2026-09-14, Ruling 93):** `RenderKind.Html` added (`docs/proof/explore-view-source.md` F-4); the mirror's None branch was written and cannot be reached by an unknown name.
+- **Sweep:** every `JsonStringEnumConverter` on a type crossing the daemon↔app pipe (grep `JsonStringEnumConverter` under src/AiDe.Core/Ipc and the projection records).
+- **Control (owed):** a converter that maps an unknown name to the enum's declared `None`/`Unknown` member on read, with a test that feeds a future name; or the IPC protocol version gate already refuses a skewed pair (verify which holds; record it).
+- **Status:** `uncontrolled` — registered 2026-09-14 from the lane's finding.
+
+### DC-216 — Parallel lanes share one scratch file keyed by the conductor's session, so one lane's summary overwrites another's
+
+- **Shape:** a pack script (or a lane's own convention) writes a scratch artefact — `audit-summary.txt` — to a path keyed by the Claude session that spawned the lanes rather than by the lane's coord session, so two lanes running under one conductor write the same file and the later one wins silently.
+- **Signature:** a lane's audit summary reads another lane's text; a file in the shared scratchpad with the wrong lane's content and a newer mtime.
+- **Instance (2026-09-14):** the Explore lane reported *"another lane overwrote my audit-summary.txt"* and switched to lane-unique names.
+- **Sweep:** the pack's scratch conventions (`docs/ai-forward-pack/scripts/*.py` temp paths keyed on `AGENT_SESSION` vs the harness session) — a pack finding (ai-forward), recorded in `docs/notes/pack-findings-addendum-cd.md`.
+- **Control (owed, pack-side):** scratch paths keyed by the coord session id (`AGENT_SESSION`), which every lane sets first; here the brief tells each lane to use lane-unique names until the pack lands it.
+- **Status:** `uncontrolled` — a process class; the fix is the pack's.
+
+### DC-217 — A fix at the writer does not reach a store the old writer already wrote; the reader shows the stored default
+
+- **Shape:** a door default (DC-110's shape) is removed from the code path that stamps it, and every record the old path already wrote keeps the literal; a reader that trusts the store shows it as a measured value for as long as the store's reuse guard says "unchanged".
+- **Signature:** the fix's tests are green, the operator's screen still shows the old value; `git log` on the writer shows the fix landed; the store's row predates it.
+- **Instance (2026-09-14, R-1):** `rev rev-1` on build `51e806f8` after Ruling 85 removed the literal from the shell — `WorkspaceCore.Reusable` reused the pre-85 snapshot on an unchanged fingerprint (`docs/proof/architecture-recut-and-session-names.md` §Ruling 98).
+- **Sweep:** the store's other stamped values (`ExtractorGeneration` is already a reuse key via `ScopeFingerprints`; the extractor version on provenance rows travels with re-extraction).
+- **Control:** Ruling 98 — a snapshot whose base revision is the retired literal is not reusable (`WorkspaceCore.RetiredFixtureRevision`), re-extracted once; the general rule for the next writer fix: name the stored shape the old writer produced and add it to the reuse guard, or migrate.
+- **Status:** `controlled`.
+
+### DC-218 — A flex row with no wrap inside a fraction-width pane overflows the document at the narrow default; the document, not the pane, grows the scrollbar
+
+- **Shape:** a browser-hosted page's `<header>` is a flex row of controls with no `flex-wrap`; at the pane's narrow default (Architecture's Left at 0.22) the row overflows the document width, and the WebView2 document scrolls sideways under a WPF header that shows nothing.
+- **Signature:** a horizontal scrollbar at the pane's bottom edge (the operator's F-C screenshot, y≈1118, x≈68–490) while the WPF tab header at the top has none; the controls *Search a node · Back · Overview · Fit · View in 3D · Group* clipped at the right.
+- **Instance (2026-09-14, Ruling 94 condition 3):** measured from the screenshot by the Sessions lane; the row is `CanvasPage.cs:34, 97-100`.
+- **Sweep:** the composer page's rows (they wrap or are single controls); the Explore reader is WPF.
+- **Control (owed to the Explore lane):** `flex-wrap: wrap` on the canvas header and a rendered check at 0.22 of the operator's viewport that `document.scrollWidth <= clientWidth`; the UI craft floor's overflow rule already names the shape for mockups — the page census should read it too.
+- **Status:** `uncontrolled` — registered 2026-09-14 from the lane's finding.
+
+### DC-219 — A store drops a kind it cannot restore in silence, so a kind the product retires vanishes from the operator's saved layout with no report unless the shell lists it as restorable
+
+- **Shape:** `ZoneLayoutStore.Read` filters saved surfaces by `restorableKinds`; a kind absent from the list is dropped and nothing says so. Ruling 94 retired `inspector`; the shell now names it in `RetiredKinds` so the drop is reported with the ruling — but a kind a *newer* build wrote, read by an older build, still vanishes silently.
+- **Signature:** a pane the operator arranged is gone after an upgrade or a downgrade; the strip reports nothing; `dropped=N` in the store's own counter with no line for the operator.
+- **Instance (2026-09-14, Ruling 94):** the composer probe's replay went `dropped=9` (silent) → `dropped=10` once `RestorableKinds` existed (`docs/proof/architecture-recut-and-session-names.md`).
+- **Sweep:** every reader of a saved envelope (`LayoutPersistence`, `ZoneLayoutStore`).
+- **Control (partial):** `RetiredKinds` closes the retired case with a report naming the ruling (ADR-0032 test 1 extended); open for the unknown-kind case — the next slice on the store makes every dropped kind a reported line ("dropped: <kind>, unknown to this build").
+- **Status:** `partially-controlled`.
+
+### DC-220 — A process-global diagnostics sink that tests swap makes the ledger's start/stop balance depend on which sink was installed when a line fired
+
+- **Shape:** `WorkbenchDiagnostics.Sink` is a process-global the App tests replace 32 times (30 paired with a restore in a `finally`; two as a disposable pair); a terminal's stop line is written synchronously through whichever sink is installed at `Dispose` time, so a stop that fires while a test's sink is installed lands in that test's capture, not in the per-run ledger — and the ledger reads one start with no stop although the terminal was disposed.
+- **Signature:** the per-run terminal ledger reads 10 starts / 9 stops for `s-terminal` in a full App run and 1/1 for the same test in isolation; the disposal is verified at the source; parallelization is off at the collection level.
+- **Instance (2026-09-14):** the Sessions lane fixed the every-kind test's disposal, observed `killed` in isolation, and the full run's ledger still read 10/9 — recorded as *not equal, mechanism not identified* rather than claimed.
+- **Sweep:** every `WorkbenchDiagnostics.Sink =` in tests/ (32); every ledger reader that treats the per-run file as complete (the terminal-host gates read the ledger with the assumption that a stop always reaches it).
+- **Control (owed):** the default sink is the *base* every swapped sink forwards `terminal.*` lines to (or the ledger writer is a separate, never-swapped channel), and a test asserts the full-run ledger balances; until then the ledger's unmatched count is read as "not recorded" for lines that fired under a swapped sink, never as a leak.
+- **Status:** `uncontrolled` — registered 2026-09-14; the measurement gap is named, the mechanism is not.

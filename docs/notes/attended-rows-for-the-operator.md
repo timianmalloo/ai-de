@@ -82,6 +82,38 @@ not record what they ask (a scored cell for a governed run, the sent prompt's ow
 counts, per-event latency, the run's root count) — carried as residuals in
 `docs/proof/conductor-front-door.md` §*The gesture happened*. Nothing further is yours here.
 
+## The 2026-09-14 findings, answered — rows added at each lane's join (build: the Release after main `c831113e` or later)
+
+### Explore (Rulings 92, 93 — `docs/proof/explore-view-source.md`)
+
+| # | Do | Expect | Proves |
+|---|---|---|---|
+| E-1 | Ctrl+2, click *PredictionEvidenceReader* (or any class) | every typed-edge row starts at the metadata labels' left edge, one line per edge, predicate · target · *Verified* on one baseline at one size | 92 |
+| E-2 | right-click a class node → **View source** | highlighted C# below the edges in the reader; right-click an ADR node → **View source**: rendered prose; a node with no source: the shortfall sentence, no blank | 93 |
+| E-3 | Task Manager: `AiDe.App` private bytes before/after the first HTML *View source* | the delta (the lane measured +29.6 MB for the sandbox host as a third WebView2) | 93 (P-4) |
+
+### Composer and Console (Rulings 96, 100, 101 — `docs/proof/composer-compiled-prompt-and-console-rows.md`)
+
+| # | Do | Expect | Proves |
+|---|---|---|---|
+| C-1 | in a session with one turn, type a one-line message; click **Compiled prompt** | the chevron rotates **and** a mono box of at least three lines appears with the message's bytes; the editor shrinks, never under 130 px | 96 |
+| C-2 | send a turn; look at the next draft | the disclosure is still open; close the app, reopen the session from Recent — still open | 96 |
+| C-3 | click **Thinking** or **detail** on any thread item | it opens (the same template was click-dead before) | 96 (DC-212) |
+| C-4 | open the Console after a turn with a Bash call | its completion rows read a first line · byte count (or *no text content (0 items)*), never `tool.result   tool.result`; `usage_update` rows still listed | 101 |
+| C-5 | a running turn's **N events** fold | the count excludes `usage_update` / `available_commands_update`; the Console still shows them | 100 |
+
+### Sessions, store and shell (Rulings 99, 102, 98, 94 — `docs/proof/architecture-recut-and-session-names.md`)
+
+| # | Do | Expect | Proves |
+|---|---|---|---|
+| S-1 | Ctrl+N twice on one day, accept the default name both times | the second tab reads *2026-09-14 session (2)*; its Console tab too; the strip announces the rename; typing a name that already exists gets the same suffix, never a refusal | 99 |
+| S-2 | Ctrl+N, look at the task-class list | every description wraps; no horizontal scrollbar | 102 |
+| S-3 | open TheTerrace on this build and wait for the index | the strip's `rev` reads the workspace HEAD (short sha), never `rev-1` — the store's stale snapshot re-extracted once at that open | 98 |
+| S-4 | Ctrl+3, then Reset layout | Left: Graph (about a fifth of the width); Center: Contexts (active) · Domain; no Right pane, Bottom collapsed; no Provenance anywhere; the View menu still lists Evidence | 94 |
+| S-5 | with your pre-94 Architecture layout saved (it was, at 16:13Z) | on first open the strip reports Provenance dropped, naming Ruling 94; nothing crashes | 94 |
+| S-6 | View → Evidence; select a row | a second, smaller line under the selected row reads origin · extractor · rev; unselected rows show none | 94 |
+| S-7 | at Graph's narrow width, the canvas header row | a horizontal scrollbar may still appear in the graph *page* (DC-218, the Explore lane's next fix) — report if you see it | — |
+
 ## What the conductor already ran (not yours)
 
 PD-5's runs 2 and 3 (the pin on the wire, `strictMcpConfig` verified), the dry runs, every headless oracle in every Proof Pack, the whole-suite recounts at every join (App 952 / Core 2632), the census (177 pairings, 0 below floor), the Release builds.
