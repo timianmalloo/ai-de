@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T18:53:53Z",
+  "generated": "2026-09-14T19:05:44Z",
   "audit": [
     {
       "actor": null,
@@ -16107,6 +16107,34 @@ window.AUDIT_DATA = {
         "branch": "lane/composer-r95",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2GMZ67R2VAXQ4WGZFSQ1XMV",
+      "shortname": "join-composer-r95",
+      "datetime": "2026-09-14T19:05:43Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "the join of origin/lane/composer-r95 into main",
+      "summary": "Joined lane/composer-r95 (866f1ab9): Ruling 95 - condition 1 measured first (two sessions, sends 59 ms apart, two lane.session-new rows, engine pids 34340/57860 alive together in 14/14 samples, both answered in ~3.4 s) so Parallel shipped; TurnState.Queued (Core seam), the two-action status line, one queued turn (Cancel returns the text; Send now after Stop/Failed), the drain only on Completed/Answered, compile spend on the queued turn's own line, Parallel via SessionConfigStore.Create(origin parallel:<parent>) with Ruling 99's UniqueName, docked Left beside the parent, sent through the sibling's gate; GovernedRunHost.DrainAsync hung when the prompt completed after the last event - fixed (waits on queue or prompt). App 993->1007, Core 2650->2660. Ruling 77(b) reversed as its condition 2 foresaw. recount_seconds=538 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/send-while-running.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "the operator's F-D answered on main: wait or a parallel session",
+      "done_when": "merge clean; recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-14T18:56:44Z",
+      "duration_seconds": 539.0
     }
   ],
   "changes": [

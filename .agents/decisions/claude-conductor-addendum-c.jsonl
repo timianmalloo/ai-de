@@ -772,3 +772,11 @@
 {"agent": "claude-conductor", "at": 1789409261.8676841, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "claude-conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789409261.8752148, "code": null, "kind": "allowed", "path": "site/index.html", "session": "claude-conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789409261.8822234, "code": null, "kind": "allowed", "path": "site/model.html", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789409521.413883, "code": null, "kind": "allowed", "path": ".agents/decisions/claude-conductor-addendum-c.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789409521.4209175, "code": null, "kind": "allowed", "path": ".agents/log/composer-r95.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789409521.4280503, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789409521.4349298, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789409521.4420538, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789409521.4476836, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789409521.4563901, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789409521.4633899, "code": null, "kind": "allowed", "path": "site/index.html", "session": "claude-conductor-addendum-c", "wi": ""}
