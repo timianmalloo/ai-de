@@ -1,0 +1,140 @@
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using AiDe.Core.AgentPlane;
+using Xunit.Abstractions;
+
+namespace AiDe.Core.Tests.AgentPlane;
+
+/// <summary>
+/// Each catalog engine, launched exactly as <see cref="EngineCatalog.ResolveLaunch"/> resolves it and
+/// spawned exactly as <see cref="AcpEngineProcess.Start"/> spawns it, answers <c>initialize</c> with
+/// <c>protocolVersion 1</c> — against the <b>real CLI</b> on this machine, never a stand-in.
+/// </summary>
+/// <remarks>
+/// <para><b>Why the real peer.</b> Ruling 97: "no engine launches on an unobserved path". A fake
+/// peer answering <c>protocolVersion 1</c> would prove the client's parser and nothing about the
+/// launch line, the shim resolution, or the CLI. Where a CLI is not installed the test is
+/// <b>skipped with the catalog's own refusal as the reason</b> — "not installed" said out loud, not
+/// a green result over a peer that was never there.</para>
+///
+/// <para><b>What is deliberately not done.</b> No <c>session/new</c> (it would use a stored login or
+/// refuse for want of one), no <c>session/prompt</c> (spend), no sign-in gesture. Each engine runs
+/// with its home pointed at a scratch directory under <c>%TEMP%\aide-engine-spikes\</c> — the
+/// isolation the spike used (<c>docs/spikes/engine-backends-2026-09-14.md</c>, "Method":
+/// <c>COPILOT_HOME</c>, <c>CODEX_HOME</c>, <c>GROK_HOME</c>, and <c>HOME</c>+<c>USERPROFILE</c> for
+/// gemini) — so nothing under the operator's <c>~/.copilot</c>, <c>~/.codex</c>, <c>~/.gemini</c> or
+/// <c>~/.grok</c> is written or read. Whether a CLI reaches the network during <c>initialize</c> is
+/// <b>not observed</b> here (no network instrument in the test); the spike's timings are the only
+/// measurement.</para>
+///
+/// <para><b>What is recorded.</b> The launch line as spawned, the child's pid, the initialize
+/// result and its latency are written to <c>observed-initialize.json</c> in the scratch directory
+/// and echoed to the test output, so the proof pack copies an observation rather than a memory.</para>
+/// </remarks>
+[Trait("Platform", "Windows")]
+public sealed class TheEnginesAnswerInitializeOnTheWireTests(ITestOutputHelper output)
+{
+    /// <summary>The spike's scratch prefix: every engine's per-test home and cwd live under it.</summary>
+    private static readonly string ScratchRoot = Path.Combine(Path.GetTempPath(), "aide-engine-spikes", "aide-tests");
+
+    /// <summary>
+    /// The install root the catalog resolves an npm-delivered CLI from when PATH has none: the
+    /// spike's per-engine scratch install (<c>npm install --prefix %TEMP%\aide-engine-spikes\&lt;engine&gt;</c>).
+    /// </summary>
+    internal static string SpikeInstallRoot(string engineId) => Path.Combine(Path.GetTempPath(), "aide-engine-spikes", engineId);
+
+    /// <summary>
+    /// copilot — <c>copilot --acp</c> (GitHub Copilot CLI 1.0.84-5 at spike time), the winget
+    /// <c>copilot.exe</c> resolved from PATH. The spike's fresh-home run answered in 408 ms with
+    /// <c>agentInfo.name "Copilot"</c> (<c>spikes/engine-backends/copilot/fresh-home/frames.jsonl</c>).
+    /// </summary>
+    [NativeCliFact("copilot")]
+    public Task CopilotAnswersInitializeWithProtocolVersionOne()
+        => ObserveInitializeAsync("copilot", home => new Dictionary<string, string> { ["COPILOT_HOME"] = home }, expectedAgentName: "Copilot");
+
+    private async Task ObserveInitializeAsync(
+        string engineId,
+        Func<string, IReadOnlyDictionary<string, string>> isolation,
+        string? expectedAgentName)
+    {
+        var scratch = Path.Combine(ScratchRoot, engineId + "-" + Guid.NewGuid().ToString("n")[..8]);
+        var home = Path.Combine(scratch, "home");
+        var cwd = Path.Combine(scratch, "cwd");
+        Directory.CreateDirectory(home);
+        Directory.CreateDirectory(cwd);
+
+        var row = EngineCatalog.Find(engineId);
+        var launch = EngineCatalog.ResolveLaunch(engineId, SpikeInstallRoot(engineId));
+        var diagnostics = new List<string>();
+        var started = System.Diagnostics.Stopwatch.StartNew();
+
+        using var engine = AcpEngineProcess.Start(launch, cwd, diagnostics.Add, environment: isolation(home));
+        var peer = new AcpPeer(engine.Output, engine.Input, new AcpRunEventMapper("run-wire", "lane-" + engineId), diagnostics: diagnostics.Add);
+        var client = new AcpLaneClient(peer, engine: row, diagnostics: diagnostics.Add);
+
+        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(90));
+        var pump = peer.RunAsync(deadline.Token);
+
+        JsonObject result;
+        try
+        {
+            result = await client.InitializeAsync(deadline.Token);
+        }
+        finally
+        {
+            // The order matters: end the child, then the pump sees end-of-stream and completes.
+            engine.Dispose();
+            try
+            {
+                await pump.WaitAsync(TimeSpan.FromSeconds(10));
+            }
+            catch (Exception error) when (error is OperationCanceledException or IOException or TimeoutException)
+            {
+                diagnostics.Add("pump: " + error.GetType().Name);
+            }
+        }
+
+        var latency = started.Elapsed;
+        var observation = new JsonObject
+        {
+            ["engine"] = engineId,
+            ["launch"] = new JsonObject { ["fileName"] = launch.FileName, ["arguments"] = new JsonArray([.. launch.Arguments.Select(a => JsonValue.Create(a))]) },
+            ["pid"] = engine.ProcessId,
+            ["initialize"] = result.DeepClone(),
+            ["initializeLatencyMs"] = (long)latency.TotalMilliseconds,
+            ["diagnostics"] = new JsonArray([.. diagnostics.Select(d => JsonValue.Create(d))]),
+            ["observedAt"] = DateTimeOffset.UtcNow.ToString("O"),
+        };
+        var record = Path.Combine(scratch, "observed-initialize.json");
+        File.WriteAllText(record, observation.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
+        output.WriteLine(record);
+        output.WriteLine(observation.ToJsonString());
+
+        Assert.Equal(1, result["protocolVersion"]!.GetValue<int>());
+        if (expectedAgentName is not null)
+        {
+            Assert.Equal(expectedAgentName, result["agentInfo"]!["name"]!.GetValue<string>());
+        }
+
+        Assert.True(engine.HasExited, $"engine process {engine.ProcessId} outlived the test");
+    }
+
+    /// <summary>
+    /// A fact that runs only where the catalog can resolve the engine's launch on this machine;
+    /// elsewhere it is skipped with the catalog's own refusal — the install instruction — as the reason.
+    /// </summary>
+    private sealed class NativeCliFactAttribute : FactAttribute
+    {
+        public NativeCliFactAttribute(string engineId)
+        {
+            try
+            {
+                EngineCatalog.ResolveLaunch(engineId, SpikeInstallRoot(engineId));
+            }
+            catch (AgentPlaneException error) when (error.Code == AgentPlaneErrorCodes.EngineNotOnPath)
+            {
+                Skip = $"{engineId} is not installed on this machine: {error.Message}";
+            }
+        }
+    }
+}
