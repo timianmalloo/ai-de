@@ -875,6 +875,36 @@ private corpus, main or push authoring is granted. Parent owns record integratio
 The Conductor ceiling remains 430; implementation admission follows the completed
 contract and independent gate receipt.
 
+Owner turn 66 extends Conductor prospectively from 430 to 455 cumulative leaves
+for the already admitted proof, contract and review nodes, not product authoring.
+Owner turn 67 extends the same sole proof writer from 55 to 63 cumulative leaves.
+The duplicate-text selector was repaired, but the full run then rejected an empty
+glyph-ink rectangle; neither missing text nor harmless whitespace follows from
+that rectangle alone. Record relevant run characters/clusters, advances and ink
+bounds before changing the oracle. Exempt only demonstrated whitespace or
+characterized no-ink runs from area containment. Preserve rendered/accessibility
+text equality and every required nonwhitespace character. Negative controls must
+remove required characters and clip real ink, failing even when remaining
+rectangles fit. Retain named footer/binding/active-VM assertions, the current-root
+locator and all failed runs. A full replay must show normal daemon exits and owned
+cleanup. Parent inspects the changed source, raw receipt and PNG before the
+proof-only join, then replays in Conductor and checks binary roots. Unresolved
+classification returns literal evidence; no blanket empty-rectangle skip,
+product edit, automatic extension or main/push grant.
+
+Owner 67 proof conditions were observed met on the bounded fixture. The proof
+writer used 63/63 and committed only `ac683dce`; parent read its changed source,
+raw receipt and both captures, then joined the three authorized proof commits as
+`d4d84674`, `9b9f83d4`, `a8e09f35`. The actual Conductor-checkout replay executed
+one test and passed: roots/assembly/daemon all resolve to Conductor, both named
+footers bind to the active refreshed VM, all three ink/character mutations fail,
+both healthy releases return, and daemons 38152/59056 exit normally with fixtures
+deleted. The initialized member and replacement-footer captures are preserved
+under `docs/proof/assets/code-atlas-mainwindow/`; the replacement image is a
+loading state, not settled-source pixel evidence. Full receipt/hashes and
+unchanged exclusions are in `docs/proof/code-atlas-real-daemon-mainwindow.md`.
+This closes the remaining bounded E0 proof-only integration, not the programme.
+
 ### Core owns
 
 | Path | Why |

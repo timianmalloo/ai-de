@@ -14,8 +14,9 @@ review-by: 2026-12-14
 summary: >-
   Owner 63 accepts the bounded E0 real-daemon/native-window reading horizon for the
   observed owned fixture and viewport. Source, member, Back, healthy release,
-  replacement and readable normal Center pixels were observed; broader coverage and
-  the synthetic workspace-footer discrepancy remain explicitly outside acceptance.
+  replacement and readable normal Center pixels were observed. The Owner 67
+  footer/current-checkout follow-up also passed with characterized no-ink controls;
+  broader coverage remains explicitly outside acceptance.
 ---
 
 # Bounded E0 acceptance, not programme completion
@@ -101,7 +102,8 @@ Conductor separately rebuilt and executed the proof under `ATLAS_PROOF_RUN=paren
 one passed, zero failed, with raw normal exits 48360 and 53416, both zero, healthy release
 returns and deleted fixtures. Its independently inspected member image also shows the full
 source, wrapped label and highlight. This parent replay ran in the proof checkout; the
-current-Conductor-tree replay after joining is a separate closing check.
+current-Conductor-tree replay after joining was a separate closing check, completed
+in the follow-up below.
 
 | Author-run binary | SHA-256 |
 |---|---|
@@ -116,12 +118,81 @@ Machine-local raw evidence is retained under the independent proof worktree's
 Parent TRX is retained in the session files at `atlas-real-window-parent/parent-real-window.trx`.
 The committed record/capture above do not pretend those raw machine-local receipts are committed.
 
-## Explicit exclusions and follow-up
+## Footer and current-checkout closure: Owner 67 conditions
 
-- **Footer not accepted:** the capture says "No workspace open" for a directly constructed
-  synthetic VM despite the real connection/source. Owner 63 requires legitimate initialization/
-  refresh and current-tree binary resolution to be checked in a four-call proof follow-up.
-  No convenient status-string assignment or product-status fix is authorized.
+The first footer follow-up failed because its selector required globally unique
+status text: the evidence pane and footer legitimately show the same status.
+The named-control correction then failed an overstrong ink-containment assertion.
+Neither failure established a product-status defect. Both failed runs remain in
+`owner63-*` / `owner64-*` evidence folders; forced cleanup is not a normal exit.
+
+Before changing the ink predicate, the original predicate was retained in
+`owner67-characterization`. The empty run contained exactly U+0020, cluster `[0]`,
+glyph index `[2]`, and advance width `3.562` DIP. The revised proof exempts only
+nonempty U+0020-only runs with empty ink, not arbitrary empty rectangles.
+It still compares the displayed text with the legitimately refreshed active VM,
+checks the `Workspace health` automation name and `StatusMessage` binding owner,
+and requires every rendered nonwhitespace character plus every real ink rectangle.
+The existing owned-HWND accessibility proof remains; this is not a new general
+screen-reader certification.
+
+The failure class is **geometry-only text proof without character coverage or
+characterized no-ink handling**. The sweep covered the two footer checks and their
+shared glyph helper, also used by the wrapped member proof. Derivation now uses
+one `FooterAccepted` predicate. Its three negative controls remove the required
+`N`, replace a nonwhitespace run's ink with `Rect.Empty`, and clip real ink while
+the other rectangles still fit. All three are rejected for both workspace VMs.
+These are mutations of measured observations, not fake runtime/query data.
+Canonical defect-ID reconciliation remains with the Conductor; no number is guessed.
+
+| Closing evidence | Observed result |
+|---|---|
+| Proof-only correction | `ac683dce2c29d182e31999e77ef0183e25ea07ba` |
+| Conductor joins | `d4d84674`, `9b9f83d4`, `a8e09f355e6785e7b0f24b009cc64e7f9785fc54`; only the one proof test |
+| Author full run | `owner67-trx1/owner67-run1.trx`: 1 passed, 0 failed; daemons 39032/29648 exited 0 |
+| Parent alternate-checkout run | `conductor-owner67-trx/conductor-owner67.trx`: 1 executed, 1 passed, 0 failed/skipped |
+| Parent repository and Git root | Both `C:\Projects\ai-de-conductor-code-atlas` |
+| Parent assembly/binary roots | Executing App.Tests assembly and launched daemon both under that Conductor tree, not the old proof tree |
+| Parent daemon exits | 38152 and 59056, both 0; process absence and owned-directory deletion read back |
+| Both actual footers | Binding owner is the active VM; text equals legitimate `RefreshAsync` result: “No evidence yet — this workspace has no committed snapshot.” |
+| Healthy releases and borrowed clients | Both real lease releases return normally; two borrowed-client queries succeed after window close |
+| Parent raw receipt SHA-256 | `C007C5CA87A580F04A7F4FA4E8FA8839E2A51E9B525DFC8D9BD808004A3258D6` |
+
+Parent rebuilt the Conductor App.Tests project, after building its own daemon, and
+ran the whole test with `ATLAS_PROOF_RUN=conductor-owner67`. Raw receipt, captures
+and TRX are retained under this checkout's
+`artifacts/atlas-real-daemon-window-proof/`. Conductor read the changed source,
+raw receipt and both author captures before joining, then inspected the new
+Conductor member capture and checked roots, controls, lifecycle and hashes.
+
+| Parent replay binary/source | SHA-256 |
+|---|---|
+| Daemon executable | `5062E37D8EEB1D798D72CA4E403E722AA58C40FA465BAC220E14ADD74E3C5FFB` |
+| Daemon assembly | `F1E30BD4BE7311B9760A62603B156041513040E2E1587D49389F869D7652C2DA` |
+| Core assembly | `F2E9C4E957603A82D3622705EA812D2119AD24CE76F357566513BC80F657F110` |
+| App assembly | `D7F3992C90A21200B2A602FDA96C7B684B351B48400B9CD48A52A8501A52ADF9` |
+| Proof source | `C9827383FB6A4375DDD225817F4EC0587E9742E2D52043F9317B789DA7813CB5` |
+
+![Initialized workspace, readable source and selected member](assets/code-atlas-mainwindow/normal-default-member-initialized.png)
+
+SHA-256: `344442E412A67DFE6D15D7A0E5CC5BD5CEA306B039E4CED67845DBD24348A9CF`.
+The independently captured author and Conductor images have this same hash.
+
+![Replacement workspace footer while selection is loading](assets/code-atlas-mainwindow/replacement-footer.png)
+
+SHA-256: `34AA6DC0124A1C4176C88369CC87AA68782AAB771C8492B96FC04D0748B00AFB`.
+This capture proves the replacement footer, **not settled replacement-source
+pixels**: it visibly says “Loading selection.” The earlier capture is retained
+above as historical accepted reader evidence, not current footer evidence.
+
+GATE footer/current-checkout proof - Owner 67 conditions - observed met by the
+Conductor source/receipt/pixel inspection and independent full replay. No product
+status edit, blanket empty-ink exemption or wider acceptance is implied.
+
+## Explicit exclusions
+
+- **The initial footer exclusion is superseded only by the follow-up above.**
+  No convenient status-string assignment or product-status fix was made.
 - **Public same-live-scope idle barrier not established.** In-process request-correlated
   drain/Git-write evidence is separate from this out-of-process release acknowledgment.
 - **Deliberately held late-publication race not exercised here.** Its dedicated Core

@@ -11108,7 +11108,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2026-12-14",
       "reviewSuggested": [],
-      "summary": "Owner 63 accepts the bounded E0 real-daemon/native-window reading horizon for the observed owned fixture and viewport. Source, member, Back, healthy release, replacement and readable normal Center pixels were observed; broader coverage and the synthetic workspace-footer discrepancy remain explicitly outside acceptance.",
+      "summary": "Owner 63 accepts the bounded E0 real-daemon/native-window reading horizon for the observed owned fixture and viewport. Source, member, Back, healthy release, replacement and readable normal Center pixels were observed. The Owner 67 footer/current-checkout follow-up also passed with characterized no-ink controls; broader coverage remains explicitly outside acceptance.",
       "tags": [
         "code-atlas",
         "proof",
@@ -11136,7 +11136,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c807d6eb94eff8c44b14cf9a5d7473bc8e2252a45226d37786bb762597dab15e"
+      "sourceSha256": "1d3497dbd514f71128d169650ed149cb82769090f34638335947c1a6220827ed"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -11761,7 +11761,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "aa5ee5b3c881493754f3931e3aa53e73cec0b10256e882cb80a883207c338920"
+      "sourceSha256": "4a1b6c5ff7f6fbab0ed41d864024419c7a06f599d3d84b1f9a543e1879b9723c"
     },
     {
       "id": "session-profiles",
@@ -19082,5 +19082,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "f0982edf0cb120eb3df4bc0ece1689be7859557b3f4a61548335aaf70d7ffc85"
+  "graphSha256": "43640c3d8ff7c09ece47dcc5a95d59a016b7d6a17b211653239d8f823c4d7749"
 };

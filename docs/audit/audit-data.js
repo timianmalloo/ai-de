@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T20:40:15Z",
+  "generated": "2026-09-14T21:01:35Z",
   "audit": [
     {
       "actor": null,
@@ -16501,6 +16501,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "b6e053c29629f53c5c670d6586213cdf09c3af08",
         "short": "b6e053c29",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GVKA9838A47TMFQTG7VBN3",
+      "shortname": "atlas-e0-footer-current-tree-closed",
+      "datetime": "2026-09-14T21:01:34Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner66 raised455; Owner67 proof55to63. Authorac683dce1pass; parent reviewed whole changed source/receipt/twoPNGs before authorized proof-only joins d4d84674/9b9f83d4/a8e09f35. CurrentConductor rebuilt and fullproof1executed1passed0failed; repo/Git/assembly/daemon roots exact. Named StatusMessage footer owner/refreshed text; characterized U+0020 no-ink only; missing-character/nonwhiteemptyink/clipping controls rejected on both VMs. Normal exits38152/59056zero, fixturesdeleted, two releaseACKs and borrowedquery reuse. Fresh initialized member and replacement-footer PNGs retained separately; replacement loading pixels not settled-source proof. Historical failed runs and publicidle/heldrace/distinctcommand/broadcoverage exclusions preserved. E0two closing tasksdone; programme38done4progress, not productpercentage. E1contract16leafreview running, no source/main/push grant. Budget countsmanualleaves, wrapper total not newly inferred.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-real-daemon-mainwindow.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Close bounded E0 named footer and current-checkout proof",
+      "done_when": "Three proof commits joined and full Conductor-root replay plus pixels, controls and normal cleanup recorded",
+      "tier": "T2",
+      "main_calls": 451,
+      "main_budget": 455,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T21:00:03Z",
+      "duration_seconds": 91.0,
+      "git": {
+        "sha": "a8e09f355e6785e7b0f24b009cc64e7f9785fc54",
+        "short": "a8e09f355",
         "branch": "conductor/code-atlas",
         "pushed": null
       }
