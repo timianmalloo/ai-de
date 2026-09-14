@@ -1,0 +1,3 @@
+{"agent": "claude-conductor", "at": 1789339807.4243555, "kind": "session-start", "path": "-", "seq": 1, "session": "sh-4-2", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-lane-shell-sh4-2"}
+{"agent": "claude-sh-4-2", "at": 1789345715.6602821, "kind": "claim", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 2, "session": "sh-4-2", "ttl": 300.0, "wi": "SH-4-2"}
+{"agent": "claude-sh-4-2", "at": 1789345715.7809708, "kind": "release", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 3, "session": "sh-4-2", "wi": "SH-4-2"}

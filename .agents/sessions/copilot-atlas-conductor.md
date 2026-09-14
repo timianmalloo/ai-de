@@ -6,12 +6,12 @@
 - Branch: conductor/code-atlas
 - Status: active implementation under explicit Owner branch-local grant; integration remains separate
 - Updated: 2026-09-13
-- Doing: Conductor 9e75ed5a includes the accepted detached reader, main compatibility and
-  corrected compiled Core render seam. Production Core candidate d8d83de is blocked by three
-  native membership qualification failures; Shell dade5c77 has a passing component milestone
-  but four source-reviewed lifetime findings. Neither is joined. Owner 43 released the
-  first three NQ diagnostic calls and twelve Shell repair calls; both writers are active.
-  Actual Core factory/MainWindow handoff remains unimplemented.
+- Doing: Conductor acaf4dca includes the accepted detached reader, main compatibility,
+  compiled Core render seam, Shell lifetime repair and qualification-only membership.
+  The watch-lifetime cause/fix is qualified; production membership remains blocked on
+  cleanup-timeout ownership/accounting. Owner 48 released ten regular Core cleanup calls
+  and four for a concrete runtime estimate. Shell is idle at 44/44 awaiting an actual
+  committed Core factory. The factory/MainWindow handoff remains unimplemented.
   Owner and Conductor retain scope, assignments, gates and joins. Exact branch-local existing
   adapter exceptions are recorded in section 2; open counterpart requests are not consent.
 - Resume artifacts: docs/coordination/code-atlas.md,
