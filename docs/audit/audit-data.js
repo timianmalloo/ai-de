@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T01:00:15Z",
+  "generated": "2026-09-14T01:04:52Z",
   "audit": [
     {
       "actor": null,
@@ -15363,6 +15363,30 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Land the last slice on main with the floors recounted and the final Release build of the programme",
       "done_when": "main pushed green through run-verify-gates; Release built",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M2EQ42P0HDDJ3YE8C647YQCW",
+      "shortname": "join-converge-docs",
+      "datetime": "2026-09-14T01:04:51Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "keep going (the join of conductor/addendum-c)",
+      "summary": "Converge (docs): Ruling 90 filed (the Console toggle closes on its second press; Ruling 88's premise corrected); the Addenda C/D lane rows retired from session-contracts.md with the horizon's new files assigned to Core/Design (verify-surface-ownership 13/13); the plan's execution ledger and Stage 10 close; DC-142 recurrence 2; docs/notes/pack-findings-addendum-cd.md (17 rows for /updatepack); 12 merged worktrees removed one by one; the stale coord sessions ended.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/addendum-cd.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Close the programme's coordination horizon on main",
+      "done_when": "main pushed green with the lane rows retired and the plan closed",
       "signals": {
         "verification_path": true,
         "verification_executed": true,
