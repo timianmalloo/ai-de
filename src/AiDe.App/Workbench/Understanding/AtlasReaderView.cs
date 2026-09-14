@@ -214,7 +214,15 @@ public sealed class AtlasReaderView : UserControl
             VisualTree = label,
         };
         _files.ItemContainerStyle = ItemStyle(typeof(TreeViewItem), nameof(AtlasFileNode.AccessibleName));
-        _outline.ItemContainerStyle = ItemStyle(typeof(ListBoxItem), nameof(OutlineRow.AccessibleName));
+        var outlineStyle = ItemStyle(typeof(ListBoxItem), nameof(OutlineRow.AccessibleName));
+        outlineStyle.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch));
+        _outline.ItemContainerStyle = outlineStyle;
+        var outlineLabel = new FrameworkElementFactory(typeof(TextBlock));
+        outlineLabel.SetBinding(TextBlock.TextProperty, new Binding());
+        outlineLabel.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap);
+        outlineLabel.SetValue(TextBlock.TextTrimmingProperty, TextTrimming.None);
+        _outline.ItemTemplate = new DataTemplate(typeof(OutlineRow)) { VisualTree = outlineLabel };
+        ScrollViewer.SetHorizontalScrollBarVisibility(_outline, ScrollBarVisibility.Disabled);
         _outline.ItemsSource = _outlineRows;
         _files.Focusable = true;
         _outline.Focusable = true;

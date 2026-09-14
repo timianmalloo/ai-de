@@ -1689,12 +1689,8 @@ public sealed class WorkbenchShell : IDisposable, IAsyncDisposable
             }
         }
 
-        // simplify: one kind places itself — a prompt draft opens beside a terminal (its transfer
-        // target) when there is one, else in any stack, where every other kind follows the document
-        // placement policy. A kind-keyed branch beside a row set is the shape Ruling 22 removes;
-        // ceiling: this one kind. Trigger: a second kind needing bespoke placement — then placement
-        // becomes a column on the row read by DocumentPlacementPolicy, and that policy's own
-        // DocumentKinds hand list retires with it.
+        // A prompt retains its terminal-relative rule. Other rows may prefer a stack for new
+        // panes; without a preference they continue through the document-placement policy.
         var besideTerminal = string.Equals(kind, "prompt", StringComparison.Ordinal)
             ? (target.Service.Current.AllStacks().FirstOrDefault(st => st.Surfaces.Any(su => su.Kind == "terminal"))
                ?? target.Service.Current.AllStacks().FirstOrDefault())?.Id
@@ -1705,7 +1701,7 @@ public sealed class WorkbenchShell : IDisposable, IAsyncDisposable
             new Surface($"{kind}#{Guid.NewGuid().ToString("N")[..6]}", kind, row.Title),
             Routed(target, from, $"{row.Title} opened"),
             $"There is no pane for {row.Title.ToLowerInvariant()}. Window → Reset workbench layout restores one.",
-            intoStackId: besideTerminal);
+            intoStackId: besideTerminal ?? row.PreferredStackId);
     }
 
     /// <summary>The sentence a routed open says (spec §C5): where it opened, when that is not where it was asked.</summary>
@@ -1715,7 +1711,8 @@ public sealed class WorkbenchShell : IDisposable, IAsyncDisposable
     /// <param name="host">The host the document opens in — resolved by the caller (<see cref="ResolveHost"/>).</param>
     /// <param name="intoStackId">
     /// When given, the surface is tabbed into this stack and the placement policy is not consulted
-    /// — the prompt kind's own rule (see <see cref="OpenKind"/>). Null for every other kind.
+    /// — a kind row's default destination or the prompt's terminal-relative rule. Null delegates
+    /// to the existing document-placement policy.
     /// </param>
     private string OpenReferenceDocument(DockHost host, Surface surface, string okMessage, string noPaneMessage, string? intoStackId = null)
     {

@@ -19,6 +19,223 @@ namespace AiDe.App.Tests;
 
 public sealed class AtlasSharedHostAdmissionTests(ITestOutputHelper output)
 {
+    private const string ReadingSample =
+        "namespace ProofOwned;\npublic sealed class Widget\n{\n    public int Answer() => 42;\n}\n";
+
+    [Fact]
+    public void Placement_NewAtlas_DefaultsToCenter()
+    {
+        Sta.Run(() =>
+        {
+            using var shell = new WorkbenchShell(null);
+            var opener = PerspectiveMenu.Opener(SurfaceContentFactory.Kinds.Single(row => row.Kind == "code-atlas"));
+            Assert.True(shell.Execute(opener.Id));
+            var atlas = Assert.Single(shell.Architecture.Service.Zones.AllSurfaces(), surface => surface.Kind == "code-atlas");
+            Assert.Equal(ZoneId.Center, shell.Architecture.Service.Zones.FindZoneOf(atlas.SurfaceId));
+        });
+    }
+
+    [Fact]
+    public void Placement_ShowExplicitlyPlacedAtlas_PreservesRightAndIdentity()
+    {
+        Sta.Run(() =>
+        {
+            using var shell = new WorkbenchShell(null);
+            var explicitSurface = new Surface("explicit-atlas", "code-atlas", "Code Atlas");
+            Assert.True(shell.Architecture.Service.Apply(
+                new LayoutOperation.AddSurface(ZonesToTree.RightStackId, explicitSurface)).Applied);
+            shell.Architecture.Adapter.Render();
+            var opener = PerspectiveMenu.Opener(SurfaceContentFactory.Kinds.Single(row => row.Kind == "code-atlas"));
+            Assert.True(shell.Execute(opener.Id));
+            Assert.Equal("explicit-atlas",
+                Assert.Single(shell.Architecture.Service.Zones.AllSurfaces(), surface => surface.Kind == "code-atlas").SurfaceId);
+            Assert.Equal(ZoneId.Right, shell.Architecture.Service.Zones.FindZoneOf("explicit-atlas"));
+        });
+    }
+
+    [Theory]
+    [InlineData(1280, 900)]
+    [InlineData(1440, 900)] // DESIGN.md:1050's declared startup target.
+    public async Task Placement_ShownDefault_ExposesSourceHighlightAndCompleteMemberLabel(int width, int height)
+    {
+        var diagnostic = new StageDiagnostics();
+        var directory = Path.Combine(Path.GetTempPath(), "aide-atlas-placement-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        try
+        {
+            await RunOwnedDispatcherAsync(async () =>
+            {
+                var root = Path.Combine(directory, "workspace");
+                Directory.CreateDirectory(root);
+                using var core = new ObservedCore(
+                    WorkspaceCore.Open("placement-fixture", root, Path.Combine(directory, "data")), diagnostic);
+                var port = new PortFixture { ReadingText = ReadingSample };
+                var model = new MainWindowViewModel(new LocalWorkspaceQueries(core.Value.Projections),
+                    "placement-display", null, atlasReaderFactory: () => port);
+                var window = new AiDe.App.MainWindow(() => Task.FromResult(model),
+                    Path.Combine(directory, "shell-state"), MainWindowResources())
+                {
+                    Width = width, Height = height, Left = 40, Top = 40,
+                    WindowStartupLocation = WindowStartupLocation.Manual, ShowInTaskbar = false, ShowActivated = false,
+                };
+                try
+                {
+                    Assert.Equal(84, System.Text.Encoding.UTF8.GetByteCount(ReadingSample));
+                    window.Shell.Execute(PerspectiveSet.Architecture.CommandId);
+                    var title = PerspectiveMenu.Opener(SurfaceContentFactory.Kinds.Single(row => row.Kind == "code-atlas")).Title;
+                    var menu = Assert.IsType<Menu>(window.FindName("MainMenu"));
+                    Assert.Single(MenuItems(menu), item => Equals(item.Header, title))
+                        .RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                    window.Show();
+                    await diagnostic.IdleAsync("placement.shown");
+                    await window.WorkspaceReady;
+                    window.UpdateLayout();
+                    await diagnostic.IdleAsync("placement.loaded");
+                    var host = Assert.Single(Visuals<AtlasLoadingHost>(window));
+                    var view = Assert.IsType<AtlasReaderView>(host.ReaderView);
+                    await view.SelectFileAsync(view.FileRoots.Single().Children.Single());
+                    await view.SelectDeclarationAsync(Assert.Single(view.OutlineRows));
+                    await diagnostic.IdleAsync("placement.selected");
+                    window.UpdateLayout();
+                    var atlas = Assert.Single(window.Shell.Architecture.Service.Zones.AllSurfaces(),
+                        surface => surface.Kind == "code-atlas");
+                    diagnostic.Mark("placement", $"fixture=true window={width}x{height} "
+                        + $"zone={window.Shell.Architecture.Service.Zones.FindZoneOf(atlas.SurfaceId)} "
+                        + $"atlasWidth={view.ActualWidth:F3} sourceBytes=84");
+                    AssertReadingGeometry(window, view, diagnostic);
+                }
+                finally
+                {
+                    window.Close();
+                    await window.CloseOperation;
+                    await diagnostic.IdleAsync("placement.closed");
+                }
+            }, diagnostic, () =>
+            {
+                Directory.Delete(directory, recursive: true);
+                diagnostic.Mark("placement.fixture.deleted");
+            });
+        }
+        catch (Exception exception) { diagnostic.Failure("placement.primary", exception); }
+        finally { diagnostic.Save($"atlas-placement-{width}.log", output); }
+        diagnostic.ThrowIfFailed();
+    }
+
+    private static void AssertReadingGeometry(Window window, AtlasReaderView view, StageDiagnostics diagnostic)
+    {
+        var client = Assert.IsAssignableFrom<FrameworkElement>(window.Content);
+        var clientBounds = client.TransformToAncestor(window).TransformBounds(new Rect(client.RenderSize));
+        var textView = view.SourceControl.TextArea.TextView;
+        textView.EnsureVisualLines();
+        var viewport = ClippedReadingBounds(textView, window, clientBounds);
+        Rect GlyphBounds(int start, int length)
+        {
+            var document = view.SourceControl.Document;
+            var first = new ICSharpCode.AvalonEdit.TextViewPosition(document.GetLocation(start));
+            var last = new ICSharpCode.AvalonEdit.TextViewPosition(document.GetLocation(start + length));
+            var top = textView.GetVisualPosition(first, ICSharpCode.AvalonEdit.Rendering.VisualYPosition.LineTop)
+                - textView.ScrollOffset;
+            var bottom = textView.GetVisualPosition(last, ICSharpCode.AvalonEdit.Rendering.VisualYPosition.LineBottom)
+                - textView.ScrollOffset;
+            return textView.TransformToAncestor(window).TransformBounds(new Rect(top, bottom));
+        }
+        var lines = new List<Rect>();
+        var offset = 0;
+        foreach (var line in ReadingSample.Split('\n'))
+        {
+            if (line.Length > 0) lines.Add(GlyphBounds(offset, line.Length));
+            offset += line.Length + 1;
+        }
+        var highlights = view.CurrentHighlights.Select(span => GlyphBounds(span.Start, span.Length)).ToArray();
+        var item = Assert.IsType<ListBoxItem>(
+            view.OutlineControl.ItemContainerGenerator.ContainerFromItem(view.OutlineControl.SelectedItem));
+        var label = Assert.Single(Visuals<TextBlock>(item), block => block.Text.Contains("Answer", StringComparison.Ordinal));
+        var drawing = VisualTreeHelper.GetDrawing(label);
+        Assert.NotNull(drawing);
+        var runs = RenderedLabelRuns(drawing, Matrix.Identity).ToArray();
+        Assert.NotEmpty(runs);
+        var labelGlyphs = runs.Select(run => label.TransformToAncestor(window).TransformBounds(run.Bounds)).ToArray();
+        var labelViewport = ClippedReadingBounds(label, window, clientBounds, startAtLayoutBounds: false);
+        var textFits = !viewport.IsEmpty && lines.All(viewport.Contains);
+        var highlightFits = !viewport.IsEmpty && highlights.Length > 0 && highlights.All(viewport.Contains);
+        var labelFits = !labelViewport.IsEmpty && labelGlyphs.All(labelViewport.Contains);
+        var selected = Assert.IsType<OutlineRow>(view.OutlineControl.SelectedItem);
+        Assert.Equal(selected.ToString(), label.Text);
+        Assert.Equal(selected.AccessibleName, System.Windows.Automation.AutomationProperties.GetName(item));
+        Assert.Equal(TextWrapping.Wrap, label.TextWrapping);
+        Assert.Equal(TextTrimming.None, label.TextTrimming);
+        Assert.True(double.IsFinite(label.ActualWidth) && label.ActualWidth > 0);
+        Assert.True(labelViewport.Width <= view.OutlineControl.ActualWidth,
+            "The label's actual clip must remain bounded by the outline viewport.");
+        Assert.All(labelGlyphs, bounds => Assert.True(
+            double.IsFinite(bounds.Width) && double.IsFinite(bounds.Height) && bounds.Width > 0 && bounds.Height > 0));
+        // Wrapping can consume separator whitespace; every non-whitespace character must still be drawn.
+        Assert.Equal(new string(label.Text.Where(character => !char.IsWhiteSpace(character)).ToArray()),
+            new string(string.Concat(runs.Select(run => run.Characters))
+                .Where(character => !char.IsWhiteSpace(character)).ToArray()));
+        Assert.True(labelGlyphs.Select(bounds => bounds.Top).Distinct().Count() > 1,
+            "The full sample label must be rendered on multiple lines, not clipped as one line.");
+        diagnostic.Mark("geometry", $"unit=DIP client={clientBounds} sourceViewport={viewport} "
+            + $"labelVisible={labelViewport} renderedRuns={runs.Length} fullText={label.Text} "
+            + $"sourceFont={view.SourceControl.FontSize} labelFont={label.FontSize} "
+            + $"textFits={textFits} highlightFits={highlightFits} labelFits={labelFits}");
+        foreach (var bounds in labelGlyphs) diagnostic.Mark("geometry.label-run", bounds.ToString());
+        foreach (var bounds in lines) diagnostic.Mark("geometry.source-line", bounds.ToString());
+        foreach (var bounds in highlights) diagnostic.Mark("geometry.highlight", bounds.ToString());
+        Assert.True(textFits, "Every source line must fit the client- and ancestor-clipped source text viewport.");
+        Assert.True(highlightFits, "The selected member highlight must fit the visible source text viewport.");
+        Assert.True(labelFits, "The complete selected member label must fit its clipped viewport.");
+    }
+
+    // GetDrawing returns the visual's drawing content; inspect its glyph runs rather than reformatting the model text.
+    private static IEnumerable<(Rect Bounds, string Characters)> RenderedLabelRuns(Drawing drawing, Matrix parent)
+    {
+        if (drawing is DrawingGroup group)
+        {
+            Assert.True(group.Opacity > 0);
+            var transform = group.Transform?.Value ?? Matrix.Identity;
+            transform.Append(parent);
+            foreach (var child in group.Children)
+            {
+                foreach (var run in RenderedLabelRuns(child, transform))
+                {
+                    if (group.ClipGeometry is { } clip)
+                        Assert.True(new MatrixTransform(transform).TransformBounds(clip.Bounds).Contains(run.Bounds),
+                            "A drawing-level clip must not hide any rendered label glyphs.");
+                    yield return run;
+                }
+            }
+        }
+        else if (drawing is GlyphRunDrawing glyph)
+        {
+            Assert.NotNull(glyph.GlyphRun.Characters);
+            yield return (new MatrixTransform(parent).TransformBounds(glyph.Bounds),
+                new string(glyph.GlyphRun.Characters.ToArray()));
+        }
+    }
+
+    private static Rect ClippedReadingBounds(FrameworkElement visual, Window window, Rect clientBounds,
+        bool startAtLayoutBounds = true)
+    {
+        // A TextBlock may paint glyph overhang outside its layout box; only actual clips hide that ink.
+        var visible = startAtLayoutBounds
+            ? visual.TransformToAncestor(window).TransformBounds(new Rect(visual.RenderSize))
+            : clientBounds;
+        visible.Intersect(clientBounds);
+        for (DependencyObject? current = visual; current is not null && !ReferenceEquals(current, window);
+             current = VisualTreeHelper.GetParent(current))
+        {
+            if (current is not UIElement element) continue;
+            if (!element.IsVisible || element.Opacity == 0) return Rect.Empty;
+            if (element.ClipToBounds)
+                visible.Intersect(element.TransformToAncestor(window).TransformBounds(new Rect(element.RenderSize)));
+            if (VisualTreeHelper.GetClip(element) is { } clip)
+                visible.Intersect(element.TransformToAncestor(window).TransformBounds(clip.Bounds));
+            if (visible.IsEmpty) return visible;
+        }
+        return visible;
+    }
+
     [Fact]
     public void Handoff_WorkbenchFactory_OwnsWorkspaceLifetimeBeforeAnyPaneOpens()
     {
@@ -905,6 +1122,7 @@ public sealed class AtlasSharedHostAdmissionTests(ITestOutputHelper output)
         internal TaskCompletionSource<IAtlasReaderLease>? Admission { get; init; }
         internal TaskCompletionSource<AtlasSelectionDto>? Selection { get; set; }
         internal SourceProjectionState SourceState { get; set; } = SourceProjectionState.IndexedMatch;
+        internal string? ReadingText { get; init; }
         internal string? RestoredReceipt { get; private set; }
         internal string? LastReceipt { get; private set; }
         internal CancellationTokenSource Invalidation { get; } = new();
@@ -937,7 +1155,8 @@ public sealed class AtlasSharedHostAdmissionTests(ITestOutputHelper output)
             return ValueTask.FromResult(new AtlasInventoryPageDto(1, "scope", 7, "accepted-manifest", default,
                 [new("dir-token", AtlasDirectoryEntryKind.Directory, null, "src", default, default,
                     new(AtlasDenominatorState.Unknown, null, "metadata only"), null),
-                 new("file-token", AtlasDirectoryEntryKind.File, "dir-token", "src/file.cs", default, default,
+                 new("file-token", AtlasDirectoryEntryKind.File, "dir-token",
+                    ReadingText is null ? "src/file.cs" : "src/Widget.cs", default, default,
                     new(AtlasDenominatorState.Known, 1, null), null)],
                 Bounds(AtlasBoundsDimension.InventoryRows, 2), null, ["synthetic public-port fixture"]));
         }
@@ -959,12 +1178,24 @@ public sealed class AtlasSharedHostAdmissionTests(ITestOutputHelper output)
         {
             LastReceipt = receipt;
             var indexed = SourceState is SourceProjectionState.IndexedMatch;
+            var text = ReadingText ?? "alpha beta";
+            var pageStart = ReadingText is null ? 20 : 0;
+            var highlightStart = ReadingText is null ? 26 : text.IndexOf("Answer", StringComparison.Ordinal);
+            var highlightLength = ReadingText is null ? 4 : 6;
             return new(1, "scope", 7, "accepted-manifest", "file-token", null, receipt,
                 new(SourceState, "observation", indexed ? "binding" : null, indexed ? "utf8" : null,
-                    indexed ? "alpha beta" : null, indexed ? new(20, 10) : null,
-                    indexed ? [new(26, 4)] : [], null, "fixture state"),
-                Bounds(AtlasBoundsDimension.SourceUtf16CodeUnits, 1),
-                AtlasOutlineState.Available, null, [new("decl-token", "beta", default, new(26, 4))],
+                    indexed ? text : null, indexed ? new(pageStart, text.Length) : null,
+                    indexed ? [new(highlightStart, highlightLength)] : [], null, "fixture state"),
+                ReadingText is null ? Bounds(AtlasBoundsDimension.SourceUtf16CodeUnits, 1)
+                    : Bounds(AtlasBoundsDimension.SourceUtf16CodeUnits, 1) with
+                    {
+                        RequestedLimit = 32768,
+                        EffectiveLimit = 32768,
+                        ReturnedContentBytes = indexed ? System.Text.Encoding.UTF8.GetByteCount(text) : 0,
+                    },
+                AtlasOutlineState.Available, null,
+                [new("decl-token", ReadingText is null ? "beta" : "ProofOwned.Widget.Answer()",
+                    ReadingText is null ? default : AtlasDeclarationKind.Method, new(highlightStart, highlightLength))],
                 Bounds(AtlasBoundsDimension.OutlineRows, 1), null,
                 new(AtlasDenominatorState.Unknown, null, "not recorded"), []);
         }
