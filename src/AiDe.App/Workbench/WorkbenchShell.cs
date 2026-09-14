@@ -2173,6 +2173,23 @@ public sealed class WorkbenchShell : IDisposable
     private readonly INodeContentSource _mockNodeContent = new MockNodeContentSource();
     private CoreNodeContentSource? _coreNodeContent;
 
+    /// <summary>
+    /// The Explorer reader's content query (Ruling 93): Core's <c>NodeContentAsync</c> through the
+    /// client seam, read live so a reader built before the workspace attached still reaches it
+    /// (DC-040). With no workspace the answer is an honest <c>None</c> — never the labelled SAMPLE
+    /// the code viewer's stand-in returns (DC-073).
+    /// </summary>
+    internal Task<NodeContent> ReadNodeContentAsync(string nodeId, CancellationToken cancellationToken)
+    {
+        if (_queries is null)
+        {
+            return Task.FromResult(new NodeContent(
+                nodeId, NodeContentKind.None, null, string.Empty, "No workspace is open."));
+        }
+
+        return (_coreNodeContent ??= new CoreNodeContentSource(_queries)).GetAsync(nodeId, cancellationToken);
+    }
+
     // The last node the user selected in the graph, so a Source pane opened AFTER a selection shows
     // that node rather than a blank — the "code viewer opened but no source" case (smoke 9-1).
     private string? _lastSelectedNodeId;

@@ -10,7 +10,8 @@ links:
   - { to: plan-ai-native-ide-architecture, rel: relates-to }
   - { to: adr-0018-node-content-reader-contract, rel: relates-to }
 review-by: 2027-02-28
-review-suggested: []
+review-suggested:
+  - { by: adr-0018-node-content-reader-contract, on: 2026-09-14, reason: "ADR-0018 accepted with the Ruling 93 erratum (Explore's reader is the consumer; RenderKind gains Html)" }
 summary: >-
   Every extractor this product has, every one it does not, and the order the remaining work is worth
   doing in — with the coverage of each measured on a real repository rather than estimated.

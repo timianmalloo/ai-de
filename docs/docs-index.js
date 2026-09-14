@@ -960,7 +960,7 @@ window.DOCS_INDEX = {
       "path": "docs/adr/0018-node-content-reader-contract.md",
       "title": "ADR-0018 — The reader fetches node content on demand via a bounded Core query, not on the graph payload",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2027-02-28",
@@ -996,10 +996,18 @@ window.DOCS_INDEX = {
         {
           "to": "spec-knowledge-exploration",
           "rel": "refines"
+        },
+        {
+          "to": "adr-0025-code-viewer-renderer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-explore-view-source",
+          "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f24e0e743081df3113f4698dc6bba2ab0a28a675289ff53f466c305f4469dbb6"
+      "sourceSha256": "551503a75c681f0e0ddc3e5c4d4a0fcb965270a8aa0fcff53e423bf4b490cf24"
     },
     {
       "id": "adr-0019-advisory-evaluator-calibration",
@@ -1228,7 +1236,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "adr-0018-node-content-reader-contract",
+          "on": "2026-09-14",
+          "reason": "ADR-0018 accepted with the Ruling 93 erratum (Explore's reader is the consumer; RenderKind gains Html)"
+        }
+      ],
       "summary": "For the read-only code viewer (spec-editor-surfaces US-ED1–ED4), use native AvalonEdit (MIT) rather than Monaco-in-WebView2 (MIT). The deciding factor is the repo's own documented WebView2 airspace pain (ADR-0015: the windowed control cannot be drawn over and the composition alternative crashes on float) — a read-only viewer does not need Monaco's VS-Code parity, so it should not pay a second WebView2's airspace and process-risk cost. Markdown content renders via Markdig (BSD-2); rich content (Mermaid/charts) reuses the ONE existing canvas WebView2 rather than adding another.",
       "tags": [
         "architecture",
@@ -1259,7 +1273,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "77c2111346cf703a74412d058a485129a2c66ebe2d18d93f59f8fc3e344e959e"
+      "sourceSha256": "5c31325415b82aaf453ff0e9e7a397544dc4eb3998ce883ef34ef55e279aac66"
     },
     {
       "id": "adr-0026-class-diagram-architecture",
@@ -1992,7 +2006,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 94 types, 413 members, 73% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 100 types, 437 members, 74% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2005,7 +2019,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6654284f570acc6f17f19fcd3becad39e5737e21de941009c3418921cdc3d5b0"
+      "sourceSha256": "d2438352322b2339df57e8f846dd93baabeebdedab7cb0228c4cf91da91f8af8"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -6346,6 +6360,11 @@ window.DOCS_INDEX = {
           "by": "adr-0017-primary-view-mode",
           "on": "2026-09-11",
           "reason": "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent"
+        },
+        {
+          "by": "adr-0018-node-content-reader-contract",
+          "on": "2026-09-14",
+          "reason": "ADR-0018 accepted with the Ruling 93 erratum (Explore's reader is the consumer; RenderKind gains Html)"
         }
       ],
       "summary": "Component design for the Phase-1 walking skeleton of the full-window Explorer mode: the ShellViewMode swap (WorkbenchHost.Content toggles Manager↔ExplorerSurface, Shell held so the workbench and its live ConPTY/WebView2 children hide-not-destroy), a dedicated CanvasSurface in Explorer (not reparented), a new CanvasSurface.NodeSelected seam the reader follows, and a NodeReaderView stub (metadata + walkable edges; content deferred to ADR-0018 node-content-reader-contract Phase 2). Resolves the mechanism the ADRs deferred, with a red-first test plan whose key control is \"a live terminal survives an Explorer round-trip\".",
@@ -6382,7 +6401,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  Rail[Explore rail item] -->|Toggle| SMC[ShellModeController]\n  SMC -->|Workbench| WH[WorkbenchHost.Content = Shell.Manager]\n  SMC -->|Explorer| EX[WorkbenchHost.Content = ExplorerSurface]\n  EX --> G[CanvasSurface 'explorer-graph']\n  EX --> R[NodeReaderView]\n  G -->|NodeSelected CanvasNodeRef| R\n  R -->|activate edge -> RefreshAsync target| G\n  G -. GraphSource .-> VM[CanvasGraphViewModel over IWorkspaceQueries]"
         }
       ],
-      "sourceSha256": "96e3c9b29aef9942dfca8d559f60848942f9e1807208b1a8960b515c0596bf9f"
+      "sourceSha256": "847ce2f05ff97128c13a7d7a2f37fb3a11fc0e25b936252cb326a8e5f9dab407"
     },
     {
       "id": "design-mcp-enlightened-path",
@@ -9254,7 +9273,7 @@ window.DOCS_INDEX = {
     {
       "id": "note-addendum-c-council-rulings",
       "path": "docs/notes/addendum-c-council-rulings.md",
-      "title": "Decision note — Rulings 50–91: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
+      "title": "Decision note — Rulings 50–93: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
       "type": "doc",
       "status": "accepted",
       "owner": "@timianmalloo",
@@ -9317,7 +9336,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e74798e5a6d578825c981c06a02c779a1cb3b76d7c0fba87b604c46dc2f7ea0b"
+      "sourceSha256": "07d38aa687acffd8c6d97d0d9af89bef3d1b6331d368702b4b5cc48d249415c2"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -9869,7 +9888,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "phase-3",
       "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "adr-0018-node-content-reader-contract",
+          "on": "2026-09-14",
+          "reason": "ADR-0018 accepted with the Ruling 93 erratum (Explore's reader is the consumer; RenderKind gains Html)"
+        }
+      ],
       "summary": "Every extractor this product has, every one it does not, and the order the remaining work is worth doing in — with the coverage of each measured on a real repository rather than estimated.",
       "tags": [
         "plan",
@@ -9889,7 +9914,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "861afc9d4143c581d7a03d000c35735c6d4b18ea0ea589cd5d301b74c75eb88f"
+      "sourceSha256": "62577cd18a0caecf5aa001fb22370aa7cca8608829123d3a4f3742a4537037ef"
     },
     {
       "id": "plan-ui-and-windowing",
@@ -15547,6 +15572,53 @@ window.DOCS_INDEX = {
       "sourceSha256": "9a358b808be4dff94ca1fbe52a8cf94ef5b223dc1c7816067f6bff7ebd4909ca"
     },
     {
+      "id": "proof-explore-view-source",
+      "path": "docs/proof/explore-view-source.md",
+      "title": "Proof Pack: Rulings 92 and 93 — the edge row on one baseline; View source in Explore's reader",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [],
+      "summary": "Ruling 92 landed as one T0 commit: the reader's edge row is a three-column grid on one 12 px baseline inside a button whose own template stretches its presenter (red: \"the predicate declared_in starts at X=82.04 while the metadata labels start at X=16\"). Ruling 93 landed as one T1 slice: Explore's node menu offers View source first; the reader renders the node's content below its metadata and edges by RenderKind — code read-only in AvalonEdit (ADR-0025, not the composer's CodeMirror: measured why), markdown as prose, HTML in a sandbox asserted against a real WebView2 (script ran in the positive control and not in the sandbox; the network image was answered 403; the meta refresh was cancelled), None as the shortfall sentence. ADR-0018 accepted with the erratum. Private bytes: the composer's WebView2 193 MB, the reader's sandbox host 30 MB as a third surface (96 MB as a second, the GPU process's one-time growth included).",
+      "tags": [
+        "proof-pack",
+        "addendum-c",
+        "explore",
+        "reader",
+        "ruling-92",
+        "ruling-93",
+        "adr-0018",
+        "sandbox",
+        "webview2"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0025-code-viewer-renderer",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-knowledge-exploration",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "660c836a874a5a03034fa74d744d6ca0c56fb935714b05d6cb703d43bfe3b849"
+    },
+    {
       "id": "proof-front-door-provider-config",
       "path": "docs/proof/front-door-provider-config.md",
       "title": "Proof Pack — node F6, provider configuration and the composer handshake",
@@ -17637,6 +17709,11 @@ window.DOCS_INDEX = {
           "by": "adr-0025-code-viewer-renderer",
           "on": "2026-08-30",
           "reason": "residual cleared: AvalonEdit read-only highlighting PoC passed (C#/py/js/sql covered, ts/bicep degrade to plain, pure-WPF no airspace)"
+        },
+        {
+          "by": "adr-0018-node-content-reader-contract",
+          "on": "2026-09-14",
+          "reason": "ADR-0018 accepted with the Ruling 93 erratum (Explore's reader is the consumer; RenderKind gains Html)"
         }
       ],
       "summary": "Specifies two content surfaces the workbench still lacks: a READ-ONLY code viewer (syntax-highlighted source for a selected node/file, never an editor of record) and a PROMPT-DRAFT editor (rich-text prompts staged until an explicit transfer to a ready terminal session). Both are read/compose surfaces, not a general-purpose code editor (explicitly out of scope in spec-ai-native-ide). The code viewer is the render side of the ADR-0018 node-content-reader-contract NodeContentAsync seam; the prompt draft composes with the terminal-sessions surface. Grounds the reuse decision (Monaco MIT via WebView2, AvalonEdit MIT native, Markdig BSD-2) and names the Design/Core ownership lanes so the surfaces can be built in parallel against defined contracts.",
@@ -17677,7 +17754,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4668f56adfa45ce69201c46b666d9d19865f5a48fd22d3e3b203e66295e2a45d"
+      "sourceSha256": "5060300c7c21d12f9a30ef6c50bf965174fb0fe1f6b8e16415641847615f388c"
     },
     {
       "id": "spec-gemini-cli-agent-session",
@@ -18212,5 +18289,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "0205ad626910271ad56a19db082854a4cba4ee0fa7b1e5ae8f4e650a0b88a007"
+  "graphSha256": "4a5b6ed0ff7aef521e127f43aa54fdbc3ac41cacd9bb5c7415d8d0c7513b46ab"
 };

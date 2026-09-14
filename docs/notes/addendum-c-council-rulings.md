@@ -1,6 +1,6 @@
 ---
 id: note-addendum-c-council-rulings
-title: "Decision note — Rulings 50–91: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
+title: "Decision note — Rulings 50–93: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
 type: doc
 status: accepted
 owner: "@timianmalloo"
@@ -1542,3 +1542,37 @@ merged tree in its self-test form and `RUN-PENDING` form.
 
 **RECORD AS:** Ruling 91 — F5 merges to `main` unrun; the exit run's gesture is performed on the
 current build; Ruling 79's "run on the frozen tree" superseded; Ruling 49 stands.
+
+---
+
+## Provenance (Rulings 92–93)
+
+Issued by the **Owner** on the operator's 2026-09-14 findings (`C:\Users\malla\Downloads\ui findings 9-14-AM\`), relayed verbatim in the conductor's brief to the Explore lane (`lane/explore-r92-r93`, session `explore-r92-r93`) and recorded here by that lane so the citations resolve; the lane's Proof Pack is `docs/proof/explore-view-source.md`. The operator's words are the decision.
+
+---
+
+## Ruling 92 — F-A: the edge row is a left-aligned grid with one baseline
+
+**RULING:** Operator: *"need to fixt the layout of the metadata view."* `EdgeRow` becomes a three-column `Grid` (predicate `Auto` min 104 · target `*` · status `Auto`), all three `TextBlock`s at 12 px on one baseline (`VerticalAlignment=Center`, status in the muted brush, not a smaller size), the `Button` template overridden so its content presenter stretches (`HorizontalContentAlignment=Stretch` is being ignored by the App's centred style — the row must not depend on the style).
+
+**BECAUSE:** `NodeReaderView.cs:233-253`: a `DockPanel` measures to content and a centred presenter floats it; `Muted(status, 11)` beside `Text(target, 13)` is the superscript the screenshot shows. The `MetaRow`s above are correct because they are not inside a `Button`.
+
+**CONDITIONS:** A rendered-surface test asserts every row's predicate `TranslatePoint` X equals the metadata rows' label X (left edge shared), and the three blocks share one `FontSize`.
+
+**RECORD AS:** Ruling 92 — the edge row is a left-aligned grid on one baseline; the row carries its own button template; Explore lane, T0.
+
+---
+
+## Ruling 93 — F-B: "View source" in Explore renders in the reader pane through NodeContentAsync; ADR-0018 is accepted by the slice that builds it
+
+**RULING:** Operator: *"right click on a node … choose view source and see the source in the right viewer eg code or rendered markdown or html."* In Explore the canvas context menu gains **View source** (first item), which renders the node's content **inside `NodeReaderView`'s content area** (replacing the placeholder sentence, which is deleted) — never a routed `codeviewer` pane. Rendering by `RenderKind`: `Code` → syntax-highlighted, reusing the CodeMirror host already in `composer.html` (one WebView2, read-only mode); `Text` whose language is markdown → `ProseMarkdown` (the existing WPF renderer, no link activation); `Html` (new `RenderKind` value, Owner extension of the enum, admitted because ADR-0018's text names it) → rendered in a WebView2 with **script disabled, no navigation, no network** (`NavigateToString`, `IsScriptEnabled=false`), falling back to `Code`/html when that sandbox cannot be asserted; `None` → the shortfall sentence, verbatim. The reader keeps its metadata and edges above the content. ADR-0018 moves to *accepted* in the same slice, with the erratum that its consumer is Explore's reader.
+
+**BECAUSE:** Core already ships the query (bounded, honest shortfall); the App's `Open as…` routes to Architecture's `codeviewer`, which is US-C3's rule for *structural* views (Ruling 58/59) — the operator wants the content *in the right viewer* of Explore, a reading act on the current pane, not a kind-open. Rendering repository HTML with script enabled would be executing workspace code in the product process; that is a Security floor, so the sandbox is a condition, not a preference.
+
+**CONFIDENCE:** Verified for NodeReaderView, the renderers, ADR-0018's status; **Inferred** that the CodeMirror host can be re-used read-only without a second WebView2 (the lane measures).
+
+**SCOPE EFFECT:** T1 (one /design-slice; surface list: `NodeContent` model → `NodeReaderView` → context menu → rendered surface). Cuts: a second, separate viewer pane in Explore; any Explore route to `codeviewer`; `Html` rendering with script. Freezes: `Open as…`'s structural entries unchanged.
+
+**CONDITIONS:** (1) Red-first rendered-surface test per `RenderKind` including `None`/shortfall. (2) Measure WebView2 private-bytes delta for the reader host (P-4 pattern — `docs/proof/coordination-perspective.md` for the form); if a second WebView2 costs more than the composer's, share one. (3) Explore's menu in the RAISING host is unchanged. (4) The HTML sandbox flags are asserted by a test that navigates a page with `<script>` and observes no execution.
+
+**RECORD AS:** Ruling 93 — View source in Explore renders in the reader's content area by `RenderKind` (`Html` added; sandboxed); ADR-0018 accepted with the erratum; the Inferred CodeMirror clause resolved by the lane's measurement (`docs/proof/explore-view-source.md`: ADR-0025's AvalonEdit renders `Code`; the reader's one WebView2 is the HTML sandbox); Explore lane, T1.

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T15:24:47Z",
+  "generated": "2026-09-14T17:12:56Z",
   "audit": [
     {
       "actor": null,
@@ -15655,6 +15655,42 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T15:16:30Z",
       "duration_seconds": 496.0
+    },
+    {
+      "id": "al-01M2GEGAYJ1V0WVQBMG1YF6KED",
+      "shortname": "lane-explore-r92-r93",
+      "datetime": "2026-09-14T17:12:45Z",
+      "session": "explore-r92-r93",
+      "prompt": "You are a lane node of the AI-DE Conductor programme (repo root C:\\projects\\ai-de; the pack's rules in C:\\projects\\ai-de\\AGENTS.md apply). Work ONLY in your worktree C:\\Projects\\ai-de-lane-explore-r92-r93 on branch lane/explore-r92-r93 (based on main dda140ba). Land the Owner's Rulings 92 and 93.",
+      "summary": "Rulings 92 and 93 landed on lane/explore-r92-r93 as two commits. Ruling 92 (7666084b, T0): NodeReaderView.EdgeRow is a three-column Grid on one 12 px baseline inside a Button with its own stretched-presenter template; red-first in the App's real theme window — \"the predicate 'declared_in' starts at X=82.04 while the metadata labels start at X=16\" / \"the status renders at 11 px beside a 13 px target\" — then green (NodeReaderEdgeRowLayoutTests, 2). Ruling 93 (T1, this commit): Explore's node menu (ExplorerNodeMenu; ExplorerSurface subscribes the canvas's NodeContextMenuRequested) offers View source first and renders the node's content in the reader's content area below the metadata and edges by RenderKind — Code/Text in the ADR-0025 AvalonEdit viewer (the ruling's Inferred CodeMirror clause resolved by measurement: the composer's WebView2 is in another visual tree and the vendored bundle has no code mount), markdown in ProseView, Html (new NodeContentKind member at the one producer KindOf, mirrored to the client) in HtmlSandboxHost (one lazy WebView2: IsScriptEnabled=false read back, no navigation, every non-local request answered 403), None as the shortfall sentence; loading/failed/late-reply states. Every state red-first (ExplorerViewSourceTests 11: \"Expected: Code Actual: Idle\" and kin; NodeContentHtmlKindTests: \"Expected: Html Actual: Code\"). Condition 4: ComposerProbe --html-sandbox with a positive control — mutant red exit 44 \"the page's own script RAN inside the reader's sandbox\", green \"#ran present = false, blocked requests = 2, cancelled navigations = 1\" (HtmlSandboxIntegrationTests). Condition 2 measured (P-4): composer WebView2 +193,290,240 bytes; a second WebView2 +95,842,304; the reader's sandbox host as a third +29,614,080 — no sharing needed, the reader owns one. Condition 3: the raising host's menu untouched (NodeViewMenu/OnNodeContextMenuRequested diff empty). ADR-0018 accepted with the erratum. Tests: App 955 -> 985 executed (985 passed), Core 2636 -> 2644 (2644 passed, 1 pre-existing skip). Terminal ledger 10 starts / 9 stops, the unmatched s-terminal identical in the baseline ledgers (finding F-6). Findings F-1..F-6 and two placeholder classes in the Proof Pack. AIDE_CONTRACT_LOG unset in this environment.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/explore-view-source.md",
+        "docs/adr/0018-node-content-reader-contract.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land the Owner's Rulings 92 and 93 as two commits on lane/explore-r92-r93 (92 first, T0; 93 second, T1 with its own Proof Pack): the reader's edge row on one baseline; View source in Explore rendering the node's content in the reader by RenderKind through NodeContentAsync, with the HTML sandbox asserted, ADR-0018 accepted with the erratum.",
+      "done_when": "Both rulings' CONDITIONS met by red-first tests observed red then green; dotnet test for AiDe.App.Tests and AiDe.Core.Tests pass with executed counts recorded before and after (no --update); python tools/run-verify-gates.py green on the committed tree; docs/proof/explore-view-source.md exists with the measurements, the red-first evidence, the attended rows and the residual risk; ADR-0018 accepted with the erratum; the branch pushed to origin; this audit entry appended; coord session ended; the report delivered.",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-14T16:30:12Z",
+      "duration_seconds": 2553.0,
+      "git": {
+        "sha": "7666084b65d20a5b08f224877ba2045921d8f7c4",
+        "short": "7666084b6",
+        "branch": "lane/explore-r92-r93",
+        "pushed": null
+      }
     }
   ],
   "changes": [

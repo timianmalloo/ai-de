@@ -12,7 +12,8 @@ links:
   - { to: adr-0018-node-content-reader-contract, rel: relates-to }
   - { to: kb-content-rendering-comparables, rel: depends-on }
 review-by: 2027-02-28
-review-suggested: []
+review-suggested:
+  - { by: adr-0018-node-content-reader-contract, on: 2026-09-14, reason: "ADR-0018 accepted with the Ruling 93 erratum (Explore's reader is the consumer; RenderKind gains Html)" }
 summary: >-
   For the read-only code viewer (spec-editor-surfaces US-ED1–ED4), use native AvalonEdit (MIT) rather
   than Monaco-in-WebView2 (MIT). The deciding factor is the repo's own documented WebView2 airspace

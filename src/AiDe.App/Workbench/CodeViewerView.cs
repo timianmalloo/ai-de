@@ -76,6 +76,9 @@ public sealed class CodeViewerView : ContentControl
     /// <summary>The read-only text currently shown (empty in the fallback state). For tests.</summary>
     public string ShownText => _editor.Text;
 
+    /// <summary>Where keyboard focus lands inside the viewer — the editor's text area, not the control.</summary>
+    public UIElement FocusTarget => _editor.TextArea;
+
     /// <summary>Renders a node's content. RenderKind decides the branch (US-ED2/ED8).</summary>
     public void Show(NodeContent content)
     {
@@ -88,7 +91,9 @@ public sealed class CodeViewerView : ContentControl
         }
 
         SetBody();
-        _editor.SyntaxHighlighting = content.RenderKind == NodeContentKind.Code
+        // An HTML node in the CODE viewer is highlighted source (Ruling 93 renders it sandboxed in
+        // the Explorer reader; this surface is the structural view and stays as it was).
+        _editor.SyntaxHighlighting = content.RenderKind is NodeContentKind.Code or NodeContentKind.Html
             ? HighlightingFor(content.Language)   // unknown language -> null -> plain text (US-ED2)
             : null;
         _editor.Text = content.Content;

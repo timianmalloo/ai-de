@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 94 types, 413 members, 73% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 100 types, 437 members, 74% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**94 public types · 413 public members · 73% documented.**
+**100 public types · 437 public members · 74% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -276,6 +276,7 @@ bounded (US-ED3), and an honest fallback when there is no inline content (US-ED8
 | `string? HighlightingName` | The AvalonEdit highlighting currently applied, or null (plain). For tests. |
 | `bool IsFallback` | Whether the viewer is showing the no-inline-content fallback. |
 | `string ShownText` | The read-only text currently shown (empty in the fallback state). For tests. |
+| `UIElement FocusTarget` | Where keyboard focus lands inside the viewer — the editor's text area, not the control. |
 | `void Show(NodeContent content)` | Renders a node's content. RenderKind decides the branch (US-ED2/ED8). |
 | `void Clear()` | **(gap)** |
 
@@ -553,6 +554,31 @@ Pure placement policy for reference-document surfaces, so it is verifiable headl
 |---|---|
 | `DocumentPlacement? Decide(Layout layout, string? activeSurfaceId)` | **(gap)** |
 
+## `ExplorerNodeAction`
+
+*enum* — `ExplorerNodeMenu.cs`
+
+What a right-click in Explore's graph offers for a node (Ruling 93).
+
+## `ExplorerNodeOption`
+
+*record* — `ExplorerNodeMenu.cs`
+
+One choice of Explore's node menu — the action and its label.
+
+## `ExplorerNodeMenu`
+
+*class* — `ExplorerNodeMenu.cs`
+
+Explore's node context menu (Ruling 93): **View source** first, then the reading gesture the
+reader already answers. Every action stays in Explore — a reading act on the current pane —
+never a routed kind-open (those are the raising host's `Open as…` grammar, Rulings 58/59,
+frozen). Pure, so the order is asserted without a window.
+
+| Member | Summary |
+|---|---|
+| `IReadOnlyList<ExplorerNodeOption> OptionsFor(NodeContextMenuRequest request)` | **(gap)** |
+
 ## `ExplorerLayout`
 
 *enum* — `ExplorerSurface.cs`
@@ -584,6 +610,68 @@ is a pure function of width, so it is testable without rendering.
 | `ExplorerLayout Layout { get; private set; } = ExplorerLayout.SideBySide` | The current arrangement of the two panes. |
 | `Func<bool>? ReturnFocusToGraph { get; set; }` | The action that returns focus from the reader to the graph, completing the cycle. Defaults to focusing the graph canvas; replaceable so the routing is testable without a live WebView2. |
 | `void ApplyLayoutForWidth(double width)` | Chooses the layout for a given available width and applies it if it changed. Pure function of width (a width of 0 — before first measure — keeps the side-by-side default). Public so the responsive rule is testable wit… |
+
+## `HtmlSandboxHost`
+
+*class* — `HtmlSandboxHost.cs`
+
+The one WebView2 the Explorer reader owns: it renders a node's HTML under
+`HtmlSandboxPolicy` — script disabled, no navigation, no network — by
+`NavigateToString`, and says so when the sandbox cannot be asserted so the reader can fall
+back to highlighted source (Ruling 93). Created on the first HTML node and kept for the reader's
+life: a WebView2 is a child process, and one per render would be one per right-click.
+
+**Remarks.** **The sandbox is applied before any document, and read back.** `Show` holds
+the HTML until the runtime has started, the settings are set, and `IsAsserted`
+has confirmed them; only then is the string navigated. A runtime that declines a setting, or a
+runtime that is not installed, reaches `SandboxUnavailable` and nothing is rendered.
+
+
+
+
+
+**What is measured on the normal path.** `CancelledNavigations` and
+`BlockedRequests` count every refusal, so a page that tried to leave is a number the
+out-of-process probe reads, never an inference from the policy's text.
+
+| Member | Summary |
+|---|---|
+| `HtmlSandboxHost(string surfaceId)` | **(gap)** |
+| `string SurfaceId { get; }` | **(gap)** |
+| `WebView2 View` | The hosted control. For the probe that measures it. |
+| `bool IsSandboxed { get; private set; }` | True once the runtime has started and the sandbox settings were read back as set. |
+| `string? Unavailable { get; private set; }` | Why the sandbox could not be asserted, or null while it can (or has not been tried). |
+| `int CancelledNavigations { get; private set; }` | How many top-level or frame navigations the policy cancelled. |
+| `int BlockedRequests { get; private set; }` | How many subresource requests the policy answered 403 instead of letting out. |
+| `int DocumentsShown { get; private set; }` | How many documents were navigated to (one per `Show` once sandboxed). |
+| `event Action<string>? SandboxUnavailable` | Raised once, with the reason, when the sandbox cannot be asserted. |
+| `event Action? DocumentShown` | Raised when a sandboxed document has been navigated to. |
+| `void Show(string html)` | Renders  once the sandbox is asserted; holds it until then. |
+| `void Dispose()` | Releases the browser. A WebView2 is a child process, not a visual. |
+
+## `HtmlSandboxPolicy`
+
+*class* — `HtmlSandboxPolicy.cs`
+
+The sandbox a repository's HTML renders under in the Explorer reader (Ruling 93): **script
+disabled, no navigation, no network**. Rendering workspace HTML with script enabled would be
+executing workspace code in the product process, so each rule here is a refusal, not a
+preference — and `IsAsserted` reads the runtime back rather than trusting the set.
+
+**Remarks.** **What "local" means.** A `NavigateToString` document lives at `about:blank`
+(or a `data:` URI, depending on the runtime's own choice for the string's length), and a
+document with no script cannot mint a `blob:`. Everything else — `http(s)`,
+`file`, `ftp`, `ws(s)`, an external scheme — is a request that leaves the
+process, and is cancelled or answered 403 before it does. A null or empty URI is refused too:
+a request whose destination cannot be read cannot be shown to be local.
+
+| Member | Summary |
+|---|---|
+| `void Apply(CoreWebView2Settings settings)` | Applies the sandbox. Script off, no message channel, no host objects, no dev tools. |
+| `bool IsAsserted(CoreWebView2Settings settings)` | Whether the runtime reports the sandbox as set. Read back after `Apply`: a setting the runtime declined is a sandbox that does not exist, and the reader falls back to highlighted source rather than render under a poli… |
+| `bool IsLocal(string? uri)` | Whether a URI stays inside the process: `about:` or `data:`. |
+| `bool MustCancelNavigation(string? uri)` | Whether a top-level or frame navigation must be cancelled. |
+| `bool MustBlockRequest(string? uri)` | Whether a subresource request must be answered without leaving the process. |
 
 ## `IHasDisplayName`
 
@@ -719,18 +807,37 @@ DC-022) — so the viewer can render and be tested end-to-end while the real que
 |---|---|
 | `Task<NodeContent> GetAsync(string nodeId, CancellationToken cancellationToken = default)` | **(gap)** |
 
+## `NodeReaderContentState`
+
+*enum* — `NodeReaderContentState.cs`
+
+What the Explorer reader's content area is showing (Ruling 93). One value per rendered state,
+so a test reads the state the operator sees rather than inferring it from the visual tree.
+
 ## `NodeReaderView`
 
 *class* — `NodeReaderView.cs`
 
-The reader half of the Explorer surface (spec-knowledge-explorer-mode US-E4; design D4). Phase 1
-renders a selected node's header, metadata and its walkable typed edges. The per-kind CONTENT view
-(rendered markdown/html, syntax-highlighted code) arrives in Phase 2 behind the node-content
-contract (ADR-0018 node-content-reader-contract), so the content area is an honest placeholder until then — never a blank. With
-no selection it shows an explicit empty state (US-E7).
+The reader half of the Explorer surface (spec-knowledge-explorer-mode US-E4; design D4): a
+selected node's header, metadata and walkable typed edges, and — below them, on the
+**View source** gesture (Ruling 93) — the node's content through ADR-0018's node-content
+query, rendered by the authority's `RenderKind`: code read-only and highlighted (the
+AvalonEdit viewer ADR-0025 chose), markdown as prose (links are text), HTML in a sandbox (script
+off, no navigation, no network — `HtmlSandboxHost`), and `None` as the
+shortfall sentence, verbatim. With no selection it shows an explicit empty state (US-E7).
+
+**Remarks.** **Two rows, one reader.** The top row (header · metadata · edges) scrolls on its own and is
+capped at `TopShare` of the reader once content is shown, so the content keeps a
+room of its own instead of being pushed below twenty-five edge rows (the writer-room lesson,
+DC-137, applied to a reader). With nothing shown the top row takes the whole reader.
 
 | Member | Summary |
 |---|---|
+| `Func<string, CancellationToken, Task<NodeContent>>? ContentSource { get; set; }` | The node-content query (ADR-0018's `NodeContentAsync`, behind the client seam), read live on each gesture so a reader built before a workspace attached still reaches it (DC-040). |
+| `NodeReaderContentState ContentState { get; private set; } = NodeReaderContentState.Idle` | What the content area shows (Ruling 93). |
+| `Task ViewSourceAsync(string nodeId, CancellationToken cancellationToken = default)` | The "View source" gesture for the node the reader is showing: fetches its content through `ContentSource` and renders it by kind. A reply for a node that is no longer the shown one is discarded (ADR-0018 echoes the id… |
+| `void ShowContent(NodeContent content)` | Renders one node's content in the content area, by its kind. A reply whose id is not the shown node's is discarded: the selection moved on while the query was in flight. |
+| `void Dispose()` | Releases the HTML sandbox's browser (a child process), if one was ever created. |
 | `NodeReaderView()` | **(gap)** |
 | `string? SelectedNodeId { get; private set; }` | The id of the node currently shown, or null when empty. |
 | `bool IsEmpty` | **(gap)** |
