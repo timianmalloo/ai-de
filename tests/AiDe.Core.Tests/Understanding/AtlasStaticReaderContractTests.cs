@@ -8,7 +8,7 @@ namespace AiDe.Core.Tests.Understanding;
 public sealed class AtlasStaticReaderContractTests
 {
     [Fact]
-    public void Capabilities_CurrentWireAdvertisesOnlyLegacyE0Features()
+    public void Capabilities_CurrentLiteralCodecAcceptsLegacyE0PayloadWithoutProvingRegistration()
     {
         const string json = """
             {"versions":[1],"features":["inventory","source","outline","receipts"],
@@ -45,17 +45,25 @@ public sealed class AtlasStaticReaderContractTests
         string before,
         string? after = null)
     {
-        var body = Encoding.UTF8.GetString(AtlasReaderProjection.SerializeSelection(CurrentSelection(), CurrentSelectRequest()));
-        var mutated = null == after
-            ? body.Replace("\"declarationToken\"", before + "\"declarationToken\"", StringComparison.Ordinal)
-            : body.Replace(before, after, StringComparison.Ordinal);
+        var baseJson = JsonNode.Parse(AtlasReaderProjection.SerializeSelection(CurrentSelection(), CurrentSelectRequest()))!.AsObject();
+        var baseBody = Encoding.UTF8.GetBytes(baseJson.ToJsonString());
 
+        var validated = AtlasReaderProjection.DeserializeSelection(baseBody, CurrentSelectRequest());
+        var mutated = MutateFirstOutlineRow(baseJson, before, after);
+        var mutatedRow = mutated["outline"]![0]!.AsObject();
+
+        Assert.Equal("scope-token", validated.ScopeToken);
+        Assert.Equal("scope-token", mutated["scopeToken"]!.GetValue<string>());
+        if (null == after)
+            Assert.Contains(mutatedRow, property => property.Key == before.Split(':')[0].Trim('"'));
+        else
+            Assert.Contains(after, mutatedRow.ToJsonString(), StringComparison.Ordinal);
         Assert.Throws<JsonException>(() =>
-            AtlasReaderProjection.DeserializeSelection(Encoding.UTF8.GetBytes(mutated), CurrentSelectRequest()));
+            AtlasReaderProjection.DeserializeSelection(Encoding.UTF8.GetBytes(mutated.ToJsonString()), CurrentSelectRequest()));
     }
 
     [Fact]
-    public void Restore_CurrentContractHasNoOptInAndSelectionValidationUsesOriginalRequest()
+    public void Restore_CurrentLocalCodecHasNoOptInAndSelectionValidationUsesOriginalRequestWithoutRemoteRetention()
     {
         var restoreProperties = typeof(AtlasRestoreRequestDto).GetProperties().Select(property => property.Name).Order().ToArray();
         var outlineProperties = typeof(AtlasOutlineRowDto).GetProperties().Select(property => property.Name).Order().ToArray();
@@ -75,13 +83,13 @@ public sealed class AtlasStaticReaderContractTests
     }
 
     [Fact]
-    public void PublicationBudget_CurrentBaselineKeepsEscapedBodyWithinFrameAndMetadataContentAtZero()
+    public void PublicationBudget_CurrentBaselineBodyFitsFrameBodyLimitAndMetadataContentStaysZero()
     {
         const string escapedText = @"A\Bé";
         var body = AtlasReaderProjection.SerializeSelection(CurrentSelection(escapedText), CurrentSelectRequest());
         var remote = AtlasReaderProjection.DeserializeSelection(body, CurrentSelectRequest());
 
-        Assert.True(body.Length + AtlasReaderProjection.FramePrefixBytes <= AtlasReaderProjection.MaxFrameBodyBytes);
+        Assert.True(body.Length <= AtlasReaderProjection.MaxFrameBodyBytes);
         Assert.Equal(sizeof(int), AtlasReaderProjection.FramePrefixBytes);
         Assert.Equal(1024 * 1024, AtlasReaderProjection.MaxFrameBodyBytes);
         Assert.Equal(128 * 1024, AtlasReaderProjection.MaxPageTextUtf8Bytes);
@@ -91,34 +99,72 @@ public sealed class AtlasStaticReaderContractTests
     }
 
     [Fact]
-    public async Task ReadBudget_CurrentBaselineReportsReservationsNotHeapAndDrainsExactly()
+    public async Task ReadBudget_CurrentQueueLedgerReportsFourActiveSixteenPendingOperationChargesAndDrains()
     {
         var budget = new AtlasReadBudget();
         var active = new List<AtlasReadBudget.Reservation>();
         using var cancellation = new CancellationTokenSource();
         var pending = new List<Task<AtlasReadBudget.Reservation>>();
+        (int Scopes, int Active, int Pending, long Owned, long Retained) held = default;
+        AtlasReadException? overCapacity = null;
+        var pendingOutcomes = new List<string>();
 
         try
         {
             for (var i = 0; i < 4; i++) active.Add(await budget.EnterAsync(cancellation.Token));
             for (var i = 0; i < 16; i++) pending.Add(budget.EnterAsync(cancellation.Token).AsTask());
 
-            var held = budget.Read();
-
-            Assert.Equal(4, held.Active);
-            Assert.Equal(16, held.Pending);
-            Assert.True(held.Owned <= AtlasReadBudget.MaxOwnedBytes);
-            Assert.Throws<AtlasReadException>(() => budget.EnterAsync(cancellation.Token));
+            held = budget.Read();
+            overCapacity = Assert.Throws<AtlasReadException>(() => budget.EnterAsync(cancellation.Token));
         }
         finally
         {
             cancellation.Cancel();
-            foreach (var task in pending)
-                await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await task);
             foreach (var reservation in active) reservation.Dispose();
+            foreach (var task in pending)
+            {
+                try
+                {
+                    using var unexpected = await task;
+                    pendingOutcomes.Add("completed");
+                }
+                catch (OperationCanceledException)
+                {
+                    pendingOutcomes.Add("canceled");
+                }
+                catch (Exception ex)
+                {
+                    pendingOutcomes.Add(ex.GetType().Name);
+                }
+            }
         }
 
+        Assert.NotNull(overCapacity);
+        Assert.Equal("Atlas.Busy", overCapacity.Code);
+        Assert.Equal(0, held.Scopes);
+        Assert.Equal(4, held.Active);
+        Assert.Equal(16, held.Pending);
+        Assert.Equal(4 * AtlasReadBudget.OperationBytes, held.Owned);
+        Assert.Equal(0, held.Retained);
+        Assert.Equal(16, pendingOutcomes.Count);
+        Assert.All(pendingOutcomes, outcome => Assert.Equal("canceled", outcome));
         Assert.Equal((0, 0, 0, 0L, 0L), budget.Read());
+    }
+
+    private static JsonObject MutateFirstOutlineRow(JsonObject baseJson, string before, string? after)
+    {
+        var mutated = JsonNode.Parse(baseJson.ToJsonString())!.AsObject();
+        var row = mutated["outline"]![0]!.AsObject();
+        if (null == after)
+        {
+            row.Insert(0, before.Split(':')[0].Trim('"'), JsonValue.Create<string?>(null));
+            return mutated;
+        }
+
+        var rowJson = row.ToJsonString();
+        Assert.Contains(before, rowJson);
+        mutated["outline"]![0] = JsonNode.Parse(rowJson.Replace(before, after, StringComparison.Ordinal));
+        return mutated;
     }
 
     private static string ValidSelectRequest() => """

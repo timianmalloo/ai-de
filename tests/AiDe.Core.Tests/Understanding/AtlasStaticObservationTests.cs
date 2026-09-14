@@ -30,7 +30,7 @@ public sealed class AtlasStaticObservationTests
                 public enum State { Ready }
             }
             """;
-        var fixture = Fixture("src\\Box.cs", source, SuppliedContext());
+        using var fixture = Fixture("src\\Box.cs", source, SuppliedContext());
 
         var result = CSharpDeclarationObservation.Observe(fixture.Compilation, fixture.Context, [fixture.Input]);
 
@@ -60,15 +60,20 @@ public sealed class AtlasStaticObservationTests
         const string first = "namespace Demo { public partial class Box { public int Count { get; set; } partial void Save(); } }";
         const string second = "namespace Demo { public partial class Box { partial void Save() { } public class Inner { public void M() { } } } }";
         var context = SuppliedContext();
-        var fixture = Fixture(("src\\Box.A.cs", first), ("src\\Box.B.cs", second), context);
+        using var fixture = Fixture(("src\\Box.A.cs", first), ("src\\Box.B.cs", second));
 
         var result = CSharpDeclarationObservation.Observe(fixture.Compilation, context, fixture.Inputs);
         var saveOccurrences = result.Declarations.Where(declaration => declaration.Identifier == "Save").ToArray();
+        var expectedRoles = new[] { AtlasDeclarationRole.PartialDefinition, AtlasDeclarationRole.PartialImplementation };
+        var expectedFiles = fixture.Inputs.Select(input => input.File.FileValue).ToArray();
         var declarationProperties = typeof(AtlasDeclaration).GetProperties().Select(property => property.Name).ToArray();
 
+        Assert.NotEmpty(saveOccurrences);
         Assert.Equal(2, result.Declarations.Count(declaration => declaration.Kind == AtlasDeclarationKind.Type && declaration.Identifier == "Box"));
-        Assert.Contains(saveOccurrences, declaration => declaration.Role == AtlasDeclarationRole.PartialDefinition);
-        Assert.Contains(saveOccurrences, declaration => declaration.Role == AtlasDeclarationRole.PartialImplementation);
+        Assert.Equal(expectedRoles.Order(), saveOccurrences.Select(declaration => declaration.Role).Order());
+        Assert.Equal(expectedFiles.Order(), saveOccurrences.Select(declaration => declaration.SourceBinding.ManifestFileIdentity).Order());
+        Assert.All(saveOccurrences, declaration => Assert.NotNull(declaration.LogicalSymbolValue));
+        Assert.Equal(saveOccurrences.Length, saveOccurrences.Select(declaration => declaration.ObservationKey).Distinct(StringComparer.Ordinal).Count());
         Assert.Single(saveOccurrences.Select(declaration => declaration.LogicalSymbolValue).Distinct(StringComparer.Ordinal));
         Assert.Contains(result.Declarations, declaration => declaration.Identifier == "Inner" && declaration.SourceBinding.ManifestFileIdentity == fixture.Inputs[1].File.FileValue);
         Assert.Contains(result.Declarations, declaration => declaration.Kind == AtlasDeclarationKind.Accessor && declaration.Identifier is "get" or "set");
@@ -77,7 +82,7 @@ public sealed class AtlasStaticObservationTests
     }
 
     [Fact]
-    public void Observe_UnsupportedInterveningDeclaration_ReportsLimitationWithoutFabricatingParent()
+    public void Observe_UnsupportedOperatorSibling_ReportsLimitationWithoutFabricatingParent()
     {
         const string source = """
             namespace Demo
@@ -89,7 +94,7 @@ public sealed class AtlasStaticObservationTests
                 }
             }
             """;
-        var fixture = Fixture("src\\Box.cs", source, SuppliedContext());
+        using var fixture = Fixture("src\\Box.cs", source, SuppliedContext());
 
         var result = CSharpDeclarationObservation.Observe(fixture.Compilation, fixture.Context, [fixture.Input]);
 
@@ -105,11 +110,13 @@ public sealed class AtlasStaticObservationTests
     {
         const string source = "namespace Demo { public sealed class Box { public void M() { } } }";
         var context = AtlasCompilationScope.ForFileLimited("workspace", "root", "profile:trusted-framework-v1");
-        var fixture = Fixture("src\\Box.cs", source, context);
+        using var fixture = Fixture("src\\Box.cs", source, context);
 
         var result = CSharpDeclarationObservation.Observe(fixture.Compilation, context, [fixture.Input]);
+        var expectedIdentifiers = new[] { "Box", "M" };
 
         Assert.Equal(AtlasCompletionState.Complete, result.Completion);
+        Assert.Equal(expectedIdentifiers.Order(), result.Declarations.Select(declaration => declaration.Identifier).Order());
         Assert.All(result.Declarations, declaration => Assert.Null(declaration.LogicalSymbolValue));
         Assert.All(result.Declarations, declaration =>
             Assert.Equal("file-limited-logical-context-not-established", declaration.UnresolvedReason));
@@ -119,7 +126,7 @@ public sealed class AtlasStaticObservationTests
     public void Observe_RecoverySyntax_EmitsOnlyBoundDeclarationsWithValidSourceSpans()
     {
         const string source = "namespace Demo { public sealed class Box { public void Broken( public int Count { get; set; } }";
-        var fixture = Fixture("src\\Broken.cs", source, SuppliedContext());
+        using var fixture = Fixture("src\\Broken.cs", source, SuppliedContext());
 
         var result = CSharpDeclarationObservation.Observe(fixture.Compilation, fixture.Context, [fixture.Input]);
 
@@ -137,17 +144,44 @@ public sealed class AtlasStaticObservationTests
     private static string Slice(string source, AtlasTextSpan span) => source.Substring(span.Start, span.Length);
     private static AtlasCompilationScope SuppliedContext() => AtlasCompilationScope.ForSuppliedProjectCompilation("workspace", "root", "project:Core", "tfm:net10.0", "configuration:Debug");
 
-    private static (CSharpCompilation Compilation, AtlasCompilationScope Context, CSharpDeclarationSourceInput Input) Fixture(string path, string source, AtlasCompilationScope context)
+    private sealed class ObservationFixture(CSharpCompilation compilation, AtlasCompilationScope context, ImmutableArray<CSharpDeclarationSourceInput> inputs) : IDisposable
     {
-        var tree = CSharpSyntaxTree.ParseText(source, path: path);
-        return (CSharpCompilation.Create("Demo", [tree], TrustedReferences()), context, Input(tree, path, source));
+        public CSharpCompilation Compilation { get; } = compilation;
+        public AtlasCompilationScope Context { get; } = context;
+        public ImmutableArray<CSharpDeclarationSourceInput> Inputs { get; } = inputs;
+        public CSharpDeclarationSourceInput Input => Inputs.Single();
+
+        public void Dispose()
+        {
+            foreach (var input in Inputs)
+                input.Dispose();
+        }
     }
 
-    private static (CSharpCompilation Compilation, ImmutableArray<CSharpDeclarationSourceInput> Inputs) Fixture((string Path, string Source) first, (string Path, string Source) second, AtlasCompilationScope context)
+    private static ObservationFixture Fixture(string path, string source, AtlasCompilationScope context)
+    {
+        var tree = CSharpSyntaxTree.ParseText(source, path: path);
+        return new(CSharpCompilation.Create("Demo", [tree], TrustedReferences()), context, [Input(tree, path, source)]);
+    }
+
+    private static ObservationFixture Fixture((string Path, string Source) first, (string Path, string Source) second)
     {
         var firstTree = CSharpSyntaxTree.ParseText(first.Source, path: first.Path);
         var secondTree = CSharpSyntaxTree.ParseText(second.Source, path: second.Path);
-        return (CSharpCompilation.Create("Demo", [firstTree, secondTree], TrustedReferences()), [Input(firstTree, first.Path, first.Source), Input(secondTree, second.Path, second.Source)]);
+        CSharpDeclarationSourceInput? firstInput = null;
+        try
+        {
+            firstInput = Input(firstTree, first.Path, first.Source);
+            return new(
+                CSharpCompilation.Create("Demo", [firstTree, secondTree], TrustedReferences()),
+                SuppliedContext(),
+                [firstInput, Input(secondTree, second.Path, second.Source)]);
+        }
+        catch
+        {
+            firstInput?.Dispose();
+            throw;
+        }
     }
 
     private static CSharpDeclarationSourceInput Input(SyntaxTree tree, string path, string source)
