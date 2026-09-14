@@ -114,6 +114,17 @@ counts, per-event latency, the run's root count) — carried as residuals in
 | S-6 | View → Evidence; select a row | a second, smaller line under the selected row reads origin · extractor · rev; unselected rows show none | 94 |
 | S-7 | at Graph's narrow width, the canvas header row | a horizontal scrollbar may still appear in the graph *page* (DC-218, the Explore lane's next fix) — report if you see it | — |
 
+### Send while a turn runs (Ruling 95 — `docs/proof/send-while-running.md`)
+
+| # | Do | Expect | Proves |
+|---|---|---|---|
+| W-1 | while a turn runs, type a prompt and Send | the status line reads *b1 is running. Wait — send after b1, or start a parallel session.* — links, no dialog, spoken once | 95 |
+| W-2 | click **Wait — send after b1** | the editor clears; a *b2 queued — sends after b1* row with one action, **Cancel**; a further Send reads *b2 is queued; cancel it or wait.* | 95 |
+| W-3 | let b1 finish | b2 runs on its own and answers; its outcome line carries its own tokens | 95 |
+| W-4 | instead, **Stop this turn** on b1 with b2 queued | b2 stays queued; *b1 stopped by you; b2 is waiting — Send it or cancel it*; b2's row gains **Send now** | 95 |
+| W-5 | **Cancel** on b2 | the row reads *cancelled by you · never sent*; your words are back in the editor | 95 |
+| W-6 | click **Start a parallel session** | a second tab *<this session> (2)* docks Left beside this one, same engine; your prompt is its b1, already sent; the Console shows two engine processes and both threads progress at once | 95 |
+
 ## What the conductor already ran (not yours)
 
 PD-5's runs 2 and 3 (the pin on the wire, `strictMcpConfig` verified), the dry runs, every headless oracle in every Proof Pack, the whole-suite recounts at every join (App 952 / Core 2632), the census (177 pairings, 0 below floor), the Release builds.

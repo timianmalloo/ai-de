@@ -479,4 +479,27 @@ public static class EngineCatalog
 
         return new Dictionary<string, string> { [variable] = host };
     }
+
+    /// <summary>
+    /// The child's environment for a launch on an account named by label — the lookup both hosts
+    /// make before they start an engine (one derivation, DM7), and a lookup only: it authorises
+    /// nothing. An account the rows do not carry yields an empty environment; the spawn contract's
+    /// refusal is the one that names it, as it always did.
+    /// </summary>
+    /// <param name="row">The engine being launched.</param>
+    /// <param name="providers">The configured provider rows.</param>
+    /// <param name="accountLabel">The account the run names.</param>
+    public static IReadOnlyDictionary<string, string> LaunchEnvironment(
+        EngineRow row, IReadOnlyList<ProviderRow> providers, string accountLabel)
+    {
+        ArgumentNullException.ThrowIfNull(row);
+        ArgumentNullException.ThrowIfNull(providers);
+
+        var account = providers
+            .Where(p => string.Equals(p.ProviderId, row.Provider, StringComparison.Ordinal))
+            .SelectMany(p => p.Accounts)
+            .FirstOrDefault(a => string.Equals(a.Label, accountLabel, StringComparison.Ordinal));
+
+        return account is null ? new Dictionary<string, string>() : LaunchEnvironment(row, account);
+    }
 }
