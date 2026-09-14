@@ -1021,6 +1021,31 @@ RESTORE retention, or the native Q/issuer/blocked writer. Boundary, empty-output
 unsupported-parent and cleanup-oracle questions remain with the independent gates.
 No runtime vulnerability or full SP1/SP4 qualification follows from these greens.
 
+Owner turn 72 reassigns the same test worker/tree and two files for sixteen new
+repair leaves. Prior approximately 35/24 expenditure is not retroactively funded.
+Required repairs: isolate JSON mutations to the intended row while preserving a
+valid root; expected nonempty occurrences, nonnull supplied-profile logical values
+and exact role/file/identity assertions; deterministic input disposal including
+partial construction; drain/capture outcomes and release every reservation before
+assertions; preserve primary failures; exact real ledger charges; separate body
+and prefix units; truthful sibling/literal-codec/reflection names.
+New red/control outputs must have distinct retained names. Historical overwritten
+TRXs cannot be recreated or called product red.
+
+Run the existing real SELECT/member/RESTORE and publication-lifetime tests at the
+repaired candidate rather than duplicate their implementation. Credit them only
+as current E0 baseline. Actual capability capture through an established public/
+test seam is permitted inside the same two files; otherwise report the gap.
+No new parent/flavor/opt-in fields, test-only substitute producer/codec or
+first-128 waiver is admitted. Owner explicitly separates those missing E1 product
+seams from this repair's exit criteria: qualification may establish current
+behavior and report missing behavior without implementing it.
+
+Twelve new post-repair review leaves are granted, four each Test/C#/Core
+Security-SRE, after parent replay of one repaired pin. Earlier review budgets
+remain spent. Conductor's cumulative ceiling rises prospectively to 560.
+No main/push, normative Addendum E or programme closure follows.
+
 ### Core owns
 
 | Path | Why |

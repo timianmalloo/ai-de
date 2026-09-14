@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T22:08:42Z",
+  "generated": "2026-09-14T22:22:03Z",
   "audit": [
     {
       "actor": null,
@@ -16663,6 +16663,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "64a597a55054376cbceafcd50e7b9693db987c0a",
         "short": "64a597a55",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2H06NA86ZF83STV9K939SF5",
+      "shortname": "atlas-owner72-scoped-test-repair",
+      "datetime": "2026-09-14T22:22:02Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner72openedcandidateandadmits16NEWrepairleavessamewriter/tree/twofiles; old~35/24notretrofunded. Fixpath-specificrowmutation, meaningfuloccurrence/logicalidentitychecks, disposableinputs/partialconstruction, cleanupbeforeasserts/exactcharges, body-prefixunits, truthfulnames; newuniquecontroloutputs. ReuseexistingrealNativeScopeSELECTmemberRESTOREandNativePublicationLifetimeOrdering CURRENT E0 tests, no duplicateimplementation. Ownerexplicitlyexcludes parent/flavor/newmetadataimplementationfromTESTONLYexit; productgatesremain. TwelveNEWpostrepairreviewleaves4each andmain560. Actualcapcaptureonlyviaestablishedseamotherwisegap. Dispatched4c71df17; prior020fheldproofae91998cpreserved. Ledger39done4progress, no product/main/normativeEclosure.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Repair the qualification tests without expanding into missing E1 product behavior",
+      "done_when": "Nonvacuous cleanup-safe tests and existing real-baseline receipts are frozen for independent review",
+      "tier": "T2",
+      "main_calls": 532,
+      "main_budget": 560,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T22:22:02Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "ae91998c0f553a420960d392a0145480c0b7ed44",
+        "short": "ae91998c0",
         "branch": "conductor/code-atlas",
         "pushed": null
       }
