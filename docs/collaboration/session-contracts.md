@@ -905,6 +905,49 @@ loading state, not settled-source pixel evidence. Full receipt/hashes and
 unchanged exclusions are in `docs/proof/code-atlas-real-daemon-mainwindow.md`.
 This closes the remaining bounded E0 proof-only integration, not the programme.
 
+Owner turn 68 raises Conductor prospectively to 475 cumulative leaves for E0
+record closure and the existing E1 contract/review convergence. E0 closure is
+committed at `af6506b4`; no E1 source authority follows.
+
+The sixteen-leaf source-contract worker returned
+`ed8511c2292f477d720cb8bbc21bd57404330094`, used 16/16, and released its design
+lease. Parent verified that only the design changed after its import and that
+product/test source equals the declared `b6e053c2` baseline. The current ledger
+identifies strict unknown-property rejection, separate SELECT/RESTORE writers,
+discarded remote capabilities, first-128 outline behavior and fixed initial source
+window. Its proposal is now sixteen paths; `AtlasWorkspaceOperations.cs` and
+`AtlasRemoteReader.cs` are necessary additional transport seams. No new code ran.
+SP1 compatibility, SP2 lexical association, SP3 long-file/page navigation and
+SP4 incremental accounting/publication remain explicitly executable blockers.
+
+The four independent read-only reviews now target that same immutable corrected
+pin, at four leaves each: retained fresh Security reviewer
+`cf522afd-1af4-42ef-a392-5af8ccb41074` (Core/security/concurrency/codec),
+retained UX reviewer `c4994e72-ff75-4e75-8a5c-2a31100dca18`,
+retained Test reviewer `e8c73a03-3fa2-4a77-8d17-68cdf80188b1`, and UML/graph reviewer
+`cb31686a-6ad1-4538-9040-5933d09146ed`. The first three use their existing separate
+review worktrees and immutable pinned content. The fourth owns registered session
+and branch `atlas-e1-uml-review` / `atlas/e1-uml-review` at
+`C:\Projects\ai-de-atlas-e1-uml-review`, whose exact HEAD parent verified above.
+No reviewer may edit product/design/shared records or treat a missing executable
+contract as PASS. All four results precede the next Owner implementation decision.
+
+E1 review join at that pin: Test and UX returned conditional design-only acceptance;
+neither clears executable E1 acceptance. Core Security used 4/4 and blocks product
+admission on SP1 compatibility and SP4 incremental accounting/publication, while
+explicitly permitting a proposed narrow test-only checkpoint for consideration.
+No additional source-contradicting design defect was established by that sample.
+UML used 4/4 but spent three reads on worktree/ref metadata and its final search
+omitted 159 of 183 matches; it did not read the full occurrence/notation contract
+and does not clear that gate. Parent supplied exact completion ranges:
+design lines 464-567 (sections 3-4) and 333-360 (SP1-SP4). Two additional targeted
+read leaves were requested from Owner, not assumed. Test/UX tool-leaf counts
+were not supplied with their verdicts; metadata-only clarification is pending.
+This is a review-coverage finding, not proof that the design contradicts UML.
+The next proposed work is test-only SP1/SP2 characterization plus existing SP4
+baseline controls, with actual codec/producer/ownership paths and no test-only
+replacement implementation; Owner admission remains pending.
+
 ### Core owns
 
 | Path | Why |
