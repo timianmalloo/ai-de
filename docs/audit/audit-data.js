@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T23:42:25Z",
+  "generated": "2026-09-14T23:55:36Z",
   "audit": [
     {
       "actor": null,
@@ -16858,6 +16858,39 @@ window.AUDIT_DATA = {
         "branch": "conductor/code-atlas",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2H5HYV9AX5V7BTBN305C6A9",
+      "shortname": "atlas-qualification-joined-core-admitted",
+      "datetime": "2026-09-14T23:55:35Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner78testonlyjoins2a05bbaf/3ca57f89/b79e662c/b91d4bb5; aggregate3testsno productdelta. ActualConductor37/37 withrawpercaseoutput, ProofPackcurrentacceptedboundedqualonly. SeparateCoreAstra48leaves11exactpaths, newtreeatlas/e1-core-metadata verifiedb91d4bb5; all11identitycheckedcoordresultsALLOWbeforeauthoring. No App/genericprotocol/dependency/storeexpansion. Genuinelegacy6cellcompatibility, verifiedsyntaxparent/flavor, Corelargepaging/UTF16/nonBMP, incrementalcharges/escapedwriterdrain mandatory; preserveoldcontrols.20freshindependentreviewleaves4eachSecurity/Data/DS/Test/CSharp,main660. Nodequalificationdone; newCoretask44total40done4progress, notproductpercentage. No main/push/normative/privatecontentpermission.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-e1-qualification.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Close current qualification and start the separately admitted E1 Core behavior",
+      "done_when": "Authorizedtestchainjoined/replayed/recorded and exact Corewriter/tree/manifest admitted",
+      "tier": "T2",
+      "main_calls": 615,
+      "main_budget": 660,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T23:53:19Z",
+      "duration_seconds": 136.0,
+      "git": {
+        "sha": "b91d4bb5b0f59352b7f90b94e0b2733a647452dc",
+        "short": "b91d4bb5b",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -20912,6 +20945,34 @@ window.AUDIT_DATA = {
         "branch": "conductor/code-atlas",
         "pushed": null,
         "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2H5HYQQYS1VXEMJ18TN08HA",
+      "datetime": "2026-09-14T23:55:35Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Admit qualification join and bounded E1 Core implementation",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner78acceptedtestchainonly afterindependentgates; joined37/37actual. Separate48leaf11pathCoretranche fornegotiation/lexicalmetadata/Corepaging/charges, nativeUIlater, genuineoldartifactsandactualSP1-4proofrequired.",
+      "rationale": "Current-test qualification no longer hides oracle/lifetime gaps; missing product behavior now receives its own exact source grant and fresh independent gates rather than being inferred from old E0 green.",
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "564e8aa791e0b66d31b0a4d8f92f393d88872d6c",
+        "after": "b91d4bb5b0f59352b7f90b94e0b2733a647452dc",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": [
+          "b91d4bb5 test(atlas): drain owned budget admissions before waiting for capacity",
+          "b79e662c Consolidate Atlas E1 qualification tests",
+          "3ca57f89 Repair Atlas E1 qualification tests",
+          "2a05bbaf Add Atlas E1 static qualification tests"
+        ]
       }
     }
   ]

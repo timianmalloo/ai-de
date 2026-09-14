@@ -11107,12 +11107,12 @@ window.DOCS_INDEX = {
       "path": "docs/proof/code-atlas-e1-qualification.md",
       "title": "Code Atlas E1 qualification: evidence and unresolved gates",
       "type": "doc",
-      "status": "draft",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-09-21",
       "reviewSuggested": [],
-      "summary": "Held test-only E1 qualification, not product acceptance. Records the actual sixteen-test candidate and parent replay, missing integration boundaries, independent oracle/cleanup findings and unavailable historical red receipts.",
+      "summary": "Owner 78 accepts the bounded current-test qualification after independent gates and a joined 37-case replay. Preserves rejected intermediate candidates, actual lifetime counterexamples and missing E1 product contracts.",
       "tags": [
         "code-atlas",
         "e1",
@@ -11135,7 +11135,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c0e098a4bb681127cc8669cf55048c5917323a6a437f1feed59542a4d20ce1f6"
+      "sourceSha256": "14e514bb1cfff1dcb5f676af8ded15091acda650a33947c1df578de1a01c2017"
     },
     {
       "id": "proof-code-atlas-production-adapters",
@@ -11839,7 +11839,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "52325253d65e9202b7d9e15b8b2f7a4353ecc3f0e5dbfb2e2a1d5e7f0375ef0c"
+      "sourceSha256": "086d1e61c5e2c4d83b7fba6f2b47d39a93389a3de4f361f9637c2b6f75cd4b0e"
     },
     {
       "id": "session-profiles",
@@ -19160,5 +19160,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "87b982494b07e728a8fef7b3f059711976a7c684cf6619ba168eb8dd82c24149"
+  "graphSha256": "a167ca46547e2a38b798c7553ba6dd4ef3035b83e83a6335c564ff9464fdb6bf"
 };

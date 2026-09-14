@@ -1097,6 +1097,58 @@ Owner turn 76 records the failed parent reflection probe accurately: AccessDenie
 bypass that denied route. The authorized ordinary test repair must supply the
 runtime evidence. No qualification/product/main/normative-E acceptance is implied.
 
+Owner turn 78 admits the exact test-only chain `020f9622`, `aa4926e9`, `44c7db6d`,
+`7262566b`. Conductor joined those as `2a05bbaf`, `3ca57f89`, `b79e662c`, `b91d4bb5`;
+the aggregate diff contains only the three authorized test files. Joined replay
+executed 37 and passed all 37, with real per-case outputs and fresh diagnostics.
+This closes the bounded qualification node only; the Proof Pack preserves every
+earlier hold, failure, source snapshot and cost record.
+
+Owner separately admits 48 author leaves for E1 Core implementation, assigned to
+retained execution-capable general-purpose Core Astra
+`cfac7750-d1df-47ae-a107-205951487fd7`. New session/branch:
+`atlas-e1-core-metadata` / `atlas/e1-core-metadata`; new tree
+`C:\Projects\ai-de-atlas-e1-core-metadata`. Immutable post-join source baseline:
+`b91d4bb5b0f59352b7f90b94e0b2733a647452dc`, verified by joined replay; parent must
+create/register/read back the new tree and verify predecessor releases before
+authoring. Exact writable manifest, no other source paths:
+
+- `src/AiDe.Core/Understanding/CSharpDeclarationObservation.cs`
+- `src/AiDe.Core/Understanding/AtlasManifest.cs`
+- `src/AiDe.Core/Understanding/AtlasQueryContracts.cs`
+- `src/AiDe.Core/Understanding/AtlasQueryService.cs`
+- `src/AiDe.Core/Understanding/AtlasReaderContracts.cs`
+- `src/AiDe.Core/Understanding/AtlasReaderProjection.cs`
+- `src/AiDe.Core/Understanding/AtlasReadScopeIssuer.cs`
+- `src/AiDe.Core/Ipc/AtlasWorkspaceOperations.cs`
+- `src/AiDe.Core/Ipc/AtlasRemoteReader.cs`
+- `tests/AiDe.Core.Tests/Understanding/AtlasStaticObservationTests.cs`
+- `tests/AiDe.Core.Tests/Understanding/AtlasStaticReaderContractTests.cs`
+
+Derive classifier flavor and immediate lexical parent from verified syntax within
+one file/context/observation; preserve overload/partial occurrences and explicit
+unsupported/ambiguous omissions. Prove all six old/new compatibility cells using
+actual codecs/registration/remote SELECT/RESTORE and genuine frozen legacy
+artifacts. Legacy/non-opted fields are absent, not null; Restore retains the
+original preference; malformed opted-in metadata refuses without fallback.
+Use v1 plus the negotiated feature only if those results establish compatibility.
+An unlisted/version seam is returned to Owner, not silently edited.
+
+Implement Core paging beyond 128 declarations and source windows beyond UTF-16
+offset 32768 with CRLF/non-BMP and off-page-parent cases; no first-page waiver.
+Charge new retained/projected fields before retention/publication and prove
+escaped-frame and matching blocked-writer/drain accounting. Metadata content
+bytes stay zero; storage charges are not heap claims. Replace obsolete
+field-absence checks with genuine legacy protections, never delete protection
+merely to obtain green. Compiled ports and retained SP1/SP2/Core-SP3/SP4 red/green
+receipts precede independent review. App/native views remain a later dependent
+grant. No new dependency/store/factory/daemon/framing/generic-client change.
+
+Twenty new review leaves are funded: Security, Data, DS, Test and C# four each,
+on one candidate after parent replay, scheduled at total width four. Conductor
+receives a prospective 660 cumulative leaves. No UI release, E1 product acceptance,
+main/push, normative E, private import or programme closure follows from authoring.
+
 ### Core owns
 
 | Path | Why |

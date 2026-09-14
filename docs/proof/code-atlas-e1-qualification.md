@@ -2,7 +2,7 @@
 id: proof-code-atlas-e1-qualification
 title: "Code Atlas E1 qualification: evidence and unresolved gates"
 type: doc
-status: draft
+status: accepted
 owner: "@timianmalloo"
 tags: [code-atlas, e1, qualification, tests, evidence]
 links:
@@ -11,19 +11,40 @@ links:
   - { to: proof-code-atlas-real-daemon-mainwindow, rel: relates-to }
 review-by: 2026-09-21
 summary: >
-  Held test-only E1 qualification, not product acceptance. Records the actual
-  sixteen-test candidate and parent replay, missing integration boundaries,
-  independent oracle/cleanup findings and unavailable historical red receipts.
+  Owner 78 accepts the bounded current-test qualification after independent
+  gates and a joined 37-case replay. Preserves rejected intermediate candidates,
+  actual lifetime counterexamples and missing E1 product contracts.
 ---
 
-# Qualification is held; sixteen green tests are not E1 acceptance
+# Current-test qualification accepted; E1 product behavior remains unproved
 
-Owner 69 admitted two test files only. Owner 70 funded independent Test, C# and
-Core Security/SRE reviews after parent replay. Owner 71 holds the candidate join
-and qualification admission. The tests remain in their separate worktree; this
-record does not add E1 metadata, diagrams, production code or main integration.
+Owner 78 admits the test-only qualification chain after the final independent
+clearances. Conductor joined it and executed the same 37 selected cases:
+37 passed, zero failed/skipped. The aggregate diff contains exactly the three
+authorized test files and no product changes. Earlier holds and failed candidates
+below are historical evidence, not current acceptance statements.
 
-## Frozen candidate and observed execution
+| Joined change | Original candidate | Conductor commit |
+|---|---|---|
+| Initial characterization | `020f9622457865d358780820a753a1bec0092958` | `2a05bbaf` |
+| First repair | `aa4926e9309ad607d9a1d846de838d0dd7c956b7` | `3ca57f89` |
+| Budget-test consolidation | `44c7db6d0730a22651bc05ad7c1872c13d2418f0` | `b79e662c` |
+| Lifetime discriminator and repair | `7262566b49f919d0163c86f29ba6278eeb74ef85` | `b91d4bb5b0f59352b7f90b94e0b2733a647452dc` |
+
+The joined TRX is retained under session files
+`atlas-e1-qualification-joined/joined-e1-qualification.trx`, with independent
+`idle/` and `publication/` diagnostics. Its five-admission case has five
+successes, no cancellation/faults and final zero. Partial/simultaneous failure
+outputs preserve original exception identity and exact residual/final accounting.
+The parent read those actual outputs before closing the qualification node.
+
+GATE current test-only qualification - Owner 78 + final independent Test,
+Core Security/SRE and C# dispositions - ACCEPTED within the recorded boundary.
+This does not implement E1 metadata or diagrams, grant main integration, make
+Addendum E normative or complete the programme. Owner's next Core authoring
+grant is separate from this acceptance.
+
+## Initial frozen candidate and observed execution (historical hold)
 
 | Item | Evidence |
 |---|---|
@@ -240,8 +261,8 @@ current root-isolation and lifetime predicates clear. The reviewers did not
 reopen accepted row controls or claim that reservation counters measure heap.
 Parent replay alone did not clear these gates; the independent dispositions did.
 
-Owner's conditional test-chain join and the next bounded E1 implementation grant
-have been requested, not assumed. No join is recorded at this checkpoint.
+At this review checkpoint, Owner's test-chain join and the next bounded E1 grant
+were requested, not assumed. Owner 78's later join is recorded at the top.
 Future parent/flavor emission, negotiated opt-in, actual feature payload adoption,
 long-file navigation and incremental E1 charges remain outside these test-only
 controls. They need their own production implementation and evidence.
@@ -260,7 +281,7 @@ Any repaired candidate still needs independent review and a parent replay.
 
 ## Remaining
 
-- Repair the actual candidate oracle/cleanup defects under an explicit grant.
+- The current qualification repairs and joined replay are complete within scope.
 - Keep actual registration, remote retention and publication evidence distinct
   from codec/ledger smoke tests.
 - Preserve SP3 long-file/page navigation and incremental new-field SP4 as open.
