@@ -702,6 +702,25 @@ cover authoring, actual daemon/window execution and receipt. No existing source/
 project/IVT file is assigned. Generated raw receipts and owned-window captures remain
 proof evidence; the Conductor owns their approved durable documentation/copy.
 
+Owner turn 58 extends the independent real-window proof allowance from fifteen to
+twenty-seven leaves: twelve charged, fifteen available. The same writer/tree and sole
+new proof test file remain. No product/shared-test/project/IVT change is granted.
+Established factory/VM contracts are supplied; remaining reads use literal ranges only,
+not shell-search/helper experiments.
+
+The minimal external lifecycle path is **healthy acknowledged lease release through
+workspace replacement**. Healthy lease disposal awaits `atlas.release`; its server handler
+awaits scope work, writer completion and resource disposal before success. Terminal
+disposal, generic reader disposal or window disappearance are not substitutes. Observational
+wrappers may record and forward real calls/results unchanged; no fake lease, private pipe
+or reflection-generated authority is permitted.
+
+The actual window proof covers opener/file/member/source/Back, replacement, released
+old-scope rejection and awaited shutdown. A public same-live-scope server-idle barrier
+remains unestablished; in-process idle-Git proof remains separate. No zero-pin or immediate
+Git-write assertion is inferred from a source reply. Mainline ceiling becomes a prospective
+330 cumulative leaves, preserving prior calls/wrappers/overruns and all programme restrictions.
+
 ### Core owns
 
 | Path | Why |

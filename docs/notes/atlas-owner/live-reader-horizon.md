@@ -1181,3 +1181,23 @@ Conductor releases the remaining eight S leaves, 64/72, within the same three-fi
 No shared helper change or production ownership inference is admitted. Any newly reached
 product failure must be identified independently; successful cases must complete and clean
 their owned lifetimes before the new gates clear.
+
+## Independent proof continuation and real release acknowledgment, Owner turn 58
+
+The first independent proof attempt used twelve of fifteen leaves during grounding and
+produced no test, build, daemon/window execution, UIA or capture. Shell-search failure and
+oversized output are not semantic reds. Owner adds twelve calls, total twenty-seven with
+fifteen available, for actual authoring/execution rather than rediscovery.
+
+Owner opened the real release path: a healthy lease's disposal awaits `atlas.release`,
+whose handler awaits `Scope.StopAsync` through work, writer completion and disposal.
+Use that acknowledged healthy release during workspace replacement as the minimal
+out-of-process lifetime boundary. Record/forward actual calls unchanged. A terminal
+lease, reader disposal alone or closed window does not establish acknowledgment.
+
+The proof still uses real daemon/client/reader and owned repository inputs, covers the
+actual Architecture journey and old-scope rejection, and awaits shutdown. It does not
+invent a public same-live-scope idle barrier or promote client receipt to server drain.
+That external idle observation remains a named gap; existing in-process idle-Git evidence
+is separate. No product protocol, reflection authority or fixture lease is added.
+Conductor's cumulative ceiling becomes 330; programme/main/normative acceptance is unchanged.

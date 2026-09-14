@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T16:33:13Z",
+  "generated": "2026-09-14T17:07:05Z",
   "audit": [
     {
       "actor": null,
@@ -16204,6 +16204,40 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "5e624810a52444e106e45bfc2815c0fe417ada40",
         "short": "5e624810a",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GE5XSKWEBKAAVPDQ88TH02",
+      "shortname": "atlas-real-window-acknowledged-release-proof",
+      "datetime": "2026-09-14T17:07:04Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep working on your tasks; give periodic refreshes of the todo table showing what is in flight and still to do",
+      "summary": "Owner58proof12newcalls,total27/12spent/15available,redispatchedsameindependentwriteronefile. Usesactualhealthyacknowledgedatlas.release throughworkspace replacement; Scope.Stopawaitswork/writer/disposal. No inventedpublicsame-live-scopeidlebarrier, no clientreply=drainassertion; in-processidleGitevidenceseparate. Actualdaemon/window/file/member/source/Back/replacement/oldscoperejection/shutdown/UIA/capturerequired. Previousgroundingfailuresnoexecutionpreserved. Ledger35done/4inprogress;Core/Shellimplementationsdonebutintegratedproofnotyetexecuted.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md",
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Execute the independent real-daemon/MainWindow proof through acknowledged healthy release.",
+      "done_when": "Actual source/navigation and replacement/release/shutdown evidence exists without fake ports or invented idle synchronization.",
+      "tier": "T2",
+      "main_calls": 306,
+      "main_budget": 330,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T17:07:04Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "294d22aaec27830ab5b7149859efac4c728e67dc",
+        "short": "294d22aae",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

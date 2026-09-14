@@ -20,6 +20,12 @@ summary: >-
 
 # Production adapter checkpoint
 
+**Latest independent-proof scope:** Owner 58 has released the same one-file proof writer
+to author and execute the real daemon/MainWindow journey. Healthy acknowledged lease release
+during workspace replacement is the external lifetime boundary. A public same-live-scope
+idle barrier is not established and is not invented; the earlier in-process idle-Git proof
+remains a distinct claim. The first proof attempt produced no execution evidence.
+
 This is an incomplete production Proof Pack. Addendum E remains candidate. No primary-main
 integration or push is claimed. The private proposal/TheTerrace corpus is not part of this
 delivery record.
