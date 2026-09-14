@@ -1,0 +1,11 @@
+{"agent": "claude-lane-sessions", "at": 1789404666.5636816, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/NewSessionFlow.cs", "session": "sessions-r94-r98-r99-r102", "wi": ""}
+{"agent": "claude-lane-sessions", "at": 1789404666.5710893, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Presentation/Sessions/NewSessionSheetViewModel.cs", "session": "sessions-r94-r98-r99-r102", "wi": ""}
+{"agent": "claude-lane-sessions", "at": 1789404666.577175, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Sessions/SessionConfigStore.cs", "session": "sessions-r94-r98-r99-r102", "wi": ""}
+{"agent": "claude-lane-sessions", "at": 1789404666.5856912, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs", "session": "sessions-r94-r98-r99-r102", "wi": ""}
+{"agent": "claude-lane-sessions", "at": 1789404666.5931964, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/TheNewSessionSheetTests.cs", "session": "sessions-r94-r98-r99-r102", "wi": ""}
+{"agent": "claude-lane-sessions", "at": 1789404666.600202, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Sessions/SessionConfigStoreTests.cs", "session": "sessions-r94-r98-r99-r102", "wi": ""}
+{"agent": "claude-lane-sessions", "at": 1789404816.8393698, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/NewSessionSheetDialog.cs", "session": "sessions-r94-r98-r99-r102", "wi": ""}
+{"agent": "claude-lane-sessions", "at": 1789404816.8479252, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/TheTaskClassIsChosenNotTypedTests.cs", "session": "sessions-r94-r98-r99-r102", "wi": ""}
+{"agent": "claude-lane-sessions", "at": 1789405089.2923598, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Extraction/SourceRevision.cs", "session": "sessions-r94-r98-r99-r102", "wi": ""}
+{"agent": "claude-lane-sessions", "at": 1789405089.3003597, "code": null, "kind": "allowed", "path": "src/AiDe.Core/WorkspaceCore.cs", "session": "sessions-r94-r98-r99-r102", "wi": ""}
+{"agent": "claude-lane-sessions", "at": 1789405089.3073647, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Phase3SurfacingTests.cs", "session": "sessions-r94-r98-r99-r102", "wi": ""}

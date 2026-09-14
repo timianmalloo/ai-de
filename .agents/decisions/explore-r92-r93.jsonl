@@ -1,0 +1,2 @@
+{"agent": "claude-lane-explore", "at": 1789404562.7003863, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/NodeReaderView.cs", "session": "explore-r92-r93", "wi": ""}
+{"agent": "claude-lane-explore", "at": 1789404562.7089021, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/NodeReaderEdgeRowLayoutTests.cs", "session": "explore-r92-r93", "wi": ""}

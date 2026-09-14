@@ -4482,7 +4482,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7daca09a2b886fc6de132c041cba7e53b894d8bee3022adbc91e3d05214ab345"
+      "sourceSha256": "5ba409daaedc19cfcd0b62c8fd517712f3b40b6fc2c078a5a48fc2bbae65840f"
     },
     {
       "id": "note-avalondock-tab-styling",
@@ -5830,7 +5830,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a5c78cc2f5103e74dea2d458da96fc0b542fde2c3ce05f05674346ea3cd71bac"
+      "sourceSha256": "02bfbfa3dcd54b1ddd0f244d13e259b2dd956cf624a330a032fec30909c87786"
     },
     {
       "id": "note-read-only-lane-runs-in-the-workspace-root",
@@ -8104,7 +8104,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "683021ec271ad914715f9f3b2e3144cc6f5d81155757fa79b75a66c16bf0c3d4"
+      "sourceSha256": "e8aca951fbcd7a8c42f231957714397c790ae7d83f7fba12aefa29132b4a6486"
     },
     {
       "id": "design-session-profiler",
@@ -9254,7 +9254,7 @@ window.DOCS_INDEX = {
     {
       "id": "note-addendum-c-council-rulings",
       "path": "docs/notes/addendum-c-council-rulings.md",
-      "title": "Decision note — Rulings 50–91: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
+      "title": "Decision note — Rulings 50–104: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, the operator's composer verdicts, and the 2026-09-13 and 2026-09-14 findings ruled",
       "type": "doc",
       "status": "accepted",
       "owner": "@timianmalloo",
@@ -9267,7 +9267,7 @@ window.DOCS_INDEX = {
           "reason": "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent"
         }
       ],
-      "summary": "Rulings 50–55 issued before any Addendum C spec was written; 56–62 issued at the spec's gate — 56 and 57 file the operator's own composer verdicts, 58–62 rule on the reconciliation table. Six rulings the Owner issued before any Addendum C spec was written, on the evidence the conductor brought at node R0 of plan-addendum-c-modes. They fix the vocabulary (Perspective), the phasing (F5 untouched; code after F5 merges), ADR-0017's fate (retained and amended), the graph model (one substrate, two surfaces), the build order under the operator's 80% case, and four page-one facts a spec written without them would get wrong.",
+      "summary": "Rulings 50–55 issued before any Addendum C spec was written; 56–62 issued at the spec's gate — 56 and 57 file the operator's own composer verdicts, 58–62 rule on the reconciliation table; 80–90 rule on the operator's 2026-09-13 findings, 91 files the F5 merge decision, and 92–104 rule on the 2026-09-14 findings (the Explore reader, the Architecture default, Send-while-running, the compiled prompt, the engine catalog, the store's fixture revision, session names, F5's close). Six rulings the Owner issued before any Addendum C spec was written, on the evidence the conductor brought at node R0 of plan-addendum-c-modes. They fix the vocabulary (Perspective), the phasing (F5 untouched; code after F5 merges), ADR-0017's fate (retained and amended), the graph model (one substrate, two surfaces), the build order under the operator's 80% case, and four page-one facts a spec written without them would get wrong.",
       "tags": [
         "decision-note",
         "ruling",
@@ -9317,7 +9317,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e74798e5a6d578825c981c06a02c779a1cb3b76d7c0fba87b604c46dc2f7ea0b"
+      "sourceSha256": "340c27fe12627c5f422056ed01bfb4f9f7f3683d0261aa5a741dd4f290c09c96"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -10811,6 +10811,59 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "c888dddbb05320cce285a0f4a0bf04808503f3e60f2f58844775a413af28b736"
+    },
+    {
+      "id": "ui-review-operator-findings-2026-09-14",
+      "path": "docs/reviews/ui-operator-findings-2026-09-14.md",
+      "title": "The operator's second manual test (2026-09-14): eight screenshots, six findings in their words, five in the conductor's, and the fresh-machine first-use gap — the evidence brief the Owner ruled on (Rulings 92–104)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-addendum-c · the 09-14 findings",
+      "reviewBy": "2026-12-14",
+      "reviewSuggested": [],
+      "summary": "The operator worked through build 51e806f8 on 2026-09-14 and left eight screenshots whose titles are the findings. This note is the evidence brief the conductor built from them and from the run's own ledgers — each finding grounded in the code with a file and line — the map from finding to the Owner's ruling (92–104), the landing order, and what each lane is dispatched to land. It is written for a reader who was not in the session.",
+      "tags": [
+        "ui-review",
+        "operator-findings",
+        "explore",
+        "architecture",
+        "composer",
+        "sessions",
+        "engines",
+        "first-use",
+        "rulings-92-104",
+        "addendum-c",
+        "addendum-d"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "ui-review-operator-findings-2026-09-13",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-conductor-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-attended-rows-for-the-operator",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2f11a5172159447d538175a285b4e91117e61d261ee879bee62795147910bb00"
     },
     {
       "id": "ui-review-perspective-shell",
@@ -15329,7 +15382,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2423d3d093e52c4684039f4df826e22087662428fa24121d61f00cd196ad048d"
+      "sourceSha256": "ab557c6e4875e55e76e31349da14086003bca982c08f7030b63f625082276706"
     },
     {
       "id": "proof-console-coalesce",
@@ -18212,5 +18265,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "0205ad626910271ad56a19db082854a4cba4ee0fa7b1e5ae8f4e650a0b88a007"
+  "graphSha256": "80f257ed48bf0b704456781c0723c7fbdea782434dd79d237ac314b371f44abf"
 };

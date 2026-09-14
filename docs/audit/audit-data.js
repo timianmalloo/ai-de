@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T15:24:47Z",
+  "generated": "2026-09-14T16:58:26Z",
   "audit": [
     {
       "actor": null,
@@ -15655,6 +15655,66 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T15:16:30Z",
       "duration_seconds": 496.0
+    },
+    {
+      "id": "al-01M2GB6W1PKNCA95A0XFDW7RH1",
+      "shortname": "i worked through the app, looking a lot better here are my findings: C:\\…",
+      "datetime": "2026-09-14T16:15:09Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "i worked through the app, looking a lot better here are my findings: C:\\Users\\malla\\Downloads\\ui findings 9-14-AM — screenshots with my issues as the title (except the first which is just for you to review). consider F5 done. Keep going with next steps",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2GCRFYTKMWCH8G6KSHW67YD",
+      "shortname": "also - consistent with my points on the agent backend needing to be conf…",
+      "datetime": "2026-09-14T16:42:15Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "also - consistent with my points on the agent backend needing to be configurable: i tried building and testing the AI-DE app from a different machine and it has no configured agent back end. seems like we missed the 'first use' scenario",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2GDP32WTAEF0JHJ1GNJRD97",
+      "shortname": "join-rulings-92-104-f5-closed",
+      "datetime": "2026-09-14T16:58:25Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "the join of conductor/addendum-c into main",
+      "summary": "Joined conductor/addendum-c (ae55f621): Rulings 92-104 verbatim (the operator's 2026-09-14 findings F-A..F-F, the conductor's R-1..R-5, first use); the evidence brief docs/reviews/ui-operator-findings-2026-09-14.md; F5 closed (Ruling 103) with spikes/conductor-front-door-exit-run/exit-evidence.json assembled from the run's artefacts (5/10 clauses MET, the rest what the product does not record) and tools/verify-front-door-exit-attended.py reading it bare; DC-210 (tests write product state into the operator's profile, 221 dirs / 91 MB measured) and DC-211 (a byte-identity oracle's locale decode) registered, 45 subprocess sites swept, tools/verify-subprocess-utf8.py added. Wave 1 lanes (Explore 92+93, Composer 96+100+101, Sessions 94+98+99+102) dispatched and running. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/ui-operator-findings-2026-09-14.md",
+        "docs/proof/conductor-front-door.md",
+        "spikes/conductor-front-door-exit-run/exit-evidence.json"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "the Owner's rulings on the 09-14 findings on main before any lane joins; F5 closed honestly; the classes found en route registered with controls",
+      "done_when": "rulings file at 104; the attended gate green bare and in self-test; the subprocess gate green; register sequence unbroken at 211; 38 gates green on main; pushed",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-14T16:58:24Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [

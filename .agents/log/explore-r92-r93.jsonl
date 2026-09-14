@@ -1,0 +1,6 @@
+{"agent": "explore-r92-r93", "at": 1789403298.0768948, "kind": "session-start", "path": "-", "seq": 1, "session": "explore-r92-r93", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-lane-explore-r92-r93"}
+{"agent": "claude-lane-explore", "at": 1789403426.3875225, "kind": "session-start", "path": "-", "seq": 2, "session": "explore-r92-r93", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-lane-explore-r92-r93"}
+{"agent": "claude-lane-explore", "at": 1789404550.352384, "kind": "claim", "path": "src/AiDe.App/Workbench/NodeReaderView.cs", "seq": 3, "session": "explore-r92-r93", "ttl": 300.0, "wi": "R92"}
+{"agent": "claude-lane-explore", "at": 1789404550.417418, "kind": "claim", "path": "tests/AiDe.App.Tests/NodeReaderEdgeRowLayoutTests.cs", "seq": 4, "session": "explore-r92-r93", "ttl": 300.0, "wi": "R92"}
+{"agent": "claude-lane-explore", "at": 1789404568.8378477, "kind": "release", "path": "src/AiDe.App/Workbench/NodeReaderView.cs", "seq": 5, "session": "explore-r92-r93", "wi": "WI-0"}
+{"agent": "claude-lane-explore", "at": 1789404568.8889425, "kind": "release", "path": "tests/AiDe.App.Tests/NodeReaderEdgeRowLayoutTests.cs", "seq": 6, "session": "explore-r92-r93", "wi": "WI-0"}
