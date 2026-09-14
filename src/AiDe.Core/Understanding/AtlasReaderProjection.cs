@@ -307,6 +307,79 @@ public static class AtlasReaderProjection
         return value;
     }
 
+    public static AtlasCapabilitiesRequestDto DeserializeCapabilitiesRequest(ReadOnlyMemory<byte> body)
+    {
+        var value = Read<AtlasCapabilitiesRequestDto>(body);
+        Require(value.SupportedVersions is { Length: > 0 and <= 8 } && value.SupportedVersions.All(version => version > 0),
+            "Invalid supported versions.");
+        return value;
+    }
+
+    public static AtlasCapabilitiesDto DeserializeCapabilities(ReadOnlyMemory<byte> body)
+    {
+        var value = Read<AtlasCapabilitiesDto>(body);
+        Require(value.Versions is not null && value.Versions.Contains(1) && value.Features is not null
+            && value.MaxFrameBodyBytes == MaxFrameBodyBytes && value.MaxPageTextUtf8Bytes == MaxPageTextUtf8Bytes
+            && value.MaxPageItems == PageRequest.MaxLimit, "Unsupported Atlas capabilities.");
+        return value;
+    }
+
+    public static AtlasAdmitRequestDto DeserializeAdmitRequest(ReadOnlyMemory<byte> body)
+    {
+        var value = Read<AtlasAdmitRequestDto>(body);
+        Require(value.Version == 1 && value.ExpectedCoreEpoch >= 0, "Invalid admission request.");
+        return value;
+    }
+
+    public static AtlasAdmitDto DeserializeAdmit(ReadOnlyMemory<byte> body)
+    {
+        var value = Read<AtlasAdmitDto>(body);
+        Require(value.Version == 1 && value.CoreEpoch >= 0, "Invalid admission response.");
+        RequireToken(value.ScopeToken);
+        RequireToken(value.InitialManifestToken);
+        return value;
+    }
+
+    public static AtlasInventoryRequestDto DeserializeInventoryRequest(ReadOnlyMemory<byte> body)
+    {
+        var value = Read<AtlasInventoryRequestDto>(body);
+        ValidateInventoryRequest(value);
+        return value;
+    }
+
+    public static AtlasRestoreRequestDto DeserializeRestoreRequest(ReadOnlyMemory<byte> body)
+    {
+        var value = Read<AtlasRestoreRequestDto>(body);
+        Require(value.Version == 1 && value.ExpectedCoreEpoch >= 0, "Invalid restore request.");
+        RequireToken(value.ScopeToken);
+        RequireToken(value.ReceiptToken);
+        return value;
+    }
+
+    public static AtlasReleaseRequestDto DeserializeReleaseRequest(ReadOnlyMemory<byte> body)
+    {
+        var value = Read<AtlasReleaseRequestDto>(body);
+        Require(value.Version == 1 && value.ExpectedCoreEpoch >= 0, "Invalid release request.");
+        RequireToken(value.ScopeToken);
+        return value;
+    }
+
+    public static AtlasReleasedDto DeserializeReleased(ReadOnlyMemory<byte> body)
+    {
+        var value = Read<AtlasReleasedDto>(body);
+        Require(value.Version == 1, "Invalid release response.");
+        return value;
+    }
+
+    internal static Ipc.IpcResponse DeserializeIpcResponse(ReadOnlyMemory<byte> body)
+    {
+        var value = Read<Ipc.IpcResponse>(body);
+        Require(value.Ok ? value.ErrorCode is null && value.Reason is null
+            : !string.IsNullOrWhiteSpace(value.ErrorCode) && !string.IsNullOrWhiteSpace(value.Reason),
+            "Invalid IPC response union.");
+        return value;
+    }
+
     private static void ValidateSelectRequest(AtlasSelectRequestDto value)
     {
         Require(value is not null, "Selection request is required.");

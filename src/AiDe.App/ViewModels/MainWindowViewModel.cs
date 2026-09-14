@@ -68,10 +68,12 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
         string workspaceId,
         string? dataDirectory,
         HealthIncidentSidecar? incidents = null,
-        IWorkspaceCommands? commands = null)
+        IWorkspaceCommands? commands = null,
+        Func<AiDe.Core.Understanding.IAtlasWorkspaceReader>? atlasReaderFactory = null)
     {
         Queries = queries;
         Commands = commands;
+        AtlasReaderFactory = atlasReaderFactory;
         WorkspaceId = workspaceId;
         DataDirectory = dataDirectory;
         _incidents = incidents;
@@ -79,6 +81,9 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
+
+    /// <summary>Creates a new owned Atlas reader for the Shell owner. Existing query/command interfaces remain borrowed.</summary>
+    public Func<AiDe.Core.Understanding.IAtlasWorkspaceReader>? AtlasReaderFactory { get; }
 
     /// <summary>The read surface the workbench renders over, or null on first run.</summary>
     internal IWorkspaceQueries? Queries { get; }
@@ -257,7 +262,8 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
             // path does not travel with it — which makes it exactly the wrong thing to show a user
             // who wants to know which workspace they are looking at.
             var model = new MainWindowViewModel(
-                client, new DirectoryInfo(root).Name, dataDirectory, incidents: null, commands: client)
+                client, new DirectoryInfo(root).Name, dataDirectory, incidents: null, commands: client,
+                atlasReaderFactory: client.CreateAtlasReader)
             {
                 WorkspaceRoot = root,
             };

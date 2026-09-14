@@ -93,6 +93,9 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
     private static readonly string[] MembershipArguments = ["ls-files", "--cached", "--stage", "-z", "--full-name", "--sparse"];
 
     internal Action<int>? ProcessStartedForQualification { get; set; }
+    internal ValueTask<AtlasMembershipSnapshot> CaptureAsync(
+        string sourceRoot, AtlasObjectIdentity expectedRootIdentity, CancellationToken cancellationToken) =>
+        CaptureForQualificationAsync(sourceRoot, expectedRootIdentity, cancellationToken);
     // Explicit qualification sink only. Paths and notification names never enter the ordinary metrics/reasons.
     internal Action<AtlasMembershipDiagnostic>? DiagnosticForQualification { get; set; }
     internal AtlasCleanupFaultPlan? CleanupFaultsForQualification { get; set; }
@@ -234,7 +237,8 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
             Captures.Add(1, new KeyValuePair<string, object?>("state", state.ToString()));
             Duration.Record(timer.Elapsed.TotalMilliseconds);
             return new AtlasMembershipSnapshot(state, reason, entries, association, head, indexDigest,
-                invocations, timer.Elapsed, retained, DiagnosticForQualification);
+                invocations, timer.Elapsed, retained, DiagnosticForQualification,
+                retained?.AssociationIdentityStamp());
         }
 
         void Observe(string stage) => pins.ObserveForQualification(stage, DiagnosticForQualification);
@@ -580,6 +584,41 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
             : _diagnosticLoss || _pins.Values.Any(pin => pin.DiagnosticLoss) ? "qualification-diagnostic-loss"
             : _pins.Values.Select(pin => pin.CurrentnessFailure).FirstOrDefault(failure => failure is not null);
         internal bool IsCurrent() => CurrentnessFailure is null;
+
+        internal void PrepareExclusiveSourceRead(string sourceRoot)
+        {
+            lock (_cleanupGate)
+            {
+                sourceRoot = OrdinaryPath(sourceRoot);
+                _pins.TryGetValue(sourceRoot, out var root);
+                Require(!_disposed && CurrentnessFailure is null
+                    && root is not null && root.DiagnosticRoles.Contains("source-root"),
+                    AtlasMembershipCaptureState.Unstable, "source-root-handoff-unavailable");
+                var parent = Path.GetDirectoryName(sourceRoot);
+                Require(parent is not null, AtlasMembershipCaptureState.Refused, "source-root-parent-required");
+                // The parent-recursive notification is a superset of the root namespace watch.
+                // It is armed before releasing the root handle that conflicts with S's exclusive open.
+                Add(parent!, trackChanges: true, role: "source-root-handoff-parent");
+                Require(CurrentnessFailure is null, AtlasMembershipCaptureState.Unstable, "source-root-handoff-changed");
+                try
+                {
+                    root!.Dispose();
+                    _pins.Remove(sourceRoot);
+                }
+                catch
+                {
+                    CleanupLedger.Retain(this);
+                    throw;
+                }
+            }
+        }
+
+        internal string AssociationIdentityStamp()
+        {
+            var identities = _pins.OrderBy(pair => pair.Key, StringComparer.OrdinalIgnoreCase)
+                .Select(pair => $"{pair.Key}|{pair.Value.Identity.VolumeSerial}|{pair.Value.Identity.FileIndex}");
+            return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(string.Join("\n", identities))));
+        }
 
         internal void ObserveForQualification(string stage, Action<AtlasMembershipDiagnostic>? sink)
         {
@@ -1239,7 +1278,7 @@ internal sealed class AtlasMembershipSnapshot(
     AtlasMembershipCaptureState state, string? reason, AtlasMembershipEntry[] entries,
     AtlasGitMembership.Association? association, string? head, string? indexDigest,
     int invocations, TimeSpan elapsed, AtlasGitMembership.PinSet? pins,
-    Action<AtlasMembershipDiagnostic>? diagnostics = null) : IAsyncDisposable
+    Action<AtlasMembershipDiagnostic>? diagnostics = null, string? associationIdentityStamp = null) : IAsyncDisposable
 {
     internal AtlasMembershipCaptureState State { get; } = state;
     internal string? Reason { get; } = reason;
@@ -1247,6 +1286,7 @@ internal sealed class AtlasMembershipSnapshot(
     internal AtlasGitMembership.Association? Association { get; } = association;
     internal string? Head { get; } = head;
     internal string? IndexDigest { get; } = indexDigest;
+    internal string? AssociationIdentityStamp { get; } = associationIdentityStamp;
     internal int Invocations { get; } = invocations;
     internal TimeSpan Elapsed { get; } = elapsed;
     internal long? MembershipTotal => State is AtlasMembershipCaptureState.CandidateComplete ? Entries.Count : null;
@@ -1254,6 +1294,13 @@ internal sealed class AtlasMembershipSnapshot(
     {
         pins?.ObserveForQualification("snapshot-currentness", diagnostics);
         return State is AtlasMembershipCaptureState.CandidateComplete && pins is not null && pins.IsCurrent();
+    }
+
+    internal void PrepareExclusiveSourceRead(string sourceRoot)
+    {
+        if (State is not AtlasMembershipCaptureState.CandidateComplete || pins is null)
+            throw new AtlasGitMembership.CaptureFailure(AtlasMembershipCaptureState.Refused, "source-root-handoff-unavailable");
+        pins.PrepareExclusiveSourceRead(sourceRoot);
     }
 
     public ValueTask DisposeAsync()

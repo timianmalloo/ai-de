@@ -20,6 +20,11 @@ public enum AtlasOutlineState
     Refused,
 }
 
+public enum AtlasConnectionEndReason
+{
+    Released, Disconnected, Abandoned, ProtocolViolation, Revoked, Expired, Shutdown,
+}
+
 public sealed record AtlasCapabilitiesRequestDto(int[] SupportedVersions);
 public sealed record AtlasCapabilitiesDto(
     int[] Versions, string[] Features, int MaxFrameBodyBytes, int MaxPageTextUtf8Bytes, int MaxPageItems);
