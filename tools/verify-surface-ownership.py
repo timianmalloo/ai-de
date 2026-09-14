@@ -64,7 +64,7 @@ FILE_NAME = re.compile(r"([A-Za-z][A-Za-z0-9_]*(?:Surface|View|Page|Builder)\.cs
 def repo_root() -> Path:
     return Path(subprocess.run(
         ["git", "rev-parse", "--show-toplevel"],
-        capture_output=True, text=True, check=True).stdout.strip())
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=True).stdout.strip())
 
 
 def surfaces(root: Path) -> list[str]:

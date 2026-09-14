@@ -115,7 +115,7 @@ def scan(target):
     """Findings for one target, or None when the detector could not be run."""
     result = subprocess.run(
         [sys.executable, str(PACK_GATE), str(ROOT / target), "--json"],
-        capture_output=True, text=True, check=False, cwd=str(ROOT))
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=False, cwd=str(ROOT))
     if not result.stdout.strip():
         return None
     try:

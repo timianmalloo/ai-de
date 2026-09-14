@@ -37,12 +37,12 @@ def is_tracked(path: Path) -> bool:
     """Whether git tracks (or would track) this path: inside a work tree and not ignored. A path outside any repository is untracked."""
     directory = path.parent if path.parent.exists() else path.parent.parent
     try:
-        inside = subprocess.run(["git", "rev-parse", "--is-inside-work-tree"], cwd=directory, capture_output=True, text=True)
+        inside = subprocess.run(["git", "rev-parse", "--is-inside-work-tree"], cwd=directory, capture_output=True, text=True, encoding="utf-8", errors="replace")
     except OSError:
         return False
     if inside.returncode != 0 or inside.stdout.strip() != "true":
         return False
-    ignored = subprocess.run(["git", "check-ignore", "-q", str(path)], cwd=directory, capture_output=True, text=True)
+    ignored = subprocess.run(["git", "check-ignore", "-q", str(path)], cwd=directory, capture_output=True, text=True, encoding="utf-8", errors="replace")
     return ignored.returncode != 0
 
 

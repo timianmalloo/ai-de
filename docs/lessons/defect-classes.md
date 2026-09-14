@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 116 · partially-controlled 66 · uncontrolled 27
+**Status counts:** controlled 117 · partially-controlled 66 · uncontrolled 28
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -7882,3 +7882,63 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   `var(--text)` / `color-mix(var(--accent) 35 %)`. The next hosted library gets the same probe row.
 - **Status:** `controlled`.
 
+
+### DC-210 — A test boots the product against a throwaway workspace, and the product's data root is the operator's profile, so every run leaves durable state in `%LOCALAPPDATA%` that nothing owns or removes
+
+- **Shape:** the product derives its per-workspace data directory from the workspace root's hash
+  under `%LOCALAPPDATA%\AiDe\workspaces\<id>` (`MainWindowViewModel.cs:242-245`, the daemon's
+  default). A test that opens a fresh temp workspace through the real shell gets a real directory
+  there — `workspace.db`, `watcher.db`, `layout.*.zones.json`, `loomkeeper-coord` — and the temp
+  root it hashed is deleted at the test's end while the profile directory is not: the name is a
+  hash, so nothing can even say which root it belonged to.
+- **Signature:** `%LOCALAPPDATA%\AiDe\workspaces` grows by a few directories per suite run (measured
+  2026-09-14: **221 directories, 91 MB**, 75 on 08-31, 53 on 09-12, 48 on 09-13, 8 today, each
+  timestamped at a recount or an agent's test run); the operator's one real workspace is
+  indistinguishable from the 220 dead ones except by its contents.
+- **Instance (measured, 2026-09-14):** found while reading the operator's TheTerrace store for the
+  F5 record — `aide.31abcd…` (45 scored cells, `health-incidents.jsonl`, `scope-fingerprints.json`)
+  beside 220 skeletons carrying only a layout file and two empty databases.
+- **Sweep:** `ShellBootstrapTests.cs:228` already asserts about *its own* directory by name under the
+  machine-wide root and passes the daemon a workspace-local data directory (`DataFor`); the App
+  suite's shell-booting tests (`MainWindowViewModel.ForWorkspaceAsync` and the WorkbenchShell
+  constructions that call `StartWatcher`) do not — that is the writer. The Core suite's
+  `ShellBootstrapTests` is the model, not the culprit.
+- **Control (planned; the slice is dispatched with wave 2):** (1) the product reads its data root
+  from `AIDE_DATA_ROOT` when set, falling back to `%LOCALAPPDATA%\AiDe` — one derivation, in the one
+  place that composes the path today; (2) the App tests' assembly fixture sets `AIDE_DATA_ROOT` to
+  a per-run temp directory and removes it at the end; (3) a test asserts that a suite run leaves the
+  real `%LOCALAPPDATA%\AiDe\workspaces` with the same directory set it started with (the
+  `ShellBootstrapTests` "the directory that must stay untouched" idiom, widened to the whole root);
+  (4) `tools/reap-stragglers.py` gains an opt-in `--workspaces` that lists profile workspace
+  directories whose recorded root no longer exists (read from `workspace.db`; a database with no
+  recorded root is reported, never removed) and removes them only with `--remove`. Until (1)–(3)
+  land the class is `uncontrolled`; (4) is the operator's cleanup, on their word.
+- **Status:** `uncontrolled` — registered at the join of 2026-09-14; the control lands with the wave-2 slice.
+
+### DC-211 — A byte-identity oracle decodes one side with the locale and reads its own committed bytes as changed; and the oracle cannot be repaired because its own ordering clause forbids a post-run edit
+
+- **Shape:** `subprocess.run(..., text=True)` with no `encoding=` decodes the child's bytes with the
+  interpreter's locale codec — cp1252 on this machine — while every file the repository writes is
+  UTF-8. `git show <commit>:<file>` of a UTF-8 file then yields `§` as two characters where
+  `Path.read_text(encoding="utf-8")` yields one, and a comparison of "the file at the oracle's
+  commit" against "the file now" reports CHANGED for identical bytes. DC-016 was the same decode
+  failing the other way (reads that threw; a gate that printed OK over nothing).
+- **Signature:** *"tools/verify-front-door-exit-evidence.py has changed since 1374401d — the oracle
+  that ran is not the oracle that was committed"* on a tree where `git diff` shows nothing; a gate
+  that is green on Linux CI and red on a Windows checkout with no code difference.
+- **Instance (2026-09-14):** the F5 attended reading (Ruling 103). The nine-clause oracle's clause 0
+  reddened against its own commit; `diff` after stripping CR showed no difference; the first
+  differing character was the `§` in its docstring. The oracle cannot be edited to fix it: clause 0
+  also requires the oracle to predate the run, and any repair post-dates it — the wrapper
+  `tools/verify-front-door-exit-attended.py` runs it as a subprocess under `PYTHONUTF8=1` instead.
+- **Sweep (measured):** 45 statements across 25 scripts under `tools/` carried the shape (most `git
+  rev-parse` reads whose output is ASCII in practice — the same mechanism, a narrower exposure); all
+  repaired with `encoding="utf-8", errors="replace"` except the frozen oracle (allowlisted with its
+  reason). `docs/ai-forward-pack/scripts/ui-craft-gate.py:1` carries it too — the pack's copy, a
+  finding for ai-forward (pack findings note), not edited here (DM7).
+- **Control:** `tools/verify-subprocess-utf8.py` — every text-mode subprocess statement under
+  `tools/` and `spikes/` states `encoding=` (statement-level, so a continuation line counts; prose
+  ignored); `--self-test` plants the shape and observes the finding; the one allowlist entry names
+  why. Red first: 2 findings on `tools/compile-eval/derive-fixtures.py` after the sweep's sed missed
+  a file, then green.
+- **Status:** `controlled`.

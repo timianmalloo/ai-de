@@ -152,7 +152,7 @@ def repo_root() -> Path:
     """Resolved from git, so the gate works from any subdirectory and in any worktree."""
     return Path(subprocess.run(
         ["git", "rev-parse", "--show-toplevel"],
-        capture_output=True, text=True, check=True).stdout.strip())
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=True).stdout.strip())
 
 
 def blank_comments_and_strings(text: str) -> str:
@@ -463,7 +463,7 @@ def _write(root: Path, relative: str, body: str) -> Path:
 def _run_from(cwd: Path) -> tuple[int, str]:
     result = subprocess.run(
         [sys.executable, str(Path(__file__).resolve())],
-        cwd=cwd, capture_output=True, text=True)
+        cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace")
     return (result.returncode, result.stdout + result.stderr)
 
 

@@ -103,7 +103,7 @@ def check_with_node(body: str) -> str | None:
     try:
         result = subprocess.run(
             ["node", "--check", temporary],
-            capture_output=True, text=True, timeout=30, check=False)
+            capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=30, check=False)
 
         if result.returncode == 0:
             return None

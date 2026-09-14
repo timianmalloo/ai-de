@@ -46,13 +46,13 @@ EXEMPT: dict[str, str] = {}
 def repo_root() -> Path:
     out = subprocess.run(
         ["git", "rev-parse", "--show-toplevel"],
-        capture_output=True, text=True, check=True)
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=True)
     return Path(out.stdout.strip())
 
 
 def tracked_projects(root: Path) -> list[str]:
     out = subprocess.run(
-        ["git", "ls-files", "*.csproj"], capture_output=True, text=True, check=True, cwd=root)
+        ["git", "ls-files", "*.csproj"], capture_output=True, text=True, encoding="utf-8", errors="replace", check=True, cwd=root)
     return sorted(p for p in out.stdout.splitlines() if p.strip())
 
 
@@ -77,7 +77,7 @@ def solution_projects(root: Path) -> set[str]:
 def build(root: Path, project: str) -> tuple[bool, str]:
     result = subprocess.run(
         ["dotnet", "build", project, "-c", "Release", "--nologo", "-v", "q"],
-        capture_output=True, text=True, cwd=root)
+        capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=root)
 
     if result.returncode == 0:
         return True, ""

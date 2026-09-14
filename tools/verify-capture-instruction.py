@@ -91,7 +91,7 @@ def reachable_text(root: Path, path: Path) -> tuple[str, list[str]]:
 def repo_root() -> Path:
     return Path(subprocess.run(
         ["git", "rev-parse", "--show-toplevel"],
-        capture_output=True, text=True, check=True).stdout.strip())
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=True).stdout.strip())
 
 
 def check(root: Path, roots: dict[str, str] | None = None) -> tuple[list[str], int, int]:

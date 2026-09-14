@@ -102,7 +102,7 @@ VOLATILE = re.compile(rb'"(?:generated|documented_sha)":\s*"[^"]*"')
 def repo_root() -> Path:
     return Path(subprocess.run(
         ["git", "rev-parse", "--show-toplevel"],
-        capture_output=True, text=True, check=True).stdout.strip())
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=True).stdout.strip())
 
 
 def comparable(blob: bytes) -> bytes:
@@ -113,7 +113,7 @@ def comparable(blob: bytes) -> bytes:
 def dirty_files(root: Path) -> set[str]:
     """Paths git currently reports as modified, so a run can tell what IT changed."""
     out = subprocess.run(["git", "status", "--porcelain", "--untracked-files=no"],
-                         capture_output=True, text=True, cwd=root)
+                         capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=root)
     return {line[3:].strip().strip('"') for line in out.stdout.splitlines() if line[3:].strip()}
 
 
@@ -142,7 +142,7 @@ def regenerate(root: Path, view: dict) -> str | None:
 
     if collateral:
         subprocess.run(["git", "checkout", "--", *collateral],
-                       capture_output=True, text=True, cwd=root)
+                       capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=root)
 
     if out.returncode != 0:
         return (f"{' '.join(view['command'])} exited {out.returncode} — the view cannot be "
@@ -242,7 +242,7 @@ def _check_from_a_differently_named_worktree(root: Path) -> list[str] | None:
 
     added = subprocess.run(
         ["git", "worktree", "add", "--detach", str(wt_path), "HEAD"],
-        cwd=root, capture_output=True, text=True)
+        cwd=root, capture_output=True, text=True, encoding="utf-8", errors="replace")
 
     if added.returncode != 0:
         print(f"  (could not provision the worktree: {added.stderr.strip()[:300]})")
@@ -252,7 +252,7 @@ def _check_from_a_differently_named_worktree(root: Path) -> list[str] | None:
         return [f for f in check(wt_path) if "audit-data.js" in f]
     finally:
         subprocess.run(["git", "worktree", "remove", "--force", str(wt_path)],
-                       cwd=root, capture_output=True, text=True)
+                       cwd=root, capture_output=True, text=True, encoding="utf-8", errors="replace")
 
 
 def self_test(root: Path) -> int:

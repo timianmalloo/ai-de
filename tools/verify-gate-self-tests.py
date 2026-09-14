@@ -60,7 +60,7 @@ KNOWN_WITHOUT_SELF_TEST = {
 def repo_root() -> Path:
     return Path(subprocess.run(
         ["git", "rev-parse", "--show-toplevel"],
-        capture_output=True, text=True, check=True).stdout.strip())
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=True).stdout.strip())
 
 
 def gate_files(root: Path) -> list[Path]:

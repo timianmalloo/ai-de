@@ -63,7 +63,7 @@ def strip_frontmatter(text: str) -> str:
 def head_sha() -> str:
     try:
         return subprocess.run(['git', '-C', str(ROOT), 'rev-parse', 'HEAD'],
-                              capture_output=True, text=True, check=True).stdout.strip()
+                              capture_output=True, text=True, encoding="utf-8", errors="replace", check=True).stdout.strip()
     except Exception:
         return ''
 
@@ -124,7 +124,7 @@ def main() -> int:
         api_summary = json.loads(subprocess.run(
             [sys.executable, str(ROOT / 'tools' / 'api-reference.py'), '--src', 'src',
              '--out', 'docs/api', '--json'],
-            capture_output=True, text=True, check=True, cwd=str(ROOT)).stdout)
+            capture_output=True, text=True, encoding="utf-8", errors="replace", check=True, cwd=str(ROOT)).stdout)
     except Exception as exc:  # noqa: BLE001 - the meta must degrade to "not recorded", not to a guess
         print('warning: could not read API coverage: ' + str(exc), file=sys.stderr)
         api_summary = None

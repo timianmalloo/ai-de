@@ -211,13 +211,13 @@ FOREIGN_PREFIXES = {
 def repo_root() -> Path:
     out = subprocess.run(
         ["git", "rev-parse", "--show-toplevel"],
-        capture_output=True, text=True, check=True)
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=True)
     return Path(out.stdout.strip())
 
 
 def tracked_text_files(root: Path) -> list[str]:
     out = subprocess.run(
-        ["git", "ls-files"], capture_output=True, text=True, check=True, cwd=root)
+        ["git", "ls-files"], capture_output=True, text=True, encoding="utf-8", errors="replace", check=True, cwd=root)
 
     keep = (".md", ".jsonl", ".json", ".py", ".cs", ".txt", ".yml", ".yaml")
     return [p for p in out.stdout.splitlines() if p.endswith(keep)]

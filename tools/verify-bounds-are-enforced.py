@@ -67,13 +67,13 @@ APPLIED_ELSEWHERE = {
 
 def repo_root() -> Path:
     out = subprocess.run(
-        ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=True)
+        ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, encoding="utf-8", errors="replace", check=True)
     return Path(out.stdout.strip())
 
 
 def tracked_sources(root: Path) -> list[Path]:
     out = subprocess.run(
-        ["git", "ls-files", SOURCE_GLOB], capture_output=True, text=True, check=True, cwd=root)
+        ["git", "ls-files", SOURCE_GLOB], capture_output=True, text=True, encoding="utf-8", errors="replace", check=True, cwd=root)
 
     return [
         root / line for line in out.stdout.splitlines()

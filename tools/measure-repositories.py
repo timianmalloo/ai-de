@@ -66,7 +66,7 @@ DEPTH = re.compile(r"^\s*depth (\d+): (\d+) group\(s\), (\d+) link\(s\), (\d+) o
 
 def repo_root() -> Path:
     out = subprocess.run(
-        ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=True)
+        ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, encoding="utf-8", errors="replace", check=True)
     return Path(out.stdout.strip())
 
 
@@ -80,7 +80,7 @@ def measure(root: Path, repository: str) -> dict:
 
     result = subprocess.run(
         ["dotnet", "run", "--project", SPIKE, "-c", "Release", "--no-build", "--", repository],
-        capture_output=True, text=True, cwd=root, timeout=1800)
+        capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=root, timeout=1800)
 
     out = result.stdout
 
@@ -122,7 +122,7 @@ def main() -> int:
 
     build = subprocess.run(
         ["dotnet", "build", SPIKE, "-c", "Release", "--nologo", "-v", "q"],
-        capture_output=True, text=True, cwd=root)
+        capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=root)
 
     if build.returncode != 0:
         print("measure-repositories: the harness does not build; measuring nothing.")
@@ -170,7 +170,7 @@ def main() -> int:
         stamp = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
         revision = subprocess.run(
             ["git", "rev-parse", "--short", "HEAD"],
-            capture_output=True, text=True, cwd=root).stdout.strip()
+            capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=root).stdout.strip()
 
         # Append-only, one line per reading, like every other log here: a rewritten history of
         # measurements is a history nobody can dispute.
