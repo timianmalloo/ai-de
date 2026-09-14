@@ -9,3 +9,10 @@
 {"agent": "claude-lane-accounts", "at": 1789413030.2873745, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/TheBinderRecordsWhatItBoundTests.cs", "session": "sessions-accounts", "wi": ""}
 {"agent": "claude-lane-accounts", "at": 1789413030.2938774, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/TheNewSessionSheetTests.cs", "session": "sessions-accounts", "wi": ""}
 {"agent": "claude-lane-accounts", "at": 1789413030.3015065, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/TheSheetListsAccountsWithDerivedStatesTests.cs", "session": "sessions-accounts", "wi": ""}
+{"agent": "claude-lane-accounts", "at": 1789414340.917443, "code": null, "kind": "allowed", "path": "src/AiDe.App/MainWindow.xaml.cs", "session": "sessions-accounts", "wi": ""}
+{"agent": "claude-lane-accounts", "at": 1789414340.9254742, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/ConfigureProviderDialog.cs", "session": "sessions-accounts", "wi": ""}
+{"agent": "claude-lane-accounts", "at": 1789414340.9324746, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/NewSessionSheetDialog.cs", "session": "sessions-accounts", "wi": ""}
+{"agent": "claude-lane-accounts", "at": 1789414340.94057, "code": null, "kind": "allowed", "path": "src/AiDe.Core/AgentPlane/FirstUse.cs", "session": "sessions-accounts", "wi": ""}
+{"agent": "claude-lane-accounts", "at": 1789414340.9475725, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Presentation/Sessions/NewSessionSheetViewModel.cs", "session": "sessions-accounts", "wi": ""}
+{"agent": "claude-lane-accounts", "at": 1789414340.9545724, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/TheConfigureDialogIsTheFirstUseSurfaceTests.cs", "session": "sessions-accounts", "wi": ""}
+{"agent": "claude-lane-accounts", "at": 1789414340.9615796, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/AgentPlane/FirstUseTests.cs", "session": "sessions-accounts", "wi": ""}

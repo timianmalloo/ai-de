@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.AgentPlane: 60 types, 163 members, 91% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.AgentPlane: 60 types, 164 members, 91% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.AgentPlane`
 
-**60 public types · 163 public members · 91% documented.**
+**60 public types · 164 public members · 91% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -708,6 +708,7 @@ way, and look like success.
 | `EngineLaunch ResolveLaunch(string engineId, string adapterInstallRoot)` | Resolves how to launch an engine: an adapter package whose entry module has been observed on a real install, or a native CLI found on this process's PATH. |
 | `EngineLaunch ResolveLaunch(string engineId, string adapterInstallRoot, NativeCommandLocator locator)` | `ResolveLaunch(string, string)` with the PATH lookup injected, so the native path's rules are asserted on a PATH the test built rather than the one the machine has. |
 | `IReadOnlyDictionary<string, string> LaunchEnvironment(EngineRow row, ProviderAccount account)` | The environment an engine's child needs from the account it is bound to — today exactly one fact: an enterprise `host` becomes the CLI's own host variable (Ruling 97 condition 3; Ruling 105 (1): the host is on the acc… |
+| `IReadOnlyDictionary<string, string> LaunchEnvironment(` | The child's environment for a launch on an account named by label — the lookup both hosts make before they start an engine (one derivation, DM7), and a lookup only: it authorises nothing. An account the rows do not ca… |
 
 ### `EngineRow Find(string engineId)`
 
@@ -737,6 +738,17 @@ Ruling 105 (1): the host is on the account, never the engine row).
 **Returns.** Variables to set on the child; empty when the account carries no host.
 
 **Throws `AgentPlaneException`.** `LaunchPathNotImplemented` when the account carries a host and the engine has no variable to honour it with — refused, because a launch that dropped the host would sign in to the wrong tenant and look like success.
+
+### `IReadOnlyDictionary<string, string> LaunchEnvironment(`
+
+The child's environment for a launch on an account named by label — the lookup both hosts
+make before they start an engine (one derivation, DM7), and a lookup only: it authorises
+nothing. An account the rows do not carry yields an empty environment; the spawn contract's
+refusal is the one that names it, as it always did.
+
+- **`row`** — The engine being launched.
+- **`providers`** — The configured provider rows.
+- **`accountLabel`** — The account the run names.
 
 ## `RunBudget`
 

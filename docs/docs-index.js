@@ -2106,7 +2106,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 60 types, 163 members, 91% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 60 types, 164 members, 91% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2119,7 +2119,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2cc990f7dd8c7c9efcb43575514849baa070d07a2f7b269cf282cdf146abc957"
+      "sourceSha256": "fc094df46cb59609c60e12f92d416f43b3478260678b72f044e1f1d19f949514"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -4496,7 +4496,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bd40b4081261950877e6aa743039a381f36a05ceb620bdf42480ba953afa4ef9"
+      "sourceSha256": "0ad5a1d7f1288e89868cca48e47836c1afa9f4df2dfd59a3acfc26d36ed80b94"
     },
     {
       "id": "note-avalondock-tab-styling",
@@ -8138,7 +8138,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "96d5423089a0053aa0373254014ffbd00e78586467aad9cfe9a4f9ec1da41c44"
+      "sourceSha256": "a3f1cdd199c6517a40f83f765b8a6cf78a911a023207ffb3a06a46efca3fe80c"
     },
     {
       "id": "design-session-profiler",
@@ -16379,7 +16379,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fed26f33a8482e6755effb3f3e7fcb73552ac69582c97e675390bbae131f7364"
+      "sourceSha256": "29d6c2872ffc79c0a0ba16309f61b4be66ab848c29fdfabe8c754bd8fc2293f4"
     },
     {
       "id": "proof-session-document-render",
@@ -18586,5 +18586,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "60dc139c3de218145f090b36961fe71c9ad4eb2369794fde9a4990e847b3e367"
+  "graphSha256": "3593f9662b0750988a28c933a946d8a2d311de0751260e64ed5bd4f96a6f05ed"
 };

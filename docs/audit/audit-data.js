@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T19:20:40Z",
+  "generated": "2026-09-14T19:39:45Z",
   "audit": [
     {
       "actor": null,
@@ -16198,6 +16198,34 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T19:11:45Z",
       "duration_seconds": 533.0
+    },
+    {
+      "id": "al-01M2GPXF95DJBM8HW4KVPMF43F",
+      "shortname": "join-conductor-seam-engine-row",
+      "datetime": "2026-09-14T19:39:44Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "the join of conductor/addendum-c into main",
+      "summary": "Joined conductor/addendum-c (502070d3): the engines lane's seam request resolved - GovernedRunHost and CompileCallHost construct AcpLaneClient with engine: EngineCatalog.Find(request.EngineId) and diagnostics: Report, and start the child with EngineCatalog.LaunchEnvironment(row, providers, label) (new overload; a lookup, never a binding; the compile child keeps its output cap); TheHostBindsItsClientToItsEngineTests (6, red-first CS0117; the source oracle scans by paren depth after a lambda's ';' stopped the regex). Also DC-221 (a drain that only wakes on an event) and DC-222 (an oracle over an unpumped derivation) from the r95 lane, its attended rows W-1..W-6, the liveness file. Full recount. recount_seconds=539 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/engines-on-the-wire.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "a non-claude engine gets its engine-appropriate session/new and its account's host from the product's own hosts",
+      "done_when": "merge clean; recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-14T19:30:43Z",
+      "duration_seconds": 541.0
     }
   ],
   "changes": [
