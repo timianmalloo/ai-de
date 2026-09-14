@@ -240,6 +240,22 @@ function parse(v){
   return m ? m.slice(0,3).map(Number) : null;
 }
 function audit(){
+  /* DC-200: a harness gating selector that matches the element carrying the harness state
+     (`[data-restore]{display:none}` on a <body data-restore=...>) hides the WHOLE page while
+     every number below still computes, and a headless sweep that reads only the verdict
+     strip passes. So the first measurement is the page box itself: a hidden page reports
+     "not rendered" and NO numbers, never a pass. Scope every gating selector to the frame
+     (`.window [data-...]`), never to <body> or <html>. */
+  const frame = document.querySelector('main') || document.body;
+  const box = frame ? frame.getBoundingClientRect() : { width: 0, height: 0 };
+  const v = document.getElementById('h-verdict');
+  if (!box.width || !box.height) {
+    document.getElementById('audit-rows').innerHTML = '';
+    document.getElementById('audit-targets').textContent = '';
+    v.textContent = `audit: page not rendered (${box.width|0}x${box.height|0} page box) — a gating selector is hiding the frame; no number is reported`;
+    v.className = 'verdict fail';
+    return;
+  }
   const cs = getComputedStyle(root), rows = [];
   for (const [fg, bg, label, kind] of AUDIT.pairs){
     const a = parse(cs.getPropertyValue(fg)), b = parse(cs.getPropertyValue(bg));
@@ -261,7 +277,6 @@ function audit(){
     .filter(el => { const r = el.getBoundingClientRect(); return r.width && (r.height < 44 || r.width < 44); });
   document.getElementById('audit-targets').textContent =
     small.length ? `${small.length} interactive target(s) under 44x44 CSS px.` : 'All interactive targets meet 44x44 CSS px.';
-  const v = document.getElementById('h-verdict');
   v.textContent = `audit: ${failures} contrast fail · ${small.length} small target`;
   v.className = 'verdict ' + (failures || small.length ? 'fail' : 'pass');
 }

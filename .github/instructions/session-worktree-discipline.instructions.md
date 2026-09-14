@@ -90,6 +90,7 @@ individually:
 | It is **not** the current working directory | Deleting the floor you are standing on |
 | The tree is **clean** — no modified, staged or untracked files | Untracked is the dangerous one: a new file nobody has committed exists nowhere else |
 | It has **no commits absent from the integration branch** | Unmerged work is the only copy |
+| Its branch has **0 commits not on the repository's default branch** (`git rev-list --count <default>..<branch>`), and the count is printed | A *pushed* branch passes the row above — every commit exists on its remote-tracking ref — so a frozen tree 21 commits ahead of `main` was labelled "merged" and offered for removal (DC-142). "Merged" means merged into the default branch, never "exists somewhere else"; `--include-unmerged` is the named escape for an abandoned branch |
 | Its branch is **not checked out anywhere else** | Someone else is using it |
 | Its session is **ended or stale** | A live session's tree is in use |
 
@@ -100,7 +101,14 @@ that mattered, and that single event ends the adoption of the whole practice.
 **WT8 — Removal is opt-in, not the default verb.** `cleanup` **MUST** default to reporting a plan
 and require an explicit flag to delete. Deleting a directory is irreversible and un-undoable by
 git; the pack's standing rule for irreversible actions applies (Rules of the Road §2 — a gate
-before, not an apology after).
+before, not an apology after). Two properties are part of the rule, because the pack's own
+tool broke both: `cleanup` adjudicates **every worktree in the repository** unless narrowed —
+that width is what makes the orphan sweep work, so it **MUST** state it in its output and
+**MUST** offer `--path <tree>` for the narrower intent (**GO14a**: an action's enforced scope
+must match its stated clause). And it **MUST** report what it **measured**, never what it
+attempted: a tree that survived the attempt is never counted as removed, and one git
+**de-registered but could not delete** is named as **orphaned** — no worktree command will
+mention it again.
 
 **WT9 — Prune the metadata as well as the directory.** Deleting a worktree directory by hand
 leaves `.git/worktrees/<name>` behind, and git keeps treating that name as taken — so the next
@@ -126,7 +134,8 @@ worktree and keys its shared event log by worktree — so worktree lifecycle bel
 than in a parallel tool (one owner per concern):
 
 ```bash
-# start a session in its own tree (creates the branch, registers the session, prints the cd)
+# start a session in its own tree (branch, session registration, the cd, and the BASE
+# commit it used — which is the INVOKING tree's HEAD, not the primary's)
 python3 docs/ai-forward-pack/scripts/coord-core.py worktree new \
     --branch feature/audit-duration --session "<session-id>"
 
@@ -136,8 +145,12 @@ python3 docs/ai-forward-pack/scripts/coord-core.py worktree list
 # the plan (default: reports, deletes nothing)
 python3 docs/ai-forward-pack/scripts/coord-core.py worktree cleanup
 
-# act on the plan — only the trees the plan marked safe
+# act on the plan — EVERY worktree the plan marked safe, repository-wide
 python3 docs/ai-forward-pack/scripts/coord-core.py worktree cleanup --remove
+
+# act on ONE tree only
+python3 docs/ai-forward-pack/scripts/coord-core.py worktree cleanup \
+    --path ../<repo>-<branch-slug> --remove
 ```
 
 **WT12 — The tool reports its refusals, not just its actions.** `cleanup` prints every tree it
@@ -157,6 +170,7 @@ information the human needs.
 - [ ] Nothing was removed that was dirty, unmerged, current, primary, or held by a live
       session — and every refusal was **named** (WT7, WT12).
 - [ ] Removal required an explicit flag; the default run only reported (WT8).
+- [ ] The cleanup output stated its **scope**, and reported **removed / not removed / orphaned** as measured rather than attempted (WT8).
 - [ ] `git worktree prune` ran so metadata matches the filesystem (WT9).
 - [ ] Orphan state was surfaced rather than discovered (WT10).
 - [ ] No worktree was deleted to settle a collision (WT11).

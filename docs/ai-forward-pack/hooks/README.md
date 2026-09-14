@@ -8,7 +8,8 @@ of what the model decides.
 |---|---|---|---|
 | `reread-guard.py` | both | `docs/ai-forward-pack/hooks/reread-guard.py` | Counts identical reads per turn; on the third, and on any paged tool output viewed whole, adds a warning to the model's context. Warns, never blocks (a real third read exists). Fail-open on every error path. |
 | `copilot.ai-forward-hooks.json` | Copilot CLI | `.github/hooks/ai-forward.json` | Copilot's hook config (`version: 1`, camelCase events, `bash`/`powershell` per platform, `timeoutSec`). Loaded from the repo automatically. Personal alternative: `~/.copilot/hooks/`. |
-| `claude-code.settings.hooks.json` | Claude Code | merge into `.claude/settings.json` | The `hooks` object for `PreToolUse` (matcher `Read`) and `UserPromptSubmit`. Committed project settings run in sub-agents too. |
+| `session-start.py` | Claude Code | `docs/ai-forward-pack/hooks/session-start.py` | Runs on `SessionStart` and `SubagentStart`: records the audit start marker at the session seam (`audit-log.py start`, keyed to `$AGENT_SESSION` when the harness environment carries it, else a harness slot an `append` uses only when it has no marker of its own — `duration_source: session-start-hook`). Prints nothing; exits 0 on every path. Closes DC-190 (a node that grounded before it marked). Copilot CLI is not wired: its session-start event was not verified. |
+| `claude-code.settings.hooks.json` | Claude Code | merge into `.claude/settings.json` | The `hooks` object for `PreToolUse` (matcher `Read`), `UserPromptSubmit`, `SessionStart` and `SubagentStart`. Committed project settings run in sub-agents too. |
 
 **Contracts these are written to** (established from the hosts' own documentation and a captured event
 stream, not assumed — class RIG-D): Claude Code hooks receive `{"hook_event_name","session_id",
