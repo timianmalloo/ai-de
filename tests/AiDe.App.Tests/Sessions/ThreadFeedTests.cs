@@ -139,13 +139,22 @@ public sealed class ThreadFeedTests
                 Assert.True(items.Count > 6, "the positive control: the walk sees the items' texts");
                 Assert.All(items, t => Assert.True(Top(t, container) < Top(outcome, container), $"'{Plain(t)}' renders below the outcome line"));
 
-                // Falsifier 4: N events counting a conversation row — 3 non-conversation rows (accepted · usage · completed).
+                // Falsifier 4: N events counting a conversation row or a bookkeeping row — the fixture's
+                // non-conversation rows are accepted · usage · completed, and the usage row is
+                // Console-only (Ruling 100), so the fold reads 2 and renders the other two. The count
+                // is the arithmetic, not a literal: the turn's events less the conversation and the
+                // two named kinds; and the fixture must carry a bookkeeping row or the row proves nothing.
+                var turn = ReadModel(feed).Current.Turns[0];
+                var bookkeeping = turn.Rows.Count(r => ConversationItems.BookkeepingKinds.Contains(r.Kind));
+                Assert.True(bookkeeping > 0, "the fixture carries no bookkeeping row; the fold's exclusion is unmeasured");
+                var expectedFold = turn.Rows.Count(r => r.Kind is not (Coalesce.MessageKind or Coalesce.ThoughtKind or ConversationItems.CallKind or ConversationItems.ResultKind)) - bookkeeping;
                 var fold = ThreadFixtures.Fold(container);
-                Assert.Equal("3 events", AutomationProperties.GetName(fold));
+                Assert.Equal(TurnCopy.EventsText(expectedFold), AutomationProperties.GetName(fold));
+                Assert.Equal("2 events", AutomationProperties.GetName(fold));
                 feed.Rows[0].IsFoldOpen = true;
                 feed.UpdateLayout();
                 var folded = feed.Rows[0].FoldedEvents.Select(r => r.Kind).ToList();
-                Assert.Equal(["run.accepted", "acp.session.update.usage_update", "run.completed"], folded);
+                Assert.Equal(["run.accepted", "run.completed"], folded);
                 return Task.CompletedTask;
             });
     }

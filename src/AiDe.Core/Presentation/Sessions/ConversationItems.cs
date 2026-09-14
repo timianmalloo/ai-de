@@ -18,9 +18,9 @@ public enum ToolStatus
 
 /// <summary>
 /// One item of a turn's conversation (Ruling 82), in event order: prose, reasoning, a tool call with
-/// its results, or an event — a non-conversation row (<c>acp.*</c>, the conductor's lines,
-/// stderr, a result whose call is not in this turn) that counts into <i>N events</i> and is never
-/// dropped.
+/// its results, or an event — a non-conversation row (<c>acp.*</c> less the two bookkeeping kinds
+/// of Ruling 100, the conductor's lines, stderr, a result whose call is not in this turn) that
+/// counts into <i>N events</i> and is never dropped from the Console.
 /// </summary>
 /// <param name="Row">The <see cref="Coalesce"/> row the item renders — the message, the thought, the call, or the event.</param>
 public abstract record ConversationItem(TurnRow Row)
@@ -82,6 +82,21 @@ public static class ConversationItems
     /// <summary>The mapper's <c>tool_call_update</c>.</summary>
     public const string ResultKind = "tool.result";
 
+    /// <summary>
+    /// The bookkeeping kinds (Ruling 100, the Owner's extension of Ruling 82): <c>usage_update</c>
+    /// and <c>available_commands_update</c> as the mapper spells them — <c>acp.session.update.</c>
+    /// plus the wire discriminator (<c>frames/read.jsonl:5–8</c>). They stay Console rows and feed
+    /// Spend (Ruling 78); they are never items of the conversation and never count in the thread's
+    /// <i>N events</i> fold — a fold reading <i>14 events</i> over four usage rows misleads about
+    /// what the agent did. A named list of two, never a pattern: <c>acp.result</c> and the rest of
+    /// <c>acp.*</c> still fold.
+    /// </summary>
+    public static readonly IReadOnlyList<string> BookkeepingKinds =
+    [
+        "acp.session.update.usage_update",
+        "acp.session.update.available_commands_update",
+    ];
+
     /// <summary>The items of a turn's rows, in the rows' order. <paramref name="live"/>: the turn is running or waiting, so a call with no terminal status is <i>running</i>, not <i>interrupted</i>.</summary>
     public static IReadOnlyList<ConversationItem> Of(IReadOnlyList<TurnRow> rows, bool live)
     {
@@ -113,6 +128,8 @@ public static class ConversationItems
                 case ResultKind when row.Tool is { } result && calls.TryGetValue(result.CallId, out var attached):
                     attached.Add(row);
                     break;
+                case var kind when BookkeepingKinds.Contains(kind, StringComparer.Ordinal):
+                    break;   // Console-only (Ruling 100): the row stays in Rows for the split and for Spend; the fold never sees it
                 default:
                     items.Add(new ConversationItem.Event(row));
                     break;

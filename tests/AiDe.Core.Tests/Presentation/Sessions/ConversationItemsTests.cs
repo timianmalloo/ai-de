@@ -40,20 +40,20 @@ public sealed class ConversationItemsTests
 
     private static EventLine Cond(int s, string kind, string text) => new(T0.AddSeconds(s), "conductor", kind, text, "run");
 
-    /// <summary>The five review turns and b17, each with its golden — the item kinds in order, a tool item as <c>Tool(status)</c>.</summary>
+    /// <summary>The five review turns and b17, each with its golden — the item kinds in order, a tool item as <c>Tool(status)</c>; the usage rows are Console-only since Ruling 100 (b2's <c>acp.result</c> still folds).</summary>
     public static TheoryData<string, bool, string[]> Turns => new()
     {
         {
             "b1", false,
-            ["Event", "Reasoning", "Tool(done)", "Prose", "Event", "Event"]
+            ["Event", "Reasoning", "Tool(done)", "Prose", "Event"]
         },
         {
             "b2", false,
-            ["Event", "Reasoning", "Tool(done)", "Tool(done)", "Prose", "Tool(done)", "Tool(failed)", "Tool(done)", "Prose", "Event", "Event", "Event", "Event"]
+            ["Event", "Reasoning", "Tool(done)", "Tool(done)", "Prose", "Tool(done)", "Tool(failed)", "Tool(done)", "Prose", "Event", "Event"]
         },
         {
             "b3", false,
-            ["Event", "Reasoning", "Tool(done)", "Tool(done)", "Prose", "Tool(done)", "Prose", "Event", "Event"]
+            ["Event", "Reasoning", "Tool(done)", "Tool(done)", "Prose", "Tool(done)", "Prose", "Event"]
         },
         {
             "b4", false,
@@ -61,7 +61,7 @@ public sealed class ConversationItemsTests
         },
         {
             "b5", false,
-            ["Event", "Reasoning", "Tool(done)", "Prose", "Tool(done)", "Prose", "Event", "Event"]
+            ["Event", "Reasoning", "Tool(done)", "Prose", "Tool(done)", "Prose", "Event"]
         },
         {
             "b17", false,
@@ -198,20 +198,24 @@ public sealed class ConversationItemsTests
 
         Assert.Equal(golden, items.Select(Golden).ToArray());
 
-        // Every row appears exactly once: as an item's row, or attached to the tool item it belongs to
-        // (a partition of the rows — ordered by the rows' own order, since a parallel call's results
-        // legitimately interleave with the next call's row).
+        // Every row but a bookkeeping row appears exactly once: as an item's row, or attached to the
+        // tool item it belongs to (a partition of the folded rows — ordered by the rows' own order,
+        // since a parallel call's results legitimately interleave with the next call's row). The
+        // bookkeeping rows (Ruling 100) stay in `rows` for the Console and are the only ones absent.
+        var folded = rows.Where(r => !ConversationItems.BookkeepingKinds.Contains(r.Kind)).ToList();
         var covered = items.SelectMany(i => i is ConversationItem.Tool t ? t.Results.Prepend(t.Row) : new[] { i.Row }).ToList();
-        Assert.Equal(rows.Count, covered.Count);
-        Assert.Equal(rows, covered.OrderBy(r => rows.ToList().IndexOf(r)));
+        Assert.Equal(folded.Count, covered.Count);
+        Assert.Equal(folded, covered.OrderBy(r => rows.ToList().IndexOf(r)));
         Assert.Equal(items.Select(i => i.Row), items.Select(i => i.Row).OrderBy(r => rows.ToList().IndexOf(r)));   // the items keep the rows' order
 
         // Each tool item holds exactly the results that carry its id.
         Assert.All(items.OfType<ConversationItem.Tool>(), t => Assert.All(t.Results, r => Assert.Equal(t.Row.Tool!.CallId, r.Tool!.CallId)));
 
-        // acp.* rows are events, never items; every event row is a non-conversation kind.
+        // acp.* rows are events, never items — except the two bookkeeping kinds, which are neither
+        // (Ruling 100); every event row is a non-conversation kind.
         Assert.All(items.OfType<ConversationItem.Event>(), e => Assert.NotEqual(Coalesce.MessageKind, e.Row.Kind));
-        Assert.All(rows.Where(r => r.Kind.StartsWith("acp.", StringComparison.Ordinal)), r => Assert.Contains(items, i => i is ConversationItem.Event e && ReferenceEquals(e.Row, r)));
+        Assert.All(rows.Where(r => r.Kind.StartsWith("acp.", StringComparison.Ordinal) && !ConversationItems.BookkeepingKinds.Contains(r.Kind)), r => Assert.Contains(items, i => i is ConversationItem.Event e && ReferenceEquals(e.Row, r)));
+        Assert.All(rows.Where(r => ConversationItems.BookkeepingKinds.Contains(r.Kind)), r => Assert.DoesNotContain(items, i => ReferenceEquals(i.Row, r)));
     }
 
     /// <summary>A call and its results by id are one item with the last stated kind, title, input, the joined output and the last result's status.</summary>
@@ -292,6 +296,36 @@ public sealed class ConversationItemsTests
         var prose = Assert.Single(items.OfType<ConversationItem.Prose>());
         Assert.True(items.ToList().IndexOf(reasoning) < items.ToList().IndexOf(prose), "the reasoning precedes the answer");
         Assert.All(items.OfType<ConversationItem.Event>(), e => Assert.StartsWith("acp.", e.Row.Kind, StringComparison.Ordinal));
+    }
+
+    /// <summary>
+    /// <b>Ruling 100 (R-3).</b> <c>usage_update</c> and <c>available_commands_update</c> are
+    /// bookkeeping: Console rows, Spend's feed — never items of the conversation, never counted in
+    /// the thread's <i>N events</i> fold. Over the captured read run through the real mapper: both
+    /// kinds are present in the rows (the positive control — the corpus has them), the constant
+    /// carries the strings the mapper emits, no event item carries either, and the fold's count is
+    /// the non-conversation rows less the bookkeeping rows. Every row of <c>Coalesce</c> is still
+    /// there for the Console (M1).
+    /// </summary>
+    /// <remarks><b>Red observed</b>: <c>Expected: 0 · Actual: 8</c> event items of the two kinds (6 usage, 2 available-commands).</remarks>
+    [Fact]
+    public void TheBookkeepingKinds_AreNeverItems_AndTheFoldCountsTheRest()
+    {
+        var rows = Coalesce.Rows(Lines("read.jsonl"));
+        var items = ConversationItems.Of(rows, live: false);
+
+        Assert.Equal(["acp.session.update.usage_update", "acp.session.update.available_commands_update"], ConversationItems.BookkeepingKinds);
+        Assert.Equal(6, rows.Count(r => r.Kind == "acp.session.update.usage_update"));               // read.jsonl:8, 12, 15, 19, 20, 21
+        Assert.Equal(2, rows.Count(r => r.Kind == "acp.session.update.available_commands_update"));  // read.jsonl:5, 6
+        var bookkeeping = rows.Count(r => ConversationItems.BookkeepingKinds.Contains(r.Kind));
+        Assert.True(bookkeeping > 0, "the corpus carries no bookkeeping row; this fact measures nothing");
+
+        Assert.Equal(0, items.OfType<ConversationItem.Event>().Count(e => ConversationItems.BookkeepingKinds.Contains(e.Row.Kind)));
+
+        // The fold's count: every non-conversation row that is not bookkeeping.
+        var nonConversation = rows.Count(r => r.Kind is not (Coalesce.MessageKind or Coalesce.ThoughtKind or ConversationItems.CallKind or ConversationItems.ResultKind));
+        Assert.Equal(nonConversation - bookkeeping, items.OfType<ConversationItem.Event>().Count());
+        Assert.True(items.OfType<ConversationItem.Event>().Any(), "no event survives the fold; the count is vacuous");
     }
 
     /// <summary>The corpus as the product's sink writes it: the mapper's event, the console model's text, the tool facts (the one writer's line).</summary>
