@@ -1,2 +1,5 @@
 {"agent": "composer-r95", "at": 1789407668.409935, "kind": "session-start", "path": "-", "seq": 1, "session": "composer-r95", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-lane-composer-r95"}
 {"agent": "claude-lane-composer-95", "at": 1789407844.250258, "kind": "session-start", "path": "-", "seq": 2, "session": "composer-r95", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-lane-composer-r95"}
+{"agent": "claude-lane-composer-95", "at": 1789408723.34599, "kind": "claim", "path": "src/AiDe.Core/Presentation/Sessions/SessionThread.cs", "seq": 3, "session": "composer-r95", "ttl": 120.0, "wi": "ruling-95"}
+{"agent": "claude-lane-composer-95", "at": 1789408723.4262903, "kind": "claim", "path": "src/AiDe.Core/Presentation/Sessions/RunChannelSessionThread.cs", "seq": 4, "session": "composer-r95", "ttl": 120.0, "wi": "ruling-95"}
+{"agent": "claude-lane-composer-95", "at": 1789408723.5079594, "kind": "claim", "path": "src/AiDe.Core/Presentation/Sessions/ThreadAnnouncementPolicy.cs", "seq": 5, "session": "composer-r95", "ttl": 120.0, "wi": "ruling-95"}

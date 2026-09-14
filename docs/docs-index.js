@@ -4496,7 +4496,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5ba409daaedc19cfcd0b62c8fd517712f3b40b6fc2c078a5a48fc2bbae65840f"
+      "sourceSha256": "bd40b4081261950877e6aa743039a381f36a05ceb620bdf42480ba953afa4ef9"
     },
     {
       "id": "note-avalondock-tab-styling",
@@ -5844,7 +5844,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "02bfbfa3dcd54b1ddd0f244d13e259b2dd956cf624a330a032fec30909c87786"
+      "sourceSha256": "6e573f54b5253e5fa5041f010ab146730b5932a3a3a8b4879ceeecc086afc5cb"
     },
     {
       "id": "note-read-only-lane-runs-in-the-workspace-root",
@@ -8123,7 +8123,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e8aca951fbcd7a8c42f231957714397c790ae7d83f7fba12aefa29132b4a6486"
+      "sourceSha256": "96d5423089a0053aa0373254014ffbd00e78586467aad9cfe9a4f9ec1da41c44"
     },
     {
       "id": "design-session-profiler",
@@ -9273,7 +9273,7 @@ window.DOCS_INDEX = {
     {
       "id": "note-addendum-c-council-rulings",
       "path": "docs/notes/addendum-c-council-rulings.md",
-      "title": "Decision note — Rulings 50–104: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, the operator's composer verdicts, and the 2026-09-13 and 2026-09-14 findings ruled",
+      "title": "Decision note — Rulings 50–105: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, the operator's composer verdicts, and the 2026-09-13 and 2026-09-14 findings ruled",
       "type": "doc",
       "status": "accepted",
       "owner": "@timianmalloo",
@@ -9286,7 +9286,7 @@ window.DOCS_INDEX = {
           "reason": "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent"
         }
       ],
-      "summary": "Rulings 50–55 issued before any Addendum C spec was written; 56–62 issued at the spec's gate — 56 and 57 file the operator's own composer verdicts, 58–62 rule on the reconciliation table; 80–90 rule on the operator's 2026-09-13 findings, 91 files the F5 merge decision, and 92–104 rule on the 2026-09-14 findings (the Explore reader, the Architecture default, Send-while-running, the compiled prompt, the engine catalog, the store's fixture revision, session names, F5's close). Six rulings the Owner issued before any Addendum C spec was written, on the evidence the conductor brought at node R0 of plan-addendum-c-modes. They fix the vocabulary (Perspective), the phasing (F5 untouched; code after F5 merges), ADR-0017's fate (retained and amended), the graph model (one substrate, two surfaces), the build order under the operator's 80% case, and four page-one facts a spec written without them would get wrong.",
+      "summary": "Rulings 50–55 issued before any Addendum C spec was written; 56–62 issued at the spec's gate — 56 and 57 file the operator's own composer verdicts, 58–62 rule on the reconciliation table; 80–90 rule on the operator's 2026-09-13 findings, 91 files the F5 merge decision, and 92–105 rule on the 2026-09-14 findings (the Explore reader, the Architecture default, Send-while-running, the compiled prompt, the engine catalog, the store's fixture revision, session names, F5's close). Six rulings the Owner issued before any Addendum C spec was written, on the evidence the conductor brought at node R0 of plan-addendum-c-modes. They fix the vocabulary (Perspective), the phasing (F5 untouched; code after F5 merges), ADR-0017's fate (retained and amended), the graph model (one substrate, two surfaces), the build order under the operator's 80% case, and four page-one facts a spec written without them would get wrong.",
       "tags": [
         "decision-note",
         "ruling",
@@ -9336,7 +9336,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "340c27fe12627c5f422056ed01bfb4f9f7f3683d0261aa5a741dd4f290c09c96"
+      "sourceSha256": "3c5ba58222a1b1d54bf011551d242292d506448262ed18d35910a93afb48146d"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -14981,7 +14981,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "af55010ecbf6f4d525aaea0e764c63000c83ea959843f306df8509bc7ff8cdd2"
+      "sourceSha256": "56dcbfeec074ea753ff0b3a0cc893aa0d3623122c7ac156afdce54071768f6fa"
     },
     {
       "id": "proof-census-controls",
@@ -15382,7 +15382,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1112706ed8ecb3117e25a4ffa116b9e4cb0ad8dc6a0ba05cdb16b280ad2b2b00"
+      "sourceSha256": "d57b53e64180eacb8961b6feea70fa70fda665d9c6052325401ee9a0421672d4"
     },
     {
       "id": "proof-composer-entry-areas",
@@ -15763,7 +15763,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "660c836a874a5a03034fa74d744d6ca0c56fb935714b05d6cb703d43bfe3b849"
+      "sourceSha256": "09ee52a234f4a67a0a0d4996bd19cc01cef5964c8a25fac19a540c80a5ce1aea"
     },
     {
       "id": "proof-front-door-provider-config",
@@ -18436,5 +18436,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "3bd10dcf216280aac3eb6cf0d9729ee73012741994294696c42678cd50444969"
+  "graphSha256": "4bf5a82870e42e9f5e2455f1c0d872b8f77924124aecd30fd693698733d3efa8"
 };

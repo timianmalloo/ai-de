@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T17:55:36Z",
+  "generated": "2026-09-14T17:59:17Z",
   "audit": [
     {
       "actor": null,
@@ -15932,6 +15932,34 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T17:47:39Z",
       "duration_seconds": 476.0
+    },
+    {
+      "id": "al-01M2GH5GXKR6XJVTSEGRFTBVHT",
+      "shortname": "join-conductor-docs-105-dc212-220",
+      "datetime": "2026-09-14T17:59:16Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "the join of conductor/addendum-c into main",
+      "summary": "Joined conductor/addendum-c (20a6d59f), docs only: Ruling 105 verbatim (the account is the operator-facing unit; session config holds account selections + a default; per-turn account picker; Higgsfield out pending spike 'higgsfield-surface'; spike order copilot -> codex -> gemini -> grok; 97(i) subsumed); DC-212..216 (Explore and Composer lanes: one-way TemplateBinding on a toggle; a floor as an addend; pointer-only context menu on a browser-hosted surface; name-travelling wire enum fail-closed at an older reader; lanes sharing a session-keyed scratch file) and DC-217..220 (Sessions lane: a writer fix not reaching an old store; a flex row without wrap in a fraction-width pane; a store dropping an unrestorable kind silently; a process-global diagnostics sink swapped by tests) registered - next free DC-221; the operator's attended rows E-1..E-3, C-1..C-5, S-1..S-7; two pack findings; the liveness file at 75a2adfb. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/attended-rows-for-the-operator.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "every ruling and class from wave 1 on main before wave 2's slices are briefed",
+      "done_when": "rulings at 105; register at 220 with the sequence unbroken; 38 gates; pushed",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-14T17:59:15Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
