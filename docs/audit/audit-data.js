@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T13:41:37Z",
+  "generated": "2026-09-14T13:53:10Z",
   "audit": [
     {
       "actor": null,
@@ -15472,51 +15472,120 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2G1TNB2JTEZ262Q6TX6NEF2",
-      "shortname": "join-f5-exit-evidence",
-      "datetime": "2026-09-14T13:31:12Z",
-      "session": "claude-conductor-addendum-c",
-      "prompt": "keep going (the join of the resolved merge)",
-      "summary": "Join: feature/exit-evidence (135e05e1, 21 commits) merged to main under Ruling 91 (the operator: merge F5 and proceed) - ten conflicts: derived figures taken ours; the four lane-pin files taken from main (the cherry-picks had evolved through CV-3/X-5; the lane.session-new frame record is on main); SessionConfigStore.Create and the sheet's Create merged by hand to carry the sheet's three decisions AND F5's origin (SessionOrigins.MainMenuNewSession); the register's header from main. F5's nine-clause oracle runs in self-test form in the runner until the gesture's record exists (clauses 2/3/5/6/9 RUN-PENDING). X-6 rides on this join: the composer's caret on the theme's ink (DC-209) and the Compiled prompt disclosure measured on screen. recount_seconds=452 (docs_only=False).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/conductor-front-door.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Land F5 on main so the front-door gesture is performed on the current build",
+      "datetime": "2026-09-14T13:31:12Z",
       "done_when": "main pushed green through the runner (F5's oracle self-test only); Release built; the recount green",
-      "tier": "T1",
+      "duration_seconds": 453.0,
       "fan_out": 0,
+      "goal": "Land F5 on main so the front-door gesture is performed on the current build",
+      "id": "al-01M2G1TNB2JTEZ262Q6TX6NEF2",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (the join of the resolved merge)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-f5-exit-evidence",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
+        "verification_path": true
       },
+      "skill": "execute-with-coordination",
       "started_at": "2026-09-14T13:23:39Z",
-      "duration_seconds": 453.0
+      "summary": "Join: feature/exit-evidence (135e05e1, 21 commits) merged to main under Ruling 91 (the operator: merge F5 and proceed) - ten conflicts: derived figures taken ours; the four lane-pin files taken from main (the cherry-picks had evolved through CV-3/X-5; the lane.session-new frame record is on main); SessionConfigStore.Create and the sheet's Create merged by hand to carry the sheet's three decisions AND F5's origin (SessionOrigins.MainMenuNewSession); the register's header from main. F5's nine-clause oracle runs in self-test form in the runner until the gesture's record exists (clauses 2/3/5/6/9 RUN-PENDING). X-6 rides on this join: the composer's caret on the theme's ink (DC-209) and the Compiled prompt disclosure measured on screen. recount_seconds=452 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2G2DPY7XVRT1NQCGBJGVXRT",
-      "shortname": "join-f5-exit-evidence-2",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/conductor-front-door.md"
+      ],
       "datetime": "2026-09-14T13:41:36Z",
-      "session": "claude-conductor-addendum-c",
+      "done_when": "main pushed green through the runner; Release built",
+      "duration_seconds": 430.0,
+      "fan_out": 0,
+      "goal": "Land F5 and X-6 on main green",
+      "id": "al-01M2G2DPY7XVRT1NQCGBJGVXRT",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "keep going (the join of the resolved merge)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-f5-exit-evidence-2",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-14T13:34:26Z",
       "summary": "The F5 join, second pass: the first pass stopped at the runner (one order-dependent red - ConsoleSplitPlacementTests read Keyboard.FocusedElement, null when another class's window held the keyboard; now the document's focus scope) and the join script now reads the recount's outcome at step 4 before any commit. F5 (135e05e1) is on main under Ruling 91 with its oracle in self-test form until the gesture's record exists; X-6 (the caret, the disclosure rows) rides along. recount_seconds=429 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-14T13:17:23Z",
+      "id": "al-01M2G11CK2DAV1Z8JWZZVNXHDN",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "1: yes it all works well, the only issue now is that the prompt text area doesnt have a cursor so I cant see where i am typing if I am attempting to move to edit something / 2: yes lets get the ai-forward pack updated / 3: merge F5 and proceed / 4: i didnt see a compiled prompt - not sure if that is just because it is not completed yet / keep going",
+      "session": "prompt-log",
+      "shortname": "1: yes it all works well, the only issue now is that the prompt text are…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-14T13:17:24Z",
+      "done_when": "the caret row red then green; the disclosure's position measured at three counts; both committed",
+      "fan_out": 0,
+      "goal": "Answer the operator's two findings of 2026-09-14 with a measurement each",
+      "id": "al-01M2G11CPYJ97S9CN0HE2SYDWX",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the prompt text area doesnt have a cursor ... / i didnt see a compiled prompt",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "x-6-caret-and-disclosure",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "summary": "X-6: the composer's caret was CodeMirror's default black on the dark surface (1.10:1, measured once the page census carried a '(caret)' probe row; DC-209) - the caret, drop cursor and selection now take the theme's ink and accent; census 34/34. The Compiled prompt disclosure is measured on screen at 0/1/40 turns (header 560-584 px in a 628 px composer at 0 turns; 364-388 in 432 with turns) and renders on every draft change - collapsed by default per Ruling 57; the operator's report reads as discoverability, not absence.",
+      "tags": [],
+      "tier": "T0",
+      "tool": null
+    },
+    {
+      "id": "al-01M2G32VGDV736N5JVENV6Q1VM",
+      "shortname": "join-x6-ruling-91",
+      "datetime": "2026-09-14T13:53:09Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "keep going (the join of conductor/addendum-c)",
+      "summary": "Join: X-6 (06654c11 - the caret on the theme's ink: the page census now carries a '(caret)' probe row, red at 1.10:1 on CodeMirror's default; the Compiled prompt disclosure measured on screen at 0/1/40 turns) and Ruling 91's filing (90f1f3f0) merged to main. The previous join's summary said X-6 rode along; it had not - corrected here. recount_seconds=454 (docs_only=False).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/conductor-front-door.md"
+        "docs/lessons/defect-classes.md"
       ],
       "tags": [],
       "outcome": "success",
-      "goal": "Land F5 and X-6 on main green",
-      "done_when": "main pushed green through the runner; Release built",
+      "goal": "Land the operator's caret fix and the disclosure measurement on main with a Release build",
+      "done_when": "main pushed green; Release built",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -15524,8 +15593,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-09-14T13:34:26Z",
-      "duration_seconds": 430.0
+      "started_at": "2026-09-14T13:45:34Z",
+      "duration_seconds": 455.0
     }
   ],
   "changes": [

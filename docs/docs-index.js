@@ -8013,7 +8013,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b28cec9903201e6ba1d971e348c6b17e6d57a5e0ee586af2f3e06e5b277adf86"
+      "sourceSha256": "fd0f7e2d5016d038bd075aa953003f3f9993b722737885012d8f17db1bab304d"
     },
     {
       "id": "design-session-profiler",
@@ -9163,7 +9163,7 @@ window.DOCS_INDEX = {
     {
       "id": "note-addendum-c-council-rulings",
       "path": "docs/notes/addendum-c-council-rulings.md",
-      "title": "Decision note — Rulings 50–90: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
+      "title": "Decision note — Rulings 50–91: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
       "type": "doc",
       "status": "accepted",
       "owner": "@timianmalloo",
@@ -9226,7 +9226,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "140a76d5231c0eb2d84d1eda2f5fcbae940910dbb261ff6878604c4c35d10c7b"
+      "sourceSha256": "e74798e5a6d578825c981c06a02c779a1cb3b76d7c0fba87b604c46dc2f7ea0b"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -18121,5 +18121,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "173974c4e627a42372691d5d17915170eec416c73a6c6d4c1a9bd41537014513"
+  "graphSha256": "c67d986c71db30a1973d424bee3d9d65b1a1a30c79a3a64aef93c562d85d4629"
 };

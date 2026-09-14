@@ -485,3 +485,12 @@
 {"agent": "claude-conductor", "at": 1789392866.3136227, "code": null, "kind": "allowed", "path": ".agents/decisions/copilot-atlas-fleet-45bbc625.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789392866.319694, "code": null, "kind": "allowed", "path": ".agents/log/copilot-atlas-fleet-45bbc625.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789392866.3256953, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789393300.1528878, "code": null, "kind": "allowed", "path": ".agents/decisions/claude-conductor-addendum-c.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789393300.1603959, "code": null, "kind": "allowed", "path": ".agents/log/atlas-production-core-runtime-astra.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789393300.1673963, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789393300.1747046, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789393300.1817098, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789393300.1887105, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789393300.1947727, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789393300.2012823, "code": null, "kind": "allowed", "path": "site/index.html", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789393435.7749352, "code": null, "kind": "allowed", "path": "tools/conductor-join.py", "session": "claude-conductor-addendum-c", "wi": ""}
