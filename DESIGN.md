@@ -899,6 +899,28 @@ your subscription — from session settings*). If the product cannot read the su
 the state reads *bounded by your subscription — not measured here* (Ruling 72, condition 1), never a
 plausible number.
 
+**Erratum after Rulings 104 and 105 (2026-09-14, lane `sessions-accounts`).** The sheet's backend
+list is a list of **accounts**, grouped under their provider with the engine as the sub-line, every
+catalog provider present — a provider with no account is one row reading *no account — Configure…*,
+never hidden. Each row's state is **derived at open** and carried by a word and its reason, never by
+colour alone: *ready* · *needs sign-in* · *not configured* `(<the launch refusal's own sentence>)` —
+the weaker of (launch path observed and installed?, account health as recorded). A selected ready row
+offers *Default for this session* (one radio group); a needs-sign-in claude-code row keeps its
+**Sign in** (Ruling 20). **Create is never disabled by readiness**: with nothing ready the footer
+reads, in `{colors.inferred}`, *"No backend is ready. The session will open; a run will not start until
+one is configured."* — a state, not a refusal. **Configure…** per provider opens one dialog, not a
+wizard: the prerequisite rows (tool · version · where, or the cited install instruction with the
+observed known-good version), the adapter root (editable; a path inside a git checkout is refused with
+the reason beside the field), **Install** (the exact npm line shown before it runs, its log streamed
+into a read-only mono block, the exit code and duration on the result line, or *not recorded* when the
+bound expires), **Sign in** (engine-native, re-probe on return), the account label, and **Write** —
+the sentence *"providers.json written: <path>"* names the file. The composer's decoration line gains
+**account** beside class and tier: *This turn · account: max ▾* lists the session's accounts, a
+non-ready one **disabled with its state word** (never hidden); a choice is an operator row at Send, the
+provenance beside it reads *chosen for this turn* or *session default*. The session-settings popover
+gains *Default account* (a picker over the session's accounts; *no default account — choose one* when
+none) and applies to new turns only. Copy added: see the list at the end of this section.
+
 ### Motion inventory (DX19)
 
 | Moment | Duration | Why |
@@ -937,6 +959,9 @@ Under reduced motion every row is 0ms and every announcement still fires.
 - `Send needs a write scope. Mention the files or folders this run may write, as @path (for example @src/AiDe.Core/) — the lease is derived from your mentions.`
 - `This prompt is a goal block and needs Not in scope.` *(the one content-gap refusal, tier-blind — Ruling 75; a blank Goal or Done when makes a Message, never a refusal, and is spoken at Send)*
 - `Compiled prompt` · `Compiled prompt — updated` · `Drop to attach` · `Attaching files is off for this session.`
+- `Accounts` · `no account — Configure…` · `ready` / `needs sign-in` / `not configured` · `as you recorded it, not probed` · `Default for this session` · `No backend is ready. The session will open; a run will not start until one is configured.`
+- `Configure…` · `Configure <provider>` · `Prerequisites` · `<tool>: <version> at <path>` / `<tool>: not on PATH. Install: <instruction> — known-good <version> (<citation>)` / `<tool>: on PATH at <path>; --version did not answer (not recorded)` · `Adapter root` · `<path> is inside the git checkout at <path>; an adapter install belongs under ~/.aide/adapters, never in a repository` · `Install` · `npm exited <n> in <s> s; installed: <entry>` / `not installed: <entry> is not on disk` / `exit code not recorded (bound <n> s exceeded after <s> s)` · `Sign in` · `Account label` · `Write providers.json` · `providers.json written: <path>` · `Configure a backend from New Session.` *(the binder's refusal names the action)*
+- `account` · `This turn · account: <label>` · `chosen for this turn` / `session default` · `<label> — <state word>` *(a disabled picker row)* · `Default account` · `no default account — choose one`
 - `Editor starting…` · `Editor couldn't start — WebView2 runtime not found.` + `Retry`
 - `Couldn't send — the conductor closed the connection. Your draft is kept.` + `Try again`
 - `Sending block b3 as a goal block, tier T1.` *(announcement)*

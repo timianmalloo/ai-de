@@ -75,12 +75,13 @@ public sealed class TheRunBindingComesFromTheProviderFileTests
         // registry → sheet. The sheet reads THE SAME registry instance the binding will.
         var sheet = new NewSessionSheetViewModel(
             "C:/repo", "w-1", providers.Registry, DateTimeOffset.UnixEpoch,
-            fallbackDefault: engine => providers.FallbackDefaultAccount(engine) is { } f ? new AccountRef(f.Provider, f.Label) : null)
+            fallbackDefault: engine => providers.FallbackDefaultAccount(engine) is { } f ? new AccountRef(f.Provider, f.Label) : null,
+            adapterInstallRoot: AiDe.App.Tests.Sessions.InstalledAdapterRoot.Create(Path.Combine(Path.GetTempPath(), "aide-run-binding-" + Guid.NewGuid().ToString("n"))))
         { TaskClass = "investigate" };
 
         // sheet → the session's ACCOUNTS (Ruling 105): both accounts are selected; the first ready
         // one is the default. No engine id is stored on the session.
-        Assert.Equal(["claude-code"], sheet.EnabledBackends);
+        Assert.Equal(2, sheet.SelectedAccounts.Count);
 
         var created = sheet.Create(DateTimeOffset.UnixEpoch);
         Assert.Equal(2, created.Config.Accounts.Count);

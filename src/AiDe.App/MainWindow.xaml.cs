@@ -281,6 +281,7 @@ public partial class MainWindow : Window
             fallbackDefault: engine => _providers?.FallbackDefaultAccount(engine) is { } fallback
                 ? new AiDe.Core.Sessions.AccountRef(fallback.Provider, fallback.Label)
                 : null,
+            adapterInstallRoot: () => _providers?.AdapterInstallRoot,
             workspaceId: root => root,
             opened: created =>
             {

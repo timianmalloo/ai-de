@@ -30,6 +30,11 @@ namespace AiDe.App.Workbench.Sessions;
 /// <para><b>Sign in stays on the sheet</b> (R13 b2, Ruling 20): it launches the engine's own login,
 /// re-probes, and re-renders the rows in place — the sheet is never left, and no credential is
 /// handled here.</para>
+///
+/// <para><b>Rows are accounts</b> (Ruling 105 (2)): grouped under their provider with the engine as
+/// the sub-line and a state derived at open; a provider with no account is one row, never hidden.
+/// <b>Create is never disabled by readiness</b> (Ruling 104 (3)): with nothing ready the footer says
+/// so in the ruled sentence and the session still opens.</para>
 /// </remarks>
 public static class NewSessionSheetDialog
 {
@@ -157,7 +162,12 @@ public static class NewSessionSheetDialog
         var taskClassState = new TextBlock { FontSize = 12, Margin = new Thickness(8, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
 
         var backends = new StackPanel();
-        AutomationProperties.SetName(backends, "Agent backends");
+        AutomationProperties.SetName(backends, "Accounts");
+
+        // Ruling 104 (3): the footer is a STATE, never a refusal — Create stays enabled.
+        var readiness = new TextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 6, 0, 0) };
+        readiness.SetResourceReference(TextBlock.ForegroundProperty, "InferredBrush");
+        AutomationProperties.SetName(readiness, "Backend readiness");
 
         // RQ5 — THE REASON TRAVELS WITH THE BUTTON. This used to render in a footnote UNDER the
         // buttons, in the vocabulary of the ranking subsystem, about 200px from the field it was
@@ -229,56 +239,23 @@ public static class NewSessionSheetDialog
         {
             backends.Children.Clear();
 
-            if (sheet.Backends.Count == 0)
+            // Ruling 105 (2): rows are ACCOUNTS grouped under their provider, the engine as the
+            // sub-line, the state derived at open — and every catalog provider appears, a provider
+            // with no account as one "no account — Configure…" row (97's nothing-hidden doctrine).
+            foreach (var group in sheet.AccountGroups)
             {
-                // The honest empty state. No provider is configured, so there is nothing to offer —
-                // saying so is different from a list that is empty because something failed.
-                var none = new TextBlock
-                {
-                    Text = "No agent backend is configured. Sessions still open; a run needs one.",
-                    TextWrapping = TextWrapping.Wrap,
-                };
-                none.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
-                backends.Children.Add(none);
-                return;
-            }
+                var heading = new TextBlock { Text = group.Key, FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 8, 0, 2) };
+                heading.SetResourceReference(TextBlock.ForegroundProperty, "TextBrush");
+                backends.Children.Add(heading);
 
-            foreach (var backend in sheet.Backends)
-            {
-                var row = new DockPanel { Margin = new Thickness(0, 2, 0, 2) };
-
-                if (sheet.CanSignIn(backend.EngineId) && !backend.RoutableForThisSession)
+                foreach (var account in group)
                 {
-                    var signIn = new Button
-                    {
-                        Content = "Sign in",
-                        Padding = new Thickness(10, 2, 10, 2),
-                        MinWidth = 80,
-                    };
-                    AutomationProperties.SetName(signIn, $"Sign in to {backend.EngineId}");
-                    signIn.Click += (_, _) =>
-                    {
-                        announce?.Invoke(sheet.SignIn(backend.EngineId));
-                        RenderBackends();
-                        Reflect();
-                    };
-                    DockPanel.SetDock(signIn, Dock.Right);
-                    row.Children.Add(signIn);
+                    backends.Children.Add(AccountRowElement(sheet, account, announce, () => { RenderBackends(); Reflect(); }));
                 }
-
-                var toggle = new CheckBox
-                {
-                    Content = backend.DisplayLabel,
-                    IsChecked = sheet.IsBackendEnabled(backend.EngineId),
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
-                AutomationProperties.SetName(toggle, backend.DisplayLabel);
-                toggle.Checked += (_, _) => sheet.SetBackendEnabled(backend.EngineId, true);
-                toggle.Unchecked += (_, _) => sheet.SetBackendEnabled(backend.EngineId, false);
-                row.Children.Add(toggle);
-
-                backends.Children.Add(row);
             }
+
+            readiness.Text = sheet.ReadinessFooter ?? string.Empty;
+            readiness.Visibility = sheet.ReadinessFooter is null ? Visibility.Collapsed : Visibility.Visible;
         }
 
         name.TextChanged += (_, _) => Reflect();
@@ -327,14 +304,82 @@ public static class NewSessionSheetDialog
         // operator's mentions; a prompt that names none runs read-only.
         body.Children.Add(Label("Lease"));
         body.Children.Add(Muted(NewSessionSheetViewModel.LeaseDisplay));
-        body.Children.Add(Label("Agent backends"));
+        body.Children.Add(Label("Accounts"));
         body.Children.Add(backends);
+        body.Children.Add(readiness);
         body.Children.Add(buttons);
 
         RenderBackends();
         Reflect();
 
         return body;
+    }
+
+    /// <summary>
+    /// One account row: a selection box carrying <c>label · state (reason)</c>, the engine as the
+    /// sub-line, a <i>Default</i> radio for a selected ready row, and Sign in for a needs-sign-in
+    /// claude-code row (Ruling 20).
+    /// </summary>
+    private static FrameworkElement AccountRowElement(
+        NewSessionSheetViewModel sheet, AccountRow account, Action<string>? announce, Action rerender)
+    {
+        var row = new DockPanel { Margin = new Thickness(12, 2, 0, 2) };
+
+        if (account.Account is not null && sheet.CanSignIn(account.EngineId) && account.State == AccountRowState.NeedsSignIn)
+        {
+            var signIn = new Button { Content = "Sign in", Padding = new Thickness(10, 2, 10, 2), MinWidth = 80 };
+            AutomationProperties.SetName(signIn, $"Sign in to {account.EngineId}");
+            signIn.Click += (_, _) =>
+            {
+                announce?.Invoke(sheet.SignIn(account.EngineId));
+                rerender();
+            };
+            DockPanel.SetDock(signIn, Dock.Right);
+            row.Children.Add(signIn);
+        }
+
+        var lines = new StackPanel();
+        var engine = new TextBlock { Text = account.EngineId, FontSize = 12, Margin = new Thickness(22, 0, 0, 0) };
+        engine.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+
+        if (account.Ref is { } reference)
+        {
+            var toggle = new CheckBox
+            {
+                Content = account.DisplayLabel,
+                IsChecked = sheet.IsAccountSelected(reference),
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            AutomationProperties.SetName(toggle, account.DisplayLabel);
+            toggle.Checked += (_, _) => { sheet.SetAccountSelected(reference, true); rerender(); };
+            toggle.Unchecked += (_, _) => { sheet.SetAccountSelected(reference, false); rerender(); };
+            lines.Children.Add(toggle);
+
+            if (account.RoutableForThisSession && sheet.IsAccountSelected(reference))
+            {
+                var isDefault = new RadioButton
+                {
+                    Content = "Default for this session",
+                    GroupName = "default-account",
+                    IsChecked = sheet.DefaultAccount == reference,
+                    Margin = new Thickness(22, 0, 0, 0),
+                    FontSize = 12,
+                };
+                AutomationProperties.SetName(isDefault, $"Default account: {account.AccountLabel}");
+                isDefault.Checked += (_, _) => sheet.DefaultAccount = reference;
+                lines.Children.Add(isDefault);
+            }
+        }
+        else
+        {
+            var none = new TextBlock { Text = account.DisplayLabel, TextWrapping = TextWrapping.Wrap };
+            none.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+            lines.Children.Add(none);
+        }
+
+        lines.Children.Add(engine);
+        row.Children.Add(lines);
+        return row;
     }
 
     private static TextBlock Label(string text)

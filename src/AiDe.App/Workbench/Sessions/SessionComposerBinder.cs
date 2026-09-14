@@ -88,7 +88,8 @@ internal static class SessionComposerBinder
             return Refuse(
                 config, composer, "providers",
                 $"there is no provider file at {ProviderConfiguration.DefaultPath}, "
-                + "so no run binding exists. The session is open; a governed run needs one");
+                + "so no run binding exists. The session is open; a governed run needs one. "
+                + ConfigureAction);
         }
 
         // THE SESSION'S ACCOUNT (Ruling 105): the default, or the one account a session with no
@@ -100,7 +101,7 @@ internal static class SessionComposerBinder
                 config, composer, "accountLabel",
                 config.Accounts.Count == 0
                     ? "this session has no account, so no run binding exists. The session is open; "
-                      + "add one in Session settings"
+                      + "add one in Session settings, or " + ConfigureAction
                     : $"this session has no default account — choose one in Session settings among "
                       + string.Join(", ", config.Accounts.Select(a => a.ToString())));
         }
@@ -161,6 +162,9 @@ internal static class SessionComposerBinder
     }
 
     private const string NotOnScreen = "Its composer is not on screen, so nothing was wired to a run.";
+
+    /// <summary>The action every no-backend refusal names (Ruling 104 (3), condition 3).</summary>
+    internal const string ConfigureAction = "Configure a backend from New Session.";
 
     /// <summary>The composer of the session's open document, or null — recorded as a refusal — when no document is open for it.</summary>
     private static ComposerSurface? OnScreen(WorkbenchShell shell, SessionConfig config)

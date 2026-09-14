@@ -200,6 +200,25 @@ public sealed class TheBinderRecordsWhatItBoundTests : IDisposable
         Assert.Empty(Of(lines, "session-document.bound"));
     }
 
+    /// <summary>Ruling 104 condition 3: the no-provider refusal names the action — Configure a backend from New Session.</summary>
+    [Fact]
+    public void Bind_WithNoProviderFile_NamesConfigureAsTheAction()
+    {
+        var config = Create([MaxWork], MaxWork);
+
+        var (said, lines) = WithShell(shell =>
+        {
+            shell.OpenSessionDocument(config);
+            return SessionComposerBinder.Bind(
+                shell, config, "feature",
+                repositoryRoot: _root, dataDirectory: _root, providers: null, new NeverAffirms());
+        });
+
+        Assert.EndsWith("Configure a backend from New Session..", said, StringComparison.Ordinal);
+        var refused = Assert.Single(Of(lines, "session-document.refused"));
+        Assert.EndsWith("Configure a backend from New Session.", refused.GetProperty("reason").GetString(), StringComparison.Ordinal);
+    }
+
     [Fact]
     public void Bind_WithNoProviderFile_RefusesProvidersNamingThePath()
     {
