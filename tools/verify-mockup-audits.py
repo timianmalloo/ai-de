@@ -85,6 +85,11 @@ WINDOWS_EDGE_PATHS = (
 
 CONSOLE_UNCAUGHT = re.compile(r"CONSOLE.*?\"(Uncaught[^\"]*)\"")
 VERDICT_PLACEHOLDER = re.compile(r'id="verdict"[^>]*>\s*measuring', re.I)
+# DC-200: the in-page audit measures its frame's page box FIRST and, at 0x0, writes "page not
+# rendered" with NO number (the pack mockup-harness template, rev 70). A strip that says so is a
+# finding here too - otherwise a hidden page passes this sweep exactly as it passed the placeholder
+# half before: the strip was updated, so the "update line ran" check is satisfied.
+VERDICT_NOT_RENDERED = re.compile(r'id="(?:verdict|h-audit)"[^>]*>(?:(?!</span>).)*?page not rendered', re.I | re.S)
 
 
 def find_browser() -> str | None:
@@ -132,6 +137,9 @@ def findings_for(browser: str, html_path: Path) -> list[str]:
     if 'id="verdict"' in dom and VERDICT_PLACEHOLDER.search(dom):
         problems.append("the #verdict strip still reads its placeholder (\"measuring...\") after render — its update line never ran")
 
+    if VERDICT_NOT_RENDERED.search(dom):
+        problems.append("the verdict strip reports \"page not rendered\" — a gating selector is hiding the frame; no number was measured (DC-200)")
+
     return problems
 
 
@@ -168,6 +176,22 @@ BROKEN_FIXTURE = """<!doctype html><html><body>
 </body></html>
 """
 
+HIDDEN_FIXTURE = """<!doctype html><html><head><style>[data-restore]{display:none}</style></head>
+<body data-restore="none">
+<span class="checks" id="verdict">measuring&hellip;</span>
+<main class="frame"><button>a control</button></main>
+<script>
+  // Planted DC-200 instance: the gating selector matches <body>, so the frame's page box is
+  // 0x0 while every computed-style number would still report. The ported audit() writes the
+  // "not rendered" verdict and no number; the sweep must read that as red, not as "updated".
+  var box = document.querySelector('.frame').getBoundingClientRect();
+  document.getElementById('verdict').innerHTML = (!box.width || !box.height)
+    ? 'audit: <b class="bad">page not rendered (' + (box.width|0) + 'x' + (box.height|0) + ' page box) — no number is reported</b>'
+    : 'audit: 0 contrast fail';
+</script>
+</body></html>
+"""
+
 HEALTHY_FIXTURE = """<!doctype html><html><body>
 <span class="checks" id="verdict">measuring&hellip;</span>
 <script>
@@ -182,11 +206,14 @@ def run_self_test(browser: str) -> int:
         tmp_path = Path(tmp)
         broken = tmp_path / "broken.html"
         healthy = tmp_path / "healthy.html"
+        hidden = tmp_path / "hidden.html"
         broken.write_text(BROKEN_FIXTURE, encoding="utf-8")
         healthy.write_text(HEALTHY_FIXTURE, encoding="utf-8")
+        hidden.write_text(HIDDEN_FIXTURE, encoding="utf-8")
 
         broken_problems = findings_for(browser, broken)
         healthy_problems = findings_for(browser, healthy)
+        hidden_problems = findings_for(browser, hidden)
 
     ok = True
 
@@ -200,6 +227,16 @@ def run_self_test(browser: str) -> int:
     else:
         print(f"planted breakage caught, as it must be (red observed): {broken_problems}")
 
+    if not any("page not rendered" in p for p in hidden_problems):
+        print(
+            "SELF-TEST FAILED: the planted DC-200 shape (a gating selector hiding the frame, the "
+            f"strip reading \"page not rendered\") was NOT caught: {hidden_problems}",
+            file=sys.stderr,
+        )
+        ok = False
+    else:
+        print(f"planted hidden frame caught, as it must be (red observed): {hidden_problems}")
+
     if healthy_problems:
         print(
             f"SELF-TEST FAILED: the healthy fixture was flagged with no bug planted: {healthy_problems}",
@@ -210,7 +247,7 @@ def run_self_test(browser: str) -> int:
         print("healthy fixture measured clean, as it must be")
 
     if ok:
-        print("self-test passed: the gate fires on the planted DC-147 shape and stays quiet when clean.")
+        print("self-test passed: the gate fires on the planted DC-147 and DC-200 shapes and stays quiet when clean.")
         return 0
 
     return 1

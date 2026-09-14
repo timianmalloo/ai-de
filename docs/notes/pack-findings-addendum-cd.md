@@ -1,7 +1,7 @@
 ---
 id: note-pack-findings-addendum-cd
 title: "Pack findings from the Addenda C/D programme — what belongs in the AI-Forward Pack, with the defect class each one closes"
-type: note
+type: decision-note
 status: accepted
 owner: "@timianmalloo"
 phase: "conductor-addendum-c"
@@ -48,3 +48,12 @@ scripts named are in `tools/` here and are candidates for `docs/ai-forward-pack/
 the join order in `docs/coordination/addendum-cd.md` §Order of operations row 6, the brief clauses
 (claim per edit; placeholders never the register; `start` first; `using var` shells; the terminal
 ledger read at the join).
+
+**Lifted (pack revision 70, 2026-09-14).** The four scripts ship generic under
+`docs/ai-forward-pack/scripts/`; this repo keeps one definition (DM7): `tools/conductor-join.py`,
+`tools/verify-no-conflict-markers.py` and `tools/verify-no-new-console-launches.py` are removed —
+the join reads `docs/coordination/join.json` (checks, the recount and its outcome check, regenerate,
+gates, the Release build, the trailer file), CI and `regenerate-derived.py` call the pack gates —
+and `tools/run-verify-gates.py` remains only as the repo's line over the pack runner, carrying the
+per-gate arguments this repository needs. The register entries that cite the `tools/` paths
+(DC-113, DC-136, DC-170) predate the lift.

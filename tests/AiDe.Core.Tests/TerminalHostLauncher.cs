@@ -21,7 +21,7 @@ namespace AiDe.Core.Tests;
 /// host attaches an agent session — a <c>copilot.exe</c> child and one <c>node.exe</c> MCP server —
 /// to every tab and keeps them after the tab closes. Measured 2026-09-12: two helper launches, two
 /// <c>node.exe</c> born, with or without <c>WT_SESSION</c> in the host; twenty-one tests headless,
-/// none. <c>tools/verify-no-new-console-launches.py</c> keeps it that way.</para>
+/// none. <c>docs/ai-forward-pack/scripts/verify-no-new-console-launches.py</c> keeps it that way.</para>
 ///
 /// <para>Shared rather than duplicated: two suites now need it, and a second hand-rolled copy of
 /// <c>CreateProcessW</c> is the kind of thing that drifts silently.</para>

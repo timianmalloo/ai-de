@@ -76,7 +76,7 @@ ai-forward-pack/
 ├─ research-synthesis.md             ← the research: industry/OSS comparison, reasoning
 │                                       disciplines, and the gap analysis vs your pack
 ├─ adapters/managed-blocks/          ← ready-to-paste CLAUDE.md / AGENTS.md blocks (the wiring)
-├─ scripts/                          ← docs-graph.py (graph mechanics + grounding packets, V18) + docs-explorer-core.js (deterministic browser state/layout) + bounded_process.py (subprocess limits/deadlines) + audit-log.py + prompt-log.py + foundation-check.py + pack-doctor.py + scrub.py + design-lint.py + obsidian-setup.py (Obsidian lens + dependency-free graph analysis) + graphify-setup.py (code knowledge graph + code/doc join)
+├─ scripts/                          ← docs-graph.py (graph mechanics + grounding packets, V18) + docs-explorer-core.js (deterministic browser state/layout) + bounded_process.py (subprocess limits/deadlines) + audit-log.py + prompt-log.py + foundation-check.py + pack-doctor.py + scrub.py + design-lint.py + obsidian-setup.py (Obsidian lens + dependency-free graph analysis) + graphify-setup.py (code knowledge graph + code/doc join) + coord-core.py (the coordination layer) + session-profile.py (the profiler; reads the sub-agent store) + run-verify-gates.py (every gate, one status) + conductor-join.py (the join as a script) + verify-no-conflict-markers.py + verify-no-new-console-launches.py
 ├─ evals/                            ← the pack's own regression suite: golden tasks + objective trajectory assertions per skill
 ├─ ci/docs-health.yml                ← reference GitHub Actions workflow: graph validate + freshness gate + foundation drift
 ├─ knowledge/

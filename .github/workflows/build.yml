@@ -152,8 +152,8 @@ jobs:
       - name: No conflict markers in tracked files
         if: ${{ !cancelled() }}
         run: |
-          python tools/verify-no-conflict-markers.py --self-test
-          python tools/verify-no-conflict-markers.py
+          python docs/ai-forward-pack/scripts/verify-no-conflict-markers.py --self-test
+          python docs/ai-forward-pack/scripts/verify-no-conflict-markers.py
 
       # DC-107: a frame-budget assertion compared a measured p95 against 16.67 ms, a number taken on
       # a developer workstation. The CI runner is ~3x slower, so it failed 38 consecutive runs while
@@ -522,11 +522,11 @@ jobs:
       # default terminal is Windows Terminal, and the tab's agent outlives the test. Code lines only.
       - name: No new-console launches gate — self-test
         if: ${{ !cancelled() }}
-        run: python tools/verify-no-new-console-launches.py --self-test
+        run: python docs/ai-forward-pack/scripts/verify-no-new-console-launches.py --self-test
 
       - name: No test or product code opens a new console
         if: ${{ !cancelled() }}
-        run: python tools/verify-no-new-console-launches.py
+        run: python docs/ai-forward-pack/scripts/verify-no-new-console-launches.py
 
   # ---------------------------------------------------------------------------------------------
   # THE PORTABLE 94% OF THE CORE SUITE, ON LINUX AT 1x.

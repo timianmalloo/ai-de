@@ -35,13 +35,14 @@ For each `CONFLICT` and `REVIEW` row, and for each `changes` entry whose `deploy
 
 **Stage 3 — EVIDENCE (apply, then reconcile).**
 1. `python3 <pack-source>/pack/scripts/pack-apply.py apply --target .` — it applies the map, backs up before every conversion, merges deviations, removes stale copies, re-pastes both managed blocks, merges `.claude/settings.json`, writes `.github/hooks/ai-forward.json`, adds the `.gitignore` lines, advances the installed revision, and records the three `context-budget` baselines (`gate`, `prefix`, `skills`) for this repo.
-2. Reconcile every `CONFLICT` row by hand: merge the repo-local addition into the new pack text (from `docs/ai-forward-pack/conflicts/<path>`), write the result to its destination, delete the parked file. Update the deviation register entry if the addition moved file.
+2. Reconcile every `CONFLICT` row by hand: merge the repo-local addition into the new pack text (from `docs/ai-forward-pack/conflicts/<path>`), write the result to its destination, delete the parked file. Update the deviation register entry if the addition moved file. **Then, before anything else reads the tree, `python3 docs/ai-forward-pack/scripts/verify-no-conflict-markers.py`** on its own line — it is the first check of every resolution, because a marker left in a hand-resolved file is legal text in almost every format and survived a skimmed diff once (DC-136); a derived file is regenerated, never resolved.
 3. Move any paragraphs `CONVERT` retained from `CLAUDE.md` into `AGENTS.md` and remove them from `CLAUDE.md`; delete the `retired/` backups once the diff has been reviewed (they are there to make the review possible, not to be committed forever).
 4. Apply any remaining non-file `deploy` directive from the changelog literally, and log it like any other action.
 5. Run the deployed `context-budget.py gate --update-baseline` again only if step 2 changed an always-on doc.
 
 **Stage 4 — DISCONFIRM (the gate).**
 - `python3 docs/ai-forward-pack/scripts/pack-doctor.py` — every check PASS, or WARN with a reason you can state (`copilot settings` is a user-level choice, not an install defect).
+- `python3 docs/ai-forward-pack/scripts/verify-no-conflict-markers.py` — clean, on its own line (never behind a pipe, CT27).
 - `git diff --stat` — `docs/docs-index.js` absent from the diff; exactly one `AI-FORWARD-PACK:BEGIN` in `AGENTS.md` and one in `CLAUDE.md`; `CLAUDE.md` begins with `@AGENTS.md`; no `.instructions.md` remains for a doc now under `.github/knowledge/`; no file left under `docs/ai-forward-pack/conflicts/`.
 - Run the repo's own controls that touch the front doors (the rewritten parity shim, the deviation register): green, or the reason is in the report.
 - The Release Engineer vetos reporting "done" while a `CONFLICT` or `REVIEW` row is unresolved.

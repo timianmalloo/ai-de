@@ -546,6 +546,9 @@ var PAIRS=[
   ['Hairline between lines',                              'decorative','--border',  '--surface-raised']
 ];
 function audit(){
+  /* DC-200 (pack mockup-harness template, rev 70): the page box is measured FIRST. A gating selector that matches the element carrying the harness state (an unscoped [data-restore] on <body>) hides the whole frame while every number below still computes, and a headless sweep that reads only the verdict strip passes. A hidden frame reports "not rendered" and NO number, never a pass. */
+  var frame0=document.querySelector('.frame'), box0=frame0?frame0.getBoundingClientRect():{width:0,height:0};
+  if(!box0.width||!box0.height){ var tb0=document.getElementById('ctbody'); if(tb0) tb0.innerHTML=''; document.getElementById('verdict').innerHTML='audit: <b class="bad">page not rendered ('+(box0.width|0)+'x'+(box0.height|0)+' page box) — a gating selector is hiding the frame; no number is reported</b>'; return; }
   var tb=document.getElementById('ctbody'), fails=0, rows='', hc=root.dataset.theme==='hc';
   for (var i=0;i<PAIRS.length;i++){
     var p=PAIRS[i], f=tok(p[2]), b=tok(p[3]), r=ratio(f,b), need=THRESH[p[1]], req=p[1]!=='decorative', ok=r>=need-0.005;

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T13:53:10Z",
+  "generated": "2026-09-14T15:04:50Z",
   "audit": [
     {
       "actor": null,
@@ -15595,6 +15595,37 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T13:45:34Z",
       "duration_seconds": 455.0
+    },
+    {
+      "id": "al-01M2G75V5PJKQ1NDASKQ029D64",
+      "shortname": "updatepack-rev70",
+      "datetime": "2026-09-14T15:04:41Z",
+      "session": "updatepack",
+      "prompt": "Run the updatepack skill (--source C:\\projects\\ai-forward — bring the installed AI-Forward Pack from revision 68 to revision 70: revision 69, two worktree defects; revision 70, the Addenda C/D findings — the join script, the gate runner, the marker and console-launch gates, coord-core's rev-list merged label and claim caps, the UTF-8 audit/prompt scripts, the profiler's sub-agent reader, the SessionStart audit hook, the managed block's new rules). Read the source pack/adapters/INSTALL.md (revision 70, six changes entries), diff the installed revision (68), apply the deployment map mechanically with the source's pack-apply.py (managed-block re-paste, stale-copy removal, the .claude/ and .github/ mirrors, the hooks in .claude/settings.json), then the pack doctor and every gate. Repo-specific: decide per script whether tools/run-verify-gates.py, tools/conductor-join.py, tools/verify-no-conflict-markers.py and tools/verify-no-new-console-launches.py stay or delegate to the pack (one definition, DM7); write docs/coordination/join.json per conductor-join.py's contract (recount whole + the two Core halves + the outcome check; the Release build); wire the SessionStart hook beside the re-read guard and prove `audit-log.py start --harness` is consumed once; keep the operator's Bash(git push:*) auto-allow; port the mockup harness page-box check (DC-200) into the mockups' in-page audits, then verify-mockup-audits.py and ui-craft-gate.py docs/mockups green; pack-doctor, docs-graph validate, run-verify-gates, regenerate-derived after the audit entry; record revision 70. Worktree C:\\Projects\\ai-de-chore-updatepack-rev70, branch chore/updatepack-rev70; push, no merge to main.",
+      "summary": "68 → 70 (2026.09.14.1): 25 UPDATE, 13 MERGE, 5 ADD, 3 KEEP, 3 BASELINE, 1 CONFLICT reconciled (context-budget.json: the pack's text differed only in measured baselines; the repo's re-baselined copy kept, prefix 89,364, always-on 47,567, the parked file deleted). Four-script decision (DM7): tools/conductor-join.py, tools/verify-no-conflict-markers.py, tools/verify-no-new-console-launches.py removed — the pack copies cover the repo through docs/coordination/join.json (checks, recount whole + Core portable + Core Windows + the --no-run outcome check, regenerate-derived, the gate line, the Release build, trailer file) and flags; tools/run-verify-gates.py kept as a thin line over the pack runner carrying the per-gate args (verify-test-run --no-run; verify-front-door-exit-evidence --self-test). regenerate-derived CHECKS, build.yml and the TerminalHostLauncher.cs citation repointed. Hook: SessionStart + SubagentStart wired by pack-apply beside the re-read guard; consumed-once proven against the deployed hook + merged audit-log.py (first unmarked append duration_source=session-start-hook, second reads no duration). DC-200: page-box check at the top of audit() in conversation-composer, new-session-sheet, perspective-shell, session-conversation, session-front-door, watcher-observatory (red first: hidden frames still reported numbers, session-front-door FEWER); verify-mockup-audits.py now reads a \"page not rendered\" strip as a finding, self-test extended. Graph: two docs/notes typed `note` (unknown) → decision-note, one link repointed to ui-review-operator-findings-2026-09-13; the front-door-ruling-49 → proof-conductor-front-door link resolves since F5. Findings, not changed: the register's DC-113/DC-136/DC-170 control citations name the old tools/ paths (register untouched per the brief); session-front-door.html as committed reports 15 contrast fail · 8 targets < 24px.",
+      "kind": "skill",
+      "skill": "updatepack",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/ai-forward-pack/INSTALL.md",
+        "docs/coordination/join.json",
+        "tools/run-verify-gates.py",
+        "tools/verify-mockup-audits.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Bring the installed AI-Forward Pack from revision 68 to 70 with the source's pack-apply.py, reconcile the one CONFLICT (context-budget.json — measured baselines, re-baselined here), and land the five repo-specific deploy items: one definition for the four lifted scripts (three tools/ copies removed, join.json + trailer file written, tools/run-verify-gates.py kept as the repo's line over the pack runner), the SessionStart/SubagentStart hook wired with a consumed-once proof against the deployed copies, the DC-200 page-box check ported into all six in-page mockup audits plus the sweep reading \"page not rendered\" as red, the knowledge-graph problems fixed (two notes typed `note` → `decision-note`, one link repointed), revision 70 recorded.",
+      "done_when": "INSTALL.md revision 70; pack-doctor PASS bar the two per-machine WARNs (python3 alias, copilot settings); docs-graph validate 0 problems; python tools/run-verify-gates.py 36 of 36 green (the two pack gates included); verify-mockup-audits.py self-test red-first on the planted DC-200 shape then 17 mockups clean; ui-craft-gate docs/mockups exit 0; Bash(git push:*) kept in .claude/settings.json; no conflicts/ or retired/ left under docs/ai-forward-pack; commits pushed to chore/updatepack-rev70, main untouched.",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-14T14:45:40Z",
+      "duration_seconds": 1141.0
     }
   ],
   "changes": [

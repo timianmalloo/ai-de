@@ -39,7 +39,7 @@ from datetime import datetime, timezone
 # tool prints - `prompt-log.py --help` crashed outright with UnicodeEncodeError (FR-047).
 # The other scripts survived only because their glyphs happen to exist in cp1252, which is
 # luck rather than an invariant, so the guard is applied uniformly.
-for _stream in (sys.stdout, sys.stderr):
+for _stream in (sys.stdin, sys.stdout, sys.stderr):
     if hasattr(_stream, "reconfigure"):
         try:
             _stream.reconfigure(encoding="utf-8", errors="replace")
@@ -206,7 +206,12 @@ def _sibling(name):
 
 
 def cmd_add(args):
-    if args.text:
+    if getattr(args, "file", None):
+        # Pack finding #1: a prompt carrying an arrow or an em dash died in argv under a
+        # cp1252 console. A file is the one path with no console in it.
+        with open(args.file, encoding="utf-8") as handle:
+            text = handle.read()
+    elif args.text:
         text = args.text
     elif args.words:
         text = " ".join(args.words)
@@ -234,7 +239,13 @@ def cmd_add(args):
                    "--prompt-file", "-"]
             for t in (args.tag or []):
                 cmd += ["--tag", t]
-            r = subprocess.run(cmd, input=text, text=True)
+            # The seam this script owns is UTF-8 by construction: the pipe is encoded here
+            # and the child is told to decode it the same way (its own stdin reconfigure
+            # is the second half). Before this, `text=True` used the console code page and
+            # an arrow arrived as "â†’" with no error (pack finding #1).
+            env = dict(os.environ)
+            env["PYTHONIOENCODING"] = "utf-8"
+            r = subprocess.run(cmd, input=text, text=True, encoding="utf-8", env=env)
             if r.returncode == 0 and not args.quiet:
                 print(f"logged to the audit log: {label}")
             return r.returncode
@@ -540,6 +551,8 @@ def build_parser():
     a = sub.add_parser("add", help="log a prompt (to the audit log by default)")
     a.add_argument("words", nargs="*", help="the prompt text (or use --text, or pipe via stdin)")
     a.add_argument("--text", help="the prompt text")
+    a.add_argument("--file", help="read the prompt text from a UTF-8 file (the safe path for "
+                                  "non-ASCII under a Windows console)")
     a.add_argument("--label", help="a short label / shortname (default: derived from the first line)")
     a.add_argument("--session", help="the session id to record on the audit entry (default: prompt-log)")
     a.add_argument("--summary", help="the audit summary (default: 'prompt logged for reuse')")

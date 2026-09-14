@@ -46,14 +46,20 @@ coord doctor                                                   # read the inheri
 **Never install from inside a worktree** — `coord install` refuses there, and the refusal is the point. A linked worktree shares `.git/config` *and* `.git/hooks` with its parent, so it already carries the drivers and the pre-commit floor; an install there does not add a registration, it **overwrites the repository's** with a path inside a tree that WT8 cleanup will delete. The install belongs in the **primary checkout, once per clone**. `coord doctor` in the new tree confirms the inherited registration, and reports `COORD-DRIVER-PATH-FOREIGN` if some earlier session already repointed it.
 
 **Stage 3 — Dispatch with a contract, never a topic.** Every delegation carries, explicitly (GO7, class CTX-F):
-- **the exact goal and its done-when** — the track's plan row, verbatim;
-- **the authored paths it owns**, and the statement that `derived`/`register` paths need no claim;
-- **tier, fan-out cap, and a per-branch budget** — tool calls, tokens, wall clock;
+- **the `start` line first** — `audit-log.py start --session <track-id> --skill <skill>` is the brief's first command, before grounding, so the node's duration is measured from the right instant (DC-190; the host's `SessionStart`/`SubagentStart` hook marks the seam as a backstop);
+- **the exact goal and its done-when** — the track's plan row, verbatim; a row that names a control's trigger **quotes the ADR line**, never a paraphrase (DC-189);
+- **the authored paths it owns**, and the statement that `derived`/`register` paths need no claim — **a `register`-class artifact is never claimed**: append with a placeholder id where the allocator is the join's, and commit (`coord claim` refuses it, DC-163);
+- **claim for the minutes of the edit** — the default TTL, released at once; never `--ttl 3600` for the node's lifetime (two joins queued ~50 min behind one such lease); a genuinely long edit passes `--long-edit <reason>`;
+- **absolute paths only, no `EnterWorktree`/`ExitWorktree`** — the tool refuses when the session cwd is the primary and a background node waited 8,143 s for the refusal (F-25, SP-23);
+- **a multi-line program is a file, then a run**, and **a gate's status is never behind a pipe** (CT27; SP-25 / SP-24);
+- **tier, fan-out cap, a per-branch budget** — tool calls, tokens, wall clock — **and a context ceiling** (400k tokens unless the plan says otherwise) with its hand-off rule: at the ceiling the node splits the slice or `/compact`s rather than continuing (F-14 ext.; SP-01 per node is the measurement);
 - **a convergence condition** — what "enough" is, stated by you, because a research agent's natural exit is "enough evidence" and nobody defined it;
 - **the exit evidence** it must return;
 - **"not in scope"**, naming the neighbouring work it will be tempted by.
 
 A budget with no convergence condition is a timer, not a contract. **A budget firing is a defect signal, not a termination argument** (GO9): when one fires, ask why the estimate was wrong before you raise it.
+
+**A resume message carries the `start` line.** A node resumed by message is a second run nobody marked: six resumed nodes' audit durations stopped at the first run (up to 60,524 s unmeasured, AC-09). The resume brief's first line is the same `audit-log.py start --session <track-id> --skill <skill>`; the profiler's SP-26 flags a resumed node whose span outran its measurement.
 
 **Stage 4 — Compose through seams, never through shared files.** When track B needs something from track A, it records a **seam request** (`coord request add`); A resolves it on its own cadence (`coord request resolve`). Neither blocks, and the seam is recorded rather than negotiated inside a merge. Two tracks that need to edit one authored file do not need a lease — they need a boundary correction, and that is a decision only you make.
 
@@ -65,7 +71,12 @@ A budget with no convergence condition is a timer, not a contract. **A budget fi
 
 **Termination variant:** the number of tracks with unreturned exit evidence, which must strictly decrease. If it does not decrease across two passes, the loop is not converging: stop, report, and re-plan. Ending the loop is not the same as finishing the work, and a plan that cannot converge is a finding.
 
-**Stage 6 — Converge.** Merge in dependency order — upstream first, downstream rebases. After each merge run `coord regen` (a failed regeneration **stays owed** and reports non-zero, because a stale derived artifact looks finished). Run the repo's full gate set on the integrated result: **each track's green is evidence its own gate passed, not that the integration did** (E13). Then close each track: `coord release`, then `coord worktree cleanup` — which **reports by default and deletes only with `--remove`**, and holds any tree that is not clean including untracked, or carries a commit that exists nowhere else.
+**Stage 6 — Converge.** Merge in dependency order — upstream first, downstream rebases. **The join is the script and nothing else:**
+```
+python3 docs/ai-forward-pack/scripts/conductor-join.py <branch> --title "<merge title>" \
+    --audit-shortname join-<track> --audit-summary "<what landed>" --audit-goal "<goal>" --audit-done-when "<done when>"
+```
+It merges, sets the join's own marker, runs **`verify-no-conflict-markers.py` first** (before anything else reads the tree — a hand-resolved file carrying `<<<<<<<` sealed a merge once, DC-136; **a derived file is regenerated, never resolved**), the repo's checks and **one whole-suite recount per join** (timed as `recount_seconds` — joins and recounts were 44.8% of a conductor's active main line and no entry recorded it), appends the join's audit entry at **tier T1, fan-out 0** with its measured duration, regenerates (`coord regen` — a failed regeneration **stays owed** and reports non-zero, because a stale derived artifact looks finished), commits, runs **`run-verify-gates.py`** (every gate, one status) and pushes — each step gated by its exit code, none by a shell line (DC-113's fourth recurrence was a hand-typed join line). A conflict stops it with the file list; resolve by hand, `git add`, `git commit --no-edit`, re-run with `--continue`. The repo's own checks, recount, regenerate and build commands live in `docs/coordination/join.json`. **Each track's green is evidence its own gate passed, not that the integration did** (E13). Then close each track: `coord release`, then `coord worktree cleanup` — which **reports by default and deletes only with `--remove`**, holds any tree that is not clean including untracked or carries a commit that exists nowhere else, and labels a tree *merged* only when `git rev-list --count <default>..<branch>` is 0 (the count is printed; a pushed-but-open branch is HELD, DC-142).
 
 **Never remove a worktree to resolve a conflict** (WT11). If two tracks collided, deleting one side destroys the evidence of what collided.
 
@@ -80,7 +91,8 @@ A budget with no convergence condition is a timer, not a contract. **A budget fi
 - [ ] Every returned exit evidence was **verified**, not accepted.
 - [ ] Seam requests were used for cross-track needs; no file was authored by two tracks.
 - [ ] The loop's termination variant strictly decreased, or the failure to converge was reported as a finding.
-- [ ] Merged in dependency order; `coord regen` clean; the **integrated** gate set green.
+- [ ] Merged in dependency order **by `conductor-join.py`** — the conflict-marker gate first, one recount per join with `recount_seconds` recorded, the join entry at T1 / fan-out 0 with a measured duration; `coord regen` clean; the **integrated** gate set green through `run-verify-gates.py`.
+- [ ] Every brief opened with the `start` line, claimed for the minutes of the edit, never claimed a `register`-class path, never called `EnterWorktree`, and carried a context ceiling with its hand-off rule; every resume carried `start`.
 - [ ] Trees closed with `coord worktree cleanup`; nothing removed to resolve a conflict; every refusal reported with its reason.
 - [ ] Planned vs actual recorded per track.
 - [ ] Status table emitted.

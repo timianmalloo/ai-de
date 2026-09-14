@@ -56,6 +56,8 @@ Idioms by language (use the lightest one that runs):
 
 The PoC **MUST** exercise the **boundary set**, not just the happy path: the empty/null/max/concurrent/malformed/hostile cases relevant to the contract (BoK §II.1). The single most valuable line in a spike is usually the one that probes what the docs *didn't* say.
 
+**An oracle over a recorded run is itself a contract, and it is spiked the same way.** Two measured failures (DC-178, DC-185): an assertion written from the *intended* state failed a green run on residue the harness's own preparation had recorded; and an oracle that asserted only what *did not* happen passed a run that never ended. So, before an oracle over a recorded run ships: **(1) run it against the harness's own recorded dry run** — the record the harness produces when nothing is under test — and read what it asserts against that; **(2) every "what did not happen" oracle first asserts that the run ended** (an exit record, a final status, a terminal event), because absence over an unfinished run is not evidence of anything. An oracle that has not been run against a real record is Inferred, whatever it asserts.
+
 ---
 
 ## 3. What a spike produces (the durable part)

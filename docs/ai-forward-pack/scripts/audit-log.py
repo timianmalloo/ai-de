@@ -39,7 +39,12 @@ import argparse, datetime, html, json, os, re, subprocess, sys
 # tool prints - `prompt-log.py --help` crashed outright with UnicodeEncodeError (FR-047).
 # The other scripts survived only because their glyphs happen to exist in cp1252, which is
 # luck rather than an invariant, so the guard is applied uniformly.
-for _stream in (sys.stdout, sys.stderr):
+# stdin too (pack finding #1, Addenda C/D): a prompt piped in through `--prompt-file -`
+# under a cp1252 console arrived as mojibake ("â†’" for an arrow) and nothing failed. The
+# seam this script owns is set here, by the script, so no caller has to remember
+# PYTHONIOENCODING. A tty stdin on Windows is already UTF-16 console I/O; reconfiguring
+# it is harmless.
+for _stream in (sys.stdin, sys.stdout, sys.stderr):
     if hasattr(_stream, "reconfigure"):
         try:
             _stream.reconfigure(encoding="utf-8", errors="replace")
@@ -331,25 +336,61 @@ def _prune_starts(data):
     return out
 
 
-def record_start(root, session, stamp=None):
+def _marker_key(session, skill=None):
+    """The marker is keyed by session AND skill (pack finding #2, Addenda C/D). Keyed by
+    session alone, `prompt-log.py add` between a skill's `start` and its close consumed
+    the skill's marker and the closing entry measured 16 s of a 3-minute run. A bare
+    `start --session` (no skill) remains the fallback every shipped skill relies on."""
+    return "{0}::{1}".format(session, skill) if skill else str(session)
+
+
+def record_start(root, session, stamp=None, skill=None):
     stamp = stamp or now_iso()
     data = _prune_starts(_read_starts(root))
     if session:
-        data[str(session)] = stamp
+        data[_marker_key(session, skill)] = stamp
     _write_starts(root, data)
     return stamp
 
 
-def consume_start(root, session):
-    """Return the recorded start for this session and clear it, so one marker measures one
-    run. Returns None when there is none -- which degrades to no duration (IO8)."""
-    if not session:
-        return None
+HARNESS_PREFIX = "__harness__:"
+
+
+def record_harness_start(root, harness_id, stamp=None):
+    """The session-start hook's marker (DC-190): keyed to the harness session (and agent),
+    because the hook cannot know the session id a skill will close under."""
+    stamp = stamp or now_iso()
     data = _prune_starts(_read_starts(root))
-    stamp = data.pop(str(session), None)
+    data[HARNESS_PREFIX + str(harness_id)] = stamp
+    _write_starts(root, data)
+    return stamp
+
+
+def consume_start(root, session, skill=None):
+    """Return (stamp, source) for this session and clear the marker, so one marker
+    measures one run. The skill-keyed marker first, then the bare session marker, then -
+    only when neither exists - the newest harness marker the session-start hook wrote,
+    reported as `session-start-hook` so a reader knows the instant was the session's
+    start rather than grounding. Returns (None, None) when there is none, which degrades
+    to no duration (IO8)."""
+    if not session:
+        return None, None
+    data = _prune_starts(_read_starts(root))
+    stamp, source = None, None
+    for key in ([_marker_key(session, skill)] if skill else []) + [str(session)]:
+        stamp = data.pop(key, None)
+        if stamp is not None:
+            source = "start"
+            break
+    if stamp is None:
+        harness = sorted((v, k) for k, v in data.items() if k.startswith(HARNESS_PREFIX))
+        if harness:
+            stamp, key = harness[-1]
+            data.pop(key, None)
+            source = "session-start-hook"
     if stamp is not None:
         _write_starts(root, data)
-    return stamp
+    return stamp, source
 
 
 
@@ -644,7 +685,10 @@ def cmd_start(args):
     persists the run's start stamp keyed by session, so the closing `append` records
     duration_seconds automatically -- no flag to remember, no variable to thread through.
     That is what makes the measurement default-on rather than opt-in."""
-    stamp = record_start(args.root, args.session)
+    if getattr(args, "harness", None):
+        stamp = record_harness_start(args.root, args.harness)
+    else:
+        stamp = record_start(args.root, args.session, skill=getattr(args, "skill", None))
     print(stamp)
     return 0
 
@@ -679,7 +723,8 @@ def cmd_append(args):
     # Front-matter goal-state (CT19): done_when is the terminal condition, and is the PACK-O
     # PRESENCE signal /dream mines (a substantive turn without it skipped the front matter, AL5b).
     for _opt in ("goal", "done_when", "tier"):
-        _v = getattr(args, _opt, None) or base.get(_opt)
+        _v = (_read_field(getattr(args, _opt, None), getattr(args, _opt + "_file", None))
+              or base.get(_opt))
         if _v:
             entry[_opt] = _v
     # CT19 tier + fan-out cap: the ceremony budget the turn declared. fan_out is the CAP it
@@ -722,8 +767,13 @@ def cmd_append(args):
     # so no caller has to remember a flag. Absent/unparseable/skewed -> no duration, never a
     # wrong one (IO8). This closes the gap that forced the optimize-graph back-test to model
     # elapsed time instead of measuring it.
-    _started = (args.started or base.get("started_at")
-                or consume_start(args.root, session))
+    # A `kind:prompt` entry is a RECORD of the operator's words, not a run: it never
+    # consumes a marker (pack finding #2 - `prompt-log.py add` was eating the skill's).
+    _started = args.started or base.get("started_at")
+    if not _started and entry["kind"] != "prompt":
+        _started, _source = consume_start(args.root, session, skill=entry.get("skill"))
+        if _started and _source == "session-start-hook":
+            entry["duration_source"] = _source
     entry.update(duration_fields(_started, entry["datetime"]))
     # P8: per-run spans make fan-out measurable. Summed agent time cannot tell serial from
     # parallel; the union of the intervals can. Unusable spans are dropped and COUNTED, so a
@@ -1174,7 +1224,10 @@ def main():
                        "log is append-only, so the original stays and this is the correction "
                        "(mirrors `change`'s existing --supersedes)")
     ap_a.add_argument("--goal", help="the turn's goal (front matter CT19)")
+    ap_a.add_argument("--goal-file", dest="goal_file", help="read --goal from a UTF-8 file (or - for stdin); "
+                                                            "argv through a Windows console is not UTF-8 (pack finding #1)")
     ap_a.add_argument("--done-when", dest="done_when", help="the terminal condition (front matter CT19); the PACK-O presence signal /dream mines (AL5b)")
+    ap_a.add_argument("--done-when-file", dest="done_when_file", help="read --done-when from a UTF-8 file")
     ap_a.add_argument("--tier", choices=["T0", "T1", "T2"], help="the turn's declared ceremony tier (front matter CT19)")
     ap_a.add_argument("--fan-out", dest="fan_out", type=int, help="the declared fan-out cap: most sub-agents the turn may convene (CT19; 0 at T0, 2 at T1)")
     # Watcher telemetry convention (AL2a): the safe, close-observable deterministic signals a turn
@@ -1268,6 +1321,13 @@ def main():
     ap_st = sub.add_parser("start", help="record this run's start stamp (call at grounding) so the "
                                          "closing `append` records duration automatically (IO1)")
     ap_st.add_argument("--session", help="session id the closing append will use")
+    ap_st.add_argument("--skill", help="key the marker to this skill too, so only an append naming the "
+                                       "same skill consumes it (a bare marker is consumed by any "
+                                       "non-prompt append in the session)")
+    ap_st.add_argument("--harness", metavar="ID", help="the session-start hook's form: a harness-session "
+                                                          "(and agent) marker that an append uses only when it "
+                                                          "has no marker of its own, recorded as "
+                                                          "duration_source=session-start-hook")
 
     args = ap.parse_args()
     dispatch = {

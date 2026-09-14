@@ -18,4 +18,6 @@ You are running the **updatepack** workflow (`knowledge/rigor-protocol.md` appli
 
 **Audit (last action):** `audit-log.py append --shortname "updatepack-r<to>" --session "<id>" --skill updatepack --kind command --prompt "<verbatim>" --summary "<from → to; rows; conflicts reconciled>" --goal "<…>" --done-when "<…>" --tier T1 --fan-out 0`.
 
+After every hand-reconciled CONFLICT, run `python3 docs/ai-forward-pack/scripts/verify-no-conflict-markers.py` on its own line before anything else reads the tree (DC-136; a derived file is regenerated, never resolved), and again at the gate.
+
 ${input}

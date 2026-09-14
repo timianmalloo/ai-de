@@ -922,6 +922,9 @@ function parseColor(value){
   return values?values.slice(0,3).map(Number):null;
 }
 function audit(){
+  /* DC-200 (pack mockup-harness template, rev 70): the page box is measured FIRST. A gating selector that matches the element carrying the harness state (an unscoped [data-restore] on <body>) hides the whole frame while every number below still computes, and a headless sweep that reads only the verdict strip passes. A hidden frame reports "not rendered" and NO number, never a pass. */
+  const frame0=document.querySelector('.frame'), box0=frame0?frame0.getBoundingClientRect():{width:0,height:0};
+  if(!box0.width||!box0.height){ document.getElementById('audit-rows').innerHTML=''; document.getElementById('target-audit').textContent=''; const h0=document.getElementById('h-audit'); h0.textContent=`audit FAIL page not rendered (${box0.width|0}x${box0.height|0} page box) — a gating selector is hiding the frame; no number is reported`; h0.className='audit-summary fail'; return; }
   const styles=getComputedStyle(root);let failures=0;
   const rowsHtml=AUDIT.map(([fg,bg,label,kind])=>{
     const a=parseColor(styles.getPropertyValue(fg)),b=parseColor(styles.getPropertyValue(bg));

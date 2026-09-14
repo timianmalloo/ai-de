@@ -98,7 +98,10 @@ every non-trivial task.
 - **How you write, and how much you take on:** **compress the expression, never the obligation.**
   Simplified technical English — short sentences, common words, active voice, one idea per sentence,
   **result first**. Every shell call carries a one-line intent — the only reasoning trace a profiler can read
-  (CT26). No monologue, no self-encouragement, no rhetorical transitions, and never announce
+  (CT26). **A gate's exit status is never behind a pipe** (`pipefail`, or the gate on its own line; at a
+  join only `run-verify-gates.py` / `conductor-join.py`), **a multi-line program is a file, then a run —
+  never a heredoc**, and **a sub-agent never calls `EnterWorktree`** — three line shapes measured at
+  168 / 70 / 8,143 s and counted by the profiler (CT27). No monologue, no self-encouragement, no rhetorical transitions, and never announce
   a step and then take it; an interim update earns its place only by carrying a verified result, a real
   blocker, a decision, or the next action. But **concision never drops a confidence label, a citation,
   an assumption, a residual risk, or a correction** — and the response channel is compressed while a
@@ -109,7 +112,7 @@ every non-trivial task.
   steps rather than chasing them**; stop when the result is proven. **Proportionality never reaches the
   floors** — a triggered hard veto, the Testing-Strategy union, the E7 surface list, red-first, and the
   audit entries are not discretionary.
-  `.github/instructions/communication-and-task-discipline.instructions.md` (CT1–CT18).
+  `.github/instructions/communication-and-task-discipline.instructions.md` (CT1–CT18, CT27).
 - **Plan the shape before you execute it:** for work beyond two steps, or containing a loop, a
   fan-out, or a triggered gate, model it as an **execution graph** — real dependencies only (delete
   incidental ordering), **shorten the critical path before widening the graph** (`Tₚ ≥ T∞` always),
@@ -140,7 +143,9 @@ every non-trivial task.
   (`audit-log.py start --session <id>`) so the closing audit entry records **duration_seconds**
   automatically — measured, not modeled, with no flag to remember. **One marker measures one run**:
   the closing entry consumes it, so each run re-marks at its own grounding rather than a session
-  marking once (AL4a).
+  marking once (AL4a); the marker is keyed by session **and** skill, a logged prompt never consumes
+  one, and the pack's `SessionStart`/`SubagentStart` hook marks the session seam so an unmarked run
+  still measures from its true start (`duration_source: session-start-hook`).
   `.github/instructions/instrumentation-over-inference.instructions.md` (IO1–IO12).
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Agents in `.github/agents/`; the operating standard in the

@@ -25,6 +25,10 @@ import time
 from pathlib import Path
 
 TTL_DEFAULT = 300
+# DC-163: a lease sized to a node's lifetime turns a shared control into a serial resource
+# (measured: the defect register held for an hour while edited never; two joins queued ~50
+# min). The cap is the ceiling a claim may ask for without saying why.
+TTL_CAP = 900
 SESSION_STALE_SECONDS = 8 * 3600
 COORD_DIRNAME = ".agents"
 SESSION_CONTRACT = "docs/collaboration/session-contracts.md"
@@ -487,6 +491,55 @@ def unique_commits(repo):
     return len([line for line in out.split() if line]), None
 
 
+def default_branch(repo):
+    """The repository's DEFAULT branch, resolved rather than assumed. Returns (name, None)
+    or (None, reason_code).
+
+    The ladder: `refs/remotes/origin/HEAD` (what a clone records) -> a local branch of that
+    name -> the remote-tracking ref of that name -> `main` -> `master`. Nothing is guessed:
+    a repository that resolves none of these reports COORD-NO-DEFAULT-BRANCH and the caller
+    HOLDS, because "merged" cannot be established against a branch nobody named (WT7).
+    """
+    names = []
+    out, err = _git(repo, "symbolic-ref", "-q", "--short", "refs/remotes/origin/HEAD")
+    if not err and (out or "").strip():
+        remote = out.strip()                       # e.g. origin/main
+        names.append(remote.split("/", 1)[1] if "/" in remote else remote)
+    for candidate in names + ["main", "master"]:
+        if not candidate:
+            continue
+        out, err = _git(repo, "rev-parse", "--verify", "--quiet", "refs/heads/" + candidate)
+        if not err and (out or "").strip():
+            return candidate, None
+        out, err = _git(repo, "rev-parse", "--verify", "--quiet",
+                        "refs/remotes/origin/" + candidate)
+        if not err and (out or "").strip():
+            return "origin/" + candidate, None
+    return None, "COORD-NO-DEFAULT-BRANCH"
+
+
+def commits_ahead_of_default(repo, branch):
+    """`git rev-list --count <default>..<branch>` -- the ONLY meaning of "merged" this tool
+    uses. Returns (count, default_name, None) or (None, default_name, reason_code).
+
+    DC-142 (recurrence 2, measured 2026-09-13): the old label was derived from
+    unique_commits(), whose question is "does every commit exist SOMEWHERE else?" A pushed
+    branch answers yes -- every commit is on its remote-tracking ref -- so a frozen tree 21
+    commits ahead of main was printed as `clean, merged, unheld` and would have been deleted
+    by --remove. "Merged" here means merged into the DEFAULT branch, and the count is printed
+    so a reader never has to take the word on trust (IO2).
+    """
+    default, code = default_branch(repo)
+    if code:
+        return None, None, code
+    if not branch:
+        return None, default, "COORD-DETACHED"
+    out, err = _git(repo, "rev-list", "--count", "{}..{}".format(default, branch))
+    if err or not (out or "").strip().isdigit():
+        return None, default, "COORD-NOT-CHECKED-GIT"
+    return int(out.strip()), default, None
+
+
 def staged_paths(repo):
     """Staged paths, NUL-separated. Returns (paths, error).
 
@@ -514,7 +567,13 @@ def _build_parser():
     claim = sub.add_parser("claim", help="declare intent over an artifact set")
     claim.add_argument("--wi", required=True)
     claim.add_argument("--path", required=True)
-    claim.add_argument("--ttl", type=float, default=TTL_DEFAULT)
+    claim.add_argument("--ttl", type=float, default=TTL_DEFAULT,
+                       help="seconds the lease lasts (default {}; capped at {} unless "
+                            "--long-edit names why - a lease is for the MINUTES of the edit, "
+                            "DC-163)".format(TTL_DEFAULT, TTL_CAP))
+    claim.add_argument("--long-edit", dest="long_edit", metavar="REASON",
+                       help="the recorded reason for a --ttl above the cap; it is written "
+                            "into the claim event so a queued peer can read why it waits")
 
     chk = sub.add_parser("check", help="may this session touch this path?")
     chk.add_argument("path")
@@ -556,7 +615,12 @@ def _build_parser():
     wt = sub.add_parser("worktree", help="session worktree lifecycle: new | list | cleanup")
     wt.add_argument("action", choices=["new", "list", "cleanup"])
     wt.add_argument("--branch", help="branch to create; name it for the WORK, not the session")
-    wt.add_argument("--base", help="commit/branch to branch from (default: current HEAD)")
+    wt.add_argument("--base", help="commit/branch to branch from (default: the INVOKING tree's HEAD)")
+    # WT8 + GO14a: without this, `cleanup --remove` adjudicates EVERY worktree in the
+    # repository, which is a wider enforced scope than "clean up my tree" ever states.
+    wt.add_argument("--path", dest="wt_path",
+                    help="cleanup: consider ONLY this worktree. Without it, cleanup "
+                         "adjudicates every worktree in the repository.")
     # `worktree new` is the FIRST command of a session, before AGENT_SESSION is necessarily
     # exported, so the id may be passed directly. Everywhere else the env var remains the
     # convention and this flag simply overrides it.
@@ -564,6 +628,10 @@ def _build_parser():
                     help="session id to register (default: $AGENT_SESSION)")
     wt.add_argument("--remove", action="store_true",
                     help="cleanup: actually delete. Off by default - deletion is irreversible")
+    wt.add_argument("--include-unmerged", dest="include_unmerged", action="store_true",
+                    help="cleanup: also remove a clean tree whose branch has commits NOT on "
+                         "the default branch (a pushed but unmerged branch is HELD by "
+                         "default - DC-142). The count is printed either way.")
     met = sub.add_parser("metrics", help="the four measures this layer exists to move")
     met.add_argument("--json", action="store_true")
     inst = sub.add_parser("install",
@@ -1815,7 +1883,67 @@ def worktree_is_clean(path):
     return not [p for p in (out or "").split("\0") if p.strip()], None
 
 
-def worktree_safety(record, primary, cwd, live_keys, index):
+def base_commit(cwd, repo, base):
+    """Resolve `--base` against the INVOKING worktree, never the primary (class PACK-P).
+
+    `repo` is deliberately the PRIMARY checkout: the coordination record is per repository,
+    which is exactly what `repo_root` exists to answer. But HEAD, @ and every relative ref
+    are per WORKTREE, so `git -C <primary> worktree add ... HEAD` run from a linked worktree
+    silently bases the new tree on the PRIMARY's commit. That is PACK-P one level along --
+    the right primitive for "which repository", used for a question that is "which tree".
+    Branch and tag names resolve identically from either tree, so for those this is only ever
+    a confirmation, never a change.
+
+    MEASURED HARM, and why this is worse than a wrong directory name: a node that had just
+    committed a fix created a tree with `--base HEAD`, silently got the primary's OLDER
+    commit, ran the pre-fix script, saw the pre-fix result, and nearly reported a correct fix
+    as broken. A tool that silently bases work on the wrong commit will be believed.
+
+    Returns (sha, None) or (None, message).
+    """
+    ref = "{}^{{commit}}".format(base)
+    out, err = _git(cwd, "rev-parse", "--verify", "--quiet", ref)
+    if err or not (out or "").strip():
+        # cwd need not be inside the repo (a caller may pass an unrelated directory); the
+        # primary is then the only tree there is, and falling back to it beats guessing.
+        out, err = _git(repo, "rev-parse", "--verify", "--quiet", ref)
+    if err or not (out or "").strip():
+        return None, "not a commit in this repository: {}".format(_safe(base, 80))
+    return out.strip(), None
+
+
+def classify_removals(attempts, after, exists=os.path.isdir):
+    """What ACTUALLY happened to each attempted removal -- read back, never inferred (E14).
+
+    The old summary printed `len(removable) - failed`: a count derived from INTENT, where a
+    git call that returned quietly counted as a success. An operator then reads "removed 4 of
+    4" while a tree is still there, and an over-reporting cleanup is worse than an
+    under-reporting one -- the recovery nobody takes is the one nobody knows is needed.
+
+    REGISTRATION is the discriminator, not the error text, because git de-registers BEFORE it
+    deletes. A delete that fails can therefore leave the tree unregistered AND on disk, and
+    calling that "not removed" tells the operator to retry something git can no longer see.
+    Observed on Windows with a file held open: exit 255, "failed to delete", entry already
+    gone. That state is ORPHANED and must be named, because no worktree command will ever
+    mention it again.
+
+    `attempts` is [(record, err_text_or_None)]; `after` is the post-prune inventory.
+    Returns (removed_paths, refused_pairs, orphaned_pairs).
+    """
+    still_registered = {_worktree_key(r.get("path", "")) for r in (after or [])}
+    removed, refused, orphaned = [], [], []
+    for record, err_text in attempts:
+        path = record.get("path", "")
+        if _worktree_key(path) in still_registered:
+            refused.append((path, err_text or "still registered after the attempt"))
+        elif exists(path):
+            orphaned.append((path, err_text or "directory survived the delete"))
+        else:
+            removed.append(path)
+    return removed, refused, orphaned
+
+
+def worktree_safety(record, primary, cwd, live_keys, index, include_unmerged=False):
     """WT7, in order, fail-safe. Returns (safe, reason).
 
     Every condition is a HARD STOP that reports rather than removes. A cleanup that deletes
@@ -1847,11 +1975,22 @@ def worktree_safety(record, primary, cwd, live_keys, index):
     branch = record.get("branch")
     if branch and index.get(branch, 0) > 1:
         return False, "branch {} is checked out in another tree".format(_safe(branch, 60))
-    return True, "clean, merged, unheld"
+    # DC-142: "merged" is `rev-list --count <default>..<branch> == 0`, never "exists
+    # somewhere else". A pushed, open branch passed every hold above; this one catches it.
+    ahead, default, code = commits_ahead_of_default(path, branch)
+    if code:
+        return False, "cannot establish merged ({}): no default branch resolved".format(code)
+    if ahead > 0:
+        if include_unmerged:
+            return True, "clean, {} commit(s) not on {} - removed on --include-unmerged".format(
+                ahead, default)
+        return False, ("{} commit(s) not on {} - open work; pass --include-unmerged to remove"
+                       .format(ahead, default))
+    return True, "clean, merged into {} (0 ahead), unheld".format(default)
 
 
 def cmd_worktree(root, repo, action, cwd, now, session=None, agent=None,
-                 branch=None, base=None, remove=False):
+                 branch=None, base=None, remove=False, only=None, include_unmerged=False):
     records, err = worktree_inventory(repo)
     if err:
         print("COORD-NOT-CHECKED-GIT: {}".format(_safe(err, 200)))
@@ -1874,10 +2013,17 @@ def cmd_worktree(root, repo, action, cwd, now, session=None, agent=None,
             print("COORD-WORKTREE-EXISTS  {}\n  remedy    cd there, or pick another --branch"
                   .format(_safe(target, 300)))
             return 3
-        args = ["worktree", "add", "-b", name, target]
-        if base:
-            args.append(base)
-        out, err = _git(repo, *args)
+        # ALWAYS resolve explicitly, including the default. With no --base, `git -C
+        # <primary> worktree add` uses the PRIMARY's HEAD while the help promises
+        # "current HEAD" -- so the documented contract and the behaviour disagreed in
+        # exactly the case WT1 makes the normal one. Resolving here makes them agree.
+        sha, base_err = base_commit(cwd, repo, base or "HEAD")
+        if base_err:
+            print("COORD-WORKTREE-BASE-UNRESOLVED: {}\n"
+                  "  remedy    pass a --base that exists (a branch, a tag or a commit)"
+                  .format(base_err))
+            return 2
+        out, err = _git(repo, "worktree", "add", "-b", name, target, sha)
         if err:
             print("COORD-WORKTREE-ADD-FAILED: {}".format(_safe(err, 300)))
             return 4
@@ -1887,8 +2033,10 @@ def cmd_worktree(root, repo, action, cwd, now, session=None, agent=None,
             append_event(root, {"kind": "session-start", "session": session, "tree": "worktree",
                                 "agent": agent or session, "wi": "WI-0", "path": "-",
                                 "at": now, "worktree": _worktree_key(target)})
-        print("worktree ready\n  branch    {}\n  path      {}\n  next      cd {}"
-              .format(name, target, target))
+        print("worktree ready\n  branch    {}\n  path      {}\n  base      {}  ({})"
+              "\n  next      cd {}"
+              .format(name, target, sha[:12], _safe(base or "HEAD of this tree", 60),
+                      target))
         print("  install   NOT needed here: this tree shares .git/config and .git/hooks"
               "\n            with the primary, so it already carries the drivers and the"
               "\n            pre-commit floor. Installing here would OVERWRITE them.")
@@ -1917,7 +2065,8 @@ def cmd_worktree(root, repo, action, cwd, now, session=None, agent=None,
 
     verdicts = []
     for record in records:
-        safe, reason = worktree_safety(record, primary, cwd, live_keys, index)
+        safe, reason = worktree_safety(record, primary, cwd, live_keys, index,
+                                       include_unmerged=include_unmerged)
         verdicts.append((record, safe, reason))
 
     if action == "list":
@@ -1931,6 +2080,25 @@ def cmd_worktree(root, repo, action, cwd, now, session=None, agent=None,
         return 0
 
     # cleanup: reports by default; --remove is the explicit gate on an irreversible act (WT8).
+    #
+    # SCOPE, stated rather than assumed (GO14a). Without --path this adjudicates EVERY
+    # worktree in the repository -- which is wider than the intent that usually reaches
+    # it ("remove the tree I just finished with"). The wide default is kept, because the
+    # orphan sweep is the reason the command exists, but it now SAYS so, and --path gives
+    # the narrow intent somewhere to be expressed.
+    if only:
+        wanted = _worktree_key(only)
+        scoped = [v for v in verdicts if _worktree_key(v[0].get('path', '')) == wanted]
+        if not scoped:
+            print('COORD-WORKTREE-NOT-FOUND  {}\n'
+                  '  remedy    `coord worktree list` shows the paths git knows about'
+                  .format(_safe(only, 300)))
+            return 3
+        verdicts = scoped
+        print('scope   only {}'.format(_safe(only, 200)))
+    else:
+        print('scope   ALL {} worktree(s) in this repository '
+              '(--path <tree> to consider only one)'.format(len(verdicts)))
     removable = [(r, why) for r, safe, why in verdicts if safe]
     held = [(r, why) for r, safe, why in verdicts if not safe]
     # WT12: refusals are printed, because a silent skip is indistinguishable from finding
@@ -1949,21 +2117,43 @@ def cmd_worktree(root, repo, action, cwd, now, session=None, agent=None,
               "irreversible and git cannot undo it, so it is opt-in (WT8):\n"
               "  coord worktree cleanup --remove".format(len(removable)))
         return 0
-    failed = 0
+    attempts = []
     for record, _why in removable:
         out, err = _git(repo, "worktree", "remove", "--force", record.get("path", ""))
+        attempts.append((record, err))
         if err:
-            failed += 1
             print("  FAILED  {}: {}".format(_safe(record.get("path", "?"), 140), _safe(err, 160)))
     # WT9: a hand-deleted directory leaves .git/worktrees/<name> behind and git keeps the
     # name reserved, so the next `worktree add` fails describing a state the filesystem does
     # not show. Prune so the administrative record matches reality, then read it back (E14).
     _git(repo, "worktree", "prune")
     after, err = worktree_inventory(repo)
-    remaining = len(after) if after else "?"
-    print("removed {} of {} tree(s); {} remain".format(
-        len(removable) - failed, len(removable), remaining))
-    return 4 if failed else 0
+    if err or after is None:
+        # PACK-P (the section entry): a verdict with no corpus is not a verdict. The old
+        # line printed a count here regardless, which is the failure this whole fix is
+        # about -- reporting a number nobody measured.
+        print("COORD-NOT-CHECKED-GIT: attempted {} removal(s); the inventory could not be "
+              "read back, so what actually happened is UNKNOWN: {}"
+              .format(len(attempts), _safe(err or "no inventory", 200)))
+        return 4
+    removed, refused, orphaned = classify_removals(attempts, after)
+    # E14: the count is READ BACK, never derived from intent. `len(removable) - failed`
+    # counted attempts that returned quietly as successes, so a tree that survived was
+    # reported as gone -- and an over-reporting cleanup is worse than an under-reporting
+    # one, because the recovery nobody takes is the one nobody knows is needed.
+    for path in refused:
+        print("  NOT REMOVED  {:<44} {}".format(_safe(path[0], 140), _safe(path[1], 160)))
+    for path, why in orphaned:
+        # git de-registers BEFORE deleting, so a directory it could not delete (a live
+        # process holding a file, an open handle) is left behind with NOTHING tracking it:
+        # `worktree list` will never mention it again. Observed: exit 255, "failed to
+        # delete", entry already gone. Say it loudly or it is lost.
+        print("  ORPHANED     {:<44} git DE-REGISTERED it but could not delete the "
+              "directory ({}); no worktree command will mention it again - delete it "
+              "by hand".format(_safe(path, 140), _safe(why, 120)))
+    print("removed {}, not removed {}, orphaned {} (of {} attempted); {} tree(s) remain"
+          .format(len(removed), len(refused), len(orphaned), len(attempts), len(after)))
+    return 4 if (refused or orphaned) else 0
 
 
 
@@ -2731,7 +2921,9 @@ def main(argv=None):
         chosen = getattr(args, "wt_session", None) or session
         return cmd_worktree(root, repo, args.action, os.getcwd(), now,
                             session=chosen, agent=agent or chosen, branch=args.branch,
-                            base=args.base, remove=args.remove)
+                            base=args.base, remove=args.remove,
+                            only=getattr(args, 'wt_path', None),
+                            include_unmerged=getattr(args, 'include_unmerged', False))
 
     if args.cmd == "session" and args.action == "list":
         return cmd_session_list(root, now, args.json)
@@ -2768,14 +2960,39 @@ def main(argv=None):
         return 4
 
     if args.cmd == "claim":
+        # DC-163, two refusals BEFORE the check: neither is a contention verdict.
+        # (1) A `register`-class artifact merges by UNION (its driver is the mechanism), so
+        # a lease on it protects nothing and blocks every join that must append to it.
+        try:
+            klass, _why = classify(root, args.path)
+        except CoordError as exc:
+            print("{}: {}".format(exc.code, exc), file=sys.stderr)
+            return 2
+        if klass == "register":
+            print("COORD-CLAIM-REGISTER-CLASS  {}\n"
+                  "  a register-class artifact merges by union; no lease is needed and one\n"
+                  "  only queues the joins behind it - append (a placeholder id if the\n"
+                  "  allocator is the join's) and commit".format(_safe(args.path, 200)),
+                  file=sys.stderr)
+            return 3
+        # (2) A TTL past the cap needs a recorded reason: the lease is for the minutes of
+        # the edit, and a queued peer reads why it waits from the claim event itself.
+        if args.ttl > TTL_CAP and not args.long_edit:
+            print("COORD-CLAIM-TTL-CAP  --ttl {:g} exceeds the cap of {} s\n"
+                  "  claim for the minutes of the edit (default {} s) and release at once;\n"
+                  "  a genuinely long edit passes --long-edit <reason>".format(
+                      args.ttl, TTL_CAP, TTL_DEFAULT), file=sys.stderr)
+            return 3
         decision = check(root, args.path, session, now)
         if decision["decision"] == "deny":
             append_decision(root, session, agent, args.path, decision)
             print(render(decision))
             return 3
         try:
-            append_event(root, make_event("claim", session, agent, args.wi,
-                                          args.path, now, args.ttl))
+            event = make_event("claim", session, agent, args.wi, args.path, now, args.ttl)
+            if args.long_edit:
+                event["long_edit"] = args.long_edit
+            append_event(root, event)
         except CoordError as exc:
             print("{}: {}".format(exc.code, exc), file=sys.stderr)
             return 2

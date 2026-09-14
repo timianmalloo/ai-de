@@ -14,6 +14,14 @@ Sources (all local, all read-only):
                        ~/.copilot/session-state/<id>/events.jsonl   the full event stream
                        ~/.copilot/settings.json           model / contextTier / effortLevel
   Claude Code          ~/.claude/projects/<slug>/<session>.jsonl    the transcript
+                       ~/.claude/projects/<slug>/<session>/subagents/agent-*.jsonl (+ .meta.json)
+                                                          every sub-agent: model, requests, tokens,
+                                                          tool calls and waits, context, span, resumes
+
+Cost is reported in TOKENS and REQUESTS (the units a subscription-bound operator can act on),
+`_meta.quota` where the harness carries it, and dollars ONLY as an "if API-billed" estimate at
+first-party list rates that are printed beside every figure (LIST_RATES, with the date they
+were cached) - never as a bill.
 
 A repo is selected by path (`--repo <path>`, repeatable). Copilot sessions match on cwd or the
 `owner/name` remote; Claude Code sessions match on the project slug of the repo path and of each
@@ -56,6 +64,39 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # 3.54 over a full Copilot system prompt on claude-opus-4.8), so the figure is a parameter,
 # printed with every estimate, never presented as a measurement (NG6).
 CHARS_PER_TOKEN = 3.54
+
+# First-party list rates, USD per MTok: (input, cache read, cache write 5m, output). Read from
+# the claude-api reference (cached 2026-06-24), not from memory; cache read is 0.1x input and
+# cache write 1.25x except on Fable 5.1 (0.025x). Used ONLY for the "if API-billed" column,
+# printed with the cache date every time, and a model with no row reads "not recorded" rather
+# than being priced as its neighbour (IO8).
+LIST_RATES_CACHED = "2026-06-24"
+LIST_RATES = collections.OrderedDict([
+    ("claude-fable-5-1", (10.0, 0.25, 12.50, 50.0)),
+    ("claude-opus-5", (5.0, 0.50, 6.25, 25.0)),
+    ("claude-sonnet-5", (2.0, 0.20, 2.50, 10.0)),
+])
+
+
+def est_usd(model, uncached_in, cache_read, cache_write, output):
+    """USD at list rates for one usage row, or None when the model has no rate row."""
+    rate = LIST_RATES.get(str(model or ""))
+    if not rate:
+        return None
+    return (uncached_in * rate[0] + cache_read * rate[1] + cache_write * rate[2] + output * rate[3]) / 1e6
+
+
+def est_usd_rows(rows):
+    """(usd, unpriced_requests) over usage rows that carry model/in/cr/cw/out."""
+    usd, unpriced = 0.0, 0
+    for r in rows:
+        v = est_usd(r.get("model"), max((r.get("in") or 0) - (r.get("cr") or 0) - (r.get("cw") or 0), 0),
+                    r.get("cr") or 0, r.get("cw") or 0, r.get("out") or 0)
+        if v is None:
+            unpriced += 1
+        else:
+            usd += v
+    return round(usd, 2), unpriced
 
 # --------------------------------------------------------------------------- catalogs
 # The fix catalog: every finding maps to a pack surface that owns its control. Keep the ids
@@ -119,6 +160,27 @@ FIXES = collections.OrderedDict([
     ("F-13", {"title": "Externalize reasoning by construction: a one-line intent on every shell call",
               "where": "knowledge/communication-and-task-discipline.md CT26; the managed block; agent cards",
               "control": "SP-18 intent-trace coverage per family; below 90% is a finding; the hook and the profiler read the same field"}),
+    ("F-18", {"title": "Read the sub-agent store: every node is a row, and SP-01/SP-07 run per node",
+              "where": "scripts/session-profile.py profile_claude (subagents/agent-*.jsonl + .meta.json)",
+              "control": "a fixture session with a subagents/ dir: the profile's sub_requests equals the store's; "
+                         "SP-07 fires on a 60-tool-call node"}),
+    ("F-19", {"title": "A task notification or local-command record is a continuation, not a human turn",
+              "where": "scripts/session-profile.py (_human_turn); the family table's no_goal",
+              "control": "a fixture notification record opens no turn and SP-09 stays silent on it"}),
+    ("F-20", {"title": "A gate's exit status is never behind a pipe",
+              "where": "adapters/managed-blocks/AGENTS.block.md (the shell rule beside CT26); "
+                       "scripts/run-verify-gates.py; scripts/conductor-join.py",
+              "control": "SP-24 counts gate runs piped into tail/head/grep with no pipefail, and the subset "
+                         "that commit/merge/push on the same line"}),
+    ("F-21", {"title": "A multi-line program is a file, then a run - never a heredoc",
+              "where": "adapters/managed-blocks/AGENTS.block.md; commands/execute-with-coordination (the brief)",
+              "control": "SP-25 counts failed heredoc runs (unexpected EOF, unterminated string, invalid escape)"}),
+    ("F-24", {"title": "A resume message carries the `start` line",
+              "where": "commands/execute-with-coordination (the resume template); scripts/audit-log.py start --skill",
+              "control": "SP-26 flags a resumed node whose store span exceeds its first run by > 30 min"}),
+    ("F-25", {"title": "A node never calls a deferred host tool that the session configuration refuses",
+              "where": "commands/execute-with-coordination (the brief: absolute paths, no EnterWorktree/ExitWorktree)",
+              "control": "SP-23 flags a sub-agent tool wait > 600 s on a non-shell tool"}),
 ])
 
 # Finding catalog: id -> (title, default severity, fix ids). Severity uses the pack scale.
@@ -145,9 +207,89 @@ FINDINGS = collections.OrderedDict([
     ("SP-20", ("Late addition on an unbounded turn: an `/also` that inherited no goal state or fanned out above no tier", "Major", ["F-15"])),
     ("SP-21", ("Model attribution: the recorded setting is not the model that ran", "Major", ["F-16"])),
     ("SP-22", ("Mechanical work at reasoning prices: a closing turn billed as though it needed novelty", "Major", ["F-17"])),
+    ("SP-23", ("Deferred-tool block-then-refuse: a sub-agent waited over 600 s on a non-shell tool", "Major", ["F-25"])),
+    ("SP-24", ("Gate status behind a pipe: a verify/test run piped into tail/head/grep with no pipefail", "Major", ["F-20"])),
+    ("SP-25", ("Failed heredoc runs: a multi-line program passed through the shell and burned the request", "Minor", ["F-21"])),
+    ("SP-26", ("Unmarked resume: a node resumed after a long gap, so its second run set no start marker", "Minor", ["F-24"])),
 ])
 
 INTENT_TOOLS = {"copilot": {"powershell", "bash", "shell"}, "claude": {"Bash", "PowerShell"}}
+
+# SP-24: a gate run (verify-*, a test runner, the gate runner) whose output is piped into a
+# formatter, with no pipefail on the line. Measured: 168 main-line lines in one programme,
+# 102 of them also committing, merging or pushing on the same line; the register recorded 4.
+# The gate must be INVOKED in the segment just before the formatter pipe - a `grep` whose
+# argument merely names verify-x.py is not a gate run (that reading over-counted 7x).
+GATE_INVOKE_RX = re.compile(
+    r"^(?:\S+=\S*\s+)*"                                        # env assignments
+    r"(?:(?:\S*python[\w.]*|py)\s+(?:-[XOu]\s*\S*\s+)*)?"     # an interpreter, optionally
+    r"(?:\S*(?:verify-[\w-]+\.py|run-verify-gates\.py)\b"
+    r"|(?:-m\s+)?pytest\b|dotnet\s+test\b|npm\s+(?:run\s+)?test\b|node\s+--test\b)")
+FORMATTER_RX = re.compile(r"^\s*(tail|head|grep|Select-Object|Select-String|findstr|sort|uniq|wc|cut|awk|sed|tee)\b")
+PIPE_SPLIT_RX = re.compile(r"(?<!\|)\|(?!\|)")
+PIPEFAIL_RX = re.compile(r"pipefail|\$LASTEXITCODE|PIPESTATUS")
+COMMIT_RX = re.compile(r"\bgit\s+(commit|merge|push)\b")
+# SP-25: the shapes a broken heredoc leaves in the tool result.
+HEREDOC_RX = re.compile(r"<<-?\s*['\"]?\w+['\"]?")
+HEREDOC_FAIL_RX = re.compile(r"unexpected EOF|SyntaxError|unterminated (string|triple)|invalid escape|"
+                             r"here-document|EOF while looking|IndentationError", re.I)
+# SP-23: waits on these are shell work, expected to be long; anything else past the bar is a
+# deferred host tool blocking until the main line surfaces it (measured: 8,143 s, refused).
+SHELL_TOOLS = {"Bash", "PowerShell", "powershell", "bash", "shell", "Agent", "Task"}
+DEFERRED_WAIT_S = 600
+RESUME_GAP_S = 1800
+# F-19: these user records are continuations of the turn in flight, never a human turn.
+CONTINUATION_PREFIXES = ("<task-notification>", "<local-command-", "<command-name>", "<command-message>",
+                         "This session is being continued from a previous conversation")
+CONTINUATION_ORIGINS = {"task-notification", "local-command", "compact", "system"}
+
+
+def _human_turn(record, content, text):
+    """Is this user record a HUMAN turn? Verified from the record's own `origin.kind` where the
+    harness writes one; otherwise the text shape. A wake-up carries the harness's words, not
+    the operator's, and counting it as a turn inflated no_goal by 50 of 89 in one programme."""
+    origin = (record.get("origin") or {}).get("kind")
+    if origin == "human":
+        return True
+    if origin in CONTINUATION_ORIGINS or record.get("isMeta"):
+        return False
+    if not isinstance(content, str):
+        return False
+    head = text.lstrip()
+    return not head.startswith(CONTINUATION_PREFIXES)
+
+
+def gate_behind_pipe(cmd):
+    """True when a gate INVOCATION is piped straight into a formatter with no pipefail on the
+    line. The invocation is the last command of the segment before the pipe (after any
+    `&&`, `;` or `(`)."""
+    if PIPEFAIL_RX.search(cmd):
+        return False
+    segments = PIPE_SPLIT_RX.split(cmd)
+    for seg, nxt in zip(segments, segments[1:]):
+        last = re.split(r"&&|;|\(|\n", seg)[-1].strip()
+        if GATE_INVOKE_RX.match(last) and FORMATTER_RX.match(nxt):
+            return True
+    return False
+
+
+def shell_shape_counts(commands, results_by_id):
+    """SP-24 / SP-25 over [(tool_use_id, command)] and {tool_use_id: result_text}. Returns
+    (piped_gate_lines, also_commit, failed_heredocs, evidence_lines)."""
+    piped, also, heredocs, ev = 0, 0, 0, []
+    for tid, command in commands:
+        cmd = str(command or "")
+        if gate_behind_pipe(cmd):
+            piped += 1
+            if COMMIT_RX.search(cmd):
+                also += 1
+                ev.append("gate piped AND committed on one line: " + cmd.strip().replace("\n", " ")[:90])
+            elif len(ev) < 12:
+                ev.append("gate piped: " + cmd.strip().replace("\n", " ")[:90])
+        if HEREDOC_RX.search(cmd) and HEREDOC_FAIL_RX.search(str(results_by_id.get(tid) or "")):
+            heredocs += 1
+            ev.append("heredoc failed: " + str(results_by_id.get(tid)).strip().replace("\n", " ")[:90])
+    return piped, also, heredocs, ev
 
 ORIENTATION_DOCS = ("agents.md", "claude.md", "agent-persona-catalog", "persona-cards", "persona-audit",
                     "agent-body-of-knowledge")
@@ -805,8 +947,114 @@ def _text_of(content):
     return "\n".join(parts)
 
 
+def _tool_result_texts(content):
+    out = {}
+    if isinstance(content, list):
+        for b in content:
+            if isinstance(b, dict) and b.get("type") == "tool_result":
+                c = b.get("content")
+                if isinstance(c, list):
+                    c = "\n".join(str(x.get("text") or "") for x in c if isinstance(x, dict))
+                out[b.get("tool_use_id")] = str(c or "")
+    return out
+
+
+def read_subagents(session_dir):
+    """Every `subagents/agent-*.jsonl` (+ `.meta.json`) under the session's directory, one
+    node row each. This is where 86% of a measured programme's tokens lived while the main
+    transcript's `isSidechain` records held none of them (F-18). Returns (nodes, store_note)."""
+    store = os.path.join(session_dir, "subagents")
+    if not os.path.isdir(store):
+        return [], NOT_RECORDED
+    nodes = []
+    for path in sorted(glob.glob(os.path.join(store, "agent-*.jsonl"))):
+        aid = _basename(path)[len("agent-"):-len(".jsonl")]
+        meta = {}
+        try:
+            with open(path[:-len(".jsonl")] + ".meta.json", encoding="utf-8") as fh:
+                meta = json.load(fh) or {}
+        except (OSError, ValueError):
+            pass
+        recs = _load_events(path)
+        seen, rows, models = set(), [], collections.Counter()
+        seen_tools = set()        # a message's blocks are streamed as separate records; a tool_use id counts once
+        tool_calls, pending, waits = 0, {}, []
+        prompts, first, last, commands, results = [], None, None, [], {}
+        reviews = 0
+        for r in recs:
+            ts = parse_ts(r.get("timestamp"))
+            if ts:
+                first = first or ts
+                last = ts
+            rt = r.get("type")
+            msg = r.get("message") or {}
+            if rt == "user":
+                content = msg.get("content")
+                if isinstance(content, str):
+                    prompts.append(ts)
+                for tid, text in _tool_result_texts(content).items():
+                    results[tid] = text
+                    started, name = pending.pop(tid, (None, None))
+                    if started and ts:
+                        waits.append((name, round((ts - started).total_seconds()), iso(started)))
+                continue
+            if rt != "assistant":
+                continue
+            mid, usage, model = msg.get("id"), msg.get("usage") or {}, msg.get("model")
+            if mid and mid not in seen and usage:
+                seen.add(mid)
+                if model:
+                    models[model] += 1
+                rows.append({"model": model,
+                             "in": (usage.get("input_tokens") or 0) + (usage.get("cache_read_input_tokens") or 0)
+                                   + (usage.get("cache_creation_input_tokens") or 0),
+                             "cr": usage.get("cache_read_input_tokens") or 0,
+                             "cw": usage.get("cache_creation_input_tokens") or 0,
+                             "out": usage.get("output_tokens") or 0})
+            for b in msg.get("content") or []:
+                if isinstance(b, dict) and b.get("type") == "tool_use":
+                    if b.get("id") in seen_tools:
+                        continue
+                    if b.get("id"):
+                        seen_tools.add(b["id"])
+                    tool_calls += 1
+                    name = b.get("name") or "?"
+                    if name in ("Agent", "Task"):
+                        reviews += 1
+                    if b.get("id") and ts:
+                        pending[b["id"]] = (ts, name)
+                    if name in INTENT_TOOLS["claude"]:
+                        commands.append((b.get("id"), (b.get("input") or {}).get("command")))
+        gaps = [round((b - a).total_seconds()) for a, b in zip(prompts, prompts[1:]) if a and b]
+        long_waits = sorted([w for w in waits if w[0] not in SHELL_TOOLS and w[1] > DEFERRED_WAIT_S],
+                            key=lambda w: -w[1])
+        nodes.append({
+            "id": aid, "name": meta.get("description") or meta.get("agentType") or aid,
+            "type": meta.get("agentType"), "depth": int(meta.get("spawnDepth") or 1),
+            "parent": meta.get("parentAgentId"), "tool_use_id": meta.get("toolUseId"),
+            "model": (models.most_common(1)[0][0] if models else None), "requests": len(rows),
+            "tool_calls": tool_calls, "reviews": reviews,
+            "cache_read": sum(r["cr"] for r in rows), "cache_write": sum(r["cw"] for r in rows),
+            "uncached_in": sum(max(r["in"] - r["cr"] - r["cw"], 0) for r in rows),
+            "output": sum(r["out"] for r in rows), "tokens": sum(r["in"] + r["out"] for r in rows),
+            "ctx_max": max([r["in"] for r in rows]) if rows else None,
+            "started": iso(first) if first else None, "ended": iso(last) if last else None,
+            "span_s": round((last - first).total_seconds()) if (first and last) else None,
+            "resumes": max(len(prompts) - 1, 0), "resume_gaps_s": gaps,
+            "long_waits": long_waits[:4], "shell_shapes": shell_shape_counts(commands, results),
+            "est_usd": est_usd_rows(rows)[0] if rows else None,
+            "_rows": rows,
+        })
+    return nodes, "{0} agent file(s)".format(len(nodes))
+
+
 def profile_claude(sess):
     recs = _load_events(sess["path"])
+    quota = NOT_RECORDED
+    for r in recs:
+        m = (r.get("message") or {}).get("_meta") or r.get("_meta") or {}
+        if isinstance(m, dict) and m.get("quota") is not None:
+            quota = m.get("quota")
     title, cwd, cost_state = "", None, None
     for r in recs:
         if r.get("type") == "ai-title":
@@ -817,6 +1065,7 @@ def profile_claude(sess):
             cwd = r.get("cwd")
     turn_idx, T = -1, []
     seen_msg = set()
+    agent_calls = {}          # tool_use id of an Agent/Task call -> turn index (F-18 attribution)
     for r in recs:
         rt = r.get("type")
         if rt not in ("user", "assistant"):
@@ -826,10 +1075,12 @@ def profile_claude(sess):
         ts = parse_ts(r.get("timestamp"))
         if rt == "user" and not side:
             content = msg.get("content")
-            is_human = (r.get("origin") or {}).get("kind") == "human" or isinstance(content, str)
             has_tool_result = isinstance(content, list) and any(
                 isinstance(b, dict) and b.get("type") == "tool_result" for b in content)
             text = _text_of(content)
+            if has_tool_result and turn_idx >= 0:
+                T[turn_idx]["results"].update(_tool_result_texts(content))
+            is_human = _human_turn(r, content, text)
             if is_human and not has_tool_result:
                 turn_idx += 1
                 T.append({"prompt": text[:160].replace("\n", " "), "started": iso(ts), "requests": [],
@@ -838,7 +1089,8 @@ def profile_claude(sess):
                           "asst_text_chars": 0, "asst_msgs": 0, "goal_state": False, "tier": False,
                           "first_asst_seen": False, "nudges": 0, "sub_agents": collections.OrderedDict(),
                           "sub_tools": 0, "sub_orientation_reads": [], "converge_nudges": 0, "models": set(),
-                          "ended": None, "reasoning_chars": 0, "intent_eligible": 0, "intent_with": 0})
+                          "ended": None, "reasoning_chars": 0, "intent_eligible": 0, "intent_with": 0,
+                          "commands": [], "results": {}})
                 m = re.search(r"<command-name>/([\w-]+)</command-name>", text)
                 if m:
                     T[-1]["skills"][m.group(1)] += 1
@@ -898,11 +1150,14 @@ def profile_claude(sess):
                     t["tools"][name] += 1
                     if name in INTENT_TOOLS["claude"]:
                         t["intent_eligible"] += 1
+                        t["commands"].append((b.get("id"), inp.get("command")))
                         if str(inp.get("description") or "").strip():
                             t["intent_with"] += 1
                     if name in ("Agent", "Task"):
                         desc = str(inp.get("description") or inp.get("subagent_type") or "agent")
-                        t["sub_agents"].setdefault("task-" + str(len(t["sub_agents"])), {"name": desc, "tool_calls": 0, "tokens": 0})
+                        key = b.get("id") or "task-" + str(len(t["sub_agents"]))
+                        agent_calls[key] = turn_idx
+                        t["sub_agents"].setdefault(key, {"name": desc, "tool_calls": 0, "tokens": 0})
                     if name == "Read" and path:
                         t["views"][path] += 1
                         if IMAGE_RX.search(path):
@@ -913,6 +1168,31 @@ def profile_claude(sess):
                         t["skills"][str(inp.get("skill") or "?")] += 1
                     if name == "SendMessage" and CONVERGE_RX.search(str(inp.get("message") or "")):
                         t["converge_nudges"] += 1
+    # F-18: the subagents store. Each depth-1 node attaches to the turn that launched it (its
+    # meta.toolUseId is the Agent call's id); a depth-2 review attaches to its parent node.
+    nodes, store_note = read_subagents(os.path.splitext(sess["path"])[0])
+    by_id = {n["id"]: n for n in nodes}
+    for n in nodes:
+        n["reviews"] = sum(1 for m in nodes if m.get("parent") == n["id"])
+    for n in nodes:
+        top = n
+        hops = 0
+        while top.get("parent") in by_id and hops < 8:
+            top = by_id[top["parent"]]
+            hops += 1
+        ti = agent_calls.get(top.get("tool_use_id"))
+        if ti is None or ti >= len(T):
+            continue
+        t = T[ti]
+        for row in n["_rows"]:
+            t["sub_requests"].append(dict(row, main=False, rsn=0, created=None))
+        t["sub_tools"] += n["tool_calls"]
+        entry = t["sub_agents"].setdefault(top.get("tool_use_id"), {"name": top["name"], "tool_calls": 0, "tokens": 0})
+        if n is top:
+            entry.update({"name": n["name"], "duration_s": n["span_s"], "model": n["model"], "requests": n["requests"],
+                          "ctx_max": n["ctx_max"], "resumes": n["resumes"], "long_waits": n["long_waits"]})
+        entry["tool_calls"] += n["tool_calls"]
+        entry["tokens"] += n["tokens"]
     turns = []
     for i, t in enumerate(T):
         main = t["requests"]
@@ -938,8 +1218,31 @@ def profile_claude(sess):
             "converge_nudges": t["converge_nudges"], "sub_orientation_reads": t["sub_orientation_reads"],
             "reasoning_main": sum(r["rsn"] for r in main), "reasoning_chars": t["reasoning_chars"],
             "intent_eligible": t["intent_eligible"], "intent_with": t["intent_with"], "effort": None,
+            "shell_shapes": shell_shape_counts(t["commands"], t["results"]),
+            "est_usd": est_usd_rows(rows)[0] if rows else None,
         })
+    main_rows = [r for t in T for r in t["requests"]]
+    node_rows = [r for n in nodes for r in n["_rows"]]
+    usd_main, unpriced_main = est_usd_rows(main_rows)
+    usd_nodes, unpriced_nodes = est_usd_rows(node_rows)
+    for n in nodes:
+        n.pop("_rows", None)
     facts = {"harness": "claude", "id": sess["id"], "title": title, "cwd": cwd,
+             "requests": {"main": len(main_rows), "subagents": len(node_rows)},
+             "tokens": {"cache_read": sum(r["cr"] for r in main_rows + node_rows),
+                        "cache_write": sum(r["cw"] for r in main_rows + node_rows),
+                        "uncached_in": sum(max(r["in"] - r["cr"] - r["cw"], 0) for r in main_rows + node_rows),
+                        "output": sum(r["out"] for r in main_rows + node_rows)},
+             "quota": quota,
+             "est_usd_if_api_billed": (round(usd_main + usd_nodes, 2) if (main_rows or node_rows) else None),
+             "est_usd_main": usd_main, "est_usd_subagents": usd_nodes,
+             "est_usd_note": "list rates cached {0}; {1} request(s) had no rate row and are unpriced".format(
+                 LIST_RATES_CACHED, unpriced_main + unpriced_nodes),
+             "subagents": {"store": store_note, "agents": len(nodes), "requests": len(node_rows),
+                           "depth1": sum(1 for n in nodes if n["depth"] == 1),
+                           "tool_calls": sum(n["tool_calls"] for n in nodes),
+                           "cache_read": sum(n["cache_read"] for n in nodes), "output": sum(n["output"] for n in nodes)},
+             "nodes": nodes,
              "started": T[0]["started"] if T else None, "updated": sess["updated"],
              "settings": {}, "prefix_chars": None, "prefix_tokens_est": None, "prefix_blocks": [],
              "prefix_note": NOT_RECORDED + " (Claude Code transcripts do not store the system prompt; use `context-budget.py prefix`)",
@@ -1001,7 +1304,7 @@ def detect(session):
         add("SP-06", ev[:6], {"turns": len(ev)}, confidence="Inferred")
     ev = []
     for t in turns:
-        for s in t["sub_agents"]:
+        for s in sorted(t["sub_agents"], key=lambda x: -(x.get("tool_calls") or 0)):
             if (s.get("tool_calls") or 0) > 40 or (s.get("tokens") or 0) > 1000000:
                 ev.append(_ev(t["turn"], "{0}: {1} tool calls, {2:,} tokens, {3}s".format(
                     s.get("name"), s.get("tool_calls"), s.get("tokens") or 0, s.get("duration_s", "?"))))
@@ -1009,6 +1312,34 @@ def detect(session):
             ev.append(_ev(t["turn"], "parent sent {0} converge/stop message(s)".format(t["converge_nudges"])))
     if ev:
         add("SP-07", ev[:8], {"count": len(ev)})
+    # SP-23 / SP-26: per node, from the subagents store (Claude Code).
+    nodes = facts.get("nodes") or []
+    ev = [_ev(None, "{0}: {1} waited {2:,} s at {3}".format(n["name"], w[0], w[1], w[2]))
+          for n in nodes for w in n.get("long_waits") or []]
+    if ev:
+        add("SP-23", ev[:8], {"count": len(ev), "worst_s": max(w[1] for n in nodes for w in n.get("long_waits") or [])})
+    ev = [_ev(None, "{0}: resumed after {1:,} s idle; span {2:,} s (the second run set no marker unless the resume carried `start`)".format(
+        n["name"], max(n["resume_gaps_s"]), n["span_s"] or 0))
+          for n in nodes if n.get("resume_gaps_s") and max(n["resume_gaps_s"]) > RESUME_GAP_S]
+    if ev:
+        add("SP-26", ev[:8], {"count": len(ev)})
+    # SP-24 / SP-25: the shell shapes, main line and nodes together.
+    piped = also = heredocs = 0
+    ev24, ev25 = [], []
+    for t in turns:
+        p, a, h, lines = t.get("shell_shapes") or (0, 0, 0, [])
+        piped, also, heredocs = piped + p, also + a, heredocs + h
+        for line in lines:
+            (ev25 if line.startswith("heredoc") else ev24).append(_ev(t["turn"], line))
+    for n in nodes:
+        p, a, h, lines = n.get("shell_shapes") or (0, 0, 0, [])
+        piped, also, heredocs = piped + p, also + a, heredocs + h
+        for line in lines:
+            (ev25 if line.startswith("heredoc") else ev24).append(_ev(None, n["name"][:24] + ": " + line))
+    if piped:
+        add("SP-24", ev24[:8], {"piped_gate_lines": piped, "also_commit_merge_push": also})
+    if heredocs:
+        add("SP-25", ev25[:8], {"failed_heredocs": heredocs})
     ev = [_ev(t["turn"], r) for t in turns for r in t["sub_orientation_reads"]]
     if ev:
         add("SP-08", ev[:10], {"reads": len(ev)})
@@ -1250,6 +1581,16 @@ def render_markdown(profile):
                       f.get("started"), f.get("updated"), f.get("cwd"),
                       ("~{0:,} est. tokens / {1:,} chars".format(f["prefix_tokens_est"], f["prefix_chars"]) if f.get("prefix_chars") else NOT_RECORDED),
                       f.get("compactions"), _settings_note(f)), ""]
+        if f.get("requests") is not None:
+            tk = f.get("tokens") or {}
+            lines += ["**Cost, in the units that are measured.** requests: main {0:,} \u00b7 sub-agents {1:,}; "
+                      "tokens: cache-read {2:,} \u00b7 cache-write {3:,} \u00b7 uncached in {4:,} \u00b7 output {5:,}; "
+                      "quota: {6}; if API-billed: {7} ({8}); harness cost record: {9}.".format(
+                          f["requests"]["main"], f["requests"]["subagents"], tk.get("cache_read", 0), tk.get("cache_write", 0),
+                          tk.get("uncached_in", 0), tk.get("output", 0),
+                          json.dumps(f.get("quota")) if f.get("quota") != NOT_RECORDED else NOT_RECORDED,
+                          ("est. ${0:,.2f}".format(f["est_usd_if_api_billed"]) if f.get("est_usd_if_api_billed") is not None else NOT_RECORDED),
+                          f.get("est_usd_note", ""), ("${0:,.2f}".format(f["cost_usd"]) if f.get("cost_usd") is not None else NOT_RECORDED)), ""]
         rows = []
         for t in s["turns"]:
             rows.append([t["turn"], t["prompt"][:48].replace("|", "/"), "+".join(t["families"]) or "\u2014", t["main_requests"], _fmt(t["ctx_start"]), _fmt(t["ctx_end"]),
@@ -1257,6 +1598,18 @@ def render_markdown(profile):
                          sum(t["rereads"].values()), "yes" if t["goal_state"] else "no", "yes" if t["tier"] else "no"])
         lines.append(_md_table(["turn", "prompt", "family", "main req", "ctx start", "ctx end", "cache read", "output", "cost AIU", "ttft p90", "wall s", "subs", "re-reads", "goal", "tier"], rows))
         lines.append("")
+        nodes = f.get("nodes") or []
+        if nodes:
+            lines += ["### Nodes (the sub-agent store: {0}; {1} agent(s))".format(f["subagents"]["store"], len(nodes)), "",
+                      _md_table(["node", "type", "depth", "model", "span s", "req", "tools", "reviews", "cache read", "output",
+                                 "ctx max", "resumes", "longest wait", "if API-billed"],
+                                [[n["name"][:48].replace("|", "/"), n.get("type") or "\u2014", n["depth"], n.get("model") or NOT_RECORDED,
+                                  _fmt(n["span_s"]), n["requests"], n["tool_calls"], n["reviews"], _fmt(n["cache_read"]), _fmt(n["output"]),
+                                  _fmt(n["ctx_max"]), n["resumes"],
+                                  ("{0} {1:,} s".format(n["long_waits"][0][0], n["long_waits"][0][1]) if n["long_waits"] else "\u2014"),
+                                  ("est. ${0:,.2f}".format(n["est_usd"]) if n.get("est_usd") is not None else NOT_RECORDED)]
+                                 for n in sorted(nodes, key=lambda x: (x["depth"], x.get("started") or ""))]),
+                      "", "*if API-billed = tokens x first-party list rates cached {0}; the operator on a subscription pays quota, not this.*".format(LIST_RATES_CACHED), ""]
     return "\n".join(lines) + "\n"
 
 
@@ -1379,7 +1732,13 @@ def _index(root, profile):
             len(profile["sessions"]), len(profile["findings"]), top))
 
 
+_RUN_STARTED = iso(_dt.datetime.now(_dt.timezone.utc))
+
+
 def _audit(root, pid, n_sessions, n_findings, session):
+    """The script's own entry. It passes its OWN start (--started), so it never consumes the
+    /session-profiler skill's marker - measured twice: the skill's closing entry read 16 s of a
+    3-minute run because this append had eaten the marker (pack finding #2, Addenda C/D)."""
     script = os.path.join(root, "docs", "ai-forward-pack", "scripts", "audit-log.py")
     if not os.path.isfile(script):
         script = os.path.join(root, "pack", "scripts", "audit-log.py")
@@ -1388,6 +1747,7 @@ def _audit(root, pid, n_sessions, n_findings, session):
     try:
         subprocess.run([sys.executable, script, "append", "--shortname", "session-profile-" + pid, "--kind", "script",
                         "--skill", "session-profiler", "--session", session or "session-profile-job",
+                        "--started", _RUN_STARTED,
                         "--prompt", "session-profile.py profile", "--summary",
                         "Profile {0}: {1} session(s), {2} finding(s)".format(pid, n_sessions, n_findings),
                         "--artifact", "docs/profiles/{0}/profile.md".format(pid)],
