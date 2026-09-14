@@ -1127,3 +1127,23 @@ factory and accepted publication/cleanup semantics. It owns only the existing ei
 S ceiling. MainWindow attachment/replacement/final awaited close must use the actual
 `AtlasReaderFactory` and separately owned Atlas reader, not the borrowed query interfaces.
 Independent actual daemon/MainWindow proof remains a separate fifteen-leaf stage.
+
+## Shown-MainWindow candidate: pending body masked by cleanup
+
+S used all sixteen handoff leaves, cumulative 60/60, without a commit. Three authorized
+files are modified in the fresh handoff tree: MainWindow, WorkbenchShell and
+AtlasSharedHostAdmissionTests. The author run reports 113/115; both shown-window theory
+cases fail after approximately thirty seconds while the outer fixture deletes a still-
+locked `watcher.db`.
+
+Conductor read the exact TRX stacks and the test body. `WorkspaceCore` is owned by a
+`using` inside the asynchronous dispatcher-pumped body; the failing directory deletion
+is outside it. The test awaits startup, owned-lease replacement and closing paths with
+deliberately blocked disposal completions. Which await remains pending is not recorded,
+and the cleanup exception may mask the earlier failure. No duplicate attach, self-await,
+dispatcher shutdown or ownership bug is asserted as the root cause yet.
+
+Owner was asked for a bounded diagnostic/repair pass that records stages and outstanding
+tasks before cleanup, preserves the primary failure, and does not skip disposal, increase
+the thirty-second cap or add sleeps. The Core remains accepted; the uncommitted MainWindow
+candidate and independent real-daemon/window proof are not accepted.

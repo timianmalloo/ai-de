@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T14:59:16Z",
+  "generated": "2026-09-14T15:19:44Z",
   "audit": [
     {
       "actor": null,
@@ -16040,6 +16040,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "4cfb8450a7cda5448d3aa32923d95998fc22d36c",
         "short": "4cfb8450a",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2G81BWGR343H5C3DQT660BY",
+      "shortname": "atlas-shown-window-pending-lifecycle",
+      "datetime": "2026-09-14T15:19:43Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "S16handoffcallsreturnedNOcommit,3filesdirty,113/115. Parentsource/TRXreadshowsbothshown-windowtheories~30.1sfailatouterwatcher.dbdelete; CoreusingisinsideasyncPumpbody. Earlierpendingawait/failureunrecorded; cleanupmaskinghypothesisNOTrootcause. Owneraskedboundedstage/awaiterlifetimediagnosiswithoutskippingcleanup/extendingtimeout. Corejoined459/96accepted; S60/60andindependentwindow15stillgated.",
+      "kind": "command",
+      "skill": null,
+      "tool": "investigation",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Expose the actual shown-window lifecycle failure before repairing the MainWindow handoff.",
+      "done_when": "The primary pending stage and cleanup ownership are observed and an evidence-backed repair is reviewed.",
+      "tier": "T2",
+      "main_calls": 255,
+      "main_budget": 256,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T15:19:04Z",
+      "duration_seconds": 39.0,
+      "git": {
+        "sha": "8004b49f9ba81af91d610cc83e45607a32bf010e",
+        "short": "8004b49f9",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

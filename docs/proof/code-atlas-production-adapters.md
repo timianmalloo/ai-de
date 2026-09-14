@@ -379,3 +379,29 @@ six calls to prove the specific request's client-complete/server-drain distincti
 correct only the demonstrated error. Zero ownership after matching drain, real Git
 add/commit, stale-scope refusal and reusable receipts remain required. A persistent owner
 after drain is not relabelled test timing. App integration gates and Shell remain held.
+
+The request-correlated correction subsequently cleared review and joined as `4cfb8450`.
+The current Core and App/factory joined gates are 459/459 and 96/96. That closed the
+receive-versus-drain oracle gate and released the separately funded Shell handoff.
+
+## Shown-MainWindow handoff candidate remains uncommitted
+
+The handoff writer exhausted its sixteen new leaves (60 cumulative). Its three-file
+MainWindow/WorkbenchShell/test implementation has no commit and is not joined.
+`artifacts/atlas-mainwindow/atlas-mainwindow-final.trx` reports 113/115.
+Conductor directly read both failed results:
+
+- `Handoff_ShownMainWindow_OpenerReplacementAndCloseUseOwnedLease(false)`: about 30.106 s.
+- The same case with `true`: about 30.108 s.
+- Both surface `IOException` for locked `watcher.db` from outer fixture deletion at test
+  line 157, not a recorded earlier await or assertion.
+
+The actual test owns Core inside an asynchronous dispatcher-pumped body and deletes the
+directory outside that body. Primary lifecycle failure versus cleanup masking remains
+unverified. This shown fixture uses real borrowed Core queries and fixture Atlas reader
+ports; it is not the reserved independent actual-daemon/MainWindow proof.
+
+The next diagnosis must expose the exact pending stage/owner and preserve both primary
+and cleanup errors. Skipping cleanup or stretching the timeout cannot establish correct
+startup, workspace replacement or awaited closing. All uncommitted source and raw evidence
+are retained in `C:\Projects\ai-de-atlas-mainwindow-handoff`.
