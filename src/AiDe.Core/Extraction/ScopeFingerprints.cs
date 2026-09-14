@@ -87,7 +87,12 @@ public sealed class ScopeFingerprints
     // truer, knowledge edges. Windows output is unchanged, and the bump is taken on both anyway:
     // this gate cannot tell one platform's behaviour change from the other's, and neither can a
     // workspace that was indexed on one and opened on the other.
-    public const string ExtractorGeneration = "2026-09-10.1";
+    // 2026-09-14.1 — A CONSTANT ONLY, and bumped anyway. `SourceRevision` names the retired fixture
+    // literal (`RetiredFixtureLiteral`, Ruling 98) so the reuse guard can refuse a snapshot stamped
+    // with it; no extractor's output changes. The bump is the gate's trade, taken as the 2026-09-05.1
+    // note explains — and it is not wasted: one re-index on every workspace is exactly the migration
+    // a pre-Ruling-85 store needs to leave `rev-1` behind, so the guard and the generation agree.
+    public const string ExtractorGeneration = "2026-09-14.1";
 
     private const string FileName = "scope-fingerprints.json";
 

@@ -55,7 +55,7 @@ public sealed class WorkbenchAdapterTests
             WorkbenchAdapter.AutomationNames(a.Manager).ToList());
 
         Assert.NotEmpty(names);
-        foreach (var expected in new[] { "Explore", "Domain", "Terminal — pwsh", "Provenance" })
+        foreach (var expected in new[] { "Explore", "Domain", "Terminal — pwsh", "Sources" })
         {
             Assert.Contains(expected, names);
         }
@@ -105,7 +105,7 @@ public sealed class WorkbenchAdapterTests
 
         Assert.Equal(expected, titles.Count);
         Assert.Contains("Explore", titles);
-        Assert.Contains("Provenance", titles);
+        Assert.Contains("Sources", titles);
         Assert.Contains("Graph", titles);
     }
 
@@ -195,10 +195,10 @@ public sealed class WorkbenchAdapterTests
             window.Show();
             adapter.Render();
 
-            service.Apply(new LayoutOperation.CloseSurface("provenance"));
+            service.Apply(new LayoutOperation.CloseSurface("sources"));
             adapter.Render();
 
-            Assert.Contains("provenance", disposed);      // the closed one ended
+            Assert.Contains("sources", disposed);      // the closed one ended
             Assert.DoesNotContain("explore", disposed);   // a surviving one did not
 
             window.Close();

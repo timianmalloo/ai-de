@@ -16,7 +16,7 @@ public sealed class ZoneLayoutServiceTests
     private static WorkbenchLayout FullyPopulated()
     {
         var layout = WorkbenchLayout.Default();                       // Left, Bottom, Center populated; Right empty
-        layout = ZoneLayoutService.OpenPane(layout, S("outline", "inspector"), ZoneId.Right).Layout;
+        layout = ZoneLayoutService.OpenPane(layout, S("outline", "view"), ZoneId.Right).Layout;
         layout.AssertInvariant();
         return layout;
     }

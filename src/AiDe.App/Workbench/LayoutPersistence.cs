@@ -250,9 +250,18 @@ public sealed class LayoutPersistence : IDisposable
         }
     }
 
-    /// <summary>The surface as the report names it: its caption, with the kind's title when that differs.</summary>
+    /// <summary>
+    /// The surface as the report names it: its caption, with the kind's title when that differs —
+    /// or, for a kind the product has retired, the caption and the retirement sentence (the ruling
+    /// and where the content went), since no perspective can be named as its home.
+    /// </summary>
     private static string Caption(DroppedSurface dropped)
     {
+        if (SurfaceContentFactory.RetiredKinds.TryGetValue(dropped.Surface.Kind, out var retired))
+        {
+            return $"{dropped.Surface.Title} ({retired})";
+        }
+
         var kindTitle = SurfaceContentFactory.Kinds.FirstOrDefault(k => string.Equals(k.Kind, dropped.Surface.Kind, StringComparison.Ordinal))?.Title
             ?? dropped.Surface.Kind;
         var caption = string.Equals(dropped.Surface.Title, kindTitle, StringComparison.Ordinal)

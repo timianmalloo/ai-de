@@ -1542,3 +1542,62 @@ merged tree in its self-test form and `RUN-PENDING` form.
 
 **RECORD AS:** Ruling 91 — F5 merges to `main` unrun; the exit run's gesture is performed on the
 current build; Ruling 79's "run on the frozen tree" superseded; Ruling 49 stands.
+
+---
+
+# Rulings 94, 98, 99, 102 — issued by the Owner, filed by lane `sessions-r94-r98-r99-r102` (2026-09-14)
+
+## Provenance
+
+Issued by the **Owner** on the operator's 9:14 AM screenshots (`ui findings 9-14-AM`) and briefed to
+the lane verbatim; filed here by the lane so the gate that requires a defining note for every cited
+ruling can resolve them. The lane's proof is `docs/proof/architecture-recut-and-session-names.md`.
+The numbers between and around these four belong to other lanes and are filed with their slices.
+
+## Ruling 94 — F-C: Architecture default = Left Graph · Center Contexts, Domain · Right empty; the `inspector` kind retires and its three fields fold into the Evidence row
+
+**RULING:** Operator: *"this is the default layout i want … AND we should eliminate the provenance tab."* `ArchitectureDefault()` becomes: **Left** = `[Graph]` at the extent in the operator's saved slot; **Center** = `[Contexts (active), Domain]`; **Right** = empty, collapsed; **Bottom** = empty, collapsed. Evidence (`view`) leaves the default, stays admitted (View menu). The **`inspector` kind is retired from the product** — removed from every allow-list, the descriptor row and `SurfaceContentFactory`; its three fields (origin · extractor · rev, `EvidencePaneViewModel.cs:234`) render as a second muted line under the selected Evidence row (a detail-on-select inside the master; no second pane). Ruling 61's "renders the selected row's detail, never a second list" is satisfied by the row; its owed "two kinds render different content" test is withdrawn with the second kind.
+
+**BECAUSE:** The screenshot (*this is the default layout i want for the architecture view AND we should eliminate the provenance tab.png*) shows exactly Left Graph ~20% · Center Contexts/Domain · no Right strip · Bottom collapsed. "Eliminate" applied to a kind that is only ever a detail half of one pair leaves it with no host — a kind no host admits is dead code (HYG-A), so retirement, not removal from one allow-list.
+
+**SCOPE EFFECT:** Amends Rulings 59 (default) and 61 (pair → master with inline detail); ADR-0032 test 1 extended with `inspector` dropped-with-report from saved envelopes. Lane: Shell. T1 only because of the envelope drop.
+
+**CONDITIONS:** (1) Left's extent is **read from the operator's saved file** — `layout.architecture.zones.json` in the TheTerrace workspace's data directory (Left extent **0.22**, Right 0.22 empty not collapsed, Bottom 0.22 collapsed, Center [contexts active, domain]) — read it and record the value in the proof doc; the Owner says Right = empty, **collapsed** (the ruling wins over the file for Right). (2) A pre-existing saved envelope carrying `inspector` reconciles with a report naming this ruling, not a crash (ADR-0032 test 1's shape). (3) The Graph pane at 0.22 shows no horizontal scrollbar in its own header row — measure; if the scrollbar in the screenshot (y≈1118) is the canvas's own control strip, record it as a finding for the Explore lane (placeholder DC id), not a blocker.
+
+**RECORD AS:** Ruling 94 — Architecture default = Left Graph (0.22) · Center Contexts, Domain · Right and Bottom empty, collapsed; `inspector` retired into the Evidence row's detail line; Rulings 59/61 amended; ADR-0032 test 1 extended.
+
+---
+
+## Ruling 98 — R-1: a snapshot stamped with the retired fixture literal is not reusable; one re-extraction, then the observed HEAD
+
+**RULING:** `Reusable(probe, scopeId)` returns false when the snapshot's `artifact_revision` base equals the retired literal `"rev-1"`, so the next index re-extracts once and stamps the observed HEAD; the literal is named as a constant with the comment that it is a retired fixture, not a revision. (Option "print not recorded for the literal" is refused: printing "not recorded" for a value the store does hold is masking.)
+
+**BECAUSE:** `StoreReader.cs:493-502` reads the stored value; `WorkspaceCore.cs:433-441` reuses on an unchanged fingerprint without opening the snapshot's revision, so Ruling 85's fix cannot reach a pre-85 store — the operator's TheTerrace workspace still shows `rev rev-1` on build 51e806f8 (Verified from their screenshot).
+
+**CONDITIONS:** Red-first: a store whose latest committed snapshot carries `"rev-1"` (base — `SourceRevision.Stamp` appends `+x<generation>`; compare `SourceRevision.Base`) indexes as *re-extracted*, not *reused*, exactly once, and `CurrentSourceRevision()` then equals the passed revision. A store with a real revision stays reused.
+
+**RECORD AS:** Ruling 98 — a `rev-1` snapshot is not reusable; one re-extraction under the observed HEAD; the literal named as a retired fixture.
+
+---
+
+## Ruling 99 — R-2: session names are unique within a workspace by a counter suffix; Create never refuses
+
+**RULING:** The default name `yyyy-MM-dd session` (`NewSessionSheetViewModel.cs:144`) gets ` (2)`, ` (3)`, … when a session of that name already exists in the workspace (all sessions in `SessionConfigStore`, not only open tabs); an operator-typed duplicate gets the same suffix on Create, announced. No refusal; no time-of-day. The later parallel-session slice will use the same rule on its parent's name — expose the rule as one function.
+
+**BECAUSE:** The operator's screenshot (*Screenshot 2026-09-14 090324.png*) shows two tabs "2026-09-14 session" and two "Console — 2026-09-14 session"; the cause is the format alone.
+
+**CONDITIONS:** The Console tab's caption derives from the session name, so it disambiguates for free — test both captions (the session tab's and the Console's).
+
+**RECORD AS:** Ruling 99 — session names unique within a workspace by a counter suffix, over the store; Create never refuses; one rule function.
+
+---
+
+## Ruling 102 — R-5: the task-class list wraps; no horizontal scrollbar
+
+**RULING:** The sheet's task-class descriptions wrap to the list's width; horizontal scrolling is disabled on that list.
+
+**BECAUSE:** The screenshot (*new session needs to allow me to choose what agent acp-mcp choice i want - GHCP Claude Code Codex Grok Gemini.png*) — the task-class list shows a horizontal scrollbar and a clipped description.
+
+**CONDITIONS:** A rendered test at the sheet's default width finds no description with `IsTextTrimmed` and no horizontal scrollbar visible.
+
+**RECORD AS:** Ruling 102 — the task-class list wraps its descriptions; horizontal scrolling disabled.

@@ -1468,7 +1468,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2da989385e7e1bef8f9f9ba33eee69e09ebe1afc9da4653b7c6e5932b4d8618b"
+      "sourceSha256": "96823534bb430d7c4930b0b048a8995bca85c1ca7f70198d41f08b5aaebc5940"
     },
     {
       "id": "adr-0031-second-docking-host",
@@ -1531,7 +1531,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a65d031c84e0f6283f6faef8a71e44b2e6cec181bc78361635f8b309a42b1243"
+      "sourceSha256": "33ae5326b25834d6a938a2fed03059a966b8ab3fb21496108305655aa46d3a3c"
     },
     {
       "id": "adr-0032-perspective-layout-slots",
@@ -1596,7 +1596,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "116e7c1026462bdd38147ded4647ad4a6b612d0d90ece70662864f7962264842"
+      "sourceSha256": "7dccba54581ab9a49b842914bc7d20ba64f99af27f57d7c0f480a0605ecb5269"
     },
     {
       "id": "adr-0033-prompt-compilation-bounded-context",
@@ -1992,7 +1992,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 94 types, 413 members, 73% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 95 types, 418 members, 73% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2005,7 +2005,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6654284f570acc6f17f19fcd3becad39e5737e21de941009c3418921cdc3d5b0"
+      "sourceSha256": "12508bc8d1f3e9311de5dd2568def2c52ce6ceeb8456b1243e1af7a8033bc105"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -2142,7 +2142,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Extraction: 40 types, 104 members, 75% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Extraction: 40 types, 105 members, 75% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2155,7 +2155,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "08c4ac5155467d64fb89332474b46beef295651e9aaf1ee53353fc6519b27bac"
+      "sourceSha256": "41068e2bf16ffaffeb8651fa4919a9a6f163adc19ea6e82aac50c9e2fb47a67a"
     },
     {
       "id": "api-aide-core-facts",
@@ -2267,7 +2267,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation: 33 types, 89 members, 66% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation: 32 types, 87 members, 66% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2280,7 +2280,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d7baf782f688d7ff2cf6960f762036ca47d2ebf58de343f447a0c737f1b3e91e"
+      "sourceSha256": "4103c27f83d98a91f9e7d93a04d8b503f1b651260c6a5e2a8c9e2de86ecc773f"
     },
     {
       "id": "api-aide-core-presentation-composer",
@@ -2392,7 +2392,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Sessions: 28 types, 82 members, 91% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Sessions: 28 types, 84 members, 91% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2405,7 +2405,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7ddfa5fbb93e0921537cf74c48107b0172213bf9223d4eccaa64c92d220b2dff"
+      "sourceSha256": "902de6fecd5e7d32a2e6811aa159f703ac663f9664c965303523a7bd30a6b525"
     },
     {
       "id": "api-aide-core-store",
@@ -2517,7 +2517,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Workbench: 78 types, 151 members, 59% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Workbench: 78 types, 152 members, 59% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2530,7 +2530,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3ab36ba5498499979ac77af33700d2933c0987b6fc2b3c55dc4dbd0652052eba"
+      "sourceSha256": "4fab21f818dce443e4e2c0db53d4813b265a2e1b6971dc4b20e245f5619b9853"
     },
     {
       "id": "api-aide-mcp",
@@ -9317,7 +9317,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e74798e5a6d578825c981c06a02c779a1cb3b76d7c0fba87b604c46dc2f7ea0b"
+      "sourceSha256": "2f02e9cbea2ad667ed54e79c1d276010f8ed70d58d92571b35ec8ab65ff1090b"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -14861,6 +14861,51 @@ window.DOCS_INDEX = {
       "sourceSha256": "70be47bec3d22b82a75fcceb9b51b67671c6eb0175f97f7d178ca72999c2ab77"
     },
     {
+      "id": "proof-architecture-recut-and-session-names",
+      "path": "docs/proof/architecture-recut-and-session-names.md",
+      "title": "Proof Pack — Rulings 99, 102, 98, 94: unique session names, the wrapping task-class list, the retired fixture revision, and the Architecture re-cut",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [],
+      "summary": "Lane sessions-r94-r98-r99-r102, four commits in ruling order 99 → 102 → 98 → 94. Every CONDITION met by a test observed red then green: session names count up \" (2)\", \" (3)\" over the store and both captions disambiguate; the task-class list wraps (extent 485.9 > viewport 444.0 was the red); a \"rev-1\" snapshot re-extracts once then the observed HEAD stands; Architecture = Left Graph 0.22 · Center Contexts, Domain · Right/Bottom empty collapsed, the inspector kind retired with a drop report naming the ruling. Core 2636 → 2638, App 955 → 961. Operator's extent read: 0.22.",
+      "tags": [
+        "proof-pack",
+        "sessions",
+        "layout",
+        "perspective",
+        "architecture",
+        "evidence",
+        "addendum-c",
+        "ruling-94",
+        "ruling-98",
+        "ruling-99",
+        "ruling-102"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0032-perspective-layout-slots",
+          "rel": "tested-by"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "af55010ecbf6f4d525aaea0e764c63000c83ea959843f306df8509bc7ff8cdd2"
+    },
+    {
       "id": "proof-census-controls",
       "path": "docs/proof/census-controls.md",
       "title": "Proof Pack - The census controls (INV-0008 phase 6, DC-147's control, the four legacy mockups)",
@@ -17282,7 +17327,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  A[Session document open: one editor, structure collapsed, compiled collapsed] -->|type prose| B{Draft settles: objective derivable?}\n  A -->|template control: pick a template — B:181 as amended, E1| T[Template fields render as the derived structure, prefilled from the text where possible]\n  T --> E\n  B -->|no| C[Structure stays one collapsed line; a T2 send will mark Goal and Done when]\n  C -->|type more| B\n  C --> E\n  B -->|yes| D[Derived structure expands beneath the editor: Goal · Done when · Not in scope, marked derived]\n  D -->|edit a line inline| D\n  D --> E{@path mention present?}\n  E -->|no| F[Write-scope line: elicitation text; Send → refusal names @path and offers the picker — Ruling 42 intact]\n  F -->|add a mention| E\n  E -->|yes| G[Write-scope line: 'src/…/** — from your mention']\n  G -->|open Compiled disclosure| H[Exactly the outgoing text; no diff, no summary; editor does not shrink]\n  H --> G\n  G -->|Send Ctrl+Enter| I{T2 and a content field empty?}\n  I -->|yes| J[Inline marks on every gap at once; one-line reason each; nothing sent]\n  J -->|fix| D\n  I -->|no| K[Sent: compiled prompt carries the session's tier · fan-out · budget in the CT19 block]\n  K --> K2[Reply streams in the Console canvas; the block joins the Score outline]\n  K2 -->|conductor answers with a drafted template — S-8| K3[Next message's draft: the reply's text with its derived structure inline]\n  K3 --> D\n  K2 -->|operator writes the next message| A\n  A -->|session settings on the header| L[Edit fan-out ceiling / budget for the session; tier is compiled, not set here]\n  L -->|re-validate the current draft| B"
         }
       ],
-      "sourceSha256": "2cb89ddd9033acac94b4834567b775a11e776d172544bcc4baeba64eda7b9bf9"
+      "sourceSha256": "39089fdda8d5b7f4df7e4f51e1ea23b254c2b7e4b95054b07ea25f22f51b1b0f"
     },
     {
       "id": "spec-addendum-d-compile-step",
@@ -18212,5 +18257,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "0205ad626910271ad56a19db082854a4cba4ee0fa7b1e5ae8f4e650a0b88a007"
+  "graphSha256": "bc21f807bb8b85bb874fc6e893e6badccd5a24d088d010ab3043183ea1f19413"
 };

@@ -135,7 +135,7 @@ public sealed record Layout(
         var workspace = new StackNode("stack-workspace",
             [
                 new Surface("explore", "view", "Explore"),
-                new Surface("provenance", "inspector", "Provenance"),
+                new Surface("sources", "view", "Sources"),
                 new Surface("contexts", "contexts", "Contexts"),
                 new Surface("joins", "joins", "Joins"),
             ]);

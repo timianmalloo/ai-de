@@ -110,8 +110,9 @@ We will:
    Evidence; Right: Provenance; Bottom: collapsed) built by the same `WorkbenchLayout.Default()`
    successor host A uses, parameterised by the perspective row. The Architecture graph is a **second
    `CanvasSurface` instance with the kind filter `code · data · architecture` on its neighbourhood
-   query** (Ruling 53) — the same substrate and query, no second store; the `view`/`inspector` pair
-   gains its selection-source seam so `inspector` renders the selected row's detail (US-C6, Ruling 61).
+   query** (Ruling 53) — the same substrate and query, no second store; the `view` master renders
+   the selected row's detail as a line under the row (US-C6 as amended by Ruling 94, which retired
+   the `inspector` half and its selection-source seam).
 5. **Web surfaces in host B share `WebSurfaceHost`** (DC-138's once-gate keyed to the surface's
    lifetime) — the spike observed `Loaded` firing twice on host B's first attach before any presenter
    cycle; see `note-addendum-cd-web-surface-host-sharing`.

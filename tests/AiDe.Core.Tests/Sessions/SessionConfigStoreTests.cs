@@ -36,8 +36,8 @@ public sealed class SessionConfigStoreTests : IDisposable
 
     /// <summary>
     /// Ruling 99: session names are unique within a workspace by a counter suffix, and the rule is
-    /// ONE function — the sheet's default name, an operator-typed duplicate at Create, and Ruling 95's
-    /// parallel session (its parent's name) all call it. Counted over every session the store holds.
+    /// ONE function — the sheet's default name, an operator-typed duplicate at Create, and the later
+    /// parallel-session slice (its parent's name) all call it. Counted over every session the store holds.
     /// </summary>
     [Fact]
     public void UniqueName_CountsUpFromTwo_OverEverySessionInTheStore_AndNeverRefuses()

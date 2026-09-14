@@ -51,7 +51,8 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
         // NON-VACUITY: the replay reached the operator's arrangement (the probe exits 33 otherwise),
         // the prior document rendered unconfigured as the log shows, and the new one loaded.
         // The operator's pre-perspective file drops its six Architecture surfaces — graph, domain,
-        // explore, provenance, contexts, joins — and, since Ruling 84, its four Loomkeeper surfaces
+        // explore, provenance (a kind retired by Ruling 94, reported as such), contexts, joins — and,
+        // since Ruling 84, its four Loomkeeper surfaces
         // — sessions, ledger, leaderboard, board — into the report when read into the Coding slot
         // (ADR-0032 rule 2); the count is on the line, not inferred from the shape.
         Assert.Contains("restore (22:33:53Z replay): applied-saved=True", stdout, StringComparison.Ordinal);

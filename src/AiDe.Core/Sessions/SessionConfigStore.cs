@@ -138,7 +138,7 @@ public sealed class SessionConfigStore
     /// </summary>
     /// <remarks>
     /// Called by the sheet for its default name and for an operator-typed duplicate at Create, and by
-    /// Ruling 95's parallel session on its parent's name — one function, so the three cannot drift.
+    /// the later parallel-session slice on its parent's name — one function, so the three cannot drift.
     /// </remarks>
     public static string UniqueName(string requested, IEnumerable<string> existing)
     {

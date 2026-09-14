@@ -96,7 +96,7 @@ public sealed class ZoneBackedLayoutServiceTests
     public void Restore_FromATree_RebuildsTheZones()
     {
         var svc = Service();
-        svc.Apply(new LayoutOperation.AddSurface(ZonesToTree.RightStackId, new Surface("outline", "inspector", "Outline")));
+        svc.Apply(new LayoutOperation.AddSurface(ZonesToTree.RightStackId, new Surface("outline", "view", "Outline")));
         var saved = svc.Current;
 
         var fresh = Service();
@@ -152,7 +152,7 @@ public sealed class ZoneBackedLayoutServiceTests
         // A shape the position mapper will not recognise for the current 2-column occupancy: 3 columns.
         var a = new StackNode("a", [new Surface("x", "view", "X")]);
         var b = new StackNode("b", [new Surface("y", "canvas", "Y")]);
-        var c = new StackNode("c", [new Surface("z", "inspector", "Z")]);
+        var c = new StackNode("c", [new Surface("z", "view", "Z")]);
         var weird = new Layout(
             new SplitNode("cols", Orientation.Horizontal, [a, b, c], [0.33, 0.34, 0.33]),
             [], ImmutableDictionary<string, StackState>.Empty);
@@ -420,7 +420,7 @@ public sealed class ZoneBackedLayoutServiceTests
     public void ReconcileFromView_WithTwoUnanchorableColumns_RefusesRatherThanGuesses()
     {
         var left = new Surface("left-surface", "view", "L");
-        var right = new Surface("right-surface", "inspector", "R");
+        var right = new Surface("right-surface", "view", "R");
         var bottomSurface = new Surface("terminal-1", "terminal", "Terminal");
 
         var zones = ImmutableDictionary.CreateRange(new[]
