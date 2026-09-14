@@ -213,6 +213,15 @@ summary: >-
 - `red-app-parking-adapter-at-6cb916e4.txt` — the three parking oracles against the adapter at `6cb916e4`: 3 red of 3.
 - `green-core-at-close.txt`, `green-app-at-close.txt` — the suites at close, with L5/L6's measured lines and the display's reach line.
 
-## Gates at close
+## Gates at close (`origin/main` unmoved at `36b7210e` — no merge needed)
 
-*(filled at close.)*
+| Gate | Result |
+|---|---|
+| `dotnet build AiDe.sln -c Debug -p:TreatWarningsAsErrors=true` (Core, App, both test projects) | 0 warnings, 0 errors |
+| `tests/AiDe.Core.Tests` (`--logger trx`) | **2632 passed**, 0 failed, 1 skipped (was 2620 at the branch point; +12: `ZoneLayoutTests` ×2, `ReconcileTests` ×10) |
+| `tests/AiDe.App.Tests` (`--logger trx`) | **952 passed**, 0 failed (was 913 at the branch point; +39 net: the new oracles, the deleted Ruling-47 file's four, the conditional 2560 rows absent on this display) |
+| `python tools/run-verify-gates.py` | **35 of 35 OK** — `verify-test-run` 3584 executed ≥ the baselines; `verify-terminal-host-exit-paths` 5 paths passed (the window-close path over the seeded slot); `verify-cited-controls` 298 resolve; `verify-mockup-audits` 17 mockups 0 findings; `verify-ui-craft-floor` clean |
+| `python tools/regenerate-derived.py` | every derived view current (the docs index 463 entries; the site figures 7 rewritten; the audit render) |
+| `ShellContrastCensusTests` (in the App suite) | the composed shell walked at `6cb916e4`+: 177 pairings, **0 below floor**; the Coding re-cut's copies, the toggle's new name and the View row measured |
+| Commits | `9b5d1062` (Core: the re-cut, F-1, pane identity) · `6cb916e4` (App: the left dock, the copies, the console, the landing, the retirements, DESIGN.md) · `0b372d93` (the three lenses' findings, the records, this pack) · `1a466660` (the audit entry `al-01M2ENW8HCBHPB7XX34VCQEMAD`, the derived views) · the pushed HEAD is the commit that carries this section |
+| Release | rebuilt after the push; the ProductVersion is in the closing report |
