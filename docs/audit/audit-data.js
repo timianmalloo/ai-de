@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T15:24:47Z",
+  "generated": "2026-09-14T17:46:17Z",
   "audit": [
     {
       "actor": null,
@@ -15655,6 +15655,33 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T15:16:30Z",
       "duration_seconds": 496.0
+    },
+    {
+      "id": "al-01M2GGDR8SD3Y5G7MN8BRPVP06",
+      "shortname": "lane-sessions-r94-r98-r99-r102",
+      "datetime": "2026-09-14T17:46:17Z",
+      "session": "sessions-r94-r98-r99-r102",
+      "prompt": "You are a lane node of the AI-DE Conductor programme (repo root C:\\projects\\ai-de; the pack's rules in C:\\projects\\ai-de\\AGENTS.md apply). Work ONLY in your worktree C:\\Projects\\ai-de-lane-sessions-r94-r98-r99-r102 on branch lane/sessions-r94-r98-r99-r102 (based on main dda140ba).",
+      "summary": "Landed Rulings 99, 102, 98, 94 as four commits on lane/sessions-r94-r98-r99-r102 (base dda140ba), each with red-first tests observed red then green. R99: SessionConfigStore.ExistingNames + UniqueName (one rule; \" (2)\", \" (3)\" over the store), the sheet's default and Create use it, NewSessionResult.RenamedFrom announced by the flow; both captions tested on the composed Coding frame (red: four captions read as two). R102: ScrollViewer horizontal scrolling Disabled on the task-class list (red: extent 485.9 > viewport 444.0; IsTextTrimmed is not on .NET 10 WPF, a wrapped-not-clipped measurement stands in). R98: SourceRevision.RetiredFixtureLiteral and Reusable() refuses a snapshot whose base is \"rev-1\" (red: second index reused (0,1) not (1,0)); the extractor generation bumped to 2026-09-14.1 (gate). R94: ArchitectureDefault = Left Graph 0.22 (read from the operator's layout.architecture.zones.json) · Center Contexts, Domain · Right/Bottom empty collapsed; the inspector kind retired (row, builders, EvidenceSelectionSource deleted), its fields a second smaller line under the selected Evidence row (EvidenceRowItem, SelectedDetailLine); RetiredKinds/RestorableKinds so a saved envelope carrying it is dropped with a report naming Ruling 94 (red: dropped=9 with Provenance vanished at the store); spec/ADR text amended; rulings filed in the council note. Tests: Core 2636 -> 2638, App 955 -> 961. Findings: DC placeholders (sessions a: a writer fix does not reach a store the old writer wrote; sessions b: the canvas header's flex row without wrap overflows at 0.22 — Explore lane; sessions c: the store drops an unrestorable kind in silence — open for kinds a newer build wrote). Hygiene: SurfaceContentTests now disposes the ConPTY it builds.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/architecture-recut-and-session-names.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land the Owner's Rulings 99, 102, 98, 94 as four commits in that order on lane/sessions-r94-r98-r99-r102 (base dda140ba): unique session names by a counter, the task-class list wrapping, the retired fixture revision not reusable, and the Architecture default re-cut with the inspector kind retired into the Evidence row.",
+      "done_when": "Each ruling's CONDITIONS met by red-first tests observed red then green; dotnet test on tests/AiDe.App.Tests and tests/AiDe.Core.Tests pass with executed counts recorded before and after (no --update); python tools/run-verify-gates.py green on the committed tree; docs/proof/architecture-recut-and-session-names.md exists with red-first evidence per ruling, the extent read from the operator's file, attended rows and residual risk; the spec/ADR text stating the old Architecture default and the inspector kind amended; the branch pushed; this audit entry appended; coord session ended.",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
+      },
+      "started_at": "2026-09-14T16:31:58Z",
+      "duration_seconds": 4459.0
     }
   ],
   "changes": [
