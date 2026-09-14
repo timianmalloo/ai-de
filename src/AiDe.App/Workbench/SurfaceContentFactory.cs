@@ -101,6 +101,10 @@ public sealed class SurfaceContentFactory(
     /// True for a kind whose content owns a child HWND (canvas, terminal). A windowed kind is
     /// returned UNWRAPPED — see the note at the end of <see cref="Create"/>.
     /// </param>
+    /// <param name="PreferredStackId">
+    /// Optional default destination for a new pane. Existing panes keep their explicit placement;
+    /// null leaves the existing document-placement policy in charge.
+    /// </param>
     public sealed record SurfaceKind(
         string Kind,
         string Title,
@@ -109,7 +113,8 @@ public sealed class SurfaceContentFactory(
         IReadOnlyList<Perspective> Perspectives,
         Instances Instances,
         SurfaceEntry Entry,
-        bool Windowed = false);
+        bool Windowed = false,
+        string? PreferredStackId = null);
 
     /// <summary>
     /// The surface kinds this factory builds — <b>a descriptor list, not a switch arm</b> (Ruling 22).
@@ -132,7 +137,8 @@ public sealed class SurfaceContentFactory(
         new("code-atlas", "Code Atlas",
             "Read the admitted workspace's file inventory, member outline and verified source.",
             static (factory, _) => new Understanding.AtlasLoadingHost(factory.AtlasOwner),
-            Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View")),
+            Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View"),
+            PreferredStackId: ZonesToTree.CenterStackId),
 
         // ── Architecture: the reading host (UC3) ──────────────────────────────────────────────
 
