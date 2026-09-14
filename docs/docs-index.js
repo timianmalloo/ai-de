@@ -2017,7 +2017,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 14 types, 113 members, 94% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 14 types, 114 members, 94% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2030,7 +2030,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "450cf88618b8e75fdd12ce1379466184490fa93bc9327886c01a494e8efac700"
+      "sourceSha256": "363a6171a643e7bf411b68a02064c902fb4b8438cefa27e6d7a5f972a9118d3d"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -2055,7 +2055,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c1ed6ad7ff2a580eaea46dbf91b1e74b5b0a5a6482aaa2367b6a5b765c36b721"
+      "sourceSha256": "f9a33712700795739783e5096bd0720c5035c8eaf8566b02ed926a46c144e5c1"
     },
     {
       "id": "api-aide-core",
@@ -2317,7 +2317,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 49 types, 143 members, 96% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 49 types, 146 members, 96% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2330,7 +2330,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f9e108623745e8f886986a9f76f0a123760407f8335b07787254299d563b13fd"
+      "sourceSha256": "4afa1768127fc6d9e2d712b4753bbe58978b492c5be335a1cfe38a2f2140420e"
     },
     {
       "id": "api-aide-core-projections",
@@ -9356,6 +9356,43 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "67b6351ffc527659f43fcf2c8b6f2ed3bce587e45530107c258f911e0e52638e"
+    },
+    {
+      "id": "note-addendum-c-rulings-96-100-101",
+      "path": "docs/notes/addendum-c-rulings-96-100-101.md",
+      "title": "Decision note — Rulings 96, 100, 101: the compiled prompt's open state, the bookkeeping kinds, a tool-result row's body",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [],
+      "summary": "The Owner's Rulings 96, 100 and 101, filed verbatim as the lane composer-r96-r100-r101 received them, so the proof and the code that cite them can be checked against the words. Filed as a separate note rather than appended to the council-rulings note because a sibling lane appends its own rulings to that note in the same window; the conductor may fold these three in at the join.",
+      "tags": [
+        "decision-note",
+        "ruling",
+        "conductor",
+        "conversation-lane",
+        "composer",
+        "console",
+        "thread"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "refines"
+        },
+        {
+          "to": "proof-composer-compiled-prompt-and-console-rows",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8a1e4f2c2024b6f947d3c729ac668c34cac6268c0c8c9502ca13fee4ad667499"
     },
     {
       "id": "note-addendum-cd-architecture-p1-inputs",
@@ -18261,5 +18298,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "b8899757088701060dfae660a572f96b0a8df2dfc551e35ecb68b7b0b160a13b"
+  "graphSha256": "c6d7e497c3f95ef8dc6002307e73c434415ba21f3911cb164a39f116dcf0c411"
 };

@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation.Sessions: 49 types, 143 members, 96% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation.Sessions: 49 types, 146 members, 96% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation.Sessions`
 
-**49 public types · 143 public members · 96% documented.**
+**49 public types · 146 public members · 96% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -130,6 +130,17 @@ present is the text, whitespace included**: a wire chunk of two newlines is the 
 break between two chunks of one thought (`frames/thought.jsonl:27`), and a blank-means-absent
 reading folded the literal kind into the reasoning (DC-187 (CV-5-3 a)).
 
+
+**A tool result never reads its kind (Ruling 101).** A `tool_call_update` with
+no `title` carries its text in `content[]` — ACP's `ToolCallContent` items,
+`{type: "content", content: {type: "text", text}}` beside `diff` and `terminal`
+items (`frames/write.jsonl:13`, `:11`) — or, for the adapter's Bash results, in a
+`rawOutput` string with no array at all (`frames/read.jsonl:14`); one update carries
+nothing but `_meta` (`read.jsonl:13`). The row reads the first text line and the
+total text bytes, *no text content (n items: types)* when no item carries text, and the
+zero-item form when nothing does — because `tool.result   tool.result` is a row saying
+nothing in the shape of a value (IO: never a plausible wrong number).
+
 ## `ToolStatus`
 
 *enum* — `ConversationItems.cs`
@@ -141,9 +152,9 @@ The status word of a tool item (DESIGN.md, the tool item row): *running · done 
 *record* — `ConversationItems.cs`
 
 One item of a turn's conversation (Ruling 82), in event order: prose, reasoning, a tool call with
-its results, or an event — a non-conversation row (`acp.*`, the conductor's lines,
-stderr, a result whose call is not in this turn) that counts into *N events* and is never
-dropped.
+its results, or an event — a non-conversation row (`acp.*` less the two bookkeeping kinds
+of Ruling 100, the conductor's lines, stderr, a result whose call is not in this turn) that
+counts into *N events* and is never dropped from the Console.
 
 ## `Prose`
 
@@ -192,6 +203,7 @@ review's §7, the Simplifier's veto on D3's run-of-four grouping).
 |---|---|
 | `string CallKind = "tool.call"` | The mapper's `tool_call`. |
 | `string ResultKind = "tool.result"` | The mapper's `tool_call_update`. |
+| `IReadOnlyList<string> BookkeepingKinds =` | The bookkeeping kinds (Ruling 100, the Owner's extension of Ruling 82): `usage_update` and `available_commands_update` as the mapper spells them — `acp.session.update.` plus the wire discriminator (`frames/read.jsonl:… |
 | `IReadOnlyList<ConversationItem> Of(IReadOnlyList<TurnRow> rows, bool live)` | The items of a turn's rows, in the rows' order. : the turn is running or waiting, so a call with no terminal status is *running*, not *interrupted*. |
 | `string StatusWord(ToolStatus status)` | The status word: *running · done · failed · interrupted* — the member's name, lower-cased (the goldens pin the four words). |
 
@@ -630,6 +642,7 @@ ordinals rather than on a clock (DC-107).
 | `string? SplitModeId { get; private set; }` | The mode showing beside it, or null when the canvas is not split. |
 | `bool IsSplit` | Whether the canvas shows two modes side by side (R16 b2, Ruling 21). |
 | `double CanvasSplitWeight { get; private set; }` | The primary mode's share of the canvas split. |
+| `bool CompiledPromptOpen { get; private set; }` | Whether the composer's compiled-prompt disclosure is open — the document's state, not one composer instance's (Ruling 96): collapsed at rest (Ruling 57), and once the operator opens it, open for this document across t… |
 | `ConsoleStreamModel Console { get; } = new()` | The merged stream every lane of this session writes into. |
 | `SessionPermissionSurface Permission { get; } = new()` | Where a lane's permission request becomes visible. |
 | `long Dispatched { get; private set; }` | How many events this document has dispatched. The ordinal R16 b3 is asserted on. |
@@ -639,6 +652,7 @@ ordinals rather than on a clock (DC-107).
 | `void Unsplit()` | Closes the split, leaving the active mode alone in the canvas. |
 | `void SetCanvasSplitWeight(double weight)` | Moves the canvas splitter. Clamped so neither half can vanish. |
 | `void SetComposerWeight(double weight)` | Moves the composer/canvas splitter. Clamped the same way. |
+| `void SetCompiledPromptOpen(bool open)` | Records the compiled-prompt disclosure's state (Ruling 96) — the surface calls this on the operator's toggle, and reads it when it binds a composer. |
 | `void Dispatch(string laneId, string laneName, RunEvent evt)` | Dispatches one lane event: it lands in the merged stream, and a permission request surfaces before the caller can dequeue the next one. |
 | `SessionDocumentEnvelope Envelope()` | This document's restorable state. |
 | `void Restore(SessionDocumentEnvelope envelope)` | Restores a saved envelope. A mode the build no longer offers is dropped rather than resurrected, exactly as `ZoneLayoutStore` drops a surface kind the app cannot provide. |
