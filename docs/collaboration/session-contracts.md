@@ -777,6 +777,21 @@ Canonical zone state replaces legacy stack flags when observed. Old captures/err
 exits remain; default-placement acceptance requires actual new readable default pixels.
 Mainline stays 360 and no main/push/normative/programme acceptance is granted.
 
+Owner turn 62 adds only
+`src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs` to the three placement files,
+and grants eight S leaves, cumulative **84/92**. The source/highlight now fit Center at
+1280/1440, but the complete 218.453-DIP member label has only 171 DIP visible. Preserve
+that red evidence. Stretch outline items within the actual finite viewport and wrap the
+full label without trimming, replacement text or font changes; accessible names remain.
+Measure actual rendered wrapped lines rather than an unconstrained single-line rectangle.
+Selection, focus, virtualization, source geometry, bounds and receipt/Back behavior remain.
+
+The existing unspent UX/SRE/Test two-leaf reviews cover the combined four-file candidate.
+The independent proof's eight conditional calls remain 41/49 after reviewed UI join:
+normal Center default, actual wrapped geometry, no legacy stack-max assertion, and real
+daemon/lifecycle/UIA/capture replay. Mainline ceiling is prospectively 400, without resetting
+prior costs. No extra product, proof, primary/main or programme authority is implied.
+
 ### Core owns
 
 | Path | Why |

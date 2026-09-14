@@ -60,6 +60,18 @@ and restored user placement must remain unchanged. The independent proof cannot 
 that layout; it follows only a reviewed product commit and must demonstrate readable
 default source, selected label and highlight with the real daemon/window journey.
 
+Center-placement measurements now separate two effects. At 1280 and 1440, source text
+and highlight fit the respective 256.94/346.54-DIP source viewports with unchanged 13-DIP
+fonts. The selected outline label remains clipped: 218.453 DIP required, 171 DIP visible.
+Only those two label oracles fail in the 118/120 affected run; the separately executed
+Sessions namespace is 121/121. Fixtures and dispatchers cleaned up.
+
+Owner turn 62 permits the one additional ReaderView file for finite-width, untrimmed
+outline wrapping. The old single-line glyph rectangle cannot prove the new layout;
+actual wrapped glyph lines and accessible/full label text must be checked. No reader
+source-grid/font/window-size or Core change is authorized. The candidate remains
+uncommitted and unaccepted until combined geometry/lifecycle/placement gates clear.
+
 This is an incomplete production Proof Pack. Addendum E remains candidate. No primary-main
 integration or push is claimed. The private proposal/TheTerrace corpus is not part of this
 delivery record.

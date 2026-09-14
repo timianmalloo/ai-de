@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T18:25:52Z",
+  "generated": "2026-09-14T18:51:35Z",
   "audit": [
     {
       "actor": null,
@@ -16337,6 +16337,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "10c772964fd75405981833d0a05eb9f57293ce89",
         "short": "10c772964",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GM59F2KQVY3HZ4QN3KGP4A",
+      "shortname": "atlas-finite-outline-wrap-release",
+      "datetime": "2026-09-14T18:51:34Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep working and provide periodic todo refreshes showing in-flight and remaining work",
+      "summary": "Owner62S8new84to92addsONLYReaderViewtothreeplacementfiles. ParentreadCenterSource/highlightfitboth1280/1440,fonts13; fullunwrappedlabel218.453vs171visiblefails2oracles. Finitewidthstretch/wrap/no-trimming/fulltext+accessibleName, actualwrappedglyphgeometryrequired; no sourcegrid/window/font/Corechange. ExistingUX/SRE/Test2eachunspent, proof8conditionalunchanged41to49. Parent400prospectiveceiling, pastcostsretained. Sourcewriterdispatched, combinedcandidateuncommitted/unaccepted.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Complete readable Center placement with full width-constrained member labels.",
+      "done_when": "Actual wrapped labels, source lines and highlights fit both declared viewports while selection/focus/Back/ownership and user placement remain intact.",
+      "tier": "T2",
+      "main_calls": 356,
+      "main_budget": 400,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T18:51:34Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "654a2a3be1a3bd070754f2238a0dc35c10307de4",
+        "short": "654a2a3be",
         "branch": "conductor/code-atlas",
         "pushed": null
       }
