@@ -175,6 +175,81 @@ public sealed class CoalesceTests
     }
 
     /// <summary>
+    /// <b>Ruling 101 (R-4).</b> A <c>tool.result</c> row renders its content's first text line and
+    /// byte count, never its own kind twice — the operator's Console read <c>tool.result   tool.result</c>
+    /// on every update that carried no <c>title</c>. Against the corpus, through the real mapper:
+    /// <c>write.jsonl:13</c> (no title; <c>content[]</c> with one text item of 43 bytes whose first
+    /// line is the fence) reads the first line and the bytes; <c>read.jsonl:11</c> (a title AND a
+    /// text item) keeps the title — a text field that is present is the text (DC-187).
+    /// </summary>
+    /// <remarks><b>Red observed</b>: <c>Expected: "``` · 43 bytes" · Actual: "tool.result"</c>.</remarks>
+    [Fact]
+    public void AToolResultsBody_IsItsContentsFirstTextLineAndByteCount_NeverTheKind()
+    {
+        var results = CorpusResults("write.jsonl");
+        var textOnly = Assert.Single(results, r => r.Body["content"] is System.Text.Json.Nodes.JsonArray && r.Body["title"] is null);
+        Assert.Equal("``` · 43 bytes", ConsoleStreamModel.TextOf(textOnly));
+
+        var titled = Assert.Single(CorpusResults("read.jsonl"), r => r.Body["content"] is System.Text.Json.Nodes.JsonArray && r.Body["title"] is not null);
+        Assert.Equal("git status --short", ConsoleStreamModel.TextOf(titled));
+    }
+
+    /// <summary>
+    /// <b>Ruling 101, the non-text form.</b> A result whose items carry no text reads
+    /// <c>no text content (n item(s): types)</c>: the corpus's diff update (<c>write.jsonl:11</c>)
+    /// with its title removed — the one title-less non-text shape the corpus can yield — and two
+    /// authored shapes from the ACP schema (a <c>diff</c> beside a <c>terminal</c>; a <c>content</c>
+    /// item wrapping an image block, named by the block's type).
+    /// </summary>
+    /// <remarks><b>Red observed</b>: <c>Expected: "no text content (1 item: diff)" · Actual: "tool.result"</c>.</remarks>
+    [Fact]
+    public void AToolResultWithOnlyNonTextItems_ReadsTheNoTextContentForm()
+    {
+        var mapper = new AiDe.Core.AgentPlane.AcpRunEventMapper("run-1", "claude-code");
+        var diffLine = AiDe.Core.Tests.AgentPlane.AcpCorpus.Lines("write.jsonl").Single(l => l.Contains("\"type\":\"diff\"", StringComparison.Ordinal) && l.Contains("tool_call_update", StringComparison.Ordinal));
+        var frame = System.Text.Json.Nodes.JsonNode.Parse(diffLine)!.AsObject();
+        frame["params"]!["update"]!.AsObject().Remove("title");   // derived from the corpus: the same frame without its title
+        var diff = mapper.Map(frame.ToJsonString(), T0);
+        Assert.Equal("no text content (1 item: diff)", ConsoleStreamModel.TextOf(diff));
+
+        var two = mapper.Map("""{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"s","update":{"sessionUpdate":"tool_call_update","toolCallId":"t","content":[{"type":"diff","path":"a.txt","oldText":"a","newText":"b"},{"type":"terminal","terminalId":"term-1"}]}}}""", T0);
+        Assert.Equal("no text content (2 items: diff, terminal)", ConsoleStreamModel.TextOf(two));
+
+        var image = mapper.Map("""{"jsonrpc":"2.0","method":"session/update","params":{"sessionId":"s","update":{"sessionUpdate":"tool_call_update","toolCallId":"t","content":[{"type":"content","content":{"type":"image","data":"AAAA","mimeType":"image/png"}}]}}}""", T0);
+        Assert.Equal("no text content (1 item: image)", ConsoleStreamModel.TextOf(image));
+    }
+
+    /// <summary>
+    /// <b>Ruling 101, the operator's rows.</b> The two <c>tool.result   tool.result</c> rows per
+    /// Bash call in their Console are the corpus's <c>read.jsonl:13</c> (nothing but <c>_meta</c>)
+    /// and <c>:14</c> (<c>status</c> and a <c>rawOutput</c> string, no <c>content[]</c>): neither
+    /// carries a content array, so the ruling's mechanism alone would leave both reading the kind.
+    /// The kind is never the body: <c>rawOutput</c> — the adapter's text of the result — reads in
+    /// the same first-line-and-bytes form, and a result with no text anywhere reads the no-text
+    /// form with zero items. Every other kind with no text still reads its kind (DC-187's control).
+    /// </summary>
+    /// <remarks><b>Red observed</b>: <c>Expected: "(Bash completed with no output) · 31 bytes" · Actual: "tool.result"</c>.</remarks>
+    [Fact]
+    public void AToolResultWithRawOutputOrNothing_NeverReadsItsKind()
+    {
+        var results = CorpusResults("read.jsonl");
+        var rawOutput = Assert.Single(results, r => r.Body["rawOutput"] is not null);
+        Assert.Equal("(Bash completed with no output) · 31 bytes", ConsoleStreamModel.TextOf(rawOutput));
+
+        var nothing = Assert.Single(results, r => r.Body["title"] is null && r.Body["content"] is null && r.Body["rawOutput"] is null);
+        Assert.Equal("no text content (0 items)", ConsoleStreamModel.TextOf(nothing));
+
+        Assert.DoesNotContain(results, r => ConsoleStreamModel.TextOf(r) == r.Kind);
+    }
+
+    /// <summary>Every <c>tool.result</c> event of one corpus file, through the real mapper.</summary>
+    private static List<AiDe.Core.AgentPlane.RunEvent> CorpusResults(string file)
+    {
+        var mapper = new AiDe.Core.AgentPlane.AcpRunEventMapper("run-1", "claude-code");
+        return AiDe.Core.Tests.AgentPlane.AcpCorpus.Lines(file).Select(l => mapper.Map(l, T0)).Where(e => e.Kind == ConversationItems.ResultKind).ToList();
+    }
+
+    /// <summary>
     /// D2, over generated interleavings (seeded — D0): the row count is the number of runs, a run
     /// being a maximal stretch of one foldable kind from one lane, or one event of any other kind;
     /// each row's text is its events' text joined; no text is lost or invented; every row's

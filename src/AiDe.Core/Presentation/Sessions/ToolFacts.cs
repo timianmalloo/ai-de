@@ -49,10 +49,19 @@ public sealed record ToolFacts(string CallId, string? Kind, string? Title, strin
             ? string.Join('\n', input.Select(pair => pair.Key + ": " + (Text(pair.Value) ?? pair.Value?.ToJsonString() ?? "null")))
             : null;
 
-    /// <summary>The text of every <c>content[]</c> block that carries one (<c>{type: "content", content: {type: "text", text}}</c> — the corpus's one shape), joined; null when none does.</summary>
+    /// <summary>The text of every <c>content[]</c> block that carries one, joined; null when none does.</summary>
     private static string? ContentText(JsonNode? node)
     {
-        var texts = (node as JsonArray)?.Select(block => Text(block?["content"]?["text"])).Where(text => text is not null).ToList();
-        return texts is { Count: > 0 } ? string.Join('\n', texts) : null;
+        var texts = ContentTexts(node).ToList();
+        return texts.Count > 0 ? string.Join('\n', texts) : null;
     }
+
+    /// <summary>
+    /// The text of each <c>content[]</c> item that carries one — <c>{type: "content", content: {type:
+    /// "text", text}}</c>, the corpus's one text shape — in order; a <c>diff</c> or <c>terminal</c>
+    /// item yields nothing. The ONE reader of the array's text: the tool item's output joins them
+    /// and the Console row's body summarises them (DM7).
+    /// </summary>
+    internal static IEnumerable<string> ContentTexts(JsonNode? node) =>
+        (node as JsonArray)?.Select(item => Text(item?["content"]?["text"])).Where(text => text is not null).Select(text => text!) ?? [];
 }
