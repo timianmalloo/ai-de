@@ -851,6 +851,30 @@ The Conductor cumulative ceiling rises prospectively from 400 to 430 leaves;
 prior expenditure remains recorded. E1 still has no implementation grant, and
 main integration, push, normative Addendum E and programme closure remain separate.
 
+Owner turn 65 expands the original four total review leaves to sixteen total
+leaves, four each for Core security/concurrency/codec, native UX, UML/graph, and
+Test/composition/simplification. This is twelve new leaves, not a reinterpretation
+of the old allowance. All applicable gates must clear against the same corrected
+source-contract pin; an unresolved contract is a blocker. Overall active width
+stays four, including the independent footer proof.
+
+Before those final reviews, the retained Core Astra worker receives a separate
+sixteen-leaf documentation-only contract checkpoint. Assignment:
+session `atlas-e1-source-contracts`, branch `atlas/e1-source-contracts`, new tree
+`C:\Projects\ai-de-atlas-e1-source-contracts`, explicit base
+`b6e053c2` (resolve and verify its full object id before creation), plus only the
+design-file commit `76d30b4252f9c66e735c5d009e4c9b4287df0d54`.
+Sole authored path: `docs/design/code-atlas-e1-static-views.md`.
+Establish actual signatures/callers, old/new compatibility, selection and
+publication ownership, charging, native token/events, and decoded memory.
+Separate source-observed, executed and unresolved contracts; name a minimum
+executable spike where reading cannot establish behavior. Reconcile the proposed
+fourteen paths and first tranche, preserving lexical occurrences versus semantic
+identity and retaining sequence/activity in E1. No product, UI, shared record,
+private corpus, main or push authoring is granted. Parent owns record integration.
+The Conductor ceiling remains 430; implementation admission follows the completed
+contract and independent gate receipt.
+
 ### Core owns
 
 | Path | Why |

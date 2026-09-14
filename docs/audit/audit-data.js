@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T20:33:37Z",
+  "generated": "2026-09-14T20:40:15Z",
   "audit": [
     {
       "actor": null,
@@ -16469,6 +16469,38 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "f8b0f3c7453b87221b1d656ffcd5c2700efb079f",
         "short": "f8b0f3c74",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GTC866ZCBGC6M9F1AFBQ1H",
+      "shortname": "atlas-owner65-contract-grant",
+      "datetime": "2026-09-14T20:40:14Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner65 expands four TOTAL review leaves to16, four each, not retrospective reinterpretation. New16-leaf Astra source-contract checkpoint updates only E1 design in separate explicitly pinned tree before reviewers. Parent§2 records exact assignment and sequence. Old/new codec, lifetime/charging, native events and decoded-memory claims remain source review blockers. Proof continues independently. No E1 product/main/push grant.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Complete E0 closure and source-grounded E1 admission",
+      "done_when": "Integrated E0 replay and explicit E1 gate decision are recorded",
+      "tier": "T2",
+      "main_calls": 425,
+      "main_budget": 430,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T20:40:14Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "b6e053c29629f53c5c670d6586213cdf09c3af08",
+        "short": "b6e053c29",
         "branch": "conductor/code-atlas",
         "pushed": null
       }
