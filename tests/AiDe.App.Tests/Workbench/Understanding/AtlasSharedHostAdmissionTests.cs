@@ -8,11 +8,412 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Threading;
 using Xunit.Abstractions;
+using AiDe.App.ViewModels;
+using AiDe.Core;
+using AiDe.Core.Projections;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Xml.Linq;
 
 namespace AiDe.App.Tests;
 
 public sealed class AtlasSharedHostAdmissionTests(ITestOutputHelper output)
 {
+    [Fact]
+    public void Handoff_WorkbenchFactory_OwnsWorkspaceLifetimeBeforeAnyPaneOpens()
+    {
+        Sta.Run(() =>
+        {
+            using var shell = new WorkbenchShell(null);
+            Assert.NotNull(Field<SurfaceContentFactory>(shell, "_factory").AtlasOwner);
+        });
+    }
+
+    /// <summary>Scans MainWindow.xaml.cs only, non-recursively, for the two exact composition
+    /// tokens below; no allowlist. The shown-window test supplies the runtime half.</summary>
+    [Fact]
+    public void Handoff_MainWindow_SourceConsumesCommittedFactoryAndAwaitsClose()
+    {
+        var source = File.ReadAllText(RepositoryFile("src", "AiDe.App", "MainWindow.xaml.cs"));
+        Assert.Contains("workspace.AtlasReaderFactory", source, StringComparison.Ordinal);
+        Assert.Contains("await Shell.DisposeAsync()", source, StringComparison.Ordinal);
+    }
+
+    private static string RepositoryFile(params string[] parts)
+    {
+        var root = new DirectoryInfo(AppContext.BaseDirectory);
+        while (root is not null && !File.Exists(Path.Combine(root.FullName, "AiDe.sln"))
+            && !Directory.Exists(Path.Combine(root.FullName, ".git")) && !File.Exists(Path.Combine(root.FullName, ".git")))
+            root = root.Parent;
+        return Path.Combine([root?.FullName ?? throw new InvalidOperationException("Repository root unavailable."), .. parts]);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Handoff_ShownMainWindow_OpenerReplacementAndCloseUseOwnedLease(bool failFirstClose)
+    {
+        var diagnostic = new StageDiagnostics();
+        var directory = Path.Combine(Path.GetTempPath(), "aide-atlas-window-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        diagnostic.Mark("fixture.created", directory);
+        try
+        {
+            await RunOwnedDispatcherAsync(async () =>
+            {
+                diagnostic.Mark("body.enter");
+                using var diagnostics = new HostDiagnostics(text => diagnostic.Mark("trace", text));
+                var root = Path.Combine(directory, "workspace");
+                Directory.CreateDirectory(root);
+                diagnostic.Mark("core.open.before");
+                using var core = new ObservedCore(
+                    WorkspaceCore.Open("window-fixture", root, Path.Combine(directory, "data")), diagnostic);
+                diagnostic.Mark("core.open.after");
+                var borrowed = new LocalWorkspaceQueries(core.Value.Projections);
+                var first = new PortFixture { LeaseDisposal = new(TaskCreationOptions.RunContinuationsAsynchronously) };
+                var second = new PortFixture { LeaseDisposal = new(TaskCreationOptions.RunContinuationsAsynchronously) };
+                diagnostic.Track("first.lease.gate", first.LeaseDisposal.Task);
+                diagnostic.Track("second.lease.gate", second.LeaseDisposal.Task);
+                var firstFactories = 0;
+                var secondFactories = 0;
+                var firstModel = new MainWindowViewModel(borrowed, "display-not-authority", null,
+                    atlasReaderFactory: () => { ++firstFactories; return first; });
+                var secondModel = new MainWindowViewModel(borrowed, "replacement-display", null,
+                    atlasReaderFactory: () => { ++secondFactories; return second; });
+                var window = new AiDe.App.MainWindow(() => Task.FromResult(firstModel),
+                    Path.Combine(directory, "shell-state"), MainWindowResources())
+                {
+                    ShowInTaskbar = false,
+                    ShowActivated = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Left = -10000,
+                    Top = -10000,
+                };
+                try
+                {
+                    diagnostic.Mark("architecture.before");
+                    window.Shell.Execute(PerspectiveSet.Architecture.CommandId);
+                    var menu = Assert.IsType<Menu>(window.FindName("MainMenu"));
+                    var title = PerspectiveMenu.Opener(
+                        SurfaceContentFactory.Kinds.Single(kind => kind.Kind == "code-atlas")).Title;
+                    var entry = Assert.Single(MenuItems(menu), item =>
+                        string.Equals(item.Header?.ToString(), title, StringComparison.Ordinal));
+                    entry.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                    diagnostic.Mark("window.show.before");
+                    window.Show();
+                    diagnostic.Track("workspace.ready.at-show", window.WorkspaceReady);
+                    diagnostic.Mark("window.show.after", $"generation={Field<long>(window, "_workspaceGeneration")}");
+                    await diagnostic.IdleAsync("yield.after-show");
+                    await diagnostic.AwaitAsync("workspace.ready", window.WorkspaceReady);
+                    window.UpdateLayout();
+                    await diagnostic.IdleAsync("yield.after-layout");
+                    var host = Assert.Single(Visuals<AtlasLoadingHost>(window));
+                    var view = Assert.IsType<AtlasReaderView>(host.ReaderView);
+                    await diagnostic.AwaitAsync("select", view.SelectFileAsync(view.FileRoots.Single().Children.Single()));
+                    Assert.Equal("alpha beta", view.SourceText);
+                    Assert.Equal(1, firstFactories);
+                    Assert.Same(firstModel, window.DataContext);
+
+                    diagnostic.Mark("apply.before", $"generation={Field<long>(window, "_workspaceGeneration")}");
+                    var replacement = window.ApplyWorkspaceAsync(secondModel);
+                    diagnostic.Track("workspace.apply", replacement);
+                    diagnostic.Mark("apply.started", $"generation={Field<long>(window, "_workspaceGeneration")}");
+                    Assert.Equal("", view.SourceText);
+                    Assert.False(replacement.IsCompleted);
+                    Assert.Equal(0, secondFactories);
+                    diagnostic.Mark("first.lease.release.before");
+                    first.LeaseDisposal.SetResult();
+                    diagnostic.Mark("first.lease.release.after");
+                    await diagnostic.AwaitAsync("workspace.apply", replacement);
+                    await diagnostic.IdleAsync("yield.after-apply");
+                    window.UpdateLayout();
+                    Assert.Same(secondModel, window.DataContext);
+                    Assert.Equal(1, secondFactories);
+                    Assert.True(first.ReaderDisposed);
+                    var next = Assert.Single(Visuals<AtlasLoadingHost>(window));
+                    Assert.NotSame(view, next.ReaderView);
+                    Assert.NotNull(next.ReaderView);
+
+                    second.ReaderFailuresRemaining = failFirstClose ? 1 : 0;
+                    diagnostic.Mark("close.first.before");
+                    window.Close();
+                    var closing = window.CloseOperation;
+                    diagnostic.Track("window.close.first", closing);
+                    diagnostic.Mark("close.first.after", $"generation={Field<long>(window, "_workspaceGeneration")}");
+                    Assert.False(closing.IsCompleted);
+                    Assert.True(window.IsVisible);
+                    window.Close();
+                    diagnostic.Mark("close.reentrant.after");
+                    Assert.Same(closing, window.CloseOperation);
+                    second.LeaseDisposal.SetResult();
+                    diagnostic.Mark("second.lease.release.after");
+                    if (failFirstClose)
+                    {
+                        await Assert.ThrowsAsync<InvalidOperationException>(() => closing);
+                        diagnostic.Mark("close.expected-failure");
+                        await diagnostic.IdleAsync("yield.after-close-failure");
+                        Assert.True(window.IsVisible);
+                        Assert.Contains("ATLAS-WINDOW-CLOSE", diagnostics.Text);
+                        window.Close();
+                        diagnostic.Mark("close.retry.after");
+                    }
+                    await diagnostic.AwaitAsync("window.close.final", window.CloseOperation);
+                    await diagnostic.IdleAsync("yield.after-close");
+                    Assert.False(window.IsVisible);
+                    Assert.Equal(1, second.LeaseDisposalAttempts);
+                    Assert.Equal(failFirstClose ? 2 : 1, second.ReaderDisposalAttempts);
+                    diagnostic.Mark("borrowed.find.before");
+                    Assert.NotNull(await borrowed.FindAsync("", 1, CancellationToken.None));
+                    diagnostic.Mark("borrowed.find.after");
+                }
+                catch (Exception exception)
+                {
+                    diagnostic.Failure("body.primary", exception);
+                    throw;
+                }
+                finally
+                {
+                    diagnostic.Mark("window.finally.before",
+                        $"generation={Field<long>(window, "_workspaceGeneration")}; firstDisposed={first.Lease.Disposed}; secondDisposed={second.Lease.Disposed}");
+                    first.LeaseDisposal.TrySetResult();
+                    second.LeaseDisposal.TrySetResult();
+                    second.ReaderFailuresRemaining = 0;
+                    try
+                    {
+                        if (window.IsVisible)
+                        {
+                            window.Close();
+                            await diagnostic.AwaitAsync("window.finally.close", window.CloseOperation);
+                            await diagnostic.IdleAsync("yield.finally");
+                        }
+                    }
+                    catch (Exception exception) { diagnostic.Failure("window.cleanup", exception); }
+                    diagnostic.Mark("window.finally.after");
+                }
+                diagnostic.Mark("body.before-core-disposal");
+            }, diagnostic, () =>
+            {
+                diagnostic.Mark("fixture.delete.before");
+                Directory.Delete(directory, recursive: true);
+                diagnostic.Mark("fixture.delete.after");
+            });
+        }
+        catch (Exception exception) { diagnostic.Failure("pump.primary", exception); }
+        finally
+        {
+            diagnostic.Save($"atlas-mainwindow-local-pump-{failFirstClose.ToString().ToLowerInvariant()}.log", output);
+        }
+        diagnostic.ThrowIfFailed();
+    }
+
+    [Fact]
+    public async Task Handoff_DiagnosticControl_OwnedDispatcherOutlivesWindowAndDisposesCore()
+    {
+        var diagnostic = new StageDiagnostics();
+        var directory = Path.Combine(Path.GetTempPath(), "aide-atlas-control-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        try
+        {
+            await RunOwnedDispatcherAsync(async () =>
+            {
+                diagnostic.Mark("control.body.before");
+                var root = Path.Combine(directory, "workspace");
+                Directory.CreateDirectory(root);
+                using (var core = new ObservedCore(
+                    WorkspaceCore.Open("control-fixture", root, Path.Combine(directory, "data")), diagnostic))
+                {
+                    var window = new Window
+                    {
+                        Content = new Border(), Width = 100, Height = 100, Left = -10000, Top = -10000,
+                        ShowInTaskbar = false, ShowActivated = false,
+                    };
+                    try
+                    {
+                        window.Show();
+                        await diagnostic.IdleAsync("control.idle.before-close");
+                        window.Close();
+                        diagnostic.Mark("control.window.closed");
+                        await diagnostic.IdleAsync("control.idle.after-close");
+                        var borrowed = new LocalWorkspaceQueries(core.Value.Projections);
+                        Assert.NotNull(await borrowed.FindAsync("", 1, CancellationToken.None));
+                        diagnostic.Mark("control.borrowed.find.after");
+                    }
+                    finally { if (window.IsVisible) window.Close(); }
+                }
+                diagnostic.Mark("control.body.after-core-disposal");
+            }, diagnostic, () =>
+            {
+                Directory.Delete(directory, recursive: true);
+                diagnostic.Mark("control.fixture.deleted");
+            });
+        }
+        catch (Exception exception) { diagnostic.Failure("control.wait.primary-retained-debt", exception); }
+        diagnostic.Save("atlas-mainwindow-local-pump-control.log", output);
+        diagnostic.ThrowIfFailed();
+    }
+
+    private static async Task RunOwnedDispatcherAsync(Func<Task> body, StageDiagnostics diagnostic, Action cleanup)
+    {
+        var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var thread = new Thread(() =>
+        {
+            Task? running = null;
+            try
+            {
+                var dispatcher = Dispatcher.CurrentDispatcher;
+                SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(dispatcher));
+                async Task RunBodyAsync()
+                {
+                    try { await body(); }
+                    catch (Exception exception) { diagnostic.Failure("owned.body.primary", exception); }
+                    finally
+                    {
+                        try { cleanup(); }
+                        catch (Exception exception) { diagnostic.Failure("owned.cleanup-retained-debt", exception); }
+                        dispatcher.BeginInvokeShutdown(DispatcherPriority.Send);
+                    }
+                }
+                dispatcher.InvokeAsync(() =>
+                {
+                    running = RunBodyAsync();
+                    diagnostic.Track("owned.body", running);
+                });
+                Dispatcher.Run();
+                diagnostic.Mark("owned.dispatcher.exited");
+                if (running?.IsCompleted != true)
+                    diagnostic.Failure("owned.body-undrained-retained-debt",
+                        new InvalidOperationException("Dispatcher exited before owned body and cleanup completed."));
+            }
+            catch (Exception exception) { diagnostic.Failure("owned.thread.primary-retained-debt", exception); }
+            finally { completion.TrySetResult(); }
+        }) { IsBackground = true };
+        thread.SetApartmentState(ApartmentState.STA);
+        diagnostic.Track("owned.thread", completion.Task);
+        thread.Start();
+        await completion.Task.WaitAsync(TimeSpan.FromSeconds(30));
+    }
+
+    private sealed class ObservedCore(WorkspaceCore value, StageDiagnostics diagnostic) : IDisposable
+    {
+        internal WorkspaceCore Value => value;
+        public void Dispose()
+        {
+            diagnostic.Mark("core.dispose.before");
+            try
+            {
+                value.Dispose();
+                diagnostic.Mark("core.dispose.after");
+            }
+            catch (Exception exception) { diagnostic.Failure("core.cleanup", exception); }
+        }
+    }
+
+    private sealed class StageDiagnostics
+    {
+        private readonly long _started = Stopwatch.GetTimestamp();
+        private readonly List<string> _stages = [];
+        private readonly Dictionary<string, Task> _tasks = [];
+        private readonly List<Exception> _failures = [];
+        private readonly object _gate = new();
+        private int _omitted;
+
+        internal void Mark(string stage, string detail = "")
+        {
+            var dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
+            var line = $"ms={Stopwatch.GetElapsedTime(_started).TotalMilliseconds:F3} stage={stage} "
+                + $"thread={Environment.CurrentManagedThreadId} apartment={Thread.CurrentThread.GetApartmentState()} "
+                + $"context={SynchronizationContext.Current?.GetType().Name ?? "none"} "
+                + $"shutdownStarted={dispatcher?.HasShutdownStarted} shutdownFinished={dispatcher?.HasShutdownFinished} "
+                + detail[..Math.Min(detail.Length, 1600)];
+            lock (_gate)
+            {
+                if (_stages.Count < 160) _stages.Add(line);
+                else ++_omitted;
+            }
+        }
+
+        internal void Track(string name, Task task)
+        {
+            lock (_gate) _tasks[name] = task;
+            Mark(name + ".tracked", $"status={task.Status}");
+        }
+
+        internal async Task AwaitAsync(string name, Task task)
+        {
+            Track(name, task);
+            Mark(name + ".before", $"status={task.Status}");
+            await task;
+            Mark(name + ".after", $"status={task.Status}");
+        }
+
+        internal Task IdleAsync(string name)
+        {
+            var operation = Dispatcher.CurrentDispatcher.InvokeAsync(
+                () => Mark(name + ".executed"), DispatcherPriority.ApplicationIdle);
+            return AwaitAsync(name, operation.Task);
+        }
+
+        internal void Failure(string category, Exception exception)
+        {
+            Mark(category, exception.ToString());
+            lock (_gate)
+                if (!_failures.Contains(exception)) _failures.Add(exception);
+        }
+
+        internal void Save(string name, ITestOutputHelper output)
+        {
+            string text;
+            lock (_gate)
+            {
+                text = string.Join(Environment.NewLine, _stages)
+                    + Environment.NewLine + $"omittedStages={_omitted}"
+                    + Environment.NewLine + string.Join(Environment.NewLine,
+                        _tasks.Select(pair => $"task={pair.Key} finalStatus={pair.Value.Status}"));
+            }
+            var path = RepositoryFile("artifacts", "atlas-mainwindow", name);
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            File.WriteAllText(path, text);
+            output.WriteLine(text);
+        }
+
+        internal void ThrowIfFailed()
+        {
+            lock (_gate)
+                if (_failures.Count > 0) throw new AggregateException("Primary and cleanup failures retained separately.", _failures);
+        }
+    }
+
+    private static ResourceDictionary MainWindowResources()
+    {
+        var app = XDocument.Load(RepositoryFile("src", "AiDe.App", "App.xaml")).Root!;
+        var ns = app.Name.Namespace;
+        var dictionary = new XElement(ns + "ResourceDictionary",
+            app.Attributes().Where(attribute => attribute.IsNamespaceDeclaration).Select(attribute =>
+                new XAttribute(attribute.Name, attribute.Value == "clr-namespace:AiDe.App"
+                    ? "clr-namespace:AiDe.App;assembly=AiDe.App" : attribute.Value)),
+            app.Element(ns + "Application.Resources")!.Elements());
+        return (ResourceDictionary)XamlReader.Parse(dictionary.ToString());
+    }
+
+    private static IEnumerable<MenuItem> MenuItems(ItemsControl parent)
+    {
+        foreach (var item in parent.Items.OfType<MenuItem>())
+        {
+            yield return item;
+            foreach (var child in MenuItems(item)) yield return child;
+        }
+    }
+
+    private static IEnumerable<T> Visuals<T>(DependencyObject parent) where T : DependencyObject
+    {
+        for (var index = 0; index < VisualTreeHelper.GetChildrenCount(parent); ++index)
+        {
+            var child = VisualTreeHelper.GetChild(parent, index);
+            if (child is T match) yield return match;
+            foreach (var nested in Visuals<T>(child)) yield return nested;
+        }
+    }
+
     [Theory]
     [InlineData("factory")]
     [InlineData("lease")]
@@ -234,10 +635,11 @@ public sealed class AtlasSharedHostAdmissionTests(ITestOutputHelper output)
     private sealed class HostDiagnostics : TraceListener
     {
         private readonly System.Text.StringBuilder _text = new();
-        private readonly ITestOutputHelper _output;
-        internal HostDiagnostics(ITestOutputHelper output)
+        private readonly Action<string> _write;
+        internal HostDiagnostics(ITestOutputHelper output) : this(output.WriteLine) { }
+        internal HostDiagnostics(Action<string> write)
         {
-            _output = output;
+            _write = write;
             Trace.Listeners.Add(this);
         }
         internal string Text { get { lock (_text) return _text.ToString(); } }
@@ -252,7 +654,7 @@ public sealed class AtlasSharedHostAdmissionTests(ITestOutputHelper output)
         protected override void Dispose(bool disposing)
         {
             Trace.Listeners.Remove(this);
-            _output.WriteLine(Text);
+            _write(Text);
             base.Dispose(disposing);
         }
     }

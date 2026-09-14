@@ -42,8 +42,10 @@ namespace AiDe.App.Workbench;
 /// adapter must share the same <see cref="ILayoutService"/> instance, or the keyboard would mutate
 /// one layout while the view rendered another.</para>
 /// </remarks>
-public sealed class WorkbenchShell : IDisposable
+public sealed class WorkbenchShell : IDisposable, IAsyncDisposable
 {
+    private readonly Understanding.AtlasWorkspaceOwner _atlasOwner = new();
+    private bool _atlasShellResourcesDisposed;
     /// <summary>The UI thread, captured where the shell is wired — indexing completes on a worker.</summary>
     private System.Windows.Threading.Dispatcher _dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
 
@@ -146,7 +148,7 @@ public sealed class WorkbenchShell : IDisposable
             queries is not null ? SearchWorkspaceAsync : null,
             watcher.Daydreams,
             TerminalNameFor,
-            SessionDocumentFor);
+            SessionDocumentFor) { AtlasOwner = _atlasOwner };
 
         // The environment contract does not depend on a workspace, so it must not be gated behind
         // one. It was assigned ONLY in AttachWorkspace, which both call sites skip when the daemon
@@ -611,7 +613,7 @@ public sealed class WorkbenchShell : IDisposable
             SearchWorkspaceAsync,
             watcher.Daydreams,
             TerminalNameFor,
-            SessionDocumentFor);
+            SessionDocumentFor) { AtlasOwner = _atlasOwner };
 
         // Panes realized at construction were built against a factory with no queries and render
         // "not available". Mark every workspace-dependent kind to rebuild on the next Render so they
@@ -2998,8 +3000,26 @@ public sealed class WorkbenchShell : IDisposable
         return $"Dispute recorded against {disputable.EpisodeId} (append-only; the score is unchanged).";
     }
 
+    internal async Task AttachAtlasWorkspaceAsync(Func<AiDe.Core.Understanding.IAtlasWorkspaceReader>? factory)
+    {
+        await _atlasOwner.AttachAsync(factory).ConfigureAwait(true);
+        foreach (var host in Hosts)
+            host.Adapter.Invalidate(host.Service.Current.AllStacks().SelectMany(stack => stack.Surfaces)
+                .Where(surface => surface.Kind == "code-atlas").Select(surface => surface.SurfaceId));
+    }
+
+    internal void CancelAtlasOperations() => _atlasOwner.Dispose();
+
+    public async ValueTask DisposeAsync()
+    {
+        await _atlasOwner.DisposeAsync().ConfigureAwait(true);
+        Dispose();
+    }
+
     public void Dispose()
     {
+        _atlasOwner.Dispose();
+        if (_atlasShellResourcesDisposed) return;
         // The owner is closing. Each live pane writes its `terminal.stop` first — the reason is
         // `owner-closing`, recorded once, so the log pairs every start with an end and a census can
         // read "still hosted" as a subtraction instead of a process list — and is then DISPOSED, which
@@ -3039,6 +3059,7 @@ public sealed class WorkbenchShell : IDisposable
         _watcherPump?.Cancel();
         _watcherPump?.Dispose();
         _watcherHost?.Dispose();
+        _atlasShellResourcesDisposed = true;
     }
 
     /// <summary>The live session document for a <c>session-document</c> surface, or null.</summary>
