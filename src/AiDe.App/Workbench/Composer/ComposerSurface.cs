@@ -326,7 +326,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     public ComboBox AccountControl => _accountControl;
 
     /// <summary>The session's accounts as the picker offers them — empty before the composer is bound.</summary>
-    public IReadOnlyList<SessionAccountOption> SessionAccounts => _context?.AccountOptions ?? [];
+    public IReadOnlyList<AccountOption> SessionAccounts => _context?.AccountOptions ?? [];
 
     /// <summary>The session's default account label, or null before the composer is bound.</summary>
     public string? DefaultAccountLabel => _context?.AccountLabel;

@@ -124,7 +124,7 @@ internal static class SessionComposerBinder
             var row = rows.FirstOrDefault(r => r.Ref == a);
             var bound = providers.Bind(a.Provider, a.Label, out _);
             var ready = row is { RoutableForThisSession: true } && bound is not null;
-            return new SessionAccountOption(
+            return new AccountOption(
                 a.Provider, a.Label,
                 bound?.EngineId ?? row?.EngineId ?? AiDe.Core.PromptCompilation.Envelope.NotRecorded,
                 bound?.Model ?? AiDe.Core.PromptCompilation.Envelope.NotRecorded,

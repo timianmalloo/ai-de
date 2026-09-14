@@ -25,9 +25,9 @@ public sealed class TheAccountPickerOverridesAtSendTests
         Providers: [],
         Accounts:
         [
-            new SessionAccountOption("anthropic", "max", "claude-code", "sonnet", Ready: true, "ready"),
-            new SessionAccountOption("openai", "chatgpt", "codex", "gpt-6-astra", Ready: true, "ready"),
-            new SessionAccountOption("anthropic", "work", "claude-code", "sonnet", Ready: false, "needs sign-in"),
+            new AccountOption("anthropic", "max", "claude-code", "sonnet", Ready: true, "ready"),
+            new AccountOption("openai", "chatgpt", "codex", "gpt-6-astra", Ready: true, "ready"),
+            new AccountOption("anthropic", "work", "claude-code", "sonnet", Ready: false, "needs sign-in"),
         ]);
 
     private static ComposerDraft Draft()

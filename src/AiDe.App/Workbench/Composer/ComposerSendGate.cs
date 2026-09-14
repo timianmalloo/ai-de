@@ -47,10 +47,10 @@ public sealed record ComposerSendContext(
     IReadOnlyList<ProviderRow> Providers,
     string CoordCommand = "coord",
     TimeSpan? PromptTimeout = null,
-    IReadOnlyList<SessionAccountOption>? Accounts = null)
+    IReadOnlyList<AccountOption>? Accounts = null)
 {
     /// <summary>The picker's rows; empty when the binder offered none.</summary>
-    public IReadOnlyList<SessionAccountOption> AccountOptions => Accounts ?? [];
+    public IReadOnlyList<AccountOption> AccountOptions => Accounts ?? [];
 }
 
 /// <summary>
@@ -64,7 +64,7 @@ public sealed record ComposerSendContext(
 /// <param name="Model">The file's model for that engine, or <c>not recorded</c>.</param>
 /// <param name="Ready">Whether a turn may bind this account now.</param>
 /// <param name="StateWord">ready · needs sign-in · not configured — shown on a disabled row.</param>
-public sealed record SessionAccountOption(string Provider, string Label, string EngineId, string Model, bool Ready, string StateWord);
+public sealed record AccountOption(string Provider, string Label, string EngineId, string Model, bool Ready, string StateWord);
 
 /// <summary>Why a send did not happen. The field is a member, not a substring of prose.</summary>
 /// <param name="Errors">Field-level errors from the one validation mechanism.</param>
