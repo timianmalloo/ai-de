@@ -33,6 +33,19 @@ use the existing rendered focus and Window/Maximize pane route, measure clipped 
 outline viewport geometry, and recapture. No product layout change is admitted, and
 default placement remains a separate usability finding.
 
+The first supported-maximize proof failed. The pane remained 247.41 DIP wide, the source
+viewport intersection was empty, and only 60.41 DIP of a 218.45-DIP selected label was visible.
+The proof focused the rendered files control and raised the menu Click, but did not yet
+record logical focused-stack identity or actual layout mutation. Post-action geometry
+was not collected because the width assertion ended the run. Owned daemons were forcibly
+reaped in that failed run; its cleanup is not the earlier successful normal exit.
+
+Owner turn 60 funds eight diagnostic proof leaves for the real focus/router/layout path.
+Click-to-router wiring is established; keyboard focus alone is not logical pane focus.
+Both command handling and the intended stack's mutation must be observed, and failed
+post-action geometry must be retained. No product resizing or private-state change is
+authorized by this investigation.
+
 This is an incomplete production Proof Pack. Addendum E remains candidate. No primary-main
 integration or push is claimed. The private proposal/TheTerrace corpus is not part of this
 delivery record.

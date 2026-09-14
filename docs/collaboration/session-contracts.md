@@ -736,6 +736,22 @@ captures plus all lifecycle assertions. No production resizing/layout edit is gr
 A successful maximized path does not close the default-placement usability finding.
 Mainline ceiling remains 330; other proof limits and programme restrictions remain.
 
+Owner turn 60 grants eight further proof leaves, total **33/41**, in the same sole test
+file. It is a command/focus/layout investigation, not a production placement grant.
+Owner opened the actual route: menu Click forwards the command ID to `Shell.Execute`
+and `PerspectiveShell`; logical focus is separately derived from ancestor layout content.
+Missing ICommand dispatch is therefore not established from the failed width result.
+
+Use legitimate rendered tab/header/control focus and the actual menu action, preferably
+own-window UIA Invoke. Read before/after `FocusedSurfaceId`/`FocusedStackId`, intended
+target stack, dispatch/result and resulting layout; a handled result can still mean
+"No pane is focused." Any temporary public-router observer forwards unchanged behavior
+and is restored. Never set controller focus/layout state or window size.
+Always record post-action geometry/pixels, including failed-width cases. Preserve failed
+captures and forced exits as failures. If the normal route cannot expose readable source,
+return the exact failing seam and minimal Shell-file proposal for separate approval.
+Mainline ceiling becomes a prospective 360; visible-source acceptance remains withheld.
+
 ### Core owns
 
 | Path | Why |

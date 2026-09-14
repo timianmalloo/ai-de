@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T17:40:43Z",
+  "generated": "2026-09-14T18:02:16Z",
   "audit": [
     {
       "actor": null,
@@ -16271,6 +16271,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "7601509826238df218f0feac4ec5466ca5d8d9a8",
         "short": "760150982",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GHAZBE6D3TZZ3ST1NPTRWS",
+      "shortname": "atlas-real-command-focus-layout-investigation",
+      "datetime": "2026-09-14T18:02:15Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep working and provide periodic todo refreshes showing in-flight and remaining work",
+      "summary": "Owner60funds8proofleaves33to41,main360prospective. Failedmaximizewidth247.41unchanged; sourceviewport0 andclippedlabelmeasured; aftergeometrymissing, failedrunforcedownedPIDexitspreserved. OwneropenedClick→execute→Shellrouter; missingICommanddispatchnotestablished, keyboardfocusnotlogicalfocusedstack. SamefilemustobservefocusedIDs/target/command/layout+AFTERgeometry/pixels, no privateSet/windowresize/productfix. Visibleacceptancewithheld; priorrealdata/lifecyclegreenretained. Proofinvestigationdispatched;todo35done4inprogress.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Identify the actual supported focus, command and layout path that can expose readable Code Atlas source.",
+      "done_when": "Logical target and command effects are measured, with complete post-action geometry and pixels or an exact product seam failure.",
+      "tier": "T2",
+      "main_calls": 333,
+      "main_budget": 360,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T18:02:15Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "6818642e34f3cedf515087650ef23f3098523d09",
+        "short": "6818642e3",
         "branch": "conductor/code-atlas",
         "pushed": null
       }
