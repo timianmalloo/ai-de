@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Sessions: 33 types, 197 members, 73% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Sessions: 35 types, 203 members, 74% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Sessions`
 
-**33 public types · 197 public members · 73% documented.**
+**35 public types · 203 public members · 74% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -469,6 +469,71 @@ handled here.
 |---|---|
 | `bool Show(NewSessionSheetViewModel sheet, Window? owner, Action<string>? announce = null)` | Shows the sheet modally. Returns whether the operator pressed Create. |
 
+## `ParallelSessionOutcome`
+
+*record* — `ParallelSessionFlow.cs`
+
+What *Start a parallel session* did (Ruling 95), as the shell announces it.
+
+## `ParallelSessionFlow`
+
+*class* — `ParallelSessionFlow.cs`
+
+*Start a parallel session* (Ruling 95): a derived sibling of the session whose composer
+offered it — the same workspace, backends and config, `origin = parallel:<parent id>`,
+its name by Ruling 99's rule on the parent's name — opened docked beside the parent
+(Ruling 83's Left zone, by the document kind's zone rule), its composer bound, and the parent's
+draft sent as its first turn through the sibling's own gate (lease derivation and prepare apply
+unchanged).
+
+**Remarks.** **Measured before it was built (Ruling 95 condition 1).** Two sessions on one workspace
+each completed a read-only turn concurrently against the live adapter — two engine processes
+alive together, both answered (`docs/proof/send-while-running.md`). Had the run host
+serialised them, this flow would not exist and the composer's action would carry that refusal.
+
+
+
+
+
+**One flow, injected edges, like `NewSessionFlow`.** The shell opens, the
+window binds, the store creates; this type only sequences them, so the sequence is testable
+without a window and the window has one place to wire it.
+
+
+
+
+
+**The name rule is Ruling 99's, not this type's.**  is a
+seam the window supplies — `SessionConfigStore.UniqueName(name, SessionConfigStore.ExistingNames(root))`,
+the Sessions lane's one function, so the sheet's default name, an operator-typed duplicate and a
+parallel session's name cannot drift; the default here, `"<parent name> (2)"`, is the
+rule's first counter for a caller with no store to ask.
+
+| Member | Summary |
+|---|---|
+| `ParallelSessionFlow(` | **(gap)** |
+| `string OriginOf(string parentSessionId)` | The origin every parallel session records: `parallel:<parent session id>`. |
+| `string FirstCounter(string parentName)` | Ruling 99's first counter — the default for a caller that supplies no rule. |
+| `ParallelSessionOutcome Start(string workspaceRoot, SessionConfig parent, ParallelDraft request)` | Runs the flow once for one parent and one draft. |
+
+### `ParallelSessionFlow(`
+
+- **`open`** — Opens the sibling's document in the shell and returns what to announce (the shell's `OpenSessionDocument`).
+- **`bind`** — Binds the sibling's composer to its run and returns what to announce (the window's binder).
+- **`composerOf`** — The composer of an open session's document, by session id (the shell's `SessionComposer`).
+- **`remember`** — Records the sibling in Recent sessions; null when this build keeps none.
+- **`uniqueName`** — Ruling 99's rule over the parent's name (`SessionConfigStore.UniqueName` over the workspace's names); null for the first counter, `"<name> (2)"`.
+- **`availability`** — The compile-mode ladder's availability, for copying an agentic parent's mode; null leaves the sibling mechanical-only and says so.
+- **`time`** — Stamps the created session.
+
+### `ParallelSessionOutcome Start(string workspaceRoot, SessionConfig parent, ParallelDraft request)`
+
+Runs the flow once for one parent and one draft.
+
+- **`workspaceRoot`** — The workspace both sessions live in.
+- **`parent`** — The parent's config as it reads now.
+- **`request`** — The parent draft's words and attachments.
+
 ## `ProseView`
 
 *class* — `ProseView.cs`
@@ -894,10 +959,12 @@ state of its own.
 | `int OtherEvents` | How many non-conversation rows the fold does not show; 0 when it shows them all. |
 | `bool HasOtherEvents` | **(gap)** |
 | `string TailText` | *the other 136, in the Console* — the tail button's text (the button is collapsed when the fold shows every line: `HasOtherEvents`). |
-| `IReadOnlyList<TurnActionKind> Actions` | The actions this turn offers, Deny first (SC7). A completed or past-failed turn offers none. |
+| `IReadOnlyList<TurnActionKind> Actions` | The actions this turn offers, Deny first (SC7). A completed or past-failed turn offers none. A queued turn offers Cancel — and *Send now* first, only while it waits on the operator after a Stop or a failure (Ruling 95… |
+| `string QueuedSentence` | The queued turn's sentence, from the snapshot it sits in (Ruling 95) — set by the feed on every merge, like `IsLast`. |
+| `bool QueuedAwaitsYou` | Whether the queued turn waits on the operator rather than on a run (Ruling 95: *Send now*) — the snapshot's derivation, set by the feed. |
 | `bool HasActions` | **(gap)** |
 | `bool IsLast` | Whether this is the thread's last turn — a failed PAST turn folds like a completed one (SC7). |
-| `bool ShowsReasonBox` | A boxed reason on a failed, stopped or waiting LAST turn; a past failure folds (SC7). |
+| `bool ShowsReasonBox` | A boxed reason on a failed, stopped, waiting or queued LAST turn; a past failure folds (SC7). |
 
 ### `int FoldLines = 4`
 

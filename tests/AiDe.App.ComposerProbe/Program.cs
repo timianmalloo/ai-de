@@ -95,6 +95,11 @@ internal static partial class Program
 
         try
         {
+            if (args is not null && args.Contains(ParallelTurnsArgument, StringComparer.Ordinal))
+            {
+                return ParallelTurns.Run(args!);
+            }
+
             if (args is not null && args.Contains(SessionRenderArgument, StringComparer.Ordinal))
             {
                 return SessionRender.Run(args!);

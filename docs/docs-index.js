@@ -2031,7 +2031,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 14 types, 114 members, 94% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 15 types, 120 members, 94% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2044,7 +2044,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "363a6171a643e7bf411b68a02064c902fb4b8438cefa27e6d7a5f972a9118d3d"
+      "sourceSha256": "4ae5427a4bff2f20d41ce76ef9d3280a9b7bb2b0cb9402d9eb8acd4484431c50"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -2056,7 +2056,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 33 types, 197 members, 73% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 35 types, 203 members, 74% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2069,7 +2069,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f9a33712700795739783e5096bd0720c5035c8eaf8566b02ed926a46c144e5c1"
+      "sourceSha256": "d63ebb8f2288e91798669502a35a5fdb162f0329b165330362f9761f3f60175d"
     },
     {
       "id": "api-aide-core",
@@ -2331,7 +2331,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 49 types, 146 members, 96% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 49 types, 152 members, 96% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2344,7 +2344,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4afa1768127fc6d9e2d712b4753bbe58978b492c5be335a1cfe38a2f2140420e"
+      "sourceSha256": "46ef9d220d07d532d4170e0bef0a9cf276c47e5ccc2cbd2d0772929c31379995"
     },
     {
       "id": "api-aide-core-projections",
@@ -2381,7 +2381,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.PromptCompilation: 47 types, 177 members, 82% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.PromptCompilation: 47 types, 178 members, 82% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2394,7 +2394,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "57f65d0cefb79e90e3639d8c9e5b6749c176110e8829041e6d1da41f96250636"
+      "sourceSha256": "1b5cdc0c303bc836ce697ccd243d5889ca477179f1df9047b316cab56cc7ff8c"
     },
     {
       "id": "api-aide-core-sessions",
@@ -16277,6 +16277,51 @@ window.DOCS_INDEX = {
       "sourceSha256": "df0f469d825982df88190a8b4b375a8d30ec0053a59396111e5f6cf22d19f9e9"
     },
     {
+      "id": "proof-send-while-running",
+      "path": "docs/proof/send-while-running.md",
+      "title": "Proof Pack — Ruling 95: a Send while a turn runs offers Wait (one queued turn) or Parallel (a derived sibling session); Ruling 77(b) reversed",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [],
+      "summary": "Lane composer-r95 on main c831113e. Condition 1 measured first: two session documents on one workspace each sent \"reply with the single word ok\" 59 ms apart through the product's own composition root against the live claude-code adapter; two engine processes (pids 34340, 57860) were alive together in every census sample, node rose 41 → 43, both turns answered in 3.5 s / 3.4 s — the run host does not serialise them, so Parallel ships. Wait: one queued turn per session, compiled at queue time, drained only after Completed/Answered, waiting with Send now after Stop or Failed; Cancel returns its words. Red-first each.",
+      "tags": [
+        "proof-pack",
+        "composer",
+        "sessions",
+        "thread",
+        "ruling-95",
+        "ruling-77",
+        "ruling-78",
+        "ruling-83",
+        "ruling-99",
+        "red-first",
+        "measurement"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-composer-compiled-prompt-and-console-rows",
+          "rel": "refines"
+        },
+        {
+          "to": "proof-conductor-front-door",
+          "rel": "refines"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fed26f33a8482e6755effb3f3e7fcb73552ac69582c97e675390bbae131f7364"
+    },
+    {
       "id": "proof-session-document-render",
       "path": "docs/proof/session-document-render.md",
       "title": "Proof Pack - A Session Document Is Shown Where The Operator Is (INV-0009 Phases 1-4)",
@@ -17631,7 +17676,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  U[aide session purge id] --> V{id is one segment of the session-id grammar, resolved under .aide/sessions/?}\n  V -->|no| X[refused before any file is touched]\n  V -->|yes| W[confirmation: name · id · workspace root · resolved file path · envelope count · newest at]\n  W -->|decline| Y[nothing deleted]\n  W -->|confirm or --yes| Z[envelope-events.jsonl deleted; session.json and session-events.jsonl survive]\n  Z --> Q[session document reopens: history purged; Proof Pack citations resolve as purged]"
         }
       ],
-      "sourceSha256": "755d02cee67c247514ace9d6f65aedf2b2a552c5d2d6518a148f391d4d321182"
+      "sourceSha256": "c21029ff60fdf4f7c00a074ec4d0eb627a31e4a28cfcace74d1a6724d53530ef"
     },
     {
       "id": "spec-agentic-watcher-substrate",
@@ -18481,5 +18526,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "dff03d73eb63a0c60f202042766a5115184a4a6dd6c8318079542e2e74e0c342"
+  "graphSha256": "8f92522d5dd317d515ecca3311e6e9ef319552379aca3a45964830ff8fed72d2"
 };

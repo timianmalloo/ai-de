@@ -158,12 +158,16 @@ public sealed class AGovernedRunReachesTheConsoleTests
                     source.AskPermission("Write src/Payments/PaymentAggregate.cs?");
                     source.Say("writing");
 
+                    // The wire's order: the answer frame is published as an event BEFORE the reply
+                    // completes the prompt task — so "done" is said first and the prompt completes
+                    // once it has been delivered (TheDrainEndsWhenThePromptEndsTests: a prompt that
+                    // completes over an empty queue ends the drain, whichever order the two took).
+                    source.Say("done");
                     Assert.True(
-                        await feed.WaitForDeliveredAsync(Frames - 1, Bound),
-                        $"the lane delivered {feed.Delivered} of {Frames - 1} events before the prompt answered");
+                        await feed.WaitForDeliveredAsync(Frames, Bound),
+                        $"the lane delivered {feed.Delivered} of {Frames} events before the prompt answered");
 
                     prompt.SetResult();
-                    source.Say("done");
 
                     var drained = await drain;
 
@@ -236,16 +240,18 @@ public sealed class AGovernedRunReachesTheConsoleTests
             source.Say($"line {i}");
         }
 
-        // With no sink there is nothing downstream to wait on, so the queue's own published count is
-        // what says the frames have arrived — the plane's number, not one this test keeps.
+        // The wire's order: the answer frame ("done") is published before the reply completes the
+        // prompt. With no sink there is nothing downstream to wait on, so the queue's own published
+        // count is what says the frames have arrived — the plane's number, not one this test keeps —
+        // and its reader's count says the drain has taken them.
+        source.Say("done");
         var deadline = DateTimeOffset.UtcNow + Bound;
-        while (source.Queue.Published < Frames - 1 && DateTimeOffset.UtcNow < deadline)
+        while ((source.Queue.Published < Frames || source.Queue.Reader.Count > 0) && DateTimeOffset.UtcNow < deadline)
         {
             await Task.Delay(5);
         }
 
         prompt.SetResult();
-        source.Say("done");
 
         var drained = await drain;
 

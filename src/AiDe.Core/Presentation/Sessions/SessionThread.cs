@@ -33,6 +33,26 @@ public sealed record ThreadSnapshot(IReadOnlyList<TurnView> Turns, long Version,
 {
     /// <summary>The in-flight turn (Ruling 77: at most one) — derived, never a member.</summary>
     public TurnView? InFlight => Turns.LastOrDefault(t => t.State is TurnState.Running or TurnState.Waiting);
+
+    /// <summary>The queued turn (Ruling 95: exactly one or none) — derived, never a member.</summary>
+    public TurnView? Queued => Turns.LastOrDefault(t => t.State == TurnState.Queued);
+
+    /// <summary>
+    /// The turn the queued one waits behind: the in-flight turn while one runs or waits, else the
+    /// last turn that ran — the one whose Stop or failure left the queued turn waiting for the
+    /// operator (Ruling 95: <i>b1 stopped; b2 is waiting</i>). Null with nothing queued.
+    /// </summary>
+    public TurnView? QueuedBehind =>
+        Queued is null ? null : InFlight ?? Turns.LastOrDefault(t => t.State is not (TurnState.Queued or TurnState.Cancelled));
+
+    /// <summary>
+    /// Whether the queued turn waits on the operator rather than on a run (Ruling 95): nothing is in
+    /// flight and the turn before it ended <c>Stopped</c> or <c>Failed</c> — the drain never sends
+    /// after those, so <i>Send now</i> is the operator's. Derived from the turns, so the instant
+    /// between a Completed conclusion and the drain's start never reads as waiting-on-you.
+    /// </summary>
+    public bool QueuedAwaitsYou =>
+        Queued is not null && InFlight is null && QueuedBehind is { State: TurnState.Stopped or TurnState.Failed };
 }
 
 /// <summary>The one encoding of a turn's lifecycle (DM7): the state decides which of Outcome / Waiting exists.</summary>
@@ -47,6 +67,19 @@ public enum TurnState
 
     /// <summary>A <c>submitted</c> with no <c>consumed</c> (ADR-0034): an explicit negative, never an absent row.</summary>
     NotRecorded,
+
+    /// <summary>
+    /// Compiled and submitted, waiting to be sent after the turn in flight (Ruling 95's <i>Wait</i>):
+    /// exactly the bytes that will be sent, no run yet. Exactly one per session.
+    /// </summary>
+    Queued,
+
+    /// <summary>
+    /// A queued turn the operator cancelled before it was sent (Ruling 95): terminal, so the
+    /// append-only stream keeps its row and its envelope gets its <c>consumed</c>; its words went
+    /// back to the editor. Never ran, so it carries no counts.
+    /// </summary>
+    Cancelled,
 }
 
 /// <summary>One decoration row of the turn's envelope: <c>class · tier · lease · shape · template</c>, each with its source and reason.</summary>
@@ -93,6 +126,12 @@ public enum TurnActionKind
     OpenLog,
     UseAsNextDraft,
     OpenConsoleAt,
+
+    /// <summary>Drops a queued turn (Ruling 95): its words return to the editor; editing is cancel-and-redraft, never in place.</summary>
+    Cancel,
+
+    /// <summary>Sends a queued turn now (Ruling 95) — offered only when it waits on the operator after a Stop or a failure.</summary>
+    SendNow,
 }
 
 /// <summary>A permission or cap request the turn is waiting on (SC7). Deny first.</summary>
@@ -133,7 +172,7 @@ public sealed record TurnView
 
         if ((outcome is not null) != IsTerminal(state))
         {
-            throw new ArgumentException("Outcome ⇔ a terminal state; Running, Waiting and NotRecorded carry none", nameof(outcome));
+            throw new ArgumentException("Outcome ⇔ a terminal state; Running, Waiting, Queued and NotRecorded carry none", nameof(outcome));
         }
 
         Ordinal = ordinal;
@@ -195,7 +234,7 @@ public sealed record TurnView
 
     /// <summary>Whether <paramref name="state"/> carries an outcome.</summary>
     public static bool IsTerminal(TurnState state) =>
-        state is TurnState.Completed or TurnState.Answered or TurnState.Failed or TurnState.Stopped;
+        state is TurnState.Completed or TurnState.Answered or TurnState.Failed or TurnState.Stopped or TurnState.Cancelled;
 
     /// <summary>The display ordinal: <c>b17</c>.</summary>
     public string DisplayOrdinal => "b" + Ordinal.ToString(CultureInfo.InvariantCulture);
@@ -222,6 +261,8 @@ public static class TurnCopy
             : "failed",
         TurnState.Stopped => "stopped by you",
         TurnState.NotRecorded => "outcome not recorded",
+        TurnState.Queued => "queued",
+        TurnState.Cancelled => "cancelled by you",
         _ => throw new ArgumentOutOfRangeException(nameof(state), state, "unknown turn state"),
     };
 
@@ -272,8 +313,30 @@ public static class TurnCopy
             TurnState.Stopped => $"Stopped by you after {EditsText(turn.Outcome!.Edits)}; {SpendText(turn.Outcome.Spend)}. Send the same turn again as a new turn, or open the log.",
             TurnState.Waiting => turn.Waiting!.Text,
             TurnState.NotRecorded => "The outcome was not recorded: the turn was submitted and nothing consumed it.",
+            TurnState.Cancelled => "Cancelled before it was sent; its words went back to the editor.",
             _ => string.Empty,
         };
+    }
+
+    /// <summary>
+    /// The queued turn's sentence (Ruling 95), from the snapshot it sits in — <i>queued — sends after
+    /// b1</i> while b1 runs or waits; <i>queued — b1 stopped; Send it or cancel it</i> when it waits
+    /// on the operator. One derivation for the row's status, its help text and the composer's line.
+    /// </summary>
+    public static string QueuedSentence(ThreadSnapshot snapshot)
+    {
+        ArgumentNullException.ThrowIfNull(snapshot);
+        var queued = snapshot.Queued ?? throw new ArgumentException("nothing is queued", nameof(snapshot));
+        var behind = snapshot.QueuedBehind;
+
+        if (snapshot.QueuedAwaitsYou)
+        {
+            return $"{behind!.DisplayOrdinal} {OutcomeWord(behind)}; {queued.DisplayOrdinal} is waiting — Send it or cancel it";
+        }
+
+        return behind is null
+            ? $"{queued.DisplayOrdinal} queued"
+            : $"{queued.DisplayOrdinal} queued — sends after {behind.DisplayOrdinal}";
     }
 
     /// <summary>
@@ -285,6 +348,13 @@ public static class TurnCopy
     {
         ArgumentNullException.ThrowIfNull(turn);
         var outcome = turn.Outcome ?? throw new ArgumentException("counts belong to a terminal turn", nameof(turn));
+
+        // A cancelled turn never ran (Ruling 95): no edits, no spend, no duration, no events —
+        // rendering "0 events · tokens not recorded" would describe a run that did not happen.
+        if (turn.State == TurnState.Cancelled)
+        {
+            return ["never sent"];
+        }
 
         var parts = new List<string>();
         if (turn.State != TurnState.Answered)

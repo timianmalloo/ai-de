@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.PromptCompilation: 47 types, 177 members, 82% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.PromptCompilation: 47 types, 178 members, 82% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.PromptCompilation`
 
-**47 public types · 177 public members · 82% documented.**
+**47 public types · 178 public members · 82% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -538,6 +538,7 @@ The `consumed.reason` codes (E6).
 | `string Completed = "completed"` | **(gap)** |
 | `string StoppedByOperator = "stopped_by_operator"` | **(gap)** |
 | `string DocumentClosed = "document_closed"` | **(gap)** |
+| `string CancelledByOperator = "cancelled_by_operator"` | A queued turn the operator cancelled before it was sent (Ruling 95): submitted, never run. |
 | `string LaneExited(int? code)` | `lane_exited{code}`, rendered with the exit code — or `lane_exited` alone when none was recorded. |
 
 ## `PurgePlan`

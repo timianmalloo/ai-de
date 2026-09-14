@@ -76,13 +76,73 @@ public sealed class RunChannelSessionThread : ISessionThread
     }
 
     /// <summary>A send the conductor accepted: the next ordinal joins, running.</summary>
+    /// <param name="compileSpend">
+    /// What the compile step cost for this turn's envelope (Ruling 78: <c>called.cost</c> is part of
+    /// the turn's spend, on its own outcome line), or null when no model was called for it.
+    /// </param>
     /// <returns>The turn's ordinal.</returns>
     public int Accept(
         string sourceText,
         IReadOnlyList<DecorationRow> decorations,
         string sentBytes,
         DateTimeOffset at,
-        string? envelopeId = null)
+        string? envelopeId = null,
+        Spend? compileSpend = null) =>
+        Add(sourceText, decorations, sentBytes, at, envelopeId, compileSpend, TurnState.Running);
+
+    /// <summary>
+    /// A send the conductor accepted while another turn is in flight (Ruling 95's <i>Wait</i>): the
+    /// next ordinal joins <b>queued</b> — compiled, submitted, not yet sent. Exactly one at a time.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">A turn is already queued (Ruling 95: <i>cancel it or wait</i>).</exception>
+    /// <returns>The turn's ordinal.</returns>
+    public int Enqueue(
+        string sourceText,
+        IReadOnlyList<DecorationRow> decorations,
+        string sentBytes,
+        DateTimeOffset at,
+        string? envelopeId = null,
+        Spend? compileSpend = null)
+    {
+        lock (_gate)
+        {
+            if (_turns.FirstOrDefault(t => t.State == TurnState.Queued) is { } queued)
+            {
+                throw new InvalidOperationException(
+                    $"turn b{queued.Ordinal} is queued; cancel it or wait — exactly one queued turn per session (Ruling 95)");
+            }
+        }
+
+        return Add(sourceText, decorations, sentBytes, at, envelopeId, compileSpend, TurnState.Queued);
+    }
+
+    /// <summary>The queued turn is sent: it runs from <paramref name="at"/> (its duration counts from the send, never from the queue).</summary>
+    /// <exception cref="InvalidOperationException">The turn is not queued.</exception>
+    public void Start(int ordinal, DateTimeOffset at)
+    {
+        lock (_gate)
+        {
+            var turn = Find(ordinal);
+            if (turn.State != TurnState.Queued)
+            {
+                throw new InvalidOperationException($"turn b{turn.Ordinal} is {turn.State}, not queued; only a queued turn starts");
+            }
+
+            turn.State = TurnState.Running;
+            turn.At = at;
+        }
+
+        Publish();
+    }
+
+    private int Add(
+        string sourceText,
+        IReadOnlyList<DecorationRow> decorations,
+        string sentBytes,
+        DateTimeOffset at,
+        string? envelopeId,
+        Spend? compileSpend,
+        TurnState state)
     {
         ArgumentNullException.ThrowIfNull(sourceText);
         ArgumentNullException.ThrowIfNull(decorations);
@@ -100,7 +160,8 @@ public sealed class RunChannelSessionThread : ISessionThread
                 Decorations = decorations,
                 SentBytes = sentBytes,
                 At = at,
-                State = TurnState.Running,
+                State = state,
+                Spend = compileSpend,
             });
         }
 
@@ -139,6 +200,7 @@ public sealed class RunChannelSessionThread : ISessionThread
         {
             var turn = Find(ordinal);
             RefuseIfTerminal(turn);
+            RefuseIfQueued(turn);
             turn.State = TurnState.Waiting;
             turn.Waiting = request;
         }
@@ -153,6 +215,7 @@ public sealed class RunChannelSessionThread : ISessionThread
         {
             var turn = Find(ordinal);
             RefuseIfTerminal(turn);
+            RefuseIfQueued(turn);
             turn.State = TurnState.Running;
             turn.Waiting = null;
         }
@@ -176,6 +239,15 @@ public sealed class RunChannelSessionThread : ISessionThread
         {
             var turn = Find(ordinal);
             RefuseIfTerminal(turn);
+
+            // A queued turn never ran, so it ends only by cancellation; a turn that ran is never
+            // "cancelled" — it is stopped, failed, or done (Ruling 95: the two words are two facts).
+            if ((turn.State == TurnState.Queued) != (terminal == TurnState.Cancelled))
+            {
+                throw new InvalidOperationException(
+                    $"turn b{turn.Ordinal} is {turn.State} and cannot conclude as {terminal}: only a queued turn is cancelled, and a queued turn is only cancelled");
+            }
+
             turn.State = terminal;
             turn.Waiting = null;
             turn.ExitCode = exitCode;
@@ -219,6 +291,15 @@ public sealed class RunChannelSessionThread : ISessionThread
         }
     }
 
+    private static void RefuseIfQueued(Turn turn)
+    {
+        if (turn.State == TurnState.Queued)
+        {
+            throw new InvalidOperationException(
+                $"turn b{turn.Ordinal} is queued and has no run to wait or resume; Start it first (Ruling 95)");
+        }
+    }
+
     /// <summary>The mutable fold of one turn — private, projected to an immutable <see cref="TurnView"/> on every publish.</summary>
     private sealed class Turn
     {
@@ -227,7 +308,7 @@ public sealed class RunChannelSessionThread : ISessionThread
         public string SourceText { get; init; } = string.Empty;
         public IReadOnlyList<DecorationRow> Decorations { get; init; } = [];
         public string SentBytes { get; init; } = string.Empty;
-        public DateTimeOffset At { get; init; }
+        public DateTimeOffset At { get; set; }
         public TurnState State { get; set; }
         public WaitingRequest? Waiting { get; set; }
         public List<EventLine> Events { get; } = [];

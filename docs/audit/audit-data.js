@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T18:11:58Z",
+  "generated": "2026-09-14T18:53:53Z",
   "audit": [
     {
       "actor": null,
@@ -16067,6 +16067,46 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T18:11:56Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2GM96PCGPBJCJ0RG5GBCP4H",
+      "shortname": "lane-composer-r95",
+      "datetime": "2026-09-14T18:53:42Z",
+      "session": "composer-r95",
+      "prompt": "Lane node composer-r95 (worktree C:\\Projects\\ai-de-lane-composer-r95, branch lane/composer-r95, base c831113e). Ruling 95 — F-D: a Send while a turn runs offers Wait (one queued turn) or Parallel (a derived sibling session); Ruling 77(b) reversed as its own condition 2 foresaw. Conditions: (1) measure first — two sessions on the same workspace each complete a turn concurrently against the real adapter (record process count and both outcome lines; if serialised, Parallel is refused with that reason and only Wait ships); (2) red-first STA rows for queued · drained · stopped-with-queued · cancel; (3) the drain never sends after Stop/Failed (test); (4) spend for the queued turn's compile on its own outcome line (Ruling 78). Sessions seam: Ruling 99's name rule through a single Func<string,string> seam if not yet on main. Not in scope: the account picker (Ruling 105), the New Session sheet, the Explore reader, the store. Tier T1, fan-out 0.",
+      "summary": "Ruling 95 landed on lane/composer-r95 (base c831113e, merged origin/main eb8cdee2 mid-lane for Ruling 99). Condition 1 measured first with a probe mode (--parallel-turns): two session documents on one workspace, two live claude-code engine processes alive together in 14/14 census samples, node 41 → 43, both turns answered (3.5 s / 3.4 s) — the run host does not serialise, so Parallel ships. Wait: TurnState.Queued/Cancelled, TurnActionKind.Cancel/SendNow, Enqueue/Start, the snapshot's derived Queued/QueuedBehind/QueuedAwaitsYou; the composer's two-action status line; exactly one queued turn; the drain after Completed/Answered only; Send now after Stop/Failed; Cancel returns the words; the compile's called.cost seeded on its own turn (Ruling 78). Parallel: ParallelSessionFlow (create with origin parallel:<parent>, config copied, name by SessionConfigStore.UniqueName, docked Left, bound, sent through the sibling's own gate), wired in MainWindow. Found and fixed on the way: GovernedRunHost.DrainAsync re-checked its exit only on an event's arrival, so a prompt completing after the last event hung the run (red-first). Counts: App 987 → 1007, Core 2648 → 2660 (lane's own +14 / +10). Proof: docs/proof/send-while-running.md. Commits 5eb14d34, 8e1669a7, 5b62b759 (merge), f7599b4f, 5d1442ff.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/send-while-running.md",
+        "src/AiDe.App/Workbench/Sessions/ParallelSessionFlow.cs",
+        "tests/AiDe.App.Tests/Sessions/Thread/ASendWhileATurnRunsOffersWaitOrParallelTests.cs"
+      ],
+      "tags": [
+        "ruling-95",
+        "composer",
+        "sessions"
+      ],
+      "outcome": "success",
+      "goal": "Land Ruling 95: a Send while a turn runs offers Wait (one queued turn) or Parallel (a derived sibling session), condition 1 measured first",
+      "done_when": "Condition 1 measured and recorded before Parallel code; Wait red-first (queued, drained, stopped-with-queued, cancel); the drain never sends after Stop/Failed; the queued turn's compile spend on its own line; Parallel shipped or refused with the measured reason; DESIGN.md and the spec's STA rows amended; gates green; audit entry; session end",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-14T17:43:04Z",
+      "duration_seconds": 4238.0,
+      "git": {
+        "sha": "5d1442ff3652d557877f00bb875d031e60f99fbd",
+        "short": "5d1442ff3",
+        "branch": "lane/composer-r95",
+        "pushed": null
+      }
     }
   ],
   "changes": [
