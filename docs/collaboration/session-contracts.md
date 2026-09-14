@@ -1069,6 +1069,34 @@ Twelve new reviews are funded, four each Test/Core Security-SRE/C#, against that
 same candidate after parent replay. Conductor's cumulative ceiling rises
 prospectively to 590. No E1 product, main/push, normative E or programme grant.
 
+Owner turn 75 transfers only the remaining lifetime bug to retained Core Astra
+`cfac7750-d1df-47ae-a107-205951487fd7`, sixteen new leaves, and freezes the original
+qualification writer and the other two test files. Assigned session/branch:
+`atlas-e1-budget-lifetime-repair` / `atlas/e1-budget-lifetime-repair`; new worktree
+`C:\Projects\ai-de-atlas-e1-budget-lifetime-repair`. Parent created, registered
+and verified HEAD `44c7db6d0730a22651bc05ad7c1872c13d2418f0`.
+Parent's identity-checked coordination query allowed the exact file before the
+new author claim, confirming no predecessor lease blocks the transfer.
+Sole authored path: `tests/AiDe.Core.Tests/Understanding/AtlasReadBudgetTests.cs`.
+The prior writer's five unused leaves are not transferred.
+
+Register every returned task/reservation immediately, including unexpected
+success from expected-refusal calls. Release successful drained acquisitions
+before dependent awaits; own/drain both FIFO tasks on every path. Observe a
+bounded five-real-admission counterexample against the preserved helper with
+failure cancellation and awaited cleanup. Exercise partial acquisition followed
+by failure, unexpected success/fault and simultaneous primary/secondary failures,
+preserving original exception objects. Retain exact charges/final zero and actual
+red/green receipts; no wrong expected number counts as a production fault.
+No helper file, production edit or renewed SP1/SP2/root-isolation work is granted.
+
+Owner grants twelve new independent review leaves, four each Test/Core
+Security-SRE/C#, and raises Conductor prospectively to 620 cumulative leaves.
+Owner turn 76 records the failed parent reflection probe accurately: AccessDenied
+(OS error 5), no diagnostic output, no runtime discriminator. Do not retry or
+bypass that denied route. The authorized ordinary test repair must supply the
+runtime evidence. No qualification/product/main/normative-E acceptance is implied.
+
 ### Core owns
 
 | Path | Why |

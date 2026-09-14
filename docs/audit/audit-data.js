@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T22:55:45Z",
+  "generated": "2026-09-14T23:20:39Z",
   "audit": [
     {
       "actor": null,
@@ -16758,6 +16758,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "24e8d1b7a43489c9462fb61862f3b21b82c8c9e6",
         "short": "24e8d1b7a",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2H3HYX1KTK6Y5VH4FTBB56G",
+      "shortname": "atlas-owner75-lifetime-transfer",
+      "datetime": "2026-09-14T23:20:38Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "All44c7reviews:Test3/4conditional,CSharp4/4twoWrappersBLOCKadvisory,CoreSRE3/4rootvetoCLEAREDresourceBLOCK. Owner75transferssoleAtlasReadBudgetTests.cs toretainedCoreAstra innewregisteredverified44c7tree; coordcheckedpredecessorleaseALLOWbeforeauthorclaim.16newleaves, old5unusednottransferred; originalwriter/other2filesfrozen. Musttrackallacquisitionsinclrefusalunexpectedresults,releasebeforedependentawait,ownFIFOeverypath,realbounded5admissionred/control,partialandprimary-secondaryfaultobjects.12freshreviews/Main620. Owner76recordsfailedreflectionprobeAccessDeniedOS5/nooutput/notsemanticred; no retry/bypass, ordinaryauthorizedtestrepair supplieswitness. No newmetadata/product/main/normativeacceptance. OriginalE0and31greenbaselinepreserved; currentqualunjoined.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Close the one-file test-helper lifetime defects without reopening accepted qualification surfaces",
+      "done_when": "Five-admission and failure-ownership controls produce retained evidence and fresh independent clearance",
+      "tier": "T2",
+      "main_calls": 585,
+      "main_budget": 620,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T23:20:38Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "aa6303ec3d2daaf4de4d717f4715beef44875790",
+        "short": "aa6303ec3",
         "branch": "conductor/code-atlas",
         "pushed": null
       }
