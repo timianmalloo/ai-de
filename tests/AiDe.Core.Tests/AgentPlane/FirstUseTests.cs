@@ -61,6 +61,25 @@ public sealed class FirstUseTests : IDisposable
         Assert.Contains("not recorded", silent.Result, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Found by the fresh-machine oracle: node ships an extensionless POSIX `npm` script beside `npm.cmd`,
+    /// and a resolver that tries the bare name first hands CreateProcess a file it cannot run ("not a
+    /// valid application for this OS platform"). On Windows the bare name never wins for an
+    /// extensionless tool.
+    /// </summary>
+    [Fact]
+    public void OnWindowsThePathResolverPrefersPathextOverAnExtensionlessScript()
+    {
+        var bin = Path.Combine(_root, "bin");
+        Directory.CreateDirectory(bin);
+        File.WriteAllText(Path.Combine(bin, "npm"), "#!/bin/sh\necho posix\n");
+        File.WriteAllText(Path.Combine(bin, "npm.cmd"), "@echo cmd");
+
+        var resolved = FirstUse.Which("npm", bin);
+
+        Assert.Equal(OperatingSystem.IsWindows() ? Path.Combine(bin, "npm.cmd") : Path.Combine(bin, "npm"), resolved, StringComparer.OrdinalIgnoreCase);   // PATHEXT spells .CMD
+    }
+
     /// <summary>(b), condition 7: a root inside a git checkout is refused with the reason; the product default is not.</summary>
     [Fact]
     public void ARootInsideAGitCheckoutIsRefusedWithTheReason()

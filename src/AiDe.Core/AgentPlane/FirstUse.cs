@@ -132,9 +132,13 @@ public static class FirstUse
             ? (Environment.GetEnvironmentVariable("PATHEXT") ?? ".COM;.EXE;.BAT;.CMD").Split(';', StringSplitOptions.RemoveEmptyEntries)
             : [string.Empty];
 
+        // On Windows the bare name is tried only when the tool already carries an extension: npm
+        // ships an extensionless POSIX script beside npm.cmd, and CreateProcess cannot run it —
+        // observed by the fresh-machine oracle ("not a valid application for this OS platform").
+        var candidates = OperatingSystem.IsWindows() && !Path.HasExtension(tool) ? extensions : extensions.Prepend(string.Empty);
         foreach (var directory in path.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
         {
-            foreach (var extension in extensions.Prepend(string.Empty))
+            foreach (var extension in candidates)
             {
                 var candidate = Path.Combine(directory.Trim('"'), tool + extension);
                 if (File.Exists(candidate))
