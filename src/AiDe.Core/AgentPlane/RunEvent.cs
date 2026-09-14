@@ -112,6 +112,13 @@ public static class AgentPlaneErrorCodes
     /// that exists.
     /// </summary>
     public const string ProviderConfigurationMalformed = "AP-0021";
+
+    /// <summary>
+    /// A native engine's command is not on PATH (nor, for an npm-delivered CLI, under the install
+    /// root), or is there only as an npm <c>.cmd</c> shim the catalog has no observed launch for.
+    /// The message carries the upstream install instruction the spike copied.
+    /// </summary>
+    public const string EngineNotOnPath = "AP-0022";
 }
 
 /// <summary>
