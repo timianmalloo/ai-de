@@ -721,6 +721,21 @@ remains unestablished; in-process idle-Git proof remains separate. No zero-pin o
 Git-write assertion is inferred from a source reply. Mainline ceiling becomes a prospective
 330 cumulative leaves, preserving prior calls/wrappers/overruns and all programme restrictions.
 
+Owner turn 59 extends the independent proof from twenty-seven to thirty-three leaves,
+six newly available in the same sole proof test file. The actual run's data/binding/
+healthy-release evidence is retained, but visible-source acceptance is withheld: the
+default capture clips source/outline despite bound text and `IsOffscreen=false`.
+
+Focus Code Atlas through its rendered tab/control and use the supported
+`Window -> Maximize pane` route (`workbench.maximizePane`), not private layout/focus state
+or an assumed keyboard binding. Observe the intended pane maximizing; measure source text
+viewport and selected-outline content against the window client area and clipping
+ancestors. The method/source text, selected label and highlighted identifier must be
+readable, not merely positive-area controls. Preserve before/after geometry and owned
+captures plus all lifecycle assertions. No production resizing/layout edit is granted.
+A successful maximized path does not close the default-placement usability finding.
+Mainline ceiling remains 330; other proof limits and programme restrictions remain.
+
 ### Core owns
 
 | Path | Why |

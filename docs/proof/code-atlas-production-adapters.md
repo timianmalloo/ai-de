@@ -26,6 +26,13 @@ during workspace replacement is the external lifetime boundary. A public same-li
 idle barrier is not established and is not invented; the earlier in-process idle-Git proof
 remains a distinct claim. The first proof attempt produced no execution evidence.
 
+Owner 59 adds a visible-source proof gate after the actual run produced data/lifecycle
+evidence. The default 1280-by-900 capture clips the source in a narrow right pane.
+Bound text and UIA visibility flags do not prove readable pixels. The same proof may
+use the existing rendered focus and Window/Maximize pane route, measure clipped text/
+outline viewport geometry, and recapture. No product layout change is admitted, and
+default placement remains a separate usability finding.
+
 This is an incomplete production Proof Pack. Addendum E remains candidate. No primary-main
 integration or push is claimed. The private proposal/TheTerrace corpus is not part of this
 delivery record.

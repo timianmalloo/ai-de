@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T17:07:05Z",
+  "generated": "2026-09-14T17:40:43Z",
   "audit": [
     {
       "actor": null,
@@ -16238,6 +16238,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "294d22aaec27830ab5b7149859efac4c728e67dc",
         "short": "294d22aae",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GG3H2632NKX5DDZSN7E1PT",
+      "shortname": "atlas-readable-maximized-source-proof",
+      "datetime": "2026-09-14T17:40:42Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep working and provide periodic todo refreshes showing in-flight and remaining work",
+      "summary": "Owner59withholdsvisible-sourceacceptanceafterparentactual1280x900PNGsourceclipping. Independentrealdata/binding/healthyrelease/lifecyclegreenretained. Sixnewproofleaves27to33samefile: renderedfocus+realWindowMaximizepane, actualtextviewport/outlineclipgeometryandreadablemethod/highlight,preservebeforecaptureandalljourneychecks. No productionresize/fakecontrols/publicidlebarrierclaim. Defaultplacementremainsusabilityfindingevenifmaximizedpathpasses. Proofwriterdispatched; notcompleted.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Demonstrate an existing supported pane state where actual Code Atlas source and member content are readable.",
+      "done_when": "The maximized user path, clipped viewport geometry and owned-window pixels support the real source/binding journey without hiding default-placement limits.",
+      "tier": "T2",
+      "main_calls": 321,
+      "main_budget": 330,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T17:40:42Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "7601509826238df218f0feac4ec5466ca5d8d9a8",
+        "short": "760150982",
         "branch": "conductor/code-atlas",
         "pushed": null
       }
