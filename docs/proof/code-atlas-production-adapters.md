@@ -329,3 +329,10 @@ the six-call allowance with two failed source reads and a limited factory inspec
 Owner turn 52 funds a fresh six-call, narrowly scoped authority review in a separate clean
 tree at `b1c6f74a`. No runtime join or Shell handoff is authorized by an irrelevant review,
 and no code vulnerability is asserted merely because that review failed to cover the code.
+
+The fresh six-range authority review completed and returned **BLOCK** on a different,
+substantive issue: scope expiry versus an in-flight prepared-response publication.
+Conductor traced the actual endpoint/server/issuer path and observed operation disposal
+before the response write. The externally visible interleaving is not yet executed;
+no disclosure is claimed. See `investigation-code-atlas-publication-lifetime`.
+The Core candidate and Shell handoff remain unjoined/unreleased pending that investigation.

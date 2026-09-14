@@ -983,3 +983,18 @@ The separate clean review tree is pinned at `b1c6f74a`; literal built-in views c
 actual policy, issuer, facade, daemon composition and Core eligibility. The gate stays closed
 until that report supports the current authority path. No vulnerability is invented from
 missing coverage and no source is joined on the strength of green counts alone.
+
+## Fresh authority review: publication/expiry remains blocked
+
+The fresh reviewer read all six current-pin ranges and returned a narrow hard BLOCK:
+preparation completion is not evidence that publication has completed or its writer has
+been canceled and awaited before native disposal. Conductor opened the continuous
+endpoint/server/issuer path and confirmed the source ordering: commit disposes the operation
+before the server response write; scope stop waits for preparation, not writer completion.
+No failing external interleaving or disclosure has yet been executed.
+
+The investigate workflow is active for the controlled publisher barrier and ownership
+oracle. Owner was asked to fund/disposition that proof and any supported repair, retaining
+the Core candidate unjoined and Shell's sixteen calls held. The provisional report is
+`docs/investigations/code-atlas-publication-lifetime.md`; neither the old Security answer
+nor the DS historical spike citation clears this new boundary.

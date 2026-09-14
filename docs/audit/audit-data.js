@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T04:31:53Z",
+  "generated": "2026-09-14T04:41:26Z",
   "audit": [
     {
       "actor": null,
@@ -15778,6 +15778,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "e9b8dbd94aeb421ed88bb942351b40dbafc6c5dd",
         "short": "e9b8dbd94",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2F3GKPTMQ6D7E284Z2PREZZ",
+      "shortname": "atlas-publication-lifetime-investigation",
+      "datetime": "2026-09-14T04:41:25Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "FreshauthorityreviewBLOCKSpublication/expiryboundary. ParentreadactualIssuer/Endpoint/Server: operationnative/workownershipdisposedbeforewirewrite; scopeStopwaitspreparationonly. Sourceorderingverified, externallyvisibleinterleaving/disclosureNOTexecuted. Controlledpublicationbarrier, competinglinearization/transporthypothesesandphasedplanrecorded; Ownerdispositionpending; NOFIX/noCorejoin/Shellrelease. Boundedmarkersearchnone. Prior437Core96Appdoesnotcovermissinginterleaving.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/code-atlas-publication-lifetime.md",
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Establish the publication/expiry authority lifetime before admitting the runtime.",
+      "done_when": "A controlled publisher interleaving distinguishes safe ownership/cancellation from premature release, and Owner approves the evidence-backed repair disposition.",
+      "tier": "T2",
+      "main_calls": 178,
+      "main_budget": 184,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T04:39:55Z",
+      "duration_seconds": 90.0,
+      "git": {
+        "sha": "14844e24e8be83abf3af4a0dfcd5954af41cc783",
+        "short": "14844e24e",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

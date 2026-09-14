@@ -4781,7 +4781,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a86a34219aab2a3ac65d406c7bbbe0ff3c3a371854f59c35f8db58d40e42dc71"
+      "sourceSha256": "9c3a6865103c30bea6fb6b1280bb975dfad9c4c0ab7378620931fe3623b88264"
     },
     {
       "id": "note-atlas-reader-native-direction",
@@ -8863,6 +8863,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "fc22d9922a978a85be89a719bf0744ec7ee06914fbacfdefe7b512d4c791a2cc"
     },
     {
+      "id": "investigation-code-atlas-publication-lifetime",
+      "path": "docs/investigations/code-atlas-publication-lifetime.md",
+      "title": "Code Atlas publication lifetime - unresolved expiry boundary",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-14",
+      "reviewSuggested": [],
+      "summary": "Source readback shows operation/native membership disposal before the response write. Expiry-versus-stalled-publication behavior has not yet been executed. Runtime admission remains blocked while a controlled counterexample and repair disposition are prepared.",
+      "tags": [
+        "code-atlas",
+        "investigation",
+        "ipc",
+        "authority",
+        "lifetime"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-e-code-atlas",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-code-atlas-production-adapters",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-atlas-live-reader-horizon",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "201f804aefcbc9135d99fa799807e9dbe2c57f9f4b9e33b0ae7a81356b2bbe59"
+    },
+    {
       "id": "lens-code-doc-join",
       "path": "docs/lenses/code-doc-join.md",
       "title": "Lens - code/doc join",
@@ -11019,7 +11054,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "10239bbfdf49fd88d0f9d3bc26c3edb1aaa2dbfffb268df0e4f4994e085970d5"
+      "sourceSha256": "66fd908ea39266a8a2908d99bb46902788fa568d9ceb063fd6d38bb84a88478f"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -18965,5 +19000,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "640ac19054a3b1b4c15434423605dc7285974b23c9041aa3afc766a10f2d1ada"
+  "graphSha256": "335b8a36e19346ac38ccd39db13eb40250a3970a619f9670576d54f5afd2548b"
 };
