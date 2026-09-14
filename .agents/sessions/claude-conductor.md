@@ -8,25 +8,25 @@
 | **Session id** | `conductor-addendum-c` |
 | **Worktree** | `C:/Projects/ai-de-conductor-addendum-c` |
 | **Branch** | `conductor/addendum-c` |
-| **Based on** | `main` `57cd405a` |
-| **Status** | converging — the programme delivered; one profiler node live |
-| **Last updated** | 2026-09-13 (23:45Z) |
+| **Based on** | `main` `51e806f8` |
+| **Status** | converged — the programme delivered; nothing live |
+| **Last updated** | 2026-09-14 (16:30Z) |
 
 ## Doing right now
 
-**Converged.** Every Addenda C/D slice is on `main` (`3e5b04f6` the last product change; `57cd405a`
-the converge docs): the lane rows retired from `session-contracts.md`, the plan's ledger and Stage
-10 close written, 13 merged worktrees removed one by one, the stale coord sessions ended, Rulings
-50–90 filed, DC-136 → DC-205 registered, the pack findings noted. Live: **the session profiler**
-(`side/session-profile-addendum-cd`) — its profile lands as the programme's last docs join. Waiting
-on the operator's eyes only: `docs/notes/attended-rows-for-the-operator.md`.
+**Converged, nothing live.** Every Addenda C/D slice, the profile (`sp-0002`), F5 (`8bd3e33e`), the
+caret fix and Ruling 91 (`528af3a1`), and the AI-Forward Pack at **revision 70** (`51e806f8` — the
+first join run by the pack's own `conductor-join.py` over `docs/coordination/join.json`) are on
+`main`. Rulings 50–91 filed, DC-136 → DC-209 registered (next free DC-210). Every conductor
+worktree but this one is removed (`chore/updatepack-rev70`, `feature/exit-evidence` last, 0 unique
+commits each); this tree is 0 ahead of `main` and clean. Waiting on the operator's eyes only:
+`docs/notes/attended-rows-for-the-operator.md`.
 
 ## Waiting on
 
 | From | What |
 |---|---|
-| **profiler** | its close → the last docs-only join |
-| **The user (later)** | the attended rows (one list); the F5 exit run (`feature/exit-evidence` @ `135e05e1`, kept); the Owner's word on Ruling 88's density unit |
+| **The user (later)** | the attended rows (one list); the F5 gesture on the current build (File → New Session with `@hello.txt`, Ruling 91); the Owner's word on Ruling 88's density unit; whether the *Compiled prompt* disclosure opens by default |
 
 ## To peers (Copilot Atlas fleet)
 
