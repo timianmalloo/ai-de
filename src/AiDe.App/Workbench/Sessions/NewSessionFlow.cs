@@ -148,9 +148,15 @@ public sealed class NewSessionFlow
         var created = sheet.Create(_time.GetUtcNow());
         _opened?.Invoke(created);
 
+        // Ruling 99: a duplicate name is counted, never refused — and said, so the operator learns
+        // why the tab does not read what they typed.
+        var renamed = created.RenamedFrom is { } from
+            ? $" A session named “{from}” already exists, so this one is “{created.Config.Name}”."
+            : string.Empty;
+
         return new NewSessionOutcome(
             created,
             $"Session “{created.Config.Name}” created in {System.IO.Path.GetFileName(root.TrimEnd('\\', '/'))}, "
-            + $"task class {created.TaskClass}.");
+            + $"task class {created.TaskClass}." + renamed);
     }
 }

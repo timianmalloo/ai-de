@@ -227,7 +227,6 @@ public sealed class PerspectiveMenuTests
             ("diagnostics",      ["coding"], SurfaceContentFactory.Instances.One),
             ("canvas",           ["architecture"], SurfaceContentFactory.Instances.One),
             ("view",             ["architecture"], SurfaceContentFactory.Instances.One),
-            ("inspector",        ["architecture"], SurfaceContentFactory.Instances.One),
             ("classdiagram",     ["architecture"], SurfaceContentFactory.Instances.Many),
             ("sequence",         ["architecture"], SurfaceContentFactory.Instances.Many),
             ("contexts",         ["architecture"], SurfaceContentFactory.Instances.One),
@@ -332,8 +331,8 @@ public sealed class PerspectiveMenuTests
             ["Coding perspective", "Explore perspective", "Architecture perspective", "Coordination perspective",
              "Next tab in pane", "Previous tab in pane", "Move tab left/right",
              "Focus graph canvas", "Clear the status message",
-             "Show graph", "Show evidence", "Show provenance", "New class diagram", "New sequence diagram",
-             "Show contexts", "Show joins", "New code viewer"],
+             "Show graph", "Show evidence", "New class diagram", "New sequence diagram",
+             "Show contexts", "Show joins", "New code viewer"],                 // Ruling 94: no "Show provenance" — the kind is retired
             Titles(architecture, "_View"));
         Assert.Equal(Titles(coding, "_Edit"), Titles(architecture, "_Edit"));
         Assert.Equal(Titles(coding, "_Window"), Titles(architecture, "_Window"));
@@ -593,7 +592,7 @@ public sealed class PerspectiveMenuTests
     public void TryParseOpener_RoundTripsEveryDerivedOpener()
     {
         var derived = SurfaceContentFactory.Kinds.Where(k => k.Entry is SurfaceContentFactory.SurfaceEntry.Derived).ToList();
-        Assert.True(derived.Count >= 16);
+        Assert.True(derived.Count >= 15);   // 16 before Ruling 94 retired `inspector`
 
         foreach (var row in derived)
         {

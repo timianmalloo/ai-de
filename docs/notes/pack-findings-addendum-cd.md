@@ -66,3 +66,13 @@ on Windows. This repository's own scripts were swept (45 statements, 25 files) a
 locale read its own committed bytes as changed, and could not be repaired in place because its
 ordering clause forbids a post-run edit). The pack's copy is the pack's to fix (DM7); the gate here
 scans `tools/` and `spikes/` only and names the pack path as the finding it does not own.
+
+**Two more from the 2026-09-14 joins.** (1) `conductor-join.py` step 1 reports *"the merge has
+conflicts"* with an empty file list when `git merge` refuses for a different reason — local
+uncommitted changes to a file the merge touches (`docs/audit/audit-log.jsonl` written by the primary's
+prompt-log after the last join). The remedy is different (commit the append-only lines in that tree,
+as `verify-stranded-audit` says), so the message should read git's own reason back
+(`Please commit your changes or stash them before you merge` / `would be overwritten`) and say so.
+(2) DC-216: parallel lanes under one conductor overwrote each other's `audit-summary.txt` — a scratch
+path keyed by the harness session rather than the lane's `AGENT_SESSION`; every lane sets
+`AGENT_SESSION` first, so it is the right key.

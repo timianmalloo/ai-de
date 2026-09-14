@@ -107,9 +107,9 @@ public sealed class WorkbenchShell : IDisposable
     /// <para><b>Derived from the factory, not restated.</b> A pane realized before
     /// <see cref="AttachWorkspace"/> was built against a factory with no queries, so it rendered
     /// "not available" — and it stays that way until something marks it to rebuild. The watcher
-    /// kinds were marked; <c>view</c> and <c>inspector</c> were not, so the default layout's
-    /// "Domain" pane read <i>"Domain is not available in this build"</i> against a fully indexed
-    /// workspace, permanently.</para>
+    /// kinds were marked; <c>view</c> (and the since-retired <c>inspector</c>, Ruling 94) were not,
+    /// so the default layout's "Domain" pane read <i>"Domain is not available in this build"</i>
+    /// against a fully indexed workspace, permanently.</para>
     ///
     /// <para>That is the same defect as the watcher panes, fixed once and swept as far as the
     /// reported instance. The list is now the union rather than the three kinds somebody happened
@@ -119,7 +119,7 @@ public sealed class WorkbenchShell : IDisposable
     /// content is a pure function of the queries belong here.</para>
     /// </remarks>
     private static readonly HashSet<string> WorkspaceDependentPaneKinds =
-        new(StringComparer.Ordinal) { "sessions", "board", "leaderboard", "ledger", "view", "inspector" };
+        new(StringComparer.Ordinal) { "sessions", "board", "leaderboard", "ledger", "view" };
 
     /// <summary>The last observed watcher-store fingerprint; the loop only re-renders the panes when it changes (conn-9).</summary>
     private string? _watcherFingerprint;
@@ -628,7 +628,11 @@ public sealed class WorkbenchShell : IDisposable
     /// </summary>
     private void AttachPersistence(string dataDirectory)
     {
-        var restorable = SurfaceContentFactory.KnownKinds.ToHashSet(StringComparer.Ordinal);
+        // Every kind the factory builds plus every kind it has RETIRED (Ruling 94's `inspector`):
+        // a retired kind must reach the host's admission to be dropped with a report — dropped at
+        // the store for being unrestorable, it would vanish from the operator's saved layout in
+        // silence, which ADR-0032 rule 2 forbids.
+        var restorable = SurfaceContentFactory.RestorableKinds;
         var layoutPath = Path.Combine(dataDirectory, "layout.json");
 
         foreach (var host in Hosts)
@@ -711,10 +715,10 @@ public sealed class WorkbenchShell : IDisposable
         // pick up the now-wired factory. Never a terminal (DC-029) - rebuilding one kills a live
         // process.
         //
-        // This was the three WATCHER kinds. `view` and `inspector` have the same dependency - the
-        // factory builds them only `when queries is not null` - so the default layout's "Domain"
-        // pane read "not available in this build" against a fully indexed workspace, forever. Same
-        // defect, swept only as far as the pane somebody reported.
+        // This was the three WATCHER kinds. `view` has the same dependency - the factory builds it
+        // only `when queries is not null` - so the default layout's "Domain" pane read "not
+        // available in this build" against a fully indexed workspace, forever. Same defect, swept
+        // only as far as the pane somebody reported.
         var rebuildable = WorkspaceDependentPaneKinds;
         foreach (var host in Hosts)
         {

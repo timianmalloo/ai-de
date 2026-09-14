@@ -272,4 +272,80 @@ public sealed class TheTaskClassIsChosenNotTypedTests : IDisposable
         Assert.Equal("review", ((ListBoxItem)Assert.Single(Walk<ListBox>(reviewBody)).SelectedItem).Tag);
         Assert.Equal("review", review.TaskClass);
     });
+
+    /// <summary>
+    /// Ruling 102 (R-5): the operator's screenshot showed the task-class list with a horizontal
+    /// scrollbar and the free-form row's description clipped at "…with no task i". The descriptions
+    /// WRAP to the list's width and horizontal scrolling is disabled on that list — rendered at the
+    /// sheet's own width (the dialog is 520 wide, height to content): the list's scroll extent never
+    /// exceeds its viewport, no horizontal scrollbar is visible, and no description is trimmed.
+    /// </summary>
+    [Fact]
+    public void TheTaskClassDescriptionsWrapToTheList_AndNothingScrollsSideways() => Sta.Run(() =>
+    {
+        var sheet = Sheet();
+        var body = NewSessionSheetDialog.Build(sheet, announce: null, onCreate: () => { });
+        var window = new Window { Width = 520, SizeToContent = SizeToContent.Height, Content = body, ShowActivated = false, WindowStartupLocation = WindowStartupLocation.Manual, Left = -10000, Top = -10000 };
+        try
+        {
+            window.Show();
+            window.UpdateLayout();
+
+            var picker = Assert.Single(Walk<ListBox>(body));
+            var scroller = Assert.Single(Visuals<ScrollViewer>(picker));
+            var descriptions = picker.Items.Cast<ListBoxItem>()
+                .Select(item => Walk<TextBlock>(item).Single(t => t.TextWrapping == TextWrapping.Wrap))
+                .ToList();
+
+            Assert.Equal(sheet.TaskClassOptions.Count, descriptions.Count);
+
+            Assert.True(scroller.ExtentWidth <= scroller.ViewportWidth + 0.5,
+                $"the list scrolls sideways: extent {scroller.ExtentWidth:F1} > viewport {scroller.ViewportWidth:F1}");
+            Assert.Equal(Visibility.Collapsed, scroller.ComputedHorizontalScrollBarVisibility);
+            Assert.Equal(ScrollBarVisibility.Disabled, ScrollViewer.GetHorizontalScrollBarVisibility(picker));
+
+            // Ruling 102's CONDITIONS say `IsTextTrimmed`; that property is .NET Framework 4.8's and
+            // is not on .NET 10 WPF's TextBlock (CS1061, observed). The measurement that stands in
+            // is stronger: a laid-out description whose one-line width exceeds the width it was
+            // given has either wrapped (taller than one line) or been clipped — and clipped fails.
+            // Rows below the list's MaxHeight are virtualized (ActualWidth 0) and are not measured.
+            var wrappedOrClipped = descriptions.Where(d => d.ActualWidth > 0 && OneLineWidth(d) > d.ActualWidth + 0.5).ToList();
+            Assert.NotEmpty(wrappedOrClipped);                      // the positive control: at 520 wide, a laid-out description is longer than its row
+            Assert.All(wrappedOrClipped, d => Assert.True(
+                d.ActualHeight > d.FontSize * 1.8,
+                $"'{d.Text}' is clipped, not wrapped: one line needs {OneLineWidth(d):F0}px, it has {d.ActualWidth:F0}px and one line of height"));
+        }
+        finally
+        {
+            window.Close();
+        }
+    });
+
+    /// <summary>The width the text block's whole text takes on one line, in its own typeface and size.</summary>
+    private static double OneLineWidth(TextBlock block) =>
+        new System.Windows.Media.FormattedText(
+            block.Text,
+            System.Globalization.CultureInfo.CurrentUICulture,
+            FlowDirection.LeftToRight,
+            new System.Windows.Media.Typeface(block.FontFamily, block.FontStyle, block.FontWeight, block.FontStretch),
+            block.FontSize,
+            System.Windows.Media.Brushes.Black,
+            System.Windows.Media.VisualTreeHelper.GetDpi(block).PixelsPerDip).Width;
+
+    private static IEnumerable<T> Visuals<T>(DependencyObject root) where T : DependencyObject
+    {
+        if (root is T typed)
+        {
+            yield return typed;
+        }
+
+        var count = System.Windows.Media.VisualTreeHelper.GetChildrenCount(root);
+        for (var i = 0; i < count; i++)
+        {
+            foreach (var found in Visuals<T>(System.Windows.Media.VisualTreeHelper.GetChild(root, i)))
+            {
+                yield return found;
+            }
+        }
+    }
 }

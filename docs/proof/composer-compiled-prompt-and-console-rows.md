@@ -110,7 +110,7 @@ measured, so nothing changes at rest).
 
 ## Findings not changed (placeholder ids — the conductor allocates)
 
-1. **DC-nnn (composer a)** — *A template's header toggle bound one-way (`TemplateBinding`) to the state it
+1. **DC-212** — *A template's header toggle bound one-way (`TemplateBinding`) to the state it
    is meant to drive: the click changes the chevron and nothing else, and every oracle sets the state
    through the property.* Signature: `SetValue(IsCheckedProperty, new TemplateBindingExtension(...))` on a
    template's toggle; a chevron trigger on `IsChecked` beside an expand trigger on `IsExpanded`; tests that
@@ -120,7 +120,7 @@ measured, so nothing changes at rest).
    turn's compiled prompt — had the same defect; the operator's screenshot shows their chevrons collapsed,
    so it had not been reported). Control: the two Ruling 96 tests open through the toggle's
    `IToggleProvider.Toggle()`. Fixed in this lane; the class is new.
-2. **DC-nnn (composer b)** — *A floor kept as an addend in the parent's arithmetic and never set on the
+2. **DC-213** — *A floor kept as an addend in the parent's arithmetic and never set on the
    element it floors: the parent reserves the room, the child desires its content.* Signature: a
    `XMinHeight` constant that appears in a parent's `MinimumHeight`/`MaxHeight` sums and in no child's
    `MinHeight`; an oracle that asserts the floor only on a fixture whose content exceeds it (the writer-room

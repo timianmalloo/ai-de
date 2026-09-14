@@ -34,6 +34,31 @@ public sealed class SessionConfigStoreTests : IDisposable
         Assert.True(File.Exists(path));
     }
 
+    /// <summary>
+    /// Ruling 99: session names are unique within a workspace by a counter suffix, and the rule is
+    /// ONE function — the sheet's default name, an operator-typed duplicate at Create, and the later
+    /// parallel-session slice (its parent's name) all call it. Counted over every session the store holds.
+    /// </summary>
+    [Fact]
+    public void UniqueName_CountsUpFromTwo_OverEverySessionInTheStore_AndNeverRefuses()
+    {
+        var now = DateTimeOffset.UtcNow;
+        new SessionConfigStore(_workspaceRoot, SessionId.New(now)).Create("2026-09-14 session", "ws", [], now);
+        new SessionConfigStore(_workspaceRoot, SessionId.New(now)).Create("2026-09-14 session (2)", "ws", [], now);
+
+        var existing = SessionConfigStore.ExistingNames(_workspaceRoot);
+        Assert.Equal(["2026-09-14 session", "2026-09-14 session (2)"], existing.OrderBy(n => n, StringComparer.Ordinal));
+
+        Assert.Equal("2026-09-14 session (3)", SessionConfigStore.UniqueName("2026-09-14 session", existing));
+        // A counter the operator (or a parent session) already carries is not part of the base.
+        Assert.Equal("2026-09-14 session (3)", SessionConfigStore.UniqueName("2026-09-14 session (2)", existing));
+        Assert.Equal("other", SessionConfigStore.UniqueName("other", existing));
+        Assert.Equal("2026-09-14 session (2)", SessionConfigStore.UniqueName("2026-09-14 session", ["2026-09-14 session"]));
+
+        // A workspace with no sessions root yet has no names — an empty answer, never a throw.
+        Assert.Empty(SessionConfigStore.ExistingNames(Path.Combine(_workspaceRoot, "never-created")));
+    }
+
     [Fact]
     public void Create_ThenLoad_RoundTripsEveryField()
     {

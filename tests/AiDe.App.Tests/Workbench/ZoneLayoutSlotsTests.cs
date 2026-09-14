@@ -20,7 +20,9 @@ public sealed class ZoneLayoutSlotsTests : IDisposable
 
     private static Perspective Coordination => PerspectiveSet.All.Single(p => p.Id == "coordination");
 
-    private static IReadOnlySet<string> Kinds => SurfaceContentFactory.KnownKinds.ToHashSet(StringComparer.Ordinal);
+    // What the shell hands LayoutPersistence (Ruling 94): the buildable kinds plus the retired ones, so a
+    // saved envelope carrying a retired kind is dropped by the host WITH a report, never by the store in silence.
+    private static IReadOnlySet<string> Kinds => SurfaceContentFactory.RestorableKinds;
 
     private static IReadOnlySet<string> NoSurfaces => new HashSet<string>(StringComparer.Ordinal);
 
@@ -123,12 +125,15 @@ public sealed class ZoneLayoutSlotsTests : IDisposable
     // ADR-0032 test 1 extended (Ruling 84 CONDITIONS; the amendment note's ADR-0032 row): the golden
     // pre-Addendum-C Coding file — the pre-C default plus one opened class diagram — restores into
     // Coding with ONLY what Coding still admits (the terminal); the four Loomkeeper kinds it carries
-    // are dropped beside the seven Architecture kinds, each reported by caption and kind and by the
-    // perspective that admits it — Coordination, with its gesture, for the four; Architecture for the
-    // seven — and the event carries the dropped count and kinds. A Loomkeeper kind surviving in the
-    // Coding slot, a report that does not name Coordination, or a crash, fails. Moved here from
+    // are dropped beside the six Architecture kinds and the one RETIRED kind (Ruling 94's
+    // `inspector`), each reported by caption and kind and by the perspective that admits it —
+    // Coordination, with its gesture, for the four; Architecture for the six; the ruling that
+    // retired it, and where its content went, for Provenance — and the event carries the dropped
+    // count and kinds. A Loomkeeper kind surviving in the Coding slot, a report that does not name
+    // Coordination, a Provenance dropped in silence, or a crash, fails. Moved here from
     // PerspectiveLayoutSlotTests (its pre-amendment form kept the four in Coding and named
-    // Architecture alone). RED before the allow-lists moved: 7 dropped, five kinds surviving.
+    // Architecture alone). RED before the allow-lists moved: 7 dropped, five kinds surviving. RED
+    // again at Ruling 94 with the kind retired: 10 dropped — Provenance vanished at the store.
     [Fact]
     public void RestoringAPreCCodingEnvelope_DropsTheFiveLoomkeeperKinds_AndReportsNamingCoordination()
     {
@@ -154,14 +159,16 @@ public sealed class ZoneLayoutSlotsTests : IDisposable
             dropped.Select(d => d.Surface.Kind).OrderBy(k => k, StringComparer.Ordinal));
         Assert.All(dropped, d => Assert.Equal(DropReason.KindNotAdmitted, d.Reason));
         Assert.All(dropped.Where(d => d.Surface.Kind is "sessions" or "board" or "leaderboard" or "ledger"), d => Assert.Same(coordination, d.AdmittedBy));
-        Assert.All(dropped.Where(d => d.Surface.Kind is not ("sessions" or "board" or "leaderboard" or "ledger")), d => Assert.Same(PerspectiveSet.Architecture, d.AdmittedBy));
+        Assert.All(dropped.Where(d => d.Surface.Kind is not ("sessions" or "board" or "leaderboard" or "ledger" or "inspector")), d => Assert.Same(PerspectiveSet.Architecture, d.AdmittedBy));
+        Assert.Null(dropped.Single(d => d.Surface.Kind == "inspector").AdmittedBy);   // retired: no perspective is its home
         Assert.Equal(LayoutErrorCodes.PartialRestore, result.ErrorCode);
 
         // Reported by caption AND kind, naming BOTH admitting perspectives with their gestures —
         // through the same channel that reports a dropped surface today (spec §C4's form).
         var said = result.Announcement;
         Assert.StartsWith("11 panes from your saved layout aren't available in Coding — ", said, StringComparison.Ordinal);
-        Assert.Contains("7 live in Architecture (Ctrl+3): ", said, StringComparison.Ordinal);
+        Assert.Contains("6 live in Architecture (Ctrl+3): ", said, StringComparison.Ordinal);
+        Assert.Contains("; also Provenance (retired by Ruling 94: its origin, extractor and revision now show under the selected Evidence row)", said, StringComparison.Ordinal);
         Assert.Contains("4 live in Coordination (Ctrl+4): Sessions (terminal sessions), Board (message board), Leaderboard, Ledger", said, StringComparison.Ordinal);   // once each, under their perspective; the saved caption, then the kind's title
         Assert.Contains("Class diagram", said, StringComparison.Ordinal);
         Assert.Contains("Domain (evidence)", said, StringComparison.Ordinal);

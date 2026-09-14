@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Workbench: 78 types, 151 members, 59% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Workbench: 78 types, 152 members, 59% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Workbench`
 
-**78 public types · 151 public members · 59% documented.**
+**78 public types · 152 public members · 59% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -907,6 +907,7 @@ unchanged from the tree model (only docked layout changes in ADR-0021).
 | `double CodingLeftExtent = 1.3 / 2.3` | Coding's Left extent (Ruling 83 condition 1; DESIGN.md's errata row): the Left is **1.3 of the Center** — the mockup's `minmax(0,1.3fr) minmax(0,1fr)` — spelled as the zone's share of the columns row (1.3 ⁄ 2.3), whic… |
 | `WorkbenchLayout Default()` | The default arrangement: graph document in the Center, a terminal in the Bottom. |
 | `WorkbenchLayout Default(Perspective perspective)` | The per-perspective default (Addendum C §B4; Rulings 54/59/60/61/84) — each docking host's OWN table, never the combined seed `Default()` filtered down (the trap `ZoneBackedLayoutService` named: filtering one shared s… |
+| `double ArchitectureLeftExtent = 0.22` | Architecture's Left extent (Ruling 94 condition 1): the value the operator's own saved slot holds — `0.22`, read from their `layout.architecture.zones.json` — which is also `DefaultExtent`. Named so the number is the … |
 | `WorkbenchLayout Empty()` | An empty frame — all four zones present, none with content. Used by the converter as a base. |
 | `ZoneState Zone(ZoneId id)` | **(gap)** |
 | `IEnumerable<Surface> AllSurfaces()` | **(gap)** |

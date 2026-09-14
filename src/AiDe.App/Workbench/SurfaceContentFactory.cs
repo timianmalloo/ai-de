@@ -39,19 +39,12 @@ public sealed class SurfaceContentFactory(
     // pane says plainly rather than rendering an empty document.
     Func<Surface, Sessions.SessionDocumentSurface?>? sessionDocumentFor = null,
 
-    // Appended, same reason as its neighbours. The Evidence(master)/Provenance(detail) seam
-    // (Ruling 61; US-C6): null lets production wire itself (lazily, in Selection below); a test
-    // supplies its own so the pair is testable without a docking host.
-    EvidenceSelectionSource? evidenceSelection = null,
-
     // Appended last, same reason. Resolves the console DOCUMENT's content for a `console` surface
     // (Ruling 89; CV-5.2's seam request): the live session document's own Split, hosted by the
     // shell so it can leave the document's grid and dock in the Center; null in a build (or a
     // test) with no session behind the surface, which the pane says plainly.
     Func<Surface, FrameworkElement?>? consoleFor = null)
 {
-    /// <summary>The one selection channel this factory's Evidence pair shares (lazily created).</summary>
-    private EvidenceSelectionSource Selection => evidenceSelection ??= new EvidenceSelectionSource();
 
     /// <summary>How many surfaces of a kind a host holds at once — what §A7's "Instances" column says.</summary>
     public enum Instances
@@ -149,54 +142,15 @@ public sealed class SurfaceContentFactory(
             Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View"),
             Windowed: true),
 
-        // ────────────────────────────────────────────────────────────────────────────────
-        // FINDING, NOT A FIX. THESE TWO ROWS BUILD THE SAME THING, AND THE OBVIOUS REPAIR IS
-        // THE WRONG ONE. Read this before deleting either.
-        //
-        // "view" and "inspector" both resolve to Evidence(s); the builder takes no discriminator
-        // and neither does the view model, so Explore, Provenance and Domain issue the identical
-        // FindAsync("") and render through the identical template. The three lists have been
-        // measured byte-identical. The strings "explore", "provenance" and "domain" appear nowhere
-        // in this assembly - they are captions in the default layout, and a caption is not a job.
-        //
-        // The operator asked for the duplicates to be removed: "maybe just explore is needed and we
-        // get rid of domain and provenance". THAT IS BACKWARDS, and acting on it destroys
-        // capability:
-        //   - Provenance is specified as the DETAIL half of a master-detail screen
-        //     (phase-1-walking-skeleton). EvidencePaneViewModel.SelectAsync builds exactly the four
-        //     specified sections and has one caller, bound to nothing in this shell. The specified
-        //     master-detail was split into two sibling TABS IN ONE STACK - which cannot be
-        //     master-detail, since only one tab is visible - and then the selection wire was
-        //     dropped, leaving two copies of the master.
-        //   - Domain is specified in US-2 and that surface EXISTS, as kind "classdiagram", openable
-        //     by command. The tab captioned Domain is wired to "view".
-        //   - Explore is the one that is genuinely redundant: it duplicates the Explorer rail mode,
-        //     which is flagged in session-contracts.md and still open.
-        // They are not redundant by design. They are redundant by decay.
-        //
-        // WHY THIS NODE DID NOT REPAIR IT. Re-pointing Domain and moving Provenance to the empty
-        // Right zone are changes to the DEFAULT LAYOUT and its migration chain, which is the
-        // zone/tree machinery another session is repairing for the pane-swap defect (INV-0006) -
-        // and a zone recommendation validated against a shell that mislabels zones has been
-        // validated against the wrong thing. Restoring Provenance as a selection-bound inspector
-        // additionally needs a selection channel BETWEEN two panes, which is a design decision
-        // (which list drives which inspector?) and not a rendering change.
-        //
-        // THE CONTROL THAT IS OWED: a test that two surface kinds render different content. None
-        // exists, and one written today would be red - correctly. It lands with the repair, not
-        // before it, because a green test here would have to assert the duplicate.
-        //
-        // Ruling 61 homes the pair in Architecture (Left: Evidence, Right: Provenance); the
-        // selection channel and the owed test are SH-3's (Addendum C US-C6).
-        // ────────────────────────────────────────────────────────────────────────────────
+        // The evidence list is a master WITH its detail (Ruling 94): the selected row's origin,
+        // extractor and revision render as a second muted line under the row. The `inspector`
+        // (Provenance) row that was the detail half of a two-pane pair is retired — a kind that is
+        // only ever the detail half of one pair has no host once the pair is cut (Ruling 61's
+        // "renders the selected row's detail, never a second list" is satisfied by the row) — see
+        // RetiredKinds for what a saved layout carrying it is told. Admitted, not in the default.
         new("view", "Evidence",
-            "The evidence list: every fact the workspace's daemon has indexed, searchable.",
+            "The evidence list: every fact the workspace's daemon has indexed, searchable; select a row for its provenance.",
             static (f, s) => f.EvidenceMaster(s),
-            Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View")),
-
-        new("inspector", "Provenance",
-            "The selected evidence row's detail: where a fact came from and what cites it.",
-            static (f, s) => f.EvidenceDetail(s),
             Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View")),
 
         new("classdiagram", "Class diagram",
@@ -321,6 +275,34 @@ public sealed class SurfaceContentFactory(
     /// <summary>Surface kinds this factory can build. An unknown kind still gets an honest pane.</summary>
     public static IReadOnlyList<string> KnownKinds { get; } = [.. Kinds.Select(k => k.Kind)];
 
+    /// <summary>
+    /// Kinds the product once built and no longer does, each with the sentence a saved layout's
+    /// drop report carries for it — the ruling that retired it and where its content went.
+    /// </summary>
+    /// <remarks>
+    /// A retired kind has no descriptor row (nothing builds it, no menu offers it, no perspective
+    /// admits it) but every operator who ran the earlier build has a slot file that still names it.
+    /// The store drops a kind it cannot restore <i>silently</i>; ADR-0032 rule 2 forbids a silent
+    /// reset, so a retired kind stays <see cref="RestorableKinds">restorable</see> in exactly one
+    /// sense — it reaches the host's admission, which refuses it with this sentence in the report.
+    /// </remarks>
+    public static IReadOnlyDictionary<string, string> RetiredKinds { get; } =
+        new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            // Ruling 94: "eliminate the provenance tab" — the detail half of the Evidence pair,
+            // folded into a second muted line under the selected Evidence row.
+            ["inspector"] = "retired by Ruling 94: its origin, extractor and revision now show under the selected Evidence row",
+        };
+
+    /// <summary>
+    /// What a saved layout may carry through the store's availability filter: every kind this
+    /// factory builds, plus every <see cref="RetiredKinds">retired</see> kind — so the latter is
+    /// dropped by the host with a report, never by the store in silence. The set the shell hands
+    /// <c>LayoutPersistence</c> as <c>restorableKinds</c>; a test of a restore passes the same set.
+    /// </summary>
+    public static IReadOnlySet<string> RestorableKinds { get; } =
+        KnownKinds.Concat(RetiredKinds.Keys).ToHashSet(StringComparer.Ordinal);
+
     public FrameworkElement Create(Surface surface)
     {
         var row = Kinds.FirstOrDefault(k => string.Equals(k.Kind, surface.Kind, StringComparison.Ordinal));
@@ -401,8 +383,8 @@ public sealed class SurfaceContentFactory(
     }
 
     /// <summary>
-    /// An evidence <c>view</c>/<c>inspector</c> pane, or the "no workspace" empty state when there
-    /// is nothing to read yet.
+    /// The evidence <c>view</c> pane, or the "no workspace" empty state when there is nothing to
+    /// read yet.
     /// </summary>
     /// <remarks>
     /// The gate lives here rather than in the descriptor row because a row's <c>Build</c> is static:
@@ -412,17 +394,14 @@ public sealed class SurfaceContentFactory(
     private FrameworkElement EvidenceMaster(Surface surface) =>
         queries is not null ? EvidenceMasterContent(surface) : WorkspaceNeeded(surface);
 
-    /// <summary>
-    /// The Provenance detail pane (Ruling 61; US-C6): renders the §C4 empty copy until a row is
-    /// selected in the Evidence master, then that row's <see cref="EvidencePaneViewModel.SelectAsync"/>
-    /// sections — never a second copy of the master's list.
-    /// </summary>
-    private FrameworkElement EvidenceDetail(Surface surface) =>
-        queries is not null ? EvidenceDetailContent(surface) : WorkspaceNeeded(surface);
-
     /// <summary>The breadth-search pane, wired to the shell's provider.</summary>
     private FrameworkElement SearchPane() => new SearchSurface { Provider = searchProvider };
 
+    /// <summary>
+    /// The Evidence list — a master whose selected row carries its own detail (Ruling 94): the row's
+    /// origin, extractor and revision render as a second, smaller line under it, inside the list.
+    /// No second pane, no section headings; the §C4 empty copy has nothing left to say.
+    /// </summary>
     private FrameworkElement EvidenceMasterContent(Surface surface)
     {
         var pane = new EvidencePaneViewModel(queries!);
@@ -438,12 +417,30 @@ public sealed class SurfaceContentFactory(
         // The accessible name is set per ITEM. It was on the ListBox, so `EvidenceRow.AccessibleName`
         // — written to carry exactly this reason — was a computed property nothing read, and a
         // screen reader got the same one property the eye did.
-        var row = new DataTemplate(typeof(EvidenceRow));
+        var row = new DataTemplate(typeof(EvidenceRowItem));
+        var lines = new FrameworkElementFactory(typeof(StackPanel));
         var line = new FrameworkElementFactory(typeof(TextBlock));
-        line.SetBinding(TextBlock.TextProperty, new Binding(nameof(EvidenceRow.ListLine)));
+        line.SetBinding(TextBlock.TextProperty, new Binding(nameof(EvidenceRowItem.ListLine)));
         line.SetValue(TextBlock.TextTrimmingProperty, TextTrimming.CharacterEllipsis);
-        line.SetBinding(AutomationProperties.NameProperty, new Binding(nameof(EvidenceRow.AccessibleName)));
-        row.VisualTree = line;
+        line.SetBinding(AutomationProperties.NameProperty, new Binding(nameof(EvidenceRowItem.AccessibleName)));
+        lines.AppendChild(line);
+
+        // The detail line (Ruling 94): present only while the row holds one — a DataTrigger on null
+        // collapses it, so an unselected row is exactly its list line. Smaller, never a brush of
+        // its own: the selected row paints the accent ground and hands its content the sunken ink,
+        // and a leaf pinned to the muted token would sit at 1.13:1 on it (DC-139; the sheet's
+        // description line records the same measurement). Hierarchy comes from size.
+        var detail = new FrameworkElementFactory(typeof(TextBlock), DetailLineName);
+        detail.SetBinding(TextBlock.TextProperty, new Binding(nameof(EvidenceRowItem.Detail)));
+        detail.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap);
+        detail.SetValue(TextBlock.FontSizeProperty, 12.0);
+        detail.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 1, 0, 0));
+        lines.AppendChild(detail);
+        row.VisualTree = lines;
+
+        var noDetail = new DataTrigger { Binding = new Binding(nameof(EvidenceRowItem.Detail)), Value = null };
+        noDetail.Setters.Add(new Setter(UIElement.VisibilityProperty, Visibility.Collapsed, DetailLineName));
+        row.Triggers.Add(noDetail);
 
         var list = new ListBox
         {
@@ -453,10 +450,23 @@ public sealed class SurfaceContentFactory(
         };
         AutomationProperties.SetName(list, $"{surface.Title} items");
 
-        // The master half of the seam (Ruling 61; US-C6): selecting a row here is exactly what
-        // changes the Provenance detail — never a second definition of "what is selected" kept in
-        // sync by hand.
-        list.SelectionChanged += (_, _) => Selection.Select((list.SelectedItem as EvidenceRow)?.NodeId);
+        // Selecting a row — the SAME gesture a click drives — is what gives it its detail line and
+        // takes every other row's away: one row carries a detail at a time, and it is the selected
+        // one. A generation counter supersedes an in-flight describe when the operator clicks on.
+        var gen = 0;
+        list.SelectionChanged += (_, _) =>
+        {
+            var mine = ++gen;
+            foreach (var item in list.ItemsSource?.OfType<EvidenceRowItem>() ?? [])
+            {
+                item.Detail = null;
+            }
+
+            if (list.SelectedItem is EvidenceRowItem selected)
+            {
+                _ = LoadDetailInto(pane, selected, list.Dispatcher, () => gen == mine);
+            }
+        };
 
         var status = new TextBlock
         {
@@ -482,6 +492,9 @@ public sealed class SurfaceContentFactory(
 
         return stack;
     }
+
+    /// <summary>The template name of the row's detail line, so its trigger can reach it.</summary>
+    private const string DetailLineName = "detail";
 
     /// <summary>Loads the pane and pushes the result into its controls, on the UI thread.</summary>
     /// <remarks>
@@ -512,109 +525,31 @@ public sealed class SurfaceContentFactory(
 
         await list.Dispatcher.InvokeAsync(() =>
         {
-            list.ItemsSource = pane.Rows;
+            list.ItemsSource = pane.Rows.Select(r => new EvidenceRowItem(r)).ToList();
             status.Text = pane.StatusMessage;
         });
     }
 
-    /// <summary>
-    /// The Provenance detail's content: subscribes to the shared <see cref="Selection"/> and re-renders
-    /// whenever it changes — the id line plus the selected row's <see cref="EvidencePaneViewModel.SelectAsync"/>
-    /// sections, or the §C4 empty copy while nothing is selected. No list of rows ever appears here
-    /// (US-C6's positive oracle).
-    /// </summary>
-    private FrameworkElement EvidenceDetailContent(Surface surface)
-    {
-        var pane = new EvidencePaneViewModel(queries!);
-        var stack = new StackPanel { Margin = new Thickness(12) };
-        AutomationProperties.SetName(stack, $"{surface.Title} detail");
-        var gen = 0;
-
-        void RenderEmpty()
-        {
-            stack.Children.Clear();
-            var empty = new TextBlock
-            {
-                Text = EvidencePaneViewModel.EmptySelectionMessage,
-                TextWrapping = TextWrapping.Wrap,
-            };
-            empty.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
-            stack.Children.Add(empty);
-        }
-
-        void OnSelectionChanged(string? nodeId)
-        {
-            var mine = ++gen;   // supersedes an in-flight SelectAsync from an earlier selection
-
-            if (nodeId is null)
-            {
-                RenderEmpty();
-                return;
-            }
-
-            stack.Children.Clear();
-            var idLine = new TextBlock
-            {
-                Text = nodeId,
-                FontWeight = FontWeights.SemiBold,
-                TextWrapping = TextWrapping.Wrap,
-                TextTrimming = TextTrimming.CharacterEllipsis,
-            };
-            stack.Children.Add(idLine);
-
-            _ = LoadDetailInto(pane, nodeId, stack, () => gen == mine);
-        }
-
-        // Started at construction: a pane built after a selection already exists (the detail opened
-        // second, or rebuilt after a workspace attach) shows that selection immediately rather than
-        // the empty copy until the next click (US-C6's oracle names both directions).
-        OnSelectionChanged(Selection.SelectedNodeId);
-        Selection.Changed += OnSelectionChanged;
-
-        // The Selection source outlives this one pane (it is the factory's, shared across
-        // rebuilds), so the subscription must not — every close/reopen of Provenance without this
-        // adds a zombie handler that keeps firing a DescribeAsync round trip on someone else's
-        // selection forever (patterns-expert review: Lapsed Listener).
-        stack.Unloaded += (_, _) => Selection.Changed -= OnSelectionChanged;
-
-        return stack;
-    }
-
-    /// <summary>Runs the selected row's provenance query and appends its sections, on the UI thread.</summary>
+    /// <summary>Runs the selected row's describe and hands the row its detail line, on the UI thread.</summary>
     /// <remarks>Guarded by <paramref name="stillCurrent"/> so a superseded selection (the operator
-    /// clicked again before this returned) never overwrites the newer render.</remarks>
+    /// clicked again before this returned) never writes onto a row that is no longer selected.</remarks>
     private static async Task LoadDetailInto(
-        EvidencePaneViewModel pane, string nodeId, StackPanel stack, Func<bool> stillCurrent)
+        EvidencePaneViewModel pane, EvidenceRowItem selected, System.Windows.Threading.Dispatcher dispatcher, Func<bool> stillCurrent)
     {
         try
         {
-            await pane.SelectAsync(nodeId);
+            await pane.SelectAsync(selected.Row.NodeId);
         }
         catch (OperationCanceledException)
         {
             return;
         }
 
-        await stack.Dispatcher.InvokeAsync(() =>
+        await dispatcher.InvokeAsync(() =>
         {
-            if (!stillCurrent()) { return; }
-
-            foreach (var section in pane.Provenance)
+            if (stillCurrent())
             {
-                var heading = new TextBlock
-                {
-                    Text = section.Heading,
-                    FontWeight = FontWeights.SemiBold,
-                    Margin = new Thickness(0, 10, 0, 2),
-                };
-                stack.Children.Add(heading);
-
-                foreach (var line in section.Lines)
-                {
-                    var text = new TextBlock { Text = line, TextWrapping = TextWrapping.Wrap };
-                    text.SetResourceReference(TextBlock.ForegroundProperty, "TextBrush");
-                    stack.Children.Add(text);
-                }
+                selected.Detail = pane.SelectedDetailLine;
             }
         });
     }
@@ -928,11 +863,11 @@ public sealed class SurfaceContentFactory(
         return text;
     }
 
-    // An evidence "view"/"inspector" surface (Explore, Domain, Provenance …) has nothing to read
-    // until a workspace is open. Before, it fell through to Unavailable() and read "… is not
-    // available in this build" — which points a user at a build/packaging defect for what is
-    // actually the ordinary empty state of "no workspace open". This says the true thing, in the
-    // same voice as the graph pane's "No workspace is open. Open one to see its graph." (UI-EMPTY-STATE).
+    // An evidence "view" surface has nothing to read until a workspace is open. Before, it fell
+    // through to Unavailable() and read "… is not available in this build" — which points a user
+    // at a build/packaging defect for what is actually the ordinary empty state of "no workspace
+    // open". This says the true thing, in the same voice as the graph pane's "No workspace is
+    // open. Open one to see its graph." (UI-EMPTY-STATE).
     private static FrameworkElement WorkspaceNeeded(Surface surface)
     {
         var text = new TextBlock
@@ -944,4 +879,44 @@ public sealed class SurfaceContentFactory(
         text.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
         return text;
     }
+}
+
+/// <summary>
+/// One row of the Evidence list as the list binds it: the pane's immutable <see cref="EvidenceRow"/>
+/// plus the detail line the row grows while it is selected (Ruling 94) — origin · extractor · rev,
+/// from <see cref="EvidencePaneViewModel.SelectedDetailLine"/>. Null while the row is not selected
+/// or its describe has not returned, which the template renders as no second line at all.
+/// </summary>
+/// <remarks>
+/// The App's binding shape over a Presentation record, not a second row model: every field a reader
+/// sees is read through <see cref="Row"/>. The accessible name carries the detail too, so a screen
+/// reader hears what the eye sees when the row is selected.
+/// </remarks>
+public sealed class EvidenceRowItem(EvidenceRow row) : System.ComponentModel.INotifyPropertyChanged
+{
+    private string? _detail;
+
+    public EvidenceRow Row { get; } = row;
+
+    public string ListLine => Row.ListLine;
+
+    public string AccessibleName => Detail is null ? Row.AccessibleName : $"{Row.AccessibleName}, {Detail}";
+
+    public string? Detail
+    {
+        get => _detail;
+        set
+        {
+            if (string.Equals(_detail, value, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _detail = value;
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof(Detail)));
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof(AccessibleName)));
+        }
+    }
+
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 }

@@ -22,10 +22,10 @@ public sealed class ZoneLayoutPersistenceTests : IDisposable
     /// <c>classdiagram</c>, <c>codeviewer</c> and <c>diagnostics</c>, so persistence was being
     /// proven against a set of kinds that is not the one that ships. A surface that failed to
     /// restore in production would still have passed here (DC-021). <c>WorkbenchShell</c> passes
-    /// <see cref="SurfaceContentFactory.KnownKinds"/>; so does this.
+    /// <see cref="SurfaceContentFactory.RestorableKinds"/> (the buildable kinds plus the retired ones, Ruling 94); so does this.
     /// </remarks>
     private static IReadOnlySet<string> Kinds =>
-        SurfaceContentFactory.KnownKinds.ToHashSet(StringComparer.Ordinal);
+        SurfaceContentFactory.RestorableKinds;
 
     [Fact]
     public void AZoneArrangement_IsSavedAndRestored_AcrossSessions()
@@ -55,7 +55,7 @@ public sealed class ZoneLayoutPersistenceTests : IDisposable
     public void WithNoSavedLayout_RestoreKeepsTheCurrentArrangement_WithoutResetting()
     {
         var svc = new ZoneBackedLayoutService();
-        svc.Apply(new LayoutOperation.AddSurface(ZonesToTree.RightStackId, new Surface("outline", "inspector", "Outline")));
+        svc.Apply(new LayoutOperation.AddSurface(ZonesToTree.RightStackId, new Surface("outline", "view", "Outline")));
 
         using var p = new LayoutPersistence(svc, LayoutPath, Available, restorableKinds: Kinds);
         var result = p.Restore(); // no file on disk

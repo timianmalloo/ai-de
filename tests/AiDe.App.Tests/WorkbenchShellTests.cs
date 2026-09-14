@@ -59,7 +59,8 @@ public sealed class WorkbenchShellTests
         Assert.DoesNotContain("Graph", coding);
 
         Assert.Contains("Graph", architecture);
-        Assert.Contains("Provenance", architecture);
+        Assert.DoesNotContain("Provenance", architecture);   // Ruling 94: the provenance tab is eliminated
+        Assert.DoesNotContain("Evidence", architecture);     // Ruling 94: admitted, not in the default
         Assert.Contains("Contexts", architecture);
         Assert.DoesNotContain("Terminal — pwsh", architecture);
 

@@ -1,0 +1,2 @@
+{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":1,"clientCapabilities":{"fs":{"readTextFile":true,"writeTextFile":true},"terminal":true}}}
+{"jsonrpc":"2.0","id":2,"method":"session/new","params":{"cwd":"C:/Users/malla/AppData/Local/Temp/aide-engine-spikes","mcpServers":[]}}

@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation: 33 types, 89 members, 66% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation: 32 types, 87 members, 66% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation`
 
-**33 public types · 89 public members · 66% documented.**
+**32 public types · 87 public members · 66% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -291,6 +291,7 @@ result-limit state as the Phase-2 canvas will.
 | `IReadOnlyList<EvidenceRow> Rows { get; private set; } = []` | **(gap)** |
 | `string? SelectedNodeId { get; private set; }` | **(gap)** |
 | `IReadOnlyList<ProvenanceSection> Provenance { get; private set; } = []` | **(gap)** |
+| `string? SelectedDetailLine { get; private set; }` | The selected row's provenance as ONE muted line for the row itself (Ruling 94): confidence · origin · extractor and version · rev, one entry per distinct triple among the node's neighbours, or `not recorded` when it h… |
 | `string StatusMessage { get; private set; } = "Loading evidence…"` | The one string the operator reads when something is off. Always states evidence, never reassurance. |
 | `string? SourceRevision { get; private set; }` | **(gap)** |
 | `string LiveAnnouncement { get; private set; } = string.Empty` | Announced through a live region, so state changes reach a screen reader without motion. |
@@ -299,21 +300,6 @@ result-limit state as the Phase-2 canvas will.
 | `void Filter(string term)` | **(gap)** |
 | `Task SelectAsync(string nodeId, CancellationToken cancellationToken = default)` | Selects a node and builds its provenance in the spec's fixed order: what it is → confidence/provenance → related nodes → source location → actions. |
 | `string EmptySelectionMessage` | Empty-pane copy, shown before anything is selected — spec §C4, verbatim (US-C6). |
-
-## `EvidenceSelectionSource`
-
-*class* — `EvidencePaneViewModel.cs`
-
-The seam between the Evidence master and Provenance detail panes (Ruling 61; US-C6): a shared,
-UI-framework-agnostic channel so selecting a row in one pane is exactly what changes the other,
-with no second definition of "what is selected". One instance per host, held by whatever builds
-both panes — testable without a docking host (US-C6's positive oracle).
-
-| Member | Summary |
-|---|---|
-| `string? SelectedNodeId { get; private set; }` | The currently selected node, or null when nothing is selected. |
-| `event Action<string?>? Changed` | Raised whenever the selection changes, including to null (nothing selected). |
-| `void Select(string? nodeId)` | Selects  (or clears the selection when null). A no-op re-selection announces nothing new. |
 
 ## `WatcherBoardRow`
 

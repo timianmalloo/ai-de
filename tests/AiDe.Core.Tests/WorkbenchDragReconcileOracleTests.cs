@@ -30,7 +30,7 @@ public sealed class WorkbenchDragReconcileOracleTests
     // fixture must not follow them.
 
     // fixture-derivation: ok — the operator's recorded zone-left at 05:59:20, not a product list.
-    private static readonly string[] ModelLeft = ["graph", "explore", "provenance", "contexts", "joins"];
+    private static readonly string[] ModelLeft = ["graph", "explore", "sources", "contexts", "joins"];
 
     // fixture-derivation: ok — the operator's recorded zone-center at 05:59:20, not a product list.
     private static readonly string[] ModelCenter = ["domain", "sessions", "board", "leaderboard", "ledger", "session-document:2026-09-11"];
@@ -39,7 +39,7 @@ public sealed class WorkbenchDragReconcileOracleTests
     private static readonly string[] ViewFirstColumn = ["graph", "domain", "explore", "sessions", "board", "leaderboard", "ledger"];
 
     // fixture-derivation: ok — the second column of screenshot 6, read off the screenshot.
-    private static readonly string[] ViewSecondColumn = ["session-document:2026-09-11", "provenance", "contexts", "joins"];
+    private static readonly string[] ViewSecondColumn = ["session-document:2026-09-11", "sources", "contexts", "joins"];
 
     private static WorkbenchLayout OperatorModel() => Zones(ModelLeft, ModelCenter);
 
@@ -89,7 +89,7 @@ public sealed class WorkbenchDragReconcileOracleTests
         {
             ("domain", 0, 1), ("sessions", 0, 3), ("board", 0, 4),
             ("leaderboard", 0, 5), ("ledger", 0, 6),
-            ("provenance", 1, 1), ("contexts", 1, 2), ("joins", 1, 3),
+            ("sources", 1, 1), ("contexts", 1, 2), ("joins", 1, 3),
         };
 
         foreach (var (surface, toColumn, atIndex) in drags)
@@ -161,7 +161,7 @@ public sealed class WorkbenchDragReconcileOracleTests
     private static string KindOf(string id) => id switch
     {
         "graph" => "canvas",
-        "provenance" => "inspector",
+        "sources" => "view",
         _ when id.StartsWith("session-document:", StringComparison.Ordinal) => "session-document",
         _ => "view",
     };

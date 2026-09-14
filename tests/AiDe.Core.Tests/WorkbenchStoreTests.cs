@@ -83,7 +83,7 @@ public sealed class WorkbenchStoreTests : IDisposable
     {
         var service = new LayoutService();
         service.Apply(new LayoutOperation.MoveSurface("domain",
-            new DropTarget(service.Current.FindStackOf("provenance")!.Id, DropKind.SplitBottom)));
+            new DropTarget(service.Current.FindStackOf("sources")!.Id, DropKind.SplitBottom)));
         service.Apply(new LayoutOperation.MoveSurface("terminal-1", new DropTarget("", DropKind.Float)));
         var expected = service.Current.Shape();
 
@@ -167,14 +167,14 @@ public sealed class WorkbenchStoreTests : IDisposable
     public void Load_WithAFloatingPaneOnADisconnectedDisplay_ReportsTheRehoming()
     {
         var service = new LayoutService();
-        service.Apply(new LayoutOperation.MoveSurface("provenance", new DropTarget("", DropKind.Float)));
+        service.Apply(new LayoutOperation.MoveSurface("sources", new DropTarget("", DropKind.Float)));
         var store = new LayoutStore(Path_);
         store.Save(service.Current);
 
         var result = store.Load(AllSurfaces, displayIsConnected: _ => false);
 
         Assert.Equal(LayoutErrorCodes.PartialRestore, result.ErrorCode);
-        Assert.Contains("Provenance", result.RehomedFloating);
+        Assert.Contains("Sources", result.RehomedFloating);
         Assert.Contains("not connected", result.Announcement, StringComparison.OrdinalIgnoreCase);
     }
 

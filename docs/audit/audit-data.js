@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T17:38:27Z",
+  "generated": "2026-09-14T18:11:58Z",
   "audit": [
     {
       "actor": null,
@@ -15851,23 +15851,157 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2GFZCJ00CHHMX9C2ZK1SBFY",
-      "shortname": "join-composer-r96-r100-r101",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/composer-compiled-prompt-and-console-rows.md"
+      ],
       "datetime": "2026-09-14T17:38:27Z",
-      "session": "claude-conductor-addendum-c",
+      "done_when": "recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "duration_seconds": 480.0,
+      "fan_out": 0,
+      "goal": "the operator's F-E answered on main with the measured cause; R-3 and R-4 answered",
+      "id": "al-01M2GFZCJ00CHHMX9C2ZK1SBFY",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of the resolved merge into main",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-composer-r96-r100-r101",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-14T17:30:27Z",
       "summary": "Joined lane/composer-r96-r100-r101 (061f0c1a): Ruling 96 - measured at the operator's belt (489.5x517.13, 1 turn): the compiled box had Text.Length 69 and ActualHeight 0 because both disclosure templates bound the HeaderSite toggle's IsChecked to Expander.IsExpanded one-way (TemplateBinding) - a click rotated the chevron and never expanded the content, in the compiled prompt and in every Thinking/detail disclosure of the thread; fixed two-way, MinHeight 48 on the box, open state on SessionDocumentViewModel and the envelope, restored on reopen (red-first x4). Ruling 101 - ConsoleStreamModel.TextOf reads content[] (first line + byte count; 'no text content (n items: types)'; rawOutput read in the same form), ToolFacts.ContentTexts the one reader. Ruling 100 - acp.session.update.usage_update and available_commands_update excluded from the thread's fold (Expected 0 Actual 8 red, then green); M1 unchanged. App 955->957, Core 2636->2640. The lane's side note docs/notes/addendum-c-rulings-96-100-101.md folded out at the merge (the council note carries 92-105 verbatim); two derived site files regenerated. recount_seconds=478 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/architecture-recut-and-session-names.md"
+      ],
+      "datetime": "2026-09-14T17:46:17Z",
+      "done_when": "Each ruling's CONDITIONS met by red-first tests observed red then green; dotnet test on tests/AiDe.App.Tests and tests/AiDe.Core.Tests pass with executed counts recorded before and after (no --update); python tools/run-verify-gates.py green on the committed tree; docs/proof/architecture-recut-and-session-names.md exists with red-first evidence per ruling, the extent read from the operator's file, attended rows and residual risk; the spec/ADR text stating the old Architecture default and the inspector kind amended; the branch pushed; this audit entry appended; coord session ended.",
+      "duration_seconds": 4459.0,
+      "fan_out": 0,
+      "goal": "Land the Owner's Rulings 99, 102, 98, 94 as four commits in that order on lane/sessions-r94-r98-r99-r102 (base dda140ba): unique session names by a counter, the task-class list wrapping, the retired fixture revision not reusable, and the Architecture default re-cut with the inspector kind retired into the Evidence row.",
+      "id": "al-01M2GGDR8SD3Y5G7MN8BRPVP06",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "You are a lane node of the AI-DE Conductor programme (repo root C:\\projects\\ai-de; the pack's rules in C:\\projects\\ai-de\\AGENTS.md apply). Work ONLY in your worktree C:\\Projects\\ai-de-lane-sessions-r94-r98-r99-r102 on branch lane/sessions-r94-r98-r99-r102 (based on main dda140ba).",
+      "session": "sessions-r94-r98-r99-r102",
+      "shortname": "lane-sessions-r94-r98-r99-r102",
+      "signals": {
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-14T16:31:58Z",
+      "summary": "Landed Rulings 99, 102, 98, 94 as four commits on lane/sessions-r94-r98-r99-r102 (base dda140ba), each with red-first tests observed red then green. R99: SessionConfigStore.ExistingNames + UniqueName (one rule; \" (2)\", \" (3)\" over the store), the sheet's default and Create use it, NewSessionResult.RenamedFrom announced by the flow; both captions tested on the composed Coding frame (red: four captions read as two). R102: ScrollViewer horizontal scrolling Disabled on the task-class list (red: extent 485.9 > viewport 444.0; IsTextTrimmed is not on .NET 10 WPF, a wrapped-not-clipped measurement stands in). R98: SourceRevision.RetiredFixtureLiteral and Reusable() refuses a snapshot whose base is \"rev-1\" (red: second index reused (0,1) not (1,0)); the extractor generation bumped to 2026-09-14.1 (gate). R94: ArchitectureDefault = Left Graph 0.22 (read from the operator's layout.architecture.zones.json) · Center Contexts, Domain · Right/Bottom empty collapsed; the inspector kind retired (row, builders, EvidenceSelectionSource deleted), its fields a second smaller line under the selected Evidence row (EvidenceRowItem, SelectedDetailLine); RetiredKinds/RestorableKinds so a saved envelope carrying it is dropped with a report naming Ruling 94 (red: dropped=9 with Provenance vanished at the store); spec/ADR text amended; rulings filed in the council note. Tests: Core 2636 -> 2638, App 955 -> 961. Findings: DC placeholders (sessions a: a writer fix does not reach a store the old writer wrote; sessions b: the canvas header's flex row without wrap overflows at 0.22 — Explore lane; sessions c: the store drops an unrestorable kind in silence — open for kinds a newer build wrote). Hygiene: SurfaceContentTests now disposes the ConPTY it builds.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/architecture-recut-and-session-names.md"
+      ],
+      "datetime": "2026-09-14T17:55:35Z",
+      "done_when": "recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "duration_seconds": 476.0,
+      "fan_out": 0,
+      "goal": "the operator's F-C answered on main; R-1, R-2, R-5 answered",
+      "id": "al-01M2GGYS8A4Q1GQ1C7YMSEJWRY",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-sessions-r94-r98-r99-r102",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-14T17:47:39Z",
+      "summary": "Joined lane/sessions-r94-r98-r99-r102 (59aa108e): Ruling 99 - SessionConfigStore.UniqueName/ExistingNames, ' (2)' suffix on the default and on a typed duplicate, the flow announces the rename (red: four captions read as two); Ruling 102 - the task-class list wraps (red: extent 485.9 > viewport 444.0; IsTextTrimmed absent on .NET 10 WPF, FormattedText measured instead); Ruling 98 - a snapshot whose base revision is the retired rev-1 literal is not Reusable, re-extracted once, then the observed HEAD (red: Expected (1,0) Actual (0,1)); ExtractorGeneration 2026-09-14.1; Ruling 94 - ArchitectureDefault = Left [Graph] at the operator's 0.22, Center [Contexts, Domain], Right/Bottom empty collapsed; inspector retired product-wide (RetiredKinds/RestorableKinds, a pre-94 envelope drops it with a report naming the ruling), its three fields an inline detail line under the selected Evidence row; spec A7/B4/US-C6 and ADR-0030/31/32 amended. App 955->961, Core 2636->2638. Conflicts: the rulings note (main's verbatim copy) and two derived site files (regenerated). The s-terminal disposal fixed at its source; the full-run ledger still reads 10/9 - the lane's finding d, registered by the conductor. recount_seconds=476 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/attended-rows-for-the-operator.md"
+      ],
+      "datetime": "2026-09-14T17:59:16Z",
+      "done_when": "rulings at 105; register at 220 with the sequence unbroken; 38 gates; pushed",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "every ruling and class from wave 1 on main before wave 2's slices are briefed",
+      "id": "al-01M2GH5GXKR6XJVTSEGRFTBVHT",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of conductor/addendum-c into main",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-conductor-docs-105-dc212-220",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-14T17:59:15Z",
+      "summary": "Joined conductor/addendum-c (20a6d59f), docs only: Ruling 105 verbatim (the account is the operator-facing unit; session config holds account selections + a default; per-turn account picker; Higgsfield out pending spike 'higgsfield-surface'; spike order copilot -> codex -> gemini -> grok; 97(i) subsumed); DC-212..216 (Explore and Composer lanes: one-way TemplateBinding on a toggle; a floor as an addend; pointer-only context menu on a browser-hosted surface; name-travelling wire enum fail-closed at an older reader; lanes sharing a session-keyed scratch file) and DC-217..220 (Sessions lane: a writer fix not reaching an old store; a flex row without wrap in a fraction-width pane; a store dropping an unrestorable kind silently; a process-global diagnostics sink swapped by tests) registered - next free DC-221; the operator's attended rows E-1..E-3, C-1..C-5, S-1..S-7; two pack findings; the liveness file at 75a2adfb. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/spikes/engine-backends-2026-09-14.md"
+      ],
+      "datetime": "2026-09-14T18:04:28Z",
+      "done_when": "docs/spikes/engine-backends-2026-09-14.md exists with every question answered by an observation or 'not recorded'; probes and frames under spikes/engine-backends/<engine>/; audit entry; session ended; branch pushed.",
+      "duration_seconds": 1343.0,
+      "fan_out": 0,
+      "goal": "One observed spike record per engine answering Rulings 97/104/105's questions, plus the claude-code --ignore-scripts observation and the two verbatim install instructions.",
+      "id": "al-01M2GHF1814E8JMCFA006FJN5J",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "You are the domain-researcher node of the AI-DE Conductor programme: one spike record per engine (copilot, codex, gemini, grok, Higgsfield) plus the claude-code --ignore-scripts observation, answering the Owner's questions with observations.",
+      "session": "engine-spikes",
+      "shortname": "spike-engine-backends",
+      "skill": "investigate",
+      "started_at": "2026-09-14T17:42:05Z",
+      "summary": "copilot: observed (CLI 1.0.84-5, copilot --acp, initialize protocolVersion 1, authMethods copilot-login, session/new refused fresh / ok on stored login; --no-auto-login suppresses stored credential; enterprise via copilot login --host / GH_HOST). codex: observed (codex-acp 1.10.0 entry dist/index.js, bundles codex 0.153.4, authMethods api-key + chat-gpt, --ignore-scripts skips nothing). gemini: observed (0.58.0, --acp; --experimental-acp deprecated; personal Google login refused server-side since Antigravity transition; GEMINI_API_KEY path opens a session). grok: observed (npm @xai-official/grok@1.0.30, grok agent stdio, authMethods grok.com / xai.api_key; postinstall skipped, lazy bootstrap into GROK_HOME). Higgsfield: REST API + MCP server, not an agent (docs, Inferred). claude-code: --ignore-scripts install answers initialize (0.75.1); node and claude install instructions copied verbatim with citations. No sign-in performed; no prompt sent.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "id": "al-01M2GHMT8H2J2EJ5FBVVFS9DNS",
+      "shortname": "join-engine-spikes",
+      "datetime": "2026-09-14T18:07:37Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "the join of origin/side/engine-spikes into main",
+      "summary": "Joined side/engine-spikes (60da3a2a): docs/spikes/engine-backends-2026-09-14.md and the frame corpus under spikes/engine-backends/. Observed: copilot CLI 1.0.84-5 speaks ACP natively (copilot --acp, protocolVersion 1, authMethods copilot-login; --no-auto-login refuses even a stored login so the product never passes it; enterprise = copilot login --host https://<tenant>.ghe.com, GH_HOST/COPILOT_GH_HOST); codex adapter 1.10.0 entry dist/index.js bundling @openai/codex 0.153.4 + codex.exe, auth api-key or chat-gpt; gemini 0.58.0 --acp (--experimental-acp deprecated), personal Google login refused server-side since 2026-06-18, GEMINI_API_KEY works; grok = @xai-official/grok 1.0.30, grok agent stdio, authMethods grok.com, XAI_API_KEY works; Higgsfield = REST API (Key id:secret) + an MCP server - a tool provider, not an engine; claude-code 0.75.1 under --ignore-scripts installs and answers initialize (no lifecycle scripts). Install instructions for claude and node copied with citations. Not recorded: session/prompt frames for the four new engines; the enterprise-tenant login; licensed Gemini OAuth. recount_seconds=0 (docs_only=True).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/composer-compiled-prompt-and-console-rows.md"
+        "docs/spikes/engine-backends-2026-09-14.md"
       ],
       "tags": [],
       "outcome": "success",
-      "goal": "the operator's F-E answered on main with the measured cause; R-3 and R-4 answered",
-      "done_when": "recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "goal": "every engine's launch line observed before any launch code lands (Rulings 97, 104, 105)",
+      "done_when": "the record and corpus on main; 38 gates; pushed",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -15875,8 +16009,64 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-09-14T17:30:27Z",
-      "duration_seconds": 480.0
+      "started_at": "2026-09-14T18:07:37Z",
+      "duration_seconds": 0.0
+    },
+    {
+      "id": "al-01M2GHWF5PQ7SNPEKKWJ38D502",
+      "shortname": "spike-engine-backends-signals",
+      "datetime": "2026-09-14T18:11:48Z",
+      "session": "engine-spikes",
+      "prompt": "One spike record per engine (copilot, codex, gemini, grok, Higgsfield) with observed command lines, handshakes and auth shapes; claude-code under --ignore-scripts",
+      "summary": "Correction carrying the signals the node's entry omitted (AL5b): every engine's initialize handshake observed on the wire and recorded under spikes/engine-backends/; session/prompt not observed for the four new engines; the record is docs/spikes/engine-backends-2026-09-14.md.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/spikes/engine-backends-2026-09-14.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "every engine's launch line observed before launch code lands",
+      "done_when": "five records with observed command line, handshake frames, auth method; the two --ignore-scripts observations; the two install instructions cited",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "duration_source": "session-start-hook",
+      "started_at": "2026-09-14T17:42:53Z",
+      "duration_seconds": 1735.0,
+      "supersedes": "al-01M2GHF1814E8JMCFA006FJN5J"
+    },
+    {
+      "id": "al-01M2GHWQSHMG04YE12RC5N9KZT",
+      "shortname": "join-engine-spikes-2",
+      "datetime": "2026-09-14T18:11:57Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "the join of the resolved merge into main",
+      "summary": "The engine-spikes join's second run: the first stopped at step 8 on verify-audit-capture (the node's entry al-01M2GHF1814E8JMCFA006FJN5J carried no signals); a superseding entry al-01M2GHWF5PQ7SNPEKKWJ38D502 with the signals appended under the node's session; this run completes the join. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "the engine spikes' record on main",
+      "done_when": "38 gates; pushed",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-14T18:11:56Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [

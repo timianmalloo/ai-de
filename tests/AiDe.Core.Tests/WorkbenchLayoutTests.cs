@@ -31,13 +31,13 @@ public sealed class WorkbenchLayoutTests
         var operations = new LayoutOperation[]
         {
             new LayoutOperation.MoveSurface("domain",
-                new DropTarget(StackIdOf(service.Current, "provenance"), DropKind.SplitBottom)),
+                new DropTarget(StackIdOf(service.Current, "sources"), DropKind.SplitBottom)),
             new LayoutOperation.ResizeSplit("split-root", 0, 0.1),
             new LayoutOperation.SetStackState(StackIdOf(service.Current, "terminal-1"), StackState.Collapsed),
             new LayoutOperation.MoveSurface("terminal-1",
                 new DropTarget(StackIdOf(service.Current, "explore"), DropKind.JoinStack)),
             new LayoutOperation.ReorderSurface(StackIdOf(service.Current, "explore"), 0, 1),
-            new LayoutOperation.MoveSurface("provenance", new DropTarget("", DropKind.Float)),
+            new LayoutOperation.MoveSurface("sources", new DropTarget("", DropKind.Float)),
             new LayoutOperation.CloseSurface("domain"),
             new LayoutOperation.SetStackState(StackIdOf(service.Current, "explore"), StackState.Maximized),
             new LayoutOperation.SetStackState(StackIdOf(service.Current, "explore"), StackState.Docked),
@@ -58,7 +58,7 @@ public sealed class WorkbenchLayoutTests
     [Fact]
     public void KeyboardAndPointer_ProduceIdenticalTrees()
     {
-        var target = StackIdOf(Layout.Default(), "provenance");
+        var target = StackIdOf(Layout.Default(), "sources");
 
         // "Pointer": the user dragged Explore onto the right edge of the Provenance pane.
         var pointer = new LayoutService();
@@ -81,7 +81,7 @@ public sealed class WorkbenchLayoutTests
     public void EveryDropKind_IsReachableAndLeavesAValidLayout(DropKind kind)
     {
         var service = new LayoutService();
-        var target = kind == DropKind.Float ? string.Empty : StackIdOf(service.Current, "provenance");
+        var target = kind == DropKind.Float ? string.Empty : StackIdOf(service.Current, "sources");
 
         var result = service.Apply(new LayoutOperation.MoveSurface("explore", new DropTarget(target, kind)));
 
@@ -115,7 +115,7 @@ public sealed class WorkbenchLayoutTests
         Run(new LayoutOperation.ActivateSurface("domain"));
         Run(new LayoutOperation.ReorderSurface(StackIdOf(service.Current, "explore"), 0, 1));
         Run(new LayoutOperation.ResizeSplit("split-root", 0, 0.05));
-        Run(new LayoutOperation.SetStackState(StackIdOf(service.Current, "provenance"), StackState.Collapsed));
+        Run(new LayoutOperation.SetStackState(StackIdOf(service.Current, "sources"), StackState.Collapsed));
         Run(new LayoutOperation.MoveSurface("domain",
             new DropTarget(StackIdOf(service.Current, "terminal-1"), DropKind.JoinStack)));
         Run(new LayoutOperation.AddSurface(
@@ -143,7 +143,7 @@ public sealed class WorkbenchLayoutTests
         var before = columns.Children.Count;
 
         var result = service.Apply(new LayoutOperation.MoveSurface(
-            "provenance", new DropTarget(right.Id, DropKind.SplitRight)));
+            "sources", new DropTarget(right.Id, DropKind.SplitRight)));
 
         Assert.True(result.Applied);
 
@@ -166,7 +166,7 @@ public sealed class WorkbenchLayoutTests
         var right = (StackNode)columns.Children[^1];
 
         service.Apply(new LayoutOperation.MoveSurface(
-            "provenance", new DropTarget(right.Id, DropKind.SplitLeft)));
+            "sources", new DropTarget(right.Id, DropKind.SplitLeft)));
 
         var after = service.Current.Walk().OfType<SplitNode>().First(sp => sp.Id == columns.Id);
         var target = after.Children.FindIndex(c => c.Id == right.Id);
@@ -174,7 +174,7 @@ public sealed class WorkbenchLayoutTests
         // The moved pane sits immediately BEFORE the drop target, which is what "drop on its left"
         // means and is the half a wrapping implementation got right by accident.
         Assert.Contains(after.Children[target - 1].Id, service.Current.Walk()
-            .OfType<StackNode>().Where(st => st.Surfaces.Any(su => su.SurfaceId == "provenance"))
+            .OfType<StackNode>().Where(st => st.Surfaces.Any(su => su.SurfaceId == "sources"))
             .Select(st => st.Id));
     }
 
@@ -191,7 +191,7 @@ public sealed class WorkbenchLayoutTests
         var untouched = columns.Weights[^1];
 
         service.Apply(new LayoutOperation.MoveSurface(
-            "provenance", new DropTarget(left.Id, DropKind.SplitRight)));
+            "sources", new DropTarget(left.Id, DropKind.SplitRight)));
 
         var after = service.Current.Walk().OfType<SplitNode>().First(sp => sp.Id == columns.Id);
 
@@ -208,7 +208,7 @@ public sealed class WorkbenchLayoutTests
         // LAST surface destroys the stack", and naming one surface made that depend on the stack
         // happening to hold exactly one — which stopped being true the moment a surface was added
         // beside it, failing a test that has nothing to do with the change.
-        var stack = service.Current.FindStackOf("provenance")!;
+        var stack = service.Current.FindStackOf("sources")!;
 
         // The split that HOLDS it, found rather than named. Naming split-root made this test depend
         // on the default arrangement, so changing where a pane lives failed a test about collapsing.
@@ -325,7 +325,7 @@ public sealed class WorkbenchLayoutTests
         var service = new LayoutService { IsLocked = true };
 
         var move = service.Apply(new LayoutOperation.MoveSurface("explore",
-            new DropTarget(StackIdOf(service.Current, "provenance"), DropKind.JoinStack)));
+            new DropTarget(StackIdOf(service.Current, "sources"), DropKind.JoinStack)));
         var resize = service.Apply(new LayoutOperation.ResizeSplit("split-root", 0, 0.1));
         var select = service.Apply(new LayoutOperation.ActivateSurface("domain"));
 
@@ -343,11 +343,11 @@ public sealed class WorkbenchLayoutTests
     {
         var service = new LayoutService();
 
-        service.Apply(new LayoutOperation.MoveSurface("provenance", new DropTarget("", DropKind.Float)));
+        service.Apply(new LayoutOperation.MoveSurface("sources", new DropTarget("", DropKind.Float)));
 
         Assert.Single(service.Current.Floating);
         Assert.DoesNotContain(service.Current.Walk().OfType<StackNode>(),
-            s => s.Surfaces.Any(f => f.SurfaceId == "provenance"));
+            s => s.Surfaces.Any(f => f.SurfaceId == "sources"));
         service.Current.AssertInvariant();
     }
 

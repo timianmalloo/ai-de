@@ -143,7 +143,7 @@ public sealed class PerspectiveShellTests
             f.B.Adapter.Render();
             f.C.Adapter.Render();
 
-            Assert.Equal("graph", PerspectiveShell.LandingSurfaceFor(f.B));
+            Assert.Equal("contexts", PerspectiveShell.LandingSurfaceFor(f.B));   // Ruling 94: the Center's active tab is Contexts
             Assert.Equal("sessions", PerspectiveShell.LandingSurfaceFor(f.C));
 
             // Coding (SH-4.2): the Left's active document when one is open, else the Center's

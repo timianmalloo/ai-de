@@ -576,7 +576,7 @@ internal static partial class Program
                 new Surface("leaderboard", "leaderboard", "Leaderboard"),
                 new Surface("board", "board", "Board"),
                 new Surface("session-document:20260911T125502Z-bd59855b", SessionDocumentSurface.Kind, "2026-09-11 session"),
-                new Surface("provenance", "inspector", "Provenance"),
+                new Surface("provenance", "inspector", "Provenance"),   // the operator's 2026-09-11 file carried the since-retired kind (Ruling 94); it is dropped with a report
                 new Surface("contexts", "contexts", "Contexts"),
                 new Surface("joins", "joins", "Joins"),
             ]);

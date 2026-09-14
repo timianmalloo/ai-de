@@ -109,6 +109,15 @@ public sealed class EvidencePaneViewModel(IWorkspaceQueries queries)
 
     public IReadOnlyList<ProvenanceSection> Provenance { get; private set; } = [];
 
+    /// <summary>
+    /// The selected row's provenance as ONE muted line for the row itself (Ruling 94): confidence ·
+    /// origin · extractor and version · rev, one entry per distinct triple among the node's
+    /// neighbours, or <c>not recorded</c> when it has none. Derived from the same
+    /// <see cref="Provenance"/> section a full describe renders — one definition of the fields,
+    /// two readers (DM7). Null until a row is selected.
+    /// </summary>
+    public string? SelectedDetailLine { get; private set; }
+
     /// <summary>The one string the operator reads when something is off. Always states evidence, never reassurance.</summary>
     public string StatusMessage { get; private set; } = "Loading evidence…";
 
@@ -220,18 +229,23 @@ public sealed class EvidencePaneViewModel(IWorkspaceQueries queries)
             new("What it is", [$"{describe.Node.DisplayLabel} ({describe.Node.NodeKind})"]),
         };
 
+        ProvenanceSection confidence;
         if (describe.Neighbors.Count == 0)
         {
-            sections.Add(new ProvenanceSection("Confidence and provenance", ["not recorded"]));
+            confidence = new ProvenanceSection("Confidence and provenance", ["not recorded"]);
+            sections.Add(confidence);
             sections.Add(new ProvenanceSection("Related nodes", ["No related evidence recorded."]));
             sections.Add(new ProvenanceSection("Source", ["not recorded"]));
         }
         else
         {
-            sections.Add(new ProvenanceSection("Confidence and provenance",
+            // Base, not stamped: the stored revision carries the extractor generation (SourceRevision);
+            // what a person is shown is the revision they named — the same rule the status line follows.
+            confidence = new ProvenanceSection("Confidence and provenance",
                 [.. describe.Neighbors.Select(n =>
                     $"{ConfidenceBadge.For(n.Status).Glyph} {ConfidenceBadge.For(n.Status).Text} · " +
-                    $"{n.Origin} · {n.Provenance.ExtractorId} {n.Provenance.ExtractorVersion} · rev {n.ArtifactRevision}")]));
+                    $"{n.Origin} · {n.Provenance.ExtractorId} {n.Provenance.ExtractorVersion} · rev {Extraction.SourceRevision.Base(n.ArtifactRevision)}")]);
+            sections.Add(confidence);
 
             sections.Add(new ProvenanceSection("Related nodes",
                 [.. describe.Neighbors.Select(n => $"{n.Subject} —{n.Predicate}→ {n.Object}")]));
@@ -253,36 +267,12 @@ public sealed class EvidencePaneViewModel(IWorkspaceQueries queries)
         }
 
         Provenance = sections;
+        // The row's own line: the confidence section's distinct entries joined — read back from
+        // the section, never composed a second time from the neighbours.
+        SelectedDetailLine = string.Join(" ; ", confidence.Lines.Distinct(StringComparer.Ordinal));
         LiveAnnouncement = $"Selected {describe.Node.DisplayLabel}. {sections.Count} provenance sections.";
     }
 
     /// <summary>Empty-pane copy, shown before anything is selected — spec §C4, verbatim (US-C6).</summary>
     public static string EmptySelectionMessage => "Select an evidence row to see its provenance.";
-}
-
-/// <summary>
-/// The seam between the Evidence master and Provenance detail panes (Ruling 61; US-C6): a shared,
-/// UI-framework-agnostic channel so selecting a row in one pane is exactly what changes the other,
-/// with no second definition of "what is selected". One instance per host, held by whatever builds
-/// both panes — testable without a docking host (US-C6's positive oracle).
-/// </summary>
-public sealed class EvidenceSelectionSource
-{
-    /// <summary>The currently selected node, or null when nothing is selected.</summary>
-    public string? SelectedNodeId { get; private set; }
-
-    /// <summary>Raised whenever the selection changes, including to null (nothing selected).</summary>
-    public event Action<string?>? Changed;
-
-    /// <summary>Selects <paramref name="nodeId"/> (or clears the selection when null). A no-op re-selection announces nothing new.</summary>
-    public void Select(string? nodeId)
-    {
-        if (string.Equals(SelectedNodeId, nodeId, StringComparison.Ordinal))
-        {
-            return;
-        }
-
-        SelectedNodeId = nodeId;
-        Changed?.Invoke(SelectedNodeId);
-    }
 }

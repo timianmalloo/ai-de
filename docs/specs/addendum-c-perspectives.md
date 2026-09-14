@@ -437,15 +437,15 @@ fails the build test (US-C3), so an unreachable kind cannot be created by omissi
 | `codeviewer` | read-only source view | **admits** | — | **admits** (default: none; opened from a node — "View source" must not leave the reading host) | many | UC1 (inspect what the agent changed), UC3; §R row 7 |
 | `diagnostics` | re-index coverage + daemon state | **admits** | — | — (no UC3 item needs it; one switch away) | one | UC1 |
 | `canvas` | a windowed graph canvas instance | — | — | **admits**, node-kind filter fixed to code · data · architecture (default: Center "Graph") | one | Ruling 53 |
-| `view` | Evidence list (master) | — | — | **admits** (default: Left "Evidence") | one | Ruling 55d; `SurfaceContentFactory.cs:70-106` |
-| `inspector` | Evidence detail (Provenance) — **must render the selected row's detail, not a second copy of the list** (US-C6) | — | — | **admits** (default: Right "Provenance") | one | Ruling 55d |
+| `view` | Evidence list — a master whose **selected row carries its own detail** (origin · extractor · rev as a second muted line under the row; Ruling 94) | — | — | **admits** (default: none — the View menu; Ruling 94) | one | Ruling 55d; Ruling 94 |
+| ~~`inspector`~~ | *Retired by Ruling 94.* The Provenance detail pane — only ever the detail half of the Evidence pair — is folded into the `view` row above; a saved layout carrying it is dropped with a report naming the ruling (ADR-0032 test 1). | — | — | — | — | Ruling 61 → Ruling 94 |
 | `classdiagram` | type-hierarchy cards (Phase 1, member-less) | — | — | **admits** (default: Center "Domain") | many | UC3 (1) domain entities, (3) class model; `spec-ai-native-ide` US-2; Ruling 54 |
 | `sequence` | UML sequence from `calls_at` | — | — | **admits** | many | UC3 (5); Ruling 54 |
 | `contexts` | bounded-context boxes + cross-context traffic | — | — | **admits** (default: Center) | one | UC3 (6) conceptual architecture; Ruling 54 |
 | `joins` | code/schema/infra joins, Verified vs Inferred | — | — | **admits** (default: Center) | one | UC3 (2)/(6); **Ruling 54 named three existing surfaces and not this one** — admitted because it exists and renders (inventory §1); §R row 7 |
 
 **Excluded by intent, not by oversight:** Coding admits no `classdiagram`, `sequence`, `contexts`,
-`joins`, `canvas`, `view`, `inspector` (the operator: *"no sequence diagram in the agentic coding use
+`joins`, `canvas`, `view` (the operator: *"no sequence diagram in the agentic coding use
 case"*; Ruling 54). Architecture admits no `terminal`, `prompt`, `session-document` or Loomkeeper
 kind: it is a reading perspective; a terminal there would put a live process in a second host whose
 no-rebuild behaviour is exactly what Ruling 52's CONDITIONS say is not yet proven **[Inferred —
@@ -578,13 +578,14 @@ only in its XAML is proven at runtime and said so.
   Right: empty), **And** no surface captioned "Explore", "Domain", "Provenance", "Graph", "Contexts",
   "Joins" or bare "Sessions" is present (*falsifier:* any of those captions in the Coding host) —
   headless on `WorkbenchLayout.Default()`'s successor.
-- **Positive oracle for the pair.** **Given** the `view` and `inspector` kinds built against one
-  store with rows R1…Rn, **When** R2 is selected in `view`, **Then** `inspector`'s visual tree
-  contains the four `SelectAsync` detail sections and R2's id and contains no list of rows, while
-  `view`'s contains a list of n rows and no detail section; **When** R3 is then selected, **Then**
-  `inspector` changes to R3; **Given** no selection, **Then** `inspector` shows the §C4 empty copy
-  verbatim (*falsifier — red today:* both trees are the same evidence list). The seam: the factory
-  takes a **selection source** so the pair is testable without host B (`/design-slice`).
+- **Positive oracle for the master's detail (Ruling 94, superseding the pair's).** **Given** the
+  `view` kind built against one store with rows R1…Rn, **When** R2 is selected, **Then** R2's row —
+  and no other — grows a second, smaller line carrying its confidence · origin · extractor and
+  version · rev (`not recorded` for a row with no neighbours), the list still holds n rows and no
+  section heading appears anywhere in the pane; **When** R3 is then selected, **Then** the line moves
+  to R3 (*falsifier — red before Ruling 94:* the row template held one line and the selection fed
+  only the retired detail pane). The pair's oracle ("two kinds render different content") is
+  withdrawn with the second kind.
 - **Given** INV-0006's zone/tree repair has not merged, **Then** this story's implementation node
   blocks and says so — it does not build the layout against a shell that mislabels zones
   (Ruling 55 CONDITIONS).
@@ -961,9 +962,9 @@ No fifth item. "Tests" is a reserved name in the vocabulary table and nowhere el
 | | Coding | Explore | Architecture |
 | --- | --- | --- | --- |
 | Body | docking host A (today's `WorkbenchShell` host) | `ExplorerSurface` (graph ‖ reader) | docking host B (new instance, same library, same zone model) |
-| Admits (§A7) | session-document · terminal · prompt · sessions · board · leaderboard · ledger · daydreams · search · codeviewer · diagnostics | — (not a host) | canvas (kind-filtered) · view · inspector · classdiagram · sequence · contexts · joins · codeviewer |
+| Admits (§A7) | session-document · terminal · prompt · sessions · board · leaderboard · ledger · daydreams · search · codeviewer · diagnostics | — (not a host) | canvas (kind-filtered) · view · classdiagram · sequence · contexts · joins · codeviewer |
 | Menu contribution (§B3) | File (entry verbs, workspace, recents) · Edit (pane ops) · View (perspectives · open/show entries · tab navigation · dispute · status) · Window (pane ops) · Terminal (dispatch · New prompt draft) · Help | File · View (perspectives · focus canvas · status) · Help | File · Edit · View (perspectives · open/show entries · focus canvas · tab navigation · status) · Window · Help |
-| Default layout (§B4) | Center: empty state → session documents · Left: Terminal sessions · Bottom: Terminal · Right: — | the Explorer's own split (in-process) | Center: Graph · Domain · Contexts · Joins (tabs) · Left: Evidence · Right: Provenance · Bottom: — (collapsed) |
+| Default layout (§B4) | Center: empty state → session documents · Left: Terminal sessions · Bottom: Terminal · Right: — | the Explorer's own split (in-process) | Left: Graph (0.22) · Center: Contexts · Domain (tabs) · Right: — (collapsed) · Bottom: — (collapsed) — Ruling 94 |
 | Slot | zone envelope A (the migrated pre-Addendum-C envelope) | none — in-process only (US-C9) | zone envelope B |
 | Entry | rail item · bound gesture · View menu · a routed kind-open only Coding admits · an entry verb | rail item · gesture · View menu · a drill-to-node from Architecture | rail item · gesture · View menu · a routed kind-open (Architecture first) |
 | Exit | any other destination (rail / gesture / View menu) | Escape from the surface root → previous · any other destination | any other destination |
@@ -1069,12 +1070,12 @@ Admitted but not in the default: `board`, `leaderboard`, `ledger`, `daydreams`, 
 
 | Zone | Surfaces (kind) | Why |
 | --- | --- | --- |
-| Center | Graph (`canvas`, kind-filtered) · Domain (`classdiagram`) · Contexts (`contexts`) · Joins (`joins`) — four tabs, one visible | Documents → Center. "Domain" now names the surface US-2 specifies, not an Evidence list. The broad views (graph, contexts) and the specific (class model, joins) share the Center as tabs. |
-| Left | Evidence (`view`) | The master half of the specified master-detail (`SurfaceContentFactory.cs:76-82`). |
-| Right | Provenance (`inspector`) | The detail half — beside the master, not a sibling tab (which "cannot be master-detail, since only one tab is visible"). |
+| Left | Graph (`canvas`, kind-filtered) at extent **0.22** | Ruling 94 — the operator's own saved slot (*"this is the default layout i want"*): the graph as the reading rail beside the documents; the extent is theirs, read from `layout.architecture.zones.json`. |
+| Center | Contexts (`contexts`, active) · Domain (`classdiagram`) — two tabs, one visible | Documents → Center. "Domain" names the surface US-2 specifies, not an Evidence list. `joins` stays out pending Ruling 59's real-content check. |
+| Right | *(empty, collapsed)* | Ruling 94: *"eliminate the provenance tab"* — the Evidence pair is one master now; the operator's file held the Right open and empty, the ruling collapses it. |
 | Bottom | *(empty, collapsed)* | Diagnostics is a Show entry, not a default. |
 
-Admitted but not in the default: `sequence` (opened from a member), `codeviewer` (opened from a node).
+Admitted but not in the default: `view` (Evidence — its selected row carries its provenance line; Ruling 94), `sequence` (opened from a member), `codeviewer` (opened from a node), `joins` (Ruling 59 CONDITIONS).
 
 ### B5. User flows
 

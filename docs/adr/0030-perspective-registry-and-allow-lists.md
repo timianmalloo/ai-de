@@ -76,7 +76,8 @@ We will:
    b5: an unreachable kind cannot be created by omission). The membership is §A7's table as ruled
    (Rulings 59–61): Coding admits `session-document · terminal · prompt · sessions · board ·
    leaderboard · ledger · daydreams · search · codeviewer · diagnostics`; Architecture admits `canvas
-   (kind-filtered) · view · inspector · classdiagram · sequence · contexts · joins · codeviewer`;
+   (kind-filtered) · view · classdiagram · sequence · contexts · joins · codeviewer` (`inspector`
+   retired by Ruling 94 — a saved layout carrying it is dropped with a report naming the ruling);
    Explore admits no docked kind (its body is not a host).
 3. **Derive every other surface from the join**, computed by one App function
    (`PerspectiveMenu.For(perspective, Kinds, catalog)`), and read by all consumers:

@@ -88,6 +88,96 @@ public sealed class SessionConfigStore
     }
 
     /// <summary>
+    /// The name of every session the workspace holds — every <c>session.json</c> under
+    /// <see cref="SessionPaths.SessionsRoot"/>, open tab or not. Empty when there is no sessions
+    /// root yet; a session whose file cannot be read is skipped, never a throw.
+    /// </summary>
+    /// <remarks>Ruling 99: uniqueness is judged against the STORE, not the open tabs — a session the
+    /// operator closed still owns its name.</remarks>
+    public static IReadOnlyList<string> ExistingNames(string workspaceRoot)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(workspaceRoot);
+
+        var root = SessionPaths.SessionsRoot(workspaceRoot);
+        if (!Directory.Exists(root))
+        {
+            return [];
+        }
+
+        var names = new List<string>();
+        foreach (var directory in Directory.EnumerateDirectories(root))
+        {
+            var file = Path.Combine(directory, SessionPaths.SessionFileName);
+            if (!File.Exists(file))
+            {
+                continue;
+            }
+
+            try
+            {
+                if (JsonSerializer.Deserialize<SessionConfig>(File.ReadAllText(file))?.Name is { } name)
+                {
+                    names.Add(name);
+                }
+            }
+            catch (Exception error) when (error is IOException or JsonException or UnauthorizedAccessException)
+            {
+                // A session whose file is mid-write or malformed does not own a name yet.
+            }
+        }
+
+        return names;
+    }
+
+    /// <summary>
+    /// The one rule for a session name that is unique within its workspace (Ruling 99): the
+    /// requested name when nothing holds it, else the name with a counter — <c>" (2)"</c>, <c>" (3)"</c>,
+    /// … — counted up from 2 until it is free. A counter the requested name already carries is not
+    /// part of the base, so <c>"X (2)"</c> over <c>{"X", "X (2)"}</c> is <c>"X (3)"</c>, never
+    /// <c>"X (2) (2)"</c>. Never refuses; no time-of-day.
+    /// </summary>
+    /// <remarks>
+    /// Called by the sheet for its default name and for an operator-typed duplicate at Create, and by
+    /// the later parallel-session slice on its parent's name — one function, so the three cannot drift.
+    /// </remarks>
+    public static string UniqueName(string requested, IEnumerable<string> existing)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(requested);
+        ArgumentNullException.ThrowIfNull(existing);
+
+        var taken = existing.ToHashSet(StringComparer.Ordinal);
+        if (!taken.Contains(requested))
+        {
+            return requested;
+        }
+
+        var baseName = StripCounter(requested);
+        for (var n = 2; ; n++)
+        {
+            var candidate = $"{baseName} ({n})";
+            if (!taken.Contains(candidate))
+            {
+                return candidate;
+            }
+        }
+    }
+
+    /// <summary>"X (n)" → "X" for a trailing counter of this rule's own shape; anything else unchanged.</summary>
+    private static string StripCounter(string name)
+    {
+        var open = name.LastIndexOf(" (", StringComparison.Ordinal);
+        if (open <= 0 || !name.EndsWith(')'))
+        {
+            return name;
+        }
+
+        var digits = name.AsSpan(open + 2, name.Length - open - 3);
+        return digits.Length > 0 && int.TryParse(digits, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out _)
+            ? name[..open]
+            : name;
+    }
+
+    /// <summary>
     /// Applies a backend toggle for new runs and emits <c>session.config</c>. Never mutates a
     /// <see cref="SessionConfig"/> a caller already holds — see the remarks on this type.
     /// </summary>
