@@ -1054,3 +1054,40 @@ records and published history must be preserved, with reissue/mapping before int
 This is not a request to merge product main or rewrite append-only audit entries.
 Owner was sent the exact findings, C's two unused calls and the remaining held Shell/proof
 allowances for the next bounded decision.
+
+## Completed-write ordering and register-only reconciliation, Owner turn 54
+
+Owner confirms that successful full writer return completes response A. Polling its
+operation cancellation afterward can incorrectly terminalize an already completed response
+and poison healthy B. Eight C leaves (regular 124/132) cover an exact post-write/pre-poll
+semantic red, the narrow correction, complete fixture resource assertions with safe
+observation perturbations, and endpoint publication-required hardening for the four
+source-bearing operation kinds. The ten existing publication cases and raw failures stay.
+DS/Test each receive four new review leaves. Security's existing ownership/revocation/drain
+clearance applies only while that contract remains unchanged.
+
+The register collision is resolved as data reconciliation, not a product-main merge:
+published 177-208 entries come verbatim from pinned `76c6d430`; Atlas meanings and history
+are preserved and reissued only after collision/semantic-duplicate checks. Mapping keys
+include origin revision, old ID and title, so an ambiguous bare ID is never globally
+rewritten. Historical JSONL remains append-only. Numbering uncertainty does not justify
+inventing IDs or stalling the independent source repair.
+
+Conductor's new cumulative ceiling is 256, with the first eight reserved for register/
+record mechanics. Previous counts and overruns remain. Core join is conditional on the
+fresh gates; Shell handoff and actual-window proof retain their separately held budgets.
+
+### Register-only outcome under Owner 54
+
+The exact published 177-208 entry block from `76c6d430` was imported verbatim. Both Atlas
+definitions were preserved in `docs/notes/atlas-owner/defect-id-reconciliation.md`, with
+origin revision + old numeric ID + exact title keys. Historical JSONL and worker commits
+were not rewritten. Current register sequence is complete through numeric 208 and passes
+the allocator against that pinned trunk.
+
+The reservation/branch check read 85 branch/remote references and 47 live worktree
+locations. Numeric 209 is already present on `conductor/addendum-c` and its live register;
+therefore this pass assigned no new canonical Atlas numbers or invented placeholder.
+Full semantic equivalence and replacement reservation remain named pending decisions.
+The two retired Atlas heading meanings and the publication class are not silently mapped
+to unrelated published classes. Product source/main integration is unaffected.

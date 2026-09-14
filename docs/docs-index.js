@@ -4781,7 +4781,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f64317129c19ad44bd3b8eecab46b8968b69cf43fc0dbe014cd7c6148e6566a4"
+      "sourceSha256": "70f80efa96846789cb708898e6e85cf49a6e775367673b4fb7bec885968acc11"
     },
     {
       "id": "note-atlas-reader-native-direction",
@@ -8441,10 +8441,14 @@ window.DOCS_INDEX = {
         {
           "to": "design-phase-1-walking-skeleton",
           "rel": "relates-to"
+        },
+        {
+          "to": "note-atlas-defect-id-reconciliation",
+          "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9ed7a21dde4fc943ff91d84d461bff7448ad4eb5d7e98f1f68ea4aea08b5b950"
+      "sourceSha256": "5c67fb9ffd54f7f4cabae174b6c48026580517ee5bc30daeb48ec83aca5afe95"
     },
     {
       "id": "design-session-profiler",
@@ -9925,6 +9929,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "15286ce85d4b5a341d250239759166952fe6a7da3d367f03ae3a7fdbd63c2927"
     },
     {
+      "id": "note-atlas-defect-id-reconciliation",
+      "path": "docs/notes/atlas-owner/defect-id-reconciliation.md",
+      "title": "Atlas defect identities - preserved history, pending reservation",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-14",
+      "reviewSuggested": [],
+      "summary": "Published register entries are preserved from a pinned main revision. Two Atlas meanings remain preserved here as named decisions pending collision-safe canonical reservation; historical audit records are not rewritten and source repair is not blocked on numbering.",
+      "tags": [
+        "code-atlas",
+        "coordination",
+        "identifiers",
+        "lessons"
+      ],
+      "links": [
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-code-atlas-production-adapters",
+          "rel": "relates-to"
+        },
+        {
+          "to": "investigation-code-atlas-publication-lifetime",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4f4e2b2784877c12c5415fb1dd833c246c648c61f352c2f8e18524ebbf2e207f"
+    },
+    {
       "id": "note-atlas-delivery-horizon",
       "path": "docs/notes/atlas-owner/delivery-horizon.md",
       "title": "Code Atlas whole-architecture roadmap and walking-skeleton horizon",
@@ -11051,10 +11089,14 @@ window.DOCS_INDEX = {
         {
           "to": "coordination-code-atlas",
           "rel": "relates-to"
+        },
+        {
+          "to": "note-atlas-defect-id-reconciliation",
+          "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "02d836693545be77098c4633b51b49e916f5281ed71a372ef17e05441f7428af"
+      "sourceSha256": "b9ae692c43425c07ff6c4f3afd019f3808976f1ded43a7cb023d25b49cb10696"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -11679,7 +11721,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5fe3b120b67feaf42679557e8a303e40a39744ae3542f4a64a3fe990900d98b0"
+      "sourceSha256": "49e39880853173c925ebcf4c9cd1bc86481c8cfe45c1988ed122c8f2f617621b"
     },
     {
       "id": "session-profiles",
@@ -19000,5 +19042,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "f9be9b26f177bb9bd394583396df5a2e2bab4d7ce254e8afc74e155724cec3fe"
+  "graphSha256": "1afd9b4fefe82c24d55cf3ee4f30e9d07c97cc64b96865acf0f1c5d42fcd8790"
 };

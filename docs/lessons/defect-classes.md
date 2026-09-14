@@ -8,6 +8,7 @@ tags: [lessons, defect-classes, continuous-improvement]
 links:
   - { to: architecture, rel: relates-to }
   - { to: design-phase-1-walking-skeleton, rel: relates-to }
+  - { to: note-atlas-defect-id-reconciliation, rel: relates-to }
 review-by: 2026-11-24
 summary: >-
   The project's register of defect classes — the recurring shapes of things that go wrong here, what
@@ -28,7 +29,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 93 · partially-controlled 65 · uncontrolled 20
+**Status counts:** controlled 115 · partially-controlled 66 · uncontrolled 27
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -7487,54 +7488,481 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   the operator-reachable delete in the same slice, in a file it owns, or does not open the store.
 - **Status:** `controlled`.
 
-### DC-177 — Failure cleanup drops ownership before cleanup succeeds
+### DC-177 — A redirected child's stream read with the platform default encoding renders every non-ASCII byte pair as mojibake, and nothing fails
 
-- **Additional native instance:** the Atlas qualification watch outlived its issuing
-  thread, and then diagnostic inspection of a dead issuer threw before cleanup. The
-  coherent candidate `c7c94153` captures immutable metadata while valid, keeps a bounded
-  shared issuer alive and tests explicit diagnostic loss/cleanup. The cause run preserved
-  three failures; Test inspected exited/live/cancel/mutation and shared-owner/drain oracles;
-  Conductor replayed 350/350. Native cleanup-timeout accounting remains a separate production
-  condition, not covered by those successful runs or the Shell control below.
-- **Signature:** an asynchronous owner clears its lease/reader before awaited disposal,
-  chains later transitions onto a faulted task, or destroys cancellation/admission primitives
-  while operations still use them. Error text can also hide retained activation state.
-- **Why it survives:** successful attach/close tests cover neither a throwing disposer nor
-  in-flight admission. A caught exception can look like cleanup even though ownership was lost.
-- **Instances:** 2026-09-13, Atlas Shell `dade5c77`; repaired in `8e691c6a`, joined `639be9d3`.
-- **Class / sweep:** inspect the bounded Atlas owner and loading-host lifetime paths:
-  factory, lease/reader disposal, view callbacks, queued invalidation, final close and
-  admission failure. All share the owner's cleanup boundary. Inventory exceptions were
-  already contained by the reader; that original review hypothesis was not a new defect.
-  This is not a claim of a repository-wide lifecycle sweep.
-- **Derive:** retain one owner's fields until successful cleanup, serialize replacement,
-  retain failures for retry, isolate callback errors, and drain work before final primitive
-  disposal. A permanently failing disposer leaves ownership retained, not falsely released.
-- **Control:** `AtlasSharedHostAdmissionTests` repair cases for throw-once boundaries,
-  close failure/retry, callback continuation, primitive drain/idempotence, admission
-  cleanup and host retry. Ten initial semantic reds plus one admission-race red were
-  read from the retained TRXs; Conductor's integrated run observed 90/90. Evidence and
-  individual assertions are recorded in `proof-code-atlas-production-adapters`.
-- **Boundary:** controlled for the tested Atlas component paths. Actual Core/MainWindow
-  composition and noncooperative production dependencies remain unproved.
+- **Shape:** `ProcessStartInfo` with `RedirectStandardOutput`/`RedirectStandardError`/`RedirectStandardInput`
+  and **no** `Standard*Encoding` reads and writes the child through the console code page on
+  Windows (CP437 in a test host, the OEM page under a terminal) while the child speaks UTF-8 — an
+  ACP adapter's JSON, git's paths and refs. Every multi-byte character arrives as its bytes decoded
+  one at a time (`—` → `â€"` or `ΓÇö`; `§` → `Â§` or `┬º`). No exception, no dropped byte, no log
+  line: the text is merely wrong, in a way that survives every equality test written in ASCII.
+- **Signature:** `â€"`, `Â§`, `ΓÇö`, `┬º` in a rendered reply, a branch name, a path; a JSON
+  payload whose string lengths grow by one per non-ASCII character; a round-trip test that passes
+  because its fixture is ASCII.
+- **Instance (Ruling 87, 2026-09-13):** the operator's reply in the session thread read
+  `The A1â€"A4 revert` and `Â§0 header`; `AcpEngineProcess.Start` set no encoding. Red-first:
+  `AcpEngineProcessStreamsAreUtf8Tests` reads `ΓÇö ┬º compile` for `— § compile` through the probe's
+  `--echo-utf8` (bytes written past the console layer, as a Node adapter writes).
+- **Sweep:** two redirected launches in the product — `AcpEngineProcess` (the instance) and
+  `ProcessRunner.Run` (git; the same absence). Both set UTF-8 without a BOM on every redirected
+  stream. The ConPTY path is a byte channel decoded by the terminal parser, not this class.
+- **Control:** the test above (red on `main` before the change, recorded); a launch with a
+  redirect and no encoding is the shape to refuse at review — named here for the next reader.
 - **Status:** `controlled`.
 
-### DC-178 — A textual patch targets a delimiter rather than its enclosing syntax
+### DC-178 — An oracle written from the intended state instead of the recorded one fails a green run on a fact its own author had measured
 
-- **Signature:** a new member is placed between an existing `try` and `catch` because the
-  edit matches a nearby closing brace instead of the full enclosing member.
-- **Why it survives:** the patch applies successfully; textual context is not a syntax tree.
-- **Instances:** 2026-09-13, qualification-only Atlas diagnostics inserted two methods into
-  exception blocks. No failing source was joined.
-- **Class / sweep:** both new diagnostic members in `AtlasGitMembership.cs` had the same
-  misplaced boundary. Conductor opened both locations and the CS1524/CS1513/CS1519 evidence.
-- **Derive:** anchor structural edits to the complete named member and its surrounding
-  declaration, not a generic closing brace. Keep the diagnostic change separate from a
-  behavior repair so a compiler error cannot be mistaken for native failure evidence.
-- **Control:** the normal Core build rejected both malformed placements before any new
-  diagnostic test executed. Moving only the methods restored compilation; the same
-  14/17 behavioral result then reproduced. Broken compiler log and diagnostic receipt
-  are named in `proof-code-atlas-production-adapters`.
-- **Boundary:** this compiler control detects malformed declarations, not valid syntax in
-  the wrong semantic location; such edits still need their behavioral oracle.
+- **Shape:** a harness records a fact during its build ("`session/new` alone makes the CLI spawn
+  the `.mcp.json` server and run `initialize`/`tools/list`") and then ships an assertion that the
+  fact violates ("the MCP log is empty"). The assertion is stricter than the specification it
+  implements (C1: zero `tool_call` frames of any name), so a run that satisfies the spec goes red on
+  the harness's own known, benign residue — a false red the operator has to carry to someone who can
+  read the frames. The inverse of a vacuous check: a check that cannot pass on the state it was
+  written against.
+- **Signature:** a RED whose evidence is a handshake, a listing, a housekeeping line; an assertion
+  whose wording is a superlative ("nothing", "empty", "never") where the spec says a count of one
+  kind; a proof pack that records the residue under *findings* and refuses it under *assertions*.
+- **Instance (PD-5, 2026-09-13):** `assert-spike.py` (c) — *"the fixture's MCP server logged
+  nothing"* — failed the operator's run on `initialize` · `notifications/initialized` ·
+  `tools/list`, three messages the prep's finding 3 had recorded from its own dry run; (a), (b),
+  (d)–(g) all held. Corrected to *zero `tools/call`*, the handshake reported as the finding it is.
+- **Sweep:** the seven assertions of the same file — (a), (b), (d), (e), (g) name a count of a
+  kind; (f) has a weak form for the state the pin produces; none else uses a superlative.
+- **Control:** an assertion over a recorded run must be run against the harness's own recorded
+  dry-run frames before it ships — `assert-spike.py --self-test` now includes `frames/dry-run/`
+  as a third fixture that must not go red on (c). Named here for the next harness author: when
+  you record a residue as expected, your oracle must expect it.
 - **Status:** `controlled`.
+
+### DC-179 — A fixture-sized constructor default reaches the one real production call site because the real caller passes none
+
+- **Filed by:** X-3 a (placeholder — the conductor allocates the final number/status).
+- **Shape:** an optional parameter's default value is chosen for a headless/fixture call site
+  (`"rev-1"`, `"fixture"`), and the ONE real production caller omits the argument — so the fixture
+  literal is what a live session actually attaches. A downstream formatter that assumes the value
+  is an opaque id (and prefixes its own label onto it) then produces a self-referential string
+  when the fixture literal happens to already contain that label's word.
+- **Instance:** `WorkbenchShell.AttachWorkspace(… artifactRevision = "rev-1")`; `MainWindow.xaml.cs`
+  passes none, so every session's evidence status rendered `rev rev-1`
+  (`EvidencePaneViewModel.cs:172`) — Ruling 85 (`docs/notes/addendum-c-council-rulings.md`).
+- **Control (this instance):** the default is now `null`, resolved at the one real call site to the
+  workspace's observed `git rev-parse --short HEAD` or the literal `"not recorded"` — never a value
+  that merely looks measured (`WorkbenchShell.ResolveGitFacts`, `GitFacts.Head`).
+- **Sweep (not run this slice):** other optional parameters on a shell/session constructor whose
+  default reads as a real value rather than an obvious placeholder — the conductor's to schedule.
+- **Status:** `controlled`.
+
+### DC-180 — A status announcement's only clearing path is a manual command, so a success path that announces nothing leaves an old refusal on screen indefinitely
+
+- **Filed by:** X-3 a (placeholder — the conductor allocates the final number/status).
+- **Shape:** a status/live-region announcer has a `Clear()` but only one caller (an explicit
+  "clear status" command). Every OTHER code path either announces a new message (which happens to
+  overwrite the old one) or announces nothing at all on success — so a refusal shown once persists
+  until the operator happens to trigger a path that announces, which for a mouse-only sequence of
+  successful actions may never happen.
+- **Instance:** `WorkbenchShell`'s pane-move refusal (`RefusedReconcileAnnouncement`,
+  `ReconcileViewIntoModel`) — a native drag's success path calls no `Announcer.Announce`, so the
+  refusal from an earlier collapsed-zone drag stayed on screen for the rest of a session (Ruling 86).
+- **Control (this instance):** the announcer itself owns a bounded dwell (`WorkbenchAnnouncer`,
+  10s default) that self-clears when nothing supersedes it, in addition to the existing
+  overwrite-on-next-announcement and the manual `Clear()` path — three ways to the same end rather
+  than a call site added to every silent success path.
+- **Sweep (not run this slice):** other `IWorkbenchAnnouncer` implementers/hosts outside the
+  workbench shell (if any) for the same one-caller-`Clear()` shape.
+- **Status:** `controlled`.
+
+### DC-181 — A same-assembly diagnostics helper duplicates a sibling's sink/file-path logic because the sibling's writer defaults to `private`
+
+- **Filed by:** X-3 a (placeholder — the conductor allocates the final number/status).
+- **Shape:** two telemetry/diagnostics types in the same assembly each need "write this JSON line to
+  the shared sink-or-log-file" — the second one cannot call the first's writer because it is
+  `private`, so it grows its own copy of the sink check, the directory, the file name pattern and
+  the lock, rather than the access modifier being the one-line fix.
+- **Instance:** `ThreadDiagnostics` duplicated `WorkbenchDiagnostics.Write`'s sink/file-path body in
+  full (DM7, named debt) until `Write` was made `internal` and `ThreadDiagnostics` was rewritten to
+  call it directly.
+- **Control (this instance):** `WorkbenchDiagnostics.Write` is `internal`;
+  `ThreadDiagnosticsHasOneWriterTests` asserts the modifier and that `ThreadDiagnostics` carries no
+  private `Write`/lock of its own.
+- **Sweep (not run this slice):** any other `*Diagnostics` type in `src/AiDe.App` for the same
+  shape — the conductor's to schedule.
+- **Status:** `controlled`.
+
+### DC-182 — A re-pointed identity oracle is green at both the old grain and the new one when its fixture has no case the two grains render differently
+
+- **Shape:** an identity oracle (`rows == f(source)`) is re-pointed from one derivation to another
+  (`events` → `Coalesce(events)`) and re-written against a fixture whose every run has length one
+  — so `f_old(source) == f_new(source)` on that fixture, the "red-first" run is green against the
+  old code, and the re-pointing is a rename that proves nothing. The identity is honest; the
+  fixture is the tautology.
+- **Signature:** a re-pointed test that goes green on its first run; a fixture built for the old
+  grain (one event per line, the answer as a field beside the events); an oracle whose expected
+  side and actual side both read the new function; a proof-pack row that says *"red: n-a — the
+  identity holds"*.
+- **Instance (CV-5.2, 2026-09-13):** DS-1's M1 re-pointed to Ruling 81's `heading +
+  Coalesce(turn.Events)`. The `ThreadFixtures` answers were a `reply` field and the working lines
+  were `agent.msg` one per event: the fold would have folded runs of the working lines (the wrong
+  thing) or, once the lines were tool rows, nothing — either way no red distinguished
+  `ConsoleSurface.Derive` per event from `Derive` per row. The fixture was rebuilt at the event
+  level with each answer arriving in three `agent.msg` chunks (`ThreadFixtures.Reply`), and the
+  red then read *b2's answer as three split rows*.
+- **Sweep:** the other identity oracles over the same fixtures — the jump list and the header
+  count (`Turns.Count`) are grain-independent by construction; DS-1's `L4` (10,001 split rows)
+  was re-based on tool rows so its count stays the row count it claims.
+- **Control:** `TheThreadIsOneListTests.TheSplitsRows_EqualHeadingPlusCoalesceOfEveryTurn` carries
+  `Assert.True(Σ Events.Count > Σ Rows.Count, "no turn in the fixture folds; the identity would
+  hold at either grain")` — the test refuses a fixture on which it cannot fail. Named for the next
+  re-pointing: a re-pointed oracle asserts, in itself, that its fixture distinguishes the old
+  derivation from the new.
+- **Status:** `controlled`.
+
+### DC-183 — Two conversions of one instant on one surface: a timestamp bound through a StringFormat renders the stamp's own clock beside a sibling that converts to local, and every test machine agrees with itself
+
+- **Shape:** a `DateTimeOffset` stamped in UTC at receipt is rendered through a `Binding {
+  StringFormat = "HH:mm:ss" }` (the offset's own clock) on one row, while the heading above it
+  and the turn's time call `ToLocalTime()` — one surface, two conversions, an hour apart wherever
+  the operator is not at UTC. No test sees it: a test that compares the rendered text to
+  `ToLocalTime()` is vacuous on a UTC runner, and a test that compares it to the stamp is wrong on
+  a non-UTC one; each machine agrees with itself.
+- **Signature:** `StringFormat` on a `DateTimeOffset` binding beside a `.ToLocalTime()` elsewhere
+  on the same surface; a heading and its rows one hour apart in a screenshot; a CI runner at UTC.
+- **Instance (CV-5.2, 2026-09-13):** `ThreadFeed.EventLineTemplate` rendered `EventLine.At`
+  (`AcpPeer` stamps `GetUtcNow()`) through a StringFormat while `ConsoleSurface.Derive`'s heading
+  and `TurnItem.Time` rendered local. Found when C4's expectation, written as
+  `at.ToLocalTime()`, read `Not found: "09:29:56"` against a rendered `"16:29:56"` on a UTC−7
+  machine. One converter (`ThreadFeed.LocalClock`) now serves both templates.
+- **Sweep:** `grep -rn 'StringFormat = "HH' src/AiDe.App` — the two sites above were the only
+  ones; the header and the jump list already converted.
+- **Control:** C4's E12 block renders the same event through the split row and the thread's fold
+  line and asserts both equal `at.ToLocalTime()` — and the fixture instant carries a **+05:00
+  offset**, so a rendering from the stamp's own clock (`16:29:56`) differs from local on every
+  machine not at +05:00, a UTC runner included (the Test Architect's condition: the first draft
+  used a UTC instant, which a UTC runner could not distinguish). Observed red by reverting the
+  converter to a `StringFormat`. Named for the next clock: a clock oracle's fixture instant
+  carries an offset no runner sits at.
+- **Status:** `controlled`.
+
+### DC-184 — A count cited in a Proof Pack or a comment is a memoir; only the literal's own count is a record
+
+- **Filed by:** CV-3 a (placeholder — the conductor allocates the final number/status).
+- **Shape:** a document (a Proof Pack, a harness comment) states the size of a set that lives as a
+  literal elsewhere ("26 names"); the literal is edited, or was never counted, and the number is
+  repeated by every reader as a fact.
+- **Instance:** PD-5's Proof Pack and `run-spike.js` cite "26 names" for
+  `ReadOnlyLaneSession`'s denied-tool set; the literal has 30 (counted red-first by
+  `TheCompileSessionIsPinnedTests.TheRecordHasExactlyFiveMembersAndTheCompilePinIsANamedStatic`).
+- **Control (this instance):** the test asserts the count from the literal
+  (`LaneSessionOptions.DeniedToolNames.Count`); the citing documents are corrected in CV-3's Proof
+  Pack, never silently.
+- **Sweep (not run this slice):** `docs/proof/read-only-turn.md`'s table for the same count — the
+  conductor's to schedule.
+- **Status:** `controlled`.
+
+### DC-185 — An oracle over what did not happen passes a run that never ended
+
+- **Filed by:** CV-3 b (placeholder — the conductor allocates the final number/status).
+- **Shape:** a spike or gate asserts only negatives (zero tool calls, nothing written, nothing
+  pushed) and has no clause requiring the run to have completed; an aborted, timed-out or runaway
+  run satisfies every letter and reads green — while costing the most.
+- **Instance:** PD-5 run 2 (`frames/2026-09-13T18-58-48-954Z`): a toolless session emitted fake
+  tool-call XML as text in an unbounded loop (5,843 chunks, ~20k output tokens) until killed by
+  hand; `assert-spike.py`'s seven letters all held and (f)'s weak form accepted the XML as "a
+  statement".
+- **Control (this instance):** `assert-spike.py (0)` refuses `mode ∉ {full, dry-run}` and any
+  `timed_out`; `(f)` fails on `<invoke ` in the reply; `run-spike.js` bounds each prompt (60 s,
+  2,000 chunks) and records a firing bound as `timed_out`; `CompileModeGate` refuses an artifact
+  whose run did not end (`CE-0022`); `CompileCallHost` cuts a reply past `OutputCharBound` as
+  `malformed` naming the bound.
+- **Sweep (not run this slice):** other negative-only oracles (`verify-*` scripts asserting "no X"
+  over a log that may be truncated) — the conductor's to schedule.
+- **Status:** `controlled`.
+
+### DC-186 — A poll-after-event drain waits on an empty queue when the producer publishes the terminal event before resolving the request
+
+- **Filed by:** CV-3 c (placeholder — the conductor allocates the final number/status).
+- **Shape:** a consumer loop reads an event, then checks `request.IsCompleted`, then waits for the
+  next event; the producer publishes the request's result frame as an event *before* it resolves the
+  request (Ruling 11's ordinal), so the check runs false on the last event and the loop waits
+  forever on a queue that will never fill.
+- **Instance:** `CompileCallHost.DrainAsync`'s first shape — green alone, timed out at the deadline
+  when the class ran together (`APromptThatOutlastsTheBound…`, `AnAnsweredCompile…`).
+- **Control (this instance):** the drain races `WaitToReadAsync` against the prompt task and sweeps
+  the queue once the prompt completes. **Sibling named:** `GovernedRunHost.DrainAsync` has the same
+  shape (`prompt.IsCompleted && queue.Reader.Count == 0` after each event); the real adapter usually
+  sends later frames, but nothing guarantees one after the result — a finding for the run root's
+  owner (CV-5 / the conductor).
+- **Status:** `controlled` (this instance); `open` (the sibling).
+
+### DC-187 — A wire-text reader's blank-means-absent fallback turns a whitespace chunk of a streamed message into the literal kind
+
+- **Filed by:** CV-5-3 a (placeholder — the conductor allocates the final number/status).
+- **Shape:** a reader that answers *"what does this event say?"* treats a present-but-whitespace
+  text field as absent (`!string.IsNullOrWhiteSpace(text)`) and falls back to something that is
+  "always true" — the event's kind. That is right for a row with no text and wrong for a *chunk*
+  of a stream: a paragraph break arrives as its own `"\n\n"` chunk, the reader returns the kind,
+  and the fold joins the word `agent.thought` (or `agent.msg`) into the middle of the prose. No
+  authored fixture hits it — an author writes chunks with words in them.
+- **Signature:** `IsNullOrWhiteSpace` guarding a fallback on wire text; a chunked kind whose
+  chunks may be whitespace (paragraph breaks, indentation); a joined text containing a kind
+  string; a fixture corpus with no whitespace-only chunk.
+- **Instance (CV-5.3, 2026-09-13):** `ConsoleStreamModel.TextOf` on the first real
+  `agent_thought_chunk` capture — `frames/thought.jsonl:27` is `"\n\n"`; M1 read
+  `Expected: "\n\n" · Actual: "agent.thought"`. The fix: a present string field is the text,
+  whitespace included; only an absent field falls back to the kind.
+- **Sweep:** `grep -rn "IsNullOrWhiteSpace" src/AiDe.Core/Presentation src/AiDe.App/Workbench/Sessions`
+  — `TextOf`'s inner `Text()` was the one reader of wire text; the composer's readers guard
+  operator input, not chunks.
+- **Control:** `CoalesceTests.AWhitespaceOnlyChunk_IsItsWhitespace_NeverTheKind` (the blank chunk
+  through the real mapper is `"\n\n"`, an empty chunk is `""`, an absent field is still the kind
+  — the positive control) and M1 over the captured frame. Named for the next reader: *a chunk's
+  text is whatever the wire sent, and a reader may fall back only on absence.*
+- **Status:** `controlled`.
+
+### DC-188 — A rendered-text oracle reads `TextBlock.Text`, which is empty for content built from inlines, so it passes vacuously on the very prose it is meant to falsify
+
+- **Filed by:** CV-5-3 b (placeholder — the conductor allocates the final number/status).
+- **Shape:** a WPF `TextBlock` whose content was built by adding `Run`s to `Inlines` (bold, mono,
+  a link's URL run) reports `Text == ""` — Verified by probe on this build — while its automation
+  peer's name (`GetPlainText`) and a `TextRange` over its content carry the words. An oracle that
+  walks the visual tree asserting *no TextBlock's `Text` contains `##`* therefore passes on the
+  un-rendered markdown source too, once the prose moves to inlines: DC-016's class (a control that
+  cannot fire) at the property level. Any census that labels sites by `Text` sees the prose as
+  empty for the same reason.
+- **Signature:** `Assert.DoesNotContain(…, t => t.Text.Contains(…))` over a rendered surface that
+  uses `Inlines`; a walk whose site labels come out empty; a "no markup rendered" falsifier with no
+  positive control beside it.
+- **Instance (CV-5.3, 2026-09-13):** T1's first draft read `Text`; the first green run listed
+  eight empty `ThreadText`s where the heading, the table cells and the list items stood. The
+  harness now reads the plain text (`new TextRange(ContentStart, ContentEnd).Text`) and T1 carries
+  a positive control (*the walk sees "Red first"*). The Shell contrast census labels sites by
+  `Text` — a routed finding for its owner (it does not walk a thread with turns today).
+- **Sweep:** `grep -rn "\.Text\.\(Contains\|StartsWith\|Equals\)" tests/AiDe.App.Tests/Sessions`
+  — the other readers bind `Text`-set blocks (words, titles, event lines), where `Text` is true.
+- **Control:** `ThreadFeedTests.Plain` (the one reader) and T1's positive control; T7 reads the
+  peer's name. Named for the next inline renderer: *a rendered-text falsifier reads what the AT
+  reads, and proves it can see the text before it proves the text is absent.*
+- **Status:** `controlled`.
+
+### DC-189 — A plan row's restatement of a control's trigger drifts from the ADR that defines it, and the node builds the row
+
+- **Shape:** an ADR defines a gate's trigger as one tuple (ADR-0036 gate 3: `(contract_version,
+  prompt_sha, profile.sha)` with a golden-set A/B at k ≥ 3); the coordination plan's row restates it
+  as another (`(adapter sha, CLI sha, craft-profile sha)`); the node — told the row is the authority
+  — builds the row's tuple, literally, and records the discrepancy in a docstring. Two definitions of
+  one trigger now exist, and the one in code is not the one the ADR's reader expects.
+- **Signature:** a docstring that says "the plan row and the ADR disagree"; a ring that re-scores on
+  a change the ADR does not name and misses one it does.
+- **Instance (CV-4, 2026-09-13):** `tools/compile-eval/ring.py` re-scores on the pin-identity triple;
+  ADR-0036's gate 3 names the prompt-version triple. Recorded by the node, allocated at the join.
+- **Sweep:** the plan's CV-3 and CV-4 rows; the ADR; Ruling 68's text — three places the trigger is
+  spelled.
+- **Control:** the ADR is amended to fold the pin-identity re-score into gate 3 explicitly (the two
+  tuples are both triggers: a pin change and a prompt-version change each re-score), or a future track
+  builds the prompt-version ring against the ADR's literal triple — the conductor decides at the
+  converge; until then the docstring names both. A plan row that restates an ADR's tuple must quote
+  it, never paraphrase it (a prepare-for-coordination rule for the pack).
+- **Status:** `uncontrolled` — recorded; the amendment or the second ring is queued.
+
+### DC-190 — A skill run whose start marker was not set at grounding reports a duration measured from the wrong instant, or none
+
+- **Shape:** the audit marker (`audit-log.py start --session <id>`) is the instrument for
+  `duration_seconds`; a node that reads plans and specs before setting its environment has done
+  substantive work before the marker exists, and its closing entry's duration understates the run —
+  or, honestly, reads *not recorded*.
+- **Signature:** a `duration_seconds` far below the agent-wall duration the harness reports; a
+  Proof Pack that says "the marker was set after grounding".
+- **Instance (CV-4, 2026-09-13):** the node grounded on the plan and the spec first; its entry's
+  duration is not from true grounding, reported as not recorded (IO: degrade to absent).
+- **Sweep:** every node brief puts the `start` line after the worktree instructions, which read
+  after the plan-row instruction — the brief's own order invites this.
+- **Control:** a harness-level `SessionStart` hook that calls `audit-log.py start` unconditionally
+  (a pack change, queued for `/updatepack`); until then the brief template moves the `start` line
+  to its first line.
+- **Status:** `uncontrolled` — recorded; the hook is a pack proposal.
+
+### DC-191 — A ceiling mistaken for a height: a belt the composer composes within was assumed to make its fill child grow, but a fill child desires only its own minimum
+
+- **Filed by:** CV-5-4 a (placeholder — the conductor allocates the final number/status).
+- **Shape:** a layout mechanism that sets a *maximum* (DS-1 Q14's belt: `Composer.BeltHeight`, the
+  height the composer may take) is read as if it produced a *height*. It cannot: a `DockPanel`'s
+  fill child is measured with the remainder but desires only what it declares, and an `HwndHost`
+  (the WebView2 editor) declares nothing beyond its `MinHeight` — so the composer desired chrome +
+  130 under any belt and the editor sat at its floor with 429 px of empty thread above it (the
+  operator's screenshot 1). Every oracle asserted `editor >= floor` and was green; none asserted
+  the editor *equals* the height the mechanism intended.
+- **Signature:** a `Max`/ceiling/share property beside a child whose desired size is content-free
+  (`HwndHost`, an empty `ContentPresenter`, a `WebView2`); tests that assert `>= floor` on a
+  quantity the design states as a value (280, "fills the body").
+- **Instance (CV-5.4, 2026-09-13):** `ComposerShare = 0.45` → `BeltHeight`, the editor 130 at
+  every turn count and window. The composer now sizes the host (`_view.Height`) from the belt's
+  remainder, capped at the rest the document derives (`EditorRestHeight`), floored by `MinHeight`.
+- **Sweep:** `grep -rn "MaxHeight =\|BeltHeight\|Share" src/AiDe.App/Workbench` — the compiled
+  prompt's `MaxHeight` (DC-137) is a ceiling on a content-sized reader, which is the correct use.
+- **Control:** `Sessions/TheWriterKeepsItsRoomTests.AtZeroTurns_TheEditorFillsTheBody_WithNoScrollbar`
+  (the editor equals `body − header − caption − chrome`) and
+  `AtOneAndFortyTurns_TheEditorRestsAt280_WithEqualTopEdge` (280 ± 0.01). Named for the next
+  belt: *a ceiling proves nothing about a height; assert the value the design states.*
+- **Status:** `controlled`.
+
+### DC-192 — A fill computed on the wrong box: one child filled 100 % of the page while a sibling sat below it, so the page overflowed by the sibling's height at exactly the floor
+
+- **Filed by:** CV-5-4 b (placeholder — the conductor allocates the final number/status).
+- **Shape:** "the page fills its host" was expressed as `min-height: max(100%, floor)` on
+  `#fields`, the box that holds the editor — but the body also holds `#drop-hint` beneath it, so
+  the page's content was 100 % + 29 px, and it scrolled by exactly the drop hint at the host's
+  floor. Every headless oracle was green (they measure the WPF host, not the page) and the static
+  CSS read was green (the rule existed); only the live read of the real page (`scrollHeight` vs
+  `clientHeight`) failed: 159 in 130.
+- **Signature:** a percentage or `100%` height on an element that is not the page's sole flex
+  child; a "no scrollbar" claim proven by a CSS grep; a `<div>` appended after the filling one.
+- **Instance (CV-5.4, 2026-09-13):** the first green of every headless oracle was followed by the
+  census fact's first run: *the composer page scrolls at 0 turns: 159 px of content in a 130 px
+  page*. The body is now the column (`#fields` flex 1 / min-height 0, `#drop-hint` flex none) and
+  the floor is the body's own minimum.
+- **Sweep:** `grep -n "100%" src/AiDe.App/Web/*.html` — `html, body { height: 100% }` only.
+- **Control:** `Sessions/TheWriterKeepsItsRoomTests.TheComposedShellsPageDoesNotScrollBeforeTheOperatorTypes`
+  over the contrast census's live scroll read (`documentScrollHeight <= documentClientHeight`,
+  the editor's scroller the same). Named for the next page: *a fill is proven on the page, in a
+  browser, never on the box that was meant to fill.*
+- **Status:** `controlled`.
+
+### DC-193 — `IsVisible` is false for every element of a detached WPF tree, so a headless predicate that filters on it measures nothing and the assertion behind it passes or reads zero vacuously
+
+- **Filed by:** CV-5-4 c (placeholder — the conductor allocates the final number/status).
+- **Shape:** `UIElement.IsVisible` is true only under a `PresentationSource`; a document measured
+  and arranged detached (the fast ring's idiom: `Measure` · `Arrange` · `UpdateLayout`, no window)
+  reports `IsVisible == false` on every element, so `Where(e => e.IsVisible && …)` yields nothing —
+  a scroller census finds no scroller, a reader read as `IsVisible ? ActualHeight : 0` reads 0 —
+  and the surrounding assertion is DC-016's shape at the predicate level.
+- **Signature:** `IsVisible` in a test that never shows a window; a `? ActualHeight : 0` that
+  reads 0 for a box that was laid out.
+- **Instance (CV-5.4, 2026-09-13):** R3's first red read *Expected: 48 Actual: 0* for a compiled
+  box that was arranged at 16 px — the `IsVisible` guard, not the layout; R1's scroller clause
+  would have been vacuous for the same reason. Both now read `ActualHeight > 0` / `IsArrangeValid`.
+- **Sweep:** `grep -rn "IsVisible" tests/AiDe.App.Tests/Sessions tests/AiDe.App.Tests/Composer` —
+  the remaining uses sit in shown-window probes (the census, the shell tests), where it is true.
+- **Control:** the writer-room oracles' non-vacuity floors (`compiled >= CompiledPromptMinHeight`,
+  `realized > 0`, `CaptionDesired > 0`). Named for the next headless oracle: *a detached tree is
+  never visible; ask the layout, not the visibility.*
+- **Status:** `controlled`.
+
+### DC-194 — A docking view's active content after a body is (re)parented is whichever pane control realized last, and the arrangement's zone occupancy decides that order
+
+- **Shape, instance, controls and sweep (SH-4.1, 2026-09-13; `docs/proof/coordination-perspective.md`):** *a docking view's active content after a body is (re)parented is whichever pane control realized last, and the arrangement's zone occupancy decides that order*: each `LayoutDocumentPaneControl` activates its selected content from its own `SelectionChanged` as its template applies (traced: `LayoutDocumentPaneControl.OnSelectionChanged → LayoutContent.set_IsActive`), so a model-stated activation placed at the body's Loaded edge — the adapter's `RestoreActive`, the presenter's entry focus — is overridden by the last pane to load, and which pane that is changes when a zone empties (Ruling 84 emptied Coding's Left; the Bottom terminal then beat the Center's restored session document). **Controls (this slice):** `WorkbenchAdapter.RestoreActive` states the Center's active tab again at `DispatcherPriority.Loaded` when the pre-render surface is gone; `PerspectiveShell.Activate` defers the entry focus one dispatcher turn past the body's Loaded; `Perspective.Landing` makes the landing data. **Oracles:** `ASessionDocumentIsShownWhereTheOperatorIsTests.ARestoredSessionDocumentIsRevivedAndBoundAtWorkspaceOpen` (red with the Left empty and the old code — the replay probe), `PerspectiveShellTests.TheLanding_…` (red before the column), the census log's *active after switch* rows (recorded). **Sweep:** every other `IsActive = true` in `WorkbenchAdapter` (`ActivateInView`) is called on an already-realized tree — not this shape; SH-4.2's re-cut re-orders realization again and inherits the controls.
+- **Status:** `controlled` — the adapter re-states the active content at Loaded priority and the presenter defers the landing one dispatcher turn; the oracles are named above.
+
+### DC-195 — A census that walks a freshly parented body before its pane controls have realized measures the first pane and reports green over the rest
+
+- **Shape, instance and control (SH-4.1, 2026-09-13; DC-135's sibling):** *a census that walks a freshly parented body before its pane controls have realized measures the first pane and reports green over the rest* (DC-135 recurrence 3's sibling — the population shrank and nothing failed): switching the presenter and walking immediately measured only each host's Left pane (Center and Right tabs +0 sites) and left the rebuilt menu bar unmeasured (+0 per menu; the reach test's *"never rendered a command"*). **Control:** `ShellContrastCensus.Settle` (UpdateLayout · a Background-priority turn · UpdateLayout) before each walk, and `ShellContrastCensusTests` anchors named sites in host B's and host C's bodies (*tab: Ledger*, *Ledger*, *Message board*, *Terminal sessions*, *Coordination perspective*, *tab: Domain*) so a walk that shrinks fails; the site count 138 → 170 is on the log.
+- **Status:** `controlled` — `ShellContrastCensus.Settle` before each walk; anchored sites in hosts B and C; 138 → 170 sites on the log.
+
+### DC-196 — One user-facing sentence with two definitions across a design artifact and its review's oracle
+
+- **Shape (SH-4.1's finding, 2026-09-13):** *one user-facing sentence with two definitions across a design artifact and its review's oracle* (`DESIGN.md` *"Coordination opens with them (Ctrl+4)…"* vs the review's *"They live in Coordination (Ctrl+4)"*): the implementer must choose, and either choice leaves one artifact stale. A candidate control: the review's oracle strings quoted from `DESIGN.md`'s *Copy added by this section* row, checked by `verify-cited-controls.py`'s string half — the conductor's call.
+- **Instance:** `DESIGN.md` *"Coordination opens with them (Ctrl+4)…"* vs the review's oracle *"They live in Coordination (Ctrl+4)"* — the oracle's form landed; `DESIGN.md`'s row is stale until D3's errata is reconciled (SH-4.2 carries the reconciliation as a seam item).
+- **Control (candidate, the conductor's call at converge):** the review's oracle strings quoted from `DESIGN.md`'s *Copy added by this section* row, checked by `verify-cited-controls.py`'s string half.
+- **Status:** `uncontrolled` — recorded; the reconciliation is queued for SH-4.2.
+
+### DC-197 — A layout reconcile that reads only rendered zones refuses every operation while a stack is maximized
+
+- **Shape, instance and control (D3, 2026-09-13; `docs/reviews/ui-operator-findings-2026-09-13.md` §Register):** *a layout reconcile that reads only rendered zones refuses every operation while a stack is maximized*: the cause is the view the reconcile reads, not the operation; Ruling 83 removes the trigger; the control is F-1's oracle. (Ruling 83's filing note.)
+- **Status:** `controlled` — Ruling 88 promoted it into SH-4.2 as a red-first oracle (`ReconcileTests.ADragWhileAZoneIsCollapsedHoldingPanes_IsApplied`); Ruling 83 removed the trigger (maximize-on-create)
+
+
+### DC-198 — A projection's two readers use two grains of one stream
+
+- **Shape, instance and control (D3, 2026-09-13; `docs/reviews/ui-operator-findings-2026-09-13.md` §Register):** *a projection's two readers use two grains of one stream* (the thread's `Reply` blob vs the Console's per-chunk rows): the control is the identity oracle C2 — the split's rows equal `Coalesce` of every turn, and the thread renders the same fold. (Ruling 81.)
+- **Status:** `controlled` — CV-5.2's `Coalesce` is the one grain both readers use (Ruling 81; C2/C3 red-first)
+
+
+### DC-199 — A design contract states a row height the craft floor cannot produce
+
+- **Shape, instance and control (D3, 2026-09-13; `docs/reviews/ui-operator-findings-2026-09-13.md` §Register):** *a design contract that states a row height the craft floor cannot produce* (24px rows beside a hairline need a 3px inset → 30px): the control is the mockup's rendered-geometry row, which reads the truth; the contract must cite a rendered number, never a CSS constant. (A-9.)
+- **Status:** `uncontrolled` — recorded (D3's A-9: amend the contract row or remove the hairline); should-fix-next
+
+
+### DC-200 — A harness gating selector matches the element carrying the harness state, hiding the whole page while every number still computes
+
+- **Shape, instance and control (D3, 2026-09-13; `docs/reviews/ui-operator-findings-2026-09-13.md` §Register):** *a harness gating selector that matches the element carrying the harness state* (`[data-restore]{display:none}` on a `<body data-restore=…>`): the page is `display:none`, computed-style measurements still report, and a headless sweep that reads only the verdict strip passes — DC-147's class with a blind spot the strip cannot see. Control: `verify-mockup-audits.py` asserts a non-zero rect on the page's root frame, and every gating selector is scoped to the frame (`.window [data-…]`). (A-12.)
+- **Status:** `partially-controlled` — the selector is scoped to `.window` (D3); the tool half — `verify-mockup-audits.py` asserting a non-zero page box (A-12) — is queued
+
+
+### DC-201 — A generated accessible name is built from unescaped text
+
+- **Shape, instance and control (D3, 2026-09-13; `docs/reviews/ui-operator-findings-2026-09-13.md` §Register):** *a generated accessible name built from unescaped text* (`esc()` escaped `&` and `<` but not `"`; six `aria-label="Detail of Grep "…"` names truncated at the quote): the control is an attribute-escaping helper used for every generated attribute, and the sweep's dangling-reference walk extended to names that end at a quote. (The UX & Accessibility lens's finding.)
+- **Status:** `controlled` — `esc()` escapes `"` (D3's A11-6); the in-page audit's dangling-ARIA check catches the shape
+
+### DC-202 — A content-majority anchor by raw count lets a large zone that lost one tab steal a small zone's column on a tie, moving the bystander
+
+- **Shape, instance and control (SH-4.2, 2026-09-13; `docs/proof/coding-recut-left-dock.md` §Defect classes):** *a content-majority anchor by raw count lets a large zone that lost one tab steal a small zone's column on a tie, moving the bystander* (DC-063's class by another mechanism): a Left of one surface and a Center of two after one moved both counted one in the Left's column; the Center won the tie by rule and the drag moved the SESSION to the Center. **Control:** anchors by pane identity first (`ILayoutPaneSerializable.Id`), then share-of-owned; `ReconcileTests.ACenterTabDraggedBesideTheSession_LeavesTheSessionInTheLeft`; the theory's Bottom row.
+- **Status:** `controlled` — the oracle named in the entry is red-first in the slice's records (`docs/proof/records/sh-4-2/`).
+
+
+### DC-203 — A view-only synthetic surface the projection drops after a model change becomes unknown to the view reader, and every later gesture is "unreadable" until a render
+
+- **Shape, instance and control (SH-4.2, 2026-09-13; `docs/proof/coding-recut-left-dock.md` §Defect classes):** *a view-only synthetic surface the projection drops after a model change becomes unknown to the view reader, and every later gesture is "unreadable" until a render*: the Center's placeholder stayed in the view after a drag into the empty Center reconciled the model; the drag back was `view-unreadable` — a silent revert with no sentence. **Control:** `ReadLayoutFromView` treats the placeholder as always known and never counts it; `WorkbenchDragCompletedHookTests.InCoding_TheSessionDraggedIntoTheCenterAndBack_…` (zero refusals of any cause).
+- **Status:** `controlled` — the oracle named in the entry is red-first in the slice's records (`docs/proof/records/sh-4-2/`).
+
+
+### DC-204 — A synthetic view surface with no kind row falls through to the factory's "not available in this build"
+
+- **Shape, instance and control (SH-4.2, 2026-09-13; `docs/proof/coding-recut-left-dock.md` §Defect classes):** *a synthetic view surface with no kind row falls through to the factory's "not available in this build"* — a build-defect sentence for the product's ordinary empty state, in every state. **Control:** the shell composes the Center's copy from the model (`CenterEmptyState`); `CenterEmptyCopyTests` assert the sentence is never rendered.
+- **Status:** `controlled` — the oracle named in the entry is red-first in the slice's records (`docs/proof/records/sh-4-2/`).
+
+
+### DC-205 — A refusal sentence names a mechanism as the cause after a fix removed that mechanism
+
+- **Shape, instance and control (SH-4.2, 2026-09-13; `docs/proof/coding-recut-left-dock.md` §Defect classes):** *a refusal sentence names a mechanism as the cause after a fix removed that mechanism* (`RefusedReconcileAnnouncement`'s "a collapsed panel still holds panes" after F-1). **Control:** the sentence names only what the code can still tell; `ADragWhileACollapsedZoneHoldsPanes_IsAppliedThroughTheDockingHost_…` asserts the old sentence is absent. Sweep: the same sentence is a fixture string in `TheStatusStripClearsOnSupersessionOrDwellTests` (X-3's; a fixture, not a claim — left).
+- **Status:** `controlled` — the oracle named in the entry is red-first in the slice's records (`docs/proof/records/sh-4-2/`).
+
+### DC-206 — A deferred host tool called from a background sub-agent blocks until the main line surfaces it, and the answer it was waiting for is a refusal
+
+- **Shape:** a node (a background sub-agent) calls a host tool that needs an interactive decision or a
+  session-level precondition (`EnterWorktree`); the call cannot resolve inside the node, so it waits
+  on the parent's main line; when the result arrives it is a refusal the node could have predicted
+  from its own cwd. The node's wall clock absorbs the wait, and a marker set after grounding hides it.
+- **Signature:** a sub-agent tool wait of minutes-to-hours on a non-shell tool whose result text is a
+  refusal; a store span far above the audit `duration_seconds` with no test run to account for it.
+- **Instance (Addenda C/D, 2026-09-13, `docs/profiles/addendum-cd.md` AC-03):** SH-4.1's
+  `EnterWorktree` waited 8,143 s (18:21:06 → 20:36:49Z) and X-1's 379 s; both returned "Cannot enter
+  worktree: the current working directory C:\projects\ai-de is the repository root".
+- **Sweep:** every node brief that names a worktree invites the call; 2 of 38 writing nodes made it.
+- **Control:** the brief template says *never call `EnterWorktree`/`ExitWorktree` — absolute paths
+  only*; the profiler flags a sub-agent tool wait over 600 s on a non-shell tool (SP-23, proposed in
+  `docs/profiles/addendum-cd.md` F-25) — red on this corpus.
+- **Status:** `uncontrolled` — recorded by the profiler; the control is a pack proposal (F-25).
+
+### DC-207 — A multi-line program passed through a shell heredoc fails on quoting or escaping, and the request that carried it is burned
+
+- **Shape:** an agent writes a Python (or shell) program inline as `python - <<'EOF' …` in Git Bash
+  on Windows; a quote, a backslash or a `$` inside the program is mangled by the shell before the
+  interpreter sees it; the tool result is `unexpected EOF` / `SyntaxError` / `IndentationError`, and
+  the agent re-issues the request at full context price.
+- **Signature:** a tool result matching `here-document|unexpected EOF|SyntaxError|IndentationError`
+  on a command containing `<<`; the same node retrying the same program with different quoting.
+- **Instance (Addenda C/D, `docs/profiles/addendum-cd.md` AC-05):** 70 failed heredoc runs (2 on
+  the conductor's main line, 68 across 28 nodes, up to 5 in one node) and 27 more that ran with a
+  `SyntaxWarning: invalid escape sequence`.
+- **Sweep:** every brief that says "use `python`" and nothing about how; the pack's own scripts are
+  files, its prompts are not.
+- **Control:** the brief rule *a program longer than one line is written to the scratchpad with the
+  Write tool and run as a file*; the profiler counts failed heredoc runs per session (SP-25,
+  proposed) — red on this corpus.
+- **Status:** `uncontrolled` — recorded by the profiler; the control is a pack proposal (F-21).
+
+### DC-208 — A resumed node's second run sets no marker, so its duration is not recorded and the first run's figure stands for both
+
+- **Shape:** DC-190's sibling. "One marker measures one run" (AL4a) holds, and a node resumed by
+  `SendMessage` (a review fix, a follow-up question, a second slice) is a second run that nobody
+  marks; the audit log keeps the first run's `duration_seconds` and the resume's entry — if one is
+  written — reads no duration, while the harness store shows the whole span.
+- **Signature:** a store span that exceeds the audit duration by more than the grounding-and-report
+  allowance (≈ 70–820 s here); a second entry for the same session with `duration_seconds` absent.
+- **Instance (Addenda C/D, `docs/profiles/addendum-cd.md` AC-09):** six nodes resumed — S2
+  `/specify` (+60,524 s), SH-4.1 (+9,655 s), X-3 (+5,240 s; `x-3-shell-seams-review-fixes` has no
+  duration), INV-0010 (+2,167 s; the slice-0 correction consumed the marker), SH-3 (+1,958 s),
+  X-1 (+1,564 s).
+- **Sweep:** every `SendMessage` to a node is a resume; 23 were sent in the programme.
+- **Control:** the resume template carries the `start` line; the profiler flags a node whose store
+  span exceeds its audit duration by more than 30 min (SP-26, proposed) — red on six nodes today.
+- **Status:** `uncontrolled` — recorded by the profiler; the control is a pack proposal (F-24).

@@ -593,6 +593,26 @@ approval, within the same five-file scope. Preparation/writer/release separation
 cancel-and-actual-drain plan match that approval; the oracle is not weakened. Runtime join
 and Shell handoff still await repaired evidence and the three independent reviews.
 
+Owner turn 54 authorizes eight C leaves, two unused plus six new, regular **124/132**,
+within the same five repair files. Observe semantic red in the successful-full-write /
+pre-poll window before removing the retroactive cancellation decision. Preserve legitimate
+connection/scope revocation and all pre/during-write/partial-frame/drain behavior.
+Assert complete blocked/drained fixture tuples and reject safely perturbed observations.
+Endpoint commit must require held publication for successful admit/inventory/select/restore,
+while capabilities/release and errors remain exempt. This guard is contract hardening,
+not an observed missing-hold disclosure. DS and Test each receive four new review leaves;
+Security's ownership clearance stands only if that contract remains unchanged.
+
+Conductor may reconcile the defect register only: import published entries 177-208
+verbatim from `76c6d430a19492ffcd9b126e641ee70cda57ec69`, preserve both Atlas definitions,
+check branches/reservations and semantic duplicates before reissuing, and record
+revision/old-id/title-to-canonical-id mappings. Historical JSONL is not rewritten and
+ambiguous references are not globally replaced. No replacement number is pre-authorized.
+If numbering cannot be serialized safely, retain named pending decisions; source repair
+does not wait for guessed IDs. Mainline ceiling is prospectively 256, retaining all
+previous calls/overruns/wrappers. Shell sixteen and independent-window fifteen stay held
+until the actual repaired Core handoff is cleared and joined.
+
 ### Core owns
 
 | Path | Why |

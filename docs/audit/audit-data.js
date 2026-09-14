@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T13:04:24Z",
+  "generated": "2026-09-14T13:31:20Z",
   "audit": [
     {
       "actor": null,
@@ -15941,6 +15941,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "3e54960114c7a63105155cd5a85b33c770f4aa06",
         "short": "3e5496011",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2G1TWD323M9YJR42V88A62K",
+      "shortname": "atlas-register-only-identity-reconciliation",
+      "datetime": "2026-09-14T13:31:19Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Owner54register-onlypass: importedpublished177-208verbatimfrom76c6d430; preservedbothAtlasdefinitionsinrevision+oldnumericID+titlemappingnote, historicalJSONLunchanged. Checked85refs/47worktrees; nextnumeric209alreadyallocatedconductor/addendum-c, soNOreplacementnumbersguessed. Atlascanonicalnumbers/semanticdeduppendingnameddecisions; sourcecorrection8leavesrunningindependently. Currentregister208collisioncheckagainstpinnedtrunkPASS; oldworkerbranchcopiesremainhistoricalnotes. No productmainmerge/push.",
+      "kind": "command",
+      "skill": null,
+      "tool": "reconciliation",
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/defect-id-reconciliation.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Preserve published and Atlas defect meanings without ambiguous ID reuse.",
+      "done_when": "Published entries are retained verbatim, Atlas meanings/history survive, and replacement numbers are either safely reserved or explicitly pending.",
+      "tier": "T2",
+      "main_calls": 216,
+      "main_budget": 256,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T13:31:19Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "7be3be92b8c6785d88895927f7dbe0647bb75a49",
+        "short": "7be3be92b",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

@@ -9,6 +9,7 @@ links:
   - { to: spec-addendum-e-code-atlas, rel: implements }
   - { to: architecture-code-atlas-proposed, rel: depends-on }
   - { to: coordination-code-atlas, rel: relates-to }
+  - { to: note-atlas-defect-id-reconciliation, rel: relates-to }
 review-by: 2026-12-13
 summary: >-
   The compiled public render seam and reviewed Shell lifetime component are joined.
@@ -350,3 +351,12 @@ and DC-178 entries and now reaches numeric maximum 208. The locally allocated cl
 records must be reissued without discarding either history. The ordinary derived-view gate
 does not clear this separate failed allocator check. Owner disposition is pending; no
 product-main merge or new ID allocation is inferred.
+
+Owner-54 register-only reconciliation now restores the published 177-208 definitions
+verbatim from the pinned revision. The two Atlas meanings and their complete text are
+preserved in `note-atlas-defect-id-reconciliation`, keyed by origin revision, old numeric
+ID and title. No replacement number is guessed: numeric 209 is already allocated on
+`conductor/addendum-c`, so Atlas canonical numbering and full semantic-duplicate
+disposition remain pending. The current Conductor register passes the collision check
+against the pinned published revision; old worker branches are retained historical copies,
+not merged over that reconciled register. Source repair does not wait for pending numbers.
