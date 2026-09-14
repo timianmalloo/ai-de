@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T15:30:06Z",
+  "generated": "2026-09-14T15:41:12Z",
   "audit": [
     {
       "actor": null,
@@ -16106,6 +16106,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "74eb1c4b1faea6b3395e131e0bd8e7d9db345d40",
         "short": "74eb1c4b1",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2G98P2BZ3BX8E1A7AHDCAVW",
+      "shortname": "atlas-dispatcher-discriminator-read",
+      "datetime": "2026-09-14T15:41:11Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Parentreadbothshownfailurediscriminatorlogs/controlandsharedStapumploopreadonly. WorkspaceReadycomplete/gen1, firstApplicationIdlewaitinguntil30spumptimeout; noSelect/Apply/Closestagereached. OwnedDispatcher.Runcontrol153msexecutesidle/borrowedFind/CoreDispose/fixturedelete. Pumpstarvationhypothesissupported, sameMainWindow/full-local-pumpcomparisonstillrequired. ReleasedremainingS8leaves64/72underOwner56; no sharedSta/timeout/ownershipwaiver; independentrealdaemonproofstillseparate.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/live-reader-horizon.md",
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Complete the same shown-window lifecycle under an owned dispatcher that services its required priorities.",
+      "done_when": "The controlled MainWindow cases execute selection, replacement, close/retry and owned cleanup, with primary failures preserved and independent review.",
+      "tier": "T2",
+      "main_calls": 267,
+      "main_budget": 300,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T15:41:11Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "752295a9ca52a27a3f791a3854a27960db654001",
+        "short": "752295a9c",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

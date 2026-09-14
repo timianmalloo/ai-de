@@ -1162,3 +1162,22 @@ extension, arbitrary delay, global pool clearing or inferred disposal of borrowe
 queries is permitted. Preserve close retry and actual lease drain, then prove owned
 Core/SQLite resources and fixture directories are released. Native SRE/Test each have
 two fresh review leaves. Mainline ceiling becomes 300, preserving all prior accounting.
+
+## Dispatcher discriminator read; local correction released
+
+Conductor read both raw stage logs and the control. Normal/fault cases reach
+`yield.after-show.before` at about 958/407 ms, with `WorkspaceReady` completed and generation
+one, then time out around thirty seconds. No Select, replacement, lease-release or close
+stage is reached. Shutdown later cancels the pending idle operation; the retained SQLite
+cleanup failure is now recorded separately from the primary timeout.
+
+The shared helper's read-only loop invokes `DispatcherPriority.Background`; the waiting
+operation is ApplicationIdle. An owned `Dispatcher.Run` control executes both idle
+operations, later borrowed-query use, Core disposal and fixture deletion before exit.
+This supports a pump-starvation hypothesis. The same MainWindow composition must still
+run under the local full-dispatcher control to complete the disconfirmation.
+
+Conductor releases the remaining eight S leaves, 64/72, within the same three-file scope.
+No shared helper change or production ownership inference is admitted. Any newly reached
+product failure must be identified independently; successful cases must complete and clean
+their owned lifetimes before the new gates clear.

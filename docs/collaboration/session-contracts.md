@@ -657,6 +657,19 @@ Native SRE and Test each receive two review leaves. Conductor's cumulative ceili
 becomes 300, first eight reserved for records. The S proposal remains unjoined; the
 independent real-daemon/MainWindow proof is still separate.
 
+The four Owner-56 diagnostic leaves returned a discriminator, now read by Conductor:
+both modes reach completed `WorkspaceReady`, generation one, then wait at the first
+ApplicationIdle operation until the shared pump times out. Primary timeout and later
+locked-database cleanup are separate. The owned `Dispatcher.Run` control executes idle
+work before/after close, uses borrowed queries, disposes Core and deletes its fixture.
+Conductor read shared `Sta.Pump` as read-only: its loop invokes Background priority.
+
+The remaining eight S leaves are released, cumulative **64/72**, to test the same unchanged
+MainWindow composition under a local full-dispatcher pump and correct only what that
+counterexample establishes. Shared `Sta` stays unchanged; no timeout extension or skipped
+cleanup. If a later product stage fails, expose it rather than attributing every failure
+to the pump. Full affected replay and fresh SRE/Test review remain required before join.
+
 ### Core owns
 
 | Path | Why |

@@ -405,3 +405,11 @@ The next diagnosis must expose the exact pending stage/owner and preserve both p
 and cleanup errors. Skipping cleanup or stretching the timeout cannot establish correct
 startup, workspace replacement or awaited closing. All uncommitted source and raw evidence
 are retained in `C:\Projects\ai-de-atlas-mainwindow-handoff`.
+
+The Owner-56 discriminator now identifies the pending stage. Both modes have completed
+workspace startup but remain at the first ApplicationIdle await; their logs preserve the
+primary pumped-body timeout and separate cleanup debt. Conductor read those logs and the
+shared Background-priority pump loop. The owned full-dispatcher control completes idle
+work, borrowed-query use, Core disposal and fixture deletion in about 154 ms.
+The same MainWindow composition under the local full dispatcher is the next controlled
+comparison; this is not yet a claim that every product lifecycle path is correct.
