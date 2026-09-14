@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Composer: 14 types, 114 members, 94% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Composer: 15 types, 120 members, 94% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Composer`
 
-**14 public types · 114 public members · 94% documented.**
+**15 public types · 120 public members · 94% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -374,6 +374,9 @@ claim, and paste is handled inside the page by the editor that received it.
 | `IReadOnlyList<TemplatePickerRow> TemplateCards` | The picker cards currently offered, in catalog order. |
 | `void ChooseTemplate(string templateId)` | Binds the draft to a catalog template and re-mints the form (R15's validated form). |
 | `GovernedRunRequest? Send()` | The send gesture, host-owned. The button calls it; so does the accelerator handler. |
+| `GovernedRunRequest? SendAfterTheTurnInFlight()` | *Wait — send after b1* (Ruling 95): the same gate, now — the envelope compiled and submitted with its sha recorded, the request handed to the document, which queues it behind the turn in flight. Public so the status l… |
+| `Func<ParallelDraft, string?>? ParallelStarter { get; set; }` | *Start a parallel session*'s seam (Ruling 95): the shell takes the draft's words and attachments, opens a derived sibling session and sends them as its first turn, and returns null — or the reason it did not, in which… |
+| `string? ParallelRefusal { get; set; }` | Why *Start a parallel session* is refused before the shell is asked, or null when it is available. Set by the shell from what it measured or can do (Ruling 95 condition 1) — a composer never decides this from its own … |
 | `string? CompileLine` | The compile line's text as rendered, or null when the line is absent. |
 | `Task? Preparing { get; private set; }` | The preparing gesture in flight, or the last one — what a test drains and what the document may await. |
 | `void KeepStructureLine(string field)` | The operator keeps a derived line through its own control (the test's route to the same click). |
@@ -390,7 +393,10 @@ claim, and paste is handled inside the page by the editor that received it.
 | `bool StructureOpen` | Whether the structure lines are open — collapsed at rest (DESIGN.md:1088). |
 | `bool EditorHasFocus` | Whether Win32 focus is inside the editor's window — the page holds it and WPF's focused element reads null. |
 | `void SetInFlight(TurnView? turn)` | The in-flight turn, or null (Ruling 77): while one runs or waits, a Send gesture is refused with its ordinal named. Set by the document from the thread's snapshot; never inferred here. |
-| `string RefusedGestureReason(TurnView inFlight)` | The refused-gesture reason (Ruling 77 condition 1; DESIGN.md copy): *b1 is running; the next turn waits for it.* |
+| `void SetQueued(TurnView? queued, string? sentence, bool awaitsYou)` | The queued turn, or null (Ruling 95): set by the document from the thread's snapshot, with the one sentence the snapshot derives for it — *b2 queued — sends after b1* · *b1 stopped by you; b2 is waiting — Send it or c… |
+| `string WaitOrParallelOffer(TurnView inFlight)` | The offer's sentence (Ruling 95; DESIGN.md copy): *b1 is running. Wait — send after b1, or start a parallel session.* |
+| `string WaitActionName(TurnView inFlight)` | The Wait action's name: *Wait — send after b1*. |
+| `string ParallelActionName = "Start a parallel session"` | The Parallel action's name. |
 | `void BeginNextTurn()` | The turn was accepted: the composer starts the next one — the message and the structure lines empty, the gate on a new block, the page told (Feedback:+Confirmed — the turn now lives in the thread). |
 | `void UseAsNextDraft(string sourceText)` | A past turn's words become the next draft (*Use as the next draft* · *Send again as a new turn*) — a host→page push, never a second Configure. |
 | `void OfferAttachment(IReadOnlyList<string> filePaths)` | **(gap)** |
@@ -450,6 +456,14 @@ rather than left accepting it.
 The send gesture, host-owned. The button calls it; so does the accelerator handler.
 
 **Returns.** The request that was built, or null when the send was refused.
+
+### `GovernedRunRequest? SendAfterTheTurnInFlight()`
+
+*Wait — send after b1* (Ruling 95): the same gate, now — the envelope compiled and
+submitted with its sha recorded, the request handed to the document, which queues it behind
+the turn in flight. Public so the status line's action and a test reach one verb.
+
+**Returns.** The request that was built and queued, or null when the gate refused.
 
 ### `bool OnAcceleratorKey(uint virtualKey, bool controlHeld, bool isKeyDown)`
 
@@ -517,3 +531,10 @@ plausible value.
 | Member | Summary |
 |---|---|
 | `string Fake(string field)` | **(gap)** |
+
+## `ParallelDraft`
+
+*record* — `ComposerSurface.cs`
+
+What *Start a parallel session* hands the shell (Ruling 95): the parent draft's words and the
+attachments that follow them — the derived sibling's first turn, sent through its own gate.
