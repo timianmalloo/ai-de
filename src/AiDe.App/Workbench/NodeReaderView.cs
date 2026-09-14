@@ -228,28 +228,58 @@ public sealed class NodeReaderView : ContentControl
         };
     }
 
+    /// <summary>The one size every block of an edge row renders at (Ruling 92: one baseline).</summary>
+    internal const double EdgeRowFontSize = 12;
+
+    /// <summary>The predicate column's minimum width, so the targets align down the list.</summary>
+    internal const double EdgeRowPredicateMinWidth = 104;
+
+    /// <summary>
+    /// One typed edge as a walkable row (Ruling 92): a three-column grid — predicate (Auto, min
+    /// <see cref="EdgeRowPredicateMinWidth"/>) · target (*) · status (Auto) — every block at
+    /// <see cref="EdgeRowFontSize"/> on one baseline, the status told apart by the muted ink and
+    /// never by a smaller size, inside a button whose own template stretches its presenter. The
+    /// App's implicit Button style centres its presenter and ignores
+    /// <c>HorizontalContentAlignment</c>, which is what floated every row to the middle and made
+    /// the status a superscript beside a larger target — so the row carries its template rather
+    /// than depending on the style.
+    /// </summary>
     private Button EdgeRow(string rel, string target, string status)
     {
-        var row = new DockPanel { LastChildFill = true, Margin = new Thickness(0, 1, 0, 1) };
-        var relText = Muted(rel, 12);
-        relText.MinWidth = 104;
-        DockPanel.SetDock(relText, Dock.Left);
+        var row = new Grid();
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto, MinWidth = EdgeRowPredicateMinWidth });
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+        var relText = Muted(rel, EdgeRowFontSize);
+        relText.TextWrapping = TextWrapping.NoWrap;
+        relText.VerticalAlignment = VerticalAlignment.Center;
+        Grid.SetColumn(relText, 0);
         row.Children.Add(relText);
-        var statusText = Muted(status, 11);
-        statusText.HorizontalAlignment = HorizontalAlignment.Right;
-        DockPanel.SetDock(statusText, Dock.Right);
+
+        var targetText = Text(target, EdgeRowFontSize, FontWeights.Normal);
+        targetText.VerticalAlignment = VerticalAlignment.Center;
+        Grid.SetColumn(targetText, 1);
+        row.Children.Add(targetText);
+
+        var statusText = Muted(status, EdgeRowFontSize);
+        statusText.TextWrapping = TextWrapping.NoWrap;
+        statusText.VerticalAlignment = VerticalAlignment.Center;
+        statusText.Margin = new Thickness(12, 1, 0, 1);
+        Grid.SetColumn(statusText, 2);
         row.Children.Add(statusText);
-        row.Children.Add(Text(target, 13, FontWeights.Normal));
 
         var button = new Button
         {
             Content = row,
-            Padding = new Thickness(8, 5, 8, 5),
+            Padding = new Thickness(0, 4, 0, 4),
+            HorizontalAlignment = HorizontalAlignment.Stretch,
             HorizontalContentAlignment = HorizontalAlignment.Stretch,
             Background = Brushes.Transparent,
             BorderThickness = new Thickness(0),
             Cursor = System.Windows.Input.Cursors.Hand,
             Tag = target,
+            Template = EdgeRowTemplate(),
         };
         AutomationProperties.SetName(button, $"Walk {rel} {target}");
         button.Click += (_, _) =>
@@ -260,6 +290,53 @@ public sealed class NodeReaderView : ContentControl
             }
         };
         return button;
+    }
+
+    /// <summary>
+    /// The edge row's own button template: a chrome border whose presenter <b>stretches</b>, the
+    /// hover ground and the focus ring the App's chrome template gives every other button. Built
+    /// with <see cref="FrameworkElementFactory"/>, whose part names the template's own name scope
+    /// registers (DC-166 is the Style built without one).
+    /// </summary>
+    private static ControlTemplate EdgeRowTemplate()
+    {
+        var root = new FrameworkElementFactory(typeof(Grid));
+
+        // The chrome carries the padding and the hover ground; its border is zero so the row's
+        // first column starts exactly where the metadata labels start.
+        var chrome = new FrameworkElementFactory(typeof(Border), "Chrome");
+        chrome.SetValue(Border.CornerRadiusProperty, new CornerRadius(4));
+        chrome.SetValue(Border.BackgroundProperty, new TemplateBindingExtension(Control.BackgroundProperty));
+        chrome.SetValue(Border.PaddingProperty, new TemplateBindingExtension(Control.PaddingProperty));
+        chrome.SetValue(Border.BorderThicknessProperty, new Thickness(0));
+
+        var presenter = new FrameworkElementFactory(typeof(ContentPresenter), "Content");
+        presenter.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
+        presenter.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+        chrome.AppendChild(presenter);
+        root.AppendChild(chrome);
+
+        // The focus ring is an overlay drawn outside the chrome (the App's own idiom), never a
+        // border that would shift the content.
+        var ring = new FrameworkElementFactory(typeof(Border), "FocusRing");
+        ring.SetValue(FrameworkElement.MarginProperty, new Thickness(-1));
+        ring.SetValue(Border.BorderThicknessProperty, new Thickness(2));
+        ring.SetValue(Border.BorderBrushProperty, Brushes.Transparent);
+        ring.SetValue(Border.CornerRadiusProperty, new CornerRadius(4));
+        ring.SetValue(UIElement.IsHitTestVisibleProperty, false);
+        root.AppendChild(ring);
+
+        var template = new ControlTemplate(typeof(Button)) { VisualTree = root };
+
+        var hover = new Trigger { Property = UIElement.IsMouseOverProperty, Value = true };
+        hover.Setters.Add(new Setter(Border.BackgroundProperty, new DynamicResourceExtension("MenuHoverBrush"), "Chrome"));
+        template.Triggers.Add(hover);
+
+        var focused = new Trigger { Property = UIElement.IsKeyboardFocusedProperty, Value = true };
+        focused.Setters.Add(new Setter(Border.BorderBrushProperty, new DynamicResourceExtension("FocusBrush"), "FocusRing"));
+        template.Triggers.Add(focused);
+
+        return template;
     }
 
     private UIElement MetaRow(string key, string value)
