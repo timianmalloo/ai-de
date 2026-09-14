@@ -57,3 +57,12 @@ gates, the Release build, the trailer file), CI and `regenerate-derived.py` call
 and `tools/run-verify-gates.py` remains only as the repo's line over the pack runner, carrying the
 per-gate arguments this repository needs. The register entries that cite the `tools/` paths
 (DC-113, DC-136, DC-170) predate the lift.
+
+**After revision 70 (2026-09-14, the F5 attended reading).** One more site of the class revision 70
+closed for `audit-log.py` / `prompt-log.py` ("UTF-8 set by the scripts"): `docs/ai-forward-pack/scripts/ui-craft-gate.py`
+starts a child with `subprocess.run(..., text=True)` and no `encoding=` — the locale decides, cp1252
+on Windows. This repository's own scripts were swept (45 statements, 25 files) and are now gated by
+`tools/verify-subprocess-utf8.py` (DC-211: a byte-identity oracle that decoded `git show` with the
+locale read its own committed bytes as changed, and could not be repaired in place because its
+ordering clause forbids a post-run edit). The pack's copy is the pack's to fix (DM7); the gate here
+scans `tools/` and `spikes/` only and names the pack path as the finding it does not own.
