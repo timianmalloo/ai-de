@@ -1,0 +1,9 @@
+{
+  "agent": "copilot-atlas-e1-source-contracts",
+  "session": "atlas-e1-source-contracts",
+  "worktree": "C:\\Projects\\ai-de-atlas-e1-source-contracts",
+  "branch": "atlas/e1-source-contracts",
+  "status": "review-handoff",
+  "doing": "Owner65 single-file documentation correction; tree retained for parent review, no product authoring",
+  "waiting_on": "Commit receipt and four independent parent-dispatched reviews; no implementation or integration grant"
+}

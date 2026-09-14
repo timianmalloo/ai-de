@@ -1,0 +1,4 @@
+{"agent": "gpt-5.5-general-purpose", "at": 1789424966.686225, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasStaticObservationTests.cs", "session": "atlas-e1-test-qualification", "wi": ""}
+{"agent": "gpt-5.5-general-purpose", "at": 1789424966.6952262, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasStaticReaderContractTests.cs", "session": "atlas-e1-test-qualification", "wi": ""}
+{"agent": "gpt-5.5-general-purpose", "at": 1789426757.5458019, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasReadBudgetTests.cs", "session": "atlas-e1-test-qualification", "wi": ""}
+{"agent": "gpt-5.5-general-purpose", "at": 1789426757.5553086, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasStaticReaderContractTests.cs", "session": "atlas-e1-test-qualification", "wi": ""}

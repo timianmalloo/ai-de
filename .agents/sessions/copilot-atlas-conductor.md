@@ -6,13 +6,17 @@
 - Branch: conductor/code-atlas
 - Status: active implementation under explicit Owner branch-local grant; integration remains separate
 - Updated: 2026-09-14
-- Doing: Conductor e9b8dbd9 includes accepted detached reader, render seam, Shell lifetime,
-  native membership qualification and retained-cleanup correction. Owner 50 funds actual
-  Core runtime in the fresh verified ai-de-atlas-production-core-runtime tree; C is active.
-  Logical reader leases cannot retain blocking Git pins while the UI is idle. Real Core
-  connection identity and separate Atlas reader ownership must reach the Shell handoff.
-  Shell's sixteen new handoff calls remain held until that reviewed committed API exists.
-  The real factory/MainWindow journey is not yet implemented or accepted.
+- Doing: E0 closure is committed at af6506b4, including actual Conductor-checkout
+  daemon/window/source/member/Back, both named refreshed footers, healthy release
+  and normal cleanup. Acceptance remains bounded to the observed fixture/viewport.
+  E1 corrected design ed8511c2 is joined through c9617fb7; four design-review
+  dispositions are recorded, including the repaired UML read gap. Core's product
+  veto on unexecuted compatibility/new-field accounting remains.
+  Candidate 020f9622 remains unjoined after oracle/cleanup review failures.
+  GPT-5.5 worker 4c71df17 is repairing the same two test files in the separate
+  atlas/e1-test-qualification tree and reusing existing real E0 baseline tests.
+  Current grants and budgets live in the sole section-2 register, not this file.
+  No E1 product metadata/UI implementation is admitted.
   Owner and Conductor retain scope, assignments, gates and joins. Exact branch-local existing
   adapter exceptions are recorded in section 2; open counterpart requests are not consent.
 - Resume artifacts: docs/coordination/code-atlas.md,
@@ -27,8 +31,8 @@
   work from your observed active SH3 IPC/factory/shell/graph/layout edits.
 - Tracked exchange: section 9 in this conductor branch's docs/collaboration/session-contracts.md.
   Ownership remains exclusively section 2; this file does not assign paths.
-- Waiting on: Actual Core runtime commits, independent review and the real Core-to-Shell handoff. Claude/Core
-  acknowledgment of Addendum E and eventual main integration remains separate. The native
+- Waiting on: E1 test-only qualification receipts and independent execution gates. Claude/Core
+  acknowledgment of Addendum E and eventual main integration remain separate. The native
   request is a pull log, not message injection; no human relay or polling is required.
   The sole section-2 register and docs/notes/atlas-owner/live-reader-horizon.md carry the exact
   branch-local exceptions. Main integration remains ungranted.

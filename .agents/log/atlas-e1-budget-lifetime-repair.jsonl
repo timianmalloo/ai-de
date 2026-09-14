@@ -1,0 +1,3 @@
+{"agent": "copilot-atlas-budget-lifetime", "at": 1789427912.333726, "kind": "session-start", "path": "-", "seq": 1, "session": "atlas-e1-budget-lifetime-repair", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-atlas-e1-budget-lifetime-repair"}
+{"agent": "copilot-atlas-budget-lifetime", "at": 1789428104.7255538, "kind": "claim", "path": "tests/AiDe.Core.Tests/Understanding/AtlasReadBudgetTests.cs", "seq": 2, "session": "atlas-e1-budget-lifetime-repair", "ttl": 3600.0, "wi": "atlas-e1-budget-lifetime-repair"}
+{"agent": "copilot-atlas-budget-lifetime", "at": 1789428465.4302487, "kind": "release", "path": "tests/AiDe.Core.Tests/Understanding/AtlasReadBudgetTests.cs", "seq": 3, "session": "atlas-e1-budget-lifetime-repair", "wi": "WI-0"}

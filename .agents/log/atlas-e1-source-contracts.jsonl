@@ -1,0 +1,4 @@
+{"agent": "copilot-atlas-e1-source-contracts", "at": 1789418827.728955, "kind": "session-start", "path": "-", "seq": 1, "session": "atlas-e1-source-contracts", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-atlas-e1-source-contracts"}
+{"agent": "copilot-atlas-e1-source-contracts", "at": 1789418827.829271, "kind": "claim", "path": "docs/design/code-atlas-e1-static-views.md", "seq": 2, "session": "atlas-e1-source-contracts", "ttl": 300.0, "wi": "atlas-e1-source-contracts"}
+{"agent": "copilot-atlas-e1-source-contracts", "at": 1789419926.5364053, "kind": "claim", "path": "docs/design/code-atlas-e1-static-views.md", "seq": 3, "session": "atlas-e1-source-contracts", "ttl": 1800.0, "wi": "atlas-e1-source-contracts"}
+{"agent": "copilot-atlas-e1-source-contracts", "at": 1789420199.7711399, "kind": "release", "path": "docs/design/code-atlas-e1-static-views.md", "seq": 4, "session": "atlas-e1-source-contracts", "wi": "WI-0"}
