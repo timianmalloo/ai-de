@@ -2106,7 +2106,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 65 types, 179 members, 92% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 65 types, 181 members, 92% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2119,7 +2119,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "80818730b1ab1cf012907b3e524d1307098aaf1bca47d7667d33b98c01d62e04"
+      "sourceSha256": "172bcb77276d0efacfa0be8bec3beb6ab79a03846f98d702e145ede86c0b9a9b"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -4496,7 +4496,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0ad5a1d7f1288e89868cca48e47836c1afa9f4df2dfd59a3acfc26d36ed80b94"
+      "sourceSha256": "8401c1a896861a28910865d9c257bdf1baffbb46afefb989418de30bf457de3c"
     },
     {
       "id": "note-avalondock-tab-styling",
@@ -5862,7 +5862,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6e573f54b5253e5fa5041f010ab146730b5932a3a3a8b4879ceeecc086afc5cb"
+      "sourceSha256": "3907abaeeed8fd12f260d45561c3aa95d2f14777d112348d30267e1c0256d282"
     },
     {
       "id": "note-read-only-lane-runs-in-the-workspace-root",
@@ -8141,7 +8141,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a3f1cdd199c6517a40f83f765b8a6cf78a911a023207ffb3a06a46efca3fe80c"
+      "sourceSha256": "f45b9723e7235ad05657bf0fddc01d06918b10e84174160c6ebe5d3e95af85a8"
     },
     {
       "id": "design-session-profiler",
@@ -15044,7 +15044,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7bc766723e2b4a59ed70f07df18ae7f6aad62e53fa9cc907b70d66c9b70de038"
+      "sourceSha256": "534020688597d57a641cdc834f321fc89b67dd7d7d1b37f3b0c90cb474d21699"
     },
     {
       "id": "proof-architecture-recut-and-session-names",
@@ -18634,5 +18634,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "db26fdd2b20a248c9482768277e25f0865286c12622b0334fcbc30e76eb93f25"
+  "graphSha256": "c098a7937db9de42729b1f524d005a86ab7ce5e85832d27fdc17ed24d0550635"
 };

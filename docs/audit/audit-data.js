@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T20:31:43Z",
+  "generated": "2026-09-14T23:42:50Z",
   "audit": [
     {
       "actor": null,
@@ -16282,6 +16282,34 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T20:23:18Z",
       "duration_seconds": 504.0
+    },
+    {
+      "id": "al-01M2H4TJZCNBFCMPEFFHY7195C",
+      "shortname": "join-conductor-catalog-seams",
+      "datetime": "2026-09-14T23:42:49Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "the join of conductor/addendum-c into main",
+      "summary": "Joined conductor/addendum-c (beafbee1): the accounts lane's two seam requests resolved - EngineCatalog.InstallRefusal(engineId, root[, locator]) is the one 'installed' reading (an adapter's entry on disk; a native CLI's executable resolved; a row that cannot launch reads its launch refusal) and both consumers (the sheet's LaunchRefusal, FirstUse.InstallAdapterAsync) read it - the sheet had read Arguments[0] as the entry, which for a native row is '--acp' (DC-223); EngineRow.DefaultModel per row from the spike's observed currentModelId/availableModels, the dialog's DefaultModelFor table removed (DC-224); DC-225 (a PATH resolver preferring an extensionless POSIX script over its .cmd shim on Windows) registered; the lane's finding (c) filed as a DC-220 instance. TheCatalogKnowsWhatIsInstalledAndWhatModelTests (8, red-first CS0117). Attended rows F-1..F-6 for the operator (first use on their second machine is F-5). Pack finding: three joins stopped at step 1 on the primary's append-only .agents ledgers colliding with a lane's older copies; the script should read git's reason and resolve ledger paths to the primary's copy. Full recount. recount_seconds=494 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/accounts-and-first-use.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "one derivation of 'installed' and of the engine's model, read by the sheet, first use and the dialog",
+      "done_when": "merge clean; recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-14T23:34:34Z",
+      "duration_seconds": 495.0
     }
   ],
   "changes": [

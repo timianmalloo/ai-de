@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.AgentPlane: 65 types, 179 members, 92% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.AgentPlane: 65 types, 181 members, 92% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.AgentPlane`
 
-**65 public types · 179 public members · 92% documented.**
+**65 public types · 181 public members · 92% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -707,6 +707,8 @@ way, and look like success.
 | `EngineRow Find(string engineId)` | Finds a row by id. |
 | `EngineLaunch ResolveLaunch(string engineId, string adapterInstallRoot)` | Resolves how to launch an engine: an adapter package whose entry module has been observed on a real install, or a native CLI found on this process's PATH. |
 | `EngineLaunch ResolveLaunch(string engineId, string adapterInstallRoot, NativeCommandLocator locator)` | `ResolveLaunch(string, string)` with the PATH lookup injected, so the native path's rules are asserted on a PATH the test built rather than the one the machine has. |
+| `string? InstallRefusal(string engineId, string adapterInstallRoot)` | Why the engine is not installed here, or `null` when it is — the one reading the New Session sheet's *not configured* state and first use's *installed* verdict both take (DC-223: two callers probing `File.Exists` on a… |
+| `string? InstallRefusal(string engineId, string adapterInstallRoot, NativeCommandLocator locator)` | `InstallRefusal(string, string)` with the PATH lookup injected. |
 | `IReadOnlyDictionary<string, string> LaunchEnvironment(EngineRow row, ProviderAccount account)` | The environment an engine's child needs from the account it is bound to — today exactly one fact: an enterprise `host` becomes the CLI's own host variable (Ruling 97 condition 3; Ruling 105 (1): the host is on the acc… |
 | `IReadOnlyDictionary<string, string> LaunchEnvironment(` | The child's environment for a launch on an account named by label — the lookup both hosts make before they start an engine (one derivation, DM7), and a lookup only: it authorises nothing. An account the rows do not ca… |
 
@@ -725,6 +727,19 @@ a real install, or a native CLI found on this process's PATH.
 - **`adapterInstallRoot`** — The directory whose `node_modules` holds the adapter — or, for an npm-delivered native CLI that PATH lacks, the CLI.
 
 **Throws `AgentPlaneException`.** `UnknownEngine` for an id the catalog does not carry; `LaunchPathNotImplemented` for `Observed` and `Deferred`, and for a native row with no command; `AdapterEntryModuleNotRecorded` for an adapter whose entry module has never been observed; `EngineNotOnPath` for a native CLI PATH does not carry.
+
+### `string? InstallRefusal(string engineId, string adapterInstallRoot)`
+
+Why the engine is not installed here, or `null` when it is — the one reading the New
+Session sheet's *not configured* state and first use's *installed* verdict both take
+(DC-223: two callers probing `File.Exists` on a composed path each read it differently;
+one read `Arguments[0]`, which for a native row is `--acp`, not a file).
+
+**Remarks.** `ResolveLaunch(string, string)` stays a pure composition — its callers spawn the
+result and the spawn is what fails when the file is missing, by name. This reads the disk
+once, before any spawn, and names what is missing: an adapter's entry module under the install
+root, or a native CLI's executable on PATH. A row that cannot launch at all reads its launch
+refusal, unchanged.
 
 ### `IReadOnlyDictionary<string, string> LaunchEnvironment(EngineRow row, ProviderAccount account)`
 
