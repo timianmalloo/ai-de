@@ -770,7 +770,7 @@ internal static class Program
                 composer.Draft.SetGoalValue(AiDe.Core.AgentPlane.GoalBlockFields.DoneWhenKey, string.Join("\n", Enumerable.Range(1, 10).Select(i => $"Done when {i}: a red test exists and the INV is written.")));
                 composer.Draft.SetGoalValue(AiDe.Core.AgentPlane.GoalBlockFields.NotInScopeKey, string.Join("\n", Enumerable.Range(1, 8).Select(i => $"Not in scope {i}: the vendored bundle.")));
                 composer.Configure(
-                    new AiDe.Core.Sessions.SessionConfig("s-spike", "spike", "w-1", DateTimeOffset.UnixEpoch, ["claude-code"]),
+                    new AiDe.Core.Sessions.SessionConfig("s-spike", "spike", "w-1", DateTimeOffset.UnixEpoch, [new AiDe.Core.Sessions.AccountRef("anthropic", "max-personal")], new AiDe.Core.Sessions.AccountRef("anthropic", "max-personal")),
                     new AiDe.App.Workbench.Composer.ComposerSendContext(
                         RepositoryRoot: root, DataDirectory: root, AdapterInstallRoot: root, EngineId: "claude-code", Model: "sonnet",
                         AccountLabel: "max-personal", TaskClass: "implement", ProofPackArtifacts: [], Providers: []),

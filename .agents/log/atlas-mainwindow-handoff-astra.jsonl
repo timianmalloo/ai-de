@@ -22,4 +22,3 @@
 {"agent": "copilot-atlas-mainwindow-handoff", "at": 1789400823.7311592, "kind": "release", "path": "src/AiDe.App/MainWindow.xaml.cs", "seq": 22, "session": "atlas-mainwindow-handoff-astra", "wi": "WI-0"}
 {"agent": "copilot-atlas-mainwindow-handoff", "at": 1789400823.8012276, "kind": "release", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 23, "session": "atlas-mainwindow-handoff-astra", "wi": "WI-0"}
 {"agent": "copilot-atlas-mainwindow-handoff", "at": 1789400823.870837, "kind": "release", "path": "tests/AiDe.App.Tests/Workbench/Understanding/AtlasSharedHostAdmissionTests.cs", "seq": 24, "session": "atlas-mainwindow-handoff-astra", "wi": "WI-0"}
-{"agent": "copilot-atlas-mainwindow-handoff", "at": 1789410174.1548038, "kind": "session-end", "path": "-", "seq": 25, "session": "atlas-mainwindow-handoff-astra", "wi": "WI-0", "worktree": "C:/Projects/ai-de-atlas-mainwindow-handoff"}

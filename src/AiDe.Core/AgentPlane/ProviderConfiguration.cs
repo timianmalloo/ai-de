@@ -31,12 +31,18 @@ public sealed record BindingRefusal(string Field, string Message);
 /// one-for-one, so a §14.2 file becomes this one by re-punctuating it. Filed as an Addendum erratum
 /// per the Ruling 23 precedent; see <c>docs/notes/conductor-spec-errata-policy.md</c>.</para>
 ///
-/// <para><b>Two fields EXTEND §14.2, and both are marked where they are read.</b>
-/// <c>adapterInstallRoot</c> and <c>engines.&lt;id&gt;.model</c> are not in the spec's schema.
-/// <see cref="GovernedRunRequest"/> requires both, §14.2 supplies neither, and §14.2's own answer for
-/// the model — <c>routing.roles</c> / <c>best_fit</c> — is a routing engine this phase does not
-/// build. They are read here rather than defaulted in code, which is the whole point of the
-/// node.</para>
+/// <para><b>Three fields EXTEND §14.2, and each is marked where it is read.</b>
+/// <c>adapterInstallRoot</c>, <c>engines.&lt;id&gt;.model</c> and <c>engines.&lt;id&gt;.account</c> are
+/// not in the spec's schema. <see cref="GovernedRunRequest"/> requires a root and a model, §14.2
+/// supplies neither, and §14.2's own answer for the model — <c>routing.roles</c> / <c>best_fit</c> —
+/// is a routing engine this phase does not build. The model is read here rather than defaulted in
+/// code. <c>adapterInstallRoot</c> is <b>optional since Ruling 104 (2)</b>: absent reads as the
+/// <c>adapters</c> directory beside this file (<c>~/.aide/adapters</c> at <see cref="DefaultPath"/>),
+/// present overrides, and the product writes the key only for a non-default root — a default root
+/// is a derivation, not a stored value (DM: derive, don't store). <c>engines.&lt;id&gt;.account</c>
+/// is the <b>fallback default only</b> (Ruling 105 condition 8): the session's own
+/// <c>DefaultAccount</c> is what a turn bills; this key decides an engine's account only when a
+/// session says nothing — the migration of a pre-105 session, and <see cref="Bind(string, out BindingRefusal?)"/>.</para>
 ///
 /// <para><b>Refused, never defaulted, and never silently empty.</b> A missing file is an absence:
 /// <see cref="ReadIfPresent"/> answers <c>null</c> and the shell renders "no agent backend is
@@ -81,14 +87,26 @@ public sealed class ProviderConfiguration
 
     private ProviderConfiguration(
         string path,
-        string adapterInstallRoot,
+        string? adapterInstallRoot,
         ProviderRegistry registry,
         Dictionary<string, EngineChoice> engines)
     {
         Path = path;
-        AdapterInstallRoot = adapterInstallRoot;
+        AdapterInstallRoot = adapterInstallRoot ?? DefaultAdapterInstallRoot(path);
+        AdapterInstallRootIsDefault = adapterInstallRoot is null;
         Registry = registry;
         _engines = engines;
+    }
+
+    /// <summary>
+    /// The root an absent <c>adapterInstallRoot</c> means (Ruling 104 (2)): the <c>adapters</c>
+    /// directory beside the provider file — <c>~/.aide/adapters</c> for a file at <see cref="DefaultPath"/>.
+    /// </summary>
+    public static string DefaultAdapterInstallRoot(string providerFilePath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(providerFilePath);
+        return System.IO.Path.Combine(
+            System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(providerFilePath)) ?? string.Empty, "adapters");
     }
 
     /// <summary>Where the file is, by default: <c>~/.aide/providers.json</c> (§4.3).</summary>
@@ -99,9 +117,13 @@ public sealed class ProviderConfiguration
     public string Path { get; }
 
     /// <summary>
-    /// The directory whose <c>node_modules</c> holds the ACP adapter. <b>Extends §14.2.</b>
+    /// The directory whose <c>node_modules</c> holds the ACP adapter. <b>Extends §14.2.</b> The file's
+    /// value, or <see cref="DefaultAdapterInstallRoot"/> when the file carries none (Ruling 104 (2)).
     /// </summary>
     public string AdapterInstallRoot { get; }
+
+    /// <summary>Whether <see cref="AdapterInstallRoot"/> is the derived default (the file carries no key).</summary>
+    public bool AdapterInstallRootIsDefault { get; }
 
     /// <summary>The providers and accounts, as the registry §4.3 describes.</summary>
     public ProviderRegistry Registry { get; }
@@ -149,7 +171,12 @@ public sealed class ProviderConfiguration
 
         RefuseUnknownMembers(path, root, TopLevelMembers, "the top level");
 
-        var adapterInstallRoot = RequiredString(path, root, "adapterInstallRoot", "the top level");
+        // OPTIONAL since Ruling 104 (2): absent ⇒ the adapters directory beside this file.
+        var adapterInstallRoot = OptionalString(path, root, "adapterInstallRoot", "the top level");
+        if (adapterInstallRoot is not null && string.IsNullOrWhiteSpace(adapterInstallRoot))
+        {
+            throw Malformed(path, "the top level has \"adapterInstallRoot\", and it is blank; omit the key for the default root");
+        }
 
         if (!root.TryGetProperty("providers", out var providers) || providers.ValueKind != JsonValueKind.Object)
         {
@@ -236,6 +263,92 @@ public sealed class ProviderConfiguration
         }
     }
 
+    /// <summary>
+    /// Binds a session's chosen account to the <c>(engine, model, account)</c> triple a turn needs
+    /// (Ruling 105 (1)): the engine is the one catalog row whose provider is the account's — derived,
+    /// never stored on the session — the model is <c>engines.&lt;id&gt;.model</c>, and the registry's
+    /// rules decide the rest.
+    /// </summary>
+    /// <param name="provider">The account's provider id.</param>
+    /// <param name="accountLabel">The account label — the session's default, or the operator's per-turn override.</param>
+    /// <param name="refusal">Why not, when the result is null.</param>
+    public LaneBinding? Bind(string provider, string accountLabel, out BindingRefusal? refusal)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(provider);
+        ArgumentException.ThrowIfNullOrWhiteSpace(accountLabel);
+
+        var engines = EngineCatalog.Rows.Where(r => string.Equals(r.Provider, provider, StringComparison.Ordinal)).ToList();
+        if (engines.Count != 1)
+        {
+            // Two engines on one provider is a ruling, not a config knob (Ruling 105 (1)).
+            refusal = new BindingRefusal(
+                "engineId",
+                engines.Count == 0
+                    ? $"no catalog engine authenticates against provider '{provider}'; the catalog carries: "
+                      + string.Join(", ", EngineCatalog.Rows.Select(r => $"{r.Id} ({r.Provider})"))
+                    : $"provider '{provider}' carries {engines.Count} catalog engines ("
+                      + string.Join(", ", engines.Select(e => e.Id)) + "); which one is a ruling, not a guess");
+            return null;
+        }
+
+        var engine = engines[0];
+        if (!_engines.TryGetValue(engine.Id, out var choice))
+        {
+            refusal = new BindingRefusal(
+                "model",
+                $"no model is configured for engine '{engine.Id}'. Add "
+                + $"\"engines\": {{ \"{engine.Id}\": {{ \"model\": \"…\" }} }} to {Path} — there is no "
+                + "default, because a defaulted model ranks the run in the wrong standings cohort");
+            return null;
+        }
+
+        try
+        {
+            var binding = Registry.Bind(engine.Id, choice.Model, accountLabel);
+            refusal = null;
+            return binding;
+        }
+        catch (AgentPlaneException error)
+        {
+            refusal = new BindingRefusal(FieldFor(error.Code), error.Message);
+            return null;
+        }
+    }
+
+    /// <summary>The model the file names for an engine, or null when it names none.</summary>
+    public string? ModelFor(string engineId) =>
+        _engines.TryGetValue(engineId ?? string.Empty, out var choice) ? choice.Model : null;
+
+    /// <summary>
+    /// The account the file makes an engine's <b>fallback default</b> (Ruling 105 condition 8): the
+    /// <c>engines.&lt;id&gt;.account</c> key when the operator wrote one, else the provider's sole
+    /// account; <c>null</c> for anything else — never one of several by reading order.
+    /// </summary>
+    /// <returns>The provider id and label, or null.</returns>
+    public (string Provider, string Label)? FallbackDefaultAccount(string engineId)
+    {
+        EngineRow engine;
+        ProviderRow provider;
+        try
+        {
+            engine = EngineCatalog.Find(engineId);
+            provider = Registry.Find(engine.Provider);
+        }
+        catch (AgentPlaneException)
+        {
+            return null;
+        }
+
+        if (_engines.TryGetValue(engine.Id, out var choice) && choice.Account is { } named
+            && provider.Accounts.Any(a => string.Equals(a.Label, named, StringComparison.Ordinal)))
+        {
+            return (provider.ProviderId, named);
+        }
+
+        // The sole account is the file choosing, not this method (the same rule as Account below).
+        return provider.Accounts.Count == 1 ? (provider.ProviderId, provider.Accounts.Single().Label) : null;
+    }
+
     /// <summary>Which field an agent-plane refusal points the operator at.</summary>
     private static string FieldFor(string code) => code switch
     {
@@ -244,7 +357,11 @@ public sealed class ProviderConfiguration
         _ => "accountLabel",
     };
 
-    /// <summary>Resolves the account label, or refuses. Never picks one from more than one.</summary>
+    /// <summary>
+    /// Resolves the engine's <b>fallback default</b> account, or refuses. Never picks one from more
+    /// than one. Since Ruling 105 the session's own <c>DefaultAccount</c> is what a turn bills; this is
+    /// consulted only when a session says nothing (the migration; the headless entry).
+    /// </summary>
     private bool Account(
         ProviderRow provider, EngineChoice choice, out string accountLabel, out BindingRefusal? refusal)
     {

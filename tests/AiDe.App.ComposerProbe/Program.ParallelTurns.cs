@@ -194,7 +194,7 @@ internal static partial class Program
 
         private static SessionDocumentSurface Open(Panel panel, string root, ProviderConfiguration providers, LaneBinding binding, string name)
         {
-            var config = new SessionConfigStore(root, SessionId.New(DateTimeOffset.UtcNow)).Create(name, root, ["claude-code"], DateTimeOffset.UtcNow);
+            var config = new SessionConfigStore(root, SessionId.New(DateTimeOffset.UtcNow)).Create(name, root, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), DateTimeOffset.UtcNow);
             var model = new SessionDocumentViewModel(config.SessionId, config.Name, root, [CanvasModeCatalog.ConsoleModeId]);
             var document = new SessionDocumentSurface(model) { Height = 380 };
             panel.Children.Add(document);

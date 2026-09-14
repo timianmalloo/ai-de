@@ -131,6 +131,13 @@ public static class PreCompile
             rows.Add(new Decorated(envelopeId, DecorationNames.Tier, JsonValue.Create(tier), DecorationSources.Operator));
         }
 
+        // THE OPERATOR'S ACCOUNT CHOICE (Ruling 105 (2)): the Ruling 63/72 shape — an operator row at
+        // Send; the session's default is never written here, it is the binding the request carries.
+        if (draft.AccountChoice is { } account)
+        {
+            rows.Add(new Decorated(envelopeId, DecorationNames.Account, JsonValue.Create(account), DecorationSources.Operator));
+        }
+
         return rows;
     }
 

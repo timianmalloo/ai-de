@@ -23,7 +23,7 @@ public sealed class TheCompileVerbsFoldAndPurgeTests : IDisposable
     {
         Directory.CreateDirectory(_workspace);
         _config = new SessionConfigStore(_workspace, SessionId.New(new DateTimeOffset(2026, 9, 12, 14, 0, 0, TimeSpan.Zero)))
-            .Create("payments", "w-1", ["claude-code"], DateTimeOffset.UnixEpoch);
+            .Create("payments", "w-1", [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), DateTimeOffset.UnixEpoch);
     }
 
     public void Dispose()

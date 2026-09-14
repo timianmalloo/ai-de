@@ -223,7 +223,7 @@ public static class GovernedRunHost
             var runner = new ProcessRunner();
             var baseline = TreeStatus(runner, request.RepositoryRoot);
 
-            var readOnlySession = await OpenReadOnlySessionAsync(client, request.RepositoryRoot, runId, laneId, Report, cancellationToken)
+            var readOnlySession = await OpenReadOnlySessionAsync(client, request.RepositoryRoot, runId, laneId, spawn.Binding, Report, cancellationToken)
                 .ConfigureAwait(false);
 
             var readOnlyPrompt = client.PromptAsync(readOnlySession, request.Prompt, cancellationToken);
@@ -327,7 +327,7 @@ public static class GovernedRunHost
         var session = new GovernedLaneSource(watcher!.Ingest).Open(identity, request.Goal!);
         Report($"episode {session.EpisodeId} opened on session {session.SessionId}");
 
-        var acpSession = await OpenSessionAsync(client, worktree, runId, laneId, Report, cancellationToken)
+        var acpSession = await OpenSessionAsync(client, worktree, runId, laneId, spawn.Binding, Report, cancellationToken)
             .ConfigureAwait(false);
 
         var prompt = client.PromptAsync(acpSession, request.Prompt, cancellationToken);
@@ -418,11 +418,13 @@ public static class GovernedRunHost
     /// site that opens a lane's session, and the value written is the object the client handed the
     /// peer — never a re-computation of what it should have sent.
     /// </remarks>
+    /// <param name="binding">The turn's (engine, model, account) — written on the ledger row (Ruling 105 condition 3); null reads "not recorded".</param>
     internal static async Task<string> OpenSessionAsync(
         AcpLaneClient client,
         ProvisionedWorktree worktree,
         string runId,
         string laneId,
+        LaneBinding? binding,
         Action<string> report,
         CancellationToken cancellationToken)
     {
@@ -430,7 +432,7 @@ public static class GovernedRunHost
         // is passed rather than a path string, so the lane cannot be rooted anywhere else. Ruling 71:
         // and the lane's shell is pinned off on the same frame.
         var acpSession = await client.NewSessionAsync(worktree, GovernedLaneSession, cancellationToken).ConfigureAwait(false);
-        RecordSessionNew(client, acpSession, runId, laneId, report);
+        RecordSessionNew(client, acpSession, runId, laneId, binding, report);
         return acpSession;
     }
 
@@ -448,11 +450,12 @@ public static class GovernedRunHost
         string repositoryRoot,
         string runId,
         string laneId,
+        LaneBinding? binding,
         Action<string> report,
         CancellationToken cancellationToken)
     {
         var acpSession = await client.NewSessionAsync(repositoryRoot, ReadOnlyLaneSession, cancellationToken).ConfigureAwait(false);
-        RecordSessionNew(client, acpSession, runId, laneId, report);
+        RecordSessionNew(client, acpSession, runId, laneId, binding, report);
         return acpSession;
     }
 
@@ -460,13 +463,18 @@ public static class GovernedRunHost
     /// Records the <c>session/new</c> params the client actually sent, <c>_meta</c> included, on the
     /// run's report and as a <c>lane.session-new</c> workbench log line.
     /// </summary>
-    private static void RecordSessionNew(AcpLaneClient client, string acpSession, string runId, string laneId, Action<string> report)
+    private static void RecordSessionNew(AcpLaneClient client, string acpSession, string runId, string laneId, LaneBinding? binding, Action<string> report)
     {
         // What was sent, not what should have been: the object the client handed the peer. A client
         // that recorded nothing reads as "not recorded" — never as the frame it was meant to send.
+        // The binding rides the same row (Ruling 105 condition 3): one turn, one (engine, model,
+        // account) — the fact row a per-turn account switch is observed on.
         var sent = client.SessionNewParameters;
-        report($"acp session {acpSession} opened with session/new params {sent?.ToJsonString() ?? NotRecorded}");
-        WorkbenchDiagnostics.LaneSessionNew(runId, laneId, acpSession, sent);
+        report($"acp session {acpSession} opened with session/new params {sent?.ToJsonString() ?? NotRecorded}"
+            + $" on {binding?.EngineId ?? NotRecorded} · {binding?.Model ?? NotRecorded} · {binding?.Account.Label ?? NotRecorded}");
+        WorkbenchDiagnostics.LaneSessionNew(
+            runId, laneId, acpSession, sent,
+            binding?.EngineId ?? NotRecorded, binding?.Model ?? NotRecorded, binding?.Account.Label ?? NotRecorded);
     }
 
     /// <summary>

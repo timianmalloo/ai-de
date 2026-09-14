@@ -2031,7 +2031,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 15 types, 120 members, 94% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 14 types, 114 members, 94% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2044,7 +2044,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4ae5427a4bff2f20d41ce76ef9d3280a9b7bb2b0cb9402d9eb8acd4484431c50"
+      "sourceSha256": "363a6171a643e7bf411b68a02064c902fb4b8438cefa27e6d7a5f972a9118d3d"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -2056,7 +2056,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 35 types, 203 members, 74% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 33 types, 197 members, 73% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2069,7 +2069,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d63ebb8f2288e91798669502a35a5fdb162f0329b165330362f9761f3f60175d"
+      "sourceSha256": "f9a33712700795739783e5096bd0720c5035c8eaf8566b02ed926a46c144e5c1"
     },
     {
       "id": "api-aide-core",
@@ -2106,7 +2106,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 60 types, 164 members, 91% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 58 types, 155 members, 91% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2119,7 +2119,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fc094df46cb59609c60e12f92d416f43b3478260678b72f044e1f1d19f949514"
+      "sourceSha256": "c810b55db14487f5dea8384e98f2bd4b6e485ba0716404d47ffca546bad68923"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -2331,7 +2331,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 49 types, 152 members, 96% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 49 types, 146 members, 96% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2344,7 +2344,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "46ef9d220d07d532d4170e0bef0a9cf276c47e5ccc2cbd2d0772929c31379995"
+      "sourceSha256": "4afa1768127fc6d9e2d712b4753bbe58978b492c5be335a1cfe38a2f2140420e"
     },
     {
       "id": "api-aide-core-projections",
@@ -2381,7 +2381,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.PromptCompilation: 47 types, 178 members, 82% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.PromptCompilation: 47 types, 177 members, 82% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2394,7 +2394,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1b5cdc0c303bc836ce697ccd243d5889ca477179f1df9047b316cab56cc7ff8c"
+      "sourceSha256": "57f65d0cefb79e90e3639d8c9e5b6749c176110e8829041e6d1da41f96250636"
     },
     {
       "id": "api-aide-core-sessions",
@@ -4496,7 +4496,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0ad5a1d7f1288e89868cca48e47836c1afa9f4df2dfd59a3acfc26d36ed80b94"
+      "sourceSha256": "bd40b4081261950877e6aa743039a381f36a05ceb620bdf42480ba953afa4ef9"
     },
     {
       "id": "note-avalondock-tab-styling",
@@ -4960,7 +4960,7 @@ window.DOCS_INDEX = {
       "phase": "1",
       "reviewBy": "2026-12-11",
       "reviewSuggested": [],
-      "summary": "Spec v1.0 names ~/.aide/providers.yaml in two places (§4.3 line 209, §14.2 lines 472-473). The reader built under Ruling 47 reads ~/.aide/providers.json, applying Ruling 23's ladder argument to the file Ruling 23 itself named as the open case. The schema is otherwise a one-for-one transcription, plus two fields marked in code as extending §14.2: adapterInstallRoot and a per-engine model. The spec HTML stays byte-frozen. Amended 2026-09-14 (engines lane): the provider map accepts every provider the catalog's engine rows name — anthropic, openai, github, google, xai — and an account may carry `host`, the enterprise host it signs in against (Ruling 97 condition 3; Ruling 105 (1)), which the copilot launch passes as COPILOT_GH_HOST.",
+      "summary": "Spec v1.0 names ~/.aide/providers.yaml in two places (§4.3 line 209, §14.2 lines 472-473). The reader built under Ruling 47 reads ~/.aide/providers.json, applying Ruling 23's ladder argument to the file Ruling 23 itself named as the open case. The schema is otherwise a one-for-one transcription, plus two fields marked in code as extending §14.2: adapterInstallRoot and a per-engine model. The spec HTML stays byte-frozen.",
       "tags": [
         "conductor",
         "spec",
@@ -4970,10 +4970,7 @@ window.DOCS_INDEX = {
         "yaml",
         "ruling-23",
         "ruling-36",
-        "ruling-47",
-        "ruling-97",
-        "ruling-105",
-        "engines"
+        "ruling-47"
       ],
       "links": [
         {
@@ -4991,22 +4988,10 @@ window.DOCS_INDEX = {
         {
           "to": "note-front-door-ruling-36",
           "rel": "relates-to"
-        },
-        {
-          "to": "note-addendum-c-council-rulings",
-          "rel": "relates-to"
-        },
-        {
-          "to": "spike-engine-backends-2026-09-14",
-          "rel": "relates-to"
-        },
-        {
-          "to": "proof-engines-on-the-wire",
-          "rel": "tested-by"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a4606c7cab61aff066edfb1c3bfb5b4a6750bbb8bd649ea4567348b69c814492"
+      "sourceSha256": "569f2b8bfa93b44d9eb277254e153e3fe07320a484fcefea2fef652fbb69f616"
     },
     {
       "id": "note-conductor-spec-errata-session-thread",
@@ -8138,7 +8123,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a3f1cdd199c6517a40f83f765b8a6cf78a911a023207ffb3a06a46efca3fe80c"
+      "sourceSha256": "96d5423089a0053aa0373254014ffbd00e78586467aad9cfe9a4f9ec1da41c44"
     },
     {
       "id": "design-session-profiler",
@@ -15779,51 +15764,6 @@ window.DOCS_INDEX = {
       "sourceSha256": "9a358b808be4dff94ca1fbe52a8cf94ef5b223dc1c7816067f6bff7ebd4909ca"
     },
     {
-      "id": "proof-engines-on-the-wire",
-      "path": "docs/proof/engines-on-the-wire.md",
-      "title": "Proof Pack — engines on the wire: copilot, codex, gemini, grok",
-      "type": "proof-pack",
-      "status": "accepted",
-      "owner": "@timianmalloo",
-      "phase": "1",
-      "reviewBy": "2026-12-14",
-      "reviewSuggested": [],
-      "summary": "Rulings 97 (ii)(iii) and 105 landed as four commits on lane/agentplane-engines, in the ruled order copilot → codex → gemini → grok: EngineCatalog carries five rows and two launch paths (adapter under node; a native CLI resolved from PATH without a shell), AcpLaneClient sends the claude-code pin to the claude-code adapter only, and the enterprise host rides on the account as COPILOT_GH_HOST. Every launch line is one the spike observed, and each engine was spawned by the product's own ResolveLaunch → AcpEngineProcess.Start on this machine and answered initialize with protocolVersion 1 — copilot.exe 1.0.84-6, codex-acp 1.10.0, gemini-cli 0.58.0, grok 1.0.30. Not observed: session/prompt on any new engine, any sign-in, the host variable's effect at session/new. The hosts still construct the client without its row (seam request filed).",
-      "tags": [
-        "conductor",
-        "agent-plane",
-        "engines",
-        "acp",
-        "copilot",
-        "codex",
-        "gemini",
-        "grok",
-        "ruling-97",
-        "ruling-105",
-        "proof-pack"
-      ],
-      "links": [
-        {
-          "to": "spike-engine-backends-2026-09-14",
-          "rel": "tested-by"
-        },
-        {
-          "to": "note-addendum-c-council-rulings",
-          "rel": "implements"
-        },
-        {
-          "to": "note-conductor-spec-errata-providers-json",
-          "rel": "relates-to"
-        },
-        {
-          "to": "spec-conductor",
-          "rel": "tested-by"
-        }
-      ],
-      "diagrams": [],
-      "sourceSha256": "31cb7a4623a60f79312767a0529ff02a87770d49506b4ecb2a88a56ca7445709"
-    },
-    {
       "id": "proof-explore-view-source",
       "path": "docs/proof/explore-view-source.md",
       "title": "Proof Pack: Rulings 92 and 93 — the edge row on one baseline; View source in Explore's reader",
@@ -16335,51 +16275,6 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "df0f469d825982df88190a8b4b375a8d30ec0053a59396111e5f6cf22d19f9e9"
-    },
-    {
-      "id": "proof-send-while-running",
-      "path": "docs/proof/send-while-running.md",
-      "title": "Proof Pack — Ruling 95: a Send while a turn runs offers Wait (one queued turn) or Parallel (a derived sibling session); Ruling 77(b) reversed",
-      "type": "proof-pack",
-      "status": "accepted",
-      "owner": "@timianmalloo",
-      "phase": "addendum-c",
-      "reviewBy": "2027-03-14",
-      "reviewSuggested": [],
-      "summary": "Lane composer-r95 on main c831113e. Condition 1 measured first: two session documents on one workspace each sent \"reply with the single word ok\" 59 ms apart through the product's own composition root against the live claude-code adapter; two engine processes (pids 34340, 57860) were alive together in every census sample, node rose 41 → 43, both turns answered in 3.5 s / 3.4 s — the run host does not serialise them, so Parallel ships. Wait: one queued turn per session, compiled at queue time, drained only after Completed/Answered, waiting with Send now after Stop or Failed; Cancel returns its words. Red-first each.",
-      "tags": [
-        "proof-pack",
-        "composer",
-        "sessions",
-        "thread",
-        "ruling-95",
-        "ruling-77",
-        "ruling-78",
-        "ruling-83",
-        "ruling-99",
-        "red-first",
-        "measurement"
-      ],
-      "links": [
-        {
-          "to": "note-addendum-c-council-rulings",
-          "rel": "implements"
-        },
-        {
-          "to": "proof-composer-compiled-prompt-and-console-rows",
-          "rel": "refines"
-        },
-        {
-          "to": "proof-conductor-front-door",
-          "rel": "refines"
-        },
-        {
-          "to": "defect-classes",
-          "rel": "relates-to"
-        }
-      ],
-      "diagrams": [],
-      "sourceSha256": "29d6c2872ffc79c0a0ba16309f61b4be66ab848c29fdfabe8c754bd8fc2293f4"
     },
     {
       "id": "proof-session-document-render",
@@ -17736,7 +17631,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  U[aide session purge id] --> V{id is one segment of the session-id grammar, resolved under .aide/sessions/?}\n  V -->|no| X[refused before any file is touched]\n  V -->|yes| W[confirmation: name · id · workspace root · resolved file path · envelope count · newest at]\n  W -->|decline| Y[nothing deleted]\n  W -->|confirm or --yes| Z[envelope-events.jsonl deleted; session.json and session-events.jsonl survive]\n  Z --> Q[session document reopens: history purged; Proof Pack citations resolve as purged]"
         }
       ],
-      "sourceSha256": "c21029ff60fdf4f7c00a074ec4d0eb627a31e4a28cfcace74d1a6724d53530ef"
+      "sourceSha256": "755d02cee67c247514ace9d6f65aedf2b2a552c5d2d6518a148f391d4d321182"
     },
     {
       "id": "spec-agentic-watcher-substrate",
@@ -18586,5 +18481,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "3593f9662b0750988a28c933a946d8a2d311de0751260e64ed5bd4f96a6f05ed"
+  "graphSha256": "dff03d73eb63a0c60f202042766a5115184a4a6dd6c8318079542e2e74e0c342"
 };

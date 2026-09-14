@@ -97,7 +97,8 @@ public sealed class ParallelSessionFlow
         var config = store.Create(
             _uniqueName(parent.Name),
             parent.WorkspaceId,
-            parent.EnabledBackends,
+            parent.Accounts,          // Ruling 105: the parallel session inherits the parent's accounts and default
+            parent.DefaultAccount,
             now,
             parent.FanOutCeiling,
             parent.BudgetCap,

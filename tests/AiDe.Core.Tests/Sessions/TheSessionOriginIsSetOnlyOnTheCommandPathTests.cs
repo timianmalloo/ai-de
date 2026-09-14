@@ -81,7 +81,7 @@ public sealed class TheSessionOriginIsSetOnlyOnTheCommandPathTests : IDisposable
         var sessionId = SessionId.New();
         var store = new SessionConfigStore(_root, sessionId);
 
-        store.Create("constructed directly", "workspace-1", ["claude-code"], DateTimeOffset.UtcNow);
+        store.Create("constructed directly", "workspace-1", [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), DateTimeOffset.UtcNow);
 
         Assert.Equal(SessionOrigins.Direct, OriginOf(store));
         Assert.NotEqual(SessionOrigins.MainMenuNewSession, OriginOf(store));
@@ -94,8 +94,8 @@ public sealed class TheSessionOriginIsSetOnlyOnTheCommandPathTests : IDisposable
         var sessionId = SessionId.New();
         var store = new SessionConfigStore(_root, sessionId);
 
-        store.Create("toggled", "workspace-1", ["claude-code"], DateTimeOffset.UtcNow);
-        store.SetEnabledBackends(["claude-code", "codex"], DateTimeOffset.UtcNow);
+        store.Create("toggled", "workspace-1", [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), DateTimeOffset.UtcNow);
+        store.SetDefaultAccount(null, DateTimeOffset.UtcNow);
 
         var config = store.ReadEvents().Single(e => e.Kind == SessionEventKinds.Config);
         Assert.Null(config.Body["origin"]);

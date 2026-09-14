@@ -1,5 +1,6 @@
 using AiDe.Core.AgentPlane;
 using AiDe.Core.Presentation.Sessions;
+using AiDe.Core.Sessions;
 
 namespace AiDe.App.Workbench.Sessions;
 
@@ -41,6 +42,8 @@ public sealed class NewSessionFlow
     private readonly Func<string, Task<string?>>? _openWorkspace;
     private readonly Func<NewSessionSheetViewModel, bool> _showSheet;
     private readonly Func<ProviderRegistry> _registry;
+    private readonly Func<string, AccountRef?>? _fallbackDefault;
+    private readonly Func<string?>? _adapterInstallRoot;
     private readonly Func<string, string> _workspaceId;
     private readonly Action<NewSessionResult>? _opened;
     private readonly TimeProvider _time;
@@ -63,6 +66,10 @@ public sealed class NewSessionFlow
     /// <param name="opened">Called once a session exists — where the shell opens its document and
     /// records it in Recent sessions.</param>
     /// <param name="time">Stamps the default name and the created session.</param>
+    /// <param name="adapterInstallRoot">
+    /// The provider file's adapter root (default or override), read fresh each time the sheet opens,
+    /// or null when there is no file — the sheet's launch-path input (Ruling 105 (2)).
+    /// </param>
     public NewSessionFlow(
         Func<string?> activeWorkspaceRoot,
         Func<string?>? chooseWorkspace,
@@ -71,7 +78,9 @@ public sealed class NewSessionFlow
         Func<ProviderRegistry> registry,
         Func<string, string> workspaceId,
         Action<NewSessionResult>? opened = null,
-        TimeProvider? time = null)
+        TimeProvider? time = null,
+        Func<string, AccountRef?>? fallbackDefault = null,
+        Func<string?>? adapterInstallRoot = null)
     {
         ArgumentNullException.ThrowIfNull(activeWorkspaceRoot);
         ArgumentNullException.ThrowIfNull(showSheet);
@@ -86,6 +95,8 @@ public sealed class NewSessionFlow
         _workspaceId = workspaceId;
         _opened = opened;
         _time = time ?? TimeProvider.System;
+        _fallbackDefault = fallbackDefault;
+        _adapterInstallRoot = adapterInstallRoot;
     }
 
     /// <summary>The sheet the last <see cref="Start"/> built, or null when none was reached.</summary>
@@ -132,7 +143,9 @@ public sealed class NewSessionFlow
             }
         }
 
-        var sheet = new NewSessionSheetViewModel(root, _workspaceId(root), _registry(), _time.GetUtcNow());
+        var sheet = new NewSessionSheetViewModel(
+            root, _workspaceId(root), _registry(), _time.GetUtcNow(),
+            fallbackDefault: _fallbackDefault, adapterInstallRoot: _adapterInstallRoot?.Invoke());
         LastSheet = sheet;
 
         if (!_showSheet(sheet))

@@ -34,8 +34,11 @@ public sealed class TheNewSessionSheetTests : IDisposable
         new ProviderRow("openai", ProviderAuth.Subscription, [new ProviderAccount("chatgpt-personal", AccountHealth.QuotaDegraded)]),
     ]);
 
+    // claude-code's launch is observed and installed in the fixture root (Ruling 105 (2): state is
+    // the weaker of launch path and health); codex's entry module is unobserved in the catalog on
+    // this tree, so an openai account can only ever read "not configured" here.
     private NewSessionSheetViewModel Sheet(ProviderRegistry? registry = null, Func<string, bool>? login = null, Func<ProviderRegistry>? reprobe = null) =>
-        new(_root, _root, registry ?? Registry(), Now, login, reprobe);
+        new(_root, _root, registry ?? Registry(), Now, login, reprobe, adapterInstallRoot: InstalledAdapterRoot.Create(_root));
 
     // ── binding (R13 b1) ──────────────────────────────────────────────────────────────────
 
@@ -194,21 +197,26 @@ public sealed class TheNewSessionSheetTests : IDisposable
         var sheet = Sheet(registry);
 
         var account = registry.Find("anthropic").Accounts[0];
-        var row = sheet.Backends.Single(b => b.EngineId == "claude-code");
+        var row = sheet.AccountRows.Single(b => b.EngineId == "claude-code");
 
         Assert.Same(account, row.Account);
-        Assert.Equal(account.Health, row.Health);
+        Assert.Equal(account.Health, row.Account!.Health);
     }
 
     [Fact]
-    public void BackendsComeFromTheCatalogFilteredByTheRegistry()
+    public void EveryCatalogEngineIsListed_ConfiguredOrNot()
     {
         var sheet = Sheet();
 
-        // claude-code (anthropic) and codex (openai) are configured; copilot's provider (github) is
-        // not, so it is absent rather than listed and then refused.
-        Assert.Equal(["claude-code", "codex"], sheet.Backends.Select(b => b.EngineId));
-        Assert.All(sheet.Backends, b => Assert.Contains(
+        // Ruling 97(i)/105: claude-code (anthropic) and codex (openai) are configured; copilot's
+        // provider (github) is not — it is still LISTED, as one "no account — Configure…" row.
+        // Every catalog row, in catalog order — five since the engines lane joined (copilot, gemini,
+        // grok Native); pinned to the catalog, not to a literal, so a new row appears here for free.
+        Assert.Equal(EngineCatalog.Rows.Select(r => r.Id), sheet.AccountRows.Select(b => b.EngineId));
+        Assert.Contains("gemini", sheet.AccountRows.Select(b => b.EngineId));
+        Assert.Contains("grok", sheet.AccountRows.Select(b => b.EngineId));
+        Assert.Null(sheet.AccountRows.Single(b => b.EngineId == "copilot").Account);
+        Assert.All(sheet.AccountRows, b => Assert.Contains(
             EngineCatalog.Rows, row => row.Id == b.EngineId && row.Provider == b.ProviderId));
     }
 
@@ -218,17 +226,21 @@ public sealed class TheNewSessionSheetTests : IDisposable
         var sheet = Sheet(Registry(AccountHealth.NeedsLogin));
 
         // It is shown, with its health (Ruling 20 keeps the display) ...
-        Assert.Contains(sheet.Backends, b => b.EngineId == "claude-code" && b.Health == AccountHealth.NeedsLogin);
+        var row = Assert.Single(sheet.AccountRows, b => b.EngineId == "claude-code");
+        Assert.Equal(AccountHealth.NeedsLogin, row.Account!.Health);
 
-        // ... and the operator may even enable it ...
-        sheet.SetBackendEnabled("claude-code", true);
-        Assert.Contains("claude-code", sheet.EnabledBackends);
+        // ... and the operator may even select it ...
+        sheet.SetAccountSelected(row.Ref!, true);
+        Assert.Contains(row.Ref!, sheet.SelectedAccounts);
 
-        // ... but it is still refused for routing.
-        Assert.DoesNotContain("claude-code", sheet.RoutableBackends);
-
-        // A quota-degraded account is a pressure signal, not an absence — it still routes.
-        Assert.Contains("codex", sheet.RoutableBackends);
+        // ... but it is still refused for routing: it is never the created session's default.
+        // (openai's quota-degraded account would route — a pressure signal, not an absence — but
+        // codex's launch is unobserved on this tree, so nothing is ready and the session opens with
+        // no default account, said so in the footer.)
+        Assert.Equal(NewSessionSheetViewModel.NoBackendReady, sheet.ReadinessFooter);
+        var created = sheet.Create(DateTimeOffset.UtcNow);
+        Assert.Null(created.Config.DefaultAccount);
+        Assert.Contains(row.Ref!, created.Config.Accounts);
     }
 
     [Fact]
@@ -253,7 +265,7 @@ public sealed class TheNewSessionSheetTests : IDisposable
         Assert.Equal(["claude-code"], launched);
         Assert.True(sheet.HealthWasReprobed);
         Assert.Contains("ready", announced, StringComparison.Ordinal);
-        Assert.Contains("claude-code", sheet.RoutableBackends);
+        Assert.Contains(sheet.AccountRows, b => b.EngineId == "claude-code" && b.Account is not null && b.Account.Health == AccountHealth.Ready);
     }
 
     // ── task class, budget, ceiling and lease (Rulings 19 → 72, 56, 63, 42 → 73) ────────

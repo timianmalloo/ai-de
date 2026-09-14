@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation.Sessions: 49 types, 152 members, 96% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation.Sessions: 49 types, 146 members, 96% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation.Sessions`
 
-**49 public types · 152 public members · 96% documented.**
+**49 public types · 146 public members · 96% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -555,8 +555,6 @@ that marshals to a dispatcher never holds this lock across the hand-off.
 | `event Action<ThreadSnapshot>? Changed` | **(gap)** |
 | `void CatchUp()` | Ends the replay: the next snapshot is the folded history at `Version` 0, caught up. |
 | `int Accept(` | A send the conductor accepted: the next ordinal joins, running. |
-| `int Enqueue(` | A send the conductor accepted while another turn is in flight (Ruling 95's *Wait*): the next ordinal joins **queued** — compiled, submitted, not yet sent. Exactly one at a time. |
-| `void Start(int ordinal, DateTimeOffset at)` | The queued turn is sent: it runs from  (its duration counts from the send, never from the queue). |
 | `void Append(int ordinal, EventLine line, Spend? cost = null)` | One line of the turn's run.  is the event's measured usage, or null when the wire recorded none. |
 | `void Wait(int ordinal, WaitingRequest request)` | The turn is waiting on the operator (a permission or cap request, SC7). |
 | `void Resume(int ordinal)` | The request was answered; the turn runs again. |
@@ -570,24 +568,7 @@ that marshals to a dispatcher never holds this lock across the hand-off.
 
 A send the conductor accepted: the next ordinal joins, running.
 
-- **`compileSpend`** — What the compile step cost for this turn's envelope (Ruling 78: `called.cost` is part of the turn's spend, on its own outcome line), or null when no model was called for it.
-
 **Returns.** The turn's ordinal.
-
-### `int Enqueue(`
-
-A send the conductor accepted while another turn is in flight (Ruling 95's *Wait*): the
-next ordinal joins **queued** — compiled, submitted, not yet sent. Exactly one at a time.
-
-**Returns.** The turn's ordinal.
-
-**Throws `InvalidOperationException`.** A turn is already queued (Ruling 95: *cancel it or wait*).
-
-### `void Start(int ordinal, DateTimeOffset at)`
-
-The queued turn is sent: it runs from  (its duration counts from the send, never from the queue).
-
-**Throws `InvalidOperationException`.** The turn is not queued.
 
 ## `SessionDocumentEnvelope`
 
@@ -788,9 +769,6 @@ The read model's state after one applied event. Version 0 is the folded history 
 | Member | Summary |
 |---|---|
 | `TurnView? InFlight` | The in-flight turn (Ruling 77: at most one) — derived, never a member. |
-| `TurnView? Queued` | The queued turn (Ruling 95: exactly one or none) — derived, never a member. |
-| `TurnView? QueuedBehind` | The turn the queued one waits behind: the in-flight turn while one runs or waits, else the last turn that ran — the one whose Stop or failure left the queued turn waiting for the operator (Ruling 95: *b1 stopped; b2 i… |
-| `bool QueuedAwaitsYou` | Whether the queued turn waits on the operator rather than on a run (Ruling 95): nothing is in flight and the turn before it ended `Stopped` or `Failed` — the drain never sends after those, so *Send now* is the operato… |
 
 ## `TurnState`
 
@@ -878,7 +856,6 @@ the jump list, the UIA name and the announcement policy can never disagree on wh
 | `string Name(TurnView turn)` | The UIA name: *b2, Refactor the layout store's…* — the ordinal and the first 120 characters, *…* when truncated. |
 | `string DecorationLine(IReadOnlyList<DecorationRow> decorations)` | The decoration line as one string: *class free-form · tier T0 · lease src/** · goal block* — the item's `ItemStatus`. |
 | `string ReasonSentence(TurnView turn)` | The reason sentence a failed, stopped, waiting or not-recorded turn carries as its container's `HelpText` (SC10); empty for a completed or running turn — one content per property. |
-| `string QueuedSentence(ThreadSnapshot snapshot)` | The queued turn's sentence (Ruling 95), from the snapshot it sits in — *queued — sends after b1* while b1 runs or waits; *queued — b1 stopped; Send it or cancel it* when it waits on the operator. One derivation for th… |
 | `IReadOnlyList<string> Counts(TurnView turn)` | The counts with units (TQ2), in order: edits · tokens · duration · events. Edits are named on every write-capable outcome — *edits not recorded* when the run reported none — and omitted on an answered (read-only) turn… |
 | `string EditsText(int? edits)` | *3 edits* · *1 edit* · *0 edits*; *edits not recorded* for null. |
 | `string SpendText(Spend? spend)` | *12,400 tokens*; *tokens not recorded* for absent usage (Ruling 78 condition 1) — never 0. |

@@ -1,5 +1,0 @@
-{"agent": "copilot-atlas-center-reading-placement", "at": 1789410223.078017, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "session": "atlas-center-reading-placement-astra", "wi": ""}
-{"agent": "copilot-atlas-center-reading-placement", "at": 1789412634.8952413, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/SurfaceContentFactory.cs", "session": "atlas-center-reading-placement-astra", "wi": ""}
-{"agent": "copilot-atlas-center-reading-placement", "at": 1789412634.9037201, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs", "session": "atlas-center-reading-placement-astra", "wi": ""}
-{"agent": "copilot-atlas-center-reading-placement", "at": 1789412634.9132326, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "session": "atlas-center-reading-placement-astra", "wi": ""}
-{"agent": "copilot-atlas-center-reading-placement", "at": 1789412634.922313, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Understanding/AtlasSharedHostAdmissionTests.cs", "session": "atlas-center-reading-placement-astra", "wi": ""}

@@ -51,7 +51,7 @@ public sealed class ASendWhileATurnRunsOffersWaitOrParallelTests
             Directory.CreateDirectory(Repository);
             StubAcpAdapter.Install(Install, mode);
 
-            var config = new SessionConfig("20260914T180000Z-r95", "r95", Repository, DateTimeOffset.UnixEpoch, ["claude-code"]) { CompileMode = compileMode };
+            var config = new SessionConfig("20260914T180000Z-r95", "r95", Repository, DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")) { CompileMode = compileMode };
             Document = new SessionDocumentSurface(new SessionDocumentViewModel(config.SessionId, config.Name, Repository, [CanvasModeCatalog.ConsoleModeId]), null, new RecordingAnnouncer());
             Document.Composer.Configure(
                 config,

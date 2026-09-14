@@ -8,7 +8,7 @@
 | **Session id** | `conductor-addendum-c` |
 | **Worktree** | `C:/Projects/ai-de-conductor-addendum-c` |
 | **Branch** | `conductor/addendum-c` |
-| **Based on** | `main` `f89ffe87` |
+| **Based on** | `main` `75a2adfb` |
 | **Status** | the 2026-09-14 findings programme — wave 1 on main, wave 2 live |
 | **Last updated** | 2026-09-14 (18:10Z) |
 
@@ -17,7 +17,7 @@
 **The operator's 2026-09-14 findings (Rulings 92–105).** Wave 1 is on `main` (`75a2adfb`): Explore
 92+93 (`ec5a1170`), Composer 96+100+101 (`c831113e`), Sessions/Store/Shell 94+98+99+102
 (`75a2adfb`); F5 closed on the operator's word (103, `43b27f23`); DC-210 → DC-220 registered (next
-free **DC-223**). Live: **`lane/composer-r95`** (Wait/Parallel, concurrency measured first) and
+free **DC-221**). Live: **`lane/composer-r95`** (Wait/Parallel, concurrency measured first) and
 **`side/engine-spikes`** (copilot → codex → gemini → grok → Higgsfield, domain-researcher). Next: the
 **accounts** slice (97(i) + 104 + 105 — the sheet as account rows with Configure…, first use, the
 per-turn account picker) once the spikes' record lands. The operator's rows for this build:

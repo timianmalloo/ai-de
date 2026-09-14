@@ -230,7 +230,7 @@ public sealed class TheReadOnlyTurnNeedsNoLeaseTests
             var surface = new ComposerSurface("composer:s-0073", "s-0073 — composer");
 
             surface.Configure(
-                new SessionConfig("s-0073", "first", "w-1", DateTimeOffset.UnixEpoch, ["claude-code"]),
+                new SessionConfig("s-0073", "first", "w-1", DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")),
                 Context(),
                 ComposerFields.FreeForm(),
                 new AttachmentGate(
@@ -264,7 +264,7 @@ public sealed class TheReadOnlyTurnNeedsNoLeaseTests
             var surface = new ComposerSurface("composer:s-0075", "s-0075 — composer");
 
             surface.Configure(
-                new SessionConfig("s-0075", "first", "w-1", DateTimeOffset.UnixEpoch, ["claude-code"]),
+                new SessionConfig("s-0075", "first", "w-1", DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")),
                 Context(),
                 ComposerFields.GoalBlock(),
                 new AttachmentGate(

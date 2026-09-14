@@ -21,6 +21,9 @@ public sealed class SessionConfigStoreTests : IDisposable
 
     public void Dispose() => Directory.Delete(_workspaceRoot, recursive: true);
 
+    private static readonly AccountRef Max = new("anthropic", "max");
+    private static readonly AccountRef Codex = new("openai", "chatgpt");
+
     [Fact]
     public void Create_WritesSessionJsonAtTheContractPath()
     {
@@ -28,7 +31,7 @@ public sealed class SessionConfigStoreTests : IDisposable
         var store = new SessionConfigStore(_workspaceRoot, sessionId);
         var now = DateTimeOffset.UtcNow;
 
-        store.Create("payments extraction", "workspace-1", ["claude-code"], now);
+        store.Create("payments extraction", "workspace-1", [Max], Max, now);
 
         var path = SessionPaths.SessionFile(_workspaceRoot, sessionId);
         Assert.True(File.Exists(path));
@@ -43,8 +46,8 @@ public sealed class SessionConfigStoreTests : IDisposable
     public void UniqueName_CountsUpFromTwo_OverEverySessionInTheStore_AndNeverRefuses()
     {
         var now = DateTimeOffset.UtcNow;
-        new SessionConfigStore(_workspaceRoot, SessionId.New(now)).Create("2026-09-14 session", "ws", [], now);
-        new SessionConfigStore(_workspaceRoot, SessionId.New(now)).Create("2026-09-14 session (2)", "ws", [], now);
+        new SessionConfigStore(_workspaceRoot, SessionId.New(now)).Create("2026-09-14 session", "ws", [], null, now);
+        new SessionConfigStore(_workspaceRoot, SessionId.New(now)).Create("2026-09-14 session (2)", "ws", [], null, now);
 
         var existing = SessionConfigStore.ExistingNames(_workspaceRoot);
         Assert.Equal(["2026-09-14 session", "2026-09-14 session (2)"], existing.OrderBy(n => n, StringComparer.Ordinal));
@@ -66,14 +69,15 @@ public sealed class SessionConfigStoreTests : IDisposable
         var store = new SessionConfigStore(_workspaceRoot, sessionId);
         var now = DateTimeOffset.UtcNow;
 
-        var created = store.Create("payments extraction", "workspace-1", ["claude-code", "codex"], now);
+        var created = store.Create("payments extraction", "workspace-1", [Max, Codex], Max, now);
         var loaded = store.Load();
 
         Assert.Equal(sessionId, loaded.SessionId);
         Assert.Equal("payments extraction", loaded.Name);
         Assert.Equal("workspace-1", loaded.WorkspaceId);
         Assert.Equal(created.CreatedAt, loaded.CreatedAt);
-        Assert.Equal(created.EnabledBackends, loaded.EnabledBackends);
+        Assert.Equal(created.Accounts, loaded.Accounts);
+        Assert.Equal(created.DefaultAccount, loaded.DefaultAccount);
     }
 
     [Fact]
@@ -81,12 +85,12 @@ public sealed class SessionConfigStoreTests : IDisposable
     {
         var sessionId = SessionId.New();
         var writer = new SessionConfigStore(_workspaceRoot, sessionId);
-        writer.Create("payments extraction", "workspace-1", ["claude-code"], DateTimeOffset.UtcNow);
+        writer.Create("payments extraction", "workspace-1", [Max], Max, DateTimeOffset.UtcNow);
 
         var reader = new SessionConfigStore(_workspaceRoot, sessionId);
         var loaded = reader.Load();
 
-        Assert.Equal(["claude-code"], loaded.EnabledBackends);
+        Assert.Equal([Max], loaded.Accounts);
     }
 
     /// <summary>
@@ -96,35 +100,35 @@ public sealed class SessionConfigStoreTests : IDisposable
     /// change under it when a later toggle lands.
     /// </summary>
     [Fact]
-    public void SetEnabledBackends_NeverMutatesAConfigARunAlreadyCaptured()
+    public void SetAccounts_NeverMutatesAConfigARunAlreadyCaptured()
     {
         var sessionId = SessionId.New();
         var store = new SessionConfigStore(_workspaceRoot, sessionId);
-        store.Create("payments extraction", "workspace-1", ["claude-code", "codex"], DateTimeOffset.UtcNow);
+        store.Create("payments extraction", "workspace-1", [Max, Codex], Max, DateTimeOffset.UtcNow);
 
         // "run 1" captures the config in effect now.
         var runOneConfig = store.Load();
-        Assert.Equal(["claude-code", "codex"], runOneConfig.EnabledBackends);
+        Assert.Equal([Max, Codex], runOneConfig.Accounts);
 
-        // The operator disables codex mid-session.
-        store.SetEnabledBackends(["claude-code"], DateTimeOffset.UtcNow);
+        // The operator drops the codex account mid-session.
+        store.SetAccounts([Max], DateTimeOffset.UtcNow);
 
         // run 1's already-captured snapshot must read exactly as it did when captured.
-        Assert.Equal(["claude-code", "codex"], runOneConfig.EnabledBackends);
+        Assert.Equal([Max, Codex], runOneConfig.Accounts);
 
-        // A NEW run ("run 2") captures the toggle.
+        // A NEW run ("run 2") captures the change.
         var runTwoConfig = store.Load();
-        Assert.Equal(["claude-code"], runTwoConfig.EnabledBackends);
+        Assert.Equal([Max], runTwoConfig.Accounts);
     }
 
     [Fact]
-    public void SetEnabledBackends_EmitsASessionConfigEvent()
+    public void SetAccounts_EmitsASessionConfigEvent()
     {
         var sessionId = SessionId.New();
         var store = new SessionConfigStore(_workspaceRoot, sessionId);
-        store.Create("payments extraction", "workspace-1", ["claude-code"], DateTimeOffset.UtcNow);
+        store.Create("payments extraction", "workspace-1", [Max], Max, DateTimeOffset.UtcNow);
 
-        store.SetEnabledBackends(["claude-code", "codex"], DateTimeOffset.UtcNow);
+        store.SetAccounts([Max, Codex], DateTimeOffset.UtcNow);
 
         var events = store.ReadEvents();
         Assert.Equal(2, events.Count); // session.open from Create, session.config from the toggle
@@ -142,13 +146,13 @@ public sealed class SessionConfigStoreTests : IDisposable
     {
         var sessionId = SessionId.New();
         var store = new SessionConfigStore(_workspaceRoot, sessionId);
-        store.Create("payments extraction", "workspace-1", ["claude-code"], DateTimeOffset.UtcNow);
+        store.Create("payments extraction", "workspace-1", [Max], Max, DateTimeOffset.UtcNow);
 
         var eventsPath = SessionPaths.EventsFile(_workspaceRoot, sessionId);
         var firstLineAfterCreate = File.ReadAllLines(eventsPath)[0];
 
-        store.SetEnabledBackends(["claude-code", "codex"], DateTimeOffset.UtcNow);
-        store.SetEnabledBackends(["codex"], DateTimeOffset.UtcNow);
+        store.SetAccounts([Max, Codex], DateTimeOffset.UtcNow);
+        store.SetAccounts([Codex], DateTimeOffset.UtcNow);
 
         var firstLineAfterTwoToggles = File.ReadAllLines(eventsPath)[0];
         Assert.Equal(firstLineAfterCreate, firstLineAfterTwoToggles);
@@ -164,9 +168,9 @@ public sealed class SessionConfigStoreTests : IDisposable
     {
         var sessionId = SessionId.New();
         var store = new SessionConfigStore(_workspaceRoot, sessionId);
-        store.Create("payments extraction", "workspace-1", ["claude-code"], DateTimeOffset.UtcNow);
-        store.SetEnabledBackends(["claude-code", "codex"], DateTimeOffset.UtcNow);
-        store.SetEnabledBackends(["codex"], DateTimeOffset.UtcNow);
+        store.Create("payments extraction", "workspace-1", [Max], Max, DateTimeOffset.UtcNow);
+        store.SetAccounts([Max, Codex], DateTimeOffset.UtcNow);
+        store.SetAccounts([Codex], DateTimeOffset.UtcNow);
         _ = store.Load();
         _ = store.ReadEvents();
 
@@ -222,7 +226,7 @@ public sealed class SessionConfigStoreTests : IDisposable
         var sessionId = SessionId.New();
         var store = new SessionConfigStore(_workspaceRoot, sessionId);
 
-        var created = store.Create("payments extraction", "workspace-1", ["claude-code"], DateTimeOffset.UtcNow);
+        var created = store.Create("payments extraction", "workspace-1", [Max], Max, DateTimeOffset.UtcNow);
 
         Assert.Equal(2, created.FanOutCeiling);
         Assert.Null(created.BudgetCap);
@@ -244,7 +248,7 @@ public sealed class SessionConfigStoreTests : IDisposable
         var store = new SessionConfigStore(_workspaceRoot, "20260912T090000Z-settings");
 
         var created = store.Create(
-            "settings", "w-1", ["claude-code"], now,
+            "settings", "w-1", [Max], Max, now,
             fanOutCeiling: 3,
             budgetCap: new RunBudget(40, 90_000),
             defaultTaskClass: "review");
@@ -264,7 +268,7 @@ public sealed class SessionConfigStoreTests : IDisposable
     {
         var sessionId = SessionId.New();
         var store = new SessionConfigStore(_workspaceRoot, sessionId);
-        var created = store.Create("payments extraction", "workspace-1", ["claude-code"], DateTimeOffset.UtcNow);
+        var created = store.Create("payments extraction", "workspace-1", [Max], Max, DateTimeOffset.UtcNow);
 
         var nonDefault = created with
         {

@@ -49,9 +49,12 @@ public sealed class TheBinderRecordsWhatItBoundTests : IDisposable
         return ProviderConfiguration.Read(path);
     }
 
-    private SessionConfig Create(IReadOnlyList<string> enabled) =>
+    private static readonly AccountRef MaxWork = new("anthropic", "max-work");
+    private static readonly AccountRef ChatGpt = new("openai", "chatgpt");
+
+    private SessionConfig Create(IReadOnlyList<AccountRef> accounts, AccountRef? defaultAccount) =>
         new SessionConfigStore(_root, SessionId.New(DateTimeOffset.UtcNow))
-            .Create("Recorded", _root, enabled, DateTimeOffset.UtcNow);
+            .Create("Recorded", _root, accounts, defaultAccount, DateTimeOffset.UtcNow);
 
     /// <summary>Runs a body against a real shell in a real shown window, capturing every diagnostic line it writes.</summary>
     private static (T Result, List<JsonElement> Lines) WithShell<T>(Func<WorkbenchShell, T> body)
@@ -101,14 +104,14 @@ public sealed class TheBinderRecordsWhatItBoundTests : IDisposable
     [Fact]
     public void Bind_WithAProviderFile_BindsAndRecordsTheRepositoryRoot()
     {
-        var config = Create(["claude-code"]);
+        var config = Create([MaxWork], MaxWork);
         var providers = Providers();
 
         var (said, lines) = WithShell(shell =>
         {
             shell.OpenSessionDocument(config);
             var sentence = SessionComposerBinder.Bind(
-                shell, config, ["claude-code"], "feature",
+                shell, config, "feature",
                 repositoryRoot: _root, dataDirectory: _root, providers, new NeverAffirms());
             return (sentence, shell.SessionComposer(config.SessionId)!.SurfaceId);
         });
@@ -131,14 +134,14 @@ public sealed class TheBinderRecordsWhatItBoundTests : IDisposable
     [Fact]
     public void Bind_OfAComposerAlreadyBound_ChangesNothingAndSaysSo()
     {
-        var config = Create(["claude-code"]);
+        var config = Create([MaxWork], MaxWork);
         var providers = Providers();
 
         var (said, lines) = WithShell(shell =>
         {
             shell.OpenSessionDocument(config);
             string Bind() => SessionComposerBinder.Bind(
-                shell, config, ["claude-code"], "feature",
+                shell, config, "feature",
                 repositoryRoot: _root, dataDirectory: _root, providers, new NeverAffirms());
             var first = Bind();
             return (first, Second: Bind());
@@ -154,14 +157,14 @@ public sealed class TheBinderRecordsWhatItBoundTests : IDisposable
     [Fact]
     public void Bind_WithNoWorkspaceOpen_RefusesRepositoryRootOnTheComposerAndInTheLog()
     {
-        var config = Create(["claude-code"]);
+        var config = Create([MaxWork], MaxWork);
         var providers = Providers();
 
         var (result, lines) = WithShell(shell =>
         {
             shell.OpenSessionDocument(config);
             var sentence = SessionComposerBinder.Bind(
-                shell, config, ["claude-code"], "feature",
+                shell, config, "feature",
                 repositoryRoot: null, dataDirectory: null, providers, new NeverAffirms());
             return (sentence, Status: shell.SessionComposer(config.SessionId)!.Status);
         });
@@ -178,34 +181,90 @@ public sealed class TheBinderRecordsWhatItBoundTests : IDisposable
     }
 
     [Fact]
-    public void Bind_WithTwoRoutableBackends_RefusesEngineIdRatherThanChoosing()
+    public void Bind_WithTwoAccountsAndNoDefault_RefusesAccountLabelRatherThanChoosing()
     {
-        var config = Create(["claude-code", "codex"]);
+        var config = Create([MaxWork, ChatGpt], defaultAccount: null);
         var providers = Providers();
 
         var (_, lines) = WithShell(shell =>
         {
             shell.OpenSessionDocument(config);
             return SessionComposerBinder.Bind(
-                shell, config, ["claude-code", "codex"], "feature",
+                shell, config, "feature",
                 repositoryRoot: _root, dataDirectory: _root, providers, new NeverAffirms());
         });
 
         var refused = Assert.Single(Of(lines, "session-document.refused"));
-        Assert.Equal("engineId", refused.GetProperty("field").GetString());
+        Assert.Equal("accountLabel", refused.GetProperty("field").GetString());
+        Assert.Contains("choose one", refused.GetProperty("reason").GetString(), StringComparison.Ordinal);
         Assert.Empty(Of(lines, "session-document.bound"));
+    }
+
+    /// <summary>
+    /// Ruling 105 (2) and condition 2 at the surface: the bound composer offers the session's accounts
+    /// with their states (a needs-sign-in one disabled, not hidden); changing the default through the
+    /// composer's changer writes the store for NEW turns only — the config a turn captured is
+    /// untouched — and this composer's next binding reads the new default.
+    /// </summary>
+    [Fact]
+    public void Bind_OffersTheSessionsAccounts_AndADefaultChangeIsForNewTurnsOnly()
+    {
+        var config = Create([MaxWork, ChatGpt], MaxWork);
+        var providers = Providers();
+
+        var (result, _) = WithShell(shell =>
+        {
+            shell.OpenSessionDocument(config);
+            SessionComposerBinder.Bind(shell, config, "feature", repositoryRoot: _root, dataDirectory: _root, providers, new NeverAffirms());
+            var composer = shell.SessionComposer(config.SessionId)!;
+            var offered = composer.SessionAccounts.Select(o => $"{o.Label}:{o.EngineId}:{o.Ready}:{o.StateWord}").ToList();
+            var before = composer.DefaultAccountLabel;
+            var said = composer.ChangeDefaultAccount!("chatgpt");
+            return (offered, before, said, composer.DefaultAccountLabel, composer.Decorations.Single(d => d.Name == "account").Value);
+        });
+
+        // claude-code's adapter is not installed in this root, codex's launch is unobserved: both
+        // offered, neither ready — states carried, rows present (Ruling 105 (2): disabled, not hidden).
+        Assert.Equal(["max-work:claude-code:False:not configured", "chatgpt:codex:False:not configured"], result.offered);
+        Assert.Equal("max-work", result.before);
+        Assert.Contains("chatgpt", result.said, StringComparison.Ordinal);
+        Assert.Equal("chatgpt", result.Item4);
+        Assert.Equal("chatgpt", result.Item5);
+
+        // The store: the default changed for new turns; the captured config still says max-work.
+        Assert.Equal(ChatGpt, new SessionConfigStore(_root, config.SessionId).Load().DefaultAccount);
+        Assert.Equal(MaxWork, config.DefaultAccount);
+    }
+
+    /// <summary>Ruling 104 condition 3: the no-provider refusal names the action — Configure a backend from New Session.</summary>
+    [Fact]
+    public void Bind_WithNoProviderFile_NamesConfigureAsTheAction()
+    {
+        var config = Create([MaxWork], MaxWork);
+
+        var (said, lines) = WithShell(shell =>
+        {
+            shell.OpenSessionDocument(config);
+            return SessionComposerBinder.Bind(
+                shell, config, "feature",
+                repositoryRoot: _root, dataDirectory: _root, providers: null, new NeverAffirms());
+        });
+
+        Assert.EndsWith("Configure a backend from New Session..", said, StringComparison.Ordinal);
+        var refused = Assert.Single(Of(lines, "session-document.refused"));
+        Assert.EndsWith("Configure a backend from New Session.", refused.GetProperty("reason").GetString(), StringComparison.Ordinal);
     }
 
     [Fact]
     public void Bind_WithNoProviderFile_RefusesProvidersNamingThePath()
     {
-        var config = Create(["claude-code"]);
+        var config = Create([MaxWork], MaxWork);
 
         var (_, lines) = WithShell(shell =>
         {
             shell.OpenSessionDocument(config);
             return SessionComposerBinder.Bind(
-                shell, config, ["claude-code"], "feature",
+                shell, config, "feature",
                 repositoryRoot: _root, dataDirectory: _root, providers: null, new NeverAffirms());
         });
 
@@ -215,11 +274,12 @@ public sealed class TheBinderRecordsWhatItBoundTests : IDisposable
         Assert.Empty(Of(lines, "session-document.bound"));
     }
 
-    /// <summary>The registry's own refusal (an ambiguous account) is recorded under the registry's field name.</summary>
+    /// <summary>The registry's own refusal (an account the file no longer carries) is recorded under the registry's field name.</summary>
     [Fact]
-    public void Bind_WithAnAmbiguousAccount_RecordsTheRegistrysRefusal()
+    public void Bind_WithAnAccountTheFileDoesNotCarry_RecordsTheRegistrysRefusal()
     {
-        var config = Create(["claude-code"]);
+        var gone = new AccountRef("anthropic", "max-gone");
+        var config = Create([gone], gone);
         var path = Path.Combine(_root, "providers.json");
         File.WriteAllText(path, """
             {
@@ -236,7 +296,7 @@ public sealed class TheBinderRecordsWhatItBoundTests : IDisposable
         {
             shell.OpenSessionDocument(config);
             return SessionComposerBinder.Bind(
-                shell, config, ["claude-code"], "feature",
+                shell, config, "feature",
                 repositoryRoot: _root, dataDirectory: _root, providers, new NeverAffirms());
         });
 
@@ -249,7 +309,7 @@ public sealed class TheBinderRecordsWhatItBoundTests : IDisposable
     [Fact]
     public void Refuse_FromTheWindow_LandsOnTheComposerAndInTheLog()
     {
-        var config = Create(["claude-code"]);
+        var config = Create([MaxWork], MaxWork);
 
         var (status, lines) = WithShell(shell =>
         {
@@ -268,11 +328,11 @@ public sealed class TheBinderRecordsWhatItBoundTests : IDisposable
     [Fact]
     public void Bind_WithNoDocumentOpen_RefusesUnderComposer()
     {
-        var config = Create(["claude-code"]);
+        var config = Create([MaxWork], MaxWork);
         var providers = Providers();
 
         var (said, lines) = WithShell(shell => SessionComposerBinder.Bind(
-            shell, config, ["claude-code"], "feature",
+            shell, config, "feature",
             repositoryRoot: _root, dataDirectory: _root, providers, new NeverAffirms()));
 
         Assert.Equal("Its composer is not on screen, so nothing was wired to a run.", said);

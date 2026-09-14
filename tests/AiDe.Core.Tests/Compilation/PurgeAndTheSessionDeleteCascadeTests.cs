@@ -21,7 +21,7 @@ public sealed class PurgeAndTheSessionDeleteCascadeTests : IDisposable
     {
         Directory.CreateDirectory(_workspace);
         _sessions = new SessionConfigStore(_workspace, SessionId.New(new DateTimeOffset(2026, 9, 12, 10, 0, 0, TimeSpan.Zero)));
-        _config = _sessions.Create("payments", "w-1", ["claude-code"], DateTimeOffset.UnixEpoch);
+        _config = _sessions.Create("payments", "w-1", [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), DateTimeOffset.UnixEpoch);
     }
 
     public void Dispose()
@@ -148,7 +148,7 @@ public sealed class PurgeAndTheSessionDeleteCascadeTests : IDisposable
     {
         WriteTwoEnvelopes();
         var sibling = new SessionConfigStore(_workspace, SessionId.New(new DateTimeOffset(2026, 9, 12, 13, 0, 0, TimeSpan.Zero)));
-        var other = sibling.Create("other", "w-1", ["claude-code"], DateTimeOffset.UnixEpoch);
+        var other = sibling.Create("other", "w-1", [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), DateTimeOffset.UnixEpoch);
         var outside = Path.Combine(_workspace, "README.md");
         File.WriteAllText(outside, "unchanged");
         var otherFile = SessionPaths.SessionFile(_workspace, other.SessionId);

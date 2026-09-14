@@ -5,53 +5,55 @@ using AiDe.Core.Watcher;
 
 namespace AiDe.Core.Presentation.Sessions;
 
+/// <summary>The derived state of one account row (Ruling 105 (2)): the weaker of (launch path observed?, account health).</summary>
+public enum AccountRowState
+{
+    /// <summary>The engine's launch path is unobserved or its adapter is not installed — regardless of health.</summary>
+    NotConfigured,
+
+    /// <summary>Launch observed and installed; the account reads <c>needs-login</c>, or the provider has no account yet.</summary>
+    NeedsSignIn,
+
+    /// <summary>Launch observed and installed; the account reads <c>ready</c> (or <c>quota-degraded</c>, a pressure signal that still binds).</summary>
+    Ready,
+}
+
 /// <summary>
-/// One agent-backend row on the New Session sheet: a catalogued engine, the provider it
-/// authenticates against, and <b>the registry's own account object</b>.
+/// One account row on the New Session sheet (Ruling 105 (2)): a provider, the catalog engine that
+/// authenticates against it (the sub-line), <b>the registry's own account object</b> — or none, for
+/// a provider that carries no account yet — and the state derived at open time, never stored
+/// (Ruling 97 condition 2).
 /// </summary>
 /// <remarks>
-/// <b>The account is carried, never copied.</b> A4.3's sheet shows live per-account health, and the
-/// registry is where health is observed. Projecting health into a field of this row would be a
-/// second health model — the day the probe re-runs, the sheet would still show the value it copied,
-/// and nothing would say so. <c>TheSheetsHealthValuesAreReferenceEqualToTheRegistrys</c> asserts reference
-/// equality against the registry's instance, which is the only form of that claim a rename cannot
-/// weaken.
+/// <b>The account is carried, never copied.</b> Health is read through the registry's instance, so a
+/// re-probe is visible here without a second health model.
 /// </remarks>
-/// <param name="EngineId">The <see cref="EngineCatalog"/> row's id.</param>
-/// <param name="ProviderId">The provider that row names.</param>
-/// <param name="Account">The registry's account object, by reference.</param>
-public sealed record AgentBackendRow(string EngineId, string ProviderId, ProviderAccount Account)
+/// <param name="ProviderId">The provider key.</param>
+/// <param name="EngineId">The catalog engine whose <c>Provider</c> is this row's — derived, never stored.</param>
+/// <param name="Account">The registry's account object, by reference; null when the provider carries none.</param>
+/// <param name="State">The derived state.</param>
+/// <param name="StateReason">Why — the launch refusal's own sentence, or the health as recorded.</param>
+public sealed record AccountRow(string ProviderId, string EngineId, ProviderAccount? Account, AccountRowState State, string StateReason)
 {
-    /// <summary>What the last probe observed — read through the registry's object, never cached.</summary>
-    public AccountHealth Health => Account.Health;
+    /// <summary>The account by identity, or null for the "no account" row.</summary>
+    public AccountRef? Ref => Account is null ? null : new AccountRef(ProviderId, Account.Label);
 
-    /// <summary>
-    /// Whether this backend may be offered to the router for this session.
-    /// </summary>
-    /// <remarks>
-    /// <c>needs-login</c> is an ABSENCE (§4.3), and Ruling 20 keeps that refusal even though the
-    /// sheet now offers a Sign in action: the operator may enable the engine on the session, and the
-    /// router still will not bind a lane to it until a re-probe says otherwise.
-    /// </remarks>
-    public bool RoutableForThisSession => Account.Health != AccountHealth.NeedsLogin;
+    /// <summary>What the row's first line reads: the label, or the zero-account sentence.</summary>
+    public string AccountLabel => Account?.Label ?? "no account — Configure…";
 
-    /// <summary>The row as the sheet reads it: engine, account, health.</summary>
-    /// <remarks>
-    /// <b>The health word carries its provenance, because nothing probes.</b> §4.3 describes a
-    /// per-account liveness check and this phase builds none — the value comes from <c>health:</c> in
-    /// <c>~/.aide/providers.json</c>, which is what the operator observed and wrote down. A bare
-    /// "ready" on screen would read as "checked just now", a claim the product cannot make, and the
-    /// operator would discover it was stale at the moment a run failed. Same posture as
-    /// <see cref="ProviderAccount.ObservedAuthLabel"/>, applied to the value beside it.
-    /// </remarks>
-    public string DisplayLabel =>
-        $"{EngineId} · {Account.Label} · {Health switch
-        {
-            AccountHealth.Ready => "ready",
-            AccountHealth.NeedsLogin => "needs login",
-            AccountHealth.QuotaDegraded => "quota degraded",
-            _ => "not recorded",
-        }} (as you recorded it, not probed)";
+    /// <summary>The state as a word the operator reads.</summary>
+    public string StateWord => State switch
+    {
+        AccountRowState.Ready => "ready",
+        AccountRowState.NeedsSignIn => "needs sign-in",
+        _ => "not configured",
+    };
+
+    /// <summary>Whether a turn may bind this row now — <c>needs-login</c> is an absence (§4.3), an unobserved launch is not a backend.</summary>
+    public bool RoutableForThisSession => State == AccountRowState.Ready;
+
+    /// <summary>The row as the sheet reads it: <c>label · state (reason)</c>.</summary>
+    public string DisplayLabel => $"{AccountLabel} · {StateWord} ({StateReason})";
 }
 
 /// <summary>What the sheet produced: the session it created, and the one field a run also needs.</summary>
@@ -65,9 +67,6 @@ public sealed record AgentBackendRow(string EngineId, string ProviderId, Provide
 /// </remarks>
 /// <param name="Config">The session container, as written to <c>session.json</c>.</param>
 /// <param name="TaskClass">The operator's task class. Required — see the sheet's remarks.</param>
-/// <param name="RoutableBackends">
-/// The enabled backends the router may bind, with <c>needs-login</c> engines already excluded.
-/// </param>
 /// <param name="RenamedFrom">
 /// The name the operator asked for when Create had to add a counter to it (Ruling 99) — what the
 /// announcement names; null when the session got exactly the name that was typed.
@@ -75,7 +74,6 @@ public sealed record AgentBackendRow(string EngineId, string ProviderId, Provide
 public sealed record NewSessionResult(
     SessionConfig Config,
     string TaskClass,
-    IReadOnlyList<string> RoutableBackends,
     string? RenamedFrom = null);
 
 /// <summary>
@@ -112,9 +110,13 @@ public sealed class NewSessionSheetViewModel
     private readonly ProviderRegistry _initialRegistry;
     private readonly Func<string, bool>? _launchEngineNativeLogin;
     private readonly Func<ProviderRegistry>? _reprobe;
-    private readonly HashSet<string> _enabled = new(StringComparer.Ordinal);
+    private readonly Func<string, AccountRef?>? _fallbackDefault;
+    private string? _adapterInstallRoot;
+    private readonly HashSet<AccountRef> _selected = [];
+    private readonly HashSet<AccountRef> _deselected = [];
 
     private ProviderRegistry _registry;
+    private AccountRef? _defaultAccount;
 
     /// <param name="workspaceRoot">The bound workspace's root. A session cannot exist unbound (R13).</param>
     /// <param name="workspaceId">The workspace's key, as the session config records it.</param>
@@ -125,13 +127,24 @@ public sealed class NewSessionSheetViewModel
     /// no way to launch one, which <see cref="SignIn"/> reports rather than pretending.
     /// </param>
     /// <param name="reprobe">Re-reads provider health after a login. Null means health is not re-read.</param>
+    /// <param name="adapterInstallRoot">
+    /// The directory whose <c>node_modules</c> holds the adapters (<c>ProviderConfiguration.AdapterInstallRoot</c>),
+    /// or null when there is no provider file — every adapter engine then reads <i>not configured</i>.
+    /// </param>
+    /// <param name="fallbackDefault">
+    /// The provider file's fallback default account for an engine (<c>engines.&lt;id&gt;.account</c>,
+    /// or the provider's sole account; Ruling 105 condition 8) — preferred as the session's initial
+    /// default when it is a ready row. Null when there is no file.
+    /// </param>
     public NewSessionSheetViewModel(
         string workspaceRoot,
         string workspaceId,
         ProviderRegistry registry,
         DateTimeOffset now,
         Func<string, bool>? launchEngineNativeLogin = null,
-        Func<ProviderRegistry>? reprobe = null)
+        Func<ProviderRegistry>? reprobe = null,
+        Func<string, AccountRef?>? fallbackDefault = null,
+        string? adapterInstallRoot = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(workspaceRoot);
         ArgumentException.ThrowIfNullOrWhiteSpace(workspaceId);
@@ -143,6 +156,8 @@ public sealed class NewSessionSheetViewModel
         _initialRegistry = registry;
         _launchEngineNativeLogin = launchEngineNativeLogin;
         _reprobe = reprobe;
+        _fallbackDefault = fallbackDefault;
+        _adapterInstallRoot = adapterInstallRoot;
 
         // A4.3: the default name is a date slug, renameable later. Invariant culture so a session
         // directory listing sorts the same on every machine. Ruling 99: unique within the workspace
@@ -153,17 +168,22 @@ public sealed class NewSessionSheetViewModel
             now.UtcDateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) + " session",
             SessionConfigStore.ExistingNames(workspaceRoot));
 
-        // Every listed backend starts enabled, and health is NOT consulted here.
-        //
-        // The two sets answer different questions and must not be conflated: "enabled" is what the
-        // operator chose for this session, "routable" is what the router may bind right now. Seeding
-        // the enabled set from health made them one — a backend that was needs-login when the sheet
-        // opened stayed unusable after its own Sign in succeeded, because the choice had already
-        // been made against a health reading that no longer held.
-        foreach (var row in Backends)
+        // Every configured account starts selected, and the default is the first READY one. The two
+        // answer different questions and must not be conflated: "selected" is what the operator
+        // chose for this session, "ready" is what a turn may bind right now — a needs-sign-in account
+        // stays selected so that its own Sign in, once it succeeds, makes it bindable without a
+        // second choice.
+        foreach (var row in AccountRows)
         {
-            _enabled.Add(row.EngineId);
+            if (row.Ref is { } account)
+            {
+                _selected.Add(account);
+            }
         }
+
+        // The file's fallback default first (Ruling 105 c8: the operator wrote it), else the first ready.
+        var ready = AccountRows.Where(r => r.RoutableForThisSession && r.Ref is not null).ToList();
+        _defaultAccount = ready.FirstOrDefault(r => _fallbackDefault?.Invoke(r.EngineId) == r.Ref)?.Ref ?? ready.FirstOrDefault()?.Ref;
     }
 
     /// <summary>The bound workspace's root.</summary>
@@ -247,60 +267,154 @@ public sealed class NewSessionSheetViewModel
     public bool TaskClassAnswered => !string.IsNullOrWhiteSpace(TaskClass);
 
     /// <summary>
-    /// The agent backends on offer: every catalog engine whose provider the registry carries,
-    /// once per configured account, with the registry's live health.
+    /// The account rows (Ruling 105 (2)): every catalog engine's provider, grouped by provider, one
+    /// row per configured account — or one "no account — Configure…" row for a provider with none
+    /// (97's nothing-hidden doctrine) — each with its state derived now from the catalog, the adapter
+    /// root and the registry as it reads. Never stored (Ruling 97 condition 2).
     /// </summary>
-    /// <remarks>
-    /// <b>Read, not re-modelled.</b> The engine set is <see cref="EngineCatalog.Rows"/> and the
-    /// account set is the registry's; an engine whose provider is not configured is simply absent,
-    /// which is the same answer <see cref="ProviderRegistry.Find"/> gives, rather than a row that
-    /// renders and then refuses.
-    /// </remarks>
-    public IReadOnlyList<AgentBackendRow> Backends => BackendsOf(_registry);
+    public IReadOnlyList<AccountRow> AccountRows => RowsOf(_registry, _adapterInstallRoot);
 
-    /// <summary>The backends the operator has enabled for this session.</summary>
-    public IReadOnlyList<string> EnabledBackends =>
-        [.. Backends.Select(b => b.EngineId).Distinct(StringComparer.Ordinal).Where(_enabled.Contains)];
+    /// <summary>The account rows grouped by provider, in catalog order — what the dialog renders.</summary>
+    public IReadOnlyList<IGrouping<string, AccountRow>> AccountGroups =>
+        [.. AccountRows.GroupBy(r => r.ProviderId, StringComparer.Ordinal)];
 
-    /// <summary>
-    /// The enabled backends the router may bind — <c>needs-login</c> excluded (Ruling 20's
-    /// "not cut" half).
-    /// </summary>
-    public IReadOnlyList<string> RoutableBackends => RoutableAmong(_enabled, _registry);
+    /// <summary>The accounts the operator has selected for this session, in row order.</summary>
+    public IReadOnlyList<AccountRef> SelectedAccounts =>
+        [.. AccountRows.Select(r => r.Ref).OfType<AccountRef>().Where(_selected.Contains)];
 
     /// <summary>
-    /// The backends in <paramref name="enabled"/> the router may bind against
-    /// <paramref name="registry"/> — <c>needs-login</c> excluded (§4.3).
+    /// The account a turn bills when the composer picks none (Ruling 105): the first ready account
+    /// at open, or the operator's choice; null is "no default account — choose one".
     /// </summary>
-    /// <remarks>
-    /// <b>One derivation, two readers (DM7).</b> The sheet derives it at create from the operator's
-    /// choices; a reopened or restored session derives it from the config's
-    /// <see cref="AiDe.Core.Sessions.SessionConfig.EnabledBackends"/> and the registry as it reads
-    /// now (INV-0009 Phase 2). A second spelling of "routable" in the binder is the shape that lets
-    /// a session bind on reopen to an engine the sheet would have refused.
-    /// </remarks>
-    public static IReadOnlyList<string> RoutableAmong(IEnumerable<string> enabled, ProviderRegistry registry)
+    public AccountRef? DefaultAccount
     {
-        ArgumentNullException.ThrowIfNull(enabled);
-        ArgumentNullException.ThrowIfNull(registry);
+        get => _defaultAccount is { } d && _selected.Contains(d) ? d : null;
+        set
+        {
+            if (value is not null && !_selected.Contains(value))
+            {
+                throw new ArgumentException($"{value} is not selected for this session", nameof(value));
+            }
 
-        var chosen = enabled.ToHashSet(StringComparer.Ordinal);
-
-        return
-        [
-            .. BackendsOf(registry)
-                .Where(b => chosen.Contains(b.EngineId) && b.RoutableForThisSession)
-                .Select(b => b.EngineId)
-                .Distinct(StringComparer.Ordinal),
-        ];
+            _defaultAccount = value;
+        }
     }
 
-    private static IReadOnlyList<AgentBackendRow> BackendsOf(ProviderRegistry registry) =>
-    [
-        .. EngineCatalog.Rows
-            .SelectMany(engine => Accounts(registry, engine.Provider)
-                .Select(account => new AgentBackendRow(engine.Id, engine.Provider, account))),
-    ];
+    /// <summary>Selects or deselects an account for this session; deselecting the default clears it.</summary>
+    public void SetAccountSelected(AccountRef account, bool selected)
+    {
+        ArgumentNullException.ThrowIfNull(account);
+        if (selected)
+        {
+            _selected.Add(account);
+            _deselected.Remove(account);
+            _defaultAccount ??= AccountRows.FirstOrDefault(r => r.Ref == account && r.RoutableForThisSession)?.Ref;
+        }
+        else
+        {
+            _selected.Remove(account);
+            _deselected.Add(account);
+        }
+    }
+
+    /// <summary>Whether this account is selected for the session.</summary>
+    public bool IsAccountSelected(AccountRef account) => _selected.Contains(account);
+
+    /// <summary>
+    /// Re-derives the rows after Configure… wrote or changed the provider file (Ruling 104): the
+    /// registry and the adapter root as they read now; an account that appeared is selected, and a
+    /// missing default becomes the first ready row. Selections the operator made stand.
+    /// </summary>
+    public void Reload(ProviderRegistry registry, string? adapterInstallRoot)
+    {
+        ArgumentNullException.ThrowIfNull(registry);
+        _registry = registry;
+        _adapterInstallRoot = adapterInstallRoot;
+
+        var known = new HashSet<AccountRef>();
+        foreach (var row in AccountRows)
+        {
+            if (row.Ref is { } account && known.Add(account) && !_deselected.Contains(account))
+            {
+                _selected.Add(account);
+            }
+        }
+
+        _selected.RemoveWhere(a => !known.Contains(a));
+        _defaultAccount = DefaultAccount ?? AccountRows.FirstOrDefault(r => r.RoutableForThisSession && r.Ref is { } a && _selected.Contains(a))?.Ref;
+    }
+
+    /// <summary>
+    /// Ruling 104 (3): the footer when zero accounts are ready — the exact ruled sentence — or null.
+    /// Create is never disabled by it.
+    /// </summary>
+    public string? ReadinessFooter =>
+        AccountRows.Any(r => r.State == AccountRowState.Ready) ? null : NoBackendReady;
+
+    /// <summary>The ruled footer (Ruling 104 (3)).</summary>
+    public const string NoBackendReady =
+        "No backend is ready. The session will open; a run will not start until one is configured.";
+
+    /// <summary>
+    /// The state rule (Ruling 105 (2)), derived: <i>not configured</i> when the engine's launch is
+    /// unobserved — <see cref="EngineCatalog.ResolveLaunch"/>'s own refusal is the input, not a
+    /// re-derivation of its rule — or the resolved entry module is not on disk; <i>needs sign-in</i>
+    /// when launch observed and health is <c>needs-login</c> or there is no account; <i>ready</i> otherwise.
+    /// </summary>
+    public static IReadOnlyList<AccountRow> RowsOf(ProviderRegistry registry, string? adapterInstallRoot)
+    {
+        ArgumentNullException.ThrowIfNull(registry);
+
+        var rows = new List<AccountRow>();
+        foreach (var engine in EngineCatalog.Rows)
+        {
+            var launch = LaunchRefusal(engine.Id, adapterInstallRoot);
+            var accounts = registry.Rows
+                .Where(r => string.Equals(r.ProviderId, engine.Provider, StringComparison.Ordinal))
+                .SelectMany(r => r.Accounts)
+                .ToList();
+
+            if (accounts.Count == 0)
+            {
+                rows.Add(launch is { } refused
+                    ? new AccountRow(engine.Provider, engine.Id, null, AccountRowState.NotConfigured, refused)
+                    : new AccountRow(engine.Provider, engine.Id, null, AccountRowState.NeedsSignIn, "no account recorded"));
+                continue;
+            }
+
+            foreach (var account in accounts)
+            {
+                rows.Add(launch is { } refused
+                    ? new AccountRow(engine.Provider, engine.Id, account, AccountRowState.NotConfigured, refused)
+                    : account.Health == AccountHealth.NeedsLogin
+                        ? new AccountRow(engine.Provider, engine.Id, account, AccountRowState.NeedsSignIn, "needs login, as you recorded it, not probed")
+                        : new AccountRow(engine.Provider, engine.Id, account, AccountRowState.Ready,
+                            (account.Health == AccountHealth.QuotaDegraded ? "quota degraded" : "ready") + ", as you recorded it, not probed"));
+            }
+        }
+
+        return rows;
+    }
+
+    /// <summary>Why the engine cannot launch now, or null when its resolved entry module is on disk.</summary>
+    private static string? LaunchRefusal(string engineId, string? adapterInstallRoot)
+    {
+        if (adapterInstallRoot is null)
+        {
+            return "no adapter root — no provider file";
+        }
+
+        try
+        {
+            var launch = EngineCatalog.ResolveLaunch(engineId, adapterInstallRoot);
+            var entry = launch.Arguments[0];
+            return File.Exists(entry) ? null : $"adapter not installed: {entry} is not on disk";
+        }
+        catch (AgentPlaneException error)
+        {
+            return error.Message;
+        }
+    }
 
     /// <summary>
     /// What the sheet says about the lease. <b>A sentence, never a <c>Lease</c></b> (Ruling 42;
@@ -360,27 +474,6 @@ public sealed class NewSessionSheetViewModel
         }
     }
 
-    /// <summary>Enables or disables a backend for this session.</summary>
-    /// <remarks>
-    /// A <c>needs-login</c> engine may be enabled — A4.3 shows it, and Ruling 20 keeps the health
-    /// display — but <see cref="RoutableBackends"/> still excludes it, so enabling one never puts it
-    /// in front of the router.
-    /// </remarks>
-    public void SetBackendEnabled(string engineId, bool enabled)
-    {
-        if (enabled)
-        {
-            _enabled.Add(engineId);
-        }
-        else
-        {
-            _enabled.Remove(engineId);
-        }
-    }
-
-    /// <summary>Whether this backend is enabled for the session.</summary>
-    public bool IsBackendEnabled(string engineId) => _enabled.Contains(engineId);
-
     /// <summary>Whether the sheet can offer a Sign in action for this engine (Ruling 20).</summary>
     public bool CanSignIn(string engineId) =>
         string.Equals(engineId, SignInEngineId, StringComparison.Ordinal)
@@ -423,11 +516,15 @@ public sealed class NewSessionSheetViewModel
         }
 
         _registry = _reprobe();
-        var health = Backends.FirstOrDefault(b => string.Equals(b.EngineId, engineId, StringComparison.Ordinal));
+        var row = AccountRows.FirstOrDefault(b => string.Equals(b.EngineId, engineId, StringComparison.Ordinal) && b.Account is not null);
+        if (row is { Ref: { } account } && row.RoutableForThisSession && _selected.Contains(account))
+        {
+            _defaultAccount ??= account;
+        }
 
-        return health is null
+        return row is null
             ? $"{engineId}'s login was started; its provider is no longer configured."
-            : $"{engineId} re-probed: {health.DisplayLabel}.";
+            : $"{engineId} re-probed: {row.DisplayLabel}.";
     }
 
     /// <summary>
@@ -463,9 +560,11 @@ public sealed class NewSessionSheetViewModel
         var requested = Name.Trim();
         var name = SessionConfigStore.UniqueName(requested, SessionConfigStore.ExistingNames(WorkspaceRoot));
 
+        // Ruling 105: the session records ACCOUNTS (provider, label), never engine ids, and the
+        // default — a needs-sign-in account may be selected but is never a default the sheet chose.
         var store = new SessionConfigStore(WorkspaceRoot, SessionId.New(now));
         var config = store.Create(
-            name, WorkspaceId, EnabledBackends, now,
+            name, WorkspaceId, SelectedAccounts, DefaultAccount, now,
             fanOutCeiling: FanOutCeiling!.Value,
             budgetCap: BudgetCap,
             defaultTaskClass: TaskClass!.Trim(),
@@ -474,7 +573,7 @@ public sealed class NewSessionSheetViewModel
         // The result's class IS the config's default (Ruling 72; ADR-0033 §4) — one source, read
         // back from what was written, never a second copy of the sheet's field.
         return new NewSessionResult(
-            config, config.DefaultTaskClass, RoutableBackends,
+            config, config.DefaultTaskClass,
             RenamedFrom: string.Equals(config.Name, requested, StringComparison.Ordinal) ? null : requested);
     }
 
@@ -485,8 +584,4 @@ public sealed class NewSessionSheetViewModel
     /// </remarks>
     public bool HealthWasReprobed => !ReferenceEquals(_registry, _initialRegistry);
 
-    private static IEnumerable<ProviderAccount> Accounts(ProviderRegistry registry, string providerId) =>
-        registry.Rows
-            .Where(r => string.Equals(r.ProviderId, providerId, StringComparison.Ordinal))
-            .SelectMany(r => r.Accounts);
 }

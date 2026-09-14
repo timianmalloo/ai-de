@@ -5,7 +5,7 @@ type: decision-note
 status: accepted
 owner: "@timianmalloo"
 phase: "1"
-tags: [conductor, spec, errata, front-door, providers, yaml, ruling-23, ruling-36, ruling-47, ruling-97, ruling-105, engines]
+tags: [conductor, spec, errata, front-door, providers, yaml, ruling-23, ruling-36, ruling-47, ruling-97, ruling-104, ruling-105, accounts, first-use, engines]
 links:
   - { to: spec-conductor, rel: relates-to }
   - { to: note-conductor-spec-errata-policy, rel: relates-to }
@@ -19,12 +19,13 @@ summary: >-
   Spec v1.0 names ~/.aide/providers.yaml in two places (§4.3 line 209, §14.2 lines 472-473).
   The reader built under Ruling 47 reads ~/.aide/providers.json, applying Ruling 23's ladder
   argument to the file Ruling 23 itself named as the open case. The schema is otherwise a
-  one-for-one transcription, plus two fields marked in code as extending §14.2:
-  adapterInstallRoot and a per-engine model. The spec HTML stays byte-frozen. Amended 2026-09-14
-  (engines lane): the provider map accepts every provider the catalog's engine rows name —
-  anthropic, openai, github, google, xai — and an account may carry `host`, the enterprise host it
-  signs in against (Ruling 97 condition 3; Ruling 105 (1)), which the copilot launch passes as
-  COPILOT_GH_HOST.
+  one-for-one transcription, plus three fields marked in code as extending §14.2:
+  adapterInstallRoot (optional since Ruling 104 — absent means ~/.aide/adapters), a per-engine
+  model, and a per-engine account that is the fallback default only (Ruling 105). The spec HTML
+  stays byte-frozen. Amended 2026-09-14 (engines lane): the provider map accepts every provider
+  the catalog's engine rows name — anthropic, openai, github, google, xai — and an account may
+  carry `host`, the enterprise host it signs in against (Ruling 97 condition 3; Ruling 105 (1)),
+  which the copilot launch passes as COPILOT_GH_HOST.
 ---
 
 # Spec erratum — §4.3 / §14.2's `providers.yaml` is `providers.json` in this repository
@@ -109,12 +110,15 @@ is already admitted for a second reason — not on this file's account alone.
 | `accounts: [max-personal]` | `"accounts": [ { "label": …, "health": … } ]` | **objects, not bare labels** — see below |
 | `engine:`, `acp:`, `metered:` | accepted, **never read** | `EngineRow.Provider` already states the engine→provider mapping; two definitions of one mapping is a defect signature (DM7) |
 | `routing:` | accepted, **never read** | Ruling 47 cut routing, `best_fit` and `metered` |
-| — | `"adapterInstallRoot"` | **EXTENDS §14.2** |
+| — | `"adapterInstallRoot"` | **EXTENDS §14.2** — **optional since Ruling 104 (2)**: absent ⇒ the `adapters` directory beside this file, i.e. `~/.aide/adapters` at the default path; present ⇒ an override. The product's Configure… writes the key only when the operator chose a non-default root. |
 | — | `"engines".<id>.model` | **EXTENDS §14.2** |
-| — | `"engines".<id>.account` | **EXTENDS §14.2** (only needed when a provider carries more than one account) |
+| — | `"engines".<id>.account` | **EXTENDS §14.2** — **fallback default only since Ruling 105 (condition 8)**: the session's own `DefaultAccount` (in `session.json`) is what a turn bills; this key decides an engine's account only when a session says nothing — the migration of a pre-105 session (`SessionConfigStore.MigrateLegacyBackends`) and `ProviderConfiguration.Bind(engineId)`. "Never picks one from many" stands: with several accounts and no key, the migrated session opens with *no default account — choose one*. |
 | — | `"providers".<id>.accounts[].host` | **EXTENDS §14.2** — the enterprise host on the **account** (Ruling 97 c3 / 105 (1)); see the 2026-09-14 amendment below |
 
-Both extensions are marked as such in `src/AiDe.Core/AgentPlane/ProviderConfiguration.cs`.
+All three extensions are marked as such in `src/AiDe.Core/AgentPlane/ProviderConfiguration.cs`.
+The example above shows `adapterInstallRoot` for the override case; a file written by the product's
+Configure… on a fresh machine carries no such key (the default root is a derivation, DM: derive,
+don't store).
 `GovernedRunRequest` requires an adapter install root and a model; §14.2 supplies neither, and
 §14.2's own answer for the model — `routing.roles` / `best_fit` — is a routing engine this phase does
 not build. They are **read from the file rather than defaulted in code**, which is the whole point of
@@ -199,5 +203,7 @@ the `sessions-accounts` lane's amendment, and this note carries one definition o
 
 **Freezes** the spec HTML, as the policy requires. **Records** `~/.aide/providers.json` as the file
 this repository reads. **Records** the three extension fields, the required `health`, and (2026-09-14) the
-account's `host` as extensions to §14.2, marked in code. **Leaves** per-workspace overrides, `routing:`, `best_fit`, `metered:` and
+account's `host` as extensions to §14.2, marked in code — `adapterInstallRoot` optional (Ruling 104 (2)),
+`engines.<id>.account` the fallback default only (Ruling 105 condition 8); every amendment **extends the
+spec, it does not read it**. **Leaves** per-workspace overrides, `routing:`, `best_fit`, `metered:` and
 `acp:` unbuilt and unread.

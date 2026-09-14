@@ -119,7 +119,7 @@ public sealed class TheSessionSurfacesNeverCreateTheReservedRunsDirectoryTests :
     {
         var sessionId = SessionId.New(DateTimeOffset.UtcNow);
         new SessionConfigStore(_root, sessionId).Create(
-            SessionName, _root, [TaskClass], DateTimeOffset.UtcNow);
+            SessionName, _root, [], null, DateTimeOffset.UtcNow);
         return sessionId;
     }
 

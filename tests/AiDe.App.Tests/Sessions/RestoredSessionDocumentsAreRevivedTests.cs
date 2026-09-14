@@ -77,7 +77,7 @@ public sealed class RestoredSessionDocumentsAreRevivedTests : IDisposable
     public void Revive_WithASessionFileThatLoads_RegistersTheDocumentAndTheNextRenderShowsIt()
     {
         var sessionId = SessionId.New(DateTimeOffset.UtcNow);
-        new SessionConfigStore(_root, sessionId).Create("Kept", _root, ["claude-code"], DateTimeOffset.UtcNow);
+        new SessionConfigStore(_root, sessionId).Create("Kept", _root, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), DateTimeOffset.UtcNow);
 
         var (before, revived, after) = WithRestoredSurface(sessionId, (shell, surfaceId) =>
         {

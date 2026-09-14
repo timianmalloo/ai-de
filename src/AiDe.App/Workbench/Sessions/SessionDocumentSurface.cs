@@ -1263,6 +1263,57 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         Row("Fan-out ceiling", string.Create(CultureInfo.InvariantCulture, $"{ceilings.FanOutCeiling} sub-agents"), "Most sub-agents any turn may convene. The compiled tier decides how many it uses, up to this.");
         Row("Budget", ceilings.BudgetCap is { } cap ? string.Create(CultureInfo.InvariantCulture, $"{cap.Tokens:N0} tokens per session · cap enforced") : "Bounded by your subscription", "Off: spend stops where your subscription stops. On: you set a number of tokens; a new turn will not start past it without asking; a running turn finishes.");
         Row("Default task class", Composer.Decorations.FirstOrDefault(d => d.Name == "class")?.Value ?? AiDe.Core.Watcher.TaskClasses.FreeForm, "Every new prompt starts with this class. Change it on any prompt from its decoration line; that never changes this default.");
+        // Ruling 105 condition 2: the default account, changeable here for NEW turns only — the
+        // store's event, applied to this composer's next turn; the turn in flight keeps its binding.
+        var accountLine = new DockPanel { Margin = new Thickness(0, 2, 0, 2) };
+        var accountKey = new TextBlock { Text = "Default account", FontSize = 12, Width = 140, VerticalAlignment = VerticalAlignment.Center };
+        accountKey.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+        var accountPicker = new ComboBox { FontSize = 12, MinWidth = 140, VerticalAlignment = VerticalAlignment.Center };
+        AutomationProperties.SetName(accountPicker, "Default account");
+        AutomationProperties.SetHelpText(accountPicker, "The account new turns bill unless a turn picks another on its decoration line. Changing it never rewrites a past turn.");
+        var reflectingAccounts = false;
+        void ReflectAccounts()
+        {
+            reflectingAccounts = true;
+            try
+            {
+                accountPicker.Items.Clear();
+                foreach (var option in Composer.SessionAccounts)
+                {
+                    accountPicker.Items.Add(new ComboBoxItem { Content = option.Ready ? option.Label : $"{option.Label} — {option.StateWord}", Tag = option.Label, IsEnabled = option.Ready });
+                }
+
+                if (accountPicker.Items.Count == 0)
+                {
+                    accountPicker.Items.Add(new ComboBoxItem { Content = "no default account — choose one", Tag = null, IsEnabled = false });
+                }
+
+                accountPicker.SelectedItem = accountPicker.Items.OfType<ComboBoxItem>().FirstOrDefault(i => string.Equals(i.Tag as string, Composer.DefaultAccountLabel, StringComparison.Ordinal))
+                    ?? accountPicker.Items[0];
+                accountPicker.IsEnabled = Composer.ChangeDefaultAccount is not null && Composer.SessionAccounts.Count > 0;
+            }
+            finally
+            {
+                reflectingAccounts = false;
+            }
+        }
+
+        accountPicker.SelectionChanged += (_, _) =>
+        {
+            if (reflectingAccounts || accountPicker.SelectedItem is not ComboBoxItem { Tag: string label } || Composer.ChangeDefaultAccount is null)
+            {
+                return;
+            }
+
+            _announcer.Announce(new Announcement(Composer.ChangeDefaultAccount(label), Urgency.Status, AnnouncementKind.Completed));
+        };
+        DockPanel.SetDock(accountKey, Dock.Left);
+        accountLine.Children.Add(accountKey);
+        accountLine.Children.Add(accountPicker);
+        rows.Children.Add(accountLine);
+        ReflectAccounts();
+        target.Click += (_, _) => ReflectAccounts();
+
         Row("Compile mode", Composer.Gate.CompileMode, "Mechanical-only: one gesture, you fill the structure.");
         Row("Compile history", Composer.HistoryState ?? (_purgedThisOpen > 0 ? "history purged; recording again" : $"recorded in {_envelopes?.Path ?? Envelope.NotRecorded}"), "Every send is a row in this session's append-only envelope file. Purge removes that file and nothing else.");
 

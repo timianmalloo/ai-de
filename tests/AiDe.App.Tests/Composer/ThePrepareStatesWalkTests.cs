@@ -29,7 +29,7 @@ public sealed class ThePrepareStatesWalkTests
     {
         var surface = new ComposerSurface("composer:s-cv3", "s-cv3 — composer");
         surface.Configure(
-            new SessionConfig("s-cv3", "first", "w-1", DateTimeOffset.UnixEpoch, ["claude-code"]) { CompileMode = mode },
+            new SessionConfig("s-cv3", "first", "w-1", DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")) { CompileMode = mode },
             Context(),
             ComposerFields.FreeForm(),
             new AttachmentGate(@"C:\repo", new AttachmentFileReader(), new NeverAsked(), "Anthropic (Claude Code)", "max"));

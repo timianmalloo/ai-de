@@ -224,7 +224,7 @@ public sealed class TheCompileModeLadderIsGatedTests : IDisposable
     {
         var sessionId = SessionId.New();
         var store = new SessionConfigStore(_root, sessionId);
-        store.Create("s", "w", ["claude-code"], DateTimeOffset.UtcNow);
+        store.Create("s", "w", [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), DateTimeOffset.UtcNow);
 
         var refused = Assert.Throws<EnvelopeStoreException>(
             () => store.SetCompileMode(CompileModes.AgenticAdvisory, Evaluate(), DateTimeOffset.UtcNow));
@@ -252,7 +252,7 @@ public sealed class TheCompileModeLadderIsGatedTests : IDisposable
     {
         WriteArtifact(frameLog: CleanFrames);
         var store = new SessionConfigStore(_root, SessionId.New());
-        store.Create("s", "w", ["claude-code"], DateTimeOffset.UtcNow);
+        store.Create("s", "w", [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), DateTimeOffset.UtcNow);
 
         using var capture = ModeChangedCapture.Open();
 
@@ -273,7 +273,7 @@ public sealed class TheCompileModeLadderIsGatedTests : IDisposable
     {
         WriteArtifact(frameLog: CleanFrames);
         var store = new SessionConfigStore(_root, SessionId.New());
-        store.Create("s", "w", ["claude-code"], DateTimeOffset.UtcNow);
+        store.Create("s", "w", [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), DateTimeOffset.UtcNow);
 
         using var capture = ModeChangedCapture.Open();
 
@@ -289,7 +289,7 @@ public sealed class TheCompileModeLadderIsGatedTests : IDisposable
     {
         WriteArtifact(frameLog: CleanFrames);
         var store = new SessionConfigStore(_root, SessionId.New());
-        store.Create("s", "w", ["claude-code"], DateTimeOffset.UtcNow);
+        store.Create("s", "w", [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), DateTimeOffset.UtcNow);
 
         Assert.Throws<ArgumentOutOfRangeException>(
             () => store.SetCompileMode(CompileModes.AgenticAdvisory, Evaluate(), DateTimeOffset.UtcNow, "operator-ish"));

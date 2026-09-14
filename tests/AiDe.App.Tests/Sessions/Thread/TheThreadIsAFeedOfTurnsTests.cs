@@ -6,6 +6,7 @@ using System.Windows.Input;
 using AiDe.App.Workbench;
 using AiDe.App.Workbench.Sessions;
 using AiDe.Core.Presentation.Sessions;
+using AiDe.Core.Sessions;
 using AiDe.Core.Workbench;
 
 namespace AiDe.App.Tests.Sessions.Thread;
@@ -464,7 +465,7 @@ public sealed class TheThreadIsAFeedOfTurnsTests
                 // Wired (Ruling 95's offer sits behind the gate, which needs a session): a context
                 // whose engine the catalog refuses — nothing is sent here, so nothing is spawned.
                 document.Composer.Configure(
-                    new AiDe.Core.Sessions.SessionConfig("20260912T140000Z-link", "link", Path.GetTempPath(), DateTimeOffset.UnixEpoch, ["claude-code"]),
+                    new AiDe.Core.Sessions.SessionConfig("20260912T140000Z-link", "link", Path.GetTempPath(), DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")),
                     new AiDe.App.Workbench.Composer.ComposerSendContext(
                         RepositoryRoot: Path.GetTempPath(), DataDirectory: Path.GetTempPath(), AdapterInstallRoot: Path.GetTempPath(),
                         EngineId: "no-such-engine", Model: "sonnet", AccountLabel: "max", TaskClass: "free-form", ProofPackArtifacts: [], Providers: []),

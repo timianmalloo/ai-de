@@ -73,7 +73,7 @@ public sealed class AParallelSessionIsADerivedSiblingTests : IDisposable
             var root = _workspace.Root;
             var now = new DateTimeOffset(2026, 9, 14, 18, 30, 0, TimeSpan.Zero);
             var parent = new SessionConfigStore(root, SessionId.New(now)).Create(
-                "payments", root, ["claude-code"], now, fanOutCeiling: 2, budgetCap: new RunBudget(10, 40_000), defaultTaskClass: "implement");
+                "payments", root, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), now, fanOutCeiling: 2, budgetCap: new RunBudget(10, 40_000), defaultTaskClass: "implement");
 
             var documents = new Dictionary<string, SessionDocumentSurface>(StringComparer.Ordinal);
             var remembered = new List<SessionConfig>();
@@ -97,7 +97,8 @@ public sealed class AParallelSessionIsADerivedSiblingTests : IDisposable
             var sibling = outcome.Created!;
             Assert.Equal("payments (7)", sibling.Name);
             Assert.Equal(parent.WorkspaceId, sibling.WorkspaceId);
-            Assert.Equal(parent.EnabledBackends, sibling.EnabledBackends);
+            Assert.Equal(parent.Accounts, sibling.Accounts);   // Ruling 105: accounts and default inherited
+            Assert.Equal(parent.DefaultAccount, sibling.DefaultAccount);
             Assert.Equal(2, sibling.FanOutCeiling);
             Assert.Equal(new RunBudget(10, 40_000), sibling.BudgetCap);
             Assert.Equal("implement", sibling.DefaultTaskClass);
@@ -127,7 +128,7 @@ public sealed class AParallelSessionIsADerivedSiblingTests : IDisposable
         {
             var root = _workspace.Root;
             var now = DateTimeOffset.UtcNow;
-            var parent = new SessionConfigStore(root, SessionId.New(now)).Create("payments", root, ["claude-code"], now);
+            var parent = new SessionConfigStore(root, SessionId.New(now)).Create("payments", root, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), now);
             var documents = new Dictionary<string, SessionDocumentSurface>(StringComparer.Ordinal);
             var flow = new ParallelSessionFlow(
                 open: config =>
@@ -157,7 +158,7 @@ public sealed class AParallelSessionIsADerivedSiblingTests : IDisposable
             create: () =>
             {
                 var document = new SessionDocumentSurface(new SessionDocumentViewModel("20260914T183000Z-alone", "alone", _workspace.Root, [CanvasModeCatalog.ConsoleModeId]));
-                Bind(document.Composer, new SessionConfig("20260914T183000Z-alone", "alone", _workspace.Root, DateTimeOffset.UnixEpoch, ["claude-code"]), _workspace.Root);
+                Bind(document.Composer, new SessionConfig("20260914T183000Z-alone", "alone", _workspace.Root, DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")), _workspace.Root);
                 document.ReadModel.Accept("first", [], "first", DateTimeOffset.Now);
                 return document;
             },
@@ -183,7 +184,7 @@ public sealed class AParallelSessionIsADerivedSiblingTests : IDisposable
     public void FromTheParentsStatusLine_TheSiblingDocksLeftBesideIt_AndTheParentsDraftIsConsumed()
     {
         var root = _workspace.Root;
-        var parentConfig = new SessionConfigStore(root, SessionId.New(DateTimeOffset.UtcNow)).Create("payments", root, ["claude-code"], DateTimeOffset.UtcNow);
+        var parentConfig = new SessionConfigStore(root, SessionId.New(DateTimeOffset.UtcNow)).Create("payments", root, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), DateTimeOffset.UtcNow);
 
         Sta.Run(() =>
         {
@@ -243,8 +244,8 @@ public sealed class AParallelSessionIsADerivedSiblingTests : IDisposable
         {
             var root = _workspace.Root;
             var now = DateTimeOffset.UtcNow;
-            var parent = new SessionConfigStore(root, SessionId.New(now)).Create("payments", root, ["claude-code"], now);
-            new SessionConfigStore(root, SessionId.New(now.AddSeconds(1))).Create("payments (2)", root, ["claude-code"], now.AddSeconds(1));
+            var parent = new SessionConfigStore(root, SessionId.New(now)).Create("payments", root, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), now);
+            new SessionConfigStore(root, SessionId.New(now.AddSeconds(1))).Create("payments (2)", root, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), now.AddSeconds(1));
 
             var documents = new Dictionary<string, SessionDocumentSurface>(StringComparer.Ordinal);
             var flow = new ParallelSessionFlow(

@@ -86,7 +86,8 @@ public sealed class TheTierIsTheMechanicalRulesProjectionTests
 
         // A message (no goal block yet): class · tier T0 · lease read-only · message.
         var message = ComposerCompiler.Decorations(draft, AiDe.Core.Watcher.TaskClasses.FreeForm);
-        Assert.Equal(["class", "tier", "lease", "shape"], message.Select(d => d.Name));
+        // Ruling 105 (2): the grammar gains `account` — this turn's binding — after the shape (and the template, when one is bound).
+        Assert.Equal(["class", "tier", "lease", "shape", "account"], message.Select(d => d.Name));
         Assert.Equal("free-form", message[0].Value);
         Assert.Equal("session-default", message[0].Source);
         Assert.Equal("no class ranks this turn", message[0].Reason);
@@ -108,8 +109,9 @@ public sealed class TheTierIsTheMechanicalRulesProjectionTests
         // A template adds its row; nothing else moves.
         draft.UseTemplate("change-order");
         var templated = ComposerCompiler.Decorations(draft, "defect");
-        Assert.Equal("template", templated[^1].Name);
-        Assert.Equal("change-order", templated[^1].Value);
+        Assert.Equal("template", templated[^2].Name);   // the template row precedes the account row (Ruling 105)
+        Assert.Equal("account", templated[^1].Name);
+        Assert.Equal("change-order", templated[^2].Value);
     }
 
     [Fact]
@@ -117,7 +119,7 @@ public sealed class TheTierIsTheMechanicalRulesProjectionTests
     {
         var draft = new ComposerDraft();
         draft.SwitchTo(ComposerShape.GoalBlock);
-        draft.UseSessionSettings(new SessionConfig("s", "n", "w", DateTimeOffset.UnixEpoch, ["claude-code"])
+        draft.UseSessionSettings(new SessionConfig("s", "n", "w", DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"))
         {
             FanOutCeiling = 1,
             BudgetCap = new RunBudget(10, 40_000),

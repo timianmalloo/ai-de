@@ -139,6 +139,9 @@ public static class DecorationNames
     public const string HistoryWindow = "history_window";
     public const string Constitution = "constitution";
 
+    /// <summary>The operator's per-turn account choice (Ruling 105 (2)) — an <c>operator</c> row at Send; absent means the session's default account.</summary>
+    public const string Account = "account";
+
     /// <summary>The three structure lines, in §14.3 order.</summary>
     public static readonly IReadOnlyList<string> StructureLines = [Goal, DoneWhen, NotInScope];
 

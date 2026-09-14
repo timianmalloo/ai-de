@@ -191,6 +191,17 @@ public sealed class ComposerDraft
     public void ChooseTaskClass(string? taskClass) =>
         TaskClassChoice = string.IsNullOrWhiteSpace(taskClass) ? null : taskClass.Trim();
 
+    /// <summary>
+    /// The account label this turn chose on the composer's picker (Ruling 105 (2)), or null — the
+    /// session's <c>DefaultAccount</c> applies. A choice becomes an <c>account</c> row with
+    /// <c>source: operator</c> at Send; it never changes the session's default.
+    /// </summary>
+    public string? AccountChoice { get; private set; }
+
+    /// <summary>Chooses this turn's account by label, or returns to the session's default with null or blank.</summary>
+    public void ChooseAccount(string? accountLabel) =>
+        AccountChoice = string.IsNullOrWhiteSpace(accountLabel) ? null : accountLabel.Trim();
+
     /// <summary>The goal-block field values, by wire name.</summary>
     public IReadOnlyDictionary<string, string> GoalValues => _goalValues;
 

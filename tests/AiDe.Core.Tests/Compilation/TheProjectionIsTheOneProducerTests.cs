@@ -71,10 +71,10 @@ public sealed class TheProjectionIsTheOneProducerTests
 
         // The ceilings (fan-out) and the budget cap.
         var ceiling = GoalBlockDraft();
-        ceiling.UseSessionSettings(new SessionConfig(Session, "n", "w", DateTimeOffset.UnixEpoch, ["claude-code"]) { FanOutCeiling = 1 });
+        ceiling.UseSessionSettings(new SessionConfig(Session, "n", "w", DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")) { FanOutCeiling = 1 });
         Assert.NotEqual(baseline, Projection.Project(PreCompile.Live(Input(ceiling))).ProjectionSha);
         var capped = GoalBlockDraft();
-        capped.UseSessionSettings(new SessionConfig(Session, "n", "w", DateTimeOffset.UnixEpoch, ["claude-code"]) { BudgetCap = new RunBudget(250, 600_000) });
+        capped.UseSessionSettings(new SessionConfig(Session, "n", "w", DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")) { BudgetCap = new RunBudget(250, 600_000) });
         Assert.NotEqual(baseline, Projection.Project(PreCompile.Live(Input(capped))).ProjectionSha);
 
         // An attachment BY REFERENCE moves it; its body does not (bodies are never in the domain).
@@ -206,7 +206,7 @@ public sealed class TheProjectionIsTheOneProducerTests
     public void ACapProjectsExactlyAndAFoldWhoseCeilingsRowLacksTheMemberIsIncomplete()
     {
         var draft = GoalBlockDraft();
-        draft.UseSessionSettings(new SessionConfig(Session, "n", "w", DateTimeOffset.UnixEpoch, ["claude-code"]) { BudgetCap = new RunBudget(250, 600_000) });
+        draft.UseSessionSettings(new SessionConfig(Session, "n", "w", DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")) { BudgetCap = new RunBudget(250, 600_000) });
         Assert.Equal(new RunBudget(250, 600_000), Projection.Project(PreCompile.Live(Input(draft))).Budget);
 
         // A row lacking `budget` is not a snapshot: the fold is incomplete and Project refuses, never defaults.

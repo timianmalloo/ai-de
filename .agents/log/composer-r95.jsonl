@@ -11,8 +11,3 @@
 {"agent": "claude-lane-composer-95", "at": 1789408990.5087101, "kind": "claim", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 11, "session": "composer-r95", "ttl": 180.0, "wi": "ruling-95"}
 {"agent": "claude-lane-composer-95", "at": 1789408990.5849667, "kind": "claim", "path": "src/AiDe.App/MainWindow.xaml.cs", "seq": 12, "session": "composer-r95", "ttl": 180.0, "wi": "ruling-95"}
 {"agent": "claude-lane-composer-95", "at": 1789409503.3571036, "kind": "claim", "path": "src/AiDe.Core/Compilation/EnvelopeEvents.cs", "seq": 13, "session": "composer-r95", "ttl": 60.0, "wi": "ruling-95"}
-{"agent": "claude-lane-composer-95", "at": 1789410170.8890274, "kind": "claim", "path": "src/AiDe.App/Conductor/GovernedRunHost.cs", "seq": 14, "session": "composer-r95", "ttl": 60.0, "wi": "ruling-95"}
-{"agent": "claude-lane-composer-95", "at": 1789410821.2885604, "kind": "claim", "path": "DESIGN.md", "seq": 15, "session": "composer-r95", "ttl": 60.0, "wi": "ruling-95"}
-{"agent": "claude-lane-composer-95", "at": 1789410821.3701606, "kind": "claim", "path": "docs/specs/addendum-d-compile-step.md", "seq": 16, "session": "composer-r95", "ttl": 60.0, "wi": "ruling-95"}
-{"agent": "claude-lane-composer-95", "at": 1789410821.4642794, "kind": "claim", "path": "src/AiDe.App/Workbench/Sessions/ParallelSessionFlow.cs", "seq": 17, "session": "composer-r95", "ttl": 60.0, "wi": "ruling-95"}
-{"agent": "claude-lane-composer-95", "at": 1789412158.0608406, "kind": "session-end", "path": "-", "seq": 18, "session": "composer-r95", "wi": "WI-0", "worktree": "C:/Projects/ai-de-lane-composer-r95"}
