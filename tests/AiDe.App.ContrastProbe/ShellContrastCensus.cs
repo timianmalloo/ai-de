@@ -885,6 +885,21 @@ internal static class ShellContrastCensus
               ink: hex(ink), inkCss: cs.color, ground: hex(ground(el)), opacity: op * ink.a,
               size: parseFloat(cs.fontSize), bold: parseInt(cs.fontWeight) >= 700, disabled: el.disabled === true });
           }
+          // The caret (2026-09-14, the operator: "the prompt text area doesn't have a cursor so I
+          // can't see where I am typing"). Not a text node, so the walk above never sees it: a probe
+          // element carrying CodeMirror's cursor classes is placed inside the editor root for one
+          // read, so the stylesheet rule the real caret gets (`.cm-cursor { border-left: … }`) is
+          // what is measured — CodeMirror's default is 1.2px solid black, invisible on the surface.
+          const editor = document.querySelector('.cm-editor');
+          if (editor) {
+            const probe = document.createElement('div'); probe.className = 'cm-cursor cm-cursor-primary';
+            editor.appendChild(probe);
+            const pcs = getComputedStyle(probe);
+            const caret = parse(pcs.borderLeftColor) || { r: 0, g: 0, b: 0, a: 1 };
+            rows.push({ sel: '.cm-editor .cm-cursor', text: '(caret)', ink: hex(caret), inkCss: pcs.borderLeftColor,
+              ground: hex(ground(editor)), opacity: caret.a, size: 13, bold: true, disabled: false });
+            editor.removeChild(probe);
+          }
           return JSON.stringify(rows);
         })()
         """;
