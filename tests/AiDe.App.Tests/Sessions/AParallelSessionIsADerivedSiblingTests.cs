@@ -235,6 +235,44 @@ public sealed class AParallelSessionIsADerivedSiblingTests : IDisposable
         });
     }
 
+    /// <summary>Ruling 99's one rule, on the parent's name, over every name the workspace holds — the window supplies it, and this proves the seam carries it.</summary>
+    [Fact]
+    public void WithRuling99sRule_TheSiblingsNameCountsPastTheNamesTheWorkspaceHolds()
+    {
+        Sta.Run(() =>
+        {
+            var root = _workspace.Root;
+            var now = DateTimeOffset.UtcNow;
+            var parent = new SessionConfigStore(root, SessionId.New(now)).Create("payments", root, ["claude-code"], now);
+            new SessionConfigStore(root, SessionId.New(now.AddSeconds(1))).Create("payments (2)", root, ["claude-code"], now.AddSeconds(1));
+
+            var documents = new Dictionary<string, SessionDocumentSurface>(StringComparer.Ordinal);
+            var flow = new ParallelSessionFlow(
+                open: config =>
+                {
+                    documents[config.SessionId] = new SessionDocumentSurface(new SessionDocumentViewModel(config.SessionId, config.Name, root, [CanvasModeCatalog.ConsoleModeId]));
+                    return "opened";
+                },
+                bind: _ => "not bound",
+                composerOf: id => documents.GetValueOrDefault(id)?.Composer,
+                uniqueName: name => SessionConfigStore.UniqueName(name, SessionConfigStore.ExistingNames(root)));
+
+            var outcome = flow.Start(root, parent, new ParallelSessionRequest("second", []));
+            Assert.Equal("payments (3)", outcome.Created!.Name);
+            documents[outcome.Created.SessionId].Dispose();
+        });
+
+        // And the window wires exactly that rule into the flow — never the first-counter default.
+        var dir = new DirectoryInfo(AppContext.BaseDirectory);
+        while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "AiDe.sln")))
+        {
+            dir = dir.Parent;
+        }
+
+        var window = File.ReadAllText(Path.Combine(dir!.FullName, "src", "AiDe.App", "MainWindow.xaml.cs"));
+        Assert.Contains("SessionConfigStore.UniqueName(name, AiDe.Core.Sessions.SessionConfigStore.ExistingNames(root))", window, StringComparison.Ordinal);
+    }
+
     private sealed class FixedTime(DateTimeOffset now) : TimeProvider
     {
         public override DateTimeOffset GetUtcNow() => now;

@@ -63,9 +63,8 @@ public partial class MainWindow : Window
         Shell.CommandRouter = _perspectives.Execute;
 
         // Ruling 95: a composer's "Start a parallel session" runs this flow — the window owns the
-        // binder and Recent sessions, the shell the documents. The name rule is Ruling 99's, owned
-        // by the Sessions lane: `SessionConfigStore.UniqueName(name, SessionConfigStore.ExistingNames(root))`
-        // replaces the first-counter default here once it lands.
+        // binder and Recent sessions, the shell the documents; the name rule is Ruling 99's, supplied
+        // below from the Sessions lane's SessionConfigStore.
         Shell.ParallelSessionStarter = StartParallelSession;
 
         // Keyboard commands bind to the window so they work wherever focus is inside it —
@@ -339,6 +338,7 @@ public partial class MainWindow : Window
             remember: config => Workbench.Sessions.RecentSessions.Remember(
                 ShellStateDirectory,
                 new Workbench.Sessions.RecentSessionEntry(config.SessionId, config.Name, config.WorkspaceId)),
+            uniqueName: name => AiDe.Core.Sessions.SessionConfigStore.UniqueName(name, AiDe.Core.Sessions.SessionConfigStore.ExistingNames(root)),
             availability: providers is null ? null : () => AiDe.Core.Sessions.CompileModeGate.Evaluate(providers.AdapterInstallRoot));
 
         var outcome = flow.Start(root, parentConfig, request);

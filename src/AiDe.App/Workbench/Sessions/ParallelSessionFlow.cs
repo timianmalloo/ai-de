@@ -28,9 +28,10 @@ public sealed record ParallelSessionOutcome(SessionConfig? Created, string Annou
 /// without a window and the window has one place to wire it.</para>
 ///
 /// <para><b>The name rule is Ruling 99's, not this type's.</b> <paramref name="uniqueName"/> is a
-/// seam the shell supplies — <c>SessionConfigStore.UniqueName(name, SessionConfigStore.ExistingNames(root))</c>
-/// once that lands from the Sessions lane; the default here, <c>"&lt;parent name&gt; (2)"</c>, is
-/// the rule's first counter and nothing more.</para>
+/// seam the window supplies — <c>SessionConfigStore.UniqueName(name, SessionConfigStore.ExistingNames(root))</c>,
+/// the Sessions lane's one function, so the sheet's default name, an operator-typed duplicate and a
+/// parallel session's name cannot drift; the default here, <c>"&lt;parent name&gt; (2)"</c>, is the
+/// rule's first counter for a caller with no store to ask.</para>
 /// </remarks>
 public sealed class ParallelSessionFlow
 {
@@ -46,7 +47,7 @@ public sealed class ParallelSessionFlow
     /// <param name="bind">Binds the sibling's composer to its run and returns what to announce (the window's binder).</param>
     /// <param name="composerOf">The composer of an open session's document, by session id (the shell's <c>SessionComposer</c>).</param>
     /// <param name="remember">Records the sibling in Recent sessions; null when this build keeps none.</param>
-    /// <param name="uniqueName">Ruling 99's rule over the parent's name; null for the first counter, <c>"&lt;name&gt; (2)"</c>.</param>
+    /// <param name="uniqueName">Ruling 99's rule over the parent's name (<c>SessionConfigStore.UniqueName</c> over the workspace's names); null for the first counter, <c>"&lt;name&gt; (2)"</c>.</param>
     /// <param name="availability">The compile-mode ladder's availability, for copying an agentic parent's mode; null leaves the sibling mechanical-only and says so.</param>
     /// <param name="time">Stamps the created session.</param>
     public ParallelSessionFlow(
@@ -78,7 +79,7 @@ public sealed class ParallelSessionFlow
         return "parallel:" + parentSessionId;
     }
 
-    /// <summary>Ruling 99's first counter, until the Sessions lane's rule is supplied.</summary>
+    /// <summary>Ruling 99's first counter — the default for a caller that supplies no rule.</summary>
     public static string FirstCounter(string parentName) => parentName + " (2)";
 
     /// <summary>Runs the flow once for one parent and one draft.</summary>
