@@ -231,10 +231,9 @@ public static class ConfigureProviderDialog
             var model = "not recorded";
             try
             {
-                // The catalog's default model for the engine (Ruling 104 (1)(e)) — the catalog row
-                // carries none today, so the file's model is the provider's known default, named
-                // here once, never silently.
-                model = DefaultModelFor(engine.Id);
+                // The catalog's default model for the engine (Ruling 104 (1)(e)): the row's own
+                // DefaultModel, observed on the engine's wire (DC-224 — one home for the model).
+                model = engine.DefaultModel ?? "not recorded";
                 var read = FirstUse.WriteProviderFile(
                     providerFilePath, providerId,
                     ProviderAuth.Subscription,
@@ -257,22 +256,6 @@ public static class ConfigureProviderDialog
         ReflectRoot();
         return body;
     }
-
-    /// <summary>
-    /// The model written for an engine at first use. The catalog carries no default model
-    /// (<c>EngineRow</c> has no such member on this tree), so the value is the one this machine's
-    /// file recorded (<c>claude-sonnet-5</c>, <c>~/.aide/providers.json</c>, read 2026-09-14) —
-    /// named here once, changeable in the file, never derived from the wire.
-    /// </summary>
-    internal static string DefaultModelFor(string engineId) => engineId switch
-    {
-        "claude-code" => "claude-sonnet-5",
-        "codex" => "gpt-6-astra",         // docs/spikes/engine-backends-2026-09-14.md §2: session/new's availableModels
-        "copilot" => "claude-sonnet-5",   // §1: models.currentModelId on this machine's login
-        "gemini" => "auto",               // §3: models.currentModelId (API-key path)
-        "grok" => "grok-4.6",             // §4: _meta.modelState.currentModelId
-        _ => "not recorded",
-    };
 
     private static TextBlock Label(string text)
     {

@@ -396,25 +396,15 @@ public sealed class NewSessionSheetViewModel
         return rows;
     }
 
-    /// <summary>Why the engine cannot launch now, or null when its resolved entry module is on disk.</summary>
+    /// <summary>
+    /// Why the engine cannot launch now, or null when it is installed — the catalog's one reading
+    /// (<see cref="EngineCatalog.InstallRefusal(string, string)"/>; DC-223: this sheet once read
+    /// <c>Arguments[0]</c> as the entry, which for a native row is <c>--acp</c>).
+    /// </summary>
     private static string? LaunchRefusal(string engineId, string? adapterInstallRoot)
-    {
-        if (adapterInstallRoot is null)
-        {
-            return "no adapter root — no provider file";
-        }
-
-        try
-        {
-            var launch = EngineCatalog.ResolveLaunch(engineId, adapterInstallRoot);
-            var entry = launch.Arguments[0];
-            return File.Exists(entry) ? null : $"adapter not installed: {entry} is not on disk";
-        }
-        catch (AgentPlaneException error)
-        {
-            return error.Message;
-        }
-    }
+        => adapterInstallRoot is null
+            ? "no adapter root — no provider file"
+            : EngineCatalog.InstallRefusal(engineId, adapterInstallRoot);
 
     /// <summary>
     /// What the sheet says about the lease. <b>A sentence, never a <c>Lease</c></b> (Ruling 42;

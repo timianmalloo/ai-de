@@ -350,9 +350,10 @@ public static class FirstUse
 
         stopwatch.Stop();
 
-        // "INSTALLED" IS ResolveLaunch's ENTRY ON DISK, never npm's exit code alone.
+        // "INSTALLED" IS THE CATALOG'S OWN READING (EngineCatalog.InstallRefusal — the sheet takes the
+        // same one; DC-223), never npm's exit code alone.
         var entry = EngineCatalog.ResolveLaunch(row.Id, root).Arguments[0];
-        var installed = File.Exists(entry);
+        var installed = EngineCatalog.InstallRefusal(row.Id, root) is null;
         var outcome = exitCode is null
             ? $"exit code not recorded (bound {timeout.TotalSeconds:0} s exceeded after {stopwatch.Elapsed.TotalSeconds:0.0} s); "
               + (installed ? $"{entry} is on disk" : $"{entry} is not on disk")
