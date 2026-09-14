@@ -3,3 +3,10 @@
 {"agent": "claude-lane-composer-95", "at": 1789408723.34599, "kind": "claim", "path": "src/AiDe.Core/Presentation/Sessions/SessionThread.cs", "seq": 3, "session": "composer-r95", "ttl": 120.0, "wi": "ruling-95"}
 {"agent": "claude-lane-composer-95", "at": 1789408723.4262903, "kind": "claim", "path": "src/AiDe.Core/Presentation/Sessions/RunChannelSessionThread.cs", "seq": 4, "session": "composer-r95", "ttl": 120.0, "wi": "ruling-95"}
 {"agent": "claude-lane-composer-95", "at": 1789408723.5079594, "kind": "claim", "path": "src/AiDe.Core/Presentation/Sessions/ThreadAnnouncementPolicy.cs", "seq": 5, "session": "composer-r95", "ttl": 120.0, "wi": "ruling-95"}
+{"agent": "claude-lane-composer-95", "at": 1789408990.0477355, "kind": "claim", "path": "src/AiDe.App/Workbench/Composer/ComposerSurface.cs", "seq": 6, "session": "composer-r95", "ttl": 180.0, "wi": "ruling-95"}
+{"agent": "claude-lane-composer-95", "at": 1789408990.157478, "kind": "claim", "path": "src/AiDe.App/Workbench/Composer/ComposerSendGate.cs", "seq": 7, "session": "composer-r95", "ttl": 180.0, "wi": "ruling-95"}
+{"agent": "claude-lane-composer-95", "at": 1789408990.2506664, "kind": "claim", "path": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs", "seq": 8, "session": "composer-r95", "ttl": 180.0, "wi": "ruling-95"}
+{"agent": "claude-lane-composer-95", "at": 1789408990.3486803, "kind": "claim", "path": "src/AiDe.App/Workbench/Sessions/TurnItem.cs", "seq": 9, "session": "composer-r95", "ttl": 180.0, "wi": "ruling-95"}
+{"agent": "claude-lane-composer-95", "at": 1789408990.4291935, "kind": "claim", "path": "src/AiDe.App/Workbench/Sessions/ThreadFeed.cs", "seq": 10, "session": "composer-r95", "ttl": 180.0, "wi": "ruling-95"}
+{"agent": "claude-lane-composer-95", "at": 1789408990.5087101, "kind": "claim", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 11, "session": "composer-r95", "ttl": 180.0, "wi": "ruling-95"}
+{"agent": "claude-lane-composer-95", "at": 1789408990.5849667, "kind": "claim", "path": "src/AiDe.App/MainWindow.xaml.cs", "seq": 12, "session": "composer-r95", "ttl": 180.0, "wi": "ruling-95"}

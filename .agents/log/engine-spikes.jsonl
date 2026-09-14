@@ -1,2 +1,3 @@
 {"agent": "engine-spikes", "at": 1789407669.224519, "kind": "session-start", "path": "-", "seq": 1, "session": "engine-spikes", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-side-engine-spikes"}
 {"agent": "claude-researcher-engines", "at": 1789407772.1251044, "kind": "session-start", "path": "-", "seq": 2, "session": "engine-spikes", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-side-engine-spikes"}
+{"agent": "claude-researcher-engines", "at": 1789409173.3107378, "kind": "session-end", "path": "-", "seq": 3, "session": "engine-spikes", "wi": "WI-0", "worktree": "C:/Projects/ai-de-side-engine-spikes"}

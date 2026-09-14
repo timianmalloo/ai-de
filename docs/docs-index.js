@@ -10674,6 +10674,51 @@ window.DOCS_INDEX = {
       "sourceSha256": "de30aa3e7abb60419e8e66713516a64814a1bce7272df2cc78f7e226ef5cffb4"
     },
     {
+      "id": "spike-engine-backends-2026-09-14",
+      "path": "docs/spikes/engine-backends-2026-09-14.md",
+      "title": "Spike — engine backends: copilot, codex, gemini, grok, Higgsfield (+ claude-code --ignore-scripts)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-14",
+      "reviewSuggested": [],
+      "summary": "Five engine spikes run 2026-09-14 on this machine (Windows 11, node v24.18.0, npm 12.0.2) plus the claude-code --ignore-scripts observation. Four engines speak ACP over stdio and answered initialize with protocolVersion 1: copilot 1.0.84-5 (native, `copilot --acp`), codex-acp 1.10.0 (adapter, entry dist/index.js, bundles codex 0.153.4), gemini-cli 0.58.0 (native, `--acp`; `--experimental-acp` is deprecated), and xAI Grok Build 1.0.30 (native, npm @xai-official/grok, `grok agent stdio`). Higgsfield is a REST API plus an MCP server, not an agent. Gemini's personal Google login is refused server-side since the Antigravity transition; only the API-key path opened a session. Every install survived --ignore-scripts; only grok declares a postinstall, and its bootstrap decompresses lazily on first run. Sign-in gestures were not performed.",
+      "tags": [
+        "spike",
+        "engines",
+        "acp",
+        "copilot",
+        "codex",
+        "gemini",
+        "grok",
+        "higgsfield",
+        "ruling-97",
+        "ruling-104",
+        "ruling-105"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-spec-errata-providers-json",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-spec-errata-policy",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e947246d0af19cff98a50406222c959d2799fe83ee77df83d5fc2fdca9fa7718"
+    },
+    {
       "id": "spike-layout-upgrade-roundtrip",
       "path": "docs/reviews/spike-layout-upgrade-roundtrip.md",
       "title": "Spike — layout round-trip across an app upgrade",
@@ -18436,5 +18481,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "4bf5a82870e42e9f5e2455f1c0d872b8f77924124aecd30fd693698733d3efa8"
+  "graphSha256": "dff03d73eb63a0c60f202042766a5115184a4a6dd6c8318079542e2e74e0c342"
 };
