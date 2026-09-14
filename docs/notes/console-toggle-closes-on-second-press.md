@@ -11,7 +11,8 @@ links:
   - { to: note-addendum-c-council-rulings, rel: refines }
   - { to: ui-review-operator-findings-2026-09-13, rel: relates-to }
 review-by: 2027-03-13
-review-suggested: []
+review-suggested:
+  - { by: proof-coding-recut-left-dock, on: 2026-09-13, reason: "SH-4.2 landed: Coding re-cut (Rulings 83/88/89), the console document, F-1's reconcile; inbound neighbours read the amended rows" }
 summary: >-
   Ruling 89 says "a second toggle focuses it"; SH-4.2 ships the toggle as an honest ToggleButton
   whose state is the Console document's open state — a second press closes it — because a toggle

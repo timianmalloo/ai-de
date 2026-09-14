@@ -14,3 +14,5 @@
   Passed AiDe.App.Tests.Shell.CodingsLeftExtentTests.CodingsLeftExtent_HoldsThe96chMeasureAtEveryViewportTheDisplayGives(width: 1440, height: 900) [161 ms]
  1440×900 requested, 1440×900 given: body 1369 · Left pane 771 · document 751 · words column 693 · 96ch = 672.6 · words 662.7 · longest word 58.8
 
+
+summary (artifacts/test-results/AiDe.App.Tests.trx, the same run): total="952" executed="952" passed="952" failed="0"

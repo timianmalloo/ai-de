@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T22:47:58Z",
+  "generated": "2026-09-14T00:43:23Z",
   "audit": [
     {
       "actor": null,
@@ -15288,6 +15288,61 @@ window.AUDIT_DATA = {
         "verification_path": true,
         "verification_executed": true,
         "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M2ENW8HCBHPB7XX34VCQEMAD",
+      "shortname": "sh-4-2-coding-recut-left-dock",
+      "datetime": "2026-09-14T00:43:07Z",
+      "session": "sh-4-2",
+      "prompt": "SH-4.2: Coding's re-cut and the left dock — a new session docks Left not maximized (Ruling 83; Ruling 47 superseded; NewSessionPlacement retired), CodingDefault Left empty · Center empty · Bottom one terminal collapsed (Ruling 88), the reconcile applies a drag while a collapsed zone holds panes or a stack is maximized (F-1, red-first), the console document's kind row and Center admission (Ruling 89, CV-5.2's seam request), the Center's two empty copies, the 96ch Left extent measured",
+      "summary": "SH-4.2 landed on lane/shell-sh4-2 (Rulings 83, 88, 89). A new session docks in Coding's Left zone, docked, Maximized == null, active in the view — the session-document kind row carries the zone rule (SurfaceKind.Zone) and OpenReferenceDocument reads it; NewSessionPlacement retired (no callers, then no type; the ComposerProbe replays end where main does). CodingDefault = Left empty at CodingLeftExtent (1.3/2.3) · Center empty · Bottom one terminal, collapsed — the terminal is not started until the rail expands (measured: terminal.start 0 → 1). The Center's empty copy is derived from the model at every render (CenterEmptyState): \"No session open.\" + New session (Ctrl+N chip, the catalog's accelerator) / \"The session is docked at the left.\" with no first action, the heading a Control-view focus target / \"Nothing open here.\" + the way out for a session that could not be restored (the island names the session and the same way out). F-1: TryMapByPosition anchors panes by identity (ILayoutPaneSerializable.Id written by BuildPane), then share-of-owned majority, the placeholder identifies the Center and never enters the model, collapsed-holding zones keep their content, a drop beside a rail joins and expands it, a bottom-edge drop joins the hidden Bottom, foreign vertical roots refused; ReadLayoutFromView knows the placeholder (the drag back was silently \"view-unreadable\"); the refusal sentence names no removed cause. Ruling 89 (CV-5.2's seam): the console kind row (Coding, Many, verb session.console, Zone Center), the View-menu verb, ConsoleDocumentHost hosts the session document's own Split in the Center and follows the read model, the toggle dispatches through Checked/Unchecked with ReflectConsole (honest state; a second press closes — a recorded deviation from Ruling 89's letter, the verb focuses), one per session, closes with its session through the adapter's SurfaceClosed, focus returns and \"Console closed.\" is announced. Coding's landing = the session at Left, else the Center's empty copy; PerspectiveShell.FocusLanding lands in the editor. Collapse is a hide, not a close: the adapter parks collapsed-holding content and gives it back on expand (the WPF lens's two Majors, red-first). L5/L6 measured on the composed tree at the design's startup size — MainWindow.xaml now opens at 1440 × 900 (it said 1180 × 720): body 1369, Left pane 771, words column 693 ≥ 96ch (672.6) + margin; ≥ 1 turn half visible (1 of 2 with the review fixture, 1 of 3 prose); the display is a 2560 × 1600 panel at 150 % so a 2560-DIP window is an attended row. DESIGN.md seam rows: the drop sentence reconciled to the P6 oracle (DC-196), the re-cut row, the \"≥ 3 turns\" row as a per-viewport measured threshold, the Copy row. Reviews: UX & Accessibility VETO HELD → CLEARED (loop 2), Test Architect VETO HELD → CLEARED (loop 2), WPF lens NO ESCALATION. Proof Pack docs/proof/coding-recut-left-dock.md with red records under docs/proof/records/sh-4-2/; decision note docs/notes/console-toggle-closes-on-second-press.md; a filing note under Ruling 89. Core 2632 / App 955 green; the verify gates green; Release rebuilt.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/coding-recut-left-dock.md",
+        "docs/proof/records/sh-4-2/red-core-reconcile-prefix-mapping.txt",
+        "docs/proof/records/sh-4-2/red-app-at-head-36b7210e-plus-9b5d1062.txt",
+        "docs/proof/records/sh-4-2/red-app-l5-l6-extent-mutation.txt",
+        "docs/proof/records/sh-4-2/red-app-parking-adapter-at-6cb916e4.txt",
+        "docs/notes/console-toggle-closes-on-second-press.md",
+        "src/AiDe.Core/Workbench/ZoneLayout.cs",
+        "src/AiDe.Core/Workbench/ZoneBackedLayoutService.cs",
+        "src/AiDe.App/Workbench/WorkbenchAdapter.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/Workbench/CenterEmptyState.cs",
+        "src/AiDe.App/Workbench/Sessions/ConsoleDocumentHost.cs",
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
+        "src/AiDe.App/Workbench/PerspectiveShell.cs",
+        "src/AiDe.App/MainWindow.xaml",
+        "DESIGN.md"
+      ],
+      "tags": [
+        "shell-lane",
+        "sh-4-2",
+        "ruling-83",
+        "ruling-88",
+        "ruling-89"
+      ],
+      "outcome": "success",
+      "goal": "Coding's re-cut and the left dock per Rulings 83/88/89: a new session docks Left (not maximized), NewSessionPlacement retired, CodingDefault = Left empty · Center empty · Bottom one terminal collapsed, the reconcile's blindness fixed (F-1), the console kind row + Center admission (C5), the Center's two copies, Coding's landing, the 96ch Left extent measured",
+      "done_when": "L1–L6, F-1, C5, the landing red → green; the gates green; the Proof Pack + the audit entry; pushed to lane/shell-sh4-2; Release rebuilt",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-13T22:51:26Z",
+      "duration_seconds": 6701.0,
+      "git": {
+        "sha": "0b372d93cf3811b0b9671f9e66119e0e4e7a82ae",
+        "short": "0b372d93c",
+        "branch": "lane/shell-sh4-2",
+        "pushed": null
       }
     }
   ],
