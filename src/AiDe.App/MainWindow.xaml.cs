@@ -62,6 +62,12 @@ public partial class MainWindow : Window
             Shell.Announcer);
         Shell.CommandRouter = _perspectives.Execute;
 
+        // Ruling 95: a composer's "Start a parallel session" runs this flow — the window owns the
+        // binder and Recent sessions, the shell the documents. The name rule is Ruling 99's, owned
+        // by the Sessions lane: `SessionConfigStore.UniqueName(name, SessionConfigStore.ExistingNames(root))`
+        // replaces the first-counter default here once it lands.
+        Shell.ParallelSessionStarter = StartParallelSession;
+
         // Keyboard commands bind to the window so they work wherever focus is inside it —
         // a layout command that only fires when a pane happens to be focused is not keyboard
         // operable in any useful sense. Bound AFTER the router is set, so a gesture reaches the
@@ -298,6 +304,46 @@ public partial class MainWindow : Window
             });
 
         return (await flow.StartAsync()).Announcement;
+    }
+
+    /// <summary>
+    /// <i>Start a parallel session</i> (Ruling 95): the parent's config as it reads now, the flow
+    /// over the shell's open, this window's binder and Recent sessions; a malformed provider file
+    /// refuses before anything is created, as New Session does.
+    /// </summary>
+    private Workbench.Sessions.ParallelSessionOutcome StartParallelSession(
+        Workbench.Sessions.SessionDocumentSurface parent, Workbench.Composer.ParallelSessionRequest request)
+    {
+        if (ReadProviders() is { } malformed)
+        {
+            return new Workbench.Sessions.ParallelSessionOutcome(null, malformed, malformed);
+        }
+
+        var root = (DataContext as MainWindowViewModel)?.WorkspaceRoot ?? parent.Model.WorkspaceRoot;
+        AiDe.Core.Sessions.SessionConfig parentConfig;
+        try
+        {
+            parentConfig = new AiDe.Core.Sessions.SessionConfigStore(root, parent.Model.SessionId).Load();
+        }
+        catch (Exception error) when (error is System.IO.IOException or System.Text.Json.JsonException or InvalidOperationException)
+        {
+            var reason = $"“{parent.Model.Title}” could not be read from its workspace, so no session can be derived from it.";
+            return new Workbench.Sessions.ParallelSessionOutcome(null, reason, reason);
+        }
+
+        var providers = _providers;
+        var flow = new Workbench.Sessions.ParallelSessionFlow(
+            open: Shell.OpenSessionDocument,
+            bind: config => BindComposer(config, RoutableBackendsOf(config), taskClass: null),
+            composerOf: Shell.SessionComposer,
+            remember: config => Workbench.Sessions.RecentSessions.Remember(
+                ShellStateDirectory,
+                new Workbench.Sessions.RecentSessionEntry(config.SessionId, config.Name, config.WorkspaceId)),
+            availability: providers is null ? null : () => AiDe.Core.Sessions.CompileModeGate.Evaluate(providers.AdapterInstallRoot));
+
+        var outcome = flow.Start(root, parentConfig, request);
+        RebuildMenu();
+        return outcome;
     }
 
     /// <summary>

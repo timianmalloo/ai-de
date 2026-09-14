@@ -622,15 +622,17 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     }
 
     /// <summary>
-    /// Raised when the operator chooses <i>Start a parallel session</i> (Ruling 95): the draft's
-    /// words and its attachments, for the shell to open a derived sibling session and send them as
-    /// its first turn. The parent's draft is consumed by the handler, never here.
+    /// <i>Start a parallel session</i>'s seam (Ruling 95): the shell takes the draft's words and
+    /// attachments, opens a derived sibling session and sends them as its first turn, and returns
+    /// null — or the reason it did not, in which case the words stay here. Null when this composer
+    /// has no shell (a document built alone), which is its own refusal.
     /// </summary>
-    public event Action<ParallelSessionRequest>? ParallelRequested;
+    public Func<ParallelSessionRequest, string?>? ParallelStarter { get; set; }
 
     /// <summary>
-    /// Why <i>Start a parallel session</i> is refused, or null when it is available. Set by the
-    /// shell from what it measured or can do — a composer never decides this from its own state.
+    /// Why <i>Start a parallel session</i> is refused before the shell is asked, or null when it is
+    /// available. Set by the shell from what it measured or can do (Ruling 95 condition 1) — a
+    /// composer never decides this from its own state.
     /// </summary>
     public string? ParallelRefusal { get; set; }
 
@@ -1023,14 +1025,19 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             return;
         }
 
-        if (ParallelRequested is null)
+        if (ParallelStarter is null)
         {
             SetStatus("a parallel session needs the shell; this composer has none", Urgency.Assertive);
             return;
         }
 
         var request = new ParallelSessionRequest(_draft.SourceText, [.. _draft.Attachments]);
-        ParallelRequested.Invoke(request);
+        if (ParallelStarter(request) is { } notStarted)
+        {
+            // The words stay here: nothing was sent on their behalf.
+            SetStatus(notStarted, Urgency.Assertive);
+            return;
+        }
 
         // THE PARENT'S DRAFT IS CONSUMED (Ruling 95): its words now belong to the sibling's first turn.
         BeginNextTurn();

@@ -75,6 +75,13 @@ public sealed class WorkbenchShell : IDisposable
     // and a factory that built one per render would build a second composer and a second console on
     // every re-render — the DC-029 shape, and here it would also strand the stream a lane is writing
     // into.
+    /// <summary>
+    /// <i>Start a parallel session</i> (Ruling 95): the window supplies the flow — it owns the
+    /// binder and Recent sessions — and the shell hands every registered document's composer a
+    /// starter that runs it. Null means this build cannot start one, which the composer says.
+    /// </summary>
+    internal Func<Sessions.SessionDocumentSurface, Composer.ParallelSessionRequest, Sessions.ParallelSessionOutcome>? ParallelSessionStarter { get; set; }
+
     private readonly Dictionary<string, Sessions.SessionDocumentSurface> _sessionDocuments =
         new(StringComparer.Ordinal);
 
@@ -3299,6 +3306,11 @@ public sealed class WorkbenchShell : IDisposable
             // toggle's other half closes it, and its name says where the Console now lives.
             document.ConsoleRequested = ordinal => Announcer.Announce(OpenSessionConsole(document, ordinal));
             document.ConsoleDismissed = () => Announcer.Announce(CloseSessionConsole(document));
+
+            // Ruling 95: the composer's "Start a parallel session" runs the window's flow — a derived
+            // sibling session, opened docked beside this one, the draft sent as its first turn — and
+            // gets back the reason when the words could not be sent, so they stay in this editor.
+            document.Composer.ParallelStarter = request => StartParallelSession(document, request);
             AutomationProperties.SetName(document.ConsoleToggle, Sessions.ConsoleDocumentHost.ToggleName);
             AutomationProperties.SetHelpText(document.ConsoleToggle, Sessions.ConsoleDocumentHost.ToggleHelp);
 
@@ -3313,6 +3325,22 @@ public sealed class WorkbenchShell : IDisposable
         }
 
         return surfaceId;
+    }
+
+    /// <summary>
+    /// Runs the window's parallel-session flow for <paramref name="parent"/>'s draft (Ruling 95) and
+    /// announces its outcome; returns the refusal the composer shows when the words were not sent.
+    /// </summary>
+    private string? StartParallelSession(Sessions.SessionDocumentSurface parent, Composer.ParallelSessionRequest request)
+    {
+        if (ParallelSessionStarter is null)
+        {
+            return "this build cannot start a parallel session";
+        }
+
+        var outcome = ParallelSessionStarter(parent, request);
+        Announcer.Announce(outcome.Announcement);
+        return outcome.Refusal;
     }
 
     /// <summary>
