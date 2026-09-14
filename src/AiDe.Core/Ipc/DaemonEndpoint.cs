@@ -194,6 +194,7 @@ public sealed class DaemonEndpoint
         {
             if (_publications.Count >= AtlasReadBudget.MaxActive)
                 throw new AtlasReadException("Atlas.Busy", "Publication capacity is occupied.");
+            operation.RegisterPublication();
             _publications.Add(response, new Publication(peer, operation));
         }
     }
@@ -212,8 +213,12 @@ public sealed class DaemonEndpoint
                 cancellationToken.ThrowIfCancellationRequested();
                 publication.Operation.Commit();
             }
-            await publication.Operation.DisposeAsync().ConfigureAwait(false);
-            lock (_publicationGate) _publications.Remove(response);
+            if (rejected is not null)
+            {
+                publication.Operation.CancelPublication();
+                await publication.Operation.DisposeAsync().ConfigureAwait(false);
+                lock (_publicationGate) _publications.Remove(response);
+            }
         }
         return rejected ?? response;
     }
@@ -223,6 +228,25 @@ public sealed class DaemonEndpoint
         Publication? publication;
         lock (_publicationGate) _publications.TryGetValue(response, out publication);
         if (publication is null) return;
+        publication.Operation.CancelPublication();
+        using var cleanup = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+        await publication.Operation.WriterFinished.WaitAsync(cleanup.Token).ConfigureAwait(false);
+        await publication.Operation.DisposeAsync().ConfigureAwait(false);
+        lock (_publicationGate) _publications.Remove(response);
+    }
+
+    internal CancellationToken PublicationCancellation(IpcResponse response)
+    {
+        lock (_publicationGate)
+            return _publications.TryGetValue(response, out var publication) ? publication.Operation.Token : default;
+    }
+
+    internal async ValueTask FinishResponseWriteAsync(IpcResponse response)
+    {
+        Publication? publication;
+        lock (_publicationGate) _publications.TryGetValue(response, out publication);
+        if (publication is null) return;
+        publication.Operation.FinishWriter();
         await publication.Operation.DisposeAsync().ConfigureAwait(false);
         lock (_publicationGate) _publications.Remove(response);
     }
@@ -230,19 +254,28 @@ public sealed class DaemonEndpoint
     public async ValueTask ConnectionEndedAsync(IpcPeer peer, AtlasConnectionEndReason reason, CancellationToken cleanupToken)
     {
         List<Exception>? failures = null;
+        var cleanupTasks = new List<Task>();
         try
         {
+            _capabilities.RevokeConnection(peer.ConnectionId);
+            // Start every invalidation before awaiting cleanup: a writer must see revocation
+            // while Stop awaits the writer's own completion signal.
+            foreach (var handler in _ended)
+            {
+                try { cleanupTasks.Add(handler(peer, reason, cleanupToken).AsTask()); }
+                catch (Exception exception) { (failures ??= []).Add(exception); }
+            }
             IpcResponse[] pending;
             lock (_publicationGate)
                 pending = _publications.Where(pair => pair.Value.Peer.ConnectionId == peer.ConnectionId).Select(pair => pair.Key).ToArray();
             foreach (var response in pending)
             {
-                try { await DiscardResponseAsync(response).ConfigureAwait(false); }
+                try { cleanupTasks.Add(DiscardResponseAsync(response).AsTask()); }
                 catch (Exception exception) { (failures ??= []).Add(exception); }
             }
-            foreach (var handler in _ended)
+            foreach (var task in cleanupTasks)
             {
-                try { await handler(peer, reason, cleanupToken).ConfigureAwait(false); }
+                try { await task.ConfigureAwait(false); }
                 catch (Exception exception) { (failures ??= []).Add(exception); }
             }
         }
