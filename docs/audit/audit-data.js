@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T15:24:47Z",
+  "generated": "2026-09-14T17:12:17Z",
   "audit": [
     {
       "actor": null,
@@ -15655,6 +15655,35 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T15:16:30Z",
       "duration_seconds": 496.0
+    },
+    {
+      "id": "al-01M2GEFG1Q6TE5ACWCVKXGJMZD",
+      "shortname": "lane-composer-r96-r100-r101",
+      "datetime": "2026-09-14T17:12:17Z",
+      "session": "composer-r96-r100-r101",
+      "prompt": "You are a lane node of the AI-DE Conductor programme (repo root C:\\projects\\ai-de; the pack's rules in C:\\projects\\ai-de\\AGENTS.md apply). Work ONLY in your worktree C:\\Projects\\ai-de-lane-composer-r96-r100-r101 on branch lane/composer-r96-r100-r101 (based on main dda140ba).",
+      "summary": "Three commits on lane/composer-r96-r100-r101 (base dda140ba): 170d0366 Ruling 96, b77a39f5 Ruling 101, d8c48356 Ruling 100; the proof doc docs/proof/composer-compiled-prompt-and-console-rows.md. F-E's measured cause (Ruling 96 condition 1, at the operator's belt 489.5 x 517.13, 1 turn, the one-line message, through the header's own click): toggle checked True, CompiledPromptOpen False, _compiled.IsArrangeValid False, ActualHeight 0.00, Text.Length 69, the lines panel 181.92 unchanged - the height was zero, the text present. Both disclosure templates (ThreadFeed.DisclosureStyle, ToolDisclosureStyle) bound the HeaderSite toggle's IsChecked to Expander.IsExpanded with a one-way TemplateBinding, so a click rotated the chevron and never set IsExpanded; the ExpandSite trigger never fired; EmitLayout (SizeChanged-only) wrote nothing - the ledger's compiled null. Fixed with the stock two-way binding; subordinate: the box had no MinHeight of its own (29.89 px under its 48 floor when opened by the property) - the floor is on the box now; the open state persists per session document (model + envelope, same schema version, saved on toggle, restored on reopen). Ruling 101: TextOf reads content[] (first text line · total bytes; the no-text form over the item types), rawOutput in the same form, the zero-item form for a result with nothing - the kind is never a tool result's body; DC-187 kept; ToolFacts.ContentTexts the one reader. Ruling 100: ConversationItems.BookkeepingKinds = acp.session.update.usage_update, acp.session.update.available_commands_update (observed through the mapper over read.jsonl); never items, never in the fold; Rows unchanged (M1 green). Red-first on every control (messages in the proof doc). Tests executed before -> after: App 955 -> 957, Core 2636 -> 2640; verify-test-run --update not run (the conductor's). Findings, not changed: two new classes (composer a: a template toggle bound one-way to the state it drives; composer b: a floor kept as an addend in the parent's arithmetic, never on the element); the fenced first line of write.jsonl:13; the pre-existing s-terminal start-without-stop in SurfaceContentTests (10/9 in every full App run, other agents' too); coord doctor's 8 owed regenerations at base; the outcome line's event count vs the fold's; the census probe never opens the disclosure.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/composer-compiled-prompt-and-console-rows.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land the Owner's Rulings 96, 101 and 100 as three commits (96 · 101 · 100) on lane/composer-r96-r100-r101, each ruling's CONDITIONS met by red-first tests.",
+      "done_when": "Each ruling's CONDITIONS met by tests observed red then green; dotnet test for AiDe.App.Tests and AiDe.Core.Tests pass with counts recorded before and after; run-verify-gates.py green on the committed tree; docs/proof/composer-compiled-prompt-and-console-rows.md exists with the Ruling 96 condition-1 measurement, red-first evidence per ruling, attended rows and residual risk; the branch pushed; an audit entry appended; coord session ended; the report given.",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-14T16:31:04Z",
+      "duration_seconds": 2473.0
     }
   ],
   "changes": [

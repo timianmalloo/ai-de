@@ -15213,6 +15213,55 @@ window.DOCS_INDEX = {
       "sourceSha256": "b629c18cfb8ef2d80a5c62cbeb57c195d5ca24a1713503c9c66bf40bc74bcfa4"
     },
     {
+      "id": "proof-composer-compiled-prompt-and-console-rows",
+      "path": "docs/proof/composer-compiled-prompt-and-console-rows.md",
+      "title": "Proof Pack — Rulings 96, 101, 100: the compiled prompt opens on its header's click and keeps its floor (its open state the document's); a tool-result row never reads its kind twice; the two bookkeeping kinds are Console-only",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [],
+      "summary": "Lane composer-r96-r100-r101 on main dda140ba. Ruling 96 (F-E): measured at the operator's belt (489.5 × 517.13, 1 turn, their one-line message) through the header's own click, the compiled box's height was 0 (IsArrangeValid false) while its text was present (69 chars) — both disclosure templates bound the header toggle to IsExpanded one-way (TemplateBinding), so a click rotated the chevron and opened nothing; the box also had no floor of its own (29.89 px under 48 when opened by the property). Fixed, with the open state persisted per session document. Ruling 101: a tool.result row reads content[]'s first text line and byte count, rawOutput in the same form, the no-text form otherwise — never its kind. Ruling 100: usage_update and available_commands_update are a named constant of two, Console-only, never in the fold. Three commits, red-first each; App 955 → 957, Core 2636 → 2640 executed.",
+      "tags": [
+        "proof-pack",
+        "conversation-lane",
+        "composer",
+        "console",
+        "thread",
+        "ruling-96",
+        "ruling-100",
+        "ruling-101",
+        "ruling-57",
+        "ruling-74",
+        "ruling-81",
+        "ruling-82",
+        "dc-187",
+        "red-first",
+        "measurement"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-composer-as-conversation",
+          "rel": "refines"
+        },
+        {
+          "to": "proof-console-coalesce",
+          "rel": "refines"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1112706ed8ecb3117e25a4ffa116b9e4cb0ad8dc6a0ba05cdb16b280ad2b2b00"
+    },
+    {
       "id": "proof-composer-entry-areas",
       "path": "docs/proof/composer-entry-areas.md",
       "title": "Proof Pack — the composer's entry areas keep their room, and the page survives a render (INV-0007, phases 1–4)",
@@ -18212,5 +18261,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "0205ad626910271ad56a19db082854a4cba4ee0fa7b1e5ae8f4e650a0b88a007"
+  "graphSha256": "b8899757088701060dfae660a572f96b0a8df2dfc551e35ecb68b7b0b160a13b"
 };
