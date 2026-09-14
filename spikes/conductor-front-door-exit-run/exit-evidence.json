@@ -1,0 +1,94 @@
+{
+  "schema": "front-door-exit-evidence/1",
+  "oracleCommit": "1374401d171b1ec6be5d56c25b1d1e00608abc18",
+  "runStartedAtUnix": 1789401688,
+  "attended": {
+    "by": "operator",
+    "words": "consider F5 done",
+    "observed": "the operator's report, 2026-09-14",
+    "gesture": "File → New Session (session.open carries origin main-menu.new-session), then one prompt sent from the composer",
+    "prompt_opening": "review the last specification we built... \npivoting the terrace to a public cont",
+    "session": "20260914T160128Z-c9c0e19a",
+    "run": "run-9a0cff77",
+    "outcome": "Completed",
+    "build": "1.0.0+51e806f8eba8dea751834b9fe716aea1aa606b42",
+    "frames": "not recorded",
+    "ruling": "Ruling 103 (docs/notes/addendum-c-council-rulings.md), with the conductor's reconciliation note"
+  },
+  "clause1": {
+    "sessionOpenOrigin": "main-menu.new-session",
+    "companionOrigin": "not recorded",
+    "companionSession": "not recorded",
+    "companionTest": "ASessionConstructedDirectlyReadsTheOtherValue",
+    "scanTest": "ExactlyOneSiteInSrcCanStampTheFrontDoorOrigin"
+  },
+  "clause2": {
+    "composerSendCount": 1,
+    "compiledViewSha256": "69f77304189f8e8101859e8dbe85eca37a51547eb213b7702a367378305a8601",
+    "projectionSha256": "2488ea61977d718eaad8b1872a5a312f61f7bd6740c0ffc74821526a1bff130f",
+    "promptSha256": "not recorded",
+    "activeModeId": "explore",
+    "consoleRowsRendered": "not recorded",
+    "terminalModeBuilt": false
+  },
+  "clause3": {
+    "scored": false,
+    "segmentIsComparable": "not recorded",
+    "incomparableReason": "no scored_episode_cell row: the envelope's consumed row reads episode_id 'not recorded'",
+    "readFrom": "scored_episode_cell",
+    "storeRow": null
+  },
+  "clause4": {
+    "terminalHostConstructions": 0,
+    "falsifierTest": "AnOpenLedgerCountsARealTerminalHostConstruction",
+    "falsifierObservedConstructions": 1
+  },
+  "clause5": {
+    "compositionRoots": "not recorded",
+    "launchedBy": "src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs",
+    "governedRunRequestSites": 2
+  },
+  "clause6": {
+    "eventsObserved": "not recorded",
+    "latencyMeasured": "not recorded",
+    "latencyP50Ms": "not recorded",
+    "latencyP95Ms": "not recorded",
+    "latencyHost": "TimmallStrix"
+  },
+  "clause7": {
+    "residualsSource": "docs/notes/front-door-residuals-carried.md"
+  },
+  "clause8": {
+    "enginesExercised": [
+      "claude-code"
+    ],
+    "refusalTests": [
+      "ANonAdapterModeIsRefusedWithANamedReason",
+      "AnAdapterWithNoObservedEntryModuleIsRefusedRatherThanGuessed"
+    ]
+  },
+  "clause9": {
+    "repositoryRootShape": "primary-checkout",
+    "repositoryRoot": "C:\\Projects\\TheTerrace",
+    "qualification": ""
+  },
+  "sources": {
+    "clause1.sessionOpenOrigin": "C:\\Projects\\TheTerrace\\.aide\\sessions\\20260914T160128Z-c9c0e19a\\session-events.jsonl seq 1 Body.origin",
+    "clause1.companionOrigin": "no session under C:\\Projects\\TheTerrace\\.aide\\sessions other than the front-door one carries session.open.origin; the sessions that predate the F5 build carry no origin key at all",
+    "clause2.composerSendCount": "C:\\Projects\\TheTerrace\\.aide\\sessions\\20260914T160128Z-c9c0e19a\\envelope-events.jsonl: accepted `submitted` rows",
+    "clause2.compiledViewSha256": "C:\\Projects\\TheTerrace\\.aide\\sessions\\20260914T160128Z-c9c0e19a\\envelope-events.jsonl submitted.text_sha256",
+    "clause2.promptSha256": "no artefact records the bytes handed to session/prompt separately from the compiled view",
+    "clause2.consoleRowsRendered": "no artefact counts Console rows; the ledger's thread.layout rows count layout passes",
+    "attended.build": "C:\\Users\\malla\\AppData\\Local\\AiDe\\logs\\workbench-20260914.log last app.start before session.open",
+    "clause4.terminalHostConstructions": "C:\\Users\\malla\\AppData\\Local\\AiDe\\logs\\workbench-20260914.log terminal.start rows between session.open and the envelope's consumed row",
+    "clause2.activeModeId": "C:\\Users\\malla\\AppData\\Local\\AiDe\\logs\\workbench-20260914.log last shell.mode row in the run's window",
+    "clause9.repositoryRoot": "C:\\Users\\malla\\AppData\\Local\\AiDe\\logs\\workbench-20260914.log session-document.bound.repositoryRoot",
+    "clause3.storeRow": "C:\\Users\\malla\\AppData\\Local\\AiDe\\workspaces\\aide.31abcd25046a4df98d65044abb06f0f5\\watcher.db scored_episode_cell where episode_id = the envelope's consumed.episode_id (not recorded)",
+    "clause9.repositoryRootShape": "git -C C:\\Projects\\TheTerrace rev-parse --git-common-dir / --show-toplevel",
+    "clause4.falsifierObservedConstructions": "dotnet test tests/AiDe.Core.Tests --filter AnOpenLedgerCountsARealTerminalHostConstruction on dda140ba at 2026-09-14T16:43:37+00:00: Passed — the test asserts one construction",
+    "clause5.governedRunRequestSites": "dotnet test tests/AiDe.App.Tests --filter C16_ExactlyTwoSitesInTheProductConstructAGovernedRunRequest on dda140ba at 2026-09-14T16:43:37+00:00: Passed — the test asserts exactly two sites",
+    "clause8.enginesExercised": "C:\\Projects\\TheTerrace\\.aide\\sessions\\20260914T160128Z-c9c0e19a\\session.json EnabledBackends",
+    "clause6.latencyHost": "socket.gethostname() of the machine holding the ledger — the run's host by the ledger's location",
+    "clause5": "the composition-root ledger and the C16 site count are test-time observations, not run artefacts; recorded by the verifier's attended run when it executes those tests"
+  }
+}

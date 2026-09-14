@@ -11,13 +11,14 @@ One definition of the runner (DM7): if the runner has a defect, the fix lands in
 
 Per-gate arguments this repository needs (the pack runner runs every gate argument-free):
   verify-test-run.py                  --no-run     it reads the last trx files; bare, it runs the suite
-  verify-front-door-exit-evidence.py  --self-test  F5's oracle reads the exit-evidence record the
-                                                   operator's File -> New Session gesture writes
-                                                   (Ruling 49; Ruling 91 merged the branch before that
-                                                   gesture). Until the record exists the bare run is a
-                                                   finding, not a red: CI wires only the self-test, and
-                                                   so does this line. The day the record lands, remove
-                                                   this row and the oracle runs bare here too.
+  verify-front-door-exit-evidence.py  --self-test  F5's nine-clause oracle, byte-identical to its
+                                                   commit 1374401d (its clause 0 demands that), so it
+                                                   keeps proving it can fail and is never edited. The
+                                                   record landed 2026-09-14 on the operator's word
+                                                   (Ruling 103); the BARE reading of it is the
+                                                   sibling gate verify-front-door-exit-attended.py,
+                                                   which runs argument-free here and reports each
+                                                   clause MET / NOT MET from the untouched oracle.
 
 Every other argument (`--skip`, `--dir`, `--budget`, `--self-test`, ...) is passed through.
 Exit status is the pack runner's: 0 when every gate passed, 1 when any failed, 2 on a usage error.

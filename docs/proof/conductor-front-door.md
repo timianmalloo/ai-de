@@ -47,7 +47,7 @@ summary: >-
 | **Oracle commit** | `1374401d171b1ec6be5d56c25b1d1e00608abc18`, committed `2026-09-11T06:36:24-07:00` (`%ct` 1789133784) |
 | **Oracle integrity** | **Held across three merges of `main`** — `39bcf288`, `be68ca1c`, `4b9dd779`. `git diff 1374401d HEAD -- tools/verify-front-door-exit-evidence.py` is **empty** after each — the bytes running are the bytes committed. The branch was merged, never rebased, every time (DC-128) |
 | **Oracle reachability** | **Pinned by the annotated tag `f5-oracle-frozen`**, pushed. `git rev-parse f5-oracle-frozen^{commit}` → `1374401d171b1ec6be5d56c25b1d1e00608abc18`, and the oracle's bytes at the tag are identical to the bytes running. **Not decoration.** The commit was reachable *only* from `feature/exit-evidence`; a squash-merge, a rebase, or deleting the branch after merge would have left it unreferenced and, at the next `gc`, gone — and clause 0 would then be **unverifiable rather than false, which is worse**, because a control that cannot run reads like one that passed. A tag is a ref, refs make objects reachable, and `gc` never collects what is reachable, so clause 0 no longer depends on anyone remembering a merge strategy. **This repository had no tags at all before this one.** DC-128 covers *"a cited commit proves existence, not immutability"*; this covers the half DC-128 does not — that the cited commit is still **there** to compare against |
-| **Run started** | `RUN-PENDING` — awaiting the operator's `File → New Session` gesture under **Ruling 49**. See *The exit run did not happen*, Part 3 |
+| **Run started** | 2026-09-14T16:01:28Z on build `1.0.0+51e806f8`, the operator's own `File → New Session` (Ruling 49; closed on their word, Ruling 103) — readings in *The gesture happened* |
 | **Ordering evidence** | Vacuous but not absent: the oracle predates any run because **there is no run yet**. Clause 0's byte comparison is the half that carries weight without one, and it holds |
 | **Blind spot, closed from outside** | Clauses 2 and 5 cannot tell a product-wired composer from a harness-wired one. **The frozen oracle was not widened** — `TheRunBindingComesFromTheProviderFileTests.TheShellConstructsOneRegistryOneSendContextAndOneAttachmentGate` asserts exactly one `composer.Configure(` in the shell, which settles it from outside clause 0's pinned bytes |
 | **Falsifier suite** | `TheSessionOriginIsSetOnlyOnTheCommandPathTests`, `TerminalHostingLedgerTests`, `TheOneCompositionRootIsCountedTests` — each resolved to a declaration under `tests/`, not quoted from memory. The third read `TheRunHasOneCompositionRootTests` until this close, and **no class of that name has ever existed** |
@@ -67,12 +67,12 @@ Each row is one §F5 clause. **Residual** names a measurement or an explicit unc
 every row — never "none", which is the shape this clause exists to refuse: *"populated" is satisfied
 by "none" in every cell*.
 
-**Clauses 1, 4, 7 and 8 are discharged. Clauses 2, 3, 5, 6 and 9 read `RUN-PENDING`** — and the reason
+**After the gesture: clauses 0, 4, 7, 8 and 9 read MET; clause 1 MET for the origin and NOT MET for the companion; clauses 2, 3, 5 and 6 read NOT MET** because the product recorded nothing for them (*The gesture happened*, 2026-09-14). Before it, clauses 2, 3, 5, 6 and 9 read `RUN-PENDING` — and the reason
 has changed twice, which is why each state is written down rather than left to be assumed. Until
 `be68ca1c` the product **could not** send from the front door at all; F6 closed that; and under
 **Ruling 49** what remains is a single input no code can supply — **the operator's own
 `File → New Session` gesture**. All three states, with the observations behind them, are in *The exit
-run did not happen* below (Parts 1, 2, 3). Read it before quoting any `RUN-PENDING` cell as merely
+run did not happen* below (Parts 1, 2, 3). Read it before quoting any NOT MET cell as merely
 "not yet done", and note that **Part 1's blocker is no longer true of this tree**.
 
 **If that gesture is not performed, clause 1 is `NOT DEMONSTRATED` and the exit is `NOT MET`.** No
@@ -81,14 +81,14 @@ row in this pack should be read as evidence the front door works until one recor
 | # | Clause | Evidence | Oracle (why it can fail) | Red observed | Confidence | Residual |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | **Started from `File → New Session`, machine-checkably** — `session.open` carries an `origin` set only on the `Ctrl+N` / `MainMenuBuilder` path | `TheSessionOriginIsSetOnlyOnTheCommandPathTests` (3 cases) + the exit run's own `session-events.jsonl` | The **companion**: a session constructed directly reads `direct`. A field that is always the same value distinguishes nothing | **Yes**, both halves — see *Falsifiers observed red* | Verified | **Named uncovered input:** the scan bounds the front-door value to two files in `src/`; it cannot see a *third* production path that reaches `SessionConfigStore.Create` and simply leaves `origin` at its default. That path would read `direct` and be indistinguishable from a test — the guard is over *claiming* the front door, not over *reaching* the store |
-| 2 | **Composed in the composer, streamed in Console mode** | `RUN-PENDING` | The bytes sent are the bytes the composer rendered (digest equality), the active canvas mode is `console`, and the console rendered ≥ 1 row | `RUN-PENDING` | `RUN-PENDING` | **Measured:** `terminalModeBuilt == false` over the run. Ruling 45's exposure is real but untaken — see the Ruling 45 residual below |
-| 3 | **Scored end-to-end**, cell `IsComparable == true`, read from `scored_episode_cell` | `RUN-PENDING` | `scored`, `segmentIsComparable`, a null `incomparableReason`, and an actual store row — a verdict with no row is a claim | `RUN-PENDING` | `RUN-PENDING` | **Named uncovered input:** one cell, one task class, one engine. Comparability across cohorts is not exercised, and `LaneCohort`'s axes are proven by unit test rather than by a second live run |
-| 4 | **`terminalHostConstructions == 0`**, with N7's companion falsifier carried forward verbatim | `RUN-PENDING` for the zero; `TerminalHostingLedgerTests.AnOpenLedgerCountsARealTerminalHostConstruction` for the one | A counter nothing increments reads 0 forever. The same counter is shown reading **1** against a real ConPTY | **Yes** — the run's own predicate applied to a run that did host a terminal | Verified (falsifier) | **Measured:** the ledger counts the *attempt*, opened before interop, so a failed construction still counts. It is **activity-shaped, not name-shaped** — an `ActivityListener` on `aide.terminal.runtime` counting `terminal.start` — so it does not share the blind spot that made a process census match on names and report zero AI-DE hosts wrongly. **Measured uncovered input, no longer hypothetical:** a terminal hosted by a *child process* emits on that process's `ActivitySource` and is invisible here. Observed instance: a full `verify-test-run.py` creates **~42 ConPTY conhosts and ~21 `msedgewebview2`** and reaps all of them, while each build leaves exactly **one** orphaned `VBCSCompiler.exe` holding a conhost — **none of which this ledger can see**. For *this* run the exposure is bounded by reading both spawn sites: `GovernedRunHost` starts only `AcpEngineProcess` (node) and `WorktreeProvisioner` (git/coord), and **both set `CreateNoWindow = true`, `UseShellExecute = false` with all streams redirected**; no daemon is on this path |
-| 5 | **Launched through the same composition root `GovernedRunHost` uses** — no second entry point (Ruling 13), asserted by a ledger counting roots | `RUN-PENDING` | `Roots == 1`, the launch site is under `src/`, and exactly 2 sites construct a `GovernedRunRequest` (C16) | `RUN-PENDING` | `RUN-PENDING` | **Named uncovered input:** the ledger counts roots *entered in this process*. A second entry point in a **separate process** is outside its window, and C16's two-site cap is a source scan, not a runtime one |
-| 6 | **Recorded measurement**: event count, p50/p95, **host named** — recorded per ADR-0029, never asserted | `RUN-PENDING` | Presence, a named host, and an absent measurement reading `not recorded` rather than `0`. **No comparison to a constant** — that is DC-107 | `RUN-PENDING` | Recorded, not asserted | **Measured and bounded:** the figures measure *in-process normalization only*, on one host, on one run. They are **no evidence** about a loaded machine or a lane whose events cross a process boundary — ADR-0029 says so in its own consequences |
+| 2 | **Composed in the composer, streamed in Console mode** | NOT MET — see *The gesture happened* (2026-09-14) | The bytes sent are the bytes the composer rendered (digest equality), the active canvas mode is `console`, and the console rendered ≥ 1 row | NOT MET — see *The gesture happened* (2026-09-14) | NOT MET — see *The gesture happened* (2026-09-14) | **Measured:** `terminalModeBuilt == false` over the run. Ruling 45's exposure is real but untaken — see the Ruling 45 residual below |
+| 3 | **Scored end-to-end**, cell `IsComparable == true`, read from `scored_episode_cell` | NOT MET — see *The gesture happened* (2026-09-14) | `scored`, `segmentIsComparable`, a null `incomparableReason`, and an actual store row — a verdict with no row is a claim | NOT MET — see *The gesture happened* (2026-09-14) | NOT MET — see *The gesture happened* (2026-09-14) | **Named uncovered input:** one cell, one task class, one engine. Comparability across cohorts is not exercised, and `LaneCohort`'s axes are proven by unit test rather than by a second live run |
+| 4 | **`terminalHostConstructions == 0`**, with N7's companion falsifier carried forward verbatim | MET — 0 terminal.start rows in the run's window; see *The gesture happened* (2026-09-14) for the zero; `TerminalHostingLedgerTests.AnOpenLedgerCountsARealTerminalHostConstruction` for the one | A counter nothing increments reads 0 forever. The same counter is shown reading **1** against a real ConPTY | **Yes** — the run's own predicate applied to a run that did host a terminal | Verified (falsifier) | **Measured:** the ledger counts the *attempt*, opened before interop, so a failed construction still counts. It is **activity-shaped, not name-shaped** — an `ActivityListener` on `aide.terminal.runtime` counting `terminal.start` — so it does not share the blind spot that made a process census match on names and report zero AI-DE hosts wrongly. **Measured uncovered input, no longer hypothetical:** a terminal hosted by a *child process* emits on that process's `ActivitySource` and is invisible here. Observed instance: a full `verify-test-run.py` creates **~42 ConPTY conhosts and ~21 `msedgewebview2`** and reaps all of them, while each build leaves exactly **one** orphaned `VBCSCompiler.exe` holding a conhost — **none of which this ledger can see**. For *this* run the exposure is bounded by reading both spawn sites: `GovernedRunHost` starts only `AcpEngineProcess` (node) and `WorktreeProvisioner` (git/coord), and **both set `CreateNoWindow = true`, `UseShellExecute = false` with all streams redirected**; no daemon is on this path |
+| 5 | **Launched through the same composition root `GovernedRunHost` uses** — no second entry point (Ruling 13), asserted by a ledger counting roots | NOT MET (root count not persisted; C16's two sites observed) — see *The gesture happened* (2026-09-14) | `Roots == 1`, the launch site is under `src/`, and exactly 2 sites construct a `GovernedRunRequest` (C16) | NOT MET (root count not persisted; C16's two sites observed) — see *The gesture happened* (2026-09-14) | NOT MET (root count not persisted; C16's two sites observed) — see *The gesture happened* (2026-09-14) | **Named uncovered input:** the ledger counts roots *entered in this process*. A second entry point in a **separate process** is outside its window, and C16's two-site cap is a source scan, not a runtime one |
+| 6 | **Recorded measurement**: event count, p50/p95, **host named** — recorded per ADR-0029, never asserted | NOT MET (nothing recorded; host named) — see *The gesture happened* (2026-09-14) | Presence, a named host, and an absent measurement reading `not recorded` rather than `0`. **No comparison to a constant** — that is DC-107 | NOT MET (nothing recorded; host named) — see *The gesture happened* (2026-09-14) | Recorded, not asserted | **Measured and bounded:** the figures measure *in-process normalization only*, on one host, on one run. They are **no evidence** about a loaded machine or a lane whose events cross a process boundary — ADR-0029 says so in its own consequences |
 | 7 | **Proof Pack** at `docs/proof/conductor-front-door.md`, every Residual cell naming a measurement or an explicit uncovered input | This file, checked by `clause7_proof_pack_residuals` | Any Residual cell reading `none` / `n/a` / `—` / empty | **Yes** — the oracle's self-test reddens on a `none` cell and does not fire on a non-Residual column | Verified | **Named uncovered input:** the check is *shape*, not *truth*. A cell reading "measured: 4 of 599" passes whether or not anything was measured. Only a reader can close that, and this row says so rather than implying the gate did |
 | 8 | **The R13 b2 qualification** (Ruling 18): only `claude-code` was exercised; codex and copilot are refused by N2's own test — **stated, not stubbed** | `EngineCatalogTests.ANonAdapterModeIsRefusedWithANamedReason` (copilot), `EngineCatalogTests.AnAdapterWithNoObservedEntryModuleIsRefusedRatherThanGuessed` (codex) | The refusal tests must exist and the run must record exactly `["claude-code"]` as exercised | Carried from N7 | Verified | **Named uncovered input:** two of three catalogued engines have **never been run**. The catalog rows for them are pinned by unit test against `EngineCatalog`, not against either adapter |
-| 9 | **DC-115** — the repository-root shape is carried, never silently | `RUN-PENDING` | Under `clone`, a written qualification is required. Under `linked-worktree`, a `Not Scored` verdict is **Ruling 17's EvaluatorIntegrity trip to the human**, not a carried qualification | `RUN-PENDING` | `RUN-PENDING` | **Named uncovered inputs, three, from the register:** a lane whose tree was **released** before the sweep (branch keeps the commit, tree is gone, verdict falls back to the parent's honest `NotFound`); the `Unverifiable` collapse at `EpisodeEvidence`; and the **two-doors asymmetry** — an audit-imported episode is evidenced by *naming* a path, a governed one must have the file present |
+| 9 | **DC-115** — the repository-root shape is carried, never silently | MET — primary checkout; see *The gesture happened* (2026-09-14) | Under `clone`, a written qualification is required. Under `linked-worktree`, a `Not Scored` verdict is **Ruling 17's EvaluatorIntegrity trip to the human**, not a carried qualification | MET — primary checkout; see *The gesture happened* (2026-09-14) | MET — primary checkout; see *The gesture happened* (2026-09-14) | **Named uncovered inputs, three, from the register:** a lane whose tree was **released** before the sweep (branch keeps the commit, tree is gone, verdict falls back to the parent's honest `NotFound`); the `Unverifiable` collapse at `EpisodeEvidence`; and the **two-doors asymmetry** — an audit-imported episode is evidenced by *naming* a path, a governed one must have the file present |
 
 ## Falsifiers observed red
 
@@ -143,7 +143,7 @@ increments, for the case it exists to catch, on this machine, today.
 
 ### Clause 5 — the root ledger
 
-`RUN-PENDING` — the ledger and its two falsifiers are built by node F4b (Ruling 46) and measured
+After the gesture: the run's own root count was never persisted (NOT MET, *The gesture happened*); the ledger and its two falsifiers are built by node F4b (Ruling 46) and measured
 here. Both directions are required: a `RealLane` driven with **no root** shows `Roots == 0` while
 events flow, and two `RunAsync` calls that fail fast on an unknown `engineId` still show `Roots == 2`,
 because the root activity is opened **before** anything that can throw and therefore counts the
@@ -156,11 +156,11 @@ in the oracle, in a test, or in CI.
 
 | Measurement | Value | Host |
 | --- | --- | --- |
-| Events observed | `RUN-PENDING` | `RUN-PENDING` |
-| Latencies measured | `RUN-PENDING` | — |
-| Normalization p50 | `RUN-PENDING` | `RUN-PENDING` |
-| Normalization p95 | `RUN-PENDING` | `RUN-PENDING` |
-| Wall clock | `RUN-PENDING` | `RUN-PENDING` |
+| Events observed | not recorded (the product persists no per-run event count) | — |
+| Latencies measured | not recorded | — |
+| Normalization p50 | not recorded | — |
+| Normalization p95 | not recorded | — |
+| Wall clock | 2026-09-14T16:02:56Z (submitted) → the `consumed` row; the ledger records no per-run duration | — |
 
 ## Qualifications carried, not discovered
 
@@ -180,7 +180,7 @@ list is empty for a separate reason recorded below.
 
 ### DC-115 — the shape the run rooted in
 
-`RUN-PENDING`.
+After the gesture: `C:\Projects\TheTerrace` is a **primary checkout** (`git rev-parse --git-common-dir` = `.git`), so no DC-115 qualification is carried — MET (*The gesture happened*).
 
 **What is already settled, before the run:** DC-115 is no longer where Phase 1 left it. Phase 2 N0
 landed `ProofPackVerifier.VerifyInCheckouts` and `ClosedEpisodeScoring.CheckoutsOf`, so **a governed
@@ -369,7 +369,49 @@ Ruling 49's answer.
 the front door works.** The slice stays open. That is the honest failure, and it is a different thing
 from the third branch above: it claims nothing, where a partial-pass headline would claim something
 false. **Nothing in this pack should be read as evidence the front door works until a row below says
-a gesture happened.**
+a gesture happened.** (It does — the next section.)
+
+### The gesture happened — 2026-09-14, on build `1.0.0+51e806f8`, closed on the operator's word (Ruling 103)
+
+**The row this pack said it needed.** The operator performed File → New Session on the current
+build (Ruling 91: the gesture is on the build in use, not the frozen tree), sent one prompt, read the
+reply, and wrote: *"consider F5 done"*. The record at
+`spikes/conductor-front-door-exit-run/exit-evidence.json` was **assembled from the run's own
+artefacts** by `spikes/conductor-front-door-exit-run/assemble-exit-evidence.py` — every field names
+its source file or reads `not recorded`; nothing in it is typed from memory — and is read bare by
+`tools/verify-front-door-exit-attended.py`, which accepts a frameless record on the operator's word
+only (a record attended by anyone else fails; its `--self-test` proves that) and reports each clause
+from the untouched oracle's findings. The nine-clause oracle itself is byte-identical to its commit
+`1374401d` (clause 0 holds); it runs as a UTF-8 subprocess because its `_git` decodes with the
+Windows locale and would otherwise read its own `§` as a change.
+
+| Clause | Reading | Source |
+| --- | --- | --- |
+| 0 oracle predates the run | **MET** — `1374401d` (2026-09-11) < `session.open` 2026-09-14T16:01:28Z; bytes identical | git |
+| 1 front door | **MET for the origin** — `session.open.origin = main-menu.new-session` (the product's own stamp); **NOT MET for the companion** — no session in the workspace carries `origin: direct` (every earlier session predates the F5 build and has no origin key) | `.aide/sessions/20260914T160128Z-c9c0e19a/session-events.jsonl` |
+| 2 composed and streamed | **NOT MET** — one accepted `submitted` row with `text_sha256 69f77304…` and `projection_sha 2488ea61…`; the prompt's own digest, the Console row count and the pre-C "canvas mode" are not recorded (the ledger's `shell.mode` rows now name perspectives) | `envelope-events.jsonl`; `workbench-20260914.log` |
+| 3 scored end to end | **NOT MET** — the `consumed` row reads `run-9a0cff77 · Completed · episode_id "not recorded"`; no `scored_episode_cell` row exists for it | `envelope-events.jsonl`; `watcher.db` |
+| 4 zero terminal hosting | **MET** — 0 `terminal.start` rows between `session.open` and `consumed`; the falsifier test observed 1 construction for a real ConPTY (`AnOpenLedgerCountsARealTerminalHostConstruction`, run at assembly) | `workbench-20260914.log`; `dotnet test` |
+| 5 one composition root | **NOT MET** — the run's root count was never persisted; the C16 scan observed exactly two construction sites (`C16_ExactlyTwoSitesInTheProductConstructAGovernedRunRequest`); `launchedBy` is `SessionDocumentSurface.cs` (product code) | `dotnet test`; the code |
+| 6 recorded measurement | **NOT MET** — no per-event latency is recorded by the product; the host is named | the ledger's location |
+| 7 residuals populated | **MET** | this pack |
+| 8 R13 b2 qualification | **MET** — `EnabledBackends = ["claude-code"]`; the two refusal tests exist | `session.json`; tests |
+| 9 DC-115 | **MET** — `C:\Projects\TheTerrace` is a primary checkout | `git rev-parse` |
+
+**Headline, in the pack's own terms:** the front door was walked through by the operator on the
+build in use, the session carries the product's front-door stamp, the run completed, no terminal was
+hosted — and five clauses read NOT MET because the product does not record what they ask for
+(a scored cell for a governed run, the sent prompt's digest, Console row counts, per-event latency,
+the run's root count). Those are carried as residuals below, not as a pass; the slice is closed on
+the operator's decision, which is the ruling's point: claims and evidence in separate columns.
+
+**Two product gaps this row surfaced, filed for the conductor:** a completed governed run whose
+envelope reads `episode_id "not recorded"` is never scored (clause 3) — the weave scores
+`audit-import` episodes at start and nothing scores a session's turn; and no artefact carries the
+bytes handed to `session/prompt` separately from the compiled view (clause 2) — the envelope's
+`text_sha256` is the only digest, so "sent == rendered" is asserted by the send gate's test, not by
+the run.
+
 
 ## Residual
 
@@ -431,7 +473,7 @@ cell comes to read "none". Every entry states its **kind**: **measured** (a numb
 | **The run's cohort will carry a degraded account** | measured | The configured account's `health` is `quota-degraded` — **the operator's own observation, not a probe and not a placeholder** (`ProviderAccount.Health` is documented as the operator's record). `QuotaDegraded` binds by design and *carries the pressure*, so a refusal or throttle from the API is a legitimate measured outcome. **The one-run rule applies:** a quota refusal is recorded as the result and is not grounds to re-run. Re-running until green would be DC-127 aimed at the exit evidence itself. |
 | **DC-095 is controlled in code comments and uncontrolled in Proof Packs** | measured | `verify-cited-controls.py` scans `SEARCHED = ("src", "tests")` — **source comments only**. A Proof Pack is markdown, so every control it cites is unguarded, in the artifact whose whole purpose is citing controls. All **14** test-shaped identifiers in this file were resolved against `tests/` at this close and **one did not exist**: the header's falsifier suite named `TheRunHasOneCompositionRootTests`, which has never existed (the real class is `TheOneCompositionRootIsCountedTests`). Corrected above. **The extension is named and not built**, and it is cheap — the resolver already exists twice, as `_declared_in_tests` in this slice's oracle and as the matcher inside `verify-cited-controls.py`. **One warning for whoever builds it:** the dead name is still written above and in the carried note, as the *record* of the defect, so a naive resolver reddens on the two files that document it. A mechanical citation checker needs claim language as its trigger — the reason `verify-cited-controls.py` already keys on *asserts / pins / proves / guards*, and not on the shape of the identifier. |
 | **The oracle cannot distinguish a product-wired composer from a harness-wired one** | named | Clause 2 asserts the request was built in the composer; clause 5 asserts the launch site is under `src/`. **Neither asks who supplied the send context**, so a driver that calls `Composer.Configure(...)` itself and then presses `Send()` reads green on both while the product still cannot send — DC-127's shape, reachable through this pack's own gate. The closure is a source scan of the form `TheProductItselfConstructsASessionLane` already uses. **Not added, deliberately:** clause 0 compares this file's bytes against `1374401d`, so widening the oracle after the fact reddens clause 0. The control refused its own author, which is the behaviour it was committed early to have. |
-| **The exit run did not happen** | named | Every `RUN-PENDING` row above is pending for the structural reason recorded in *The exit run did not happen* — not because a run was attempted and failed, and not because one was skipped for cost. No live subscription turn was spent, no lane tree was provisioned, and no episode was scored by this node. **The `front-door-preflight` class recorded earlier remains the only live run this node caused**, and it is tagged `not-exit-evidence` in its own store. When the run does happen it will still be **one** run — one host, one engine, one account, one task class, no distribution and no rate — and the re-runnable half will still be the test suite. |
+| **The exit run happened 2026-09-14 and five clauses stayed unmet** | measured | Closed on the operator's word (Ruling 103); the unmet clauses are what the product does not record — see *The gesture happened*. Before it, every `RUN-PENDING` row was pending for the structural reason recorded in *The exit run did not happen* — not because a run was attempted and failed, and not because one was skipped for cost. No live subscription turn was spent, no lane tree was provisioned, and no episode was scored by this node. **The `front-door-preflight` class recorded earlier remains the only live run this node caused**, and it is tagged `not-exit-evidence` in its own store. When the run does happen it will still be **one** run — one host, one engine, one account, one task class, no distribution and no rate — and the re-runnable half will still be the test suite. |
 
 ### One process residual, recorded because it shaped everything above
 
