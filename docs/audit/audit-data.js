@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T01:35:24Z",
+  "generated": "2026-09-14T01:41:45Z",
   "audit": [
     {
       "actor": null,
@@ -15441,6 +15441,35 @@ window.AUDIT_DATA = {
       "summary": "Converge (docs): Ruling 90 filed (the Console toggle closes on its second press; Ruling 88's premise corrected); the Addenda C/D lane rows retired from session-contracts.md with the horizon's new files assigned to Core/Design (verify-surface-ownership 13/13); the plan's execution ledger and Stage 10 close; DC-142 recurrence 2; docs/notes/pack-findings-addendum-cd.md (17 rows for /updatepack); 12 merged worktrees removed one by one; the stale coord sessions ended.",
       "tags": [],
       "tool": null
+    },
+    {
+      "id": "al-01M2ES7KN6V0BSF2DTVE0C3XRE",
+      "shortname": "join-profile-and-converge-close",
+      "datetime": "2026-09-14T01:41:44Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "keep going (the join of the resolved merge)",
+      "summary": "The programme's last join: the session profile sp-0002 (docs/profiles/addendum-cd.md: 14 findings, 10 fixes with controls; est. $2,198 for the programme, 86% in sub-agents the pack's profiler could not see; joins+recounts 44.8% of the main line; DC-113's shape 168/102 on the main line), DC-206..208 allocated, the ledger's ratio corrected to 1.75x, conductor-join.py now sets its own marker/tier/fan-out/recount_seconds (F-22), the attended rows for the operator in one note, the liveness at converge. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/profiles/addendum-cd.md",
+        "docs/notes/attended-rows-for-the-operator.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Close the Addenda C/D programme on main with its profile, its open list for the operator, and the join script measuring itself",
+      "done_when": "main pushed green; the profile indexed; the operator's list on main",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-14T01:41:44Z",
+      "duration_seconds": 0.0
     }
   ],
   "changes": [

@@ -7984,7 +7984,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ec3b9dc9b9641d1aaee6da7455886019a2edffbd0f4652c72807e24c278a7d1a"
+      "sourceSha256": "55bf5b1e116bcd69a8ddb05ee1c3fd879b7a287f3575aad6b2da08a5f54edca5"
     },
     {
       "id": "defect-classes",
@@ -8013,7 +8013,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "eb6e6f67e2f039fe5f7eb534c8511eefed18811afdb2260d636909793e0235cd"
+      "sourceSha256": "b28cec9903201e6ba1d971e348c6b17e6d57a5e0ee586af2f3e06e5b277adf86"
     },
     {
       "id": "design-session-profiler",
@@ -18074,5 +18074,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "eeacffb36fb1a72b39c04cc751e400b57dd72863ef98bbee9402d1428fbbf427"
+  "graphSha256": "582e55c1a405a9f2625b3271f904305fcf4f9fb947f64f4484e81306bbdfd30f"
 };
