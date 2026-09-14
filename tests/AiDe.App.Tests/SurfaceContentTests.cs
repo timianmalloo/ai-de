@@ -173,6 +173,11 @@ public sealed class SurfaceContentTests
                 var content = factory.Create(new Surface($"s-{kind}", kind, kind));
                 Assert.False(Unwrap(content) is TextBlock t && t.Text.Contains("not available",
                     StringComparison.OrdinalIgnoreCase), kind);
+
+                // The `terminal` kind is a live ConPTY (TerminalSurface starts its shell in the
+                // constructor): what this loop builds, it ends — the terminal ledger read one
+                // `s-terminal` start with no stop on every full run before this line.
+                (content as IDisposable)?.Dispose();
             }
 
             return 0;

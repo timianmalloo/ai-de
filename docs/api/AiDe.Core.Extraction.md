@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Extraction: 40 types, 104 members, 75% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Extraction: 40 types, 105 members, 75% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Extraction`
 
-**40 public types · 104 public members · 75% documented.**
+**40 public types · 105 public members · 75% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1179,7 +1179,7 @@ is a graph that quietly describes code that no longer exists.
 
 | Member | Summary |
 |---|---|
-| `string ExtractorGeneration = "2026-09-10.1"` | **(gap)** |
+| `string ExtractorGeneration = "2026-09-14.1"` | **(gap)** |
 | `ScopeFingerprints Load(string dataDirectory)` | **(gap)** |
 | `bool IsUnchanged(string scopeId, string fingerprint)` | True when this scope's inputs are byte-for-byte what they were when it last ran. |
 | `void Record(string scopeId, string fingerprint)` | **(gap)** |
@@ -1266,6 +1266,7 @@ type collapses to nothing.`
 
 | Member | Summary |
 |---|---|
+| `string RetiredFixtureLiteral = "rev-1"` | A RETIRED FIXTURE, not a revision. `"rev-1"` was the literal the shell attached to every workspace it indexed before Ruling 85 — a door default read as a measurement (DC-110) — and the stores those builds wrote still … |
 | `string Stamp(string artifactRevision)` | The revision to STORE facts under. Idempotent: stamping an already-stamped revision returns it unchanged, so a caller that passes one through twice does not create a third identity. |
 | `string Base(string revision)` | The revision to SHOW: the caller's own text, with any extractor stamp removed. |
 

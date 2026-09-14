@@ -78,6 +78,11 @@ public static class NewSessionSheetDialog
             Padding = new Thickness(2),
             MaxHeight = 190,
         };
+        // Ruling 102: the descriptions WRAP to the list's width. A ListBox's ScrollViewer measures
+        // its items at infinite width unless horizontal scrolling is off, so `TextWrapping = Wrap`
+        // on the description never fired — the operator's screenshot showed a horizontal scrollbar
+        // and the free-form row clipped at "…with no task i" (extent 486 > viewport 444, measured).
+        ScrollViewer.SetHorizontalScrollBarVisibility(taskClass, ScrollBarVisibility.Disabled);
         AutomationProperties.SetName(taskClass, "Task class");
 
         foreach (var option in sheet.TaskClassOptions)

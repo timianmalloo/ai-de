@@ -23,7 +23,9 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
 
     private string ArchitectureSlot => LayoutPersistence.SlotPathFor(LayoutPath, PerspectiveSet.Architecture);
 
-    private static IReadOnlySet<string> Kinds => SurfaceContentFactory.KnownKinds.ToHashSet(StringComparer.Ordinal);
+    // What the shell hands LayoutPersistence (Ruling 94): the buildable kinds plus the retired ones, so a
+    // saved envelope carrying a retired kind is dropped by the host WITH a report, never by the store in silence.
+    private static IReadOnlySet<string> Kinds => SurfaceContentFactory.RestorableKinds;
 
     private static IReadOnlySet<string> NoSurfaces => new HashSet<string>(StringComparer.Ordinal);
 
@@ -386,6 +388,66 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         Assert.Empty(Host(PerspectiveSet.Architecture).DefaultDropped);
         Assert.Empty(Host(PerspectiveSet.Coding).DefaultDropped);
         Assert.Empty(Host(PerspectiveSet.Coordination).DefaultDropped);   // Ruling 84: host C seeds from its own table too
+    }
+
+    // Ruling 94 (F-C) — the operator: "this is the default layout i want … AND we should eliminate
+    // the provenance tab." Architecture's default is Left = Graph at the extent the operator's own
+    // saved slot holds (0.22, read from layout.architecture.zones.json — the proof doc records it)
+    // · Center = Contexts (active), Domain · Right empty and COLLAPSED (the ruling wins over the
+    // file's `collapsed: false` for the Right) · Bottom empty and collapsed. Evidence leaves the
+    // default and stays admitted (the View menu); the `inspector` kind is retired from the product.
+    [Fact]
+    public void TheArchitectureDefault_IsLeftGraph_CenterContextsThenDomain_RightAndBottomEmptyAndCollapsed()
+    {
+        var layout = WorkbenchLayout.Default(PerspectiveSet.Architecture);
+
+        Assert.Equal("Left:[graph@0]|Right:-/collapsed|Bottom:-/collapsed|Center:[contexts+domain@0]|float:", layout.Shape());
+        Assert.Equal(0.22, layout.Zone(ZoneId.Left).Extent, precision: 3);
+        Assert.Equal("canvas", layout.Zone(ZoneId.Left).Surfaces().Single().Kind);
+        Assert.Equal(["contexts", "classdiagram"], layout.Zone(ZoneId.Center).Surfaces().Select(s => s.Kind));
+        Assert.DoesNotContain(layout.AllSurfaces(), s => s.Kind is "view" or "inspector");
+
+        // Evidence is one View-menu gesture away, not gone; Provenance is gone from the product.
+        Assert.True(DockHost.AdmissionFor(PerspectiveSet.Architecture).Admits("view"));
+        Assert.All(PerspectiveSet.All, p => Assert.False(DockHost.AdmissionFor(p).Admits("inspector"), $"{p.Title} still admits 'inspector'"));
+        Assert.DoesNotContain("inspector", SurfaceContentFactory.KnownKinds);
+    }
+
+    // Ruling 94 CONDITION (2) — ADR-0032 test 1's shape for the retired kind: every operator who ran
+    // the previous build has an Architecture slot file carrying Provenance (`inspector`) at Right.
+    // It restores with that surface dropped and REPORTED, naming this ruling — never a crash, never
+    // a silent reset — and everything else in the file survives.
+    [Fact]
+    public void APreRuling94ArchitectureEnvelopeCarryingProvenance_RestoresWithTheInspectorDroppedAndReported_NamingTheRuling()
+    {
+        Directory.CreateDirectory(_dir);
+        var pre94 = WorkbenchLayout.Empty()
+            .WithZone(new ZoneState(ZoneId.Left, new ZoneStack([new Surface("evidence", "view", "Evidence")]), ZoneState.DefaultExtent, Collapsed: false))
+            .WithZone(new ZoneState(ZoneId.Right, new ZoneStack([new Surface("provenance", "inspector", "Provenance")]), ZoneState.DefaultExtent, Collapsed: false))
+            .WithZone(new ZoneState(ZoneId.Center, new ZoneStack(
+            [
+                new Surface("graph", "canvas", "Graph"),
+                new Surface("domain", "classdiagram", "Domain"),
+                new Surface("contexts", "contexts", "Contexts"),
+            ]), 1.0, Collapsed: false));
+        new ZoneLayoutStore(LayoutPersistence.SlotPathFor(LayoutPath, PerspectiveSet.Architecture)).Save(pre94);
+        var host = Host(PerspectiveSet.Architecture);
+        using var persistence = PersistenceFor(host);
+
+        var result = persistence.Restore();
+
+        Assert.True(persistence.LastRestoreAppliedASavedArrangement);
+        Assert.False(result.WasDefaulted);
+        Assert.Equal("Left:[evidence@0]|Right:-|Bottom:-|Center:[graph+domain+contexts@0]|float:", host.Zones.Shape());
+
+        var dropped = Assert.Single(persistence.LastRestoreDropped);
+        Assert.Equal("provenance", dropped.Surface.SurfaceId);
+        Assert.Equal(DropReason.KindNotAdmitted, dropped.Reason);
+        Assert.Null(dropped.AdmittedBy);                                    // no perspective admits a retired kind
+        Assert.Equal(LayoutErrorCodes.PartialRestore, result.ErrorCode);
+        Assert.Equal(
+            "1 pane from your saved layout isn't available in Architecture — Provenance (retired by Ruling 94: its origin, extractor and revision now show under the selected Evidence row).",
+            result.Announcement);
     }
 
     public static IEnumerable<object[]> HostPerspectives()

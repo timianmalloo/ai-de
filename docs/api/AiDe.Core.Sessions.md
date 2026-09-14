@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Sessions: 28 types, 82 members, 91% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Sessions: 28 types, 84 members, 91% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Sessions`
 
-**28 public types · 82 public members · 91% documented.**
+**28 public types · 84 public members · 91% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -359,6 +359,8 @@ plain `System.Text.Json`, tolerant JSONL reads.
 | `string SessionId { get; }` | **(gap)** |
 | `SessionConfig Create(` | Creates the session: writes `session.json` and emits `session.open`. |
 | `SessionConfig Load()` | The current, live config — what a NEW run would pick up. |
+| `IReadOnlyList<string> ExistingNames(string workspaceRoot)` | The name of every session the workspace holds — every `session.json` under `SessionsRoot`, open tab or not. Empty when there is no sessions root yet; a session whose file cannot be read is skipped, never a throw. |
+| `string UniqueName(string requested, IEnumerable<string> existing)` | The one rule for a session name that is unique within its workspace (Ruling 99): the requested name when nothing holds it, else the name with a counter — `" (2)"`, `" (3)"`, … — counted up from 2 until it is free. A c… |
 | `SessionConfig SetEnabledBackends(IReadOnlyList<string> enabledBackends, DateTimeOffset now)` | Applies a backend toggle for new runs and emits `session.config`. Never mutates a `SessionConfig` a caller already holds — see the remarks on this type. |
 | `SessionConfig SetAttachEnabled(bool attachEnabled, DateTimeOffset now)` | Applies the attach toggle for new runs and emits `session.config` (C21). |
 | `SessionConfig SetCompileMode(string compileMode, CompileModeAvailability availability, DateTimeOffset now, string trigger = PromptCompilation.CompileModeChangeTriggers.Operator)` | Selects the session's `compile_mode` for new envelopes, **through the gate** (ADR-0036 rule 1): a rung the evaluated  does not admit is refused with the gate's own code and the file is not touched. Emits `session.conf… |
@@ -379,6 +381,26 @@ Creates the session: writes `session.json` and emits `session.open`.
 - **`origin`** — How this session came to exist — see `SessionOrigins`. **Defaulted to `Direct` deliberately:** F5 clause 1's claim is that the front door is distinguishable from every other way of reaching this method, and that is only checkable if something which did not come through it reads differently. The default is what makes the other value evidence.
 
 **Remarks.** The sheet's three decisions at create (Rulings 56, 63, 72); absent, the record's own defaults apply. The origin is F5's clause 1.
+
+### `IReadOnlyList<string> ExistingNames(string workspaceRoot)`
+
+The name of every session the workspace holds — every `session.json` under
+`SessionsRoot`, open tab or not. Empty when there is no sessions
+root yet; a session whose file cannot be read is skipped, never a throw.
+
+**Remarks.** Ruling 99: uniqueness is judged against the STORE, not the open tabs — a session the
+operator closed still owns its name.
+
+### `string UniqueName(string requested, IEnumerable<string> existing)`
+
+The one rule for a session name that is unique within its workspace (Ruling 99): the
+requested name when nothing holds it, else the name with a counter — `" (2)"`, `" (3)"`,
+… — counted up from 2 until it is free. A counter the requested name already carries is not
+part of the base, so `"X (2)"` over `{"X", "X (2)"}` is `"X (3)"`, never
+`"X (2) (2)"`. Never refuses; no time-of-day.
+
+**Remarks.** Called by the sheet for its default name and for an operator-typed duplicate at Create, and by
+the later parallel-session slice on its parent's name — one function, so the three cannot drift.
 
 ### `SessionConfig SetAttachEnabled(bool attachEnabled, DateTimeOffset now)`
 

@@ -491,6 +491,58 @@ public sealed class TheNewSessionSheetTests : IDisposable
         Assert.StartsWith("2026-09-10", Sheet().Name, StringComparison.Ordinal);
     }
 
+    // ── names are unique within a workspace (Ruling 99) ───────────────────────────────────
+
+    /// <summary>
+    /// Ruling 99 (R-2): the operator's screenshot showed two tabs <i>2026-09-14 session</i> and two
+    /// <i>Console — 2026-09-14 session</i> — the default name is the date alone, so every session
+    /// opened on one day collides. A name is unique within a workspace by a counter suffix —
+    /// <c> (2)</c>, <c> (3)</c> — counted over EVERY session the store holds, not only the open tabs;
+    /// no time-of-day, and Create never refuses.
+    /// </summary>
+    [Fact]
+    public void TheDefaultNameTakesACounter_WhenASessionOfThatNameAlreadyExistsInTheWorkspace()
+    {
+        var first = Sheet();
+        Assert.Equal("2026-09-10 session", first.Name);
+        first.Create(Now);
+
+        var second = Sheet();
+        Assert.Equal("2026-09-10 session (2)", second.Name);
+        var created = second.Create(Now);
+        Assert.Equal("2026-09-10 session (2)", created.Config.Name);
+        Assert.Null(created.RenamedFrom);
+
+        // The third counts past both. Neither is an open tab here: the store is the record.
+        Assert.Equal("2026-09-10 session (3)", Sheet().Name);
+    }
+
+    /// <summary>An operator-typed duplicate gets the same suffix on Create, and the announcement says so (Ruling 99).</summary>
+    [Fact]
+    public async Task ATypedDuplicateNameIsSuffixedOnCreate_AndTheAnnouncementSaysSo()
+    {
+        NewSessionFlow Flow() => new(
+            activeWorkspaceRoot: () => _root,
+            chooseWorkspace: () => throw new InvalidOperationException("a workspace is active"),
+            openWorkspace: _ => throw new InvalidOperationException("a workspace is active"),
+            showSheet: sheet => { sheet.Name = "payments"; return true; },
+            registry: () => Registry(),
+            workspaceId: root => root,
+            time: new FixedTime(Now));
+
+        var one = await Flow().StartAsync();
+        var two = await Flow().StartAsync();
+
+        Assert.Equal("payments", one.Created!.Config.Name);
+        Assert.Null(one.Created.RenamedFrom);
+        Assert.DoesNotContain("already exists", one.Announcement, StringComparison.Ordinal);
+
+        Assert.Equal("payments (2)", two.Created!.Config.Name);
+        Assert.Equal("payments", two.Created.RenamedFrom);
+        Assert.Contains("“payments (2)”", two.Announcement, StringComparison.Ordinal);
+        Assert.Contains("“payments” already exists", two.Announcement, StringComparison.Ordinal);
+    }
+
     private static void AssertNoDefaultFor(Type type, string parameter)
     {
         var withDefaults = type.GetConstructors()

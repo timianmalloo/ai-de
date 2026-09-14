@@ -176,11 +176,51 @@ public sealed class Phase3SurfacingTests : IDisposable
         return root;
     }
 
-    private async Task<(int Indexed, int Reused)> IndexAsync(string root, string data, bool force = false)
+    /// <summary>A revision of the shape the product attaches since Ruling 85 — the observed HEAD — never the retired fixture literal (Ruling 98).</summary>
+    private const string ObservedHead = "51e806f8";
+
+    private async Task<(int Indexed, int Reused)> IndexAsync(string root, string data, bool force = false, string revision = ObservedHead)
     {
         using var core = WorkspaceCore.Open("fp", root, data, WorkspaceExtractors.Default());
-        var result = await core.IndexCSharpAsync("rev-1", CancellationToken.None, force: force);
+        var result = await core.IndexCSharpAsync(revision, CancellationToken.None, force: force);
         return (result.ScopesIndexed, result.ScopesReused);
+    }
+
+    private static string CurrentRevision(string root, string data)
+    {
+        using var core = WorkspaceCore.Open("fp", root, data, WorkspaceExtractors.Default());
+        using var reader = core.Store.BeginRead();
+        return reader.CurrentSourceRevision();
+    }
+
+    /// <summary>
+    /// Ruling 98 (R-1): a store the pre-Ruling-85 product wrote carries <c>rev-1</c> on every
+    /// snapshot, and the reuse guard — unchanged fingerprint, a committed snapshot — never opens the
+    /// snapshot's revision, so Ruling 85's fix at the WRITER could not reach a store the old writer
+    /// had already written: the operator's TheTerrace still read <i>rev rev-1</i> on build 51e806f8.
+    /// A snapshot whose revision base is the retired literal is not reusable: the next index
+    /// re-extracts once and stamps the observed HEAD; the one after that reuses it.
+    /// </summary>
+    [Fact]
+    public async Task ASnapshotStampedWithTheRetiredFixtureLiteral_IsReExtractedOnce_ThenTheObservedHeadStands()
+    {
+        var root = Workspace();
+        var data = Path.Combine(_dir, "data");
+
+        // The pre-85 store: the product attached the fixture literal to everything it indexed.
+        var first = await IndexAsync(root, data, revision: SourceRevision.RetiredFixtureLiteral);
+        Assert.Equal((1, 0), first);
+        Assert.Equal(SourceRevision.RetiredFixtureLiteral, CurrentRevision(root, data));
+
+        // The next index, on the same unchanged tree, carries the observed HEAD: re-extracted, not reused.
+        var second = await IndexAsync(root, data);
+        Assert.Equal((1, 0), second);
+        Assert.Equal(ObservedHead, CurrentRevision(root, data));
+
+        // Exactly once: the re-stamped snapshot is reusable like any other.
+        var third = await IndexAsync(root, data);
+        Assert.Equal((0, 1), third);
+        Assert.Equal(ObservedHead, CurrentRevision(root, data));
     }
 
     [Fact]
@@ -370,13 +410,13 @@ public sealed class Phase3SurfacingTests : IDisposable
                     t.Result.ScopesFound, t.Result.ScopesIndexed, t.Result.Assertions,
                     t.Result.Failed, t.Result.Disclosures, t.Result.Contexts, t.Result.ScopesReused), ct));
 
-        await commands.IndexSolutionAsync("rev-1", CancellationToken.None);
+        await commands.IndexSolutionAsync(ObservedHead, CancellationToken.None);
 
-        var cached = await commands.IndexSolutionAsync("rev-1", CancellationToken.None);
+        var cached = await commands.IndexSolutionAsync(ObservedHead, CancellationToken.None);
         Assert.Equal(1, cached.ScopesReused);
         Assert.Contains("reused", cached.Describe(), StringComparison.OrdinalIgnoreCase);
 
-        var forced = await commands.IndexSolutionAsync("rev-1", CancellationToken.None, force: true);
+        var forced = await commands.IndexSolutionAsync(ObservedHead, CancellationToken.None, force: true);
         Assert.Equal(0, forced.ScopesReused);
     }
 

@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 100 types, 437 members, 74% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 101 types, 442 members, 74% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**100 public types · 437 public members · 74% documented.**
+**101 public types · 442 public members · 74% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1517,6 +1517,27 @@ The kind's only door is the catalog entry verb  (`terminal.new`, `session.new`);
 
 One surface kind, as a row of data: what it answers to, how it is built, which perspectives
 admit it, and how the menu names it.
+
+## `EvidenceRowItem`
+
+*class* — `SurfaceContentFactory.cs`
+
+One row of the Evidence list as the list binds it: the pane's immutable `EvidenceRow`
+plus the detail line the row grows while it is selected (Ruling 94) — origin · extractor · rev,
+from `SelectedDetailLine`. Null while the row is not selected
+or its describe has not returned, which the template renders as no second line at all.
+
+**Remarks.** The App's binding shape over a Presentation record, not a second row model: every field a reader
+sees is read through `Row`. The accessible name carries the detail too, so a screen
+reader hears what the eye sees when the row is selected.
+
+| Member | Summary |
+|---|---|
+| `EvidenceRow Row { get; } = row` | **(gap)** |
+| `string ListLine` | **(gap)** |
+| `string AccessibleName` | **(gap)** |
+| `string? Detail` | **(gap)** |
+| `event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged` | **(gap)** |
 
 ## `TerminalColorScheme`
 

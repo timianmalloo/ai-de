@@ -152,7 +152,7 @@ public sealed record WorkbenchLayout(
         var left = new ZoneStack(
         [
             new Surface("explore", "view", "Explore"),
-            new Surface("provenance", "inspector", "Provenance"),
+            new Surface("sources", "view", "Sources"),
             new Surface("contexts", "contexts", "Contexts"),
             new Surface("joins", "joins", "Joins"),
         ]);
@@ -234,34 +234,39 @@ public sealed record WorkbenchLayout(
     }
 
     /// <summary>
-    /// Architecture's default (Rulings 59/61): the graph, the class model ("Domain" — Ruling 55d's
-    /// re-pointing off the Evidence list), and Contexts as Center tabs; the Evidence/Provenance
-    /// master-detail pair split Left/Right, never sibling tabs in one stack (only one tab renders at
-    /// once, which cannot be master-detail).
+    /// Architecture's default (Ruling 94, amending Rulings 59/61 — the operator: <i>"this is the
+    /// default layout i want … AND we should eliminate the provenance tab"</i>): <b>Left = the
+    /// Graph</b> at <see cref="ArchitectureLeftExtent"/> · <b>Center = Contexts (active), Domain</b>
+    /// (the class model — Ruling 55d's re-pointing off the Evidence list) · <b>Right = empty,
+    /// collapsed</b> · <b>Bottom = empty, collapsed</b>. Evidence (<c>view</c>) leaves the default
+    /// and stays admitted — one View-menu gesture away; its selected row carries its own provenance
+    /// line, so the pair Ruling 61 split Left/Right is one master now and the <c>inspector</c> kind
+    /// is retired from the product.
     /// </summary>
     /// <remarks>
-    /// <c>joins</c> is admitted to Architecture (Ruling 59) but left out of THIS default pending the
-    /// attended real-content check Ruling 59's CONDITIONS require (a default tab that may render
+    /// <para>Left · Center · Bottom are the operator's saved slot (their
+    /// <c>layout.architecture.zones.json</c>, read at the ruling: Left <c>canvas</c> at 0.22, Center
+    /// <c>contexts</c> active then <c>classdiagram</c>, Bottom 0.22 collapsed). The file held the
+    /// Right at 0.22 <i>not</i> collapsed; the ruling says collapsed, and the ruling wins.</para>
+    /// <para><c>joins</c> is admitted to Architecture (Ruling 59) but left out of THIS default pending
+    /// the attended real-content check Ruling 59's CONDITIONS require (a default tab that may render
     /// empty is the Explore-pane defect Ruling 55d already removed) — see
     /// <c>docs/proof/perspective-content.md</c>. It stays reachable from the derived View menu
-    /// either way; re-add it here as a fifth Center tab the moment the check finds real content.
+    /// either way; re-add it here as a Center tab the moment the check finds real content.</para>
     /// </remarks>
     private static WorkbenchLayout ArchitectureDefault()
     {
+        var left = new ZoneStack([new Surface("graph", "canvas", "Graph")]);
         var center = new ZoneStack(
         [
-            new Surface("graph", "canvas", "Graph"),
-            new Surface("domain", "classdiagram", "Domain"),
             new Surface("contexts", "contexts", "Contexts"),
+            new Surface("domain", "classdiagram", "Domain"),
         ]);
-
-        var left = new ZoneStack([new Surface("evidence", "view", "Evidence")]);
-        var right = new ZoneStack([new Surface("provenance", "inspector", "Provenance")]);
 
         var zones = ImmutableDictionary.CreateRange(new[]
         {
-            KeyValuePair.Create(ZoneId.Left, new ZoneState(ZoneId.Left, left, ZoneState.DefaultExtent, Collapsed: false)),
-            KeyValuePair.Create(ZoneId.Right, new ZoneState(ZoneId.Right, right, ZoneState.DefaultExtent, Collapsed: false)),
+            KeyValuePair.Create(ZoneId.Left, new ZoneState(ZoneId.Left, left, ArchitectureLeftExtent, Collapsed: false)),
+            KeyValuePair.Create(ZoneId.Right, new ZoneState(ZoneId.Right, Content: null, ZoneState.DefaultExtent, Collapsed: true)),
             // (empty, collapsed) per §B4: Diagnostics is a Show entry, not a default.
             KeyValuePair.Create(ZoneId.Bottom, new ZoneState(ZoneId.Bottom, Content: null, ZoneState.DefaultExtent, Collapsed: true)),
             KeyValuePair.Create(ZoneId.Center, new ZoneState(ZoneId.Center, center, Extent: 1.0, Collapsed: false)),
@@ -269,6 +274,13 @@ public sealed record WorkbenchLayout(
 
         return new WorkbenchLayout(zones, [], Maximized: null);
     }
+
+    /// <summary>
+    /// Architecture's Left extent (Ruling 94 condition 1): the value the operator's own saved slot
+    /// holds — <c>0.22</c>, read from their <c>layout.architecture.zones.json</c> — which is also
+    /// <see cref="ZoneState.DefaultExtent"/>. Named so the number is the operator's, not a coincidence.
+    /// </summary>
+    public const double ArchitectureLeftExtent = 0.22;
 
     /// <summary>
     /// Coordination's default (Ruling 84; §B4's third table — the Owner's arrangement, Inferred until

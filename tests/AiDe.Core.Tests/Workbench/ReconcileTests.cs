@@ -30,7 +30,7 @@ namespace AiDe.Core.Tests.Workbench;
 public sealed class ReconcileTests
 {
     private static readonly Surface Explore = new("explore", "view", "Explore");
-    private static readonly Surface Inspector = new("provenance", "inspector", "Provenance");
+    private static readonly Surface Sources = new("sources", "view", "Sources");
     private static readonly Surface Graph = new("graph", "canvas", "Graph");
     private static readonly Surface Domain = new("domain", "view", "Domain");
     private static readonly Surface Terminal = new("terminal-1", "terminal", "Terminal — pwsh");
@@ -40,7 +40,7 @@ public sealed class ReconcileTests
         ImmutableDictionary.CreateRange(new[]
         {
             KeyValuePair.Create(ZoneId.Left, new ZoneState(ZoneId.Left, new ZoneStack([Explore]), ZoneState.DefaultExtent, Collapsed: false)),
-            KeyValuePair.Create(ZoneId.Right, new ZoneState(ZoneId.Right, new ZoneStack([Inspector]), ZoneState.DefaultExtent, Collapsed: false)),
+            KeyValuePair.Create(ZoneId.Right, new ZoneState(ZoneId.Right, new ZoneStack([Sources]), ZoneState.DefaultExtent, Collapsed: false)),
             KeyValuePair.Create(ZoneId.Bottom, new ZoneState(ZoneId.Bottom, new ZoneStack([Terminal]), 0.30, Collapsed: false)),
             KeyValuePair.Create(ZoneId.Center, new ZoneState(ZoneId.Center, new ZoneStack([Graph, Domain]), 1.0, Collapsed: false)),
         }),
@@ -100,7 +100,7 @@ public sealed class ReconcileTests
             [0.7, 0.3]));
 
         Assert.True(svc.ReconcileFromView(post));
-        Assert.Equal(["provenance", "domain"], svc.Zones.Zone(ZoneId.Right).Surfaces().Select(s => s.SurfaceId));
+        Assert.Equal(["sources", "domain"], svc.Zones.Zone(ZoneId.Right).Surfaces().Select(s => s.SurfaceId));
         Assert.False(svc.Zones.Zone(ZoneId.Right).Collapsed);
         Assert.Equal("domain", ((ZoneStack)svc.Zones.Zone(ZoneId.Right).Content!).Active.SurfaceId);   // the view's active tab wins
     }
@@ -284,7 +284,7 @@ public sealed class ReconcileTests
             [
                 new StackNode(ZonesToTree.LeftStackId, [Explore]),
                 new StackNode(ZonesToTree.CenterStackId, [Domain]),
-                new StackNode(ZonesToTree.RightStackId, [Inspector]),
+                new StackNode(ZonesToTree.RightStackId, [Sources]),
             ],
             [0.2, 0.6, 0.2]));
 

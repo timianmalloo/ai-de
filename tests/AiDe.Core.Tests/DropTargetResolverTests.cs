@@ -112,7 +112,7 @@ public sealed class DropTargetResolverTests
     {
         foreach (var kind in Enum.GetValues<DropKind>())
         {
-            var text = DropTargetResolver.Describe(new DropTarget("stack-a", kind), "Provenance");
+            var text = DropTargetResolver.Describe(new DropTarget("stack-a", kind), "Sources");
             Assert.False(string.IsNullOrWhiteSpace(text));
             Assert.StartsWith("Destination:", text, StringComparison.Ordinal);
         }
@@ -134,7 +134,7 @@ public sealed class DropTargetResolverTests
     {
         // Pointer path: geometry → DropTarget → operation.
         var pointerService = new LayoutService();
-        var stackId = pointerService.Current.FindStackOf("provenance")!.Id;
+        var stackId = pointerService.Current.FindStackOf("sources")!.Id;
         var panes = new[] { new PaneHitBox(stackId, new LayoutRect(0, 0, 400, 300), 28) };
         var resolved = DropTargetResolver.Resolve(panes, new LayoutPoint(x, y))!;
         pointerService.Apply(new LayoutOperation.MoveSurface("explore", resolved));
@@ -153,7 +153,7 @@ public sealed class DropTargetResolverTests
         foreach (var (x, y) in new[] { (10.0, 150.0), (390.0, 150.0), (200.0, 40.0), (200.0, 295.0), (200.0, 150.0) })
         {
             var service = new LayoutService();
-            var stackId = service.Current.FindStackOf("provenance")!.Id;
+            var stackId = service.Current.FindStackOf("sources")!.Id;
             var panes = new[] { new PaneHitBox(stackId, new LayoutRect(0, 0, 400, 300), 28) };
 
             var target = DropTargetResolver.Resolve(panes, new LayoutPoint(x, y))!;

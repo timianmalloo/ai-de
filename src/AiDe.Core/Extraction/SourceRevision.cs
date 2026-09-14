@@ -30,6 +30,15 @@ namespace AiDe.Core.Extraction;
 /// </remarks>
 public static class SourceRevision
 {
+    /// <summary>
+    /// A RETIRED FIXTURE, not a revision. <c>"rev-1"</c> was the literal the shell attached to every
+    /// workspace it indexed before Ruling 85 — a door default read as a measurement (DC-110) — and
+    /// the stores those builds wrote still carry it on every snapshot. Named so the reuse guard can
+    /// refuse it by name (Ruling 98): a snapshot stamped with it is re-extracted once under the
+    /// observed HEAD. Nothing in the product path attaches it; tests that build a pre-85 store do.
+    /// </summary>
+    public const string RetiredFixtureLiteral = "rev-1";
+
     private const string Marker = "+x";
 
     private static readonly string Suffix = Marker + ScopeFingerprints.ExtractorGeneration;

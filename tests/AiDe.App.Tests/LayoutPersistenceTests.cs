@@ -32,7 +32,7 @@ public sealed class LayoutPersistenceTests : IDisposable
         {
             persistence.Restore();
             first.Apply(new LayoutOperation.MoveSurface("domain",
-                new DropTarget(first.Current.FindStackOf("provenance")!.Id, DropKind.SplitBottom)));
+                new DropTarget(first.Current.FindStackOf("sources")!.Id, DropKind.SplitBottom)));
             persistence.SaveNow();
         }
 
@@ -86,7 +86,7 @@ public sealed class LayoutPersistenceTests : IDisposable
         using (var persistence = Open(first))
         {
             persistence.Restore();
-            first.Apply(new LayoutOperation.MoveSurface("provenance", new DropTarget("", DropKind.Float)));
+            first.Apply(new LayoutOperation.MoveSurface("sources", new DropTarget("", DropKind.Float)));
             // Park it far off any real screen.
             var floating = first.Current.Floating[0];
             first.Restore(first.Current with
@@ -102,7 +102,7 @@ public sealed class LayoutPersistenceTests : IDisposable
         var result = reopened.Restore();
 
         Assert.Equal(LayoutErrorCodes.PartialRestore, result.ErrorCode);
-        Assert.Contains("Provenance", result.RehomedFloating);
+        Assert.Contains("Sources", result.RehomedFloating);
         // Reporting alone would leave a window the user still cannot reach.
         Assert.Null(second.Current.Floating[0].FloatingBounds);
     }
@@ -115,7 +115,7 @@ public sealed class LayoutPersistenceTests : IDisposable
         using (var persistence = Open(first))
         {
             persistence.Restore();
-            first.Apply(new LayoutOperation.MoveSurface("provenance", new DropTarget("", DropKind.Float)));
+            first.Apply(new LayoutOperation.MoveSurface("sources", new DropTarget("", DropKind.Float)));
             var floating = first.Current.Floating[0];
             first.Restore(first.Current with
             {
