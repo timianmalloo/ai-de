@@ -102,6 +102,18 @@ counts, per-event latency, the run's root count) — carried as residuals in
 | C-4 | open the Console after a turn with a Bash call | its completion rows read a first line · byte count (or *no text content (0 items)*), never `tool.result   tool.result`; `usage_update` rows still listed | 101 |
 | C-5 | a running turn's **N events** fold | the count excludes `usage_update` / `available_commands_update`; the Console still shows them | 100 |
 
+### Sessions, store and shell (Rulings 99, 102, 98, 94 — `docs/proof/architecture-recut-and-session-names.md`)
+
+| # | Do | Expect | Proves |
+|---|---|---|---|
+| S-1 | Ctrl+N twice on one day, accept the default name both times | the second tab reads *2026-09-14 session (2)*; its Console tab too; the strip announces the rename; typing a name that already exists gets the same suffix, never a refusal | 99 |
+| S-2 | Ctrl+N, look at the task-class list | every description wraps; no horizontal scrollbar | 102 |
+| S-3 | open TheTerrace on this build and wait for the index | the strip's `rev` reads the workspace HEAD (short sha), never `rev-1` — the store's stale snapshot re-extracted once at that open | 98 |
+| S-4 | Ctrl+3, then Reset layout | Left: Graph (about a fifth of the width); Center: Contexts (active) · Domain; no Right pane, Bottom collapsed; no Provenance anywhere; the View menu still lists Evidence | 94 |
+| S-5 | with your pre-94 Architecture layout saved (it was, at 16:13Z) | on first open the strip reports Provenance dropped, naming Ruling 94; nothing crashes | 94 |
+| S-6 | View → Evidence; select a row | a second, smaller line under the selected row reads origin · extractor · rev; unselected rows show none | 94 |
+| S-7 | at Graph's narrow width, the canvas header row | a horizontal scrollbar may still appear in the graph *page* (DC-218, the Explore lane's next fix) — report if you see it | — |
+
 ## What the conductor already ran (not yours)
 
 PD-5's runs 2 and 3 (the pin on the wire, `strictMcpConfig` verified), the dry runs, every headless oracle in every Proof Pack, the whole-suite recounts at every join (App 952 / Core 2632), the census (177 pairings, 0 below floor), the Release builds.

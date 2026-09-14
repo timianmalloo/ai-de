@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 119 · partially-controlled 66 · uncontrolled 31
+**Status counts:** controlled 120 · partially-controlled 67 · uncontrolled 33
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -7987,3 +7987,39 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Sweep:** the pack's scratch conventions (`docs/ai-forward-pack/scripts/*.py` temp paths keyed on `AGENT_SESSION` vs the harness session) — a pack finding (ai-forward), recorded in `docs/notes/pack-findings-addendum-cd.md`.
 - **Control (owed, pack-side):** scratch paths keyed by the coord session id (`AGENT_SESSION`), which every lane sets first; here the brief tells each lane to use lane-unique names until the pack lands it.
 - **Status:** `uncontrolled` — a process class; the fix is the pack's.
+
+### DC-217 — A fix at the writer does not reach a store the old writer already wrote; the reader shows the stored default
+
+- **Shape:** a door default (DC-110's shape) is removed from the code path that stamps it, and every record the old path already wrote keeps the literal; a reader that trusts the store shows it as a measured value for as long as the store's reuse guard says "unchanged".
+- **Signature:** the fix's tests are green, the operator's screen still shows the old value; `git log` on the writer shows the fix landed; the store's row predates it.
+- **Instance (2026-09-14, R-1):** `rev rev-1` on build `51e806f8` after Ruling 85 removed the literal from the shell — `WorkspaceCore.Reusable` reused the pre-85 snapshot on an unchanged fingerprint (`docs/proof/architecture-recut-and-session-names.md` §Ruling 98).
+- **Sweep:** the store's other stamped values (`ExtractorGeneration` is already a reuse key via `ScopeFingerprints`; the extractor version on provenance rows travels with re-extraction).
+- **Control:** Ruling 98 — a snapshot whose base revision is the retired literal is not reusable (`WorkspaceCore.RetiredFixtureRevision`), re-extracted once; the general rule for the next writer fix: name the stored shape the old writer produced and add it to the reuse guard, or migrate.
+- **Status:** `controlled`.
+
+### DC-218 — A flex row with no wrap inside a fraction-width pane overflows the document at the narrow default; the document, not the pane, grows the scrollbar
+
+- **Shape:** a browser-hosted page's `<header>` is a flex row of controls with no `flex-wrap`; at the pane's narrow default (Architecture's Left at 0.22) the row overflows the document width, and the WebView2 document scrolls sideways under a WPF header that shows nothing.
+- **Signature:** a horizontal scrollbar at the pane's bottom edge (the operator's F-C screenshot, y≈1118, x≈68–490) while the WPF tab header at the top has none; the controls *Search a node · Back · Overview · Fit · View in 3D · Group* clipped at the right.
+- **Instance (2026-09-14, Ruling 94 condition 3):** measured from the screenshot by the Sessions lane; the row is `CanvasPage.cs:34, 97-100`.
+- **Sweep:** the composer page's rows (they wrap or are single controls); the Explore reader is WPF.
+- **Control (owed to the Explore lane):** `flex-wrap: wrap` on the canvas header and a rendered check at 0.22 of the operator's viewport that `document.scrollWidth <= clientWidth`; the UI craft floor's overflow rule already names the shape for mockups — the page census should read it too.
+- **Status:** `uncontrolled` — registered 2026-09-14 from the lane's finding.
+
+### DC-219 — A store drops a kind it cannot restore in silence, so a kind the product retires vanishes from the operator's saved layout with no report unless the shell lists it as restorable
+
+- **Shape:** `ZoneLayoutStore.Read` filters saved surfaces by `restorableKinds`; a kind absent from the list is dropped and nothing says so. Ruling 94 retired `inspector`; the shell now names it in `RetiredKinds` so the drop is reported with the ruling — but a kind a *newer* build wrote, read by an older build, still vanishes silently.
+- **Signature:** a pane the operator arranged is gone after an upgrade or a downgrade; the strip reports nothing; `dropped=N` in the store's own counter with no line for the operator.
+- **Instance (2026-09-14, Ruling 94):** the composer probe's replay went `dropped=9` (silent) → `dropped=10` once `RestorableKinds` existed (`docs/proof/architecture-recut-and-session-names.md`).
+- **Sweep:** every reader of a saved envelope (`LayoutPersistence`, `ZoneLayoutStore`).
+- **Control (partial):** `RetiredKinds` closes the retired case with a report naming the ruling (ADR-0032 test 1 extended); open for the unknown-kind case — the next slice on the store makes every dropped kind a reported line ("dropped: <kind>, unknown to this build").
+- **Status:** `partially-controlled`.
+
+### DC-220 — A process-global diagnostics sink that tests swap makes the ledger's start/stop balance depend on which sink was installed when a line fired
+
+- **Shape:** `WorkbenchDiagnostics.Sink` is a process-global the App tests replace 32 times (30 paired with a restore in a `finally`; two as a disposable pair); a terminal's stop line is written synchronously through whichever sink is installed at `Dispose` time, so a stop that fires while a test's sink is installed lands in that test's capture, not in the per-run ledger — and the ledger reads one start with no stop although the terminal was disposed.
+- **Signature:** the per-run terminal ledger reads 10 starts / 9 stops for `s-terminal` in a full App run and 1/1 for the same test in isolation; the disposal is verified at the source; parallelization is off at the collection level.
+- **Instance (2026-09-14):** the Sessions lane fixed the every-kind test's disposal, observed `killed` in isolation, and the full run's ledger still read 10/9 — recorded as *not equal, mechanism not identified* rather than claimed.
+- **Sweep:** every `WorkbenchDiagnostics.Sink =` in tests/ (32); every ledger reader that treats the per-run file as complete (the terminal-host gates read the ledger with the assumption that a stop always reaches it).
+- **Control (owed):** the default sink is the *base* every swapped sink forwards `terminal.*` lines to (or the ledger writer is a separate, never-swapped channel), and a test asserts the full-run ledger balances; until then the ledger's unmatched count is read as "not recorded" for lines that fired under a swapped sink, never as a leak.
+- **Status:** `uncontrolled` — registered 2026-09-14; the measurement gap is named, the mechanism is not.
