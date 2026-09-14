@@ -645,6 +645,18 @@ The same eight-file S ceiling applies. MainWindow consumes
 The independent real daemon/MainWindow proof's fifteen leaves remain separate and held
 until the real handoff lands. No source grant, main/push or programme acceptance is implied.
 
+Owner turn 56 grants twelve S diagnostic/repair leaves, cumulative **60/72**, only in
+the three dirty MainWindow, WorkbenchShell and AtlasSharedHostAdmissionTests files.
+Conductor releases the first four for named stage/task/generation/disposal-gate evidence
+and an owned WPF/Core/SQLite control; the remaining eight wait for parent readback of
+the discriminator. Preserve the primary failure and report cleanup errors separately.
+No longer timeout, sleeps, sync-over-async, pool clearing, borrowed-query disposal or
+shared-`Sta` edit is granted. Successful cases must finish their owned body/cleanup and
+delete fixtures; failed drain is explicit retained debt, not skipped cleanup success.
+Native SRE and Test each receive two review leaves. Conductor's cumulative ceiling
+becomes 300, first eight reserved for records. The S proposal remains unjoined; the
+independent real-daemon/MainWindow proof is still separate.
+
 ### Core owns
 
 | Path | Why |

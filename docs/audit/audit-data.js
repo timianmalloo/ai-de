@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T15:19:44Z",
+  "generated": "2026-09-14T15:30:06Z",
   "audit": [
     {
       "actor": null,
@@ -16073,6 +16073,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "8004b49f9ba81af91d610cc83e45607a32bf010e",
         "short": "8004b49f9",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2G8MBPT1RBPWWT5C85X3G87",
+      "shortname": "atlas-mainwindow-primary-failure-diagnostic-release",
+      "datetime": "2026-09-14T15:30:05Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Owner56S12newleaves60to72same3dirtyfiles; first4diagnostic/controlleavesreleased,remaining8helduntilparentdiscriminatorread. Preserveprimarypendingawait/timeoutandcleanupfailureseparately; ownedpumpbody/CoreSQLitecleanup,noSleep/longertimeout/poolclearing/borroweddisposal/sharedStaedits. NativeSRE2Test2freshreviews. Mainceiling300prospective; actualdaemonwindowproof15stillseparate. Noverifiedcause/productfix/commitfromS yet.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Identify the exact shown-window lifecycle failure before a cause-specific correction.",
+      "done_when": "Named stages and owned task/resource state distinguish primary failure from cleanup masking and support a reviewed remedy.",
+      "tier": "T2",
+      "main_calls": 260,
+      "main_budget": 300,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T15:28:22Z",
+      "duration_seconds": 103.0,
+      "git": {
+        "sha": "74eb1c4b1faea6b3395e131e0bd8e7d9db345d40",
+        "short": "74eb1c4b1",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

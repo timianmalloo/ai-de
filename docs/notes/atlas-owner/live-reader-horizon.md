@@ -1147,3 +1147,18 @@ Owner was asked for a bounded diagnostic/repair pass that records stages and out
 tasks before cleanup, preserves the primary failure, and does not skip disposal, increase
 the thirty-second cap or add sleeps. The Core remains accepted; the uncommitted MainWindow
 candidate and independent real-daemon/window proof are not accepted.
+
+## Primary shown-window failure must survive cleanup, Owner turn 56
+
+Owner grants twelve S leaves, cumulative 60/72, in the same three dirty files.
+First record the named stage, awaited-task state, workspace generation and disposal
+gate before cleanup; retain the primary exception/timeout and report cleanup failure
+separately. The parent must read the discriminator before a product or local-harness
+correction proceeds. Four initial diagnostic leaves are released; eight remain held.
+
+The owned pump body and cleanup must both finish. Window closure alone proves neither.
+Shared `Sta` stays read-only; any required external change is a seam request. No timeout
+extension, arbitrary delay, global pool clearing or inferred disposal of borrowed
+queries is permitted. Preserve close retry and actual lease drain, then prove owned
+Core/SQLite resources and fixture directories are released. Native SRE/Test each have
+two fresh review leaves. Mainline ceiling becomes 300, preserving all prior accounting.
