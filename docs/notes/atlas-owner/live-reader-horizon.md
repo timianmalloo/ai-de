@@ -1037,3 +1037,20 @@ The proposed preparation/writer/release separation matches Owner 53's conditiona
 Conductor releases the remaining twelve leaves, C 114/126, for the exact five-file repair
 and replay. Failed drains retain ownership and debt; possible partial writes terminate.
 No Core join or Shell release occurs until the repaired current-pin gates clear.
+
+## Repaired publication candidate: two remaining gates and ID reconciliation
+
+The five-file `fa89ed06` candidate used ten repair leaves, C 124/126. Parent replayed
+447/447 Core/IPC and 96/96 App/factory and read raw writer-retention/partial/drain cases.
+Security clears its original publication/expiry veto. DS identifies a post-successful-write
+cancellation check that can terminalize an already completed response; Conductor opened
+the exact caller/helper and confirmed the statement. Test identifies receipt-observed
+resource tuples that are not fully asserted in the executable oracle. These are distinct
+remaining gates, not a failed reproduction of the original fix.
+
+The allocator also reports that published main `76c6d430` uses DC-177/DC-178 for different
+records and has reached numeric maximum 208 since this branch allocated its two entries. Both local
+records and published history must be preserved, with reissue/mapping before integration.
+This is not a request to merge product main or rewrite append-only audit entries.
+Owner was sent the exact findings, C's two unused calls and the remaining held Shell/proof
+allowances for the next bounded decision.

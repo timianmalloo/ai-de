@@ -336,3 +336,17 @@ Conductor traced the actual endpoint/server/issuer path and observed operation d
 before the response write. The externally visible interleaving is not yet executed;
 no disclosure is claimed. See `investigation-code-atlas-publication-lifetime`.
 The Core candidate and Shell handoff remain unjoined/unreleased pending that investigation.
+
+The repair candidate `fa89ed06` independently ran 447 Core/IPC and 96 App/factory cases.
+Its raw blocked/revoke/partial/drain observations correct the original release-before-write
+case. Security clears that narrow ownership repair. DS and Test remain blocked on a new
+post-full-write cancellation poll and missing exact resource-counter assertions respectively.
+The investigation records these separately; neither the new green runs nor Security's
+narrow clearance admits the whole runtime.
+
+The cross-branch ID allocator also detected a bookkeeping collision before integration:
+published `origin/main` at `76c6d430a19492ffcd9b126e641ee70cda57ec69` has different DC-177
+and DC-178 entries and now reaches numeric maximum 208. The locally allocated cleanup/structural-patch
+records must be reissued without discarding either history. The ordinary derived-view gate
+does not clear this separate failed allocator check. Owner disposition is pending; no
+product-main merge or new ID allocation is inferred.

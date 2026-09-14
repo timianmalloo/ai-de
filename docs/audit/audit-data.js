@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T05:22:46Z",
+  "generated": "2026-09-14T13:04:24Z",
   "audit": [
     {
       "actor": null,
@@ -15877,6 +15877,70 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "bb28dc0f5ce1764728291531b0f09045843252e7",
         "short": "bb28dc0f5",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2G07QADEM33GF0DSPZWA6GP",
+      "shortname": "atlas-publication-review-remaining-gates",
+      "datetime": "2026-09-14T13:03:22Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Candidatefa89fixedoriginal6reds,parent447Core96Appand10orderingcases. Securityclearsoriginalpublicationveto; DSblocksnewpost-full-writecancellationpoll, Testblocksreceiptcountersnotfullyasserted. Parentopenedexactwriter/helper; newlatecancelinterleavingnotyetexecuted. Runtimeunjoined/Shellproofheld. SeparateidallocatorFAILED: publishedmain76c6d430max208collideswithlocalDC177/178; preservebothandseekOwnerreconciliation, no newidguess/productmainmerge/auditrewrite. Normalderivedgatesdonotclearallocatorfailure.",
+      "kind": "command",
+      "skill": null,
+      "tool": "review",
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/code-atlas-publication-lifetime.md",
+        "docs/proof/code-atlas-production-adapters.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Resolve the remaining publication review gates without erasing evidence or published IDs.",
+      "done_when": "Late-completion behavior and complete resource oracles are proven, and local class identities are reconciled for integration.",
+      "tier": "T2",
+      "main_calls": 206,
+      "main_budget": 208,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T13:03:22Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "3e54960114c7a63105155cd5a85b33c770f4aa06",
+        "short": "3e5496011",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2G09JNQ804F81AET12YK5AS",
+      "shortname": "atlas-published-id-count-wording",
+      "datetime": "2026-09-14T13:04:23Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Corrected publishedmaximum wording to a numericcount ratherthan an unresolvedlocalclasscitation. InitialderivedgatecaughtliteralDC208notpresentlocally; no commitwascreatedbyfailedcommand. ActualDC177/178cross-branchcollisionremainsrecordedandunresolved; no evidence/IDsdiscarded. PublicationDS/TestgatesremainblockedandOwnerrulingpending.",
+      "kind": "command",
+      "skill": null,
+      "tool": "docs",
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Keep the pending blocker record accurate without creating a false local class citation.",
+      "done_when": "The record distinguishes the published numeric maximum from locally resolvable class entries.",
+      "tier": "T0",
+      "main_calls": 208,
+      "main_budget": 208,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "git": {
+        "sha": "3e54960114c7a63105155cd5a85b33c770f4aa06",
+        "short": "3e5496011",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

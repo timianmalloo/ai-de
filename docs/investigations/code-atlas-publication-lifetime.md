@@ -141,3 +141,37 @@ Owner turn 53 conditionally approved the described repair after parent red/plan 
 That gate is met; C's remaining twelve leaves are released. They cover only the stated
 five files and preserve the exact paused-write oracle. The independent Security/DS/Test
 gates and final runtime admission remain open.
+
+## Repair candidate and remaining review findings
+
+Candidate `fa89ed06500c0f271561f2ec5527b15306cf42c6` changes exactly the five authorized
+files. C used ten of twelve repair leaves, regular 124/126. Conductor independently built
+the daemon and ran 447/447 Core/IPC and 96/96 App/factory cases. All ten publication modes
+passed. New raw cases are preserved under
+`files/atlas-publication-fixed-independent/cases`.
+
+The original expiry/revoke defect is corrected in those observations: while the writer
+is blocked, one active reservation, one native owner, five native buffers, 16 MiB owned
+and 4 MiB retained remain charged. Invalidation cancels the writer and cleanup waits.
+Closed modes reach all-zero charges after actual drain; partial publication stops at four
+bytes with no success/refusal appended. Fresh Security clears that original narrow veto.
+
+Two independent gates remain blocked:
+
+| Gate | Observed source gap | Required control/correction |
+|---|---|---|
+| DS | `IpcServer` polls writer cancellation immediately after `RespondWithinTimeout` has returned successfully | Cancel in the full-write/pre-finalization window; completed A must remain completed and late operation cancellation must not kill healthy B |
+| Test | Tests record full blocked/drained resource tuples but assert only active count and a positive owner count | Assert every required resource component per mode; prove wrong component values fail without freeing live native buffers |
+
+Conductor opened the exact server write/helper source and confirmed the post-return
+token check. Its harmful interleaving is still a source-level finding until the new
+counterexample executes. The existing completed control invalidates after publication
+drains and therefore does not cover this smaller window.
+
+DS also notes an explicit held-publication requirement would protect source-bearing
+operations against a future accidental direct success. The current four source-bearing
+facade paths do call `Hold`; capabilities/release legitimately do not. This is recorded
+as a contract condition, not a demonstrated source leak or automatic scope expansion.
+
+Owner was asked to disposition the narrow post-drain correction and exact resource
+oracles. Runtime remains unjoined and Shell/independent-window work remains held.
