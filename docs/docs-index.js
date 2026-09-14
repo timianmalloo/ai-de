@@ -3582,7 +3582,7 @@ window.DOCS_INDEX = {
       "path": "docs/notes/console-toggle-closes-on-second-press.md",
       "title": "The session header's Console toggle closes the Console document on its second press; the verb focuses it",
       "type": "decision-note",
-      "status": "draft",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "addendum-c",
       "reviewBy": "2027-03-13",
@@ -3618,7 +3618,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8bdcbcc8511029a4ab2537dbda9745589b9c7fe497281905484572f35f5991cc"
+      "sourceSha256": "b09546bb66cdb19ea7eb74435419b0fa250b6a1d212fa7ae948e894c385e777a"
     },
     {
       "id": "note-addendum-a-ratification",
@@ -7984,7 +7984,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ebf71cea451c3ec649953c11fdd8bf4dc6d54d1ea72d5308331c3a26e81d8822"
+      "sourceSha256": "ec3b9dc9b9641d1aaee6da7455886019a2edffbd0f4652c72807e24c278a7d1a"
     },
     {
       "id": "defect-classes",
@@ -8013,7 +8013,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3a00afb365f0c152f27e1796af408c411c92038901bf215f7db209434248fafe"
+      "sourceSha256": "eb6e6f67e2f039fe5f7eb534c8511eefed18811afdb2260d636909793e0235cd"
     },
     {
       "id": "design-session-profiler",
@@ -9163,7 +9163,7 @@ window.DOCS_INDEX = {
     {
       "id": "note-addendum-c-council-rulings",
       "path": "docs/notes/addendum-c-council-rulings.md",
-      "title": "Decision note — Rulings 50–89: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
+      "title": "Decision note — Rulings 50–90: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
       "type": "doc",
       "status": "accepted",
       "owner": "@timianmalloo",
@@ -9226,7 +9226,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "09c3034440760c2a89b888374e52261848f5823a94a625143fac198adfc870b1"
+      "sourceSha256": "140a76d5231c0eb2d84d1eda2f5fcbae940910dbb261ff6878604c4c35d10c7b"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -10499,7 +10499,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8f127f720bc334fea0fd5fb8f0adbca00de9d8617df42c9fea774dc8913fa80d"
+      "sourceSha256": "ee7a5e0b1109ad3e8e1fd6c6da6d5f58050c462a0689168617346470f8cd8dee"
     },
     {
       "id": "session-profiles",
@@ -18074,5 +18074,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "55539d898a51d4b6485a380188641a3ab271bcd2f64703d49b53a83d30dc4d28"
+  "graphSha256": "eeacffb36fb1a72b39c04cc751e400b57dd72863ef98bbee9402d1428fbbf427"
 };

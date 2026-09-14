@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T01:32:19Z",
+  "generated": "2026-09-14T01:35:24Z",
   "audit": [
     {
       "actor": null,
@@ -15267,39 +15267,30 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2EF9D2NEFCXXK556NSQ60HK",
-      "shortname": "join-sh4-1",
-      "datetime": "2026-09-13T22:47:57Z",
-      "session": "claude-conductor-addendum-c",
-      "prompt": "keep going (the join of the resolved merge)",
-      "summary": "Join: SH-4.1 (0a7c9795) merged to main clean - Coordination is the fourth Perspective (host C, Ctrl+4, its own slot file, IconCoordination, the five Loomkeeper kinds re-homed, the pre-C restore's drop-with-report naming Coordination), plus two defects the slice found and fixed (the view's active content after a body is reparented, DC-194; the census walking before realization, DC-195). DC-194..196 (SH-4.1) and DC-197..201 (D3) allocated into the register from their proof and review. The first join through conductor-join.py.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/coordination-perspective.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Land SH-4.1 on main with the floors recounted and a Release build the operator can press Ctrl+4 on",
+      "datetime": "2026-09-13T22:47:57Z",
       "done_when": "main pushed green through run-verify-gates; Release built",
+      "goal": "Land SH-4.1 on main with the floors recounted and a Release build the operator can press Ctrl+4 on",
+      "id": "al-01M2EF9D2NEFCXXK556NSQ60HK",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (the join of the resolved merge)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-sh4-1",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
-      }
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Join: SH-4.1 (0a7c9795) merged to main clean - Coordination is the fourth Perspective (host C, Ctrl+4, its own slot file, IconCoordination, the five Loomkeeper kinds re-homed, the pre-C restore's drop-with-report naming Coordination), plus two defects the slice found and fixed (the view's active content after a body is reparented, DC-194; the census walking before realization, DC-195). DC-194..196 (SH-4.1) and DC-197..201 (D3) allocated into the register from their proof and review. The first join through conductor-join.py.",
+      "tags": [],
+      "tool": null
     },
     {
-      "id": "al-01M2ENW8HCBHPB7XX34VCQEMAD",
-      "shortname": "sh-4-2-coding-recut-left-dock",
-      "datetime": "2026-09-14T00:43:07Z",
-      "session": "sh-4-2",
-      "prompt": "SH-4.2: Coding's re-cut and the left dock — a new session docks Left not maximized (Ruling 83; Ruling 47 superseded; NewSessionPlacement retired), CodingDefault Left empty · Center empty · Bottom one terminal collapsed (Ruling 88), the reconcile applies a drag while a collapsed zone holds panes or a stack is maximized (F-1, red-first), the console document's kind row and Center admission (Ruling 89, CV-5.2's seam request), the Center's two empty copies, the 96ch Left extent measured",
-      "summary": "SH-4.2 landed on lane/shell-sh4-2 (Rulings 83, 88, 89). A new session docks in Coding's Left zone, docked, Maximized == null, active in the view — the session-document kind row carries the zone rule (SurfaceKind.Zone) and OpenReferenceDocument reads it; NewSessionPlacement retired (no callers, then no type; the ComposerProbe replays end where main does). CodingDefault = Left empty at CodingLeftExtent (1.3/2.3) · Center empty · Bottom one terminal, collapsed — the terminal is not started until the rail expands (measured: terminal.start 0 → 1). The Center's empty copy is derived from the model at every render (CenterEmptyState): \"No session open.\" + New session (Ctrl+N chip, the catalog's accelerator) / \"The session is docked at the left.\" with no first action, the heading a Control-view focus target / \"Nothing open here.\" + the way out for a session that could not be restored (the island names the session and the same way out). F-1: TryMapByPosition anchors panes by identity (ILayoutPaneSerializable.Id written by BuildPane), then share-of-owned majority, the placeholder identifies the Center and never enters the model, collapsed-holding zones keep their content, a drop beside a rail joins and expands it, a bottom-edge drop joins the hidden Bottom, foreign vertical roots refused; ReadLayoutFromView knows the placeholder (the drag back was silently \"view-unreadable\"); the refusal sentence names no removed cause. Ruling 89 (CV-5.2's seam): the console kind row (Coding, Many, verb session.console, Zone Center), the View-menu verb, ConsoleDocumentHost hosts the session document's own Split in the Center and follows the read model, the toggle dispatches through Checked/Unchecked with ReflectConsole (honest state; a second press closes — a recorded deviation from Ruling 89's letter, the verb focuses), one per session, closes with its session through the adapter's SurfaceClosed, focus returns and \"Console closed.\" is announced. Coding's landing = the session at Left, else the Center's empty copy; PerspectiveShell.FocusLanding lands in the editor. Collapse is a hide, not a close: the adapter parks collapsed-holding content and gives it back on expand (the WPF lens's two Majors, red-first). L5/L6 measured on the composed tree at the design's startup size — MainWindow.xaml now opens at 1440 × 900 (it said 1180 × 720): body 1369, Left pane 771, words column 693 ≥ 96ch (672.6) + margin; ≥ 1 turn half visible (1 of 2 with the review fixture, 1 of 3 prose); the display is a 2560 × 1600 panel at 150 % so a 2560-DIP window is an attended row. DESIGN.md seam rows: the drop sentence reconciled to the P6 oracle (DC-196), the re-cut row, the \"≥ 3 turns\" row as a per-viewport measured threshold, the Copy row. Reviews: UX & Accessibility VETO HELD → CLEARED (loop 2), Test Architect VETO HELD → CLEARED (loop 2), WPF lens NO ESCALATION. Proof Pack docs/proof/coding-recut-left-dock.md with red records under docs/proof/records/sh-4-2/; decision note docs/notes/console-toggle-closes-on-second-press.md; a filing note under Ruling 89. Core 2632 / App 955 green; the verify gates green; Release rebuilt.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/coding-recut-left-dock.md",
@@ -15319,6 +15310,31 @@ window.AUDIT_DATA = {
         "src/AiDe.App/MainWindow.xaml",
         "DESIGN.md"
       ],
+      "datetime": "2026-09-14T00:43:07Z",
+      "done_when": "L1–L6, F-1, C5, the landing red → green; the gates green; the Proof Pack + the audit entry; pushed to lane/shell-sh4-2; Release rebuilt",
+      "duration_seconds": 6701.0,
+      "fan_out": 3,
+      "git": {
+        "branch": "lane/shell-sh4-2",
+        "pushed": null,
+        "sha": "0b372d93cf3811b0b9671f9e66119e0e4e7a82ae",
+        "short": "0b372d93c"
+      },
+      "goal": "Coding's re-cut and the left dock per Rulings 83/88/89: a new session docks Left (not maximized), NewSessionPlacement retired, CodingDefault = Left empty · Center empty · Bottom one terminal collapsed, the reconcile's blindness fixed (F-1), the console kind row + Center admission (C5), the Center's two copies, Coding's landing, the 96ch Left extent measured",
+      "id": "al-01M2ENW8HCBHPB7XX34VCQEMAD",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "SH-4.2: Coding's re-cut and the left dock — a new session docks Left not maximized (Ruling 83; Ruling 47 superseded; NewSessionPlacement retired), CodingDefault Left empty · Center empty · Bottom one terminal collapsed (Ruling 88), the reconcile applies a drag while a collapsed zone holds panes or a stack is maximized (F-1, red-first), the console document's kind row and Center admission (Ruling 89, CV-5.2's seam request), the Center's two empty copies, the 96ch Left extent measured",
+      "session": "sh-4-2",
+      "shortname": "sh-4-2-coding-recut-left-dock",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-13T22:51:26Z",
+      "summary": "SH-4.2 landed on lane/shell-sh4-2 (Rulings 83, 88, 89). A new session docks in Coding's Left zone, docked, Maximized == null, active in the view — the session-document kind row carries the zone rule (SurfaceKind.Zone) and OpenReferenceDocument reads it; NewSessionPlacement retired (no callers, then no type; the ComposerProbe replays end where main does). CodingDefault = Left empty at CodingLeftExtent (1.3/2.3) · Center empty · Bottom one terminal, collapsed — the terminal is not started until the rail expands (measured: terminal.start 0 → 1). The Center's empty copy is derived from the model at every render (CenterEmptyState): \"No session open.\" + New session (Ctrl+N chip, the catalog's accelerator) / \"The session is docked at the left.\" with no first action, the heading a Control-view focus target / \"Nothing open here.\" + the way out for a session that could not be restored (the island names the session and the same way out). F-1: TryMapByPosition anchors panes by identity (ILayoutPaneSerializable.Id written by BuildPane), then share-of-owned majority, the placeholder identifies the Center and never enters the model, collapsed-holding zones keep their content, a drop beside a rail joins and expands it, a bottom-edge drop joins the hidden Bottom, foreign vertical roots refused; ReadLayoutFromView knows the placeholder (the drag back was silently \"view-unreadable\"); the refusal sentence names no removed cause. Ruling 89 (CV-5.2's seam): the console kind row (Coding, Many, verb session.console, Zone Center), the View-menu verb, ConsoleDocumentHost hosts the session document's own Split in the Center and follows the read model, the toggle dispatches through Checked/Unchecked with ReflectConsole (honest state; a second press closes — a recorded deviation from Ruling 89's letter, the verb focuses), one per session, closes with its session through the adapter's SurfaceClosed, focus returns and \"Console closed.\" is announced. Coding's landing = the session at Left, else the Center's empty copy; PerspectiveShell.FocusLanding lands in the editor. Collapse is a hide, not a close: the adapter parks collapsed-holding content and gives it back on expand (the WPF lens's two Majors, red-first). L5/L6 measured on the composed tree at the design's startup size — MainWindow.xaml now opens at 1440 × 900 (it said 1180 × 720): body 1369, Left pane 771, words column 693 ≥ 96ch (672.6) + margin; ≥ 1 turn half visible (1 of 2 with the review fixture, 1 of 3 prose); the display is a 2560 × 1600 panel at 150 % so a 2560-DIP window is an attended row. DESIGN.md seam rows: the drop sentence reconciled to the P6 oracle (DC-196), the re-cut row, the \"≥ 3 turns\" row as a per-viewport measured threshold, the Copy row. Reviews: UX & Accessibility VETO HELD → CLEARED (loop 2), Test Architect VETO HELD → CLEARED (loop 2), WPF lens NO ESCALATION. Proof Pack docs/proof/coding-recut-left-dock.md with red records under docs/proof/records/sh-4-2/; decision note docs/notes/console-toggle-closes-on-second-press.md; a filing note under Ruling 89. Core 2632 / App 955 green; the verify gates green; Release rebuilt.",
       "tags": [
         "shell-lane",
         "sh-4-2",
@@ -15326,97 +15342,105 @@ window.AUDIT_DATA = {
         "ruling-88",
         "ruling-89"
       ],
-      "outcome": "success",
-      "goal": "Coding's re-cut and the left dock per Rulings 83/88/89: a new session docks Left (not maximized), NewSessionPlacement retired, CodingDefault = Left empty · Center empty · Bottom one terminal collapsed, the reconcile's blindness fixed (F-1), the console kind row + Center admission (C5), the Center's two copies, Coding's landing, the 96ch Left extent measured",
-      "done_when": "L1–L6, F-1, C5, the landing red → green; the gates green; the Proof Pack + the audit entry; pushed to lane/shell-sh4-2; Release rebuilt",
       "tier": "T2",
-      "fan_out": 3,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "started_at": "2026-09-13T22:51:26Z",
-      "duration_seconds": 6701.0,
-      "git": {
-        "sha": "0b372d93cf3811b0b9671f9e66119e0e4e7a82ae",
-        "short": "0b372d93c",
-        "branch": "lane/shell-sh4-2",
-        "pushed": null
-      }
+      "tool": null
     },
     {
-      "id": "al-01M2EPVKVAXNVKTT4KFQ6NR46F",
-      "shortname": "join-sh4-2",
-      "datetime": "2026-09-14T01:00:14Z",
-      "session": "claude-conductor-addendum-c",
-      "prompt": "keep going (the join of the resolved merge)",
-      "summary": "Join: SH-4.2 (c1a301da) merged to main clean - the last Addenda C/D slice: a new session docks in Coding's Left, not maximized (Ruling 83; NewSessionPlacement deleted); Coding's default Bottom collapsed with the terminal started only on expand (Ruling 88); the reconcile reads identity, not rendered zones (F-1: 9 of 10 rows red before); the Console as a document in the Center (Ruling 89, CV-5.2's C5 green); the Center's copies; the Left extent measured (96ch at 1440x900: column 693 >= 672.6); the startup size set to the design's 1440x900. DC-202..205 allocated. One deviation for the Owner: the Console toggle's second press closes (UIA Toggle honesty) where Ruling 89 said focus.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/coding-recut-left-dock.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Land the last slice on main with the floors recounted and the final Release build of the programme",
+      "datetime": "2026-09-14T01:00:14Z",
       "done_when": "main pushed green through run-verify-gates; Release built",
+      "goal": "Land the last slice on main with the floors recounted and the final Release build of the programme",
+      "id": "al-01M2EPVKVAXNVKTT4KFQ6NR46F",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (the join of the resolved merge)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-sh4-2",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
-      }
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Join: SH-4.2 (c1a301da) merged to main clean - the last Addenda C/D slice: a new session docks in Coding's Left, not maximized (Ruling 83; NewSessionPlacement deleted); Coding's default Bottom collapsed with the terminal started only on expand (Ruling 88); the reconcile reads identity, not rendered zones (F-1: 9 of 10 rows red before); the Console as a document in the Center (Ruling 89, CV-5.2's C5 green); the Center's copies; the Left extent measured (96ch at 1440x900: column 693 >= 672.6); the startup size set to the design's 1440x900. DC-202..205 allocated. One deviation for the Owner: the Console toggle's second press closes (UIA Toggle honesty) where Ruling 89 said focus.",
+      "tags": [],
+      "tool": null
     },
     {
-      "id": "al-01M2EQ97SWHTZVKMP5Y2Z0NN8T",
-      "shortname": "session-profile-sp-0002",
-      "datetime": "2026-09-14T01:07:40Z",
-      "session": "profiler",
-      "prompt": "session-profile.py profile",
-      "summary": "Profile sp-0002: 4 session(s), 27 finding(s)",
-      "kind": "script",
-      "skill": "session-profiler",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/profiles/sp-0002/profile.md"
       ],
-      "tags": [],
+      "datetime": "2026-09-14T01:07:40Z",
+      "duration_seconds": 181.0,
+      "id": "al-01M2EQ97SWHTZVKMP5Y2Z0NN8T",
+      "kind": "script",
       "outcome": "success",
+      "prompt": "session-profile.py profile",
+      "session": "profiler",
+      "shortname": "session-profile-sp-0002",
+      "skill": "session-profiler",
       "started_at": "2026-09-14T01:04:39Z",
-      "duration_seconds": 181.0
+      "summary": "Profile sp-0002: 4 session(s), 27 finding(s)",
+      "tags": [],
+      "tool": null
     },
     {
-      "id": "al-01M2ERP5BWMQA01JKMS2TXHB8J",
-      "shortname": "session-profiler-addendum-cd",
-      "datetime": "2026-09-14T01:32:13Z",
-      "session": "profiler",
-      "prompt": "Run the session-profiler skill (--repo C:\\projects\\ai-de --days 3 — the Addenda C/D programme, 2026-09-11 → 2026-09-13: the conductor session (Claude Code, Opus) and its ~20 sub-agent nodes (opus/sonnet/fable), 14 joins, Rulings 50–90). Stage 0 discover first; every number read from a store or labelled est.; missing measurements read not recorded; the Simplifier strikes findings that change nothing; the Test Architect's veto on fixes without a named control. Answer the operator's questions (IO2): cost and tokens per node and per join; the cache share; joins vs dispatch/review on the conductor's wall; rework passes; width used vs the cap; nodes over plan and by what ratio; whether the operator's five findings were answered within the day and at what cost; the repeat-mistake shapes (DC-113 ×4, mangled heredocs, DC-nnn allocation drift). Reconcile against docs/notes/pack-findings-addendum-cd.md; SP-15 against git worktree list (42 atlas/* trees are the peer's). Outputs in the side worktree; new classes as DC-nnn (profiler a) placeholders; never claim the register.",
-      "summary": "Profile addendum-cd (curating sp-0002): 14 findings (AC-01..AC-12, SP-01, SP-07), 8 struck (SP-09, SP-06, SP-14, SP-15x3f8dad7c, SP-12, SP-17, the audit-id split, the coord refusals), 10 fixes each with a pack surface and a red-observed control (F-18 subagents reader, F-19 notification turns, F-20 DC-113 shell rule + SP-24, F-21 heredoc write-then-run + SP-25, F-22 join entries carry marker/tier/fan-out/recount, F-23 ledger ratio derived, F-24 resume carries start + SP-26, F-25 no EnterWorktree in nodes + SP-23, F-14 ext. per-node context ceiling, F-09). Numbers: programme est. $2,198 list-price (main $308, 52 nodes $1,634, 114 reviews $257); cache share 98.95% main / 98.09% sub-agents; joins + gates/recounts = 13,451 s = 44.8% of the 30,032 s active main line (20 whole-suite --update recounts, median 391.5 s); width mean 1.9, width 3 for 28.1% of live time, 4 once for 752 s; planned-vs-actual median 1.78x (store) / 1.75x (ledger rows) — the ledger's 2.2x is not derivable (DC-184 shape); the operator's five findings answered in code within the day (16:36Z message -> SH-4.2 joined 01:00Z = 18:00 local), findings-driven nodes $364 est., the window $631 est.; DC-113 shape 168 main-line lines / 102 on commit lines vs 4 recorded; 70 failed heredoc runs; 20 register lease refusals in 45 min; EnterWorktree blocked SH-4.1 8,143 s. Pack findings #1 #2 #5 #6 #16 #17 confirmed with counts, none struck. 3 placeholder classes DC-nnn (profiler a|b|c). The script's own append consumed this run's start marker (finding #2 re-observed); the closing duration is from the re-mark at 01:07:56Z.",
-      "kind": "skill",
-      "skill": "session-profiler",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/profiles/addendum-cd.md",
         "docs/profiles/sp-0002/profile.md",
         "docs/lessons/defect-classes.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Profile the Addenda C/D programme (conductor 919ba21f + nodes + joins) from the harness stores, the audit log and the ledger; answer the operator's IO2 questions; findings/fixes/family tables with controls; register new shapes as placeholders",
+      "datetime": "2026-09-14T01:32:13Z",
       "done_when": "docs/profiles/addendum-cd.md + sp-0002 + PROFILES.md row written; every Inferred finding confirmed or struck; gates green; committed and pushed to side/session-profile-addendum-cd; claims released",
-      "tier": "T0",
+      "duration_seconds": 1457.0,
       "fan_out": 0,
+      "goal": "Profile the Addenda C/D programme (conductor 919ba21f + nodes + joins) from the harness stores, the audit log and the ledger; answer the operator's IO2 questions; findings/fixes/family tables with controls; register new shapes as placeholders",
+      "id": "al-01M2ERP5BWMQA01JKMS2TXHB8J",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Run the session-profiler skill (--repo C:\\projects\\ai-de --days 3 — the Addenda C/D programme, 2026-09-11 → 2026-09-13: the conductor session (Claude Code, Opus) and its ~20 sub-agent nodes (opus/sonnet/fable), 14 joins, Rulings 50–90). Stage 0 discover first; every number read from a store or labelled est.; missing measurements read not recorded; the Simplifier strikes findings that change nothing; the Test Architect's veto on fixes without a named control. Answer the operator's questions (IO2): cost and tokens per node and per join; the cache share; joins vs dispatch/review on the conductor's wall; rework passes; width used vs the cap; nodes over plan and by what ratio; whether the operator's five findings were answered within the day and at what cost; the repeat-mistake shapes (DC-113 ×4, mangled heredocs, DC-nnn allocation drift). Reconcile against docs/notes/pack-findings-addendum-cd.md; SP-15 against git worktree list (42 atlas/* trees are the peer's). Outputs in the side worktree; new classes as DC-nnn (profiler a) placeholders; never claim the register.",
+      "session": "profiler",
+      "shortname": "session-profiler-addendum-cd",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
+        "verification_path": true
       },
+      "skill": "session-profiler",
       "started_at": "2026-09-14T01:07:56Z",
-      "duration_seconds": 1457.0
+      "summary": "Profile addendum-cd (curating sp-0002): 14 findings (AC-01..AC-12, SP-01, SP-07), 8 struck (SP-09, SP-06, SP-14, SP-15x3f8dad7c, SP-12, SP-17, the audit-id split, the coord refusals), 10 fixes each with a pack surface and a red-observed control (F-18 subagents reader, F-19 notification turns, F-20 DC-113 shell rule + SP-24, F-21 heredoc write-then-run + SP-25, F-22 join entries carry marker/tier/fan-out/recount, F-23 ledger ratio derived, F-24 resume carries start + SP-26, F-25 no EnterWorktree in nodes + SP-23, F-14 ext. per-node context ceiling, F-09). Numbers: programme est. $2,198 list-price (main $308, 52 nodes $1,634, 114 reviews $257); cache share 98.95% main / 98.09% sub-agents; joins + gates/recounts = 13,451 s = 44.8% of the 30,032 s active main line (20 whole-suite --update recounts, median 391.5 s); width mean 1.9, width 3 for 28.1% of live time, 4 once for 752 s; planned-vs-actual median 1.78x (store) / 1.75x (ledger rows) — the ledger's 2.2x is not derivable (DC-184 shape); the operator's five findings answered in code within the day (16:36Z message -> SH-4.2 joined 01:00Z = 18:00 local), findings-driven nodes $364 est., the window $631 est.; DC-113 shape 168 main-line lines / 102 on commit lines vs 4 recorded; 70 failed heredoc runs; 20 register lease refusals in 45 min; EnterWorktree blocked SH-4.1 8,143 s. Pack findings #1 #2 #5 #6 #16 #17 confirmed with counts, none struck. 3 placeholder classes DC-nnn (profiler a|b|c). The script's own append consumed this run's start marker (finding #2 re-observed); the closing duration is from the re-mark at 01:07:56Z.",
+      "tags": [],
+      "tier": "T0",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/addendum-cd.md"
+      ],
+      "datetime": "2026-09-14T01:04:51Z",
+      "done_when": "main pushed green with the lane rows retired and the plan closed",
+      "goal": "Close the programme's coordination horizon on main",
+      "id": "al-01M2EQ42P0HDDJ3YE8C647YQCW",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (the join of conductor/addendum-c)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-converge-docs",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Converge (docs): Ruling 90 filed (the Console toggle closes on its second press; Ruling 88's premise corrected); the Addenda C/D lane rows retired from session-contracts.md with the horizon's new files assigned to Core/Design (verify-surface-ownership 13/13); the plan's execution ledger and Stage 10 close; DC-142 recurrence 2; docs/notes/pack-findings-addendum-cd.md (17 rows for /updatepack); 12 merged worktrees removed one by one; the stale coord sessions ended.",
+      "tags": [],
+      "tool": null
     }
   ],
   "changes": [

@@ -6311,6 +6311,15 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   as below.
 - **Status:** `partially-controlled` — the instance is repaired; the mechanical control is a pack
   proposal, filed with this entry, not yet a gate.
+- **Recurrence 2 (2026-09-13, the converge's dry run):** `coord worktree cleanup` reported
+  `C:/Projects/ai-de-feature-exit-evidence — clean, merged, unheld — WOULD remove` while
+  `git rev-list --count main..feature/exit-evidence` read **21**: the frozen F5 tree, whose exit run
+  is still the operator's, would have been deleted by `--remove`. The label's rule (Inferred: the
+  tree's HEAD is an ancestor of some ref, or a `--merged` check against the wrong base) is not the
+  one that matters. **Control held by procedure, not by the tool:** the conductor removed twelve trees
+  one at a time, each after `rev-list --count main..<branch> == 0` and an empty `status --short`;
+  `--remove` stays unrun until the tool's "merged" label is `rev-list` against `main` (a pack finding
+  for `/updatepack`, DC-142's control proper).
 
 ### DC-143 — A theme declared as a rule with no values is a theme that cannot fail
 - **Shape:** the design language declares one mode's values and, for the other, a sentence

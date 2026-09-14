@@ -8,32 +8,31 @@
 | **Session id** | `conductor-addendum-c` |
 | **Worktree** | `C:/Projects/ai-de-conductor-addendum-c` |
 | **Branch** | `conductor/addendum-c` |
-| **Based on** | `main` `4b8d379c` |
+| **Based on** | `main` `36b7210e` |
 | **Status** | live |
-| **Last updated** | 2026-09-13 (17:20Z) |
+| **Last updated** | 2026-09-13 (23:05Z) |
 
 ## Doing right now
 
-The operator's first manual test of the CV-2 build (2026-09-13 09:27–09:33, five screenshots)
-became **Rulings 80–87** (filed, on `main` `4b8d379c`). Live: **D3** (`design/operator-findings-0913`,
-`/ui-design` elevate — mockups, DESIGN.md errata, the ranked plan for CV-5 and SH-4) and **X-3**
-(`side/x3-shell-seams` — the Shell-lane seam requests, Rulings 85/86). Landed on the conductor
-branch, joining with X-3: **X-4** = Ruling 87 (UTF-8 engine streams, DC-177). Next dispatches from
-D3's plan: **CV-5** (Rulings 81/82/80 — the conversation) and **SH-4** (Rulings 84/83 — Coordination,
-the left dock). CV-3 stays blocked on PD-5's attended spike. Joins in the primary, serialized:
-merge → recount → audit → regenerate → commit → `run-verify-gates.py` → push → Release build.
-Next free register id: DC-178. No leases held.
+The operator is away until later tonight or tomorrow ("don't block on me"). Landed on `main`
+`36b7210e`: every Addenda C/D slice but one — S0–S2, DS-1, SH-1..3, SH-4.1, CV-0..4, CV-5.2..5.4,
+D3, X-1..5, PD-5 (three runs, GREEN under the full pin; gate 1 open). Live: **SH-4.2**
+(`lane/shell-sh4-2`, the last slice — Rulings 83/88/89's zone rules, the reconcile fix, the
+console document). Converge has begun: 12 merged worktrees removed one by one (never `--remove` —
+DC-142 rec. 2), the stale coord sessions ended, the plan's ledger written, the pack findings noted
+(`docs/notes/pack-findings-addendum-cd.md`). After SH-4.2's scripted join: retire the §2 lane rows,
+`/session-profiler`, the plan's Stage 10 close, the operator's attended rows listed for their
+return. Register ids are allocated at the join (next free: DC-202). No leases held.
 
 ## Waiting on
 
 | From | What |
 |---|---|
-| **X-3** | close → join with X-4 → rebuild |
-| **D3** | the ranked plan → dispatch CV-5 ∥ SH-4 |
-| **The user** | PD-5's attended ~30-min window (gates CV-3); the F5 exit run (`feature/exit-evidence` @ `135e05e1`); the attended rows of CV-0/CV-1/CV-2 on the next build |
+| **SH-4.2** | its close → `conductor-join.py` → rebuild |
+| **The user (later)** | the visual attended rows on the final build — O-1/O-2 (docked Left, drag without refusal), O-4 (a reply: Thinking, tool lines, rendered prose), O-7 (Ctrl+4); the F5 exit run on `feature/exit-evidence` @ `135e05e1` (21 unique commits; the tree is kept); an Owner word on Ruling 88's density unit (1 turn measured at both viewports) |
 
 ## To peers (Copilot Atlas fleet)
 
-`atlas/*` worktrees are yours; the conductor neither reads nor removes them. Ownership for the
+`atlas/*` worktrees (42) are yours; the conductor neither reads nor removes them. Ownership for the
 horizon is in `session-contracts.md` §2. Shared files under lease refuse the pre-commit boundary —
 claim for the minutes of the edit, default TTL.

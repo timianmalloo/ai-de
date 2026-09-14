@@ -55,7 +55,7 @@ which is the defect signature the data-modelling standard names.
 
 ## 2. File ownership
 
-**Last reconciled against the tree: 2026-09-11 (evening)**, by the conductor applying the Addenda C/D lane rows as moves (plan `addendum-cd`); before that the same day by node F4 of the front-door slice, adding the
+**Last reconciled against the tree: 2026-09-13 (converge)**, by the conductor retiring the Addenda C/D lane rows (plan `addendum-cd` step 11: the horizon's moves returned to Core/Design with the horizon's new files assigned); before that on 2026-09-11 by the conductor applying those rows as moves, and the same day by node F4 of the front-door slice, adding the
 composer surface it built under `src/AiDe.App/Workbench/Composer/`. Previously reconciled 2026-09-10
 by node F2 (the three surfaces under `src/AiDe.App/Workbench/Sessions/`), and 2026-09-01 by the core
 session (the nine surfaces §4y listed and the Session 3 rows in §4z).
@@ -85,7 +85,6 @@ other session may not read it — reading is how contracts stay honest.
 |---|---|
 | `src/AiDe.Core/**` | Extraction, store, projections, layout model, terminal runtime |
 | `src/AiDe.Daemon/**` | The process boundary and what it composes |
-| `src/AiDe.App/Workbench/WorkbenchAdapter.cs` | Command routing and layout application (`WorkbenchController.cs` moved to the Shell lane for the horizon) |
 | `src/AiDe.App/ViewModels/**` | Composition root wiring |
 | `src/AiDe.App/Workbench/DiagnosticsSurface.cs` | Renders the index summary and its disclosures — a Core projection end to end |
 | `src/AiDe.App/Workbench/NodeReaderView.cs` | Reads `DescribeAsync`/`NodeContentAsync` directly — see the split below |
@@ -118,6 +117,17 @@ shortfall affordance at `CodeViewerView.cs:96-98`, which the bounds harness alre
 The same split already works for the canvas chip. It is one sentence against a mis-routed finding,
 and a finding was mis-routed exactly once today for want of it (§4y).
 | `tests/AiDe.Core.Tests/**`, `spikes/**`, `tools/**` | Evidence and gates |
+| `src/AiDe.App/Workbench/WorkbenchShell.cs` | Binds surfaces to evidence — "interaction between surfaces" |
+| `src/AiDe.App/Workbench/WorkbenchController.cs`, `WorkbenchAdapter.cs` | Command routing and layout application |
+| `src/AiDe.App/Workbench/SurfaceContentFactory.cs` | The registry mapping a surface kind to a control, with the perspectives' allow-list column (ADR-0030) |
+| `src/AiDe.App/Workbench/LayoutPersistence.cs` | Layout state, versioning and restore; one slot file per host perspective (ADR-0032) |
+| `src/AiDe.App/Workbench/JoinSurface.cs` | A design surface |
+| `src/AiDe.App/Workbench/CanvasPage.cs`, `CanvasSurface.cs` | The graph surface and its embedded page |
+| `src/AiDe.App/Workbench/CommandPalette.cs`, `PromptBar.cs`, `MainMenuBuilder.cs` | Interactive chrome; the menus are derived from the kind rows (ADR-0030) |
+| `src/AiDe.App/Workbench/ClassDiagramSurface.cs` | A design surface (ADR-0026 class-diagram-architecture) |
+| `src/AiDe.App/Workbench/ExplorerSurface.cs` | The full-window Explorer body (ADR-0017 as amended) |
+| `src/AiDe.Core/Workbench/Perspectives.cs`, `src/AiDe.App/Workbench/PerspectiveShell.cs`, `DockHost.cs`, `PerspectiveRail.cs`, `PerspectiveMenu.cs`, `CenterEmptyState.cs` | The Perspective registry, the presenter over three docking hosts and the Explorer body, the rail, the derived menu, the Center's copies (Addendum C; ADR-0030/31/32; Rulings 83/84/88) |
+| `src/AiDe.Core/Compilation/**`, `src/AiDe.App/Conductor/CompileCallHost.cs`, `src/AiDe.App/Cli/**`, `tools/compile-eval/**` | The Prompt Compilation bounded context, the compile call, its CLI verbs and eval harness (Addendum D; ADR-0033–0036) |
 
 ### Design owns
 
@@ -135,7 +145,6 @@ would find §2 and this history disagreeing with no way to tell which was curren
 of both files is unchanged and returns to Design.
 | `src/AiDe.App/Workbench/ContextMapSurface.cs` | A design surface |
 | `src/AiDe.App/Workbench/TerminalView.cs`, `TerminalPalette.cs` | Terminal rendering and colour |
-| `src/AiDe.App/Workbench/PromptBar.cs` | Interactive chrome (`CommandPalette.cs`, `MainMenuBuilder.cs` moved to the Shell lane for the horizon) |
 
 **Recorded crossing, 2026-09-10 (front-door F2).** The front-door node edited two Design-owned files
 to make `File → New Session` reachable at all: `MainMenuBuilder.cs` gained a **Recent sessions**
@@ -153,44 +162,9 @@ unchanged and returns to Design.
 | `docs/mockups/**`, `docs/design/**` | Design artifacts |
 | `docs/ui/**` | Session 3 (`claude-ui-experience`) — craft findings, mockups, review harnesses |
 | `docs/design/ux-*.md`, `docs/design/ui-*.md` | Session 3 — UX/UI specs it authors |
+| `src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs`, `ConsoleSurface.cs`, `ConsoleDocumentHost.cs`, `ThreadFeed*.cs`, `TurnItem*.cs` | The session document: the thread as the conversation, the folded Console and its document in the Center (Rulings 74, 81, 82, 89) |
+| `src/AiDe.App/Workbench/Composer/ComposerSurface.cs`, `src/AiDe.App/Web/composer.*` | The composer: one message field, the decoration line, Prepare (Rulings 57, 63, 80) |
 
-
-### Horizon 2026-09-11 → converge: the Addenda C/D lanes (plan `docs/coordination/addendum-cd.md`)
-
-**Applied as moves on 2026-09-11 by the conductor at dispatch** (plan step 1): the paths below left
-the *Core owns* / *Design owns* tables for the horizon and return at converge (plan step 11). The
-plan is the authority for *why*; this section is the register's copy so `verify-surface-ownership.py`
-sees exactly one owner per surface. `derived` and `register` artifacts carry no owner — the driver is
-the owner.
-
-### Shell lane owns
-
-| Path | Why |
-|---|---|
-| `src/AiDe.Core/Workbench/Perspectives.cs`, `WorkbenchCommands.cs`, `LayoutModel.cs`, `ZoneLayout.cs`, `ZoneBackedLayoutService.cs`, `ZoneLayoutStore.cs` | The Perspective registry and the per-host layout aggregate (ADR-0030/0032) |
-| `src/AiDe.App/Workbench/SurfaceContentFactory.cs`, `PerspectiveMenu.cs`, `MainMenuBuilder.cs`, `CommandPalette.cs` | The kind rows' allow-list columns and everything derived from the join (ADR-0030) - **the `MainMenuBuilder.Layout` carve-out is suspended**: the mapping moves onto the catalog entry in SH-1 |
-| `src/AiDe.App/Workbench/WorkbenchShell.cs`, `DockHost.cs`, `PerspectiveShell.cs` (né `ShellModeController.cs`), `WorkbenchController.cs`, `LayoutPersistence.cs`, `WebSurfaceHost.cs`, `WorkbenchDiagnostics.cs` | The second host, the presenter, the slots (ADR-0031/0032) |
-| `src/AiDe.App/MainWindow.xaml`, `MainWindow.xaml.cs`, `DockRoundedTabs.xaml`, `DESIGN.md` | The rail, the title, the status strip, the tab states, the tokens |
-| `src/AiDe.App/Workbench/CanvasSurface.cs`, `CanvasPage.cs`, `ClassDiagramSurface.cs`, `JoinSurface.cs`, `ExplorerSurface.cs` | SH-3's content: the Evidence pair, the scaling fix, Ruling 59's check; Explore unchanged by ruling |
-
-### Conversation lane owns
-
-| Path | Why |
-|---|---|
-| `src/AiDe.App/Workbench/Composer/**` (`ComposerSurface.cs`, `ComposerSendGate.cs`, `ComposerPageContract.cs`, `ComposerPageTheme.cs`), `src/AiDe.App/Web/composer.html`, `composer.mjs` | The composer as a conversation; the send path (US-C13; ADR-0033) |
-| `src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs`, `ConsoleSurface.cs`, `NewSessionSheetDialog.cs`, `NewSessionFlow.cs`, `SessionComposerBinder.cs` | The thread, the folded Console, the sheet, the one binding site |
-| `src/AiDe.Core/Presentation/Composer/**`, `src/AiDe.Core/Presentation/Sessions/NewSessionSheetViewModel.cs`, `src/AiDe.Core/Sessions/**` | The compiler's render site, the draft, lease derivation, the sheet's model, session settings and the compile-mode ladder's settings model |
-| `src/AiDe.Core/Compilation/**`, `src/AiDe.App/Cli/**`, `tools/compile-eval/**` | The Prompt Compilation bounded context, its CLI verbs and its eval harness (ADR-0033-0036) |
-| `src/AiDe.Core/AgentPlane/GoalBlock.cs`, `LeaseAndSeams.cs`, `AcpLaneClient.cs`, `AcpEngineProcess.cs`, `src/AiDe.App/Conductor/**` | The read-only shape, `AuthorizeBinding`, the pins, `CompileCallHost` (Rulings 71/73; ADR-0035) |
-| `src/AiDe.Core/Watcher/Leaderboard.cs` and the watcher store's schema | `TaskClasses.FreeForm`; the `task_class_source` expand-only column (ADR-0028 amendment) |
-
-### Side tracks own
-
-| Path | Why |
-|---|---|
-| `docs/design/session-thread-itemscontrol.md` and the notes DS-1 files | DS-1 |
-| `spikes/compile-session-pin-wire/**`, `docs/proof/compile-pin-spike.md`, `compile-pin-spike.json` | PD-5 |
-| `tests/AiDe.App.ContrastProbe/**`, `tests/AiDe.App.Tests/**/ContrastFloorTests.cs`, `tools/verify-mockup-audits.py`, `.github/workflows/build.yml`, `docs/mockups/{app-facelift,context-map-join,knowledge-explorer,uml-erm-surfaces}.html` | X-1 |
 
 ### Shared, and therefore rule-bound
 

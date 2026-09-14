@@ -1,6 +1,6 @@
 ---
 id: note-addendum-c-council-rulings
-title: "Decision note — Rulings 50–89: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
+title: "Decision note — Rulings 50–90: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
 type: doc
 status: accepted
 owner: "@timianmalloo"
@@ -1497,3 +1497,21 @@ Issued by the **Owner** (`fable`) on D3's review (`docs/reviews/ui-operator-find
 **Filing note (Rulings 88–89).** The IA lens's Blocker (IA-1) clears on Ruling 88; its stated condition ("must measure ≥ 1 turn with the editor at 280") is L6.
 
 **Filing note (SH-4.2, 2026-09-13 — for the conductor's ratification).** Ruling 89's *"a second toggle focuses it"* is honoured by the **verb** (`session.console`, the View menu, a turn's *Open the log*), not by the header's ToggleButton: hosted, the toggle's state is the Console document's open state and its second press **closes** it — the UX & Accessibility lens's Blocker on the slice (a ToggleButton that never releases lies to the UIA Toggle pattern, WCAG 4.1.2). The count of `console:<id>` stays ≤ 1 on every path. The call and its one-line reversal are `docs/notes/console-toggle-closes-on-second-press.md`; the evidence is `docs/proof/coding-recut-left-dock.md` Claim 8. Ruling 88's premise that the collapsed default *"would refuse every drag"* was measured wrong for the Bottom (never pre-seeded, so kept) and right for the Left/Right; the same oracle found a raw-count tie that moved the session — Claim 5 of the same pack.
+
+---
+
+## Ruling 90 — the header's Console toggle closes the Console document on its second press; the verb focuses it (Ruling 89 amended); Ruling 88's premise corrected
+
+Issued by the **Owner** (`fable`) at `main` `3e5b04f6` on SH-4.2's recorded deviation (`docs/notes/console-toggle-closes-on-second-press.md`).
+
+**RULING:** Ratify the deviation. Ruling 89's *"One per session: a second toggle focuses it"* becomes *"One per session: the header toggle's state is the document's open state — a second press closes it; a second run of the verb `session.console` (View menu, palette, chord) or a turn's *Open the log* focuses the one open console."* Ruling 89's substance — count of `console:<id>` ≤ 1 on every path — is unchanged.
+
+**BECAUSE:** The control is a `ToggleButton` (`SessionDocumentSurface.cs:999`), driven from `Checked`/`Unchecked` with `ReflectConsole` non-dispatching (`:1006-1019`, `:230`); a toggle whose second press never releases reports `ToggleState` On while `IToggleProvider.Toggle` changes nothing — a role/value lie under WCAG 4.1.2, the UX & Accessibility lens's Blocker, cleared in loop 2 with the deviation *"acceptable from the UX side, explicitly"* (proof pack §Reviews). The oracle presses through the UIA pattern itself (`ConsoleSplitPlacementTests.cs:39-40`), so the fix is measured, not asserted. The alternative — a plain Button — is a control-type change in a Conversation-lane file beyond SH-4.2's seam, and loses the honest open-state the toggle now carries. **Ruling 88's premise is corrected:** *"the default would refuse every drag"* was wrong for the Bottom (never pre-seeded, so kept — but mis-anchored on a raw-count tie, *Expected Left, Actual Center*) and right for Left/Right; 9 of 10 pre-fix reconcile rows were red (Claim 5, `red-run-core-reconcile.txt`). Ruling 88's outcome stands; its BECAUSE overstated the mechanism.
+
+**CONFIDENCE:** Verified (note, filing note, Claim 5/8, §Reviews, the handlers, the oracle's pattern press).
+
+**SCOPE EFFECT:** Ruling 89 amended as above; Rulings 21/74 unchanged. No plain-Button rework. Finding 5 (`CurrentRegion` reports `Split` for the hosted console) stays a CV-lane finding.
+
+**CONDITIONS:** (1) C5 keeps asserting *unchecking closes* and *the verb focuses, count 1*. (2) The hosted help text stays state-neutral. (3) The decision note's status moves `draft` → accepted, citing this ruling.
+
+**RECORD AS:** Ruling 90 — the Console toggle closes on its second press, the verb focuses (Ruling 89 amended, UIA Toggle honesty); Ruling 88's "refuses every drag" premise corrected (Bottom kept-but-tied, Left/Right refused, 9 of 10 rows red); SH-4.2 deviation ratified.
