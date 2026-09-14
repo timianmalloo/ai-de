@@ -4,3 +4,6 @@
 {"agent": "claude-lane-explore", "at": 1789404550.417418, "kind": "claim", "path": "tests/AiDe.App.Tests/NodeReaderEdgeRowLayoutTests.cs", "seq": 4, "session": "explore-r92-r93", "ttl": 300.0, "wi": "R92"}
 {"agent": "claude-lane-explore", "at": 1789404568.8378477, "kind": "release", "path": "src/AiDe.App/Workbench/NodeReaderView.cs", "seq": 5, "session": "explore-r92-r93", "wi": "WI-0"}
 {"agent": "claude-lane-explore", "at": 1789404568.8889425, "kind": "release", "path": "tests/AiDe.App.Tests/NodeReaderEdgeRowLayoutTests.cs", "seq": 6, "session": "explore-r92-r93", "wi": "WI-0"}
+{"agent": "claude-lane-explore", "at": 1789405899.920144, "kind": "claim", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 7, "session": "explore-r92-r93", "ttl": 300.0, "wi": "R93"}
+{"agent": "claude-lane-explore", "at": 1789405900.4283178, "kind": "release", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 8, "session": "explore-r92-r93", "wi": "WI-0"}
+{"agent": "claude-lane-explore", "at": 1789406294.8164475, "kind": "session-end", "path": "-", "seq": 9, "session": "explore-r92-r93", "wi": "WI-0", "worktree": "C:/Projects/ai-de-lane-explore-r92-r93"}

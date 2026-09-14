@@ -845,3 +845,13 @@
 {"agent": "copilot-atlas-conductor", "at": 1789403596.3418236, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
 {"agent": "copilot-atlas-conductor", "at": 1789403596.3498235, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
 {"agent": "copilot-atlas-conductor", "at": 1789403596.3568287, "code": null, "kind": "allowed", "path": "site/index.html", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789405628.4864361, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789405628.492947, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789405628.500942, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789405628.5079408, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789405628.5149462, "code": null, "kind": "allowed", "path": "docs/collaboration/session-contracts.md", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789405628.5219467, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789405628.5289502, "code": null, "kind": "allowed", "path": "docs/notes/atlas-owner/live-reader-horizon.md", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789405628.5359514, "code": null, "kind": "allowed", "path": "docs/proof/code-atlas-production-adapters.md", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789405628.5434763, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
+{"agent": "copilot-atlas-conductor", "at": 1789405628.5504754, "code": null, "kind": "allowed", "path": "site/index.html", "session": "copilot-atlas-fleet-45bbc625", "wi": ""}
