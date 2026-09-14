@@ -836,6 +836,21 @@ worktree `C:\Projects\ai-de-atlas-e1-static-design`, exact clean base
 design and receipt; no product code or shared artifact editing is granted. Parent owns
 audit/change/index integration. Four targeted review leaves remain separate.
 
+Owner turn 64 extends the existing proof writer from 51 to 55 cumulative leaves,
+solely for the named, bound footer assertion and current-checkout proof closure.
+Within the owned MainWindow, identify `Workspace health`, verify its `StatusMessage`
+binding belongs to the active VM, and compare displayed status after legitimate
+refresh. Two equal text values elsewhere are not a footer oracle. No status
+assignment or product edit is granted. Preserve the failed duplicate-match run.
+Build and replay the whole real-daemon journey, inspect fresh pixels and normal
+lifecycle receipts, and verify repository, test assembly and daemon binary roots.
+Only the reviewed proof-file correction may join the two previously admitted
+proof commits; alternate-checkout correctness requires a real Conductor replay.
+Footer coherence is not accepted before that named-target evidence passes.
+The Conductor cumulative ceiling rises prospectively from 400 to 430 leaves;
+prior expenditure remains recorded. E1 still has no implementation grant, and
+main integration, push, normative Addendum E and programme closure remain separate.
+
 ### Core owns
 
 | Path | Why |

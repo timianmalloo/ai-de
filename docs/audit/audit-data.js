@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T20:10:52Z",
+  "generated": "2026-09-14T20:33:37Z",
   "audit": [
     {
       "actor": null,
@@ -16436,6 +16436,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "8b9232d5c0f7bebcaada0cdc01e7eff193e98bb3",
         "short": "8b9232d5c",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GT041TZKXP9Z6QSREZG9KB",
+      "shortname": "atlas-owner64-proof-e1-checkpoint",
+      "datetime": "2026-09-14T20:33:36Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner64 authorizes four proof-only leaves 51 to55 and prospective cumulative Conductor430. Actual footer binding/VM owner, legitimate refresh and current-checkout replay required. E1 design76d30b42 fully paged/read; codec/capability, charge and native source-contract gaps remain explicit, no code grant. Four review-node budget interpretation referred to Owner. Ledger refreshed36done6inprogress. Current Claude liveness read: wave1main75a2adfb, composer and engine spikes live; no canonical ownership transfer/main consent inferred. Corrected stale own liveness. Shell probe mistakenly parsed Markdown as JSON; restricted parser by extension, no repository defect or product change.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-real-daemon-mainwindow.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Close remaining E0 proof and obtain E1 design decision",
+      "done_when": "Proof integrated and replayed; E1 has reviewed implementation boundary",
+      "tier": "T2",
+      "main_calls": 418,
+      "main_budget": 430,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T20:32:29Z",
+      "duration_seconds": 67.0,
+      "git": {
+        "sha": "f8b0f3c7453b87221b1d656ffcd5c2700efb079f",
+        "short": "f8b0f3c74",
         "branch": "conductor/code-atlas",
         "pushed": null
       }
