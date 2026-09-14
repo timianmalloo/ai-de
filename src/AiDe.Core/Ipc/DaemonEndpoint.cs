@@ -205,6 +205,10 @@ public sealed class DaemonEndpoint
         Publication? publication;
         lock (_publicationGate) _publications.TryGetValue(response, out publication);
         var rejected = Validate(request, peer);
+        if (rejected is null && response.Ok && publication is null
+            && request.Operation is AtlasWorkspaceOperations.Admit or AtlasWorkspaceOperations.Inventory
+                or AtlasWorkspaceOperations.Select or AtlasWorkspaceOperations.Restore)
+            return IpcResponse.Error("Atlas.PublicationMissing", "A successful Atlas source operation requires held publication ownership.");
         if (publication is not null)
         {
             if (publication.Peer != peer) throw new InvalidOperationException("Publication belongs to another connection.");
