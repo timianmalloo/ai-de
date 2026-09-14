@@ -40,7 +40,7 @@ public sealed class EngineCatalogTests
     [Fact]
     public void TheEngineRowsLoadWithTheirPinnedPackagesAndObservedLaunches()
     {
-        Assert.Equal(3, EngineCatalog.Rows.Count);
+        Assert.Equal(4, EngineCatalog.Rows.Count);
 
         var claude = EngineCatalog.Find("claude-code");
         Assert.Equal("anthropic", claude.Provider);
@@ -64,6 +64,16 @@ public sealed class EngineCatalogTests
         Assert.Equal("copilot", native.Command);
         Assert.Equal(["--acp"], native.Arguments);
         Assert.Equal("COPILOT_GH_HOST", native.HostVariable);
+
+        var gemini = EngineCatalog.Find("gemini");
+        Assert.Equal("google", gemini.Provider);
+        Assert.Equal(AcpMode.Native, gemini.Acp);
+        var geminiNative = Assert.IsType<NativeCommand>(gemini.Native);
+        Assert.Equal("gemini", geminiNative.Command);
+        Assert.Equal(["--acp"], geminiNative.Arguments);
+        Assert.Equal("@google/gemini-cli", geminiNative.NpmPackage);
+        Assert.Equal("bundle/gemini.js", geminiNative.NpmEntryModule);
+        Assert.Null(geminiNative.HostVariable);
     }
 
     /// <summary>Every adapter row pins both a package and a version — an unpinned adapter is drift.</summary>
@@ -105,7 +115,7 @@ public sealed class EngineCatalogTests
         Assert.Equal("node", launch.FileName);
         var module = Assert.Single(launch.Arguments);
         Assert.Equal(
-            Path.Combine(InstallRoot, "node_modules", "@agentclientprotocol/claude-agent-acp", "dist", "index.js"),
+            Path.Combine(InstallRoot, "node_modules", "@agentclientprotocol", "claude-agent-acp", "dist", "index.js"),
             module);
     }
 
@@ -129,7 +139,7 @@ public sealed class EngineCatalogTests
         Assert.Equal("node", launch.FileName);
         var module = Assert.Single(launch.Arguments);
         Assert.Equal(
-            Path.Combine(InstallRoot, "node_modules", "@agentclientprotocol/codex-acp", "dist", "index.js"),
+            Path.Combine(InstallRoot, "node_modules", "@agentclientprotocol", "codex-acp", "dist", "index.js"),
             module);
     }
 
@@ -211,6 +221,72 @@ public sealed class EngineCatalogTests
         Assert.Equal(AgentPlaneErrorCodes.EngineNotOnPath, error.Code);
         Assert.Contains("copilot", error.Message, StringComparison.Ordinal);
         Assert.Contains("shell", error.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Ruling 97 condition 1, gemini: <c>gemini --acp</c> resolves through npm's <c>.cmd</c> shim to
+    /// the script beside it — <c>node &lt;npm prefix&gt;/node_modules/@google/gemini-cli/bundle/gemini.js --acp</c>,
+    /// the line the spike spawned (<c>spikes/engine-backends/gemini/fresh-home/frames.jsonl</c>) —
+    /// and never <c>--experimental-acp</c>, which <c>gemini --help</c> marks deprecated.
+    /// </summary>
+    /// <remarks>
+    /// <b>Red-first.</b> Before the row existed this threw <c>UnknownEngine</c>. Measured on this
+    /// machine: <c>where gemini</c> finds <c>%APPDATA%\npm\gemini.cmd</c> and no <c>gemini.exe</c>,
+    /// so this is the pass every gemini launch on Windows takes.
+    /// </remarks>
+    [Fact]
+    public void TheNativeLaunchPathResolvesGeminiThroughTheNpmShimToItsScript()
+    {
+        using var path = new FakePath();
+        var script = path.AddNpmShim("gemini", "@google/gemini-cli", "bundle/gemini.js");
+
+        var launch = EngineCatalog.ResolveLaunch("gemini", InstallRoot, path.Locator);
+
+        Assert.Equal("node", launch.FileName);
+        Assert.Equal([script, "--acp"], launch.Arguments);
+        Assert.DoesNotContain("--experimental-acp", launch.Arguments);
+    }
+
+    /// <summary>
+    /// An npm shim whose script is not beside it is refused by name, not handed to <c>node</c> to
+    /// fail with "Cannot find module" after the lane has started.
+    /// </summary>
+    [Fact]
+    public void AnNpmShimWithoutItsScriptIsRefusedRatherThanHandedToNode()
+    {
+        using var path = new FakePath();
+        var script = path.AddNpmShim("gemini", "@google/gemini-cli", "bundle/gemini.js");
+        File.Delete(script);
+
+        var error = Assert.Throws<AgentPlaneException>(
+            () => EngineCatalog.ResolveLaunch("gemini", InstallRoot, path.Locator));
+
+        Assert.Equal(AgentPlaneErrorCodes.EngineNotOnPath, error.Code);
+        Assert.Contains(script, error.Message, StringComparison.Ordinal);
+        Assert.Contains("npm install -g @google/gemini-cli", error.Message, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// An npm-delivered CLI that PATH lacks is resolved from the product's own install root — the
+    /// place Ruling 104's <c>npm install --prefix &lt;root&gt;</c> puts it — and refused, naming the
+    /// root, when it is not there either.
+    /// </summary>
+    [Fact]
+    public void AnNpmDeliveredCliAbsentFromPathResolvesFromTheInstallRootOrIsRefusedNamingIt()
+    {
+        using var path = new FakePath();
+        using var installRoot = new FakePath();
+        var script = installRoot.AddNpmShim("gemini", "@google/gemini-cli", "bundle/gemini.js");
+
+        var launch = EngineCatalog.ResolveLaunch("gemini", installRoot.Entries.Single(), path.Locator);
+        Assert.Equal("node", launch.FileName);
+        Assert.Equal([script, "--acp"], launch.Arguments);
+
+        var error = Assert.Throws<AgentPlaneException>(
+            () => EngineCatalog.ResolveLaunch("gemini", InstallRoot, path.Locator));
+        Assert.Equal(AgentPlaneErrorCodes.EngineNotOnPath, error.Code);
+        Assert.Contains(InstallRoot, error.Message, StringComparison.Ordinal);
+        Assert.Contains("@google/gemini-cli", error.Message, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -349,6 +425,9 @@ public sealed class EngineCatalogTests
         private readonly List<string> _entries = [];
 
         public NativeCommandLocator Locator => new(_entries, OperatingSystem.IsWindows());
+
+        /// <summary>The directories on this PATH, in order — each is also an npm prefix when a shim was added to it.</summary>
+        public IReadOnlyList<string> Entries => _entries;
 
         /// <summary>A directory on PATH holding <c>&lt;command&gt;.exe</c> (or an executable file off Windows).</summary>
         public string AddExecutable(string command)

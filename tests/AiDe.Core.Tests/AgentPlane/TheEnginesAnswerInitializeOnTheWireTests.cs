@@ -65,6 +65,19 @@ public sealed class TheEnginesAnswerInitializeOnTheWireTests(ITestOutputHelper o
     public Task CodexAnswersInitializeWithProtocolVersionOne()
         => ObserveInitializeAsync("codex", home => new Dictionary<string, string> { ["CODEX_HOME"] = home }, expectedAgentName: "@agentclientprotocol/codex-acp");
 
+    /// <summary>
+    /// gemini — <c>gemini --acp</c> (Gemini CLI 0.58.0 at spike time), resolved through npm's
+    /// <c>gemini.cmd</c> to <c>node &lt;npm prefix&gt;/node_modules/@google/gemini-cli/bundle/gemini.js --acp</c>.
+    /// The spike's fresh-home run answered in 1.1 s with <c>agentInfo.name "gemini-cli"</c>
+    /// (<c>spikes/engine-backends/gemini/fresh-home/frames.jsonl</c>). Isolation is
+    /// <c>HOME</c>+<c>USERPROFILE</c> on scratch, the spike's shape; the CLI writes
+    /// <c>.gemini/</c> there. <c>GEMINI_API_KEY</c> is inherited as this machine has it — it is
+    /// read at <c>session/new</c>, which is not sent.
+    /// </summary>
+    [NativeCliFact("gemini")]
+    public Task GeminiAnswersInitializeWithProtocolVersionOne()
+        => ObserveInitializeAsync("gemini", home => new Dictionary<string, string> { ["HOME"] = home, ["USERPROFILE"] = home }, expectedAgentName: "gemini-cli");
+
     private async Task ObserveInitializeAsync(
         string engineId,
         Func<string, IReadOnlyDictionary<string, string>> isolation,

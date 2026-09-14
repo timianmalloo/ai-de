@@ -245,6 +245,30 @@ public static class EngineCatalog
                 // because it reaches Copilot alone and leaves any `gh` in the child's tree untouched.
                 // Whether the ACP server reads it at session time was not observable without a tenant.
                 HostVariable: "COPILOT_GH_HOST")),
+        new(
+            "gemini",
+            "google",
+            AcpMode.Native,
+            null,
+            null,
+            null,
+            new NativeCommand(
+                // Observed: Gemini CLI 0.58.0 (`@google/gemini-cli`, package.json `bin.gemini =
+                // bundle/gemini.js`), spawned as `node <bundle/gemini.js> --acp` — no .cmd, no shell —
+                // answered initialize in 1.1 s with agentInfo.name "gemini-cli"
+                // (spikes/engine-backends/gemini/fresh-home/frames.jsonl). `--acp` is the flag;
+                // `--experimental-acp` is listed as "(deprecated, use --acp instead)"
+                // (spikes/engine-backends/gemini/gemini-help.txt:28-29). On this machine PATH carries
+                // only npm's gemini.cmd, so the launch is the npm-shim pass: the script beside it.
+                "gemini",
+                ["--acp"],
+                // Copied from https://github.com/google-gemini/gemini-cli/blob/main/README.md and
+                // https://geminicli.com/docs/get-started/authentication/ (read 2026-09-14). The API
+                // key is the only sign-in path observed to open a session: personal "Sign in with
+                // Google" is refused server-side for individuals since 2026-06-18 (spike §3).
+                "npm install -g @google/gemini-cli  (then set GEMINI_API_KEY, from https://aistudio.google.com/apikey, in the environment the product launches with)",
+                NpmPackage: "@google/gemini-cli",
+                NpmEntryModule: "bundle/gemini.js")),
     ];
 
     /// <summary>The catalog, as data.</summary>
@@ -375,12 +399,17 @@ public static class EngineCatalog
             + $"; install it: {native.InstallInstruction}");
     }
 
+    /// <summary>
+    /// <c>&lt;root&gt;/node_modules/&lt;package&gt;/&lt;entry&gt;</c> with the platform's separator
+    /// throughout — a scoped package (<c>@scope/name</c>) is two directories, so the launch line
+    /// the host reports and the proof pack copies reads as one path, not a mixed one.
+    /// </summary>
     private static string NodeModule(string root, string package, string entryModule)
         => Path.Combine(
         [
             root,
             "node_modules",
-            package,
+            .. package.Split('/', StringSplitOptions.RemoveEmptyEntries),
             .. entryModule.Split('/', StringSplitOptions.RemoveEmptyEntries),
         ]);
 
