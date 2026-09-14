@@ -99,6 +99,13 @@ public sealed class SessionDocumentViewModel
     /// <summary>The primary mode's share of the canvas split.</summary>
     public double CanvasSplitWeight { get; private set; }
 
+    /// <summary>
+    /// Whether the composer's compiled-prompt disclosure is open — the document's state, not one
+    /// composer instance's (Ruling 96): collapsed at rest (Ruling 57), and once the operator opens
+    /// it, open for this document across turns and a reopen.
+    /// </summary>
+    public bool CompiledPromptOpen { get; private set; }
+
     /// <summary>The merged stream every lane of this session writes into.</summary>
     public ConsoleStreamModel Console { get; } = new();
 
@@ -176,6 +183,9 @@ public sealed class SessionDocumentViewModel
         LayoutChanged?.Invoke();
     }
 
+    /// <summary>Records the compiled-prompt disclosure's state (Ruling 96) — the surface calls this on the operator's toggle, and reads it when it binds a composer.</summary>
+    public void SetCompiledPromptOpen(bool open) => CompiledPromptOpen = open;
+
     /// <summary>
     /// Dispatches one lane event: it lands in the merged stream, and a permission request surfaces
     /// before the caller can dequeue the next one.
@@ -215,7 +225,8 @@ public sealed class SessionDocumentViewModel
         ActiveModeId,
         SplitModeId,
         CanvasSplitWeight,
-        Preset.ComposerWeight);
+        Preset.ComposerWeight,
+        CompiledPromptOpen);
 
     /// <summary>
     /// Restores a saved envelope. A mode the build no longer offers is dropped rather than
@@ -239,6 +250,7 @@ public sealed class SessionDocumentViewModel
         CanvasSplitWeight = Math.Clamp(
             envelope.CanvasSplitWeight, SessionZonePreset.MinimumWeight, 1.0 - SessionZonePreset.MinimumWeight);
         Preset = Preset.WithComposerWeight(envelope.ComposerWeight);
+        CompiledPromptOpen = envelope.CompiledPromptOpen;
         LayoutChanged?.Invoke();
     }
 

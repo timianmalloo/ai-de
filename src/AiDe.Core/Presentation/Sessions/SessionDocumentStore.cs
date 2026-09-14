@@ -14,12 +14,19 @@ namespace AiDe.Core.Presentation.Sessions;
 /// <param name="SplitModeId">The mode beside it, or null when the canvas was not split.</param>
 /// <param name="CanvasSplitWeight">The primary mode's share of the canvas split.</param>
 /// <param name="ComposerWeight">The composer's share of the paired zone.</param>
+/// <param name="CompiledPromptOpen">
+/// Whether the composer's compiled-prompt disclosure was open (Ruling 96: opened once, it stays open
+/// for the session document — across turns and a reopen). Absent from an envelope written before
+/// the field existed, which reads as collapsed at rest (Ruling 57) — the same schema version, because
+/// no existing field changes meaning.
+/// </param>
 public sealed record SessionDocumentEnvelope(
     [property: JsonPropertyName("schemaVersion")] int SchemaVersion,
     [property: JsonPropertyName("activeModeId")] string ActiveModeId,
     [property: JsonPropertyName("splitModeId")] string? SplitModeId,
     [property: JsonPropertyName("canvasSplitWeight")] double CanvasSplitWeight,
-    [property: JsonPropertyName("composerWeight")] double ComposerWeight);
+    [property: JsonPropertyName("composerWeight")] double ComposerWeight,
+    [property: JsonPropertyName("compiledPromptOpen")] bool CompiledPromptOpen = false);
 
 /// <summary>
 /// Reads and writes one session document's <c>session-document.json</c>, beside that session's

@@ -1009,7 +1009,12 @@ public sealed class ThreadFeed : FeedList, IDisposable
         line.AppendChild(header);
 
         var toggle = F(typeof(ToggleButton), "HeaderSite");
-        toggle.SetValue(ToggleButton.IsCheckedProperty, new TemplateBindingExtension(Expander.IsExpandedProperty));
+        // TWO-WAY, as the stock Expander template binds its HeaderSite (Ruling 96). A TemplateBinding
+        // is one-way, templated parent to child: the click checked the toggle, the chevron rotated,
+        // and IsExpanded never moved — so the ExpandSite trigger never fired and the reader got 0 px
+        // (the operator's screenshot: chevron down, nothing beneath; the ledger: compiled null).
+        // Every oracle had set IsExpanded through the property and was green.
+        toggle.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Expander.IsExpanded)) { RelativeSource = RelativeSource.TemplatedParent, Mode = BindingMode.TwoWay });
         toggle.SetValue(ContentControl.ContentProperty, "detail");
         toggle.SetValue(FrameworkElement.MinHeightProperty, 24.0);
         toggle.SetValue(FrameworkElement.MinWidthProperty, 24.0);
@@ -1175,7 +1180,12 @@ public sealed class ThreadFeed : FeedList, IDisposable
         var root = F(typeof(StackPanel));
 
         var toggle = F(typeof(ToggleButton), "HeaderSite");
-        toggle.SetValue(ToggleButton.IsCheckedProperty, new TemplateBindingExtension(Expander.IsExpandedProperty));
+        // TWO-WAY, as the stock Expander template binds its HeaderSite (Ruling 96). A TemplateBinding
+        // is one-way, templated parent to child: the click checked the toggle, the chevron rotated,
+        // and IsExpanded never moved — so the ExpandSite trigger never fired and the reader got 0 px
+        // (the operator's screenshot: chevron down, nothing beneath; the ledger: compiled null).
+        // Every oracle had set IsExpanded through the property and was green.
+        toggle.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Expander.IsExpanded)) { RelativeSource = RelativeSource.TemplatedParent, Mode = BindingMode.TwoWay });
         toggle.SetValue(ContentControl.ContentProperty, new TemplateBindingExtension(HeaderedContentControl.HeaderProperty));
         toggle.SetValue(ContentControl.ContentTemplateProperty, new TemplateBindingExtension(HeaderedContentControl.HeaderTemplateProperty));
         toggle.SetValue(FrameworkElement.MinHeightProperty, 24.0);

@@ -663,7 +663,7 @@ refusal is announced (`THR-0002`), never silent.
 ### `SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)`
 
 - **`model`** — The document's state.
-- **`store`** — Where the document's envelope is persisted, or null to keep none. Kept for the shell's call; the conversation persists no layout of its own.
+- **`store`** — Where the document's envelope is persisted, or null to keep none — the compiled-prompt disclosure's open state is written there on every toggle (Ruling 96), so a reopen restores it.
 - **`announcer`** — The shell's announcer (one across hosts, ADR-0031; landed at the shell's construction site, `WorkbenchShell.RegisterSessionDocument`). Null — a document built directly, as every headless test here still does — builds a document-owned polite live region so SC9 is never silent; the two are never both live.
 
 ### `string PurgeCompileHistory()`

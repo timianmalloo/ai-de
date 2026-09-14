@@ -78,13 +78,14 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     private readonly Dictionary<int, (string EnvelopeId, string TaskClassSource)> _envelopeByOrdinal = [];
     private readonly Lock _envelopeGate = new();
     private EnvelopeStore? _envelopes;
+    private readonly SessionDocumentStore? _store;
     private int _purgedThisOpen;
     private bool _operatorActed;
     private bool _placedFocus;
     private bool _disposed;
 
     /// <param name="model">The document's state.</param>
-    /// <param name="store">Where the document's envelope is persisted, or null to keep none. Kept for the shell's call; the conversation persists no layout of its own.</param>
+    /// <param name="store">Where the document's envelope is persisted, or null to keep none — the compiled-prompt disclosure's open state is written there on every toggle (Ruling 96), so a reopen restores it.</param>
     /// <param name="announcer">
     /// The shell's announcer (one across hosts, ADR-0031; landed at the shell's construction site,
     /// <c>WorkbenchShell.RegisterSessionDocument</c>). Null — a document built directly, as every
@@ -94,7 +95,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     public SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null, IWorkbenchAnnouncer? announcer = null)
     {
         ArgumentNullException.ThrowIfNull(model);
-        _ = store;
+        _store = store;
 
         Model = model;
         SurfaceId = SurfaceIdFor(model.SessionId);
@@ -132,6 +133,12 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         Composer.PageReady += PlaceFocusInTheEditor;
         Composer.FocusLeftBackward += OnComposerLeftBackward;
         Composer.TurnRequested += ordinal => _feed.FocusTurn(ordinal);
+
+        // THE DISCLOSURE'S OPEN STATE IS THE DOCUMENT'S (Ruling 96): restored from the model a
+        // reopen rebuilt, recorded on the model and persisted on every toggle — so "opened once"
+        // holds across turns (the composer instance lives) and across a reopen (it does not).
+        Composer.CompiledPromptOpen = model.CompiledPromptOpen;
+        Composer.CompiledPromptOpenChanged += RecordCompiledPromptOpen;
 
         _outsideText = BuildOutsideText();
         _stoppedRow = BuildStoppedRow();
@@ -172,6 +179,29 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
 
     /// <summary>The envelope store this document holds for its lifetime, or null with the reason on <see cref="ComposerSurface.HistoryState"/>.</summary>
     public EnvelopeStore? Envelopes => _envelopes;
+
+    /// <summary>
+    /// The operator's toggle reaches the model and the store. A store that cannot be written
+    /// degrades to "not persisted" on the log — never a throw out of a UI event over a cosmetic
+    /// fact (the same rule the store's own reader keeps: an unreadable envelope restores the default).
+    /// </summary>
+    private void RecordCompiledPromptOpen(bool open)
+    {
+        Model.SetCompiledPromptOpen(open);
+        if (_store is null)
+        {
+            return;
+        }
+
+        try
+        {
+            _store.Save(Model.Envelope());
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+        {
+            WorkbenchDiagnostics.SessionDocumentRefused(Model.SessionId, SurfaceId, SessionDocumentStore.FileName, "the compiled prompt's open state was not persisted: " + error.Message);
+        }
+    }
 
     /// <summary>
     /// Opens the session's compile history exclusively, or returns why it could not: the Session
@@ -1300,6 +1330,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         Composer.Gate.Sent -= Launch;
         Composer.PageReady -= PlaceFocusInTheEditor;
         Composer.FocusLeftBackward -= OnComposerLeftBackward;
+        Composer.CompiledPromptOpenChanged -= RecordCompiledPromptOpen;
         _feed.Dispose();
 
         // A RUN MAY OUTLIVE ITS DOCUMENT — ONE LIFETIME RULE (ADR-0034 rule 7): the store's lifetime

@@ -131,6 +131,12 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             TextWrapping = TextWrapping.Wrap,
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
             MaxHeight = CompiledPromptMaxHeight,
+            // THE FLOOR IS ON THE BOX (Ruling 96): a floor that lives only in the parent's arithmetic
+            // (MinimumHeight, the MaxHeight clamp) is not a floor the box desires — a one-line message
+            // compiled to one line and the reader laid out at 29.89 px under its 48 (measured at the
+            // operator's belt, 489.5 × 517.13). Collapsed, the box is never measured, so this costs
+            // nothing at rest.
+            MinHeight = CompiledPromptMinHeight,
             FontFamily = AiDe.App.Workbench.Sessions.ThreadFeed.Mono,
             FontSize = 12,
         };
@@ -220,6 +226,8 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         };
         AutomationProperties.SetName(_compiledDisclosure, "Compiled prompt");
         AutomationProperties.SetHelpText(_compiledDisclosure, "exactly the bytes that will be sent; no diff, no comments");
+        _compiledDisclosure.Expanded += (_, _) => CompiledPromptOpenChanged?.Invoke(true);
+        _compiledDisclosure.Collapsed += (_, _) => CompiledPromptOpenChanged?.Invoke(false);
 
         // THE COMPILE LINE (§A10.2, §A11): absent under mechanical-only with nothing supplied (E5);
         // under an agentic rung it carries the `called` outcome's string in voice with its next-action
@@ -295,12 +303,15 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// <summary>Raised once per page mount — after <see cref="MarkReady"/>; the document places focus in the editor on it (K7).</summary>
     public event Action? PageReady;
 
-    /// <summary>Whether the compiled prompt disclosure is open — collapsed at rest (Ruling 57).</summary>
+    /// <summary>Whether the compiled prompt disclosure is open — collapsed at rest (Ruling 57); the document owns the state across turns and a reopen (Ruling 96).</summary>
     public bool CompiledPromptOpen
     {
         get => _compiledDisclosure.IsExpanded;
         set => _compiledDisclosure.IsExpanded = value;
     }
+
+    /// <summary>Raised when the disclosure opens or closes — by the operator's header or by <see cref="CompiledPromptOpen"/> — so the document can record the state it restores on reopen (Ruling 96).</summary>
+    public event Action<bool>? CompiledPromptOpenChanged;
 
     /// <summary>The decoration rows this turn carries — the same projection the thread will show for it and the send gate will put on the wire (SC2; ADR-0033 rule 2).</summary>
     public IReadOnlyList<DecorationRow> Decorations =>

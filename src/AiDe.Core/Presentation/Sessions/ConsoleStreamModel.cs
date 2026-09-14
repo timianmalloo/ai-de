@@ -265,11 +265,52 @@ public sealed class ConsoleStreamModel
     /// present is the text, whitespace included</b>: a wire chunk of two newlines is the paragraph
     /// break between two chunks of one thought (<c>frames/thought.jsonl:27</c>), and a blank-means-absent
     /// reading folded the literal kind into the reasoning (DC-187 (CV-5-3 a)).
+    /// <para><b>A tool result never reads its kind (Ruling 101).</b> A <c>tool_call_update</c> with
+    /// no <c>title</c> carries its text in <c>content[]</c> — ACP's <c>ToolCallContent</c> items,
+    /// <c>{type: "content", content: {type: "text", text}}</c> beside <c>diff</c> and <c>terminal</c>
+    /// items (<c>frames/write.jsonl:13</c>, <c>:11</c>) — or, for the adapter's Bash results, in a
+    /// <c>rawOutput</c> string with no array at all (<c>frames/read.jsonl:14</c>); one update carries
+    /// nothing but <c>_meta</c> (<c>read.jsonl:13</c>). The row reads the first text line and the
+    /// total text bytes, <i>no text content (n items: types)</i> when no item carries text, and the
+    /// zero-item form when nothing does — because <c>tool.result   tool.result</c> is a row saying
+    /// nothing in the shape of a value (IO: never a plausible wrong number).</para>
     /// </remarks>
     public static string TextOf(RunEvent evt) =>
         Text(evt.Body)
         ?? (evt.Body["content"] is JsonObject content ? Text(content) : null)
+        ?? (evt.Body["content"] is JsonArray items ? ToolContentText(items) : null)
+        ?? (evt.Kind == ConversationItems.ResultKind ? ToolResultText(evt.Body) : null)
         ?? evt.Kind;
+
+    /// <summary>The first text item's first line and the items' total text bytes; the no-text form over the items' types when none carries text.</summary>
+    private static string ToolContentText(JsonArray items)
+    {
+        var texts = ToolFacts.ContentTexts(items).ToList();
+        if (texts.Count > 0)
+        {
+            return FirstLineAndBytes(texts[0], texts.Sum(System.Text.Encoding.UTF8.GetByteCount));
+        }
+
+        var types = items.Select(item => TextValue(item?["content"]?["type"]) ?? TextValue(item?["type"]) ?? "unknown");
+        return NoTextContent(items.Count, string.Join(", ", types));
+    }
+
+    /// <summary>A result with no content array: its <c>rawOutput</c> string in the same form, else the zero-item form — the kind is never the body.</summary>
+    private static string ToolResultText(JsonObject body) =>
+        TextValue(body["rawOutput"]) is { } raw ? FirstLineAndBytes(raw, System.Text.Encoding.UTF8.GetByteCount(raw)) : NoTextContent(0, null);
+
+    private static string FirstLineAndBytes(string text, int bytes)
+    {
+        var newline = text.IndexOf('\n', StringComparison.Ordinal);
+        var firstLine = (newline < 0 ? text : text[..newline]).TrimEnd('\r');
+        return string.Create(System.Globalization.CultureInfo.InvariantCulture, $"{firstLine} · {bytes} bytes");
+    }
+
+    private static string NoTextContent(int count, string? types) =>
+        string.Create(System.Globalization.CultureInfo.InvariantCulture, $"no text content ({count} {(count == 1 ? "item" : "items")}{(string.IsNullOrEmpty(types) ? string.Empty : ": " + types)})");
+
+    private static string? TextValue(JsonNode? node) =>
+        node is JsonValue value && value.TryGetValue<string>(out var text) ? text : null;
 
     private static string? Text(JsonObject body)
     {

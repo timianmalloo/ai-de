@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Composer: 14 types, 113 members, 94% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Composer: 14 types, 114 members, 94% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Composer`
 
-**14 public types · 113 public members · 94% documented.**
+**14 public types · 114 public members · 94% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -345,7 +345,8 @@ claim, and paste is handled inside the page by the editor that received it.
 | `string ModelSource = "model"` | The decoration source that earns the tilde and the inferred ink: a value the model proposed (CV-2's compile step). A rule's value is text. |
 | `ICanvasFocusTarget FocusTarget { get; }` | The editor as a focus region of the document's F6 cycle: SetFocus on the host HWND with a read-back (DS-1 seam 1). |
 | `event Action? PageReady` | Raised once per page mount — after `MarkReady`; the document places focus in the editor on it (K7). |
-| `bool CompiledPromptOpen` | Whether the compiled prompt disclosure is open — collapsed at rest (Ruling 57). |
+| `bool CompiledPromptOpen` | Whether the compiled prompt disclosure is open — collapsed at rest (Ruling 57); the document owns the state across turns and a reopen (Ruling 96). |
+| `event Action<bool>? CompiledPromptOpenChanged` | Raised when the disclosure opens or closes — by the operator's header or by `CompiledPromptOpen` — so the document can record the state it restores on reopen (Ruling 96). |
 | `IReadOnlyList<DecorationRow> Decorations` | The decoration rows this turn carries — the same projection the thread will show for it and the send gate will put on the wire (SC2; ADR-0033 rule 2). |
 | `ComboBox TierControl` | The tier control on the decoration line (E2): *rule*, T0, T1, T2 — an override is an `operator` row at Send (§A11). |
 | `ComboBox ClassControl` | The class control on the decoration line: the session's default or a class for this prompt (Ruling 70). |
