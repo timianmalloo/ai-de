@@ -83,6 +83,9 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     private string _taskClass = AiDe.Core.Watcher.TaskClasses.FreeForm;
     private string _leaseLine = ComposerCompiler.LeaseLine(null);
     private TurnView? _inFlight;
+    private TurnView? _queued;
+    private string? _queuedSentence;
+    private StatusKind _statusKind;
     private readonly ComposerSendGate _gate = new();
     private readonly ComposerDraft _draft = new();
     private readonly List<ComposerFieldDescriptor> _fields = [];
@@ -547,12 +550,12 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// <returns>The request that was built, or null when the send was refused.</returns>
     public GovernedRunRequest? Send()
     {
-        // ONE GOVERNED RUN AT A TIME PER SESSION (Ruling 77): a gesture while a turn runs or waits
-        // is refused with the turn named — spoken, never silent (SC6) — before anything else is
-        // read: the operator's gesture is answered by the turn in flight, not by the wiring.
-        if (_inFlight is { } inFlight)
+        // EXACTLY ONE QUEUED TURN PER SESSION (Ruling 95): while one is queued a further Send is
+        // refused naming it — cancel it or wait — before anything else is read.
+        if (_queued is { } queued)
         {
-            SetRefusedGesture(inFlight);
+            SetStatus($"{queued.DisplayOrdinal} is queued; cancel it or wait.", Urgency.Assertive);
+            _statusKind = StatusKind.Refusal;
             return null;
         }
 
@@ -579,7 +582,61 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             return null;
         }
 
-        var request = _gate.Send(_context, _draft, _template, out var refusal);
+        // A SEND WHILE A TURN RUNS OR WAITS IS A CHOICE, NOT A REFUSAL (Ruling 95, reversing
+        // Ruling 77(b) as its own condition 2 foresaw): the status line offers Wait — the same gate,
+        // compiled now, queued after the turn in flight — or a parallel session. Spoken, never
+        // silent (SC6); no dialog, no modifier key. Offered here, behind the prepare gate, so under
+        // an agentic rung the choice comes when a send would happen — never on the preparing gesture.
+        if (_inFlight is { } inFlight)
+        {
+            OfferWaitOrParallel(inFlight);
+            return null;
+        }
+
+        return SendThroughTheGate();
+    }
+
+    /// <summary>
+    /// <i>Wait — send after b1</i> (Ruling 95): the same gate, now — the envelope compiled and
+    /// submitted with its sha recorded, the request handed to the document, which queues it behind
+    /// the turn in flight. Public so the status line's action and a test reach one verb.
+    /// </summary>
+    /// <returns>The request that was built and queued, or null when the gate refused.</returns>
+    public GovernedRunRequest? SendAfterTheTurnInFlight()
+    {
+        if (_queued is { } queued)
+        {
+            SetStatus($"{queued.DisplayOrdinal} is queued; cancel it or wait.", Urgency.Assertive);
+            _statusKind = StatusKind.Refusal;
+            return null;
+        }
+
+        if (_context is null)
+        {
+            SetStatus("the composer is not wired to a session yet", Urgency.Assertive);
+            return null;
+        }
+
+        RenderCompiledView();
+        return SendThroughTheGate();
+    }
+
+    /// <summary>
+    /// Raised when the operator chooses <i>Start a parallel session</i> (Ruling 95): the draft's
+    /// words and its attachments, for the shell to open a derived sibling session and send them as
+    /// its first turn. The parent's draft is consumed by the handler, never here.
+    /// </summary>
+    public event Action<ParallelSessionRequest>? ParallelRequested;
+
+    /// <summary>
+    /// Why <i>Start a parallel session</i> is refused, or null when it is available. Set by the
+    /// shell from what it measured or can do — a composer never decides this from its own state.
+    /// </summary>
+    public string? ParallelRefusal { get; set; }
+
+    private GovernedRunRequest? SendThroughTheGate()
+    {
+        var request = _gate.Send(_context!, _draft, _template, out var refusal);
         if (request is null)
         {
             SetStatus(
@@ -593,6 +650,14 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
         // THE SENT LEASE, AS SENT (Ruling 73): the request's own absent lease is the read-only state.
         _leaseLine = ComposerCompiler.LeaseLine(request.Lease?.Exclusive);
+
+        // A QUEUED SEND KEEPS ITS OWN SENTENCE (Ruling 95): the document queued it during the gate's
+        // Sent event and the thread's snapshot already put "b2 queued — sends after b1" here.
+        if (_statusKind == StatusKind.Queued)
+        {
+            _hasSentBefore = true;
+            return request;
+        }
 
         // Ruling 75 condition (2): a goal-block form that compiled as a Message is said so, never
         // demoted silently. SC9's spoken announcement is CV-1's; the status line is the floor here.
@@ -818,21 +883,72 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     public void SetInFlight(TurnView? turn)
     {
         _inFlight = turn;
-        if (turn is null && _statusText.EndsWith("the next turn waits for it.", StringComparison.Ordinal))
+        if (turn is null && _statusKind == StatusKind.Offer)
         {
             SetStatus(string.Empty, Urgency.Status);
         }
     }
 
-    /// <summary>The refused-gesture reason (Ruling 77 condition 1; DESIGN.md copy): <i>b1 is running; the next turn waits for it.</i></summary>
-    public static string RefusedGestureReason(TurnView inFlight)
+    /// <summary>
+    /// The queued turn, or null (Ruling 95): set by the document from the thread's snapshot, with the
+    /// one sentence the snapshot derives for it — <i>b2 queued — sends after b1</i> · <i>b1 stopped
+    /// by you; b2 is waiting — Send it or cancel it</i>. The sentence is the status line while a turn
+    /// is queued; spoken when it changes (assertively when it asks the operator for an act), and
+    /// cleared when the queue empties.
+    /// </summary>
+    public void SetQueued(TurnView? queued, string? sentence, bool awaitsYou)
     {
-        ArgumentNullException.ThrowIfNull(inFlight);
-        return $"{inFlight.DisplayOrdinal} {RefusedGestureState(inFlight)}; the next turn waits for it.";
+        _queued = queued;
+
+        if (queued is null)
+        {
+            if (_statusKind is StatusKind.Queued or StatusKind.Refusal)
+            {
+                SetStatus(string.Empty, Urgency.Status);
+            }
+
+            _queuedSentence = null;
+            return;
+        }
+
+        ArgumentException.ThrowIfNullOrWhiteSpace(sentence);
+        if (string.Equals(_queuedSentence, sentence, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        _queuedSentence = sentence;
+        SetStatus(sentence, awaitsYou ? Urgency.Assertive : Urgency.Status);
+        _statusKind = StatusKind.Queued;
     }
 
-    private static string RefusedGestureState(TurnView inFlight) =>
+    /// <summary>The offer's sentence (Ruling 95; DESIGN.md copy): <i>b1 is running. Wait — send after b1, or start a parallel session.</i></summary>
+    public static string WaitOrParallelOffer(TurnView inFlight)
+    {
+        ArgumentNullException.ThrowIfNull(inFlight);
+        return $"{inFlight.DisplayOrdinal} {InFlightState(inFlight)}. {WaitActionName(inFlight)}, or start a parallel session.";
+    }
+
+    /// <summary>The Wait action's name: <i>Wait — send after b1</i>.</summary>
+    public static string WaitActionName(TurnView inFlight)
+    {
+        ArgumentNullException.ThrowIfNull(inFlight);
+        return $"Wait — send after {inFlight.DisplayOrdinal}";
+    }
+
+    /// <summary>The Parallel action's name.</summary>
+    public const string ParallelActionName = "Start a parallel session";
+
+    private static string InFlightState(TurnView inFlight) =>
         inFlight.State == TurnState.Waiting ? "is waiting for you" : "is running";
+
+    private enum StatusKind
+    {
+        Other,
+        Offer,
+        Queued,
+        Refusal,
+    }
 
     /// <summary>
     /// The status line: the sentence on screen and spoken (SC6 — never silent). A refusal, an
@@ -841,6 +957,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     private void SetStatus(string text, Urgency urgency)
     {
         _statusText = text;
+        _statusKind = StatusKind.Other;
         if (text.Length == 0)
         {
             _status.Inlines.Clear();
@@ -854,20 +971,70 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         _status.Inlines.Add(new System.Windows.Documents.Run(text));
     }
 
-    /// <summary>Ruling 77's refusal with the ordinal as a link to the turn (SC8): <i>b1</i> → the turn's container, never an action.</summary>
-    private void SetRefusedGesture(TurnView inFlight)
+    /// <summary>
+    /// Ruling 95's two-action line, spoken as one sentence and rendered as three links: the ordinal
+    /// (SC8: to the turn's container, never an action — Ruling 77 condition 1's link kept), <i>Wait —
+    /// send after b1</i>, and <i>Start a parallel session</i>. No dialog, no modifier key.
+    /// </summary>
+    private void OfferWaitOrParallel(TurnView inFlight)
     {
-        SetStatus(RefusedGestureReason(inFlight), Urgency.Assertive);
+        SetStatus(WaitOrParallelOffer(inFlight), Urgency.Assertive);
+        _statusKind = StatusKind.Offer;
 
         var ordinal = inFlight.Ordinal;
-        var link = new System.Windows.Documents.Hyperlink(new System.Windows.Documents.Run(inFlight.DisplayOrdinal));
-        link.SetResourceReference(System.Windows.Documents.TextElement.ForegroundProperty, "AccentBrush");
-        AutomationProperties.SetName(link, $"{inFlight.DisplayOrdinal}, {(inFlight.State == TurnState.Waiting ? "waiting for you" : "running")}");
-        link.Click += (_, _) => TurnRequested?.Invoke(ordinal);
+        var turn = StatusLink(inFlight.DisplayOrdinal, $"{inFlight.DisplayOrdinal}, {(inFlight.State == TurnState.Waiting ? "waiting for you" : "running")}");
+        turn.Click += (_, _) => TurnRequested?.Invoke(ordinal);
+
+        var wait = StatusLink(WaitActionName(inFlight), WaitActionName(inFlight));
+        AutomationProperties.SetHelpText(wait, "compiles now and sends when the turn in flight ends");
+        wait.Click += (_, _) => SendAfterTheTurnInFlight();
+
+        var parallel = StatusLink(ParallelActionName, ParallelActionName);
+        AutomationProperties.SetHelpText(parallel, ParallelRefusal ?? "a derived session beside this one; this prompt is its first turn");
+        parallel.Click += (_, _) => StartParallel();
 
         _status.Inlines.Clear();
-        _status.Inlines.Add(link);
-        _status.Inlines.Add(new System.Windows.Documents.Run($" {RefusedGestureState(inFlight)}; the next turn waits for it."));
+        _status.Inlines.Add(turn);
+        _status.Inlines.Add(new System.Windows.Documents.Run($" {InFlightState(inFlight)}. "));
+        _status.Inlines.Add(wait);
+        _status.Inlines.Add(new System.Windows.Documents.Run(", or "));
+        _status.Inlines.Add(parallel);
+        _status.Inlines.Add(new System.Windows.Documents.Run("."));
+    }
+
+    private static System.Windows.Documents.Hyperlink StatusLink(string text, string name)
+    {
+        var link = new System.Windows.Documents.Hyperlink(new System.Windows.Documents.Run(text));
+        link.SetResourceReference(System.Windows.Documents.TextElement.ForegroundProperty, "AccentBrush");
+        AutomationProperties.SetName(link, name);
+        return link;
+    }
+
+    /// <summary>
+    /// <i>Start a parallel session</i> (Ruling 95): refused with the shell's reason when it has one
+    /// (condition 1's measurement, or no shell to open a session); else the draft's words and
+    /// attachments go to the shell and the draft is consumed once the handler took them.
+    /// </summary>
+    private void StartParallel()
+    {
+        if (ParallelRefusal is { } refusal)
+        {
+            SetStatus(refusal, Urgency.Assertive);
+            return;
+        }
+
+        if (ParallelRequested is null)
+        {
+            SetStatus("a parallel session needs the shell; this composer has none", Urgency.Assertive);
+            return;
+        }
+
+        var request = new ParallelSessionRequest(_draft.SourceText, [.. _draft.Attachments]);
+        ParallelRequested.Invoke(request);
+
+        // THE PARENT'S DRAFT IS CONSUMED (Ruling 95): its words now belong to the sibling's first turn.
+        BeginNextTurn();
+        SetStatus("sent as the first turn of a parallel session", Urgency.Status);
     }
 
     /// <summary>
@@ -1976,3 +2143,11 @@ public static class StructureDeriver
         return string.Empty;
     }
 }
+
+/// <summary>
+/// What <i>Start a parallel session</i> hands the shell (Ruling 95): the parent draft's words and the
+/// attachments that follow them — the derived sibling's first turn, sent through its own gate.
+/// </summary>
+/// <param name="SourceText">The draft's source text, verbatim.</param>
+/// <param name="Attachments">The draft's attachments, already read through the parent's attach gate.</param>
+public sealed record ParallelSessionRequest(string SourceText, IReadOnlyList<ComposerAttachment> Attachments);

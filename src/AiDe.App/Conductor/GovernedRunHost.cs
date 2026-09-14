@@ -585,21 +585,49 @@ public static class GovernedRunHost
         var latencies = new List<double>();
         var events = 0;
 
-        await foreach (var run in queue.Reader.ReadAllAsync(cancellationToken).ConfigureAwait(false))
+        // THE DRAIN ENDS WHEN THE PROMPT HAS COMPLETED AND NOTHING IS QUEUED — WHICHEVER HAPPENS
+        // LAST. The answer frame is published as an event BEFORE the reply completes the prompt
+        // task, so a drain that re-checked the condition only on the next event's arrival could
+        // consume the answer, see the prompt still open, and wait for an event that never comes
+        // (found under Ruling 95's drain; TheDrainEndsWhenThePromptEndsTests). So the wait is on
+        // both: the queue becoming readable, or the prompt ending — completed, faulted or cancelled.
+        Task<bool>? readable = null;
+        while (true)
         {
-            events++;
-            kinds.Add(run.Event.Kind);
+            readable ??= queue.Reader.WaitToReadAsync(cancellationToken).AsTask();
+            await Task.WhenAny(readable, prompt).ConfigureAwait(false);
 
-            sink?.Invoke(run);
-
-            if (run.NormalizationLatency is { } latency)
+            if (readable.IsCompleted)
             {
-                latencies.Add(latency.TotalMilliseconds);
-            }
+                var open = await readable.ConfigureAwait(false);
+                readable = null;
+                if (!open)
+                {
+                    break;
+                }
 
-            foreach (var seam in seams?.Observe(run.Event) ?? [])
-            {
-                report($"seam {seam.SeamId}: {seam.Path} is outside the lease");
+                while (queue.Reader.TryRead(out var run))
+                {
+                    events++;
+                    kinds.Add(run.Event.Kind);
+
+                    sink?.Invoke(run);
+
+                    if (run.NormalizationLatency is { } latency)
+                    {
+                        latencies.Add(latency.TotalMilliseconds);
+                    }
+
+                    foreach (var seam in seams?.Observe(run.Event) ?? [])
+                    {
+                        report($"seam {seam.SeamId}: {seam.Path} is outside the lease");
+                    }
+
+                    if (prompt.IsCompleted && queue.Reader.Count == 0)
+                    {
+                        return new DrainedEvents(events, kinds, latencies);
+                    }
+                }
             }
 
             if (prompt.IsCompleted && queue.Reader.Count == 0)

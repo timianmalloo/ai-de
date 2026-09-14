@@ -114,7 +114,7 @@ public sealed class TurnItem : INotifyPropertyChanged
     public string Words => _view.SourceText;
     public string Name => TurnCopy.Name(_view);
     public string DecorationLine => TurnCopy.DecorationLine(_view.Decorations);
-    public string HelpText => TurnCopy.ReasonSentence(_view);
+    public string HelpText => _view.State == TurnState.Queued ? QueuedSentence : TurnCopy.ReasonSentence(_view);
     public IReadOnlyList<DecorationRow> Decorations => _view.Decorations;
     public string Time => _view.At.ToLocalTime().ToString("HH:mm", CultureInfo.InvariantCulture);
     public TurnState State => _view.State;
@@ -158,14 +158,47 @@ public sealed class TurnItem : INotifyPropertyChanged
     /// <summary><i>the other 136, in the Console</i> — the tail button's text (the button is collapsed when the fold shows every line: <see cref="HasOtherEvents"/>).</summary>
     public string TailText => string.Create(CultureInfo.InvariantCulture, $"the other {OtherEvents:N0}, in the Console");
 
-    /// <summary>The actions this turn offers, Deny first (SC7). A completed or past-failed turn offers none.</summary>
+    /// <summary>
+    /// The actions this turn offers, Deny first (SC7). A completed or past-failed turn offers none.
+    /// A queued turn offers Cancel — and <i>Send now</i> first, only while it waits on the operator
+    /// after a Stop or a failure (Ruling 95); editing it is cancel-and-redraft, never in place.
+    /// </summary>
     public IReadOnlyList<TurnActionKind> Actions => _view.State switch
     {
         TurnState.Running => [TurnActionKind.Stop],
         TurnState.Waiting => _view.Waiting!.Actions,
+        TurnState.Queued => QueuedAwaitsYou ? [TurnActionKind.SendNow, TurnActionKind.Cancel] : [TurnActionKind.Cancel],
         TurnState.Failed or TurnState.Stopped when IsLast => [TurnActionKind.SendAgain, TurnActionKind.OpenLog],
         _ => [],
     };
+
+    /// <summary>The queued turn's sentence, from the snapshot it sits in (Ruling 95) — set by the feed on every merge, like <see cref="IsLast"/>.</summary>
+    public string QueuedSentence
+    {
+        get => _queuedSentence;
+        set
+        {
+            ArgumentNullException.ThrowIfNull(value);
+            if (string.Equals(_queuedSentence, value, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _queuedSentence = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
+        }
+    }
+
+    private string _queuedSentence = string.Empty;
+
+    /// <summary>Whether the queued turn waits on the operator rather than on a run (Ruling 95: <i>Send now</i>) — the snapshot's derivation, set by the feed.</summary>
+    public bool QueuedAwaitsYou
+    {
+        get => _queuedAwaitsYou;
+        set => Set(ref _queuedAwaitsYou, value);
+    }
+
+    private bool _queuedAwaitsYou;
 
     public bool HasActions => Actions.Count > 0;
 
@@ -178,8 +211,8 @@ public sealed class TurnItem : INotifyPropertyChanged
 
     private bool _isLast;
 
-    /// <summary>A boxed reason on a failed, stopped or waiting LAST turn; a past failure folds (SC7).</summary>
-    public bool ShowsReasonBox => IsLast && (_view.State is TurnState.Failed or TurnState.Stopped or TurnState.Waiting);
+    /// <summary>A boxed reason on a failed, stopped, waiting or queued LAST turn; a past failure folds (SC7).</summary>
+    public bool ShowsReasonBox => IsLast && (_view.State is TurnState.Failed or TurnState.Stopped or TurnState.Waiting or TurnState.Queued);
 
     private void Set(ref bool field, bool value, [System.Runtime.CompilerServices.CallerMemberName] string? name = null)
     {
@@ -191,7 +224,7 @@ public sealed class TurnItem : INotifyPropertyChanged
         field = value;
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-        if (name == nameof(IsLast))
+        if (name is nameof(IsLast) or nameof(QueuedAwaitsYou))
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
         }

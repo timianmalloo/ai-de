@@ -268,6 +268,14 @@ public sealed class ThreadFeed : FeedList, IDisposable
             _items[i].IsLast = i == _items.Count - 1;
         }
 
+        // THE QUEUED ROW READS THE SNAPSHOT, NOT ITSELF (Ruling 95): who it waits behind and whether
+        // it waits on the operator are the snapshot's derivations, set on the row at every merge.
+        if (snapshot.Queued is { } queued && IndexOf(queued.Ordinal) is var at && at >= 0)
+        {
+            _items[at].QueuedSentence = TurnCopy.QueuedSentence(snapshot);
+            _items[at].QueuedAwaitsYou = snapshot.QueuedAwaitsYou;
+        }
+
         if (_items.Count > 0 && SelectedIndex < 0)
         {
             SelectedIndex = _items.Count - 1;
@@ -1278,6 +1286,8 @@ public sealed class ThreadFeed : FeedList, IDisposable
         Colour(TurnState.Waiting, "InferredBrush");
         Colour(TurnState.Stopped, "TextMutedBrush");
         Colour(TurnState.NotRecorded, "TextMutedBrush");
+        Colour(TurnState.Queued, "TextMutedBrush");
+        Colour(TurnState.Cancelled, "TextMutedBrush");
         return style;
     }
 
@@ -1294,6 +1304,7 @@ public sealed class ThreadFeed : FeedList, IDisposable
         Colour(TurnState.Failed, "DangerBrush");
         Colour(TurnState.Stopped, "BorderBrush");
         Colour(TurnState.Waiting, "InferredBrush");
+        Colour(TurnState.Queued, "BorderBrush");
         return style;
     }
 
@@ -1317,6 +1328,8 @@ public sealed class ThreadFeed : FeedList, IDisposable
         Mark(TurnState.Waiting, "M 3,1 L 3,11 M 9,1 L 9,11", "InferredBrush");
         Mark(TurnState.Stopped, "M 2,2 L 10,2 L 10,10 L 2,10 Z", "TextMutedBrush");
         Mark(TurnState.NotRecorded, "M 6,2 L 6,7 M 6,10 L 6,10.5", "TextMutedBrush");
+        Mark(TurnState.Queued, "M 6,2 L 6,6 L 9,8 M 1.5,6 A 4.5,4.5 0 1 0 10.5,6 A 4.5,4.5 0 1 0 1.5,6", "TextMutedBrush");
+        Mark(TurnState.Cancelled, "M 2,2 L 10,2 L 10,10 L 2,10 Z", "TextMutedBrush");
         return style;
     }
 
@@ -1377,8 +1390,13 @@ public sealed class ThreadFeed : FeedList, IDisposable
     {
         public static readonly ActionHelpConverter Instance = new();
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
-            value is TurnActionKind.Stop ? "edits so far stay on disk and are listed on the turn" : string.Empty;
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => value switch
+        {
+            TurnActionKind.Stop => "edits so far stay on disk and are listed on the turn",
+            TurnActionKind.Cancel => "drops the queued turn; its words go back to the editor",
+            TurnActionKind.SendNow => "sends the queued turn as its own run",
+            _ => string.Empty,
+        };
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotSupportedException();
     }

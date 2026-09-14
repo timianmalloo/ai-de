@@ -76,6 +76,9 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     private readonly CancellationTokenSource _closing = new();
     private readonly Dictionary<int, CancellationTokenSource> _runs = [];
     private readonly Dictionary<int, (string EnvelopeId, string TaskClassSource)> _envelopeByOrdinal = [];
+
+    /// <summary>The one queued turn's request, by ordinal (Ruling 95: exactly one); null when nothing is queued.</summary>
+    private (int Ordinal, GovernedRunRequest Request)? _queued;
     private readonly Lock _envelopeGate = new();
     private EnvelopeStore? _envelopes;
     private readonly SessionDocumentStore? _store;
@@ -518,18 +521,21 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     private void Launch(GovernedRunRequest request)
     {
         var now = DateTimeOffset.Now;
-        var ordinal = _thread.Accept(Composer.Draft.SourceText, Composer.Decorations, request.Prompt, now);
+        var submission = Composer.Gate.LastSubmission;
+        var compileSpend = submission?.CompileCost is { } cost ? new Spend(cost.TokensIn, cost.CacheRead, cost.TokensOut, cost.Requests) : null;
 
-        var relay = new RunEventRelay();
-        var lane = new SessionLane($"lane:{Model.SessionId}:{ordinal}", request.EngineId, relay.Reader, Model, Marshal);
-        AttachLane(lane);
-        LastRelay = relay;
+        // A SEND WHILE A TURN IS IN FLIGHT IS A QUEUED TURN (Ruling 95's Wait): the composer offered
+        // the choice and the operator took it; the gate compiled the same bytes it always does, and
+        // the turn joins the thread queued. It is sent by the drain when the turn in flight ends
+        // Completed or Answered, by Send now after a Stop or a failure, or not at all (Cancel).
+        var queue = _thread.Current.InFlight is not null;
+        var ordinal = queue
+            ? _thread.Enqueue(Composer.Draft.SourceText, Composer.Decorations, request.Prompt, now, compileSpend: compileSpend)
+            : _thread.Accept(Composer.Draft.SourceText, Composer.Decorations, request.Prompt, now, compileSpend: compileSpend);
 
-        var cancel = CancellationTokenSource.CreateLinkedTokenSource(_closing.Token);
-        _runs[ordinal] = cancel;
         // THE ENVELOPE AND ITS CLASS PROVENANCE, CAPTURED WITH THE ORDINAL AT LAUNCH — never read
         // from the gate at completion, where the next block's submission may already stand.
-        if (Composer.Gate.LastSubmission is { } submission)
+        if (submission is not null)
         {
             lock (_envelopeGate)
             {
@@ -540,7 +546,69 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         // Feedback:+Confirmed — the turn now lives in the thread; the composer starts the next one.
         Composer.BeginNextTurn();
 
-        LastLaunch = RunOneAsync(request, relay, ordinal, cancel);
+        if (queue)
+        {
+            _queued = (ordinal, request);
+            return;
+        }
+
+        LastLaunch = Run(request, ordinal);
+    }
+
+    /// <summary>One run for one accepted turn: the lane, the relay, the cancellation, and the run itself.</summary>
+    private Task Run(GovernedRunRequest request, int ordinal)
+    {
+        var relay = new RunEventRelay();
+        var lane = new SessionLane($"lane:{Model.SessionId}:{ordinal}", request.EngineId, relay.Reader, Model, Marshal);
+        AttachLane(lane);
+        LastRelay = relay;
+
+        var cancel = CancellationTokenSource.CreateLinkedTokenSource(_closing.Token);
+        _runs[ordinal] = cancel;
+        return RunOneAsync(request, relay, ordinal, cancel);
+    }
+
+    /// <summary>
+    /// The drain (Ruling 95): the queued turn is sent when the turn it waited behind ended
+    /// <c>Completed</c> or <c>Answered</c> — and only then. After a Stop or a failure it stays
+    /// queued, waiting on the operator (<i>Send now</i>); a closing document sends nothing.
+    /// </summary>
+    private void DrainAfter(TurnState ending)
+    {
+        if (ending is not (TurnState.Completed or TurnState.Answered) || _closing.IsCancellationRequested)
+        {
+            return;
+        }
+
+        StartQueued();
+    }
+
+    /// <summary>Sends the queued turn now — the drain's act, and <i>Send now</i>'s. Nothing to send, or a turn in flight: no act.</summary>
+    private void StartQueued()
+    {
+        if (_queued is not { } queued || _thread.Current.InFlight is not null)
+        {
+            return;
+        }
+
+        _queued = null;
+        _thread.Start(queued.Ordinal, DateTimeOffset.Now);
+        LastLaunch = Run(queued.Request, queued.Ordinal);
+    }
+
+    /// <summary>Cancel on the queued turn (Ruling 95): dropped from the queue, its row concluded cancelled, its envelope consumed, its words back in the editor.</summary>
+    private void CancelQueued(int ordinal)
+    {
+        if (_queued is not { } queued || queued.Ordinal != ordinal)
+        {
+            return;
+        }
+
+        _queued = null;
+        var turn = _thread.Current.Turns.First(t => t.Ordinal == ordinal);
+        _thread.Conclude(ordinal, TurnState.Cancelled, DateTimeOffset.Now);
+        RecordConsumed(ordinal, Envelope.NotRecorded, null, "Abandoned", ConsumedReasons.CancelledByOperator);
+        Composer.UseAsNextDraft(turn.SourceText);
     }
 
     /// <summary>
@@ -573,9 +641,11 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         {
             var result = await GovernedRunHost.RunAsync(request, cancel.Token, sink).ConfigureAwait(false);
             LastRunResult = result;
-            _thread.Conclude(ordinal, request.Goal is null ? TurnState.Answered : TurnState.Completed, DateTimeOffset.Now);
+            var ending = request.Goal is null ? TurnState.Answered : TurnState.Completed;
+            _thread.Conclude(ordinal, ending, DateTimeOffset.Now);
             var consumed = RecordConsumed(ordinal, result.RunId, result.EpisodeId, result.Outcome, ConsumedReasons.Completed);
             StampTaskClassSource(request.DataDirectory, result, consumed?.TaskClassSource);
+            Marshal(() => DrainAfter(ending));
         }
         catch (OperationCanceledException) when (cancel.IsCancellationRequested && !_closing.IsCancellationRequested)
         {
@@ -787,6 +857,18 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
                 _settingsPopup.IsOpen = true;
                 break;
 
+            case TurnActionKind.Cancel:
+                CancelQueued(action.Ordinal);
+                break;
+
+            case TurnActionKind.SendNow:
+                if (_queued is { } queued && queued.Ordinal == action.Ordinal)
+                {
+                    StartQueued();
+                }
+
+                break;
+
             default:
                 // Deny / Allow once / Allow this turn: the run host answers permission itself in
                 // Phase 1 (GovernedRunHost's permission chooser), so no turn waits on the operator
@@ -824,6 +906,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
 
         RenderHeader(snapshot);
         Composer.SetInFlight(snapshot.InFlight);
+        Composer.SetQueued(snapshot.Queued, snapshot.Queued is null ? null : TurnCopy.QueuedSentence(snapshot), snapshot.QueuedAwaitsYou);
         if (IsSplitOpen)
         {
             _split.Show(snapshot.Turns);
