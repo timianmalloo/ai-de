@@ -181,6 +181,58 @@ from this record; the candidate remains unjoined.
 
 ## Reuse before adding more fixtures
 
+### Consolidation and one-file lifetime discriminator
+
+Owner 74 consolidated budget tests at `44c7db6d0730a22651bc05ad7c1872c13d2418f0`.
+Parent replayed 31 tests successfully. The root-isolation gate cleared, but the
+new drain helper retained successful reservations until every await completed.
+That can prevent the fifth real admission from acquiring one of the first four
+slots. FIFO early-failure ownership also remained incomplete. Those findings were
+test-helper defects, not production vulnerabilities.
+
+Owner 75 transferred only `AtlasReadBudgetTests.cs` to Core Astra in a new,
+verified tree. Owner 76 preserved the failed parent reflection probe as
+**AccessDenied, no runtime evidence**; it was not retried. The authorized ordinary
+test runner then supplied the missing discriminator.
+
+Candidate `7262566b49f919d0163c86f29ba6278eeb74ef85` changes only that test file.
+Parent compared its scope, read the complete file, raw red/control results and
+individual green outputs, and independently replayed **37 executed / 37 passed /
+zero failed or skipped**. Production and the other two qualification files remain
+unchanged from `44c7`. The author reports 14/16 new leaves, no wrappers.
+
+| Claim / oracle | Observed evidence | Confidence / limit |
+|---|---|---|
+| Original helper cannot drain five real admissions without an outside cancellation | Preserved old helper: one test fails on timeout at `(0,4,1,58720256,0)`; recovery cancels and awaits all work, yielding four successes/one cancellation and final exact zero | Verified counterexample to the test helper; not a production allocation defect |
+| Fixed helper releases before a dependent await | Five real admissions: five successes, zero faults, cancellation false and final zero; source disposes inside each successful iteration | Verified bounded five-admission control |
+| FIFO owns all captured acquisitions | One deliberate release, then four drained successes and one cancellation; before/after queue tuples asserted, final zero | Verified tested FIFO route, with both tasks retained for cleanup |
+| Capacity/refusal probes retain unexpectedly returned resources | Four active/sixteen canceled pending acquisitions accounted; separate successful scope/operation refusal-capture control ends at exact zero | Verified current reservation ledger, not total heap |
+| Partial acquisition preserves both accounting and original exception identity | Cases with 0/1/3 operations; operation cleanup leaves only `(1,0,0,2097152,4194304)` until scope disposal, then zero; simultaneous primary/secondary case keeps both same objects | Verified injected-failure controls; no general all-fault guarantee |
+| Exception-identity assertions detect replacement, not merely type equality | Same-type replacement mutant: two `Assert.Same` failures, three passing controls, exact cleanup zero throughout | Verified mutation sensitivity of exception-object preservation |
+
+Tuple order is `(Scopes, Active, Pending, Owned, Retained)` and byte quantities
+are reservation charges, not measured CLR heap.
+
+Author evidence is retained at
+`C:\Projects\ai-de-atlas-e1-budget-lifetime-repair\.artifacts\owner75-budget-lifetime`:
+`red-restored/red-five-old-helper-restored.trx`,
+`mutant-control/mutant-same-type-replacement.trx`,
+`green-final/owner75-green-final.trx`, source snapshots, `candidate.patch` and
+`committed-receipt.json`. The earlier no-receipt `--no-restore` success exit was
+not counted. Baseline, red, mutant and green snapshots remain separate.
+
+Parent evidence is in session files `atlas-e1-lifetime-independent/`, including
+`parent-e1-lifetime.trx` and new `idle/` / `publication/` receipts. The 37 cases
+are budget 10, static observation 5, static reader contracts 11, existing
+publication modes 10 and real idle-Git/RESTORE 1. Existing native cases remain
+**current E0 regression evidence**, not new E1 metadata proof.
+
+Fresh Test, C# and Core Security/SRE reviews are pending against this exact pin.
+No candidate join or qualification acceptance follows from the parent replay
+alone. Future parent/flavor emission, negotiated opt-in, actual feature payload
+adoption, long-file navigation and incremental E1 charges remain outside these
+test-only controls.
+
 Parent inspected existing source while preparing the next bounded decision:
 `AtlasProductionAdmissionTests.cs:237-325` uses real `AtlasRuntimeFixture` and
 `AtlasRemoteReader`, file/member SELECT windows, repeated original-receipt RESTORE

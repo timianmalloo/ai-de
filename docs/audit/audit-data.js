@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T23:20:39Z",
+  "generated": "2026-09-14T23:35:32Z",
   "audit": [
     {
       "actor": null,
@@ -16791,6 +16791,38 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "aa6303ec3d2daaf4de4d717f4715beef44875790",
         "short": "aa6303ec3",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2H4D6XBXQQ37FC1GAY6TB6X",
+      "shortname": "atlas-lifetime-counterexample-and-replay",
+      "datetime": "2026-09-14T23:35:31Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "7262566bCoreAstra14/16nowrap, solebudgettestdelta, otherqualification/produnchangedverified. Parentreadfullsource andRAWoldhelperfive-admissionredTimeout4active1pending:cancel+awaitcleanup4success1cancelzero. New37/37parentreplay with5success0faultnocancel, exactFIFO/capacity/partial0-1-3 andsameexceptionobjects. Same-typeexceptionreplacementmutant2Assert.Samefailures3pass preserveszero. NewE0baseline11separate. Thisordinarytestevidence—notdeniedreflection—establishesboundedtesthelpercounterexample. Source/rawsnapshotsallretained, no-receiptno-restoreexitnotproof. Threefresh4leafreviewsgatesrunning, nojoin. FutureE1parent/flavor/optin/longfile/newmetadatachargesunimplemented. Earlierlosses/overrunsnotrewritten.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Establish the lifetime repair with actual counterexamples and independent replay",
+      "done_when": "Pinned one-file red/green, exception identity and acquisition/drain accounting are recorded for independent gates",
+      "tier": "T2",
+      "main_calls": 599,
+      "main_budget": 620,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T23:32:39Z",
+      "duration_seconds": 172.0,
+      "git": {
+        "sha": "9ec414d32859aeee0ccd83e8ff94327695b232f6",
+        "short": "9ec414d32",
         "branch": "conductor/code-atlas",
         "pushed": null
       }
