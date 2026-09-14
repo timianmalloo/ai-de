@@ -7793,3 +7793,54 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Shape, instance and control (SH-4.2, 2026-09-13; `docs/proof/coding-recut-left-dock.md` §Defect classes):** *a refusal sentence names a mechanism as the cause after a fix removed that mechanism* (`RefusedReconcileAnnouncement`'s "a collapsed panel still holds panes" after F-1). **Control:** the sentence names only what the code can still tell; `ADragWhileACollapsedZoneHoldsPanes_IsAppliedThroughTheDockingHost_…` asserts the old sentence is absent. Sweep: the same sentence is a fixture string in `TheStatusStripClearsOnSupersessionOrDwellTests` (X-3's; a fixture, not a claim — left).
 - **Status:** `controlled` — the oracle named in the entry is red-first in the slice's records (`docs/proof/records/sh-4-2/`).
 
+### DC-nnn (profiler a) — A deferred host tool called from a background sub-agent blocks until the main line surfaces it, and the answer it was waiting for is a refusal
+
+- **Shape:** a node (a background sub-agent) calls a host tool that needs an interactive decision or a
+  session-level precondition (`EnterWorktree`); the call cannot resolve inside the node, so it waits
+  on the parent's main line; when the result arrives it is a refusal the node could have predicted
+  from its own cwd. The node's wall clock absorbs the wait, and a marker set after grounding hides it.
+- **Signature:** a sub-agent tool wait of minutes-to-hours on a non-shell tool whose result text is a
+  refusal; a store span far above the audit `duration_seconds` with no test run to account for it.
+- **Instance (Addenda C/D, 2026-09-13, `docs/profiles/addendum-cd.md` AC-03):** SH-4.1's
+  `EnterWorktree` waited 8,143 s (18:21:06 → 20:36:49Z) and X-1's 379 s; both returned "Cannot enter
+  worktree: the current working directory C:\projects\ai-de is the repository root".
+- **Sweep:** every node brief that names a worktree invites the call; 2 of 38 writing nodes made it.
+- **Control:** the brief template says *never call `EnterWorktree`/`ExitWorktree` — absolute paths
+  only*; the profiler flags a sub-agent tool wait over 600 s on a non-shell tool (SP-23, proposed in
+  `docs/profiles/addendum-cd.md` F-25) — red on this corpus.
+- **Status:** `uncontrolled` — recorded by the profiler; the control is a pack proposal (F-25).
+
+### DC-nnn (profiler b) — A multi-line program passed through a shell heredoc fails on quoting or escaping, and the request that carried it is burned
+
+- **Shape:** an agent writes a Python (or shell) program inline as `python - <<'EOF' …` in Git Bash
+  on Windows; a quote, a backslash or a `$` inside the program is mangled by the shell before the
+  interpreter sees it; the tool result is `unexpected EOF` / `SyntaxError` / `IndentationError`, and
+  the agent re-issues the request at full context price.
+- **Signature:** a tool result matching `here-document|unexpected EOF|SyntaxError|IndentationError`
+  on a command containing `<<`; the same node retrying the same program with different quoting.
+- **Instance (Addenda C/D, `docs/profiles/addendum-cd.md` AC-05):** 70 failed heredoc runs (2 on
+  the conductor's main line, 68 across 28 nodes, up to 5 in one node) and 27 more that ran with a
+  `SyntaxWarning: invalid escape sequence`.
+- **Sweep:** every brief that says "use `python`" and nothing about how; the pack's own scripts are
+  files, its prompts are not.
+- **Control:** the brief rule *a program longer than one line is written to the scratchpad with the
+  Write tool and run as a file*; the profiler counts failed heredoc runs per session (SP-25,
+  proposed) — red on this corpus.
+- **Status:** `uncontrolled` — recorded by the profiler; the control is a pack proposal (F-21).
+
+### DC-nnn (profiler c) — A resumed node's second run sets no marker, so its duration is not recorded and the first run's figure stands for both
+
+- **Shape:** DC-190's sibling. "One marker measures one run" (AL4a) holds, and a node resumed by
+  `SendMessage` (a review fix, a follow-up question, a second slice) is a second run that nobody
+  marks; the audit log keeps the first run's `duration_seconds` and the resume's entry — if one is
+  written — reads no duration, while the harness store shows the whole span.
+- **Signature:** a store span that exceeds the audit duration by more than the grounding-and-report
+  allowance (≈ 70–820 s here); a second entry for the same session with `duration_seconds` absent.
+- **Instance (Addenda C/D, `docs/profiles/addendum-cd.md` AC-09):** six nodes resumed — S2
+  `/specify` (+60,524 s), SH-4.1 (+9,655 s), X-3 (+5,240 s; `x-3-shell-seams-review-fixes` has no
+  duration), INV-0010 (+2,167 s; the slice-0 correction consumed the marker), SH-3 (+1,958 s),
+  X-1 (+1,564 s).
+- **Sweep:** every `SendMessage` to a node is a resume; 23 were sent in the programme.
+- **Control:** the resume template carries the `start` line; the profiler flags a node whose store
+  span exceeds its audit duration by more than 30 min (SP-26, proposed) — red on six nodes today.
+- **Status:** `uncontrolled` — recorded by the profiler; the control is a pack proposal (F-24).

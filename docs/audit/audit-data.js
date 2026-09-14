@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T01:00:15Z",
+  "generated": "2026-09-14T01:32:19Z",
   "audit": [
     {
       "actor": null,
@@ -15368,6 +15368,55 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       }
+    },
+    {
+      "id": "al-01M2EQ97SWHTZVKMP5Y2Z0NN8T",
+      "shortname": "session-profile-sp-0002",
+      "datetime": "2026-09-14T01:07:40Z",
+      "session": "profiler",
+      "prompt": "session-profile.py profile",
+      "summary": "Profile sp-0002: 4 session(s), 27 finding(s)",
+      "kind": "script",
+      "skill": "session-profiler",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/profiles/sp-0002/profile.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-09-14T01:04:39Z",
+      "duration_seconds": 181.0
+    },
+    {
+      "id": "al-01M2ERP5BWMQA01JKMS2TXHB8J",
+      "shortname": "session-profiler-addendum-cd",
+      "datetime": "2026-09-14T01:32:13Z",
+      "session": "profiler",
+      "prompt": "Run the session-profiler skill (--repo C:\\projects\\ai-de --days 3 — the Addenda C/D programme, 2026-09-11 → 2026-09-13: the conductor session (Claude Code, Opus) and its ~20 sub-agent nodes (opus/sonnet/fable), 14 joins, Rulings 50–90). Stage 0 discover first; every number read from a store or labelled est.; missing measurements read not recorded; the Simplifier strikes findings that change nothing; the Test Architect's veto on fixes without a named control. Answer the operator's questions (IO2): cost and tokens per node and per join; the cache share; joins vs dispatch/review on the conductor's wall; rework passes; width used vs the cap; nodes over plan and by what ratio; whether the operator's five findings were answered within the day and at what cost; the repeat-mistake shapes (DC-113 ×4, mangled heredocs, DC-nnn allocation drift). Reconcile against docs/notes/pack-findings-addendum-cd.md; SP-15 against git worktree list (42 atlas/* trees are the peer's). Outputs in the side worktree; new classes as DC-nnn (profiler a) placeholders; never claim the register.",
+      "summary": "Profile addendum-cd (curating sp-0002): 14 findings (AC-01..AC-12, SP-01, SP-07), 8 struck (SP-09, SP-06, SP-14, SP-15x3f8dad7c, SP-12, SP-17, the audit-id split, the coord refusals), 10 fixes each with a pack surface and a red-observed control (F-18 subagents reader, F-19 notification turns, F-20 DC-113 shell rule + SP-24, F-21 heredoc write-then-run + SP-25, F-22 join entries carry marker/tier/fan-out/recount, F-23 ledger ratio derived, F-24 resume carries start + SP-26, F-25 no EnterWorktree in nodes + SP-23, F-14 ext. per-node context ceiling, F-09). Numbers: programme est. $2,198 list-price (main $308, 52 nodes $1,634, 114 reviews $257); cache share 98.95% main / 98.09% sub-agents; joins + gates/recounts = 13,451 s = 44.8% of the 30,032 s active main line (20 whole-suite --update recounts, median 391.5 s); width mean 1.9, width 3 for 28.1% of live time, 4 once for 752 s; planned-vs-actual median 1.78x (store) / 1.75x (ledger rows) — the ledger's 2.2x is not derivable (DC-184 shape); the operator's five findings answered in code within the day (16:36Z message -> SH-4.2 joined 01:00Z = 18:00 local), findings-driven nodes $364 est., the window $631 est.; DC-113 shape 168 main-line lines / 102 on commit lines vs 4 recorded; 70 failed heredoc runs; 20 register lease refusals in 45 min; EnterWorktree blocked SH-4.1 8,143 s. Pack findings #1 #2 #5 #6 #16 #17 confirmed with counts, none struck. 3 placeholder classes DC-nnn (profiler a|b|c). The script's own append consumed this run's start marker (finding #2 re-observed); the closing duration is from the re-mark at 01:07:56Z.",
+      "kind": "skill",
+      "skill": "session-profiler",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/profiles/addendum-cd.md",
+        "docs/profiles/sp-0002/profile.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Profile the Addenda C/D programme (conductor 919ba21f + nodes + joins) from the harness stores, the audit log and the ledger; answer the operator's IO2 questions; findings/fixes/family tables with controls; register new shapes as placeholders",
+      "done_when": "docs/profiles/addendum-cd.md + sp-0002 + PROFILES.md row written; every Inferred finding confirmed or struck; gates green; committed and pushed to side/session-profile-addendum-cd; claims released",
+      "tier": "T0",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-14T01:07:56Z",
+      "duration_seconds": 1457.0
     }
   ],
   "changes": [
