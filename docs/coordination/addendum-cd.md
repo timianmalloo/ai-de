@@ -331,8 +331,10 @@ refused; `unsupported` = no code path wired here. No mode is advertised that was
 ## Execution ledger — planned vs actual (Stage 10, kept as nodes land)
 
 Actual = the node's audit entry `duration_seconds` (Verified, measured from its own marker);
-planned = the wave table above (Inferred at planning). The **W1–W3 median ratio is 2.2×**, the same
-ratio the parent plan measured for P1; the plan's implement figures were medians of smaller inputs.
+planned = the wave table above (Inferred at planning). The **median planned-vs-actual ratio is 1.75×**
+over the rows below (the session profile `sp-0002` recomputed it: 1.75× audit / 1.78× store; the
+conductor's earlier "2.2×" was not derivable from the rows — DC-184's shape, corrected here); the plan's
+implement figures were medians of smaller inputs.
 
 | Node | Planned | Actual | Ratio | Note |
 | --- | --- | --- | --- | --- |
@@ -390,8 +392,8 @@ contrast census over three hosts at 0 below floor.
 **Numbers:** 20 nodes (14 opus, 4 sonnet, 2 fable rulings-only) + 5 conductor side tracks; 14 joins,
 each a whole-suite recount + both halves; floors from App 781 / Core 2312 to **App 952 / Core 2632 =
 2462 + 170**; Rulings 50–90; DC-136 → DC-205 (70 classes); 0 Windows Terminal agent attaches born
-in any recount since DC-170. The W1–W3 planned-vs-actual median was **2.2×** (Inferred plan
-figures); the wave after the operator's findings (D3 → CV-5.2/5.3/5.4, SH-4.1/4.2, CV-3/4) ran
+in any recount since DC-170. The planned-vs-actual median was **1.75×** (Inferred plan figures; the profile's
+recomputation); the wave after the operator's findings (D3 → CV-5.2/5.3/5.4, SH-4.1/4.2, CV-3/4) ran
 without planned figures and is recorded as measured.
 
 **Rework passes:** 4 recurrences of a shell line hiding a red gate (DC-113) — the join is a script

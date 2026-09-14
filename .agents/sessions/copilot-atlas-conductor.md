@@ -5,13 +5,14 @@
 - Worktree: C:\Projects\ai-de-conductor-code-atlas
 - Branch: conductor/code-atlas
 - Status: active implementation under explicit Owner branch-local grant; integration remains separate
-- Updated: 2026-09-13
-- Doing: Conductor acaf4dca includes the accepted detached reader, main compatibility,
-  compiled Core render seam, Shell lifetime repair and qualification-only membership.
-  The watch-lifetime cause/fix is qualified; production membership remains blocked on
-  cleanup-timeout ownership/accounting. Owner 48 released ten regular Core cleanup calls
-  and four for a concrete runtime estimate. Shell is idle at 44/44 awaiting an actual
-  committed Core factory. The factory/MainWindow handoff remains unimplemented.
+- Updated: 2026-09-14
+- Doing: Conductor e9b8dbd9 includes accepted detached reader, render seam, Shell lifetime,
+  native membership qualification and retained-cleanup correction. Owner 50 funds actual
+  Core runtime in the fresh verified ai-de-atlas-production-core-runtime tree; C is active.
+  Logical reader leases cannot retain blocking Git pins while the UI is idle. Real Core
+  connection identity and separate Atlas reader ownership must reach the Shell handoff.
+  Shell's sixteen new handoff calls remain held until that reviewed committed API exists.
+  The real factory/MainWindow journey is not yet implemented or accepted.
   Owner and Conductor retain scope, assignments, gates and joins. Exact branch-local existing
   adapter exceptions are recorded in section 2; open counterpart requests are not consent.
 - Resume artifacts: docs/coordination/code-atlas.md,
@@ -26,7 +27,7 @@
   work from your observed active SH3 IPC/factory/shell/graph/layout edits.
 - Tracked exchange: section 9 in this conductor branch's docs/collaboration/session-contracts.md.
   Ownership remains exclusively section 2; this file does not assign paths.
-- Waiting on: Core diagnostic receipt, Shell repair evidence and actual Core-to-Shell runtime handoff. Claude/Core
+- Waiting on: Actual Core runtime commits, independent review and the real Core-to-Shell handoff. Claude/Core
   acknowledgment of Addendum E and eventual main integration remains separate. The native
   request is a pull log, not message injection; no human relay or polling is required.
   The sole section-2 register and docs/notes/atlas-owner/live-reader-horizon.md carry the exact

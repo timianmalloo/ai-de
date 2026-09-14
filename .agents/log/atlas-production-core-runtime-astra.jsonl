@@ -1,0 +1,3 @@
+{"agent": "copilot-atlas-core-runtime", "at": 1789348407.9072375, "kind": "session-start", "path": "-", "seq": 1, "session": "atlas-production-core-runtime-astra", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-atlas-production-core-runtime"}
+{"agent": "copilot-atlas-core-runtime", "at": 1789349259.6552117, "kind": "claim", "path": "src/AiDe.Core/Understanding/AtlasWorkspaceReadPolicy.cs", "seq": 2, "session": "atlas-production-core-runtime-astra", "ttl": 60.0, "wi": "atlas-runtime-capability-check"}
+{"agent": "copilot-atlas-core-runtime", "at": 1789349259.791046, "kind": "release", "path": "src/AiDe.Core/Understanding/AtlasWorkspaceReadPolicy.cs", "seq": 3, "session": "atlas-production-core-runtime-astra", "wi": "WI-0"}

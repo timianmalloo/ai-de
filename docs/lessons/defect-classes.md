@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 115 · partially-controlled 66 · uncontrolled 24
+**Status counts:** controlled 115 · partially-controlled 66 · uncontrolled 27
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -4553,6 +4553,13 @@ for both or split.*
   conflict stopping the script with the file list. The join line is now `python
   tools/conductor-join.py <branch> …` and nothing else. Status moves to `controlled` for the join;
   the class stays live for every other shell line an agent types.
+- **Measured across the whole programme (the session profile `sp-0002`, 2026-09-13):** the shape
+  — a gate's status behind `| tail`, `| head`, `| grep` with no `pipefail` on the main line — appeared
+  **168 times**, **102 of them on a line that also committed, merged or pushed**; the nodes' lines
+  271 more (21 acting). The four recorded recurrences are the ones that bit; the count says the
+  control cannot be a habit. **Control (the profile's F-20):** a managed-block shell rule — *a gate's
+  status is never behind a pipe* — and the profiler's SP-24 counter, red at 168/102; the join is
+  already a script. Status stays `partially-controlled` until SP-24 reads 0 on a later profile.
 
 ### DC-114 — A fix to the deployment mechanism cannot deploy itself: correct, tested, green, and unreachable
 
@@ -7802,7 +7809,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Shape, instance and control (SH-4.2, 2026-09-13; `docs/proof/coding-recut-left-dock.md` §Defect classes):** *a refusal sentence names a mechanism as the cause after a fix removed that mechanism* (`RefusedReconcileAnnouncement`'s "a collapsed panel still holds panes" after F-1). **Control:** the sentence names only what the code can still tell; `ADragWhileACollapsedZoneHoldsPanes_IsAppliedThroughTheDockingHost_…` asserts the old sentence is absent. Sweep: the same sentence is a fixture string in `TheStatusStripClearsOnSupersessionOrDwellTests` (X-3's; a fixture, not a claim — left).
 - **Status:** `controlled` — the oracle named in the entry is red-first in the slice's records (`docs/proof/records/sh-4-2/`).
 
-### DC-nnn (profiler a) — A deferred host tool called from a background sub-agent blocks until the main line surfaces it, and the answer it was waiting for is a refusal
+### DC-206 — A deferred host tool called from a background sub-agent blocks until the main line surfaces it, and the answer it was waiting for is a refusal
 
 - **Shape:** a node (a background sub-agent) calls a host tool that needs an interactive decision or a
   session-level precondition (`EnterWorktree`); the call cannot resolve inside the node, so it waits
@@ -7819,7 +7826,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   `docs/profiles/addendum-cd.md` F-25) — red on this corpus.
 - **Status:** `uncontrolled` — recorded by the profiler; the control is a pack proposal (F-25).
 
-### DC-nnn (profiler b) — A multi-line program passed through a shell heredoc fails on quoting or escaping, and the request that carried it is burned
+### DC-207 — A multi-line program passed through a shell heredoc fails on quoting or escaping, and the request that carried it is burned
 
 - **Shape:** an agent writes a Python (or shell) program inline as `python - <<'EOF' …` in Git Bash
   on Windows; a quote, a backslash or a `$` inside the program is mangled by the shell before the
@@ -7837,7 +7844,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   proposed) — red on this corpus.
 - **Status:** `uncontrolled` — recorded by the profiler; the control is a pack proposal (F-21).
 
-### DC-nnn (profiler c) — A resumed node's second run sets no marker, so its duration is not recorded and the first run's figure stands for both
+### DC-208 — A resumed node's second run sets no marker, so its duration is not recorded and the first run's figure stands for both
 
 - **Shape:** DC-190's sibling. "One marker measures one run" (AL4a) holds, and a node resumed by
   `SendMessage` (a review fix, a follow-up question, a second slice) is a second run that nobody

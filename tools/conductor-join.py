@@ -19,7 +19,7 @@ Steps, in order, stop on the first red:
   2. verify-no-conflict-markers        always, before anything else reads the tree
   3. verify-defect-register --fix-counts (counts only; ids are the conductor's, allocated by hand)
   4. verify-test-run --update          whole, then both Core halves — skipped with --docs-only
-  5. audit-log append                  the join's entry, artifacts and signals
+  5. audit-log append                  the join's entry - tier T1, fan-out 0, its own marker's duration, recount_seconds (F-22)
   6. regenerate-derived                the derived views after the audit entry
   7. git add -A && git commit          the join commit (the pre-commit boundary runs)
   8. run-verify-gates                  every gate, one status, on the committed tree
@@ -33,6 +33,7 @@ from __future__ import annotations
 import argparse
 import os
 import subprocess
+import time
 import sys
 from pathlib import Path
 
@@ -98,6 +99,12 @@ def main(argv: list[str]) -> int:
                 print(f"   - {c}")
             return 1
 
+    # The join's own marker (F-22 of the session profile sp-0002: fourteen join entries carried no
+    # duration, tier or fan-out, so the profiler could not cost a join). Set here so the closing
+    # entry's duration_seconds is measured from this instant; one marker measures one join (AL4a).
+    run(2, "audit marker", [PY, "docs/ai-forward-pack/scripts/audit-log.py", "start", "--session", env["AGENT_SESSION"]], env)
+    recount_started = time.monotonic()
+
     run(2, "no conflict markers", [PY, "tools/verify-no-conflict-markers.py"], env)
     run(3, "register counts", [PY, "tools/verify-defect-register.py", "--fix-counts"], env)
     run(3, "register sequence", [PY, "tools/verify-defect-register.py"], env)
@@ -110,12 +117,14 @@ def main(argv: list[str]) -> int:
                                            "--filter", "Platform=Windows", "--key", "AiDe.Core.Tests.nonportable"], env)
     else:
         print("\n== step 4: recount skipped (--docs-only)")
+    recount_seconds = int(time.monotonic() - recount_started)
 
     audit = [PY, "docs/ai-forward-pack/scripts/audit-log.py", "append",
              "--shortname", args.audit_shortname, "--session", env["AGENT_SESSION"],
-             "--skill", "execute-with-coordination", "--kind", "skill",
+             "--skill", "execute-with-coordination", "--kind", "skill", "--tier", "T1", "--fan-out", "0",
              "--prompt", f"keep going (the join of {args.branch or 'the resolved merge'})",
-             "--summary", args.audit_summary, "--goal", args.audit_goal, "--done-when", args.audit_done_when,
+             "--summary", f"{args.audit_summary} recount_seconds={recount_seconds} (docs_only={args.docs_only}).",
+             "--goal", args.audit_goal, "--done-when", args.audit_done_when,
              "--signal-verification-path", "true", "--signal-verification-executed", "true",
              "--signal-acceptance-met", "true"]
     for a in args.artifact:

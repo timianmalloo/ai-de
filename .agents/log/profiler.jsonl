@@ -1,1 +1,2 @@
 {"agent": "claude-conductor", "at": 1789347831.156433, "kind": "session-start", "path": "-", "seq": 1, "session": "profiler", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-side-session-profile-addendum-cd"}
+{"agent": "claude-profiler", "at": 1789349920.8822536, "kind": "session-end", "path": "-", "seq": 2, "session": "profiler", "wi": "WI-0", "worktree": "C:/Projects/ai-de-side-session-profile-addendum-cd"}

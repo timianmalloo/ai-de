@@ -59,3 +59,4 @@
 {"agent": "copilot-atlas-core-execution", "at": 1789345068.5685272, "kind": "claim", "path": "tests/AiDe.Core.Tests/Understanding/AtlasGitMembershipTests.cs", "seq": 59, "session": "atlas-production-core-exec-astra", "ttl": 300.0, "wi": "atlas-retained-cleanup"}
 {"agent": "copilot-atlas-core-execution", "at": 1789346000.2696505, "kind": "release", "path": "src/AiDe.Core/Understanding/AtlasGitMembership.cs", "seq": 60, "session": "atlas-production-core-exec-astra", "wi": "WI-0"}
 {"agent": "copilot-atlas-core-execution", "at": 1789346000.3253758, "kind": "release", "path": "tests/AiDe.Core.Tests/Understanding/AtlasGitMembershipTests.cs", "seq": 61, "session": "atlas-production-core-exec-astra", "wi": "WI-0"}
+{"agent": "copilot-atlas-core-execution", "at": 1789348407.8423667, "kind": "session-end", "path": "-", "seq": 62, "session": "atlas-production-core-exec-astra", "wi": "WI-0", "worktree": "C:/Projects/ai-de-atlas-production-core-execution"}

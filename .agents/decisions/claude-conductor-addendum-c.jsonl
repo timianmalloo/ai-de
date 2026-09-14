@@ -435,3 +435,14 @@
 {"agent": "claude-conductor", "at": 1789347814.2185867, "code": null, "kind": "allowed", "path": "docs/notes/addendum-c-council-rulings.md", "session": "claude-conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789347814.2246366, "code": null, "kind": "allowed", "path": "docs/notes/console-toggle-closes-on-second-press.md", "session": "claude-conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789347891.12923, "code": null, "kind": "allowed", "path": "docs/coordination/addendum-cd.md", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789347895.72947, "code": null, "kind": "allowed", "path": ".agents/decisions/claude-conductor-addendum-c.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789347895.7351794, "code": null, "kind": "allowed", "path": ".agents/log/profiler.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789347895.7417083, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789347895.7476943, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789347895.7532206, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789347895.759216, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789347895.7652187, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789347895.7710423, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789347895.7770443, "code": null, "kind": "allowed", "path": "site/index.html", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789348119.0555675, "code": null, "kind": "allowed", "path": ".agents/sessions/claude-conductor.md", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789348119.0621133, "code": null, "kind": "allowed", "path": "docs/notes/attended-rows-for-the-operator.md", "session": "claude-conductor-addendum-c", "wi": ""}
