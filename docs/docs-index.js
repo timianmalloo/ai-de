@@ -8013,7 +8013,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3c514c8a514c593d07d1a8018cba7640f32e0bd768fac711e75f12ee20cc3836"
+      "sourceSha256": "eb6e6f67e2f039fe5f7eb534c8511eefed18811afdb2260d636909793e0235cd"
     },
     {
       "id": "design-session-profiler",
@@ -9834,6 +9834,56 @@ window.DOCS_INDEX = {
       "sourceSha256": "2d5ebde012f5c21f85aaa095489501b42cd9371ffcced0c19292c6e3dbb37797"
     },
     {
+      "id": "profile-addendum-cd",
+      "path": "docs/profiles/addendum-cd.md",
+      "title": "Session profile — the Addenda C/D programme",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-addendum-c",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [],
+      "summary": "A /session-profiler pass over the Addenda C/D programme (2026-09-11 -> 2026-09-13): the conductor session claude:919ba21f, its 52 depth-1 nodes and 114 depth-2 persona reviews read from the harness's subagents store (which session-profile.py sp-0002 could not see), joined to the audit log's per-node durations and the coordination plan's ledger. Est. list-price cost $2,198, 98-99% of input from cache; 44.8% of the conductor's active main line was joins and recounts; a deferred tool blocked one node for 2 h 15 min; the DC-113 shell shape recurred 102 times on commit lines against 4 recorded consequences.",
+      "tags": [
+        "profile",
+        "session-profiler",
+        "conductor",
+        "addendum-c",
+        "addendum-d",
+        "efficiency",
+        "adherence",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "design-session-profiler",
+          "rel": "relates-to"
+        },
+        {
+          "to": "profile-sp-0002",
+          "rel": "depends-on"
+        },
+        {
+          "to": "profile-conductor-phase1",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-pack-findings-addendum-cd",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2a7fc695603df78e1342cf4ab297b0d07d5e8114e79732f07382a4a2b357fcd1"
+    },
+    {
       "id": "profile-conductor-phase1",
       "path": "docs/profiles/conductor-phase1.md",
       "title": "Session profile — Conductor Phase 1",
@@ -9898,6 +9948,32 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "e7e9efde10072578ca62a776d034b4eedd7f1173516a82aec73bb1e5fe25294c"
+    },
+    {
+      "id": "profile-sp-0002",
+      "path": "docs/profiles/sp-0002/profile.md",
+      "title": "Session profile sp-0002 - ai-de",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-12",
+      "reviewSuggested": [],
+      "summary": "Measured pass over 4 session(s) in ai-de (last 3 days); 27 finding(s), top: SP-01, SP-06, SP-09.",
+      "tags": [
+        "profile",
+        "session-profiler",
+        "efficiency",
+        "adherence"
+      ],
+      "links": [
+        {
+          "to": "design-session-profiler",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2c0e0bbdcecc72079f6b8a801b7777b95b6c28834d8623bbe6aa2998ecb44925"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -10448,7 +10524,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2328a42e46a3328963e096d359764aac63418da8b7c7ded01167224ad5b9265e"
+      "sourceSha256": "fbf372e37e6df30d58ad671051def9d2f9fd7848f0c02db8b3af8ba41cc69df7"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -17998,5 +18074,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a03c5a4e328f699401bade8be1159e1b9fd37d337f5afd5885ac47d597489346"
+  "graphSha256": "eeacffb36fb1a72b39c04cc751e400b57dd72863ef98bbee9402d1428fbbf427"
 };
