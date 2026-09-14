@@ -1,0 +1,4 @@
+{"agent": "copilot-atlas-e1-static-design", "at": 1789416166.1944127, "kind": "session-start", "path": "-", "seq": 1, "session": "atlas-e1-static-design", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-atlas-e1-static-design"}
+{"agent": "copilot-atlas-e1-static-design", "at": 1789416928.7957306, "kind": "claim", "path": "docs/design/code-atlas-e1-static-views.md", "seq": 2, "session": "atlas-e1-static-design", "ttl": 300.0, "wi": "atlas-e1-static-design"}
+{"agent": "copilot-atlas-e1-static-design", "at": 1789417304.8106673, "kind": "claim", "path": "docs/design/code-atlas-e1-static-views.md", "seq": 3, "session": "atlas-e1-static-design", "ttl": 300.0, "wi": "atlas-e1-static-design"}
+{"agent": "copilot-atlas-e1-static-design", "at": 1789417305.2302446, "kind": "release", "path": "docs/design/code-atlas-e1-static-views.md", "seq": 4, "session": "atlas-e1-static-design", "wi": "WI-0"}
