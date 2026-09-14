@@ -227,11 +227,24 @@ are budget 10, static observation 5, static reader contracts 11, existing
 publication modes 10 and real idle-Git/RESTORE 1. Existing native cases remain
 **current E0 regression evidence**, not new E1 metadata proof.
 
-Fresh Test, C# and Core Security/SRE reviews are pending against this exact pin.
-No candidate join or qualification acceptance follows from the parent replay
-alone. Future parent/flavor emission, negotiated opt-in, actual feature payload
-adoption, long-file navigation and incremental E1 charges remain outside these
-test-only controls.
+All three final reviews have returned against that exact pin:
+
+| Reviewer | Inspected source / execution | Verdict / actual reported usage |
+|---|---|---|
+| Test Architect | Budget tests 1-180, 181-339; parent and author green, old-helper red and replacement-exception control receipts | Conditional PASS for current test-only lifetime qualification; 3/4 leaves, one wrapper |
+| Core Security/SRE | Budget tests 1-170, 171-339; parent budget outputs, old-helper red and replacement-exception failures/cleanup | PASS; final resource-lifetime veto clears; 4/4 leaves |
+| C# | Budget tests 1-190, 191-339; parent green, old-helper red and replacement-exception receipts | PASS advisory; no remaining scoped C# repair; 4/4 leaves, two wrappers |
+
+GATE current test-only qualification - final candidate `7262566b` - all reported
+current root-isolation and lifetime predicates clear. The reviewers did not
+reopen accepted row controls or claim that reservation counters measure heap.
+Parent replay alone did not clear these gates; the independent dispositions did.
+
+Owner's conditional test-chain join and the next bounded E1 implementation grant
+have been requested, not assumed. No join is recorded at this checkpoint.
+Future parent/flavor emission, negotiated opt-in, actual feature payload adoption,
+long-file navigation and incremental E1 charges remain outside these test-only
+controls. They need their own production implementation and evidence.
 
 Parent inspected existing source while preparing the next bounded decision:
 `AtlasProductionAdmissionTests.cs:237-325` uses real `AtlasRuntimeFixture` and

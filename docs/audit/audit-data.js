@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T23:35:32Z",
+  "generated": "2026-09-14T23:42:25Z",
   "audit": [
     {
       "actor": null,
@@ -16823,6 +16823,38 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "9ec414d32859aeee0ccd83e8ff94327695b232f6",
         "short": "9ec414d32",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2H4STF70VKBCWNNSBW00DRB",
+      "shortname": "atlas-final-qualification-gates-clear",
+      "datetime": "2026-09-14T23:42:24Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Final7262566b: Test3/4onewrapperconditionalPASScurrenttestscope;CoreSRE4/4PASSresourcelifetimevetoCLEARED;CSharp4/4twowrappersPASSadvisory. Completeonefilesource+retainedparent37/37/oldhelperred/identitymutantinspected. No remainingCURRENTqualificationpredicate reported. Futuremetadata/negotiation/SP3/incrementalSP4remainoutside. Owner77requestedconsolidatedreceipt; suppliedexactfourtestcommitjoinchain020f,aa,44c7,726 andproposed11fileCoretranchefromexisting16pathdesign, dependencyoncompiledportbeforenativeUI, explicitsemanticoracles/budget. AwaitOwnerruling; nojoin/sourcegrantinferred. Allfailedintermediateevidencepreserved.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Converge independent current-qualification gates and request the bounded next implementation",
+      "done_when": "All three final receipts and exact test-chain/next-core requests are recorded without widening acceptance",
+      "tier": "T2",
+      "main_calls": 607,
+      "main_budget": 620,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T23:41:52Z",
+      "duration_seconds": 32.0,
+      "git": {
+        "sha": "b4d3136794f9daf18927fca206e8e902276a900d",
+        "short": "b4d313679",
         "branch": "conductor/code-atlas",
         "pushed": null
       }
