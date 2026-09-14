@@ -40,7 +40,7 @@ public sealed class EngineCatalogTests
     [Fact]
     public void TheEngineRowsLoadWithTheirPinnedPackagesAndObservedLaunches()
     {
-        Assert.Equal(4, EngineCatalog.Rows.Count);
+        Assert.Equal(5, EngineCatalog.Rows.Count);
 
         var claude = EngineCatalog.Find("claude-code");
         Assert.Equal("anthropic", claude.Provider);
@@ -74,6 +74,16 @@ public sealed class EngineCatalogTests
         Assert.Equal("@google/gemini-cli", geminiNative.NpmPackage);
         Assert.Equal("bundle/gemini.js", geminiNative.NpmEntryModule);
         Assert.Null(geminiNative.HostVariable);
+
+        var grok = EngineCatalog.Find("grok");
+        Assert.Equal("xai", grok.Provider);
+        Assert.Equal(AcpMode.Native, grok.Acp);
+        var grokNative = Assert.IsType<NativeCommand>(grok.Native);
+        Assert.Equal("grok", grokNative.Command);
+        Assert.Equal(["agent", "stdio"], grokNative.Arguments);
+        Assert.Equal("@xai-official/grok", grokNative.NpmPackage);
+        Assert.Equal("bin/grok", grokNative.NpmEntryModule);
+        Assert.Null(grokNative.HostVariable);
     }
 
     /// <summary>Every adapter row pins both a package and a version — an unpinned adapter is drift.</summary>
@@ -287,6 +297,34 @@ public sealed class EngineCatalogTests
         Assert.Equal(AgentPlaneErrorCodes.EngineNotOnPath, error.Code);
         Assert.Contains(InstallRoot, error.Message, StringComparison.Ordinal);
         Assert.Contains("@google/gemini-cli", error.Message, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Ruling 97 condition 1, grok: <c>grok agent stdio</c> resolves to the executable on PATH when
+    /// xAI's installer put one there, and otherwise — as on this machine, where <c>where grok</c>
+    /// finds nothing — to the npm package under the install root, spawned as
+    /// <c>node &lt;root&gt;/node_modules/@xai-official/grok/bin/grok agent stdio</c>, the line the
+    /// spike observed (<c>spikes/engine-backends/grok/frames.jsonl</c>).
+    /// </summary>
+    /// <remarks>
+    /// <b>Red-first.</b> Before the row existed both halves threw <c>UnknownEngine</c>. The npm shim
+    /// pass is the same as gemini's and is not repeated here.
+    /// </remarks>
+    [Fact]
+    public void TheNativeLaunchPathResolvesGrokFromPathOrFromTheInstallRoot()
+    {
+        using var path = new FakePath();
+        var exe = path.AddExecutable("grok");
+        var onPath = EngineCatalog.ResolveLaunch("grok", InstallRoot, path.Locator);
+        Assert.Equal(exe, onPath.FileName);
+        Assert.Equal(["agent", "stdio"], onPath.Arguments);
+
+        using var emptyPath = new FakePath();
+        using var installRoot = new FakePath();
+        var script = installRoot.AddNpmShim("grok", "@xai-official/grok", "bin/grok");
+        var fromRoot = EngineCatalog.ResolveLaunch("grok", installRoot.Entries.Single(), emptyPath.Locator);
+        Assert.Equal("node", fromRoot.FileName);
+        Assert.Equal([script, "agent", "stdio"], fromRoot.Arguments);
     }
 
     /// <summary>

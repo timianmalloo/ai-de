@@ -42,6 +42,7 @@ public sealed class TheSessionNewFrameIsEngineAppropriateTests
     [InlineData("copilot")]
     [InlineData("codex")]
     [InlineData("gemini")]
+    [InlineData("grok")]
     public async Task ANonClaudeEngineGetsTheAcpStandardFrameAndNoClaudeMeta(string engineId)
     {
         var absolute = Path.GetFullPath(Path.GetTempPath());

@@ -78,10 +78,30 @@ public sealed class TheEnginesAnswerInitializeOnTheWireTests(ITestOutputHelper o
     public Task GeminiAnswersInitializeWithProtocolVersionOne()
         => ObserveInitializeAsync("gemini", home => new Dictionary<string, string> { ["HOME"] = home, ["USERPROFILE"] = home }, expectedAgentName: "gemini-cli");
 
+    /// <summary>
+    /// grok — <c>grok agent stdio</c> (xAI Grok Build 1.0.30), not on this machine's PATH, so
+    /// resolved from the spike's scratch install as
+    /// <c>node &lt;root&gt;/node_modules/@xai-official/grok/bin/grok agent stdio</c>. The spike's
+    /// fresh run answered in 2.8 s including the first-run bootstrap
+    /// (<c>spikes/engine-backends/grok/frames.jsonl</c>); no <c>agentInfo</c>, the version rides
+    /// <c>_meta.agentVersion</c>. <c>GROK_HOME</c> is a <b>stable</b> scratch home so the ~150 MB
+    /// bootstrap (<c>bin/grok.exe</c> decompressed from the platform package) happens once per
+    /// machine, never under <c>~/.grok</c>. <c>XAI_API_KEY</c> is inherited as this machine has it —
+    /// it changes <c>authMethods</c> and is read at <c>session/new</c>, which is not sent.
+    /// </summary>
+    [NativeCliFact("grok")]
+    public Task GrokAnswersInitializeWithProtocolVersionOne()
+        => ObserveInitializeAsync(
+            "grok",
+            _ => new Dictionary<string, string> { ["GROK_HOME"] = Directory.CreateDirectory(Path.Combine(ScratchRoot, "grok-home")).FullName },
+            expectedAgentName: null,
+            assertIdentity: result => Assert.Equal("1.0.30", result["_meta"]!["agentVersion"]!.GetValue<string>()));
+
     private async Task ObserveInitializeAsync(
         string engineId,
         Func<string, IReadOnlyDictionary<string, string>> isolation,
-        string? expectedAgentName)
+        string? expectedAgentName,
+        Action<JsonObject>? assertIdentity = null)
     {
         var scratch = Path.Combine(ScratchRoot, engineId + "-" + Guid.NewGuid().ToString("n")[..8]);
         var home = Path.Combine(scratch, "home");
@@ -141,6 +161,8 @@ public sealed class TheEnginesAnswerInitializeOnTheWireTests(ITestOutputHelper o
         {
             Assert.Equal(expectedAgentName, result["agentInfo"]!["name"]!.GetValue<string>());
         }
+
+        assertIdentity?.Invoke(result);
 
         Assert.True(engine.HasExited, $"engine process {engine.ProcessId} outlived the test");
     }

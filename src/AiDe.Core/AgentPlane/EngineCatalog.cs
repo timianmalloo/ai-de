@@ -269,6 +269,39 @@ public static class EngineCatalog
                 "npm install -g @google/gemini-cli  (then set GEMINI_API_KEY, from https://aistudio.google.com/apikey, in the environment the product launches with)",
                 NpmPackage: "@google/gemini-cli",
                 NpmEntryModule: "bundle/gemini.js")),
+        new(
+            "grok",
+            "xai",
+            AcpMode.Native,
+            null,
+            null,
+            null,
+            new NativeCommand(
+                // NATIVE, NOT ADAPTER — the spike (§4, "Catalog consequences") left this to the
+                // architect. Native because (1) `AcpMode` states how the engine speaks ACP, and Grok
+                // Build speaks it itself: `@xai-official/grok` IS the CLI and `grok agent stdio` is its
+                // own ACP mode (Zed's registry launches the same line) — an Adapter row would misstate
+                // the topology; (2) one launch mechanism serves the three native CLIs: the command on
+                // PATH (xAI's installer puts a grok.exe there), npm's shim, or the product's install
+                // root — the same three passes as copilot and gemini, no fourth shape; (3) the npm
+                // package is recorded as the install source so Ruling 104's `npm install --prefix
+                // <root>` mechanism can deliver it, which is exactly the launch the spike observed:
+                // `node <root>/node_modules/@xai-official/grok/bin/grok agent stdio` (package.json
+                // `bin.grok = bin/grok`; xAI Grok Build 1.0.30) answered initialize in 2.8 s incl. the
+                // first-run bootstrap, `_meta.agentVersion "1.0.30"`, no agentInfo
+                // (spikes/engine-backends/grok/frames.jsonl). The bootstrap (bin/grok-bootstrap.js)
+                // decompresses the platform package's grok.exe.br into $GROK_HOME/bin on first run —
+                // ~150 MB, default ~/.grok/bin — so GROK_HOME is where the CLI writes; the product
+                // sets nothing and the CLI uses its own home, as `grok login` does.
+                "grok",
+                ["agent", "stdio"],
+                // Copied from https://docs.x.ai/build/overview (read 2026-09-14) and the npm registry
+                // (`npm view @xai-official/grok`: latest 1.0.30, bin {grok: bin/grok}). Sign-in:
+                // `grok login` (browser) or XAI_API_KEY in the launch environment; which xAI plan the
+                // grok.com sign-in requires was not recorded.
+                "irm https://x.ai/cli/install.ps1 | iex  (Windows PowerShell; macOS/Linux: curl -fsSL https://x.ai/cli/install.sh | bash) — or: npm install -g @xai-official/grok@1.0.30; then: grok login, or set XAI_API_KEY in the environment the product launches with",
+                NpmPackage: "@xai-official/grok",
+                NpmEntryModule: "bin/grok")),
     ];
 
     /// <summary>The catalog, as data.</summary>
