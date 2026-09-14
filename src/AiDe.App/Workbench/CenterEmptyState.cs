@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using AiDe.App.Workbench.Sessions;
 using AiDe.Core.Workbench;
 
 namespace AiDe.App.Workbench;
@@ -20,7 +21,7 @@ namespace AiDe.App.Workbench;
 /// build"</i>, a build-defect sentence for the ordinary empty state (SH-4.2, L4's red).</para>
 /// <para><b>No first action while a session is open.</b> The first action is the editor at Left,
 /// where focus lands; a <i>Maximize</i> here would hide the zone that offers it. The copy still
-/// carries a focus target — its root — because the landing falls back to it when the Left is
+/// carries a focus target — its heading — because the landing falls back to it when the Left is
 /// collapsed (<see cref="PerspectiveShell.LandingSurfaceFor"/>), and a landing with nothing
 /// focusable falls through to an arbitrary tab header (the UX &amp; Accessibility lens, SH-4.1).</para>
 /// </remarks>
@@ -29,8 +30,9 @@ public static class CenterEmptyState
     /// <summary>The copy: a heading, a second line, and whether the New session action is offered.</summary>
     public sealed record Copy(string Heading, string Body, bool OffersNewSession);
 
-    /// <summary>The New session action's caption and its bound gesture, as the catalog spells them.</summary>
-    private const string NewSessionGesture = "Ctrl+N";
+    /// <summary>The New session action's bound gesture, read from the catalog's own row — never a second spelling of it.</summary>
+    private static string NewSessionGesture =>
+        WorkbenchCommandCatalog.All.First(c => string.Equals(c.Id, "session.new", StringComparison.Ordinal)).Gesture;
 
     /// <summary>
     /// The copy for <paramref name="host"/>'s empty Center over <paramref name="zones"/>:
@@ -65,13 +67,21 @@ public static class CenterEmptyState
         if (live.Count == 0)
         {
             // A surface the saved arrangement restored, whose session is gone: the island at Left
-            // says so; the Center points at it rather than claiming a session is open.
-            return new Copy("Nothing open here.", $"The session at the {Where(sessions)} could not be restored; its recovery is on the {Where(sessions)}.", OffersNewSession: false);
+            // says so and names the way out; the Center points at it rather than claiming a
+            // session is open, and names the same way out (the UX lens: a "recovery" the island
+            // does not offer is a promise, not a sentence).
+            var one = sessions.Count == 1;
+            return new Copy("Nothing open here.",
+                $"The session{(one ? string.Empty : "s")} at the {Where(sessions)} could not be restored. Reopen {(one ? "it" : "them")} from File → Recent sessions, or close {(one ? "its tab" : "their tabs")}.",
+                OffersNewSession: false);
         }
 
+        // A collapsed zone holding a live session: still docked there, but behind its rail — said,
+        // because this is the state whose landing falls back to this copy.
+        var collapsed = live.Select(s => s.Zone).Distinct().All(z => zones.Zone(z).Collapsed);
         var heading = live.Count == 1
-            ? $"The session is docked at the {Where(live)}."
-            : $"The sessions are docked at the {Where(live)}.";
+            ? $"The session is docked at the {Where(live)}{(collapsed ? ", collapsed — expand the rail to reach it" : string.Empty)}."
+            : $"The sessions are docked at the {Where(live)}{(collapsed ? ", collapsed — expand the rail to reach them" : string.Empty)}.";
         return new Copy(heading, "Code viewers, prompt drafts and search open here, from the View menu.", OffersNewSession: false);
     }
 
@@ -84,7 +94,9 @@ public static class CenterEmptyState
 
     /// <summary>
     /// The rendered copy: the <c>state.not-declared</c> shape — a heading, a line, the one action
-    /// when offered — named for assistive technology from its own sentences, focusable at its root.
+    /// when offered. The heading is a Control-view text element (<see cref="ThreadText"/>) and, when
+    /// no action is offered, the focus target: its sentence IS its accessible name, the line its
+    /// help — a panel with a Name is silent to an AT (no peer), the UX lens's finding on SH-4.2.
     /// </summary>
     /// <param name="newSession">Runs the New session verb; only bound when the copy offers it.</param>
     public static FrameworkElement Build(Copy copy, Action newSession)
@@ -92,14 +104,16 @@ public static class CenterEmptyState
         ArgumentNullException.ThrowIfNull(copy);
         ArgumentNullException.ThrowIfNull(newSession);
 
-        var heading = new TextBlock
+        var heading = new ThreadText
         {
             Text = copy.Heading,
             FontSize = 15,
             TextWrapping = TextWrapping.Wrap,
             TextAlignment = TextAlignment.Center,
+            Focusable = !copy.OffersNewSession,
         };
         heading.SetResourceReference(TextBlock.ForegroundProperty, "TextBrush");
+        AutomationProperties.SetHelpText(heading, copy.Body);
 
         var body = new TextBlock
         {
@@ -115,15 +129,31 @@ public static class CenterEmptyState
 
         if (copy.OffersNewSession)
         {
+            // The gesture is visible as a chip beside the caption (the mockup's kbd) and stated
+            // once to an AT, as the accelerator — a name that repeats it is read twice.
+            var caption = new StackPanel { Orientation = System.Windows.Controls.Orientation.Horizontal };
+            caption.Children.Add(new TextBlock { Text = "New session", VerticalAlignment = VerticalAlignment.Center });
+            var chip = new TextBlock
+            {
+                Text = NewSessionGesture,
+                FontSize = 11,
+                Margin = new Thickness(8, 0, 0, 0),
+                Padding = new Thickness(4, 0, 4, 0),
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            chip.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+            chip.SetResourceReference(TextBlock.BackgroundProperty, "SurfaceSunkenBrush");
+            caption.Children.Add(chip);
+
             var action = new Button
             {
-                Content = "New session",
+                Content = caption,
                 Padding = new Thickness(12, 4, 12, 4),
                 Margin = new Thickness(0, 12, 0, 0),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 MinHeight = 24,
             };
-            AutomationProperties.SetName(action, $"New session — {NewSessionGesture}");
+            AutomationProperties.SetName(action, "New session");
             AutomationProperties.SetAcceleratorKey(action, NewSessionGesture);
             action.Click += (_, _) => newSession();
             stack.Children.Add(action);
@@ -131,11 +161,8 @@ public static class CenterEmptyState
 
         stack.Children.Add(body);
 
-        // The root is the focus target when no action is offered; with the action, the action is
-        // first in tab order and the root stays reachable for the landing's MoveFocus(First).
-        var host = new Grid { Focusable = !copy.OffersNewSession, MinHeight = 120 };
+        var host = new Grid { MinHeight = 120 };
         host.Children.Add(stack);
-        AutomationProperties.SetName(host, $"{copy.Heading} {copy.Body}");
         return host;
     }
 }

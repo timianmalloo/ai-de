@@ -1,0 +1,16 @@
+
+  Passed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(viewportWidth: 2560, viewportHeight: 1600, width: 1197, height: 1448, turns: 5, atLeast: 1, viewportAtLeast: 977) [297 ms]
+  Passed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(viewportWidth: 2560, viewportHeight: 1600, width: 1197, height: 1448, turns: 40, atLeast: 1, viewportAtLeast: 977) [4 s]
+  Passed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(viewportWidth: 1440, viewportHeight: 900, width: 673, height: 748, turns: 1, atLeast: 1, viewportAtLeast: 277) [22 ms]
+  Passed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(viewportWidth: 1440, viewportHeight: 900, width: 673, height: 748, turns: 5, atLeast: 1, viewportAtLeast: 277) [162 ms]
+  Passed AiDe.App.Tests.Sessions.TheWriterKeepsItsRoomTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(viewportWidth: 1440, viewportHeight: 900, width: 673, height: 748, turns: 40, atLeast: 1, viewportAtLeast: 277) [4 s]
+  Passed AiDe.App.Tests.Shell.CodingsLeftExtentTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(width: 1440, height: 900, fixture: "prose", atLeast: 1) [147 ms]
+ 1440×900 requested, 1440×900 given, 5 turns: document 751×708 · thread viewport 237 · editor 280 · 1 of 3 realized at least half visible · b3 205 px, 0 shown · b4 205 px, 32 shown · b5 205 px, 205 shown
+  Passed AiDe.App.Tests.Shell.CodingsLeftExtentTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(width: 1440, height: 900, fixture: "five", atLeast: 1) [475 ms]
+ 1440×900 requested, 1440×900 given, 5 turns: document 751×708 · thread viewport 237 · editor 280 · 1 of 2 realized at least half visible · b4 2018 px, 0 shown · b5 345 px, 237 shown
+  Passed AiDe.App.Tests.Shell.CodingsLeftExtentTests.CodingsLeftExtent_HoldsThe96chMeasureAtStartupSize [242 ms]
+ display (virtual screen, DIPs): 1707×1067 at DPI scale 1.50 (≈ 2560×1600 physical) — the 2560×1600 rows are ABSENT (not reachable in DIPs on this display) in this run
+ 1440×900 requested, 1440×900 given: body 1369 · Left pane 771 · document 751 · words column 693 · 96ch = 672.6 · words 662.7 · longest word 58.8
+  Passed AiDe.App.Tests.Shell.CodingsLeftExtentTests.CodingsLeftExtent_HoldsThe96chMeasureAtEveryViewportTheDisplayGives(width: 1440, height: 900) [161 ms]
+ 1440×900 requested, 1440×900 given: body 1369 · Left pane 771 · document 751 · words column 693 · 96ch = 672.6 · words 662.7 · longest word 58.8
+

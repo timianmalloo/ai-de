@@ -639,9 +639,9 @@ public sealed class WorkbenchShell : IDisposable
             Path.Combine(dataDirectory, "terminal-customization.json"));
     }
 
-    /// <summary>Every surface in every host, with the host that holds it.</summary>
+    /// <summary>Every surface in every host's MODEL — a collapsed zone's included — with the host that holds it.</summary>
     private IEnumerable<(DockHost Host, Surface Surface)> AllHostSurfaces() =>
-        Hosts.SelectMany(h => h.Service.Current.AllStacks().SelectMany(st => st.Surfaces).Select(s => (h, s)));
+        Hosts.SelectMany(h => h.Service.Zones.AllSurfaces().Select(s => (h, s)));
 
     /// <summary>The rendered content of every surface (of <paramref name="kind"/>, when given) of type <typeparamref name="T"/>, across every host.</summary>
     private IEnumerable<T> SurfaceContents<T>(string? kind = null) where T : class =>
@@ -3278,8 +3278,12 @@ public sealed class WorkbenchShell : IDisposable
             _sessionDocuments[document.SurfaceId] = document;
 
             // Ruling 89: the header's Console toggle and a turn's "Open the log" open the session's
-            // Console as a document in the Center through the shell, never beside the thread.
+            // Console as a document in the Center through the shell, never beside the thread; the
+            // toggle's other half closes it, and its name says where the Console now lives.
             document.ConsoleRequested = ordinal => Announcer.Announce(OpenSessionConsole(document, ordinal));
+            document.ConsoleDismissed = () => Announcer.Announce(CloseSessionConsole(document));
+            AutomationProperties.SetName(document.ConsoleToggle, Sessions.ConsoleDocumentHost.ToggleName);
+            AutomationProperties.SetHelpText(document.ConsoleToggle, Sessions.ConsoleDocumentHost.ToggleHelp);
 
             // A surface the saved arrangement restored BEFORE this session was reopened holds the
             // factory's "No session is open" island, and the reconcile reuses a pane's content
@@ -3365,7 +3369,30 @@ public sealed class WorkbenchShell : IDisposable
         WorkbenchDiagnostics.LayoutMutation("open-console", "zone-rule", consoleId, host.Adapter.ActiveSurfaceId, host.Service.Current);
         host.Adapter.Render();
 
-        return result.Applied ? FocusConsole(host, consoleId, ordinal, "Console open") : result.Announcement;
+        if (!result.Applied)
+        {
+            document.ReflectConsole(open: false);   // a refused open leaves the toggle honest
+            return result.Announcement;
+        }
+
+        return FocusConsole(host, consoleId, ordinal, "Console open");
+    }
+
+    /// <summary>Closes the session's Console document — the toggle unchecked, or the tab's close by another route — and says so.</summary>
+    private string CloseSessionConsole(Sessions.SessionDocumentSurface document)
+    {
+        var host = HostOf(document.SurfaceId) ?? Coding;
+        var sessionId = Sessions.SessionDocumentSurface.SessionIdOf(document.SurfaceId) ?? document.SurfaceId;
+        var consoleId = Sessions.ConsoleDocumentHost.SurfaceIdFor(sessionId);
+        if (host.Service.Zones.FindZoneOf(consoleId) is null)
+        {
+            document.ReflectConsole(open: false);
+            return "Console closed.";
+        }
+
+        var result = host.Service.Apply(new LayoutOperation.CloseSurface(consoleId));
+        host.Adapter.Render();   // OnSurfaceClosed announces, focuses the toggle and reflects
+        return result.Applied ? string.Empty : result.Announcement;
     }
 
     /// <summary>A second toggle focuses the one open console (one per session); a collapsed zone holding it is expanded first.</summary>
@@ -3401,10 +3428,7 @@ public sealed class WorkbenchShell : IDisposable
         }
 
         console.Split.FocusCurrentItem();
-        if (SessionDocumentOf(consoleId) is { } document)
-        {
-            document.ConsoleToggle.IsChecked = true;
-        }
+        SessionDocumentOf(consoleId)?.ReflectConsole(open: true);
 
         return said + ", " + console.Split.Status + ".";
     }
@@ -3420,7 +3444,27 @@ public sealed class WorkbenchShell : IDisposable
             console.Dispose();
             if (SessionDocumentOf(surfaceId) is { } owner)
             {
-                owner.ConsoleToggle.IsChecked = false;
+                // The way back keeps its focus and its sentence (CV-5.2's CloseSplit did both): the
+                // toggle is where the operator left from, whichever route closed the document. A
+                // toggle that cannot take focus — its zone collapsed to a rail — hands focus to the
+                // host's landing instead, so the close never drops focus on the window (SC 2.4.3).
+                owner.ReflectConsole(open: false);
+                if (!owner.ConsoleToggle.Focus())
+                {
+                    // One dispatcher turn past the render that just ran: the landing's pane
+                    // realizes on the layout pass, and a MoveFocus into an unrealized subtree
+                    // lands nowhere (the same edge AssertActive defers past, DC-194).
+                    _dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, () =>
+                    {
+                        if (PerspectiveShell.LandingSurfaceFor(host) is { } landing
+                            && host.Adapter.ContentFor(landing) is { } content)
+                        {
+                            PerspectiveShell.FocusLanding(content);
+                        }
+                    });
+                }
+
+                Announcer.Announce("Console closed.");
             }
 
             return;

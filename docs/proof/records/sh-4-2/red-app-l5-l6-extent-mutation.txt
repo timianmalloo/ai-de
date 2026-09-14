@@ -1,0 +1,78 @@
+record: CodingLeftExtent mutated to 0.22 (the tool default) in src/AiDe.Core/Workbench/ZoneLayout.cs; every other file as on disk; 2026-09-13 ~17:15 local
+
+Test run for C:\Projects\ai-de-lane-shell-sh4-2\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+C:\Projects\ai-de-lane-shell-sh4-2\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.07]   Discovering: AiDe.App.Tests
+[xUnit.net 00:00:00.15]   Discovered:  AiDe.App.Tests
+[xUnit.net 00:00:00.17]   Starting:    AiDe.App.Tests
+[xUnit.net 00:00:00.92]     AiDe.App.Tests.Shell.CodingsLeftExtentTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(width: 1440, height: 900, fixture: "prose", atLeast: 1) [FAIL]
+[xUnit.net 00:00:00.92]       threshold ≥ 1 at 1440×900: 0 of 2 turns at least half visible · b4 484 px, 0 shown · b5 484 px, 237 shown
+[xUnit.net 00:00:00.92]       Stack Trace:
+[xUnit.net 00:00:00.92]         C:\Projects\ai-de-lane-shell-sh4-2\tests\AiDe.App.Tests\Workbench\CodingsLeftExtentTests.cs(275,0): at AiDe.App.Tests.Shell.CodingsLeftExtentTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(Int32 width, Int32 height, String fixture, Int32 atLeast)
+[xUnit.net 00:00:00.92]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.92]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.92]       Output:
+[xUnit.net 00:00:00.92]         1440×900 requested, 1440×900 given, 5 turns: document 280×708 · thread viewport 237 · editor 280 · 0 of 2 realized at least half visible · b4 484 px, 0 shown · b5 484 px, 237 shown
+[xUnit.net 00:00:01.34]     AiDe.App.Tests.Shell.CodingsLeftExtentTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(width: 1440, height: 900, fixture: "five", atLeast: 1) [FAIL]
+[xUnit.net 00:00:01.34]       threshold ≥ 1 at 1440×900: 0 of 2 turns at least half visible · b4 2235 px, 0 shown · b5 538 px, 237 shown
+[xUnit.net 00:00:01.34]       Stack Trace:
+[xUnit.net 00:00:01.34]         C:\Projects\ai-de-lane-shell-sh4-2\tests\AiDe.App.Tests\Workbench\CodingsLeftExtentTests.cs(275,0): at AiDe.App.Tests.Shell.CodingsLeftExtentTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(Int32 width, Int32 height, String fixture, Int32 atLeast)
+[xUnit.net 00:00:01.34]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:01.34]       Output:
+[xUnit.net 00:00:01.34]         1440×900 requested, 1440×900 given, 5 turns: document 280×708 · thread viewport 237 · editor 280 · 0 of 2 realized at least half visible · b4 2235 px, 0 shown · b5 538 px, 237 shown
+  Failed AiDe.App.Tests.Shell.CodingsLeftExtentTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(width: 1440, height: 900, fixture: "prose", atLeast: 1) [734 ms]
+  Error Message:
+   threshold ≥ 1 at 1440×900: 0 of 2 turns at least half visible · b4 484 px, 0 shown · b5 484 px, 237 shown
+  Stack Trace:
+  Standard Output Messages:
+ 1440×900 requested, 1440×900 given, 5 turns: document 280×708 · thread viewport 237 · editor 280 · 0 of 2 realized at least half visible · b4 484 px, 0 shown · b5 484 px, 237 shown
+
+
+  Failed AiDe.App.Tests.Shell.CodingsLeftExtentTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(width: 1440, height: 900, fixture: "five", atLeast: 1) [421 ms]
+  Error Message:
+   threshold ≥ 1 at 1440×900: 0 of 2 turns at least half visible · b4 2235 px, 0 shown · b5 538 px, 237 shown
+  Stack Trace:
+  Standard Output Messages:
+ 1440×900 requested, 1440×900 given, 5 turns: document 280×708 · thread viewport 237 · editor 280 · 0 of 2 realized at least half visible · b4 2235 px, 0 shown · b5 538 px, 237 shown
+
+
+[xUnit.net 00:00:01.50]     AiDe.App.Tests.Shell.CodingsLeftExtentTests.CodingsLeftExtent_HoldsThe96chMeasureAtStartupSize [FAIL]
+[xUnit.net 00:00:01.51]       the Left pane is 300 of a 1369 body — not the document zone's 1.3 cut
+[xUnit.net 00:00:01.51]       Stack Trace:
+[xUnit.net 00:00:01.51]         C:\Projects\ai-de-lane-shell-sh4-2\tests\AiDe.App.Tests\Workbench\CodingsLeftExtentTests.cs(176,0): at AiDe.App.Tests.Shell.CodingsLeftExtentTests.CodingsLeftExtent_HoldsThe96chMeasureAtStartupSize()
+[xUnit.net 00:00:01.51]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:01.51]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:01.51]       Output:
+[xUnit.net 00:00:01.51]         1440×900 requested, 1440×900 given: body 1369 · Left pane 300 · document 280 · words column 205 · 96ch = 672.6 · words 200.0 · longest word 58.8
+[xUnit.net 00:00:01.71]     AiDe.App.Tests.Shell.CodingsLeftExtentTests.CodingsLeftExtent_HoldsThe96chMeasureAtEveryViewportTheDisplayGives(width: 1440, height: 900) [FAIL]
+[xUnit.net 00:00:01.71]       the Left pane is 300 of a 1369 body
+[xUnit.net 00:00:01.71]       Stack Trace:
+[xUnit.net 00:00:01.71]         C:\Projects\ai-de-lane-shell-sh4-2\tests\AiDe.App.Tests\Workbench\CodingsLeftExtentTests.cs(206,0): at AiDe.App.Tests.Shell.CodingsLeftExtentTests.CodingsLeftExtent_HoldsThe96chMeasureAtEveryViewportTheDisplayGives(Int32 width, Int32 height)
+[xUnit.net 00:00:01.71]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:01.71]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+[xUnit.net 00:00:01.71]       Output:
+[xUnit.net 00:00:01.71]         1440×900 requested, 1440×900 given: body 1369 · Left pane 300 · document 280 · words column 205 · 96ch = 672.6 · words 200.0 · longest word 58.8
+[xUnit.net 00:00:01.71]   Finished:    AiDe.App.Tests
+  Failed AiDe.App.Tests.Shell.CodingsLeftExtentTests.CodingsLeftExtent_HoldsThe96chMeasureAtStartupSize [161 ms]
+  Error Message:
+   the Left pane is 300 of a 1369 body — not the document zone's 1.3 cut
+  Stack Trace:
+  Standard Output Messages:
+ 1440×900 requested, 1440×900 given: body 1369 · Left pane 300 · document 280 · words column 205 · 96ch = 672.6 · words 200.0 · longest word 58.8
+
+
+  Failed AiDe.App.Tests.Shell.CodingsLeftExtentTests.CodingsLeftExtent_HoldsThe96chMeasureAtEveryViewportTheDisplayGives(width: 1440, height: 900) [205 ms]
+  Error Message:
+   the Left pane is 300 of a 1369 body
+  Stack Trace:
+  Standard Output Messages:
+ 1440×900 requested, 1440×900 given: body 1369 · Left pane 300 · document 280 · words column 205 · 96ch = 672.6 · words 200.0 · longest word 58.8
+
+
+
+Test Run Failed.
+Total tests: 4
+     Failed: 4
+ Total time: 2.1275 Seconds

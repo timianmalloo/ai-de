@@ -47,6 +47,14 @@ public sealed class WorkbenchAdapter
     // DC-029); the shell only ever marks the stateless watcher read surfaces.
     private readonly HashSet<string> _pendingRebuild = new(StringComparer.Ordinal);
 
+    // Content the model still holds but the projection does not show — a collapsed zone's panes
+    // (Ruling 88's Bottom; a Left rail holding the session) — kept alive, detached, until the zone
+    // expands. Collapse is a HIDE, not a close: before this the projection alone decided what to keep,
+    // so collapsing a zone disposed its terminal's process and, on expand, handed the factory a
+    // retained session document still parented to the old island (WPF: "already the logical child of
+    // another element") — the WPF lens's two Majors on SH-4.2.
+    private readonly Dictionary<string, FrameworkElement> _parked = new(StringComparer.Ordinal);
+
     // The pane topology this adapter last SAW in the view - set by Render (what it just drew) and by
     // the drag watcher (what it just observed). Comparing against it is what turns WPF's very chatty
     // layout-pass event into "the arrangement actually changed", exactly once per change.
@@ -211,14 +219,25 @@ public sealed class WorkbenchAdapter
     }
 
     /// <summary>
-    /// Raised after a render for each surface the model no longer holds — a tab the operator closed,
+    /// Raised after a render for each surface the MODEL no longer holds — a tab the operator closed,
     /// a document a command closed, every pre-render surface after a whole-arrangement replacement
-    /// — with the content that rendered it (already disposed when it was disposable). The one funnel
-    /// every close passes through: AvalonDock's own close, the keyboard's, the shell's all end in a
-    /// render, which is why the shell listens here for a session document leaving (its console
-    /// closes with it, Ruling 89) rather than at each caller.
+    /// — with the content that rendered it (already disposed when it was disposable). Never for a
+    /// surface a collapsed zone still holds: collapse hides, it does not close. The one funnel every
+    /// close passes through: AvalonDock's own close, the keyboard's, the shell's all end in a render,
+    /// which is why the shell listens here for a session document leaving (its console closes with
+    /// it, Ruling 89) rather than at each caller.
     /// </summary>
     public event Action<string, FrameworkElement?>? SurfaceClosed;
+
+    /// <summary>
+    /// Every surface the model holds — the projection's, plus what collapsed zones still hold — or
+    /// the projection's alone for a tree service with no zone model behind it.
+    /// </summary>
+    private HashSet<string> HeldByTheModel() =>
+        (_service is ZoneBackedLayoutService zones
+            ? zones.Zones.AllSurfaces().Select(s => s.SurfaceId)
+            : _service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.SurfaceId))
+        .ToHashSet(StringComparer.Ordinal);
 
     public void Render()
     {
@@ -236,6 +255,22 @@ public sealed class WorkbenchAdapter
         var keep = _service.Current.AllStacks()
             .SelectMany(s => s.Surfaces).Select(s => s.SurfaceId)
             .ToHashSet(StringComparer.Ordinal);
+        var held = HeldByTheModel();
+
+        // Parked content whose surface left the model while its zone was collapsed is closed now,
+        // the same way a rendered surface's is; the rest stays parked until its zone renders again.
+        foreach (var (id, parked) in _parked.ToList())
+        {
+            if (!held.Contains(id) || _pendingRebuild.Contains(id))
+            {
+                _parked.Remove(id);
+                (parked as IDisposable)?.Dispose();
+                if (!held.Contains(id))
+                {
+                    closed.Add((id, parked));
+                }
+            }
+        }
 
         var reuse = new Dictionary<string, FrameworkElement>(StringComparer.Ordinal);
         if (Manager.Layout is { } current)
@@ -253,14 +288,19 @@ public sealed class WorkbenchAdapter
                 // (Ruling 83 condition 2). It holds no resource and no operator state.
                 var placeholder = string.Equals(id, ZonesToTree.WelcomePlaceholder.SurfaceId, StringComparison.Ordinal);
 
-                if (keep.Contains(id) && !_pendingRebuild.Contains(id) && !placeholder)
+                if (held.Contains(id) && !_pendingRebuild.Contains(id) && !placeholder)
                 {
-                    if (!reuse.ContainsKey(id))
+                    // Free the element so it can re-parent into the new tree without a "already has a
+                    // parent" fault when the layout is replaced below — into the next render when its
+                    // zone still shows, into the park when its zone collapsed (a hide, not a close).
+                    doc.Content = null;
+                    if (keep.Contains(id))
                     {
-                        // Free the element so it can re-parent into the new tree without a "already has a
-                        // parent" fault when the layout is replaced below.
-                        doc.Content = null;
-                        reuse[id] = fe;
+                        reuse.TryAdd(id, fe);
+                    }
+                    else
+                    {
+                        _parked.TryAdd(id, fe);
                     }
                 }
                 else
@@ -275,11 +315,21 @@ public sealed class WorkbenchAdapter
                         disposable.Dispose();
                     }
 
-                    if (!keep.Contains(id) && !placeholder)
+                    if (!held.Contains(id) && !placeholder)
                     {
                         closed.Add((id, fe));
                     }
                 }
+            }
+        }
+
+        // A zone that expanded again: its parked content is the content the pane gets back —
+        // the same terminal, the same session document — never a second build.
+        foreach (var id in keep)
+        {
+            if (_parked.Remove(id, out var parked))
+            {
+                reuse.TryAdd(id, parked);
             }
         }
 
@@ -778,9 +828,10 @@ public sealed class WorkbenchAdapter
     /// rearranges, and it would go stale exactly when a pane is moved or closed.
     /// </remarks>
     public FrameworkElement? ContentFor(string surfaceId) =>
-        Manager.Layout?.Descendents().OfType<LayoutDocument>()
+        (Manager.Layout?.Descendents().OfType<LayoutDocument>()
             .FirstOrDefault(d => string.Equals(d.ContentId, surfaceId, StringComparison.Ordinal))
-            ?.Content as FrameworkElement;
+            ?.Content as FrameworkElement)
+        ?? _parked.GetValueOrDefault(surfaceId);   // hidden by a collapsed zone, still this surface's live content
 
     /// <summary>
     /// The inner surface content of type <typeparamref name="T"/> for <paramref name="surfaceId"/>,

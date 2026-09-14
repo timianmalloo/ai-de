@@ -12,13 +12,63 @@ namespace AiDe.App.Tests.Shell;
 /// it builds a terminal pane: none at startup, one after the expand.
 /// </summary>
 /// <remarks>
-/// The alternative — a shell started behind a rail — costs a process for a pane the operator's five
-/// screenshots never showed open, and today's adapter would end that process on the next collapse
-/// anyway (a collapsed zone's content is disposed with the projection; a finding, not this slice's
-/// scope). What this pins is the cheaper truth.
+/// <para>The alternative — a shell started behind a rail — costs a process for a pane the
+/// operator's five screenshots never showed open. What the first fact pins is the cheaper truth:
+/// a <b>characterization</b> of the docking layer (green on its first run — nothing was built for
+/// a collapsed zone before this slice either), kept so the decision cannot drift silently.</para>
+/// <para><b>Collapse is a hide, not a close</b> (the WPF lens's finding on SH-4.2, red first): the
+/// adapter used to keep only the projection's surfaces, so collapsing a zone disposed its terminal's
+/// process, and expanding a zone that held a retained session document handed the factory an element
+/// still parented to the old island. Collapsed-holding content is parked and given back on expand.</para>
 /// </remarks>
 public sealed class CollapsedBottomTests
 {
+    private static List<JsonElement> Records(List<string> lines, string evt) =>
+        lines.Select(l => JsonDocument.Parse(l).RootElement)
+            .Where(e => e.TryGetProperty("evt", out var kind) && kind.GetString() == evt)
+            .ToList();
+
+    /// <summary>Collapse after use keeps the terminal — the same instance, no stop; expand gives it back, no second start.</summary>
+    [Fact]
+    public void CollapsingTheBottomAfterUse_KeepsTheTerminal_AndExpandingGivesTheSameOneBack()
+    {
+        var lines = new List<string>();
+        var previous = WorkbenchDiagnostics.Sink;
+        WorkbenchDiagnostics.Sink = lines.Add;
+        try
+        {
+            Sta.Run(() =>
+            {
+                using var frame = ComposedCoding.Show(1440, 900);
+                var shell = frame.Shell;
+                Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackState.Docked)).Applied);
+                shell.Coding.Adapter.Render();
+                frame.Settle();
+                var built = shell.Coding.Adapter.ContentFor("terminal-1");
+                Assert.NotNull(built);
+                Assert.Single(Records(lines, "terminal.start"));
+
+                Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackState.Collapsed)).Applied);
+                shell.Coding.Adapter.Render();
+                frame.Settle();
+                Assert.Same(built, shell.Coding.Adapter.ContentFor("terminal-1"));   // parked, alive
+                Assert.Empty(Records(lines, "terminal.stop"));
+
+                Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackState.Docked)).Applied);
+                shell.Coding.Adapter.Render();
+                frame.Settle();
+                Assert.Same(built, shell.Coding.Adapter.ContentFor("terminal-1"));
+                Assert.Single(Records(lines, "terminal.start"));
+                Assert.Empty(Records(lines, "terminal.stop"));
+                return 0;
+            }, 60);
+        }
+        finally
+        {
+            WorkbenchDiagnostics.Sink = previous;
+        }
+    }
+
     private static List<JsonElement> TerminalStarts(List<string> lines) =>
         lines.Select(l => JsonDocument.Parse(l).RootElement)
             .Where(e => e.TryGetProperty("evt", out var evt) && evt.GetString() == "terminal.start")

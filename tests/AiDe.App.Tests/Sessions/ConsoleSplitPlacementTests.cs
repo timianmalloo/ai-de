@@ -28,6 +28,18 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
 
     private static string ConsoleId(string sessionId) => "console:" + sessionId;
 
+    /// <summary>
+    /// The operator's press, as UI Automation makes it: the Toggle pattern flips the state and
+    /// raises Checked/Unchecked with no Click — the path a ToggleButton driven from Click alone
+    /// ignores (the UX lens's Blocker). A mouse press does the same and then raises Click.
+    /// </summary>
+    private static void Press(System.Windows.Controls.Primitives.ToggleButton toggle)
+    {
+        var peer = System.Windows.Automation.Peers.UIElementAutomationPeer.CreatePeerForElement(toggle);
+        var pattern = Assert.IsAssignableFrom<System.Windows.Automation.Provider.IToggleProvider>(peer.GetPattern(System.Windows.Automation.Peers.PatternInterface.Toggle));
+        pattern.Toggle();
+    }
+
     [Fact]
     public void WithTheSessionAtLeft_TheSplitOpensInTheCenterZone_AsAConsoleDocument()
     {
@@ -44,7 +56,7 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
             Assert.Equal(ZoneId.Left, shell.Coding.Service.Zones.FindZoneOf(sessionId));
 
             // The header's toggle — the operator's gesture — dispatches the verb.
-            document.ConsoleToggle.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+            Press(document.ConsoleToggle);
             frame.Settle();
 
             var zones = shell.Coding.Service.Zones;
@@ -64,25 +76,90 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
             Assert.False(document.IsSplitOpen, "the split still opened inside the session document's own grid");
             Assert.Equal(console.SurfaceId, shell.Coding.Adapter.ActiveSurfaceId);
             Assert.True(document.ConsoleToggle.IsChecked == true);
+            Assert.StartsWith("Console open, ", shell.LiveRegion.Text, StringComparison.Ordinal);
+            // The toggle's name says where the Console lives now; the CV-5.2 name said "beside the thread".
+            Assert.Equal(ConsoleDocumentHost.ToggleName, System.Windows.Automation.AutomationProperties.GetName(document.ConsoleToggle));
 
             // The Center's empty copy yields to the tab while it is open.
             Assert.Null(frame.CenterEmpty());
 
-            // One per session: a second toggle focuses the existing one, never adds a second.
+            // One per session: a second RUN of the verb focuses the existing one, never adds a second.
             Assert.True(shell.Coding.Service.Apply(new LayoutOperation.ActivateSurface(sessionId)).Applied);
             shell.Coding.Adapter.Render();
-            document.ConsoleToggle.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+            frame.Settle();
+            System.Windows.Input.Keyboard.Focus(document.ConsoleToggle);
+            frame.Settle();
+            Assert.Equal(sessionId, shell.Coding.Controller.FocusedSurfaceId);
+            Assert.True(shell.Execute("session.console"));
             frame.Settle();
             Assert.Single(shell.Coding.Service.Zones.AllSurfaces(), s => s.SurfaceId == ConsoleId(config.SessionId));
             Assert.Equal(1, shell.Coding.Service.Zones.AllSurfaces().Count(s => s.Kind == "console"));
             Assert.Equal(console.SurfaceId, shell.Coding.Adapter.ActiveSurfaceId);
+            Assert.StartsWith("Console shown, ", shell.LiveRegion.Text, StringComparison.Ordinal);
+            Assert.True(document.ConsoleToggle.IsChecked == true);
 
-            // It closes with its session.
+            // The toggle's state is the document's open state, honestly: pressing it again — or an
+            // AT's Toggle pattern, which flips the state with no Click — closes the Console, focus
+            // returns to the toggle, and the strip says so (the UX lens's Blocker on SH-4.2).
+            Press(document.ConsoleToggle);
+            frame.Settle();
+            Assert.DoesNotContain(shell.Coding.Service.Zones.AllSurfaces(), s => s.Kind == "console");
+            Assert.Equal("Console closed.", shell.LiveRegion.Text);
+            Assert.Same(document.ConsoleToggle, System.Windows.Input.Keyboard.FocusedElement);
+            Assert.NotNull(frame.CenterEmpty());
+
+            // Open again: the same split instance, hosted anew; then it closes with its session.
+            Press(document.ConsoleToggle);
+            frame.Settle();
+            var reopened = shell.Coding.Adapter.ContentFor(ConsoleId(config.SessionId));
+            Assert.True(reopened is not null && ReferenceEquals(document.Split, ComposedCoding.Visuals<ConsoleSurface>(reopened).SingleOrDefault()), "the reopened console does not host the document's own split");
             Assert.True(shell.Coding.Service.Apply(new LayoutOperation.CloseSurface(sessionId)).Applied);
             shell.Coding.Adapter.Render();
             frame.Settle();
             Assert.DoesNotContain(shell.Coding.Service.Zones.AllSurfaces(), s => s.Kind == "console");
+            Assert.True(document.ConsoleToggle.IsChecked == false);
             Assert.NotNull(frame.CenterEmpty());
+            return 0;
+        }, 60);
+    }
+
+    /// <summary>
+    /// A hide is not a close: collapsing the Left that holds the session leaves its console open in
+    /// the Center — and closing the console from its tab while the Left is collapsed hands focus to
+    /// the host's landing (the toggle behind the rail cannot take it), never to the window.
+    /// </summary>
+    [Fact]
+    public void CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen()
+    {
+        var config = _workspace.Session("hidden, not closed");
+
+        Sta.Run(() =>
+        {
+            using var frame = ComposedCoding.Show(1440, 900);
+            var shell = frame.Shell;
+            shell.OpenSessionDocument(config);
+            frame.Settle();
+            var document = frame.Document(SessionDocumentSurface.SurfaceIdFor(config.SessionId));
+            Press(document.ConsoleToggle);
+            frame.Settle();
+            Assert.Equal(ZoneId.Center, shell.Coding.Service.Zones.FindZoneOf(ConsoleId(config.SessionId)));
+
+            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
+            shell.Coding.Adapter.Render();
+            frame.Settle();
+
+            Assert.Equal(ZoneId.Center, shell.Coding.Service.Zones.FindZoneOf(ConsoleId(config.SessionId)));
+            Assert.NotNull(shell.Coding.Adapter.ContentFor(ConsoleId(config.SessionId)));
+
+            // The tab's close with the Left collapsed: "Console closed.", and focus on the landing
+            // (the Center's copy — its heading), not dropped on the window.
+            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.CloseSurface(ConsoleId(config.SessionId))).Applied);
+            shell.Coding.Adapter.Render();
+            frame.Settle();
+            Assert.Equal("Console closed.", shell.LiveRegion.Text);
+            var focused = System.Windows.Input.Keyboard.FocusedElement;
+            Assert.True(focused is System.Windows.Controls.TextBlock { Text: var text } && text.StartsWith("The session is docked at the left, collapsed", StringComparison.Ordinal),
+                $"focus after the close is on {focused?.GetType().Name ?? "(none)"}, not the landing");
             return 0;
         }, 60);
     }
@@ -104,7 +181,7 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
             frame.Settle();
             var document = frame.Document(sessionId);
 
-            document.ConsoleToggle.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+            Press(document.ConsoleToggle);
             frame.Settle();
 
             var center = (ZoneStack)shell.Coding.Service.Zones.Zone(ZoneId.Center).Content!;

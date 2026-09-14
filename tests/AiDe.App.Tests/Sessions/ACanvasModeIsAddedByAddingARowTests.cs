@@ -147,9 +147,11 @@ public sealed class ACanvasModeIsAddedByAddingARowTests
     [Fact]
     public void AnUnboundSessionDocumentSurfaceRendersAnHonestEmptyState()
     {
-        // The factory builds this kind with no session wired (a restored layout whose session has
-        // not been reopened). It must not read as a build defect — "not available in this build"
-        // points the reader at packaging for what is an ordinary empty state.
+        // The factory builds this kind with no session wired (a restored layout whose session could
+        // not be revived). It must not read as a build defect — "not available in this build"
+        // points the reader at packaging for what is an ordinary empty state — and, since SH-4.2's
+        // UX review, it names the session and the way out (File → Recent sessions, or the tab's
+        // close), never "No session is open" one pane over from a Center that says one is here.
         var text = Sta.Run(() =>
         {
             var content = new SurfaceContentFactory(queries: null)
@@ -164,7 +166,9 @@ public sealed class ACanvasModeIsAddedByAddingARowTests
         });
 
         Assert.DoesNotContain("not available", text, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("New Session", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("No session is open", text, StringComparison.Ordinal);
+        Assert.StartsWith("“Session” could not be restored", text, StringComparison.Ordinal);
+        Assert.Contains("File → Recent sessions", text, StringComparison.Ordinal);
     }
 
     private static string RepoRoot()

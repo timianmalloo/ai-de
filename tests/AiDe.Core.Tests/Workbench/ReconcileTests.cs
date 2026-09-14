@@ -18,9 +18,14 @@ namespace AiDe.Core.Tests.Workbench;
 /// finding 4). The Bottom was already kept (it was never pre-seeded), which is why Ruling 88's
 /// default — Bottom collapsed, holding one terminal — was not the shape that refused; the Left and
 /// Right were, and maximize-on-create (Ruling 47) collapsed both.</para>
-/// <para><b>Red before green:</b> the Left and Right rows of the theory, and the maximized fact,
-/// against the pre-seeding code; the Bottom row was green on its first run and is recorded as such
-/// (a premise corrected, not a control seen red).</para>
+/// <para><b>Red before green, per row (the record is <c>docs/proof/coding-recut-left-dock.md</c>):</b>
+/// the Left and Right rows of the theory and the maximized fact REFUSED against the pre-seeding
+/// code; the Bottom row was APPLIED BUT WRONG — <c>domain</c> landed in the Center (<i>Expected
+/// Left, Actual Center</i>): the Bottom was never pre-seeded, so its panes were kept, and the
+/// raw-count majority then let the Center (two owned, one moved) win the tie for the Left's column
+/// (one owned). Ruling 88's premise that the default "would refuse every drag" was thus wrong for
+/// the Bottom by refusal and right by mis-anchoring — a premise corrected, and a second cause found
+/// on the same oracle.</para>
 /// </remarks>
 public sealed class ReconcileTests
 {
@@ -210,6 +215,57 @@ public sealed class ReconcileTests
         Assert.True(svc.ReconcileFromView(post));
         Assert.Equal(["session:s1", "codeviewer#1"], svc.Zones.Zone(ZoneId.Left).Surfaces().Select(s => s.SurfaceId));
         Assert.Null(svc.Zones.Zone(ZoneId.Center).Content);
+    }
+
+    /// <summary>
+    /// A drop on the BOTTOM edge while the Bottom is collapsed and holding (Coding's default): the
+    /// view's root becomes a vertical split with the dropped pane below the columns. The drop joins
+    /// the Bottom and expands it — never a one-column reading of the whole tree that hands every
+    /// Center tab to the Left (the WPF lens's finding on SH-4.2; DC-063's bystander class).
+    /// </summary>
+    [Fact]
+    public void ADropOnTheBottomEdge_WhileTheBottomIsCollapsedHolding_JoinsTheBottomAndExpandsIt()
+    {
+        var session = new Surface("session:s1", "session-document", "S1");
+        var viewer = new Surface("codeviewer#1", "codeviewer", "Router.cs");
+        var layout = ZoneLayoutService.OpenPane(WorkbenchLayout.Default(PerspectiveSet.Coding), session, ZoneId.Left).Layout;
+        layout = ZoneLayoutService.OpenPane(layout, viewer, ZoneId.Center).Layout;
+        var svc = new ZoneBackedLayoutService(layout);
+        Assert.True(svc.Zones.Zone(ZoneId.Bottom).Collapsed);
+
+        var post = View(new SplitNode("root", Orientation.Vertical,
+            [
+                new SplitNode("cols", Orientation.Horizontal,
+                    [new StackNode(ZonesToTree.LeftStackId, [session]), new StackNode(ZonesToTree.CenterStackId, [ZonesToTree.WelcomePlaceholder])],
+                    [0.55, 0.45]),
+                new StackNode("dropped", [viewer]),
+            ],
+            [0.7, 0.3]));
+
+        Assert.True(svc.ReconcileFromView(post), "the bottom-edge drop was refused");
+        Assert.Equal(["session:s1"], svc.Zones.Zone(ZoneId.Left).Surfaces().Select(s => s.SurfaceId));
+        Assert.Null(svc.Zones.Zone(ZoneId.Center).Content);
+        Assert.Equal(["terminal-1", "codeviewer#1"], svc.Zones.Zone(ZoneId.Bottom).Surfaces().Select(s => s.SurfaceId));
+        Assert.False(svc.Zones.Zone(ZoneId.Bottom).Collapsed);
+    }
+
+    /// <summary>A vertical root of any other shape — three rows, or a row that is not the columns — is not our frame and is refused, never read as one column.</summary>
+    [Fact]
+    public void AVerticalRootThatIsNotColumnsOverBottom_IsRefused()
+    {
+        var session = new Surface("session:s1", "session-document", "S1");
+        var viewer = new Surface("codeviewer#1", "codeviewer", "Router.cs");
+        var layout = ZoneLayoutService.OpenPane(WorkbenchLayout.Default(PerspectiveSet.Coding), session, ZoneId.Left).Layout;
+        layout = ZoneLayoutService.OpenPane(layout, viewer, ZoneId.Center).Layout;
+        var svc = new ZoneBackedLayoutService(layout);
+        var before = svc.Zones.Shape();
+
+        var post = View(new SplitNode("root", Orientation.Vertical,
+            [new StackNode("a", [session]), new StackNode("b", [viewer]), new StackNode("c", [ZonesToTree.WelcomePlaceholder])],
+            [0.4, 0.3, 0.3]));
+
+        Assert.False(svc.ReconcileFromView(post));
+        Assert.Equal(before, svc.Zones.Shape());
     }
 
     /// <summary>

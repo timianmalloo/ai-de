@@ -42,6 +42,12 @@ public sealed class ConsoleDocumentHost : ContentControl, IDisposable
     /// <summary>The document's caption: <i>Console — &lt;session name&gt;</i>.</summary>
     public static string CaptionFor(string sessionName) => "Console — " + sessionName;
 
+    /// <summary>The header toggle's accessible name once the shell hosts the Console as a document (its CV-5.2 name said "beside the thread").</summary>
+    public const string ToggleName = "Console — open as a document in the Center";
+
+    /// <summary>The header toggle's help once hosted: how it closes. (No chord named in operator copy — US-C10 b3; the View menu's row carries the gesture.)</summary>
+    public const string ToggleHelp = "Opens the Console as a document in the Center; press again, or close its tab, to close it.";
+
     public ConsoleDocumentHost(SessionDocumentSurface document, int? at)
     {
         _document = document ?? throw new ArgumentNullException(nameof(document));

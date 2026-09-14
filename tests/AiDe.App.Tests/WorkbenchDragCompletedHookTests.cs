@@ -330,6 +330,78 @@ public sealed class WorkbenchDragCompletedHookTests
     }
 
     /// <summary>
+    /// INV-0006 F3, the refusal that remains: a frame the mapping cannot place without guessing —
+    /// two split-off columns and no Center column to place them beside — is refused, the panes
+    /// return, and the strip says so in the one sentence that is still true. Through the docking
+    /// host, so the shell's announcement is pinned by a real reconcile, not by a fixture literal.
+    /// </summary>
+    [Fact]
+    public void ADragThatCannotBePlacedWithoutGuessing_IsRefusedAndAnnounced_AndThePanesReturn()
+    {
+        var (announcement, refusals, shape, before, returned) = WithRealizedWorkbench(h =>
+        {
+            var host = h.Shell.Coding;
+            var records = new List<string>();
+            var previous = WorkbenchDiagnostics.Sink;
+            WorkbenchDiagnostics.Sink = records.Add;
+            try
+            {
+                foreach (var id in new[] { "session:a", "session:b", "session:c" })
+                {
+                    Assert.True(host.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.LeftStackId, new Surface(id, "session-document", id))).Applied);
+                }
+
+                host.Adapter.Render();
+                Settle(h.Window, host.Manager);
+                var shapeBefore = host.Service.Zones.Shape();
+
+                // The view AvalonDock hands the hook after ONE drop: b and c each in a new, unnamed
+                // pane beside the Left pane and the Center pane gone with its placeholder — nothing
+                // says which of the two new columns is the Center. Built as one tree and swapped in
+                // whole, the way a drop lands, then poked once so the docking model reports it.
+                var docs = host.Manager.Layout.Descendents().OfType<LayoutDocument>().ToDictionary(d => d.ContentId!, StringComparer.Ordinal);
+                foreach (var doc in docs.Values)
+                {
+                    doc.Parent.RemoveChild(doc);
+                }
+
+                var left = new LayoutDocumentPane();
+                ((ILayoutPaneSerializable)left).Id = ZonesToTree.LeftStackId;
+                left.Children.Add(docs["session:a"]);
+                var second = new LayoutDocumentPane();
+                second.Children.Add(docs["session:b"]);
+                var third = new LayoutDocumentPane();
+                third.Children.Add(docs["session:c"]);
+                var columns = new LayoutPanel { Orientation = System.Windows.Controls.Orientation.Horizontal };
+                columns.Children.Add(left);
+                columns.Children.Add(second);
+                columns.Children.Add(third);
+                host.Manager.Layout = new LayoutRoot { RootPanel = columns };
+                Settle(h.Window, host.Manager);
+                columns.Children.Add(new LayoutDocumentPane());   // one docking-model update over the whole frame (an empty pane is skipped by the reader)
+                Settle(h.Window, host.Manager);
+                var said = h.Shell.Announcer.Last;
+                var refused = records.Count(r => r.Contains("position-mapping-refused", StringComparison.Ordinal));
+                var shapeAfter = host.Service.Zones.Shape();
+
+                // The panes return: the next render draws the untouched model — the Left pane holds
+                // the three again, the columns AvalonDock showed are gone.
+                host.Adapter.Render();
+                Settle(h.Window, host.Manager);
+                var leftPane = (LayoutDocumentPane)host.Manager.Layout.Descendents().OfType<LayoutDocument>().Single(d => d.ContentId == "session:a").Parent;
+                var returned = leftPane.Children.OfType<LayoutDocument>().Select(d => d.ContentId).ToList();
+                return (said, refused, shapeAfter, shapeBefore, returned);
+            }
+            finally { WorkbenchDiagnostics.Sink = previous; }
+        });
+
+        Assert.True(refusals >= 1, "the ambiguous frame was not refused: " + shape + " :: " + announcement);
+        Assert.Equal(before, shape);   // untouched by the refusal
+        Assert.Equal(["session:a", "session:b", "session:c"], returned);   // and back on screen after the render
+        Assert.Equal("That pane move could not be applied, so the panes will return to where they were.", announcement);
+    }
+
+    /// <summary>
     /// INV-0006 F4. Opening a workspace replaces the WHOLE arrangement, so every pane moves at once.
     /// <c>LayoutPersistence.Restore()</c> has always composed the sentence that says so, and the caller
     /// used the result only for a null test and threw the sentence away — which is half of why the

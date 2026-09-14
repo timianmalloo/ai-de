@@ -158,17 +158,24 @@ public sealed class ZoneBackedLayoutService : ILayoutService
     /// </remarks>
     internal static WorkbenchLayout? TryMapByPosition(Layout tree, WorkbenchLayout current)
     {
-        bool Rendered(ZoneId z) => !current.Zone(z).Collapsed && !current.Zone(z).IsEmpty;
         static bool IsPlaceholder(Surface s) => string.Equals(s.SurfaceId, ZonesToTree.WelcomePlaceholder.SurfaceId, StringComparison.Ordinal);
 
-        // Split the root into the columns row and (optionally) the bottom zone.
+        // Split the root into the columns row and (optionally) the bottom zone. A vertical root is
+        // the frame's own shape — columns over the Bottom — whether the Bottom was rendered or a drop
+        // on the bottom edge just made the row (the Bottom collapsed and holding: the drop joins it,
+        // below). Any other vertical shape is not our frame: reading it as one column would hand
+        // every Center tab to whichever zone claimed the column first (the WPF lens's finding).
         LayoutNode columns = tree.Root;
         LayoutNode? bottom = null;
-        if (Rendered(ZoneId.Bottom)
-            && tree.Root is SplitNode { Orientation: Orientation.Vertical, Children: { Count: 2 } rootKids })
+        if (tree.Root is SplitNode { Orientation: Orientation.Vertical } vertical)
         {
-            columns = rootKids[0];
-            bottom = rootKids[1];
+            if (vertical.Children.Count != 2 || vertical.Children[1] is SplitNode { Orientation: Orientation.Vertical })
+            {
+                return null;
+            }
+
+            columns = vertical.Children[0];
+            bottom = vertical.Children[1];
         }
 
         // The columns row holds the side and center zones. A native drag can INSERT a column (a new
@@ -298,7 +305,13 @@ public sealed class ZoneBackedLayoutService : ILayoutService
 
         if (bottom is not null)
         {
-            assigned[ZoneId.Bottom] = [.. SurfacesUnder(bottom)];
+            var below = SurfacesUnder(bottom).Where(s => !IsPlaceholder(s)).ToList();
+            if (below.Count == 0)
+            {
+                return null; // a bottom row holding nothing but the placeholder is not our frame
+            }
+
+            assigned[ZoneId.Bottom] = below;
             if (ActiveUnder(bottom) is { } activeBottom)
             {
                 activeIn[ZoneId.Bottom] = activeBottom;

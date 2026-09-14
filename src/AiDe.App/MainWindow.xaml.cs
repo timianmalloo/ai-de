@@ -568,7 +568,7 @@ public partial class MainWindow : Window
             host!.Adapter.ActivateInView(landing);   // the view's notion of active follows the landing, so the next switch back returns here
         }
 
-        return active is not null && active.MoveFocus(new System.Windows.Input.TraversalRequest(System.Windows.Input.FocusNavigationDirection.First));
+        return active is not null && PerspectiveShell.FocusLanding(active);
     }
 
     /// <summary>Reflects the active perspective on the rail's selection, the window title and the status strip.</summary>

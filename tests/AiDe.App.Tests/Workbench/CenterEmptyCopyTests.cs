@@ -47,8 +47,11 @@ public sealed class CenterEmptyCopyTests : IDisposable
             Assert.DoesNotContain(texts, t => t.Contains("not available in this build", StringComparison.Ordinal));
             var action = ComposedCoding.Visuals<Button>(empty!).SingleOrDefault();
             Assert.True(action is not null, "the no-session state has no first action");
-            Assert.Contains("New session", AutomationProperties.GetName(action!) + action!.Content, StringComparison.Ordinal);
-            Assert.True(action.Focusable && action.IsEnabled, "the first action is not a focus target");
+            // Named once, the gesture as the accelerator (not repeated in the name) and visible as a chip.
+            Assert.Equal("New session", AutomationProperties.GetName(action!));
+            Assert.Equal("Ctrl+N", AutomationProperties.GetAcceleratorKey(action!));
+            Assert.Contains(ComposedCoding.Visuals<TextBlock>(action!), t => t.Text == "Ctrl+N");
+            Assert.True(action!.Focusable && action.IsEnabled, "the first action is not a focus target");
 
             // State 2 — a session open at Left: the docked sentence, the View-menu line, NO first action.
             shell.OpenSessionDocument(config);
@@ -62,10 +65,25 @@ public sealed class CenterEmptyCopyTests : IDisposable
             Assert.DoesNotContain(texts, t => t.Contains("No session open", StringComparison.Ordinal));
             Assert.DoesNotContain(texts, t => t.Contains("not available in this build", StringComparison.Ordinal));
             Assert.Empty(ComposedCoding.Visuals<Button>(docked!));
-            // A focus target still exists — the landing can fall back here when the Left is collapsed.
-            Assert.True(docked is UIElement { Focusable: true } || ComposedCoding.Visuals<UIElement>(docked!).Any(e => e.Focusable), "the docked-at-left copy has no focus target");
-            // Named for assistive technology from its own sentences, not the placeholder's "Welcome".
-            Assert.Contains(ComposedCoding.Visuals<FrameworkElement>(docked!).Prepend(docked!), e => AutomationProperties.GetName(e).Contains("docked at the left", StringComparison.Ordinal));
+            // The focus target is the heading — a Control-view text element whose sentence is its
+            // name and whose help is the second line — so an AT landing here hears the state (a
+            // panel with a Name has no peer and is silent: the UX lens's finding).
+            var heading = ComposedCoding.Visuals<TextBlock>(docked!).Single(t => t.Text == "The session is docked at the left.");
+            Assert.True(heading.Focusable, "the docked-at-left heading is not the focus target");
+            var peer = System.Windows.Automation.Peers.UIElementAutomationPeer.CreatePeerForElement(heading);
+            Assert.True(peer is not null && peer.IsControlElement(), "the heading has no Control-view automation peer — a screen reader hears nothing");
+            Assert.Equal("The session is docked at the left.", peer!.GetName());
+            Assert.Equal("Code viewers, prompt drafts and search open here, from the View menu.", peer.GetHelpText());
+            Assert.DoesNotContain(ComposedCoding.Visuals<Grid>(docked!), g => g.Focusable);
+
+            // The Left collapsed with the session held: still docked there, behind its rail — said.
+            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
+            shell.Coding.Adapter.Render();
+            frame.Settle();
+            Assert.Contains("The session is docked at the left, collapsed — expand the rail to reach it.", Texts(frame.CenterEmpty()!));
+            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Docked)).Applied);
+            shell.Coding.Adapter.Render();
+            frame.Settle();
 
             // State 1 again after the session closes: the copy follows the model, render by render.
             Assert.True(shell.Coding.Service.Apply(new LayoutOperation.CloseSurface(SessionDocumentSurface.SurfaceIdFor(config.SessionId))).Applied);
@@ -97,9 +115,20 @@ public sealed class CenterEmptyCopyTests : IDisposable
             Assert.NotNull(copy);
             var texts = Texts(copy!).ToList();
             Assert.Contains("Nothing open here.", texts);
-            Assert.Contains("The session at the left could not be restored; its recovery is on the left.", texts);
+            Assert.Contains("The session at the left could not be restored. Reopen it from File → Recent sessions, or close its tab.", texts);
             Assert.DoesNotContain(texts, t => t.Contains("No session open", StringComparison.Ordinal));
             Assert.DoesNotContain(texts, t => t.Contains("docked at the left", StringComparison.Ordinal));
+
+            // And the island at Left names the session and the same way out — never "No session is
+            // open" one pane over from a Center that says one is here.
+            var island = shell.Coding.Adapter.ContentFor(gone.SurfaceId);
+            Assert.NotNull(island);
+            var islandTexts = Texts(island!).ToList();
+            Assert.Contains(islandTexts, t => t.StartsWith("“gone” could not be restored", StringComparison.Ordinal) && t.Contains("File → Recent sessions", StringComparison.Ordinal));
+            Assert.DoesNotContain(islandTexts, t => t.Contains("No session is open", StringComparison.Ordinal));
+            var islandText = ComposedCoding.Visuals<TextBlock>(island!).Single(t => t.Text.StartsWith("“gone”", StringComparison.Ordinal));
+            var islandPeer = System.Windows.Automation.Peers.UIElementAutomationPeer.CreatePeerForElement(islandText);
+            Assert.True(islandText.Focusable && islandPeer is not null && islandPeer.IsControlElement(), "the island is not a focusable Control-view element");
             return 0;
         }, 60);
     }
@@ -108,9 +137,11 @@ public sealed class CenterEmptyCopyTests : IDisposable
     [Theory]
     [InlineData("none", "No session open.")]
     [InlineData("left-live", "The session is docked at the left.")]
+    [InlineData("left-live-collapsed", "The session is docked at the left, collapsed — expand the rail to reach it.")]
     [InlineData("left-dead", "Nothing open here.")]
     [InlineData("bottom-live", "The session is docked at the bottom.")]
     [InlineData("two-live", "The sessions are docked at the left.")]
+    [InlineData("two-dead", "Nothing open here.")]
     public void TheCopy_IsAFunctionOfTheZonesAndTheLiveRegistry(string state, string heading)
     {
         var s1 = new Surface("session:a", SessionDocumentSurface.Kind, "A");
@@ -123,8 +154,17 @@ public sealed class CenterEmptyCopyTests : IDisposable
                 layout = ZoneLayoutService.OpenPane(layout, s1, ZoneId.Left).Layout;
                 live.Add(s1.SurfaceId);
                 break;
+            case "left-live-collapsed":
+                layout = ZoneLayoutService.OpenPane(layout, s1, ZoneId.Left).Layout;
+                layout = ZoneLayoutService.CollapseZone(layout, ZoneId.Left).Layout;
+                live.Add(s1.SurfaceId);
+                break;
             case "left-dead":
                 layout = ZoneLayoutService.OpenPane(layout, s1, ZoneId.Left).Layout;
+                break;
+            case "two-dead":
+                layout = ZoneLayoutService.OpenPane(layout, s1, ZoneId.Left).Layout;
+                layout = ZoneLayoutService.OpenPane(layout, s2, ZoneId.Bottom).Layout;
                 break;
             case "bottom-live":
                 layout = ZoneLayoutService.OpenPane(layout, s1, ZoneId.Bottom).Layout;
@@ -141,5 +181,9 @@ public sealed class CenterEmptyCopyTests : IDisposable
         var copy = CenterEmptyState.CopyFor(PerspectiveSet.Coding, layout, live.Contains);
         Assert.Equal(heading, copy.Heading);
         Assert.Equal(state == "none", copy.OffersNewSession);
+        if (state == "two-dead")
+        {
+            Assert.Equal("The sessions at the left and the bottom could not be restored. Reopen them from File → Recent sessions, or close their tabs.", copy.Body);
+        }
     }
 }

@@ -30,7 +30,10 @@ public sealed class RestoredSessionDocumentsAreRevivedTests : IDisposable
         try { Directory.Delete(_root, recursive: true); } catch (IOException) { }
     }
 
-    private const string Island = "No session is open. Create one from File → New Session.";
+    // The island's sentence since SH-4.2's UX review: it names the session and the way out — a
+    // reopen from Recent sessions or the tab's close — never "No session is open" beside a Center
+    // that says one is docked here (Ruling 83 condition 2).
+    private const string Island = "“Restored” could not be restored — its files are missing or unreadable. Reopen it from File → Recent sessions, or close this tab.";
 
     /// <summary>A shown shell whose layout carries a restored session-document surface for <paramref name="sessionId"/> and nothing registered for it.</summary>
     private static T WithRestoredSurface<T>(string sessionId, Func<WorkbenchShell, string, T> body) => Sta.Run(() =>

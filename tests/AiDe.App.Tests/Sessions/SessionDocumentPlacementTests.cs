@@ -114,10 +114,41 @@ public sealed class SessionDocumentPlacementTests : IDisposable
             frame.Settle();
             var surfaceId = SessionDocumentSurface.SurfaceIdFor(config.SessionId);
             Assert.Equal(surfaceId, PerspectiveShell.LandingSurfaceFor(shell.Coding));
-            var document = shell.Coding.Adapter.ContentFor(surfaceId);
-            Assert.True(document is not null && HasFocusTarget(document), "the session document has no focus target");
+            var content = shell.Coding.Adapter.ContentFor(surfaceId);
+            Assert.True(content is not null && HasFocusTarget(content), "the session document has no focus target");
+
+            // The window's entry focus: into the EDITOR (the first action), not the header's first
+            // button — what MoveFocus(First) lands on (the UX lens's finding on SH-4.2).
+            var document = frame.Document(surfaceId);
+            Assert.True(PerspectiveShell.FocusLanding(content!), "the landing placed no focus");
+            frame.Settle();
+            var focused = System.Windows.Input.Keyboard.FocusedElement as System.Windows.DependencyObject;
+            Assert.True(focused is not null && IsInside(focused, document.Composer), $"focus landed on {focused?.GetType().Name ?? "(none)"}, not inside the composer");
+
+            // And the Center's copy's landing: its heading, with the sentence as the name.
+            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
+            shell.Coding.Adapter.Render();
+            frame.Settle();
+            var fallback = shell.Coding.Adapter.ContentFor(PerspectiveShell.LandingSurfaceFor(shell.Coding)!);
+            Assert.True(fallback is not null && PerspectiveShell.FocusLanding(fallback));
+            frame.Settle();
+            var landed = System.Windows.Input.Keyboard.FocusedElement as System.Windows.Controls.TextBlock;
+            Assert.True(landed is not null && landed.Text.StartsWith("The session is docked at the left", StringComparison.Ordinal), $"the fallback landing is {System.Windows.Input.Keyboard.FocusedElement?.GetType().Name ?? "(none)"}");
             return 0;
         }, 60);
+
+        static bool IsInside(System.Windows.DependencyObject element, System.Windows.DependencyObject ancestor)
+        {
+            for (var node = element; node is not null; node = System.Windows.Media.VisualTreeHelper.GetParent(node) ?? System.Windows.LogicalTreeHelper.GetParent(node))
+            {
+                if (ReferenceEquals(node, ancestor))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         static bool HasFocusTarget(System.Windows.DependencyObject element)
         {
@@ -137,6 +168,45 @@ public sealed class SessionDocumentPlacementTests : IDisposable
 
             return false;
         }
+    }
+
+    /// <summary>
+    /// The Left rail's first gesture on the re-cut: collapse the Left holding the session, expand
+    /// it again — the same document comes back, nothing throws, the session was never "closed".
+    /// <b>Red before green:</b> the adapter kept only the projection's content, so the expand
+    /// handed the factory the retained document still parented to the old island
+    /// (<i>already the logical child of another element</i>), and the collapse raised
+    /// <c>SurfaceClosed</c> for a surface the model still held.
+    /// </summary>
+    [Fact]
+    public void CollapsingTheLeftHoldingTheSession_ThenExpanding_GivesTheSameDocumentBack_AndClosesNothing()
+    {
+        var config = _workspace.Session("held");
+
+        Sta.Run(() =>
+        {
+            using var frame = ComposedCoding.Show(1440, 900);
+            var shell = frame.Shell;
+            shell.OpenSessionDocument(config);
+            frame.Settle();
+            var surfaceId = SessionDocumentSurface.SurfaceIdFor(config.SessionId);
+            var document = frame.Document(surfaceId);
+            var closed = new List<string>();
+            shell.Coding.Adapter.SurfaceClosed += (id, _) => closed.Add(id);
+
+            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
+            shell.Coding.Adapter.Render();
+            frame.Settle();
+            Assert.Empty(closed);
+            Assert.True(shell.Coding.Rails.RailVisible(ZoneId.Left));
+
+            Assert.True(shell.Coding.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Docked)).Applied);
+            shell.Coding.Adapter.Render();
+            frame.Settle();
+            Assert.Same(document, frame.Document(surfaceId));
+            Assert.Empty(closed);
+            return 0;
+        }, 60);
     }
 
     /// <summary>The zone rule is data on the kind's row — what the open reads, and what a reader can check without a window.</summary>

@@ -214,6 +214,32 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     /// </summary>
     public Action<int?>? ConsoleRequested { get; set; }
 
+    /// <summary>
+    /// The shell's close (the other half of the seam): when hosted, unchecking the header's toggle
+    /// closes the Console document — the toggle's state is the document's open state, honestly, so
+    /// an AT's Toggle pattern (which flips the state without a Click) opens and closes too.
+    /// </summary>
+    public Action? ConsoleDismissed { get; set; }
+
+    private bool _reflectingConsole;
+
+    /// <summary>
+    /// Reflects the hosted Console's open state on the header's toggle WITHOUT dispatching the
+    /// verb — the shell's, after an open, a focus, a close, or a refused open.
+    /// </summary>
+    public void ReflectConsole(bool open)
+    {
+        _reflectingConsole = true;
+        try
+        {
+            _consoleToggle.IsChecked = open;
+        }
+        finally
+        {
+            _reflectingConsole = false;
+        }
+    }
+
     /// <summary>Whether the Console split is open beside the thread (Ruling 74: on demand).</summary>
     public bool IsSplitOpen => _splitColumn.Width.Value > 0;
 
@@ -972,11 +998,33 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
 
         var console = new ToggleButton { Content = "Console", Padding = new Thickness(8, 2, 8, 2), MinHeight = 24, MinWidth = 24, Margin = new Thickness(0, 0, 8, 0), VerticalAlignment = VerticalAlignment.Center };
         AutomationProperties.SetName(console, "Console: show the merged stream beside the thread");
+        // Hosted (Ruling 89; SH-4.2), the toggle's STATE is the Console document's open state and
+        // it is driven from Checked/Unchecked — the events an AT's Toggle pattern raises without a
+        // Click — so checking opens (or focuses) the document and unchecking closes it; the shell
+        // reflects a state change it made itself through ReflectConsole, which dispatches nothing.
+        // Unhosted, the split opens beside the thread on Click as CV-5.2 built it.
+        console.Checked += (_, _) =>
+        {
+            if (ConsoleRequested is not null && !_reflectingConsole)
+            {
+                OpenSplit();
+            }
+        };
+        console.Unchecked += (_, _) =>
+        {
+            if (ConsoleRequested is not null && !_reflectingConsole)
+            {
+                ConsoleDismissed?.Invoke();
+            }
+        };
         console.Click += (_, _) =>
         {
-            // Hosted (Ruling 89), the toggle opens or focuses the console document — a second press
-            // focuses, never closes; the tab's own close is the way back, and the shell reflects it here.
-            if (IsSplitOpen && ConsoleRequested is null)
+            if (ConsoleRequested is not null)
+            {
+                return;   // hosted: Checked/Unchecked above did the work
+            }
+
+            if (IsSplitOpen)
             {
                 CloseSplit();
             }

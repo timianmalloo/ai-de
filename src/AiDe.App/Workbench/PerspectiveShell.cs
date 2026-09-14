@@ -160,6 +160,30 @@ public sealed class PerspectiveShell
     }
 
     /// <summary>
+    /// Moves focus into a landing surface's content (spec §C5; DESIGN.md's landing row): a session
+    /// document lands in its <b>editor</b> — the first action, where the operator types — and any
+    /// other surface on its first focusable. Returns whether focus was placed.
+    /// </summary>
+    /// <remarks>
+    /// <c>MoveFocus(First)</c> on a session document lands on the header's first button (the
+    /// session settings), not the editor — the UX lens's finding on SH-4.2; the document's own
+    /// <see cref="Sessions.SessionDocumentSurface.FocusRegion"/> knows where the editor is, page
+    /// or first line.
+    /// </remarks>
+    public static bool FocusLanding(FrameworkElement content)
+    {
+        ArgumentNullException.ThrowIfNull(content);
+
+        var document = content as Sessions.SessionDocumentSurface ?? (content as Border)?.Child as Sessions.SessionDocumentSurface;
+        if (document is not null && document.FocusRegion(Sessions.SessionDocumentSurface.Region.Composer, "landing").Outcome == CanvasFocusOutcome.Entered)
+        {
+            return true;
+        }
+
+        return content.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
+    }
+
+    /// <summary>
     /// Makes <paramref name="perspective"/> the active one and returns what to announce. Activating
     /// the active perspective is a no-op that emits nothing (US-C1); a body that fails to build
     /// leaves the active perspective, the focus and the other bodies as they were and reports why.

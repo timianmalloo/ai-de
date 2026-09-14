@@ -361,14 +361,17 @@ public sealed class SurfaceContentFactory(
             return document;
         }
 
-        // The ordinary empty state, in the same voice as WorkspaceNeeded: this is "no session open",
-        // not a build or packaging defect, and saying "not available in this build" would point the
-        // reader at the wrong thing (UI-EMPTY-STATE).
+        // The ordinary empty state, in the same voice as WorkspaceNeeded: a session-document surface
+        // with no live document behind it is one the saved arrangement restored and the revive could
+        // not load (INV-0009 Phase 2b) — say so, name the session, and name the way out; never
+        // "not available in this build" (UI-EMPTY-STATE), and never "No session is open" while the
+        // Center says one is docked here (Ruling 83 condition 2; the UX lens on SH-4.2).
         var text = new TextBlock
         {
-            Text = "No session is open. Create one from File → New Session.",
+            Text = $"“{surface.Title}” could not be restored — its files are missing or unreadable. Reopen it from File → Recent sessions, or close this tab.",
             Margin = new Thickness(12),
             TextWrapping = TextWrapping.Wrap,
+            Focusable = true,
         };
         text.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
         return text;
