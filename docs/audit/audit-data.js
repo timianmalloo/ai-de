@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T17:03:14Z",
+  "generated": "2026-09-14T17:16:15Z",
   "audit": [
     {
       "actor": null,
@@ -15741,6 +15741,21 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T17:03:13Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2GEPRFPC617YYTMWDGVDW0E",
+      "shortname": "acp=mcp: For the tool backend i need to be able to use: my claude subscr…",
+      "datetime": "2026-09-14T17:16:15Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "acp=mcp: For the tool backend i need to be able to use: my claude subscription (my max account in my case); my Microsoft work account with GCHP (so i can let some of my colleagues try it who may not have a claude account); My OpenAI, Grok and Gemini subscriptions. For any given session in the tool... I should be able to switch between any of the accounts i listed above as well as Higgsfield",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
