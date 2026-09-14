@@ -23,7 +23,7 @@ namespace AiDe.App.Tests;
 
 public sealed class AtlasDaemonMainWindowProofTests
 {
-    private const string Tree = @"C:\Projects\ai-de-atlas-real-daemon-window-proof";
+    private static readonly string Tree = RepositoryRoot();
     private const string Git = @"C:\Program Files\Git\cmd\git.exe";
     private const string Source = "namespace ProofOwned;\npublic sealed class Widget\n{\n    public int Answer() => 42;\n}\n";
 
@@ -46,8 +46,15 @@ public sealed class AtlasDaemonMainWindowProofTests
             var binary = Path.Combine(Tree, "src", "AiDe.Daemon", "bin", configuration,
                 "net10.0-windows", "AiDe.Daemon.exe");
             Assert.True(File.Exists(binary), "Build this tree's daemon explicitly before running this proof.");
+            var gitRoot = Path.GetFullPath((await CommandAsync(Git, Tree, "rev-parse", "--show-toplevel")).Trim());
+            Assert.True(string.Equals(Tree, gitRoot, StringComparison.OrdinalIgnoreCase),
+                "The executing test assembly's repository must equal Git's actual current worktree root.");
             receipt.Mark("pins", new
             {
+                RepositoryRoot = Tree, GitRoot = gitRoot,
+                TestAssemblyPath = typeof(AtlasDaemonMainWindowProofTests).Assembly.Location,
+                TestAssemblyRelativePath = Path.GetRelativePath(Tree, typeof(AtlasDaemonMainWindowProofTests).Assembly.Location),
+                RootAuthority = "executing test assembly ancestors, repository project files, and actual Git top-level",
                 SourceCommit = (await CommandAsync(Git, Tree, "rev-parse", "HEAD")).Trim(),
                 Binary = binary, BinarySha256 = Hash(File.ReadAllBytes(binary)),
                 DaemonAssemblySha256 = Hash(File.ReadAllBytes(Path.ChangeExtension(binary, ".dll"))),
@@ -93,6 +100,17 @@ public sealed class AtlasDaemonMainWindowProofTests
                 var replacement = new MainWindowViewModel(clients[1], "display-replacement-not-pipe-authority", null,
                     commands: clients[1], atlasReaderFactory: () =>
                         replacementReader = new ObservedReader(clients[1].CreateAtlasReader(), receipt, "replacement"));
+                receipt.Mark("remote-vms.before-refresh", new
+                {
+                    FirstStatus = first.StatusMessage, ReplacementStatus = replacement.StatusMessage,
+                });
+                await first.RefreshAsync(CancellationToken.None);
+                await replacement.RefreshAsync(CancellationToken.None);
+                receipt.Mark("remote-vms.after-refresh", new
+                {
+                    FirstStatus = first.StatusMessage, ReplacementStatus = replacement.StatusMessage,
+                    Initialization = "actual MainWindowViewModel.RefreshAsync over each owned real remote client",
+                });
                 var window = new AiDe.App.MainWindow(() => Task.FromResult(first),
                     Path.Combine(owned, "shell-state"), Resources())
                 {
@@ -172,6 +190,7 @@ public sealed class AtlasDaemonMainWindowProofTests
                     {
                         _ = MeasureReading(window, view, actualSource, memberSelection.Source.Highlights,
                             receipt, "normal-default-observed", requireReadable: false);
+                        VerifyFooter(window, first, receipt, "first");
                     }
                     finally { Capture(window, evidence, receipt, "mainwindow-member-normal-default.png"); }
                     Assert.True(canonicalZone == ZoneId.Center, "The real normal opener must place a new Atlas in canonical Center.");
@@ -224,6 +243,8 @@ public sealed class AtlasDaemonMainWindowProofTests
                     var nextLease = Assert.IsType<ObservedLease>(replacementReader?.Lease);
                     Assert.True(nextLease.ScopeToken != firstLease.ScopeToken, "Replacement must own a distinct actual scope.");
                     VerifySource(nextView, Assert.IsType<AtlasSelectionDto>(nextLease.LastSelection), receipt, "replacement", replacementSourcePath);
+                    try { VerifyFooter(window, replacement, receipt, "replacement"); }
+                    finally { Capture(window, evidence, receipt, "mainwindow-replacement-footer.png"); }
                     var receiptFailure = await Record.ExceptionAsync(async () =>
                         await nextLease.Queries.RestoreAsync(new AtlasRestoreRequestDto(
                             1, nextLease.ScopeToken, nextLease.CoreEpoch, fileSelection.ReceiptToken!), CancellationToken.None));
@@ -484,7 +505,7 @@ public sealed class AtlasDaemonMainWindowProofTests
         return view.ActualWidth;
     }
 
-    private static IEnumerable<(Rect Bounds, string Characters)> RenderedLabelRuns(Drawing drawing, Matrix parent)
+    private static IEnumerable<(Rect Bounds, string Characters, object Facts)> RenderedLabelRuns(Drawing drawing, Matrix parent)
     {
         if (drawing is DrawingGroup group)
         {
@@ -504,7 +525,16 @@ public sealed class AtlasDaemonMainWindowProofTests
         {
             Assert.NotNull(glyph.GlyphRun.Characters);
             yield return (new MatrixTransform(parent).TransformBounds(glyph.Bounds),
-                new string(glyph.GlyphRun.Characters.ToArray()));
+                new string(glyph.GlyphRun.Characters.ToArray()),
+                new
+                {
+                    CharacterCodePoints = glyph.GlyphRun.Characters.Select(character => (int)character).ToArray(),
+                    ClusterMap = glyph.GlyphRun.ClusterMap?.ToArray(),
+                    AdvanceWidths = glyph.GlyphRun.AdvanceWidths.ToArray(),
+                    GlyphIndices = glyph.GlyphRun.GlyphIndices.ToArray(),
+                    LocalInkBounds = Box(glyph.Bounds),
+                    BaselineOrigin = new { glyph.GlyphRun.BaselineOrigin.X, glyph.GlyphRun.BaselineOrigin.Y },
+                });
         }
     }
 
@@ -594,6 +624,147 @@ public sealed class AtlasDaemonMainWindowProofTests
     }
 
     private static string Hash(byte[] bytes) => Convert.ToHexString(SHA256.HashData(bytes));
+
+    private static string RepositoryRoot()
+    {
+        var assembly = typeof(AtlasDaemonMainWindowProofTests).Assembly.Location;
+        for (var directory = new DirectoryInfo(Path.GetDirectoryName(assembly)!);
+             directory is not null; directory = directory.Parent)
+        {
+            var root = directory.FullName;
+            if (File.Exists(Path.Combine(root, "tests", "AiDe.App.Tests", "AiDe.App.Tests.csproj"))
+                && File.Exists(Path.Combine(root, "src", "AiDe.Daemon", "AiDe.Daemon.csproj"))
+                && (Directory.Exists(Path.Combine(root, ".git")) || File.Exists(Path.Combine(root, ".git"))))
+                return root;
+        }
+        throw new InvalidOperationException("The executing proof assembly is not beneath a product repository.");
+    }
+
+    private static void VerifyFooter(Window window, MainWindowViewModel model, Receipt receipt, string name)
+    {
+        var client = Assert.IsAssignableFrom<FrameworkElement>(window.Content);
+        var clientBounds = client.TransformToAncestor(window).TransformBounds(new Rect(client.RenderSize));
+        var matches = Visuals<TextBlock>(window).Where(block => block.IsVisible
+            && AutomationProperties.GetName(block) == "Workspace health"
+            && System.Windows.Data.BindingOperations.GetBinding(block, TextBlock.TextProperty)?.Path?.Path
+                == nameof(MainWindowViewModel.StatusMessage)
+            && !VisibleBounds(block, window, clientBounds).IsEmpty).ToArray();
+        receipt.Mark(name + ".footer-binding", new
+        {
+            ComputedStatus = model.StatusMessage, VisibleMatchingControls = matches.Length,
+            RenderedTexts = matches.Select(block => block.Text).ToArray(),
+            Selector = "owned MainWindow; automation name Workspace health; Text binding path StatusMessage",
+        });
+        Assert.False(string.IsNullOrWhiteSpace(model.StatusMessage)
+            || model.StatusMessage.Contains("No workspace open", StringComparison.OrdinalIgnoreCase),
+            "Legitimate remote Refresh must replace the unopened-workspace default.");
+        var footer = Assert.Single(matches);
+        var expression = System.Windows.Data.BindingOperations.GetBindingExpression(footer, TextBlock.TextProperty);
+        var ownerMatches = ReferenceEquals(expression?.DataItem, model)
+            && ReferenceEquals(window.DataContext, model);
+        receipt.Mark(name + ".footer-owner", new
+        {
+            AutomationName = AutomationProperties.GetName(footer),
+            BindingPath = expression?.ParentBinding.Path?.Path,
+            BindingOwnerIsActiveVm = ownerMatches, DisplayEqualsRefreshedVm = footer.Text == model.StatusMessage,
+        });
+        Assert.True(ownerMatches, "The named footer binding must resolve to the active real remote VM.");
+        Assert.True(footer.Text == model.StatusMessage, "The named footer must display its legitimately refreshed VM status.");
+        var drawing = VisualTreeHelper.GetDrawing(footer);
+        Assert.NotNull(drawing);
+        var runs = RenderedLabelRuns(drawing, Matrix.Identity).ToArray();
+        var bounds = runs.Select(run => footer.TransformToAncestor(window).TransformBounds(run.Bounds)).ToArray();
+        var viewport = VisibleBounds(footer, window, clientBounds, startAtLayoutBounds: false);
+        receipt.Mark(name + ".footer-glyph-characterization", new
+        {
+            EmptyInkPolicy = "Only nonempty U+0020-only runs; characterized before predicate change",
+            Runs = runs.Select((run, index) => new
+            {
+                Index = index, run.Characters, run.Facts, WindowInkBounds = Box(bounds[index]),
+            }).ToArray(),
+        });
+        var expected = new string(model.StatusMessage.Where(character => !char.IsWhiteSpace(character)).ToArray());
+        var actual = new string(string.Concat(runs.Select(run => run.Characters))
+            .Where(character => !char.IsWhiteSpace(character)).ToArray());
+        var ink = runs.Select((run, index) => new InkRun(bounds[index], run.Characters)).ToArray();
+        var fits = FooterInkFits(ink, viewport);
+        receipt.Mark(name + ".footer-rendered", new
+        {
+            Text = footer.Text, CompleteGlyphCharacters = expected == actual, AllGlyphsFit = fits,
+            ViewportWindow = Box(viewport), GlyphRunsWindow = bounds.Select(Box).ToArray(),
+            AdmittedNoInkCodePoints = ink.Where(IsCharacterizedNoInk)
+                .Select(run => run.Characters.Select(character => (int)character).ToArray()).ToArray(),
+        });
+        Assert.True(FooterAccepted(model.StatusMessage, ink, viewport),
+            "Every required footer character and every real ink rectangle must survive actual clipping.");
+        VerifyFooterNegativeControls(model.StatusMessage, ink, viewport, receipt, name);
+    }
+
+    private sealed record InkRun(Rect Bounds, string Characters);
+
+    private static bool IsCharacterizedNoInk(InkRun run) =>
+        run.Bounds.IsEmpty && run.Characters.Length > 0
+        && run.Characters.All(character => character == ' ');
+
+    private static bool FooterInkFits(IReadOnlyList<InkRun> runs, Rect viewport) =>
+        !viewport.IsEmpty && runs.Any(run => !run.Bounds.IsEmpty)
+        && runs.All(run => IsCharacterizedNoInk(run)
+            || (!run.Bounds.IsEmpty && double.IsFinite(run.Bounds.X) && double.IsFinite(run.Bounds.Y)
+                && double.IsFinite(run.Bounds.Width) && double.IsFinite(run.Bounds.Height)
+                && run.Bounds.Width > 0 && run.Bounds.Height > 0 && viewport.Contains(run.Bounds)));
+
+    private static string RequiredCharacters(string text) =>
+        new(text.Where(character => !char.IsWhiteSpace(character)).ToArray());
+
+    private static bool FooterAccepted(string text, IReadOnlyList<InkRun> runs, Rect viewport) =>
+        RequiredCharacters(text) == RequiredCharacters(string.Concat(runs.Select(run => run.Characters)))
+        && FooterInkFits(runs, viewport);
+
+    private static void VerifyFooterNegativeControls(string text, InkRun[] measured, Rect viewport,
+        Receipt receipt, string name)
+    {
+        var requiredRun = Array.FindIndex(measured, run => RequiredCharacters(run.Characters).Length > 0);
+        Assert.True(requiredRun >= 0);
+        var characterIndex = Array.FindIndex(measured[requiredRun].Characters.ToCharArray(),
+            character => !char.IsWhiteSpace(character));
+        var missing = measured.ToArray();
+        missing[requiredRun] = missing[requiredRun] with
+        {
+            Characters = missing[requiredRun].Characters.Remove(characterIndex, 1),
+        };
+        var missingInkStillFits = FooterInkFits(missing, viewport);
+        var missingRejected = !FooterAccepted(text, missing, viewport);
+
+        var invisibleRequired = measured.ToArray();
+        invisibleRequired[requiredRun] = invisibleRequired[requiredRun] with { Bounds = Rect.Empty };
+        var invisibleRequiredRejected = !FooterAccepted(text, invisibleRequired, viewport);
+        var otherInkStillFits = invisibleRequired.Where((_, index) => index != requiredRun)
+            .All(run => IsCharacterizedNoInk(run) || viewport.Contains(run.Bounds));
+
+        var rightmost = Enumerable.Range(0, measured.Length).Where(index => !measured[index].Bounds.IsEmpty)
+            .OrderByDescending(index => measured[index].Bounds.Right).First();
+        var last = measured[rightmost].Bounds;
+        var clipped = new Rect(viewport.X, viewport.Y,
+            last.Right - Math.Min(1, last.Width / 2) - viewport.Left, viewport.Height);
+        var remainingInkFits = measured.Where((_, index) => index != rightmost)
+            .All(run => IsCharacterizedNoInk(run) || clipped.Contains(run.Bounds));
+        var clippingRejected = !FooterAccepted(text, measured, clipped);
+        receipt.Mark(name + ".footer-negative-controls", new
+        {
+            InputKind = "copies of measured glyph evidence; no runtime, query, binding or model mutation",
+            RemovedRequiredCodePoint = (int)measured[requiredRun].Characters[characterIndex],
+            MissingCharacterRejected = missingRejected, MissingCharacterInkStillFits = missingInkStillFits,
+            NonWhitespaceEmptyInkRejected = invisibleRequiredRejected, OtherInkStillFits = otherInkStillFits,
+            RealInkClipRejected = clippingRejected, RemainingUnclippedInkFits = remainingInkFits,
+            ClippedRunIndex = rightmost, OriginalRealInk = Box(last), NegativeViewport = Box(clipped),
+        });
+        Assert.True(missingInkStillFits && missingRejected,
+            "Removing a required character must fail even when the unchanged ink rectangles fit.");
+        Assert.True(otherInkStillFits && invisibleRequiredRejected,
+            "An empty rectangle carrying required characters must fail; empty ink is not automatically whitespace.");
+        Assert.True(remainingInkFits && clippingRejected,
+            "Clipping real ink must fail even when every other ink rectangle fits and all characters remain.");
+    }
 
     private static Task<string> GitAsync(string root, params string[] arguments) =>
         CommandAsync(Git, root, ["-c", "user.name=Atlas Proof", "-c", "user.email=atlas-proof@example.invalid", .. arguments]);
