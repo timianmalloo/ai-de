@@ -83,7 +83,7 @@ CHECKS = [
     # its markers intact, and this command then reported "every derived view is current" over a
     # tree that still carried '<<<<<<<'. Observed on main f5c0f740; CI reddened and nobody read
     # it. The gate exists; it belongs in the one command every resolution already runs.
-    ("conflict markers", [sys.executable, "tools/verify-no-conflict-markers.py"]),
+    ("conflict markers", [sys.executable, "docs/ai-forward-pack/scripts/verify-no-conflict-markers.py"]),
     ("derived views", [sys.executable, "tools/verify-derived-views.py"]),
     ("site figures", [sys.executable, "tools/verify-site-figures.py"]),
     ("defect register", [sys.executable, "tools/verify-defect-register.py"]),

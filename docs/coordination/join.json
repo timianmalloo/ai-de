@@ -1,0 +1,37 @@
+{
+  "_comment": [
+    "The join contract for this repository, read by docs/ai-forward-pack/scripts/conductor-join.py",
+    "(pack revision 70; it replaced tools/conductor-join.py, which carried these commands inline).",
+    "Every command runs as a subprocess gated by its exit code; `python` resolves to the invoking",
+    "interpreter. Order inside the join: merge -> audit marker -> verify-no-conflict-markers ->",
+    "checks -> recount (timed as recount_seconds) -> audit entry -> regenerate -> commit -> gates ->",
+    "push -> build.",
+    "recount: `--update` re-baselines the counts even when a test FAILED (its job is the count), so",
+    "the closing `--no-run` is the outcome check - a red suite stops the join before the audit entry",
+    "and the commit (the F5 join, 2026-09-14: one order-dependent red reached the gates and left a",
+    "join commit unpushed). Node reuse is off at the boundary (Directory.Build.rsp, verify-node-reuse-control.py).",
+    "gates: tools/run-verify-gates.py is the repo's line over the pack runner - it carries the per-gate",
+    "arguments (verify-test-run --no-run; verify-front-door-exit-evidence --self-test until the record lands)."
+  ],
+  "checks": [
+    ["python", "tools/verify-defect-register.py", "--fix-counts"],
+    ["python", "tools/verify-defect-register.py"]
+  ],
+  "recount": [
+    ["python", "tools/verify-test-run.py", "--update"],
+    ["python", "tools/verify-test-run.py", "--update", "--only", "AiDe.Core.Tests", "--filter", "Platform!=Windows", "--key", "AiDe.Core.Tests.portable"],
+    ["python", "tools/verify-test-run.py", "--update", "--only", "AiDe.Core.Tests", "--filter", "Platform=Windows", "--key", "AiDe.Core.Tests.nonportable"],
+    ["python", "tools/verify-test-run.py", "--no-run"]
+  ],
+  "regenerate": [
+    ["python", "tools/regenerate-derived.py"]
+  ],
+  "gates": [
+    ["python", "tools/run-verify-gates.py"]
+  ],
+  "build": [
+    ["dotnet", "build", "src/AiDe.App/AiDe.App.csproj", "-c", "Release", "-nologo", "-v", "q"]
+  ],
+  "push_remote": "origin",
+  "trailer_file": "docs/coordination/commit-trailer.txt"
+}
