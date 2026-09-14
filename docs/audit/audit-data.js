@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T16:27:24Z",
+  "generated": "2026-09-14T16:33:13Z",
   "audit": [
     {
       "actor": null,
@@ -16172,6 +16172,38 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "28c5c5ea5e5530b98408c66773377c7e1bf0509d",
         "short": "28c5c5ea5",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GC7XG0F6XTC8K9VJA15HX8",
+      "shortname": "atlas-independent-real-window-proof-started",
+      "datetime": "2026-09-14T16:33:12Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Independentreal-daemon/MainWindowproofagent413486b5dispatchedinowncleanverified5e624810tree,15totalleaves,soleNEWAtlasDaemonMainWindowProofTests.cs. Realdaemon/client/reader/Architecturewindow,ownedsource/config,own-HWNDUIA/capture,replace/currentness/awaitedshutdown; nofixtureAtlasports/product/project/IVT/sharedStaedits/profilewrites. Exactassignmentrecorded; parentownsproofdoc/capturecopy. Priorfixture124greenisnotthisproof. Programme/main/normativeEunaccepted.",
+      "kind": "command",
+      "skill": null,
+      "tool": "task",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Observe the actual daemon-backed MainWindow reading and lifetime journey independently.",
+      "done_when": "Owned-window source/binding/navigation/currentness/replacement/shutdown evidence exists with actual daemon and no fake Atlas data.",
+      "tier": "T2",
+      "main_calls": 293,
+      "main_budget": 300,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T16:33:12Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "5e624810a52444e106e45bfc2815c0fe417ada40",
+        "short": "5e624810a",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

@@ -693,6 +693,15 @@ Atlas ports, DesktopRoot search, private UIA cache manipulation, source bodies/s
 logs or user-profile writes are permitted. Parent owns the durable proof document and
 approved capture copy. The fifteen calls include authoring, execution and receipt.
 
+Independent proof assignment: session `atlas-real-daemon-window-proof`, branch
+`atlas/real-daemon-window-proof`, worktree
+`C:\Projects\ai-de-atlas-real-daemon-window-proof`, exact clean base
+`5e624810a52444e106e45bfc2815c0fe417ada40`. Parent verified the base, local derived gates
+and the identity-bound allowance for the sole new proof test file. Fifteen leaf calls
+cover authoring, actual daemon/window execution and receipt. No existing source/test/
+project/IVT file is assigned. Generated raw receipts and owned-window captures remain
+proof evidence; the Conductor owns their approved durable documentation/copy.
+
 ### Core owns
 
 | Path | Why |
