@@ -52,6 +52,19 @@ public sealed class TheEnginesAnswerInitializeOnTheWireTests(ITestOutputHelper o
     public Task CopilotAnswersInitializeWithProtocolVersionOne()
         => ObserveInitializeAsync("copilot", home => new Dictionary<string, string> { ["COPILOT_HOME"] = home }, expectedAgentName: "Copilot");
 
+    /// <summary>
+    /// codex — the adapter <c>@agentclientprotocol/codex-acp@1.10.0</c>, spawned as
+    /// <c>node &lt;root&gt;/node_modules/@agentclientprotocol/codex-acp/dist/index.js</c> from the
+    /// spike's scratch install (<c>%TEMP%\aide-engine-spikes\codex</c>, <c>--ignore-scripts</c>).
+    /// The spike's fresh-home run answered in 834 ms with <c>agentInfo.name
+    /// "@agentclientprotocol/codex-acp"</c> (<c>spikes/engine-backends/codex/frames.jsonl</c>); the
+    /// adapter itself spawns <c>node &lt;@openai/codex/bin/codex.js&gt; app-server</c>, which is why
+    /// the kill-on-close job matters here.
+    /// </summary>
+    [NativeCliFact("codex")]
+    public Task CodexAnswersInitializeWithProtocolVersionOne()
+        => ObserveInitializeAsync("codex", home => new Dictionary<string, string> { ["CODEX_HOME"] = home }, expectedAgentName: "@agentclientprotocol/codex-acp");
+
     private async Task ObserveInitializeAsync(
         string engineId,
         Func<string, IReadOnlyDictionary<string, string>> isolation,
@@ -120,20 +133,39 @@ public sealed class TheEnginesAnswerInitializeOnTheWireTests(ITestOutputHelper o
     }
 
     /// <summary>
-    /// A fact that runs only where the catalog can resolve the engine's launch on this machine;
-    /// elsewhere it is skipped with the catalog's own refusal — the install instruction — as the reason.
+    /// A fact that runs only where the catalog can resolve the engine's launch on this machine and
+    /// the file it resolves to exists; elsewhere it is skipped with the catalog's own refusal — the
+    /// install instruction — as the reason. An adapter or npm script needs <c>node</c> on PATH too.
     /// </summary>
     private sealed class NativeCliFactAttribute : FactAttribute
     {
         public NativeCliFactAttribute(string engineId)
         {
+            EngineLaunch launch;
             try
             {
-                EngineCatalog.ResolveLaunch(engineId, SpikeInstallRoot(engineId));
+                launch = EngineCatalog.ResolveLaunch(engineId, SpikeInstallRoot(engineId));
             }
             catch (AgentPlaneException error) when (error.Code == AgentPlaneErrorCodes.EngineNotOnPath)
             {
                 Skip = $"{engineId} is not installed on this machine: {error.Message}";
+                return;
+            }
+
+            if (launch.FileName != "node")
+            {
+                return;
+            }
+
+            if (NativeCommandLocator.FromEnvironment().FindExecutable("node") is null)
+            {
+                Skip = $"{engineId} runs under node, and node is not on PATH";
+            }
+            else if (!File.Exists(launch.Arguments[0]))
+            {
+                var row = EngineCatalog.Find(engineId);
+                Skip = $"{engineId} is not installed on this machine: '{launch.Arguments[0]}' does not exist "
+                    + $"(npm install --prefix {SpikeInstallRoot(engineId)} --ignore-scripts {row.AdapterPackage ?? row.Native?.NpmPackage}@{row.AdapterVersion ?? "<version>"})";
             }
         }
     }

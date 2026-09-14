@@ -210,8 +210,14 @@ public static class EngineCatalog
             AcpMode.Adapter,
             "@agentclientprotocol/codex-acp",
             "1.10.0",
-            // Never installed, never observed. Null rather than a copy of the Claude adapter's path.
-            null),
+            // Observed 2026-09-14 (spike §2): `npm install --prefix %TEMP%\aide-engine-spikes\codex
+            // --ignore-scripts @agentclientprotocol/codex-acp@1.10.0` → package.json
+            // `"bin": {"codex-acp": "dist/index.js"}`, `"main": "dist/index.js"`; on disk
+            // node_modules/@agentclientprotocol/codex-acp/dist/index.js (1,272,135 bytes); spawned as
+            // `node <that>` it answered initialize in 834 ms with agentInfo.name
+            // "@agentclientprotocol/codex-acp" (spikes/engine-backends/codex/frames.jsonl). It bundles
+            // @openai/codex@0.153.4 and needs no `codex` on PATH (dist/index.js:35040, :22098-22105).
+            "dist/index.js"),
         new(
             "copilot",
             "github",

@@ -54,6 +54,7 @@ public sealed class EngineCatalogTests
         Assert.Equal(AcpMode.Adapter, codex.Acp);
         Assert.Equal("@agentclientprotocol/codex-acp", codex.AdapterPackage);
         Assert.Equal("1.10.0", codex.AdapterVersion);
+        Assert.Equal("dist/index.js", codex.AdapterEntryModule);
 
         var copilot = EngineCatalog.Find("copilot");
         Assert.Equal("github", copilot.Provider);
@@ -105,6 +106,30 @@ public sealed class EngineCatalogTests
         var module = Assert.Single(launch.Arguments);
         Assert.Equal(
             Path.Combine(InstallRoot, "node_modules", "@agentclientprotocol/claude-agent-acp", "dist", "index.js"),
+            module);
+    }
+
+    /// <summary>
+    /// Ruling 97 condition 1, codex: the adapter path resolves the entry module the spike observed —
+    /// <c>dist/index.js</c> of <c>@agentclientprotocol/codex-acp@1.10.0</c>, spawned as
+    /// <c>node &lt;root&gt;/node_modules/@agentclientprotocol/codex-acp/dist/index.js</c>
+    /// (<c>spikes/engine-backends/codex/frames.jsonl</c>).
+    /// </summary>
+    /// <remarks>
+    /// <b>Red-first.</b> Before the entry was recorded this threw
+    /// <c>AdapterEntryModuleNotRecorded</c> — the refusal that enforced the codex deferral until a
+    /// real install was observed, and which <see cref="AnAdapterWithNoObservedEntryModuleIsRefusedRatherThanGuessed"/>
+    /// still exercises on a synthetic row.
+    /// </remarks>
+    [Fact]
+    public void TheAdapterLaunchPathResolvesForCodexWithTheObservedEntryModule()
+    {
+        var launch = EngineCatalog.ResolveLaunch("codex", InstallRoot);
+
+        Assert.Equal("node", launch.FileName);
+        var module = Assert.Single(launch.Arguments);
+        Assert.Equal(
+            Path.Combine(InstallRoot, "node_modules", "@agentclientprotocol/codex-acp", "dist", "index.js"),
             module);
     }
 

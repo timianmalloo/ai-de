@@ -40,6 +40,7 @@ public sealed class TheSessionNewFrameIsEngineAppropriateTests
     /// </summary>
     [Theory]
     [InlineData("copilot")]
+    [InlineData("codex")]
     public async Task ANonClaudeEngineGetsTheAcpStandardFrameAndNoClaudeMeta(string engineId)
     {
         var absolute = Path.GetFullPath(Path.GetTempPath());
