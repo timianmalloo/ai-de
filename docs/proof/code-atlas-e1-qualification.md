@@ -115,6 +115,70 @@ Conductor reconciliation process.
 
 These are required controls, **not controls yet observed failing and repaired**.
 
+### Known inherited sibling and repair scope
+
+Parent subsequently read `tests/AiDe.Core.Tests/Understanding/AtlasReadBudgetTests.cs`.
+Its existing `PendingAndOwnedBuffersHaveHardCeilings` method contains the same
+assertion-before-active-disposal cleanup order and `Owned <= MaxOwnedBytes` oracle
+as the first new candidate. It is a **known pre-existing sibling and prior-art
+source**, not an additional file changed by this qualification.
+
+Owner 73 requires this instance to remain explicit and forbids editing it under
+the two-file grant. If further queue work is required, the next decision must
+compare removing the redundant new fixture and repairing one authoritative
+budget-test home against maintaining both. This records an option, not a grant
+or an assertion that the existing test's failure paths have been executed.
+
+### Repaired candidate awaiting complete gate disposition
+
+Owner 72 admitted sixteen new repair leaves; the writer reports fourteen used.
+Candidate `aa4926e9309ad607d9a1d846de838d0dd7c956b7` remains unjoined. Parent read
+both repaired files and replayed **27 executed / 27 passed / zero failed**:
+16 focused tests, ten existing `NativePublicationLifetimeOrdering` cases
+(including `ownership`) and one existing real `NativeScope`/RESTORE case.
+The earlier nine-mode statement came from a source excerpt starting after the
+`ownership` attribute; the actual run establishes ten.
+
+New parent receipts are under session files `atlas-e1-repair-independent/`:
+`parent-e1-repair.trx`, `idle/matched-idle-drain.json` and ten
+`publication/<mode>.json` files. Parent read the matched Restore, ownership,
+partial, drain-timeout and completed receipts. The matching Restore records
+client completion with one owner/five buffers/one active operation and 16,777,216
+owned reservation bytes; after its matching publication drain it records
+zero owners/buffers/active operations and the connection's 2,097,152-byte
+reservation. The partial case records only four prefix bytes and retains
+ownership until actual drain. This is **executed current E0 baseline evidence**,
+not incremental E1 metadata proof or a CLR heap measurement.
+
+The new retained red/control TRX has 16 executed, 12 passed and four failed.
+Its errors include `Assert.Empty` against a normal partial pair, expected owned
+bytes changed to zero, and two missing-row-property cases. Record each by its
+actual assertion/input mutation; **four red results do not by themselves prove
+the required null/empty, root-preservation or cleanup-failure controls**.
+Two unsuccessful restoration runs are also retained; they are not product
+failure evidence. The old overwritten receipts remain unavailable.
+
+Owner 73 holds this repaired candidate for the fresh dispositions. All three
+have now returned: Test conditional acceptance (3/4 leaves), C# conditional
+advisory acceptance (4/4, two wrappers), and Core Security/SRE BLOCK (4/4).
+The remaining hard predicate is complete root invariance: preserving only
+`scopeToken` does not detect corruption of another root property while the
+intended bad row remains present. Such root rejection can still conceal a
+row-validation regression. The required comparison excludes the intentionally
+mutated `outline` but preserves every other property and value.
+
+C# also found that the `"classifierFlavor":"class"` case inserts null, not its
+declared value, and that secondary task faults retain only their type name.
+The reviewers recognize the source-level cleanup and nonvacuity improvements;
+unexpected success/fault and partial-construction controls remain unobserved.
+These are current qualification issues, not demands to implement future E1.
+
+Conductor returned two alternatives to Owner: finish both test homes within
+the two-file scope, or explicitly grant the existing budget-test file, delete the
+redundant new queue fixture and repair one authoritative home. The latter is
+recommended, not authorized here. No extra repair or third-file edit follows
+from this record; the candidate remains unjoined.
+
 ## Reuse before adding more fixtures
 
 Parent inspected existing source while preparing the next bounded decision:

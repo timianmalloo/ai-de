@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T22:22:03Z",
+  "generated": "2026-09-14T22:48:57Z",
   "audit": [
     {
       "actor": null,
@@ -16696,6 +16696,36 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "ae91998c0f553a420960d392a0145480c0b7ed44",
         "short": "ae91998c0",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2H1QX9HZ18HJZQ78B8RYDSA",
+      "shortname": "atlas-e1-repair-review-disposition",
+      "datetime": "2026-09-14T22:48:56Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "aa4926e9author14/16; parent27/27=16focused+10NativePublication(includingownership)+1realNativeScopeRestore, rawmatched-drain/publicationread. CURRENT E0baseline notnewmetadata. FreshTest3/4conditional,CSharp4/4twoWrappersconditional,CoreSRE4/4BLOCKwhole-rootinvariance missing; scopeTokenonlycannotexcluderoot+rowcorruption. ClassFlavordeclaredclassactuallynull, secondaryexceptionsreduced,cleanupfailurecontrols unobserved. Red16/4fail scope limited toactualmutants, notautomaticregressionproof. Parentclasssweepobservedexactoldbadqueuecleanup/upperbound inexistingAtlasReadBudgetTests; Owner73requiresrecord,no3rdfilegrantyet. AskedOwnercompare2homesvsdelete duplicateandexplicitlyrepaironecanonicalbudgettesthome. Nojoin/furtherauthoringcurrently, no E1product/main/normativeacceptance.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Disposition the repaired qualification against its actual boundaries",
+      "done_when": "All fresh reviews and exact remaining predicates are recorded for Owner decision",
+      "tier": "T2",
+      "main_calls": 556,
+      "main_budget": 560,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "git": {
+        "sha": "0966e6ff3cfde39c5742832faf690f611c5988ae",
+        "short": "0966e6ff3",
         "branch": "conductor/code-atlas",
         "pushed": null
       }
